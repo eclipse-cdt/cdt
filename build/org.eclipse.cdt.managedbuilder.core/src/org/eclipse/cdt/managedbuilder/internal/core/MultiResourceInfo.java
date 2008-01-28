@@ -39,9 +39,11 @@ public class MultiResourceInfo extends MultiItemsHolder implements
 	
 	protected IResourceInfo[] fRis = null;
 	private int activeCfg = 0;
+	IConfiguration parent = null;
 	
-	public MultiResourceInfo(IResourceInfo[] ris) {
+	public MultiResourceInfo(IResourceInfo[] ris, IConfiguration _parent) {
 		fRis = ris;
+		parent = _parent;
 		for (int i=0; i<fRis.length; i++) {
 			if (! (fRis[i].getParent() instanceof Configuration))
 				continue;
@@ -81,7 +83,7 @@ public class MultiResourceInfo extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceInfo#getParent()
 	 */
 	public IConfiguration getParent() {
-		return fRis[activeCfg].getParent();
+		return parent;
 	}
 
 	/* (non-Javadoc)
@@ -223,6 +225,7 @@ public class MultiResourceInfo extends MultiItemsHolder implements
 	throws BuildException {
 		IOption op = null;
 		String ext = parent instanceof ITool ? ((ITool)parent).getDefaultInputExtension() : null;
+		
 		String sid = getSuperClassId(option);
 		for (int i=0; i<fRis.length; i++) {
 			ITool[] ts = fRis[i].getTools();

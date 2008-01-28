@@ -55,10 +55,16 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	private static final String[] EMPTY_STR_ARRAY = new String[0];
 	
 	protected IConfiguration[] fCfgs = null;
+	private int curr = 0;
 	
 	public MultiConfiguration(IConfiguration[] cfs, int mode) {
 		fCfgs = cfs;
 		setStringListMode(mode);
+		for (int i=0; i<fCfgs.length; i++)
+			if (((Configuration)fCfgs[i]).getConfigurationDescription().isActive()) {
+				curr = i;
+				break;
+			}
 	}
 	
 	public MultiConfiguration(ICConfigurationDescription[] cfds, int mode) {
@@ -91,8 +97,8 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#calculateTargetTool()
 	 */
 	public ITool calculateTargetTool() {
-		System.out.println("Bad multi access: MultiConfiguration.calculateTargetTool()"); //$NON-NLS-1$
-		return null;
+		System.out.println("Strange multi access: MultiConfiguration.calculateTargetTool()"); //$NON-NLS-1$
+		return curr().calculateTargetTool();
 	}
 
 	/* (non-Javadoc)
@@ -107,16 +113,16 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#createFileInfo(org.eclipse.core.runtime.IPath)
 	 */
 	public IFileInfo createFileInfo(IPath path) {
-		System.out.println("Bad multi access: MultiConfiguration.createFileInfo(1)"); //$NON-NLS-1$
-		return null; // curr().createFileInfo(path);
+		System.out.println("Strange multi access: MultiConfiguration.createFileInfo(1)"); //$NON-NLS-1$
+		return curr().createFileInfo(path);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#createFileInfo(org.eclipse.core.runtime.IPath, java.lang.String, java.lang.String)
 	 */
 	public IFileInfo createFileInfo(IPath path, String id, String name) {
-		System.out.println("Bad multi access: MultiConfiguration.createFileInfo(3)"); //$NON-NLS-1$
-		return null; // curr().createFileInfo(path, id, name);
+		System.out.println("Strange multi access: MultiConfiguration.createFileInfo(3)"); //$NON-NLS-1$
+		return curr().createFileInfo(path, id, name);
 	}
 
 	/* (non-Javadoc)
@@ -183,11 +189,24 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#generateToolCommandLineInfo(java.lang.String, java.lang.String[], java.lang.String, java.lang.String, java.lang.String, java.lang.String[], org.eclipse.core.runtime.IPath, org.eclipse.core.runtime.IPath)
 	 */
 	public IManagedCommandLineInfo generateToolCommandLineInfo(
-			String sourceExtension, String[] flags, String outputFlag,
-			String outputPrefix, String outputName, String[] inputResources,
-			IPath inputLocation, IPath outputLocation) {
-		System.out.println("Bad multi access: MultiConfiguration.generateToolCommandLineInfo()"); //$NON-NLS-1$
-		return null;
+			String sourceExtension, 
+			String[] flags, 
+			String outputFlag,
+			String outputPrefix, 
+			String outputName, 
+			String[] inputResources,
+			IPath inputLocation, 
+			IPath outputLocation) {
+		System.out.println("Strange multi access: MultiConfiguration.generateToolCommandLineInfo()"); //$NON-NLS-1$
+		return curr().generateToolCommandLineInfo(
+				sourceExtension, 
+				flags, 
+				outputFlag, 
+				outputPrefix, 
+				outputName, 
+				inputResources, 
+				inputLocation, 
+				outputLocation);
 	}
 
 	/* (non-Javadoc)
@@ -330,7 +349,6 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getEditableBuilder()
 	 */
 	public IBuilder getEditableBuilder() {
-		System.out.println("Strange multi access: MultiConfiguration.getEditableBuilder()"); //$NON-NLS-1$
 		return curr().getEditableBuilder();
 	}
 
@@ -378,8 +396,24 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getFilteredTools()
 	 */
 	public ITool[] getFilteredTools() {
-		System.out.println("Strange multi access: MultiConfiguration.getFilteredTools()"); //$NON-NLS-1$
-		return new ITool[0];
+		ITool[] ts = curr().getFilteredTools();
+		/*
+		ITool[] ms = new ITool[ts.length]; 
+		for (int i=0; i<ts.length; i++) {
+			ArrayList lst = new ArrayList(fCfgs.length);
+			String ext = ts[i].getDefaultInputExtension(); 
+			for (int j=0; j<fCfgs.length; j++) {
+				ITool t = fCfgs[j].getToolFromInputExtension(ext);
+				if (t != null)
+					lst.add(t);
+			}
+			if (lst.size() > 1)
+				ms[i] = (ITool)new MultiTool(lst, curr);
+			else
+				ms[i] = ts[i];
+		}
+		*/
+		return ts;
 	}
 
 	/* (non-Javadoc)
@@ -551,7 +585,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 		IResourceInfo ris[] = new IResourceInfo[fCfgs.length];
 		for (int i=0; i<fCfgs.length; i++)
 			ris[i] = fCfgs[i].getResourceInfo(path, exactPath);
-		return new MultiResourceInfo(ris);
+		return new MultiResourceInfo(ris, this);
 	}
 
 	/* (non-Javadoc)
@@ -581,79 +615,77 @@ public class MultiConfiguration extends MultiItemsHolder implements
 		IFolderInfo ris[] = new IFolderInfo[fCfgs.length];
 		for (int i=0; i<fCfgs.length; i++)
 			ris[i] = fCfgs[i].getRootFolderInfo();
-		return new MultiFolderInfo(ris);
+		return new MultiFolderInfo(ris, this);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getSourceEntries()
 	 */
 	public ICSourceEntry[] getSourceEntries() {
-		System.out.println("Bad multi access: MultiConfiguration.getSourceEntries()"); //$NON-NLS-1$
-		return new ICSourceEntry[0];
+		System.out.println("Strange multi access: MultiConfiguration.getSourceEntries()"); //$NON-NLS-1$
+		return curr().getSourceEntries();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getTargetTool()
 	 */
 	public ITool getTargetTool() {
-		System.out.println("Bad multi access: MultiConfiguration.getTargetTool()"); //$NON-NLS-1$
-		return null;
+		System.out.println("Strange multi access: MultiConfiguration.getTargetTool()"); //$NON-NLS-1$
+		return curr().getTargetTool();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getTool(java.lang.String)
 	 */
 	public ITool getTool(String id) {
-		System.out.println("Bad multi access: MultiConfiguration.getTool()"); //$NON-NLS-1$
-		return null;
+		System.out.println("Strange multi access: MultiConfiguration.getTool()"); //$NON-NLS-1$
+		return curr().getTool(id);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getToolChain()
 	 */
 	public IToolChain getToolChain() {
-		System.out.println("Bad multi access: MultiConfiguration.getToolChain()"); //$NON-NLS-1$
-		return null;
+		return curr().getToolChain();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getToolCommand(org.eclipse.cdt.managedbuilder.core.ITool)
 	 */
 	public String getToolCommand(ITool tool) {
-		System.out.println("Strange multi access: MultiConfiguration.getToolCommand()"); //$NON-NLS-1$
-		return EMPTY_STR;
+		return curr().getToolCommand(tool);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getToolFromInputExtension(java.lang.String)
 	 */
 	public ITool getToolFromInputExtension(String sourceExtension) {
-		System.out.println("Bad multi access: MultiConfiguration.getToolFromInputExtension()"); //$NON-NLS-1$
-		return null;
+		System.out.println("Strange multi access: MultiConfiguration.getToolFromInputExtension()"); //$NON-NLS-1$
+		return curr().getToolFromInputExtension(sourceExtension);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getToolFromOutputExtension(java.lang.String)
 	 */
 	public ITool getToolFromOutputExtension(String extension) {
-		System.out.println("Bad multi access: MultiConfiguration.getToolFromOutputExtension()"); //$NON-NLS-1$
-		return null;
+		System.out.println("Strange multi access: MultiConfiguration.getToolFromOutputExtension()"); //$NON-NLS-1$
+		return curr().getToolFromOutputExtension(extension);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getTools()
 	 */
 	public ITool[] getTools() {
-		System.out.println("Bad multi access: MultiConfiguration.getTools()"); //$NON-NLS-1$
-		return new ITool[0];
+		System.out.println("Strange multi access: MultiConfiguration.getTools()"); //$NON-NLS-1$
+		return curr().getTools();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getToolsBySuperClassId(java.lang.String)
 	 */
 	public ITool[] getToolsBySuperClassId(String id) {
-		System.out.println("Bad multi access: MultiConfiguration.getToolsBySuperClassId()"); //$NON-NLS-1$
-		return new ITool[0];
+		System.out.println("Strange multi access: MultiConfiguration.getToolsBySuperClassId()"); //$NON-NLS-1$
+		return curr().getToolsBySuperClassId(id);
 	}
 
 	/* (non-Javadoc)
@@ -661,7 +693,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 */
 	public String[] getUserObjects(String extension) {
 		System.out.println("Strange multi access: MultiConfiguration.getUserObjects()"); //$NON-NLS-1$
-		return EMPTY_STR_ARRAY;
+		return curr().getUserObjects(extension);
 	}
 
 	/* (non-Javadoc)
@@ -884,9 +916,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#setName(java.lang.String)
 	 */
-	public void setName(String name) {
-		System.out.println("Bad multi access: MultiConfiguration.setName()"); //$NON-NLS-1$
-	}
+	public void setName(String name) {} // do nothing 
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#setOption(org.eclipse.cdt.managedbuilder.core.IHoldsOptions, org.eclipse.cdt.managedbuilder.core.IOption, boolean)
@@ -1028,9 +1058,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObject#setVersion(org.eclipse.core.runtime.PluginVersionIdentifier)
 	 */
-	public void setVersion(PluginVersionIdentifier version) {
-		System.out.println("Strange multi access: MultiConfiguration.setVersion()"); //$NON-NLS-1$
-	}
+	public void setVersion(PluginVersionIdentifier version) {} // do nothing
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObjectPropertiesContainer#getBuildProperties()
@@ -1050,7 +1078,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 		return true; // all cfgs report true
 	}
 	
-	public void    setParallelDef(boolean def) {
+	public void setParallelDef(boolean def) {
 		for (int i=0; i<fCfgs.length; i++)
 			if (fCfgs[i] instanceof Configuration)
 				((Configuration)fCfgs[i]).setParallelDef(def);
@@ -1117,7 +1145,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 * @return
 	 */
 	private IConfiguration curr() {
-		return fCfgs[0];
+		return fCfgs[curr];
 	}
 
 	public String getToolOutputPrefix() {

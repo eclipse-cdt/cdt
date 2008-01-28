@@ -168,7 +168,11 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 				}
 			}
 			if (currentSettingsPage == null) {
-				currentSettingsPage = new BuildOptionSettingsUI(this, fInfo, optionHolder, category);
+				currentSettingsPage = new BuildOptionSettingsUI(
+						this, 
+						fInfo, 
+						optionHolder, 
+						category);
 				pages.add(currentSettingsPage);
 				currentSettingsPage.setContainer(this);
 				if (currentSettingsPage.getControl() == null) {

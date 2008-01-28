@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
+import org.eclipse.cdt.ui.newui.UIMessages;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -34,7 +35,6 @@ public class PropertyMultiCfgTab extends AbstractCPropertyTab {
     private static final Color BLUE = CUIPlugin.getStandardDisplay().getSystemColor(SWT.COLOR_BLUE);
 
     private Button enable_multi;
-    private Button enable_3state;
     private Group dGrp;
     private Group wGrp;
     private Button d_0;
@@ -52,25 +52,21 @@ public class PropertyMultiCfgTab extends AbstractCPropertyTab {
 		usercomp.setLayout(g);
 
 		Label l = new Label(usercomp, SWT.CENTER | SWT.BORDER);
-		l.setText("* This functionality is experimental *");
+		l.setText(UIMessages.getString("PropertyMultiCfgTab.0")); //$NON-NLS-1$
 		l.setForeground(RED);
 		l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		l.setFont(JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT));
 		
         enable_multi = new Button(usercomp, SWT.CHECK);
-        enable_multi.setText("Enable multiple configurations setting");
+        enable_multi.setText(UIMessages.getString("PropertyMultiCfgTab.1")); //$NON-NLS-1$
         enable_multi.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         enable_multi.addSelectionListener(new SelectionAdapter () {
 			public void widgetSelected(SelectionEvent e) {
 				setStates();
 			}});
         
-		enable_3state = new Button(usercomp, SWT.CHECK);
-		enable_3state.setText("Use 3-state checkboxes where possible");
-		enable_3state.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
         dGrp = new Group(usercomp, SWT.NONE);
-        dGrp.setText("String list Display mode");
+        dGrp.setText(UIMessages.getString("PropertyMultiCfgTab.3")); //$NON-NLS-1$
         dGrp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         FillLayout fl = new FillLayout(SWT.VERTICAL);
         fl.spacing = SPACING;
@@ -79,18 +75,18 @@ public class PropertyMultiCfgTab extends AbstractCPropertyTab {
         
         l = new Label(dGrp, SWT.WRAP | SWT.CENTER);
         l.setText(
-       		"Define how string lists from different configurations\nshould be combined for display, when lists are not equal"
+       		UIMessages.getString("PropertyMultiCfgTab.4") //$NON-NLS-1$
         );
         l.setForeground(BLUE);
         d_0 = new Button(dGrp, SWT.RADIO);
-        d_0.setText("Show empty list");
+        d_0.setText(UIMessages.getString("PropertyMultiCfgTab.5")); //$NON-NLS-1$
         d_1 = new Button(dGrp, SWT.RADIO);
-        d_1.setText("Show common elements (conjunction)");
+        d_1.setText(UIMessages.getString("PropertyMultiCfgTab.6")); //$NON-NLS-1$
         d_2 = new Button(dGrp, SWT.RADIO);
-        d_2.setText("Show all elements except doubles (disjunction)");
+        d_2.setText(UIMessages.getString("PropertyMultiCfgTab.7")); //$NON-NLS-1$
         
         wGrp = new Group(usercomp, SWT.NONE);
-        wGrp.setText("String list Write mode");
+        wGrp.setText(UIMessages.getString("PropertyMultiCfgTab.8")); //$NON-NLS-1$
         wGrp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         fl = new FillLayout(SWT.VERTICAL);
         fl.spacing = SPACING;
@@ -99,16 +95,15 @@ public class PropertyMultiCfgTab extends AbstractCPropertyTab {
 
         l = new Label(wGrp, SWT.WRAP | SWT.CENTER);
         l.setText(
-           		"Define how to save changes in string lists \nfor different configurations"
+           		UIMessages.getString("PropertyMultiCfgTab.9") //$NON-NLS-1$
             );
         l.setForeground(BLUE);
         w_0 = new Button(wGrp, SWT.RADIO);
-        w_0.setText("Add/remove/change affected elements, do not touch others");
+        w_0.setText(UIMessages.getString("PropertyMultiCfgTab.10")); //$NON-NLS-1$
         w_1 = new Button(wGrp, SWT.RADIO);
-        w_1.setText("Replace existing string lists with string list shown to user");
+        w_1.setText(UIMessages.getString("PropertyMultiCfgTab.11")); //$NON-NLS-1$
         
 		enable_multi.setSelection(CDTPrefUtil.getBool(CDTPrefUtil.KEY_MULTI));
-		enable_3state.setSelection(CDTPrefUtil.getBool(CDTPrefUtil.KEY_3STATE));
 		
 		switch (CDTPrefUtil.getInt(CDTPrefUtil.KEY_DMODE)) {
 			case CDTPrefUtil.DMODE_EMPTY:       d_0.setSelection(true); break;
@@ -128,7 +123,6 @@ public class PropertyMultiCfgTab extends AbstractCPropertyTab {
 
 	protected void performOK() {
 		CDTPrefUtil.setBool(CDTPrefUtil.KEY_MULTI, enable_multi.getSelection());
-		CDTPrefUtil.setBool(CDTPrefUtil.KEY_3STATE,enable_3state.getSelection());
 		int x = 0;
 		if (d_0.getSelection()) 
 			x = CDTPrefUtil.DMODE_EMPTY;
@@ -147,7 +141,6 @@ public class PropertyMultiCfgTab extends AbstractCPropertyTab {
 	
 	protected void performDefaults() {
 		enable_multi.setSelection(false);
-		enable_3state.setSelection(false);
 		d_0.setSelection(false);
 		d_1.setSelection(true);
 		d_2.setSelection(false);
@@ -157,7 +150,6 @@ public class PropertyMultiCfgTab extends AbstractCPropertyTab {
 
 	private void setStates() {
 		boolean b = enable_multi.getSelection();
-		enable_3state.setEnabled(b);
 		d_0.setEnabled(b);
 		d_1.setEnabled(b);
 		d_2.setEnabled(b);

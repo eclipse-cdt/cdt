@@ -22,7 +22,6 @@ import org.eclipse.cdt.newmake.core.IMakeBuilderInfo;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.cdt.ui.newui.ICPropertyProvider;
-import org.eclipse.cdt.ui.newui.TriButton;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
@@ -45,11 +44,11 @@ import org.eclipse.swt.widgets.Widget;
 
 public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 	
-	private static int TRI_STATES_SIZE = 4;
+	private static final int TRI_STATES_SIZE = 4;
 	// Widgets
 	//3
-	private TriButton b_stopOnError;
-	private TriButton b_parallel;
+	private Button b_stopOnError;
+	private Button b_parallel;
 
 	private Button b_parallelOpt;
 	private Button b_parallelNum;
@@ -91,7 +90,7 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 		gl.marginHeight = 0;
 		c1.setLayout(gl);
 		
-		b_stopOnError = setupTri(c1, Messages.getString("BuilderSettingsTab.10"), 1, GridData.BEGINNING); //$NON-NLS-1$
+		b_stopOnError = setupCheck(c1, Messages.getString("BuilderSettingsTab.10"), 1, GridData.BEGINNING); //$NON-NLS-1$
 		
 		Composite c2 = new Composite(g3, SWT.NONE);
 		setupControl(c2, 1, GridData.FILL_BOTH);
@@ -101,7 +100,7 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 		gl.marginHeight = 0;
 		c2.setLayout(gl);
 		
-		b_parallel = setupTri(c2, Messages.getString("BuilderSettingsTab.11"), 1, GridData.BEGINNING); //$NON-NLS-1$
+		b_parallel = setupCheck(c2, Messages.getString("BuilderSettingsTab.11"), 1, GridData.BEGINNING); //$NON-NLS-1$
 
 		Composite c3 = new Composite(g3, SWT.NONE);
 		setupControl(c3, 1, GridData.FILL_BOTH);
@@ -189,11 +188,10 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 	 *    3: cfg.getInternalBuilderParallel()
 	 */
 	 static int[] calc3states(ICPropertyProvider p, 
-			 TriButton b3, 
+			 Button b3, 
 			 IConfiguration c,
 			 boolean p0) {
 		if (p.isMultiCfg() &&
-			b3.in3mode() && 
 			c instanceof ICMultiItemsHolder) 
 		{ 
 			IConfiguration[] cfs = (IConfiguration[])((ICMultiItemsHolder)c).getItems();
@@ -208,22 +206,22 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 				                 ((Configuration)cfs[0]).getInternalBuilderParallel();
 			for (int i=1; i<cfs.length; i++) {
 				b = cfs[i].getEditableBuilder();
-				if (res[0] != TriButton.UNKNOWN && 
+				if (res[0] != TRI_UNKNOWN && 
 						x[0] != (p0) ? b.isManagedBuildOn() : b.isStopOnError())
-					res[0] = TriButton.UNKNOWN;
-				if (res[1] != TriButton.UNKNOWN && 
+					res[0] = TRI_UNKNOWN;
+				if (res[1] != TRI_UNKNOWN && 
 						x[1] != (p0) ? b.isDefaultBuildCmd() : b.supportsStopOnError(true))
-					res[1] = TriButton.UNKNOWN;
-				if (res[2] != TriButton.UNKNOWN && 
+					res[1] = TRI_UNKNOWN;
+				if (res[2] != TRI_UNKNOWN && 
 						x[2] != (p0) ? b.canKeepEnvironmentVariablesInBuildfile() : b.supportsStopOnError(false))
-					res[2] = TriButton.UNKNOWN;
-				if (res[3] != TriButton.UNKNOWN && 
+					res[2] = TRI_UNKNOWN;
+				if (res[3] != TRI_UNKNOWN && 
 						x[3] != (p0) ? b.keepEnvironmentVariablesInBuildfile() : ((Configuration)cfs[i]).getInternalBuilderParallel())
-					res[3] = TriButton.UNKNOWN;
+					res[3] = TRI_UNKNOWN;
 			}
 			for (int i=0; i<TRI_STATES_SIZE; i++) {
-				if (res[i] != TriButton.UNKNOWN)
-					res[i] = x[i] ? TriButton.YES : TriButton.NO;
+				if (res[i] != TRI_UNKNOWN)
+					res[i] = x[i] ? TRI_YES : TRI_NO;
 			}
 			return res;
 		} else
@@ -239,21 +237,21 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 		int[] extStates = calc3states(page, b_stopOnError, icfg, false);
 		
 		if (extStates != null) {
-			b_stopOnError.setTriSelection(extStates[0]);
+			setTriSelection(b_stopOnError, extStates[0]);
 			b_stopOnError.setEnabled(
-					extStates[1] == TriButton.YES &&
-					extStates[2] == TriButton.YES);
+					extStates[1] == TRI_YES &&
+					extStates[2] == TRI_YES);
 		} else {
-			b_stopOnError.setSelection(bldr.isStopOnError());
+			setTriSelection(b_stopOnError, bldr.isStopOnError() ? TRI_YES : TRI_NO);
 			b_stopOnError.setEnabled(
 					bldr.supportsStopOnError(true) &&
 					bldr.supportsStopOnError(false));
 		} 
 		// parallel
 		if (extStates == null) // no extended states
-			b_parallel.setSelection(getInternalBuilderParallel());
+			setTriSelection(b_parallel, getInternalBuilderParallel() ? TRI_YES : TRI_NO);
 		else
-			b_parallel.setTriSelection(extStates[3]);
+			setTriSelection(b_parallel, extStates[3]);
 		
 		b_parallelOpt.setSelection(getParallelDef());
 		b_parallelNum.setSelection(!getParallelDef());
@@ -334,7 +332,6 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 		
 		boolean val = false;
 		if (b instanceof Button) val = ((Button)b).getSelection();
-		else if (b instanceof TriButton) val = ((TriButton)b).getSelection();
 		
 		if (b.getData() instanceof Text) {
 			Text t = (Text)b.getData();

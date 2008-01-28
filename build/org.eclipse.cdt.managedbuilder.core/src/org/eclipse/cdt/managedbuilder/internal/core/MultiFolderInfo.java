@@ -13,6 +13,7 @@ package org.eclipse.cdt.managedbuilder.internal.core;
 
 import org.eclipse.cdt.core.settings.model.extension.CFolderData;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
 import org.eclipse.cdt.managedbuilder.core.IModificationStatus;
 import org.eclipse.cdt.managedbuilder.core.ITool;
@@ -25,8 +26,8 @@ import org.eclipse.cdt.managedbuilder.core.IToolChain;
  */
 public class MultiFolderInfo extends MultiResourceInfo implements IFolderInfo {
 
-	public MultiFolderInfo(IFolderInfo[] ris) {
-		super(ris);
+	public MultiFolderInfo(IFolderInfo[] ris, IConfiguration p) {
+		super(ris, p);
 		fRis = ris;
 	}
 	

@@ -91,8 +91,9 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	public static final String WORKSPACE_FILE_DIALOG_ERR = UIMessages.getString("BrowseEntryDialog.wsp.file.dlg.err");	//$NON-NLS-1$
 	public static final String WORKSPACE_DIR_DIALOG_ERR = UIMessages.getString("BrowseEntryDialog.wsp.dir.dlg.err");	//$NON-NLS-1$
 
-	// use 3-state buttons in property pages
-	protected final boolean USE_TRI_STATE = CDTPrefUtil.getBool(CDTPrefUtil.KEY_MULTI) && CDTPrefUtil.getBool(CDTPrefUtil.KEY_3STATE);
+	public static final int TRI_UNKNOWN = 2;
+	public static final int TRI_YES = 1;
+	public static final int TRI_NO = 0;
 
 	protected Composite usercomp; // space where user can create widgets 
 	protected Composite buttoncomp; // space for buttons on the right
@@ -321,17 +322,7 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 		 setupControl(b, span, mode);
 		 b.addSelectionListener(new SelectionAdapter() {
 		    public void widgetSelected(SelectionEvent event) {
-		    	checkPressed(event);
-		 }});
-		 return b;
-	}
-
-	protected TriButton setupTri(Composite c, String name, int span, int mode) {
-		 TriButton b = new TriButton(c, 0, USE_TRI_STATE);
-		 b.setText(name);
-		 setupControl(b, span, mode);
-		 b.addSelectionListener(new SelectionAdapter() {
-		    public void widgetSelected(SelectionEvent event) {
+		    	((Button)event.widget).setGrayed(false);
 		    	checkPressed(event);
 		 }});
 		 return b;
@@ -534,6 +525,24 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 		gc.dispose();
 		return fFontMetrics;
 	}
+
+	public static void setTriSelection(Button b, int state) {
+		switch (state) {
+		case TRI_NO:
+			b.setGrayed(false);
+			b.setSelection(false);
+			break;
+		case TRI_YES:
+			b.setGrayed(false);
+			b.setSelection(true);
+			break;
+		case TRI_UNKNOWN:
+			b.setSelection(true);
+			b.setGrayed(true);
+			break;
+		}
+	}
+	 
 
 
 }

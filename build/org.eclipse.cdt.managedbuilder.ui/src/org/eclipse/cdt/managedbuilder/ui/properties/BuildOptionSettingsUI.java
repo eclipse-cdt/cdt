@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import org.eclipse.cdt.core.settings.model.MultiItemsHolder;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -27,7 +29,9 @@ import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
+import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.internal.core.MultiResourceInfo;
 import org.eclipse.cdt.ui.newui.AbstractPage;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
@@ -38,6 +42,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 
@@ -45,6 +50,8 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 	private Map fieldsMap = new HashMap();
 	private IOptionCategory category;
 	private IHoldsOptions optionHolder;
+	private IHoldsOptions[] ohs;
+	private int curr;
 	private Map fieldEditorsToParentMap = new HashMap();
 
 	public BuildOptionSettingsUI(AbstractCBuildPropertyTab page,
@@ -54,6 +61,33 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 		this.category = _category;
 		this.optionHolder = optionHolder;
 		buildPropPage = page;
+		if (info instanceof MultiItemsHolder) {
+			MultiResourceInfo mri = (MultiResourceInfo)info; 
+			IResourceInfo[] ris = (IResourceInfo[])mri.getItems();
+			String id = category.getId();
+			String ext = ((ITool)optionHolder).getDefaultInputExtension();
+			ArrayList lst = new ArrayList();
+			for (int i=0; i<ris.length; i++) {
+				ITool[] ts = ris[i].getTools();
+				for (int j=0; j<ts.length; j++) {
+					IOptionCategory op = ts[j].getOptionCategory(id);
+					if (op != null) {
+						if (ext.equals(ts[j].getDefaultInputExtension()))
+							lst.add(ts[j]);
+					}
+				}				
+			}
+			ohs = (IHoldsOptions[])lst.toArray(new IHoldsOptions[lst.size()]);
+			for (int i=0; i<ohs.length; i++) {
+				if (ohs[i].equals(optionHolder)) {
+					curr = i;
+					break;
+				}
+			}	
+		} else {
+			ohs = null;
+			curr = 0;
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -129,15 +163,14 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 						} break;
 						
 						case IOption.BOOLEAN: {
-							class TooltipBooleanFieldEditor extends BooleanFieldEditor {
-								public TooltipBooleanFieldEditor(String name, String labelText, String tooltip, Composite parent, String contextId) {
-									super(name, labelText, parent);
-									getChangeControl(parent).setToolTipText(tooltip);
-									if (!contextId.equals(AbstractPage.EMPTY_STR)) PlatformUI.getWorkbench().getHelpSystem().setHelp(getChangeControl(parent), contextId);
-								}
-							}
-							
-							fieldEditor = new TooltipBooleanFieldEditor(optId, opt.getName(), opt.getToolTip(), fieldEditorParent, opt.getContextId());
+							fieldEditor = new TriStateBooleanFieldEditor(
+									optId, 
+									opt.getName(), 
+									opt.getToolTip(), 
+									fieldEditorParent, 
+									opt.getContextId(), 
+									ohs,
+									curr);
 						} break;
 						
 						case IOption.ENUMERATED: {
@@ -362,6 +395,8 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 		Iterator iter = fieldsList.iterator();
 		while (iter.hasNext()) {
 			FieldEditor editor = (FieldEditor) iter.next();
+			if (editor instanceof TriStateBooleanFieldEditor)
+				((TriStateBooleanFieldEditor)editor).set3(true);
 			editor.load();
 		}
 	}
@@ -395,9 +430,20 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 		if(source instanceof FieldEditor){
 			FieldEditor fe = (FieldEditor)source;
 			
-			id = fe.getPreferenceName();
+			if (fe instanceof TriStateBooleanFieldEditor)
+				((TriStateBooleanFieldEditor)fe).set3(false);
 			
+			id = fe.getPreferenceName();
+
 			Object[] option = this.getToolSettingsPrefStore().getOption(id);
+
+			if (option == null) {
+				int n = id.lastIndexOf('.');
+				if (n > 0) {
+					id = id.substring(0, n); 
+					option = getToolSettingsPrefStore().getOption(id);
+				}
+			}
 			
 			if(option != null){
 				changedOption = (IOption)option[1];
@@ -560,4 +606,65 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 		((BuildOptionComboFieldEditor)fieldEditor).setOptions(enumValidNames);
 		fieldEditor.load();
 	}
+	
+	/**
+	 * 
+	 * 
+	 *
+	 */
+	class TriStateBooleanFieldEditor extends BooleanFieldEditor {
+		protected Button button = null;
+		protected IHoldsOptions[] holders = null;
+		private boolean enable3 = true;
+		protected int current = 0;
+		public TriStateBooleanFieldEditor(String name, String labelText, String tooltip, Composite parent, String contextId, IHoldsOptions[] ho, int curr) {
+			super(name, labelText, parent);
+			holders = ho; 
+			current = curr;
+			button = (Button)getChangeControl(parent);
+			button.setToolTipText(tooltip);
+			if (!contextId.equals(AbstractPage.EMPTY_STR)) PlatformUI.getWorkbench().getHelpSystem().setHelp(button, contextId);
+			
+		}
+		protected void valueChanged(boolean oldValue, boolean newValue) {
+			if (button.getGrayed())
+				button.setGrayed(false);
+			super.valueChanged(!newValue, newValue);
+		}
+		protected void doLoad() {
+			if (enable3 && holders != null && button != null) {
+				String id = getPreferenceName();
+				IOption op = holders[current].getOptionById(id);
+				if (op != null) {
+					if (op.getSuperClass() != null)
+						id = op.getSuperClass().getId();
+					int[] vals = new int[2];
+					for (int i=0; i<holders.length; i++) {
+						op = holders[i].getOptionBySuperClassId(id);
+						try {
+							if (op != null) 
+								vals[op.getBooleanValue() ? 1 : 0]++;
+						} catch (BuildException e) {}
+					}
+					boolean value = false;
+					boolean gray  = false;
+					if (vals[1] > 0) {
+						value = true;
+						if (vals[0] > 0)
+							gray = true;
+					}
+					button.setGrayed(gray);
+					button.setSelection(value);
+					return;
+				}
+			}
+			super.doLoad(); // default case
+		}
+		
+		void set3(boolean state) {
+			enable3 = state;
+		}
+	}
+	
+
 }

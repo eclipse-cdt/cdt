@@ -1102,7 +1102,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		try {
 			// Request a value change and set dirty if real change results
 			retOpt = resConfig.setOption(holder, option, value);
-			if (retOpt.getValueHandler().handleValue(
+			if (retOpt != null && retOpt.getValueHandler().handleValue(
 					resConfig, 
 					holder, 
 					retOpt,

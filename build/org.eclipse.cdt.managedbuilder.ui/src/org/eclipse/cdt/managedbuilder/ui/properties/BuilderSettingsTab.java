@@ -19,7 +19,6 @@ import org.eclipse.cdt.managedbuilder.internal.core.Builder;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
-import org.eclipse.cdt.ui.newui.TriButton;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -41,12 +40,12 @@ import org.eclipse.swt.widgets.Widget;
 public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 	// Widgets
 	//1
-	private TriButton b_useDefault;
+	private Button b_useDefault;
 	private Combo  c_builderType;
 	private Text   t_buildCmd; 
 	//2
-	private TriButton b_genMakefileAuto;
-	private TriButton b_expandVars;
+	private Button b_genMakefileAuto;
+	private Button b_expandVars;
 	//5
 	private Text   t_dir;
 	private Button b_dirWsp;
@@ -74,7 +73,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		    	updateButtons();
 		 }});
 		
-		b_useDefault = setupTri(g1, Messages.getString("BuilderSettingsTab.4"), 3, GridData.BEGINNING); //$NON-NLS-1$
+		b_useDefault = setupCheck(g1, Messages.getString("BuilderSettingsTab.4"), 3, GridData.BEGINNING); //$NON-NLS-1$
 		
 		setupLabel(g1, Messages.getString("BuilderSettingsTab.5"), 1, GridData.BEGINNING); //$NON-NLS-1$
 		t_buildCmd = setupBlock(g1, b_useDefault);
@@ -93,8 +92,8 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		Group g2 = setupGroup(usercomp, Messages.getString("BuilderSettingsTab.6"), 2, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
 		((GridLayout)(g2.getLayout())).makeColumnsEqualWidth = true;
 		
-		b_genMakefileAuto = setupTri(g2, Messages.getString("BuilderSettingsTab.7"), 1, GridData.BEGINNING); //$NON-NLS-1$
-		b_expandVars  = setupTri(g2, Messages.getString("BuilderSettingsTab.8"), 1, GridData.BEGINNING); //$NON-NLS-1$
+		b_genMakefileAuto = setupCheck(g2, Messages.getString("BuilderSettingsTab.7"), 1, GridData.BEGINNING); //$NON-NLS-1$
+		b_expandVars  = setupCheck(g2, Messages.getString("BuilderSettingsTab.8"), 1, GridData.BEGINNING); //$NON-NLS-1$
 
 		// Build location group
 		group_dir = setupGroup(usercomp, Messages.getString("BuilderSettingsTab.21"), 2, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
@@ -131,8 +130,11 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 
 		b_genMakefileAuto.setEnabled(icfg.supportsBuild(true));
 		if (extStates == null) { // no extended states available
+			b_genMakefileAuto.setGrayed(false);
 			b_genMakefileAuto.setSelection(bldr.isManagedBuildOn());
+			b_useDefault.setGrayed(false);
 			b_useDefault.setSelection(bldr.isDefaultBuildCmd());
+			b_expandVars.setGrayed(false);
 			if(!bldr.canKeepEnvironmentVariablesInBuildfile())
 				b_expandVars.setEnabled(false);
 			else {
@@ -140,13 +142,13 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 				b_expandVars.setSelection(!bldr.keepEnvironmentVariablesInBuildfile());
 			}
 		} else {
-			b_genMakefileAuto.setTriSelection(extStates[0]);
-			b_useDefault.setTriSelection(extStates[1]);
-			if(extStates[2] != TriButton.YES)
+			BuildBehaviourTab.setTriSelection(b_genMakefileAuto, extStates[0]);
+			BuildBehaviourTab.setTriSelection(b_useDefault, extStates[1]);
+			if(extStates[2] != BuildBehaviourTab.TRI_YES)
 				b_expandVars.setEnabled(false);
 			else {
 				b_expandVars.setEnabled(true);
-				b_expandVars.setTriSelection(extStates[3]);
+				BuildBehaviourTab.setTriSelection(b_expandVars, extStates[3]);
 			}
 		}
 		c_builderType.select(isInternalBuilderEnabled() ? 1 : 0);
@@ -174,7 +176,8 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		((Control)t_buildCmd.getData()).setEnabled(external & ! b_useDefault.getSelection());
 		
 		b_genMakefileAuto.setEnabled(external && icfg.supportsBuild(true));
-		b_expandVars.setEnabled(external && b_genMakefileAuto.getSelection());
+		if (b_expandVars.getEnabled())
+			b_expandVars.setEnabled(external && b_genMakefileAuto.getSelection());
 		
 		if (external) {
 			checkPressed(b_useDefault);
@@ -243,7 +246,6 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		
 		boolean val = false;
 		if (b instanceof Button) val = ((Button)b).getSelection();
-		else if (b instanceof TriButton) val = ((TriButton)b).getSelection();
 		
 		if (b.getData() instanceof Text) {
 			Text t = (Text)b.getData();

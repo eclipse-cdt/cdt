@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation.
+ * Copyright (c) 2006, 2008 IBM Corporation.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -219,9 +219,7 @@ public class NamespaceTests extends PDOMTestBase {
 		IName[] decls = pdom.findNames(variable1, IIndex.FIND_DECLARATIONS);
 		assertEquals(0, decls.length);
 		
-		//TODO: should this be 2?
-		//Doug: Not sure but we're at one now...
 		IName[] refs = pdom.findNames(variable1, IIndex.FIND_REFERENCES);
-		assertEquals(1, refs.length);	
+		assertEquals(2, refs.length);	
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 QNX Software Systems and others.
+ * Copyright (c) 2005, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
@@ -64,13 +65,7 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 		record = db.malloc(RECORD_SIZE);
 
 		// What kind of name are we
-		int flags = 0;
-		if (name.isDefinition())
-			flags = IS_DEFINITION;
-		else if (name.isDeclaration())
-			flags = IS_DECLARATION;
-		else 
-			flags = IS_REFERENCE;
+		int flags= getRoleOfName(name);
 		
 		flags |= binding.getAdditionalNameFlags(flags, name);
 		db.putByte(record + FLAGS, (byte) flags);
@@ -101,6 +96,21 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 		IASTFileLocation fileloc = name.getFileLocation();
 		db.put3ByteUnsignedInt(record + NODE_OFFSET_OFFSET, fileloc.getNodeOffset());
 		db.putShort(record + NODE_LENGTH_OFFSET, (short) fileloc.getNodeLength());
+	}
+
+	private int getRoleOfName(IASTName name) {
+		if (name.isDefinition()) {
+			return IS_DEFINITION;
+		}  
+		if (name.isDeclaration()) {
+			return IS_DECLARATION;
+		} 
+		
+		// special case a using-declaration is a declaration and a reference at the same time.
+		if (name.getBinding() instanceof ICPPUsingDeclaration) {
+			return IS_DEFINITION;
+		}
+		return IS_REFERENCE;
 	}
 	
 	public PDOMName(PDOM pdom, int nameRecord) {
@@ -350,7 +360,7 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 	}
 
 	public IIndexName[] getEnclosedNames() throws CoreException {
-		ArrayList result= new ArrayList();
+		ArrayList<PDOMName> result= new ArrayList<PDOMName>();
 		PDOMName name= getNextInFile();
 		while (name != null) {
 			if (name.getEnclosingDefinitionRecord() == record) {
@@ -358,6 +368,6 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 			}
 			name= name.getNextInFile();
 		}
-		return (IIndexName[]) result.toArray(new IIndexName[result.size()]);
+		return result.toArray(new PDOMName[result.size()]);
 	}
 }

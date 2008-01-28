@@ -159,4 +159,40 @@ public class ASTInternal {
 		}
 		return filePath;
 	}
+
+	public static String getDeclaredInOneFileOnly(IBinding binding) {
+		IASTNode[] decls;
+		IASTNode def;
+		if (binding instanceof ICPPInternalBinding) {
+			ICPPInternalBinding ib= (ICPPInternalBinding) binding;
+			decls= ib.getDeclarations();
+			def= ib.getDefinition();
+		}
+		else if (binding instanceof ICInternalBinding) {
+			ICInternalBinding ib= (ICInternalBinding) binding;
+			decls= ib.getDeclarations();
+			def= ib.getDefinition();
+		}
+		else {
+			return null;
+		}
+		String filePath= null;
+		if (def != null) {
+			filePath= def.getContainingFilename();
+		}
+		if (decls != null) {
+			for (int i = 0; i < decls.length; i++) {
+				final IASTNode node= decls[i];
+				if (node != null) {
+					final String fn = node.getContainingFilename();
+					if (filePath == null) {
+						filePath= fn;
+					} else if (!filePath.equals(fn)) {
+						return null;
+					}
+				}
+			}
+		}
+		return filePath;
+	}
 }

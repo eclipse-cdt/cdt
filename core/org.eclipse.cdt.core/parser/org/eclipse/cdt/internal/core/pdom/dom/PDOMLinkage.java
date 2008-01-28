@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
@@ -42,7 +43,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexLinkage;
 import org.eclipse.cdt.internal.core.Util;
@@ -259,6 +259,11 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 			if (binding instanceof ICPPTemplateInstance) {
 				scopeBinding = ((ICPPTemplateInstance)binding).getTemplateDefinition();
 			} else {
+				// in case this is a delegate the scope of the delegate can be different to the
+				// scope of the delegating party (e.g. using-declarations)
+				while (binding instanceof ICPPDelegate && !(binding instanceof ICPPNamespaceAlias)) {
+					binding= ((ICPPDelegate) binding).getBinding();
+				}
 				IScope scope = binding.getScope();
 				if (scope == null) {
 					if (binding instanceof ICPPDeferredTemplateInstance) {
@@ -359,12 +364,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 				} else if (binding instanceof IFunction) {
 					IFunction f= (IFunction) binding;
 					isFileLocal= ASTInternal.isStatic(f, false);
-				} else if ((binding instanceof ICPPUsingDeclaration ||
-						binding instanceof ICPPNamespaceAlias) && binding.getScope() == null) {
-					// Using declarations and namespace aliases in global scope are restricted
-					// to the containing file.
-					isFileLocal= true;
-				}
+				} 
 
 				if (isFileLocal) {
 					String path= ASTInternal.getDeclaredInSourceFileOnly(binding);

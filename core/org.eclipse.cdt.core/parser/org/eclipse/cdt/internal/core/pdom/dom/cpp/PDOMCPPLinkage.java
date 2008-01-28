@@ -58,10 +58,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPBasicType;
 import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBlockScope;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.WritablePDOM;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMASTAdapter;
@@ -783,6 +785,16 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	@Override
 	protected PDOMFile getLocalToFile(IBinding binding) throws CoreException {
 		if (binding instanceof ICPPMethod) {
+			return null;
+		}
+		if (binding instanceof ICPPUsingDeclaration || binding instanceof ICPPNamespaceAlias) {
+			if (pdom instanceof WritablePDOM) {
+				final WritablePDOM wpdom= (WritablePDOM) pdom;
+				String path= ASTInternal.getDeclaredInOneFileOnly(binding);
+				if (path != null) {
+					return wpdom.getFileForASTPath(getLinkageID(), path);
+				}
+			}
 			return null;
 		}
 		return super.getLocalToFile(binding);

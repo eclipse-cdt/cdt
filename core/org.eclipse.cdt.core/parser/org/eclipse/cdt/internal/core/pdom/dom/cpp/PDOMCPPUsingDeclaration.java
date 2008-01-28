@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Google, Inc and others.
+ * Copyright (c) 2008 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,10 +33,13 @@ import org.eclipse.core.runtime.CoreException;
  * @see ICPPUsingDeclaration
  */
 class PDOMCPPUsingDeclaration extends PDOMCPPBinding implements	ICPPUsingDeclaration {
+	@SuppressWarnings("static-access")
 	private static final int TARGET_BINDING = PDOMCPPBinding.RECORD_SIZE + 0;
 	// Using declarations for functions may have multiple delegates. We model such case
 	// by creating a chain of PDOMCPPUsingDeclaration objects linked by NEXT_DELEGATE field.
+	@SuppressWarnings("static-access")
 	private static final int NEXT_DELEGATE = PDOMCPPBinding.RECORD_SIZE + 4;
+	@SuppressWarnings({ "hiding", "static-access" })
 	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 8;
 	private ICPPDelegate[] delegates;
 	
@@ -115,11 +118,5 @@ class PDOMCPPUsingDeclaration extends PDOMCPPBinding implements	ICPPUsingDeclara
 			CCorePlugin.log(e);
 		}
 		return null;
-	}
-
-	public boolean hasDeclaration() throws CoreException {
-		// TODO(sprigogin) I'm not sure if returning unconditional true is legitimate,
-		// but I couldn't figure out a better way to satisfy DeclaredBindingsFilter#acceptBinding.
-		return true;
 	}
 }

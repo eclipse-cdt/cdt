@@ -22,7 +22,7 @@ public interface ICfgScannerConfigBuilderInfo2Set {
 	
 	void setPerRcTypeDiscovery(boolean on);
 	
-	Map getInfoMap();
+	Map<CfgInfoContext, IScannerConfigBuilderInfo2> getInfoMap();
 	
 	CfgInfoContext[] getContexts();
 	

@@ -445,11 +445,9 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
  			CfgScannerConfigProfileManager.getCfgScannerConfigBuildInfo(getCfg(dst.getConfiguration()));
  		cbi2.setPerRcTypeDiscovery(cbi1.isPerRcTypeDiscovery());
  		
- 		Map m1 = cbi1.getInfoMap();
- 		Map m2 = cbi2.getInfoMap();
- 		Iterator it2 = m2.keySet().iterator();
- 		while (it2.hasNext()) {
- 			CfgInfoContext ic = (CfgInfoContext)it2.next();
+ 		Map<CfgInfoContext, IScannerConfigBuilderInfo2> m1 = cbi1.getInfoMap();
+ 		Map<CfgInfoContext, IScannerConfigBuilderInfo2> m2 = cbi2.getInfoMap();
+ 		for (CfgInfoContext ic : m2.keySet()) {
  			if (m1.keySet().contains(ic))  {
  				IScannerConfigBuilderInfo2 bi1 = (IScannerConfigBuilderInfo2)m1.get(ic);
  				try { 
@@ -503,11 +501,10 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		if(cbi == null || baseInfoMap == null)
 			return new ArrayList(0);
 		
-		Map cfgInfoMap = cbi.getInfoMap();
-		HashMap baseCopy = new HashMap(baseInfoMap);
-		List list = new ArrayList();
-		for(Iterator iter = cfgInfoMap.entrySet().iterator(); iter.hasNext();){
-			Map.Entry entry = (Map.Entry)iter.next();
+		Map<CfgInfoContext, IScannerConfigBuilderInfo2> cfgInfoMap = cbi.getInfoMap();
+		HashMap<InfoContext, Object> baseCopy = new HashMap<InfoContext, Object>(baseInfoMap);
+		List<CfgInfoContext> list = new ArrayList<CfgInfoContext>();
+		for(Map.Entry entry : cfgInfoMap.entrySet()){
 			CfgInfoContext cic = (CfgInfoContext)entry.getKey();
 			InfoContext c = cic.toInfoContext();
 			if(c == null)
@@ -525,8 +522,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		
 		if(baseCopy.size() != 0){
 			IConfiguration cfg = cbi.getConfiguration();
-			for(Iterator iter = baseCopy.keySet().iterator(); iter.hasNext();){
-				InfoContext c = (InfoContext)iter.next();
+			for(InfoContext c : baseCopy.keySet()){
 				CfgInfoContext cic = CfgInfoContext.fromInfoContext(cfg, c);
 				if(cic != null)
 					list.add(cic);
@@ -557,7 +553,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		return true;
 	}
 
-	private boolean listEqual(List l1, List l2) {
+	private boolean listEqual(List<Object> l1, List<Object> l2) {
 		if (l1 == null && l2 == null) return true;
 		if (l2 == null || l2 == null) return false;
 		if (l1.size() != l2.size()) return false;
@@ -565,7 +561,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		// since it's most probable, try it first.
 		if (l1.equals(l2)) return true;
 		// order may differ...
-		Iterator it = l1.iterator();
+		Iterator<Object> it = l1.iterator();
 		while (it.hasNext())
 			if (!l2.contains(it.next())) return false;
 		return true;
@@ -592,10 +588,9 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		if (page.isMultiCfg())
 			return;
  		cbi.setPerRcTypeDiscovery(true);
- 		Iterator it = cbi.getInfoMap().keySet().iterator();
- 		while (it.hasNext()) {
+ 		for (CfgInfoContext cic : cbi.getInfoMap().keySet()) {
 			try { 
-				cbi.applyInfo((CfgInfoContext)it.next(), null);
+				cbi.applyInfo(cic, null);
  			} catch (CoreException e) {}
  		}
  		updateData();

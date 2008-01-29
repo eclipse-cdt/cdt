@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -222,7 +222,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 		
 		c_toolchain.removeAll();
 		boolean isMng = cfg.getBuilder().isManagedBuildOn();
-		ArrayList list = new ArrayList();
+		ArrayList<IToolChain> list = new ArrayList<IToolChain>();
 		
 		IToolChain[] tcs = r_tcs;
 		if (b_dispCompatible.getSelection() && (ri instanceof IFolderInfo)) {
@@ -264,7 +264,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 		IBuilder b = ManagedBuildManager.getRealBuilder(cfg.getBuilder());
 		int pos = -1;
 		c_builder.removeAll();
-		ArrayList list = new ArrayList();
+		ArrayList<IBuilder> list = new ArrayList<IBuilder>();
 		
 		IBuilder[] bs = r_bs;
 		
@@ -384,7 +384,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 	
 	private boolean updateCompatibleTools(ITool real) {
 		boolean result = false;
-		ArrayList list = new ArrayList();
+		ArrayList<ITool> list = new ArrayList<ITool>();
 		IFileInfoModification fim = (IFileInfoModification)mod;
 		
 		if (real != null) { // Current tool exists 

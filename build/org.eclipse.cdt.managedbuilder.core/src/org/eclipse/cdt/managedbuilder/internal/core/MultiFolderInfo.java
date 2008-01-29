@@ -47,53 +47,53 @@ public class MultiFolderInfo extends MultiResourceInfo implements IFolderInfo {
 	}
 
 	public ITool[] getFilteredTools() {
-		return ((IFolderInfo)fRis[0]).getFilteredTools();
+		return ((IFolderInfo)fRis[curr]).getFilteredTools();
 	}
 
 	public CFolderData getFolderData() {
-		return ((IFolderInfo)fRis[0]).getFolderData();
+		return ((IFolderInfo)fRis[curr]).getFolderData();
 	}
 
 	public String getOutputExtension(String resourceExtension) {
-		return ((IFolderInfo)fRis[0]).getOutputExtension(resourceExtension);
+		return ((IFolderInfo)fRis[curr]).getOutputExtension(resourceExtension);
 	}
 
 	public ITool getTool(String id) {
-		return ((IFolderInfo)fRis[0]).getTool(id);
+		return ((IFolderInfo)fRis[curr]).getTool(id);
 	}
 
 	public IToolChain getToolChain() {
-		return ((IFolderInfo)fRis[0]).getToolChain();	
+		return ((IFolderInfo)fRis[curr]).getToolChain();	
 	}
 
 	public IModificationStatus getToolChainModificationStatus(ITool[] removed,
 			ITool[] added) {
-		return ((IFolderInfo)fRis[0]).getToolChainModificationStatus(removed, added);		
+		return ((IFolderInfo)fRis[curr]).getToolChainModificationStatus(removed, added);		
 	}
 
 	public ITool getToolFromInputExtension(String sourceExtension) {
-		return ((IFolderInfo)fRis[0]).getToolFromInputExtension(sourceExtension);
+		return ((IFolderInfo)fRis[curr]).getToolFromInputExtension(sourceExtension);
 	}
 
 	public ITool getToolFromOutputExtension(String extension) {
-		return ((IFolderInfo)fRis[0]).getToolFromOutputExtension(extension);
+		return ((IFolderInfo)fRis[curr]).getToolFromOutputExtension(extension);
 	}
 
 	public ITool[] getToolsBySuperClassId(String id) {
-		return ((IFolderInfo)fRis[0]).getToolsBySuperClassId(id);
+		return ((IFolderInfo)fRis[curr]).getToolsBySuperClassId(id);
 	}
 
 	public boolean isHeaderFile(String ext) {
-		return ((IFolderInfo)fRis[0]).isHeaderFile(ext);
+		return ((IFolderInfo)fRis[curr]).isHeaderFile(ext);
 	}
 
 	public boolean isToolChainCompatible(IToolChain ch) {
-		return ((IFolderInfo)fRis[0]).isToolChainCompatible(ch);
+		return ((IFolderInfo)fRis[curr]).isToolChainCompatible(ch);
 	}
 
 	public void modifyToolChain(ITool[] removed, ITool[] added)
 			throws BuildException {
-		((IFolderInfo)fRis[0]).modifyToolChain(removed, added);
+		((IFolderInfo)fRis[curr]).modifyToolChain(removed, added);
 	}
 
 }

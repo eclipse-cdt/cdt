@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -247,7 +247,7 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 	}
 
 	private ITool[] getRcbsTools(IResourceInfo rcConfig){
-		List list = new ArrayList();
+		List<ITool> list = new ArrayList<ITool>();
 		ITool tools[] = rcConfig.getTools();
 		
 		for (int i = 0; i < tools.length; i++) {

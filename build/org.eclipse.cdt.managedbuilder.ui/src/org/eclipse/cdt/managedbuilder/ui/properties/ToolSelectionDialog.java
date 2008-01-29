@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,9 +64,9 @@ public class ToolSelectionDialog extends Dialog {
 	private Button b_add, b_del, b_rep, b_all;
 	private CLabel errorLabel, l1;
 	private Text txt2;
-	private ArrayList left, right;
+	private ArrayList<ITool> left, right;
 
-	public ArrayList added, removed; 
+	public ArrayList<ITool> added, removed; 
 	public ITool[] all, used;
 	public IFolderInfo fi;
 	public IToolListModification mod = null;
@@ -92,10 +92,10 @@ public class ToolSelectionDialog extends Dialog {
 		gd.heightHint = 300;
 		composite.setLayoutData(gd);
 
-		added = new ArrayList();
-		removed = new ArrayList();
-		left = new ArrayList();
-		right = new ArrayList();
+		added = new ArrayList<ITool>();
+		removed = new ArrayList<ITool>();
+		left = new ArrayList<ITool>();
+		right = new ArrayList<ITool>();
 		
 		Composite c1 = new Composite(composite, SWT.NONE);
 		c1.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -419,9 +419,7 @@ public class ToolSelectionDialog extends Dialog {
 		
 		Collections.sort(left, BuildListComparator.getInstance());
 		
-		Iterator it = left.iterator();
-		while(it.hasNext()) {
-			ITool t = (ITool)it.next();
+		for (ITool t : left) {
 			boolean exists = false;
 			for (int i=0; i<all.length; i++) {
 				if (all[i] != null && t.matches(all[i])) {
@@ -432,9 +430,7 @@ public class ToolSelectionDialog extends Dialog {
 			if (!exists) removed.add(t);
 			add(t, t1, !exists);
 		}
-		it = right.iterator();
-		while(it.hasNext()) {
-			ITool t = (ITool)it.next();
+		for (ITool t : right) {
 			boolean exists = false;
 			for (int i=0; i<used.length; i++) {
 				if (t.matches(used[i])) {
@@ -458,7 +454,7 @@ public class ToolSelectionDialog extends Dialog {
 			if ((c & IModificationStatus.TOOLS_CONFLICT) != 0) {
 				s = s + Messages.getString("ToolSelectionDialog.7"); //$NON-NLS-1$
 				ITool[][] tools = st.getToolsConflicts();
-				List conflictTools = new ArrayList();
+				List<String> conflictTools = new ArrayList<String>();
 				for (int k=0; k<t2.getItemCount(); k++) {
 					TableItem ti = t2.getItem(k);
 					ITool t = (ITool)ti.getData();
@@ -474,10 +470,10 @@ public class ToolSelectionDialog extends Dialog {
 					}
 				}
 				//bug 189229 - provide more information in the error message for accessibility
-				Iterator iterator = conflictTools.iterator();
-				s = s+" "+ (String)iterator.next(); //$NON-NLS-1$
+				Iterator<String> iterator = conflictTools.iterator();
+				s = s+" "+ iterator.next(); //$NON-NLS-1$
 				while (iterator.hasNext()) {
-					s = s + ", " + (String)iterator.next(); //$NON-NLS-1$
+					s = s + ", " + iterator.next(); //$NON-NLS-1$
 				}
 			}
 			if ((c & IModificationStatus.TOOLS_DONT_SUPPORT_MANAGED_BUILD) != 0) {

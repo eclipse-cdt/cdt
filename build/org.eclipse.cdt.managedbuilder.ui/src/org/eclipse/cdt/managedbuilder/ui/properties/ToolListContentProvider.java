@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002 - 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,7 +45,7 @@ public class ToolListContentProvider implements ITreeContentProvider{
 	private ToolListElement[] createElements(IConfiguration config) {
 		IOptionCategory toolChainCategories[]; 
 		ITool filteredTools[];
-		List elementList = new ArrayList();
+		List<ToolListElement> elementList = new ArrayList<ToolListElement>();
 		if (config != null) {
 			// Get the the option categories of the toolChain  
 			IToolChain toolChain = config.getToolChain();
@@ -69,7 +69,7 @@ public class ToolListContentProvider implements ITreeContentProvider{
 	}
 
 	private ToolListElement[] createElements(IResourceInfo info) {
-		List elementList = new ArrayList();
+		List<ToolListElement> elementList = new ArrayList<ToolListElement>();
 		if (info != null) {
 			ITool[] tools = null;
 			if(info instanceof IFolderInfo){

@@ -67,7 +67,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 		/*
 		 * Bookeeping variables
 		 */
-		private Map configToPageListMap;
+		private Map<String, List<AbstractToolSettingUI>> configToPageListMap;
 		private IPreferenceStore settingsStore;
 		private AbstractToolSettingUI currentSettingsPage;
 		private ToolListElement selectedElement;
@@ -80,7 +80,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			super.createControls(par);
 			usercomp.setLayout(new GridLayout());
 
-			configToPageListMap = new HashMap();
+			configToPageListMap = new HashMap<String, List<AbstractToolSettingUI>>();
 			settingsStore = ToolSettingsPrefStore.getDefault();
 			
 			// Create the sash form
@@ -157,8 +157,8 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			currentSettingsPage = null;
 
 			// Create a new settings page if necessary
-			List pages = getPagesForConfig();
-			ListIterator iter = pages.listIterator();
+			List<AbstractToolSettingUI> pages = getPagesForConfig();
+			ListIterator<AbstractToolSettingUI> iter = pages.listIterator();
 			
 			while (iter.hasNext()) {
 				AbstractToolSettingUI page = (AbstractToolSettingUI) iter.next();
@@ -211,8 +211,8 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			currentSettingsPage = null;
 
 			// Create a new page if we need one
-			List pages = getPagesForConfig();
-			ListIterator iter = pages.listIterator();
+			List<AbstractToolSettingUI> pages = getPagesForConfig();
+			ListIterator<AbstractToolSettingUI> iter = pages.listIterator();
 			while (iter.hasNext()) {
 				AbstractToolSettingUI page = (AbstractToolSettingUI) iter.next();
 				if (page.isFor(tool, null)) {
@@ -444,6 +444,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			}
 		}
 
+		@SuppressWarnings("unchecked")
 		private void setOption(IOption op1, IOption op2, IHoldsOptions dst, IResourceInfo res){
 			try {
 				switch (op1.getValueType()) {
@@ -475,7 +476,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 					case IOption.UNDEF_LIBRARY_PATHS:
 					case IOption.UNDEF_LIBRARY_FILES:
 					case IOption.UNDEF_MACRO_FILES:
-						String[] data = (String[])((List)op1.getValue()).toArray(new String[0]);
+						String[] data = (String[])((List<String>)op1.getValue()).toArray(new String[0]);
 						ManagedBuildManager.setOption(res, dst, op2, data);
 						break;
 					default :
@@ -536,11 +537,11 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 		/* (non-Javadoc)
 		 * Answers the list of settings pages for the selected configuration 
 		 */
-		private List getPagesForConfig() {
+		private List<AbstractToolSettingUI> getPagesForConfig() {
 			if (getCfg() == null) return null;
-			List pages = (List) configToPageListMap.get(getCfg().getId());
+			List<AbstractToolSettingUI> pages = (List<AbstractToolSettingUI>) configToPageListMap.get(getCfg().getId());
 			if (pages == null) {
-				pages = new ArrayList();
+				pages = new ArrayList<AbstractToolSettingUI>();
 				configToPageListMap.put(getCfg().getId(), pages);	
 			}
 			return pages;
@@ -554,9 +555,9 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 		 * Sets the "dirty" state
 		 */
 		public void setDirty(boolean b) {
-			List pages = getPagesForConfig();
+			List<AbstractToolSettingUI> pages = getPagesForConfig();
 			if (pages == null) return;
-			ListIterator iter = pages.listIterator();
+			ListIterator<AbstractToolSettingUI> iter = pages.listIterator();
 			while (iter.hasNext()) {
 				AbstractToolSettingUI page = (AbstractToolSettingUI) iter.next();
 				if (page == null) continue;
@@ -569,13 +570,13 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 		 */
 		public boolean isDirty() {
 			// Check each settings page
-			List pages = getPagesForConfig();
+			List<AbstractToolSettingUI> pages = getPagesForConfig();
 			// Make sure we have something to work on
 			if (pages == null) {
 				// Nothing to do
 				return false;
 			}
-			ListIterator iter = pages.listIterator();
+			ListIterator<AbstractToolSettingUI> iter = pages.listIterator();
 			while (iter.hasNext()) {
 				AbstractToolSettingUI page = (AbstractToolSettingUI) iter.next();
 				if (page == null) continue;

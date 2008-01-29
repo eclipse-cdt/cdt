@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -70,6 +73,8 @@ import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
  *   communication way for new CDT model pages and tabs.   
  */
 public abstract class AbstractCPropertyTab implements ICPropertyTab {
+	
+	public static final Method GRAY_METHOD = getGrayEnabled();
 	public static final int BUTTON_WIDTH = 120; // used as hint for all push buttons
 
 	// commonly used button names
@@ -322,8 +327,7 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 		 setupControl(b, span, mode);
 		 b.addSelectionListener(new SelectionAdapter() {
 		    public void widgetSelected(SelectionEvent event) {
-		    	// TODO: uncomment before M5
-		    	//((Button)event.widget).setGrayed(false);
+		    	setGrayed((Button)event.widget, false);
 		    	checkPressed(event);
 		 }});
 		 return b;
@@ -535,22 +539,55 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	 */
 	public static void setTriSelection(Button b, int state) {
 		switch (state) {
-		// TODO: uncomment before M5
 		case TRI_NO:
-		//	b.setGrayed(false);
+			setGrayed(b, false);
 			b.setSelection(false);
 			break;
 		case TRI_YES:
-		//	b.setGrayed(false);
+			setGrayed(b, false);
 			b.setSelection(true);
 			break;
 		case TRI_UNKNOWN:
 			b.setSelection(true);
-		//	b.setGrayed(true);
+			setGrayed(b, true);
 			break;
 		}
 	}
 	 
+	/**
+	 * This method will be simplified after M5 release,
+	 * when Button.setGrayed() method will be accessible.
+	 * In this case, reflection will not be required.
+	 * 
+	 * @param b
+	 * @param value
+	 */
+	public static void setGrayed(Button b, boolean value) {
+		// TODO: uncomment before M5
+		// b.setGrayed(value);
+		if (GRAY_METHOD != null)
+			try {
+				GRAY_METHOD.invoke(b, new Object[] { new Boolean(value) });
+			}
+			catch (InvocationTargetException e) {}
+			catch (IllegalAccessException e) {}
+	}
 
+	/**
+	 * This method will be removed after M5 release,
+	 * when Button.setGrayed() will be officially accessible.
+	 * 
+	 * @return reference to Button.setGrayed() method
+	 */
+	private static Method getGrayEnabled() {
+		try {
+			Class cl = Class.forName("org.eclipse.swt.widgets.Button"); //$NON-NLS-1$
+			return cl.getMethod("setGrayed", new Class[] { boolean.class }); //$NON-NLS-1$
+		} catch (ClassNotFoundException e) {
+			return null;
+		} catch (NoSuchMethodException e) {
+			return null;
+		}
+	}
 
 }

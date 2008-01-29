@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Intel Corporation and others.
+ * Copyright (c) 2005 - 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -126,7 +126,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 		};
 	
 	private boolean fShowSysMacros = false;
-	private Set fIncorrectlyDefinedMacrosNames = new HashSet();
+	private Set<String> fIncorrectlyDefinedMacrosNames = new HashSet<String>();
 	private static final int CONTEXT = ICoreVariableContextInfo.CONTEXT_CONFIGURATION;
 
 	private TableViewer tv;
@@ -325,9 +325,10 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 	/*
 	 * returnes the selected user-defined macros
 	 */
+	@SuppressWarnings("unchecked")
 	private ICdtVariable[] getSelectedUserMacros(){
 		if(tv == null)	return null;
-		List list = ((IStructuredSelection)tv.getSelection()).toList();
+		List<ICdtVariable> list = ((IStructuredSelection)tv.getSelection()).toList();
 		return (ICdtVariable[])list.toArray(new ICdtVariable[list.size()]);
 	}
 	
@@ -495,7 +496,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 		if (_vars == null) return;
 		if (cfgd == null) {
 			if (fShowSysMacros) {
-				List lst = new ArrayList(_vars.length);
+				List<ICdtVariable> lst = new ArrayList<ICdtVariable>(_vars.length);
 				ICdtVariable[] uvars = vars.getMacros();
 				for (int i=0; i<uvars.length; i++) {
 					lst.add(uvars[i]);
@@ -517,7 +518,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 			}
 		}
 		
-		ArrayList list = new ArrayList(_vars.length);
+		ArrayList<ICdtVariable> list = new ArrayList<ICdtVariable>(_vars.length);
 		for(int i = 0; i < _vars.length; i++){
 			if(_vars[i] != null && (fShowSysMacros || isUserVar(_vars[i]))) 
 				list.add(_vars[i]);
@@ -633,7 +634,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 		return page.isForProject() || page.isForPrefs();
 	}
 
-	private static class EnvCmp implements Comparator {
+	private static class EnvCmp implements Comparator<Object> {
 		
 		public int compare(Object a0, Object a1) {
 			if (a0 == null || a1 == null)

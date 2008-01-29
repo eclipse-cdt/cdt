@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Intel Corporation and others.
+ * Copyright (c) 2005 - 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -260,10 +260,10 @@ public class NewVarDialog extends Dialog {
 			for(int i = 0; i < vars.length; i++)
 				names[i] = vars[i].getName();
 			final Collator collator = Collator.getInstance();
-			Arrays.sort(names, new Comparator() {
-	            public int compare(final Object a, final Object b) {
-					final String strA = ((String)a).toUpperCase();
-					final String strB = ((String)b).toUpperCase();
+			Arrays.sort(names, new Comparator<String>() {
+	            public int compare(final String a, final String b) {
+					final String strA = a.toUpperCase();
+					final String strB = b.toUpperCase();
 					return collator.compare(strA,strB);
 	            }
 	        });

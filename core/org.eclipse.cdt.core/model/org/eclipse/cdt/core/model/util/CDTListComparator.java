@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Intel Corporation and others
+ * Copyright (c) 2005 - 2008 Intel Corporation and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,10 +17,10 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 
-public class CDTListComparator implements Comparator {
-	private static Comparator comparator = null;
+public class CDTListComparator implements Comparator<Object> {
+	private static Comparator<Object> comparator = null;
 
-	public static Comparator getInstance() {
+	public static Comparator<Object> getInstance() {
 		if (comparator == null)
 			comparator = new CDTListComparator();
 		return comparator;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -332,7 +332,7 @@ public class NewCfgDialog implements INewCfgDialog {
 		des = prj;
 		ICConfigurationDescription[] descs = des.getConfigurations(); 
 		cfgds = new IConfiguration[descs.length]; 
-		ArrayList lst = new ArrayList();
+		ArrayList<IConfiguration> lst = new ArrayList<IConfiguration>();
 		for (int i = 0; i < descs.length; ++i) {
 			cfgds[i] = ManagedBuildManager.getConfigurationForDescription(descs[i]);
 			IConfiguration cfg = cfgds[i];

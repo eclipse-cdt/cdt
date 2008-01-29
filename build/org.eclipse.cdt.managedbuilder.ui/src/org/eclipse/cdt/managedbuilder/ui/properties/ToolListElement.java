@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Intel Corporation and others.
+ * Copyright (c) 2006, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,7 +33,7 @@ public class ToolListElement {
 	 * Bookeeping variables
 	 */
 	private ToolListElement parent = null;
-	private List childElements = null;
+	private List<ToolListElement> childElements = null;
 
 	private IHoldsOptions optionHolder = null;
 	private IOptionCategory optionCategory = null;
@@ -116,7 +116,7 @@ public class ToolListElement {
 	
 	public void addChildElement(ToolListElement element) {
 		if (childElements == null)
-			childElements = new ArrayList();
+			childElements = new ArrayList<ToolListElement>();
 		childElements.add(element);
 	}
 }

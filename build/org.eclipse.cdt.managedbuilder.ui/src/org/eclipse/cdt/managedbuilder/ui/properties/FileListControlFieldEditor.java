@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 BitMethods Inc and others.
+ * Copyright (c) 2004, 2008 BitMethods Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -293,11 +293,11 @@ public class FileListControlFieldEditor extends FieldEditor {
 	private String[] parseString(String stringList) {
 		StringTokenizer tokenizer =
 			new StringTokenizer(stringList, DEFAULT_SEPERATOR);
-		ArrayList list = new ArrayList();
+		ArrayList<String> list = new ArrayList<String>();
 		while (tokenizer.hasMoreElements()) {
-			list.add(tokenizer.nextElement());
+			list.add((String)tokenizer.nextElement());
 		}
-		return (String[]) list.toArray(new String[list.size()]);
+		return list.toArray(new String[list.size()]);
 	}
 
 	/**

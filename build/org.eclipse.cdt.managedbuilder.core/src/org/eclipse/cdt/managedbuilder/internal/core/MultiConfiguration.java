@@ -397,22 +397,6 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 */
 	public ITool[] getFilteredTools() {
 		ITool[] ts = curr().getFilteredTools();
-		/*
-		ITool[] ms = new ITool[ts.length]; 
-		for (int i=0; i<ts.length; i++) {
-			ArrayList lst = new ArrayList(fCfgs.length);
-			String ext = ts[i].getDefaultInputExtension(); 
-			for (int j=0; j<fCfgs.length; j++) {
-				ITool t = fCfgs[j].getToolFromInputExtension(ext);
-				if (t != null)
-					lst.add(t);
-			}
-			if (lst.size() > 1)
-				ms[i] = (ITool)new MultiTool(lst, curr);
-			else
-				ms[i] = ts[i];
-		}
-		*/
 		return ts;
 	}
 
@@ -583,8 +567,17 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 */
 	public IResourceInfo getResourceInfo(IPath path, boolean exactPath) {
 		IResourceInfo ris[] = new IResourceInfo[fCfgs.length];
-		for (int i=0; i<fCfgs.length; i++)
+		boolean isFolder = true;
+		for (int i=0; i<fCfgs.length; i++) {
 			ris[i] = fCfgs[i].getResourceInfo(path, exactPath);
+			if (! (ris[i] instanceof IFolderInfo))
+				isFolder = false;
+		}
+		if (isFolder) {
+			IFolderInfo fis[] = new IFolderInfo[ris.length];
+			System.arraycopy(ris, 0, fis, 0, ris.length);
+			return new MultiFolderInfo(fis, this);
+		}
 		return new MultiResourceInfo(ris, this);
 	}
 
@@ -600,7 +593,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getResourceInfos()
 	 */
 	public IResourceInfo[] getResourceInfos() {
-		ArrayList ri = new ArrayList();
+		ArrayList<IResourceInfo> ri = new ArrayList<IResourceInfo>();
 		for (int i=0; i<fCfgs.length; i++) {
 			IResourceInfo[] ris = fCfgs[i].getResourceInfos();
 			ri.addAll(Arrays.asList(ris));

@@ -38,7 +38,7 @@ public class MultiResourceInfo extends MultiItemsHolder implements
 	private static final int MODE_COMMAND  = 5;
 	
 	protected IResourceInfo[] fRis = null;
-	private int activeCfg = 0;
+	protected int curr = 0;
 	IConfiguration parent = null;
 	
 	public MultiResourceInfo(IResourceInfo[] ris, IConfiguration _parent) {
@@ -49,7 +49,7 @@ public class MultiResourceInfo extends MultiItemsHolder implements
 				continue;
 			Configuration cfg = (Configuration)fRis[i].getParent();
 			if (cfg.getConfigurationDescription().isActive()) {
-				activeCfg = i;
+				curr = i;
 				break;
 			}
 		}
@@ -69,14 +69,14 @@ public class MultiResourceInfo extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceInfo#getCLanguageDatas()
 	 */
 	public CLanguageData[] getCLanguageDatas() {
-		return fRis[activeCfg].getCLanguageDatas();
+		return fRis[curr].getCLanguageDatas();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceInfo#getKind()
 	 */
 	public int getKind() {
-		return fRis[activeCfg].getKind();
+		return fRis[curr].getKind();
 	}
 
 	/* (non-Javadoc)
@@ -90,7 +90,7 @@ public class MultiResourceInfo extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceInfo#getPath()
 	 */
 	public IPath getPath() {
-		return fRis[activeCfg].getPath();
+		return fRis[curr].getPath();
 	}
 
 	/* (non-Javadoc)
@@ -98,14 +98,14 @@ public class MultiResourceInfo extends MultiItemsHolder implements
 	 */
 	public CResourceData getResourceData() {
 		System.out.println("Strange call: MultiResourceInfo.getResourceData()"); //$NON-NLS-1$
-		return fRis[activeCfg].getResourceData();
+		return fRis[curr].getResourceData();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceInfo#getTools()
 	 */
 	public ITool[] getTools() {
-		return fRis[activeCfg].getTools();
+		return fRis[curr].getTools();
 	}
 
 	/* (non-Javadoc)
@@ -307,42 +307,42 @@ public class MultiResourceInfo extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceInfo#supportsBuild(boolean)
 	 */
 	public boolean supportsBuild(boolean managed) {
-		return fRis[activeCfg].supportsBuild(managed);
+		return fRis[curr].supportsBuild(managed);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObject#getBaseId()
 	 */
 	public String getBaseId() {
-		return fRis[activeCfg].getBaseId();
+		return fRis[curr].getBaseId();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObject#getId()
 	 */
 	public String getId() {
-		return fRis[activeCfg].getId();
+		return fRis[curr].getId();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObject#getManagedBuildRevision()
 	 */
 	public String getManagedBuildRevision() {
-		return fRis[activeCfg].getManagedBuildRevision();
+		return fRis[curr].getManagedBuildRevision();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObject#getName()
 	 */
 	public String getName() {
-		return fRis[activeCfg].getName();
+		return fRis[curr].getName();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObject#getVersion()
 	 */
 	public PluginVersionIdentifier getVersion() {
-		return fRis[activeCfg].getVersion();
+		return fRis[curr].getVersion();
 	}
 
 	/* (non-Javadoc)
@@ -358,7 +358,7 @@ public class MultiResourceInfo extends MultiItemsHolder implements
 	}
 
 	public boolean isRoot() {
-		return ((ResourceInfo)fRis[activeCfg]).isRoot();
+		return ((ResourceInfo)fRis[curr]).isRoot();
 	}
 
 }

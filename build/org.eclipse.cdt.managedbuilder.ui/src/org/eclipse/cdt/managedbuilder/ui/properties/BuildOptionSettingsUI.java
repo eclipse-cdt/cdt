@@ -32,6 +32,7 @@ import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.MultiResourceInfo;
+import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.cdt.ui.newui.AbstractPage;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
@@ -47,12 +48,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 
 public class BuildOptionSettingsUI extends AbstractToolSettingUI {
-	private Map fieldsMap = new HashMap();
+	private Map<String, FieldEditor> fieldsMap = 
+		new HashMap<String, FieldEditor>();
 	private IOptionCategory category;
 	private IHoldsOptions optionHolder;
 	private IHoldsOptions[] ohs;
 	private int curr;
-	private Map fieldEditorsToParentMap = new HashMap();
+	private Map<FieldEditor, Composite> fieldEditorsToParentMap = 
+		new HashMap<FieldEditor, Composite>();
 
 	public BuildOptionSettingsUI(AbstractCBuildPropertyTab page,
 			IResourceInfo info, IHoldsOptions optionHolder, 
@@ -66,7 +69,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 			IResourceInfo[] ris = (IResourceInfo[])mri.getItems();
 			String id = category.getId();
 			String ext = ((ITool)optionHolder).getDefaultInputExtension();
-			ArrayList lst = new ArrayList();
+			ArrayList<ITool> lst = new ArrayList<ITool>();
 			for (int i=0; i<ris.length; i++) {
 				ITool[] ts = ris[i].getTools();
 				for (int j=0; j<ts.length; j++) {
@@ -182,7 +185,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 							// in the plugin.xml file) in the UI Combobox. This refrains the user from selecting an
 							// invalid value and avoids issuing an error message.
 							String[] enumNames = opt.getApplicableValues();
-							Vector enumValidList = new Vector();
+							Vector<String> enumValidList = new Vector<String>();
 							for (int i = 0; i < enumNames.length; ++i) {
 								if (opt.getValueHandler().isEnumValueAppropriate(config, 
 										opt.getOptionHolder(), opt, opt.getValueHandlerExtraArgument(), enumNames[i])) {
@@ -247,6 +250,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
+	@SuppressWarnings("unchecked")
 	public boolean performOk() {
 		// Write the field editor contents out to the preference store
 		boolean ok = super.performOk();
@@ -323,7 +327,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 					case IOption.UNDEF_LIBRARY_PATHS:
 					case IOption.UNDEF_LIBRARY_FILES:
 					case IOption.UNDEF_MACRO_FILES:	
-						String[] listVal = (String[])((List)clonedOption.getValue()).toArray(new String[0]);
+						String[] listVal = (String[])((List<String>)clonedOption.getValue()).toArray(new String[0]);
 						setOption = ManagedBuildManager.setOption(realCfg, realHolder, realOption, listVal);	
 						
 						// Reset the preference store since the Id may have changed
@@ -391,8 +395,8 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 			}
 		}
 		
-		Collection fieldsList = fieldsMap.values();
-		Iterator iter = fieldsList.iterator();
+		Collection<FieldEditor> fieldsList = fieldsMap.values();
+		Iterator<FieldEditor> iter = fieldsList.iterator();
 		while (iter.hasNext()) {
 			FieldEditor editor = (FieldEditor) iter.next();
 			if (editor instanceof TriStateBooleanFieldEditor)
@@ -530,7 +534,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 			}
 		}
 		
-		Iterator iter = fieldsMap.values().iterator();
+		Iterator<FieldEditor> iter = fieldsMap.values().iterator();
 		while (iter.hasNext()) {
 			FieldEditor editor = (FieldEditor) iter.next();
 			if(id == null || !id.equals(editor.getPreferenceName()))
@@ -572,7 +576,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 		boolean selectNewEnum = true;
 		boolean selectDefault = false;
 
-		Vector enumValidList = new Vector();
+		Vector<String> enumValidList = new Vector<String>();
 		for (int i = 0; i < enumNames.length; ++i) {
 			if (opt.getValueHandler().isEnumValueAppropriate(config, 
 					opt.getOptionHolder(), opt, opt.getValueHandlerExtraArgument(), enumNames[i])) {
@@ -629,7 +633,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 		protected void valueChanged(boolean oldValue, boolean newValue) {
 			// TODO: uncomment before M5
 			//if (button.getGrayed())
-			//	button.setGrayed(false);
+			AbstractCPropertyTab.setGrayed(button, false);
 			super.valueChanged(!newValue, newValue);
 		}
 		protected void doLoad() {
@@ -654,8 +658,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 						if (vals[0] > 0)
 							gray = true;
 					}
-					// TODO: uncomment before M5	
-					// button.setGrayed(gray);
+					AbstractCPropertyTab.setGrayed(button, gray);
 					button.setSelection(value);
 					return;
 				}

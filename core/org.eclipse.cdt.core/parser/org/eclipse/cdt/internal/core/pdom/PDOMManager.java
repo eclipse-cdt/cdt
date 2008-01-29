@@ -652,9 +652,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
     }
         
     public boolean isIndexerIdle() {
-    	synchronized (fTaskQueueMutex) {
-    		return fCurrentTask == null && fTaskQueue.isEmpty();
-    	}
+    	return Job.getJobManager().find(this).length == 0;
     }
 
 	void addProject(final ICProject cproject) {
@@ -1007,46 +1005,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			}
 		}
 	}
-	
-	public boolean joinIndexerOld(int waitMaxMillis, IProgressMonitor monitor) {
-		final int totalTicks = 1000;
-		monitor.beginTask(Messages.PDOMManager_JoinIndexerTask, totalTicks);
-		long limit= System.currentTimeMillis()+waitMaxMillis;
-		try {
-			int currentTicks= 0;
-			while (true) {
-				if (monitor.isCanceled()) {
-					return false;
-				}
-				currentTicks= getMonitorMessage(monitor, currentTicks, totalTicks);
-				synchronized(fTaskQueueMutex) {
-					if (isIndexerIdle()) {
-						return true;
-					}
-					int wait= 1000;
-					if (waitMaxMillis >= 0) {
-						int rest= (int) (limit - System.currentTimeMillis());
-						if (rest < wait) {
-							if (rest <= 0) {
-								return false;
-							}
-							wait= rest;
-						}
-					}
-
-					try {
-						fTaskQueueMutex.wait(wait);
-					} catch (InterruptedException e) {
-						return false;
-					}
-				}
-			}
-		}
-		finally {
-			monitor.done();
-		}
-	}
-	
+		
 	int getMonitorMessage(IProgressMonitor monitor, int currentTicks, int base) {
 		assert !Thread.holdsLock(fTaskQueueMutex);
 		int remainingSources= 0;

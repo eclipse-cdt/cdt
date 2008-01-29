@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
@@ -192,7 +193,7 @@ public class CReconciler extends MonoReconciler {
 		public void elementChanged(ElementChangedEvent event) {
 			if (event.getType() == ElementChangedEvent.POST_CHANGE) {
 				if (isRelevantDelta(event.getDelta())) {
-					if (!fIsReconciling && isEditorActive()) {
+					if (!fIsReconciling && isEditorActive() && fInitialProcessDone) {
 						CReconciler.this.scheduleReconciling();
 					} else {
 						setCModelChanged(true);
@@ -243,7 +244,7 @@ public class CReconciler extends MonoReconciler {
 			if (event.indexerIsIdle()) {
 				if (fIndexChanged || hasCModelChanged()) {
 					fIndexChanged= false;
-					if (!fIsReconciling && isEditorActive()) {
+					if (!fIsReconciling && isEditorActive() && fInitialProcessDone) {
 						CReconciler.this.scheduleReconciling();
 					} else {
 						setCModelChanged(true);
@@ -383,6 +384,9 @@ public class CReconciler extends MonoReconciler {
 	protected void initialProcess() {
 		super.initialProcess();
 		fInitialProcessDone= true;
+		if (!fIsReconciling && isEditorActive() && hasCModelChanged()) {
+			CReconciler.this.scheduleReconciling();
+		} 
 	}
 
 	/*

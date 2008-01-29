@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.dom.lrparser.action.ITokenMap;
 import org.eclipse.cdt.core.dom.lrparser.util.DebugUtil;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
@@ -70,7 +71,7 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
      * 
 	 * @return an IASTTranslationUnit object thats empty and will be filled in by the parser
 	 */
-	protected abstract IASTTranslationUnit createASTTranslationUnit();
+	protected abstract IASTTranslationUnit createASTTranslationUnit(IIndex index, IScanner preprocessor);
 	
 	
 	/**
@@ -97,12 +98,12 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 	public IASTTranslationUnit getASTTranslationUnit(CodeReader reader, IScannerInfo scanInfo,
 			ICodeReaderFactory fileCreator, IIndex index, int options, IParserLogService log) throws CoreException {
 		
-		ILanguage gccLanguage = GCCLanguage.getDefault();
-		IASTTranslationUnit gtu = gccLanguage.getASTTranslationUnit(reader, scanInfo, fileCreator, index, log);
+		ILanguage gppLanguage = GPPLanguage.getDefault();
+		IASTTranslationUnit gtu = gppLanguage.getASTTranslationUnit(reader, scanInfo, fileCreator, index, log);
 		
 		System.out.println();
 		System.out.println("********************************************************");
-		System.out.println("GCC AST:");
+		System.out.println("GPP AST:");
 		DebugUtil.printAST(gtu);
 		System.out.println();
 		
@@ -120,7 +121,7 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 		preprocessor.setComputeImageLocations((options & AbstractLanguage.OPTION_NO_IMAGE_LOCATIONS) == 0);
 		
 		IParser parser = getParser();
-		IASTTranslationUnit tu = createTranslationUnit(index, preprocessor);
+		IASTTranslationUnit tu = createASTTranslationUnit(index, preprocessor);
 		
 		CPreprocessorAdapter.runCPreprocessor(preprocessor, parser, getTokenMap(), tu);
 		
@@ -128,7 +129,7 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 		
 		
 		System.out.println("Base Extensible Language AST:");
-		//DebugUtil.printAST(tu);
+		DebugUtil.printAST(tu);
 		return tu;
 	}
 	
@@ -153,7 +154,7 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 		preprocessor.setContentAssistMode(offset);
 		
 		IParser parser = getParser();
-		IASTTranslationUnit tu = createTranslationUnit(index, preprocessor);
+		IASTTranslationUnit tu = createASTTranslationUnit(index, preprocessor);
 		
 		CPreprocessorAdapter.runCPreprocessor(preprocessor, parser, getTokenMap(), tu);
 		
@@ -163,16 +164,6 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 	}
 	
 	
-	/**
-	 * Gets the translation unit object and sets the index and the location resolver. 
-	 */
-	private IASTTranslationUnit createTranslationUnit(IIndex index, IScanner preprocessor) {
-		IASTTranslationUnit tu = createASTTranslationUnit();
-		tu.setIndex(index);
-		if(tu instanceof CASTTranslationUnit) {
-			((CASTTranslationUnit)tu).setLocationResolver(preprocessor.getLocationResolver());
-		}
-		return tu;
-	}
+	
 	
 }

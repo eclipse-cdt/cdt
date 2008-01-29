@@ -294,8 +294,8 @@ public abstract class BuildASTParserAction {
 		// this is the same way that the DOM parser computes the length
 		IASTDeclaration[] declarations = tu.getDeclarations();
         if (declarations.length != 0) {
-            CASTNode d = (CASTNode) declarations[declarations.length-1];
-            setOffsetAndLength(tu, 0, d.getOffset() + d.getLength());
+        	IASTNode d = declarations[declarations.length-1];
+            setOffsetAndLength(tu, 0, offset(d) + length(d));
         } 
 
         if(TRACE_AST_STACK) System.out.println(astStack);

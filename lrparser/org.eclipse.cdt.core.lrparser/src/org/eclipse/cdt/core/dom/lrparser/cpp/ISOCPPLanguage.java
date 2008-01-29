@@ -17,11 +17,14 @@ import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.dom.lrparser.BaseExtensibleLanguage;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.action.ITokenMap;
-import org.eclipse.cdt.core.dom.lrparser.action.c99.C99ASTNodeFactory;
+import org.eclipse.cdt.core.dom.lrparser.action.cpp.CPPASTNodeFactory;
+import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.IContributedModelBuilder;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParser;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 
 /**
  * ILanguage implementation for the C++ parser.
@@ -83,15 +86,23 @@ public class ISOCPPLanguage extends BaseExtensibleLanguage {
 	}
 
 	@Override
-	protected IASTTranslationUnit createASTTranslationUnit() {
-		return C99ASTNodeFactory.DEFAULT_INSTANCE.newTranslationUnit();
-	}
-
-	@Override
 	protected ParserLanguage getParserLanguageForPreprocessor() {
 		return ParserLanguage.CPP;
 	}
 
+	/**
+	 * Gets the translation unit object and sets the index and the location resolver. 
+	 */
+	@SuppressWarnings("restriction")
+	@Override
+	protected IASTTranslationUnit createASTTranslationUnit(IIndex index, IScanner preprocessor) {
+		IASTTranslationUnit tu = CPPASTNodeFactory.DEFAULT_INSTANCE.newTranslationUnit();
+		tu.setIndex(index);
+		if(tu instanceof CPPASTTranslationUnit) {
+			((CPPASTTranslationUnit)tu).setLocationResolver(preprocessor.getLocationResolver());
+		}
+		return tu;
+	}
 	
 
 }

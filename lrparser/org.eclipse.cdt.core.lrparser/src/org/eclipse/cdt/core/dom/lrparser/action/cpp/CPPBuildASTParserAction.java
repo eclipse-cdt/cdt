@@ -74,6 +74,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;

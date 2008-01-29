@@ -95,7 +95,7 @@ public abstract class AbstractTrialUndoActionProvider<ACT, RULE_DATA> extends Pr
 	}
 
 	public final void finalAction(int rule_number) {
-		System.out.println("finalAction: " + rule_number);
+		//System.out.println("finalAction: " + rule_number); //$NON-NLS-1$
 		ruleAction[rule_number].doFinal(this, parserAction);
 	}
 

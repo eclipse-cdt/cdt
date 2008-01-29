@@ -384,11 +384,16 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 
 			// is the option on this page?
 			if (fieldsMap.containsKey(prefName)) {
+				FieldEditor fieldEditor = (FieldEditor) fieldsMap.get(prefName);
+				try {
+					if ( opt.getValueType() == IOption.ENUMERATED ) {
+						updateEnumList( fieldEditor, opt, holder, fInfo );
+					}
+				} catch ( BuildException be ) {}
+				
 				// check to see if the option has an applicability calculator
 				IOptionApplicability applicabilityCalculator = opt.getApplicabilityCalculator();
-				
 				if (applicabilityCalculator != null) {
-					FieldEditor fieldEditor = (FieldEditor) fieldsMap.get(prefName);
 					Composite parent = (Composite) fieldEditorsToParentMap.get(fieldEditor);
 					setFieldEditorEnablement(holder, opt, applicabilityCalculator, fieldEditor, parent);
 				}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core;
 
@@ -48,14 +49,14 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 	private ICConfigurationDescription fCfgDes;
 	private IProject fProject;
 	private COwner fOwner;
-	private HashMap fDesMap = new HashMap();
-	private HashMap fStorageDataElMap = new HashMap();
+	private final HashMap fDesMap = new HashMap();
+	private final HashMap fStorageDataElMap = new HashMap();
 	private boolean fApplyOnChange = true;
 	private boolean fIsDirty;
 	private CDescriptorEvent fOpEvent;
 	private boolean fIsOpStarted;
 	
-	class CConfigBaseDescriptorExtensionReference implements ICExtensionReference{
+	final class CConfigBaseDescriptorExtensionReference implements ICExtensionReference{
 		private ICConfigExtensionReference fCfgExtRef;
 		CConfigBaseDescriptorExtensionReference(ICConfigExtensionReference cfgRef){
 			fCfgExtRef = cfgRef; 
@@ -191,14 +192,16 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 	
 	private CConfigBaseDescriptorExtensionReference create(ICConfigExtensionReference ref){
 		CConfigBaseDescriptorExtensionReference dr = new CConfigBaseDescriptorExtensionReference(ref);
-		ArrayList list = (ArrayList)fDesMap.get(ref.getExtensionPoint());
-		if(list == null){
-			list = new ArrayList(1);
-			fDesMap.put(ref.getExtensionPoint(), list);
-		} else {
-			list.ensureCapacity(list.size() + 1);
+		synchronized (fDesMap) {
+			ArrayList list = (ArrayList)fDesMap.get(ref.getExtensionPoint());
+			if(list == null){
+				list = new ArrayList(1);
+				fDesMap.put(ref.getExtensionPoint(), list);
+			} else {
+				list.ensureCapacity(list.size() + 1);
+			}
+			list.add(dr);
 		}
-		list.add(dr);
 		return dr;
 	}
 
@@ -228,45 +231,47 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 		}
 		
 		ICExtensionReference[] extRefs = new ICExtensionReference[cfgRefs.length];
-		ArrayList list = (ArrayList)fDesMap.get(extensionPoint);
-//		if(list == null){
-//			list = new ArrayList(cfgRefs.length);
-//			fDesMap.put(extensionPoint, list);
-//		}
+		synchronized (fDesMap) {
+			ArrayList list = (ArrayList)fDesMap.get(extensionPoint);
+			//		if(list == null){
+			//			list = new ArrayList(cfgRefs.length);
+			//			fDesMap.put(extensionPoint, list);
+			//		}
 
-//		list = (ArrayList)list.clone();
-//
-//		CConfigBaseDescriptorExtensionReference[] refs = (CConfigBaseDescriptorExtensionReference[])list.
-//			toArray(new CConfigBaseDescriptorExtensionReference[list.size()]);
-		int num = cfgRefs.length - 1;
-			
-		for(int i = cfgRefs.length - 1; i >= 0; i--){
-			ICConfigExtensionReference ref = cfgRefs[i];
-			int k = list != null ? list.size() - 1 : -1;
-			
-			for(; k >= 0; k--){
-				CConfigBaseDescriptorExtensionReference r = (CConfigBaseDescriptorExtensionReference)list.get(k);
-				if(r.fCfgExtRef == ref){
-					extRefs[num--] = r;
-					list.remove(k);
-					break;
+			//		list = (ArrayList)list.clone();
+			//
+			//		CConfigBaseDescriptorExtensionReference[] refs = (CConfigBaseDescriptorExtensionReference[])list.
+			//			toArray(new CConfigBaseDescriptorExtensionReference[list.size()]);
+			int num = cfgRefs.length - 1;
+
+			for(int i = cfgRefs.length - 1; i >= 0; i--){
+				ICConfigExtensionReference ref = cfgRefs[i];
+				int k = list != null ? list.size() - 1 : -1;
+
+				for(; k >= 0; k--){
+					CConfigBaseDescriptorExtensionReference r = (CConfigBaseDescriptorExtensionReference)list.get(k);
+					if(r.fCfgExtRef == ref){
+						extRefs[num--] = r;
+						list.remove(k);
+						break;
+					}
+				}
+				if(k < 0){
+					extRefs[num--] = new CConfigBaseDescriptorExtensionReference(ref);
 				}
 			}
-			if(k < 0){
-				extRefs[num--] = new CConfigBaseDescriptorExtensionReference(ref);
+
+			if(list == null){
+				list = new ArrayList(cfgRefs.length);
+				fDesMap.put(extensionPoint, list);
+			} else {
+				list.clear();
+				list.ensureCapacity(cfgRefs.length);
 			}
+
+			list.addAll(Arrays.asList(extRefs));
+			list.trimToSize();
 		}
-		
-		if(list == null){
-			list = new ArrayList(cfgRefs.length);
-			fDesMap.put(extensionPoint, list);
-		} else {
-			list.clear();
-			list.ensureCapacity(cfgRefs.length);
-		}
-		
-		list.addAll(Arrays.asList(extRefs));
-		list.trimToSize();
 		return extRefs;
 	}
 

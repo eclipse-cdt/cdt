@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [216596] dstore preferences (timeout, and others)
  *******************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore;
@@ -64,4 +65,7 @@ public interface IUniversalDStoreConstants
 
     public static final String RESID_PREF_DO_KEEPALIVE = RESID_PREF_PREFIX + "dokeepalive"; //$NON-NLS-1$
     public static final boolean DEFAULT_PREF_DO_KEEPALIVE = true;
+    
+	public static final String ALERT_MISMATCHED_SERVER = RESID_PREFIX + "alert.mismatched.server"; //$NON-NLS-1$
+	public static final boolean DEFAULT_ALERT_MISMATCHED_SERVER = true;
 }

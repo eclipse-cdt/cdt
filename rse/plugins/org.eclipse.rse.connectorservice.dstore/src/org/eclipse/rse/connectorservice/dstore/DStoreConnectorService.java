@@ -20,6 +20,7 @@
  * David McKnight   (IBM)        - [205986] attempt SSL before non-SSL for daemon connect
  * David McKnight   (IBM)        - [186363] get rid of obsolete calls to SubSystem.connect()
  * David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup
+ * David McKnight   (IBM)        - [216596] dstore preferences (timeout, and others)
  ********************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore;
@@ -908,8 +909,11 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 					msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_SERVER_OLDER_WARNING);
 					msg.makeSubstitution(getHostName());
 				}
-				ShowConnectMessage msgAction = new ShowConnectMessage(msg);
-				Display.getDefault().asyncExec(msgAction);				
+				
+				if (store.getBoolean(IUniversalDStoreConstants.ALERT_MISMATCHED_SERVER)){
+					DisplayHidableSystemMessageAction msgAction = new DisplayHidableSystemMessageAction(msg, store, IUniversalDStoreConstants.ALERT_MISMATCHED_SERVER, false);
+					Display.getDefault().syncExec(msgAction);			
+				}
 			}
 			
 			// register the classloader for this plugin with the datastore
@@ -919,7 +923,6 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 			if (serverVersion >= 8 || (serverVersion == 7 && getServerMinor() >= 1))
 			{
 				//	 register the preference for remote class caching with the datastore
-				store.setDefault(IUniversalDStoreConstants.RESID_PREF_CACHE_REMOTE_CLASSES, IUniversalDStoreConstants.DEFAULT_PREF_CACHE_REMOTE_CLASSES);
 				boolean cacheRemoteClasses = store.getBoolean(IUniversalDStoreConstants.RESID_PREF_CACHE_REMOTE_CLASSES);
 				
 				dataStore.setPreference(RemoteClassLoader.CACHING_PREFERENCE, cacheRemoteClasses ? "true" : "false"); //$NON-NLS-1$  //$NON-NLS-2$
@@ -938,7 +941,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 		            monitor.subTask(imsg.getLevelOneText());
 		         }
 		         DataElement initStatus = dataStore.initMiners();	         
-		         statusMonitor.waitForUpdate(schemaStatus);
+		         //statusMonitor.waitForUpdate(schemaStatus);
 		         statusMonitor.waitForUpdate(initStatus);
 			}
 			//long t2 = System.currentTimeMillis();

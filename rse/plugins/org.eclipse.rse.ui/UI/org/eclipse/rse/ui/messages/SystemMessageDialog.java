@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
  * Martin Oberhuber (Wind River) - [187115] force SystemMessageDialog always into Display thread
  * Martin Oberhuber (Wind River) - [189272] exception when canceling ssh connect
+ * David McKnight   (IBM)        - [216596] determine whether to show yes/no or just okay
  ********************************************************************************/
 
 package org.eclipse.rse.ui.messages;
@@ -443,13 +444,23 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 		open();
 		return (buttonIdPressed==IDialogConstants.YES_ID);
 	}
+	
 	/**
-	 * opens the dialog with Yes, No, Details button for an Inquiry/Question message.
+	 * opens the dialog with Yes/No, Details button for an Inquiry/Question message.
 	 * Eats up the IndicatorException, so only call this when you know what you are doing!
 	 */
 	public boolean openQuestionNoException() 
 	{
-		yesNoButtons=true;	
+		return openQuestionNoException(true);
+	}
+	
+	/**
+	 * opens the dialog with an optional Yes/No or OK, Details button for an Inquiry/Question message.
+	 * Eats up the IndicatorException, so only call this when you know what you are doing!
+	 */
+	public boolean openQuestionNoException(boolean showYesNo) 
+	{
+		yesNoButtons=showYesNo;	
 		open();
 		return (buttonIdPressed==IDialogConstants.YES_ID);
 	}

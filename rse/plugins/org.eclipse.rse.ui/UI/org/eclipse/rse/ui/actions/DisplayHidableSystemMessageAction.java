@@ -6,6 +6,7 @@
  *
  * Contributors:
  * Michael Berger (IBM) - Initial API and implementation
+ * David McKnight (IBM) - [216596] determine whether to show yes/no or just okay
  ********************************************************************************/
 package org.eclipse.rse.ui.actions;
 
@@ -20,11 +21,21 @@ public class DisplayHidableSystemMessageAction extends
 {
 	protected IPreferenceStore _store;
 	protected String _prefID;
+	protected boolean _showYesNo = true;
+	
 	public DisplayHidableSystemMessageAction(SystemMessage message, IPreferenceStore prefStore, String prefID)
 	{
 		super(message);
 		_store = prefStore;
 		_prefID = prefID;
+	}
+	
+	public DisplayHidableSystemMessageAction(SystemMessage message, IPreferenceStore prefStore, String prefID, boolean showYesNo)
+	{
+		super(message);
+		_store = prefStore;
+		_prefID = prefID;
+		_showYesNo = showYesNo;
 	}
 
 	/**
@@ -38,10 +49,10 @@ public class DisplayHidableSystemMessageAction extends
 			if (shells[loop].isEnabled() && shells[loop].isVisible()) {
 				SystemMessageDialog dialog = new SystemMessageDialog(shells[loop], message);
 				dialog.setNoShowAgainOption(true, _store, _prefID, false);
-				dialog.openQuestionNoException();
+				dialog.openQuestionNoException(_showYesNo);
 				rc = dialog.getButtonPressedId();
 				finished = true;
-			}
+			} 
 		}
 	}
 }

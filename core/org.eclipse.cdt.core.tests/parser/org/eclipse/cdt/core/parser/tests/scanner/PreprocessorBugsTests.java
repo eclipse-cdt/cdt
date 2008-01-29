@@ -84,5 +84,12 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 		validateEOF();
 		validateProblemCount(0);
 	}
-
+	
+	// __CDT_PARSER__
+	public void testPredefinedCDTMacro_Bug173848() throws Exception {
+		initializeScanner();
+		validateInteger("1");
+		validateEOF();
+		validateProblemCount(0);
+	}
 }

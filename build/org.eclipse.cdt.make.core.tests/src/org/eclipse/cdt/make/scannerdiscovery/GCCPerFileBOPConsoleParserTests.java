@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,11 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Anton Leherbauer (Wind River Systems)
  *******************************************************************************/ 
 package org.eclipse.cdt.make.scannerdiscovery;
 
+import java.io.File;
 import java.util.List;
 
 import junit.framework.TestSuite;
@@ -21,8 +23,10 @@ import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
 import org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCPerFileBOPConsoleParser;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.CCommandDSC;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Path;
 
 public class GCCPerFileBOPConsoleParserTests extends BaseBOPConsoleParserTests {
 	private final static IMarkerGenerator MARKER_GENERATOR= new IMarkerGenerator() {
@@ -67,5 +71,24 @@ public class GCCPerFileBOPConsoleParserTests extends BaseBOPConsoleParserTests {
         assertEquals(1, cmds.size());
         CCommandDSC command= (CCommandDSC) cmds.get(0);
         assertEquals("gcc", command.getCompilerName());
+	}
+	
+	public void testResolvingLinkedFolder_Bug213690() throws Exception {
+		File tempRoot= new File(System.getProperty("java.io.tmpdir"));
+		File tempDir= new File(tempRoot, "cdttest_213690");
+		tempDir.mkdir();
+		try {
+			IFolder linkedFolder= fCProject.getProject().getFolder("cdttest");
+			linkedFolder.createLink(new Path(tempDir.toString()), IResource.ALLOW_MISSING_LOCAL, null);
+			fOutputParser.processLine("gcc -g -O0 -I\""+ tempDir.toString() + "\"" + "-c test.c"); //$NON-NLS-1$
+	        List cmds = fCollector.getCollectedScannerInfo(null, ScannerInfoTypes.COMPILER_COMMAND);
+	        assertEquals(1, cmds.size());
+	        CCommandDSC command= (CCommandDSC) cmds.get(0);
+	        List includes= command.getIncludes();
+	        assertEquals(1, includes.size());
+	        assertEquals(tempDir.toString(), includes.get(0).toString());
+		} finally {
+			tempDir.delete();
+		}
 	}
 }

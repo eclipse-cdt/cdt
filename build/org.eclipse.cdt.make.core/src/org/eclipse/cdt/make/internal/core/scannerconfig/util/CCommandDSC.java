@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig.util;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -442,8 +441,16 @@ public class CCommandDSC {
 
 
 	public static final String makeAbsolute(IProject project, String path) {
-		if (project != null && !new Path(path).isAbsolute()) {
-			path = new File(project.getLocation().toOSString(), path).getAbsolutePath();
+		IPath ppath = new Path(path);
+		if (project != null && !ppath.isAbsolute()) {
+			IResource res = project.findMember(ppath);
+			if (res != null) {
+				ppath = res.getLocation();
+				if (ppath != null) {
+					path = ppath.toOSString();
+				}
+			}
+//			path = new File(project.getLocation().toOSString(), path).getAbsolutePath();
 		}
 		return path;
 	}

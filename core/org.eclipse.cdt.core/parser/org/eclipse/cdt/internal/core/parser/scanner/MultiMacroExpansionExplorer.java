@@ -134,12 +134,15 @@ public class MultiMacroExpansionExplorer extends MacroExpansionExplorer {
 	private void addLocations(IASTPreprocessorMacroDefinition[] defs,
 			final Map<IMacroBinding, IASTFileLocation> result) {
 		for (IASTPreprocessorMacroDefinition def : defs) {
-			IASTFileLocation loc= def.getFileLocation();
-			if (loc != null) {
-				final IBinding binding= def.getName().getBinding();
-				if (binding instanceof IMacroBinding) {
-					loc= new ASTFileLocation(loc.getFileName(), loc.getNodeOffset(), loc.getNodeLength());
-					result.put((IMacroBinding) binding, loc);
+			IASTName name= def.getName();
+			if (name != null) {
+				IASTFileLocation loc= name.getFileLocation();
+				if (loc != null) {
+					final IBinding binding= name.getBinding();
+					if (binding instanceof IMacroBinding) {
+						loc= new ASTFileLocation(loc.getFileName(), loc.getNodeOffset(), loc.getNodeLength());
+						result.put((IMacroBinding) binding, loc);
+					}
 				}
 			}
 		}

@@ -785,9 +785,9 @@
          </action>
          <action
                label="%Dummy.label"
-               class="org.eclipse.ui.texteditor.SelectRulerAction"
+               class="org.eclipse.cdt.internal.ui.text.correction.CSelectRulerAction"
                actionID="RulerClick"
-               id="org.eclipse.ui.texteditor.SelectRulerAction">
+               id="org.eclipse.cdt.internal.ui.text.correction.CSelectRulerAction">
          </action>
       </editorContribution>
    </extension>
@@ -907,6 +907,14 @@
                menubarPath="add"
                id="org.eclipse.ui.texteditor.BookmarkRulerAction">
          </action>
+         <action
+               class="org.eclipse.cdt.internal.ui.text.correction.CSelectRulerAction"
+               definitionId="org.eclipse.jdt.ui.edit.text.java.correction.assist.proposals"
+               id="org.eclipse.cdt.internal.ui.text.correction.CSelectRulerAction"
+               label="%QuickFix.label"
+               menubarPath="additions"
+               tooltip="%QuickFix.tooltip">
+         </action>            
       </viewerContribution>
       <viewerContribution
             targetID="#ASMEditorRulerContext"

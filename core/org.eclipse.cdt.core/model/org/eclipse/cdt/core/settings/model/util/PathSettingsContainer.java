@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model.util;
 
@@ -19,7 +20,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
-public class PathSettingsContainer {
+public final class PathSettingsContainer {
 	private static final Object INEXISTENT_VALUE = new Object();
 	private static final String ROOY_PATH_NAME = Path.ROOT.toString();
 //	private static final boolean DEBUG = true;
@@ -298,9 +299,11 @@ public class PathSettingsContainer {
 			internalSetValue(INEXISTENT_VALUE);
 		}
 		if(!hasChildren()) {
-			getDirectParentContainer().deleteChild(this);
-			fDirectParentContainer.checkRemove();
-			fDirectParentContainer = null;
+			if (fDirectParentContainer != null) {
+				fDirectParentContainer.deleteChild(this);
+				fDirectParentContainer.checkRemove();
+				fDirectParentContainer = null;
+			}
 			fRootContainer = null;
 		}
 	}

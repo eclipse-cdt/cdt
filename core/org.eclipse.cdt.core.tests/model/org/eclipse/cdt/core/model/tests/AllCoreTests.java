@@ -15,6 +15,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.model.failedTests.FailedDeclaratorsTest;
 import org.eclipse.cdt.core.settings.model.AllCProjectDescriptionTests;
+import org.eclipse.cdt.core.settings.model.PathSettingsContainerTests;
 
 
 /**
@@ -52,6 +53,7 @@ public class AllCoreTests {
 		//the CProjectDescriptionTests now groups all New Project Model related tests
 		//which includes the CConfigurationDescriptionReferenceTests
 		suite.addTest(AllCProjectDescriptionTests.suite());
+		suite.addTest(PathSettingsContainerTests.suite());
 		suite.addTest(ASTCacheTests.suite());
 		suite.addTest(AsmModelBuilderTest.suite());
         return suite;

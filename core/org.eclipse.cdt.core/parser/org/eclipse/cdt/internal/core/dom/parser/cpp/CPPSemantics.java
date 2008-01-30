@@ -1168,7 +1168,7 @@ public class CPPSemantics {
 	private static IScope getParentScope(IScope scope, IASTTranslationUnit unit) throws DOMException {
 		IScope parentScope= scope.getParent();
 		// the index cannot return the translation unit as parent scope
-		if (parentScope == null && scope instanceof IIndexScope) {
+		if (parentScope == null && scope instanceof IIndexScope && unit != null) {
 			parentScope= unit.getScope();
 		}
 		return parentScope;

@@ -188,7 +188,8 @@ $Headers
 	private $action_class action;	
 	
 	// uncomment to use with backtracking parser
-	public CPPParser() {}
+	public $action_type() {  // constructor
+	}
 	
 	private void initActions(IASTTranslationUnit tu) {
 	    // binding resolution actions need access to IASTName nodes, temporary
@@ -207,6 +208,13 @@ $Headers
 		super.addToken(token);
 	}
 	
+	
+	public void setTokens(List<IToken> tokens) {
+		resetTokenStream();
+		for(IToken token : tokens) {
+			addToken(token);
+		}
+	}
 	
 	public IASTCompletionNode parse(IASTTranslationUnit tu) {
 		// this has to be done, or... kaboom!

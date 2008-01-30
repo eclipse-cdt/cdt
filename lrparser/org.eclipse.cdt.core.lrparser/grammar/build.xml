@@ -1,0 +1,71 @@
+<!--
+ Copyright (c) 2006, 2008 IBM Corporation and others.
+ All rights reserved. This program and the accompanying materials
+ are made available under the terms of the Eclipse Public License v1.0
+ which accompanies this distribution, and is available at
+ http://www.eclipse.org/legal/epl-v10.html
+
+ Contributors:
+     IBM Corporation - initial API and implementation
+-->
+
+<project name="CDT Extensible LR Parser Framework" default="both" basedir=".">
+    <description>Generates LPG parsers from grammar files</description>
+	
+	
+	<fail unless="lpg_exe">
+		Property $${lpg_exe} not set.
+		This property must be set to the full path to the LPG generator executable.
+	</fail>
+	
+	<fail unless="lpg_template">
+		Property $${lpg_template} not set.
+		This property must be set to the full path to the LPG templates folder.
+	</fail>
+	
+	
+	<target name="both" depends="cpp, c99">
+		<description>Generates the C99 and C++ parsers</description>	
+		<echo message="Done"/>
+	</target>
+	
+	
+	<target name="cpp">
+		<description>Generate the C++ parser</description>
+		<antcall target="generate">
+			<param name="grammar_dir" value="cpp"/>
+			<param name="grammar_name" value="CPPParser"/>
+			<param name="output_dir" value="org/eclipse/cdt/internal/core/dom/lrparser/cpp"/>
+		</antcall>
+	</target>
+	
+	<target name="c99">
+		<description>Generate the C99 parser</description>
+		<antcall target="generate">
+			<param name="grammar_dir" value="c99"/>
+            <param name="grammar_name" value="C99Parser"/>
+			<param name="output_dir" value="org/eclipse/cdt/internal/core/dom/lrparser/c99"/>
+		</antcall>
+	</target>
+	
+	
+	<target name="generate">
+		<property name="grammar_file" value="${grammar_dir}/${grammar_name}.g"/>
+		<echo message="lpg_exe=${lpg_exe}"/>
+		<echo message="lpg_template=${lpg_template}"/>
+		<echo message="grammar_file=${grammar_file}.g"/>
+		<echo message="output_dir=${output_dir}"/>
+
+		<exec executable="${lpg_exe}">
+			<arg value="${grammar_file}"/>
+			<env key="LPG_TEMPLATE" path="${lpg_template}"/>
+		</exec>
+		
+		<move overwrite="true" toDir="../src/${output_dir}">
+		    <fileset dir=".">
+			    <include name="${grammar_name}*.*"/>
+			</fileset>
+		</move>
+	</target> 
+	
+</project>  

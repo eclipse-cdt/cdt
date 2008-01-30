@@ -29,7 +29,7 @@ import org.eclipse.cdt.core.dom.lrparser.action.c99.C99BuildASTParserAction;
 import org.eclipse.cdt.core.dom.lrparser.action.c99.C99TypedefTrackerParserAction;
 import org.eclipse.cdt.core.dom.lrparser.util.DebugUtil;
 
-public class C99Parser extends AbstractTrialUndoActionProvider< C99ParserAction ,  Object > implements IParserActionTokenProvider, IParser    {
+public class C99Parser extends AbstractTrialUndoActionProvider< C99ParserAction ,  Object > implements IParserActionTokenProvider, IParser   {
 	private static ParseTable prs = new C99Parserprs();
 	protected static final Action< C99ParserAction ,  Object >[] RULE_ACTIONS;
 
@@ -131,12 +131,15 @@ public class C99Parser extends AbstractTrialUndoActionProvider< C99ParserAction 
 
 private  C99ParserAction  action;	
 
+//public C99Parser() {  // constructor
+//}
+
 private void initActions(IASTTranslationUnit tu) {
     // binding resolution actions need access to IASTName nodes, temporary
     action = new  C99ParserAction ();
 	action.resolver = new  C99TypedefTrackerParserAction (this);
 	action.builder  = new  C99BuildASTParserAction ( C99ASTNodeFactory.DEFAULT_INSTANCE , this, tu);
-	action.builder.setTokenMap(C99Parsersym.orderedTerminalSymbols);
+	action.builder.setTokenMap( C99Parsersym .orderedTerminalSymbols);
 	setParserAction(action);
 }
 
@@ -146,6 +149,12 @@ public void addToken(IToken token) {
 	super.addToken(token);
 }
 
+public void setTokens(List<IToken> tokens) {
+	resetTokenStream();
+	for(IToken token : tokens) {
+		addToken(token);
+	}
+}
 
 public IASTCompletionNode parse(IASTTranslationUnit tu) {
 	// this has to be done, or... kaboom!
@@ -168,8 +177,8 @@ public IASTCompletionNode parse(IASTTranslationUnit tu) {
 public int getKind(int i) {
 	int kind = super.getKind(i);
 	// lexer feedback hack!
-	if(kind == C99Parsersym.TK_identifier && action.resolver.isTypedef(getTokenText(i))) {
-		kind = C99Parsersym.TK_TypedefName;
+	if(kind ==  C99Parsersym .TK_identifier && action.resolver.isTypedef(getTokenText(i))) {
+		kind =  C99Parsersym .TK_TypedefName;
 	}
 	return kind;
 }

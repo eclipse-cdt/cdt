@@ -165,7 +165,8 @@ public class CPPParser extends PrsStream implements RuleAction , IParserActionTo
 private  CPPParserAction  action;	
 
 // uncomment to use with backtracking parser
-public CPPParser() {}
+public CPPParser() {  // constructor
+}
 
 private void initActions(IASTTranslationUnit tu) {
     // binding resolution actions need access to IASTName nodes, temporary
@@ -184,6 +185,13 @@ public void addToken(IToken token) {
 	super.addToken(token);
 }
 
+
+public void setTokens(List<IToken> tokens) {
+	resetTokenStream();
+	for(IToken token : tokens) {
+		addToken(token);
+	}
+}
 
 public IASTCompletionNode parse(IASTTranslationUnit tu) {
 	// this has to be done, or... kaboom!

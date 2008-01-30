@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ package org.eclipse.cdt.managedbuilder.ui.wizards;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -91,7 +90,7 @@ public class MBSWizardHandler extends CWizardHandler {
 		Messages.getString("CWizardHandler.4") + //$NON-NLS-1$
 		Messages.getString("CWizardHandler.5"); //$NON-NLS-1$
 	
-	protected SortedMap full_tcs = new TreeMap();
+	protected SortedMap<String, IToolChain> full_tcs = new TreeMap<String, IToolChain>();
 	private String propertyId = null;
 	private IProjectType pt = null;
 	protected IWizardItemsListListener listener;
@@ -105,7 +104,7 @@ public class MBSWizardHandler extends CWizardHandler {
 	protected IWizardPage[] customPages;
 	
 	protected static final class EntryInfo {
-		private SortedMap tcs;
+		private SortedMap<String, IToolChain> tcs;
 		private EntryDescriptor entryDescriptor;
 		private Template template;
 		private boolean initialized;
@@ -116,7 +115,7 @@ public class MBSWizardHandler extends CWizardHandler {
 		private IWizardPage predatingPage;
 		private IWizardPage followingPage;
 		
-		public EntryInfo(EntryDescriptor dr, SortedMap _tcs){
+		public EntryInfo(EntryDescriptor dr, SortedMap<String, IToolChain> _tcs){
 			entryDescriptor = dr;
 			tcs = _tcs;
 		}
@@ -170,13 +169,13 @@ public class MBSWizardHandler extends CWizardHandler {
 			initialized = true;
 		}
 		
-		public Template getInitializedTemplate(IWizardPage predatingPage, IWizardPage followingPage, Map map){
+		public Template getInitializedTemplate(IWizardPage predatingPage, IWizardPage followingPage, Map<String, String> map){
 			getNextPage(predatingPage, followingPage);
 			
 			Template template = getTemplate();
 			
 			if(template != null){
-				Map/*<String, String>*/ valueStore = template.getValueStore();
+				Map<String, String> valueStore = template.getValueStore();
 //				valueStore.clear();
 				for(int i=0; i < templatePages.length; i++) {
 					IWizardPage page = templatePages[i];
@@ -226,17 +225,14 @@ public class MBSWizardHandler extends CWizardHandler {
 		 * 
 		 * @return - set of compatible toolchain's IDs
 		 */
-		protected Set tc_filter() {
-			Set full = tcs.keySet();
+		protected Set<String> tc_filter() {
+			Set<String> full = tcs.keySet();
 			if (entryDescriptor == null) 
 				return full;
-			Set out = new LinkedHashSet(full.size());
-			Iterator it = full.iterator();
-			while (it.hasNext()) {
-				String s = (String)it.next();
+			Set<String> out = new LinkedHashSet<String>(full.size());
+			for (String s : full)
 				if (isToolChainAcceptable(s)) 
 					out.add(s);
-			}
 			return out;
 		}
 
@@ -306,9 +302,9 @@ public class MBSWizardHandler extends CWizardHandler {
 		return startingPage;
 	}
 	
-	public Map getMainPageData() {
+	public Map<String, String> getMainPageData() {
 		WizardNewProjectCreationPage page = (WizardNewProjectCreationPage)getStartingPage();
-		Map data = new HashMap();
+		Map<String, String> data = new HashMap<String, String>();
 		String projName = page.getProjectName();
 		projName = projName != null ? projName.trim() : EMPTY_STR; 
 		data.put("projectName", projName); //$NON-NLS-1$
@@ -336,7 +332,7 @@ public class MBSWizardHandler extends CWizardHandler {
 	}
 	
 	public void handleSelection() {
-		List preferred = CDTPrefUtil.getPreferredTCs();
+		List<String> preferred = CDTPrefUtil.getPreferredTCs();
 		
 		if (table == null) {
 			table = new Table(parent, SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
@@ -349,12 +345,10 @@ public class MBSWizardHandler extends CWizardHandler {
 				 );
 			table.setToolTipText(tooltip);
 			if (entryInfo != null) {
-				Iterator it = entryInfo.tc_filter().iterator();
 				int counter = 0;
 				int position = 0;
-				while (it.hasNext()) {
+				for (String s : entryInfo.tc_filter()) {
 					TableItem ti = new TableItem(table, SWT.NONE);
-					String s = (String)it.next();
 					Object obj = full_tcs.get(s);
 					String id = CDTPrefUtil.NULL;
 					if (obj instanceof IToolChain) {
@@ -425,7 +419,7 @@ public class MBSWizardHandler extends CWizardHandler {
 		else if (natures.length == 1)
 			MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.NATURE, natures[0]);
 		else {
-			Set x = new TreeSet();
+			TreeSet<String> x = new TreeSet<String>();
 			for (int i=0; i<natures.length; i++) x.add(natures[i]);
 			MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.NATURE, x);
 		}
@@ -441,8 +435,8 @@ public class MBSWizardHandler extends CWizardHandler {
 
 		IToolChain[] tcs = getSelectedToolChains();
 		int n = (tcs == null) ? 0 : tcs.length;
-		List x = new ArrayList();			
-		Set y = new TreeSet();	
+		ArrayList<IToolChain> x = new ArrayList<IToolChain>();			
+		TreeSet<String> y = new TreeSet<String>();	
 		for (int i=0; i<n; i++) {
 			if (tcs[i] == null) // --- NO TOOLCHAIN ---
 				continue;       // has no custom pages.
@@ -560,9 +554,9 @@ public class MBSWizardHandler extends CWizardHandler {
 		if(template == null)
 			return;
 
-		List configs = new ArrayList();
+		List<IConfiguration> configs = new ArrayList<IConfiguration>();
 		for(int i = 0; i < cfgs.length; i++){
-			configs.add(cfgs[i].getConfiguration());
+			configs.add((IConfiguration)cfgs[i].getConfiguration());
 		}
 		template.getTemplateInfo().setConfigurations(configs);
 
@@ -585,7 +579,9 @@ public class MBSWizardHandler extends CWizardHandler {
 	
 	/**
 	 * Mark preferred toolchains with specific images
+	 * @
 	 */
+	
 	public void updatePreferred(List prefs) {
 		int x = table.getItemCount();
 		for (int i=0; i<x; i++) {
@@ -659,7 +655,7 @@ public class MBSWizardHandler extends CWizardHandler {
 		return null;
 	}
 	
-	private void doCustom() {
+	protected void doCustom() {
 		IRunnableWithProgress[] operations = MBSCustomPageManager.getOperations();
 		if(operations != null)
 			for(int k = 0; k < operations.length; k++)

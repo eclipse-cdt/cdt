@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.cdt.managedbuilder.ui.wizards;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.SortedMap;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
@@ -44,7 +43,7 @@ public class ManagedBuildWizard extends AbstractCWizard {
 		IBuildPropertyValue[] vs = bpt.getSupportedValues();
 		Arrays.sort(vs, BuildListComparator.getInstance());
 		
-		ArrayList items = new ArrayList();
+		ArrayList<EntryDescriptor> items = new ArrayList<EntryDescriptor>();
 		// new style project types
 		for (int i=0; i<vs.length; i++) {
 			IToolChain[] tcs = ManagedBuildManager.getExtensionsToolChains(MBSWizardHandler.ARTIFACT, vs[i].getId(), false);
@@ -61,10 +60,8 @@ public class ManagedBuildWizard extends AbstractCWizard {
 		
 		// old style project types
 		EntryDescriptor oldsRoot = null;
-		SortedMap sm = ManagedBuildManager.getExtensionProjectTypeMap();
-		Iterator it = sm.keySet().iterator();
-		while(it.hasNext()) {
-			String s = (String)it.next();
+		SortedMap<String, IProjectType> sm = ManagedBuildManager.getExtensionProjectTypeMap();
+		for (String s : sm.keySet()) {
 			IProjectType pt = (IProjectType)sm.get(s);
 			if (pt.isAbstract() || pt.isSystemObject()) continue;
 			if (supportedOnly && !pt.isSupported()) continue; // not supported

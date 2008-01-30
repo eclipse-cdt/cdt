@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -193,7 +193,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	private static boolean projectTypesLoaded = false;
 	private static boolean projectTypesLoading = false;
 	// Project types defined in the manifest files
-	public static SortedMap projectTypeMap;
+	public static SortedMap<String, IProjectType> projectTypeMap;
 	private static List projectTypes;
 	// Early configuration initialization extension elements
 	private static List startUpConfigElements;
@@ -371,13 +371,13 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * 
 	 * @return Map
 	 */
-	public static SortedMap getExtensionProjectTypeMap() {
+	public static SortedMap<String, IProjectType> getExtensionProjectTypeMap() {
 		try {
 			loadExtensions();
 		} catch (BuildException e) {
 		}
 		if (projectTypeMap == null) {
-			projectTypeMap = new TreeMap();
+			projectTypeMap = new TreeMap<String, IProjectType>();
 		}
 		return projectTypeMap;
 	}

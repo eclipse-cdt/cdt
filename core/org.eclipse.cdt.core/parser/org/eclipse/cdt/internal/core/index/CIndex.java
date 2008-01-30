@@ -28,8 +28,10 @@ import java.util.regex.Pattern;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
@@ -120,6 +122,26 @@ public class CIndex implements IIndex {
 	}
 
 	public IIndexName[] findNames(IBinding binding, int flags) throws CoreException {
+		if (binding instanceof ICPPUsingDeclaration) {
+			IBinding[] bindings= null;
+			try {
+				bindings = ((ICPPUsingDeclaration)binding).getDelegates();
+			} catch (DOMException e) {
+				CCorePlugin.log(e);
+			}
+			if (bindings == null || bindings.length == 0) {
+				return new IIndexName[0];
+			}
+			if (bindings.length > 1) {
+				ArrayList<IIndexName> result= new ArrayList<IIndexName>();
+				for (int i = 0; i < bindings.length; i++) {
+					IBinding b = bindings[i];
+					result.addAll(Arrays.asList(findNames(b, flags)));
+				}
+				return result.toArray(new IIndexName[result.size()]);
+			}
+			binding= bindings[0];
+		}
 		LinkedList<IIndexFragmentName> result= new LinkedList<IIndexFragmentName>();
 		int fragCount= 0;
 		for (int i = 0; i < fPrimaryFragmentCount; i++) {

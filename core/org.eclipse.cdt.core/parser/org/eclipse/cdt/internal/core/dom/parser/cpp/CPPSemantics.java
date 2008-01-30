@@ -858,14 +858,14 @@ public class CPPSemantics {
             IType p = ps[i];
             p = getUltimateType( p, true );
             try {
-                getAssociatedScopes( p, namespaces, classes, data.astName.getTranslationUnit());
+                getAssociatedScopes( p, namespaces, classes, (CPPASTTranslationUnit) data.astName.getTranslationUnit());
             } catch ( DOMException e ) {
             }
         }
         return namespaces;
     }
 
-    static private void getAssociatedScopes( IType t, ObjectSet namespaces, ObjectSet classes, IASTTranslationUnit tu) throws DOMException{
+    static private void getAssociatedScopes( IType t, ObjectSet namespaces, ObjectSet classes, CPPASTTranslationUnit tu) throws DOMException{
         //3.4.2-2 
 		if( t instanceof ICPPClassType ){
 		    if( !classes.containsKey( t ) ){
@@ -905,7 +905,7 @@ public class CPPSemantics {
 		return;
     }
     
-    static private ICPPNamespaceScope getContainingNamespaceScope( IBinding binding, IASTTranslationUnit tu) throws DOMException{
+    static private ICPPNamespaceScope getContainingNamespaceScope( IBinding binding, CPPASTTranslationUnit tu) throws DOMException{
         if( binding == null ) return null;
         IScope scope = binding.getScope();
         while( scope != null && !(scope instanceof ICPPNamespaceScope) ){
@@ -1146,7 +1146,7 @@ public class CPPSemantics {
 			if( blockItem != null )
 				node = blockItem;
 			
-			ICPPScope parentScope = (ICPPScope) getParentScope(scope, node.getTranslationUnit());
+			ICPPScope parentScope = (ICPPScope) getParentScope(scope, (CPPASTTranslationUnit) node.getTranslationUnit());
 			if( parentScope instanceof ICPPTemplateScope ){
 			    IASTNode parent = node.getParent();
 			    while( parent != null && !(parent instanceof ICPPASTTemplateDeclaration) ){
@@ -1165,11 +1165,16 @@ public class CPPSemantics {
 		}
 	}
 	
-	private static IScope getParentScope(IScope scope, IASTTranslationUnit unit) throws DOMException {
+	private static IScope getParentScope(IScope scope, CPPASTTranslationUnit unit) throws DOMException {
 		IScope parentScope= scope.getParent();
 		// the index cannot return the translation unit as parent scope
-		if (parentScope == null && scope instanceof IIndexScope && unit != null) {
-			parentScope= unit.getScope();
+		if (unit != null) {
+			if (parentScope == null && scope instanceof IIndexScope) {
+				parentScope= unit.getScope();
+			}
+			else if (parentScope instanceof IIndexScope) {
+				parentScope= unit.mapToASTScope((IIndexScope) parentScope);
+			}
 		}
 		return parentScope;
 	}
@@ -1403,7 +1408,7 @@ public class CPPSemantics {
 				
 			//namespace are searched at most once
 			if( !data.visited.containsKey( temp ) ){
-				enclosing = getClosestEnclosingScope( scope, temp, data.astName.getTranslationUnit());
+				enclosing = getClosestEnclosingScope( scope, temp, (CPPASTTranslationUnit) data.astName.getTranslationUnit());
 				
 				//data.usingDirectives is a map from enclosing scope to a IScope[]
 				//of namespaces to consider when we reach that enclosing scope
@@ -1418,7 +1423,7 @@ public class CPPSemantics {
 		
 	}
 
-	static private ICPPScope getClosestEnclosingScope( IScope scope1, IScope scope2, IASTTranslationUnit tu) throws DOMException{
+	static private ICPPScope getClosestEnclosingScope( IScope scope1, IScope scope2, CPPASTTranslationUnit tu) throws DOMException{
 		ObjectSet set = new ObjectSet( 2 );
 		IScope parent = scope1;
 		while( parent != null ){

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -675,5 +676,36 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 		assertTrue(tAST.isSameType(tIndex));
 		assertTrue(tIndex.isSameType(tAST));
 	}
+	
+	//	namespace FOO {
+	//		namespace BAR {
+	//		    class Bar;
+	//		}
+	//		class Foo {
+	//			BAR::Bar * Test(BAR::Bar * bar);
+	//		};
+	//	}
 
+	//	#include "header.h"
+	//	namespace FOO {
+	//	    using BAR::Bar;
+	//	 
+	//	    Bar* Foo::Test(Bar* pBar) {
+	//	       return pBar;
+	//	    }
+	//	}
+	public void testAdvanceUsingDeclaration_Bug217102() throws Exception {
+		IBinding cl = getBindingFromASTName("Bar* Foo", 3);
+		assertTrue(cl instanceof ICPPDelegate);
+		cl= ((ICPPDelegate) cl).getBinding();
+		assertEquals("Bar", cl.getName());
+		assertTrue(cl instanceof ICPPClassType);
+		assertEquals("BAR", cl.getScope().getScopeName().toString());
+
+		cl = getBindingFromASTName("Bar* pBar", 3);
+		cl= ((ICPPDelegate) cl).getBinding();
+		assertEquals("Bar", cl.getName());
+		assertTrue(cl instanceof ICPPClassType);
+		assertEquals("BAR", cl.getScope().getScopeName().toString());
+	}
 }

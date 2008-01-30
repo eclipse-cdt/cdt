@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import java.util.HashMap;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -54,7 +56,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.ParserLanguage;
@@ -63,6 +65,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.GCCBuiltinSymbolProvider.CPPBuiltinParameter;
+import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
 import org.eclipse.core.runtime.CoreException;
 
@@ -80,11 +83,12 @@ public class CPPASTTranslationUnit extends CPPASTNode implements ICPPASTTranslat
 
     private IASTDeclaration[] decls = new IASTDeclaration[32];
     private ICPPNamespace binding = null;
-    private ICPPScope scope = null;
+    private CPPNamespaceScope scope = null;
     private ILocationResolver resolver;
     private IIndex index;
     private IIndexFileSet fIndexFileSet;
 	private boolean fIsHeader;
+	private HashMap<IIndexScope, IScope> fMappedScopes= new HashMap<IIndexScope, IScope>();
     
     public IASTTranslationUnit getTranslationUnit() {
     	return this;
@@ -105,7 +109,7 @@ public class CPPASTTranslationUnit extends CPPASTNode implements ICPPASTTranslat
         return (IASTDeclaration[]) ArrayUtil.trim( IASTDeclaration.class, decls );
     }
 
-    public IScope getScope() {
+    public CPPNamespaceScope getScope() {
         if (scope == null) {
             scope = new CPPNamespaceScope(this);
 			addBuiltinOperators(scope);
@@ -526,5 +530,21 @@ public class CPPASTTranslationUnit extends CPPASTNode implements ICPPASTTranslat
 
 	public void setIsHeaderUnit(boolean headerUnit) {
 		fIsHeader= headerUnit;
+	}
+
+	// bug 217102: namespace scopes from the index have to be mapped back to the AST.
+	IScope mapToASTScope(IIndexScope scope) {
+		if (scope instanceof ICPPNamespaceScope) {
+			IScope result= fMappedScopes.get(scope);
+			if (result == null) {
+				result= getScope().findNamespaecScope(scope);
+				if (result == null) {
+					result= scope;
+				}
+				fMappedScopes.put(scope, result);
+			}
+			return result;
+		}
+		return scope;
 	}
 }

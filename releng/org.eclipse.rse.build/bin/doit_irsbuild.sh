@@ -71,7 +71,7 @@ daystamp=`date +'%Y%m%d*%H'`
 
 echo "Running the builder..."
 ./nightly.sh ${mapTag} ${buildType} ${buildId} >> $log 2>&1
-tail -50 $log
+tail -30 $log
 
 #update the main download and archive pages: build.eclipse.org only
 if [ -d /home/data/httpd/archive.eclipse.org/dsdp/tm/downloads ]; then

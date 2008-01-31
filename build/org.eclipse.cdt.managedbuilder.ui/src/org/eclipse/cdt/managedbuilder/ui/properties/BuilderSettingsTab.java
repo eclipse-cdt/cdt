@@ -126,27 +126,21 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 	protected void updateButtons() {
 		bldr = icfg.getEditableBuilder();
 		
-		int[] extStates = BuildBehaviourTab.calc3states(page, icfg, true);
+		int[] extStates = BuildBehaviourTab.calc3states(page, icfg, 0);
 
 		b_genMakefileAuto.setEnabled(icfg.supportsBuild(true));
 		if (extStates == null) { // no extended states available
 			BuildBehaviourTab.setTriSelection(b_genMakefileAuto, 
-				bldr.isManagedBuildOn() ? 
-					BuildBehaviourTab.TRI_YES : 
-					BuildBehaviourTab.TRI_NO);
+				bldr.isManagedBuildOn());
 			BuildBehaviourTab.setTriSelection(b_useDefault, 
-				bldr.isDefaultBuildCmd() ?
-					BuildBehaviourTab.TRI_YES : 
-					BuildBehaviourTab.TRI_NO);
+				bldr.isDefaultBuildCmd());
 			// b_expandVars.setGrayed(false);
 			if(!bldr.canKeepEnvironmentVariablesInBuildfile())
 				b_expandVars.setEnabled(false);
 			else {
 				b_expandVars.setEnabled(true);
 				BuildBehaviourTab.setTriSelection(b_expandVars, 
-					!bldr.keepEnvironmentVariablesInBuildfile() ?
-						BuildBehaviourTab.TRI_YES : 
-						BuildBehaviourTab.TRI_NO);
+					!bldr.keepEnvironmentVariablesInBuildfile());
 			}
 		} else {
 			BuildBehaviourTab.setTriSelection(b_genMakefileAuto, extStates[0]);
@@ -186,8 +180,8 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		if (b_expandVars.getEnabled())
 			b_expandVars.setEnabled(external && b_genMakefileAuto.getSelection());
 		
-		if (external) {
-			checkPressed(b_useDefault);
+		if (external) { // just set relatet text widget state,
+			checkPressed(b_useDefault, false); // do not update 
 		}
 	}
 	
@@ -244,11 +238,11 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 	}
 	
     public void checkPressed(SelectionEvent e) {
-    	checkPressed((Control)e.widget);
+    	checkPressed((Control)e.widget, true);
     	updateButtons();
     }
 	
-	private void checkPressed(Control b) {	
+	private void checkPressed(Control b, boolean needUpdate) {	
 		if (b == null) return;
 		
 		boolean val = false;
@@ -263,6 +257,11 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 				c.setEnabled(val);
 			}
 		}
+		// call may be used just to set text state above
+		// in this case, settings update is not required
+		if (! needUpdate)	
+			return;
+		
 		if (b == b_useDefault) {
 			setUseDefaultBuildCmd(!val);
 		} else if (b == b_genMakefileAuto) {

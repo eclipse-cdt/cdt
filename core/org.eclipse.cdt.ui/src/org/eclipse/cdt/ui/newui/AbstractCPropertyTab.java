@@ -533,6 +533,16 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 
 	/**
 	 * Sets checkbox to appropriate state: 
+	 * 	  unchecked or checked
+	 * @param b - checkbox to set
+	 * @param state  
+	 */
+	public static void setTriSelection(Button b, boolean state) {
+		setTriSelection(b, state ? TRI_YES : TRI_NO);
+	}
+	
+	/**
+	 * Sets checkbox to appropriate state: 
 	 * 	  unchecked, checked or unknown (grayed)
 	 * @param b - checkbox to set
 	 * @param state 

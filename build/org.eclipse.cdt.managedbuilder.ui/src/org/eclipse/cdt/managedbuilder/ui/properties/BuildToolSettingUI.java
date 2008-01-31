@@ -95,13 +95,13 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 	//tool command-line-pattern field
 	private StringFieldEditor commandLinePatternField;
 	// A list of safe options to put unrecognized values in
-	private Vector defaultOptionNames;
+	private Vector<String> defaultOptionNames;
 	// Map that holds all string options and its values
-	private HashMap stringOptionsMap;
+	private HashMap<String, String> stringOptionsMap;
 
 	private ITool fTool;
 	// Map that holds all user object options and its values
-	private HashMap userObjsMap;
+	private HashMap<String, String> userObjsMap;
 	
 	public BuildToolSettingUI(AbstractCBuildPropertyTab page,
 			IResourceInfo info, ITool _tool) {
@@ -110,8 +110,8 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 		super(info);
 		this.fTool = _tool;
 		buildPropPage = page;
-		stringOptionsMap = new HashMap();
-		userObjsMap = new HashMap();
+		stringOptionsMap = new HashMap<String, String>();
+		userObjsMap = new HashMap<String, String>();
 	}
 	
 	/* (non-Javadoc)
@@ -173,9 +173,9 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 	/**
 	 * @return
 	 */
-	private Vector getDefaultOptionNames() {
+	private Vector<String> getDefaultOptionNames() {
 		if (defaultOptionNames == null) {
-			defaultOptionNames = new Vector();
+			defaultOptionNames = new Vector<String>();
 			defaultOptionNames.add("Other flags"); //$NON-NLS-1$
 			defaultOptionNames.add("Linker flags"); //$NON-NLS-1$
 			defaultOptionNames.add("Archiver flags"); //$NON-NLS-1$
@@ -201,11 +201,11 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 	 * @param rawOptionString
 	 * @return Vector containing all options
 	 */
-	private Vector getOptionVector(String rawOptionString){
-		Vector tokens = new Vector(Arrays.asList(rawOptionString.split("\\s")));	//$NON-NLS-1$
-		Vector output = new Vector(tokens.size());
+	private Vector<String> getOptionVector(String rawOptionString){
+		Vector<String> tokens = new Vector<String>(Arrays.asList(rawOptionString.split("\\s")));	//$NON-NLS-1$
+		Vector<String> output = new Vector<String>(tokens.size());
 
-		Iterator iter = tokens.iterator();
+		Iterator<String> iter = tokens.iterator();
 		while(iter.hasNext()){
 			String token = (String)iter.next();
 			int firstIndex = token.indexOf("\"");	//$NON-NLS-1$
@@ -254,30 +254,25 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 		String alloptions = getToolSettingsPrefStore().getString(ToolSettingsPrefStore.ALL_OPTIONS_ID);
 		// list that holds the options for the option type other than
 		// boolean,string and enumerated
-		List optionsList = new ArrayList();
+		List<String> optionsList = new ArrayList<String>();
 		// additional options buffer
 		StringBuffer addnOptions = new StringBuffer();
 		// split all build options string
-		Vector optionsArr = getOptionVector(alloptions);
-		Iterator optIter = optionsArr.iterator();
-		while(optIter.hasNext()) {
-			String optionValue = (String)optIter.next();
+		Vector<String> optionsArr = getOptionVector(alloptions);
+		for (String optionValue : optionsArr) {
 			boolean optionValueExist = false;
 			// get the options for this tool
 			IOption[] options = fTool.getOptions();
-			for (int k = 0; k < options.length; ++k) {
-				IOption opt = options[k];
+			for (IOption opt : options) {
 				//String name = opt.getId();
 				// check whether the option value is "STRING" type
-				Iterator stringOptsIter = stringOptionsMap.values().iterator();
-				while (stringOptsIter.hasNext()) {
-					if (((String) stringOptsIter.next()).indexOf(optionValue) != -1)
+				for (String s : stringOptionsMap.values()) {
+					if (s.indexOf(optionValue) != -1)
 						optionValueExist = true;
 				}
 				// check whether the option value is "OBJECTS" type
-				Iterator userObjsIter = userObjsMap.values().iterator();
-				while (userObjsIter.hasNext()) {
-					if (((String) userObjsIter.next()).indexOf(optionValue) != -1)
+				for (String s : userObjsMap.values()) {
+					if (s.indexOf(optionValue) != -1)
 						optionValueExist = true;
 				}
 				// if the value does not exist in string option or user objects
@@ -350,9 +345,9 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 		// check whether some of the "STRING" option value or "OBJECTS" type
 		// option value removed
 		// by the user from all build option field
-		Set set = stringOptionsMap.keySet();
-		for (int s = 0; s < set.size(); s++) {
-			Iterator iterator = set.iterator();
+		Set<String> set = stringOptionsMap.keySet();
+		for (int i = 0; i < set.size(); i++) {
+			Iterator<String> iterator = set.iterator();
 			while (iterator.hasNext()) {
 				Object key = iterator.next();
 				String val = (String) stringOptionsMap.get(key);
@@ -369,13 +364,13 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 			}
 		}
 		// "OBJECTS" type
-		Set objSet = userObjsMap.keySet();
+		Set<String> objSet = userObjsMap.keySet();
 		for (int s = 0; s < objSet.size(); s++) {
 			Iterator iterator = objSet.iterator();
 			while (iterator.hasNext()) {
 				Object key = iterator.next();
 				String val = (String) userObjsMap.get(key);
-				ArrayList list = new ArrayList();
+				ArrayList<String> list = new ArrayList<String>();
 				String[] vals = parseString(val);
 				for (int t = 0; t < vals.length; t++) {
 					if (alloptions.indexOf(vals[t]) != -1)
@@ -397,7 +392,7 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 			try {
 				switch (opt.getValueType()) {
 					case IOption.BOOLEAN :
-						ArrayList optsList = new ArrayList(optionsArr);
+						ArrayList<String> optsList = new ArrayList<String>(optionsArr);
 						if (opt.getCommand() != null 
 								&& opt.getCommand().length() > 0  
 								&& !optsList.contains(opt.getCommand()))
@@ -422,7 +417,7 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 					case IOption.INCLUDE_PATH :
 					case IOption.PREPROCESSOR_SYMBOLS :
 					case IOption.LIBRARIES :
-						ArrayList newList = new ArrayList();
+						ArrayList<String> newList = new ArrayList<String>();
 						for (int i = 0; i < optionsList.size(); i++) {
 							if (opt.getCommand() != null
 									&& ((String) optionsList.get(i)).startsWith(opt

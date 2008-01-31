@@ -154,7 +154,7 @@ implements
 	
 	// tabs
 	protected TabFolder folder;
-	protected ArrayList itabs = new ArrayList();
+	protected ArrayList<InternalTab> itabs = new ArrayList<InternalTab>();
 	protected ICPropertyTab currentTab;
 
 	private static boolean isNewOpening = true;
@@ -915,7 +915,7 @@ implements
 				if (folder == null) {
 					if (itabs == null || itabs.size() == 0) 
 						return;
-					ICPropertyTab t = ((InternalTab)itabs.get(0)).tab;
+					ICPropertyTab t = itabs.get(0).tab;
 					if (! t.canBeVisible())
 						t.handleTabEvent(ICPropertyTab.VISIBLE, null);
 					return;
@@ -925,7 +925,7 @@ implements
 				int x = folder.getSelectionIndex();
 				String currHeader = (x == -1) ? null : ts[x].getText();
 				for (int i=0; i<itabs.size(); i++) {
-					InternalTab itab = (InternalTab)itabs.get(i);
+					InternalTab itab = itabs.get(i);
 					TabItem ti = null;
 					for (int j=0; j<ts.length; j++) {
 						if (ts[j].isDisposed()) continue;
@@ -951,7 +951,7 @@ implements
 							ts[j].dispose();
 					TabItem ti = null;
 					for (int i=0; i<itabs.size(); i++) {
-						InternalTab itab = (InternalTab)itabs.get(i);
+						InternalTab itab = itabs.get(i);
 						if (itab.tab.canBeVisible()) {
 							TabItem currTI = itab.createOn(folder);
 							if (currHeader != null && currHeader.equals(itab.text))

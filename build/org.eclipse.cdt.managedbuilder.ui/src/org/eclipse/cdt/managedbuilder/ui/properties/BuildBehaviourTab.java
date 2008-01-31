@@ -47,19 +47,19 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 	private static final int TRI_STATES_SIZE = 4;
 	// Widgets
 	//3
-	private Button b_stopOnError;
-	private Button b_parallel;
+	private Button b_stopOnError; // 3
+	private Button b_parallel;    // 3
 
 	private Button b_parallelOpt;
 	private Button b_parallelNum;
 	private Spinner parallelProcesses;
 
 	private Label  title2;
-	private Button b_autoBuild;
+	private Button b_autoBuild; //3
 	private Text   t_autoBuild;
-	private Button b_cmdBuild;
+	private Button b_cmdBuild; //3
 	private Text   t_cmdBuild;
-	private Button b_cmdClean;
+	private Button b_cmdClean; // 3
 	private Text   t_cmdClean;	
 
 	private IBuilder bldr;
@@ -186,32 +186,46 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 	 *    1: supportsStopOnError(true)
 	 *    2: bld.supportsStopOnError(false)  
 	 *    3: cfg.getInternalBuilderParallel()
+	 * Mode 2:
+	 *    0: b.isAutoBuildEnable()
+	 *    1: b.isIncrementalBuildEnabled()
+	 *    2: b.isCleanBuildEnabled()
+	 *    3: getParallelDef()   
 	 */
 	 static int[] calc3states(ICPropertyProvider p, 
 			 IConfiguration c,
-			 boolean p0) {
+			 int mode) {
 		if (p.isMultiCfg() &&
 			c instanceof ICMultiItemsHolder) 
 		{ 
+			boolean p0 = (mode == 0);
+			boolean p1 = (mode == 1);
+			
 			IConfiguration[] cfs = (IConfiguration[])((ICMultiItemsHolder)c).getItems();
 			IBuilder b = cfs[0].getBuilder();
 			int[]   res = new int[TRI_STATES_SIZE];
 			boolean[] x = new boolean[TRI_STATES_SIZE];
-			x[0] = p0 ? b.isManagedBuildOn() : b.isStopOnError();
-			x[1] = p0 ? b.isDefaultBuildCmd(): b.supportsStopOnError(true);
+			x[0] = p0 ? b.isManagedBuildOn() : 
+				(p1 ? b.isStopOnError() : b.isAutoBuildEnable());
+			x[1] = p0 ? b.isDefaultBuildCmd(): 
+				(p1 ? b.supportsStopOnError(true) : b.isIncrementalBuildEnabled() );
 			x[2] = p0 ? b.canKeepEnvironmentVariablesInBuildfile() : 
-								 b.supportsStopOnError(false);
+				(p1 ? b.supportsStopOnError(false) : b.isCleanBuildEnabled());
 			x[3] = p0 ? b.keepEnvironmentVariablesInBuildfile() : 
-				                 ((Configuration)cfs[0]).getInternalBuilderParallel();
+				( p1 ? ((Configuration)cfs[0]).getInternalBuilderParallel() : getParallelDef(c));
 			for (int i=1; i<cfs.length; i++) {
 				b = cfs[i].getBuilder();
-				if (x[0] != (p0 ? b.isManagedBuildOn() : b.isStopOnError()))
+				if (x[0] != (p0 ? b.isManagedBuildOn() : 
+					(p1 ? b.isStopOnError() : b.isAutoBuildEnable())))
 					res[0] = TRI_UNKNOWN;
-				if (x[1] != (p0 ? b.isDefaultBuildCmd() : b.supportsStopOnError(true)))
+				if (x[1] != (p0 ? b.isDefaultBuildCmd() : 
+					(p1 ? b.supportsStopOnError(true) : b.isIncrementalBuildEnabled())))
 					res[1] = TRI_UNKNOWN;
-				if (x[2] != (p0 ? b.canKeepEnvironmentVariablesInBuildfile() : b.supportsStopOnError(false)))
+				if (x[2] != (p0 ? b.canKeepEnvironmentVariablesInBuildfile() : 
+					(p1 ? b.supportsStopOnError(false) : b.isCleanBuildEnabled())))
 					res[2] = TRI_UNKNOWN;
-				if (x[3] != (p0 ? b.keepEnvironmentVariablesInBuildfile() : ((Configuration)cfs[i]).getInternalBuilderParallel()))
+				if (x[3] != (p0 ? b.keepEnvironmentVariablesInBuildfile() : 
+					(p1 ? ((Configuration)cfs[i]).getInternalBuilderParallel() : getParallelDef(c))))
 					res[3] = TRI_UNKNOWN;
 			}
 			for (int i=0; i<TRI_STATES_SIZE; i++) {
@@ -229,7 +243,7 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 	protected void updateButtons() {
 		bldr = icfg.getEditableBuilder();
 		
-		int[] extStates = calc3states(page, icfg, false);
+		int[] extStates = calc3states(page, icfg, 1);
 		
 		if (extStates != null) {
 			setTriSelection(b_stopOnError, extStates[0]);
@@ -237,19 +251,17 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 					extStates[1] == TRI_YES &&
 					extStates[2] == TRI_YES);
 		} else {
-			setTriSelection(b_stopOnError, bldr.isStopOnError() ? TRI_YES : TRI_NO);
+			setTriSelection(b_stopOnError, bldr.isStopOnError());
 			b_stopOnError.setEnabled(
 					bldr.supportsStopOnError(true) &&
 					bldr.supportsStopOnError(false));
 		} 
 		// parallel
 		if (extStates == null) // no extended states
-			setTriSelection(b_parallel, getInternalBuilderParallel() ? TRI_YES : TRI_NO);
+			setTriSelection(b_parallel, getInternalBuilderParallel());
 		else
 			setTriSelection(b_parallel, extStates[3]);
 		
-		b_parallelOpt.setSelection(getParallelDef());
-		b_parallelNum.setSelection(!getParallelDef());
 		int n = getParallelNumber();
 		if (n < 0) n = -n;
 		parallelProcesses.setSelection(n);
@@ -259,11 +271,27 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 		b_parallelNum.setVisible(bldr.supportsParallelBuild());
 		parallelProcesses.setVisible(bldr.supportsParallelBuild());
 
-		b_autoBuild.setSelection(bldr.isAutoBuildEnable());
+		extStates = calc3states(page, icfg, 2);
+		if (extStates == null) {
+			setTriSelection(b_autoBuild, bldr.isAutoBuildEnable());
+			setTriSelection(b_cmdBuild, bldr.isIncrementalBuildEnabled());
+			setTriSelection(b_cmdClean, bldr.isCleanBuildEnabled());
+			b_parallelOpt.setSelection(getParallelDef(icfg));
+			b_parallelNum.setSelection(!getParallelDef(icfg));
+		} else {
+			setTriSelection(b_autoBuild, extStates[0]);
+			setTriSelection(b_cmdBuild, extStates[1]);
+			setTriSelection(b_cmdClean, extStates[2]);
+			if (extStates[3] == TRI_UNKNOWN) {
+				b_parallelOpt.setSelection(false);
+				b_parallelNum.setSelection(false);
+			} else {
+				b_parallelOpt.setSelection(getParallelDef(icfg));
+				b_parallelNum.setSelection(!getParallelDef(icfg));
+			}
+		}
 		t_autoBuild.setText(bldr.getBuildAttribute(IBuilder.BUILD_TARGET_AUTO, EMPTY_STR));
-		b_cmdBuild.setSelection(bldr.isIncrementalBuildEnabled());
 		t_cmdBuild.setText(bldr.getBuildAttribute(IBuilder.BUILD_TARGET_INCREMENTAL, EMPTY_STR));
-		b_cmdClean.setSelection(bldr.isCleanBuildEnabled());
 		t_cmdClean.setText(bldr.getBuildAttribute(IBuilder.BUILD_TARGET_CLEAN, EMPTY_STR));
 		
 		boolean external = ! isInternalBuilderEnabled(); 
@@ -282,9 +310,9 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 		((Control)t_cmdClean.getData()).setVisible(external);
 		
 		if (external) {
-			checkPressed(b_autoBuild);
-			checkPressed(b_cmdBuild);
-			checkPressed(b_cmdClean);
+			checkPressed(b_autoBuild, false);
+			checkPressed(b_cmdBuild, false);
+			checkPressed(b_cmdClean, false);
 		}
 	}
 	
@@ -318,11 +346,11 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 	}
 	
     public void checkPressed(SelectionEvent e) {
-    	checkPressed((Control)e.widget);
+    	checkPressed((Control)e.widget, true);
     	updateButtons();
     }
 	
-	private void checkPressed(Control b) {	
+	private void checkPressed(Control b, boolean needsUpdate) {	
 		if (b == null) return;
 		
 		boolean val = false;
@@ -336,7 +364,8 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 				c.setEnabled(val);
 			}
 		}
-		setValue(b, val);
+		if (needsUpdate)
+			setValue(b, val);
 	}
 
 	/*
@@ -379,11 +408,11 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 		updateData(getResDesc());
 	}
 	
-	private boolean getParallelDef() {
-		if (icfg instanceof Configuration) 
-			return ((Configuration)icfg).getParallelDef();
-		if (icfg instanceof IMultiConfiguration)
-			return ((IMultiConfiguration)icfg).getParallelDef();
+	private static boolean getParallelDef(IConfiguration cfg) {
+		if (cfg instanceof Configuration) 
+			return ((Configuration)cfg).getParallelDef();
+		if (cfg instanceof IMultiConfiguration)
+			return ((IMultiConfiguration)cfg).getParallelDef();
 		return false;
 	}
 	

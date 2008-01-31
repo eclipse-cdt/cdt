@@ -115,7 +115,7 @@ label:
 template<int X>
 class ConstantTemplate {
 public:
-	size_t foo(size_t y) {
+	size_t getNumber(size_t y) {
 		return X;
 	}
 };
@@ -123,3 +123,5 @@ public:
 ConstantTemplate<5> c5;
 ConstantTemplate<5> c52;
 ConstantTemplate<4> c4;
+
+const int c= c5.getNumber(0);

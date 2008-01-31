@@ -308,9 +308,35 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		assertOccurrences(2);
 		assertOccurrencesInWidget();
 	}
+	public void testMarkMethodOccurrences2() {
+		try {
+			fMatch= fFindReplaceDocumentAdapter.find(0, "getNumber", true, true, true, false);
+		} catch (BadLocationException e) {
+			fail();
+		}
+		assertNotNull(fMatch);
+
+		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
+		
+		assertOccurrences(2);
+		assertOccurrencesInWidget();
+	}
 	public void testMarkFieldOccurrences() {
 		try {
 			fMatch= fFindReplaceDocumentAdapter.find(0, "pubField", true, true, true, false);
+		} catch (BadLocationException e) {
+			fail();
+		}
+		assertNotNull(fMatch);
+
+		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
+		
+		assertOccurrences(2);
+		assertOccurrencesInWidget();
+	}
+	public void testMarkFieldOccurrences2() {
+		try {
+			fMatch= fFindReplaceDocumentAdapter.find(0, "tArg1", true, true, true, false);
 		} catch (BadLocationException e) {
 			fail();
 		}
@@ -433,6 +459,20 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
 		
 		assertOccurrences(4);
+		assertOccurrencesInWidget();
+	}
+
+	public void testMarkLabelOccurrences() {
+		try {
+			fMatch= fFindReplaceDocumentAdapter.find(0, "label", true, true, true, false);
+		} catch (BadLocationException e) {
+			fail();
+		}
+		assertNotNull(fMatch);
+
+		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
+		
+		assertOccurrences(2);
 		assertOccurrencesInWidget();
 	}
 

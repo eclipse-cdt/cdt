@@ -33,6 +33,7 @@ import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterDMData;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterGroupDMContext;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterGroupDMData;
 import org.eclipse.dd.dsf.debug.ui.DsfDebugUIPlugin;
+import org.eclipse.dd.dsf.service.DsfServiceID;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.IDMVMContext;
@@ -62,32 +63,18 @@ public class SyncRegisterDataAccess {
     @ThreadSafe
     private synchronized IRegisters getService() {
 
+    	String serviceId = DsfServiceID.createServiceId( IRegisters.class, fSession.getId() );
         if (fServiceTracker == null) {
             try {
                 fServiceTracker = new ServiceTracker(
                     DsfDebugUIPlugin.getBundleContext(), 
-                    DsfDebugUIPlugin.getBundleContext().createFilter(getServiceFilter()), null);
+                    DsfDebugUIPlugin.getBundleContext().createFilter(serviceId), null);
                 fServiceTracker.open();
             } catch (InvalidSyntaxException e) {
                 return null;
             }
         }
         return (IRegisters) fServiceTracker.getService();
-    }
-    
-    private String getServiceFilter() {
-        StringBuffer filter = new StringBuffer();
-        filter.append("(&"); //$NON-NLS-1$
-        filter.append("(OBJECTCLASS="); //$NON-NLS-1$
-        filter.append(IRegisters.class.getName());
-        filter.append(')');
-        filter.append('(');
-        filter.append(IDsfService.PROP_SESSION_ID);
-        filter.append('=');
-        filter.append(fSession.getId());
-        filter.append(')');
-        filter.append(')');
-        return filter.toString();
     }
     
     @ThreadSafe

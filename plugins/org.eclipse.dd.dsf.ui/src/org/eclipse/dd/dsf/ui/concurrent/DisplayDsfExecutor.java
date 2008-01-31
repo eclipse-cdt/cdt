@@ -23,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.eclipse.dd.dsf.concurrent.DefaultDsfExecutor;
 import org.eclipse.dd.dsf.concurrent.DsfExecutable;
-import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Display;
@@ -46,7 +45,7 @@ public class DisplayDsfExecutor extends DefaultDsfExecutor
      * @param display Display to create an executor for.
      * @return The new (or re-used) executor.
      */
-    public static DsfExecutor getDisplayDsfExecutor(Display display) {
+    public static DisplayDsfExecutor getDisplayDsfExecutor(Display display) {
         synchronized (fExecutors) {
             DisplayDsfExecutor executor = fExecutors.get(display);
             if (executor == null) {
@@ -255,7 +254,6 @@ public class DisplayDsfExecutor extends DefaultDsfExecutor
 
 	@Override
 	public boolean isShutdown() {
-	    // TODO Auto-generated method stub
 	    return super.isShutdown();
 	}
 }

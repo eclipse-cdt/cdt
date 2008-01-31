@@ -99,7 +99,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
     }
     
     /**
-     * A base calss for the entry in the cache.  Since the cache maintains
+     * A base class for the entry in the cache.  Since the cache maintains
      * a double-linked list through all the entries, the linked list references
      * are maintained in this class.
      */
@@ -394,7 +394,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
                 });
             super.updateNode(node, updates);
         } else if (update.getOffset() < 0 ) {
-            // The udpate requested all children.  Fill in all children assuming that 
+            // The update requested all children.  Fill in all children assuming that 
             // the children array is complete.
             
             // The following assert should never fail given the first if statement. 
@@ -548,9 +548,6 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
         }
     }
 
-
-
-    
     @Override
     public void handleEvent(final Object event) {
         IElementUpdateTester elementTester =  getActiveUpdatePolicy().getTesterTester(event);
@@ -611,7 +608,6 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
         }
         return proxy;
     }
-
     
     /**
      * Called when a given all cache entries for the given root element have
@@ -757,5 +753,4 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
         }
         return null;
     }
-
 }

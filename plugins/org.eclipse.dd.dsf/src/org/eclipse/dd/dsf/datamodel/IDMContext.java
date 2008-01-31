@@ -45,7 +45,7 @@ public interface IDMContext extends IAdaptable
      * originated.  The session ID allows clients to choose the correct
      * dispatch thread with which to access the service, and it allows the
      * service to be uniquely identified among other sessions.   
-     * @return Session ID of the service that originated the cotnext.
+     * @return Session ID of the service that originated the context.
      */
     public String getSessionId();
     

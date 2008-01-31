@@ -33,6 +33,7 @@ import org.eclipse.dd.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMData;
 import org.eclipse.dd.dsf.debug.service.IMemory.IMemoryDMContext;
+import org.eclipse.dd.dsf.service.DsfServiceID;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.debug.core.DebugException;
@@ -93,13 +94,7 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
  		// amalgamated one because it is less error prone (and we are lazy).
 
  		// Create a tracker for the MemoryService
- 		String memoryServiceFilter = "(&" + //$NON-NLS-1$
-				"(OBJECTCLASS=" //$NON-NLS-1$
-				+ IMemory.class.getName()
-				+ ")" + //$NON-NLS-1$
-				"(" + IDsfService.PROP_SESSION_ID //$NON-NLS-1$
-				+ "=" + dmc.getSessionId() + ")" + //$NON-NLS-1$//$NON-NLS-2$
-				")"; //$NON-NLS-1$
+ 		String memoryServiceFilter = DsfServiceID.createServiceId( IMemory.class, dmc.getSessionId() );
 
  		try {
 			fMemoryServiceTracker = new ServiceTracker(

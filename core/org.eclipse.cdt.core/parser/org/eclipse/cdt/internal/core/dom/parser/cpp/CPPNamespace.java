@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,9 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-/*
- * Created on Dec 1, 2004
- */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ILinkage;
@@ -36,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
@@ -49,7 +47,7 @@ import org.eclipse.core.runtime.PlatformObject;
  */
 public class CPPNamespace extends PlatformObject implements ICPPNamespace, ICPPInternalBinding {
     public static class CPPNamespaceDelegate extends CPPDelegate implements ICPPNamespace {
-        public CPPNamespaceDelegate( IASTName name, ICPPNamespace binding ) {
+        public CPPNamespaceDelegate( ICPPUsingDeclaration name, ICPPNamespace binding ) {
             super( name, binding );
         }
         public ICPPNamespaceScope getNamespaceScope() throws DOMException {
@@ -305,8 +303,8 @@ public class CPPNamespace extends PlatformObject implements ICPPNamespace, ICPPI
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
      */
-    public ICPPDelegate createDelegate( IASTName name ) {
-        return new CPPNamespaceDelegate( name, this );
+    public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl ) {
+        return new CPPNamespaceDelegate( usingDecl, this );
     }
 
 	/* (non-Javadoc)

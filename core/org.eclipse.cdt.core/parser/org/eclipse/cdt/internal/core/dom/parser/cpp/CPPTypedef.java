@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,9 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-/*
- * Created on Dec 11, 2004
- */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ILinkage;
@@ -24,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -35,18 +33,11 @@ import org.eclipse.core.runtime.PlatformObject;
  */
 public class CPPTypedef extends PlatformObject implements ITypedef, ITypeContainer, ICPPInternalBinding {
     public static class CPPTypedefDelegate extends CPPDelegate implements ITypedef, ITypeContainer {
-        public CPPTypedefDelegate( IASTName name, ITypedef binding ) {
+        public CPPTypedefDelegate( ICPPUsingDeclaration name, ITypedef binding ) {
             super( name, binding );
         }
         public IType getType() throws DOMException {
             return ((ITypedef)getBinding()).getType();
-        }
-        public Object clone() {
-            try {
-                return super.clone();
-            } catch ( CloneNotSupportedException e ) {
-            }
-            return null;
         }
         public boolean isSameType( IType type ) {
             return ((ITypedef)getBinding()).isSameType( type );
@@ -174,8 +165,8 @@ public class CPPTypedef extends PlatformObject implements ITypedef, ITypeContain
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
      */
-    public ICPPDelegate createDelegate( IASTName name ) {
-        return new CPPTypedefDelegate( name, this );
+    public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl ) {
+        return new CPPTypedefDelegate( usingDecl, this );
     }
 
 	/* (non-Javadoc)

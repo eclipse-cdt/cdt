@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,9 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-/*
- * Created on Dec 10, 2004
- */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ILinkage;
@@ -29,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -40,7 +38,7 @@ import org.eclipse.core.runtime.PlatformObject;
  */
 public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPInternalBinding {
     public static class CPPParameterDelegate extends CPPDelegate implements ICPPParameter {
-        public CPPParameterDelegate( IASTName name, IParameter binding ) {
+        public CPPParameterDelegate( ICPPUsingDeclaration name, IParameter binding ) {
             super( name, binding );
         }
         public IType getType() throws DOMException {
@@ -245,8 +243,8 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
      */
-    public ICPPDelegate createDelegate( IASTName name ) {
-        return new CPPParameterDelegate( name, this );
+    public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl ) {
+        return new CPPParameterDelegate( usingDecl, this );
     }
 
 	/* (non-Javadoc)

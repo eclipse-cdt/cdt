@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 QNX Software Systems and others.
+ * Copyright (c) 2006, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,13 +13,14 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPEnumerator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
+import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -34,6 +35,7 @@ class PDOMCPPEnumerator extends PDOMCPPBinding implements IEnumerator, ICPPBindi
 	private static final int ENUMERATION = PDOMBinding.RECORD_SIZE + 0;
 	private static final int NEXT_ENUMERATOR = PDOMBinding.RECORD_SIZE + 4;
 	
+	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 8;
 	
 	public PDOMCPPEnumerator(PDOM pdom, PDOMNode parent, IEnumerator enumerator, PDOMCPPEnumeration enumeration)
@@ -52,7 +54,7 @@ class PDOMCPPEnumerator extends PDOMCPPBinding implements IEnumerator, ICPPBindi
 	}
 	
 	public int getNodeType() {
-		return PDOMCPPLinkage.CPPENUMERATOR;
+		return IIndexCPPBindingConstants.CPPENUMERATOR;
 	}
 
 	public PDOMCPPEnumerator getNextEnumerator() throws CoreException {
@@ -74,8 +76,8 @@ class PDOMCPPEnumerator extends PDOMCPPBinding implements IEnumerator, ICPPBindi
 		}
 	}
 
-	public ICPPDelegate createDelegate(IASTName name) {
-		return new CPPEnumerator.CPPEnumeratorDelegate(name, this);
+	public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl) {
+		return new CPPEnumerator.CPPEnumeratorDelegate(usingDecl, this);
 	}
 	
 }

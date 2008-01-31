@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IndexFilter;
@@ -200,8 +201,8 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 		return this;
 	}
 	
-	public ICPPDelegate createDelegate(IASTName name) {
-		return new CPPNamespace.CPPNamespaceDelegate(name, this);
+	public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl) {
+		return new CPPNamespace.CPPNamespaceDelegate(usingDecl, this);
 	}
 	
 }

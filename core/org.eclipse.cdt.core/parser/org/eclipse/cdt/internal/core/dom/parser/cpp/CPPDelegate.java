@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,21 +7,18 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
-/*
- * Created on Mar 17, 2005
- */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.core.runtime.PlatformObject;
 
@@ -29,30 +26,29 @@ import org.eclipse.core.runtime.PlatformObject;
  * @author aniefer
  */
 public class CPPDelegate extends PlatformObject implements ICPPDelegate, ICPPInternalBinding {
-    private IBinding binding = null;
-    private int type = 0;
-    private IASTName name = null;
+    private final IBinding originalBinding;
+    private ICPPUsingDeclaration usingDeclaration;
     
     /**
      * 
      */
-    public CPPDelegate( IASTName name, IBinding binding ) {
-        this.binding = binding;
-        this.name = name;
+    public CPPDelegate(ICPPUsingDeclaration usingDecl, IBinding original ) {
+        this.originalBinding = original;
+        this.usingDeclaration = usingDecl;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate#getDelegateType()
      */
     public int getDelegateType() {
-        return type;
+        return USING_DECLARATION;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate#getBinding()
      */
     public IBinding getBinding() {
-        return binding;
+        return originalBinding;
     }
 
     /* (non-Javadoc)
@@ -86,75 +82,72 @@ public class CPPDelegate extends PlatformObject implements ICPPDelegate, ICPPInt
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
      */
     public String getName() {
-        return name.toString();
+        return usingDeclaration.getName();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
      */
     public char[] getNameCharArray() {
-        return name.toCharArray();
+        return usingDeclaration.getNameCharArray();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
      */
-    public IScope getScope() {
-        return CPPVisitor.getContainingScope( name.getParent() );
+    public IScope getScope() throws DOMException {
+        return usingDeclaration.getScope();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#getDeclarations()
      */
     public IASTNode[] getDeclarations() {
-        return null;
+    	if (usingDeclaration instanceof ICPPInternalBinding) {
+    		return ((ICPPInternalBinding) usingDeclaration).getDeclarations();
+    	}
+    	return IASTNode.EMPTY_NODE_ARRAY;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#getDefinition()
      */
     public IASTNode getDefinition() {
-        if( binding instanceof ICPPInternalBinding )
-            return ((ICPPInternalBinding)binding).getDefinition();
-        return name;
-    }
-
-    public void setName( IASTName name ){
-        this.name = name;
+    	return null;
     }
     
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
      */
-    public ICPPDelegate createDelegate( IASTName n ) {
-        CPPDelegate delegate = null;
-        try {
-            delegate = (CPPDelegate) clone();
-        } catch ( CloneNotSupportedException e ) {
-        }
-        
-        delegate.setName( n );
+    public ICPPDelegate createDelegate( ICPPUsingDeclaration decl ) {
+        CPPDelegate delegate= (CPPDelegate) clone();
+        delegate.usingDeclaration= decl;
         return delegate;
     }
+
+    @Override
+	public Object clone() {
+		try {
+			return super.clone();
+		} catch (CloneNotSupportedException e) {
+			// cannot be thrown because we implement Clonable
+		}
+		return null;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDefinition(org.eclipse.cdt.core.dom.ast.IASTNode)
 	 */
 	public void addDefinition(IASTNode node) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDeclaration(org.eclipse.cdt.core.dom.ast.IASTNode)
 	 */
 	public void addDeclaration(IASTNode node) {
-		// TODO Auto-generated method stub
-		
 	}
 	
 	public void removeDeclaration(IASTNode node) {
-		
 	}
 
 	public ILinkage getLinkage() {

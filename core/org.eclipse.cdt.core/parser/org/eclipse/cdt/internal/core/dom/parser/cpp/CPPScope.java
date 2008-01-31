@@ -110,6 +110,9 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 							bindings= fileSet.filterFileLocalBindings(bindings);
 						}
 						binding= CPPSemantics.resolveAmbiguities(name, bindings);
+			        	if( binding instanceof ICPPUsingDeclaration ){
+			        		binding= CPPSemantics.resolveAmbiguities( name, ((ICPPUsingDeclaration)binding).getDelegates() );
+			        	}
 					} catch (CoreException e) {
 		        		CCorePlugin.log(e);
 					}
@@ -126,6 +129,9 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 								bindings= fileSet.filterFileLocalBindings(bindings);
 							}
 							binding= CPPSemantics.resolveAmbiguities(name, bindings);
+				        	if( binding instanceof ICPPUsingDeclaration ){
+				        		binding= CPPSemantics.resolveAmbiguities( name, ((ICPPUsingDeclaration)binding).getDelegates() );
+				        	}
 						}
 					}
 				}

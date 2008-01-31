@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 QNX Software Systems and others.
+ * Copyright (c) 2005, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,10 +20,12 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
+import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -54,6 +56,7 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable, ICPPDelega
 	/**
 	 * The size in bytes of a PDOMCPPVariable record in the database.
 	 */
+	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 5;
 	
 	public PDOMCPPVariable(PDOM pdom, PDOMNode parent, ICPPVariable variable) throws CoreException {
@@ -105,7 +108,7 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable, ICPPDelega
 	}
 
 	public int getNodeType() {
-		return PDOMCPPLinkage.CPPVARIABLE;
+		return IIndexCPPBindingConstants.CPPVARIABLE;
 	}
 	
 	public boolean isMutable() throws DOMException {
@@ -143,8 +146,8 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable, ICPPDelega
 		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.STATIC_OFFSET);
 	}
 	
-	public ICPPDelegate createDelegate(IASTName name) {
-		return new CPPVariable.CPPVariableDelegate(name, this);
+	public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl) {
+		return new CPPVariable.CPPVariableDelegate(usingDecl, this);
 	}
 	
 	public int getAdditionalNameFlags(int standardFlags, IASTName name) {

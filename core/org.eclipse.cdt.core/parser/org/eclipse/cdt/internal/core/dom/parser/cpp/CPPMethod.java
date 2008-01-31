@@ -9,9 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-/*
- * Created on Dec 1, 2004
- */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -33,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 
@@ -41,7 +39,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
  */
 public class CPPMethod extends CPPFunction implements ICPPMethod {
     public static class CPPMethodDelegate extends CPPFunction.CPPFunctionDelegate implements ICPPMethod {
-        public CPPMethodDelegate( IASTName name, ICPPMethod binding ) {
+        public CPPMethodDelegate( ICPPUsingDeclaration name, ICPPMethod binding ) {
             super( name, binding );
         }
         public int getVisibility() throws DOMException {
@@ -234,8 +232,8 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
      */
-    public ICPPDelegate createDelegate( IASTName name ) {
-        return new CPPMethodDelegate( name, this );
+    public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl ) {
+        return new CPPMethodDelegate( usingDecl, this );
     }
 
     /* (non-Javadoc)

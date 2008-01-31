@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
@@ -49,8 +50,8 @@ import org.eclipse.core.runtime.PlatformObject;
 public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInternalFunction {
     
     public static class CPPFunctionDelegate extends CPPDelegate implements ICPPFunction, ICPPInternalFunction {
-        public CPPFunctionDelegate( IASTName name, ICPPFunction binding ) {
-            super( name, binding );
+        public CPPFunctionDelegate( ICPPUsingDeclaration usingDecl, ICPPFunction binding ) {
+            super( usingDecl, binding );
         }
 
         public IParameter[] getParameters() throws DOMException {
@@ -94,7 +95,11 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
     		}
         }
         public IBinding resolveParameter( IASTParameterDeclaration param ) {
-            return ((ICPPInternalFunction)getBinding()).resolveParameter( param );
+            final IBinding binding = getBinding();
+            if (binding instanceof ICPPInternalFunction) {
+            	return ((ICPPInternalFunction)binding).resolveParameter( param );
+            }
+            return null;
         }
     }
     public static class CPPFunctionProblem extends ProblemBinding implements ICPPFunction {
@@ -505,8 +510,8 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
      */
-    public ICPPDelegate createDelegate( IASTName name ) {
-        return new CPPFunctionDelegate( name, this );
+    public ICPPDelegate createDelegate( ICPPUsingDeclaration usingDecl ) {
+        return new CPPFunctionDelegate( usingDecl, this );
     }
 
 	static public boolean hasStorageClass( ICPPInternalFunction function, int storage){

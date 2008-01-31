@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -234,8 +235,8 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction implements
 		return this;
 	}
 	
-	public ICPPDelegate createDelegate(IASTName name) {
-		return new CPPFunctionTemplate.CPPFunctionTemplateDelegate(name, this);
+	public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl) {
+		return new CPPFunctionTemplate.CPPFunctionTemplateDelegate(usingDecl, this);
 	}
 	
 }

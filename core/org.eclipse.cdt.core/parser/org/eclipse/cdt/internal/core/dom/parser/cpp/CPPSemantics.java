@@ -2146,6 +2146,9 @@ public class CPPSemantics {
 		if (binding instanceof ICPPSpecialization) {
 			return ((ICPPSpecialization) binding).getSpecializedBinding() instanceof IIndexBinding;
 		}
+		if (binding instanceof ICPPDelegate) {
+			return ((ICPPDelegate) binding).getBinding() instanceof IIndexBinding;
+		}
 		return false;
 	}
 	

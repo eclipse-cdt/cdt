@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Google, Inc and others.
+ * Copyright (c) 2007, 2008 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
@@ -38,7 +37,7 @@ class CompositeCPPUsingDeclaration extends CompositeCPPBinding implements ICPPUs
 			if (binding instanceof IIndexFragmentBinding) {
 				binding = cf.getCompositeBinding((IIndexFragmentBinding) binding);
 	            if (binding instanceof ICPPDelegateCreator) {
-	                composites[j++] = ((ICPPDelegateCreator) binding).createDelegate(new CPPASTName(getNameCharArray()));
+	                composites[j++] = ((ICPPDelegateCreator) binding).createDelegate(this);
 	            }
 			}
 		}

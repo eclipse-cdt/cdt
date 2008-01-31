@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,6 +44,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -58,9 +59,9 @@ import org.eclipse.core.runtime.PlatformObject;
  * @author aniefer
  */
 public class CPPClassType extends PlatformObject implements ICPPInternalClassTypeMixinHost, ICPPClassType, ICPPInternalClassType {
-	public static class CPPClassTypeDelegate extends CPPDelegate implements ICPPClassType, ICPPInternalClassType {
-		public CPPClassTypeDelegate( IASTName name, ICPPClassType cls ){
-			super( name, cls );
+	public static class CPPClassTypeDelegate extends CPPDelegate implements ICPPClassType {
+		public CPPClassTypeDelegate( ICPPUsingDeclaration usingDecl, ICPPClassType cls ){
+			super( usingDecl, cls );
 		}
 		public ICPPBase[] getBases() throws DOMException {
 			return ((ICPPClassType)getBinding()).getBases();
@@ -94,14 +95,6 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 		}
 		public IScope getCompositeScope() throws DOMException {
 			return ((ICPPClassType)getBinding()).getCompositeScope();
-		}
-		public Object clone() {
-			CPPClassTypeDelegate d = null;
-			try {
-				d = (CPPClassTypeDelegate) super.clone();
-			} catch ( CloneNotSupportedException e ) {
-			}
-			return d;
 		}
 		public ICPPMethod[] getConversionOperators() throws DOMException {
 			IBinding binding = getBinding();
@@ -411,8 +404,8 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 		return true;
 	}
 
-	public ICPPDelegate createDelegate( IASTName name ) {
-		return new CPPClassTypeDelegate( name, this );
+	public ICPPDelegate createDelegate( ICPPUsingDeclaration usingDecl ) {
+		return new CPPClassTypeDelegate( usingDecl, this );
 	}
 
 

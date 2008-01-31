@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 QNX Software Systems and others.
+ * Copyright (c) 2005, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,13 +14,14 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPField;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
+import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
@@ -47,7 +48,7 @@ class PDOMCPPField extends PDOMCPPVariable implements ICPPField, ICPPDelegateCre
 	
 	// @Override
 	public int getNodeType() {
-		return PDOMCPPLinkage.CPPFIELD;
+		return IIndexCPPBindingConstants.CPPFIELD;
 	}
 	
 	public ICPPClassType getClassOwner() {
@@ -95,8 +96,8 @@ class PDOMCPPField extends PDOMCPPVariable implements ICPPField, ICPPDelegateCre
 		return getClassOwner();
 	}
 	
-	public ICPPDelegate createDelegate(IASTName name) {
-		return new CPPField.CPPFieldDelegate(name, this);
+	public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl) {
+		return new CPPField.CPPFieldDelegate(usingDecl, this);
 	}
 	
 }

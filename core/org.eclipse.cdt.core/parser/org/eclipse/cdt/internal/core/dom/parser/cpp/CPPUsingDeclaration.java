@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,7 +50,7 @@ public class CPPUsingDeclaration extends PlatformObject implements ICPPUsingDecl
         ICPPDelegate [] result = null;
         for( int i = 0; i < bindings.length; i++ ){
             if( bindings[i] instanceof ICPPDelegateCreator){
-                ICPPDelegate delegate = ((ICPPDelegateCreator)bindings[i]).createDelegate( name );
+                ICPPDelegate delegate = ((ICPPDelegateCreator)bindings[i]).createDelegate( this );
                 result = (ICPPDelegate[]) ArrayUtil.append( ICPPDelegate.class, result, delegate );
             } 
         }
@@ -133,7 +133,7 @@ public class CPPUsingDeclaration extends PlatformObject implements ICPPUsingDecl
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
      */
-    public ICPPDelegate createDelegate( IASTName name1 ) {
+    public ICPPDelegate createDelegate( ICPPUsingDeclaration usingDecl ) {
         return null;
     }
 

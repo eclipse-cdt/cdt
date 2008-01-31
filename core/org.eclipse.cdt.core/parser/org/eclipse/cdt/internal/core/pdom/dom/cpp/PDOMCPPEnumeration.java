@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 QNX Software Systems and others.
+ * Copyright (c) 2006, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,13 +16,13 @@ import java.util.ArrayList;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPEnumeration.CPPEnumerationDelegate;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
@@ -42,6 +42,7 @@ class PDOMCPPEnumeration extends PDOMCPPBinding
 
 	private static final int FIRST_ENUMERATOR = PDOMBinding.RECORD_SIZE + 0;
 	
+	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 4;
 	
 	public PDOMCPPEnumeration(PDOM pdom, PDOMNode parent, IEnumeration enumeration)
@@ -63,14 +64,14 @@ class PDOMCPPEnumeration extends PDOMCPPBinding
 
 	public IEnumerator[] getEnumerators() throws DOMException {
 		try {
-			ArrayList enums = new ArrayList();
+			ArrayList<PDOMCPPEnumerator> enums = new ArrayList<PDOMCPPEnumerator>();
 			for (PDOMCPPEnumerator enumerator = getFirstEnumerator();
 					enumerator != null;
 					enumerator = enumerator.getNextEnumerator()) {
 				enums.add(enumerator);
 			}
 			
-			IEnumerator[] enumerators = (IEnumerator[])enums.toArray(new IEnumerator[enums.size()]);
+			IEnumerator[] enumerators = enums.toArray(new IEnumerator[enums.size()]);
 			
 			// Reverse the list since they are last in first out
 			int n = enumerators.length;
@@ -134,8 +135,8 @@ class PDOMCPPEnumeration extends PDOMCPPBinding
 		throw new PDOMNotImplementedError();
 	}
 	
-	public ICPPDelegate createDelegate(IASTName name) {
-		return new CPPEnumerationDelegate(name, this);
+	public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl) {
+		return new CPPEnumerationDelegate(usingDecl, this);
 	}
 
 }

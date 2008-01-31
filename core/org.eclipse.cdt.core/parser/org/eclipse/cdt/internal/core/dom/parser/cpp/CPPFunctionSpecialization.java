@@ -10,9 +10,6 @@
  *    Bryan Wilkinson (QNX)
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
-/*
- * Created on Apr 22, 2005
- */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -31,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction.CPPFunctionDelegate;
@@ -156,8 +154,8 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
         return false;
 	}
 
-	public ICPPDelegate createDelegate(IASTName name) {
-		return new CPPFunctionDelegate( name, this );
+	public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl) {
+		return new CPPFunctionDelegate( usingDecl, this );
 	}
 
     /* (non-Javadoc)

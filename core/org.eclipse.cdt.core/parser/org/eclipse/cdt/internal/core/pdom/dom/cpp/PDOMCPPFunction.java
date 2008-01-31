@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 QNX Software Systems and others.
+ * Copyright (c) 2005, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
@@ -26,9 +25,11 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
+import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IndexCPPSignatureUtil;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -50,34 +51,40 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 	 * Offset of total number of function parameters (relative to the
 	 * beginning of the record).
 	 */
+	@SuppressWarnings("static-access")
 	private static final int NUM_PARAMS = PDOMCPPBinding.RECORD_SIZE + 0;
 
 	/**
 	 * Offset of pointer to the first parameter of this function (relative to
 	 * the beginning of the record).
 	 */
+	@SuppressWarnings("static-access")
 	private static final int FIRST_PARAM = PDOMCPPBinding.RECORD_SIZE + 4;
 	
 	/**
 	 * Offset of pointer to the function type record of this function (relative to
 	 * the beginning of the record).
 	 */
+	@SuppressWarnings("static-access")
 	protected static final int FUNCTION_TYPE= PDOMCPPBinding.RECORD_SIZE + 8;
 	
 	/**
 	 * Offset of hash of parameter information to allow fast comparison
 	 */
+	@SuppressWarnings("static-access")
 	private static final int SIGNATURE_MEMENTO = PDOMCPPBinding.RECORD_SIZE + 12;
 	
 	/**
 	 * Offset of annotation information (relative to the beginning of the
 	 * record).
 	 */
+	@SuppressWarnings("static-access")
 	protected static final int ANNOTATION = PDOMCPPBinding.RECORD_SIZE + 16; // byte
 	
 	/**
 	 * The size in bytes of a PDOMCPPFunction record in the database.
 	 */
+	@SuppressWarnings({ "static-access", "hiding" })
 	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 17;
 	
 	public PDOMCPPFunction(PDOM pdom, PDOMNode parent, ICPPFunction function, boolean setTypes) throws CoreException {
@@ -162,7 +169,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 	}
 
 	public int getNodeType() {
-		return PDOMCPPLinkage.CPPFUNCTION;
+		return IIndexCPPBindingConstants.CPPFUNCTION;
 	}
 	
 	public PDOMCPPParameter getFirstParameter() throws CoreException {
@@ -277,8 +284,8 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		return 0;
 	}
 	
-	public ICPPDelegate createDelegate(IASTName name) {
-		return new CPPFunction.CPPFunctionDelegate(name, this);
+	public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl) {
+		return new CPPFunction.CPPFunctionDelegate(usingDecl, this);
 	}
 	
 }

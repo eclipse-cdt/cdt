@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,6 +41,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.index.IIndexType;
@@ -53,8 +54,8 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 ICPPClassTemplate, ICPPClassType, ICPPInternalClassType, ICPPInternalClassTemplate, ICPPInternalClassTypeMixinHost {
 
 	public static class CPPClassTemplateDelegate extends CPPClassType.CPPClassTypeDelegate implements ICPPClassTemplate, ICPPInternalClassTemplate {
-		public CPPClassTemplateDelegate( IASTName name, ICPPClassType cls ) {
-			super( name, cls );
+		public CPPClassTemplateDelegate( ICPPUsingDeclaration usingDecl, ICPPClassType cls ) {
+			super( usingDecl, cls );
 		}
 		public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() throws DOMException {
 			return ((ICPPClassTemplate)getBinding()).getPartialSpecializations();
@@ -229,8 +230,8 @@ ICPPClassTemplate, ICPPClassType, ICPPInternalClassType, ICPPInternalClassTempla
 		return partialSpecializations;
 	}
 
-	public ICPPDelegate createDelegate( IASTName name ) {
-		return new CPPClassTemplateDelegate( name, this );
+	public ICPPDelegate createDelegate( ICPPUsingDeclaration usingDecl ) {
+		return new CPPClassTemplateDelegate( usingDecl, this );
 	}
 	
 	/*   */

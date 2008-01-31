@@ -163,6 +163,63 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		IBinding b1= getBindingFromASTName("B bb", 1);
 	}
 	
+	//	namespace header {
+	//		class clh {
+	//		};
+	//		void fh();
+	//		void fh(int a);
+	//		
+	//		class cl {
+	//		};
+	//		void f();
+	//		void f(int a);
+	//	}
+	//	using header::clh;
+	//	using header::fh;
+		
+	//	#include "header.h"
+	//	namespace source {
+	//		class cls {
+	//		};
+	//		void fs();
+	//		void fs(int a);
+	//		
+	//	}
+	//	using header::cl;
+	//	using header::f;
+	//
+	//
+	//	using source::cls;
+	//	using source::fs;
+	//
+	//	void test() {
+	//		fh();
+	//		fh(1);  
+	//		      
+	//		clh c;
+	//		
+	//		f();
+	//		f(1);
+	//		cl c1;
+	//
+	//		fs();
+	//		fs(1);
+	//		cls c2;
+	//	}
+	public void testUsingOverloadedFunctionDirective() {
+		IBinding b;
+		b= getBindingFromASTName("fh()", 2);
+		b= getBindingFromASTName("fh(1)", 2);
+		b= getBindingFromASTName("clh c", 3);
+		b= getBindingFromASTName("f()", 1);
+		b= getBindingFromASTName("f(1)", 1);
+		b= getBindingFromASTName("cl c1", 2);
+		b= getBindingFromASTName("fs()", 2);
+		b= getBindingFromASTName("fs(1)", 2);
+		b= getBindingFromASTName("cls c2", 3);
+	}
+
+	
 	// int (*f)(int);
 	// int g(int n){return n;}
 	// int g(int n, int m){ return n+m; }

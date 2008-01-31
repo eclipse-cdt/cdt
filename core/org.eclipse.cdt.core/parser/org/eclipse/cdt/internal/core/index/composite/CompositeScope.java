@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPCompositeBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUsingDeclaration;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 
@@ -81,6 +82,8 @@ public abstract class CompositeScope implements IIndexScope {
 			return new CPPCompositeBinding(
 				processUncertainBindings(((CPPCompositeBinding)binding).getBindings())
 			);
+		} else if(binding instanceof CPPUsingDeclaration) {
+			return binding;
 		} else if(binding == null) {
 			return null;
 		} else if(binding instanceof ICPPSpecialization) {

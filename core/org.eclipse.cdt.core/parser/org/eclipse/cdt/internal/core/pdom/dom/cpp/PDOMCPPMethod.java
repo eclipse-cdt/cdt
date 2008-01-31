@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 QNX Software Systems and others.
+ * Copyright (c) 2006, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,9 +28,11 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethod;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
+import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
@@ -55,6 +57,7 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod, ICPPDelegateC
 	/**
 	 * The size in bytes of a PDOMCPPMethod record in the database.
 	 */
+	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPFunction.RECORD_SIZE + 1;
 
 	/**
@@ -96,7 +99,7 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod, ICPPDelegateC
 	}
 
 	public int getNodeType() {
-		return PDOMCPPLinkage.CPPMETHOD;
+		return IIndexCPPBindingConstants.CPPMETHOD;
 	}
 
 	public boolean isVirtual() throws DOMException {
@@ -163,8 +166,8 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod, ICPPDelegateC
 		return getBit(getByte(record + ANNOTATION1), PDOMCAnnotation.VOLATILE_OFFSET + CV_OFFSET);
 	}
 	
-	public ICPPDelegate createDelegate(IASTName name) {
-		return new CPPMethod.CPPMethodDelegate(name, this);
+	public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl) {
+		return new CPPMethod.CPPMethodDelegate(usingDecl, this);
 	}
 
 	public int getAdditionalNameFlags(int standardFlags, IASTName name) {

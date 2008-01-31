@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 QNX Software Systems and others.
+ * Copyright (c) 2006, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
@@ -29,10 +29,11 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  *
  */
-class PDOMCPPNamespaceAlias extends PDOMCPPBinding implements
-		ICPPNamespaceAlias {
+class PDOMCPPNamespaceAlias extends PDOMCPPBinding implements ICPPNamespaceAlias {
 
+	@SuppressWarnings("static-access")
 	private static final int NAMESPACE_BINDING = PDOMCPPBinding.RECORD_SIZE + 0;
+	@SuppressWarnings({ "hiding", "static-access" })
 	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 4;
 	
 	public PDOMCPPNamespaceAlias(PDOM pdom, PDOMNode parent, ICPPNamespaceAlias alias)
@@ -95,7 +96,7 @@ class PDOMCPPNamespaceAlias extends PDOMCPPBinding implements
 	}
 
 	public int getDelegateType() {
-		throw new PDOMNotImplementedError();
+		return NAMESPACE_ALIAS;
 	}
 
 	public IBinding getBinding() {

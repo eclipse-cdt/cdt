@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
@@ -38,7 +39,7 @@ import org.eclipse.core.runtime.PlatformObject;
  */
 public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInternalVariable {
     public static class CPPVariableDelegate extends CPPDelegate implements ICPPVariable {
-        public CPPVariableDelegate( IASTName name, ICPPVariable binding ) {
+        public CPPVariableDelegate( ICPPUsingDeclaration name, ICPPVariable binding ) {
             super( name, binding );
         }
         public IType getType() throws DOMException {
@@ -287,8 +288,8 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
      */
-    public ICPPDelegate createDelegate( IASTName name ) {
-        return new CPPVariableDelegate( name, this );
+    public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl ) {
+        return new CPPVariableDelegate( usingDecl, this );
     }
 
 	/* (non-Javadoc)

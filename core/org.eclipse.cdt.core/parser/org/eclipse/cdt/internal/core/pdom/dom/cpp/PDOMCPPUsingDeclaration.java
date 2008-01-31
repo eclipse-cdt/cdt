@@ -16,7 +16,6 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -93,8 +92,8 @@ class PDOMCPPUsingDeclaration extends PDOMCPPBinding implements	ICPPUsingDeclara
 				do {
 					IBinding binding = alias.getBinding();
 		            if (binding instanceof ICPPDelegateCreator) {
-		                ICPPDelegate delegate = ((ICPPDelegateCreator) binding).createDelegate(new CPPASTName(getNameCharArray()));
-						ArrayUtil.append(ICPPDelegate.class, delegates, i++, delegate);
+		                ICPPDelegate delegate = ((ICPPDelegateCreator) binding).createDelegate(this);
+						delegates= (ICPPDelegate[]) ArrayUtil.append(ICPPDelegate.class, delegates, i++, delegate);
 		            } 
 				} while ((alias = alias.getNext()) != null);
 			} catch (CoreException e) {

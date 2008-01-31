@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 
 /**
@@ -94,7 +95,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
 		}
 	}
 	public static class CPPFunctionTemplateDelegate extends CPPFunction.CPPFunctionDelegate implements ICPPFunctionTemplate, ICPPInternalTemplate {
-        public CPPFunctionTemplateDelegate( IASTName name, ICPPFunction binding ) {
+        public CPPFunctionTemplateDelegate( ICPPUsingDeclaration name, ICPPFunction binding ) {
             super( name, binding );
         }
         public ICPPTemplateParameter[] getTemplateParameters() throws DOMException {
@@ -427,8 +428,8 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
      */
-    public ICPPDelegate createDelegate( IASTName name ) {
-        return new CPPFunctionTemplateDelegate( name, this );
+    public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl ) {
+        return new CPPFunctionTemplateDelegate( usingDecl, this );
     }
 
 }

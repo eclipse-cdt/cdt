@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,6 +40,7 @@ public class Util implements ICLogConstants {
 	public static boolean VERBOSE_PARSER = false;
 	public static boolean VERBOSE_SCANNER = false;
 	public static boolean VERBOSE_MODEL = false;
+	public static boolean VERBOSE_DELTA = false;
 	public static boolean PARSER_EXCEPTIONS= false;
 
 	public static String LINE_SEPARATOR = System.getProperty("line.separator"); //$NON-NLS-1$

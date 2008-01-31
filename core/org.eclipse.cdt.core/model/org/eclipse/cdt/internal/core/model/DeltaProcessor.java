@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,24 +35,17 @@ import org.eclipse.core.runtime.IPath;
  * It also does some processing on the <code>CElement</code>s involved
  * (e.g. closing them or updating classpaths).
  */
-public class DeltaProcessor {
+final class DeltaProcessor {
 	
 	/**
 	 * The <code>CElementDelta</code> corresponding to the <code>IResourceDelta</code> being translated.
 	 */
-	protected CElementDelta fCurrentDelta;
-	
-	/* The C element that was last created (see createElement(IResource). 
-	 * This is used as a stack of C elements (using getParent() to pop it, and 
-	 * using the various get*(...) to push it. */
-	ICElement currentElement;
+	private CElementDelta fCurrentDelta;
 	
 	static final ICElementDelta[] NO_DELTA = new ICElementDelta[0];
 
-	public static boolean VERBOSE = false;
-
 	// Hold on the element bein renamed.
-	ICElement movedFromElement = null;
+	private ICElement movedFromElement = null;
 
 	/**
 	 * Creates the create corresponding to this resource.
@@ -440,7 +433,10 @@ public class DeltaProcessor {
 				traverseDelta(root, delta); // traverse delta
 				translatedDeltas[i] = fCurrentDelta;
 			}
-			return filterRealDeltas(translatedDeltas);
+			ICElementDelta[] filteredDeltas= filterRealDeltas(translatedDeltas);
+			// release deltas
+			fCurrentDelta= null;
+			return filteredDeltas;
 		} finally {
 		}
 	}

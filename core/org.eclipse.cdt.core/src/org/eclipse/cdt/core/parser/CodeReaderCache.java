@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,14 +7,17 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.core.parser;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.internal.core.parser.EmptyIterator;
+import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.util.ILRUCacheable;
 import org.eclipse.cdt.internal.core.util.LRUCache;
 import org.eclipse.cdt.internal.core.util.OverflowingLRUCache;
@@ -53,7 +56,7 @@ public class CodeReaderCache implements ICodeReaderCache {
 	public static final String DEFAULT_CACHE_SIZE_IN_MB_STRING = String.valueOf(DEFAULT_CACHE_SIZE_IN_MB);
 	private static final int MB_TO_KB_FACTOR = 1024;
 	private CodeReaderLRUCache cache = null; // the actual cache
-	private IResourceChangeListener listener = new UpdateCodeReaderCacheListener(this);
+	private final IResourceChangeListener listener = new UpdateCodeReaderCacheListener(this);
 
 	private class UpdateCodeReaderCacheListener implements IResourceChangeListener {
 		ICodeReaderCache c = null;
@@ -88,7 +91,7 @@ public class CodeReaderCache implements ICodeReaderCache {
 				if (event.getSource() instanceof IWorkspace && event.getDelta() != null) {
 					removeKeys(event.getDelta().getAffectedChildren());
 				}
-				
+				event = null;
 				return Status.OK_STATUS;
 			}
             
@@ -127,15 +130,11 @@ public class CodeReaderCache implements ICodeReaderCache {
 	 */
 	public CodeReaderCache(int size) {
 		cache = new CodeReaderLRUCache(size * MB_TO_KB_FACTOR);
-		if (ResourcesPlugin.getWorkspace() != null)
-			ResourcesPlugin.getWorkspace().addResourceChangeListener(listener);
 	}
 	
 	protected void finalize() throws Throwable {
+		flush();
 		super.finalize();
-
-		if (ResourcesPlugin.getWorkspace() != null)
-			ResourcesPlugin.getWorkspace().removeResourceChangeListener(listener);
 	}
 	
 	/**
@@ -155,7 +154,8 @@ public class CodeReaderCache implements ICodeReaderCache {
 			if (!(new File(key).exists()))
 				return null;
 			
-			ret = ParserUtil.createReader(key, EmptyIterator.EMPTY_ITERATOR);
+			final List<IWorkingCopy> emptyList= Collections.emptyList();
+			ret = ParserUtil.createReader(key, emptyList.iterator());
 			
 			if (cache.getSpaceLimit() > 0) 
 				put(ret);
@@ -172,6 +172,10 @@ public class CodeReaderCache implements ICodeReaderCache {
 	 */
 	private synchronized CodeReader put(CodeReader value) {
 		if (value==null) return null;
+		if (cache.isEmpty()) {
+			if (ResourcesPlugin.getWorkspace() != null)
+				ResourcesPlugin.getWorkspace().addResourceChangeListener(listener);
+		}
 		return cache.put(String.valueOf(value.filename), value);
 	}
 	
@@ -302,7 +306,12 @@ public class CodeReaderCache implements ICodeReaderCache {
 	 * @param key 
 	 */
 	public synchronized CodeReader remove(String key) {
-		return cache.remove(key);
+		CodeReader removed= cache.remove(key);
+		if (cache.isEmpty()) {
+			if (ResourcesPlugin.getWorkspace() != null)
+				ResourcesPlugin.getWorkspace().removeResourceChangeListener(listener);
+		}
+		return removed;
 	}
 	
 	/**
@@ -315,6 +324,8 @@ public class CodeReaderCache implements ICodeReaderCache {
 
 	public void flush() {
 		cache.flush();
+		if (ResourcesPlugin.getWorkspace() != null)
+			ResourcesPlugin.getWorkspace().removeResourceChangeListener(listener);
 	}
 
 }

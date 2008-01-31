@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -91,7 +91,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	/**
 	 * Used to convert <code>IResourceDelta</code>s into <code>ICElementDelta</code>s.
 	 */
-	protected DeltaProcessor fDeltaProcessor = new DeltaProcessor();
+	protected final DeltaProcessor fDeltaProcessor = new DeltaProcessor();
 
 	/**
 	 * Queue of deltas created explicitly by the C Model that
@@ -101,7 +101,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 
 	/**
 	 * Queue of reconcile deltas on working copies that have yet to be fired.
-	 * This is a table form IWorkingCopy to IJavaElementDelta
+	 * This is a table form IWorkingCopy to ICElementDelta
 	 */
 	HashMap reconcileDeltas = new HashMap();
 
@@ -902,7 +902,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	private void firePreAutoBuildDelta(ICElementDelta deltaToNotify,
 		IElementChangedListener[] listeners, int[] listenerMask, int listenerCount) {
 
-		if (VERBOSE) {
+		if (Util.VERBOSE_DELTA) {
 			System.out.println("FIRING PRE_AUTO_BUILD Delta [" + Thread.currentThread() + "]:"); //$NON-NLS-1$//$NON-NLS-2$
 			System.out.println(deltaToNotify == null ? "<NONE>" : deltaToNotify.toString()); //$NON-NLS-1$
 		}
@@ -914,7 +914,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	private void firePostChangeDelta(ICElementDelta deltaToNotify, IElementChangedListener[] listeners, int[] listenerMask, int listenerCount) {
 
 		// post change deltas
-		if (VERBOSE) {
+		if (Util.VERBOSE_DELTA) {
 			System.out.println("FIRING POST_CHANGE Delta [" + Thread.currentThread() + "]:"); //$NON-NLS-1$//$NON-NLS-2$
 			System.out.println(deltaToNotify == null ? "<NONE>" : deltaToNotify.toString()); //$NON-NLS-1$
 		}
@@ -927,7 +927,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 
 	private void fireReconcileDelta(IElementChangedListener[] listeners, int[] listenerMask, int listenerCount) {
 		ICElementDelta deltaToNotify = mergeDeltas(this.reconcileDeltas.values());
-		if (VERBOSE) {
+		if (Util.VERBOSE_DELTA) {
 			System.out.println("FIRING POST_RECONCILE Delta [" + Thread.currentThread() + "]:"); //$NON-NLS-1$//$NON-NLS-2$
 			System.out.println(deltaToNotify == null ? "<NONE>" : deltaToNotify.toString()); //$NON-NLS-1$
 		}
@@ -941,7 +941,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	private void fireShiftEvent(ICElementDelta deltaToNotify, IElementChangedListener[] listeners, int[] listenerMask, int listenerCount) {
 
 		// post change deltas
-		if (VERBOSE) {
+		if (Util.VERBOSE_DELTA) {
 			System.out.println("FIRING POST_SHIFT event [" + Thread.currentThread() + "]:"); //$NON-NLS-1$//$NON-NLS-2$
 			System.out.println(deltaToNotify == null ? "<NONE>" : deltaToNotify.toString()); //$NON-NLS-1$
 		}
@@ -959,7 +959,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 			if (listenerMask == null || (listenerMask[i] & eventType) != 0) {
 				final IElementChangedListener listener = listeners[i];
 				long start = -1;
-				if (VERBOSE) {
+				if (Util.VERBOSE_DELTA) {
 					System.out.print("Listener #" + (i + 1) + "=" + listener.toString());//$NON-NLS-1$//$NON-NLS-2$
 					start = System.currentTimeMillis();
 				}
@@ -974,7 +974,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 						listener.elementChanged(extraEvent);
 					}
 				});
-				if (VERBOSE) {
+				if (Util.VERBOSE_DELTA) {
 					System.out.println(" -> " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,7 +63,7 @@ IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate, IMenuCreator {
 	private static final String DLG_TEXT  = Messages.getString("BuildAllAction.6");//$NON-NLS-1$
 	private static final String DLG_TITLE = Messages.getString("BuildAllAction.7");//$NON-NLS-1$
 	
-	protected ArrayList projects = null;
+	protected ArrayList<IProject> projects = null;
 	private ActionContributionItem it_all = null;
 	private ActionContributionItem it_sel = null; 
 	
@@ -87,7 +87,7 @@ IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate, IMenuCreator {
 							if (prjd == null) continue;
 							ICConfigurationDescription[] cfgds = prjd.getConfigurations();
 							if (cfgds != null && cfgds.length > 0) {
-								if (projects == null) projects = new ArrayList();
+								if (projects == null) projects = new ArrayList<IProject>();
 								projects.add(prj);
 							}
 						}
@@ -174,12 +174,15 @@ IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate, IMenuCreator {
 		}
 		
 		public void run() {
-			if (projects == null || projects.isEmpty()) return;
-			Iterator it = projects.iterator();
+			if (projects == null || projects.isEmpty()) 
+				return;
+			Iterator<IProject> it = projects.iterator();
 			if (forAll) {
-				while(it.hasNext()) processProject((IProject)it.next());
+				while(it.hasNext()) 
+					processProject((IProject)it.next());
 			} else {
-				if (it.hasNext()) processProject((IProject)it.next());
+				if (it.hasNext()) 
+					processProject((IProject)it.next());
 			}
 		}
 		

@@ -1213,4 +1213,18 @@ public class MultiConfiguration extends MultiItemsHolder implements
 			CCorePlugin.log(e);
 		}
 	}
+	
+	public String getBuildAttribute(String name, String defValue) {
+		String res = defValue;
+		IBuilder b = fCfgs[0].getBuilder();
+		if (b != null)
+			res = b.getBuildAttribute(name, defValue);
+		for (int i=1; i<fCfgs.length; i++) {
+			b = fCfgs[i].getBuilder();
+			if (b != null)
+				if (! res.equals(b.getBuildAttribute(name, defValue)))
+					return defValue;
+		}
+		return res;
+	}
 }

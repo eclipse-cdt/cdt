@@ -39,15 +39,16 @@ import org.eclipse.swt.widgets.Text;
 
 
 public class BuildStepsTab extends AbstractCBuildPropertyTab {
-	Combo combo;
-	Text preCmd;
-	Text preDes;
-	Text postCmd;
-	Text postDes;
-	ITool tool;
-	IConfiguration config;
-	ICResourceDescription cfgdescr;
-	IFileInfo rcfg;
+	private Combo combo;
+	private Text preCmd;
+	private Text preDes;
+	private Text postCmd;
+	private Text postDes;
+	private ITool tool;
+	private IConfiguration config;
+	private ICResourceDescription cfgdescr;
+	private IFileInfo rcfg;
+	private boolean canModify = true;
 	
 	private static final String label1 = Messages.getString("BuildStepsTab.0"); //$NON-NLS-1$
 	private static final String label2 = Messages.getString("BuildStepsTab.1"); //$NON-NLS-1$
@@ -94,14 +95,18 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 		preCmd = setupText(g1, 1, GridData.FILL_HORIZONTAL);
 		preCmd.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				getCfg().setPrebuildStep(preCmd.getText());
+				if (canModify && 
+					!preCmd.getText().equals(getCfg().getPrebuildStep()))
+					getCfg().setPrebuildStep(preCmd.getText());
 			}});
 
 		setupLabel(g1, label2, 1, GridData.BEGINNING);
 		preDes = setupText(g1, 1, GridData.FILL_HORIZONTAL);
 		preDes.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				getCfg().setPreannouncebuildStep(preDes.getText());
+				if (canModify && 
+					!preDes.getText().equals(getCfg().getPreannouncebuildStep()))	
+					getCfg().setPreannouncebuildStep(preDes.getText());
 			}});
 
 		Group g2 = setupGroup (usercomp, Messages.getString("BuildStepsTab.3"), 1, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
@@ -109,14 +114,18 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 		postCmd = setupText(g2, 1, GridData.FILL_HORIZONTAL);
 		postCmd.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				getCfg().setPostbuildStep(postCmd.getText());
+				if (canModify && 
+					!postCmd.getText().equals(getCfg().getPostbuildStep()))	
+				    getCfg().setPostbuildStep(postCmd.getText());
 			}});
 
 		setupLabel(g2, label2, 1, GridData.BEGINNING);
 		postDes = setupText(g2, 1, GridData.FILL_HORIZONTAL);
 		postDes.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				getCfg().setPostannouncebuildStep(postDes.getText());
+				if (canModify && 
+				   !postDes.getText().equals(getCfg().getPostannouncebuildStep()))		
+				   getCfg().setPostannouncebuildStep(postDes.getText());
 			}});
 	}
 
@@ -138,9 +147,10 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 		preCmd = setupText(g1, 1, GridData.FILL_HORIZONTAL);
 		preCmd.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				if (page.isForProject())
-					getCfg().setPrebuildStep(preCmd.getText());
-				else {
+			//	if (page.isForProject())
+			//		getCfg().setPrebuildStep(preCmd.getText());
+			//	else 
+				if (canModify && tool != null) {
 					IInputType[] ein = tool.getInputTypes();
 					if (ein != null && ein.length > 0) {
 						IAdditionalInput[] add = ein[0].getAdditionalInputs();
@@ -155,9 +165,10 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 		preDes = setupText(g1, 1, GridData.FILL_HORIZONTAL);
 		preDes.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				if (page.isForProject())
-					getCfg().setPreannouncebuildStep(preDes.getText());
-				else {
+//				if (page.isForProject())
+//					getCfg().setPreannouncebuildStep(preDes.getText());
+//				else {
+				if (canModify && tool != null) {
 					IOutputType[] out = tool.getOutputTypes();
 					if (valid(out))
 						out[0].setOutputNames(preDes.getText());
@@ -168,9 +179,10 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 		postCmd = setupText(g1, 1, GridData.FILL_HORIZONTAL);
 		postCmd.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				if (page.isForProject())
-					getCfg().setPostbuildStep(postCmd.getText());
-				else 
+//				if (page.isForProject())
+//					getCfg().setPostbuildStep(postCmd.getText());
+//				else 
+				if (canModify && tool != null) 
 					tool.setToolCommand(postCmd.getText());
 			}});
 
@@ -178,9 +190,10 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 		postDes = setupText(g1, 1, GridData.FILL_HORIZONTAL);
 		postDes.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				if (page.isForProject())
-					getCfg().setPostannouncebuildStep(postDes.getText());
-				else 
+//				if (page.isForProject())
+//					getCfg().setPostannouncebuildStep(postDes.getText());
+//				else 
+				if (canModify && tool != null)
 					tool.setAnnouncement(postDes.getText());
 			}});
 	}
@@ -192,7 +205,8 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 		update();
 	}
 		
-	private void update() {	
+	private void update() {
+		canModify = false; // avoid changing 
 		if (page.isForProject()) {
 			preCmd.setText(config.getPrebuildStep());
 			preDes.setText(config.getPreannouncebuildStep());
@@ -227,6 +241,7 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 				postDes.setText(EMPTY_STR);
 			}
 		}
+		canModify = true; 
 	}
 	
 	private ITool getRcbsTool(IFileInfo rcConfig){

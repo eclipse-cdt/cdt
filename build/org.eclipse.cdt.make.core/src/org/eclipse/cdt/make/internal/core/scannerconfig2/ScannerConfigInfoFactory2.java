@@ -534,9 +534,10 @@ public class ScannerConfigInfoFactory2 {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2#getSIProviderIdList()
 		 */
-		public List getProviderIdList() {
+		@SuppressWarnings("unchecked")
+		public List<String> getProviderIdList() {
             ProfileOptions po = (ProfileOptions) profileOptionsMap.get(selectedProfile);
-            return (po != null) ? new ArrayList(po.providerOptionsMap.keySet()) : new ArrayList(0);
+            return (po != null) ? new ArrayList<String>(po.providerOptionsMap.keySet()) : new ArrayList<String>(0);
 		}
 
 		/* (non-Javadoc)

@@ -31,7 +31,7 @@ public interface ICLanguageSetting extends ICSettingObject {
 
 	ICLanguageSettingEntry[] getSettingEntries(int kind);
 
-	List getSettingEntriesList(int kind);
+	List<ICLanguageSettingEntry> getSettingEntriesList(int kind);
 
 //	ICLanguageSettingEntry[] getResolvedSettingEntries();
 
@@ -39,7 +39,7 @@ public interface ICLanguageSetting extends ICSettingObject {
 
 	void setSettingEntries(int kind, ICLanguageSettingEntry[] entries);
 
-	void setSettingEntries(int kind, List entriesList);
+	void setSettingEntries(int kind, List<ICLanguageSettingEntry> entriesList);
 
 //	void changeEntries(ICLanguageSettingEntryInfo[] added, ICLanguageSettingEntry[] removed);
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.cdt.managedbuilder.ui.properties;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -82,11 +81,11 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
     private Group scGroup;
     
     private ICfgScannerConfigBuilderInfo2Set cbi;
-    private Map baseInfoMap;
+    private Map<InfoContext, Object> baseInfoMap;
     private IScannerConfigBuilderInfo2 buildInfo;
     private CfgInfoContext iContext;
-    private List pagesList = null;
-    private List visibleProfilesList = null;
+    private List<DiscoveryProfilePageConfiguration> pagesList = null;
+    private List<String> visibleProfilesList = null;
     private IPath configPath;
     private AbstractDiscoveryPage[] realPages;
 	protected SashForm sashForm;
@@ -172,7 +171,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
         profileComboBox.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
             	int x = profileComboBox.getSelectionIndex();
-            	String s = (String)visibleProfilesList.get(x); 
+            	String s = visibleProfilesList.get(x); 
             	buildInfo.setSelectedProfileId(s);
                 handleDiscoveryProfileChanged();
             }
@@ -188,10 +187,10 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 
  	public void updateData(ICResourceDescription rcfg) {
 		if (page.isMultiCfg()) {
-			usercomp.setVisible(false);
+			setAllVisible(false, null);
 			return;
  		} else {
-			usercomp.setVisible(true);
+			setAllVisible(true, null);
  			configPath = rcfg.getPath();
  	 		IConfiguration cfg = getCfg(rcfg.getConfiguration());
  	 		cbi = CfgScannerConfigProfileManager.getCfgScannerConfigBuildInfo(cfg);
@@ -210,13 +209,11 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
  		if (scopeComboBox != null) 
  			scopeComboBox.select(cbi.isPerRcTypeDiscovery() ? 0 : 1);
  		
- 		Map m = cbi.getInfoMap();
- 		Iterator it = m.keySet().iterator();
+ 		Map<CfgInfoContext, IScannerConfigBuilderInfo2> m = cbi.getInfoMap();
  		int pos = resTable.getSelectionIndex();
  		resTable.removeAll();
- 		while (it.hasNext()) {
+ 		for (CfgInfoContext ic : m.keySet()) {
  			String s = null; 
- 			CfgInfoContext ic = (CfgInfoContext)it.next();
  			IResourceInfo rci = ic.getResourceInfo();
  			if (rci == null) { // per configuration
  				s = ic.getConfiguration().getName();
@@ -276,9 +273,9 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
         scProblemReportingEnabledButton.setSelection(buildInfo.isProblemReportingEnabled());
 
         profileComboBox.removeAll();
-        List profilesList = buildInfo.getProfileIdList();
+        List<String> profilesList = buildInfo.getProfileIdList();
         Collections.sort(profilesList, CDTListComparator.getInstance());
-        visibleProfilesList = new ArrayList(profilesList.size());
+        visibleProfilesList = new ArrayList<String>(profilesList.size());
         
         if (realPages != null && realPages.length > 0) {
         	for (int i=0; i<realPages.length; i++) {
@@ -292,12 +289,10 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
         realPages = new AbstractDiscoveryPage[profilesList.size()];
         String[] labels = new String[profilesList.size()];
         String[] profiles = new String[profilesList.size()];
-        Iterator it = profilesList.iterator();
         int counter = 0;
         int pos = 0;
         String savedId = buildInfo.getSelectedProfileId();
-        while (it.hasNext()) {
-            String profileId = (String)it.next();
+        for (String profileId : profilesList) {
             if (!cbi.isProfileSupported(iContext, profileId)) 
  				continue; 
  			visibleProfilesList.add(profileId);
@@ -305,8 +300,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
             if (profileId.equals(savedId)) 
             	pos = counter;
             buildInfo.setSelectedProfileId(profileId); // needs to create page
-    		for (Iterator it2 = pagesList.iterator(); it2.hasNext(); ) {
-    			DiscoveryProfilePageConfiguration p = (DiscoveryProfilePageConfiguration)it2.next();
+    		for (DiscoveryProfilePageConfiguration p : pagesList) {
     			if (p != null && p.profId.equals(profileId)) {
     				AbstractDiscoveryPage pg = p.getPage();
     				if (pg != null) {
@@ -400,7 +394,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
      * 
      */
     private void initializeProfilePageMap() {
-        pagesList = new ArrayList(5);
+        pagesList = new ArrayList<DiscoveryProfilePageConfiguration>(5);
 		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(
 				NAMESPACE, POINT);
 		if (point == null) return; 
@@ -488,7 +482,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 	}
 	
 	private void clearChangedDiscoveredInfos(){
- 		List changedContexts = checkChanges();
+ 		List<CfgInfoContext> changedContexts = checkChanges();
  		IProject project = getProject();
  		for(int i = 0; i < changedContexts.size(); i++){
  			CfgInfoContext c = (CfgInfoContext)changedContexts.get(i);
@@ -497,14 +491,14 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
  		}
 	}
 
-	private List checkChanges(){
+	private List<CfgInfoContext> checkChanges(){
 		if(cbi == null || baseInfoMap == null)
-			return new ArrayList(0);
+			return new ArrayList<CfgInfoContext>(0);
 		
 		Map<CfgInfoContext, IScannerConfigBuilderInfo2> cfgInfoMap = cbi.getInfoMap();
 		HashMap<InfoContext, Object> baseCopy = new HashMap<InfoContext, Object>(baseInfoMap);
 		List<CfgInfoContext> list = new ArrayList<CfgInfoContext>();
-		for(Map.Entry entry : cfgInfoMap.entrySet()){
+		for(Map.Entry<CfgInfoContext, IScannerConfigBuilderInfo2> entry : cfgInfoMap.entrySet()){
 			CfgInfoContext cic = (CfgInfoContext)entry.getKey();
 			InfoContext c = cic.toInfoContext();
 			if(c == null)
@@ -553,7 +547,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		return true;
 	}
 
-	private boolean listEqual(List<Object> l1, List<Object> l2) {
+	private boolean listEqual(List<String> l1, List<String> l2) {
 		if (l1 == null && l2 == null) return true;
 		if (l2 == null || l2 == null) return false;
 		if (l1.size() != l2.size()) return false;
@@ -561,9 +555,8 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		// since it's most probable, try it first.
 		if (l1.equals(l2)) return true;
 		// order may differ...
-		Iterator<Object> it = l1.iterator();
-		while (it.hasNext())
-			if (!l2.contains(it.next())) return false;
+		for (String s : l1)
+			if (!l2.contains(s)) return false;
 		return true;
 	}
 	

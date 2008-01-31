@@ -21,7 +21,7 @@ public interface IScannerConfigBuilderInfo2Set {
 	 * 
 	 * @return InfoContext - to IScannerConfigBuilderInfo2 map
 	 */
-	Map getInfoMap();
+	Map<InfoContext, Object> getInfoMap();
 	
 	IScannerConfigBuilderInfo2 getInfo(InfoContext context);
 	

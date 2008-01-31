@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Intel Corporation and others.
+ * Copyright (c) 2005, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,7 +43,7 @@ public class ConvertTargetDialog extends Dialog {
 	final private String title;
 	protected List convertersList;
 	private IProject project;
-	private Map conversionElements;
+	private Map<String, IConfigurationElement> conversionElements;
 	private IConfigurationElement selectedConversionElement;
 	private static boolean isConversionSuccessful = false;
 	
@@ -173,9 +173,9 @@ public class ConvertTargetDialog extends Dialog {
 			b.setEnabled(convertersList.getSelectionIndex() != -1); 
 	}
 	
-	private Map getConversionElements() {
+	private Map<String, IConfigurationElement> getConversionElements() {
 		if (conversionElements == null) {
-			conversionElements = new HashMap(); 
+			conversionElements = new HashMap<String, IConfigurationElement>(); 
 		}
 		return conversionElements;
 	}

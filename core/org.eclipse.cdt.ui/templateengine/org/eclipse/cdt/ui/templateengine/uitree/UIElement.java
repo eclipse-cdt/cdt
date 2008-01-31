@@ -74,7 +74,7 @@ public abstract class UIElement {
 	 * get The values as a HashMap. This method is called recursively on all the childrens, if the UIElement instance on which this mehtod called is a GenericUIElementGroup.
 	 * @return  HashMap.
 	 */
-	public abstract Map/*<String, String>*/ getValues();
+	public abstract Map<String, String> getValues();
 
 	/**
 	 * This method adds UIWidets to UIComposite. This method is called

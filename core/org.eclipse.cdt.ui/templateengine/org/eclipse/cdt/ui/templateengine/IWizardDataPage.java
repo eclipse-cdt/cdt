@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Limited and others.
+ * Copyright (c) 2007, 2008 Symbian Software Limited and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,7 @@ public interface IWizardDataPage extends IWizardPage {
 	 * @return a map of (key,value) pairs that should be added to the
 	 * associated project template's value store.
 	 */
-	Map/*<String, String>*/ getPageData();
+	Map<String, String> getPageData();
 	
 	/**
 	 * Set the page that follows this one. Implementations must ensure

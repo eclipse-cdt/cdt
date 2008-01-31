@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,10 +36,10 @@ import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 
 
 public class ErrorParsTab extends AbstractCPropertyTab {
-	protected HashMap mapParsers = new HashMap();
-	protected Table table;
-	protected CheckboxTableViewer tv;
-	ICConfigurationDescription cfgd;
+	private HashMap<String, String> mapParsers = new HashMap<String, String>();
+	private Table table;
+	private CheckboxTableViewer tv;
+	private ICConfigurationDescription cfgd;
 	
 	public void createControls(Composite parent) {
 		super.createControls(parent);
@@ -146,12 +146,12 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 			((ICMultiConfigDescription)cfgd).getErrorParserIDs() :
 			cfgd.getBuildSetting().getErrorParserIDs();
 		
-		ArrayList data = new ArrayList(mapParsers.size());
-		ArrayList checked = new ArrayList(ss.length);
-		HashMap cloneMap = new HashMap(mapParsers);
+		ArrayList<TableData> data = new ArrayList<TableData>(mapParsers.size());
+		ArrayList<TableData> checked = new ArrayList<TableData>(ss.length);
+		HashMap<String, String> cloneMap = new HashMap<String, String>(mapParsers);
 		// add checked elements
 		for (int i=0; i<ss.length; i++) {
-			String s = (String)cloneMap.get(ss[i]);
+			String s = cloneMap.get(ss[i]);
 			if (s != null) {
 				TableData d = new TableData(ss[i],s);
 				data.add(d);
@@ -163,7 +163,7 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 		Iterator it = cloneMap.keySet().iterator();
 		while (it.hasNext()) {
 			String s = (String)it.next();
-			data.add(new TableData(s, (String)cloneMap.get(s)));
+			data.add(new TableData(s, cloneMap.get(s)));
 		}
 		tv.setInput(data.toArray());
 		tv.setCheckedElements(checked.toArray());
@@ -193,12 +193,12 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 	
 	private void saveChecked() {
 		Object[] objs = tv.getCheckedElements();
-		ArrayList lst = new ArrayList();
+		ArrayList<String> lst = new ArrayList<String>();
 		if (objs != null) {
-			for (int i=0; i<objs.length; i++) 
-				lst.add(((TableData)objs[i]).key);
+			for (Object ob : objs) 
+				lst.add(((TableData)ob).key);
 		}
-		String[] s = (String[])lst.toArray(new String[lst.size()]);
+		String[] s = lst.toArray(new String[lst.size()]);
 		if (cfgd instanceof ICMultiConfigDescription)
 			((ICMultiConfigDescription)cfgd).setErrorParserIDs(s);
 		else

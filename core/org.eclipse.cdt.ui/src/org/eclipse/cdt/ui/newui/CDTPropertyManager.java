@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,7 +46,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
  */
 public class CDTPropertyManager {
 
-	private static ArrayList pages = new ArrayList();
+	private static ArrayList<Object> pages = new ArrayList<Object>();
 	private static ICProjectDescription prjd = null;
 	private static boolean saveDone  = false;
 	private static IProject project = null;

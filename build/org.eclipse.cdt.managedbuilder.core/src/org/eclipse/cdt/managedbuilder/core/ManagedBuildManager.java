@@ -3735,9 +3735,9 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * Generic function for getting the list of converters for the given Build Object
 	 */
 
-	public static Map getConversionElements(IBuildObject buildObj) {
+	public static Map<String, IConfigurationElement> getConversionElements(IBuildObject buildObj) {
 
-		Map conversionTargets = new HashMap();
+		Map<String, IConfigurationElement> conversionTargets = new HashMap<String, IConfigurationElement>();
 
 		// Get the Converter Extension Point
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry()

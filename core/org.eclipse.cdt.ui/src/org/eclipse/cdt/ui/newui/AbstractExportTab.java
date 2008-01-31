@@ -66,11 +66,11 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 	public static final Image IMG_MK = CPluginImages.get(CPluginImages.IMG_OBJS_MACRO);
 	private static final String ALL = UIMessages.getString("AbstractExportTab.0"); //$NON-NLS-1$
 	private static final String LIST = UIMessages.getString("AbstractExportTab.1"); //$NON-NLS-1$
-	private static Map names_l = new HashMap();
-	private static Map names_t = new HashMap();
+	private static Map<String, String> names_l = new HashMap<String, String>();
+	private static Map<String, String> names_t = new HashMap<String, String>();
 	private static String[] names_ls; 	
 	private static String[] names_ts;
-	private List namesList;
+	private List<String> namesList;
 
 	static {
 		ILanguage[] ls = lm.getRegisteredLanguages();
@@ -171,20 +171,20 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 		int x = table.getSelectionIndex();
 		if (x == -1) x = 0;
 		
-		namesList = new ArrayList();
-		ArrayList lst = new ArrayList();
+		namesList = new ArrayList<String>();
+		ArrayList<ExtData> lst = new ArrayList<ExtData>();
 		ICExternalSetting[] vals = cfg.getExternalSettings();
 		if (vals == null || vals.length == 0) {
 			tv.setInput(null);
 			updateButtons();
 			return;
 		}
-		for (int i=0; i<vals.length; i++) {
-			ICSettingEntry[] ents = vals[i].getEntries(getKind());
+		for (ICExternalSetting v : vals) {
+			ICSettingEntry[] ents = v.getEntries(getKind());
 			if (ents == null || ents.length == 0) continue;
-			for (int j=0; j<ents.length; j++) {
-				lst.add(new ExtData(vals[i], ents[j]));
-				namesList.add(ents[j].getName());
+			for (ICSettingEntry se : ents) {
+				lst.add(new ExtData(v, se));
+				namesList.add(se.getName());
 			}
 		}
 		Collections.sort(lst, CDTListComparator.getInstance());
@@ -201,13 +201,10 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 	public void updateData(ICResourceDescription rcfg) {
 		if (rcfg == null) return;
 		if (page.isMultiCfg()) {
-			usercomp.setVisible(false);
-			buttoncomp.setVisible(false);
+			setAllVisible(false, null);
 		} else { 
-			if (! usercomp.getVisible()) {
-				usercomp.setVisible(true);
-				buttoncomp.setVisible(true);
-			}
+			if (! usercomp.getVisible()) 
+				setAllVisible(true, null);
 			cfg = rcfg.getConfiguration();
 			update();
 		}
@@ -279,27 +276,27 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 				old = (ExtData)(its[t].getData());
 				if (old.entry.isReadOnly() || old.entry.isBuiltIn()) continue;
 				ICSettingEntry[] ls = old.setting.getEntries(getKind());
-				ArrayList lst = new ArrayList();
+				ArrayList<ICSettingEntry> lst = new ArrayList<ICSettingEntry>();
 outer:				
-				for (int x=0; x<ls.length; x++) { 
+				for (ICSettingEntry se : ls) { 
 					for (int y=t; y<its.length; y++) {
 						if (its[y] == null) break;
 						Object ob = its[y].getData();
 						if (ob != null && (ob instanceof ExtData)) {  
 							ExtData ex = (ExtData)ob;
-							if (ls[x].equals(ex.entry)) {
+							if (se.equals(ex.entry)) {
 								checked[y] = true;
 								continue outer;
 							}
 						}
 					}
-					lst.add(ls[x]);
+					lst.add(se);
 				}
 				cfg.removeExternalSetting(old.setting);
 				cfg.createExternalSetting(old.setting.getCompatibleLanguageIds(), 
 						old.setting.getCompatibleContentTypeIds(),
 						old.setting.getCompatibleExtensions(), 
-						(ICLanguageSettingEntry[])lst.toArray(new ICLanguageSettingEntry[lst.size()])); 
+						lst.toArray(new ICLanguageSettingEntry[lst.size()])); 
 			}
 			update();
 			break;

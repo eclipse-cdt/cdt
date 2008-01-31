@@ -26,12 +26,12 @@ import org.eclipse.cdt.core.settings.model.MultiItemsHolder;
  * Normally, they should have the same name.
  */
 public class MultiLanguageSetting extends MultiItemsHolder implements ICLanguageSetting {
-	private static final Comparator comp = CDTListComparator.getInstance();
+	private static final Comparator<Object> comp = CDTListComparator.getInstance();
 
 	ICLanguageSetting[] items = null;
 	ICConfigurationDescription cfgd = null;
 	
-	public MultiLanguageSetting(List data, ICConfigurationDescription cf) {
+	public MultiLanguageSetting(List<ICLanguageSetting> data, ICConfigurationDescription cf) {
 		items = (ICLanguageSetting[])data.toArray(new ICLanguageSetting[data.size()]);
 		cfgd = cf;
 	}
@@ -73,7 +73,7 @@ public class MultiLanguageSetting extends MultiItemsHolder implements ICLanguage
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.settings.model.ICLanguageSetting#getSettingEntriesList(int)
 	 */
-	public List getSettingEntriesList(int kind) {
+	public List<ICLanguageSettingEntry> getSettingEntriesList(int kind) {
 		return Arrays.asList(getSettingEntries(kind));
 	}
 
@@ -125,7 +125,7 @@ public class MultiLanguageSetting extends MultiItemsHolder implements ICLanguage
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.settings.model.ICLanguageSetting#setSettingEntries(int, java.util.List)
 	 */
-	public void setSettingEntries(int kind, List entriesList) {
+	public void setSettingEntries(int kind, List<ICLanguageSettingEntry> entriesList) {
 		for (int i=0; i<items.length; i++)
 			items[i].setSettingEntries(kind, entriesList);
 	}

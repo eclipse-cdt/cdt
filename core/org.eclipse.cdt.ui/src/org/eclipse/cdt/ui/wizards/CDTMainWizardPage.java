@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -261,7 +261,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 			IExtension[] extensions = extensionPoint.getExtensions();
 			if (extensions == null) return null;
 			
-			List items = new ArrayList();
+			List<EntryDescriptor> items = new ArrayList<EntryDescriptor>();
 			for (int i = 0; i < extensions.length; ++i)	{
 				IConfigurationElement[] elements = extensions[i].getConfigurationElements();
 				for (int k = 0; k < elements.length; k++) {
@@ -274,10 +274,9 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 							return null; 
 						}
 						if (w == null) return null;
-						
 						w.setDependentControl(right, ls);
-						EntryDescriptor[] wd = w.createItems(show_sup.getSelection(), wizard);
-						for (int x=0; x<wd.length; x++)	items.add(wd[x]);
+						for (EntryDescriptor ed : w.createItems(show_sup.getSelection(), wizard))	
+							items.add(ed);
 					}
 				}
 			}
@@ -305,15 +304,13 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 			return null;
 		}
 
-		private static void addItemsToTree(Tree tree, List items) {
+		private static void addItemsToTree(Tree tree, List<EntryDescriptor> items) {
 		//  Sorting is disabled because of users requests	
 		//	Collections.sort(items, CDTListComparator.getInstance());
 			
-			ArrayList placedTreeItemsList = new ArrayList(items.size());
-			ArrayList placedEntryDescriptorsList = new ArrayList(items.size());
-			Iterator it = items.iterator();
-			while (it.hasNext()) {
-				EntryDescriptor wd = (EntryDescriptor)it.next();
+			ArrayList<TreeItem> placedTreeItemsList = new ArrayList<TreeItem>(items.size());
+			ArrayList<EntryDescriptor> placedEntryDescriptorsList = new ArrayList<EntryDescriptor>(items.size());
+			for (EntryDescriptor wd : items) {
 				if (wd.getParentId() == null) {
 					wd.setPath(wd.getId());
 					TreeItem ti = new TreeItem(tree, SWT.NONE);
@@ -332,7 +329,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 					EntryDescriptor wd1 = (EntryDescriptor)it2.next();
 					if (wd1.getParentId() == null) continue;
 					for (int i=0; i<placedEntryDescriptorsList.size(); i++) {
-						EntryDescriptor wd2 = (EntryDescriptor)placedEntryDescriptorsList.get(i);
+						EntryDescriptor wd2 = placedEntryDescriptorsList.get(i);
 						if (wd2.getId().equals(wd1.getParentId())) {
 							found = true;
 							wd1.setParentId(null);
@@ -347,7 +344,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 							if (h != null && !h.isApplicable(wd1))
 								break;
 							
-							TreeItem p = (TreeItem)placedTreeItemsList.get(i);
+							TreeItem p = placedTreeItemsList.get(i);
 							TreeItem ti = new TreeItem(p, SWT.NONE);
 							ti.setText(wd1.getName());
 							ti.setData(wd1.getHandler());
@@ -406,6 +403,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 			return IMG_ITEM;
 		}
 
+		@SuppressWarnings("unchecked")
 		public List filterItems(List items) {
 			return items;
 		}

@@ -30,16 +30,16 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage impleme
 	private static final String ERROR_SUFFIX_TOO_LONG = Messages.getString("NewProjectCreationPage.1"); //$NON-NLS-1$
 	private static final Status OK_STATUS = new Status(IStatus.OK, CUIPlugin.getPluginId(), 0, "", null); //$NON-NLS-1$
 
-	private Map data;
+	private Map<String, String> data;
 	private IWizardPage next;
 	
 	public NewProjectCreationPage(String name) {
 		super(name);
-		data= new HashMap();
+		data= new HashMap<String, String>();
 		this.setDescription(Messages.getString("NewProjectCreationPage.3"));	 //$NON-NLS-1$
 	}
 
-	public Map getPageData() {
+	public Map<String, String> getPageData() {
 		String projName = super.getProjectName().trim();
 		data.put("projectName", projName); //$NON-NLS-1$
 		data.put("baseName", getBaseName(projName)); //$NON-NLS-1$

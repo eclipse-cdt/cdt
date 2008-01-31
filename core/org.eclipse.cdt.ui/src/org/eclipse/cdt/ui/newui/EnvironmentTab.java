@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,7 +69,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 
 	private Table table;
 	private TableViewer tv;
-	private ArrayList data = new ArrayList();
+	private ArrayList<TabData> data = new ArrayList<TabData>();
 	private Button b1, b2;
 	
 	private ICConfigurationDescription cfgd = null;
@@ -162,9 +162,10 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 		tv = new TableViewer(table);
 		tv.setContentProvider(new IStructuredContentProvider() {
 
+			@SuppressWarnings("unchecked")
 			public Object[] getElements(Object inputElement) {
 				if (inputElement != null && inputElement instanceof ArrayList) {
-					ArrayList ar = (ArrayList)inputElement;
+					ArrayList<Object> ar = (ArrayList)inputElement;
 					return ar.toArray(new TabData[0]);
 				}
 				return null;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -101,7 +101,7 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 
 	private ITool fTool;
 	// Map that holds all user object options and its values
-	private HashMap<String, String> userObjsMap;
+	private HashMap<IOption, String> userObjsMap;
 	
 	public BuildToolSettingUI(AbstractCBuildPropertyTab page,
 			IResourceInfo info, ITool _tool) {
@@ -111,7 +111,7 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 		this.fTool = _tool;
 		buildPropPage = page;
 		stringOptionsMap = new HashMap<String, String>();
-		userObjsMap = new HashMap<String, String>();
+		userObjsMap = new HashMap<IOption, String>();
 	}
 	
 	/* (non-Javadoc)
@@ -364,21 +364,18 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 			}
 		}
 		// "OBJECTS" type
-		Set<String> objSet = userObjsMap.keySet();
+		Set<IOption> objSet = userObjsMap.keySet();
 		for (int s = 0; s < objSet.size(); s++) {
-			Iterator iterator = objSet.iterator();
-			while (iterator.hasNext()) {
-				Object key = iterator.next();
-				String val = (String) userObjsMap.get(key);
+			for (IOption op : objSet) {
+				String val = (String) userObjsMap.get(op);
 				ArrayList<String> list = new ArrayList<String>();
-				String[] vals = parseString(val);
-				for (int t = 0; t < vals.length; t++) {
-					if (alloptions.indexOf(vals[t]) != -1)
-						list.add(vals[t]);
+				for (String v : parseString(val)) {
+					if (alloptions.indexOf(v) != -1)
+						list.add(v);
 				}
 				String listArr[] = new String[list.size()];
 				list.toArray(listArr);
-				setOption(((IOption) key), listArr);
+				setOption(op, listArr);
 			}
 		}
 		// Now update the preference store with parsed options
@@ -418,12 +415,10 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 					case IOption.PREPROCESSOR_SYMBOLS :
 					case IOption.LIBRARIES :
 						ArrayList<String> newList = new ArrayList<String>();
-						for (int i = 0; i < optionsList.size(); i++) {
+						for (String s : optionsList) {
 							if (opt.getCommand() != null
-									&& ((String) optionsList.get(i)).startsWith(opt
-											.getCommand())) {
-								newList.add(((String) optionsList.get(i))
-										.substring(opt.getCommand().length()));
+									&& s.startsWith(opt.getCommand())) {
+								newList.add(s.substring(opt.getCommand().length()));
 							}
 						}
 						String[] strlist = new String[newList.size()];

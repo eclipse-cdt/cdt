@@ -117,20 +117,17 @@ public class RefsTab extends AbstractCPropertyTab {
 
 	public void updateData(ICResourceDescription cfgd) {
 		if (page.isMultiCfg()) {
-			usercomp.setVisible(false);
-			buttoncomp.setVisible(false);
+			setAllVisible(false, null);
 		} else {
-			if ( !usercomp.getVisible()) {
-				usercomp.setVisible(true);
-				buttoncomp.setVisible(true);
-			}
+			if ( !usercomp.getVisible()) 
+				setAllVisible(true, null);
 			initData();
 		}
 	}
 
 	private void saveChecked() {
 		TreeItem[] tr = tree.getItems();
-		Map refs = new HashMap();
+		Map<String, String> refs = new HashMap<String, String>();
 		for (int i=0; i<tr.length; i++) {
 			if (tr[i].getChecked()) {
 				TreeItem[] cfgs = tr[i].getItems();

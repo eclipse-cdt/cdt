@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Limited and others.
+ * Copyright (c) 2007, 2008 Symbian Software Limited and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,7 +40,7 @@ public class UIWizardPage extends UIPage implements IWizardDataPage, PatternEven
 	 * This map will contain reference to the source widgets, which has generated the 
 	 * SWT events. If this map contains an event source, the error message will not be cleared.
 	 */
-	HashMap/*<Object, String>*/ validInvalid;
+	HashMap<Object, String> validInvalid;
 
 	/**
 	 * Page Name
@@ -77,7 +77,7 @@ public class UIWizardPage extends UIPage implements IWizardDataPage, PatternEven
 	public UIWizardPage(String title, String pageName, UIElement uiElement, Map/*<String, String>*/ valueStore) {
 		super(title, uiElement, valueStore);
 		name = pageName;
-		validInvalid = new HashMap/*<Object, String>*/();
+		validInvalid = new HashMap<Object, String>();
 		isPageComplete = uiElement.isValid();
 	}
 
@@ -312,13 +312,12 @@ public class UIWizardPage extends UIPage implements IWizardDataPage, PatternEven
 	 * @return
 	 */
 	private String getErrorString() {
-		Iterator iterator = validInvalid.keySet().iterator();
+		Iterator<Object> iterator = validInvalid.keySet().iterator();
 		String message = ""; //$NON-NLS-1$
 		
 		// only display one error message at a time
 		if (iterator.hasNext()) {
-
-			message = (String) validInvalid.get(iterator.next());
+			message = validInvalid.get(iterator.next());
 		}
 		return message;
 	}

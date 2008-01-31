@@ -13,7 +13,6 @@ package org.eclipse.cdt.core.settings.model.util;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -24,7 +23,6 @@ import org.eclipse.cdt.core.settings.model.ICLibraryFileEntry;
 import org.eclipse.cdt.core.settings.model.ICLibraryPathEntry;
 import org.eclipse.cdt.core.settings.model.ICMacroEntry;
 import org.eclipse.cdt.core.settings.model.ICMacroFileEntry;
-import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 
 public class EntryStore {
 	private KindBasedStore fStore = new KindBasedStore();
@@ -39,40 +37,35 @@ public class EntryStore {
 	}
 	
 	public EntryStore(EntryStore base, boolean preserveReadOnly){
-		int kinds[] = KindBasedStore.getLanguageEntryKinds();
-		int kind;
-		for(int i = 0; i < kinds.length; i++){
-			kind = kinds[i];
-			ArrayList list = (ArrayList)fStore.get(kind);
+		for(int kind : KindBasedStore.getLanguageEntryKinds()){
+			ArrayList<?> list = (ArrayList<?>)fStore.get(kind);
 			if(list != null)
-				fStore.put(kind, (ArrayList)list.clone());
+				fStore.put(kind, (ArrayList<?>)list.clone());
 		}
 		fPreserveReadOnly = preserveReadOnly;
 	}
 
+	@SuppressWarnings("unchecked")
 	public ICLanguageSettingEntry[] getEntries(){
-		int kinds[] = KindBasedStore.getLanguageEntryKinds();
-		List result = new ArrayList();
-		List list;
-		for(int i = 0; i < kinds.length; i++){
-			list = (List)fStore.get(kinds[i]);
+		List<ICLanguageSettingEntry> result = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> list;
+		for(int k: KindBasedStore.getLanguageEntryKinds()){
+			list = (List<ICLanguageSettingEntry>)fStore.get(k);
 			if(list != null)
 				result.addAll(list);
 		}
-		
-		return (ICLanguageSettingEntry[])result.toArray(new ICLanguageSettingEntry[result.size()]);
+		return result.toArray(new ICLanguageSettingEntry[result.size()]);
 	}
 	
 	public boolean containsEntriesList(int kind){
-		List list = getEntriesList(kind, false);
+		List<?> list = getEntriesList(kind, false);
 		return list != null;
 	}
 
 	public ICLanguageSettingEntry[] getEntries(int kind){
-		List list = getEntriesList(kind);
-//		if(list != null){
+		List<ICLanguageSettingEntry> list = getEntriesList(kind);
 		if(list == null)
-			list = new ArrayList(0);
+			list = new ArrayList<ICLanguageSettingEntry>(0);
 		switch(kind){
 		case ICLanguageSettingEntry.INCLUDE_PATH:
 			return (ICLanguageSettingEntry[])list.toArray(new ICIncludePathEntry[list.size()]);
@@ -89,25 +82,24 @@ public class EntryStore {
 		default:
 			throw new IllegalArgumentException();
 		}
-//		}
-//		return null;
 	}
 
-	public List getEntriesList(int kind){
-		List list = getEntriesList(kind, false);
+	public List<ICLanguageSettingEntry> getEntriesList(int kind){
+		List<ICLanguageSettingEntry> list = getEntriesList(kind, false);
 		if(list != null)
-			return new ArrayList(list);
-		return new ArrayList(0);
+			return new ArrayList<ICLanguageSettingEntry>(list);
+		return new ArrayList<ICLanguageSettingEntry>(0);
 	}
 
-	private void setEntriesList(int kind, List list){
+	private void setEntriesList(int kind, List<ICLanguageSettingEntry> list){
 		fStore.put(kind, list);
 	}
 	
-	private List getEntriesList(int kind, boolean create){
-		List list = (List)fStore.get(kind);
+	@SuppressWarnings("unchecked")
+	private List<ICLanguageSettingEntry> getEntriesList(int kind, boolean create){
+		List<ICLanguageSettingEntry> list = (List<ICLanguageSettingEntry>)fStore.get(kind);
 		if(list == null && create){
-			fStore.put(kind, list = new ArrayList());
+			fStore.put(kind, list = new ArrayList<ICLanguageSettingEntry>());
 		}
 		return list;
 	}
@@ -117,7 +109,7 @@ public class EntryStore {
 //	}
 	
 	public void addEntry(int pos, ICLanguageSettingEntry entry){
-		List list = getEntriesList(entry.getKind(), true);
+		List<ICLanguageSettingEntry> list = getEntriesList(entry.getKind(), true);
 		if(pos >= list.size())
 			list.add(entry);
 		else 
@@ -131,19 +123,21 @@ public class EntryStore {
 	}
 
 	public void storeEntries(int kind, ICLanguageSettingEntry[] entries){
-		storeEntries(kind, entries != null ? Arrays.asList(entries) : new ArrayList());
+		storeEntries(kind, 
+				entries != null ? 
+						Arrays.asList(entries) : 
+						new ArrayList<ICLanguageSettingEntry>());
 	}
 
-	public void storeEntries(int kind, List list){
-		List newList = new ArrayList(list);
+	public void storeEntries(int kind, List<ICLanguageSettingEntry> list){
+		List<ICLanguageSettingEntry> newList = new ArrayList<ICLanguageSettingEntry>(list);
 //		newList.addAll(Arrays.asList(entries));
 		if(fPreserveReadOnly){
-			List oldList = getEntriesList(kind, false);
+			List<ICLanguageSettingEntry> oldList = getEntriesList(kind, false);
 			if(oldList != null){
-				Set ro = getReadOnlySet(oldList);
+				Set<ICLanguageSettingEntry> ro = getReadOnlySet(oldList);
 				ro.removeAll(newList);
-				for(Iterator iter = oldList.iterator(); iter.hasNext();){
-					Object o = iter.next();
+				for(ICLanguageSettingEntry o : oldList){
 					if(ro.contains(o))
 						newList.add(o);
 				}
@@ -152,10 +146,9 @@ public class EntryStore {
 		setEntriesList(kind, newList);
 	}
 	
-	private Set getReadOnlySet(List entries){
-		Set set = new HashSet();
-		for(Iterator iter = entries.iterator(); iter.hasNext();){
-			ICSettingEntry entry = (ICSettingEntry)iter.next();
+	private Set<ICLanguageSettingEntry> getReadOnlySet(List<ICLanguageSettingEntry> entries){
+		Set<ICLanguageSettingEntry> set = new HashSet<ICLanguageSettingEntry>();
+		for(ICLanguageSettingEntry entry : entries){
 			if(entry.isReadOnly())
 				set.add(entry);
 		}
@@ -163,14 +156,16 @@ public class EntryStore {
 	}
 	
 	public void addEntry(ICLanguageSettingEntry entry){
-		List list = getEntriesList(entry.getKind(), true);
+		List<ICLanguageSettingEntry> list = getEntriesList(entry.getKind(), true);
 		list.add(entry);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void trimToSize(){
 		int kinds[] = KindBasedStore.getLanguageEntryKinds();
 		for(int i = 0; i < kinds.length; i++){
-			ArrayList list = (ArrayList)fStore.get(kinds[i]);
+			ArrayList<ICLanguageSettingEntry> list = 
+				(ArrayList<ICLanguageSettingEntry>)fStore.get(kinds[i]);
 			if(list != null)
 				list.trimToSize();
 		}

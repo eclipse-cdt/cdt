@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -82,13 +82,12 @@ public class CDTConfigWizardPage extends WizardPage {
 		if (getDefault || table == null || !isVisited())  
 			its = getDefaultCfgs(handler);
 		else {
-			ArrayList out = new ArrayList(table.getItemCount());
-			TableItem[] tis = table.getItems();
-			for (int i=0; i < tis.length; i++) {
-				if (tis[i].getChecked())
-					out.add(tis[i].getData()); 
+			ArrayList<CfgHolder> out = new ArrayList<CfgHolder>(table.getItemCount());
+			for (TableItem ti : table.getItems()) {
+				if (ti.getChecked())
+					out.add((CfgHolder)ti.getData()); 
 			}
-			its = (CfgHolder[])out.toArray(new CfgHolder[out.size()]);
+			its = out.toArray(new CfgHolder[out.size()]);
 		}
 		return its;
 	}
@@ -189,19 +188,18 @@ public class CDTConfigWizardPage extends WizardPage {
 	 * @return
 	 */
 	static public CfgHolder[] getDefaultCfgs(MBSWizardHandler handler) {
-		IToolChain[] tcs = handler.getSelectedToolChains();
 		String id = handler.getPropertyId();
 		IProjectType pt = handler.getProjectType(); 
-		ArrayList out = new ArrayList(tcs.length * 2);
-		for (int i=0; i < tcs.length; i++) {
+		ArrayList<CfgHolder> out = new ArrayList<CfgHolder>();
+		for (IToolChain tc : handler.getSelectedToolChains()){
 			CfgHolder[] cfgs = null;
 			if (id != null) 
-				cfgs = CfgHolder.cfgs2items(ManagedBuildManager.getExtensionConfigurations(tcs[i], MBSWizardHandler.ARTIFACT, id));
+				cfgs = CfgHolder.cfgs2items(ManagedBuildManager.getExtensionConfigurations(tc, MBSWizardHandler.ARTIFACT, id));
 			else if (pt != null) 
-				cfgs = CfgHolder.cfgs2items(ManagedBuildManager.getExtensionConfigurations(tcs[i], pt));
+				cfgs = CfgHolder.cfgs2items(ManagedBuildManager.getExtensionConfigurations(tc, pt));
 			else { // Create default configuration for StdProject
 				cfgs = new CfgHolder[1];
-				cfgs[0] = new CfgHolder(tcs[i], null);
+				cfgs[0] = new CfgHolder(tc, null);
 			}
 			if (cfgs == null) return null;
 			
@@ -210,7 +208,7 @@ public class CDTConfigWizardPage extends WizardPage {
 				out.add(cfgs[j]);
 			}
 		}
-		return (CfgHolder[])out.toArray(new CfgHolder[out.size()]);
+		return out.toArray(new CfgHolder[out.size()]);
 	}
 	
 	/**

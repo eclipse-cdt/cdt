@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,9 +66,9 @@ public abstract class AbstractCWizard extends CNewWizard {
 		// Check for platform compatibility
 		ITargetPlatform tp = tc.getTargetPlatform();
 		if (tp != null) {
-			List osList = Arrays.asList(tc.getOSList());
+			List<String> osList = Arrays.asList(tc.getOSList());
 			if (osList.contains(ALL) || osList.contains(os)) {
-				List archList = Arrays.asList(tc.getArchList());
+				List<String> archList = Arrays.asList(tc.getArchList());
 				if (archList.contains(ALL) || archList.contains(arch))
 					return true; // OS and ARCH fits
 			}

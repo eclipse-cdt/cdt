@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,6 +46,7 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 	private IBuildObjectProperties fProperties; 
 	private IBuildPropertyValue[] values;
 	private ITool tTool;
+	private boolean canModify = true;
 	
 	public void createControls(Composite parent) {
 		super.createControls(parent);
@@ -68,7 +69,8 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 		t2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		t2.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				fCfg.setArtifactName(t2.getText());
+				if (canModify)
+					fCfg.setArtifactName(t2.getText());
 			}} );
 		Label l3 = new Label(usercomp, SWT.NONE);
 		l3.setLayoutData(new GridData(GridData.BEGINNING));
@@ -77,7 +79,8 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 		t3.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		t3.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				fCfg.setArtifactExtension(t3.getText());
+				if (canModify)
+					fCfg.setArtifactExtension(t3.getText());
 			}} );
 		
 		l4 = new Label(usercomp, SWT.NONE);
@@ -87,11 +90,12 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 		t4.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		t4.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				if(tTool != null)
-					tTool.setOutputPrefixForPrimaryOutput(t4.getText());
-				else if (fCfg instanceof IMultiConfiguration)
-					((IMultiConfiguration)fCfg).setOutputPrefixForPrimaryOutput(t4.getText());
-					
+				if (canModify) {
+					if(tTool != null)
+						tTool.setOutputPrefixForPrimaryOutput(t4.getText());
+					else if (fCfg instanceof IMultiConfiguration)
+						((IMultiConfiguration)fCfg).setOutputPrefixForPrimaryOutput(t4.getText());
+				}
 			}} );
 		updateData(getResDesc());
 	}
@@ -145,31 +149,40 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 		}
 		
 		String s = fCfg.getArtifactName();
-		if (s == null || s.trim().length() == 0) {
+		if (! page.isMultiCfg() && (s == null || s.trim().length() == 0)) {
 			s = getResDesc().getConfiguration().getProjectDescription().getName();
 			getCfg().setArtifactName(CWizardHandler.removeSpaces(s));
 		}
-		t2.setText(s);
 		
+		canModify = false;
+		
+		t2.setText(s);
 		t3.setText(fCfg.getArtifactExtension());
 		
-		tTool = fCfg.calculateTargetTool();
-		if(tTool != null){
-			if (l4 != null) l4.setVisible(true);
-			if (t4 != null) {
-				t4.setVisible(true);
-				t4.setText(tTool.getOutputPrefix());
-			}
-		} else if (page.isMultiCfg()) {
-			if (l4 != null) l4.setVisible(true);
+		if (page.isMultiCfg()) {
+			if (l4 != null) 
+				l4.setVisible(true);
 			if (t4 != null) {
 				t4.setVisible(true);
 				t4.setText(((IMultiConfiguration)fCfg).getToolOutputPrefix());
 			}
 		} else {
-			if (l4 != null) l4.setVisible(false);
-			if (t4 != null) t4.setVisible(false);
+			tTool = fCfg.calculateTargetTool();
+			if(tTool != null){
+				if (l4 != null) 
+					l4.setVisible(true);
+				if (t4 != null) {
+					t4.setVisible(true);
+					t4.setText(tTool.getOutputPrefix());
+				}
+			} else {
+				if (l4 != null) 
+					l4.setVisible(false);
+				if (t4 != null) 
+					t4.setVisible(false);
+			}
 		}
+		canModify = true;
 	}
 	
 	public void performApply(ICResourceDescription src, ICResourceDescription dst) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Texas Instruments Incorporated and others.
+ * Copyright (c) 2006, 2008 Texas Instruments Incorporated and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -147,9 +147,9 @@ public class CleanFilesAction extends ActionDelegate implements
 	 * 
 	 * @return a list of resources
 	 */
-	private List getSelectedBuildableFiles() {
+	private List<IFile> getSelectedBuildableFiles() {
 
-		List files = new LinkedList();
+		List<IFile> files = new LinkedList<IFile>();
 
 		ISelectionService selectionService = workbenchWindow
 				.getSelectionService();
@@ -157,7 +157,7 @@ public class CleanFilesAction extends ActionDelegate implements
 
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection structuredSelection = (IStructuredSelection) selection;
-			for (Iterator elements = structuredSelection.iterator(); elements
+			for (Iterator<?> elements = structuredSelection.iterator(); elements
 					.hasNext();) {
 				IFile file = convertToIFile(elements.next());
 				if (file != null) {
@@ -180,11 +180,11 @@ public class CleanFilesAction extends ActionDelegate implements
 	}
 
 	private static final class CleanFilesJob extends Job {
-		private final List files;
+		private final List<IFile> files;
 
-		protected Vector generationProblems;
+		protected Vector<?> generationProblems;
 
-		private CleanFilesJob(String name, List filesToBuild) {
+		private CleanFilesJob(String name, List<IFile> filesToBuild) {
 			super(name);
 			files = filesToBuild;
 		}
@@ -217,7 +217,7 @@ public class CleanFilesAction extends ActionDelegate implements
 									ManagedMakeMessages
 											.getResourceString("CleanFilesAction.cleaningFiles"), files.size()); //$NON-NLS-1$
 
-					Iterator iterator = files.iterator();
+					Iterator<IFile> iterator = files.iterator();
 
 					// clean each file
 					while (iterator.hasNext() && !monitor.isCanceled()) {
@@ -254,7 +254,7 @@ public class CleanFilesAction extends ActionDelegate implements
 	 */
 	public void run(IAction action) {
 
-		List selectedFiles = getSelectedBuildableFiles();
+		List<IFile> selectedFiles = getSelectedBuildableFiles();
 
 		CleanFilesJob job = new CleanFilesJob(
 				ManagedMakeMessages
@@ -288,7 +288,7 @@ public class CleanFilesAction extends ActionDelegate implements
 				return false;
 			}
 
-			for (Iterator elements = structuredSelection.iterator(); elements
+			for (Iterator<?> elements = structuredSelection.iterator(); elements
 					.hasNext();) {
 				IFile file = convertToIFile(elements.next());
 				if (file != null) {

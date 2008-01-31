@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,7 +66,7 @@ public class CWizardHandler implements Cloneable {
 	 * @parame pane - parent for handler-specific data    
 	 */
 	public void handleSelection() {
-		List preferred = CDTPrefUtil.getPreferredTCs();
+		List<String> preferred = CDTPrefUtil.getPreferredTCs();
 		if (table == null) {
 			table = new Table(parent, SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
 			TableItem ti = new TableItem(table, SWT.NONE);
@@ -130,7 +130,7 @@ public class CWizardHandler implements Cloneable {
 	 * Usually, marks preferred toolchains somehow (icon, font etc)
 	 * @param prefs - list of strings (preferred Toolchain IDs)
 	 */
-	public void updatePreferred(List prefs) {}
+	public void updatePreferred(List<String> prefs) {}
 
 	/**
 	 * Creates project

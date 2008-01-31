@@ -582,7 +582,7 @@ public class MBSWizardHandler extends CWizardHandler {
 	 * @
 	 */
 	
-	public void updatePreferred(List prefs) {
+	public void updatePreferred(List<String> prefs) {
 		int x = table.getItemCount();
 		for (int i=0; i<x; i++) {
 			TableItem ti = table.getItem(i);

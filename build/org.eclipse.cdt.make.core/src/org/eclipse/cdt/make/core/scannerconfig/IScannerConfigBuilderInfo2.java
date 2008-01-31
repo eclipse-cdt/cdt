@@ -31,7 +31,7 @@ public interface IScannerConfigBuilderInfo2 {
 	String getSelectedProfileId();
 	void setSelectedProfileId(String profileId);
 
-    List getProfileIdList();
+    List<String> getProfileIdList();
     
 	// SCD profile - buildOutputProvider options 
 	boolean isBuildOutputFileActionEnabled();
@@ -44,7 +44,7 @@ public interface IScannerConfigBuilderInfo2 {
 	void setBuildOutputParserEnabled(boolean enable);
 	
 	// SCD profile - scanner info provider options
-	List getProviderIdList();
+	List<String> getProviderIdList();
 //	void addSIProvider(String providerId);
 //	void removeSIProvider(String providerId);
 	

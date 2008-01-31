@@ -23,11 +23,13 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -95,11 +97,13 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	public static final String WORKSPACE_FILE_DIALOG_MSG = UIMessages.getString("BrowseEntryDialog.wsp.file.dlg.msg");	//$NON-NLS-1$
 	public static final String WORKSPACE_FILE_DIALOG_ERR = UIMessages.getString("BrowseEntryDialog.wsp.file.dlg.err");	//$NON-NLS-1$
 	public static final String WORKSPACE_DIR_DIALOG_ERR = UIMessages.getString("BrowseEntryDialog.wsp.dir.dlg.err");	//$NON-NLS-1$
-
+	public static final String BACKGROUND_TEXT_DEFAULT = UIMessages.getString("AbstractCPropertyTab.2"); //$NON-NLS-1$
+	
 	public static final int TRI_UNKNOWN = 2;
 	public static final int TRI_YES = 1;
 	public static final int TRI_NO = 0;
 
+	private   CLabel  background; 
 	protected Composite usercomp; // space where user can create widgets 
 	protected Composite buttoncomp; // space for buttons on the right
 	private Button[] buttons;     // buttons in buttoncomp
@@ -121,10 +125,13 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	 * @param parent
 	 */
 	protected void createControls(Composite parent) {
-		parent.setLayout(new GridLayout(2, false));
-		usercomp = new Composite(parent, SWT.NONE);
+		parent.setLayout(new FillLayout());
+		background = new CLabel(parent, SWT.CENTER | SWT.SHADOW_NONE);
+		background.setText(BACKGROUND_TEXT_DEFAULT);
+		background.setLayout(new GridLayout(2, false));
+		usercomp = new Composite(background, SWT.NONE);
 		usercomp.setLayoutData(new GridData(GridData.FILL_BOTH));
-		buttoncomp = new Composite(parent, SWT.NONE);
+		buttoncomp = new Composite(background, SWT.NONE);
 		GridData d = new GridData(GridData.END);
 		d.widthHint = 1;
 		buttoncomp.setLayoutData(d);
@@ -600,4 +607,27 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 		}
 	}
 
+	/**
+	 * Utility method to show/hide working panes
+	 * When panes are hidden, message becomes visible 
+	 * 
+	 * @param visible - true or false
+	 * @param msg - text to be shown instead of panes
+	 */
+	protected void setAllVisible(boolean visible, String msg) {
+		if (!visible)
+			setBackgroundText(msg);
+		usercomp.setVisible(visible);
+		buttoncomp.setVisible(visible);
+	}
+	
+	/**
+	 * Allows changing message on background pane,
+	 * which becomes visible after usercomp hidden
+	 * 
+	 * @param s - text to display or null for default  
+	 */
+	protected void setBackgroundText(String s) {
+		background.setText(s == null ? BACKGROUND_TEXT_DEFAULT : s);
+	}
 }

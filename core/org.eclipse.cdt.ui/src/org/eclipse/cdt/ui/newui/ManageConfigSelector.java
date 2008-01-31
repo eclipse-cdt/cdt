@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -74,22 +74,22 @@ public class ManageConfigSelector {
 	 * @return array with only new-style projects included
 	 */
 	public static IProject[] getProjects(Object[] obs) {
-		ArrayList lst = new ArrayList();
+		ArrayList<IProject> lst = new ArrayList<IProject>();
 		if (obs != null) {
-			for (int i=0; i<obs.length; i++) {
+			for (Object ob : obs) {
 				IProject prj = null;
 				// Extract project from selection 
-				if (obs[i] instanceof ICElement) { // for C/C++ view
-					prj = ((ICElement)obs[i]).getCProject().getProject();
-				} else if (obs[i] instanceof IResource) { // for other views
-					prj = ((IResource)obs[i]).getProject();
+				if (ob instanceof ICElement) { // for C/C++ view
+					prj = ((ICElement)ob).getCProject().getProject();
+				} else if (ob instanceof IResource) { // for other views
+					prj = ((IResource)ob).getProject();
 				/* get project from Include folder elements */
-				} else if (obs[i] instanceof IncludeRefContainer) {
-					ICProject fCProject = ((IncludeRefContainer)obs[i]).getCProject();
+				} else if (ob instanceof IncludeRefContainer) {
+					ICProject fCProject = ((IncludeRefContainer)ob).getCProject();
 					if (fCProject != null)
 						prj = fCProject.getProject();
-				} else if (obs[i] instanceof IncludeReferenceProxy) {
-					IncludeRefContainer irc = ((IncludeReferenceProxy)obs[i]).getIncludeRefContainer();
+				} else if (ob instanceof IncludeReferenceProxy) {
+					IncludeRefContainer irc = ((IncludeReferenceProxy)ob).getIncludeRefContainer();
 					if (irc != null) {
 						ICProject fCProject = irc.getCProject();
 						if (fCProject != null)
@@ -103,7 +103,7 @@ public class ManageConfigSelector {
 				lst.add(prj);
 			}
 		}
-		return (IProject[])lst.toArray(new IProject[lst.size()]);
+		return lst.toArray(new IProject[lst.size()]);
 	}
 
 	private static void readMgrs() {
@@ -118,7 +118,7 @@ public class ManageConfigSelector {
 		if (extensions == null) 
 			return;
 
-		ArrayList list = new ArrayList();
+		ArrayList<IConfigManager> list = new ArrayList<IConfigManager>();
 		for (int i = 0; i < extensions.length; ++i)	{
 			IConfigurationElement[] elements = extensions[i].getConfigurationElements();
 			for (int k = 0; k < elements.length; k++) {
@@ -134,6 +134,6 @@ public class ManageConfigSelector {
 			}
 		}
 		list.add(ManageConfigRunner.getDefault()); // Default manager
-		mgrs = (IConfigManager[]) list.toArray(new IConfigManager[list.size()]);
+		mgrs = list.toArray(new IConfigManager[list.size()]);
 	}
 }

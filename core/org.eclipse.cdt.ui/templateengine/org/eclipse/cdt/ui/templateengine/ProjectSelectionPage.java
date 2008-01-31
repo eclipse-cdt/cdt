@@ -146,9 +146,9 @@ public class ProjectSelectionPage extends WizardPage implements IWizardDataPage 
 		}
 	}
 	
-	private Map data = new HashMap(2);
+	private Map<String, String> data = new HashMap<String, String>(2);
 	
-	public Map getPageData() {
+	public Map<String, String> getPageData() {
 		String cPojectName = currentCProject.getResource().getName().trim();
 		data.put("projectName", cPojectName); //$NON-NLS-1$
 		data.put("baseName", getBaseName(cPojectName)); //$NON-NLS-1$

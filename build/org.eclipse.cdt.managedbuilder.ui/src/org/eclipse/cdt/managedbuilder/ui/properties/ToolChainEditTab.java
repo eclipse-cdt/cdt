@@ -171,10 +171,10 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 	
 	protected void updateData(ICResourceDescription rcfg) {
 		if (page.isMultiCfg()) {
-			usercomp.setVisible(false);
+			setAllVisible(false, null);
 			return;
 		} else {
-			usercomp.setVisible(true);
+			setAllVisible(true, null);
 		}
 		cfg = getCfg(rcfg.getConfiguration());
 		ri = cfg.getResourceInfo(rcfg.getPath(), false);

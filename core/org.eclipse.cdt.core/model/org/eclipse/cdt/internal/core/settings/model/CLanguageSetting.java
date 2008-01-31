@@ -11,7 +11,6 @@
 package org.eclipse.cdt.internal.core.settings.model;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
@@ -62,11 +61,11 @@ public class CLanguageSetting extends CDataProxy implements
 		return data.getEntries(kind);
 	}
 
-	public List getSettingEntriesList(int kind) {
+	public List<ICLanguageSettingEntry> getSettingEntriesList(int kind) {
 		CLanguageData data = getCLanguageData(false);
 		ICLanguageSettingEntry entries[] = data.getEntries(kind);
 		int size = entries != null ? entries.length : 0;
-		List arrayList = new ArrayList(size);
+		List<ICLanguageSettingEntry> arrayList = new ArrayList<ICLanguageSettingEntry>(size);
 		for(int i = 0; i < size; i++){
 			arrayList.add(entries[i]);
 		}
@@ -290,7 +289,7 @@ public class CLanguageSetting extends CDataProxy implements
 		return result;
 	}
 
-	public void setSettingEntries(int kind, List list) {
+	public void setSettingEntries(int kind, List<ICLanguageSettingEntry> list) {
 		CLanguageData data = getCLanguageData(true);
 		EntryStore store = new EntryStore();
 //		KindBasedStore nameSetStore = new KindBasedStore();
@@ -298,8 +297,7 @@ public class CLanguageSetting extends CDataProxy implements
 		
 		if(list != null){
 			if(list.size() != 0){
-				for(Iterator iter = list.iterator(); iter.hasNext();){
-					ICLanguageSettingEntry entry = (ICLanguageSettingEntry)iter.next();
+				for(ICLanguageSettingEntry entry : list){
 					eKind = entry.getKind();
 					if((kind & eKind) != 0 && (data.getSupportedEntryKinds() & eKind) != 0){
 						store.addEntry(entry);
@@ -307,9 +305,9 @@ public class CLanguageSetting extends CDataProxy implements
 				}
 			} else {
 				int kinds[] = KindBasedStore.getLanguageEntryKinds();
-				for(int i = 0; i < kinds.length; i++){
-					if((kinds[i] & kind) != 0){
-						store.storeEntries(kinds[i], new ICLanguageSettingEntry[0]);
+				for(int k : kinds){
+					if((k & kind) != 0){
+						store.storeEntries(k, new ICLanguageSettingEntry[0]);
 					}
 				}
 			}

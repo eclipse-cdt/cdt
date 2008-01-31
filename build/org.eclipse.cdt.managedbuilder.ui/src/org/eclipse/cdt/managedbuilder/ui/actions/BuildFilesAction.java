@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Texas Instruments Incorporated and others.
+ * Copyright (c) 2006, 2008 Texas Instruments Incorporated and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -147,9 +147,9 @@ public class BuildFilesAction extends ActionDelegate implements
 	 * 
 	 * @return a list of resources
 	 */
-	private List getSelectedBuildableFiles() {
+	private List<IFile> getSelectedBuildableFiles() {
 
-		List files = new LinkedList();
+		List<IFile> files = new LinkedList<IFile>();
 
 		ISelectionService selectionService = workbenchWindow
 				.getSelectionService();
@@ -157,7 +157,7 @@ public class BuildFilesAction extends ActionDelegate implements
 
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection structuredSelection = (IStructuredSelection) selection;
-			for (Iterator elements = structuredSelection.iterator(); elements
+			for (Iterator<?> elements = structuredSelection.iterator(); elements
 					.hasNext();) {
 				IFile file = convertToIFile(elements.next());
 				if (file != null) {
@@ -182,9 +182,9 @@ public class BuildFilesAction extends ActionDelegate implements
 	}
 
 	private static final class BuildFilesJob extends Job {
-		private final List files;
+		private final List<IFile> files;
 
-		BuildFilesJob(List filesToBuild) {
+		BuildFilesJob(List<IFile> filesToBuild) {
 			super(
 					ManagedMakeMessages
 							.getResourceString("BuildFilesAction.buildingSelectedFiles")); //$NON-NLS-1$
@@ -197,7 +197,7 @@ public class BuildFilesAction extends ActionDelegate implements
 		 */
 		protected IStatus run(IProgressMonitor monitor) {
 
-			Iterator iterator = files.iterator();
+			Iterator<IFile> iterator = files.iterator();
 
 			GeneratedMakefileBuilder builder = new GeneratedMakefileBuilder();
 
@@ -251,7 +251,7 @@ public class BuildFilesAction extends ActionDelegate implements
 	 */
 	public void run(IAction action) {
 
-		List selectedFiles = getSelectedBuildableFiles();
+		List<IFile> selectedFiles = getSelectedBuildableFiles();
 
 		Job buildFilesJob = new BuildFilesJob(selectedFiles);
 
@@ -283,7 +283,7 @@ public class BuildFilesAction extends ActionDelegate implements
 				return false;
 			}
 
-			for (Iterator elements = structuredSelection.iterator(); elements
+			for (Iterator<?> elements = structuredSelection.iterator(); elements
 					.hasNext();) {
 				IFile file = convertToIFile(elements.next());
 				if (file != null) {

@@ -18,6 +18,7 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IMultiConfiguration;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.BuildProcessManager;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
+import org.eclipse.cdt.managedbuilder.internal.core.MultiConfiguration;
 import org.eclipse.cdt.newmake.core.IMakeBuilderInfo;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
@@ -64,6 +65,7 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 
 	private IBuilder bldr;
 	private IConfiguration icfg;
+	private boolean canModify = true;
 	
 	protected final int cpuNumber = BuildProcessManager.checkCPUNumber(); 
 	
@@ -153,7 +155,8 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 		t_autoBuild = setupBlock(g4, b_autoBuild);
 		t_autoBuild.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_AUTO, t_autoBuild.getText());
+				if (canModify)
+					setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_AUTO, t_autoBuild.getText());
 			}} );
 		t_autoBuild.getAccessible().addAccessibleListener(makeTargetLabelAccessibleListener);
 		setupLabel(g4, Messages.getString("BuilderSettingsTab.18"), 3, GridData.BEGINNING); //$NON-NLS-1$
@@ -161,14 +164,16 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 		t_cmdBuild = setupBlock(g4, b_cmdBuild);
 		t_cmdBuild.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREMENTAL, t_cmdBuild.getText());
+				if (canModify)
+					setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREMENTAL, t_cmdBuild.getText());
 			}} );
 		t_cmdBuild.getAccessible().addAccessibleListener(makeTargetLabelAccessibleListener);
 		b_cmdClean = setupCheck(g4, Messages.getString("BuilderSettingsTab.20"), 1, GridData.BEGINNING); //$NON-NLS-1$
 		t_cmdClean = setupBlock(g4, b_cmdClean);
 		t_cmdClean.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_CLEAN, t_cmdClean.getText());
+				if (canModify)
+					setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_CLEAN, t_cmdClean.getText());
 			}} );
 		t_cmdClean.getAccessible().addAccessibleListener(makeTargetLabelAccessibleListener);
 	}
@@ -242,7 +247,7 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 	 */
 	protected void updateButtons() {
 		bldr = icfg.getEditableBuilder();
-		
+		canModify = false;
 		int[] extStates = calc3states(page, icfg, 1);
 		
 		if (extStates != null) {
@@ -290,9 +295,17 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 				b_parallelNum.setSelection(!getParallelDef(icfg));
 			}
 		}
-		t_autoBuild.setText(bldr.getBuildAttribute(IBuilder.BUILD_TARGET_AUTO, EMPTY_STR));
-		t_cmdBuild.setText(bldr.getBuildAttribute(IBuilder.BUILD_TARGET_INCREMENTAL, EMPTY_STR));
-		t_cmdClean.setText(bldr.getBuildAttribute(IBuilder.BUILD_TARGET_CLEAN, EMPTY_STR));
+		
+		if (page.isMultiCfg()) {
+			MultiConfiguration mc = (MultiConfiguration)icfg;
+			t_autoBuild.setText(mc.getBuildAttribute(IBuilder.BUILD_TARGET_AUTO, EMPTY_STR));
+			t_cmdBuild.setText(mc.getBuildAttribute(IBuilder.BUILD_TARGET_INCREMENTAL, EMPTY_STR));
+			t_cmdClean.setText(mc.getBuildAttribute(IBuilder.BUILD_TARGET_CLEAN, EMPTY_STR));
+		} else {
+			t_autoBuild.setText(bldr.getBuildAttribute(IBuilder.BUILD_TARGET_AUTO, EMPTY_STR));
+			t_cmdBuild.setText(bldr.getBuildAttribute(IBuilder.BUILD_TARGET_INCREMENTAL, EMPTY_STR));
+			t_cmdClean.setText(bldr.getBuildAttribute(IBuilder.BUILD_TARGET_CLEAN, EMPTY_STR));
+		}
 		
 		boolean external = ! isInternalBuilderEnabled(); 
 		boolean parallel = b_parallel.getSelection();
@@ -314,6 +327,7 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 			checkPressed(b_cmdBuild, false);
 			checkPressed(b_cmdClean, false);
 		}
+		canModify = true;
 	}
 	
 	/**

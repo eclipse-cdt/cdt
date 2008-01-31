@@ -693,9 +693,10 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
      * 
      * @return array of <code>IBaseClassInfo</code>
      */
-    protected IBaseClassInfo[] getBaseClasses() {
-        List classesList = fBaseClassesDialogField.getElements();
-        return (IBaseClassInfo[]) classesList.toArray(new IBaseClassInfo[classesList.size()]);
+    @SuppressWarnings("unchecked")
+	protected IBaseClassInfo[] getBaseClasses() {
+        List<IBaseClassInfo> classesList = fBaseClassesDialogField.getElements();
+        return classesList.toArray(new IBaseClassInfo[classesList.size()]);
     }
     
     /**

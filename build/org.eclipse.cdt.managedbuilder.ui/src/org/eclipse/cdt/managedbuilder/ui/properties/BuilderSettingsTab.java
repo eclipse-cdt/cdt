@@ -17,6 +17,7 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IMultiConfiguration;
 import org.eclipse.cdt.managedbuilder.internal.core.Builder;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
+import org.eclipse.cdt.managedbuilder.internal.core.MultiConfiguration;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.core.runtime.CoreException;
@@ -55,6 +56,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 
 	private IBuilder bldr;
 	private IConfiguration icfg;
+	private boolean canModify = true;
 	
 	public void createControls(Composite parent) {
 		super.createControls(parent);
@@ -79,6 +81,8 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		t_buildCmd = setupBlock(g1, b_useDefault);
 		t_buildCmd.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
+				if (! canModify)
+					return;
 	        	String fullCommand = t_buildCmd.getText().trim();
 	        	String buildCommand = parseMakeCommand(fullCommand);
 	        	String buildArgs = fullCommand.substring(buildCommand.length()).trim();
@@ -101,7 +105,8 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		t_dir = setupText(group_dir, 1, GridData.FILL_HORIZONTAL);
 		t_dir.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				setBuildPath(t_dir.getText());
+				if (canModify)
+					setBuildPath(t_dir.getText());
 			}} );
 		Composite c = new Composite(group_dir, SWT.NONE);
 		setupControl(c, 2, GridData.FILL_HORIZONTAL);
@@ -126,6 +131,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 	protected void updateButtons() {
 		bldr = icfg.getEditableBuilder();
 		
+		canModify = false; // avoid extra update from modifyListeners
 		int[] extStates = BuildBehaviourTab.calc3states(page, icfg, 0);
 
 		b_genMakefileAuto.setEnabled(icfg.supportsBuild(true));
@@ -183,6 +189,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		if (external) { // just set relatet text widget state,
 			checkPressed(b_useDefault, false); // do not update 
 		}
+		canModify = true;
 	}
 	
 	Button setupBottomButton(Composite c, String name) {
@@ -384,7 +391,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		if (icfg instanceof Configuration) 
 			return ((Configuration)icfg).isInternalBuilderEnabled();
 		if (icfg instanceof IMultiConfiguration)
-			return ((IMultiConfiguration)icfg).isInternalBuilderEnabled();
+			return ((MultiConfiguration)icfg).isInternalBuilderEnabled();
 		return false;
 	}
 	

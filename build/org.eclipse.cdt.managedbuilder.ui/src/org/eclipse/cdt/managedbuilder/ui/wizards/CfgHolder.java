@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -158,7 +158,7 @@ public class CfgHolder {
      */
     
     public static CfgHolder[] reorder(CfgHolder[] its) {
-    	ArrayList ls = new ArrayList(its.length);
+    	ArrayList<CfgHolder> ls = new ArrayList<CfgHolder>(its.length);
     	boolean found = true;
     	while (found) {
 			found = false;
@@ -185,7 +185,7 @@ public class CfgHolder {
     			}
     		}
     	}
-    	return (CfgHolder[])ls.toArray(new CfgHolder[ls.size()]); 
+    	return ls.toArray(new CfgHolder[ls.size()]); 
     }
     
     
@@ -193,10 +193,11 @@ public class CfgHolder {
      * Note that null configurations are ignored !
      */
     public static IConfiguration[] items2cfgs(CfgHolder[] its) {
-    	ArrayList lst = new ArrayList(its.length);
-    	for (int i=0; i<its.length; i++) 
-    		if (its[i].cfg != null) lst.add(its[i].cfg);
-    	return (IConfiguration[])lst.toArray(new IConfiguration[lst.size()]);
+    	ArrayList<IConfiguration> lst = new ArrayList<IConfiguration>(its.length);
+    	for (CfgHolder h : its) 
+    		if (h.cfg != null) 
+    			lst.add(h.cfg);
+    	return lst.toArray(new IConfiguration[lst.size()]);
     }
     
     public IConfiguration getTcCfg() {

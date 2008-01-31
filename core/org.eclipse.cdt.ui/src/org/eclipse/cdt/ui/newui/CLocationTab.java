@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,8 +27,8 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -55,7 +55,7 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 	
 	Label label;
 	TreeViewer tree;
-	ArrayList src;
+	ArrayList<_Entry> src;
 	ICResourceDescription cfgd;
 	ICProject cprj;
 	
@@ -71,17 +71,21 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 		
 		public String[] getExts() {
 			IPath[] p = getExtPaths();
-			if (p == null || p.length == 0) return new String[0];
+			if (p == null || p.length == 0) 
+				return new String[0];
 			String[] s = new String[p.length];
-			for (int i=0; i<p.length; i++) s[i] = p[i].toOSString();
+			for (int i=0; i<p.length; i++) 
+				s[i] = p[i].toOSString();
 			return s;
 		}
 		
 		public String toString() {
 			String[] s = getExts();
-			if (s.length == 0) return UIMessages.getString("CLocationTab.0"); //$NON-NLS-1$
+			if (s.length == 0) 
+				return UIMessages.getString("CLocationTab.0"); //$NON-NLS-1$
 			String x = UIMessages.getString("CLocationTab.1"); //$NON-NLS-1$
-			for (int i=0; i< s.length; i++) x = x + s[i] + UIMessages.getString("CLocationTab.2"); //$NON-NLS-1$
+			for (int i=0; i< s.length; i++) 
+				x = x + s[i] + UIMessages.getString("CLocationTab.2"); //$NON-NLS-1$
 			x = x.substring(0, x.length() - 2) + UIMessages.getString("CLocationTab.3"); //$NON-NLS-1$
 			return x;
 		} 
@@ -114,11 +118,7 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 		label.setLayoutData(new GridData(GridData.BEGINNING));
 		tree = new TreeViewer(usercomp);
 		tree.getTree().setLayoutData(new GridData(GridData.FILL_BOTH));
-		tree.getTree().addSelectionListener(new SelectionListener() {
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
+		tree.getTree().addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateButtons();
 			}});
@@ -240,11 +240,9 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 			usercomp.setVisible(true);
 		
 		cfgd = _cfgd;
-		ICExclusionPatternPathEntry[] ent = getEntries(cfgd);
-		src = new ArrayList(ent.length);
-		for (int i=0; i<ent.length; i++) {
-			src.add(new _Entry(ent[i]));
-		}
+		src = new ArrayList<_Entry>();
+		for (ICExclusionPatternPathEntry e : getEntries(cfgd))
+			src.add(new _Entry(e));
 		tree.setInput(src);
 		// get CProject 
 		IAdaptable ad = page.getElement();

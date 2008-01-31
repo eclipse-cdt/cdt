@@ -68,8 +68,8 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 	private static final String ATTR_VALUE = "value"; //$NON-NLS-1$
 	private static final String ATTR_VALUE_PRIVATE = "private"; //$NON-NLS-1$
 
-	protected Map configMap;
-	protected Map fParserPageMap = null;
+	protected Map<String, BinaryParserConfiguration> configMap;
+	protected Map<String, BinaryParserPageConfiguration> fParserPageMap = null;
 	protected Table table;
 	protected CheckboxTableViewer tv;
 	protected Composite parserGroup;
@@ -185,7 +185,7 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 			ids = CoreModelUtil.getBinaryParserIds(cfgs);
 		}
 		Object[] data = new Object[configMap.size()];
-		HashMap clone = new HashMap(configMap);
+		HashMap<String, BinaryParserConfiguration> clone = new HashMap<String, BinaryParserConfiguration>(configMap);
 		// add checked elements
 		int i;
 		for (i=0; i<ids.length; i++) {
@@ -214,7 +214,7 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, CCorePlugin.BINARY_PARSER_SIMPLE_ID);
 		if (point != null) {
 			IExtension[] exts = point.getExtensions();
-			configMap = new HashMap(exts.length);
+			configMap = new HashMap<String, BinaryParserConfiguration>(exts.length);
 			for (int i = 0; i < exts.length; i++) {
 				if (isExtensionVisible(exts[i])) {
 					configMap.put(exts[i].getUniqueIdentifier(), new BinaryParserConfiguration(exts[i]));
@@ -224,7 +224,7 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 	}
 
 	private void initializeParserPageMap() {
-		fParserPageMap = new HashMap(5);
+		fParserPageMap = new HashMap<String, BinaryParserPageConfiguration>(5);
 
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(CUIPlugin.PLUGIN_ID, "BinaryParserPage"); //$NON-NLS-1$
 		IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
@@ -281,11 +281,11 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 	}
 	
 	protected String[] getBinaryParserIDs() {
-		return (String[]) configMap.keySet().toArray(new String[configMap.keySet().size()]);
+		return configMap.keySet().toArray(new String[configMap.keySet().size()]);
 	}
 
 	protected ICOptionPage getBinaryParserPage(String parserID) {
-		BinaryParserPageConfiguration configElement = (BinaryParserPageConfiguration) fParserPageMap.get(parserID);
+		BinaryParserPageConfiguration configElement = fParserPageMap.get(parserID);
 		if (configElement != null) {
 			try {
 				return configElement.getPage();

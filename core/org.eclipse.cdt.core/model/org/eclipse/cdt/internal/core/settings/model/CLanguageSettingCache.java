@@ -113,7 +113,7 @@ public class CLanguageSettingCache extends CDefaultLanguageData implements
 		return fStore.getEntries(kind);
 	}
 	
-	public List getSettingEntriesList(int kind) {
+	public List<ICLanguageSettingEntry> getSettingEntriesList(int kind) {
 //		int kinds[] = KindBasedStore.getSupportedKinds();
 //		List list = new ArrayList();
 //		for(int i = 0; i < kinds.length; i++){
@@ -135,7 +135,7 @@ public class CLanguageSettingCache extends CDefaultLanguageData implements
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
 
-	public void setSettingEntries(int kind, List entriesList) {
+	public void setSettingEntries(int kind, List<ICLanguageSettingEntry> entriesList) {
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
 

@@ -131,7 +131,7 @@ public abstract class UIPage extends DialogPage {
 	 * 
 	 * @return HashMap. The data contained in the widgets on this page.
 	 */
-	public Map/*<String, String>*/ getPageData() {
+	public Map<String, String> getPageData() {
 		return uiElement.getValues();
 	}
 

@@ -54,7 +54,7 @@ public class CDTPrefUtil {
 	public static final String NULL = "NULL"; //$NON-NLS-1$
 	private static final IPreferenceStore pref = CUIPlugin.getDefault().getPreferenceStore();
 	private static final String DELIMITER = " "; //$NON-NLS-1$
-	private static LinkedList preferredTCs = null;
+	private static LinkedList<String> preferredTCs = null;
 	
 	// low-level methods
 	public static boolean getBool(String key) { return pref.getBoolean(key); }
@@ -66,9 +66,9 @@ public class CDTPrefUtil {
 
 	// up-level methods
 	public static void readPreferredTCs() {
-		preferredTCs = new LinkedList(Arrays.asList(getStr(KEY_PREFTC).split(DELIMITER)));
+		preferredTCs = new LinkedList<String>(Arrays.asList(getStr(KEY_PREFTC).split(DELIMITER)));
 	}
-	public static List getPreferredTCs() {
+	public static List<String> getPreferredTCs() {
 		if (preferredTCs == null) readPreferredTCs(); 
 		return preferredTCs; 
 	}

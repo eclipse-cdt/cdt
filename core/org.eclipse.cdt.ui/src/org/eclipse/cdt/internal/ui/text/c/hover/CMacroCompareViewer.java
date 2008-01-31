@@ -172,7 +172,7 @@ class CMacroCompareViewer extends CMergeViewer {
 	 */
 	public void setMacroExpansionInput(CMacroExpansionInput input) {
 		fInput= input;
-		fPrefixLength= fInput.getPrefix().length();
+		fPrefixLength= 0;
 	}
 
 	/*

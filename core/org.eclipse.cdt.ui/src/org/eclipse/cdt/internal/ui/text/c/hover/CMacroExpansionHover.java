@@ -44,7 +44,6 @@ public class CMacroExpansionHover extends AbstractCEditorTextHover implements II
 		if (input == null) {
 			return null;
 		}
-		input.fStartWithFullExpansion= true;
 		fCache= new SoftReference(input);
 		String result= input.fExplorer.getFullExpansion().getCodeAfterStep();
 		if (result.length() == 0) {
@@ -93,7 +92,6 @@ public class CMacroExpansionHover extends AbstractCEditorTextHover implements II
 					ITextSelection textSelection= (ITextSelection) selection;
 					IRegion region= new Region(textSelection.getOffset(), textSelection.getLength());
 					input= CMacroExpansionInput.create(editor, region, true);
-					input.fStartWithFullExpansion= true;
 				}
 			}
 		}

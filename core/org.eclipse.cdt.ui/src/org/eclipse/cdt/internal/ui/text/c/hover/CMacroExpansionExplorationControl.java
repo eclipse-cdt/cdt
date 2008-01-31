@@ -242,24 +242,23 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 	}
 
 	protected final void gotoMacroDefinition() {
-		if (fIndex < getStepCount()) {
-			final IMacroExpansionStep step= fInput.fExplorer.getExpansionStep(fIndex);
-			IASTFileLocation fileLocation= step.getLocationOfExpandedMacroDefinition();
-			if (fileLocation != null) {
-				final IPath path= new Path(fileLocation.getFileName());
-				final int offset= fileLocation.getNodeOffset();
-				final int length= fileLocation.getNodeLength();
-				IEditorPart editor;
-				try {
-					editor = EditorUtility.openInEditor(path, null);
-					if (editor instanceof ITextEditor) {
-						ITextEditor textEditor = (ITextEditor)editor;
-						textEditor.selectAndReveal(offset, length);
-					}
-					dispose();
-				} catch (PartInitException exc) {
-					CUIPlugin.getDefault().log(exc);
+		int index= fIndex < getStepCount() ? fIndex : 0;
+		final IMacroExpansionStep step= fInput.fExplorer.getExpansionStep(index);
+		IASTFileLocation fileLocation= step.getLocationOfExpandedMacroDefinition();
+		if (fileLocation != null) {
+			final IPath path= new Path(fileLocation.getFileName());
+			final int offset= fileLocation.getNodeOffset();
+			final int length= fileLocation.getNodeLength();
+			IEditorPart editor;
+			try {
+				editor = EditorUtility.openInEditor(path, null);
+				if (editor instanceof ITextEditor) {
+					ITextEditor textEditor = (ITextEditor)editor;
+					textEditor.selectAndReveal(offset, length);
 				}
+				dispose();
+			} catch (PartInitException exc) {
+				CUIPlugin.getDefault().log(exc);
 			}
 		}
 	}
@@ -397,12 +396,10 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 			expansionStep= fInput.fExplorer.getFullExpansion();
 		}
 		final String text;
-		final String prefix = fInput.getPrefix();
-		final String postfix = fInput.getPostfix();
 		if (before) {
-			text= prefix + expansionStep.getCodeBeforeStep() + postfix;
+			text= expansionStep.getCodeBeforeStep();
 		} else {
-			text= prefix + expansionStep.getCodeAfterStep() + postfix;
+			text= expansionStep.getCodeAfterStep();
 		}
 		final Document doc= new Document(text);
 		CUIPlugin.getDefault().getTextTools().setupCDocument(doc);

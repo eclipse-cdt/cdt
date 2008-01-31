@@ -200,10 +200,6 @@ public class CMacroExpansionInput {
 			IRegion region= getExpansionRegion();
 			if (region != null) {
 				fExplorer= MacroExpansionExplorer.create(ast, region);
-				int length= fExplorer.getExpansionStep(0).getCodeAfterStep().length();
-				if (region.getLength() < length) {
-					region= new Region(region.getOffset(), length);
-				}
 				fExpansionRegion= region;
 			}
 		}
@@ -280,31 +276,10 @@ public class CMacroExpansionInput {
 	MacroExpansionExplorer fExplorer;
 	IDocument fDocument;
 	IRegion fRegion;
-	boolean fStartWithFullExpansion;
-
-	private int fPrefixLength;
-	private int fPostfixLength;
+	boolean fStartWithFullExpansion= true;
 
 	private CMacroExpansionInput() {
 		// forbidden
-	}
-
-	String getPrefix() {
-		try {
-			return fDocument.get(fRegion.getOffset() - fPrefixLength, fPrefixLength);
-		} catch (BadLocationException exc) {
-			fPrefixLength= 0;
-			return ""; //$NON-NLS-1$
-		}
-	}
-
-	String getPostfix() {
-		try {
-			return fDocument.get(fRegion.getOffset() + fRegion.getLength(), fPostfixLength);
-		} catch (BadLocationException exc) {
-			fPostfixLength= 0;
-			return ""; //$NON-NLS-1$
-		}
 	}
 
 	public static CMacroExpansionInput create(IEditorPart editor, IRegion hoverRegion, boolean allowSelection) {
@@ -340,10 +315,6 @@ public class CMacroExpansionInput {
 		input.fDocument= document;
 		input.fRegion= region;
 
-		// add context lines
-//		IRegion contextRegion= expandRegion(region, document, 2);
-//		input.fPrefixLength= region.getOffset() - contextRegion.getOffset();
-//		input.fPostfixLength= contextRegion.getOffset() + contextRegion.getLength() - (region.getOffset() + region.getLength());
 		return input;
 	}
 

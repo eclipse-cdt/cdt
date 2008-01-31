@@ -301,6 +301,8 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
                             if(getStatus().isOK()) {
                                 entry.fHasChildren = this.getData();
                                 update.setHasChilren(getData());
+                            } else {
+                                update.setStatus(getStatus());
                             }
                             update.done();
                         }
@@ -333,6 +335,8 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
                     if(getStatus().isOK()) {
                         entry.fChildrenCount = this.getData();
                         update.setChildCount(getData());
+                    } else {
+                        update.setStatus(getStatus());
                     }
                     update.done();
                 }
@@ -753,4 +757,5 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
         }
         return null;
     }
+
 }

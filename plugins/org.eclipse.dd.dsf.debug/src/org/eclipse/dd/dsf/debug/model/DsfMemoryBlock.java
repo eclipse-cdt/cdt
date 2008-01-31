@@ -415,7 +415,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
     	final Addr64 address = new Addr64(bigAddress);
     	final int word_size = 1;
     	
-        // Use a Query to synchronise the downstream calls  
+        // Use a Query to synchronize the downstream calls  
         Query<MemoryByte[]> query = new Query<MemoryByte[]>() {
 			@Override
 			protected void execute(final DataRequestMonitor<MemoryByte[]> drm) {

@@ -33,7 +33,7 @@ import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterDMData;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterGroupDMContext;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterGroupDMData;
 import org.eclipse.dd.dsf.debug.ui.DsfDebugUIPlugin;
-import org.eclipse.dd.dsf.service.DsfServiceID;
+import org.eclipse.dd.dsf.service.DsfServices;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.IDMVMContext;
@@ -63,7 +63,7 @@ public class SyncRegisterDataAccess {
     @ThreadSafe
     private synchronized IRegisters getService() {
 
-    	String serviceId = DsfServiceID.createServiceId( IRegisters.class, fSession.getId() );
+    	String serviceId = DsfServices.createServiceFilter( IRegisters.class, fSession.getId() );
         if (fServiceTracker == null) {
             try {
                 fServiceTracker = new ServiceTracker(

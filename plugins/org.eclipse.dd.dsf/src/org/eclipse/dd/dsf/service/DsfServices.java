@@ -12,16 +12,18 @@
 package org.eclipse.dd.dsf.service;
 
 /**
- *  Convenience class to create the somewhat complicated service ID which
- *  can then be used with the DsfServicesTracker or OSGI services tracker
- *  to find a desired service.
+ *  Utility class containing status methods to use with DSF services.
  */
+public class DsfServices {
 
-public class DsfServiceID {
-
-	@SuppressWarnings("unchecked")
-	public static String createServiceId(Class serviceClass, String sessionId) {
-
+    /**
+     * Creates a properly formatted OSGi service filter for a DSF service based
+     * on service class and session ID.
+     * @param serviceClass Class of the service to create the filter for.
+     * @param sessionId Session ID of the session that the service belongs to.
+     * @return Filter string to identify the given service. 
+     */
+	public static String createServiceFilter(Class<?> serviceClass, String sessionId) {
 		String serviceId = 
 			"(&"                        + //$NON-NLS-1$
 			"(OBJECTCLASS="             + //$NON-NLS-1$

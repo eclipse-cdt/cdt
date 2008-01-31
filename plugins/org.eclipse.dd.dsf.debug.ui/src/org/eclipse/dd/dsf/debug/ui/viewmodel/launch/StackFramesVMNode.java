@@ -262,6 +262,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
     @Override
     protected void handleFailedUpdate(IViewerUpdate update) {
         if (update instanceof ILabelUpdate) {
+            update.done();
             // Avoid repainting the label if it's not available.  This only slows
             // down the display.
         } else {

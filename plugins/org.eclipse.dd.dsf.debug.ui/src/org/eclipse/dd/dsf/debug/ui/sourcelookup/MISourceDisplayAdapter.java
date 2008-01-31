@@ -416,7 +416,7 @@ public class MISourceDisplayAdapter implements ISourceDisplay
         fServicesTracker.dispose();
         fSourceLookup.removeParticipants(new ISourceLookupParticipant[] {fSourceLookupParticipant});
         
-        // fSourceLookupParticipant is disposed by teh source lookup director
+        // fSourceLookupParticipant is disposed by the source lookup director
         
         // Need to remove annotations in UI thread.
         //fIPManager.removeAllAnnotations();

@@ -113,10 +113,13 @@ public class DisplayDsfExecutor extends DefaultDsfExecutor
                     }
                 }
 
-				if(e[0] instanceof RuntimeException)
+				if(e[0] instanceof RuntimeException) {
 					throw (RuntimeException) e[0];
-				else if(e[0] instanceof Exception)
+                } else if (e[0] instanceof Error) {
+                    throw (Error) e[0];
+				} else if(e[0] instanceof Exception) {
 					throw (Exception) e[0];
+                }
 				
 				return (V) v[0];
 			}
@@ -140,15 +143,10 @@ public class DisplayDsfExecutor extends DefaultDsfExecutor
 
 	    return new Runnable() {
 			public void run() {
-				final Throwable[] e = new Throwable[1];
 				try {
     				fDisplay.syncExec(new Runnable() {
     					public void run() {
-    						try {
-    							runnable.run();
-    						} catch(Throwable exception) {
-    							e[0] = exception;
-    						}
+    					    runnable.run();
     					}
     				});
 				} catch (SWTException swtException) {
@@ -156,8 +154,6 @@ public class DisplayDsfExecutor extends DefaultDsfExecutor
 				        DisplayDsfExecutor.super.shutdown();
 				    }
 				}
-				if(e[0] instanceof RuntimeException)
-					throw (RuntimeException) e[0];
 			}
 		};
 	}
@@ -250,10 +246,5 @@ public class DisplayDsfExecutor extends DefaultDsfExecutor
     @Override
 	public List<Runnable> shutdownNow() {
 	    return (List<Runnable>)Collections.EMPTY_LIST;
-	}
-
-	@Override
-	public boolean isShutdown() {
-	    return super.isShutdown();
 	}
 }

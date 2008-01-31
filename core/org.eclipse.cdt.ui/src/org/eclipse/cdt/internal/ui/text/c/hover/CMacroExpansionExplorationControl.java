@@ -317,7 +317,7 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 	 * @see org.eclipse.cdt.internal.ui.text.AbstractCompareViewerInformationControl#getId()
 	 */
 	protected String getId() {
-		return "org.eclipse.cdt.ui.text.hover.CMacroExpansionExploration0"; //$NON-NLS-1$
+		return "org.eclipse.cdt.ui.text.hover.CMacroExpansionExploration"; //$NON-NLS-1$
 	}
 
 	/*

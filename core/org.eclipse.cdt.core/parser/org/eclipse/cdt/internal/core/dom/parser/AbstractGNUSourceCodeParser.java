@@ -1474,16 +1474,15 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
     protected abstract IASTCastExpression createCastExpression();
 
+    
     /**
-     * @return
-     * @throws EndOfFileException
-     * @throws BacktrackException
+     * There are many ambiguities in C and C++ between expressions and declarations.
+     * This method will attempt to parse a statement as both an expression and a declaration,
+     * if both parses succeed then an ambiguity node is returned.
      */
-    protected IASTStatement parseDeclarationOrExpressionStatement()
-            throws EndOfFileException, BacktrackException {
-        // expressionStatement
-        // Note: the function style cast ambiguity is handled in
-        // expression
+    protected IASTStatement parseDeclarationOrExpressionStatement() throws EndOfFileException, BacktrackException {
+        // First attempt to parse an expressionStatement
+        // Note: the function style cast ambiguity is handled in expression
         // Since it only happens when we are in a statement
         IToken mark = mark();
         IASTExpressionStatement expressionStatement = null;
@@ -1497,14 +1496,13 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
                 lastTokenOfExpression = consume(IToken.tSEMI);
             expressionStatement = createExpressionStatement();
             expressionStatement.setExpression(expression);
-            ((ASTNode) expressionStatement).setOffsetAndLength(
-                    mark.getOffset(), lastTokenOfExpression.getEndOffset() - mark.getOffset());
+            ((ASTNode) expressionStatement).setOffsetAndLength(mark.getOffset(), lastTokenOfExpression.getEndOffset() - mark.getOffset());
         } catch (BacktrackException b) {
         }
 
         backup(mark);
 
-        // declarationStatement
+        // Now attempt to parse a declarationStatement
         IASTDeclarationStatement ds = null;
         try {
             IASTDeclaration d = declaration();
@@ -1516,6 +1514,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             backup(mark);
         }
 
+        // if not ambiguous then return the appropriate node
         if (expressionStatement == null && ds != null) {
             return ds;
         }
@@ -1526,35 +1525,33 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             }
             return expressionStatement;
         }
-
         if (expressionStatement == null && ds == null)
             throwBacktrack(savedBt);
-        // resolve ambiguities
+        
+        
+        // At this point we know we have an ambiguity.
+        // Attempt to resolve some ambiguities that are easy to detect.
+        
         // A * B = C;
+        // foo() = x;
+        // These can get parsed as expressions but the lvalue doesn't make sense
         if (expressionStatement.getExpression() instanceof IASTBinaryExpression) {
             IASTBinaryExpression exp = (IASTBinaryExpression) expressionStatement.getExpression();
             if (exp.getOperator() == IASTBinaryExpression.op_assign) {
                 IASTExpression lhs = exp.getOperand1();
                 if (lhs instanceof IASTBinaryExpression
                         && ((IASTBinaryExpression) lhs).getOperator() == IASTBinaryExpression.op_multiply) {
-
                     return ds;
                 }
                 if (lhs instanceof IASTFunctionCallExpression) {
-                    // lvalue - makes no sense
                     return ds;
                 }
             }
         }
 
-        // x = y; // default to int
-        // valid @ Translation Unit scope
-        // but not valid as a statement in a function body
-        if (ds.getDeclaration() instanceof IASTSimpleDeclaration
-                && ((IASTSimpleDeclaration) ds.getDeclaration())
-                        .getDeclSpecifier() instanceof IASTSimpleDeclSpecifier
-                && ((IASTSimpleDeclSpecifier) ((IASTSimpleDeclaration) ds
-                        .getDeclaration()).getDeclSpecifier()).getType() == IASTSimpleDeclSpecifier.t_unspecified) {
+        // x = y; // implicit int
+        // valid at Translation Unit scope but not valid as a statement in a function body
+        if(isImplicitInt(ds.getDeclaration())) {
             backup(mark);
             while (true) {
                 if (consume() == lastTokenOfExpression)
@@ -1564,39 +1561,31 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             return expressionStatement;
         }
 
-        if (ds.getDeclaration() instanceof IASTAmbiguousDeclaration )
-        {
+        // generalization of the previous check for implicit int
+        if (ds.getDeclaration() instanceof IASTAmbiguousDeclaration ) {
             IASTAmbiguousDeclaration amb = (IASTAmbiguousDeclaration) ds.getDeclaration();
-            IASTDeclaration [] ambDs = amb.getDeclarations();
-            int ambCount = 0;
-            for( int i = 0; i < ambDs.length; ++i )
-            {
-                if (ambDs[i] instanceof IASTSimpleDeclaration
-                        && ((IASTSimpleDeclaration) ambDs[i])
-                                .getDeclSpecifier() instanceof IASTSimpleDeclSpecifier
-                        && ((IASTSimpleDeclSpecifier) ((IASTSimpleDeclaration) ambDs[i]).getDeclSpecifier()).getType() == IASTSimpleDeclSpecifier.t_unspecified) {
-                    ++ambCount;
-                }
+            boolean allImplicitInt = true;
+            for(IASTDeclaration ambD : amb.getDeclarations()) {
+            	if(!isImplicitInt(ambD)) {
+                    allImplicitInt = false;
+                    break;
+            	}
             }
-            if ( ambCount == ambDs.length )
-            {
+            if(allImplicitInt) {
                 backup(mark);
                 while (true) {
                     if (consume() == lastTokenOfExpression)
                         break;
                 }
-
                 return expressionStatement;
             }
         }
 
-        if (ds.getDeclaration() instanceof IASTSimpleDeclaration
-                && ((IASTSimpleDeclaration) ds.getDeclaration())
-                        .getDeclSpecifier() instanceof IASTNamedTypeSpecifier)
-
-        {
-            final IASTDeclarator[] declarators = ((IASTSimpleDeclaration) ds
-                    .getDeclaration()).getDeclarators();
+        // x;
+        // a single identifier can be parsed as a named declaration specifier without a declarator
+        if(ds.getDeclaration() instanceof IASTSimpleDeclaration && 
+           ((IASTSimpleDeclaration) ds.getDeclaration()).getDeclSpecifier() instanceof IASTNamedTypeSpecifier) {
+            final IASTDeclarator[] declarators = ((IASTSimpleDeclaration) ds.getDeclaration()).getDeclarators();
             if (declarators.length == 0
                     || (declarators.length == 1 && (declarators[0].getName()
                             .toCharArray().length == 0 && declarators[0]
@@ -1611,13 +1600,31 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             }
         }
 
+        // create and return ambiguity node
         IASTAmbiguousStatement statement = createAmbiguousStatement();
         statement.addStatement(ds);
         statement.addStatement(expressionStatement);
         ((ASTNode) statement).setOffsetAndLength((ASTNode) ds);
         return statement;
     }
+    
+    
+    /**
+     * Returns true if the given declaration has unspecified type,
+     * in this case the type defaults to int and is know as "implicit int".
+     */
+    protected static boolean isImplicitInt(IASTDeclaration declaration) {
+    	if(declaration instanceof IASTSimpleDeclaration) {
+    		IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration)declaration).getDeclSpecifier();
+    		if(declSpec instanceof IASTSimpleDeclSpecifier && 
+    		   ((IASTSimpleDeclSpecifier)declSpec).getType() == IASTSimpleDeclSpecifier.t_unspecified) {
+    			return true;
+    		}
+    	}
+    	return false;
+    }
 
+    
     protected abstract IASTAmbiguousStatement createAmbiguousStatement();
 
     /**

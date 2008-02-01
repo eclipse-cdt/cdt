@@ -10,7 +10,6 @@
  *     Markus Schorn (Wind River Systems)
  *     Ed Swartz (Nokia)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.search.actions;
 
 import java.util.ArrayList;
@@ -41,6 +40,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.index.IIndexName;
@@ -81,6 +81,10 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 	}
 
 	private class Runner extends Job implements ASTRunnable {
+		private static final int KIND_OTHER = 0;
+		private static final int KIND_USING_DECL = 1;
+		private static final int KIND_DEFINITION = 2;
+		
 		private IWorkingCopy fWorkingCopy;
 		private IIndex fIndex;
 
@@ -132,16 +136,23 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 					openInclude(((IASTPreprocessorIncludeStatement) parent));
 					return Status.OK_STATUS;
 				}
-				boolean isDefinition= searchName.isDefinition();
 				IBinding binding = searchName.resolveBinding();
 				if (binding != null && !(binding instanceof IProblemBinding)) {
-					IName[] declNames = findNames(fIndex, ast, isDefinition, binding);
+					int isKind= KIND_OTHER;
+					if (searchName.isDefinition()) {
+						if (binding instanceof ICPPUsingDeclaration) {
+							isKind= KIND_USING_DECL;
+						} else {
+							isKind= KIND_DEFINITION;
+						}
+					}
+					IName[] declNames = findNames(fIndex, ast, isKind, binding);
 					if (declNames.length == 0) {
 						if (binding instanceof ICPPSpecialization) {
 							// bug 207320, handle template instances
 							IBinding specialized= ((ICPPSpecialization) binding).getSpecializedBinding();
 							if (specialized != null && !(specialized instanceof IProblemBinding)) {
-								declNames = findNames(fIndex, ast, true, specialized);
+								declNames = findNames(fIndex, ast, KIND_DEFINITION, specialized);
 							}
 						} else if (binding instanceof ICPPMethod) {
 							// bug 86829, handle implicit methods.
@@ -150,7 +161,7 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 								try {
 									IBinding clsBinding= method.getClassOwner();
 									if (clsBinding != null && !(clsBinding instanceof IProblemBinding)) {
-										declNames= findNames(fIndex, ast, false, clsBinding);
+										declNames= findNames(fIndex, ast, KIND_OTHER, clsBinding);
 									}
 								} catch (DOMException e) {
 									// don't log problem bindings.
@@ -239,7 +250,7 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 		}
 
 		private boolean navigateViaCElements(ICProject project, IIndex index, IName[] declNames) {
-			final ArrayList elements= new ArrayList();
+			final ArrayList<ICElement> elements= new ArrayList<ICElement>();
 			for (int i = 0; i < declNames.length; i++) {
 				try {
 					ICElement elem = getCElementForName(project, index, declNames[i]);
@@ -264,7 +275,7 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 						if (sIsJUnitTest) {
 							throw new RuntimeException("ambiguous input"); //$NON-NLS-1$
 						}
-						ICElement[] elemArray= (ICElement[]) elements.toArray(new ICElement[elements.size()]);
+						ICElement[] elemArray= elements.toArray(new ICElement[elements.size()]);
 						target = (ISourceReference) OpenActionUtil.selectCElement(elemArray, getSite().getShell(),
 								CEditorMessages.getString("OpenDeclarationsAction.dialog.title"), CEditorMessages.getString("OpenDeclarationsAction.selectMessage"), //$NON-NLS-1$ //$NON-NLS-2$
 								CElementBaseLabels.ALL_DEFAULT | CElementBaseLabels.MF_POST_FILE_QUALIFIED, 0);
@@ -307,28 +318,64 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 			return null;
 		}
 
-		private IName[] findNames(IIndex index, IASTTranslationUnit ast,
-				boolean isDefinition, IBinding binding) throws CoreException {
-			IName[] declNames= isDefinition ?
-					findDeclarations(index, ast, binding) :
-					findDefinitions(index, ast, binding);
+		private IName[] findNames(IIndex index, IASTTranslationUnit ast, int isKind, IBinding binding) throws CoreException {
+			IName[] declNames;
+			if (isKind == KIND_DEFINITION) {
+				declNames= findDeclarations(index, ast, binding);
+			} else {
+				declNames= findDefinitions(index, ast, isKind, binding);
+			}
 			
 			if (declNames.length == 0) {
-				declNames= isDefinition ?
-						findDefinitions(index, ast, binding) :
-						findDeclarations(index, ast, binding);
+				if (isKind == KIND_DEFINITION) {
+					declNames= findDefinitions(index, ast, isKind, binding);
+				} else {
+					declNames= findDeclarations(index, ast, binding);
+				}
 			}
 			return declNames;
 		}
 
-		private IName[] findDefinitions(IIndex index, IASTTranslationUnit ast,
-				IBinding binding) throws CoreException {
-			IName[] declNames= ast.getDefinitionsInAST(binding);
-			if (declNames.length == 0) {
-					// 2. Try definition in index
-				declNames = index.findNames(binding, IIndex.FIND_DEFINITIONS | IIndex.SEARCH_ACCROSS_LANGUAGE_BOUNDARIES);
+		private IName[] findDefinitions(IIndex index, IASTTranslationUnit ast, int isKind, IBinding binding) throws CoreException {
+			IASTName[] declNames= ast.getDefinitionsInAST(binding);
+			boolean containsUsingDirectives= false;
+			for (int i = 0; i < declNames.length; i++) {
+				IASTName name= declNames[i];
+				if (name.resolveBinding() instanceof ICPPUsingDeclaration) {
+					containsUsingDirectives= true;
+					break;
+				}
 			}
-			return declNames;
+			if (containsUsingDirectives) {
+				// prevent navigation from using-decl to itself, or prefer using-decls over original defs.
+				declNames= separateUsingDecls(declNames, isKind != KIND_USING_DECL);
+			}
+			if (declNames.length > 0) {
+				return declNames;
+			}
+			
+			// 2. Try definition in index
+			IIndexName[] inames= index.findNames(binding, IIndex.FIND_DEFINITIONS | IIndex.SEARCH_ACCROSS_LANGUAGE_BOUNDARIES);
+			if (isKind != KIND_USING_DECL) {
+				// prefer using decls
+				for (int i = 0; i < inames.length; i++) {
+					if (index.findBinding(inames[i]) instanceof ICPPUsingDeclaration) {
+						return new IName[]{inames[i]};
+					}
+				}
+			}
+			return inames;
+		}
+
+		private IASTName[] separateUsingDecls(IASTName[] declNames, boolean keep) {
+			ArrayList<IASTName> result= new ArrayList<IASTName>(declNames.length);
+			for (int i = 0; i < declNames.length; i++) {
+				IASTName name = declNames[i];
+				if (keep == (name.resolveBinding() instanceof ICPPUsingDeclaration)) {
+					result.add(name);
+				}
+			}
+			return result.toArray(new IASTName[result.size()]);
 		}
 
 		private IName[] findDeclarations(IIndex index, IASTTranslationUnit ast,

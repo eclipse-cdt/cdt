@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
@@ -105,11 +104,6 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 		if (name.isDeclaration()) {
 			return IS_DECLARATION;
 		} 
-		
-		// special case a using-declaration is a declaration and a reference at the same time.
-		if (name.getBinding() instanceof ICPPUsingDeclaration) {
-			return IS_DEFINITION;
-		}
 		return IS_REFERENCE;
 	}
 	

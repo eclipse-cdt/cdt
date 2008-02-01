@@ -11,7 +11,6 @@
  *     IBM Corporation
  *     Andrew Ferguson (Symbian)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.pdom.dom;
 
 import org.eclipse.cdt.core.dom.ILinkage;
@@ -36,7 +35,6 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
@@ -261,8 +259,12 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 			} else {
 				// in case this is a delegate the scope of the delegate can be different to the
 				// scope of the delegating party (e.g. using-declarations)
-				while (binding instanceof ICPPDelegate && !(binding instanceof ICPPNamespaceAlias)) {
-					binding= ((ICPPDelegate) binding).getBinding();
+				while (binding instanceof ICPPDelegate) {
+					final ICPPDelegate delegate = (ICPPDelegate)binding;
+					if (delegate.getDelegateType() != ICPPDelegate.USING_DECLARATION) {
+						break;
+					}
+					binding= delegate.getBinding();
 				}
 				IScope scope = binding.getScope();
 				if (scope == null) {
@@ -356,17 +358,19 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 				if (binding instanceof IField) {
 					return null;
 				}
-				boolean isFileLocal= false;
+				boolean checkInSourceOnly= false;
 				if (binding instanceof IVariable) {
 					if (!(binding instanceof IField)) {
-						isFileLocal= ASTInternal.isStatic((IVariable) binding);
+						checkInSourceOnly= ASTInternal.isStatic((IVariable) binding);
 					}
 				} else if (binding instanceof IFunction) {
 					IFunction f= (IFunction) binding;
-					isFileLocal= ASTInternal.isStatic(f, false);
-				} 
+					checkInSourceOnly= ASTInternal.isStatic(f, false);
+//				} else if (binding instanceof ITypedef || binding instanceof ICompositeType || binding instanceof IEnumeration) {
+//					checkInSourceOnly= true;
+				}
 
-				if (isFileLocal) {
+				if (checkInSourceOnly) {
 					String path= ASTInternal.getDeclaredInSourceFileOnly(binding);
 					if (path != null) {
 						return wpdom.getFileForASTPath(getLinkageID(), path);

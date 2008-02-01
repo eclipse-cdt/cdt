@@ -113,6 +113,9 @@ public class CPPDelegate extends PlatformObject implements ICPPDelegate, ICPPInt
      * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#getDefinition()
      */
     public IASTNode getDefinition() {
+    	if (usingDeclaration instanceof ICPPInternalBinding) {
+    		return ((ICPPInternalBinding) usingDeclaration).getDefinition();
+    	}
     	return null;
     }
     
@@ -152,5 +155,9 @@ public class CPPDelegate extends PlatformObject implements ICPPDelegate, ICPPInt
 
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
+	}
+
+	public ICPPUsingDeclaration getUsingDeclaration() {
+		return usingDeclaration;
 	}
 }

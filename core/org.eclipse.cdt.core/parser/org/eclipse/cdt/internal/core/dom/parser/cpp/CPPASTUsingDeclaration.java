@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Bryan Wilkinson (QNX)
+ *    IBM - Initial API and implementation
+ *    Bryan Wilkinson (QNX)
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -80,13 +81,13 @@ public class CPPASTUsingDeclaration extends CPPASTNode implements
 
 	public int getRoleForName(IASTName n) {
 		if( n == name )
-			return r_reference;
+			return r_definition;
 		return r_unclear;
 	}
 	
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
 		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix);
-		List filtered = new ArrayList();
+		List<IBinding> filtered = new ArrayList<IBinding>();
 		
 		for (int i = 0;i < bindings.length; i++) {
 			if (bindings[i] instanceof ICPPNamespace) {
@@ -94,6 +95,6 @@ public class CPPASTUsingDeclaration extends CPPASTNode implements
 			}
 		}
 		
-		return (IBinding[]) filtered.toArray(new IBinding[filtered.size()]);
+		return filtered.toArray(new IBinding[filtered.size()]);
 	}
 }

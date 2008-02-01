@@ -11,7 +11,6 @@
  *    Andrew Ferguson (Symbian)
  *    Anton Leherbauer (Wind River Systems)
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.core.index;
 
 import java.util.ArrayList;
@@ -31,6 +30,7 @@ import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
@@ -42,6 +42,7 @@ import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.internal.core.dom.Linkage;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDelegate;
 import org.eclipse.cdt.internal.core.index.composite.CompositingNotImplementedError;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 import org.eclipse.cdt.internal.core.index.composite.c.CCompositesFactory;
@@ -122,8 +123,9 @@ public class CIndex implements IIndex {
 	}
 
 	public IIndexName[] findNames(IBinding binding, int flags) throws CoreException {
+		LinkedList<IIndexFragmentName> result= new LinkedList<IIndexFragmentName>();
 		if (binding instanceof ICPPUsingDeclaration) {
-			IBinding[] bindings= null;
+			ICPPDelegate[] bindings= null;
 			try {
 				bindings = ((ICPPUsingDeclaration)binding).getDelegates();
 			} catch (DOMException e) {
@@ -133,16 +135,26 @@ public class CIndex implements IIndex {
 				return new IIndexName[0];
 			}
 			if (bindings.length > 1) {
-				ArrayList<IIndexName> result= new ArrayList<IIndexName>();
+				ArrayList<IIndexName> multi= new ArrayList<IIndexName>();
 				for (int i = 0; i < bindings.length; i++) {
 					IBinding b = bindings[i];
-					result.addAll(Arrays.asList(findNames(b, flags)));
+					multi.addAll(Arrays.asList(findNames(b, flags)));
 				}
-				return result.toArray(new IIndexName[result.size()]);
+				return multi.toArray(new IIndexName[multi.size()]);
 			}
 			binding= bindings[0];
+		} else if (binding instanceof CPPDelegate) {
+			CPPDelegate delegate= (CPPDelegate) binding;
+			if (delegate.getDelegateType() == ICPPDelegate.USING_DECLARATION) {
+				binding= delegate.getBinding();
+				IIndexFragmentBinding ib= (IIndexFragmentBinding) delegate.getUsingDeclaration().getAdapter(IIndexFragmentBinding.class);
+				if (ib != null) {
+					final IIndexFragmentName[] names= ib.getFragment().findNames(ib, flags);
+					result.addAll(Arrays.asList(names));
+				}
+			}
 		}
-		LinkedList<IIndexFragmentName> result= new LinkedList<IIndexFragmentName>();
+
 		int fragCount= 0;
 		for (int i = 0; i < fPrimaryFragmentCount; i++) {
 			final IIndexFragmentName[] names = fFragments[i].findNames(binding, flags);

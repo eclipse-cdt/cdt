@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,9 +11,6 @@
  *     Markus Schorn (Wind River Systems)
  *     Andrew Ferguson (Symbian)
  *******************************************************************************/
-/*
- * Created on Nov 29, 2004
- */
 package org.eclipse.cdt.core.parser.tests.ast2;
 
 import java.io.BufferedReader;
@@ -76,11 +73,14 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
@@ -2939,7 +2939,7 @@ public class AST2CPPTests extends AST2BaseTest {
                 .resolveBinding();
 
         IASTName[] decls = tu.getDeclarationsInAST(u);
-        assertEquals(decls.length, 2);
+        assertEquals(3, decls.length);	// 2 function-decls + using-decl
         assertSame(decls[0], col.getName(1));
         assertSame(decls[1], col.getName(3));
 
@@ -2947,11 +2947,12 @@ public class AST2CPPTests extends AST2BaseTest {
         assertEquals(delegates.length, 2);
 
         decls = tu.getDeclarationsInAST(delegates[0]);
-        assertEquals(decls.length, 1);
-        assertSame(decls[0], col.getName(7));
+        assertEquals(2, decls.length);	// function-decl + using-decl
+        assertSame(decls[0], col.getName(1));
+        assertSame(decls[1], col.getName(7));
 
         decls = tu.getDeclarationsInAST(delegates[0].getBinding());
-        assertEquals(decls.length, 1);
+        assertEquals(1, decls.length);
         assertSame(decls[0], col.getName(1));
     }
 
@@ -3014,9 +3015,10 @@ public class AST2CPPTests extends AST2BaseTest {
         ICPPUsingDeclaration comp = (ICPPUsingDeclaration) col.getName(7)
                 .resolveBinding();
         IASTName[] decls = tu.getDeclarationsInAST(comp);
-        assertEquals(decls.length, 2);
+        assertEquals(3, decls.length);	// struct, func and using-decl
         assertSame(decls[0], col.getName(1));
         assertSame(decls[1], col.getName(2));
+        assertSame(decls[2], col.getName(7));
     }
 
     public void testBug86470_4() throws Exception {
@@ -3051,8 +3053,9 @@ public class AST2CPPTests extends AST2BaseTest {
         assertSame(x_var, ((ICPPDelegate) ref1).getBinding());
 
         IASTName[] refs = tu.getReferences(x_struct);
-        assertEquals(refs.length, 1);
+        assertEquals(2, refs.length);	// 1 ref + using-decl
         assertSame(refs[0], col.getName(10));
+        assertSame(refs[1], col.getName(12));
 
         String[] s = ref2.getQualifiedName();
         assertEquals(s[0], "x"); //$NON-NLS-1$
@@ -5577,5 +5580,91 @@ public class AST2CPPTests extends AST2BaseTest {
     	
     	assertInstance(b03, ICPPFunction.class);
     	assertInstance(b09, ICPPFunction.class);
+    }
+    
+	//	namespace source {
+	//		class cls {
+	//		};
+	//		void fs();
+	//		void fs(int a);
+	//		
+	//	}
+    //  void test1() {
+	//		source::fs();
+	//		source::fs(1);
+	//		source::cls c2;
+    //  }
+    //
+	//	using source::cls;
+	//	using source::fs;
+	//
+	//	void test() {
+	//		cls c2;
+	//		fs();
+	//		fs(1);
+	//	}
+    public void testReferencesOfUsingDecls() throws Exception {
+    	StringBuffer buffer = getContents(1)[0];
+    	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP, true, true );
+
+    	IASTDeclaration[] decls = tu.getDeclarations();
+    	ICPPASTNamespaceDefinition nsdef= (ICPPASTNamespaceDefinition) decls[0];
+		ICPPASTUsingDeclaration udcl= (ICPPASTUsingDeclaration) decls[2];
+		ICPPASTUsingDeclaration udf= (ICPPASTUsingDeclaration) decls[3];
+		IASTFunctionDefinition fdef= (IASTFunctionDefinition) decls[4];
+
+		IASTDeclaration[] nsdecls= nsdef.getDeclarations();
+    	ICPPASTCompositeTypeSpecifier cldef= (ICPPASTCompositeTypeSpecifier) ((IASTSimpleDeclaration) nsdecls[0]).getDeclSpecifier();
+    	ICPPASTFunctionDeclarator fdecl1= (ICPPASTFunctionDeclarator) ((IASTSimpleDeclaration) nsdecls[1]).getDeclarators()[0];
+    	ICPPASTFunctionDeclarator fdecl2= (ICPPASTFunctionDeclarator) ((IASTSimpleDeclaration) nsdecls[2]).getDeclarators()[0];
+    	
+    	IASTStatement[] stmts= ((IASTCompoundStatement) fdef.getBody()).getStatements();
+    	IASTName clname= ((IASTNamedTypeSpecifier) ((IASTSimpleDeclaration)((IASTDeclarationStatement) stmts[0]).getDeclaration()).getDeclSpecifier()).getName();
+    	IASTName fnname1= ((IASTIdExpression) ((IASTFunctionCallExpression) ((IASTExpressionStatement) stmts[1]).getExpression()).getFunctionNameExpression()).getName();
+    	IASTName fnname2= ((IASTIdExpression) ((IASTFunctionCallExpression) ((IASTExpressionStatement) stmts[2]).getExpression()).getFunctionNameExpression()).getName();
+
+    	// check class
+    	IBinding b= cldef.getName().resolveBinding();
+    	assertEquals(3, tu.getReferences(b).length);			// 2 refs + using-decl
+    	assertEquals(1, tu.getDefinitionsInAST(b).length);		// class-def
+    	assertEquals(1, tu.getDeclarationsInAST(b).length);		// class-def
+
+    	// check functions
+    	b= fdecl1.getName().resolveBinding();
+    	assertEquals(3, tu.getReferences(b).length);			// 2 refs + using-decl
+    	assertEquals(0, tu.getDefinitionsInAST(b).length);		// no def
+    	assertEquals(1, tu.getDeclarationsInAST(b).length);		// func-decl
+    	b= fdecl2.getName().resolveBinding();
+    	assertEquals(3, tu.getReferences(b).length);			// 2 refs + using-decl
+    	assertEquals(0, tu.getDefinitionsInAST(b).length);		// no def
+    	assertEquals(1, tu.getDeclarationsInAST(b).length);		// func-decl
+
+    	// check using declaration class
+    	b= udcl.getName().resolveBinding();
+    	assertEquals(3, tu.getReferences(b).length);			// 2 refs + using-decl
+    	assertEquals(2, tu.getDefinitionsInAST(b).length);		// class-def + using-decl
+    	assertEquals(2, tu.getDeclarationsInAST(b).length);		// class-def + using-decl
+
+    	// check using declaration function
+    	b= udf.getName().resolveBinding();
+    	assertEquals(5, tu.getReferences(b).length);			// 4 refs + using-decl
+    	assertEquals(1, tu.getDefinitionsInAST(b).length);		// using-decl
+    	assertEquals(3, tu.getDeclarationsInAST(b).length);		// using-decl + 2 func-decls
+    	
+    	// check class reference
+    	b= clname.resolveBinding();
+    	assertEquals(3, tu.getReferences(b).length);			// 2 refs + using-decl
+    	assertEquals(2, tu.getDefinitionsInAST(b).length);		// class-def + using-decl
+    	assertEquals(2, tu.getDeclarationsInAST(b).length);		// class-def + using-decl
+
+    	// check function references
+    	b= fnname1.resolveBinding();							
+    	assertEquals(3, tu.getReferences(b).length);			// 2 refs + using-decl
+    	assertEquals(1, tu.getDefinitionsInAST(b).length);		// using-decl
+    	assertEquals(2, tu.getDeclarationsInAST(b).length);		// using-decl + func-decl
+    	b= fnname2.resolveBinding();
+    	assertEquals(3, tu.getReferences(b).length);			// 2 refs + using-decl
+    	assertEquals(1, tu.getDefinitionsInAST(b).length);		// using-decl
+    	assertEquals(2, tu.getDeclarationsInAST(b).length);		// using-decl + func-decl
     }
 }

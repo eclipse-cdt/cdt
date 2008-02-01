@@ -43,7 +43,11 @@ abstract public class BaseTestFramework extends TestCase {
     static protected ICProject				cproject;
     static protected FileManager 			fileManager;
 	static protected boolean				indexDisabled=false;
-    {
+	
+	static void initProject() {
+		if (project != null) {
+			return;
+		}
         if( CCorePlugin.getDefault() != null && CCorePlugin.getDefault().getCoreModel() != null){
 			//(CCorePlugin.getDefault().getCoreModel().getIndexManager()).reset();
 			monitor = new NullProgressMonitor();
@@ -88,13 +92,20 @@ abstract public class BaseTestFramework extends TestCase {
     public void cleanupProject() throws Exception {
         try{
 	        project.delete( true, false, monitor );
-	        project = null;
 	    } catch( Throwable e ){
 	        /*boo*/
+	    } finally {
+	    	project= null;
 	    }
     }
     
-    protected void tearDown() throws Exception {
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		initProject();
+	}
+
+	protected void tearDown() throws Exception {
         if( project == null || !project.exists() )
             return;
         

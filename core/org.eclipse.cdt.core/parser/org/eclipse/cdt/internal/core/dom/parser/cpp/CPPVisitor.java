@@ -10,7 +10,6 @@
  *     Markus Schorn (Wind River Systems)
  *     Andrew Ferguson (Symbian)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.IName;
@@ -1105,7 +1104,7 @@ public class CPPVisitor {
 	public static class CollectDeclarationsAction extends CPPASTVisitor {
 	    private static final int DEFAULT_LIST_SIZE = 8;
 		private IASTName [] decls;
-		private IBinding binding;
+		private IBinding[] bindings;
 		private int idx = 0;
 		private int kind;
 		
@@ -1118,11 +1117,23 @@ public class CPPVisitor {
 		
 		
 		public CollectDeclarationsAction( IBinding binding ){
-			this.binding = binding;
+			shouldVisitNames = true;
 			this.decls = new IASTName[ DEFAULT_LIST_SIZE ];
 			
-			shouldVisitNames = true;
-			if( binding instanceof ILabel )
+			this.bindings = new IBinding[] {binding};
+			if (binding instanceof ICPPUsingDeclaration) {
+				try {
+					ICPPDelegate[] delegates= ((ICPPUsingDeclaration) binding).getDelegates();
+					this.bindings= new IBinding[delegates.length+1];
+					this.bindings[0]= binding;
+					for (int i=0; i < delegates.length; i++) {
+						this.bindings[i+1]= delegates[i].getBinding();
+					}
+				} catch (DOMException e) {
+				}
+				kind= KIND_COMPOSITE;
+			}
+			else if( binding instanceof ILabel )
 				kind = KIND_LABEL;
 			else if( binding instanceof ICPPTemplateParameter )
 				kind = KIND_TEMPLATE_PARAMETER;
@@ -1135,8 +1146,6 @@ public class CPPVisitor {
 			else if( binding instanceof ICPPNamespace) {
 				kind = KIND_NAMESPACE;
 			}
-			else if( binding instanceof ICPPUsingDeclaration )
-			    kind = KIND_COMPOSITE;
 			else 
 				kind = KIND_OBJ_FN;
 		}
@@ -1212,64 +1221,40 @@ public class CPPVisitor {
 					return PROCESS_CONTINUE;
 			}
 			
-			if( binding != null )
-			{
-			    IBinding potential = name.resolveBinding();
-			    IBinding [] bs = null;
-			    IBinding candidate = null;
-			    int n = -1;
-			    if( potential instanceof ICPPUsingDeclaration ){
-			        try {
-                        bs = ((ICPPUsingDeclaration)potential).getDelegates();
-                    } catch ( DOMException e ) {
-                        return PROCESS_CONTINUE;
-                    }
-                    if( bs == null || bs.length == 0 )
-                        candidate = null;
-                    else
-                        candidate = bs[ ++n ];
-			    } else {
-			        candidate = potential;
-			    }
-			        
-			    while( candidate != null ) {
-			        boolean found = false;
-			        if( binding instanceof ICPPUsingDeclaration ){
-			        	ICPPDelegate [] delegates = null;
-						try {
-							delegates = ((ICPPUsingDeclaration)binding).getDelegates();
-						} catch (DOMException e1) {
-						}
-						if( delegates != null ){
-			        		for (int i = 0; i < delegates.length; i++) {
-								if( delegates[i].getBinding() == candidate ){
-									found = true;
-									break;
-								}
-							}	
-						}
-				    } else {
-//				    	if( candidate instanceof ICPPDelegate )
-//				    		found = ( ((ICPPDelegate)candidate).getBinding() == binding );
-//			    		else
-			    			found = ( binding == candidate );   
-				    }
-				        
-			        if( found ){
-						if( decls.length == idx ){
-							IASTName [] temp = new IASTName[ decls.length * 2 ];
-							System.arraycopy( decls, 0, temp, 0, decls.length );
-							decls = temp;
-						}
-						decls[idx++] = name;
-				    }
-				    if( n > -1 && ++n < bs.length ){
-				        candidate = bs[n];
-				    } else break;
+			if( bindings != null ) {
+				if (isDeclarationsBinding(name.resolveBinding())) {
+					if( decls.length == idx ){
+						IASTName [] temp = new IASTName[ decls.length * 2 ];
+						System.arraycopy( decls, 0, temp, 0, decls.length );
+						decls = temp;
+					}
+					decls[idx++] = name;
 			    }   
 			}
 			return PROCESS_CONTINUE;
 		}
+
+		private boolean isDeclarationsBinding(IBinding nameBinding) {
+			nameBinding= unwindBinding(nameBinding);
+			if (nameBinding != null) {
+				for (int i = 0; i < bindings.length; i++) {
+					if (nameBinding.equals(unwindBinding(bindings[i]))) {
+						return true;
+					}
+					// a using declaration is a declaration for the references of its delegates
+					if (nameBinding instanceof ICPPUsingDeclaration) {
+						try {
+							if (ArrayUtil.contains(((ICPPUsingDeclaration) nameBinding).getDelegates(), bindings[i])) {
+								return true;
+							}
+						} catch (DOMException e) {
+						}
+					}
+				}
+			}
+			return false;
+		}
+
 		public IASTName[] getDeclarations(){
 			if( idx < decls.length ){
 				IASTName [] temp = new IASTName[ idx ];
@@ -1280,10 +1265,29 @@ public class CPPVisitor {
 		}
 
 	}
+
+	protected static IBinding unwindBinding(IBinding binding) {
+		while(true) {
+			if (binding instanceof ICPPSpecialization) {
+				binding= ((ICPPSpecialization) binding).getSpecializedBinding();
+			} else if (binding instanceof ICPPDelegate) {
+				ICPPDelegate delegate= (ICPPDelegate) binding;
+				if (delegate.getDelegateType() == ICPPDelegate.USING_DECLARATION) {
+					binding= delegate.getBinding();
+				} else {
+					break;
+				}
+			} else {
+				break;
+			}
+		}
+		return binding;
+	}
+
 	public static class CollectReferencesAction extends CPPASTVisitor {
 		private static final int DEFAULT_LIST_SIZE = 8;
 		private IASTName [] refs;
-		private IBinding binding;
+		private IBinding[] bindings;
 		private int idx = 0;
 		private int kind;
 		
@@ -1295,28 +1299,35 @@ public class CPPVisitor {
 		
 		
 		public CollectReferencesAction( IBinding binding ){
-			if (binding instanceof ICPPSpecialization) {
-				binding= ((ICPPSpecialization) binding).getSpecializedBinding();
-			}
-			this.binding = binding;
-			this.refs = new IASTName[ DEFAULT_LIST_SIZE ];
-			
 			shouldVisitNames = true;
-			if( binding instanceof ILabel )
+			this.refs = new IASTName[ DEFAULT_LIST_SIZE ];
+
+			binding = unwindBinding(binding);
+			this.bindings = new IBinding[] {binding};
+			
+			if (binding instanceof ICPPUsingDeclaration) {
+				try {
+					ICPPDelegate[] delegates= ((ICPPUsingDeclaration) binding).getDelegates();
+					this.bindings= new IBinding[delegates.length];
+					for (int i = 0; i < delegates.length; i++) {
+						binding= this.bindings[i]= delegates[i].getBinding();
+					}
+				} catch (DOMException e) {
+				}
+				kind= KIND_COMPOSITE;
+			} else if( binding instanceof ILabel ) {
 				kind = KIND_LABEL;
-			else if( binding instanceof ICompositeType || 
+			} else if( binding instanceof ICompositeType || 
 					 binding instanceof ITypedef || 
-					 binding instanceof IEnumeration)
-			{
+					 binding instanceof IEnumeration) {
 				kind = KIND_TYPE;
-			}
-			else if( binding instanceof ICPPNamespace) {
+			} else if( binding instanceof ICPPNamespace) {
 				kind = KIND_NAMESPACE;
-			} else if( binding instanceof ICPPUsingDeclaration ||
-					   binding instanceof ICPPTemplateParameter )
+			} else if( binding instanceof ICPPTemplateParameter ) {
 			    kind = KIND_COMPOSITE;
-			else 
+			} else { 
 				kind = KIND_OBJ_FN;
+			}
 		}
 		
 		public int visit( IASTName name ){
@@ -1382,63 +1393,46 @@ public class CPPVisitor {
 					return PROCESS_CONTINUE;
 			}
 			
-			if( binding != null ){
-			    IBinding potential = name.resolveBinding();
-			    IBinding [] bs = null;
-			    IBinding candidate = null;
-			    int n = -1;
-			    if( potential instanceof ICPPUsingDeclaration ){
-			        try {
-                        bs = ((ICPPUsingDeclaration)potential).getDelegates();
-                    } catch ( DOMException e ) {
-                        return PROCESS_CONTINUE;
-                    }
-                    if( bs == null || bs.length == 0 )
-                        candidate = null;
-                    else
-                        candidate = bs[ ++n ];
-			    } else if (potential instanceof ICPPSpecialization) {
-			    	candidate= ((ICPPSpecialization) potential).getSpecializedBinding();
-			    } else {
-			        candidate = potential;
-			    }
-			        
-			    while( candidate != null ) {
-			        boolean found = false;
-			        if( binding instanceof ICPPUsingDeclaration ){
-	                    try {
-	                        found = ArrayUtil.containsEqual( ((ICPPUsingDeclaration)binding).getDelegates(), candidate ); 
-	                    } catch ( DOMException e ) {
-	                    }
-				    } else if( potential instanceof ICPPUsingDeclaration ){
-				        found = sameBinding(binding, ((ICPPDelegate)candidate).getBinding());   
-				    } else {
-				    	found = sameBinding(binding, candidate);
-				    }
-			        
-				    if( found ){
-						if( refs.length == idx ){
-							IASTName [] temp = new IASTName[ refs.length * 2 ];
-							System.arraycopy( refs, 0, temp, 0, refs.length );
-							refs = temp;
-						}
-						refs[idx++] = name;
-						break;
-				    }
-				    if( n > -1 && ++n < bs.length ){
-				        candidate = bs[n];
-				    } else break;
+			if( bindings != null ){
+			    if (isReferenceBinding(name.resolveBinding())) {
+			    	if (refs.length == idx){
+			    		IASTName [] temp = new IASTName[ refs.length * 2 ];
+			    		System.arraycopy( refs, 0, temp, 0, refs.length );
+			    		refs = temp;
+			    	}
+			    	refs[idx++] = name;
 			    }
 			}
 			return PROCESS_CONTINUE;
 		}
-		private boolean sameBinding(IBinding binding1, IBinding binding2) {
-			if (binding1 == binding2)
-				return true;
-			if (binding1.equals(binding2))
-				return true;
+
+		private boolean isReferenceBinding(IBinding nameBinding) {
+			nameBinding= unwindBinding(nameBinding);
+			if (nameBinding != null) {
+				for (int i = 0; i < bindings.length; i++) {
+					if (nameBinding.equals(bindings[i])) {
+						return true;
+					}
+				}
+				if (nameBinding instanceof ICPPUsingDeclaration) {
+					try {
+						ICPPDelegate[] delegates= ((ICPPUsingDeclaration) nameBinding).getDelegates();
+						for (int i = 0; i < delegates.length; i++) {
+							ICPPDelegate delegate = delegates[i];
+							if (isReferenceBinding(delegate.getBinding())) {
+								return true;
+							}
+						}
+					} catch (DOMException e) {
+					}
+					return false;
+				} else {
+					return false;
+				}
+			}
 			return false;
 		}
+		
 		public IASTName[] getReferences(){
 			if( idx < refs.length ){
 				IASTName [] temp = new IASTName[ idx ];

@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.selection;
 
@@ -80,7 +80,12 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
 	static ICProject				cPrj;
     static FileManager              fileManager;
     static boolean                  disabledHelpContributions = false;
-    {
+    
+    static void initProject() {
+    	if (project != null) {
+    		return;
+    	}
+    	
         //(CCorePlugin.getDefault().getCoreModel().getIndexManager()).reset();
         monitor = new NullProgressMonitor();
         
@@ -126,14 +131,19 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
     	closeAllEditors();
         try{
             project.delete( true, false, monitor );
-            project = null;
-        } catch( Throwable e ){
-            /*boo*/
+        } catch( CoreException e ){
+        	try {
+        		project.delete( true, false, monitor );
+        	}
+        	catch (CoreException e1) {}
+        } finally {
+        	project= null;
         }
     }
     
     protected void setUp() throws Exception {
     	super.setUp();
+    	initProject();
     	OpenDeclarationsAction.sIsJUnitTest= true;
     }
     

@@ -9,6 +9,7 @@ package org.eclipse.dd.dsf.debug.ui.viewmodel.variable;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues;
 import org.eclipse.dd.dsf.debug.service.IExpressions.IExpressionDMContext;
+import org.eclipse.dd.dsf.debug.service.IExpressions.IExpressionDMData;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.IDebugVMConstants;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.expression.WatchExpressionCellModifier;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.numberformat.IFormattedValuePreferenceStore;
@@ -53,6 +54,10 @@ public class VariableCellModifier extends WatchExpressionCellModifier {
             if (getVariableDMC(element) == null)
                 return false;
             
+           IExpressionDMData exprData = fDataAccess.readVariable(element);
+            
+            if ( ( exprData != null ) && ( ! exprData.isEditable() ) ) return false;
+ 
             return true ;
         }
 

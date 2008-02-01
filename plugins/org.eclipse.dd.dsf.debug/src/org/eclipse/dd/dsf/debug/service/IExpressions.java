@@ -122,6 +122,11 @@ public interface IExpressions extends IFormattedValues {
          * This method needs to be defined.
          */
         IRegisters.IRegisterDMContext getRegister();
+        
+        /**
+         * @return True if this expression's value can be edited.  False otherwise.
+         */
+        boolean isEditable();
     }
 
     /**

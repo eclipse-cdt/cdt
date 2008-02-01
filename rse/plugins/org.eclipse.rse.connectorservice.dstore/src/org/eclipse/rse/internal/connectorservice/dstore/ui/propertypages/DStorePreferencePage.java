@@ -195,6 +195,28 @@ public class DStorePreferencePage extends PreferencePage implements IWorkbenchPr
 		
 	}
 
+	public boolean performOk() {
+		IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
+		
+		// timeout
+		String timeoutStr = _connectionTimeout.getText();
+		int timeout = Integer.parseInt(timeoutStr);
+		store.setValue(IUniversalDStoreConstants.RESID_PREF_SOCKET_TIMEOUT, timeout);	
+		
+		// do keepalive
+		boolean doKeepalive = _doKeepaliveButton.getSelection();
+		store.setValue(IUniversalDStoreConstants.RESID_PREF_DO_KEEPALIVE, doKeepalive);
+		
+		// cache remote classes
+		boolean cacheRemoteClasses = _cacheRemoteClassesButton.getSelection();
+		store.setValue(IUniversalDStoreConstants.RESID_PREF_CACHE_REMOTE_CLASSES, cacheRemoteClasses);				
+		
+		// show mismatched server warning
+		boolean showMismatchedWarning = _showMismatchedServerWarningButton.getSelection();
+		store.setValue(IUniversalDStoreConstants.ALERT_MISMATCHED_SERVER, showMismatchedWarning);
+		return super.performOk();
+	}
+
 	
 	
 }

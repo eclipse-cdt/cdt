@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 QNX Software Systems and others.
+ * Copyright (c) 2002, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -92,43 +92,46 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	static protected class ProblemAnnotation extends Annotation implements ICAnnotation {
 		private static final String INDEXER_ANNOTATION_TYPE= "org.eclipse.cdt.ui.indexmarker"; //$NON-NLS-1$
 		
-		private ITranslationUnit fTranslationUnit;
+		private final ITranslationUnit fTranslationUnit;
+		private final int fId;
+		private final boolean fIsProblem;
+		private final String[] fArguments;
+		private final String fMarkerType;
 		private List fOverlaids;
-		private IProblem fProblem;
-		
+
 		public ProblemAnnotation(IProblem problem, ITranslationUnit tu) {
-			fProblem= problem;
 			fTranslationUnit= tu;
+			setText(problem.getMessage());
+			fId= problem.getID();
+			fIsProblem= problem.isError() || problem.isWarning();
+			fArguments= isProblem() ? problem.getArguments() : null;
             setType(problem instanceof CoreSpellingProblem ?
             		SpellingAnnotation.TYPE : INDEXER_ANNOTATION_TYPE);
-		}
-		
-		/*
-		 * @see ICAnnotation#getMessage()
-		 */
-		public String getText() {
-			return fProblem.getMessage();
+			if (problem instanceof IPersistableProblem)
+				fMarkerType= ((IPersistableProblem) problem).getMarkerType();
+			else 
+				fMarkerType= null;
 		}
 		
 		/*
 		 * @see ICAnnotation#getArguments()
 		 */
 		public String[] getArguments() {
-			return isProblem() ? fProblem.getArguments() : null;
+			return fArguments;
 		}
 	
 		/*
 		 * @see ICAnnotation#getId()
 		 */
 		public int getId() {
-			return fProblem.getID();
+			return fId;
 		}
 	
 		/*
 		 * @see ICAnnotation#isProblem()
 		 */
 		public boolean isProblem() {
-			return fProblem.isError() || fProblem.isWarning();
+			return fIsProblem;
 		}
 		
 		/*
@@ -182,12 +185,10 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		}
 
 		/*
-		 * @see org.eclipse.jdt.internal.ui.javaeditor.IJavaAnnotation#getMarkerType()
+		 * @see org.eclipsecjdt.internal.ui.editor.ICAnnotation#getMarkerType()
 		 */
 		public String getMarkerType() {
-			if (fProblem instanceof IPersistableProblem)
-				return ((IPersistableProblem) fProblem).getMarkerType();
-			return null;
+			return fMarkerType;
 		}
 	}
 		
@@ -268,6 +269,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		
 		public void clear() {
 			fList.clear();
+			fAnchor= 0;
 		}
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -96,9 +96,16 @@ public abstract class APathEntry extends PathEntry {
 					return false;
 				}
 				
-				Set excludeSet = new HashSet();
-				Set otherSet = new HashSet();
-				for (int i = 0; i < excludeLength; i++) {
+				int i=0;
+				// performance: iterate to first non-identical path
+				for (; i < excludeLength; i++) {
+					if (exclusionPatterns[i] == otherExcludes[i]) {
+						continue;
+					}
+				}
+				Set<String> excludeSet = new HashSet<String>();
+				Set<String> otherSet = new HashSet<String>();
+				for (; i < excludeLength; i++) {
 					// compare toStrings instead of IPaths
 					// since IPath.equals is specified to ignore trailing separators
 					excludeSet.add(exclusionPatterns[i].toString());

@@ -126,6 +126,7 @@ public class VariableCellModifier extends WatchExpressionCellModifier {
                     formatId = IFormattedValues.NATURAL_FORMAT;
                 }
                 
+                fDataAccess.writeVariable(element, (String) value, formatId);
                 fProvider.handleEvent(new UserEditEvent(element));
             }
         }

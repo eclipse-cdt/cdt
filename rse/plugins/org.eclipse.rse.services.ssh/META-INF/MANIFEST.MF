@@ -9,6 +9,7 @@ Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.rse.services;bundle-version="[2.0.0,3.0.0)",
  com.jcraft.jsch;bundle-version="[0.1.31,1.0.0)"
+Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.rse.internal.services.ssh;x-friends:="org.eclipse.rse.connectorservice.ssh,org.eclipse.rse.subsystems.files.ssh,org.eclipse.rse.subsystems.shells.ssh",
  org.eclipse.rse.internal.services.ssh.files;x-friends:="org.eclipse.rse.connectorservice.ssh,org.eclipse.rse.subsystems.files.ssh,org.eclipse.rse.subsystems.shells.ssh",

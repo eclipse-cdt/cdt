@@ -30,6 +30,7 @@ Export-Package: org.eclipse.rse.internal.processes.ui;x-internal:=true,
  org.eclipse.rse.internal.processes.ui.propertypages;x-internal:=true,
  org.eclipse.rse.internal.processes.ui.view;x-internal:=true,
  org.eclipse.rse.processes.ui
+Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: J2SE-1.4

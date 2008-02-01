@@ -17,6 +17,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.rse.ui;bundle-version="[3.0.0,4.0.0)"
 Export-Package: org.eclipse.rse.internal.subsystems.shells.telnet;x-internal:=true,
  org.eclipse.rse.subsystems.shells.telnet
+Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: J2SE-1.4

@@ -11,5 +11,6 @@ Export-Package: org.eclipse.tm.internal.discovery.model.provider;x-friends:="org
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.edit;bundle-version="[2.2.0,3.0.0)";visibility:=reexport,
  org.eclipse.tm.discovery.model;bundle-version="[2.0.0,3.0.0)"
+Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: J2SE-1.4

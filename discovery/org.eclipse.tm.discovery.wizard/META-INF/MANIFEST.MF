@@ -12,6 +12,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.tm.discovery.engine;bundle-version="[2.0.0,3.0.0)",
  org.eclipse.tm.discovery.model;bundle-version="[2.0.0,3.0.0)",
  org.eclipse.tm.discovery.model.edit;bundle-version="[2.0.0,3.0.0)"
+Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.tm.internal.discovery.wizard;x-friends:="org.eclipse.rse.discovery,org.eclipse.tm.discovery.view"
 Bundle-Vendor: %providerName

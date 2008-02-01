@@ -18,6 +18,7 @@ Require-Bundle: org.eclipse.ui,
 Import-Package: com.ibm.icu.lang,
  com.ibm.icu.text,
  com.ibm.icu.util
+Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.rse.core.servicesubsystem,
  org.eclipse.rse.core.subsystems,

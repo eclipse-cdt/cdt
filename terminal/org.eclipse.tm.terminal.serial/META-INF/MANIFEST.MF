@@ -8,6 +8,7 @@ Import-Package: gnu.io;resolution:=optional
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.tm.terminal;bundle-version="[2.0.0,3.0.0)"
+Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
 Eclipse-BuddyPolicy: ext
 Bundle-Vendor: %providerName

@@ -10,6 +10,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.rse.services;bundle-version="[2.0.0,3.0.0)",
  org.eclipse.rse.core;bundle-version="[3.0.0,4.0.0)",
  org.eclipse.rse.ui;bundle-version="[3.0.0,4.0.0)"
+Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.rse.internal.connectorservice.local;x-friends:="org.eclipse.rse.subsystems.files.local,org.eclipse.rse.subsystems.processes.local,org.eclipse.rse.subsystems.shells.local"
 Bundle-Vendor: %providerName

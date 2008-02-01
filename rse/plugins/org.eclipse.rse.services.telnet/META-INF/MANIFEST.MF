@@ -10,6 +10,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.apache.commons.net;bundle-version="[1.4.1,2.0.0)"
 Export-Package: org.eclipse.rse.internal.services.telnet;x-friends:="org.eclipse.rse.connectorservice.telnet,org.eclipse.rse.subsystems.files.telnet,org.eclipse.rse.subsystems.shells.telnet",
  org.eclipse.rse.internal.services.telnet.shell;x-friends:="org.eclipse.rse.connectorservice.telnet,org.eclipse.rse.subsystems.shells.telnet"
+Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: J2SE-1.4

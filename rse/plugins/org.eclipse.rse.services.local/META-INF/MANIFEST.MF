@@ -8,6 +8,7 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.rse.services;bundle-version="[2.0.0,3.0.0)"
+Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.rse.internal.services.local;x-friends:="org.eclipse.rse.subsystems.files.local,org.eclipse.rse.subsystems.processes.local,org.eclipse.rse.subsystems.shells.local",
  org.eclipse.rse.internal.services.local.files;x-friends:="org.eclipse.rse.subsystems.files.local",

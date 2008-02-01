@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.utils.elf.parser;
  
@@ -39,42 +40,48 @@ public class ElfParser extends AbstractCExtension implements IBinaryParser {
 		}
 
 		IBinaryFile binary = null;
-		try {
-			Elf.Attribute attribute = null;
-			if (hints != null && hints.length > 0) {
-				try {
-					attribute = Elf.getAttributes(hints);
-				} catch (EOFException eof) {
-					// continue, the array was to small.
-				}
-			}
-
-			//Take a second run at it if the data array failed. 			
- 			if(attribute == null) {
-				attribute = Elf.getAttributes(path.toOSString());
- 			}
-
-			if (attribute != null) {
-				switch (attribute.getType()) {
-					case Attribute.ELF_TYPE_EXE :
-						binary = createBinaryExecutable(path);
-						break;
-
-					case Attribute.ELF_TYPE_SHLIB :
-						binary = createBinaryShared(path);
-						break;
-
-					case Attribute.ELF_TYPE_OBJ :
-						binary = createBinaryObject(path);
-						break;
-
-					case Attribute.ELF_TYPE_CORE :
-						binary = createBinaryCore(path);
-						break;
-				}
-			}
-		} catch (IOException e) {
+		if (hints != null && AR.isARHeader(hints)) {
 			binary = createBinaryArchive(path);
+		} else {
+			try {
+				Elf.Attribute attribute = null;
+				if (hints != null && Elf.isElfHeader(hints)) {
+					try {
+						attribute = Elf.getAttributes(hints);
+					} catch (EOFException eof) {
+						// continue, the array was to small.
+					}
+				}
+	
+				//Take a second run at it if the data array failed. 			
+	 			if(attribute == null) {
+					attribute = Elf.getAttributes(path.toOSString());
+	 			}
+	
+				if (attribute != null) {
+					switch (attribute.getType()) {
+						case Attribute.ELF_TYPE_EXE :
+							binary = createBinaryExecutable(path);
+							break;
+	
+						case Attribute.ELF_TYPE_SHLIB :
+							binary = createBinaryShared(path);
+							break;
+	
+						case Attribute.ELF_TYPE_OBJ :
+							binary = createBinaryObject(path);
+							break;
+	
+						case Attribute.ELF_TYPE_CORE :
+							binary = createBinaryCore(path);
+							break;
+					}
+				}
+			} catch (IOException e) {
+				if (hints == null) {
+					binary = createBinaryArchive(path);
+				}
+			}
 		}
 		return binary;
 	}

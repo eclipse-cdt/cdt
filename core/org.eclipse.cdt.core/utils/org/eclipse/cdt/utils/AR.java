@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Abeer Bagul (Tensilica) - bug 102434
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.utils;
 
@@ -58,11 +60,27 @@ public class AR {
 	 */
 	public class ARHeader {
 
+		private static final int NAME_IDX= 0;
+		private static final int NAME_LEN= 16;
+//		private static final int MTIME_IDX= 16;
+//		private static final int MTIME_LEN= 12;
+//		private static final int UID_IDX= 28;
+//		private static final int UID_LEN= 6;
+//		private static final int GID_IDX= 34;
+//		private static final int GID_LEN= 6;
+//		private static final int MODE_IDX= 40;
+//		private static final int MODE_LEN= 8;
+		private static final int SIZE_IDX= 48;
+		private static final int SIZE_LEN= 10;
+//		private static final int TRAILER_IDX= 58;
+//		private static final int TRAILER_LEN= 2;
+		private static final int HEADER_LEN= 60;
+		
 		private String object_name;
-		private String modification_time;
-		private String uid;
-		private String gid;
-		private String mode;
+//		private String modification_time;
+//		private String uid;
+//		private String gid;
+//		private String mode;
 		private long size;
 		private long obj_offset;
 
@@ -70,9 +88,7 @@ public class AR {
 		 * Remove the padding from the archive header strings.
 		 */
 		private String removeBlanks(String str) {
-			while (str.charAt(str.length() - 1) == ' ')
-				str = str.substring(0, str.length() - 1);
-			return str;
+		    return str.trim();
 		}
 
 		/**
@@ -113,25 +129,11 @@ public class AR {
 		 *    There was an error processing the header data from the file.
 		 */
 		ARHeader() throws IOException {
-			byte[] object_name = new byte[16];
-			byte[] modification_time = new byte[12];
-			byte[] uid = new byte[6];
-			byte[] gid = new byte[6];
-			byte[] mode = new byte[8];
-			byte[] size = new byte[10];
-			byte[] trailer = new byte[2];
-
+			byte[] buf= new byte[HEADER_LEN];
 			//
 			// Read in the archive header data. Fixed sizes.
 			//
-			efile.read(object_name);
-			efile.read(modification_time);
-			efile.read(uid);
-			efile.read(gid);
-			efile.read(mode);
-			efile.read(size);
-			efile.read(trailer);
-
+			efile.readFully(buf);
 			//
 			// Save this location so we can create the Elf object later.
 			//
@@ -140,12 +142,12 @@ public class AR {
 			//
 			// Convert the raw bytes into strings and numbers.
 			//
-			this.object_name = removeBlanks(new String(object_name));
-			this.modification_time = new String(modification_time);
-			this.uid = new String(uid);
-			this.gid = new String(gid);
-			this.mode = new String(mode);
-			this.size = Long.parseLong(removeBlanks(new String(size)));
+			this.object_name = removeBlanks(new String(buf, NAME_IDX, NAME_LEN));
+//			this.modification_time = new String(buf, MTIME_IDX, MTIME_LEN);
+//			this.uid = new String(buf, UID_IDX, UID_LEN);
+//			this.gid = new String(buf, GID_IDX, GID_LEN);
+//			this.mode = new String(buf, MODE_IDX, MODE_LEN);
+			this.size = Long.parseLong(removeBlanks(new String(buf, SIZE_IDX, SIZE_LEN)));
 
 			//
 			// If the name is of the format "/<number>", get name from the
@@ -224,11 +226,21 @@ public class AR {
 	 */
 	public AR(String filename) throws IOException {
 		this.filename = filename;
-		efile = new ERandomAccessFile(filename, "r"); //$NON-NLS-1$
-		String hdr = efile.readLine();
-		if (hdr == null || hdr.compareTo("!<arch>") != 0) { //$NON-NLS-1$
-			efile.close();
-			throw new IOException(CCorePlugin.getResourceString("Util.exception.invalidArchive")); //$NON-NLS-1$
+		boolean goodAr = false;
+		try {
+			efile = new ERandomAccessFile(filename, "r"); //$NON-NLS-1$
+			byte [] hdrBytes = new byte[7];
+			efile.readFully(hdrBytes);
+			goodAr = isARHeader(hdrBytes);
+			if (!goodAr) {
+				throw new IOException(CCorePlugin.getResourceString("Util.exception.invalidArchive")); //$NON-NLS-1$
+			}
+			efile.readLine();
+		} finally {
+			if (!goodAr && efile != null) {
+				efile.close();
+				efile = null;
+			}
 		}
 	}
 
@@ -237,7 +249,7 @@ public class AR {
 		if (headers != null)
 			return;
 
-		Vector v = new Vector();
+		Vector<ARHeader> v = new Vector<ARHeader>();
 		try {
 			//
 			// Check for EOF condition
@@ -271,7 +283,7 @@ public class AR {
 			}
 		} catch (IOException e) {
 		}
-		headers = (ARHeader[]) v.toArray(new ARHeader[0]);
+		headers = v.toArray(new ARHeader[0]);
 	}
 
 	/**
@@ -295,7 +307,7 @@ public class AR {
 	}
 
 	public String[] extractFiles(String outdir, String[] names) throws IOException {
-		Vector names_used = new Vector();
+		Vector<String> names_used = new Vector<String>();
 		String object_name;
 		int count;
 
@@ -319,7 +331,7 @@ public class AR {
 			rfile.close();
 		}
 
-		return (String[]) names_used.toArray(new String[0]);
+		return names_used.toArray(new String[0]);
 	}
 
 	public String[] extractFiles(String outdir) throws IOException {

@@ -280,8 +280,8 @@ public class CPPVisitor {
         return enumeration;
     }
 
-    private static IBinding createBinding( ICPPASTElaboratedTypeSpecifier elabType ){
-	    IASTNode parent = elabType.getParent();
+    private static IBinding createBinding( final ICPPASTElaboratedTypeSpecifier elabType ){
+	    final IASTNode parent = elabType.getParent();
 	    IBinding binding = null;
 	    boolean mustBeSimple = true;
 	    boolean isFriend = false;
@@ -350,7 +350,9 @@ public class CPPVisitor {
 		    }
 		}
         try {
-            binding = scope.getBinding( elabType.getName(), false );
+        	if (scope != null) {
+        		binding = scope.getBinding( elabType.getName(), false );
+        	}
             if( !(binding instanceof ICPPInternalBinding) || !(binding instanceof ICPPClassType) ){
     			if( elabType.getKind() != IASTElaboratedTypeSpecifier.k_enum ){
 					if( template )
@@ -2142,7 +2144,7 @@ public class CPPVisitor {
 	private static IScope getParentScope(IScope scope, IASTTranslationUnit unit) throws DOMException {
 		IScope parentScope= scope.getParent();
 		// the index cannot return the translation unit as parent scope
-		if (parentScope == null && scope instanceof IIndexScope) {
+		if (parentScope == null && scope instanceof IIndexScope && unit != null) {
 			parentScope= unit.getScope();
 		}
 		return parentScope;

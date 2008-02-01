@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig;
 
@@ -15,6 +16,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.ref.Reference;
+import java.lang.ref.SoftReference;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,7 +57,7 @@ import org.xml.sax.SAXException;
  * 
  * @author vhirsl
  */
-public class DiscoveredScannerInfoStore {
+public final class DiscoveredScannerInfoStore {
 	private static final QualifiedName dscFileNameProperty = new 
             QualifiedName(MakeCorePlugin.getUniqueIdentifier(), "discoveredScannerConfigFileName"); //$NON-NLS-1$
 	private static final String CDESCRIPTOR_ID = MakeCorePlugin.getUniqueIdentifier() + ".discoveredScannerInfo"; //$NON-NLS-1$
@@ -67,7 +70,10 @@ public class DiscoveredScannerInfoStore {
 
 	private static DiscoveredScannerInfoStore instance;
 
-	private Map fDocumentMap = new HashMap();
+	/**
+	 * Caches scanner config XML Documents per project using soft references.
+	 */
+	private final Map<IProject, Reference<Document>> fDocumentCache = new HashMap<IProject, Reference<Document>>();
 
 	public static DiscoveredScannerInfoStore getInstance() {
 		if (instance == null) {
@@ -144,7 +150,8 @@ public class DiscoveredScannerInfoStore {
 
 	private Document getDocument(IProject project) throws CoreException {
 		// Get the document
-		Document document = (Document) fDocumentMap.get(project);
+		Reference<Document> ref= fDocumentCache.get(project);
+		Document document = ref != null ? ref.get() : null;
 		if (document == null) {
 		    try {
 		        DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -164,11 +171,11 @@ public class DiscoveredScannerInfoStore {
 		            document = builder.newDocument();
 		            ProcessingInstruction pi = document.createProcessingInstruction(SCD_STORE_VERSION, "version=\"2\""); //$NON-NLS-1$
 		            document.appendChild(pi);
-		            Element rootElement = document.createElement(SI_ELEM); //$NON-NLS-1$
-		            rootElement.setAttribute(ID_ATTR, CDESCRIPTOR_ID); //$NON-NLS-1$
+		            Element rootElement = document.createElement(SI_ELEM);
+		            rootElement.setAttribute(ID_ATTR, CDESCRIPTOR_ID);
 		            document.appendChild(rootElement);
 		        }
-		        fDocumentMap.put(project, document);
+		        fDocumentCache.put(project, new SoftReference<Document>(document));
 		    }
 		    catch (IOException e) {
 		        MakeCorePlugin.log(e);
@@ -194,7 +201,7 @@ public class DiscoveredScannerInfoStore {
 	* @param project 
 	*/
 	private void upgradeDocument(Document document, IProject project) {
-		Element rootElem = (Element) document.getElementsByTagName(SI_ELEM).item(0); //$NON-NLS-1$
+		Element rootElem = (Element) document.getElementsByTagName(SI_ELEM).item(0);
 		ProcessingInstruction pi = document.createProcessingInstruction(SCD_STORE_VERSION, "version=\"2.0\""); //$NON-NLS-1$
 		document.insertBefore(pi, rootElem);
 		
@@ -224,15 +231,6 @@ public class DiscoveredScannerInfoStore {
         return cfgElem;
 	}
 	
-	private void clearChildren(Element cElem){
-		for (Node child = cElem.getFirstChild(); child != null; 
-		child = cElem.getFirstChild()) {
-				cElem.removeChild(child);
-		}
-	}
-
-	
-
 	/**
 	* @param scannerInfo
 	* @param rootElement
@@ -378,7 +376,7 @@ public class DiscoveredScannerInfoStore {
                                 scProjectDeleted(project);
                             }
                             // remove from cache
-                            fDocumentMap.put(project, null);
+                            fDocumentCache.remove(project);
                         }
                         return false;
                     }

@@ -18,6 +18,7 @@ Javier Montalvo Orus (Symbian) - [plan] Improve Discovery and Autodetect in RSE
 Javier Montalvo Orus (Symbian) - Fixing 176216 - [api] FTP sould provide API to allow clients register their own FTPListingParser
 Martin Oberhuber (Wind River) - [186523] Move subsystemConfigurations from UI to core
 Javier Montalvo Orus (Symbian) - improved autodetection of FTPListingParser
+Martin Oberhuber (Wind River) - [198692] Use FTP LIST -a to list UNIX hidden files
 -->
 <?eclipse version="3.1"?>
 <plugin>
@@ -53,6 +54,7 @@ Javier Montalvo Orus (Symbian) - improved autodetection of FTPListingParser
             class="org.apache.commons.net.ftp.parser.UnixFTPEntryParser"
             id="org.eclipse.rse.ftp.parser.Unix"
             label="%FTPParser.UNIX"
+            listCommandModifiers="-a"
             priority="100"
             systemTypeRegex=".*[Uu][Nn][Ii][Xx].*">
       </parser>

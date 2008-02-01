@@ -69,7 +69,6 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
     private static final String PROFILE_PAGE = "profilePage"; //$NON-NLS-1$
     private static final String PROFILE_ID = "profileId"; //$NON-NLS-1$
     private static final String PROFILE_NAME = "name"; //$NON-NLS-1$
-//	private static final String MULTI_MSG = Messages.getString("DiscoveryTab.4"); //$NON-NLS-1$
     private static final int DEFAULT_HEIGHT = 110;
 	private static final int[] DEFAULT_SASH_WEIGHTS = new int[] { 10, 20 };
     private Table resTable;
@@ -561,7 +560,13 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 	}
 	
 	public boolean canBeVisible() {
-		if (page.isForProject() || page.isForPrefs()) return true;
+		if (page.isMultiCfg()) {
+			setAllVisible(false, null);
+			return false;
+		}	
+		setAllVisible(true, null);
+		if (page.isForProject() || page.isForPrefs()) 
+			return true;
 		// Hide this page for folders and files 
 		// if Discovery scope is "per configuration", not "per resource"
  		ICfgScannerConfigBuilderInfo2Set _cbi =

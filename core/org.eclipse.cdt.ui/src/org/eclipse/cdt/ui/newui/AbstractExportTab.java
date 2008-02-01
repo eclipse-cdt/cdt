@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -167,7 +167,7 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 	 * Called when item added/edited/removed.
 	 * Refreshes whole table contwnts
 	 */
-	public void update() {
+	protected void update() {
 		int x = table.getSelectionIndex();
 		if (x == -1) x = 0;
 		
@@ -327,7 +327,7 @@ outer:
 		return ein;
 	}
 	
-	public void performApply(ICResourceDescription src, ICResourceDescription dst) {
+	protected void performApply(ICResourceDescription src, ICResourceDescription dst) {
 		ICConfigurationDescription c1 = src.getConfiguration();
 		ICConfigurationDescription c2 = dst.getConfiguration();
 		c2.removeExternalSettings();
@@ -389,18 +389,9 @@ outer:
 	}
 
 	public boolean canBeVisible() {
-		if (! page.isForProject() ) return false;
-		
+		if (! page.isForProject() ) 
+			return false;
 		return true;
-		/*
-		if (getResDesc() == null) return true;
-		ICLanguageSetting [] ls = getLangSetting(getResDesc());
-		for (int i=0; i<ls.length; i++) {
-			if ((ls[i].getSupportedEntryKinds() & getKind()) != 0)
-				return true;
-		}
-		return false;
-		*/
 	}
 
 	/**

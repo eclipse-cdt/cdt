@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.PluginVersionIdentifier;
  * belonging to different configurations while they are
  * edited simultaneously.
  */
-public class MultiResourceInfo extends MultiItemsHolder implements
+public abstract class MultiResourceInfo extends MultiItemsHolder implements
 		IResourceInfo {
 	private static final int MODE_BOOL = 0;
 	private static final int MODE_STR  = 1;

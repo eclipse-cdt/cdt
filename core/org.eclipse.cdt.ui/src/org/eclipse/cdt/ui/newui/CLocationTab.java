@@ -221,7 +221,7 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 		}
 	}
 	
-	public void saveData() {
+	private void saveData() {
 		ICExclusionPatternPathEntry[] p = new ICExclusionPatternPathEntry[src.size()];
 		Iterator it = src.iterator();
 		int i=0;
@@ -257,7 +257,7 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 	protected abstract ICExclusionPatternPathEntry newEntry(IPath p, IPath[] ex, boolean workspacePath);
 	protected abstract ICExclusionPatternPathEntry newEntry(IFolder f, IPath[] ex, boolean workspacePath);
 	
-	public void performApply(ICResourceDescription src, ICResourceDescription dst) {
+	protected void performApply(ICResourceDescription src, ICResourceDescription dst) {
 		setEntries(dst, getEntries(src));
 	}
 

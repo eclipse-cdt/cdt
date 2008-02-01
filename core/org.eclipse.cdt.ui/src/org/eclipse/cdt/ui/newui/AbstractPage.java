@@ -1033,5 +1033,12 @@ implements
 		p1.y = Math.min(p1.y, (r.height - p0.y));
 		sh.setSize(p1);
 	}
-	
+
+	public Button getAButton() {
+		return getApplyButton();
+	}
+	public Button getDButton() {
+		return getDefaultsButton();
+	}
+
 }

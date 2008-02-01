@@ -15,7 +15,6 @@ import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IMultiConfiguration;
-import org.eclipse.cdt.managedbuilder.internal.core.Builder;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.MultiConfiguration;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -119,7 +118,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		b_dirVars = setupBottomButton(c, VARIABLESBUTTON_NAME);
 	}
 
-	void setManagedBuild(boolean enable) {
+	private void setManagedBuild(boolean enable) {
 		setManagedBuildOn(enable);
 		page.informPages(MANAGEDBUILDSTATE, null);
 		updateButtons();
@@ -192,7 +191,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		canModify = true;
 	}
 	
-	Button setupBottomButton(Composite c, String name) {
+	private Button setupBottomButton(Composite c, String name) {
 		Button b = new Button(c, SWT.PUSH);
 		b.setText(name);
 		GridData fd = new GridData(GridData.CENTER);
@@ -302,42 +301,9 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 	}
 
 	public void performApply(ICResourceDescription src, ICResourceDescription dst) {
-		Configuration cfg01 = (Configuration)getCfg(src.getConfiguration());
-		Configuration cfg02 = (Configuration)getCfg(dst.getConfiguration());
-		cfg02.enableInternalBuilder(cfg01.isInternalBuilderEnabled());
-		copyBuilders(cfg01.getBuilder(), cfg02.getEditableBuilder());
+		BuildBehaviourTab.apply(src, dst, page.isMultiCfg());
 	}
 	
-	static void copyBuilders(IBuilder b1, IBuilder b2) {  	
-		try {
-			b2.setUseDefaultBuildCmd(b1.isDefaultBuildCmd());
-			if (!b1.isDefaultBuildCmd()) {
-				b2.setCommand(b1.getCommand());
-				b2.setArguments(b1.getArguments());
-			} else {
-				b2.setCommand(null);
-				b2.setArguments(null);
-			}
-			b2.setStopOnError(b1.isStopOnError());
-			b2.setParallelBuildOn(b1.isParallelBuildOn());
-			b2.setParallelizationNum(b1.getParallelizationNum());
-			if (b2.canKeepEnvironmentVariablesInBuildfile())
-				b2.setKeepEnvironmentVariablesInBuildfile(b1.keepEnvironmentVariablesInBuildfile());
-			((Builder)b2).setBuildPath(((Builder)b1).getBuildPathAttribute());
-		
-			b2.setAutoBuildEnable((b1.isAutoBuildEnable()));
-			b2.setBuildAttribute(IBuilder.BUILD_TARGET_AUTO, (b1.getBuildAttribute(IBuilder.BUILD_TARGET_AUTO, EMPTY_STR)));
-			b2.setCleanBuildEnable(b1.isCleanBuildEnabled());
-			b2.setBuildAttribute(IBuilder.BUILD_TARGET_CLEAN, (b1.getBuildAttribute(IBuilder.BUILD_TARGET_CLEAN, EMPTY_STR)));
-			b2.setIncrementalBuildEnable(b1.isIncrementalBuildEnabled());
-			b2.setBuildAttribute(IBuilder.BUILD_TARGET_INCREMENTAL, (b1.getBuildAttribute(IBuilder.BUILD_TARGET_INCREMENTAL, EMPTY_STR)));
-		
-			b2.setManagedBuildOn(b1.isManagedBuildOn());
-		} catch (CoreException ex) {
-			ManagedBuilderUIPlugin.log(ex);
-		}
-	}
-
 	/* (non-Javadoc)
 	 * 
 	 * @param string
@@ -365,10 +331,10 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 			IConfiguration[] cfs = (IConfiguration[])((IMultiConfiguration)icfg).getItems();
 			for (int i=0; i<cfs.length; i++) {
 				IBuilder b = cfs[i].getEditableBuilder();
-				copyBuilders(b.getSuperClass(), b);
+				BuildBehaviourTab.copyBuilders(b.getSuperClass(), b);
 			}
 		} else 
-			copyBuilders(bldr.getSuperClass(), bldr);
+			BuildBehaviourTab.copyBuilders(bldr.getSuperClass(), bldr);
 		updateData(getResDesc());
 	}
 	

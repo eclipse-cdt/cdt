@@ -192,13 +192,13 @@ public class RefsTab extends AbstractCPropertyTab {
 		}
 	}
 
-	public void performApply(ICResourceDescription src, ICResourceDescription dst) {
+	protected void performApply(ICResourceDescription src, ICResourceDescription dst) {
 		dst.getConfiguration().setReferenceInfo(src.getConfiguration().getReferenceInfo());
 	}
 
 	// This page can be displayed for project only
 	public boolean canBeVisible() {
-		return page.isForProject();
+		return page.isForProject() && ! page.isMultiCfg();
 	}
 
 	protected void performDefaults() {

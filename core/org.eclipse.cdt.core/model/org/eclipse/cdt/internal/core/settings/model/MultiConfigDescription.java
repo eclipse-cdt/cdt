@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -266,9 +266,14 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 			return null;
 		if (lst.size() == 1)
 			return (ICResourceDescription)lst.get(0);
-		return new MultiResourceDescription(
-				(ICResourceDescription[])lst.toArray(new ICResourceDescription[lst.size()]),
+		if (isForFolder)
+			return new MultiFolderDescription(
+				(ICFolderDescription[])lst.toArray(new ICFolderDescription[lst.size()]),
  				 getStringListMode());
+		else
+			return new MultiFileDescription(
+					(ICFileDescription[])lst.toArray(new ICFileDescription[lst.size()]),
+	 				 getStringListMode());
 	}
 	
 	/* (non-Javadoc)

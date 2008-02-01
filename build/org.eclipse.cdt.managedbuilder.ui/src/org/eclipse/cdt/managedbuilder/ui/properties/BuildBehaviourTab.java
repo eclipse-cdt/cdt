@@ -11,12 +11,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICMultiConfigDescription;
 import org.eclipse.cdt.core.settings.model.ICMultiItemsHolder;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IMultiConfiguration;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.BuildProcessManager;
+import org.eclipse.cdt.managedbuilder.internal.core.Builder;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.MultiConfiguration;
 import org.eclipse.cdt.newmake.core.IMakeBuilderInfo;
@@ -395,12 +398,57 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 	}
 
 	public void performApply(ICResourceDescription src, ICResourceDescription dst) {
-		Configuration cfg01 = (Configuration)getCfg(src.getConfiguration());
-		Configuration cfg02 = (Configuration)getCfg(dst.getConfiguration());
-		cfg02.enableInternalBuilder(cfg01.isInternalBuilderEnabled());
-		BuilderSettingsTab.copyBuilders(cfg01.getBuilder(), cfg02.getEditableBuilder());
+		apply(src, dst, page.isMultiCfg());
+	}
+
+	static void apply(ICResourceDescription src, ICResourceDescription dst, boolean multi) {
+		if (multi) {
+			ICMultiConfigDescription mc1 = (ICMultiConfigDescription)src.getConfiguration();
+			ICMultiConfigDescription mc2 = (ICMultiConfigDescription)dst.getConfiguration();
+			ICConfigurationDescription[] cds1 = (ICConfigurationDescription[])mc1.getItems();
+			ICConfigurationDescription[] cds2 = (ICConfigurationDescription[])mc2.getItems();
+			for (int i=0; i<cds1.length; i++) 
+				applyToCfg(cds1[i], cds2[i]);
+		} else 
+			applyToCfg(src.getConfiguration(), dst.getConfiguration());
 	}
 	
+	private static void applyToCfg(ICConfigurationDescription c1, ICConfigurationDescription c2) {
+		Configuration cfg01 = (Configuration)getCfg(c1);
+		Configuration cfg02 = (Configuration)getCfg(c2);
+		cfg02.enableInternalBuilder(cfg01.isInternalBuilderEnabled());
+		copyBuilders(cfg01.getBuilder(), cfg02.getEditableBuilder());
+	}
+	
+	static void copyBuilders(IBuilder b1, IBuilder b2) {  	
+		try {
+			b2.setUseDefaultBuildCmd(b1.isDefaultBuildCmd());
+			if (!b1.isDefaultBuildCmd()) {
+				b2.setCommand(b1.getCommand());
+				b2.setArguments(b1.getArguments());
+			} else {
+				b2.setCommand(null);
+				b2.setArguments(null);
+			}
+			b2.setStopOnError(b1.isStopOnError());
+			b2.setParallelBuildOn(b1.isParallelBuildOn());
+			b2.setParallelizationNum(b1.getParallelizationNum());
+			if (b2.canKeepEnvironmentVariablesInBuildfile())
+				b2.setKeepEnvironmentVariablesInBuildfile(b1.keepEnvironmentVariablesInBuildfile());
+			((Builder)b2).setBuildPath(((Builder)b1).getBuildPathAttribute());
+		
+			b2.setAutoBuildEnable((b1.isAutoBuildEnable()));
+			b2.setBuildAttribute(IBuilder.BUILD_TARGET_AUTO, (b1.getBuildAttribute(IBuilder.BUILD_TARGET_AUTO, EMPTY_STR)));
+			b2.setCleanBuildEnable(b1.isCleanBuildEnabled());
+			b2.setBuildAttribute(IBuilder.BUILD_TARGET_CLEAN, (b1.getBuildAttribute(IBuilder.BUILD_TARGET_CLEAN, EMPTY_STR)));
+			b2.setIncrementalBuildEnable(b1.isIncrementalBuildEnabled());
+			b2.setBuildAttribute(IBuilder.BUILD_TARGET_INCREMENTAL, (b1.getBuildAttribute(IBuilder.BUILD_TARGET_INCREMENTAL, EMPTY_STR)));
+		
+			b2.setManagedBuildOn(b1.isManagedBuildOn());
+		} catch (CoreException ex) {
+			ManagedBuilderUIPlugin.log(ex);
+		}
+	}
 	// This page can be displayed for project only
 	public boolean canBeVisible() {
 		return page.isForProject() || page.isForPrefs();
@@ -410,15 +458,16 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 		super.setVisible(b);
 	}
 
+	
 	protected void performDefaults() {
 		if (icfg instanceof IMultiConfiguration) {
 			IConfiguration[] cfs = (IConfiguration[])((IMultiConfiguration)icfg).getItems();
 			for (int i=0; i<cfs.length; i++) {
 				IBuilder b = cfs[i].getEditableBuilder();
-				BuilderSettingsTab.copyBuilders(b.getSuperClass(), b);
+				copyBuilders(b.getSuperClass(), b);
 			}
 		} else 
-			BuilderSettingsTab.copyBuilders(bldr.getSuperClass(), bldr);
+			copyBuilders(bldr.getSuperClass(), bldr);
 		updateData(getResDesc());
 	}
 	

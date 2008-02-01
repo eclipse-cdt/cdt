@@ -73,7 +73,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 		private ToolListElement selectedElement;
 		private ToolListContentProvider listprovider;
 		private Object propertyObject;
-		
+
 		private IResourceInfo fInfo;
 		
 		public void createControls(Composite par)  {
@@ -400,13 +400,11 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 		 *  (non-Javadoc)
 		 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performDefaults()
 		 */
-		public void performDefaults() {
+		protected void performDefaults() {
 			if (page.isForProject()) {
 				ManagedBuildManager.resetConfiguration(page.getProject(), getCfg());
 			} else {
-//				ManagedBuildManager.resetResourceConfiguration(provider.getProject(), );
-//				ManagedBuildManager.performValueHandlerEvent(fInfo, IManagedOptionValueHandler.EVENT_SETDEFAULT);
-
+				ManagedBuildManager.resetOptionSettings(fInfo);
 			}
 			ITool tools[];
 			if (page.isForProject()) 

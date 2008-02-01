@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.cdt.ui.newui;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.swt.widgets.Button;
 
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
@@ -64,5 +65,8 @@ public interface ICPropertyProvider extends ICOptionContainer {
 	// Checks whether a project is new CDT model-style
 	boolean isCDTProject(IProject p);
 	boolean isMultiCfg();
+	// Gives access to buttons
+	Button getAButton();
+	Button getDButton();
 
 }

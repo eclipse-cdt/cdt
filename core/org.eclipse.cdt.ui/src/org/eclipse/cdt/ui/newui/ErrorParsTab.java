@@ -179,7 +179,7 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 		buttonSetEnabled(4, cnt > 0);
 	}
 	
-	public void performApply(ICResourceDescription src, ICResourceDescription dst) {
+	protected void performApply(ICResourceDescription src, ICResourceDescription dst) {
 		ICConfigurationDescription sd = src.getConfiguration();
 		ICConfigurationDescription dd = dst.getConfiguration();
 		String[] s = (sd instanceof ICMultiConfigDescription) ?

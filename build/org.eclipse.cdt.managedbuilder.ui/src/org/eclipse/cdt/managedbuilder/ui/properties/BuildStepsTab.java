@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.settings.model.ICMultiItemsHolder;
+import org.eclipse.cdt.core.settings.model.ICMultiResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.managedbuilder.core.IAdditionalInput;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -292,7 +293,6 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 		return path.toString();
 	}
 
-	
 	public void performApply(ICResourceDescription src, ICResourceDescription dst) {
 		if (page.isForProject()) {
 			IConfiguration cfg1 = getCfg(src.getConfiguration());
@@ -302,31 +302,40 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 			cfg2.setPostbuildStep(cfg1.getPostbuildStep());
 			cfg2.setPostannouncebuildStep(cfg1.getPostannouncebuildStep());
 		} else {
-			IFileInfo rcfg1 = (IFileInfo)getResCfg(src);
-			IFileInfo rcfg2 = (IFileInfo)getResCfg(dst);
-			rcfg2.setRcbsApplicability(rcfg1.getRcbsApplicability());
-			ITool tool1 = getRcbsTool(rcfg1);
-			ITool tool2 = getRcbsTool(rcfg2);
-
-			IInputType[] ein1 = tool1.getInputTypes();
-			IInputType[] ein2 = tool2.getInputTypes();
-			if (valid(ein1) && valid(ein2)) {
-				IAdditionalInput[] add1 = ein1[0].getAdditionalInputs();
-				IAdditionalInput[] add2 = ein2[0].getAdditionalInputs();
-				if (valid(add1) && valid(add2)) {
-//				if (add1 != null && add2 != null && add1.length > 0 && add2.length > 0) {
-					add2[0].setPaths(createList(add1[0].getPaths()));
-				}
-			}
-			IOutputType[] tmp1 = tool1.getOutputTypes();			
-			IOutputType[] tmp2 = tool2.getOutputTypes();
-//			if (tmp1 != null && tmp2 != null && tmp1.length > 0 && tmp2.length > 0) {
-			if (valid(tmp1) && valid(tmp2)) {
-				tmp2[0].setOutputNames(createList(tmp1[0].getOutputNames()));
-			}
-			tool2.setToolCommand(tool1.getToolCommand());
-			tool2.setAnnouncement(tool1.getAnnouncement());
+			if (page.isMultiCfg()) {
+				ICResourceDescription[] ris1 = (ICResourceDescription[])((ICMultiResourceDescription)src).getItems();				
+				ICResourceDescription[] ris2 = (ICResourceDescription[])((ICMultiResourceDescription)dst).getItems();
+				for (int i=0; i<ris1.length; i++)
+					applyToFile(ris1[i], ris2[i]);
+			} else 
+				applyToFile(src, dst);
 		}
+	}
+	
+	private void applyToFile(ICResourceDescription src, ICResourceDescription dst) {
+		IFileInfo rcfg1 = (IFileInfo)getResCfg(src);
+		IFileInfo rcfg2 = (IFileInfo)getResCfg(dst);
+		rcfg2.setRcbsApplicability(rcfg1.getRcbsApplicability());
+		ITool tool1 = getRcbsTool(rcfg1);
+		ITool tool2 = getRcbsTool(rcfg2);
+		IInputType[] ein1 = tool1.getInputTypes();
+		IInputType[] ein2 = tool2.getInputTypes();
+		if (valid(ein1) && valid(ein2)) {
+			IAdditionalInput[] add1 = ein1[0].getAdditionalInputs();
+			IAdditionalInput[] add2 = ein2[0].getAdditionalInputs();
+			if (valid(add1) && valid(add2)) {
+//			if (add1 != null && add2 != null && add1.length > 0 && add2.length > 0) {
+				add2[0].setPaths(createList(add1[0].getPaths()));
+			}
+		}
+		IOutputType[] tmp1 = tool1.getOutputTypes();			
+		IOutputType[] tmp2 = tool2.getOutputTypes();
+//		if (tmp1 != null && tmp2 != null && tmp1.length > 0 && tmp2.length > 0) {
+		if (valid(tmp1) && valid(tmp2)) {
+			tmp2[0].setOutputNames(createList(tmp1[0].getOutputNames()));
+		}
+		tool2.setToolCommand(tool1.getToolCommand());
+		tool2.setAnnouncement(tool1.getAnnouncement());
 	}
 	
 	private int sel2app(int index){

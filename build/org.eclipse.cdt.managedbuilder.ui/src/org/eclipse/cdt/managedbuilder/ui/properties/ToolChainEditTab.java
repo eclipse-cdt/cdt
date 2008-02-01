@@ -426,6 +426,8 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
     }
 	protected void performApply(ICResourceDescription src,
 			ICResourceDescription dst) {
+		if (mod == null)
+			return;
 		IConfiguration cfg = getCfg(dst.getConfiguration());
 		try {
 			IToolListModification tlm = (ri instanceof IFolderInfo) ?
@@ -438,9 +440,11 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 	}
 	
 	protected void performDefaults() {
-		mod.restoreDefaults();
-		apply();
-		updateData();
+		if (mod != null) {
+			mod.restoreDefaults();
+			apply();
+			updateData();
+		}
 	}
 	
 	protected void updateButtons() {} // Do nothing. No buttons to update.

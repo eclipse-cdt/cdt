@@ -578,7 +578,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 			System.arraycopy(ris, 0, fis, 0, ris.length);
 			return new MultiFolderInfo(fis, this);
 		}
-		return new MultiResourceInfo(ris, this);
+		return new MultiFileInfo(ris, this);
 	}
 
 	/* (non-Javadoc)

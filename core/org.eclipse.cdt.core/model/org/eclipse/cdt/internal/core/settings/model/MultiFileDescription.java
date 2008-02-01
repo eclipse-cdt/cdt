@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,8 +29,8 @@ public class MultiFileDescription extends MultiResourceDescription implements
 	 * @see org.eclipse.cdt.core.settings.model.ICFileDescription#getLanguageSetting()
 	 */
 	public ICLanguageSetting getLanguageSetting() {
-		System.out.println("Bad multi access: MultiFileDescription.getLanguageSetting()");
-		return null;
+		System.out.println("Limited multi access: MultiFileDescription.getLanguageSetting()");
+		return ((ICFileDescription)fRess[0]).getLanguageSetting();
 	}
 
 }

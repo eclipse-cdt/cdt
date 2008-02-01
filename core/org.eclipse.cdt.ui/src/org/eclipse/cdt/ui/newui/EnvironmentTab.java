@@ -344,7 +344,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 		updateButtons();
 	}
 
-	public void performApply(ICResourceDescription _src, ICResourceDescription _dst) {
+	protected void performApply(ICResourceDescription _src, ICResourceDescription _dst) {
 		ICConfigurationDescription src = _src.getConfiguration();
 		ICConfigurationDescription dst = _dst.getConfiguration();
 		

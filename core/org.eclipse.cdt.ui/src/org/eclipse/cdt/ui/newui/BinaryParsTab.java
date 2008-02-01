@@ -300,7 +300,7 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 		return ((BinaryParserConfiguration)table.getItem(x).getData()).getID();
 	}
 
-	public void performApply(ICResourceDescription src, ICResourceDescription dst) {
+	protected void performApply(ICResourceDescription src, ICResourceDescription dst) {
 		if (page.isMultiCfg()) {
 			src = ((ICResourceDescription[])((ICMultiResourceDescription)src).getItems())[0];
 			dst = ((ICResourceDescription[])((ICMultiResourceDescription)dst).getItems())[0];

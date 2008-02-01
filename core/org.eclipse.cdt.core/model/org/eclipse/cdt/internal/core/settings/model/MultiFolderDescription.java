@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.IPath;
 public class MultiFolderDescription extends MultiResourceDescription implements
 		ICFolderDescription {
 
-	private static final Comparator comp = CDTListComparator.getInstance();
+	private static final Comparator<Object> comp = CDTListComparator.getInstance();
 	private ICLanguageSetting[] lsets = null;
 	
 	public MultiFolderDescription(ICFolderDescription[] res, int mode) {
@@ -93,7 +93,7 @@ public class MultiFolderDescription extends MultiResourceDescription implements
 		ICLanguageSetting[] fs = conv2LS(getListForDisplay(ls, comp));
 		lsets = new ICLanguageSetting[fs.length];
 		for (int i=0; i<fs.length; i++) {
-			ArrayList list = new ArrayList(fRess.length);
+			ArrayList<ICLanguageSetting> list = new ArrayList<ICLanguageSetting>(fRess.length);
 			for (int j=0; j<ls.length; j++) {
 				int x = Arrays.binarySearch(ls[j], fs[i], comp);
 				if (x >= 0)

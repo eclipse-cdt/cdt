@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -468,7 +468,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		}
 	}
 	
-	public void performApply(ICResourceDescription src, ICResourceDescription dst) {
+	protected void performApply(ICResourceDescription src, ICResourceDescription dst) {
 		ICLanguageSetting [] sr = getLangSetting(src);
 		ICLanguageSetting [] ds = getLangSetting(dst);
 		if (sr == null || ds == null || sr.length != ds.length) return;

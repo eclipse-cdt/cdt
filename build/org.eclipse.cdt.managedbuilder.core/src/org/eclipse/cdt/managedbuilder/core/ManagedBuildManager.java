@@ -83,6 +83,7 @@ import org.eclipse.cdt.managedbuilder.internal.core.ManagedCommandLineGenerator;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
 import org.eclipse.cdt.managedbuilder.internal.core.MultiConfiguration;
+import org.eclipse.cdt.managedbuilder.internal.core.MultiFolderInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.MultiResourceInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.Option;
 import org.eclipse.cdt.managedbuilder.internal.core.OptionCategory;
@@ -1691,11 +1692,18 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 */
 	public static void resetConfiguration(IProject project, IConfiguration configuration) {
 		// reset the configuration
-		((Configuration)configuration).reset();
-
-		performValueHandlerEvent(configuration, 
-				IManagedOptionValueHandler.EVENT_SETDEFAULT, false);
-
+		if (configuration instanceof MultiConfiguration) {
+			IConfiguration[] cfs = (IConfiguration[])((MultiConfiguration)configuration).getItems();
+			for (IConfiguration c : cfs) {
+				((Configuration)c).reset();
+				performValueHandlerEvent(c, 
+						IManagedOptionValueHandler.EVENT_SETDEFAULT, false);
+			}
+		} else {
+			((Configuration)configuration).reset();
+			performValueHandlerEvent(configuration, 
+					IManagedOptionValueHandler.EVENT_SETDEFAULT, false);
+		}
 	}
 
 	public static void resetResourceConfiguration(IProject project, IResourceConfiguration resConfig) {
@@ -1709,17 +1717,34 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	
 	public static void resetOptionSettings(IResourceInfo rcInfo){
 		if(rcInfo instanceof IFileInfo){
-			Configuration cfg = (Configuration)rcInfo.getParent();
-			IProject project;
+			IConfiguration c = rcInfo.getParent();
+			Configuration cfg = null;
+			IProject project = null; 
+			if (c instanceof Configuration) 
+				cfg = (Configuration)c;
+			else if (c instanceof MultiConfiguration) {
+				MultiConfiguration mc = (MultiConfiguration)c;
+				IConfiguration[] cfs = (IConfiguration[])mc.getItems();
+				cfg = (Configuration)cfs[0]; 
+			}
 			if(cfg.isExtensionElement() || cfg.isPreference())
 				project = null;
 			else
 				project = cfg.getOwner().getProject();
 			
-			resetResourceConfiguration(project, (IFileInfo)rcInfo);
+			if (rcInfo instanceof MultiResourceInfo) {
+				for (IResourceInfo ri : (IResourceInfo[])((MultiResourceInfo)rcInfo).getItems())
+					resetResourceConfiguration(project, (IFileInfo)ri);
+			} else
+				resetResourceConfiguration(project, (IFileInfo)rcInfo);
 		} else {
-			FolderInfo fo = (FolderInfo)rcInfo;
-			fo.resetOptionSettings();
+			if (rcInfo instanceof MultiFolderInfo) {
+				for (IFolderInfo fi : (IFolderInfo[])((MultiFolderInfo)rcInfo).getItems())
+					((FolderInfo)fi).resetOptionSettings();
+			} else {
+				FolderInfo fo = (FolderInfo)rcInfo;
+				fo.resetOptionSettings();
+			}
 		}
 	}
 	/**

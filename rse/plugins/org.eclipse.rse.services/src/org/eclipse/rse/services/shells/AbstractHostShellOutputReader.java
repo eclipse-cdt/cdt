@@ -13,11 +13,13 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [197848] Fix shell terminated state when remote dies
+ * Martin Oberhuber (Wind River) - [217429] Make registering multiple output listeners thread-safe
  *******************************************************************************/
 
 package org.eclipse.rse.services.shells;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class AbstractHostShellOutputReader  extends Thread implements IHostShellOutputReader
@@ -38,7 +40,7 @@ public abstract class AbstractHostShellOutputReader  extends Thread implements I
 	public AbstractHostShellOutputReader(IHostShell hostShell, boolean isErrorReader)
 	{
 		_hostShell = hostShell;
-		_listeners = new ArrayList();
+		_listeners = Collections.synchronizedList(new ArrayList());
 		_linesOfOutput = new ArrayList();
 		_consumerOffset = 0;
 		_isErrorReader = isErrorReader;
@@ -102,12 +104,18 @@ public abstract class AbstractHostShellOutputReader  extends Thread implements I
 		}
 	}
 	
+	protected final synchronized void startIfNotAlive() {
+		if (!isAlive()) {
+			start();
+		}
+	}
+	
 	public IHostOutput readLine()
 	{
 		if (!isAlive())
 		{
 			internalReadLine();
-			start();			
+			startIfNotAlive();			
 		}
 		return (IHostOutput)_linesOfOutput.get(_consumerOffset++);		
 	}
@@ -126,10 +134,7 @@ public abstract class AbstractHostShellOutputReader  extends Thread implements I
 	public void addOutputListener(IHostShellOutputListener listener)
 	{
 		_listeners.add(listener);
-		if (!isAlive())
-		{
-			start();
-		}
+		startIfNotAlive();
 	}
 
 	public void fireOutputChanged(IHostShellChangeEvent event)

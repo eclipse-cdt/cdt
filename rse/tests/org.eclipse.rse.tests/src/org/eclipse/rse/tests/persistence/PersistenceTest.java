@@ -9,6 +9,7 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * David McKnight   (IBM)        - [217715] [api] RSE property sets should support nested property sets
  ********************************************************************************/
 
 package org.eclipse.rse.tests.persistence;
@@ -135,6 +136,13 @@ public class PersistenceTest extends RSECoreTestCase {
 		bogusProperties.addProperty("bp1", "1");
 		bogusProperties.addProperty("bp2", "2");
 		bogus.addPropertySet(bogusProperties);
+		
+		// nested property set
+		IPropertySet bogusNestedProperties = new PropertySet("bogus_nested_properties");
+		bogusNestedProperties.addProperty("bnpa", "a");
+		bogusNestedProperties.addProperty("bnpb", "b");
+		bogusProperties.addPropertySet(bogusNestedProperties);
+		
 		bogus.commit();
 		
 		/*
@@ -156,6 +164,11 @@ public class PersistenceTest extends RSECoreTestCase {
 		assertNotNull(bogusProperties);
 		assertEquals("1", bogusProperties.getProperty("bp1").getValue());
 		assertEquals("2", bogusProperties.getProperty("bp2").getValue());
+		
+		bogusNestedProperties = bogusProperties.getPropertySet("bogus_nested_properties");
+		assertNotNull(bogusNestedProperties);
+		assertEquals("a", bogusNestedProperties.getProperty("bnpa").getValue());
+		assertEquals("b", bogusNestedProperties.getProperty("bnpb").getValue());		
 		
 		try {
 			registry.deleteSystemProfile(bogus);

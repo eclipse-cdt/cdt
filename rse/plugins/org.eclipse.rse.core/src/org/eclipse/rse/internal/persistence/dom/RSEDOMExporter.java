@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Kevin Doyle (IBM) - [163883] Multiple filter strings are disabled
  * Kevin Doyle (IBM) - [197199] Renaming a Profile doesn't cause a save
+ * David McKnight   (IBM)        - [217715] [api] RSE property sets should support nested property sets
  ********************************************************************************/
 
 package org.eclipse.rse.internal.persistence.dom;
@@ -182,6 +183,10 @@ public class RSEDOMExporter implements IRSEDOMExporter {
 				
 			}
 			result[i] = propertySetNode;
+			// persist nested property sets of property set
+			if (set instanceof IRSEModelObject){
+				createPropertySetNodes(propertySetNode, (IRSEModelObject)set, clean);
+			}
 		}
 		return result;
 	}

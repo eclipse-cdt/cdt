@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
  * Kevin Doyle (IBM) - [163883] Multiple filter strings are disabled
  * Martin Oberhuber (Wind River) - [202416] Protect against NPEs when importing DOM
+ * David McKnight   (IBM)        - [217715] [api] RSE property sets should support nested property sets
  ********************************************************************************/
 
 package org.eclipse.rse.internal.persistence.dom;
@@ -505,16 +506,24 @@ public class RSEDOMImporter {
 		}
 		// properties are now stored as children, get those next
 		RSEDOMNode[] children = propertySetNode.getChildren();
-		for (int i = 0; i < children.length; i++) {
+		for (int i = 0; i < children.length; i++) {						
 			RSEDOMNode child = children[i];
-			String propertyName = child.getName();
-			String propertyValue = getAttributeValue(child, IRSEDOMConstants.ATTRIBUTE_VALUE);
-			String propertyTypeName = getAttributeValue(child, IRSEDOMConstants.ATTRIBUTE_TYPE);
-			IPropertyType propertyType = PropertyType.fromString(propertyTypeName);
-			if (IPropertySet.DESCRIPTION_KEY.equals(propertyName)) { // any descriptions found as properties should be set directly
-				set.setDescription(propertyValue);
-			} else {
-				set.addProperty(propertyName, propertyValue, propertyType);
+			
+			// is this a property set or a property?
+			String type = child.getType();
+			if (set instanceof IRSEModelObject && type.equals(IRSEDOMConstants.TYPE_PROPERTY_SET)){ 
+				restorePropertySet((IRSEModelObject)set, child);
+			}
+			else {
+				String propertyName = child.getName();
+				String propertyValue = getAttributeValue(child, IRSEDOMConstants.ATTRIBUTE_VALUE);
+				String propertyTypeName = getAttributeValue(child, IRSEDOMConstants.ATTRIBUTE_TYPE);
+				IPropertyType propertyType = PropertyType.fromString(propertyTypeName);
+				if (IPropertySet.DESCRIPTION_KEY.equals(propertyName)) { // any descriptions found as properties should be set directly
+					set.setDescription(propertyValue);
+				} else {
+					set.addProperty(propertyName, propertyValue, propertyType);
+				}
 			}
 		}
 		return set;

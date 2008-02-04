@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - Added Javadoc.
+ * David McKnight   (IBM)        - [217715] [api] RSE property sets should support nested property sets
  *******************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -30,7 +31,7 @@ import java.util.Set;
  * Not thread-safe since the underlying {@link java.util.HashMap} is 
  * not thread-safe.
  */
-public class PropertySet extends RSEPersistableObject implements IPropertySet, ILabeledObject, Observer {
+public class PropertySet extends RSEModelObject implements IPropertySet, IRSEModelObject, ILabeledObject, Observer {
 	
 	private String _name;
 	private String _label = null;
@@ -204,4 +205,5 @@ public class PropertySet extends RSEPersistableObject implements IPropertySet, I
 	public void update(Observable o, Object arg) {
 		setDirty(true);
 	}
+
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -200,16 +200,16 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
     // extern int MyInt;       // MyInt is in another file
     // extern const int MyConst;   // MyConst is in another file
     // void MyFunc(int);       // often used in header files
-    // struct MyStruct;        // often used in header files
     // typedef int NewInt;     // a normal typedef statement
-    // class MyClass;          // often used in header files
+	// struct MyStruct { int Member1; int Member2; };
+	// class MyClass { int MemberVar; };
     
     // #include "basicDefinition.h"
     // int MyInt;
     // extern const int MyConst = 42;
     // void MyFunc(int a) { cout << a << endl; }
-    // struct MyStruct { int Member1; int Member2; };
-    // class MyClass { int MemberVar; };
+	// class MyClass;          
+	// struct MyStruct;        
     public void testBasicDefinition() throws Exception {
         StringBuffer[] buffers= getContents(2);
         String hcode= buffers[0].toString();

@@ -68,6 +68,7 @@ import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.cdt.internal.core.pdom.indexer.PDOMNullIndexer;
 import org.eclipse.cdt.internal.core.pdom.indexer.PDOMRebuildTask;
 import org.eclipse.cdt.internal.core.pdom.indexer.PDOMUpdateTask;
+import org.eclipse.cdt.internal.core.pdom.indexer.ProjectIndexerInputAdapter;
 import org.eclipse.cdt.internal.core.pdom.indexer.TriggerNotificationTask;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.core.resources.IFolder;
@@ -346,6 +347,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 				writeProjectPDOMProperties(pdom, rproject);
 				pdom.releaseWriteLock();
 			}
+			pdom.setASTFilePathResolver(new ProjectIndexerInputAdapter(project, false));
 			pdom.addListener(this);
 			
 			fFileToProject.put(dbFile, project);

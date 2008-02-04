@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
@@ -518,19 +519,35 @@ public class IndexUpdateTests extends IndexTestBase {
 			final char[] nchars = name.toCharArray();
 			final String refType = name + " &";
 			final String constRefType = "const " + refType;
-			IBinding[] ctors= fIndex.findBindings(new char[][]{nchars, nchars}, IndexFilter.ALL_DECLARED_OR_IMPLICIT, NPM);
-			assertEquals(m1 == null ? 1 : 2, ctors.length);
+			IIndexBinding[] ctors= fIndex.findBindings(new char[][]{nchars, nchars}, IndexFilter.ALL_DECLARED_OR_IMPLICIT, NPM);
+
+			int count= 0;
+			for (int i = 0; i < ctors.length; i++) {
+				IIndexBinding ctor= ctors[i];
+				if (((IIndexBinding) ((ICPPClassScope) ctor.getScope()).getClassType()).isFileLocal()) {
+					ctors[count++]= ctor;
+				}
+			}
+			assertEquals(m1 == null ? 1 : 2, count);
 			final IType[] parameterTypes = ((ICPPConstructor) ctors[0]).getType().getParameterTypes();
 			if (parameterTypes.length!=1 || !(parameterTypes[0] instanceof ICPPReferenceType)) {
-				IBinding h= ctors[0]; ctors[0]= ctors[1]; ctors[1]= h;
+				IIndexBinding h= ctors[0]; ctors[0]= ctors[1]; ctors[1]= h;
 			}
 			if (m1 != null) {
 				checkCppConstructor((ICPPConstructor) ctors[1], new String[]{"", "void"}, m1);
 			}
 			checkCppConstructor((ICPPConstructor) ctors[0], new String[]{"", constRefType}, m2);
 
-			IBinding assignmentOp= fIndex.findBindings(new char[][]{nchars, "operator =".toCharArray()}, IndexFilter.ALL_DECLARED_OR_IMPLICIT, NPM)[0];
-			checkCppMethod((ICPPMethod) assignmentOp, new String[]{refType, constRefType}, m3);
+			IIndexBinding[] assignmentOps= fIndex.findBindings(new char[][]{nchars, "operator =".toCharArray()}, IndexFilter.ALL_DECLARED_OR_IMPLICIT, NPM);
+			count= 0;
+			for (int i = 0; i < assignmentOps.length; i++) {
+				IIndexBinding assignmentOp= assignmentOps[i];
+				if (((IIndexBinding) ((ICPPClassScope) assignmentOp.getScope()).getClassType()).isFileLocal()) {
+					assignmentOps[count++]= assignmentOp;
+				}
+			}
+			assertEquals(1, count);
+			checkCppMethod((ICPPMethod) assignmentOps[0], new String[]{refType, constRefType}, m3);
 		} finally {
 			fIndex.releaseReadLock();
 		}

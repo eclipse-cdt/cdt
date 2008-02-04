@@ -50,6 +50,10 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 	public WritablePDOM(File dbPath, IIndexLocationConverter locationConverter, ChunkCache cache, Map<String, IPDOMLinkageFactory> linkageFactoryMappings) throws CoreException {
 		super(dbPath, locationConverter, cache, linkageFactoryMappings);
 	}
+	
+	public void setASTFilePathResolver(ASTFilePathResolver resolver) {
+		fPathResolver= resolver;
+	}
 
 	public IIndexFragmentFile addFile(int linkageID, IIndexFileLocation location) throws CoreException {
 		return super.addFile(linkageID, location);
@@ -62,12 +66,13 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 		PDOMFile pdomFile = (PDOMFile) sourceFile;
 		pdomFile.addIncludesTo(includes);
 		pdomFile.addMacros(macros);
+		final ASTFilePathResolver origResolver= fPathResolver;
 		fPathResolver= pathResolver;
 		try {
 			pdomFile.addNames(names);
 		}
 		finally {
-			fPathResolver= null;
+			fPathResolver= origResolver;
 		}
 	}
 

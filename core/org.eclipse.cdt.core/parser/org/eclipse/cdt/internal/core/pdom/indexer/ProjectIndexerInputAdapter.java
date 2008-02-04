@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,29 +42,44 @@ public class ProjectIndexerInputAdapter extends IndexerInputAdapter {
 	private final static boolean CASE_SENSITIVE_FILES= !new File("a").equals(new File("A"));  //$NON-NLS-1$//$NON-NLS-2$
 
 	private final ICProject fCProject;
-	private HashMap fIflCache= new HashMap();
+	private HashMap<String, IIndexFileLocation> fIflCache;
 
 	public ProjectIndexerInputAdapter(ICProject cproject) {
+		this(cproject, true);
+	}
+
+	public ProjectIndexerInputAdapter(ICProject cproject, boolean useCache) {
 		fCProject= cproject;
+		fIflCache= useCache ? new HashMap<String, IIndexFileLocation>() : null;
 	}
 
 	public IIndexFileLocation resolveASTPath(String astPath) {
-		IIndexFileLocation result= (IIndexFileLocation) fIflCache.get(astPath);
+		if (fIflCache == null) {
+			return doResolveASTPath(astPath);
+		}
+		IIndexFileLocation result= fIflCache.get(astPath);
 		if (result == null) {
-			result= IndexLocationFactory.getIFLExpensive(fCProject, astPath);
+			result = doResolveASTPath(astPath);
 			fIflCache.put(astPath, result);
 		}
 		return result;
 	}
 
+	private IIndexFileLocation doResolveASTPath(String astPath) {
+		return IndexLocationFactory.getIFLExpensive(fCProject, astPath);
+	}
+
 	public IIndexFileLocation resolveIncludeFile(String includePath) {
-		IIndexFileLocation result= (IIndexFileLocation) fIflCache.get(includePath);
+		if (fIflCache == null) {
+			return doResolveASTPath(includePath);
+		}
+		IIndexFileLocation result= fIflCache.get(includePath);
 		if (result == null) {
 			File location= new File(includePath);
 			if (!location.exists()) {
 				return null;
 			}
-			result= IndexLocationFactory.getIFLExpensive(fCProject, includePath);
+			result = doResolveASTPath(includePath);
 			if (result.getFullPath() == null && !CASE_SENSITIVE_FILES) {
 				try {
 					String canonicalPath= location.getCanonicalPath();

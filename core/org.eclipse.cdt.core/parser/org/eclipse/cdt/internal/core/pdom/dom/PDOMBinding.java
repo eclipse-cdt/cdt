@@ -309,9 +309,12 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 	 * Compares two binding fully qualified names. If b0 has
      * less segments than b1 then -1 is returned, if b0 has 
      * more segments than b1 then 1 is returned. If the segment
-     * lengths are equal then comparison is lexographical on each
+     * lengths are equal then comparison is lexicographical on each
      * component name, beginning with the most nested name and working
-     * outward. The first non-zero comparison is returned as the result.
+     * outward. 
+     * If one of the bindings in the hierarchy is file-local it is treated as a different
+     * binding.
+     * The first non-zero comparison is returned as the result.
 	 * @param b0
 	 * @param b1
 	 * @return<ul><li> -1 if b0 &lt; b1
@@ -327,6 +330,11 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 				IString s0 = b0.getDBName(), s1 = b1.getDBName();
 				cmp = s0.compare(s1, true);
 				if(cmp==0) {
+					int l1= b0.getLocalToFileRec();
+					int l2= b1.getLocalToFileRec();
+					if (l1 != l2) {
+						return l1 < l2 ? -1 : 1;
+					}
 					b0 = (PDOMBinding) b0.getParentBinding();
 					b1 = (PDOMBinding) b1.getParentBinding();
 					if(b0==null || b1==null) {

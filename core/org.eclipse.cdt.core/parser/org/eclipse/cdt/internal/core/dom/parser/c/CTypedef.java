@@ -1,15 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation 
- * Markus Schorn (Wind River Systems)
+ *    IBM Rational Software - Initial API and implementation 
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ILinkage;
@@ -28,7 +27,7 @@ import org.eclipse.core.runtime.PlatformObject;
  * Created on Nov 8, 2004
  * @author aniefer
  */
-public class CTypedef extends PlatformObject implements ITypedef, ITypeContainer {
+public class CTypedef extends PlatformObject implements ITypedef, ITypeContainer, ICInternalBinding {
 	private final IASTName name; 
 	private IType type = null;
 	
@@ -104,5 +103,13 @@ public class CTypedef extends PlatformObject implements ITypedef, ITypeContainer
     
 	public ILinkage getLinkage() {
 		return Linkage.C_LINKAGE;
+	}
+
+	public IASTNode[] getDeclarations() {
+		return IASTNode.EMPTY_NODE_ARRAY;
+	}
+
+	public IASTNode getDefinition() {
+		return name;
 	}
 }

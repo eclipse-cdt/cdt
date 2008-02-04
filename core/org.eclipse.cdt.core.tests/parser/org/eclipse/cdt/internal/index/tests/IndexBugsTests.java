@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1244,6 +1244,38 @@ public class IndexBugsTests extends BaseTestCase {
 					"method".toCharArray() }, IndexFilter.ALL, NPM);
 			assertEquals(1, bindings.length);
 			IIndexName[] decls = fIndex.findDeclarations(bindings[0]);
+			assertEquals(2, decls.length);
+		} finally {
+			fIndex.releaseReadLock();
+		}
+	}
+	
+	
+	// typedef int unrelated;
+	
+	// class unrelated {
+	// public: int b;
+	// };
+	
+	// #include "h1.h"
+	// void test() {
+	//    unrelated a;
+	//    a.b;
+	// }
+	public void testUnrelatedTypedef_Bug214146() throws Exception {
+		StringBuffer[] contents= getContentsForTest(3);
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		TestSourceReader.createFile(fCProject.getProject(), "s1.cpp", contents[0].toString());
+		TestSourceReader.createFile(fCProject.getProject(), "h1.h", contents[1].toString());
+		TestSourceReader.createFile(fCProject.getProject(), "s2.h", contents[2].toString());
+		indexManager.reindex(fCProject);
+		waitForIndexer();
+		fIndex.acquireReadLock();
+		try {
+			IIndexBinding[] bindings = fIndex.findBindings(new char[][] { "unrelated".toCharArray(),
+					"b".toCharArray() }, IndexFilter.ALL, NPM);
+			assertEquals(1, bindings.length);
+			IIndexName[] decls = fIndex.findNames(bindings[0], IIndex.FIND_ALL_OCCURENCES);
 			assertEquals(2, decls.length);
 		} finally {
 			fIndex.releaseReadLock();

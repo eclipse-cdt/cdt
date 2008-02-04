@@ -24,6 +24,8 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
+import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
@@ -31,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
@@ -359,6 +362,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 					return null;
 				}
 				boolean checkInSourceOnly= false;
+				boolean requireDefinition= false;
 				if (binding instanceof IVariable) {
 					if (!(binding instanceof IField)) {
 						checkInSourceOnly= ASTInternal.isStatic((IVariable) binding);
@@ -366,12 +370,13 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 				} else if (binding instanceof IFunction) {
 					IFunction f= (IFunction) binding;
 					checkInSourceOnly= ASTInternal.isStatic(f, false);
-//				} else if (binding instanceof ITypedef || binding instanceof ICompositeType || binding instanceof IEnumeration) {
-//					checkInSourceOnly= true;
+				} else if (binding instanceof ITypedef || binding instanceof ICompositeType || binding instanceof IEnumeration) {
+					checkInSourceOnly= true;
+					requireDefinition= true;
 				}
 
 				if (checkInSourceOnly) {
-					String path= ASTInternal.getDeclaredInSourceFileOnly(binding);
+					String path= ASTInternal.getDeclaredInSourceFileOnly(binding, requireDefinition);
 					if (path != null) {
 						return wpdom.getFileForASTPath(getLinkageID(), path);
 					}

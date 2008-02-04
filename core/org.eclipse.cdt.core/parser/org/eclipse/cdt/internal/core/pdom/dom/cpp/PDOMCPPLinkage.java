@@ -795,7 +795,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 					return wpdom.getFileForASTPath(getLinkageID(), path);
 				}
 			} else if (binding instanceof ICPPNamespaceAlias) {
-				String path= ASTInternal.getDeclaredInSourceFileOnly(binding);
+				String path= ASTInternal.getDeclaredInSourceFileOnly(binding, false);
 				if (path != null) {
 					return wpdom.getFileForASTPath(getLinkageID(), path);
 				}

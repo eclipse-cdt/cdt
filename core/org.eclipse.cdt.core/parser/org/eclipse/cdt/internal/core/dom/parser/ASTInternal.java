@@ -110,7 +110,7 @@ public class ASTInternal {
 		}
 	}
 
-	public static String getDeclaredInSourceFileOnly(IBinding binding) {
+	public static String getDeclaredInSourceFileOnly(IBinding binding, boolean requireDefinition) {
 		IASTNode[] decls;
 		IASTNode def;
 		if (binding instanceof ICPPInternalBinding) {
@@ -124,6 +124,9 @@ public class ASTInternal {
 			def= ib.getDefinition();
 		}
 		else {
+			return null;
+		}
+		if (requireDefinition && def == null) {
 			return null;
 		}
 		String filePath= null;

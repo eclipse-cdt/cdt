@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 QNX Software Systems
+ * Copyright (c) 2005, 2008 QNX Software Systems
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -237,8 +237,8 @@ public class DBTest extends BaseTestCase {
 	
 	public void testLongStringComparison() throws CoreException {
 		Random r= new Random(314159265);
-		doTrials(600, ShortString.MAX_LENGTH+1, ShortString.MAX_LENGTH*2, r, true);
-		doTrials(600, ShortString.MAX_LENGTH+1, ShortString.MAX_LENGTH*2, r, false);
+		doTrials(100, ShortString.MAX_LENGTH+1, ShortString.MAX_LENGTH*2, r, true);
+		doTrials(100, ShortString.MAX_LENGTH+1, ShortString.MAX_LENGTH*2, r, false);
 	}
 		
 	private void doTrials(int n, int min, int max, Random r, boolean caseSensitive) throws CoreException {

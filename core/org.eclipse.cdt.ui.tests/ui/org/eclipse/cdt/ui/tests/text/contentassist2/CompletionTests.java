@@ -819,10 +819,11 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//   void test() {
 	//      g/*cursor*/
 	public void testBindingsWithoutDeclaration() throws Exception {
+		// gC1all, gStruct, gnsClass, gnsStruct: fix for 214146, type from a source file is not proposed.
 		final String[] expected= {
 			"gC1", "gC2", "gfC1()", "gfC2()", 
-			"gns::", "gnsClass", "gnsFunc()", "gnsStruct", "gnsTemp",
-			"gClass", "gFunc()", "gStruct", "gTemp"
+			"gns::", "gnsFunc()", "gnsTemp",
+			"gFunc()", "gTemp"
 		};
 		final String[] expected2= {
 				"gC1", "gC2", "gfC1()", "gfC2()", "gns::"

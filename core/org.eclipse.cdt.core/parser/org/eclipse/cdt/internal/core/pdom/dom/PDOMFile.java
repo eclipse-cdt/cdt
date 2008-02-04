@@ -21,6 +21,7 @@ import java.util.List;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IIndexLocationConverter;
@@ -243,6 +244,9 @@ public class PDOMFile implements IIndexFragmentFile {
 	}
 
 	private PDOMName createPDOMName(IASTName name, PDOMName caller) {
+		if (name.getBinding() instanceof IParameter) {
+			return null;
+		}
 		PDOMName result= null;
 		try {
 			PDOMBinding binding = ((WritablePDOM) pdom).addBinding(name);

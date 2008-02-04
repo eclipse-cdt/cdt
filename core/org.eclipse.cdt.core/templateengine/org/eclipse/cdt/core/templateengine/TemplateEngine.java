@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Bala Torati (Symbian) - Initial API and implementation
+ *     Bala Torati (Symbian) - Initial API and implementation
+ *     Mark Espiritu (VaST Systems) - bug 215960
  *******************************************************************************/
 package org.eclipse.cdt.core.templateengine;
 
@@ -212,14 +213,14 @@ public class TemplateEngine {
 		String projectType = null;
 		String filterPattern = null;
 		boolean isCategory = false;
-		Object /*IPagesAfterTemplateSelectionProvider*/ extraPagesProvider = null;
-
+		
 		IExtension[] extensions = Platform.getExtensionRegistry().getExtensionPoint(TEMPLATES_EXTENSION_ID).getExtensions();
 		for(int i=0; i<extensions.length; i++) {
 			IExtension extension = extensions[i];
 			IConfigurationElement[] configElements = extension.getConfigurationElements();
 			pluginId = extension.getNamespaceIdentifier(); // Plug-in id of the extending plug-in.
 			for(int j=0; j<configElements.length; j++) {
+				Object /*IPagesAfterTemplateSelectionProvider*/ extraPagesProvider = null;
 				IConfigurationElement config = configElements[j];
 				templateId = config.getAttribute(TemplateEngineHelper.ID);
 				location = config.getAttribute(TemplateEngineHelper.LOCATION);

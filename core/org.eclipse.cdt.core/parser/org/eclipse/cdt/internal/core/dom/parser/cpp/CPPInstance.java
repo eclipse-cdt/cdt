@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
@@ -24,10 +25,10 @@ import org.eclipse.cdt.core.parser.util.ObjectMap;
  * @author aniefer
  */
 public abstract class CPPInstance extends CPPSpecialization implements ICPPTemplateInstance {
-	private IType [] arguments;
+	private IType[] arguments;
 
-	public CPPInstance( ICPPScope scope, IBinding orig, ObjectMap argMap, IType [] arguments ){
-		super( orig, scope, argMap );
+	public CPPInstance(ICPPScope scope, IBinding orig, ObjectMap argMap, IType[] arguments) {
+		super(orig, scope, argMap);
 		this.arguments = arguments;
 	}
 
@@ -43,5 +44,12 @@ public abstract class CPPInstance extends CPPSpecialization implements ICPPTempl
 	 */
 	public IType[] getArguments() {
 		return arguments;
+	}
+
+	/* (non-Javadoc)
+	 * For debug purposes only
+	 */
+	public String toString() {
+		return getName() + " <" + ASTTypeUtil.getTypeListString(arguments) + ">"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

@@ -32,21 +32,16 @@ import org.eclipse.cdt.core.parser.util.ObjectMap;
  */
 public class CPPDeferredClassInstance extends CPPInstance implements
 		ICPPClassType, ICPPDeferredTemplateInstance, ICPPInternalDeferredClassInstance {
-
-	public IType [] arguments = null;
-	public ICPPClassTemplate classTemplate = null;
 	
-	public CPPDeferredClassInstance(ICPPClassTemplate orig,	IType [] arguments ) {
-		super( null, orig, null, arguments );
-		this.arguments = arguments;
-		this.classTemplate = orig;
+	public CPPDeferredClassInstance(ICPPClassTemplate orig,	IType[] arguments) {
+		super(null, orig, null, arguments);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getBases()
 	 */
 	public ICPPBase[] getBases() throws DOMException {
-		return ((ICPPClassType) classTemplate).getBases();
+		return ((ICPPClassType) getClassTemplate()).getBases();
 	}
 
 	/* (non-Javadoc)
@@ -124,20 +119,20 @@ public class CPPDeferredClassInstance extends CPPInstance implements
 	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getKey()
 	 */
 	public int getKey() throws DOMException {
-		return ((ICPPClassType)classTemplate).getKey();
+		return ((ICPPClassType) getClassTemplate()).getKey();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getCompositeScope()
 	 */
 	public IScope getCompositeScope() throws DOMException {
-		return ((ICPPClassType)classTemplate).getCompositeScope();
+		return ((ICPPClassType) getClassTemplate()).getCompositeScope();
 	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#clone()
 	 */
-	 public Object clone(){
+	 public Object clone() {
         return this;
     }
 
@@ -146,34 +141,38 @@ public class CPPDeferredClassInstance extends CPPInstance implements
 	 * @return
 	 */
 	public IType instantiate(ObjectMap argMap) {
-		
-		IType [] newArgs = new IType[ arguments.length ];
+		IType[] arguments = getArguments();
+		IType[] newArgs = new IType[arguments.length];
 		int size = arguments.length;
-		for( int i = 0; i < size; i++ ){
-			newArgs[i] = CPPTemplates.instantiateType( arguments[i], argMap );
+		for (int i = 0; i < size; i++) {
+			newArgs[i] = CPPTemplates.instantiateType(arguments[i], argMap);
 		}
 		
-		if( argMap.containsKey( classTemplate ) ){
-			classTemplate = (ICPPClassTemplate) argMap.get( classTemplate );
+		ICPPClassTemplate classTemplate = getClassTemplate();
+		if (argMap.containsKey(classTemplate)) {
+			classTemplate = (ICPPClassTemplate) argMap.get(classTemplate);
 		}
 		
-		return (IType) ((ICPPInternalTemplateInstantiator)classTemplate).instantiate( newArgs );
+		return (IType) ((ICPPInternalTemplateInstantiator)classTemplate).instantiate(newArgs);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
 	 */
 	public boolean isSameType(IType type) {
-		if( type == this )
+		if (type == this)
 			return true;
-		
-		//allow some fuzziness here.
-		if( type instanceof ICPPDeferredTemplateInstance && type instanceof ICPPClassType ){
-			ICPPClassTemplate typeClass = (ICPPClassTemplate) ((ICPPDeferredTemplateInstance)type).getSpecializedBinding();
-			return (typeClass == classTemplate );
-		} else if( type instanceof ICPPClassTemplate && classTemplate == type ){
+
+		// allow some fuzziness here.
+		ICPPClassTemplate classTemplate = getClassTemplate();
+		if (type instanceof ICPPDeferredTemplateInstance && type instanceof ICPPClassType) {
+			ICPPClassTemplate typeClass =
+				(ICPPClassTemplate) ((ICPPDeferredTemplateInstance) type).getSpecializedBinding();
+			return typeClass == classTemplate;
+		} else if (type instanceof ICPPClassTemplate && classTemplate == type) {
 			return true;
-		} else if( type instanceof ICPPTemplateInstance && ((ICPPTemplateInstance)type).getTemplateDefinition() == classTemplate ){
+		} else if (type instanceof ICPPTemplateInstance &&
+				((ICPPTemplateInstance)type).getTemplateDefinition() == classTemplate) {
 			return true;
 		}
 		return false;
@@ -182,5 +181,9 @@ public class CPPDeferredClassInstance extends CPPInstance implements
 	public ICPPClassType[] getNestedClasses() throws DOMException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	private ICPPClassTemplate getClassTemplate() {
+		return (ICPPClassTemplate) getSpecializedBinding();
 	}
 }

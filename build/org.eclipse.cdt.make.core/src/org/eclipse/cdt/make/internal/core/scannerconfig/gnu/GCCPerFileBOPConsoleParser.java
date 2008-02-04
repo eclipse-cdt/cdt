@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Tianchao Li (tianchao.li@gmail.com) - arbitrary build directory (bug #136136)
  *     Gerhard Schaber (Wind River Systems) - bug 187910
  *     Markus Schorn (Wind River Systems)
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig.gnu;
 
@@ -27,6 +28,7 @@ import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 
 
@@ -116,22 +118,9 @@ public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
 				}
 			}
             
-            CCommandDSC cmd = fUtil.getNewCCommandDSC(tokens, compilerInvocationIndex, extensionsIndex > 0);
-            IPath baseDirectory = fUtil.getBaseDirectory();
-            boolean isValidPath = baseDirectory.isPrefixOf(pFilePath);
-            if (!isValidPath) {
-            	final IProject prj= fUtil.getProject();
-                IFile[] foundOccurrences = ((IWorkspaceRoot) prj.getParent()).findFilesForLocation(pFilePath);
-                for (int j=0; !isValidPath && j<foundOccurrences.length; j++) {
-                	isValidPath= prj.equals(foundOccurrences[j].getProject());
-                }
-            }
-            if (isValidPath) {
-	            List cmdList = new ArrayList();
-	            cmdList.add(cmd);
-	            Map sc = new HashMap(1);
-	            sc.put(ScannerInfoTypes.COMPILER_COMMAND, cmdList);
-
+            IFile file= null;
+            IPath baseDirectory= fUtil.getBaseDirectory();
+            if (baseDirectory.isPrefixOf(pFilePath)) {
 				IPath relPath = pFilePath.removeFirstSegments(baseDirectory.segmentCount());
 				//Note: We add the scanner-config even if the resource doesn't actually
 				//exist below this project (which may happen when reading existing
@@ -139,15 +128,28 @@ public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
 				//and may not exist at the time of analyzing the config but re-built
 				//later on.
 				//if (getProject().exists(relPath)) {
-	            IFile file = getProject().getFile(relPath);
-	            getCollector().contributeToScannerConfig(file, sc);
+	            file = getProject().getFile(relPath);
             } else {
-            	//TODO limiting to paths below this project means not being
-            	//able to work with linked resources. Linked resources could
-            	//be checked through IWorkspaceRoot.findFilesForLocation().
-            	TraceUtil.outputError("Build command for file outside project: "+pFilePath.toString(), tokens); //$NON-NLS-1$
+            	// search linked resources
+            	final IProject prj= fUtil.getProject();
+	            final IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
+            	IFile[] foundOccurrences= root.findFilesForLocation(pFilePath);
+            	for (int j=0; j<foundOccurrences.length; j++) {
+            		if (prj.equals(foundOccurrences[j].getProject())) {
+            			file= foundOccurrences[j];
+            			break;
+            		}
+            	}
             }
-            // fUtil.addGenericCommandForFile2(longFileName, genericLine);
+            if (file != null) {
+                CCommandDSC cmd = fUtil.getNewCCommandDSC(tokens, compilerInvocationIndex, extensionsIndex > 0);
+	            List cmdList = new ArrayList();
+	            cmdList.add(cmd);
+	            Map sc = new HashMap(1);
+	            sc.put(ScannerInfoTypes.COMPILER_COMMAND, cmdList);
+	            getCollector().contributeToScannerConfig(file, sc);
+            } else
+            	TraceUtil.outputError("Build command for file outside project: "+pFilePath.toString(), tokens); //$NON-NLS-1$
         }
         return true;
     }

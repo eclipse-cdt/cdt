@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -231,35 +231,33 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
             addScannerInfo(((Integer)resource), scannerInfo);
             return;
         }
-// GSA allow per project settings
-//        else if (!(resource instanceof IFile)) {
-//            errorMessage = "resource is not an IFile";//$NON-NLS-1$
-//        }
+        else if (!(resource instanceof IFile)) {
+            errorMessage = "resource is not an IFile";//$NON-NLS-1$
+        }
         else if (((IFile) resource).getProject() == null) {
             errorMessage = "project is null";//$NON-NLS-1$
         }
-        else if (((IFile) resource).getProject() != project) {
+        else if (!((IFile) resource).getProject().equals(project)) {
             errorMessage = "wrong project";//$NON-NLS-1$
         }
         if (errorMessage != null) {
             TraceUtil.outputError("PerFileSICollector.contributeToScannerConfig : ", errorMessage); //$NON-NLS-1$
             return;
         }
-        if (resource instanceof IFile) {
-	        IFile file = (IFile) resource;
-	       
-	        for (Iterator i = scannerInfo.keySet().iterator(); i.hasNext(); ) {
-	            ScannerInfoTypes type = (ScannerInfoTypes) i.next();
-	            if (type.equals(ScannerInfoTypes.COMPILER_COMMAND)) {
-	                List commands = (List) scannerInfo.get(type);
-	                for (Iterator j = commands.iterator(); j.hasNext(); ) {
-	                    addCompilerCommand(file, (CCommandDSC) j.next());
-	                }
-	            }
-	            else {
-	                addScannerInfo(type, (List) scannerInfo.get(type));
-	            }
-	        }
+        
+        IFile file = (IFile) resource;
+       
+        for (Iterator i = scannerInfo.keySet().iterator(); i.hasNext(); ) {
+            ScannerInfoTypes type = (ScannerInfoTypes) i.next();
+            if (type.equals(ScannerInfoTypes.COMPILER_COMMAND)) {
+                List commands = (List) scannerInfo.get(type);
+                for (Iterator j = commands.iterator(); j.hasNext(); ) {
+                    addCompilerCommand(file, (CCommandDSC) j.next());
+                }
+            }
+            else {
+                addScannerInfo(type, (List) scannerInfo.get(type));
+            }
         }
     }
 

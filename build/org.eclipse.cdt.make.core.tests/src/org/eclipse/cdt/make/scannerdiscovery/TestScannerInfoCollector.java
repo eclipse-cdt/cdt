@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Anton Leherbauer (Wind River Systems)
  *******************************************************************************/ 
 package org.eclipse.cdt.make.scannerdiscovery;
 
@@ -24,7 +25,8 @@ import org.eclipse.cdt.make.internal.core.scannerconfig.util.CCommandDSC;
 
 final class TestScannerInfoCollector implements IScannerInfoCollector {
 	private HashMap fInfoMap = new HashMap();
-
+	private HashMap fResourceToInfoMap = new HashMap();
+	
 	public void contributeToScannerConfig(Object resource, Map scannerInfo) {
 		for (Iterator iterator = scannerInfo.entrySet().iterator(); iterator.hasNext();) {
 			Map.Entry entry = (Map.Entry) iterator.next();
@@ -41,6 +43,9 @@ final class TestScannerInfoCollector implements IScannerInfoCollector {
 				}
 			}
 		}
+		if (resource != null) {
+			fResourceToInfoMap.put(resource, scannerInfo);
+		}
 	}
 
 	private void addTo(ScannerInfoTypes type, List col) {
@@ -53,7 +58,15 @@ final class TestScannerInfoCollector implements IScannerInfoCollector {
 	}
 
 	public List getCollectedScannerInfo(Object resource, ScannerInfoTypes type) {
-		List result= (List) fInfoMap.get(type);
-		return result == null ? Collections.EMPTY_LIST : result;
+		if (resource == null) {
+			List result= (List) fInfoMap.get(type);
+			return result == null ? Collections.EMPTY_LIST : result;
+		}
+		Map scannerInfo= (Map)fResourceToInfoMap.get(resource);
+		if (scannerInfo != null) {
+			List result= (List) scannerInfo.get(type);
+			return result == null ? Collections.EMPTY_LIST : result;
+		}
+		return Collections.EMPTY_LIST;
 	}
 }

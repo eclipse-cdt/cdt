@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig2;
 
@@ -50,7 +51,7 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.w3c.dom.Element;
 
 /**
@@ -107,7 +108,7 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
 		else if (((IResource) resource).getProject() == null) {
 			errorMessage = "project is null";//$NON-NLS-1$
 		}
-		else if (((IResource) resource).getProject() != project) {
+		else if (!((IResource) resource).getProject().equals(project)) {
 			errorMessage = "wrong project";//$NON-NLS-1$
 		}
 		if (errorMessage != null) {
@@ -289,32 +290,6 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
 		return addedIncludes;
 	}
 	
-	/*
-	 * translated to raw map
-	 */
-	private Map translateDiscoveredIncludes(List list){
-		int baseSize = list.size();
-		LinkedHashMap map = new LinkedHashMap(baseSize);
-		List translated = CygpathTranslator.translateIncludePaths(project, list);
-		if(baseSize == translated.size()){
-			for(int i = 0; i < baseSize; i++){
-				map.put(translated.get(i), list.get(i));
-			}
-		} else {
-			List tmpList = new ArrayList(1);
-			for(int i = 0; i < baseSize; i++){
-				String basePath = (String)list.get(i);
-				tmpList.add(0, basePath);
-				List tr = CygpathTranslator.translateIncludePaths(project, tmpList);
-				if(tr.size() != 0){
-					String translatedPath = (String)tr.get(0);
-					map.put(translatedPath, basePath);
-				}
-			}
-		}
-		return map;
-	}
-
 	/**
 	 * Compare symbol definitions with already discovered.
 	 * 
@@ -507,7 +482,7 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
 				}
 			}
 		};
-		Platform.run(runnable);
+		SafeRunner.run(runnable);
 	}
 	
     private static void createDiscoveredPathContainer(IProject project, IProgressMonitor monitor) throws CModelException {

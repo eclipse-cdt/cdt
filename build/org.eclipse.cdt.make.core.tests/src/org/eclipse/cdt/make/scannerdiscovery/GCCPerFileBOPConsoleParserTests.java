@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
 import org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCPerFileBOPConsoleParser;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.CCommandDSC;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -88,6 +89,28 @@ public class GCCPerFileBOPConsoleParserTests extends BaseBOPConsoleParserTests {
 	        assertEquals(1, includes.size());
 	        assertEquals(tempDir.toString(), includes.get(0).toString());
 		} finally {
+			tempDir.delete();
+		}
+	}
+
+	public void testResolvingLinkedResourceArgument_Bug216945() throws Exception {
+		File tempRoot= new File(System.getProperty("java.io.tmpdir"));
+		File tempDir= new File(tempRoot, "cdttest_216945");
+		tempDir.mkdir();
+		File tempFile= null;
+		try {
+			tempFile= new File(tempDir, "test.c");
+			tempFile.createNewFile();
+			IFolder linkedFolder= fCProject.getProject().getFolder("cdttest");
+			linkedFolder.createLink(new Path(tempDir.toString()), IResource.ALLOW_MISSING_LOCAL, null);
+			fOutputParser.processLine("gcc -g -O0 -c \""+ tempFile.toString() + "\""); //$NON-NLS-1$
+			IFile file= linkedFolder.getFile("test.c");
+	        List cmds = fCollector.getCollectedScannerInfo(file, ScannerInfoTypes.COMPILER_COMMAND);
+	        assertEquals(1, cmds.size());
+		} finally {
+			if (tempFile != null) {
+				tempFile.delete();
+			}
 			tempDir.delete();
 		}
 	}

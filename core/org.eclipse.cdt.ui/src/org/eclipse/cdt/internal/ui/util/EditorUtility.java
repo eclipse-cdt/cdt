@@ -493,10 +493,22 @@ public class EditorUtility {
 			}
 			contentType= CCorePlugin.getContentType(project, input.getName());
 		}
+		// handle binary files without content-type (e.g. executables without extension)
+		if (contentType == null && cElement != null) {
+			final int elementType= cElement.getElementType();
+			if (elementType == ICElement.C_ARCHIVE || elementType == ICElement.C_BINARY) {
+				contentType= Platform.getContentTypeManager().getContentType(CCorePlugin.CONTENT_TYPE_BINARYFILE);
+			}
+		}
 		IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
 		IEditorDescriptor desc= registry.getDefaultEditor(input.getName(), contentType);
 		if (desc != null) {
-			return desc.getId();
+			String editorID= desc.getId();
+			if (input instanceof IFileEditorInput) {
+				IFile file= ((IFileEditorInput)input).getFile();
+				IDE.setDefaultEditor(file, editorID);
+			}
+			return editorID;
 		}
 
 		return DEFAULT_TEXT_EDITOR_ID;

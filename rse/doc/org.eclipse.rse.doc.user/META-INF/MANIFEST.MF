@@ -5,4 +5,3 @@ Bundle-SymbolicName: org.eclipse.rse.doc.user; singleton:=true
 Bundle-Version: 3.0.0.qualifier
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Eclipse-LazyStart: false

@@ -257,18 +257,31 @@ public class ToggleSourceAndHeaderAction extends TextEditorAction {
 			}
 		}
 
-		IProgressMonitor monitor= new NullProgressMonitor();
-		PartnerFileComputer computer= new PartnerFileComputer();
-		ASTProvider.getASTProvider().runOnAST(tUnit, ASTProvider.WAIT_ACTIVE_ONLY, monitor, computer);
-		IPath partnerFileLoation= computer.getPartnerFileLocation();
-		if (partnerFileLoation != null) {
-			ITranslationUnit partnerUnit= (ITranslationUnit) CoreModel.getDefault().create(partnerFileLoation);
-			if (partnerUnit == null) {
-				partnerUnit= CoreModel.getDefault().createTranslationUnitFrom(tUnit.getCProject(), partnerFileLoation);
+		// search partner file based on filename/extension
+		ITranslationUnit partnerUnit= getPartnerFileFromFilename(tUnit);
+
+		if (partnerUnit == null) {
+			// search partner file based on definition/declaration association
+			IProgressMonitor monitor= new NullProgressMonitor();
+			PartnerFileComputer computer= new PartnerFileComputer();
+			ASTProvider.getASTProvider().runOnAST(tUnit, ASTProvider.WAIT_ACTIVE_ONLY, monitor, computer);
+			IPath partnerFileLoation= computer.getPartnerFileLocation();
+			if (partnerFileLoation != null) {
+				partnerUnit= (ITranslationUnit) CoreModel.getDefault().create(partnerFileLoation);
+				if (partnerUnit == null) {
+					partnerUnit= CoreModel.getDefault().createTranslationUnitFrom(tUnit.getCProject(), partnerFileLoation);
+				}
 			}
-			return partnerUnit;
 		}
-		// search partnerfile based on filename/extension
+		return partnerUnit;
+	}
+
+	/**
+	 * Find a partner translation unit based on filename/extension matching.
+	 * 
+	 * @param a partner translation unit or <code>null</code>
+	 */
+	private ITranslationUnit getPartnerFileFromFilename(ITranslationUnit tUnit) {
 		IPath sourceFileLocation= tUnit.getLocation();
 		if (sourceFileLocation == null) {
 			return null;
@@ -300,7 +313,7 @@ public class ToggleSourceAndHeaderAction extends TextEditorAction {
 					}
 					// external tanslation unit - try in same directory
 					if (tUnit.getResource() == null) {
-						partnerFileLoation= partnerBasePath.removeLastSegments(1).append(partnerFileBasename);
+						IPath partnerFileLoation= partnerBasePath.removeLastSegments(1).append(partnerFileBasename);
 						ITranslationUnit partnerUnit= CoreModel.getDefault().createTranslationUnitFrom(tUnit.getCProject(), partnerFileLoation);
 						if (partnerUnit != null) {
 							return partnerUnit;

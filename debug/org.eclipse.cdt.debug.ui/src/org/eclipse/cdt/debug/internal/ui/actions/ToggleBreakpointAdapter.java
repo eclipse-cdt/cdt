@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 QNX Software Systems and others.
+ * Copyright (c) 2004, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  * Freescale Semiconductor - Address watchpoints, https://bugs.eclipse.org/bugs/show_bug.cgi?id=118299
+ * Warren Paul (Nokia) - Bug 217485
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
@@ -172,39 +173,24 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#toggleMethodBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void toggleMethodBreakpoints( IWorkbenchPart part, ISelection selection ) throws CoreException {
-		if ( selection instanceof ITextSelection ) {
-			String text = ((ITextSelection)selection).getText();
-			if ( text != null ) {
-				IResource resource = getResource( part );
-				if ( resource instanceof IFile ) {
-					ITranslationUnit tu = getTranslationUnit( (IFile)resource );
-					if ( tu != null ) {
-						try {
-							ICElement element = tu.getElement( text.trim() );
-							if ( element instanceof IFunction || element instanceof IMethod ) {
-								toggleMethodBreakpoints0( (IDeclaration)element );
-							}
-						}
-						catch( CModelException e ) {
-						}
-					}
-				}
-			}
+		ICElement element = getCElementFromSelection( part, selection );
+		if ( element instanceof IFunction || element instanceof IMethod ) {
+			toggleMethodBreakpoints0( (IDeclaration)element );
 		}
-		else if ( selection instanceof IStructuredSelection ) {
-			IStructuredSelection ss = (IStructuredSelection)selection;
-			if ( ss.size() == 1 && (ss.getFirstElement() instanceof IFunction || ss.getFirstElement() instanceof IMethod) ) {
-				toggleMethodBreakpoints0( (IDeclaration)ss.getFirstElement() );
-			}
-		}		
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#canToggleMethodBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public boolean canToggleMethodBreakpoints( IWorkbenchPart part, ISelection selection ) {
+		ICElement element = getCElementFromSelection( part, selection );
+		return ( element instanceof IFunction || element instanceof IMethod );
+	}
+	
+	protected ICElement getCElementFromSelection( IWorkbenchPart part, ISelection selection ) {
 		if ( selection instanceof ITextSelection ) {
-			String text = ((ITextSelection)selection).getText();
+			ITextSelection textSelection = (ITextSelection)selection;
+			String text = textSelection.getText();
 			if ( text != null ) {
 				IResource resource = getResource( part );
 				if ( resource instanceof IFile ) {
@@ -212,7 +198,10 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 					if ( tu != null ) {
 						try {
 							ICElement element = tu.getElement( text.trim() );
-							return ( element instanceof IFunction || element instanceof IMethod );
+							if ( element == null ) {
+								element = tu.getElementAtLine( textSelection.getStartLine() );
+							}
+							return element;
 						}
 						catch( CModelException e ) {
 						}
@@ -223,40 +212,22 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 		else if ( selection instanceof IStructuredSelection ) {
 			IStructuredSelection ss = (IStructuredSelection)selection;
 			if ( ss.size() == 1 ) {
-				return ( ss.getFirstElement() instanceof IFunction || ss.getFirstElement() instanceof IMethod );
+				Object object = ss.getFirstElement();
+				if ( object instanceof ICElement ) {
+					return (ICElement)object;
+				}
 			}
 		}
-		return false;
+		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#toggleWatchpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void toggleWatchpoints( IWorkbenchPart part, ISelection selection ) throws CoreException {
-		if ( selection instanceof ITextSelection ) {
-			String text = ((ITextSelection)selection).getText();
-			if ( text != null ) {
-				IResource resource = getResource( part );
-				if ( resource instanceof IFile ) {
-					ITranslationUnit tu = getTranslationUnit( (IFile)resource );
-					if ( tu != null ) {
-						try {
-							ICElement element = tu.getElement( text.trim() );
-							if ( element instanceof IVariable ) {
-								toggleVariableWatchpoint( part, (IVariable)element );
-							}
-						}
-						catch( CModelException e ) {
-						}
-					}
-				}
-			}
-		}
-		else if ( selection instanceof IStructuredSelection ) {
-			IStructuredSelection ss = (IStructuredSelection)selection;
-			if ( ss.size() == 1 && ss.getFirstElement() instanceof IVariable ) {
-				toggleVariableWatchpoint( part, (IVariable)ss.getFirstElement() );
-			}
+		IVariable variable = getVariableFromSelection( part, selection );
+		if ( variable != null ) {
+			toggleVariableWatchpoint( part, variable );
 		}
 	}
 
@@ -264,6 +235,10 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#canToggleWatchpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public boolean canToggleWatchpoints( IWorkbenchPart part, ISelection selection ) {
+		return getVariableFromSelection( part, selection ) != null;
+	}
+
+	protected IVariable getVariableFromSelection( IWorkbenchPart part, ISelection selection ) {
 		if ( selection instanceof ITextSelection ) {
 			String text = ((ITextSelection)selection).getText();
 			if ( text != null ) {
@@ -272,7 +247,10 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 					ITranslationUnit tu = getTranslationUnit( (IFile)resource );
 					if ( tu != null ) {
 						try {
-							return ( tu.getElement( text.trim() ) instanceof IVariable );
+							ICElement element = tu.getElement( text.trim() );
+							if (element instanceof IVariable) {
+								return (IVariable)element;
+							}
 						}
 						catch( CModelException e ) {
 						}
@@ -283,12 +261,15 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 		else if ( selection instanceof IStructuredSelection ) {
 			IStructuredSelection ss = (IStructuredSelection)selection;
 			if ( ss.size() == 1 ) {
-				return ( ss.getFirstElement() instanceof IVariable );
+				Object selected = ss.getFirstElement();
+				if (selected instanceof IVariable) {
+					return (IVariable)selected;
+				}
 			}
 		}
-		return false;
+		return null;
 	}
-
+	
 	protected void report( String message, IWorkbenchPart part ) {
 		IEditorStatusLine statusLine = (IEditorStatusLine)part.getAdapter( IEditorStatusLine.class );
 		if ( statusLine != null ) {

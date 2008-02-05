@@ -205,7 +205,7 @@ public class CdtMacroSupplier extends CoreMacroSupplierBase {
 				macro = new CdtVariable(macroName,ICdtVariable.VALUE_TEXT,project.getName());
 		} else if("ProjDirPath".equals(macroName)){	//$NON-NLS-1$
 			IProject project = getProject(cfg);
-			if(project != null)
+			if(project != null && project.getLocation() != null) // in the EFS world getLocation() can return null
 				macro = new CdtVariable(macroName,ICdtVariable.VALUE_TEXT,project.getLocation().toString());
 		}
 /*		else if("BuildArtifactFileName".equals(macroName)){	//$NON-NLS-1$

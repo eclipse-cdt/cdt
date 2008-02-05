@@ -89,6 +89,7 @@ import org.eclipse.cdt.internal.core.model.CElementDelta;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.core.settings.model.CExternalSettinsDeltaCalculator.ExtSettingsDelta;
 import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -1963,13 +1964,15 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 			// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=96258
 			URI location = rscFile.getLocationURI();
 			if (location != null) {
-				File file = toLocalFile(location, null/*no progress monitor available*/);
-				if (file != null && file.exists()) {
-					try {
-						stream = new FileInputStream(file);
-					} catch (FileNotFoundException e) {
-						throw ExceptionFactory.createCoreException(e);
-					}
+				IFileStore file = EFS.getStore(location);
+				IFileInfo info = null;
+				
+				if(file != null) {
+					info = file.fetchInfo();
+				}
+				
+				if (info != null && info.exists()) {
+					stream = file.openInputStream(EFS.NONE, null);
 				}
 			}
 		}

@@ -89,7 +89,7 @@ public abstract class AbstractGCCBOPConsoleParserUtility {
     protected void pushDirectory(IPath dir) {
         if (dir != null) {
             IPath pwd = null;
-            if (fBaseDirectory.isPrefixOf(dir)) {
+            if (fBaseDirectory != null && fBaseDirectory.isPrefixOf(dir)) {
                 pwd = dir.removeFirstSegments(fBaseDirectory.segmentCount());
             } else {
                 // check if it is a cygpath

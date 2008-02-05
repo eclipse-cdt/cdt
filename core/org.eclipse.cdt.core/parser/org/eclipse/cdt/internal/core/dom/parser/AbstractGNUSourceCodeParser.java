@@ -1938,16 +1938,14 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         throwBacktrack(token.getOffset(), token.getLength());
     }
 
-    protected IASTNode[] parseTypeIdOrUnaryExpression(
-            boolean typeIdWithParentheses) throws EndOfFileException {
+    protected IASTNode[] parseTypeIdOrUnaryExpression(boolean typeIdWithParentheses) throws EndOfFileException {
     	return parseTypeIdOrUnaryExpression(typeIdWithParentheses, new int[1]);
     }
 
-    protected IASTNode[] parseTypeIdOrUnaryExpression(
-            boolean typeIdWithParentheses, int[] endoffset) throws EndOfFileException {
+    protected IASTNode[] parseTypeIdOrUnaryExpression(boolean typeIdWithParentheses, int[] endoffset) throws EndOfFileException {
         IASTTypeId typeId = null;
-        IASTExpression unaryExpression = null;
-        IToken typeIdLA = null, unaryExpressionLA = null;
+        
+        IToken typeIdLA = null;
         IToken mark = mark();
         try {
             if (typeIdWithParentheses)
@@ -1971,36 +1969,27 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             		}
             	}
             }
-        } catch (BacktrackException e) {
-			typeId = null;        	
-        }
+        } catch (BacktrackException e) { }
         backup(mark);
+        
+        IToken unaryExpressionLA = null;
+        IASTExpression unaryExpression = null;
         try {
-            unaryExpression = unaryExpression();
+            unaryExpression = unaryExpression(); // throws BacktrackException
             unaryExpressionLA = LA(1);
-        } catch (BacktrackException bte) {
-            unaryExpression = null;
-        }
-        IASTNode[] result;
+        } catch (BacktrackException bte) { }
+
         if (unaryExpression == null && typeId != null) {
             backup(typeIdLA);
-            result = new IASTNode[1];
-            result[0] = typeId;
-            return result;
+            return new IASTNode[] {typeId};
         }
         if (unaryExpression != null && typeId == null) {
             backup(unaryExpressionLA);
-            result = new IASTNode[1];
-            result[0] = unaryExpression;
             endoffset[0]= calculateEndOffset(unaryExpression);
-            return result;
+            return new IASTNode[] {unaryExpression};
         }
-        if (unaryExpression != null && typeId != null
-                && typeIdLA == unaryExpressionLA) {
-            result = new IASTNode[2];
-            result[0] = typeId;
-            result[1] = unaryExpression;
-            return result;
+        if (unaryExpression != null && typeId != null && typeIdLA == unaryExpressionLA) {
+            return new IASTNode[] {typeId, unaryExpression};
         }
         return EMPTY_NODE_ARRAY;
 

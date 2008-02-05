@@ -12,28 +12,15 @@ package org.eclipse.rse.tests.subsystems.files;
 
 import junit.framework.TestSuite;
 
-import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.IFileStore;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
-import org.eclipse.rse.core.model.ISystemResourceSet;
-import org.eclipse.rse.core.model.SystemRemoteResourceSet;
 import org.eclipse.rse.core.model.SystemStartHere;
-import org.eclipse.rse.core.model.SystemWorkspaceResourceSet;
 import org.eclipse.rse.core.subsystems.IConnectorService;
-import org.eclipse.rse.core.subsystems.IRemoteServerLauncher;
-import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.core.subsystems.ISystemDragDropAdapter;
-import org.eclipse.rse.core.subsystems.ServerLaunchType;
-import org.eclipse.rse.files.ui.resources.UniversalFileTransferUtility;
-import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.IFileServiceSubSystem;
-import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 

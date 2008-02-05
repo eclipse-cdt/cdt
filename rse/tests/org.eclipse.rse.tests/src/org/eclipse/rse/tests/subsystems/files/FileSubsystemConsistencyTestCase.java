@@ -26,7 +26,6 @@ import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.SystemStartHere;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.services.files.IFileService;
-import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.tests.RSETestsPlugin;
@@ -433,7 +432,7 @@ public class FileSubsystemConsistencyTestCase extends RSEBaseConnectionTestCase 
 				}
 				catch (Exception e)
 				{
-					
+					/*ignore*/
 				}
 			}
 			else
@@ -443,7 +442,7 @@ public class FileSubsystemConsistencyTestCase extends RSEBaseConnectionTestCase 
 			
 			Exception exception = null;
 			String cause = null;
-			IRemoteFile[] remoteFiles = null;
+			//IRemoteFile[] remoteFiles = null;
 			
 			try
 			{

@@ -39,18 +39,25 @@
  * Martin Oberhuber (Wind River) - [206742] Make SystemHostPool thread-safe
  * David Dykstal    (IBM)        - [210537] removed exception handling for SystemHostPool, no longer needed
  * Martin Oberhuber (Wind River) - [216266] improved non-forced getSubSystems() code, removed getSubSystemsLazily()
+ * David Dykstal (IBM) - [197036] wrapped createHost to commit changes only once
+ *                                rewrote createHost to better pick default subsystem configurations to activate
+ *                                rewrote getSubSystemConfigurationsBySystemType to be able to delay the creation (and loading) of subsystem configurations
  ********************************************************************************/
 
 package org.eclipse.rse.ui.internal.model;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.IRSEUserIdConstants;
@@ -90,6 +97,7 @@ import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
 import org.eclipse.rse.core.subsystems.ISystemDragDropAdapter;
 import org.eclipse.rse.internal.core.filters.SystemFilterStartHere;
+import org.eclipse.rse.internal.core.model.ISystemProfileOperation;
 import org.eclipse.rse.internal.core.model.SystemHostPool;
 import org.eclipse.rse.internal.core.model.SystemModelChangeEvent;
 import org.eclipse.rse.internal.core.model.SystemModelChangeEventManager;
@@ -107,6 +115,8 @@ import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.SystemAdapterHelpers;
 import org.eclipse.swt.widgets.Display;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Registry for all connections.
@@ -206,7 +216,9 @@ public class SystemRegistry implements ISystemRegistry
 	 */
 	public Object[] getConnectionChildren(IHost selectedConnection)
 	{
-		return getSubSystems(selectedConnection);
+		// DWD shouldn't this be "getHostChildren"? Its part of the ISystemViewInputProvider interface.
+		Object[] result = getSubSystems(selectedConnection);
+		return result;
 	}
 	/**
 	 * This method is called by the connection adapter when deciding to show a plus-sign
@@ -321,64 +333,45 @@ public class SystemRegistry implements ISystemRegistry
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.ISystemRegistry#getSubSystemConfigurationsBySystemType(org.eclipse.rse.core.IRSESystemType, boolean)
 	 */
+	/**
+	 * @deprecated Use {@link #getSubSystemConfigurationsBySystemType(IRSESystemType,boolean,boolean)} instead
+	 */
 	public ISubSystemConfiguration[] getSubSystemConfigurationsBySystemType(IRSESystemType systemType, boolean filterDuplicateServiceSubSystemFactories)
 	{
-		List serviceTypesAdded = new ArrayList();
-		List serviceImplsAdded = new ArrayList();
-		Vector v = new Vector();
-		if (subsystemConfigurationProxies != null)
-		{
-			for (int idx = 0; idx < subsystemConfigurationProxies.length; idx++)
-			{
-				ISubSystemConfigurationProxy ssfProxy = subsystemConfigurationProxies[idx];
-				if (ssfProxy.appliesToSystemType(systemType))
-				{
-					ISubSystemConfiguration ssFactory = ssfProxy.getSubSystemConfiguration();
-					if (ssFactory != null)
-					{
-						if (ssFactory instanceof IServiceSubSystemConfiguration && filterDuplicateServiceSubSystemFactories)
-						{
-							IServiceSubSystemConfiguration serviceFactory = (IServiceSubSystemConfiguration)ssFactory;
-							Class serviceType = serviceFactory.getServiceType();
-							Class serviceImplType = serviceFactory.getServiceImplType();
-							boolean containsThisServiceType = serviceTypesAdded.contains(serviceType);
-							boolean containsThisServiceImplType = serviceImplsAdded.contains(serviceImplType);
-							
-							if (!containsThisServiceType)
-							{							
-								serviceTypesAdded.add(serviceType);
-								serviceImplsAdded.add(serviceImplType);
-								v.addElement(ssFactory);
-							}
-							else if (containsThisServiceImplType)
-							{
-								// remove the other one
-								for (int i = 0; i < v.size(); i++)
-								{
-									if (v.get(i) instanceof IServiceSubSystemConfiguration)
-									{		
-										IServiceSubSystemConfiguration addedConfig = (IServiceSubSystemConfiguration)v.get(i);
-										if (addedConfig.getServiceType() == serviceType)
-										{
-											v.remove(addedConfig);
-										}
-									}
-
+		return getSubSystemConfigurationsBySystemType(systemType, filterDuplicateServiceSubSystemFactories, true);
+	}
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#getSubSystemConfigurationsBySystemType(org.eclipse.rse.core.IRSESystemType, boolean)
+	 */
+	public ISubSystemConfiguration[] getSubSystemConfigurationsBySystemType(IRSESystemType systemType, final boolean filterDuplicates, boolean activate) {
+		List configurations = new ArrayList();
+		if (subsystemConfigurationProxies != null) {
+			Set serviceTypes = new HashSet();
+//			Set serviceImplsAdded = new HashSet();
+			for (int idx = 0; idx < subsystemConfigurationProxies.length; idx++) {
+				ISubSystemConfigurationProxy subsystemConfigurationProxy = subsystemConfigurationProxies[idx];
+				if (subsystemConfigurationProxy.appliesToSystemType(systemType)) {
+					if (activate || subsystemConfigurationProxy.isSubSystemConfigurationActive()) {
+						ISubSystemConfiguration configuration = subsystemConfigurationProxy.getSubSystemConfiguration();
+						if (configuration != null) { // could happen if activate fails
+							if (filterDuplicates && configuration instanceof IServiceSubSystemConfiguration) {
+								IServiceSubSystemConfiguration service = (IServiceSubSystemConfiguration) configuration;
+								Class serviceType = service.getServiceType();
+								if (!serviceTypes.contains(serviceType)) {
+									serviceTypes.add(serviceType);
+									configurations.add(configuration);
 								}
-								
-								v.addElement(ssFactory);
+							} else {
+								configurations.add(configuration);
 							}
-											}											
-						else
-						{
-							v.addElement(ssFactory);
 						}
 					}
 				}
 			}
 		}
-		ISubSystemConfiguration[] factories = (ISubSystemConfiguration[])v.toArray(new ISubSystemConfiguration[v.size()]);
-		return factories;
+		ISubSystemConfiguration[] result = (ISubSystemConfiguration[]) configurations.toArray(new ISubSystemConfiguration[configurations.size()]);
+		return result;
 	}
 	
 
@@ -875,70 +868,53 @@ public class SystemRegistry implements ISystemRegistry
 		return pool.getSystemProfile();
 	}
 
-	public IConnectorService[] getConnectorServices(IHost conn)
-	{
-		List csList = new ArrayList();
-		// DKM for now, I'll just use the subsystems to get at the systems
-		//  but later with new model, we should be getting these directly
-		ISubSystem[] sses = getSubSystems(conn);
-		for (int i = 0; i < sses.length; i++)
-		{
-			ISubSystem ss = sses[i];
-			IConnectorService service = ss.getConnectorService();
-			if (!csList.contains(service))
-			{
-				csList.add(service);
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#getConnectorServices(org.eclipse.rse.core.model.IHost)
+	 */
+	public IConnectorService[] getConnectorServices(IHost host) {
+		List services = new ArrayList();
+		ISubSystem[] subsystems = getSubSystems(host);
+		for (int i = 0; i < subsystems.length; i++) {
+			ISubSystem subsystem = subsystems[i];
+			IConnectorService service = subsystem.getConnectorService();
+			if (!services.contains(service)) {
+				services.add(service);
 			}
 		}
-		return (IConnectorService[])csList.toArray(new IConnectorService[csList.size()]);
+		return (IConnectorService[]) services.toArray(new IConnectorService[services.size()]);
 	}
 	
-	/**
-	 * Return list of subsystem objects for a given connection.
-	 * Demand pages the subsystem factories into memory if they aren't already.
-	 * <p>
-	 * To protect against crashes, if there are no subsystems, an array of length zero is returned.
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#getSubSystems(org.eclipse.rse.core.model.IHost, boolean)
 	 */
-	public ISubSystem[] getSubSystems(IHost conn)
-	{
-		return getSubSystems(conn, ISubSystemConfiguration.FORCE_INTO_MEMORY);
+	public ISubSystem[] getSubSystems(IHost host, boolean force) {
+		return getSubSystems(host);
 	}
 	
-	/**
-	 * Return list of subsystem objects for a given connection.
-	 * Demand pages the subsystem factories into memory if they aren't already.
-	 * <p>
-	 * To protect against crashes, if there are no subsystems, an array of length zero is returned.
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#getSubSystems(org.eclipse.rse.core.model.IHost)
 	 */
-	public ISubSystem[] getSubSystems(IHost conn, boolean force)
-	{
-		ISubSystem[] subsystems = null;
-
-		if (subsystemConfigurationProxies != null)
-		{
-			List v = new ArrayList();
-			for (int idx = 0; idx < subsystemConfigurationProxies.length; idx++)
-			{
-				if (!force && !subsystemConfigurationProxies[idx].isSubSystemConfigurationActive()) {
-					//avoid instantiation if not forced.
-					continue;
-				}
-
-				if (subsystemConfigurationProxies[idx].appliesToSystemType(conn.getSystemType()))
-				{
-					ISubSystemConfiguration factory = subsystemConfigurationProxies[idx].getSubSystemConfiguration();
-					if (factory != null)
-					{
-						ISubSystem[] sss = factory.getSubSystems(conn, force);
-						if (sss != null)
-							for (int jdx = 0; jdx < sss.length; jdx++)
-								v.add(sss[jdx]);
+	public ISubSystem[] getSubSystems(IHost host) {
+		IRSESystemType systemType = host.getSystemType();
+		List subsystems = new ArrayList();
+		if (subsystemConfigurationProxies != null) {
+			for (int i = 0; i < subsystemConfigurationProxies.length; i++) {
+				ISubSystemConfigurationProxy proxy = subsystemConfigurationProxies[i];
+				if (proxy.appliesToSystemType(systemType)) {
+					if (proxy.isSubSystemConfigurationActive()) {
+						ISubSystemConfiguration config = proxy.getSubSystemConfiguration();
+						ISubSystem[] ssArray = config.getSubSystems(host, false);
+						if (ssArray == null) { // create a subsystem for this connection and config
+							ssArray = this.createSubSystems(host, new ISubSystemConfiguration[] {config});
+						}
+						subsystems.addAll(Arrays.asList(ssArray));
 					}
 				}
 			}
-			subsystems = (ISubSystem[])v.toArray(new ISubSystem[v.size()]);
 		}
-		return subsystems;
+		ISubSystem[] result = new ISubSystem[subsystems.size()];
+		subsystems.toArray(result);
+		return result;
 	}
 
 	/**
@@ -1147,12 +1123,15 @@ public class SystemRegistry implements ISystemRegistry
 		dataStream.append("."); //$NON-NLS-1$
 		dataStream.append(connectionName);
 		return dataStream.toString();
-	 }
-	 
-	public ISubSystem[] getSubsystems(IHost connection, Class subsystemInterface)
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#getSubsystems(org.eclipse.rse.core.model.IHost, java.lang.Class)
+	 */
+	public ISubSystem[] getSubsystems(IHost host, Class subsystemInterface)
 	{
 		List matches = new ArrayList();
-		ISubSystem[] allSS = connection.getSubSystems();
+		ISubSystem[] allSS = getSubSystems(host);
 		for (int i = 0; i < allSS.length; i++)
 		{
 			ISubSystem ss = allSS[i];
@@ -1164,10 +1143,13 @@ public class SystemRegistry implements ISystemRegistry
 		return (ISubSystem[])matches.toArray(new ISubSystem[matches.size()]);
 	}
 	
-	public ISubSystem[] getServiceSubSystems(IHost connection, Class serviceType)
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#getServiceSubSystems(org.eclipse.rse.core.model.IHost, java.lang.Class)
+	 */
+	public ISubSystem[] getServiceSubSystems(IHost host, Class serviceType)
 	{
 		List matches = new ArrayList();
-		ISubSystem[] allSS = connection.getSubSystems();
+		ISubSystem[] allSS = getSubSystems(host);
 		for (int i = 0; i < allSS.length; i++)
 		{
 			ISubSystem ss = allSS[i];
@@ -1187,9 +1169,9 @@ public class SystemRegistry implements ISystemRegistry
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.ISystemRegistry#getSubSystemsBySubSystemConfigurationCategory(java.lang.String, org.eclipse.rse.core.model.IHost)
 	 */
-	public ISubSystem[] getSubSystemsBySubSystemConfigurationCategory(String factoryCategory, IHost connection)
+	public ISubSystem[] getSubSystemsBySubSystemConfigurationCategory(String factoryCategory, IHost host)
 	{
-		ISubSystem[] subsystems = getSubSystems(connection);
+		ISubSystem[] subsystems = getSubSystems(host);
 		if ((subsystems != null) && (subsystems.length > 0))
 		{
 			Vector v = new Vector();
@@ -1658,82 +1640,116 @@ public class SystemRegistry implements ISystemRegistry
 	}
 	
 	/**
-	 * Create a connection object, given the connection pool and given all the possible attributes.
-	 * <p>
-	 * THE RESULTING CONNECTION OBJECT IS ADDED TO THE LIST OF EXISTING CONNECTIONS FOR YOU, IN
-	 *  THE PROFILE YOU SPECIFY. THE PROFILE IS ALSO SAVED TO DISK.
+	 * Create a host object, given its host pool and its attributes.
 	 * <p>
 	 * This method:
 	 * <ul>
-	 *  <li>creates and saves a new connection within the given profile
-	 *  <li>calls all subsystem factories to give them a chance to create a subsystem instance
-	 *  <li>fires an ISystemResourceChangeEvent event of type EVENT_ADD to all registered listeners
+	 * <li>creates and saves a new connection within the given profile
+	 * <li>calls all subsystem factories to give them a chance to create a subsystem instance
+	 * <li>fires an ISystemResourceChangeEvent event of type EVENT_ADD to all registered listeners
 	 * </ul>
 	 * <p>
 	 * @param profileName Name of the system profile the connection is to be added to.
-	 * @param systemType system type matching one of the system types
-	 *     defined via the systemTypes extension point.
-	 * @param connectionName unique connection name.
-	 * @param hostName ip name of host.
+	 * @param systemType system type matching one of the system types defined via the systemTypes extension point.
+	 * @param hostName unique connection name.
+	 * @param hostAddress IP name of host.
 	 * @param description optional description of the connection. Can be null.
 	 * @param defaultUserId userId to use as the default for the subsystems.
 	 * @param defaultUserIdLocation one of the constants in {@link org.eclipse.rse.core.IRSEUserIdConstants}
-	 *   that tells us where to set the user Id
+	 * that tells us where to set the user Id
 	 * @param createSubSystems <code>true</code> to create subsystems for the host, <code>false</code> otherwise.
 	 * @param newConnectionWizardPages when called from the New Connection wizard this is union of the list of additional
-	 *          wizard pages supplied by the subsystem factories that pertain to the specified system type. Else null.
+	 * wizard pages supplied by the subsystem factories that pertain to the specified system type. Else null.
 	 * @return SystemConnection object, or null if it failed to create. This is typically
-	 *   because the connectionName is not unique. Call getLastException() if necessary.
+	 * because the connectionName is not unique. Call getLastException() if necessary.
 	 */
-	public IHost createHost(
-		String profileName,
-		IRSESystemType systemType,
-		String connectionName,
-		String hostName,
-		String description,
-		String defaultUserId,
-		int defaultUserIdLocation,
-		boolean createSubSystems,
-		ISystemNewConnectionWizardPage[] newConnectionWizardPages)
-		throws Exception {
-		lastException = null;
-		ISystemHostPool pool = getHostPool(profileName);
-		IHost conn = null;
-		boolean promptable = false; // systemType.equals(IRSESystemType.SYSTEMTYPE_PROMPT);
-		try
-		{
-			// create, register and save new connection...
-			if ((defaultUserId != null) && (defaultUserId.length() == 0))
-				defaultUserId = null;
-			conn = pool.createHost(systemType, connectionName, hostName, description, defaultUserId, defaultUserIdLocation);
-			if (conn == null) // conn already exists
-			{
-				conn = pool.getHost(connectionName);
+	// FIXME need to remove ISystemNewConnectionWizardPage[] from this and replace with IAdaptable[]
+	public IHost createHost(final String profileName, final IRSESystemType systemType, final String hostName, 
+			final String hostAddress, final String description, final String defaultUserId, 
+			final int defaultUserIdLocation, final boolean createSubSystems, 
+			final ISystemNewConnectionWizardPage[] newConnectionWizardPages) throws Exception {
+		final ISystemRegistry sr = this;
+		class CreateHostOperation implements ISystemProfileOperation {
+			private IHost host = null;
+			private ISubSystem[] subsystems = new ISubSystem[0];
+			IHost getHost() {
+				return host;
 			}
-			if (promptable)
-				conn.setPromptable(true);
-		}
-		catch (Exception exc)
-		{
-			lastException = exc;
-			SystemBasePlugin.logError("Exception in createConnection for " + connectionName, exc); //$NON-NLS-1$
-			throw exc;
-		}
-		if ((lastException == null) && !promptable && createSubSystems) {
-			// only 1 factory used per service type
-			ISubSystemConfiguration[] factories = getSubSystemConfigurationsBySystemType(systemType, true);
-			ISubSystem subSystems[] = new ISubSystem[factories.length];
-			for (int idx = 0; idx < factories.length; idx++) {
-				ISubSystemConfiguration factory = factories[idx];
-				ISystemNewConnectionWizardPage[] interestingPages = getApplicableWizardPages(factory, newConnectionWizardPages);
-				subSystems[idx] = factory.createSubSystem(conn, true, interestingPages); // give it the opportunity to create a subsystem
+			public ISubSystem[] getSubSystems() {
+				return subsystems;
 			}
-			FireNewHostEvents fire = new FireNewHostEvents(conn, subSystems, this);
-			Display.getDefault().asyncExec(fire);
+			public IStatus run() {
+				IStatus status = Status.OK_STATUS;
+				ISystemHostPool pool = getHostPool(profileName);
+				try {
+					// create, register and save new connection...
+					String uid = defaultUserId;
+					if ((uid != null) && (uid.length() == 0)) {
+						uid = null;
+					}
+					host = pool.createHost(systemType, hostName, hostAddress, description, uid, defaultUserIdLocation);
+					if (host == null) { // did not create since host already exists
+						host = pool.getHost(hostName);
+					}
+				} catch (Exception e) {
+					String pluginId = RSEUIPlugin.getDefault().getSymbolicName();
+					String message = MessageFormat.format("Exception in createHost for {0}", new Object[] {hostName});
+					status = new Status(IStatus.ERROR, pluginId, message, e);
+				}
+				if (status.isOK()) {
+					if (createSubSystems) {
+						// determine the list of configs to use to create subsystems from
+						List configs = new ArrayList(10); // arbitrary but reasonable
+						if (newConnectionWizardPages != null) {
+							// if there are wizard pages need to at least use those
+							for (int i = 0; i < newConnectionWizardPages.length; i++) {
+								configs.add(newConnectionWizardPages[i].getSubSystemConfiguration());
+							}
+							// add any non-service subsystem configs that aren't already there that apply to this systemtype
+							ISubSystemConfiguration[] configsArray = getSubSystemConfigurationsBySystemType(systemType, false);
+							for (int i = 0; i < configsArray.length; i++) {
+								ISubSystemConfiguration config = configsArray[i];
+								boolean isStrange = !(config instanceof IServiceSubSystemConfiguration);
+								boolean isAbsent = !configs.contains(config);
+								if (isStrange && isAbsent) {
+									configs.add(config);
+								}
+							}
+						} else {
+							// just get the defaults with the service subsystems filtered
+							ISubSystemConfiguration[] configsArray = getSubSystemConfigurationsBySystemType(systemType, true);
+							configs = Arrays.asList(configsArray);
+						}
+						// only subsystem configuration is used per service type
+						subsystems = new ISubSystem[configs.size()];
+						ISystemProfile profile = host.getSystemProfile();
+						int i = 0;
+						for (Iterator z = configs.iterator(); z.hasNext();) {
+							ISubSystemConfiguration config = (ISubSystemConfiguration) z.next();
+							config.getFilterPoolManager(profile, true); // create the filter pool
+							ISystemNewConnectionWizardPage[] interestingPages = getApplicableWizardPages(config, newConnectionWizardPages);
+							subsystems[i] = config.createSubSystem(host, true, interestingPages); // give it the opportunity to create a subsystem
+							i++;
+						}
+					}
+					host.commit();
+				}
+				return status;
+			}
 		}
-		conn.commit();
+		CreateHostOperation op = new CreateHostOperation();
+		IStatus status = SystemProfileManager.run(op);
+		lastException = (Exception) status.getException();
+		if (lastException != null) {
+			SystemBasePlugin.logError(status.getMessage(), lastException);
+			throw lastException;
+		}
+		IHost host = op.getHost();
+		ISubSystem[] subsystems = op.getSubSystems();
+		FireNewHostEvents fire = new FireNewHostEvents(host, subsystems, sr);
+		Display.getDefault().asyncExec(fire);
 		SystemPreferencesManager.setConnectionNamesOrder(); // update preferences order list                
-		return conn;
+		return host;
 	}
 	
 	/*
@@ -1949,33 +1965,12 @@ public class SystemRegistry implements ISystemRegistry
 		return createHost(profileName, systemType, connectionName, hostName, description, true);  
 	}
 	
-	/**
-	 * Create a connection object. This is a simplified version
-	 * <p>
-	 * THE RESULTING CONNECTION OBJECT IS ADDED TO THE LIST OF EXISTING CONNECTIONS FOR YOU, IN
-	 *  THE PROFILE YOU SPECIFY. THE PROFILE IS ALSO SAVED TO DISK.
-	 * <p>
-	 * This method:
-	 * <ul>
-	 *  <li>creates and saves a new connection within the given profile
-	 *  <li>optionally calls all subsystem factories to give them a chance to create subsystem instances
-	 *  <li>fires an ISystemResourceChangeEvent event of type EVENT_ADD to all registered listeners
-	 * </ul>
-	 * <p>
-	 * @param profileName Name of the system profile the connection is to be added to.
-	 * @param systemType system type matching one of the system types
-	 *     defined via the systemTypes extension point.
-	 * @param connectionName unique connection name.
-	 * @param hostName ip name of host.
-	 * @param description optional description of the connection. Can be null.
-	 * @param createSubSystems <code>true</code> to create subsystems for the host, <code>false</code> otherwise.
-	 * @return SystemConnection object, or null if it failed to create. This is typically
-	 *   because the connectionName is not unique. Call getLastException() if necessary.
-	 * @since 2.0
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#createHost(java.lang.String, org.eclipse.rse.core.IRSESystemType, java.lang.String, java.lang.String, java.lang.String, boolean)
 	 */
 	public IHost createHost(String profileName, IRSESystemType systemType, String connectionName, String hostName, String description, boolean createSubSystems) throws Exception
 	{
-		return createHost(profileName, systemType, connectionName, hostName, description, null, IRSEUserIdConstants.USERID_LOCATION_HOST, null);  
+		return createHost(profileName, systemType, connectionName, hostName, description, null, IRSEUserIdConstants.USERID_LOCATION_HOST, createSubSystems, null);  
 	}
 	
 	/*
@@ -2318,7 +2313,7 @@ public class SystemRegistry implements ISystemRegistry
 	public boolean isAnySubSystemConnected(IHost conn)
 	{
 		boolean any = false;
-		ISubSystem[] subsystems = getSubSystems(conn, false);
+		ISubSystem[] subsystems = getSubSystems(conn);
 		if (subsystems == null)
 			return false;
 		for (int idx = 0; !any && (idx < subsystems.length); idx++)
@@ -2352,7 +2347,7 @@ public class SystemRegistry implements ISystemRegistry
 		return false;
 		
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.ISystemRegistry#areAllSubSystemsConnected(org.eclipse.rse.core.model.IHost)
@@ -2394,7 +2389,7 @@ public class SystemRegistry implements ISystemRegistry
 	public void disconnectAllSubSystems(IHost conn)
 	{
 		// get subsystems lazily, because not instantiated ones cannot be disconnected anyways.
-		ISubSystem[] subsystems = getSubSystems(conn, false);
+		ISubSystem[] subsystems = getSubSystems(conn);
 		if (subsystems == null)
 			return;
 

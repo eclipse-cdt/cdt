@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,8 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - [197036] All filter pools created on clean workspace
+ * cleaned javadoc for renameSystemFilterPool
  *******************************************************************************/
 
 package org.eclipse.rse.core.filters;
@@ -237,19 +238,13 @@ public interface ISystemFilterPoolManager extends IRSEPersistableContainer {
 	public boolean preTestRenameFilterPool(ISystemFilterPool pool) throws Exception;
 
 	/**
-	 * Rename a given filter pool. Dependending on the save policy, the 
-	 *  appropriate file or folder on disk will also be renamed.
-	 * <p>
-	 * Does the following:
+	 * Rename a filter pool.
 	 * <ul>
-	 *   <li>Renames referencing objects
-	 *   <li>Renames pool object in the in-memory model
-	 *   <li>Renames folder on disk for policies of one folder per pool
-	 *   <li>Renames file on disk for policy of one file per pool
-	 *   <li>Saves model to disk for policy of one file per manager
-	 *   <li>Invalidates in-memory caches
+	 * <li>Renames pool object
+	 * <li>Informs any filter pool references to this pool
+	 * <li>Schedules a save of the pool object
 	 * </ul>
-	 * @param pool The filter pool object to physically rename
+	 * @param pool The filter pool object to rename
 	 * @param newName The new name to give the pool
 	 */
 	public void renameSystemFilterPool(ISystemFilterPool pool, String newName) throws Exception;

@@ -13,11 +13,12 @@
  * Contributors:
  * David Dykstal (IBM) - 142806: refactoring persistence framework
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * David Dykstal (IBM) - [197036] removed createHost() shortcut (should use ISystemRegistry), 
+ *    cleaned javadoc for getFilterPools() 
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
 
-import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.persistence.IRSEPersistenceProvider;
@@ -45,12 +46,6 @@ public interface ISystemProfile extends IRSEModelObject {
 	 * Get the in-memory pointer back to the parent system profile manager
 	 */
 	public ISystemProfileManager getProfileManager();
-
-	/**
-	 * Convenience method for create a new connection within this profile.
-	 * Shortcut for {@link ISystemRegistry#createHost(IRSESystemType,String,String,String)}
-	 */
-	public IHost createHost(IRSESystemType systemType, String connectionName, String hostName, String description) throws Exception;
 
 	/**
 	 * @return The value of the Name attribute
@@ -81,7 +76,7 @@ public interface ISystemProfile extends IRSEModelObject {
 	public IHost[] getHosts();
 
 	/**
-	 * Return all filter pools for this profile
+	 * @return all existing filter pools for this profile.
 	 */
 	public ISystemFilterPool[] getFilterPools();
 

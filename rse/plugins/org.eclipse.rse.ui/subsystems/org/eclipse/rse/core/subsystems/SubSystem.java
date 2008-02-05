@@ -28,13 +28,19 @@
  * David McKnight   (IBM)        - [186363] get rid of obsolete calls to SubSystem.connect()
  * David McKnight   (IBM)        - [211472] [api][breaking] IRemoteObjectResolver.getObjectWithAbsoluteName() needs a progress monitor
  * David McKnight   (IBM)        - [212403] [apidoc][breaking] Fixing docs of SubSystem#getConnectorService() and making internalConnect() private
+ * David Dykstal (IBM) - [197036] pulled up subsystem configuration switching logic from the service subsystem layer
+ *                                implemented IServiceSubSystem here so that subsystem configuration switching can be 
+ *                                made common among all service subsystems.
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IResource;
@@ -51,6 +57,7 @@ import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.RSEPreferencesManager;
+import org.eclipse.rse.core.events.ISystemModelChangeEvent;
 import org.eclipse.rse.core.events.ISystemModelChangeEvents;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.events.SystemResourceChangeEvent;
@@ -69,6 +76,9 @@ import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.RSEModelObject;
+import org.eclipse.rse.internal.core.model.ISystemProfileOperation;
+import org.eclipse.rse.internal.core.model.SystemModelChangeEvent;
+import org.eclipse.rse.internal.core.model.SystemProfileManager;
 import org.eclipse.rse.internal.ui.GenericMessages;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
@@ -122,7 +132,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
  */
 
 public abstract class SubSystem extends RSEModelObject
-	implements IAdaptable, ISubSystem,
+	implements IAdaptable, ISubSystem, IServiceSubSystem,
 		ISystemFilterPoolReferenceManagerProvider
 {
 
@@ -174,6 +184,8 @@ public abstract class SubSystem extends RSEModelObject
 	 * @generated This field/method will be replaced during code generation.
 	 */
 	protected ISystemFilterPoolReferenceManager filterPoolReferenceManager = null;
+
+	private Map poolReferencesMap = new HashMap();
 
 	private class NullRunnableContext implements IRunnableContext {
 		public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
@@ -2958,7 +2970,7 @@ public abstract class SubSystem extends RSEModelObject
 	{
 		ISubSystem firstSS = null;
 		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
-		ISubSystem[] sses = registry.getSubSystems(getHost(), false);
+		ISubSystem[] sses = registry.getSubSystems(getHost());
 		for (int i = 0; i < sses.length; i++)
 		{
 			ISubSystem ss = sses[i];
@@ -3047,6 +3059,133 @@ public abstract class SubSystem extends RSEModelObject
 		IRSEPersistableContainer[] result = new IRSEPersistableContainer[children.size()];
 		children.toArray(result);
 		return result;
+	}
+	
+	/* Service Subsystem support */
+
+	/**
+	 * Perform the subsystem specific processing required to complete a subsystem configuration switch for a
+	 * service subsystem. The subsystem will typically query this configuration for interesting properties or 
+	 * policies. It should also reset any state to a fresh start.
+	 * This supplied implementation does nothing. Subclasses may override if they implement a service subsystem.
+	 * @param newConfiguration the configuration this subsystem should use from this point.
+	 */
+	protected void internalSwitchServiceSubSystemConfiguration(IServiceSubSystemConfiguration newConfiguration) {
+	}
+
+	/**
+	 * Determine if a service subsystem is capable of switching to this new configuration.
+	 * This is usually a test of this configuration's type against the type expected by this subsystem.
+	 * This supplied implementation returns false. Subclasses should override if they implement a service subsystem.
+	 * @param configuration the configuration to which this subsystem may switch 
+	 * @return true if this subsystem is capable of switching to this configuration, false otherwise. This implementation
+	 * returns false.
+	 * @see IServiceSubSystem#canSwitchTo(IServiceSubSystemConfiguration)
+	 */
+	public boolean canSwitchTo(IServiceSubSystemConfiguration configuration) {
+		return false;
+	}
+
+	/**
+	 * Switch to use another subsystem configuration. This default implementation will test if the subsystem is a 
+	 * service subsystem and if the subsystem is compatible with the suggested configuration. If it is the switch will
+	 * be performed and internalSwitchSubSystemConfiguration will be called.
+	 * @see IServiceSubSystem#switchServiceFactory(IServiceSubSystemConfiguration)
+	 * @see #internalSwitchServiceSubSystemConfiguration(IServiceSubSystemConfiguration)
+	 */
+	public void switchServiceFactory(final IServiceSubSystemConfiguration config) {
+		if (config != getSubSystemConfiguration() && canSwitchTo(config)) {
+			// define the operation to be executed
+			ISystemProfileOperation op = new ISystemProfileOperation() {
+				public IStatus run() {
+					doSwitchServiceConfiguration(config);
+					return Status.OK_STATUS;
+				}
+			};
+			// execute the operation in a commit guard
+			SystemProfileManager.run(op);
+		}
+	}
+	
+	/**
+	 * Return the service type for this subsystem.
+	 * @return the default implementation returns null. Subclasses that implement service subsystems
+	 * should return a type as specified in the interface.
+	 * @see org.eclipse.rse.core.subsystems.IServiceSubSystem#getServiceType()
+	 */
+	public Class getServiceType() {
+		return null;
+	}
+
+	/**
+	 * Actually perform the switch inside the commit guard
+	 * @param newConfig
+	 */
+	private void doSwitchServiceConfiguration(IServiceSubSystemConfiguration newConfig) {
+		try {
+			disconnect();
+		} catch (Exception e) {
+		}
+		IHost host = getHost();
+		// remove the old references and store them for later use
+		ISubSystemConfiguration oldConfig = getSubSystemConfiguration();
+		if (oldConfig.supportsFilters()) {
+			ISystemFilterPoolReferenceManager fprm = getSystemFilterPoolReferenceManager();
+			List poolReferences = Arrays.asList(fprm.getSystemFilterPoolReferences());
+			poolReferencesMap.put(oldConfig, poolReferences);
+			for (Iterator z = poolReferences.iterator(); z.hasNext();) {
+				ISystemFilterPoolReference poolReference = (ISystemFilterPoolReference) z.next();
+				fprm.removeSystemFilterPoolReference(poolReference, true);
+			}
+			fprm.setSystemFilterPoolManagerProvider(null);
+		}
+		setSubSystemConfiguration(newConfig);
+		setConfigurationId(newConfig.getId());
+		setName(newConfig.getName());
+		// add the new pools to the manager
+		if (newConfig.supportsFilters()) {
+			ISystemFilterPoolReferenceManager fprm = getSystemFilterPoolReferenceManager();
+			fprm.setSystemFilterPoolManagerProvider(newConfig);
+			List poolReferences = (List) poolReferencesMap.get(newConfig);
+			if (poolReferences == null) {
+				// create default pools
+				ISystemProfile profile = host.getSystemProfile();
+				ISystemFilterPoolManager poolManager = newConfig.getFilterPoolManager(profile, true); // get and initialize the new filter pool manager
+				int eventType = ISystemModelChangeEvents.SYSTEM_RESOURCE_CHANGED;
+				int resourceType = ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_CONNECTION;
+				ISystemModelChangeEvent event = new SystemModelChangeEvent(eventType, resourceType, host);
+				RSECorePlugin.getTheSystemRegistry().fireEvent(event); // signal a model change event as well
+				// create references to those pools
+				fprm.setDefaultSystemFilterPoolManager(poolManager);
+				ISystemFilterPool[] pools = poolManager.getSystemFilterPools();
+				for (int i = 0; i < pools.length; i++) {
+					ISystemFilterPool pool = pools[i];
+					fprm.addReferenceToSystemFilterPool(pool);
+				}
+			} else { // use the found pools
+				for (Iterator z = poolReferences.iterator(); z.hasNext();) {
+					ISystemFilterPoolReference poolReference = (ISystemFilterPoolReference) z.next();
+					fprm.addSystemFilterPoolReference(poolReference);
+				}
+				fprm.resolveReferencesAfterRestore();
+			}
+			filterEventFilterPoolReferencesReset(); // signal a resource change event
+		}
+	
+		// switch the connector service
+		IConnectorService oldConnectorService = getConnectorService();
+		oldConnectorService.deregisterSubSystem(this);
+		IConnectorService newConnectorService = newConfig.getConnectorService(host);
+		setConnectorService(newConnectorService);
+		oldConnectorService.commit();
+		newConnectorService.commit();
+	
+		// call the subsystem specfic switching support
+		internalSwitchServiceSubSystemConfiguration(newConfig);
+	
+		// commit the subsystem
+		setDirty(true);
+		commit();
 	}
 	
 }

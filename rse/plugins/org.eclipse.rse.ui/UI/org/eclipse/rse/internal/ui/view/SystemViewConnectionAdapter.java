@@ -30,6 +30,7 @@
  * Uwe Stieber (Wind River)      - [199032] [api] Remove method acceptContextMenuActionContribution(...) from RSESystemTypeAdapter
  * Xuan Chen         (IBM)       - [160775] [api] rename (at least within a zip) blocks UI thread
  * Martin Oberhuber (Wind River) - [216266] Consider stateless subsystems (supportsSubSystemConnect==false)
+ * David Dykstal (IBM) - [197036] minor refactoring caused by SystemRegistry fix for this bug
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -599,7 +600,7 @@ public class SystemViewConnectionAdapter
 	        //specifically, this allows deletion of "Local" which is always connected (but does not support disconnect)
 	        //need to get subsystems from registry instead of host in order to be lazy:
 	        //subsystems which are not yet instantiated do not need to be considered.
-        	ISubSystem[] ss = sr.getSubSystems(host, false);
+        	ISubSystem[] ss = sr.getSubSystems(host);
         	for (int i=0; i<ss.length; i++) {
         		if (ss[i].isConnected() && ss[i].getSubSystemConfiguration().supportsSubSystemConnect())
         			return false;

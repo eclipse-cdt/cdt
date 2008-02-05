@@ -12,6 +12,8 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * David Dykstal (IBM) - [197036] fixed delete filter pool bug found during testing of this bug
+ *                                see also bug 194260 regarding deleting filter pools
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.filters.dialogs;
@@ -20,6 +22,7 @@ import java.util.Vector;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.ISelection;
@@ -77,6 +80,15 @@ public class SystemFilterWorkWithFilterPoolsDialog
                   SystemFilterPoolDialogInterface
                   //,ISystemResourceChangeListener
 {
+	class DeleteFilterPoolAction extends SystemCommonDeleteAction {
+		public DeleteFilterPoolAction(Shell parent, ISystemDeleteTarget deleteTarget) {
+			super(parent, deleteTarget);
+		}
+		protected Object getDialogValue(Dialog dlg) {
+			doDelete(null);
+			return null;
+		}
+	}
 	
 	private String promptString;
 	//private Label prompt;
@@ -93,8 +105,8 @@ public class SystemFilterWorkWithFilterPoolsDialog
     //private ActionContributionItem newActionItem, deleteActionItem, renameActionItem;
     private SystemFilterWorkWithFilterPoolsRefreshAllAction refreshAction = null;
     private SystemFilterNewFilterPoolAction  newAction = null;
-    //private SystemSimpleDeleteAction         dltAction = null;
-    private SystemCommonDeleteAction         dltAction = null;    
+    private DeleteFilterPoolAction dltAction = null;
+    //private SystemCommonDeleteAction         dltAction = null;    
     //private SystemSimpleRenameAction         rnmAction = null;
     private SystemCommonRenameAction         rnmAction = null;
     private SystemFilterCopyFilterPoolAction cpyAction = null;
@@ -251,7 +263,7 @@ public class SystemFilterWorkWithFilterPoolsDialog
 	{
 		newAction = new SystemFilterNewFilterPoolAction(shell,this);
 		//dltAction = new SystemSimpleDeleteAction(shell,this);	
-		dltAction = new SystemCommonDeleteAction(shell,this);			
+		dltAction = new DeleteFilterPoolAction(shell,this);			
 		rnmAction = new SystemCommonRenameAction(shell,this);		
 		  // undo typical settings...
 		  rnmAction.allowOnMultipleSelection(false);

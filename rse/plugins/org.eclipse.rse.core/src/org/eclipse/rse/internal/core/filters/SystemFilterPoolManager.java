@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * David Dykstal (IBM) - 142806: refactoring persistence framework
+ * David Dykstal (IBM) - [197036] removed caching mechanism to clean up logic
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.filters;
@@ -57,10 +58,10 @@ import org.eclipse.rse.logging.Logger;
  * This class is not intended to be subclassed by clients.
  */
 public class SystemFilterPoolManager extends RSEPersistableObject implements ISystemFilterPoolManager {
-	private ISystemFilterPool[] poolArray = null; // cache for performance
+//	private ISystemFilterPool[] poolArray = null; // cache for performance
 	private ISystemFilterPoolManagerProvider caller = null;
 	private Object poolMgrData;
-	private Vector poolNames;
+//	private Vector poolNames;
 	private boolean initialized = false;
 
 	private boolean suspendCallbacks = false;
@@ -152,7 +153,8 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 	 */
 	protected boolean singleFilterStringOnly = SINGLE_FILTER_STRING_ONLY_EDEFAULT;
 
-	protected List pools = null;
+	protected List pools = new ArrayList(3);
+//	protected List pools = null;
 
 	/**
 	 * Constructor
@@ -210,7 +212,7 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 			initialize(logger, caller, name); // core data
 		}
 		setSupportsNestedFilters(allowNestedFilters); // cascade it down    	
-		invalidatePoolCache();
+//		invalidatePoolCache();
 //		List pools = getPools();
 //		ISystemFilterPool pool = null;
 //		Vector poolNames = getSystemFilterPoolNamesVector();
@@ -397,17 +399,20 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 	 * Return array of SystemFilterPools managed by this manager.
 	 */
 	public ISystemFilterPool[] getSystemFilterPools() {
-		//System.out.println("Inside getSFPools for mgr "+getName()+". poolArray null? "+(poolArray==null));
-		if ((poolArray == null) || (getPools().size() != poolArray.length)) {
-			List pools = getPools();
-			poolArray = new ISystemFilterPool[pools.size()];
-			Iterator i = pools.iterator();
-			int idx = 0;
-			while (i.hasNext())
-				poolArray[idx++] = (ISystemFilterPool) i.next();
-			//System.out.println("Pool array created. length = "+poolArray.length);
-		}
-		return poolArray;
+		ISystemFilterPool[] result = new ISystemFilterPool[pools.size()];
+		pools.toArray(result);
+		return result;
+//		//System.out.println("Inside getSFPools for mgr "+getName()+". poolArray null? "+(poolArray==null));
+//		if ((poolArray == null) || (getPools().size() != poolArray.length)) {
+//			List pools = getPools();
+//			poolArray = new ISystemFilterPool[pools.size()];
+//			Iterator i = pools.iterator();
+//			int idx = 0;
+//			while (i.hasNext())
+//				poolArray[idx++] = (ISystemFilterPool) i.next();
+//			//System.out.println("Pool array created. length = "+poolArray.length);
+//		}
+//		return poolArray;
 	}
 
 	/**
@@ -425,24 +430,31 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 	 * Get list of filter pool names currently existing.
 	 */
 	public Vector getSystemFilterPoolNamesVector() {
-		List pools = getPools();
-		if ((poolNames == null) || (poolNames.size() != pools.size())) // been invalidated?
-		{
-			poolNames = new Vector();
-			Iterator i = pools.iterator();
-			while (i.hasNext())
-				poolNames.addElement(((ISystemFilterPool) i.next()).getName());
+		Vector result = new Vector(pools.size());
+		for (Iterator z = pools.iterator(); z.hasNext();) {
+			ISystemFilterPool pool = (ISystemFilterPool) z.next();
+			String poolName = pool.getName(); 
+			result.add(poolName);
 		}
-		return poolNames;
+		return result;
+//		List pools = getPools();
+//		if ((poolNames == null) || (poolNames.size() != pools.size())) // been invalidated?
+//		{
+//			poolNames = new Vector();
+//			Iterator i = pools.iterator();
+//			while (i.hasNext())
+//				poolNames.addElement(((ISystemFilterPool) i.next()).getName());
+//		}
+//		return poolNames;
 	}
 
 	/*
 	 * Call this to invalidate array cache after any activity 
 	 */
-	private void invalidatePoolCache() {
-		poolArray = null;
-		poolNames = null;
-	}
+//	private void invalidatePoolCache() {
+//		poolArray = null;
+//		poolNames = null;
+//	}
 
 	/**
 	 * Create a new filter pool.
@@ -473,9 +485,9 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 			pool.setSystemFilterPoolManager(this);
 			pool.setStringsCaseSensitive(areStringsCaseSensitive());
 			pool.setSupportsDuplicateFilterStrings(isSetSupportsDuplicateFilterStrings() && supportsDuplicateFilterStrings());
-			List pools = getPools();
+//			List pools = getPools();
 			pools.add(pool);
-			invalidatePoolCache();
+//			invalidatePoolCache();
 			commit(pool);
 			if ((caller != null) && !suspendCallbacks) {
 				caller.filterEventFilterPoolCreated(pool);
@@ -501,63 +513,22 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 	 * @param pool The filter pool object to physically delete
 	 */
 	public void deleteSystemFilterPool(ISystemFilterPool pool) throws Exception {
-
-		// remove all references
 		IRSEBaseReferencingObject[] refs = pool.getReferencingObjects();
-		//boolean needsSave = false;
 		if (refs != null) {
 			for (int idx = 0; idx < refs.length; idx++) {
 				if (refs[idx] instanceof ISystemFilterPoolReference) {
 					ISystemFilterPoolReference fpRef = (ISystemFilterPoolReference) refs[idx];
 					ISystemFilterPoolReferenceManager fprMgr = fpRef.getFilterPoolReferenceManager();
-					if (fprMgr != null) fprMgr.removeSystemFilterPoolReference(fpRef, false);// false means don't dereference
+					if (fprMgr != null) {
+						fprMgr.removeSystemFilterPoolReference(fpRef, false); // false means don't dereference DWD why?
+					}
 				}
 			}
 		}
-		// DWD removing a pool should mark its parent profile as dirty and cause a save to be "scheduled"
-
-		// remove from model
-		List pools = getPools();
 		pools.remove(pool);
-		invalidatePoolCache();
-
-		/* FIXME
-		 // now in EMF, the pools are "owned" by the Resource, and only referenced by this pool manager,
-		 //  so I don't think just removing it from the manager is enough... it must also be removed from its
-		 //  resource. Phil.
-		 Resource res = pool.eResource();
-		 if (res != null)
-		 res.getContents().remove(pool);
-		 
-		 // remove from disk
-		 if ( (savePolicy == SystemFilterConstants.SAVE_POLICY_ONE_FILEANDFOLDER_PER_POOL) ||
-		 (savePolicy == SystemFilterConstants.SAVE_POLICY_ONE_FILE_PER_FILTER) )
-		 {
-		 String expectedFolderName = derivePoolFolderName(poolName);
-		 if (expectedFolderName.equals(poolFolder.getName()))
-		 {
-		 // folder name equals what we would have named it if left to us.
-		 // assumption is this folder only exists to hold this pool!
-		 if (poolFolder.exists())
-		 getResourceHelpers().deleteResource(poolFolder);
-		 }
-		 }
-		 else if (savePolicy == SystemFilterConstants.SAVE_POLICY_ONE_FILE_PER_POOL_SAME_FOLDER)
-		 {
-		 String poolFileName = SystemFilterPoolImpl.getSaveFileName(getMOFHelpers(),pool);
-		 IFile poolFile = SystemResourceHelpers.getResourceHelpers().getFile(poolFolder,poolFileName);
-		 if (poolFile.exists())
-		 getResourceHelpers().deleteResource(poolFile);            
-		 }
-		 else // all pools in one file per manager. Just save it
-		 {
-		 commit();
-		 }    	
-		 invalidatePoolCache(); 	
-		 // if caller provider, callback to inform them of this event
-		 if ((caller != null) && !suspendCallbacks)
-		 caller.filterEventFilterPoolDeleted(pool);        
-		 */
+		_profile.setDirty(true);
+		_profile.commit();
+		getProvider().filterEventFilterPoolDeleted(pool);
 	}
 
 	/**
@@ -576,174 +547,25 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 	}
 
 	/**
-	 * Pre-test if we are going to run into any trouble renaming any of the files or folders
-	 *  used to persist a filter pool.
-	 * @return true if everything seems ok, false if a file/folder is in use.
+	 * Pre-test if we are going to run into any trouble renaming a filter pool.
+	 * @return true if the pool can be renamed.
 	 */
 	public boolean preTestRenameFilterPool(ISystemFilterPool pool) throws Exception {
-		boolean ok = true;
 		/*
-		 * DWD this looks like it needs to be modified so that it queries the persistence
-		 * manager to see if the pool can be renamed. The provider is in charge of determining
-		 * pool names in the persistent form. The Manager will have to construct a DOM 
-		 * object for this pool and query the appropriate provider.
+		 * The default implementation returns true. Persistence providers should be able to handle this 
+		 * circumstance regardless. If a pool can be renamed internally, it should be able to be 
+		 * renamed in its persistent form.
 		 */
-		/* FIXME
-		 if ( (savePolicy == SystemFilterConstants.SAVE_POLICY_ONE_FILEANDFOLDER_PER_POOL) ||
-		 (savePolicy == SystemFilterConstants.SAVE_POLICY_ONE_FILE_PER_FILTER) )
-		 {
-		 String expectedFolderName = derivePoolFolderName(pool.getName());
-		 boolean ourFolderName = expectedFolderName.equals(pool.getFolder().getName());
-		 // we must rename the old file...
-		 String poolFileName = SystemFilterPoolImpl.getSaveFileName(getMOFHelpers(),pool);    	  
-		 IFile poolFile = getResourceHelpers().getFile(pool.getFolder(),poolFileName);
-		 IFolder poolFolder = pool.getFolder();
-		 
-		 // first, pre-test for file-in-use error:
-		 boolean inUse = poolFile.exists() && SystemResourceHelpers.testIfResourceInUse(poolFile);
-		 if (inUse)
-		 {
-		 SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_FILE_INUSE);
-		 msg.makeSubstitution(poolFile.getFullPath());
-		 throw new SystemMessageException(msg);
-		 }
-		 // next, pre-test for folder-in-use error:
-		 if (ourFolderName)
-		 {
-		 inUse = poolFolder.exists() && SystemResourceHelpers.testIfResourceInUse(poolFolder);
-		 if (inUse)
-		 {
-		 SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_FOLDER_INUSE);
-		 msg.makeSubstitution(poolFolder.getFullPath());
-		 throw new SystemMessageException(msg);
-		 }
-		 }    	            
-		 }
-		 else if (savePolicy == SystemFilterConstants.SAVE_POLICY_ONE_FILE_PER_POOL_SAME_FOLDER)
-		 {
-		 String poolFileName = SystemFilterPoolImpl.getSaveFileName(getMOFHelpers(),pool);    	  
-		 IFile poolFile = getResourceHelpers().getFile(pool.getFolder(),poolFileName);
-		 // first, pre-test for file-in-use error:
-		 boolean inUse = poolFile.exists() && SystemResourceHelpers.testIfResourceInUse(poolFile);
-		 if (inUse)
-		 {
-		 SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_FILE_INUSE);
-		 msg.makeSubstitution(poolFile.getFullPath());
-		 throw new SystemMessageException(msg);
-		 }
-		 }
-		 */
+		boolean ok = true;
 		return ok;
 	}
 
-	/**
-	 * Rename a given filter pool. Dependending on the save policy, the 
-	 *  appropriate file or folder on disk will also be renamed.
-	 * <p>
-	 * Does the following:
-	 * <ul>
-	 *   <li>Updates all referencing objects
-	 *   <li>Renames pool object in the in-memory model
-	 *   <li>Renames folder on disk for policies of one folder per pool
-	 *   <li>Renames file on disk for policy of one file per pool
-	 *   <li>Saves model to disk for policy of one file per manager
-	 *   <li>Invalidates in-memory caches
-	 *   <li>Calls back to provider to inform of this event.
-	 * </ul>
-	 * @param pool The filter pool object to physically rename
-	 * @param newName The new name to give the pool
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilterPoolManager#renameSystemFilterPool(org.eclipse.rse.core.filters.ISystemFilterPool, java.lang.String)
 	 */
 	public void renameSystemFilterPool(ISystemFilterPool pool, String newName) throws Exception {
-		/*
-		 *  DWD Renaming a filter pool should mark its parent profile as dirty and
-		 *  the pool itself as dirty. A rewrite of the profile should be scheduled.
-		 */
-
 		String oldName = pool.getName();
-		// rename on disk
-		/* FIXME
-		 int oldLen = oldName.length();
-		 int newLen = newName.length();
-		 if ( (savePolicy == SystemFilterConstants.SAVE_POLICY_ONE_FILEANDFOLDER_PER_POOL) ||
-		 (savePolicy == SystemFilterConstants.SAVE_POLICY_ONE_FILE_PER_FILTER) )
-		 {
-		 String expectedFolderName = derivePoolFolderName(pool.getName());
-		 boolean ourFolderName = expectedFolderName.equals(pool.getFolder().getName());
-		 // we must rename the old file...
-		 String poolFileName = SystemFilterPoolImpl.getSaveFileName(getMOFHelpers(),pool);    	  
-		 String poolFileNewName = SystemFilterPoolImpl.getSaveFileName(getMOFHelpers(),pool,newName);
-		 IFile poolFile = getResourceHelpers().getFile(pool.getFolder(),poolFileName);
-		 IFolder poolFolder = pool.getFolder();
-		 
-		 // first, pre-test for file-in-use error:
-		 boolean inUse = poolFile.exists() && SystemResourceHelpers.testIfResourceInUse(poolFile);
-		 if (inUse)
-		 {
-		 SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_FILE_INUSE);
-		 msg.makeSubstitution(poolFile.getFullPath());
-		 throw new SystemMessageException(msg);
-		 }
-		 // next, pre-test for folder-in-use error:
-		 if (ourFolderName)
-		 {
-		 inUse = poolFolder.exists() && SystemResourceHelpers.testIfResourceInUse(poolFolder);
-		 if (inUse)
-		 {
-		 SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_FOLDER_INUSE);
-		 msg.makeSubstitution(poolFolder.getFullPath());
-		 throw new SystemMessageException(msg);
-		 }
-		 }
-		 
-		 if (poolFile.exists())
-		 {
-		 // pre-test if the new name will be too long for MOF (256)
-		 if (nameLenDiff > 0)
-		 {
-		 if (ourFolderName)
-		 nameLenDiff *= 2; // new name affects folder and file
-		 int newNameLen = poolFile.getLocation().toOSString().length() + nameLenDiff; 
-		 if (newNameLen > 256)
-		 throw new Exception("Fully qualified filter pool name too long for "+newName+". Exceeds 256 characters");
-		 }
-		 getResourceHelpers().renameResource(poolFile, poolFileNewName);            
-		 }
-		 if (ourFolderName)
-		 {
-		 // folder name equals what we would have named it if left to us.
-		 // assumption is this folder only exists to hold this pool!
-		 if (poolFolder.exists())
-		 {
-		 String newFolderName = derivePoolFolderName(newName);
-		 getResourceHelpers().renameResource(poolFolder, newFolderName);
-		 // as we now know, the original IFolder still points to the old name!
-		 poolFolder = getResourceHelpers().getRenamedFolder(poolFolder, newFolderName);
-		 pool.setFolder(poolFolder);
-		 }
-		 }
-		 }
-		 else if (savePolicy == SystemFilterConstants.SAVE_POLICY_ONE_FILE_PER_POOL_SAME_FOLDER)
-		 {
-		 String poolFileName = SystemFilterPoolImpl.getSaveFileName(getMOFHelpers(),pool);    	  
-		 IFile poolFile = getResourceHelpers().getFile(pool.getFolder(),poolFileName);
-		 // first, pre-test for file-in-use error:
-		 boolean inUse = poolFile.exists() && SystemResourceHelpers.testIfResourceInUse(poolFile);
-		 if (inUse)
-		 {
-		 SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_FILE_INUSE);
-		 msg.makeSubstitution(poolFile.getFullPath());
-		 throw new SystemMessageException(msg);
-		 }
-		 if (poolFile.exists())
-		 {
-		 String poolFileNewName = SystemFilterPoolImpl.getSaveFileName(getMOFHelpers(),pool,newName);
-		 getResourceHelpers().renameResource(poolFile, poolFileNewName);            
-		 }
-		 }
-		 */
 		pool.setName(newName);
-		invalidatePoolCache();
-
 		// inform all referencees
 		IRSEBaseReferencingObject[] refs = pool.getReferencingObjects();
 		if (refs != null) {
@@ -756,9 +578,10 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 				}
 			}
 		}
-
 		// if caller provider, callback to inform them of this event
-		if ((caller != null) && !suspendCallbacks) caller.filterEventFilterPoolRenamed(pool, oldName);
+		if ((caller != null) && !suspendCallbacks) {
+			caller.filterEventFilterPoolRenamed(pool, oldName);
+		}
 	}
 
 	/**
@@ -1148,24 +971,23 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 	 * @param delta the amount by which to move the filters (filterEventFiltersRePositioned)
 	 */
 	public void moveSystemFilters(ISystemFilter filters[], int delta) throws Exception {
-		/*
-		 * DWD revisit this. Make sure that the pool is scheduled to be saved.
-		 */
-		//    	ISystemFilterContainer container = filters[0].getParentFilterContainer(); 
 		int[] oldPositions = new int[filters.length];
-		for (int idx = 0; idx < filters.length; idx++)
+		for (int idx = 0; idx < filters.length; idx++) {
 			oldPositions[idx] = getSystemFilterPosition(filters[idx]);
-		if (delta > 0) // moving down, process backwards
-			for (int idx = filters.length - 1; idx >= 0; idx--)
+		}
+		if (delta > 0) { // moving down, process backwards
+			for (int idx = filters.length - 1; idx >= 0; idx--) {
 				moveFilter(filters[idx], oldPositions[idx] + delta);
-		else
-			for (int idx = 0; idx < filters.length; idx++)
+			}
+		} else {
+			for (int idx = 0; idx < filters.length; idx++) {
 				moveFilter(filters[idx], oldPositions[idx] + delta);
-
+			}
+		}
 		commit(filters[0].getParentFilterPool());
-
-		// if caller provider, callback to inform them of this event
-		if ((caller != null) && !suspendCallbacks) caller.filterEventFiltersRePositioned(filters, delta);
+		if ((caller != null) && !suspendCallbacks) {
+			caller.filterEventFiltersRePositioned(filters, delta);
+		}
 	}
 
 	/**
@@ -1331,21 +1153,13 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 	 * Copy a system filter string to a filter in this or another filter pool manager.
 	 */
 	public ISystemFilterString copySystemFilterString(ISystemFilter targetFilter, ISystemFilterString oldFilterString) throws Exception {
-		/*
-		 * DWD revisit this. make sure that pool is persisted.
-		 */
 		ISystemFilterPool targetPool = targetFilter.getParentFilterPool();
 		ISystemFilterPoolManager targetMgr = targetPool.getSystemFilterPoolManager();
 		ISystemFilter oldFilter = oldFilterString.getParentSystemFilter();
-		//        ISystemFilterPool oldPool = oldFilter.getParentFilterPool(); 
-
 		targetMgr.suspendCallbacks(true);
-
 		ISystemFilterString newFilterString = oldFilter.copySystemFilterString(targetFilter, oldFilterString); // creates it in memory
 		commit(targetPool); // save updated pool to disk
-
 		targetMgr.suspendCallbacks(false);
-
 		targetMgr.getProvider().filterEventFilterStringCreated(newFilterString);
 		return newFilterString;
 	}
@@ -1570,10 +1384,12 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 	 * @generated This field/method will be replaced during code generation 
 	 */
 	public List getPools() {
-		if (pools == null) {
-			pools = new ArrayList();
-		}
-		return pools;
+//		if (pools == null) {
+//			pools = new ArrayList();
+//		}
+		List result = new ArrayList(pools.size());
+		result.addAll(pools);
+		return result;
 	}
 
 	/**
@@ -1638,10 +1454,10 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 	}
 
 	/**
-	 * Save all the filter pools to disk.     
-	 * Uses the save policy specified in this manager's factory method.
+	 * Save a specific filter pool.
 	 */
 	public boolean commit(ISystemFilterPool pool) {
+		pool.setDirty(true);
 		boolean result = pool.commit();
 		return result;
 	}

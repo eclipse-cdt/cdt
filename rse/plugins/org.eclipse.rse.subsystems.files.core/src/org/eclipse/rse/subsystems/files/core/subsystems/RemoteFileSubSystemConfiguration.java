@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
  * Martin Oberhuber (Wind River) - [189123] Move renameSubSystemProfile() from UI to Core
+ * David Dykstal (IBM) - [197036] fixed NPE found during testing
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
@@ -330,13 +331,14 @@ public abstract class RemoteFileSubSystemConfiguration extends SubSystemConfigur
 		try {
 		  // -----------------------------------------------------
 		  // create a pool named filters
-		  // -----------------------------------------------------      			  
-		  pool = mgr.createSystemFilterPool(getDefaultFilterPoolName(mgr.getName(), getId()), true); // true=>is deletable by user
+		  // -----------------------------------------------------
+			String poolName = getDefaultFilterPoolName(mgr.getName(), getId());
+			pool = mgr.createSystemFilterPool(poolName, true); // true => is deletable by user
 		  //System.out.println("Pool created");
 		  // ---------------------------------------------------------------------------------------------
 		  // create default filters in that pool iff this is the user's private profile we are creating...
 		  // ---------------------------------------------------------------------------------------------
-		  if (isUserPrivateProfile(mgr))
+		  if (pool != null && isUserPrivateProfile(mgr))
 		  {
 				    
 		      Vector filterStrings = new Vector();

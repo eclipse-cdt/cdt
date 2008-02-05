@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * David Dykstal (IBM) - [197036] refactored switch configuration
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.processes.servicesubsystem;
@@ -145,37 +146,21 @@ public class ProcessServiceSubSystem extends RemoteProcessSubSystemImpl implemen
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.servicesubsystem.IServiceSubSystem#switchServiceFactory(org.eclipse.rse.core.servicesubsystem.IServiceSubSystemConfiguration)
+	 * @see org.eclipse.rse.core.subsystems.SubSystem#internalSwitchServiceSubSystemConfiguration(org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration)
 	 */
-	public void switchServiceFactory(IServiceSubSystemConfiguration fact) 
+	protected void internalSwitchServiceSubSystemConfiguration(IServiceSubSystemConfiguration configuration) 
 	{
-		if (fact != getSubSystemConfiguration() && fact instanceof IProcessServiceSubSystemConfiguration)
-		{
-			IProcessServiceSubSystemConfiguration factory = (IProcessServiceSubSystemConfiguration)fact;
-			try
-			{
-				disconnect();
-			}
-			catch (Exception e)
-			{	
-			}
-			
+			IProcessServiceSubSystemConfiguration config = (IProcessServiceSubSystemConfiguration) configuration;
 			IHost host = getHost();
-			setSubSystemConfiguration(factory);
-			setName(factory.getName());
-
-			IConnectorService oldConnectorService = getConnectorService();			
-			oldConnectorService.deregisterSubSystem(this);
-			
-			IConnectorService newConnectorService = factory.getConnectorService(host);
-			setConnectorService(newConnectorService);
-			
-			oldConnectorService.commit();
-			newConnectorService.commit();
-
-			setProcessService(factory.getProcessService(host));
-			setHostProcessToRemoteProcessAdapter(factory.getHostProcessAdapter());
-		}
+			setProcessService(config.getProcessService(host));
+			setHostProcessToRemoteProcessAdapter(config.getHostProcessAdapter());
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.SubSystem#canSwitchTo(org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration)
+	 */
+	public boolean canSwitchTo(IServiceSubSystemConfiguration configuration) {
+		return configuration instanceof IProcessServiceSubSystemConfiguration;
 	}
 	
 	/* (non-Javadoc)
@@ -185,7 +170,6 @@ public class ProcessServiceSubSystem extends RemoteProcessSubSystemImpl implemen
 	{
 		return IProcessService.class;
 	}
-	
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.subsystems.processes.core.subsystem.impl.RemoteProcessSubSystemImpl#initializeSubSystem(org.eclipse.core.runtime.IProgressMonitor)

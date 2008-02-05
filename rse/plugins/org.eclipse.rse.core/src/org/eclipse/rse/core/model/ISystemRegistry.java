@@ -20,6 +20,8 @@
  * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  * David McKnight   (IBM)        - [207100] adding ISystemRegistry.isRegisteredSystemRemoteChangeListener
+ * David Dykstal (IBM) - [197036] adding new createHost and getSubSystemConfigurationsBySYstemType which
+ * are able to delay the creation of subsystems.
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -99,11 +101,26 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 
 	/**
 	 * Return all subsystem configurations which support the given system type.
-	 * If the type is null, returns all.
+	 * If the type is null, returns all subsystem confgurations.
+	 * Fully equivalent to getSubSystemConfigurationsBySystemType(systemType, filterDuplicates, <code>true</code>)
+	 * which is preferred since we do not want to load subsystem configurations unless necessary.
 	 * @param systemType system type to filter
-	 * @param filterDuplicateServiceSubSystemConfigurations set false by default
+	 * @param filterDuplicates if true and the subsystem configuration uses services then return only one
+	 * subsystem configuration that supports this service. Which configuration is returned is undefined.
+	 * @return an array of subsystem configurations meeting the criteria
 	 */
-	public ISubSystemConfiguration[] getSubSystemConfigurationsBySystemType(IRSESystemType systemType, boolean filterDuplicateServiceSubSystemConfigurations);
+	public ISubSystemConfiguration[] getSubSystemConfigurationsBySystemType(IRSESystemType systemType, boolean filterDuplicates);
+
+	/**
+	 * Return all subsystem configurations which support the given system type.
+	 * If the type is null, returns all subsystem confgurations.
+	 * @param systemType system type to filter
+	 * @param filterDuplicates if true and the subsystem configuration uses services then return only one
+	 * subsystem configuration that supports this service. Which configuration is returned is undefined.
+	 * @param activate if true activate the respective configurations if not already active, if false return only those that are already active.
+	 * @return an array of subsystem configurations meeting the criteria
+	 */
+	public ISubSystemConfiguration[] getSubSystemConfigurationsBySystemType(IRSESystemType systemType, boolean filterDuplicates, boolean activate);
 	
 	// ----------------------------------
 	// SYSTEMVIEWINPUTPROVIDER METHODS...
@@ -211,59 +228,52 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	public void setSystemProfileActive(ISystemProfile profile, boolean makeActive);
 
 	/**
-	 * Return the list of connector services provided for the given host
-	 * @param conn the host
+	 * Return the list of connector services currently configured for the given host
+	 * @param host the host
 	 * @return the list of connector services
 	 */
-	public IConnectorService[] getConnectorServices(IHost conn);
+	public IConnectorService[] getConnectorServices(IHost host);
 
 	// ----------------------------
 	// SUBSYSTEM METHODS...
 	// ----------------------------
 
 	/**
-	 * Return list of subsystem objects for a given connection.  If the subsystems have
-	 * not all been read into memory, this loads them up
+	 * Return list of subsystem objects for a given host.
+	 * @param host the host for which to return the subsystems that are currently known.
+	 * @return an array of subsystem objects known to this host. 
 	 */
-	public ISubSystem[] getSubSystems(IHost conn);
+	public ISubSystem[] getSubSystems(IHost host);
 
 	/**
-	 * Return list of subsystem objects for a given connection.  Use the force
-	 * flag to indicate whether or not to restore from disk
+	 * Return list of subsystem objects for a given connection.
+	 * @param host the host for which to return the subsystems that are known.
+	 * @param force if true, force the creation of subsystems for which the system type of this host is configured.
+	 * Use this parameter with care since it can cause extensive initialization.
+	 * @return the list of subsystems known to this host, possibly after the creation of subsystems.
+	 * @deprecated Use {@link #getSubSystems(IHost)} instead, the "force" parameter is now ignored.
 	 */
-	public ISubSystem[] getSubSystems(IHost conn, boolean force);
+	public ISubSystem[] getSubSystems(IHost host, boolean force);
 
 	/**
 	 * Get those subsystems that are registered against a given connection,
 	 * which are an instance of the given interface class.
-	 * <p>
-	 * This method activates all subsystem configurations of the given
-	 * host in order to support checking against the given interface.
-	 * If lazy loading is desired, use {@link #getSubSystems(IHost, boolean)}
-	 * with a boolean parameter <code>false</code> instead, and check against
-	 * the class instance in client code.
 	 * </p>
-	 * @param connection the connection to check
+	 * @param host the connection to check
 	 * @param subsystemInterface the interface class to filter against
 	 * @return list of matching subsystems
 	 */
-	public ISubSystem[] getSubsystems(IHost connection, Class subsystemInterface);
+	public ISubSystem[] getSubsystems(IHost host, Class subsystemInterface);
 	
 	/**
 	 * Get those subsystems that are registered against a given connection,
 	 * which are an instance of ServiceSubSystem for the given serviceType.
-	 * <p>
-	 * This method activates all subsystem configurations of the given
-	 * host in order to support checking against the given interface.
-	 * If lazy loading is desired, use {@link #getSubSystems(IHost, boolean)}
-	 * with a boolean parameter <code>false</code> instead, and check against
-	 * the class instance in client code.
 	 * </p>
-	 * @param connection the connection to check
+	 * @param host the host to check
 	 * @param serviceType the class of service to ask for
 	 * @return list of matching subsystems
 	 */
-	public ISubSystem[] getServiceSubSystems(IHost connection, Class serviceType);
+	public ISubSystem[] getServiceSubSystems(IHost host, Class serviceType);
 
 	/**
 	 * Resolve a subsystem from it's absolute name
@@ -283,10 +293,10 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 
 	/**
 	 * Return the absolute name for the specified host (connection)
-	 * @param connection the host (aka connection) object to query
+	 * @param host the host (aka connection) object to query
 	 * @return the absolute name of the host
 	 */
-	public String getAbsoluteNameForConnection(IHost connection);
+	public String getAbsoluteNameForConnection(IHost host);
 
 	/**
 	 * Get a list of subsystem objects for given connection, owned by a subsystem factory 
@@ -301,7 +311,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	 *    that are really needed. Then, use {@link ISubSystemConfiguration#getSubSystems(boolean)}
 	 *    with a parameter true.
 	 */
-	public ISubSystem[] getSubSystemsBySubSystemConfigurationCategory(String factoryCategory, IHost connection);
+	public ISubSystem[] getSubSystemsBySubSystemConfigurationCategory(String factoryCategory, IHost host);
 
 	/**
 	 * Delete a subsystem object. This code finds the factory that owns it and
@@ -507,6 +517,26 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	public IHost createHost(IRSESystemType systemType, String connectionName, String hostAddress, String description) throws Exception;
 	
     /**
+	 * Create a host object. The resulting host object is added to the list of existing host objects
+	 * in the specified profile.
+	 * <ul>
+	 * <li>creates and saves a new host within the given profile
+	 * <li>optionally creates subsystem instances
+	 * <li>fires an ISystemResourceChangeEvent event of type EVENT_ADD to all registered listeners
+	 * </ul>
+	 * <p>
+	 * @param profileName Name of the system profile to which the host is to be added.
+	 * @param systemType system type of the new host.
+	 * @param hostName unique host name within the profile.
+	 * @param hostAddress ip name of host.
+	 * @param description optional description of the connection. May be null.
+	 * @param createSubSystems <code>true</code> to create subsystems for the host, <code>false</code> otherwise.
+	 * @return IHost object, or null if it failed to create. This is typically because the hostName is not unique. Call getLastException() if necessary.
+	 * @since 3.0
+	 */
+	public IHost createHost(String profileName, IRSESystemType systemType, String hostName, String hostAddress, String description, boolean createSubSystems) throws Exception;
+
+	/**
      * Update an existing host given the new information.
      * This method:
      * <ul>

@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [206742] Make SystemHostPool thread-safe
+ * David Dykstal (IBM) - [197036] cleaned javddoc for getConnectorServices()
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -261,8 +262,7 @@ public interface IHost extends IAdaptable, IRSEModelObject {
 	void setOffline(boolean value);
 
 	/**
-	 * Returns all the connector services provided
-	 * for this host
+	 * Returns all the connector services currently configured for this host
 	 * @return the connector services
 	 */
 	IConnectorService[] getConnectorServices();

@@ -16,6 +16,7 @@
  * David Dykstal (IBM) - 168870: move core function from UI to core
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
+ * David Dykstal (IBM) - [197036] delay the creation of filterPoolManagers when restoring
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.subsystems;
@@ -264,11 +265,12 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 	 * After a reset, restore from disk
 	 */
 	public void restore() {
-		try {
-			configuration.getAllSystemFilterPoolManagers();
-		} catch (Exception exc) {
-			RSECorePlugin.getDefault().getLogger().logError("Error restoring subsystem for configuration " + getName(), exc); //$NON-NLS-1$
-		}
+	// Filter pool managers do not need to be created until they are needed.
+//		try {
+//			configuration.getAllSystemFilterPoolManagers();
+//		} catch (Exception exc) {
+//			RSECorePlugin.getDefault().getLogger().logError("Error restoring subsystem for configuration " + getName(), exc); //$NON-NLS-1$
+//		}
 	}
 
 	/* (non-Javadoc)

@@ -27,7 +27,8 @@
  * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
  *                                API to the user actions plugin
  * David Dykstal (IBM) - [191038] initialize SystemRegistryUI without a log file, it was not used  
- * David McKnight   (IBM)        - [196838] Don't recreate local after it has been deleted                             
+ * David McKnight   (IBM)        - [196838] Don't recreate local after it has been deleted        
+ * David Dykstal (IBM) - [197036] formatted the initialize job to be able to read it                     
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -79,45 +80,26 @@ import org.osgi.framework.BundleContext;
  */
 public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvider
 {
-	 public class InitRSEJob extends Job
-	    {
-	    	public InitRSEJob()
-	    	{
-	    		//IMPORTANT: The name of this job must not ever be changed. It is par of API, 
-	    		//because clients can use it to find the InitRSEJob by name, such that they can join it.
+	 public class InitRSEJob extends Job {
+	    	public InitRSEJob() {
+	    		// IMPORTANT: The name of this job must not ever be changed. It is part of the API, 
+	    		// because clients can use it to find the InitRSEJob by name, such that they can join it.
 	    		super("Initialize RSE"); //$NON-NLS-1$
 	    	} 
 	    	
-	    	public IStatus run(IProgressMonitor monitor)
-	    	{    		
+	    	public IStatus run(IProgressMonitor monitor) {    		
 	            //System.err.println("InitRSEJob started"); //$NON-NLS-1$
 	    		ISystemRegistry registry = getSystemRegistryInternal();
-
-	    		
-//	        	SystemResourceManager.getRemoteSystemsProject(); // create core folder tree  
-	        	try
-	        	{
-	        		SystemStartHere.getSystemProfileManager(); // create folders per profile
-	        	}
-	        	catch (Exception e)
-	        	{
-	        		e.printStackTrace();
-	        	}	
-
-	 
-			   
-		
+        		SystemStartHere.getSystemProfileManager(); // create folders per profile
 			    // add workspace listener for our project
 	        	IProject remoteSystemsProject = SystemResourceManager.getRemoteSystemsProject(false);
 	        	SystemResourceListener listener = SystemResourceListener.getListener(remoteSystemsProject);
 			    SystemResourceManager.startResourceEventListening(listener);
-				
 		    	// determining whether to create an initial local connection
 				IPath statePath = RSECorePlugin.getDefault().getStateLocation();
 				IPath markPath = statePath.append("localHostCreated.mark"); //$NON-NLS-1$
 				File markFile = new File(markPath.toOSString());
-				if (!markFile.exists() && SystemPreferencesManager.getShowLocalConnection()) 
-				{		
+				if (!markFile.exists() && SystemPreferencesManager.getShowLocalConnection()) {		
 					// create the connection only if the local system type is enabled
 					IRSESystemType systemType = RSECorePlugin.getTheCoreRegistry().getSystemTypeById(IRSESystemType.SYSTEMTYPE_LOCAL_ID);
 					if (systemType != null) {
@@ -134,7 +116,6 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 						}
 					}				       
 				}
-			
 	            //System.err.println("InitRSEJob done"); //$NON-NLS-1$
 				return Status.OK_STATUS;
 	    	}

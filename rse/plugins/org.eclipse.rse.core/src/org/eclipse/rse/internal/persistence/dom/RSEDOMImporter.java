@@ -17,6 +17,7 @@
  * Kevin Doyle (IBM) - [163883] Multiple filter strings are disabled
  * Martin Oberhuber (Wind River) - [202416] Protect against NPEs when importing DOM
  * David McKnight   (IBM)        - [217715] [api] RSE property sets should support nested property sets
+ * David Dykstal (IBM) - [197036] respond to removal of SystemProfile.createHost()
  ********************************************************************************/
 
 package org.eclipse.rse.internal.persistence.dom;
@@ -117,11 +118,11 @@ public class RSEDOMImporter {
 		IHost host = null;
 
 		// get host node attributes
-		String connectionName = hostNode.getName();
+		String hostName = hostNode.getName();
 		// we changed from storing names to storing IDs, so these may be null
 		String systemTypeName = getAttributeValueMaybeNull(hostNode, IRSEDOMConstants.ATTRIBUTE_TYPE);
 		String systemTypeId = getAttributeValueMaybeNull(hostNode, IRSEDOMConstants.ATTRIBUTE_SYSTEM_TYPE);
-		String hostName = getAttributeValue(hostNode, IRSEDOMConstants.ATTRIBUTE_HOSTNAME);
+		String hostAddress = getAttributeValue(hostNode, IRSEDOMConstants.ATTRIBUTE_HOSTNAME);
 		String description = getAttributeValue(hostNode, IRSEDOMConstants.ATTRIBUTE_DESCRIPTION);
 		boolean isOffline = getBooleanValue(hostNode, IRSEDOMConstants.ATTRIBUTE_OFFLINE);
 		boolean isPromptable = getBooleanValue(hostNode, IRSEDOMConstants.ATTRIBUTE_PROMPTABLE);
@@ -130,16 +131,18 @@ public class RSEDOMImporter {
 		try {
 			// NOTE create host effectively recreates the subsystems
 			// so instead of creating subsystems on restore, we should be updating their properties
-			IRSECoreRegistry registry = RSECorePlugin.getTheCoreRegistry();
+			IRSECoreRegistry coreRegistry = RSECorePlugin.getTheCoreRegistry();
 			IRSESystemType systemType = null;
 			if (systemTypeId != null) {
-				systemType = registry.getSystemTypeById(systemTypeId);
+				systemType = coreRegistry.getSystemTypeById(systemTypeId);
 			} else if (systemTypeName != null) {
-				systemType = registry.getSystemType(systemTypeName);
+				systemType = coreRegistry.getSystemType(systemTypeName);
 			}
 			//cannot create a host from a profile if we do not know the systemType
 			if (systemType != null) {
-				host = profile.createHost(systemType, connectionName, hostName, description);
+				ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
+				String profileName = profile.getName();
+				host = registry.createHost(profileName, systemType, hostName, hostAddress, description, false);
 				host.setOffline(isOffline);
 				host.setPromptable(isPromptable);
 			} else {
@@ -151,7 +154,7 @@ public class RSEDOMImporter {
 		        msg.append(") in "); //$NON-NLS-1$
 			    msg.append(profile.getName());
 			    msg.append(':');
-			    msg.append(connectionName);
+			    msg.append(hostName);
 				logWarning(msg.toString());
 			}
 		} catch (Exception e) {
@@ -292,7 +295,7 @@ public class RSEDOMImporter {
 				fprMgr.setDefaultSystemFilterPoolManager(defaultFilterPoolManager);
 			}
 
-			// restore filer pool references
+			// restore filter pool references
 			RSEDOMNode[] filterPoolReferenceChildren = subSystemNode.getChildren(IRSEDOMConstants.TYPE_FILTER_POOL_REFERENCE);
 			for (int i = 0; i < filterPoolReferenceChildren.length; i++) {
 				RSEDOMNode fprChild = filterPoolReferenceChildren[i];
@@ -506,7 +509,7 @@ public class RSEDOMImporter {
 		}
 		// properties are now stored as children, get those next
 		RSEDOMNode[] children = propertySetNode.getChildren();
-		for (int i = 0; i < children.length; i++) {						
+		for (int i = 0; i < children.length; i++) {
 			RSEDOMNode child = children[i];
 			
 			// is this a property set or a property?
@@ -515,14 +518,14 @@ public class RSEDOMImporter {
 				restorePropertySet((IRSEModelObject)set, child);
 			}
 			else {
-				String propertyName = child.getName();
-				String propertyValue = getAttributeValue(child, IRSEDOMConstants.ATTRIBUTE_VALUE);
-				String propertyTypeName = getAttributeValue(child, IRSEDOMConstants.ATTRIBUTE_TYPE);
-				IPropertyType propertyType = PropertyType.fromString(propertyTypeName);
-				if (IPropertySet.DESCRIPTION_KEY.equals(propertyName)) { // any descriptions found as properties should be set directly
-					set.setDescription(propertyValue);
-				} else {
-					set.addProperty(propertyName, propertyValue, propertyType);
+			String propertyName = child.getName();
+			String propertyValue = getAttributeValue(child, IRSEDOMConstants.ATTRIBUTE_VALUE);
+			String propertyTypeName = getAttributeValue(child, IRSEDOMConstants.ATTRIBUTE_TYPE);
+			IPropertyType propertyType = PropertyType.fromString(propertyTypeName);
+			if (IPropertySet.DESCRIPTION_KEY.equals(propertyName)) { // any descriptions found as properties should be set directly
+				set.setDescription(propertyValue);
+			} else {
+				set.addProperty(propertyName, propertyValue, propertyType);
 				}
 			}
 		}

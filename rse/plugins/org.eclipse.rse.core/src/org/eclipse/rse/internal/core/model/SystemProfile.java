@@ -14,17 +14,18 @@
  * David Dykstal (IBM) - 142806: refactoring persistence framework
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
+ * David Dykstal (IBM) - [197036] changed getFilterPools to not force the loading of subsystem configurations
+ *   removed createHost, migrated commit logic to SystemProfileManager
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.model;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Vector;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
@@ -35,6 +36,7 @@ import org.eclipse.rse.core.model.ISystemProfileManager;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.RSEModelObject;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
+import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
 import org.eclipse.rse.internal.core.RSECoreMessages;
 import org.eclipse.rse.persistence.IRSEPersistenceProvider;
 
@@ -80,15 +82,6 @@ public class SystemProfile extends RSEModelObject implements ISystemProfile, IAd
     	return mgr;
     }
     
-    /**
-     * Convenience method for create a new connection within this profile.
-     * Shortcut for {@link ISystemRegistry#createHost(String,String,String,String)}
-     */
-    public IHost createHost(IRSESystemType systemType, String connectionName, String hostName, String description) throws Exception
-    {
-		return RSECorePlugin.getTheSystemRegistry().createHost(getName(), systemType, connectionName,  hostName, description);
-    }
-    
 	/**
 	 * Return all connections for this profile
 	 */
@@ -97,25 +90,26 @@ public class SystemProfile extends RSEModelObject implements ISystemProfile, IAd
 		return RSECorePlugin.getTheSystemRegistry().getHostsByProfile(this);
 	}
 
-	/**
-	 * Return all filter pools for this profile
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemProfile#getFilterPools()
 	 */
 	public ISystemFilterPool[] getFilterPools()
 	{
-		ISubSystemConfiguration[] ssFactories = RSECorePlugin.getTheSystemRegistry().getSubSystemConfigurations();
-		Vector poolsVector = new Vector();
-		for (int idx = 0; idx < ssFactories.length; idx++)
-		{
-			ISystemFilterPoolManager poolMgr = ssFactories[idx].getFilterPoolManager(this);
-			ISystemFilterPool[] pools = poolMgr.getSystemFilterPools();
-			for (int ydx=0; ydx<pools.length; ydx++)
-			{
-				poolsVector.add(pools[ydx]);
+		List filterPools = new ArrayList(10); // 10 is arbitrary but reasonable
+		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
+		ISubSystemConfigurationProxy proxies[] = registry.getSubSystemConfigurationProxies();
+		for (int i = 0; i < proxies.length; i++) {
+			ISubSystemConfigurationProxy proxy = proxies[i];
+			if (proxy.isSubSystemConfigurationActive()) {
+				ISubSystemConfiguration config = proxy.getSubSystemConfiguration();
+				ISystemFilterPoolManager fpm = config.getFilterPoolManager(this);
+				ISystemFilterPool[] poolArray = fpm.getSystemFilterPools();
+				filterPools.addAll(Arrays.asList(poolArray));
 			}
 		}
-		ISystemFilterPool[] allPools = new ISystemFilterPool[poolsVector.size()];
-		poolsVector.toArray(allPools);
-		return allPools;
+		ISystemFilterPool[] result = new ISystemFilterPool[filterPools.size()];
+		filterPools.toArray(result);
+		return result;
 	}
 
 	/**
@@ -209,13 +203,13 @@ public class SystemProfile extends RSEModelObject implements ISystemProfile, IAd
 		setDirty(true);
 	}
 	
-	public boolean commit() 
-	{
-		boolean result = false;
-		if (!RSECorePlugin.getThePersistenceManager().isBusy()) {
-			result = RSECorePlugin.getThePersistenceManager().commitProfile(this, 5000);
-		}
-		return result;
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IRSEPersistableContainer#commit()
+	 */
+	public boolean commit() {
+		IStatus status = SystemProfileManager.getDefault().commitSystemProfile(this);
+		boolean scheduled =  status.isOK();
+		return scheduled;
 	}
 	
 	/**

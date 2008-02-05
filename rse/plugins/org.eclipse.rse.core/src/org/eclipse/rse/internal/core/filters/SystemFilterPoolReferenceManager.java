@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - [197036] fixed parent references and names so that delete references would function correctly
  *******************************************************************************/
 
 package org.eclipse.rse.internal.core.filters;
@@ -185,7 +185,11 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
 	 * objects in this list reference.
 	 */
 	public ISystemFilterPoolManager[] getSystemFilterPoolManagers() {
-		return poolMgrProvider.getSystemFilterPoolManagers();
+		ISystemFilterPoolManager[] result = new ISystemFilterPoolManager[0];
+		if (poolMgrProvider != null) {
+			result = poolMgrProvider.getSystemFilterPoolManagers();
+		}
+		return result;
 	}
 
 	/**
@@ -379,6 +383,7 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
 	 */
 	private ISystemFilterPoolReference createSystemFilterPoolReference(ISystemFilterPool filterPool) {
 		ISystemFilterPoolReference filterPoolReference = new SystemFilterPoolReference(filterPool);
+		filterPoolReference.setParentReferenceManager(this);
 		invalidateFilterPoolReferencesCache();
 		return filterPoolReference;
 	}
@@ -391,6 +396,7 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
 	 */
 	private ISystemFilterPoolReference createSystemFilterPoolReference(String filterPoolName) {
 		ISystemFilterPoolReference filterPoolReference = new SystemFilterPoolReference(filterPoolName);
+		filterPoolReference.setParentReferenceManager(this);
 		invalidateFilterPoolReferencesCache();
 		return filterPoolReference;
 	}
@@ -402,7 +408,7 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
 	 */
 	public int addSystemFilterPoolReference(ISystemFilterPoolReference filterPoolReference) {
 		int count = addReferencingObject(filterPoolReference);
-		filterPoolReference.setParentReferenceManager(this); // DWD - should be done in the addReferencingObject method?
+		filterPoolReference.setParentReferenceManager(this); // DWD - should be done in addReferencingObject?
 		invalidateFilterPoolReferencesCache();
 		quietSave();
 		return count;
@@ -432,7 +438,6 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
 			count = super.removeReferencingObject(filterPoolReference);
 		else
 			count = super.removeAndDeReferenceReferencingObject(filterPoolReference);
-		filterPoolReference.setParentReferenceManager(null); // DWD should be done in remove?
 		invalidateFilterPoolReferencesCache();
 		if (fireEvents && (caller != null)) caller.filterEventFilterPoolReferenceDeleted(filterPoolReference);
 		quietSave();
@@ -541,8 +546,8 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
 	 */
 	public ISystemFilterPoolReference addReferenceToSystemFilterPool(ISystemFilterPool filterPool) {
 		ISystemFilterPoolReference filterPoolReference = createSystemFilterPoolReference(filterPool);
-		addReferencingObject(filterPoolReference); // DWD - should be done in addReferencingObject?
-		filterPoolReference.setParentReferenceManager(this);
+		addReferencingObject(filterPoolReference);
+		filterPoolReference.setParentReferenceManager(this); // DWD - should be done in addReferencingObject?
 		invalidateFilterPoolReferencesCache();
 		quietSave();
 		if (fireEvents && (caller != null)) caller.filterEventFilterPoolReferenceCreated(filterPoolReference);
@@ -555,7 +560,7 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
 	public ISystemFilterPoolReference addReferenceToSystemFilterPool(String filterPoolName) {
 		ISystemFilterPoolReference filterPoolReference = createSystemFilterPoolReference(filterPoolName);
 		addReferencingObject(filterPoolReference);
-		filterPoolReference.setParentReferenceManager(this);
+		filterPoolReference.setParentReferenceManager(this); // DWD - should be done in addReferencingObject?
 		invalidateFilterPoolReferencesCache();
 		quietSave();
 		if (fireEvents && (caller != null)) caller.filterEventFilterPoolReferenceCreated(filterPoolReference);
@@ -574,11 +579,12 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
 		if (filterPoolReference != null) {
 			filterPoolReference.removeReference();
 			newCount = removeReferencingObject(filterPoolReference);
-			filterPoolReference.setParentReferenceManager(null); // DWD should be done in removeReferencingObject?
 			invalidateFilterPoolReferencesCache();
 			quietSave();
 			// callback to provider so they can fire events in their GUI
-			if (fireEvents && (caller != null)) caller.filterEventFilterPoolReferenceDeleted(filterPoolReference);
+			if (fireEvents && (caller != null)) {
+				caller.filterEventFilterPoolReferenceDeleted(filterPoolReference);
+			}
 		} else
 			newCount = getSystemFilterPoolReferenceCount();
 		return newCount;
@@ -621,7 +627,7 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
 				//addReferenceToSystemFilterPool(filterPools[idx]);
 				ISystemFilterPoolReference filterPoolReference = createSystemFilterPoolReference(filterPools[idx]);
 				addReferencingObject(filterPoolReference);
-				filterPoolReference.setParentReferenceManager(this); // DWD should be done in addReferencingObject?
+				filterPoolReference.setParentReferenceManager(this); // DWD - should be done in addReferencingObject?
 			}
 			invalidateFilterPoolReferencesCache();
 			quietSave();

@@ -11,10 +11,12 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - [197036] added commitSystemProfile operation to interface
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
+
+import org.eclipse.core.runtime.IStatus;
 
 /**
  * Manages a list of SystemProfile objects. System profiles
@@ -108,6 +110,13 @@ public interface ISystemProfileManager {
 	 * @return the new profile
 	 */
 	public ISystemProfile cloneSystemProfile(ISystemProfile profile, String newName);
+	
+	/**
+	 * Commit a system profile
+	 * @param profile the profile to commit
+	 * @return a status object indicating the result of the commit
+	 */
+	public IStatus commitSystemProfile(ISystemProfile profile);
 
 	/**
 	 * Get an indication of whether a profile is active or not.

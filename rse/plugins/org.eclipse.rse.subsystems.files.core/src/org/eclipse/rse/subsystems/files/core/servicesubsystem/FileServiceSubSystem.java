@@ -27,6 +27,7 @@
  * David McKnight   (IBM)        - [209552] API changes to use multiple and getting rid of deprecated
  * Kevin Doyle		(IBM)		 - [208778] [efs][api] RSEFileStore#getOutputStream() does not support EFS#APPEND 
  * David McKnight   (IBM)        - [209704] added supportsEncodingConversion()
+ * David Dykstal (IBM) - [197036] pulling up subsystem switch logic
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.servicesubsystem;
@@ -77,10 +78,6 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 	protected ISearchService _hostSearchService;
 	protected IHostFileToRemoteFileAdapter _hostFileToRemoteFileAdapter;
 	protected IRemoteFile _userHome;
-	
-	
-	
-	
 	public FileServiceSubSystem(IHost host, IConnectorService connectorService, IFileService hostFileService, IHostFileToRemoteFileAdapter fileAdapter, ISearchService searchService)
 	{
 		super(host, connectorService);
@@ -919,43 +916,28 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		return null;
 	}
 
-
-
-	/**
-	 * Switch to use another protocol
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.SubSystem#canSwitchTo(org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration)
+	 * Overriding the super implementation to return true for any configuration that implements IFileServiceSubSystemConfiguration
 	 */
-	public void switchServiceFactory(IServiceSubSystemConfiguration fact)
-	{
-		if (fact != getSubSystemConfiguration() && fact instanceof IFileServiceSubSystemConfiguration)
-		{
-			IFileServiceSubSystemConfiguration factory = (IFileServiceSubSystemConfiguration)fact;
-			try
-			{
-				_cachedRemoteFiles.clear();
-				disconnect();
-			}
-			catch (Exception e)
-			{	
-			}
-			
-			_languageUtilityFactory = null;
-			IHost host = getHost();
-			setSubSystemConfiguration(factory);
+	public boolean canSwitchTo(IServiceSubSystemConfiguration configuration) {
+		return (configuration instanceof IFileServiceSubSystemConfiguration);
+	}
 
-			IConnectorService oldConnectorService = getConnectorService();			
-			oldConnectorService.deregisterSubSystem(this);
-			
-			IConnectorService newConnectorService = factory.getConnectorService(host);
-			setConnectorService(newConnectorService);
-			
-			oldConnectorService.commit();
-			newConnectorService.commit();
-		
-			setName(factory.getName());
-			setFileService(factory.getFileService(host));	
-			setHostFileToRemoteFileAdapter(factory.getHostFileAdapter());
-			setSearchService(factory.getSearchService(host));
-			
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.SubSystem#internalSwitchServiceSubSystemConfiguration(org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration)
+	 * Overriding the super implementation to do switch the file subsystem bits that need to be copied or initialized in a switch
+	 */
+	protected void internalSwitchServiceSubSystemConfiguration(IServiceSubSystemConfiguration newConfig) {
+		if (newConfig instanceof IFileServiceSubSystemConfiguration) {
+			IHost host = getHost();
+			IFileServiceSubSystemConfiguration config = (IFileServiceSubSystemConfiguration) newConfig;
+			// file subsystem specific bits
+			_cachedRemoteFiles.clear();
+			_languageUtilityFactory = null;
+			setFileService(config.getFileService(host));
+			setHostFileToRemoteFileAdapter(config.getHostFileAdapter());
+			setSearchService(config.getSearchService(host));
 		}
 	}
 

@@ -25,6 +25,8 @@
  * Rupen Mardirossian (IBM) - [189434] Move Up/Down on Filters Error
  * Kevin Doyle (IBM) - [190445] Set Position of cloned event in cloneEvent()
  * Martin Oberhuber (Wind River) - [195392] Avoid setting port 0 in initializeSubSystem()
+ * David Dykstal (IBM) - [197036] rewrote getFilterPoolManager to delay the creation of default filter pools until the corresponding
+ *                                a subsystem configuration is actually used for a host.
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -67,6 +69,7 @@ import org.eclipse.rse.internal.core.filters.SystemFilterStartHere;
 import org.eclipse.rse.internal.core.model.SystemProfileManager;
 import org.eclipse.rse.internal.ui.SystemPropertyResources;
 import org.eclipse.rse.internal.ui.SystemResources;
+import org.eclipse.rse.logging.Logger;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -632,31 +635,20 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	// SUBSYSTEM METHODS...
 	// ---------------------------------    	
 
-	/**
-	 * Called by SystemRegistry's renameSystemProfile method to ensure we update our
-	 *  subsystem names within each subsystem.
-	 * <p>
-	 * This is called AFTER changing the profile's name!!
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#renameSubSystemProfile(org.eclipse.rse.core.subsystems.ISubSystem, java.lang.String, java.lang.String)
 	 */
-	public void renameSubSystemProfile(ISubSystem ss, String oldProfileName, String newProfileName)
-	{
-		//RSEUIPlugin.logDebugMessage(this.getClass().getName(), "Inside renameSubSystemProfile. newProfileName = "+newProfileName+", old ssName = "+ss.getName());
-		//renameFilterPoolManager(getSystemProfile(newProfileName)); // update filter pool manager name
-		ss.renamingProfile(oldProfileName, newProfileName);
-		ISystemFilterPoolReferenceManager sfprm = ss.getSystemFilterPoolReferenceManager();
-		if (sfprm != null)
-		{
-		    sfprm.regenerateReferencedSystemFilterPoolNames(); // ask it to re-ask each pool for its reference name
+	public void renameSubSystemProfile(ISubSystem subsystem, String oldProfileName, String newProfileName) {
+		subsystem.renamingProfile(oldProfileName, newProfileName);
+		ISystemFilterPoolReferenceManager sfprm = subsystem.getSystemFilterPoolReferenceManager();
+		if (sfprm != null) {
+			sfprm.regenerateReferencedSystemFilterPoolNames(); // ask it to re-ask each pool for its reference name
 		}
-		try
-		{
-			saveSubSystem(ss);
+		try {
+			saveSubSystem(subsystem);
+		} catch (Exception exc) {
+			RSECorePlugin.getDefault().getLogger().logError("Unexpected error saving subsystem.", exc); //$NON-NLS-1$
 		}
-		catch (Exception exc)
-		{
-			// already dealt with in save?
-		}
-		
 	}
 
 	/**
@@ -1015,9 +1007,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 			try
 			{
 				saveSubSystem(subsys);  
-				//DKM - save this event til all the processing is done!
-				// fire model change event in case any BP code is listening...
-				//RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_ADDED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_SUBSYSTEM, subsys, null);						
+				RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_ADDED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_SUBSYSTEM, subsys, null);						
 			}
 			catch (Exception exc)
 			{
@@ -1597,79 +1587,55 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		}
 		return activeManagers;
 	}
-
-	/**
-	 * Get the filter pool manager for the given profile
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#getFilterPoolManager(org.eclipse.rse.core.model.ISystemProfile)
 	 */
-	public ISystemFilterPoolManager getFilterPoolManager(ISystemProfile profile)
-	{
-		// it is important to key by profile object not profile name, since that
-		//   name can change but the object never should for any one session.
+	public ISystemFilterPoolManager getFilterPoolManager(ISystemProfile profile) {
+		return getFilterPoolManager(profile, false);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#getFilterPoolManager(org.eclipse.rse.core.model.ISystemProfile, boolean)
+	 */
+	public ISystemFilterPoolManager getFilterPoolManager(ISystemProfile profile, boolean force) {
+		// it is important to key by profile object not profile name, since that name can change but the object never should for any one session.
 		ISystemFilterPoolManager mgr = (ISystemFilterPoolManager) filterPoolManagersPerProfile.get(profile);
-		//System.out.println("in getFilterPoolManager for ssfactory "+getId()+" for profile " + profile.getName() + ", mgr found? " + (mgr!=null));
-		if (mgr == null)
-		{
-			try
-			{
-				mgr = SystemFilterPoolManager.createSystemFilterPoolManager(profile, RSECorePlugin.getDefault().getLogger(), this, // the caller
-							getFilterPoolManagerName(profile), // the filter pool manager name
-							supportsNestedFilters(), // whether or not nested filters are allowed
-							ISystemFilterSavePolicies.SAVE_POLICY_ONE_FILE_PER_FILTER, filterNamingPolicy);
-				mgr.setSingleFilterStringOnly(!supportsMultipleFilterStrings()); // DWD was restored flag?
-			}
-			catch (Exception exc)
-			{
+		if (mgr == null) {
+			try {
+				Logger logger = RSECorePlugin.getDefault().getLogger();
+				String managerName = getFilterPoolManagerName(profile);
+				boolean supportsNested = supportsNestedFilters();
+				int savePolicy = ISystemFilterSavePolicies.SAVE_POLICY_ONE_FILE_PER_FILTER;
+				mgr = SystemFilterPoolManager.createSystemFilterPoolManager(profile, logger, this, managerName, supportsNested, savePolicy, filterNamingPolicy);// the filter pool manager name
+				mgr.setSingleFilterStringOnly(!supportsMultipleFilterStrings()); 
+				mgr.setWasRestored(false); // not yet initialized
+			} catch (Exception exc) {
 				SystemBasePlugin.logError("Restore/Creation of SystemFilterPoolManager " + getFilterPoolManagerName(profile) + " failed!", exc); //$NON-NLS-1$ //$NON-NLS-2$
 				SystemMessageDialog.displayExceptionMessage(null, exc);
-				return null; // something very bad happend!           	  
+				return null; // something very bad happened!           	  
 			}
-
 			addFilterPoolManager(profile, mgr);
-
-			boolean restored = mgr.wasRestored();
-			//System.out.println("...after createSystemFilterPoolManager for " + mgr.getName() + ", restored = " + restored);
-
-			// allow subclasses to create default filter pool...
-			if (!restored)
-			{
-				ISystemFilterPool defaultPool = createDefaultFilterPool(mgr);
-				if (defaultPool != null)
-				{
-					defaultPool.setDefault(true);
-					try
-					{
-						defaultPool.commit();
-					}
-					catch (Exception exc)
-					{
-					}
-				}
+		}
+		boolean initialized = mgr.wasRestored();
+		if (force && !initialized) {
+			String defaultPoolName = getDefaultFilterPoolName(profile.getName(), getId());
+			ISystemFilterPool defaultPool = mgr.getSystemFilterPool(defaultPoolName);
+			if (defaultPool == null) {
+				// allow subclasses to create default filter pool...
+				defaultPool = createDefaultFilterPool(mgr); // createDefaultFilterPool(mgr) is typically overridden by subclasses
 			}
-			// else filter pools restored for this profile. Allow subclasses chance to do post-processing,
-			// such as any migration needed
-			else
-			{
-				if (doPostRestoreProcessing(mgr))
-				{
-					try
-					{
-						mgr.commit();
-					}
-					catch (Exception exc)
-					{
-					}
-				}
+			if (defaultPool != null) {
+				defaultPool.setDefault(true);
+				defaultPool.commit();
 			}
-			// these should be inside the above logic but we need them outside for now because they were
-			//  added late and there are existing filter pool managers that need this to be set for.
-			//  In a future release we should move them inside the if (!restored) logic. Phil.
-			if (supportsDuplicateFilterStrings())
-				mgr.setSupportsDuplicateFilterStrings(true);
-			if (isCaseSensitive())
-				mgr.setStringsCaseSensitive(isCaseSensitive());
+			if (supportsDuplicateFilterStrings()) mgr.setSupportsDuplicateFilterStrings(true);
+			if (isCaseSensitive()) mgr.setStringsCaseSensitive(true);
+			mgr.setWasRestored(true);
 		}
 		return mgr;
 	}
+
 	/**
 	 * Do post-restore-processing of an existing filter pool manager. 
 	 * This is where child classes do any required migration work. By default, we do nothing.

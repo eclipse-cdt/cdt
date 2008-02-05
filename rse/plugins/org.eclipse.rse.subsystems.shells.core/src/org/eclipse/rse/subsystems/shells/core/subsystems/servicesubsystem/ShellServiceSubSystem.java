@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
  * David McKnight   (IBM)        - [191599] Need to pass in shell encoding
+ * David Dykstal (IBM) - [197036] refactored switch configuration
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem;
@@ -33,6 +34,7 @@ import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IShellService;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
+import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystemConfiguration;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
 import org.eclipse.rse.subsystems.shells.core.subsystems.RemoteCmdSubSystem;
 
@@ -204,38 +206,25 @@ public final class ShellServiceSubSystem extends RemoteCmdSubSystem implements I
 		return l;
 	}
 
-	/**
-	 * swtich from one protocol to another
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.SubSystem#canSwitchTo(org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration)
 	 */
-	public void switchServiceFactory(IServiceSubSystemConfiguration fact)
-	{		
-		if (fact != getSubSystemConfiguration() && fact instanceof IShellServiceSubSystemConfiguration)
-		{
-			IShellServiceSubSystemConfiguration factory = (IShellServiceSubSystemConfiguration)fact;
-			try
-			{
-				disconnect();
-			}
-			catch (Exception e)
-			{	
-			}
-			
-			IHost host = getHost();
-			setSubSystemConfiguration(factory);
-			setName(factory.getName());
-			IConnectorService oldConnectorService = getConnectorService();			
-			oldConnectorService.deregisterSubSystem(this);
-			
-			IConnectorService newConnectorService = factory.getConnectorService(host);
-			setConnectorService(newConnectorService);
-			
-			oldConnectorService.commit();
-			newConnectorService.commit();
-			
-			setShellService(factory.getShellService(host));
-		}
+	public boolean canSwitchTo(IServiceSubSystemConfiguration configuration) {
+		return configuration instanceof IShellServiceSubSystemConfiguration;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.SubSystem#internalSwitchServiceSubSystemConfiguration(org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration)
+	 */
+	protected void internalSwitchServiceSubSystemConfiguration(IServiceSubSystemConfiguration newConfiguration) {
+		IShellServiceSubSystemConfiguration configuration = (IShellServiceSubSystemConfiguration) newConfiguration;
+		IHost host = getHost();
+		setShellService(configuration.getShellService(host));
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.SubSystem#getServiceType()
+	 */
 	public Class getServiceType()
 	{
 		return IShellService.class;

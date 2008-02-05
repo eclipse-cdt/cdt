@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Kevin Doyle (IBM) - [175277] Cannot disconnect multiple connections at once with multiselect
+ * David Dykstal (IBM) - [197036] minor refactoring
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
@@ -59,7 +60,7 @@ public class SystemDisconnectAllSubSystemsAction extends SystemBaseAction
 		if (element instanceof IHost) {
 			IHost host = (IHost)element;
 			ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
-			ISubSystem[] ss = sr.getSubSystems(host, false);
+			ISubSystem[] ss = sr.getSubSystems(host);
 			List l = new ArrayList();
 			for (int i=0; i<ss.length; i++) {
 				if (ss[i].isConnected() && ss[i].getSubSystemConfiguration().supportsSubSystemConnect()) {

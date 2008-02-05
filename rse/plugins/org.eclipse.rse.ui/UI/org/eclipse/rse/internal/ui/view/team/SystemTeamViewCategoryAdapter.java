@@ -15,10 +15,18 @@
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * David Dykstal (IBM) - [197036] rewrote getSubSystemConfigurationNodes to get filter pools
+ *                                in a way that delays the loading of subsystem configurations
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.team;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -28,6 +36,8 @@ import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
+import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
+import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.view.SystemViewResources;
 import org.eclipse.rse.ui.SystemMenuManager;
@@ -156,48 +166,55 @@ public class SystemTeamViewCategoryAdapter
 	
 	
 	/**
-	 * Create subsystem factory child nodes for expanded category node
+	 * Create subsystem configuration child nodes for expanded category node.
 	 */
-	private SystemTeamViewSubSystemConfigurationNode[] createSubSystemConfigurationNodes(ISystemProfile profile, SystemTeamViewCategoryNode category)
-	{
-		SystemTeamViewSubSystemConfigurationNode[] nodes = null;
-		
+	private SystemTeamViewSubSystemConfigurationNode[] createSubSystemConfigurationNodes(ISystemProfile profile, SystemTeamViewCategoryNode category) {
+		// create a sorted set to hold the subsystem configurations based on the proxy ordering
 		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
-		ISubSystemConfiguration[] factories = sr.getSubSystemConfigurations();
-		if (factories != null)
-		{
-			Vector v = new Vector();
-			String categoryType = category.getMementoHandle();
-			for (int idx=0; idx<factories.length; idx++)
-			{
-				boolean createNode = false;
-				ISubSystemConfiguration ssf = factories[idx];
-				if (categoryType.equals(SystemTeamViewCategoryNode.MEMENTO_FILTERPOOLS))
-				{
-					createNode = ssf.supportsFilters() && (profile.getFilterPools(ssf).length > 0);
-				}
-				else if (categoryType.equals(SystemTeamViewCategoryNode.MEMENTO_USERACTIONS))
-				{
-					createNode = ssf.supportsUserDefinedActions(); // && profile.getUserActions(ssf).length > 0;
-				}
-				else if (categoryType.equals(SystemTeamViewCategoryNode.MEMENTO_COMPILECMDS))
-				{
-					createNode = ssf.supportsCompileActions(); // && profile.getCompileCommandTypes(ssf).length > 0;
-				}
-				else if (categoryType.equals(SystemTeamViewCategoryNode.MEMENTO_TARGETS))
-				{
-					createNode = ssf.supportsTargets(); // && profile.getTargets(ssf).length > 0;
-				}
-				if (createNode)
-					v.addElement(new SystemTeamViewSubSystemConfigurationNode(profile, category, factories[idx]));
+		final List proxies = Arrays.asList(sr.getSubSystemConfigurationProxies());
+		Comparator comparator = new Comparator() {
+			public int compare(Object o1, Object o2) {
+				ISubSystemConfiguration c1 = (SubSystemConfiguration) o1;
+				ISubSystemConfiguration c2 = (SubSystemConfiguration) o2;
+				ISubSystemConfigurationProxy proxy1 = c1.getSubSystemConfigurationProxy();
+				ISubSystemConfigurationProxy proxy2 = c2.getSubSystemConfigurationProxy();
+				Integer p1 = new Integer(proxies.indexOf(proxy1));
+				Integer p2 = new Integer(proxies.indexOf(proxy2));
+				int result = p1.compareTo(p2);
+				return result;
 			}
-			nodes = new SystemTeamViewSubSystemConfigurationNode[v.size()];
-			for (int idx=0; idx<nodes.length; idx++)
-			{
-				nodes[idx] = (SystemTeamViewSubSystemConfigurationNode)v.elementAt(idx);
+		};
+		SortedSet activeSubsystemConfigurations = new TreeSet(comparator);
+		// find the active subsystem configurations
+		for (Iterator z = proxies.iterator(); z.hasNext();) {
+			ISubSystemConfigurationProxy proxy = (ISubSystemConfigurationProxy) z.next();
+			if (proxy.isSubSystemConfigurationActive()) {
+				ISubSystemConfiguration config = proxy.getSubSystemConfiguration();
+				activeSubsystemConfigurations.add(config);
 			}
-		}		
-		return nodes;
+		}
+		// construct the nodes for the view based on these configurations
+		List nodes = new ArrayList();
+		String categoryType = category.getMementoHandle();
+		for (Iterator z = activeSubsystemConfigurations.iterator(); z.hasNext();) {
+			ISubSystemConfiguration ssf = (ISubSystemConfiguration) z.next();
+			boolean createNode = false;
+			if (categoryType.equals(SystemTeamViewCategoryNode.MEMENTO_FILTERPOOLS)) {
+				createNode = ssf.supportsFilters() && (profile.getFilterPools(ssf).length > 0);
+			} else if (categoryType.equals(SystemTeamViewCategoryNode.MEMENTO_USERACTIONS)) {
+				createNode = ssf.supportsUserDefinedActions(); // && profile.getUserActions(ssf).length > 0;
+			} else if (categoryType.equals(SystemTeamViewCategoryNode.MEMENTO_COMPILECMDS)) {
+				createNode = ssf.supportsCompileActions(); // && profile.getCompileCommandTypes(ssf).length > 0;
+			} else if (categoryType.equals(SystemTeamViewCategoryNode.MEMENTO_TARGETS)) {
+				createNode = ssf.supportsTargets(); // && profile.getTargets(ssf).length > 0;
+			}
+			if (createNode) {
+				nodes.add(new SystemTeamViewSubSystemConfigurationNode(profile, category, ssf));
+			}
+		}
+		SystemTeamViewSubSystemConfigurationNode[] result = new SystemTeamViewSubSystemConfigurationNode[nodes.size()];
+		nodes.toArray(result);
+		return result;
 	}
 		
 	/**

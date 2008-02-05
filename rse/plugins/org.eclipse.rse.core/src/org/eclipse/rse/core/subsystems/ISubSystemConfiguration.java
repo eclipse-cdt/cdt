@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  * Martin Oberhuber (Wind River) - [189123] Move renameSubSystemProfile() from UI to Core
+ * David Dykstal (IBM) - [197036] change signature of getFilterPoolManager method to be able to control the creation of filter pools
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -34,7 +35,7 @@ import org.eclipse.rse.core.model.ISystemProfile;
  * 
  * <p>
  * This interface is not intended to be implemented by clients. Subsystem
- * configuration implementations must subclass {@link SubSystemConfiguration}
+ * configuration implementations must subclass SubSystemConfiguration
  * rather than implementing this interface directly.
  * </p>
  */
@@ -351,11 +352,13 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 
 	/**
 	 * Called by SystemRegistry's renameSystemProfile method to ensure we update our
-	 *  subsystem names within each subsystem.
-	 * <p>
-	 * This is called AFTER changing the profile's name!!
+	 * subsystem names within each subsystem. 
+	 * This should be invoked after changing the profile's name.
+	 * @param subsystem the subsystem to be updated
+	 * @param oldProfileName the old profile name
+	 * @param newProfileName the new profile name
 	 */
-	public void renameSubSystemProfile(ISubSystem ss, String oldProfileName, String newProfileName);
+	public void renameSubSystemProfile(ISubSystem subsystem, String oldProfileName, String newProfileName);
 
 	/**
 	 * Called by SystemRegistry's renameSystemProfile method to pre-test if we are going to run into errors on a 
@@ -488,7 +491,22 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	// FILTER POOL METHODS...
 	// ---------------------------------
 	/**
-	 * Get the filter pool manager for the given profile
+	 * A subsystem configuration has a filter pool manager for each profile.
+	 * Get the filter pool manager for the given profile.
+	 * @param profile The system profile for which to get the manager. 
+	 * @param force if true then create the default filters for this subsystem configuration in this profile. This should only be 
+	 * done during initial subsystem creation, not during subsystem restore.
+	 * @return a filter pool manager
+	 */
+	public ISystemFilterPoolManager getFilterPoolManager(ISystemProfile profile, boolean force);
+	
+	/**
+	 * A subsystem configuration has a filter pool manager for each profile.
+	 * Get the filter pool manager for the given profile.
+	 * Do not force the creation of default filter pools.
+	 * Fully equivalent to getFilterPoolManager(profile, false).
+	 * @param profile The system profile for which to get the manager. 
+	 * @return a filter pool manager
 	 */
 	public ISystemFilterPoolManager getFilterPoolManager(ISystemProfile profile);
 

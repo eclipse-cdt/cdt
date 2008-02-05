@@ -131,7 +131,7 @@ class TelnetOption implements TelnetCodes
      * This constant and the others having similar names represent the states of a
      * finite state automaton (FSA) that tracks the negotiation state of this option.
      * The initial state is NEGOTIATION_NOT_STARTED.  The state machine is as follows
-     * (with transitions labelled with letters in parentheses): <p>
+     * (with transitions labeled with letters in parentheses): <p>
      *
      * <pre>
      *     NEGOTIATION_NOT_STARTED -----> {@link #NEGOTIATION_IN_PROGRESS}
@@ -159,7 +159,7 @@ class TelnetOption implements TelnetCodes
      *
      * Transition C happens when the local endpoint receives an option command from the
      * remote endpoint before sending a command for the same option.  In that case, the
-     * local endpoint replies immediately with an option command and the negotitation
+     * local endpoint replies immediately with an option command and the negotiation
      * terminates. <p>
      *
      * Some TELNET servers (e.g., the Solaris server), after sending WILL and receiving

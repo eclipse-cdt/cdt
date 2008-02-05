@@ -12,6 +12,8 @@
 
 package org.eclipse.cdt.internal.core.model;
 
+import java.util.Arrays;
+
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IArchive;
@@ -492,17 +494,31 @@ final class DeltaProcessor {
 				fCurrentDelta.addResourceDelta(delta);
 				return;
 			case ICElement.C_PROJECT: {
-				((CProjectInfo)info).setNonCResources(null);
-				// deal with project == sourceroot.  For that case the parent could have been the sourceroot
-				// so we must update the sourceroot nonCResource array also.
-				ICProject cproject = (ICProject)parent;
-				ISourceRoot[] roots = cproject.getAllSourceRoots();
-				for (int i = 0; i < roots.length; i++) {
-					IResource r = roots[i].getResource();
-					if (r instanceof IProject) {
-						CElementInfo cinfo = (CElementInfo) CModelManager.getDefault().peekAtInfo(roots[i]);
-						if (cinfo instanceof CContainerInfo) {
-							((CContainerInfo)cinfo).setNonCResources(null);
+				final CProjectInfo pInfo= (CProjectInfo)info;
+				pInfo.setNonCResources(null);
+				
+				ISourceRoot[] roots= pInfo.sourceRoots;
+				if (roots != null) {
+					ICProject cproject = (ICProject)parent;
+					if (isFolderAddition(delta)) {
+						// if source roots changed - refresh from scratch
+						// see http://bugs.eclipse.org/215112
+						pInfo.sourceRoots= null;
+						ISourceRoot[] newRoots= cproject.getAllSourceRoots();
+						if (!Arrays.equals(roots, newRoots)) {
+							cproject.close();
+							break;
+						}
+					}
+					// deal with project == sourceroot.  For that case the parent could have been the sourceroot
+					// so we must update the sourceroot nonCResource array also.
+					for (int i = 0; i < roots.length; i++) {
+						IResource r = roots[i].getResource();
+						if (r instanceof IProject) {
+							CElementInfo cinfo = (CElementInfo) CModelManager.getDefault().peekAtInfo(roots[i]);
+							if (cinfo instanceof CContainerInfo) {
+								((CContainerInfo)cinfo).setNonCResources(null);
+							}
 						}
 					}
 				}
@@ -523,6 +539,25 @@ final class DeltaProcessor {
 		} else {
 			elementDelta.addResourceDelta(delta);
 		}
+	}
+
+	/**
+	 * Test whether this delta or any of its children represents a folder addition.
+	 * @param delta
+	 * @return <code>true</code>, if the delta contains at least one new folder
+	 */
+	private static boolean isFolderAddition(IResourceDelta delta) {
+		if (delta.getResource().getType() != IResource.FOLDER)
+			return false;
+		if (delta.getKind() == IResourceDelta.ADDED)
+			return true;
+		IResourceDelta[] children= delta.getAffectedChildren();
+		for (int i = 0; i < children.length; i++) {
+			if (isFolderAddition(children[i])) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/*

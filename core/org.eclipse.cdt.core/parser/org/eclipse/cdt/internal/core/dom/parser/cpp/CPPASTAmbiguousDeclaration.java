@@ -17,14 +17,20 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousDeclaration;
 
 public class CPPASTAmbiguousDeclaration extends CPPASTAmbiguity implements IASTAmbiguousDeclaration {
 
-    protected IASTNode[] getNodes() {
+    @Override
+	protected IASTNode[] getNodes() {
         return getDeclarations();
     }
 
     private IASTDeclaration [] decls = new IASTDeclaration[2];
     private int declsPos=-1;
     
-    public void addDeclaration(IASTDeclaration d) {
+    public CPPASTAmbiguousDeclaration(IASTDeclaration... declarations) {
+		for(IASTDeclaration d : declarations)
+			addDeclaration(d);
+	}
+
+	public void addDeclaration(IASTDeclaration d) {
     	if (d != null) {
     		decls = (IASTDeclaration[]) ArrayUtil.append(IASTDeclaration.class, decls, ++declsPos, d );
     		d.setParent(this);

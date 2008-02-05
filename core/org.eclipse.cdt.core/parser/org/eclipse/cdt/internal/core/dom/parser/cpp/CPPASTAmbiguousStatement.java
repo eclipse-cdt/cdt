@@ -21,7 +21,12 @@ public class CPPASTAmbiguousStatement extends CPPASTAmbiguity implements
     private IASTStatement [] stmts = new IASTStatement[2];
     private int stmtsPos=-1;
     
-    public void addStatement(IASTStatement s) {
+    public CPPASTAmbiguousStatement(IASTStatement... statements) {
+		for(IASTStatement s : statements)
+			addStatement(s);
+	}
+
+	public void addStatement(IASTStatement s) {
     	if (s != null) {
     		stmts = (IASTStatement[]) ArrayUtil.append( IASTStatement.class, stmts, ++stmtsPos, s );
     		s.setParent(this);
@@ -34,7 +39,8 @@ public class CPPASTAmbiguousStatement extends CPPASTAmbiguity implements
     	return stmts;
     }
     
-    protected IASTNode[] getNodes() {
+    @Override
+	protected IASTNode[] getNodes() {
         return getStatements();
     }
 }

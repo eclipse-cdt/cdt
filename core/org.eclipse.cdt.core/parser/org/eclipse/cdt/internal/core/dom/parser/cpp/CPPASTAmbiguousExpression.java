@@ -22,7 +22,12 @@ public class CPPASTAmbiguousExpression extends CPPASTAmbiguity implements
     private IASTExpression [] exp = new IASTExpression[2];
     private int expPos=-1;
     
-    public void addExpression(IASTExpression e) {
+    public CPPASTAmbiguousExpression(IASTExpression... expressions) {
+		for(IASTExpression e : expressions)
+			addExpression(e);
+	}
+
+	public void addExpression(IASTExpression e) {
     	if (e != null) {
     		exp = (IASTExpression[]) ArrayUtil.append( IASTExpression.class, exp, ++expPos, e );
     		e.setParent(this);
@@ -35,7 +40,8 @@ public class CPPASTAmbiguousExpression extends CPPASTAmbiguity implements
     	return exp;
     }
 
-    protected IASTNode[] getNodes() {
+    @Override
+	protected IASTNode[] getNodes() {
         return getExpressions();
     }
     

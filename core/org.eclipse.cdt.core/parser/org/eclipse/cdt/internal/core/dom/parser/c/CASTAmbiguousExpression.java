@@ -23,7 +23,13 @@ public class CASTAmbiguousExpression extends CASTAmbiguity implements
     private IASTExpression [] expressions = new IASTExpression[2];
     private int expressionsPos=-1;
 
-    public void addExpression(IASTExpression e) {
+    
+    public CASTAmbiguousExpression(IASTExpression... expressions) {
+		for(IASTExpression e : expressions)
+			addExpression(e);
+	}
+
+	public void addExpression(IASTExpression e) {
     	if (e != null) {
     		expressions = (IASTExpression[]) ArrayUtil.append( IASTExpression.class, expressions, ++expressionsPos, e );
     		e.setParent(this);

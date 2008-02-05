@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -15,7 +15,8 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [174945] Remove obsolete icons from rse.shells.ui
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
- * Martin Oberhuber (Wind River) - [187218] Fix error reporting for connect() 
+ * Martin Oberhuber (Wind River) - [187218] Fix error reporting for connect()
+ * Kevin Doyle (IBM)			 - [187083] Launch Shell action available on folders inside virtual files  
  ********************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui.actions;
@@ -42,10 +43,12 @@ import org.eclipse.rse.internal.shells.ui.ShellsUIPlugin;
 import org.eclipse.rse.internal.shells.ui.view.SystemCommandsUI;
 import org.eclipse.rse.internal.shells.ui.view.SystemCommandsViewPart;
 import org.eclipse.rse.services.clientserver.PathUtility;
+import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.shells.ui.RemoteCommandHelpers;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
+import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
 import org.eclipse.rse.ui.ISystemIconConstants;
@@ -651,6 +654,20 @@ public class SystemCommandAction extends SystemBaseAction
 			{
 				_selected = (IRemoteFile) selected;
 				_selectedFilterRef = null;
+				// If the selected object is a virtual folder then we need to select the parent
+				// of the archive
+				if (ArchiveHandlerManager.isVirtual(_selected.getAbsolutePath())) {
+					IRemoteFileSubSystem rfss = _selected.getParentRemoteFileSubSystem();
+					String file = _selected.getAbsolutePath();
+					// Get the archive's path
+					file = file.substring(0, file.indexOf(ArchiveHandlerManager.VIRTUAL_SEPARATOR));
+					// Get the parent of the archive's path
+					file = file.substring(0, file.lastIndexOf(_selected.getSeparator()));
+					try {
+						_selected = rfss.getRemoteFileObject(file, null);
+					} catch (SystemMessageException exc) {
+					}
+				}
 				if (!_selected.isFile())
 				{
 					enable = checkObjectType(_selected);

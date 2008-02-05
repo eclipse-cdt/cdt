@@ -24,8 +24,8 @@
  * David McKnight   (IBM)        - [191472] should not use super transfer with SSH/FTP Folder Copy and Paste
  * Xuan Chen (IBM)               - [191367] with supertransfer on, Drag & Drop Folder from DStore to DStore doesn't work
  * Xuan Chen (IBM)               - [201790] [dnd] Copy and Paste across connections to a Drive doesn't work
- * Xuan Chen (IBM)               - [202668] [Supertransfer] Subfolders not copied when doing first copy from dstore to Local
- * Xuan Chen (IBM)               - [202670] [Supertransfer] After doing a copy to a directory that contains folders some folders name's display "deleted"
+ * Xuan Chen (IBM)               - [202668] [supertransfer] Subfolders not copied when doing first copy from dstore to Local
+ * Xuan Chen (IBM)               - [202670] [supertransfer] After doing a copy to a directory that contains folders some folders name's display "deleted"
  * Xuan Chen (IBM)               - [202949] [archives] copy a folder from one connection to an archive file in a different connection does not work
  * David McKnight   (IBM)        - [205819] Need to use input stream copy when EFS files are the src
  * David McKnight   (IBM)        - [195285] mount path mapper changes
@@ -37,7 +37,7 @@
  * David Mcknight     (IBM)      - [203114] don't treat XML files specially (no hidden prefs for bin vs text)
  * David McKnight     (IBM)      - [209552] get rid of copy APIs to be clearer with download and upload  
  * David McKnight     (IBM)      - [143503] encoding and isBinary needs to be stored in the IFile properties
- * Xuan Chen          (IBM)        - [191370] [dstore] Supertransfer zip not deleted when cancelling copy
+ * Xuan Chen          (IBM)        - [191370] [dstore] supertransfer zip not deleted when cancelling copy
  * Xuan Chen          (IBM)      - [210816] Archive testcases throw ResourceException if they are run in batch
  ********************************************************************************/
 
@@ -372,7 +372,7 @@ public class UniversalFileTransferUtility
 	 * 
 	 * @param remoteSet the set of resources to download
 	 * @param monitor the progress monitor
-	 * @return the set of temp files created as a result of the download.
+	 * @return the set of temporary files created as a result of the download.
 	 */
 	public static SystemWorkspaceResourceSet downloadResourcesToWorkspaceMultiple(SystemRemoteResourceSet remoteSet, IProgressMonitor monitor)
 	{
@@ -793,7 +793,7 @@ public class UniversalFileTransferUtility
 	}
 	
 	/**
-	 * Replicates a local file to the temp files project in the workspace. 
+	 * Replicates a local file to the temporary files project in the workspace. 
 	 * @param srcFileOrFolder the file to copy.
 	 * @param monitor the progress monitor.
 	 * @return the resulting local replica.
@@ -2685,7 +2685,7 @@ public class UniversalFileTransferUtility
 	 * temporary object produced by the doDrag.
 	 * @param targetFolder the object to be copied to.
 	 * @param monitor the progress monitor
-	 * @param checkForCollisions indicates whether to check for colllisions or not
+	 * @param checkForCollisions indicates whether to check for collisions or not
 	 * @return the result remote object
 	 * 
 	 * @deprecated use uploadResourceFromWorkspace

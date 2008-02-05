@@ -90,7 +90,7 @@
 <!-- ================================================================================== -->
 <!-- EXTENSION POINT: org.eclipse.rse.core.subsystemConfigurations                      -->
 <!-- ================================================================================== -->
-<!-- Extension point for defining subsystem factories. A configuration is responsible for     -->
+<!-- Extension point for defining subsystem configurations. A configuration is responsible for     -->
 <!--  creating subsystem instances.                                                     -->
 <!--                                                                                    -->
 <!-- Example of extension configuration:                                                -->
@@ -114,7 +114,7 @@
 <!-- <configuration> tag attributes:                                                          -->
 <!-- ================================================================================== -->
 <!--  systemTypes => semicolon-separated list of system types or * for all              -->
-<!--  class       => class implementing org.eclipse.rse.subsystems.SubSystemFactory -->
+<!--  class       => class implementing org.eclipse.rse.subsystems.SubSystemConfiguration -->
 <!--  category    => optionally identifies category to allow efficient subsetting of    -->
 <!--                  connection lists. Pre-defined categories are "files", "cmds" and  -->
 <!--                  "jobs". Can also specify your own category like "database"        -->

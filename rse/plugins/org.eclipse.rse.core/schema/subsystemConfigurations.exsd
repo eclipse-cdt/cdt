@@ -8,9 +8,7 @@
       <documentation>
          This extension point allows tool-writers to extend the capability of the Remote System Explorer, by identifying a subsystem configuration that produces a subsystem whenever a new connection is created. This subsystem appears under the connection when it is expanded in the Remote Systems view of the Remote System Explorer perspective. The subsystem configuration is called by the Remote System framework when the user creates a new connection, when the connection&apos;s system type is one of the types identified as supported by this subsystem configuration extension.
 &lt;p&gt;
-There is one subsystem object per connection, and the role of a subsystem is to allow
-users to work with remote resourcesfor the remote system identified by the containing connection. Defining a subsystem configuration involves more than the single subsystem
-configuration class. There must also be a subsystem class defined, and a system class defined. There may also be other classes defined, such as classes for the content area of wizards for defining filters, user actions and compile commands, if the subsystem configuration wishes to support these. See the developer documentation for the Remote System Explorer for documentation details on defining subsystems.
+There is one subsystem object per connection, and the role of a subsystem is to allow users to work with remote resources for the remote system identified by the containing connection. Defining a subsystem configuration involves more than the single subsystem configuration class. There must also be a subsystem class defined. There may also be other classes defined, such as classes for the content area of wizards for defining filters, user actions and compile commands, if the subsystem configuration wishes to support these. See the developer documentation for the Remote System Explorer for documentation details on defining subsystems.
       </documentation>
    </annotation>
 
@@ -211,11 +209,11 @@ creating the classes needed for a subsystem configuration, however. For this inf
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         The provider of subsystem factories must implement the interface
+         The provider of subsystem configurations must implement the interface
 &lt;samp&gt;org.eclipse.rse.core.subsystems.ISubSystemConfiguration&lt;/samp&gt;,
 although it is not recommended to create a new class from scratch.
 Rather, it is highly recommended to use the supplied base class &lt;samp&gt;org.eclipse.rse.core.subsystems.SubSystemConfiguration&lt;/samp&gt;.
-This base class pre-supplies much functionality, including support for
+This base class supplies much functionality, including support for
 persisting properties and metadata, and support for filters.
       </documentation>
    </annotation>
@@ -225,7 +223,7 @@ persisting properties and metadata, and support for filters.
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         All supplied subsystems are implemented via use of this extension point.
+         All supplied subsystems are implemented by using this extension point.
 See the &lt;samp&gt;plugin.xml&lt;/samp&gt; files for plugins
 &lt;samp&gt;org.eclipse.rse.subsystems.files.dstore&lt;/samp&gt; and
 &lt;samp&gt;org.eclipse.rse.subsystems.processes.dstore&lt;/samp&gt;

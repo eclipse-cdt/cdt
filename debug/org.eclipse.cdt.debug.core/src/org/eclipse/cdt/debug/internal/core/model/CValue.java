@@ -445,7 +445,7 @@ public class CValue extends AbstractCValue {
 		}
 		else if ( CVariableFormat.BINARY.equals( format ) ) {
 			StringBuffer sb = new StringBuffer( "0b" ); //$NON-NLS-1$
-			String stringValue = Long.toBinaryString( new Float( floatValue ).longValue() );
+			String stringValue = Long.toBinaryString( Float.floatToIntBits(floatValue) );
 			sb.append( (stringValue.length() > 32) ? stringValue.substring( stringValue.length() - 32 ) : stringValue );
 			return sb.toString();
 		}
@@ -474,7 +474,7 @@ public class CValue extends AbstractCValue {
 		}
 		else if ( CVariableFormat.BINARY.equals( format ) ) {
 			StringBuffer sb = new StringBuffer( "0b" ); //$NON-NLS-1$
-			String stringValue = Long.toHexString( new Double( doubleValue ).longValue() );
+			String stringValue = Long.toBinaryString( Double.doubleToLongBits(doubleValue) );
 			sb.append( (stringValue.length() > 64) ? stringValue.substring( stringValue.length() - 64 ) : stringValue );
 			return sb.toString();
 		}

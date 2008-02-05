@@ -384,12 +384,12 @@ public class C99ASTNodeFactory implements IC99ASTNodeFactory {
 		return new CASTProblem(id, arg, warn, error);
 	}
 
-	public IASTAmbiguousExpression newAmbiguousExpression() {
-		return new CASTAmbiguousExpression();
+	public IASTAmbiguousExpression newAmbiguousExpression(IASTExpression... expressions) {
+		return new CASTAmbiguousExpression(expressions);
 	}
 
-	public IASTAmbiguousStatement newAmbiguousStatement() {
-		return new CASTAmbiguousStatement();
+	public IASTAmbiguousStatement newAmbiguousStatement(IASTStatement... statements) {
+		return new CASTAmbiguousStatement(statements);
 	}
 
 	public IASTTranslationUnit newTranslationUnit() {

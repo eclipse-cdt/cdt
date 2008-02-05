@@ -52,12 +52,14 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.lrparser.action.IASTNodeFactory;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousDeclaration;
 
 /**
  * TODO remove CPP from method names.
  * 
  * @author Mike Kucera
  */
+@SuppressWarnings("restriction")
 public interface ICPPASTNodeFactory extends IASTNodeFactory {
 
 	public ICPPASTOperatorName newCPPOperatorName(char[] name);
@@ -131,4 +133,6 @@ public interface ICPPASTNodeFactory extends IASTNodeFactory {
 	public ICPPASTSimpleTypeTemplateParameter newSimpleTypeTemplateParameter(int type, IASTName name, IASTTypeId typeId);
 
 	public ICPPASTTemplatedTypeTemplateParameter newTemplatedTypeTemplateParameter(IASTName name, IASTExpression idExpression);
+	
+	public IASTAmbiguousDeclaration newAmbiguousDeclaration(IASTDeclaration... declarations);
 }

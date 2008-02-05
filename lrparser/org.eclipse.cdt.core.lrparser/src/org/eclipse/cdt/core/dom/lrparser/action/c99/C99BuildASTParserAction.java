@@ -42,20 +42,19 @@ import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
-import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
-import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointer;
+import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
@@ -63,6 +62,8 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
@@ -82,8 +83,14 @@ import org.eclipse.cdt.core.dom.lrparser.action.ITokenMap;
 import org.eclipse.cdt.core.dom.lrparser.action.TokenMap;
 import org.eclipse.cdt.core.dom.lrparser.util.CollectionUtils;
 import org.eclipse.cdt.core.dom.lrparser.util.DebugUtil;
+import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99ExpressionStatementParser;
+import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99NoCastExpressionParser;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym;
+import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99SizeofExpressionParser;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
+import org.eclipse.cdt.internal.core.dom.parser.c.CASTAmbiguousExpression;
 
 /**
  * Semantic actions called by the C99 parser to build an AST.
@@ -167,6 +174,31 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 		ICASTTypeIdInitializerExpression expr = nodeFactory.newCTypeIdInitializerExpression(typeId, list);
 		setOffsetAndLength(expr);
 		astStack.push(expr);
+		
+		if(TRACE_AST_STACK) System.out.println(astStack);
+	}
+	
+	/**
+	 * Lots of rules, no need to list them.
+	 * @param operator From IASTUnaryExpression
+	 */
+	public void consumeExpressionSizeofTypeId() {
+		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
+		
+		IASTTypeId typeId = (IASTTypeId) astStack.pop();
+		IASTTypeIdExpression expr = nodeFactory.newTypeIdExpression(IASTTypeIdExpression.op_sizeof, typeId);
+		setOffsetAndLength(expr);
+		
+		// try parsing as an expression to resolve ambiguities
+		C99SizeofExpressionParser alternateParser = new C99SizeofExpressionParser(C99Parsersym.orderedTerminalSymbols); 
+		alternateParser.setTokens(parser.getRuleTokens());
+		alternateParser.parse(tu);
+		IASTExpression alternateExpr = alternateParser.getParseResult();
+		
+		if(alternateExpr == null || alternateExpr instanceof IASTProblemExpression)
+			astStack.push(expr);
+		else
+			astStack.push(nodeFactory.newAmbiguousExpression(expr, alternateExpr));
 		
 		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
@@ -648,13 +680,30 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		
 		IASTDeclaration decl = (IASTDeclaration) astStack.pop();
+		IASTDeclarationStatement declarationStatement = nodeFactory.newDeclarationStatement(decl);
+		setOffsetAndLength(declarationStatement);
 		
-		if(disambiguateHackIdentifierExpression(decl))
-			return;
+		// attempt to also parse the tokens as an expression
+		IASTExpressionStatement expressionStatement = null;
+		if(decl instanceof IASTSimpleDeclaration) {
+			// TODO this probably has bad performance
+			C99ExpressionStatementParser expressionParser = new C99ExpressionStatementParser(C99Parsersym.orderedTerminalSymbols); 
+			expressionParser.setTokens(parser.getRuleTokens());
+			// need to pass tu because any completion nodes need to be linked directly to the root
+			expressionParser.parse(tu);
+			IASTExpression expr = expressionParser.getParseResult();
+			
+			if(expr != null && !(expr instanceof IASTProblemExpression)) { // the parse may fail
+				expressionStatement = nodeFactory.newExpressionStatement(expr);
+				setOffsetAndLength(expressionStatement);
+			}
+		}
 		
-		IASTDeclarationStatement stat = nodeFactory.newDeclarationStatement(decl);
-		setOffsetAndLength(stat);
-		astStack.push(stat);
+		if(expressionStatement == null)
+			astStack.push(declarationStatement);
+		else
+			astStack.push(nodeFactory.newAmbiguousStatement(declarationStatement, expressionStatement));
+			
 		
 		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
@@ -662,46 +711,46 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	
 	
 	
-	
-	/**
-	 * Kludgy way to disambiguate a certain case.
-	 * An identifier alone on a line will be parsed as a declaration
-	 * but it probably should be an expression.
-	 * eg) i;
-	 * 
-	 * This only happens in the presence of a completion token.
-	 * 
-	 * @return true if the hack was applied
-	 */
-	private boolean disambiguateHackIdentifierExpression(IASTDeclaration decl) {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
-		// this is only meant to work with content assist
-		List<IToken> tokens = parser.getRuleTokens();
-		if(tokens.size() != 2 || tokens.get(0).getKind() == TK_typedef)
-			return false;
-		
-		if(decl instanceof IASTSimpleDeclaration) {
-			IASTSimpleDeclaration declaration = (IASTSimpleDeclaration) decl;
-			if(declaration.getDeclarators() == IASTDeclarator.EMPTY_DECLARATOR_ARRAY) {
-				IASTDeclSpecifier declSpec = declaration.getDeclSpecifier();
-				if(declSpec instanceof ICASTTypedefNameSpecifier) {
-					ICASTTypedefNameSpecifier typedefNameSpec = (ICASTTypedefNameSpecifier) declSpec;
-					IASTName name = typedefNameSpec.getName();
-					
-					if(offset(name) == offset(typedefNameSpec) && length(name) == length(typedefNameSpec)) {
-						IASTIdExpression idExpr = nodeFactory.newIdExpression(name);
-						IASTExpressionStatement stat = nodeFactory.newExpressionStatement(idExpr);
-
-						setOffsetAndLength(stat);
-						astStack.push(stat);
-						return true;
-					}
-				}
-			}
-		}
-		return false;
-	}
+//	
+//	/**
+//	 * Kludgy way to disambiguate a certain case.
+//	 * An identifier alone on a line will be parsed as a declaration
+//	 * but it probably should be an expression.
+//	 * eg) i;
+//	 * 
+//	 * This only happens in the presence of a completion token.
+//	 * 
+//	 * @return true if the hack was applied
+//	 */
+//	private boolean disambiguateHackIdentifierExpression(IASTDeclaration decl) {
+//		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
+//		
+//		// this is only meant to work with content assist
+//		List<IToken> tokens = parser.getRuleTokens();
+//		if(tokens.size() != 2 || tokens.get(0).getKind() == TK_typedef)
+//			return false;
+//		
+//		if(decl instanceof IASTSimpleDeclaration) {
+//			IASTSimpleDeclaration declaration = (IASTSimpleDeclaration) decl;
+//			if(declaration.getDeclarators() == IASTDeclarator.EMPTY_DECLARATOR_ARRAY) {
+//				IASTDeclSpecifier declSpec = declaration.getDeclSpecifier();
+//				if(declSpec instanceof ICASTTypedefNameSpecifier) {
+//					ICASTTypedefNameSpecifier typedefNameSpec = (ICASTTypedefNameSpecifier) declSpec;
+//					IASTName name = typedefNameSpec.getName();
+//					
+//					if(offset(name) == offset(typedefNameSpec) && length(name) == length(typedefNameSpec)) {
+//						IASTIdExpression idExpr = nodeFactory.newIdExpression(name);
+//						IASTExpressionStatement stat = nodeFactory.newExpressionStatement(idExpr);
+//
+//						setOffsetAndLength(stat);
+//						astStack.push(stat);
+//						return true;
+//					}
+//				}
+//			}
+//		}
+//		return false;
+//	}
 	
 	
 	

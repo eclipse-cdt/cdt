@@ -14,14 +14,34 @@
 %options template=btParserTemplateD.g
 
 -- All we need to do is import the main parser and redefine the start symbol.
+
 $Define
-	$sym_class /. C99Parsersym ./
+	$sym_class /. C99ExpressionStatementParsersym ./
 $End
-	
+
 $Import
 	C99Grammar.g
 $End
 
 $Start
-    translation_unit
+    expression_parser_start
+$End
+
+
+
+$Headers
+/.
+	public IASTExpression getParseResult() {
+		return (IASTExpression) action.getSecondaryParseResult();
+	}
+./
+$End
+
+$Rules
+
+expression_parser_start
+    ::= expression ';'
+      | ERROR_TOKEN
+          /. $Build  consumeExpressionProblem();  $EndBuild ./
+          
 $End

@@ -1587,7 +1587,8 @@ conversion_declarator
     ::= <openscope-ast> ptr_operator_seq
           /. $Build  consumeDeclaratorWithPointer(false);  $EndBuild ./
       
-
+ 
+ 
 --conversion_declarator_opt
 --    ::= conversion_declarator
 --      | $empty

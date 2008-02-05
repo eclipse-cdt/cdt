@@ -15,6 +15,7 @@ import java.util.List;
 
 import lpg.lpgjavaruntime.IToken;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
@@ -52,9 +53,9 @@ import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
+import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
 import org.eclipse.cdt.core.dom.ast.IASTProblemHolder;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
-import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -65,13 +66,13 @@ import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
 import org.eclipse.cdt.core.dom.lrparser.util.DebugUtil;
+import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99NoCastExpressionParser;
+import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
 
 
 /**
@@ -117,6 +118,11 @@ public abstract class BuildASTParserAction {
 	private final IASTNodeFactory nodeFactory;
 	
 	
+	protected static final ASTVisitor EMPTY_VISITOR = new ASTVisitor() {
+		{ shouldVisitStatements = true; }
+	};
+	
+    
 	
 	/**
 	 * Completion tokens are represented by different kinds by different parsers.
@@ -164,6 +170,13 @@ public abstract class BuildASTParserAction {
 		return completionNode;
 	}
 	
+	
+	/**
+	 * Used to get the result of secondary parsers.
+	 */
+	public Object getSecondaryParseResult() {
+		return astStack.pop();
+	}
 	
 	
 	
@@ -297,6 +310,9 @@ public abstract class BuildASTParserAction {
         	IASTNode d = declarations[declarations.length-1];
             setOffsetAndLength(tu, 0, offset(d) + length(d));
         } 
+        
+        // resolve ambiguities
+        tu.accept(EMPTY_VISITOR);
 
         if(TRACE_AST_STACK) System.out.println(astStack);
 	}
@@ -439,6 +455,8 @@ public abstract class BuildASTParserAction {
 	
 	/**
 	 * @param operator constant for {@link ICPPASTCastExpression}
+	 * 
+	 * TODO Remove C99 specific code
 	 */
 	public void consumeExpressionCast(int operator) {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
@@ -447,7 +465,18 @@ public abstract class BuildASTParserAction {
 		IASTTypeId typeId = (IASTTypeId) astStack.pop();
 		IASTCastExpression expr = nodeFactory.newCastExpression(operator, typeId, operand);
 		setOffsetAndLength(expr);
-		astStack.push(expr);
+				
+		// try parsing as non-cast to resolve ambiguities
+		C99NoCastExpressionParser alternateParser = new C99NoCastExpressionParser(C99Parsersym.orderedTerminalSymbols); 
+		alternateParser.setTokens(parser.getRuleTokens());
+		alternateParser.parse(tu);
+		IASTExpression alternateExpr = alternateParser.getParseResult();
+		
+		if(alternateExpr == null || alternateExpr instanceof IASTProblemExpression)
+			astStack.push(expr);
+		else
+			astStack.push(nodeFactory.newAmbiguousExpression(expr, alternateExpr));
+
 		
 		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
@@ -596,6 +625,7 @@ public abstract class BuildASTParserAction {
 		
 		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
+	
 	
 	
 	/**

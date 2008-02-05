@@ -28,9 +28,9 @@ import org.eclipse.cdt.core.dom.lrparser.action.c99.C99ASTNodeFactory;
 import org.eclipse.cdt.core.dom.lrparser.action.c99.C99BuildASTParserAction;
 import org.eclipse.cdt.core.dom.lrparser.action.c99.C99TypedefTrackerParserAction;
 
-public class C99Parser extends PrsStream implements RuleAction , IParserActionTokenProvider, IParser 
+public class C99ExpressionStatementParser extends PrsStream implements RuleAction , IParserActionTokenProvider, IParser 
 {
-    private static ParseTable prs = new C99Parserprs();
+    private static ParseTable prs = new C99ExpressionStatementParserprs();
     private BacktrackingParser btParser;
 
     public BacktrackingParser getParser() { return btParser; }
@@ -65,13 +65,13 @@ public class C99Parser extends PrsStream implements RuleAction , IParserActionTo
         return (ErrorToken) (err instanceof ErrorToken ? err : null);
     }
 
-    public C99Parser(LexStream lexStream)
+    public C99ExpressionStatementParser(LexStream lexStream)
     {
         super(lexStream);
 
         try
         {
-            super.remapTerminalSymbols(orderedTerminalSymbols(), C99Parserprs.EOFT_SYMBOL);
+            super.remapTerminalSymbols(orderedTerminalSymbols(), C99ExpressionStatementParserprs.EOFT_SYMBOL);
         }
         catch(NullExportedSymbolsException e) {
         }
@@ -84,7 +84,7 @@ public class C99Parser extends PrsStream implements RuleAction , IParserActionTo
             for (int i = 0; i < unimplemented_symbols.size(); i++)
             {
                 Integer id = (Integer) unimplemented_symbols.get(i);
-                System.out.println("    " + C99Parsersym.orderedTerminalSymbols[id.intValue()]);               
+                System.out.println("    " + C99ExpressionStatementParsersym.orderedTerminalSymbols[id.intValue()]);               
             }
             System.out.println();                        
         }
@@ -92,13 +92,13 @@ public class C99Parser extends PrsStream implements RuleAction , IParserActionTo
         {
             throw new Error(new UndefinedEofSymbolException
                                 ("The Lexer does not implement the Eof symbol " +
-                                 C99Parsersym.orderedTerminalSymbols[C99Parserprs.EOFT_SYMBOL]));
+                                 C99ExpressionStatementParsersym.orderedTerminalSymbols[C99ExpressionStatementParserprs.EOFT_SYMBOL]));
         } 
     }
 
-    public String[] orderedTerminalSymbols() { return C99Parsersym.orderedTerminalSymbols; }
-    public String getTokenKindName(int kind) { return C99Parsersym.orderedTerminalSymbols[kind]; }
-    public int getEOFTokenKind() { return C99Parserprs.EOFT_SYMBOL; }
+    public String[] orderedTerminalSymbols() { return C99ExpressionStatementParsersym.orderedTerminalSymbols; }
+    public String getTokenKindName(int kind) { return C99ExpressionStatementParsersym.orderedTerminalSymbols[kind]; }
+    public int getEOFTokenKind() { return C99ExpressionStatementParserprs.EOFT_SYMBOL; }
     public PrsStream getParseStream() { return (PrsStream) this; }
     
     //
@@ -143,11 +143,11 @@ public class C99Parser extends PrsStream implements RuleAction , IParserActionTo
         catch (NotBacktrackParseTableException e)
         {
             throw new Error(new NotBacktrackParseTableException
-                                ("Regenerate C99Parserprs.java with -BACKTRACK option"));
+                                ("Regenerate C99ExpressionStatementParserprs.java with -BACKTRACK option"));
         }
         catch (BadParseSymFileException e)
         {
-            throw new Error(new BadParseSymFileException("Bad Parser Symbol File -- C99Parsersym.java"));
+            throw new Error(new BadParseSymFileException("Bad Parser Symbol File -- C99ExpressionStatementParsersym.java"));
         }
 
         try
@@ -167,12 +167,12 @@ public class C99Parser extends PrsStream implements RuleAction , IParserActionTo
 
 private  C99BuildASTParserAction  action;
 
-public C99Parser() {  // constructor
+public C99ExpressionStatementParser() {  // constructor
 }
 
 private void initActions(IASTTranslationUnit tu) {
 	action = new  C99BuildASTParserAction ( C99ASTNodeFactory.DEFAULT_INSTANCE , this, tu);
-	action.setTokenMap( C99Parsersym .orderedTerminalSymbols);
+	action.setTokenMap( C99ExpressionStatementParsersym .orderedTerminalSymbols);
 }
 
 
@@ -215,13 +215,17 @@ public void setTokens(List<IToken> tokens) {
 		token.setKind(tokenMap.mapKind(token.getKind()));
 		addToken(token);
 	}
-	addToken(new Token(null, 0, 0,  C99Parsersym .TK_EOF_TOKEN));
+	addToken(new Token(null, 0, 0,  C99ExpressionStatementParsersym .TK_EOF_TOKEN));
 }
 
-public C99Parser(String[] mapFrom) {  // constructor
-	tokenMap = new TokenMap( C99Parsersym .orderedTerminalSymbols, mapFrom);
+public C99ExpressionStatementParser(String[] mapFrom) {  // constructor
+	tokenMap = new TokenMap( C99ExpressionStatementParsersym .orderedTerminalSymbols, mapFrom);
 }	
 
+
+public IASTExpression getParseResult() {
+	return (IASTExpression) action.getSecondaryParseResult();
+}
 
     public void ruleAction(int ruleNumber)
     {
@@ -1228,6 +1232,12 @@ public C99Parser(String[] mapFrom) {  // constructor
             // Rule 305:  function_body ::= { <openscope-ast> block_item_list }
             //
             case 305: { action.   consumeStatementCompoundStatement(true);             break;
+            }  
+  
+            //
+            // Rule 307:  expression_parser_start ::= ERROR_TOKEN
+            //
+            case 307: { action.   consumeExpressionProblem();             break;
             }  
 
     

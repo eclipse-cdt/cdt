@@ -96,7 +96,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.lrparser.action.ASTCompletionNode;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousDeclaration;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTASMDeclaration;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTAmbiguousDeclaration;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTAmbiguousExpression;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTAmbiguousStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTArrayDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTArrayModifier;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTArraySubscriptExpression;
@@ -531,6 +537,18 @@ public class CPPASTNodeFactory implements ICPPASTNodeFactory {
 
 	public ICPPASTTemplatedTypeTemplateParameter newTemplatedTypeTemplateParameter(IASTName name, IASTExpression idExpression) {
 		return new CPPASTTemplatedTypeTemplateParameter(name, idExpression);
+	}
+
+	public IASTAmbiguousDeclaration newAmbiguousDeclaration(IASTDeclaration... declarations) {
+		return new CPPASTAmbiguousDeclaration(declarations);
+	}
+
+	public IASTAmbiguousExpression newAmbiguousExpression(IASTExpression... expressions) {
+		return new CPPASTAmbiguousExpression(expressions);
+	}
+
+	public IASTAmbiguousStatement newAmbiguousStatement(IASTStatement... statements) {
+		return new CPPASTAmbiguousStatement(statements);
 	}
 
 }

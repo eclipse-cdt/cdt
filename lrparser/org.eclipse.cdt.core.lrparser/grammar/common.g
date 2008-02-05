@@ -33,76 +33,49 @@ $Define
 	$ast_class /.Object./
 	$data_class /. Object ./ -- allow anything to be passed between actions
 	
-	--$additional_interfaces /. , IParserActionTokenProvider, IParser ./
-	$additional_interfaces /. ./
+	$additional_interfaces /. , IParserActionTokenProvider, IParser ./
 	
 	$build_action_class /.  ./
 	$resolve_action_class /.  ./
 	$node_factory_create_expression /.  ./
 	
-	
 	$lexer_class /.  ./
 	$action_class /.  ./
 	
-	
-	$UndoResolver /.$Undo action.resolver.undo(); $EndUndo./
-	
-	$Resolve /. $BeginTrial $resolve.
-	./
-	$EndResolve /. $EndTrial 
-		$UndoResolver
-	./ -- undo actions are automatically generated for binding resolution actions
-	
-	$Builder /. $BeginFinal  $builder.
-	./ 
-	$EndBuilder /. /*$builder.getASTStack().print();*/ $EndFinal ./
-
-	$Build /. $Action $Builder ./
-	$EndBuild /. $EndBuilder $EndAction ./
-	
-	$resolve /. action.resolver./
-	$builder /. action.builder./
-
-
--- comment out when using trial/undo
-	--$Action /. $BeginAction ./
-	--$BeginFinal /. ./
-	--$EndFinal /. ./
-	--$BeginTrial /. ./
-	--$EndTrial /. ./
-	--$Undo /. ./
-	--$EndUndo /. ./
+	$Build /. $BeginAction action. ./
+	$EndBuild /. $EndAction ./
 $End
 
 
+
+$Globals
+/.	
+	import java.util.*;
+	import org.eclipse.cdt.core.dom.ast.*;
+	import org.eclipse.cdt.core.dom.lrparser.IParser;
+	import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
+	import org.eclipse.cdt.core.dom.lrparser.util.DebugUtil;	
+./
+$End
+
 $Headers
 /.
-	private $action_class action;	
+	private $build_action_class action;
 	
-	//public $action_type() {  // constructor
-	//}
+	public $action_type() {  // constructor
+	}
 	
 	private void initActions(IASTTranslationUnit tu) {
-	    // binding resolution actions need access to IASTName nodes, temporary
-	    action = new $action_class();
-		action.resolver = new $resolve_action_class(this);
-		action.builder  = new $build_action_class($node_factory_create_expression, this, tu);
-		action.builder.setTokenMap($sym_class.orderedTerminalSymbols);
-		//setParserAction(action);
+		action = new $build_action_class($node_factory_create_expression, this, tu);
+		action.setTokenMap($sym_class.orderedTerminalSymbols);
 	}
 	
 	
 	public void addToken(IToken token) {
-		token.setKind(mapKind(token.getKind()));
+		token.setKind(mapKind(token.getKind())); // TODO does mapKind need to be called?
 		super.addToken(token);
 	}
 	
-	public void setTokens(List<IToken> tokens) {
-		resetTokenStream();
-		for(IToken token : tokens) {
-			addToken(token);
-		}
-	}
 	
 	public IASTCompletionNode parse(IASTTranslationUnit tu) {
 		// this has to be done, or... kaboom!
@@ -114,22 +87,46 @@ $Headers
 		super.resetTokenStream(); // allow tokens to be garbage collected
 	
 		// the completion node may be null
-		IASTCompletionNode compNode = action.builder.getASTCompletionNode();
+		IASTCompletionNode compNode = action.getASTCompletionNode();
 	
-		action = null;
-		parserAction = null;
+		//action = null;
+		//parserAction = null;
 		return compNode;
 	}
 
-
-	public int getKind(int i) {
-		int kind = super.getKind(i);
-		// lexer feedback hack!
-		//if(kind == $sym_class.TK_identifier && action.resolver.isTypedef(getTokenText(i))) {
-		//	kind = $sym_class.TK_TypedefName;
-		//}
-		return kind;
+	// uncomment this method to use with backtracking parser
+	public List getRuleTokens() {
+	    return Collections.unmodifiableList(getTokens().subList(getLeftSpan(), getRightSpan() + 1));
 	}
+	
+./
+$End
+
+$Globals
+/.
+    import org.eclipse.cdt.core.dom.lrparser.action.ITokenMap;
+    import org.eclipse.cdt.core.dom.lrparser.action.TokenMap;
+./
+$End
+
+$Headers
+/.
+
+	private ITokenMap tokenMap = null;
+	
+	public void setTokens(List<IToken> tokens) {
+		resetTokenStream();
+		addToken(new Token(null, 0, 0, 0)); // dummy token
+		for(IToken token : tokens) {
+			token.setKind(tokenMap.mapKind(token.getKind()));
+			addToken(token);
+		}
+		addToken(new Token(null, 0, 0, $sym_class.TK_EOF_TOKEN));
+	}
+	
+	public $action_type(String[] mapFrom) {  // constructor
+		tokenMap = new TokenMap($sym_class.orderedTerminalSymbols, mapFrom);
+	}	
 	
 ./
 $End

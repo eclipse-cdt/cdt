@@ -62,6 +62,8 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
 
 
 /**
@@ -69,6 +71,7 @@ import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
  * 
  * @author Mike Kucera
  */
+@SuppressWarnings("restriction")
 public interface IASTNodeFactory {
 
 	public IASTName newName(char[] name);
@@ -171,5 +174,9 @@ public interface IASTNodeFactory {
 	public IASTParameterDeclaration newParameterDeclaration(IASTDeclSpecifier declSpec, IASTDeclarator declarator);
 	
 	public IASTFieldDeclarator newFieldDeclarator(IASTName name, IASTExpression bitFieldSize);
+	
+	public IASTAmbiguousStatement newAmbiguousStatement(IASTStatement... statements);
+	
+	public IASTAmbiguousExpression newAmbiguousExpression(IASTExpression... expressions);
 	
 }

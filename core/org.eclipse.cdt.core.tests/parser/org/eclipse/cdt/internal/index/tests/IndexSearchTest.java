@@ -189,10 +189,12 @@ public class IndexSearchTest extends IndexTestBase {
 
 		// the binding in the unnamed namespace is not visible in global scope.
 		bindings= fIndex.findBindings(pcl, true, INDEX_FILTER, NPM);
-		assertEquals(0, bindings.length);
+		assertEquals(1, bindings.length);
+		assertTrue(bindings[0].isFileLocal());
 
 		bindings= fIndex.findBindings(pcl.pattern().toCharArray(), INDEX_FILTER, NPM);
-		assertEquals(0, bindings.length);
+		assertEquals(1, bindings.length);
+		assertTrue(bindings[0].isFileLocal());
 }
 
 	public void testFindEnumerator() throws CoreException {

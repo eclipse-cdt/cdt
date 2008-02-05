@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -38,6 +39,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
@@ -46,6 +48,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
@@ -57,6 +60,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPBasicType;
+import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
@@ -218,10 +222,12 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 
 	public PDOMBinding addBinding(IBinding binding, IASTName fromName) throws CoreException {
 		// assign names to anonymous types.
-		binding= PDOMASTAdapter.getAdapterIfAnonymous(binding);
+		binding= PDOMASTAdapter.getAdapterForAnonymousASTBinding(binding);
 		if (binding == null) {
 			return null;
 		}
+		// references to the using-declarations delegates are stored with the original binding.
+		binding = unwrapUsingDelarationDelegates(binding);
 
 		PDOMBinding pdomBinding = adaptBinding(binding);
 		if (pdomBinding != null) {
@@ -243,6 +249,18 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			}
 		}
 		return pdomBinding;
+	}
+
+	private IBinding unwrapUsingDelarationDelegates(IBinding binding) {
+		while (binding instanceof ICPPDelegate) {
+			ICPPDelegate d= (ICPPDelegate) binding;
+			if (d.getDelegateType() == ICPPDelegate.USING_DECLARATION) {
+				binding= d.getBinding();
+			} else {
+				break;
+			}
+		}
+		return binding;
 	}
 
 	private void addConstructors(PDOMBinding pdomBinding, ICPPClassType binding)
@@ -407,7 +425,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		}
 
 		if (pdomBinding != null) {
-			pdomBinding.setLocalToFile(getLocalToFile(binding));
+			pdomBinding.setLocalToFileRec(getLocalToFileRec(parent, binding));
 			parent.addChild(pdomBinding);
 			afterAddBinding(pdomBinding);
 		}
@@ -553,15 +571,21 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	 * Find the equivalent binding, or binding placeholder within this PDOM
 	 */
 	@Override
-	public PDOMBinding doAdaptBinding(IBinding binding, int localToFileRec) throws CoreException {
+	public PDOMBinding doAdaptBinding(IBinding binding) throws CoreException {
+		// references to using-declarations are stored with the original binding.
+		binding= unwrapUsingDelarationDelegates(binding);
+		
 		PDOMNode parent = getAdaptedParent(binding, false);
 		if (parent == this) {
+			int localToFileRec= getLocalToFileRec(null, binding);
 			return CPPFindBinding.findBinding(getIndex(), this, binding, localToFileRec);
 		}
 		if (parent instanceof PDOMCPPNamespace) {
+			int localToFileRec= getLocalToFileRec(parent, binding);
 			return CPPFindBinding.findBinding(((PDOMCPPNamespace)parent).getIndex(), this, binding, localToFileRec);
 		}
 		if (parent instanceof IPDOMMemberOwner) {
+			int localToFileRec= getLocalToFileRec(parent, binding);
 			return CPPFindBinding.findBinding(parent, this, binding, localToFileRec);
 		}
 		return null;
@@ -784,23 +808,45 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 
 	@Override
 	protected PDOMFile getLocalToFile(IBinding binding) throws CoreException {
-		if (binding instanceof ICPPMethod) {
-			return null;
-		}
 		if (pdom instanceof WritablePDOM) {
 			final WritablePDOM wpdom= (WritablePDOM) pdom;
+			PDOMFile file= null;
 			if (binding instanceof ICPPUsingDeclaration) {
 				String path= ASTInternal.getDeclaredInOneFileOnly(binding);
 				if (path != null) {
-					return wpdom.getFileForASTPath(getLinkageID(), path);
+					file= wpdom.getFileForASTPath(getLinkageID(), path);
 				}
 			} else if (binding instanceof ICPPNamespaceAlias) {
 				String path= ASTInternal.getDeclaredInSourceFileOnly(binding, false);
 				if (path != null) {
-					return wpdom.getFileForASTPath(getLinkageID(), path);
+					file= wpdom.getFileForASTPath(getLinkageID(), path);
 				}
 			}
+			if (file == null && !(binding instanceof IIndexBinding)) {
+				IScope scope;
+				try {
+					scope= binding.getScope();
+					if (scope instanceof ICPPNamespaceScope) {
+						IName name= scope.getScopeName();
+						if (name instanceof IASTName && name.toCharArray().length == 0) {
+							IASTName astName= (IASTName) name;
+							IBinding parentBinding= astName.resolveBinding();
+							String path= ASTInternal.getDeclaredInSourceFileOnly(parentBinding, false);
+							if (path != null) {
+								file= wpdom.getFileForASTPath(getLinkageID(), path);
+							}
+						}
+					}
+				} catch (DOMException e) {
+				}
+			}
+			if (file != null) {
+				return file;
+			}
 		} 
+		if (binding instanceof ICPPMember) {
+			return null;
+		}
 		return super.getLocalToFile(binding);
 	}
 }

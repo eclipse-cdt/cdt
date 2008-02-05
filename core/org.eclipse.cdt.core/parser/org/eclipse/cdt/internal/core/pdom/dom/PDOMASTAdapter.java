@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.core.runtime.CoreException;
 
 public class PDOMASTAdapter {
@@ -173,6 +174,7 @@ public class PDOMASTAdapter {
 			throw new PDOMNotImplementedError();
 		}
 
+		@SuppressWarnings("unchecked")
 		public Object getAdapter(Class adapter) {
 			return fDelegate.getAdapter(adapter);
 		}
@@ -219,6 +221,7 @@ public class PDOMASTAdapter {
 			return fDelegate.findField(name);
 		}
 
+		@SuppressWarnings("unchecked")
 		public Object getAdapter(Class adapter) {
 			return fDelegate.getAdapter(adapter);
 		}
@@ -295,6 +298,7 @@ public class PDOMASTAdapter {
 			return qn;
 		}
 
+		@SuppressWarnings("unchecked")
 		public Object getAdapter(Class adapter) {
 			return fDelegate.getAdapter(adapter);
 		}
@@ -391,8 +395,8 @@ public class PDOMASTAdapter {
 	 * is not appropriate (e.g. binding is not a type).
 	 * Otherwise, if the binding has a name it is returned unchanged.
 	 */
-	public static IBinding getAdapterIfAnonymous(IBinding binding) {
-		if (binding != null) {
+	public static IBinding getAdapterForAnonymousASTBinding(IBinding binding) {
+		if (binding != null && !(binding instanceof IIndexBinding)) {
 			char[] name= binding.getNameCharArray();
 			if (name.length == 0) {
 				if (binding instanceof IEnumeration) {

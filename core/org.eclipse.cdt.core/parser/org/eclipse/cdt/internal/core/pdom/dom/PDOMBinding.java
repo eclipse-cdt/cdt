@@ -162,9 +162,8 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 		return pdom.getDB().getInt(record + LOCAL_TO_FILE);
 	}
 
-	public final void setLocalToFile(PDOMFile file) throws CoreException {
-		final int filerec= file == null ? 0 : file.getRecord();
-		pdom.getDB().putInt(record + LOCAL_TO_FILE, filerec);
+	public final void setLocalToFileRec(int rec) throws CoreException {
+		pdom.getDB().putInt(record + LOCAL_TO_FILE, rec);
 	}
 
 	public String getName() {

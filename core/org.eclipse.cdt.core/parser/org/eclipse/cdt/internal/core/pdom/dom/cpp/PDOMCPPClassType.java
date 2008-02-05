@@ -6,11 +6,11 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * Andrew Ferguson (Symbian)
- * Bryan Wilkinson (QNX)
- * Sergey Prigogin (Google)
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
+ *    Andrew Ferguson (Symbian)
+ *    Bryan Wilkinson (QNX)
+ *    Sergey Prigogin (Google)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
@@ -149,7 +149,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 		
 		if (type instanceof ICPPClassType && !(type instanceof ProblemBinding)) {
 			ICPPClassType ctype= (ICPPClassType) type;
-			ctype= (ICPPClassType) PDOMASTAdapter.getAdapterIfAnonymous(ctype);
+			ctype= (ICPPClassType) PDOMASTAdapter.getAdapterForAnonymousASTBinding(ctype);
 			try {
 				if (ctype.getKey() == getKey()) {
 					char[][] qname= ctype.getQualifiedNameCharArray();

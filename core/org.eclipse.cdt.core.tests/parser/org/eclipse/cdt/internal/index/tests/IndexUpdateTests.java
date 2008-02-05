@@ -27,7 +27,6 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
@@ -524,7 +523,7 @@ public class IndexUpdateTests extends IndexTestBase {
 			int count= 0;
 			for (int i = 0; i < ctors.length; i++) {
 				IIndexBinding ctor= ctors[i];
-				if (((IIndexBinding) ((ICPPClassScope) ctor.getScope()).getClassType()).isFileLocal()) {
+				if (ctor.isFileLocal()) {
 					ctors[count++]= ctor;
 				}
 			}
@@ -542,7 +541,7 @@ public class IndexUpdateTests extends IndexTestBase {
 			count= 0;
 			for (int i = 0; i < assignmentOps.length; i++) {
 				IIndexBinding assignmentOp= assignmentOps[i];
-				if (((IIndexBinding) ((ICPPClassScope) assignmentOp.getScope()).getClassType()).isFileLocal()) {
+				if (assignmentOp.isFileLocal()) {
 					assignmentOps[count++]= assignmentOp;
 				}
 			}

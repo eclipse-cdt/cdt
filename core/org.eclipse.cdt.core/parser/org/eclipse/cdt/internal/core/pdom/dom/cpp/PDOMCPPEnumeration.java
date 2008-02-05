@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * Sergey Prigogin (Google)
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
+ *    Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -115,7 +115,7 @@ class PDOMCPPEnumeration extends PDOMCPPBinding
 			if (type instanceof IEnumeration) {
 				if (type instanceof ICPPBinding) {
 					ICPPBinding etype= (ICPPBinding) type;
-					etype= (ICPPBinding) PDOMASTAdapter.getAdapterIfAnonymous(etype);
+					etype= (ICPPBinding) PDOMASTAdapter.getAdapterForAnonymousASTBinding(etype);
 					char[][] qname = etype.getQualifiedNameCharArray();
 					return hasQualifiedName(qname, qname.length-1);
 				}

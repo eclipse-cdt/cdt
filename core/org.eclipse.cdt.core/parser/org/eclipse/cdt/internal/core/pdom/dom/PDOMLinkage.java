@@ -37,7 +37,6 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
@@ -196,7 +195,6 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 			return null;
 		}
 
-		boolean isFromAST= true;
 		IBinding binding= inputBinding;
 		if (binding instanceof PDOMBinding) {
 			// there is no guarantee, that the binding is from the same PDOM object.
@@ -208,7 +206,6 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 			if (pdomBinding.isFileLocal()) {
 				return null;
 			}
-			isFromAST= false;
 		}
 
 		PDOMBinding result= (PDOMBinding) pdom.getCachedResult(inputBinding);
@@ -216,26 +213,20 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 			return result;
 		}
 
-		int fileLocalRec= 0;
-		if (isFromAST) {
-			// assign names to anonymous types.
-			binding= PDOMASTAdapter.getAdapterIfAnonymous(binding);
-			if (binding == null) {
-				return null;
-			}
-			PDOMFile lf= getLocalToFile(binding);
-			if (lf != null) {
-				fileLocalRec= lf.getRecord();
-			}
+		// assign names to anonymous types.
+		binding= PDOMASTAdapter.getAdapterForAnonymousASTBinding(binding);
+		if (binding == null) {
+			return null;
 		}
-		result= doAdaptBinding(binding, fileLocalRec);
+
+		result= doAdaptBinding(binding);
 		if (result != null) {
 			pdom.putCachedResult(inputBinding, result);
 		}
 		return result;
 	}
 
-	protected abstract PDOMBinding doAdaptBinding(IBinding binding, int fileLocalRec) throws CoreException;
+	protected abstract PDOMBinding doAdaptBinding(IBinding binding) throws CoreException;
 
 	public final PDOMBinding resolveBinding(IASTName name) throws CoreException {
 		IBinding binding= name.resolveBinding();
@@ -260,15 +251,6 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 			if (binding instanceof ICPPTemplateInstance) {
 				scopeBinding = ((ICPPTemplateInstance)binding).getTemplateDefinition();
 			} else {
-				// in case this is a delegate the scope of the delegate can be different to the
-				// scope of the delegating party (e.g. using-declarations)
-				while (binding instanceof ICPPDelegate) {
-					final ICPPDelegate delegate = (ICPPDelegate)binding;
-					if (delegate.getDelegateType() != ICPPDelegate.USING_DECLARATION) {
-						break;
-					}
-					binding= delegate.getBinding();
-				}
 				IScope scope = binding.getScope();
 				if (scope == null) {
 					if (binding instanceof ICPPDeferredTemplateInstance) {
@@ -314,11 +296,13 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 					}
 				}
 
-				if (scope instanceof ICPPNamespaceScope) {
+				while (scope instanceof ICPPNamespaceScope) {
 					IName name= scope.getScopeName();
 					if (name != null && name.toCharArray().length == 0) {
 						// skip unnamed namespaces
-						return null;
+						scope= scope.getParent();
+					} else {
+						break;
 					}
 				}
 
@@ -352,6 +336,21 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 			throw new CoreException(Util.createStatus(e));
 		}
 		return null;
+	}
+
+	
+	final protected int getLocalToFileRec(PDOMNode parent, IBinding binding) throws CoreException {
+		int rec= 0;
+		if (parent instanceof PDOMBinding) {
+			rec= ((PDOMBinding) parent).getLocalToFileRec();
+		}
+		if (rec == 0) {
+			PDOMFile file= getLocalToFile(binding);
+			if (file != null) {
+				rec= file.getRecord();
+			}
+		}
+		return rec;
 	}
 
 	protected PDOMFile getLocalToFile(IBinding binding) throws CoreException {

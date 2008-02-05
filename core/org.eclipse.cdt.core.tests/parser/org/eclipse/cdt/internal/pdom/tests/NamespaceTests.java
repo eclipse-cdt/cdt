@@ -153,8 +153,8 @@ public class NamespaceTests extends PDOMTestBase {
 
 	}
 	
-	public void _testUnnamed() throws Exception {
-		//TODO test case is failing - see Bugzilla 162226
+	public void testUnnamed() throws Exception {
+		// test case for Bugzilla 162226
 		/* Unnamed Namespace */
 		IBinding[] functions = pdom.findBindings(Pattern.compile("function1"), true, INDEX_FILTER, NULL_MONITOR);
 		assertEquals(1, functions.length);

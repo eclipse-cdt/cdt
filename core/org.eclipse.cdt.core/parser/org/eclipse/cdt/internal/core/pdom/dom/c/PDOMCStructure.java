@@ -204,7 +204,7 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 		
 		if (type instanceof ICompositeType) {
 			ICompositeType etype= (ICompositeType) type;
-			etype= (ICompositeType) PDOMASTAdapter.getAdapterIfAnonymous(etype);
+			etype= (ICompositeType) PDOMASTAdapter.getAdapterForAnonymousASTBinding(etype);
 			try {
 				return getDBName().equals(etype.getNameCharArray());
 			} catch (CoreException e) {

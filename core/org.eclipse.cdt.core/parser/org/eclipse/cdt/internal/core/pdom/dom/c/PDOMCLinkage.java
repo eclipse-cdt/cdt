@@ -79,7 +79,7 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 				return null;
 			
 			// assign names to anonymous types.
-			binding= PDOMASTAdapter.getAdapterIfAnonymous(binding);
+			binding= PDOMASTAdapter.getAdapterForAnonymousASTBinding(binding);
 
 			if (binding == null || binding instanceof IParameter)
 				return null; // skip parameters
@@ -111,7 +111,7 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 			}
 
 			if (pdomBinding != null) {
-				pdomBinding.setLocalToFile(getLocalToFile(binding));
+				pdomBinding.setLocalToFileRec(getLocalToFileRec(parent, binding));
 				parent.addChild(pdomBinding);
 				afterAddBinding(pdomBinding);
 			}
@@ -172,12 +172,14 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 			return 0;
 	}
 
-	public final PDOMBinding doAdaptBinding(final IBinding binding, int localToFileRec) throws CoreException {
+	public final PDOMBinding doAdaptBinding(final IBinding binding) throws CoreException {
 		PDOMNode parent = getAdaptedParent(binding, false);
 		if (parent == this) {
+			int localToFileRec= getLocalToFileRec(null, binding);
 			return FindBinding.findBinding(getIndex(), getPDOM(), binding.getNameCharArray(), new int[] {getBindingType(binding)}, localToFileRec);
 		} 
 		if (parent instanceof IPDOMMemberOwner) {
+			int localToFileRec= getLocalToFileRec(parent, binding);
 			return FindBinding.findBinding(parent, getPDOM(), binding.getNameCharArray(), new int[] {getBindingType(binding)}, localToFileRec);
 		}
 		return null;

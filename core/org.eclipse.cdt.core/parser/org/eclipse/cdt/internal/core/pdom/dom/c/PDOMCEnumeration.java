@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 QNX Software Systems and others.
+ * Copyright (c) 2006, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.c;
 
@@ -35,6 +35,7 @@ class PDOMCEnumeration extends PDOMBinding implements IEnumeration, IIndexType {
 
 	private static final int FIRST_ENUMERATOR = PDOMBinding.RECORD_SIZE + 0;
 	
+	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 4;
 	
 	public PDOMCEnumeration(PDOM pdom, PDOMNode parent, IEnumeration enumeration)
@@ -56,14 +57,14 @@ class PDOMCEnumeration extends PDOMBinding implements IEnumeration, IIndexType {
 
 	public IEnumerator[] getEnumerators() throws DOMException {
 		try {
-			ArrayList enums = new ArrayList();
+			ArrayList<PDOMCEnumerator> enums = new ArrayList<PDOMCEnumerator>();
 			for (PDOMCEnumerator enumerator = getFirstEnumerator();
 					enumerator != null;
 					enumerator = enumerator.getNextEnumerator()) {
 				enums.add(enumerator);
 			}
 			
-			IEnumerator[] enumerators = (IEnumerator[])enums.toArray(new IEnumerator[enums.size()]);
+			IEnumerator[] enumerators = enums.toArray(new IEnumerator[enums.size()]);
 			
 			// Reverse the list since they are last in first out
 			int n = enumerators.length;
@@ -105,7 +106,7 @@ class PDOMCEnumeration extends PDOMBinding implements IEnumeration, IIndexType {
 		
 		if (type instanceof IEnumeration) {
 			IEnumeration etype= (IEnumeration) type;
-			etype= (IEnumeration) PDOMASTAdapter.getAdapterIfAnonymous(etype);
+			etype= (IEnumeration) PDOMASTAdapter.getAdapterForAnonymousASTBinding(etype);
 			try {
 				return getDBName().equals(etype.getNameCharArray());
 			} catch (CoreException e) {

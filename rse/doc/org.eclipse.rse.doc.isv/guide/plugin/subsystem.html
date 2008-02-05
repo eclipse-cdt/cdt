@@ -125,9 +125,9 @@ following summarizes the minimum set of classes you will be creating in order to
 			<TD>Represents and manages a live connection to the remote system, doing the connecting and disconnecting.</TD>
 		</TR>
 		<TR>
-			<TD>system manager</TD>
+			<TD>connector service manager</TD>
 			<TD><samp><A href="../../reference/api/org/eclipse/rse/core/subsystems/AbstractConnectorServiceManager.html">AbstractConnectorServiceManager</A></samp></TD>
-			<TD>Manages a single system instance that is shared among multiple subsystems in a single connection. Even if you only have a single subsystem configuration it is useful to use this in
+			<TD>Manages a single connector service instance that is shared among multiple subsystems in a single connection. Even if you only have a single subsystem configuration it is useful to use this in
 			case you later add additional factories, and their subsystems share the same communication pipe. To enable this, all your subsystem classes need to implement a unique interface of your own creation.</TD>
 		</TR>
 		<TR>
@@ -184,9 +184,8 @@ following summarizes the minimum set of classes you will be creating in order to
   <li>Creating a subclass of <A href="../../reference/api/org/eclipse/rse/core/subsystems/SubSystem.html">SubSystem</A>
       that implements the interface you designed in step 1. This will:
       <ul>
-       <li>return a singleton instance of the system manager from step 3 in its <A href="../../reference/api/org/eclipse/rse/core/subsystems/SubSystem.html#getSystemManager()">getSystemManager</A> method,
-       <li>manage persistent properties via calls to the inherited <A href="../../reference/api/org/eclipse/rse/core/subsystems/SubSystem.html#setVendorAttribute(java.lang.String, java.lang.String, java.lang.String)">setVendorAttribute</A>
-       and <A href="../../reference/api/org/eclipse/rse/core/subsystems/SubSystem.html#getVendorAttribute(java.lang.String, java.lang.String)">getVendorAttribute</A> methods,
+       <li>manage persistent properties via calls to the inherited <A href="../../reference/api/org/eclipse/rse/core/model/PropertySetContainer.html#createPropertySet(java.lang.String)">createPropertySet</A>,
+       <A href="../../reference/api/org/eclipse/rse/core/model/PropertySetContainer.html#getPropertySet(java.lang.String)">getPropertySet</A> and related methods,
        <li>use your communications layer to return instances of your model objects in its <A href="../../reference/api/org/eclipse/rse/core/subsystems/SubSystem.html#internalResolveFilterString(org.eclipse.core.runtime.IProgressMonitor, java.lang.String)">internalResolveFilterString</A> method.
        The input to this is one or more strings such as you designed in step 5. It will return all remote resources matching the criteria captured in the input filter string.
        You may also find the <A href="../../reference/api/org/eclipse/rse/services/clientserver/NamePatternMatcher.html">org.eclipse.rse.services.clientserver.NamePatternMatcher</a>

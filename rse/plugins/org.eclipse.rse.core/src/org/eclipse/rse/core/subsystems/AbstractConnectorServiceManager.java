@@ -26,7 +26,7 @@ import org.eclipse.rse.core.model.IHost;
 /**
  * This class is only needed if you need/want to support multiple
  *  subsystems and want them to share a single {@link org.eclipse.rse.core.subsystems.IConnectorService IConnectorService} object per 
- *  system connection. This is the base system manager implementation
+ *  connection. This is the base connector service manager implementation
  *  that returns the same IConnectorService object for all subsystems in the
  *  same system connection, which implement a given interface. 
  * <p>

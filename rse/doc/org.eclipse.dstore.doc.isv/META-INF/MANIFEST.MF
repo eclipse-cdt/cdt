@@ -4,5 +4,4 @@ Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.dstore.doc.isv; singleton:=true
 Bundle-Version: 2.0.0.qualifier
 Bundle-Localization: plugin
-Eclipse-LazyStart: false
 Bundle-Vendor: %providerName

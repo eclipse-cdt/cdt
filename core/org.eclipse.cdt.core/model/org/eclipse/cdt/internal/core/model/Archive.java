@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
@@ -30,7 +31,8 @@ public class Archive extends Openable implements IArchive {
 	IBinaryArchive binaryArchive;
 
 	public Archive(ICElement parent, IFile file, IBinaryArchive ar) {
-		this(parent, file.getLocation(), ar);
+		super(parent, file, ICElement.C_ARCHIVE);
+		binaryArchive = ar;
 	}
 
 	public Archive(ICElement parent, IPath path, IBinaryArchive ar) {

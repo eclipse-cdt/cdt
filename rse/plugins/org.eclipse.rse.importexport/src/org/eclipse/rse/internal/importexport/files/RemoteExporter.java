@@ -55,7 +55,7 @@ class RemoteExporter {
 	public void createFolder(IPath destinationPath) {
 		// IFS: use IFSJaveFile object if necessary
 		if (_host != null)
-			new UniFilePlus(Utilities.getIRemoteFile((IHost) _host, destinationPath.toString())).mkdir();
+			new UniFilePlus(Utilities.getIRemoteFile(_host, destinationPath.toString())).mkdir();
 		else
 			new File(destinationPath.toOSString()).mkdir();
 	}
@@ -91,7 +91,7 @@ class RemoteExporter {
 	 * @throws SystemMessageException TODO
 	 */
 	protected void writeFile(IFile file, IPath destinationPath) throws IOException, CoreException, SystemMessageException {
-		IRemoteFileSubSystem rfss = RemoteFileUtility.getFileSubSystem((IHost) _host);
+		IRemoteFileSubSystem rfss = RemoteFileUtility.getFileSubSystem(_host);
 		String dest = destinationPath.toString();
 		char sep = rfss.getSeparatorChar();
 		if (sep != '/')

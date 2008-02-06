@@ -14,14 +14,11 @@
 package org.eclipse.cdt.internal.core.pdom.dom;
 
 import org.eclipse.cdt.core.dom.ILinkage;
-import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -31,25 +28,12 @@ import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
-import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
-import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexLinkage;
-import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.index.IIndexBindingConstants;
-import org.eclipse.cdt.internal.core.index.IIndexScope;
-import org.eclipse.cdt.internal.core.index.composite.CompositeScope;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.WritablePDOM;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
@@ -235,109 +219,6 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		}
 		return null;
 	}
-
-	/**
-	 * 
-	 * @param binding
-	 * @return <ul><li> null - skip this binding (don't add to pdom)
-	 * <li>this - for filescope
-	 * <li>a PDOMBinding instance - parent adapted binding
-	 * </ul>
-	 * @throws CoreException
-	 */
-	protected PDOMNode getAdaptedParent(IBinding binding, boolean addParent) throws CoreException {
-		try {
-			IBinding scopeBinding = null;
-			if (binding instanceof ICPPTemplateInstance) {
-				scopeBinding = ((ICPPTemplateInstance)binding).getTemplateDefinition();
-			} else {
-				IScope scope = binding.getScope();
-				if (scope == null) {
-					if (binding instanceof ICPPDeferredTemplateInstance) {
-						ICPPDeferredTemplateInstance deferred = (ICPPDeferredTemplateInstance) binding;
-						ICPPTemplateDefinition template = deferred.getTemplateDefinition();
-						scope = template.getScope();
-					} 
-
-					IIndexBinding ib = (binding instanceof IIndexBinding) ? (IIndexBinding) binding : null;
-
-					if (ib == null && binding instanceof ICPPSpecialization) {
-						IBinding spec = ((ICPPSpecialization)binding).getSpecializedBinding();
-						if (spec instanceof IIndexBinding) {
-							ib = (IIndexBinding) spec;
-						}
-					}
-
-					if (ib != null) {
-						// don't adapt file local bindings from other fragments to this one.
-						if (ib.isFileLocal()) {
-							return null;
-						}
-						// in an index the null scope represents global scope.
-						return this;
-					}
-
-					return null;
-				}
-
-				if (scope instanceof IIndexScope) {
-					if (scope instanceof CompositeScope) { // we special case for performance
-						return adaptBinding(((CompositeScope)scope).getRawScopeBinding());
-					} else {
-						return adaptBinding(((IIndexScope) scope).getScopeBinding());
-					}
-				}
-
-				// the scope is from the ast
-				if (scope instanceof ICPPTemplateScope && !(binding instanceof ICPPTemplateParameter || binding instanceof ICPPTemplateInstance)) {
-					scope = scope.getParent();
-					if (scope == null) {
-						return null;
-					}
-				}
-
-				while (scope instanceof ICPPNamespaceScope) {
-					IName name= scope.getScopeName();
-					if (name != null && name.toCharArray().length == 0) {
-						// skip unnamed namespaces
-						scope= scope.getParent();
-					} else {
-						break;
-					}
-				}
-
-				IASTNode scopeNode = ASTInternal.getPhysicalNodeOfScope(scope);
-				if (scopeNode instanceof IASTCompoundStatement) {
-					return null;
-				} else if (scopeNode instanceof IASTTranslationUnit) {
-					return this;
-				} else {
-					if (scope instanceof ICPPClassScope) {
-						scopeBinding = ((ICPPClassScope)scope).getClassType();
-					} else {
-						IName scopeName = scope.getScopeName();
-						if (scopeName instanceof IASTName) {
-							scopeBinding = ((IASTName) scopeName).resolveBinding();
-						}
-					}
-				}
-			}
-			if (scopeBinding != null && scopeBinding != binding) {
-				PDOMBinding scopePDOMBinding = null;
-				if (addParent) {
-					scopePDOMBinding = addBinding(scopeBinding, null);
-				} else {
-					scopePDOMBinding = adaptBinding(scopeBinding);
-				}
-				if (scopePDOMBinding != null)
-					return scopePDOMBinding;
-			}
-		} catch (DOMException e) {
-			throw new CoreException(Util.createStatus(e));
-		}
-		return null;
-	}
-
 	
 	final protected int getLocalToFileRec(PDOMNode parent, IBinding binding) throws CoreException {
 		int rec= 0;

@@ -21,8 +21,10 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
@@ -55,6 +57,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
@@ -66,6 +69,8 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBlockScope;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
+import org.eclipse.cdt.internal.core.index.IIndexScope;
+import org.eclipse.cdt.internal.core.index.composite.CompositeScope;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.WritablePDOM;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
@@ -590,6 +595,103 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		}
 		return null;
 	}
+
+	/**
+	 * Adapts the parent of the given binding to an object contained in this linkage. May return 
+	 * <code>null</code> if the binding cannot be adapted or the binding does not exist and addParent
+	 * is set to <code>false</code>.
+	 * @param binding the binding to adapt
+	 * @return <ul>
+	 * <li> null - skip this binding (don't add to pdom)
+	 * <li> this - for global scope
+	 * <li> a PDOMBinding instance - parent adapted binding
+	 * </ul>
+	 * @throws CoreException
+	 */
+ 	private final PDOMNode getAdaptedParent(IBinding binding, boolean addParent) throws CoreException {
+ 		try {
+ 			IBinding scopeBinding = null;
+ 			if (binding instanceof ICPPTemplateInstance) {
+ 				scopeBinding = ((ICPPTemplateInstance)binding).getTemplateDefinition();
+ 			} else {
+ 				IScope scope = binding.getScope();
+ 				if (binding instanceof IIndexBinding) {
+ 					IIndexBinding ib= (IIndexBinding) binding;
+ 					// don't adapt file local bindings from other fragments to this one.
+ 					if (ib.isFileLocal()) {
+ 						return null;
+ 					}
+ 					// in an index the null scope represents global scope.
+ 					if (scope == null) {
+ 						return this;
+ 					}
+ 				}
+ 				if (scope == null) {
+ 					if (binding instanceof ICPPSpecialization) {
+ 						if (((ICPPSpecialization) binding).getSpecializedBinding() instanceof IIndexBinding) {
+ 							return this;
+ 						}
+ 					}
+ 					return null;
+ 				}
+ 
+ 				if (scope instanceof IIndexScope) {
+ 					if (scope instanceof CompositeScope) { // we special case for performance
+ 						return adaptBinding(((CompositeScope)scope).getRawScopeBinding());
+ 					} else {
+ 						return adaptBinding(((IIndexScope) scope).getScopeBinding());
+ 					}
+ 				}
+ 
+ 				// the scope is from the ast
+ 				if (scope instanceof ICPPTemplateScope && !(binding instanceof ICPPTemplateParameter || binding instanceof ICPPTemplateInstance)) {
+ 					scope = scope.getParent();
+ 					if (scope == null) {
+ 						return null;
+ 					}
+ 				}
+ 
+ 				while (scope instanceof ICPPNamespaceScope) {
+ 					IName name= scope.getScopeName();
+ 					if (name != null && name.toCharArray().length == 0) {
+ 						// skip unnamed namespaces
+ 						scope= scope.getParent();
+ 					} else {
+ 						break;
+ 					}
+ 				}
+ 
+ 				IASTNode scopeNode = ASTInternal.getPhysicalNodeOfScope(scope);
+ 				if (scopeNode instanceof IASTCompoundStatement) {
+ 					return null;
+ 				} else if (scopeNode instanceof IASTTranslationUnit) {
+ 					return this;
+ 				} else {
+ 					if (scope instanceof ICPPClassScope) {
+ 						scopeBinding = ((ICPPClassScope)scope).getClassType();
+ 					} else {
+ 						IName scopeName = scope.getScopeName();
+ 						if (scopeName instanceof IASTName) {
+ 							scopeBinding = ((IASTName) scopeName).resolveBinding();
+ 						}
+ 					}
+ 				}
+ 			}
+ 			if (scopeBinding != null && scopeBinding != binding) {
+ 				PDOMBinding scopePDOMBinding = null;
+ 				if (addParent) {
+ 					scopePDOMBinding = addBinding(scopeBinding, null);
+ 				} else {
+ 					scopePDOMBinding = adaptBinding(scopeBinding);
+ 				}
+ 				if (scopePDOMBinding != null)
+ 					return scopePDOMBinding;
+ 			}
+ 		} catch (DOMException e) {
+ 			throw new CoreException(Util.createStatus(e));
+ 		}
+ 		return null;
+ 	}
 
 	@Override
 	public PDOMNode addType(PDOMNode parent, IType type) throws CoreException {

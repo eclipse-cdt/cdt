@@ -14,8 +14,12 @@
 
 package org.eclipse.cdt.internal.core.pdom.dom.c;
 
+import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -25,12 +29,17 @@ import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.ICBasicType;
+import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
+import org.eclipse.cdt.internal.core.index.IIndexScope;
+import org.eclipse.cdt.internal.core.index.composite.CompositeScope;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
 import org.eclipse.cdt.internal.core.pdom.dom.FindBinding;
@@ -74,7 +83,7 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 			}
 		}
 		else {
-			PDOMNode parent = getAdaptedParent(binding, false);
+			PDOMNode parent = getAdaptedParent(binding);
 			if (parent == null)
 				return null;
 			
@@ -172,8 +181,70 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 			return 0;
 	}
 
+	/**
+	 * Adapts the parent of the given binding to an object contained in this linkage. May return 
+	 * <code>null</code> if the binding cannot be adapted or the binding does not exist and addParent
+	 * is set to <code>false</code>.
+	 * @param binding the binding to adapt
+	 * @return <ul>
+	 * <li> null - skip this binding (don't add to pdom)
+	 * <li> this - for global scope
+	 * <li> a PDOMBinding instance - parent adapted binding
+	 * </ul>
+	 * @throws CoreException
+	 */
+	final private PDOMNode getAdaptedParent(IBinding binding) throws CoreException {
+		try {
+			IScope scope = binding.getScope();
+			if (binding instanceof IIndexBinding) {
+				IIndexBinding ib= (IIndexBinding) binding;
+				if (ib.isFileLocal()) {
+					return null;
+				}
+				// in an index the null scope represents global scope.
+				if (scope == null) {
+					return this;
+				}
+			}
+			
+			if (scope == null) {
+				return null;
+			}
+
+			if (scope instanceof IIndexScope) {
+				if (scope instanceof CompositeScope) { // we special case for performance
+					return adaptBinding(((CompositeScope)scope).getRawScopeBinding());
+				} else {
+					return adaptBinding(((IIndexScope) scope).getScopeBinding());
+				}
+			}
+
+			// the scope is from the ast
+			IASTNode scopeNode = ASTInternal.getPhysicalNodeOfScope(scope);
+			IBinding scopeBinding = null;
+			if (scopeNode instanceof IASTCompoundStatement) {
+				return null;
+			} else if (scopeNode instanceof IASTTranslationUnit) {
+				return this;
+			} else {
+				IName scopeName = scope.getScopeName();
+				if (scopeName instanceof IASTName) {
+					scopeBinding = ((IASTName) scopeName).resolveBinding();
+				}
+			}
+			if (scopeBinding != null && scopeBinding != binding) {
+				PDOMBinding scopePDOMBinding= adaptBinding(scopeBinding);
+				if (scopePDOMBinding != null)
+					return scopePDOMBinding;
+			}
+		} catch (DOMException e) {
+			throw new CoreException(Util.createStatus(e));
+		}
+		return null;
+	}
+
 	public final PDOMBinding doAdaptBinding(final IBinding binding) throws CoreException {
-		PDOMNode parent = getAdaptedParent(binding, false);
+		PDOMNode parent = getAdaptedParent(binding);
 		if (parent == this) {
 			int localToFileRec= getLocalToFileRec(null, binding);
 			return FindBinding.findBinding(getIndex(), getPDOM(), binding.getNameCharArray(), new int[] {getBindingType(binding)}, localToFileRec);

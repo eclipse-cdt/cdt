@@ -38,6 +38,7 @@ import java.util.List;
 
 import lpg.lpgjavaruntime.IToken;
 
+import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -192,7 +193,8 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 		// try parsing as an expression to resolve ambiguities
 		C99SizeofExpressionParser alternateParser = new C99SizeofExpressionParser(C99Parsersym.orderedTerminalSymbols); 
 		alternateParser.setTokens(parser.getRuleTokens());
-		alternateParser.parse(tu);
+		IASTCompletionNode completionNode = alternateParser.parse(tu);
+		addNameToCompletionNode(completionNode);
 		IASTExpression alternateExpr = alternateParser.getParseResult();
 		
 		if(alternateExpr == null || alternateExpr instanceof IASTProblemExpression)
@@ -580,6 +582,14 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	public void consumeDeclarationEmpty() {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		
+		// Don't generate declaration nodes for extra EOC tokens
+		// TODO: the token type must be converted
+		if(asC99Kind(parser.getLeftIToken()) == C99Parsersym.TK_EndOfCompletion)
+			return;
+		
+		List<IToken> tokens = parser.getRuleTokens();
+		
+		System.out.println("what: " + parser.getLeftIToken().getKind());
 		IASTDeclSpecifier declSpecifier   = nodeFactory.newCSimpleDeclSpecifier();
 		IASTSimpleDeclaration declaration = nodeFactory.newSimpleDeclaration(declSpecifier);
 		setOffsetAndLength(declSpecifier);
@@ -690,7 +700,8 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 			C99ExpressionStatementParser expressionParser = new C99ExpressionStatementParser(C99Parsersym.orderedTerminalSymbols); 
 			expressionParser.setTokens(parser.getRuleTokens());
 			// need to pass tu because any completion nodes need to be linked directly to the root
-			expressionParser.parse(tu);
+			IASTCompletionNode compNode = expressionParser.parse(tu);
+			addNameToCompletionNode(compNode);
 			IASTExpression expr = expressionParser.getParseResult();
 			
 			if(expr != null && !(expr instanceof IASTProblemExpression)) { // the parse may fail
@@ -699,10 +710,12 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 			}
 		}
 		
-		if(expressionStatement == null)
+		if(expressionStatement == null) {
 			astStack.push(declarationStatement);
-		else
+		}
+		else {
 			astStack.push(nodeFactory.newAmbiguousStatement(declarationStatement, expressionStatement));
+		}
 			
 		
 		if(TRACE_AST_STACK) System.out.println(astStack);

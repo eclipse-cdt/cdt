@@ -44,10 +44,6 @@ public class C99CompletionBasicTest extends BasicCompletionTest {
 		return C99Language.getDefault();
 	}
 	
-	// The C99 parser currently doesn't support ambiguity nodes.
-	// Therefore calling IASTCompletionNode.getNames() will
-	// never return more than one name.
-	
 	
 	@Override
 	public void testFunction() throws Exception {
@@ -60,9 +56,9 @@ public class C99CompletionBasicTest extends BasicCompletionTest {
 		IASTName[] names = node.getNames();
 
 		// There is only one name, for now
-		assertEquals(1, names.length);
+		assertEquals(2, names.length);
 		// The expression points to our functions
-		IBinding[] bindings = sortBindings(names[0].getCompletionContext().findBindings(names[0], true));
+		IBinding[] bindings = sortBindings(names[1].getCompletionContext().findBindings(names[1], true));
 		// There should be two since they both start with fu
 		assertEquals(2, bindings.length);
 		assertEquals("func", ((IFunction)bindings[0]).getName());//$NON-NLS-1$

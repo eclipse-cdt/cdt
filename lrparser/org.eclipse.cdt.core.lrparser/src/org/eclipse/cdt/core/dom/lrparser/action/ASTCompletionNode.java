@@ -11,6 +11,7 @@
 package org.eclipse.cdt.core.dom.lrparser.action;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -37,7 +38,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
  */
 public class ASTCompletionNode implements IASTCompletionNode {
 
-	private final LinkedList<IASTName> names = new LinkedList<IASTName>();
+	private final List<IASTName> names = new LinkedList<IASTName>();
 	
 	private final String prefix;
 	private final IASTTranslationUnit tu;
@@ -73,7 +74,7 @@ public class ASTCompletionNode implements IASTCompletionNode {
 
 	
 	public IASTName[] getNames() {
-		return names.toArray(new IASTName[0]);
+		return names.toArray(new IASTName[names.size()]);
 	}
 
 	

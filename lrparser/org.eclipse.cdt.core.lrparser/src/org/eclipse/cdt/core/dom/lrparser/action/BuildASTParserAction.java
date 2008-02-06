@@ -98,8 +98,8 @@ public abstract class BuildASTParserAction {
 	
 	// turn debug tracing on and off
 	// TODO move this into an AspectJ project
-	protected static final boolean TRACE_ACTIONS = true;
-	protected static final boolean TRACE_AST_STACK = true;
+	protected static final boolean TRACE_ACTIONS = false;
+	protected static final boolean TRACE_AST_STACK = false;
 	
 	
 	/** Stack that holds the intermediate nodes as the AST is being built */
@@ -160,6 +160,19 @@ public abstract class BuildASTParserAction {
 		}
 		
 		completionNode.addName(name);
+	}
+	
+	
+	/**
+	 * Used to combine completion nodes from secondary parsers into
+	 * the main completion node.
+	 */
+	protected void addNameToCompletionNode(IASTCompletionNode node) {
+		if(node == null)
+			return;
+		
+		for(IASTName name : node.getNames())
+			addNameToCompletionNode(name, node.getPrefix());
 	}
 	
 	
@@ -469,7 +482,8 @@ public abstract class BuildASTParserAction {
 		// try parsing as non-cast to resolve ambiguities
 		C99NoCastExpressionParser alternateParser = new C99NoCastExpressionParser(C99Parsersym.orderedTerminalSymbols); 
 		alternateParser.setTokens(parser.getRuleTokens());
-		alternateParser.parse(tu);
+		IASTCompletionNode compNode = alternateParser.parse(tu);
+		addNameToCompletionNode(compNode);
 		IASTExpression alternateExpr = alternateParser.getParseResult();
 		
 		if(alternateExpr == null || alternateExpr instanceof IASTProblemExpression)

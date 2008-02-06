@@ -62,13 +62,13 @@ public class C99CompleteParser2Tests extends CompleteParser2Tests {
 //			fail();
 //		} catch(AssertionError _) { }
 //	}
-//	
-//	
-//	public void testBug102376() throws Exception { // gcc extension
-//		try {
-//			super.testBug102376();
-//			fail();
-//		} catch(AssertionError _) { }
-//	}
+
+	
+	public void testBug102376() throws Exception { // gcc extension
+		try {
+			super.testBug102376();
+			fail();
+		} catch(AssertionFailedError _) { }
+	}
 	
 }

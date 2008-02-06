@@ -72,10 +72,8 @@ class CPreprocessorAdapter {
 					org.eclipse.cdt.core.parser.IToken domEocToken = preprocessor.nextToken();
 					assert domEocToken.getType() == tEOC;
 					
-					IToken eocToken = createEOCToken(domEocToken, tokenMap);
-					
 					for(int i = 0; i < NUM_EOC_TOKENS; i++)
-						tokenCollector.addToken(eocToken); // reuse the same reference, no need to create several objects
+						tokenCollector.addToken(createEOCToken(domEocToken, tokenMap));
 
 					break;
 				}

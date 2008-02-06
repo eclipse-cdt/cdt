@@ -12,12 +12,13 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [216252] [nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  *******************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui.view;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.rse.internal.shells.ui.ShellResources;
 import org.eclipse.rse.internal.ui.view.SystemViewResources;
 import org.eclipse.rse.shells.ui.view.SystemViewRemoteOutputAdapter;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteError;
@@ -59,10 +60,10 @@ public class SystemViewRemoteErrorAdapter extends SystemViewRemoteOutputAdapter
 					//RSEUIPlugin plugin = RSEUIPlugin.getDefault();
 
 					// path
-					_uniquePropertyDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_ERROR_FILENAME, SystemViewResources.RESID_PROPERTY_ERROR_FILENAME_LABEL, SystemViewResources.RESID_PROPERTY_ERROR_FILENAME_TOOLTIP);
+					_uniquePropertyDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_ERROR_FILENAME, ShellResources.RESID_PROPERTY_ERROR_FILENAME_LABEL, ShellResources.RESID_PROPERTY_ERROR_FILENAME_TOOLTIP);
 
 					// line
-					_uniquePropertyDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_ERROR_LINENO, SystemViewResources.RESID_PROPERTY_ERROR_LINENO_LABEL, SystemViewResources.RESID_PROPERTY_ERROR_LINENO_TOOLTIP);	
+					_uniquePropertyDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_ERROR_LINENO, ShellResources.RESID_PROPERTY_ERROR_LINENO_LABEL, ShellResources.RESID_PROPERTY_ERROR_LINENO_TOOLTIP);	
 				}
 
 				return _uniquePropertyDescriptorArray;

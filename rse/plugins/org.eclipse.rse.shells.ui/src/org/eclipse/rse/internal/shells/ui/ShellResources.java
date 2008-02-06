@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [216252] [nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  *******************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui;
@@ -70,6 +70,23 @@ public class ShellResources extends NLS
 
 	public static String ACTION_OPEN_OUTPUT_LABEL;
 	public static String ACTION_OPEN_OUTPUT_TOOLTIP;
+	
+	// error properties
+	public static String	RESID_PROPERTY_ERROR_FILENAME_LABEL;
+	public static String	RESID_PROPERTY_ERROR_FILENAME_TOOLTIP;
+
+	public static String	RESID_PROPERTY_ERROR_LINENO_LABEL;
+	public static String	RESID_PROPERTY_ERROR_LINENO_TOOLTIP;
+
+	// shell status properties
+	public static String	RESID_PROPERTY_SHELL_STATUS_LABEL;
+	public static String	RESID_PROPERTY_SHELL_STATUS_TOOLTIP;
+	public static String	RESID_PROPERTY_SHELL_CONTEXT_LABEL;
+	public static String	RESID_PROPERTY_SHELL_CONTEXT_TOOLTIP;
+	
+	public static String	RESID_PROPERTY_SHELL_STATUS_ACTIVE_VALUE;
+	public static String	RESID_PROPERTY_SHELL_STATUS_INACTIVE_VALUE;
+
 
 	static 
 	{

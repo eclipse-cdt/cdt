@@ -43,6 +43,7 @@
  * Xuan Chen        (IBM)        - [191370] [dstore] Supertransfer zip not deleted when cancelling copy
  * David McKnight   (IBM)        - [189873] DownloadJob changed to DownloadAndOpenJob
  * David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
+ * David McKnight   (IBM)        - [216252] [nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -233,9 +234,9 @@ public class SystemViewRemoteFileAdapter
 	public SystemViewRemoteFileAdapter()
 	{
 		super();
-		xlatedSize = SystemViewResources.RESID_PROPERTY_FILE_SIZE_VALUE;
-		xlatedCompressedSize = SystemViewResources.RESID_PROPERTY_VIRTUALFILE_COMPRESSEDSIZE_VALUE;
-		xlatedExpandedSize = SystemViewResources.RESID_PROPERTY_ARCHIVE_EXPANDEDSIZE_VALUE;
+		xlatedSize = FileResources.RESID_PROPERTY_FILE_SIZE_VALUE;
+		xlatedCompressedSize = FileResources.RESID_PROPERTY_VIRTUALFILE_COMPRESSEDSIZE_VALUE;
+		xlatedExpandedSize = FileResources.RESID_PROPERTY_ARCHIVE_EXPANDEDSIZE_VALUE;
 			
 	}
 	
@@ -911,44 +912,44 @@ public class SystemViewRemoteFileAdapter
 				//RSEUIPlugin plugin = RSEUIPlugin.getDefault();
 	
 				// classification
-				if (isRegular) uniquePropertyDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_CLASSIFICATION, SystemViewResources.RESID_PROPERTY_FILE_CLASSIFICATION_LABEL, SystemViewResources.RESID_PROPERTY_FILE_CLASSIFICATION_TOOLTIP);
-				else if (isVirtual) uniqueVirtualDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_CLASSIFICATION, SystemViewResources.RESID_PROPERTY_FILE_CLASSIFICATION_LABEL, SystemViewResources.RESID_PROPERTY_FILE_CLASSIFICATION_TOOLTIP);
-				else if (isArchive) uniqueArchiveDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_CLASSIFICATION, SystemViewResources.RESID_PROPERTY_FILE_CLASSIFICATION_LABEL, SystemViewResources.RESID_PROPERTY_FILE_CLASSIFICATION_TOOLTIP);
+				if (isRegular) uniquePropertyDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_CLASSIFICATION, FileResources.RESID_PROPERTY_FILE_CLASSIFICATION_LABEL, FileResources.RESID_PROPERTY_FILE_CLASSIFICATION_TOOLTIP);
+				else if (isVirtual) uniqueVirtualDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_CLASSIFICATION, FileResources.RESID_PROPERTY_FILE_CLASSIFICATION_LABEL, FileResources.RESID_PROPERTY_FILE_CLASSIFICATION_TOOLTIP);
+				else if (isArchive) uniqueArchiveDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_CLASSIFICATION, FileResources.RESID_PROPERTY_FILE_CLASSIFICATION_LABEL, FileResources.RESID_PROPERTY_FILE_CLASSIFICATION_TOOLTIP);
 				
 				// last modified
-				if (isRegular) uniquePropertyDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_LASTMODIFIED, SystemViewResources.RESID_PROPERTY_FILE_LASTMODIFIED_LABEL, SystemViewResources.RESID_PROPERTY_FILE_LASTMODIFIED_TOOLTIP);
-				else if (isVirtual) uniqueVirtualDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_LASTMODIFIED, SystemViewResources.RESID_PROPERTY_FILE_LASTMODIFIED_LABEL, SystemViewResources.RESID_PROPERTY_FILE_LASTMODIFIED_TOOLTIP);
-				else if (isArchive) uniqueArchiveDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_LASTMODIFIED, SystemViewResources.RESID_PROPERTY_FILE_LASTMODIFIED_LABEL, SystemViewResources.RESID_PROPERTY_FILE_LASTMODIFIED_TOOLTIP);
+				if (isRegular) uniquePropertyDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_LASTMODIFIED, FileResources.RESID_PROPERTY_FILE_LASTMODIFIED_LABEL, FileResources.RESID_PROPERTY_FILE_LASTMODIFIED_TOOLTIP);
+				else if (isVirtual) uniqueVirtualDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_LASTMODIFIED, FileResources.RESID_PROPERTY_FILE_LASTMODIFIED_LABEL, FileResources.RESID_PROPERTY_FILE_LASTMODIFIED_TOOLTIP);
+				else if (isArchive) uniqueArchiveDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_LASTMODIFIED, FileResources.RESID_PROPERTY_FILE_LASTMODIFIED_LABEL, FileResources.RESID_PROPERTY_FILE_LASTMODIFIED_TOOLTIP);
 	
 				// size
-				if (isRegular) uniquePropertyDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_SIZE, SystemViewResources.RESID_PROPERTY_FILE_SIZE_LABEL, SystemViewResources.RESID_PROPERTY_FILE_SIZE_TOOLTIP);
-				else if (isVirtual) uniqueVirtualDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_SIZE, SystemViewResources.RESID_PROPERTY_FILE_SIZE_LABEL, SystemViewResources.RESID_PROPERTY_FILE_SIZE_TOOLTIP);
-				else if (isArchive) uniqueArchiveDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_SIZE, SystemViewResources.RESID_PROPERTY_FILE_SIZE_LABEL, SystemViewResources.RESID_PROPERTY_FILE_SIZE_TOOLTIP);
+				if (isRegular) uniquePropertyDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_SIZE, FileResources.RESID_PROPERTY_FILE_SIZE_LABEL, FileResources.RESID_PROPERTY_FILE_SIZE_TOOLTIP);
+				else if (isVirtual) uniqueVirtualDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_SIZE, FileResources.RESID_PROPERTY_FILE_SIZE_LABEL, FileResources.RESID_PROPERTY_FILE_SIZE_TOOLTIP);
+				else if (isArchive) uniqueArchiveDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_SIZE, FileResources.RESID_PROPERTY_FILE_SIZE_LABEL, FileResources.RESID_PROPERTY_FILE_SIZE_TOOLTIP);
 						
 				// canonical path
-				if (isRegular) uniquePropertyDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_CANONICAL_PATH, SystemViewResources.RESID_PROPERTY_FILE_CANONICAL_PATH_LABEL, SystemViewResources.RESID_PROPERTY_FILE_CANONICAL_PATH_TOOLTIP);
-				else if (isVirtual) uniqueVirtualDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_CANONICAL_PATH, SystemViewResources.RESID_PROPERTY_FILE_CANONICAL_PATH_LABEL, SystemViewResources.RESID_PROPERTY_FILE_CANONICAL_PATH_TOOLTIP);
-				else if (isArchive) uniqueArchiveDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_CANONICAL_PATH, SystemViewResources.RESID_PROPERTY_FILE_CANONICAL_PATH_LABEL, SystemViewResources.RESID_PROPERTY_FILE_CANONICAL_PATH_TOOLTIP);
+				if (isRegular) uniquePropertyDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_CANONICAL_PATH, FileResources.RESID_PROPERTY_FILE_CANONICAL_PATH_LABEL, FileResources.RESID_PROPERTY_FILE_CANONICAL_PATH_TOOLTIP);
+				else if (isVirtual) uniqueVirtualDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_CANONICAL_PATH, FileResources.RESID_PROPERTY_FILE_CANONICAL_PATH_LABEL, FileResources.RESID_PROPERTY_FILE_CANONICAL_PATH_TOOLTIP);
+				else if (isArchive) uniqueArchiveDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_CANONICAL_PATH, FileResources.RESID_PROPERTY_FILE_CANONICAL_PATH_LABEL, FileResources.RESID_PROPERTY_FILE_CANONICAL_PATH_TOOLTIP);
 	
 				// file extension
-				if (isRegular) uniquePropertyDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_EXTENSION, SystemViewResources.RESID_PROPERTY_FILE_EXTENSION_LABEL, SystemViewResources.RESID_PROPERTY_FILE_EXTENSION_TOOLTIP);
-				else if (isVirtual) uniqueVirtualDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_EXTENSION, SystemViewResources.RESID_PROPERTY_FILE_EXTENSION_LABEL, SystemViewResources.RESID_PROPERTY_FILE_EXTENSION_TOOLTIP);
-				else if (isArchive) uniqueArchiveDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_EXTENSION, SystemViewResources.RESID_PROPERTY_FILE_EXTENSION_LABEL, SystemViewResources.RESID_PROPERTY_FILE_EXTENSION_TOOLTIP);
+				if (isRegular) uniquePropertyDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_EXTENSION, FileResources.RESID_PROPERTY_FILE_EXTENSION_LABEL, FileResources.RESID_PROPERTY_FILE_EXTENSION_TOOLTIP);
+				else if (isVirtual) uniqueVirtualDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_EXTENSION, FileResources.RESID_PROPERTY_FILE_EXTENSION_LABEL, FileResources.RESID_PROPERTY_FILE_EXTENSION_TOOLTIP);
+				else if (isArchive) uniqueArchiveDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_EXTENSION, FileResources.RESID_PROPERTY_FILE_EXTENSION_LABEL, FileResources.RESID_PROPERTY_FILE_EXTENSION_TOOLTIP);
 		
 				// file permissions
-				if (isRegular) uniquePropertyDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_PERMISSIONS, SystemViewResources.RESID_PROPERTY_FILE_PERMISSIONS_LABEL, SystemViewResources.RESID_PROPERTY_FILE_PERMISSIONS_TOOLTIP);
-				else if (isVirtual) uniqueVirtualDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_PERMISSIONS, SystemViewResources.RESID_PROPERTY_FILE_PERMISSIONS_LABEL, SystemViewResources.RESID_PROPERTY_FILE_PERMISSIONS_TOOLTIP);
-				else if (isArchive) uniqueArchiveDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_PERMISSIONS, SystemViewResources.RESID_PROPERTY_FILE_PERMISSIONS_LABEL, SystemViewResources.RESID_PROPERTY_FILE_PERMISSIONS_TOOLTIP);
+				if (isRegular) uniquePropertyDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_PERMISSIONS, FileResources.RESID_PROPERTY_FILE_PERMISSIONS_LABEL, FileResources.RESID_PROPERTY_FILE_PERMISSIONS_TOOLTIP);
+				else if (isVirtual) uniqueVirtualDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_PERMISSIONS, FileResources.RESID_PROPERTY_FILE_PERMISSIONS_LABEL, FileResources.RESID_PROPERTY_FILE_PERMISSIONS_TOOLTIP);
+				else if (isArchive) uniqueArchiveDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_PERMISSIONS, FileResources.RESID_PROPERTY_FILE_PERMISSIONS_LABEL, FileResources.RESID_PROPERTY_FILE_PERMISSIONS_TOOLTIP);
 
 				// file owner
-				if (isRegular) uniquePropertyDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_OWNER, SystemViewResources.RESID_PROPERTY_FILE_OWNER_LABEL, SystemViewResources.RESID_PROPERTY_FILE_OWNER_TOOLTIP);
-				else if (isVirtual) uniqueVirtualDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_OWNER, SystemViewResources.RESID_PROPERTY_FILE_OWNER_LABEL, SystemViewResources.RESID_PROPERTY_FILE_OWNER_TOOLTIP);
-				else if (isArchive) uniqueArchiveDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_OWNER, SystemViewResources.RESID_PROPERTY_FILE_OWNER_LABEL, SystemViewResources.RESID_PROPERTY_FILE_OWNER_TOOLTIP);
+				if (isRegular) uniquePropertyDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_OWNER, FileResources.RESID_PROPERTY_FILE_OWNER_LABEL, FileResources.RESID_PROPERTY_FILE_OWNER_TOOLTIP);
+				else if (isVirtual) uniqueVirtualDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_OWNER, FileResources.RESID_PROPERTY_FILE_OWNER_LABEL, FileResources.RESID_PROPERTY_FILE_OWNER_TOOLTIP);
+				else if (isArchive) uniqueArchiveDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_OWNER, FileResources.RESID_PROPERTY_FILE_OWNER_LABEL, FileResources.RESID_PROPERTY_FILE_OWNER_TOOLTIP);
 				
 				// file group
-				if (isRegular) uniquePropertyDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_GROUP, SystemViewResources.RESID_PROPERTY_FILE_GROUP_LABEL, SystemViewResources.RESID_PROPERTY_FILE_GROUP_TOOLTIP);
-				else if (isVirtual) uniqueVirtualDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_GROUP, SystemViewResources.RESID_PROPERTY_FILE_GROUP_LABEL, SystemViewResources.RESID_PROPERTY_FILE_GROUP_TOOLTIP);
-				else if (isArchive) uniqueArchiveDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_GROUP, SystemViewResources.RESID_PROPERTY_FILE_GROUP_LABEL, SystemViewResources.RESID_PROPERTY_FILE_GROUP_TOOLTIP);
+				if (isRegular) uniquePropertyDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_GROUP, FileResources.RESID_PROPERTY_FILE_GROUP_LABEL, FileResources.RESID_PROPERTY_FILE_GROUP_TOOLTIP);
+				else if (isVirtual) uniqueVirtualDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_GROUP, FileResources.RESID_PROPERTY_FILE_GROUP_LABEL, FileResources.RESID_PROPERTY_FILE_GROUP_TOOLTIP);
+				else if (isArchive) uniqueArchiveDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_GROUP, FileResources.RESID_PROPERTY_FILE_GROUP_LABEL, FileResources.RESID_PROPERTY_FILE_GROUP_TOOLTIP);
 
 				
 				if (isVirtual)
@@ -956,26 +957,26 @@ public class SystemViewRemoteFileAdapter
 					// add virtual property descriptors...
 					
 					// compressed size
-					uniqueVirtualDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_VIRTUAL_COMPRESSEDSIZE, SystemViewResources.RESID_PROPERTY_VIRTUALFILE_COMPRESSEDSIZE_LABEL, SystemViewResources.RESID_PROPERTY_VIRTUALFILE_COMPRESSEDSIZE_DESCRIPTION);
+					uniqueVirtualDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_VIRTUAL_COMPRESSEDSIZE, FileResources.RESID_PROPERTY_VIRTUALFILE_COMPRESSEDSIZE_LABEL, FileResources.RESID_PROPERTY_VIRTUALFILE_COMPRESSEDSIZE_DESCRIPTION);
 				
 					// compression ratio
-					uniqueVirtualDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_VIRTUAL_COMPRESSIONRATIO, SystemViewResources.RESID_PROPERTY_VIRTUALFILE_COMPRESSIONRATIO_LABEL, SystemViewResources.RESID_PROPERTY_VIRTUALFILE_COMPRESSIONRATIO_DESCRIPTION);
+					uniqueVirtualDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_VIRTUAL_COMPRESSIONRATIO, FileResources.RESID_PROPERTY_VIRTUALFILE_COMPRESSIONRATIO_LABEL, FileResources.RESID_PROPERTY_VIRTUALFILE_COMPRESSIONRATIO_DESCRIPTION);
 				
 					// compression method
-					uniqueVirtualDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_VIRTUAL_COMPRESSIONMETHOD, SystemViewResources.RESID_PROPERTY_VIRTUALFILE_COMPRESSIONMETHOD_LABEL,  SystemViewResources.RESID_PROPERTY_VIRTUALFILE_COMPRESSIONMETHOD_DESCRIPTION);
+					uniqueVirtualDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_VIRTUAL_COMPRESSIONMETHOD, FileResources.RESID_PROPERTY_VIRTUALFILE_COMPRESSIONMETHOD_LABEL,  FileResources.RESID_PROPERTY_VIRTUALFILE_COMPRESSIONMETHOD_DESCRIPTION);
 	
 					// comment
-					uniqueVirtualDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_VIRTUAL_COMMENT, SystemViewResources.RESID_PROPERTY_VIRTUALFILE_COMMENT_LABEL,  SystemViewResources.RESID_PROPERTY_VIRTUALFILE_COMMENT_DESCRIPTION);
+					uniqueVirtualDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_VIRTUAL_COMMENT, FileResources.RESID_PROPERTY_VIRTUALFILE_COMMENT_LABEL,  FileResources.RESID_PROPERTY_VIRTUALFILE_COMMENT_DESCRIPTION);
 				}
 				else if (isArchive)
 				{
 					// add archive property descriptors...
 					
 					// expanded size
-					uniqueArchiveDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_ARCHIVE_EXPANDEDSIZE, SystemViewResources.RESID_PROPERTY_ARCHIVE_EXPANDEDSIZE_LABEL, SystemViewResources.RESID_PROPERTY_ARCHIVE_EXPANDEDSIZE_DESCRIPTION);
+					uniqueArchiveDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_ARCHIVE_EXPANDEDSIZE, FileResources.RESID_PROPERTY_ARCHIVE_EXPANDEDSIZE_LABEL, FileResources.RESID_PROPERTY_ARCHIVE_EXPANDEDSIZE_DESCRIPTION);
 				
 					// comment
-					uniqueArchiveDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_ARCHIVE_COMMENT, SystemViewResources.RESID_PROPERTY_ARCHIVE_COMMENT_LABEL, SystemViewResources.RESID_PROPERTY_ARCHIVE_COMMENT_DESCRIPTION);
+					uniqueArchiveDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_ARCHIVE_COMMENT, FileResources.RESID_PROPERTY_ARCHIVE_COMMENT_LABEL, FileResources.RESID_PROPERTY_ARCHIVE_COMMENT_DESCRIPTION);
 				}
 			}
 
@@ -1043,54 +1044,54 @@ public class SystemViewRemoteFileAdapter
 			briefPropertyDescriptorArray[++briefIdx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILTERSTRING, SystemViewResources.RESID_PROPERTY_FILTERSTRING_LABEL,SystemViewResources.RESID_PROPERTY_FILTERSTRING_TOOLTIP);
 
 			// canonical path
-			if (isRegular) propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_CANONICAL_PATH, SystemViewResources.RESID_PROPERTY_FILE_CANONICAL_PATH_LABEL,SystemViewResources.RESID_PROPERTY_FILE_CANONICAL_PATH_TOOLTIP);
-			else if (isVirtual) virtualDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_CANONICAL_PATH, SystemViewResources.RESID_PROPERTY_FILE_CANONICAL_PATH_LABEL,SystemViewResources.RESID_PROPERTY_FILE_CANONICAL_PATH_TOOLTIP);
-			else if (isArchive) archiveDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_CANONICAL_PATH, SystemViewResources.RESID_PROPERTY_FILE_CANONICAL_PATH_LABEL,SystemViewResources.RESID_PROPERTY_FILE_CANONICAL_PATH_TOOLTIP);
+			if (isRegular) propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_CANONICAL_PATH, FileResources.RESID_PROPERTY_FILE_CANONICAL_PATH_LABEL,FileResources.RESID_PROPERTY_FILE_CANONICAL_PATH_TOOLTIP);
+			else if (isVirtual) virtualDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_CANONICAL_PATH, FileResources.RESID_PROPERTY_FILE_CANONICAL_PATH_LABEL,FileResources.RESID_PROPERTY_FILE_CANONICAL_PATH_TOOLTIP);
+			else if (isArchive) archiveDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_CANONICAL_PATH, FileResources.RESID_PROPERTY_FILE_CANONICAL_PATH_LABEL,FileResources.RESID_PROPERTY_FILE_CANONICAL_PATH_TOOLTIP);
 			
 			// last modified
-			if (isRegular) propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_LASTMODIFIED, SystemViewResources.RESID_PROPERTY_FILE_LASTMODIFIED_LABEL, SystemViewResources.RESID_PROPERTY_FILE_LASTMODIFIED_TOOLTIP);
-			else if (isVirtual) virtualDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_LASTMODIFIED, SystemViewResources.RESID_PROPERTY_FILE_LASTMODIFIED_LABEL,SystemViewResources.RESID_PROPERTY_FILE_LASTMODIFIED_TOOLTIP);
-			else if (isArchive) archiveDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_LASTMODIFIED, SystemViewResources.RESID_PROPERTY_FILE_LASTMODIFIED_LABEL,SystemViewResources.RESID_PROPERTY_FILE_LASTMODIFIED_TOOLTIP);
+			if (isRegular) propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_LASTMODIFIED, FileResources.RESID_PROPERTY_FILE_LASTMODIFIED_LABEL, FileResources.RESID_PROPERTY_FILE_LASTMODIFIED_TOOLTIP);
+			else if (isVirtual) virtualDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_LASTMODIFIED, FileResources.RESID_PROPERTY_FILE_LASTMODIFIED_LABEL,FileResources.RESID_PROPERTY_FILE_LASTMODIFIED_TOOLTIP);
+			else if (isArchive) archiveDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_LASTMODIFIED, FileResources.RESID_PROPERTY_FILE_LASTMODIFIED_LABEL,FileResources.RESID_PROPERTY_FILE_LASTMODIFIED_TOOLTIP);
 
 			// size
-			if (isRegular) propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_SIZE, SystemViewResources.RESID_PROPERTY_FILE_SIZE_LABEL, SystemViewResources.RESID_PROPERTY_FILE_SIZE_TOOLTIP);
-			else if (isVirtual) virtualDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_SIZE, SystemViewResources.RESID_PROPERTY_FILE_SIZE_LABEL, SystemViewResources.RESID_PROPERTY_FILE_SIZE_TOOLTIP);
-			else if (isArchive) archiveDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_SIZE, SystemViewResources.RESID_PROPERTY_FILE_SIZE_LABEL, SystemViewResources.RESID_PROPERTY_FILE_SIZE_TOOLTIP);
+			if (isRegular) propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_SIZE, FileResources.RESID_PROPERTY_FILE_SIZE_LABEL, FileResources.RESID_PROPERTY_FILE_SIZE_TOOLTIP);
+			else if (isVirtual) virtualDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_SIZE, FileResources.RESID_PROPERTY_FILE_SIZE_LABEL, FileResources.RESID_PROPERTY_FILE_SIZE_TOOLTIP);
+			else if (isArchive) archiveDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_SIZE, FileResources.RESID_PROPERTY_FILE_SIZE_LABEL, FileResources.RESID_PROPERTY_FILE_SIZE_TOOLTIP);
 
 			// classification
-			if (isRegular) propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_CLASSIFICATION, SystemViewResources.RESID_PROPERTY_FILE_CLASSIFICATION_LABEL, SystemViewResources.RESID_PROPERTY_FILE_CLASSIFICATION_TOOLTIP);
-			else if (isVirtual) virtualDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_CLASSIFICATION, SystemViewResources.RESID_PROPERTY_FILE_CLASSIFICATION_LABEL, SystemViewResources.RESID_PROPERTY_FILE_CLASSIFICATION_TOOLTIP);
-			else if (isArchive) archiveDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_CLASSIFICATION, SystemViewResources.RESID_PROPERTY_FILE_CLASSIFICATION_LABEL, SystemViewResources.RESID_PROPERTY_FILE_CLASSIFICATION_TOOLTIP);
+			if (isRegular) propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_CLASSIFICATION, FileResources.RESID_PROPERTY_FILE_CLASSIFICATION_LABEL, FileResources.RESID_PROPERTY_FILE_CLASSIFICATION_TOOLTIP);
+			else if (isVirtual) virtualDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_CLASSIFICATION, FileResources.RESID_PROPERTY_FILE_CLASSIFICATION_LABEL, FileResources.RESID_PROPERTY_FILE_CLASSIFICATION_TOOLTIP);
+			else if (isArchive) archiveDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_CLASSIFICATION, FileResources.RESID_PROPERTY_FILE_CLASSIFICATION_LABEL, FileResources.RESID_PROPERTY_FILE_CLASSIFICATION_TOOLTIP);
 			
 			// readonly
-			if (isRegular) propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_READONLY, SystemViewResources.RESID_PROPERTY_FILE_READONLY_LABEL, SystemViewResources.RESID_PROPERTY_FILE_READONLY_TOOLTIP);
-			else if (isVirtual) virtualDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_READONLY, SystemViewResources.RESID_PROPERTY_FILE_READONLY_LABEL, SystemViewResources.RESID_PROPERTY_FILE_READONLY_TOOLTIP);
-			else if (isArchive) archiveDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_READONLY, SystemViewResources.RESID_PROPERTY_FILE_READONLY_LABEL, SystemViewResources.RESID_PROPERTY_FILE_READONLY_TOOLTIP);
+			if (isRegular) propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_READONLY, FileResources.RESID_PROPERTY_FILE_READONLY_LABEL, FileResources.RESID_PROPERTY_FILE_READONLY_TOOLTIP);
+			else if (isVirtual) virtualDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_READONLY, FileResources.RESID_PROPERTY_FILE_READONLY_LABEL, FileResources.RESID_PROPERTY_FILE_READONLY_TOOLTIP);
+			else if (isArchive) archiveDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_READONLY, FileResources.RESID_PROPERTY_FILE_READONLY_LABEL, FileResources.RESID_PROPERTY_FILE_READONLY_TOOLTIP);
 
 			// hidden
-			if (isRegular) propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_HIDDEN, SystemViewResources.RESID_PROPERTY_FILE_HIDDEN_LABEL, SystemViewResources.RESID_PROPERTY_FILE_HIDDEN_TOOLTIP);
-			else if (isVirtual) virtualDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_HIDDEN, SystemViewResources.RESID_PROPERTY_FILE_HIDDEN_LABEL, SystemViewResources.RESID_PROPERTY_FILE_HIDDEN_TOOLTIP);
-			else if (isArchive) archiveDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_HIDDEN, SystemViewResources.RESID_PROPERTY_FILE_HIDDEN_LABEL, SystemViewResources.RESID_PROPERTY_FILE_HIDDEN_TOOLTIP);
+			if (isRegular) propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_HIDDEN, FileResources.RESID_PROPERTY_FILE_HIDDEN_LABEL, FileResources.RESID_PROPERTY_FILE_HIDDEN_TOOLTIP);
+			else if (isVirtual) virtualDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_HIDDEN, FileResources.RESID_PROPERTY_FILE_HIDDEN_LABEL, FileResources.RESID_PROPERTY_FILE_HIDDEN_TOOLTIP);
+			else if (isArchive) archiveDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_HIDDEN, FileResources.RESID_PROPERTY_FILE_HIDDEN_LABEL, FileResources.RESID_PROPERTY_FILE_HIDDEN_TOOLTIP);
 
 			// file extension
-			if (isRegular) propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_EXTENSION, SystemViewResources.RESID_PROPERTY_FILE_EXTENSION_LABEL, SystemViewResources.RESID_PROPERTY_FILE_EXTENSION_TOOLTIP);
-			else if (isVirtual) virtualDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_EXTENSION, SystemViewResources.RESID_PROPERTY_FILE_EXTENSION_LABEL, SystemViewResources.RESID_PROPERTY_FILE_EXTENSION_TOOLTIP);
-			else if (isArchive) archiveDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_EXTENSION, SystemViewResources.RESID_PROPERTY_FILE_EXTENSION_LABEL, SystemViewResources.RESID_PROPERTY_FILE_EXTENSION_TOOLTIP);
+			if (isRegular) propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_EXTENSION, FileResources.RESID_PROPERTY_FILE_EXTENSION_LABEL, FileResources.RESID_PROPERTY_FILE_EXTENSION_TOOLTIP);
+			else if (isVirtual) virtualDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_EXTENSION, FileResources.RESID_PROPERTY_FILE_EXTENSION_LABEL, FileResources.RESID_PROPERTY_FILE_EXTENSION_TOOLTIP);
+			else if (isArchive) archiveDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_EXTENSION, FileResources.RESID_PROPERTY_FILE_EXTENSION_LABEL, FileResources.RESID_PROPERTY_FILE_EXTENSION_TOOLTIP);
 
 			// file permissions
-			if (isRegular) propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_PERMISSIONS, SystemViewResources.RESID_PROPERTY_FILE_PERMISSIONS_LABEL, SystemViewResources.RESID_PROPERTY_FILE_PERMISSIONS_TOOLTIP);
-			else if (isVirtual) virtualDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_PERMISSIONS, SystemViewResources.RESID_PROPERTY_FILE_PERMISSIONS_LABEL, SystemViewResources.RESID_PROPERTY_FILE_PERMISSIONS_TOOLTIP);
-			else if (isArchive) archiveDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_PERMISSIONS, SystemViewResources.RESID_PROPERTY_FILE_PERMISSIONS_LABEL, SystemViewResources.RESID_PROPERTY_FILE_PERMISSIONS_TOOLTIP);
+			if (isRegular) propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_PERMISSIONS, FileResources.RESID_PROPERTY_FILE_PERMISSIONS_LABEL, FileResources.RESID_PROPERTY_FILE_PERMISSIONS_TOOLTIP);
+			else if (isVirtual) virtualDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_PERMISSIONS, FileResources.RESID_PROPERTY_FILE_PERMISSIONS_LABEL, FileResources.RESID_PROPERTY_FILE_PERMISSIONS_TOOLTIP);
+			else if (isArchive) archiveDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_PERMISSIONS, FileResources.RESID_PROPERTY_FILE_PERMISSIONS_LABEL, FileResources.RESID_PROPERTY_FILE_PERMISSIONS_TOOLTIP);
 
 			// file owner
-			if (isRegular) propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_OWNER, SystemViewResources.RESID_PROPERTY_FILE_OWNER_LABEL, SystemViewResources.RESID_PROPERTY_FILE_OWNER_TOOLTIP);
-			else if (isVirtual) virtualDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_OWNER, SystemViewResources.RESID_PROPERTY_FILE_OWNER_LABEL, SystemViewResources.RESID_PROPERTY_FILE_OWNER_TOOLTIP);
-			else if (isArchive) archiveDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_OWNER, SystemViewResources.RESID_PROPERTY_FILE_OWNER_LABEL, SystemViewResources.RESID_PROPERTY_FILE_OWNER_TOOLTIP);
+			if (isRegular) propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_OWNER, FileResources.RESID_PROPERTY_FILE_OWNER_LABEL, FileResources.RESID_PROPERTY_FILE_OWNER_TOOLTIP);
+			else if (isVirtual) virtualDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_OWNER, FileResources.RESID_PROPERTY_FILE_OWNER_LABEL, FileResources.RESID_PROPERTY_FILE_OWNER_TOOLTIP);
+			else if (isArchive) archiveDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_OWNER, FileResources.RESID_PROPERTY_FILE_OWNER_LABEL, FileResources.RESID_PROPERTY_FILE_OWNER_TOOLTIP);
 			
 			// file group
-			if (isRegular) propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_GROUP, SystemViewResources.RESID_PROPERTY_FILE_GROUP_LABEL, SystemViewResources.RESID_PROPERTY_FILE_GROUP_TOOLTIP);
-			else if (isVirtual) virtualDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_GROUP, SystemViewResources.RESID_PROPERTY_FILE_GROUP_LABEL, SystemViewResources.RESID_PROPERTY_FILE_GROUP_TOOLTIP);
-			else if (isArchive) archiveDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_GROUP, SystemViewResources.RESID_PROPERTY_FILE_GROUP_LABEL, SystemViewResources.RESID_PROPERTY_FILE_GROUP_TOOLTIP);
+			if (isRegular) propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_GROUP, FileResources.RESID_PROPERTY_FILE_GROUP_LABEL, FileResources.RESID_PROPERTY_FILE_GROUP_TOOLTIP);
+			else if (isVirtual) virtualDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_GROUP, FileResources.RESID_PROPERTY_FILE_GROUP_LABEL, FileResources.RESID_PROPERTY_FILE_GROUP_TOOLTIP);
+			else if (isArchive) archiveDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_GROUP, FileResources.RESID_PROPERTY_FILE_GROUP_LABEL, FileResources.RESID_PROPERTY_FILE_GROUP_TOOLTIP);
 
 			
 			if (debug)
@@ -1116,16 +1117,16 @@ public class SystemViewRemoteFileAdapter
 				// add virtual property descriptors...
 				
 				// compressed size
-				virtualDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_VIRTUAL_COMPRESSEDSIZE, SystemViewResources.RESID_PROPERTY_VIRTUALFILE_COMPRESSEDSIZE_LABEL, SystemViewResources.RESID_PROPERTY_VIRTUALFILE_COMPRESSEDSIZE_DESCRIPTION);
+				virtualDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_VIRTUAL_COMPRESSEDSIZE, FileResources.RESID_PROPERTY_VIRTUALFILE_COMPRESSEDSIZE_LABEL, FileResources.RESID_PROPERTY_VIRTUALFILE_COMPRESSEDSIZE_DESCRIPTION);
 			
 				// compression ratio
-				virtualDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_VIRTUAL_COMPRESSIONRATIO, SystemViewResources.RESID_PROPERTY_VIRTUALFILE_COMPRESSIONRATIO_LABEL, SystemViewResources.RESID_PROPERTY_VIRTUALFILE_COMPRESSIONRATIO_DESCRIPTION);
+				virtualDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_VIRTUAL_COMPRESSIONRATIO, FileResources.RESID_PROPERTY_VIRTUALFILE_COMPRESSIONRATIO_LABEL, FileResources.RESID_PROPERTY_VIRTUALFILE_COMPRESSIONRATIO_DESCRIPTION);
 			
 				// compression method
-				virtualDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_VIRTUAL_COMPRESSIONMETHOD, SystemViewResources.RESID_PROPERTY_VIRTUALFILE_COMPRESSIONMETHOD_LABEL, SystemViewResources.RESID_PROPERTY_VIRTUALFILE_COMPRESSIONMETHOD_DESCRIPTION);
+				virtualDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_VIRTUAL_COMPRESSIONMETHOD, FileResources.RESID_PROPERTY_VIRTUALFILE_COMPRESSIONMETHOD_LABEL, FileResources.RESID_PROPERTY_VIRTUALFILE_COMPRESSIONMETHOD_DESCRIPTION);
 
 				// comment
-				virtualDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_VIRTUAL_COMMENT, SystemViewResources.RESID_PROPERTY_VIRTUALFILE_COMMENT_LABEL,  SystemViewResources.RESID_PROPERTY_VIRTUALFILE_COMMENT_DESCRIPTION);
+				virtualDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_VIRTUAL_COMMENT, FileResources.RESID_PROPERTY_VIRTUALFILE_COMMENT_LABEL,  FileResources.RESID_PROPERTY_VIRTUALFILE_COMMENT_DESCRIPTION);
 			}
 
 			else if (isArchive)
@@ -1133,10 +1134,10 @@ public class SystemViewRemoteFileAdapter
 				// add archive property descriptors...
 				
 				// expanded size
-				archiveDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_ARCHIVE_EXPANDEDSIZE, SystemViewResources.RESID_PROPERTY_ARCHIVE_EXPANDEDSIZE_LABEL,  SystemViewResources.RESID_PROPERTY_ARCHIVE_EXPANDEDSIZE_DESCRIPTION);
+				archiveDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_ARCHIVE_EXPANDEDSIZE, FileResources.RESID_PROPERTY_ARCHIVE_EXPANDEDSIZE_LABEL,  FileResources.RESID_PROPERTY_ARCHIVE_EXPANDEDSIZE_DESCRIPTION);
 			
 				// comment
-				archiveDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_ARCHIVE_COMMENT, SystemViewResources.RESID_PROPERTY_ARCHIVE_COMMENT_LABEL, SystemViewResources.RESID_PROPERTY_ARCHIVE_COMMENT_DESCRIPTION);
+				archiveDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_ARCHIVE_COMMENT, FileResources.RESID_PROPERTY_ARCHIVE_COMMENT_LABEL, FileResources.RESID_PROPERTY_ARCHIVE_COMMENT_DESCRIPTION);
 			}
 		
 		}

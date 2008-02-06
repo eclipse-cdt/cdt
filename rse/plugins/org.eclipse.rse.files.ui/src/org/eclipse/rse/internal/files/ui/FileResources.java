@@ -14,6 +14,7 @@
  * David Dykstal (IBM) - 176488: adding some text for the cache limit checkbox
  * David McKnight(IBM) - [210142] for accessibility need transfer mode toggle button
  * David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
+ * David McKnight   (IBM)        - [216252] [nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui;
@@ -282,6 +283,76 @@ public class FileResources extends NLS
 	public static String MESSAGE_PENDING;
 	public static String MESSAGE_NOT_SUPPORTED;
 	public static String MESSAGE_GETTING_PERMISSIONS;
+	
+	public static String	RESID_PROPERTY_ARCHIVE_EXPANDEDSIZE_LABEL;
+
+	public static String	RESID_PROPERTY_ARCHIVE_EXPANDEDSIZE_VALUE;
+	public static String	RESID_PROPERTY_ARCHIVE_EXPANDEDSIZE_DESCRIPTION;
+
+	public static String	RESID_PROPERTY_ARCHIVE_COMMENT_LABEL;
+	public static String	RESID_PROPERTY_ARCHIVE_COMMENT_DESCRIPTION;
+
+	
+	public static String	RESID_PROPERTY_VIRTUALFILE_COMPRESSEDSIZE_LABEL;
+	public static String	RESID_PROPERTY_VIRTUALFILE_COMPRESSEDSIZE_VALUE;
+	public static String	RESID_PROPERTY_VIRTUALFILE_COMPRESSEDSIZE_DESCRIPTION;
+
+	public static String	RESID_PROPERTY_VIRTUALFILE_COMMENT_LABEL;
+	public static String	RESID_PROPERTY_VIRTUALFILE_COMMENT_DESCRIPTION;
+	
+	public static String	RESID_PROPERTY_VIRTUALFILE_COMPRESSIONRATIO_LABEL;
+	public static String	RESID_PROPERTY_VIRTUALFILE_COMPRESSIONRATIO_DESCRIPTION;
+
+	public static String	RESID_PROPERTY_VIRTUALFILE_COMPRESSIONMETHOD_LABEL;
+	public static String	RESID_PROPERTY_VIRTUALFILE_COMPRESSIONMETHOD_DESCRIPTION;
+
+	public static String	RESID_PROPERTY_FILE_SIZE_VALUE;
+	
+	public static String	RESID_PROPERTY_FILE_LASTMODIFIED_LABEL;
+	public static String	RESID_PROPERTY_FILE_LASTMODIFIED_TOOLTIP;
+	
+	public static String	RESID_PROPERTY_FILE_SIZE_LABEL;
+	public static String	RESID_PROPERTY_FILE_SIZE_TOOLTIP;
+
+	public static String	RESID_PROPERTY_FILE_CANONICAL_PATH_LABEL;
+	public static String	RESID_PROPERTY_FILE_CANONICAL_PATH_TOOLTIP;
+
+	public static String	RESID_PROPERTY_FILE_EXTENSION_LABEL;
+	public static String	RESID_PROPERTY_FILE_EXTENSION_TOOLTIP;
+	
+	public static String	RESID_PROPERTY_FILE_PERMISSIONS_LABEL;
+	public static String	RESID_PROPERTY_FILE_PERMISSIONS_TOOLTIP;
+	
+	public static String	RESID_PROPERTY_FILE_OWNER_LABEL;
+	public static String	RESID_PROPERTY_FILE_OWNER_TOOLTIP;
+	
+	public static String	RESID_PROPERTY_FILE_GROUP_LABEL;
+	public static String	RESID_PROPERTY_FILE_GROUP_TOOLTIP;
+	
+	public static String	RESID_PROPERTY_FILE_CLASSIFICATION_LABEL;
+	public static String	RESID_PROPERTY_FILE_CLASSIFICATION_TOOLTIP;
+
+	public static String	RESID_PROPERTY_FILE_READONLY_LABEL;
+	public static String	RESID_PROPERTY_FILE_READONLY_TOOLTIP;
+
+	public static String	RESID_PROPERTY_FILE_READABLE_LABEL;
+	public static String	RESID_PROPERTY_FILE_READABLE_TOOLTIP;
+
+	public static String	RESID_PROPERTY_FILE_WRITABLE_LABEL;
+	public static String	RESID_PROPERTY_FILE_WRITABLE_TOOLTIP;
+
+	public static String	RESID_PROPERTY_FILE_HIDDEN_LABEL;
+	public static String	RESID_PROPERTY_FILE_HIDDEN_TOOLTIP;
+
+	// search result properties
+	public static String	RESID_PROPERTY_SEARCH_LINE_LABEL;
+	public static String	RESID_PROPERTY_SEARCH_LINE_TOOLTIP;
+	//public static String	RESID_PROPERTY_SEARCH_CHAR_END_LABEL;
+	//public static String	RESID_PROPERTY_SEARCH_CHAR_END_TOOLTIP;
+	
+	public static String	RESID_PROPERTY_SEARCH_STATUS_ACTIVE_VALUE;
+	public static String	RESID_PROPERTY_SEARCH_STATUS_INACTIVE_VALUE;
+
 	
 	static 
 	{

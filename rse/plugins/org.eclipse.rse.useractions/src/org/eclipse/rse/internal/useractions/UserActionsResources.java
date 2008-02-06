@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * David McKnight   (IBM)        - [216252] [nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  *******************************************************************************/
 package org.eclipse.rse.internal.useractions;
 
@@ -63,6 +64,16 @@ public class UserActionsResources extends NLS {
 	public static String RESID_PROPERTY_COMPILETYPE_TYPES_DESCRIPTION;
 	// TEAM VIEW
 	public static String RESID_TEAMVIEW_USERACTION_VALUE;
+	
+	
+	public static String	RESID_PROPERTY_ORIGIN_LABEL;
+	public static String	RESID_PROPERTY_ORIGIN_TOOLTIP;
+	public static String	RESID_PROPERTY_COMMAND_LABEL;
+	public static String	RESID_PROPERTY_COMMAND_TOOLTIP;
+	public static String	RESID_PROPERTY_COMMENT_LABEL;
+	public static String	RESID_PROPERTY_COMMENT_TOOLTIP;
+	
+	
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, UserActionsResources.class);

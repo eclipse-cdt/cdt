@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [190195] Cannot enable new connection prompt in system view
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
+ * David McKnight   (IBM)        - [216252] [nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;

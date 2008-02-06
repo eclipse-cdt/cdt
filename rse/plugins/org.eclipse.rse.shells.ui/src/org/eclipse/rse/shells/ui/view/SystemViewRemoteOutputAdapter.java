@@ -22,6 +22,7 @@
  * David McKnight   (IBM)        - [196842] Don't have open menu for folders
  * Xuan Chen        (IBM)        - [160775] [api] rename (at least within a zip) blocks UI thread
  * David McKnight   (IBM)        - [189873] Improve remote shell editor open action with background jobs
+ * David McKnight   (IBM)        - [216252] [nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  ********************************************************************************/
 
 package org.eclipse.rse.shells.ui.view;
@@ -53,7 +54,6 @@ import org.eclipse.rse.internal.shells.ui.view.ShellServiceSubSystemConfiguratio
 import org.eclipse.rse.internal.shells.ui.view.SystemCommandsUI;
 import org.eclipse.rse.internal.shells.ui.view.SystemCommandsViewPart;
 import org.eclipse.rse.internal.ui.view.SystemView;
-import org.eclipse.rse.internal.ui.view.SystemViewResources;
 import org.eclipse.rse.subsystems.files.core.SystemIFileProperties;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
@@ -1081,8 +1081,8 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 		    {
 		        _shellPropertyDescriptors = new IPropertyDescriptor[2];
 		        
-		        _shellPropertyDescriptors[0] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_SHELL_STATUS, SystemViewResources.RESID_PROPERTY_SHELL_STATUS_LABEL, SystemViewResources.RESID_PROPERTY_SHELL_STATUS_TOOLTIP);
-		        _shellPropertyDescriptors[1] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_SHELL_CONTEXT, SystemViewResources.RESID_PROPERTY_SHELL_CONTEXT_LABEL, SystemViewResources.RESID_PROPERTY_SHELL_CONTEXT_TOOLTIP);
+		        _shellPropertyDescriptors[0] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_SHELL_STATUS, ShellResources.RESID_PROPERTY_SHELL_STATUS_LABEL, ShellResources.RESID_PROPERTY_SHELL_STATUS_TOOLTIP);
+		        _shellPropertyDescriptors[1] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_SHELL_CONTEXT, ShellResources.RESID_PROPERTY_SHELL_CONTEXT_LABEL, ShellResources.RESID_PROPERTY_SHELL_CONTEXT_TOOLTIP);
 		    }
 		    return _shellPropertyDescriptors;
 		}
@@ -1113,11 +1113,11 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 			{
 			    if (cmdShell.isActive())
 			    {
-			        return SystemViewResources.RESID_PROPERTY_SHELL_STATUS_ACTIVE_VALUE;
+			        return ShellResources.RESID_PROPERTY_SHELL_STATUS_ACTIVE_VALUE;
 			    }
 			    else
 			    {
-			        return SystemViewResources.RESID_PROPERTY_SHELL_STATUS_INACTIVE_VALUE;
+			        return ShellResources.RESID_PROPERTY_SHELL_STATUS_INACTIVE_VALUE;
 			    }
 			}
 			else if (name.equals(ISystemPropertyConstants.P_SHELL_CONTEXT))

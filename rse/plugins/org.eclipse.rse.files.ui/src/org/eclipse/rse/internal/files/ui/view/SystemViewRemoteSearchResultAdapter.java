@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
+ * David McKnight   (IBM)        - [216252] [nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -515,7 +516,7 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 			_propertyDescriptors[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_PATH, SystemViewResources.RESID_PROPERTY_FILE_PATH_LABEL, SystemViewResources.RESID_PROPERTY_FILE_PATH_TOOLTIP);
 			
 			// char start
-			_propertyDescriptors[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_SEARCH_LINE, SystemViewResources.RESID_PROPERTY_SEARCH_LINE_LABEL, SystemViewResources.RESID_PROPERTY_SEARCH_LINE_TOOLTIP);
+			_propertyDescriptors[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_SEARCH_LINE, FileResources.RESID_PROPERTY_SEARCH_LINE_LABEL, FileResources.RESID_PROPERTY_SEARCH_LINE_TOOLTIP);
 			//_propertyDescriptors[++idx] = createSimplePropertyDescriptor(P_SEARCH_CHAR_END, SystemViewResources.RESID_PROPERTY_SEARCH_CHAR_END_ROOT);
 		}
 		return _propertyDescriptors;
@@ -802,11 +803,11 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 			{
 			    if (cmdShell.isActive())
 			    {
-			        return SystemViewResources.RESID_PROPERTY_SHELL_STATUS_ACTIVE_VALUE;
+			        return FileResources.RESID_PROPERTY_SEARCH_STATUS_ACTIVE_VALUE;
 			    }
 			    else
 			    {
-			        return SystemViewResources.RESID_PROPERTY_SHELL_STATUS_INACTIVE_VALUE;
+			        return FileResources.RESID_PROPERTY_SEARCH_STATUS_INACTIVE_VALUE;
 			    }
 			}
 			else if (name.equals(ISystemPropertyConstants.P_SHELL_CONTEXT))

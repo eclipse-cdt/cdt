@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * David McKnight   (IBM)        - [216252] [nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  *******************************************************************************/
 
 package org.eclipse.rse.internal.useractions.ui.compile.teamview;
@@ -17,7 +18,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.internal.ui.view.SystemViewResources;
 import org.eclipse.rse.internal.useractions.UserActionsResources;
 import org.eclipse.rse.internal.useractions.ui.compile.SystemCompileCommand;
 import org.eclipse.rse.ui.SystemMenuManager;
@@ -139,11 +139,11 @@ public class SystemTeamViewCompileCommandAdapter extends AbstractSystemViewAdapt
 			propertyDescriptorArray = new PropertyDescriptor[2];
 			int idx = 0;
 			// origin
-			propertyDescriptorArray[idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_ORIGIN, SystemViewResources.RESID_PROPERTY_ORIGIN_LABEL,
-					SystemViewResources.RESID_PROPERTY_ORIGIN_TOOLTIP);
+			propertyDescriptorArray[idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_ORIGIN,UserActionsResources.RESID_PROPERTY_ORIGIN_LABEL,
+					UserActionsResources.RESID_PROPERTY_ORIGIN_TOOLTIP);
 			// command
-			propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_COMMAND, SystemViewResources.RESID_PROPERTY_COMMAND_LABEL,
-					SystemViewResources.RESID_PROPERTY_COMMAND_TOOLTIP);
+			propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_COMMAND, UserActionsResources.RESID_PROPERTY_COMMAND_LABEL,
+					UserActionsResources.RESID_PROPERTY_COMMAND_TOOLTIP);
 		}
 		return propertyDescriptorArray;
 	}

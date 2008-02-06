@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [181066] NLS missing messages with DAEMON and Shells
  * Martin Oberhuber (Wind River) - [185552] Remove remoteSystemsViewPreferencesActions extension point
  * David McKnight   (IBM)        - [210229] table refresh needs unique table-specific tooltip-text
+ * David McKnight   (IBM)        - [216252] [nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui;
@@ -813,11 +814,6 @@ public class SystemResources extends NLS
 	public static String ACTION_RENAME_LABEL;
 	public static String ACTION_RENAME_TOOLTIP;
 
-	public static String ACTION_IMPORT_TO_PROJECT_LABEL;
-	public static String ACTION_IMPORT_TO_PROJECT_TOOLTIP;
-
-	public static String ACTION_EXPORT_FROM_PROJECT_LABEL;
-	public static String ACTION_EXPORT_FROM_PROJECT_TOOLTIP;
 
 	public static String ACTION_NEWFILE_LABEL;
 	public static String ACTION_NEWFILE_TOOLTIP;
@@ -1100,14 +1096,8 @@ public class SystemResources extends NLS
 	public static String ACTION_ERROR_LIST_LABEL;
 	public static String ACTION_ERROR_LIST_TOOLTIP;
 
-	public static String ACTION_FIND_FILES_LABEL;
-	public static String ACTION_FIND_FILES_TOOLTIP;
-
 	public static String ACTION_SEARCH_LABEL;
 	public static String ACTION_SEARCH_TOOLTIP;
-
-	public static String ACTION_CANCEL_FIND_FILES_LABEL;
-	public static String ACTION_CANCEL_FIND_FILES_TOOLTIP;
 
 	public static String ACTION_CANCEL_SEARCH_LABEL;
 	public static String ACTION_CANCEL_SEARCH_TOOLTIP;
@@ -1152,8 +1142,6 @@ public class SystemResources extends NLS
 	public static String ACTION_VIEWFORM_GETLIST_LABEL;
 	public static String ACTION_VIEWFORM_GETLIST_TOOLTIP;
 
-	public static String ACTION_COMMANDSVIEW_SAVEASFILTER_LABEL;
-	public static String ACTION_COMMANDSVIEW_SAVEASFILTER_TOOLTIP;
 
 	public static String ACTION_EXPAND_SELECTED_LABEL;
 	public static String ACTION_EXPAND_SELECTED_TOOLTIP;
@@ -1214,8 +1202,6 @@ public class SystemResources extends NLS
 	public static String RESID_PROPERTIES_PROPERTIES_LABEL;
 	public static String RESID_PROPERTIES_PROPERTIES_TOOLTIP;
 
-	
-	public static String ACTION_COMPILE_NOPROMPT_LABEL;
 
 	// Services form
 	public static String RESID_SERVICESFORM_CONFIGURATION_TOOLTIP;

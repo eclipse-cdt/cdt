@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
+ * David McKnight   (IBM)        - [216252] [nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -127,98 +128,16 @@ public class SystemViewResources extends NLS {
 	public static String	RESID_PROPERTY_FILTERS_LABEL;
 	public static String	RESID_PROPERTY_FILTERS_DESCRIPTION;
 	
-	// Property sheet values: Files
+	
+	// files - still needed outside of files.ui
 	public static String	RESID_PROPERTY_FILE_TYPE_FILE_VALUE;
 	public static String	RESID_PROPERTY_FILE_TYPE_FOLDER_VALUE;
 	public static String	RESID_PROPERTY_FILE_TYPE_ROOT_VALUE;
-
-	public static String	RESID_PROPERTY_ARCHIVE_EXPANDEDSIZE_LABEL;
-
-	public static String	RESID_PROPERTY_ARCHIVE_EXPANDEDSIZE_VALUE;
-	public static String	RESID_PROPERTY_ARCHIVE_EXPANDEDSIZE_DESCRIPTION;
-
-	public static String	RESID_PROPERTY_ARCHIVE_COMMENT_LABEL;
-	public static String	RESID_PROPERTY_ARCHIVE_COMMENT_DESCRIPTION;
-
 	
-	public static String	RESID_PROPERTY_VIRTUALFILE_COMPRESSEDSIZE_LABEL;
-	public static String	RESID_PROPERTY_VIRTUALFILE_COMPRESSEDSIZE_VALUE;
-	public static String	RESID_PROPERTY_VIRTUALFILE_COMPRESSEDSIZE_DESCRIPTION;
-
-	public static String	RESID_PROPERTY_VIRTUALFILE_COMMENT_LABEL;
-	public static String	RESID_PROPERTY_VIRTUALFILE_COMMENT_DESCRIPTION;
-	
-	public static String	RESID_PROPERTY_VIRTUALFILE_COMPRESSIONRATIO_LABEL;
-	public static String	RESID_PROPERTY_VIRTUALFILE_COMPRESSIONRATIO_DESCRIPTION;
-
-	public static String	RESID_PROPERTY_VIRTUALFILE_COMPRESSIONMETHOD_LABEL;
-	public static String	RESID_PROPERTY_VIRTUALFILE_COMPRESSIONMETHOD_DESCRIPTION;
-
-	public static String	RESID_PROPERTY_FILE_SIZE_VALUE;
-
 	public static String	RESID_PROPERTY_FILE_PATH_LABEL;
 	public static String	RESID_PROPERTY_FILE_PATH_TOOLTIP;
 	
-	public static String	RESID_PROPERTY_FILE_LASTMODIFIED_LABEL;
-	public static String	RESID_PROPERTY_FILE_LASTMODIFIED_TOOLTIP;
 	
-	public static String	RESID_PROPERTY_FILE_SIZE_LABEL;
-	public static String	RESID_PROPERTY_FILE_SIZE_TOOLTIP;
-
-	public static String	RESID_PROPERTY_FILE_CANONICAL_PATH_LABEL;
-	public static String	RESID_PROPERTY_FILE_CANONICAL_PATH_TOOLTIP;
-
-	public static String	RESID_PROPERTY_FILE_EXTENSION_LABEL;
-	public static String	RESID_PROPERTY_FILE_EXTENSION_TOOLTIP;
-	
-	public static String	RESID_PROPERTY_FILE_PERMISSIONS_LABEL;
-	public static String	RESID_PROPERTY_FILE_PERMISSIONS_TOOLTIP;
-	
-	public static String	RESID_PROPERTY_FILE_OWNER_LABEL;
-	public static String	RESID_PROPERTY_FILE_OWNER_TOOLTIP;
-	
-	public static String	RESID_PROPERTY_FILE_GROUP_LABEL;
-	public static String	RESID_PROPERTY_FILE_GROUP_TOOLTIP;
-	
-	public static String	RESID_PROPERTY_FILE_CLASSIFICATION_LABEL;
-	public static String	RESID_PROPERTY_FILE_CLASSIFICATION_TOOLTIP;
-
-	public static String	RESID_PROPERTY_FILE_READONLY_LABEL;
-	public static String	RESID_PROPERTY_FILE_READONLY_TOOLTIP;
-
-	public static String	RESID_PROPERTY_FILE_READABLE_LABEL;
-	public static String	RESID_PROPERTY_FILE_READABLE_TOOLTIP;
-
-	public static String	RESID_PROPERTY_FILE_WRITABLE_LABEL;
-	public static String	RESID_PROPERTY_FILE_WRITABLE_TOOLTIP;
-
-	public static String	RESID_PROPERTY_FILE_HIDDEN_LABEL;
-	public static String	RESID_PROPERTY_FILE_HIDDEN_TOOLTIP;
-
-	// search result properties
-	public static String	RESID_PROPERTY_SEARCH_LINE_LABEL;
-	public static String	RESID_PROPERTY_SEARCH_LINE_TOOLTIP;
-	//public static String	RESID_PROPERTY_SEARCH_CHAR_END_LABEL;
-	//public static String	RESID_PROPERTY_SEARCH_CHAR_END_TOOLTIP;
-	
-	
-
-	// shell status properties
-	public static String	RESID_PROPERTY_SHELL_STATUS_LABEL;
-	public static String	RESID_PROPERTY_SHELL_STATUS_TOOLTIP;
-	public static String	RESID_PROPERTY_SHELL_CONTEXT_LABEL;
-	public static String	RESID_PROPERTY_SHELL_CONTEXT_TOOLTIP;
-	
-	public static String	RESID_PROPERTY_SHELL_STATUS_ACTIVE_VALUE;
-	public static String	RESID_PROPERTY_SHELL_STATUS_INACTIVE_VALUE;
-
-	// error properties
-	public static String	RESID_PROPERTY_ERROR_FILENAME_LABEL;
-	public static String	RESID_PROPERTY_ERROR_FILENAME_TOOLTIP;
-
-	public static String	RESID_PROPERTY_ERROR_LINENO_LABEL;
-	public static String	RESID_PROPERTY_ERROR_LINENO_TOOLTIP;
-
 	// Property sheet values: Messages
 	public static String	RESID_PROPERTY_MESSAGE_TYPE_VALUE;
 
@@ -227,13 +146,6 @@ public class SystemViewResources extends NLS {
 	public static String	RESID_PROPERTY_TEAM_SSFACTORY_TYPE_VALUE;
 	
 	// Miscellaneous / common
-	public static String	RESID_PROPERTY_ORIGIN_LABEL;
-	public static String	RESID_PROPERTY_ORIGIN_TOOLTIP;
-	public static String	RESID_PROPERTY_COMMAND_LABEL;
-	public static String	RESID_PROPERTY_COMMAND_TOOLTIP;
-	public static String	RESID_PROPERTY_COMMENT_LABEL;
-	public static String	RESID_PROPERTY_COMMENT_TOOLTIP;
-	
 	public static String	RESID_PROPERTY_LINKINGACTION_TEXT;
 	public static String	RESID_PROPERTY_LINKINGACTION_TOOLTIP;
 

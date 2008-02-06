@@ -9,6 +9,36 @@ export USERNAME=`whoami`
 echo " running as $USERNAME";
 echo " currently in dir: `pwd`";
 
+# fix for org.eclipse.swt.SWTError: No more handles [gtk_init_check() failed]
+# fix for Failed to invoke suite():org.eclipse.swt.SWTError: No more handles [gtk_init_check() failed]
+export CVS_RSH=ssh
+ulimit -c unlimited; # core file size          (blocks, -c) unlimited
+
+echo "Set JAVA_HIGH_ZIPFDS=500 & LANG=C";
+export JAVA_HIGH_ZIPFDS=500
+export LANG=C
+
+# configure X server thread for tests :: not yet working!
+echo "Start Xvfb on :42"
+Xvfb :42 -screen 0 1024x768x24 -ac & 
+sleep 40
+export DISPLAY=localhost:42.0
+xhost +
+
+#startkde &
+#sleep 40
+# xwd -silent -display :42 -root -out /tmp/snap.xwd; # save a snapshot
+#import -window root screenshot1.png  # save a snapshot
+ 	  	 
+readPropertyOut="";
+readProperty ()
+{
+	readPropertyOut="";
+	file=$1
+	property=$2
+	readPropertyOut=$(grep $property $file | egrep -v "^#" | tail -1 | sed -e "s/$property=//");
+}
+
 if [[ ! $JAVA_HOME ]]; then
 	echo -n "[relengbuild] Get JAVA_HOME from build.cfg ... ";
 	buildcfg=$PWD/../../../build.cfg;
@@ -199,6 +229,8 @@ execCmd "$JAVA_HOME/bin/java $Xflags -enableassertions -cp $cpAndMain -ws $ws -o
 $Dflags -Dws=$ws -Dos=$os -Darch=$arch -D$installmode=true $J2SE15flags \
 $properties -logger org.apache.tools.ant.DefaultLogger" $consolelog;
 echo "[runtests] [`date +%H\:%M\:%S`] Eclipse test run completed. "
+
+#import -window root screenshot1.png  # save a snapshot
 
 ############################# END RUN TESTS #############################  
 

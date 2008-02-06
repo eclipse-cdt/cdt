@@ -45,7 +45,6 @@ public class C99CompleteParser2Tests extends CompleteParser2Tests {
 		} catch(Exception _) {
 			return;
 		}
-		
 		fail();
 	} 
 	

@@ -11,7 +11,7 @@
 
 %options la=2
 %options package=org.eclipse.cdt.internal.core.dom.lrparser.cpp
-%options template=btParserTemplateD.g
+%options template=TrialUndoParserTemplate.g
 
 
 
@@ -148,7 +148,7 @@ $End
 $Define
 	-- These macros allow the template and header code to be customized by an extending parser.
 	$ast_class /.Object./
-	$additional_interfaces /. , IParserActionTokenProvider, IParser ./
+	$additional_interfaces /.  ./
 	
 	$build_action_class /. CPPBuildASTParserAction ./
 	$resolve_action_class /. C99TypedefTrackerParserAction ./
@@ -176,9 +176,9 @@ $Define
 	$builder /. action.builder./
 	
 	-- comment out when using trial/undo
-	$Action /. $BeginAction ./
-	$BeginFinal /. ./
-	$EndFinal /. ./
+	--$Action /. $BeginAction ./
+	--$BeginFinal /. ./
+	--$EndFinal /. ./
 
 $End
 
@@ -188,8 +188,8 @@ $Headers
 	private $action_class action;	
 	
 	// uncomment to use with backtracking parser
-	public $action_type() {  // constructor
-	}
+	//public $action_type() {  // constructor
+	//}
 	
 	private void initActions(IASTTranslationUnit tu) {
 	    // binding resolution actions need access to IASTName nodes, temporary
@@ -199,7 +199,7 @@ $Headers
 		//action.builder.setTokenMap(CPPParsersym.orderedTerminalSymbols);
 		
 		// comment this line to use with backtracking parser
-		//setParserAction(action);
+		setParserAction(action);
 	}
 	
 	
@@ -231,7 +231,7 @@ $Headers
 		action = null;
 		
 		// Comment this line to use with backtracking parser
-		//parserAction = null;
+		parserAction = null;
 		
 		return compNode;
 	}
@@ -258,9 +258,9 @@ $Headers
 	
 	
 	// uncomment this method to use with backtracking parser
-	public List getRuleTokens() {
-	    return Collections.unmodifiableList(getTokens().subList(getLeftSpan(), getRightSpan() + 1));
-	}
+	//public List getRuleTokens() {
+	//    return Collections.unmodifiableList(getTokens().subList(getLeftSpan(), getRightSpan() + 1));
+	//}
 
 
 ./

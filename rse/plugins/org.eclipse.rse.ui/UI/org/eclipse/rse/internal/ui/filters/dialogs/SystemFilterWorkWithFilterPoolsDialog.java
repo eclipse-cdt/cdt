@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * David Dykstal (IBM) - [197036] fixed delete filter pool bug found during testing of this bug
  *                                see also bug 194260 regarding deleting filter pools
+ * David Dykstal (IBM) - [194268] fixed initial selection and new action selection
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.filters.dialogs;
@@ -602,24 +603,25 @@ public class SystemFilterWorkWithFilterPoolsDialog
         ISystemFilterPoolManager[] mgrs = filterPoolManagers;        
         return mgrs;    	
     }
+
     /**
-     * Callback from new action to get index of initial manager to select
-     */
-    public int getFilterPoolManagerSelection()
-    {
-        int selection = 0;
-    	SystemSimpleContentElement element = getSelectedElement();
-    	Object elementData = element.getData();
-    	if (elementData != null)
-    	{
-    	  if (elementData instanceof ISystemFilterPoolManager)
-    	    selection = getManagerIndex((ISystemFilterPoolManager)elementData);
-    	  else if (elementData instanceof ISystemFilterPool)
-    	    selection = getManagerIndex(((ISystemFilterPool)elementData).getSystemFilterPoolManager());
-    	}
-    	//System.out.println("In getFilterPoolManagerSelection(). Returning "+selection);
-        return selection;    	
-    }
+	 * Callback from new action to get index of initial manager to select
+	 */
+	public int getFilterPoolManagerSelection() {
+		int selection = 0;
+		SystemSimpleContentElement element = getSelectedElement();
+		if (element != null) {
+			Object elementData = element.getData();
+			if (elementData != null) {
+				if (elementData instanceof ISystemFilterPoolManager) {
+					selection = getManagerIndex((ISystemFilterPoolManager) elementData);
+				} else if (elementData instanceof ISystemFilterPool) {
+					selection = getManagerIndex(((ISystemFilterPool) elementData).getSystemFilterPoolManager());
+				}
+			}
+		}
+		return selection;
+	}
     
     private int getManagerIndex(ISystemFilterPoolManager mgr)
     {

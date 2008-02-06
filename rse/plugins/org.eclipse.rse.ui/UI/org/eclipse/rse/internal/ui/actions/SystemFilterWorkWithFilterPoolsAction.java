@@ -12,7 +12,8 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - [194268] action now assumes the first filter pool manager is selected if there was no selection
+ *                       provided by the caller.
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
@@ -161,21 +162,22 @@ public class SystemFilterWorkWithFilterPoolsAction
 		      SystemFilterUIHelpers.getFilterPoolModel(getFilterPoolManagerProvider(), mgrs);		
         return input;		
 	}
+
 	/**
 	 * Callback for dialog to refresh its contents
 	 */
-	public SystemSimpleContentElement getTreeModelPreSelection(SystemSimpleContentElement input)
-	{
-		ISystemFilterPoolReferenceManagerProvider sprmp = getReferenceManagerProviderSelection();
+	public SystemSimpleContentElement getTreeModelPreSelection(SystemSimpleContentElement input) {
 		SystemSimpleContentElement initialElementSelection = null;
-		if (sprmp != null)
-		{
+		ISystemFilterPoolReferenceManagerProvider sprmp = getReferenceManagerProviderSelection();
+		if (sprmp != null) {
 			ISystemFilterPoolManager initialSelection = sprmp.getSystemFilterPoolReferenceManager().getDefaultSystemFilterPoolManager();
-			if (initialSelection != null)
-			{
-			  initialElementSelection = SystemFilterUIHelpers.getDataElement(input, initialSelection);
-			  //if (initialElementSelection != null)
-			    //dialog.setRootToPreselect(initialElementSelection);
+			if (initialSelection != null) {
+				initialElementSelection = SystemFilterUIHelpers.getDataElement(input, initialSelection);
+			}
+		} else {
+			SystemSimpleContentElement[] children = input.getChildren();
+			if (children.length > 0) {
+				initialElementSelection = children[0];
 			}
 		}
 		return initialElementSelection;

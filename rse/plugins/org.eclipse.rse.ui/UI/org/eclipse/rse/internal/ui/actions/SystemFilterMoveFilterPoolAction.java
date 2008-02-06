@@ -13,10 +13,13 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
+ * David Dykstal (IBM) - [194268] fixed updateSelection() to disable when selection is empty
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -86,45 +89,35 @@ public class SystemFilterMoveFilterPoolAction extends SystemBaseCopyAction
 	 * <p>
 	 * @see SystemBaseAction#updateSelection(IStructuredSelection)
 	 */
-	public boolean updateSelection(IStructuredSelection selection)
-	{
-		boolean enable = true;
-		/* */
-		Iterator e = selection.iterator();		
-		ISystemFilterPoolManager prevMgr = null;
-		ISystemFilterPoolManager currMgr = null;		
-		ISystemFilterPool pool;
-		while (enable && e.hasNext())
-		{
-			Object selectedObject = e.next();
-			if (selectedObject instanceof SystemSimpleContentElement)
-			  selectedObject = ((SystemSimpleContentElement)selectedObject).getData();
-			if (!(selectedObject instanceof ISystemFilterPool) &&
-			    !(selectedObject instanceof ISystemFilterPoolReference))
-			  enable = false;
-			// disable if this is a connection-unique filter pool
-			else if (selectedObject instanceof ISystemFilterPool)
-				enable = ((ISystemFilterPool)selectedObject).getOwningParentName() == null;
-			// disable if this is a connection-unique filter pool
-			else if (selectedObject instanceof ISystemFilterPoolReference)
-				enable = ((ISystemFilterPoolReference)selectedObject).getReferencedFilterPool().getOwningParentName() == null;
-							  
-			if (enable)
-			{
-			  if (selectedObject instanceof ISystemFilterPool)
-			    pool = (ISystemFilterPool)selectedObject;
-			  else
-			    pool = ((ISystemFilterPoolReference)selectedObject).getReferencedFilterPool();
-			  currMgr = pool.getSystemFilterPoolManager();
-			  if (prevMgr == null)
-			    prevMgr = currMgr;
-			  else
-			    enable = (prevMgr == currMgr);
-			  if (enable)
-		        prevMgr = currMgr;
+	public boolean updateSelection(IStructuredSelection selection) {
+		boolean enable = false;
+		if (!selection.isEmpty()) {
+			enable = true;
+			Iterator e = selection.iterator();
+			Set managers = new HashSet();
+			while (enable && e.hasNext()) {
+				Object selectedObject = e.next();
+				if (selectedObject instanceof SystemSimpleContentElement) {
+					selectedObject = ((SystemSimpleContentElement) selectedObject).getData();
+				}
+				ISystemFilterPool pool = null;
+				if (selectedObject instanceof ISystemFilterPool){
+					pool = (ISystemFilterPool) selectedObject;
+				}
+				else if (selectedObject instanceof ISystemFilterPoolReference) {
+					pool = ((ISystemFilterPoolReference) selectedObject).getReferencedFilterPool();
+				}
+				if (pool != null) {
+					String ownerName = pool.getOwningParentName();
+					ISystemFilterPoolManager manager = pool.getSystemFilterPoolManager();
+					managers.add(manager);
+					// enable if the number of managers is one and the owner name is null (i.e. the pool does not belong to a connection)
+					enable = (managers.size() == 1) && (ownerName == null);
+				} else {
+					enable = false;
+				}
 			}
 		}
-		/* */
 		return enable;
 	}
  

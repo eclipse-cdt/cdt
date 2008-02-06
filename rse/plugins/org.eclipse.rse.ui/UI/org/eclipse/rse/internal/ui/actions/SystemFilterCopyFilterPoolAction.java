@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
+ * David Dykstal (IBM) - [194268] fixed updateSelection to disable when selection is empty
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
@@ -83,27 +84,26 @@ public class SystemFilterCopyFilterPoolAction extends SystemBaseCopyAction
 	 * <p>
 	 * @see SystemBaseAction#updateSelection(IStructuredSelection)
 	 */
-	public boolean updateSelection(IStructuredSelection selection)
-	{
-		boolean enable = true;
-		/* */
-		Iterator e= selection.iterator();		
-		while (enable && e.hasNext())
-		{
-			Object selectedObject = e.next();
-			if (selectedObject instanceof SystemSimpleContentElement)
-			  	selectedObject = ((SystemSimpleContentElement)selectedObject).getData();
-			if (!(selectedObject instanceof ISystemFilterPool) &&
-			    !(selectedObject instanceof ISystemFilterPoolReference))
-			  	enable = false;
-			// disable if this is a connection-unique filter pool
-			else if (selectedObject instanceof ISystemFilterPool)
-			  	enable = ((ISystemFilterPool)selectedObject).getOwningParentName() == null;
-			// disable if this is a connection-unique filter pool
-			else if (selectedObject instanceof ISystemFilterPoolReference)
-			  	enable = ((ISystemFilterPoolReference)selectedObject).getReferencedFilterPool().getOwningParentName() == null;
+	public boolean updateSelection(IStructuredSelection selection) {
+		boolean enable = false;
+		if (!selection.isEmpty()) {
+			enable = true;
+			Iterator e = selection.iterator();
+			while (enable && e.hasNext()) {
+				Object selectedObject = e.next();
+				if (selectedObject instanceof SystemSimpleContentElement) {
+					selectedObject = ((SystemSimpleContentElement) selectedObject).getData();
+				}
+				ISystemFilterPool pool = null;
+				if (selectedObject instanceof ISystemFilterPool) {
+					pool = (ISystemFilterPool) selectedObject;
+				} else if (selectedObject instanceof ISystemFilterPoolReference) {
+					pool = ((ISystemFilterPoolReference) selectedObject).getReferencedFilterPool();
+				}
+				// enable if this is not a connection specific filter pool
+				enable = (pool != null) && (pool.getOwningParentName() == null);
+			}
 		}
-		/* */
 		return enable;
 	}
  

@@ -127,9 +127,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		if (logService instanceof AbstractParserLogService) {
 			return (AbstractParserLogService) logService;
 		}
-		else {
-			return new ParserLogServiceWrapper(logService);
-		}
+		return new ParserLogServiceWrapper(logService);
 	}
 
     protected final void throwBacktrack(int offset, int length) throws BacktrackException {
@@ -150,12 +148,9 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     // Use to create the completion node
     protected ASTCompletionNode createCompletionNode(IToken token) {
     	// the preprocessor may deliver tokens for literals or header-names.
-        if (completionNode == null && token != null)
-        	switch(token.getType()) {
-        	case IToken.tCOMPLETION:
-                completionNode = new ASTCompletionNode(token, getTranslationUnit());
-                break;
-        	}
+        if(completionNode == null && token != null && token.getType() == IToken.tCOMPLETION) {
+        	completionNode = new ASTCompletionNode(token, getTranslationUnit());
+        }
         return completionNode;
     }
 
@@ -264,8 +259,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
     protected static int parseCount = 0;
 
-    protected void handleOffsetLimitException(
-            OffsetLimitReachedException exception) throws EndOfFileException {
+    protected void handleOffsetLimitException(OffsetLimitReachedException exception) throws EndOfFileException {
         if (mode != ParserMode.COMPLETION_PARSE)
             throw new EndOfFileException();
         createCompletionNode(exception.getFinalToken());
@@ -283,9 +277,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      *             If there are no more tokens.
      */
     protected IToken mark() throws EndOfFileException {
-        if (currToken == null)
-            currToken = fetchToken();
-        return currToken;
+        return currToken == null ? currToken = fetchToken() : currToken;
     }
 
     /**

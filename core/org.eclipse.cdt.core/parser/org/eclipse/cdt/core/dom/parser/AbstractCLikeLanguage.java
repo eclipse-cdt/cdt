@@ -151,16 +151,14 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 	 * @return  an instance of ISourceCodeParser
 	 */
 	protected ISourceCodeParser createParser(IScanner scanner, IParserLogService log, IIndex index, boolean forCompletion, int options) {
-		ParserMode mode= null;
-		if (forCompletion) {
+		ParserMode mode;
+		if(forCompletion)
 			mode= ParserMode.COMPLETION_PARSE;
-		}
-		else if ((options & OPTION_SKIP_FUNCTION_BODIES) != 0) {
+		else if((options & OPTION_SKIP_FUNCTION_BODIES) != 0)
 			mode= ParserMode.STRUCTURAL_PARSE;
-		}
-		else {
+		else
 			mode= ParserMode.COMPLETE_PARSE;
-		}
+
 		return createParser(scanner, mode, log, index);
 	}
 	

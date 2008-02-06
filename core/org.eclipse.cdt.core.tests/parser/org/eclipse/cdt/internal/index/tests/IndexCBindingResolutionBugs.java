@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,9 +22,11 @@ import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IParameter;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
 
 /**
@@ -326,5 +328,47 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 		assertTrue(tIndex instanceof IEnumeration);
 		assertTrue(tAST.isSameType(tIndex));
 		assertTrue(tIndex.isSameType(tAST));
+	}
+	
+	// struct outer {
+	//    union {
+	//       int var1;
+	//    };
+	// };
+	  
+	// #include "header.h"
+	// void test() {
+	//    struct outer x;
+	//    x.var1=1;
+	// }
+	public void testAnonymousUnion_Bug216791() throws DOMException {
+		// struct
+		IBinding b = getBindingFromASTName("var1=", 4);
+		assertTrue(b instanceof IField);
+		IField f= (IField) b;
+		IScope outer= f.getCompositeTypeOwner().getScope();
+		assertTrue(outer instanceof ICCompositeTypeScope);
+		assertEquals("outer", outer.getScopeName().toString());
+	}
+
+	// union outer {
+	//    struct {
+	//       int var1;
+	//    };
+	// };
+	  
+	// #include "header.h"
+	// void test() {
+	//    union outer x;
+	//    x.var1=1;
+	// }
+	public void testAnonymousStruct_Bug216791() throws DOMException {
+		// struct
+		IBinding b = getBindingFromASTName("var1=", 4);
+		assertTrue(b instanceof IField);
+		IField f= (IField) b;
+		IScope outer= f.getCompositeTypeOwner().getScope();
+		assertTrue(outer instanceof ICCompositeTypeScope);
+		assertEquals("outer", outer.getScopeName().toString());
 	}
 }

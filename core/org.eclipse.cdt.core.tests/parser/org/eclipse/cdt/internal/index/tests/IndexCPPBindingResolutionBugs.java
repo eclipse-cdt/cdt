@@ -20,12 +20,14 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
@@ -707,5 +709,47 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 		assertEquals("Bar", cl.getName());
 		assertTrue(cl instanceof ICPPClassType);
 		assertEquals("BAR", cl.getScope().getScopeName().toString());
+	}
+	
+	// struct outer {
+	//    union {
+	//       int var1;
+	//    };
+	// };
+	  
+	// #include "header.h"
+	// void test() {
+	//    struct outer x;
+	//    x.var1=1;
+	// }
+	public void testAnonymousUnion_Bug216791() throws DOMException {
+		// struct
+		IBinding b = getBindingFromASTName("var1=", 4);
+		assertTrue(b instanceof IField);
+		IField f= (IField) b;
+		IScope outer= f.getCompositeTypeOwner().getScope();
+		assertTrue(outer instanceof ICPPClassScope);
+		assertEquals("outer", outer.getScopeName().toString());
+	}
+
+	// union outer {
+	//    struct {
+	//       int var1;
+	//    };
+	// };
+	  
+	// #include "header.h"
+	// void test() {
+	//    union outer x;
+	//    x.var1=1;
+	// }
+	public void testAnonymousStruct_Bug216791() throws DOMException {
+		// struct
+		IBinding b = getBindingFromASTName("var1=", 4);
+		assertTrue(b instanceof IField);
+		IField f= (IField) b;
+		IScope outer= f.getCompositeTypeOwner().getScope();
+		assertTrue(outer instanceof ICPPClassScope);
+		assertEquals("outer", outer.getScopeName().toString());
 	}
 }

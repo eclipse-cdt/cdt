@@ -34,9 +34,11 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.ICBasicType;
+import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
+import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.index.composite.CompositeScope;
@@ -83,15 +85,14 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 			}
 		}
 		else {
+			// assign names to anonymous types.
+			binding= PDOMASTAdapter.getAdapterForAnonymousASTBinding(binding);
+			if (binding == null || binding instanceof IParameter)
+				return null; // skip parameters
+
 			PDOMNode parent = getAdaptedParent(binding);
 			if (parent == null)
 				return null;
-			
-			// assign names to anonymous types.
-			binding= PDOMASTAdapter.getAdapterForAnonymousASTBinding(binding);
-
-			if (binding == null || binding instanceof IParameter)
-				return null; // skip parameters
 			
 			if (binding instanceof IField) { // must be before IVariable
 				if (parent instanceof IPDOMMemberOwner)
@@ -224,18 +225,33 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 			IBinding scopeBinding = null;
 			if (scopeNode instanceof IASTCompoundStatement) {
 				return null;
-			} else if (scopeNode instanceof IASTTranslationUnit) {
-				return this;
-			} else {
-				IName scopeName = scope.getScopeName();
-				if (scopeName instanceof IASTName) {
-					scopeBinding = ((IASTName) scopeName).resolveBinding();
+			} 
+			if (scopeNode instanceof IASTTranslationUnit) {
+				boolean isGlobal= true;
+				if (binding instanceof ICompositeType) {
+					ICompositeType ct= (ICompositeType) binding;
+					final IScope ctscope = ct.getCompositeScope();
+					if (ctscope != null) {
+						final IName myOrigScopeName = ctscope.getScopeName();
+						if (myOrigScopeName instanceof IASTName && myOrigScopeName.toCharArray().length == 0) {
+							scope= CVisitor.getContainingScope((IASTName) myOrigScopeName);
+							if (scope instanceof ICCompositeTypeScope) {
+								isGlobal= false;
+							} 
+						}
+					}
 				}
-			}
-			if (scopeBinding != null && scopeBinding != binding) {
-				PDOMBinding scopePDOMBinding= adaptBinding(scopeBinding);
-				if (scopePDOMBinding != null)
-					return scopePDOMBinding;
+				if (isGlobal) {
+					return this;
+				}
+			} 
+			
+			IName scopeName = scope.getScopeName();
+			if (scopeName instanceof IASTName) {
+				scopeBinding = ((IASTName) scopeName).resolveBinding();
+				if (scopeBinding != null && scopeBinding != binding) {
+					return adaptBinding(scopeBinding);
+				}
 			}
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));

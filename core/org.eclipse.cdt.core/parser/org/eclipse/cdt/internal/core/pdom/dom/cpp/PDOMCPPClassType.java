@@ -367,7 +367,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 				// the class itself
 				visitor.visit(this);
 			}
-			
+			visitor.setVisitAnonymousClassTypes(true);
 			accept(visitor);
 			result= visitor.getBindings();
 		} catch (CoreException e) {
@@ -386,6 +386,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 		if (getDBName().compare(name, true) == 0) {
 			visitor.visit(this);
 		}
+		visitor.setVisitAnonymousClassTypes(true);
 		accept(visitor);
 		result = visitor.getBindings();
 		pdom.putCachedResult(key, result);

@@ -152,6 +152,12 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 					}
 				}
 			}
+			else if (node instanceof ICompositeType) {
+				char[] nchars= ((ICompositeType) node).getNameCharArray();
+				if (nchars.length > 0 && nchars[0] == '{') {
+					return true; // visit children
+				}
+			}
 			return false;
 		}
 		public void leave(IPDOMNode node) throws CoreException {

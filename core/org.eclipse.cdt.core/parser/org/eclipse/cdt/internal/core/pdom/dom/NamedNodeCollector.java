@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.cdt.internal.core.pdom.db.IString;
 import org.eclipse.core.runtime.CoreException;
@@ -32,8 +33,9 @@ public class NamedNodeCollector implements IBTreeVisitor, IPDOMVisitor {
 	private final boolean caseSensitive;
 	private IProgressMonitor monitor= null;
 	private int monitorCheckCounter= 0;
+	private boolean visitAnonymousClassTypes= false;
 	
-	private List nodes = new ArrayList();
+	private List<PDOMNamedNode> nodes = new ArrayList<PDOMNamedNode>();
 
 	/**
 	 * Collects all nodes with given name.
@@ -59,6 +61,10 @@ public class NamedNodeCollector implements IBTreeVisitor, IPDOMVisitor {
 	 */
 	public void setMonitor(IProgressMonitor pm) {
 		monitor= pm;
+	}
+	
+	public void setVisitAnonymousClassTypes(boolean val) {
+		visitAnonymousClassTypes= val;
 	}
 	
 	final public int compare(int record) throws CoreException {
@@ -110,12 +116,12 @@ public class NamedNodeCollector implements IBTreeVisitor, IPDOMVisitor {
 		return true; // look for more
 	}
 	
-	final protected List getNodeList() {
+	final protected List<PDOMNamedNode> getNodeList() {
 		return nodes;
 	}
 	
 	final public PDOMNamedNode[] getNodes() {
-		return (PDOMNamedNode[])nodes.toArray(new PDOMNamedNode[nodes.size()]);
+		return nodes.toArray(new PDOMNamedNode[nodes.size()]);
 	}
 
 	final public boolean visit(IPDOMNode node) throws CoreException {
@@ -126,6 +132,14 @@ public class NamedNodeCollector implements IBTreeVisitor, IPDOMVisitor {
 			PDOMNamedNode pb= (PDOMNamedNode) node;
 			if (compare(pb.getDBName()) == 0) {
 				addNode(pb);
+			}
+			else if (visitAnonymousClassTypes) {
+				if (pb instanceof ICompositeType) {
+					char[] nchars= pb.getNameCharArray();
+					if (nchars.length > 0 && nchars[0] == '{') {
+						return true; // visit children
+					}
+				}
 			}
 		}
 		return false;	// don't visit children

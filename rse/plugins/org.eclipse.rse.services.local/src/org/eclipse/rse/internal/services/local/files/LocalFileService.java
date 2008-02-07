@@ -29,6 +29,7 @@
  * Xuan Chen        (IBM)        - [210555] [regression] NPE when deleting a file on SSH
  * Kevin Doyle		(IBM)		 - [208778] [efs][api] RSEFileStore#getOutputStream() does not support EFS#APPEND
  * David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
+ * Radoslav Gerganov (ProSyst)   - [218173] [local] non-generic filters don't work
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -774,7 +775,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 						results.add(new LocalHostFile(file));
 					}
 				}
-				else if (!file.exists())
+				else if (file.exists())
 				{
 					results.add(new LocalHostFile(file));
 				}

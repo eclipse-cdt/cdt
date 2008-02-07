@@ -70,7 +70,7 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
 	private CScope compilationUnit = null;
 	private ILocationResolver resolver;
 	private IIndex index;
-	private boolean fIsHeader;
+	private boolean fIsHeader= true;
 	private IIndexFileSet fIndexFileSet;
 
     public IASTTranslationUnit getTranslationUnit() {

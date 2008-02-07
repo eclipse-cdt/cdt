@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -104,11 +104,13 @@ public class CStructureCreator extends StructureCreator {
 		CodeReader reader= new CodeReader(document.get().toCharArray());
 		
 		// determine the language
-		ILanguage language= determineLanguage(element);
+		boolean isSource[]= {false};
+		ILanguage language= determineLanguage(element, isSource);
 		
 		try {
 			IASTTranslationUnit ast;
-			ast= language.getASTTranslationUnit(reader, scanInfo, codeReaderFactory, null, ParserUtil.getParserLogService());
+			int options= isSource[0] ? ILanguage.OPTION_IS_SOURCE_UNIT : 0;
+			ast= language.getASTTranslationUnit(reader, scanInfo, codeReaderFactory, null, options, ParserUtil.getParserLogService());
 			CStructureCreatorVisitor structureCreator= new CStructureCreatorVisitor(root);
 			// build structure
 			ast.accept(structureCreator);
@@ -125,7 +127,7 @@ public class CStructureCreator extends StructureCreator {
 	 * @param element
 	 * @return a language instance
 	 */
-	private ILanguage determineLanguage(Object element) {
+	private ILanguage determineLanguage(Object element, boolean[] isSource) {
 		ILanguage language= null;
 		if (element instanceof ResourceNode) {
 			IResource resource= ((ResourceNode)element).getResource();
@@ -134,6 +136,7 @@ public class CStructureCreator extends StructureCreator {
 				if (tUnit != null) {
 					try {
 						language= tUnit.getLanguage();
+						isSource[0]= tUnit.isSourceUnit();
 					} catch (CoreException exc) {
 						// silently ignored
 					}

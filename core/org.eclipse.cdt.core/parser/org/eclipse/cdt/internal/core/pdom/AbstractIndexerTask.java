@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.AbstractLanguage;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfo;
@@ -86,11 +87,11 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	private int fUpdateFlags= IIndexManager.UPDATE_ALL;
 	private boolean fIndexHeadersWithoutContext= true;
 	private boolean fIndexFilesWithoutConfiguration= true;
-	private HashMap fFileInfos= new HashMap();
+	private HashMap<FileKey, FileInfo> fFileInfos= new HashMap<FileKey, FileInfo>();
 
 	private Object[] fFilesToUpdate;
-	private List fFilesToRemove = new ArrayList();
-	private List fFilesUpFront= new ArrayList();
+	private List<Object> fFilesToRemove = new ArrayList<Object>();
+	private List<String> fFilesUpFront= new ArrayList<String>();
 	private int fASTOptions;
 	
 	protected IWritableIndex fIndex;
@@ -135,8 +136,6 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		return "______"; //$NON-NLS-1$
 	}
 
-
-	
 	private final IASTTranslationUnit createAST(String code, AbstractLanguage lang, IScannerInfo scanInfo, 
 			int options, IProgressMonitor monitor) throws CoreException {
 		String dummyName= getASTPathForParsingUpFront();
@@ -156,12 +155,10 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		if (codeReader == null) {
 			return null;
 		}
-		
-		IASTTranslationUnit ast= createAST(language, codeReader, scanInfo, options, pm);
-		if (ast != null && !fResolver.isSourceUnit(tu)) {
-			ast.setIsHeaderUnit(true);
+		if (fResolver.isSourceUnit(tu)) {
+			options |= ILanguage.OPTION_IS_SOURCE_UNIT;
 		}
-		return ast;
+		return createAST(language, codeReader, scanInfo, options, pm);
 	}
 
 	private final IASTTranslationUnit createAST(AbstractLanguage language, CodeReader codeReader,
@@ -203,9 +200,9 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		}
 		fTodoTaskUpdater= createTodoTaskUpdater();
 		
-		fASTOptions= AbstractLanguage.OPTION_ADD_COMMENTS | AbstractLanguage.OPTION_NO_IMAGE_LOCATIONS;
+		fASTOptions= ILanguage.OPTION_ADD_COMMENTS | ILanguage.OPTION_NO_IMAGE_LOCATIONS;
 		if (getSkipReferences() == SKIP_ALL_REFERENCES) {
-			fASTOptions |= AbstractLanguage.OPTION_SKIP_FUNCTION_BODIES;
+			fASTOptions |= ILanguage.OPTION_SKIP_FUNCTION_BODIES;
 		}
 
 		fIndex.resetCacheCounters();
@@ -214,8 +211,8 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		try { 
 			try {
 				// split into sources and headers, remove excluded sources.
-				final HashMap files= new HashMap();
-				final ArrayList ifilesToRemove= new ArrayList();
+				final HashMap<Integer, List<Object>> files= new HashMap<Integer, List<Object>>();
+				final ArrayList<IIndexFragmentFile> ifilesToRemove= new ArrayList<IIndexFragmentFile>();
 				extractFiles(files, ifilesToRemove, monitor);
 
 				// remove files from index
@@ -237,7 +234,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		}
 	}
 
-	private void extractFiles(Map files, List iFilesToRemove, IProgressMonitor monitor) throws CoreException {
+	private void extractFiles(Map<Integer, List<Object>> files, List<IIndexFragmentFile> iFilesToRemove, IProgressMonitor monitor) throws CoreException {
 		final boolean force= (fUpdateFlags & IIndexManager.UPDATE_ALL) != 0;
 		final boolean checkTimestamps= (fUpdateFlags & IIndexManager.UPDATE_CHECK_TIMESTAMPS) != 0;
 		final boolean checkConfig= (fUpdateFlags & IIndexManager.UPDATE_CHECK_CONFIGURATION) != 0;
@@ -311,7 +308,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	
 	private void requestUpdate(int linkageID, IIndexFileLocation ifl, IIndexFragmentFile ifile) {
 		FileKey key= new FileKey(linkageID, ifl.getURI());
-		FileInfo info= (FileInfo) fFileInfos.get(key);
+		FileInfo info= fFileInfos.get(key);
 		if (info == null) {
 			info= createFileInfo(key, null);
 		}
@@ -321,7 +318,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	
 	private void setIndexed(int linkageID, IIndexFileLocation ifl) {
 		FileKey key= new FileKey(linkageID, ifl.getURI());
-		FileInfo info= (FileInfo) fFileInfos.get(key);
+		FileInfo info= fFileInfos.get(key);
 		if (info == null) {
 			info= createFileInfo(key, null);
 		}
@@ -338,7 +335,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 
 	private FileInfo getFileInfo(int linkageID, IIndexFileLocation ifl) {
 		FileKey key= new FileKey(linkageID, ifl.getURI());
-		return (FileInfo) fFileInfos.get(key);
+		return fFileInfos.get(key);
 	}
 
 	private boolean isSourceUnitConfigChange(Object tu, IIndexFragmentFile ifile) {
@@ -368,11 +365,11 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		}
 	}
 
-	private void store(Object tu, int linkageID, boolean isSourceUnit, Map files) {
+	private void store(Object tu, int linkageID, boolean isSourceUnit, Map<Integer, List<Object>> files) {
 		Integer key = getFileListKey(linkageID, isSourceUnit);
-		List list= (List) files.get(key);
+		List<Object> list= files.get(key);
 		if (list == null) {
-			list= new LinkedList();
+			list= new LinkedList<Object>();
 			files.put(key, list);
 		}
 		list.add(tu);
@@ -383,11 +380,11 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		return key;
 	}
 
-	private void removeFilesInIndex(List filesToRemove, List ifilesToRemove, IProgressMonitor monitor) throws InterruptedException, CoreException {
+	private void removeFilesInIndex(List<Object> filesToRemove, List<IIndexFragmentFile> ifilesToRemove, IProgressMonitor monitor) throws InterruptedException, CoreException {
 		if (!filesToRemove.isEmpty() || !ifilesToRemove.isEmpty()) {
 			fIndex.acquireWriteLock(1);
 			try {
-				for (Iterator iterator = fFilesToRemove.iterator(); iterator.hasNext();) {
+				for (Iterator<Object> iterator = fFilesToRemove.iterator(); iterator.hasNext();) {
 					if (monitor.isCanceled()) {
 						return;
 					}
@@ -400,11 +397,11 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 					}
 					updateInfo(0, 0, -1);
 				}
-				for (Iterator iterator = ifilesToRemove.iterator(); iterator.hasNext();) {
+				for (Iterator<IIndexFragmentFile> iterator = ifilesToRemove.iterator(); iterator.hasNext();) {
 					if (monitor.isCanceled()) {
 						return;
 					}
-					IIndexFragmentFile ifile= (IIndexFragmentFile) iterator.next();
+					IIndexFragmentFile ifile= iterator.next();
 					fIndex.clearFile(ifile, null);
 					updateInfo(0, 0, -1);
 				}
@@ -416,11 +413,11 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	}
 	
 	private void parseFilesUpFront(IProgressMonitor monitor) throws CoreException {
-		for (Iterator iter = fFilesUpFront.iterator(); iter.hasNext();) {
+		for (Iterator<String> iter = fFilesUpFront.iterator(); iter.hasNext();) {
 			if (monitor.isCanceled()) {
 				return;
 			}
-			String upfront= (String) iter.next();
+			String upfront= iter.next();
 			String filePath = upfront;
 			filePath= filePath.trim();
 			if (filePath.length() == 0) {
@@ -461,11 +458,11 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		fFilesUpFront.clear();
 	}
 	
-	private void parseLinkage(int linkageID, Map fileListMap, IProgressMonitor monitor) throws CoreException, InterruptedException {
+	private void parseLinkage(int linkageID, Map<Integer, List<Object>> fileListMap, IProgressMonitor monitor) throws CoreException, InterruptedException {
 		// sources
-		List files= (List) fileListMap.get(getFileListKey(linkageID, true));
+		List<Object> files= fileListMap.get(getFileListKey(linkageID, true));
 		if (files != null) {
-			for (Iterator iter = files.iterator(); iter.hasNext();) {
+			for (Iterator<Object> iter = files.iterator(); iter.hasNext();) {
 				if (monitor.isCanceled()) 
 					return;
 				final Object tu= iter.next();
@@ -484,10 +481,10 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		}
 		
 		// headers with context
-		HashMap contextMap= new HashMap();
-		files= (List) fileListMap.get(getFileListKey(linkageID, false));
+		HashMap<IIndexFragmentFile, Object> contextMap= new HashMap<IIndexFragmentFile, Object>();
+		files= fileListMap.get(getFileListKey(linkageID, false));
 		if (files != null) {
-			for (Iterator iter = files.iterator(); iter.hasNext();) {
+			for (Iterator<Object> iter = files.iterator(); iter.hasNext();) {
 				if (monitor.isCanceled()) 
 					return;
 				final Object header= iter.next();
@@ -515,7 +512,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 
 			// headers without context
 			contextMap= null;
-			for (Iterator iter = files.iterator(); iter.hasNext();) {
+			for (Iterator<Object> iter = files.iterator(); iter.hasNext();) {
 				if (monitor.isCanceled()) 
 					return;
 				final Object header= iter.next();
@@ -535,7 +532,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	}
 
 	private static Object NO_CONTEXT= new Object();
-	private Object findContext(IIndexFragmentFile ifile, HashMap contextMap) {
+	private Object findContext(IIndexFragmentFile ifile, HashMap<IIndexFragmentFile, Object> contextMap) {
 		Object cachedContext= contextMap.get(ifile);
 		if (cachedContext != null) {
 			return cachedContext == NO_CONTEXT ? null : cachedContext;
@@ -602,8 +599,8 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	}
 	
 	private void writeToIndex(final int linkageID, IASTTranslationUnit ast, int configHash, IProgressMonitor pm) throws CoreException, InterruptedException {
-		HashSet enteredASTFilePaths= new HashSet();
-		ArrayList orderedIFLs= new ArrayList();
+		HashSet<String> enteredASTFilePaths= new HashSet<String>();
+		ArrayList<IIndexFileLocation> orderedIFLs= new ArrayList<IIndexFileLocation>();
 		final String astPath = ast.getFilePath();
 		enteredASTFilePaths.add(astPath);
 		
@@ -619,7 +616,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			orderedIFLs.add(fResolver.resolveASTPath(astPath));
 		}
 		
-		IIndexFileLocation[] ifls= (IIndexFileLocation[]) orderedIFLs.toArray(new IIndexFileLocation[orderedIFLs.size()]);
+		IIndexFileLocation[] ifls= orderedIFLs.toArray(new IIndexFileLocation[orderedIFLs.size()]);
 		addSymbols(ast, ifls, fIndex, 1, false, configHash, fTodoTaskUpdater, pm);
 		for (int i = 0; i < ifls.length; i++) {
 			ifl= ifls[i];
@@ -631,7 +628,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		}
 	}
 
-	private void collectOrderedIFLs(final int linkageID, IASTInclusionNode inclusion, HashSet enteredASTFilePaths, ArrayList orderedIFLs) throws CoreException {
+	private void collectOrderedIFLs(final int linkageID, IASTInclusionNode inclusion, HashSet<String> enteredASTFilePaths, ArrayList<IIndexFileLocation> orderedIFLs) throws CoreException {
 		final IASTPreprocessorIncludeStatement id= inclusion.getIncludeDirective();
 		if (id.isActive() && id.isResolved()) {
 			final String path= id.getPath();
@@ -705,12 +702,12 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 
 	private static int computeHashCode(IScannerInfo scannerInfo) {
 		int result= 0;
-		Map macros= scannerInfo.getDefinedSymbols();
+		Map<String, String> macros= scannerInfo.getDefinedSymbols();
 		if (macros != null) {
-			for (Iterator i = macros.entrySet().iterator(); i.hasNext();) {
-				Map.Entry entry = (Map.Entry) i.next();
-				String key = (String) entry.getKey();
-				String value = (String) entry.getValue();
+			for (Iterator<Map.Entry<String,String>> i = macros.entrySet().iterator(); i.hasNext();) {
+				Map.Entry<String,String> entry = i.next();
+				String key = entry.getKey();
+				String value = entry.getValue();
 				result= addToHashcode(result, key);
 				if (value != null && value.length() > 0) {
 					result= addToHashcode(result, value);

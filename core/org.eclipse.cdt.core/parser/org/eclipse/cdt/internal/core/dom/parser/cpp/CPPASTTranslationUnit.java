@@ -87,9 +87,12 @@ public class CPPASTTranslationUnit extends CPPASTNode implements ICPPASTTranslat
     private ILocationResolver resolver;
     private IIndex index;
     private IIndexFileSet fIndexFileSet;
-	private boolean fIsHeader;
+	private boolean fIsHeader= true;
 	private HashMap<IIndexScope, IScope> fMappedScopes= new HashMap<IIndexScope, IScope>();
-    
+   
+	public CPPASTTranslationUnit() {
+	}
+	
     public IASTTranslationUnit getTranslationUnit() {
     	return this;
     }

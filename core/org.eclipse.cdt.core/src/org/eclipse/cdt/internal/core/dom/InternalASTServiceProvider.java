@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -115,10 +115,11 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
             return null;
 		IScanner scanner = null;
 		ISourceCodeParser parser = null;
+		boolean[] isSource= {false};
 
 		if( configuration == null || configuration.getParserDialect() == null)
 		{
-		    ParserLanguage l = getLanguage(filename, project);
+		    ParserLanguage l = getLanguage(filename, project, isSource);
 		    IScannerExtensionConfiguration scannerExtensionConfiguration;
 		    if( l == ParserLanguage.CPP )
 		       scannerExtensionConfiguration = CPP_GNU_SCANNER_EXTENSION;
@@ -169,7 +170,9 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 		    }
 		}
 		// Parse
-		return parser.parse();
+		IASTTranslationUnit ast= parser.parse();
+		ast.setIsHeaderUnit(!isSource[0]);
+		return ast;
     }
 
 	public IASTCompletionNode getCompletionNode(IStorage fileToParse, IProject project, int offset,
@@ -199,7 +202,8 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 
 		CodeReader reader = fileCreator.createCodeReaderForTranslationUnit(filename);
 
-		ParserLanguage l = getLanguage(filename, project);
+		boolean[] isSource= {false};
+		ParserLanguage l = getLanguage(filename, project, isSource);
 		IScannerExtensionConfiguration scannerExtensionConfiguration = null;
 		if (l == ParserLanguage.CPP)
 			scannerExtensionConfiguration = CPP_GNU_SCANNER_EXTENSION;
@@ -242,23 +246,25 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
         return dialects;
     }
 
-    private ParserLanguage getLanguage( String filename, IProject project )
-    {
+    private ParserLanguage getLanguage( String filename, IProject project, boolean[] isSource ) {
     	//FIXME: ALAIN, for headers should we assume CPP ??
     	// The problem is that it really depends on how the header was included.
     	String id = null;
+    	isSource[0]= false;
     	IContentType contentType = CCorePlugin.getContentType(project, filename);
     	if (contentType != null) {
     		id = contentType.getId();
     	}
     	if (id != null) {
     		if (CCorePlugin.CONTENT_TYPE_CXXHEADER.equals(id)) {
+    			isSource[0]= true;
     			return ParserLanguage.CPP;
     		} else if (CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(id)) {
     			return ParserLanguage.CPP;
     		} else if (CCorePlugin.CONTENT_TYPE_CHEADER.equals(id)) {
     			return ParserLanguage.C; 					
     		} else if (CCorePlugin.CONTENT_TYPE_CSOURCE.equals(id)) {
+    			isSource[0]= true;
     			return ParserLanguage.C;
     		} else if (CCorePlugin.CONTENT_TYPE_ASMSOURCE.equals(id)) {
     			// ???

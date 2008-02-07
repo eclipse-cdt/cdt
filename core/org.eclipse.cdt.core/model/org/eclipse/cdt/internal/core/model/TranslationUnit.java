@@ -11,7 +11,6 @@
  *     IBM Corporation
  *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.model;
 
 import java.io.FileInputStream;
@@ -221,13 +220,13 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 
 	public IInclude[] getIncludes() throws CModelException {
 		ICElement[] celements = getChildren();
-		ArrayList aList = new ArrayList();
+		ArrayList<ICElement> aList = new ArrayList<ICElement>();
 		for (int i = 0; i < celements.length; i++) {
 			if (celements[i].getElementType() == ICElement.C_INCLUDE) {
 				aList.add(celements[i]);
 			}
 		}
-		return (IInclude[]) aList.toArray(new IInclude[0]);
+		return aList.toArray(new IInclude[0]);
 	}
 
 	public IUsing getUsing(String name) {
@@ -247,13 +246,13 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 
 	public IUsing[] getUsings() throws CModelException {
 		ICElement[] celements = getChildren();
-		ArrayList aList = new ArrayList();
+		ArrayList<ICElement> aList = new ArrayList<ICElement>();
 		for (int i = 0; i < celements.length; i++) {
 			if (celements[i].getElementType() == ICElement.C_USING) {
 				aList.add(celements[i]);
 			}
 		}
-		return (IUsing[]) aList.toArray(new IUsing[0]);
+		return aList.toArray(new IUsing[0]);
 	}
 
 	public INamespace getNamespace(String name) {
@@ -286,13 +285,13 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 
 	public INamespace[] getNamespaces() throws CModelException {
 		ICElement[] celements = getChildren();
-		ArrayList aList = new ArrayList();
+		ArrayList<ICElement> aList = new ArrayList<ICElement>();
 		for (int i = 0; i < celements.length; i++) {
 			if (celements[i].getElementType() == ICElement.C_NAMESPACE) {
 				aList.add(celements[i]);
 			}
 		}
-		return (INamespace[]) aList.toArray(new INamespace[0]);
+		return aList.toArray(new INamespace[0]);
 	}
 
 	protected void setLocationURI(URI loc) {
@@ -786,24 +785,17 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			fLanguageOfContext= language;
 			if (language != null) {
 				ICodeReaderFactory crf= getCodeReaderFactory(style, index, language.getLinkageID());
-				IASTTranslationUnit ast= null;
-				if (language instanceof AbstractLanguage) {
-					int options= 0;
-					if ((style & AST_SKIP_FUNCTION_BODIES) != 0) {
-						options |= AbstractLanguage.OPTION_SKIP_FUNCTION_BODIES;
-					}
-					if ((style & AST_CREATE_COMMENT_NODES) != 0) {
-						options |= AbstractLanguage.OPTION_ADD_COMMENTS;
-					}
-					ast= ((AbstractLanguage)language).getASTTranslationUnit(reader, scanInfo, crf, index, options, ParserUtil.getParserLogService());
+				int options= 0;
+				if ((style & AST_SKIP_FUNCTION_BODIES) != 0) {
+					options |= ILanguage.OPTION_SKIP_FUNCTION_BODIES;
 				}
-				else {
-					ast= language.getASTTranslationUnit(reader, scanInfo, crf, index, ParserUtil.getParserLogService());
+				if ((style & AST_CREATE_COMMENT_NODES) != 0) {
+					options |= ILanguage.OPTION_ADD_COMMENTS;
 				}
-				if (ast != null) {
-					ast.setIsHeaderUnit(isHeaderUnit());
+				if (isSourceUnit()) {
+					options |= ILanguage.OPTION_IS_SOURCE_UNIT;
 				}
-				return ast;
+				return ((AbstractLanguage)language).getASTTranslationUnit(reader, scanInfo, crf, index, options, ParserUtil.getParserLogService());
 			}
 		}
 		return null;
@@ -836,7 +828,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 					IIndexFile indexFile= index.getFile(CTX_LINKAGES[i], ifl);
 					if (indexFile != null) {
 						// bug 199412, when a source-file includes itself the context may recurse.
-						HashSet visited= new HashSet();
+						HashSet<IIndexFile> visited= new HashSet<IIndexFile>();
 						visited.add(indexFile);
 						indexFile = getParsedInContext(indexFile);
 						while (indexFile != null && visited.add(indexFile)) {

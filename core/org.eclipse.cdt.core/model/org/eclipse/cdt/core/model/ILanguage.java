@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 QNX Software Systems and others.
+ * Copyright (c) 2005, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *    Markus Schorn (Wind River Systems)
  *    IBM Corporation
  *******************************************************************************/
-
 package org.eclipse.cdt.core.model;
 
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
@@ -32,8 +31,31 @@ import org.eclipse.core.runtime.IAdaptable;
  */
 public interface ILanguage extends IAdaptable {
 
-	//public static final QualifiedName KEY = new QualifiedName(CCorePlugin.PLUGIN_ID, "language"); //$NON-NLS-1$
-	public static final String KEY = "language"; //$NON-NLS-1$
+	/**
+	 * Option for {@link #getASTTranslationUnit(CodeReader, IScannerInfo, ICodeReaderFactory, IIndex, int, IParserLogService)}
+	 * Instructs the parser to skip function and method bodies.
+	 */
+	public final static int OPTION_SKIP_FUNCTION_BODIES= 1;
+
+	/**
+	 * Option for {@link #getASTTranslationUnit(CodeReader, IScannerInfo, ICodeReaderFactory, IIndex, int, IParserLogService)}
+	 * Instructs the parser to add comment nodes to the ast.
+	 */
+	public final static int OPTION_ADD_COMMENTS= 2;
+
+	/**
+	 * Option for {@link #getASTTranslationUnit(CodeReader, IScannerInfo, ICodeReaderFactory, IIndex, int, IParserLogService)}
+	 * Performance optimization, instructs the parser not to create image-locations. 
+	 * When using this option {@link IASTName#getImageLocation()} will always return <code>null</code>.
+	 */
+	public final static int OPTION_NO_IMAGE_LOCATIONS= 4;
+
+	/**
+	 * Option for {@link #getASTTranslationUnit(CodeReader, IScannerInfo, ICodeReaderFactory, IIndex, int, IParserLogService)}
+	 * Marks the ast as being based on a source-file rather than a header-file. This makes a difference
+	 * when bindings from the AST are used for searching the index, e.g. for static variables. 
+	 */
+	public final static int OPTION_IS_SOURCE_UNIT= 8;
 
 	/**
 	 * Return the language id for this language.
@@ -55,21 +77,6 @@ public interface ILanguage extends IAdaptable {
 	 */
 	public String getName();
 	
-	/**
-	 * @deprecated use {@link ITranslationUnit#getAST()}.
-	 */
-	public IASTTranslationUnit getASTTranslationUnit(
-			ITranslationUnit file,
-			int style) throws CoreException;
-
-	/**
-	 * @deprecated use {@link ITranslationUnit#getAST(...)}.
-	 */
-	public IASTTranslationUnit getASTTranslationUnit(
-			ITranslationUnit file,
-			ICodeReaderFactory codeReaderFactory,
-			int style) throws CoreException;
-
 	/**
 	 * Return the AST completion node for the given offset.
 	 * 
@@ -109,6 +116,8 @@ public interface ILanguage extends IAdaptable {
 
 	/**
 	 * Construct an AST for the source code provided by <code>reader</code>.
+	 * Fully equivalent to 
+	 * <code> getASTTranslationUnit(reader, scanInfo, fileCreator, index, 0, log) </code>
 	 * @param reader source code to be parsed.
 	 * @param scanInfo provides include paths and defined symbols.
 	 * @param fileCreator factory that provides CodeReaders for files included
@@ -119,5 +128,29 @@ public interface ILanguage extends IAdaptable {
 	 * @return an AST for the source code provided by reader.
 	 * @throws CoreException
 	 */
-	public IASTTranslationUnit getASTTranslationUnit(CodeReader reader, IScannerInfo scanInfo, ICodeReaderFactory fileCreator, IIndex index, IParserLogService log) throws CoreException;
+	public IASTTranslationUnit getASTTranslationUnit(CodeReader reader, IScannerInfo scanInfo, 
+			ICodeReaderFactory fileCreator, IIndex index, IParserLogService log) 
+			throws CoreException;
+	
+	/**
+	 * Construct an AST for the source code provided by <code>reader</code>.
+	 * As an option you can supply 
+	 * @param reader source code to be parsed.
+	 * @param scanInfo provides include paths and defined symbols.
+	 * @param fileCreator factory that provides CodeReaders for files included
+	 *                    by the source code being parsed.
+	 * @param index (optional) index to use to provide support for ambiguity
+	 *              resolution.
+	 * @param options A combination of 
+	 * {@link #OPTION_SKIP_FUNCTION_BODIES}, {@link #OPTION_ADD_COMMENTS},
+	 * {@link #OPTION_NO_IMAGE_LOCATIONS}, {@link #OPTION_IS_SOURCE_UNIT},
+	 *  or <code>0</code>.
+	 * @param log logger
+	 * @return an AST for the source code provided by reader.
+	 * @throws CoreException
+	 */
+	public IASTTranslationUnit getASTTranslationUnit(CodeReader reader, IScannerInfo scanInfo,
+			ICodeReaderFactory fileCreator, IIndex index, int options, IParserLogService log)
+			throws CoreException;
+
 }

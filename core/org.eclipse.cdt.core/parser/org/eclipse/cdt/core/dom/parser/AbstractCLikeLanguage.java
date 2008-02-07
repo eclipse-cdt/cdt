@@ -115,12 +115,13 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 
 		IScanner scanner= createScanner(reader, scanInfo, codeReaderFactory, log);
 		scanner.setScanComments((options & OPTION_ADD_COMMENTS) != 0);
-		scanner.setComputeImageLocations((options & AbstractLanguage.OPTION_NO_IMAGE_LOCATIONS) == 0);
+		scanner.setComputeImageLocations((options & OPTION_NO_IMAGE_LOCATIONS) == 0);
 
 		ISourceCodeParser parser= createParser(scanner, log, index, false, options);
 		
 		// Parse
 		IASTTranslationUnit ast= parser.parse();
+		ast.setIsHeaderUnit((options & OPTION_IS_SOURCE_UNIT) == 0);
 		return ast;
 	}
 	
@@ -204,8 +205,8 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 		
 		CharArrayIntMap additionalKeywords = getScannerExtensionConfiguration().getAdditionalKeywords();
 		if (additionalKeywords != null) {
-			for (Iterator iterator = additionalKeywords.toList().iterator(); iterator.hasNext(); ) {
-				char[] name = (char[]) iterator.next();
+			for (Iterator<char[]> iterator = additionalKeywords.toList().iterator(); iterator.hasNext(); ) {
+				char[] name = iterator.next();
 				keywords.add(new String(name));
 			}
 		}
@@ -223,8 +224,8 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 		Set<String> keywords = new HashSet<String>(KeywordSets.getKeywords(KeywordSetKey.PP_DIRECTIVE, getParserLanguage()));
 		CharArrayIntMap additionalKeywords= getScannerExtensionConfiguration().getAdditionalPreprocessorKeywords();
 		if (additionalKeywords != null) {
-			for (Iterator iterator = additionalKeywords.toList().iterator(); iterator.hasNext(); ) {
-				char[] name = (char[]) iterator.next();
+			for (Iterator<char[]> iterator = additionalKeywords.toList().iterator(); iterator.hasNext(); ) {
+				char[] name = iterator.next();
 				keywords.add(new String(name));
 			}
 		}

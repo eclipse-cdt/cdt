@@ -10,18 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
-import org.eclipse.cdt.core.parser.Enum;
 
-public interface IDebugLogConstants {
-	public class DebugLogConstant extends Enum {
-			protected DebugLogConstant( int value )
-			{
-				super( value );
-			}
-			
-		}
+public enum DebugLogConstants {
 		
-	public static final DebugLogConstant PARSER = new DebugLogConstant( 1 );
-	public static final DebugLogConstant MODEL = new DebugLogConstant ( 2 );
-	public static final DebugLogConstant SCANNER = new DebugLogConstant( 3 );
+	PARSER,
+	MODEL,
+	SCANNER,
 }

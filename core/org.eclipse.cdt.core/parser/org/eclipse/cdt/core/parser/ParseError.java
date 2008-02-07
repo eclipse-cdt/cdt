@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
+ *     IBM Rational Software - Initial API and implementation
+ *     Mike Kucera (IBM)- convert to Java 5 enum
  *******************************************************************************/
 package org.eclipse.cdt.core.parser;
 
@@ -19,27 +20,20 @@ public class ParseError extends Error {
 	
 	private final ParseErrorKind errorKind;
 
-	public static class ParseErrorKind extends Enum
+	public enum ParseErrorKind
 	{
 		// the method called is not implemented in this particular implementation
-		public static final ParseErrorKind METHOD_NOT_IMPLEMENTED = new ParseErrorKind( 0 );
+		METHOD_NOT_IMPLEMENTED,
 		
 		// offset specified is within a section of code #if'd out by the preprocessor 
 		// semantic context cannot be provided in this case
-		public static final ParseErrorKind OFFSETDUPLE_UNREACHABLE = new ParseErrorKind( 1 );
+		OFFSETDUPLE_UNREACHABLE,
 		
 		// offset range specified is not a valid identifier or qualified name
 		// semantic context cannot be provided in this case
-		public static final ParseErrorKind OFFSET_RANGE_NOT_NAME = new ParseErrorKind( 2 );
+		OFFSET_RANGE_NOT_NAME,
 
-		public static final ParseErrorKind TIMEOUT_OR_CANCELLED = new ParseErrorKind( 3 );
-		
-		/**
-		 * @param enumValue
-		 */
-		protected ParseErrorKind(int enumValue) {
-			super(enumValue);
-		}
+		TIMEOUT_OR_CANCELLED,
 	}
 
 	public ParseErrorKind getErrorKind()

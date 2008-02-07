@@ -25,7 +25,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICModelStatusConstants;
-import org.eclipse.cdt.internal.core.model.IDebugLogConstants.DebugLogConstant;
 import org.eclipse.cdt.internal.core.util.CharArrayBuffer;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
@@ -208,11 +207,11 @@ public class Util implements ICLogConstants {
 		Util.log(status, logType);
 	}
 
-	public static void debugLog(String message, DebugLogConstant client) {
+	public static void debugLog(String message, DebugLogConstants client) {
 		Util.debugLog(message, client, true);
 	}
 
-	public static void debugLog(String message, DebugLogConstant client,
+	public static void debugLog(String message, DebugLogConstants client,
 			boolean addTimeStamp) {
 		if (CCorePlugin.getDefault() == null)
 			return;
@@ -238,12 +237,12 @@ public class Util implements ICLogConstants {
 	 * @param client
 	 * @return
 	 */
-	public static boolean isActive(DebugLogConstant client) {
-		if (client.equals(IDebugLogConstants.PARSER)) {
+	public static boolean isActive(DebugLogConstants client) {
+		if (client.equals(DebugLogConstants.PARSER)) {
 			return VERBOSE_PARSER;
-		} else if (client.equals(IDebugLogConstants.SCANNER))
+		} else if (client.equals(DebugLogConstants.SCANNER))
 			return VERBOSE_SCANNER;
-		else if (client.equals(IDebugLogConstants.MODEL)) {
+		else if (client.equals(DebugLogConstants.MODEL)) {
 			return VERBOSE_MODEL;
 		}
 		return false;

@@ -16,7 +16,7 @@ import java.io.InputStream;
 import java.util.Iterator;
 
 import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.internal.core.model.IDebugLogConstants;
+import org.eclipse.cdt.internal.core.model.DebugLogConstants;
 import org.eclipse.cdt.internal.core.parser.InternalParserUtil;
 import org.eclipse.cdt.internal.core.parser.ParserLogService;
 import org.eclipse.core.resources.IFile;
@@ -40,8 +40,8 @@ public class ParserUtil
 		return parserLogService;
 	}
 		
-	private static IParserLogService parserLogService = new ParserLogService(IDebugLogConstants.PARSER );
-	private static IParserLogService scannerLogService = new ParserLogService(IDebugLogConstants.SCANNER );
+	private static IParserLogService parserLogService = new ParserLogService(DebugLogConstants.PARSER );
+	private static IParserLogService scannerLogService = new ParserLogService(DebugLogConstants.SCANNER );
 
 	/**
 	 * @return

@@ -635,7 +635,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			}
 		} catch (Exception e) {
 			// use the debug log for this exception.
-			Util.debugLog( "Exception in CModelBuilder", IDebugLogConstants.MODEL);  //$NON-NLS-1$
+			Util.debugLog( "Exception in CModelBuilder", DebugLogConstants.MODEL);  //$NON-NLS-1$
 		}
 	}
 
@@ -644,7 +644,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			mb.parse(quickParseMode);
 		} catch (Exception e) {
 			// use the debug log for this exception.
-			Util.debugLog( "Exception in contributed model builder", IDebugLogConstants.MODEL);  //$NON-NLS-1$
+			Util.debugLog( "Exception in contributed model builder", DebugLogConstants.MODEL);  //$NON-NLS-1$
 		}
 	}
 

@@ -236,7 +236,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 					+ fTranslationUnit.getElementName()
 					+ " mode="+ (quickParseMode ? "skip all " : "skip indexed ") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					+ " time="+ ( System.currentTimeMillis() - startTime ) + "ms", //$NON-NLS-1$ //$NON-NLS-2$
-					IDebugLogConstants.MODEL, false);
+					DebugLogConstants.MODEL, false);
 
 			if (ast == null) {
 				return;
@@ -249,7 +249,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			Util.debugLog("CModelBuilder2: building " //$NON-NLS-1$
 					+"children="+ fTranslationUnit.getElementInfo().internalGetChildren().size() //$NON-NLS-1$
 					+" time="+ (System.currentTimeMillis() - startTime) + "ms", //$NON-NLS-1$ //$NON-NLS-2$
-					IDebugLogConstants.MODEL, false);
+					DebugLogConstants.MODEL, false);
 
 			if (elementInfo instanceof ASTHolderTUInfo) {
 				((ASTHolderTUInfo)elementInfo).fAST= ast;
@@ -269,7 +269,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 
 	private void checkCanceled() {
 		if (fProgressMonitor != null && fProgressMonitor.isCanceled()) {
-			Util.debugLog("CModelBuilder2: cancelled ", IDebugLogConstants.MODEL, false); //$NON-NLS-1$
+			Util.debugLog("CModelBuilder2: cancelled ", DebugLogConstants.MODEL, false); //$NON-NLS-1$
 			throw new OperationCanceledException();
 		}
 	}

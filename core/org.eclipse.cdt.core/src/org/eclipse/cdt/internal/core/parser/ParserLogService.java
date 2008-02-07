@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,30 +8,28 @@
  * Contributors:
  *    IBM Rational Software - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
+ *    Mike Kucera (IBM)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.core.parser.AbstractParserLogService;
+import org.eclipse.cdt.internal.core.model.DebugLogConstants;
 import org.eclipse.cdt.internal.core.model.Util;
-import org.eclipse.cdt.internal.core.model.IDebugLogConstants.DebugLogConstant;
 
 /**
  * @author jcamelon
  *
  */
-public class ParserLogService extends AbstractParserLogService
-{
+public class ParserLogService extends AbstractParserLogService {
 
-	final DebugLogConstant topic;
-	final boolean fIsTracing;
-	final boolean fIsTracingExceptions;
+	private final DebugLogConstants topic;
+	private final boolean fIsTracing;
+	private final boolean fIsTracingExceptions;
 	
-	/**
-	 * @param constant
-	 */
-	public ParserLogService(DebugLogConstant constant) {
+
+	public ParserLogService(DebugLogConstants constant) {
 		topic = constant;
 		if (CCorePlugin.getDefault() == null) {
 			fIsTracing= fIsTracingExceptions= false;
@@ -42,26 +40,24 @@ public class ParserLogService extends AbstractParserLogService
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserLogService#traceLog(java.lang.String)
-	 */
-	public void traceLog(String message)
-	{
+
+	@Override
+	public void traceLog(String message) {
 		Util.debugLog( message, topic );
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserLogService#errorLog(java.lang.String)
-	 */
-	public void errorLog(String message)
-	{
+
+	@Override
+	public void errorLog(String message) {
 		Util.log( message, ICLogConstants.CDT );
 	}
 
-	public boolean isTracing(){
+	@Override
+	public boolean isTracing() {
 		return fIsTracing;
 	}
 	
+	@Override
 	public boolean isTracingExceptions() {
 		return fIsTracingExceptions;
 	}

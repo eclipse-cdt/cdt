@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,34 +7,26 @@
  *
  * Contributors:
  *     IBM Corp. - Rational Software - initial implementation
+ *     Mike Kucera (IBM) - convert to Java 5 enum
  *******************************************************************************/
 
 package org.eclipse.cdt.core.parser;
 
 /**
- * @author aniefer
- *
- * To change the template for this generated type comment go to
- * Window>Preferences>Java>Code Generation>Code and Comments
+ * Enumeration of base languages supported by CDT.
  */
-public class ParserLanguage extends Enum {
-	public final static ParserLanguage C   = new ParserLanguage( 1 );
-	public final static ParserLanguage CPP = new ParserLanguage( 2 );
+public enum ParserLanguage {
+	
+	C {
+		@Override public boolean isCPP() { return false; }
+		@Override public String toString() { return "C"; } //$NON-NLS-1$
+	},
+	
+	CPP {
+		@Override public boolean isCPP() { return true; }
+		@Override public String toString() { return "C++"; } //$NON-NLS-1$
+	};
 
-	private ParserLanguage( int value )
-	{
-		super( value ); 
-	}
+	public abstract boolean isCPP();
 
-	/**
-	 * @return
-	 */
-	public boolean isCPP() {
-		return ( this == CPP );
-	}
-    
-    public String toString() {
-        if( isCPP() ) return "C++"; //$NON-NLS-1$
-        return "C"; //$NON-NLS-1$
-    }
 }

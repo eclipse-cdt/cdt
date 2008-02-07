@@ -269,21 +269,6 @@ public class CDebugCorePlugin extends Plugin {
 		return dbgCfg;
 	}
 
-	protected void resetBreakpointsInstallCount() {
-		IBreakpointManager bm = DebugPlugin.getDefault().getBreakpointManager();
-		IBreakpoint[] breakpoints = bm.getBreakpoints( getUniqueIdentifier() );
-		for( int i = 0; i < breakpoints.length; ++i ) {
-			if ( breakpoints[i] instanceof CBreakpoint ) {
-				try {
-					((CBreakpoint)breakpoints[i]).resetInstallCount();
-				}
-				catch( CoreException e ) {
-					log( e.getStatus() );
-				}
-			}
-		}
-	}
-
 	protected SessionManager getSessionManager() {
 		return fSessionManager;
 	}
@@ -347,7 +332,6 @@ public class CDebugCorePlugin extends Plugin {
 		super.start( context );
 		initializeCommonSourceLookupDirector();
 		createBreakpointListenersList();
-		resetBreakpointsInstallCount();
 		setSessionManager( new SessionManager() );
 	}
 
@@ -357,7 +341,6 @@ public class CDebugCorePlugin extends Plugin {
 	public void stop( BundleContext context ) throws Exception {
 		setSessionManager( null );
 		disposeBreakpointListenersList();
-		resetBreakpointsInstallCount();
 		disposeCommonSourceLookupDirector();
 		disposeDebugConfigurations();
 		super.stop( context );

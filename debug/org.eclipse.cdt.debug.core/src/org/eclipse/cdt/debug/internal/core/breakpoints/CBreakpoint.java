@@ -12,6 +12,7 @@ package org.eclipse.cdt.debug.internal.core.breakpoints;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +48,11 @@ public abstract class CBreakpoint extends Breakpoint implements ICBreakpoint, ID
      * and values are arrays of breakpoint extensions.
      */
 	private Map fExtensions = new HashMap(1);
+	
+	/**
+	 * The number of debug targets the breakpoint is installed in.  
+	 */
+	private int fInstallCount = 0;	
 	
    /**
      * Constructor for CBreakpoint.
@@ -107,7 +113,7 @@ public abstract class CBreakpoint extends Breakpoint implements ICBreakpoint, ID
 	 * @see org.eclipse.cdt.debug.core.ICBreakpoint#isInstalled()
 	 */
 	public boolean isInstalled() throws CoreException {
-		return ensureMarker().getAttribute( INSTALL_COUNT, 0 ) > 0;
+		return fInstallCount > 0;
 	}
 
 	/*
@@ -216,19 +222,18 @@ public abstract class CBreakpoint extends Breakpoint implements ICBreakpoint, ID
 	abstract protected String getMarkerMessage() throws CoreException;
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.ICBreakpoint#resetInstallCount()
-	 */
-	public synchronized void resetInstallCount() throws CoreException {
-		setAttribute( INSTALL_COUNT, 0 );
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICBreakpoint#incrementInstallCount()
 	 */
 	public synchronized int incrementInstallCount() throws CoreException {
-		int count = getInstallCount();
-		setAttribute( INSTALL_COUNT, ++count );
-		return count;
+		++fInstallCount;
+		
+		// handle the crossing into the installed state; we decorate 
+		// an installed marker with a blue checkmark
+		if (fInstallCount == 1) {
+			setAttribute(FORCE_UPDATE, Long.toString((new Date()).getTime()));	// force a refresh of the marker through a dummy attribute
+		}
+		
+		return fInstallCount;
 	}
 
 	/**
@@ -236,20 +241,35 @@ public abstract class CBreakpoint extends Breakpoint implements ICBreakpoint, ID
 	 * 0 if the attribute is not set.
 	 */
 	public int getInstallCount() throws CoreException {
-		return ensureMarker().getAttribute( INSTALL_COUNT, 0 );
+		return fInstallCount;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICBreakpoint#decrementInstallCount()
 	 */
 	public synchronized int decrementInstallCount() throws CoreException {
-		int count = getInstallCount();
-		if ( count > 0 ) {
-			setAttribute( INSTALL_COUNT, --count );
+		fInstallCount--;
+		
+		// handle the crossing into the uninstalled state; we decorate 
+		// an installed marker with a blue checkmark
+		if (fInstallCount == 0) {
+			setAttribute(FORCE_UPDATE, Long.toString((new Date()).getTime()));	// force a refresh of the marker through a dummy attribute
 		}
-		return count;
+		
+		return fInstallCount;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICBreakpoint#resetInstallCount()
+	 */
+	public synchronized void resetInstallCount() throws CoreException {
+		int previous = fInstallCount;
+		fInstallCount = 0;
+		if (previous != 0) {
+			setAttribute(FORCE_UPDATE, Long.toString((new Date()).getTime()));	// force a refresh of the marker through a dummy attribute
+		}
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 

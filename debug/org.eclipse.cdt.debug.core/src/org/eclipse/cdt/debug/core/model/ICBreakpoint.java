@@ -26,11 +26,13 @@ import org.eclipse.debug.core.model.IBreakpoint;
 public interface ICBreakpoint extends IBreakpoint {
 
 	/**
-	 * Breakpoint attribute storing the number of debug targets a breakpoint is
-	 * installed in (value <code>"org.eclipse.cdt.debug.core.installCount"</code>). 
-	 * This attribute is an <code>int</code>.
+	 * Breakpoint attribute that we use merely as a way to force the marker to
+	 * refresh. When a CDT internal, but not persisted, state of the breakpoint
+	 * changes in a way that calls for the marker to refresh, we simply store a
+	 * timestamp (Long.toString(Date.getTime())) into this setting. The platform
+	 * responds to all marker attrib changes with a marker refresh.
 	 */
-	public static final String INSTALL_COUNT = "org.eclipse.cdt.debug.core.installCount"; //$NON-NLS-1$	
+	public static final String FORCE_UPDATE = "org.eclipse.cdt.debug.core.forceupdate"; //$NON-NLS-1$	
 
 	/**
 	 * Breakpoint attribute storing the conditional expression associated with

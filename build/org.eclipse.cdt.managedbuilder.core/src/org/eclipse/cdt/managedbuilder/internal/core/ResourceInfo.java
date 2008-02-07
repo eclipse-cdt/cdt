@@ -30,8 +30,6 @@ import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.OptionStringValue;
-import org.eclipse.cdt.managedbuilder.internal.tcmodification.ToolListModification;
-import org.eclipse.cdt.managedbuilder.tcmodification.IToolListModification;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -470,9 +468,9 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 	
 	public abstract boolean isExtensionElement();
 	
-	public abstract Set contributeErrorParsers(Set set);
+	public abstract Set<String> contributeErrorParsers(Set<String> set);
 	
-	protected Set contributeErrorParsers(ITool[] tools, Set set){
+	protected Set<String> contributeErrorParsers(ITool[] tools, Set<String> set){
 //		if(set == null)
 //			set = new HashSet();
 		for(int i = 0; i < tools.length; i++){
@@ -491,9 +489,9 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		}
 	}
 	
-	abstract void removeErrorParsers(Set set);
+	abstract void removeErrorParsers(Set<String> set);
 	
-	protected void removeErrorParsers(ITool tools[], Set set){
+	protected void removeErrorParsers(ITool tools[], Set<String> set){
 		for(int i = 0; i < tools.length; i++){
 			Tool tool = (Tool)tools[i];
 			tool.removeErrorParsers(set);
@@ -579,7 +577,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		return cr.getResourceInfos();
 	}
 	
-	public List getChildResourceInfoList(boolean includeCurrent){
+	public List<IResourceInfo> getChildResourceInfoList(boolean includeCurrent){
 		return getRcInfo().getRcInfoList(ICSettingBase.SETTING_FILE | ICSettingBase.SETTING_FOLDER, includeCurrent);
 	}
 }

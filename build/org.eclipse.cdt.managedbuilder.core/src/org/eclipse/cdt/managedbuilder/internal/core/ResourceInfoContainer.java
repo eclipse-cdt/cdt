@@ -63,11 +63,11 @@ public class ResourceInfoContainer {
 	}
 	
 	public IResourceInfo[] getResourceInfos(int kind, Class clazz){
-		List list = getRcInfoList(kind);
+		List<IResourceInfo> list = getRcInfoList(kind);
 
 		IResourceInfo datas[] = (IResourceInfo[])Array.newInstance(clazz, list.size());
 		
-		return (IResourceInfo[])list.toArray(datas);
+		return list.toArray(datas);
 	}
 
 	public IResourceInfo[] getDirectChildResourceInfos(){
@@ -82,12 +82,12 @@ public class ResourceInfoContainer {
 		return datas;
 	}
 
-	public List getRcInfoList(final int kind){
+	public List<IResourceInfo> getRcInfoList(final int kind){
 		return getRcInfoList(kind, fIncludeCurrent);
 	}		
 	
-	public List getRcInfoList(final int kind, final boolean includeCurrent){
-		final List list = new ArrayList(); 
+	public List<IResourceInfo> getRcInfoList(final int kind, final boolean includeCurrent){
+		final List<IResourceInfo> list = new ArrayList<IResourceInfo>(); 
 		fRcDataContainer.accept(new IPathSettingsContainerVisitor(){
 
 			public boolean visit(PathSettingsContainer container) {

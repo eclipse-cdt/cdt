@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 Intel Corporation and others.
+ * Copyright (c) 2004, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,6 +53,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 
@@ -71,15 +72,15 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 	private String superClassId;
 	//  Parent and children
 	private IConfiguration config;
-	private List toolList;
-	private Map toolMap;
+	private List<Tool> toolList;
+	private Map<String, Tool> toolMap;
 	private TargetPlatform targetPlatform;
 	private Builder builder;
 	//  Managed Build model attributes
 	private String unusedChildren;
 	private String errorParserIds;
-	private List osList;
-	private List archList;
+	private List<String> osList;
+	private List<String> archList;
 	private String targetToolIds;
 	private String secondaryOutputIds;
 	private Boolean isAbstract;
@@ -115,7 +116,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 	private BooleanExpressionApplicabilityCalculator booleanExpressionCalculator;
 	
 	private List identicalList;
-	private Set unusedChildrenSet;
+	private Set<String> unusedChildrenSet;
 
 	
 	private IFolderInfo parentFolderInfo;
@@ -290,7 +291,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 	 * @param parent The <code>IConfiguration</code> the tool-chain will be added to. 
 	 * @param toolChain The existing tool-chain to clone.
 	 */
-	public ToolChain(IFolderInfo folderInfo, String Id, String name, Map superIdMap, ToolChain toolChain) {
+	public ToolChain(IFolderInfo folderInfo, String Id, String name, Map<IPath, Map<String, String>> superIdMap, ToolChain toolChain) {
 		super(resolvedDefault);
 		this.config = folderInfo.getParent();
 		parentFolderInfo = folderInfo;
@@ -324,10 +325,10 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 			errorParserIds = new String(toolChain.errorParserIds);
 		}
 		if (toolChain.osList != null) {
-			osList = new ArrayList(toolChain.osList);
+			osList = new ArrayList<String>(toolChain.osList);
 		}
 		if (toolChain.archList != null) {
-			archList = new ArrayList(toolChain.archList);
+			archList = new ArrayList<String>(toolChain.archList);
 		}
 		if (toolChain.targetToolIds != null) {
 			targetToolIds = new String(toolChain.targetToolIds);
@@ -416,16 +417,13 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		
 		IConfiguration cfg = parentFolderInfo.getParent();
 		if (toolChain.toolList != null) {
-			Iterator iter = toolChain.getToolList().listIterator();
-			while (iter.hasNext()) {
-			    Tool toolChild = (Tool) iter.next();
-//				int nnn = ManagedBuildManager.getRandomNumber();
+			for (Tool toolChild : toolChain.getToolList()) {
 				String subId = null;
 //				String tmpId;
 				String subName;
 //				String version;
 				ITool extTool = ManagedBuildManager.getExtensionTool(toolChild);
-				Map curIdMap = (Map)superIdMap.get(folderInfo.getPath());
+				Map<String, String> curIdMap = (Map<String, String>)superIdMap.get(folderInfo.getPath());
 				if(curIdMap != null){
 					if(extTool != null)
 						subId = (String)curIdMap.get(extTool.getId());
@@ -476,9 +474,9 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 								}
 							} else {
 								superId = copyIds ? otherSuperTool.getId() : ManagedBuildManager.calculateChildId(otherExtTool.getId(), null);
-								Map idMap = (Map)superIdMap.get(otherRcInfo.getPath());
+								Map<String, String> idMap = (Map<String, String>)superIdMap.get(otherRcInfo.getPath());
 								if(idMap == null){
-									idMap = new HashMap();
+									idMap = new HashMap<String, String>();
 									superIdMap.put(otherRcInfo.getPath(), idMap);
 								}
 								idMap.put(otherExtTool.getId(), superId);
@@ -579,7 +577,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		// Get the comma-separated list of valid OS
 		String os = element.getAttribute(OS_LIST);
 		if (os != null) {
-			osList = new ArrayList();
+			osList = new ArrayList<String>();
 			String[] osTokens = os.split(","); //$NON-NLS-1$
 			for (int i = 0; i < osTokens.length; ++i) {
 				osList.add(osTokens[i].trim());
@@ -589,7 +587,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		// Get the comma-separated list of valid Architectures
 		String arch = element.getAttribute(ARCH_LIST);
 		if (arch != null) {
-			archList = new ArrayList();
+			archList = new ArrayList<String>();
 			String[] archTokens = arch.split(","); //$NON-NLS-1$
 			for (int j = 0; j < archTokens.length; ++j) {
 				archList.add(archTokens[j].trim());
@@ -698,7 +696,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		if (element.getAttribute(OS_LIST) != null) {
 			String os = element.getAttribute(OS_LIST);
 			if (os != null) {
-				osList = new ArrayList();
+				osList = new ArrayList<String>();
 				String[] osTokens = os.split(","); //$NON-NLS-1$
 				for (int i = 0; i < osTokens.length; ++i) {
 					osList.add(osTokens[i].trim());
@@ -710,7 +708,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		if (element.getAttribute(ARCH_LIST) != null) {
 			String arch = element.getAttribute(ARCH_LIST);
 			if (arch != null) {
-				archList = new ArrayList();
+				archList = new ArrayList<String>();
 				String[] archTokens = arch.split(","); //$NON-NLS-1$
 				for (int j = 0; j < archTokens.length; ++j) {
 					archList.add(archTokens[j].trim());
@@ -787,7 +785,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 			}
 			
 			if (osList != null) {
-				Iterator osIter = osList.listIterator();
+				Iterator<String> osIter = osList.listIterator();
 				String listValue = EMPTY_STRING;
 				while (osIter.hasNext()) {
 					String current = (String) osIter.next();
@@ -800,7 +798,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 			}
 	
 			if (archList != null) {
-				Iterator archIter = archList.listIterator();
+				Iterator<String> archIter = archList.listIterator();
 				String listValue = EMPTY_STRING;
 				while (archIter.hasNext()) {
 					String current = (String) archIter.next();
@@ -824,10 +822,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 				ICStorageElement builderElement = element.createChild(IBuilder.BUILDER_ELEMENT_NAME);
 				builder.serialize(builderElement);
 			}
-			List toolElements = getToolList();
-			Iterator iter = toolElements.listIterator();
-			while (iter.hasNext()) {
-				Tool tool = (Tool) iter.next();
+			for (Tool tool : getToolList()) {
 				ICStorageElement toolElement = element.createChild(ITool.TOOL_ELEMENT_NAME);
 				tool.serialize(toolElement);
 			}
@@ -992,28 +987,17 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		}
 		//  Our tools take precedence
 		if (tools != null) {
-			Iterator iter = getToolList().listIterator();
-			while (iter.hasNext()) {
-				Tool tool = (Tool)iter.next();
-				int j;
-				for (j = 0; j < tools.length; j++) {
+			for (Tool tool : getToolList()) {
+				int j = 0;
+				for (; j < tools.length; j++) {
 					ITool superTool = tool.getSuperClass();
 					if(superTool != null){
 						superTool = ManagedBuildManager.getExtensionTool(superTool);
-//						if(!superTool.isExtensionElement())
-//							superTool = superTool.getSuperClass();
-						
 						if(superTool != null && superTool.getId().equals(tools[j].getId())){
 							tools[j] = tool;
 							break;
 						}
 					}
-						
-//					if (tool.getSuperClass() != null  // Remove assumption that ALL tools must have superclasses  
-//							&&  tool.getSuperClass().getId().equals(tools[j].getId())) {
-//						tools[j] = tool;
-//						break;
-//					}
  				}
 				//  No Match?  Insert it (may be re-ordered)
 				if (j == tools.length) {
@@ -1042,11 +1026,9 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 //			}
 		} else {
 			tools = new Tool[getToolList().size()];
-			Iterator iter = getToolList().listIterator();
 			int i = 0;
-			while (iter.hasNext()) {
-				Tool tool = (Tool)iter.next();
-				tools[i++] = (Tool)tool; 
+			for (Tool tool : getToolList()) {
+				tools[i++] = tool; 
 			}
 		}
 		if(includeCurrentUnused)
@@ -1055,17 +1037,16 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 	}
 	
 	private Tool[] filterUsedTools(Tool tools[], boolean used){
-		Set set = getUnusedChilrenSet();
+		Set<String> set = getUnusedChilrenSet();
 		if(set.size() == 0)
 			return used ? tools : new Tool[0];
 		
-		List list = new ArrayList(tools.length);
-		for(int i = 0; i < tools.length; i++){
-			if(set.contains(tools[i].getId()) != used)
-				list.add(tools[i]);
+		List<Tool> list = new ArrayList<Tool>(tools.length);
+		for(Tool t : tools){
+			if(set.contains(t.getId()) != used)
+				list.add(t);
 		}
-		
-		return (Tool[])list.toArray(new Tool[list.size()]);
+		return list.toArray(new Tool[list.size()]);
 	}
 	
 	public Tool[] getUnusedTools(){
@@ -1085,12 +1066,11 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#getToolsBySuperClassId(java.lang.String)
 	 */
 	public ITool[] getToolsBySuperClassId(String id) {
-		List retTools = new ArrayList();
+		List<ITool> retTools = new ArrayList<ITool>();
 		if (id != null) {
 			//  Look for a tool with this ID, or the tool(s) with a superclass with this id
 			ITool[] tools = getTools();
-			for (int i = 0; i < tools.length; i++) {
-				ITool targetTool = tools[i];
+			for (ITool targetTool : tools) {
 				ITool tool = targetTool;
 				do {
 					if (id.equals(tool.getId())) {
@@ -1101,7 +1081,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 				} while (tool != null);
 			}
 		}
-		return (ITool[])retTools.toArray( new ITool[retTools.size()]);
+		return retTools.toArray( new ITool[retTools.size()]);
 	}
 	
 	/* (non-Javadoc)
@@ -1109,9 +1089,9 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 	 * 
 	 * @return List containing the tools
 	 */
-	public List getToolList() {
+	public List<Tool> getToolList() {
 		if (toolList == null) {
-			toolList = new ArrayList();
+			toolList = new ArrayList<Tool>();
 		}
 		return toolList;
 	}
@@ -1121,9 +1101,9 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 	 * 
 	 * @return
 	 */
-	private Map getToolMap() {
+	private Map<String, Tool> getToolMap() {
 		if (toolMap == null) {
-			toolMap = new HashMap();
+			toolMap = new HashMap<String, Tool>();
 		}
 		return toolMap;
 	}
@@ -1139,16 +1119,15 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 	}
 	
 	void setToolsInternal(ITool[] tools){
-		List list = getToolList();
-		Map map = getToolMap();
+		List<Tool> list = getToolList();
+		Map<String, Tool> map = getToolMap();
 		
 		list.clear();
 		map.clear();
 		
-		list.addAll(Arrays.asList(tools));
-		for(int i = 0; i < tools.length; i++){
-			ITool tool = tools[i];
-			map.put(tool.getId(), tool);
+		for (ITool t : tools) {
+			list.add((Tool)t);
+			map.put(t.getId(), (Tool)t);
 		}
 	}
 	
@@ -1322,7 +1301,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 				targetTools = new String[0];
 			} else {
 				StringTokenizer tok = new StringTokenizer(IDs, ";"); //$NON-NLS-1$
-				List list = new ArrayList(tok.countTokens());
+				List<String> list = new ArrayList<String>(tok.countTokens());
 				while (tok.hasMoreElements()) {
 					list.add(tok.nextToken());
 				}
@@ -1380,7 +1359,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 				errorParsers = new String[0];
 			} else {
 				StringTokenizer tok = new StringTokenizer(parserIDs, ";"); //$NON-NLS-1$
-				List list = new ArrayList(tok.countTokens());
+				List<String> list = new ArrayList<String>(tok.countTokens());
 				while (tok.hasMoreElements()) {
 					list.add(tok.nextToken());
 				}
@@ -1393,11 +1372,11 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		return errorParsers;
 	}
 	
-	public Set contributeErrorParsers(FolderInfo info, Set set, boolean includeChildren){
+	public Set<String> contributeErrorParsers(FolderInfo info, Set<String> set, boolean includeChildren){
 		String parserIDs = getErrorParserIdsAttribute();
 		if (parserIDs != null){
 			if(set == null)
-				set = new HashSet();
+				set = new HashSet<String>();
 			if(parserIDs.length() != 0) {
 				StringTokenizer tok = new StringTokenizer(parserIDs, ";"); //$NON-NLS-1$
 				while (tok.hasMoreElements()) {
@@ -1497,7 +1476,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 	 */
 	public void setOSList(String[] OSs) {
 		if (osList == null) {
-			osList = new ArrayList();
+			osList = new ArrayList<String>();
 		} else {
 			osList.clear();
 		}
@@ -1512,7 +1491,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 	 */
 	public void setArchList(String[] archs) {
 		if (archList == null) {
-			archList = new ArrayList();
+			archList = new ArrayList<String>();
 		} else {
 			archList.clear();
 		}
@@ -1611,10 +1590,9 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 			return true;
 
 		// Otherwise see if any tools need saving
-		Iterator iter = getToolList().listIterator();
-		while (iter.hasNext()) {
-			Tool toolChild = (Tool) iter.next();
-			if (toolChild.isDirty()) return true;
+		for (Tool toolChild : getToolList()) {
+			if (toolChild.isDirty()) 
+				return true;
 		}
 		
 		// Otherwise see if any options need saving
@@ -1634,11 +1612,8 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		super.setDirty(isDirty);
 		// Propagate "false" to the children
 		if (!isDirty) {
-			Iterator iter = getToolList().listIterator();
-			while (iter.hasNext()) {
-				Tool toolChild = (Tool) iter.next();
+			for (Tool toolChild : getToolList())
 				toolChild.setDirty(false);
-			}		    
 		}
 	}
 	
@@ -1673,11 +1648,8 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 			if (builder != null) {
 				builder.resolveReferences();
 			}
-			Iterator iter = getToolList().listIterator();
-			while (iter.hasNext()) {
-				Tool toolChild = (Tool) iter.next();
+			for (Tool toolChild : getToolList())
 				toolChild.resolveReferences();
-			}
 		}
 	}
 	
@@ -1921,7 +1893,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 			String baseId = ManagedBuildManager.getIdFromIdAndVersion(superClassId);
 			String version = getVersionFromId().toString();
 
-			Collection c = subMap.values();
+			Collection<IToolChain[]> c = subMap.values();
 			IToolChain[] toolChainElements = (IToolChain[]) c.toArray(new IToolChain[c.size()]);
 			
 			for (int i = 0; i < toolChainElements.length; i++) {
@@ -2075,9 +2047,8 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 	public void updateManagedBuildRevision(String revision){
 		super.updateManagedBuildRevision(revision);
 		
-		for(Iterator iter = getToolList().iterator(); iter.hasNext();){
-			((Tool)iter.next()).updateManagedBuildRevision(revision);
-		}
+		for (Tool t : getToolList())
+			t.updateManagedBuildRevision(revision);
 		
 		if(builder != null)
 			builder.updateManagedBuildRevision(revision);
@@ -2239,6 +2210,9 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 			calculator.adjustToolChain(getParentFolderInfo(), this, false);
 		
 		super.propertiesChanged();
+		
+		for (ITool t : getTools()) 
+			((Tool)t).propertiesChanged();
 	}
 	
 	public BooleanExpressionApplicabilityCalculator getBooleanExpressionCalculator(){
@@ -2411,11 +2385,10 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 	}
 	
 	public IConfigurationElement getConverterModificationElement(IToolChain tc){
-		Map map = ManagedBuildManager.getConversionElements(this);
+		Map<String, IConfigurationElement> map = ManagedBuildManager.getConversionElements(this);
 		IConfigurationElement element = null;
 		if(!map.isEmpty()){
-			for(Iterator iter = map.values().iterator(); iter.hasNext();){
-				IConfigurationElement el = (IConfigurationElement)iter.next();
+			for(IConfigurationElement el : map.values()){
 				String toId = el.getAttribute("toId"); //$NON-NLS-1$
 				IToolChain toTc = tc;
 				if(toId != null){
@@ -2424,14 +2397,12 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 							break;
 					}
 				}
-				
 				if(toTc != null){
 					element = el;
 					break; 
 				}
 			}
 		}
-
 		return element;
 	}
 
@@ -2450,7 +2421,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 
 	public String[] getRequiredTypeIds(boolean checkTools) {
 		SupportedProperties props = findSupportedProperties();
-		List result = new ArrayList();
+		List<String> result = new ArrayList<String>();
 		if(props != null) {
 			result.addAll(Arrays.asList(props.getRequiredTypeIds()));
 		} else {
@@ -2478,7 +2449,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 
 	public String[] getSupportedTypeIds(boolean checkTools) {
 		SupportedProperties props = findSupportedProperties();
-		List result = new ArrayList();
+		List<String> result = new ArrayList<String>();
 		if(props != null) {
 			result.addAll(Arrays.asList(props.getSupportedTypeIds()));
 		} else {
@@ -2497,7 +2468,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 				result.addAll(Arrays.asList(((Tool)tools[i]).getSupportedTypeIds()));
 			}
 		}
-		return (String[])result.toArray(new String[result.size()]);
+		return result.toArray(new String[result.size()]);
 	}
 
 	public String[] getSupportedValueIds(String typeId) {
@@ -2506,7 +2477,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 
 	public String[] getSupportedValueIds(String typeId, boolean checkTools) {
 		SupportedProperties props = findSupportedProperties();
-		List result = new ArrayList();
+		List<String> result = new ArrayList<String>();
 		if(props != null) {
 			result.addAll(Arrays.asList(props.getSupportedValueIds(typeId)));
 		} else {
@@ -2525,7 +2496,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 				result.addAll(Arrays.asList(((Tool)tools[i]).getSupportedValueIds(typeId)));
 			}
 		}
-		return (String[])result.toArray(new String[result.size()]);
+		return result.toArray(new String[result.size()]);
 	}
 
 	public boolean requiresType(String typeId) {
@@ -2592,10 +2563,10 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		}
 	}
 
-	void removeErrorParsers(FolderInfo info, Set set){
-		Set oldSet = contributeErrorParsers(info, null, false);
+	void removeErrorParsers(FolderInfo info, Set<String> set){
+		Set<String> oldSet = contributeErrorParsers(info, null, false);
 		if(oldSet == null)
-			oldSet = new HashSet();
+			oldSet = new HashSet<String>();
 		
 		oldSet.removeAll(set);
 		setErrorParserList((String[])oldSet.toArray(new String[oldSet.size()]));
@@ -2641,8 +2612,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 	}
 	
 	void resolveProjectReferences(boolean onLoad){
-		for(Iterator iter = getToolList().iterator(); iter.hasNext();){
-			Tool tool = (Tool)iter.next();
+		for(Tool tool : getToolList()){
 			tool.resolveProjectReferences(onLoad);
 		}
 	}
@@ -2732,13 +2702,13 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		return getSuperClassNum() - other.getSuperClassNum();
 	}
 	
-	private Set getUnusedChilrenSet(){
+	private Set<String> getUnusedChilrenSet(){
 		if(unusedChildrenSet == null){
 			String childIds[] = CDataUtil.stringToArray(unusedChildren, ";"); //$NON-NLS-1$
 			if(childIds == null)
-				unusedChildrenSet = new HashSet();
+				unusedChildrenSet = new HashSet<String>();
 			else {
-				unusedChildrenSet = new HashSet();
+				unusedChildrenSet = new HashSet<String>();
 				unusedChildrenSet.addAll(Arrays.asList(childIds));
 			}
 		}
@@ -2746,7 +2716,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 	}
 	
 	void addUnusedChild(ITool tool){
-		Set set = getUnusedChilrenSet();
+		Set<String> set = getUnusedChilrenSet();
 		set.add(tool.getId());
 		unusedChildrenSet = set;
 		unusedChildren = translateUnusedIdSetToString(set);
@@ -2760,7 +2730,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		unusedChildren = children;
 	}
 	
-	private String translateUnusedIdSetToString(Set set){
+	private String translateUnusedIdSetToString(Set<String> set){
 		return CDataUtil.arrayToString(set.toArray(), ";"); //$NON-NLS-1$
 	}
 	

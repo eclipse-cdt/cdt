@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -115,16 +115,16 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	private String superClassId;
 	//  Parent and children
 	private IBuildObject parent;
-	private Vector inputTypeList;
-	private Map inputTypeMap;
-	private Vector outputTypeList;
-	private Map outputTypeMap;
+	private Vector<InputType> inputTypeList;
+	private Map<String, InputType> inputTypeMap;
+	private Vector<OutputType> outputTypeList;
+	private Map<String, OutputType> outputTypeMap;
 	private List envVarBuildPathList;
 	//  Managed Build model attributes
 	private String unusedChildren;
 	private Boolean isAbstract;
 	private String command;
-	private List inputExtensions;
+	private List<String> inputExtensions;
 	private List interfaceExtensions;
 	private Integer natureFilter;
 	private String outputExtensions;
@@ -693,7 +693,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		if (inputs != null) {
 			StringTokenizer tokenizer = new StringTokenizer(inputs, DEFAULT_SEPARATOR);
 			while (tokenizer.hasMoreElements()) {
-				getInputExtensionsList().add(tokenizer.nextElement());
+				getInputExtensionsList().add((String)tokenizer.nextElement());
 			}
 		}
 		
@@ -856,7 +856,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			if (inputs != null) {
 				StringTokenizer tokenizer = new StringTokenizer(inputs, DEFAULT_SEPARATOR);
 				while (tokenizer.hasMoreElements()) {
-					getInputExtensionsList().add(tokenizer.nextElement());
+					getInputExtensionsList().add((String)tokenizer.nextElement());
 				}
 			}
 		}
@@ -1366,7 +1366,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		if(isExtensionTool || types.length == 0)
 			return types;
 		
-		List list = new ArrayList(types.length);
+		List<OutputType> list = new ArrayList<OutputType>(types.length);
 		OutputType type;
 		for(int i = 0; i < types.length; i++){
 			type = (OutputType)types[i];
@@ -1374,14 +1374,14 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 				list.add(type);
 		}
 		
-		return (OutputType[])list.toArray(new OutputType[list.size()]);
+		return list.toArray(new OutputType[list.size()]);
 	}
 
 	private IInputType[] filterInputTypes(IInputType types[]){
 		if(isExtensionTool || types.length == 0)
 			return types;
 		
-		List list = new ArrayList(types.length);
+		List<InputType> list = new ArrayList<InputType>(types.length);
 		InputType type;
 		for(int i = 0; i < types.length; i++){
 			type = (InputType)types[i];
@@ -1389,11 +1389,11 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 				list.add(type);
 		}
 		
-		return (InputType[])list.toArray(new InputType[list.size()]);
+		return list.toArray(new InputType[list.size()]);
 	}
 
 	private boolean hasOutputTypes() {
-		Vector ourTypes = getOutputTypeList();
+		Vector<OutputType> ourTypes = getOutputTypeList();
 		if (ourTypes.size() > 0) return true;
 		return false;
 	}
@@ -1558,9 +1558,9 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	/* (non-Javadoc)
 	 * Memory-safe way to access the list of input types
 	 */
-	private Vector getInputTypeList() {
+	private Vector<InputType> getInputTypeList() {
 		if (inputTypeList == null) {
-			inputTypeList = new Vector();
+			inputTypeList = new Vector<InputType>();
 		}
 		return inputTypeList;
 	}
@@ -1568,9 +1568,9 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	/* (non-Javadoc)
 	 * Memory-safe way to access the list of IDs to input types
 	 */
-	private Map getInputTypeMap() {
+	private Map<String, InputType> getInputTypeMap() {
 		if (inputTypeMap == null) {
-			inputTypeMap = new HashMap();
+			inputTypeMap = new HashMap<String, InputType>();
 		}
 		return inputTypeMap;
 	}
@@ -1586,9 +1586,9 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	/* (non-Javadoc)
 	 * Memory-safe way to access the list of output types
 	 */
-	private Vector getOutputTypeList() {
+	private Vector<OutputType> getOutputTypeList() {
 		if (outputTypeList == null) {
-			outputTypeList = new Vector();
+			outputTypeList = new Vector<OutputType>();
 		}
 		return outputTypeList;
 	}
@@ -1596,9 +1596,9 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	/* (non-Javadoc)
 	 * Memory-safe way to access the list of IDs to output types
 	 */
-	private Map getOutputTypeMap() {
+	private Map<String, OutputType> getOutputTypeMap() {
 		if (outputTypeMap == null) {
-			outputTypeMap = new HashMap();
+			outputTypeMap = new HashMap<String, OutputType>();
 		}
 		return outputTypeMap;
 	}
@@ -1706,7 +1706,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 				errorParsers = new String[0];
 			} else {
 				StringTokenizer tok = new StringTokenizer(parserIDs, ";"); //$NON-NLS-1$
-				List list = new ArrayList(tok.countTokens());
+				List<String> list = new ArrayList<String>(tok.countTokens());
 				while (tok.hasMoreElements()) {
 					list.add(tok.nextToken());
 				}
@@ -1719,10 +1719,10 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		return errorParsers;
 	}
 	
-	public Set contributeErrorParsers(Set set){
+	public Set<String> contributeErrorParsers(Set<String> set){
 		if(getErrorParserIds() != null){
 			if(set == null)
-				set = new HashSet();
+				set = new HashSet<String>();
 			String ids[] = getErrorParserList();
 			if(ids.length != 0)
 				set.addAll(Arrays.asList(ids));
@@ -1734,30 +1734,30 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getInputExtensions()
 	 * @deprecated
 	 */
-	public List getInputExtensions() {
+	public List<String> getInputExtensions() {
 		String[] exts = getPrimaryInputExtensions();
-		List extList = new ArrayList();
+		List<String> extList = new ArrayList<String>();
 		for (int i=0; i<exts.length; i++) {
 			extList.add(exts[i]);
 		}
 		return extList;
 	}
 
-	private List getInputExtensionsAttribute() {
+	private List<String> getInputExtensionsAttribute() {
 		if( (inputExtensions == null) || ( inputExtensions.size() == 0) ) {
 			// If I have a superClass, ask it
 			if (getSuperClass() != null) {
 				return ((Tool)getSuperClass()).getInputExtensionsAttribute();
 			} else {
-				inputExtensions = new ArrayList();
+				inputExtensions = new ArrayList<String>();
 			}
 		}
 		return inputExtensions;
 	}
 
-	private List getInputExtensionsList() {
+	private List<String> getInputExtensionsList() {
 		if (inputExtensions == null) {
-				inputExtensions = new ArrayList();
+				inputExtensions = new ArrayList<String>();
 		}
 		return inputExtensions;
 	}
@@ -1774,7 +1774,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			if (exts.length > 0) return exts[0];
 		}
 		// If none, use the input extensions specified for the Tool (backwards compatibility)
-		List extsList = getInputExtensionsAttribute();
+		List<String> extsList = getInputExtensionsAttribute();
 		// Use the first entry in the list
 		if (extsList != null && extsList.size() > 0) return (String)extsList.get(0);
 		return EMPTY_STRING;
@@ -1978,7 +1978,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			}
 		}
 		// If none, use the header extensions specified for the Tool (backwards compatibility)
-		List extsList = getHeaderExtensionsAttribute();
+		List<String> extsList = getHeaderExtensionsAttribute();
 		if (extsList != null && extsList.size() > 0) {
 			return (String[])extsList.toArray(new String[extsList.size()]);
 		}

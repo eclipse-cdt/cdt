@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,7 +51,7 @@ public class PairMatcherTest extends TestCase {
 		document.setDocumentPartitioner(ICPartitions.C_PARTITIONING, partitioner);
 
 		fDocument= document;
-		fPairMatcher= new CPairMatcher(new char[] { '(', ')' });
+		fPairMatcher= new CPairMatcher(new char[] { '(', ')', '<', '>' });
 	}
 	
 	public static Test suite() {
@@ -146,12 +146,92 @@ public class PairMatcherTest extends TestCase {
 			assertNotNull(match);
 			assertTrue(match.getOffset() == 3 && match.getLength() == 12);
 		}
-	}	
+	}
 	
 	public void testAfterClosingMatchWithNLAndSingleLineComment() {
 		fDocument.set("x\nx(y\nx //(x\ny)x");
 		IRegion match= fPairMatcher.match(fDocument, 15);
 		assertNotNull(match);
 		assertTrue(match.getOffset() == 3 && match.getLength() == 12);
+	}
+
+	public void testAngleBracketsAsOperators() {
+		fDocument.set("void f(){ \n\tif (x<y);\n\twhile(x>y)\n\t\tx << 2; y >> 1;\n}");
+		int idx= fDocument.get().indexOf('<', 0);
+		while (idx >= 0) {
+			IRegion match= fPairMatcher.match(fDocument, idx + 1);
+			assertNull(match);
+			idx= fDocument.get().indexOf('<', idx + 1);
+		}
+		idx= fDocument.get().indexOf('>', 0);
+		while (idx >= 0) {
+			IRegion match= fPairMatcher.match(fDocument, idx + 1);
+			assertNull(match);
+			idx= fDocument.get().indexOf('>', idx + 1);
+		}
+	}
+
+	public void testAngleBracketsAsPairs() {
+		fDocument.set("template < class X > class A {};}");
+		int idx= fDocument.get().indexOf('<', 0);
+		IRegion match= fPairMatcher.match(fDocument, idx + 1);
+		assertNotNull(match);
+		int otherIdx= fDocument.get().indexOf('>');
+		assertEquals(otherIdx, match.getOffset() + match.getLength() - 1);
+		
+		match= fPairMatcher.match(fDocument, otherIdx + 1);
+		assertNotNull(match);
+		assertEquals(idx, match.getOffset());
+	}
+
+	public void testAngleBracketsAsPairs2() {
+		fDocument.set("ConstTemplate c<5>;");
+		int idx= fDocument.get().indexOf('<', 0);
+		IRegion match= fPairMatcher.match(fDocument, idx + 1);
+		assertNotNull(match);
+		int otherIdx= fDocument.get().indexOf('>');
+		assertEquals(otherIdx, match.getOffset() + match.getLength() - 1);
+		
+		match= fPairMatcher.match(fDocument, otherIdx + 1);
+		assertNotNull(match);
+		assertEquals(idx, match.getOffset());
+	}
+
+	public void testAngleBracketsAsPairsNested() {
+		fDocument.set("OtherTemplate nested<map<int,int>,Y>;");
+		int idx= fDocument.get().indexOf('<', 0);
+		IRegion match= fPairMatcher.match(fDocument, idx + 1);
+		assertNotNull(match);
+		int otherIdx= fDocument.get().lastIndexOf('>');
+		assertEquals(otherIdx, match.getOffset() + match.getLength() - 1);
+
+		match= fPairMatcher.match(fDocument, otherIdx + 1);
+		assertNotNull(match);
+		assertEquals(idx, match.getOffset());
+
+		idx= fDocument.get().indexOf('<', idx+1);
+		match= fPairMatcher.match(fDocument, idx + 1);
+		assertNotNull(match);
+		otherIdx= fDocument.get().indexOf('>', idx + 1);
+		assertEquals(otherIdx, match.getOffset() + match.getLength() - 1);
+	}
+	
+	public void testAngleBracketsAsPairsMultiline() {
+		fDocument.set("OtherTemplate nested<\n\tmap<int,int>,Y\n>;");
+		int idx= fDocument.get().indexOf('<', 0);
+		IRegion match= fPairMatcher.match(fDocument, idx + 1);
+		assertNotNull(match);
+		int otherIdx= fDocument.get().lastIndexOf('>');
+		assertEquals(otherIdx, match.getOffset() + match.getLength() - 1);
+
+		match= fPairMatcher.match(fDocument, otherIdx + 1);
+		assertNotNull(match);
+		assertEquals(idx, match.getOffset());
+
+		idx= fDocument.get().indexOf('<', idx+1);
+		match= fPairMatcher.match(fDocument, idx + 1);
+		assertNotNull(match);
+		otherIdx= fDocument.get().indexOf('>', idx + 1);
+		assertEquals(otherIdx, match.getOffset() + match.getLength() - 1);
 	}	
 }

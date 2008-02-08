@@ -195,7 +195,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	private static boolean projectTypesLoading = false;
 	// Project types defined in the manifest files
 	public static SortedMap<String, IProjectType> projectTypeMap;
-	private static List projectTypes;
+	private static List<IProjectType> projectTypes;
 	// Early configuration initialization extension elements
 	private static List startUpConfigElements;
 	// Configurations defined in the manifest files
@@ -313,7 +313,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		}
 
 		// Get the project types for this project and all referenced projects
-		List definedTypes = null;
+		List<IProjectType> definedTypes = null;
 		// To Do
 
 		// Create the array and copy the elements over
@@ -329,7 +329,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		
 		if (definedTypes != null)
 			for (int i = 0; i < definedTypes.size(); ++i)
-				types[n++] = (IProjectType)definedTypes.get(i);
+				types[n++] = definedTypes.get(i);
 				
 		return types;
 	}
@@ -573,8 +573,8 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		IManagedBuildInfo buildInfo = getBuildInfo(resource);
 		
 		if (buildInfo != null) {
-			List targets = buildInfo.getTargets();
-			return (ITarget[])targets.toArray(new ITarget[targets.size()]);
+			List<ITarget> targets = buildInfo.getTargets();
+			return targets.toArray(new ITarget[targets.size()]);
 		}
 		return emptyTargets;
 	}
@@ -930,6 +930,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @param config
 	 * @param option
 	 */
+	/*
 	private static void notifyListeners(IConfiguration config, IOption option) {
 		// Continue if change is something that effect the scanner
 		try {
@@ -964,7 +965,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			((IScannerInfoChangeListener)iter.next()).changeNotification(resource, (IScannerInfo)getBuildInfo(resource));
 		}
 	}
-
+*/
 	public static void initializePathEntries(IConfiguration config, IOption option){
 		try{
 			if(config.isTemporary() ||
@@ -1756,7 +1757,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 */
 	public static void addExtensionProjectType(ProjectType projectType) {
 		if (projectTypes == null) {
-			projectTypes = new ArrayList();
+			projectTypes = new ArrayList<IProjectType>();
 		}
 		
 		projectTypes.add(projectType);
@@ -3924,7 +3925,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		if (cfgDes instanceof ICMultiConfigDescription) {
 			ICMultiConfigDescription mcd = (ICMultiConfigDescription)cfgDes;
 			ICConfigurationDescription[] cfds = (ICConfigurationDescription[])mcd.getItems();
-			return new MultiConfiguration(cfds, mcd.getStringListMode());
+			return new MultiConfiguration(cfds);
 		}
 		
 		CConfigurationData cfgData = cfgDes.getConfigurationData();

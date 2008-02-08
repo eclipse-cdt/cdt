@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -219,7 +219,7 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	 * 
 	 * @return
 	 */
-	Map getReferenceInfo();
+	Map<String, String> getReferenceInfo();
 
 	/**
 	 * sets the reference information for this configuration, i.e. the information on the projects/configurations
@@ -231,7 +231,7 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	 * @throws WriteAccessException when the configuration description is read-only
 	 * the description is read only if it was queried/returned by the {@link CoreModel#getProjectDescription(org.eclipse.core.resources.IProject, false)} call
 	 */
-	void setReferenceInfo(Map refs) throws WriteAccessException;
+	void setReferenceInfo(Map<String, String> refs) throws WriteAccessException;
 	
 	/**
 	 * returns an array of settings exported by this configuration

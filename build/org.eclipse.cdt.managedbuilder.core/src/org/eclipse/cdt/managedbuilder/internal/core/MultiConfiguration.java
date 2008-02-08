@@ -57,9 +57,8 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	protected IConfiguration[] fCfgs = null;
 	private int curr = 0;
 	
-	public MultiConfiguration(IConfiguration[] cfs, int mode) {
+	public MultiConfiguration(IConfiguration[] cfs) {
 		fCfgs = cfs;
-		setStringListMode(mode);
 		for (int i=0; i<fCfgs.length; i++)
 			if (((Configuration)fCfgs[i]).getConfigurationDescription().isActive()) {
 				curr = i;
@@ -67,8 +66,8 @@ public class MultiConfiguration extends MultiItemsHolder implements
 			}
 	}
 	
-	public MultiConfiguration(ICConfigurationDescription[] cfds, int mode) {
-		this(cfds2cfs(cfds),mode);
+	public MultiConfiguration(ICConfigurationDescription[] cfds) {
+		this(cfds2cfs(cfds));
 	}
 	
 	public static IConfiguration[] cfds2cfs(ICConfigurationDescription[] cfgds) {

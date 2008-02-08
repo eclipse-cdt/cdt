@@ -14,7 +14,6 @@ package org.eclipse.cdt.ui.newui;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedList;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
@@ -74,8 +73,9 @@ public class SymbolTab extends AbstractLangsListTab {
 			int x = table.getSelectionIndex();
 			if (x == -1) x = 0;
 			
+//			incs = new LinkedList<ICLanguageSettingEntry>(lang.getSettingEntriesList(getKind()));
+			incs = getIncs();
 			ArrayList<ICLanguageSettingEntry> lst = new ArrayList<ICLanguageSettingEntry>();
-			incs = new LinkedList<ICLanguageSettingEntry>(lang.getSettingEntriesList(getKind())); 
 			if (incs != null) {
 				Iterator it = incs.iterator();
 				while (it.hasNext()) {
@@ -88,6 +88,7 @@ public class SymbolTab extends AbstractLangsListTab {
 			if (table.getItemCount() > x) table.select(x);
 			else if (table.getItemCount() > 0) table.select(0);
 		}		
+		updateLbs(lb1, lb2);
 		updateButtons();
 	}
 	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 - 2008 Intel Corporation and others.
+ * Copyright (c) 2005, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ import org.eclipse.cdt.internal.core.cdtvariables.StorableCdtVariables;
 import org.eclipse.cdt.internal.core.cdtvariables.UserDefinedVariableSupplier;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.cdt.ui.newui.AbstractPage;
+import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.cdt.ui.newui.PrefPage_Abstract;
 import org.eclipse.cdt.ui.newui.UIMessages;
 import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
@@ -63,6 +64,8 @@ import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
@@ -131,6 +134,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 
 	private TableViewer tv;
 	private Label fStatusLabel;
+	private Label  lb1, lb2;
 	
 	private static final String[] fEditableTableColumnProps = new String[] {
 		"editable name",	//$NON-NLS-1$
@@ -246,79 +250,100 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 	 */
 	public void buttonPressed(int index){
 		switch(index){
-		case 0:{
-			NewVarDialog dlg = new NewVarDialog(usercomp.getShell(), null, cfgd, getVariables());
-			if(dlg.open() == Dialog.OK){
-				ICdtVariable macro = dlg.getDefinedMacro();
-				if(canCreate(macro)) {
+		case 0:
+			handleAddButton();
+			break;
+		case 1:
+			handleEditButton();
+			break;
+		case 2:
+			handleDelButton();
+			break;
+		}
+	}
+	
+	private void replaceMacros() {
+		if (!page.isMultiCfg() || 
+				cfgd == null ||
+				CDTPrefUtil.getInt(CDTPrefUtil.KEY_WMODE) != CDTPrefUtil.WMODE_REPLACE)
+			return;
+		ICdtVariable[] vars = getVariables();
+		for (int i=0; i<vars.length; i++)
+			if (!isUserVar(vars[i]))
+				vars[i] = null;
+		for (ICConfigurationDescription c : getCfs()) {
+			fUserSup.deleteAll(CONTEXT, c);
+			for (ICdtVariable macro : vars)
+				if (macro != null)
+					fUserSup.createMacro(macro, CONTEXT, c);
+		}
+	}
+
+	private ICConfigurationDescription[] getCfs() {
+		if (cfgd instanceof ICMultiItemsHolder)
+			return (ICConfigurationDescription[])
+				((ICMultiItemsHolder)cfgd).getItems();
+		else 
+			return new ICConfigurationDescription[] {cfgd};
+	}
+	
+	private void addOrEdit(ICdtVariable macro, boolean forAll) {
+		if( ! canCreate(macro)) 
+			return;
+		if (cfgd != null) {
+			if (forAll) {
+				for (ICConfigurationDescription c : page.getCfgsEditable()) 
+					fUserSup.createMacro(macro, CONTEXT, c);
+			} else {
+				if (page.isMultiCfg() && cfgd instanceof ICMultiItemsHolder) {
+					for (ICConfigurationDescription c : getCfs())
+						fUserSup.createMacro(macro, CONTEXT, c);
+					replaceMacros();
+				} else
+					fUserSup.createMacro(macro, CONTEXT, cfgd);
+			}
+		}
+		else if (vars != null)
+			vars.createMacro(macro);
+		updateData();
+	}
+	
+	private void handleAddButton() {
+		NewVarDialog dlg = new NewVarDialog(usercomp.getShell(), null, cfgd, getVariables());
+		if(dlg.open() == Dialog.OK)
+			addOrEdit(dlg.getDefinedMacro(), dlg.isForAllCfgs);
+	}
+	private void handleEditButton() {
+		ICdtVariable _vars[] = getSelectedUserMacros();
+		if(_vars != null && _vars.length == 1){
+			NewVarDialog dlg = new NewVarDialog(usercomp.getShell() ,_vars[0], cfgd, getVariables());
+			if(dlg.open() == Dialog.OK)
+				addOrEdit(dlg.getDefinedMacro(), false);
+		}
+	}
+
+	private void handleDelButton() {
+		ICdtVariable macros[] = getSelectedUserMacros();
+		if(macros != null && macros.length > 0){
+			if(MessageDialog.openQuestion(usercomp.getShell(),
+					UIMessages.getString(DELETE_CONFIRM_TITLE),
+					UIMessages.getString(DELETE_CONFIRM_MESSAGE))){
+				for(int i = 0; i < macros.length; i++){
 					if (cfgd != null) {
-						if (dlg.isForAllCfgs) {
-							ICConfigurationDescription[] cfgs = page.getCfgsEditable();
-							for (int k=0; k<cfgs.length; k++) 
-								fUserSup.createMacro(macro, CONTEXT, cfgs[k]);
-						} else { 
-							if (page.isMultiCfg() && cfgd instanceof ICMultiItemsHolder) {
-								ICConfigurationDescription[] cfs = (ICConfigurationDescription[])((ICMultiItemsHolder)cfgd).getItems();
-								for (int k=0; k<cfs.length; k++)
-									fUserSup.createMacro(macro, CONTEXT, cfs[k]);
-							} else
-								fUserSup.createMacro(macro, CONTEXT, cfgd);
+						if (page.isMultiCfg() && cfgd instanceof ICMultiItemsHolder) {
+							ICConfigurationDescription[] cfs = (ICConfigurationDescription[])((ICMultiItemsHolder)cfgd).getItems();
+							for (int k=0; k<cfs.length; k++)
+								fUserSup.deleteMacro(macros[i].getName(), CONTEXT, cfs[k]);
+							replaceMacros();
 						}
-					} 
+						else		
+							fUserSup.deleteMacro(macros[i].getName(), CONTEXT, cfgd);
+					}
 					else if (vars != null)
-						vars.createMacro(macro);
-					updateData();
+						vars.deleteMacro(macros[i].getName());
 				}
+				updateData();
 			}
-		}
-		break;
-		case 1:{
-			ICdtVariable _vars[] = getSelectedUserMacros();
-			if(_vars != null && _vars.length == 1){
-				NewVarDialog dlg = new NewVarDialog(usercomp.getShell() ,_vars[0], cfgd, getVariables());
-				if(dlg.open() == Dialog.OK){
-					ICdtVariable macro = dlg.getDefinedMacro();
-					if(canCreate(macro)) {
-						if (cfgd != null) {
-							if (page.isMultiCfg() && cfgd instanceof ICMultiItemsHolder) {
-								ICConfigurationDescription[] cfs = (ICConfigurationDescription[])((ICMultiItemsHolder)cfgd).getItems();
-								for (int k=0; k<cfs.length; k++)
-									fUserSup.createMacro(macro, CONTEXT, cfs[k]);
-							} else
-								fUserSup.createMacro(macro, CONTEXT, cfgd);
-						}
-						else if (vars != null)
-							vars.createMacro(macro);
-						updateData();
-					}
-				}
-			}
-		}
-		break;
-		case 2:{
-			ICdtVariable macros[] = getSelectedUserMacros();
-			if(macros != null && macros.length > 0){
-				if(MessageDialog.openQuestion(usercomp.getShell(),
-						UIMessages.getString(DELETE_CONFIRM_TITLE),
-						UIMessages.getString(DELETE_CONFIRM_MESSAGE))){
-					for(int i = 0; i < macros.length; i++){
-						if (cfgd != null) {
-							if (page.isMultiCfg() && cfgd instanceof ICMultiItemsHolder) {
-								ICConfigurationDescription[] cfs = (ICConfigurationDescription[])((ICMultiItemsHolder)cfgd).getItems();
-								for (int k=0; k<cfs.length; k++)
-									fUserSup.deleteMacro(macros[i].getName(), CONTEXT, cfs[k]);
-							}
-							else		
-								fUserSup.deleteMacro(macros[i].getName(), CONTEXT, cfgd);
-						}
-						else if (vars != null)
-							vars.deleteMacro(macros[i].getName());
-					}
-					updateData();
-				}
-			}
-		}
-		break;
 		}
 	}
 	
@@ -359,7 +384,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 	public void createControls(Composite parent) {
 		super.createControls(parent);
 		initButtons(new String[] {ADD_STR, EDIT_STR, DEL_STR});
-		usercomp.setLayout(new GridLayout(1, false));
+		usercomp.setLayout(new GridLayout(2, true));
 		createTableControl();
 		
 		// Create a "show parent levels" button 
@@ -374,13 +399,31 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 				updateData(getResDesc());
 			}
 		});
-//		if (page.isForPrefs()) b.setVisible(false);
+		
+	    lb1 = new Label(usercomp, SWT.BORDER | SWT.CENTER);
+	    lb1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+	    lb1.setToolTipText(UIMessages.getString("EnvironmentTab.15")); //$NON-NLS-1$
+	    lb1.addMouseListener(new MouseAdapter() {
+			public void mouseDoubleClick(MouseEvent e) {
+				CDTPrefUtil.spinDMode();
+				updateData();
+			}});
+	    
 		
 		fStatusLabel = new Label(usercomp, SWT.LEFT);
 		fStatusLabel.setFont(usercomp.getFont());
 		fStatusLabel.setText(EMPTY_STR);
 		fStatusLabel.setLayoutData(new GridData(GridData.BEGINNING));
 		fStatusLabel.setForeground(JFaceResources.getColorRegistry().get(JFacePreferences.ERROR_COLOR));
+
+	    lb2 = new Label(usercomp, SWT.BORDER | SWT.CENTER);
+	    lb2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+	    lb2.setToolTipText(UIMessages.getString("EnvironmentTab.23")); //$NON-NLS-1$
+	    lb2.addMouseListener(new MouseAdapter() {
+			public void mouseDoubleClick(MouseEvent e) {
+				CDTPrefUtil.spinWMode();
+				updateLbs(null, lb2);
+			}});
 	}
 	
 	private void createTableControl(){
@@ -399,8 +442,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 		table.setLayout(tableLayout);
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		tableViewer.getControl().setLayoutData(gd);
+
 		tableViewer.setContentProvider(new MacroContentProvider());
 		tableViewer.setLabelProvider(new MacroLabelProvider());
 		tableViewer.setSorter(new ViewerSorter());
@@ -426,8 +468,11 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 
 			public void keyReleased(KeyEvent e){}
 		});
-		table.setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.horizontalSpan = 2;
+		table.setLayoutData(gd);
 	}
+	
 
 	/*
 	 * answers whether the macro of a given name can be sreated
@@ -479,7 +524,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 			ICdtVariable[][] vs = new ICdtVariable[cfs.length][];
 			for (int i=0; i<cfs.length; i++)
 				vs[i] = vmgr.getVariables(cfs[i]);
-			Object[] obs = mih.getListForDisplay(vs, comparator);
+			Object[] obs = CDTPrefUtil.getListForDisplay(vs, comparator);
 			ICdtVariable[] v = new ICdtVariable[obs.length];
 			System.arraycopy(obs, 0, v, 0, obs.length);
 			return v;
@@ -494,6 +539,9 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 		// get variables
 		ICdtVariable[] _vars = getVariables();
 		if (_vars == null) return;
+
+		updateLbs(lb1, lb2);
+		
 		if (cfgd == null) {
 			if (fShowSysMacros) {
 				List<ICdtVariable> lst = new ArrayList<ICdtVariable>(_vars.length);
@@ -586,7 +634,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 		return value;
 	}
 	
-	public void performApply(ICResourceDescription src, ICResourceDescription dst) {
+	protected void performApply(ICResourceDescription src, ICResourceDescription dst) {
 		if (cfgd != null) {// only for project, not for prefs
 			if (page.isMultiCfg()) {
 				if (src instanceof ICMultiItemsHolder && 

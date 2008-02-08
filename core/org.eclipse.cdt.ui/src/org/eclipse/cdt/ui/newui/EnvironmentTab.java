@@ -28,6 +28,8 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -71,6 +73,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 	private TableViewer tv;
 	private ArrayList<TabData> data = new ArrayList<TabData>();
 	private Button b1, b2;
+	private Label  lb1, lb2;
 	
 	private ICConfigurationDescription cfgd = null;
 	private StorableEnvironment vars = null;
@@ -143,7 +146,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 	
 	public void createControls(Composite parent) {
 		super.createControls(parent);
-		usercomp.setLayout(new GridLayout(1, false));
+		usercomp.setLayout(new GridLayout(2, true));
 		Label l1 = new Label(usercomp, SWT.LEFT);
 		l1.setText(UIMessages.getString("EnvironmentTab.0")); //$NON-NLS-1$
 		l1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -181,8 +184,10 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 		tc = new TableColumn(table, SWT.LEFT);
 		tc.setText(UIMessages.getString("EnvironmentTab.2")); //$NON-NLS-1$
 		tc.setWidth(200);
-		                      
-	    table.setLayoutData(new GridData(GridData.FILL_BOTH));
+		                    
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.horizontalSpan = 2;
+	    table.setLayoutData(gd);
 	    
 	    b1 = new Button(usercomp, SWT.RADIO);
 	    b1.setText(UIMessages.getString("EnvironmentTab.3")); //$NON-NLS-1$
@@ -196,6 +201,15 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 				updateData();
 			}});
 
+	    lb1 = new Label(usercomp, SWT.BORDER | SWT.CENTER);
+	    lb1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+	    lb1.setToolTipText(UIMessages.getString("EnvironmentTab.15")); //$NON-NLS-1$
+	    lb1.addMouseListener(new MouseAdapter() {
+			public void mouseDoubleClick(MouseEvent e) {
+				CDTPrefUtil.spinDMode();
+				updateData();
+			}});
+	    
 	    b2 = new Button(usercomp, SWT.RADIO);
 	    b2.setText(UIMessages.getString("EnvironmentTab.4")); //$NON-NLS-1$
 	    b2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -207,101 +221,36 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 					vars.setAppendContributedEnvironment(false);
 				updateData();
 			}});
-	    
+
+	    lb2 = new Label(usercomp, SWT.BORDER | SWT.CENTER);
+	    lb2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+	    lb2.setToolTipText(UIMessages.getString("EnvironmentTab.23")); //$NON-NLS-1$
+	    lb2.addMouseListener(new MouseAdapter() {
+			public void mouseDoubleClick(MouseEvent e) {
+				CDTPrefUtil.spinWMode();
+				updateLbs(null, lb2);
+			}});
 	    initButtons(new String[] {UIMessages.getString("EnvironmentTab.5"),UIMessages.getString("EnvironmentTab.6"),UIMessages.getString("EnvironmentTab.7"),UIMessages.getString("EnvironmentTab.8"),UIMessages.getString("EnvironmentTab.9")}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 	}
-
+	
 	public void buttonPressed(int i) {
-		IEnvironmentVariable var = null;
-		EnvDialog dlg;
-		int n = table.getSelectionIndex();
-		int[] idx;
 		switch (i) {
 		case 0:
-			dlg = new EnvDialog(usercomp.getShell(), 
-					var, 
-					UIMessages.getString("EnvironmentTab.10"), //$NON-NLS-1$ 
-					true,
-					page.isMultiCfg(),
-					cfgd);
-			if (dlg.open() == Window.OK) {
-				if (dlg.t1.trim().length() > 0) {
-					ICConfigurationDescription[] cfgs;
-					if (dlg.toAll)
-						cfgs = page.getCfgsEditable();
-					else 
-						cfgs = new ICConfigurationDescription[] {cfgd};
-					if (cfgd == null)
-						vars.createVariable(dlg.t1.trim(), dlg.t2.trim(), 
-								IEnvironmentVariable.ENVVAR_APPEND,	SEMI);
-					else	
-						for (int x=0; x<cfgs.length; x++) { 
-							ce.addVariable(dlg.t1.trim(), dlg.t2.trim(), 
-							IEnvironmentVariable.ENVVAR_APPEND, 
-							SEMI, cfgs[x]);
-					}
-					updateData();
-				}
-			}
+			handleEnvAddButtonSelected();
 			break;
 		case 1: // select
 			handleEnvSelectButtonSelected();
-			updateData();
 			break;
 		case 2: // edit
-			if (n == -1) return;
-			var = ((TabData)tv.getElementAt(n)).var;
-			dlg = new EnvDialog(usercomp.getShell(), 
-					var, 
-					UIMessages.getString("EnvironmentTab.11"),  //$NON-NLS-1$ 
-					false,
-					page.isMultiCfg(),
-					cfgd);
-			if (dlg.open() == Window.OK) {
-				if (cfgd != null)
-					ce.addVariable(	dlg.t1.trim(), dlg.t2.trim(), 
-						IEnvironmentVariable.ENVVAR_REPLACE, 
-						var.getDelimiter(), cfgd);
-				else
-					vars.createVariable(dlg.t1.trim(), dlg.t2.trim(),
-						IEnvironmentVariable.ENVVAR_REPLACE, var.getDelimiter());
-				updateData();
-			}
+			handleEnvEditButtonSelected(table.getSelectionIndex());
 			break;
 		case 3: // remove
-			if (n == -1) return;
-			idx = table.getSelectionIndices();
-			for (int j=0; j<idx.length; j++) {
-				var = ((TabData)tv.getElementAt(idx[j])).var;
-				if (cfgd == null) 
-					vars.deleteVariable(var.getName());
-				else
-					ce.removeVariable(var.getName(), cfgd);
-			}
-			updateData();
+			handleEnvDelButtonSelected(table.getSelectionIndex());
 			break;
 		case 4: // Undefine
-			if (n == -1) return;
-			idx = table.getSelectionIndices();
-			for (int j=0; j<idx.length; j++) {
-				var = ((TabData)tv.getElementAt(idx[j])).var;
-				if (cfgd == null)
-					vars.createVariable(
-							var.getName(), 
-							null, 
-							IEnvironmentVariable.ENVVAR_REMOVE, 
-							var.getDelimiter());
-				else 
-					ce.addVariable(
-						var.getName(), 
-						null, 
-						IEnvironmentVariable.ENVVAR_REMOVE, 
-						var.getDelimiter(), cfgd);
-			}
-			updateData();
+			handleEnvUndefButtonSelected(table.getSelectionIndex());
 			break;
 		}
-		updateButtons();
 	}
 	
 	public void updateButtons() {
@@ -334,6 +283,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 			b2.setSelection(!vars.appendContributedEnvironment());
 			_vars = vars.getVariables() ;
 		}
+		
 		data.clear();
 		if (_vars != null) {
 			for (int i=0; i<_vars.length; i++) {
@@ -341,6 +291,8 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 			}
 		}
 		tv.setInput(data);
+		
+		updateLbs(lb1, lb2);
 		updateButtons();
 	}
 
@@ -383,6 +335,91 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 	    }
 	}
 	
+	private void handleEnvEditButtonSelected(int n) {
+		if (n == -1)
+			return;
+		IEnvironmentVariable var = ((TabData)tv.getElementAt(n)).var;
+		EnvDialog dlg = new EnvDialog(usercomp.getShell(), 
+				var, 
+				UIMessages.getString("EnvironmentTab.11"),  //$NON-NLS-1$ 
+				false,
+				page.isMultiCfg(),
+				cfgd);
+		if (dlg.open() == Window.OK) {
+			if (cfgd != null)
+				ce.addVariable(	var.getName(), dlg.t2.trim(), 
+						IEnvironmentVariable.ENVVAR_REPLACE, 
+						var.getDelimiter(), cfgd);
+			else
+				vars.createVariable(dlg.t1.trim(), dlg.t2.trim(),
+						IEnvironmentVariable.ENVVAR_REPLACE, var.getDelimiter());
+			updateData();
+		}
+	}
+	
+	private void handleEnvUndefButtonSelected(int n) {
+		if (n == -1) 
+			return;
+		for (int i : table.getSelectionIndices()) {
+			IEnvironmentVariable var = ((TabData)tv.getElementAt(i)).var;
+			if (cfgd == null)
+				vars.createVariable(
+						var.getName(), 
+						null, 
+						IEnvironmentVariable.ENVVAR_REMOVE, 
+						var.getDelimiter());
+			else 
+				ce.addVariable(
+						var.getName(), 
+						null, 
+						IEnvironmentVariable.ENVVAR_REMOVE, 
+						var.getDelimiter(), cfgd);
+		}
+		updateData();
+	}
+	
+	private void handleEnvDelButtonSelected(int n) {
+		if (n == -1) 
+			return;
+		for (int i : table.getSelectionIndices()) {
+			IEnvironmentVariable var = ((TabData)tv.getElementAt(i)).var;
+			if (cfgd == null) 
+				vars.deleteVariable(var.getName());
+			else
+				ce.removeVariable(var.getName(), cfgd);
+		}
+		updateData();
+	}
+	
+	private void handleEnvAddButtonSelected() {
+		IEnvironmentVariable var = null;
+		EnvDialog dlg = new EnvDialog(usercomp.getShell(), 
+				var, 
+				UIMessages.getString("EnvironmentTab.10"), //$NON-NLS-1$ 
+				true,
+				page.isMultiCfg(),
+				cfgd);
+		if (dlg.open() == Window.OK) {
+			if (dlg.t1.trim().length() > 0) {
+				ICConfigurationDescription[] cfgs;
+				if (dlg.toAll)
+					cfgs = page.getCfgsEditable();
+				else 
+					cfgs = new ICConfigurationDescription[] {cfgd};
+				if (cfgd == null)
+					vars.createVariable(dlg.t1.trim(), dlg.t2.trim(), 
+							IEnvironmentVariable.ENVVAR_APPEND,	SEMI);
+				else	
+					for (int x=0; x<cfgs.length; x++) { 
+						ce.addVariable(dlg.t1.trim(), dlg.t2.trim(), 
+								IEnvironmentVariable.ENVVAR_APPEND, 
+								SEMI, cfgs[x]);
+					}
+				updateData();
+			}
+		}
+	}
+	
 	private void handleEnvSelectButtonSelected() {
 		// get Environment Variables from the OS
 		Map v = EnvironmentReader.getEnvVars();
@@ -416,6 +453,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 								SEMI, cfgs[y]);
 				}
 			}
+			updateData();
 		}
 	}
 	

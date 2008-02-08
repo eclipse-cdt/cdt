@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,7 +37,6 @@ public class PropertyMultiCfgTab extends AbstractCPropertyTab {
     private Button enable_multi;
     private Group dGrp;
     private Group wGrp;
-    private Button d_0;
     private Button d_1;
     private Button d_2;
 
@@ -78,8 +77,6 @@ public class PropertyMultiCfgTab extends AbstractCPropertyTab {
        		UIMessages.getString("PropertyMultiCfgTab.4") //$NON-NLS-1$
         );
         l.setForeground(BLUE);
-        d_0 = new Button(dGrp, SWT.RADIO);
-        d_0.setText(UIMessages.getString("PropertyMultiCfgTab.5")); //$NON-NLS-1$
         d_1 = new Button(dGrp, SWT.RADIO);
         d_1.setText(UIMessages.getString("PropertyMultiCfgTab.6")); //$NON-NLS-1$
         d_2 = new Button(dGrp, SWT.RADIO);
@@ -106,7 +103,6 @@ public class PropertyMultiCfgTab extends AbstractCPropertyTab {
 		enable_multi.setSelection(CDTPrefUtil.getBool(CDTPrefUtil.KEY_MULTI));
 		
 		switch (CDTPrefUtil.getInt(CDTPrefUtil.KEY_DMODE)) {
-			case CDTPrefUtil.DMODE_EMPTY:       d_0.setSelection(true); break;
 			case CDTPrefUtil.DMODE_CONJUNCTION: d_1.setSelection(true); break;
 			case CDTPrefUtil.DMODE_DISJUNCTION: d_2.setSelection(true); break;
 			default:                            d_1.setSelection(true); break;
@@ -124,9 +120,7 @@ public class PropertyMultiCfgTab extends AbstractCPropertyTab {
 	protected void performOK() {
 		CDTPrefUtil.setBool(CDTPrefUtil.KEY_MULTI, enable_multi.getSelection());
 		int x = 0;
-		if (d_0.getSelection()) 
-			x = CDTPrefUtil.DMODE_EMPTY;
-		else if (d_1.getSelection()) 
+		if (d_1.getSelection()) 
 			x = CDTPrefUtil.DMODE_CONJUNCTION;
 		else if (d_2.getSelection()) 
 			x = CDTPrefUtil.DMODE_DISJUNCTION;
@@ -141,7 +135,6 @@ public class PropertyMultiCfgTab extends AbstractCPropertyTab {
 	
 	protected void performDefaults() {
 		enable_multi.setSelection(false);
-		d_0.setSelection(false);
 		d_1.setSelection(true);
 		d_2.setSelection(false);
 		w_0.setSelection(true);
@@ -150,7 +143,6 @@ public class PropertyMultiCfgTab extends AbstractCPropertyTab {
 
 	private void setStates() {
 		boolean b = enable_multi.getSelection();
-		d_0.setEnabled(b);
 		d_1.setEnabled(b);
 		d_2.setEnabled(b);
 		w_0.setEnabled(b);

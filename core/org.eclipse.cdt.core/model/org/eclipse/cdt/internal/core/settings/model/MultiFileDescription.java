@@ -21,8 +21,8 @@ import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
 public class MultiFileDescription extends MultiResourceDescription implements
 		ICFileDescription {
 
-	public MultiFileDescription(ICFileDescription[] res, int mode) {
-		super(res, mode);
+	public MultiFileDescription(ICFileDescription[] res) {
+		super(res);
 	}
 
 	/* (non-Javadoc)

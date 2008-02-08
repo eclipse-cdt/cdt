@@ -26,7 +26,6 @@ import org.eclipse.cdt.core.settings.model.ICFileDescription;
 import org.eclipse.cdt.core.settings.model.ICFolderDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
 import org.eclipse.cdt.core.settings.model.ICMultiConfigDescription;
-import org.eclipse.cdt.core.settings.model.ICMultiItemsHolder;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingContainer;
@@ -50,9 +49,8 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 
 	ICConfigurationDescription[] fCfgs = null;
 
-	public MultiConfigDescription(ICConfigurationDescription[] des, int mode) {
+	public MultiConfigDescription(ICConfigurationDescription[] des) {
 		fCfgs = des;
-		setStringListMode(mode);
 	}
 
 	/* (non-Javadoc)
@@ -116,11 +114,11 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 		return null;
 	}
 
-	public String[] getErrorParserIDs() {
+	public String[][] getErrorParserIDs() {
 		String[][] out = new String[fCfgs.length][]; 
 		for (int i=0; i<fCfgs.length; i++)
 			out[i] = fCfgs[i].getBuildSetting().getErrorParserIDs();
-		return getStrListForDisplay(out, ICMultiItemsHolder.DMODE_CONJUNCTION);
+		return out;
 	}
 
 	public void setErrorParserIDs(String[] ids) {
@@ -174,7 +172,6 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#getExternalSettings()
 	 */
 	public ICExternalSetting[] getExternalSettings() {
-		System.out.println("Bad multi access: MultiConfigDescription.getExtSettings()");
 		return null;
 	}
 
@@ -231,9 +228,9 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#getReferenceInfo()
 	 */
-	public Map getReferenceInfo() {
+	public Map<String, String> getReferenceInfo() {
 		System.out.println("Bad multi access: MultiConfigDescription.getReferenceInfo()");
-		return Collections.EMPTY_MAP;
+		return Collections.emptyMap();
 	}
 
 	/* (non-Javadoc)
@@ -268,12 +265,10 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 			return (ICResourceDescription)lst.get(0);
 		if (isForFolder)
 			return new MultiFolderDescription(
-				(ICFolderDescription[])lst.toArray(new ICFolderDescription[lst.size()]),
- 				 getStringListMode());
+				(ICFolderDescription[])lst.toArray(new ICFolderDescription[lst.size()]));
 		else
 			return new MultiFileDescription(
-					(ICFileDescription[])lst.toArray(new ICFileDescription[lst.size()]),
-	 				 getStringListMode());
+					(ICFileDescription[])lst.toArray(new ICFileDescription[lst.size()]));
 	}
 	
 	/* (non-Javadoc)
@@ -293,7 +288,7 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 		ICFolderDescription[] rds = new ICFolderDescription[fCfgs.length];
 		for (int i=0; i<fCfgs.length; i++) 
 			rds[i] = fCfgs[i].getRootFolderDescription();
-		return new MultiFolderDescription(rds, getStringListMode());
+		return new MultiFolderDescription(rds);
 	}
 
 	/* (non-Javadoc)
@@ -431,7 +426,7 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#setReferenceInfo(java.util.Map)
 	 */
-	public void setReferenceInfo(Map refs) throws WriteAccessException {
+	public void setReferenceInfo(Map<String, String> refs) throws WriteAccessException {
 		for (int i=0; i<fCfgs.length; i++)
 			fCfgs[i].setReferenceInfo(refs);
 	}

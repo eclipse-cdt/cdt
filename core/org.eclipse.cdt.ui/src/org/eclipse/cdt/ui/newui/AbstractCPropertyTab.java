@@ -632,4 +632,28 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	protected void setBackgroundText(String s) {
 		background.setText(s == null ? BACKGROUND_TEXT_DEFAULT : s);
 	}
+	
+	protected void updateLbs(Label lb1, Label lb2) {
+		if (page.isMultiCfg()) {
+			if (lb1 != null) {
+				lb1.setText(CDTPrefUtil.getDMode());
+				lb1.setVisible(true);
+			}
+			if (lb2 != null) {
+				lb2.setText(CDTPrefUtil.getWMode());
+				lb2.setVisible(true);
+			}
+		} else {
+			if (lb1 != null)
+				lb1.setVisible(false);
+			if (lb2 != null)
+				lb2.setVisible(false);
+		}
+	}
+
+	protected boolean isWModifyMode() {
+		int wmode = CDTPrefUtil.getInt(CDTPrefUtil.KEY_WMODE);
+		return (wmode == CDTPrefUtil.WMODE_MODIFY);
+	}
+
 }

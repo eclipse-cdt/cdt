@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -251,7 +251,7 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 
 			public CDataObject[] getChildren() {
 				CConfigurationData data = getConfigurationData(false);
-				List list = new ArrayList();
+				List<CDataObject> list = new ArrayList<CDataObject>();
 				CResourceData rcDatas[] = data.getResourceDatas();
 				for(int i = 0; i < rcDatas.length; i++){
 					list.add(rcDatas[i]);
@@ -261,7 +261,7 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 				CBuildData buildData = data.getBuildData();
 				list.add(buildData);
 				// TODO add other data types
-				return (CDataObject[])list.toArray(new CDataObject[list.size()]);
+				return list.toArray(new CDataObject[list.size()]);
 			}
 
 			public boolean isStatic() {
@@ -526,16 +526,16 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 //		return des;
 //	}
 
-	public Map getReferenceInfo() {
+	public Map<String, String> getReferenceInfo() {
 		try {
 			CConfigurationSpecSettings specs = getSpecSettings();
 			return specs.getReferenceInfo();
 		} catch (CoreException e) {
 		}
-		return new HashMap(0);
+		return new HashMap<String, String>(0);
 	}
 
-	public void setReferenceInfo(Map refs) {
+	public void setReferenceInfo(Map<String, String> refs) {
 		try {
 			CConfigurationSpecSettings specs = getSpecSettings();
 			specs.setReferenceInfo(refs);

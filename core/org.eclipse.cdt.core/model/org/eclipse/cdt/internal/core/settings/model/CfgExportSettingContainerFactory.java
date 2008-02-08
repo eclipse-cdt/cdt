@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -114,9 +114,9 @@ public class CfgExportSettingContainerFactory extends
 		return new CContainerRef(FACTORY_ID, createId(projName, cfgId));
 	}
 	
-	public static Map getReferenceMap(ICConfigurationDescription cfg){
+	public static Map<String, String> getReferenceMap(ICConfigurationDescription cfg){
 		CContainerRef[] refs = CExternalSettingsManager.getInstance().getReferences(cfg, FACTORY_ID);
-		Map map = new HashMap();
+		Map<String, String> map = new HashMap<String, String>();
 		for(int i = 0; i < refs.length; i++){
 			try {
 				String[] r = parseId(refs[i].getContainerId());
@@ -129,24 +129,24 @@ public class CfgExportSettingContainerFactory extends
 		return map;
 	}
 
-	public static void setReferenceMap(ICConfigurationDescription cfg, Map map){
-		Map cur = getReferenceMap(cfg);
-		Map newCopy = new HashMap(map);
+	public static void setReferenceMap(ICConfigurationDescription cfg, Map<String, String> map){
+		Map<String, String> cur = getReferenceMap(cfg);
+		Map<String, String> newCopy = new HashMap<String, String>(map);
 		
-		for(Iterator iter = cur.entrySet().iterator(); iter.hasNext();){
-			Map.Entry entry = (Map.Entry)iter.next();
+		for(Iterator<Map.Entry<String, String>> iter = cur.entrySet().iterator(); iter.hasNext();){
+			Map.Entry<String, String> entry = (Map.Entry<String, String>)iter.next();
 			Object projName = entry.getKey();
 			if(newCopy.containsKey(projName) && entry.getValue().equals(newCopy.get(projName))){
 				iter.remove();
 				newCopy.remove(projName);
 			}
 		}
-		for(Iterator iter = cur.entrySet().iterator(); iter.hasNext();){
-			Map.Entry entry = (Map.Entry)iter.next();
+		for(Iterator<Map.Entry<String, String>> iter = cur.entrySet().iterator(); iter.hasNext();){
+			Map.Entry<String, String> entry = (Map.Entry<String, String>)iter.next();
 			removeReference(cfg, (String)entry.getKey(), (String)entry.getValue());
 		}
-		for(Iterator iter = newCopy.entrySet().iterator(); iter.hasNext();){
-			Map.Entry entry = (Map.Entry)iter.next();
+		for(Iterator<Map.Entry<String, String>> iter = newCopy.entrySet().iterator(); iter.hasNext();){
+			Map.Entry<String, String> entry = (Map.Entry<String, String>)iter.next();
 			createReference(cfg, (String)entry.getKey(), (String)entry.getValue());
 		}
 	}
@@ -215,7 +215,7 @@ public class CfgExportSettingContainerFactory extends
 			return new String[0];
 		int deltaKind = delta.getDeltaKind();
 		
-		List cfgIds = new ArrayList();
+		List<String> cfgIds = new ArrayList<String>();
 		switch(deltaKind){
 		case ICDescriptionDelta.ADDED:
 		case ICDescriptionDelta.REMOVED:
@@ -247,9 +247,9 @@ public class CfgExportSettingContainerFactory extends
 		return ids;
 	}
 	
-	public Collection collectCfgIds(ICDescriptionDelta[] deltas, Collection c){
+	public Collection<String> collectCfgIds(ICDescriptionDelta[] deltas, Collection<String> c){
 		if(c == null)
-			c = new ArrayList();
+			c = new ArrayList<String>();
 		for(int i = 0; i < deltas.length; i++){
 			ICDescriptionDelta delta = deltas[i];
 			int deltaKind = delta.getDeltaKind();

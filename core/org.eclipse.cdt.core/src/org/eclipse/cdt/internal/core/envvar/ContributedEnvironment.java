@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,11 +27,6 @@ public class ContributedEnvironment implements IContributedEnvironment{
 		private IEnvironmentContextInfo fBaseInfo;
 		private ICoreEnvironmentVariableSupplier fSuppliers[];
 
-/*		public ContributedEnvContextInfo(Object context,
-				ICoreEnvironmentVariableSupplier[] suppliers) {
-			super(context, suppliers);
-		}
-*/
 		public ContributedEnvContextInfo(IEnvironmentContextInfo info) {
 			super(info.getContext());
 			fBaseInfo = info;
@@ -77,7 +72,7 @@ public class ContributedEnvironment implements IContributedEnvironment{
 		EnvVarCollector cr = EnvironmentVariableManager.getVariables(getContextInfo(des), true);
 		if(cr != null){
 			EnvVarDescriptor collected[] = cr.toArray(true);
-			List vars = new ArrayList(collected.length);
+			List<IEnvironmentVariable> vars = new ArrayList<IEnvironmentVariable>(collected.length);
 			IEnvironmentVariable var;
 			IEnvironmentContextInfo info = new DefaultEnvironmentContextInfo(des);//getContextInfo(des);
 			for(int i = 0; i < collected.length; i++){
@@ -86,7 +81,7 @@ public class ContributedEnvironment implements IContributedEnvironment{
 				if(var != null)
 					vars.add(var);
 			}
-			return (EnvVarDescriptor[])vars.toArray(new EnvVarDescriptor[vars.size()]);
+			return vars.toArray(new EnvVarDescriptor[vars.size()]);
 		}
 		return new EnvVarDescriptor[0];
 	}
@@ -118,6 +113,21 @@ public class ContributedEnvironment implements IContributedEnvironment{
 				EnvironmentVariableManager.fUserSupplier);
 	}
 	
+	public void addVariables(IEnvironmentVariable[] vars,
+			ICConfigurationDescription des) {
+		for (IEnvironmentVariable v : vars)
+			addVariable(v, des);
+	}
+	
+	public IEnvironmentVariable addVariable(IEnvironmentVariable var,
+			ICConfigurationDescription des) {
+		return addVariable(var.getName(), 
+						   var.getValue(), 
+						   var.getOperation(), 
+						   var.getDelimiter(), 
+						   des);
+	}
+	
 	public IEnvironmentVariable removeVariable(String name, ICConfigurationDescription des){
 		return EnvironmentVariableManager.fUserSupplier.deleteVariable(name, des);
 	}
@@ -135,6 +145,6 @@ public class ContributedEnvironment implements IContributedEnvironment{
 	public void serialize(ICProjectDescription des){
 		EnvironmentVariableManager.fUserSupplier.storeProjectEnvironment(des, false);
 	}
-	
+
 	
 }

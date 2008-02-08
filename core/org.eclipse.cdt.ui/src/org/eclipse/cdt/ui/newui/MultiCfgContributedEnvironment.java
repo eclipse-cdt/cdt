@@ -1,6 +1,14 @@
-/**	
- * 
- */
+/*******************************************************************************
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Intel Corporation - initial API and implementation
+ *     IBM Corporation
+ *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
 import java.util.Comparator;
@@ -10,7 +18,6 @@ import org.eclipse.cdt.core.envvar.IContributedEnvironment;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICMultiConfigDescription;
-import org.eclipse.cdt.core.settings.model.ICMultiItemsHolder;
 import org.eclipse.cdt.core.settings.model.MultiItemsHolder;
 
 /**
@@ -21,10 +28,9 @@ public class MultiCfgContributedEnvironment implements IContributedEnvironment {
 	private static final IContributedEnvironment ice = CCorePlugin.getDefault().getBuildEnvironmentManager().getContributedEnvironment();
 	private boolean isMulti = false;
 	private ICConfigurationDescription[] mono = new ICConfigurationDescription[1];
-	private ICConfigurationDescription[] cfs;
 	private static final EnvCmp comparator = new EnvCmp(); 
 	
-	private static class EnvCmp implements Comparator {
+	private static class EnvCmp implements Comparator<Object> {
 		
 		public int compare(Object a0, Object a1) {
 			if (a0 == null || a1 == null)
@@ -51,17 +57,31 @@ public class MultiCfgContributedEnvironment implements IContributedEnvironment {
 	
 	public IEnvironmentVariable addVariable(String name, String value,
 			int op, String delimiter, ICConfigurationDescription des) {
-		cfs = getCfs(des);
 		IEnvironmentVariable v = null;
-		for (int i=0; i<cfs.length; i++)
-			v = ice.addVariable(name, value, op, delimiter, cfs[i]);
+		for (ICConfigurationDescription c : getCfs(des))
+			v = ice.addVariable(name, value, op, delimiter, c);
+		doReplace(des);
 		return v;
 	}
 
+	private void doReplace(ICConfigurationDescription des) {
+		if (isMulti && ! isModifyMode()) { 
+			IEnvironmentVariable[] vars = getVariables(des);
+			for (int i=0; i<vars.length; i++)
+				if (! ice.isUserVariable(des, vars[i]))
+					vars[i] = null;
+			for (ICConfigurationDescription c : getCfs(des)) {
+				ice.restoreDefaults(c);
+				for (IEnvironmentVariable v : vars)
+					if (v != null)
+						ice.addVariable(v, c);
+			}
+		}
+	}
+	
 	public boolean appendEnvironment(ICConfigurationDescription des) {
-		cfs = getCfs(des);
-		for (int i=0; i<cfs.length; i++)
-			if (! ice.appendEnvironment(cfs[i]))
+		for (ICConfigurationDescription c : getCfs(des))
+			if (! ice.appendEnvironment(c))
 				return false;
 		return true;
 	}
@@ -71,8 +91,8 @@ public class MultiCfgContributedEnvironment implements IContributedEnvironment {
 		if (!isMulti)
 			return ice.getVariable(name, des);
 		// should we show ANY vars, even if they exist not in all cfgs ? 
-		boolean any = (getDispMode(des) == ICMultiItemsHolder.DMODE_ALL);	
-		cfs = getCfs(des);
+		boolean any = (getDispMode(des) == CDTPrefUtil.DMODE_DISJUNCTION);	
+		ICConfigurationDescription[] cfs = getCfs(des);
 		IEnvironmentVariable v = ice.getVariable(name, cfs[0]);
 		// if ((any && v != null) || (! any && v == null))
 		if (any ^ (v == null))
@@ -92,12 +112,13 @@ public class MultiCfgContributedEnvironment implements IContributedEnvironment {
 			ICConfigurationDescription des) {
 		if (!isMulti)
 			return ice.getVariables(des);
-		cfs = getCfs(des);
+		ICConfigurationDescription[] cfs = getCfs(des);
 		IEnvironmentVariable[][] evs = new IEnvironmentVariable[cfs.length][];
-		for (int i=0; i<cfs.length; i++)
-			 evs[i] = ice.getVariables(cfs[i]);
+		int i = 0;
+		for (ICConfigurationDescription c : cfs)
+			 evs[i++] = ice.getVariables(c);
 		
-		Object[] obs = ((ICMultiItemsHolder)des).getListForDisplay(evs, comparator); 
+		Object[] obs = CDTPrefUtil.getListForDisplay(evs, comparator); 
 		IEnvironmentVariable[] ev = new IEnvironmentVariable[obs.length];
 		System.arraycopy(obs, 0, ev, 0, obs.length);
 		return ev;
@@ -106,9 +127,8 @@ public class MultiCfgContributedEnvironment implements IContributedEnvironment {
 
 	public boolean isUserVariable(ICConfigurationDescription des,
 			IEnvironmentVariable var) {
-		cfs = getCfs(des);
-		for (int i=0; i<cfs.length; i++)
-			if (! ice.isUserVariable(cfs[i], var))
+		for (ICConfigurationDescription c : getCfs(des))
+			if (! ice.isUserVariable(c, var))
 				return false;
 		return true; // only if for each cfg
 	}
@@ -116,22 +136,20 @@ public class MultiCfgContributedEnvironment implements IContributedEnvironment {
 	public IEnvironmentVariable removeVariable(String name,
 			ICConfigurationDescription des) {
 		IEnvironmentVariable res = null;
-		cfs = getCfs(des);
-		for (int i=0; i<cfs.length; i++)
-			res = ice.removeVariable(name, cfs[i]);
+		for (ICConfigurationDescription c : getCfs(des))
+			res = ice.removeVariable(name, c);
+		doReplace(des);
 		return res;
 	}
 
 	public void restoreDefaults(ICConfigurationDescription des) {
-		cfs = getCfs(des);
-		for (int i=0; i<cfs.length; i++)
-			ice.restoreDefaults(cfs[i]);
+		for (ICConfigurationDescription c : getCfs(des))
+			ice.restoreDefaults(c);
 	}
 
 	public void setAppendEnvironment(boolean append,ICConfigurationDescription des) {
-		cfs = getCfs(des);
-		for (int i=0; i<cfs.length; i++)
-			ice.setAppendEnvironment(append, cfs[i]);
+		for (ICConfigurationDescription c : getCfs(des))
+			ice.setAppendEnvironment(append, c);
 	}
 	
 	private ICConfigurationDescription[] getCfs(ICConfigurationDescription des) {
@@ -145,8 +163,29 @@ public class MultiCfgContributedEnvironment implements IContributedEnvironment {
 	
 	private int getDispMode(ICConfigurationDescription des) {
 		if (isMulti && des instanceof MultiItemsHolder)
-			return ((MultiItemsHolder)des).getStringListMode() & ICMultiItemsHolder.DMODES;
+			return CDTPrefUtil.getInt(CDTPrefUtil.KEY_DMODE);
 		return 0;	
+	}
+	
+	private boolean isModifyMode() {
+		int wmode = CDTPrefUtil.getInt(CDTPrefUtil.KEY_WMODE);
+		return (wmode == CDTPrefUtil.WMODE_MODIFY);
+	}
+
+	public IEnvironmentVariable addVariable(IEnvironmentVariable var,
+			ICConfigurationDescription des) {
+		IEnvironmentVariable v = null;
+		for (ICConfigurationDescription c : getCfs(des))
+			v = ice.addVariable(var, c);
+		doReplace(des);
+		return v;
+	}
+
+	public void addVariables(IEnvironmentVariable[] vars,
+			ICConfigurationDescription des) {
+		for (ICConfigurationDescription c : getCfs(des))
+			ice.addVariables(vars, c);
+		doReplace(des);
 	}
 	
 }

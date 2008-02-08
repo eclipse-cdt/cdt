@@ -8,13 +8,11 @@
  * Contributors:
  * Intel Corporation - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.settings.model;
+package org.eclipse.cdt.core.model;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 
-import org.eclipse.cdt.core.model.util.CDTListComparator;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
@@ -26,8 +24,6 @@ import org.eclipse.cdt.core.settings.model.MultiItemsHolder;
  * Normally, they should have the same name.
  */
 public class MultiLanguageSetting extends MultiItemsHolder implements ICLanguageSetting {
-	private static final Comparator<Object> comp = CDTListComparator.getInstance();
-
 	ICLanguageSetting[] items = null;
 	ICConfigurationDescription cfgd = null;
 	
@@ -40,34 +36,18 @@ public class MultiLanguageSetting extends MultiItemsHolder implements ICLanguage
 	 * @see org.eclipse.cdt.core.settings.model.ICLanguageSetting#getLanguageId()
 	 */
 	public String getLanguageId() {
-		System.out.println("Bad multi access: MultiLanguageSetting.getLanguageId()");
 		return null; // IDs are different.
-	}
-
-	private ICLanguageSettingEntry[] conv2LSE(Object[] ob) {
-		ICLanguageSettingEntry[] se = new ICLanguageSettingEntry[ob.length];
-		System.arraycopy(ob, 0, se, 0, ob.length);
-		return se;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICLanguageSetting#getResolvedSettingEntries(int)
-	 */
-	public ICLanguageSettingEntry[] getResolvedSettingEntries(int kind) {
-		ICLanguageSettingEntry[][] le = new ICLanguageSettingEntry[items.length][];
-		for (int i=0; i<items.length; i++)
-			le[i] = items[i].getResolvedSettingEntries(kind);
-		return conv2LSE(getListForDisplay(le, comp));
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.settings.model.ICLanguageSetting#getSettingEntries(int)
 	 */
-	public ICLanguageSettingEntry[] getSettingEntries(int kind) {
+	public ICLanguageSettingEntry[][] getSettingEntriesM(int kind) {
 		ICLanguageSettingEntry[][] le = new ICLanguageSettingEntry[items.length][];
 		for (int i=0; i<items.length; i++)
 			le[i] = items[i].getSettingEntries(kind);
-		return conv2LSE(getListForDisplay(le, comp));
+		return le;
+//		return conv2LSE(getListForDisplay(le, comp));
 	}
 
 	/* (non-Javadoc)
@@ -80,21 +60,21 @@ public class MultiLanguageSetting extends MultiItemsHolder implements ICLanguage
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.settings.model.ICLanguageSetting#getSourceContentTypeIds()
 	 */
-	public String[] getSourceContentTypeIds() {
+	public String[][] getSourceContentTypeIdsM() {
 	    String[][] ss = new String[items.length][];
 		for (int i=0; i<items.length; i++)
 			ss[i] = items[i].getSourceContentTypeIds();
-		return this.getStrListForDisplay(ss);
+		return ss;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.settings.model.ICLanguageSetting#getSourceExtensions()
 	 */
-	public String[] getSourceExtensions() {
+	public String[][] getSourceExtensionsM() {
 	    String[][] ss = new String[items.length][];
 		for (int i=0; i<items.length; i++)
 			ss[i] = items[i].getSourceExtensions();
-		return this.getStrListForDisplay(ss);
+		return ss;
 	}
 
 	/* (non-Javadoc)
@@ -110,9 +90,7 @@ public class MultiLanguageSetting extends MultiItemsHolder implements ICLanguage
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.settings.model.ICLanguageSetting#setLanguageId(java.lang.String)
 	 */
-	public void setLanguageId(String id) { // Do nothing
-		System.out.println("Bad multi access: MultiLanguageSetting.setLanguageId()");
-	}
+	public void setLanguageId(String id) {} // Do nothing
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.settings.model.ICLanguageSetting#setSettingEntries(int, org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry[])
@@ -220,6 +198,23 @@ public class MultiLanguageSetting extends MultiItemsHolder implements ICLanguage
 
 	public Object[] getItems() {
 		return items;
+	}
+
+	public ICLanguageSettingEntry[] getResolvedSettingEntries(int kind) {
+		return null;
+	}
+
+	public ICLanguageSettingEntry[] getSettingEntries(int kind) {
+		ICLanguageSettingEntry[][] ses = getSettingEntriesM(kind);
+		return ses[0];
+	}
+
+	public String[] getSourceContentTypeIds() {
+		return null;
+	}
+
+	public String[] getSourceExtensions() {
+		return null;
 	}
 
 }

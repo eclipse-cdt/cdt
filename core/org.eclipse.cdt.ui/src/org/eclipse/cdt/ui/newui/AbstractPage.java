@@ -401,9 +401,7 @@ implements
 					cfgIndex = selectionIndex;
 				}
 			}
-			// TODO: avoid repeated update like for single cfg 
-			cfgChanged(MultiItemsHolder.createCDescription(multiCfgs, 
-					ICMultiItemsHolder.MODE_DEFAULT)); 
+			cfgChanged(MultiItemsHolder.createCDescription(multiCfgs)); 
 			return;
 		} else {
 			String id1 = getResDesc() == null ? null : getResDesc().getId();
@@ -1013,7 +1011,9 @@ implements
 			return true; // Projects and folders are always applicable
 	}
 
-	// update views (in particular, display resource configurations)
+	/**
+	 * update views (in particular, display resource configurations)
+	 */
 	public static void updateViews(IResource res) {
 		if (res == null) return;  
 		IWorkbenchPartReference refs[] = CUIPlugin.getActiveWorkbenchWindow().getActivePage().getViewReferences();
@@ -1023,7 +1023,10 @@ implements
 				((IPropertyChangeListener)part).propertyChange(new PropertyChangeEvent(res, PreferenceConstants.PREF_SHOW_CU_CHILDREN, null, null));
 		}
 	}
-	
+
+	/**
+	 * Adjusts form size according to contents dimensions
+	 */
 	public void resize() {
 		Shell sh = parentComposite.getShell();
 		Point p0 = sh.getLocation();
@@ -1034,9 +1037,18 @@ implements
 		sh.setSize(p1);
 	}
 
+	/**
+	 * Returns Apply button widget
+	 * Allows public access to it.
+	 */
 	public Button getAButton() {
 		return getApplyButton();
 	}
+	
+	/**
+	 * Returns Default button widget.
+	 * Allows public access to it.
+	 */
 	public Button getDButton() {
 		return getDefaultsButton();
 	}

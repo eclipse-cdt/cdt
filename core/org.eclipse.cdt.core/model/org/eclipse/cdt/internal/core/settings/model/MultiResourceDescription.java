@@ -31,9 +31,8 @@ public abstract class MultiResourceDescription extends MultiItemsHolder implemen
 	ICResourceDescription[] fRess = null;
 	ICConfigurationDescription fCfg = null;
 	
-	public MultiResourceDescription(ICResourceDescription[] res, int mode) {
+	public MultiResourceDescription(ICResourceDescription[] res) {
 		fRess = res;
-		setStringListMode(mode);
 	}
 
 	/* (non-Javadoc)
@@ -115,7 +114,7 @@ public abstract class MultiResourceDescription extends MultiItemsHolder implemen
 			ICConfigurationDescription[] cfgs = new ICConfigurationDescription[fRess.length];
 			for (int i=0; i<fRess.length; i++)
 				cfgs[i] = fRess[i].getConfiguration();
-			fCfg = new MultiConfigDescription(cfgs, getStringListMode());
+			fCfg = new MultiConfigDescription(cfgs);
 		}
 		return fCfg; 
 	}

@@ -10,25 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
+import java.util.Comparator;
 
-/**
- * Implementors of this interface are intended 
- * to hold 1 or more items and perform
- * some simultaneous operations on them.
- * 
- * There are no any restrictions for items
- * types to be held. 
- * 
- * As common rule, items are set in constructor
- * and their list cannot be changed in life time. 
- *
- */
-public interface ICMultiItemsHolder {
-	public static final String EMPTY_STR = "";
-
-	/**
-	 * Returns array of items which it holds 
-	 * @return 
-	 */
-	Object[] getItems();
+public interface ICMultiFolderDescription extends ICFolderDescription {
+	public ICLanguageSetting[][] getLanguageSettingsM(Comparator<Object> comp);
 }

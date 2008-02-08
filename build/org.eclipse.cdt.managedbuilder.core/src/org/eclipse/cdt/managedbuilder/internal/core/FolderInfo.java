@@ -925,14 +925,12 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 	}
 	
 	private ITool[][] getBestMatches(ITool[] tools1, ITool[] tools2){
-		HashSet set = new HashSet(Arrays.asList(tools2));
-		List list = new ArrayList(tools1.length);
-		for(int i = 0; i < tools1.length; i++){
-			ITool tool1 = tools1[i];
+		HashSet<ITool> set = new HashSet<ITool>(Arrays.asList(tools2));
+		List<ITool[]> list = new ArrayList<ITool[]>(tools1.length);
+		for(ITool tool1 : tools1){
 			ITool bestMatchTool = null;
 			int num = 0;
-			for(Iterator iter = set.iterator(); iter.hasNext();){
-				ITool tool2 = (ITool)iter.next();
+			for(ITool tool2 : set){
 				int extsNum = getConflictingInputExts(tool1, tool2).length;
 				if(extsNum > num){
 					bestMatchTool = tool2;

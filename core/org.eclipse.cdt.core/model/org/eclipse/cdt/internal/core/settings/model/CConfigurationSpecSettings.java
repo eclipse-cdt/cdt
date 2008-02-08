@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,7 +67,7 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 	private StorableCdtVariables fMacros;
 	private StorableEnvironment fEnvironment;
 //	private HashMap fRefInfoMap;
-	private Map fRefMapCache;
+	private Map<String, String> fRefMapCache;
 	private CExternalSettingsHolder fExtSettingsProvider = new CExternalSettingsHolder();
 	private boolean fIsModified;
 	private HashMap fSessionPropertiesMap;
@@ -387,12 +387,12 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 		fEnvironment = environment;
 	}
 	
-	public Map getReferenceInfo(){
+	public Map<String, String> getReferenceInfo(){
 		if(!fCfg.isReadOnly())
 			return CfgExportSettingContainerFactory.getReferenceMap(fCfg);
 		if(fRefMapCache == null)
 			fRefMapCache = CfgExportSettingContainerFactory.getReferenceMap(fCfg);
-		return new HashMap(fRefMapCache);
+		return new HashMap<String, String>(fRefMapCache);
 //		if(fRefInfoMap == null || fRefInfoMap.size() == 0)
 //			return new HashMap(0);
 //		
@@ -420,7 +420,7 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 //		fIsModified = true;
 //	}
 
-	public void setReferenceInfo(Map ref){
+	public void setReferenceInfo(Map<String, String> ref){
 		fRefMapCache = null;
 		CfgExportSettingContainerFactory.setReferenceMap(fCfg, ref);
 //		if(isReadOnly())

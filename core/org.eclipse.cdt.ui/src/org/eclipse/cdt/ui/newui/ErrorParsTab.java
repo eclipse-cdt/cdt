@@ -142,9 +142,14 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 	public void updateData(ICResourceDescription _cfgd) {
 		cfgd = _cfgd.getConfiguration();
 		if (mapParsers == null) return;
-		String[] ss = (page.isMultiCfg()) ?
-			((ICMultiConfigDescription)cfgd).getErrorParserIDs() :
-			cfgd.getBuildSetting().getErrorParserIDs();
+
+		String[] ss = null;
+		if (page.isMultiCfg()) {
+			String[][] ids = ((ICMultiConfigDescription)cfgd).getErrorParserIDs();
+			ss = CDTPrefUtil.getStrListForDisplay(ids); 
+		} else {
+			ss = cfgd.getBuildSetting().getErrorParserIDs();
+		}
 		
 		ArrayList<TableData> data = new ArrayList<TableData>(mapParsers.size());
 		ArrayList<TableData> checked = new ArrayList<TableData>(ss.length);
@@ -182,9 +187,13 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 	protected void performApply(ICResourceDescription src, ICResourceDescription dst) {
 		ICConfigurationDescription sd = src.getConfiguration();
 		ICConfigurationDescription dd = dst.getConfiguration();
-		String[] s = (sd instanceof ICMultiConfigDescription) ?
-			((ICMultiConfigDescription)sd).getErrorParserIDs() :
-			sd.getBuildSetting().getErrorParserIDs();
+		String[] s = null;
+		if (sd instanceof ICMultiConfigDescription) {
+			String[][] ss = ((ICMultiConfigDescription)sd).getErrorParserIDs();
+			s = CDTPrefUtil.getStrListForDisplay(ss);
+		} else {
+			s = sd.getBuildSetting().getErrorParserIDs();
+		}
 		if (dd instanceof ICMultiConfigDescription)
 			((ICMultiConfigDescription)sd).setErrorParserIDs(s);
 		else	

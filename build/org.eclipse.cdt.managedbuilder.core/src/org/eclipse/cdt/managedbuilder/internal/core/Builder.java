@@ -2551,10 +2551,10 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 		setDirty(true);
 	}
 	
-	public Set contributeErrorParsers(Set set){
+	public Set<String> contributeErrorParsers(Set<String> set){
 		if(getErrorParserIds() != null){
 			if(set == null)
-				set = new HashSet();
+				set = new HashSet<String>();
 			
 			String ids[] = getErrorParserList();
 			if(ids.length != 0)

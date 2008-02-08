@@ -10,13 +10,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.settings.model;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import org.eclipse.cdt.core.model.util.CDTListComparator;
 import org.eclipse.cdt.core.settings.model.ICFolderDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
+import org.eclipse.cdt.core.settings.model.ICMultiFolderDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -26,13 +25,10 @@ import org.eclipse.core.runtime.IPath;
  *
  */
 public class MultiFolderDescription extends MultiResourceDescription implements
-		ICFolderDescription {
+	ICMultiFolderDescription {
 
-	private static final Comparator<Object> comp = CDTListComparator.getInstance();
-	private ICLanguageSetting[] lsets = null;
-	
-	public MultiFolderDescription(ICFolderDescription[] res, int mode) {
-		super(res, mode);
+	public MultiFolderDescription(ICFolderDescription[] res) {
+		super(res);
 	}
 
 	/* (non-Javadoc)
@@ -70,19 +66,10 @@ public class MultiFolderDescription extends MultiResourceDescription implements
 		return ls0;
 	}
 
-	private ICLanguageSetting[] conv2LS(Object[] ob) {
-		ICLanguageSetting[] se = new ICLanguageSetting[ob.length];
-		System.arraycopy(ob, 0, se, 0, ob.length);
-		return se;
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.settings.model.ICFolderDescription#getLanguageSettings()
 	 */
-	public ICLanguageSetting[] getLanguageSettings() {
-		if (lsets != null)
-			return lsets;
-		
+	public ICLanguageSetting[][] getLanguageSettingsM(Comparator<Object> comp) {
 		ICLanguageSetting[][] ls = new ICLanguageSetting[fRess.length][];
 		for (int i=0; i<fRess.length; i++) {
 			if (fRess[i] instanceof ICFolderDescription) {
@@ -90,21 +77,7 @@ public class MultiFolderDescription extends MultiResourceDescription implements
 				Arrays.sort(ls[i], comp);
 			}
 		}
-		ICLanguageSetting[] fs = conv2LS(getListForDisplay(ls, comp));
-		lsets = new ICLanguageSetting[fs.length];
-		for (int i=0; i<fs.length; i++) {
-			ArrayList<ICLanguageSetting> list = new ArrayList<ICLanguageSetting>(fRess.length);
-			for (int j=0; j<ls.length; j++) {
-				int x = Arrays.binarySearch(ls[j], fs[i], comp);
-				if (x >= 0)
-					list.add(ls[j][x]);
-			}
-			if (list.size() == 1)
-				lsets[i] = (ICLanguageSetting)list.get(0);
-			else if (list.size() > 1)
-				lsets[i] = new MultiLanguageSetting(list, getConfiguration());
-		}
-		return lsets;
+		return ls;
 	}
 
 	/* (non-Javadoc)
@@ -137,9 +110,13 @@ public class MultiFolderDescription extends MultiResourceDescription implements
 	 */
 	public boolean isRoot() {
 		for (int i=0; i<fRess.length; i++)
-			if (! ((ICFolderDescription)fRess[0]).isRoot())
+			if (! ((ICFolderDescription)fRess[i]).isRoot())
 				return false;
 		return true;
+	}
+
+	public ICLanguageSetting[] getLanguageSettings() {
+		return ((ICFolderDescription)fRess[0]).getLanguageSettings();
 	}
 
 }

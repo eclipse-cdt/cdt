@@ -5667,4 +5667,24 @@ public class AST2CPPTests extends AST2BaseTest {
     	assertEquals(1, tu.getDefinitionsInAST(b).length);		// using-decl
     	assertEquals(2, tu.getDeclarationsInAST(b).length);		// using-decl + func-decl
     }
+    
+    
+	// namespace x {
+	//    int a;
+	// }
+	// using namespace x;
+	// class O {
+	//    class I {
+	//       void f();
+	//    };
+	// };
+	// void O::I::f() {
+	//    a=0;
+	// }
+    public void testUsingDirectiveWithNestedClass_Bug209582() throws Exception {
+    	BindingAssertionHelper bh= new BindingAssertionHelper(getContents(1)[0].toString(), true);
+    	
+    	IBinding b= bh.assertNonProblem("a=", 1);
+    	assertEquals("x", b.getScope().getScopeName().toString());
+    }
 }

@@ -1108,7 +1108,7 @@ public class CPPSemantics {
 						HashSet<ICPPNamespaceScope> handled= new HashSet<ICPPNamespaceScope>();
 						for( int i = 0; i < uds.length; i++ ){
 							final ICPPUsingDirective ud = uds[i];
-							if( CPPSemantics.declaredBefore( ud, blockItem ) ){
+							if( CPPSemantics.declaredBefore( ud, data.astName ) ){
 								storeUsingDirective(data, blockScope, ud, handled);
 							}
 						}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *     Rational Software - initial implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.core.dom.ast;
 
 import java.util.LinkedList;
@@ -69,7 +68,7 @@ public class ASTTypeUtil {
 	 * @return the representation of the parameter type of an IFunctionType
 	 */
 	public static String getParameterTypeString(IFunctionType type) {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		String[] parms = getParameterTypeStringArray(type);
 		
 		result.append(Keywords.cpLPAREN);
@@ -90,7 +89,7 @@ public class ASTTypeUtil {
 	 * @return representation of the type array as a comma-separated list 
 	 */
 	public static String getTypeListString(IType[] types) {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		for(int i=0; i<types.length; i++) {
 			if (types[i] != null) {
 				result.append(getTypeString(types[i]));
@@ -124,7 +123,7 @@ public class ASTTypeUtil {
 	}
 	
 	private static String getTypeString(IType type) {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		boolean needSpace = false;
 		
 		if (type instanceof IArrayType) {
@@ -311,7 +310,7 @@ public class ASTTypeUtil {
 	 * @return the type representation of the IType
 	 */
 	public static String getType(IType type, boolean resolveTypedefs) {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		IType[] types = new IType[DEAULT_ITYPE_SIZE];
 		
 		// push all of the types onto the stack
@@ -502,7 +501,7 @@ public class ASTTypeUtil {
 	
 	
 	private static String[] getQualifiedNameForAnonymous(ICPPBinding binding) throws DOMException {
-		LinkedList result= new LinkedList();
+		LinkedList<String> result= new LinkedList<String>();
 		result.addFirst(getNameForAnonymous(binding));
 		ICPPScope scope = (ICPPScope) binding.getScope();
 		while( scope != null ){
@@ -530,7 +529,7 @@ public class ASTTypeUtil {
 			}
 			scope = (ICPPScope) scope.getParent();
 		}
-	    return (String[]) result.toArray(new String[result.size()]);
+	    return result.toArray(new String[result.size()]);
 	}
 	
 	private static String getNameForAnonymous(IBinding binding) {
@@ -570,7 +569,7 @@ public class ASTTypeUtil {
 			if (loc != null) {
 				char[] fname= loc.getFileName().toCharArray();
 				int fnamestart= findFileNameStart(fname);
-				StringBuffer buf= new StringBuffer();
+				StringBuilder buf= new StringBuilder();
 				buf.append('{');
 				buf.append(fname, fnamestart, fname.length-fnamestart);
 				buf.append(':');

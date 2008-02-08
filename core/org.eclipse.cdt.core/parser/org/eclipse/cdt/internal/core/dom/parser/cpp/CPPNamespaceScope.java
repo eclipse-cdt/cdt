@@ -9,12 +9,10 @@
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-/*
- * Created on Nov 29, 2004
- */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.IName;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -22,14 +20,16 @@ import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics.LookupData;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 
 /**
  * @author aniefer
  */
 public class CPPNamespaceScope extends CPPScope implements ICPPNamespaceScope{
-	IASTNode[] usings = null;
+	ICPPUsingDirective[] usings = null;
 	
     public CPPNamespaceScope( IASTNode physicalNode ) {
 		super( physicalNode );
@@ -38,14 +38,18 @@ public class CPPNamespaceScope extends CPPScope implements ICPPNamespaceScope{
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope#getUsingDirectives()
 	 */
-	public IASTNode[] getUsingDirectives() {
-		return (IASTNode[]) ArrayUtil.trim( IASTNode.class, usings, true );
+	public ICPPUsingDirective[] getUsingDirectives() throws DOMException {
+		if (!isFullyCached()) {
+			LookupData ld= new LookupData();
+			CPPSemantics.lookupInScope(ld, this, null);
+		}
+		return (ICPPUsingDirective[]) ArrayUtil.trim( ICPPUsingDirective.class, usings, true );
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope#addUsingDirective(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective)
 	 */
-	public void addUsingDirective(IASTNode directive) {
-		usings = (IASTNode[]) ArrayUtil.append( IASTNode.class, usings, directive );
+	public void addUsingDirective(ICPPUsingDirective directive) {
+		usings = (ICPPUsingDirective[]) ArrayUtil.append( ICPPUsingDirective.class, usings, directive );
 	}
 
     /* (non-Javadoc)
@@ -59,7 +63,7 @@ public class CPPNamespaceScope extends CPPScope implements ICPPNamespaceScope{
         return null;
     }
 
-    public IScope findNamespaecScope(IIndexScope scope) {
+    public IScope findNamespaceScope(IIndexScope scope) {
     	final String[] qname= scope.getScopeBinding().getQualifiedName();
     	final IScope[] result= {null};
     	final CPPASTVisitor visitor= new CPPASTVisitor () {

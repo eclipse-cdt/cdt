@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -64,20 +65,26 @@ public class AST2SpecBaseTest extends TestCase {
 	 * @throws ParserException
 	 */
 	protected void parseCandCPP( String code, boolean checkBindings, int expectedProblemBindings ) throws ParserException {
-		parse( code, ParserLanguage.C, false, true, checkBindings, expectedProblemBindings);
-		parse( code, ParserLanguage.CPP, false, true, checkBindings, expectedProblemBindings );
+		parse( code, ParserLanguage.C, false, true, checkBindings, expectedProblemBindings, null);
+		parse( code, ParserLanguage.CPP, false, true, checkBindings, expectedProblemBindings, null );
 	}
 		
 	protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean checkBindings, int expectedProblemBindings ) throws ParserException {
-    	return parse(code, lang, false, true, checkBindings, expectedProblemBindings );
+    	return parse(code, lang, false, true, checkBindings, expectedProblemBindings, null );
     }
+	
+	protected IASTTranslationUnit parse(String code, ParserLanguage lang, String[] problems) throws ParserException {
+    	return parse(code, lang, false, true, true, problems.length, problems );
+	}
+
     
-    private IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems, boolean checkBindings, int expectedProblemBindings ) throws ParserException {
+    private IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems, 
+    		boolean checkBindings, int expectedProblemBindings, String[] problems ) throws ParserException {
 		// TODO beef this up with tests... i.e. run once with \n, and then run again with \r\n replacing \n ... etc
 		// TODO another example might be to replace all characters with corresponding trigraph/digraph tests...
 		
 		CodeReader codeReader = new CodeReader(code.toCharArray());
-		return parse(codeReader, lang, useGNUExtensions, expectNoProblems, checkBindings, expectedProblemBindings);
+		return parse(codeReader, lang, useGNUExtensions, expectNoProblems, checkBindings, expectedProblemBindings, problems);
     }
 	
 //	private IASTTranslationUnit parse( IFile filename, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems ) throws ParserException {
@@ -93,7 +100,8 @@ public class AST2SpecBaseTest extends TestCase {
 //		return parse(codeReader, lang, useGNUExtensions, expectNoProblems);
 //    }
 	
-	private IASTTranslationUnit parse(CodeReader codeReader, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems, boolean checkBindings, int expectedProblemBindings) throws ParserException {
+	private IASTTranslationUnit parse(CodeReader codeReader, ParserLanguage lang, boolean useGNUExtensions, 
+			boolean expectNoProblems, boolean checkBindings, int expectedProblemBindings, String[] problems) throws ParserException {
         ScannerInfo scannerInfo = new ScannerInfo();
         IScanner scanner= AST2BaseTest.createScanner(codeReader, lang, ParserMode.COMPLETE_PARSE, scannerInfo, false);
         
@@ -129,13 +137,23 @@ public class AST2SpecBaseTest extends TestCase {
 			if ( lang == ParserLanguage.CPP ) {
 				CPPNameResolver res = new CPPNameResolver();
 		        tu.accept( res );
-				if (res.numProblemBindings != expectedProblemBindings )
-					throw new ParserException("Expected " + expectedProblemBindings + " problems, encountered " + res.numProblemBindings ); //$NON-NLS-1$ //$NON-NLS-2$
+				if (res.problemBindings.size() != expectedProblemBindings )
+					throw new ParserException("Expected " + expectedProblemBindings + " problems, encountered " + res.problemBindings.size() ); //$NON-NLS-1$ //$NON-NLS-2$
+				if (problems != null) {
+					for (int i = 0; i < problems.length; i++) {
+						assertEquals(problems[i], res.problemBindings.get(i));
+					}
+				}
 			} else if (lang == ParserLanguage.C ) {
 				CNameResolver res = new CNameResolver();
 		        tu.accept( res );
-				if (res.numProblemBindings != expectedProblemBindings )
-					throw new ParserException("Expected " + expectedProblemBindings + " problems, encountered " + res.numProblemBindings ); //$NON-NLS-1$ //$NON-NLS-2$
+				if (res.problemBindings.size() != expectedProblemBindings )
+					throw new ParserException("Expected " + expectedProblemBindings + " problems, encountered " + res.problemBindings.size() ); //$NON-NLS-1$ //$NON-NLS-2$
+				if (problems != null) {
+					for (int i = 0; i < problems.length; i++) {
+						assertEquals(problems[i], res.problemBindings.get(i));
+					}
+				}
 			}
 		}
 
@@ -168,14 +186,14 @@ public class AST2SpecBaseTest extends TestCase {
 		{
 			shouldVisitNames = true;
 		}
-		public int numProblemBindings=0;
+		public ArrayList<String> problemBindings=new ArrayList<String>();
 		public int numNullBindings=0;
 		public List nameList = new ArrayList();
 		public int visit( IASTName name ){
 			nameList.add( name );
 			IBinding binding = name.resolveBinding();
 			if (binding instanceof IProblemBinding)
-				numProblemBindings++;
+				problemBindings.add(name.toString());
 			if (binding == null)
 				numNullBindings++;
 			return PROCESS_CONTINUE;
@@ -192,14 +210,14 @@ public class AST2SpecBaseTest extends TestCase {
 		{
 			shouldVisitNames = true;
 		}
-		public int numProblemBindings=0;
+		public ArrayList<String> problemBindings=new ArrayList<String>();
 		public int numNullBindings=0;
 		public List nameList = new ArrayList();
 		public int visit( IASTName name ){
 			nameList.add( name );
 			IBinding binding = name.resolveBinding();
 			if (binding instanceof IProblemBinding)
-				numProblemBindings++;
+				problemBindings.add(name.toString());
 			if (binding == null)
 				numNullBindings++;
 			return PROCESS_CONTINUE;

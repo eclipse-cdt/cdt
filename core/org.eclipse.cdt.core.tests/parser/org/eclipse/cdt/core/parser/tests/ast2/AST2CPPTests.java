@@ -3398,7 +3398,7 @@ public class AST2CPPTests extends AST2BaseTest {
                 .getParent().getParent();
         IScope scope = ((IASTCompoundStatement) def.getBody()).getScope();
         IBinding[] bs = scope.find("f"); //$NON-NLS-1$
-        assertEquals(bs.length, 3);
+        assertEquals(3, bs.length);
         assertSame(bs[0], f);
         assertSame(bs[1], f1);
         assertSame(bs[2], f2);

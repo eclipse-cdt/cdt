@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -727,7 +728,8 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		buffer.append("// S is { Y::h(int), Z::h(double) } and overload\n"); //$NON-NLS-1$
 		buffer.append("// resolution chooses Z::h(double)\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parse(buffer.toString(), ParserLanguage.CPP, false, 0);
+		String[] problems= {"AB::x", "x", "AB::i", "i"}; 
+		parse(buffer.toString(), ParserLanguage.CPP, problems);  // qualified names are counted double, so 4 
 	}
 	
 	/**
@@ -2386,7 +2388,9 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		buffer.append("A::i++; // A::unique::i\n"); //$NON-NLS-1$
 		buffer.append("j++; // A::unique::j\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parse(buffer.toString(), ParserLanguage.CPP, false, 0);
+		
+		String[] problems= {"i"};
+		parse(buffer.toString(), ParserLanguage.CPP, problems);
 	}
 	
 	/**
@@ -2999,7 +3003,8 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		buffer.append("void f4() {\n"); //$NON-NLS-1$
 		buffer.append("i = 5; // illformed; neither i is visible\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parse(buffer.toString(), ParserLanguage.CPP, false, 0);
+		String[] problems= {"i", "i"};
+		parse(buffer.toString(), ParserLanguage.CPP, problems);
 	}
 	
 	/**
@@ -3032,7 +3037,8 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		buffer.append("using namespace N;\n"); //$NON-NLS-1$
 		buffer.append("i = 7; // error: both M::i and N::i are visible\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
+		String[] problems= {"i"};
+		parse(buffer.toString(), ParserLanguage.CPP, problems);
 	}
 	
 	/**
@@ -3081,7 +3087,8 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		buffer.append("int n = j; // D::j hides B::j\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
+		String[] problems= {"k"};
+		parse(buffer.toString(), ParserLanguage.CPP, problems);
 	}
 	
 	/**
@@ -3140,7 +3147,8 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		buffer.append("f(1); //error: ambiguous: D::f(int) or E::f(int)?\n"); //$NON-NLS-1$
 		buffer.append("f('a'); //OK: D::f(char)\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parse(buffer.toString(), ParserLanguage.CPP, false, 0);
+		String[] problems= {"d1", "f"};
+		parse(buffer.toString(), ParserLanguage.CPP, problems);
 	}
 	
 	/**

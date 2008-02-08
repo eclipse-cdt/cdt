@@ -540,7 +540,7 @@ public class CPPASTTranslationUnit extends CPPASTNode implements ICPPASTTranslat
 		if (scope instanceof ICPPNamespaceScope) {
 			IScope result= fMappedScopes.get(scope);
 			if (result == null) {
-				result= getScope().findNamespaecScope(scope);
+				result= getScope().findNamespaceScope(scope);
 				if (result == null) {
 					result= scope;
 				}

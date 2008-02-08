@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,36 +7,25 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-/*
- * Created on Nov 29, 2004
- */
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 
 /**
- * @author aniefer
+ * A namespace scope is either a block-scope or a namespace-scope or global scope.
  */
 public interface ICPPNamespaceScope extends ICPPScope {
 
 	/**
-	 * Add an IASTNode that nominates another namespace to this scope Most
-	 * commonly, ICPPASTUsingDirectives, but in the case of unnamed namespaces,
-	 * it could be an ICPPASTNamespaceDefinition
-	 * 
-	 * @param directive
+	 * Add a directive that nominates another namespace to this scope.
 	 */
-	public void addUsingDirective(IASTNode directive) throws DOMException;
+	public void addUsingDirective(ICPPUsingDirective usingDirective) throws DOMException;
 
 	/**
-	 * Get the IASTNodes that have been added to this scope to nominate other
-	 * namespaces during lookup. (ICPPASTUsingDirective or
-	 * ICPPASTNamespaceDefinition)
-	 * 
-	 * @return
+	 * Get the using directives that have been added to this scope to nominate other
+	 * namespaces during lookup. 
 	 */
-	public IASTNode[] getUsingDirectives() throws DOMException;
-
+	public ICPPUsingDirective[] getUsingDirectives() throws DOMException;
 }

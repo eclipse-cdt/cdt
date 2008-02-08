@@ -6,12 +6,11 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * Andrew Ferguson (Symbian)
- * Bryan Wilkinson (QNX)
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
+ *    Andrew Ferguson (Symbian)
+ *    Bryan Wilkinson (QNX)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import java.util.ArrayList;
@@ -21,12 +20,12 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IndexFilter;
@@ -106,9 +105,8 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 		return this;
 	}
 
-	public IASTNode[] getUsingDirectives() throws DOMException {
-		// TODO
-		return new IASTNode[0];
+	public ICPPUsingDirective[] getUsingDirectives() throws DOMException {
+		return new ICPPUsingDirective[0];
 	}
 
 	public IBinding[] find(String name) {
@@ -160,7 +158,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 		if (result != null) {
 			return result;
 		}
-		BindingCollector visitor = new BindingCollector(getLinkageImpl(), name, null, false, true);
+		BindingCollector visitor = new BindingCollector(getLinkageImpl(), name, IndexFilter.ALL_DECLARED_OR_IMPLICIT, false, true);
 		getIndex().accept(visitor);
 		result = visitor.getBindings();
 		pdom.putCachedResult(key, result);
@@ -195,7 +193,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 		return result;
 	}
 	
-	public void addUsingDirective(IASTNode directive) throws DOMException {fail();}
+	public void addUsingDirective(ICPPUsingDirective directive) throws DOMException {fail();}
 	
 	public IIndexBinding getScopeBinding() {
 		return this;

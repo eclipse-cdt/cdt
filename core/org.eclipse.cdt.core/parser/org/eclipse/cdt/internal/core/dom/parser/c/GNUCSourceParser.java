@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,6 +57,7 @@ import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
@@ -158,7 +159,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             BacktrackException {
         if (LT(1) == IToken.tASSIGN) {
             consume();
-            return cInitializerClause(Collections.EMPTY_LIST);
+            final List<IASTNode> empty= Collections.emptyList();
+            return cInitializerClause(empty);
         }
         return null;
     }
@@ -167,7 +169,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
      * @param scope
      * @return
      */
-    protected IASTInitializer cInitializerClause(List designators)
+    protected IASTInitializer cInitializerClause(List<IASTNode> designators)
             throws EndOfFileException, BacktrackException {
         IToken la = LA(1);
         int startingOffset = la.getOffset();
@@ -188,7 +190,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 int checkHashcode = LA(1).hashCode();
                 // required at least one initializer list
                 // get designator list
-                List newDesignators = designatorList();
+                List<IASTNode> newDesignators = designatorList();
                 if (newDesignators.size() != 0)
                     if (LT(1) == IToken.tASSIGN)
                         consume();
@@ -269,10 +271,10 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         return new CASTInitializerExpression();
     }
 
-    protected List designatorList() throws EndOfFileException,
+    protected List<IASTNode> designatorList() throws EndOfFileException,
             BacktrackException {
         // designated initializers for C
-        List designatorList = Collections.EMPTY_LIST;
+        List<IASTNode> designatorList= Collections.emptyList();
 
         if (LT(1) == IToken.tDOT || LT(1) == IToken.tLBRACKET) {
             while (LT(1) == IToken.tDOT || LT(1) == IToken.tLBRACKET) {
@@ -284,7 +286,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                     IASTName n = createName(id);
                     designator.setName(n);
                     if (designatorList == Collections.EMPTY_LIST)
-                        designatorList = new ArrayList(DEFAULT_DESIGNATOR_LIST_SIZE);
+                        designatorList = new ArrayList<IASTNode>(DEFAULT_DESIGNATOR_LIST_SIZE);
                     designatorList.add(designator);
                 } else if (LT(1) == IToken.tLBRACKET) {
                     IToken mark = consume();
@@ -296,7 +298,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                         ((ASTNode) designator).setOffsetAndLength(offset, lastOffset - offset);
                         designator.setSubscriptExpression(constantExpression);
                         if (designatorList == Collections.EMPTY_LIST)
-                            designatorList = new ArrayList(DEFAULT_DESIGNATOR_LIST_SIZE);
+                            designatorList = new ArrayList<IASTNode>(DEFAULT_DESIGNATOR_LIST_SIZE);
                         designatorList.add(designator);
                         continue;
                     }
@@ -312,7 +314,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                         designator.setRangeFloor(constantExpression1);
                         designator.setRangeCeiling(constantExpression2);
                         if (designatorList == Collections.EMPTY_LIST)
-                            designatorList = new ArrayList(DEFAULT_DESIGNATOR_LIST_SIZE);
+                            designatorList = new ArrayList<IASTNode>(DEFAULT_DESIGNATOR_LIST_SIZE);
                         designatorList.add(designator);
                     }
                 } else if (supportGCCStyleDesignators
@@ -325,7 +327,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                     IASTName n = createName(identifier);
                     designator.setName(n);
                     if (designatorList == Collections.EMPTY_LIST)
-                        designatorList = new ArrayList(DEFAULT_DESIGNATOR_LIST_SIZE);
+                        designatorList = new ArrayList<IASTNode>(DEFAULT_DESIGNATOR_LIST_SIZE);
                     designatorList.add(designator);
                 }
             }
@@ -346,7 +348,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                     IASTName n = createName(identifier);
                     designator.setName(n);
                     if (designatorList == Collections.EMPTY_LIST)
-                        designatorList = new ArrayList(DEFAULT_DESIGNATOR_LIST_SIZE);
+                        designatorList = new ArrayList<IASTNode>(DEFAULT_DESIGNATOR_LIST_SIZE);
                     designatorList.add(designator);
                 } else if (LT(1) == IToken.tLBRACKET) {
                     int startOffset = consume().getOffset();
@@ -359,7 +361,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                     designator.setRangeFloor(constantExpression1);
                     designator.setRangeCeiling(constantExpression2);
                     if (designatorList == Collections.EMPTY_LIST)
-                        designatorList = new ArrayList(DEFAULT_DESIGNATOR_LIST_SIZE);
+                        designatorList = new ArrayList<IASTNode>(DEFAULT_DESIGNATOR_LIST_SIZE);
                     designatorList.add(designator);
                 }
             }
@@ -884,7 +886,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         		if (t != null) {
         			consume(IToken.tRPAREN).getEndOffset();
                 	if (LT(1) == IToken.tLBRACE) {
-        				IASTInitializer i = cInitializerClause(Collections.EMPTY_LIST);
+        				final List<IASTNode> emptyList = Collections.emptyList();
+						IASTInitializer i = cInitializerClause(emptyList);
         				firstExpression = buildTypeIdInitializerExpression(t, i, offset, calculateEndOffset(i));
         				break;        
                 	}
@@ -1192,7 +1195,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
      * @throws BacktrackException
      *             request a backtrack
      */
-    protected void consumePointerOperators(List pointerOps)
+    protected void consumePointerOperators(List<IASTPointerOperator> pointerOps)
             throws EndOfFileException, BacktrackException {
         for (;;) {
         	// __attribute__ in-between pointers
@@ -1727,9 +1730,9 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         int startingOffset = la.getOffset();
         int finalOffset = startingOffset;
         la = null;
-        List pointerOps = new ArrayList(DEFAULT_POINTEROPS_LIST_SIZE);
-        List parameters = Collections.EMPTY_LIST;
-        List arrayMods = Collections.EMPTY_LIST;
+        List<IASTPointerOperator> pointerOps = new ArrayList<IASTPointerOperator>(DEFAULT_POINTEROPS_LIST_SIZE);
+        List<IASTNode> parameters = Collections.emptyList();
+        List<IASTNode> arrayMods = Collections.emptyList();
         boolean encounteredVarArgs = false;
         IASTExpression bitField = null;
         boolean isFunction = false;
@@ -1745,7 +1748,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             __attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
             
             if (!pointerOps.isEmpty()) {
-                finalOffset = calculateEndOffset((IASTPointerOperator) pointerOps
+                finalOffset = calculateEndOffset(pointerOps
                         .get(pointerOps.size() - 1));
             }
 
@@ -1773,10 +1776,10 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
                     // count the number of K&R C parameters (0 K&R C parameters
                     // essentially means it's not K&R C)
-                    if( !knr )
+                    if( !knr && supportKnRC)
                         numKnRCParms = countKnRCParms();
 					
-                    if (supportKnRC && numKnRCParms > 0) { // KnR C parameters were found so
+                    if (numKnRCParms > 0) { // KnR C parameters were found so
                         // handle the declarator accordingly
                         parmNames = new IASTName[numKnRCParms];
                         parmDeclarations = new IASTDeclaration[numKnRCParms];
@@ -1878,7 +1881,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                             IASTParameterDeclaration pd = parameterDeclaration();
                             finalOffset = calculateEndOffset(pd);
                             if (parameters == Collections.EMPTY_LIST)
-                                parameters = new ArrayList(DEFAULT_PARAMETERS_LIST_SIZE);
+                                parameters = new ArrayList<IASTNode>(DEFAULT_PARAMETERS_LIST_SIZE);
                             parameters.add(pd);
                             seenParameter = true;
                         }
@@ -1887,11 +1890,10 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                     break;
                 case IToken.tLBRACKET:
                     if (arrayMods == Collections.EMPTY_LIST)
-                        arrayMods = new ArrayList(DEFAULT_POINTEROPS_LIST_SIZE);
+                        arrayMods = new ArrayList<IASTNode>(DEFAULT_POINTEROPS_LIST_SIZE);
                     consumeArrayModifiers(arrayMods);
                     if (!arrayMods.isEmpty())
-                        finalOffset = calculateEndOffset((IASTArrayModifier) arrayMods
-                                .get(arrayMods.size() - 1));
+                        finalOffset = calculateEndOffset(arrayMods.get(arrayMods.size() - 1));
                     continue;
                 case IToken.tCOLON:
                     consume();
@@ -1922,7 +1924,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         __attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
 
         IASTDeclarator d = null;
-        if (numKnRCParms > 0) {
+        if (numKnRCParms > 0 && supportKnRC) {
             ICASTKnRFunctionDeclarator functionDecltor = createKnRFunctionDeclarator();
             parmDeclarations = (IASTDeclaration[]) ArrayUtil.removeNulls( IASTDeclaration.class, parmDeclarations );
             for (int i = 0; i < parmDeclarations.length; ++i) {
@@ -1959,7 +1961,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             d = createDeclarator();
         }
         for (int i = 0; i < pointerOps.size(); ++i) {
-            IASTPointerOperator po = (IASTPointerOperator) pointerOps.get(i);
+            IASTPointerOperator po = pointerOps.get(i);
             d.addPointerOperator(po);
         }
         if (innerDecl != null) {
@@ -2021,7 +2023,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         return new CASTDeclarator();
     }
 
-    protected void consumeArrayModifiers(List arrayMods)
+    protected void consumeArrayModifiers(List<IASTNode> arrayMods)
             throws EndOfFileException, BacktrackException {
 
         while (LT(1) == IToken.tLBRACKET) {

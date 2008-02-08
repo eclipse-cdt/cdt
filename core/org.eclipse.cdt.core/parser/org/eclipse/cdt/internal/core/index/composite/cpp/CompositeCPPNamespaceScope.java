@@ -6,18 +6,19 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
+ *    Andrew Ferguson (Symbian) - Initial implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -33,12 +34,12 @@ class CompositeCPPNamespaceScope extends CompositeScope implements ICPPNamespace
 		this.namespaces = namespaces;
 	}
 	
-	public void addUsingDirective(IASTNode directive) throws DOMException {
+	public void addUsingDirective(ICPPUsingDirective directive) throws DOMException {
 		fail();
 	}
 
-	public IASTNode[] getUsingDirectives() throws DOMException {
-		return new IASTNode[0]; // same behaviour as PDOMCPPNamespace
+	public ICPPUsingDirective[] getUsingDirectives() throws DOMException {
+		return new ICPPUsingDirective[0]; // same behavior as PDOMCPPNamespace
 	}
 
 	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet)

@@ -13,6 +13,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
@@ -90,6 +98,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -100,7 +109,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
@@ -115,15 +123,14 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
-import org.eclipse.cdt.core.parser.util.ArrayUtil.ArrayWrapper;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
@@ -144,8 +151,9 @@ public class CPPSemantics {
 	static protected class LookupData
 	{
 		protected IASTName astName;
-		public ObjectMap usingDirectives = ObjectMap.EMPTY_MAP; 
-		public ObjectSet visited = ObjectSet.EMPTY_SET;	//used to ensure we don't visit things more than once
+		protected CPPASTTranslationUnit tu;
+		public Map<ICPPNamespaceScope, List<ICPPNamespaceScope>> usingDirectives= Collections.emptyMap(); 
+		public ObjectSet visited= new ObjectSet(1);	//used to ensure we don't visit things more than once
 		public ObjectSet inheritanceChain;	//used to detect circular inheritance
 		public ObjectSet associated = ObjectSet.EMPTY_SET;
 		
@@ -167,6 +175,7 @@ public class CPPSemantics {
 		
 		public LookupData( IASTName n ){
 			astName = n;
+			tu= (CPPASTTranslationUnit) astName.getTranslationUnit();
 			typesOnly = typesOnly();
 			considerConstructors = considerConstructors();
 			checkWholeClassScope = checkWholeClassScope();
@@ -292,7 +301,8 @@ public class CPPSemantics {
 			if( astName.getPropertyInParent() == STRING_LOOKUP_PROPERTY ) return false;
 			IASTNode p1 = astName.getParent();
 			if( p1 instanceof ICPPASTQualifiedName ){
-				return ((ICPPASTQualifiedName)p1).getNames()[0] != astName;
+				final IASTName[] qnames = ((ICPPASTQualifiedName)p1).getNames();
+				return qnames.length == 1 || qnames[0] != astName;
 			}
 			return p1 instanceof ICPPASTFieldReference;
 		}
@@ -858,7 +868,7 @@ public class CPPSemantics {
             IType p = ps[i];
             p = getUltimateType( p, true );
             try {
-                getAssociatedScopes( p, namespaces, classes, (CPPASTTranslationUnit) data.astName.getTranslationUnit());
+                getAssociatedScopes( p, namespaces, classes, data.tu);
             } catch ( DOMException e ) {
             }
         }
@@ -1011,9 +1021,8 @@ public class CPPSemantics {
 
 		IIndexFileSet fileSet= IIndexFileSet.EMPTY;
 		if (node != null) {
-			final IASTTranslationUnit tu= node.getTranslationUnit();
-			if (tu != null) {
-				final IIndexFileSet fs= (IIndexFileSet) tu.getAdapter(IIndexFileSet.class);
+			if (data.tu != null) {
+				final IIndexFileSet fs= (IIndexFileSet) data.tu.getAdapter(IIndexFileSet.class);
 				if (fs != null) {
 					fileSet= fs;
 				}
@@ -1040,7 +1049,6 @@ public class CPPSemantics {
 		while( scope != null ){
 			IASTNode blockItem = CPPVisitor.getContainingBlockItem( node );
 			
-			ArrayWrapper directives = null;
 			if( !data.usingDirectivesOnly ){
 				if( ASTInternal.isFullyCached(scope) ){
 					if (!data.contentAssist && data.astName != null) {
@@ -1089,36 +1097,29 @@ public class CPPSemantics {
 					}
 				}
 
-				if( (!data.hasResults() || data.contentAssist) && scope instanceof ICPPNamespaceScope ){
-					directives = new ArrayWrapper();
-					directives.array = ((ICPPNamespaceScope) scope).getUsingDirectives();
-					if( directives.array != null ){
-						for( int i = 0; i < directives.array.length; i++ ){
-							if( !CPPSemantics.declaredBefore( directives.array[i], blockItem ) ){
-								directives.array[i] = null;
-								directives.array = ArrayUtil.trim( IASTNode.class, directives.array );
+				// store using-directives found in this block or namespace for later use.
+				if( (!data.hasResults() || !data.qualified() || data.contentAssist) && scope instanceof ICPPNamespaceScope ){
+					final ICPPNamespaceScope blockScope= (ICPPNamespaceScope) scope;
+					if (! (blockScope instanceof ICPPBlockScope)) {
+						data.visited.put(blockScope);	// namespace has been searched.
+					}
+					ICPPUsingDirective[] uds= blockScope.getUsingDirectives();
+					if( uds != null && uds.length > 0) {
+						HashSet<ICPPNamespaceScope> handled= new HashSet<ICPPNamespaceScope>();
+						for( int i = 0; i < uds.length; i++ ){
+							final ICPPUsingDirective ud = uds[i];
+							if( CPPSemantics.declaredBefore( ud, blockItem ) ){
+								storeUsingDirective(data, blockScope, ud, handled);
 							}
 						}
 					}
 				}
 			}
-				
-			if( !data.ignoreUsingDirectives ) {
-				data.visited.clear();
-				if( data.contentAssist || !data.hasResults() ){
-					Object[] transitives = lookupInNominated( data, scope, null );
-					
-					processDirectives( data, scope, transitives );
-					if( directives != null && directives.array != null && directives.array.length != 0 )
-						processDirectives( data, scope, directives.array );
-					
-					while( !data.usingDirectives.isEmpty() && data.usingDirectives.get( scope ) != null ){
-						transitives = lookupInNominated( data, scope, transitives );
-		
-						if( !data.qualified() || ( data.contentAssist || !data.hasResults()) ){
-							processDirectives( data, scope, transitives );
-						}
-					}
+
+			// lookup in nominated namespaces
+			if( !data.ignoreUsingDirectives && scope instanceof ICPPNamespaceScope && !(scope instanceof ICPPBlockScope)) {
+				if( !data.hasResults() || !data.qualified() || data.contentAssist) {
+					lookupInNominated(data, (ICPPNamespaceScope) scope);
 				}
 			}
 			
@@ -1146,7 +1147,7 @@ public class CPPSemantics {
 			if( blockItem != null )
 				node = blockItem;
 			
-			ICPPScope parentScope = (ICPPScope) getParentScope(scope, (CPPASTTranslationUnit) node.getTranslationUnit());
+			ICPPScope parentScope = (ICPPScope) getParentScope(scope, data.tu);
 			if( parentScope instanceof ICPPTemplateScope ){
 			    IASTNode parent = node.getParent();
 			    while( parent != null && !(parent instanceof ICPPASTTemplateDeclaration) ){
@@ -1221,8 +1222,6 @@ public class CPPSemantics {
 	
 			if( !bases[i].isVirtual() || !data.visited.containsKey( parent ) ){
 				if( bases[i].isVirtual() ){
-				    if( data.visited == ObjectSet.EMPTY_SET )
-				        data.visited = new ObjectSet(2);
 					data.visited.put( parent );
 				}
 	
@@ -1313,8 +1312,6 @@ public class CPPSemantics {
             if (b instanceof ICPPClassType) {
             	IScope bScope = ((ICPPClassType)b).getCompositeScope();
             	if( bases[i].isVirtual() ){
-            		if( data.visited == ObjectSet.EMPTY_SET )
-            			data.visited = new ObjectSet(2);
             		if (bScope != null)
             			data.visited.put(bScope);
             	} else if ( bScope != null ) {
@@ -1385,53 +1382,55 @@ public class CPPSemantics {
 		return false;
 	}
 
-	static private void processDirectives( CPPSemantics.LookupData data, IScope scope, Object[] directives ) throws DOMException{
-		if( directives == null || directives.length == 0 )
+	/**
+	 * Stores the using directive with the scope where the members of the nominated namespace will appear.
+	 * In case of an unqualified lookup the transitive directives are stored, also. This is important because
+	 * the members nominated by a transitive directive can appear before those of the original directive.
+	 */
+	static private void storeUsingDirective(CPPSemantics.LookupData data, ICPPNamespaceScope container, 
+			ICPPUsingDirective directive, Set<ICPPNamespaceScope> handled) throws DOMException {
+		final ICPPNamespaceScope nominated= directive.getNamespace().getNamespaceScope();
+		if (nominated == null || data.visited.containsKey(nominated) || (handled != null && !handled.add(nominated))) {
 			return;
-		
-		ICPPScope enclosing = null;
-		IScope temp = null;
-		
-		int size = directives.length;
-		for( int i = 0; i < size && directives[i] != null; i++ ){
-			Object d = directives[i];
-			IBinding binding = null;
-			if( d instanceof ICPPASTUsingDirective ){
-				binding = ((ICPPASTUsingDirective)d).getQualifiedName().resolveBinding();
-			} else if( d instanceof ICPPASTNamespaceDefinition ){
-				binding = ((ICPPASTNamespaceDefinition)d).getName().resolveBinding();
-			}
-			if( binding instanceof ICPPNamespace ){
-				temp = ((ICPPNamespace)binding).getNamespaceScope();
-			} else
-				continue;
-				
-			//namespace are searched at most once
-			if( !data.visited.containsKey( temp ) ){
-				enclosing = getClosestEnclosingScope( scope, temp, (CPPASTTranslationUnit) data.astName.getTranslationUnit());
-				
-				//data.usingDirectives is a map from enclosing scope to a IScope[]
-				//of namespaces to consider when we reach that enclosing scope
-				IScope [] scopes = (IScope[]) ( data.usingDirectives.isEmpty() ? null : data.usingDirectives.get( enclosing ) );
-				scopes = (IScope[]) ArrayUtil.append( IScope.class, scopes, temp );
-				if( data.usingDirectives == ObjectMap.EMPTY_MAP ){
-					data.usingDirectives = new ObjectMap(2);
+		}
+		// 7.3.4.1 names appear at end of common enclosing scope of container and nominated scope. 
+		final IScope appearsIn= getCommonEnclosingScope(nominated, container, data.tu);
+		if (appearsIn instanceof ICPPNamespaceScope) {
+			// store the directive with the scope where it has to be considered
+			List<ICPPNamespaceScope> listOfNominated= data.usingDirectives.get(appearsIn);
+			if (listOfNominated == null) {
+				listOfNominated= new ArrayList<ICPPNamespaceScope>(1);
+				if (data.usingDirectives.isEmpty()) {
+					data.usingDirectives= new HashMap<ICPPNamespaceScope, List<ICPPNamespaceScope>>();
 				}
-				data.usingDirectives.put( enclosing, scopes );
+				data.usingDirectives.put((ICPPNamespaceScope) appearsIn, listOfNominated);
 			}
+			listOfNominated.add(nominated);
 		}
 		
+		// in a non-qualified lookup the transitive directive have to be stored right away, they may overtake the
+		// container.
+		if (!data.qualified() || data.contentAssist) {
+			assert handled != null;
+			ICPPUsingDirective[] transitive= nominated.getUsingDirectives();
+			for (int i = 0; i < transitive.length; i++) {
+				storeUsingDirective(data, container, transitive[i], handled);
+			}
+		}
 	}
 
-	static private ICPPScope getClosestEnclosingScope( IScope scope1, IScope scope2, CPPASTTranslationUnit tu) throws DOMException{
+	/**
+	 * Computes the common enclosing scope of s1 and s2.
+	 */
+	static private ICPPScope getCommonEnclosingScope(IScope s1, IScope s2, CPPASTTranslationUnit tu) throws DOMException { 
 		ObjectSet set = new ObjectSet( 2 );
-		IScope parent = scope1;
+		IScope parent= s1;
 		while( parent != null ){
 			set.put( parent );
-			parent = getParentScope(parent, tu);
+			parent= getParentScope(parent, tu);
 		}
-		parent = scope2;
-		while( parent != null && !set.containsKey( parent ) ){
+		parent= s2;
+		while(parent != null && !set.containsKey( parent ) ){
 			parent = getParentScope(parent, tu);
 		}
 		return (ICPPScope) parent;
@@ -1520,12 +1519,19 @@ public class CPPSemantics {
 
 		    if( item instanceof IASTDeclarationStatement )
 		        item = ((IASTDeclarationStatement)item).getDeclaration();
-		    if( item instanceof ICPPASTUsingDirective  ||
-				  (item instanceof ICPPASTNamespaceDefinition &&
-				   ((ICPPASTNamespaceDefinition)item).getName().toCharArray().length == 0) ) 
-			{
-				if( scope instanceof ICPPNamespaceScope )
-					((ICPPNamespaceScope)scope).addUsingDirective( item );
+			if( item instanceof ICPPASTUsingDirective ) {
+				if( scope instanceof ICPPNamespaceScope ) {
+				    final ICPPNamespaceScope nsscope = (ICPPNamespaceScope)scope;
+					final ICPPASTUsingDirective usingDirective = (ICPPASTUsingDirective) item;
+					nsscope.addUsingDirective(new CPPUsingDirective(usingDirective));
+				}
+			} else if (item instanceof ICPPASTNamespaceDefinition &&
+					   ((ICPPASTNamespaceDefinition)item).getName().toCharArray().length == 0) {
+				if( scope instanceof ICPPNamespaceScope ) {
+				    final ICPPNamespaceScope nsscope = (ICPPNamespaceScope)scope;
+				    final ICPPASTNamespaceDefinition nsdef= (ICPPASTNamespaceDefinition) item;
+					nsscope.addUsingDirective(new CPPUsingDirective(nsdef));
+				}
 			} else {
 			    //possible is IASTName or IASTName[]
 				possible = collectResult( data, scope, item, (item == parent)  );
@@ -1612,63 +1618,49 @@ public class CPPSemantics {
 		return found;
 	}
 
-	static private Object[] lookupInNominated( CPPSemantics.LookupData data, ICPPScope scope, Object[] transitives ) throws DOMException{
-		if( data.usingDirectives.isEmpty() )
-			return transitives;
-		
-		ICPPScope temp = null;
-		
-		IScope [] directives = (IScope[]) data.usingDirectives.remove( scope );
-		if( directives == null || directives.length == 0 ) {
-			return transitives;
-		}
-		for( int i = 0; i < directives.length && directives[i] != null; i++ ){
-			temp = (ICPPScope) directives[i];
-			if( !data.visited.containsKey( temp ) ){
-				if( data.visited == ObjectSet.EMPTY_SET ) {
-					data.visited = new ObjectSet(2);
+	/**
+	 * Perform lookup in nominated namespaces that appear in the given scope. For unqualified lookups the method assumes
+	 * that transitive directives have been stored in the lookup-data. For qualified lookups the transitive directives
+	 * are considered if the lookup of the original directive returns empty.
+	 */
+	static private void lookupInNominated(CPPSemantics.LookupData data, ICPPNamespaceScope scope) throws DOMException{
+		List<ICPPNamespaceScope> allNominated= data.usingDirectives.remove(scope);
+		while (allNominated != null) {
+			for (ICPPNamespaceScope nominated : allNominated) {
+				if (data.visited.containsKey(nominated)) {
+					continue;
 				}
-				data.visited.put( temp );
-				ArrayWrapper usings = new ArrayWrapper();
-				
+				data.visited.put(nominated);
+
 				boolean found = false;
-				if( ASTInternal.isFullyCached(temp) ) {
-					if ( !data.contentAssist ){
-						IBinding binding = temp.getBinding( data.astName, true );
-						if( binding != null && 
-							( CPPSemantics.declaredBefore( binding, data.astName ) || 
-							  (scope instanceof ICPPClassScope && data.checkWholeClassScope) ) )
-						{
-							mergeResults( data, binding, true );
-							found = true;
-						}
-					} else {
-						IBinding[] bindings = temp.getBindings( data.astName, true, data.prefixLookup );
-						if (bindings != null && bindings.length > 0) {
-							mergeResults( data, bindings, true );
-							found = true;
-						}
+				if (ASTInternal.isFullyCached(nominated)) {
+					IBinding[] bindings= nominated.getBindings(data.astName, true, data.prefixLookup);
+					if (bindings != null && bindings.length > 0) {
+						mergeResults( data, bindings, true );
+						found = true;
 					}
 				} else {
-					IASTName [] f = lookupInScope( data, temp, null );
+					IASTName [] f = lookupInScope( data, nominated, null );
 					if( f != null ) {
 						mergeResults( data, f, true );
 						found = true;
 					}
 				}
 
-				if( !found && temp instanceof ICPPNamespaceScope ){
-					usings.array = ((ICPPNamespaceScope) temp).getUsingDirectives();
-				}
-							
-				//only consider the transitive using directives if we are an unqualified
-				//lookup, or we didn't find the name in decl
-				if( usings.array != null && usings.array.length > 0 && (!data.qualified() || !found ) ){
-				    transitives = ArrayUtil.addAll( Object.class, transitives, usings.array );
+				// in the qualified lookup we have to nominate the transitive directives only when
+				// the lookup did not succeed. In the qualified case this is done earlier, when the directive
+				// is encountered.
+				if (!found && data.qualified() && !data.contentAssist) {
+					ICPPUsingDirective[] usings= nominated.getUsingDirectives();
+					for (int i = 0; i < usings.length; i++) {
+						ICPPUsingDirective using = usings[i];
+						storeUsingDirective(data, scope, using, null);
+					}
 				}
 			}
+			// retry with transitive directives that may have been nominated in a qualified lookup
+			allNominated= data.usingDirectives.remove(scope);
 		}
-		return transitives;
 	}
 
 	static private Object collectResult( CPPSemantics.LookupData data, ICPPScope scope, IASTNode node, boolean checkAux ) throws DOMException{
@@ -1924,12 +1916,14 @@ public class CPPSemantics {
 	static public boolean declaredBefore( Object obj, IASTNode node ){
 	    if( node == null ) return true;
 	    if( node.getPropertyInParent() == STRING_LOOKUP_PROPERTY ) return true;
+	    final int pointOfRef= ((ASTNode) node).getOffset();
 	    
 	    ASTNode nd = null;
 	    if( obj instanceof ICPPSpecialization ){
 	        obj = ((ICPPSpecialization)obj).getSpecializedBinding();
 	    }
 	    
+	    int pointOfDecl= -1;
 	    if( obj instanceof ICPPInternalBinding ){
 	        ICPPInternalBinding cpp = (ICPPInternalBinding) obj;
 	        IASTNode[] n = cpp.getDeclarations();
@@ -1945,10 +1939,11 @@ public class CPPSemantics {
 	            return true;
 	    } else if( obj instanceof ASTNode ){
 	        nd = (ASTNode) obj;
+	    } else if( obj instanceof ICPPUsingDirective) {
+	    	pointOfDecl= ((ICPPUsingDirective) obj).getPointOfDeclaration();
 	    }
 	    
-	    if( nd != null ){
-	        int pointOfDecl = 0;
+	    if( pointOfDecl < 0 && nd != null ){
             ASTNodeProperty prop = nd.getPropertyInParent();
             //point of declaration for a name is immediately after its complete declarator and before its initializer
             if( prop == IASTDeclarator.DECLARATOR_NAME || nd instanceof IASTDeclarator ){
@@ -1978,11 +1973,8 @@ public class CPPSemantics {
             	pointOfDecl = nd.getOffset() + nd.getLength();
             } else 
                 pointOfDecl = nd.getOffset() + nd.getLength();
-            
-            return ( pointOfDecl < ((ASTNode)node).getOffset() );
-	        
 	    }
-	    return true; // TODO - I changed this to true 
+	    return ( pointOfDecl < pointOfRef );
 	}
 	
 	static private IBinding resolveAmbiguities( CPPSemantics.LookupData data, IASTName name ) throws DOMException {

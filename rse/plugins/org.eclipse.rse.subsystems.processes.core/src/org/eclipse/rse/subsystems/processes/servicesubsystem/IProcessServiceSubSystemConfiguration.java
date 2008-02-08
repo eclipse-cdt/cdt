@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,13 +11,12 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - [217556] remove service subsystem types
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.processes.servicesubsystem;
 
 import org.eclipse.rse.core.model.IHost;
-import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
 import org.eclipse.rse.services.processes.IProcessService;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IHostProcessToRemoteProcessAdapter;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessSubSystemConfiguration;
@@ -28,7 +27,7 @@ import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessSubSyst
  * @author mjberger
  *
  */
-public interface IProcessServiceSubSystemConfiguration extends IServiceSubSystemConfiguration, IRemoteProcessSubSystemConfiguration 
+public interface IProcessServiceSubSystemConfiguration extends IRemoteProcessSubSystemConfiguration 
 {
 	/**
 	 * @param host The object representing the remote machine to which the process service is associated

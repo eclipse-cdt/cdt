@@ -42,6 +42,7 @@
  * David Dykstal (IBM) - [197036] wrapped createHost to commit changes only once
  *                                rewrote createHost to better pick default subsystem configurations to activate
  *                                rewrote getSubSystemConfigurationsBySystemType to be able to delay the creation (and loading) of subsystem configurations
+ * David Dykstal (IBM) - [217556] remove service subsystem types
  ********************************************************************************/
 
 package org.eclipse.rse.ui.internal.model;
@@ -90,8 +91,6 @@ import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.SystemChildrenContentsType;
 import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
 import org.eclipse.rse.core.subsystems.IConnectorService;
-import org.eclipse.rse.core.subsystems.IServiceSubSystem;
-import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
@@ -355,9 +354,8 @@ public class SystemRegistry implements ISystemRegistry
 					if (activate || subsystemConfigurationProxy.isSubSystemConfigurationActive()) {
 						ISubSystemConfiguration configuration = subsystemConfigurationProxy.getSubSystemConfiguration();
 						if (configuration != null) { // could happen if activate fails
-							if (filterDuplicates && configuration instanceof IServiceSubSystemConfiguration) {
-								IServiceSubSystemConfiguration service = (IServiceSubSystemConfiguration) configuration;
-								Class serviceType = service.getServiceType();
+							Class serviceType = configuration.getServiceType();
+							if (filterDuplicates && serviceType != null) {
 								if (!serviceTypes.contains(serviceType)) {
 									serviceTypes.add(serviceType);
 									configurations.add(configuration);
@@ -1153,14 +1151,11 @@ public class SystemRegistry implements ISystemRegistry
 		for (int i = 0; i < allSS.length; i++)
 		{
 			ISubSystem ss = allSS[i];
-			if (ss instanceof IServiceSubSystem)
+			Class thisServiceType = ss.getServiceType();
+			if (thisServiceType == serviceType)
 			{
-				IServiceSubSystem serviceSubSystem = (IServiceSubSystem)ss;
-				if (serviceSubSystem.getServiceType() == serviceType)
-				{
-					matches.add(ss);
-				}
-			}						
+				matches.add(ss);
+			}
 		}
 		return (ISubSystem[])matches.toArray(new ISubSystem[matches.size()]);
 	}
@@ -1709,7 +1704,7 @@ public class SystemRegistry implements ISystemRegistry
 							ISubSystemConfiguration[] configsArray = getSubSystemConfigurationsBySystemType(systemType, false);
 							for (int i = 0; i < configsArray.length; i++) {
 								ISubSystemConfiguration config = configsArray[i];
-								boolean isStrange = !(config instanceof IServiceSubSystemConfiguration);
+								boolean isStrange = (config.getServiceType() == null);
 								boolean isAbsent = !configs.contains(config);
 								if (isStrange && isAbsent) {
 									configs.add(config);

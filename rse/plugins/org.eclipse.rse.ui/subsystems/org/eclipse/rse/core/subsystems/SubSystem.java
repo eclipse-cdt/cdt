@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -31,6 +31,7 @@
  * David Dykstal (IBM) - [197036] pulled up subsystem configuration switching logic from the service subsystem layer
  *                                implemented IServiceSubSystem here so that subsystem configuration switching can be 
  *                                made common among all service subsystems.
+ * David Dykstal (IBM) - [217556] remove service subsystem types
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -132,8 +133,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
  */
 
 public abstract class SubSystem extends RSEModelObject
-	implements IAdaptable, ISubSystem, IServiceSubSystem,
-		ISystemFilterPoolReferenceManagerProvider
+	implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 {
 
 
@@ -3070,7 +3070,7 @@ public abstract class SubSystem extends RSEModelObject
 	 * This supplied implementation does nothing. Subclasses may override if they implement a service subsystem.
 	 * @param newConfiguration the configuration this subsystem should use from this point.
 	 */
-	protected void internalSwitchServiceSubSystemConfiguration(IServiceSubSystemConfiguration newConfiguration) {
+	protected void internalSwitchSubSystemConfiguration(ISubSystemConfiguration newConfiguration) {
 	}
 
 	/**
@@ -3080,9 +3080,9 @@ public abstract class SubSystem extends RSEModelObject
 	 * @param configuration the configuration to which this subsystem may switch 
 	 * @return true if this subsystem is capable of switching to this configuration, false otherwise. This implementation
 	 * returns false.
-	 * @see IServiceSubSystem#canSwitchTo(IServiceSubSystemConfiguration)
+	 * @see ISubSystem#canSwitchTo(ISubSystemConfiguration)
 	 */
-	public boolean canSwitchTo(IServiceSubSystemConfiguration configuration) {
+	public boolean canSwitchTo(ISubSystemConfiguration configuration) {
 		return false;
 	}
 
@@ -3090,10 +3090,10 @@ public abstract class SubSystem extends RSEModelObject
 	 * Switch to use another subsystem configuration. This default implementation will test if the subsystem is a 
 	 * service subsystem and if the subsystem is compatible with the suggested configuration. If it is the switch will
 	 * be performed and internalSwitchSubSystemConfiguration will be called.
-	 * @see IServiceSubSystem#switchServiceFactory(IServiceSubSystemConfiguration)
-	 * @see #internalSwitchServiceSubSystemConfiguration(IServiceSubSystemConfiguration)
+	 * @see ISubSystem#switchServiceFactory(ISubSystemConfiguration)
+	 * @see #internalSwitchSubSystemConfiguration(ISubSystemConfiguration)
 	 */
-	public void switchServiceFactory(final IServiceSubSystemConfiguration config) {
+	public void switchServiceFactory(final ISubSystemConfiguration config) {
 		if (config != getSubSystemConfiguration() && canSwitchTo(config)) {
 			// define the operation to be executed
 			ISystemProfileOperation op = new ISystemProfileOperation() {
@@ -3111,7 +3111,7 @@ public abstract class SubSystem extends RSEModelObject
 	 * Return the service type for this subsystem.
 	 * @return the default implementation returns null. Subclasses that implement service subsystems
 	 * should return a type as specified in the interface.
-	 * @see org.eclipse.rse.core.subsystems.IServiceSubSystem#getServiceType()
+	 * @see org.eclipse.rse.core.subsystems.ISubSystem#getServiceType()
 	 */
 	public Class getServiceType() {
 		return null;
@@ -3121,7 +3121,7 @@ public abstract class SubSystem extends RSEModelObject
 	 * Actually perform the switch inside the commit guard
 	 * @param newConfig
 	 */
-	private void doSwitchServiceConfiguration(IServiceSubSystemConfiguration newConfig) {
+	private void doSwitchServiceConfiguration(ISubSystemConfiguration newConfig) {
 		try {
 			disconnect();
 		} catch (Exception e) {
@@ -3181,7 +3181,7 @@ public abstract class SubSystem extends RSEModelObject
 		newConnectorService.commit();
 	
 		// call the subsystem specfic switching support
-		internalSwitchServiceSubSystemConfiguration(newConfig);
+		internalSwitchSubSystemConfiguration(newConfig);
 	
 		// commit the subsystem
 		setDirty(true);

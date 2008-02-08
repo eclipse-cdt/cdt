@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * David Dykstal (IBM) - [217556] remove service subsystem types
  *******************************************************************************/
 package org.eclipse.rse.tests.internal;
 
@@ -39,7 +40,6 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.SystemSignonInformation;
-import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
@@ -263,9 +263,8 @@ public class RSEConnectionManager implements IRSEConnectionManager {
 
 			ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 			ISubSystemConfiguration desiredConfiguration = registry.getSubSystemConfiguration(desiredConfigurationId);
-			if (desiredConfiguration instanceof IServiceSubSystemConfiguration) {
-				IServiceSubSystemConfiguration t = (IServiceSubSystemConfiguration)desiredConfiguration;
-				subsystem.switchServiceFactory(t);
+			if (subsystem.canSwitchTo(desiredConfiguration)) {
+				subsystem.switchServiceFactory(desiredConfiguration);
 			}
 		}
 		return subsystem;

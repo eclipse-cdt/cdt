@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -21,7 +21,8 @@
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  * David McKnight   (IBM)        - [207100] adding ISystemRegistry.isRegisteredSystemRemoteChangeListener
  * David Dykstal (IBM) - [197036] adding new createHost and getSubSystemConfigurationsBySYstemType which
- * are able to delay the creation of subsystems.
+ *                                are able to delay the creation of subsystems.
+ * David Dykstal (IBM) - [217556] remove service subsystem types
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -267,7 +268,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	
 	/**
 	 * Get those subsystems that are registered against a given connection,
-	 * which are an instance of ServiceSubSystem for the given serviceType.
+	 * which are service subsystems with the given serviceType.
 	 * </p>
 	 * @param host the host to check
 	 * @param serviceType the class of service to ask for

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * David Dykstal (IBM) - [217556] remove service subsystem types
  ********************************************************************************/
 
 package org.eclipse.rse.internal.processes.ui.propertypages;
@@ -25,7 +26,6 @@ import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
-import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.subsystems.processes.servicesubsystem.IProcessServiceSubSystemConfiguration;
 import org.eclipse.rse.subsystems.processes.servicesubsystem.ProcessServiceSubSystem;
@@ -84,7 +84,7 @@ public class ProcessServicesPropertyPage extends ServicesPropertyPage
 		return (IProcessServiceSubSystemConfiguration[])results.toArray(new IProcessServiceSubSystemConfiguration[results.size()]);
 	}
 
-	protected IServiceSubSystemConfiguration getCurrentServiceSubSystemConfiguration()
+	protected ISubSystemConfiguration getCurrentSubSystemConfiguration()
 	{
 		return _currentFactory;
 	}

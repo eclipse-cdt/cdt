@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,16 +11,15 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - [217556] remove service subsystem types
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.processes.servicesubsystem;
 
-import org.eclipse.rse.core.subsystems.IServiceSubSystem;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessSubSystem;
 
 
-public interface IProcessServiceSubSystem extends IRemoteProcessSubSystem, IServiceSubSystem 
+public interface IProcessServiceSubSystem extends IRemoteProcessSubSystem
 {
 
 }

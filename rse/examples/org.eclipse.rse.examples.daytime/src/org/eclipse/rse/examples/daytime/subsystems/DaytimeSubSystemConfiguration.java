@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - adapted template for daytime example.
+ * David Dykstal (IBM) - [217556] remove service subsystem types
  *******************************************************************************/
 
 package org.eclipse.rse.examples.daytime.subsystems;
@@ -21,9 +22,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.rse.core.model.IHost;
-import org.eclipse.rse.core.servicesubsystem.ServiceSubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
 import org.eclipse.rse.examples.daytime.connectorservice.DaytimeConnectorService;
 import org.eclipse.rse.examples.daytime.connectorservice.DaytimeConnectorServiceManager;
 import org.eclipse.rse.examples.daytime.service.IDaytimeService;
@@ -36,7 +37,7 @@ import org.eclipse.rse.services.IService;
  * or disabled options, and is responsible for instanciating the actual
  * Daytime subsystem as well as the UI-less configuration layer (service).
  */
-public class DaytimeSubSystemConfiguration extends ServiceSubSystemConfiguration {
+public class DaytimeSubSystemConfiguration extends SubSystemConfiguration {
 
 	private Map fServices = new HashMap();
 	
@@ -47,14 +48,17 @@ public class DaytimeSubSystemConfiguration extends ServiceSubSystemConfiguration
 	public boolean supportsFilters() {
 		return false;
 	}
+	
 	public boolean supportsSubSystemConnect() {
 		//TODO for now, we have to connect in order to pass the hostname to the service
 		//This should not be necessary in an ideal world
 		return true; 
 	}
+	
 	public boolean isPortEditable() {
 		return false;
 	}
+	
 	public boolean isFactoryFor(Class subSystemType) {
 		return DaytimeSubSystem.class.equals(subSystemType);
 	}
@@ -71,12 +75,11 @@ public class DaytimeSubSystemConfiguration extends ServiceSubSystemConfiguration
 	}
 
 	public IConnectorService getConnectorService(IHost host) {
-		return DaytimeConnectorServiceManager.getInstance()
-			.getConnectorService(host, IDaytimeService.class);
+		return DaytimeConnectorServiceManager.getInstance().getConnectorService(host, IDaytimeService.class);
 	}
+	
 	public void setConnectorService(IHost host, IConnectorService connectorService) {
-		DaytimeConnectorServiceManager.getInstance()
-			.setConnectorService(host, IDaytimeService.class, connectorService);
+		DaytimeConnectorServiceManager.getInstance().setConnectorService(host, IDaytimeService.class, connectorService);
 	}
 
 	public IDaytimeService createDaytimeService(IHost host) {

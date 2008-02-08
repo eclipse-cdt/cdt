@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - [217556] remove service subsystem types
  *******************************************************************************/
 
 package org.eclipse.rse.ui.widgets.services;
@@ -22,7 +22,7 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.IDelegatingConnectorService;
 import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
-import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
+import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.services.IService;
 
 
@@ -31,11 +31,11 @@ import org.eclipse.rse.services.IService;
 public class FactoryServiceElement extends ServiceElement
 {
 
-	private IServiceSubSystemConfiguration _factory;	
+	private ISubSystemConfiguration _factory;	
 	private ServiceElement[] _children;
 
 
-	public FactoryServiceElement(IHost host, IServiceSubSystemConfiguration factory)
+	public FactoryServiceElement(IHost host, ISubSystemConfiguration factory)
 	{
 		super(host, null);
 		_factory = factory;
@@ -51,7 +51,7 @@ public class FactoryServiceElement extends ServiceElement
 		return _factory.getDescription();
 	}
 	
-	public IServiceSubSystemConfiguration getFactory()
+	public ISubSystemConfiguration getFactory()
 	{
 		return _factory;
 	}

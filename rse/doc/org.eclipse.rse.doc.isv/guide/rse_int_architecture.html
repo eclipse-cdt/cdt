@@ -41,8 +41,8 @@ else.
 <A name="Subsystems"></A><h2>RSE Subsystem Layer</h2>
 <p>
 RSE subsystems integrate the services of the service layer with connection information, model artifacts and persistence.
-Each subsystem is associated with a single service type.  For example, the file service subsystem is associated with the
-file service.  Each <a href="rse_int_subsystems.html">subsystem</a> is associated with one or more services from the service layer,
+Each subsystem is associated with a single service type. For example, the file service subsystem is associated with the
+file service. Each <a href="rse_int_subsystems.html">subsystem</a> is associated with one or more services from the service layer,
 a <a href="rse_int_connectorservices.html">connector service</a> and, in some cases, a model adapter, which is used to
 convert artifacts from the service layer into a form that is suitable for the subsystem layer.
 </p>
@@ -59,6 +59,11 @@ one protocols that can be used to implement the same service.  For example, ther
 the IFileService.  Subsystem configurations are contributed for both the FTP implementation and the DataStore one.  In
 such cases, only one subsystem is instantiated for each host, however that subsystem can have its configuration changed from FTP
 to DataStore and vice versa.
+</p>
+<p>
+Subsystems do not have to be implemented on top of a formally defined service layer, although this is highly recommended.
+Instead it may have all the services implemented directly in the subsystem itself. 
+If a subsystem does not use a service layer it should return <strong>null</strong> when implementing getServiceType(). 
 </p>
 <p>
 Subsystems are RSE objects that are persistable and maintain higher level functionality from the service layer.  Subsystems that

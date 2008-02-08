@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * David Dykstal (IBM) - [217556] remove service subsystem types
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.processes.servicesubsystem;
@@ -56,7 +57,7 @@ public abstract class ProcessServiceSubSystemConfiguration extends RemoteProcess
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.servicesubsystem.IServiceSubSystemConfiguration#getServiceType()
+	 * @see org.eclipse.rse.core.servicesubsystem.ISubSystemConfiguration#getServiceType()
 	 */
 	public final Class getServiceType()
 	{
@@ -72,7 +73,7 @@ public abstract class ProcessServiceSubSystemConfiguration extends RemoteProcess
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.servicesubsystem.IServiceSubSystemConfiguration#getService(org.eclipse.rse.ui.model.IHost)
+	 * @see org.eclipse.rse.core.servicesubsystem.ISubSystemConfiguration#getService(org.eclipse.rse.ui.model.IHost)
 	 */
 	public IService getService(IHost host)
 	{

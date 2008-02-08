@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,14 +12,13 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - [217556] remove service subsystem types
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.servicesubsystem;
 
 
 import org.eclipse.rse.core.model.IHost;
-import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
 import org.eclipse.rse.services.clientserver.SystemSearchString;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.search.IHostSearchResultConfiguration;
@@ -32,7 +31,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConf
 
 
 
-public interface IFileServiceSubSystemConfiguration extends IRemoteFileSubSystemConfiguration, IServiceSubSystemConfiguration
+public interface IFileServiceSubSystemConfiguration extends IRemoteFileSubSystemConfiguration
 {
 	public IFileService getFileService(IHost host);	
 	public IFileService createFileService(IHost host);

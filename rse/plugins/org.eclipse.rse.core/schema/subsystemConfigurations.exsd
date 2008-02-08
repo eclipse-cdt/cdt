@@ -100,7 +100,7 @@ These appear in configuration and properties pages for subsystems.
             <annotation>
                <documentation>
                   A class that implements &lt;samp&gt;org.eclipse.rse.core.subsystems.ISubSystemConfiguration&lt;/samp&gt;.
-It is recommended to extend &lt;samp&gt;org.eclipse.rse.core.subsystems.SubSystemConfiguration&lt;/samp&gt; or &lt;samp&gt;org.eclipse.rse.core.servicesubsystem.ServiceSubSystemConfiguration&lt;/samp&gt;.
+It is recommended to extend &lt;samp&gt;org.eclipse.rse.core.subsystems.SubSystemConfiguration&lt;/samp&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.rse.core.subsystems.SubSystemConfiguration:org.eclipse.rse.core.subsystems.ISubSystemConfiguration"/>
@@ -154,7 +154,7 @@ For example, if listing database resources you might specify a category of &quot
                <documentation>
                   This optional attribute determines the order in which subsystems appear in the New Connection wizard and RSE views. Integer values are allowed. Subsystems with lower number will appear first in the RSE tree. Subsystems that do not define the priority attribute will be appended last to the list of subsystems.
 
-Note that ServiceSubSystems that share the same service should always use the same priority, since their service implementation can change at runtime. The following priorities are used by the predefined subsystems: files=100, processes=200, shells=300.
+Note that service subsystems that share the same service should always use the same priority, since their service implementation can change at runtime. The following priorities are used by the predefined subsystems: files=100, processes=200, shells=300.
                </documentation>
             </annotation>
          </attribute>

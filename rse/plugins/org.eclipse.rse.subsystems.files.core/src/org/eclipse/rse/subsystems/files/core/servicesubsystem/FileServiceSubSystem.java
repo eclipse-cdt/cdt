@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@
  * Kevin Doyle		(IBM)		 - [208778] [efs][api] RSEFileStore#getOutputStream() does not support EFS#APPEND 
  * David McKnight   (IBM)        - [209704] added supportsEncodingConversion()
  * David Dykstal (IBM) - [197036] pulling up subsystem switch logic
+ * David Dykstal (IBM) - [217556] remove service subsystem types
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.servicesubsystem;
@@ -46,7 +47,7 @@ import org.eclipse.rse.core.events.SystemRemoteChangeEvent;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.IConnectorService;
-import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
+import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.RemoteChildrenContentsType;
 import org.eclipse.rse.services.clientserver.PathUtility;
 import org.eclipse.rse.services.clientserver.SystemSearchString;
@@ -917,18 +918,18 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.SubSystem#canSwitchTo(org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration)
+	 * @see org.eclipse.rse.core.subsystems.SubSystem#canSwitchTo(org.eclipse.rse.core.subsystems.ISubSystemConfiguration)
 	 * Overriding the super implementation to return true for any configuration that implements IFileServiceSubSystemConfiguration
 	 */
-	public boolean canSwitchTo(IServiceSubSystemConfiguration configuration) {
+	public boolean canSwitchTo(ISubSystemConfiguration configuration) {
 		return (configuration instanceof IFileServiceSubSystemConfiguration);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.SubSystem#internalSwitchServiceSubSystemConfiguration(org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration)
+	 * @see org.eclipse.rse.core.subsystems.SubSystem#internalSwitchServiceSubSystemConfiguration(org.eclipse.rse.core.subsystems.ISubSystemConfiguration)
 	 * Overriding the super implementation to do switch the file subsystem bits that need to be copied or initialized in a switch
 	 */
-	protected void internalSwitchServiceSubSystemConfiguration(IServiceSubSystemConfiguration newConfig) {
+	protected void internalSwitchSubSystemConfiguration(ISubSystemConfiguration newConfig) {
 		if (newConfig instanceof IFileServiceSubSystemConfiguration) {
 			IHost host = getHost();
 			IFileServiceSubSystemConfiguration config = (IFileServiceSubSystemConfiguration) newConfig;

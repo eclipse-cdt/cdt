@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * David Dykstal (IBM) - [197036] refactored switch configuration
+ * David Dykstal (IBM) - [217556] remove service subsystem types
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.processes.servicesubsystem;
@@ -22,7 +23,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.IConnectorService;
-import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
+import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.clientserver.processes.HostProcessFilterImpl;
 import org.eclipse.rse.services.clientserver.processes.IHostProcess;
@@ -146,9 +147,9 @@ public class ProcessServiceSubSystem extends RemoteProcessSubSystemImpl implemen
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.SubSystem#internalSwitchServiceSubSystemConfiguration(org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration)
+	 * @see org.eclipse.rse.core.subsystems.SubSystem#internalSwitchServiceSubSystemConfiguration(org.eclipse.rse.core.subsystems.ISubSystemConfiguration)
 	 */
-	protected void internalSwitchServiceSubSystemConfiguration(IServiceSubSystemConfiguration configuration) 
+	protected void internalSwitchServiceSubSystemConfiguration(ISubSystemConfiguration configuration) 
 	{
 			IProcessServiceSubSystemConfiguration config = (IProcessServiceSubSystemConfiguration) configuration;
 			IHost host = getHost();
@@ -157,14 +158,14 @@ public class ProcessServiceSubSystem extends RemoteProcessSubSystemImpl implemen
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.SubSystem#canSwitchTo(org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration)
+	 * @see org.eclipse.rse.core.subsystems.SubSystem#canSwitchTo(org.eclipse.rse.core.subsystems.ISubSystemConfiguration)
 	 */
-	public boolean canSwitchTo(IServiceSubSystemConfiguration configuration) {
+	public boolean canSwitchTo(ISubSystemConfiguration configuration) {
 		return configuration instanceof IProcessServiceSubSystemConfiguration;
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.servicesubsystem.IServiceSubSystem#getServiceType()
+	 * @see org.eclipse.rse.core.servicesubsystem.ISubSystem#getServiceType()
 	 */
 	public Class getServiceType()
 	{

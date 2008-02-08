@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -7,6 +7,7 @@
  * 
  * Contributors: 
  * Martin Oberhuber (Wind River) - initial API and implementation 
+ * David Dykstal (IBM) - [217556] remove service subsystem types
  *******************************************************************************/
 
 package org.eclipse.rse.examples.daytime.subsystems;
@@ -20,8 +21,7 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemMessageObject;
 import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.core.subsystems.IConnectorService;
-import org.eclipse.rse.core.subsystems.IServiceSubSystem;
-import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
+import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.examples.daytime.model.DaytimeResource;
 import org.eclipse.rse.examples.daytime.service.IDaytimeService;
@@ -34,7 +34,7 @@ import org.eclipse.rse.ui.model.ISystemRegistryUI;
  * This is our subsystem, which manages the remote connection and resources for
  * a particular Service (system connection) object.
  */
-public class DaytimeSubSystem extends SubSystem implements IServiceSubSystem {
+public class DaytimeSubSystem extends SubSystem {
 
 	private IDaytimeService fDaytimeService; 
 	
@@ -90,7 +90,7 @@ public class DaytimeSubSystem extends SubSystem implements IServiceSubSystem {
 		return IDaytimeService.class;
 	}
 
-	public void switchServiceFactory(IServiceSubSystemConfiguration factory) {
+	public void switchServiceFactory(ISubSystemConfiguration factory) {
 		// not applicable here
 		
 	}

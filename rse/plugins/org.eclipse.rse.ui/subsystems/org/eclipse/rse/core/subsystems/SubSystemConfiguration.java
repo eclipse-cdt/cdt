@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -27,6 +27,7 @@
  * Martin Oberhuber (Wind River) - [195392] Avoid setting port 0 in initializeSubSystem()
  * David Dykstal (IBM) - [197036] rewrote getFilterPoolManager to delay the creation of default filter pools until the corresponding
  *                                a subsystem configuration is actually used for a host.
+ * David Dykstal (IBM) - [217556] remove service subsystem types
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -70,6 +71,7 @@ import org.eclipse.rse.internal.core.model.SystemProfileManager;
 import org.eclipse.rse.internal.ui.SystemPropertyResources;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.logging.Logger;
+import org.eclipse.rse.services.IService;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -2798,4 +2800,53 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	{
 		return true;
 	}
+	
+	/*
+	 * Service Subsystem Configuration methods - default implementations
+	 */
+	
+	/**
+	 * This default implementation does nothing.
+	 * Service subsystems must override as defined in the interface.
+	 * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#setConnectorService(org.eclipse.rse.core.model.IHost, org.eclipse.rse.core.subsystems.IConnectorService)
+	 */
+	public void setConnectorService(IHost host, IConnectorService connectorService) {
+	}
+	
+	/**
+	 * This default implementation returns null. 
+	 * Service subsystem configurations must override as defined in the interface.
+	 * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#getConnectorService(org.eclipse.rse.core.model.IHost)
+	 */
+	public IConnectorService getConnectorService(IHost host) {
+		return null;
+	}
+	
+	/**
+	 * This default implementation returns null. 
+	 * Service subsystem configurations must override as defined in the interface.
+	 * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#getServiceType()
+	 */
+	public Class getServiceType() {
+		return null;
+	}
+	
+	/**
+	 * This default implementation returns null. 
+	 * Service subsystem configurations must override as defined in the interface.
+	 * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#getServiceImplType()
+	 */
+	public Class getServiceImplType() {
+		return null;
+	}
+	
+	/**
+	 * This default implementation returns null. 
+	 * Service subsystem configurations must override as defined in the interface.
+	 * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#getService(org.eclipse.rse.core.model.IHost)
+	 */
+	public IService getService(IHost host) {
+		return null;
+	}
+	
 }

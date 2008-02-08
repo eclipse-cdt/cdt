@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2007, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Javier Montalvo Orus (Symbian) - [188146] Incorrect "FTP Settings" node in Property Sheet for Linux connection
  * Martin Oberhuber (Wind River) - [190231] Move ISubSystemPropertiesWizardPage from UI to Core
+ * David Dykstal (IBM) - [217556] remove service subsystem types
  ********************************************************************************/
 
 package org.eclipse.rse.ui.wizards;
@@ -34,8 +35,6 @@ import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
-import org.eclipse.rse.core.subsystems.IServiceSubSystem;
-import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystemPropertiesWizardPage;
@@ -55,7 +54,7 @@ import org.eclipse.swt.widgets.Control;
 public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizardPage implements ISubSystemPropertiesWizardPage
 {
 	private ServicesForm _form;
-	private IServiceSubSystemConfiguration _selectedConfiguration;
+	private ISubSystemConfiguration _selectedConfiguration;
 	private ServiceElement _root;
 	private ServiceElement[] _serviceElements;
 	
@@ -93,10 +92,10 @@ public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizar
 		{
 
 			
-			IServiceSubSystemConfiguration currentFactory = (IServiceSubSystemConfiguration)getSubSystemConfiguration();
+			ISubSystemConfiguration currentFactory = getSubSystemConfiguration();
 			
 			IRSESystemType systemType = getMainPage() != null && getMainPage().getWizard() instanceof RSEDefaultNewConnectionWizard ? ((RSEDefaultNewConnectionWizard)getMainPage().getWizard()).getSystemType() : null;
-			IServiceSubSystemConfiguration[] factories = getServiceSubSystemConfigurations(systemType, currentFactory.getServiceType());
+			ISubSystemConfiguration[] factories = getServiceSubSystemConfigurations(systemType, currentFactory.getServiceType());
 			
 			IHost dummyHost = null;
 			if (getWizard() instanceof RSEDefaultNewConnectionWizard)
@@ -112,7 +111,7 @@ public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizar
 			_serviceElements = new ServiceElement[factories.length];
 			for (int i = 0; i < factories.length; i++)
 			{	
-				IServiceSubSystemConfiguration factory = factories[i];
+				ISubSystemConfiguration factory = factories[i];
 				_serviceElements[i] = new FactoryServiceElement(dummyHost, factory);
 			
 			
@@ -127,7 +126,7 @@ public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizar
 		return _serviceElements;
 	}
 	
-	protected IServiceSubSystemConfiguration[] getServiceSubSystemConfigurations(IRSESystemType systemType, Class serviceType)
+	protected ISubSystemConfiguration[] getServiceSubSystemConfigurations(IRSESystemType systemType, Class serviceType)
 	{
 		List results = new ArrayList();
 		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
@@ -136,18 +135,13 @@ public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizar
 		for (int i = 0; i < configs.length; i++)
 		{
 			ISubSystemConfiguration config = configs[i];
-			if (config instanceof IServiceSubSystemConfiguration)
+			if (config.getServiceType() == serviceType)
 			{
-				IServiceSubSystemConfiguration sconfig = (IServiceSubSystemConfiguration)config;
-				if (sconfig.getServiceType() == serviceType)
-				{
-					
-					results.add(sconfig);
-				}
+				results.add(config);
 			}
 		}
 		
-		return (IServiceSubSystemConfiguration[])results.toArray(new IServiceSubSystemConfiguration[results.size()]);
+		return (ISubSystemConfiguration[])results.toArray(new ISubSystemConfiguration[results.size()]);
 	}
 	
 	public boolean isPageComplete()
@@ -203,10 +197,10 @@ public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizar
 
 	public boolean applyValues(ISubSystem ss) {
 		if (_selectedConfiguration != null) {
-			IServiceSubSystemConfiguration currentConfiguration = (IServiceSubSystemConfiguration) ss.getSubSystemConfiguration();
+			ISubSystemConfiguration currentConfiguration = ss.getSubSystemConfiguration();
 			if (currentConfiguration != null) {
 				if (_selectedConfiguration != currentConfiguration) {
-					((IServiceSubSystem) ss).switchServiceFactory(_selectedConfiguration);
+					ss.switchServiceFactory(_selectedConfiguration);
 				}
 				if (_root != null) {
 					IConnectorService connectorService = ss.getConnectorService();
@@ -267,7 +261,7 @@ public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizar
 		return result;
 	}
 	
-	protected IConnectorService getCustomConnectorService(IServiceSubSystemConfiguration config)
+	protected IConnectorService getCustomConnectorService(ISubSystemConfiguration config)
 	{
 		ServiceElement[] children = _root.getChildren();
 		for (int i = 0; i < children.length; i++)

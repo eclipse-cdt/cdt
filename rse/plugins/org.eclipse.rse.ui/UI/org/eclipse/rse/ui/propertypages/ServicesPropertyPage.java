@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,14 +12,15 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * David Dykstal (IBM) - [217556] remove service subsystem types
  ********************************************************************************/
 
 package org.eclipse.rse.ui.propertypages;
 
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.subsystems.IConnectorService;
-import org.eclipse.rse.core.subsystems.IServiceSubSystem;
-import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
+import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.ui.widgets.services.FactoryServiceElement;
 import org.eclipse.rse.ui.widgets.services.RootServiceElement;
 import org.eclipse.rse.ui.widgets.services.ServiceElement;
@@ -59,13 +60,14 @@ public abstract class ServicesPropertyPage extends SystemBasePropertyPage
 		_form.init(_rootElement);
 	}
 
-	protected IServiceSubSystem getServiceSubSystem()
+	protected ISubSystem getServiceSubSystem()
 	{
-		return (IServiceSubSystem)getElement();
+		return (ISubSystem)getElement();
 	}
 	
 	protected abstract ServiceElement[] getServiceElements();
-	protected abstract IServiceSubSystemConfiguration getCurrentServiceSubSystemConfiguration();
+	
+	protected abstract ISubSystemConfiguration getCurrentSubSystemConfiguration();
 
 	public boolean performOk()
 	{
@@ -93,21 +95,15 @@ public abstract class ServicesPropertyPage extends SystemBasePropertyPage
 
 	public boolean applyValues(IConnectorService connectorService)
 	{
-		
-		
 		FactoryServiceElement selectedService = (FactoryServiceElement)_form.getSelectedService();	
-		
-		IServiceSubSystemConfiguration factory = selectedService.getFactory();
-		IServiceSubSystemConfiguration currentFactory = getCurrentServiceSubSystemConfiguration();
+		ISubSystemConfiguration factory = selectedService.getFactory();
+		ISubSystemConfiguration currentFactory = getCurrentSubSystemConfiguration();
 		if (factory != currentFactory)		
 		{
 			getServiceSubSystem().switchServiceFactory(factory);
 		}
-		
 		return true;
 	}
-
-
 
 	public void setHostname(String hostname)
 	{

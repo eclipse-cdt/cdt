@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Xuan Chen        (IBM)        - [160775] [api] rename (at least within a zip) blocks UI thread
+ * David Dykstal (IBM) - [217556] remove service subsystem types
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -29,7 +30,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.IConnectorService;
-import org.eclipse.rse.core.subsystems.IServiceSubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.ui.SystemResources;
@@ -152,19 +152,12 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 	public String getAbsoluteName(Object element)
 	{
 		ISubSystem ss = (ISubSystem)element;
-		
-		// DKM - using type instead of name
-		//FIXME can we guarantee that the serviceType is always different than the subsystemName?
-		//Or could the two be confused when looking up the subsystem the reverse way?
-		if (ss instanceof IServiceSubSystem)
-		{
-			return ss.getSystemProfileName() + "." + ss.getHostAliasName() + "." + ((IServiceSubSystem)ss).getServiceType(); //$NON-NLS-1$ //$NON-NLS-2$
+		String suffix = ss.getName();
+		Class serviceType = ss.getServiceType();
+		if (serviceType != null) {
+			suffix = serviceType.toString();
 		}
-		else
-		{
-			return ss.getSystemProfileName() + "." + ss.getHostAliasName() + "." + ss.getName(); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		
+		return ss.getSystemProfileName() + "." + ss.getHostAliasName() + "." + suffix; //$NON-NLS-1$ //$NON-NLS-2$
 	}		
 	/**
 	 * Return the type label for this object

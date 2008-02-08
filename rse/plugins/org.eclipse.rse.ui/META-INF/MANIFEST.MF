@@ -20,8 +20,7 @@ Import-Package: com.ibm.icu.lang,
  com.ibm.icu.util
 Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
-Export-Package: org.eclipse.rse.core.servicesubsystem,
- org.eclipse.rse.core.subsystems,
+Export-Package: org.eclipse.rse.core.subsystems,
  org.eclipse.rse.internal.ui;x-friends:="org.eclipse.rse.connectorservice.dstore,org.eclipse.rse.processes.ui",
  org.eclipse.rse.internal.ui.actions;x-internal:=true,
  org.eclipse.rse.internal.ui.dialogs;x-internal:=true,

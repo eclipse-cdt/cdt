@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -18,6 +18,7 @@
  * Martin Oberhuber (Wind River) - [202416] Protect against NPEs when importing DOM
  * David McKnight   (IBM)        - [217715] [api] RSE property sets should support nested property sets
  * David Dykstal (IBM) - [197036] respond to removal of SystemProfile.createHost()
+ * David Dykstal (IBM) - [217556] remove service subsystem types
  ********************************************************************************/
 
 package org.eclipse.rse.internal.persistence.dom;
@@ -45,8 +46,6 @@ import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.PropertyType;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
-import org.eclipse.rse.core.subsystems.IServiceSubSystem;
-import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystemFilterNamingPolicy;
@@ -258,13 +257,13 @@ public class RSEDOMImporter {
 		ISubSystem subSystem = null;
 		ISubSystemConfiguration factory = getSubSystemConfiguration(type);
 		if (factory != null) {
-			if (factory instanceof IServiceSubSystemConfiguration) {
-				IServiceSubSystemConfiguration serviceFactory = (IServiceSubSystemConfiguration) factory;
-				ISubSystem[] existingSubSystems = _registry.getServiceSubSystems(host, serviceFactory.getServiceType());
+			Class serviceType = factory.getServiceType();
+			if (serviceType != null) {
+				ISubSystem[] existingSubSystems = _registry.getServiceSubSystems(host, serviceType);
 				if (existingSubSystems != null && existingSubSystems.length > 0) {
 					subSystem = existingSubSystems[0];
 					// need to switch factories
-					((IServiceSubSystem) subSystem).switchServiceFactory(serviceFactory);
+					subSystem.switchServiceFactory(factory);
 				}
 			} else {
 				ISubSystemConfiguration config = _registry.getSubSystemConfiguration(type);

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [190231] Remove UI-only code from SubSystemConfiguration
  * Martin Oberhuber (Wind River) - [174789] [performance] Don't contribute Property Pages to Wizard automatically
  * David McKnight   (IBM)        - [197129] Removing obsolete  ISystemConnectionWizardPropertyPage and SystemSubSystemsPropertiesWizardPage
+ * David Dykstal (IBM) - [217556] remove service subsystem types
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -40,7 +41,6 @@ import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.filters.ISystemFilterString;
 import org.eclipse.rse.core.model.ISystemNewConnectionWizardPage;
 import org.eclipse.rse.core.model.ISystemProfile;
-import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
@@ -192,7 +192,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 */
 		public ISystemNewConnectionWizardPage[] getNewConnectionWizardPages(ISubSystemConfiguration config, IWizard wizard)
 		{
-			if (config instanceof IServiceSubSystemConfiguration)
+			if (config.getServiceType() != null)
 			{
 				SubSystemServiceWizardPage page = new SubSystemServiceWizardPage(wizard, config);
 				return new ISystemNewConnectionWizardPage[] {page};

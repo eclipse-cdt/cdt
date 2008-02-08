@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  * Martin Oberhuber (Wind River) - [189123] Move renameSubSystemProfile() from UI to Core
  * David Dykstal (IBM) - [197036] change signature of getFilterPoolManager method to be able to control the creation of filter pools
+ * David Dykstal (IBM) - [217556] remove service subsystem types
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -29,6 +30,7 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.ISystemNewConnectionWizardPage;
 import org.eclipse.rse.core.model.ISystemProfile;
+import org.eclipse.rse.services.IService;
 
 /**
  * Subsystem Configuration interface.
@@ -387,8 +389,7 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	 * @param creatingConnection true if we are creating a connection, false if just creating
 	 *          another subsystem for an existing connection.
 	 * @param yourNewConnectionWizardPages The wizard pages you supplied to the New Connection wizard, via the
-	 *            {@link org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter#getNewConnectionWizardPages(ISubSystemConfiguration, org.eclipse.jface.wizard.IWizard)}
-	 *             method or null if you didn't override this method.
+	 * getNewConnectionWizardPages(...) method, or null.
 	 */
 	public ISubSystem createSubSystem(IHost conn, boolean creatingConnection, ISystemNewConnectionWizardPage[] yourNewConnectionWizardPages);
 
@@ -398,9 +399,53 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	public ISubSystem createSubSystemInternal(IHost conn);
 
 	/**
-	 * Find or create a connector service for this host
+	 * Get the connector service for a particular host.
+	 * This may create the connector service if necessary.
+	 * If the configuration is a service subsystem configuration, this should
+	 * return the connector service specified in {@link #setConnectorService(IHost, IConnectorService)}.
+	 * @param host the host for which to create or retrieve the connector service
+	 * @return the connector service associated with this host. This can return null if there
+	 * is no connector service associated with this configuration. It is recommended that 
+	 * there be a connector service if {@link #supportsSubSystemConnect()} is true.
 	 */
 	public IConnectorService getConnectorService(IHost host);
+
+	/**
+	 * Sets the connector service for a particular host. 
+	 * This is usually mangaged by a connector service manager known 
+	 * to this configuration.
+	 * This must be implemented by service subsystem configurations.
+	 * Service subsystems allow a connector service to be changed.
+	 * @param host the host for which to set this connector service.
+	 * @param connectorService the connector service associated with this host.
+	 */
+	public void setConnectorService(IHost host, IConnectorService connectorService);
+
+	/**
+	 * Get the service type associated with this subsystem configuration.
+	 * If the configuration is not a service subsystem configuration it must return null, otherwise
+	 * it must return the interface class that the underlying service layer implements.
+	 * @return an interface class that is implemented by the service layer used by subsystems that have this configuration.
+	 */
+	public Class getServiceType();
+
+	/**
+	 * Get the implementation type of the service associated with this subsystem configuration.
+	 * If the configuration is not a service subsystem configuration then this must return null, otherwise
+	 * it must return the class that implements the interface specified in {@link #getServiceType()}.
+	 * @return an implementation class that implements the interface specified in {@link #getServiceType()}.
+	 */
+	public Class getServiceImplType();
+
+	/**
+	 * Get the actual service associated with a particular host.
+	 * If the configuration is not a service subsystem this must return null.
+	 * Otherwise this must return the particular instance of the class returned by {@link #getServiceImplType()}
+	 * that is associated with this host instance.
+	 * @param host The host for which to retrieve the service.
+	 * @return The instance of {@link IService} which is associated with this host.
+	 */
+	public IService getService(IHost host);
 
 	/**
 	 * Overridable entry for child classes to contribute a server launcher instance

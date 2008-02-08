@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [187218] Fix error reporting for connect() 
  * David McKnight   (IBM)        - [207095] Implicit connect needs to run in the same job as caller
  * David McKnight   (IBM)        - [186363] get rid of obsolete calls to ISubSystem.connect()
+ * David Dykstal (IBM) - [217556] remove service subsystem types
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -446,7 +447,7 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 * Resolve multiple absolute filter strings. This is only applicable if the subsystem
 	 *  factory reports true for supportsFilters().
 	 * <p>
-	 * This is the same as {@link #resolveFilterString(String)} but takes an array of
+	 * This is the same as {@link #resolveFilterString(String, IProgressMonitor)} but takes an array of
 	 * filter strings versus a single filter string.
 	 *
 	 * @param filterStrings array of filter patterns for objects to return.
@@ -600,6 +601,34 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 * @return An object representing the parent
 	 */
 	Object getTargetForFilter(ISystemFilterReference filterRef);
+	
+	/**
+	 * Returns the interface type (i.e. a Class object that is an Interface) of a service subsystem. 
+	 * @return the service interface on which this service subsystem is implemented. If this
+	 * subsystem is not a service subsystem it must return null.
+	 */
+	public Class getServiceType();
+
+	/**
+	 * Requests a service subsystem to switch to a new configuration. If the configuration
+	 * is compatible with this subsystem then it must disconnect, possibly reset its
+	 * filter pool references, and request new services and parameters from its new configuration.
+	 * It must also answer true to {@link #canSwitchTo(ISubSystemConfiguration)}.
+	 * If the configuration is not compatible with this subsystem then this must do nothing and must answer
+	 * false to {@link #canSwitchTo(ISubSystemConfiguration)}.
+	 * @param configuration the configuration to which to switch.
+	 */
+	public void switchServiceFactory(ISubSystemConfiguration configuration);
+	
+	/**
+	 * Determine is this subsystem is compatible with this specified configuration.
+	 * @param configuration the configuration which may be switched to
+	 * @return true if the subsystem can switch to this configuration, false otherwise.
+	 * Subsystems which are not service subsystems must return false.
+	 */
+	public boolean canSwitchTo(ISubSystemConfiguration configuration);
+	
+
 
 	////	 -------------------------------------
 	//	// GUI methods 

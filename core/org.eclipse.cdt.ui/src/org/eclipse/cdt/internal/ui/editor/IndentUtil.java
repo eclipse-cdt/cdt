@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sergey Prigogin, Google
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
@@ -616,6 +617,48 @@ public final class IndentUtil {
 		String previousIndent= document.get(previousLineStart, previousLineNonWS - previousLineStart);
 		computed= new StringBuffer(previousIndent);
 		return computed.toString();
+	}
+
+	/**
+	 * Extends the string with whitespace to match displayed width.
+	 * @param prefix  add to this string
+	 * @param displayedWidth  the desired display width
+	 * @param tabWidth  the configured tab width
+	 * @param useSpaces  whether to use spaces only
+	 */
+	public static String changePrefix(String prefix, int displayedWidth, int tabWidth, boolean useSpaces) {
+		int column = computeVisualLength(prefix, tabWidth);
+		if (column > displayedWidth) {
+			return prefix;
+		}
+		final StringBuffer buffer = new StringBuffer(prefix);
+		appendIndent(buffer, displayedWidth, tabWidth, useSpaces, column);
+		return buffer.toString();
+	}
+
+	/**
+	 * Appends whitespace to given buffer such that its visual length equals the given width.
+	 * @param buffer  the buffer to add whitespace to
+	 * @param width  the desired visual indent width
+	 * @param tabWidth  the configured tab width
+	 * @param useSpaces  whether tabs should be substituted by spaces
+	 * @param startColumn  the column where to start measurement
+	 * @return StringBuffer
+	 */
+	private static StringBuffer appendIndent(StringBuffer buffer, int width, int tabWidth, boolean useSpaces, int startColumn) {
+		assert tabWidth > 0;
+		int tabStop = startColumn - startColumn % tabWidth;
+		int tabs = useSpaces ? 0 : (width-tabStop) / tabWidth;
+		for (int i = 0; i < tabs; ++i) {
+			buffer.append('\t');
+			tabStop += tabWidth;
+			startColumn = tabStop;
+		}
+		int spaces = width - startColumn;
+		for (int i = 0; i < spaces; ++i) {
+			buffer.append(' ');
+		}
+		return buffer;
 	}
 
 }

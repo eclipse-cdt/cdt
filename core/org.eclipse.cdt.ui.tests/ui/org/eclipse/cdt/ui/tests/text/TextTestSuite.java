@@ -33,6 +33,7 @@ public class TextTestSuite extends TestSuite {
 		addTest(BracketInserterTest.suite());
 		addTest(IndentActionTest.suite());
 		addTest(FormatActionTest.suite());
+		addTest(ShiftActionTest.suite());
 		addTest(CodeFormatterTest.suite());
 		addTest(CIndenterTest.suite());
 		

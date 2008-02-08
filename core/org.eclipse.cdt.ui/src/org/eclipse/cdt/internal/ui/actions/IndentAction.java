@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -269,11 +269,12 @@ public class IndentAction extends TextEditorAction {
 		String currentIndent= document.get(offset, length);
 		
 		// if we are right before the text start / line end, and already after the insertion point
-		// then just insert a tab.
+		// then just shift to the right
 		if (fIsTabAction && caret == end && whiteSpaceLength(currentIndent) >= whiteSpaceLength(indent)) {
-			String tab= getTabEquivalent();
-			document.replace(caret, 0, tab);
-			fCaretOffset= caret + tab.length();
+			int indentWidth= whiteSpaceLength(currentIndent) + getIndentSize();
+			String replacement= IndentUtil.changePrefix(currentIndent.trim(), indentWidth, getTabSize(), useSpaces());
+			document.replace(offset, length, replacement);
+			fCaretOffset= offset + replacement.length();
 			return true;
 		}
 		
@@ -329,36 +330,17 @@ public class IndentAction extends TextEditorAction {
 	private int whiteSpaceLength(String indent) {
 		if (indent == null)
 			return 0;
-		else {
-			int size= 0;
-			int l= indent.length();
-			int tabSize= getTabSize();
-			
-			for (int i= 0; i < l; i++)
-				size += indent.charAt(i) == '\t' ? tabSize : 1;
-			return size;
-		}
+		return IndentUtil.computeVisualLength(indent, getTabSize());
 	}
 
 	/**
-	 * Returns a tab equivalent, either as a tab character or as spaces, depending on the editor and
+	 * Returns whether spaces should be used exclusively for indentation, depending on the editor and
 	 * formatter preferences.
 	 * 
-	 * @return a string representing one tab in the editor, never <code>null</code>
+	 * @return <code>true</code> if only spaces should be used
 	 */
-	private String getTabEquivalent() {
-		String tab;
-		if (CCorePlugin.SPACE.equals(getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR))) {
-			int size= getTabSize();
-			StringBuffer buf= new StringBuffer();
-			for (int i= 0; i< size; i++)
-				buf.append(' ');
-			tab= buf.toString();
-		} else {
-			tab= "\t"; //$NON-NLS-1$
-		}
-	
-		return tab;
+	private boolean useSpaces() {
+		return CCorePlugin.SPACE.equals(getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR));
 	}
 	
 	/**
@@ -369,6 +351,16 @@ public class IndentAction extends TextEditorAction {
 	 */
 	private int getTabSize() {
 		return getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE, 4);
+	}
+
+	/**
+	 * Returns the indent size used by the editor, which is deduced from the
+	 * formatter preferences.
+	 * 
+	 * @return the indent size as defined in the current formatter preferences
+	 */
+	private int getIndentSize() {
+		return getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_INDENTATION_SIZE, 4);
 	}
 
 	/**

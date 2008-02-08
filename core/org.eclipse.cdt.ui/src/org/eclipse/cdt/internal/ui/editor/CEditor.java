@@ -175,6 +175,7 @@ import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.ui.text.folding.ICFoldingStructureProvider;
 
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
+import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
@@ -1093,8 +1094,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	public static final String INACTIVE_CODE_ENABLE = "inactiveCodeEnable"; //$NON-NLS-1$
 	/** Preference key for inactive code painter color */
 	public static final String INACTIVE_CODE_COLOR = "inactiveCodeColor"; //$NON-NLS-1$
-	/** Preference key for inserting spaces rather than tabs */
-	public final static String SPACES_FOR_TABS = DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR;
 	/** Preference key for automatically closing strings */
 	private final static String CLOSE_STRINGS = PreferenceConstants.EDITOR_CLOSE_STRINGS;
 	/** Preference key for automatically closing brackets and parenthesis */
@@ -1210,6 +1209,13 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		}
 		if (fCEditorErrorTickUpdater != null) {
 			fCEditorErrorTickUpdater.updateEditorImage(getInputCElement());
+		}
+		
+		ICElement element= getInputCElement();
+		if (element instanceof ITranslationUnit) {
+			fBracketMatcher.configure(((ITranslationUnit)element).getLanguage());
+		} else {
+			fBracketMatcher.configure(null);
 		}
 	}
 
@@ -1342,14 +1348,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 					return;
 				}
 
-				if (SPACES_FOR_TABS.equals(property)) {
-					if (isTabsToSpacesConversionEnabled())
-						installTabsToSpacesConverter();
-					else
-						uninstallTabsToSpacesConverter();
-					return;
-				}
-
 				if (PreferenceConstants.EDITOR_TEXT_HOVER_MODIFIERS.equals(property))
 					updateHoverBehavior();
 
@@ -1392,7 +1390,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 						uninstallTabsToSpacesConverter();
 						installTabsToSpacesConverter();
 					} else {
-						updateIndentPrefixes();
+						updateIndentationMode();
 					}
 					return;
 				}
@@ -1723,8 +1721,21 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 			} else
 				tabToSpacesConverter.setLineTracker(new DefaultLineTracker());
 			((ITextViewerExtension7)sourceViewer).setTabsToSpacesConverter(tabToSpacesConverter);
-			updateIndentPrefixes();
+			updateIndentationMode();
 		}
+	}
+
+	private void updateIndentationMode() {
+		ISourceViewer sourceViewer= getSourceViewer();
+		if (sourceViewer instanceof CSourceViewer) {
+			CSourceViewer cSourceVieer= (CSourceViewer) sourceViewer;
+			ICElement element= getInputCElement();
+			ICProject project= element == null ? null : element.getCProject();
+			final int indentWidth= CodeFormatterUtil.getIndentWidth(project);
+			final boolean useSpaces= isTabsToSpacesConversionEnabled();
+			cSourceVieer.configureIndentation(indentWidth, useSpaces);
+		}
+		super.updateIndentPrefixes();
 	}
 
 	/*
@@ -1736,9 +1747,9 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		ICProject project= element == null ? null : element.getCProject();
 		String option;
 		if (project == null)
-			option= CCorePlugin.getOption(SPACES_FOR_TABS);
+			option= CCorePlugin.getOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR);
 		else
-			option= project.getOption(SPACES_FOR_TABS, true);
+			option= project.getOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, true);
 		return CCorePlugin.SPACE.equals(option);
 	}
 

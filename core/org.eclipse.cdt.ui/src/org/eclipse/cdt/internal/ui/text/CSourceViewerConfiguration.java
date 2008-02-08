@@ -531,6 +531,31 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	}
 
 	/**
+	 * Returns the configured indent width for this viewer.
+	 * @param sourceViewer
+	 * @return the indent width
+	 */
+	public int getIndentWidth(ISourceViewer sourceViewer) {
+		return CodeFormatterUtil.getIndentWidth(getProject());
+	}
+
+	/**
+	 * Returns whether spaces should be used exclusively for indentation.
+	 * 
+	 * @param sourceViewer
+	 * @return <code>true</code> if spaces should be used for indentation
+	 */
+	public boolean useSpacesOnly(ISourceViewer sourceViewer) {
+		ICProject project= getProject();
+		String option;
+		if (project == null)
+			option= CCorePlugin.getOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR);
+		else
+			option= project.getOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, true);
+		return CCorePlugin.SPACE.equals(option);
+	}
+	
+	/**
 	 * @see SourceViewerConfiguration#getAnnotationHover(ISourceViewer)
 	 */
 	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
@@ -873,6 +898,5 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
         };
         return conrolCreator;
     }
-
 
 }

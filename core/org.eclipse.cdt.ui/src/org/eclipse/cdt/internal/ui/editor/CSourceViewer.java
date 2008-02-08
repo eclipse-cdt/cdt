@@ -18,7 +18,11 @@ import java.util.ArrayList;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.DocumentRewriteSession;
+import org.eclipse.jface.text.DocumentRewriteSessionType;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentExtension4;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextPresentationListener;
 import org.eclipse.jface.text.Region;
@@ -35,6 +39,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -51,11 +56,11 @@ import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
 public class CSourceViewer extends ProjectionViewer implements IPropertyChangeListener {
 
     /** Show outline operation id. */
-    public static final int SHOW_OUTLINE = 101;
+    public static final int SHOW_OUTLINE= 101;
     /** Show type hierarchy operation id. */
-    public static final int SHOW_HIERARCHY = 102;
+    public static final int SHOW_HIERARCHY= 102;
     /** Show macro explorer operation id. */
-    public static final int SHOW_MACRO_EXPLORER = 103;
+    public static final int SHOW_MACRO_EXPLORER= 103;
     
     /** Presents outline. */
     private IInformationPresenter fOutlinePresenter;
@@ -111,6 +116,15 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 	 * Workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=195808
 	 */
 	private boolean fWasProjectionMode;
+	
+	/**
+	 * The configured indent width.
+	 */
+	private int fIndentWidth= 4;
+	/**
+	 * Flag indicating whether to use spaces exclusively for indentation.
+	 */
+	private boolean fUseSpaces;
 
 	/**
      * Creates new source viewer. 
@@ -152,6 +166,7 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 		}
 
 		super.configure(configuration);
+
 		if (configuration instanceof CSourceViewerConfiguration) {
 			CSourceViewerConfiguration cConfiguration= (CSourceViewerConfiguration)configuration;
 			fOutlinePresenter= cConfiguration.getOutlinePresenter(this);
@@ -163,6 +178,12 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 			fMacroExplorationPresenter= cConfiguration.getMacroExplorationPresenter(this);
 			if (fMacroExplorationPresenter != null) {
 				fMacroExplorationPresenter.install(this);
+			}
+			String[] defaultIndentPrefixes= (String[])fIndentChars.get(IDocument.DEFAULT_CONTENT_TYPE);
+			if (defaultIndentPrefixes != null && defaultIndentPrefixes.length > 0) {
+				final int indentWidth= cConfiguration.getIndentWidth(this);
+				final boolean useSpaces= cConfiguration.useSpacesOnly(this);
+				configureIndentation(indentWidth, useSpaces);
 			}
 		}
 		if (fPreferenceStore != null) {
@@ -290,7 +311,7 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
-		String property = event.getProperty();
+		String property= event.getProperty();
 		if (AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND.equals(property)
 				|| AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT.equals(property)
 				|| AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND.equals(property)
@@ -468,4 +489,114 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 			enableProjection();
 		}
 	}
+
+
+	/**
+	 * Configure the indentation mode for this viewer.
+	 * 
+	 * @param indentWidth  the indentation width
+	 * @param useSpaces  if <code>true</code>, only spaces are used for indentation
+	 */
+	public void configureIndentation(int indentWidth, boolean useSpaces) {
+		fIndentWidth= indentWidth;
+		fUseSpaces= useSpaces;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.TextViewer#shift(boolean, boolean, boolean)
+	 */
+	protected void shift(boolean useDefaultPrefixes, boolean right, boolean ignoreWhitespace) {
+		if (!useDefaultPrefixes) {
+			// simple shift case
+			adjustIndent(right, fIndentWidth, fUseSpaces);
+			return;
+		}
+		super.shift(useDefaultPrefixes, right, ignoreWhitespace);
+	}
+
+	/**
+	 * Increase/decrease indentation of current selection.
+	 * 
+	 * @param increase  if <code>true</code>, indent is increased by one unit
+	 * @param shiftWidth  width in spaces of one indent unit
+	 * @param useSpaces  if <code>true</code>, only spaces are used for indentation
+	 */
+	protected void adjustIndent(boolean increase, int shiftWidth, boolean useSpaces) {
+		if (fUndoManager != null) {
+			fUndoManager.beginCompoundChange();
+		}
+		IDocument d= getDocument();
+		DocumentRewriteSession rewriteSession= null;
+		try {
+			if (d instanceof IDocumentExtension4) {
+				IDocumentExtension4 extension= (IDocumentExtension4) d;
+				rewriteSession= extension.startRewriteSession(DocumentRewriteSessionType.SEQUENTIAL);
+			}
+
+			Point selection= getSelectedRange();
+
+			// perform the adjustment
+			int tabWidth= getTextWidget().getTabs();
+			int startLine= d.getLineOfOffset(selection.x);
+			int endLine= selection.y == 0 ? startLine : d.getLineOfOffset(selection.x + selection.y - 1);
+			for (int line= startLine; line <= endLine; ++line) {
+				IRegion lineRegion= d.getLineInformation(line);
+				String indent= IndentUtil.getCurrentIndent(d, line, false);
+				int indentWidth= IndentUtil.computeVisualLength(indent, tabWidth);
+				int newIndentWidth= Math.max(0, indentWidth + (increase ? shiftWidth : -shiftWidth));
+				String newIndent= IndentUtil.changePrefix(indent.trim(), newIndentWidth, tabWidth, useSpaces);
+				int commonLen= getCommonPrefixLength(indent, newIndent);
+				if (commonLen < Math.max(indent.length(), newIndent.length())) {
+					if (commonLen > 0) {
+						indent= indent.substring(commonLen);
+						newIndent= newIndent.substring(commonLen);
+					}
+					final int offset= lineRegion.getOffset() + commonLen;
+					if (!increase && newIndent.length() > indent.length() && indent.length() > 0) {
+						d.replace(offset, indent.length(), ""); //$NON-NLS-1$
+						d.replace(offset, 0, newIndent);
+					} else {
+						d.replace(offset, indent.length(), newIndent);
+					}
+				}
+			}
+			
+		} catch (BadLocationException x) {
+			// ignored
+		} finally {
+			if (rewriteSession != null) {
+				((IDocumentExtension4)d).stopRewriteSession(rewriteSession);
+			}
+			if (fUndoManager != null) {
+				fUndoManager.endCompoundChange();
+			}
+		}
+	}
+
+    /**
+     * Compute the length of the common prefix of two strings.
+     * 
+	 * @param s1
+	 * @param s2
+	 * @return the length of the common prefix
+	 */
+	private static int getCommonPrefixLength(String s1, String s2) {
+		final int l1= s1.length();
+		final int l2= s2.length();
+		int i= 0;
+		while (i < l1 && i < l2 && s1.charAt(i) == s2.charAt(i)) {
+			++i;
+		}
+		return i;
+	}
+
+	/*
+     * work around for memory leak in TextViewer$WidgetCommand
+     */
+    protected void updateTextListeners(WidgetCommand cmd) {
+        super.updateTextListeners(cmd);
+        cmd.preservedText= null;
+        cmd.event= null;
+        cmd.text= null;
+    }
 }

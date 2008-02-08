@@ -106,7 +106,7 @@ public class SyncVariableDataAccess {
         @Override
         protected void execute(final DataRequestMonitor<IExpressionDMData> rm) {
             /*
-             * Guard agains the session being disposed. If session is disposed
+             * Guard against the session being disposed. If session is disposed
              * it could mean that the executor is shut-down, which in turn could
              * mean that we can't complete the RequestMonitor argument. in that
              * case, cancel to notify waiting thread.
@@ -159,7 +159,7 @@ public class SyncVariableDataAccess {
 
     public IExpressionDMData readVariable(Object element) {
         /*
-         * Get the DMC and the session. If element is not an register DMC, or
+         * Get the DMC and the session. If element is not an expression DMC, or
          * session is stale, then bail out.
          */
         IExpressionDMContext dmc = getExpressionDMC(element);
@@ -169,7 +169,7 @@ public class SyncVariableDataAccess {
 
         /*
          * Create the query to request the value from service. Note: no need to
-         * guard agains RejectedExecutionException, because
+         * guard against RejectedExecutionException, because
          * DsfSession.getSession() above would only return an active session.
          */
         GetVariableValueQuery query = new GetVariableValueQuery(dmc);
@@ -226,7 +226,7 @@ public class SyncVariableDataAccess {
             }
 
             /*
-             * Write the bit field using a string/format style.
+             * Write the expression value using a string/format style.
              */
             service.writeExpression(
                fDmc, 
@@ -272,7 +272,7 @@ public class SyncVariableDataAccess {
 
         /*
          * Create the query to write the value to the service. Note: no need to
-         * guard agains RejectedExecutionException, because
+         * guard against RejectedExecutionException, because
          * DsfSession.getSession() above would only return an active session.
          */
         SetVariableValueQuery query = new SetVariableValueQuery(dmc, value, formatId);
@@ -337,7 +337,7 @@ public class SyncVariableDataAccess {
             }
 
             /*
-             * Write the bit field using a string/format style.
+             * Get the available formats from the service.
              */
             service.getAvailableFormats(
                 fDmc,
@@ -381,7 +381,7 @@ public class SyncVariableDataAccess {
         
         /*
          * Create the query to write the value to the service. Note: no need to
-         * guard agains RejectedExecutionException, because
+         * guard against RejectedExecutionException, because
          * DsfSession.getSession() above would only return an active session.
          */
         GetSupportFormatsValueQuery query = new GetSupportFormatsValueQuery(dmc);
@@ -479,7 +479,7 @@ public class SyncVariableDataAccess {
         
         /*
          * Create the query to write the value to the service. Note: no need to
-         * guard agains RejectedExecutionException, because
+         * guard against RejectedExecutionException, because
          * DsfSession.getSession() above would only return an active session.
          */
         GetFormattedValueValueQuery query = new GetFormattedValueValueQuery(dmc, formatId);
@@ -499,4 +499,95 @@ public class SyncVariableDataAccess {
             return null;
         }
     }
+ 
+    private class CanWriteExpressionQuery extends Query<Boolean> {
+
+        private IExpressionDMContext fDmc;
+
+        public CanWriteExpressionQuery(IExpressionDMContext dmc) {
+        	super();
+            fDmc = dmc;
+        }
+
+        @Override
+        protected void execute(final DataRequestMonitor<Boolean> rm) {
+            /*
+             * We're in another dispatch, so we must guard against executor
+             * shutdown again.
+             */
+            final DsfSession session = DsfSession.getSession(fDmc.getSessionId());
+            if (session == null) {
+                cancel(false);
+                return;
+            }
+
+            /*
+             * Guard against a disposed service
+             */
+            IExpressions service = getService();
+            if (service == null) {
+                rm .setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfService.INVALID_STATE, "Service unavailable", null)); //$NON-NLS-1$
+                rm.done();
+                return;
+            }
+            
+            service.canWriteExpression(fDmc, new DataRequestMonitor<Boolean>(session.getExecutor(), rm) {
+                @Override
+                protected void handleCompleted() {
+                    /*
+                     * We're in another dispatch, so we must guard against executor shutdown again.
+                     */
+                    if (!DsfSession.isSessionActive(session.getId())) {
+                    	CanWriteExpressionQuery.this.cancel(false);
+                        return;
+                    }
+                    super.handleCompleted();
+                }
+
+                @Override
+                protected void handleOK() {
+                    /*
+                     * All good set return value.
+                     */
+                    rm.setData(getData());
+                    rm.done();
+                }
+            });    
+        }
+    }
+
+    public boolean canWriteExpression(Object element) {
+        /*
+         * Get the DMC and the session. If element is not an expression DMC, or
+         * session is stale, then bail out.
+         */
+        IExpressionDMContext dmc = getExpressionDMC(element);
+        if (dmc == null) return false;
+        DsfSession session = DsfSession.getSession(dmc.getSessionId());
+        if (session == null) return false;
+        
+        /*
+         * Create the query to make the request to the service. Note: no need to
+         * guard against RejectedExecutionException, because
+         * DsfSession.getSession() above would only return an active session.
+         */
+        CanWriteExpressionQuery query = new CanWriteExpressionQuery(dmc);
+        session.getExecutor().execute(query);
+
+        /*
+         * Now we have the data, go and get it. Since the call is completed now
+         * the ".get()" will not suspend it will immediately return with the
+         * data.
+         */
+        try {
+            return query.get();
+        } catch (InterruptedException e) {
+            assert false;
+            return false;
+        } catch (ExecutionException e) {
+            return false;
+        }
+    }
+    
+ 
 }

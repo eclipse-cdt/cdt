@@ -121,12 +121,7 @@ public interface IExpressions extends IFormattedValues {
         /**
          * This method needs to be defined.
          */
-        IRegisters.IRegisterDMContext getRegister();
-        
-        /**
-         * @return True if this expression's value can be edited.  False otherwise.
-         */
-        boolean isEditable();
+        IRegisters.IRegisterDMContext getRegister();    
     }
 
     /**
@@ -217,6 +212,15 @@ public interface IExpressions extends IFormattedValues {
      */
     void getBaseExpressions(IExpressionDMContext exprContext, DataRequestMonitor<IExpressionDMContext[]> rm);
     
+    /**
+     * This method indicates if an expression can be written to.
+     * 
+     * @param expressionContext: The data model context representing an expression.
+     *
+     * @param rm: Data Request monitor containing True if this expression's value can be edited.  False otherwise.
+     */
+    void canWriteExpression(IExpressionDMContext expressionContext, DataRequestMonitor<Boolean> rm);
+
     /**
      * This method supports the writing/modifying the value of the expression.
      * 

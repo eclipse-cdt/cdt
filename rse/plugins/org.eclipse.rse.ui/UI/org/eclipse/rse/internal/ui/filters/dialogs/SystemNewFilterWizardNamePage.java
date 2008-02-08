@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - [160403] filters should be connection private by default
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.filters.dialogs;
@@ -170,7 +170,8 @@ public class SystemNewFilterWizardNamePage
         {
 			uniqueCB = SystemWidgetHelpers.createCheckBox(composite_prompts, nbrColumns, configurator.getPage2UniqueToConnectionLabel(), null);
 			uniqueCB.setToolTipText(configurator.getPage2UniqueToConnectionToolTip()); 
-			uniqueCB.addSelectionListener(this);        	 
+			uniqueCB.addSelectionListener(this);
+			uniqueCB.setSelection(true); // [160403] filters should be connection private by default
         }
 		        
         addFillerLine(composite_prompts, nbrColumns);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -634,13 +634,30 @@ public final class CHeuristicScanner implements Symbols {
 	 * @return the matching peer character position, or <code>NOT_FOUND</code>
 	 */
 	public int findClosingPeer(int start, final char openingPeer, final char closingPeer) {
+		return findClosingPeer(start, UNBOUND, openingPeer, closingPeer);
+	}
+
+	/**
+	 * Returns the position of the closing peer character (forward search). Any scopes introduced by opening peers
+	 * are skipped. All peers accounted for must reside in the default partition.
+	 *
+	 * <p>Note that <code>start</code> must not point to the opening peer, but to the first
+	 * character being searched.</p>
+	 *
+	 * @param start the start position
+	 * @param bound the bound
+	 * @param openingPeer the opening peer character (e.g. '{')
+	 * @param closingPeer the closing peer character (e.g. '}')
+	 * @return the matching peer character position, or <code>NOT_FOUND</code>
+	 */
+	public int findClosingPeer(int start, int bound, final char openingPeer, final char closingPeer) {
 		Assert.isLegal(start >= 0);
 
 		try {
 			int depth= 1;
 			start -= 1;
 			while (true) {
-				start= scanForward(start + 1, UNBOUND, new CharacterMatch(new char[] {openingPeer, closingPeer}));
+				start= scanForward(start + 1, bound, new CharacterMatch(new char[] {openingPeer, closingPeer}));
 				if (start == NOT_FOUND)
 					return NOT_FOUND;
 
@@ -726,7 +743,7 @@ public final class CHeuristicScanner implements Symbols {
 			return null;
 
 		int begin= findOpeningPeer(offset - 1, CHeuristicScanner.UNBOUND, LBRACE, RBRACE);
-		int end= findClosingPeer(offset, LBRACE, RBRACE);
+		int end= findClosingPeer(offset, UNBOUND, LBRACE, RBRACE);
 		if (begin == NOT_FOUND || end == NOT_FOUND)
 			return null;
 		return new Region(begin, end + 1 - begin);

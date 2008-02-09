@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor.asm;
 
@@ -14,18 +15,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.rules.EndOfLineRule;
 import org.eclipse.jface.text.rules.IRule;
-import org.eclipse.jface.text.rules.Token;
+import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.WhitespaceRule;
 
 import org.eclipse.cdt.core.model.IAsmLanguage;
+import org.eclipse.cdt.ui.text.ITokenStoreFactory;
 
 import org.eclipse.cdt.internal.ui.text.AbstractCScanner;
 import org.eclipse.cdt.internal.ui.text.CHeaderRule;
 import org.eclipse.cdt.internal.ui.text.ICColorConstants;
-import org.eclipse.cdt.internal.ui.text.IColorManager;
 import org.eclipse.cdt.internal.ui.text.PreprocessorRule;
 import org.eclipse.cdt.internal.ui.text.util.CWhitespaceDetector;
 import org.eclipse.cdt.internal.ui.text.util.CWordDetector;
@@ -37,12 +37,12 @@ import org.eclipse.cdt.internal.ui.text.util.CWordDetector;
  */
 public class AsmPreprocessorScanner extends AbstractCScanner {
 
-    /** Properties for tokens. */
+	/** Properties for tokens. */
 	private static final String[] fgTokenProperties= {
 		ICColorConstants.C_SINGLE_LINE_COMMENT,
 		ICColorConstants.PP_DIRECTIVE,
 		ICColorConstants.C_STRING,
-        ICColorConstants.PP_HEADER,
+		ICColorConstants.PP_HEADER,
 		ICColorConstants.PP_DEFAULT,
 	};
 
@@ -50,31 +50,27 @@ public class AsmPreprocessorScanner extends AbstractCScanner {
 
 	/**
 	 * Create a preprocessor directive scanner.
-	 * 
-	 * @param colorManager
-	 * @param store
+	 * @param factory
 	 * @param asmLanguage
 	 */
-	public AsmPreprocessorScanner(IColorManager colorManager, IPreferenceStore store, IAsmLanguage asmLanguage) {
-		super(colorManager, store);
+	public AsmPreprocessorScanner(ITokenStoreFactory factory, IAsmLanguage asmLanguage) {
+		super(factory.createTokenStore(fgTokenProperties));
 		Assert.isNotNull(asmLanguage);
 		fAsmLanguage= asmLanguage;
-		initialize();
+		setRules(createRules());
 	}
 
-	/*
-	 * @see org.eclipse.cdt.internal.ui.text.AbstractCScanner#createRules()
+	/**
+	 * Creates rules used in this RulesBasedScanner
 	 */
-	protected List createRules() {
+	protected List<IRule> createRules() {
+		List<IRule> rules= new ArrayList<IRule>();
+		IToken defaultToken= getToken(ICColorConstants.PP_DEFAULT);
+		IToken token;
 
-		Token defaultToken= getToken(ICColorConstants.PP_DEFAULT);
-
-		List rules= new ArrayList();		
-		Token token;
-		
 		// Add generic white space rule.
 		rules.add(new WhitespaceRule(new CWhitespaceDetector()));
-		
+
 		token= getToken(ICColorConstants.PP_DIRECTIVE);
 		PreprocessorRule preprocessorRule= new PreprocessorRule(new CWordDetector(), defaultToken, getToken(ICColorConstants.C_SINGLE_LINE_COMMENT));
 		String[] ppKeywords= fAsmLanguage.getPreprocessorKeywords();
@@ -88,27 +84,19 @@ public class AsmPreprocessorScanner extends AbstractCScanner {
 		preprocessorRule.addWord("##", token); //$NON-NLS-1$
 		rules.add(preprocessorRule);
 
-        token = getToken(ICColorConstants.PP_HEADER);
-        CHeaderRule headerRule = new CHeaderRule(token);
-        rules.add(headerRule);
+		token = getToken(ICColorConstants.PP_HEADER);
+		CHeaderRule headerRule = new CHeaderRule(token);
+		rules.add(headerRule);
 
-        token = getToken(ICColorConstants.C_SINGLE_LINE_COMMENT);
-        IRule lineCommentRule= new EndOfLineRule("#", token); //$NON-NLS-1$
-        rules.add(lineCommentRule);
+		token = getToken(ICColorConstants.C_SINGLE_LINE_COMMENT);
+		IRule lineCommentRule= new EndOfLineRule("#", token); //$NON-NLS-1$
+		rules.add(lineCommentRule);
 
-//        token = getToken(ICColorConstants.C_MULTI_LINE_COMMENT);
-//        IRule blockCommentRule = new MultiLineRule("/*", "*/", token, '\\'); //$NON-NLS-1$ //$NON-NLS-2$
-//        rules.add(blockCommentRule);
-        
-        setDefaultReturnToken(defaultToken);
+		//        token = getToken(ICColorConstants.C_MULTI_LINE_COMMENT);
+		//        IRule blockCommentRule = new MultiLineRule("/*", "*/", token, '\\'); //$NON-NLS-1$ //$NON-NLS-2$
+		//        rules.add(blockCommentRule);
+
+		setDefaultReturnToken(defaultToken);
 		return rules;
 	}
-
-	/*
-	 * @see org.eclipse.cdt.internal.ui.text.AbstractCScanner#getTokenProperties()
-	 */
-	protected String[] getTokenProperties() {
-		return fgTokenProperties;
-	}
-
 }

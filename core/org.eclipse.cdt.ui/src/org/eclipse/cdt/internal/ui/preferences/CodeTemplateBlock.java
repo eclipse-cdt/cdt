@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
@@ -409,7 +410,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 		
 		IDocument document= new Document();
 		CTextTools tools= CUIPlugin.getDefault().getTextTools();
-		tools.setupCDocumentPartitioner(document, ICPartitions.C_PARTITIONING);
+		tools.setupCDocumentPartitioner(document, ICPartitions.C_PARTITIONING, null);
 		IPreferenceStore store= CUIPlugin.getDefault().getCombinedPreferenceStore();
 		SourceViewer viewer= new CSourceViewer(parent, null, null, false, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL, store);
 		CodeTemplateSourceViewerConfiguration configuration= new CodeTemplateSourceViewerConfiguration(tools.getColorManager(), store, null, fTemplateProcessor);
@@ -442,7 +443,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 	}
 
 	protected TemplatePersistenceData[] getCodeTemplatesOfCategory(boolean isComment) {
-		ArrayList res=  new ArrayList();
+		ArrayList<TemplatePersistenceData> res=  new ArrayList<TemplatePersistenceData>();
 		TemplatePersistenceData[] templates= fTemplateStore.getTemplateData();
 		for (int i= 0; i < templates.length; i++) {
 			TemplatePersistenceData curr= templates[i];
@@ -452,7 +453,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 				res.add(curr);
 			}
 		}
-		return (TemplatePersistenceData[]) res.toArray(new TemplatePersistenceData[res.size()]);
+		return res.toArray(new TemplatePersistenceData[res.size()]);
 	}
 	
 	private TemplatePersistenceData[] getTemplatesOfContextType(TemplateContextType contextType) {
@@ -460,7 +461,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 	}
 
 	protected TemplatePersistenceData[] getTemplatesOfContextType(String contextTypeId) {
-		ArrayList res=  new ArrayList();
+		ArrayList<TemplatePersistenceData> res=  new ArrayList<TemplatePersistenceData>();
 		TemplatePersistenceData[] templates= fTemplateStore.getTemplateData();
 		for (int i= 0; i < templates.length; i++) {
 			TemplatePersistenceData curr= templates[i];
@@ -468,7 +469,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 				res.add(curr);
 			}
 		}
-		return (TemplatePersistenceData[]) res.toArray(new TemplatePersistenceData[res.size()]);
+		return res.toArray(new TemplatePersistenceData[res.size()]);
 	}
 
 	protected ContextTypeRegistry getFileTemplateContextRegistry() {
@@ -489,14 +490,14 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 	
 	protected TemplateContextType[] getFileTemplateContextTypes() {
 		Iterator iter= getFileTemplateContextRegistry().contextTypes();
-		ArrayList result= new ArrayList();
+		ArrayList<TemplateContextType> result= new ArrayList<TemplateContextType>();
 		while (iter.hasNext()) {
 			TemplateContextType contextType= (TemplateContextType)iter.next();
 			if (getTemplatesOfContextType(contextType).length > 0) {
 				result.add(contextType);
 			}
 		}
-		return (TemplateContextType[]) result.toArray(new TemplateContextType[0]);
+		return result.toArray(new TemplateContextType[0]);
 	}
 
 	protected static boolean canAdd(List selected) {
@@ -693,7 +694,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 	}
 	
 	private void export(List selected) {
-		Set datas= new HashSet();
+		Set<Object> datas= new HashSet<Object>();
 		for (int i= 0; i < selected.size(); i++) {
 			Object curr= selected.get(i);
 			if (curr instanceof TemplatePersistenceData) {
@@ -713,7 +714,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 				datas.addAll(Arrays.asList(cat));
 			}
 		}
-		export((TemplatePersistenceData[]) datas.toArray(new TemplatePersistenceData[datas.size()]));
+		export(datas.toArray(new TemplatePersistenceData[datas.size()]));
 	}
 	
 	private void export(TemplatePersistenceData[] templates) {

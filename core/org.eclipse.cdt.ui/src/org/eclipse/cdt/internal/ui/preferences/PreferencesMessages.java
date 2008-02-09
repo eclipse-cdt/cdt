@@ -10,6 +10,7 @@
  *     Anton Leherbauer (Wind River Systems)
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
@@ -181,9 +182,12 @@ public final class PreferencesMessages extends NLS {
 	public static String CEditorPreferencePage_closeBraces;
 	public static String CEditorPreferencePage_wrapStrings;
 	public static String CEditorPreferencePage_escapeStrings;
+	public static String CEditorPreferencePage_GeneralAppearanceGroupTitle;
+	public static String CEditorPreferencePage_SelectDocToolDescription;
 	public static String CEditorPreferencePage_smartPaste;
 
 	public static String CEditorPreferencePage_typing_smartTab;
+	public static String CEditorPreferencePage_WorkspaceDefaultLabel;
 
 	public static String SmartTypingConfigurationBlock_autoclose_title;
 	public static String SmartTypingConfigurationBlock_tabs_title;

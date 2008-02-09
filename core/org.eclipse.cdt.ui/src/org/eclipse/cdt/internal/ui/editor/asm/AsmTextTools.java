@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
  *     Wind River Systems, Inc.
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor.asm;
 
@@ -20,11 +21,13 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 
 import org.eclipse.cdt.core.model.AssemblyLanguage;
 import org.eclipse.cdt.ui.CUIPlugin;
-
+import org.eclipse.cdt.ui.text.ITokenStore;
+import org.eclipse.cdt.ui.text.ITokenStoreFactory;
 
 import org.eclipse.cdt.internal.ui.text.CCommentScanner;
 import org.eclipse.cdt.internal.ui.text.ICColorConstants;
 import org.eclipse.cdt.internal.ui.text.SingleTokenCScanner;
+import org.eclipse.cdt.internal.ui.text.TokenStore;
 import org.eclipse.cdt.internal.ui.text.util.CColorManager;
 
 
@@ -77,20 +80,23 @@ public class AsmTextTools {
      * and initializes all members of this collection.
      */
     public AsmTextTools(IPreferenceStore store, Preferences coreStore) {
-		if(store == null) {
-			store = CUIPlugin.getDefault().getPreferenceStore();
-		}
-        
-		fColorManager= new CColorManager();
-		fCodeScanner= new AsmCodeScanner(fColorManager, store, AssemblyLanguage.getDefault());
-		fPreprocessorScanner= new AsmPreprocessorScanner(fColorManager, store, AssemblyLanguage.getDefault());
+    	fPreferenceStore = store != null ? store : CUIPlugin.getDefault().getPreferenceStore();
+    	fColorManager= new CColorManager();
+    	
+		ITokenStoreFactory factory= new ITokenStoreFactory() {
+			public ITokenStore createTokenStore(String[] propertyColorNames) {
+				return new TokenStore(fColorManager, fPreferenceStore, propertyColorNames);
+			}
+		};
 
-        fMultilineCommentScanner= new CCommentScanner(fColorManager, store, coreStore, ICColorConstants.C_MULTI_LINE_COMMENT);
-        fSinglelineCommentScanner= new CCommentScanner(fColorManager, store, coreStore, ICColorConstants.C_SINGLE_LINE_COMMENT);
-		fStringScanner= new SingleTokenCScanner(fColorManager, store, ICColorConstants.C_STRING);
+		fCodeScanner= new AsmCodeScanner(factory, AssemblyLanguage.getDefault());
+		fPreprocessorScanner= new AsmPreprocessorScanner(factory, AssemblyLanguage.getDefault());
+        fMultilineCommentScanner= new CCommentScanner(factory, coreStore, ICColorConstants.C_MULTI_LINE_COMMENT);
+        fSinglelineCommentScanner= new CCommentScanner(factory, coreStore, ICColorConstants.C_SINGLE_LINE_COMMENT);
+		fStringScanner= new SingleTokenCScanner(factory, ICColorConstants.C_STRING);
 
-        fPreferenceStore = store;
-		store.addPropertyChangeListener(fPreferenceListener);
+		// listener must be registered after initializing scanners
+        fPreferenceStore.addPropertyChangeListener(fPreferenceListener);
         
         fCorePreferenceStore= coreStore;
         if (fCorePreferenceStore != null) {

@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
  *     Anton Leherbauer (Wind River Systems)
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
@@ -21,6 +22,7 @@ import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.Token;
 
 import org.eclipse.cdt.ui.text.ICPartitions;
+import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
 
 
 /**
@@ -38,6 +40,8 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 	private static final int PREPROCESSOR= 5;
 	private static final int PREPROCESSOR_MULTI_LINE_COMMENT= 6;
 	private static final int PREPROCESSOR_STRING= 7;
+	private static final int SINGLE_LINE_DOC_COMMENT= 8;
+	private static final int MULTI_LINE_DOC_COMMENT= 9;
 	
 	// beginning of prefixes and postfixes
 	private static final int NONE= 0;
@@ -65,11 +69,14 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 	private int fPrefixLength;
 	/** Indicate whether current char is first non-whitespace char on the line*/
 	private boolean fFirstCharOnLine= true;
-
+	/** An optional (possibly null) comment owner for detecting documentation-comments **/
+	private IDocCommentOwner fOwner;
+	
 	// emulate CPartitionScanner
 	private final boolean fEmulate;
 	private int fCCodeOffset;
 	private int fCCodeLength;
+	private IDocument fDocument;
 	
 	private final IToken[] fTokens= new IToken[] {
 		new Token(null),
@@ -80,14 +87,21 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 		new Token(C_PREPROCESSOR),
 		new Token(C_MULTI_LINE_COMMENT),
 		new Token(C_PREPROCESSOR),
+		new Token(C_SINGLE_LINE_DOC_COMMENT),
+		new Token(C_MULTI_LINE_DOC_COMMENT)
 	};
 
-	public FastCPartitionScanner(boolean emulate) {
+	public FastCPartitionScanner(boolean emulate, IDocCommentOwner owner) {
 	    fEmulate= emulate;
+	    fOwner= owner;
 	}
 
+	public FastCPartitionScanner(IDocCommentOwner owner) {
+	    this(false, owner);
+	}
+	
 	public FastCPartitionScanner() {
-	    this(false);
+	    this(false, null);
 	}
 
 	/*
@@ -533,12 +547,17 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 	}
 	
 	private final IToken postFix(int state) {
+		return postFix(state, CCODE);
+	}
+	
+	private final IToken postFix(int state, int newState) {
 		fTokenLength++;
 		fLast= NONE;
-		fState= CCODE;
+		fState= newState;
 		fPrefixLength= 0;		
-		return fTokens[state];
+		return fTokens[interceptTokenState(state)];
 	}
+
 
 	private final IToken preFix(int state, int newState, int last, int prefixLength) {
 		// emulate CPartitionScanner
@@ -550,15 +569,14 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 			fState= newState;
 			fPrefixLength= prefixLength;
 			fLast= last;
-			return fTokens[state];
+			return fTokens[interceptTokenState(state)];
 
 		} else {
 			fTokenLength -= getLastLength(fLast);
 			fLast= last;
 			fPrefixLength= prefixLength;
-			IToken token= fTokens[state];
 			fState= newState;
-			return token;
+			return fTokens[interceptTokenState(state)];
 		}
 	}
 
@@ -581,7 +599,13 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 
 		else if (contentType.equals(C_PREPROCESSOR))
 			return PREPROCESSOR;
-			
+		
+		else if (contentType.equals(C_SINGLE_LINE_DOC_COMMENT))
+			return SINGLE_LINE_COMMENT; // intentionally non-doc state: the state machine is doc-comment unaware
+
+		else if (contentType.equals(C_MULTI_LINE_DOC_COMMENT))
+			return MULTI_LINE_COMMENT; // intentionally non-doc state: the state machine is doc-comment unaware
+		
 		else
 			return CCODE;
 	}
@@ -590,7 +614,7 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 	 * @see IPartitionTokenScanner#setPartialRange(IDocument, int, int, String, int)
 	 */
 	public void setPartialRange(IDocument document, int offset, int length, String contentType, int partitionOffset) {
-
+		fDocument= document;
 		fScanner.setRange(document, offset, length);
 		fTokenOffset= partitionOffset;
 		fTokenLength= 0;
@@ -622,7 +646,7 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 	 * @see ITokenScanner#setRange(IDocument, int, int)
 	 */
 	public void setRange(IDocument document, int offset, int length) {
-
+		fDocument= document;
 		fScanner.setRange(document, offset, length);
 		fTokenOffset= offset;
 		fTokenLength= 0;		
@@ -658,4 +682,30 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 		return fTokenOffset;
 	}
 
+	private int interceptTokenState(int proposedTokenState) {
+		if(fOwner!=null) {
+			switch(proposedTokenState) {
+			case MULTI_LINE_COMMENT: 
+				if(fOwner.getMultilineConfiguration().isDocumentationComment(fDocument, fTokenOffset, fTokenLength))
+					return MULTI_LINE_DOC_COMMENT;
+				break;
+
+			case SINGLE_LINE_COMMENT:
+				if(fOwner.getSinglelineConfiguration().isDocumentationComment(fDocument, fTokenOffset, fTokenLength))
+					return SINGLE_LINE_DOC_COMMENT;
+				break;
+
+			}
+		}
+		return proposedTokenState;
+	}
+	
+	/**
+	 * @return the DocCommentOwner associated with this partition scanner, or null
+	 * if there is no owner.
+	 * @since 5.0
+	 */
+	public IDocCommentOwner getDocCommentOwner() {
+		return fOwner;
+	}
 }

@@ -32,10 +32,10 @@
       <perspectiveExtension
             targetID="org.eclipse.ui.resourcePerspective">
          <view
+               id="org.eclipse.cdt.ui.tests.DOMAST.DOMAST"
                ratio="0.5"
-               relative="org.eclipse.ui.views.TaskList"
                relationship="right"
-               id="org.eclipse.cdt.ui.tests.DOMAST.DOMAST">
+               relative="org.eclipse.ui.views.TaskList">
          </view>
       </perspectiveExtension>
    </extension>
@@ -115,5 +115,87 @@
             projectType="org.eclipse.cdt.build.core.buildArtefactType.exe">
       </template>
    </extension>
-
+   
+   
+   <!-- documentation tool comment test owners -->
+   <extension
+         point="org.eclipse.cdt.ui.DocCommentOwner">
+     <owner id="org.cdt.test.DCOM1"
+         name="Test comment owner1"
+         singleline="org.eclipse.cdt.internal.ui.text.doctools.NullDocCommentViewerConfiguration"
+         multiline="org.eclipse.cdt.internal.ui.text.doctools.NullDocCommentViewerConfiguration"
+     />
+   </extension>
+    <extension
+         point="org.eclipse.cdt.ui.DocCommentOwner">
+      <owner  id="org.cdt.test.DCOM2"
+         name="Test comment owner1"
+           singleline="org.eclipse.cdt.internal.ui.text.doctools.NullDocCommentViewerConfiguration"
+         multiline="org.eclipse.cdt.internal.ui.text.doctools.NullDocCommentViewerConfiguration"
+         />
+   </extension>
+    <extension
+          point="org.eclipse.cdt.ui.DocCommentOwner">
+       <owner
+             id="org.cdt.test.DCOM3"
+             multiline="org.eclipse.cdt.internal.ui.text.doctools.NullDocCommentViewerConfiguration"
+             name="Test comment owner1"
+             singleline="org.eclipse.cdt.internal.ui.text.doctools.NullDocCommentViewerConfiguration">
+       </owner>
+    </extension>
+    <extension
+          point="org.eclipse.cdt.ui.DocCommentOwner">
+       <owner
+             id="org.cdt.test.ownerA"
+             multiline="org.eclipse.cdt.ui.tests.text.doctools.TestGenericTagConfiguration$A"
+             name="name_A"
+             singleline="org.eclipse.cdt.ui.tests.text.doctools.TestGenericTagConfiguration$A">
+       </owner>
+    </extension>
+      <extension
+          point="org.eclipse.cdt.ui.DocCommentOwner">
+       <owner
+             id="org.cdt.test.ownerB"
+             multiline="org.eclipse.cdt.ui.tests.text.doctools.TestGenericTagConfiguration$B"
+             name="name_B"
+             singleline="org.eclipse.cdt.ui.tests.text.doctools.TestGenericTagConfiguration$B">
+       </owner>
+    </extension>
+      <extension
+          point="org.eclipse.cdt.ui.DocCommentOwner">
+       <owner
+             id="org.cdt.test.ownerC"
+             multiline="org.eclipse.cdt.ui.tests.text.doctools.TestGenericTagConfiguration$C"
+             name="name_C"
+             singleline="org.eclipse.cdt.ui.tests.text.doctools.TestGenericTagConfiguration$C">
+       </owner>
+    </extension>
+    <extension
+          point="org.eclipse.cdt.ui.DocCommentOwner">
+       <owner
+             id="org.cdt.test.ownerABC"
+             multiline="org.eclipse.cdt.ui.tests.text.doctools.TestGenericTagConfiguration$ABC"
+             name="name_ABC"
+             singleline="org.eclipse.cdt.ui.tests.text.doctools.TestGenericTagConfiguration$ABC">
+       </owner>
+    </extension>
+    <extension
+          point="org.eclipse.cdt.ui.DocCommentOwner">
+       <owner
+             id="org.cdt.test.ownerBDFG"
+             multiline="org.eclipse.cdt.ui.tests.text.doctools.TestGenericTagConfiguration$BDFG"
+             name="name_BDFG"
+             singleline="org.eclipse.cdt.ui.tests.text.doctools.TestGenericTagConfiguration$BDFG">
+       </owner>
+    </extension>
+    <extension
+          point="org.eclipse.cdt.ui.DocCommentOwner">
+       <owner
+             id="org.cdt.test.ownerPUNC"
+             multiline="org.eclipse.cdt.ui.tests.text.doctools.TestGenericTagConfiguration$PUNC"
+             name="name_PUNC"
+             singleline="org.eclipse.cdt.ui.tests.text.doctools.TestGenericTagConfiguration$PUNC">
+       </owner>
+    </extension>
+    
 </plugin>

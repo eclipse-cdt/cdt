@@ -88,6 +88,8 @@ import org.eclipse.cdt.internal.ui.editor.asm.AsmTextTools;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
 import org.eclipse.cdt.internal.ui.text.PreferencesAdapter;
 import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverDescriptor;
+import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
+import org.eclipse.cdt.internal.ui.text.doctools.EditorReopener;
 import org.eclipse.cdt.internal.ui.text.folding.CFoldingStructureProviderRegistry;
 import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
 import org.eclipse.cdt.internal.ui.util.ProblemMarkerManager;
@@ -102,6 +104,8 @@ public class CUIPlugin extends AbstractUIPlugin {
 	public static final String CVIEW_ID = PLUGIN_ID + ".CView"; //$NON-NLS-1$
 	public static final String C_PROBLEMMARKER = PLUGIN_CORE_ID + ".problem"; //$NON-NLS-1$
 
+	public static final String ID_COMMENT_OWNER= PLUGIN_ID+".DocCommentOwner"; //$NON-NLS-1$
+	
     public static final String ID_INCLUDE_BROWSER= PLUGIN_ID + ".includeBrowser"; //$NON-NLS-1$
     public static final String ID_CALL_HIERARCHY= PLUGIN_ID + ".callHierarchy"; //$NON-NLS-1$
 	public static final String ID_TYPE_HIERARCHY = PLUGIN_ID + ".typeHierarchy"; //$NON-NLS-1$
@@ -237,11 +241,11 @@ public class CUIPlugin extends AbstractUIPlugin {
 	}
 	
 	public static String getFormattedString(String key, String arg) {
-		return MessageFormat.format(getResourceString(key), new String[] { arg });
+		return MessageFormat.format(getResourceString(key), arg);
 	}
 
 	public static String getFormattedString(String key, String[] args) {
-		return MessageFormat.format(getResourceString(key), args);
+		return MessageFormat.format(getResourceString(key), (Object[]) args);
 	}
 
 	public static ResourceBundle getResourceBundle() {
@@ -349,7 +353,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	private CTextTools fTextTools;
 	private AsmTextTools fAsmTextTools;
 	private ProblemMarkerManager fProblemMarkerManager;
-	private Map fBuildConsoleManagers;
+	private Map<String, BuildConsoleManager> fBuildConsoleManagers;
 	private ResourceAdapterFactory fResourceAdapterFactory;
 	private CElementAdapterFactory fCElementAdapterFactory;
 
@@ -387,7 +391,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 		fgCPlugin = this;
 		fDocumentProvider = null;
 		fTextTools = null;		
-		fBuildConsoleManagers = new HashMap();
+		fBuildConsoleManagers = new HashMap<String, BuildConsoleManager>();
 	}
 		
 	/**
@@ -445,7 +449,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 * @return IBuildConsoleManager
 	 */	
 	public IBuildConsoleManager getConsoleManager(String name, String id) {
-		BuildConsoleManager manager = (BuildConsoleManager)fBuildConsoleManagers.get(id);
+		BuildConsoleManager manager = fBuildConsoleManagers.get(id);
 		if (manager == null ) {
 			manager = new BuildConsoleManager();
 			fBuildConsoleManagers.put(id, manager);
@@ -454,7 +458,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 		return manager;
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext context) throws Exception {
@@ -474,6 +478,8 @@ public class CUIPlugin extends AbstractUIPlugin {
 		// init ast provider
 		getASTProvider();
 		CDTContextActivator.getInstance().install();
+		
+		DocCommentOwnerManager.getInstance().addListener(new EditorReopener());
 		
 		// start make-ui plugin, such that it can check for project conversions.
 		Job job= new Job(Messages.CUIPlugin_jobStartMakeUI) {
@@ -619,8 +625,8 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 * @return an array of all dirty editor parts.
 	 */	
 	public static IEditorPart[] getDirtyEditors() {
-		Set inputs= new HashSet();
-		List result= new ArrayList(0);
+		Set<IEditorInput> inputs= new HashSet<IEditorInput>();
+		List<IEditorPart> result= new ArrayList<IEditorPart>(0);
 		IWorkbench workbench= getDefault().getWorkbench();
 		IWorkbenchWindow[] windows= workbench.getWorkbenchWindows();
 		for (int i= 0; i < windows.length; i++) {
@@ -637,13 +643,13 @@ public class CUIPlugin extends AbstractUIPlugin {
 				}
 			}
 		}
-		return (IEditorPart[])result.toArray(new IEditorPart[result.size()]);
+		return result.toArray(new IEditorPart[result.size()]);
 	}
 	/**
 	 * Returns an array of all instanciated editors. 
 	 */
 	public static IEditorPart[] getInstanciatedEditors() {
-		List result= new ArrayList(0);
+		List<IEditorPart> result= new ArrayList<IEditorPart>(0);
 		IWorkbench workbench= getDefault().getWorkbench();
 		IWorkbenchWindow[] windows= workbench.getWorkbenchWindows();
 		for (int windowIndex= 0; windowIndex < windows.length; windowIndex++) {
@@ -657,7 +663,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 				}
 			}
 		}
-		return (IEditorPart[])result.toArray(new IEditorPart[result.size()]);
+		return result.toArray(new IEditorPart[result.size()]);
 	}
 
 	/**

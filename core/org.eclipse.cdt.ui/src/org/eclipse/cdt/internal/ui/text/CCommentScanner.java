@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,152 +8,49 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
-
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.StringTokenizer;
 
-import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.rules.IToken;
-import org.eclipse.jface.text.rules.IWordDetector;
-import org.eclipse.jface.text.rules.Token;
-import org.eclipse.jface.text.rules.WordRule;
-import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.text.rules.IRule;
 
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.ITokenStoreFactory;
+import org.eclipse.cdt.ui.text.TaskTagRule;
 
 /**
- * CCommentScanner.java
+ * Default token-scanner used for plain (non-documentation-comment) single and multi-line comments, with awareness of
+ * task tags.
  */
-public class CCommentScanner extends AbstractCScanner
-{
-    private static class TaskTagDetector implements IWordDetector {
+public class CCommentScanner extends AbstractCScanner {
+	private static String TASK_TAG_KEY= PreferenceConstants.EDITOR_TASK_TAG_COLOR;
+	private Preferences fCorePreferenceStore;
+		
+	public CCommentScanner(ITokenStoreFactory tokenStoreFactory, String defaultTokenProperty) {
+		this(tokenStoreFactory, null, defaultTokenProperty, new String[] { defaultTokenProperty, TASK_TAG_KEY });
+	}
 
-        public boolean isWordStart(char c) {
-            return Character.isLetter(c);
-        }
+	public CCommentScanner(ITokenStoreFactory tokenStoreFactory, Preferences coreStore, String defaultTokenProperty) {
+		this(tokenStoreFactory, coreStore, defaultTokenProperty, new String[] { defaultTokenProperty, TASK_TAG_KEY });
+	}
 
-        public boolean isWordPart(char c) {
-            return Character.isLetter(c);
-        }
-    }
+	private CCommentScanner(ITokenStoreFactory tokenStoreFactory, Preferences coreStore, String defaultTokenProperty, String[] tokenProperties) {
+		super(tokenStoreFactory.createTokenStore(tokenProperties));
+		fCorePreferenceStore= coreStore;
+		setRules(createRules(defaultTokenProperty));
+	}
 
-    private class TaskTagRule extends WordRule {
-
-        private IToken fToken;
-
-        public TaskTagRule(IToken token) {
-            super(new TaskTagDetector(), Token.UNDEFINED);
-            fToken= token;
-        }
-    
-        public void clearTaskTags() {
-            fWords.clear();
-        }
-    
-        public void addTaskTags(String value) {
-            String[] tasks= split(value, ","); //$NON-NLS-1$
-            for (int i= 0; i < tasks.length; i++) {
-                if (tasks[i].length() > 0) {
-                    addWord(tasks[i], fToken);
-                }
-            }
-        }
-        
-        private String[] split(String value, String delimiters) {
-            StringTokenizer tokenizer= new StringTokenizer(value, delimiters);
-            int size= tokenizer.countTokens();
-            String[] tokens= new String[size];
-            for (int i = 0; i < size; i++)
-                tokens[i] = tokenizer.nextToken();
-            return tokens;
-        }
-    }
-    
-    private static final String TODO_TASK_TAGS= CCorePreferenceConstants.TODO_TASK_TAGS;    
-    protected static final String TASK_TAG= ICColorConstants.TASK_TAG;
-
-    private TaskTagRule fTaskTagRule;
-    private Preferences fCorePreferenceStore;
-    private String fDefaultTokenProperty;
-    private String[] fTokenProperties;
-
-    public CCommentScanner(IColorManager manager, IPreferenceStore store, String defaultTokenProperty) {
-        this(manager, store, null, defaultTokenProperty, new String[] { defaultTokenProperty, TASK_TAG });
-    }
-
-    public CCommentScanner(IColorManager manager, IPreferenceStore store, Preferences coreStore, String defaultTokenProperty) {
-        this(manager, store, coreStore, defaultTokenProperty, new String[] { defaultTokenProperty, TASK_TAG });
-    }
-    
-    public CCommentScanner(IColorManager manager, IPreferenceStore store, Preferences coreStore, String defaultTokenProperty, String[] tokenProperties) {
-        super(manager, store);
-        
-        fCorePreferenceStore= coreStore;
-        fDefaultTokenProperty= defaultTokenProperty;
-        fTokenProperties= tokenProperties;
-
-        initialize();
-    }
-
-    /*
-     * @see AbstractCScanner#createRules()
-     */
-    protected List createRules() {
-        List list= new ArrayList();
-        
-        String tasks= null;
-        if (getPreferenceStore().contains(TODO_TASK_TAGS)) {
-            tasks= getPreferenceStore().getString(TODO_TASK_TAGS);
-        } else if (fCorePreferenceStore != null) {
-            tasks= fCorePreferenceStore.getString(TODO_TASK_TAGS);
-        }
-        
-        if (tasks != null) {
-            // Add rule for Task Tags.
-            fTaskTagRule= new TaskTagRule(getToken(TASK_TAG));
-            fTaskTagRule.addTaskTags(tasks);
-            list.add(fTaskTagRule);
-        }
-
-        setDefaultReturnToken(getToken(fDefaultTokenProperty));
-
-        return list;
-    }
-
-    /*
-     * @see org.eclipse.cdt.internal.ui.text.AbstractJavaScanner#affectsBehavior(org.eclipse.jface.util.PropertyChangeEvent)
-     */
-    public boolean affectsBehavior(PropertyChangeEvent event) {
-        return event.getProperty().equals(TODO_TASK_TAGS) || super.affectsBehavior(event);
-    }
-
-    /*
-     * @see org.eclipse.cdt.internal.ui.text.AbstractJavaScanner#adaptToPreferenceChange(org.eclipse.jface.util.PropertyChangeEvent)
-     */
-    public void adaptToPreferenceChange(PropertyChangeEvent event) {
-        if (fTaskTagRule != null && event.getProperty().equals(TODO_TASK_TAGS)) {
-            Object value= event.getNewValue();
-
-            if (value instanceof String) {
-                fTaskTagRule.clearTaskTags();
-                fTaskTagRule.addTaskTags((String) value);
-            }
-            
-        } else if (super.affectsBehavior(event)) {
-            super.adaptToPreferenceChange(event);
-        }
-    }
-
-    /*
-     * @see org.eclipse.cdt.internal.ui.text.AbstractJavaScanner#getTokenProperties()
-     */
-    protected String[] getTokenProperties() {
-        return fTokenProperties;
-    }
-
+	 protected List<IRule> createRules(String defaultTokenProperty) {
+		 setDefaultReturnToken(getToken(defaultTokenProperty));
+		 IPreferenceStore store= fTokenStore.getPreferenceStore();
+		 String taskWords= TaskTagRule.getTaskWords(store, fCorePreferenceStore);
+		 TaskTagRule taskTagRule= new TaskTagRule(getToken(TASK_TAG_KEY), taskWords);
+		 addPropertyChangeParticipant(taskTagRule);
+		 return Collections.singletonList((IRule)taskTagRule);
+	 }
 }

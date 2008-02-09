@@ -23,6 +23,7 @@
    <extension-point id="ConfigManager" name="%ConfigManager" schema="schema/ConfigManager.exsd"/>
    <extension-point id="HelpInfo" name="%HelpInfo" schema="schema/HelpInfo.exsd"/>
    <extension-point id="quickFixProcessors" name="%quickFixProcessorExtensionPoint" schema="schema/quickFixProcessors.exsd"/>
+   <extension-point id="DocCommentOwner" name="%DocCommentOwner.name" schema="schema/DocCommentOwner.exsd"/>
 
    <extension
          point="org.eclipse.core.runtime.adapters">
@@ -770,6 +771,11 @@
             class="org.eclipse.cdt.internal.ui.preferences.WorkInProgressPreferencePage"
             id="org.eclipse.cdt.ui.preferneces.WorkInProgressPreferencePage">
       </page-->
+      <page
+            class="org.eclipse.cdt.ui.templateengine.pages.TemplatePreferencePage"
+            name="%TemplatePreferencePage.name"
+            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
+            id="org.eclipse.cdt.core.templateengine.shareddefaults"/>
    </extension>
    <extension
          point="org.eclipse.ui.editorActions">
@@ -1944,7 +1950,11 @@
          point="org.eclipse.core.runtime.preferences">
       <initializer class="org.eclipse.cdt.ui.CUIPreferenceInitializer"/>
    </extension>
-
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer class="org.eclipse.cdt.ui.text.doctools.doxygen.DoxygenHelper"/>
+   </extension>
+   
 <!-- Default folding -->
 	<extension
 		point= "org.eclipse.cdt.ui.foldingStructureProviders">
@@ -2447,16 +2457,6 @@
            name="%exportWizard.CDTCategory.name">
      </category>
   </extension>
-
-   <extension
-         point="org.eclipse.ui.preferencePages">
-      <page
-            class="org.eclipse.cdt.ui.templateengine.pages.TemplatePreferencePage"
-            name="%TemplatePreferencePage.name"
-            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
-            id="org.eclipse.cdt.core.templateengine.shareddefaults"/>
-   </extension>
-  
    <extension
             id="TemplateEngineWizard"
             name="%Template.Engine.Wizard"
@@ -2476,11 +2476,44 @@
       </updater>
    </extension>
    <extension
+         id="doccomment.multiline"
+         point="org.eclipse.cdt.ui.completionProposalComputer">
+      <completionProposalComputer
+            activate="true"
+            categoryId="org.eclipse.cdt.ui.parserProposalCategory"
+            class="org.eclipse.cdt.internal.ui.text.doctools.DocCommentMultilineProposalComputer">
+         <partition
+               type="__c_multiline_doc_comment">
+         </partition>
+      </completionProposalComputer>
+   </extension>
+   <extension
+         id="doccomment.singleline"
+         point="org.eclipse.cdt.ui.completionProposalComputer">
+      <completionProposalComputer
+            activate="true"
+            categoryId="org.eclipse.cdt.ui.parserProposalCategory"
+            class="org.eclipse.cdt.internal.ui.text.doctools.DocCommentSinglelineProposalComputer">
+         <partition
+               type="__c_singleline_doc_comment">
+         </partition>
+      </completionProposalComputer>
+   </extension>
+   <extension
          point="org.eclipse.cdt.ui.CHelpProvider">
       <provider
             class="org.eclipse.cdt.internal.ui.help.CHelpProvider"
             id="org.eclipse.cdt.ui.provider1">
       </provider>
    </extension>
- 
+   
+   <extension
+         point="org.eclipse.cdt.ui.DocCommentOwner">
+      <owner
+            id="org.eclipse.cdt.ui.doxygen"
+            name="Doxygen"
+            multiline="org.eclipse.cdt.ui.text.doctools.doxygen.DoxygenMultilineConfiguration"
+            singleline="org.eclipse.cdt.ui.text.doctools.doxygen.DoxygenSingleConfiguration">
+      </owner>
+   </extension>
  </plugin>

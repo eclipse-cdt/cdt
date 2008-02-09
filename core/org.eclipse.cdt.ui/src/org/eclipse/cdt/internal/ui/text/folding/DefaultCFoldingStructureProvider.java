@@ -10,6 +10,7 @@
  *     Anton Leherbauer (Wind River Systems)
  *     Markus Schorn (Wind River Systems)
  *     Elazar Leibovich (IDF) - Code folding of compound statements (bug 174597)
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.text.folding;
@@ -168,7 +169,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 
 		private ISourceReference fFirstType;
 		private boolean fHasHeaderComment;
-		private LinkedHashMap fMap= new LinkedHashMap();
+		private LinkedHashMap<CProjectionAnnotation,Position> fMap= new LinkedHashMap<CProjectionAnnotation,Position>();
 		private IASTTranslationUnit fAST;
 
 		FoldingStructureComputationContext(IDocument document, ProjectionAnnotationModel model, boolean allowCollapsing) {
@@ -840,9 +841,9 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 			fSelectionListener= null;
 		}
 
-		Map additions= new HashMap();
-		List deletions= new ArrayList();
-		List updates= new ArrayList();
+		Map<CProjectionAnnotation,Position> additions= new HashMap<CProjectionAnnotation,Position>();
+		List<CProjectionAnnotation> deletions= new ArrayList<CProjectionAnnotation>();
+		List<CProjectionAnnotation> updates= new ArrayList<CProjectionAnnotation>();
 		
 		computeFoldingStructure(ctx);
 		Map updated= ctx.fMap;
@@ -923,12 +924,13 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	 * result is that more annotations are changed and fewer get
 	 * deleted/re-added.
 	 */
-	private void match(List deletions, Map additions, List changes, FoldingStructureComputationContext ctx) {
+	private void match(List<CProjectionAnnotation> deletions, Map additions,
+			List<CProjectionAnnotation> changes, FoldingStructureComputationContext ctx) {
 		if (deletions.isEmpty() || (additions.isEmpty() && changes.isEmpty()))
 			return;
 
-		List newDeletions= new ArrayList();
-		List newChanges= new ArrayList();
+		List<CProjectionAnnotation> newDeletions= new ArrayList<CProjectionAnnotation>();
+		List<CProjectionAnnotation> newChanges= new ArrayList<CProjectionAnnotation>();
 
 		Iterator deletionIterator= deletions.iterator();
 		while (deletionIterator.hasNext()) {
@@ -1014,7 +1016,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 
 	private Map computeCurrentStructure(FoldingStructureComputationContext ctx) {
 		boolean includeBranches= fPreprocessorBranchFoldingEnabled && ctx.fAST != null;
-		Map map= new HashMap();
+		Map<Object, List<Tuple>> map= new HashMap<Object, List<Tuple>>();
 		ProjectionAnnotationModel model= ctx.getModel();
 		Iterator e= model.getAnnotationIterator();
 		while (e.hasNext()) {
@@ -1026,22 +1028,21 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 				}
 				Position position= model.getPosition(cAnnotation);
 				Assert.isNotNull(position);
-				List list= (List) map.get(cAnnotation.getElement());
+				List<Tuple> list= map.get(cAnnotation.getElement());
 				if (list == null) {
-					list= new ArrayList(2);
+					list= new ArrayList<Tuple>(2);
 					map.put(cAnnotation.getElement(), list);
 				}
 				list.add(new Tuple(cAnnotation, position));
 			}
 		}
 
-		Comparator comparator= new Comparator() {
-			public int compare(Object o1, Object o2) {
-				return ((Tuple) o1).position.getOffset() - ((Tuple) o2).position.getOffset();
+		Comparator<Tuple> comparator= new Comparator<Tuple>() {
+			public int compare(Tuple t1, Tuple t2) {
+				return t1.position.getOffset() - t2.position.getOffset();
 			}
 		};
-		for (Iterator it= map.values().iterator(); it.hasNext();) {
-			List list= (List) it.next();
+		for(List<Tuple> list : map.values()) {
 			Collections.sort(list, comparator);
 		}
 		return map;
@@ -1116,7 +1117,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	 * @param ctx
 	 */
 	private void computeStatementFoldingStructure(IASTTranslationUnit ast, FoldingStructureComputationContext ctx) {
-		final Stack iral = new Stack();
+		final Stack<ModifiableRegionExtra> iral= new Stack<ModifiableRegionExtra>();
 		ast.accept(new ASTVisitor() {
 			{
 				shouldVisitStatements = true;
@@ -1181,7 +1182,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 								if (!(tmpstmt instanceof IASTCaseStatement || tmpstmt instanceof IASTDefaultStatement)) {
 									if (!pushedMR) return PROCESS_SKIP;
 									IASTFileLocation tmpfl = tmpstmt.getFileLocation();
-									tmpmr = (ModifiableRegionExtra) iral.peek();
+									tmpmr = iral.peek();
 									tmpmr.setLength(tmpfl.getNodeLength()+tmpfl.getNodeOffset()-tmpmr.getOffset());
 									if (tmpstmt instanceof IASTBreakStatement) pushedMR = false;
 									continue;
@@ -1243,7 +1244,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 			}
 		});
 		while (!iral.empty()) {
-			ModifiableRegionExtra mr = (ModifiableRegionExtra) iral.pop();
+			ModifiableRegionExtra mr = iral.pop();
 			IRegion aligned = alignRegion(mr, ctx,mr.inclusive);
 			if (aligned != null) {
 				Position alignedPos= new Position(aligned.getOffset(), aligned.getLength());
@@ -1286,8 +1287,8 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	 */
 	private void computePreprocessorFoldingStructure(IASTTranslationUnit ast,
 			FoldingStructureComputationContext ctx, String fileName) {
-		List branches = new ArrayList();
-		Stack branchStack = new Stack();
+		List<Branch> branches = new ArrayList<Branch>();
+		Stack<Branch> branchStack = new Stack<Branch>();
 
 		IASTPreprocessorStatement[] preprocStmts = ast.getAllPreprocessorStatements();
 
@@ -1315,7 +1316,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 					// #else without #if
 					continue;
 				}
-				Branch branch= (Branch)branchStack.pop();
+				Branch branch= branchStack.pop();
 				IASTPreprocessorElseStatement elseStmt = (IASTPreprocessorElseStatement)statement;
 				branchStack.push(new Branch(stmtLocation.getNodeOffset(), elseStmt.taken()));
 				branch.setEndOffset(stmtLocation.getNodeOffset());
@@ -1325,7 +1326,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 					// #elif without #if
 					continue;
 				}
-				Branch branch= (Branch)branchStack.pop();
+				Branch branch= branchStack.pop();
 				IASTPreprocessorElifStatement elifStmt = (IASTPreprocessorElifStatement) statement;
 				branchStack.push(new Branch(stmtLocation.getNodeOffset(), elifStmt.taken()));
 				branch.setEndOffset(stmtLocation.getNodeOffset());
@@ -1335,7 +1336,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 					// #endif without #if
 					continue;
 				}
-				Branch branch= (Branch)branchStack.pop();
+				Branch branch= branchStack.pop();
 				branch.setEndOffset(stmtLocation.getNodeOffset() + stmtLocation.getNodeLength());
 				branch.setInclusive(true);
 				branches.add(branch);
@@ -1379,12 +1380,13 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		IDocument doc= ctx.getDocument();
 		int startLine = -1;
 		int endLine = -1;
-		List comments= new ArrayList();
+		List<Tuple> comments= new ArrayList<Tuple>();
 		ModifiableRegion commentRange = new ModifiableRegion();
 		for (int i = 0; i < partitions.length; i++) {
 			ITypedRegion partition = partitions[i];
 			boolean singleLine= false;
-			if (ICPartitions.C_MULTI_LINE_COMMENT.equals(partition.getType())) {
+			if (ICPartitions.C_MULTI_LINE_COMMENT.equals(partition.getType())
+				|| ICPartitions.C_MULTI_LINE_DOC_COMMENT.equals(partition.getType())) {
 				Position position= createCommentPosition(alignRegion(partition, ctx, true));
 				if (position != null) {
 					if (startLine >= 0 && endLine - startLine >= fMinCommentLines) {

@@ -17,6 +17,8 @@ package org.eclipse.cdt.internal.ui.text;
 import java.util.Arrays;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -77,6 +79,12 @@ import org.eclipse.cdt.ui.CElementContentProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.ILanguageUI;
 import org.eclipse.cdt.ui.text.ICPartitions;
+import org.eclipse.cdt.ui.text.ICTokenScanner;
+import org.eclipse.cdt.ui.text.ITokenStore;
+import org.eclipse.cdt.ui.text.ITokenStoreFactory;
+import org.eclipse.cdt.ui.text.doctools.DefaultMultilineCommentAutoEditStrategy;
+import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
+import org.eclipse.cdt.ui.text.doctools.IDocCommentViewerConfiguration;
 
 import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
 
@@ -90,6 +98,7 @@ import org.eclipse.cdt.internal.ui.text.c.hover.CMacroExpansionInformationProvid
 import org.eclipse.cdt.internal.ui.text.contentassist.CContentAssistProcessor;
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 import org.eclipse.cdt.internal.ui.text.correction.CCorrectionAssistant;
+import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
 import org.eclipse.cdt.internal.ui.typehierarchy.THInformationControl;
 import org.eclipse.cdt.internal.ui.typehierarchy.THInformationProvider;
 
@@ -111,11 +120,11 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	/**
 	 * The C multi-line comment scanner.
 	 */
-	private AbstractCScanner fMultilineCommentScanner;
+	private ICTokenScanner fMultilineDocCommentScanner;
 	/**
 	 * The C single-line comment scanner.
 	 */
-	private AbstractCScanner fSinglelineCommentScanner;
+	private ICTokenScanner fSinglelineDocCommentScanner;
 	/**
 	 * The C string scanner.
 	 */
@@ -147,24 +156,6 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	}
 
 	/**
-	 * Returns the C multi-line comment scanner for this configuration.
-	 *
-	 * @return the C multi-line comment scanner
-	 */
-	protected RuleBasedScanner getMultilineCommentScanner() {
-		return fMultilineCommentScanner;
-	}
-
-	/**
-	 * Returns the C single-line comment scanner for this configuration.
-	 *
-	 * @return the C single-line comment scanner
-	 */
-	protected RuleBasedScanner getSinglelineCommentScanner() {
-		return fSinglelineCommentScanner;
-	}
-
-	/**
 	 * Returns the C string scanner for this configuration.
 	 *
 	 * @return the C string scanner
@@ -184,10 +175,10 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		}
 		AbstractCScanner scanner= null;
 		if (language instanceof ICLanguageKeywords) {
-			scanner= new CPreprocessorScanner(getColorManager(), fPreferenceStore, (ICLanguageKeywords)language);
+			scanner= new CPreprocessorScanner(getTokenStoreFactory(), (ICLanguageKeywords)language);
 		}
 		if (scanner == null) {
-			scanner= new CPreprocessorScanner(getColorManager(), fPreferenceStore, GPPLanguage.getDefault());
+			scanner= new CPreprocessorScanner(getTokenStoreFactory(), GPPLanguage.getDefault());
 		}
 		fPreprocessorScanner= scanner;
 		return fPreprocessorScanner;
@@ -250,14 +241,12 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
         presenter.setSizeConstraints(50, 20, true, false);
         return presenter;
     }
-
+    
 	/**
 	 * Initializes the scanners.
 	 */
 	private void initializeScanners() {
-		fMultilineCommentScanner= new CCommentScanner(getColorManager(), fPreferenceStore, ICColorConstants.C_MULTI_LINE_COMMENT);
-		fSinglelineCommentScanner= new CCommentScanner(getColorManager(), fPreferenceStore, ICColorConstants.C_SINGLE_LINE_COMMENT);
-		fStringScanner= new SingleTokenCScanner(getColorManager(), fPreferenceStore, ICColorConstants.C_STRING);
+		fStringScanner= new SingleTokenCScanner(getTokenStoreFactory(), ICColorConstants.C_STRING);
 	}
 
     /**
@@ -274,17 +263,29 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 
 		reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
 		reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
-
-		//TextAttribute attr = new TextAttribute(manager.getColor(ICColorConstants.C_DEFAULT));
 		
-		dr= new DefaultDamagerRepairer(getSinglelineCommentScanner());		
+		dr= new DefaultDamagerRepairer(new CCommentScanner(getTokenStoreFactory(),  ICColorConstants.C_SINGLE_LINE_COMMENT));
 		reconciler.setDamager(dr, ICPartitions.C_SINGLE_LINE_COMMENT);
 		reconciler.setRepairer(dr, ICPartitions.C_SINGLE_LINE_COMMENT);
-		
-		dr= new DefaultDamagerRepairer(getMultilineCommentScanner());		
+
+		dr= new DefaultDamagerRepairer(new CCommentScanner(getTokenStoreFactory(),  ICColorConstants.C_MULTI_LINE_COMMENT));
 		reconciler.setDamager(dr, ICPartitions.C_MULTI_LINE_COMMENT);
 		reconciler.setRepairer(dr, ICPartitions.C_MULTI_LINE_COMMENT);
-
+		
+		ICTokenScanner docCommentSingleScanner= getSinglelineDocCommentScanner(getProject());
+		if(docCommentSingleScanner!=null) {
+			dr= new DefaultDamagerRepairer(docCommentSingleScanner);
+			reconciler.setDamager(dr, ICPartitions.C_SINGLE_LINE_DOC_COMMENT);
+			reconciler.setRepairer(dr, ICPartitions.C_SINGLE_LINE_DOC_COMMENT);
+		}
+	
+		ICTokenScanner docCommentMultiScanner= getMultilineDocCommentScanner(getProject());
+		if(docCommentMultiScanner!=null) {
+			dr= new DefaultDamagerRepairer(docCommentMultiScanner);
+			reconciler.setDamager(dr, ICPartitions.C_MULTI_LINE_DOC_COMMENT);
+			reconciler.setRepairer(dr, ICPartitions.C_MULTI_LINE_DOC_COMMENT);
+		}
+		
 		dr= new DefaultDamagerRepairer(getStringScanner());
 		reconciler.setDamager(dr, ICPartitions.C_STRING);
 		reconciler.setRepairer(dr, ICPartitions.C_STRING);
@@ -299,7 +300,33 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		
 		return reconciler;
 	}
+      
+	/**
+	 * Returns the C multi-line comment scanner for this configuration.
+	 *
+	 * @return the C multi-line comment scanner
+	 */
+	protected ICTokenScanner getMultilineDocCommentScanner(IResource resource) {
+		if (fMultilineDocCommentScanner == null) {
+			IDocCommentViewerConfiguration owner= DocCommentOwnerManager.getInstance().getCommentOwner(resource).getMultilineConfiguration();
+			fMultilineDocCommentScanner= owner.createCommentScanner(getTokenStoreFactory());
+		}
+		return fMultilineDocCommentScanner;
+	}
 
+	/**
+	 * Returns the C single-line comment scanner for this configuration.
+	 *
+	 * @return the C single-line comment scanner
+	 */
+	protected ICTokenScanner getSinglelineDocCommentScanner(IResource resource) {
+		if (fSinglelineDocCommentScanner == null) {
+			IDocCommentViewerConfiguration owner= DocCommentOwnerManager.getInstance().getCommentOwner(resource).getSinglelineConfiguration();		
+			fSinglelineDocCommentScanner= owner.createCommentScanner(getTokenStoreFactory());
+		}
+		return fSinglelineDocCommentScanner;
+	}
+    
 	/**
 	 * @return the code scanner for the given language
 	 */
@@ -310,14 +337,14 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		RuleBasedScanner scanner= null;
 		if (language instanceof ICLanguageKeywords) {
 			ICLanguageKeywords cLang= (ICLanguageKeywords)language;
-			scanner = new CCodeScanner(getColorManager(), fPreferenceStore, cLang);
+			scanner = new CCodeScanner(getTokenStoreFactory(), cLang);
 		} else if (language != null) {
 			ILanguageUI languageUI = (ILanguageUI)language.getAdapter(ILanguageUI.class);
 			if (languageUI != null)
 				scanner = languageUI.getCodeScanner();
 		}
 		if (scanner == null) {
-			scanner = new CCodeScanner(getColorManager(), fPreferenceStore, GPPLanguage.getDefault());
+			scanner = new CCodeScanner(getTokenStoreFactory(), GPPLanguage.getDefault());
 		}
 		if (scanner instanceof AbstractCScanner) {
 			fCodeScanner= (AbstractCScanner)scanner;
@@ -346,6 +373,12 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 
 		processor = new CContentAssistProcessor(getEditor(), sourceViewer, assistant, ICPartitions.C_SINGLE_LINE_COMMENT);
 		assistant.setContentAssistProcessor(processor, ICPartitions.C_SINGLE_LINE_COMMENT);
+
+		processor = new CContentAssistProcessor(getEditor(), sourceViewer, assistant, ICPartitions.C_MULTI_LINE_DOC_COMMENT);
+		assistant.setContentAssistProcessor(processor, ICPartitions.C_MULTI_LINE_DOC_COMMENT);
+
+		processor = new CContentAssistProcessor(getEditor(), sourceViewer, assistant, ICPartitions.C_SINGLE_LINE_DOC_COMMENT);
+		assistant.setContentAssistProcessor(processor, ICPartitions.C_SINGLE_LINE_DOC_COMMENT);
 
 		processor = new CContentAssistProcessor(getEditor(), sourceViewer, assistant, ICPartitions.C_STRING);
 		assistant.setContentAssistProcessor(processor, ICPartitions.C_STRING);
@@ -410,26 +443,46 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	 */
 	public IAutoEditStrategy[] getAutoEditStrategies(ISourceViewer sourceViewer, String contentType) {
 		String partitioning= getConfiguredDocumentPartitioning(sourceViewer);
+		
+		IDocCommentOwner owner= DocCommentOwnerManager.getInstance().getCommentOwner(getProject());
+		IAutoEditStrategy single= owner.getSinglelineConfiguration().createAutoEditStrategy();
+		IAutoEditStrategy multi= owner.getMultilineConfiguration().createAutoEditStrategy();
+		
+		IAutoEditStrategy[] NONE= new IAutoEditStrategy[0];
+		
 		if (ICPartitions.C_MULTI_LINE_COMMENT.equals(contentType))
-			return new IAutoEditStrategy[] { new CCommentAutoIndentStrategy() };
+			return new IAutoEditStrategy[] { new DefaultMultilineCommentAutoEditStrategy() };
+		if (ICPartitions.C_SINGLE_LINE_DOC_COMMENT.equals(contentType))
+			return single!=null ? new IAutoEditStrategy[] {single} : NONE;
+		else if (ICPartitions.C_MULTI_LINE_DOC_COMMENT.equals(contentType))
+			return multi!=null? new IAutoEditStrategy[] {multi} : NONE;
 		else if (ICPartitions.C_STRING.equals(contentType))
-			return new IAutoEditStrategy[] { /*new SmartSemicolonAutoEditStrategy(partitioning),*/ new CStringAutoIndentStrategy(partitioning, getProject()) };
+			return new IAutoEditStrategy[] { /*new SmartSemicolonAutoEditStrategy(partitioning),*/ new CStringAutoIndentStrategy(partitioning, getCProject()) };
 		else
-			return new IAutoEditStrategy[] { new CAutoIndentStrategy(partitioning, getProject()) };
+			return new IAutoEditStrategy[] { new CAutoIndentStrategy(partitioning, getCProject()) };
 	}
-
+	
 	/**
 	 * @see SourceViewerConfiguration#getDoubleClickStrategy(ISourceViewer, String)
 	 */
 	public ITextDoubleClickStrategy getDoubleClickStrategy(ISourceViewer sourceViewer, String contentType) {
 		if (ICPartitions.C_MULTI_LINE_COMMENT.equals(contentType) ||
-				ICPartitions.C_SINGLE_LINE_COMMENT.equals(contentType))
+				ICPartitions.C_SINGLE_LINE_COMMENT.equals(contentType)) {
 			return new DefaultTextDoubleClickStrategy();
-		else if (ICPartitions.C_STRING.equals(contentType) ||
-				ICPartitions.C_CHARACTER.equals(contentType))
+		} else if (ICPartitions.C_SINGLE_LINE_DOC_COMMENT.equals(contentType)) {
+			IDocCommentOwner owner= DocCommentOwnerManager.getInstance().getCommentOwner(getProject());
+			ITextDoubleClickStrategy single= owner.getSinglelineConfiguration().createDoubleClickStrategy();
+			return single != null ? single : new DefaultTextDoubleClickStrategy();
+		} else if(ICPartitions.C_MULTI_LINE_DOC_COMMENT.equals(contentType)) {
+			IDocCommentOwner owner= DocCommentOwnerManager.getInstance().getCommentOwner(getProject());
+			ITextDoubleClickStrategy multi= owner.getMultilineConfiguration().createDoubleClickStrategy();
+			return multi!=null ? multi : new DefaultTextDoubleClickStrategy();
+		} else if (ICPartitions.C_STRING.equals(contentType) ||
+				ICPartitions.C_CHARACTER.equals(contentType)) {
 			return new CStringDoubleClickSelector(getConfiguredDocumentPartitioning(sourceViewer));
-		else if (ICPartitions.C_PREPROCESSOR.equals(contentType))
+		} else if (ICPartitions.C_PREPROCESSOR.equals(contentType)) {
 			return new CStringDoubleClickSelector(getConfiguredDocumentPartitioning(sourceViewer), new CDoubleClickSelector());
+		}
 		return new CDoubleClickSelector();
 	}
 
@@ -444,7 +497,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	 * @see SourceViewerConfiguration#getIndentPrefixes(ISourceViewer, String)
 	 */
 	public String[] getIndentPrefixes(ISourceViewer sourceViewer, String contentType) {
-		ICProject project= getProject();
+		ICProject project= getCProject();
 		final int tabWidth= CodeFormatterUtil.getTabWidth(project);
 		final int indentWidth= CodeFormatterUtil.getIndentWidth(project);
 		boolean allowTabs= tabWidth <= indentWidth;
@@ -504,7 +557,12 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		return new String(spaceChars);
 	}
 
-	private ICProject getProject() {
+	/**
+	 * Returns the ICProject associated with this CSourceViewerConfiguration, or null if
+	 * no ICProject could be determined
+	 * @return
+	 */
+	private ICProject getCProject() {
 		ITextEditor editor= getEditor();
 		if (editor == null)
 			return null;
@@ -527,7 +585,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	 * @see SourceViewerConfiguration#getTabWidth(ISourceViewer)
 	 */
 	public int getTabWidth(ISourceViewer sourceViewer) {
-		return CodeFormatterUtil.getTabWidth(getProject());
+		return CodeFormatterUtil.getTabWidth(getCProject());
 	}
 
 	/**
@@ -536,7 +594,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	 * @return the indent width
 	 */
 	public int getIndentWidth(ISourceViewer sourceViewer) {
-		return CodeFormatterUtil.getIndentWidth(getProject());
+		return CodeFormatterUtil.getIndentWidth(getCProject());
 	}
 
 	/**
@@ -546,7 +604,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	 * @return <code>true</code> if spaces should be used for indentation
 	 */
 	public boolean useSpacesOnly(ISourceViewer sourceViewer) {
-		ICProject project= getProject();
+		ICProject project= getCProject();
 		String option;
 		if (project == null)
 			option= CCorePlugin.getOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR);
@@ -628,7 +686,10 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 				ICPartitions.C_SINGLE_LINE_COMMENT,
 				ICPartitions.C_STRING,
 				ICPartitions.C_CHARACTER,
-				ICPartitions.C_PREPROCESSOR};
+				ICPartitions.C_PREPROCESSOR,
+				ICPartitions.C_SINGLE_LINE_DOC_COMMENT,
+				ICPartitions.C_MULTI_LINE_DOC_COMMENT
+		};
 	}
 	
 	/**
@@ -645,8 +706,8 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	}
 	
 	public boolean affectsBehavior(PropertyChangeEvent event) {
-		if (fMultilineCommentScanner.affectsBehavior(event)
-			|| fSinglelineCommentScanner.affectsBehavior(event)
+		if ((fMultilineDocCommentScanner != null && fMultilineDocCommentScanner.affectsBehavior(event))
+			|| (fSinglelineDocCommentScanner != null && fSinglelineDocCommentScanner.affectsBehavior(event))
 			|| fStringScanner.affectsBehavior(event)) {
 			return true;
 		}
@@ -739,10 +800,10 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	public void handlePropertyChangeEvent(PropertyChangeEvent event) {
 		if (fCodeScanner != null && fCodeScanner.affectsBehavior(event))
 			fCodeScanner.adaptToPreferenceChange(event);
-		if (fMultilineCommentScanner.affectsBehavior(event))
-			fMultilineCommentScanner.adaptToPreferenceChange(event);
-		if (fSinglelineCommentScanner.affectsBehavior(event))
-			fSinglelineCommentScanner.adaptToPreferenceChange(event);
+		if (fMultilineDocCommentScanner!=null && fMultilineDocCommentScanner.affectsBehavior(event))
+			fMultilineDocCommentScanner.adaptToPreferenceChange(event);
+		if (fSinglelineDocCommentScanner!=null && fSinglelineDocCommentScanner.affectsBehavior(event))
+			fSinglelineDocCommentScanner.adaptToPreferenceChange(event);
 		if (fStringScanner.affectsBehavior(event))
 			fStringScanner.adaptToPreferenceChange(event);
 		if (fPreprocessorScanner != null && fPreprocessorScanner.affectsBehavior(event))
@@ -858,9 +919,11 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	 */
 	public void resetScanners() {
 		fCodeScanner= null;
+		fMultilineDocCommentScanner= null;
+		fSinglelineDocCommentScanner= null;
 		fPreprocessorScanner= null;
 	}
-
+	
 	/**
 	 * Creates macro exploration presenter.
 	 * @param sourceViewer
@@ -898,5 +961,21 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
         };
         return conrolCreator;
     }
+	
+    /**
+	 * @return the IProject associated with this CSourceViewerConfiguration, or null if
+	 * no IProject could be determined
+	 */
+	private IProject getProject() {
+		ICProject cproject= getCProject();
+		return cproject!=null ? cproject.getProject() :null;
+	}
 
+	private ITokenStoreFactory getTokenStoreFactory() {
+		return new ITokenStoreFactory() {
+			public ITokenStore createTokenStore(String[] propertyColorNames) {
+				return new TokenStore(getColorManager(), fPreferenceStore, propertyColorNames);
+			}
+		};
+	}
 }

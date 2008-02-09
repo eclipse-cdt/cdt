@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text;
 
@@ -49,7 +50,7 @@ public class CPartitionerTest extends TestCase {
 		fTextTools= new CTextTools(new PreferenceStore());
 
 		fDocument= new Document();
-		IDocumentPartitioner partitioner= fTextTools.createDocumentPartitioner();
+		IDocumentPartitioner partitioner= fTextTools.createDocumentPartitioner(null);
 		partitioner.connect(fDocument);
 		fDocument.setDocumentPartitioner(partitioner);
 		fDocument.set("xxx\n/*xxx*/\nxxx\n/**xxx*/\nxxx\n/**/\nxxx\n/***/\nxxx");

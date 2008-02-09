@@ -8,6 +8,7 @@
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
  *     Sergey Prigogin, Google
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 
 package org.eclipse.cdt.ui.tests.text;
@@ -16,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -26,214 +26,22 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.DocumentCommand;
-import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.TextUtilities;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.ICPartitions;
+import org.eclipse.cdt.ui.text.doctools.DefaultMultilineCommentAutoEditStrategy;
 
 import org.eclipse.cdt.internal.formatter.DefaultCodeFormatterOptions;
 
 import org.eclipse.cdt.internal.ui.text.CAutoIndentStrategy;
-import org.eclipse.cdt.internal.ui.text.CCommentAutoIndentStrategy;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
 
 /**
  * Testing the auto indent strategies.
  */
-public class CAutoIndentTest extends BaseTestCase {
-
-	/**
-	 * Helper class to test the auto-edit strategies on a document.
-	 */
-	static class AutoEditTester {
-
-		private Map fStrategyMap = new HashMap();
-		private IDocument fDoc;
-		private String fPartitioning;
-		private int fCaretOffset;
-
-		public AutoEditTester(IDocument doc, String partitioning) {
-			super();
-			fDoc = doc;
-			fPartitioning = partitioning;
-		}
-
-		public void setAutoEditStrategy(String contentType, IAutoEditStrategy aes) {
-			fStrategyMap.put(contentType, aes);
-		}
-
-		public IAutoEditStrategy getAutoEditStrategy(String contentType) {
-			return (IAutoEditStrategy)fStrategyMap.get(contentType);
-		}
-
-		/**
-		 * Empties the document, and returns the caret to the origin (0,0)
-		 */
-		public void reset() {
-			try {
-				goTo(0,0);
-				fDoc.set("");
-			} catch(BadLocationException ble) {
-				fail(ble.getMessage());
-			}
-		}
-		
-		public void type(String text) throws BadLocationException {
-			for (int i = 0; i < text.length(); ++i) {
-				type(text.charAt(i));
-			}
-		}
-
-		public void type(char c) throws BadLocationException {
-			TestDocumentCommand command = new TestDocumentCommand(fCaretOffset, 0, new String(new char[] { c }));
-			customizeDocumentCommand(command);
-			fCaretOffset = command.exec(fDoc);
-		}
-
-		private void customizeDocumentCommand(TestDocumentCommand command) throws BadLocationException {
-			IAutoEditStrategy aes = getAutoEditStrategy(getContentType());
-			if (aes != null) {
-				aes.customizeDocumentCommand(fDoc, command);
-			}
-		}
-
-		public void type(int offset, String text) throws BadLocationException {
-			fCaretOffset = offset;
-			type(text);
-		}
-
-		public void type(int offset, char c) throws BadLocationException {
-			fCaretOffset = offset;
-			type(c);
-		}
-
-		public void paste(String text) throws BadLocationException {
-			TestDocumentCommand command = new TestDocumentCommand(fCaretOffset, 0, text);
-			customizeDocumentCommand(command);
-			fCaretOffset = command.exec(fDoc);
-		}
-
-		public void paste(int offset, String text) throws BadLocationException {
-			fCaretOffset = offset;
-			paste(text);
-		}
-
-		public void backspace(int n) throws BadLocationException {
-			for (int i = 0; i < n; ++i) {
-				backspace();
-			}
-		}
-		
-		public void backspace() throws BadLocationException {
-			TestDocumentCommand command = new TestDocumentCommand(fCaretOffset - 1, 1, ""); //$NON-NLS-1$
-			customizeDocumentCommand(command);
-			fCaretOffset = command.exec(fDoc);
-		}
-
-		public int getCaretOffset() {
-			return fCaretOffset;
-		}
-
-		public int setCaretOffset(int offset) {
-			fCaretOffset = offset;
-			if (fCaretOffset < 0)
-				fCaretOffset = 0;
-			else if (fCaretOffset > fDoc.getLength())
-				fCaretOffset = fDoc.getLength();
-			return fCaretOffset;
-		}
-		
-		/**
-		 * Moves caret right or left by the given number of characters.
-		 * 
-		 * @param shift Move distance.
-		 * @return New caret offset.
-		 */
-		public int moveCaret(int shift) {
-			return setCaretOffset(fCaretOffset + shift);
-		}
-		
-		public int goTo(int line) throws BadLocationException {
-			fCaretOffset = fDoc.getLineOffset(line);
-			return fCaretOffset;
-		}
-
-		public int goTo(int line, int column) throws BadLocationException {
-			if (column < 0 || column > fDoc.getLineLength(line)) {
-				throw new BadLocationException("No column " + column + " in line " + line); //$NON-NLS-1$ $NON-NLS-2$
-			}
-			fCaretOffset = fDoc.getLineOffset(line) + column;
-			return fCaretOffset;
-		}
-
-		public int getCaretLine() throws BadLocationException {
-			return fDoc.getLineOfOffset(fCaretOffset);
-		}
-
-		public int getCaretColumn() throws BadLocationException {
-			IRegion region = fDoc.getLineInformationOfOffset(fCaretOffset);
-			return fCaretOffset - region.getOffset();
-		}
-
-		public char getChar() throws BadLocationException {
-			return getChar(0);
-		}
-		
-		public char getChar(int i) throws BadLocationException {
-			return fDoc.getChar(fCaretOffset+i);
-		}
-		
-		public String getLine() throws BadLocationException {
-			return getLine(0);
-		}
-
-		public String getLine(int i) throws BadLocationException {
-			IRegion region = fDoc.getLineInformation(getCaretLine() + i);
-			return fDoc.get(region.getOffset(), region.getLength());
-		}
-
-		public String getContentType() throws BadLocationException {
-			return getContentType(0);
-		}
-
-		public String getContentType(int i) throws BadLocationException {
-			return TextUtilities.getContentType(fDoc, fPartitioning, fCaretOffset + i, false);
-		}
-	}
-
-	/**
-	 * A DocumentCommand with public constructor and exec method.
-	 */
-	static class TestDocumentCommand extends DocumentCommand {
-
-		public TestDocumentCommand(int offset, int length, String text) {
-			super();
-			doit = true;
-			this.text = text;
-
-			this.offset = offset;
-			this.length = length;
-
-			owner = null;
-			caretOffset = -1;
-		}
-
-		/**
-		 * Returns new caret position.
-		 */
-		public int exec(IDocument doc) throws BadLocationException {
-			doc.replace(offset, length, text);
-			return caretOffset != -1 ?
-						caretOffset :
-						offset + (text == null ? 0 : text.length());
-		}
-	}
+public class CAutoIndentTest extends AbstractAutoEditTest {
 
 	private HashMap fOptions;
 	private List fStatusLog;
@@ -289,8 +97,9 @@ public class CAutoIndentTest extends BaseTestCase {
 		IDocument doc = new Document();
 		textTools.setupCDocument(doc);
 		AutoEditTester tester = new AutoEditTester(doc, ICPartitions.C_PARTITIONING);
+		
 		tester.setAutoEditStrategy(IDocument.DEFAULT_CONTENT_TYPE, new CAutoIndentStrategy(ICPartitions.C_PARTITIONING, null));
-		tester.setAutoEditStrategy(ICPartitions.C_MULTI_LINE_COMMENT, new CCommentAutoIndentStrategy());
+		tester.setAutoEditStrategy(ICPartitions.C_MULTI_LINE_COMMENT, new DefaultMultilineCommentAutoEditStrategy());
 		tester.setAutoEditStrategy(ICPartitions.C_PREPROCESSOR, new CAutoIndentStrategy(ICPartitions.C_PARTITIONING, null));
 		return tester;
 	}
@@ -385,7 +194,7 @@ public class CAutoIndentTest extends BaseTestCase {
 	public void testCCommentAutoIndent() throws BadLocationException {
 		AutoEditTester tester = createAutoEditTester(); //$NON-NLS-1$
 		tester.type("/*\n"); //$NON-NLS-1$
-		assertEquals(ICPartitions.C_MULTI_LINE_COMMENT, tester.getContentType(-1));
+		assertEquals(ICPartitions.C_MULTI_LINE_COMMENT, tester.getContentType(tester.getCaretOffset()-1));
 		assertEquals(1, tester.getCaretLine());
 		assertEquals(3, tester.getCaretColumn());
 		assertEquals(" * ", tester.getLine()); //$NON-NLS-1$

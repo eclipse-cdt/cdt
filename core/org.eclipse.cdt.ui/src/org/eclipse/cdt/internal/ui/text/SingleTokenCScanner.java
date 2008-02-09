@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,42 +8,36 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
 import java.util.List;
-import org.eclipse.jface.preference.IPreferenceStore;
+
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.Token;
 
+import org.eclipse.cdt.ui.text.ITokenStoreFactory;
 
 /**
  * 
  */
-public final class SingleTokenCScanner extends AbstractCScanner{
-	
+public final class SingleTokenCScanner extends AbstractCScanner {
+	private String fProperty;
+	private int position, end;
+	private int size;
 	protected IToken fDefaultReturnToken;
-	private String[] fProperty;
 	
-	public SingleTokenCScanner(IColorManager manager, IPreferenceStore store, String property) {
-		super(manager, store, 20);
-		fProperty= new String[] { property };
-		initialize();
+	public SingleTokenCScanner(ITokenStoreFactory factory, String property) {
+		super(factory.createTokenStore(new String[] {property}), 20);
+		fProperty= property;
+		setRules(createRules());
 	}
 
-	/*
-	 * @see AbstractCScanner#getTokenProperties()
-	 */
-	protected String[] getTokenProperties() {
-		return fProperty;
-	}
-
-	/*
-	 * @see AbstractCScanner#createRules()
-	 */
-	protected List createRules() {
-		fDefaultReturnToken= getToken(fProperty[0]);
+	protected List<IRule> createRules() {
+		fDefaultReturnToken= getToken(fProperty);
 		setDefaultReturnToken(fDefaultReturnToken);
 		return null;
 	}
@@ -51,9 +45,6 @@ public final class SingleTokenCScanner extends AbstractCScanner{
 	/**
 	 * setRange -- sets the range to be scanned
 	 */
-	
-	private int position, end;
-	private int size;
 	public void setRange(IDocument document, int offset, int length) {
 		
 		super.setRange(document, offset, length);
@@ -61,13 +52,13 @@ public final class SingleTokenCScanner extends AbstractCScanner{
 		size = length;
 		end = offset + length;
 	}
+	
 	/**
 	 * Returns the next token in the document.
 	 *
 	 * @return the next token in the document
 	 */
 	public IToken nextToken() {
-		
 		fTokenOffset = position;
 		
 		if(position < end) {
@@ -81,30 +72,6 @@ public final class SingleTokenCScanner extends AbstractCScanner{
 	public int getTokenLength() {
 		return size;
 	}
-	
-	//public int getTokenOffset() {
-	//	return position;
-	//}
-		/* while (true) {
-			
-			fTokenOffset= fOffset;
-			fColumn= UNDEFINED;
-			
-			if (fRules != null) {
-				for (int i= 0; i < fRules.length; i++) {
-					token= (fRules[i].evaluate(this));
-					if (!token.isUndefined())
-						return token;
-				}
-			}
-			
-			if (read() == EOF)
-				return Token.EOF;
-			else
-				return fDefaultReturnToken;
-		} 
-	} */
-
 }
 
 

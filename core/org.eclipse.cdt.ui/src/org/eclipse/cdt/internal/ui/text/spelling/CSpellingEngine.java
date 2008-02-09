@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * 	   Sergey Prigogin (Google)
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.text.spelling;
@@ -15,6 +16,8 @@ package org.eclipse.cdt.internal.ui.text.spelling;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentExtension3;
+import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.TextUtilities;
@@ -25,9 +28,15 @@ import org.eclipse.ui.texteditor.spelling.ISpellingProblemCollector;
 
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.ICPartitions;
+import org.eclipse.cdt.ui.text.doctools.IDocCommentDictionary;
+import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
+import org.eclipse.cdt.ui.text.doctools.IDocCommentSimpleDictionary;
 
 import org.eclipse.cdt.internal.ui.text.CTextTools;
+import org.eclipse.cdt.internal.ui.text.FastCPartitioner;
+import org.eclipse.cdt.internal.ui.text.doctools.DocCommentSpellDictionary;
 import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellChecker;
+import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellDictionary;
 import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellEventListener;
 
 /**
@@ -40,8 +49,19 @@ public class CSpellingEngine extends SpellingEngine {
 	protected void check(IDocument document, IRegion[] regions, ISpellChecker checker, ISpellingProblemCollector collector, IProgressMonitor monitor) {
 		ISpellEventListener listener= new SpellEventListener(collector, document);
 		boolean isIgnoringStringLiterals= SpellingPreferences.isIgnoreStringLiterals();
+		
+		ISpellDictionary toRemove= null;
 		try {
 			checker.addListener(listener);
+			
+			IDocCommentOwner owner= null;
+			if(document instanceof IDocumentExtension3) {
+				IDocumentPartitioner partitioner= ((IDocumentExtension3)document).getDocumentPartitioner(ICPartitions.C_PARTITIONING);
+					if(partitioner instanceof FastCPartitioner) {
+						owner= ((FastCPartitioner)partitioner).getDocCommentOwner();
+					}
+			}
+			
 			try {
 				for (int i= 0; i < regions.length; i++) {
 					IRegion region= regions[i];
@@ -57,6 +77,22 @@ public class CSpellingEngine extends SpellingEngine {
 						if (isIgnoringStringLiterals && type.equals(ICPartitions.C_STRING))
 							continue;
 
+						if(owner!=null) {
+							IDocCommentDictionary dict= null;
+							
+							if (type.equals(ICPartitions.C_MULTI_LINE_DOC_COMMENT)) {
+								dict= owner.getMultilineConfiguration().getSpellingDictionary();
+							} else if (type.equals(ICPartitions.C_SINGLE_LINE_DOC_COMMENT)) {
+								dict= owner.getSinglelineConfiguration().getSpellingDictionary();
+							}
+							
+							if(dict instanceof IDocCommentSimpleDictionary) {
+								ISpellDictionary sd= new DocCommentSpellDictionary((IDocCommentSimpleDictionary)dict);
+								checker.addDictionary(sd);
+								toRemove= sd;
+							}
+						}
+						
 						if (type.equals(ICPartitions.C_PREPROCESSOR)) {
 							CTextTools textTools = CUIPlugin.getDefault().getTextTools();
 							RuleBasedScanner scanner = textTools.getCppPreprocessorScanner();
@@ -101,12 +137,19 @@ public class CSpellingEngine extends SpellingEngine {
 								!type.equals(ICPartitions.C_CHARACTER)) {
 							checker.execute(new SpellCheckIterator(document, partition, checker.getLocale()));
 						}
+						
+						if(toRemove != null) {
+							checker.removeDictionary(toRemove);
+							toRemove= null;
+						}
 					}
 				}
 			} catch (BadLocationException x) {
 				CUIPlugin.getDefault().log(x);
 			}
 		} finally {
+			if(toRemove!=null)
+				checker.removeDictionary(toRemove);
 			checker.removeListener(listener);
 		}
 	}

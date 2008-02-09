@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,30 +9,29 @@
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
  *     Anton Leherbauer (Wind River Systems)
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor.asm;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.rules.EndOfLineRule;
 import org.eclipse.jface.text.rules.IRule;
-import org.eclipse.jface.text.rules.Token;
+import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.WhitespaceRule;
 import org.eclipse.jface.text.rules.WordPatternRule;
 import org.eclipse.jface.text.rules.WordRule;
-import org.eclipse.jface.util.PropertyChangeEvent;
 
 import org.eclipse.cdt.core.model.IAsmLanguage;
+import org.eclipse.cdt.ui.text.ITokenStoreFactory;
 
 import org.eclipse.cdt.internal.ui.text.AbstractCScanner;
 import org.eclipse.cdt.internal.ui.text.ICColorConstants;
-import org.eclipse.cdt.internal.ui.text.IColorManager;
 import org.eclipse.cdt.internal.ui.text.util.CWhitespaceDetector;
 
 
-/**
+/*
  * An assembly code scanner.
  */
 public final class AsmCodeScanner extends AbstractCScanner {
@@ -50,27 +49,15 @@ public final class AsmCodeScanner extends AbstractCScanner {
 	/**
 	 * Creates an assembly code scanner.
 	 */
-	public AsmCodeScanner(IColorManager manager, IPreferenceStore store, IAsmLanguage asmLanguage) {
-		super(manager, store);
+	public AsmCodeScanner(ITokenStoreFactory factory, IAsmLanguage asmLanguage) {
+		super(factory.createTokenStore(fgTokenProperties));
 		fAsmLanguage= asmLanguage;
-		initialize();
-	}
-	
-	/*
-	 * @see AbstractCScanner#getTokenProperties()
-	 */
-	protected String[] getTokenProperties() {
-		return fgTokenProperties;
+		setRules(createRules());
 	}
 
-	/*
-	 * @see AbstractCScanner#createRules()
-	 */
-	protected List createRules() {
-				
-		List rules= new ArrayList();		
-		
-		Token token;
+	protected List<IRule> createRules() {
+		IToken token;
+		List<IRule> rules= new ArrayList<IRule>();
 
 		// Add rule(s) for single line comments
 		token= getToken(ICColorConstants.C_SINGLE_LINE_COMMENT);
@@ -82,7 +69,7 @@ public final class AsmCodeScanner extends AbstractCScanner {
 		// Add generic whitespace rule.
 		rules.add(new WhitespaceRule(new CWhitespaceDetector()));
 
-		final Token other= getToken(ICColorConstants.C_DEFAULT);		
+		final IToken other= getToken(ICColorConstants.C_DEFAULT);		
 
 		// Add rule for labels
 		token= getToken(ICColorConstants.ASM_LABEL);
@@ -104,14 +91,5 @@ public final class AsmCodeScanner extends AbstractCScanner {
 
 		setDefaultReturnToken(other);
 		return rules;
-	}
-
-	/*
-	 * @see AbstractCScanner#adaptToPreferenceChange(PropertyChangeEvent)
-	 */
-	public void adaptToPreferenceChange(PropertyChangeEvent event) {
-		if (super.affectsBehavior(event)) {
-			super.adaptToPreferenceChange(event);
-		}
 	}
 }

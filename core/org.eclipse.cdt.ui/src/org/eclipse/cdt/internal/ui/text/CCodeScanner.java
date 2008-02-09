@@ -9,19 +9,20 @@
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
  *     Anton Leherbauer (Wind River Systems)
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.rules.Token;
+import org.eclipse.jface.text.rules.IRule;
+import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.WhitespaceRule;
 import org.eclipse.jface.text.rules.WordRule;
-import org.eclipse.jface.util.PropertyChangeEvent;
 
 import org.eclipse.cdt.core.model.ICLanguageKeywords;
+import org.eclipse.cdt.ui.text.ITokenStoreFactory;
 
 import org.eclipse.cdt.internal.ui.text.util.CWhitespaceDetector;
 import org.eclipse.cdt.internal.ui.text.util.CWordDetector;
@@ -45,31 +46,22 @@ public final class CCodeScanner extends AbstractCScanner {
 
 	/**
 	 * Creates a C/C++ code scanner.
-	 * 
-     * @param manager  the color manager
-     * @param store  the reference store
+	 * @param factory 
      * @param keywords  the keywords defined by the language dialect
 	 */
-	public CCodeScanner(IColorManager manager, IPreferenceStore store, ICLanguageKeywords keywords) {
-		super(manager, store);
+	public CCodeScanner(ITokenStoreFactory factory, ICLanguageKeywords keywords) {
+		super(factory.createTokenStore(fgTokenProperties));
 		fKeywords= keywords;
-		initialize();
+		setRules(createRules());
 	}
-
-	/*
-	 * @see AbstractCScanner#getTokenProperties()
-	 */
-	protected String[] getTokenProperties() {
-		return fgTokenProperties;
-	}
-
+	
 	/*
 	 * @see AbstractCScanner#createRules()
 	 */
-	protected List createRules() {
+	protected List<IRule> createRules() {
 				
-		List rules= new ArrayList();		
-		Token token;
+		List<IRule> rules= new ArrayList<IRule>();		
+		IToken token;
 		
 		// Add generic white space rule.
 		rules.add(new WhitespaceRule(new CWhitespaceDetector()));
@@ -104,14 +96,5 @@ public final class CCodeScanner extends AbstractCScanner {
         
 		setDefaultReturnToken(getToken(ICColorConstants.C_DEFAULT));
 		return rules;
-	}
-
-	/*
-	 * @see AbstractCScanner#adaptToPreferenceChange(PropertyChangeEvent)
-	 */
-	public void adaptToPreferenceChange(PropertyChangeEvent event) {
-		if (super.affectsBehavior(event)) {
-			super.adaptToPreferenceChange(event);
-		}
 	}
 }

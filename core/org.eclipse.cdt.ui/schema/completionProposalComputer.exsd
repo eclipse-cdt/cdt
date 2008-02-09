@@ -115,6 +115,10 @@ and must have a public 0-argument constructor.
                   </enumeration>
                   <enumeration value="__c_preprocessor">
                   </enumeration>
+                  <enumeration value="__c_multiline_doc_comment">
+                  </enumeration>
+                  <enumeration value="__c_singleline_doc_comment">
+                  </enumeration>
                </restriction>
             </simpleType>
          </attribute>

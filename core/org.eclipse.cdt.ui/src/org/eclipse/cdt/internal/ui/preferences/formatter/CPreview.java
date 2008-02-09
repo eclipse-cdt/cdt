@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Sergey Prigogin, Google
  *     Anton Leherbauer (Wind River Systems)
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences.formatter;
 
@@ -110,7 +111,7 @@ public abstract class CPreview {
 		CTextTools tools= CUIPlugin.getDefault().getTextTools();
 		fPreviewDocument= new Document();
 		fWorkingValues= workingValues;
-		tools.setupCDocumentPartitioner( fPreviewDocument, ICPartitions.C_PARTITIONING);	
+		tools.setupCDocumentPartitioner(fPreviewDocument, ICPartitions.C_PARTITIONING, null);	
 		
 		PreferenceStore prioritizedSettings= new PreferenceStore();
 		

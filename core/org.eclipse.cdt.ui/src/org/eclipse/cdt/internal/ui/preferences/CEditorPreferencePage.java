@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,11 +9,13 @@
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
  *     Anton Leherbauer (Wind River Systems)
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
 import java.util.ArrayList;
 
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -37,10 +39,15 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
 import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.dialogs.DocCommentOwnerComposite;
+import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
+import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore.OverlayKey;
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
+import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
 
 /*
  * The page for setting the editor options.
@@ -60,14 +67,14 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 	private List fAppearanceColorList;
 	private ColorSelector fAppearanceColorEditor;
 	private Button fAppearanceColorDefault;
-
-
+	private DocCommentOwnerComposite fDocCommentOwnerComposite;
+	
 	public CEditorPreferencePage() {
 		super();
 	}
 
 	protected OverlayPreferenceStore.OverlayKey[] createOverlayStoreKeys() {
-		ArrayList overlayKeys = new ArrayList();
+		ArrayList<OverlayKey> overlayKeys = new ArrayList<OverlayKey>();
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, CEditor.SUB_WORD_NAVIGATION));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, CEditor.MATCHING_BRACKETS_COLOR));
@@ -117,8 +124,8 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 	}
 
 	private Control createAppearancePage(Composite parent) {
-
-		Composite behaviorComposite = new Composite(parent, SWT.NONE);
+		Composite behaviorComposite= ControlFactory.createGroup(parent, PreferencesMessages.CEditorPreferencePage_GeneralAppearanceGroupTitle, 1);
+		
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		behaviorComposite.setLayout(layout);
@@ -269,8 +276,17 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 
 		createHeader(parent);
 
+		ControlFactory.createEmptySpace(parent, 2);
 		createAppearancePage(parent);
 
+		ControlFactory.createEmptySpace(parent, 2);
+		
+		String dsc= PreferencesMessages.CEditorPreferencePage_SelectDocToolDescription;
+		String msg= PreferencesMessages.CEditorPreferencePage_WorkspaceDefaultLabel;
+		IDocCommentOwner workspaceOwner= DocCommentOwnerManager.getInstance().getWorkspaceCommentOwner();
+		fDocCommentOwnerComposite= new DocCommentOwnerComposite(parent, workspaceOwner, dsc, msg);
+		fDocCommentOwnerComposite.setLayoutData(GridDataFactory.fillDefaults().grab(true,false).create());
+		
 		initialize();
 
 		return parent;
@@ -289,6 +305,14 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 				handleAppearanceColorListSelection();
 			}
 		});
+	}
+
+	/*
+	 * @see org.eclipse.cdt.internal.ui.preferences.AbstractPreferencePage#performOk()
+	 */
+	public boolean performOk() {
+		DocCommentOwnerManager.getInstance().setWorkspaceCommentOwner(fDocCommentOwnerComposite.getSelectedDocCommentOwner());
+		return super.performOk();
 	}
 
 	/**

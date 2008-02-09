@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,6 +73,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.ActiveShellExpression;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
@@ -155,8 +156,8 @@ class EditTemplateDialog extends StatusDialog {
 
 	private StatusInfo fValidationStatus;
 	private boolean fSuppressError= true; // https://bugs.eclipse.org/bugs/show_bug.cgi?id=4354
-	private Map fGlobalActions= new HashMap(10);
-	private List fSelectionActions = new ArrayList(3);
+	private Map<String, TextViewerAction> fGlobalActions= new HashMap<String, TextViewerAction>(10);
+	private List<String> fSelectionActions = new ArrayList<String>(3);
 	private String[][] fContextTypes;
 	
 	private ContextTypeRegistry fContextTypeRegistry;
@@ -187,7 +188,7 @@ class EditTemplateDialog extends StatusDialog {
 	
 //		String delim= new Document().getLegalLineDelimiters()[0];
 		
-		List contexts= new ArrayList();
+		List<String[]> contexts= new ArrayList<String[]>();
 		for (Iterator it= registry.contextTypes(); it.hasNext();) {
 			TemplateContextType type= (TemplateContextType) it.next();
 			// TODO cppdoc? doxygen?
@@ -196,13 +197,11 @@ class EditTemplateDialog extends StatusDialog {
 //			else
 				contexts.add(0, new String[] { type.getId(), type.getName(), "" }); //$NON-NLS-1$
 		}
-		Collections.sort(contexts, new Comparator() {
-			public int compare(Object o1, Object o2) {
-				String[] lhs= (String[]) o1;
-				String[] rhs= (String[]) o2;
-				return lhs[1].compareTo(rhs[1]);
+		Collections.sort(contexts, new Comparator<String[]>() {
+			public int compare(String[] s1, String[] s2) {
+				return s1[1].compareTo(s2[1]);
 			}});
-		fContextTypes= (String[][]) contexts.toArray(new String[contexts.size()][]);
+		fContextTypes= contexts.toArray(new String[contexts.size()][]);
 		
 		fValidationStatus= new StatusInfo();
 		
@@ -413,7 +412,7 @@ class EditTemplateDialog extends StatusDialog {
 		String prefix= getPrefix();
 		IDocument document= new Document(prefix + fTemplate.getPattern());
 		CTextTools tools= CUIPlugin.getDefault().getTextTools();
-		tools.setupCDocumentPartitioner(document, ICPartitions.C_PARTITIONING);
+		tools.setupCDocumentPartitioner(document, ICPartitions.C_PARTITIONING, null);
 		IPreferenceStore store= CUIPlugin.getDefault().getCombinedPreferenceStore();
 		SourceViewer viewer= new CSourceViewer(parent, null, null, false, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL, store);
 		CodeTemplateSourceViewerConfiguration configuration= new CodeTemplateSourceViewerConfiguration(tools.getColorManager(), store, null, fTemplateProcessor);
@@ -475,7 +474,7 @@ class EditTemplateDialog extends StatusDialog {
 	}
 
 	private void initializeActions() {
-		final ArrayList handlerActivations= new ArrayList(3);
+		final ArrayList<IHandlerActivation> handlerActivations= new ArrayList<IHandlerActivation>(3);
 		final IHandlerService handlerService= (IHandlerService) PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
 		getShell().addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
@@ -536,28 +535,28 @@ class EditTemplateDialog extends StatusDialog {
 
 	private void fillContextMenu(IMenuManager menu) {
 		menu.add(new GroupMarker(ITextEditorActionConstants.GROUP_UNDO));
-		menu.appendToGroup(ITextEditorActionConstants.GROUP_UNDO, (IAction) fGlobalActions.get(ITextEditorActionConstants.UNDO));
-		menu.appendToGroup(ITextEditorActionConstants.GROUP_UNDO, (IAction) fGlobalActions.get(ITextEditorActionConstants.REDO));
+		menu.appendToGroup(ITextEditorActionConstants.GROUP_UNDO, fGlobalActions.get(ITextEditorActionConstants.UNDO));
+		menu.appendToGroup(ITextEditorActionConstants.GROUP_UNDO, fGlobalActions.get(ITextEditorActionConstants.REDO));
 		
 		menu.add(new Separator(ITextEditorActionConstants.GROUP_EDIT));
-		menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, (IAction) fGlobalActions.get(ITextEditorActionConstants.CUT));
-		menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, (IAction) fGlobalActions.get(ITextEditorActionConstants.COPY));
-		menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, (IAction) fGlobalActions.get(ITextEditorActionConstants.PASTE));
-		menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, (IAction) fGlobalActions.get(ITextEditorActionConstants.SELECT_ALL));
+		menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, fGlobalActions.get(ITextEditorActionConstants.CUT));
+		menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, fGlobalActions.get(ITextEditorActionConstants.COPY));
+		menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, fGlobalActions.get(ITextEditorActionConstants.PASTE));
+		menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, fGlobalActions.get(ITextEditorActionConstants.SELECT_ALL));
 
 		menu.add(new Separator(IContextMenuConstants.GROUP_GENERATE));
-		menu.appendToGroup(IContextMenuConstants.GROUP_GENERATE, (IAction) fGlobalActions.get("ContentAssistProposal")); //$NON-NLS-1$
+		menu.appendToGroup(IContextMenuConstants.GROUP_GENERATE, fGlobalActions.get("ContentAssistProposal")); //$NON-NLS-1$
 	}
 	
 
 	protected void updateSelectionDependentActions() {
-		Iterator iterator= fSelectionActions.iterator();
+		Iterator<String> iterator= fSelectionActions.iterator();
 		while (iterator.hasNext())
-			updateAction((String)iterator.next());
+			updateAction(iterator.next());
 	}
 
 	protected void updateAction(String actionId) {
-		IAction action= (IAction) fGlobalActions.get(actionId);
+		IAction action= fGlobalActions.get(actionId);
 		if (action instanceof IUpdate)
 			((IUpdate) action).update();
 	}

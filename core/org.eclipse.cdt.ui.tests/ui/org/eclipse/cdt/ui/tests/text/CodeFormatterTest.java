@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text;
 
@@ -209,7 +210,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 
 	//int verylooooooooooooooooooooooooooooooooooongname = 0000000000000000000000000000000;
 	
-	//int verylooooooooooooooooooooooooooooooooooongname = 
+	//int verylooooooooooooooooooooooooooooooooooongname =
 	//		0000000000000000000000000000000;
 	public void testLineWrappingOfInitializerExpression_Bug200961() throws Exception {
 		assertFormatterResult();

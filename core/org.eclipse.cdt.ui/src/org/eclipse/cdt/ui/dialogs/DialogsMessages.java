@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *    IBM Corporation
+ *      Markus Schorn - initial API and implementation
+ *      IBM Corporation
+ *      Andrew Ferguson (Symbian)
  *******************************************************************************/
 
 package org.eclipse.cdt.ui.dialogs;
@@ -37,6 +38,12 @@ public class DialogsMessages extends NLS {
 	public static String CacheSizeBlock_indexDatabaseCache;
 	public static String CacheSizeBlock_limitRelativeToMaxHeapSize;
 	
+	public static String DocCommentOwnerBlock_DocToolLabel;
+	public static String DocCommentOwnerBlock_EnableProjectSpecificSettings;
+	public static String DocCommentOwnerBlock_SelectDocToolDescription;
+	public static String DocCommentOwnerCombo_None;
+	public static String DocCommentOwnerComposite_DocumentationToolGroupTitle;
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, DialogsMessages.class);

@@ -9,7 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
  *     Anton Leherbauer (Wind River Systems)
- *     Sergey Prigogin, Google
+ *     Sergey Prigogin (Google)
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
@@ -44,7 +45,6 @@ import org.eclipse.cdt.internal.ui.editor.IndentUtil;
  * Auto indent strategy sensitive to brackets.
  */
 public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
-	private static final String MULTILINE_COMMENT_CLOSE = "*/"; //$NON-NLS-1$
 	/** The line comment introducer. Value is "{@value}" */
 	private static final String LINE_COMMENT= "//"; //$NON-NLS-1$
 //	private static final GCCScannerExtensionConfiguration C_GNU_SCANNER_EXTENSION = new GCCScannerExtensionConfiguration();
@@ -1120,42 +1120,19 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 			super.customizeDocumentCommand(d, c);
 			return;
 		}
-
-		if (c.length == 0 && c.text != null && isLineDelimiter(d, c.text)) {
-			if (isAppendToOpenMultilineComment(d, c)) {
-				// special case: multi-line comment at end of document (bug 48339)
-				CCommentAutoIndentStrategy.commentIndentAfterNewLine(d, c);
-			} else {
-				smartIndentAfterNewLine(d, c);
-			}
-		} else if ("/".equals(c.text) && isAppendToOpenMultilineComment(d, c)) { //$NON-NLS-1$
-			// special case: multi-line comment at end of document (bug 48339)
-			CCommentAutoIndentStrategy.commentIndentForCommentEnd(d, c);
+		
+		/*
+         * I removed the workaround for 48339 as I believe the recent changes to 
+         * FastCPartitioner are enough to fix this.
+         */
+		boolean isNewLine= c.length == 0 && c.text != null && isLineDelimiter(d, c.text);
+		if (isNewLine) {
+			smartIndentAfterNewLine(d, c);
 		} else if (c.text.length() == 1) {
 			smartIndentOnKeypress(d, c);
 		} else if (c.text.length() > 1 && getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_SMART_PASTE)) {
 			smartPaste(d, c); // no smart backspace for paste
 		}
-	}
-	
-	/**
-	 * Check, if the command appends to an open multi-line comment.
-	 * @param d  the document
-	 * @param c  the document command
-	 * @return true, if the command appends to an open multi-line comment.
-	 */
-	private boolean isAppendToOpenMultilineComment(IDocument d, DocumentCommand c) {
-		if (d.getLength() >= 2 && c.offset == d.getLength()) {
-			try {
-				String contentType = TextUtilities.getContentType(d, fPartitioning, c.offset - 1, false);
-				if (ICPartitions.C_MULTI_LINE_COMMENT.equals(contentType)) {
-					return !d.get(c.offset - 2, 2).equals(MULTILINE_COMMENT_CLOSE);
-				}
-			} catch (BadLocationException exc) {
-				// see below
-			}
-		}
-		return false;
 	}
 
 	private static IPreferenceStore getPreferenceStore() {

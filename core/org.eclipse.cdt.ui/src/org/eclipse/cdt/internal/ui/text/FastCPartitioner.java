@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
@@ -16,6 +17,7 @@ import org.eclipse.jface.text.rules.FastPartitioner;
 import org.eclipse.jface.text.rules.IPartitionTokenScanner;
 
 import org.eclipse.cdt.ui.text.ICPartitions;
+import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
 
 /**
  * A slightly adapted FastPartitioner.
@@ -44,10 +46,30 @@ public class FastCPartitioner extends FastPartitioner {
 					if (fDocument.getChar(offset - 1) != '\n') {
 						return region;
 					}
+				} else if (ICPartitions.C_MULTI_LINE_DOC_COMMENT.equals(region.getType())) {
+					if (!fDocument.get(offset - 2, 2).equals("*/")) { //$NON-NLS-1$
+						return region;
+					}
+				} else if (ICPartitions.C_SINGLE_LINE_DOC_COMMENT.equals(region .getType())) {
+					if (fDocument.getChar(offset - 1) != '\n') {
+						return region;
+					}
 				}
 			} catch (BadLocationException exc) {
 			}
 		}
 		return super.getPartition(offset, preferOpenPartitions);
+	}
+	
+	/**
+	 * @return the DocCommentOwner associated with this partition scanner, or null
+	 * if there is no owner.
+	 * @since 5.0
+	 */
+	public IDocCommentOwner getDocCommentOwner() {
+		if(fScanner instanceof FastCPartitionScanner) {
+			return ((FastCPartitionScanner)fScanner).getDocCommentOwner();
+		}
+		return null;
 	}
 }

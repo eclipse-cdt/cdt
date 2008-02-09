@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,6 +51,9 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.osgi.framework.Bundle;
 
+/**
+ * Utilities for reading test source code from plug-in .java sources
+ */
 public class TestSourceReader {
 
 	/**
@@ -85,7 +88,7 @@ public class TestSourceReader {
 	    List contents = new ArrayList();
 	    StringBuffer content = new StringBuffer();
 	    for(String line = br.readLine(); line!=null; line = br.readLine()) {
-	    	line = line.trim();
+	    	line = line.replaceFirst("^\\s*", ""); // replace leading whitespace, preserve trailing
 	    	if(line.startsWith("//")) {
 	    		content.append(line.substring(2)+"\n");
 	    	} else {
@@ -113,7 +116,7 @@ public class TestSourceReader {
 	 * @param lookfor string to be searched for
 	 * @param fullPath full path of the workspace file
 	 * @return the offset or -1
-	 * @throws CoreException
+	 * @throws Exception 
 	 * @throws UnsupportedEncodingException 
 	 * @since 4.0
 	 */

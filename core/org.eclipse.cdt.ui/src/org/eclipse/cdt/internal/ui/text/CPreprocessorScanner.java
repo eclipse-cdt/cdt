@@ -7,20 +7,21 @@
  *
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.rules.IRule;
+import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.PatternRule;
-import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WhitespaceRule;
 import org.eclipse.jface.text.rules.WordRule;
 
 import org.eclipse.cdt.core.model.ICLanguageKeywords;
+import org.eclipse.cdt.ui.text.ITokenStoreFactory;
 
 import org.eclipse.cdt.internal.ui.text.util.CWhitespaceDetector;
 import org.eclipse.cdt.internal.ui.text.util.CWordDetector;
@@ -45,26 +46,22 @@ public class CPreprocessorScanner extends AbstractCScanner {
 	
 	/**
 	 * Creates a C/C++ preprocessor scanner.
-	 * 
-     * @param manager the color manager
-     * @param store  the preference store
      * @param keywords  the keywords defined by the language dialect
 	 */
-	public CPreprocessorScanner(IColorManager manager, IPreferenceStore store, ICLanguageKeywords keywords) {
-		super(manager, store);
+	public CPreprocessorScanner(ITokenStoreFactory factory, ICLanguageKeywords keywords) {
+		super(factory.createTokenStore(fgTokenProperties));
 		fKeywords= keywords;
-		initialize();
+		setRules(createRules());
 	}
 
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.AbstractCScanner#createRules()
 	 */
-	protected List createRules() {
+	protected List<IRule> createRules() {
+		IToken defaultToken= getToken(ICColorConstants.PP_DEFAULT);
 
-		Token defaultToken= getToken(ICColorConstants.PP_DEFAULT);
-
-		List rules= new ArrayList();		
-		Token token;
+		List<IRule> rules= new ArrayList<IRule>();		
+		IToken token;
 		
 		// Add generic white space rule.
 		rules.add(new WhitespaceRule(new CWhitespaceDetector()));
@@ -110,12 +107,4 @@ public class CPreprocessorScanner extends AbstractCScanner {
         setDefaultReturnToken(defaultToken);
 		return rules;
 	}
-
-	/*
-	 * @see org.eclipse.cdt.internal.ui.text.AbstractCScanner#getTokenProperties()
-	 */
-	protected String[] getTokenProperties() {
-		return fgTokenProperties;
-	}
-
 }

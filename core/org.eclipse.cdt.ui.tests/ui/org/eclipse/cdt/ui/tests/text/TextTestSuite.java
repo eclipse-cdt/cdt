@@ -7,11 +7,14 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Andrew Ferguson (Symbian)
  *******************************************************************************/
 
 package org.eclipse.cdt.ui.tests.text;
 
 import junit.framework.TestSuite;
+
+import org.eclipse.cdt.ui.tests.text.doctools.DocCommentTestSuite;
 
 public class TextTestSuite extends TestSuite {
 
@@ -22,6 +25,9 @@ public class TextTestSuite extends TestSuite {
     public TextTestSuite() {
         super(TextTestSuite.class.getName());
 
+        // documentation tool extension tests
+        addTest(DocCommentTestSuite.suite());
+        
         // partitioning tests
 		addTest(PartitionTokenScannerTest.suite());
 		addTest(CPartitionerTest.suite());

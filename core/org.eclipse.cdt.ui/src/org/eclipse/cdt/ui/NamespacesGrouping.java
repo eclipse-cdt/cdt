@@ -13,8 +13,10 @@ package org.eclipse.cdt.ui;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.INamespace;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 
@@ -42,11 +44,11 @@ public class NamespacesGrouping extends CElementGrouping {
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
 	 */
 	public Object[] getChildren(Object object) {
-		ArrayList list = new ArrayList();
+		List<ICElement> list = new ArrayList<ICElement>();
 		for (int i = 0; i < fNamespaces.length; ++i) {
 			INamespace nspace = fNamespaces[i];
 			try {
-				Object[] objs = nspace.getChildren();
+				ICElement[] objs = nspace.getChildren();
 				list.addAll(Arrays.asList(objs));
 			} catch (CModelException e) {
 				//

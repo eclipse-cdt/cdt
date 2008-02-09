@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
  *     Anton Leherbauer (Wind River Systems)
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.compare;
 
@@ -160,7 +161,7 @@ public class CStructureCreator extends StructureCreator {
 	 * @see org.eclipse.compare.structuremergeviewer.StructureCreator#getDocumentPartitioner()
 	 */
 	protected IDocumentPartitioner getDocumentPartitioner() {
-		return CUIPlugin.getDefault().getTextTools().createDocumentPartitioner();
+		return CUIPlugin.getDefault().getTextTools().createDocumentPartitioner(null);
 	}
 	
 	private static String readString(IStreamContentAccessor sa) throws CoreException {

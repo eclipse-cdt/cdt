@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,6 +44,8 @@ import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.ILanguageUI;
 import org.eclipse.cdt.ui.text.ICPartitions;
+import org.eclipse.cdt.ui.text.ITokenStore;
+import org.eclipse.cdt.ui.text.ITokenStoreFactory;
 
 import org.eclipse.cdt.internal.ui.text.AbstractCScanner;
 import org.eclipse.cdt.internal.ui.text.CCommentScanner;
@@ -52,6 +54,7 @@ import org.eclipse.cdt.internal.ui.text.ICColorConstants;
 import org.eclipse.cdt.internal.ui.text.IColorManager;
 import org.eclipse.cdt.internal.ui.text.PartitionDamager;
 import org.eclipse.cdt.internal.ui.text.SingleTokenCScanner;
+import org.eclipse.cdt.internal.ui.text.TokenStore;
 
 
 public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration {
@@ -123,9 +126,9 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 	 * Initializes the scanners.
 	 */
 	private void initializeScanners() {
-		fMultilineCommentScanner= new CCommentScanner(getColorManager(), fPreferenceStore, ICColorConstants.C_MULTI_LINE_COMMENT);
-		fSinglelineCommentScanner= new CCommentScanner(getColorManager(), fPreferenceStore, ICColorConstants.C_SINGLE_LINE_COMMENT);
-		fStringScanner= new SingleTokenCScanner(getColorManager(), fPreferenceStore, ICColorConstants.C_STRING);
+		fMultilineCommentScanner= new CCommentScanner(getTokenStoreFactory(), ICColorConstants.C_MULTI_LINE_COMMENT);
+		fSinglelineCommentScanner= new CCommentScanner(getTokenStoreFactory(), ICColorConstants.C_SINGLE_LINE_COMMENT);
+		fStringScanner= new SingleTokenCScanner(getTokenStoreFactory(), ICColorConstants.C_STRING);
 	}
 
 	/**
@@ -167,10 +170,10 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 		}
 		AbstractCScanner scanner= null;
 		if (language instanceof IAsmLanguage) {
-			scanner= new AsmPreprocessorScanner(getColorManager(), fPreferenceStore, (IAsmLanguage)language);
+			scanner= new AsmPreprocessorScanner(getTokenStoreFactory(), (IAsmLanguage)language);
 		}
 		if (scanner == null) {
-			scanner= new AsmPreprocessorScanner(getColorManager(), fPreferenceStore, AssemblyLanguage.getDefault());
+			scanner= new AsmPreprocessorScanner(getTokenStoreFactory(), AssemblyLanguage.getDefault());
 		}
 		fPreprocessorScanner= scanner;
 		return fPreprocessorScanner;
@@ -187,14 +190,14 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 		RuleBasedScanner scanner= null;
 		if (language instanceof IAsmLanguage) {
 			IAsmLanguage asmLang= (IAsmLanguage)language;
-			scanner = new AsmCodeScanner(getColorManager(), fPreferenceStore, asmLang);
+			scanner = new AsmCodeScanner(getTokenStoreFactory(), asmLang);
 		} else if (language != null) {
 			ILanguageUI languageUI = (ILanguageUI)language.getAdapter(ILanguageUI.class);
 			if (languageUI != null)
 				scanner = languageUI.getCodeScanner();
 		}
 		if (scanner == null) {
-			scanner = new AsmCodeScanner(getColorManager(), fPreferenceStore, AssemblyLanguage.getDefault());
+			scanner = new AsmCodeScanner(getTokenStoreFactory(), AssemblyLanguage.getDefault());
 		}
 		if (scanner instanceof AbstractCScanner) {
 			fCodeScanner= (AbstractCScanner)scanner;
@@ -373,6 +376,13 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 		fPreprocessorScanner= null;
 	}
 
+	private ITokenStoreFactory getTokenStoreFactory() {
+		return new ITokenStoreFactory() {
+			public ITokenStore createTokenStore(String[] propertyColorNames) {
+				return new TokenStore(getColorManager(), fPreferenceStore, propertyColorNames);
+			}
+		};
+	}
 }
 
 

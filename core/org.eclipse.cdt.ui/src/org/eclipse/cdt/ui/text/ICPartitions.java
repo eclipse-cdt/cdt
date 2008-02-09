@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.ui.text;
 
@@ -23,7 +24,7 @@ public interface ICPartitions {
 	String C_PARTITIONING= "___c_partitioning";  //$NON-NLS-1$
 
 	/**
-	 * The identifier of the single-line end comment partition content type.
+	 * The identifier of the single-line comment partition content type.
 	 */
 	String C_SINGLE_LINE_COMMENT= "__c_singleline_comment"; //$NON-NLS-1$
 
@@ -46,4 +47,30 @@ public interface ICPartitions {
 	 * The identifier of the C preprocessor partition content type.
 	 */
 	String C_PREPROCESSOR= "__c_preprocessor";  //$NON-NLS-1$
+	
+	/**
+	 * The identifier of the single-line documentation tool comment partition content type.
+     * @since 5.0
+	 */
+	String C_SINGLE_LINE_DOC_COMMENT= "__c_singleline_doc_comment"; //$NON-NLS-1$
+
+	/**
+	 * The identifier multi-line comment documentation tool partition content type.
+     * @since 5.0
+	 */
+	String C_MULTI_LINE_DOC_COMMENT= "__c_multiline_doc_comment"; //$NON-NLS-1$
+	
+	/**
+	 * All defined CDT editor partitions
+	 * @since 5.0
+	 */
+	String[] ALL_CPARTITIONS= {
+			ICPartitions.C_MULTI_LINE_COMMENT,
+			ICPartitions.C_SINGLE_LINE_COMMENT,
+			ICPartitions.C_STRING,
+			ICPartitions.C_CHARACTER,
+			ICPartitions.C_PREPROCESSOR,
+			ICPartitions.C_SINGLE_LINE_DOC_COMMENT,
+			ICPartitions.C_MULTI_LINE_DOC_COMMENT
+	};
 }

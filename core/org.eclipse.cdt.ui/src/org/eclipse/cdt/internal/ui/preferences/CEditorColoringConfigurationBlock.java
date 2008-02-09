@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Anton Leherbauer (Wind River Systems)
+ *     Anton Leherbauer (Wind River Systems
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.preferences;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.ColorSelector;
@@ -341,7 +343,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 	/**
 	 * Highlighting color list
 	 */
-	private final java.util.List fListModel= new ArrayList();
+	private final java.util.List<HighlightingColorListItem> fListModel= new ArrayList<HighlightingColorListItem>();
 	/**
 	 * Highlighting color list viewer
 	 */
@@ -394,13 +396,12 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 	}
 
 	private OverlayPreferenceStore.OverlayKey[] createOverlayStoreKeys() {
-		
-		ArrayList overlayKeys= new ArrayList();
+		List<OverlayPreferenceStore.OverlayKey> overlayKeys= new ArrayList<OverlayPreferenceStore.OverlayKey>();
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED));
 		
 		for (int i= 0, n= fListModel.size(); i < n; i++) {
-			HighlightingColorListItem item= (HighlightingColorListItem) fListModel.get(i);
+			HighlightingColorListItem item= fListModel.get(i);
 			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, item.getColorKey()));
 			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, item.getBoldKey()));
 			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, item.getItalicKey()));
@@ -788,7 +789,6 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 	}
 
 	private Control createPreviewer(Composite parent) {
-		
 		IPreferenceStore generalTextStore= EditorsUI.getPreferenceStore();
 		IPreferenceStore store= new ChainedPreferenceStore(new IPreferenceStore[] { getPreferenceStore(), generalTextStore });
 		fPreviewViewer = new CSourceViewer(parent, null, null, false, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER, store);
@@ -801,7 +801,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		
 		String content= loadPreviewContentFromFile("ColorSettingPreviewCode.txt"); //$NON-NLS-1$
 		IDocument document= new Document(content);
-		CUIPlugin.getDefault().getTextTools().setupCDocumentPartitioner(document, ICPartitions.C_PARTITIONING);
+		CUIPlugin.getDefault().getTextTools().setupCDocumentPartitioner(document, ICPartitions.C_PARTITIONING, null);
 		fPreviewViewer.setDocument(document);
 	
 		installSemanticHighlighting();

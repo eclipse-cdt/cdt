@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 
 /**
@@ -81,4 +82,7 @@ public abstract class CPPASTBaseDeclSpecifier extends CPPASTNode implements ICPP
         this.explicit = value;
     }
 
+    public String toString() {
+    	return ASTSignatureUtil.getSignature(this);
+    }
 }

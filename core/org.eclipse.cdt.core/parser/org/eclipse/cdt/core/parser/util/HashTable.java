@@ -25,7 +25,7 @@ public class HashTable implements Cloneable{
         return currEntry == -1;
     }
     
-	final public int size(){
+	final public int size() {
 	    return currEntry + 1;
 	}
     
@@ -47,20 +47,20 @@ public class HashTable implements Cloneable{
 		}
 	}
 	
-	public Object clone(){
+	public Object clone() {
 	    HashTable newTable = null;
         try {
             newTable = (HashTable) super.clone();
-        } catch ( CloneNotSupportedException e ) {
+        } catch (CloneNotSupportedException e) {
             //shouldn't happen because object supports clone.
             return null;
         }
         
         int size = capacity();
         
-        if( hashTable != null ){
-	        newTable.hashTable = new int[ size*2 ];
-	        newTable.nextTable = new int[ size ];
+        if (hashTable != null) {
+	        newTable.hashTable = new int[size * 2];
+	        newTable.nextTable = new int[size];
 		    System.arraycopy(hashTable, 0, newTable.hashTable, 0, hashTable.length);
 		    System.arraycopy(nextTable, 0, newTable.nextTable, 0, nextTable.length);
         }
@@ -79,7 +79,7 @@ public class HashTable implements Cloneable{
 		if (hashTable == null)
 			return;
 		
-		for( int i = 0; i < capacity(); i++ ){
+		for (int i = 0; i < capacity(); i++) {
 	        hashTable[2*i] = 0;
 	        hashTable[2*i+1] = 0;
 	        nextTable[i] = 0;
@@ -90,11 +90,11 @@ public class HashTable implements Cloneable{
 			return;
 		
 		// clear the table (don't call clear() or else the subclasses stuff will be cleared too)
-		for( int i = 0; i < capacity(); i++ ){
+		for (int i = 0; i < capacity(); i++) {
             hashTable[2*i] = 0;
             hashTable[2*i+1] = 0;
             nextTable[i] = 0;
-	        }
+	    }
 		// Need to rehash everything
 		for (int i = 0; i <= currEntry; ++i) {
 			linkIntoHashTable(i, hash(i));
@@ -128,7 +128,7 @@ public class HashTable implements Cloneable{
 			// need to link
 			int j = hashTable[hash] - 1;
 			while (nextTable[j] != 0) {
-//				if(nextTable[j] - 1 == j) {
+//				if (nextTable[j] - 1 == j) {
 //					break;
 //				}
 				j = nextTable[j] - 1;
@@ -144,15 +144,15 @@ public class HashTable implements Cloneable{
 	}
 	
 	protected void removeEntry(int i, int hash) {
-		if (nextTable == null){
+		if (nextTable == null) {
 		    --currEntry;
 			return;
 		}
 		
 		// Remove the hash entry
-		if (hashTable[hash] == i + 1)
+		if (hashTable[hash] == i + 1) {
 			hashTable[hash] = nextTable[i];
-		else { 
+		} else { 
 			// find entry pointing to me
 			int j = hashTable[hash] - 1;
 			while (nextTable[j] != 0 && nextTable[j] != i + 1)
@@ -165,13 +165,15 @@ public class HashTable implements Cloneable{
 			System.arraycopy(nextTable, i + 1, nextTable, i, currEntry - i);
 			
 			// adjust hash and next entries for things that moved
-			for (int j = 0; j < hashTable.length; ++j)
+			for (int j = 0; j < hashTable.length; ++j) {
 				if (hashTable[j] > i + 1)
 					--hashTable[j];
+			}
 
-			for (int j = 0; j < nextTable.length; ++j)
+			for (int j = 0; j < nextTable.length; ++j) {
 				if (nextTable[j] > i + 1)
 					--nextTable[j];
+			}
 		}
 
 		// last entry is now free
@@ -179,21 +181,21 @@ public class HashTable implements Cloneable{
 		--currEntry;
 	}
 
-    final public void sort( Comparator c ) {
-        if( size() > 1 ){
-	        quickSort( c, 0, size() - 1 );       
+    final public void sort(Comparator<Object> c) {
+        if (size() > 1) {
+	        quickSort(c, 0, size() - 1);       
 	        rehash();
         }
     }	
-    final private void quickSort( Comparator c, int p, int r ){
-        if( p < r ){
-            int q = partition( c, p, r );
-            if( p < q )   quickSort( c, p, q );
-            if( ++q < r ) quickSort( c, q, r );
+    final private void quickSort(Comparator<Object> c, int p, int r) {
+        if (p < r) {
+            int q = partition(c, p, r);
+            if (p < q)   quickSort(c, p, q);
+            if (++q < r) quickSort(c, q, r);
         }
     }
     
-    protected int partition( Comparator c, int p, int r ) {
+    protected int partition(Comparator<Object> c, int p, int r) {
     	throw new UnsupportedOperationException();
     }
     

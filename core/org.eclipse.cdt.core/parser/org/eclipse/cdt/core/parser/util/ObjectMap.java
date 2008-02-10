@@ -23,29 +23,29 @@ import java.util.List;
  * @author aniefer
  */
 public class ObjectMap extends ObjectTable {
-    public static final ObjectMap EMPTY_MAP = new ObjectMap( 0 ){
-        public Object clone()                         { return this; }
-        public List toList()                		  { return Collections.EMPTY_LIST; }
-        public Object put( Object key, Object value ) { throw new UnsupportedOperationException(); }
+    public static final ObjectMap EMPTY_MAP = new ObjectMap(0) {
+        public Object clone() { return this; }
+        public List<Object> toList() { return Collections.emptyList(); }
+        public Object put(Object key, Object value) { throw new UnsupportedOperationException(); }
     };
     
 	private Object[] valueTable;
 
 	public ObjectMap(int initialSize) {
-	    super( initialSize );
-		valueTable = new Object[ capacity() ];
+	    super(initialSize);
+		valueTable = new Object[capacity()];
 	}
 
-	public Object clone(){
+	public Object clone() {
 	    ObjectMap newMap = (ObjectMap) super.clone();
-	    newMap.valueTable = new Object[ capacity() ];
+	    newMap.valueTable = new Object[capacity()];
 	    System.arraycopy(valueTable, 0, newMap.valueTable, 0, valueTable.length);
 	    return newMap;
 	}
 	
-	final public void clear(){
+	final public void clear() {
 	    super.clear();
-	    for( int i = 0; i < valueTable.length; i++ ){
+	    for(int i = 0; i < valueTable.length; i++) {
 	        valueTable[i] = null;
 	    }
 	}
@@ -54,7 +54,7 @@ public class ObjectMap extends ObjectTable {
 		Object[] oldValueTable = valueTable;
 		valueTable = new Object[size];
 		System.arraycopy(oldValueTable, 0, valueTable, 0, oldValueTable.length);
-		super.resize( size );
+		super.resize(size);
 	}
 	
 	public Object put(Object key, Object value) {
@@ -71,15 +71,15 @@ public class ObjectMap extends ObjectTable {
 		return null;
 	}
 
-	final public Object getAt( int i ){
-	    if( i < 0 || i > currEntry )
+	final public Object getAt(int i) {
+	    if (i < 0 || i > currEntry)
 	        return null;
 	    
 	    return valueTable[i];
 	}
 	
-	final public Object remove( Object key ) {
-	    if( key == null )
+	final public Object remove(Object key) {
+	    if (key == null)
 	        return null;
 		int i = lookup(key);
 		if (i < 0)
@@ -101,18 +101,24 @@ public class ObjectMap extends ObjectTable {
 		super.removeEntry(i);
 	}
 	
-    protected int partition( Comparator c, int p, int r ){
-        Object x = keyTable[ p ];
+	@Override
+    protected int partition(Comparator<Object> c, int p, int r) {
+        Object x = keyTable[p];
         Object temp = null;
         int i = p;
         int j = r;
         
-        while( true ){
-            while( c.compare( keyTable[ j ], x ) > 0 ){ j--; }
-            if( i < j ) 
-                while( c.compare( keyTable[ i ], x ) < 0 ){ i++; }
+        while (true) {
+            while (c.compare(keyTable[j], x) > 0) {
+            	j--;
+            }
+            if (i < j) {
+                while (c.compare(keyTable[i], x) < 0) {
+                	i++;
+                }
+            }
             
-            if( i < j ){
+            if (i < j) {
                 temp = keyTable[j];
                 keyTable[j] = keyTable[i];
                 keyTable[i] = temp;
@@ -126,9 +132,29 @@ public class ObjectMap extends ObjectTable {
         }
     }
 
-	public Object [] valueArray(){
-		Object [] vals = new Object[ size() ];
-		System.arraycopy( valueTable, 0, vals, 0, vals.length );
+	public Object[] valueArray() {
+		Object[] vals = new Object[size()];
+		System.arraycopy(valueTable, 0, vals, 0, vals.length);
 	    return vals;
+	}
+	
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < size(); i++) {
+			Object key = keyAt(i);
+			if (key != null) {
+				if (sb.length() == 0) {
+					sb.append("{");
+				} else {
+					sb.append(", ");
+				}
+				Object value = valueTable[i];
+				sb.append(String.valueOf(key));
+				sb.append(": ");
+				sb.append(String.valueOf(value));
+			}
+		}
+		sb.append("}");
+		return sb.toString();
 	}
 }

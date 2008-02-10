@@ -41,7 +41,6 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 public class CPPASTQualifiedName extends CPPASTNode implements
 		ICPPASTQualifiedName, IASTCompletionContext {
 
-
 	public CPPASTQualifiedName() {
 	}
 
@@ -64,7 +63,6 @@ public class CPPASTQualifiedName extends CPPASTNode implements
     	return null;
 	}
 
-
 	public String toString() {
 		if (signature == null)
 			return ""; //$NON-NLS-1$
@@ -78,7 +76,6 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 			name.setPropertyInParent(SEGMENT_NAME);
 		}
 	}
-
 
 	private void removeNullNames() {
         names = (IASTName[]) ArrayUtil.removeNullsAfter( IASTName.class, names, namesPos );
@@ -183,7 +180,6 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 		return true;
 	}
 
-
 	public boolean isDeclaration() {
 		IASTNode parent = getParent();
 		if (parent instanceof IASTNameOwner) {
@@ -233,12 +229,16 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 		IASTName[] nonNullNames = getNames(); // ensure no null names
 		
 		int len=nonNullNames.length;
-		if (nonNullNames[len-1] instanceof ICPPASTConversionName || nonNullNames[len-1] instanceof ICPPASTOperatorName) return true;
+		if (nonNullNames[len-1] instanceof ICPPASTConversionName || nonNullNames[len-1] instanceof ICPPASTOperatorName) {
+			return true;
+		}
 		
 		// check templateId's name
 		if (nonNullNames[len-1] instanceof ICPPASTTemplateId) {
 			IASTName tempName = ((ICPPASTTemplateId)nonNullNames[len-1]).getTemplateName();
-			if (tempName instanceof ICPPASTConversionName || tempName instanceof ICPPASTOperatorName) return true;
+			if (tempName instanceof ICPPASTConversionName || tempName instanceof ICPPASTOperatorName) {
+				return true;
+			}
 		}
 		
 		return false;
@@ -262,10 +262,10 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 			if (binding instanceof ICPPClassType) {
 				ICPPClassType classType = (ICPPClassType) binding;
 				final boolean isDeclaration = getParent().getParent() instanceof IASTSimpleDeclaration;
-				List filtered = filterClassScopeBindings(classType, bindings, isDeclaration);
+				List<IBinding> filtered = filterClassScopeBindings(classType, bindings, isDeclaration);
 			
-				if (isDeclaration && nameMatches(classType.getNameCharArray(), n
-								.toCharArray(), isPrefix)) {
+				if (isDeclaration && nameMatches(classType.getNameCharArray(),
+						n.toCharArray(), isPrefix)) {
 					try {
 						ICPPConstructor[] constructors = classType.getConstructors();
 						for (int i = 0; i < constructors.length; i++) {
@@ -277,16 +277,16 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 					}
 				}
 				
-				return (IBinding[]) filtered.toArray(new IBinding[filtered.size()]);
+				return filtered.toArray(new IBinding[filtered.size()]);
 			}
 		}
 
 		return bindings;
 	}
 	
-	private List filterClassScopeBindings(ICPPClassType classType,
+	private List<IBinding> filterClassScopeBindings(ICPPClassType classType,
 			IBinding[] bindings, final boolean isDeclaration) {
-		List filtered = new ArrayList();
+		List<IBinding> filtered = new ArrayList<IBinding>();
 		
 		try {
 			for (int i = 0; i < bindings.length; i++) {
@@ -298,7 +298,9 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 					if (method.isImplicit()) continue;
 					if (method.isDestructor() || method instanceof ICPPConstructor) {
 						if (!isDeclaration) continue;
-					} else if (!method.isStatic() && !isDeclaration) continue;
+					} else if (!method.isStatic() && !isDeclaration) {
+						continue;
+					}
 				} else if (bindings[i] instanceof ICPPClassType) {
 					ICPPClassType type = (ICPPClassType) bindings[i];
 					if (type.isSameType(classType)) continue;

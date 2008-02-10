@@ -40,7 +40,8 @@ public class CPPASTFieldReference extends CPPASTNode implements
     public CPPASTFieldReference() {
 	}
 
-	public CPPASTFieldReference(IASTName name, IASTExpression owner, boolean isTemplate, boolean isDeref) {
+	public CPPASTFieldReference(IASTName name, IASTExpression owner, boolean isTemplate,
+			boolean isDeref) {
 		setFieldName(name);
 		setFieldOwner(owner);
 		this.isTemplate = isTemplate;
@@ -91,39 +92,38 @@ public class CPPASTFieldReference extends CPPASTNode implements
         isDeref = value;
     }
     
-    public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitExpressions ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+    public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitExpressions) {
+		    switch (action.visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
       
-        if( owner != null ) if( !owner.accept( action ) ) return false;
-        if( name != null )  if( !name.accept( action ) ) return false;
+        if (owner != null && !owner.accept(action)) return false;
+        if (name != null && !name.accept(action)) return false;
         
-        if( action.shouldVisitExpressions ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+        if (action.shouldVisitExpressions) {
+		    switch (action.leave(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         return true;
     }
 
 	public int getRoleForName(IASTName n) {
-		if( n == name )
+		if (n == name)
 			return r_reference;
 		return r_unclear;
 	}
 
     public void replace(IASTNode child, IASTNode other) {
-        if( child == owner )
-        {
-            other.setPropertyInParent( child.getPropertyInParent() );
-            other.setParent( child.getParent() );
+        if (child == owner) {
+            other.setPropertyInParent(child.getPropertyInParent());
+            other.setParent(child.getParent());
             owner  = (IASTExpression) other;
         }
     }
@@ -134,7 +134,7 @@ public class CPPASTFieldReference extends CPPASTNode implements
 
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
 		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix);
-		List filtered = new ArrayList();
+		List<IBinding> filtered = new ArrayList<IBinding>();
 		
 		for (int i = 0; i < bindings.length; i++) {
 			if (bindings[i] instanceof ICPPMethod) {
@@ -146,6 +146,6 @@ public class CPPASTFieldReference extends CPPASTNode implements
 			filtered.add(bindings[i]);
 		}
 		
-		return (IBinding[]) filtered.toArray(new IBinding[filtered.size()]);
+		return filtered.toArray(new IBinding[filtered.size()]);
 	}
 }

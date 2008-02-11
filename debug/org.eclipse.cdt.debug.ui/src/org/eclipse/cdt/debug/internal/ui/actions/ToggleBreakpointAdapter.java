@@ -8,7 +8,7 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  * Freescale Semiconductor - Address watchpoints, https://bugs.eclipse.org/bugs/show_bug.cgi?id=118299
- * Warren Paul (Nokia) - Bug 217485
+ * Warren Paul (Nokia) - Bug 217485, Bug 218342
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
@@ -32,6 +32,7 @@ import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
 import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyEditorInput;
 import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyView;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -291,6 +292,8 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 			IEditorInput editorInput = ((IEditorPart)part).getEditorInput();
 			if ( editorInput instanceof IFileEditorInput ) {
 				return ((IFileEditorInput)editorInput).getFile();
+			} else if (editorInput instanceof ExternalEditorInput) {
+				return ((ExternalEditorInput)editorInput).getMarkerResource();
 			}
 			ILocationProvider provider = (ILocationProvider)editorInput.getAdapter( ILocationProvider.class );
 			if ( provider != null ) {

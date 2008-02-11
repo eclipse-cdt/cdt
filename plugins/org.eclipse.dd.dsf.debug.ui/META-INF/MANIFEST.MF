@@ -23,6 +23,7 @@ Eclipse-LazyStart: true
 Export-Package: 
  org.eclipse.dd.dsf.debug.ui,
  org.eclipse.dd.dsf.debug.ui.actions,
+ org.eclipse.dd.dsf.debug.ui.contexts,
  org.eclipse.dd.dsf.debug.ui.sourcelookup,
  org.eclipse.dd.dsf.debug.ui.viewmodel,
  org.eclipse.dd.dsf.debug.ui.viewmodel.expression,
@@ -30,5 +31,7 @@ Export-Package:
  org.eclipse.dd.dsf.debug.ui.viewmodel.modules,
  org.eclipse.dd.dsf.debug.ui.viewmodel.numberformat,
  org.eclipse.dd.dsf.debug.ui.viewmodel.register,
+ org.eclipse.dd.dsf.debug.ui.viewmodel.update,
+ org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions,
  org.eclipse.dd.dsf.debug.ui.viewmodel.variable
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

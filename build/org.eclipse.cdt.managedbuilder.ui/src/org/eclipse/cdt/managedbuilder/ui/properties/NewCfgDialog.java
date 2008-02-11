@@ -460,6 +460,7 @@ public class NewCfgDialog implements INewCfgDialog {
 				if (b_clone.getSelection()) {
 					ICConfigurationDescription base = ManagedBuildManager.getDescriptionForConfiguration(parentConfig);
 					cfgDes = des.createConfiguration(id, newName, base);
+					cfgDes.setDescription(newDescription);
 				} else {
 					CConfigurationData data = config.getConfigurationData();
 					cfgDes = des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);

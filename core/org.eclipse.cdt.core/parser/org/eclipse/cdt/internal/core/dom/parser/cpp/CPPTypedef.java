@@ -33,29 +33,30 @@ import org.eclipse.core.runtime.PlatformObject;
  */
 public class CPPTypedef extends PlatformObject implements ITypedef, ITypeContainer, ICPPInternalBinding {
     public static class CPPTypedefDelegate extends CPPDelegate implements ITypedef, ITypeContainer {
-        public CPPTypedefDelegate( ICPPUsingDeclaration name, ITypedef binding ) {
-            super( name, binding );
+        public CPPTypedefDelegate(ICPPUsingDeclaration name, ITypedef binding) {
+            super(name, binding);
         }
         public IType getType() throws DOMException {
             return ((ITypedef)getBinding()).getType();
         }
-        public boolean isSameType( IType type ) {
-            return ((ITypedef)getBinding()).isSameType( type );
+        public boolean isSameType(IType type) {
+            return ((ITypedef)getBinding()).isSameType(type);
         }
 		public void setType(IType type) {
-			((ITypeContainer)getBinding()).setType( type );
+			((ITypeContainer)getBinding()).setType(type);
 		}
     }
-	private IASTName [] declarations = null;
+
+	private IASTName[] declarations = null;
 	private IType type = null;
-	
+
 	/**
 	 * @param declarator
 	 */
 	public CPPTypedef(IASTName name) {
 		this.declarations = new IASTName[] { name };
         if (name != null)
-            name.setBinding( this );
+            name.setBinding(this);
 	}
 
     /* (non-Javadoc)
@@ -72,36 +73,37 @@ public class CPPTypedef extends PlatformObject implements ITypedef, ITypeContain
         return declarations[0];
     }
 
-    public boolean isSameType( IType o ){
-        if( o == this )
+    public boolean isSameType(IType o) {
+        if (o == this)
             return true;
-	    if( o instanceof ITypedef )
+	    if (o instanceof ITypedef) {
             try {
                 IType t = getType();
-                if( t != null )
-                    return t.isSameType( ((ITypedef)o).getType());
+                if (t != null)
+                    return t.isSameType(((ITypedef)o).getType());
                 return false;
-            } catch ( DOMException e ) {
+            } catch (DOMException e) {
                 return false;
             }
-	        
+	    }
+
 	    IType t = getType();
-	    if( t != null )
-	        return t.isSameType( o );
+	    if (t != null)
+	        return t.isSameType(o);
 	    return false;
 	}
-    
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.ITypedef#getType()
 	 */
 	public IType getType() {
-	    if( type == null ){
-	        type = CPPVisitor.createType( (IASTDeclarator) declarations[0].getParent() );
+	    if (type == null) {
+	        type = CPPVisitor.createType((IASTDeclarator) declarations[0].getParent());
 	    }
 		return type;
 	}
-	
-	public void setType( IType t ){
+
+	public void setType(IType t) {
 	    type = t;
 	}
 
@@ -123,14 +125,14 @@ public class CPPTypedef extends PlatformObject implements ITypedef, ITypeContain
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
 	 */
 	public IScope getScope() {
-		return CPPVisitor.getContainingScope( declarations[0].getParent() );
+		return CPPVisitor.getContainingScope(declarations[0].getParent());
 	}
 
-    public Object clone(){
+    public Object clone() {
         IType t = null;
    		try {
             t = (IType) super.clone();
-        } catch ( CloneNotSupportedException e ) {
+        } catch (CloneNotSupportedException e) {
             //not going to happen
         }
         return t;
@@ -139,14 +141,14 @@ public class CPPTypedef extends PlatformObject implements ITypedef, ITypeContain
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedName()
      */
     public String[] getQualifiedName() {
-        return CPPVisitor.getQualifiedName( this );
+        return CPPVisitor.getQualifiedName(this);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedNameCharArray()
      */
     public char[][] getQualifiedNameCharArray() {
-        return CPPVisitor.getQualifiedNameCharArray( this );
+        return CPPVisitor.getQualifiedNameCharArray(this);
     }
 
     /* (non-Javadoc)
@@ -154,8 +156,8 @@ public class CPPTypedef extends PlatformObject implements ITypedef, ITypeContain
      */
     public boolean isGloballyQualified() throws DOMException {
         IScope scope = getScope();
-        while( scope != null ){
-            if( scope instanceof ICPPBlockScope )
+        while(scope != null) {
+            if (scope instanceof ICPPBlockScope)
                 return false;
             scope = scope.getParent();
         }
@@ -165,42 +167,47 @@ public class CPPTypedef extends PlatformObject implements ITypedef, ITypeContain
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
      */
-    public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl ) {
-        return new CPPTypedefDelegate( usingDecl, this );
+    public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl) {
+        return new CPPTypedefDelegate(usingDecl, this);
     }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDefinition(org.eclipse.cdt.core.dom.ast.IASTNode)
 	 */
 	public void addDefinition(IASTNode node) {
-	    addDeclaration( node );
+	    addDeclaration(node);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDeclaration(org.eclipse.cdt.core.dom.ast.IASTNode)
 	 */
 	public void addDeclaration(IASTNode node) {
-	    if( !(node instanceof IASTName) )
+	    if (!(node instanceof IASTName))
 			return;
 		IASTName name = (IASTName) node;
 
-		if( declarations == null )
+		if (declarations == null) {
 	        declarations = new IASTName[] { name };
-	    else {
-	        //keep the lowest offset declaration in [0]
-			if( declarations.length > 0 && ((ASTNode)node).getOffset() < ((ASTNode)declarations[0]).getOffset() ){
-				declarations = (IASTName[]) ArrayUtil.prepend( IASTName.class, declarations, name );
+		} else {
+	        // keep the lowest offset declaration in [0]
+			if (declarations.length > 0 &&
+					((ASTNode )node).getOffset() < ((ASTNode) declarations[0]).getOffset()) {
+				declarations = (IASTName[]) ArrayUtil.prepend(IASTName.class, declarations, name);
 			} else {
-				declarations = (IASTName[]) ArrayUtil.append( IASTName.class, declarations, name );
+				declarations = (IASTName[]) ArrayUtil.append(IASTName.class, declarations, name);
 			}
 	    }
 	}
-	
+
 	public void removeDeclaration(IASTNode node) {
 		ArrayUtil.remove(declarations, node);
 	}
-	
+
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
+	}
+
+	public String toString() {
+		return getName();
 	}
 }

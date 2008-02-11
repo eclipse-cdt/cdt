@@ -44,7 +44,7 @@ public interface IRunControl extends IDMService
     public interface IContainerDMContext extends IExecutionDMContext {}
 
     /** Flag indicating reason context state change. */
-    public enum StateChangeReason { UNKNOWN, USER_REQUEST, STEP, BREAKPOINT, EXCEPTION, CONTAINER, WATCHPOINT, SIGNAL, SHAREDLIB, ERROR };
+    public enum StateChangeReason { UNKNOWN, USER_REQUEST, STEP, BREAKPOINT, EXCEPTION, CONTAINER, WATCHPOINT, SIGNAL, SHAREDLIB, ERROR, EVALUATION };
         
     /**
      * Indicates that the given thread has suspended.

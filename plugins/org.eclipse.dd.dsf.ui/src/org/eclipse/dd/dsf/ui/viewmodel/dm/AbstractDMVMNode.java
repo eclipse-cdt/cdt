@@ -14,6 +14,7 @@ import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.dd.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
@@ -219,6 +220,7 @@ abstract public class AbstractDMVMNode extends AbstractVMNode implements IVMNode
         }
     }
 
+    @ConfinedToDsfExecutor("getSession().getExecutor()")
     protected void updateHasElementsInSessionThread(final IHasChildrenUpdate update) {
         update.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfService.NOT_SUPPORTED, "Not implemented, clients should call to update all children instead.", null)); //$NON-NLS-1$
         update.done();
@@ -240,6 +242,7 @@ abstract public class AbstractDMVMNode extends AbstractVMNode implements IVMNode
         }
     }
     
+    @ConfinedToDsfExecutor("getSession().getExecutor()")
     protected void updateElementCountInSessionThread(final IChildrenCountUpdate update) {
         update.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfService.NOT_SUPPORTED, "Not implemented, clients should call to update all children instead.", null)); //$NON-NLS-1$
         update.done();
@@ -262,6 +265,7 @@ abstract public class AbstractDMVMNode extends AbstractVMNode implements IVMNode
         }
     }
 
+    @ConfinedToDsfExecutor("getSession().getExecutor()")
     abstract protected void updateElementsInSessionThread(IChildrenUpdate update);
 
     /**

@@ -208,7 +208,7 @@ public class StandardProcessVMNode extends AbstractVMNode {
     }
 
     protected void handleCreate(DebugEvent event, ModelDelta parent) {
-        // do nothing - Launch change notification handles this
+        parent.setFlags(parent.getFlags() | IModelDelta.CONTENT);
     }
 
     protected void handleTerminate(DebugEvent event, ModelDelta parent) {

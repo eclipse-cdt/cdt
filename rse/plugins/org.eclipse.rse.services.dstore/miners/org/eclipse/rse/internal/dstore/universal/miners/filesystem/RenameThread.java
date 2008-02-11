@@ -20,7 +20,6 @@ import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.rse.dstore.universal.miners.ICancellableHandler;
-import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.dstore.universal.miners.UniversalFileSystemMiner;
 import org.eclipse.rse.dstore.universal.miners.UniversalServerUtilities;
 import org.eclipse.rse.services.clientserver.IServiceConstants;

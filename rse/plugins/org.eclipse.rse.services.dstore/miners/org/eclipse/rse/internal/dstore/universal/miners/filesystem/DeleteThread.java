@@ -15,7 +15,6 @@
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
 
 import java.io.File;
-import java.io.InputStream;
 
 import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
@@ -25,7 +24,6 @@ import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.dstore.universal.miners.UniversalFileSystemMiner;
 import org.eclipse.rse.dstore.universal.miners.UniversalServerUtilities;
 import org.eclipse.rse.services.clientserver.IServiceConstants;
-import org.eclipse.rse.services.clientserver.PathUtility;
 import org.eclipse.rse.services.clientserver.SystemOperationMonitor;
 import org.eclipse.rse.services.clientserver.archiveutils.AbsoluteVirtualPath;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;

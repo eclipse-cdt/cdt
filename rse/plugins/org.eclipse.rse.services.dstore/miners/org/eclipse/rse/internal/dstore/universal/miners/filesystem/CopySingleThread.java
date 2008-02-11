@@ -15,8 +15,6 @@
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;

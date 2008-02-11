@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -47,6 +47,7 @@
  * Xuan Chen      (IBM)          - [160775] [api] rename (at least within a zip) blocks UI thread
  * David McKnight   (IBM)        - [199424] api to create tree items after query complete
  * David McKnight   (IBM)        - [187711] expandTo to handle filters specially
+ * Martin Oberhuber (Wind River) - [218524][api] Remove deprecated ISystemViewInputProvider#getShell()
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -298,7 +299,6 @@ public class SystemView extends SafeTreeViewer
 		assert shell == parent.getShell();
 		this.shell = shell;
 		this.inputProvider = inputProvider;
-		this.inputProvider.setShell(shell); // DY:  defect 44544
 		this.messageLine = msgLine;
 		init();
 	}
@@ -317,7 +317,6 @@ public class SystemView extends SafeTreeViewer
 		assert shell == parent.getShell();
 		this.shell = shell;
 		this.inputProvider = inputProvider;
-		this.inputProvider.setShell(shell); // DY:  defect 44544
 		this.messageLine = msgLine;
 		init();
 	}
@@ -337,7 +336,6 @@ public class SystemView extends SafeTreeViewer
 		assert shell == parent.getShell();
 		this.shell = shell;
 		this.inputProvider = inputProvider;
-		this.inputProvider.setShell(shell); // DY:  defect 44544
 		this.messageLine = msgLine;
 		this.initViewerFilters = initViewerFilters;
 		init();
@@ -356,7 +354,6 @@ public class SystemView extends SafeTreeViewer
 		assert shell == tree.getShell();
 		this.shell = shell;
 		this.inputProvider = inputProvider;
-		this.inputProvider.setShell(shell); // DY:  defect 44544
 		this.messageLine = msgLine;
 		init();
 	}
@@ -368,9 +365,6 @@ public class SystemView extends SafeTreeViewer
 	public void setInputProvider(ISystemViewInputProvider inputProvider) {
 		this.inputProvider = inputProvider;
 		inputProvider.setViewer(this);
-		inputProvider.setShell(getShell()); // DY:  Defect 44544, shell was not being set for Test dialogs, when they
-		// tried to connect there was not shell for the password prompt
-		// and an error message (expand failed) occurred.
 		setInput(inputProvider);
 	}
 
@@ -642,7 +636,6 @@ public class SystemView extends SafeTreeViewer
 	 */
 	public ISystemViewInputProvider getInputProvider() {
 		inputProvider.setViewer(this); // just in case. Added by Phil in V5.0
-		inputProvider.setShell(getShell()); // just in case. Added by Phil
 		return inputProvider;
 	}
 

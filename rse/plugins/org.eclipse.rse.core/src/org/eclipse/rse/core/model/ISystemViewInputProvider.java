@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [186773] split SystemRegistryUI from SystemRegistry implementation
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core from org.eclipse.rse.ui.view
+ * Martin Oberhuber (Wind River) - [218524][api] Remove deprecated ISystemViewInputProvider#getShell()
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -61,22 +62,6 @@ public interface ISystemViewInputProvider extends IAdaptable {
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapterType);
-
-	/**
-	 * Set the shell in case it is needed for anything.
-	 * The label and content provider will call this.
-	 * @param shell an {@link org.eclipse.swt.widgets.Shell shell} object,
-	 *    being used by the viewer using this provider
-	 */
-	public void setShell(Object shell);
-
-	/**
-	 * @return the {@link org.eclipse.swt.widgets.Shell shell} of the viewer 
-	 *     we are currently associated with.
-	 * @deprecated use other methods for getting the active workbench shell,
-	 *     e.g. {@link org.eclipse.rse.ui.RSEUIPlugin#getActiveWorkbenchShell()}
-	 */
-	public Object getShell();
 
 	/**
 	 * Set the viewer in case it is needed for anything.

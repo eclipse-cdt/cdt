@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Tobias Schwarz   (Wind River) - [173267] "empty list" should not be displayed 
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
+ * Martin Oberhuber (Wind River) - [218524][api] Remove deprecated ISystemViewInputProvider#getShell()
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -42,9 +43,6 @@ import org.eclipse.swt.widgets.Shell;
 public abstract class SystemAbstractAPIProvider 
        implements ISystemViewInputProvider
 {
-
-
-	protected Shell shell;
 	protected Viewer viewer;
 	protected ISystemRegistry sr;
 	
@@ -77,24 +75,6 @@ public abstract class SystemAbstractAPIProvider
     {
    	    return Platform.getAdapterManager().getAdapter(this, adapterType);	
     }           
-
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.rse.ui.view.ISystemViewInputProvider#setShell(java.lang.Object)
-     */
-    public void setShell(Object shell)
-    {
-    	this.shell = (Shell)shell;
-    }
-    
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.rse.ui.view.ISystemViewInputProvider#getShell()
-     */
-    public Object getShell()
-    {
-    	return shell;
-    }
 
     /*
      * (non-Javadoc)

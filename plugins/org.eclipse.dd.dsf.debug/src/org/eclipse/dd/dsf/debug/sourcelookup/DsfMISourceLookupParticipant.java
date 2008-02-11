@@ -54,7 +54,7 @@ public class DsfMISourceLookupParticipant implements ISourceLookupParticipant {
         
     public DsfMISourceLookupParticipant(DsfSession session) {
         fSessionId = session.getId();
-        fExecutor = DsfSession.getSession(fSessionId).getExecutor();
+        fExecutor = session.getExecutor();
         fServicesTracker = new DsfServicesTracker(DsfDebugPlugin.getBundleContext(), fSessionId);
     }
     

@@ -109,6 +109,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
@@ -1389,7 +1390,11 @@ public class CPPSemantics {
 	 */
 	static private void storeUsingDirective(CPPSemantics.LookupData data, ICPPNamespaceScope container, 
 			ICPPUsingDirective directive, Set<ICPPNamespaceScope> handled) throws DOMException {
-		final ICPPNamespaceScope nominated= directive.getNamespace().getNamespaceScope();
+		final ICPPNamespace nsBinding = directive.getNamespace();
+		if (nsBinding == null) {
+			return;
+		}
+		final ICPPNamespaceScope nominated= nsBinding.getNamespaceScope();
 		if (nominated == null || data.visited.containsKey(nominated) || (handled != null && !handled.add(nominated))) {
 			return;
 		}

@@ -30,6 +30,7 @@
  * Kevin Doyle		(IBM)		 - [208778] [efs][api] RSEFileStore#getOutputStream() does not support EFS#APPEND
  * David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
  * Radoslav Gerganov (ProSyst)   - [218173] [local] non-generic filters don't work
+ * Martin Oberhuber (Wind River) - [188330] Problems Copying files with $ in name
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -1233,8 +1234,6 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		return movedOk;
 	}
 
-
-
 	public boolean copy(String srcParent, String srcName, String tgtParent, String tgtName, IProgressMonitor monitor) throws SystemMessageException 
 	{
 		File srcFile = new File(srcParent, srcName);
@@ -1243,8 +1242,6 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		String command = null;
 		boolean folderCopy = srcFile.isDirectory();
 		String src = srcFile.getAbsolutePath();
-		
-
 		String target = tgtFile.getAbsolutePath();
 
 		boolean sourceIsVirtual = ArchiveHandlerManager.isVirtual(src);
@@ -1259,24 +1256,10 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			return copyToArchive(srcFile, new File(tgtParent), tgtName, monitor, SystemEncodingUtil.ENCODING_UTF_8, SystemEncodingUtil.ENCODING_UTF_8, false);
 		}
 		
-		
 //		 handle special characters in source and target strings 
-		StringBuffer srcBuf = new StringBuffer(src);
-		StringBuffer tgtBuf = new StringBuffer(target);
-		handleSpecialChars(srcBuf);
-		handleSpecialChars(tgtBuf);
-		
-		src = "\"" + srcBuf.toString() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
-		target = "\"" + tgtBuf.toString() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
-		/*
-		// handle imbedded blanks of from or to name...
-		if (src.indexOf(' ') >= 0)
-			src = "\"" + src + "\"";
-		if (target.indexOf(' ') >= 0)
-			target = "\"" + target + "\"";
-		*/
-		boolean isWindows = System.getProperty("os.name").toLowerCase().startsWith("win"); //$NON-NLS-1$ //$NON-NLS-2$
-		if (isWindows)
+		src = enQuote(src);
+		target = enQuote(target);
+		if (isWindows())
 		{
 			if (folderCopy)
 			{
@@ -1284,16 +1267,13 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			}
 			else
 			{
-				//command = _osCmdShell + "copy " + src + " " + target; //$NON-NLS-1$ //$NON-NLS-2$
 				// create target first so that not prompted
-				File targetFile = new File(tgtBuf.toString());
-				if (!targetFile.exists())
+				if (!tgtFile.exists())
 				{
 					// create file so as to avoid ambiguity
 					try
 					{
-						targetFile.createNewFile();
-				
+						tgtFile.createNewFile();
 					}
 					catch (Exception e)
 					{
@@ -1305,7 +1285,6 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		}
 		else
 		{
-			
 			if (folderCopy)
 			{
 				command = "cp  -Rp " + src + " " + target; //$NON-NLS-1$ //$NON-NLS-2$
@@ -1320,7 +1299,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		{
 			Process p = null;
 			Runtime runtime = Runtime.getRuntime();
-			if (isWindows)
+			if (isWindows())
 			{
 				String theShell = "cmd /C "; //$NON-NLS-1$
 				p = runtime.exec(theShell + command);		
@@ -1348,36 +1327,17 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		return (rc == 0);
 	}
 	
-	protected void handleSpecialChars(StringBuffer buf)
-	{
-		for (int i = 0; i < buf.length(); i++)
-		{
-			char c = buf.charAt(i);
-		
-			boolean isSpecialChar = isSpecialChar(c);
-		
-			if (isSpecialChar)
-			{
-				buf.insert(i, "\\"); //$NON-NLS-1$
-				i++;
-			}
-		}
-	}
-	
 	/**
-	 * Checks whether the given character is a special character in the shell. A special character is
-	 * '$', '`', '"' and '\'.
-	 * @param c the character to check.
-	 * @return <code>true</code> if the character is a special character, <code>false</code> otherwise.
+	 * Quote a file name such that it is valid in a shell
+	 * @param s file name to quote
+	 * @return quoted file name
 	 */
-	protected boolean isSpecialChar(char c)  {
-		   
-		if ((c == '$') || (c == '`') || (c == '"') || (!isWindows() && (c == '\\')) ) {
-						
-			return true;
-		}
-		else {
-			return false;
+	protected String enQuote(String s)
+	{
+		if(isWindows()) {
+			return '"' + s + '"';
+		} else {
+			return PathUtility.enQuoteUnix(s);
 		}
 	}
 	
@@ -1391,7 +1351,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 	 * @param sourceEncoding encoding of source file
 	 * @param targetEncoding desired encoding of target file
 	 * @param isText currently unused
-	 * @return true iff the copy succeeded
+	 * @return true if the copy succeeded
 	 */
 	public boolean copyFromArchive(File sourceFolderOrFile, File targetFolder, String newName, IProgressMonitor monitor, String sourceEncoding, String targetEncoding, boolean isText) throws SystemMessageException
 	{

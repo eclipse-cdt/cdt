@@ -328,14 +328,10 @@ public class FileClassifier extends Thread
     /**
      * Classifies from the given line of classification output.
      * 
-     * @param parentFile
-     *            the parent file.
-     * @param line
-     *            the line of output to parse.
-     * @param specialEncoding
-     *            a special encoding, if there is one.
-     * @param resolveLink
-     *            resolve link.
+     * @param parentFile the parent file.
+     * @param line the line of output to parse.
+     * @param specialEncoding a special encoding, if there is one.
+     * @param resolveLink resolve link.
      * @return the classification.
      */
     protected String classify(File parentFile, String line, String specialEncoding, boolean resolveLink)
@@ -533,8 +529,7 @@ public class FileClassifier extends Thread
      * Classify a file. It classifies the file by running "sh -c file
      * <filename>".
      * 
-     * @param aFile
-     *            the file to classify.
+     * @param aFile the file to classify.
      * @return the classification.
      */
     public String classifyFile(File aFile)
@@ -683,12 +678,9 @@ public class FileClassifier extends Thread
     /**
      * Classifies the children of a given file.
      * 
-     * @param parentFile
-     *            the parent file.
-     * @param files
-     *            the files to classify. Specify "*" to classify all files.
-     * @param resolveLinks
-     *            resolve links if possible.
+     * @param parentFile the parent file.
+     * @param files the files to classify. Specify "*" to classify all files.
+     * @param resolveLinks resolve links if possible.
      */
     protected void classifyChildren(File parentFile, String files, boolean resolveLinks)
     {
@@ -949,9 +941,8 @@ public class FileClassifier extends Thread
     /**
      * Classify virtual children.
      * 
-     * @param parentPath
-     *            the full path of the parent file. The path could represent an
-     *            archive or a virtual folder.
+     * @param parentPath the full path of the parent file. 
+     *      The path could represent an archive or a virtual folder.
      */
     protected void classifyVirtualChildren(String parentPath)
     {

@@ -178,7 +178,7 @@ public class CommandMinerThread extends MinerThread
 							{
 								isBash = true;
 								// no bash!
-								theShell = "sh";
+								theShell = "sh"; //$NON-NLS-1$
 								
 							}
 						}

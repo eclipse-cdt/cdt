@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@
  * Xuan Chen        (IBM)        - [194293] [Local][Archives] Saving file second time in an Archive Errors
  * Xuan Chen (IBM)        - [202949] [archives] copy a folder from one connection to an archive file in a different connection does not work
  * Xuan Chen (IBM)        - [160775] [api] rename (at least within a zip) blocks UI thread
+ * Xuan Chen (IBM)        - [218491] ArchiveHandlerManager#cleanUpVirtualPath is messing up the file separators
  *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver.archiveutils;
@@ -366,7 +367,7 @@ public class ArchiveHandlerManager
 	public static String cleanUpVirtualPath(String fullVirtualName)
 	{
 		int j = fullVirtualName.indexOf(VIRTUAL_CANONICAL_SEPARATOR);
-		if (j == -1 && fullVirtualName.indexOf(":") != -1) return fullVirtualName; //$NON-NLS-1$
+		if (j == -1) return fullVirtualName; 
 		String realPart = ""; //$NON-NLS-1$
 		String newPath = fullVirtualName;
 		if (j != -1)

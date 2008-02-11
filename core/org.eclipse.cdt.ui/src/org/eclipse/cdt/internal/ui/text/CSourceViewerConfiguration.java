@@ -365,25 +365,25 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 
 		assistant.setRestoreCompletionProposalSize(getSettings("completion_proposal_size")); //$NON-NLS-1$
 		
-		IContentAssistProcessor processor = new CContentAssistProcessor(getEditor(), sourceViewer, assistant, IDocument.DEFAULT_CONTENT_TYPE);
+		IContentAssistProcessor processor = new CContentAssistProcessor(getEditor(), assistant, IDocument.DEFAULT_CONTENT_TYPE);
 		assistant.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
 
-		processor = new CContentAssistProcessor(getEditor(), sourceViewer, assistant, ICPartitions.C_MULTI_LINE_COMMENT);
+		processor = new CContentAssistProcessor(getEditor(), assistant, ICPartitions.C_MULTI_LINE_COMMENT);
 		assistant.setContentAssistProcessor(processor, ICPartitions.C_MULTI_LINE_COMMENT);
 
-		processor = new CContentAssistProcessor(getEditor(), sourceViewer, assistant, ICPartitions.C_SINGLE_LINE_COMMENT);
+		processor = new CContentAssistProcessor(getEditor(), assistant, ICPartitions.C_SINGLE_LINE_COMMENT);
 		assistant.setContentAssistProcessor(processor, ICPartitions.C_SINGLE_LINE_COMMENT);
 
-		processor = new CContentAssistProcessor(getEditor(), sourceViewer, assistant, ICPartitions.C_MULTI_LINE_DOC_COMMENT);
+		processor = new CContentAssistProcessor(getEditor(), assistant, ICPartitions.C_MULTI_LINE_DOC_COMMENT);
 		assistant.setContentAssistProcessor(processor, ICPartitions.C_MULTI_LINE_DOC_COMMENT);
 
-		processor = new CContentAssistProcessor(getEditor(), sourceViewer, assistant, ICPartitions.C_SINGLE_LINE_DOC_COMMENT);
+		processor = new CContentAssistProcessor(getEditor(), assistant, ICPartitions.C_SINGLE_LINE_DOC_COMMENT);
 		assistant.setContentAssistProcessor(processor, ICPartitions.C_SINGLE_LINE_DOC_COMMENT);
 
-		processor = new CContentAssistProcessor(getEditor(), sourceViewer, assistant, ICPartitions.C_STRING);
+		processor = new CContentAssistProcessor(getEditor(), assistant, ICPartitions.C_STRING);
 		assistant.setContentAssistProcessor(processor, ICPartitions.C_STRING);
 
-		processor = new CContentAssistProcessor(getEditor(), sourceViewer, assistant, ICPartitions.C_PREPROCESSOR);
+		processor = new CContentAssistProcessor(getEditor(), assistant, ICPartitions.C_PREPROCESSOR);
 		assistant.setContentAssistProcessor(processor, ICPartitions.C_PREPROCESSOR);
 
 		ContentAssistPreference.configure(assistant, fPreferenceStore);

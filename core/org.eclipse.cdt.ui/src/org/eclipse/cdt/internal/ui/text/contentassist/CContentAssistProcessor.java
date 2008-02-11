@@ -28,7 +28,6 @@ import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
-import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IEditorPart;
@@ -39,7 +38,9 @@ import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
 import org.eclipse.cdt.ui.text.contentassist.IProposalFilter;
 
 import org.eclipse.cdt.internal.ui.preferences.ProposalFilterPreferencesUtil;
+import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
 import org.eclipse.cdt.internal.ui.text.CParameterListValidator;
+import org.eclipse.cdt.internal.ui.text.Symbols;
 
 /**
  * C/C++ content assist processor.
@@ -123,22 +124,12 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 	}
 
 
-	private static final int IDX_AFTERDASH = 0;
-	private static final int IDX_AFTERCOLON = 1;
-	private static final int IDX_AFTEROTHER = 2;
-	private static final int IDX_ALL = 3;
-	
-
-
 	private IContextInformationValidator fValidator;
 	private final IEditorPart fEditor;
-	private char[][] fCompletionAutoActivationCharacters;
-	private ISourceViewer fViewer;
 
-	public CContentAssistProcessor(IEditorPart editor, ISourceViewer viewer, ContentAssistant assistant, String partition) {
+	public CContentAssistProcessor(IEditorPart editor, ContentAssistant assistant, String partition) {
 		super(assistant, partition);
 		fEditor= editor;
-		fViewer= viewer;
 	}
 
 	/*
@@ -216,69 +207,41 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 	 * @see org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistProcessor#createContext(org.eclipse.jface.text.ITextViewer, int)
 	 */
 	protected ContentAssistInvocationContext createContext(ITextViewer viewer, int offset, boolean isCompletion) {
-		return new CContentAssistInvocationContext(viewer, offset, fEditor, isCompletion);
-	}
-	
-	public void setCompletionProposalAutoActivationCharacters(char[] activationSet) {
-		if (activationSet == null) {
-			fCompletionAutoActivationCharacters= null;
-		}
-		else {
-			final int len= activationSet.length;
-			StringBuffer afterDash= new StringBuffer(len);
-			StringBuffer afterColon= new StringBuffer(len);
-			StringBuffer afterOther= new StringBuffer(len);
-			for (int i = 0; i < activationSet.length; i++) {
-				final char c = activationSet[i];
-				switch(c) {
-				case ':':
-					afterColon.append(c);
-					break;
-				case '>':
-					afterDash.append(c);
-					break;
-				default:
-					afterDash.append(c);
-				afterColon.append(c);
-				afterOther.append(c);
-				break;
-				}
-			}
-			fCompletionAutoActivationCharacters= new char[4][];
-			fCompletionAutoActivationCharacters[IDX_AFTERDASH]= afterDash.toString().toCharArray();
-			fCompletionAutoActivationCharacters[IDX_AFTERCOLON]= afterColon.toString().toCharArray();
-			fCompletionAutoActivationCharacters[IDX_AFTEROTHER]= afterOther.toString().toCharArray();
-			fCompletionAutoActivationCharacters[IDX_ALL]= activationSet;
-		}
+		return new CContentAssistInvocationContext(viewer, offset, fEditor, isCompletion, isAutoActivated());
 	}
 
-
-	public char[] getCompletionProposalAutoActivationCharacters() {
-		if (fCompletionAutoActivationCharacters == null) {
-			return null;
+	/*
+	 * @see org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistProcessor#verifyAutoActivation(org.eclipse.jface.text.ITextViewer, int)
+	 */
+	protected boolean verifyAutoActivation(ITextViewer viewer, int offset) {
+		IDocument doc= viewer.getDocument();
+		if (doc == null) {
+			return false;
 		}
-		
-		if (fViewer != null) {
-			char prevChar= 0;
-			try {
-				final IDocument doc= fViewer.getDocument();
-				if (doc != null) {
-					prevChar= doc.getChar(fViewer.getSelectedRange().x-1);
+		if (offset <= 0) {
+			return false;
+		}
+		try {
+			char activationChar= doc.getChar(--offset);
+			switch (activationChar) {
+			case ':':
+				return offset > 0 && doc.getChar(--offset) == ':';
+			case '>':
+				return offset > 0 && doc.getChar(--offset) == '-';
+			case '.':
+				// avoid completion of float literals
+				CHeuristicScanner scanner= new CHeuristicScanner(doc);
+				int token= scanner.previousToken(--offset, Math.max(0, offset - 200));
+				// the scanner reports numbers as identifiers
+				if (token == Symbols.TokenIDENT && !Character.isJavaIdentifierStart(doc.getChar(scanner.getPosition() + 1))) {
+					// not a valid identifier
+					return false;
 				}
-			} 
-			catch (BadLocationException e) {
-				// beginning of document.
+				return true;
 			}
-			switch (prevChar) {
-				case ':':
-					return fCompletionAutoActivationCharacters[IDX_AFTERCOLON];
-				case '-':
-					return fCompletionAutoActivationCharacters[IDX_AFTERDASH];
-				default:
-					return fCompletionAutoActivationCharacters[IDX_AFTEROTHER];
-			}
+		} catch (BadLocationException exc) {
 		}
-		return fCompletionAutoActivationCharacters[IDX_ALL];
+		return false;
 	}
 
 }

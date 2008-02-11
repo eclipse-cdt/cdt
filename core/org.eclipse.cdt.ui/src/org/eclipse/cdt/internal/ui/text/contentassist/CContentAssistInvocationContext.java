@@ -43,6 +43,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 	
 	private final IEditorPart fEditor;
 	private final boolean fIsCompletion;
+	private final boolean fIsAutoActivated;
 	
 	private ITranslationUnit fTU= null;
 	private boolean fTUComputed= false;
@@ -59,12 +60,14 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 	 * @param viewer the viewer used by the editor
 	 * @param offset the invocation offset
 	 * @param editor the editor that content assist is invoked in
+	 * @param isAutoActivated  inidicates whether content assist was auto-activated
 	 */
-	public CContentAssistInvocationContext(ITextViewer viewer, int offset, IEditorPart editor, boolean isCompletion) {
+	public CContentAssistInvocationContext(ITextViewer viewer, int offset, IEditorPart editor, boolean isCompletion, boolean isAutoActivated) {
 		super(viewer, offset);
 		Assert.isNotNull(editor);
 		fEditor= editor;
 		fIsCompletion= isCompletion;
+		fIsAutoActivated= isAutoActivated;
 	}
 	
 	/**
@@ -78,6 +81,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 		fTUComputed= true;
 		fEditor= null;
 		fIsCompletion= isCompletion;
+		fIsAutoActivated= false;
 	}
 	
 	/**
@@ -109,7 +113,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 		if (fCNComputed) return fCN;
 		
 		fCNComputed = true;
-		
+
 		int offset = getParseOffset();
 		if (offset < 0) return null;
 		
@@ -255,6 +259,10 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 		return !fIsCompletion || (getParseOffset() != getInvocationOffset());
 	}
 	
+	public boolean isAutoActivated() {
+		return fIsAutoActivated;
+	}
+
 	public void dispose() {
 		if (fIndex != null) {
 			fIndex.releaseReadLock();

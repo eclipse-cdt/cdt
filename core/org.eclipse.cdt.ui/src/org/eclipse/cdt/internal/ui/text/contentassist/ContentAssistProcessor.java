@@ -102,6 +102,8 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 		}
 		
 	};
+
+	private static final ICompletionProposal[] NO_PROPOSALS= {};
 	
 	private final List fCategories;
 	private final String fPartition;
@@ -115,7 +117,8 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 	private String fIterationGesture= null;
 	private int fNumberOfComputedResults= 0;
 	private String fErrorMessage;
-	
+	private boolean fIsAutoActivated;
+
 	public ContentAssistProcessor(ContentAssistant assistant, String partition) {
 		Assert.isNotNull(partition);
 		Assert.isNotNull(assistant);
@@ -131,6 +134,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 				if (event.processor != ContentAssistProcessor.this)
 					return;
 
+				fIsAutoActivated= event.isAutoActivated;
 				fIterationGesture= getIterationGesture();
 				KeySequence binding= getIterationBinding();
 
@@ -203,6 +207,10 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 	public final ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
 		long start= DEBUG ? System.currentTimeMillis() : 0;
 		
+		if (isAutoActivated() && !verifyAutoActivation(viewer, offset)) {
+			return NO_PROPOSALS;
+		}
+		
 		clearState();
 		
 		IProgressMonitor monitor= createProgressMonitor();
@@ -236,6 +244,20 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 		} finally {
 			context.dispose();
 		}
+	}
+
+	/**
+	 * Verify that auto activation is allowed.
+	 * <p>
+	 * The default implementation always returns <code>true</code>.
+	 * </p>
+	 * 
+	 * @param viewer  the text viewer
+	 * @param offset  the offset where content assist was invoked on
+	 * @return <code>true</code> if auto activation is allowed
+	 */
+	protected boolean verifyAutoActivation(ITextViewer viewer, int offset) {
+		return true;
 	}
 
 	private void clearState() {
@@ -394,6 +416,15 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 	 */
 	protected ContentAssistInvocationContext createContext(ITextViewer viewer, int offset, boolean isCompletion) {
 		return new ContentAssistInvocationContext(viewer, offset);
+	}
+
+	/**
+	 * Test whether the current session was auto-activated.
+	 * 
+	 * @return  <code>true</code> if the current session was auto-activated.
+	 */
+	protected boolean isAutoActivated() {
+		return fIsAutoActivated;
 	}
 
 	private List getCategories() {

@@ -308,8 +308,7 @@ public class NewCfgDialog implements INewCfgDialog {
 			cloneConfigSelector.setEnabled(b_clone.getSelection());
 			realConfigSelector.setEnabled(b_real.getSelection());
 		}
-
-}
+	}
 
 	public int open() {
 		if (parentShell == null) return 1;
@@ -341,9 +340,9 @@ public class NewCfgDialog implements INewCfgDialog {
 				IProjectType pType = cfg.getProjectType();
 				if(pType != null){
 					IConfiguration[] cfs = pType.getConfigurations(); 
-					for (int j=0; j<cfs.length; j++) {
-						if (cfs[j] != null && !lst.contains(cfs[j]))
-							lst.add(cfs[j]);
+					for (IConfiguration c : cfs) {
+						if (c != null && !lst.contains(c))
+							lst.add(c);
 					}
 				}
 			}
@@ -460,6 +459,7 @@ public class NewCfgDialog implements INewCfgDialog {
 				if (b_clone.getSelection()) {
 					ICConfigurationDescription base = ManagedBuildManager.getDescriptionForConfiguration(parentConfig);
 					cfgDes = des.createConfiguration(id, newName, base);
+					cfgDes.setDescription(newDescription);
 				} else {
 					CConfigurationData data = config.getConfigurationData();
 					cfgDes = des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);

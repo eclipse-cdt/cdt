@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,14 +7,17 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.viewsupport;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.text.ITextSelection;
@@ -58,6 +61,11 @@ public class SelectionListenerWithASTManager {
 		private ISelectionChangedListener fSelectionListener;
 		private Job fCurrentJob;
 		private ListenerList fAstListeners;
+		/**
+		 * Lock to avoid having more than one calculateAndInform job in parallel.
+		 * Only jobs may synchronize on this as otherwise deadlocks are possible.
+		 */
+		private final Object fJobLock= new Object();
 		
 		public PartListenerGroup(ITextEditor editorPart) {
 			fPart= editorPart;
@@ -116,13 +124,29 @@ public class SelectionListenerWithASTManager {
 				fCurrentJob.cancel();
 			}
 			
-			IWorkingCopy workingCopy = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(fPart.getEditorInput());
+			final IWorkingCopy workingCopy = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(fPart.getEditorInput());
 			if (workingCopy == null)
 				return;
 			
-			ASTProvider.getASTProvider().runOnAST(workingCopy, ASTProvider.WAIT_YES, null, new ASTRunnable() {
+			fCurrentJob= new Job(Messages.SelectionListenerWithASTManager_jobName) { 
+				public IStatus run(IProgressMonitor monitor) {
+					if (monitor == null) {
+						monitor= new NullProgressMonitor();
+					}
+					synchronized (fJobLock) {
+						return calculateASTandInform(workingCopy, selection, monitor);
+					}
+				}
+			};
+			fCurrentJob.setPriority(Job.DECORATE);
+			fCurrentJob.setSystem(true);
+			fCurrentJob.schedule();
+		}
+
+		protected IStatus calculateASTandInform(final IWorkingCopy workingCopy, final ITextSelection selection, final IProgressMonitor monitor) {
+			return ASTProvider.getASTProvider().runOnAST(workingCopy, ASTProvider.WAIT_YES, monitor, new ASTRunnable() {
 				public IStatus runOnAST(ILanguage lang, IASTTranslationUnit astRoot) {
-					if (astRoot != null) {
+					if (astRoot != null && !monitor.isCanceled()) {
 						Object[] listeners;
 						synchronized (PartListenerGroup.this) {
 							listeners= fAstListeners.getListeners();
@@ -130,18 +154,19 @@ public class SelectionListenerWithASTManager {
 						for (int i= 0; i < listeners.length; i++) {
 							((ISelectionListenerWithAST) listeners[i]).selectionChanged(fPart, selection, astRoot);
 						}
+						return Status.OK_STATUS;
 					}
-					return Status.OK_STATUS;
+					return Status.CANCEL_STATUS;
 				}
 			});
 		}
 	}
 	
 		
-	private Map fListenerGroups;
+	private Map<ITextEditor, PartListenerGroup> fListenerGroups;
 	
 	private SelectionListenerWithASTManager() {
-		fListenerGroups= new HashMap();
+		fListenerGroups= new HashMap<ITextEditor, PartListenerGroup>();
 	}
 	
 	/**
@@ -151,7 +176,7 @@ public class SelectionListenerWithASTManager {
 	 */
 	public void addListener(ITextEditor part, ISelectionListenerWithAST listener) {
 		synchronized (this) {
-			PartListenerGroup partListener= (PartListenerGroup) fListenerGroups.get(part);
+			PartListenerGroup partListener= fListenerGroups.get(part);
 			if (partListener == null) {
 				partListener= new PartListenerGroup(part);
 				fListenerGroups.put(part, partListener);
@@ -167,7 +192,7 @@ public class SelectionListenerWithASTManager {
 	 */
 	public void removeListener(ITextEditor part, ISelectionListenerWithAST listener) {
 		synchronized (this) {
-			PartListenerGroup partListener= (PartListenerGroup) fListenerGroups.get(part);
+			PartListenerGroup partListener= fListenerGroups.get(part);
 			if (partListener != null) {
 				partListener.uninstall(listener);
 				if (partListener.isEmpty()) {

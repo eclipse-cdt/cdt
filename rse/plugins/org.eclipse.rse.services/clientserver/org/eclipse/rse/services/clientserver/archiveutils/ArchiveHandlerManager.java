@@ -130,7 +130,7 @@ public class ArchiveHandlerManager
 	
 	/**
 	 * Tests whether a file is an known type of archive, based on the file name.
-	 * @param file the name of the file to test.
+	 * @param filename the name of the file to test.
 	 * @return true if and only if the file is an archive whose
 	 * type is registered with the ArchiveHandlerManager.
 	 */
@@ -350,7 +350,7 @@ public class ArchiveHandlerManager
 	/**
 	 * Tests whether the absolute path given by <code>path</code>
 	 * refers to a virtual object.
-	 * @param path
+	 * @param path an absolute path string to check
 	 * @return True if and only if the absolute path refers to a virtual object.
 	 */
 	public static boolean isVirtual(String path)

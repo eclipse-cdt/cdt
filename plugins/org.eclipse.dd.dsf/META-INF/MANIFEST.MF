@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Debug Services Framework Core
 Bundle-Vendor: Eclipse.org
-Bundle-SymbolicName: org.eclipse.dd.dsf
+Bundle-SymbolicName: org.eclipse.dd.dsf;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.dd.dsf.DsfPlugin
 Bundle-Localization: plugin

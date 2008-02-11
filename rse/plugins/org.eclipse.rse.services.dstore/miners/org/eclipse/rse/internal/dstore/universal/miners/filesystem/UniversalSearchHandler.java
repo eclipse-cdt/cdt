@@ -173,7 +173,7 @@ public class UniversalSearchHandler extends Thread implements ICancellableHandle
 		// is it an archive?
 		boolean isArchive = ArchiveHandlerManager.getInstance().isArchive(theFile);
 		
-		String absPath = absPath = theFile.getAbsolutePath();
+		String absPath = theFile.getAbsolutePath();
 	
 		
 		String compareStr = theFile.getName();

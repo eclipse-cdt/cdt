@@ -21,7 +21,7 @@ public interface ISystemProfileOperation {
 	
 	/**
 	 * Run this operation. Should not be invoked directly. 
-	 * See {@link SystemProfileManager#run(ISystemProfileOperation) 
+	 * See {@link SystemProfileManager#run(ISystemProfileOperation)}
 	 * @return The IStatus of the operation
 	 */
 	public IStatus run();

@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * David Dykstal (IBM) - [189858] Removed the remote systems project in the team view
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
+ * Martin Oberhuber (Wind River) - [218524][api] Remove deprecated ISystemViewInputProvider#getShell()
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.team;
@@ -25,7 +26,6 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemViewInputProvider;
 import org.eclipse.rse.internal.core.model.SystemProfileManager;
-import org.eclipse.swt.widgets.Shell;
 
 
 /**
@@ -34,7 +34,6 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class SystemTeamViewInputProvider implements IAdaptable, ISystemViewInputProvider
 {
-	private Shell shell;
 	private Viewer viewer;
 			
 	/**
@@ -109,22 +108,6 @@ public class SystemTeamViewInputProvider implements IAdaptable, ISystemViewInput
 	{
 		// TODO Auto-generated method stub
 		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.ui.view.ISystemViewInputProvider#setShell(org.eclipse.swt.widgets.Shell)
-	 */
-	public void setShell(Object shell)
-	{
-		this.shell = (Shell)shell;		
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.ui.view.ISystemViewInputProvider#getShell()
-	 */
-	public Object getShell()
-	{
-		return shell;
 	}
 
 	/* (non-Javadoc)

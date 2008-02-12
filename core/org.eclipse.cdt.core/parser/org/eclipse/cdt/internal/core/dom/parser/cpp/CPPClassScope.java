@@ -11,9 +11,6 @@
  *     Bryan Wilkinson (QNX)
  *     Andrew Ferguson (Symbian)
  *******************************************************************************/
-/*
- * Created on Nov 29, 2004
- */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import java.util.ArrayList;
@@ -247,7 +244,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 			return false;
 		if(forName == null)
 			return true;
-		if(!forName.isReference() && !CPPSemantics.declaredBefore(candidate, forName))
+		if(!forName.isReference() && !CPPSemantics.declaredBefore(candidate, forName, false))
 			return false;
 		return true;
 	}

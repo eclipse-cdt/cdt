@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
@@ -35,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
@@ -751,5 +753,54 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 		IScope outer= f.getCompositeTypeOwner().getScope();
 		assertTrue(outer instanceof ICPPClassScope);
 		assertEquals("outer", outer.getScopeName().toString());
+	}
+	
+	// namespace ns {
+	// int v;
+	// };
+	// using namespace ns;
+	
+	// #include "header.h"
+	// void test() {
+	//    v=1;
+	// }
+	public void testUsingDirective_Bug216527() throws Exception {
+		IBinding b = getBindingFromASTName("v=", 1);
+		assertTrue(b instanceof IVariable);
+		IVariable v= (IVariable) b;
+		IScope scope= v.getScope();
+		assertTrue(scope instanceof ICPPNamespaceScope);
+		assertEquals("ns", scope.getScopeName().toString());
+	}	
+	
+	// namespace NSA {
+	// int a;
+	// }
+	// namespace NSB {
+	// int b;
+	// }
+	// namespace NSAB {
+	//    using namespace NSA;
+	//    using namespace NSB;
+	// }
+
+	// #include "header.h"
+	// void f() {
+	//   NSAB::a= NSAB::b;
+	// }
+	public void testNamespaceComposition_Bug200673() throws Exception {
+		IBinding a = getBindingFromASTName("a=", 1);
+		assertTrue(a instanceof IVariable);
+		IVariable v= (IVariable) a;
+		IScope scope= v.getScope();
+		assertTrue(scope instanceof ICPPNamespaceScope);
+		assertEquals("NSA", scope.getScopeName().toString());
+
+		IBinding b = getBindingFromASTName("b;", 1);
+		assertTrue(b instanceof IVariable);
+		v= (IVariable) b;
+		scope= v.getScope();
+		assertTrue(scope instanceof ICPPNamespaceScope);
+		assertEquals("NSB", scope.getScopeName().toString());
 	}
 }

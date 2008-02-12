@@ -25,8 +25,6 @@ import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
-import org.eclipse.cdt.core.index.IIndexFile;
-import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.EndOfFileException;
@@ -1014,7 +1012,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 				path= fi.getFileLocation();
 				switch(fi.getKind()) {
 				case FOUND_IN_INDEX:
-					processInclusionFromIndex(path, fi);
+					processInclusionFromIndex(poundOffset, path, fi);
 					break;
 				case USE_CODE_READER:
 					CodeReader reader= fi.getCodeReader();
@@ -1041,18 +1039,12 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		}
 	}
 
-	private void processInclusionFromIndex(String path, IncludeFileContent fi) {
+	private void processInclusionFromIndex(int offset, String path, IncludeFileContent fi) {
 		List<IIndexMacro> mdefs= fi.getMacroDefinitions();
 		for (IIndexMacro macro : mdefs) {
 			addMacroDefinition(macro);
 		}
-		IIndexFileSet fileSet= fLocationMap.getFileSet();
-		if (fileSet != null) {
-			List<IIndexFile> files= fi.getFilesIncluded();
-			for (IIndexFile indexFile : files) {
-				fileSet.add(indexFile);
-			}
-		}
+		fLocationMap.skippedFile(fLocationMap.getSequenceNumberForOffset(offset), fi);
 	}
 
 	private char[] extractHeaderName(final char[] image, final char startDelim, final char endDelim, int[] offsets) {

@@ -20,7 +20,6 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
-import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentName;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -124,7 +123,7 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 		pdom.getDB().putInt(record + offset, fieldrec);
 	}
 
-	public PDOMBinding getPDOMBinding() throws CoreException {
+	public PDOMBinding getBinding() throws CoreException {
 		int bindingrec = getRecField(BINDING_REC_OFFSET);
 		return pdom.getBinding(bindingrec);
 	}
@@ -327,13 +326,13 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 		else {
 			switch (getFlags(DECL_DEF_REF_MASK)) {
 			case IS_DECLARATION:
-				getPDOMBinding().setFirstDeclaration(nextName);
+				getBinding().setFirstDeclaration(nextName);
 				break;
 			case IS_DEFINITION:
-				getPDOMBinding().setFirstDefinition(nextName);
+				getBinding().setFirstDefinition(nextName);
 				break;
 			case IS_REFERENCE:
-				getPDOMBinding().setFirstReference(nextName);
+				getBinding().setFirstReference(nextName);
 				break;
 			}
 		}
@@ -347,10 +346,6 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 
 	public IIndexFragment getIndexFragment() {
 		return pdom;
-	}
-
-	public IIndexFragmentBinding getBinding() throws CoreException {
-		return getPDOMBinding();
 	}
 
 	public IIndexName[] getEnclosedNames() throws CoreException {

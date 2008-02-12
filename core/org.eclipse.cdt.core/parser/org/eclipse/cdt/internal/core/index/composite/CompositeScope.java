@@ -6,18 +6,18 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
+ *    Andrew Ferguson (Symbian) - Initial implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.index.IIndexFileSet;
+import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPCompositeBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUsingDeclaration;
@@ -44,17 +44,17 @@ public abstract class CompositeScope implements IIndexScope {
 		this.rbinding = rbinding;
 	}
 	
-	final public IScope getParent() throws DOMException {
-		IIndexScope rscope = (IIndexScope) rbinding.getScope();
+	final public IIndexScope getParent() {
+		IIndexScope rscope = rbinding.getScope();
 		if(rscope!=null) {
 			return cf.getCompositeScope(rscope);
 		}
 		return null;
 	}
 
-	public IName getScopeName() throws DOMException {
-		if(rbinding instanceof IScope)
-			return ((IScope) rbinding).getScopeName();
+	public IIndexName getScopeName() {
+		if(rbinding instanceof IIndexScope)
+			return ((IIndexScope) rbinding).getScopeName();
 		return null;
 	}
 

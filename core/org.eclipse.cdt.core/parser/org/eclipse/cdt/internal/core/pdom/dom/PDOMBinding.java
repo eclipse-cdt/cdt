@@ -18,17 +18,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBindingComparator;
+import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IString;
@@ -184,11 +183,11 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 		return new char[0];
 	}
 	
-	public IScope getParent() throws DOMException {
+	public IIndexScope getParent() {
 		try {
 			IBinding parent = getParentBinding();
-			if(parent instanceof IScope) {
-				return (IScope) parent;
+			if(parent instanceof IIndexScope) {
+				return (IIndexScope) parent;
 			}
 		} catch(CoreException ce) {
 			CCorePlugin.log(ce);
@@ -196,11 +195,11 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 		return null;
 	}
 	
-	public final IScope getScope() {
+	public final IIndexScope getScope() {
 		try {
 			IBinding parent = getParentBinding(); 
-			if(parent instanceof IScope) {
-				return (IScope) parent;
+			if(parent instanceof IIndexScope) {
+				return (IIndexScope) parent;
 			}
 		} catch(CoreException ce) {
 			CCorePlugin.log(ce);
@@ -267,7 +266,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
      */
 	protected final void fail() { throw new PDOMNotImplementedError(); }
 	
-	public IName getScopeName() throws DOMException {
+	public PDOMName getScopeName() {
 		try {
 			PDOMName name = getFirstDefinition();
 			if (name == null)

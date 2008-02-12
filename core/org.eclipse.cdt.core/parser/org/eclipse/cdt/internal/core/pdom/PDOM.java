@@ -91,7 +91,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 */
 	public static final String FRAGMENT_PROPERTY_VALUE_FORMAT_ID= "org.eclipse.cdt.internal.core.pdom.PDOM"; //$NON-NLS-1$
 	
-	public static final int CURRENT_VERSION = 55;
+	public static final int CURRENT_VERSION = 56; 
 	public static final int MIN_SUPPORTED_VERSION= CURRENT_VERSION;
 	
 	/**
@@ -156,6 +156,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  53 - polymorphic method calls (bug 156691)
 	 *  54 - optimization of database size (bug 210392)
 	 *  55 - generalization of local bindings (bug 215783)
+	 *  56 - using directives (bug 216527)
 	 */
 	
 	public static final int LINKAGES = Database.DATA_AREA;
@@ -709,7 +710,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	public IIndexFragmentBinding findBinding(IIndexFragmentName indexName) throws CoreException {
 		if (indexName instanceof PDOMName) {
 			PDOMName pdomName= (PDOMName) indexName;
-			return pdomName.getPDOMBinding();
+			return pdomName.getBinding();
 		}
 		return null;
 	}

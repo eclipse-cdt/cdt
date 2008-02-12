@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2008 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
+ *    Andrew Ferguson (Symbian) - Initial implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.c;
 
@@ -23,7 +23,6 @@ import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
-import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
@@ -50,14 +49,14 @@ public class CCompositesFactory extends AbstractCompositeFactory implements ICom
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.index.composite.cpp.ICompositesFactory#getCompositeScope(org.eclipse.cdt.core.index.IIndex, org.eclipse.cdt.core.dom.ast.IScope)
 	 */
-	public IScope getCompositeScope(IIndexScope rscope) {
+	public IIndexScope getCompositeScope(IIndexScope rscope) {
 		if(rscope==null)
 			return null;
 		if(rscope instanceof ICCompositeTypeScope) {
 			try {
 				ICCompositeTypeScope cscope = (ICCompositeTypeScope) rscope;
 				IIndexFragmentBinding rbinding = (IIndexFragmentBinding) cscope.getCompositeType();
-				return ((ICompositeType)getCompositeBinding(rbinding)).getCompositeScope();
+				return (IIndexScope) ((ICompositeType)getCompositeBinding(rbinding)).getCompositeScope();
 			} catch(DOMException de) {
 				CCorePlugin.log(de);
 			}

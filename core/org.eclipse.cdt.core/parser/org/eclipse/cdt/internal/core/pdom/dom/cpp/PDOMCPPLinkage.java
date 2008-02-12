@@ -15,6 +15,7 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -33,7 +34,9 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
@@ -60,6 +63,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPBasicType;
@@ -68,6 +72,7 @@ import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBlockScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.index.composite.CompositeScope;
@@ -857,8 +862,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	}
 
 	@Override
-	public void onCreateName(PDOMName pdomName, IASTName name) throws CoreException {
-		super.onCreateName(pdomName, name);
+	public void onCreateName(PDOMFile file, IASTName name, PDOMName pdomName) throws CoreException {
+		super.onCreateName(file, name, pdomName);
 		
 		IASTNode parentNode= name.getParent();
 		if (parentNode instanceof ICPPASTQualifiedName) {
@@ -873,7 +878,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			PDOMName derivedClassName= (PDOMName) pdomName.getEnclosingDefinition();
 			if (derivedClassName != null) {
 				ICPPASTBaseSpecifier baseNode= (ICPPASTBaseSpecifier) parentNode;
-				PDOMBinding derivedClassBinding= derivedClassName.getPDOMBinding();
+				PDOMBinding derivedClassBinding= derivedClassName.getBinding();
 				if (derivedClassBinding instanceof PDOMCPPClassType) {
 					PDOMCPPClassType ownerClass = (PDOMCPPClassType)derivedClassBinding;
 					PDOMCPPBase pdomBase = new PDOMCPPBase(pdom, pdomName, baseNode.isVirtual(), baseNode.getVisibility());
@@ -887,8 +892,58 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				}
 			}
 		}
+		else if (parentNode instanceof ICPPASTUsingDirective) {
+			IScope container= CPPVisitor.getContainingScope(name);
+			try {
+				boolean doit= false;
+				PDOMCPPNamespace containerNS= null;
+				
+				IASTNode node= ASTInternal.getPhysicalNodeOfScope(container);
+				if (node instanceof IASTTranslationUnit) {
+					doit= true;
+				}
+				else if (node instanceof ICPPASTNamespaceDefinition) {
+					ICPPASTNamespaceDefinition nsDef= (ICPPASTNamespaceDefinition) node;
+					IASTName nsContainerName= nsDef.getName();
+					if (nsContainerName != null) {
+						PDOMBinding binding= adaptBinding(nsContainerName.resolveBinding());
+						if (binding instanceof PDOMCPPNamespace) {
+							containerNS= (PDOMCPPNamespace) binding;
+							doit= true;
+						}
+					}
+				}
+				if (doit) {
+					int rec= file.getFirstUsingDirectiveRec();
+					PDOMCPPUsingDirective ud= new PDOMCPPUsingDirective(this, rec, containerNS, pdomName.getBinding());
+					file.setFirstUsingDirectiveRec(ud.getRecord());
+				}
+			} catch (DOMException e) {
+				CCorePlugin.log(e);
+			}
+		}
 	}
 	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage#getUsingDirectives()
+	 */
+	@Override
+	public ICPPUsingDirective[] getUsingDirectives(PDOMFile file) throws CoreException {
+		int rec= file.getFirstUsingDirectiveRec();
+		if (rec == 0) {
+			return ICPPUsingDirective.EMPTY_ARRAY;
+		}
+		LinkedList<ICPPUsingDirective> uds= new LinkedList<ICPPUsingDirective>();
+		do {
+			PDOMCPPUsingDirective ud= new PDOMCPPUsingDirective(this, rec);
+			uds.addFirst(ud);
+			rec= ud.getPreviousRec();
+		}
+		while (rec != 0);
+		return uds.toArray(new ICPPUsingDirective[uds.size()]);
+	}
+
 	@Override
 	public void onDeleteName(PDOMName pdomName) throws CoreException {
 		super.onDeleteName(pdomName);
@@ -896,7 +951,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		if (pdomName.isBaseSpecifier()) {
 			PDOMName derivedClassName= (PDOMName) pdomName.getEnclosingDefinition();
 			if (derivedClassName != null) {
-				PDOMBinding derivedClassBinding= derivedClassName.getPDOMBinding();
+				PDOMBinding derivedClassBinding= derivedClassName.getBinding();
 				if (derivedClassBinding instanceof PDOMCPPClassType) {
 					PDOMCPPClassType ownerClass = (PDOMCPPClassType)derivedClassBinding;
 					ownerClass.removeBase(pdomName);

@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.index.IIndexLinkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.index.IIndexBindingConstants;
@@ -270,14 +271,15 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	public abstract int getBindingType(IBinding binding);
 
 	/**
-	 * Callback informing the linkage that a name has been added. This is
+	 * Call-back informing the linkage that a name has been added. This is
 	 * used to do additional processing, like establishing inheritance relationships.
-	 * @param pdomName the name that was inserted into the linkage
+	 * @param file the file that has triggered the creation of the name
 	 * @param name the name that caused the insertion
+	 * @param pdomName the name that was inserted into the linkage
 	 * @throws CoreException 
 	 * @since 4.0
 	 */
-	public void onCreateName(PDOMName pdomName, IASTName name) throws CoreException {
+	public void onCreateName(PDOMFile file, IASTName name, PDOMName pdomName) throws CoreException {
 		IASTNode parentNode= name.getParent();
 		if (parentNode instanceof IASTDeclSpecifier) {
 			IASTDeclSpecifier ds= (IASTDeclSpecifier) parentNode;
@@ -341,5 +343,9 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 
 	public void delete(PDOMLinkage linkage) throws CoreException {
 		assert false; // no need to delete linkages.
+	}
+
+	public ICPPUsingDirective[] getUsingDirectives(PDOMFile file) throws CoreException {
+		return ICPPUsingDirective.EMPTY_ARRAY;
 	}
 }

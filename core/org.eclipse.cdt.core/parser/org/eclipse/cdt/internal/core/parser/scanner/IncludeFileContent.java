@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.parser.CodeReader;
@@ -40,6 +41,7 @@ public class IncludeFileContent {
 	private final InclusionKind fKind;
 	private final CodeReader fCodeReader;
 	private final List<IIndexMacro> fMacroDefinitions;
+	private final List<ICPPUsingDirective> fUsingDirectives;
 	private final String fFileLocation;
 	private List<IIndexFile> fFiles;
 	
@@ -57,6 +59,7 @@ public class IncludeFileContent {
 		fKind= kind;
 		fFileLocation= fileLocation;
 		fMacroDefinitions= null;
+		fUsingDirectives= null;
 		fCodeReader= null;
 	}
 
@@ -73,6 +76,7 @@ public class IncludeFileContent {
 		fFileLocation= codeReader.getPath();
 		fCodeReader= codeReader;
 		fMacroDefinitions= null;
+		fUsingDirectives= null;
 		if (fFileLocation == null) {
 			throw new IllegalArgumentException();
 		}
@@ -85,10 +89,12 @@ public class IncludeFileContent {
 	 * @param files 
 	 * @throws IllegalArgumentException in case the fileLocation or the macroDefinitions are <code>null</code>.
 	 */
-	public IncludeFileContent(String fileLocation, List<IIndexMacro> macroDefinitions, List<IIndexFile> files) {
+	public IncludeFileContent(String fileLocation, List<IIndexMacro> macroDefinitions, List<ICPPUsingDirective> usingDirectives,
+			List<IIndexFile> files) {
 		fKind= InclusionKind.FOUND_IN_INDEX;
 		fFileLocation= fileLocation;
 		fCodeReader= null;
+		fUsingDirectives= usingDirectives;
 		fMacroDefinitions= macroDefinitions;
 		fFiles= files;
 	}
@@ -123,6 +129,13 @@ public class IncludeFileContent {
 		return fMacroDefinitions;
 	}
 
+	/**
+	 * Valid with {@link InclusionKind#FOUND_IN_INDEX}.
+	 * @return the usingDirectives or <code>null</code> if kind is different to {@link InclusionKind#FOUND_IN_INDEX}.
+	 */
+	public List<ICPPUsingDirective> getUsingDirectives() {
+		return fUsingDirectives;
+	}
 
 	/**
 	 * Valid with {@link InclusionKind#FOUND_IN_INDEX}.

@@ -125,6 +125,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
@@ -1021,12 +1022,12 @@ public class CPPSemantics {
 		IASTNode node = data.astName;
 
 		IIndexFileSet fileSet= IIndexFileSet.EMPTY;
-		if (node != null) {
-			if (data.tu != null) {
-				final IIndexFileSet fs= (IIndexFileSet) data.tu.getAdapter(IIndexFileSet.class);
-				if (fs != null) {
-					fileSet= fs;
-				}
+		boolean isIndexBased= false;
+		if (data.tu != null) {
+			final IIndexFileSet fs= data.tu.getFileSet();
+			if (fs != null) {
+				fileSet= fs;
+				isIndexBased= true;
 			}
 		}
 		
@@ -1048,6 +1049,9 @@ public class CPPSemantics {
 		}
 		
 		while( scope != null ){
+			if (scope instanceof IIndexScope && data.tu != null) {
+				scope= (ICPPScope) data.tu.mapToASTScope(((IIndexScope) scope));
+			}
 			IASTNode blockItem = CPPVisitor.getContainingBlockItem( node );
 			
 			if( !data.usingDirectivesOnly ){
@@ -1055,7 +1059,7 @@ public class CPPSemantics {
 					if (!data.contentAssist && data.astName != null) {
 						IBinding binding = scope.getBinding( data.astName, true, fileSet );
 						if( binding != null && 
-							( CPPSemantics.declaredBefore( binding, data.astName ) || 
+							( CPPSemantics.declaredBefore( binding, data.astName, isIndexBased ) || 
 							  (scope instanceof ICPPClassScope && data.checkWholeClassScope) ) )
 						{
 							mergeResults( data, binding, true );	
@@ -1103,13 +1107,16 @@ public class CPPSemantics {
 					final ICPPNamespaceScope blockScope= (ICPPNamespaceScope) scope;
 					if (! (blockScope instanceof ICPPBlockScope)) {
 						data.visited.put(blockScope);	// namespace has been searched.
+						if (data.tu != null) {
+							data.tu.handleAdditionalDirectives(blockScope);
+						}
 					}
 					ICPPUsingDirective[] uds= blockScope.getUsingDirectives();
 					if( uds != null && uds.length > 0) {
 						HashSet<ICPPNamespaceScope> handled= new HashSet<ICPPNamespaceScope>();
 						for( int i = 0; i < uds.length; i++ ){
 							final ICPPUsingDirective ud = uds[i];
-							if( CPPSemantics.declaredBefore( ud, data.astName ) ){
+							if( CPPSemantics.declaredBefore( ud, data.astName, false ) ){
 								storeUsingDirective(data, blockScope, ud, handled);
 							}
 						}
@@ -1390,11 +1397,10 @@ public class CPPSemantics {
 	 */
 	static private void storeUsingDirective(CPPSemantics.LookupData data, ICPPNamespaceScope container, 
 			ICPPUsingDirective directive, Set<ICPPNamespaceScope> handled) throws DOMException {
-		final ICPPNamespace nsBinding = directive.getNamespace();
-		if (nsBinding == null) {
-			return;
+		ICPPNamespaceScope nominated= directive.getNominatedScope();
+		if (nominated instanceof IIndexScope && data.tu != null) {
+			nominated= (ICPPNamespaceScope) data.tu.mapToASTScope((IIndexScope) nominated);
 		}
-		final ICPPNamespaceScope nominated= nsBinding.getNamespaceScope();
 		if (nominated == null || data.visited.containsKey(nominated) || (handled != null && !handled.add(nominated))) {
 			return;
 		}
@@ -1417,6 +1423,9 @@ public class CPPSemantics {
 		// container.
 		if (!data.qualified() || data.contentAssist) {
 			assert handled != null;
+			if (data.tu != null) {
+				data.tu.handleAdditionalDirectives(nominated);
+			}
 			ICPPUsingDirective[] transitive= nominated.getUsingDirectives();
 			for (int i = 0; i < transitive.length; i++) {
 				storeUsingDirective(data, container, transitive[i], handled);
@@ -1448,6 +1457,7 @@ public class CPPSemantics {
 	 * @throws DOMException
 	 */
 	static protected IASTName[] lookupInScope( CPPSemantics.LookupData data, ICPPScope scope, IASTNode blockItem ) throws DOMException {
+		final boolean isIndexBased= data.tu == null ? false : data.tu.getIndex() != null;
 		Object possible = null;
 		IASTNode [] nodes = null;
 		IASTNode parent = ASTInternal.getPhysicalNodeOfScope(scope);
@@ -1549,7 +1559,7 @@ public class CPPSemantics {
 				        temp = ((IASTName[])possible)[++jdx];
 				    while( temp != null ) {
 					
-						if(	(checkWholeClassScope || declaredBefore( temp, data.astName )) &&
+						if(	(checkWholeClassScope || declaredBefore( temp, data.astName, isIndexBased )) &&
 						    (item != blockItem || data.includeBlockItem( item )) )
 							
 						{
@@ -1656,6 +1666,9 @@ public class CPPSemantics {
 				// the lookup did not succeed. In the qualified case this is done earlier, when the directive
 				// is encountered.
 				if (!found && data.qualified() && !data.contentAssist) {
+					if (data.tu != null) {
+						data.tu.handleAdditionalDirectives(nominated);
+					}
 					ICPPUsingDirective[] usings= nominated.getUsingDirectives();
 					for (int i = 0; i < usings.length; i++) {
 						ICPPUsingDirective using = usings[i];
@@ -1918,7 +1931,7 @@ public class CPPSemantics {
         return new CPPCompositeBinding( result );
 	}
 	
-	static public boolean declaredBefore( Object obj, IASTNode node ){
+	static public boolean declaredBefore( Object obj, IASTNode node, boolean indexBased ){
 	    if( node == null ) return true;
 	    if( node.getPropertyInParent() == STRING_LOOKUP_PROPERTY ) return true;
 	    final int pointOfRef= ((ASTNode) node).getOffset();
@@ -1931,6 +1944,21 @@ public class CPPSemantics {
 	    int pointOfDecl= -1;
 	    if( obj instanceof ICPPInternalBinding ){
 	        ICPPInternalBinding cpp = (ICPPInternalBinding) obj;
+	        // for bindings in global or namespace scope we don't know whether there is a 
+	        // previous declaration in one of the skipped header files. For bindings that
+	        // are likely to be redeclared we need to assume that there is a declaration
+	        // in one of the headers.
+	    	if (indexBased) {
+	    		if (cpp instanceof ICPPNamespace || cpp instanceof ICPPFunction || cpp instanceof ICPPVariable) {
+	    			try {
+	    				IScope scope= cpp.getScope();
+	    				if (!(scope instanceof ICPPBlockScope) && scope instanceof ICPPNamespaceScope) {
+	    					return true;
+	    				}
+	    			} catch (DOMException e) {
+	    			}
+	    		}
+	    	}
 	        IASTNode[] n = cpp.getDeclarations();
 	        if( n != null && n.length > 0 ) {
 	        	nd = (ASTNode) n[0];
@@ -1986,6 +2014,7 @@ public class CPPSemantics {
 	    if( !data.hasResults() || data.contentAssist )
 	        return null;
 	      
+	    final boolean indexBased= data.tu == null ? false : data.tu.getIndex() != null;
 	    IBinding type = null;
 	    IBinding obj  = null;
 	    IBinding temp = null;
@@ -1996,7 +2025,7 @@ public class CPPSemantics {
 	    Object [] items = (Object[]) data.foundItems;
 	    for( int i = 0; i < items.length && items[i] != null; i++ ){
 	        Object o = items[i];
-	        boolean declaredBefore = declaredBefore( o, name );
+	        boolean declaredBefore = declaredBefore( o, name, indexBased );
 	        boolean checkResolvedNamesOnly= false;
 	        if( !data.checkWholeClassScope && !declaredBefore) {
 	        	if (!name.isReference()) {
@@ -2724,6 +2753,7 @@ public class CPPSemantics {
 	        } catch ( DOMException e1 ) {
 	            return null;
 	        }
+		    final boolean isIndexBased= data.tu == null ? false : data.tu.getIndex() != null;
 	        if( data.hasResults() ){
 	            Object [] items = (Object[]) data.foundItems;
 	            IBinding temp = null;
@@ -2734,7 +2764,7 @@ public class CPPSemantics {
 	    	            temp = ((IASTName) o).resolveBinding();
 	    	        else if( o instanceof IBinding ){
 	    	            temp = (IBinding) o;
-	    	            if( !declaredBefore( temp, name ) )
+	    	            if( !declaredBefore( temp, name, isIndexBased ) )
 	    	                continue;
 	    	        } else
 	    	            continue;

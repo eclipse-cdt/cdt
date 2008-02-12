@@ -121,9 +121,10 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//     class B {};
 	// }
 
+	// #include "header.h"
 	// namespace n { class C{}; }
 	// m::C c;
-	public void _testUsingNamingDirective_177917_1b() {
+	public void testUsingNamingDirective_177917_1b() {
 		IBinding b0= getBindingFromASTName("C c", 1);
 	}
 

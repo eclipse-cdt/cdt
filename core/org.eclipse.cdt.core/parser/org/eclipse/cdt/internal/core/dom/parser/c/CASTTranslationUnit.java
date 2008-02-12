@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import java.util.List;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
@@ -44,18 +46,21 @@ import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
+import org.eclipse.cdt.internal.core.parser.scanner.ISkippedIndexedFilesListener;
+import org.eclipse.cdt.internal.core.parser.scanner.IncludeFileContent;
 import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author jcamelon
  */
-public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit {
+public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit, ISkippedIndexedFilesListener {
 
 	private static final IASTPreprocessorStatement[] EMPTY_PREPROCESSOR_STATEMENT_ARRAY = new IASTPreprocessorStatement[0];
 	private static final IASTPreprocessorMacroDefinition[] EMPTY_PREPROCESSOR_MACRODEF_ARRAY = new IASTPreprocessorMacroDefinition[0];
@@ -560,4 +565,16 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
 	public void setIsHeaderUnit(boolean headerUnit) {
 		fIsHeader= headerUnit;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.scanner.ISkippedIndexedFilesListener#skippedFile(org.eclipse.cdt.internal.core.parser.scanner.IncludeFileContent)
+	 */
+	public void skippedFile(int offset, IncludeFileContent fileContent) {
+		if (fIndexFileSet != null) {
+			List<IIndexFile> files= fileContent.getFilesIncluded();
+			for (IIndexFile indexFile : files) {
+				fIndexFileSet.add(indexFile);
+			}
+		}
+	}	
 }

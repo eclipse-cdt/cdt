@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 QNX Software Systems and others.
+ * Copyright (c) 2006, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -93,7 +93,7 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 		try {
 			PDOMName name= getBaseClassSpecifierNameImpl();
 			if (name != null) {
-				PDOMBinding b = name.getPDOMBinding();
+				PDOMBinding b = name.getBinding();
 		    	while( b instanceof PDOMCPPTypedef && ((PDOMCPPTypedef)b).getType() instanceof PDOMBinding ){
 					b = (PDOMBinding) ((PDOMCPPTypedef)b).getType();
 		    	}

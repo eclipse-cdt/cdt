@@ -19,9 +19,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ILinkage;
+import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IIndexLocationConverter;
@@ -58,8 +61,9 @@ public class PDOMFile implements IIndexFragmentFile {
 	private static final int LINKAGE_ID= 20;
 	private static final int TIME_STAMP = 24;
 	private static final int SCANNER_CONFIG_HASH= 32;
+	private static final int FIRST_USING_DIRECTIVE= 36;
 
-	private static final int RECORD_SIZE = 36;
+	private static final int RECORD_SIZE= 40;
 
 	public static class Comparator implements IBTreeComparator {
 		private Database db;
@@ -252,7 +256,7 @@ public class PDOMFile implements IIndexFragmentFile {
 			PDOMBinding binding = ((WritablePDOM) pdom).addBinding(name);
 			if (binding != null) {
 				result= new PDOMName(pdom, name, this, binding, caller);
-				binding.getLinkageImpl().onCreateName(result, name);
+				binding.getLinkageImpl().onCreateName(this, name, result);
 			}
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -261,6 +265,14 @@ public class PDOMFile implements IIndexFragmentFile {
 	}
 
 	public void clear(Collection<IIndexFileLocation> contextsRemoved) throws CoreException {
+		ICPPUsingDirective[] directives= getUsingDirectives();
+		for (ICPPUsingDirective ud : directives) {
+			if (ud instanceof IPDOMNode) {
+				((IPDOMNode) ud).delete(null);
+			}
+		}
+		setFirstUsingDirectiveRec(0);
+
 		// Remove the includes
 		PDOMInclude include = getFirstInclude();
 		while (include != null) {
@@ -288,7 +300,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		PDOMName name = getFirstName();
 		while (name != null) {
 			names.add(name);
-			name.getPDOMBinding().getLinkageImpl().onDeleteName(name);
+			name.getBinding().getLinkageImpl().onDeleteName(name);
 			name= name.getNextInFile();
 		}
 		
@@ -502,5 +514,24 @@ public class PDOMFile implements IIndexFragmentFile {
 			include = nextInclude;
 		}
 		setFirstIncludedBy(null);
+	}
+
+	public int getFirstUsingDirectiveRec() throws CoreException {
+		return pdom.getDB().getInt(record + FIRST_USING_DIRECTIVE);
+	}
+
+	public void setFirstUsingDirectiveRec(int rec) throws CoreException {
+		pdom.getDB().putInt(record + FIRST_USING_DIRECTIVE, rec);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.index.IIndexFile#getUsingDirectives()
+	 */
+	public ICPPUsingDirective[] getUsingDirectives() throws CoreException {
+		PDOMLinkage linkage= pdom.getLinkage(ILinkage.CPP_LINKAGE_NAME);
+		if (linkage != null) {
+			return linkage.getUsingDirectives(this);
+		}
+		return ICPPUsingDirective.EMPTY_ARRAY;
 	}
 }

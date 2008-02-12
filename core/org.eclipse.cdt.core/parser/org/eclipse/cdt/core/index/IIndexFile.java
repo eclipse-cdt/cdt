@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,9 +9,9 @@
  *    Markus Schorn - initial API and implementation
  *    Andrew Ferguson (Symbian)
  *******************************************************************************/ 
-
 package org.eclipse.cdt.core.index;
 
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -53,6 +53,13 @@ public interface IIndexFile {
 	 */
 	IIndexMacro[] getMacros() throws CoreException;
 	
+	/**
+	 * Returns all using directives for namespaces and global scope, found in this file.
+	 * @throws CoreException 
+	 * @since 5.0
+	 */
+	ICPPUsingDirective[] getUsingDirectives() throws CoreException;
+
 	/**
 	 * Last modification of file before it was indexed.
 	 * @return the last modification date of the file at the time it was parsed.

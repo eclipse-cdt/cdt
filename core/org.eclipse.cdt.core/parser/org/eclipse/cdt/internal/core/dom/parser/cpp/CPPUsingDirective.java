@@ -13,9 +13,11 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
@@ -43,10 +45,10 @@ public class CPPUsingDirective implements ICPPUsingDirective {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective#getNamespaceScope()
 	 */
-	public ICPPNamespace getNamespace() throws DOMException {
+	public ICPPNamespaceScope getNominatedScope() throws DOMException {
 		IBinding binding= fNamespaceName.resolveBinding();
 		if (binding instanceof ICPPNamespace) {
-			return (ICPPNamespace) binding;
+			return ((ICPPNamespace) binding).getNamespaceScope();
 		}
 		return null;
 	}
@@ -57,5 +59,12 @@ public class CPPUsingDirective implements ICPPUsingDirective {
 	public int getPointOfDeclaration() {
 		final ASTNode astNode = (ASTNode) fNamespaceName;
 		return astNode.getOffset() + astNode.getLength();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective#getContainingScope()
+	 */
+	public IScope getContainingScope() {
+		return CPPVisitor.getContainingScope(fNamespaceName);
 	}
 }

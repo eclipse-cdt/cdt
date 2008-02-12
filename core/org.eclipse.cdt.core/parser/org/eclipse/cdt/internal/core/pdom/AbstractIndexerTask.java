@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree.IASTInclusionNode;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexInclude;
@@ -76,18 +77,19 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		}
 	}
 
-	private static class FileInfo {
-		IIndexFile fIndexFile= null;
-		boolean fRequestUpdate= false;
-		boolean fRequestIsCounted= true;
-		boolean fIsUpdated= false;
+	public static class FileContent {
+		private IIndexFile fIndexFile= null;
+		private boolean fRequestUpdate= false;
+		private boolean fRequestIsCounted= true;
+		private boolean fIsUpdated= false;
 		public IIndexMacro[] fMacros;
+		public ICPPUsingDirective[] fDirectives;
 	}
 	
 	private int fUpdateFlags= IIndexManager.UPDATE_ALL;
 	private boolean fIndexHeadersWithoutContext= true;
 	private boolean fIndexFilesWithoutConfiguration= true;
-	private HashMap<FileKey, FileInfo> fFileInfos= new HashMap<FileKey, FileInfo>();
+	private HashMap<FileKey, FileContent> fFileInfos= new HashMap<FileKey, FileContent>();
 
 	private Object[] fFilesToUpdate;
 	private List<Object> fFilesToRemove = new ArrayList<Object>();
@@ -308,7 +310,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	
 	private void requestUpdate(int linkageID, IIndexFileLocation ifl, IIndexFragmentFile ifile) {
 		FileKey key= new FileKey(linkageID, ifl.getURI());
-		FileInfo info= fFileInfos.get(key);
+		FileContent info= fFileInfos.get(key);
 		if (info == null) {
 			info= createFileInfo(key, null);
 		}
@@ -318,7 +320,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	
 	private void setIndexed(int linkageID, IIndexFileLocation ifl) {
 		FileKey key= new FileKey(linkageID, ifl.getURI());
-		FileInfo info= fFileInfos.get(key);
+		FileContent info= fFileInfos.get(key);
 		if (info == null) {
 			info= createFileInfo(key, null);
 		}
@@ -326,14 +328,14 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		info.fMacros= null;
 	}
 
-	private FileInfo createFileInfo(FileKey key, IIndexFile ifile) {
-		FileInfo info = new FileInfo();
+	private FileContent createFileInfo(FileKey key, IIndexFile ifile) {
+		FileContent info = new FileContent();
 		fFileInfos.put(key, info);
 		info.fIndexFile= ifile;
 		return info;
 	}
 
-	private FileInfo getFileInfo(int linkageID, IIndexFileLocation ifl) {
+	private FileContent getFileInfo(int linkageID, IIndexFileLocation ifl) {
 		FileKey key= new FileKey(linkageID, ifl.getURI());
 		return fFileInfos.get(key);
 	}
@@ -467,7 +469,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 					return;
 				final Object tu= iter.next();
 				final IIndexFileLocation ifl = fResolver.resolveFile(tu);
-				final FileInfo info= getFileInfo(linkageID, ifl);
+				final FileContent info= getFileInfo(linkageID, ifl);
 				if (info != null && info.fRequestUpdate && !info.fIsUpdated) {
 					info.fRequestIsCounted= false;
 					final IScannerInfo scannerInfo= fResolver.getBuildConfiguration(linkageID, tu);
@@ -489,7 +491,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 					return;
 				final Object header= iter.next();
 				final IIndexFileLocation ifl = fResolver.resolveFile(header);
-				final FileInfo info= getFileInfo(linkageID, ifl);
+				final FileContent info= getFileInfo(linkageID, ifl);
 				if (info != null && info.fRequestUpdate && !info.fIsUpdated) {
 					if (info.fIndexFile != null && fIndex.isWritableFile(info.fIndexFile)) {
 						Object tu= findContext((IIndexFragmentFile) info.fIndexFile, contextMap);
@@ -517,7 +519,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 					return;
 				final Object header= iter.next();
 				final IIndexFileLocation ifl = fResolver.resolveFile(header);
-				final FileInfo info= getFileInfo(linkageID, ifl);
+				final FileContent info= getFileInfo(linkageID, ifl);
 				if (info != null && info.fRequestUpdate && !info.fIsUpdated) {
 					info.fRequestIsCounted= false;
 					final IScannerInfo scannerInfo= fResolver.getBuildConfiguration(linkageID, header);
@@ -611,7 +613,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		}
 		
 		IIndexFileLocation ifl= fResolver.resolveASTPath(astPath);
-		FileInfo info= getFileInfo(linkageID, ifl);
+		FileContent info= getFileInfo(linkageID, ifl);
 		if (info != null && info.fRequestUpdate && !info.fIsUpdated) {
 			orderedIFLs.add(fResolver.resolveASTPath(astPath));
 		}
@@ -647,7 +649,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	}
 
 	public final boolean needToUpdateHeader(int linkageID, IIndexFileLocation ifl) throws CoreException {
-		FileInfo info= getFileInfo(linkageID, ifl);
+		FileContent info= getFileInfo(linkageID, ifl);
 		if (info == null) {
 			IIndexFile ifile= null;
 			if (fResolver.canBePartOfSDK(ifl)) {
@@ -752,9 +754,9 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		return result*31 + key.hashCode();
 	}
 
-	public final IIndexMacro[] getConvertedMacros(int linkageID, IIndexFileLocation ifl) throws CoreException {
+	public final FileContent getFileContent(int linkageID, IIndexFileLocation ifl) throws CoreException {
 		if (!needToUpdateHeader(linkageID, ifl)) {
-			FileInfo info= getFileInfo(linkageID, ifl);
+			FileContent info= getFileInfo(linkageID, ifl);
 			assert info != null;
 			if (info != null) {
 				if (info.fIndexFile == null) {
@@ -763,12 +765,13 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 						return null;
 					}
 				}
-				IIndexMacro[] result= info.fMacros;
-				if (result == null) {
-					result= info.fIndexFile.getMacros();
-					info.fMacros= result;
+				if (info.fMacros == null) {
+					info.fMacros= info.fIndexFile.getMacros();
 				}
-				return result;
+				if (info.fDirectives == null) {
+					info.fDirectives= info.fIndexFile.getUsingDirectives();
+				}
+				return info;
 			}
 		}
 		return null;

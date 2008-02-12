@@ -11,18 +11,18 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
-import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
+import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
+import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.index.composite.CompositeScope;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
@@ -75,11 +75,11 @@ class CompositeCPPNamespaceScope extends CompositeScope implements ICPPNamespace
 		return cf.getCompositeBinding(rbinding);
 	}
 	
-	public IName getScopeName() throws DOMException {
+	public IIndexName getScopeName() {
 		for(int i=0; i<namespaces.length; i++) {
-			if(namespaces[i] instanceof IScope) {
-				IScope s= (IScope) namespaces[i];
-				IName nm= s.getScopeName();
+			if(namespaces[i] instanceof IIndexScope) {
+				IIndexScope s= (IIndexScope) namespaces[i];
+				IIndexName nm= s.getScopeName();
 				if(nm!=null)
 					return nm;
 			}

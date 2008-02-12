@@ -1,0 +1,221 @@
+/*******************************************************************************
+ * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Markus Schorn - initial API and implementation
+ *******************************************************************************/ 
+package org.eclipse.cdt.internal.core.dom.parser.cpp;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import org.eclipse.cdt.core.dom.IName;
+import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
+import org.eclipse.cdt.core.index.IIndexFileSet;
+import org.eclipse.cdt.internal.core.index.IIndexScope;
+
+/**
+ * Utility to map index-scopes to scopes from the AST. This is important for
+ * scopes that can be reopened, i.e. namespaces.
+ */
+public class CPPScopeMapper {
+	/**
+	 * Wrapper for namespace-scopes from the index.
+	 */
+	private class NamespaceScopeWrapper implements ICPPNamespaceScope {
+		private final ICPPNamespaceScope fScope;
+		private ArrayList<ICPPUsingDirective> fUsingDirectives;
+
+		public NamespaceScopeWrapper(ICPPNamespaceScope scope) {
+			fScope= scope;
+		}
+
+		public IBinding[] find(String name) throws DOMException {
+			return fScope.find(name);
+		}
+		public IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
+			return fScope.getBinding(name, resolve);
+		}
+		public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet acceptLocalBindings) throws DOMException {
+			return fScope.getBinding(name, resolve, acceptLocalBindings);
+		}
+		public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup) throws DOMException {
+			return fScope.getBindings(name, resolve, prefixLookup);
+		}
+		public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup,	IIndexFileSet acceptLocalBindings) throws DOMException {
+			return fScope.getBindings(name, resolve, prefixLookup, acceptLocalBindings);
+		}
+		public IScope getParent() throws DOMException {
+			IScope parent= fScope.getParent();
+			if (parent instanceof IIndexScope) {
+				return mapToASTScope((IIndexScope) parent);
+			}
+			return fTuScope;
+		}
+
+		public IName getScopeName() throws DOMException {
+			return fScope.getScopeName();
+		}
+
+		public void addUsingDirective(ICPPUsingDirective usingDirective) throws DOMException {
+			if (fUsingDirectives == null) {
+				fUsingDirectives= new ArrayList<ICPPUsingDirective>(1);
+			}
+			fUsingDirectives.add(usingDirective);
+		}
+
+		public ICPPUsingDirective[] getUsingDirectives() throws DOMException {
+			if (fUsingDirectives == null) {
+				return ICPPUsingDirective.EMPTY_ARRAY;
+			}
+			return fUsingDirectives.toArray(new ICPPUsingDirective[fUsingDirectives.size()]);
+		}
+	}
+
+	/**
+	 * Wrapper for using directives from the index.
+	 */
+	private class UsingDirectiveWrapper implements ICPPUsingDirective {
+		private final int fOffset;
+		private final ICPPUsingDirective fDirective;
+
+		public UsingDirectiveWrapper(int offset, ICPPUsingDirective ud) {
+			fOffset= offset;
+			fDirective= ud;
+		}
+
+		public IScope getContainingScope() {
+			final IScope scope= fDirective.getContainingScope();
+			if (scope == null) {
+				return fTuScope;
+			}
+			return scope;
+		}
+
+		public ICPPNamespaceScope getNominatedScope() throws DOMException {
+			return fDirective.getNominatedScope();
+		}
+
+		public int getPointOfDeclaration() {
+			return fOffset;
+		}
+	}
+
+	
+	
+	private final HashMap<IIndexScope, IScope> fMappedScopes= new HashMap<IIndexScope, IScope>();
+	private final HashMap<String, NamespaceScopeWrapper> fNamespaceWrappers= new HashMap<String, NamespaceScopeWrapper>();
+	private final Map<String, List<UsingDirectiveWrapper>> fPerName= new HashMap<String, List<UsingDirectiveWrapper>>();
+	private final CPPNamespaceScope fTuScope;
+
+
+	public CPPScopeMapper(CPPASTTranslationUnit tu) {
+		fTuScope= tu.getScope();
+	}
+
+	/**
+	 * Register an additional list of using directives to be considered.
+	 * @param offset the global offset at which the using directives are provided
+	 * @param usingDirectives the list of additional directives.
+	 */
+	public void registerAdditionalDirectives(int offset, List<ICPPUsingDirective> usingDirectives) {
+		if (!usingDirectives.isEmpty()) {
+			for (ICPPUsingDirective ud : usingDirectives) {
+				IScope container= ud.getContainingScope();
+				try {
+					final String name= getReverseQualifiedName(container);
+					List<UsingDirectiveWrapper> list= fPerName.get(name);
+					if (list == null) {
+						list= new LinkedList<UsingDirectiveWrapper>();
+						fPerName.put(name, list);
+					}
+					list.add(new UsingDirectiveWrapper(offset, ud));
+				} catch (DOMException e) {
+				}
+			}
+		}
+	}
+
+	/**
+	 * Adds additional directives previously registered to the given scope.
+	 */
+	public void handleAdditionalDirectives(ICPPNamespaceScope scope) {
+		assert !(scope instanceof IIndexScope);
+		if (fPerName.isEmpty()) {
+			return;
+		}
+		try {
+			String qname = getReverseQualifiedName(scope);
+			List<UsingDirectiveWrapper> candidates= fPerName.remove(qname);
+			if (candidates != null) {
+				for (UsingDirectiveWrapper ud : candidates) {
+					scope.addUsingDirective(ud);
+				}
+			}
+		} catch (DOMException e) {
+		}
+	}
+
+	private String getReverseQualifiedName(IScope scope) throws DOMException {
+		if (scope == fTuScope || scope == null) {
+			return "";    //$NON-NLS-1$
+		}
+		StringBuilder buf= new StringBuilder();
+		buf.append(scope.getScopeName().toCharArray());
+		scope= scope.getParent();
+		while (scope != null && scope != fTuScope) {
+			buf.append(':');  
+			buf.append(scope.getScopeName().toCharArray());
+			scope= scope.getParent();
+		}
+		return buf.toString();
+	}
+
+	/**
+	 * Maps namespace scopes from the index back into the AST.
+	 */
+	public IScope mapToASTScope(IIndexScope scope) {
+		if (scope == null) {
+			return fTuScope;
+		}
+		if (scope instanceof ICPPNamespaceScope) {
+			IScope result= fMappedScopes.get(scope);
+			if (result == null) {
+				result= fTuScope.findNamespaceScope(scope);
+				if (result == null) {
+					result= wrapNamespaceScope(scope);
+				}
+				fMappedScopes.put(scope, result);
+			}
+			return result;
+		}
+		return scope;
+	}
+
+	private IScope wrapNamespaceScope(IIndexScope scope) {
+		try {
+			String rqname= getReverseQualifiedName(scope);
+			NamespaceScopeWrapper result= fNamespaceWrappers.get(rqname);
+			if (result == null) {
+				result= new NamespaceScopeWrapper((ICPPNamespaceScope) scope);
+				fNamespaceWrappers.put(rqname, result);
+			}
+			return result;
+		} catch (DOMException e) {
+			assert false;	// index scopes don't throw dom-exceptions
+			return null;
+		}	
+	}
+}

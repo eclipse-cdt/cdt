@@ -17,14 +17,12 @@ import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
-import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
-import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
@@ -39,6 +37,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
+import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
@@ -249,7 +248,7 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 			return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
 		}
 		
-		public IScope getParent() throws DOMException {
+		public IIndexScope getParent() {
 			return PDOMCPPClassTemplate.super.getParent();
 		}
 		
@@ -258,7 +257,7 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 			return null;
 		}
 
-		public IName getScopeName() throws DOMException {
+		public IIndexName getScopeName() {
 			return null;
 		}
 
@@ -269,7 +268,7 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 	
 	private PDOMCPPTemplateScope scope;
 	
-	public IScope getParent() throws DOMException {
+	public IIndexScope getParent() {
 		if (scope == null) {
 			scope = new PDOMCPPTemplateScope();
 		}

@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import java.util.HashMap;
+import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
@@ -58,6 +58,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -67,12 +68,14 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.GCCBuiltinSymbolProvider.CPPBuiltinParameter;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
+import org.eclipse.cdt.internal.core.parser.scanner.ISkippedIndexedFilesListener;
+import org.eclipse.cdt.internal.core.parser.scanner.IncludeFileContent;
 import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author jcamelon
  */
-public class CPPASTTranslationUnit extends CPPASTNode implements ICPPASTTranslationUnit, IASTAmbiguityParent {
+public class CPPASTTranslationUnit extends CPPASTNode implements ICPPASTTranslationUnit, IASTAmbiguityParent, ISkippedIndexedFilesListener {
     
     private static final IASTPreprocessorStatement[] EMPTY_PREPROCESSOR_STATEMENT_ARRAY = new IASTPreprocessorStatement[0];
     private static final IASTPreprocessorMacroDefinition[] EMPTY_PREPROCESSOR_MACRODEF_ARRAY = new IASTPreprocessorMacroDefinition[0];
@@ -88,8 +91,8 @@ public class CPPASTTranslationUnit extends CPPASTNode implements ICPPASTTranslat
     private IIndex index;
     private IIndexFileSet fIndexFileSet;
 	private boolean fIsHeader= true;
-	private HashMap<IIndexScope, IScope> fMappedScopes= new HashMap<IIndexScope, IScope>();
-   
+	private CPPScopeMapper fScopeMapper= new CPPScopeMapper(this);
+	
 	public CPPASTTranslationUnit() {
 	}
 	
@@ -535,19 +538,32 @@ public class CPPASTTranslationUnit extends CPPASTNode implements ICPPASTTranslat
 		fIsHeader= headerUnit;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.scanner.ISkippedIndexedFilesListener#skippedFile(org.eclipse.cdt.internal.core.parser.scanner.IncludeFileContent)
+	 */
+	public void skippedFile(int offset, IncludeFileContent fileContent) {
+		if (fIndexFileSet != null) {
+			final List<IIndexFile> files= fileContent.getFilesIncluded();
+			for (IIndexFile indexFile : files) {
+				fIndexFileSet.add(indexFile);
+			}
+		}
+		fScopeMapper.registerAdditionalDirectives(offset, fileContent.getUsingDirectives());
+	}	
+	
 	// bug 217102: namespace scopes from the index have to be mapped back to the AST.
 	IScope mapToASTScope(IIndexScope scope) {
-		if (scope instanceof ICPPNamespaceScope) {
-			IScope result= fMappedScopes.get(scope);
-			if (result == null) {
-				result= getScope().findNamespaceScope(scope);
-				if (result == null) {
-					result= scope;
-				}
-				fMappedScopes.put(scope, result);
-			}
-			return result;
-		}
-		return scope;
+		return fScopeMapper.mapToASTScope(scope);
+	}
+
+	/**
+	 * Stores directives from the index into this scope.
+	 */
+	void handleAdditionalDirectives(ICPPNamespaceScope scope) {
+		fScopeMapper.handleAdditionalDirectives(scope);
+	}
+
+	IIndexFileSet getFileSet() {
+		return fIndexFileSet;
 	}
 }

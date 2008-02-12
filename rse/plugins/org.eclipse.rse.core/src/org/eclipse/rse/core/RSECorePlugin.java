@@ -210,17 +210,6 @@ public class RSECorePlugin extends Plugin {
 		return _persistenceManager;
 	}
 
-	/**
-	 * Sets the system registry. This is the main registry that can be used by RSE components
-	 * that require a user interface. This should be set only by RSE startup components and 
-	 * not by any external client.
-	 * @param registry the implementation of ISystemRegistry that the core should remember.
-	 * @deprecated Do not use this method.
-	 */
-	public void setSystemRegistry(ISystemRegistry registry) {
-		_systemRegistry = registry;
-	}
-
     /**
      * Test if the SystemRegistry has been instantiated already.
      * Use this when you don't want to start the system registry as a

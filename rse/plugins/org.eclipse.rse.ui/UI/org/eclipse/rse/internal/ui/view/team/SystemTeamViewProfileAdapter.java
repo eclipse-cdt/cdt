@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -19,6 +19,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * David Dykstal (IBM) - [191130] use new getRemoteSystemsProject(boolean) call
  * Xuan Chen     (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
+ * Martin Oberhuber (Wind River) - [cleanup] Avoid using SystemStartHere in production code
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.team;
@@ -33,7 +34,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemResourceManager;
 import org.eclipse.rse.core.model.ISystemProfile;
-import org.eclipse.rse.core.model.SystemStartHere;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.actions.SystemCommonDeleteAction;
 import org.eclipse.rse.internal.ui.actions.SystemCommonRenameAction;
@@ -89,7 +89,7 @@ public class SystemTeamViewProfileAdapter
 		if (!actionsCreated)
 		  createActions();	    
 
-		boolean privateProfileStillExists = (SystemStartHere.getSystemProfileManager().getDefaultPrivateSystemProfile() != null);
+		boolean privateProfileStillExists = (RSECorePlugin.getTheSystemProfileManager().getDefaultPrivateSystemProfile() != null);
 		copyProfileAction.setProfile((ISystemProfile)selection.getFirstElement());
 		
 		if (activeProfileAction != null)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [cleanup] Avoid using SystemStartHere in production code
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
@@ -81,7 +81,7 @@ public class SystemNewProfileAction extends SystemBaseWizardAction {
 		 * connection was created. However, new default profiles are created when RSE is initially activated
 		 * so there is no need to inhibit profile creation. 
 		 */
-//		ISystemProfile defaultProfile = SystemStartHere.getSystemProfileManager().getDefaultPrivateSystemProfile();
+//		ISystemProfile defaultProfile = RSECorePlugin.getTheSystemProfileManager().getDefaultPrivateSystemProfile();
 //		if (defaultProfile != null)
 //			return false;
 //		else

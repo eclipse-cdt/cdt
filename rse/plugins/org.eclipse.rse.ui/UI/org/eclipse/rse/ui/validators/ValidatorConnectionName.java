@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [cleanup] Avoid using SystemStartHere in production code
  *******************************************************************************/
 
 package org.eclipse.rse.ui.validators;
@@ -67,7 +67,7 @@ public class ValidatorConnectionName extends ValidatorUniqueString implements IS
     	for (int idx = 0; (msg == null) && (idx < names.length); idx++)
 		{
 			profileName = names[idx];
-			IHost[] conns = RSEUIPlugin.getTheSystemProfileManager().getSystemProfile(profileName).getHosts();
+			IHost[] conns = RSECorePlugin.getTheSystemProfileManager().getSystemProfile(profileName).getHosts();
 			for (int jdx=0; (msg==null) && (jdx<conns.length); jdx++)
 			{				
 				if (conns[jdx].getAliasName().equalsIgnoreCase(proposedName))

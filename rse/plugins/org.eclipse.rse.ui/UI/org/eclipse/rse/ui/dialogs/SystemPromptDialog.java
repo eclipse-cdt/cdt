@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,6 +13,7 @@
  * Contributors:
  * Uwe Stieber (Wind River) - API consistency.
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Martin Oberhuber (Wind River) - [cleanup] Avoid using SystemStartHere in production code
  ********************************************************************************/
 
 package org.eclipse.rse.ui.dialogs;
@@ -32,6 +33,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ICellEditorValidator;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.dialogs.SystemControlEnableState;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
@@ -897,7 +899,7 @@ public abstract class SystemPromptDialog
 	
 	/**
 	 * Swing-like method to auto-set the size of this dialog by 
-	 *  looking at the preferred sizes of all constituents.
+	 * looking at the preferred sizes of all constituents.
 	 * @deprecated
 	 */
     protected void pack()
@@ -1159,7 +1161,7 @@ public abstract class SystemPromptDialog
 			  separator= new Label(parentComposite, SWT.HORIZONTAL | SWT.SEPARATOR);
 			  separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			}
-			if (RSEUIPlugin.isTheSystemRegistryActive())
+			if (RSECorePlugin.isTheSystemRegistryActive())
 			{
 			  RSEUIPlugin.getTheSystemRegistryUI().setRunnableContext(getShell(),this);
 	          // add a dispose listener for the shell

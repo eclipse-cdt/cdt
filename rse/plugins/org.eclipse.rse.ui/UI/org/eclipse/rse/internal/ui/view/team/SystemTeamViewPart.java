@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -18,6 +18,7 @@
  *   API to the user actions plugin
  * Rupen Mardirossian (IBM) - [187741] Implemented the handleDoubleClick method
  * Xuan Chen          (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
+ * Martin Oberhuber (Wind River) - [cleanup] Avoid using SystemStartHere in production code
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.team;
@@ -73,7 +74,6 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemProfileManager;
 import org.eclipse.rse.core.model.ISystemRegistry;
-import org.eclipse.rse.core.model.SystemStartHere;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.actions.SystemCollapseAllAction;
@@ -680,7 +680,7 @@ public class SystemTeamViewPart
 	 */
 	private SystemTeamReloadAction getReloadRSEAction(IStructuredSelection selection)
 	{
-	    boolean privateProfileStillExists = (SystemStartHere.getSystemProfileManager().getDefaultPrivateSystemProfile() != null);
+	    boolean privateProfileStillExists = (RSECorePlugin.getTheSystemProfileManager().getDefaultPrivateSystemProfile() != null);
 		if (reloadRSEAction == null)
 		  reloadRSEAction = new SystemTeamReloadAction(getShell());
         reloadRSEAction.setSelection(selection);
@@ -757,7 +757,7 @@ public class SystemTeamViewPart
 		IStructuredSelection selection = getStructuredSelection();
 		Object firstSelection = selection.getFirstElement();
 		if (firstSelection instanceof IProject) {
-			boolean privateProfileStillExists = (SystemStartHere.getSystemProfileManager().getDefaultPrivateSystemProfile() != null);
+			boolean privateProfileStillExists = (RSECorePlugin.getTheSystemProfileManager().getDefaultPrivateSystemProfile() != null);
 			IContributionItem items[] = menuMgr.getItems();
 			if (items != null) {
 				for (int idx = 0; idx < items.length; idx++) {

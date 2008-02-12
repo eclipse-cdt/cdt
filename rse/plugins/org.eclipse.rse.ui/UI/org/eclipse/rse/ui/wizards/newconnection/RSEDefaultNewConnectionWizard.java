@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2000, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -19,6 +19,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
  * Uwe Stieber (Wind River) - [192202] Default RSE new connection wizard does not allow to query created host instance anymore
+ * Martin Oberhuber (Wind River) - [cleanup] Avoid using SystemStartHere in production code
  ********************************************************************************/
 
 package org.eclipse.rse.ui.wizards.newconnection;
@@ -40,7 +41,6 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemNewConnectionWizardPage;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
-import org.eclipse.rse.core.model.SystemStartHere;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.ui.SystemResources;
@@ -76,7 +76,7 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 	 * Constructor.
 	 */
 	public RSEDefaultNewConnectionWizard() {
-		String[] profiles = SystemStartHere.getSystemProfileManager().getActiveSystemProfileNames();
+		String[] profiles = RSECorePlugin.getTheSystemProfileManager().getActiveSystemProfileNames();
 		// normalize the profiles by sorting our null or empty profile names
 		List normalized = new LinkedList();
 		for (int i = 0; i < profiles.length; i++) {

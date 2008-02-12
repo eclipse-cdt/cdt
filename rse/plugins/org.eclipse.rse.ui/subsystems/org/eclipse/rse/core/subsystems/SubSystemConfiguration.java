@@ -28,6 +28,7 @@
  * David Dykstal (IBM) - [197036] rewrote getFilterPoolManager to delay the creation of default filter pools until the corresponding
  *                                a subsystem configuration is actually used for a host.
  * David Dykstal (IBM) - [217556] remove service subsystem types
+ * Martin Oberhuber (Wind River) - [cleanup] Avoid using SystemStartHere in production code
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -61,7 +62,6 @@ import org.eclipse.rse.core.model.ISystemNewConnectionWizardPage;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemProfileManager;
 import org.eclipse.rse.core.model.ISystemRegistry;
-import org.eclipse.rse.core.model.SystemStartHere;
 import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
 import org.eclipse.rse.internal.core.RSECoreMessages;
 import org.eclipse.rse.internal.core.filters.SystemFilterPoolManager;
@@ -2585,7 +2585,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 */
 	public ISystemFilterPoolManager[] getAllSystemFilterPoolManagers()
 	{
-		ISystemProfile[] profiles = SystemStartHere.getSystemProfileManager().getSystemProfiles();
+		ISystemProfile[] profiles = RSECorePlugin.getTheSystemProfileManager().getSystemProfiles();
 		ISystemFilterPoolManager[] allMgrs = new ISystemFilterPoolManager[profiles.length];
 		for (int idx = 0; idx < profiles.length; idx++)
 		{

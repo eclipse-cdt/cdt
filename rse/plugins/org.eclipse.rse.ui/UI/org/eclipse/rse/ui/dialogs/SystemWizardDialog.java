@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,6 +13,7 @@
  * Contributors:
  * Uwe Stieber (Wind River) - API consistency.
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Martin Oberhuber (Wind River) - [cleanup] Avoid using SystemStartHere in production code
  ********************************************************************************/
 
 package org.eclipse.rse.ui.dialogs;
@@ -21,6 +22,7 @@ import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.wizards.ISystemWizard;
 import org.eclipse.swt.events.DisposeEvent;
@@ -144,7 +146,7 @@ public class SystemWizardDialog extends WizardDialog implements ISystemPromptDia
 			IProgressMonitor pm = getProgressMonitor();
 			((ProgressMonitorPart)pm).dispose();
 		}
-		if (needsMonitor && RSEUIPlugin.isTheSystemRegistryActive()) {
+		if (needsMonitor && RSECorePlugin.isTheSystemRegistryActive()) {
 			RSEUIPlugin.getTheSystemRegistryUI().setRunnableContext(getShell(), this);
 			// add a dispose listener
 			getShell().addDisposeListener(new DisposeListener() {

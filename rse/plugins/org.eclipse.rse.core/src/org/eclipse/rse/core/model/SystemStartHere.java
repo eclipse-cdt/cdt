@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -16,14 +16,15 @@
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
  * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
+ * Martin Oberhuber (Wind River) - [cleanup] Avoid using SystemStartHere in production code
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
+import org.eclipse.rse.core.IRSECoreRegistry;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.internal.core.model.SystemProfileManager;
 
 
 /**
@@ -55,8 +56,8 @@ public class SystemStartHere
    /**
     * STEP 2b. Get all connections for the given system type.
     * <p>
-    * SAME AS: <code>getSystemRegistry().getConnectionsBySystemType(systemType)</code>
-    * @param systemType One of the system types defined via system type extension point:
+    * SAME AS: <code>getSystemRegistry().getHostsBySystemType(systemType)</code>
+    * @param systemTypeId One of the system types IDs defined via system type extension point:
     * <ul>
     *  <li>"org.eclipse.rse.systemtype.iseries" ({@link IRSESystemType#SYSTEMTYPE_ISERIES_ID})
     *  <li>"org.eclipse.rse.systemtype.windows" ({@link IRSESystemType#SYSTEMTYPE_WINDOWS_ID})
@@ -65,12 +66,13 @@ public class SystemStartHere
     *  <li>"org.eclipse.rse.systemtype.linux" ({@link IRSESystemType#SYSTEMTYPE_LINUX_ID})
     *  <li>"org.eclipse.rse.systemtype.aix" ({@link IRSESystemType#SYSTEMTYPE_AIX_ID})
     *  <li>"org.eclipse.rse.systemtype.local" ({@link IRSESystemType#SYSTEMTYPE_LOCAL_ID})
-    *  <li>"org.eclipse.rse.systemtype.ftp" ({@link IRSESystemType#SYSTEMTYPE_FTP_ID})
-    *  <li>"org.eclipse.rse.systemtype.ssh" ({@link IRSESystemType#SYSTEMTYPE_SSH_ID})
-    *  <li>"org.eclipse.rse.systemtype.telnet" ({@link IRSESystemType#SYSTEMTYPE_TELNET_ID})
+    *  <li>"org.eclipse.rse.systemtype.ftp" ({@link IRSESystemType#SYSTEMTYPE_FTP_ONLY_ID})
+    *  <li>"org.eclipse.rse.systemtype.ssh" ({@link IRSESystemType#SYSTEMTYPE_SSH_ONLY_ID})
+    *  <li>"org.eclipse.rse.systemtype.telnet" ({@link IRSESystemType#SYSTEMTYPE_TELNET_ONLY_ID})
     * </ul>
     * @see org.eclipse.rse.core.IRSESystemType
-    * @see org.eclipse.rse.core.model.ISystemRegistry#getHostsBySystemType(String)
+    * @see IRSECoreRegistry#getSystemTypeById(String)
+    * @see org.eclipse.rse.core.model.ISystemRegistry#getHostsBySystemType(IRSESystemType)
     * 
     */
    public static IHost[] getConnectionsBySystemType(String systemTypeId)
@@ -161,7 +163,7 @@ public class SystemStartHere
     // MISCELLANEOUS:
     // ----------------------------           
    /**
-    * Miscallenous Helper. Return the subsystem configuration object for the given subsystemConfigurationId.
+    * Miscellaneous Helper - return the subsystem configuration object for the given subsystemConfigurationId.
     * <p>
     * SAME AS: <code>getSystemRegistry().getSubSystemConfiguration(subsystemConfigurationId)</code>
     * @param subsystemConfigurationId The id of the subsystem configuration as given in its plugin.xml id attribute for the subsystemConfigurations extension point
@@ -172,12 +174,12 @@ public class SystemStartHere
    }
     
    /**
-	* Miscellaneous Helper. Return singleton profile manager
+	* Miscellaneous Helper - Return the singleton profile manager.
     * SAME AS: <code>getSystemRegistry().getSystemProfileManager()</code>
 	*/
    public static ISystemProfileManager getSystemProfileManager()
    {
-	   return SystemProfileManager.getDefault();
+	   return RSECorePlugin.getTheSystemProfileManager();
    }
 
     /**

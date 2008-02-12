@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2000, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,7 +13,8 @@
  * Contributors:
  * Uwe Stieber (Wind River) - Extended system type -> subsystemConfiguration association.
  * Martin Oberhuber (Wind River) - [185098] Provide constants for all well-known system types
- * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty()
+ * Martin Oberhuber (Wind River) - [218655][api] Provide SystemType enablement info in non-UI
  ********************************************************************************/
 
 package org.eclipse.rse.core;
@@ -247,6 +248,22 @@ public interface IRSESystemType extends IAdaptable {
 	 */
 	public boolean testProperty(String key, boolean expectedValue);
 	
+	/**
+	 * Tests whether the system type is currently enabled.
+	 * 
+	 * The enabled state is a dynamic property of a system type, compared to the
+	 * static configuration by plugin markup. Enablement is a non-UI property,
+	 * which can be set by a Product in the Preferences or modified by a user
+	 * to hide certain system types.
+	 * <p>
+	 * Implementers of custom system types (which are registered by a SystemTypeProvider)
+	 * can override this method to provide more advanced enabled checks e.g. based on
+	 * license availability.
+	 *   
+	 * @return <code>true</code> if the system type is currently enabled, or <code>false</code> otherwise.
+	 */
+	public boolean isEnabled();
+
 	/**
 	 * Tests whether the system type refers to the local system.
 	 * This is a shortcut for

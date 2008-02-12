@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
+ * Martin Oberhuber (Wind River) - [218655][api] Provide SystemType enablement info in non-UI
  ********************************************************************************/
 
 package org.eclipse.rse.core;
@@ -93,6 +94,9 @@ public class PasswordPersistenceManager {
 		}
 		public Object getAdapter(Class adapter) {
 			return null;
+		}
+		public boolean isEnabled() {
+			return true;
 		}
 	}
 	

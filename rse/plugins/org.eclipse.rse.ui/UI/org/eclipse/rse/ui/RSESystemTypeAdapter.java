@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -19,6 +19,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [181939] avoid subsystem plugin activation just for enablement checking
  * Uwe Stieber (Wind River)      - [199032] [api] Remove method acceptContextMenuActionContribution(...) from RSESystemTypeAdapter
+ * Martin Oberhuber (Wind River) - [218655][api] Provide SystemType enablement info in non-UI
  ********************************************************************************/
 package org.eclipse.rse.ui;
 
@@ -32,9 +33,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.IRSESystemTypeConstants;
-import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.RSEPreferencesManager;
-import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
 import org.eclipse.rse.internal.ui.RSEAdapter;
 import org.eclipse.rse.ui.wizards.registries.IRSEWizardDescriptor;
 import org.eclipse.ui.IViewPart;
@@ -101,10 +100,8 @@ public class RSESystemTypeAdapter extends RSEAdapter {
      * image file. bundle parameter is used as the base for relative paths and
      * is allowed to be null.
      *
-     * @param value
-     *            the absolute or relative path
-     * @param definingBundle
-     *            bundle to be used for relative paths (may be null)
+     * @param value the absolute or relative path
+     * @param definingBundle bundle to be used for relative paths (may be null)
      * @return ImageDescriptor
      */
     public static ImageDescriptor getImage(String value, Bundle definingBundle) {
@@ -116,10 +113,8 @@ public class RSESystemTypeAdapter extends RSEAdapter {
 	 * Create a URL from the argument absolute or relative path. The bundle parameter is 
 	 * used as the base for relative paths and may be null.
 	 * 
-	 * @param value
-	 *            the absolute or relative path
-	 * @param definingBundle
-	 *            bundle to be used for relative paths (may be null)
+	 * @param value the absolute or relative path
+	 * @param definingBundle bundle to be used for relative paths (may be null)
 	 * @return the URL to the resource
 	 */
 	public static URL getUrl(String value, Bundle definingBundle) {
@@ -187,26 +182,32 @@ public class RSESystemTypeAdapter extends RSEAdapter {
 	 * @param object the object being adapted, usually a system type.
 	 * @return true if that system type is enabled. false if the object is
 	 * not a system type or if it is not enabled.
+	 * @deprecated Clients should use {@link IRSESystemType#isEnabled()}, which is
+	 *     available without UI dependencies, in order to guarantee consistent
+	 *     availability of system types.
+	 *     Providers of custom RSESystemTypeAdapter implementations, which override
+	 *     this method, should move their code to their IRSESystemType implementations.
+	 *     See https://bugs.eclipse.org/bugs/show_bug.cgi?id=218655#c1 for details.
 	 */
-	public boolean isEnabled(Object object) {
+	public final boolean isEnabled(Object object) {
 		IRSESystemType systemType = getSystemType(object);
-		if ( systemType != null && RSEPreferencesManager.getIsSystemTypeEnabled(systemType)) {
-			// if enabled, check if the system type has any registered subsystems. If
-			// not, this will auto-disable the system type.
-			ISubSystemConfigurationProxy[] proxies = RSECorePlugin.getTheSystemRegistry().getSubSystemConfigurationProxies();
-			for (int i=0; i<proxies.length; i++) {
-				if (proxies[i].appliesToSystemType(systemType)) {
-					return true;
-				}
-			}
+		if (systemType != null) {
+			return systemType.isEnabled();
 		}
 		return false;
 	}
 
 	/**
 	 * Sets the enabled state of a particular system type.
+	 * <p>
+	 * Note that system types which are provided by extenders via the dynamic
+	 * sytemTypeProviders extension point may have their own logic to determine
+	 * whether they are enabled or not, so changing the enabled setting may
+	 * not work for them.
+	 *  
 	 * @param object The system type being adapted.
 	 * @param isEnabled true if the system type is enabled. false if it is not.
+	 * @deprecated Set the enabled state in {@link RSEPreferencesManager} directly
 	 */
 	public void setIsEnabled(Object object, boolean isEnabled) {
 		IRSESystemType systemType = getSystemType(object);

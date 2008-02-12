@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
  * Martin Oberhuber (Wind River) - [186868] Fix IRSESystemType.testProperty() semantics 
+ * Martin Oberhuber (Wind River) - [218655][api] Provide SystemType enablement info in non-UI
  ********************************************************************************/
 package org.eclipse.rse.core;
 
@@ -25,6 +26,7 @@ import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.rse.core.model.Host;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemProfile;
+import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
 import org.osgi.framework.Bundle;
 
 /**
@@ -151,6 +153,24 @@ public abstract class AbstractRSESystemType extends PlatformObject implements IR
 		Object val = properties.get(key);
 		if (val instanceof String) {
 			return Boolean.valueOf((String)val).booleanValue() == expectedValue;
+		}
+		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.IRSESystemType#isEnabled()
+	 */
+	public boolean isEnabled() {
+		if (RSEPreferencesManager.getIsSystemTypeEnabled(this)) {
+			// if enabled, check if the system type has any registered subsystems. If
+			// not, this will auto-disable the system type.
+			ISubSystemConfigurationProxy[] proxies = RSECorePlugin.getTheSystemRegistry().getSubSystemConfigurationProxies();
+			for (int i=0; i<proxies.length; i++) {
+				if (proxies[i].appliesToSystemType(this)) {
+					return true;
+				}
+			}
 		}
 		return false;
 	}

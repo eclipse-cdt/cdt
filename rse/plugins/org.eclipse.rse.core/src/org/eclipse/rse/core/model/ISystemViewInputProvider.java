@@ -26,12 +26,14 @@ import org.eclipse.core.runtime.IAdaptable;
 public interface ISystemViewInputProvider extends IAdaptable {
 	
 	/**
-	 * @return the children objects to constitute the root elements in the system view tree
+	 * Return the child objects to constitute the root elements in the system view tree.
+	 * @return Array of root root elements for the system view tree
 	 */
 	public Object[] getSystemViewRoots();
 
 	/**
-	 * @return true if {@link #getSystemViewRoots()} will return a non-empty list
+	 * Test if {@link #getSystemViewRoots()} will return a non-empty list
+	 * @return <code>true</code> if root elements are available, or <code>false</code> otherwise.
 	 */
 	public boolean hasSystemViewRoots();
 

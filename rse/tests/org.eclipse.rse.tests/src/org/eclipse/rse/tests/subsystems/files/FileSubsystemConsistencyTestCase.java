@@ -1,11 +1,10 @@
-/*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
+/********************************************************************************
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the terms
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors: 
+ * Contributors:
  * David McKnight   (IBM)        - [207095] test case to compare same op between subsystems
  * David McKnight   (IBM)        - [162195] new APIs for upload multi and download multi
  * David McKnight   (IBM)        - [209552] API changes to use multiple and getting rid of deprecated

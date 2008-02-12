@@ -41,7 +41,6 @@ import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.subsystems.ISubSystemConfigurationAdapter;
-import org.eclipse.swt.widgets.Shell;
 
 
 

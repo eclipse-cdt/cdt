@@ -23,6 +23,7 @@
  * David Dykstal (IBM) - [197036] adding new createHost and getSubSystemConfigurationsBySYstemType which
  *                                are able to delay the creation of subsystems.
  * David Dykstal (IBM) - [217556] remove service subsystem types
+ * Martin Oberhuber (Wind River) - [215820] Move SystemRegistry implementation to Core
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -144,34 +145,6 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	 */
 	public boolean hasConnectionChildren(IHost selectedConnection);
 	
-	// ----------------------------
-	// USER PREFERENCE METHODS...
-	// ----------------------------
-	/**
-	 * Are connection names to be qualified by profile name?
-	 */
-	public boolean getQualifiedHostNames();
-
-	/**
-	 * Set if connection names are to be qualified by profile name
-	 */
-	public void setQualifiedHostNames(boolean set);
-
-	/**
-	 * Reflect the user changing the preference for showing filter pools.
-	 */
-	public void setShowFilterPools(boolean show);
-
-	/*
-	 * Reflect the user changing the preference for showing filter strings.
-	 *
-	 public void setShowFilterStrings(boolean show);
-	 */
-	/**
-	 * Reflect the user changing the preference for showing new connection prompt
-	 */
-	public void setShowNewHostPrompt(boolean show);
-
 	// ----------------------------
 	// PROFILE METHODS...
 	// ----------------------------
@@ -324,12 +297,15 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	// CONNECTION METHODS...
 	// ----------------------------
 	/**
-	 * Return the first connection to localhost we can find. While we always create a default one in
-	 *  the user's profile, it is possible that this profile is not active or the connection was deleted.
-	 *  However, since any connection to localHost will usually do, we just search all active profiles
-	 *  until we find one, and return it. <br>
-	 * If no localhost connection is found, this will return null. If one is needed, it can be created 
-	 *  easily by calling {@link #createLocalHost(ISystemProfile, String, String)}.
+	 * Return the first connection to the local host we can find.
+	 * 
+	 * While we always create a default one in the user's profile, it is possible that
+	 * this profile is not active or the connection was deleted. However, since any 
+	 * connection to the local host will usually do, we just search all active profiles
+	 * until we find one, and return it. <br>
+	 * If no connection to the local host can be found, this will return <code>null</code>.
+	 * If one is needed, it can be created easily by calling
+	 * {@link #createLocalHost(ISystemProfile, String, String)}.
 	 */
 	public IHost getLocalHost();
 

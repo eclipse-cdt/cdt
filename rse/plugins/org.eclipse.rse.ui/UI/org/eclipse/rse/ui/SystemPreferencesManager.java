@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2000, 2008 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,14 +14,23 @@
  * David Dykstal (IBM) - moved SystemPreferencesManager to a this package, was in 
  *                       the org.eclipse.rse.core package of the UI plugin.
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Martin Oberhuber (Wind River) - [215820] Move SystemRegistry implementation to Core
  ********************************************************************************/
 package org.eclipse.rse.ui;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.rse.core.IRSEPreferenceNames;
 import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.core.events.ISystemModelChangeEvent;
+import org.eclipse.rse.core.events.ISystemModelChangeEvents;
+import org.eclipse.rse.core.events.ISystemModelChangeListener;
+import org.eclipse.rse.core.events.ISystemRemoteChangeEvents;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvent;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
+import org.eclipse.rse.core.events.ISystemResourceChangeListener;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 
@@ -49,6 +58,22 @@ public class SystemPreferencesManager {
 	private static boolean showProfilePage; // This is not a persistent preference
 	private static boolean showNewConnectionPrompt; // This is not a persistent preference
 
+	/*
+	 * Singleton instance to support listening to model change events
+	 */
+	private static SystemPreferencesManager fInstance = new SystemPreferencesManager();
+	private int fModelChangeListeners = 0;
+	private ISystemModelChangeListener fModelChangeListener = null;
+	
+	/*
+	 * Private Constructor to discourage instance creation other than by ourselves. 
+	 */
+	private SystemPreferencesManager() {
+	}
+
+	/**
+	 * Migrate Preferences from UI Preference Store into Core Preference store
+	 */
 	private static void migrateCorePreferences() {
 		String[] keys = {
 				IRSEPreferenceNames.ACTIVEUSERPROFILES,  
@@ -80,11 +105,12 @@ public class SystemPreferencesManager {
 		migrateCorePreferences();
 		initDefaultsUI();
 		savePreferences();
+		fInstance.startModelChangeListening();
 	}
 
 	private static void initDefaultsUI() {
 		
-		String showProp = System.getProperty("rse.showNewConnectionPrompt");
+		//String showProp = System.getProperty("rse.showNewConnectionPrompt");
 		RSEUIPlugin ui = RSEUIPlugin.getDefault();
 		Preferences store = ui.getPluginPreferences();
 		showNewConnectionPrompt= getBooleanProperty("rse.showNewConnectionPrompt", ISystemPreferencesConstants.DEFAULT_SHOWNEWCONNECTIONPROMPT); //$NON-NLS-1$
@@ -155,15 +181,13 @@ public class SystemPreferencesManager {
 		String[] allConnectionNamesOrder = SystemPreferencesManager.getConnectionNamesOrder();
 		profileName = profileName + "."; //$NON-NLS-1$
 		int profileNameLength = profileName.length();
-		Vector v = new Vector();
+		List l = new ArrayList();
 		for (int idx = 0; idx < allConnectionNamesOrder.length; idx++)
 			if (allConnectionNamesOrder[idx].startsWith(profileName)) {
-				v.addElement(allConnectionNamesOrder[idx].substring(profileNameLength));
+				l.add(allConnectionNamesOrder[idx].substring(profileNameLength));
 			}
-		String[] names = new String[v.size()];
-		for (int idx = 0; idx < names.length; idx++) {
-			names[idx] = (String) v.elementAt(idx);
-		}
+		String[] names = new String[l.size()];
+		l.toArray(names);
 		return names;
 	}
 
@@ -191,6 +215,9 @@ public class SystemPreferencesManager {
 	/**
 	 * Sets user's preference for the order of the connection names according to the 
 	 * list kept in the system registry.
+	 * This resets any user-specified ordering of profiles since the SystemRegistry
+	 * has no concept of ordered profiles. The hosts inside a profile, though, 
+	 * will be ordered according to user preference.
 	 */
 	public static void setConnectionNamesOrder() {
 		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
@@ -231,14 +258,14 @@ public class SystemPreferencesManager {
 	 * a restored ordered list of names.
 	 */
 	private static String[] resolveOrderPreferenceVersusReality(String[] reality, String[] ordered) {
-		Vector finalList = new Vector();
+		List finalList = new ArrayList();
 		// step 1: include all names from preferences list which do exist in reality...
 		for (int idx = 0; idx < ordered.length; idx++) {
-			if (SystemPreferencesManager.find(reality, ordered[idx])) finalList.addElement(ordered[idx]);
+			if (SystemPreferencesManager.find(reality, ordered[idx])) finalList.add(ordered[idx]);
 		}
 		// step 2: add all names in reality which do not exist in preferences list...
 		for (int idx = 0; idx < reality.length; idx++) {
-			if (!SystemPreferencesManager.find(ordered, reality[idx])) finalList.addElement(reality[idx]);
+			if (!SystemPreferencesManager.find(ordered, reality[idx])) finalList.add(reality[idx]);
 		}
 		String[] resolved = new String[finalList.size()];
 		finalList.toArray(resolved);
@@ -335,7 +362,7 @@ public class SystemPreferencesManager {
 		store.setValue(ISystemPreferencesConstants.SHOWFILTERPOOLS, show);
 		savePreferences();
 		if (show != prevValue) {
-			RSECorePlugin.getTheSystemRegistry().setShowFilterPools(show);
+			RSEUIPlugin.getTheSystemRegistryUI().setShowFilterPools(show);
 		}
 	}
 
@@ -435,10 +462,64 @@ public class SystemPreferencesManager {
 		RSEUIPlugin.getDefault().savePluginPreferences();
 		RSECorePlugin.getDefault().savePluginPreferences();
 	}
-
+	
 	/*
-	 * Private to discourage instance creation. 
+	 * Start listening to SystemRegistry model change events
 	 */
-	private SystemPreferencesManager() {
+	private void startModelChangeListening() {
+		//TODO Register a listener for shutdown, to stop model change listening
+		boolean alreadyListening;
+		synchronized(this) {
+			alreadyListening = (fModelChangeListeners>0);
+			fModelChangeListeners++;
+		}
+		if (!alreadyListening) {
+			fModelChangeListener = new ModelChangeListener();
+			RSECorePlugin.getTheSystemRegistry().addSystemModelChangeListener(fModelChangeListener);
+		}
 	}
+	
+	/*
+	 * A listener for SystemRegistry Model Change events
+	 */
+	private static class ModelChangeListener implements ISystemModelChangeListener, ISystemResourceChangeListener {
+
+		public void systemModelResourceChanged(ISystemModelChangeEvent event) {
+			int rt = event.getResourceType();
+			if (rt==ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_CONNECTION) {
+				switch(event.getEventType()) {
+				case ISystemModelChangeEvents.SYSTEM_RESOURCE_RENAMED:
+				case ISystemModelChangeEvents.SYSTEM_RESOURCE_REMOVED:
+				case ISystemModelChangeEvents.SYSTEM_RESOURCE_ADDED:
+					//TODO Change order of hosts from affected profile only?
+					SystemPreferencesManager.setConnectionNamesOrder();
+					break;
+				}
+			} else if (rt==ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_PROFILE) {
+				switch (event.getEventType()) {
+				case ISystemModelChangeEvents.SYSTEM_RESOURCE_RENAMED:
+				case ISystemModelChangeEvents.SYSTEM_RESOURCE_REMOVED:
+				case ISystemModelChangeEvents.SYSTEM_RESOURCE_CHANGED:
+					//TODO Change order of hosts from affected profile only?
+					SystemPreferencesManager.setConnectionNamesOrder();
+					break;
+				}
+				if (event.getEventType()==ISystemModelChangeEvents.SYSTEM_RESOURCE_RENAMED) {
+					boolean namesQualified = SystemPreferencesManager.getQualifyConnectionNames();
+					RSEUIPlugin.getTheSystemRegistryUI().setQualifiedHostNames(namesQualified); // causes refresh events to be fired
+				}
+			}
+		}
+
+		public void systemResourceChanged(ISystemResourceChangeEvent event) {
+			if (event.getType()==ISystemResourceChangeEvents.EVENT_MOVE_MANY
+			 && (event.getSource() instanceof IHost[])
+			) {
+				//TODO Change order of hosts from affected profile only?
+				SystemPreferencesManager.setConnectionNamesOrder();
+			}
+		}
+		
+	}
+	
 }

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,9 +12,10 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [215820] Move SystemRegistry implementation to Core
  ********************************************************************************/
 
-package org.eclipse.rse.ui.internal.model;
+package org.eclipse.rse.internal.core.model;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvent;
 import org.eclipse.rse.core.events.ISystemResourceChangeListener;
 import org.eclipse.swt.widgets.Display;
@@ -24,7 +25,7 @@ import org.eclipse.swt.widgets.Display;
  * To support posted events versus synchronous events, this class encapsulates
  * the code to execute via the run() method.
  * <p>
- * The post behaviour is accomplished by calling the asyncExec method in the swt
+ * The post behavior is accomplished by calling the asyncExec method in the SWT
  * widget Display class. The Display object comes from calling getDisplay() on
  * the shell which we get by calling getShell on the given listener. 
  * <p>

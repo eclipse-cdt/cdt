@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -16,6 +16,8 @@
  * David Dykstal (IBM) - [191038] remove getInstance(logFilePath) log file was not used
  *                                initialize correctly in getInstance()
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
+ * Martin Oberhuber (Wind River) - [] Move SystemRegistry impl into Core
+ * Martin Oberhuber (Wind River) - [215820] Move SystemRegistry implementation to Core
  ********************************************************************************/
 package org.eclipse.rse.ui.internal.model;
 
@@ -28,11 +30,17 @@ import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvent;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.events.ISystemResourceChangeListener;
+import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
+import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
+import org.eclipse.rse.internal.core.model.SystemPostableEventNotifier;
+import org.eclipse.rse.internal.core.model.SystemRegistry;
 import org.eclipse.rse.internal.ui.view.SystemDNDTransferRunnable;
 import org.eclipse.rse.internal.ui.view.SystemPerspectiveHelpers;
 import org.eclipse.rse.internal.ui.view.SystemView;
@@ -41,6 +49,7 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.ui.SystemPreferencesManager;
 import org.eclipse.rse.ui.model.ISystemRegistryUI;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.FileTransfer;
@@ -434,6 +443,85 @@ public class SystemRegistryUI implements ISystemRegistryUI {
 	        scratchpad = new SystemScratchpad();
 	    }
 	    return scratchpad;
+	}
+
+
+	// ----------------------------
+	// USER PREFERENCE METHODS...
+	// ----------------------------
+	/**
+	 * Are connection names to be qualified by profile name?
+	 */
+	public boolean getQualifiedHostNames()
+	{
+		return SystemPreferencesManager.getQualifyConnectionNames();
+	}
+	/**
+	 * Set if connection names are to be qualified by profile name
+	 */
+	public void setQualifiedHostNames(boolean set)
+	{
+		SystemPreferencesManager.setQualifyConnectionNames(set);
+		IHost[] conns = registry.getHosts();
+		if (conns != null)
+		{
+			for (int idx = 0; idx < conns.length; idx++)
+			{
+				//FIXME it seems wrong to fire a RENAME event just because a user preference changed.
+				//Showing qualified host names or not should be a view-only setting!
+				registry.fireEvent(new SystemResourceChangeEvent(conns[idx], ISystemResourceChangeEvents.EVENT_RENAME, registry));
+			}
+		}
+		if (SystemPreferencesManager.getShowFilterPools())
+		{
+			registry.fireEvent(new SystemResourceChangeEvent(registry, ISystemResourceChangeEvents.EVENT_REFRESH, registry));			
+		}
+	}
+
+	/**
+	 * Reflect the user changing the preference for showing filter pools.
+	 */
+	public void setShowFilterPools(boolean show)
+	{
+		ISubSystemConfigurationProxy[] proxies = registry.getSubSystemConfigurationProxies();
+		if (proxies != null)
+		{
+			for (int idx = 0; idx < proxies.length; idx++)
+			{
+				if (proxies[idx].isSubSystemConfigurationActive())
+				{
+					ISubSystemConfiguration factory = proxies[idx].getSubSystemConfiguration();
+					if ((factory != null) && factory.supportsFilters())
+						factory.setShowFilterPools(show);
+				}
+			}
+		}
+	}
+	/*
+	 * Reflect the user changing the preference for showing filter strings.
+	 *
+	public void setShowFilterStrings(boolean show)
+	{
+		ISubSystemConfigurationProxy[] proxies = registry.getSubSystemConfigurationProxies();
+	    if (proxies != null)
+	    {
+	      for (int idx = 0; idx < proxies.length; idx++)
+	      {
+	      	 if (proxies[idx].isSubSystemConfigurationActive())
+	      	 {
+	      	   SubSystemConfiguration factory = proxies[idx].getSubSystemConfiguration();
+	      	   if ((factory!=null)&&factory.supportsFilters())
+	      	     factory.setShowFilterStrings(show);
+	      	 }
+	      }    	
+	    }    	
+	}*/
+	/**
+	 * Reflect the user changing the preference for showing new connection prompt
+	 */
+	public void setShowNewHostPrompt(boolean show)
+	{
+		registry.fireEvent(new SystemResourceChangeEvent(this, ISystemResourceChangeEvents.EVENT_REFRESH, null));
 	}
 
 	// ----------------------------

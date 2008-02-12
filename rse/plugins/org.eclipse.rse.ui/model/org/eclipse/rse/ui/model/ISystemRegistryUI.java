@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [189123] Prepare ISystemRegistry for move into non-UI
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
+ * Martin Oberhuber (Wind River) - [215820] Move SystemRegistry implementation to Core
  ********************************************************************************/
 package org.eclipse.rse.ui.model;
 
@@ -68,6 +69,34 @@ public interface ISystemRegistryUI extends ISystemShellProvider {
 	 * @return the list of clipboard objects
 	 */
 	public List getSystemClipboardObjects(int srcType);
+
+	// ----------------------------
+	// USER PREFERENCE METHODS...
+	// ----------------------------
+	/**
+	 * Are connection names to be qualified by profile name?
+	 */
+	public boolean getQualifiedHostNames();
+
+	/**
+	 * Set if connection names are to be qualified by profile name
+	 */
+	public void setQualifiedHostNames(boolean set);
+
+	/**
+	 * Reflect the user changing the preference for showing filter pools.
+	 */
+	public void setShowFilterPools(boolean show);
+
+	/*
+	 * Reflect the user changing the preference for showing filter strings.
+	 *
+	 public void setShowFilterStrings(boolean show);
+	 */
+	/**
+	 * Reflect the user changing the preference for showing new connection prompt
+	 */
+	public void setShowNewHostPrompt(boolean show);
 
 	// ----------------------------------
 	// ACTIVE PROGRESS MONITOR METHODS...

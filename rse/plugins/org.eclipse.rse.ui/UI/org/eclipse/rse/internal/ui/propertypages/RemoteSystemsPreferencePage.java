@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [180562] don't implement ISystemPreferencesConstants
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Martin Oberhuber (Wind River) - [215820] Move SystemRegistry implementation to Core
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.propertypages;
@@ -195,14 +196,14 @@ public class RemoteSystemsPreferencePage
     {
     	boolean ok = super.performOk();
     	SystemPreferencesManager.savePreferences(); // better save to disk, just in case.
-        if (!RSEUIPlugin.getDefault().isSystemRegistryActive())    	
+        if (!RSECorePlugin.isTheSystemRegistryActive())    	
           	return ok;
     	if (showFilterPoolsEditor != null)
     	{
     	   	boolean newValue = showFilterPoolsEditor.getBooleanValue();
     	   	if (newValue != lastShowFilterPoolsValue)
     	   	{
-    	     	RSECorePlugin.getTheSystemRegistry().setShowFilterPools(newValue);
+    	     	RSEUIPlugin.getTheSystemRegistryUI().setShowFilterPools(newValue);
     	     	firePreferenceChangeEvent(ISystemPreferenceChangeEvents.EVENT_SHOWFILTERPOOLS,lastShowFilterPoolsValue,newValue);
     	   	}
     	   	lastShowFilterPoolsValue = newValue;
@@ -212,7 +213,7 @@ public class RemoteSystemsPreferencePage
     	   	boolean newValue = showNewConnectionPromptEditor.getBooleanValue();
     	   	if (newValue != lastShowNewConnectionPromptValue)
     	   	{
-    	     	RSECorePlugin.getTheSystemRegistry().setShowNewHostPrompt(newValue);
+    	     	RSEUIPlugin.getTheSystemRegistryUI().setShowNewHostPrompt(newValue);
     	   	}
     	   	lastShowNewConnectionPromptValue = newValue;    		
     	}
@@ -221,7 +222,7 @@ public class RemoteSystemsPreferencePage
     	   	boolean newValue = qualifyConnectionNamesEditor.getBooleanValue();
     	   	if (newValue != lastQualifyConnectionNamesValue)
     	   	{
-    	     	RSECorePlugin.getTheSystemRegistry().setQualifiedHostNames(newValue);
+    	     	RSEUIPlugin.getTheSystemRegistryUI().setQualifiedHostNames(newValue);
     	     	firePreferenceChangeEvent(ISystemPreferenceChangeEvents.EVENT_QUALIFYCONNECTIONNAMES,lastQualifyConnectionNamesValue,newValue);
     	   	}
     	   	lastQualifyConnectionNamesValue = newValue;    		

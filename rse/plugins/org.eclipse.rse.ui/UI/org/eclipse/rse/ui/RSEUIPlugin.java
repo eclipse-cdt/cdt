@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -29,6 +29,7 @@
  * David Dykstal (IBM) - [191038] initialize SystemRegistryUI without a log file, it was not used  
  * David McKnight   (IBM)        - [196838] Don't recreate local after it has been deleted        
  * David Dykstal (IBM) - [197036] formatted the initialize job to be able to read it                     
+ * Martin Oberhuber (Wind River) - [215820] Move SystemRegistry implementation to Core
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -53,10 +54,10 @@ import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemProfileManager;
 import org.eclipse.rse.core.model.ISystemRegistry;
-import org.eclipse.rse.core.model.SystemStartHere;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
 import org.eclipse.rse.internal.core.model.SystemProfileManager;
+import org.eclipse.rse.internal.core.model.SystemRegistry;
 import org.eclipse.rse.internal.ui.RSESystemTypeAdapterFactory;
 import org.eclipse.rse.internal.ui.SystemResourceListener;
 import org.eclipse.rse.internal.ui.SystemResources;
@@ -69,7 +70,6 @@ import org.eclipse.rse.persistence.IRSEPersistenceManager;
 import org.eclipse.rse.services.clientserver.messages.ISystemMessageProvider;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageFile;
-import org.eclipse.rse.ui.internal.model.SystemRegistry;
 import org.eclipse.rse.ui.internal.model.SystemRegistryUI;
 import org.eclipse.rse.ui.model.ISystemRegistryUI;
 import org.osgi.framework.BundleContext;
@@ -89,8 +89,8 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 	    	
 	    	public IStatus run(IProgressMonitor monitor) {    		
 	            //System.err.println("InitRSEJob started"); //$NON-NLS-1$
-	    		ISystemRegistry registry = getSystemRegistryInternal();
-        		SystemStartHere.getSystemProfileManager(); // create folders per profile
+	    		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
+        		RSECorePlugin.getTheSystemProfileManager(); // create folders per profile
 			    // add workspace listener for our project
 	        	IProject remoteSystemsProject = SystemResourceManager.getRemoteSystemsProject(false);
 	        	SystemResourceListener listener = SystemResourceListener.getListener(remoteSystemsProject);
@@ -105,7 +105,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 					if (systemType != null) {
 						RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(systemType.getAdapter(RSESystemTypeAdapter.class));
 						if (adapter != null && adapter.isEnabled(systemType)) {
-							ISystemProfileManager profileManager = SystemProfileManager.getDefault();
+							ISystemProfileManager profileManager = RSECorePlugin.getTheSystemProfileManager(); 
 							ISystemProfile profile = profileManager.getDefaultPrivateSystemProfile();
 							String userName = System.getProperty("user.name"); //$NON-NLS-1$
 							registry.createLocalHost(profile, SystemResources.TERM_LOCAL, userName);
@@ -130,10 +130,6 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 	
 	private static SystemMessageFile 	messageFile = null;    
     private static SystemMessageFile    defaultMessageFile = null;    
-    
-//    private SystemType[]	            allSystemTypes = null;
-    private SystemRegistryUI           _systemRegistryUI = null;
-    private SystemRegistry             _systemRegistry = null;
 
     private Vector viewSuppliers = new Vector();
     private SystemViewAdapterFactory svaf; // for fastpath access
@@ -439,9 +435,9 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
         
 	   	messageFile = getMessageFile("systemmessages.xml"); //$NON-NLS-1$
 	   	defaultMessageFile = getDefaultMessageFile("systemmessages.xml"); //$NON-NLS-1$
-
-		ISystemRegistry registry = getSystemRegistryInternal();
-		RSECorePlugin.getDefault().setSystemRegistry(registry);
+	   	
+	   	//Force load the SystemRegistry - TODO Is this really necessary?
+	   	RSECorePlugin.getTheSystemRegistry();
   	
     	IAdapterManager manager = Platform.getAdapterManager();
 	    
@@ -461,11 +457,8 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 	    svraf = new SystemTeamViewResourceAdapterFactory();
 	    svraf.registerWithManager(manager);
 	    
-    	
 		InitRSEJob initJob = new InitRSEJob();
 		initJob.schedule();
-
-	
 	}
 
     /**
@@ -482,39 +475,42 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
      */
     public void restart()
     {
-        if (_systemRegistry != null)
-        {
-    	  // disconnect all active connections
-    	  disconnectAll(false); // don't save ?
-    	  // collapse and flush all nodes in all views
-    	  _systemRegistry.fireEvent(new SystemResourceChangeEvent("dummy", ISystemResourceChangeEvents.EVENT_COLLAPSE_ALL, null)); //$NON-NLS-1$
+    	if (RSECorePlugin.isTheSystemRegistryActive()) {
+        	ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
+        	
+        	// disconnect all active connections
+        	disconnectAll(false); // don't save ?
+        	// collapse and flush all nodes in all views
+        	sr.fireEvent(new SystemResourceChangeEvent("dummy", ISystemResourceChangeEvents.EVENT_COLLAPSE_ALL, null)); //$NON-NLS-1$
 
-          // allow child classes to override
-          closeViews();
-              	
-          // clear in-memory settings for all filter pools and subsystems
-    	  ISubSystemConfigurationProxy[] proxies = getSystemRegistryInternal().getSubSystemConfigurationProxies();
-    	  if (proxies != null)
-    	  	for (int idx=0; idx < proxies.length; idx++)
-    	  	   proxies[idx].reset();
-          // clear in-memory settings for all profiles
-    	  SystemProfileManager.clearDefault();
+        	// allow child classes to override
+        	closeViews();
+                	
+        	// clear in-memory settings for all filter pools and subsystems
+        	ISubSystemConfigurationProxy[] proxies = sr.getSubSystemConfigurationProxies();
+        	if (proxies != null) {
+          	  	for (int idx=0; idx < proxies.length; idx++)
+           	  	   proxies[idx].reset();
+        	}
+        	// clear in-memory settings for all profiles
+        	SystemProfileManager.clearDefault();
 
-          // rebuild profiles
-    	  SystemStartHere.getSystemProfileManager(); // create folders per profile
-          // clear in-memory settings for all connections, then restore from disk
-          _systemRegistry.reset();
-          // restore in-memory settings for all filter pools and subsystems
-    	  if (proxies != null)
-    	  	for (int idx=0; idx < proxies.length; idx++)
-    	  	   proxies[idx].restore();
-    	  	
-    	  // refresh GUIs
-    	  _systemRegistry.fireEvent(new SystemResourceChangeEvent(_systemRegistry, ISystemResourceChangeEvents.EVENT_REFRESH, null));    	
+        	// rebuild profiles
+        	RSECorePlugin.getTheSystemProfileManager(); // create folders per profile
+        	// clear in-memory settings for all connections, then restore from disk
+        	((SystemRegistry)sr).reset();
+        	// restore in-memory settings for all filter pools and subsystems
+        	if (proxies != null) {
+          	  	for (int idx=0; idx < proxies.length; idx++)
+           	  	   proxies[idx].restore();
+        	}
+      	  	
+        	// refresh GUIs
+        	sr.fireEvent(new SystemResourceChangeEvent(sr, ISystemResourceChangeEvents.EVENT_REFRESH, null));    	
 
-          // allow child classes to override
-          openViews();
-        }
+            // allow child classes to override
+            openViews();
+    	}
     }
 
     /**
@@ -569,9 +565,10 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
      */
     protected void disconnectAll(boolean doSave)
     {
-    	if (isSystemRegistryActive())
+    	if (RSECorePlugin.isTheSystemRegistryActive())
     	{
-    	  ISubSystemConfigurationProxy[] proxies = getSystemRegistryInternal().getSubSystemConfigurationProxies();
+    	  ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
+    	  ISubSystemConfigurationProxy[] proxies = sr.getSubSystemConfigurationProxies();
     	  if (proxies != null)
     	  {
     	  	for (int idx=0; idx < proxies.length; idx++)
@@ -605,86 +602,54 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
     }
     
     /**
-     * Returns true if the SystemRegistry has been instantiated already.
+     * Test if the SystemRegistry has been instantiated already.
      * Use this when you don't want to start the system registry as a side effect of retrieving it.
+     * @return <code>true</code> if the System Registry has been instantiated already.
+     * @deprecated use {@link RSECorePlugin#isTheSystemRegistryActive()}
      */
     public boolean isSystemRegistryActive()
     {
-    	return (_systemRegistry != null);
+    	return RSECorePlugin.isTheSystemRegistryActive();
     }
     
     /**
+     * Return the persistence manager used for persisting RSE profiles.
      * @return the persistence manager used for persisting RSE profiles
+     * @deprecated use {@link RSECorePlugin#getThePersistenceManager()}
      */
     public IRSEPersistenceManager getPersistenceManager()
     {
     	return RSECorePlugin.getThePersistenceManager();
     }
     
-  
-    
-    /**
-     * Return the SystemRegistry singleton.
-     * Clients should use static @{link getTheSystemRegistry()} instead.
-     */
-    private SystemRegistry getSystemRegistryInternal()
-    {
-    	if (_systemRegistry == null)
-        {
-    	  String logfilePath = getStateLocation().toOSString();    	
-
-    	  _systemRegistry = SystemRegistry.getInstance(logfilePath);
-
-          ISubSystemConfigurationProxy[] proxies = RSECorePlugin.getDefault().getSubSystemConfigurationProxies();
-          if (proxies != null)
-          {
-            _systemRegistry.setSubSystemConfigurationProxies(proxies);
-          }
-          
-        }
-    	return _systemRegistry;
-    }
-
     /**
      * Return the SystemRegistryUI singleton.
-     * Clients should use static @{link getTheSystemRegistry()} instead.
-     */
-    private SystemRegistryUI getSystemRegistryUIInternal()
-    {
-    	if (_systemRegistryUI == null)
-        {
-    	  _systemRegistryUI = SystemRegistryUI.getInstance();
-        }
-    	return _systemRegistryUI;
-    }
-
-    /**
-     * A static version for convenience
-	 * Returns the master registry singleton.
+	 * @return the SystemRegistryUI singleton.
      */
     public static ISystemRegistryUI getTheSystemRegistryUI()
     {
-    	return getDefault().getSystemRegistryUIInternal();
+    	return SystemRegistryUI.getInstance();
     }
     
 	/**
-	 * A static version for convenience
-	 * Returns the master profile manager singleton.
+	 * Return the master profile manager singleton.
+	 * @return the RSE Profile Manager Singleton.
+	 * @deprecated use {@link RSECorePlugin#getTheSystemProfileManager()}
 	 */
 	public static ISystemProfileManager getTheSystemProfileManager()
 	{
-		return SystemProfileManager.getDefault();
+		return RSECorePlugin.getTheSystemProfileManager();
 	}
 
     /**
-     * A static version for convenience
+     * Check if the SystemRegistry has been instantiated already.
+     * Use this when you don't want to start the system registry as a side effect
+     * of retrieving it.
+     * @return <code>true</code> if the System Registry has been instantiated already.
+     * @deprecated use {@link RSECorePlugin#isTheSystemRegistryActive()}
      */
-    public static boolean isTheSystemRegistryActive()
-    {
-    	if (inst == null)
-    	  return false;
-    	else
-    	  return getDefault().isSystemRegistryActive();
+    public static boolean isTheSystemRegistryActive() {
+    	return RSECorePlugin.isTheSystemRegistryActive();
     }
 
 	/**

@@ -13,9 +13,10 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [218659] Make *EventManager, *ChangeManager thread-safe
+ * Martin Oberhuber (Wind River) - [215820] Move SystemRegistry implementation to Core
  ********************************************************************************/
 
-package org.eclipse.rse.ui.internal.model;
+package org.eclipse.rse.internal.core.model;
 import java.util.ArrayList;
 import java.util.List;
 

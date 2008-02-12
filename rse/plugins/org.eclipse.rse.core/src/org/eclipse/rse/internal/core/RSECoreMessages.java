@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -8,6 +8,7 @@
  * David Dykstal (IBM) - initial API and implementation
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  * Martin Oberhuber (Wind River) - [184095] combined RSEModelResources and persistence.Messages into this file
+ * Martin Oberhuber (Wind River) - [215820] Move SystemRegistry implementation to Core
  ********************************************************************************/
 package org.eclipse.rse.internal.core;
 
@@ -50,6 +51,17 @@ public class RSECoreMessages extends NLS {
 
 	// Password Persistence Manager
 	public static String DefaultSystemType_Label;
+	
+	// SystemRegistry: Loading Profile Warning Messages - See also ISystemMessages
+	public static String MSG_LOADING_PROFILE_WARNING_FILTERPOOL_REFS;
+	public static String MSG_LOADING_PROFILE_WARNING_FILTERPOOL_REF;
+	public static String MSG_LOADING_PROFILE_SHOULDNOTBE_DEACTIVATED; //RSEG1069
+	public static String MSG_CREATEHOST_EXCEPTION;
+
+	// SystemRegistry: Progress Reporting - See also ISystemMessages
+	public static String MSG_COPYCONNECTION_PROGRESS;  //RSEG1073
+	public static String MSG_COPYFILTERPOOLS_PROGRESS; //RSEG1075
+	public static String MSG_COPYSUBSYSTEMS_PROGRESS;  //RSEG1081
 	
 	private RSECoreMessages() {
 	}

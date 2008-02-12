@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,12 +13,12 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Martin Oberhuber (Wind River) - [215820] Move SystemRegistry implementation to Core
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemPreferenceChangeEvents;
-import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.internal.core.model.SystemPreferenceChangeEvent;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -33,8 +33,6 @@ import org.eclipse.swt.widgets.Shell;
 public class SystemPreferenceQualifyConnectionNamesAction extends SystemBaseAction 
                                  
 {
-	
-    private ISystemRegistry sr = null;
 	/**
 	 * Constructor
 	 */
@@ -44,8 +42,7 @@ public class SystemPreferenceQualifyConnectionNamesAction extends SystemBaseActi
 		      parent);
         setSelectionSensitive(false);
         allowOnMultipleSelection(true);
-        sr = RSECorePlugin.getTheSystemRegistry();	        
-        setChecked(sr.getQualifiedHostNames());
+        setChecked(RSEUIPlugin.getTheSystemRegistryUI().getQualifiedHostNames());
 
 		setHelp(RSEUIPlugin.HELPPREFIX+"actn0008"); //$NON-NLS-1$
 	}
@@ -57,7 +54,7 @@ public class SystemPreferenceQualifyConnectionNamesAction extends SystemBaseActi
 	public void run() 
 	{
 		boolean newState = isChecked();
-        sr.setQualifiedHostNames(newState);        
+		RSEUIPlugin.getTheSystemRegistryUI().setQualifiedHostNames(newState);        
     	firePreferenceChangeEvent(ISystemPreferenceChangeEvents.EVENT_QUALIFYCONNECTIONNAMES,
     	                          !newState,newState);  // defect 41794             
 	}		

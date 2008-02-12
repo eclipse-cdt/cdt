@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -19,6 +19,7 @@
  * Martin Oberhuber (Wind River) - [160293] NPE on startup when only Core feature is installed
  * Uwe Stieber (Wind River) - [192611] RSE Core plugin may fail to initialize because of cyclic code invocation
  * Martin Oberhuber (Wind River) - [165674] Sort subsystem configurations by priority then Id
+ * Martin Oberhuber (Wind River) - [215820] Move SystemRegistry implementation to Core
  ********************************************************************************/
 package org.eclipse.rse.core;
 
@@ -33,9 +34,12 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.rse.core.comm.SystemKeystoreProviderManager;
+import org.eclipse.rse.core.model.ISystemProfileManager;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
 import org.eclipse.rse.internal.core.RSECoreRegistry;
+import org.eclipse.rse.internal.core.model.SystemProfileManager;
+import org.eclipse.rse.internal.core.model.SystemRegistry;
 import org.eclipse.rse.internal.core.subsystems.SubSystemConfigurationProxy;
 import org.eclipse.rse.internal.core.subsystems.SubSystemConfigurationProxyComparator;
 import org.eclipse.rse.internal.persistence.RSEPersistenceManager;
@@ -64,7 +68,7 @@ public class RSECorePlugin extends Plugin {
 
 	private static RSECorePlugin plugin = null; // the singleton instance of this plugin
 	private Logger logger = null;
-	private ISystemRegistry _registry = null;
+	private ISystemRegistry _systemRegistry = null;
 	private IRSEPersistenceManager _persistenceManager = null;
 	private ISubSystemConfigurationProxy[] _subsystemConfigurations = null;
  
@@ -78,15 +82,6 @@ public class RSECorePlugin extends Plugin {
 
 	/**
 	 * A static convenience method - fully equivalent to 
-	 * <code>RSECorePlugin.getDefault().getPersistenceManager()</code>.
-	 * @return the persistence manager currently in use for RSE
-	 */
-	public static IRSEPersistenceManager getThePersistenceManager() {
-		return getDefault().getPersistenceManager();
-	}
-	
-	/**
-	 * A static convenience method - fully equivalent to 
 	 * <code>RSECorePlugin.getDefault().getRegistry()</code>.
 	 * @return the RSE Core Registry.
 	 */
@@ -96,7 +91,40 @@ public class RSECorePlugin extends Plugin {
 	
 	/**
 	 * A static convenience method - fully equivalent to 
+	 * <code>RSECorePlugin.getDefault().getPersistenceManager()</code>.
+	 * @return the persistence manager currently in use for RSE
+	 */
+	public static IRSEPersistenceManager getThePersistenceManager() {
+		return getDefault().getPersistenceManager();
+	}
+	
+	/**
+	 * Return the master profile manager singleton.
+	 * @return the RSE Profile Manager Singleton.
+	 */
+	public static ISystemProfileManager getTheSystemProfileManager() {
+		return SystemProfileManager.getDefault();
+	}
+
+    /**
+     * Check if the SystemRegistry has been instantiated already.
+     * Use this when you don't want to start the system registry as a
+     * side effect of retrieving it.
+     * @return <code>true</code> if the System Registry has been instantiated already.
+     */
+    public static boolean isTheSystemRegistryActive()
+    {
+    	if (plugin == null) {
+      	  return false;
+    	}
+    	return getDefault().isSystemRegistryActive();
+    }
+
+	/**
+	 * A static convenience method - fully equivalent to 
 	 * <code>RSECorePlugin.getDefault().getSystemRegistry()</code>.
+	 * The SystemRegistry is used to gain access to the basic services
+	 * and components used in RSE. 
 	 * @return the RSE System Registry.
 	 */
 	public static ISystemRegistry getTheSystemRegistry() {
@@ -173,7 +201,11 @@ public class RSECorePlugin extends Plugin {
 	 */
 	public IRSEPersistenceManager getPersistenceManager() {
 		if (_persistenceManager == null) {
-			_persistenceManager = new RSEPersistenceManager(_registry);
+			synchronized(this) {
+				if (_persistenceManager==null) {
+					_persistenceManager = new RSEPersistenceManager(getSystemRegistry());
+				}
+			}
 		}
 		return _persistenceManager;
 	}
@@ -183,19 +215,43 @@ public class RSECorePlugin extends Plugin {
 	 * that require a user interface. This should be set only by RSE startup components and 
 	 * not by any external client.
 	 * @param registry the implementation of ISystemRegistry that the core should remember.
+	 * @deprecated Do not use this method.
 	 */
 	public void setSystemRegistry(ISystemRegistry registry) {
-		_registry = registry;
+		_systemRegistry = registry;
 	}
 
+    /**
+     * Test if the SystemRegistry has been instantiated already.
+     * Use this when you don't want to start the system registry as a
+     * side effect of retrieving it.
+     * @return <code>true</code> if the system registry has been instantiated already.
+     */
+    private boolean isSystemRegistryActive()
+    {
+    	return (_systemRegistry != null);
+    }
+    
 	/**
-	 * Gets the system registry set by {@link #setSystemRegistry(ISystemRegistry)}.
-	 * This registry is used to gain access to the basic services and components used in 
-	 * the RSE user interface. 
+     * Return the SystemRegistry singleton.
+     * Clients should use static @{link getTheSystemRegistry()} instead.
 	 * @return the RSE system registry
 	 */
 	public ISystemRegistry getSystemRegistry() {
-		return _registry;
+    	if (_systemRegistry == null) {
+    		synchronized(this) {
+    			if (_systemRegistry == null) {
+    	    		String logfilePath = getStateLocation().toOSString();    	
+    	    		SystemRegistry sr = SystemRegistry.getInstance(logfilePath);
+    	    		ISubSystemConfigurationProxy[] proxies = getSubSystemConfigurationProxies();
+    	    		if (proxies != null) {
+    	    			sr.setSubSystemConfigurationProxies(proxies);
+    	    		}
+    	    		_systemRegistry = sr;
+    			}
+    		}
+        }
+		return _systemRegistry;
 	}
 
 	/**

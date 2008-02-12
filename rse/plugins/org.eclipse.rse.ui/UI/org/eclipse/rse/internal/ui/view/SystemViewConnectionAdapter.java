@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -31,6 +31,7 @@
  * Xuan Chen         (IBM)       - [160775] [api] rename (at least within a zip) blocks UI thread
  * Martin Oberhuber (Wind River) - [216266] Consider stateless subsystems (supportsSubSystemConnect==false)
  * David Dykstal (IBM) - [197036] minor refactoring caused by SystemRegistry fix for this bug
+ * Martin Oberhuber (Wind River) - [215820] Move SystemRegistry implementation to Core
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -234,7 +235,7 @@ public class SystemViewConnectionAdapter
 	public String getText(Object element)
 	{
 		IHost conn = (IHost)element;	
-		boolean qualifyNames = RSECorePlugin.getTheSystemRegistry().getQualifiedHostNames();		
+		boolean qualifyNames = RSEUIPlugin.getTheSystemRegistryUI().getQualifiedHostNames();		
 		if (!qualifyNames)
 		  return conn.getAliasName();
 		else

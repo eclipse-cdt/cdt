@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * David McKnight  (IBM)  - [205986] daemon handshake needs a timeout
+ * David McKnight  (IBM)  - [218685] [dstore] Unable to connect when using SSL.
  *******************************************************************************/
 
 package org.eclipse.dstore.core.client;
@@ -639,8 +640,7 @@ public class ClientConnection
 	
 	public ConnectionStatus launchServer(String user, String password, int daemonPort, int timeout)
 	{
-		ConnectionStatus result = connectDaemon(daemonPort);
-		boolean doTimeOut = timeout > 0;
+		ConnectionStatus result = connectDaemon(daemonPort, timeout);
 		if (!result.isConnected()) {
 			return result;
 		}
@@ -652,7 +652,6 @@ public class ClientConnection
 			// create output stream for server launcher
 			try
 			{
-				if (doTimeOut) _launchSocket.setSoTimeout(timeout);
 				writer = new PrintWriter(new OutputStreamWriter(_launchSocket.getOutputStream(), DE.ENCODING_UTF_8));
 				writer.println(user);
 				writer.println(password);
@@ -719,7 +718,7 @@ public class ClientConnection
 	 * @param daemonPort the port of the daemon
 	 * @return the status of the connection
 	 */
-	public ConnectionStatus connectDaemon(int daemonPort) {
+	public ConnectionStatus connectDaemon(int daemonPort, int timeout) {
 		ConnectionStatus result = new ConnectionStatus(true);
 		try
 		{
@@ -739,7 +738,9 @@ public class ClientConnection
 						SSLSocket lSocket = (SSLSocket) factory.createSocket(_host, daemonPort);
 						_launchSocket = lSocket;
 
-						lSocket.setSoTimeout(10000);
+						if (timeout > 0) {
+							_launchSocket.setSoTimeout(timeout);
+						}
 						lSocket.startHandshake();
 
 						SSLSession session = lSocket.getSession();
@@ -773,6 +774,9 @@ public class ClientConnection
 			else
 			{
 				_launchSocket = new Socket(_host, daemonPort);
+				if (timeout > 0) {
+					_launchSocket.setSoTimeout(timeout);
+				}
 			}
 		}
 		catch (java.net.ConnectException e)

@@ -175,7 +175,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
     protected CPPASTTranslationUnit translationUnit;
     
-    private static class ScopeStack {
+    private final static class ScopeStack {
         private int[] stack;
 
         private int index = -1;
@@ -190,27 +190,28 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             stack = newStack;
         }
 
-        final public void push(int i) {
+        public void push(int i) {
             if (++index == stack.length)
                 grow();
             stack[index] = i;
         }
 
-        final public int pop() {
+        public int pop() {
             if (index >= 0)
                 return stack[index--];
             return -1;
         }
 
-        final public int peek() {
+        public int peek() {
             if (index >= 0)
                 return stack[index];
             return -1;
         }
 
-        final public int size() {
+        public int size() {
             return index + 1;
         }
+        
     }
 
     /**
@@ -822,8 +823,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @param expression
      * @throws BacktrackException
      */
-    protected IASTExpression multiplicativeExpression()
-            throws BacktrackException, EndOfFileException {
+    protected IASTExpression multiplicativeExpression() throws BacktrackException, EndOfFileException {
         IASTExpression firstExpression = pmExpression();
         for (;;) {
             switch (LT(1)) {
@@ -858,8 +858,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @param expression
      * @throws BacktrackException
      */
-    protected IASTExpression pmExpression() throws EndOfFileException,
-            BacktrackException {
+    protected IASTExpression pmExpression() throws EndOfFileException, BacktrackException {
 
         IASTExpression firstExpression = castExpression();
         for (;;) {
@@ -890,15 +889,16 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     /**
      * castExpression : unaryExpression | "(" typeId ")" castExpression
      */
-    protected IASTExpression castExpression() throws EndOfFileException,
-    				BacktrackException {
+    protected IASTExpression castExpression() throws EndOfFileException, BacktrackException {
 // 		TO DO: we need proper symbol checkint to ensure type name
     	if (LT(1) == IToken.tLPAREN) {
     		IToken la = LA(1);
     		int startingOffset = la.getOffset();
     		IToken mark = mark();
     		consume();
-    		if (templateIdScopes.size() > 0) { templateIdScopes.push(IToken.tLPAREN); }
+    		
+    		if (templateIdScopes.size() > 0)  
+    			templateIdScopes.push(IToken.tLPAREN); 
     		
     		boolean popped = false;
     		IASTTypeId typeId = null;

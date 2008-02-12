@@ -14,66 +14,72 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 
-public final class TemplateParameterManager
-{	
-	protected void reset()
-	{
-		list = Collections.EMPTY_LIST;
+/**
+ * Manages lists of template parameter nodes during the parsing
+ * of names. The purpose of this class is performance, as these
+ * lists are managed using lazy initialization and object pooling.
+ * This class is basically as substitute for List<List<IASTNode>>.
+ * 
+ * When using the object pool code must be wrapped in a try-finally
+ * block to ensure the object is returned to the pool.
+ * 
+ * TODO: How much of a performance improvement are we talking about here?
+ * It might make sense just to get rid of this class. The extra complexity
+ * might not be worth it.
+ */
+public final class TemplateParameterManager {
+	
+	protected void reset() {
+		list = Collections.emptyList();
 		emptySegmentCount = 0;
 	}
 	
-	private TemplateParameterManager(int i)
-	{
+	private TemplateParameterManager(int i) {
 		reset();
 		counterId = i;
 	}
 	
 	private final int counterId;
-	private List list;
+	private List<List<IASTNode>> list;
 	private int emptySegmentCount;
 
-	public List getTemplateArgumentsList()
-	{
+	public List<List<IASTNode>> getTemplateArgumentsList() {
 		return list;
 	}
 	
-	public void addSegment( List inputSegment )
-	{
-		if( inputSegment == null )
-		{
-			if( list == Collections.EMPTY_LIST )
+	public void addSegment(List<IASTNode> inputSegment) {
+		// avoid creating an actual ArrayList instance for as long as possible
+		if(inputSegment == null) {
+			if(list.isEmpty())
 				++emptySegmentCount;
 			else
 				list.add( null );
 		}
-		else
-		{
-			if( list == Collections.EMPTY_LIST )
-			{
-				list = new ArrayList();
+		else {
+			if(list.isEmpty()) {
+				list = new ArrayList<List<IASTNode>>();
 				for( int i = 0; i < emptySegmentCount; ++i )
 					list.add( null );
 			}
 			list.add( inputSegment );
 		}
 	}
+	
+	
+	// An object pool
 
 	private static final int NUMBER_OF_INSTANCES = 8;
 	private static final boolean [] instancesUsed = new boolean[ NUMBER_OF_INSTANCES ];
 	private static final TemplateParameterManager [] counters = new TemplateParameterManager[ NUMBER_OF_INSTANCES ];
 	private static int counter = 8;
-	static
-	{
-		for( int i = 0; i < NUMBER_OF_INSTANCES; ++i )
-		{
-			instancesUsed[ i ] = false;
+	static {
+		for( int i = 0; i < NUMBER_OF_INSTANCES; ++i ) {
 			counters[ i ] = new TemplateParameterManager( i );
 		}
 	}
-	/**
-	 * @return
-	 */
+
 	public synchronized static TemplateParameterManager getInstance() {
 		int index = findFreeCounter();
 		if( index == -1 )
@@ -82,16 +88,13 @@ public final class TemplateParameterManager
 		return counters[ index ];
 	}
 
-	public synchronized static void returnInstance( TemplateParameterManager c )
-	{
+	public synchronized static void returnInstance( TemplateParameterManager c ) {
 		if( c.counterId > 0 && c.counterId < NUMBER_OF_INSTANCES )
 			instancesUsed[ c.counterId ] = false;
 		c.reset();
 	}
 	
-	/**
-	 * @return
-	 */
+	
 	private static int findFreeCounter() {
 		for( int i = 0; i < NUMBER_OF_INSTANCES; ++i )
 			if( instancesUsed[i] == false )

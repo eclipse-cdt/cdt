@@ -1,9 +1,10 @@
-/********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
- * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
- * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+/*******************************************************************************
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
  * component that contains this file: David McKnight, Kushal Munir, 
@@ -15,7 +16,7 @@
  * David Dykstal (IBM) - [197036] fixed delete filter pool bug found during testing of this bug
  *                                see also bug 194260 regarding deleting filter pools
  * David Dykstal (IBM) - [194268] fixed initial selection and new action selection
- ********************************************************************************/
+ *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.filters.dialogs;
 import java.util.Vector;

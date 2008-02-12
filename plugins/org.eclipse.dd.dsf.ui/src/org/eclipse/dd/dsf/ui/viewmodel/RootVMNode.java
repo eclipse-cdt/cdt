@@ -45,6 +45,9 @@ public class RootVMNode extends AbstractVMNode implements IRootVMNode {
      * event should be processed to generate a delta.
      */
     public boolean isDeltaEvent(Object rootObject, Object event) {
+        if (event instanceof ModelProxyInstalledEvent) {
+            return rootObject.equals( ((ModelProxyInstalledEvent)event).getRootElement() ); 
+        }
         return true;
     } 
     

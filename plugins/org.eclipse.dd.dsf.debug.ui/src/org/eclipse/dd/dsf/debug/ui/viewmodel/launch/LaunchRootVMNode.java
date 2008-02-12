@@ -70,7 +70,7 @@ public class LaunchRootVMNode extends RootVMNode
                 return false;
             }
         }
-        return true;
+        return super.isDeltaEvent(rootObject, e);
     }
     
     @Override

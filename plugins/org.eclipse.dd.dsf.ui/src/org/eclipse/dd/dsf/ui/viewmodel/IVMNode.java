@@ -11,6 +11,7 @@
 package org.eclipse.dd.dsf.ui.viewmodel;
 
 import org.eclipse.dd.dsf.concurrent.ConfinedToDsfExecutor;
+import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMProvider;
@@ -92,20 +93,21 @@ public interface IVMNode extends IElementContentProvider
     public void buildDelta(Object event, VMDelta parent, int nodeOffset, RequestMonitor requestMonitor);
 
     /**
-     * Returns the view model element for the given data model event.  This method 
+     * Retireves the view model elements for the given data model event.  This method 
      * is optional and it allows the view model provider to optimize event processing
      * by avoiding the need to retrieve all possible elements for the given node.
      * </p>
      * For example:  If a threads node implementation is given a thread stopped event in 
-     * for this method, and the stopped event included a reference to the thread.  Then
+     * this method, and the stopped event included a reference to the thread.  Then
      * the implementation should create a view model context for that thread and return it
      * here.
      *   
+     * @param parentDelta The parent delta in the processing of this event.
      * @param event The event to check for the data model object.
-     * @return A view model object if it can be calculated, <code>null</code> 
-     * if it cannot.
+     * @param Request monitor for the array of elements corresponding to the 
+     * given event.
      */
-    public IVMContext getContextFromEvent(Object event);
+    public void getContextsForEvent(VMDelta parentDelta, Object event, DataRequestMonitor<IVMContext[]> rm);
 
     /**
      * Releases the resources held by this node.

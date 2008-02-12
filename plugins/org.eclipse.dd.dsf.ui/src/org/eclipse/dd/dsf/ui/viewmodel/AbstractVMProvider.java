@@ -322,7 +322,7 @@ abstract public class AbstractVMProvider implements IVMProvider
      * overrides this method to optionally return the results for an update from
      * a cache. 
      */
-    protected void updateNode(final IVMNode node, IHasChildrenUpdate[] updates) {
+    public void updateNode(final IVMNode node, IHasChildrenUpdate[] updates) {
         IHasChildrenUpdate[] updateProxies = new IHasChildrenUpdate[updates.length];
         for (int i = 0; i < updates.length; i++) {
             final IHasChildrenUpdate update = updates[i];
@@ -340,7 +340,7 @@ abstract public class AbstractVMProvider implements IVMProvider
                         if (getStatus().getCode() == IDsfService.NOT_SUPPORTED) {
                             updateNode(
                                 node, 
-                                new VMChildrenUpdate[] { new VMChildrenUpdate(
+                                new VMChildrenUpdate(
                                     update, -1, -1, 
                                     new ViewerDataRequestMonitor<List<Object>>(getExecutor(), update) {
                                         @Override
@@ -349,7 +349,7 @@ abstract public class AbstractVMProvider implements IVMProvider
                                             update.done();
                                         }
                                     })
-                                });
+                                );
                                     
                         } else {
                             update.setStatus(getStatus());
@@ -370,13 +370,11 @@ abstract public class AbstractVMProvider implements IVMProvider
      * overrides this method to optionally return the results for an update from
      * a cache. 
      */
-    protected void updateNode(final IVMNode node, IChildrenCountUpdate[] updates) {
-        IChildrenCountUpdate[] updateProxies = new IChildrenCountUpdate[updates.length];
-        for (int i = 0; i < updates.length; i++) {
-            final IChildrenCountUpdate update = updates[i];
-            updateProxies[i] = new VMChildrenCountUpdate(
+    public void updateNode(final IVMNode node, final IChildrenCountUpdate update) {
+        node.update(new IChildrenCountUpdate[] { 
+            new VMChildrenCountUpdate(
                 update,
-                new ViewerDataRequestMonitor<Integer>(getExecutor(), updates[i]) {
+                new ViewerDataRequestMonitor<Integer>(getExecutor(), update) {
                     @Override
                     protected void handleOK() {
                         update.setChildCount(getData());
@@ -388,7 +386,7 @@ abstract public class AbstractVMProvider implements IVMProvider
                         if (getStatus().getCode() == IDsfService.NOT_SUPPORTED) {
                             updateNode(
                                 node, 
-                                new VMChildrenUpdate[] { new VMChildrenUpdate(
+                                new VMChildrenUpdate(
                                     update, -1, -1, 
                                     new ViewerDataRequestMonitor<List<Object>>(getExecutor(), update) {
                                         @Override
@@ -397,14 +395,13 @@ abstract public class AbstractVMProvider implements IVMProvider
                                             update.done();
                                         }
                                     })
-                                });
+                                );
                                     
                         }
                     }
                     
-                });
-        }
-        node.update(updateProxies);
+                })
+        });
     }
 
     /**
@@ -415,8 +412,8 @@ abstract public class AbstractVMProvider implements IVMProvider
      * overrides this method to optionally return the results for an update from
      * a cache. 
      */
-    protected void updateNode(IVMNode node, IChildrenUpdate[] updates) {
-        node.update(updates);
+    public void updateNode(IVMNode node, IChildrenUpdate update) {
+        node.update(new IChildrenUpdate[] { update });
     }
 
     

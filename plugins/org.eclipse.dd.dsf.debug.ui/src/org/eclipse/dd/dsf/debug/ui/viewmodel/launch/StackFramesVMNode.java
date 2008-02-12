@@ -19,7 +19,7 @@ import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IStack;
-import org.eclipse.dd.dsf.debug.service.IStepQueueManager;
+import org.eclipse.dd.dsf.debug.service.StepQueueManager;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerSuspendedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IResumedDMEvent;
@@ -30,6 +30,7 @@ import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMData;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
+import org.eclipse.dd.dsf.ui.viewmodel.ModelProxyInstalledEvent;
 import org.eclipse.dd.dsf.ui.viewmodel.VMChildrenUpdate;
 import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMNode;
@@ -118,31 +119,39 @@ public class StackFramesVMNode extends AbstractDMVMNode
             return;
         }          
 
-        getServicesTracker().getService(IStack.class).getTopFrame(
-            execDmc, 
-            new DataRequestMonitor<IFrameDMContext>(getExecutor(), null) { 
-                @Override
-                public void handleCompleted() {
-                    if (!getStatus().isOK()) {
-                        handleFailedUpdate(update);
-                        return;
-                    }
-                    
-                    IVMContext topFrameVmc = createVMContext(getData());
-                    
-                    update.setChild(topFrameVmc, 0);
-                    // If there are old frames cached, use them and only substitute the top frame object. Otherwise, create
-                    // an array of VMCs with just the top frame.
-                    if (fCachedOldFrameVMCs != null && fCachedOldFrameVMCs.length >= 1) {
-                        fCachedOldFrameVMCs[0] = topFrameVmc;
-                        for (int i = 0; i < fCachedOldFrameVMCs.length; i++) 
-                        	update.setChild(fCachedOldFrameVMCs[i], i);
-                    } else {
-                        update.setChild(topFrameVmc, 0);
-                    }
-                    update.done();
+        try {
+            getSession().getExecutor().execute(new DsfRunnable() {
+                public void run() {
+                    getServicesTracker().getService(IStack.class).getTopFrame(
+                        execDmc, 
+                        new DataRequestMonitor<IFrameDMContext>(getExecutor(), null) { 
+                            @Override
+                            public void handleCompleted() {
+                                if (!getStatus().isOK()) {
+                                    handleFailedUpdate(update);
+                                    return;
+                                }
+                                
+                                IVMContext topFrameVmc = createVMContext(getData());
+                                
+                                update.setChild(topFrameVmc, 0);
+                                // If there are old frames cached, use them and only substitute the top frame object. Otherwise, create
+                                // an array of VMCs with just the top frame.
+                                if (fCachedOldFrameVMCs != null && fCachedOldFrameVMCs.length >= 1) {
+                                    fCachedOldFrameVMCs[0] = topFrameVmc;
+                                    for (int i = 0; i < fCachedOldFrameVMCs.length; i++) 
+                                    	update.setChild(fCachedOldFrameVMCs[i], i);
+                                } else {
+                                    update.setChild(topFrameVmc, 0);
+                                }
+                                update.done();
+                            }
+                        });
                 }
             });
+        } catch (RejectedExecutionException e) {
+            update.done();
+        }
     }
     
     
@@ -209,7 +218,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
         
         final IExecutionDMContext execDmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IExecutionDMContext.class);
         IRunControl runControlService = getServicesTracker().getService(IRunControl.class); 
-        IStepQueueManager stepQueueMgrService = getServicesTracker().getService(IStepQueueManager.class); 
+        StepQueueManager stepQueueMgrService = getServicesTracker().getService(StepQueueManager.class); 
         if (execDmc == null || runControlService == null || stepQueueMgrService == null) return;
         
         String imageKey = null;
@@ -271,6 +280,31 @@ public class StackFramesVMNode extends AbstractDMVMNode
     }
 
     
+    @Override
+    public void getContextsForEvent(final VMDelta parentDelta, Object e, final DataRequestMonitor<IVMContext[]> rm) {
+        if (e instanceof ModelProxyInstalledEvent) {
+            // Retrieve the list of stack frames, and mark the top frame to be selected.  
+            getElementsTopStackFrameOnly(
+                new VMChildrenUpdate(
+                    parentDelta, getVMProvider().getPresentationContext(), -1, -1,
+                    new DataRequestMonitor<List<Object>>(getExecutor(), null) { 
+                        @Override
+                        public void handleCompleted() {
+                            if (getStatus().isOK() && getData().size() != 0) {
+                                rm.setData(new IVMContext[] { (IVMContext)getData().get(0) });
+                            } else {
+                                // In case of errors, return an empty set of frames.
+                                rm.setData(new IVMContext[0]);
+                            }
+                            rm.done();
+                        }
+                    })
+                );
+            return;
+        }
+        super.getContextsForEvent(parentDelta, e, rm);
+    }
+    
     public int getDeltaFlags(Object e) {
         // This node generates delta if the timers have changed, or if the 
         // label has changed.
@@ -282,9 +316,12 @@ public class StackFramesVMNode extends AbstractDMVMNode
             } else {
                 return IModelDelta.CONTENT;
             }
-        } else if (e instanceof IStepQueueManager.ISteppingTimedOutEvent) {
+        } else if (e instanceof StepQueueManager.ISteppingTimedOutEvent) {
             return IModelDelta.CONTENT;
+        } else if (e instanceof ModelProxyInstalledEvent) {
+            return IModelDelta.SELECT | IModelDelta.EXPAND;
         }
+
         return IModelDelta.NO_CHANGE;
     }
 
@@ -300,8 +337,10 @@ public class StackFramesVMNode extends AbstractDMVMNode
             buildDeltaForSuspendedEvent((ISuspendedDMEvent)e, execDmc, execDmc, parent, nodeOffset, rm);
         } else if (e instanceof IResumedDMEvent) {
             buildDeltaForResumedEvent((IResumedDMEvent)e, parent, nodeOffset, rm);
-        } else if (e instanceof IStepQueueManager.ISteppingTimedOutEvent) {
-            buildDeltaForSteppingTimedOutEvent((IStepQueueManager.ISteppingTimedOutEvent)e, parent, nodeOffset, rm);
+        } else if (e instanceof StepQueueManager.ISteppingTimedOutEvent) {
+            buildDeltaForSteppingTimedOutEvent((StepQueueManager.ISteppingTimedOutEvent)e, parent, nodeOffset, rm);
+        } else if (e instanceof ModelProxyInstalledEvent) {
+            buildDeltaForModelProxyInstalledEvent(parent, nodeOffset, rm);
         } else {
             rm.done();
         }
@@ -372,9 +411,27 @@ public class StackFramesVMNode extends AbstractDMVMNode
         rm.done();
     }
 
-    private void buildDeltaForSteppingTimedOutEvent(final IStepQueueManager.ISteppingTimedOutEvent e, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor rm) {
+    private void buildDeltaForSteppingTimedOutEvent(final StepQueueManager.ISteppingTimedOutEvent e, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor rm) {
         // Repaint the stack frame images to have the running symbol.
         parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
         rm.done();
     }
+    
+    private void buildDeltaForModelProxyInstalledEvent(final VMDelta parentDelta, final int nodeOffset, final RequestMonitor rm) {
+        // Retrieve the list of stack frames, and mark the top frame to be selected.  
+        getElementsTopStackFrameOnly(
+            new VMChildrenUpdate(
+                parentDelta, getVMProvider().getPresentationContext(), -1, -1,
+                new DataRequestMonitor<List<Object>>(getExecutor(), null) { 
+                    @Override
+                    public void handleCompleted() {
+                        if (getStatus().isOK() && getData().size() != 0) {
+                            parentDelta.addNode( getData().get(0), 0, IModelDelta.SELECT | IModelDelta.EXPAND);
+                        }                        
+                        rm.done();
+                    }
+                })
+            );
+    }
+
 }

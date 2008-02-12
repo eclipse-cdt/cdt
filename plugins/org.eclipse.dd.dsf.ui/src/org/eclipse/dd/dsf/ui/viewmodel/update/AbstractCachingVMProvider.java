@@ -285,7 +285,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
     }
     
     @Override
-    protected void updateNode(IVMNode node, IHasChildrenUpdate[] updates) {
+    public void updateNode(IVMNode node, IHasChildrenUpdate[] updates) {
         LinkedList <IHasChildrenUpdate> missUpdates = new LinkedList<IHasChildrenUpdate>();
         for(final IHasChildrenUpdate update : updates) {
             ElementDataKey key = makeEntryKey(node, update);
@@ -316,20 +316,14 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
     }
     
     @Override
-    protected void updateNode(IVMNode node, IChildrenCountUpdate[] updates) {
-        // Given our knowledge of DefaultVMContentProviderStragety, make an 
-        // assumption about the updates argument: there should always be 
-        // exactly one update in this array.
-        assert updates.length == 1;
-        final IChildrenCountUpdate update = updates[0];
-
+    public void updateNode(IVMNode node, final IChildrenCountUpdate update) {
         ElementDataKey key = makeEntryKey(node, update);
         final ElementDataEntry entry = getElementDataEntry(key);
         if(entry.fChildrenCount != null) {
             update.setChildCount(entry.fChildrenCount.intValue());
             update.done();
         } else {
-            updates[0] = new VMChildrenCountUpdate(update, new DataRequestMonitor<Integer>(getExecutor(), null) {
+            IChildrenCountUpdate updateProxy = new VMChildrenCountUpdate(update, new DataRequestMonitor<Integer>(getExecutor(), null) {
                 @Override
                 protected void handleCompleted() {
                     if(getStatus().isOK()) {
@@ -341,17 +335,12 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
                     update.done();
                 }
             });
-            super.updateNode(node, updates);
+            super.updateNode(node, updateProxy);
         }
     }
 
     @Override
-    protected void updateNode(IVMNode node, IChildrenUpdate[] updates) {
-        // Given our knowledge of DefaultVMContentProviderStragety, make an 
-        // assumption about the updates argument: there should always be 
-        // exactly one update in this array.
-        assert updates.length == 1;
-        final IChildrenUpdate update = updates[0];
+    public void updateNode(IVMNode node, final IChildrenUpdate update) {
         
         ElementDataKey key = makeEntryKey(node, update);
         
@@ -360,7 +349,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
             // We need to retrieve all the children if we don't have any children information.
             // Or if the client requested all children (offset = -1, length -1) and we have not
             // retrieved that before.
-            updates[0] = new VMChildrenUpdate(
+            IChildrenUpdate updateProxy = new VMChildrenUpdate(
                 update, update.getOffset(), update.getLength(),
                 new DataRequestMonitor<List<Object>>(getExecutor(), null)
                 {
@@ -396,7 +385,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
                         update.done();
                     }
                 });
-            super.updateNode(node, updates);
+            super.updateNode(node, updateProxy);
         } else if (update.getOffset() < 0 ) {
             // The update requested all children.  Fill in all children assuming that 
             // the children array is complete.
@@ -450,7 +439,9 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
                         }));
                 }
                 
-                super.updateNode( node, partialUpdates.toArray(new IChildrenUpdate[partialUpdates.size()]) );
+                for (IChildrenUpdate partialUpdate : partialUpdates) {
+                    super.updateNode(node, partialUpdate);
+                }
                 multiRm.setDoneCount(partialUpdates.size());
             } else {
                 // we have all of the children in cache; return from cache

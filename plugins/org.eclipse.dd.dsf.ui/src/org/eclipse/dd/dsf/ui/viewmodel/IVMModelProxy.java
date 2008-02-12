@@ -15,17 +15,32 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
 
 /**
- * 
+ * View Model extension to the platform IModelProxy interface.  This extension
+ * allows the IVMProvider implementation to delegate the model proxy implementation
+ * into a separate object. 
  */
 @SuppressWarnings("restriction")
 public interface IVMModelProxy extends IModelProxy {
-    
+
+    /**
+     * Returns the root element that this model proxy was created for.  
+     */
     public Object getRootElement();
     
+    /**
+     * Returns whether the given event applies to the root element and the 
+     * nodes in this model proxy.   
+     */
     public boolean isDeltaEvent(Object event);
 
+    /**
+     * Creates a model delta for the given event.
+     */
     public void createDelta(final Object event, final DataRequestMonitor<IModelDelta> rm);
 
+    /**
+     * Sends the given delta to this model proxy's listeners.
+     */
     public void fireModelChanged(IModelDelta delta);
 
 }

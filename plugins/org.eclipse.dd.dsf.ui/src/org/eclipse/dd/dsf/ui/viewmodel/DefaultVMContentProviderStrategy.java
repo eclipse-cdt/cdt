@@ -170,7 +170,7 @@ public class DefaultVMContentProviderStrategy implements IElementContentProvider
                     update.setChildCount(0);
                     update.done();
                 } else if (childNodes.length == 1) {
-                    getVMProvider().updateNode(childNodes[0], new IChildrenCountUpdate[] { update } );
+                    getVMProvider().updateNode(childNodes[0], update);
                 } else {
                     getChildrenCountsForNode(
                         update, 
@@ -208,7 +208,7 @@ public class DefaultVMContentProviderStrategy implements IElementContentProvider
                     // Invalid update, just mark done.
                     update.done();
                 } else if (childNodes.length == 1) {
-                    getVMProvider().updateNode(childNodes[0], new IChildrenUpdate[] { update });
+                    getVMProvider().updateNode(childNodes[0], update);
                 } else {
                     getChildrenCountsForNode(
                         update,  
@@ -261,23 +261,22 @@ public class DefaultVMContentProviderStrategy implements IElementContentProvider
             final int nodeIndex = i;
             getVMProvider().updateNode(
                 childNodes[i], 
-                new IChildrenCountUpdate[] {
-                    new VMChildrenCountUpdate(
-                        update,  
-                        childrenCountMultiReqMon.add(
-                            new DataRequestMonitor<Integer>(getVMProvider().getExecutor(), null) {
-                                @Override
-                                protected void handleOK() {
-                                    counts[nodeIndex] = getData();
-                                }
-                                
-                                @Override
-                                protected void handleCompleted() {
-                                    super.handleCompleted();
-                                    childrenCountMultiReqMon.requestMonitorDone(this);
-                                }
-                            }))
-                });
+                new VMChildrenCountUpdate(
+                    update,  
+                    childrenCountMultiReqMon.add(
+                        new DataRequestMonitor<Integer>(getVMProvider().getExecutor(), null) {
+                            @Override
+                            protected void handleOK() {
+                                counts[nodeIndex] = getData();
+                            }
+                            
+                            @Override
+                            protected void handleCompleted() {
+                                super.handleCompleted();
+                                childrenCountMultiReqMon.requestMonitorDone(this);
+                            }
+                        }))
+                );
         }
     }
     
@@ -315,21 +314,19 @@ public class DefaultVMContentProviderStrategy implements IElementContentProvider
                 if (elementsLength > 0) {
                     getVMProvider().updateNode(
                         nodes[i],
-                        new IChildrenUpdate[] {
-                            new VMChildrenUpdate(
-                                update, elementsStartIdx, elementsLength,   
-                                elementsMultiRequestMon.add(new DataRequestMonitor<List<Object>>(getVMProvider().getExecutor(), null) { 
-                                    @Override
-                                    protected void handleCompleted() {
-                                        if (getStatus().isOK()) {
-                                            for (int i = 0; i < elementsLength; i++) {
-                                                update.setChild(getData().get(i), elementsStartIdx + nodeStartIdx + i);
-                                            }
+                        new VMChildrenUpdate(
+                            update, elementsStartIdx, elementsLength,   
+                            elementsMultiRequestMon.add(new DataRequestMonitor<List<Object>>(getVMProvider().getExecutor(), null) { 
+                                @Override
+                                protected void handleCompleted() {
+                                    if (getStatus().isOK()) {
+                                        for (int i = 0; i < elementsLength; i++) {
+                                            update.setChild(getData().get(i), elementsStartIdx + nodeStartIdx + i);
                                         }
-                                        elementsMultiRequestMon.requestMonitorDone(this);
                                     }
-                                }))
-                            }
+                                    elementsMultiRequestMon.requestMonitorDone(this);
+                                }
+                            }))
                         ); 
                 }
             }

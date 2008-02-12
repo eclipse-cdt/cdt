@@ -10,7 +10,12 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.ui.viewmodel;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
+import org.eclipse.dd.dsf.service.IDsfService;
+import org.eclipse.dd.dsf.ui.DsfUIPlugin;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
@@ -46,8 +51,9 @@ abstract public class AbstractVMNode implements IVMNode {
         fDisposed = true;
     }
 
-    public IVMContext getContextFromEvent(Object event) {
-        return null;
+    public void getContextsForEvent(VMDelta parentDelta, Object event, DataRequestMonitor<IVMContext[]> rm) {
+        rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfService.NOT_SUPPORTED, "", null)); //$NON-NLS-1$
+        rm.done();
     }
     
     protected boolean isDisposed() { 

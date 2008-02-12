@@ -15,6 +15,7 @@ import java.util.concurrent.RejectedExecutionException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.ConfinedToDsfExecutor;
+import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
@@ -28,6 +29,7 @@ import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMNode;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMNode;
+import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
@@ -129,15 +131,17 @@ abstract public class AbstractDMVMNode extends AbstractVMNode implements IVMNode
     }
     
     @Override
-    public IVMContext getContextFromEvent(Object event) {
+    public void getContextsForEvent(VMDelta parentDelta, Object event, DataRequestMonitor<IVMContext[]> rm) {
         if (event instanceof IDMEvent<?>) {
             IDMEvent<?> dmEvent = (IDMEvent<?>)event;
             IDMContext dmc = DMContexts.getAncestorOfType(dmEvent.getDMContext(), fDMCClassType);
             if (dmc != null) {
-                return createVMContext(dmc);
+                rm.setData(new IVMContext[] { createVMContext(dmc) });
+                rm.done();
+                return;
             }
-        }
-        return null;
+        } 
+        super.getContextsForEvent(parentDelta, event, rm);
     }
 
     protected AbstractDMVMProvider getDMVMProvider() {

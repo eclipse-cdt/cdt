@@ -3,8 +3,11 @@ package org.eclipse.dd.dsf.ui.viewmodel;
 import java.util.concurrent.Executor;
 
 import org.eclipse.dd.dsf.concurrent.ConfinedToDsfExecutor;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputProvider;
@@ -40,6 +43,12 @@ public interface IVMProvider
     extends IElementContentProvider, IModelProxyFactory, IColumnPresentationFactory, IViewerInputProvider
 {
     /**
+     * Returns the presentation context of the viewer that this provider
+     * is configured for. 
+     */
+    public IPresentationContext getPresentationContext();
+
+    /**
      * Returns the VM Adapter associated with the provider.
      */
     public IVMAdapter getVMAdapter();
@@ -66,10 +75,26 @@ public interface IVMProvider
     public IVMNode[] getAllVMNodes();
     
     /**
-     * Returns the presentation context of the viewer that this provider
-     * is configured for. 
+     * Calls the given view model node to perform the given updates.  This 
+     * method is different than calling the IVMNode update method directly in that
+     * it allows the provider to do additional processing on the update such as caching.
      */
-    public IPresentationContext getPresentationContext();
+    public void updateNode(final IVMNode node, IHasChildrenUpdate[] updates);
+    
+    /**
+     * Calls the given view model node to perform the given updates.  This 
+     * method is different than calling the IVMNode update method directly in that
+     * it allows the provider to do additional processing on the update such as caching.
+     */
+    public void updateNode(final IVMNode node, IChildrenCountUpdate updates);
+
+    /**
+     * Calls the given view model node to perform the given updates.  This 
+     * method is different than calling the IVMNode update method directly in that
+     * it allows the provider to do additional processing on the update such as caching.
+     */
+    public void updateNode(IVMNode node, IChildrenUpdate updates);
+
     
     /**
      * Cleans up the resources associated with this provider.

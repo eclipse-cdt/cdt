@@ -46,7 +46,6 @@ import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMProvider;
-import org.eclipse.dd.dsf.ui.viewmodel.dm.CompositeDMVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.IDMVMContext;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -458,7 +457,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
                     final IExpressions expressionService = getServicesTracker().getService(IExpressions.class);
                     if (expressionService != null) {
                         IExpressionDMContext expressionDMC = expressionService.createExpression(
-                            new CompositeDMVMContext(update), 
+                            createCompositeDMVMContext(update), 
                             update.getExpression().getExpressionText());
                         VariableExpressionVMC variableVmc = new VariableExpressionVMC(expressionDMC);
                         variableVmc.setExpression(update.getExpression());

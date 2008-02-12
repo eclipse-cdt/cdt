@@ -39,7 +39,6 @@ import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMProvider;
-import org.eclipse.dd.dsf.ui.viewmodel.dm.CompositeDMVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.IDMVMContext;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
@@ -364,7 +363,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
     @Override
     protected void updateElementsInSessionThread(final IChildrenUpdate update) {
         getServicesTracker().getService(IRegisters.class).getRegisters(
-            new CompositeDMVMContext(update),
+            createCompositeDMVMContext(update),
             new DataRequestMonitor<IRegisterDMContext[]>(getSession().getExecutor(), null) { 
                 @Override
                 public void handleCompleted() {

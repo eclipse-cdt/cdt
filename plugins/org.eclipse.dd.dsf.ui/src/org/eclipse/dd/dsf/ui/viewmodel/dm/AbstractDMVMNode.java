@@ -298,6 +298,16 @@ abstract public class AbstractDMVMNode extends AbstractVMNode implements IVMNode
     }
 
     /**
+     * Creates a default CompositeDMVMContext which represents the selection.
+     * This can be overridden by view model providers which for their own purposes.
+     * @param update defines the selection to be updated to
+     * @return DM Context which represent the current selection 
+     */
+    protected IDMContext createCompositeDMVMContext(IViewerUpdate update) {
+    	return new CompositeDMVMContext(update);
+    }
+    
+    /**
      * Searches for a DMC of given type in the tree patch contained in given 
      * VMC.  Only a DMC in the same session will be returned.
      * @param <V> Type of the DMC that will be returned.
@@ -305,7 +315,7 @@ abstract public class AbstractDMVMNode extends AbstractVMNode implements IVMNode
      * @param dmcType Class object for matching the type.
      * @return DMC, or null if not found.
      */
-    public <T extends IDMContext> T findDmcInPath(Object inputObject, TreePath path, Class<T> dmcType) {
+    protected <T extends IDMContext> T findDmcInPath(Object inputObject, TreePath path, Class<T> dmcType) {
         T retVal = null;
         for (int i = path.getSegmentCount() - 1; i >= 0; i--) {
             if (path.getSegment(i) instanceof IDMVMContext) {

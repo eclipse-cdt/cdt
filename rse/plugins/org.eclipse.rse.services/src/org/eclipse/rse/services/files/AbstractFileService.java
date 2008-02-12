@@ -1,9 +1,10 @@
-/********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
- * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
- * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+/*******************************************************************************
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
  * component that contains this file: David McKnight, Kushal Munir, 
@@ -22,7 +23,7 @@
  * Xuan Chen        (IBM)        - [210555] [regression] NPE when deleting a file on SSH
  * Kevin Doyle		(IBM)		 - [208778] [efs][api] RSEFileStore#getOutputStream() does not support EFS#APPEND
  * David McKnight   (IBM)        - [209704] added supportsEncodingConversion()
- ********************************************************************************/
+ *******************************************************************************/
 
 package org.eclipse.rse.services.files;
 

@@ -1,9 +1,10 @@
-/********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
- * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
- * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+/*******************************************************************************
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
  * component that contains this file: David McKnight, Kushal Munir, 
@@ -15,7 +16,7 @@
  * David McKnight   (IBM)        - [190803] Canceling a long-running dstore job prints "InterruptedException" to stdout  
  * David McKnight   (IBM)        - [207095] check for null datastore
  * David McKnight   (IBM)        - [209593] [api] check for existing query to avoid duplicates
- ********************************************************************************/
+ *******************************************************************************/
 
 package org.eclipse.rse.services.dstore;
 

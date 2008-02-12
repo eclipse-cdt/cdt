@@ -1,9 +1,10 @@
-/********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
- * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
- * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+/*******************************************************************************
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
  * component that contains this file: David McKnight, Kushal Munir, 
@@ -16,7 +17,7 @@
  * Kevin Doyle (IBM) - [163883] Multiple filter strings are disabled
  * Kevin Doyle (IBM) - [197199] Renaming a Profile doesn't cause a save
  * David McKnight   (IBM)        - [217715] [api] RSE property sets should support nested property sets
- ********************************************************************************/
+ *******************************************************************************/
 
 package org.eclipse.rse.internal.persistence.dom;
 

@@ -1,9 +1,10 @@
-/********************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others. All rights reserved.
- * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
- * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+/*******************************************************************************
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
  * component that contains this file: David McKnight, Kushal Munir, 
@@ -14,7 +15,7 @@
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
  * David McKnight   (IBM)        - [189873] DownloadJob changed to DownloadAndOpenJob
- ********************************************************************************/
+ *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
 import java.text.Collator;

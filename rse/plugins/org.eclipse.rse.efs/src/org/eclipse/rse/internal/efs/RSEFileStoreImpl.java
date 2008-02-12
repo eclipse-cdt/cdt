@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -25,6 +25,7 @@
  * Martin Oberhuber (Wind River) - [199552] fix deadlock with dstore-backed efs access
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  * Kevin Doyle		(IBM)		 - [208778] [efs][api] RSEFileStore#getOutputStream() does not support EFS#APPEND
+ * Kevin Doyle 		(IBM)		 - [210673] [efs][nls] Externalize Strings in RSEFileStore and RSEFileStoreImpl
  ********************************************************************************/
 
 package org.eclipse.rse.internal.efs;
@@ -44,6 +45,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
@@ -229,13 +231,13 @@ public class RSEFileStoreImpl extends FileStore
 		if (con == null) {
 			throw new CoreException(new Status(IStatus.ERROR, 
 					Activator.getDefault().getBundle().getSymbolicName(),
-					"Connection not found for host: "+hostNameOrAddr));
+					NLS.bind(Messages.CONNECTION_NOT_FOUND, hostNameOrAddr)));
 		}
 		IRemoteFileSubSystem subSys = RSEFileStoreImpl.getRemoteFileSubSystem(con);
 		if (subSys == null) {
 			throw new CoreException(new Status(IStatus.ERROR,
 					Activator.getDefault().getBundle().getSymbolicName(),
-					"No file subsystem found on host: "+hostNameOrAddr+" connection "+con.getAliasName()));
+					NLS.bind(Messages.NO_FILE_SUBSYSTEM, hostNameOrAddr, con.getAliasName())));
 		}
 		if (!subSys.isConnected()) {
 			try {
@@ -245,7 +247,7 @@ public class RSEFileStoreImpl extends FileStore
 			catch (Exception e) {
 				throw new CoreException(new Status(IStatus.ERROR,
 						Activator.getDefault().getBundle().getSymbolicName(),
-						"Could not connect to host: "+hostNameOrAddr+" subsystem "+subSys.getConfigurationId(), e));
+						NLS.bind(Messages.COULD_NOT_CONNECT, hostNameOrAddr, subSys.getConfigurationId()), e));
 			}
 		}
 		return subSys;
@@ -293,14 +295,14 @@ public class RSEFileStoreImpl extends FileStore
 			if (parent==null) {
 				throw new CoreException(new Status(IStatus.ERROR, 
 						Activator.getDefault().getBundle().getSymbolicName(),
-						"Could not get remote file"));
+						Messages.COULD_NOT_GET_REMOTE_FILE));
 			}
 			try {
 				remoteFile = parent.getParentRemoteFileSubSystem().getRemoteFileObject(parent, getName(), monitor);
-			} catch(Exception e) {
+			} catch(SystemMessageException e) {
 				throw new CoreException(new Status(IStatus.ERROR,
 						Activator.getDefault().getBundle().getSymbolicName(),
-						"Could not get remote file", e));
+						getExceptionMessage(null, e), e));
 			}
 		} else {
 			//Handle was created with an absolute name
@@ -308,11 +310,11 @@ public class RSEFileStoreImpl extends FileStore
 			try {
 				remoteFile = subSys.getRemoteFileObject(_store.getAbsolutePath(), monitor);
 			}
-			catch (Exception e) {
+			catch (SystemMessageException e) {
 				throw new CoreException(new Status(
 						IStatus.ERROR, 
 						Activator.getDefault().getBundle().getSymbolicName(), 
-						"Could not get remote file", e));
+						getExceptionMessage(null, e), e));
 			}
 		}
 
@@ -320,7 +322,7 @@ public class RSEFileStoreImpl extends FileStore
 		if (forceExists && (remoteFile == null || !remoteFile.exists())) {
 			throw new CoreException(new Status(IStatus.ERROR,
 					Activator.getDefault().getBundle().getSymbolicName(),
-					"The file store does not exist"));
+					Messages.FILE_STORE_DOES_NOT_EXIST));
 		}
 		return remoteFile;
 	}
@@ -542,7 +544,7 @@ public class RSEFileStoreImpl extends FileStore
     			exceptionText = e.getClass().getName();
     		}
     	} else {
-    		exceptionText = "Unknown exception";
+    		exceptionText = Messages.UNKNOWN_EXCEPTION;
     	}
     	if (item!=null && item.length()>0) {
     		return exceptionText + ": " + item; //$NON-NLS-1$
@@ -591,7 +593,7 @@ public class RSEFileStoreImpl extends FileStore
 		if (remoteFile.isDirectory()) {
 			throw new CoreException(new Status(IStatus.ERROR, 
 					Activator.getDefault().getBundle().getSymbolicName(),
-					"The file store represents a directory"));
+					Messages.CANNOT_OPEN_STREAM_ON_FOLDER));
 		}
 		
 		if (remoteFile.isFile()) {
@@ -602,7 +604,7 @@ public class RSEFileStoreImpl extends FileStore
 				cacheRemoteFile(null);
 				throw new CoreException(new Status(IStatus.ERROR,
 						Activator.getDefault().getBundle().getSymbolicName(),
-						"Could not get input stream", e));
+						getExceptionMessage(null, e), e));
 			}
 		}
 		
@@ -620,7 +622,7 @@ public class RSEFileStoreImpl extends FileStore
 		if (remoteFile==null) {
 			throw new CoreException(new Status(IStatus.ERROR, 
 					Activator.getDefault().getBundle().getSymbolicName(),
-					"Could not get remote file"));
+					Messages.COULD_NOT_GET_REMOTE_FILE));
 		}
 		IRemoteFileSubSystem subSys = remoteFile.getParentRemoteFileSubSystem();
 		if (!remoteFile.exists()) {
@@ -628,17 +630,17 @@ public class RSEFileStoreImpl extends FileStore
 				remoteFile = subSys.createFolder(remoteFile, monitor);
 				cacheRemoteFile(remoteFile);
 			}
-			catch (Exception e) {
+			catch (SystemMessageException e) {
 				throw new CoreException(new Status(IStatus.ERROR,
 						Activator.getDefault().getBundle().getSymbolicName(), 
-						"The directory could not be created", e));
+						getExceptionMessage(null, e), e));
 			}
 			return _store;
 		}
 		else if (remoteFile.isFile()) {
 			throw new CoreException(new Status(IStatus.ERROR, 
 					Activator.getDefault().getBundle().getSymbolicName(),
-					"A file of that name already exists"));
+					Messages.FILE_NAME_EXISTS));
 		}
 		else {
 			return _store;
@@ -655,7 +657,7 @@ public class RSEFileStoreImpl extends FileStore
 		if (remoteFile==null) {
 			throw new CoreException(new Status(IStatus.ERROR,
 					Activator.getDefault().getBundle().getSymbolicName(),
-					"Could not get remote file"));
+					Messages.COULD_NOT_GET_REMOTE_FILE));
 		}
 		IRemoteFileSubSystem subSys = remoteFile.getParentRemoteFileSubSystem();
 		if (!remoteFile.exists()) {
@@ -663,10 +665,10 @@ public class RSEFileStoreImpl extends FileStore
 				remoteFile = subSys.createFile(remoteFile, monitor);
 				cacheRemoteFile(remoteFile);
 			}
-			catch (Exception e) {
+			catch (SystemMessageException e) {
 				throw new CoreException(new Status(IStatus.ERROR,
 						Activator.getDefault().getBundle().getSymbolicName(),
-						"Could not create file", e));
+						getExceptionMessage(null, e), e));
 			} 
 		}
 			
@@ -683,13 +685,13 @@ public class RSEFileStoreImpl extends FileStore
 			catch (SystemMessageException e) {
 				throw new CoreException(new Status(IStatus.ERROR,
 						Activator.getDefault().getBundle().getSymbolicName(),
-						"Could not get output stream", e));
+						Messages.CANNOT_OPEN_STREAM_ON_FOLDER, e));
 			}
 		}
 		else if (remoteFile.isDirectory()) {
 			throw new CoreException(new Status(IStatus.ERROR,
 					Activator.getDefault().getBundle().getSymbolicName(),
-					"This is a directory"));
+					Messages.CANNOT_OPEN_STREAM_ON_FOLDER));
 		}
 		else {
 			//TODO check what to do for symbolic links and other strange stuff
@@ -711,13 +713,13 @@ public class RSEFileStoreImpl extends FileStore
 			if (!success) {
 				throw new CoreException(new Status(IStatus.ERROR,
 						Activator.getDefault().getBundle().getSymbolicName(),
-						"Could not delete file"));
+						Messages.DELETE_FAILED));
 			}
 		}
-		catch (Exception e) {
+		catch (SystemMessageException e) {
 			throw new CoreException(new Status(IStatus.ERROR,
 					Activator.getDefault().getBundle().getSymbolicName(),
-					"Could not delete file", e));
+					getExceptionMessage(null, e), e));
 		}
 	}
 }

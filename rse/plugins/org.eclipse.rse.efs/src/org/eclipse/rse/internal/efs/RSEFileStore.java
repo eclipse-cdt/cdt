@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -19,6 +19,7 @@
  * Martin Oberhuber (Wind River) - [188360] renamed from plugin org.eclipse.rse.eclipse.filesystem
  * Martin Oberhuber (Wind River) - [189441] fix EFS operations on Windows (Local) systems
  * Martin Oberhuber (Wind River) - [191589] fix Rename by adding putInfo() for RSE EFS, and fetch symlink info
+ * Kevin Doyle 		(IBM)		 - [210673] [efs][nls] Externalize Strings in RSEFileStore and RSEFileStoreImpl
  ********************************************************************************/
 
 package org.eclipse.rse.internal.efs;
@@ -193,7 +194,7 @@ public class RSEFileStore extends FileStore implements IFileStore
 			if (!isResourcesPluginUp()) {
 				throw new CoreException(new Status(IStatus.WARNING,
 						Activator.getDefault().getBundle().getSymbolicName(),
-						"Cannot access file: Resources not loaded yet"));
+						Messages.RESOURCES_NOT_LOADED)); 
 			}
 			_impl = new RSEFileStoreImpl(this);
 		}

@@ -31,7 +31,7 @@ import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IStack;
-import org.eclipse.dd.dsf.debug.service.IStepQueueManager;
+import org.eclipse.dd.dsf.debug.service.StepQueueManager;
 import org.eclipse.dd.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMData;
@@ -543,7 +543,7 @@ public class MISourceDisplayAdapter implements ISourceDisplay
     }
 
     @DsfServiceEventHandler
-    public void eventDispatched(IStepQueueManager.ISteppingTimedOutEvent e) {
+    public void eventDispatched(StepQueueManager.ISteppingTimedOutEvent e) {
         startAnnotationClearingJob(e.getDMContext());        
     }    
 }

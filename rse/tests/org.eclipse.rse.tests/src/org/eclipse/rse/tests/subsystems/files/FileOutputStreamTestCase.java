@@ -1,16 +1,16 @@
 /********************************************************************************
-* Copyright (c) 2007 IBM Corporation. All rights reserved.
-* This program and the accompanying materials are made available under the terms
-* of the Eclipse Public License v1.0 which accompanies this distribution, and is 
-* available at http://www.eclipse.org/legal/epl-v10.html 
-* 
-* Initial Contributors:
-* The following IBM employees contributed to the Remote System Explorer
-* component that contains this file: Kevin Doyle
-* 
-* Contributors:
-* {Name} (company) - description of contribution.
-********************************************************************************/
+ * Copyright (c) 2007, 2008 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the terms
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * available at http://www.eclipse.org/legal/epl-v10.html 
+ * 
+ * Initial Contributors:
+ * The following IBM employees contributed to the Remote System Explorer
+ * component that contains this file: Kevin Doyle
+ * 
+ * Contributors:
+ * Martin Oberhuber (Wind River) - [cleanup] Avoid using SystemStartHere in production code
+ ********************************************************************************/
 
 package org.eclipse.rse.tests.subsystems.files;
 
@@ -27,6 +27,7 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.SystemStartHere;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.internal.core.model.SystemRegistry;
 import org.eclipse.rse.internal.efs.RSEFileStore;
 import org.eclipse.rse.services.clientserver.PathUtility;
 import org.eclipse.rse.services.files.IFileService;
@@ -35,7 +36,6 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
-import org.eclipse.rse.ui.internal.model.SystemRegistry;
 
 public class FileOutputStreamTestCase extends FileServiceBaseTest {
 

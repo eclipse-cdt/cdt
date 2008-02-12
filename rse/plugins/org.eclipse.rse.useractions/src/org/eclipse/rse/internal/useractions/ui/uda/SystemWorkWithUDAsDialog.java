@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,11 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [cleanup] Avoid using SystemStartHere in production code
  *******************************************************************************/
 package org.eclipse.rse.internal.useractions.ui.uda;
 
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.ISystemProfile;
-import org.eclipse.rse.core.model.SystemStartHere;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.ui.SystemResources;
@@ -74,7 +75,7 @@ public class SystemWorkWithUDAsDialog extends SystemPromptDialog implements ISys
 		this.shell = shell;
 		this.subsystem = ss;
 		this.subsystemFactory = ss.getSubSystemConfiguration();
-		setProfiles(SystemStartHere.getSystemProfileManager().getActiveSystemProfiles(), subsystem.getSystemProfile());
+		setProfiles(RSECorePlugin.getTheSystemProfileManager().getActiveSystemProfiles(), subsystem.getSystemProfile());
 		//setMinimumSize(600, 520); // x, y
 		//pack();
 		setHelp();
@@ -89,7 +90,7 @@ public class SystemWorkWithUDAsDialog extends SystemPromptDialog implements ISys
 		setShowOkButton(false);
 		this.shell = shell;
 		this.subsystemFactory = ssFactory;
-		setProfiles(SystemStartHere.getSystemProfileManager().getActiveSystemProfiles(), profile);
+		setProfiles(RSECorePlugin.getTheSystemProfileManager().getActiveSystemProfiles(), profile);
 		//setMinimumSize(600, 520); // x, y
 		//pack();
 		setHelp();

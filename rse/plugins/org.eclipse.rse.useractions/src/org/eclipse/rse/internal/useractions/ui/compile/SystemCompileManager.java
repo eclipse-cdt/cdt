@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * David Dykstal (IBM) - [186589] move user actions API out of org.eclipse.rse.ui   
+ * Martin Oberhuber (Wind River) - [cleanup] Avoid using SystemStartHere in production code
  *******************************************************************************/
 
 package org.eclipse.rse.internal.useractions.ui.compile;
@@ -21,7 +22,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemProfile;
-import org.eclipse.rse.core.model.SystemStartHere;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.useractions.UserActionsPersistenceUtil;
 import org.eclipse.rse.internal.useractions.ui.SystemCmdSubstVarList;
@@ -176,7 +176,7 @@ public abstract class SystemCompileManager {
 	 *  this must be overridden.
 	 */
 	public SystemCompileProfile[] getAllCompileProfiles() {
-		ISystemProfile[] systemProfiles = SystemStartHere.getSystemProfileManager().getActiveSystemProfiles();
+		ISystemProfile[] systemProfiles = RSECorePlugin.getTheSystemProfileManager().getActiveSystemProfiles();
 		SystemCompileProfile[] compProfiles = null;
 		if ((systemProfiles != null) && (systemProfiles.length > 0)) {
 			compProfiles = new SystemCompileProfile[systemProfiles.length];
@@ -250,8 +250,8 @@ public abstract class SystemCompileManager {
 	 */
 	private ISystemProfile getSystemProfile(SystemCompileProfile compProfile) {
 		//return currentProfile;
-		//SystemProfile[] systemProfiles = SystemStartHere.getSystemProfileManager().getActiveSystemProfiles(); THIS WAS THE BUG!!
-		ISystemProfile[] systemProfiles = SystemStartHere.getSystemProfileManager().getSystemProfiles();
+		//SystemProfile[] systemProfiles = RSECorePlugin.getTheSystemProfileManager().getActiveSystemProfiles(); THIS WAS THE BUG!!
+		ISystemProfile[] systemProfiles = RSECorePlugin.getTheSystemProfileManager().getSystemProfiles();
 		String profileName = compProfile.getProfileName();
 		ISystemProfile currentProfile = null;
 		for (int idx = 0; (currentProfile == null) && (idx < systemProfiles.length); idx++) {

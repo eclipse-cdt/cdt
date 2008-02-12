@@ -102,18 +102,15 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 				if (!markFile.exists() && SystemPreferencesManager.getShowLocalConnection()) {		
 					// create the connection only if the local system type is enabled
 					IRSESystemType systemType = RSECorePlugin.getTheCoreRegistry().getSystemTypeById(IRSESystemType.SYSTEMTYPE_LOCAL_ID);
-					if (systemType != null) {
-						RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(systemType.getAdapter(RSESystemTypeAdapter.class));
-						if (adapter != null && adapter.isEnabled(systemType)) {
-							ISystemProfileManager profileManager = RSECorePlugin.getTheSystemProfileManager(); 
-							ISystemProfile profile = profileManager.getDefaultPrivateSystemProfile();
-							String userName = System.getProperty("user.name"); //$NON-NLS-1$
-							registry.createLocalHost(profile, SystemResources.TERM_LOCAL, userName);
-							try { 
-								markFile.createNewFile(); 
-							} 
-							catch(Exception e){}
-						}
+					if (systemType != null && systemType.isEnabled()) {
+						ISystemProfileManager profileManager = RSECorePlugin.getTheSystemProfileManager(); 
+						ISystemProfile profile = profileManager.getDefaultPrivateSystemProfile();
+						String userName = System.getProperty("user.name"); //$NON-NLS-1$
+						registry.createLocalHost(profile, SystemResources.TERM_LOCAL, userName);
+						try { 
+							markFile.createNewFile(); 
+						} 
+						catch(Exception e){}
 					}				       
 				}
 	            //System.err.println("InitRSEJob done"); //$NON-NLS-1$

@@ -26,32 +26,6 @@ import org.eclipse.dd.dsf.service.IDsfService;
  */
 public interface IBreakpoints extends IDsfService {
 
-    /**
-     * Breakpoint attributes markers used in the map parameters of insert/updateBreakpoint().
-     * All are optional with the possible exception of TYPE. It is the responsibility of the
-     * service to ensure that the set of attributes provided is sufficient to create/update
-     * a valid breakpoint on the back-end.
-     */
-	// General markers
-	public static final String DSFBREAKPOINT   = "org.eclipse.dd.dsf.debug.breakpoint"; //$NON-NLS-1$
-	public static final String BREAKPOINT_TYPE = DSFBREAKPOINT + ".type";      //$NON-NLS-1$
-	public static final String BREAKPOINT      = "breakpoint";                 //$NON-NLS-1$
-	public static final String WATCHPOINT      = "watchpoint";                 //$NON-NLS-1$
-	public static final String CATCHPOINT      = "catchpoint";                 //$NON-NLS-1$
-
-	// Basic set of breakpoint attribute markers
-	public static final String FILE_NAME     = DSFBREAKPOINT + ".fileName";    //$NON-NLS-1$
-	public static final String LINE_NUMBER   = DSFBREAKPOINT + ".lineNumber";  //$NON-NLS-1$
-	public static final String FUNCTION      = DSFBREAKPOINT + ".function";    //$NON-NLS-1$
-	public static final String ADDRESS       = DSFBREAKPOINT + ".address";     //$NON-NLS-1$
-	public static final String CONDITION     = DSFBREAKPOINT + ".condition";   //$NON-NLS-1$
-	public static final String IGNORE_COUNT  = DSFBREAKPOINT + ".ignoreCount"; //$NON-NLS-1$
-	public static final String IS_ENABLED    = DSFBREAKPOINT + ".isEnabled";   //$NON-NLS-1$
-
-	// Basic set of watchpoint attribute markers
-	public static final String EXPRESSION    = DSFBREAKPOINT + ".expression";  //$NON-NLS-1$
-	public static final String READ          = DSFBREAKPOINT + ".read";        //$NON-NLS-1$
-	public static final String WRITE         = DSFBREAKPOINT + ".write";       //$NON-NLS-1$
 
     /**
      * Marker interface for a context for which breakpoints can be installed
@@ -62,27 +36,18 @@ public interface IBreakpoints extends IDsfService {
      * Specific breakpoint context
      */
     @Immutable
-    public interface IBreakpointDMContext extends IDMContext {
-
-    	public IBreakpointsTargetDMContext getTargetContext();
-    }
+    public interface IBreakpointDMContext extends IDMContext {}
     
     /**
 	 * Breakpoint events
 	 */
-    public interface IBreakpointsChangedEvent extends IDMEvent<IBreakpointDMContext> {}
+    public interface IBreakpointsChangedEvent extends IDMEvent<IBreakpointsTargetDMContext> {
+        public IBreakpointDMContext[] getBreakpoints();        
+    }
     
-    public interface IBreakpointAddedEvent extends IBreakpointsChangedEvent {
-    	public IBreakpointDMContext getAddedBreakpoint();
-    }
-
-    public interface IBreakpointUpdatedEvent extends IBreakpointsChangedEvent {
-    	public IBreakpointDMContext getUpdatedBreakpoint();
-    }
-
-    public interface IBreakpointRemovedEvent extends IBreakpointsChangedEvent {
-    	public IBreakpointDMContext getRemovedBreakpoint();
-    }
+    public interface IBreakpointsAddedEvent extends IBreakpointsChangedEvent {}
+    public interface IBreakpointsUpdatedEvent extends IBreakpointsChangedEvent {}
+    public interface IBreakpointsRemovedEvent extends IBreakpointsChangedEvent {}
     
     /**
      * Effective breakpoint data as held by the back-end.

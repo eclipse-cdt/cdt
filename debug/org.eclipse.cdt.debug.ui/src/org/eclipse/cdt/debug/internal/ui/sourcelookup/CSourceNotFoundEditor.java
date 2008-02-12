@@ -338,5 +338,15 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 		}
 		return false;
 	}
-
+	/**
+	 * @Override
+	 * @see org.eclipse.debug.ui.sourcelookup.CommonSourceNotFoundEditor#getArtifact()
+	 */
+	protected Object getArtifact() {
+		Object o = super.getArtifact();
+		if (o instanceof CSourceNotFoundElement) {
+			return ((CSourceNotFoundElement) o).getElement();
+		}
+		return o;
+	}
 }

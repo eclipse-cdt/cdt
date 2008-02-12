@@ -48,6 +48,7 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 		fSupportedTypes.add( FolderSourceContainer.TYPE_ID );
 		fSupportedTypes.add( DirectorySourceContainer.TYPE_ID );
 		fSupportedTypes.add( MappingSourceContainer.TYPE_ID );
+		fSupportedTypes.add( AbsolutePathSourceContainer.TYPE_ID );
 	}
 
 	/* (non-Javadoc)

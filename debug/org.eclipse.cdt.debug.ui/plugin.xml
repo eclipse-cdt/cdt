@@ -1371,6 +1371,7 @@
             icon="icons/obj16/mapentry_obj.gif"
             id="org.eclipse.cdt.debug.ui.sourceContainerPresentation.mapEntry"/>
       <sourceContainerPresentation
+            browserClass="org.eclipse.cdt.debug.internal.ui.sourcelookup.AbsolutePathSourceContainerBrowser "
             containerTypeID="org.eclipse.cdt.debug.core.containerType.absolutePath"
             icon="icons/obj16/abspath_obj.gif"
             id="org.eclipse.cdt.debug.ui.sourceContainerPresentation.absolutePath"/>

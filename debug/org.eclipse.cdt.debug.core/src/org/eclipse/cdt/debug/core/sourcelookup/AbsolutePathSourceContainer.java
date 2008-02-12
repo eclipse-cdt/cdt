@@ -107,4 +107,13 @@ public class AbsolutePathSourceContainer extends AbstractSourceContainer {
 		return getSourceContainerType( TYPE_ID );
 	}
 
+	public int hashCode() {
+		return TYPE_ID.hashCode();
+	}
+	
+	public boolean equals(Object obj) {
+	    if (!(obj instanceof AbsolutePathSourceContainer))
+		    return false;
+	    return true;
+    }
 }

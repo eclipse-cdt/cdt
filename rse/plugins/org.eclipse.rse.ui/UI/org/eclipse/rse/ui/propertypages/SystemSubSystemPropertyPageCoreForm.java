@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
+ * Martin Oberhuber (Wind River) - [195399] Improve String display for default port 0
  ********************************************************************************/
 
 package org.eclipse.rse.ui.propertypages;
@@ -176,7 +177,7 @@ public class SystemSubSystemPropertyPageCoreForm extends AbstractSystemSubSystem
 		  else
 		  {
 		    textPort.setLocalText(localPort);
-		    textPort.setInheritedText("0 "+SystemResources.RESID_PORT_DYNAMICSELECT));
+		    textPort.setInheritedText(NLS.bind(SystemPropertyResources.RESID_PORT_DYNAMICSELECT, new Integer(0)));
 		    textPort.setLocal(iPort != 0);	    
 		  }
 	    }

@@ -18,6 +18,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Xuan Chen        (IBM)        - [160775] [api] rename (at least within a zip) blocks UI thread
  * David Dykstal (IBM) - [217556] remove service subsystem types
+ * Martin Oberhuber (Wind River) - [195399] Improve String display for default port 0
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -41,6 +42,7 @@ import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.validators.ValidatorPortInput;
 import org.eclipse.rse.ui.view.AbstractSystemViewAdapter;
 import org.eclipse.rse.ui.view.ISystemPropertyConstants;
+import org.eclipse.rse.ui.view.SystemAdapterHelpers;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
@@ -326,7 +328,7 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 		if (!notApplicable)
 		{
 		  data.setInheritedValue("0");			
-	      data.setInheritedDisplayString(SystemResources.RESID_PORT_DYNAMICSELECT));		  		  
+	      data.setInheritedDisplayString(NLS.bind(SystemPropertyResources.RESID_PORT_DYNAMICSELECT, "0")); //$NON-NLS-1$		  		  
 		  data.setIsLocal(iPort != 0);
 		}
 		data.setNotApplicable(notApplicable);
@@ -737,7 +739,7 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 	public String getInputMementoHandle(Object element)
 	{
 		Object parent = getParent(element);
-		return getSystemViewElementAdapter(parent).getInputMementoHandle(parent) + MEMENTO_DELIM + getMementoHandle(element);
+		return SystemAdapterHelpers.getViewAdapter(parent, getViewer()).getInputMementoHandle(parent) + MEMENTO_DELIM + getMementoHandle(element);
 	}
 	/**
 	 * Return a short string to uniquely identify the type of resource. Eg "conn" for connection.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,10 +12,11 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [195399] Improve String display for default port 0
  *******************************************************************************/
 
 package org.eclipse.rse.ui.widgets;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.internal.ui.SystemPropertyResources;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
@@ -189,7 +190,7 @@ public class SystemPortPrompt
 		  else // editable 
 		  {
 		    textPort.setLocalText(localPort);
-		    textPort.setInheritedText("0 "+SystemPropertyResources.RESID_PORT_DYNAMICSELECT); //$NON-NLS-1$
+		    textPort.setInheritedText(NLS.bind(SystemPropertyResources.RESID_PORT_DYNAMICSELECT, new Integer(0)));
 		    textPort.setLocal(iPort != 0);	    
 		  }
 	    }

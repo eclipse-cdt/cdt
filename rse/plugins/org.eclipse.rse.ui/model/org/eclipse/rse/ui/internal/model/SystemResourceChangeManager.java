@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,10 +12,12 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Martin Oberhuber (Wind River) - [218659] Make *EventManager, *ChangeManager thread-safe
  ********************************************************************************/
 
 package org.eclipse.rse.ui.internal.model;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.rse.core.events.ISystemResourceChangeEvent;
 import org.eclipse.rse.core.events.ISystemResourceChangeListener;
@@ -26,7 +28,8 @@ import org.eclipse.rse.core.events.ISystemResourceChangeListener;
  */
 public class SystemResourceChangeManager
 {
-    private Vector listeners = new Vector();
+    private List listeners = new ArrayList();
+    private Object lockObject = new Object();
 
     /**
      * Constructor
@@ -36,53 +39,75 @@ public class SystemResourceChangeManager
     }
 
     /**
-     * Add a listener to list of listeners. If this object is already in
-     *  the list, this does nothing.
-     */
-    public void addSystemResourceChangeListener(ISystemResourceChangeListener l)
-    {
-    	if (!listeners.contains(l))
-    	  listeners.addElement(l);
-    }
-
-    /**
-     * Remove a listener to list of listeners. If this object is not in
-     *  the list, this does nothing.
-     */
-    public void removeSystemResourceChangeListener(ISystemResourceChangeListener l)
-    {
-    	if (listeners.contains(l))
-    	  listeners.removeElement(l);
-    }
-
-    /**
-     * Query if the ISystemResourceChangeListener is already listening for SystemResourceChange events
+     * Query if the given listener is already listening for SystemResourceChange events.
+     * @param l the listener to check
+     * @return <code>true</code> if the listener is already registered
      */
     public boolean isRegisteredSystemResourceChangeListener(ISystemResourceChangeListener l)
     {
-    	return listeners.contains(l);
-    }
-
-    /**
-     * Notify all registered listeners of the given event
-     */
-    public void notify(ISystemResourceChangeEvent event)
-    {
-    	for (int idx=0; idx<listeners.size(); idx++)
-    	{
-    	   ISystemResourceChangeListener l = (ISystemResourceChangeListener)listeners.elementAt(idx);
-    	   l.systemResourceChanged(event);
+    	synchronized(lockObject) {
+        	return listeners.contains(l);
     	}
     }
 
     /**
-     * Post a notify to all registered listeners of the given event
+     * Add a listener to list of listeners.
+     * If this object is already in the list, this does nothing.
+     * @param l the listener to add
+     */
+    public void addSystemResourceChangeListener(ISystemResourceChangeListener l)
+    {
+    	synchronized(lockObject) {
+        	if (!listeners.contains(l))
+          	  listeners.add(l);
+    	}
+    }
+
+    /**
+     * Remove a listener from the list of listeners.
+     * If this object is not in the list, this does nothing.
+     * @param l the listener to remove
+     */
+    public void removeSystemResourceChangeListener(ISystemResourceChangeListener l)
+    {
+    	synchronized(lockObject) {
+    		//Thread-safety: create a new List when removing, to avoid problems in notify()
+    		listeners = new ArrayList(listeners);
+    		listeners.remove(l);
+    	}
+    }
+
+    /**
+     * Notify all registered listeners of the given event.
+     * @param event the event to send
+     */
+    public void notify(ISystemResourceChangeEvent event)
+    {
+    	//Thread-safe event firing: fire events on a current snapshot of the list.
+    	//If not done that way, and a thread removes a listener while event firing 
+    	//is in progress, an ArrayIndexOutOfBoundException might occur.
+    	List currentListeners;
+    	synchronized(lockObject) {
+    		currentListeners = listeners;
+    	}
+    	for (int idx=0; idx<currentListeners.size(); idx++) {
+    		ISystemResourceChangeListener l = (ISystemResourceChangeListener)currentListeners.get(idx);
+    		l.systemResourceChanged(event);
+    	}
+    }
+
+    /**
+     * Post a notify to all registered listeners of the given event.
+     * @param event the event to send
      */
     public void postNotify(ISystemResourceChangeEvent event)
     {
-    	for (int idx=0; idx<listeners.size(); idx++)
-    	{
-    	   ISystemResourceChangeListener listener = (ISystemResourceChangeListener)listeners.elementAt(idx);
+    	List currentListeners;
+    	synchronized(lockObject) {
+    		currentListeners = listeners;
+    	}
+    	for (int idx=0; idx<currentListeners.size(); idx++) {
+     	   ISystemResourceChangeListener listener = (ISystemResourceChangeListener)currentListeners.get(idx);
     	   new SystemPostableEventNotifier(listener, event); // create and run the notifier
     	   //l.systemResourceChanged(event);
     	}

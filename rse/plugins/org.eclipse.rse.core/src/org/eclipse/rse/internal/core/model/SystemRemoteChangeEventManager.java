@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,11 +13,10 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * David McKnight   (IBM)        - [207100] adding SystemRemoteChangeEventManager.isRegisteredSystemRemoteChangeListener
+ * Martin Oberhuber (Wind River) - [218659] Make *EventManager, *ChangeManager thread-safe
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.model;
-import java.util.Vector;
-
 import org.eclipse.rse.core.events.ISystemRemoteChangeEvent;
 import org.eclipse.rse.core.events.ISystemRemoteChangeListener;
 
@@ -26,7 +25,8 @@ import org.eclipse.rse.core.events.ISystemRemoteChangeListener;
  */
 public class SystemRemoteChangeEventManager
 {
-    private Vector listeners = new Vector();
+    private ISystemRemoteChangeListener[] listeners = new ISystemRemoteChangeListener[0];
+    private Object lockObject = new Object();
 
     /**
      * Constructor
@@ -36,11 +36,20 @@ public class SystemRemoteChangeEventManager
     }
     
     /**
-     * Query if the ISystemRemoteChangeListener is already listening for SystemRemoteChange events
+     * Query if the given listener is already listening for SystemRemoteChange events.
+     * @param l the listener to check
+     * @return <code>true</code> if the listener is already registered
      */
     public boolean isRegisteredSystemRemoteChangeListener(ISystemRemoteChangeListener l)
     {
-    	return listeners.contains(l);
+    	synchronized(lockObject) {
+    		for(int i=0; i<listeners.length; i++) {
+    			if(listeners[i].equals(l)) {
+    				return true;
+    			}
+    		}
+        	return false;
+    	}
     }
 
     /**
@@ -50,19 +59,38 @@ public class SystemRemoteChangeEventManager
      */
     public void addSystemRemoteChangeListener(ISystemRemoteChangeListener l)
     {
-    	if (!listeners.contains(l))
-    	  listeners.addElement(l);
+    	if (l==null) throw new IllegalArgumentException();
+    	synchronized(lockObject) {
+    		if (!isRegisteredSystemRemoteChangeListener(l)) {
+    			int len = listeners.length;
+    			ISystemRemoteChangeListener[] oldListeners = listeners;
+    			listeners = new ISystemRemoteChangeListener[len+1];
+    			System.arraycopy(oldListeners, 0, listeners, 0, len);
+    			listeners[len] = l;
+    		}
+    	}
     }
 
     /**
-     * Remove a listener to list of listeners.
+     * Remove a listener from the list of listeners.
      * If this object is not in the list, this does nothing.
-     * @param l the listener to remove.
+     * @param l the listener to remove
      */
     public void removeSystemRemoteChangeListener(ISystemRemoteChangeListener l)
     {
-    	if (listeners.contains(l))
-    	  listeners.removeElement(l);
+    	synchronized(lockObject) {
+    		if (isRegisteredSystemRemoteChangeListener(l)) {
+        		//Thread-safety: create a new List when removing, to avoid problems in notify()
+    			int len = listeners.length;
+    			ISystemRemoteChangeListener[] oldListeners = listeners;
+    			listeners = new ISystemRemoteChangeListener[len-1];
+    			for (int i=0, j=0; i<len; i++) {
+    				if (!oldListeners[i].equals(l)) {
+    					listeners[j++] = oldListeners[i];
+    				}
+    			}
+    		}
+    	}
     }
 
     /**
@@ -72,10 +100,15 @@ public class SystemRemoteChangeEventManager
      */
     public void notify(ISystemRemoteChangeEvent event)
     {
-    	for (int idx=0; idx<listeners.size(); idx++)
-    	{
-    	   ISystemRemoteChangeListener l = (ISystemRemoteChangeListener)listeners.elementAt(idx);
-    	   l.systemRemoteResourceChanged(event);
+    	//Thread-safe event firing: fire events on a current snapshot of the list.
+    	//If not done that way, and a thread removes a listener while event firing 
+    	//is in progress, an ArrayIndexOutOfBoundException might occur.
+    	ISystemRemoteChangeListener[] currentListeners;
+    	synchronized(lockObject) {
+    		currentListeners = listeners;
+    	}
+    	for (int idx=0; idx<currentListeners.length; idx++) {
+    	   currentListeners[idx].systemRemoteResourceChanged(event);
     	}
     }
 

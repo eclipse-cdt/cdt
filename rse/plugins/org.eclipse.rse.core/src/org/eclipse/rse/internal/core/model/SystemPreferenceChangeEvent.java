@@ -18,6 +18,7 @@ package org.eclipse.rse.internal.core.model;
 import java.util.EventObject;
 
 import org.eclipse.rse.core.events.ISystemPreferenceChangeEvent;
+import org.eclipse.rse.core.events.ISystemPreferenceChangeEvents;
 
 
 /**
@@ -36,9 +37,9 @@ public class SystemPreferenceChangeEvent
 	/**
 	 * Constructor 
      * @see org.eclipse.rse.core.events.ISystemPreferenceChangeEvents
-	 * @param source The object that was added,deleted,renamed,changed.
-	 * @param type The type of event, one of ISystemChangeEvent constants.
-	 * @param parent The parent of the object that was added or deleted.
+	 * @param type The type of event, one of {@link ISystemPreferenceChangeEvents} constants.
+	 * @param oldValue the old value of the Preference
+	 * @param newValue the old value of the Preference
 	 */
 	public SystemPreferenceChangeEvent(int type, Object oldValue, Object newValue)
 	{

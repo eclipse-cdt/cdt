@@ -20,7 +20,7 @@
  * Martin Oberhuber (Wind River) - [186779] Fix IRSESystemType.getAdapter()
  * David Dykstal (IBM) - [176577] wrong enablement of "Move up/down" in connection context menu
  * Martin Oberhuber (Wind River) - [206742] Make SystemHostPool thread-safe
- * David Dykstal (IBM) - [210537] removed exception signalling from this class to match the interface
+ * David Dykstal (IBM) - [210537] removed exception signaling from this class to match the interface
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.model;
@@ -141,7 +141,7 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
 
     /**
      * Private debug method to print connections, to test restored ok.
-     * @deprecated
+     * @deprecated this private debug method may be removed at any time.
      */
     public void printConnections()
     {

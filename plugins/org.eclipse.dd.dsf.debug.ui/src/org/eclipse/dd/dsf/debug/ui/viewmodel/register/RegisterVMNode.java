@@ -41,12 +41,7 @@ import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.CompositeDMVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.IDMVMContext;
-import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IExpression;
-import org.eclipse.debug.core.model.IValue;
-import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
@@ -57,7 +52,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapterExtension;
+import org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapter2;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
@@ -70,7 +65,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
     implements IElementEditor, IElementLabelProvider
 {
     protected class RegisterVMC extends DMVMContext
-    implements IVariable, IFormattedValueVMContext
+        implements IFormattedValueVMContext
     {
         private IExpression fExpression;
         public RegisterVMC(IDMContext dmc) {
@@ -86,7 +81,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
         public Object getAdapter(Class adapter) {
             if (fExpression != null && adapter.isAssignableFrom(fExpression.getClass())) {
                 return fExpression;
-            } else if (adapter.isAssignableFrom(IWatchExpressionFactoryAdapterExtension.class)) {
+            } else if (adapter.isAssignableFrom(IWatchExpressionFactoryAdapter2.class)) {
                 return fRegisterExpressionFactory;
             } else {
                 return super.getAdapter(adapter);
@@ -111,29 +106,16 @@ public class RegisterVMNode extends AbstractExpressionVMNode
         public IFormattedValuePreferenceStore getPreferenceStore() {
             return fFormattedPrefStore;
         }
-        
-        public String getName() throws DebugException { return toString(); }
-        public String getReferenceTypeName() throws DebugException { return ""; } //$NON-NLS-1$
-        public IValue getValue() throws DebugException { return null; }
-        public boolean hasValueChanged() throws DebugException { return false; }
-        public void setValue(IValue value) throws DebugException {}
-        public void setValue(String expression) throws DebugException {}
-        public boolean supportsValueModification() { return false; }
-        public boolean verifyValue(IValue value) throws DebugException { return false; }
-        public boolean verifyValue(String expression) throws DebugException { return false; }
-        public IDebugTarget getDebugTarget() { return null;}
-        public ILaunch getLaunch() { return null; }
-        public String getModelIdentifier() { return DsfDebugUIPlugin.PLUGIN_ID; }
     }
 
-    protected class RegisterExpressionFactory implements IWatchExpressionFactoryAdapterExtension {
+    protected class RegisterExpressionFactory implements IWatchExpressionFactoryAdapter2 {
 
-        public boolean canCreateWatchExpression(IVariable variable) {
-            return variable instanceof RegisterVMC;
+        public boolean canCreateWatchExpression(Object element) {
+            return element instanceof RegisterVMC;
         }
 
-        public String createWatchExpression(IVariable variable) throws CoreException {
-            RegisterVMC registerVmc = ((RegisterVMC)variable);
+        public String createWatchExpression(Object element) throws CoreException {
+            RegisterVMC registerVmc = ((RegisterVMC)element);
 
             StringBuffer exprBuf = new StringBuffer();
             IRegisterGroupDMContext groupDmc = 

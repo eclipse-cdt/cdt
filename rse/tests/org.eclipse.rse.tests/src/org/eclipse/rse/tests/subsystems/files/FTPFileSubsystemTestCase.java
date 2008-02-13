@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -9,6 +9,7 @@
  * Uwe Stieber (Wind River) - initial API and implementation.
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * David McKnight   (IBM)        - [186363] get rid of obsolete calls to SubSystem.connect()
+ * Martin Oberhuber (Wind River) - organize, enable and tag test cases
  *******************************************************************************/
 package org.eclipse.rse.tests.subsystems.files;
 
@@ -63,6 +64,7 @@ public class FTPFileSubsystemTestCase extends RSEBaseConnectionTestCase {
 	 * Test the FTP read access to a real remote FTP host.
 	 */
 	public void testFTPReadAccessToRemoteHost() {
+		//-test-author-:UweStieber
 		if (!RSETestsPlugin.isTestCaseEnabled("FTPFileSubsystemTestCase.testFTPReadAccessToRemoteHost")) return; //$NON-NLS-1$
 		
 		ISystemRegistry systemRegistry = RSECorePlugin.getTheSystemRegistry();

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -10,6 +10,7 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * David McKnight   (IBM)        - [186363] get rid of obsolete calls to SubSystem.connect()
+ * Martin Oberhuber (Wind River) - organize, enable and tag test cases
  ********************************************************************************/
 package org.eclipse.rse.tests.core.connection;
 
@@ -35,6 +36,7 @@ public class RSEConnectionTestCase extends RSEBaseConnectionTestCase {
 	 * Test creation of connections.
 	 */
 	public void testConnectionCreation() {
+		//-test-author-:DavidDykstal
 		if (!RSETestsPlugin.isTestCaseEnabled("RSEConnectionTestCase.testConnectionCreation")) return; //$NON-NLS-1$
 
 		Properties properties = new Properties();
@@ -79,6 +81,7 @@ public class RSEConnectionTestCase extends RSEBaseConnectionTestCase {
 	 * Test removal of connections
 	 */
 	public void testConnectionRemoval() {
+		//-test-author-:DavidDykstal
 		if (!RSETestsPlugin.isTestCaseEnabled("RSEConnectionTestCase.testConnectionRemoval")) return; //$NON-NLS-1$
 
 		String profileName = "TestProfile"; //$NON-NLS-1$
@@ -96,6 +99,7 @@ public class RSEConnectionTestCase extends RSEBaseConnectionTestCase {
 	 * Test the connect and disconnect methods
 	 */
 	public void testConnect() {
+		//-test-author-:DavidDykstal
 		if (!RSETestsPlugin.isTestCaseEnabled("RSEConnectionTestCase.testConnect")) return; //$NON-NLS-1$
 
 		Exception exception = null;
@@ -145,6 +149,7 @@ public class RSEConnectionTestCase extends RSEBaseConnectionTestCase {
 	 * Test resolving a filter string.
 	 */
 	public void testResolveFilterString() {
+		//-test-author-:DavidDykstal
 		if (!RSETestsPlugin.isTestCaseEnabled("RSEConnectionTestCase.testResolveFilterString")) return; //$NON-NLS-1$
 
 		Exception exception = null;

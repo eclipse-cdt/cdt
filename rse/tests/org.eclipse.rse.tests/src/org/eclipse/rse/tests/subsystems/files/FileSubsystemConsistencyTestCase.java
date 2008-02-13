@@ -9,6 +9,7 @@
  * David McKnight   (IBM)        - [162195] new APIs for upload multi and download multi
  * David McKnight   (IBM)        - [209552] API changes to use multiple and getting rid of deprecated
  * David McKnight   (IBM)        - [210109] store constants in IFileService rather than IFileServiceConstants
+ * Martin Oberhuber (Wind River) - organize, enable and tag test cases
  *******************************************************************************/
 package org.eclipse.rse.tests.subsystems.files;
 
@@ -181,6 +182,7 @@ public class FileSubsystemConsistencyTestCase extends RSEBaseConnectionTestCase 
 	 * Test the implicit connect of each connection when calling getRemoteFileObject().
 	 */
 	public void testImplicitConnectViaFileSubSystem() {
+		//-test-author-:DaveMcKnight
 		if (!RSETestsPlugin.isTestCaseEnabled("FileSubsystemConsistencyTestCase.testImplicitConnectViaFileSubSystem")) return; //$NON-NLS-1$
 		setupConnections();
 		
@@ -221,6 +223,7 @@ public class FileSubsystemConsistencyTestCase extends RSEBaseConnectionTestCase 
 		}
 	}
 	public void testSingleFileQuery() {
+		//-test-author-:DaveMcKnight
 		if (!RSETestsPlugin.isTestCaseEnabled("FileSubsystemConsistencyTestCase.testSingleFileQuery")) return; //$NON-NLS-1$
 		setupConnections();
 		
@@ -310,6 +313,7 @@ public class FileSubsystemConsistencyTestCase extends RSEBaseConnectionTestCase 
 	 * Test the multi file query
 	 */
 	public void testMultiFileQuery() {
+		//-test-author-:DaveMcKnight
 		if (!RSETestsPlugin.isTestCaseEnabled("FileSubsystemConsistencyTestCase.testMultiFileQuery")) return; //$NON-NLS-1$
 		setupConnections();
 		
@@ -379,6 +383,7 @@ public class FileSubsystemConsistencyTestCase extends RSEBaseConnectionTestCase 
 	 * Test the single file download
 	 */
 	public void testSingleFileDownload() {
+		//-test-author-:DaveMcKnight
 		if (!RSETestsPlugin.isTestCaseEnabled("FileSubsystemConsistencyTestCase.testSingleFileDownload")) return; //$NON-NLS-1$
 		setupConnections();
 		internalFileDownload(false);
@@ -388,6 +393,7 @@ public class FileSubsystemConsistencyTestCase extends RSEBaseConnectionTestCase 
 	 * Test the multi file download
 	 */
 	public void testMultiFileDownload() {
+		//-test-author-:DaveMcKnight
 		if (!RSETestsPlugin.isTestCaseEnabled("FileSubsystemConsistencyTestCase.testMultiFileDownload")) return; //$NON-NLS-1$
 		setupConnections();
 		internalFileDownload(true);

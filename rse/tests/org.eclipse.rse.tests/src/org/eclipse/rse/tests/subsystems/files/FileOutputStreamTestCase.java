@@ -10,6 +10,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [cleanup] Avoid using SystemStartHere in production code
+ * Martin Oberhuber (Wind River) - organize, enable and tag test cases
  ********************************************************************************/
 
 package org.eclipse.rse.tests.subsystems.files;
@@ -115,30 +116,50 @@ public class FileOutputStreamTestCase extends FileServiceBaseTest {
 		return dstoreHost;
 	}
 	
-	public void testRSEFileStoreAppendOutputStream() throws Exception {
+	public void testRSEFileStoreAppendOutputStreamLocal() throws Exception {
+		//-test-author-:KevinDoyle
 		host = getLocalHost();
 		outputStreamFileWriting(EFS.APPEND);
+	}
 		
+	public void testRSEFileStoreAppendOutputStreamFTP() throws Exception {
+		//-test-author-:KevinDoyle
 		host = getFTPHost();
 		outputStreamFileWriting(EFS.APPEND);
+	}
 		
+	public void testRSEFileStoreAppendOutputStreamDStore() throws Exception {
+		//-test-author-:KevinDoyle
 		host = getDStoreHost();
 		outputStreamFileWriting(EFS.APPEND);
+	}
 		
+	public void testRSEFileStoreAppendOutputStreamSSH() throws Exception {
+		//-test-author-:KevinDoyle
 		host = getSSHHost();
 		outputStreamFileWriting(EFS.APPEND);
 	}
 	
-	public void testRSEFileStoreOverwriteOutputStream() throws Exception {
+	public void testRSEFileStoreOverwriteOutputStreamLocal() throws Exception {
+		//-test-author-:KevinDoyle
 		host = getLocalHost();
 		outputStreamFileWriting(EFS.NONE);
+	}
 		
+	public void testRSEFileStoreOverwriteOutputStreamFTP() throws Exception {
+		//-test-author-:KevinDoyle
 		host = getFTPHost();
 		outputStreamFileWriting(EFS.NONE);
+	}
 		
+	public void testRSEFileStoreOverwriteOutputStreamDStore() throws Exception {
+		//-test-author-:KevinDoyle
 		host = getDStoreHost();
 		outputStreamFileWriting(EFS.NONE);
+	}
 		
+	public void testRSEFileStoreOverwriteOutputStreamSSH() throws Exception {
+		//-test-author-:KevinDoyle
 		host = getSSHHost();
 		outputStreamFileWriting(EFS.NONE);
 	}

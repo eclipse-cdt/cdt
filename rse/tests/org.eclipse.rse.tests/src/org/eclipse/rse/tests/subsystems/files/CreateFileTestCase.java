@@ -10,6 +10,7 @@
  *  
  * Contributors:
  * Martin Oberhuber (Wind River) - [cleanup] Avoid using SystemStartHere in production code
+ * Martin Oberhuber (Wind River) - organize, enable and tag test cases
  ********************************************************************************/
 
 package org.eclipse.rse.tests.subsystems.files;
@@ -101,13 +102,20 @@ public class CreateFileTestCase extends FileServiceBaseTest {
 		return dstoreHost;
 	}
 	
-	public void testCreateFile() throws Exception {
+	public void testCreateFileFTP() throws Exception {
+		//-test-author-:KevinDoyle
 		host = getFTPHost();
 		createFileAndAssertProperties();
+	}
 		
+	public void testCreateFileDStore() throws Exception {
+		//-test-author-:KevinDoyle
 		host = getDStoreHost();
 		createFileAndAssertProperties();
+	}
 		
+	public void testCreateFileSSH() throws Exception {
+		//-test-author-:KevinDoyle
 		host = getSSHHost();
 		createFileAndAssertProperties();
 	}

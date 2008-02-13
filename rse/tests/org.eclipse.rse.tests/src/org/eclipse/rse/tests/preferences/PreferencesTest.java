@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  *                     - created and used RSEPreferencesManager
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
+ * Martin Oberhuber (Wind River) - organize, enable and tag test cases
  *******************************************************************************/
 
 package org.eclipse.rse.tests.preferences;
@@ -43,6 +44,7 @@ public class PreferencesTest extends RSECoreTestCase {
 	}
 	
 	public void testActiveProfiles() {
+		//-test-author-:DavidDykstal
 		RSEPreferencesManager.addActiveProfile("bogus01"); //$NON-NLS-1$
 		RSEPreferencesManager.addActiveProfile("bogus02"); //$NON-NLS-1$
 		String[] profiles = RSEPreferencesManager.getActiveProfiles();
@@ -60,6 +62,7 @@ public class PreferencesTest extends RSECoreTestCase {
 	}
 	
 	public void testUserIds() {
+		//-test-author-:DavidDykstal
 		RSEPreferencesManager.setUserId("a.b.c", "bogusUser"); //$NON-NLS-1$ //$NON-NLS-2$
 		assertEquals("bogusUser", RSEPreferencesManager.getUserId("a.b.c")); //$NON-NLS-1$ //$NON-NLS-2$
 		RSEPreferencesManager.clearUserId("a.b.c"); //$NON-NLS-1$
@@ -67,6 +70,7 @@ public class PreferencesTest extends RSECoreTestCase {
 	}
 	
 	public void testDefaultUserIds() {
+		//-test-author-:DavidDykstal
 		IRSECoreRegistry registry = RSECorePlugin.getTheCoreRegistry();
 		//TODO should we test deprecated methods as well? Probably yes...
 		IRSESystemType systemTypeDeprecated = registry.getSystemType("Local"); //$NON-NLS-1$
@@ -83,6 +87,7 @@ public class PreferencesTest extends RSECoreTestCase {
 	}
 	
 	public void testShowLocalConnection() {
+		//-test-author-:DavidDykstal
 		assertTrue(SystemPreferencesManager.getShowLocalConnection());
 	}
 	

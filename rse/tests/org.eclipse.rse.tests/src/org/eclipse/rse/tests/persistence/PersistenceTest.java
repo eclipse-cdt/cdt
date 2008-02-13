@@ -11,6 +11,7 @@
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * David McKnight   (IBM)        - [217715] [api] RSE property sets should support nested property sets
+ * Martin Oberhuber (Wind River) - organize, enable and tag test cases
  *******************************************************************************/
 
 package org.eclipse.rse.tests.persistence;
@@ -53,6 +54,7 @@ public class PersistenceTest extends RSECoreTestCase {
 	}
 	
 	public void testPersistenceManagerStartup() {
+		//-test-author-:DavidDykstal
 		IRSEPersistenceManager m = RSECorePlugin.getThePersistenceManager();
 		for (int i = 0; i < 5; i++) {
 			if (m.isRestoreComplete()) break;
@@ -66,6 +68,7 @@ public class PersistenceTest extends RSECoreTestCase {
 	}
 	
 	public void testProfilePersistence() {
+		//-test-author-:DavidDykstal
 		/*
 		 * Set up this particular test.
 		 */
@@ -182,6 +185,7 @@ public class PersistenceTest extends RSECoreTestCase {
 	}
 
 	public void testHostPersistence() {
+		//-test-author-:DavidDykstal
 		/*
 		 * Set up this particular test.
 		 */

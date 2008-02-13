@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -10,6 +10,7 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
+ * Martin Oberhuber (Wind River) - organize, enable and tag test cases
  *******************************************************************************/
 package org.eclipse.rse.tests.core.registries;
 
@@ -28,6 +29,7 @@ import org.eclipse.rse.tests.core.RSECoreTestCase;
 public class SubSystemConfigurationProxyTestCase extends RSECoreTestCase {
 	
 	public void testSubSystemConfigurationProxy() {
+		//-test-author-:UweStieber
 		ISystemRegistry systemRegistry = RSECorePlugin.getTheSystemRegistry();
 		assertNotNull("Failed to fetch RSE system registry instance!", systemRegistry); //$NON-NLS-1$
 		

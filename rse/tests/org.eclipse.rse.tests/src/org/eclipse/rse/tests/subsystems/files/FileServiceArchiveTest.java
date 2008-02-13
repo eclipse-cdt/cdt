@@ -8,6 +8,7 @@
  * Contributors:
  * Xuan Chen (IBM)               - initial API and implementation
  * Martin Oberhuber (Wind River) - Fix Javadoc warnings
+ * Martin Oberhuber (Wind River) - organize, enable and tag test cases
  *******************************************************************************/
 package org.eclipse.rse.tests.subsystems.files;
 
@@ -587,6 +588,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 	
 
 	public void testCreateZipFile() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		//Create the zip file first.
@@ -642,6 +644,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 	}
 	
 	public void testRenameVirtualFile() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		//Create the zip file first.
@@ -713,6 +716,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 	}
 	
 	public void testMoveVirtualFile() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		//Create the source data needed for testing
@@ -747,6 +751,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 	}
 	
 	public void testMoveVirtualFileLevelTwo() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		createSourceZipFiles();
@@ -783,6 +788,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 	}
 	
 	public void testMoveToArchiveFile() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		createSourceZipFiles();
@@ -816,6 +822,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 	}
 	
 	public void testMoveToVirtualFileLevelOne() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		createSourceZipFiles();
@@ -851,6 +858,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 	}
 	
 	public void testMoveToVirtualFileLevelTwo() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		createSourceZipFiles();
@@ -887,6 +895,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 	
 	
 	public void testCopyVirtualFile() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		createSourceZipFiles();
@@ -914,6 +923,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 	}
 	
 	public void testCopyVirtualFileLevelTwo() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		createSourceZipFiles();
@@ -945,6 +955,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 	
 	
 	public void testCopyToArchiveFile() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		createSourceZipFiles();
@@ -975,6 +986,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 	
 	
 	public void testCopyToVirtualFileLevelOne() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		createSourceZipFiles();
@@ -1007,6 +1019,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 	
 
 	public void testCopyToVirtualFileLevelTwo() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		createSourceZipFiles();
@@ -1038,6 +1051,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 	}
 	
 	public void testCopyBatchToArchiveFile() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		createSourceZipFiles();
@@ -1092,6 +1106,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 	}
 
 	public void testCopyBatchToVirtualFileLevelOne() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		createSourceZipFiles();
@@ -1124,6 +1139,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 	}
 
 	public void testCopyBatchToVirtualFileLevelTwo() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		createSourceZipFiles();
@@ -1183,6 +1199,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 	}
 
 	public void testCopyBatchVirtualFile() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		createSourceZipFiles();
@@ -1228,6 +1245,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 	}
 
 	public void testCopyBatchVirtualFileLevelTwo() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		createSourceZipFiles();
@@ -1260,6 +1278,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 	}
 
 	public void testCopyVirtualBatchToArchiveFile() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		createSourceZipFiles();
@@ -1291,6 +1310,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 	}
 
 	public void testCopyVirtualBatchToVirtualFileLevelOne() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		createSourceZipFiles();
@@ -1347,6 +1367,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 	}
 
 	public void testCopyVirtualBatchToVirtualFileLevelTwo() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		createSourceZipFiles();
@@ -1546,6 +1567,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 	}
 	
 	public void testCreateTarFile() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		//Create the zip file first.
@@ -1599,6 +1621,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 	}
 	
 	public void testCopyToTarArchiveFile() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		//create the source for testing first
@@ -1628,6 +1651,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 	}
 
 	public void testCopyToTarVirtualFileLevelOne() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		//create the source for testing first
@@ -1660,6 +1684,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 	}
 
 	public void testCopyToTarVirtualFileLevelFour() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		//create the source for testing first
@@ -1697,6 +1722,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 	}
 
 	public void testCopyTarVirtualFile() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		//create the source for testing first
@@ -1726,6 +1752,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 	}
 
 	public void testCopyTarVirtualFileLevelFour() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		//create the source for testing first
@@ -1773,6 +1800,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 	}
 
 	public void testMoveToTarArchiveFile() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		//create the source for testing first
@@ -1805,6 +1833,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 	}
 
 	public void testMoveToTarVirtualFileLevelOne() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		//create the source for testing first
@@ -1841,6 +1870,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 	}
 
 	public void testMoveToVirtualFileLevelFour() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		//create the source for testing first
@@ -1883,6 +1913,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 	}
 
 	public void testMoveTarVirtualFile() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		//create the source for testing first
@@ -1918,6 +1949,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 	}
 
 	public void testMoveTarVirtualFileLevelFour() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		//create the source for testing first
@@ -1961,6 +1993,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 	}
 
 	public void testRenameTarVirtualFile() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		//Create the zip file first.
@@ -2029,6 +2062,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 	}
 
 	public void testDeleteTarVirtualFile() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		//create the source for testing first
@@ -2099,6 +2133,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 
 
 	public void testCopyBatchToTarArchiveFile() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		createSourceTarFiles();
@@ -2155,6 +2190,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 
 
 	public void testCopyBatchToTarVirtualFileLevelFour() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		createSourceTarFiles();
@@ -2221,6 +2257,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 
 
 	public void testCopyBatchTarVirtualFileLevelFive() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		createSourceTarFiles();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -7,6 +7,7 @@
  * 
  * Contributors: 
  * Martin Oberhuber (Wind River) - initial API and implementation
+ * Martin Oberhuber (Wind River) - organize, enable and tag test cases
  *******************************************************************************/
 package org.eclipse.rse.tests.subsystems.files;
 
@@ -40,16 +41,19 @@ public class RSEFileSubsystemTestSuite extends DelegatingTestSuiteHolder {
 	public static Test suite() {
 		TestSuite suite = new TestSuite("RSE File Subsystem Test Suite"); //$NON-NLS-1$
 		// add the single test suites to the overall one here.
+		//-test-disabled-//suite.addTestSuite(CreateFileTestCase.class);
+		suite.addTestSuite(FileOutputStreamTestCase.class);
+		suite.addTestSuite(FileServiceArchiveTest.class);
+		//-test-disabled-//suite.addTest(FileServiceArchiveTestDStore.suite());
+		//-test-disabled-//suite.addTest(FileServiceArchiveTestDStoreWindows.suite());
 		suite.addTestSuite(FileServiceTest.class);
+		//-test-disabled-//suite.addTestSuite(FileSubsystemConsistencyTestCase.class);
 
 		// Do not include the ftp sub system test case within the automated tests.
 		// Most server seems to limit the amount of connections per IP-address, so
 		// we run in problems with that. The test needs to be executed manually with
 		// the ftp server to use possibly changed to whatever host will do.
-		// suite.addTestSuite(FTPFileSubsystemTestCase.class);
-		
-		
-		//suite.addTestSuite(FileSubsystemConsistencyTestCase.class);
+		suite.addTestSuite(FTPFileSubsystemTestCase.class);
 		
 		return suite;
 	}

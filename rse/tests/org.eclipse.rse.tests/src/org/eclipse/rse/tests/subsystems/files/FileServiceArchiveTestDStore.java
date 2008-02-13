@@ -8,6 +8,7 @@
  * Contributors:
  * Xuan Chen (IBM)               - initial API and implementation
  * Martin Oberhuber (Wind River) - Fix Javadoc warnings
+ * Martin Oberhuber (Wind River) - organize, enable and tag test cases
  *******************************************************************************/
 package org.eclipse.rse.tests.subsystems.files;
 
@@ -202,6 +203,7 @@ public class FileServiceArchiveTestDStore extends FileServiceArchiveTest {
 	}
 	
 	public void testSuperTransferLocalToRemote() throws Exception {
+		//-test-author-:XuanChen
 		String tempPath = getWorkspace().getRoot().getLocation().append("temp").toString();
 		IFileStore temp = createDir(tempPath, true);
 		
@@ -243,6 +245,7 @@ public class FileServiceArchiveTestDStore extends FileServiceArchiveTest {
 	}
 
 	public void testSuperTransferDStoreWindowsAndDStore() throws Exception {
+		//-test-author-:XuanChen
 		String tempPath = getWorkspace().getRoot().getLocation().append("temp").toString();
 		IFileStore temp = createDir(tempPath, true);
 		
@@ -339,6 +342,7 @@ public class FileServiceArchiveTestDStore extends FileServiceArchiveTest {
 	}
 	
 	public void testSuperTransferDStoreToLocal() throws Exception {
+		//-test-author-:XuanChen
 		String tempPath = getWorkspace().getRoot().getLocation().append("temp").toString();
 		IFileStore temp = createDir(tempPath, true);
 		
@@ -413,6 +417,7 @@ public class FileServiceArchiveTestDStore extends FileServiceArchiveTest {
 	}
 	
 	public void testCopyVirtualFileFromDStoreToLocal() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		createSourceZipFiles();
@@ -471,6 +476,7 @@ public class FileServiceArchiveTestDStore extends FileServiceArchiveTest {
 
 	
 	public void testCopyVirtualFileLevelTwoFromDStoreToLocal() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		createSourceZipFiles();
@@ -530,6 +536,7 @@ public class FileServiceArchiveTestDStore extends FileServiceArchiveTest {
 	}
 	
 	public void testCopyVirtualFileFromLocalToDStore() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		IRemoteFile sourceZipLocation = createSourceZipFiles(localFss);
@@ -570,6 +577,7 @@ public class FileServiceArchiveTestDStore extends FileServiceArchiveTest {
 	}
 	
 	public void testCopyVirtualFileLevelTwoFromLocalToDStore() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		IRemoteFile sourceZipLocation = createSourceZipFiles(localFss);
@@ -615,6 +623,7 @@ public class FileServiceArchiveTestDStore extends FileServiceArchiveTest {
 	}
 	
 	public void testCopyVFToArchiveFromDStoreToLocal() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		//Create the zip files in dstore connection.
@@ -659,6 +668,7 @@ public class FileServiceArchiveTestDStore extends FileServiceArchiveTest {
 	}
 	
 	public void testCopyVFLevelTwoToArchiveFromDStoreToLocal() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		//Create the zip files in dstore connection.
@@ -709,6 +719,7 @@ public class FileServiceArchiveTestDStore extends FileServiceArchiveTest {
 	}
 	
 	public void testCopyVFToArchiveFromLocalToDStore() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		//Create the zip files in dstore connection.
@@ -757,6 +768,7 @@ public class FileServiceArchiveTestDStore extends FileServiceArchiveTest {
 	}
 	
 	public void testCopyVFLevelTwoToArchiveFromLocalToDStore() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		//Create the zip files in dstore connection.
@@ -809,6 +821,7 @@ public class FileServiceArchiveTestDStore extends FileServiceArchiveTest {
 	}
 	
 	public void testCopyVFToVFFromDStoreToLocal() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		//Create the zip files in dstore connection.
@@ -853,6 +866,7 @@ public class FileServiceArchiveTestDStore extends FileServiceArchiveTest {
 	}
 	
 	public void testCopyVFToVFLevelTwoFromDStoreToLocal() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		//Create the zip files in dstore connection.
@@ -902,6 +916,7 @@ public class FileServiceArchiveTestDStore extends FileServiceArchiveTest {
 	}
 	
 	public void testCopyVFToVFFromLocalToDStore() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		//Create the zip files in dstore connection.
@@ -950,6 +965,7 @@ public class FileServiceArchiveTestDStore extends FileServiceArchiveTest {
 	}
 	
 	public void testCopyVFToVFLevelTwoFromLocalToDStore() throws Exception {
+		//-test-author-:XuanChen
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		//Create the zip files in dstore connection.

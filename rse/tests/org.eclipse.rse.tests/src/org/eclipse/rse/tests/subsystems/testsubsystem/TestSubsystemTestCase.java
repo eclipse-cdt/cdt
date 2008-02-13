@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -9,6 +9,7 @@
  * Tobias Schwarz (Wind River) - initial API and implementation.
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Martin Oberhuber (Wind River) - organize, enable and tag test cases
  *******************************************************************************/
 package org.eclipse.rse.tests.subsystems.testsubsystem;
 
@@ -68,6 +69,7 @@ public class TestSubsystemTestCase extends RSEBaseConnectionTestCase {
 	}
 	
 	public void testAddAndDeleteDeepNodes() {
+		//-test-author-:TobiasSchwarz
 		if (!RSETestsPlugin.isTestCaseEnabled("TestSubsystemTestCase.testAddAndDeleteDeepNodes")) return; //$NON-NLS-1$
 		// these test _must_ run in UI thread
 		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
@@ -78,6 +80,7 @@ public class TestSubsystemTestCase extends RSEBaseConnectionTestCase {
 	}
 		
 	public void testAddAndDeleteFlatNodes() {
+		//-test-author-:TobiasSchwarz
 		if (!RSETestsPlugin.isTestCaseEnabled("TestSubsystemTestCase.testAddAndDeleteFlatNodes")) return; //$NON-NLS-1$
 		// these test _must_ run in UI thread
 		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
@@ -138,6 +141,7 @@ public class TestSubsystemTestCase extends RSEBaseConnectionTestCase {
 	}
 	
 	public void testBugzilla170728() {
+		//-test-author-:TobiasSchwarz
 		if (!RSETestsPlugin.isTestCaseEnabled("TestSubsystemTestCase.testBugzilla170728")) return; //$NON-NLS-1$
 		// these test _must_ run in UI thread
 		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {

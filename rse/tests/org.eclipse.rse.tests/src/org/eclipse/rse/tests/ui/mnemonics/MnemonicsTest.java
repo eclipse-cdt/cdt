@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2007, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -9,6 +9,7 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Martin Oberhuber (Wind River) - organize, enable and tag test cases
  ********************************************************************************/
 
 package org.eclipse.rse.tests.ui.mnemonics;
@@ -39,6 +40,7 @@ public class MnemonicsTest extends RSECoreTestCase {
 	}
 	
 	public void testDefaultGeneration() {
+		//-test-author-:DavidDykstal
 		Mnemonics mn = new Mnemonics();
 		mn.clear("abcde");
 		String result = mn.setUniqueMnemonic("A...");
@@ -48,6 +50,7 @@ public class MnemonicsTest extends RSECoreTestCase {
 	}
 	
 	public void testAppendPolicies() {
+		//-test-author-:DavidDykstal
 		setLocalePattern(".*"); // match all locales
 		Mnemonics mn = new Mnemonics();
 		mn.clear("abcde");

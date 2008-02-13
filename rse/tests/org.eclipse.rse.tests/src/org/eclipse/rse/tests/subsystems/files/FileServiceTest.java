@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -10,6 +10,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
+ * Martin Oberhuber (Wind River) - organize, enable and tag test cases
  *******************************************************************************/
 package org.eclipse.rse.tests.subsystems.files;
 
@@ -83,6 +84,7 @@ public class FileServiceTest extends RSEBaseConnectionTestCase {
 	}
 	
 	public void testCaseSensitive() {
+		//-test-author-:MartinOberhuber
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCaseSensitive")) return; //$NON-NLS-1$
 		
 		if (isWindows()) {
@@ -97,6 +99,7 @@ public class FileServiceTest extends RSEBaseConnectionTestCase {
 	}
 	
 	public void testCreateFile() throws SystemMessageException {
+		//-test-author-:MartinOberhuber
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
 		
 		String testName = getTestFileName();
@@ -116,6 +119,7 @@ public class FileServiceTest extends RSEBaseConnectionTestCase {
 	}
 	
 	public void testCreateCaseSensitive() throws SystemMessageException {
+		//-test-author-:MartinOberhuber
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateCaseSensitive")) return; //$NON-NLS-1$
 		
 		String testName = getTestFileName();

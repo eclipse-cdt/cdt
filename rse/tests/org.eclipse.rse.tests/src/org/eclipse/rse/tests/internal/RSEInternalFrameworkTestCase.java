@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -8,6 +8,7 @@
  * Contributors: 
  * Uwe Stieber (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - organize, enable and tag test cases
  *******************************************************************************/
 package org.eclipse.rse.tests.internal;
 
@@ -41,6 +42,7 @@ public class RSEInternalFrameworkTestCase extends RSEBaseConnectionTestCase {
 	 * <code>RSECoreTestCase</code> implementation.
 	 */
 	public void testCoreTestPropertiesHandling() {
+		//-test-author-:UweStieber
 		if (!RSETestsPlugin.isTestCaseEnabled("RSEInternalFrameworkTestCase.testCoreTestPropertiesHandling")) return; //$NON-NLS-1$
 		
 		// test for our defaults
@@ -100,6 +102,7 @@ public class RSEInternalFrameworkTestCase extends RSEBaseConnectionTestCase {
 	 * Test the <code>RSEWaitAndDispatchUtil</code> wait methods.
 	 */
 	public void testWaitAndDispatch() {
+		//-test-author-:UweStieber
 		if (!RSETestsPlugin.isTestCaseEnabled("RSEInternalFrameworkTestCase.testWaitAndDispatch")) return; //$NON-NLS-1$
 		
 		// the simple wait and dispatch is time out based
@@ -132,6 +135,7 @@ public class RSEInternalFrameworkTestCase extends RSEBaseConnectionTestCase {
 	 * Test accessing the test data location.
 	 */
 	public void testTestDataLocationManagement() {
+		//-test-author-:UweStieber
 		if (!RSETestsPlugin.isTestCaseEnabled("RSEInternalFrameworkTestCase.testTestDataLocationManagement")) return; //$NON-NLS-1$
 		
 		// get the pure test data location root path.
@@ -167,6 +171,7 @@ public class RSEInternalFrameworkTestCase extends RSEBaseConnectionTestCase {
 	 * Test RSE connection manager and related functionality.
 	 */
 	public void testConnectionManager() {
+		//-test-author-:UweStieber
 		if (!RSETestsPlugin.isTestCaseEnabled("RSEInternalFrameworkTestCase.testConnectionManager")) return; //$NON-NLS-1$
 		
 		// get the pure test data location root path.

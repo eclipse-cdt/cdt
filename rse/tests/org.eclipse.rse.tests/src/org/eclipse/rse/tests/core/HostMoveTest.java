@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2007, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -9,6 +9,7 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Martin Oberhuber (Wind River) - organize, enable and tag test cases
  ********************************************************************************/
 
 package org.eclipse.rse.tests.core;
@@ -50,6 +51,7 @@ public class HostMoveTest extends RSEBaseConnectionTestCase {
 	}
 	
 	public void testMoveOneUp() {
+		//-test-author-:DavidDykstal
 		checkPrecondition();
 		IHost host = hostArray[NUMBER_OF_HOSTS - 1];
 		IHost[] hosts = new IHost[] {host};
@@ -60,6 +62,7 @@ public class HostMoveTest extends RSEBaseConnectionTestCase {
 	}
 	
 	public void testMoveManyUp() {
+		//-test-author-:DavidDykstal
 		checkPrecondition();
 		IHost[] hosts = new IHost[] {hostArray[NUMBER_OF_HOSTS - 1], hostArray[NUMBER_OF_HOSTS - 2]};
 		registry.moveHosts("TestProfile", hosts, -2);
@@ -71,6 +74,7 @@ public class HostMoveTest extends RSEBaseConnectionTestCase {
 	}
 
 	public void testMoveFirstUp() {
+		//-test-author-:DavidDykstal
 		checkPrecondition();
 		IHost host = hostArray[0];
 		assertEquals(0, registry.getHostPosition(host));
@@ -80,6 +84,7 @@ public class HostMoveTest extends RSEBaseConnectionTestCase {
 	}
 
 	public void testMoveOneDown() {
+		//-test-author-:DavidDykstal
 		checkPrecondition();
 		IHost host = hostArray[1]; // second in the list
 		assertEquals(1, registry.getHostPosition(host));
@@ -91,6 +96,7 @@ public class HostMoveTest extends RSEBaseConnectionTestCase {
 	}
 	
 	public void testMoveManyDown() {
+		//-test-author-:DavidDykstal
 		checkPrecondition();
 		IHost[] hosts = new IHost[] {hostArray[0], hostArray[2], hostArray[4]};
 		assertEquals(0, registry.getHostPosition(hostArray[0]));
@@ -107,6 +113,7 @@ public class HostMoveTest extends RSEBaseConnectionTestCase {
 	}
 
 	public void testMoveLastDown() {
+		//-test-author-:DavidDykstal
 		checkPrecondition();
 		IHost host = hostArray[NUMBER_OF_HOSTS - 1]; 
 		assertEquals(NUMBER_OF_HOSTS - 1, registry.getHostPosition(host));
@@ -116,6 +123,7 @@ public class HostMoveTest extends RSEBaseConnectionTestCase {
 	}
 
 	public void testNoHost() {
+		//-test-author-:DavidDykstal
 		checkPrecondition();
 		IHost[] hosts = new IHost[] {};
 		registry.moveHosts("TestProfile", hosts, -1); // should not fail

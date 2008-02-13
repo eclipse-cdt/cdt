@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -7,6 +7,7 @@
  * 
  * Contributors: 
  * Uwe Stieber (Wind River) - initial API and implementation
+ * Martin Oberhuber (Wind River) - organize, enable and tag test cases
  *******************************************************************************/
 
 package org.eclipse.rse.tests.internal;
@@ -26,6 +27,7 @@ public class RSETestsPluginTestCase extends RSECoreTestCase {
 	 * resource bundle functionality.
 	 */
 	public void testPluginResourceBundle() {
+		//-test-author-:UweStieber
 		if (!RSETestsPlugin.isTestCaseEnabled("RSETestsPluginTestCase.testPluginResourceBundle")) return; //$NON-NLS-1$
 		
 		ResourceBundle bundle = RSETestsPlugin.getDefault().getResourceBundle();

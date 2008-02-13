@@ -13,6 +13,7 @@
  * Contributors:
  * Michael Scharf (Wind River) - split into core, view and connector plugins
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
+ * Ruslan Sychev - [217675] NPE or SWTException when closing Terminal View while connection establishing
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.control.impl;
 
@@ -284,6 +285,10 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 				continue;
 
 			fDisplay.sleep();
+		}
+		if(getCtlText().isDisposed()) {
+			disconnectTerminal();
+			return;
 		}
 		if (!getMsg().equals("")) //$NON-NLS-1$
 		{

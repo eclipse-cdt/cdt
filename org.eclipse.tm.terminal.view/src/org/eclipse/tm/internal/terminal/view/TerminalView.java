@@ -529,6 +529,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 		ctlText = fCtlTerminal.getControl();
 		menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menu = menuMgr.createContextMenu(ctlText);
+		loadContextMenus(menuMgr);
 		contextMenuHandler = new TerminalContextMenuHandler();
 
 		ctlText.setMenu(menu);
@@ -572,8 +573,6 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 			updateEditSelectAll();
 			updateEditPaste();
 			updateEditClearAll();
-
-			loadContextMenus(menuMgr);
 		}
 	}
 

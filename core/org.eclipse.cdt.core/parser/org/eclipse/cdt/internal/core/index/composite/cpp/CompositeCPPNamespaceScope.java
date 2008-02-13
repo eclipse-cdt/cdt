@@ -20,7 +20,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IIndexName;
-import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.index.composite.CompositeScope;
@@ -53,12 +52,13 @@ class CompositeCPPNamespaceScope extends CompositeScope implements ICPPNamespace
 	
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet)
 			throws DOMException {
-		IBinding[] preresult = null;
+		IIndexFragmentBinding[][] preresult = new IIndexFragmentBinding[namespaces.length][];
 		for(int i=0; i<namespaces.length; i++) {
-			preresult = (IBinding[]) ArrayUtil.addAll(IBinding.class, preresult,
-					namespaces[i].getNamespaceScope().getBindings(name, resolve, prefixLookup, fileSet));
+			IBinding[] raw = namespaces[i].getNamespaceScope().getBindings(name, resolve, prefixLookup, fileSet);
+			preresult[i] = new IIndexFragmentBinding[raw.length];
+			System.arraycopy(raw, 0, preresult[i], 0, raw.length);
 		}
-		return processUncertainBindings(preresult);
+		return cf.getCompositeBindings(preresult);
 	}
 	
 	final public IBinding[] find(String name) throws DOMException {

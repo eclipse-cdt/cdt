@@ -21,8 +21,10 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
+import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 
@@ -62,7 +64,7 @@ public class CPPScopeMapper {
 			if (parent instanceof IIndexScope) {
 				return mapToASTScope((IIndexScope) parent);
 			}
-			return fTuScope;
+			return fTu.getScope();
 		}
 
 		public IName getScopeName() throws DOMException {
@@ -99,7 +101,7 @@ public class CPPScopeMapper {
 		public IScope getContainingScope() {
 			final IScope scope= fDirective.getContainingScope();
 			if (scope == null) {
-				return fTuScope;
+				return fTu.getScope();
 			}
 			return scope;
 		}
@@ -118,11 +120,11 @@ public class CPPScopeMapper {
 	private final HashMap<IIndexScope, IScope> fMappedScopes= new HashMap<IIndexScope, IScope>();
 	private final HashMap<String, NamespaceScopeWrapper> fNamespaceWrappers= new HashMap<String, NamespaceScopeWrapper>();
 	private final Map<String, List<UsingDirectiveWrapper>> fPerName= new HashMap<String, List<UsingDirectiveWrapper>>();
-	private final CPPNamespaceScope fTuScope;
+	private final CPPASTTranslationUnit fTu;
 
 
 	public CPPScopeMapper(CPPASTTranslationUnit tu) {
-		fTuScope= tu.getScope();
+		fTu= tu;
 	}
 
 	/**
@@ -169,13 +171,14 @@ public class CPPScopeMapper {
 	}
 
 	private String getReverseQualifiedName(IScope scope) throws DOMException {
-		if (scope == fTuScope || scope == null) {
+		final CPPNamespaceScope tuscope = fTu.getScope();
+		if (scope == tuscope || scope == null) {
 			return "";    //$NON-NLS-1$
 		}
 		StringBuilder buf= new StringBuilder();
 		buf.append(scope.getScopeName().toCharArray());
 		scope= scope.getParent();
-		while (scope != null && scope != fTuScope) {
+		while (scope != null && scope != tuscope) {
 			buf.append(':');  
 			buf.append(scope.getScopeName().toCharArray());
 			scope= scope.getParent();
@@ -188,14 +191,14 @@ public class CPPScopeMapper {
 	 */
 	public IScope mapToASTScope(IIndexScope scope) {
 		if (scope == null) {
-			return fTuScope;
+			return fTu.getScope();
 		}
 		if (scope instanceof ICPPNamespaceScope) {
 			IScope result= fMappedScopes.get(scope);
 			if (result == null) {
-				result= fTuScope.findNamespaceScope(scope);
+				result= fTu.getScope().findNamespaceScope(scope);
 				if (result == null) {
-					result= wrapNamespaceScope(scope);
+					result= wrapNamespaceScope((ICPPNamespaceScope) scope);
 				}
 				fMappedScopes.put(scope, result);
 			}
@@ -204,12 +207,12 @@ public class CPPScopeMapper {
 		return scope;
 	}
 
-	private IScope wrapNamespaceScope(IIndexScope scope) {
+	private IScope wrapNamespaceScope(ICPPNamespaceScope scope) {
 		try {
 			String rqname= getReverseQualifiedName(scope);
 			NamespaceScopeWrapper result= fNamespaceWrappers.get(rqname);
 			if (result == null) {
-				result= new NamespaceScopeWrapper((ICPPNamespaceScope) scope);
+				result= new NamespaceScopeWrapper(getCompositeNamespaceScope(scope));
 				fNamespaceWrappers.put(rqname, result);
 			}
 			return result;
@@ -217,5 +220,15 @@ public class CPPScopeMapper {
 			assert false;	// index scopes don't throw dom-exceptions
 			return null;
 		}	
+	}
+	
+	private ICPPNamespaceScope getCompositeNamespaceScope(ICPPNamespaceScope scope) throws DOMException {
+		if (scope instanceof IIndexScope) {
+			IIndexBinding binding= fTu.getIndex().adaptBinding(((IIndexScope) scope).getScopeBinding());
+			if (binding instanceof ICPPNamespace) {
+				scope= ((ICPPNamespace) binding).getNamespaceScope();
+			}
+		}
+		return scope;
 	}
 }

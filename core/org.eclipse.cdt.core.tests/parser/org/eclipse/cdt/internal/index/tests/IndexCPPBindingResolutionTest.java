@@ -1258,6 +1258,21 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		getBindingFromASTName("a= 1", 1);
 		getBindingFromASTName("b= 1", 1);
 	}
+	
+	// namespace x {
+	//    int a(int);
+	// }
+    // using namespace x;
+	// using x::a;
+	
+	// #include "header.h"
+	// void test() {
+	//    a(1);
+	// }
+    public void testLegalConflictWithUsingDeclaration() throws Exception {
+		getBindingFromASTName("a(1)", 1);
+    } 
+
 
 	/* CPP assertion helpers */
 	/* ##################################################################### */

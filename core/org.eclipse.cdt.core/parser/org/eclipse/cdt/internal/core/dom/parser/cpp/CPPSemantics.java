@@ -1074,7 +1074,7 @@ public class CPPSemantics {
 						IBinding binding = scope.getBinding( data.astName, false, fileSet );
 						if (binding instanceof CPPImplicitFunction || binding instanceof CPPImplicitTypedef) 
 							mergeResults( data, binding, true );
-						else
+						else if (binding != null)
 							b = new IBinding[] { binding };
 					} else {
 						b = scope.getBindings( data.astName, false, data.prefixLookup, fileSet );
@@ -2399,9 +2399,9 @@ public class CPPSemantics {
 		outer: for( int fnIdx = 0; fnIdx < numFns; fnIdx++ ){
 			currFn = (IFunction) fns[fnIdx];
 			
-			if( currFn == null || bestFn == currFn ||
-			    ( bestFn instanceof ICPPDelegate && ((ICPPDelegate)bestFn).getBinding() == currFn ) ||
-			    ( currFn instanceof ICPPDelegate && ((ICPPDelegate)currFn).getBinding() == bestFn ) )
+			if (currFn == null || bestFn == currFn ||
+					(bestFn instanceof ICPPDelegate && currFn.equals(((ICPPDelegate)bestFn).getBinding())) ||
+					(bestFn != null && currFn instanceof ICPPDelegate && bestFn.equals(((ICPPDelegate)currFn).getBinding())) )
 			{
 				continue;
 			}

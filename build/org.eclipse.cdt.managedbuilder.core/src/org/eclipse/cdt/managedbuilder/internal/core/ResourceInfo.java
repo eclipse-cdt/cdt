@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.settings.model.ICSettingBase;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.extension.CResourceData;
@@ -34,18 +35,12 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 public abstract class ResourceInfo extends BuildObject implements IResourceInfo {
-//	private IFolderInfo parentFolderInfo;
-//	private String parentFolderInfoId;
 	private Configuration config;
 	private IPath path;
 	boolean isDirty;
-//	private boolean isExcluded;
 	boolean needsRebuild;
 	private ResourceInfoContainer rcInfo;
 	private CResourceData resourceData;
-//	private boolean inheritParentInfo;
-//	private IToolChain baseToolChain;
-//	private String baseToolChainId;
 
 	ResourceInfo(IConfiguration cfg, IManagedConfigElement element, boolean hasBody){
 		config = (Configuration)cfg;
@@ -56,28 +51,10 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 	ResourceInfo(IConfiguration cfg, ResourceInfo base, String id) {
 		config = (Configuration)cfg;
 		path = normalizePath(base.path);
-//		internalSetExclude(base.isExcluded);
 
 		setId(id);
 		setName(base.getName());
 
-//		inheritParentInfo = base.inheritParentInfo;
-/*		if(!isRoot()){
-			IFolderInfo pfi = base.getParentFolderInfo();
-			IResourceInfo pf = null;
-			if(pfi != null){
-				pf = config.getResourceInfo(pfi.getPath(), true);
-			}
-			
-			if(pf instanceof IFolderInfo)
-				this.parentFolderInfo = (IFolderInfo)pf;
-			else
-				this.parentFolderInfo = config.getRootFolderInfo();
-	
-	//		if()
-			this.parentFolderInfoId = this.parentFolderInfo.getId();
-		}
-*/
 		if(id.equals(base.getId())){
 			isDirty = base.isDirty;
 			needsRebuild = base.needsRebuild;
@@ -96,7 +73,6 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		path = normalizePath(path);
 		this.path = path;
 
-//		inheritParentInfo = inherit;
 		setId(id);
 		setName(name);
 	}
@@ -106,14 +82,9 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 
 		setId(id);
 		setName(name);
-		
 		path = normalizePath(path);
 		
 		this.path = path;
-//		internalSetExclude(base.isExcluded());
-//		parentFolderInfoId = base.getId();
-//		parentFolderInfo = base;
-//		inheritParentInfo = false;
 		needsRebuild = true;
 		isDirty = true;
 	}
@@ -123,14 +94,9 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 
 		setId(id);
 		setName(name);
-		
 		path = normalizePath(path);
 		
 		this.path = path;
-//		internalSetExclude(base.isExcluded());
-//		parentFolderInfoId = base.getId();
-//		parentFolderInfo = base;
-//		inheritParentInfo = base.getPath().isPrefixOf(path);
 		needsRebuild = true;
 		isDirty = true;
 	}
@@ -149,9 +115,6 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		// Get the name
 		setName(element.getAttribute(NAME));
 		
-//		parentFolderInfoId = element.getAttribute(PARENT_FOLDER_INFO_ID);
-//		baseToolChainId = element.getAttribute(BASE_TOOLCHAIN_ID);
-
 		// resourcePath
 		String tmp = element.getAttribute(RESOURCE_PATH);
 		if(tmp != null){
@@ -161,10 +124,8 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 			}
 			path = normalizePath(path);
 		} else {
-			//TODO
+			CCorePlugin.log("ResourceInfo.loadFromManifest() : resourcePath is NULL");
 		}
-		
-//		inheritParentInfo = "true".equals(element.getAttribute(INHERIT_PARENT_INFO));
 
 		// exclude
         String excludeStr = element.getAttribute(EXCLUDE);
@@ -193,7 +154,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 				}
 				path = normalizePath(path);
 			} else {
-				//TODO
+				CCorePlugin.log("ResourceInfo.loadFromProject() : resourcePath is NULL");
 			}
 		}
 
@@ -204,11 +165,6 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 	    		config.setExcluded(getPath(), isFolderInfo(), ("true".equals(excludeStr))); //$NON-NLS-1$
 			}
 		}
-
-//		inheritParentInfo = "true".equals(element.getAttribute(INHERIT_PARENT_INFO));
-
-//		parentFolderInfoId = element.getAttribute(PARENT_FOLDER_INFO_ID);
-//		baseToolChainId = element.getAttribute(BASE_TOOLCHAIN_ID);
 	}
 
 
@@ -216,17 +172,6 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		return config;
 	}
 
-/*	public IFolderInfo getParentFolderInfo() {
-		if(parentFolderInfo == null && parentFolderInfoId != null){
-			IResourceInfo rcInfo = config.getResourceInfoById(parentFolderInfoId);
-			if(rcInfo instanceof IFolderInfo)
-				parentFolderInfo = (IFolderInfo)rcInfo;
-			else
-				parentFolderInfo = config.getRootFolderInfo();
-		}
-		return parentFolderInfo;
-	}
-*/	
 	public IPath getPath() {
 		return normalizePath(path);
 	}
@@ -263,12 +208,6 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 
 	public abstract boolean isFolderInfo();
 	
-//	private boolean internalSetExclude(boolean excluded){
-////		if(excluded/* && isRoot()*/)
-////			return isExcluded;
-//		return isExcluded = excluded;
-//	}
-
 	public void setPath(IPath p) {
 		p = normalizePath(p);
 		if(path == null)
@@ -300,34 +239,12 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 			element.setAttribute(IBuildObject.NAME, name);
 		}
 		
-//		if (isExcluded) {
-//			element.setAttribute(IResourceInfo.EXCLUDE, "true"); //$NON-NLS-1$
-//		}
-
 		if (path != null) {
 			element.setAttribute(IResourceInfo.RESOURCE_PATH, path.toString());
 		}
-		
-//		if(parentFolderInfoId != null){
-//			element.setAttribute(IResourceInfo.PARENT_FOLDER_INFO_ID, parentFolderInfoId);
-//		}
-
-//		if(baseToolChainId != null){
-//			element.setAttribute(IResourceInfo.BASE_TOOLCHAIN_ID, baseToolChainId);
-//		}
 	}
 
-	void resolveReferences(){
-//		getParentFolderInfo();
-	}
-	
-//	void setParentFolderId(String id){
-//		parentFolderInfoId = id;
-//	}
-	
-//	void setParentFolder(IFolderInfo info){
-//		parentFolderInfo = info;
-//	}
+	void resolveReferences() {}
 	
 	public CResourceData getResourceData(){
 		return resourceData;
@@ -345,10 +262,6 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		return config != null;
 	}
 
-//	public boolean isParentInfoInherited() {
-//		return inheritParentInfo;
-//	}
-	
 	public IOption setOption(IHoldsOptions parent, IOption option, boolean value) throws BuildException {
 		// Is there a change?
 		IOption retOpt = option;
@@ -356,10 +269,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		if (oldVal != value) {
 			retOpt = parent.getOptionToSet(option, false);
 			retOpt.setValue(value);
-//			if(resourceData != null)
-//				((ISettingsChangeListener)resourceData).optionChanged(this, parent, option, new Boolean(oldVal));
 			NotificationManager.getInstance().optionChanged(this, parent, option, new Boolean(oldVal));
-//			rebuildNeeded = true;
 		}
 		return retOpt;
 	}
@@ -387,21 +297,6 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 			case IOption.STRING_LIST :
 				oldValue = option.getBasicStringListValue();
 				break;
-//			case IOption.STRING_LIST :
-//				oldValue = option.getStringListValue();
-//				break;
-//			case IOption.INCLUDE_PATH :
-//				oldValue = option.getIncludePaths();
-//				break;
-//			case IOption.PREPROCESSOR_SYMBOLS :
-//				oldValue = option.getDefinedSymbols();
-//				break;
-//			case IOption.LIBRARIES :
-//				oldValue = option.getLibraries();
-//				break;
-//			case IOption.OBJECTS :
-//				oldValue = option.getUserObjects();
-//				break;
 			default :
 				oldValue = new String[0];
 				break;
@@ -409,10 +304,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		if(!Arrays.equals(value, oldValue)) {
 			retOpt = parent.getOptionToSet(option, false);
 			retOpt.setValue(value);
-//			if(resourceData != null)
-//				((ISettingsChangeListener)resourceData).optionChanged(this, parent, option, oldValue);
 			NotificationManager.getInstance().optionChanged(this, parent, option, oldValue);
-//			rebuildNeeded = true;
 		} 
 		return retOpt;
 	}
@@ -425,21 +317,6 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 			case IOption.STRING_LIST :
 				oldValue = ((Option)option).getBasicStringListValueElements();
 				break;
-//			case IOption.STRING_LIST :
-//				oldValue = option.getStringListValue();
-//				break;
-//			case IOption.INCLUDE_PATH :
-//				oldValue = option.getIncludePaths();
-//				break;
-//			case IOption.PREPROCESSOR_SYMBOLS :
-//				oldValue = option.getDefinedSymbols();
-//				break;
-//			case IOption.LIBRARIES :
-//				oldValue = option.getLibraries();
-//				break;
-//			case IOption.OBJECTS :
-//				oldValue = option.getUserObjects();
-//				break;
 			default :
 				oldValue = new OptionStringValue[0];
 				break;
@@ -447,10 +324,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		if(!Arrays.equals(value, oldValue)) {
 			retOpt = parent.getOptionToSet(option, false);
 			((Option)retOpt).setValue(value);
-//			if(resourceData != null)
-//				((ISettingsChangeListener)resourceData).optionChanged(this, parent, option, oldValue);
 			NotificationManager.getInstance().optionChanged(this, parent, option, oldValue);
-//			rebuildNeeded = true;
 		} 
 		return retOpt;
 	}
@@ -471,8 +345,6 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 	public abstract Set<String> contributeErrorParsers(Set<String> set);
 	
 	protected Set<String> contributeErrorParsers(ITool[] tools, Set<String> set){
-//		if(set == null)
-//			set = new HashSet();
 		for(int i = 0; i < tools.length; i++){
 			Tool tool = (Tool)tools[i];
 			set = tool.contributeErrorParsers(set);
@@ -580,4 +452,5 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 	public List<IResourceInfo> getChildResourceInfoList(boolean includeCurrent){
 		return getRcInfo().getRcInfoList(ICSettingBase.SETTING_FILE | ICSettingBase.SETTING_FOLDER, includeCurrent);
 	}
+	
 }

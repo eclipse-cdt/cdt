@@ -65,15 +65,15 @@ public class SymbolTab extends AbstractLangsListTab {
 			return null;
 	}
 	
-	public int getKind() { return ICSettingEntry.MACRO; }
+	public int getKind() { 
+		return ICSettingEntry.MACRO; 
+	}
 
 	// Specific version of "update()" for Symbols tab only
 	public void update() {
 		if (lang != null) {
 			int x = table.getSelectionIndex();
 			if (x == -1) x = 0;
-			
-//			incs = new LinkedList<ICLanguageSettingEntry>(lang.getSettingEntriesList(getKind()));
 			incs = getIncs();
 			ArrayList<ICLanguageSettingEntry> lst = new ArrayList<ICLanguageSettingEntry>();
 			if (incs != null) {
@@ -91,5 +91,4 @@ public class SymbolTab extends AbstractLangsListTab {
 		updateLbs(lb1, lb2);
 		updateButtons();
 	}
-	
 }

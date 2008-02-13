@@ -57,7 +57,6 @@ public abstract class CPPASTAmbiguity extends CPPASTNode {
 //        if( debugging  ) 
 //            printNode();
         int[] issues = new int[nodez.length];
-        Arrays.fill(issues, 0);
         for (int i = 0; i < nodez.length; ++i) {
             IASTNode s = nodez[i];
             s.accept( visitor );

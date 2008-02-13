@@ -57,7 +57,6 @@ public abstract class CASTAmbiguity extends CASTNode  {
     public boolean accept(ASTVisitor visitor) {
         IASTNode [] nodez = getNodes();
         int [] issues = new int[ nodez.length ];
-        Arrays.fill( issues, 0 );
         for( int i = 0; i < nodez.length; ++i )
         {
             IASTNode s = nodez[i];

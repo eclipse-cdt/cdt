@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Debug Services Framework Examples
+Bundle-Vendor: Eclipse.org
+Bundle-SymbolicName: org.eclipse.dd.examples.dsf;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.eclipse.dd.examples.dsf.DsfExamplesPlugin
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.debug.core,
+ org.eclipse.debug.ui,
+ org.eclipse.dd.dsf,
+ org.eclipse.ui,
+ org.eclipse.dd.dsf.ui
+ 
+Eclipse-LazyStart: true
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

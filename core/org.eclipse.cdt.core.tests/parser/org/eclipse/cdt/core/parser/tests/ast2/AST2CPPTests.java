@@ -5687,4 +5687,25 @@ public class AST2CPPTests extends AST2BaseTest {
     	IBinding b= bh.assertNonProblem("a=", 1);
     	assertEquals("x", b.getScope().getScopeName().toString());
     }
+    
+	// class Test {
+	// public:
+	//    Test(int, int *) {}
+	//    Test(int *) {}
+	// };
+	// void test () {
+	//    int bar= 0;
+	//    int * pBar = &bar;
+	//    Test foo1 (bar, &bar);
+	//    Test foo2 (bar, pBar);
+	//    Test foo3 (&bar); 
+	// }   
+    public void testCastAmbiguity_Bug211756() throws Exception {
+    	BindingAssertionHelper bh= new BindingAssertionHelper(getContents(1)[0].toString(), true);
+    	
+    	bh.assertNonProblem("foo1", 4);
+    	bh.assertNonProblem("foo2", 4);
+    	bh.assertNonProblem("foo3", 4);
+    }
+
 }

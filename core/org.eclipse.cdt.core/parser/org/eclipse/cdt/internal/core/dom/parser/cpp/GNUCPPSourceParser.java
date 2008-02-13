@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -666,7 +666,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @param expression
      * @throws BacktrackException
      */
-    protected IASTExpression assignmentExpression() throws EndOfFileException,
+    @Override
+	protected IASTExpression assignmentExpression() throws EndOfFileException,
             BacktrackException {
         if (LT(1) == IToken.t_throw) {
             return throwExpression();
@@ -751,7 +752,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @param expression
      * @throws BacktrackException
      */
-    protected IASTExpression relationalExpression() throws BacktrackException, EndOfFileException {
+    @Override
+	protected IASTExpression relationalExpression() throws BacktrackException, EndOfFileException {
 
         IASTExpression firstExpression = shiftExpression();
         for (;;) {
@@ -823,7 +825,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @param expression
      * @throws BacktrackException
      */
-    protected IASTExpression multiplicativeExpression() throws BacktrackException, EndOfFileException {
+    @Override
+	protected IASTExpression multiplicativeExpression() throws BacktrackException, EndOfFileException {
         IASTExpression firstExpression = pmExpression();
         for (;;) {
             switch (LT(1)) {
@@ -889,7 +892,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     /**
      * castExpression : unaryExpression | "(" typeId ")" castExpression
      */
-    protected IASTExpression castExpression() throws EndOfFileException, BacktrackException {
+    @Override
+	protected IASTExpression castExpression() throws EndOfFileException, BacktrackException {
 // 		TO DO: we need proper symbol checkint to ensure type name
     	if (LT(1) == IToken.tLPAREN) {
     		IToken la = LA(1);
@@ -946,7 +950,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     /**
      * @throws BacktrackException
      */
-    protected IASTTypeId typeId(boolean forNewExpression) throws EndOfFileException {
+    @Override
+	protected IASTTypeId typeId(boolean forNewExpression) throws EndOfFileException {
     	if (!canBeTypeSpecifier()) {
     		return null;
     	}
@@ -1310,7 +1315,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @param expression
      * @throws BacktrackException
      */
-    protected IASTExpression unaryExpression() throws EndOfFileException,
+    @Override
+	protected IASTExpression unaryExpression() throws EndOfFileException,
             BacktrackException {
         switch (LT(1)) {
         case IToken.tSTAR:
@@ -1616,7 +1622,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         }
     }
 
-    protected IASTAmbiguousExpression createAmbiguousExpression() {
+    @Override
+	protected IASTAmbiguousExpression createAmbiguousExpression() {
         return new CPPASTAmbiguousExpression();
     }
 
@@ -1773,7 +1780,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     /**
      * @return
      */
-    protected IASTIdExpression createIdExpression() {
+    @Override
+	protected IASTIdExpression createIdExpression() {
         return new CPPASTIdExpression();
     }
 
@@ -2307,7 +2315,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @throws BacktrackException
      *             request a backtrack
      */
-    protected IASTDeclaration declaration() throws EndOfFileException, BacktrackException {
+    @Override
+	protected IASTDeclaration declaration() throws EndOfFileException, BacktrackException {
         switch (LT(1)) {
         case IToken.t_asm:
             return asmDeclaration();
@@ -2366,23 +2375,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 }
                 
                 if (sd.getDeclarators()[0] instanceof IASTStandardFunctionDeclarator) {
-                    IASTStandardFunctionDeclarator fd = (IASTStandardFunctionDeclarator) sd.getDeclarators()[0];
                     if (sd.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef)
                         return d1;
-                    IASTParameterDeclaration[] parms = fd.getParameters();
-                    for (int i = 0; i < parms.length; ++i) {
-                        if (!(parms[i].getDeclSpecifier() instanceof IASTNamedTypeSpecifier))
-                            return d1;
-                        IASTDeclarator d = parms[i].getDeclarator();
-                        if (d == null) // must be an EOC
-                            return d1;
-                        if (((ASTNode)d.getName()).getLength() > 0)
-                            return d1;
-                        while (d.getNestedDeclarator() != null)
-                            d = d.getNestedDeclarator();
-                        if (((ASTNode) d.getName()).getLength() > 0)
-                            return d1;
-                    }
                 } else
                     return d1;
             }
@@ -2831,7 +2825,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     }
 
 
-    protected IASTSimpleDeclaration createSimpleDeclaration() {
+    @Override
+	protected IASTSimpleDeclaration createSimpleDeclaration() {
         return new CPPASTSimpleDeclaration();
     }
 
@@ -3349,7 +3344,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     }
 
 
-    protected IASTNamedTypeSpecifier createNamedTypeSpecifier() {
+    @Override
+	protected IASTNamedTypeSpecifier createNamedTypeSpecifier() {
         return new CPPASTNamedTypeSpecifier();
     }
 
@@ -3400,7 +3396,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         return new CPPASTElaboratedTypeSpecifier();
     }
 
-    protected IASTDeclarator initDeclarator() throws EndOfFileException, BacktrackException {
+    @Override
+	protected IASTDeclarator initDeclarator() throws EndOfFileException, BacktrackException {
         return initDeclarator(SimpleDeclarationStrategy.TRY_FUNCTION);
     }
 
@@ -4277,7 +4274,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * This is the top-level entry point into the ANSI C++ grammar.
      * translationUnit : (declaration)*
      */
-    protected void translationUnit() {
+    @Override
+	protected void translationUnit() {
         try {
             translationUnit = createTranslationUnit();
             translationUnit.setIndex(index);
@@ -4384,35 +4382,43 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         return new CPPASTArrayModifier();
     }
 
-    protected IASTTranslationUnit getTranslationUnit() {
+    @Override
+	protected IASTTranslationUnit getTranslationUnit() {
         return translationUnit;
     }
 
-    protected IASTCompoundStatement createCompoundStatement() {
+    @Override
+	protected IASTCompoundStatement createCompoundStatement() {
         return new CPPASTCompoundStatement();
     }
 
-    protected IASTBinaryExpression createBinaryExpression() {
+    @Override
+	protected IASTBinaryExpression createBinaryExpression() {
         return new CPPASTBinaryExpression();
     }
 
-    protected IASTConditionalExpression createConditionalExpression() {
+    @Override
+	protected IASTConditionalExpression createConditionalExpression() {
         return new CPPASTConditionalExpression();
     }
 
-    protected IASTUnaryExpression createUnaryExpression() {
+    @Override
+	protected IASTUnaryExpression createUnaryExpression() {
         return new CPPASTUnaryExpression();
     }
 
-    protected IGNUASTCompoundStatementExpression createCompoundStatementExpression() {
+    @Override
+	protected IGNUASTCompoundStatementExpression createCompoundStatementExpression() {
         return new CPPASTCompoundStatementExpression();
     }
 
-    protected IASTExpressionList createExpressionList() {
+    @Override
+	protected IASTExpressionList createExpressionList() {
         return new CPPASTExpressionList();
     }
 
-    protected IASTName createName(IToken token) {
+    @Override
+	protected IASTName createName(IToken token) {
         IASTName n = null;
 
         if (token instanceof OperatorTokenDuple) {
@@ -4432,16 +4438,19 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         return n;
     }
 
-    protected IASTName createName() {
+    @Override
+	protected IASTName createName() {
         return new CPPASTName();
     }
 
-    protected IASTEnumerator createEnumerator() {
+    @Override
+	protected IASTEnumerator createEnumerator() {
         return new CPPASTEnumerator();
     }
 
 
-    protected IASTExpression buildTypeIdExpression(int op, IASTTypeId typeId,
+    @Override
+	protected IASTExpression buildTypeIdExpression(int op, IASTTypeId typeId,
             int startingOffset, int endingOffset) {
         ICPPASTTypeIdExpression typeIdExpression = createTypeIdExpression();
         ((ASTNode) typeIdExpression).setOffsetAndLength(startingOffset, endingOffset - startingOffset);
@@ -4455,19 +4464,23 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         return new CPPASTTypeIdExpression();
     }
 
-    protected IASTEnumerationSpecifier createEnumerationSpecifier() {
+    @Override
+	protected IASTEnumerationSpecifier createEnumerationSpecifier() {
         return new CPPASTEnumerationSpecifier();
     }
 
-    protected IASTLabelStatement createLabelStatement() {
+    @Override
+	protected IASTLabelStatement createLabelStatement() {
         return new CPPASTLabelStatement();
     }
 
-    protected IASTGotoStatement createGoToStatement() {
+    @Override
+	protected IASTGotoStatement createGoToStatement() {
         return new CPPASTGotoStatement();
     }
 
-    protected IASTReturnStatement createReturnStatement() {
+    @Override
+	protected IASTReturnStatement createReturnStatement() {
         return new CPPASTReturnStatement();
     }
 
@@ -4475,23 +4488,28 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         return new CPPASTForStatement();
     }
 
-    protected IASTContinueStatement createContinueStatement() {
+    @Override
+	protected IASTContinueStatement createContinueStatement() {
         return new CPPASTContinueStatement();
     }
 
-    protected IASTDoStatement createDoStatement() {
+    @Override
+	protected IASTDoStatement createDoStatement() {
         return new CPPASTDoStatement();
     }
 
-    protected IASTBreakStatement createBreakStatement() {
+    @Override
+	protected IASTBreakStatement createBreakStatement() {
         return new CPPASTBreakStatement();
     }
 
-    protected IASTWhileStatement createWhileStatement() {
+    @Override
+	protected IASTWhileStatement createWhileStatement() {
         return new CPPASTWhileStatement();
     }
 
-    protected IASTNullStatement createNullStatement() {
+    @Override
+	protected IASTNullStatement createNullStatement() {
         return new CPPASTNullStatement();
     }
 
@@ -4503,31 +4521,38 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         return new CPPASTIfStatement();
     }
 
-    protected IASTDefaultStatement createDefaultStatement() {
+    @Override
+	protected IASTDefaultStatement createDefaultStatement() {
         return new CPPASTDefaultStatement();
     }
 
-    protected IASTCaseStatement createCaseStatement() {
+    @Override
+	protected IASTCaseStatement createCaseStatement() {
         return new CPPASTCaseStatement();
     }
 
-    protected IASTExpressionStatement createExpressionStatement() {
+    @Override
+	protected IASTExpressionStatement createExpressionStatement() {
         return new CPPASTExpressionStatement();
     }
 
-    protected IASTDeclarationStatement createDeclarationStatement() {
+    @Override
+	protected IASTDeclarationStatement createDeclarationStatement() {
         return new CPPASTDeclarationStatement();
     }
 
-    protected IASTASMDeclaration createASMDirective() {
+    @Override
+	protected IASTASMDeclaration createASMDirective() {
         return new CPPASTASMDeclaration();
     }
 
-    protected IASTCastExpression createCastExpression() {
+    @Override
+	protected IASTCastExpression createCastExpression() {
         return new CPPASTCastExpression();
     }
 
-    protected IASTStatement statement() throws EndOfFileException,
+    @Override
+	protected IASTStatement statement() throws EndOfFileException,
             BacktrackException {
 
         switch (LT(1)) {
@@ -4602,19 +4627,23 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         return new CPPASTTryBlockStatement();
     }
 
-    protected void nullifyTranslationUnit() {
+    @Override
+	protected void nullifyTranslationUnit() {
         translationUnit = null;
     }
 
-    protected IASTProblemStatement createProblemStatement() {
+    @Override
+	protected IASTProblemStatement createProblemStatement() {
         return new CPPASTProblemStatement();
     }
 
-    protected IASTProblemExpression createProblemExpression() {
+    @Override
+	protected IASTProblemExpression createProblemExpression() {
         return new CPPASTProblemExpression();
     }
 
-    protected IASTProblem createProblem(int signal, int offset, int length) {
+    @Override
+	protected IASTProblem createProblem(int signal, int offset, int length) {
         IASTProblem result = new CPPASTProblem(signal, EMPTY_STRING, false, true);
         ((ASTNode) result).setOffsetAndLength(offset, length);
         ((ASTNode) result).setLength(length);
@@ -4622,7 +4651,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     }
 
 
-    protected IASTStatement parseWhileStatement() throws EndOfFileException, BacktrackException {
+    @Override
+	protected IASTStatement parseWhileStatement() throws EndOfFileException, BacktrackException {
         int startOffset = consume().getOffset();
         consume(IToken.tLPAREN);
         IASTNode while_condition = cppStyleCondition(true);
@@ -4696,11 +4726,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
     private int functionBodyCount;
 
-    protected ASTVisitor createVisitor() {
+    @Override
+	protected ASTVisitor createVisitor() {
         return EMPTY_VISITOR;
     }
 
-    protected IASTAmbiguousStatement createAmbiguousStatement() {
+    @Override
+	protected IASTAmbiguousStatement createAmbiguousStatement() {
         return new CPPASTAmbiguousStatement();
     }
 
@@ -4815,7 +4847,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         return result;
     }
 
-    protected void checkTokenVsDeclarator(IToken la, IASTDeclarator d) throws FoundDeclaratorException {
+    @Override
+	protected void checkTokenVsDeclarator(IToken la, IASTDeclarator d) throws FoundDeclaratorException {
         switch (la.getType()) {
         case IToken.tCOLON:
         case IToken.t_try:
@@ -4825,14 +4858,16 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         }
     }
     
-    protected IASTStatement functionBody() throws EndOfFileException, BacktrackException {
+    @Override
+	protected IASTStatement functionBody() throws EndOfFileException, BacktrackException {
         ++functionBodyCount;
         IASTStatement s = super.functionBody();
         --functionBodyCount;
         return s;
     }
 
-    protected IASTDeclaration simpleDeclaration() throws BacktrackException, EndOfFileException {
+    @Override
+	protected IASTDeclaration simpleDeclaration() throws BacktrackException, EndOfFileException {
         return simpleDeclarationStrategyUnion();
     }
 

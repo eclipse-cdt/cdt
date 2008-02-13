@@ -76,6 +76,11 @@
 			<property name="file" value="${eclipseFile}" />
 			<property name="isUnpackedFile" value="${buildDirectory}/plugins/org.eclipse.platform.doc.isv/plugin.xml" />
 		</ant>
+		<ant target="getDependency" antfile="${buildDirectory}/../org.eclipse.modeling.common.releng/scripts/getDependencies.xml">
+			<property name="url" value="${rxtxURL}" />
+			<property name="file" value="${rxtxFile}" />
+			<property name="isUnpackedFile" value="${buildDirectory}/plugins/gnu.io.rxtx.jar" />
+		</ant>
 	</target>
 
 	<!-- ===================================================================== -->

@@ -1,0 +1,11 @@
+push 1
+push 2
+push 3
+foobar swish
+push 4
+add
+add
+call zippy
+add
+output
+halt

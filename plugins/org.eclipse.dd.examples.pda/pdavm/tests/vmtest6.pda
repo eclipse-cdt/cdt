@@ -1,0 +1,31 @@
+var a
+var b
+push 1
+pop $a
+push 2
+pop $b
+push 3
+push 4
+#
+call inner
+#
+push $a
+push 2
+add
+pop $b
+output
+#
+halt
+#
+:inner
+var a
+var c
+pop $a
+pop $c
+push $a
+push $a
+add
+return
+:other
+push 15
+return

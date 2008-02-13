@@ -1,0 +1,35 @@
+push "hello"
+output
+call foobar
+push 3
+:label
+dup
+push 4
+push 5
+add
+add
+output
+dec
+dup
+branch_not_zero label
+call foobar
+push "end"
+output
+halt
+:foobar
+var a
+var b
+call barfoo
+push "first"
+push "second"
+pop $a
+pop $b
+push $a
+push $b
+output
+output
+return
+:barfoo
+push "barfoo"
+output
+return

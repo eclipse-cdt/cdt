@@ -1,0 +1,8 @@
+push one two three
+push 1 2 3
+var x
+var y
+pop $x
+pop $y
+push Done
+output

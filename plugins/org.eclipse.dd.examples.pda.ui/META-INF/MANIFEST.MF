@@ -1,0 +1,26 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: PDA Example Device Debugging UI Plug-in
+Bundle-SymbolicName: org.eclipse.dd.examples.pda.ui;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: org.eclipse.dd.examples.pda.ui.PDAUIPlugin
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.core.resources,
+ org.eclipse.debug.core,
+ org.eclipse.ui,
+ org.eclipse.debug.ui,
+ org.eclipse.jface.text,
+ org.eclipse.ui.editors,
+ org.eclipse.ui.workbench.texteditor,
+ org.eclipse.ui.ide,
+ org.eclipse.dd.examples.pda;bundle-version="1.0.0",
+ org.eclipse.dd.dsf;bundle-version="1.0.0",
+ org.eclipse.dd.dsf.ui;bundle-version="1.0.0",
+ org.eclipse.dd.dsf.debug;bundle-version="1.0.0",
+ org.eclipse.dd.dsf.debug.ui;bundle-version="1.0.0"
+Eclipse-LazyStart: true
+Export-Package: org.eclipse.dd.examples.pda.ui,
+ org.eclipse.dd.examples.pda.ui.breakpoints,
+ org.eclipse.dd.examples.pda.ui.editor,
+ org.eclipse.dd.examples.pda.ui.launcher
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

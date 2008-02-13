@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+   <extension
+         point="org.eclipse.core.variables.valueVariables">
+      <variable
+            description="Path to Perl executable in the local file system"
+            name="dsfPerlExecutable"
+            initialValue="/usr/bin/perl"/>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            sourceLocatorId="org.eclipse.dd.examples.pda.sourceLocator"
+            delegate="org.eclipse.dd.examples.pda.launch.PDALaunchDelegate"
+            sourcePathComputerId="org.eclipse.dd.examples.pda.sourcePathComputer"
+            name="DSF PDA Application"
+            id="org.eclipse.dd.examples.pda.launchType"
+            modes="run, debug"/>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.sourceLocators">
+      <sourceLocator
+            class="org.eclipse.debug.examples.core.pda.sourcelookup.PDASourceLookupDirector"
+            name="DSF PDA Source Locator"
+            id="org.eclipse.dd.examples.pda.sourceLocator"/>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.sourcePathComputers">
+      <sourcePathComputer
+            class="org.eclipse.debug.examples.core.pda.sourcelookup.PDASourcePathComputerDelegate"
+            id="org.eclipse.dd.examples.pda.sourcePathComputer"/>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.breakpoints">
+      <breakpoint
+            class="org.eclipse.dd.examples.pda.breakpoints.PDALineBreakpoint"
+            name="DSF PDA Line Breakpoints"
+            markerType="org.eclipse.dd.examples.pda.markerType.lineBreakpoint"
+            id="org.eclipse.dd.examples.pda.lineBreakpoint"/>
+      <breakpoint
+            class="org.eclipse.dd.examples.pda.breakpoints.PDAWatchpoint"
+            name="DSF PDA Watchpoints"
+            markerType="org.eclipse.dd.examples.pda.markerType.watchpoint"
+            id="org.eclipse.dd.examples.pda.watchpoint"/>
+   </extension>
+   <extension
+         id="markerType.lineBreakpoint"
+         name="PDA Line Breakpoint Marker"
+         point="org.eclipse.core.resources.markers">
+      <super type="org.eclipse.debug.core.lineBreakpointMarker"/>
+      <persistent value="true"/>
+   </extension>
+   <extension
+         id="org.eclipse.dd.examples.pda.markerType.watchpoint"
+         name="DD PDA Watchpoint Marker"
+         point="org.eclipse.core.resources.markers">
+      <super type="org.eclipse.dd.examples.pda.markerType.lineBreakpoint"/>
+      <persistent value="true"/>
+   </extension>
+
+
+   <extension
+         point="org.eclipse.debug.core.logicalStructureTypes">
+      <logicalStructureType
+            class="org.eclipse.debug.examples.core.pda.model.WordStructureDelegate"
+            description="Words"
+            id="pda.wordStructure"
+            modelIdentifier="org.eclipse.dd.examples.pda.debugModel"/>
+   </extension>
+</plugin>
+

@@ -1,0 +1,198 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>PDA Debugger Protocol Reference</title>
+</head>
+<body>
+
+<h2>PDA Debugger Protocol Reference</h2>
+
+<h3>clear</h3>
+Clears any breakpoint set on given line
+<pre>
+   C: clear {line}
+   R: ok
+</pre>
+
+
+<h3>data</h3>
+Retrieves data stack information 
+<pre>
+   C: data
+   R: {value 1}|{value 2}|{value 3}|...|
+</pre>
+
+
+<h3>drop</h3>
+Returns from the current frame without executing the rest of instructions.  
+
+<pre>
+   C: drop
+   R: ok
+   E: resumed drop
+   E: suspended drop
+</pre>
+
+
+<h3>eval</h3>
+Sets what events cause the execution to stop.
+
+<pre>
+   C: eval {instruction}%20{parameter}|{instruction}%20{parameter}|...
+   R: ok
+   E: resume client
+   E: evalresult result
+   E: suspended eval
+</pre>
+
+
+<h3>eventstop</h3>
+Sets what events cause the execution to stop.
+
+<pre>
+   C: eventstop {event_name} {0|1}
+   R: ok
+   ...
+   E: suspended event {event_name}
+</pre>
+
+
+<h3>exit</h3>
+Instructs the debugger to exit.
+
+<pre>
+   C: exit
+   R: ok
+</pre>
+
+
+<h3>popdata</h3>
+Pops the top value from the data stack  
+
+<pre>
+   C: popdata
+   R: ok
+</pre>
+
+
+<h3>pushdata</h3>
+Pushes the given value on top of the data stack.
+
+<pre>
+   C: pushdata {value}
+   R: ok
+</pre>
+
+
+<h3>resume</h3>
+Resumes the execution  
+
+<pre>
+   C: resume
+   R: ok
+   E: resumed client
+</pre>
+
+
+<h3>set</h3>
+Sets a breakpoint at given line
+
+<pre>
+   C: set {line_number}
+   R: ok
+   C: resume
+   E: resumed client
+   E: suspended breakpoint line_number
+</pre>
+
+
+<h3>setdata</h3>
+Sets a data value in the data stack at the given location
+
+<pre>
+   C: setdata {index} {value}
+   R: ok
+</pre>
+
+
+<h3>setvar</h3>
+Sets a variable value 
+
+<pre>
+   C: setvar {variable} {value}
+   R: ok
+</pre>
+
+
+<h3>stack</h3>
+Retrieves command stack information 
+
+<pre>
+   C: stack
+   R: {file}|{line}|{function}|{var_1}|{var_2}|...{file}|{line}|{function}|{var_1}|{var_2}|......
+</pre>
+
+
+<h3>step</h3>
+Executes next instruction 
+
+<pre>
+   C: step
+   R: ok
+   E: resumed step
+   E: suspended step
+</pre>
+
+
+<h3>stepreturn</h3>
+Executes instructions until the current subroutine is finished 
+
+<pre>
+   C: stepreturn
+   R: ok
+   E: resumed step
+   E: suspended step
+</pre>
+
+
+<h3>suspend</h3>
+Suspends execution 
+
+<pre>
+   C: suspend
+   R: ok
+   E: suspended client
+</pre>
+
+
+<h3>var</h3>
+Retrieves variable value 
+
+<pre>
+   C: var {frame_number} {variable_name}
+   R: {variable_value}
+</pre>
+
+
+<h3>watch</h3>
+Sets a watchpoint on a given variable
+
+<pre>
+   C: watch {function}::{variable_name} {watch_operation}
+   R: ok
+   C: resume
+   R: resumed client
+   E: suspended watch {watch_operation} {function}::{variable_name}
+</pre>
+
+The <code>watch_operation<code> value can be:
+<ul>
+  <li>0 - no watch</li>
+  <li>1 - read watch</li>
+  <li>2 - write watch</li>
+  <li>3 - both, etc.</li>
+</ul>
+</body>
+</html>

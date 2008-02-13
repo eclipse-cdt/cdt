@@ -1,0 +1,48 @@
+push 6
+push 7
+push 8
+push 9
+push 10
+call sub1
+output
+call sub3
+call sub5
+push 3
+halt
+:sub2
+push 27
+return
+:sub1
+var m
+var n
+call sub2
+pop $n
+pop $m
+push $n
+push $m
+return
+# zero-based line 23
+:sub3
+push 1
+call sub4
+push 2
+call sub4
+push 3
+return
+:sub4
+push 4
+return
+# zero-based line 34
+:sub5
+var a
+var b
+var c
+pop $c
+pop $b
+call sub6
+push $a
+return
+:sub6
+var b
+pop $b
+return

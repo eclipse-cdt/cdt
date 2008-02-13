@@ -29,7 +29,7 @@ Examples
    </requires>
 
    <plugin
-         id="org.eclipse.dd.dsf.examples"
+         id="org.eclipse.dd.examples.dsf"
          download-size="0"
          install-size="0"
          version="0.0.0"

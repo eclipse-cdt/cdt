@@ -60,7 +60,7 @@ Core SDK
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.dd.dsf.mi.core"
+         id="org.eclipse.dd.mi"
          download-size="0"
          install-size="0"
          version="0.0.0"

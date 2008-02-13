@@ -25,12 +25,19 @@ Tests
    </url>
 
    <requires>
-      <import feature="org.eclipse.dd.dsf.mi" version="0.9.0"/>
-      <import feature="org.eclipse.dd.dsf.sdk" version="0.9.0"/>
+      <import feature="org.eclipse.dd.dsf.gdb" version="1.0.0"/>
+      <import feature="org.eclipse.dd.dsf.sdk" version="1.0.0"/>
    </requires>
 
    <plugin
-         id="org.eclipse.dd.dsf.test"
+         id="org.eclipse.dd.test.dsf"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.dd.test.gdb"
          download-size="0"
          install-size="0"
          version="0.0.0"

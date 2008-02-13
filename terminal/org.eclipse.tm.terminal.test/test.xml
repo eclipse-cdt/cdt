@@ -32,7 +32,7 @@ Needs to be updated and tested for org.eclipse.tm.terminal
     <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
       <property name="data-dir" value="${location}"/>
       <property name="plugin-name" value="${plugin-name}"/>
-      <property name="classname" value="org.eclipse.tm.terminal.test.RSECombinedTestSuite"/>
+      <property name="classname" value="org.eclipse.tm.terminal.test.AutomatedTests"/>
 	  <property name="extraVMargs" value="-ea"/>
     </ant>
     

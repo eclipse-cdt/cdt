@@ -1,0 +1,24 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: GDB/MI Protocol-based DSF Debugger Integration Core
+Bundle-Vendor: Eclipse.org
+Bundle-SymbolicName: org.eclipse.dd.mi;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.eclipse.dd.mi.internal.MIPlugin
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.debug.core,
+ org.eclipse.core.resources,
+ org.eclipse.core.variables,
+ org.eclipse.dd.dsf,
+ org.eclipse.dd.dsf.debug,
+ org.eclipse.cdt.debug.core,
+ org.eclipse.cdt.core
+Export-Package: 
+ org.eclipse.dd.mi.service,
+ org.eclipse.dd.mi.service.command,
+ org.eclipse.dd.mi.service.command.commands,
+ org.eclipse.dd.mi.service.command.events,
+ org.eclipse.dd.mi.service.command.output
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-ActivationPolicy: lazy

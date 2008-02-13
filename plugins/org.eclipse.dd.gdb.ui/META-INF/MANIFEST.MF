@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Debug Services Framework GDB UI Plug-in
+Bundle-Vendor: Eclipse.org
+Bundle-SymbolicName: org.eclipse.dd.gdb.ui;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.eclipse.dd.gdb.internal.ui.GdbUIPlugin
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.dd.dsf.debug.ui,
+ org.eclipse.dd.dsf,
+ org.eclipse.dd.dsf.ui,
+ org.eclipse.debug.ui,
+ org.eclipse.cdt.launch,
+ org.eclipse.cdt.debug.core,
+ org.eclipse.dd.mi,
+ org.eclipse.dd.gdb,
+ org.eclipse.dd.dsf.debug,
+ org.eclipse.cdt.debug.ui
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

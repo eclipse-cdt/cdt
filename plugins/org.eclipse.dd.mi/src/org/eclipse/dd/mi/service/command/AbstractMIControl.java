@@ -1,0 +1,736 @@
+/*******************************************************************************
+ * Copyright (c) 2006 Wind River Systems and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Wind River Systems - initial API and implementation
+ *     Ericsson 		  - Modified for handling of multiple stacks and threads
+ *******************************************************************************/
+package org.eclipse.dd.mi.service.command;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionException;
+
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.dd.dsf.concurrent.DsfRunnable;
+import org.eclipse.dd.dsf.datamodel.DMContexts;
+import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
+import org.eclipse.dd.dsf.debug.service.command.ICommand;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControl;
+import org.eclipse.dd.dsf.debug.service.command.ICommandListener;
+import org.eclipse.dd.dsf.debug.service.command.ICommandResult;
+import org.eclipse.dd.dsf.debug.service.command.IEventListener;
+import org.eclipse.dd.dsf.service.AbstractDsfService;
+import org.eclipse.dd.dsf.service.DsfSession;
+import org.eclipse.dd.dsf.service.IDsfService;
+import org.eclipse.dd.mi.internal.MIPlugin;
+import org.eclipse.dd.mi.service.IMIExecutionDMContext;
+import org.eclipse.dd.mi.service.command.commands.MICommand;
+import org.eclipse.dd.mi.service.command.commands.MIStackSelectFrame;
+import org.eclipse.dd.mi.service.command.commands.MIThreadSelect;
+import org.eclipse.dd.mi.service.command.output.MIConst;
+import org.eclipse.dd.mi.service.command.output.MIInfo;
+import org.eclipse.dd.mi.service.command.output.MIList;
+import org.eclipse.dd.mi.service.command.output.MIOOBRecord;
+import org.eclipse.dd.mi.service.command.output.MIOutput;
+import org.eclipse.dd.mi.service.command.output.MIParser;
+import org.eclipse.dd.mi.service.command.output.MIResult;
+import org.eclipse.dd.mi.service.command.output.MIResultRecord;
+import org.eclipse.dd.mi.service.command.output.MIValue;
+
+/**
+ * Base implementation of an MI control service.  It provides basic handling 
+ * of input/output channels, and processing of the commands.
+ * <p>
+ * Extending classes need to implement the initialize() and shutdown() methods.
+ */
+public abstract class AbstractMIControl extends AbstractDsfService
+    implements ICommandControl
+{
+    final static String PROP_INSTANCE_ID = MIPlugin.PLUGIN_ID + ".miControlInstanceId";    //$NON-NLS-1$
+    
+    /*
+	 *  Thread control variables for the transmit and receive threads.
+	 */
+
+	private TxThread fTxThread;
+    private RxThread fRxThread;
+    
+    private int fCurrentStackLevel = -1;
+    private int fCurrentThreadId = -1;
+    
+    
+    private final BlockingQueue<CommandHandle> fTxCommands = new LinkedBlockingQueue<CommandHandle>();
+    private final Map<Integer, CommandHandle>  fRxCommands = Collections.synchronizedMap(new HashMap<Integer, CommandHandle>());
+     
+    /*
+     *   Various listener control variables used to keep track of listeners who want to monitor
+     *   what the control object is doing.
+     */
+
+    private final List<ICommandListener> fCommandProcessors = new ArrayList<ICommandListener>();
+    private final List<IEventListener>   fEventProcessors = new ArrayList<IEventListener>();
+    
+    /**
+     *   Current command which have not been handed off to the backend yet.
+     */
+    
+    private final List<CommandHandle> fCommandQueue = new ArrayList<CommandHandle>();
+
+    /**
+     * Flag indicating that the command control has stopped processing commands.
+     */
+    private boolean fStoppedCommandProcessing = false;
+
+    /*
+     *  Public constructor.
+     */
+    
+    public AbstractMIControl(DsfSession session) {
+        super(session);
+    }
+
+    /**
+     * Starts the threads that process the debugger input/output channels.
+     * To be invoked by the initialization routine of the extending class.
+     * 
+     * @param inStream
+     * @param outStream
+     */
+    
+    protected void startCommandProcessing(InputStream inStream, OutputStream outStream) {
+    	
+        fTxThread = new TxThread(outStream);
+        fRxThread = new RxThread(inStream);
+        fTxThread.start();
+        fRxThread.start();
+    }
+    
+    /**
+     *  Stops the threads that process the debugger input/output channels, and notifies the
+     *  results of the outstanding commands. To be invoked by the shutdown routine of the 
+     *  extending class.
+     * 
+     * @param inStream
+     * @param outStream
+     */
+
+    private Status genStatus(String str) {
+    	return new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.INVALID_STATE, str, null);
+    }
+    
+    protected void stopCommandProcessing() {
+        fStoppedCommandProcessing = true;
+        
+    	/*
+    	 *  First go through the commands which have been queueud and not yet sent to the backend.
+    	 */
+    	for (CommandHandle commandHandle : fCommandQueue) {
+            if (commandHandle.getRequestMonitor() == null) continue;
+            commandHandle.getRequestMonitor().setStatus(genStatus("Connection is shut down")); //$NON-NLS-1$
+            commandHandle.getRequestMonitor().done();
+        }
+    	
+    	/*
+    	 *  Now go through the commands which are outstanding in that they have been sent to the backend.
+    	 */
+        synchronized(fRxCommands) {
+            for (CommandHandle commandHandle : fRxCommands.values()) {
+                if (commandHandle.getRequestMonitor() == null) continue;
+                commandHandle.getRequestMonitor().setStatus(genStatus( "Connection is shut down")); //$NON-NLS-1$
+                commandHandle.getRequestMonitor().done();
+            }
+            fRxCommands.clear();
+        }
+        
+        /*
+         *  Now handle any requests which have not been transmitted, but weconsider them handed off.
+         */
+        List<CommandHandle> txCommands = new ArrayList<CommandHandle>();
+        fTxCommands.drainTo(txCommands);
+        for (CommandHandle commandHandle : txCommands) {
+            if (commandHandle.getRequestMonitor() == null) continue;
+            commandHandle.getRequestMonitor().setStatus(genStatus("Connection is shut down")); //$NON-NLS-1$
+            commandHandle.getRequestMonitor().done();
+        }
+    }
+    
+    /**
+     * Queues the given MI command to be sent to the debugger back end.  
+     * 
+     * @param command Command to be executed.  This parameter must be an 
+     * instance of DsfMICommand, otherwise a ClassCastException will be 
+     * thrown. 
+     * @param rm Request completion monitor
+     * 
+     * @see org.eclipse.dd.dsf.debug.service.command.ICommandControl#addCommand(org.eclipse.dd.dsf.debug.service.command.ICommand, org.eclipse.dd.dsf.concurrent.RequestMonitor)
+     */
+    
+    public <V extends ICommandResult> void queueCommand(ICommand<V> command, DataRequestMonitor<V> rm) {
+
+        // If the command control stopped processing commands, just return an error immediately. 
+        if (fStoppedCommandProcessing) {
+            rm.setStatus(genStatus("Connection is shut down")); //$NON-NLS-1$
+            rm.done();
+            return;
+        }
+        
+        // Cast the command to MI Command type.  This will cause a cast exception to be 
+        // thrown if the client did not give an MI command as an argument.
+        @SuppressWarnings("unchecked")
+              MICommand<MIInfo> miCommand = (MICommand<MIInfo>) command;
+
+        // Cast the return token to match the result type of MI Command.  This is checking
+        // against an erased type so it should never throw any exceptions.
+        @SuppressWarnings("unchecked")
+        DataRequestMonitor<MIInfo> miDone = (DataRequestMonitor<MIInfo>)rm;
+
+        final CommandHandle handle = new CommandHandle(miCommand, miDone);
+    	
+        if ( fRxCommands.size() > 3 ) {
+        	
+        	/*
+        	 *  We  only allow three  outstanding commands  to be on the wire  to the backend
+        	 *  at any one time. This allows for coalesence as well as allowing for canceling
+        	 *  existing commands on a state change. So we add it to the waiting list and let
+        	 *  the user know they can now work with this item if need be.
+        	 */
+        	fCommandQueue.add(handle);
+            processCommandQueued(handle);
+        } else {
+        	
+        	/*
+        	 *  We are putting this one on the wire. We need to add it to the waiting list so
+        	 *  the user has the chance to cancel it when we tell them we are acknowleding it
+        	 *  has been officially accepted. They could choose to cancel it before we go and
+        	 *  send it. That is why we put it into the QUEUE and then check to see if it  is
+        	 *  still there.
+        	 */
+        	fCommandQueue.add(handle);
+            processCommandQueued(handle);
+            
+            if ( fCommandQueue.remove(handle) ) {
+            	processCommandSent(handle);
+            	
+            	// Before the command is sent, Check the Thread Id and send it to 
+            	// the queue only if the id has been changed.
+            	if( handle.getThreadId()!= null && 
+            			handle.getThreadId().intValue() != fCurrentThreadId && handle.getThreadId().intValue() != 0)
+            	{
+            		// Re-set the level
+            		fCurrentThreadId = handle.getThreadId().intValue();
+            		CommandHandle cmdHandle = new CommandHandle(
+            		    new MIThreadSelect(handle.fCommand.getContext(), fCurrentThreadId), null);
+            		fTxCommands.add(cmdHandle);
+            		MIPlugin.debug(MIPlugin.getDebugTime() + " " + cmdHandle.getCommand()); //$NON-NLS-1$
+            	}
+
+            	// Before the command is sent, Check the Stack level and send it to 
+            	// the queue only if the level has been changed. 
+            	if( handle.getStackFrameId()!= null && 
+            			handle.getStackFrameId().intValue() != fCurrentStackLevel)
+            	{
+            		// Re-set the level
+            		fCurrentStackLevel = handle.getStackFrameId().intValue();
+            		CommandHandle cmdHandle = new CommandHandle(
+            		    new MIStackSelectFrame(handle.fCommand.getContext(), fCurrentStackLevel), null);
+            		fTxCommands.add(cmdHandle);
+            		MIPlugin.debug(MIPlugin.getDebugTime() + " " + cmdHandle.getCommand()); //$NON-NLS-1$
+            	}
+               	fTxCommands.add(handle);
+            }
+        }
+        
+    }
+    
+    /*
+     *   This is the command which allows the user to retract a previously issued command. The
+     *   state of the command  is that it is in the waiting queue  and has not yet been handed 
+     *   to the backend yet.
+     *   
+     * (non-Javadoc)
+     * @see org.eclipse.dd.mi.service.command.IDebuggerControl#removeCommand(org.eclipse.dd.mi.service.command.commands.ICommand)
+     */
+    public void removeCommand(ICommand<? extends ICommandResult> command) {
+    	
+    	synchronized(fCommandQueue) {
+    		
+    		for ( CommandHandle handle : fCommandQueue ) {
+    			if ( handle.getCommand().equals(command)) {
+    				fCommandQueue.remove(handle);
+    				
+    				final CommandHandle finalHandle = handle;
+                    getExecutor().execute(new DsfRunnable() {
+                        public void run() {
+                        	processCommandRemoved(finalHandle);
+                        }
+                    });
+    				break;
+    			}
+    		}
+    	}
+    }
+   
+    /*
+     *  This command allows the user to try and cancel commands  which have been handed off to the 
+     *  backend. Some backends support this with extended GDB/MI commands. If the support is there
+     *  then we will attempt it.  Because of the bidirectional nature of the GDB/MI command stream
+     *  there is no guarantee that this will work. The response to the command could be on its way
+     *  back when the cancel command is being issued.
+     *  
+     * (non-Javadoc)
+     * @see org.eclipse.dd.mi.service.command.IDebuggerControl#cancelCommand(org.eclipse.dd.mi.service.command.commands.ICommand)
+     */
+    public void  cancelCommand(ICommand<? extends ICommandResult> command) {}
+    
+    /*
+     *  Allows a user ( typically a cache manager ) to sign up a listener to monitor command queue
+     *  activity.
+     *  
+     * (non-Javadoc)
+     * @see org.eclipse.dd.mi.service.command.IDebuggerControl#addCommandListener(org.eclipse.dd.mi.service.command.IDebuggerControl.ICommandListener)
+     */
+    public void addCommandListener(ICommandListener processor) { fCommandProcessors.add(processor); }
+    
+    /*
+     *  Allows a user ( typically a cache manager ) to remove a monitoring listener.
+     * (non-Javadoc)
+     * @see org.eclipse.dd.mi.service.command.IDebuggerControl#removeCommandListener(org.eclipse.dd.mi.service.command.IDebuggerControl.ICommandListener)
+     */
+    public void removeCommandListener(ICommandListener processor) { fCommandProcessors.remove(processor); }
+    
+    /*
+     *  Allows a user to sign up to a listener which handles out of band messages ( events ).
+     *  
+     * (non-Javadoc)
+     * @see org.eclipse.dd.mi.service.command.IDebuggerControl#addEventListener(org.eclipse.dd.mi.service.command.IDebuggerControl.IEventListener)
+     */
+    public void addEventListener(IEventListener processor) { fEventProcessors.add(processor); }
+    
+    /*
+     *  Allows a user to remove a event monitoring listener.
+     *  
+     * (non-Javadoc)
+     * @see org.eclipse.dd.mi.service.command.IDebuggerControl#removeEventListener(org.eclipse.dd.mi.service.command.IDebuggerControl.IEventListener)
+     */
+    public void removeEventListener(IEventListener processor) { fEventProcessors.remove(processor); }
+    
+    abstract public MIControlDMContext getControlDMContext();
+    
+    /*
+     *  These are the service routines which perform the various callouts back to the listeners.
+     */
+
+    private void processCommandQueued(CommandHandle commandHandle) {
+        for (ICommandListener processor : fCommandProcessors) {
+            processor.commandQueued(commandHandle.getCommand());
+        }
+    }
+    private void processCommandRemoved(CommandHandle commandHandle) {
+        for (ICommandListener processor : fCommandProcessors) {
+            processor.commandRemoved(commandHandle.getCommand());
+        }
+    }
+    
+    private void processCommandSent(CommandHandle commandHandle) {
+        MIPlugin.debug(MIPlugin.getDebugTime() + " " + commandHandle.getToken() + commandHandle.getCommand()); //$NON-NLS-1$
+        for (ICommandListener processor : fCommandProcessors) {
+            processor.commandSent(commandHandle.getCommand());
+        }
+    }
+
+    private void processCommandDone(CommandHandle commandHandle, ICommandResult result) {
+    	
+    	/*
+    	 *  Provide tracking for out processing.
+    	 */
+    	if ( result != null ) {
+    		MIInfo cmdResult = (MIInfo) result ;
+    		MIOutput output =  cmdResult.getMIOutput();
+    		MIPlugin.debug(MIPlugin.getDebugTime() + " " + output + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+    	}
+    	else
+    	{
+    		MIPlugin.debug(MIPlugin.getDebugTime() + " result output not available\n"); //$NON-NLS-1$
+    	}
+    	
+        /*
+         *  Tell the listeners we have completed this one.
+         */
+        for (ICommandListener processor : fCommandProcessors) {
+            processor.commandDone(commandHandle == null ? null : commandHandle.getCommand(), result);
+        }
+    }
+    
+    private void processEvent(MIOutput output) {
+        MIPlugin.debug(MIPlugin.getDebugTime() + " " + output + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+        for (IEventListener processor : fEventProcessors) {
+            processor.eventReceived(output);
+        }
+    }
+
+	/*
+	 * A global counter for all command, the token will be use to identify uniquely a command.
+	 * Unless the value wraps around which is unlikely.
+	 */
+    
+    private static int globalCounter = 0 ;
+    
+	private static synchronized int getUniqToken() {
+		int count = ++globalCounter;
+		// If we ever wrap around.
+		if (count <= 0) {
+			count = globalCounter = 1;
+		}
+		return count;
+	}
+	
+	/*
+	 *  Support class which creates a convenient wrapper for holding all information about an
+	 *  individual request.
+	 */
+    
+    public static class CommandHandle {
+    	
+        private MICommand<MIInfo> fCommand;
+        private DataRequestMonitor<MIInfo> fRequestMonitor;
+        private int fTokenId ;
+        
+        CommandHandle(MICommand<MIInfo> c, DataRequestMonitor<MIInfo> d) {
+            fCommand = c; 
+            fRequestMonitor = d;
+            fTokenId = getUniqToken() ;
+        }
+        
+        public MICommand<MIInfo> getCommand() { return fCommand; }
+        public DataRequestMonitor<MIInfo> getRequestMonitor() { return fRequestMonitor; }
+        public Integer getToken() { return fTokenId; }
+        //public String getThreadId() { return null; } 
+        public Integer getStackFrameId() {
+        	IFrameDMContext frameCtx = DMContexts.getAncestorOfType(fCommand.getContext(), IFrameDMContext.class);
+        	if(frameCtx != null)
+        		return frameCtx.getLevel();
+        	return null;
+        } 
+
+        public Integer getThreadId() {
+        	IMIExecutionDMContext execCtx = DMContexts.getAncestorOfType(fCommand.getContext(), IMIExecutionDMContext.class);
+        	if(execCtx != null)
+        		return execCtx.getThreadId();
+        	return null;
+        } 
+    }
+
+    /*
+     *  This is the transmitter thread. When a command is given to this thread it has been
+     *  considered to be sent, even if it has not actually been sent yet.  This assumption
+     *  makes it easier from state management.  Whomever fill this pipeline handles all of
+     *  the required state notofication ( callbacks ). This thread simply physically gives
+     *  the message to the backend. 
+     */
+    
+    private class TxThread extends Thread {
+
+        final private OutputStream fOutputStream; 
+        
+        public TxThread(OutputStream outStream) {
+            super("MI TX Thread"); //$NON-NLS-1$
+            fOutputStream = outStream;
+        }
+
+        @Override
+        public void run () {
+            while (true) {
+                CommandHandle commandHandle = null;
+                
+                /*
+                 *   Note: Acquiring locks for both fRxCommands and fTxCommands collections. 
+                 */
+                synchronized(fTxCommands) {
+                    try {
+                        commandHandle = fTxCommands.take();
+                    } catch (InterruptedException e) {
+                        break;  // Shutting down.
+                    }
+        
+                    if (commandHandle == null) {
+                        
+                        break; // Null command is an indicator that we're shutting down. 
+                    }
+                    
+                    /*
+                     *  We note that this is an outstanding request at this point.
+                     */
+                    fRxCommands.put(commandHandle.getToken(), commandHandle);
+                }
+                
+                /*
+                 *   Construct the new command and push this command out the pipeline.
+                 */
+                
+                String str = commandHandle.getToken() + commandHandle.getCommand().constructCommand();
+                
+                try {
+                    if (fOutputStream != null) {
+                        fOutputStream.write(str.getBytes());
+                        fOutputStream.flush();
+                    }
+                } catch (IOException e) {
+                    // Shutdown thread in case of IO error.
+                    break;
+                }
+            }
+        }
+    }
+
+    private class RxThread extends Thread {
+        private final InputStream fInputStream;
+        private final MIParser fMiParser = new MIParser();
+
+        /** 
+        * List of out of band records since the last result record.  Out of band records are 
+        * required for processing the results of CLI commands.   
+        */ 
+        private final List<MIOOBRecord> fAccumulatedOOBRecords = new ArrayList<MIOOBRecord>();
+        public RxThread(InputStream inputStream) {
+            super("MI RX Thread"); //$NON-NLS-1$
+            fInputStream = inputStream;
+        }
+
+        @Override
+        public void run() {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(fInputStream));
+            try {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    if (line.length() != 0) {
+                    	processMIOutput(line);
+                    }
+                }
+            } catch (IOException e) {
+                // Socket is shut down.
+            } catch (RejectedExecutionException e) {
+                // Dispatch thread is down.
+            }
+        }
+        
+        private MIResult findResultRecord(MIResult[] results, String variable) {
+            for (int i = 0; i < results.length; i++) {
+                if (variable.equals(results[i].getVariable())) {
+                    return results[i];
+                }
+            }
+            return null;
+        }
+        
+        private String getStatusString(MICommand<MIInfo> origCommand, MIOutput response ) {
+            
+        	// Attempt to extract a message from the result record:
+        	String message = null;
+        	String[] parameters = null;
+        	if (response != null && response.getMIResultRecord() != null) {
+        		MIResult[] results = response.getMIResultRecord().getMIResults();
+
+        		// Extract the parameters
+        		MIResult paramsRes = findResultRecord(results, "parameters"); //$NON-NLS-1$
+        		if (paramsRes != null && paramsRes.getMIValue() instanceof MIList) {
+        			MIValue[] paramValues = ((MIList)paramsRes.getMIValue()).getMIValues();
+        			parameters = new String[paramValues.length];
+        			for (int i = 0; i < paramValues.length; i++) {
+        				if (paramValues[i] instanceof MIConst) {
+        					parameters[i] = ((MIConst)paramValues[i]).getString();
+        				} else {
+        					parameters[i] = ""; //$NON-NLS-1$
+        				}
+        			}
+        		}
+        		MIResult messageRes = findResultRecord(results, "message"); //$NON-NLS-1$
+        		if (messageRes != null && messageRes.getMIValue() instanceof MIConst) {
+        			message = ((MIConst)messageRes.getMIValue()).getString();
+        		}
+        		// FRCH: I believe that the actual string is "msg" ...
+        		// FRCH: (at least for the version of gdb I'm using)
+        		else {
+        			messageRes = findResultRecord(results, "msg"); //$NON-NLS-1$
+        			if (messageRes != null && messageRes.getMIValue() instanceof MIConst) {
+        				message = ((MIConst)messageRes.getMIValue()).getString();
+        			}
+        		}
+        	}
+        	StringBuilder clientMsg = new StringBuilder();
+        	clientMsg.append("Failed to execute MI command:\n"); //$NON-NLS-1$
+        	clientMsg.append(origCommand.toString());
+        	if (message != null) {
+        		clientMsg.append("Error message from debugger back end:\n"); //$NON-NLS-1$
+        		if (parameters != null) {
+        			try {
+        				clientMsg.append(MessageFormat.format(message, (Object[])parameters));
+        			} catch(IllegalArgumentException e2) {
+        				// Message format string invalid.  Fallback to just appending the strings. 
+        				clientMsg.append(message);
+        				clientMsg.append(parameters);
+        			}
+        		} else {
+        			clientMsg.append(message);
+        		}
+        	}
+        	return clientMsg.toString();
+        }
+
+        void processMIOutput(String line) {
+            MIParser.RecordType recordType = fMiParser.getRecordType(line);
+            
+            if (recordType == MIParser.RecordType.ResultRecord) { 
+                final MIResultRecord rr = fMiParser.parseMIResultRecord(line);
+                final MIOutput response = new MIOutput(rr, 
+                		fAccumulatedOOBRecords.toArray(new MIOOBRecord[fAccumulatedOOBRecords.size()]) );
+                fAccumulatedOOBRecords.clear();
+           
+            	
+            	/*
+            	 *  Find the command in the current output list. If we cannot then this is
+            	 *  some form of asynchronous notification. Or perhaps general IO.
+            	 */
+                int id = rr.getToken();
+                final CommandHandle commandHandle = fRxCommands.remove(id);
+
+                if (commandHandle != null) {
+                	
+                	MIInfo result = commandHandle.getCommand().getResult(response);
+					DataRequestMonitor<MIInfo> rm = commandHandle.getRequestMonitor();
+					
+					/*
+					 *  Not all users want to get there results. They indicate so by not having
+					 *  a completion object. 
+					 */
+					if ( rm != null ) {
+						rm.setData(result);
+						
+						/*
+						 * We need to indicate if this request had an error or not.
+						 */
+						String errorResult =  rr.getResultClass();
+						
+						if ( errorResult.equals(MIResultRecord.ERROR) ) {
+							String status = getStatusString(commandHandle.getCommand(),response);
+							rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, status, null)); 
+						}
+						
+						/*
+						 *  We need to complete the command on the DSF thread for data security.
+						 */
+						final ICommandResult finalResult = result;
+						getExecutor().execute(new DsfRunnable() {
+	                        public void run() {
+	                        	/*
+	                        	 *  Complete the specific command.
+	                        	 */
+	                            if (commandHandle.getRequestMonitor() != null) {
+	                                commandHandle.getRequestMonitor().done();
+	                            }
+	                            
+	                            /*
+	                             *  Now tell the generic listeners about it.
+	                             */
+	                            processCommandDone(commandHandle, finalResult);
+	                        }
+	                        @Override
+                            public String toString() {
+	                            return "MI command output received for: " + commandHandle.getCommand(); //$NON-NLS-1$
+	                        }
+	                    });
+					} else {
+						/*
+						 *  While the specific requestor did not care about the completion  we
+						 *  need to call any listeners. This could have been a CLI command for
+						 *  example and  the CommandDone listeners there handle the IO as part
+						 *  of the work.
+						 */
+
+						final ICommandResult finalResult = result;
+						getExecutor().execute(new DsfRunnable() {
+	                        public void run() {
+	                            processCommandDone(commandHandle, finalResult);
+	                        }
+	                        @Override
+                            public String toString() {
+	                            return "MI command output received for: " + commandHandle.getCommand(); //$NON-NLS-1$
+	                        }
+	                    });
+					}
+                } else {
+                    /*
+                     *  GDB apparently can sometimes send multiple responses to the same command.  In those cases, 
+                     *  the command handle is gone, so post the result as an event. Again this must be done on the
+                     *  DSF thread for integrity.
+                     */
+                    getExecutor().execute(new DsfRunnable() {
+                        public void run() {
+                            processEvent(response);
+                        }
+                        @Override
+                        public String toString() {
+                            return "MI asynchronous output received: " + response; //$NON-NLS-1$
+                        }
+                    });
+                }
+            //} else {
+        	} else if (recordType == MIParser.RecordType.OOBRecord) {
+				// Process OOBs
+        		final MIOOBRecord oob = fMiParser.parseMIOOBRecord(line);
+       	        fAccumulatedOOBRecords.add(oob);
+       	        final MIOutput response = new MIOutput(oob);
+
+
+				
+            	/*
+            	 *   OOBS are events. So we pass them to any event listeners who want to see them. Again this must
+            	 *   be done on the DSF thread for integrity.
+            	 */
+                getExecutor().execute(new DsfRunnable() {
+                    public void run() {
+                        processEvent(response);
+                    }
+                    @Override
+                    public String toString() {
+                        return "MI asynchronous output received: " + response; //$NON-NLS-1$
+                    }
+                });
+            }
+            
+            getExecutor().execute(new DsfRunnable() {
+            	public void run() {
+            		if ( fCommandQueue.size() > 0 ) {
+            			CommandHandle comHandle = fCommandQueue.remove(0);
+            			if ( comHandle != null ) {
+                        	processCommandQueued(comHandle);
+                        	processCommandSent(comHandle);
+                            fTxCommands.add(comHandle);
+            			}
+            		}
+            	}
+            });
+        }
+    }
+
+    public void resetCurrentThreadLevel(){
+    	fCurrentThreadId = -1; 
+    }
+}

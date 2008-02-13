@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+
+   <extension point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            type="org.eclipse.dd.mi.launch.localCLaunch"
+            class="org.eclipse.dd.gdb.internal.ui.launching.DsfMIlRunLaunchConfigurationTabGroup"
+            id="org.eclipse.dd.mi.launch.localRunLaunchTabGroup">
+      </launchConfigurationTabGroup>
+   </extension>
+   
+   <extension point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+      <launchConfigurationTypeImage
+            icon="icons/full/obj16/c_app.gif" 	
+            configTypeID="org.eclipse.dd.mi.launch.localCLaunch"
+            id="org.eclipse.dd.mi.launch.localRunLaunchImage">
+      </launchConfigurationTypeImage>
+   </extension>
+
+   <extension point="org.eclipse.core.runtime.adapters">
+      <factory 
+        	class="org.eclipse.dd.gdb.internal.ui.GdbAdapterFactory" 
+	        adaptableType="org.eclipse.dd.gdb.launching.GdbLaunch">
+         <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider"/>
+         <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory"/>
+         <adapter type="org.eclipse.debug.ui.contexts.ISuspendTrigger"/>
+         <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory"/>
+	  </factory>         
+   </extension>	
+   
+   <extension point="org.eclipse.debug.ui.memoryRenderings">
+      <renderingBindings
+            defaultIds="org.eclipse.debug.ui.rendering.raw_memory"
+            primaryId="org.eclipse.debug.ui.rendering.raw_memory"
+            renderingIds="org.eclipse.debug.ui.rendering.raw_memory,org.eclipse.debug.ui.rendering.ascii,org.eclipse.debug.ui.rendering.signedint,org.eclipse.debug.ui.rendering.unsignedint">
+         <enablement>
+            <instanceof value="org.eclipse.dd.dsf.debug.model.DsfMemoryBlock"/>
+         </enablement>
+      </renderingBindings>
+   </extension>
+
+   <extension point="org.eclipse.ui.propertyPages">
+         <page class="org.eclipse.dd.gdb.internal.ui.breakpoints.CBreakpointGdbThreadFilterPage"
+            id="org.eclipse.dd.dsf.gdb.breakpoint.filtering"
+            name="Filter">
+         <filter name="debugModelId" value="org.eclipse.dd.dsf.gdb"/>
+         <enabledWhen>
+            <adapt type="org.eclipse.cdt.debug.core.model.ICBreakpoint"/>
+         </enabledWhen>
+      </page>
+   </extension>
+   
+</plugin>

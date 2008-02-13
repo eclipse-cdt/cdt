@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.eclipse.tm.terminal.tests"
+      id="org.eclipse.tm.terminal.telnet"
       label="%featureName"
       version="2.0.0.qualifier"
       provider-name="%providerName">
@@ -26,19 +26,13 @@
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.tm.terminal" version="2.0.0" match="compatible"/>
-      <import plugin="org.eclipse.tm.terminal.view" version="2.0.0" match="compatible"/>
    </requires>
 
    <plugin
-         id="org.eclipse.tm.terminal.test"
+         id="org.eclipse.tm.terminal.telnet"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.eclipse.rse.tests.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>

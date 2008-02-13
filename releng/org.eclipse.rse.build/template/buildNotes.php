@@ -28,19 +28,38 @@
   Platform Runtime is the minimum requirement for core RSE and Terminal.
   Discovery needs EMF, and the RemoteCDT integration needs CDT.</li>
 <li>Important Bug Fixes, Enhancements and API changes:<ul>
-<li>The RSE "<b>Link with Editor</b>" action has been fixed. A new <tt>IViewLinker</tt>
-  API as well as extensions to the <tt>ISystemTree</tt> API were made to get this done
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=187711">187711</a>].</li>
 <li><b>Permissions, Owner and Group</b> of remote files on DStore, SSH and FTP connections 
   can now be shown in the Property sheet and the Table view. There is also a new
   Property page to modify Permissions, Owner and Group if that is supported by the
   file service. New API was introduced to support this
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=209593">209593</a>].</li>
+<li><b>Lazy Loading of Filter Pools</b> accounts for improved RSE startup time
+  and decreased memory footprint due to fewer plugins being loaded
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=197036">197036</a>].</li>
+<li>The RSE "<b>Link with Editor</b>" action has been fixed. A new <tt>IViewLinker</tt>
+  API as well as extensions to the <tt>ISystemTree</tt> API were made to get this done
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=187711">187711</a>].</li>
+<li><b>Filters</b> are now <b>connection-private</b> by default
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=160403">160403</a>].</li>
+<li><b>SSH Keepalive</b> added to avoid connections time out. The keepalive is
+  hardcoded to 5 minutes for now and will be made user-configurable in the future
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=155026">155026</a>].</li>
+<li>A <b>Connection Timeout Preference</b> has been added for dstore
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=216596">216596</a>].</li>
 <li>In the optional <b>Terminal Input Field</b>, field assist (Ctrl+Space) has been
   added to easily access commands that were entered previously
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=211659">211659</a>].</li>
+<li>API: <b>SystemRegistry</b> is now accessible for non-UI plugins without starting
+  RSEUIPlugin before (there still is a dependency into SWT only, which we hope
+  to remove with the next milestone)
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=215820">215820</a>].</li>
+<li>API: <b>Nested Property Sets</b> are now supported for more complex descriptions
+  of hosts
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=217715">217715</a>].</li>
+<li>Several smaller bug fixes have been made for search results, archive
+  handling, and thread-safety.</li> 
 </ul></li>
-<li>At least 12 bugs were fixed: Use 
+<li>At least 45 bugs were fixed: Use 
   <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2008-01-05&chfieldto=2008-02-18&chfield=resolution&cmdtype=doit"> -->
   <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2008-01-05&chfieldto=2008-02-18&chfield=resolution&cmdtype=doit&negate0=1&field0-0-0=target_milestone&type0-0-0=substring&value0-0-0=2.0.&field0-0-1=target_milestone&type0-0-1=regexp&value0-0-1=3.0%20M%5B34%5D">
   <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=3.0+M5&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit"> -->
@@ -117,8 +136,32 @@ user attention. A short hint on what needs to change is given directly in the li
 More information can be found in the associated bugzilla items.
 
 <ul>
-<li>TM @buildId@ Breaking API Changes
+<li>TM @buildId@ Breaking API Changes [<a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&product=Target+Management&target_milestone=3.0+M5&resolution=FIXED&keywords_type=allwords&keywords=api&cmdtype=doit">query</a>]
 <ul>
+<li><b>Removed</b> <tt>IServiceSubSystem</tt> and related types in order to simplify the code, and allow better lazy initialization.
+    <tt>ISubSystem.getServiceType()</tt> is now used to know whether a given subsystem
+    is based on a service or not. Implementers of IServiceSubSystem need to implement ISubSystem now; code that tested for <tt>instanceof IServiceSubSystem</tt>
+    needs to use the dynamic check now
+    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=217556">217556</a>].</li>
+<li><b>Removed</b> <tt>ISystemProfile#createHost(IRSESystemType, String, String, String)</tt>. Deprecated some other methods related
+    to filter or host creation, in order to support lazy initialization of filter pools.
+    Replacement methods are mentioned in the deprecation text
+    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=197036">197036</a>].</li>
+<li>Made the <b>TerminalConnectorId mandatory</b> in terminal connector plugin.xml,
+    because it is essentially API allowing to talk to a given connector
+    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=199285">199285</a>].</li>
+<li><b>Removed</b> deprecated <tt>ISystemViewInputProvider#getShell()</tt> 
+    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=218524">218524</a>].</li>
+<li><b>Moved</b> some methods from <tt>ISystemRegistry</tt> into <tt>ISystemRegistryUI</tt>
+    in order to facilitate moving SystemRegistry implementation to non-UI. Making this change
+    also required <b>adding an SWT dependency for rse.core</b>, which we hope to get rid
+    again later. The SystemRegistry logfile can now be found in the <tt>rse.core</tt> plugin rather
+    than the <tt>rse.ui</tt> plugin
+    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=215820">215820</a>].</li>
+<li><b>IRSESystemType.isEnabled()</b> has been added instead of <tt>RSESystemTypeAdapter.isEnabled()</tt>,
+    in order to provide enablement info to non-UI plugins as well. The adapter method has been made 
+    final in order to warn extenders that they need to move their code to non-UI.
+    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=218655">218655</a>].</li>
 </ul></li>
 <li>TM 3.0M4 Breaking API Changes
 <ul>
@@ -202,7 +245,7 @@ Use
 The following critical or major bugs are currently known.
 We'll strive to fix these as soon as possible.
 <ul>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=198143">bug 198143</a> - maj - [dstore][performance] Refresh a big directory takes very long time, and freezes workbench</li>
+  <li><font color="red"><b><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=218387">bug 218387</a> - cri - [efs] Deadlock when launching Eclipse on a Workspace with efs-shared files</b></font></li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=198395">bug 198395</a> - maj - [dstore] Can connect to DStore with expired password</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=208185">bug 208185</a> - maj - [terminal][serial] terminal can hang the UI when text is entered while the backend side is not reading characters</li>
 </ul>

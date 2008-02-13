@@ -24,9 +24,10 @@
 		<!-- TODO: if your project requires more dependencies for testing, add them here -->
 		<echo message="Copy EMF SDK + Eclipse SDK to ${executionDir}..."/>
 		<copy todir="${executionDir}">
-			<!--TODO: Main runtime is RSE, therefore need to copy TM-terminal and others to test as well-->
 			<!--<fileset dir="${downloadsDir}" includes="${emfFile},${eclipseFile},${wtpFile},${orbitFile}"/>-->
-			<fileset dir="${downloadsDir}" includes="${emfFile},${eclipseFile},${orbitFile},TM-terminal-*"/>
+			<fileset dir="${downloadsDir}" includes="${emfFile},${eclipseFile},${orbitFile}"/>
+			<!--TODO: Main runtime is RSE, therefore need to copy TM-terminal and others to test as well-->
+			<fileset dir="${testDir}/../.." includes="TM-terminal-*.zip"/>
 		</copy>
 		<property name="shell" value="relengbuildgtk.sh"/>
 	

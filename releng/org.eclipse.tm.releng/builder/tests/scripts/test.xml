@@ -44,8 +44,10 @@
 		<property name="dir" location="."/>
 		<echo message="Unpack SDK + JUnit Tests (${dir}/RSE-*.zip) ..."/>		
 		<unzip dest="${install}" overwrite="true">
-		    <fileset dir="${dir}"><include name="**/RSE-*.zip"/></fileset>
-		    <fileset dir="${dir}"><include name="**/TM-terminal-*.zip"/></fileset>
+		    <fileset dir="${dir}">
+		    	<include name="**/RSE-*.zip"/>
+		    	<include name="**/TM-terminal-*.zip"/>
+		    </fileset>
 		</unzip>
 	</target>
 

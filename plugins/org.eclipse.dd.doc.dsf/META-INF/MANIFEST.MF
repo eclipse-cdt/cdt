@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Debug Services Framework Documentation
+Bundle-Vendor: Eclipse.org
+Bundle-SymbolicName: org.eclipse.dd.doc.dsf;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

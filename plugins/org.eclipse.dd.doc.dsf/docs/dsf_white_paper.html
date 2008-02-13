@@ -1,0 +1,315 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>DSF White Paper</title>
+</head>
+<body>
+<h2>Debugger Services Framework (DSF)&nbsp; White Paper</h2>
+Version 1.0<br>
+Pawel Piech<br>
+&copy; 2006, Wind River Systems.&nbsp; Release under EPL version 1.0.<br>
+<h3>Overview</h3>
+DSF is a service framework for implementing the model and communication
+layers of Eclipse debuggers.&nbsp; The framework itself is actually
+very small in terms of lines of code, because it mostly builds on top
+of existing standard frameworks of OSGI services and Java 5.0
+concurrency features.&nbsp; The value of DSF is the set of utilities,
+patterns, and guidelines that together help solve some of the more
+difficult problems we have with existing Eclipse debugger
+implementations.<br>
+<h3>Design goals</h3>
+<span style="font-size: 12pt; font-family: times new roman,times,serif;">The
+primary design goal is to overcome the problems with
+existing Eclipse debuggers.&nbsp; These problems are:<o:p></o:p></span>
+<ol start="1" type="1">
+  <li class="MsoNormal"
+ style="line-height: normal; font-family: times new roman,times,serif;"><span
+ style="font-size: 12pt;">Poor performance when debugging a remote
+target (over a slow connection).<o:p></o:p></span></li>
+  <ul style="font-family: times new roman,times,serif;" type="circle">
+    <li class="MsoNormal" style="line-height: normal;"><span
+ style="font-size: 12pt;">Synchronous debugger communication, which
+results in poor throughput of data.<o:p></o:p></span></li>
+    <li class="MsoNormal" style="line-height: normal;"><span
+ style="font-size: 12pt;">Amount of data that is retrieved from target
+is based on the data model, rather than on what's visible to the user
+on the screen.<o:p></o:p></span></li>
+    <li class="MsoNormal" style="line-height: normal;"><span
+ style="font-size: 12pt;">No ability to filter, or to choose update
+policies, which could allow user to control what is retrieved from the
+target.<o:p></o:p></span></li>
+  </ul>
+  <li class="MsoNormal"
+ style="line-height: normal; font-family: times new roman,times,serif;"><span
+ style="font-size: 12pt;">No modularity in APIs or debugger
+implementations.<o:p></o:p></span></li>
+  <ul style="font-family: times new roman,times,serif;" type="circle">
+    <li class="MsoNormal" style="line-height: normal;"><span
+ style="font-size: 12pt;">Specialized debuggers must use forking and
+duplication of common code to provide unique features.<o:p></o:p></span></li>
+    <li class="MsoNormal" style="line-height: normal;"><span
+ style="font-size: 12pt;">Degenerate debuggers (with a subset of
+functionality of conventional debuggers)&nbsp; must implement a lot of
+interfaces that are meaningless to their users.</span><span
+ class="MsoCommentReference"><span style="font-size: 8pt;"><!--[if !supportAnnotations]--><!--[endif]--><span
+ style="display: none;"><span style="">&nbsp;</span></span></span></span><span
+ style="font-size: 12pt;"><o:p></o:p></span></li>
+    <li class="MsoNormal" style="line-height: normal;"><span
+ style="font-size: 12pt;">It's difficult to modify or selectively
+replace interfaces, because all interfaces have references to each
+other.</span><span class="MsoCommentReference"><span
+ style="font-size: 8pt;"><!--[if !supportAnnotations]--><!--[endif]--><span
+ style="display: none;"><span style="">&nbsp;</span></span></span></span><span
+ style="font-size: 12pt;"><o:p></o:p></span></li>
+  </ul>
+  <li class="MsoNormal" style="line-height: normal;"><span
+ style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;"><span
+ style="font-family: times new roman,times,serif;">Difficulty in
+customizing data presentation for different types of debugging.</span></span></li>
+</ol>
+<h3>Features</h3>
+The DSF features described below, more-or-less correspond one-to-one to
+the problems in the Design Goals section.&nbsp; <br>
+<h4>Concurrency Model</h4>
+It may be a surprise that simply adopting a threading model would solve
+performance problems with debugger communication, but indirectly, it
+actually does.&nbsp; The primary reason for poor performance with
+remote targets in debuggers such as CDT is the synchronous nature of
+target communication.&nbsp; When a request is made at the UI level that
+results in a command being sent to the target, then the client thread
+is blocked while the command is being processed.&nbsp; After the result
+if finally retrieved, the client makes the next request for data and is
+blocked again.&nbsp; In this pattern the responsiveness of the UI is
+slow, yet the majority of this performance hit is due to the latency of
+the communication channel to the debugger back end.&nbsp; <br>
+<p>There is one major improvement to this pattern implemented in the
+platform already.&nbsp; The platform debugger views have been
+re-written so that they spin off a separate thread for each separable
+call to the debug model.&nbsp; The multiple threads each result in
+individual requests being sent to the target, and each thread is
+blocked waiting for the result.&nbsp; Overall the responsiveness of the
+view is improved because all the request threads execute in
+parallel.&nbsp; However, there is one obvious limitation of this
+approach: creating a lot of new threads, even when using a thread pool,
+is an expensive operation and can in itself degrade performance,
+therefore this solution doesn't scale well to programs that for example
+have thousands of threads, or threads, or variables.<br>
+</p>
+<p>There is also a more subtle limitation of using jobs.&nbsp; Most
+debuggers have a very lopsided performance characteristic, where it
+takes a long time to initiate a query for the target, but once a query
+is run, it takes relatively little extra time to retrieve larger
+amounts of data.&nbsp; Therefore, to better optimize the performance of
+communicating with a remote target, it is important to coalesce
+individual requests into queries for larger chunks of data.&nbsp; This
+is a rather complicated problem, mostly because the commands available
+in debugger back ends vary depending on the type of data being
+retrieved.&nbsp; Also different types of data require different types
+of coalescing.&nbsp; For example, where it might be possible to
+retrieve memory in arbitrarily sized chunks, registers may be
+retrievable only in groups.&nbsp; There is one thing all coalescing
+solutions will have in common, though: they need to convert the calls
+that are made to the service into objects, which can be compared,
+sorted, and pooled together.&nbsp; Management of such objects requires
+a lot of state information to be tracked by the service, and managing
+the cache of the request results requires even more state
+information.&nbsp; </p>
+<p>Managing a lot of state information, which coalescing optimization
+requires, is exceedingly difficult in a free multi-threaded
+environment.&nbsp; This is because the more state information there is
+in the system, the more semaphores are needed to avoid race conditions.
+The more semaphores are used, the greater the chance that deadlocks
+will occur.&nbsp; There are many methods for managing concurrency in
+systems with a lot of state information, and they all have some
+drawbacks.&nbsp; One such example is the Eclipse resource system use of
+<span style="font-family: monospace;">ISchedulingRule </span>and
+jobs.&nbsp; Unfortunately this this concurrency model would not work
+well for the debugger because the resource system has a clearly defined
+hierarchy to its data: Workspace/Projects/File, so it&#8217;s easy to lock a
+portion of the tree and still allow other clients to interact with
+it.&nbsp; For debugger services, the relationship between state data is
+not clearly defined and often very complicated, so if scheduling rules
+were applied in a debugger implementation they would likely degrade
+performance, because each request would probably need to lock the
+entire system.<br>
+</p>
+<p>For its concurrency model, DSF imposes a strict threading
+model.&nbsp; <span style="font-style: italic;">All services that make
+up a debugger implementation must talk to each other using a single
+dispatch thread, and no service can make a blocking call while in the
+dispatch thread.</span>&nbsp; Conceptually this rule can be interpreted
+as: all communication between services is accomplished by runnables in
+a thread pool, where the thread pool size is just one.&nbsp; The effect
+of this policy is that the dispatch thread acts as a single global
+semaphore, and when executing on the dispatch thread, a client or a
+service can perform arbitrarily complex operations, and can poll the
+sate of as many services as necessary without worrying about the state
+of the system changing concurrently.&nbsp; The single threading rule
+only applies to the service interfaces, and does not preclude
+multi-threading in the service implementations.&nbsp; In fact
+multi-threading is utilized more in this architecture because many
+blocking operations that would normally be performed on shared threads,
+possibly slowing the UI responsiveness, now need to be performed using
+background threads.<br>
+</p>
+<p>In summary, a restrictive threading model combined with asynchronous
+interfaces, is the DSF solution to communication performance problems
+because it allows debugger implementations to have highly complex logic
+that handles coalescing and cancelling of requests, intelligent caching
+of debugger requests, and other advanced features such as filtering and
+configurable update policies.</p>
+<h4>Services Model<br>
+</h4>
+<p class="MsoNormal"
+ style="margin-bottom: 0.0001pt; line-height: normal;"><span
+ style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;">Fortunately
+it's easier to see the connection between a
+services model and addressing modularity problems.&nbsp; <o:p></o:p></span></p>
+<p class="MsoNormal" style="line-height: normal;"><span
+ style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;">Most current
+debugger
+implementations don't make an effort to separate out different
+components that make
+up the data model and communication layers.&nbsp; It is true that UI
+components
+usually interact with clearly defined data model interfaces, and in
+case of CDT
+the data model is somewhat separated from the communication layer using
+the CDI
+interface.&nbsp; However within the CDT data model and communication
+layer
+interfaces, there are enough references between the various objects to
+make all
+of them essentially inter-dependent.&nbsp; Furthermore, in the
+implementation
+of these layers, components use internal knowledge of other
+components.&nbsp;
+This is perfectly acceptable if we assume that the debugger
+implementation is
+going to be used as a single module, and any extensions can be built on
+top of
+it.&nbsp; But, it is important that vendors be able to selectively pick
+and
+choose components which they would like to reuse "as is" and which
+components they would like to extend, modify, replace, or not use at
+all.&nbsp;
+In order to achieve that kind of modularity, a lot of design work has
+to go
+into interfaces not just between the major layers of implementation,
+but also
+between various components that make up these layers.<br>
+</span></p>
+<p class="MsoNormal" style="line-height: normal;"></p>
+<p class="MsoNormal" style="line-height: normal;"><span
+ style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;">To help build
+a modular
+architecture, DSF builds on the OSGI services framework, by providing
+additional functionality of:<o:p></o:p></span></p>
+<ul>
+  <li> organizing services into sessions,</li>
+  <li>managing start-up and shut-down processes,</li>
+  <li>managing events between services.</li>
+</ul>
+<p class="MsoNormal" style="line-height: normal;"><span
+ style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;">Additionally,
+DSF includes an
+initial draft of service interfaces designed to build a modular
+debugger
+implementation.&nbsp; These interfaces must be validated, and this can
+only be
+realistically accomplished by implementing several full-featured and
+diverse
+debuggers.&nbsp; We are seeking additional debug tool vendors from the
+community to port to these interfaces in addition to Wind River.<o:p></o:p></span></p>
+<h4>Data Model</h4>
+<p class="MsoNormal"
+ style="margin-bottom: 0.0001pt; line-height: normal;"><span
+ style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;">The problems
+of the data model are perhaps less severe than
+problems of performance and modularity, but this is an area with a lot
+of room
+for innovation.&nbsp; We are used to thinking of the debug data model
+in a
+rather rigid terms, where there is a defined hierarchy of debug
+targets,
+threads, stack frames, variables, sub-expressions, etc.&nbsp; We are
+also used
+to seeing standard debug views of threads, stack frames, locals, and
+watch.&nbsp; These expectations seem to be pretty accurately reflected
+in the
+platform debug model, on top of which all of the current Eclipse
+debuggers are
+based.&nbsp; This is a problem for two reasons:<o:p></o:p></span></p>
+<ol start="1" type="1">
+  <li class="MsoNormal" style="line-height: normal;"><span
+ style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;">The direct
+references between different types of objects prevent the debug model
+implementation from being modular.<o:p></o:p></span></li>
+  <li class="MsoNormal" style="line-height: normal;"><span
+ style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;">Extensions to
+the debug model are limited to additions in functionality of the basic
+platform objects and some additional object types.<o:p></o:p></span></li>
+</ol>
+<p class="MsoNormal"
+ style="margin-bottom: 0.0001pt; line-height: normal;"><span
+ style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;">Fortunately
+in release 3.2, the Eclipse platform introduced
+a way to circumvent the standard platform model and to drive the
+content of
+most of the standard debugger views using a completely custom data
+model and a
+set of viewer adapters.&nbsp; DSF aims to take advantage of this new
+capability
+to address the above problems, as well as to provide the additional
+benefits
+of:<o:p></o:p></span></p>
+<ol start="3" type="1">
+  <li class="MsoNormal" style="line-height: normal;"><span
+ style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;">Improving
+performance by using the DSF dispatch thread model and asynchronous
+methods.<o:p></o:p></span></li>
+  <li class="MsoNormal" style="line-height: normal;"><span
+ style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;">Giving the
+user ability to fully customize at runtime the content and layout of
+debugger views.<o:p></o:p></span></li>
+</ol>
+<p class="MsoNormal"
+ style="margin-bottom: 0.0001pt; line-height: normal;"><span
+ style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;">Points 1, 2,
+and 3 are a side effect of DSF's Threading
+Model and Services Model used in conjunction with the platform's
+flexible
+hierarchy interfaces.&nbsp; Point 4 is an innovative and exciting
+feature that
+naturally builds on top of the service model and flexible hierarchy.<span
+ style="">&nbsp; </span>In the first release of DSF to open source,
+we have not yet implemented the capability described in point 4.&nbsp;
+The
+design for this feature calls for data driven, configurable views,
+where the
+configuration data drives the content and label providers to retrieve
+appropriate information from the data model.<span style="">&nbsp;
+</span>On the service side, there needs to be a published data model
+schema and
+a query language interpreter, which will retrieve the data for clients.<span
+ style="">&nbsp; </span>We expect community discussion and design
+work to help solve this problem, and we intend to present
+implementations from
+our commercial product as one possible solution.<o:p></o:p></span></p>
+<p class="MsoNormal" style="line-height: normal;"><span
+ style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;">One final
+point is that although the
+DSF data model is fundamentally different than the platform debug model
+and the
+CDT extensions, a DSF debugger could easily be adapted to provide any
+of these
+API&#8217;s.&nbsp; This may require considerable effort, especially for
+extensive
+API&#8217;s like CDI, but is desirable and necessary to support the existing
+CDT
+community.<o:p></o:p></span></p>
+<br>
+</body>
+</html>

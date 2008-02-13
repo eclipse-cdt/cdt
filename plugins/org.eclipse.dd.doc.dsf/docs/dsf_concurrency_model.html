@@ -1,0 +1,432 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>DSF Concurrency Model</title>
+</head>
+<body>
+<h2>DSF Concurrency Model</h2>
+<h3>
+</h3>
+<p class="MsoNormal" style="line-height: normal;"><b><span
+ style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;">Version
+1.0<br>
+Pawel Piech<br>
+&copy; 2006, Wind River Systems.<span style="">&nbsp; </span>Release
+under EPL version 1.0.</span></b><b><span
+ style="font-size: 18pt; font-family: &quot;Times New Roman&quot;;"><o:p></o:p></span></b></p>
+<h3>Introduction</h3>
+Providing a solution to concurrency problems is the primary design goal
+of DSF.&nbsp; To that end DSF imposes a rather draconian
+restriction on services that use it: <span style="font-weight: bold;">1)
+All service interface methods must be called using a single designated
+dispatch thread, unless explicitly stated otherwise, 2) The dispatch
+thread should never be used to make a blocking call (a call that waits
+on I/O or a call that makes a long-running computation).&nbsp; </span>What
+the first restriction effectively means, is that the dispatch thread
+becomes a global "lock" that all DSF services in a given session
+share with each other, and which controls access to most of services'
+shared data.&nbsp; It's important to note that <span
+ style="font-weight: bold;">multi-threading is still allowed</span>
+within individual service implementation. but when crossing the service
+interface boundaries, only the dispatch thread can be used.&nbsp; The
+second restriction just ensures that the performance of the whole
+system is not killed by one service that needs to read a huge file over
+the network.&nbsp; Another way of looking at it is that the
+service implementations practice co-operative multi-threading using the
+single dispatch thread.<br>
+<br>
+There are a couple of obvious side effects that result from this rule:<br>
+<ol>
+  <li>When executing within the dispatch thread, the state of the
+services is guaranteed not to change.&nbsp; This means that
+thread-defensive programming techniques, such as making duplicates of
+lists before iterating over them, are not necessary.&nbsp; Also it's
+possible to implement much more complicated logic which polls the state
+of many objects, without the worry about dead-locks.</li>
+  <li>Whenever a blocking operation needs to be performed, it must be
+done using an asynchronous method.&nbsp; By the time the operation is
+completed, and the caller regains the dispatch thread, this caller may
+need to retest the relevant state of the system, because it could
+change completely while the asynchronous operation was executing.</li>
+</ol>
+<h3>The Mechanics</h3>
+<h4><span style="font-family: monospace;">java.util.concurrent.ExecutorService</span><br>
+</h4>
+DSF builds on the vast array of tools added in Java 5.0's
+java.util.concurrent package (see <a
+ href="http://java.sun.com/j2se/1.5.0/docs/guide/concurrency/index.html">http://java.sun.com/j2se/1.5.0/docs/guide/concurrency/index.html</a>
+for details), where the most important is the <a
+ style="font-family: monospace;"
+ href="http://java.sun.com/j2se/1.5.0/docs/api/java/util/concurrent/ExecutorService.html">ExecutorService</a>
+interface.&nbsp; <span style="font-family: monospace;">ExecutorService
+</span>is a formal interface for submitting <span
+ style="font-family: monospace;">Runnable</span> objects that will be
+executed according to executor's rules, which could be to execute the
+<span style="font-family: monospace;">Runnable </span>immediately,
+within a thread pool, using a display thread,
+etc.&nbsp; For DSF, the main rule for executors is that they have
+to use a single thread to execute the runnable and that the runnables
+be executed in the order that they were submitted.&nbsp; To give the
+DSF clients and services a method for checking whether they are
+being called on the dispatch thread, we extended the <span
+ style="font-family: monospace;">ExecutorService
+</span>interface as such:<br>
+<pre>public interface DsfExecutor extends ScheduledExecutorService<br>{<br>    /**<br>     * Checks if the thread that this method is called in is the same as the<br>     * executor's dispatch thread.<br>     * @return true if in DSF executor's dispatch thread<br>     */<br>    public boolean isInExecutorThread();<br>}<br></pre>
+<h4><a
+ href="http://java.sun.com/j2se/1.5.0/docs/api/java/util/concurrent/Future.html"><span
+ style="font-family: monospace;">java.lang.concurrent.Future</span></a>
+vs <a
+ href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.dd.dsf.doc/reference/api/org/eclipse/dd/dsf/concurrent/Done.html"><span
+ style="font-family: monospace;">org.eclipse.dd.dsf.concurrent.Done</span></a></h4>
+The <span style="font-family: monospace;">Done </span>object
+encapsulates the return value of an asynchronous call in DSF.&nbsp; It
+is actually merely a <span style="font-family: monospace;">Runnable </span>with
+an attached <span style="font-family: monospace;">org.eclipse.core.runtime.IStatus</span>
+object , but it can be extended by the services or clients to hold
+whatever additional data is needed.&nbsp;&nbsp; Typical pattern in how
+the <span style="font-family: monospace;">Done </span>object is used,
+is as follows:<br>
+<pre>Service:<br>    public class Service {<br>        void asyncMethod(Done done) {<br>            new Job() {<br>                public void run() {<br>                    // perform calculation                    <br>                    ... <br>                    done.setStatus(new Status(IStatus.ERROR, ...));<br>                    fExecutor.execute(done);<br>                }<br>            }.schedule();<br>        }<br>    }<br><br>Client:<br>    ...<br>    Service service = new Service();<br>    final String clientData = "xyz";<br>    ...<br>    service.asynMethod(new Done() {<br>        public void run() {<br>            if (getStatus().isOK()) {<br>                // Handle return data<br>                ...<br>            } else {<br>	        // Handle error<br>                ...<br>            }<br>        }<br>    }<br></pre>
+The service performs the asynchronous operation a background thread,
+but
+it can still submit the <span style="font-family: monospace;">Done </span>runnable
+with the executor.&nbsp; In other words, the <span
+ style="font-family: monospace;">Done</span> and other runnables can be
+submitted from any thread, but will always execute in the single
+dispatch thread.&nbsp; Also if the implementation of the <span
+ style="font-family: monospace;">asyncMethod()</span> is non-blocking,
+it does not need to start a job, it could just perform the operation in
+the dispatch thread.&nbsp; On the client side, care has to be taken to
+save appropriate state before the asynchronous method is called,
+because by the time the <span style="font-family: monospace;">Done </span>is
+executed, the client state may change.<br>
+<br>
+The <span style="font-family: monospace;">java.lang.concurrent</span>
+package
+doesn't already have a <span style="font-family: monospace;">Done</span>,
+because the generic concurrent
+package is geared more towards large thread pools, where clients submit
+tasks to be run in a style similar to Eclipse's Jobs, rather than using
+the single dispatch thread model of DSF.&nbsp; To this end<span
+ style="font-family: monospace;">,</span> the
+concurrent package does have an equivalent object, <a
+ style="font-family: monospace;"
+ href="http://java.sun.com/j2se/1.5.0/docs/api/java/util/concurrent/Future.html">Future</a>.&nbsp;
+<span style="font-family: monospace;">Future </span>has methods that
+allows the client to call the <span style="font-family: monospace;">get()</span>
+method, and block while waiting for a result, and for this reason it
+cannot
+be used from the dispatch thread.&nbsp; But it can be used, in a
+limited way, by clients which are running on background thread that
+still
+need to retrieve data from <span style="text-decoration: underline;">synchronous</span>
+DSF methods.&nbsp; In this case the code might look like the
+following:<br>
+<pre>Service:<br>    public class Service {<br>        int syncMethod() {<br>	    // perform calculation<br>            ...<br>            return result;<br>        }<br>    }<br><br>Client:<br>    ...<br>    DsfExecutor executor = new DsfExecutor();<br>    final Service service = new Service(executor);<br>    Future&lt;Integer&gt; future = executor.submit(new Callable&lt;Integer&gt;() {<br>        Integer call() {<br>            return service.syncMethod();<br>        }<br>    });<br>    int result = future.get();<br></pre>
+The biggest drawback to using <span style="font-family: monospace;">Future
+</span>with DSF services, is that it does not work with
+asynchronous methods.&nbsp; This is because the <a
+ href="http://java.sun.com/j2se/1.5.0/docs/api/java/util/concurrent/Callable.html#call%28%29"><span
+ style="font-family: monospace;">Callable.call()</span></a>
+implementation
+has to return a value within a single dispatch cycle.&nbsp; To get
+around this, DSF has an additional object called <span
+ style="font-family: monospace;">DsfQuery</span>, which works like a <span
+ style="font-family: monospace;">Future </span>combined with a <span
+ style="font-family: monospace;">Callable</span>, but allows the
+implementation to make multiple dispatches before setting the return
+value to the client.&nbsp; The <span style="font-family: monospace;">DsfQuery<span
+ style="font-family: monospace;"> object works as follows:<br>
+</span></span>
+<ol>
+  <li>Client creates the query object with its own implementation of <span
+ style="font-family: monospace;">DsfQuery.execute()</span>.<br>
+  </li>
+  <li>Client calls the <span style="font-family: monospace;">DsfQuery.get()</span>
+method on non-dispatch thread, and blocks.</li>
+  <li>The query is queued with the executor, and eventually the <span
+ style="font-family: monospace;">DsfQuery.execute()</span> method is
+called on the dispatch thread.</li>
+  <li>The query <span style="font-family: monospace;">DsfQuery.execute()</span>
+calls synchronous and asynchronous methods that are needed to do its
+job.</li>
+  <li>The query code calls <span style="font-family: monospace;">DsfQuery.done()</span>
+method with the result.</li>
+  <li>The <span style="font-family: monospace;">DsfQuery.get()</span>
+method un-blocks and returns the result to the client.<br>
+  </li>
+</ol>
+<h3><a
+ href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.dd.dsf.doc/reference/api/org/eclipse/dd/dsf/examples/concurrent/package-summary.html">Slow
+Data Provider Example</a></h3>
+The point of DSF concurrency can be most easily explained through
+a practical example.&nbsp; Suppose there is a viewer which needs to
+show data that originates from a remote "provider".&nbsp; There is a
+considerable delay in transmitting the data to and from the provider,
+and some delay in processing the data.&nbsp; The viewer is a
+lazy-loading table, which means that it request information only about
+items that are visible on the screen, and as the table is scrolled, new
+requests for data are generated.&nbsp; The diagram below illustrates
+the
+logical relationship between components:<br>
+<br>
+.<img alt="" title="Slow Data Provider Diagram"
+ src="dsf_concurrency_model-1.png" style="width: 636px; height: 128px;"><br>
+<p>In detail, these components look like this:<span
+ style="text-decoration: underline;"></span></p>
+<p><span style="text-decoration: underline;"></span></p>
+<span style="text-decoration: underline;">Table Viewer</span><br>
+<p>The table viewer is the standard
+<span style="font-family: monospace;">org.eclipse.jface.viewers.TableViewer</span>,
+created with <span style="font-family: monospace;">SWT.VIRTUAL</span>
+flag.&nbsp; It has an associated content
+provider, SlowDataProviderContentProvider) which handles all the
+interactions with the data provider.&nbsp; The lazy content provider
+operates in a very simple cycle:</p>
+<ol>
+  <li>Table viewer tells content provider that the input has changed by
+calling <span style="font-family: monospace;">IContentProvider.inputChanged()</span>.&nbsp;
+This means that the content provider has to query initial state of the
+data.</li>
+  <li>Next the content provider tells the viewer how many elements
+there are, by calling <span style="font-family: monospace;">TableViewer.setItemCount()</span>.</li>
+  <li>At this point, the table resizes, and it requests data values for
+items that are visible.&nbsp; So for each visible item it calls: <span
+ style="font-family: monospace;">ILazyContentProvider.updateElement()</span>.</li>
+  <li>After calculating the value, the content provider tells the table
+what the value is, by calling <span style="font-family: monospace;">TableViewer.replace().</span></li>
+  <li>If the data ever changes, the content provider tells the table to
+rerequest the data, by calling <span style="font-family: monospace;">TableViewer.clear()</span>.</li>
+</ol>
+Table viewer operates in the
+SWT display thread, which means that the content provider must switch
+from the display thread to the DSF dispatch thread, whenever it is
+called by the table viewer, as in the example below:<br>
+<pre>    public void updateElement(final int index) {<br>        assert fTableViewer != null;<br>        if (fDataProvider == null) return;<br><br>        fDataProvider.getExecutor().execute(<br>            new Runnable() { public void run() {<br>                // Must check again, in case disposed while redispatching.<br>                if (fDataProvider == null) return;<br>                <br>                queryItemData(index);<br>            }});<br>    }<br></pre>
+Likewise, when the content provider calls the table viewer, it also has
+to switch back into the display thread as in following example, when
+the content provider receives an event from the data provider, that an
+item value has changed.<br>
+<pre>    public void dataChanged(final Set&lt;Integer&gt; indexes) {<br>        // Check for dispose.<br>        if (fDataProvider == null) return;<br><br>        // Clear changed items in table viewer.<br>        if (fTableViewer != null) {<br>            final TableViewer tableViewer = fTableViewer;<br>            tableViewer.getTable().getDisplay().asyncExec(<br>                new Runnable() { public void run() {<br>                    // Check again if table wasn't disposed when <br>                    // switching to the display thread.<br>                    if (tableViewer.getTable().isDisposed()) return; // disposed<br>                    for (Integer index : indexes) {<br>                        tableViewer.clear(index);<br>                    }<br>                }});<br>        }<br>    }<br></pre>
+All of this switching back and forth between threads makes the code
+look a lot more complicated than it really is, and it takes some
+getting used to, but this is the price to be paid for multi-threading.
+Whether the participants use semaphores or the dispatch thread, the
+logic is equally complicated, and we believe that using a single
+dispatch thread, makes the synchronization very explicit and thus less
+error-prone.<br>
+<p><span style="text-decoration: underline;">Data Provider Service</span></p>
+<p>The data provider service interface, <span
+ style="font-family: monospace;">DataProvider</span>, is very similar
+to that of the lazy content provider.&nbsp; It has methods to: </p>
+<ul>
+  <li>get item count</li>
+  <li>get a value for given item</li>
+  <li>register as listener for changes in data count and data values</li>
+</ul>
+But this is a DSF interface, and all methods must be called on the
+service's dispatch thread.&nbsp; For this reason, the <span
+ style="font-family: monospace;">DataProvider </span>interface returns
+an instance of <span style="font-family: monospace;">DsfExecutor</span>,
+which must be used with the interface.<br>
+<p><span style="text-decoration: underline;">Slow Data Provider</span></p>
+<p>The data provider is actually implemented as a thread which is an
+inner class of <span style="font-family: monospace;">SlowDataProvider</span>
+service.&nbsp; The provider thread
+communicates with the service by reading Request objects from a shared
+queue, and by posting Runnable objects directly to the <span
+ style="font-family: monospace;">DsfExecutor</span> but
+with a simulated transmission delay.&nbsp; Separately, an additional
+flag is also used to control the shutdown of the provider thread.</p>
+To simulate a real back end, the data provider randomly invalidates a
+set of items and notifies the listeners to update themselves.&nbsp; It
+also periodically invalidates the whole table and forces the clients to
+requery all items.<br>
+<h4>Data and Control Flow<br>
+</h4>
+This can be described in following steps:<br>
+<ol>
+  <li>The table viewer requests data for an item at a given index (<span
+ style="font-family: monospace;">SlowDataProviderContentProvider.updateElement</span>).<br>
+  </li>
+  <li>The table viewer's content provider executes a <span
+ style="font-family: monospace;">Runnable </span>in the DSF
+dispatch thread and calls the data provider interface (<span
+ style="font-family: monospace;">SlowDataProviderContentProvider.queryItemData</span>).</li>
+  <li>Data provider service creates a Request object, and files it in a
+queue (<span style="font-family: monospace;">SlowDataProvider.getItem</span>).</li>
+  <li>Data provider thread de-queues the Request object and acts on it,
+calculating the value (<span style="font-family: monospace;">ProviderThread.processItemRequest</span>).</li>
+  <li>Data provider thread schedules the calculation result to be
+posted with DSF executor (<span style="font-family: monospace;">SlowDataProvider.java:185</span>).</li>
+  <li>The Done callback sets the result data in the table viewer (<span
+ style="font-family: monospace;">SlowDataProviderContentProvider.java:167</span>).<br>
+  </li>
+</ol>
+<h4>Running the example and full sources</h4>
+This example is implemented in the <span
+ style="font-family: monospace;">org.eclipse.dd.dsf.examples</span>
+plugin, in the <span style="font-family: monospace;">org.eclipse.dd.dsf.examples.concurrent</span>
+package.&nbsp; <br>
+<br>
+To run the example:<br>
+<ol>
+  <li>Build the test plugin (along with the <span
+ style="font-family: monospace;">org.eclipse.dsdp.DSF plugin</span>)
+and launch the PDE.&nbsp; <br>
+  </li>
+  <li>Make sure to add the <span style="font-style: italic;">DSF
+Tests</span> action set to your current perspective.</li>
+  <li>From the main menu, select <span style="font-style: italic;">DSF
+Tests -&gt; Slow Data Provider</span>.</li>
+  <li>A dialog will open and after a delay it will populate with data.</li>
+  <li>Scroll and resize dialog and observe the update behavior.</li>
+</ol>
+<h4>Initial Notes<br>
+</h4>
+This example is supposed to be representative of a typical embedded
+debugger design problem.&nbsp; Embedded debuggers are often slow in
+retrieving and processing data, and can sometimes be accessed through a
+relatively slow data channel, such as serial port or JTAG
+connection.&nbsp; But as such, this basic example presents a couple
+of major usability problems<br>
+<ol>
+  <li>The data provider service interface mirrors the table's content
+provider interface, in that it has a method to retrieve a single piece
+of data at a time.&nbsp; The result of this is visible to the user as
+lines of data are filled in one-by-one in the table.&nbsp; However,
+most debugger back ends are in fact capable of retrieving data in
+batches and are much more efficient at it than retrieving data items
+one-by-one.</li>
+  <li>When scrolling quickly through the table, the requests are
+generated by the table viewer for items which are quickly scrolled out
+of view, but the service still queues them up and calculates them in
+the order they were received.&nbsp; As a result, it takes a very long
+time for the table to be populated with data at the location where the
+user is looking.&nbsp; <br>
+  </li>
+</ol>
+These two problems are very common in creating UI for embedded
+debugging, and there are common patterns which can be used to solve
+these problems in DSF services. <br>
+<h3>Coalescing</h3>
+Coalescing many single-item requests into fewer multi-item requests is
+the surest way to improve performance in communication with a remote
+debugger, although it's not necessarily the simplest.&nbsp; There are
+two basic patterns in which coalescing is achieved:<br>
+<ol>
+  <li>The back end provides an interface for retrieving data in large
+chunks.&nbsp; So when the service implementation receives a request for
+a single item, it retrieves a whole chunk of data, returns the single
+item, and stores the rest of the data in a local cache.</li>
+  <li>The back end providers an interface for retrieving data in
+variable size chunks.&nbsp; When the service implementation receives a
+request for a single item, it buffers the request, and waits for other
+requests to come in.&nbsp; After a delay, the service clears the buffer
+and submits a request for the combined items to the data provider.</li>
+</ol>
+In practice, a combination of the two patterns is needed, but for
+purpose of an example, we implemented the second pattern in the
+"Input-Coalescing Slow Data Provider" (<span
+ style="font-family: monospace;">InputCoalescingSlowDataProvider.java</span>).&nbsp;
+<br>
+<p><span style="text-decoration: underline;">Input Buffer</span></p>
+<p>The main feature of this pattern is a buffer for holding the
+requests before sending them to the data provider.&nbsp; In this
+example the user requests are buffered in two arrays: <span
+ style="font-family: monospace;">fGetItemIndexesBuffer</span> and <span
+ style="font-family: monospace;">fGetItemDonesBuffer</span>.&nbsp; The
+<span style="font-family: monospace;">DataProvider.getItem()</span>
+implementation is changed as follows:</p>
+<pre>    public void getItem(final int index, final GetDataDone&lt;String&gt; done) {<br>        // Schedule a buffer-servicing call, if one is needed.<br>        if (fGetItemIndexesBuffer.isEmpty()) {<br>            fExecutor.schedule(<br>                new Runnable() { public void run() {<br>                    fileBufferedRequests();<br>                }},<br>                COALESCING_DELAY_TIME, <br>                TimeUnit.MILLISECONDS);<br>        }<br>        <br>        // Add the call data to the buffer.  <br>        // Note: it doesn't matter that the items were added to the buffer <br>        // after the buffer-servicing request was scheduled.  This is because<br>        // the buffers are guaranteed not to be modified until this dispatch<br>        // cycle is over.<br>        fGetItemIndexesBuffer.add(index);<br>        fGetItemDonesBuffer.add(done);<br>    } <br><br></pre>
+And method that services the buffer looks like this:<br>
+<pre>    public void fileBufferedRequests() { <br>        // Remove a number of getItem() calls from the buffer, and combine them<br>        // into a request.<br>        int numToCoalesce = Math.min(fGetItemIndexesBuffer.size(), COALESCING_COUNT_LIMIT);<br>        final ItemRequest request = new ItemRequest(new Integer[numToCoalesce], new GetDataDone[numToCoalesce]); <br>        for (int i = 0; i &lt; numToCoalesce; i++) {<br>            request.fIndexes[i] = fGetItemIndexesBuffer.remove(0);<br>            request.fDones[i] = fGetItemDonesBuffer.remove(0);<br>        }<br><br>        // Queue the coalesced request, with the appropriate transmission delay.<br>        fQueue.add(request);<br>        <br>        // If there are still calls left in the buffer, execute another <br>        // buffer-servicing call, but without any delay.<br>        if (!fGetItemIndexesBuffer.isEmpty()) {<br>            fExecutor.execute(new Runnable() { public void run() {<br>                fileBufferedRequests();<br>            }});<br>        }<br>    }<br></pre>
+The most interesting feature of this implementation is the fact that
+there are no semaphores anywhere to control access to the input
+buffers.&nbsp; Even though the buffers are serviced with a delay and
+multiple clients can call the <span style="font-family: monospace;">getItem()</span>
+method, the use of a single
+dispatch thread prevents any race conditions that could corrupt the
+buffer data.&nbsp; In real-world implementations, the buffers and
+caches that need to be used are far more sophisticated with much more
+complicated logic, and this is where managing access to them using the
+dispatch thread is ever more important.<br>
+<h3>Cancellability</h3>
+<p><span style="text-decoration: underline;">Table Viewer</span></p>
+<p><span style="text-decoration: underline;"></span></p>
+Unlike coalescing, which can be implemented entirely within the
+service, cancellability requires that the client be modified as well
+to take advantage of this capability.&nbsp; For the table viewer
+content provider, this means that additional features have to be
+added.&nbsp; In <span style="font-family: monospace;">CancellingSlowDataProviderContentProvider.java</span>
+<span style="font-family: monospace;">ILazyContentProvider.updateElement()</span>
+was changes as follows:<br>
+<pre>    public void updateElement(final int index) {<br>        assert fTableViewer != null;<br>        if (fDataProvider == null) return;<br>        <br>        // Calculate the visible index range.<br>        final int topIdx = fTableViewer.getTable().getTopIndex();<br>        final int botIdx = topIdx + getVisibleItemCount(topIdx);<br>        <br>        fCancelCallsPending.incrementAndGet();<br>        fDataProvider.getExecutor().execute(<br>            new Runnable() { public void run() {<br>                // Must check again, in case disposed while redispatching.<br>                if (fDataProvider == null || fTableViewer.getTable().isDisposed()) return;<br>                if (index &gt;= topIdx &amp;&amp; index &lt;= botIdx) {<br>                    queryItemData(index);<br>                }<br>                cancelStaleRequests(topIdx, botIdx);<br>            }});<br>    }<br></pre>
+Now the client keeps track of the requests it made to the service in <span
+ style="font-family: monospace;">fItemDataDones</span>, and above, <span
+ style="font-family: monospace;">cancelStaleRequests()</span> iterates
+through all the outstanding requests and cancels the ones that are no
+longer in the visible range.<br>
+<p><span style="text-decoration: underline;">Data Provider Service<span
+ style="text-decoration: underline;"></span></span></p>
+<p><span style="text-decoration: underline;"><span
+ style="text-decoration: underline;"></span></span></p>
+<p>The data provider implementation
+(<span style="font-family: monospace;">CancellableInputCoalescingSlowDataProvider.java</span>),
+builds on top of the
+coalescing data provider.&nbsp; To make the canceling feature useful,
+the data provider service has to limit the size of the request
+queue.&nbsp; This is because in this example which simulates
+communication with a target and once requests are filed into the
+request
+queue, they cannot be canceled, just like a client can't cancel
+request once it sends them over a socket.&nbsp; So instead, if a flood
+of <span style="font-family: monospace;">getItem()</span>
+calls comes in, the service has to hold most of them in the coalescing
+buffer in case the client decides to cancel them.&nbsp; Therefore the
+<span style="font-family: monospace;">fileBufferedRequests()</span>
+method includes a simple check before servicing
+the buffer, and if the request queue is full, the buffer servicing call
+is delayed.</p>
+<pre>        if (fQueue.size() &gt;= REQUEST_QUEUE_SIZE_LIMIT) {<br>            if (fGetItemIndexesBuffer.isEmpty()) {<br>                fExecutor.schedule(<br>                    new Runnable() { public void run() {<br>                        fileBufferedRequests();<br>                    }},<br>                    REQUEST_BUFFER_FULL_RETRY_DELAY, <br>                    TimeUnit.MILLISECONDS);<br>            }<br>            return;<br>        } <br></pre>
+Beyond this change, the only other significant change is that before
+the requests are queued, they are checked for cancellation.<br>
+<h3>Final Notes<br>
+</h3>
+The example given here is fairly simplistic, and chances are that the
+same example could be implemented using semaphores and free threading
+with perhaps fewer lines of code.&nbsp; But what we have found is that
+as the problem gets bigger, the amount of
+features in the data provider increases, the state of the
+communication protocol gets more complicated, and the number of modules
+needed in the service layer increases, using free threading and
+semaphores does not safely scale.&nbsp; Using a dispatch thread for
+synchronization certainly doesn't make the inherent problems of the
+system less complicated, but it does help eliminate the race conditions
+and deadlocks from the overall system.<br>
+<p>Coalescing and Cancellability are both optimizations.&nbsp; Neither
+of these optimizations affected the original interface of the service,
+and one of them only needed a service-side modification.&nbsp; But as
+with all optimizations, it is often better to first make sure that the
+whole system is working correctly and then add optimizations where they
+can make the biggest difference in user experience.&nbsp; </p>
+<p>The above examples of optimizations can take many forms, and as
+mentioned with coalescing, caching data that is retrieved from the data
+provider is the most common form of data coalescing.&nbsp; For
+cancellation, many services in DSF build on top of other services,
+which means that even a low-level service can cause a higher
+level service to retrieve data, while another event might cause it to
+cancel those requests.&nbsp; The perfect example of this is a Variables
+service, which is responsible for calculating the value of expressions
+shown in the Variables view.&nbsp; The Variables service reacts to the
+Run Control service, which issues a suspended event and then requests a
+set of variables to be evaluated by the debugger back end.&nbsp; But as
+soon as a resumed event is issued by Run Control, the Variables service
+needs to cancel&nbsp; the pending evaluation requests.<br>
+</p>
+<br>
+<br>
+</body>
+</html>

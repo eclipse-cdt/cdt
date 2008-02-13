@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!-- ===================================================== -->
+<!-- Declare the documentation for the DSF Docs            -->
+<!-- We will declare only one infoset (book)               -->
+<!-- ===================================================== -->
+
+<plugin>
+
+
+<!-- ============================================================================= -->
+<!-- Define primary TOC                                                            -->
+<!-- ============================================================================= -->
+
+   <extension point="org.eclipse.help.toc"> 
+       <toc file="toc.xml" primary="true"/>
+       <index path="index/"/>
+   </extension>
+
+<!-- ============================================================================= -->
+<!-- Define Javadoc locations                                                      -->
+<!-- ============================================================================= -->
+   <extension point="org.eclipse.pde.core.javadoc">
+       <javadoc path="reference/api">
+           <plugin id="org.eclipse.dd.dsf" />
+           <plugin id="org.eclipse.dd.dsf.ui" />
+           <plugin id="org.eclipse.dd.dsf.examples" />
+       </javadoc>
+   </extension>
+   
+</plugin>

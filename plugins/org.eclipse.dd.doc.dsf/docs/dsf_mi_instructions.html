@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>GDB/MI Debugger on top of DSF - Instructions</title>
+</head>
+<body>
+<h2>GDB/MI Debugger implementation based on DSF</h2>
+<br>
+<hr style="width: 100%; height: 2px;">
+<h3>Buiding and Running Instructions<br>
+</h3>
+<h4>To build:</h4>
+<ol>
+  <li>Install the latest milestone of Eclipse 3.3 SDK</li>
+  <li>Install the latest milestone of CDT 4.0</li>
+  <li>Install and configure gdb (cygwin on windows)</li>
+  <li>Check out following projects from<a
+ href="http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.dd.dsf/plugins/?cvsroot=DSDP_Project">
+    <span class="moz-txt-slash"><span class="moz-txt-tag">/</span>cvsroot/dsdp/org.eclipse.dd.dsf/plugins
+    </span></a></li>
+  <ul>
+    <li>org.eclipse.dd.dsf </li>
+    <li>org.eclipse.dd.dsf.ui </li>
+    <li>org.eclipse.dd.dsf.debug </li>
+    <li>org.eclipse.dd.dsf.debug.ui </li>    
+    <li>org.eclipse.dd.dsf.mi.core </li>
+    <li>org.eclipse.dd.dsf.mi.ui.</li>
+  </ul>
+</ol>
+<h4>To run:</h4>
+<ol>
+  <li>Create a new "Managed make build project" called "hello".</li>
+  <li>Create a simple hello.c source file:</li>
+</ol>
+<div style="margin-left: 40px;">
+<pre>#include &lt;stdio.h&gt;<br>int main(void) {<br>    printf("Hello world");<br>}<br></pre>
+</div>
+<ol start="3">
+  <li>Build the project.<br>
+  </li>
+  <li>Create a new "DSF C/C++ Local Application"&nbsp; launch
+configuration (one with the pink icon) and set the executable and entry
+point to "main"<br>
+  </li>
+  <li>Launch and step through.</li>
+  <li>If the "source not found" page appears, the a path mapping needs
+to be created.&nbsp; This is an issue with latest cygwin gdb.<br>
+  </li>
+  <ol>
+    <li>Click on the "Edit source lookup" button in the editor, or
+right click on the launch node in Debug View and select "Edit source
+lookup"</li>
+    <li>Click on the "Add..." button</li>
+    <li>Select "Path Mapping" and click OK.<br>
+    </li>
+    <li>Select the new "Path Mapping" source container and click the
+"Edit..." button.</li>
+    <li>Once again, click the "Add..." button to create a mapping.</li>
+    <li>Enter the path to map from.&nbsp; Look at the stack frame label
+in Debug view, if the filename is something like
+"/cygdrive/c/workspace/hello/hello.c", enter the path to the first real
+directory "/cygdrive/c/workspace".</li>
+    <li>Enter the correct path to the directory entered above, in the
+file system.&nbsp; In example above, it would be "C:\workspace".</li>
+    <li>Click OK three times and you'll be back in Kansas.... ehm Debug
+view that is.</li>
+    <li>If the source doesn't show up right away, try stepping once.</li>
+  </ol>
+</ol>
+<hr style="width: 100%; height: 2px;">
+<h3>Supported Platforms<br>
+</h3>
+Currently only Windows with <a
+ href="http://www.cygwin.com/mirrors.html">cygwin</a> GDB is supported.
+<br>
+<br>
+<hr style="width: 100%; height: 2px;">
+<h3>Current Features<br>
+</h3>
+<ul>
+  <li>Launching</li>
+  <ul>
+    <li>The "DSF C/C++Local Application" is the standard CDT launch
+configuration minus some of the features.&nbsp; <br>
+    </li>
+    <li>What is NOT working here is <br>
+    </li>
+    <ul>
+      <li>Debugger tab: the selection of debugger back ends (gdb/mi,
+Cygwin gdb debugger, etc.), tThe implementation is currently hard-wired
+for Cygwin,</li>
+      <li>Debugger tab: Debugger Options section</li>
+    </ul>
+  </ul>
+  <li>Debug view</li>
+  <ul>
+    <li>Single thread debugging only.</li>
+    <li>Terminating<br>
+    </li>
+    <li>Stepping <br>
+    </li>
+    <li>Resume/Suspend<br>
+    </li>
+  </ul>
+  <li>Console support<br>
+  </li>
+  <ul>
+    <li>GDB process output</li>
+    <li>NO user process console support<br>
+    </li>
+  </ul>
+  <li>Breakpoints</li>
+  <ul>
+    <li>Basic CDT breakpoint support implemented</li>
+    <ul>
+      <li>no filtering support, <br>
+      </li>
+      <li>no advanced options (hardware, temporary, etc)</li>
+      <li>no watchpoints <br>
+      </li>
+    </ul>
+  </ul>
+  <li>Variables</li>
+  <ul>
+    <li>not yet<br>
+    </li>
+  </ul>
+</ul>
+<br>
+<hr style="width: 100%; height: 2px;">Updated Aug 25th, 2006<br>
+<br>
+</body>
+</html>

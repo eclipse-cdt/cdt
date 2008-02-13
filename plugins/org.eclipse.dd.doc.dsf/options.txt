@@ -1,0 +1,35 @@
+-quiet
+-encoding "iso-8859-1"
+-charset "iso-8859-1"
+-sourcepath "../org.eclipse.dd.dsf/src
+;../org.eclipse.dd.dsf.ui/src
+;../org.eclipse.dd.dsf.examples/src
+-d reference/api
+-classpath @rt@
+-breakiterator
+-tag generated:X
+-tag lastgen:X
+-tag model:X
+-tag ordered:X
+-use
+-splitIndex
+-windowtitle "DSF API Specification"
+-doctitle "DSF API Specification"
+-header "<b>DSF</b>"
+-bottom "Copyright (c) Wind River Systems, Inc. and others 2000, 2006. All Rights Reserved."
+-group "DSF Core Packages" "org.eclipse.dd.dsf"
+-group "DSF UI Packages" "org.eclipse.dd.dsf.ui"
+-group "DSF Examples Packages" "org.eclipse.dd.dsf.examples"
+-link http://java.sun.com/j2se/1.5/docs/api
+-link http://bundles.osgi.org/javadoc/r4
+
+org.eclipse.dd.dsf
+org.eclipse.dd.dsf.concurrent
+org.eclipse.dd.dsf.debug
+org.eclipse.dd.dsf.model
+org.eclipse.dd.dsf.service
+org.eclipse.dd.dsf.ui
+org.eclipse.dd.dsf.ui.model
+org.eclipse.dd.dsf.examples
+org.eclipse.dd.dsf.examples.concurrent
+org.eclipse.dd.dsf.examples.timers

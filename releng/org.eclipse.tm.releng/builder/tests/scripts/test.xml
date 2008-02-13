@@ -63,10 +63,23 @@
 		<copy file="${eclipse-home}/${report}.xml" tofile="${results}/xml/${report}_${platform}.xml" />
 	</target>
 
-	<target name="rse" description="Runs the test.xml of the tests plugin">
+	<target name="rse" description="Runs the test.xml of the rse.tests plugin">
 		<antcall target="runtests">
 			<param name="testPlugin" value="${org.eclipse.rse.tests}" />
 			<param name="report" value="org.eclipse.rse.tests" />
+		</antcall>
+
+		<!-- test if chkpii script exists before proceeding -->
+		<property name="common.releng.dir" value="${basedir}/../../../org.eclipse.modeling.common.releng"/>
+		<property name="chkpii.xml" value="${common.releng.dir}/scripts/chkpii.xml"/>
+		<available file="${chkpii.xml}" property="chkpiiXMLAvailable"/>
+		<antcall target="runChkpii"/>
+	</target>
+
+	<target name="terminal" description="Runs the test.xml of the tm.terminal.test plugin">
+		<antcall target="runtests">
+			<param name="testPlugin" value="${org.eclipse.tm.terminal.test}" />
+			<param name="report" value="org.eclipse.tm.terminal.test" />
 		</antcall>
 
 		<!-- test if chkpii script exists before proceeding -->
@@ -84,6 +97,7 @@
 
 	<target name="all">
 		<antcall target="rse" />
+		<antcall target="terminal" />
 		<antcall target="genHtml" />
 	</target>
 	

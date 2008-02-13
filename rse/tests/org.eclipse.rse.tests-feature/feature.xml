@@ -44,6 +44,7 @@
       <!-- it could invalidate the configuration for Platform users:       --> 
       <!-- bug 151797)                                                     -->
       <import plugin="org.junit" version="3.8.1" match="compatible"/>
+      <import plugin="org.apache.ant"/>
    </requires>
 
    <plugin
@@ -57,7 +58,8 @@
          download-size="0"
          install-size="0"
          version="0.0.0"
-         fragment="true"/>
+         fragment="true"
+         unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.tests"

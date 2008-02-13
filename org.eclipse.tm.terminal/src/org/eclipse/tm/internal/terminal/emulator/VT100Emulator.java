@@ -28,7 +28,6 @@ import java.nio.charset.Charset;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.tm.internal.terminal.control.impl.ITerminalControlForText;
-import org.eclipse.tm.internal.terminal.control.impl.TerminalControl;
 import org.eclipse.tm.internal.terminal.control.impl.TerminalPlugin;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;

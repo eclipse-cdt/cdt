@@ -27,7 +27,7 @@
 			<!--<fileset dir="${downloadsDir}" includes="${emfFile},${eclipseFile},${wtpFile},${orbitFile}"/>-->
 			<fileset dir="${downloadsDir}" includes="${emfFile},${eclipseFile},${orbitFile}"/>
 			<!--TODO: Main runtime is RSE, therefore need to copy TM-terminal and others to test as well-->
-			<fileset dir="${testDir}/../.." includes="TM-terminal-*.zip"/>
+			<fileset dir="${executionDir}/../../.." includes="TM-terminal-*.zip"/>
 		</copy>
 		<property name="shell" value="relengbuildgtk.sh"/>
 	

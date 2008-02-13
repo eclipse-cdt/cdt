@@ -181,11 +181,20 @@ public class StyleMap {
 		for (char c = ' '+128; c <= '~'+128; c++) {
 			measureChar(gc, c,false);
 		}
+		if(fProportional) {
+			fCharSize.x-=3;
+		}
 		for (int i = 0; i < fOffsets.length; i++) {
 			fOffsets[i]=(fCharSize.x-fOffsets[i])/2;
 		}
 		gc.dispose ();
 	}
+	/**
+	 * @param gc
+	 * @param c
+	 * @param updateMax
+	 * @return true if the the font is proportional
+	 */
 	private boolean measureChar(GC gc, char c, boolean updateMax) {
 		boolean proportional=false;
 		Point ext=gc.textExtent(String.valueOf(c));

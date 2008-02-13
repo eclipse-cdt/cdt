@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [206883] Serial Terminal leaks Jobs
  * Martin Oberhuber (Wind River) - [208145] Terminal prints garbage after quick disconnect/reconnect
  * Martin Oberhuber (Wind River) - [207785] NPE when trying to send char while no longer connected
+ * Ruslan Sychev - [217675] NPE or SWTException when closing Terminal View while connection establishing
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
@@ -321,6 +322,10 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 				continue;
 
 			fDisplay.sleep();
+		}
+		if(getCtlText().isDisposed()) {
+			disconnectTerminal();
+			return;
 		}
 		if (!getMsg().equals("")) //$NON-NLS-1$
 		{

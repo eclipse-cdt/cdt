@@ -3,6 +3,7 @@ feature@org.eclipse.tm.terminal.sdk=v20080212,:pserver:anonymous:none@dev.eclips
 feature@org.eclipse.tm.terminal.serial=v20080212,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.serial-feature
 feature@org.eclipse.tm.terminal.ssh=v20080212,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.ssh-feature
 feature@org.eclipse.tm.terminal.telnet=v20080212,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.telnet-feature
+feature@org.eclipse.tm.terminal.test=v20080212,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.test-feature
 feature@org.eclipse.tm.terminal.view=v20080212,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.view-feature
 plugin@org.eclipse.tm.terminal=v20080212,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal
 plugin@org.eclipse.tm.terminal.serial=v20080212,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.serial

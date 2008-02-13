@@ -16,6 +16,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -134,25 +135,13 @@ public class AST2SpecBaseTest extends TestCase {
 		
 		// resolve all bindings
 		if (checkBindings) {
-			if ( lang == ParserLanguage.CPP ) {
-				CPPNameResolver res = new CPPNameResolver();
-		        tu.accept( res );
-				if (res.problemBindings.size() != expectedProblemBindings )
-					throw new ParserException("Expected " + expectedProblemBindings + " problems, encountered " + res.problemBindings.size() ); //$NON-NLS-1$ //$NON-NLS-2$
-				if (problems != null) {
-					for (int i = 0; i < problems.length; i++) {
-						assertEquals(problems[i], res.problemBindings.get(i));
-					}
-				}
-			} else if (lang == ParserLanguage.C ) {
-				CNameResolver res = new CNameResolver();
-		        tu.accept( res );
-				if (res.problemBindings.size() != expectedProblemBindings )
-					throw new ParserException("Expected " + expectedProblemBindings + " problems, encountered " + res.problemBindings.size() ); //$NON-NLS-1$ //$NON-NLS-2$
-				if (problems != null) {
-					for (int i = 0; i < problems.length; i++) {
-						assertEquals(problems[i], res.problemBindings.get(i));
-					}
+			NameResolver res = new NameResolver();
+	        tu.accept( res );
+			if (res.problemBindings.size() != expectedProblemBindings )
+				throw new ParserException("Expected " + expectedProblemBindings + " problems, encountered " + res.problemBindings.size() ); //$NON-NLS-1$ //$NON-NLS-2$
+			if (problems != null) {
+				for (int i = 0; i < problems.length; i++) {
+					assertEquals(problems[i], res.problemBindings.get(i));
 				}
 			}
 		}
@@ -182,39 +171,20 @@ public class AST2SpecBaseTest extends TestCase {
         return tu;
 	}
 	
-	static protected class CNameResolver extends CASTVisitor {
-		{
-			shouldVisitNames = true;
-		}
-		public ArrayList<String> problemBindings=new ArrayList<String>();
-		public int numNullBindings=0;
-		public List nameList = new ArrayList();
-		public int visit( IASTName name ){
-			nameList.add( name );
-			IBinding binding = name.resolveBinding();
-			if (binding instanceof IProblemBinding)
-				problemBindings.add(name.toString());
-			if (binding == null)
-				numNullBindings++;
-			return PROCESS_CONTINUE;
-		}
-		public IASTName getName( int idx ){
-			if( idx < 0 || idx >= nameList.size() )
-				return null;
-			return (IASTName) nameList.get( idx );
-		}
-		public int size() { return nameList.size(); } 
-	}
 	
-	static protected class CPPNameResolver extends CPPASTVisitor {
+	
+	static protected class NameResolver extends ASTVisitor {
 		{
 			shouldVisitNames = true;
 		}
-		public ArrayList<String> problemBindings=new ArrayList<String>();
-		public int numNullBindings=0;
-		public List nameList = new ArrayList();
-		public int visit( IASTName name ){
-			nameList.add( name );
+		
+		public List<IASTName> nameList = new ArrayList<IASTName>();
+		public List<String> problemBindings = new ArrayList<String>();
+		public int numNullBindings = 0;
+		
+		
+		public int visit(IASTName name) {
+			nameList.add(name);
 			IBinding binding = name.resolveBinding();
 			if (binding instanceof IProblemBinding)
 				problemBindings.add(name.toString());
@@ -222,12 +192,16 @@ public class AST2SpecBaseTest extends TestCase {
 				numNullBindings++;
 			return PROCESS_CONTINUE;
 		}
-		public IASTName getName( int idx ){
-			if( idx < 0 || idx >= nameList.size() )
+		
+		public IASTName getName(int idx) {
+			if(idx < 0 || idx >= nameList.size())
 				return null;
-			return (IASTName) nameList.get( idx );
+			return nameList.get(idx);
 		}
-		public int size() { return nameList.size(); } 
+		
+		public int size() { 
+			return nameList.size(); 
+		}
 	}
 	
 }

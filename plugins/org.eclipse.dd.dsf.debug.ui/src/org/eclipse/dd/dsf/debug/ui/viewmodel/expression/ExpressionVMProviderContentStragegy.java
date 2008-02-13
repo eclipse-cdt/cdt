@@ -12,7 +12,7 @@ package org.eclipse.dd.dsf.debug.ui.viewmodel.expression;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.dd.dsf.debug.ui.DsfDebugUIPlugin;
+import org.eclipse.dd.dsf.debug.internal.ui.DsfDebugUIPlugin;
 import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.dd.dsf.ui.viewmodel.DefaultVMContentProviderStrategy;

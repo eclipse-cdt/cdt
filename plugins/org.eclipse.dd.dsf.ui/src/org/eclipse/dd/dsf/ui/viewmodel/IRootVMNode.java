@@ -17,7 +17,6 @@ import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
  * for a hierarchy.  The root node of a layout hierarchy has to implement this
  * interface.
  */
-@SuppressWarnings("restriction")
 public interface IRootVMNode extends IVMNode{
     
     /**

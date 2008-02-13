@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
-import org.eclipse.dd.dsf.ui.DsfUIPlugin;
+import org.eclipse.dd.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.debug.core.IRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;

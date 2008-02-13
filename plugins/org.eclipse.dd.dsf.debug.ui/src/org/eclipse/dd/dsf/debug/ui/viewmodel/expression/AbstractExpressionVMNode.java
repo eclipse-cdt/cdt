@@ -18,13 +18,13 @@ import org.eclipse.dd.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.MultiRequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
-import org.eclipse.dd.dsf.debug.ui.DsfDebugUIPlugin;
+import org.eclipse.dd.dsf.debug.internal.ui.DsfDebugUIPlugin;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.dd.dsf.ui.viewmodel.VMChildrenUpdate;
-import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMNode;
-import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMProvider;
+import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMNode;
+import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 

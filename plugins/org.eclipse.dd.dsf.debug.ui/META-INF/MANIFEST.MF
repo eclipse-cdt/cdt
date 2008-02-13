@@ -4,7 +4,7 @@ Bundle-Name: Debug Services Framework Debug UI
 Bundle-Vendor: Eclipse.org
 Bundle-SymbolicName: org.eclipse.dd.dsf.debug.ui; singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: org.eclipse.dd.dsf.debug.ui.DsfDebugUIPlugin
+Bundle-Activator: org.eclipse.dd.dsf.debug.internal.ui.DsfDebugUIPlugin
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
@@ -19,7 +19,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.dd.dsf.debug,
  org.eclipse.cdt.core,
  org.eclipse.cdt.debug.ui
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
 Export-Package: 
  org.eclipse.dd.dsf.debug.ui,
  org.eclipse.dd.dsf.debug.ui.actions,

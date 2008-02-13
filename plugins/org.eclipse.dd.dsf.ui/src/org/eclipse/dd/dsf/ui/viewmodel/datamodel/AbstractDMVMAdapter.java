@@ -8,7 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.dd.dsf.ui.viewmodel.dm;
+package org.eclipse.dd.dsf.ui.viewmodel.datamodel;
 
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.eclipse.dd.dsf.service.DsfSession;

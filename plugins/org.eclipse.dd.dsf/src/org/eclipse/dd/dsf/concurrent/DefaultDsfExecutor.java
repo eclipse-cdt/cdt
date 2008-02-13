@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.dd.dsf.DsfPlugin;
+import org.eclipse.dd.dsf.internal.DsfPlugin;
 
 /**
  * Default implementation of a DSF executor interfaces, based on the 

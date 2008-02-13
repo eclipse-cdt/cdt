@@ -19,7 +19,7 @@ import org.eclipse.dd.dsf.debug.ui.viewmodel.IDebugVMConstants;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.expression.WatchExpressionCellModifier;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.numberformat.IFormattedValuePreferenceStore;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
-import org.eclipse.dd.dsf.ui.viewmodel.dm.IDMVMContext;
+import org.eclipse.dd.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.update.AbstractCachingVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.update.UserEditEvent;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;

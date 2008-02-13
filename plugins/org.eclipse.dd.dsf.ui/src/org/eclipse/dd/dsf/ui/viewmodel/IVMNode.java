@@ -14,7 +14,7 @@ import org.eclipse.dd.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.service.IDsfService;
-import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMProvider;
+import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;

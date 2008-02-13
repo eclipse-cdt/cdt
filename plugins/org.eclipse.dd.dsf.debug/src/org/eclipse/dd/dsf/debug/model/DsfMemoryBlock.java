@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.Query;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
-import org.eclipse.dd.dsf.debug.DsfDebugPlugin;
+import org.eclipse.dd.dsf.debug.internal.DsfDebugPlugin;
 import org.eclipse.dd.dsf.debug.service.IMemory;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IMemory.IMemoryChangedEvent;

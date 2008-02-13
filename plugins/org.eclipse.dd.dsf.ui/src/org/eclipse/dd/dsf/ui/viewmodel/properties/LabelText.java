@@ -15,7 +15,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.dd.dsf.ui.DsfUIPlugin;
+import org.eclipse.dd.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 
 /**

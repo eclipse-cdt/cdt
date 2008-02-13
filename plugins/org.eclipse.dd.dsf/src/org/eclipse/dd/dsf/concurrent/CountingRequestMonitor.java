@@ -14,7 +14,7 @@ import java.util.concurrent.Executor;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.dd.dsf.DsfPlugin;
+import org.eclipse.dd.dsf.internal.DsfPlugin;
 
 /**
  * Utility class to collect multiple request monitor results of commands

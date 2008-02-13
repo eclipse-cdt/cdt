@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
-import org.eclipse.dd.dsf.debug.DsfDebugPlugin;
+import org.eclipse.dd.dsf.debug.internal.DsfDebugPlugin;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IResumedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.ISuspendedDMEvent;

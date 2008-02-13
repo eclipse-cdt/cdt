@@ -110,7 +110,7 @@
 	<extension 
 	    point="org.eclipse.debug.ui.detailPaneFactories">
         <detailFactories
-             class="org.eclipse.dd.dsf.debug.ui.viewmodel.numberformat.detail.NumberFormatDetailPaneFactory"
+             class="org.eclipse.dd.dsf.debug.internal.ui.viewmodel.numberformat.detail.NumberFormatDetailPaneFactory"
              id="org.eclipse.dd.dsf.debug.ui.viewmodel.detailPaneFactory">
 			<enablement>
 		        <with variable="selection">

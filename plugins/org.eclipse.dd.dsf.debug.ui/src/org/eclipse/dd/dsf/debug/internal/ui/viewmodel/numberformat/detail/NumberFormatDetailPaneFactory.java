@@ -8,7 +8,7 @@
  * Contributors:
  *     Randy Rohrbach (Wind River Systems, Inc.) - initial implementation
  *******************************************************************************/
-package org.eclipse.dd.dsf.debug.ui.viewmodel.numberformat.detail;
+package org.eclipse.dd.dsf.debug.internal.ui.viewmodel.numberformat.detail;
 
 import java.util.HashSet;
 import java.util.Set;

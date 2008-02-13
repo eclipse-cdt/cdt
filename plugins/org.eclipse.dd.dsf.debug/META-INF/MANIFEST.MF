@@ -4,14 +4,14 @@ Bundle-Name: Debug Services Framework Debug
 Bundle-Vendor: Eclipse.org
 Bundle-SymbolicName: org.eclipse.dd.dsf.debug;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: org.eclipse.dd.dsf.debug.DsfDebugPlugin
+Bundle-Activator: org.eclipse.dd.dsf.debug.internal.DsfDebugPlugin
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.debug.core,
  org.eclipse.dd.dsf,
  org.eclipse.cdt.core,
  org.eclipse.cdt.debug.core
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.dd.dsf.debug.model,
  org.eclipse.dd.dsf.debug.service,
  org.eclipse.dd.dsf.debug.service.command,

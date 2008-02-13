@@ -8,50 +8,44 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.dd.dsf.debug;
+package org.eclipse.dd.dsf.internal.ui;
 
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Plugin;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 /**
  * The activator class controls the plug-in life cycle
  */
-public class DsfDebugPlugin extends Plugin {
+public class DsfUIPlugin extends AbstractUIPlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.dd.dsf.debug.debug.service"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "org.eclipse.dd.dsf.ui"; //$NON-NLS-1$
 
 	// The shared instance
-	private static DsfDebugPlugin fgPlugin;
-
-    // BundleContext of this plugin
+	private static DsfUIPlugin fgPlugin;
+	
     private static BundleContext fgBundleContext; 
-
-    // Debugging flag
-    public static boolean DEBUG = false;
 
 	/**
 	 * The constructor
 	 */
-	public DsfDebugPlugin() {
+	public DsfUIPlugin() {
 		fgPlugin = this;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugins#start(org.osgi.framework.BundleContext)
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
 	 */
 	@Override
     public void start(BundleContext context) throws Exception {
         fgBundleContext = context;
 		super.start(context);
-        DEBUG = "true".equals(Platform.getDebugOption("org.eclipse.dd.dsf.debug.debug.service/debug"));  //$NON-NLS-1$//$NON-NLS-2$
-    }
+	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
 	 */
 	@Override
     public void stop(BundleContext context) throws Exception {
@@ -65,17 +59,12 @@ public class DsfDebugPlugin extends Plugin {
 	 *
 	 * @return the shared instance
 	 */
-	public static DsfDebugPlugin getDefault() {
+	public static DsfUIPlugin getDefault() {
 		return fgPlugin;
 	}
 
     public static BundleContext getBundleContext() {
         return fgBundleContext;
     }
-    
-    public static void debug(String message) {
-        if (DEBUG) {
-            System.out.println(message);
-        }
-    }
+
 }

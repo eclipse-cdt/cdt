@@ -1,6 +1,6 @@
 package org.eclipse.dd.dsf.debug.ui.viewmodel;
 
-import org.eclipse.dd.dsf.debug.ui.DsfDebugUIPlugin;
+import org.eclipse.dd.dsf.debug.internal.ui.DsfDebugUIPlugin;
 
 public interface IDebugVMConstants {
     /**

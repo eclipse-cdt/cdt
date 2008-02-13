@@ -1,4 +1,4 @@
-package org.eclipse.dd.dsf.debug.ui.viewmodel.numberformat.detail;
+package org.eclipse.dd.dsf.debug.internal.ui.viewmodel.numberformat.detail;
 
 import org.eclipse.osgi.util.NLS;
 

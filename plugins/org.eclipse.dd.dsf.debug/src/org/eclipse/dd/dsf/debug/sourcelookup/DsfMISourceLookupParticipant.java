@@ -28,7 +28,7 @@ import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 import org.eclipse.dd.dsf.concurrent.Query;
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
-import org.eclipse.dd.dsf.debug.DsfDebugPlugin;
+import org.eclipse.dd.dsf.debug.internal.DsfDebugPlugin;
 import org.eclipse.dd.dsf.debug.service.IStack;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMData;

@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Randy Rohrbach (Wind River Systems, Inc.) - extended implementation
  *******************************************************************************/
-package org.eclipse.dd.dsf.debug.ui.viewmodel.numberformat.detail;
+package org.eclipse.dd.dsf.debug.internal.ui.viewmodel.numberformat.detail;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
+import org.eclipse.dd.dsf.debug.internal.ui.DsfDebugUIPlugin;
 import org.eclipse.dd.dsf.debug.service.IExpressions;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues;
 import org.eclipse.dd.dsf.debug.service.IRegisters;
@@ -36,9 +37,8 @@ import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMData;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.IFormattedDataDMContext;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IBitFieldDMContext;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterDMContext;
-import org.eclipse.dd.dsf.debug.ui.DsfDebugUIPlugin;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
-import org.eclipse.dd.dsf.ui.viewmodel.dm.IDMVMContext;
+import org.eclipse.dd.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IExpression;

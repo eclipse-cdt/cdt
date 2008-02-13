@@ -12,16 +12,16 @@ package org.eclipse.dd.dsf.debug.ui.actions;
 
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 import org.eclipse.dd.dsf.concurrent.Immutable;
+import org.eclipse.dd.dsf.debug.internal.ui.DsfDebugUIPlugin;
 import org.eclipse.dd.dsf.debug.service.IRunControl.StepType;
-import org.eclipse.dd.dsf.debug.ui.DsfDebugUIPlugin;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.debug.core.commands.IDebugCommandRequest;
 import org.eclipse.debug.core.commands.IEnabledStateRequest;
-import org.eclipse.debug.core.commands.IStepIntoHandler;
+import org.eclipse.debug.core.commands.IStepReturnHandler;
 
 @Immutable
-public class DsfStepReturnCommand implements IStepIntoHandler {
+public class DsfStepReturnCommand implements IStepReturnHandler {
 
     private final DsfExecutor fExecutor;
     private final DsfServicesTracker fTracker;

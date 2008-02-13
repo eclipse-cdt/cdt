@@ -14,8 +14,8 @@ import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMAdapter;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMNode;
 import org.eclipse.dd.dsf.ui.viewmodel.IRootVMNode;
-import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMProvider;
-import org.eclipse.dd.dsf.ui.viewmodel.dm.RootDMVMNode;
+import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
+import org.eclipse.dd.dsf.ui.viewmodel.datamodel.RootDMVMNode;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 
 /**

@@ -8,7 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.dd.dsf.ui.viewmodel.dm;
+package org.eclipse.dd.dsf.ui.viewmodel.datamodel;
 
 import java.util.ArrayList;
 import java.util.List;

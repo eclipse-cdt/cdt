@@ -8,7 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.dd.dsf;
+package org.eclipse.dd.dsf.debug.internal;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
@@ -17,13 +17,13 @@ import org.osgi.framework.BundleContext;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class DsfPlugin extends Plugin {
+public class DsfDebugPlugin extends Plugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.dd.dsf"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "org.eclipse.dd.dsf.debug.debug.service"; //$NON-NLS-1$
 
 	// The shared instance
-	private static DsfPlugin fgPlugin;
+	private static DsfDebugPlugin fgPlugin;
 
     // BundleContext of this plugin
     private static BundleContext fgBundleContext; 
@@ -34,7 +34,7 @@ public class DsfPlugin extends Plugin {
 	/**
 	 * The constructor
 	 */
-	public DsfPlugin() {
+	public DsfDebugPlugin() {
 		fgPlugin = this;
 	}
 
@@ -46,7 +46,7 @@ public class DsfPlugin extends Plugin {
     public void start(BundleContext context) throws Exception {
         fgBundleContext = context;
 		super.start(context);
-        DEBUG = "true".equals(Platform.getDebugOption("org.eclipse.dd.dsf/debug"));  //$NON-NLS-1$//$NON-NLS-2$
+        DEBUG = "true".equals(Platform.getDebugOption("org.eclipse.dd.dsf.debug.debug.service/debug"));  //$NON-NLS-1$//$NON-NLS-2$
     }
 
 	/*
@@ -55,6 +55,7 @@ public class DsfPlugin extends Plugin {
 	 */
 	@Override
     public void stop(BundleContext context) throws Exception {
+		fgPlugin = null;
         fgBundleContext = null;
 		super.stop(context);
 	}
@@ -64,7 +65,7 @@ public class DsfPlugin extends Plugin {
 	 *
 	 * @return the shared instance
 	 */
-	public static DsfPlugin getDefault() {
+	public static DsfDebugPlugin getDefault() {
 		return fgPlugin;
 	}
 
@@ -77,24 +78,4 @@ public class DsfPlugin extends Plugin {
             System.out.println(message);
         }
     }
-    
-    public static String getDebugTime() {
-        StringBuilder traceBuilder = new StringBuilder();
-        
-        // Record the time
-        long time = System.currentTimeMillis();
-        long seconds = (time / 1000) % 1000;
-        if (seconds < 100) traceBuilder.append('0');
-        if (seconds < 10) traceBuilder.append('0');
-        traceBuilder.append(seconds);
-        traceBuilder.append(',');
-        long millis = time % 1000;
-        if (millis < 100) traceBuilder.append('0');
-        if (millis < 10) traceBuilder.append('0');
-        traceBuilder.append(millis);
-        return traceBuilder.toString();
-    }
-
-
-
 }

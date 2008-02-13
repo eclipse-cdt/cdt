@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.dd.dsf.DsfPlugin;
+import org.eclipse.dd.dsf.internal.DsfPlugin;
 
 /**
  * Convenience class for implementing a series of commands that need to be 

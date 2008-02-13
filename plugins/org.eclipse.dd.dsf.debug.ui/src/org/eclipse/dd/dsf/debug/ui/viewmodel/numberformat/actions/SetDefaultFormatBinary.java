@@ -8,16 +8,16 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.dd.dsf.debug.ui.viewmodel.numberformat;
+package org.eclipse.dd.dsf.debug.ui.viewmodel.numberformat.actions;
 
 import org.eclipse.dd.dsf.debug.service.IFormattedValues;
+import org.eclipse.dd.dsf.debug.ui.viewmodel.numberformat.AbstractSetFormatStyle;
 
 @SuppressWarnings("restriction")
-public class SetDefaultFormatOctal extends AbstractSetFormatStyle {
+public class SetDefaultFormatBinary extends AbstractSetFormatStyle {
 
     @Override
     protected String getFormatStyle() {
-        return IFormattedValues.OCTAL_FORMAT;
+        return IFormattedValues.BINARY_FORMAT;
     }
 }
-

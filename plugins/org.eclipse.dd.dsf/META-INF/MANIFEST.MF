@@ -4,10 +4,10 @@ Bundle-Name: Debug Services Framework Core
 Bundle-Vendor: Eclipse.org
 Bundle-SymbolicName: org.eclipse.dd.dsf;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: org.eclipse.dd.dsf.DsfPlugin
+Bundle-Activator: org.eclipse.dd.dsf.internal.DsfPlugin
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.dd.dsf.concurrent,
  org.eclipse.dd.dsf.datamodel,
  org.eclipse.dd.dsf.service

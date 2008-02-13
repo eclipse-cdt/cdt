@@ -16,7 +16,7 @@ import java.util.concurrent.RejectedExecutionException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.dd.dsf.DsfPlugin;
+import org.eclipse.dd.dsf.internal.DsfPlugin;
 import org.eclipse.dd.dsf.service.IDsfService;
 
 /**

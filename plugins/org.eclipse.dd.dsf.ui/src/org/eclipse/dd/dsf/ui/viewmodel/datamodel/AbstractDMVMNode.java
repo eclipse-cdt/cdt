@@ -8,7 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.dd.dsf.ui.viewmodel.dm;
+package org.eclipse.dd.dsf.ui.viewmodel.datamodel;
 
 import java.util.concurrent.RejectedExecutionException;
 
@@ -21,10 +21,10 @@ import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
+import org.eclipse.dd.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.service.IDsfService;
-import org.eclipse.dd.dsf.ui.DsfUIPlugin;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMNode;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;

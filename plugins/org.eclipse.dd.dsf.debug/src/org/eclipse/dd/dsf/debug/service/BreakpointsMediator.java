@@ -34,7 +34,7 @@ import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
-import org.eclipse.dd.dsf.debug.DsfDebugPlugin;
+import org.eclipse.dd.dsf.debug.internal.DsfDebugPlugin;
 import org.eclipse.dd.dsf.debug.service.IBreakpoints.IBreakpointDMContext;
 import org.eclipse.dd.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.dd.dsf.service.AbstractDsfService;

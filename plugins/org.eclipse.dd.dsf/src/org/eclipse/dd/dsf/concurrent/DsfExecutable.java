@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.dd.dsf.DsfPlugin;
+import org.eclipse.dd.dsf.internal.DsfPlugin;
 
 /**
  * Base class for DSF-instrumented alternative to the Runnable/Callable interfaces.

@@ -13,7 +13,7 @@ package org.eclipse.dd.dsf.concurrent;
 import java.util.concurrent.Executor;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.dd.dsf.DsfPlugin;
+import org.eclipse.dd.dsf.internal.DsfPlugin;
 
 /**
  * Executor that executes a runnable immediately as it is submitted.  This 

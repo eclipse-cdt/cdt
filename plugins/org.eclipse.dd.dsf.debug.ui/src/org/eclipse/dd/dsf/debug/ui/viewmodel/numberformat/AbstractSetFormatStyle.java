@@ -12,7 +12,7 @@ package org.eclipse.dd.dsf.debug.ui.viewmodel.numberformat;
 
 import org.eclipse.dd.dsf.debug.service.IFormattedValues;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.IDebugVMConstants;
-import org.eclipse.dd.dsf.ui.viewmodel.dm.IDMVMContext;
+import org.eclipse.dd.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;

@@ -12,7 +12,10 @@ package org.eclipse.cdt.managedbuilder.ui.properties;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICMultiItemsHolder;
 import org.eclipse.cdt.core.settings.model.ICMultiResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
@@ -36,15 +39,14 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Text;
 
 
 public class BuildStepsTab extends AbstractCBuildPropertyTab {
 	private Combo combo;
-	private Text preCmd;
-	private Text preDes;
-	private Text postCmd;
-	private Text postDes;
+	private Combo preCmd;
+	private Combo preDes;
+	private Combo postCmd;
+	private Combo postDes;
 	private ITool tool;
 	private IConfiguration config;
 	private ICResourceDescription cfgdescr;
@@ -69,6 +71,12 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 	private static final String RCBS_OVERRIDE = LABEL + ".applicability.rule.override";	//$NON-NLS-1$
 	private static final String RCBS_DISABLE = LABEL + ".applicability.rule.disable";	//$NON-NLS-1$
 
+	private enum FIELD {PRECMD, PREANN, PSTCMD, PSTANN}
+	private Set<String> set1 = new TreeSet<String>();
+	private Set<String> set2 = new TreeSet<String>();
+	private Set<String> set3 = new TreeSet<String>();
+	private Set<String> set4 = new TreeSet<String>();
+	
 	private static final String[] rcbsApplicabilityRules = {
 		new String(UIMessages.getString(RCBS_OVERRIDE)),
 //		new String(ManagedBuilderUIMessages.getResourceString(RCBS_BEFORE)),
@@ -93,7 +101,7 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 	private void createForProject() {
 		Group g1 = setupGroup (usercomp, Messages.getString("BuildStepsTab.2"), 1, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
 		setupLabel(g1, label1, 1, GridData.BEGINNING);
-		preCmd = setupText(g1, 1, GridData.FILL_HORIZONTAL);
+		preCmd = setCombo(g1, FIELD.PRECMD, set1);
 		preCmd.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				if (canModify && 
@@ -102,7 +110,7 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 			}});
 
 		setupLabel(g1, label2, 1, GridData.BEGINNING);
-		preDes = setupText(g1, 1, GridData.FILL_HORIZONTAL);
+		preDes = setCombo(g1, FIELD.PREANN, set2);
 		preDes.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				if (canModify && 
@@ -112,7 +120,7 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 
 		Group g2 = setupGroup (usercomp, Messages.getString("BuildStepsTab.3"), 1, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
 		setupLabel(g2, label1, 1, GridData.BEGINNING);
-		postCmd = setupText(g2, 1, GridData.FILL_HORIZONTAL);
+		postCmd = setCombo(g2, FIELD.PSTCMD, set3);
 		postCmd.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				if (canModify && 
@@ -121,7 +129,7 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 			}});
 
 		setupLabel(g2, label2, 1, GridData.BEGINNING);
-		postDes = setupText(g2, 1, GridData.FILL_HORIZONTAL);
+		postDes = setCombo(g2, FIELD.PSTANN, set4);
 		postDes.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				if (canModify && 
@@ -145,12 +153,9 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 			}});
 		
 		setupLabel(g1, Messages.getString("BuildStepsTab.5"), 1, GridData.BEGINNING);		 //$NON-NLS-1$
-		preCmd = setupText(g1, 1, GridData.FILL_HORIZONTAL);
+		preCmd = setCombo(g1, FIELD.PRECMD, set1);
 		preCmd.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-			//	if (page.isForProject())
-			//		getCfg().setPrebuildStep(preCmd.getText());
-			//	else 
 				if (canModify && tool != null) {
 					IInputType[] ein = tool.getInputTypes();
 					if (ein != null && ein.length > 0) {
@@ -163,12 +168,9 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 			}});
 
 		setupLabel(g1, Messages.getString("BuildStepsTab.6"), 1, GridData.BEGINNING); //$NON-NLS-1$
-		preDes = setupText(g1, 1, GridData.FILL_HORIZONTAL);
+		preDes = setCombo(g1, FIELD.PREANN, set2);
 		preDes.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-//				if (page.isForProject())
-//					getCfg().setPreannouncebuildStep(preDes.getText());
-//				else {
 				if (canModify && tool != null) {
 					IOutputType[] out = tool.getOutputTypes();
 					if (valid(out))
@@ -177,23 +179,17 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 			}});
 
 		setupLabel(g1, label1, 1, GridData.BEGINNING);
-		postCmd = setupText(g1, 1, GridData.FILL_HORIZONTAL);
+		postCmd = setCombo(g1, FIELD.PSTCMD, set3);
 		postCmd.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-//				if (page.isForProject())
-//					getCfg().setPostbuildStep(postCmd.getText());
-//				else 
 				if (canModify && tool != null) 
 					tool.setToolCommand(postCmd.getText());
 			}});
 
 		setupLabel(g1, label2, 1, GridData.BEGINNING);
-		postDes = setupText(g1, 1, GridData.FILL_HORIZONTAL);
+		postDes = setCombo(g1, FIELD.PSTANN, set4);
 		postDes.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-//				if (page.isForProject())
-//					getCfg().setPostannouncebuildStep(postDes.getText());
-//				else 
 				if (canModify && tool != null)
 					tool.setAnnouncement(postDes.getText());
 			}});
@@ -207,7 +203,13 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 	}
 		
 	private void update() {
-		canModify = false; // avoid changing 
+		canModify = false; // avoid changing
+		
+		updateCombo(preCmd);
+		updateCombo(preDes);
+		updateCombo(postCmd);
+		updateCombo(postDes);
+		
 		if (page.isForProject()) {
 			preCmd.setText(config.getPrebuildStep());
 			preDes.setText(config.getPreannouncebuildStep());
@@ -219,20 +221,8 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 			tool = getRcbsTool(rcfg);
 			
 			if(tool != null){
-				String s = EMPTY_STR;
-				IInputType[] tmp = tool.getInputTypes();
-				if (tmp != null && tmp.length > 0) {
-					IAdditionalInput[] add = tmp[0].getAdditionalInputs();
-					if (add != null && add.length > 0)
-						s = createList(add[0].getPaths());
-				}
-				preCmd.setText(s);
-				s = EMPTY_STR;
-				IOutputType[] tmp2 = tool.getOutputTypes();
-				if (tmp2 != null && tmp2.length > 0) {
-					s = createList(tmp2[0].getOutputNames());
-				}
-				preDes.setText(s);
+				preCmd.setText(getInputTypes(tool));
+				preDes.setText(getOutputNames(tool));
 				postCmd.setText(tool.getToolCommand());
 				postDes.setText(tool.getAnnouncement());
 			} else {
@@ -244,6 +234,26 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 		}
 		canModify = true; 
 	}
+
+	private String getInputTypes(ITool t) {
+		String s = EMPTY_STR;
+		IInputType[] tmp = t.getInputTypes();
+		if (tmp != null && tmp.length > 0) {
+			IAdditionalInput[] add = tmp[0].getAdditionalInputs();
+			if (add != null && add.length > 0)
+				s = createList(add[0].getPaths());
+		}
+		return s;
+	}
+
+	private String getOutputNames(ITool t) {
+		String s = EMPTY_STR;
+		IOutputType[] tmp2 = t.getOutputTypes();
+		if (tmp2 != null && tmp2.length > 0)
+			s = createList(tmp2[0].getOutputNames());
+		return s;
+	}
+
 	
 	private ITool getRcbsTool(IFileInfo rcConfig){
 		ITool rcbsTools[] = getRcbsTools(rcConfig);
@@ -407,4 +417,56 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 		update();
 	}
 	protected void updateButtons() {} // Do nothing. No buttons to update.
+	
+	private Combo setCombo(Composite c, FIELD field, Set<String> set) {
+		Combo combo = new Combo(c, SWT.BORDER);
+		setupControl(combo, 1, GridData.FILL_HORIZONTAL);
+
+		combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		combo.setData(ENUM, field);
+		combo.setData(SSET, set);
+		updateCombo(combo);
+		return combo;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void updateCombo(Combo combo) {
+		FIELD field = (FIELD)combo.getData(ENUM);
+		Set<String> set   = (Set<String>)combo.getData(SSET);
+		if (field == null || set == null)
+			return;
+		combo.removeAll();
+		boolean prj = page.isForProject();
+		IConfiguration c = null;
+		ITool t = null;
+		if (prj || tool != null) {
+			for (ICConfigurationDescription cf : page.getCfgsEditable()) {
+				if (prj) {
+					c = getCfg(cf);
+				} else {
+					ICResourceDescription r = cf.getResourceDescription(cfgdescr.getPath(), false);
+					t = getRcbsTool((IFileInfo)getResCfg(r));
+				}
+				String s = null;
+				switch (field) {
+				case PRECMD:
+					s =  prj ? c.getPrebuildStep() : getInputTypes(t);
+					break;
+				case PREANN:
+					s = prj ? c.getPreannouncebuildStep() : getOutputNames(t);
+					break;
+				case PSTCMD:
+					s = prj ? c.getPostbuildStep() : t.getToolCommand();
+					break;
+				case PSTANN:
+					s = prj ? c.getPostannouncebuildStep() : t.getAnnouncement();
+					break;
+				}
+				if (s != null && s.trim().length() > 0)
+					set.add(s.trim());
+			}
+		}
+		if (set.size() > 0) 
+			combo.setItems(set.toArray(new String[set.size()]));
+	}
 }

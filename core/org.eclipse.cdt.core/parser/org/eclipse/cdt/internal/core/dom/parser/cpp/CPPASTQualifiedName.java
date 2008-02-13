@@ -48,7 +48,7 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 		// The full qualified name resolves to the same thing as the last name
 		removeNullNames();
 		IASTName lastName = getLastName();
-		return lastName != null ? lastName.resolveBinding() : null;
+		return lastName == null ? null : lastName.resolveBinding();
 	}
 
 	public IASTCompletionContext getCompletionContext() {
@@ -63,10 +63,9 @@ public class CPPASTQualifiedName extends CPPASTNode implements
     	return null;
 	}
 
+	@Override
 	public String toString() {
-		if (signature == null)
-			return ""; //$NON-NLS-1$
-		return signature;
+		return (signature == null) ? "" : signature; //$NON-NLS-1$
 	}
 
 	public void addName(IASTName name) {
@@ -83,7 +82,7 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 
 	private IASTName[] names = null;
 	private int namesPos=-1;
-	private boolean value;
+	private boolean isFullyQualified;
 	private String signature;
 
 
@@ -103,7 +102,7 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 	
 	public char[] toCharArray() {
 		if (names == null)
-			return "".toCharArray(); //$NON-NLS-1$
+			return new char[0];
 		removeNullNames();
 
 		// count first
@@ -132,19 +131,20 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 	}
 
 	public boolean isFullyQualified() {
-		return value;
+		return isFullyQualified;
 	}
 
-	public void setFullyQualified(boolean value) {
-		this.value = value;
+	public void setFullyQualified(boolean isFullyQualified) {
+		this.isFullyQualified = isFullyQualified;
 	}
 
 
-	public void setValue(String string) {
-		this.signature = string;
+	public void setSignature(String signature) {
+		this.signature = signature;
 
 	}
 
+	@Override
 	public boolean accept(ASTVisitor action) {
 		if (action.shouldVisitNames) {
 			switch (action.visit(this)) {
@@ -317,10 +317,8 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 	}
 	
 	private boolean nameMatches(char[] potential, char[] name, boolean isPrefix) {
-		if (isPrefix) {
+		if (isPrefix)
 			return CharArrayUtils.equals(potential, 0, name.length, name, true);
-		} else {
-			return CharArrayUtils.equals(potential, name);
-		}
+		return CharArrayUtils.equals(potential, name);
 	}
 }

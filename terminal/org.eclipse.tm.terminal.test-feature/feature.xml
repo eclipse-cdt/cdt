@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.tm.terminal.tests"
+      label="%featureName"
+      version="2.0.0.qualifier"
+      provider-name="%providerName">
+
+   <description>
+      %description
+   </description>
+
+   <copyright>
+      %copyright
+   </copyright>
+
+   <license url="%licenseURL">
+      %license
+   </license>
+
+   <url>
+      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/dsdp/tm/updates/3.0"/>
+      <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/dsdp/tm/updates/3.0"/>
+   </url>
+
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.tm.terminal" version="2.0.0" match="compatible"/>
+      <import plugin="org.eclipse.tm.terminal.view" version="2.0.0" match="compatible"/>
+   </requires>
+
+   <plugin
+         id="org.eclipse.tm.terminal.test"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.rse.tests.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+</feature>

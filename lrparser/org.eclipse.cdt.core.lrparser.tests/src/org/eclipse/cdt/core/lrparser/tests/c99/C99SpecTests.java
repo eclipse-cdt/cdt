@@ -15,6 +15,8 @@ import junit.framework.AssertionFailedError;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.lrparser.BaseExtensibleLanguage;
 import org.eclipse.cdt.core.dom.lrparser.c99.C99Language;
+import org.eclipse.cdt.core.dom.lrparser.cpp.ISOCPPLanguage;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.tests.ast2.AST2CSpecTest;
 import org.eclipse.cdt.internal.core.parser.ParserException;
@@ -25,24 +27,24 @@ public class C99SpecTests extends AST2CSpecTest {
 	public C99SpecTests(String name) { super(name); }
 
 	
-	/**
-	 * Only parses it as C actually
-	 * @throws ParserException 
-	 */
+	@Override
 	protected void parseCandCPP( String code, boolean checkBindings, int expectedProblemBindings ) throws ParserException {
-		parse(code, ParserLanguage.C,   checkBindings, expectedProblemBindings);
+		//parse(code, ParserLanguage.C,   checkBindings, expectedProblemBindings);
 		parse(code, ParserLanguage.CPP, checkBindings, expectedProblemBindings);
 	}
 		
+	@Override
 	protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean checkBindings, int expectedProblemBindings ) throws ParserException {
-		if(lang == ParserLanguage.C)
-			return ParseHelper.parse(code, getLanguage(), true, checkBindings, expectedProblemBindings );
-		else
-			return super.parse(code, lang, checkBindings, expectedProblemBindings);
+		ILanguage language = lang.isCPP() ? getCPPLanguage() : getCLanguage();
+		return ParseHelper.parse(code, language, true, checkBindings, expectedProblemBindings );
     }
 	
-	protected BaseExtensibleLanguage getLanguage() {
+	protected BaseExtensibleLanguage getCLanguage() {
 		return C99Language.getDefault();
+	}
+	
+	protected BaseExtensibleLanguage getCPPLanguage() {
+		return ISOCPPLanguage.getDefault();
 	}
 
 	//Assignment statements cannot exists outside of a function body

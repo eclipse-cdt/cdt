@@ -32,6 +32,8 @@ public final class CollectionUtils {
 	/**
 	 * Returns an iterator that iterates backwards over the given list.
 	 * The remove() method is not implemented and will throw UnsupportedOperationException.
+	 * The returned iterator does not support the remove() method.
+	 * 
 	 * @throws NullPointerException if list is null
 	 */
 	public static <T> Iterator<T> reverseIterator(final List<T> list) {
@@ -93,7 +95,7 @@ public final class CollectionUtils {
 	 * @throws NullPointerException if source or pattern is null
 	 */
 	public static boolean matchTokens(List<IToken> source, Integer ... pattern) {
-		if(source.size() != pattern.length) // throws NPE if either param is null
+		if(source.size() != pattern.length) // throws NPE if either parameter is null
 			return false;
 		
 		for(int i = 0, n = pattern.length; i < n; i++) {
@@ -107,13 +109,14 @@ public final class CollectionUtils {
 	/**
 	 * Finds the first object in the heterogeneous list that is an instance of 
 	 * the given class, removes it from the list, and returns it.
+	 * If there is not object in the list of the given type the list is left
+	 * unmodified and null is returned.
 	 * 
 	 * @throws NullPointerException if list or clazz is null
 	 * @throws UnsupportedOperationException if the list's Iterator does not support the remove() method
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T findFirstAndRemove(List<Object> list, Class<T> clazz) {
-		// There's a name somewhere on the stack, find it
 		for(Iterator<Object> iter = list.iterator(); iter.hasNext();) {
 			Object o = iter.next();
 			if(clazz.isInstance(o)) {

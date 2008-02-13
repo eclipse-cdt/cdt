@@ -51,6 +51,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTPointer;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
@@ -73,6 +74,7 @@ import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99NoCastExpressionParser;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
+import org.eclipse.cdt.internal.core.dom.parser.c.CASTAmbiguity;
 
 
 /**
@@ -118,9 +120,6 @@ public abstract class BuildASTParserAction {
 	private final IASTNodeFactory nodeFactory;
 	
 	
-	protected static final ASTVisitor EMPTY_VISITOR = new ASTVisitor() {
-		{ shouldVisitStatements = true; }
-	};
 	
     
 	
@@ -324,11 +323,33 @@ public abstract class BuildASTParserAction {
             setOffsetAndLength(tu, 0, offset(d) + length(d));
         } 
         
-        // resolve ambiguities
-        tu.accept(EMPTY_VISITOR);
+        resolveAmbiguityNodes();
 
         if(TRACE_AST_STACK) System.out.println(astStack);
 	}
+
+	
+	/**
+	 * Removes ambiguity nodes from the AST by resolving them.
+	 * The ambiguity nodes resolve themselves when visited for the first time.
+	 * All ambiguities must be resolved before the AST is returned.
+	 * 
+	 * @see CPPASTAmbiguity.accept()
+	 * @see CASTAmbiguity.accept()
+	 * 
+	 * TODO Ambiguity resolution may be avoided in the case that no
+	 * ambiguity nodes were created.
+	 */
+	private void resolveAmbiguityNodes() {
+		tu.accept(EMPTY_VISITOR);
+	}
+	
+	/**
+	 * When applied to the AST causes ambiguity nodes to be resolved.
+	 */
+	protected static final ASTVisitor EMPTY_VISITOR = new ASTVisitor() {
+		{ shouldVisitStatements = true; }
+	};
 	
 	
 	
@@ -338,9 +359,7 @@ public abstract class BuildASTParserAction {
   	public void consumeIdentifierName() {
   		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
   		
-  		IToken token = parser.getRightIToken();
-  		IASTName name = createName(token);
-  		astStack.push(name);
+  		astStack.push(createName(parser.getRightIToken()));
   		
   		if(TRACE_AST_STACK) System.out.println(astStack);
   	}
@@ -814,7 +833,7 @@ public abstract class BuildASTParserAction {
 			decl = nodeFactory.newDeclarator(nodeFactory.newName());
 		
 		for(Object pointer : astStack.closeScope())
-			decl.addPointerOperator((ICASTPointer)pointer);
+			decl.addPointerOperator((IASTPointer)pointer);
 		
 		setOffsetAndLength(decl);
 		astStack.push(decl);
@@ -911,7 +930,7 @@ public abstract class BuildASTParserAction {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		
 		List<Object> declarators = (hasDeclaratorList) ? astStack.closeScope() : Collections.emptyList();
-		ICASTDeclSpecifier declSpecifier = (ICASTDeclSpecifier) astStack.pop(); // may be null
+		IASTDeclSpecifier declSpecifier = (IASTDeclSpecifier) astStack.pop(); // may be null
 		
 		IASTSimpleDeclaration declaration = nodeFactory.newSimpleDeclaration(declSpecifier);
 		

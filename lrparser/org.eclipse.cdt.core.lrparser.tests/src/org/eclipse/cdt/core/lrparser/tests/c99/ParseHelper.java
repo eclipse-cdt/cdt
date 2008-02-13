@@ -19,9 +19,10 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
-import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
+import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.lrparser.BaseExtensibleLanguage;
 import org.eclipse.cdt.core.model.AbstractLanguage;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ParserUtil;
@@ -38,42 +39,48 @@ public class ParseHelper {
 	
 	static int testsRun = 0;
 	
-	private static class C99NameResolver extends ASTVisitor {
+	private static class NameResolver extends CPPASTVisitor {
 		{
 			shouldVisitNames = true;
 		}
-		public int numProblemBindings=0;
-		public int numNullBindings=0;
+		public int numProblemBindings = 0;
+		public int numNullBindings = 0;
 		
+		@Override
 		public int visit( IASTName name ){
+			System.out.println("Visit Name: '" + name.toString() + "'");
 			IBinding binding = name.resolveBinding();
-			if (binding instanceof IProblemBinding)
+			if (binding instanceof IProblemBinding) {
 				numProblemBindings++;
-			if (binding == null)
+				System.out.println("Problem Binding: " + name);
+			}
+			if (binding == null) {
 				numNullBindings++;
+				System.out.println("Null Binding: " + name);
+			}
 			return PROCESS_CONTINUE;
 		}
 	}
 	
 	
 
-	public static IASTTranslationUnit parse(char[] code, BaseExtensibleLanguage lang, boolean expectNoProblems, boolean checkBindings, int expectedProblemBindings) {
+	public static IASTTranslationUnit parse(char[] code, ILanguage lang, boolean expectNoProblems, boolean checkBindings, int expectedProblemBindings) {
 		CodeReader codeReader = new CodeReader(code);
 		return parse(codeReader, lang, new ScannerInfo(), null, expectNoProblems, checkBindings, expectedProblemBindings);
 	}
 	
-	public static IASTTranslationUnit parse(String code, BaseExtensibleLanguage lang, boolean expectNoProblems, boolean checkBindings, int expectedProblemBindings) {
+	public static IASTTranslationUnit parse(String code, ILanguage lang, boolean expectNoProblems, boolean checkBindings, int expectedProblemBindings) {
 		return parse(code.toCharArray(), lang, expectNoProblems, checkBindings, expectedProblemBindings);
 	}
 	
 	
-	public static IASTTranslationUnit parse(String code, BaseExtensibleLanguage lang, boolean expectNoProblems) {
+	public static IASTTranslationUnit parse(String code, ILanguage lang, boolean expectNoProblems) {
 		return parse(code, lang, expectNoProblems, false, 0);
 	}
 
 
 
-	public static IASTTranslationUnit parse(CodeReader codeReader, BaseExtensibleLanguage language, IScannerInfo scanInfo, 
+	public static IASTTranslationUnit parse(CodeReader codeReader, ILanguage language, IScannerInfo scanInfo, 
 			                                ICodeReaderFactory fileCreator, boolean expectNoProblems, boolean checkBindings, int expectedProblemBindings) {
 		testsRun++;
 		
@@ -100,7 +107,7 @@ public class ParseHelper {
         // resolve all bindings
 		if (checkBindings) {
 
-			C99NameResolver res = new C99NameResolver();
+			NameResolver res = new NameResolver();
 	        tu.accept( res );
 			if (res.numProblemBindings != expectedProblemBindings )
 				throw new AssertionFailedError("Expected " + expectedProblemBindings + " problem(s), encountered " + res.numProblemBindings ); //$NON-NLS-1$ //$NON-NLS-2$

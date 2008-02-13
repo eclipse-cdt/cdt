@@ -103,15 +103,13 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 		
 		System.out.println();
 		System.out.println("********************************************************");
+		System.out.println("Parsing");
+		System.out.println("Options: " + options);
 		System.out.println("GPP AST:");
 		DebugUtil.printAST(gtu);
 		System.out.println();
 		
-		
-		
-		//IParseResult parseResult = parse(reader, scanInfo, fileCreator, index, null, null);
-		//IASTTranslationUnit tu = parseResult.getTranslationUnit();
-		
+
 		// TODO temporary
 		IScannerExtensionConfiguration config = new GCCScannerExtensionConfiguration();
 		
@@ -138,6 +136,7 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 			IScannerInfo scanInfo, ICodeReaderFactory fileCreator,
 			IIndex index, IParserLogService log) throws CoreException {
 		
+		System.out.println("Second Method");
 		return getASTTranslationUnit(reader, scanInfo, fileCreator, index, 0, log);
 	}
 

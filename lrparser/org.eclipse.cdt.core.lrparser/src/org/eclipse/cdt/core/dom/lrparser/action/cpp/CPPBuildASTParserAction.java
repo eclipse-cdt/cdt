@@ -88,11 +88,11 @@ import org.eclipse.cdt.core.dom.lrparser.util.DebugUtil;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionDeclarator;
 
 /**
- * Semantic actions that build the AST during the parse. These are the actions
- * that are specific to the C++ parser.
+ * Semantic actions that build the AST during the parse. 
+ * These are the actions that are specific to the C++ parser, the superclass
+ * contains actions that can be shared with the C99 parser.
  * 
  * @author Mike Kucera
- *
  */
 public class CPPBuildASTParserAction extends BuildASTParserAction {
 
@@ -633,6 +633,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	public void consumeNestedNameSpecifierEmpty() {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		
+		// can't use Collections.EMPTY_LIST because we need a list thats mutable
 		astStack.push(new LinkedList<IASTName>());
 		
 		if(TRACE_AST_STACK) System.out.println(astStack);
@@ -676,7 +677,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	public void consumeQualifiedId(boolean hasTemplateKeyword) {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 
-		ICPPASTQualifiedName qualifiedName = subRuleQualifiedName(hasTemplateKeyword);
+		IASTName qualifiedName = subRuleQualifiedName(hasTemplateKeyword);
 		astStack.push(qualifiedName);
 		
 		if(TRACE_AST_STACK) System.out.println(astStack);
@@ -688,7 +689,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	 * Creates a qualified name from a list of names (that must be in reverse order).
 	 * Does not set the offset and length.
 	 */
-	private ICPPASTQualifiedName createQualifiedName(LinkedList<IASTName> nestedNames, boolean hasDColon) {
+	private ICPPASTQualifiedName createQualifiedName(LinkedList<IASTName> nestedNames, boolean startsWithColonColon) {
 		ICPPASTQualifiedName qualifiedName = nodeFactory.newCPPQualifiedName();
 		
 		int startOffset = offset(nestedNames.getLast());
@@ -698,8 +699,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		for(IASTName name : reverseIterable(nestedNames))
 			qualifiedName.addName(name);
 		
-		qualifiedName.setFullyQualified(hasDColon);
-		
+		qualifiedName.setFullyQualified(startsWithColonColon);
 		return qualifiedName;
 	}
 	
@@ -713,17 +713,22 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	 * Does not place the resulting node on the stack, returns it instead.
 	 */
 	@SuppressWarnings("unchecked")
-	private ICPPASTQualifiedName subRuleQualifiedName(boolean hasOptionalKeyword) {
-		IASTName subName = (IASTName) astStack.pop();
+	private IASTName subRuleQualifiedName(boolean hasOptionalKeyword) {
+		IASTName lastName = (IASTName) astStack.pop();
 		
 		if(hasOptionalKeyword) // this is usually a template keyword and can be ignored
 			astStack.pop();
 		
 		LinkedList<IASTName> nestedNames = (LinkedList<IASTName>) astStack.pop();
-		boolean hasDColon = astStack.pop() == PLACE_HOLDER;
+		boolean startsWithColonColon = astStack.pop() == PLACE_HOLDER;
 		
-		nestedNames.addFirst(subName);
-		return createQualifiedName(nestedNames, hasDColon);
+		if(nestedNames.isEmpty() && !startsWithColonColon) { // then its not a qualified name
+			return lastName;
+		}
+
+		nestedNames.addFirst(lastName); // the list of names is in reverse order
+		
+		return createQualifiedName(nestedNames, startsWithColonColon);
 	}
 	
 	
@@ -784,7 +789,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	public void consumeNamespaceAliasDefinition() {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 
-		ICPPASTQualifiedName qualifiedName = subRuleQualifiedName(false);
+		IASTName qualifiedName = subRuleQualifiedName(false);
 		
 		IASTName alias = createName(parser.getRuleTokens().get(1));
 		ICPPASTNamespaceAlias namespaceAlias = nodeFactory.newNamespaceAlias(alias, qualifiedName);
@@ -803,7 +808,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	public void consumeUsingDeclaration() {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		
-		ICPPASTQualifiedName qualifiedName = subRuleQualifiedName(false);
+		IASTName qualifiedName = subRuleQualifiedName(false);
 		boolean hasTypenameKeyword = astStack.pop() == PLACE_HOLDER;
 		
 		ICPPASTUsingDeclaration usingDeclaration = nodeFactory.newUsingDeclaration(qualifiedName);
@@ -823,7 +828,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	public void consumeUsingDirective() {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		
-		ICPPASTQualifiedName qualifiedName = subRuleQualifiedName(false);
+		IASTName qualifiedName = subRuleQualifiedName(false);
 		
 		ICPPASTUsingDirective usingDirective = nodeFactory.newUsingDirective(qualifiedName);
 		setOffsetAndLength(usingDirective);

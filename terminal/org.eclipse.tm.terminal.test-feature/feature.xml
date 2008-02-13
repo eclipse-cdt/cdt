@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.eclipse.tm.terminal.tests"
+      id="org.eclipse.tm.terminal.test"
       label="%featureName"
       version="2.0.0.qualifier"
       provider-name="%providerName">

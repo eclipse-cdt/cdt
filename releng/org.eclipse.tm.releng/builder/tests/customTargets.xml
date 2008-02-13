@@ -218,9 +218,16 @@
             featureId="org.eclipse.rse.tests" 
             outputFile="${workingDirectory}/testing/test.properties" 
     /> 
+    <generateTestProperties 
+            buildDirectory="${buildDirectory}" 
+            featureId="org.eclipse.tm.terminal.test" 
+            outputFile="${workingDirectory}/testing/test2.properties" 
+    /> 
+
 
 	<!--load the property file created with the directory names for all test plugins-->
 	<property file="${workingDirectory}/testing/test.properties" />
+	<property file="${workingDirectory}/testing/test2.properties" />
 
 	<!-- Remove the plugin version number appended to the org.eclipse.test plugin directory.
    	     This is so that contributors of test.xml's do not have to update their paths to 

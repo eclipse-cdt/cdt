@@ -1,0 +1,23 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: GDB/MI reference application tests
+Bundle-SymbolicName: org.eclipse.dd.tests.gdb;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: org.eclipse.dd.tests.gdb.launching.TestsPlugin
+Bundle-Vendor: Ericsson
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.dd.dsf,
+ org.eclipse.dd.dsf.debug,
+ org.eclipse.cdt.core,
+ org.eclipse.cdt.launch,
+ org.eclipse.cdt.debug.core,
+ org.eclipse.dd.mi,
+ org.junit4,
+ org.eclipse.debug.core,
+ org.eclipse.cdt.debug.mi.core,
+ org.eclipse.swt,
+ org.eclipse.dd.gdb
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-ClassPath: .

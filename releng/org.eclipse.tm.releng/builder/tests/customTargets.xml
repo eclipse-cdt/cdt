@@ -8,6 +8,10 @@
 		<property name="type" value="feature" />
 		<property name="id" value="org.eclipse.rse.tests" />
 	</ant>
+	<ant antfile="${genericTargets}" target="${target}" >
+		<property name="type" value="feature" />
+		<property name="id" value="org.eclipse.tm.terminal.test" />
+	</ant>
 </target>
 
 <!-- ===================================================================== -->
@@ -22,6 +26,12 @@
 	<ant antfile="${assembleScriptName}"/>
 <!-- ADD POST STEPS -->
 </target>
+<target name="assemble.org.eclipse.tm.terminal.test">
+	<property name="archiveName" value="TM-terminal-junit-tests-${buildAlias}.zip"/>
+	<ant antfile="${assembleScriptName}"/>
+<!-- ADD POST STEPS -->
+</target>
+
 
 <!-- ===================================================================== -->
 <!-- Check out map files from correct repository -->
@@ -71,11 +81,6 @@
 			<property name="url" value="${eclipseURL}" />
 			<property name="file" value="${eclipseFile}" />
 			<property name="isUnpackedFile" value="${buildDirectory}/plugins/org.eclipse.platform.doc.isv/plugin.xml" />
-		</ant>
-		<ant target="getDependency" antfile="${buildDirectory}/../org.eclipse.modeling.common.releng/scripts/getDependencies.xml">
-			<property name="url" value="${emfURL}" />
-			<property name="file" value="${emfFile}" />
-			<property name="isUnpackedFile" value="${buildDirectory}/plugins/org.eclipse.emf.ecore/plugin.xml" />
 		</ant>
 		<!-- Important: This must be the last dependency downloaded, because the
 					                getDependency target strips versions from all plug-ins -->
@@ -171,6 +176,9 @@
 		<fileset dir="${buildDirectory}/features/org.eclipse.rse.tests">
 			<include name="*.log.zip" />
 		</fileset>
+		<fileset dir="${buildDirectory}/features/org.eclipse.tm.terminal.test">
+			<include name="*.log.zip" />
+		</fileset>
 	</unzip>
 </target>
 
@@ -191,6 +199,7 @@
 	<unzip dest="${workingDirectory}" overwrite="true">
 		<fileset dir="${buildDirectory}/${buildLabel}">
 			<include name="**/RSE-junit-tests*.zip"/>
+			<include name="**/TM-terminal-junit-tests*.zip"/>
 		</fileset>
 	</unzip>
 	
@@ -246,6 +255,7 @@
 	</zip>
 
 	<delete file="${buildDirectory}/${buildLabel}/RSE-junit-tests-${buildAlias}.zip"  />
+	<delete file="${buildDirectory}/${buildLabel}/TM-terminal-junit-tests-${buildAlias}.zip"  />
 </target>
 
 <!-- ===================================================================== -->

@@ -6,7 +6,7 @@
 	<target name="allElements">
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />
-			<property name="id" value="org.eclipse.rse.examples" />
+			<property name="id" value="org.eclipse.tm.terminal.sdk" />
 		</ant>
 	</target>
 
@@ -17,8 +17,8 @@
 	<!-- Add one target for each root element and each configuration -->
 	<!-- ===================================================================== -->
 
-	<target name="assemble.org.eclipse.rse.examples">
-		<property name="archiveName" value="RSE-examples-${buildAlias}.zip" />
+	<target name="assemble.org.eclipse.tm.terminal.sdk">
+		<property name="archiveName" value="TM-terminal-${buildAlias}.zip" />
 		<ant antfile="${assembleScriptName}" />
 		<!-- ADD POST STEPS -->
 	</target>
@@ -35,6 +35,7 @@
 
 		<!-- ***  change the repo info -->
 		<property name="mapCvsRoot" value=":${cvsReadProtocol}:${cvsReadUser}@${cvsHost}:${cvsRep}" />
+
 		<property name="mapVersionTag" value="HEAD" />
 		<!-- <property name="packagePath" value="org.eclipse.${projectName}/org.eclipse.${subprojectName2}.releng/maps"/> -->
 		<property name="packagePath" value="org.eclipse.${projectName}.${subprojectName2}/releng/org.eclipse.${projectName}.releng/maps"/>
@@ -75,21 +76,6 @@
 			<property name="file" value="${eclipseFile}" />
 			<property name="isUnpackedFile" value="${buildDirectory}/plugins/org.eclipse.platform.doc.isv/plugin.xml" />
 		</ant>
-
-		<!-- Important: This must be the last dependency downloaded, because the
-				getDependency target strips versions from all plug-ins -->
-		<echo message="Download Orbit Bundles ..." />
-		<ant target="getBundle" antfile="${buildDirectory}/../org.eclipse.modeling.common.releng/scripts/getDependenciesHelper.xml">
-			<property name="url" value="${orbitURL}"/>
-			<property name="file" value="${orbitFile}"/>
-		</ant>
-		<echo message="Unpack selected jars ..." />
-		<unzip dest="${buildDirectory}/.." src="${downloadsDir}/${orbitFile}">
-			<patternset>
-				<include name="**/org.apache.oro*.jar"/>
-				<include name="**/org.apache.commons.net*.jar"/>
-			</patternset>
-		</unzip>
 	</target>
 
 	<!-- ===================================================================== -->
@@ -165,12 +151,11 @@
 		</antcall>
 
 		<unzip dest="${buildDirectory}/${buildLabel}/compilelogs" overwrite="true">
-			<fileset dir="${buildDirectory}/features/org.eclipse.rse.examples">
+			<fileset dir="${buildDirectory}/features/org.eclipse.tm.terminal.sdk">
 				<include name="*.log.zip" />
 			</fileset>
 		</unzip>
 	</target>
-
 	<target name="clean" unless="noclean">
 		<antcall target="allElements">
 			<param name="target" value="cleanElement" />

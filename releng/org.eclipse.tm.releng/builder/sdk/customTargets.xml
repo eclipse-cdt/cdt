@@ -76,11 +76,7 @@
 			<property name="file" value="${eclipseFile}" />
 			<property name="isUnpackedFile" value="${buildDirectory}/plugins/org.eclipse.platform.doc.isv/plugin.xml" />
 		</ant>
-		<ant target="getDependency" antfile="${buildDirectory}/../org.eclipse.modeling.common.releng/scripts/getDependencies.xml">
-			<property name="url" value="${emfURL}" />
-			<property name="file" value="${emfFile}" />
-			<property name="isUnpackedFile" value="${buildDirectory}/plugins/org.eclipse.emf.ecore/plugin.xml" />
-		</ant>
+
 		<!-- Important: This must be the last dependency downloaded, because the
 				getDependency target strips versions from all plug-ins -->
 		<echo message="Download Orbit Bundles ..." />

@@ -142,17 +142,20 @@ propertyName=propertyValue
 
 	<target name="buildAll">
 		<ant antfile="build.xml" target="main">
+			<property name="component" value="builder/terminal" />
+		</ant>
+		<ant antfile="build.xml" target="main">
 			<property name="component" value="builder/sdk" />
 		</ant>
-
 		<ant antfile="build.xml" target="main">
 			<property name="component" value="builder/runtime" />
 		</ant>
-
 		<ant antfile="build.xml" target="main">
 			<property name="component" value="builder/examples" />
 		</ant>
-
+		<ant antfile="build.xml" target="main">
+			<property name="component" value="builder/discovery" />
+		</ant>
 		<ant antfile="build.xml" target="main">
 			<property name="component" value="builder/tests" />
 		</ant>

@@ -103,6 +103,9 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	public static final int TRI_YES = 1;
 	public static final int TRI_NO = 0;
 
+	protected static final String ENUM = "enum"; //$NON-NLS-1$
+	protected static final String SSET = "set";  //$NON-NLS-1$
+	
 	private   CLabel  background; 
 	protected Composite usercomp; // space where user can create widgets 
 	protected Composite buttoncomp; // space for buttons on the right

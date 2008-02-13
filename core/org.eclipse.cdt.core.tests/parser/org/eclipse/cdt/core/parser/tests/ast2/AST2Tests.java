@@ -4195,4 +4195,24 @@ public class AST2Tests extends AST2BaseTest {
 		    }
 		}
     }
+    
+    // void isTrue( int field, int bit ){
+    //    return ((field) & (bit));
+    // }
+    // void test() {
+    //   int foux=0, bhar=0;
+    //   foux = (foux) - bhar1;
+    // }
+    public void testBug100641_106279_castAmbiguity() throws Exception {
+    	StringBuffer[] buffer = getContents(1);
+    	final String content1 = buffer[0].toString();
+    	boolean cpp= false;
+    	do {
+    		BindingAssertionHelper ba= new BindingAssertionHelper(content1, cpp);
+    		ba.assertNonProblem("field)", 5);
+    		ba.assertNonProblem("bit))", 3);
+    		ba.assertNonProblem("foux)", 4);
+    		cpp= !cpp;
+    	} while(cpp);
+    }
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Markus Schorn (Wind River Systems)
  *     IBM Corporation
  *     Anton Leherbauer (Wind River Systems)
+ *     Warren Paul (Nokia) - Bug 218266
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.model;
@@ -297,7 +298,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			if (file != null) {
 				location = file.getLocation();
 			} else {
-				return getPath();
+				return null;
 			}
 		}
 		return location;
@@ -901,5 +902,12 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	public ILanguage getLanguageOfContext() throws CoreException {
 		final ILanguage result= fLanguageOfContext;
 		return result != null ? result : getLanguage();
+	}
+
+	public IPath getPath() {
+		if (getFile() != null) {
+			return super.getPath();
+		}
+		return getLocation();
 	}
 }

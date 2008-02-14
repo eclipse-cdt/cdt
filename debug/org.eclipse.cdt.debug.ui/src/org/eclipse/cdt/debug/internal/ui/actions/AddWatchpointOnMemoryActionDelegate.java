@@ -4,13 +4,13 @@ package org.eclipse.cdt.debug.internal.ui.actions;
 import java.math.BigInteger;
 
 import org.eclipse.cdt.debug.internal.core.model.CMemoryBlockExtension;
-import org.eclipse.cdt.debug.internal.ui.actions.AddWatchpointDialog;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
-import org.eclipse.cdt.debug.ui.ICMemorySelection;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
+import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.MemoryByte;
-import org.eclipse.debug.internal.ui.memory.provisional.AbstractAsyncTableRendering;
-import org.eclipse.debug.ui.memory.AbstractMemoryRendering;
+import org.eclipse.debug.ui.memory.IRepositionableMemoryRendering;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -50,19 +50,23 @@ public class AddWatchpointOnMemoryActionDelegate extends AddWatchpointActionDele
 			String address = ""; //$NON-NLS-1$
 			String range = "1"; //$NON-NLS-1$
 			
-			if (obj instanceof AbstractAsyncTableRendering) {
-				AbstractAsyncTableRendering r = (AbstractAsyncTableRendering) obj;
-				memorySpace = getMemorySpace(r.getMemoryBlock(), memorySpace);
-				address = getSelectedAddress(r.getSelectedAddress(), address);
-				range = getRange(r.getSelectedAsBytes(), range);
-			} else if (obj instanceof ICMemorySelection) {
-				ICMemorySelection sel = (ICMemorySelection) obj;
-				memorySpace = getMemorySpace(sel.getContainingBlock(), memorySpace);
-				address = getSelectedAddress(sel.getAddress(), address);
-				range = sel.getUnits().toString();
-			} else if (obj instanceof AbstractMemoryRendering) {
-				AbstractMemoryRendering r = (AbstractMemoryRendering) obj;
-				address = getSelectedAddress(BigInteger.valueOf(r.getMemoryBlock().getStartAddress()), address);
+			if (obj instanceof IAdaptable) {
+				IRepositionableMemoryRendering rendering = (IRepositionableMemoryRendering) ((IAdaptable)obj).getAdapter(IRepositionableMemoryRendering.class);
+				if (rendering != null) {
+					int addressableSize = 1;
+					IMemoryBlock memblock = rendering.getMemoryBlock();
+					if (memblock instanceof IMemoryBlockExtension) {
+						try {
+							addressableSize = ((IMemoryBlockExtension)memblock).getAddressableSize();
+						} catch (DebugException e) {
+							CDebugUIPlugin.log(e);
+						}
+					}
+					
+					memorySpace = getMemorySpace(rendering.getMemoryBlock(), memorySpace);
+					address = getSelectedAddress(rendering.getSelectedAddress(), address);
+					range = getRange(rendering.getSelectedAsBytes(), addressableSize, range);
+				}
 			}
 			
 			AddWatchpointDialog dlg = new AddWatchpointDialog(CDebugUIPlugin.getActiveWorkbenchShell(), 
@@ -91,9 +95,9 @@ public class AddWatchpointOnMemoryActionDelegate extends AddWatchpointActionDele
 		return def;
 	}
 
-	private String getRange(MemoryByte[] selectedBytes, String def) {
+	private String getRange(MemoryByte[] selectedBytes, int addressableSize, String def) {
 		if (selectedBytes != null && selectedBytes.length > 0) {
-			return Integer.toString(selectedBytes.length);
+			return Integer.toString(selectedBytes.length / addressableSize);
 		}
 		return def;
 	}

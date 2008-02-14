@@ -43,7 +43,7 @@ public class MIPlugin extends Plugin {
     public void start(BundleContext context) throws Exception {
         fgBundleContext = context;
 		super.start(context);
-        DEBUG = "true".equals(Platform.getDebugOption("org.eclipse.dd.mi.core/debug"));  //$NON-NLS-1$//$NON-NLS-2$
+        DEBUG = "true".equals(Platform.getDebugOption("org.eclipse.dd.mi/debug"));  //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	/**

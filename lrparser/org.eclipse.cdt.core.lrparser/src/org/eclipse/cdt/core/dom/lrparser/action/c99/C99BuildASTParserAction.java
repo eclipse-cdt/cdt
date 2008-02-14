@@ -143,7 +143,10 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 		return new C99ExpressionStatementParser(C99Parsersym.orderedTerminalSymbols); 
 	}
 
-	
+	@Override
+	protected IParser getNoCastExpressionParser() {
+		return new C99NoCastExpressionParser(C99Parsersym.orderedTerminalSymbols);
+	}
 	
 	
 	
@@ -152,6 +155,9 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	 ********************************************************************/
 
 	
+	
+
+
 	/**
 	 * postfix_expression ::= postfix_expression '.' ident
 	 * postfix_expression ::= postfix_expression '->' ident

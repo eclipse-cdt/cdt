@@ -89,6 +89,7 @@ import org.eclipse.cdt.core.dom.lrparser.util.DebugUtil;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99ExpressionStatementParser;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPExpressionStatementParser;
+import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPNoCastExpressionParser;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionDeclarator;
 
@@ -127,6 +128,12 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		return new CPPExpressionStatementParser(CPPParsersym.orderedTerminalSymbols); 
 	}
 	
+	@Override
+	protected IParser getNoCastExpressionParser() {
+		return new CPPNoCastExpressionParser(CPPParsersym.orderedTerminalSymbols);
+	}
+	
+	
 //	/**
 //	 * Used only for debugging purposes.
 //	 * 
@@ -155,6 +162,8 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	
 	
 	
+
+
 	/**
 	 * new_expression
      *     ::= dcolon_opt 'new' new_placement_opt new_type_id <openscope-ast> new_array_expressions_op new_initializer_opt

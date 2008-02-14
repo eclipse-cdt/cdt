@@ -52,7 +52,6 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTPointer;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
@@ -65,18 +64,12 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
-import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
-import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
 import org.eclipse.cdt.core.dom.lrparser.util.DebugUtil;
-import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99NoCastExpressionParser;
-import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
-import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTAmbiguity;
 
 
 /**
@@ -135,6 +128,14 @@ public abstract class BuildASTParserAction {
 	 * Get the parser that will recognize expression statements.
 	 */
 	protected abstract IParser getExpressionStatementParser();
+	
+	
+	/**
+	 * Expression parser that does not recognize cast expressions,
+	 * used to disambiguate casts. 
+	 */
+	protected abstract IParser getNoCastExpressionParser();
+	
 	
 	
 	/**
@@ -538,8 +539,6 @@ public abstract class BuildASTParserAction {
 	
 	/**
 	 * @param operator constant for {@link ICPPASTCastExpression}
-	 * 
-	 * TODO Remove C99 specific code
 	 */
 	public void consumeExpressionCast(int operator) {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
@@ -550,7 +549,7 @@ public abstract class BuildASTParserAction {
 		setOffsetAndLength(expr);
 				
 		// try parsing as non-cast to resolve ambiguities
-		IParser secondaryParser = new C99NoCastExpressionParser(C99Parsersym.orderedTerminalSymbols); 
+		IParser secondaryParser = getNoCastExpressionParser();
 		IASTNode alternateExpr = runSecondaryParser(secondaryParser);
 		
 		if(alternateExpr == null || alternateExpr instanceof IASTProblemExpression)
@@ -881,7 +880,7 @@ public abstract class BuildASTParserAction {
 			decl = nodeFactory.newDeclarator(nodeFactory.newName());
 		
 		for(Object pointer : astStack.closeScope())
-			decl.addPointerOperator((IASTPointer)pointer);
+			decl.addPointerOperator((IASTPointerOperator)pointer);
 		
 		setOffsetAndLength(decl);
 		astStack.push(decl);

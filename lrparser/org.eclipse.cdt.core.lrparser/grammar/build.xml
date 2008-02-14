@@ -60,6 +60,10 @@
 		<antcall target="generate-cpp">
             <param name="grammar_name" value="CPPExpressionStatementParser"/>
 		</antcall>
+		<!-- Generate parser for disambiguating cast expressions vs binary expressions-->
+		<antcall target="generate-cpp">
+            <param name="grammar_name" value="CPPNoCastExpressionParser"/>
+		</antcall>
 	</target>
 	
 	

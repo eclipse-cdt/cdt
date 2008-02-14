@@ -311,6 +311,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return URIUtil.toPath(location);
 	}
 	
+	@Override
 	public URI getLocationURI() {
 		if (location == null) {
 			IFile file = getFile();
@@ -369,6 +370,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return sourceManipulationInfo;
 	}
 
+	@Override
 	protected CElementInfo createElementInfo() {
 		return new TranslationUnitInfo(this);
 	}
@@ -381,6 +383,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	 * 
 	 * @see Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object o) {
 		if (!(o instanceof ITranslationUnit)) return false;
 		return super.equals(o) && !((ITranslationUnit) o).isWorkingCopy();
@@ -401,15 +404,17 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return (WorkingCopy) perFactoryWorkingCopies.get(this);
 	}
 
+	@Override
 	public synchronized CElementInfo getElementInfo(IProgressMonitor monitor) throws CModelException {
 		return super.getElementInfo(monitor);
 	}
 
+	@Override
 	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map newElements, IResource underlyingResource) throws CModelException {
 		TranslationUnitInfo unitInfo = (TranslationUnitInfo) info;
 
 		// We reuse the general info cache in the CModelBuilder, We should not do this
-		// and instead create the info explicitely(see JDT).
+		// and instead create the info explicitly(see JDT).
 		// So to get by we need to remove in the LRU all the info of this handle
 		CModelManager.getDefault().removeChildrenInfo(this);
 
@@ -492,10 +497,12 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	/**
 	 * Returns true if this element may have an associated source buffer.
 	 */
+	@Override
 	protected boolean hasBuffer() {
 		return true;
 	}
 
+	@Override
 	protected void openParent(Object childInfo, Map newElements, IProgressMonitor pm) throws CModelException {
 		try {
 			super.openParent(childInfo, newElements, pm);
@@ -507,10 +514,12 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		}
 	}
 
+	@Override
 	public boolean isConsistent() throws CModelException {
 		return isOpen() && CModelManager.getDefault().getElementsOutOfSynchWithBuffers().get(this) == null;
 	}
 
+	@Override
 	public void makeConsistent(IProgressMonitor monitor, boolean forced) throws CModelException {
 		makeConsistent(forced, monitor);
 	}
@@ -560,6 +569,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return null;
 	}
 
+	@Override
 	protected boolean isSourceElement() {
 		return true;
 	}
@@ -568,6 +578,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return false;
 	}
 
+	@Override
 	protected IBuffer openBuffer(IProgressMonitor pm) throws CModelException {
 
 		// create buffer - translation units only use default buffer factory
@@ -690,6 +701,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return CCorePlugin.CONTENT_TYPE_ASMSOURCE.equals(contentTypeId);
 	}
 
+	@Override
 	public boolean exists() {
 		IResource res = getResource();
 		if (res != null)
@@ -744,6 +756,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		contentTypeId = id;
 	}
 
+	@Override
 	protected void closing(Object info) throws CModelException {
 		IContentType cType = CCorePlugin.getContentType(getCProject().getProject(), getElementName());
 		if (cType != null) {
@@ -889,11 +902,11 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 				reader= new CodeReader(getContents());
 			}
 			else {
-				reader= new CodeReader(location.toOSString(), getContents());
+				reader= new CodeReader(location.toString(), getContents());
 			}
 		}
 		else {
-			reader= ParserUtil.createReader(location.toOSString(), null);
+			reader= ParserUtil.createReader(location.toString(), null);
 		}
 		return reader;
 	}
@@ -929,6 +942,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return result != null ? result : getLanguage();
 	}
 
+	@Override
 	public IPath getPath() {
 		if (getFile() != null) {
 			return super.getPath();

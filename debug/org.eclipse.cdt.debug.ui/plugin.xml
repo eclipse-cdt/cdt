@@ -782,13 +782,26 @@
                tooltip="%EditRegisterGroupAction.tooltip"/>
       </objectContribution>
       <viewerContribution
-            id="org.eclipse.debug.ui.MemoryView.RenderingViewPane.popupMenu"
+            id="org.eclipse.debug.ui.MemoryView.RenderingViewPane.popupMenu.1"
             targetID="org.eclipse.debug.ui.MemoryView.RenderingViewPane.1">
          <action
                class="org.eclipse.cdt.debug.internal.ui.actions.AddWatchpointOnMemoryActionDelegate"
                enablesFor="1"
                icon="icons/elcl16/watchpoint_co.gif"
-               id="org.eclipse.cdt.debug.internal.ui.actions.AddWatchpointOnMemoryActionDelegate"
+               id="org.eclipse.cdt.debug.internal.ui.actions.AddWatchpointOnMemoryActionDelegate.1"
+               label="%AddWatchpoint.label"
+               menubarPath="additions"
+               tooltip="%AddWatchpoint.tooltip">
+         </action>
+      </viewerContribution>
+      <viewerContribution
+            id="org.eclipse.debug.ui.MemoryView.RenderingViewPane.popupMenu.2"
+            targetID="org.eclipse.debug.ui.MemoryView.RenderingViewPane.2">
+         <action
+               class="org.eclipse.cdt.debug.internal.ui.actions.AddWatchpointOnMemoryActionDelegate"
+               enablesFor="1"
+               icon="icons/elcl16/watchpoint_co.gif"
+               id="org.eclipse.cdt.debug.internal.ui.actions.AddWatchpointOnMemoryActionDelegate.2"
                label="%AddWatchpoint.label"
                menubarPath="additions"
                tooltip="%AddWatchpoint.tooltip">

@@ -12,7 +12,6 @@ package org.eclipse.cdt.debug.internal.core.breakpoints;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +49,9 @@ public abstract class CBreakpoint extends Breakpoint implements ICBreakpoint, ID
 	private Map fExtensions = new HashMap(1);
 	
 	/**
-	 * The number of debug targets the breakpoint is installed in.  
+	 * The number of debug targets the breakpoint is installed in. We don't use
+	 * the INSTALL_COUNT attribute to manage this property (see bugzilla 218194)
+	 * 
 	 */
 	private int fInstallCount = 0;	
 	
@@ -227,11 +228,9 @@ public abstract class CBreakpoint extends Breakpoint implements ICBreakpoint, ID
 	public synchronized int incrementInstallCount() throws CoreException {
 		++fInstallCount;
 		
-		// handle the crossing into the installed state; we decorate 
-		// an installed marker with a blue checkmark
-		if (fInstallCount == 1) {
-			setAttribute(FORCE_UPDATE, Long.toString((new Date()).getTime()));	// force a refresh of the marker through a dummy attribute
-		}
+		// cause the marker to update; will ultimately result in a blue checkmark
+		// when install count > 0
+		setAttribute(INSTALL_COUNT, fInstallCount);
 		
 		return fInstallCount;
 	}
@@ -250,11 +249,9 @@ public abstract class CBreakpoint extends Breakpoint implements ICBreakpoint, ID
 	public synchronized int decrementInstallCount() throws CoreException {
 		fInstallCount--;
 		
-		// handle the crossing into the uninstalled state; we decorate 
-		// an installed marker with a blue checkmark
-		if (fInstallCount == 0) {
-			setAttribute(FORCE_UPDATE, Long.toString((new Date()).getTime()));	// force a refresh of the marker through a dummy attribute
-		}
+		// cause the marker to update; will ultimately remove blue checkmark
+		// when install count == 0
+		setAttribute(INSTALL_COUNT, fInstallCount);
 		
 		return fInstallCount;
 	}
@@ -263,10 +260,9 @@ public abstract class CBreakpoint extends Breakpoint implements ICBreakpoint, ID
 	 * @see org.eclipse.cdt.debug.core.model.ICBreakpoint#resetInstallCount()
 	 */
 	public synchronized void resetInstallCount() throws CoreException {
-		int previous = fInstallCount;
-		fInstallCount = 0;
-		if (previous != 0) {
-			setAttribute(FORCE_UPDATE, Long.toString((new Date()).getTime()));	// force a refresh of the marker through a dummy attribute
+		if (fInstallCount != 0) {
+			fInstallCount = 0;
+			setAttribute(INSTALL_COUNT, fInstallCount);
 		}
 	}
 	

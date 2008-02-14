@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 QNX Software Systems and others.
+ * Copyright (c) 2004, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -175,7 +175,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 		}
 		if ( element instanceof ExternalTranslationUnit ) {
 			ExternalTranslationUnit etu = (ExternalTranslationUnit) element;
-			return new ExternalEditorInput( etu , new LocalFileStorage( etu.getPath().toFile() ) );
+			return new ExternalEditorInput( etu , new LocalFileStorage( etu.getLocation().toFile() ) );
 		}
 		if (element instanceof CSourceNotFoundElement)
 		{

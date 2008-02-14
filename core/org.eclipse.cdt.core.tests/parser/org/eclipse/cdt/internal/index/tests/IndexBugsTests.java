@@ -79,6 +79,7 @@ public class IndexBugsTests extends BaseTestCase {
 		return suite(IndexBugsTests.class);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		fCProject= CProjectHelper.createCCProject("__bugsTest__", "bin", IPDOMManager.ID_FAST_INDEXER);
@@ -86,6 +87,7 @@ public class IndexBugsTests extends BaseTestCase {
 		fIndex= CCorePlugin.getIndexManager().getIndex(fCProject);
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		if (fCProject != null) {
 			CProjectHelper.delete(fCProject);
@@ -230,7 +232,7 @@ public class IndexBugsTests extends BaseTestCase {
 		// make sure the ast is correct
 		ITranslationUnit tu= (ITranslationUnit) fCProject.findElement(new Path(fileName));
 		IASTTranslationUnit ast= tu.getAST();
-		IASTName name= (IASTName) ast.selectNodeForLocation(tu.getLocation().toOSString(), indexOfDecl, funcName.length());
+		IASTName name= (IASTName) ast.selectNodeForLocation(tu.getLocation().toString(), indexOfDecl, funcName.length());
 		IBinding astBinding= name.resolveBinding();
 
 		IName[] astDecls= ast.getDeclarations(astBinding);
@@ -697,6 +699,7 @@ public class IndexBugsTests extends BaseTestCase {
 		fIndex.acquireReadLock();
 		try {
 			final IndexFilter NON_FUNCTIONS = new IndexFilter() {
+				@Override
 				public boolean acceptBinding(IBinding binding) {
 					return !(binding instanceof IFunction);
 				}
@@ -730,6 +733,7 @@ public class IndexBugsTests extends BaseTestCase {
 		fIndex.acquireReadLock();
 		try {
 			final IndexFilter NON_CLASS = new IndexFilter() {
+				@Override
 				public boolean acceptBinding(IBinding binding) {
 					return !(binding instanceof ICPPClassType);
 				}
@@ -1056,6 +1060,7 @@ public class IndexBugsTests extends BaseTestCase {
 		
 		final ITranslationUnit tu= (ITranslationUnit) fCProject.findElement(new Path("source.cpp"));
 		Thread th= new Thread() {
+			@Override
 			public void run() {
 				try {
 					tu.getAST(fIndex, ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT);

@@ -803,4 +803,13 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 		assertTrue(scope instanceof ICPPNamespaceScope);
 		assertEquals("NSB", scope.getScopeName().toString());
 	}
+	
+	// namespace N { namespace M {}}
+
+	// namespace N {using namespace N::M;}
+	// using namespace N;
+    // void test() {x;}
+	public void testEndlessLoopWithUsingDeclaration_Bug209813() throws DOMException {
+		getProblemFromASTName("x;", 1);
+	}
 }

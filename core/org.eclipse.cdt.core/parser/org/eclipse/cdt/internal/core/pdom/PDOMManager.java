@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 QNX Software Systems and others.
+ * Copyright (c) 2005, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import java.nio.channels.FileChannel;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,6 +39,7 @@ import org.eclipse.cdt.core.index.IIndexChangeListener;
 import org.eclipse.cdt.core.index.IIndexLocationConverter;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.index.IIndexerStateListener;
+import org.eclipse.cdt.core.index.IndexerSetupParticipant;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICContainer;
@@ -48,7 +50,6 @@ import org.eclipse.cdt.core.model.ILanguageMappingChangeListener;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.settings.model.CProjectDescriptionEvent;
-import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionListener;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
@@ -67,7 +68,6 @@ import org.eclipse.cdt.internal.core.pdom.indexer.PDOMRebuildTask;
 import org.eclipse.cdt.internal.core.pdom.indexer.PDOMUpdateTask;
 import org.eclipse.cdt.internal.core.pdom.indexer.TriggerNotificationTask;
 import org.eclipse.cdt.internal.core.pdom.indexer.nulli.PDOMNullIndexer;
-import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -163,7 +163,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
 	private CModelListener fCModelListener= new CModelListener(this);
 	private ILanguageMappingChangeListener fLanguageChangeListener = new LanguageMappingChangeListener(this);
-	private ICProjectDescriptionListener fProjectDescriptionListener= new CProjectDescriptionListener(this);
+	private final ICProjectDescriptionListener fProjectDescriptionListener;
 	
 	private IndexFactory fIndexFactory= new IndexFactory(this);
     private IndexProviderManager fIndexProviderManager = new IndexProviderManager();
@@ -175,7 +175,13 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	 */
 	private HashMap fUpdatePolicies= new HashMap();
 	private HashMap fPrefListeners= new HashMap();
+	private ArrayList fSetupParticipants= new ArrayList();
+	private HashSet fPostponedProjects= new HashSet();
     
+	public PDOMManager() {
+		fProjectDescriptionListener= new CProjectDescriptionListener(this);
+	}
+	
 	public Job startup() {
 		Job postStartupJob= new Job(CCorePlugin.getResourceString("CCorePlugin.startupJob")) { //$NON-NLS-1$
 			protected IStatus run(IProgressMonitor monitor) {
@@ -627,7 +633,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		Job addProject= new Job(Messages.PDOMManager_StartJob_name) {
 			protected IStatus run(IProgressMonitor monitor) {
 				monitor.beginTask("", 100); //$NON-NLS-1$
-				if (project.isOpen() && isFullyCreated(project)) {
+				if (project.isOpen() && !postponeSetup(cproject)) {
 					syncronizeProjectSettings(project, new SubProgressMonitor(monitor, 1));
 					if (getIndexer(cproject) == null) {
 						createIndexer(cproject, new SubProgressMonitor(monitor, 99));
@@ -666,14 +672,6 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		addProject.setRule(rule); 
 		addProject.setSystem(true);
 		addProject.schedule();
-	}
-
-	private boolean isFullyCreated(IProject project) {
-		ICProjectDescription desc= CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
-		if (desc != null && !desc.isCdtProjectCreating()) {
-			return true;
-		}
-		return false;
 	}
 
 	private void registerPreferenceListener(ICProject project) {
@@ -836,24 +834,33 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		}
 	}    
 
-	public void reindex(ICProject project) {
-		assert !Thread.holdsLock(fProjectToPDOM);
-		IPDOMIndexer indexer= null;
-		synchronized (fUpdatePolicies) {
-			indexer= getIndexer(project);
-		}
-		// don't attempt to hold lock on indexerMutex while cancelling
-		if (indexer != null) {
-			cancelIndexerJobs(indexer);
-		}
-		
-		synchronized(fUpdatePolicies) {
-			indexer= getIndexer(project);
-			if (indexer != null) {
-				createPolicy(project).clearTUs();
-				enqueue(new PDOMRebuildTask(indexer));
+	public void reindex(final ICProject project) {
+		Job job= new Job(Messages.PDOMManager_notifyJob_label) { 
+			protected IStatus run(IProgressMonitor monitor) {
+				IPDOMIndexer indexer= null;
+				synchronized (fUpdatePolicies) {
+					indexer= getIndexer(project);
+				}
+				// don't attempt to hold lock on indexerMutex while cancelling
+				if (indexer != null) {
+					cancelIndexerJobs(indexer);
+				}
+				
+				synchronized(fUpdatePolicies) {
+					indexer= getIndexer(project);
+					if (indexer != null) {
+						createPolicy(project).clearTUs();
+						enqueue(new PDOMRebuildTask(indexer));
+					}
+				}
+				return Status.OK_STATUS;
 			}
-		}
+			public boolean belongsTo(Object family) {
+				return family == PDOMManager.this;
+			}
+		};
+		job.setSystem(true);
+		job.schedule();
 	}
 
 	public void addIndexChangeListener(IIndexChangeListener listener) {
@@ -1276,6 +1283,48 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 				if (task != null) {
 					enqueue(task);
 				}
+			}
+		}
+	}
+
+	protected boolean postponeSetup(ICProject cproject) {
+		synchronized(fSetupParticipants) {
+			for (Iterator it = fSetupParticipants.iterator(); it.hasNext();) {
+				IndexerSetupParticipant sp = (IndexerSetupParticipant) it.next();
+				if (sp.postponeIndexerSetup(cproject)) {
+					fPostponedProjects.add(cproject);
+					return true;
+				}
+			}
+			fPostponedProjects.remove(cproject);
+			return false;
+		}
+	}
+
+	/**
+	 * @param indexerSetupParticipant
+	 * @param project
+	 */
+	public void notifyIndexerSetup(IndexerSetupParticipant participant,	ICProject project) {
+		synchronized(fSetupParticipants) {
+			if (fPostponedProjects.contains(project)) {
+				addProject(project);
+			}
+		}		
+	}
+
+	public void addIndexerSetupParticipant(IndexerSetupParticipant participant) {
+		synchronized (fSetupParticipants) {
+			fSetupParticipants.add(participant);
+		}
+	}
+
+	public void removeIndexerSetupParticipant(IndexerSetupParticipant participant) {
+		synchronized (fSetupParticipants) {
+			fSetupParticipants.remove(participant);
+			for (Iterator it = fPostponedProjects.iterator(); it.hasNext();) {
+				ICProject project = (ICProject) it.next();
+				addProject(project);
 			}
 		}
 	}

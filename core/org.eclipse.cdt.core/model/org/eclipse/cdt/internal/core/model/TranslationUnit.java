@@ -10,6 +10,7 @@
  *     Markus Schorn (Wind River Systems)
  *     IBM Corporation
  *     Anton Leherbauer (Wind River Systems)
+ *     Warren Paul (Nokia) - Bug 218266
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
@@ -928,5 +929,15 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return result != null ? result : getLanguage();
 	}
 
+	public IPath getPath() {
+		if (getFile() != null) {
+			return super.getPath();
+		}
+		IPath path= getLocation();
+		if (path != null) {
+			return path;
+		}
+		return super.getPath();
+	}
 
 }

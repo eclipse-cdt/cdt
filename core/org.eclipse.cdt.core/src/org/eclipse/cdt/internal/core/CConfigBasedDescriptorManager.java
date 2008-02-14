@@ -52,6 +52,8 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ILock;
+import org.eclipse.core.runtime.jobs.Job;
 import org.w3c.dom.Element;
 
 public class CConfigBasedDescriptorManager implements ICDescriptorManager {
@@ -194,11 +196,21 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 		return getDescriptor(project, true);
 	}
 
+	private ILock fInstanceLock = Job.getJobManager().newLock();
+
 	public ICDescriptor getDescriptor(IProject project, boolean create)
 			throws CoreException {
-		synchronized (CProjectDescriptionManager.getInstance()) {
+		if (create) {
+			synchronized (CProjectDescriptionManager.getInstance()) {
+				try {
+					fInstanceLock.acquire();
+					return findDescriptor(project, create);
+				} finally {
+					fInstanceLock.release();
+		 		}
+			}
+		} else // no need to synchronize in this case.  
 			return findDescriptor(project, create);
-		}
 	}
 
 	public void addDescriptorListener(ICDescriptorListener listener) {

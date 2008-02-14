@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
@@ -212,7 +213,7 @@ abstract public class PDOMWriter {
 						reportProblem((IProblemBinding) binding);
 					else if (name.isReference()) {
 						if (fSkipReferences == SKIP_TYPE_REFERENCES) {
-							if (isTypeReferenceBinding(binding) && !isInheritanceSpec(name)) {
+							if (isTypeReferenceBinding(binding) && !isRequiredReference(name)) {
 								na[0]= null;
 								fStatistics.fReferenceCount--;
 							}
@@ -284,10 +285,11 @@ abstract public class PDOMWriter {
 
 		// names
 		ast.accept(new IndexerASTVisitor() {
+			@Override
 			public void visit(IASTName name, IASTName caller) {
 				if (fSkipReferences == SKIP_ALL_REFERENCES) {
 					if (name.isReference()) {
-						if (!isInheritanceSpec(name)) {
+						if (!isRequiredReference(name)) {
 							return;
 						}
 					}
@@ -306,7 +308,7 @@ abstract public class PDOMWriter {
 		});
 	}
 	
-	protected boolean isInheritanceSpec(IASTName name) {
+	protected final boolean isRequiredReference(IASTName name) {
 		IASTNode parentNode= name.getParent();
 		if (parentNode instanceof ICPPASTBaseSpecifier) {
 			return true;
@@ -314,6 +316,9 @@ abstract public class PDOMWriter {
 		else if (parentNode instanceof IASTDeclSpecifier) {
 			IASTDeclSpecifier ds= (IASTDeclSpecifier) parentNode;
 			return ds.getStorageClass() == IASTDeclSpecifier.sc_typedef;
+		}
+		else if (parentNode instanceof ICPPASTUsingDirective) {
+			return true;
 		}
 		return false;
 	}
@@ -422,7 +427,7 @@ abstract public class PDOMWriter {
 	 * Makes a copy of the current progress information and returns it.
 	 * @since 4.0
 	 */
-	protected IndexerProgress getProgressInformation() {
+	public IndexerProgress getProgressInformation() {
 		synchronized (fInfo) {
 			return new IndexerProgress(fInfo);
 		}
@@ -432,7 +437,7 @@ abstract public class PDOMWriter {
 	 * Updates current progress information with the provided delta.
 	 * @since 4.0
 	 */
-	protected void updateInfo(int completedSources, int completedHeaders, int totalEstimate) {
+	protected final void updateInfo(int completedSources, int completedHeaders, int totalEstimate) {
 		synchronized(fInfo) {
 			fInfo.fCompletedHeaders+= completedHeaders;
 			fInfo.fCompletedSources+= completedSources;

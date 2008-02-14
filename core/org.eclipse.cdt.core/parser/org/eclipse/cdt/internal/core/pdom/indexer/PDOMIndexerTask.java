@@ -91,11 +91,6 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 		traceEnd(start, fIndex);
 	}
 	
-	
-	public IndexerProgress getProgressInformation() {
-		return super.getProgressInformation();
-	}
-
 	/**
 	 * Checks whether a given debug option is enabled. See {@link IPDOMIndexerTask}
 	 * for valid values.
@@ -116,6 +111,7 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 	}
 
 	
+	@Override
 	protected String getASTPathForParsingUpFront() {
 		final IProject project = getProject().getProject();
 		final IPath prjLocation= project.getLocation();
@@ -125,6 +121,7 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 		return prjLocation.append(super.getASTPathForParsingUpFront()).toString(); 
 	}
 
+	@Override
 	protected AbstractLanguage[] getLanguages(String filename) {
 		IContentType ct= CCorePlugin.getContentType(filename);
 		if (ct != null) {
@@ -142,6 +139,7 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 		return new AbstractLanguage[0];
 	}
 
+	@Override
 	protected IScannerInfo createDefaultScannerConfig(int linkageID) {
 		IProject project= getProject().getProject();
 		IScannerInfoProvider provider= CCorePlugin.getDefault().getScannerInfoProvider(project);
@@ -159,6 +157,7 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 		return getIndexer().getProject();
 	}
 
+	@Override
 	protected final IWritableIndex createIndex() {
 		try {
 			return ((IWritableIndexManager) CCorePlugin.getIndexManager()).getWritableIndex(getProject());
@@ -168,6 +167,7 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 		return null;
 	}
 
+	@Override
 	protected final ITodoTaskUpdater createTodoTaskUpdater() {
 		return new TodoTaskUpdater();
 	}

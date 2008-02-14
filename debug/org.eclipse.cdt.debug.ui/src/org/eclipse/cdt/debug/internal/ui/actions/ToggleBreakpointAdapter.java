@@ -364,10 +364,10 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 	private String getSourceHandle( IDeclaration declaration ) {
 		ITranslationUnit tu = declaration.getTranslationUnit();
 		if ( tu != null ) {
-			IResource resource = tu.getResource();
-			if ( resource != null )
-				return resource.getLocation().toOSString();
-			return tu.getPath().toOSString();
+			IPath location = tu.getLocation();
+			if (location != null) {
+				return location.toOSString();
+			}
 		}
 		return ""; //$NON-NLS-1$
 	}

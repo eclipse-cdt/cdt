@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 
 package org.eclipse.cdt.core.index;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
@@ -196,4 +197,14 @@ public interface IIndexManager extends IPDOMManager {
 	 * @since 4.0
 	 */
 	public void export(ICProject project, String location, int options, IProgressMonitor monitor) throws CoreException;
+	
+	/**
+	 * Adds a participant for the indexer-setup
+	 */
+	public void addIndexerSetupParticipant(IndexerSetupParticipant participant);
+	
+	/**
+	 * Removes a participant for the indexer-setup
+	 */
+	public void removeIndexerSetupParticipant(IndexerSetupParticipant participant);
 }

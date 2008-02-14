@@ -42,9 +42,9 @@
 
    <extension point="org.eclipse.ui.propertyPages">
          <page class="org.eclipse.dd.gdb.internal.ui.breakpoints.CBreakpointGdbThreadFilterPage"
-            id="org.eclipse.dd.dsf.gdb.breakpoint.filtering"
+            id="org.eclipse.dd.gdb.breakpoint.filtering"
             name="Filter">
-         <filter name="debugModelId" value="org.eclipse.dd.dsf.gdb"/>
+         <filter name="debugModelId" value="org.eclipse.dd.gdb"/>
          <enabledWhen>
             <adapt type="org.eclipse.cdt.debug.core.model.ICBreakpoint"/>
          </enabledWhen>

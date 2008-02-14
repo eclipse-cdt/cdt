@@ -57,7 +57,7 @@ import org.eclipse.debug.core.sourcelookup.IPersistableSourceLocator2;
 public class GdbLaunchDelegate extends AbstractCLaunchDelegate 
     implements ILaunchConfigurationDelegate2
 {
-    public final static String GDB_DEBUG_MODEL_ID = "org.eclipse.dd.dsf.gdb"; //$NON-NLS-1$
+    public final static String GDB_DEBUG_MODEL_ID = "org.eclipse.dd.gdb"; //$NON-NLS-1$
     
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.launch.AbstractCLaunchDelegate#launch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)

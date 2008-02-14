@@ -17,8 +17,8 @@
          point="org.eclipse.cdt.debug.core.BreakpointExtension">
       <breakpointExtension
             class="org.eclipse.dd.gdb.breakpoints.CBreakpointGdbThreadsFilterExtension"
-            debugModelId="org.eclipse.dd.dsf.gdb"
-            id="org.eclipse.dd.dsf.gdb.threadFilter"
+            debugModelId="org.eclipse.dd.gdb"
+            id="org.eclipse.dd.gdb.threadFilter"
             markerType="org.eclipse.cdt.debug.core.cBreakpointMarker">
       </breakpointExtension>
    </extension>

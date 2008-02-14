@@ -6,13 +6,13 @@
          point="org.eclipse.ui.views">
       <category
             name="DSF Tests"
-            id="org.eclipse.dd.dsf.tests.model">
+            id="org.eclipse.dd.tests.dsf.model">
       </category>
       <view
             name="Model Test View"
-            category="org.eclipse.dd.dsf.tests.model"
-            class="org.eclipse.dd.dsf.tests.model.ModelTestsView"
-            id="org.eclipse.dd.dsf.tests.model.ModelTestView">
+            category="org.eclipse.dd.tests.dsf.model"
+            class="org.eclipse.dd.tests.dsf.model.ModelTestsView"
+            id="org.eclipse.dd.tests.dsf.model.ModelTestView">
       </view>
    </extension>
 </plugin>

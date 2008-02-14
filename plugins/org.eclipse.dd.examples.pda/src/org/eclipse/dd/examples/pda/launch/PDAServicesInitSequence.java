@@ -19,6 +19,7 @@ import org.eclipse.dd.examples.pda.service.breakpoints.PDABreakpointAttributeTra
 import org.eclipse.dd.examples.pda.service.breakpoints.PDABreakpoints;
 import org.eclipse.dd.examples.pda.service.command.PDACommandControl;
 import org.eclipse.dd.examples.pda.service.runcontrol.PDARunControl;
+import org.eclipse.dd.examples.pda.service.stack.PDAStack;
 import org.eclipse.debug.examples.core.pda.sourcelookup.PDASourceLookupDirector;
 
 public class PDAServicesInitSequence extends Sequence {
@@ -65,19 +66,12 @@ public class PDAServicesInitSequence extends Sequence {
                 }); 
             }
         },
+        new Step() { @Override
+            public void execute(RequestMonitor requestMonitor) {
+                new PDAStack(fSession).initialize(requestMonitor);
+            }
+        },
         /*new Step() { @Override
-            public void execute(RequestMonitor requestMonitor) {
-                new MIMemory(fSession).initialize(requestMonitor);
-        }},
-        new Step() { @Override
-            public void execute(RequestMonitor requestMonitor) {
-                new MIModules(fSession).initialize(requestMonitor);
-        }},
-        new Step() { @Override
-        public void execute(RequestMonitor requestMonitor) {
-            new MIStack(fSession).initialize(requestMonitor);
-        }},
-        new Step() { @Override
         public void execute(RequestMonitor requestMonitor) {
             new ExpressionService(fSession).initialize(requestMonitor);
         }},

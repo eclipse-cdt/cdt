@@ -51,7 +51,6 @@ import org.osgi.framework.BundleContext;
 public class PDARunControl extends AbstractDsfService 
     implements IRunControl, IEventListener
 {
-    
     private PDACommandControl fCommandControl;
 	private CommandCache fCommandCache;
     
@@ -64,6 +63,11 @@ public class PDARunControl extends AbstractDsfService
 	
     public PDARunControl(DsfSession session) {
         super(session);
+    }
+    
+    @Override
+    protected BundleContext getBundleContext() {
+        return PDAPlugin.getBundleContext();
     }
     
     @Override
@@ -97,8 +101,6 @@ public class PDARunControl extends AbstractDsfService
         super.shutdown(rm);
     }
     
-    public boolean isValid() { return true; }
-    
     @SuppressWarnings("unchecked")
     public void getModelData(IDMContext dmc, DataRequestMonitor<?> rm) {
         if (dmc instanceof IExecutionDMContext) {
@@ -108,9 +110,6 @@ public class PDARunControl extends AbstractDsfService
             rm.done();
         }
     }
-    
-    public CommandCache getCache() { return fCommandCache; }
-    
     
     public void eventReceived(Object output) {
         if (!(output instanceof String)) return;
@@ -142,7 +141,6 @@ public class PDARunControl extends AbstractDsfService
         fResumePending = false;
         fStateChangeReason = e.getReason();
         fCommandCache.setTargetAvailable(false);
-        //fStateChangeTriggeringContext = e.getTriggeringContext();
         if (e.getReason().equals(StateChangeReason.STEP)) {
             fStepping = true;        
         } else {
@@ -162,15 +160,6 @@ public class PDARunControl extends AbstractDsfService
     }
     
     
-    ///////////////////////////////////////////////////////////////////////////
-    // AbstractService    
-    @Override
-    protected BundleContext getBundleContext() {
-        return PDAPlugin.getBundleContext();
-    }
-    
-    ///////////////////////////////////////////////////////////////////////////
-    // IRunControl
 	public boolean canResume(IExecutionDMContext context) {
         return isSuspended(context) && !fResumePending;
 	}

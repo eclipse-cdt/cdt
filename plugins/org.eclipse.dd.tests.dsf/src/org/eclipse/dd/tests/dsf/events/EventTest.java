@@ -35,7 +35,7 @@ public class EventTest {
         fExecutor = new TestDsfExecutor();
         
         fExecutor.submit(new DsfRunnable() { public void run() {
-            fSession = DsfSession.startSession(fExecutor, "org.eclipse.dd.dsf.tests"); //$NON-NLS-1$
+            fSession = DsfSession.startSession(fExecutor, "org.eclipse.dd.tests.dsf"); //$NON-NLS-1$
         }}).get();
         
         StartupSequence startupSeq = new StartupSequence(fSession);

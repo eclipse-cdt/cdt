@@ -8,7 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.dd.dsf.tests.service;
+package org.eclipse.dd.tests.dsf.service;
 
 import java.util.Hashtable;
 

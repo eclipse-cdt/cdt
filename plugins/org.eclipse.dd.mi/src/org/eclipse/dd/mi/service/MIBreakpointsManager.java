@@ -79,7 +79,7 @@ import org.osgi.framework.BundleContext;
 public class MIBreakpointsManager extends AbstractDsfService implements IBreakpointManagerListener, IBreakpointListener
 {
     // Note: Find a way to import this (careful of circular dependencies)
-    public final static String GDB_DEBUG_MODEL_ID = "org.eclipse.dd.dsf.gdb"; //$NON-NLS-1$
+    public final static String GDB_DEBUG_MODEL_ID = "org.eclipse.dd.gdb"; //$NON-NLS-1$
 
     // Extra breakpoint attributes
     private static final String ATTR_DEBUGGER_PATH   = MIPlugin.PLUGIN_ID + ".debuggerPath";   //$NON-NLS-1$

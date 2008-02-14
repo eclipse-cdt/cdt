@@ -30,40 +30,53 @@
 	</target>
 	
 	
-	<target name="cpp">
-		<description>Generate the C++ parser</description>
-		<antcall target="generate">
-			<param name="grammar_dir" value="cpp"/>
-			<param name="grammar_name" value="CPPParser"/>
-			<param name="output_dir" value="org/eclipse/cdt/internal/core/dom/lrparser/cpp"/>
-		</antcall>
-	</target>
-	
 	<target name="c99">
 		<description>Generate the C99 parser</description>
 		<!-- Generate main parser -->
-		<antcall target="generate">
-			<param name="grammar_dir" value="c99"/>
+		<antcall target="generate-c99">
             <param name="grammar_name" value="C99Parser"/>
-			<param name="output_dir" value="org/eclipse/cdt/internal/core/dom/lrparser/c99"/>
 		</antcall>
 		<!-- Generate parser for disambiguating declarations vs expression statements -->
-		<antcall target="generate">
-			<param name="grammar_dir" value="c99"/>
+		<antcall target="generate-c99">
             <param name="grammar_name" value="C99ExpressionStatementParser"/>
-			<param name="output_dir" value="org/eclipse/cdt/internal/core/dom/lrparser/c99"/>
 		</antcall>
 		<!-- Generate parser for disambiguating cast expressions vs binary expressions-->
-		<antcall target="generate">
-			<param name="grammar_dir" value="c99"/>
+		<antcall target="generate-c99">
             <param name="grammar_name" value="C99NoCastExpressionParser"/>
-			<param name="output_dir" value="org/eclipse/cdt/internal/core/dom/lrparser/c99"/>
 		</antcall>
 		<!-- Generate parser for disambiguating sizeof expressions -->
+		<antcall target="generate-c99">
+            <param name="grammar_name" value="C99SizeofExpressionParser"/>
+		</antcall>
+	</target>
+	
+	
+	<target name="cpp">
+		<description>Generate the C++ parser</description>
+		<antcall target="generate-cpp">
+			<param name="grammar_name" value="CPPParser"/>
+		</antcall>
+		<!-- Generate parser for disambiguating declarations vs expression statements -->
+		<antcall target="generate-cpp">
+            <param name="grammar_name" value="CPPExpressionStatementParser"/>
+		</antcall>
+	</target>
+	
+	
+	<target name="generate-c99">
 		<antcall target="generate">
 			<param name="grammar_dir" value="c99"/>
-            <param name="grammar_name" value="C99SizeofExpressionParser"/>
 			<param name="output_dir" value="org/eclipse/cdt/internal/core/dom/lrparser/c99"/>
+			<param name="grammar_name" value="${grammar_name}"/>
+		</antcall>
+	</target>
+	
+	
+	<target name="generate-cpp">
+		<antcall target="generate">
+			<param name="grammar_dir" value="cpp"/>
+			<param name="output_dir" value="org/eclipse/cdt/internal/core/dom/lrparser/cpp"/>
+			<param name="grammar_name" value="${grammar_name}"/>
 		</antcall>
 	</target>
 	

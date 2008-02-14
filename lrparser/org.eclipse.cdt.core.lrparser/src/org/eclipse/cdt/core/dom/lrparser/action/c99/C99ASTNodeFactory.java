@@ -404,6 +404,10 @@ public class C99ASTNodeFactory implements IC99ASTNodeFactory {
 		return new CASTEnumerationSpecifier(name);
 	}
 
+	public IASTDeclSpecifier newSimpleDeclSpecifier() {
+		return newCSimpleDeclSpecifier();
+	}
+
 	
 } 
 

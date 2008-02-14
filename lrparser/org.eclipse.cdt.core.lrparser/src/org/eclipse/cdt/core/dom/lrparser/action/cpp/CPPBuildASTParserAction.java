@@ -82,9 +82,14 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
+import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
 import org.eclipse.cdt.core.dom.lrparser.action.BuildASTParserAction;
 import org.eclipse.cdt.core.dom.lrparser.util.DebugUtil;
+import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99ExpressionStatementParser;
+import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym;
+import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPExpressionStatementParser;
+import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionDeclarator;
 
 /**
@@ -110,11 +115,17 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		this.nodeFactory = nodeFactory;
 	}
 
-	@Override protected boolean isCompletionToken(IToken token) {
+	@Override 
+	protected boolean isCompletionToken(IToken token) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 	
+	
+	@Override
+	protected IParser getExpressionStatementParser() {
+		return new CPPExpressionStatementParser(CPPParsersym.orderedTerminalSymbols); 
+	}
 	
 //	/**
 //	 * Used only for debugging purposes.
@@ -531,24 +542,6 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		
 		setOffsetAndLength(whileStatement);
 		astStack.push(whileStatement);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
-	}
-	
-	
-	/**
-	 * block_item ::= declaration | statement 
-	 * 
-	 * Wrap a declaration in a DeclarationStatement.
-	 */
-	public void consumeStatementDeclaration() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
-		IASTDeclaration decl = (IASTDeclaration) astStack.pop();
-
-		IASTDeclarationStatement stat = nodeFactory.newDeclarationStatement(decl);
-		setOffsetAndLength(stat);
-		astStack.push(stat);
 		
 		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
@@ -1180,6 +1173,9 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 			nestedNames.addFirst(className);
 			className = createQualifiedName(nestedNames, false);
 		}
+
+		if(className == null)
+			className = nodeFactory.newName();
 		
 		ICPPASTCompositeTypeSpecifier classSpecifier = nodeFactory.newCPPCompositeTypeSpecifier(key, className);
 		

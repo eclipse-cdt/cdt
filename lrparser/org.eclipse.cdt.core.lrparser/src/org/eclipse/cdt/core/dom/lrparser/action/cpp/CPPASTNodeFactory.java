@@ -551,4 +551,8 @@ public class CPPASTNodeFactory implements ICPPASTNodeFactory {
 		return new CPPASTAmbiguousStatement(statements);
 	}
 
+	public IASTDeclSpecifier newSimpleDeclSpecifier() {
+		return newCPPSimpleDeclSpecifier();
+	}
+
 }

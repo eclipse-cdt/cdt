@@ -33,7 +33,8 @@ $Define
 	$ast_class /.Object./
 	$data_class /. Object ./ -- allow anything to be passed between actions
 	
-	$additional_interfaces /. , IParserActionTokenProvider, IParser ./
+	$extra_interfaces /. ./
+	$additional_interfaces /. , IParserActionTokenProvider, IParser $extra_interfaces ./
 	
 	$build_action_class /.  ./
 	$resolve_action_class /.  ./
@@ -67,7 +68,7 @@ $Headers
 	
 	private void initActions(IASTTranslationUnit tu) {
 		action = new $build_action_class($node_factory_create_expression, this, tu);
-		action.setTokenMap($sym_class.orderedTerminalSymbols);
+		action.setTokenMap($sym_type.orderedTerminalSymbols);
 	}
 	
 	
@@ -99,6 +100,11 @@ $Headers
 	    return Collections.unmodifiableList(getTokens().subList(getLeftSpan(), getRightSpan() + 1));
 	}
 	
+	
+	public IASTNode getSecondaryParseResult() {
+		return  action.getSecondaryParseResult();
+	}
+	
 ./
 $End
 
@@ -121,12 +127,14 @@ $Headers
 			token.setKind(tokenMap.mapKind(token.getKind()));
 			addToken(token);
 		}
-		addToken(new Token(null, 0, 0, $sym_class.TK_EOF_TOKEN));
+		addToken(new Token(null, 0, 0, $sym_type.TK_EOF_TOKEN));
 	}
 	
 	public $action_type(String[] mapFrom) {  // constructor
-		tokenMap = new TokenMap($sym_class.orderedTerminalSymbols, mapFrom);
+		tokenMap = new TokenMap($sym_type.orderedTerminalSymbols, mapFrom);
 	}	
 	
+
 ./
 $End
+	

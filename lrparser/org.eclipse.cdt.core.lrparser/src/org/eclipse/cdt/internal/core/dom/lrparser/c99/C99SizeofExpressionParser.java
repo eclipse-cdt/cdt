@@ -28,7 +28,7 @@ import org.eclipse.cdt.core.dom.lrparser.action.c99.C99ASTNodeFactory;
 import org.eclipse.cdt.core.dom.lrparser.action.c99.C99BuildASTParserAction;
 import org.eclipse.cdt.core.dom.lrparser.action.c99.C99TypedefTrackerParserAction;
 
-public class C99SizeofExpressionParser extends PrsStream implements RuleAction , IParserActionTokenProvider, IParser 
+public class C99SizeofExpressionParser extends PrsStream implements RuleAction , IParserActionTokenProvider, IParser   
 {
     private static ParseTable prs = new C99SizeofExpressionParserprs();
     private BacktrackingParser btParser;
@@ -172,7 +172,7 @@ public C99SizeofExpressionParser() {  // constructor
 
 private void initActions(IASTTranslationUnit tu) {
 	action = new  C99BuildASTParserAction ( C99ASTNodeFactory.DEFAULT_INSTANCE , this, tu);
-	action.setTokenMap( C99SizeofExpressionParsersym .orderedTerminalSymbols);
+	action.setTokenMap(C99SizeofExpressionParsersym.orderedTerminalSymbols);
 }
 
 
@@ -205,6 +205,11 @@ public List getRuleTokens() {
 }
 
 
+public IASTNode getSecondaryParseResult() {
+	return  action.getSecondaryParseResult();
+}
+
+
 
 private ITokenMap tokenMap = null;
 
@@ -215,17 +220,14 @@ public void setTokens(List<IToken> tokens) {
 		token.setKind(tokenMap.mapKind(token.getKind()));
 		addToken(token);
 	}
-	addToken(new Token(null, 0, 0,  C99SizeofExpressionParsersym .TK_EOF_TOKEN));
+	addToken(new Token(null, 0, 0, C99SizeofExpressionParsersym.TK_EOF_TOKEN));
 }
 
 public C99SizeofExpressionParser(String[] mapFrom) {  // constructor
-	tokenMap = new TokenMap( C99SizeofExpressionParsersym .orderedTerminalSymbols, mapFrom);
+	tokenMap = new TokenMap(C99SizeofExpressionParsersym.orderedTerminalSymbols, mapFrom);
 }	
 
 
-public IASTExpression getParseResult() {
-	return (IASTExpression) action.getSecondaryParseResult();
-}
 
     public void ruleAction(int ruleNumber)
     {

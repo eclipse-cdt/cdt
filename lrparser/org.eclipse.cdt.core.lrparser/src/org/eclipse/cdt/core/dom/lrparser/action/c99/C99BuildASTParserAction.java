@@ -53,6 +53,7 @@ import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointer;
 import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
@@ -78,6 +79,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
+import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
 import org.eclipse.cdt.core.dom.lrparser.action.BuildASTParserAction;
 import org.eclipse.cdt.core.dom.lrparser.action.ITokenMap;
@@ -136,6 +138,12 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	}
 	
 	
+	@Override
+	protected IParser getExpressionStatementParser() {
+		return new C99ExpressionStatementParser(C99Parsersym.orderedTerminalSymbols); 
+	}
+
+	
 	
 	
 	
@@ -191,16 +199,13 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 		setOffsetAndLength(expr);
 		
 		// try parsing as an expression to resolve ambiguities
-		C99SizeofExpressionParser alternateParser = new C99SizeofExpressionParser(C99Parsersym.orderedTerminalSymbols); 
-		alternateParser.setTokens(parser.getRuleTokens());
-		IASTCompletionNode completionNode = alternateParser.parse(tu);
-		addNameToCompletionNode(completionNode);
-		IASTExpression alternateExpr = alternateParser.getParseResult();
+		C99SizeofExpressionParser secondaryParser = new C99SizeofExpressionParser(C99Parsersym.orderedTerminalSymbols); 
+		IASTNode alternateExpr = runSecondaryParser(secondaryParser);
 		
 		if(alternateExpr == null || alternateExpr instanceof IASTProblemExpression)
 			astStack.push(expr);
 		else
-			astStack.push(nodeFactory.newAmbiguousExpression(expr, alternateExpr));
+			astStack.push(nodeFactory.newAmbiguousExpression(expr, (IASTExpression)alternateExpr));
 		
 		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
@@ -251,38 +256,15 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	
 	
 	
-	
-	@Deprecated public void consumeDeclaratorComplete(/*IBinding binding*/) {
-//		if(DEBUG) DebugUtil.printMethodTrace();
-//		
-//		IASTDeclarator declarator = (IASTDeclarator) astStack.peek();
-//		
-//		IASTDeclarator nested;
-//		while((nested = declarator.getNestedDeclarator()) != null) {
-//			declarator = nested;
-//		}
-//		
-//		//declarator.getName().setBinding(binding);
-	}
-	
-	
-	
 	/**
 	 * type_qualifier ::= const | restrict | volatile
 	 */
 	private void collectArrayModifierTypeQualifiers(ICASTArrayModifier arrayModifier) {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		for(Object o : astStack.closeScope()) {
 			switch(asC99Kind((IToken)o)) {
-				case TK_const:
-					arrayModifier.setConst(true);
-					break;
-				case TK_restrict:
-					arrayModifier.setRestrict(true);
-					break;
-				case TK_volatile:
-					arrayModifier.setVolatile(true);
-					break;
+				case TK_const:    arrayModifier.setConst(true);    break;
+				case TK_restrict: arrayModifier.setRestrict(true); break;
+				case TK_volatile: arrayModifier.setVolatile(true); break;
 			}
 		}
 	}
@@ -326,11 +308,6 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	}
 
 
-	@Deprecated public void consumeDeclaratorCompleteField(/*IBinding binding*/) {
-		//IASTDeclarator declarator = (IASTDeclarator) astStack.peek();
-		//declarator.getName().setBinding(binding);
-	}
-	
 	
 	/**
 	 * direct_declarator ::= direct_declarator '(' <openscope> identifier_list ')'
@@ -402,19 +379,6 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 		
 		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
-	
-	
-	
-	
-	
-	@Deprecated public void consumeDeclaratorCompleteParameter(/*IBinding binding*/) {
-		//if(DEBUG) DebugUtil.printMethodTrace();
-		
-		//IASTDeclarator declarator = (IASTDeclarator) astStack.peek();
-		//declarator.getName().setBinding(binding);
-	}
-	
-	
 	
 	
 	
@@ -679,93 +643,6 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
-
-	
-	/**
-	 * block_item ::= declaration | statement 
-	 * 
-	 * Wrap a declaration in a DeclarationStatement.
-	 */
-	public void consumeStatementDeclaration() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
-		IASTDeclaration decl = (IASTDeclaration) astStack.pop();
-		IASTDeclarationStatement declarationStatement = nodeFactory.newDeclarationStatement(decl);
-		setOffsetAndLength(declarationStatement);
-		
-		// attempt to also parse the tokens as an expression
-		IASTExpressionStatement expressionStatement = null;
-		if(decl instanceof IASTSimpleDeclaration) {
-			// TODO this probably has bad performance
-			C99ExpressionStatementParser expressionParser = new C99ExpressionStatementParser(C99Parsersym.orderedTerminalSymbols); 
-			expressionParser.setTokens(parser.getRuleTokens());
-			// need to pass tu because any completion nodes need to be linked directly to the root
-			IASTCompletionNode compNode = expressionParser.parse(tu);
-			addNameToCompletionNode(compNode);
-			IASTExpression expr = expressionParser.getParseResult();
-			
-			if(expr != null && !(expr instanceof IASTProblemExpression)) { // the parse may fail
-				expressionStatement = nodeFactory.newExpressionStatement(expr);
-				setOffsetAndLength(expressionStatement);
-			}
-		}
-		
-		if(expressionStatement == null) {
-			astStack.push(declarationStatement);
-		}
-		else {
-			astStack.push(nodeFactory.newAmbiguousStatement(declarationStatement, expressionStatement));
-		}
-			
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
-	}
-	
-	
-	
-	
-//	
-//	/**
-//	 * Kludgy way to disambiguate a certain case.
-//	 * An identifier alone on a line will be parsed as a declaration
-//	 * but it probably should be an expression.
-//	 * eg) i;
-//	 * 
-//	 * This only happens in the presence of a completion token.
-//	 * 
-//	 * @return true if the hack was applied
-//	 */
-//	private boolean disambiguateHackIdentifierExpression(IASTDeclaration decl) {
-//		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-//		
-//		// this is only meant to work with content assist
-//		List<IToken> tokens = parser.getRuleTokens();
-//		if(tokens.size() != 2 || tokens.get(0).getKind() == TK_typedef)
-//			return false;
-//		
-//		if(decl instanceof IASTSimpleDeclaration) {
-//			IASTSimpleDeclaration declaration = (IASTSimpleDeclaration) decl;
-//			if(declaration.getDeclarators() == IASTDeclarator.EMPTY_DECLARATOR_ARRAY) {
-//				IASTDeclSpecifier declSpec = declaration.getDeclSpecifier();
-//				if(declSpec instanceof ICASTTypedefNameSpecifier) {
-//					ICASTTypedefNameSpecifier typedefNameSpec = (ICASTTypedefNameSpecifier) declSpec;
-//					IASTName name = typedefNameSpec.getName();
-//					
-//					if(offset(name) == offset(typedefNameSpec) && length(name) == length(typedefNameSpec)) {
-//						IASTIdExpression idExpr = nodeFactory.newIdExpression(name);
-//						IASTExpressionStatement stat = nodeFactory.newExpressionStatement(idExpr);
-//
-//						setOffsetAndLength(stat);
-//						astStack.push(stat);
-//						return true;
-//					}
-//				}
-//			}
-//		}
-//		return false;
-//	}
-	
-	
 	
 	/**
 	 * selection_statement ::=  switch '(' expression ')' statement
@@ -831,14 +708,6 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
-    
-	
-	@Deprecated public void consumeFunctionDefinitionHeader(/*IBinding binding*/) {
-//		Object o = astStack.peek();
-//		if(o instanceof IASTFunctionDeclarator) {
-//			((IASTFunctionDeclarator)o).getName().setBinding(binding);
-//		}
-	}
 	
 	
     /**

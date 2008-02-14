@@ -11,8 +11,10 @@
 
 -- TODO "complete" rules can be removed
 
+-- TODO when the architecture has solidified try to move common
+-- stuff between C99 and C++ into one file.
 $Include
-../common.g
+common.g
 $End
 
 
@@ -111,7 +113,6 @@ $End
 
 $Define
 	$build_action_class /. C99BuildASTParserAction ./
-	$resolve_action_class /. C99TypedefTrackerParserAction ./
 	$node_factory_create_expression /. C99ASTNodeFactory.DEFAULT_INSTANCE ./
 $End
 

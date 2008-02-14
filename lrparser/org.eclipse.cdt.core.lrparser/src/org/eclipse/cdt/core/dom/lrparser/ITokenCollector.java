@@ -10,17 +10,43 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.lrparser;
 
+import java.util.List;
+
 import lpg.lpgjavaruntime.IToken;
 
 /**
  * An LPG parser object is initialized with the list of tokens
  * before parsing is invoked.
  * 
- * This interface allows tokens to be "injected" into the parser
- * before the parser is run.
- * 
  * @author Mike Kucera
  */
 public interface ITokenCollector {
+	
+	/**
+	 * Used to add one token at a time to the parser.
+	 * If this method is used to add tokens then the dummy token
+	 * and the EOF token must be added by the client.
+	 * 
+	 * This is really just an optimization, no intermediate data structures
+     * are required between the preprocessor and the parser.
+     * 
+     * @throws NullPointerException if token is null
+	 */
 	public void addToken(IToken token);
+	
+	/**
+	 * Set the list of tokens that will be parsed.
+	 * 
+	 * The given list does not need to contain dummy and EOF tokens,
+	 * these will be added automatically.
+	 * 
+	 * This method causes any tokens already contained in the parser
+	 * to be removed.
+	 * 
+	 * This method is mainly used by secondary parsers that are called
+	 * from a main parser.
+	 * 
+	 * @throws NullPointerException if tokens is null
+	 */
+	public void setTokens(List<IToken> tokens);
 }

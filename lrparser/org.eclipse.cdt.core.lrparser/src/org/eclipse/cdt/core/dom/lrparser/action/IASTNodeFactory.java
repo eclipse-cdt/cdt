@@ -178,5 +178,7 @@ public interface IASTNodeFactory {
 	public IASTAmbiguousStatement newAmbiguousStatement(IASTStatement... statements);
 	
 	public IASTAmbiguousExpression newAmbiguousExpression(IASTExpression... expressions);
+
+	public IASTDeclSpecifier newSimpleDeclSpecifier();
 	
 }

@@ -11,6 +11,7 @@
 package org.eclipse.cdt.core.dom.lrparser;
 
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 
 
@@ -37,5 +38,11 @@ public interface IParser extends ITokenCollector {
 	 * @return a completion node if a completion token is encountered during the parser, null otherwise.
 	 */
 	public IASTCompletionNode parse(IASTTranslationUnit tu);
+	
+	
+	/**
+	 * Returns the result of a secondary parser.
+	 */
+	public IASTNode getSecondaryParseResult();
 	
 }

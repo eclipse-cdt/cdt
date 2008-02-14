@@ -13,11 +13,9 @@
 %options package=org.eclipse.cdt.internal.core.dom.lrparser.c99
 %options template=btParserTemplateD.g
 
--- All we need to do is import the main parser and redefine the start symbol.
-$Define
-	$sym_class /. C99Parsersym ./
-$End
-	
+-- This file is needed because LPG won't allow redefinition of the 
+-- start symbol, so C99Grammar.g cannot define a start symbol.
+
 $Import
 	C99Grammar.g
 $End

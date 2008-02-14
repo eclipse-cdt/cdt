@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTContinueStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTDefaultStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
@@ -68,6 +69,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
+import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
 import org.eclipse.cdt.core.dom.lrparser.util.DebugUtil;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99NoCastExpressionParser;
@@ -130,6 +132,12 @@ public abstract class BuildASTParserAction {
 	
 	
 	/**
+	 * Get the parser that will recognize expression statements.
+	 */
+	protected abstract IParser getExpressionStatementParser();
+	
+	
+	/**
 	 * Create a new parser action.
 	 * @param tu Root node of the AST, its list of declarations should be empty.
 	 * @throws NullPointerException if any of the parameters are null
@@ -186,8 +194,8 @@ public abstract class BuildASTParserAction {
 	/**
 	 * Used to get the result of secondary parsers.
 	 */
-	public Object getSecondaryParseResult() {
-		return astStack.pop();
+	public IASTNode getSecondaryParseResult() {
+		return (IASTNode) astStack.pop();
 	}
 	
 	
@@ -248,6 +256,16 @@ public abstract class BuildASTParserAction {
 	}
 	
 	
+	/**
+	 * Runs the given parser on the tokens that make up the current rule.
+	 */
+	protected IASTNode runSecondaryParser(IParser secondaryParser) { 
+		secondaryParser.setTokens(parser.getRuleTokens());
+		// need to pass tu because any completion nodes need to be linked directly to the root
+		IASTCompletionNode compNode = secondaryParser.parse(tu);
+		addNameToCompletionNode(compNode);
+		return secondaryParser.getSecondaryParseResult();
+	}
 	
 	
 	/*************************************************************************************************************
@@ -261,8 +279,6 @@ public abstract class BuildASTParserAction {
 	 * in order to create a new scope in the AST stack.
 	 */
 	public void openASTScope() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		astStack.openScope();
 	}
 	
@@ -364,6 +380,41 @@ public abstract class BuildASTParserAction {
   		if(TRACE_AST_STACK) System.out.println(astStack);
   	}
   	
+  	
+  	/**
+	 * block_item ::= declaration | statement 
+	 * 
+	 * Wrap a declaration in a DeclarationStatement.
+	 */
+	public void consumeStatementDeclaration() {
+		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
+		
+		IASTDeclaration decl = (IASTDeclaration) astStack.pop();
+		IASTDeclarationStatement declarationStatement = nodeFactory.newDeclarationStatement(decl);
+		setOffsetAndLength(declarationStatement);
+		
+		// attempt to also parse the tokens as an expression
+		IASTExpressionStatement expressionStatement = null;
+		if(decl instanceof IASTSimpleDeclaration) {
+			IParser expressionParser = getExpressionStatementParser();
+			IASTExpression expr = (IASTExpression) runSecondaryParser(expressionParser);
+			
+			if(expr != null && !(expr instanceof IASTProblemExpression)) { // the parse may fail
+				expressionStatement = nodeFactory.newExpressionStatement(expr);
+				setOffsetAndLength(expressionStatement);
+			}
+		}
+		
+		if(expressionStatement == null)
+			astStack.push(declarationStatement);
+		else
+			astStack.push(nodeFactory.newAmbiguousStatement(declarationStatement, expressionStatement));
+			
+		
+		if(TRACE_AST_STACK) System.out.println(astStack);
+	}
+	
+	
   	
 	
 	/**
@@ -499,16 +550,13 @@ public abstract class BuildASTParserAction {
 		setOffsetAndLength(expr);
 				
 		// try parsing as non-cast to resolve ambiguities
-		C99NoCastExpressionParser alternateParser = new C99NoCastExpressionParser(C99Parsersym.orderedTerminalSymbols); 
-		alternateParser.setTokens(parser.getRuleTokens());
-		IASTCompletionNode compNode = alternateParser.parse(tu);
-		addNameToCompletionNode(compNode);
-		IASTExpression alternateExpr = alternateParser.getParseResult();
+		IParser secondaryParser = new C99NoCastExpressionParser(C99Parsersym.orderedTerminalSymbols); 
+		IASTNode alternateExpr = runSecondaryParser(secondaryParser);
 		
 		if(alternateExpr == null || alternateExpr instanceof IASTProblemExpression)
 			astStack.push(expr);
 		else
-			astStack.push(nodeFactory.newAmbiguousExpression(expr, alternateExpr));
+			astStack.push(nodeFactory.newAmbiguousExpression(expr, (IASTExpression)alternateExpr));
 
 		
 		if(TRACE_AST_STACK) System.out.println(astStack);
@@ -923,8 +971,19 @@ public abstract class BuildASTParserAction {
 	 * Even if there is potential for reuse it still may be cleaner to leave the 
 	 * common stuff to just simple expressions and statements.
 	 * 
+	 * For C99:
+	 * 
 	 * declaration ::= declaration_specifiers <openscope> init_declarator_list ';'
 	 * declaration ::= declaration_specifiers  ';'
+	 * 
+	 * 
+	 * For C++:
+	 * 
+	 * simple_declaration
+     *     ::= declaration_specifiers_opt <openscope-ast> init_declarator_list_opt ';'
+     *     
+     *     
+     * TODO Make both grammars the same here.
 	 */
 	public void consumeDeclarationSimple(boolean hasDeclaratorList) {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
@@ -932,6 +991,11 @@ public abstract class BuildASTParserAction {
 		List<Object> declarators = (hasDeclaratorList) ? astStack.closeScope() : Collections.emptyList();
 		IASTDeclSpecifier declSpecifier = (IASTDeclSpecifier) astStack.pop(); // may be null
 		
+		if(declSpecifier == null) { // can happen if implicit int is used
+			declSpecifier = nodeFactory.newSimpleDeclSpecifier();
+			setOffsetAndLength(declSpecifier, parser.getLeftIToken().getStartOffset(), 0);
+		}
+
 		IASTSimpleDeclaration declaration = nodeFactory.newSimpleDeclaration(declSpecifier);
 		
 		for(Object declarator : declarators)

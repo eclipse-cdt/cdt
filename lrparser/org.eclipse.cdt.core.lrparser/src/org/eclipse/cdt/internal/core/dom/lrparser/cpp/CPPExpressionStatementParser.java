@@ -28,9 +28,9 @@ import org.eclipse.cdt.core.dom.lrparser.util.DebugUtil;
 import org.eclipse.cdt.core.dom.lrparser.action.ITokenMap;
 import org.eclipse.cdt.core.dom.lrparser.action.TokenMap;
 
-public class CPPParser extends PrsStream implements RuleAction , IParserActionTokenProvider, IParser 
+public class CPPExpressionStatementParser extends PrsStream implements RuleAction , IParserActionTokenProvider, IParser 
 {
-    private static ParseTable prs = new CPPParserprs();
+    private static ParseTable prs = new CPPExpressionStatementParserprs();
     private BacktrackingParser btParser;
 
     public BacktrackingParser getParser() { return btParser; }
@@ -65,13 +65,13 @@ public class CPPParser extends PrsStream implements RuleAction , IParserActionTo
         return (ErrorToken) (err instanceof ErrorToken ? err : null);
     }
 
-    public CPPParser(LexStream lexStream)
+    public CPPExpressionStatementParser(LexStream lexStream)
     {
         super(lexStream);
 
         try
         {
-            super.remapTerminalSymbols(orderedTerminalSymbols(), CPPParserprs.EOFT_SYMBOL);
+            super.remapTerminalSymbols(orderedTerminalSymbols(), CPPExpressionStatementParserprs.EOFT_SYMBOL);
         }
         catch(NullExportedSymbolsException e) {
         }
@@ -84,7 +84,7 @@ public class CPPParser extends PrsStream implements RuleAction , IParserActionTo
             for (int i = 0; i < unimplemented_symbols.size(); i++)
             {
                 Integer id = (Integer) unimplemented_symbols.get(i);
-                System.out.println("    " + CPPParsersym.orderedTerminalSymbols[id.intValue()]);               
+                System.out.println("    " + CPPExpressionStatementParsersym.orderedTerminalSymbols[id.intValue()]);               
             }
             System.out.println();                        
         }
@@ -92,13 +92,13 @@ public class CPPParser extends PrsStream implements RuleAction , IParserActionTo
         {
             throw new Error(new UndefinedEofSymbolException
                                 ("The Lexer does not implement the Eof symbol " +
-                                 CPPParsersym.orderedTerminalSymbols[CPPParserprs.EOFT_SYMBOL]));
+                                 CPPExpressionStatementParsersym.orderedTerminalSymbols[CPPExpressionStatementParserprs.EOFT_SYMBOL]));
         } 
     }
 
-    public String[] orderedTerminalSymbols() { return CPPParsersym.orderedTerminalSymbols; }
-    public String getTokenKindName(int kind) { return CPPParsersym.orderedTerminalSymbols[kind]; }
-    public int getEOFTokenKind() { return CPPParserprs.EOFT_SYMBOL; }
+    public String[] orderedTerminalSymbols() { return CPPExpressionStatementParsersym.orderedTerminalSymbols; }
+    public String getTokenKindName(int kind) { return CPPExpressionStatementParsersym.orderedTerminalSymbols[kind]; }
+    public int getEOFTokenKind() { return CPPExpressionStatementParserprs.EOFT_SYMBOL; }
     public PrsStream getParseStream() { return (PrsStream) this; }
     
     //
@@ -143,11 +143,11 @@ public class CPPParser extends PrsStream implements RuleAction , IParserActionTo
         catch (NotBacktrackParseTableException e)
         {
             throw new Error(new NotBacktrackParseTableException
-                                ("Regenerate CPPParserprs.java with -BACKTRACK option"));
+                                ("Regenerate CPPExpressionStatementParserprs.java with -BACKTRACK option"));
         }
         catch (BadParseSymFileException e)
         {
-            throw new Error(new BadParseSymFileException("Bad Parser Symbol File -- CPPParsersym.java"));
+            throw new Error(new BadParseSymFileException("Bad Parser Symbol File -- CPPExpressionStatementParsersym.java"));
         }
 
         try
@@ -168,7 +168,7 @@ public class CPPParser extends PrsStream implements RuleAction , IParserActionTo
 private  CPPParserAction  action;	
 
 // uncomment to use with backtracking parser
-public CPPParser() {  // constructor
+public CPPExpressionStatementParser() {  // constructor
 }
 
 private void initActions(IASTTranslationUnit tu) {
@@ -250,11 +250,11 @@ public void setTokens(List<IToken> tokens) {
 		token.setKind(tokenMap.mapKind(token.getKind()));
 		addToken(token);
 	}
-	addToken(new Token(null, 0, 0, CPPParsersym.TK_EOF_TOKEN));
+	addToken(new Token(null, 0, 0, CPPExpressionStatementParsersym.TK_EOF_TOKEN));
 }
 
-public CPPParser(String[] mapFrom) {  // constructor
-	tokenMap = new TokenMap(CPPParsersym.orderedTerminalSymbols, mapFrom);
+public CPPExpressionStatementParser(String[] mapFrom) {  // constructor
+	tokenMap = new TokenMap(CPPExpressionStatementParsersym.orderedTerminalSymbols, mapFrom);
 }	
 
 
@@ -2026,6 +2026,13 @@ public CPPParser(String[] mapFrom) {  // constructor
             //
             case 517: {       action.builder.
    consumeDeclarationSimple(false);                 break;
+            }  
+   
+            //
+            // Rule 525:  expression_parser_start ::= ERROR_TOKEN
+            //
+            case 525: {       action.builder.
+   consumeExpressionProblem();                 break;
             }  
 
     

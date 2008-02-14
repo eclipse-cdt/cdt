@@ -14,41 +14,24 @@
 %options template=btParserTemplateD.g
 
 
-$Define
-	$sym_class /. C99SizeofExpressionParsersym ./
-$End
-
 $Import
 	C99Grammar.g
-
 $DropRules
 
-unary_expression
-    ::= 'sizeof' '(' type_name ')'
+	unary_expression
+	    ::= 'sizeof' '(' type_name ')'
     
 $End
-
 
 $Start
     no_sizeof_type_name_start
 $End
 
-
-
-$Headers
-/.
-	public IASTExpression getParseResult() {
-		return (IASTExpression) action.getSecondaryParseResult();
-	}
-./
-$End
-
-
 $Rules 
 
-no_sizeof_type_name_start
-    ::= expression
-      | ERROR_TOKEN
-          /. $Build  consumeExpressionProblem();  $EndBuild ./
+	no_sizeof_type_name_start
+	    ::= expression
+	      | ERROR_TOKEN
+	          /. $Build  consumeExpressionProblem();  $EndBuild ./
           
 $End

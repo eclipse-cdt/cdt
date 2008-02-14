@@ -29,7 +29,7 @@ public class C99SpecTests extends AST2CSpecTest {
 	
 	@Override
 	protected void parseCandCPP( String code, boolean checkBindings, int expectedProblemBindings ) throws ParserException {
-		//parse(code, ParserLanguage.C,   checkBindings, expectedProblemBindings);
+		parse(code, ParserLanguage.C,   checkBindings, expectedProblemBindings);
 		parse(code, ParserLanguage.CPP, checkBindings, expectedProblemBindings);
 	}
 		
@@ -61,18 +61,6 @@ public class C99SpecTests extends AST2CSpecTest {
 		parseCandCPP(buffer.toString(), false, 0);
 	}	
 
-	
-	// offsetof does not work if <stddef.h> is not included!
-	@Override
-	public void test6_7_2_1s17() throws Exception {
-		try {
-			super.test6_7_2_1s17();
-		} catch(AssertionFailedError _) {
-			return;
-		}
-		
-		fail();
-	} 
 	
 	
 	// Tests from AST2CSpecFailingTests

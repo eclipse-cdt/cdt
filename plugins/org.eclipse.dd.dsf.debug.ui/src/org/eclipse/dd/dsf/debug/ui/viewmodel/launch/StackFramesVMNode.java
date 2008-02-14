@@ -262,7 +262,9 @@ public class StackFramesVMNode extends AbstractDMVMNode
         }
         
         // Add the address
-        label.append(dmData.getAddress());
+        if (dmData.getAddress() != null) {
+            label.append(dmData.getAddress());
+        }
             
         // Set the label to the result listener
         update.setLabel(label.toString(), 0);

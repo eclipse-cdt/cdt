@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ import org.eclipse.cdt.internal.core.pdom.AbstractIndexerTask;
 import org.eclipse.cdt.internal.core.pdom.ITodoTaskUpdater;
 import org.eclipse.cdt.internal.core.pdom.IndexerProgress;
 import org.eclipse.cdt.internal.core.pdom.db.ChunkCache;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -52,6 +53,9 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 		super(concat(addFiles, updateFiles), removeFiles, new ProjectIndexerInputAdapter(indexer.getProject()), isFastIndexer);
 		fIndexer= indexer;
 		setShowActivity(checkDebugOption(TRACE_ACTIVITY, TRUE));
+		setShowInclusionProblems(checkDebugOption(TRACE_INCLUSION_PROBLEMS, TRUE));
+		setShowScannerProblems(checkDebugOption(TRACE_SCANNER_PROBLEMS, TRUE));
+		setShowSyntaxProblems(checkDebugOption(TRACE_SYNTAX_PROBLEMS, TRUE));
 		setShowProblems(checkDebugOption(TRACE_PROBLEMS, TRUE));
 		if (checkProperty(IndexerPreferences.KEY_SKIP_ALL_REFERENCES)) {
 			setSkipReferences(SKIP_ALL_REFERENCES);
@@ -145,7 +149,9 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 		IScannerInfoProvider provider= CCorePlugin.getDefault().getScannerInfoProvider(project);
 		IScannerInfo scanInfo;
 		if (provider != null) { 
-			scanInfo= provider.getScannerInformation(project);
+			String filename= linkageID == ILinkage.C_LINKAGE_ID ? "__cdt__.c" : "__cdt__.cpp";  //$NON-NLS-1$//$NON-NLS-2$
+			IFile file= project.getFile(filename);
+			scanInfo= provider.getScannerInformation(file);
 		}
 		else {
 			scanInfo= new ScannerInfo();
@@ -175,18 +181,20 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 	protected void traceEnd(long start, IWritableIndex index) {
 		if (checkDebugOption(IPDOMIndexerTask.TRACE_STATISTICS, TRUE)) {
 			IndexerProgress info= getProgressInformation();
-			String name= getClass().getName();
-			name= name.substring(name.lastIndexOf('.')+1);
-
-			System.out.println(name + " " + getProject().getElementName()  //$NON-NLS-1$
-					+ " (" + info.fCompletedSources + " sources, "  //$NON-NLS-1$ //$NON-NLS-2$
+			String kind= getIndexer().getClass().getName();
+			kind= kind.substring(kind.lastIndexOf('.')+1);
+			String name= "   "; //$NON-NLS-1$
+			
+			System.out.println("C/C++ Indexer: Project '" + getProject().getElementName()  //$NON-NLS-1$
+					+ "' (" + info.fCompletedSources + " sources, "  //$NON-NLS-1$ //$NON-NLS-2$
 					+ info.fCompletedHeaders + " headers)"); //$NON-NLS-1$
 			boolean allFiles= getIndexAllFiles();
 			boolean skipRefs= checkProperty(IndexerPreferences.KEY_SKIP_ALL_REFERENCES);
 			boolean skipTypeRefs= skipRefs || checkProperty(IndexerPreferences.KEY_SKIP_TYPE_REFERENCES);
 			System.out.println(name + " Options: "  //$NON-NLS-1$
-					+ "parseAllFiles=" + allFiles //$NON-NLS-1$
-					+ ",skipReferences=" + skipRefs //$NON-NLS-1$
+					+ "indexer='" + kind //$NON-NLS-1$
+					+ "', parseAllFiles=" + allFiles //$NON-NLS-1$
+					+ ", skipReferences=" + skipRefs //$NON-NLS-1$
 					+ ", skipTypeReferences=" + skipTypeRefs //$NON-NLS-1$
 					+ "."); //$NON-NLS-1$
 			System.out.println(name + " Timings: "  //$NON-NLS-1$
@@ -195,18 +203,20 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 					+ fStatistics.fResolutionTime + " resolution, " //$NON-NLS-1$
 					+ fStatistics.fAddToIndexTime + " index update."); //$NON-NLS-1$
 			System.out.println(name + " Errors: " //$NON-NLS-1$
-					+ fStatistics.fUnresolvedIncludes + " unresolved includes, " //$NON-NLS-1$
-					+ fStatistics.fErrorCount + " unexpected errors."); //$NON-NLS-1$
+					+ fStatistics.fUnresolvedIncludesCount + " include, " //$NON-NLS-1$
+					+ fStatistics.fPreprocessorProblemCount + " scanner, " //$NON-NLS-1$
+					+ fStatistics.fSyntaxProblemsCount + " syntax, " //$NON-NLS-1$
+					+ fStatistics.fErrorCount + " internal errors."); //$NON-NLS-1$
 
 			int sum= fStatistics.fDeclarationCount+fStatistics.fReferenceCount+fStatistics.fProblemBindingCount;
 			double problemPct= sum==0 ? 0.0 : (double) fStatistics.fProblemBindingCount / (double) sum;
 			NumberFormat nf= NumberFormat.getPercentInstance();
 			nf.setMaximumFractionDigits(2);
 			nf.setMinimumFractionDigits(2);
-			System.out.println(name + " Result: " //$NON-NLS-1$
+			System.out.println(name + " Names: " //$NON-NLS-1$
 					+ fStatistics.fDeclarationCount + " declarations, " //$NON-NLS-1$
 					+ fStatistics.fReferenceCount + " references, " //$NON-NLS-1$
-					+ fStatistics.fProblemBindingCount + "(" + nf.format(problemPct) + ") problems.");  //$NON-NLS-1$ //$NON-NLS-2$
+					+ fStatistics.fProblemBindingCount + "(" + nf.format(problemPct) + ") unresolved.");  //$NON-NLS-1$ //$NON-NLS-2$
 			
 			if (index != null) {
 				long misses= index.getCacheMisses();

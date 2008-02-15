@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.dom.parser.ASTProblem;
 
 /**
  * Converts the offsets relative to various contexts to the global sequence number. Also creates and stores
@@ -217,7 +218,7 @@ public class LocationMap implements ILocationResolver {
 	public void encounterProblem(int id, char[] arg, int offset, int endOffset) {
     	offset= getSequenceNumberForOffset(offset);
     	endOffset= getSequenceNumberForOffset(endOffset);
-    	ASTProblem problem = new ASTProblem(fTranslationUnit, id, arg, offset, endOffset);
+    	ASTProblem problem = new ASTProblem(fTranslationUnit, IASTTranslationUnit.SCANNER_PROBLEM, id, arg, false, offset, endOffset);
 		fProblems.add(problem);
 	}
 
@@ -545,6 +546,9 @@ public class LocationMap implements ILocationResolver {
 		return fProblems.toArray(new IASTProblem[fProblems.size()]);
 	}
 
+	public int getScannerProblemsCount() {
+		return fProblems.size();
+	}	
 	
 	public IASTName[] getDeclarations(IMacroBinding binding) {
 		IASTPreprocessorMacroDefinition def = getMacroDefinition(binding);

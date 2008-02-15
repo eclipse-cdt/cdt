@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -68,8 +70,11 @@ abstract public class PDOMWriter {
 		ArrayList<IASTPreprocessorMacroDefinition> fMacros= new ArrayList<IASTPreprocessorMacroDefinition>();
 		ArrayList<IASTPreprocessorIncludeStatement> fIncludes= new ArrayList<IASTPreprocessorIncludeStatement>();
 	}
+	private boolean fShowProblems;
+	private boolean fShowInclusionProblems;
+	private boolean fShowScannerProblems;
+	private boolean fShowSyntaxProblems;
 	protected boolean fShowActivity;
-	protected boolean fShowProblems;
 	protected final IndexerStatistics fStatistics;
 	protected final IndexerInputAdapter fResolver;
 	
@@ -85,6 +90,18 @@ abstract public class PDOMWriter {
 		fShowActivity= val;
 	}
 	
+	public void setShowInclusionProblems(boolean val) {
+		fShowInclusionProblems= val;
+	}
+
+	public void setShowScannerProblems(boolean val) {
+		fShowScannerProblems= val;
+	}
+
+	public void setShowSyntaxProblems(boolean val) {
+		fShowSyntaxProblems= val;
+	}
+
 	public void setShowProblems(boolean val) {
 		fShowProblems= val;
 	}
@@ -116,6 +133,11 @@ abstract public class PDOMWriter {
 	public void addSymbols(IASTTranslationUnit ast, IIndexFileLocation[] ifls, IWritableIndex index, 
 			int readlockCount, boolean flushIndex, int configHash, ITodoTaskUpdater taskUpdater, IProgressMonitor pm) 
 			throws InterruptedException, CoreException {
+		if (fShowProblems) {
+			fShowInclusionProblems= true;
+			fShowScannerProblems= true;
+			fShowSyntaxProblems= true;
+		}
 		final Map<IIndexFileLocation, Symbols> symbolMap= new HashMap<IIndexFileLocation, Symbols>();
 		for (int i = 0; i < ifls.length; i++) {
 			prepareInMap(symbolMap, ifls[i]);
@@ -209,8 +231,12 @@ abstract public class PDOMWriter {
 				final IASTName name = na[0];
 				try {
 					final IBinding binding = name.resolveBinding();
-					if (binding instanceof IProblemBinding)
-						reportProblem((IProblemBinding) binding);
+					if (binding instanceof IProblemBinding) {
+						fStatistics.fProblemBindingCount++;
+						if (fShowProblems) {
+							reportProblem((IProblemBinding) binding);
+						}
+					}
 					else if (name.isReference()) {
 						if (fSkipReferences == SKIP_TYPE_REFERENCES) {
 							if (isTypeReferenceBinding(binding) && !isRequiredReference(name)) {
@@ -249,6 +275,7 @@ abstract public class PDOMWriter {
 		final IIndexFileLocation astIFL = fResolver.resolveASTPath(ast.getFilePath());
 		
 		// includes
+		int unresolvedIncludes= 0;
 		IASTPreprocessorIncludeStatement[] includes = ast.getIncludeDirectives();
 		for (int i= 0; i < includes.length; i++) {
 			final IASTPreprocessorIncludeStatement include = includes[i];
@@ -260,7 +287,7 @@ abstract public class PDOMWriter {
 			}
 			if (include.isActive()) {
 				if (!include.isResolved()) {
-					reportProblem(include);
+					unresolvedIncludes++;
 				}
 				else if (updateSource) {
 					// the include was parsed, check if we want to update the included file in the index
@@ -271,7 +298,7 @@ abstract public class PDOMWriter {
 				}
 			}
 		}
-
+		
 		// macros
 		IASTPreprocessorMacroDefinition[] macros = ast.getMacroDefinitions();
 		for (int i2 = 0; i2 < macros.length; ++i2) {
@@ -282,9 +309,9 @@ abstract public class PDOMWriter {
 				addToMap(symbolMap, path2, macro);
 			}
 		}
-
+		
 		// names
-		ast.accept(new IndexerASTVisitor() {
+		final IndexerASTVisitor visitor = new IndexerASTVisitor() {
 			@Override
 			public void visit(IASTName name, IASTName caller) {
 				if (fSkipReferences == SKIP_ALL_REFERENCES) {
@@ -305,7 +332,28 @@ abstract public class PDOMWriter {
 					}
 				}
 			}
-		});
+		};
+		ast.accept(visitor);
+		
+		fStatistics.fUnresolvedIncludesCount += unresolvedIncludes;
+		fStatistics.fPreprocessorProblemCount+= ast.getPreprocessorProblemsCount() - unresolvedIncludes;
+		if (fShowScannerProblems || fShowSyntaxProblems) {
+			final boolean reportAll= fShowScannerProblems && fShowSyntaxProblems;
+			IASTProblem[] scannerProblems= ast.getPreprocessorProblems();
+			for (IASTProblem problem : scannerProblems) {
+				if (reportAll || (problem.getID() == IASTProblem.PREPROCESSOR_INCLUSION_NOT_FOUND) == fShowInclusionProblems) {
+					reportProblem(problem);
+				}
+			}
+		}
+
+		final List<IASTProblem> problems= visitor.getProblems();
+		fStatistics.fSyntaxProblemsCount+= problems.size();
+		if (fShowSyntaxProblems) {
+			for (IASTProblem problem : problems) {
+				reportProblem(problem); 
+			}
+		}
 	}
 	
 	protected final boolean isRequiredReference(IASTName name) {
@@ -333,30 +381,6 @@ abstract public class PDOMWriter {
 			return true;
 		}
 		return false;
-	}
-
-
-	private void reportProblem(IASTPreprocessorIncludeStatement problem) {
-		fStatistics.fUnresolvedIncludes++;
-		if (fShowProblems) {
-			String msg= "Indexer: unresolved include"; //$NON-NLS-1$
-			IASTFileLocation loc= problem.getFileLocation();
-			if (loc != null && loc.getFileName() != null) {
-				msg += " at " + loc.getFileName() + ": " + loc.getStartingLineNumber();  //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			System.out.println(msg);
-		}
-	}
-	
-	private void reportProblem(IProblemBinding problem) {
-		fStatistics.fProblemBindingCount++;
-		if (fShowProblems) {
-			String msg= "Indexer: problem at "+ problem.getFileName() + ": " + problem.getLineNumber();  //$NON-NLS-1$//$NON-NLS-2$
-			String pmsg= problem.getMessage();
-			if (pmsg != null && pmsg.length() > 0) 
-				msg+= "; " + problem.getMessage(); //$NON-NLS-1$
-			System.out.println(msg);
-		}
 	}
 
 	private void addToMap(Map<IIndexFileLocation, Symbols> map, IIndexFileLocation location, IASTName[] thing) {
@@ -444,4 +468,22 @@ abstract public class PDOMWriter {
 			fInfo.fTotalSourcesEstimate+= totalEstimate;
 		}
 	}
+		
+	private String getLocationInfo(String filename, int lineNumber) {
+		return " at " + filename + "(" + lineNumber + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	}
+
+	private void reportProblem(IProblemBinding problem) {
+		String msg= "Indexer: unresolved name" + getLocationInfo(problem.getFileName(), problem.getLineNumber()); //$NON-NLS-1$
+		String pmsg= problem.getMessage();
+		if (pmsg != null && pmsg.length() > 0) 
+			msg+= "; " + problem.getMessage(); //$NON-NLS-1$
+		System.out.println(msg);
+	}
+	
+	private void reportProblem(IASTProblem problem) {
+		String msg= "Indexer: " + problem.getMessage(); //$NON-NLS-1$
+		System.out.println(msg);
+	}
+
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -22,25 +23,42 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 
 abstract public class IndexerASTVisitor extends ASTVisitor {
+	private static class Definition {
+		Definition(IASTName name, IASTNode node) {
+			fName= name;
+			fNode= node;
+		}
+		IASTName fName;
+		IASTNode fNode;
+	}
+	
 	private IASTName fDefinitionName;
 	private IASTNode fDefinitionNode;
-	private ArrayList fStack= new ArrayList();
+	private ArrayList<Definition> fStack= new ArrayList<Definition>();
+	private ArrayList<IASTProblem> fProblems= new ArrayList<IASTProblem>();
 
 	public IndexerASTVisitor() {
 		shouldVisitNames= true;
 		shouldVisitDeclarations= true;
 		shouldVisitInitializers= true;
 		shouldVisitDeclSpecifiers= true;
+		shouldVisitProblems= true;
+	}
+	
+	public List<IASTProblem> getProblems() {
+		return fProblems;
 	}
 
 	abstract public void visit(IASTName name, IASTName definitionName);
 
+	@Override
 	final public int visit(IASTName name) {
 		if (!(name instanceof ICPPASTQualifiedName)) {
 			if (name != fDefinitionName) {
@@ -52,7 +70,7 @@ abstract public class IndexerASTVisitor extends ASTVisitor {
 
 	private void push(IASTName name, IASTNode node) {
 		if (fDefinitionName != null) {
-			fStack.add(new Object[] {fDefinitionName, fDefinitionNode});
+			fStack.add(new Definition(fDefinitionName, fDefinitionNode));
 		}
 		name = getLastInQualified(name);
 		fDefinitionName= name;
@@ -73,14 +91,15 @@ abstract public class IndexerASTVisitor extends ASTVisitor {
 				fDefinitionNode= null;
 			}
 			else {
-				Object[] old= (Object[]) fStack.remove(fStack.size()-1);
-				fDefinitionName= (IASTName) old[0];
-				fDefinitionNode= (IASTNode) old[1];
+				Definition old= fStack.remove(fStack.size()-1);
+				fDefinitionName= old.fName;
+				fDefinitionNode= old.fNode;
 			}
 		}
 	}
 
 	// functions and methods
+	@Override
 	public int visit(IASTDeclaration decl) {
 		if (decl instanceof IASTFunctionDefinition) {
 			IASTFunctionDefinition fdef= (IASTFunctionDefinition) decl;
@@ -111,12 +130,14 @@ abstract public class IndexerASTVisitor extends ASTVisitor {
 		return PROCESS_CONTINUE;
 	}
 
+	@Override
 	public int leave(IASTDeclaration decl) {
 		pop(decl);
 		return PROCESS_CONTINUE;
 	}
 
 	// class definitions, typedefs
+	@Override
 	public int visit(IASTDeclSpecifier declspec) {
 		if (declspec instanceof ICPPASTCompositeTypeSpecifier) {
 			ICPPASTCompositeTypeSpecifier cts= (ICPPASTCompositeTypeSpecifier) declspec;
@@ -133,12 +154,20 @@ abstract public class IndexerASTVisitor extends ASTVisitor {
 		return PROCESS_CONTINUE;
 	}
 
+	@Override
 	public int leave(IASTDeclSpecifier declspec) {
 		pop(declspec);
 		return PROCESS_CONTINUE;
 	}
+	
+	@Override
+	public int visit(IASTProblem problem) {
+		fProblems.add(problem);
+		return PROCESS_SKIP;
+	}
 
 	// variable and field initializers
+	@Override
 	public int visit(IASTInitializer initializer) {
 		if (!(fDefinitionNode instanceof IASTFunctionDefinition)) {
 			IASTNode cand= initializer.getParent();
@@ -149,6 +178,7 @@ abstract public class IndexerASTVisitor extends ASTVisitor {
 		return PROCESS_CONTINUE;
 	}
 	
+	@Override
 	public int leave(IASTInitializer initializer) {
 		pop(initializer);
 		return PROCESS_CONTINUE;

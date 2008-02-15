@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -62,6 +63,7 @@ import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
@@ -96,7 +98,8 @@ public class CPPASTTranslationUnit extends CPPASTNode implements ICPPASTTranslat
 	public CPPASTTranslationUnit() {
 	}
 	
-    public IASTTranslationUnit getTranslationUnit() {
+    @Override
+	public IASTTranslationUnit getTranslationUnit() {
     	return this;
     }
     
@@ -284,7 +287,8 @@ public class CPPASTTranslationUnit extends CPPASTNode implements ICPPASTTranslat
     	}
     	
  
-    	public int visit(IASTDeclaration declaration) {
+    	@Override
+		public int visit(IASTDeclaration declaration) {
     		// use declarations to determine if the search has gone past the offset (i.e. don't know the order the visitor visits the nodes)
     		if (declaration instanceof ASTNode && ((ASTNode)declaration).getOffset() > offset)
     			return PROCESS_ABORT;
@@ -293,7 +297,8 @@ public class CPPASTTranslationUnit extends CPPASTNode implements ICPPASTTranslat
     	}
     	
 
-    	public int visit(IASTDeclarator declarator) {
+    	@Override
+		public int visit(IASTDeclarator declarator) {
     		int ret = processNode(declarator);
     		
     		IASTPointerOperator[] ops = declarator.getPointerOperators();
@@ -328,38 +333,46 @@ public class CPPASTTranslationUnit extends CPPASTNode implements ICPPASTTranslat
     		return processNode(designator);
     	}
 
-    	public int visit(IASTDeclSpecifier declSpec) {
+    	@Override
+		public int visit(IASTDeclSpecifier declSpec) {
     		return processNode(declSpec);
     	}
 
-    	public int visit(IASTEnumerator enumerator) {
+    	@Override
+		public int visit(IASTEnumerator enumerator) {
     		return processNode(enumerator);
     	}
 
-    	public int visit(IASTExpression expression) {
+    	@Override
+		public int visit(IASTExpression expression) {
     		return processNode(expression);
     	}
  
-    	public int visit(IASTInitializer initializer) {
+    	@Override
+		public int visit(IASTInitializer initializer) {
     		return processNode(initializer);
     	}
     	
-    	public int visit(IASTName name) {
+    	@Override
+		public int visit(IASTName name) {
     		if ( name.toString() != null )
     			return processNode(name);
     		return PROCESS_CONTINUE;
     	}
     	
-    	public int visit(
+    	@Override
+		public int visit(
     			IASTParameterDeclaration parameterDeclaration) {
     		return processNode(parameterDeclaration);
     	}
     	
-    	public int visit(IASTStatement statement) {
+    	@Override
+		public int visit(IASTStatement statement) {
     		return processNode(statement);
     	}
     	
-    	public int visit(IASTTypeId typeId) {
+    	@Override
+		public int visit(IASTTypeId typeId) {
     		return processNode(typeId);
     	}
 
@@ -436,13 +449,18 @@ public class CPPASTTranslationUnit extends CPPASTNode implements ICPPASTTranslat
         return result;
     }
 
+	public int getPreprocessorProblemsCount() {
+		return resolver == null ? 0 : resolver.getScannerProblemsCount();
+	}
+
 	public String getFilePath() {
 		if (resolver == null)
 			return EMPTY_STRING;
 		return new String(resolver.getTranslationUnitPath());
 	}
 	
-    public boolean accept( ASTVisitor action ){
+    @Override
+	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitTranslationUnit){
 		    switch( action.visit( this ) ){
 	            case ASTVisitor.PROCESS_ABORT : return false;
@@ -565,5 +583,12 @@ public class CPPASTTranslationUnit extends CPPASTNode implements ICPPASTTranslat
 
 	IIndexFileSet getFileSet() {
 		return fIndexFileSet;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getLinkage()
+	 */
+	public ILinkage getLinkage() {
+		return Linkage.CPP_LINKAGE;
 	}
 }

@@ -769,7 +769,8 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         return -1;
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         StringBuffer buffer = new StringBuffer("Scanner @ file:");  //$NON-NLS-1$
         buffer.append(fCurrentContext.toString());
         buffer.append(" line: ");  //$NON-NLS-1$
@@ -1030,7 +1031,15 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 				}
 			}
 			else {
-				handleProblem(IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, headerName, poundOffset, condEndOffset);
+				final int len = headerName.length+2;
+				StringBuilder name= new StringBuilder(len);
+				name.append(userInclude ? '"' : '<');
+				name.append(headerName);
+				name.append(userInclude ? '"' : '>');
+
+				final char[] nameChars= new char[len];
+				name.getChars(0, len, nameChars, 0);
+				handleProblem(IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, nameChars, poundOffset, condEndOffset);
 			}
 		}
 

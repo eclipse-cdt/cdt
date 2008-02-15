@@ -64,6 +64,11 @@ public interface ILocationResolver {
 	 */
     IASTProblem[] getScannerProblems();
 
+	/**
+	 * @see IASTTranslationUnit#getPreprocessorProblemsCount()
+	 */
+	int getScannerProblemsCount();
+
     /**
      * Returns the comments encountered.
      */

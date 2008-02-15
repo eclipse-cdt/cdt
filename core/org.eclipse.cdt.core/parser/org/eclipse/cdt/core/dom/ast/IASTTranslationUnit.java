@@ -164,6 +164,11 @@ public interface IASTTranslationUnit extends IASTNode, IAdaptable {
 	public IASTProblem[] getPreprocessorProblems();
 
 	/**
+	 * Fast access to the count of preprocessor problems to support statistics.
+	 */
+	public int getPreprocessorProblemsCount();
+
+	/**
 	 * Get the translation unit's full path.  
 	 * @return String representation of path.
 	 */

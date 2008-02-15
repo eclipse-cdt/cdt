@@ -130,7 +130,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		 * @see org.eclipse.cdt.core.parser.IProblem#getMessage()
 		 */
 		public String getMessage() {
-			return fASTProblem.getMessage();
+			return fASTProblem.getMessageWithoutLocation();
 		}
 
 		/*

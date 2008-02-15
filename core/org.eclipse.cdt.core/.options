@@ -30,7 +30,16 @@ org.eclipse.cdt.core/debug/indexer/activity=false
 # Reports statistics for indexer
 org.eclipse.cdt.core/debug/indexer/statistics=false
 
-# Reports problems for indexer
+# Reports unresolved inclusions for indexer
+org.eclipse.cdt.core/debug/indexer/problems/inclusion=false
+
+# Reports scanner-problems for indexer (other than unresolved includes)
+org.eclipse.cdt.core/debug/indexer/problems/scanner=false
+
+# Reports syntax-problems for indexer
+org.eclipse.cdt.core/debug/indexer/problems/syntax=false
+
+# Reports problems for indexer, including inclusion-, scanner-, syntax- and resolution-problems.
 org.eclipse.cdt.core/debug/indexer/problems=false
 
 # Code formatter debugging

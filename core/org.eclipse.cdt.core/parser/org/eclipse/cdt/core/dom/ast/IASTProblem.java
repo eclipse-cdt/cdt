@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -38,13 +39,19 @@ public interface IASTProblem extends IASTNode {
 
 	/**
 	 * Answer a localized, human-readable message string which describes the
-	 * problem.
+	 * problem including its location
 	 * 
 	 * @return a localized, human-readable message string which describes the
 	 *         problem
 	 */
 	String getMessage();
 
+	/**
+	 * Returns a human-readable message string describing the problem, without
+	 * location information.
+	 */
+	String getMessageWithoutLocation();
+	
 	/**
 	 * Return to the client a map between parameter names and values.
 	 * 

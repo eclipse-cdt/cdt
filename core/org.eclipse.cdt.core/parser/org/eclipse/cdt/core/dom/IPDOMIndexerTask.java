@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 QNX Software Systems
+ * Copyright (c) 2005, 2008 QNX Software Systems
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public interface IPDOMIndexerTask {
 	public static final String TRACE_ACTIVITY   = CCorePlugin.PLUGIN_ID + "/debug/indexer/activity";  //$NON-NLS-1$
 	public static final String TRACE_STATISTICS = CCorePlugin.PLUGIN_ID + "/debug/indexer/statistics";  //$NON-NLS-1$
+	public static final String TRACE_INCLUSION_PROBLEMS = CCorePlugin.PLUGIN_ID + "/debug/indexer/problems/inclusion";  //$NON-NLS-1$
+	public static final String TRACE_SCANNER_PROBLEMS = CCorePlugin.PLUGIN_ID + "/debug/indexer/problems/scanner";  //$NON-NLS-1$
+	public static final String TRACE_SYNTAX_PROBLEMS = CCorePlugin.PLUGIN_ID + "/debug/indexer/problems/syntax";  //$NON-NLS-1$
 	public static final String TRACE_PROBLEMS   = CCorePlugin.PLUGIN_ID + "/debug/indexer/problems";  //$NON-NLS-1$
 
 	/**

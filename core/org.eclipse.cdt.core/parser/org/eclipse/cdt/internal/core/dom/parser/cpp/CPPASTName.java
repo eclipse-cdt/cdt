@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
@@ -29,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 
 /**
@@ -166,7 +168,8 @@ public class CPPASTName extends CPPASTNode implements IASTName, IASTCompletionCo
         return binding;
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         if (name == EMPTY_CHAR_ARRAY)
             return EMPTY_STRING;
         return new String(name);
@@ -180,7 +183,8 @@ public class CPPASTName extends CPPASTNode implements IASTName, IASTCompletionCo
         this.name = name;
     }
 
-    public boolean accept(ASTVisitor action) {
+    @Override
+	public boolean accept(ASTVisitor action) {
         if (action.shouldVisitNames) {
             switch (action.visit(this)) {
             case ASTVisitor.PROCESS_ABORT:
@@ -248,4 +252,11 @@ public class CPPASTName extends CPPASTNode implements IASTName, IASTCompletionCo
         }
         return false;
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IASTName#getLinkage()
+	 */
+	public ILinkage getLinkage() {
+		return Linkage.CPP_LINKAGE;
+	}
 }

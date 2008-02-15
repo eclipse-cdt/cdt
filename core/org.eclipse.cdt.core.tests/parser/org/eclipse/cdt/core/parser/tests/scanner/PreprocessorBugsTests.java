@@ -32,7 +32,7 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 	public void testMacroInInclusion_Bug122891() throws Exception {
 		initializeScanner();
 		validateEOF();
-		validateProblem(0, IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, "regxag4.sfr");
+		validateProblem(0, IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, "<regxag4.sfr>");
 		validateProblemCount(1);
 	}
 	
@@ -63,7 +63,7 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 	public void testEmptyStringInMacroInInclusion_Bug145270() throws Exception {
 		initializeScanner();
 		validateEOF();
-		validateProblem(0, IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, "bar.h");
+		validateProblem(0, IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, "\"bar.h\"");
 		validateProblemCount(1);
 	}
 	

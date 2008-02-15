@@ -1300,7 +1300,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             }
 
         }
-        ((CPPASTNode) result).setLength(lastOffset - startingOffset);
+        ((ASTNode) result).setLength(lastOffset - startingOffset);
         return result;
     }
 
@@ -2019,7 +2019,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                         IASTProblem p = failParse(bt);
                         IASTProblemDeclaration pd = createProblemDeclaration();
                         pd.setProblem(p);
-                        ((CPPASTNode) pd).setOffsetAndLength(((CPPASTNode) p));
+                        ((ASTNode) pd).setOffsetAndLength(((ASTNode) p));
                         linkage.addDeclaration(pd);
                         errorHandling();
                         if (checkToken == LA(1).hashCode())
@@ -2031,14 +2031,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             }
             // consume the }
             int endOffset = consume(IToken.tRBRACE).getEndOffset();
-            ((CPPASTNode) linkage).setLength(endOffset - firstToken.getOffset());
+            ((ASTNode) linkage).setLength(endOffset - firstToken.getOffset());
             return linkage;
         }
         // single declaration
 
         IASTDeclaration d = declaration();
         linkage.addDeclaration(d);
-        ((CPPASTNode) linkage).setLength(calculateEndOffset(d) - firstToken.getOffset());
+        ((ASTNode) linkage).setLength(calculateEndOffset(d) - firstToken.getOffset());
         return linkage;
     }
 
@@ -2406,7 +2406,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             return d2;
 
         IASTAmbiguousDeclaration result = createAmbiguousDeclaration();
-        ((CPPASTNode) result).setOffsetAndLength((ASTNode) d1);
+        ((ASTNode) result).setOffsetAndLength((ASTNode) d1);
         result.addDeclaration(d1);
         result.addDeclaration(d2);
         return result;
@@ -2465,7 +2465,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                         IASTProblem p = failParse(bt);
                         IASTProblemDeclaration pd = createProblemDeclaration();
                         pd.setProblem(p);
-                        ((CPPASTNode) pd).setOffsetAndLength((CPPASTNode) p);
+                        ((ASTNode) pd).setOffsetAndLength((ASTNode) p);
                         namespaceDefinition.addDeclaration(pd);
                         errorHandling();
                         if (checkToken == LA(1).hashCode())
@@ -2478,7 +2478,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
             // consume the }
             int end = consume().getEndOffset();
-            ((CPPASTNode) namespaceDefinition).setLength(end - first.getOffset());
+            ((ASTNode) namespaceDefinition).setLength(end - first.getOffset());
             return namespaceDefinition;
         } else if (LT(1) == IToken.tASSIGN) {
             IToken assign = consume();
@@ -2791,7 +2791,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             if (s != null) {
                 funcDefinition.setBody(s);
             }
-            ((CPPASTNode) funcDefinition).setLength(calculateEndOffset(s) - firstOffset);
+            ((ASTNode) funcDefinition).setLength(calculateEndOffset(s) - firstOffset);
 
             if (hasFunctionTryBlock && declarator instanceof ICPPASTFunctionTryBlockDeclarator) {
                 List handlers = new ArrayList(DEFAULT_CATCH_HANDLER_LIST_SIZE);
@@ -2799,7 +2799,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 for (int i = 0; i < handlers.size(); ++i) {
                     ICPPASTCatchHandler handler = (ICPPASTCatchHandler) handlers.get(i);
                     ((ICPPASTFunctionTryBlockDeclarator) declarator).addCatchHandler(handler);
-                    ((CPPASTNode) funcDefinition).setLength(calculateEndOffset(handler) - firstOffset);
+                    ((ASTNode) funcDefinition).setLength(calculateEndOffset(handler) - firstOffset);
                 }
             }
             return funcDefinition;
@@ -3249,7 +3249,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             elabSpec.setStorageClass(storageClass);
             elabSpec.setVirtual(isVirtual);
             elabSpec.setExplicit(isExplicit);
-            ((CPPASTNode) elabSpec).setOffsetAndLength(startOffset, calculateEndOffset(elabSpec) - startOffset);
+            ((ASTNode) elabSpec).setOffsetAndLength(startOffset, calculateEndOffset(elabSpec) - startOffset);
             return elabSpec;
         }
         if (enumSpec != null) {
@@ -3262,7 +3262,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             ((ICPPASTDeclSpecifier) enumSpec).setExplicit(isExplicit);
             enumSpec.setInline(isInline);
             enumSpec.setStorageClass(storageClass);
-            ((CPPASTNode) enumSpec).setOffsetAndLength(startOffset, calculateEndOffset(enumSpec) - startOffset);
+            ((ASTNode) enumSpec).setOffsetAndLength(startOffset, calculateEndOffset(enumSpec) - startOffset);
             return (ICPPASTDeclSpecifier) enumSpec;
         }
         if (classSpec != null) {
@@ -3275,7 +3275,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             classSpec.setStorageClass(storageClass);
             classSpec.setVirtual(isVirtual);
             classSpec.setExplicit(isExplicit);
-            ((CPPASTNode) classSpec).setOffsetAndLength(startOffset, calculateEndOffset(classSpec) - startOffset);
+            ((ASTNode) classSpec).setOffsetAndLength(startOffset, calculateEndOffset(classSpec) - startOffset);
             return classSpec;
         }
         if (duple != null) {
@@ -3292,7 +3292,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             nameSpec.setStorageClass(storageClass);
             nameSpec.setVirtual(isVirtual);
             nameSpec.setExplicit(isExplicit);
-            ((CPPASTNode) nameSpec).setOffsetAndLength(startOffset, last.getEndOffset() - startOffset);
+            ((ASTNode) nameSpec).setOffsetAndLength(startOffset, last.getEndOffset() - startOffset);
             return nameSpec;
         }
         ICPPASTSimpleDeclSpecifier simpleDeclSpec = null;
@@ -3716,7 +3716,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                                     		before.getOffset(), before.getLength());
                                 	IASTProblemTypeId typeIdProblem = createTypeIDProblem();
                                     typeIdProblem.setProblem(p);
-                                    ((CPPASTNode) typeIdProblem).setOffsetAndLength(((CPPASTNode) p));
+                                    ((ASTNode) typeIdProblem).setOffsetAndLength(((ASTNode) p));
                                     exceptionSpecIds.add(typeIdProblem);
                                     if (before == LA(1))
                                         done = true;
@@ -4035,7 +4035,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                         IASTProblem p = failParse(bt);
                         IASTProblemDeclaration pd = createProblemDeclaration();
                         pd.setProblem(p);
-                        ((CPPASTNode) pd).setOffsetAndLength(((CPPASTNode) p));
+                        ((ASTNode) pd).setOffsetAndLength(((ASTNode) p));
                         astClassSpecifier.addMemberDeclaration(pd);
                         if (checkToken == LA(1).hashCode())
                             errorHandling();
@@ -4211,7 +4211,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 IASTProblem p = failParse(bte);
                 IASTProblemDeclaration pd = createProblemDeclaration();
                 pd.setProblem(p);
-                ((CPPASTNode) pd).setOffsetAndLength(((CPPASTNode) p));
+                ((ASTNode) pd).setOffsetAndLength(((ASTNode) p));
                 decl = pd;
             }
 
@@ -4308,10 +4308,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     failParseWithErrorHandling();
             } catch (EndOfFileException e) {
                 if (translationUnit.getDeclarations().length != 0) {
-                    CPPASTNode d = (CPPASTNode) translationUnit.getDeclarations()[translationUnit.getDeclarations().length - 1];
-                    ((CPPASTNode) translationUnit).setLength(d.getOffset() + d.getLength());
+                	ASTNode d = (ASTNode) translationUnit.getDeclarations()[translationUnit.getDeclarations().length - 1];
+                    ((ASTNode) translationUnit).setLength(d.getOffset() + d.getLength());
                 } else
-                    ((CPPASTNode) translationUnit).setLength(0);
+                    ((ASTNode) translationUnit).setLength(0);
                 break;
             } catch (BacktrackException b) {
                 try {
@@ -4319,7 +4319,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     IASTProblem p = failParse(b);
                     IASTProblemDeclaration pd = createProblemDeclaration();
                     pd.setProblem(p);
-                    ((CPPASTNode) pd).setOffsetAndLength(((CPPASTNode) p));
+                    ((ASTNode) pd).setOffsetAndLength(((ASTNode) p));
                     translationUnit.addDeclaration(pd);
                     errorHandling();
                 } catch (EndOfFileException e) {
@@ -4644,12 +4644,11 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
     @Override
 	protected IASTProblem createProblem(int signal, int offset, int length) {
-        IASTProblem result = new CPPASTProblem(signal, EMPTY_STRING, false, true);
+        IASTProblem result = new CPPASTProblem(signal, EMPTY_STRING, true);
         ((ASTNode) result).setOffsetAndLength(offset, length);
         ((ASTNode) result).setLength(length);
         return result;
     }
-
 
     @Override
 	protected IASTStatement parseWhileStatement() throws EndOfFileException, BacktrackException {

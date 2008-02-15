@@ -78,7 +78,8 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
 	private boolean fIsHeader= true;
 	private IIndexFileSet fIndexFileSet;
 
-    public IASTTranslationUnit getTranslationUnit() {
+    @Override
+	public IASTTranslationUnit getTranslationUnit() {
     	return this;
     }
     
@@ -246,6 +247,7 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
 		 * 
 		 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processDeclaration(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
 		 */
+		@Override
 		public int visit(IASTDeclaration declaration) {
 			// use declarations to determine if the search has gone past the
 			// offset (i.e. don't know the order the visitor visits the nodes)
@@ -261,6 +263,7 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
 		 * 
 		 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processDeclarator(org.eclipse.cdt.core.dom.ast.IASTDeclarator)
 		 */
+		@Override
 		public int visit(IASTDeclarator declarator) {
 			int ret = processNode(declarator);
 
@@ -283,6 +286,7 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
 		 * 
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processDesignator(org.eclipse.cdt.core.dom.ast.c.ICASTDesignator)
 		 */
+		@Override
 		public int visit(ICASTDesignator designator) {
 			return processNode(designator);
 		}
@@ -292,6 +296,7 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
 		 * 
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processDeclSpecifier(org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier)
 		 */
+		@Override
 		public int visit(IASTDeclSpecifier declSpec) {
 			return processNode(declSpec);
 		}
@@ -301,6 +306,7 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
 		 * 
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processEnumerator(org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator)
 		 */
+		@Override
 		public int visit(IASTEnumerator enumerator) {
 			return processNode(enumerator);
 		}
@@ -310,6 +316,7 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
 		 * 
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processExpression(org.eclipse.cdt.core.dom.ast.IASTExpression)
 		 */
+		@Override
 		public int visit(IASTExpression expression) {
 			return processNode(expression);
 		}
@@ -319,6 +326,7 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
 		 * 
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processInitializer(org.eclipse.cdt.core.dom.ast.IASTInitializer)
 		 */
+		@Override
 		public int visit(IASTInitializer initializer) {
 			return processNode(initializer);
 		}
@@ -328,6 +336,7 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
 		 * 
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processName(org.eclipse.cdt.core.dom.ast.IASTName)
 		 */
+		@Override
 		public int visit(IASTName name) {
 			if (name.toString() != null)
 				return processNode(name);
@@ -339,6 +348,7 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
 		 * 
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processParameterDeclaration(org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration)
 		 */
+		@Override
 		public int visit(
 				IASTParameterDeclaration parameterDeclaration) {
 			return processNode(parameterDeclaration);
@@ -349,6 +359,7 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
 		 * 
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processStatement(org.eclipse.cdt.core.dom.ast.IASTStatement)
 		 */
+		@Override
 		public int visit(IASTStatement statement) {
 			return processNode(statement);
 		}
@@ -358,6 +369,7 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
 		 * 
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processTypeId(org.eclipse.cdt.core.dom.ast.IASTTypeId)
 		 */
+		@Override
 		public int visit(IASTTypeId typeId) {
 			return processNode(typeId);
 		}
@@ -469,6 +481,11 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
 		return result;
 	}
 
+	
+	public int getPreprocessorProblemsCount() {
+		return resolver == null ? 0 : resolver.getScannerProblemsCount();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -480,7 +497,8 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
 		return new String(resolver.getTranslationUnitPath());
 	}
 	
-	 public boolean accept( ASTVisitor action ){
+	 @Override
+	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitTranslationUnit){
 		    switch( action.visit( this ) ){
 	            case ASTVisitor.PROCESS_ABORT : return false;

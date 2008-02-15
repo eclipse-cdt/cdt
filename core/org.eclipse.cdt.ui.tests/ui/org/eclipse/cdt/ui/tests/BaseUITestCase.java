@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -314,8 +314,13 @@ public class BaseUITestCase extends BaseTestCase {
 				if (text.length() > 0 && !text.equals("...")) {
 					item= root.getItem(i1);
 					assertNotNull("Unexpected tree node " + item.getText(), label);
-					assertEquals(label, item.getText());
-					return item;
+					if (label.equals(item.getText())) {
+						return item;
+					}
+					if (i > 100) {
+						assertEquals(label, item.getText());
+						return item;
+					}
 				}
 			} 
 			catch (IllegalArgumentException e) {
@@ -330,6 +335,7 @@ public class BaseUITestCase extends BaseTestCase {
 			}
 			runEventQueue(10);
 		}
+		runEventQueue(30000);
 		fail("Timeout expired waiting for tree node " + label + "{" + i0 + "," + i1 + "}");
 		return null;
 	}

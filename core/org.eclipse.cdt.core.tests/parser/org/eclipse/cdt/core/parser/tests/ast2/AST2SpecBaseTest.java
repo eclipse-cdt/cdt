@@ -21,8 +21,6 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
-import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.parser.ISourceCodeParser;
 import org.eclipse.cdt.core.dom.parser.c.ANSICParserExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.c.GCCParserExtensionConfiguration;

@@ -2511,7 +2511,7 @@
          point="org.eclipse.cdt.ui.DocCommentOwner">
       <owner
             id="org.eclipse.cdt.ui.doxygen"
-            name="Doxygen"
+            name="%Doxygen.name"
             multiline="org.eclipse.cdt.ui.text.doctools.doxygen.DoxygenMultilineConfiguration"
             singleline="org.eclipse.cdt.ui.text.doctools.doxygen.DoxygenSingleConfiguration">
       </owner>

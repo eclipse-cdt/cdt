@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 QNX Software Systems and others.
+ * Copyright (c) 2002, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX Software Systems - Initial API and implementation
- * IBM Corporation
+ *     QNX Software Systems - Initial API and implementation
+ *     IBM Corporation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.make.internal.ui.preferences;
@@ -44,7 +45,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.ui.model.WorkbenchViewerSorter;
+import org.eclipse.ui.model.WorkbenchViewerComparator;
 
 
 /**
@@ -319,7 +320,7 @@ public class MakefileEditorPreferencePage extends AbstractMakefileEditorPreferen
 		fHighlightingColorListViewer= new TableViewer(editorComposite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER | SWT.FULL_SELECTION);
 		fHighlightingColorListViewer.setLabelProvider(new ColorListLabelProvider());
 		fHighlightingColorListViewer.setContentProvider(new ColorListContentProvider());
-		fHighlightingColorListViewer.setSorter(new WorkbenchViewerSorter());
+		fHighlightingColorListViewer.setComparator(new WorkbenchViewerComparator());
 		gd= new GridData(GridData.FILL_BOTH);
 		gd.heightHint= convertHeightInCharsToPixels(5);
 		fHighlightingColorListViewer.getControl().setLayoutData(gd);

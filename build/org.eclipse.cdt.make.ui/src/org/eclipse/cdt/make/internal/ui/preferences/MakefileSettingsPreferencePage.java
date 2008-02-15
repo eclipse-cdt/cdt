@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 QNX Software Systems and others.
+ * Copyright (c) 2002, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX Software Systems - Initial API and implementation
+ *     QNX Software Systems - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.make.internal.ui.preferences;
@@ -41,8 +42,6 @@ public class MakefileSettingsPreferencePage extends FieldEditorPreferencePage im
 	 * @see FieldEditorPreferencePage#createControl(Composite)
 	 */
 	protected void createFieldEditors() {
-		Composite parent = getFieldEditorParent();
-
 		String[][] personalities = {{POSIX_MAKE_LABEL, POSIX_MAKE_VALUE}, {GNU_MAKE_LABEL, GNU_MAKE_VALUE}};
 		RadioGroupFieldEditor combo = new RadioGroupFieldEditor(MakeCorePlugin.MAKEFILE_STYLE,
 				MakefilePreferencesMessages.getString("MakefileSettingsPreferencePage.style"),//$NON-NLS-1$

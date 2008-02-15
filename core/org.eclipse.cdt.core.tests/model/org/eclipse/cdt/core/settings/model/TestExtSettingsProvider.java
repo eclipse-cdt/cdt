@@ -64,7 +64,7 @@ public class TestExtSettingsProvider extends CExternalSettingProvider {
 	
 	public CExternalSetting[] getSettings(IProject project,
 			ICConfigurationDescription cfg) {
-		return (CExternalSetting[])SETTINGS_VARIANTS[variantNum].clone();
+		return SETTINGS_VARIANTS[variantNum].clone();
 	}
 	
 	public static void setVariantNum(int num){

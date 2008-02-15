@@ -16,7 +16,7 @@
  * Xuan Chen        (IBM)        - [194293] [Local][Archives] Saving file second time in an Archive Errors
  * Xuan Chen (IBM)        - [202949] [archives] copy a folder from one connection to an archive file in a different connection does not work
  * Xuan Chen (IBM)        - [160775] [api] rename (at least within a zip) blocks UI thread
- * Xuan Chen (IBM)        - [218491] ArchiveHandlerManager#cleanUpVirtualPath is messing up the file separators
+ * Xuan Chen (IBM)        - [218491] ArchiveHandlerManager#cleanUpVirtualPath is messing up the file separators (with updated fix)
  *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver.archiveutils;
@@ -367,7 +367,19 @@ public class ArchiveHandlerManager
 	public static String cleanUpVirtualPath(String fullVirtualName)
 	{
 		int j = fullVirtualName.indexOf(VIRTUAL_CANONICAL_SEPARATOR);
-		if (j == -1) return fullVirtualName; 
+		if (j == -1) 
+		{
+			//fullVirtualName does not contains VIRTUAL_CANONICAL_SEPARATOR
+			//fullVirtualName could be the virtual path only, instead of the full path.
+			//So even fullVirtualName does not contains VIRTUAL_CANONICAL_SEPARATOR, we may still
+			//need to process it.
+			//But virtual path should neither start with "\", nor contains
+			//":".  So for those two cases, we could just return the fullVirtualName
+			if (fullVirtualName.indexOf(":") != -1 || fullVirtualName.trim().startsWith("\\"))
+			{
+				return fullVirtualName; 
+			}
+		}
 		String realPart = ""; //$NON-NLS-1$
 		String newPath = fullVirtualName;
 		if (j != -1)

@@ -22,6 +22,7 @@
  * Xuan Chen        (IBM)        - [211653] Copy virtual directory with nested directory of tar file did not work
  * Xuan Chen        (IBM)        - [214251] [archive] "Last Modified Time" changed for all virtual files/folders if rename/paste/delete of one virtual file.
  * Xuan Chen        (IBM)        - [191370] [dstore] Supertransfer zip not deleted when cancelling copy
+ * Xuan Chen        (IBM)        - [218491] ArchiveHandlerManager#cleanUpVirtualPath is messing up the file separators
  *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver.archiveutils;
@@ -1355,10 +1356,21 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 			if (children[i].isDirectory) {
 				
 				// include a '/' at the end, since it is a directory
-				TarEntry nextEntry = tarFile.getEntry(children[i].fullName + "/"); //$NON-NLS-1$
+				TarEntry nextEntry = null;
+				if (!children[i].fullName.endsWith("/")) //$NON-NLS-1$
+				{
+					nextEntry = tarFile.getEntry(children[i].fullName + "/"); //$NON-NLS-1$
+				}
+				else
+				{
+					nextEntry = tarFile.getEntry(children[i].fullName); 
+				}
 				
 				// put the entry
-				outStream.putNextEntry(nextEntry);
+				if (null != nextEntry)
+				{
+					outStream.putNextEntry(nextEntry);
+				}
 				
 				// close the entry
 				outStream.closeEntry();
@@ -2150,6 +2162,10 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	 */
 	public boolean createFolder(String fullVirtualName, ISystemOperationMonitor archiveOperationMonitor) {
 		fullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(fullVirtualName);
+		if (fullVirtualName.startsWith("folder1"))
+		{
+			System.out.println("fullVirtualName is: " + fullVirtualName);
+		}
 		fullVirtualName = fullVirtualName + "/"; //$NON-NLS-1$
 		boolean returnCode = createVirtualObject(fullVirtualName, archiveOperationMonitor);
 		setArchiveOperationMonitorStatusDone(archiveOperationMonitor);

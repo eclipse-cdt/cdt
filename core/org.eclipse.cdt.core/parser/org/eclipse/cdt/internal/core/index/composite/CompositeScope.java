@@ -114,4 +114,25 @@ public abstract class CompositeScope implements IIndexScope {
 	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix) throws DOMException {
 		return getBindings(name, resolve, prefix, IIndexFileSet.EMPTY);
 	}
+	
+	@Override
+	/**
+	 * The c++-name resolution stores scopes in hash-maps, we need to make sure equality is detected
+	 * in order to prevent infinite loops.
+	 */
+	public final boolean equals(Object other) {
+		if (other instanceof CompositeScope) {
+			return rbinding.equals(((CompositeScope)other).rbinding);
+		}
+		return false;
+	}
+	
+	@Override
+	/**
+	 * The c++-name resolution stores scopes in hash-maps, we need to make sure equality is detected
+	 * in order to prevent infinite loops.
+	 */
+	public final int hashCode() {
+		return rbinding.hashCode();
+	}
 }

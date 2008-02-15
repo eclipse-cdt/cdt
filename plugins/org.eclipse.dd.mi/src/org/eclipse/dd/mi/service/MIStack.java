@@ -11,13 +11,17 @@
  *******************************************************************************/
 package org.eclipse.dd.mi.service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Hashtable;
+import java.util.List;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.utils.Addr32;
 import org.eclipse.cdt.utils.Addr64;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.dd.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.AbstractDMContext;
@@ -512,13 +516,36 @@ public class MIStack extends AbstractDsfService
     
     
     public void getLocals(final IFrameDMContext frameDmc, final DataRequestMonitor<IVariableDMContext[]> rm) {
+
+        final List<IVariableDMContext> localsList = new ArrayList<IVariableDMContext>();
+        
+        final CountingRequestMonitor countingRm = new CountingRequestMonitor(getExecutor(), rm) {
+            @Override
+            protected void handleOK() {
+                rm.setData( localsList.toArray(new IVariableDMContext[localsList.size()]) );
+                rm.done();
+            }
+        };
+        countingRm.setDoneCount(2);
+        
+        getArguments(
+            frameDmc,
+            new DataRequestMonitor<IVariableDMContext[]>(getExecutor(), countingRm) { 
+                @Override
+                protected void handleOK() {
+                    localsList.addAll( Arrays.asList(getData()) );
+                    countingRm.done();
+                }
+            }); 
+        
 	    fRunControl.getCache().execute(
                 new MIStackListLocals(frameDmc, true),
                 new DataRequestMonitor<MIStackListLocalsInfo>(getExecutor(), rm) { 
                     @Override
                     protected void handleOK() {
-                    	rm.setData(makeVariableDMCs(frameDmc, MIVariableDMC.Type.LOCAL, getData().getLocals().length));
-                        rm.done();
+                        localsList.addAll( Arrays.asList(
+                            makeVariableDMCs(frameDmc, MIVariableDMC.Type.LOCAL, getData().getLocals().length)) );
+                        countingRm.done();
                     }
                 }); 
     }

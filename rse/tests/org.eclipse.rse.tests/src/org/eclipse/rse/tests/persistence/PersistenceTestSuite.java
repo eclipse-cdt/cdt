@@ -30,7 +30,7 @@ public class PersistenceTestSuite extends DelegatingTestSuiteHolder {
 	}
 
 	/**
-	 * Combine all test into a suite and returns the test suite instance.
+	 * Combine all tests into a suite and returns the test suite instance.
 	 * <p>
 	 * <b>Note: This method must be always called <i><code>suite</code></i> ! Otherwise
 	 * the JUnit plug-in test launcher will fail to detect this class!</b>
@@ -39,7 +39,10 @@ public class PersistenceTestSuite extends DelegatingTestSuiteHolder {
 	 */
 	public static Test suite() {
 		TestSuite suite = new TestSuite("RSE Persistence Test Suite"); //$NON-NLS-1$
-		suite.addTestSuite(PersistenceTest.class);
+//		suite.addTestSuite(PersistenceTest.class); // use this when running all tests
+		suite.addTest(new PersistenceTest("testPersistenceManagerStartup"));
+		suite.addTest(new PersistenceTest("testProfilePersistence"));
+		suite.addTest(new PersistenceTest("testHostPersistence"));
 		return suite;
 	}
 	

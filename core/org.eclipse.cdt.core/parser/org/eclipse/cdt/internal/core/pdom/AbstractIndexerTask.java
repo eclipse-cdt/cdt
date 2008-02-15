@@ -68,9 +68,11 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			fUri= uri;
 			fLinkageID= linkageID;
 		}
+		@Override
 		public int hashCode() {
 			return fUri.hashCode() * 31 + fLinkageID;
 		}
+		@Override
 		public boolean equals(Object obj) {
 			FileKey other = (FileKey) obj;
 			return fLinkageID == other.fLinkageID && fUri.equals(other.fUri);
@@ -525,7 +527,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 					final IScannerInfo scannerInfo= fResolver.getBuildConfiguration(linkageID, header);
 					parseFile(header, linkageID, ifl, scannerInfo, monitor);
 					if (info.fIsUpdated) {
-						updateInfo(-1, 1, 0);	// a header was parsed without context
+						updateInfo(0, 1, -1);	// a header was parsed without context
 						iter.remove();
 					}
 				}
@@ -601,27 +603,25 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	}
 	
 	private void writeToIndex(final int linkageID, IASTTranslationUnit ast, int configHash, IProgressMonitor pm) throws CoreException, InterruptedException {
-		HashSet<String> enteredASTFilePaths= new HashSet<String>();
+		HashSet<IIndexFileLocation> enteredFiles= new HashSet<IIndexFileLocation>();
 		ArrayList<IIndexFileLocation> orderedIFLs= new ArrayList<IIndexFileLocation>();
-		final String astPath = ast.getFilePath();
-		enteredASTFilePaths.add(astPath);
 		
+		final IIndexFileLocation topIfl = fResolver.resolveASTPath(ast.getFilePath());
+		enteredFiles.add(topIfl);
 		IDependencyTree tree= ast.getDependencyTree();
 		IASTInclusionNode[] inclusions= tree.getInclusions();
 		for (int i=0; i < inclusions.length; i++) {
-			collectOrderedIFLs(linkageID, inclusions[i], enteredASTFilePaths, orderedIFLs);
+			collectOrderedIFLs(linkageID, inclusions[i], enteredFiles, orderedIFLs);
 		}
 		
-		IIndexFileLocation ifl= fResolver.resolveASTPath(astPath);
-		FileContent info= getFileInfo(linkageID, ifl);
+		FileContent info= getFileInfo(linkageID, topIfl);
 		if (info != null && info.fRequestUpdate && !info.fIsUpdated) {
-			orderedIFLs.add(fResolver.resolveASTPath(astPath));
+			orderedIFLs.add(topIfl);
 		}
 		
 		IIndexFileLocation[] ifls= orderedIFLs.toArray(new IIndexFileLocation[orderedIFLs.size()]);
 		addSymbols(ast, ifls, fIndex, 1, false, configHash, fTodoTaskUpdater, pm);
-		for (int i = 0; i < ifls.length; i++) {
-			ifl= ifls[i];
+		for (IIndexFileLocation ifl : ifls) {
 			info= getFileInfo(linkageID, ifl);
 			assert info != null;
 			if (info != null) {
@@ -630,20 +630,17 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		}
 	}
 
-	private void collectOrderedIFLs(final int linkageID, IASTInclusionNode inclusion, HashSet<String> enteredASTFilePaths, ArrayList<IIndexFileLocation> orderedIFLs) throws CoreException {
+	private void collectOrderedIFLs(final int linkageID, IASTInclusionNode inclusion, HashSet<IIndexFileLocation> enteredFiles, ArrayList<IIndexFileLocation> orderedIFLs) throws CoreException {
 		final IASTPreprocessorIncludeStatement id= inclusion.getIncludeDirective();
 		if (id.isActive() && id.isResolved()) {
-			final String path= id.getPath();
-			final boolean isFirst= enteredASTFilePaths.add(path);
+			final IIndexFileLocation ifl= fResolver.resolveASTPath(id.getPath());
+			final boolean isFirstEntry= enteredFiles.add(ifl);
 			IASTInclusionNode[] nested= inclusion.getNestedInclusions();
 			for (int i = 0; i < nested.length; i++) {
-				collectOrderedIFLs(linkageID, nested[i], enteredASTFilePaths, orderedIFLs);
+				collectOrderedIFLs(linkageID, nested[i], enteredFiles, orderedIFLs);
 			}
-			if (isFirst) {
-				final IIndexFileLocation ifl= fResolver.resolveASTPath(path);
-				if (needToUpdateHeader(linkageID, ifl)) {
-					orderedIFLs.add(ifl);
-				}
+			if (isFirstEntry && needToUpdateHeader(linkageID, ifl)) {
+				orderedIFLs.add(ifl);
 			}
 		}
 	}

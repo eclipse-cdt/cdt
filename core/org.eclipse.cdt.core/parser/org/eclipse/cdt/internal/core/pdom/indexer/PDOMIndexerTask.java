@@ -152,6 +152,9 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 			String filename= linkageID == ILinkage.C_LINKAGE_ID ? "__cdt__.c" : "__cdt__.cpp";  //$NON-NLS-1$//$NON-NLS-2$
 			IFile file= project.getFile(filename);
 			scanInfo= provider.getScannerInformation(file);
+			if (scanInfo == null || scanInfo.getDefinedSymbols().isEmpty()) {
+				scanInfo= provider.getScannerInformation(project);
+			}
 		}
 		else {
 			scanInfo= new ScannerInfo();
@@ -203,10 +206,10 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 					+ fStatistics.fResolutionTime + " resolution, " //$NON-NLS-1$
 					+ fStatistics.fAddToIndexTime + " index update."); //$NON-NLS-1$
 			System.out.println(name + " Errors: " //$NON-NLS-1$
-					+ fStatistics.fUnresolvedIncludesCount + " include, " //$NON-NLS-1$
-					+ fStatistics.fPreprocessorProblemCount + " scanner, " //$NON-NLS-1$
-					+ fStatistics.fSyntaxProblemsCount + " syntax, " //$NON-NLS-1$
-					+ fStatistics.fErrorCount + " internal errors."); //$NON-NLS-1$
+					+ fStatistics.fErrorCount + " internal, " //$NON-NLS-1$
+					+ fStatistics.fUnresolvedIncludesCount + " include, "  //$NON-NLS-1$
+					+ fStatistics.fPreprocessorProblemCount + " scanner, "  //$NON-NLS-1$
+					+ fStatistics.fSyntaxProblemsCount + " syntax errors."); //$NON-NLS-1$
 
 			int sum= fStatistics.fDeclarationCount+fStatistics.fReferenceCount+fStatistics.fProblemBindingCount;
 			double problemPct= sum==0 ? 0.0 : (double) fStatistics.fProblemBindingCount / (double) sum;

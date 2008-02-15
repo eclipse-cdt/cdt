@@ -224,45 +224,47 @@ abstract public class PDOMWriter {
 			IIndexFileLocation path= ifls[i];
 			Symbols symbols= symbolMap.get(path);
 
-			ArrayList<IASTName[]> names= symbols.fNames;
+			final ArrayList<IASTName[]> names= symbols.fNames;
 			boolean reported= false;
 			for (Iterator<IASTName[]> j = names.iterator(); j.hasNext();) {
 				final IASTName[] na= j.next();
 				final IASTName name = na[0];
-				try {
-					final IBinding binding = name.resolveBinding();
-					if (binding instanceof IProblemBinding) {
-						fStatistics.fProblemBindingCount++;
-						if (fShowProblems) {
-							reportProblem((IProblemBinding) binding);
-						}
-					}
-					else if (name.isReference()) {
-						if (fSkipReferences == SKIP_TYPE_REFERENCES) {
-							if (isTypeReferenceBinding(binding) && !isRequiredReference(name)) {
-								na[0]= null;
-								fStatistics.fReferenceCount--;
+				if (name != null) { // should not be null, just be defensive.
+					try {
+						final IBinding binding = name.resolveBinding();
+						if (binding instanceof IProblemBinding) {
+							fStatistics.fProblemBindingCount++;
+							if (fShowProblems) {
+								reportProblem((IProblemBinding) binding);
 							}
 						}
-						fStatistics.fReferenceCount++;
+						else if (name.isReference()) {
+							if (fSkipReferences == SKIP_TYPE_REFERENCES) {
+								if (isTypeReferenceBinding(binding) && !isRequiredReference(name)) {
+									na[0]= null;
+									fStatistics.fReferenceCount--;
+								}
+							}
+							fStatistics.fReferenceCount++;
+						}
+						else {
+							fStatistics.fDeclarationCount++;
+						}
+					} catch (RuntimeException e) {
+						if (!reported) {
+							stati.add(CCorePlugin.createStatus(
+									NLS.bind(Messages.PDOMWriter_errorResolvingName, name.toString(), path.getURI().getPath()), e));
+						}
+						reported= true;
+						j.remove();
+					} catch (PDOMNotImplementedError e) {
+						if (!reported) {
+							stati.add(CCorePlugin.createStatus(
+									NLS.bind(Messages.PDOMWriter_errorResolvingName, name.toString(), path.getURI().getPath()), e));
+						}
+						reported= true;
+						j.remove();
 					}
-					else {
-						fStatistics.fDeclarationCount++;
-					}
-				} catch (RuntimeException e) {
-					if (!reported) {
-						stati.add(CCorePlugin.createStatus(
-								NLS.bind(Messages.PDOMWriter_errorResolvingName, name.toString(), path.getURI().getPath()), e));
-					}
-					reported= true;
-					j.remove();
-				} catch (PDOMNotImplementedError e) {
-					if (!reported) {
-						stati.add(CCorePlugin.createStatus(
-								NLS.bind(Messages.PDOMWriter_errorResolvingName, name.toString(), path.getURI().getPath()), e));
-					}
-					reported= true;
-					j.remove();
 				}
 			}
 		}
@@ -337,8 +339,8 @@ abstract public class PDOMWriter {
 		
 		fStatistics.fUnresolvedIncludesCount += unresolvedIncludes;
 		fStatistics.fPreprocessorProblemCount+= ast.getPreprocessorProblemsCount() - unresolvedIncludes;
-		if (fShowScannerProblems || fShowSyntaxProblems) {
-			final boolean reportAll= fShowScannerProblems && fShowSyntaxProblems;
+		if (fShowScannerProblems || fShowInclusionProblems) {
+			final boolean reportAll= fShowScannerProblems && fShowInclusionProblems;
 			IASTProblem[] scannerProblems= ast.getPreprocessorProblems();
 			for (IASTProblem problem : scannerProblems) {
 				if (reportAll || (problem.getID() == IASTProblem.PREPROCESSOR_INCLUSION_NOT_FOUND) == fShowInclusionProblems) {

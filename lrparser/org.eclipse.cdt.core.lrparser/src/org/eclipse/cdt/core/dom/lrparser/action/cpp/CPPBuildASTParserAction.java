@@ -171,7 +171,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	 */
 	public void consumeExpressionNew(boolean isNewTypeId) {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
+
 		IASTExpression initializer = (IASTExpression) astStack.pop(); // may be null
 		
 		List<Object> arrayExpressions = Collections.emptyList();

@@ -350,6 +350,8 @@ $Rules
 -- Basic Concepts
 ------------------------------------------------------------------------------------------
 
+-- TODO declaration errors need to be caught
+-- TODO in C99 as well, nested declarations should be able to have errors
 
 translation_unit
     ::= declaration_seq
@@ -569,9 +571,9 @@ unary_expression
 
 new_expression -- done
     ::= dcolon_opt 'new' new_placement_opt new_type_id <openscope-ast> new_array_expressions_opt new_initializer_opt
-          /. $Build  consumeExpressionNew(false);  $EndBuild ./
-      | dcolon_opt 'new' new_placement_opt '(' type_id ')' new_initializer_opt
           /. $Build  consumeExpressionNew(true);  $EndBuild ./
+      | dcolon_opt 'new' new_placement_opt '(' type_id ')' new_initializer_opt
+          /. $Build  consumeExpressionNew(false);  $EndBuild ./
 
 
 new_placement -- done
@@ -1142,7 +1144,7 @@ namespace_name
 
 
 original_namespace_name
-    ::= 'identifier'
+    ::= identifier_name
 
 
 namespace_definition

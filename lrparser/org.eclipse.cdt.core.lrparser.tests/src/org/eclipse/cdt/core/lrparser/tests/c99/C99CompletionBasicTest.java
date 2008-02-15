@@ -17,6 +17,8 @@ import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.lrparser.BaseExtensibleLanguage;
 import org.eclipse.cdt.core.dom.lrparser.c99.C99Language;
+import org.eclipse.cdt.core.dom.lrparser.cpp.ISOCPPLanguage;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.tests.prefix.BasicCompletionTest;
 import org.eclipse.cdt.internal.core.parser.ParserException;
@@ -26,24 +28,23 @@ public class C99CompletionBasicTest extends BasicCompletionTest {
 	public C99CompletionBasicTest() { }
 
 
+	@Override
 	protected IASTCompletionNode getCompletionNode(String code,
 			ParserLanguage lang, boolean useGNUExtensions)
 			throws ParserException {
 		
-		if(ParserLanguage.C == lang) {
-			return ParseHelper.getCompletionNode(code, getLanguage());
-		}
-		else {
-			// TODO: parsing of C++
-			return super.getCompletionNode(code, lang, useGNUExtensions);
-		}
+		ILanguage language = lang.isCPP() ? getCPPLanguage() : getC99Language();
+		return ParseHelper.getCompletionNode(code, language);
 	}
 	
 	
-	protected BaseExtensibleLanguage getLanguage() {
-		return C99Language.getDefault();
-	}
+	protected ILanguage getC99Language() {
+    	return C99Language.getDefault();
+    }
 	
+	protected ILanguage getCPPLanguage() {
+		return ISOCPPLanguage.getDefault();
+	}
 	
 	@Override
 	public void testFunction() throws Exception {

@@ -10,16 +10,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.lrparser.tests.c99;
 
-import java.util.Collections;
-
-import org.eclipse.cdt.core.dom.ast.IASTComment;
-import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.lrparser.BaseExtensibleLanguage;
 import org.eclipse.cdt.core.dom.lrparser.c99.C99Language;
+import org.eclipse.cdt.core.dom.lrparser.cpp.ISOCPPLanguage;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
-import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.tests.ast2.DOMLocationInclusionTests;
@@ -31,7 +28,7 @@ public class C99DOMLocationInclusionTests extends DOMLocationInclusionTests {
 	public C99DOMLocationInclusionTests() {
 	}
 
-	public C99DOMLocationInclusionTests(String name, Class className) {
+	public C99DOMLocationInclusionTests(String name, Class<Object> className) {
 		super(name, className);
 	}
 
@@ -39,23 +36,30 @@ public class C99DOMLocationInclusionTests extends DOMLocationInclusionTests {
 		super(name);
 	}
 
-	protected IASTTranslationUnit parse(IFile code, IScannerInfo s)
-			throws Exception {
+	@Override
+	protected IASTTranslationUnit parse(IFile code, IScannerInfo s)throws Exception {
+		// TODO: total freakin hack! the test suite needs to be refactored
+		ILanguage lang = code.getName().endsWith("cc") ? getCPPLanguage() : getC99Language();
 		
 		CodeReader codeReader = new CodeReader(code.getLocation().toOSString());
-		BaseExtensibleLanguage lang = getLanguage();
 		IASTTranslationUnit tu = lang.getASTTranslationUnit(codeReader, s, SavedCodeReaderFactory.getInstance(), null, BaseExtensibleLanguage.OPTION_ADD_COMMENTS, ParserUtil.getParserLogService());
 
 		return tu;
 	}
 
+	@Override
 	protected IASTTranslationUnit parse(IFile code) throws Exception {
 	
 		return parse(code, new ExtendedScannerInfo());
 	}
 
-	protected BaseExtensibleLanguage getLanguage() {
-		return C99Language.getDefault();
+	
+	protected ILanguage getC99Language() {
+    	return C99Language.getDefault();
+    }
+	
+	protected ILanguage getCPPLanguage() {
+		return ISOCPPLanguage.getDefault();
 	}
 
 

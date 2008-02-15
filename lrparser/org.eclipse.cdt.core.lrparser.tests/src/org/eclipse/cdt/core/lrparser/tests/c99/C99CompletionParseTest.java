@@ -30,6 +30,8 @@ import org.eclipse.cdt.core.dom.lrparser.c99.C99Language;
  * Reuse the completion parse tests from the old parser for now.
  * 
  * This test suite is specific to C99.
+ * 
+ * TODO run this against C++
  */
 public class C99CompletionParseTest extends TestCase {
 

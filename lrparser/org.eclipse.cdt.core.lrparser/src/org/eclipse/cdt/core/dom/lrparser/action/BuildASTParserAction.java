@@ -95,7 +95,7 @@ public abstract class BuildASTParserAction {
 	
 	// turn debug tracing on and off
 	// TODO move this into an AspectJ project
-	protected static final boolean TRACE_ACTIONS = true;
+	protected static final boolean TRACE_ACTIONS = false;
 	protected static final boolean TRACE_AST_STACK = false;
 	
 	

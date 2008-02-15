@@ -709,14 +709,14 @@ public CPPParser(String[] mapFrom) {  // constructor
             // Rule 85:  new_expression ::= dcolon_opt new new_placement_opt new_type_id <openscope-ast> new_array_expressions_opt new_initializer_opt
             //
             case 85: {       action.builder.
-   consumeExpressionNew(false);                 break;
+   consumeExpressionNew(true);                 break;
             }  
    
             //
             // Rule 86:  new_expression ::= dcolon_opt new new_placement_opt ( type_id ) new_initializer_opt
             //
             case 86: {       action.builder.
-   consumeExpressionNew(true);                 break;
+   consumeExpressionNew(false);                 break;
             }  
    
             //

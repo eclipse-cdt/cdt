@@ -13,14 +13,12 @@ package org.eclipse.cdt.core.lrparser.tests.c99;
 import junit.framework.AssertionFailedError;
 
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
-import org.eclipse.cdt.core.dom.lrparser.BaseExtensibleLanguage;
 import org.eclipse.cdt.core.model.AbstractLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.CodeReader;
@@ -118,7 +116,7 @@ public class ParseHelper {
 	}
 
 	
-	public static IASTTranslationUnit commentParse(String code, BaseExtensibleLanguage language) {
+	public static IASTTranslationUnit commentParse(String code, ILanguage language) {
 		CodeReader codeReader = new CodeReader(code.toCharArray());
 		IASTTranslationUnit tu;
 		try {
@@ -129,14 +127,18 @@ public class ParseHelper {
 		return tu;
 	}
 	
-	public static IASTCompletionNode getCompletionNode(String code, BaseExtensibleLanguage lang) {
+	public static IASTCompletionNode getCompletionNode(String code, ILanguage lang) {
 		return getCompletionNode(code, lang, code.length());
 	}
 	
 	
-	public static IASTCompletionNode getCompletionNode(String code, BaseExtensibleLanguage language, int offset) {
+	public static IASTCompletionNode getCompletionNode(String code, ILanguage language, int offset) {
 		CodeReader reader = new CodeReader(code.toCharArray());
-		return language.getCompletionNode(reader, new ScannerInfo(), null, null, ParserUtil.getParserLogService(), offset);
+		try {
+			return language.getCompletionNode(reader, new ScannerInfo(), null, null, ParserUtil.getParserLogService(), offset);
+		} catch (CoreException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }

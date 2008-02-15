@@ -15,24 +15,28 @@ import junit.framework.AssertionFailedError;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.lrparser.BaseExtensibleLanguage;
 import org.eclipse.cdt.core.dom.lrparser.c99.C99Language;
+import org.eclipse.cdt.core.dom.lrparser.cpp.ISOCPPLanguage;
 
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.tests.ast2.CompleteParser2Tests;
 
 public class C99CompleteParser2Tests extends CompleteParser2Tests {
 
+	@Override
 	protected IASTTranslationUnit parse(String code, boolean expectedToPass,
 			ParserLanguage lang, boolean gcc) throws Exception {
-		
-		if(lang != ParserLanguage.C)
-			return super.parse(code, expectedToPass, lang, gcc);
-		
-		return ParseHelper.parse(code, getLanguage(), expectedToPass);
+		ILanguage language = lang.isCPP() ? getCPPLanguage() : getC99Language();
+		return ParseHelper.parse(code, language, expectedToPass);
 	}
 
-	protected BaseExtensibleLanguage getLanguage() {
+	protected ILanguage getC99Language() {
     	return C99Language.getDefault();
     }
+	
+	protected ILanguage getCPPLanguage() {
+		return ISOCPPLanguage.getDefault();
+	}
 	
 	
 	// Tests that are failing at this point

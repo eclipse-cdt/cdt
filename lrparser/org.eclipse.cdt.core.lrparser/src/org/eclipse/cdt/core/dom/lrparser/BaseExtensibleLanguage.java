@@ -45,6 +45,9 @@ import org.eclipse.core.runtime.CoreException;
 public abstract class BaseExtensibleLanguage extends AbstractLanguage implements ILanguage, ICLanguageKeywords {
 			
 	
+	private static final boolean DEBUG_PRINT_GCC_AST = false;
+	private static final boolean DEBUG_PRINT_AST = false;
+	
 	/**
 	 * Retrieve the parser (runs after the preprocessor runs).
 	 * 
@@ -98,17 +101,18 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 	public IASTTranslationUnit getASTTranslationUnit(CodeReader reader, IScannerInfo scanInfo,
 			ICodeReaderFactory fileCreator, IIndex index, int options, IParserLogService log) throws CoreException {
 		
-		ILanguage gppLanguage = GPPLanguage.getDefault();
-		IASTTranslationUnit gtu = gppLanguage.getASTTranslationUnit(reader, scanInfo, fileCreator, index, log);
-		
-		System.out.println();
-		System.out.println("********************************************************");
-		System.out.println("Parsing");
-		System.out.println("Options: " + options);
-		System.out.println("GPP AST:");
-		DebugUtil.printAST(gtu);
-		System.out.println();
-		
+		if(DEBUG_PRINT_GCC_AST) {
+			ILanguage gppLanguage = GPPLanguage.getDefault();
+			IASTTranslationUnit gtu = gppLanguage.getASTTranslationUnit(reader, scanInfo, fileCreator, index, log);
+			
+			System.out.println();
+			System.out.println("********************************************************");
+			System.out.println("Parsing");
+			System.out.println("Options: " + options);
+			System.out.println("GPP AST:");
+			DebugUtil.printAST(gtu);
+			System.out.println();
+		}
 
 		// TODO temporary
 		IScannerExtensionConfiguration config = new GCCScannerExtensionConfiguration();
@@ -125,9 +129,11 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 		
 		parser.parse(tu); // the parser will fill in the rest of the AST
 		
+		if(DEBUG_PRINT_AST) {
+			System.out.println("Base Extensible Language AST:");
+			DebugUtil.printAST(tu);
+		}
 		
-		System.out.println("Base Extensible Language AST:");
-		DebugUtil.printAST(tu);
 		return tu;
 	}
 	
@@ -136,7 +142,6 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 			IScannerInfo scanInfo, ICodeReaderFactory fileCreator,
 			IIndex index, IParserLogService log) throws CoreException {
 		
-		System.out.println("Second Method");
 		return getASTTranslationUnit(reader, scanInfo, fileCreator, index, 0, log);
 	}
 

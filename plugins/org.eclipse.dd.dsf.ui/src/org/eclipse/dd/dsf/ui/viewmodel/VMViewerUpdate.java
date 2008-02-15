@@ -173,7 +173,12 @@ public class VMViewerUpdate implements IViewerUpdate {
                 fRequestMonitor.setStatus(new Status( IStatus.CANCEL, DsfUIPlugin.PLUGIN_ID," Update was cancelled") ); //$NON-NLS-1$
             }
             fRequestMonitor.done();
-        } catch (RejectedExecutionException e) { // Ignore
+        } catch (RejectedExecutionException e) {
+            // If the request monitor cannot be invoked still, try to complete the update to avoid
+            // leaving the viewer in an inconsistent state.
+            if (fClientUpdate != null) {
+                fClientUpdate.done();
+            }
         }
     }
 

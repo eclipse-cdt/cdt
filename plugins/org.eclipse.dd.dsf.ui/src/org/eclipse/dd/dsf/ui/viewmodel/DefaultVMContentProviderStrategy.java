@@ -319,7 +319,12 @@ public class DefaultVMContentProviderStrategy implements IElementContentProvider
                             elementsMultiRequestMon.add(new DataRequestMonitor<List<Object>>(getVMProvider().getExecutor(), null) { 
                                 @Override
                                 protected void handleCompleted() {
-                                    if (getStatus().isOK()) {
+                                    // Workaround for a bug caused by an optimization in the viewer:
+                                    // The viewer may request more children then there are at a given level.  
+                                    // This caues the update to return with an error.
+                                    // See https://bugs.eclipse.org/bugs/show_bug.cgi?id=202109
+                                    // Instead of checking getStatus().isOK(), check getData() != null.
+                                    if (getData() != null) {
                                         for (int i = 0; i < elementsLength; i++) {
                                             update.setChild(getData().get(i), elementsStartIdx + nodeStartIdx + i);
                                         }

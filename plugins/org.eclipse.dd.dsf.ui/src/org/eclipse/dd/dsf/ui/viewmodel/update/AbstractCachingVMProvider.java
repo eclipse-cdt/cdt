@@ -356,6 +356,11 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
                     @Override
                     protected void handleCompleted()
                     {
+                        // Workaround for a bug caused by an optimization in the viewer:
+                        // The viewer may request more children then there are at a given level.  
+                        // This caues the update to return with an error.
+                        // See https://bugs.eclipse.org/bugs/show_bug.cgi?id=202109
+                        // Instead of checking getStatus().isOK(), check getData() != null.
                         if(getData() != null) {
                             // Check if the udpate retrieved all children by specifying "offset = -1, length = -1"
                             int updateOffset = update.getOffset();
@@ -404,7 +409,16 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
             for (int i = update.getOffset(); i < update.getOffset() + update.getLength(); i++) {
                 childrenMissingFromCache.add(i);
             }
-            childrenMissingFromCache.removeAll(entry.fChildren.keySet());
+
+            // Fill in the known children from cache.
+            for(int position = update.getOffset(); position < update.getOffset() + update.getLength(); position++) {
+                Object child = entry.fChildren.get(position);
+                if (child != null) {
+                    update.setChild(entry.fChildren.get(position), position);
+                } else {
+                    childrenMissingFromCache.remove(position);
+                }
+            }
             
             if (childrenMissingFromCache.size() > 0) {
                 // perform a partial update; we only have some of the children of the update request
@@ -445,9 +459,6 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
                 multiRm.setDoneCount(partialUpdates.size());
             } else {
                 // we have all of the children in cache; return from cache
-                for(int position = update.getOffset(); position < update.getOffset() + update.getLength(); position++) {
-                    update.setChild(entry.fChildren.get(position), position);
-                }
                 update.done();
             }
         }

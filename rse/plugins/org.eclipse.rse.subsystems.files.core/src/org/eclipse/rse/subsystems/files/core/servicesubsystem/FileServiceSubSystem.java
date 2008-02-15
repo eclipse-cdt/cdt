@@ -29,6 +29,7 @@
  * David McKnight   (IBM)        - [209704] added supportsEncodingConversion()
  * David Dykstal (IBM) - [197036] pulling up subsystem switch logic
  * David Dykstal (IBM) - [217556] remove service subsystem types
+ * Martin Oberhuber (Wind River) - [219098][api] FileServiceSubSystem should not be final 
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.servicesubsystem;
@@ -71,7 +72,16 @@ import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 
-public final class FileServiceSubSystem extends RemoteFileSubSystem implements IFileServiceSubSystem 
+/**
+ * Generic Subsystem implementation for remote files.
+ * 
+ * Clients may instantiate this class from their subsystem configurations.
+ * <p>
+ * Extending (overriding) this class is discouraged: configuration of the subsystem
+ * behavior should be done by providing a custom {@link IFileService} implementation 
+ * wherever possible.
+ */
+public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileServiceSubSystem 
 {
 	
 	protected ILanguageUtilityFactory _languageUtilityFactory;

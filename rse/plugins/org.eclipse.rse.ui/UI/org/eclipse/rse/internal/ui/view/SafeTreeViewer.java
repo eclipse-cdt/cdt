@@ -67,7 +67,7 @@ public class SafeTreeViewer extends TreeViewer {
 	 * @see org.eclipse.jface.viewers.TreeViewer#doUpdateItem(org.eclipse.swt.widgets.Item, java.lang.Object)
 	 */
 	protected void doUpdateItem(Item item, Object element) {
-		if (item == null || item.isDisposed()) return;
+		if (item != null && item.isDisposed()) return;
 		super.doUpdateItem(item, element);
 	}
 
@@ -75,7 +75,7 @@ public class SafeTreeViewer extends TreeViewer {
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#doUpdateItem(org.eclipse.swt.widgets.Widget, java.lang.Object, boolean)
 	 */
 	protected void doUpdateItem(Widget widget, Object element, boolean fullMap) {
-		if (widget == null || widget.isDisposed()) return;
+		if (widget != null && widget.isDisposed()) return;
 		super.doUpdateItem(widget, element, fullMap);
 	}
 
@@ -83,7 +83,7 @@ public class SafeTreeViewer extends TreeViewer {
 	 * @see org.eclipse.jface.viewers.TreeViewer#getItemCount(org.eclipse.swt.widgets.Control)
 	 */
 	protected int getItemCount(Control widget) {
-		if (widget == null || widget.isDisposed()) return 0;
+		if (widget != null && widget.isDisposed()) return 0;
 		return super.getItemCount(widget);
 	}
 
@@ -91,7 +91,7 @@ public class SafeTreeViewer extends TreeViewer {
 	 * @see org.eclipse.jface.viewers.TreeViewer#getItemCount(org.eclipse.swt.widgets.Item)
 	 */
 	protected int getItemCount(Item item) {
-		if (item == null || item.isDisposed()) return 0;
+		if (item != null && item.isDisposed()) return 0;
 		return super.getItemCount(item);
 	}
 
@@ -99,7 +99,7 @@ public class SafeTreeViewer extends TreeViewer {
 	 * @see org.eclipse.jface.viewers.TreeViewer#showItem(org.eclipse.swt.widgets.Item)
 	 */
 	protected void showItem(Item item) {
-		if (item == null || item.isDisposed()) return;
+		if (item != null && item.isDisposed()) return;
 		super.showItem(item);
 	}
 
@@ -107,7 +107,7 @@ public class SafeTreeViewer extends TreeViewer {
 	 * @see org.eclipse.jface.viewers.TreeViewer#updatePlus(org.eclipse.swt.widgets.Item, java.lang.Object)
 	 */
 	protected void updatePlus(Item item, Object element) {
-		if (item == null || item.isDisposed()) return;
+		if (item != null && item.isDisposed()) return;
 		super.updatePlus(item, element);
 	}
 
@@ -115,7 +115,7 @@ public class SafeTreeViewer extends TreeViewer {
 	 * @see org.eclipse.jface.viewers.TreeViewer#createChildren(org.eclipse.swt.widgets.Widget)
 	 */
 	protected void createChildren(Widget widget) {
-		if (widget == null || widget.isDisposed()) return;
+		if (widget != null && widget.isDisposed()) return;
 		super.createChildren(widget);
 	}
 
@@ -123,7 +123,7 @@ public class SafeTreeViewer extends TreeViewer {
 	 * @see org.eclipse.jface.viewers.TreeViewer#getChild(org.eclipse.swt.widgets.Widget, int)
 	 */
 	protected Item getChild(Widget widget, int index) {
-		if (widget == null || widget.isDisposed()) return null;
+		if (widget != null && widget.isDisposed()) return null;
 		return super.getChild(widget, index);
 	}
 
@@ -131,7 +131,7 @@ public class SafeTreeViewer extends TreeViewer {
 	 * @see org.eclipse.jface.viewers.TreeViewer#getChildren(org.eclipse.swt.widgets.Widget)
 	 */
 	protected Item[] getChildren(Widget widget) {
-		if (widget == null || widget.isDisposed()) return new Item[0];
+		if (widget != null && widget.isDisposed()) return new Item[0];
 		return super.getChildren(widget);
 	}
 
@@ -139,7 +139,7 @@ public class SafeTreeViewer extends TreeViewer {
 	 * @see org.eclipse.jface.viewers.TreeViewer#getExpanded(org.eclipse.swt.widgets.Item)
 	 */
 	protected boolean getExpanded(Item item) {
-		if (item == null || item.isDisposed()) return false;
+		if (item != null && item.isDisposed()) return false;
 		return super.getExpanded(item);
 	}
 
@@ -147,7 +147,7 @@ public class SafeTreeViewer extends TreeViewer {
 	 * @see org.eclipse.jface.viewers.TreeViewer#getItems(org.eclipse.swt.widgets.Item)
 	 */
 	protected Item[] getItems(Item item) {
-		if (item == null || item.isDisposed()) return new Item[0];
+		if (item != null && item.isDisposed()) return new Item[0];
 		return super.getItems(item);
 	}
 
@@ -155,7 +155,7 @@ public class SafeTreeViewer extends TreeViewer {
 	 * @see org.eclipse.jface.viewers.TreeViewer#getParentItem(org.eclipse.swt.widgets.Item)
 	 */
 	protected Item getParentItem(Item item) {
-		if (item == null || item.isDisposed()) return null;
+		if (item != null && item.isDisposed()) return null;
 		return super.getParentItem(item);
 	}
 }

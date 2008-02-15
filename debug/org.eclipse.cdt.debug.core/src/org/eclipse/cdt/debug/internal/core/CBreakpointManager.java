@@ -28,6 +28,7 @@ import java.util.Set;
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugUtils;
@@ -837,6 +838,17 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 					sourceHandle = ((IStorage)sourceElement).getFullPath().toOSString();
 					resource = ResourcesPlugin.getWorkspace().getRoot();
 				}
+				else if ( sourceElement instanceof ITranslationUnit ) {
+					ITranslationUnit translationUnit = (ITranslationUnit)sourceElement;
+					sourceHandle = translationUnit.getPath().toString();
+					resource = translationUnit.getResource();
+
+					// an IExternalTranslationUnit doesn't have an IResource
+					if (resource == null) {
+						resource = getProject();
+					}
+				}
+				
 				breakpoint = createLineBreakpoint( sourceHandle, resource, cdiBreakpoint );
 			}
 			else if ( cdiBreakpoint instanceof ICDIFunctionBreakpoint ) {

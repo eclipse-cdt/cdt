@@ -4,7 +4,7 @@
 <booleanAttribute key="automaticAdd" value="true"/>
 <booleanAttribute key="automaticValidate" value="false"/>
 <stringAttribute key="bootstrap" value=""/>
-<stringAttribute key="checked" value="[NONE]"/>
+<stringAttribute key="checked" value="org.eclipse.ui.workbench"/>
 <booleanAttribute key="clearConfig" value="true"/>
 <booleanAttribute key="clearws" value="true"/>
 <booleanAttribute key="clearwslog" value="false"/>
@@ -30,8 +30,13 @@
 <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-ea -esa -Dcom.sun.management.jmxremote"/>
 <stringAttribute key="pde.version" value="3.3"/>
 <stringAttribute key="product" value="org.eclipse.sdk.ide"/>
+<stringAttribute key="selectedPlugin" value="org.eclipse.ui.workbench"/>
+<booleanAttribute key="show_selected_only" value="false"/>
 <stringAttribute key="templateConfig" value="${target_home}\configuration\config.ini"/>
-<booleanAttribute key="tracing" value="false"/>
+<booleanAttribute key="tracing" value="true"/>
+<mapAttribute key="tracingOptions">
+<mapEntry key="org.eclipse.ui.workbench/debug" value="true"/>
+</mapAttribute>
 <booleanAttribute key="useDefaultConfig" value="true"/>
 <booleanAttribute key="useDefaultConfigArea" value="false"/>
 <booleanAttribute key="useProduct" value="true"/>

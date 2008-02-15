@@ -30,14 +30,14 @@ Tests
    </requires>
 
    <plugin
-         id="org.eclipse.dd.test.dsf"
+         id="org.eclipse.dd.tests.dsf"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.dd.test.gdb"
+         id="org.eclipse.dd.tests.gdb"
          download-size="0"
          install-size="0"
          version="0.0.0"

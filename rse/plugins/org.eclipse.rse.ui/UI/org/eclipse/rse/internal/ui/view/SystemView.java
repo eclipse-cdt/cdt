@@ -1500,6 +1500,11 @@ public class SystemView extends SafeTreeViewer
 	 * Move one tree item to a new location
 	 */
 	protected void moveTreeItem(Widget parentItem, Item item, Object src, int newPosition) {
+		if (item==null) {
+			//Null items during RSECombinedTestSuite - put debugBreak here to investigate
+			assert item!=null;
+			return;
+		}
 		if (getExpanded(item)) {
 			setExpanded(item, false);
 			refresh(src); // flush items from memory  	  
@@ -1667,6 +1672,7 @@ public class SystemView extends SafeTreeViewer
 
 		protected ISystemResourceChangeEvent _event;
 		protected SystemView _originatingViewer;
+		//public Exception _originatingThread; //for debugging
 
 		public ResourceChangedJob(ISystemResourceChangeEvent event, SystemView originatingViewer) {
 			super("Resource Changed..."); //$NON-NLS-1$
@@ -1674,6 +1680,10 @@ public class SystemView extends SafeTreeViewer
 			//See also originatedHere, below
 			_originatingViewer = originatingViewer;
 			_event = event;
+			//_originatingThread = new Exception();
+			//_originatingThread.fillInStackTrace();
+			////_originatingThread.printStackTrace();
+			////System.out.println("<<<<<<<<<<<<<");
 		}
 
 		public IStatus runInUIThread(IProgressMonitor monitor) {

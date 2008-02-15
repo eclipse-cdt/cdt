@@ -42,7 +42,7 @@ public class RSEFileSubsystemTestSuite extends DelegatingTestSuiteHolder {
 		TestSuite suite = new TestSuite("RSE File Subsystem Test Suite"); //$NON-NLS-1$
 		// add the single test suites to the overall one here.
 		//-test-disabled-//suite.addTestSuite(CreateFileTestCase.class);
-		suite.addTestSuite(FileOutputStreamTestCase.class);
+		//-test-disabled-//suite.addTestSuite(FileOutputStreamTestCase.class);
 		suite.addTestSuite(FileServiceArchiveTest.class);
 		//-test-disabled-//suite.addTest(FileServiceArchiveTestDStore.suite());
 		//-test-disabled-//suite.addTest(FileServiceArchiveTestDStoreWindows.suite());

@@ -325,8 +325,11 @@ public class DefaultVMContentProviderStrategy implements IElementContentProvider
                                     // See https://bugs.eclipse.org/bugs/show_bug.cgi?id=202109
                                     // Instead of checking getStatus().isOK(), check getData() != null.
                                     if (getData() != null) {
-                                        for (int i = 0; i < elementsLength; i++) {
-                                            update.setChild(getData().get(i), elementsStartIdx + nodeStartIdx + i);
+                                        for (int i = 0; i < elementsLength && i < getData().size(); i++) {
+                                            Object child = getData().get(i);
+                                            if (child != null) {
+                                                update.setChild(getData().get(i), elementsStartIdx + nodeStartIdx + i);
+                                            }
                                         }
                                     }
                                     elementsMultiRequestMon.requestMonitorDone(this);

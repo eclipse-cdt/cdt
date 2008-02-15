@@ -2162,10 +2162,6 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	 */
 	public boolean createFolder(String fullVirtualName, ISystemOperationMonitor archiveOperationMonitor) {
 		fullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(fullVirtualName);
-		if (fullVirtualName.startsWith("folder1"))
-		{
-			System.out.println("fullVirtualName is: " + fullVirtualName);
-		}
 		fullVirtualName = fullVirtualName + "/"; //$NON-NLS-1$
 		boolean returnCode = createVirtualObject(fullVirtualName, archiveOperationMonitor);
 		setArchiveOperationMonitorStatusDone(archiveOperationMonitor);

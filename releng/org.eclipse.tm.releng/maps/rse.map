@@ -1,12 +1,5 @@
 !***************  PROJECT CONTRIBUTION  ******************************************************** 
-
-!*** Special entries from eclipse
-
-plugin@org.eclipse.test=v20070226,:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse,
-fragment@org.eclipse.ant.optional.junit=v20050226,:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse,
-
 !*** Project's plugins, features and fragments
-
 feature@org.eclipse.rse=v20080212,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse-feature
 feature@org.eclipse.rse.core=v20080212,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse.core-feature
 feature@org.eclipse.rse.dstore=v20080212,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse.dstore-feature
@@ -44,9 +37,9 @@ plugin@org.eclipse.rse.services.files.ftp=v20080212,:pserver:anonymous:none@dev.
 plugin@org.eclipse.rse.services.local=v20080212,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.services.local
 plugin@org.eclipse.rse.services.ssh=v20080212,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.services.ssh
 plugin@org.eclipse.rse.services.telnet=v20080212,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.services.telnet
-plugin@org.eclipse.rse.services=v20080212,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.services
+plugin@org.eclipse.rse.services=v20080214,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.services
 plugin@org.eclipse.rse.shells.ui=v20080212,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.shells.ui
-plugin@org.eclipse.rse.subsystems.files.core=v20080212,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.subsystems.files.core
+plugin@org.eclipse.rse.subsystems.files.core=v20080214,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.subsystems.files.core
 plugin@org.eclipse.rse.subsystems.files.dstore=v20080212,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.subsystems.files.dstore
 plugin@org.eclipse.rse.subsystems.files.ftp=v20080212,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.subsystems.files.ftp
 plugin@org.eclipse.rse.subsystems.files.local=v20080212,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.subsystems.files.local
@@ -60,7 +53,7 @@ plugin@org.eclipse.rse.subsystems.shells.dstore=v20080212,:pserver:anonymous:non
 plugin@org.eclipse.rse.subsystems.shells.local=v20080212,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.subsystems.shells.local
 plugin@org.eclipse.rse.subsystems.shells.ssh=v20080212,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.subsystems.shells.ssh
 plugin@org.eclipse.rse.subsystems.shells.telnet=v20080212,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.subsystems.shells.telnet
-plugin@org.eclipse.rse.tests=v20080213a,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/tests/org.eclipse.rse.tests
+plugin@org.eclipse.rse.tests=v20080214,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/tests/org.eclipse.rse.tests
 plugin@org.eclipse.rse.tests.framework=v20080212,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/tests/org.eclipse.rse.tests.framework
-plugin@org.eclipse.rse.ui=v20080212,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.ui
+plugin@org.eclipse.rse.ui=v20080214,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.ui
 plugin@org.eclipse.rse.useractions=v20080212,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.useractions

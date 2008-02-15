@@ -73,7 +73,7 @@ public interface IRSEConnectionManager {
 	/**
 	 * Lookup the connection described by the given connection properties. If
 	 * the described connection does not exist, the connection (and all required
-	 * RSE artefacts) will be created.
+	 * RSE artifacts) will be created.
 	 * 
 	 * @param properties The connection properties. Must be not <code>null</code>.
 	 * @return The corresponding <code>IHost</code> connection object.

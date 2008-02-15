@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.Display;
  * to hold the current thread from execution time out and/or condition
  * based.
  * <p>
- * <b>Note:</b> The class cannot be instanciated as all provided methods
+ * <b>Note:</b> The class cannot be instantiated as all provided methods
  * are declared static! 
  */
 public final class RSEWaitAndDispatchUtil {
@@ -26,7 +26,7 @@ public final class RSEWaitAndDispatchUtil {
 	 * Private constructor.
 	 */
 	private RSEWaitAndDispatchUtil() {
-		// nothing to do. The class cannot be instanciated.
+		// nothing to do. The class cannot be instantiated.
 	}
 	
 	/**
@@ -42,10 +42,10 @@ public final class RSEWaitAndDispatchUtil {
 	 * Blocks the calling thread from execution till the specified
 	 * time out has exceeded. If the calling thread is an display thread,
 	 * the display event dispatching will be kept going during this time.
-	 * The method will return immediatelly if any time out less or equal
+	 * The method will return immediately if any time out less or equal
 	 * to 0 is specified.
 	 * 
-	 * @param timeout The time to wait till the method return in milli seconds. Must be larger than 0.
+	 * @param timeout The time to wait till the method return in milliseconds. Must be larger than 0.
 	 */
 	public static void waitAndDispatch(long timeout) {
 		assert timeout > 0;
@@ -57,6 +57,14 @@ public final class RSEWaitAndDispatchUtil {
 				// display event dispatching running.
 				long current = System.currentTimeMillis();
 				while ((current - start) < timeout && !display.isDisposed()) {
+					//See EventLoopProgressMonitor.runEventLoop():
+					//Usually, we should embed the display.readAndDispatch() inside a
+					//try...catch construct in order to continue running the loop even
+					//if an exception occurs, since that exception is not necessarlily
+					//related to the test code.
+					//Here, however, we deliberately let exception fall through in the 
+					//hope that seeing it in the test helps finding the issue that causes
+					//the unhandled event loop exception.
 					if (!display.readAndDispatch()) display.sleep();
 					current = System.currentTimeMillis();
 				}
@@ -92,12 +100,12 @@ public final class RSEWaitAndDispatchUtil {
 	 * Blocks the calling thread from execution till the specified
 	 * time out has exceeded or the specified interrupt condition is <code>true</code>.
 	 * If the calling thread is an display thread, the display event dispatching will
-	 * be kept going during this time. The method will return immediatelly if any time
+	 * be kept going during this time. The method will return immediately if any time
 	 * out less than 0 is specified or the interrupt condition is <code>true</code> from
 	 * the beginning. If a time out of 0 is specified, the method will be wait indefinite
 	 * amount of time till the interrupt condition ever becomes <code>true</code>.
 	 * 
-	 * @param timeout The time to wait till the method return in milli seconds. Must be larger or equals than 0.
+	 * @param timeout The time to wait till the method return in milliseconds. Must be larger or equals than 0.
 	 * @param condition The interrupt condition to test. Must be not <code>null</code>.
 	 * @return <code>True</code> if the method returned because of the timeout, <code>false</code> if the
 	 *         method returned because of the condition became true.

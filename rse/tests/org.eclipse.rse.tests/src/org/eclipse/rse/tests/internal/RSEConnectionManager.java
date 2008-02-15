@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * David Dykstal (IBM) - [217556] remove service subsystem types
+ * Martin Oberhuber (Wind River) - [219086] flush event queue to shield tests from each other
  *******************************************************************************/
 package org.eclipse.rse.tests.internal;
 
@@ -49,6 +50,7 @@ import org.eclipse.rse.tests.RSETestsPlugin;
 import org.eclipse.rse.tests.core.connection.IRSEConnectionManager;
 import org.eclipse.rse.tests.core.connection.IRSEConnectionProperties;
 import org.eclipse.rse.tests.testsubsystem.interfaces.ITestSubSystem;
+import org.eclipse.swt.widgets.Display;
 import org.osgi.framework.Bundle;
 
 /**
@@ -244,6 +246,12 @@ public class RSEConnectionManager implements IRSEConnectionManager {
 				}
 		}
 		Assert.assertNotNull("FAILED(findOrCreateConnection): Failed to find and/or create connection IHost object!", connection); //$NON-NLS-1$
+		final Display display = Display.getCurrent();
+		if (display!=null) {
+			while(!display.isDisposed() && display.readAndDispatch()) {
+				//running on main thread: wait until all async events are fired
+			}
+		}
 		
 		return connection;
 	}

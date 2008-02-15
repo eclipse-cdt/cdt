@@ -50,22 +50,27 @@ public class HostMoveTest extends RSEBaseConnectionTestCase {
 		super.tearDown();
 	}
 	
-	public void testMoveOneUp() {
+	public void testMoveOneUp() throws Exception {
 		//-test-author-:DavidDykstal
 		checkPrecondition();
 		IHost host = hostArray[NUMBER_OF_HOSTS - 1];
 		IHost[] hosts = new IHost[] {host};
 		registry.moveHosts("TestProfile", hosts, -1);
 		assertEquals(NUMBER_OF_HOSTS - 2, registry.getHostPosition(host));
+		flushEventQueue();
+		assertEquals(NUMBER_OF_HOSTS - 2, registry.getHostPosition(host));
 		registry.moveHosts("TestProfile", hosts, 1);
 		assertEquals(NUMBER_OF_HOSTS - 1, registry.getHostPosition(host));
 	}
 	
-	public void testMoveManyUp() {
+	public void testMoveManyUp() throws Exception {
 		//-test-author-:DavidDykstal
 		checkPrecondition();
 		IHost[] hosts = new IHost[] {hostArray[NUMBER_OF_HOSTS - 1], hostArray[NUMBER_OF_HOSTS - 2]};
 		registry.moveHosts("TestProfile", hosts, -2);
+		assertEquals(NUMBER_OF_HOSTS - 3, registry.getHostPosition(hostArray[NUMBER_OF_HOSTS - 1]));
+		assertEquals(NUMBER_OF_HOSTS - 4, registry.getHostPosition(hostArray[NUMBER_OF_HOSTS - 2]));
+		flushEventQueue();
 		assertEquals(NUMBER_OF_HOSTS - 3, registry.getHostPosition(hostArray[NUMBER_OF_HOSTS - 1]));
 		assertEquals(NUMBER_OF_HOSTS - 4, registry.getHostPosition(hostArray[NUMBER_OF_HOSTS - 2]));
 		registry.moveHosts("TestProfile", hosts, 2);
@@ -73,7 +78,7 @@ public class HostMoveTest extends RSEBaseConnectionTestCase {
 		assertEquals(NUMBER_OF_HOSTS - 2, registry.getHostPosition(hostArray[NUMBER_OF_HOSTS - 2]));
 	}
 
-	public void testMoveFirstUp() {
+	public void testMoveFirstUp() throws Exception {
 		//-test-author-:DavidDykstal
 		checkPrecondition();
 		IHost host = hostArray[0];
@@ -83,7 +88,7 @@ public class HostMoveTest extends RSEBaseConnectionTestCase {
 		assertEquals(0, registry.getHostPosition(host));
 	}
 
-	public void testMoveOneDown() {
+	public void testMoveOneDown() throws Exception {
 		//-test-author-:DavidDykstal
 		checkPrecondition();
 		IHost host = hostArray[1]; // second in the list
@@ -95,7 +100,7 @@ public class HostMoveTest extends RSEBaseConnectionTestCase {
 		assertEquals(1, registry.getHostPosition(host));
 	}
 	
-	public void testMoveManyDown() {
+	public void testMoveManyDown() throws Exception {
 		//-test-author-:DavidDykstal
 		checkPrecondition();
 		IHost[] hosts = new IHost[] {hostArray[0], hostArray[2], hostArray[4]};
@@ -112,7 +117,7 @@ public class HostMoveTest extends RSEBaseConnectionTestCase {
 		assertEquals(4, registry.getHostPosition(hostArray[4]));
 	}
 
-	public void testMoveLastDown() {
+	public void testMoveLastDown() throws Exception {
 		//-test-author-:DavidDykstal
 		checkPrecondition();
 		IHost host = hostArray[NUMBER_OF_HOSTS - 1]; 
@@ -122,7 +127,7 @@ public class HostMoveTest extends RSEBaseConnectionTestCase {
 		assertEquals(NUMBER_OF_HOSTS - 1, registry.getHostPosition(host));
 	}
 
-	public void testNoHost() {
+	public void testNoHost() throws Exception {
 		//-test-author-:DavidDykstal
 		checkPrecondition();
 		IHost[] hosts = new IHost[] {};
@@ -132,7 +137,7 @@ public class HostMoveTest extends RSEBaseConnectionTestCase {
 	/**
 	 * Create the test hosts.
 	 */
-	private void createHosts() {
+	private void createHosts() throws Exception {
 		
 		hostArray = new IHost[NUMBER_OF_HOSTS];
 

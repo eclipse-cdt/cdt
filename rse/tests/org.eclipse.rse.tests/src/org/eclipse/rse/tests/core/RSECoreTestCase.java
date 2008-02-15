@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -9,6 +9,7 @@
  * Uwe Stieber (Wind River) - initial API and implementation.
  * Martin Oberhuber (Wind River) - fix build against 3.2.1, fix javadoc errors
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
+ * Martin Oberhuber (Wind River) - [219086] flush event queue to shield tests from each other
  ********************************************************************************/
 package org.eclipse.rse.tests.core;
 
@@ -48,6 +49,7 @@ import org.eclipse.rse.persistence.IRSEPersistenceManager;
 import org.eclipse.rse.tests.RSETestsPlugin;
 import org.eclipse.rse.tests.core.RSEWaitAndDispatchUtil.IInterruptCondition;
 import org.eclipse.rse.ui.SystemBasePlugin;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbench;
@@ -59,7 +61,7 @@ import org.eclipse.ui.WorkbenchException;
 import org.osgi.framework.Bundle;
 
 /**
- * Core RSE test case infra structure implementation.
+ * Core RSE test case infrastructure implementation.
  */
 public class RSECoreTestCase extends TestCase {
 	// Test properties storage.
@@ -351,7 +353,7 @@ public class RSECoreTestCase extends TestCase {
 	/**
 	 * Wait until the SystemProfileManager has finished loading all "autoload" profiles,
 	 * and the RSEUIPlugin InitRSEJob has finished filling it with the default connections.
-	 * @throws InterruptedException
+	 * @throws InterruptedException when initialization is interrupted e.g. by shutting down Eclipse.
 	 */
 	protected void waitForRSEWorkspaceInit() throws InterruptedException {
 		//RSEUIPlugin is loaded automatically because RSETestsPlugins extends SystemBasePlugin,
@@ -385,12 +387,65 @@ public class RSECoreTestCase extends TestCase {
 		waitForRSEWorkspaceInit();
 		switchMaximizeSystemsView();
 	}
+	
+	/**
+	 * Flush the event queue in order to ensure that no left-over events influence later test cases.
+	 * <p>
+	 * Unhandled exceptions in the event loop event are caught as follows:
+	 * In case multiple events from the event loop throw exceptions these are printed
+	 * to stdout. The first exception found in the event loop is thrown to the caller.
+	 * 
+	 * @throws Exception in case an unhandled event loop exception was found.
+	 */
+	protected void flushEventQueue() throws Exception {
+		Display display = Display.getCurrent();
+		if (display!=null) {
+			//on the dispatch thread already
+			Exception eventLoopException = null;
+			while(!display.isDisposed()) {
+				//loop until event queue is flushed
+				try {
+					if (!display.readAndDispatch()) {
+						break;
+					}
+				} catch(Exception e) {
+					if (eventLoopException==null) {
+						eventLoopException = e;
+					} else {
+						System.out.println("Multiple unhandled event loop exceptions:");
+						e.printStackTrace();
+					}
+				}
+			}
+			if (eventLoopException!=null) {
+				throw eventLoopException;
+			}
+		} else {
+			//calling from background thread
+			final Exception[] ex = new Exception[1];
+			display = Display.getDefault();
+			display.syncExec(new Runnable() {
+				public void run() {
+					try {
+						flushEventQueue();
+					} catch(Exception e) {
+						ex[0] = e;
+					}
+				}
+			});
+			if (ex[0]!=null) throw ex[0];
+		}
+	}
 
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#tearDown()
 	 */
 	protected void tearDown() throws Exception {
 		restoreMaximizeSystemsView();
+		//if running on main thread: wait until all asynchronous events are fired,
+		//in order to ensure that individual test cases do not influence each other
+		//See also https://bugs.eclipse.org/bugs/show_bug.cgi?id=219086
+		flushEventQueue();
 		super.tearDown();
 	}
 	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,10 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
-/*
- * Created on Nov 22, 2004
- */
 package org.eclipse.cdt.core.parser.tests.ast2;
 
 import java.io.IOException;
@@ -266,7 +262,8 @@ public class AST2BaseTest extends BaseTestCase {
             shouldVisitNames = true;
         }
         public List nameList = new ArrayList();
-        public int visit( IASTName name ){
+        @Override
+		public int visit( IASTName name ){
             nameList.add( name );
             return PROCESS_CONTINUE;
         }
@@ -295,7 +292,8 @@ public class AST2BaseTest extends BaseTestCase {
             shouldVisitNames = true;
         }
         public List<IASTName> nameList = new ArrayList<IASTName>();
-        public int visit(IASTName name) {
+        @Override
+		public int visit(IASTName name) {
             nameList.add(name);
             return PROCESS_CONTINUE;
         }
@@ -361,6 +359,7 @@ public class AST2BaseTest extends BaseTestCase {
 		public int numProblemBindings=0;
 		public int numNullBindings=0;
 		public List nameList = new ArrayList();
+		@Override
 		public int visit( IASTName name ){
 			nameList.add( name );
 			IBinding binding = name.resolveBinding();
@@ -385,6 +384,7 @@ public class AST2BaseTest extends BaseTestCase {
 		public int numProblemBindings=0;
 		public int numNullBindings=0;
 		public List nameList = new ArrayList();
+		@Override
 		public int visit( IASTName name ){
 			nameList.add( name );
 			IBinding binding = name.resolveBinding();
@@ -453,7 +453,7 @@ public class AST2BaseTest extends BaseTestCase {
     			}
     		}
     		names= (IASTName[]) lnames.toArray(new IASTName[lnames.size()]);
-    		assertEquals("<>1 name found for \""+section+"\"", 1, names.length);
+    		assertEquals("found " + names.length + " names for \""+section.substring(0, len)+"\"", 1, names.length);
     			
     		IBinding binding = names[0].resolveBinding();
     		assertNotNull("No binding for "+names[0].getRawSignature(), binding);

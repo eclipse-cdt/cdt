@@ -5708,4 +5708,17 @@ public class AST2CPPTests extends AST2BaseTest {
     	bh.assertNonProblem("foo3", 4);
     }
 
+    // int foo2() {
+    //   int relayIndex = -1;
+    //   int numRelays = 0;
+    //	 if( relayIndex < 0 || relayIndex > numRelays )
+    //	    return 0;
+    // }
+    public void testTemplateIDAmbiguity_Bug104706() throws Exception {
+    	BindingAssertionHelper bh= new BindingAssertionHelper(getContents(1)[0].toString(), true);
+    	
+    	bh.assertNonProblem("relayIndex <", 10);
+    	bh.assertNonProblem("relayIndex >", 10);
+    	bh.assertNonProblem("numRelays )", 9);
+    }
 }

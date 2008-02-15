@@ -276,13 +276,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         return last;
     }
 
-    protected List templateArgumentList() throws EndOfFileException,
+    protected List<IASTNode> templateArgumentList() throws EndOfFileException,
             BacktrackException {
         IToken start = LA(1);
         int startingOffset = start.getOffset();
         int endOffset = 0;
         start = null;
-        List list = new ArrayList();
+        List<IASTNode> list = new ArrayList<IASTNode>();
 
         boolean completedArg = false;
         boolean failed = false;
@@ -363,10 +363,12 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             case IToken.tCOMPLETION:
             case IToken.tEOC:
                 last = consume();
-                IToken templateLast = consumeTemplateArguments(last, argumentList);
-                if (last != templateLast) {
-                    last = templateLast;
-                    hasTemplateId = true;
+                if (!fNoTemplateArguments) {
+                	IToken templateLast = consumeTemplateArguments(last, argumentList);
+                	if (last != templateLast) {
+                		last = templateLast;
+                		hasTemplateId = true;
+                	}
                 }
                 break;
 
@@ -378,10 +380,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             }
 
             while (LT(1) == IToken.tCOLONCOLON) {
+            	boolean checkTemplateArgs= !fNoTemplateArguments;
                 last = consume();
 
-                if (LT(1) == IToken.t_template)
+                if (LT(1) == IToken.t_template) {
+                	checkTemplateArgs= true;
                     consume();
+                }
 
                 if (LT(1) == IToken.tBITCOMPLEMENT)
                     consume();
@@ -396,7 +401,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 case IToken.tCOMPLETION:
                 case IToken.tEOC:
                     last = consume();
-                    last = consumeTemplateArguments(last, argumentList);
+                    if (checkTemplateArgs) {
+                    	last = consumeTemplateArguments(last, argumentList);
+                    }
                     if (last.getType() == IToken.tGT || last.getType() == IToken.tEOC)
                         hasTemplateId = true;
                 }
@@ -425,16 +432,16 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             IToken secondMark = mark();
             consume();
             try {
-                List list = templateArgumentList();
+                List<IASTNode> list = templateArgumentList();
                 argumentList.addSegment(list);
                 switch (LT(1)) {
                 case IToken.tGT:
                 case IToken.tEOC:
-                    last = consume();
-                    if( LT(1) == IToken.tINTEGER || LT(1) == IToken.tFLOATINGPT ) {
+                    if( LT(2) == IToken.tINTEGER || LT(2) == IToken.tFLOATINGPT) {
                         backup( secondMark );
                         return last;
                     }
+                    last = consume();
                     break;
                 default:
                     throw backtrack;
@@ -530,7 +537,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @throws BacktrackException
      *             request a backtrack
      */
-    protected void consumePointerOperators(List collection)
+    protected void consumePointerOperators(List<IASTPointerOperator> collection)
             throws EndOfFileException, BacktrackException {
 
         for (;;) {
@@ -1862,6 +1869,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 	private final IIndex index;
 
+	private boolean fNoTemplateArguments;
+
     private static final int DEFAULT_PARM_LIST_SIZE = 4;
 
     private static final int DEFAULT_POINTEROPS_LIST_SIZE = 4;
@@ -2139,7 +2148,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         }
 
         try {
-            List parms = templateParameterList();
+            List<ICPPASTTemplateParameter> parms = templateParameterList();
             consume(IToken.tGT);
             ICPPASTTemplateDeclaration templateDecl = createTemplateDeclaration();
             try
@@ -2150,7 +2159,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 templateDecl.setExported(exported);
                 templateDecl.setDeclaration(d);
                 for (int i = 0; i < parms.size(); ++i) {
-                    ICPPASTTemplateParameter parm = (ICPPASTTemplateParameter) parms.get(i);
+                    ICPPASTTemplateParameter parm = parms.get(i);
                     templateDecl.addTemplateParamter(parm);
                 }
             }
@@ -2204,11 +2213,11 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @throws BacktrackException
      *             request for a backtrack
      */
-    protected List templateParameterList() throws BacktrackException,
+    protected List<ICPPASTTemplateParameter> templateParameterList() throws BacktrackException,
             EndOfFileException {
         // if we have gotten this far then we have a true template-declaration
         // iterate through the template parameter list
-        List returnValue = new ArrayList(DEFAULT_PARM_LIST_SIZE);
+        List<ICPPASTTemplateParameter> returnValue = new ArrayList<ICPPASTTemplateParameter>(DEFAULT_PARM_LIST_SIZE);
 
         for (;;) {
             if (LT(1) == IToken.tGT)
@@ -2250,7 +2259,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 IToken firstToken = consume();
                 consume(IToken.tLT);
 
-                List subResult = templateParameterList();
+                List<ICPPASTTemplateParameter> subResult = templateParameterList();
                 consume(IToken.tGT);
                 int last = consume(IToken.t_class).getEndOffset();
                 IASTName identifierName = null;
@@ -2275,7 +2284,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 }
 
                 for (int i = 0; i < subResult.size(); ++i) {
-                    ICPPASTTemplateParameter p = (ICPPASTTemplateParameter) subResult.get(i);
+                    ICPPASTTemplateParameter p = subResult.get(i);
                     parm.addTemplateParamter(p);
                 }
                 returnValue.add(parm);
@@ -2587,10 +2596,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         }
         result.setTemplateName(templateIdName);
         if (duple.getTemplateIdArgLists() != null) {
-            List args = duple.getTemplateIdArgLists()[0];
+            List<IASTNode> args= duple.getTemplateIdArgLists()[0];
             if (args != null)
                 for (int i = 0; i < args.size(); ++i) {
-                    IASTNode n = (IASTNode) args.get(i);
+                    IASTNode n = args.get(i);
                     if (n instanceof IASTTypeId)
                         result.addTemplateArgument((IASTTypeId) n);
                     else if(n instanceof IASTExpression)
@@ -2712,7 +2721,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         boolean hasFunctionTryBlock = false;
         boolean consumedSemi = false;
         int semiOffset = 0;
-        List constructorChain = Collections.EMPTY_LIST;
+        List<IASTNode> constructorChain = Collections.emptyList();
 
         switch (LT(1)) {
         case IToken.tSEMI:
@@ -2724,13 +2733,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         case IToken.t_try:
             consume();
             if (LT(1) == IToken.tCOLON) {
-                constructorChain = new ArrayList(DEFAULT_CONSTRUCTOR_CHAIN_LIST_SIZE);
+                constructorChain = new ArrayList<IASTNode>(DEFAULT_CONSTRUCTOR_CHAIN_LIST_SIZE);
                 ctorInitializer(constructorChain);
             }
             hasFunctionTryBlock = true;
             break;
         case IToken.tCOLON:
-            constructorChain = new ArrayList(DEFAULT_CONSTRUCTOR_CHAIN_LIST_SIZE);
+            constructorChain = new ArrayList<IASTNode>(DEFAULT_CONSTRUCTOR_CHAIN_LIST_SIZE);
             ctorInitializer(constructorChain);
             hasFunctionBody = true;
             break;
@@ -2794,10 +2803,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             ((ASTNode) funcDefinition).setLength(calculateEndOffset(s) - firstOffset);
 
             if (hasFunctionTryBlock && declarator instanceof ICPPASTFunctionTryBlockDeclarator) {
-                List handlers = new ArrayList(DEFAULT_CATCH_HANDLER_LIST_SIZE);
+                List<ICPPASTCatchHandler> handlers = new ArrayList<ICPPASTCatchHandler>(DEFAULT_CATCH_HANDLER_LIST_SIZE);
                 catchHandlerSequence(handlers);
                 for (int i = 0; i < handlers.size(); ++i) {
-                    ICPPASTCatchHandler handler = (ICPPASTCatchHandler) handlers.get(i);
+                    ICPPASTCatchHandler handler = handlers.get(i);
                     ((ICPPASTFunctionTryBlockDeclarator) declarator).addCatchHandler(handler);
                     ((ASTNode) funcDefinition).setLength(calculateEndOffset(handler) - firstOffset);
                 }
@@ -2842,7 +2851,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @throws BacktrackException
      *             request a backtrack
      */
-    protected void ctorInitializer(List collection) throws EndOfFileException,
+    protected void ctorInitializer(List<IASTNode> collection) throws EndOfFileException,
             BacktrackException {
         consume();
         ctorLoop: for (;;) {
@@ -3545,10 +3554,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         la = null;
         IASTDeclarator innerDecl = null;
         IASTName declaratorName = null;
-        List pointerOps = new ArrayList(DEFAULT_POINTEROPS_LIST_SIZE);
-        List parameters = Collections.EMPTY_LIST;
-        List arrayMods = Collections.EMPTY_LIST;
-        List exceptionSpecIds = Collections.EMPTY_LIST;
+        List<IASTPointerOperator> pointerOps = new ArrayList<IASTPointerOperator>(DEFAULT_POINTEROPS_LIST_SIZE);
+        List<IASTNode> parameters = Collections.emptyList();
+        List<IASTNode> arrayMods = Collections.emptyList();
+        List<IASTNode> exceptionSpecIds = Collections.emptyList();
         boolean encounteredVarArgs = false;
         boolean tryEncountered = false;
         IASTExpression bitField = null;
@@ -3563,7 +3572,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             __attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
             
             if (!pointerOps.isEmpty())
-                finalOffset = calculateEndOffset((IASTNode) pointerOps.get(pointerOps.size() - 1));
+                finalOffset = calculateEndOffset(pointerOps.get(pointerOps.size() - 1));
 
             if (!forNewTypeId && LT(1) == IToken.tLPAREN) {
                 IToken mark = mark();
@@ -3655,7 +3664,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                                 IASTParameterDeclaration p = parameterDeclaration();
                                 finalOffset = calculateEndOffset(p);
                                 if (parameters == Collections.EMPTY_LIST)
-                                    parameters = new ArrayList(DEFAULT_PARM_LIST_SIZE);
+                                    parameters = new ArrayList<IASTNode>(DEFAULT_PARM_LIST_SIZE);
                                 parameters.add(p);
                                 seenParameter = true;
                             }
@@ -3693,7 +3702,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     // check for throws clause here
 
                     if (LT(1) == IToken.t_throw) {
-                        exceptionSpecIds = new ArrayList(DEFAULT_SIZE_EXCEPTIONS_LIST);
+                        exceptionSpecIds = new ArrayList<IASTNode>(DEFAULT_SIZE_EXCEPTIONS_LIST);
                         consume(); // throw
                         consume(IToken.tLPAREN); // (
                         boolean done = false;
@@ -3759,10 +3768,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 case IToken.tLBRACKET:
                     if (forNewTypeId)
                         break;
-                    arrayMods = new ArrayList(DEFAULT_POINTEROPS_LIST_SIZE);
+                    arrayMods = new ArrayList<IASTNode>(DEFAULT_POINTEROPS_LIST_SIZE);
                     consumeArrayModifiers(arrayMods);
                     if (!arrayMods.isEmpty())
-                        finalOffset = calculateEndOffset((IASTNode) arrayMods.get(arrayMods.size() - 1));
+                        finalOffset = calculateEndOffset(arrayMods.get(arrayMods.size() - 1));
                     continue;
                 case IToken.tCOLON:
                     consume();
@@ -3818,7 +3827,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             d = createDeclarator();
         }
         for (int i = 0; i < pointerOps.size(); ++i) {
-            IASTPointerOperator po = (IASTPointerOperator) pointerOps.get(i);
+            IASTPointerOperator po = pointerOps.get(i);
             d.addPointerOperator(po);
         }
         if (innerDecl != null) {
@@ -4179,7 +4188,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         return new CPPASTBaseSpecifier();
     }
 
-    protected void catchHandlerSequence(List collection)
+    protected void catchHandlerSequence(List<ICPPASTCatchHandler> collection)
             throws EndOfFileException, BacktrackException {
         if (LT(1) == IToken.tEOC)
             return;
@@ -4349,7 +4358,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         return new CPPASTTranslationUnit();
     }
 
-    protected void consumeArrayModifiers(List collection)
+    protected void consumeArrayModifiers(List<IASTNode> collection)
             throws EndOfFileException, BacktrackException {
         while (LT(1) == IToken.tLBRACKET) {
             int o = consume().getOffset(); // eat the '['
@@ -4608,14 +4617,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     protected IASTStatement parseTryStatement() throws EndOfFileException, BacktrackException {
         int startO = consume().getOffset();
         IASTStatement tryBlock = compoundStatement();
-        List catchHandlers = new ArrayList(DEFAULT_CATCH_HANDLER_LIST_SIZE);
+        List<ICPPASTCatchHandler> catchHandlers = new ArrayList<ICPPASTCatchHandler>(DEFAULT_CATCH_HANDLER_LIST_SIZE);
         catchHandlerSequence(catchHandlers);
         ICPPASTTryBlockStatement tryStatement = createTryBlockStatement();
         ((ASTNode) tryStatement).setOffset(startO);
         tryStatement.setTryBody(tryBlock);
 
         for (int i = 0; i < catchHandlers.size(); ++i) {
-            ICPPASTCatchHandler handler = (ICPPASTCatchHandler) catchHandlers.get(i);
+            ICPPASTCatchHandler handler = catchHandlers.get(i);
             tryStatement.addCatchHandler(handler);
             ((ASTNode) tryStatement).setLength(calculateEndOffset(handler) - startO);
         }
@@ -4654,7 +4663,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	protected IASTStatement parseWhileStatement() throws EndOfFileException, BacktrackException {
         int startOffset = consume().getOffset();
         consume(IToken.tLPAREN);
-        IASTNode while_condition = cppStyleCondition(true);
+        IASTNode while_condition = cppStyleCondition(IToken.tRPAREN);
         switch (LT(1)) {
         case IToken.tRPAREN:
             consume();
@@ -4689,20 +4698,31 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @param expectSemi TODO
      * @return
      */
-    protected IASTNode cppStyleCondition(boolean expectSemi) throws BacktrackException, EndOfFileException {
+    protected IASTNode cppStyleCondition(int expectToken) throws BacktrackException, EndOfFileException {
         IToken mark = mark();
         try {
             IASTExpression e = expression();
-            if( ! expectSemi )
-                return e;
-            switch (LT(1)) {
-            case IToken.tRPAREN:
-            case IToken.tEOC:
-                return e;
-            default:
-                throwBacktrack(LA(1));
+            final int lt1= LT(1);
+            if (lt1 == expectToken || lt1 == IToken.tEOC) {
+            	return e;
             }
-            return e;
+            if (!fNoTemplateArguments) {
+            	// bug 104706, ambiguity between template arguments and conditional expression,
+            	// try without template args
+            	backup(mark);
+            	try {
+            		fNoTemplateArguments= true;
+            		e= expression();
+            		final int lt11= LT(1);
+            		if (lt11 == expectToken || lt11 == IToken.tEOC) {
+            			return e;
+            		}
+            	}
+            	finally {
+            		fNoTemplateArguments= false;
+            	}
+            }
+            throwBacktrack(LA(1));
         } catch (BacktrackException bt) {
             backup(mark);
             try {
@@ -4710,9 +4730,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             } catch (BacktrackException b) {
                 failParse();
                 throwBacktrack(b);
-                return null;
             }
         }
+        return null;
     }
 
     private static class EmptyVisitor extends CPPASTVisitor {
@@ -4749,7 +4769,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             consume(IToken.tLPAREN);
             IASTNode condition = null;
             try {
-                condition = cppStyleCondition(true); 
+                condition = cppStyleCondition(IToken.tRPAREN); 
                 // condition
                 if (LT(1) == IToken.tEOC) {
                     // Completing in the condition
@@ -4898,7 +4918,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         int startOffset;
         startOffset = consume().getOffset();
         consume(IToken.tLPAREN);
-        IASTNode switch_condition = cppStyleCondition(true);
+        IASTNode switch_condition = cppStyleCondition(IToken.tRPAREN);
         switch (LT(1)) {
         case IToken.tRPAREN:
             consume();
@@ -4945,7 +4965,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         case IToken.tEOC:
             break;
         default:
-            for_condition = cppStyleCondition(false);
+            for_condition = cppStyleCondition(IToken.tSEMI);
         }
         switch (LT(1)) {
         case IToken.tSEMI:

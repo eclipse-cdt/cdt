@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Texas Instruments Inc. and others.
+ * Copyright (c) 2005, 2008 Texas Instruments Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,9 @@
 
 package org.eclipse.cdt.managedbuilder.gnu.ui;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Status;
 import org.osgi.framework.BundleContext;
 import java.util.*;
 
@@ -19,6 +21,8 @@ import java.util.*;
  * The main plugin class to be used in the desktop.
  */
 public class GnuUIPlugin extends Plugin {
+	
+	public static final String PLUGIN_ID = "org.eclipse.cdt.managedbuilder.gnu.ui"; //$NON-NLS-1$
 	//The shared instance.
 	private static GnuUIPlugin plugin;
 	//Resource bundle.
@@ -81,4 +85,11 @@ public class GnuUIPlugin extends Plugin {
 		return resourceBundle;
 	}
 
+	public void log(Throwable e) {
+		log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, "Error", e)); //$NON-NLS-1$
+	}
+
+	public void log(IStatus status) {
+		getLog().log(status);
+	}
 }

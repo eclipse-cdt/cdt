@@ -108,12 +108,12 @@ public final class RSEWaitAndDispatchUtil {
 		boolean isTimedOut= false;
 		if (timeout >= 0 && condition != null) {
 			long start = System.currentTimeMillis();
-			Display display = Display.findDisplay(Thread.currentThread());
+			final Display display = Display.findDisplay(Thread.currentThread());
 			if (display != null) {
 				// ok, we are running within a display thread --> keep the
 				// display event dispatching running.
 				long current = System.currentTimeMillis();
-				while (timeout == 0 || (current - start) < timeout) {
+				while (timeout == 0 || (current - start) < timeout && !display.isDisposed()) {
 					if (condition.isTrue()) break;
 					if (!display.readAndDispatch()) display.sleep();
 					current = System.currentTimeMillis();

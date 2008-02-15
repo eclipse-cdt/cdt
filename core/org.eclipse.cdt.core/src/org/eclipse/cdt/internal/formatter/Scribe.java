@@ -1265,7 +1265,6 @@ public class Scribe {
 	public void printNextToken(int expectedTokenType, boolean considerSpaceIfAny) {
 		printComment();
 		if (shouldSkip(scanner.getCurrentPosition())) {
-//			print(0, considerSpaceIfAny);
 			return;
 		}
 		currentToken= scanner.nextToken();
@@ -1283,7 +1282,6 @@ public class Scribe {
 	public void printNextToken(int[] expectedTokenTypes, boolean considerSpaceIfAny) {
 		printComment();
 		if (shouldSkip(scanner.getCurrentPosition())) {
-//			print(0, considerSpaceIfAny);
 			return;
 		}
 		currentToken= scanner.nextToken();
@@ -1669,16 +1667,11 @@ public class Scribe {
 		}
 	}
 
-	/**
-	 * @param offset
-	 * @return
-	 */
 	boolean shouldSkip(int offset) {
 		return offset >= fSkipTokensFrom && offset <= fSkipTokensTo;
 	}
 
-
-	public void skipRange(int offset, int endOffset) {
+	void skipRange(int offset, int endOffset) {
 		if (offset == fSkipTokensFrom) {
 			return;
 		}
@@ -1690,14 +1683,10 @@ public class Scribe {
 		fSkipTokensTo= endOffset;
 	}
 
-	public void resetToOffset(int offset) {
+	void restartAtOffset(int offset) {
 		if (fSkipTokensTo > 0) {
 			fSkipTokensFrom= Integer.MAX_VALUE;
 			fSkipTokensTo= 0;
-			while (fSkippedIndentations > 0) {
-				indent();
-				fSkippedIndentations--;
-			}
 			while (fSkippedIndentations < 0) {
 				unIndent();
 				fSkippedIndentations++;
@@ -1705,6 +1694,10 @@ public class Scribe {
 			if (offset > scanner.getCurrentPosition()) {
 				printRaw(scanner.getCurrentPosition(), offset - scanner.getCurrentPosition());
 				scanner.resetTo(offset, scannerEndPosition - 1);
+			}
+			while (fSkippedIndentations > 0) {
+				indent();
+				fSkippedIndentations--;
 			}
 		}
 	}

@@ -146,22 +146,8 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	private static boolean DEBUG = "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.cdt.core/debug/formatter")); //$NON-NLS-1$ //$NON-NLS-2$
 
 	private static class ASTProblemException extends RuntimeException {
-		private static final long serialVersionUID= 1L;
-		private IASTProblem fProblem;
 		ASTProblemException(IASTProblem problem) {
-			super();
-			fProblem= problem;
-		}
-		/*
-		 * @see java.lang.Throwable#getMessage()
-		 */
-		public String getMessage() {
-			String message= fProblem.getMessage();
-			if (fProblem.getFileLocation() != null) {
-				int line= fProblem.getFileLocation().getStartingLineNumber();
-				message += " (line " + line + ')'; //$NON-NLS-1$
-			}
-			return message;
+			super(problem.getMessage());
 		}
 	}
 
@@ -190,7 +176,6 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		shouldVisitTypeIds = true;
 		shouldVisitEnumerators = true;
 		shouldVisitTranslationUnit = true;
-		shouldVisitProblems = true;
 
 		shouldVisitBaseSpecifiers = true;
 		shouldVisitNamespaces = true;
@@ -301,7 +286,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 				continue;
 			}
 			try {
-				visit(declaration);
+				declaration.accept(this);
 				scribe.startNewLine();
 			} catch (RuntimeException e) {
 				// report, but continue
@@ -517,7 +502,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTExpression)
 	 */
 	public int visit(IASTExpression node) {
-		scribe.printComment();
+//		scribe.printComment();
 		startNode(node);
 		try {
 			if (node instanceof IASTConditionalExpression) {
@@ -555,7 +540,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTStatement)
 	 */
 	public int visit(IASTStatement node) {
-		scribe.printComment();
+//		scribe.printComment();
 		startNode(node);
 		int indentLevel= scribe.indentationLevel;
 		try {
@@ -648,14 +633,6 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	public int visit(IASTEnumerator enumerator) {
 		formatNode(enumerator);
 		endOfNode(enumerator);
-		return PROCESS_SKIP;
-	}
-
-	/*
-	 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTProblem)
-	 */
-	public int visit(IASTProblem problem) {
-		formatNode(problem);
 		return PROCESS_SKIP;
 	}
 
@@ -1837,10 +1814,6 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	}
 
 	private int visit(IASTNullStatement node) {
-		if (peekNextToken() == Token.tIDENTIFIER) {
-			// probably a macro with empty expansion
-			skipToNode(node);
-		}
 		if (!fInsideFor) {
 			scribe.printNextToken(Token.tSEMI, preferences.insert_space_before_semicolon);
 			scribe.printTrailingComment();
@@ -2295,46 +2268,80 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	 * @param node the AST node to be tested
 	 */
 	private void startNode(IASTNode node) {
+		if (node instanceof IASTProblemHolder) {
+			return;
+		}
 		IASTNodeLocation[] locations= node.getNodeLocations();
 		if (locations.length == 0) {
-		} else if (node instanceof IASTProblemHolder) {
 		} else if (locations[0] instanceof IASTMacroExpansion) {
 			IASTFileLocation expansionLocation= locations[0].asFileLocation();
 			int startOffset= expansionLocation.getNodeOffset();
-			scribe.skipRange(startOffset, startOffset + expansionLocation.getNodeLength());
+			int endOffset= startOffset + expansionLocation.getNodeLength();
+			scribe.skipRange(startOffset, endOffset);
 		} else {
 			IASTFileLocation fileLocation= node.getFileLocation();
-			scribe.resetToOffset(fileLocation.getNodeOffset());
+			scribe.restartAtOffset(fileLocation.getNodeOffset());
 		}
 	}
 
 	private void endOfNode(IASTNode node) {
-		IASTNodeLocation[] locations= node.getNodeLocations();
-		if (locations.length == 0) {
-		} else if (node instanceof IASTProblemHolder) {
-		} else if (locations[0] instanceof IASTMacroExpansion) {
-			IASTFileLocation expansionLocation= locations[0].asFileLocation();
-			int macroEndOffset= expansionLocation.getNodeOffset() + expansionLocation.getNodeLength();
-			IASTFileLocation fileLocation= node.getFileLocation();
+		if (node instanceof IASTProblemHolder) {
+			return;
+		}
+		IASTFileLocation fileLocation= node.getFileLocation();
+		if (fileLocation != null) {
 			int nodeEndOffset= fileLocation.getNodeOffset() + fileLocation.getNodeLength();
-			if (nodeEndOffset >= macroEndOffset) {
-				IASTNode parent= node.getParent();
-				IASTFileLocation parentLocation= parent.getFileLocation();
-				int parentEndOffset= parentLocation.getNodeOffset() + parentLocation.getNodeLength();
-				if (parentEndOffset > nodeEndOffset) {
-					scribe.resetToOffset(nodeEndOffset);
-				} else if (parentEndOffset == nodeEndOffset) {
-					if (node instanceof IASTCompoundStatement
-							&& !(parent instanceof IASTCompoundStatement || parent instanceof IASTDoStatement)) {
-						scribe.resetToOffset(nodeEndOffset);
+			scribe.restartAtOffset(nodeEndOffset);
+		}
+		continueNode(node.getParent());
+	}
+
+	private void continueNode(IASTNode node) {
+		if (node instanceof IASTProblemHolder || node instanceof IASTTranslationUnit) {
+			return;
+		}
+		IASTFileLocation fileLocation= node.getFileLocation();
+		if (fileLocation == null) {
+			return;
+		}
+		int nodeOffset= fileLocation.getNodeOffset();
+		int nodeEndOffset= nodeOffset + fileLocation.getNodeLength();
+		int currentOffset= scribe.scanner.getCurrentPosition();
+		if (currentOffset > nodeEndOffset) {
+			return;
+		}
+		IASTNodeLocation[] locations= node.getNodeLocations();
+		for (int i= 0; i < locations.length; i++) {
+			IASTNodeLocation nodeLocation= locations[i];
+			if (nodeLocation instanceof IASTMacroExpansion) {
+				IASTFileLocation expansionLocation= nodeLocation.asFileLocation();
+				int startOffset= expansionLocation.getNodeOffset();
+				int endOffset= startOffset + expansionLocation.getNodeLength();
+				if (currentOffset >= startOffset) {
+					if (currentOffset < endOffset) {
+						scribe.skipRange(startOffset, endOffset);
+						break;
+					}
+					else if (currentOffset == endOffset && i == locations.length - 1) {
+						scribe.skipRange(startOffset, endOffset);
+						break;
 					}
 				}
+				else {
+					int nextTokenOffset= getNextTokenOffset();
+					if (nextTokenOffset < nodeEndOffset && nextTokenOffset >= startOffset && nextTokenOffset <= endOffset) {
+						scribe.skipRange(startOffset, endOffset);
+					}
+					break;
+				}
 			}
-		} else {
-			IASTFileLocation fileLocation= node.getFileLocation();
-			int nodeEndOffset= fileLocation.getNodeOffset() + fileLocation.getNodeLength();
-			scribe.resetToOffset(nodeEndOffset);
 		}
+	}
+
+	private int getNextTokenOffset() {
+		localScanner.resetTo(scribe.scanner.getCurrentPosition(), scribe.scannerEndPosition - 1);
+		localScanner.getNextToken();
+		return localScanner.getCurrentTokenStartPosition();
 	}
 
 	private void skipNode(IASTNode node) {
@@ -2463,15 +2470,16 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	private void formatStatements(final List<IASTStatement> statements, boolean insertNewLineAfterLastStatement) {
 		final int statementsLength = statements.size();
 		if (statementsLength > 1) {
-			IASTStatement previousStatement = statements.get(0);
+			IASTStatement previousStatement= statements.get(0);
 			try {
 				previousStatement.accept(this);
 			} catch (ASTProblemException e) {
 				skipToNode(statements.get(1));
 			}
-			final boolean previousStatementIsNullStmt = previousStatement instanceof IASTNullStatement;
+			final boolean previousStatementIsNullStmt= previousStatement instanceof IASTNullStatement;
 			for (int i = 1; i < statementsLength - 1; i++) {
 				final IASTStatement statement = statements.get(i);
+				startNode(statement);
 				final boolean statementIsNullStmt = statement instanceof IASTNullStatement;
 				if ((previousStatementIsNullStmt && !statementIsNullStmt)
 					|| (!previousStatementIsNullStmt && !statementIsNullStmt)) {
@@ -2547,12 +2555,6 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	}
 
 	private boolean isGuardClause(IASTCompoundStatement block, List<IASTStatement> statements) {
-		IASTNodeLocation[] locations= block.getNodeLocations();
-		if (locations.length == 0) {
-			return false;
-		} else if (locations[0] instanceof IASTMacroExpansion) {
-			return false;
-		}
 		IASTNodeLocation fileLocation= block.getFileLocation();
 		if (fileLocation == null) {
 			return false;

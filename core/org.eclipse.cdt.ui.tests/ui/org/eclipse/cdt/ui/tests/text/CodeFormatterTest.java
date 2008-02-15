@@ -375,8 +375,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//#define break_end(); foo = 0; }
 	//
 	//void break_indenter(int a, int b) {
-	//	break_start()
-	//		; // This semicolon moves to its own line.
+	//	break_start(); // This semicolon moves to its own line.
 	//		if (a > b) {
 	//			indentation_remains();
 	//		}

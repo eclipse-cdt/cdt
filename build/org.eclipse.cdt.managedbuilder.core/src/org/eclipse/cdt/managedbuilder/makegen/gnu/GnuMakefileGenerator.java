@@ -1039,9 +1039,23 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			valueList = (List)entry.getValue();
 			Iterator valueIter = valueList.iterator();
 			while (valueIter.hasNext()) {
-	 			macroBuffer.append(WHITESPACE + ensurePathIsGNUMakeTargetRuleCompatibleSyntax((String)valueIter.next()));
+				String path = (String) valueIter.next();
+
+				// These macros will also be used within commands.
+				// Make all the slashes go forward so they aren't
+				// interpreted as escapes and get lost.
+				// See https://bugs.eclipse.org/163672.
+				path = path.replace('\\', '/');
+
+				path = ensurePathIsGNUMakeTargetRuleCompatibleSyntax(path);
+
+				macroBuffer.append(WHITESPACE);
+				macroBuffer.append(path);
 			}
-			if (iterator.hasNext()) macroBuffer.append(NEWLINE + NEWLINE);
+			// terminate the macro definition line
+			macroBuffer.append(NEWLINE);
+			// leave a blank line before the next macro
+			if (iterator.hasNext()) macroBuffer.append(NEWLINE);
 		}
  
  		// For now, just save the buffer that was populated when the rules were created

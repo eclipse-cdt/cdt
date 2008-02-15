@@ -15,6 +15,8 @@ package org.eclipse.rse.tests.subsystems.testsubsystem;
 
 import java.util.Vector;
 
+import junit.framework.AssertionFailedError;
+
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
@@ -203,8 +205,15 @@ public class TestSubsystemTestCase extends RSEBaseConnectionTestCase {
 			RSEWaitAndDispatchUtil.waitAndDispatch(10000);
 		}
 		catch (Exception e) {
-			e.printStackTrace();
-			assertNull(e.getMessage(), e);
+			//We cannot have the Exception forwarded to the test framework, because
+			//it happens in the dispatch thread and our Runnable.run() method does
+			//not allow checked exceptions. Therefore, convert the exception into
+			//an Error that the test framework can handle, but make sure that the
+			//cause of the Error (the original exception) is maintained by calling
+			//initCause(). This will allow seeing it in the JUnit runner later on.
+			Error err = new AssertionFailedError("Unhandled event loop exception");
+			err.initCause(e);  
+			throw err;
 		}
 	}
 }

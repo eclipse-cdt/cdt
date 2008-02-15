@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -92,9 +92,13 @@ public class Scribe {
 
 	private boolean preserveNewlines;
 
-	private List fSkipPositions= Collections.EMPTY_LIST;
+	private List<Position> fSkipPositions= Collections.emptyList();
 
 	private boolean skipOverInactive;
+
+	private int fSkipTokensFrom= Integer.MAX_VALUE;
+	private int fSkipTokensTo;
+	private int fSkippedIndentations;
 
 	Scribe(CodeFormatterVisitor formatter, int offset, int length) {
 		scanner= new Scanner();
@@ -532,6 +536,10 @@ public class Scribe {
 	}
 
 	public void indent() {
+		if (shouldSkip(scanner.getCurrentPosition())) {
+			fSkippedIndentations++;
+			return;
+		}
 		indentationLevel+= indentationSize;
 		numberOfIndentations++;
 	}
@@ -549,7 +557,7 @@ public class Scribe {
 	/**
 	 * @param list
 	 */
-	public void setSkipPositions(List list) {
+	public void setSkipPositions(List<Position> list) {
 		fSkipPositions= list;
 		skipOverInactive= !list.isEmpty();
 	}
@@ -611,6 +619,9 @@ public class Scribe {
 		if (length <= 0) {
 			return;
 		}
+		if (shouldSkip(scanner.getCurrentPosition())) {
+			return;
+		}
 		if (startOffset > scanner.getCurrentPosition()) {
 			printComment();
 		}
@@ -649,20 +660,26 @@ public class Scribe {
 					needSpace= false;
 				}
 				switch (currentToken.type) {
-				case Token.tLBRACE:
+				case Token.tLBRACE: {
+//					int currentPosition= scanner.getCurrentPosition();
 					scanner.resetTo(scanner.getCurrentTokenStartPosition(), scannerEndPosition-1);
 					formatOpeningBrace(formatter.preferences.brace_position_for_block, formatter.preferences.insert_space_before_opening_brace_in_block);
 					if (formatter.preferences.indent_statements_compare_to_block) {
 						indent();
 					}
+//					scanner.resetTo(currentPosition, scannerEndPosition-1);
 					break;
-				case Token.tRBRACE:
+				}
+				case Token.tRBRACE: {
+//					int currentPosition= scanner.getCurrentPosition();
 					scanner.resetTo(scanner.getCurrentTokenStartPosition(), scannerEndPosition-1);
 					if (formatter.preferences.indent_statements_compare_to_block) {
 						unIndent();
 					}
 					formatClosingBrace(formatter.preferences.brace_position_for_block);
+//					scanner.resetTo(currentPosition, scannerEndPosition-1);
 					break;
+				}
 				case Token.tLPAREN:
 					++parenLevel;
 					print(currentToken.getLength(), hasWhitespace);
@@ -902,14 +919,16 @@ public class Scribe {
 		// if we have a space between two tokens we ensure it will be dumped in
 		// the formatted string
 		int currentTokenStartPosition= scanner.getCurrentPosition();
+		if (shouldSkip(currentTokenStartPosition)) {
+			return false;
+		}
 		boolean hasComment= false;
 		boolean hasLineComment= false;
 		boolean hasWhitespace= false;
 		int count= 0;
 		while ((currentToken= scanner.nextToken()) != null) {
-			Position inactivePos= null;
 			if (skipOverInactive) {
-				inactivePos= getInactivePosAt(scanner.getCurrentTokenStartPosition());
+				Position inactivePos= getInactivePosAt(scanner.getCurrentTokenStartPosition());
 				if (inactivePos != null) {
 					int startOffset= Math.min(scanner.getCurrentTokenStartPosition(), inactivePos.getOffset());
 					int endOffset= Math.min(scannerEndPosition, inactivePos.getOffset() + inactivePos.getLength());
@@ -1037,8 +1056,8 @@ public class Scribe {
 	 * @return
 	 */
 	private Position getInactivePosAt(int offset) {
-		for (Iterator iter= fSkipPositions.iterator(); iter.hasNext();) {
-			Position pos= (Position) iter.next();
+		for (Iterator<Position> iter= fSkipPositions.iterator(); iter.hasNext();) {
+			Position pos= iter.next();
 			if (pos.includes(offset)) {
 				return pos;
 			}
@@ -1220,23 +1239,15 @@ public class Scribe {
 		}
 	}
 	public void printNewLine() {
-		if (lastNumberOfNewLines >= 1) {
-			column= 1; // ensure that the scribe is at the beginning of a new
-						// line
-			return;
-		}
-		addInsertEdit(scanner.getCurrentTokenEndPosition() + 1, lineSeparator);
-		line++;
-		lastNumberOfNewLines= 1;
-		column= 1;
-		needSpace= false;
-		pendingSpace= false;
+		printNewLine(scanner.getCurrentTokenEndPosition() + 1);
 	}
 
 	public void printNewLine(int insertPosition) {
+		if (shouldSkip(insertPosition - 1)) {
+			return;
+		}
 		if (lastNumberOfNewLines >= 1) {
-			column= 1; // ensure that the scribe is at the beginning of a new
-						// line
+			column= 1; // ensure that the scribe is at the beginning of a new line
 			return;
 		}
 		addInsertEdit(insertPosition, lineSeparator);
@@ -1253,6 +1264,10 @@ public class Scribe {
 
 	public void printNextToken(int expectedTokenType, boolean considerSpaceIfAny) {
 		printComment();
+		if (shouldSkip(scanner.getCurrentPosition())) {
+//			print(0, considerSpaceIfAny);
+			return;
+		}
 		currentToken= scanner.nextToken();
 		if (currentToken == null || expectedTokenType != currentToken.type) {
 			throw new AbortFormatting(
@@ -1267,6 +1282,10 @@ public class Scribe {
 
 	public void printNextToken(int[] expectedTokenTypes, boolean considerSpaceIfAny) {
 		printComment();
+		if (shouldSkip(scanner.getCurrentPosition())) {
+//			print(0, considerSpaceIfAny);
+			return;
+		}
 		currentToken= scanner.nextToken();
 		if (Arrays.binarySearch(expectedTokenTypes, currentToken.type) < 0) {
 			StringBuffer expectations= new StringBuffer(5);
@@ -1302,6 +1321,9 @@ public class Scribe {
 		// if we have a space between two tokens we ensure it will be dumped in
 		// the formatted string
 		int currentTokenStartPosition= scanner.getCurrentPosition();
+		if (shouldSkip(currentTokenStartPosition)) {
+			return;
+		}
 		boolean hasWhitespaces= false;
 		boolean hasComment= false;
 		boolean hasLineComment= false;
@@ -1435,6 +1457,9 @@ public class Scribe {
 	public void space() {
 		if (!needSpace)
 			return;
+		if (shouldSkip(scanner.getCurrentPosition())) {
+			return;
+		}
 		lastNumberOfNewLines= 0;
 		pendingSpace= true;
 		column++;
@@ -1470,6 +1495,10 @@ public class Scribe {
 	}
 
 	public void unIndent() {
+		if (shouldSkip(scanner.getCurrentPosition())) {
+			fSkippedIndentations--;
+			return;
+		}
 		indentationLevel-= indentationSize;
 		numberOfIndentations--;
 	}
@@ -1477,8 +1506,11 @@ public class Scribe {
 	/**
 	 */
 	public void printModifiers() {
-		boolean isFirstModifier= true;
 		int currentTokenStartPosition= scanner.getCurrentPosition();
+		if (shouldSkip(currentTokenStartPosition)) {
+			return;
+		}
+		boolean isFirstModifier= true;
 		boolean hasComment= false;
 		while ((currentToken= scanner.nextToken()) != null) {
 			switch (currentToken.type) {
@@ -1580,6 +1612,9 @@ public class Scribe {
 	 */
 	public boolean skipToToken(int expectedTokenType) {
 		int skipStart= scanner.getCurrentPosition();
+		if (shouldSkip(skipStart)) {
+			return true;
+		}
 		int braceLevel= 0;
 		int parenLevel= 0;
 		while ((currentToken= scanner.nextToken()) != null) {
@@ -1631,6 +1666,46 @@ public class Scribe {
 			return printComment();
 		} finally {
 			this.preserveNewlines= savedPreserveNL;
+		}
+	}
+
+	/**
+	 * @param offset
+	 * @return
+	 */
+	boolean shouldSkip(int offset) {
+		return offset >= fSkipTokensFrom && offset <= fSkipTokensTo;
+	}
+
+
+	public void skipRange(int offset, int endOffset) {
+		if (offset == fSkipTokensFrom) {
+			return;
+		}
+		final int currentPosition= scanner.getCurrentPosition();
+		if (currentPosition >= offset && currentPosition < endOffset) {
+			printRaw(offset, endOffset - offset);
+		}
+		fSkipTokensFrom= offset;
+		fSkipTokensTo= endOffset;
+	}
+
+	public void resetToOffset(int offset) {
+		if (fSkipTokensTo > 0) {
+			fSkipTokensFrom= Integer.MAX_VALUE;
+			fSkipTokensTo= 0;
+			while (fSkippedIndentations > 0) {
+				indent();
+				fSkippedIndentations--;
+			}
+			while (fSkippedIndentations < 0) {
+				unIndent();
+				fSkippedIndentations++;
+			}
+			if (offset > scanner.getCurrentPosition()) {
+				printRaw(scanner.getCurrentPosition(), offset - scanner.getCurrentPosition());
+				scanner.resetTo(offset, scannerEndPosition - 1);
+			}
 		}
 	}
 

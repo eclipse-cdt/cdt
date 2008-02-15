@@ -58,7 +58,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 		String before= contents[0].toString();
 		IDocument document= new Document(before);
 		String expected= contents[1].toString();
-		TextEdit edit= CodeFormatterUtil.format(CodeFormatter.K_COMPILATION_UNIT, before, 0, TextUtilities.getDefaultLineDelimiter(document), fOptions);
+		TextEdit edit= CodeFormatterUtil.format(CodeFormatter.K_TRANSLATION_UNIT, before, 0, TextUtilities.getDefaultLineDelimiter(document), fOptions);
 		assertNotNull(edit);
 		edit.apply(document);
 		assertEquals(expected, document.get());
@@ -353,4 +353,43 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 	
+	//#define break_start(); { int foo;
+	//#define break_end(); foo = 0; }
+	//
+	//void break_indenter(int a, int b) {
+	//    break_start(); // This semicolon moves to its own line.
+	//    if(a > b) {
+	//        indentation_remains();
+	//    }
+	//
+	//    if(b>a)
+	//        indentation_vanishes();
+	//
+	//    break_end();
+	//
+	//    if(b == a)
+	//      indentation_remains();
+	//}
+	
+	//#define break_start(); { int foo;
+	//#define break_end(); foo = 0; }
+	//
+	//void break_indenter(int a, int b) {
+	//	break_start()
+	//		; // This semicolon moves to its own line.
+	//		if (a > b) {
+	//			indentation_remains();
+	//		}
+	//
+	//		if (b>a)
+	//			indentation_vanishes();
+	//
+	//		break_end();
+	//
+	//	if (b == a)
+	//		indentation_remains();
+	//}
+	public void testBracesInMacros_Bug217435() throws Exception {
+		assertFormatterResult();
+	}
 }

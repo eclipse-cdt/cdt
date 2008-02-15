@@ -380,8 +380,8 @@ public class C99ASTNodeFactory implements IC99ASTNodeFactory {
 		return new CASTProblemExpression();
 	}
 	
-	public IASTProblem newProblem(int id, char[] arg, boolean warn, boolean error) {
-		return new CASTProblem(id, arg, warn, error);
+	public IASTProblem newProblem(int id, char[] arg, boolean error) {
+		return new CASTProblem(id, arg, error);
 	}
 
 	public IASTAmbiguousExpression newAmbiguousExpression(IASTExpression... expressions) {

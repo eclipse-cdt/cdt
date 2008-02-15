@@ -210,8 +210,8 @@ public class CPPASTNodeFactory implements ICPPASTNodeFactory {
 		return new CPPASTOperatorName(name);
 	}
 
-	public IASTProblem newProblem(int id, char[] arg, boolean warn, boolean error) {
-		return new CPPASTProblem(id, arg, warn, error);
+	public IASTProblem newProblem(int id, char[] arg, boolean error) {
+		return new CPPASTProblem(id, arg, error);
 	}
 
 	public IASTProblemDeclaration newProblemDeclaration() {

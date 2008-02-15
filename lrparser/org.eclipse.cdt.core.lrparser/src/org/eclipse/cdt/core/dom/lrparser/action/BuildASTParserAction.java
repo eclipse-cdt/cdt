@@ -1313,7 +1313,7 @@ public abstract class BuildASTParserAction {
 
 	
 	private void consumeProblem(IASTProblemHolder problemHolder) {
-		IASTProblem problem = nodeFactory.newProblem(IASTProblem.SYNTAX_ERROR, new char[0], false, true);
+		IASTProblem problem = nodeFactory.newProblem(IASTProblem.SYNTAX_ERROR, new char[0], true);
 		problemHolder.setProblem(problem);		
 		setOffsetAndLength(problem);
 		setOffsetAndLength((ASTNode)problemHolder);

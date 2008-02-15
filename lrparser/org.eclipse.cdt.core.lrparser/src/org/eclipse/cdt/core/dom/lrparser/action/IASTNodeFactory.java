@@ -159,7 +159,7 @@ public interface IASTNodeFactory {
 
 	public IASTProblemExpression newProblemExpression();
 
-	public IASTProblem newProblem(int id, char[] arg, boolean warn, boolean error);
+	public IASTProblem newProblem(int id, char[] arg, boolean error);
 
 	public IASTEnumerationSpecifier newEnumerationSpecifier(IASTName name);
 	

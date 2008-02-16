@@ -285,7 +285,7 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 		ICType type;
 		try {
 			type = getType();
-			return ( getOriginal() != null && isEnabled() && type.isPointer() );
+			return ( getOriginal() != null && isEnabled() && type != null && type.isPointer() );
 		}
 		catch( DebugException e ) {
 		}

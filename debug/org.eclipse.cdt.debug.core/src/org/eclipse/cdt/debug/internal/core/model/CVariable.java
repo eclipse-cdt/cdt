@@ -11,6 +11,7 @@
 package org.eclipse.cdt.debug.internal.core.model;
 
 import java.text.MessageFormat;
+
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugConstants;
@@ -260,7 +261,7 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 		ICType type;
 		try {
 			type = getType();
-			return ( getOriginal() != null && isEnabled() && type.isPointer() );
+			return ( getOriginal() != null && isEnabled() && type != null && type.isPointer() );
 		}
 		catch( DebugException e ) {
 		}

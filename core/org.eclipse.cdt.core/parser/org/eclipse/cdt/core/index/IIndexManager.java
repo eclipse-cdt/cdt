@@ -146,7 +146,9 @@ public interface IIndexManager extends IPDOMManager {
 	boolean joinIndexer(int waitMaxMillis, IProgressMonitor monitor);
 	
 	/**
-	 * Checks whether the indexer is currently idle
+	 * Checks whether the indexer is currently idle. The indexer is idle, when there is currently no request
+	 * to update files of an index and no initialization for a project is performed. However, the indexer becomes
+	 * idle, when the setup of a project is postponed (check with {@link #isIndexerSetupPostponed(ICProject)}).
 	 */
 	boolean isIndexerIdle();
 	
@@ -155,6 +157,14 @@ public interface IIndexManager extends IPDOMManager {
 	 * @since 4.0
 	 */
 	boolean isProjectIndexed(ICProject proj);
+	
+	/**
+	 * Return whether the indexer-setup for a project is currently postponed. Note,
+	 * that a postponed setup does not prevent the indexer from becoming idle ({@link #isIndexerIdle()}.
+	 * The fact that the indexer-setup for a project is no longer postponed, will be reported using 
+	 * {@link IndexerSetupParticipant#onIndexerSetup(ICProject)}.
+	 */
+	boolean isIndexerSetupPostponed(ICProject proj);
 
 	/**
 	 * Returns the id of the indexer working on the project.

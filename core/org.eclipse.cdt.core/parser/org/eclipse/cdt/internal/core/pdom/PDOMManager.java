@@ -469,7 +469,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		}
 	}
 
-	private void registerIndexer(ICProject project, IPDOMIndexer indexer) throws CoreException {
+	private void registerIndexer(ICProject project, IPDOMIndexer indexer) {
 		assert Thread.holdsLock(fUpdatePolicies);
 		indexer.setProject(project);
 		registerPreferenceListener(project);
@@ -495,10 +495,12 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 				WritablePDOM pdom= getOrCreatePDOM(project);
 				Properties props= IndexerPreferences.getProperties(prj);
 				IPDOMIndexer indexer= createIndexer(project, getIndexerId(project), props);
+				IndexUpdatePolicy policy= createPolicy(project);
 
 				boolean rebuild= 
 					pdom.isClearedBecauseOfVersionMismatch() ||
-					pdom.isCreatedFromScratch();
+					pdom.isCreatedFromScratch() ||
+					policy.isInitialRebuildRequested();
 				if (rebuild) {
 					if (IPDOMManager.ID_NO_INDEXER.equals(indexer.getID())) {
 						rebuild= false;
@@ -527,7 +529,9 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 				Properties props= IndexerPreferences.getProperties(prj);
 				IPDOMIndexer indexer = createIndexer(project, getIndexerId(project), props);
 				registerIndexer(project, indexer);
-				createPolicy(project).clearTUs();
+				final IndexUpdatePolicy policy= createPolicy(project);
+				policy.clearTUs();
+				policy.clearInitialFlags();
 
 				IPDOMIndexerTask task= null;
 				if (operation.wasSuccessful()) {
@@ -803,6 +807,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
 	private void stopIndexer(IPDOMIndexer indexer) {
 		assert !Thread.holdsLock(fProjectToPDOM);
+		assert !Thread.holdsLock(fUpdatePolicies);
 		ICProject project= indexer.getProject();
 		synchronized (fUpdatePolicies) {
 			IndexUpdatePolicy policy= getPolicy(project);
@@ -840,12 +845,14 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 				IPDOMIndexer indexer= null;
 				synchronized (fUpdatePolicies) {
 					indexer= getIndexer(project);
+					if (indexer == null) {
+						createPolicy(project).requestInitialReindex();
+						return Status.OK_STATUS;
+					}
 				}
-				// don't attempt to hold lock on indexerMutex while cancelling
-				if (indexer != null) {
-					cancelIndexerJobs(indexer);
-				}
-				
+				// don't attempt to hold lock on indexerMutex while canceling
+				cancelIndexerJobs(indexer);
+
 				synchronized(fUpdatePolicies) {
 					indexer= getIndexer(project);
 					if (indexer != null) {
@@ -1208,6 +1215,12 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		return !IPDOMManager.ID_NO_INDEXER.equals(getIndexerId(proj));
 	}
 
+	public boolean isIndexerSetupPostponed(ICProject proj) {
+		synchronized(fSetupParticipants) {
+			return fPostponedProjects.contains(proj);
+		}
+	}
+
 	public void update(ICElement[] tuSelection, int options) throws CoreException {
 		Map projectsToElements= splitSelection(tuSelection);
 		for (Iterator i = projectsToElements.entrySet().iterator(); i
@@ -1287,7 +1300,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		}
 	}
 
-	protected boolean postponeSetup(ICProject cproject) {
+	protected boolean postponeSetup(final ICProject cproject) {
 		synchronized(fSetupParticipants) {
 			for (Iterator it = fSetupParticipants.iterator(); it.hasNext();) {
 				IndexerSetupParticipant sp = (IndexerSetupParticipant) it.next();
@@ -1297,8 +1310,30 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 				}
 			}
 			fPostponedProjects.remove(cproject);
-			return false;
+			final IndexerSetupParticipant[] participants= (IndexerSetupParticipant[]) fSetupParticipants.toArray(new IndexerSetupParticipant[fSetupParticipants.size()]);
+			Job notify= new Job(Messages.PDOMManager_notifyJob_label) {
+				protected IStatus run(IProgressMonitor monitor) {
+					monitor.beginTask(Messages.PDOMManager_notifyTask_message, participants.length);
+					for (int i = 0; i < participants.length; i++) {
+						final IndexerSetupParticipant p = participants[i];
+						SafeRunner.run(new ISafeRunnable(){
+							public void handleException(Throwable exception) {
+								CCorePlugin.log(exception);
+							}
+							public void run() throws Exception {
+								p.onIndexerSetup(cproject);
+							}
+						});
+						monitor.worked(1);
+					}
+					return Status.OK_STATUS;
+				}
+			};
+			notify.setRule(NOTIFICATION_SCHEDULING_RULE);
+			notify.setSystem(true);
+			notify.schedule();
 		}
+		return false;
 	}
 
 	/**

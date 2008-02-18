@@ -14,6 +14,7 @@
  * Contributors:
  * David McKnight  (IBM)  - [205986] daemon handshake needs a timeout
  * David McKnight  (IBM)  - [218685] [dstore] Unable to connect when using SSL.
+ * Martin Oberhuber (Wind River) - [219260][dstore][regression] Cannot connect to dstore daemon
  *******************************************************************************/
 
 package org.eclipse.dstore.core.client;
@@ -640,6 +641,10 @@ public class ClientConnection
 	
 	public ConnectionStatus launchServer(String user, String password, int daemonPort, int timeout)
 	{
+		if (timeout<=0) {
+			//bug 219260: default timeout 10 sec if not specified
+			timeout = 10000;
+		}
 		ConnectionStatus result = connectDaemon(daemonPort, timeout);
 		if (!result.isConnected()) {
 			return result;

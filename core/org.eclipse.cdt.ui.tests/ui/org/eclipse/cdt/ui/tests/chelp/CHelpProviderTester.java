@@ -111,6 +111,7 @@ public class CHelpProviderTester{
         private String fPrototype = "Prototype";
         private String fSummary = "Summary";
         private String fSynopsis = "Synopsis";
+        private IRequiredInclude[] incs = new IRequiredInclude[] { new RequiredInclude("dummy.h")};
         private class RequiredInclude implements IRequiredInclude {
         	private String include;
         	
@@ -152,7 +153,7 @@ public class CHelpProviderTester{
         public IFunctionPrototypeSummary getPrototype() { return new FunctionPrototypeSummary(); }
         
         public IRequiredInclude[] getIncludes() {
-        	return (IRequiredInclude[])null; 
+        	return incs; 
         }
         
     }

@@ -12,21 +12,24 @@
 package org.eclipse.cdt.internal.ui.text.c.hover;
 
 
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.ui.CHelpProviderManager;
-import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
-import org.eclipse.cdt.internal.ui.text.CWordFinder;
-import org.eclipse.cdt.internal.ui.text.HTMLPrinter;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.IFunctionSummary;
-import org.eclipse.cdt.ui.IFunctionSummary.IFunctionPrototypeSummary;
-import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IEditorInput;
+
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.IFunctionSummary;
+import org.eclipse.cdt.ui.IRequiredInclude;
+import org.eclipse.cdt.ui.IFunctionSummary.IFunctionPrototypeSummary;
+import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
+
+import org.eclipse.cdt.internal.ui.CHelpProviderManager;
+import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
+import org.eclipse.cdt.internal.ui.text.CWordFinder;
+import org.eclipse.cdt.internal.ui.text.HTMLPrinter;
 
 public class CDocHover extends AbstractCEditorTextHover {
 	
@@ -50,7 +53,7 @@ public class CDocHover extends AbstractCEditorTextHover {
 			if (expression.length() == 0)
 				return null; 
 
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 
 			// call the Help to get info
 
@@ -83,6 +86,19 @@ public class CDocHover extends AbstractCEditorTextHover {
 					buffer.append(CEditorMessages.getString("DefaultCEditorTextHover.html.description")); //$NON-NLS-1$
 					//Don't convert this description since it could already be formatted
 					buffer.append(fs.getDescription());
+				}
+				IRequiredInclude[] incs = fs.getIncludes();
+				if (incs != null && incs.length > 0) {
+					buffer.append(CEditorMessages.getString("DefaultCEditorTextHover.html.includes")); //$NON-NLS-1$
+					int count = 0;
+					for (IRequiredInclude inc : incs) {
+						buffer.append(inc.getIncludeName());
+						buffer.append("<br>");        //$NON-NLS-1$
+						if (count++ > 4) {
+							buffer.append("...<br>"); //$NON-NLS-1$
+							break; // too long list: do not display all 
+						}
+					}
 				}
 			} 
 			if (buffer.length() > 0) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000 2005 IBM Corporation and others.
+ * Copyright (c) 2000 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
+ *     Intel corp.
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
@@ -19,7 +20,12 @@ import java.io.Reader;
  * Provides a set of convenience methods for creating HTML pages.
  */
 public class HTMLPrinter {
-			
+
+	private static final String LB = "<"; //$NON-NLS-1$
+	private static final String CB = "</"; //$NON-NLS-1$
+	private static final String RB = ">"; //$NON-NLS-1$
+	
+	
 	private HTMLPrinter() {
 	}
 	
@@ -31,7 +37,7 @@ public class HTMLPrinter {
 		if (current == -1)
 			return text;
 		
-		StringBuffer buffer= new StringBuffer();	
+		StringBuilder buffer= new StringBuilder();	
 		while (current > -1) {
 			buffer.append(text.substring(previous, current));
 			buffer.append(s);
@@ -50,7 +56,7 @@ public class HTMLPrinter {
 	
 	public static String read(Reader rd) {
 		
-		StringBuffer buffer= new StringBuffer();
+		StringBuilder buffer= new StringBuilder();
 		char[] readBuffer= new char[2048];
 		
 		try {
@@ -70,47 +76,104 @@ public class HTMLPrinter {
 		buffer.insert(position, "<html><body text=\"#000000\" bgcolor=\"#FFFF88\"><font size=-1>"); //$NON-NLS-1$
 	}
 	
+	public static void insertPageProlog(StringBuilder buffer, int position) {
+		buffer.insert(position, "<html><body text=\"#000000\" bgcolor=\"#FFFF88\"><font size=-1>"); //$NON-NLS-1$
+	}
+	
 	public static void addPageProlog(StringBuffer buffer) {
 		insertPageProlog(buffer, buffer.length());
 	}
 	
+	public static void addPageProlog(StringBuilder buffer) {
+		insertPageProlog(buffer, buffer.length());
+	}
+
 	public static void addPageEpilog(StringBuffer buffer) {
 		buffer.append("</font></body></html>"); //$NON-NLS-1$
 	}
 	
+	public static void addPageEpilog(StringBuilder buffer) {
+		buffer.append("</font></body></html>"); //$NON-NLS-1$
+	}
+
 	public static void startBulletList(StringBuffer buffer) {
+		buffer.append("<ul>"); //$NON-NLS-1$
+	}
+	
+	public static void startBulletList(StringBuilder buffer) {
 		buffer.append("<ul>"); //$NON-NLS-1$
 	}
 	
 	public static void endBulletList(StringBuffer buffer) {
 		buffer.append("</ul>"); //$NON-NLS-1$
 	}
+
+	public static void endBulletList(StringBuilder buffer) {
+		buffer.append("</ul>"); //$NON-NLS-1$
+	}
+
+	private static void addTag(StringBuffer buffer, String bullet, String tag) {
+		if (bullet != null && tag != null) {
+			buffer.append(LB);
+			buffer.append(tag);
+			buffer.append(RB);
+			buffer.append(bullet);
+			buffer.append(CB);
+			buffer.append(tag);
+			buffer.append(RB);
+		}
+	}
+	
+	private static void addTag(StringBuilder buffer, String bullet, String tag) {
+		if (bullet != null && tag != null) {
+			buffer.append(LB);
+			buffer.append(tag);
+			buffer.append(RB);
+			buffer.append(bullet);
+			buffer.append(CB);
+			buffer.append(tag);
+			buffer.append(RB);
+		}
+	}
 	
 	public static void addBullet(StringBuffer buffer, String bullet) {
-		if (bullet != null) {
-			buffer.append("<li>"); //$NON-NLS-1$
-			buffer.append(bullet);
-			buffer.append("</li>"); //$NON-NLS-1$
-		}
+		addTag(buffer, bullet, "li"); //$NON-NLS-1$
 	}
 	
+	public static void addBullet(StringBuilder buffer, String bullet) {
+		addTag(buffer, bullet, "li"); //$NON-NLS-1$
+	}
+
 	public static void addSmallHeader(StringBuffer buffer, String header) {
-		if (header != null) {
-			buffer.append("<h5>"); //$NON-NLS-1$
-			buffer.append(header);
-			buffer.append("</h5>"); //$NON-NLS-1$
-		}
+		addTag(buffer, header, "h5"); //$NON-NLS-1$
 	}
 	
+	public static void addSmallHeader(StringBuilder buffer, String header) {
+		addTag(buffer, header, "h5"); //$NON-NLS-1$
+	}
+
 	public static void addParagraph(StringBuffer buffer, String paragraph) {
 		if (paragraph != null) {
 			buffer.append("<p>"); //$NON-NLS-1$
 			buffer.append(paragraph);
 		}
 	}
-	
+
+	public static void addParagraph(StringBuilder buffer, String paragraph) {
+		if (paragraph != null) {
+			buffer.append("<p>"); //$NON-NLS-1$
+			buffer.append(paragraph);
+		}
+	}
+
 	public static void addParagraph(StringBuffer buffer, Reader paragraphReader) {
 		if (paragraphReader != null)
 			addParagraph(buffer, read(paragraphReader));
 	}
+
+	public static void addParagraph(StringBuilder buffer, Reader paragraphReader) {
+		if (paragraphReader != null)
+			addParagraph(buffer, read(paragraphReader));
+	}
+
 }

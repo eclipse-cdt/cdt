@@ -604,7 +604,7 @@ public class MIBreakpointsTest extends BaseTestCase {
     // ------------------------------------------------------------------------
 	// insertBreakpoint_InvalidContext
 	// ------------------------------------------------------------------------
-    // @Test
+    @Test
 	public void insertBreakpoint_InvalidContext() throws Throwable {
 
 		// Create a line breakpoint
@@ -628,7 +628,7 @@ public class MIBreakpointsTest extends BaseTestCase {
     // ------------------------------------------------------------------------
 	// insertBreakpoint_InvalidFileName
 	// ------------------------------------------------------------------------
-	// @Test
+	@Test
 	public void insertBreakpoint_InvalidFileName() throws Throwable {
 
 		// Create a line breakpoint
@@ -652,7 +652,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// ------------------------------------------------------------------------
 	// insertBreakpoint_InvalidLineNumber
 	// ------------------------------------------------------------------------
-	// @Test
+	@Test
 	public void insertBreakpoint_InvalidLineNumber() throws Throwable {
 
 		// Create a line breakpoint
@@ -676,7 +676,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// ------------------------------------------------------------------------
 	// insertBreakpoint_InvalidFunctionName
 	// ------------------------------------------------------------------------
-	// @Test
+	@Test
 	public void insertBreakpoint_InvalidFunctionName() throws Throwable {
 
 		// Create a function breakpoint
@@ -700,7 +700,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// ------------------------------------------------------------------------
 	// insertBreakpoint_InvalidAddress
 	// ------------------------------------------------------------------------
-	// @Test
+	@Test
 	public void insertBreakpoint_InvalidAddress() throws Throwable {
 
 		// Create an address breakpoint
@@ -725,7 +725,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// Set a breakpoint on a line number.
 	// Ensure that it is set correctly at the back-end.
 	// ------------------------------------------------------------------------
-	// @Test
+	@Test
 	public void insertBreakpoint_LineNumber() throws Throwable {
 
 		// Create a line breakpoint
@@ -773,7 +773,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// Set a disabled breakpoint on a line number.
 	// Ensure that it is set correctly at the back-end.
 	// ------------------------------------------------------------------------
-	// @Test
+	@Test
 	public void insertBreakpoint_Disabled() throws Throwable {
 
 		// Create a line breakpoint
@@ -822,7 +822,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// Set a breakpoint on a function name.
 	// Ensure that it is set correctly at the back-end.
 	// ------------------------------------------------------------------------
-	// @Test
+	@Test
 	public void insertBreakpoint_FunctionName() throws Throwable {
 
 		// Create a function breakpoint
@@ -868,7 +868,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// Set a conditional breakpoint.
 	// Ensure that it is set correctly at the back-end.
 	// ------------------------------------------------------------------------
-	// @Test
+	@Test
 	public void insertBreakpoint_Condition() throws Throwable {
 
 		// Create a conditional line breakpoint
@@ -962,7 +962,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// Set multiple distinct breakpoints.
 	// Ensure that the state is kosher.
 	// ------------------------------------------------------------------------
-	// @Test
+	@Test
 	public void insertBreakpoint_MultipleBreakpoints() throws Throwable {
 		
 		// Create a line breakpoint
@@ -1048,7 +1048,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// Set 2 identical breakpoints.
 	// For GDB, no problem...
 	// ------------------------------------------------------------------------
-	// @Test
+	@Test
 	public void insertBreakpoint_Duplicate() throws Throwable {
 		
 		// Create a line breakpoint
@@ -1132,7 +1132,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// Set a write watchpoint.
 	// Ensure that the state is kosher.
 	// ------------------------------------------------------------------------
-	// @Test
+	@Test
 	public void insertWatchpoint_Write() throws Throwable {
 
 		// Create a write watchpoint
@@ -1178,7 +1178,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// Set a read watchpoint.
 	// Ensure that the state is kosher.
 	// ------------------------------------------------------------------------
-	// @Test
+	@Test
 	public void insertWatchpoint_Read() throws Throwable {
 
 		// Create a read watchpoint
@@ -1224,7 +1224,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// Set an access watchpoint.
 	// Ensure that the state is kosher.
 	// ------------------------------------------------------------------------
-	// @Test
+	@Test
 	public void insertWatchpoint_Access() throws Throwable {
 
 		// Create an access watchpoint
@@ -1275,7 +1275,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// Set a breakpoint and then remove it.
 	// Ensure that the state is kosher.
 	// ------------------------------------------------------------------------
-	// @Test
+	@Test
 	public void removeBreakpoint_SimpleCase() throws Throwable {
 
 		// Create a line breakpoint
@@ -1318,7 +1318,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// removeBreakpoint_InvalidBreakpoint
 	// Try removing a non-existing breakpoint.
 	// ------------------------------------------------------------------------
-	// @Test
+	@Test
 	public void removeBreakpoint_InvalidBreakpoint() throws Throwable {
 
 		// Create an invalid breakpoint reference
@@ -1429,7 +1429,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// Set a number of breakpoints and then remove them in disorder.
 	// Ensure that the right breakpoints are left after each iteration.
 	// ------------------------------------------------------------------------
-	// @Test
+	@Test
 	public void removeBreakpoint_MixedCase() throws Throwable {
 
 		// Create a line breakpoint
@@ -1497,7 +1497,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// Updates a non-existing breakpoint.
 	// For GDB, no problem...
 	// ------------------------------------------------------------------------
-	// @Test
+	@Test
 	public void updateBreakpoint_InvalidBreakpoint() throws Throwable {
 
 		// Create an invalid breakpoint reference
@@ -1525,7 +1525,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// Set a breakpoint and then add a condition.
 	// Ensure that the new breakpoint reflects the changes 
 	// ------------------------------------------------------------------------
-	// @Test
+	@Test
 	public void updateBreakpoint_AddCondition() throws Throwable {
 
 		// Create a line breakpoint
@@ -1571,7 +1571,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// Set a conditional breakpoint and then remove the condition.
 	// Ensure that the new breakpoint reflects the changes 
 	// ------------------------------------------------------------------------
-	// @Test
+	@Test
 	public void updateBreakpoint_RemoveCondition() throws Throwable {
 
 		// Create a line breakpoint
@@ -1618,7 +1618,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// Set a conditional breakpoint and then modify the condition.
 	// Ensure that the new breakpoint reflects the changes 
 	// ------------------------------------------------------------------------
-	// @Test
+	@Test
 	public void updateBreakpoint_ModifyCondition() throws Throwable {
 
 		// Create a line breakpoint
@@ -1665,7 +1665,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// Set a watchpoint and then add a condition.
 	// Ensure that the new breakpoint reflects the changes 
 	// ------------------------------------------------------------------------
-	// @Test
+	@Test
 	public void updateWatchpoint_AddCondition() throws Throwable {
 
 		// Run to the point where the variable is initialized
@@ -1716,7 +1716,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// Set a conditional watchpoint and then remove the condition.
 	// Ensure that the new breakpoint reflects the changes 
 	// ------------------------------------------------------------------------
-	// @Test
+	@Test
 	public void updateWatchpoint_RemoveCondition() throws Throwable {
 
 		// Run to the point where the variable is initialized
@@ -1768,7 +1768,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// Set a conditional watchpoint and then modify the condition.
 	// Ensure that the new breakpoint reflects the changes 
 	// ------------------------------------------------------------------------
-	// @Test
+	@Test
 	public void updateWatchpoint_ModifyCondition() throws Throwable {
 
 		// Run to the point where the variable is initialized
@@ -1820,7 +1820,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// Set a breakpoint and then add an ignore count.
 	// Ensure that the new breakpoint reflects the changes 
 	// ------------------------------------------------------------------------
-	// @Test
+	@Test
 	public void updateBreakpoint_AddCount() throws Throwable {
 
 		// Create a line breakpoint
@@ -1866,7 +1866,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// Set a conditional breakpoint and then remove the count..
 	// Ensure that the new breakpoint reflects the changes 
 	// ------------------------------------------------------------------------
-	// @Test
+	@Test
 	public void updateBreakpoint_RemoveCount() throws Throwable {
 
 		// Create a line breakpoint
@@ -1913,7 +1913,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// Set a conditional breakpoint and then modify the count.
 	// Ensure that the new breakpoint reflects the changes 
 	// ------------------------------------------------------------------------
-	// @Test
+	@Test
 	public void updateBreakpoint_ModifyCount() throws Throwable {
 
 		// Create a line breakpoint
@@ -1960,7 +1960,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// Set 2 breakpoints and disable the first one.
 	// Ensure that we stop on the second one.
 	// ------------------------------------------------------------------------
-	// @Test
+	@Test
 	public void updateBreakpoint_Disable() throws Throwable {
 
 		// Create a first line breakpoint
@@ -2037,7 +2037,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// the second one, enable the first one again.
 	// Ensure that we stop on the first one on the next iteration.
 	// ------------------------------------------------------------------------
-	// @Test
+	@Test
 	public void updateBreakpoint_Enable() throws Throwable {
 
 		// Create a first line breakpoint
@@ -2149,7 +2149,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// breakpointHit_LineNumber
 	// Set a breakpoint on a line number.
 	// ------------------------------------------------------------------------
-	// @Test
+	@Test
 	public void breakpointHit_LineNumber() throws Throwable {
 
 		// Create a line breakpoint
@@ -2189,7 +2189,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// breakpointHit_Function
 	// Set a breakpoint on a function name.
 	// ------------------------------------------------------------------------
-	// @Test
+	@Test
 	public void breakpointHit_Function() throws Throwable {
 
 		// Create a function breakpoint
@@ -2231,7 +2231,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// Set a condition so that the break occurs only after variable == count.
 	// Ensure that the variable was increased 'count' times.
 	// ------------------------------------------------------------------------
-	// @Test
+	@Test
 	public void breakpointHit_Condition() throws Throwable {
 
 		// Create a conditional line breakpoint
@@ -2278,7 +2278,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// Set a condition so that the break occurs only after variable == count.
 	// Ensure that the variable was increased 'count' times.
 	// ------------------------------------------------------------------------
-	// @Test
+	@Test
 	public void breakpointHit_UpdatedCondition() throws Throwable {
 
 		// Create a conditional line breakpoint
@@ -2385,7 +2385,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// Set an ignore count != 0.
 	// Ensure that the variable was increased 'ignoreCount' times.
 	// ------------------------------------------------------------------------
-	// @Test
+	@Test
 	public void breakpointHit_UpdatedCount() throws Throwable {
 
 		// Create a conditional line breakpoint
@@ -2444,7 +2444,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// Set a write watchpoint and go.
 	// Ensure that the correct event is received.
 	// ------------------------------------------------------------------------
-	// @Test
+	@Test
 	public void breakpointHit_WriteWatchpoint() throws Throwable {
 
 		// Create a write watchpoint
@@ -2489,7 +2489,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// Set a read watchpoint and go.
 	// Ensure that the correct event is received.
 	// ------------------------------------------------------------------------
-	// @Test
+	@Test
 	public void breakpointHit_ReadWatchpoint() throws Throwable {
 
 		// Create a write watchpoint
@@ -2534,7 +2534,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// Set an access watchpoint and go.
 	// Ensure that the correct event is received.
 	// ------------------------------------------------------------------------
-	// @Test
+	@Test
 	public void breakpointHit_AccessWatchpoint() throws Throwable {
 
 		// Create an access watchpoint
@@ -2645,7 +2645,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// Set a write watchpoint, add a condition and go.
 	// Ensure that the correct event is received.
 	// ------------------------------------------------------------------------
-	// @Test
+	@Test
 	public void breakpointHit_watchpointUpdateCondition() throws Throwable {
 
 		// Run to the point where the variable is initialized

@@ -810,8 +810,19 @@ public class MIMemory extends AbstractDsfService implements IMemory {
 				   new DataRequestMonitor<MemoryByte[]>(getExecutor(), rm) {
 					   @Override
 					   public void handleOK() {
-						   fMemoryCache.updateMemoryCache(address, count, getData());
-						   getSession().dispatchEvent(new MemoryChangedEvent(memoryDMC, addresses), getProperties());
+						   MemoryByte[] oldBlock = fMemoryCache.getMemoryBlockFromCache(address, count);
+						   MemoryByte[] newBlock = getData();
+						   boolean blocksDiffer = false;
+						   for (int i = 0; i < oldBlock.length; i++) {
+						       if (oldBlock[i].getValue() != newBlock[i].getValue()) {
+						          blocksDiffer = true;
+						          break;
+						       }
+						   }
+						   if (blocksDiffer) {
+						      fMemoryCache.updateMemoryCache(address, count, newBlock);
+						      getSession().dispatchEvent(new MemoryChangedEvent(memoryDMC, addresses), getProperties());
+						      }
 						   rm.done();
 					   }
 			   });

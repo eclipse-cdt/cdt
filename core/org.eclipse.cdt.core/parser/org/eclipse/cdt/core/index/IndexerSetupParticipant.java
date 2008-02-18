@@ -29,7 +29,9 @@ public abstract class IndexerSetupParticipant {
 	 * @param project the project for which the indexer is supposed to be initialized.
 	 * @return whether or not to proceed with the indexer setup.
 	 */
-	public abstract boolean postponeIndexerSetup(ICProject project);
+	public boolean postponeIndexerSetup(ICProject project) {
+		return false;
+	}
 
 	/**
 	 * Informs the index manager that this participant no longer needs to postpone the
@@ -37,7 +39,14 @@ public abstract class IndexerSetupParticipant {
 	 * this may trigger the indexer setup.
 	 * @param project the project for which the setup no longer needs to be postponed
 	 */
-	public void notifyIndexerSetup(ICProject project) {
+	public final void notifyIndexerSetup(ICProject project) {
 		CCoreInternals.getPDOMManager().notifyIndexerSetup(this, project);
+	}
+	
+	/**
+	 * Call-back that tells the implementor that a project has passed all setup participants
+	 * and therefore it is actually initialized.
+	 */
+	public void onIndexerSetup(ICProject project) {
 	}
 }

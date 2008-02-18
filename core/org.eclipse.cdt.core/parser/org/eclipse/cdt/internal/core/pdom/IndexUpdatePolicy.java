@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,10 +30,11 @@ public class IndexUpdatePolicy {
 	private final ICProject fCProject;
 	private int fKind;
 	
-	private HashSet fAdded= new HashSet();
-	private HashSet fChanged= new HashSet();
-	private HashSet fRemoved= new HashSet();
+	private HashSet<ITranslationUnit> fAdded= new HashSet<ITranslationUnit>();
+	private HashSet<ITranslationUnit> fChanged= new HashSet<ITranslationUnit>();
+	private HashSet<ITranslationUnit> fRemoved= new HashSet<ITranslationUnit>();
 	private IPDOMIndexer fIndexer;
+	private boolean fReindexRequested;
 
 	public IndexUpdatePolicy(ICProject project, int kind) {
 		fCProject= project;
@@ -65,15 +66,15 @@ public class IndexUpdatePolicy {
 	}
 
 	private ITranslationUnit[] getAdded() {
-		return (ITranslationUnit[]) fAdded.toArray(new ITranslationUnit[fAdded.size()]);
+		return fAdded.toArray(new ITranslationUnit[fAdded.size()]);
 	}
 
 	private ITranslationUnit[] getChanged() {
-		return (ITranslationUnit[]) fChanged.toArray(new ITranslationUnit[fChanged.size()]);
+		return fChanged.toArray(new ITranslationUnit[fChanged.size()]);
 	}
 
 	private ITranslationUnit[] getRemoved() {
-		return (ITranslationUnit[]) fRemoved.toArray(new ITranslationUnit[fRemoved.size()]);
+		return fRemoved.toArray(new ITranslationUnit[fRemoved.size()]);
 	}
 
 	public void setIndexer(IPDOMIndexer indexer) {
@@ -155,5 +156,17 @@ public class IndexUpdatePolicy {
 			}
 		}
 		return task;
+	}
+
+	public void requestInitialReindex() {
+		fReindexRequested= true;
+	}
+
+	public void clearInitialFlags() {
+		fReindexRequested= false;
+	}
+
+	public boolean isInitialRebuildRequested() {
+		return fReindexRequested;
 	}
 }

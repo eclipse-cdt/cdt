@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -124,7 +124,8 @@ public class EnvDialog extends Dialog {
 
 			text1.setText(var.getName());
 			text1.setEnabled(false); // don't change name
-			text2.setText(var.getValue()); 
+			String s = var.getValue();
+			text2.setText(s == null ? AbstractCPropertyTab.EMPTY_STR : s); 
 		}
 		
 		gd.horizontalSpan = 3;

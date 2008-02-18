@@ -256,6 +256,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 					vars.createVariable(dlg.t1.trim(), dlg.t2.trim(),
 						IEnvironmentVariable.ENVVAR_REPLACE, var.getDelimiter());
 				updateData();
+				table.setSelection(n);
 			}
 			break;
 		case 3: // remove
@@ -289,6 +290,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 						var.getDelimiter(), cfgd);
 			}
 			updateData();
+			table.setSelection(n);
 			break;
 		}
 		updateButtons();

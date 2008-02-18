@@ -119,7 +119,8 @@ public class EnvDialog extends Dialog {
 
 			text1.setText(var.getName());
 			text1.setEnabled(false); // don't change name
-			text2.setText(var.getValue()); 
+			String s = var.getValue();
+			text2.setText(s == null ? AbstractCPropertyTab.EMPTY_STR : s); 
 		}
 		
 		gd.horizontalSpan = 3;

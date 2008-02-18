@@ -245,7 +245,8 @@ Use
 The following critical or major bugs are currently known.
 We'll strive to fix these as soon as possible.
 <ul>
-  <li><font color="red"><b><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=218387">bug 218387</a> - cri - [efs] Deadlock when launching Eclipse on a Workspace with efs-shared files</b></font></li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=219260">bug 219260</a> - maj - [dstore][regression] Cannot connect to dstore daemon (M5 candidate)</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=218387">bug 218387</a> - maj - [efs] Eclipse hangs on startup of a Workspace with a large efs-shared file system on a slow connection</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=198395">bug 198395</a> - maj - [dstore] Can connect to DStore with expired password</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=208185">bug 208185</a> - maj - [terminal][serial] terminal can hang the UI when text is entered while the backend side is not reading characters</li>
 </ul>

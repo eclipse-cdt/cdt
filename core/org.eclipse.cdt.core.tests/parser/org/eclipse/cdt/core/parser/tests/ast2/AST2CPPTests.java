@@ -5721,4 +5721,23 @@ public class AST2CPPTests extends AST2BaseTest {
     	bh.assertNonProblem("relayIndex >", 10);
     	bh.assertNonProblem("numRelays )", 9);
     }
+    
+    // namespace ns {
+    //    class cl {};
+    //    void func(cl c);
+    // }
+    // using ns::cl;
+    // void test() {
+    //    ns::cl qualified;
+    //    cl unqualified;
+    //    func(qualified);
+    //    func(unqualified);
+    // }
+    public void _testScopeOfUsingDelegates_Bug219424() throws Exception {
+    	BindingAssertionHelper bh= new BindingAssertionHelper(getContents(1)[0].toString(), true);
+
+    	bh.assertNonProblem("cl c", 2);
+    	bh.assertNonProblem("func(qualified)", 4);
+    	bh.assertNonProblem("func(unqualified)", 4);
+    }
 }

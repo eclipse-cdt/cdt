@@ -237,12 +237,14 @@ public class StepQueueManager extends AbstractDsfService
                     new DsfRunnable() { public void run() {
                         fTimedOutFutures.remove(e.getDMContext());
 
-                        // Issue the stepping time-out event.
-                        getSession().dispatchEvent(
-                            new ISteppingTimedOutEvent() { 
-                                public IExecutionDMContext getDMContext() { return e.getDMContext(); }
-                            }, 
-                            getProperties());
+                        if (getSession().isActive()) {
+                            // Issue the stepping time-out event.
+                            getSession().dispatchEvent(
+                                new ISteppingTimedOutEvent() { 
+                                    public IExecutionDMContext getDMContext() { return e.getDMContext(); }
+                                }, 
+                                getProperties());
+                        }
                     }},
                     STEPPING_TIMEOUT, TimeUnit.MILLISECONDS)
                 );

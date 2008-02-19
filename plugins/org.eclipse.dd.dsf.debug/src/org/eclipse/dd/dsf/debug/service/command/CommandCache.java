@@ -274,16 +274,22 @@ public class CommandCache implements ICommandListener
         }
             
         /*
-         *  If we are waiting for this command to complete ( but the command has
-         *  been sent to the debug engine), add this request monitor to list of waiting monitors.
+         *  If we are already waiting for this command to complete, 
+         *  add this request monitor to list of waiting monitors.
          */ 
-        
         for ( CommandInfo sentCommand : fPendingQCommandsSent ) {
             if ( sentCommand.equals( cachedCmd )) {
                 sentCommand.getRequestMonitorList().add(genericDone);
                 return;
             }
         }
+        for ( CommandInfo notYetSentCommand : fPendingQCommandsNotYetSent ) {
+            if ( notYetSentCommand.equals( cachedCmd )) {
+                notYetSentCommand.getRequestMonitorList().add(genericDone);
+                return;
+            }
+        }
+
         
         /*
          *  We see if this command can be combined into a coalesced one. The

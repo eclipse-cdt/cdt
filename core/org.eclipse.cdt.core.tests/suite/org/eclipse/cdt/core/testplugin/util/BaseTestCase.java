@@ -54,9 +54,11 @@ public class BaseTestCase extends TestCase {
 		super(name);
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		TestScannerProvider.clear();
 	}
@@ -113,11 +115,12 @@ public class BaseTestCase extends TestCase {
 		}
 	}
 
+	@Override
 	public void runBare() throws Throwable {
 		final List statusLog= Collections.synchronizedList(new ArrayList());
 		ILogListener logListener= new ILogListener() {
 			public void logging(IStatus status, String plugin) {
-				if(!status.isOK()) {
+				if(!status.isOK() && status.getSeverity() != IStatus.INFO) {
 					statusLog.add(status);
 				}
 			}
@@ -163,7 +166,8 @@ public class BaseTestCase extends TestCase {
 			throw testThrowable;
 	}
 
-    public void run( TestResult result ) {
+    @Override
+	public void run( TestResult result ) {
     	if (!fExpectFailure || "true".equals(System.getProperty("SHOW_EXPECTED_FAILURES"))) {
     		super.run(result);
     		return;

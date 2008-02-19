@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -103,19 +103,19 @@ public class PDOMRebuildTask implements IPDOMIndexerTask {
 
 	private synchronized void createDelegate(ICProject project, IProgressMonitor monitor) throws CoreException {
 		boolean allFiles= TRUE.equals(fIndexer.getProperty(IndexerPreferences.KEY_INDEX_ALL_FILES));
-		List sources= new ArrayList();
-		List headers= allFiles ? sources : null;
+		List<ITranslationUnit> sources= new ArrayList<ITranslationUnit>();
+		List<ITranslationUnit> headers= allFiles ? sources : null;
 		TranslationUnitCollector collector= new TranslationUnitCollector(sources, headers, monitor);
 		project.accept(collector);
-		ITranslationUnit[] tus= (ITranslationUnit[]) sources.toArray(new ITranslationUnit[sources.size()]);
+		ITranslationUnit[] tus= sources.toArray(new ITranslationUnit[sources.size()]);
 		fDelegate= fIndexer.createTask(tus, NO_TUS, NO_TUS);
 		if (fDelegate instanceof PDOMIndexerTask) {
 			final PDOMIndexerTask delegate = (PDOMIndexerTask) fDelegate;
 			delegate.setUpdateFlags(IIndexManager.UPDATE_ALL);
 			delegate.setParseUpFront();
+			delegate.setWriteInfoToLog();
 		}
 	}
-
 
 	public synchronized IndexerProgress getProgressInformation() {
 		return fDelegate != null ? fDelegate.getProgressInformation() : fProgress;

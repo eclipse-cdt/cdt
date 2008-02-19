@@ -63,6 +63,21 @@ public class BaseUITestCase extends BaseTestCase {
 	public BaseUITestCase(String name) {
 		super(name);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.testplugin.util.BaseTestCase#setUp()
+	 */
+	protected void setUp() throws Exception {
+		super.setUp();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.testplugin.util.BaseTestCase#tearDown()
+	 */
+	protected void tearDown() throws Exception {
+		runEventQueue(0);
+		super.tearDown();
+	}
 
 	/**
 	 * Reads a section in comments form the source of the given class. Fully 
@@ -305,9 +320,9 @@ public class BaseUITestCase extends BaseTestCase {
 	
 	final protected TreeItem checkTreeNode(Tree tree, int i0, int i1, String label) {
 		TreeItem item= null;
-		TreeItem root= tree.getItem(i0);
 		String itemText= null;
 		for (int i=0; i<400; i++) {
+			TreeItem root= tree.getItem(i0);
 			try {
 				TreeItem firstItem= root.getItem(0);
 				final String text= firstItem.getText();
@@ -331,7 +346,6 @@ public class BaseUITestCase extends BaseTestCase {
 			}
 			catch (SWTException e) {
 				// widget was disposed, try again.
-				root= tree.getItem(i0);
 			}
 			runEventQueue(10);
 		}

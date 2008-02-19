@@ -80,4 +80,9 @@ public interface IWritableIndexFragment extends IIndexFragment {
 	 * Flushes caches to disk.
 	 */
 	void flush() throws CoreException;
+
+	/**
+	 * @return the size of the database in bytes
+	 */
+	long getDatabaseSizeBytes();
 }

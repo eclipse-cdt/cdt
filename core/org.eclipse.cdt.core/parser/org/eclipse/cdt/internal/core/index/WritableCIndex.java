@@ -96,12 +96,13 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 		}
 	}
 
-	
+	@Override
 	public synchronized void acquireReadLock() throws InterruptedException {
 		assert !fIsWriteLocked: "Read locks are not allowed while write-locked."; //$NON-NLS-1$
 		super.acquireReadLock();
 	}
 
+	@Override
 	public synchronized void releaseReadLock() {
 		assert !fIsWriteLocked: "Read locks are not allowed while write-locked."; //$NON-NLS-1$
 		super.releaseReadLock();
@@ -131,5 +132,12 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 	public void flush() throws CoreException {
 		assert !fIsWriteLocked;
 		fWritableFragment.flush();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.index.IWritableIndex#getDatabaseSizeBytes()
+	 */
+	public long getDatabaseSizeBytes() {
+		return fWritableFragment.getDatabaseSizeBytes();
 	}
 }

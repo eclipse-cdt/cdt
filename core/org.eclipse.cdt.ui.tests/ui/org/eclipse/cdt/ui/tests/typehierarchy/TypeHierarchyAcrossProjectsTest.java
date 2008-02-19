@@ -163,7 +163,4 @@ public class TypeHierarchyAcrossProjectsTest extends TypeHierarchyBaseTest {
 		assertEquals(0, item4.getItemCount());
 		checkMethodTable(new String[] {"field4", "method4()"});
 	}
-	
-	public void testDummy() {
-	}
 }

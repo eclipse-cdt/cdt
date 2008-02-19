@@ -55,6 +55,7 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 		fPathResolver= resolver;
 	}
 
+	@Override
 	public IIndexFragmentFile addFile(int linkageID, IIndexFileLocation location) throws CoreException {
 		return super.addFile(linkageID, location);
 	}
@@ -81,10 +82,12 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 		((PDOMFile) file).clear(contextsRemoved);		
 	}
 	
+	@Override
 	public void clear() throws CoreException {
 		super.clear();
 	}
 	
+	@Override
 	public void flush() throws CoreException {
 		super.flush();
 	}
@@ -175,6 +178,7 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 		fCreatedFromScratch = createdFromScratch;
 	}
 	
+	@Override
 	protected final boolean isPermanentlyReadOnly() {
 		return false;
 	}
@@ -187,6 +191,11 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 		}
 		return null;
 	}
-	
-	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.index.IWritableIndexFragment#getDatabaseSizeBytes()
+	 */
+	public long getDatabaseSizeBytes() {
+		return getDB().getSizeBytes();
+	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,26 +13,23 @@ package org.eclipse.cdt.internal.core.pdom;
 
 public class IndexerProgress {
 
-	public int fTotalSourcesEstimate;
-	public int fCompletedHeaders;
-	public int fCompletedSources;
-	public int fTimeEstimate;
+	public int fRequestedFilesCount;
+	public int fCompletedSources;	
+	public int fPrimaryHeaderCount;	// headers parsed that were actually requested
+	public int fCompletedHeaders;	// all headers including those found through inclusions
+	public int fTimeEstimate;		// fall-back for the time where no file-count is available
 
 	public IndexerProgress() {
 	}
 
 	public IndexerProgress(IndexerProgress info) {
-		fTotalSourcesEstimate= info.fTotalSourcesEstimate;
-		fCompletedHeaders= info.fCompletedHeaders;
+		fRequestedFilesCount= info.fRequestedFilesCount;
 		fCompletedSources= info.fCompletedSources;
+		fCompletedHeaders= info.fCompletedHeaders;
+		fPrimaryHeaderCount= info.fPrimaryHeaderCount;
 	}
 
-
-	public int getRemainingSources() {
-		return fTotalSourcesEstimate-fCompletedSources;
-	}
-
-	public int getTimeEstimate() {
-		return fTotalSourcesEstimate > 0 ? fTotalSourcesEstimate : fTimeEstimate;
+	public int getEstimatedTicks() {
+		return fRequestedFilesCount > 0 ? fRequestedFilesCount : fTimeEstimate;
 	}
 }

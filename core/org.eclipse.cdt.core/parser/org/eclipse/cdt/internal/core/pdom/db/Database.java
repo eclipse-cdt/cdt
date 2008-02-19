@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 QNX Software Systems and others.
+ * Copyright (c) 2005, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -488,7 +488,7 @@ public class Database {
 	public void giveUpExclusiveLock(final boolean flush) throws CoreException {
 		if (fExclusiveLock) {
 			try {
-				ArrayList dirtyChunks= new ArrayList();
+				ArrayList<Chunk> dirtyChunks= new ArrayList<Chunk>();
 				synchronized (fCache) {
 					for (int i= 1; i < fChunks.length; i++) {
 						Chunk chunk= fChunks[i];
@@ -542,7 +542,7 @@ public class Database {
 		}
 
 		// be careful as other readers may access chunks concurrently
-		ArrayList dirtyChunks= new ArrayList();
+		ArrayList<Chunk> dirtyChunks= new ArrayList<Chunk>();
 		synchronized (fCache) {
 			for (int i= 1; i < fChunks.length ; i++) {
 				Chunk chunk= fChunks[i];
@@ -556,7 +556,7 @@ public class Database {
 		flushAndUnlockChunks(dirtyChunks, true);
 	}
 
-	private void flushAndUnlockChunks(final ArrayList dirtyChunks, boolean isComplete) throws CoreException {
+	private void flushAndUnlockChunks(final ArrayList<Chunk> dirtyChunks, boolean isComplete) throws CoreException {
 		assert !Thread.holdsLock(fCache);
 		synchronized(fHeaderChunk) {
 			if (!fHeaderChunk.fDirty) {
@@ -566,8 +566,8 @@ public class Database {
 			}
 			if (!dirtyChunks.isEmpty()) {
 				markFileIncomplete();
-				for (Iterator it = dirtyChunks.iterator(); it.hasNext();) {
-					Chunk chunk = (Chunk) it.next();
+				for (Iterator<Chunk> it = dirtyChunks.iterator(); it.hasNext();) {
+					Chunk chunk = it.next();
 					if (chunk.fDirty) {
 						chunk.flush();
 					}
@@ -575,8 +575,8 @@ public class Database {
 
 				// only after the chunks are flushed we may unlock and release them.
 				synchronized (fCache) {
-					for (Iterator it = dirtyChunks.iterator(); it.hasNext();) {
-						Chunk chunk = (Chunk) it.next();
+					for (Iterator<Chunk> it = dirtyChunks.iterator(); it.hasNext();) {
+						Chunk chunk = it.next();
 						chunk.fLocked= false;
 						if (chunk.fCacheIndex < 0) {
 							fChunks[chunk.fSequenceNumber]= null;
@@ -617,5 +617,13 @@ public class Database {
 	
 	public long getCacheMisses() {
 		return cacheMisses;
+	}
+
+	public long getSizeBytes() {
+		try {
+			return fFile.length();
+		} catch (IOException e) {
+		}
+		return 0;
 	}
 }

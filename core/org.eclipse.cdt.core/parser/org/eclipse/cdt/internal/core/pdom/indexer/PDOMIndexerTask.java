@@ -13,6 +13,7 @@
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
 import java.text.NumberFormat;
+import java.util.Calendar;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
@@ -37,8 +38,11 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Configures the abstract indexer task suitable for indexing projects.
@@ -47,6 +51,7 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 	private static final String TRUE = "true"; //$NON-NLS-1$
 	
 	private AbstractPDOMIndexer fIndexer;
+	private boolean fWriteInfoToLog;
 	
 	protected PDOMIndexerTask(ITranslationUnit[] addFiles, ITranslationUnit[] updateFiles, ITranslationUnit[] removeFiles, 
 			AbstractPDOMIndexer indexer, boolean isFastIndexer) {
@@ -92,7 +97,7 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 	public final void run(IProgressMonitor monitor) throws InterruptedException {
 		long start = System.currentTimeMillis();
 		runTask(monitor);
-		traceEnd(start, fIndex);
+		traceEnd(start, fIndex, monitor.isCanceled());
 	}
 	
 	/**
@@ -181,62 +186,149 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 		return new TodoTaskUpdater();
 	}
 	
-	protected void traceEnd(long start, IWritableIndex index) {
+	protected void traceEnd(long start, IWritableIndex index, boolean wasCancelled) {
+		// log entry
+		if (fWriteInfoToLog && !wasCancelled && index != null) {
+			final long totalTime = System.currentTimeMillis() - start;
+			final IndexerProgress info= getProgressInformation();
+			final int sum= fStatistics.fDeclarationCount+fStatistics.fReferenceCount+fStatistics.fProblemBindingCount;
+			final double problemPct= sum==0 ? 0.0 : (double) fStatistics.fProblemBindingCount / (double) sum;
+			NumberFormat nfGroup= NumberFormat.getNumberInstance();
+			nfGroup.setGroupingUsed(true);
+			NumberFormat nfPercent= NumberFormat.getPercentInstance();
+			nfPercent.setMaximumFractionDigits(2);
+			nfPercent.setMinimumFractionDigits(2);
+			NumberFormat nfTime= NumberFormat.getNumberInstance();
+			nfTime.setMaximumFractionDigits(2);
+			nfTime.setMinimumFractionDigits(2);
+			nfTime.setGroupingUsed(true);
+			final String msg= NLS.bind(Messages.PDOMIndexerTask_indexerInfo,
+					new Object[] {
+						getCProject().getElementName(), 
+						nfGroup.format(info.fCompletedSources), 
+						nfGroup.format(info.fCompletedHeaders),
+						nfTime.format((double) totalTime/1000),
+						nfGroup.format(fStatistics.fDeclarationCount), 
+						nfGroup.format(fStatistics.fReferenceCount),
+						nfGroup.format(fStatistics.fUnresolvedIncludesCount),
+						nfGroup.format(fStatistics.fPreprocessorProblemCount + fStatistics.fSyntaxProblemsCount),
+						nfGroup.format(fStatistics.fProblemBindingCount),
+						nfPercent.format(problemPct)
+					}
+			);
+			CCorePlugin.getDefault().getLog().log(new Status(IStatus.INFO, CCorePlugin.PLUGIN_ID, msg));
+		}
+		
+		// tracing
 		if (checkDebugOption(IPDOMIndexerTask.TRACE_STATISTICS, TRUE)) {
-			IndexerProgress info= getProgressInformation();
+			String ident= "   ";   //$NON-NLS-1$
+			final long totalTime = System.currentTimeMillis() - start;
+			final IndexerProgress info= getProgressInformation();
+			final int sum= fStatistics.fDeclarationCount+fStatistics.fReferenceCount+fStatistics.fProblemBindingCount;
+			final double problemPct= sum==0 ? 0.0 : (double) fStatistics.fProblemBindingCount / (double) sum;
 			String kind= getIndexer().getClass().getName();
 			kind= kind.substring(kind.lastIndexOf('.')+1);
-			String name= "   "; //$NON-NLS-1$
+			final long dbSize= index.getDatabaseSizeBytes();
 			
-			System.out.println("C/C++ Indexer: Project '" + getProject().getElementName()  //$NON-NLS-1$
-					+ "' (" + info.fCompletedSources + " sources, "  //$NON-NLS-1$ //$NON-NLS-2$
-					+ info.fCompletedHeaders + " headers)"); //$NON-NLS-1$
+			System.out.println("C/C++ Indexer: Project '" + getProject().getElementName()     //$NON-NLS-1$
+					+ "' (" + info.fCompletedSources + " sources, "      //$NON-NLS-1$//$NON-NLS-2$
+					+ info.fCompletedHeaders + " headers)");    //$NON-NLS-1$
 			boolean allFiles= getIndexAllFiles();
 			boolean skipRefs= checkProperty(IndexerPreferences.KEY_SKIP_ALL_REFERENCES);
 			boolean skipTypeRefs= skipRefs || checkProperty(IndexerPreferences.KEY_SKIP_TYPE_REFERENCES);
-			System.out.println(name + " Options: "  //$NON-NLS-1$
-					+ "indexer='" + kind //$NON-NLS-1$
-					+ "', parseAllFiles=" + allFiles //$NON-NLS-1$
-					+ ", skipReferences=" + skipRefs //$NON-NLS-1$
-					+ ", skipTypeReferences=" + skipTypeRefs //$NON-NLS-1$
-					+ "."); //$NON-NLS-1$
-			System.out.println(name + " Timings: "  //$NON-NLS-1$
-					+ (System.currentTimeMillis() - start) + " total, " //$NON-NLS-1$
-					+ fStatistics.fParsingTime + " parser, " //$NON-NLS-1$
-					+ fStatistics.fResolutionTime + " resolution, " //$NON-NLS-1$
-					+ fStatistics.fAddToIndexTime + " index update."); //$NON-NLS-1$
-			System.out.println(name + " Errors: " //$NON-NLS-1$
-					+ fStatistics.fErrorCount + " internal, " //$NON-NLS-1$
-					+ fStatistics.fUnresolvedIncludesCount + " include, "  //$NON-NLS-1$
-					+ fStatistics.fPreprocessorProblemCount + " scanner, "  //$NON-NLS-1$
-					+ fStatistics.fSyntaxProblemsCount + " syntax errors."); //$NON-NLS-1$
+			System.out.println(ident + " Options: "     //$NON-NLS-1$
+					+ "indexer='" + kind    //$NON-NLS-1$
+					+ "', parseAllFiles=" + allFiles    //$NON-NLS-1$
+					+ ", skipReferences=" + skipRefs    //$NON-NLS-1$
+					+ ", skipTypeReferences=" + skipTypeRefs    //$NON-NLS-1$
+					+ ".");    //$NON-NLS-1$
+			System.out.println(ident + " Database: " + dbSize + " bytes");   //$NON-NLS-1$ //$NON-NLS-2$
+			System.out.println(ident + " Timings: "     //$NON-NLS-1$
+					+ totalTime + " total, "    //$NON-NLS-1$
+					+ fStatistics.fParsingTime + " parser, "    //$NON-NLS-1$
+					+ fStatistics.fResolutionTime + " resolution, "    //$NON-NLS-1$
+					+ fStatistics.fAddToIndexTime + " index update.");    //$NON-NLS-1$
+			System.out.println(ident + " Errors: "    //$NON-NLS-1$
+					+ fStatistics.fErrorCount + " internal, "    //$NON-NLS-1$
+					+ fStatistics.fUnresolvedIncludesCount + " include, "     //$NON-NLS-1$
+					+ fStatistics.fPreprocessorProblemCount + " scanner, "     //$NON-NLS-1$
+					+ fStatistics.fSyntaxProblemsCount + " syntax errors.");    //$NON-NLS-1$
 
-			int sum= fStatistics.fDeclarationCount+fStatistics.fReferenceCount+fStatistics.fProblemBindingCount;
-			double problemPct= sum==0 ? 0.0 : (double) fStatistics.fProblemBindingCount / (double) sum;
-			NumberFormat nf= NumberFormat.getPercentInstance();
-			nf.setMaximumFractionDigits(2);
-			nf.setMinimumFractionDigits(2);
-			System.out.println(name + " Names: " //$NON-NLS-1$
-					+ fStatistics.fDeclarationCount + " declarations, " //$NON-NLS-1$
-					+ fStatistics.fReferenceCount + " references, " //$NON-NLS-1$
-					+ fStatistics.fProblemBindingCount + "(" + nf.format(problemPct) + ") unresolved.");  //$NON-NLS-1$ //$NON-NLS-2$
+			NumberFormat nfPercent= NumberFormat.getPercentInstance();
+			nfPercent.setMaximumFractionDigits(2);
+			nfPercent.setMinimumFractionDigits(2);
+			System.out.println(ident + " Names: "    //$NON-NLS-1$
+					+ fStatistics.fDeclarationCount + " declarations, "    //$NON-NLS-1$
+					+ fStatistics.fReferenceCount + " references, "    //$NON-NLS-1$
+					+ fStatistics.fProblemBindingCount + "(" + nfPercent.format(problemPct) + ") unresolved.");     //$NON-NLS-1$ //$NON-NLS-2$
 			
 			if (index != null) {
 				long misses= index.getCacheMisses();
 				long hits= index.getCacheHits();
 				long tries= misses+hits;
 				double missPct= tries==0 ? 0.0 : (double) misses / (double) tries;
-				nf.setMinimumFractionDigits(4);
-				nf.setMaximumFractionDigits(4);
-				System.out.println(name + " Cache[" //$NON-NLS-1$
-					+ ChunkCache.getSharedInstance().getMaxSize() / 1024 / 1024 + "mb]: " + //$NON-NLS-1$
-					+ hits + " hits, "   //$NON-NLS-1$
-					+ misses + "(" + nf.format(missPct)+ ") misses.");   //$NON-NLS-1$//$NON-NLS-2$
+				System.out.println(ident + " Cache["    //$NON-NLS-1$
+					+ ChunkCache.getSharedInstance().getMaxSize() / 1024 / 1024 + "mb]: " +    //$NON-NLS-1$
+					+ hits + " hits, "      //$NON-NLS-1$
+					+ misses + "(" + nfPercent.format(missPct)+ ") misses.");      //$NON-NLS-1$ //$NON-NLS-2$
+			
+				if ("true".equals(System.getProperty("SHOW_COMPRESSED_INDEXER_INFO"))) {    //$NON-NLS-1$ //$NON-NLS-2$
+					Calendar cal = Calendar.getInstance();
+					NumberFormat twoDigits= NumberFormat.getNumberInstance();
+					twoDigits.setMinimumIntegerDigits(2);
+					NumberFormat nfGroup= NumberFormat.getNumberInstance();
+					nfGroup.setGroupingUsed(true);
+
+					final String sep0 = "|"; //$NON-NLS-1$
+					final String sep = "|  "; //$NON-NLS-1$
+					final String sec = "s"; //$NON-NLS-1$
+					final String mb = "mb"; //$NON-NLS-1$
+					final String million = "M"; //$NON-NLS-1$
+					System.out.print(sep0);   
+					System.out.print(cal.get(Calendar.YEAR) + twoDigits.format(cal.get(Calendar.MONTH)+1) + twoDigits.format(cal.get(Calendar.DAY_OF_MONTH)+1));
+					System.out.print(sep);   
+					System.out.print(nfGroup.format(info.fCompletedSources));
+					System.out.print(sep);   
+					System.out.print(nfGroup.format(info.fCompletedHeaders));
+					System.out.print(sep);   
+					System.out.print(nfGroup.format((totalTime+500)/1000) + sec);   
+					System.out.print(sep);   
+					System.out.print(nfGroup.format((fStatistics.fParsingTime+500)/1000) + sec);   
+					System.out.print(sep);    
+					System.out.print(nfGroup.format((fStatistics.fResolutionTime+500)/1000) + sec);   
+					System.out.print(sep);   
+					System.out.print(nfGroup.format((fStatistics.fAddToIndexTime+500)/1000) + sec);   
+					System.out.print(sep);   
+					System.out.print(nfGroup.format((dbSize+1024*512)/1024/1024) + mb);   
+					System.out.print(sep);   
+					System.out.print(nfGroup.format((tries+1000*500)/1000000) + million);   
+					System.out.print(sep);   
+					System.out.print(nfGroup.format(fStatistics.fDeclarationCount));  
+					System.out.print(sep);   
+					System.out.print(nfGroup.format(fStatistics.fReferenceCount));  
+					System.out.print(sep);   
+					System.out.print(nfGroup.format(fStatistics.fProblemBindingCount));  
+					System.out.print(sep);   
+					System.out.print(nfPercent.format(problemPct));   
+					System.out.print(sep);   
+					System.out.print(nfGroup.format(fStatistics.fErrorCount));  
+					System.out.print(sep);   
+					System.out.print(nfGroup.format(fStatistics.fUnresolvedIncludesCount));  
+					System.out.print(sep);   
+					System.out.print(nfGroup.format(fStatistics.fPreprocessorProblemCount));  
+					System.out.print(sep);   
+					System.out.print(nfGroup.format(fStatistics.fSyntaxProblemsCount));  
+					System.out.println(sep0);   
+				}
 			}
 		}
 	}
 
 	protected ICProject getCProject() {
 		return fIndexer.project;
+	}
+
+	public void setWriteInfoToLog() {
+		fWriteInfoToLog= true;
 	}
 }

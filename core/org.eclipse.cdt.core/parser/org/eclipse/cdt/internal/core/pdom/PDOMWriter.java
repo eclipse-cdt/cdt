@@ -205,7 +205,7 @@ abstract public class PDOMWriter {
 						break;
 					}
 					if (i<ifls.length-1) {
-						updateInfo(0, 1, 0); // update header count
+						updateFileCount(0, 0, 1); // update header count
 					}
 				}
 			}
@@ -461,13 +461,21 @@ abstract public class PDOMWriter {
 
 	/**
 	 * Updates current progress information with the provided delta.
-	 * @since 4.0
 	 */
-	protected final void updateInfo(int completedSources, int completedHeaders, int totalEstimate) {
+	protected final void updateFileCount(int sources, int primaryHeader, int header) {
 		synchronized(fInfo) {
-			fInfo.fCompletedHeaders+= completedHeaders;
-			fInfo.fCompletedSources+= completedSources;
-			fInfo.fTotalSourcesEstimate+= totalEstimate;
+			fInfo.fCompletedSources+= sources;
+			fInfo.fPrimaryHeaderCount+= primaryHeader;
+			fInfo.fCompletedHeaders+= header;
+		}
+	}
+	
+	/**
+	 * Updates current progress information with the provided delta.
+	 */
+	protected final void updateRequestedFiles(int delta) {
+		synchronized(fInfo) {
+			fInfo.fRequestedFilesCount+= delta;
 		}
 	}
 		

@@ -149,8 +149,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
     private PDOMIndexerJob fIndexerJob;
 	private IPDOMIndexerTask fCurrentTask;
 	private LinkedList<IPDOMIndexerTask> fTaskQueue = new LinkedList<IPDOMIndexerTask>();
-	private int fCompletedSources;
-	private int fCompletedHeaders;
+	private int fSourceCount, fHeaderCount, fTickCount;
 	
     /**
      * Stores mapping from pdom to project, used to serialize\ creation of new pdoms.
@@ -605,8 +604,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
         		fTaskQueue.addLast(subjob);
     		}
 			if (fIndexerJob == null) {
-				fCompletedSources= 0;
-				fCompletedHeaders= 0;
+				fSourceCount= fHeaderCount= fTickCount= 0;
 				fIndexerJob = new PDOMIndexerJob(this);
 				fIndexerJob.setRule(INDEXER_SCHEDULING_RULE);
 				fIndexerJob.schedule();
@@ -637,8 +635,10 @@ public class PDOMManager implements IWritableIndexManager, IListener {
     		else {
     			if (fCurrentTask != null) {
     				IndexerProgress info= fCurrentTask.getProgressInformation();
-    				fCompletedSources+= info.fCompletedSources;
-    				fCompletedHeaders+= info.fCompletedHeaders;
+    				fSourceCount+= info.fCompletedSources;
+    				fHeaderCount+= info.fCompletedHeaders;
+    				// for the ticks we don't consider additional headers
+    				fTickCount+= info.fCompletedSources + info.fPrimaryHeaderCount;
     			}
     			result= fCurrentTask= fTaskQueue.removeFirst();
     		}
@@ -1033,43 +1033,44 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		
 	int getMonitorMessage(IProgressMonitor monitor, int currentTicks, int base) {
 		assert !Thread.holdsLock(fTaskQueueMutex);
-		int remainingSources= 0;
-		int completedSources= 0;
-		int completedHeaders= 0;
-		int totalEstimate= 0;
+		
+		int sourceCount, sourceEstimate, headerCount, tickCount, tickEstimate;
 		String detail= null;
-		IndexerProgress info;
 		synchronized (fTaskQueueMutex) {
-			completedHeaders= fCompletedHeaders;
-			completedSources= fCompletedSources;
-			totalEstimate= fCompletedHeaders+fCompletedSources;
-			for (Iterator<IPDOMIndexerTask> iter = fTaskQueue.iterator(); iter.hasNext();) {
-				IPDOMIndexerTask task = iter.next();
-				info= task.getProgressInformation();
-				remainingSources+= info.getRemainingSources();
-				totalEstimate+= info.getTimeEstimate();
+			// add historic data
+			sourceCount= sourceEstimate= fSourceCount;
+			headerCount= fHeaderCount;
+			tickCount= tickEstimate= fTickCount;
+
+			// add future data
+			for (IPDOMIndexerTask task : fTaskQueue) {
+				final IndexerProgress info= task.getProgressInformation();
+				sourceEstimate+= info.fRequestedFilesCount;
+				tickEstimate+= info.getEstimatedTicks();
 			}
+			// add current data
 			if (fCurrentTask != null) {
-				info= fCurrentTask.getProgressInformation();
-				remainingSources+= info.getRemainingSources();
-				completedHeaders+= info.fCompletedHeaders;
-				completedSources+= info.fCompletedSources;
+				final IndexerProgress info= fCurrentTask.getProgressInformation();
+				sourceCount+= info.fCompletedSources;
+				sourceEstimate+= info.fRequestedFilesCount-info.fPrimaryHeaderCount;
+				headerCount+= info.fCompletedHeaders;
+				// for the ticks we don't consider additional headers
+				tickCount+= info.fCompletedSources + info.fPrimaryHeaderCount;
+				tickEstimate+= info.getEstimatedTicks();
 				detail= PDOMIndexerJob.sMonitorDetail;
-				totalEstimate+= info.getTimeEstimate();
 			}
 		}
 		
-		int totalSources = remainingSources+completedSources;
 		String msg= MessageFormat.format(Messages.PDOMManager_indexMonitorDetail, new Object[] { 
-					new Integer(completedSources), new Integer(totalSources), 
-					new Integer(completedHeaders)}); 
+					new Integer(sourceCount), new Integer(sourceEstimate), 
+					new Integer(headerCount)}); 
 		if (detail != null) {
-			msg= msg+ ": " + detail; //$NON-NLS-1$
+			msg= msg+ ": " + detail;  //$NON-NLS-1$
 		}
 		monitor.subTask(msg);
 		
-		if (completedSources > 0 && totalEstimate >= completedSources) {
-			int newTick= completedSources*base/totalEstimate;
+		if (tickCount > 0 && tickCount <= tickEstimate) {
+			int newTick= tickCount*base/tickEstimate;
 			if (newTick > currentTicks) {
 				monitor.worked(newTick-currentTicks);
 				return newTick;

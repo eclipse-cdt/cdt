@@ -108,7 +108,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		fIsFastIndexer= fastIndexer;
 		fFilesToUpdate= filesToUpdate;
 		fFilesToRemove.addAll(Arrays.asList(filesToRemove));
-		updateInfo(0, 0, fFilesToUpdate.length + fFilesToRemove.size());
+		updateRequestedFiles(fFilesToUpdate.length + fFilesToRemove.size());
 	}
 	
 	public final void setIndexHeadersWithoutContext(boolean val) {
@@ -306,7 +306,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 				}
 			}
 		}
-		updateInfo(0, 0, count-fFilesToUpdate.length);
+		updateRequestedFiles(count-fFilesToUpdate.length);
 		fFilesToUpdate= null;
 	}
 	
@@ -399,7 +399,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 						IIndexFragmentFile ifile = ifiles[i];
 						fIndex.clearFile(ifile, null);
 					}
-					updateInfo(0, 0, -1);
+					updateRequestedFiles(-1);
 				}
 				for (Iterator<IIndexFragmentFile> iterator = ifilesToRemove.iterator(); iterator.hasNext();) {
 					if (monitor.isCanceled()) {
@@ -407,7 +407,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 					}
 					IIndexFragmentFile ifile= iterator.next();
 					fIndex.clearFile(ifile, null);
-					updateInfo(0, 0, -1);
+					updateRequestedFiles(-1);
 				}
 			} finally {
 				fIndex.releaseWriteLock(1);
@@ -450,7 +450,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 						
 						if (ast != null) {
 							writeToIndex(linkageID, ast, computeHashCode(scanInfo), monitor);
-							updateInfo(0, 1, 0);
+							updateFileCount(0, 0, 1);
 						}
 					}
 				}
@@ -477,7 +477,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 					final IScannerInfo scannerInfo= fResolver.getBuildConfiguration(linkageID, tu);
 					parseFile(tu, linkageID, ifl, scannerInfo, monitor);
 					if (info.fIsUpdated) {
-						updateInfo(1, 0, 0);	// a source file was parsed
+						updateFileCount(1, 0, 0);	// a source file was parsed
 					}
 				}
 			}
@@ -502,7 +502,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 							info.fRequestIsCounted= false;
 							parseFile(tu, linkageID, fResolver.resolveFile(tu), scannerInfo, monitor);
 							if (info.fIsUpdated) {
-								updateInfo(0, 1, 0);	// a header was parsed in context
+								updateFileCount(0, 0, 1);	// a header was parsed in context
 								iter.remove();
 							}
 						}
@@ -527,7 +527,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 					final IScannerInfo scannerInfo= fResolver.getBuildConfiguration(linkageID, header);
 					parseFile(header, linkageID, ifl, scannerInfo, monitor);
 					if (info.fIsUpdated) {
-						updateInfo(0, 1, -1);	// a header was parsed without context
+						updateFileCount(0, 1, 1);	// a header was parsed without context
 						iter.remove();
 					}
 				}
@@ -666,7 +666,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		} 
 		final boolean needUpdate= !info.fIsUpdated && info.fRequestUpdate;
 		if (needUpdate && info.fRequestIsCounted) {
-			updateInfo(0, 0, -1);
+			updateFileCount(0, 1, 0);	// total headers will be counted when written to db
 			info.fRequestIsCounted= false;
 		}
 		return needUpdate;

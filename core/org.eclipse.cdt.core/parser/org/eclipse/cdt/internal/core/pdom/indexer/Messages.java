@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ public class Messages extends NLS {
 	public static String PDOMImportTask_errorInvalidArchive;
 	public static String PDOMImportTask_errorInvalidPDOMVersion;
 	public static String PDOMIndexerTask_collectingFilesTask;
+	public static String PDOMIndexerTask_indexerInfo;
 	public static String TodoTaskUpdater_DeleteJob;
 	public static String TodoTaskUpdater_taskFormat;
 	public static String TodoTaskUpdater_UpdateJob;

@@ -123,4 +123,9 @@ public interface IWritableIndex extends IIndex {
 	 * Flushes all caches to the disk. 
 	 */
 	void flush() throws CoreException;
+
+	/**
+	 * Returns the size of the database in bytes.
+	 */
+	long getDatabaseSizeBytes();
 }

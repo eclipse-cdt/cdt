@@ -639,6 +639,8 @@ struct_declaration
           /. $Build  consumeStructDeclaration(true);  $EndBuild ./
       | specifier_qualifier_list ';'
           /. $Build  consumeStructDeclaration(false);  $EndBuild ./
+      | ERROR_TOKEN
+          /. $Build  consumeDeclarationProblem();  $EndBuild ./
 
 
 -- just reuse declaration_specifiers, makes grammar a bit more lenient but thats OK

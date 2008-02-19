@@ -350,14 +350,26 @@ $Rules
 -- Basic Concepts
 ------------------------------------------------------------------------------------------
 
--- TODO declaration errors need to be caught
--- TODO in C99 as well, nested declarations should be able to have errors
+-- The extra external declaration rules are there just so that ERROR_TOKEN can be
+-- caught at the top level.
 
 translation_unit
-    ::= declaration_seq
+    ::= external_declaration_list
           /. $Build  consumeTranslationUnit(); $EndBuild ./
       | $empty
           /. $Build  consumeTranslationUnit(); $EndBuild ./
+
+
+external_declaration_list
+    ::= external_declaration
+      | external_declaration_list external_declaration
+      
+      
+external_declaration
+    ::= declaration
+      | ERROR_TOKEN
+          /. $Build  consumeDeclarationProblem();  $EndBuild ./
+      
 
 --expression_as_translation_unit
 --    ::= expression
@@ -1505,15 +1517,15 @@ member_declaration
           /. $Build  consumeDeclarationSimple(true);  $EndBuild ./
       | declaration_specifiers_opt ';'
           /. $Build  consumeDeclarationSimple(false);  $EndBuild ./
-      | function_definition ';'  -- done
-      | function_definition      -- done
+      | function_definition ';' 
+      | function_definition      
       | dcolon_opt nested_name_specifier template_opt unqualified_id_name ';'
           /. $Build  consumeMemberDeclarationQualifiedId();  $EndBuild ./ 
-      | using_declaration  -- done
+      | using_declaration  
       | template_declaration
-      | visibility_label  -- done
-
-
+      | visibility_label 
+      | ERROR_TOKEN
+          /. $Build  consumeDeclarationProblem();  $EndBuild ./
 
 
 member_declaration_list

@@ -46,15 +46,15 @@ public class ParseHelper {
 		
 		@Override
 		public int visit( IASTName name ){
-			System.out.println("Visit Name: '" + name.toString() + "'");
+			//System.out.println("Visit Name: '" + name.toString() + "'");
 			IBinding binding = name.resolveBinding();
 			if (binding instanceof IProblemBinding) {
 				numProblemBindings++;
-				System.out.println("Problem Binding: " + name);
+				//System.out.println("Problem Binding: " + name);
 			}
 			if (binding == null) {
 				numNullBindings++;
-				System.out.println("Null Binding: " + name);
+				//System.out.println("Null Binding: " + name);
 			}
 			return PROCESS_CONTINUE;
 		}

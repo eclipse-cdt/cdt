@@ -557,9 +557,6 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 		if(asC99Kind(parser.getLeftIToken()) == C99Parsersym.TK_EndOfCompletion)
 			return;
 		
-		List<IToken> tokens = parser.getRuleTokens();
-		
-		System.out.println("what: " + parser.getLeftIToken().getKind());
 		IASTDeclSpecifier declSpecifier   = nodeFactory.newCSimpleDeclSpecifier();
 		IASTSimpleDeclaration declaration = nodeFactory.newSimpleDeclaration(declSpecifier);
 		setOffsetAndLength(declSpecifier);

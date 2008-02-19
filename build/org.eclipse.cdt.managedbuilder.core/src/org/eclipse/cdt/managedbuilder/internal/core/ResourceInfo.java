@@ -262,6 +262,51 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		return config != null;
 	}
 
+	private void propagate(IHoldsOptions parent, IOption option, Object oldValue, Object value) {
+		if (! (parent instanceof ITool))
+			return;
+		ITool tool = (ITool)parent;
+		String sup = option.getId();
+		IOption op = option;
+		while (op.getSuperClass() != null) {
+			op = op.getSuperClass();
+			sup = op.getId();
+		}
+		for (IResourceInfo ri : getChildResourceInfos()) {
+			for (ITool t : ri.getTools()) {
+				if (t.getDefaultInputExtension() != tool.getDefaultInputExtension())
+					continue;
+				op = t.getOptionBySuperClassId(sup);
+				if (op == null) 
+					continue;
+				try {
+					if (value instanceof Boolean) {
+						boolean b = ((Boolean)oldValue).booleanValue();
+						if (b == op.getBooleanValue() && b != ((Boolean)value).booleanValue())
+							ri.setOption(t, op, ((Boolean)value).booleanValue());
+					} else if (value instanceof String) {
+						String s = (String)oldValue;
+						if (s.equals(op.getStringValue()) && ! s.equals((String)value))
+							ri.setOption(t, op, (String)value);
+					} else if (value instanceof String[]) {
+						String[] s = (String[])oldValue;
+						if (Arrays.equals(s, op.getStringListValue()) && 
+								! Arrays.equals(s, (String[])value))
+							ri.setOption(t, op, (String[])value);
+					} else if (value instanceof OptionStringValue[]) {
+						OptionStringValue[] s = (OptionStringValue[])oldValue; 
+						if (Arrays.equals(s, op.getBasicStringListValueElements()) && 
+								! Arrays.equals(s, (OptionStringValue[])value))
+							ri.setOption(t, op, (OptionStringValue[])value);
+					}
+					break;
+				} catch (BuildException e) {}
+			}
+		}
+		
+	}
+	
+	
 	public IOption setOption(IHoldsOptions parent, IOption option, boolean value) throws BuildException {
 		// Is there a change?
 		IOption retOpt = option;
@@ -269,6 +314,9 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		if (oldVal != value) {
 			retOpt = parent.getOptionToSet(option, false);
 			retOpt.setValue(value);
+			propagate(parent, option,
+					(oldVal ? Boolean.TRUE : Boolean.FALSE), 
+					(value  ? Boolean.TRUE : Boolean.FALSE));
 			NotificationManager.getInstance().optionChanged(this, parent, option, new Boolean(oldVal));
 		}
 		return retOpt;
@@ -281,10 +329,8 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		if (oldValue != null && !oldValue.equals(value)) {
 			retOpt = parent.getOptionToSet(option, false);
 			retOpt.setValue(value);
-//			if(resourceData != null)
-//				((ISettingsChangeListener)resourceData).optionChanged(this, parent, option, oldValue);
+			propagate(parent, option, oldValue, value);
 			NotificationManager.getInstance().optionChanged(this, parent, option, oldValue);
-//			rebuildNeeded = true;
 		}
 		return retOpt;
 	}
@@ -304,6 +350,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		if(!Arrays.equals(value, oldValue)) {
 			retOpt = parent.getOptionToSet(option, false);
 			retOpt.setValue(value);
+			propagate(parent, option, oldValue, value);
 			NotificationManager.getInstance().optionChanged(this, parent, option, oldValue);
 		} 
 		return retOpt;
@@ -324,6 +371,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		if(!Arrays.equals(value, oldValue)) {
 			retOpt = parent.getOptionToSet(option, false);
 			((Option)retOpt).setValue(value);
+			propagate(parent, option, oldValue, value);
 			NotificationManager.getInstance().optionChanged(this, parent, option, oldValue);
 		} 
 		return retOpt;

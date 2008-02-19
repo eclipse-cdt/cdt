@@ -241,11 +241,6 @@
          <showInPart id="org.eclipse.ui.navigator.ProjectExplorer"/>
          <viewShortcut id="org.eclipse.ui.navigator.ProjectExplorer"/>
          <viewShortcut id="org.eclipse.cdt.ui.includeBrowser"/>
-         <view
-               id="org.eclipse.pde.runtime.LogView"
-               minimized="false"
-               relationship="stack"
-               relative="org.eclipse.ui.views.ProblemView"/>
       </perspectiveExtension>
    </extension>
    <extension

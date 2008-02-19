@@ -358,7 +358,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
                     {
                         // Workaround for a bug caused by an optimization in the viewer:
                         // The viewer may request more children then there are at a given level.  
-                        // This caues the update to return with an error.
+                        // This causes the update to return with an error.
                         // See https://bugs.eclipse.org/bugs/show_bug.cgi?id=202109
                         // Instead of checking getStatus().isOK(), check getData() != null.
                         if(getData() != null) {
@@ -382,9 +382,10 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
                             for(int j = 0; j < getData().size(); j++) {
                                 int offset = updateOffset + j;
                                 Object child = getData().get(j);
-                                
-                                entry.fChildren.put(offset, child);
-                                update.setChild(child, offset);
+                                if (child != null) {
+                                    entry.fChildren.put(offset, child);
+                                    update.setChild(child, offset);
+                                }
                             }
                         }
                         update.done();
@@ -411,11 +412,10 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
             }
 
             // Fill in the known children from cache.
-            for(int position = update.getOffset(); position < update.getOffset() + update.getLength(); position++) {
+            for(Integer position = update.getOffset(); position < update.getOffset() + update.getLength(); position++) {
                 Object child = entry.fChildren.get(position);
                 if (child != null) {
                     update.setChild(entry.fChildren.get(position), position);
-                } else {
                     childrenMissingFromCache.remove(position);
                 }
             }

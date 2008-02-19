@@ -261,11 +261,12 @@ public class TrialUndoParser {
 			if (state.act == ERROR_ACTION) {
 				error_token = (error_token > state.curtok ? error_token : state.curtok);
 
-				undoActions();
 				ConfigurationElement configuration = state.configurationStack.pop();
 				if (configuration == null)
 					state.act = ERROR_ACTION;
 				else {
+					boolean shouldPop = prs.baseAction(configuration.conflict_index) == 0;
+					undoActions(shouldPop);
 					state.actionCount = configuration.action_length;
 					state.act = configuration.act;
 					state.curtok = configuration.curtok;
@@ -366,11 +367,12 @@ public class TrialUndoParser {
 				state.tokens.add(state.curtok);
 			} else if (state.act == ERROR_ACTION) {
 				if (state.curtok != error_token) {
-					undoActions();
 					ConfigurationElement configuration = state.configurationStack.pop();
 					if (configuration == null)
 						state.act = ERROR_ACTION;
 					else {
+						boolean shouldPop = prs.baseAction(configuration.conflict_index) == 0;
+						undoActions(shouldPop);
 						state.actionCount = configuration.action_length;
 						state.act = configuration.act;
 						int next_token_index = configuration.curtok;
@@ -610,12 +612,15 @@ public class TrialUndoParser {
 	 * Performs the undo actions (in reverse order) for the corresponding trial
 	 * actions that have been executed since the last backtrackable point.
 	 */
-	private void undoActions() {
+	private void undoActions(boolean shouldPop) {
 		int oldTrialActionCount;
 		if (state.trialActionStack.size() == 0) {
 			oldTrialActionCount = 0;
 		} else {
-			oldTrialActionCount = state.trialActionStack.removeLast();
+			oldTrialActionCount = state.trialActionStack.getLast();
+			if (shouldPop) {
+				state.trialActionStack.removeLast();
+			}
 		}
 		safeUndoActions(oldTrialActionCount);
 

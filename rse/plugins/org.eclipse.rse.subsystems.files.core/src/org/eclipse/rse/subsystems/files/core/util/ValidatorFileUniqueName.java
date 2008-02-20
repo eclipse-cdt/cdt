@@ -13,16 +13,19 @@
  * 
  * Contributors:
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.util;
 import java.util.Vector;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.rse.internal.subsystems.files.core.Activator;
+import org.eclipse.rse.internal.subsystems.files.core.SystemFileResources;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
-import org.eclipse.rse.ui.ISystemMessages;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.validators.ValidatorFileName;
 import org.eclipse.rse.ui.validators.ValidatorFolderName;
 import org.eclipse.rse.ui.validators.ValidatorUniqueString;
@@ -75,11 +78,11 @@ public class ValidatorFileUniqueName
 	    //shell.setCursor(busyCursor);
         org.eclipse.rse.ui.dialogs.SystemPromptDialog.setDisplayCursor(shell, busyCursor);	    
 
-		setErrorMessages(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_NAME_EMPTY),
-		                 RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_NAME_NOTUNIQUE),
-		                 isFolder ? RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_FOLDERNAME_NOTVALID) :
-		                            RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_FILENAME_NOTVALID)
-		                );  
+		setErrorMessages(new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, SystemFileResources.MSG_VALIDATE_NAME_EMPTY),
+				new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, SystemFileResources.MSG_VALIDATE_NAME_NOTUNIQUE),
+				isFolder ? new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, SystemFileResources.FILEMSG_VALIDATE_FILEFILTERSTRING_NOTUNIQUE) :
+						new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, SystemFileResources.FILEMSG_VALIDATE_FILEFILTERSTRING_NOTVALID));  
+
 		try
 		{
 		IRemoteFile[] contents = parentFolder.getParentRemoteFileSubSystem().list(parentFolder, null);

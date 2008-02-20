@@ -16,6 +16,7 @@
  * Kevin Doyle (IBM) - [189430] Limited System Types displayed in Folder Dialog
  * Kevin Doyle (IBM) - [187427] Selecting an Archive will check Search Archives checkbox
  * Martin Oberhuber (Wind River) - [196936] Hide disabled system types
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.search;
@@ -28,22 +29,26 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
+import org.eclipse.rse.internal.files.ui.Activator;
 import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.internal.ui.view.search.SystemSearchUI;
 import org.eclipse.rse.internal.ui.view.search.SystemSearchViewPart;
 import org.eclipse.rse.services.clientserver.SystemSearchString;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.clientserver.search.SystemSearchUtil;
@@ -55,7 +60,6 @@ import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSyst
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConfiguration;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.Mnemonics;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
@@ -671,9 +675,13 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 			if (searchString != null && searchString.length() != 0) {
 				
 				if (!util.isValidRegex(searchString)) {
-					SystemMessage message = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_REMOTE_SEARCH_INVALID_REGEX);
-					message.makeSubstitution(searchString);
+					
+					String msgTxt = FileResources.MSG_REMOTE_SEARCH_INVALID_REGEX;
+					String msgDetails = NLS.bind(FileResources.MSG_REMOTE_SEARCH_INVALID_REGEX_DETAILS, searchString);
+
+					SystemMessage message = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
 					SystemMessageDialog.displayErrorMessage(getShell(), message);
+
 					stringCombo.setFocus();
 					return false;
 				}
@@ -688,9 +696,12 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 			if (fileNameString != null && fileNameString.length() != 0) {
 				
 				if (!util.isValidRegex(fileNameString)) {
-					SystemMessage message = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_REMOTE_SEARCH_INVALID_REGEX);
-					message.makeSubstitution(fileNameString);
-					SystemMessageDialog.displayErrorMessage(getShell(), message);
+					String msgTxt = FileResources.MSG_REMOTE_SEARCH_INVALID_REGEX;
+					String msgDetails = NLS.bind(FileResources.MSG_REMOTE_SEARCH_INVALID_REGEX_DETAILS, fileNameString);
+					
+					SystemMessage message = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+					SystemMessageDialog.displayErrorMessage(getShell(), message);				
+
 					fileNameCombo.setFocus();
 					return false;
 				}

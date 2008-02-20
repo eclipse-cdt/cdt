@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [181066] NLS missing messages with DAEMON and Shells
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  ********************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.shells.core;
@@ -29,6 +30,10 @@ public class ShellStrings extends NLS
 	public static String RSESubSystemOperation_Run_Shell_message;
 	public static String RSESubSystemOperation_Send_command_to_Shell_message;
 	public static String RSESubSystemOperation_Refresh_Output;
+	
+	public static String MSG_CONNECT_FAILED;	
+	public static String MSG_OPERATION_CANCELLED;
+
 	
 	static 
 	{

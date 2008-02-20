@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.core;
@@ -174,6 +174,32 @@ public class SystemFileResources extends NLS
 
 	public static String	RESID_JOB_SEARCH_NAME;
 	public static String	RESID_JOB_DECORATEFILES_NAME;
+	
+
+	public static String FILEMSG_VALIDATE_FILEFILTERSTRING_EMPTY;
+	public static String FILEMSG_VALIDATE_FILEFILTERSTRING_NOTUNIQUE;
+	public static String FILEMSG_VALIDATE_FILEFILTERSTRING_NOTVALID;
+	public static String FILEMSG_VALIDATE_FILEFILTERSTRING_NOINCLUDES;
+	public static String MSG_VALIDATE_NAME_EMPTY;
+	public static String MSG_VALIDATE_NAME_NOTUNIQUE;
+	public static String MSG_VALIDATE_NAME_NOTVALID;
+	
+	public static String MSG_CONNECT_FAILED;	
+	public static String MSG_OPERATION_CANCELLED;
+	
+	public static String FILEMSG_FOLDER_NOTEMPTY;
+	public static String FILEMSG_FOLDER_NOTEMPTY_DETAILS;
+  	public static String FILEMSG_FOLDER_NOTFOUND;
+  	public static String FILEMSG_FOLDER_NOTFOUND_WANTTOCREATE;  
+  	public static String FILEMSG_FOLDER_NOTFOUND_WANTTOCREATE_DETAILS;  
+  	public static String FILEMSG_FILE_NOTFOUND;
+  	
+	public static String MSG_ERROR_UNEXPECTED;
+	
+	public static String MSG_FOLDER_UNREADABLE;
+	
+	public static String MSG_FILE_CANNOT_BE_SAVED;
+	public static String MSG_FILE_CANNOT_BE_SAVED_DETAILS;	
 	
 	static {
 		// load message values from bundle file

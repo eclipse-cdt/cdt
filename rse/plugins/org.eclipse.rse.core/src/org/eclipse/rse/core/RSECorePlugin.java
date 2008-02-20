@@ -61,6 +61,8 @@ public class RSECorePlugin extends Plugin {
 	 */
 	public static final int CURRENT_RELEASE = 200; // updated to new release
 
+	public static final String PLUGIN_ID = "org.eclipse.rse.core";
+	
 	/**
 	 * Current release as a string.
 	 */

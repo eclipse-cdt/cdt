@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  *******************************************************************************/
 
 package org.eclipse.rse.internal.processes.ui;
@@ -83,6 +83,13 @@ public class SystemProcessesResources extends NLS
 	// Remote Processes dialog
 	public static String	RESID_REMOTE_PROCESSES_EXECUTABLE_LABEL;
 	public static String	RESID_REMOTE_PROCESSES_EXECUTABLE_TOOLTIP;
+	
+	public static String MSG_OPERATION_FAILED;
+	public static String MSG_OPERATION_CANCELLED;
+	public static String MSG_EXPAND_FAILED;
+	
+	public static String MSG_VALIDATE_FILEFILTERSTRING_NOTUNIQUE;
+
 	
 	static {
 		// load message values from bundle file

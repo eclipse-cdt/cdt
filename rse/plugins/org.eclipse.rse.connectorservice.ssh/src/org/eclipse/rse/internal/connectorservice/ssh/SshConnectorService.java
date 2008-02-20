@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [198790] make SSH createSession() protected
  * Martin Oberhuber (Wind River) - [203500] Support encodings for SSH Sftp paths
  * Martin Oberhuber (Wind River) - [155026] Add keepalives for SSH connection
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  *******************************************************************************/
 
 package org.eclipse.rse.internal.connectorservice.ssh;
@@ -22,6 +23,7 @@ package org.eclipse.rse.internal.connectorservice.ssh;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -29,6 +31,7 @@ import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jsch.core.IJSchService;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -47,8 +50,8 @@ import org.eclipse.rse.core.subsystems.CommunicationsEvent;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
 import org.eclipse.rse.internal.services.ssh.ISshSessionProvider;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
@@ -276,8 +279,10 @@ public class SshConnectorService extends StandardConnectorService implements ISs
 			//TODO need a more correct message for "session lost"
 			//TODO allow users to reconnect from this dialog
 			//SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_UNKNOWNHOST);
-			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_CANCELLED);
-			msg.makeSubstitution(_connection.getPrimarySubSystem().getHost().getAliasName());
+
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.CANCEL, 
+					NLS.bind(SshConnectorResources.MSG_CONNECT_CANCELLED, _connection.getHost().getAliasName()));
+
 			SystemMessageDialog dialog = new SystemMessageDialog(getShell(), msg);
 			dialog.open();
 			try
@@ -395,8 +400,8 @@ public class SshConnectorService extends StandardConnectorService implements ISs
 	         //                             ISystemMessages.MSG_DISCONNECT_FAILED,
 	         //                             hostName, exc.getMessage()); 	
 	         //RSEUIPlugin.logError("Disconnect failed",exc); // temporary
-	    	 SystemMessageDialog msgDlg = new SystemMessageDialog(shell,
-	    	            RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_DISCONNECT_FAILED).makeSubstitution(hostName,exc));
+	    	SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, NLS.bind(SshConnectorResources.MSG_DISCONNECT_FAILED, hostName), exc);
+	    	 SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);
 	    	 msgDlg.setException(exc);
 	    	 msgDlg.open();
 	    }	
@@ -409,9 +414,9 @@ public class SshConnectorService extends StandardConnectorService implements ISs
 	    protected void showDisconnectCancelledMessage(Shell shell, String hostName, int port)
 	    {
 	         //SystemMessage.displayMessage(SystemMessage.MSGTYPE_ERROR, shell, RSEUIPlugin.getResourceBundle(),
-	         //                             ISystemMessages.MSG_DISCONNECT_CANCELLED, hostName);
-	    	 SystemMessageDialog msgDlg = new SystemMessageDialog(shell,
-	    	            RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_DISCONNECT_CANCELLED).makeSubstitution(hostName));
+	         //                             ISystemMessages.MSG_DISCONNECT_CANCELLED, hostName)
+	    	SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.CANCEL, NLS.bind(SshConnectorResources.MSG_DISCONNECT_CANCELLED, hostName));
+	    	 SystemMessageDialog msgDlg = new SystemMessageDialog(shell,msg);
 	    	 msgDlg.open();
 	    }
 	}

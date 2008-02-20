@@ -355,6 +355,139 @@ public class FileResources extends NLS
 	public static String	RESID_PROPERTY_SEARCH_STATUS_INACTIVE_VALUE;
 
 	
+	// messages
+	public static String MSG_ERROR_UNEXPECTED;
+	
+	public static String MSG_ERROR_FOLDER_NOTFOUND;
+	public static String MSG_ERROR_FILE_NOTFOUND; 
+	public static String MSG_ERROR_FOLDERORFILE_NOTFOUND;
+	public static String MSG_ERROR_ARCHIVEMANAGEMENT_NOTSUPPORTED;
+	public static String MSG_ERROR_ARCHIVEMANAGEMENT_NOTSUPPORTED_DETAILS;
+	
+	// Remote editing messages
+	public static String MSG_DOWNLOAD_NO_WRITE;
+	public static String MSG_DOWNLOAD_ALREADY_OPEN_IN_EDITOR;
+	public static String MSG_UPLOAD_FILE_EXISTS;	
+	public static String MSG_DOWNLOAD_NO_WRITE_DETAILS;
+	public static String MSG_DOWNLOAD_ALREADY_OPEN_IN_EDITOR_DETAILS;
+
+	// file transfer messages
+	public static String MSG_DOWNLOAD_PROGRESS;
+	public static String MSG_UPLOAD_PROGRESS;
+	public static String MSG_SYNCHRONIZE_PROGRESS;
+	public static String MSG_EXTRACT_PROGRESS;
+	public static String MSG_PERCENT_DONE;
+	public static String MSG_DOWNLOADING_PROGRESS;
+	public static String MSG_UPLOADING_PROGRESS;
+	
+    // Remote File Exception Messages
+  	public static String FILEMSG_SECURITY_ERROR;
+  	public static String FILEMSG_IO_ERROR;
+  	public static String FILEMSG_FOLDER_NOTEMPTY;
+  	public static String FILEMSG_FOLDER_NOTFOUND;
+  	public static String FILEMSG_FOLDER_NOTFOUND_WANTTOCREATE;
+  	public static String FILEMSG_FILE_NOTFOUND;
+		
+  	public static String FILEMSG_SECURITY_ERROR_DETAILS;
+  	public static String FILEMSG_IO_ERROR_DETAILS;
+  	public static String FILEMSG_FOLDER_NOTEMPTY_DETAILS;
+  	public static String FILEMSG_FOLDER_NOTFOUND_WANTTOCREATE_DETAILS;
+
+  	
+    // --------------------------
+    // UNIVERSAL FILE MESSAGES...
+    // --------------------------	
+	public static  String FILEMSG_VALIDATE_FILEFILTERSTRING_EMPTY;
+	public static  String FILEMSG_VALIDATE_FILEFILTERSTRING_NOTUNIQUE;
+	public static  String FILEMSG_VALIDATE_FILEFILTERSTRING_NOTVALID;
+	public static  String FILEMSG_VALIDATE_FILEFILTERSTRING_NOINCLUDES;
+	
+    public static  String FILEMSG_DELETE_FILE_FAILED;
+    public static  String FILEMSG_RENAME_FILE_FAILED;
+    public static  String FILEMSG_CREATE_FILE_FAILED;
+    public static  String FILEMSG_CREATE_FILE_FAILED_EXIST;
+    public static  String FILEMSG_CREATE_FOLDER_FAILED;
+    public static  String FILEMSG_CREATE_FOLDER_FAILED_EXIST;
+    public static  String FILEMSG_CREATE_RESOURCE_NOTVISIBLE;
+    public static  String FILEMSG_RENAME_RESOURCE_NOTVISIBLE;
+	public static  String FILEMSG_ERROR_NOFILETYPES;
+    public static  String FILEMSG_COPY_FILE_FAILED;
+    public static  String FILEMSG_MOVE_FILE_FAILED;
+    public static  String FILEMSG_MOVE_TARGET_EQUALS_SOURCE;
+    public static  String FILEMSG_MOVE_TARGET_EQUALS_PARENT_OF_SOURCE;
+	public static  String FILEMSG_MOVE_TARGET_DESCENDS_FROM_SOURCE;
+	public static  String FILEMSG_MOVE_FILTER_NOT_VALID;
+
+    public static  String FILEMSG_DELETE_FILE_FAILED_DETAILS;
+    public static  String FILEMSG_RENAME_FILE_FAILED_DETAILS;
+    public static  String FILEMSG_CREATE_FILE_FAILED_DETAILS;
+    public static  String FILEMSG_CREATE_FILE_FAILED_EXIST_DETAILS;
+    public static  String FILEMSG_CREATE_FOLDER_FAILED_DETAILS;
+    public static  String FILEMSG_CREATE_FOLDER_FAILED_EXIST_DETAILS;
+    public static  String FILEMSG_CREATE_RESOURCE_NOTVISIBLE_DETAILS;
+    public static  String FILEMSG_RENAME_RESOURCE_NOTVISIBLE_DETAILS;
+	public static  String FILEMSG_ERROR_NOFILETYPES_DETAILS;
+    public static  String FILEMSG_COPY_FILE_FAILED_DETAILS;
+    public static  String FILEMSG_MOVE_FILE_FAILED_DETAILS;
+    public static  String FILEMSG_MOVE_TARGET_EQUALS_SOURCE_DETAILS;
+    public static  String FILEMSG_MOVE_TARGET_EQUALS_PARENT_OF_SOURCE_DETAILS;
+	public static  String FILEMSG_MOVE_TARGET_DESCENDS_FROM_SOURCE_DETAILS;
+	public static  String FILEMSG_MOVE_FILTER_NOT_VALID_DETAILS;
+	
+	public static String FILEMSG_MOVE_INTERRUPTED;
+	public static String FILEMSG_RENAME_INTERRUPTED;	
+	public static String FILEMSG_DELETE_INTERRUPTED;
+	public static String FILEMSG_COPY_INTERRUPTED;
+	public static String FILEMSG_MOVE_INTERRUPTED_DETAILS;
+	public static String FILEMSG_RENAME_INTERRUPTED_DETAILS;	
+	public static String FILEMSG_DELETE_INTERRUPTED_DETAILS;
+	public static String FILEMSG_COPY_INTERRUPTED_DETAILS;
+	
+	// cache preferences
+	public static String MSG_CACHE_UPLOAD_BEFORE_DELETE;
+	public static String MSG_CACHE_UNABLE_TO_SYNCH;
+	
+	public static  String FILEMSG_DELETING;
+
+	public static String MSG_ERROR_CONNECTION_NOTFOUND;
+	public static String MSG_ERROR_PROFILE_NOTFOUND;
+	public static String MSG_ERROR_CONNECTION_NOTFOUND_DETAILS;
+	public static String MSG_ERROR_PROFILE_NOTFOUND_DETAILS;
+  	
+	public static String MSG_VALIDATE_PATH_EMPTY;
+	public static String MSG_VALIDATE_PATH_NOTUNIQUE;
+	public static String MSG_VALIDATE_PATH_NOTVALID;
+	public static String MSG_VALIDATE_PATH_EMPTY_DETAILS;
+	public static String MSG_VALIDATE_PATH_NOTUNIQUE_DETAILS;
+	public static String MSG_VALIDATE_PATH_NOTVALID_DETAILS;
+	
+	public static String MSG_CONNECT_FAILED; 
+	public static String MSG_CONNECT_UNKNOWNHOST;
+	public static String MSG_CONNECT_CANCELLED; 
+	
+	public static String MSG_EXCEPTION_OCCURRED;
+
+	// remote search messages
+	public static String MSG_REMOTE_SEARCH_INVALID_REGEX;
+	public static String MSG_REMOTE_SEARCH_INVALID_REGEX_DETAILS;
+	
+	public static String MSG_COPY_PROGRESS;
+	
+	public static String MSG_EXPAND_FAILED;
+	public static String MSG_EXPAND_CANCELLED;
+	
+	// operation status
+	public static String MSG_OPERATION_RUNNING;
+	public static String MSG_OPERATION_FINISHED;
+	public static String MSG_OPERTION_STOPPED;
+	public static String MSG_OPERATION_DISCONNECTED;	
+	
+	public static String MSG_CREATEFILEGENERIC_PROGRESS;
+	public static String MSG_CREATEFOLDERGENERIC_PROGRESS;
+  	
+	// universal commands
+	public static String MSG_UCMD_INVOCATION_EMPTY;
+	
 	static 
 	{
 		// load message values from bundle file

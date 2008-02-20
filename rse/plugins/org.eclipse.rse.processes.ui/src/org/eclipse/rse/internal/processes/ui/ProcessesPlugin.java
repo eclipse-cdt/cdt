@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [180519][api] declaratively register rse.processes.ui adapter factories
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  ********************************************************************************/
 
 package org.eclipse.rse.internal.processes.ui;
@@ -31,6 +32,9 @@ import org.osgi.framework.BundleContext;
  * The main plugin class to be used in the desktop.
  */
 public class ProcessesPlugin extends SystemBasePlugin {
+
+	public static final String PLUGIN_ID = "org.eclipse.rse.processes.ui";
+	
 	//The shared instance.
 	private static ProcessesPlugin plugin;
 	//Resource bundle.

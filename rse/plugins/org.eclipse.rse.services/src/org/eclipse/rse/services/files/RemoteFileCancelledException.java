@@ -13,11 +13,11 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [216351] Improve cancellation of SystemFetchOperation for files
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  *******************************************************************************/
 
 package org.eclipse.rse.services.files;
 
-import org.eclipse.rse.services.clientserver.messages.IndicatorException;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 
 /**
@@ -53,10 +53,8 @@ public class RemoteFileCancelledException extends RemoteFileException {
 	private static SystemMessage getMyMessage() {
 		String l1 = "Operation cancelled."; //$NON-NLS-1$
 		String l2 = ""; //$NON-NLS-1$
-		try {
-			myMessage = new SystemMessage("RSE", "G", "1067", SystemMessage.ERROR, l1, l2); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		} catch (IndicatorException e) {
-		}
+		myMessage = new SystemMessage("RSE", "G", "1067", SystemMessage.ERROR, l1, l2); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
 		return myMessage;
 	}
 

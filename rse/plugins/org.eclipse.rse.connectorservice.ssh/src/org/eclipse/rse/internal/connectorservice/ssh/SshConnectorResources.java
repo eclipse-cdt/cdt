@@ -8,6 +8,7 @@
  * Contributors: 
  * Martin Oberhuber (Wind River) - initial API and implementation 
  * Martin Oberhuber (Wind River) - copy dialogs from team.cvs.ui 
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  *******************************************************************************/
 
 package org.eclipse.rse.internal.connectorservice.ssh;
@@ -42,4 +43,9 @@ public class SshConnectorResources extends NLS {
 	public static String KeyboardInteractiveDialog_message;
 	public static String KeyboardInteractiveDialog_labelConnection;
 
+	public static String MSG_CONNECT_CANCELLED;
+	
+	public static String MSG_DISCONNECT_FAILED;
+	public static String MSG_DISCONNECT_CANCELLED;
+	
 }

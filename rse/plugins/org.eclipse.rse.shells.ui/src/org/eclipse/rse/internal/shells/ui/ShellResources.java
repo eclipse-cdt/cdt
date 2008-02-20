@@ -87,6 +87,12 @@ public class ShellResources extends NLS
 	public static String	RESID_PROPERTY_SHELL_STATUS_ACTIVE_VALUE;
 	public static String	RESID_PROPERTY_SHELL_STATUS_INACTIVE_VALUE;
 
+	// universal commands
+	public static String MSG_UCMD_INVOCATION_EMPTY;
+	
+	public static String MSG_OPERATION_RUNNING;
+	public static String MSG_OPERATION_FINISHED;
+
 
 	static 
 	{

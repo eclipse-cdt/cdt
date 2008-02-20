@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
  * David McKnight   (IBM)        - [186363] get rid of obsolete calls to ISubSystem.connect()
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.widgets;
@@ -23,6 +24,7 @@ import java.util.Hashtable;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
@@ -30,14 +32,13 @@ import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.files.ui.actions.SystemSelectRemoteFolderAction;
+import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.internal.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemPreferencesManager;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.widgets.ISystemCombo;
@@ -580,18 +581,16 @@ public class SystemQualifiedRemoteFolderCombo extends Composite
     	ISystemProfile profile = sr.getSystemProfile(profileName);
     	if (profile == null)
     	{
-    	  msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_PROFILE_NOTFOUND);
-    	  msg.makeSubstitution(profileName);
-    	  throw new Exception(msg.getLevelOneText());
+    		String msgTxt = NLS.bind(FileResources.MSG_ERROR_PROFILE_NOTFOUND, profileName);
+    	  throw new Exception(msgTxt);
     	}
     	
 		// turn connection name into connection object...
     	IHost conn = RSECorePlugin.getTheSystemRegistry().getHost(profile,connName);
     	if (conn == null)
     	{
-    	  msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_CONNECTION_NOTFOUND);
-    	  msg.makeSubstitution(connName);
-    	  throw new Exception(msg.getLevelOneText());
+    		String msgTxt = NLS.bind(FileResources.MSG_ERROR_CONNECTION_NOTFOUND, connName);
+    	  throw new Exception(msgTxt);
     	}
     	
     	// turn folder name into folder object...
@@ -604,9 +603,8 @@ public class SystemQualifiedRemoteFolderCombo extends Composite
     	
     	if (filesubsystems.length == 0)
     	{
-    	  msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_CONNECTION_NOTFOUND);// hmm, what else to say?
-    	  msg.makeSubstitution(connName);
-    	  throw new Exception(msg.getLevelOneText());
+    		String msgTxt = NLS.bind(FileResources.MSG_ERROR_CONNECTION_NOTFOUND, connName);
+    	  throw new Exception(msgTxt);
     	}
     	IRemoteFileSubSystem ss = (IRemoteFileSubSystem)filesubsystems[0]; // what else to do?
     	if (!ss.isConnected())
@@ -620,14 +618,12 @@ public class SystemQualifiedRemoteFolderCombo extends Composite
 			}
     	   } catch (InterruptedException exc)
     	   {
-    	     msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_CANCELLED);
-    	     msg.makeSubstitution(conn.getHostName());
-    	     throw new Exception(msg.getLevelOneText());    	   	 
+    		   String msgTxt = NLS.bind(FileResources.MSG_CONNECT_CANCELLED, conn.getHostName());
+    	     throw new Exception(msgTxt);    	   	 
     	   } catch (Exception exc)
     	   {
-    	     msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED);
-    	     msg.makeSubstitution(conn.getHostName());
-    	     throw new Exception(msg.getLevelOneText());    	   	 
+    		   String msgTxt = NLS.bind(FileResources.MSG_CONNECT_FAILED, conn.getHostName());
+      	     throw new Exception(msgTxt);    	     	   	 
     	   }     	   
     	}
     	if (ss.isConnected())    	  

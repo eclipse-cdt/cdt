@@ -12,26 +12,31 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.widgets;
 
 import java.util.Vector;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManagerProvider;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManagerProvider;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
+import org.eclipse.rse.internal.files.ui.Activator;
+import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.internal.files.ui.actions.SystemSelectFileTypesAction;
 import org.eclipse.rse.internal.subsystems.files.core.SystemFileResources;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConfiguration;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileSubSystemConfiguration;
 import org.eclipse.rse.subsystems.files.core.util.ValidatorFileFilterString;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
@@ -502,7 +507,7 @@ public class SystemFileFilterStringEditPane
 			{
 				if (textTypes.getText().trim().length() == 0)
 				{
-				  errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_ERROR_NOFILETYPES);
+					errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, FileResources.FILEMSG_ERROR_NOFILETYPES, FileResources.FILEMSG_ERROR_NOFILETYPES_DETAILS);
 				}
 			}
 			controlInError = textFile;
@@ -515,7 +520,8 @@ public class SystemFileFilterStringEditPane
 			  notUnique = true;
 			if (notUnique)
 			{
-			  errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_VALIDATE_FILEFILTERSTRING_NOTUNIQUE).makeSubstitution(currFilterString);
+				String msgTxt = NLS.bind(FileResources.FILEMSG_VALIDATE_FILEFILTERSTRING_NOTUNIQUE, currFilterString);
+				errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt);
 			}
 			controlInError = textFile;
 		}		  
@@ -633,7 +639,7 @@ public class SystemFileFilterStringEditPane
 					}
 					// no path validator, so just use default path empty message
 					else {
-						errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PATH_EMPTY);
+						errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, FileResources.MSG_VALIDATE_PATH_EMPTY, FileResources.MSG_VALIDATE_PATH_EMPTY_DETAILS);
 					}
 				}
 				// KM: defect 53210
@@ -649,7 +655,7 @@ public class SystemFileFilterStringEditPane
 						}
 						// no path validator, so just use default path empty message
 						else {
-							errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PATH_EMPTY);
+							errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, FileResources.MSG_VALIDATE_PATH_EMPTY, FileResources.MSG_VALIDATE_PATH_EMPTY_DETAILS);
 						}						
 					}
 				}

@@ -12,17 +12,20 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.widgets;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.rse.internal.files.ui.Activator;
 import org.eclipse.rse.internal.files.ui.FileResources;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
-import org.eclipse.rse.ui.ISystemMessages;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
@@ -110,10 +113,12 @@ public class SaveAsForm extends SystemSelectRemoteFileOrFolderForm {
 		    //System.out.println("...saveasMbr null? "+ (saveasMbr==null));
 			if (saveasFile != null && saveasFile.exists())
 			{
-				SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_UPLOAD_FILE_EXISTS);
-				msg.makeSubstitution(fileName);
+				String msgTxt = NLS.bind(FileResources.MSG_UPLOAD_FILE_EXISTS, fileName);
+
+				SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.WARNING, msgTxt);
 				SystemMessageDialog dlg = new SystemMessageDialog(getShell(), msg);
 				ok = dlg.openQuestionNoException();
+
 			}
 		}
 		return ok;

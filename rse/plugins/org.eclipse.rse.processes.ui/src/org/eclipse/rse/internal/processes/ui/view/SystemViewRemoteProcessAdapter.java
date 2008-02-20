@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  ********************************************************************************/
 
 package org.eclipse.rse.internal.processes.ui.view;
@@ -22,6 +23,7 @@ package org.eclipse.rse.internal.processes.ui.view;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.model.ISystemMessageObject;
@@ -30,14 +32,16 @@ import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.core.model.SystemRemoteResourceSet;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.processes.ui.ProcessesPlugin;
+import org.eclipse.rse.internal.processes.ui.SystemProcessesResources;
 import org.eclipse.rse.internal.processes.ui.actions.SystemKillProcessAction;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
+import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.processes.IHostProcessFilter;
 import org.eclipse.rse.services.clientserver.processes.ISystemProcessRemoteConstants;
 import org.eclipse.rse.services.clientserver.processes.ISystemProcessRemoteTypes;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcess;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessSubSystem;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.SystemMenuManager;
@@ -187,7 +191,8 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 		catch (Exception exc)
 		{
 			children = new SystemMessageObject[1];
-			children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_FAILED), ISystemMessageObject.MSGTYPE_ERROR, element);
+			SystemMessage msg = new SimpleSystemMessage(ProcessesPlugin.PLUGIN_ID, IStatus.ERROR, SystemProcessesResources.MSG_EXPAND_FAILED);
+			children[0] = new SystemMessageObject(msg, ISystemMessageObject.MSGTYPE_ERROR, element);
 			SystemBasePlugin.logError("Exception resolving file filter strings", exc); //$NON-NLS-1$
 		}
 		return children;

@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [174945] split importexport icons from rse.ui
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
@@ -35,6 +36,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.rse.internal.importexport.RemoteImportExportPlugin;
+import org.eclipse.rse.internal.importexport.RemoteImportExportResources;
 import org.eclipse.rse.internal.importexport.RemoteImportExportUtil;
 import org.eclipse.rse.internal.importexport.SystemImportExportResources;
 import org.eclipse.rse.services.files.RemoteFileIOException;
@@ -416,7 +418,7 @@ public class RemoteFileImportOperation extends WorkspaceModifyOperation {
 		IStatus[] errors = new IStatus[errorTable.size()];
 		errorTable.toArray(errors);
 		// IFS:
-		String msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_IMPORT_PROBLEMS).getLevelOneText();
+		String msg = RemoteImportExportResources.FILEMSG_IMPORT_PROBLEMS;
 		return new MultiStatus(RemoteImportExportPlugin.getDefault().getBundle().getSymbolicName(), IStatus.OK, errors, msg, null);
 	}
 
@@ -509,7 +511,7 @@ public class RemoteFileImportOperation extends WorkspaceModifyOperation {
 					// If we don't have a parent then we have selected the
 					// file systems root. Roots can't copied (at least not
 					// under windows).
-					String msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_COPY_ROOT).toString();
+					String msg = RemoteImportExportResources.FILEMSG_COPY_ROOT;
 					errorTable.add(new Status(IStatus.INFO, RemoteImportExportPlugin.getDefault().getBundle().getSymbolicName(), 0, msg, null));
 					continue;
 				}

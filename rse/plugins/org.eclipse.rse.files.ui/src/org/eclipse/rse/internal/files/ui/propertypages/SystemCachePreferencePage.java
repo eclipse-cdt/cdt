@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.propertypages;
@@ -28,6 +29,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
@@ -38,14 +40,15 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.internal.files.ui.Activator;
 import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.internal.files.ui.resources.SystemRemoteEditManager;
 import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
 import org.eclipse.rse.internal.ui.GenericMessages;
 import org.eclipse.rse.internal.ui.view.SystemTableViewProvider;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.subsystems.files.core.SystemIFileProperties;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.Mnemonics;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
@@ -607,16 +610,17 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 		List dirtyEditors = new ArrayList();
 		if (!getDirtyReplicas(dirtyEditors))
 		{
-			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CACHE_UNABLE_TO_SYNCH);
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, FileResources.MSG_CACHE_UNABLE_TO_SYNCH);
 			SystemMessageDialog dlg = new SystemMessageDialog(getShell(), msg);
 			dlg.open();
+
 
 			return false;
 		}
 		if (dirtyEditors.size() > 0)
 		{
 			AdaptableList input = new AdaptableList();
-			for (int i = 0; i < dirtyEditors.size(); i++)
+			for (int i = 0; i < dirtyEditors.size(); i++) 
 			{
 				ISystemEditableRemoteObject rmtObj = (ISystemEditableRemoteObject) dirtyEditors.get(i);
 				input.add(rmtObj.getRemoteObject());
@@ -625,7 +629,7 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 			WorkbenchContentProvider cprovider = new WorkbenchContentProvider();
 			SystemTableViewProvider lprovider = new SystemTableViewProvider();
 
-			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CACHE_UPLOAD_BEFORE_DELETE);
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, FileResources.MSG_CACHE_UPLOAD_BEFORE_DELETE);
 
 			ListSelectionDialog dlg =
 				new ListSelectionDialog(getShell(), input, cprovider, lprovider, msg.getLevelOneText());

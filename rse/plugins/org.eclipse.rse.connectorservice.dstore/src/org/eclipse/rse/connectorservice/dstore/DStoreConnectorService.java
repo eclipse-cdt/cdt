@@ -22,6 +22,7 @@
  * David McKnight   (IBM)        - [186363] get rid of obsolete calls to SubSystem.connect()
  * David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup
  * David McKnight   (IBM)        - [216596] dstore preferences (timeout, and others)
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  *******************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore;
@@ -37,6 +38,7 @@ import javax.net.ssl.SSLHandshakeException;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.dstore.core.client.ClientConnection;
 import org.eclipse.dstore.core.client.ConnectionStatus;
@@ -51,6 +53,7 @@ import org.eclipse.dstore.core.model.ISSLProperties;
 import org.eclipse.dstore.internal.core.client.ClientSSLProperties;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.connectorservice.dstore.util.ConnectionStatusListener;
 import org.eclipse.rse.connectorservice.dstore.util.StatusMonitor;
 import org.eclipse.rse.connectorservice.dstore.util.StatusMonitorFactory;
@@ -67,11 +70,13 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ServerLaunchType;
 import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
+import org.eclipse.rse.internal.connectorservice.dstore.Activator;
+import org.eclipse.rse.internal.connectorservice.dstore.ConnectorServiceResources;
 import org.eclipse.rse.internal.connectorservice.dstore.RexecDstoreServer;
 import org.eclipse.rse.internal.ui.SystemPropertyResources;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
@@ -356,6 +361,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 				
 //				 Fire comm event to signal state changed
 				notifyDisconnection();
+				
 				clientConnection = null;
 				// DKM - no need to clear uid cache
 				clearPassword(false, true); // clear in-memory password
@@ -503,7 +509,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 	/**
 	 * @see org.eclipse.rse.core.subsystems.IConnectorService#connect(IProgressMonitor)
 	 */
-	protected void internalConnect(IProgressMonitor monitor) throws Exception
+	protected synchronized void internalConnect(IProgressMonitor monitor) throws Exception
 	{
 	    if (isConnected()) {
 	        return;
@@ -550,8 +556,8 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 		{	
 			if (monitor != null)
 			{
-				SystemMessage cmsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_STARTING_SERVER_VIA_REXEC);
-				monitor.subTask(cmsg.getLevelOneText());	
+				String cmsg = ConnectorServiceResources.MSG_STARTING_SERVER_VIA_REXEC;
+				monitor.subTask(cmsg);	
 			}
 			
 			SystemSignonInformation info = getSignonInformation();
@@ -572,9 +578,8 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 				
 				if (monitor != null)
 				{
-					SystemMessage cmsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECTING_TO_SERVER);
-					cmsg.makeSubstitution(clientConnection.getPort());
-					monitor.subTask(cmsg.getLevelOneText());
+					String cmsg = NLS.bind(ConnectorServiceResources.MSG_CONNECTING_TO_SERVER, clientConnection.getPort());
+					monitor.subTask(cmsg);
 				}
 				
 				// connect to launched server
@@ -600,7 +605,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 				String errorMsg = null;
 				if (msg == null)
 				{
-					errorMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_CONNECT_FAILED).getLevelOneText();
+					errorMsg = NLS.bind(ConnectorServiceResources.MSG_COMM_CONNECT_FAILED, getHostName());
 				}
 				else
 				{
@@ -614,8 +619,8 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 		{
 			if (monitor != null)
 			{
-				SystemMessage cmsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_STARTING_SERVER_VIA_DAEMON);
-				monitor.subTask(cmsg.getLevelOneText());		
+				String cmsg = ConnectorServiceResources.MSG_STARTING_SERVER_VIA_DAEMON;
+				monitor.subTask(cmsg);		
 			}
 
 			// DY:  getLocalUserId() may return null for Windows connections because
@@ -686,8 +691,19 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 					SystemSignonInformation newCredentials = null;
 					while (launchMsg != null && (isPasswordExpired(launchMsg) || isNewPasswordInvalid(launchMsg)))
 					{
-						String messageId = isPasswordExpired(launchMsg) ? ISystemMessages.MSG_VALIDATE_PASSWORD_EXPIRED : ISystemMessages.MSG_VALIDATE_PASSWORD_INVALID;
-						SystemMessage message = RSEUIPlugin.getPluginMessage(messageId);
+						String pmsg = null;
+						String pmsgDetails = null;
+						boolean expired = isPasswordExpired(launchMsg);
+						if (expired){
+							pmsg = ConnectorServiceResources.MSG_VALIDATE_PASSWORD_EXPIRED;
+							pmsgDetails = ConnectorServiceResources.MSG_VALIDATE_PASSWORD_EXPIRED_DETAILS;
+						}
+						else {
+							pmsg = ConnectorServiceResources.MSG_VALIDATE_PASSWORD_INVALID;
+							pmsgDetails = ConnectorServiceResources.MSG_VALIDATE_PASSWORD_INVALID_DETAILS;
+						}
+						
+						SystemMessage message = createSystemMessage(IStatus.ERROR, pmsg, pmsgDetails);
 						getCredentialsProvider().repairCredentials(message);
 						newCredentials = (SystemSignonInformation) getCredentialsProvider().getCredentials();
 						launchStatus = changePassword(clientConnection, oldCredentials, serverLauncher, monitor, newCredentials.getPassword());
@@ -707,12 +723,14 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 				{
 					launchFailed = true;
 					
-					SystemMessage cmsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_PORT_OUT_RANGE);
+
 					int colonIndex = launchMsg.indexOf(':');
 					String portRange = launchMsg.substring(colonIndex + 1);
-					cmsg.makeSubstitution(portRange);
 					
-					ShowConnectMessage msgAction = new ShowConnectMessage(cmsg);
+					String pmsg =NLS.bind(ConnectorServiceResources.MSG_PORT_OUT_RANGE, portRange);		
+					SystemMessage message = createSystemMessage(IStatus.ERROR, pmsg);
+
+					ShowConnectMessage msgAction = new ShowConnectMessage(message);
 					Display.getDefault().asyncExec(msgAction);
 					return;
 				}
@@ -726,9 +744,11 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 			{
 				if (monitor != null)
 				{
-					SystemMessage cmsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECTING_TO_SERVER);
-					cmsg.makeSubstitution(clientConnection.getPort());
-					monitor.subTask(cmsg.getLevelOneText());
+					if (clientConnection == null){
+						System.out.println("client connection is null!");
+					}
+					String pmsg = NLS.bind(ConnectorServiceResources.MSG_CONNECTING_TO_SERVER, clientConnection.getPort());
+					monitor.subTask(pmsg);
 				}
 				// connect to launched server
 				connectStatus = clientConnection.connect(launchStatus.getTicket(), timeout);
@@ -790,17 +810,17 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 			else
 			{
 				connectStatus = new ConnectionStatus(false);
-				connectStatus.setMessage(
-					RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_CONNECT_FAILED).getLevelOneText());
+				
+				String cmsg = NLS.bind(ConnectorServiceResources.MSG_COMM_CONNECT_FAILED, getHostName());
+				connectStatus.setMessage(cmsg);
 			}
 		}
 		else if (serverLauncherType == ServerLaunchType.RUNNING_LITERAL)
 		{
 			if (monitor != null)
 			{
-				SystemMessage cmsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECTING_TO_SERVER);
-				cmsg.makeSubstitution(clientConnection.getPort());
-				monitor.subTask(cmsg.getLevelOneText());
+				String cmsg = NLS.bind(ConnectorServiceResources.MSG_CONNECTING_TO_SERVER, clientConnection.getPort()); 
+				monitor.subTask(cmsg);
 			}
 			// connection directly
 			boolean useSSL = isUsingSSL();
@@ -833,8 +853,9 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 			IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
 			if (clientConnection.getDataStore().usingSSL() && store.getBoolean(ISystemPreferencesConstants.ALERT_SSL))
 			{
-				msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_USING_SSL);
-				msg.makeSubstitution(getHostName());
+				String cmsg = NLS.bind(ConnectorServiceResources.MSG_COMM_USING_SSL, getHostName());
+				msg = createSystemMessage(IStatus.INFO, cmsg);
+				
 				DisplayHidableSystemMessageAction msgAction = new DisplayHidableSystemMessageAction(msg, store, ISystemPreferencesConstants.ALERT_SSL);
 				Display.getDefault().syncExec(msgAction);
 				if (msgAction.getReturnCode() != IDialogConstants.YES_ID)
@@ -845,8 +866,9 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 			}
 			else if (!clientConnection.getDataStore().usingSSL() && store.getBoolean(ISystemPreferencesConstants.ALERT_NONSSL))
 			{
-				msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_NOT_USING_SSL);
-				msg.makeSubstitution(getHostName());
+				String cmsg = NLS.bind(ConnectorServiceResources.MSG_COMM_NOT_USING_SSL, getHostName());
+				msg = createSystemMessage(IStatus.INFO, cmsg);			
+			
 				DisplayHidableSystemMessageAction msgAction = new DisplayHidableSystemMessageAction(msg, store, ISystemPreferencesConstants.ALERT_NONSSL);
 				Display.getDefault().syncExec(msgAction);
 				if (msgAction.getReturnCode() != IDialogConstants.YES_ID)
@@ -901,14 +923,18 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 			{
 				if (message.startsWith(ClientConnection.CLIENT_OLDER))
 				{
+					String cmsg = NLS.bind(ConnectorServiceResources.MSG_COMM_CLIENT_OLDER_WARNING, getHostName());
+					String cmsgDetail = ConnectorServiceResources.MSG_COMM_CLIENT_OLDER_WARNING_DETAILS;
 					
-					msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_CLIENT_OLDER_WARNING);
-					msg.makeSubstitution(getHostName());
+					msg = createSystemMessage(IStatus.WARNING, cmsg, cmsgDetail);
+
 				}
 				else if (message.startsWith(ClientConnection.SERVER_OLDER))
 				{
-					msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_SERVER_OLDER_WARNING);
-					msg.makeSubstitution(getHostName());
+					String cmsg = NLS.bind(ConnectorServiceResources.MSG_COMM_SERVER_OLDER_WARNING, getHostName());
+					String cmsgDetail = ConnectorServiceResources.MSG_COMM_SERVER_OLDER_WARNING_DETAILS;
+					
+					msg = createSystemMessage(IStatus.WARNING, cmsg, cmsgDetail);
 				}
 				
 				if (store.getBoolean(IUniversalDStoreConstants.ALERT_MISMATCHED_SERVER)){
@@ -933,16 +959,15 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 			{						
 				dataStore.addMinersLocation("."); //$NON-NLS-1$
 				// older servers initialized in one shot
-				DataElement schemaStatus = dataStore.getSchema();
+				dataStore.getSchema();
 		 
 		         // Initialzie the miners
 		         if (monitor != null)
 		         {
-		            SystemMessage imsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_INITIALIZING_SERVER);
-		            monitor.subTask(imsg.getLevelOneText());
+		        	 String imsg = ConnectorServiceResources.MSG_INITIALIZING_SERVER;
+		            monitor.subTask(imsg);
 		         }
 		         DataElement initStatus = dataStore.initMiners();	         
-		         //statusMonitor.waitForUpdate(schemaStatus);
 		         statusMonitor.waitForUpdate(initStatus);
 			}
 			//long t2 = System.currentTimeMillis();
@@ -972,9 +997,8 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 					}
 					else
 					{
-					
-						msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_SSL_EXCEPTION);
-						msg.makeSubstitution(launchStatus.getMessage());
+						String cmsg = NLS.bind(ConnectorServiceResources.MSG_CONNECT_SSL_EXCEPTION, launchStatus.getMessage());
+						msg = createSystemMessage(IStatus.ERROR, cmsg);
 					}
 				} 	
 		    }
@@ -986,8 +1010,9 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 				if (launchStatus.getException() != null && serverLauncher != null)
 				{
 					Throwable exception = launchStatus.getException();
-					msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_DAEMON_FAILED_EXCEPTION);
-					msg.makeSubstitution(getHostName(), ""+serverLauncher.getDaemonPort(), exception); //$NON-NLS-1$
+					String fmsg = NLS.bind(ConnectorServiceResources.MSG_CONNECT_DAEMON_FAILED_EXCEPTION, getHostName(), ""+serverLauncher.getDaemonPort()); //$NON-NLS-1$
+										
+					msg = createSystemMessage(IStatus.ERROR, fmsg, exception);
 				}
 				else if (launchMsg != null && launchMsg.indexOf(IDataStoreConstants.AUTHENTICATION_FAILED) != -1)
 				{
@@ -997,8 +1022,11 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 				    }
 				
 					// Display error message
-					msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_AUTH_FAILED);
-					msg.makeSubstitution(getHostName());
+					String msgTxt = ConnectorServiceResources.MSG_COMM_AUTH_FAILED;
+					String msgDetails = NLS.bind(ConnectorServiceResources.MSG_COMM_AUTH_FAILED_DETAILS, getHostName());
+					
+					msg = createSystemMessage(IStatus.ERROR, msgTxt, msgDetails);
+
 					DisplaySystemMessageAction msgAction = new DisplaySystemMessageAction(msg);
 					Display.getDefault().syncExec(msgAction);
 
@@ -1040,8 +1068,15 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 					SystemSignonInformation newCredentials = null;
 					while (launchMsg != null && (isPasswordExpired(launchMsg) || isNewPasswordInvalid(launchMsg)))
 					{
-						String messageId = isPasswordExpired(launchMsg) ? ISystemMessages.MSG_VALIDATE_PASSWORD_EXPIRED : ISystemMessages.MSG_VALIDATE_PASSWORD_INVALID;
-						SystemMessage message = RSEUIPlugin.getPluginMessage(messageId);
+						String msgTxt = ConnectorServiceResources.MSG_VALIDATE_PASSWORD_INVALID;
+						String msgDetails = ConnectorServiceResources.MSG_VALIDATE_PASSWORD_INVALID_DETAILS;
+						if (isPasswordExpired(launchMsg)){
+							msgTxt = ConnectorServiceResources.MSG_VALIDATE_PASSWORD_EXPIRED;
+							msgDetails = ConnectorServiceResources.MSG_VALIDATE_PASSWORD_EXPIRED_DETAILS;
+						}
+					
+						SystemMessage message = createSystemMessage(IStatus.ERROR, msgTxt, msgDetails);
+						
 						getCredentialsProvider().repairCredentials(message);
 						newCredentials = (SystemSignonInformation) getCredentialsProvider().getCredentials();
 						launchStatus = changePassword(clientConnection, oldCredentials, serverLauncher, monitor, newCredentials.getPassword());
@@ -1071,8 +1106,8 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 				}
 				else if (launchMsg != null)
 				{					
-					msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_DAEMON_FAILED);
-					msg.makeSubstitution(getHostName(), clientConnection.getPort(), launchMsg);
+					String msgTxt = NLS.bind(ConnectorServiceResources.MSG_CONNECT_DAEMON_FAILED, getHostName(), clientConnection.getPort());
+					msg = createSystemMessage(IStatus.ERROR, msgTxt, launchMsg);
 				}
 			}
 			
@@ -1081,21 +1116,25 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 			{
 				if (connectStatus.getMessage().startsWith(ClientConnection.INCOMPATIBLE_SERVER_UPDATE))
 				{
-					msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_INCOMPATIBLE_UPDATE);
-					msg.makeSubstitution(getHostName());
+					String msgTxt = NLS.bind(ConnectorServiceResources.MSG_COMM_INCOMPATIBLE_UPDATE, getHostName());	
+					String msgDetails = ConnectorServiceResources.MSG_COMM_INCOMPATIBLE_UPDATE_DETAILS;
+					
+					msg = createSystemMessage(IStatus.ERROR, msgTxt, msgDetails);
 				}
 				else if (connectStatus.getMessage().startsWith(ClientConnection.INCOMPATIBLE_PROTOCOL))
 				{
-					msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_INCOMPATIBLE_PROTOCOL);
-					msg.makeSubstitution(getHostName());
+					String msgTxt = NLS.bind(ConnectorServiceResources.MSG_COMM_INCOMPATIBLE_PROTOCOL, getHostName());	
+					String msgDetails = ConnectorServiceResources.MSG_COMM_INCOMPATIBLE_PROTOCOL_DETAILS;
+					
+					msg = createSystemMessage(IStatus.ERROR, msgTxt, msgDetails);
 				}
 				else
 				{
 					Throwable exception = connectStatus.getException();
 					if (exception != null)
 					{
-						msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED);
-						msg.makeSubstitution(getHostName(), exception);
+						String msgTxt = NLS.bind(ConnectorServiceResources.MSG_CONNECT_FAILED, getHostName());
+						msg = createSystemMessage(IStatus.ERROR, msgTxt, exception);
 					}
 				}
 			}
@@ -1104,23 +1143,25 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 			else if (connectStatus == null)
 			{
 				SystemBasePlugin.logError("Failed to connect to remote system", null); //$NON-NLS-1$
-				msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_CONNECT_FAILED);
-				msg.makeSubstitution(getHostName());
+				String msgTxt = NLS.bind(ConnectorServiceResources.MSG_COMM_CONNECT_FAILED, getHostName());
+				String msgDetails = NLS.bind(ConnectorServiceResources.MSG_COMM_CONNECT_FAILED_DETAILS, getHostName());
+				msg = createSystemMessage(IStatus.ERROR, msgTxt, msgDetails);
 			}
 
 			// if, for some reason, we don't have a message
 			if (msg == null && connectStatus != null)
 			{
 				SystemBasePlugin.logError("Failed to connect to remote system" + connectStatus.getMessage(), null); //$NON-NLS-1$
-				msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_CONNECT_FAILED);
-				msg.makeSubstitution(getHostName());
+				String msgTxt = NLS.bind(ConnectorServiceResources.MSG_COMM_CONNECT_FAILED, getHostName());
+				String msgDetails = NLS.bind(ConnectorServiceResources.MSG_COMM_CONNECT_FAILED_DETAILS, getHostName());
+				msg = createSystemMessage(IStatus.ERROR, msgTxt, msgDetails);
 			}
 
 			clientConnection.disconnect();
 			clientConnection = null;
 			
 			// yantzi: artemis 6.0, check for invalid login (user ID / pwd) and reprompt for signon information
-			if (msg != null && msg.getFullMessageID().startsWith(ISystemMessages.MSG_COMM_INVALID_LOGIN))
+			if (msg != null && msg.getLevelOneText().startsWith(NLS.bind(ConnectorServiceResources.MSG_COMM_INVALID_LOGIN, getHostName())))
 			{
 				if (launchFailed)
 			    {
@@ -1211,7 +1252,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 		String serverPort = (String)starter.launch(monitor);	
 		if (monitor.isCanceled())
 		{
-			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_CANCELLED);
+			SystemMessage msg = createSystemMessage(IStatus.CANCEL, ConnectorServiceResources.MSG_OPERATION_CANCELLED);
 			throw new SystemMessageException(msg);
 		}
 		
@@ -1329,8 +1370,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 	{
 		for (int idx = 0; idx < warnings.size(); idx++)
 		{
-			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_GENERIC_W);
-			msg.makeSubstitution((warnings.elementAt(idx)).toString());
+			SystemMessage msg = createSystemMessage(IStatus.WARNING, warnings.elementAt(idx).toString());
 			SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);
 			msgDlg.open();
 		}
@@ -1384,4 +1424,17 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 		return result;
 	}
 	
+
+	protected SystemMessage createSystemMessage(int severity, String msg) {
+		return createSystemMessage(severity, msg, (String)null);
+	}
+	
+	protected SystemMessage createSystemMessage(int severity, String msg, Throwable e) {
+		return new SimpleSystemMessage(Activator.PLUGIN_ID, severity, msg, e);
+	}
+	
+	protected SystemMessage createSystemMessage(int severity, String msg, String msgDetails) {
+		return new SimpleSystemMessage(Activator.PLUGIN_ID, severity, msg, msgDetails);
+	}	
 }
+

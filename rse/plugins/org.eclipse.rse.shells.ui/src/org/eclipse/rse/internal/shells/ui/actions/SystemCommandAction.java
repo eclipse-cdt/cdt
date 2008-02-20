@@ -16,7 +16,8 @@
  * Martin Oberhuber (Wind River) - [174945] Remove obsolete icons from rse.shells.ui
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
  * Martin Oberhuber (Wind River) - [187218] Fix error reporting for connect()
- * Kevin Doyle (IBM)			 - [187083] Launch Shell action available on folders inside virtual files  
+ * Kevin Doyle (IBM)			 - [187083] Launch Shell action available on folders inside virtual files 
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui.actions;
@@ -44,6 +45,7 @@ import org.eclipse.rse.internal.shells.ui.view.SystemCommandsUI;
 import org.eclipse.rse.internal.shells.ui.view.SystemCommandsViewPart;
 import org.eclipse.rse.services.clientserver.PathUtility;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.shells.ui.RemoteCommandHelpers;
@@ -52,7 +54,6 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
 import org.eclipse.rse.ui.ISystemIconConstants;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
@@ -296,7 +297,8 @@ public class SystemCommandAction extends SystemBaseAction
 
 			if (theNewName.length() == 0)
 			{
-				_errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_UCMD_INVOCATION_EMPTY);
+				String msgTxt = ShellResources.MSG_UCMD_INVOCATION_EMPTY;
+				_errorMessage = new SimpleSystemMessage(ShellsUIPlugin.PLUGIN_ID, IStatus.ERROR, msgTxt);
 			}
 
 			if (_errorMessage != null)

@@ -12,25 +12,33 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * David McKnight   (IBM)        - [216252] SystemMessages using RSEStatus
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  ********************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore.util;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.extra.DomainEvent;
 import org.eclipse.dstore.extra.IDomainListener;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
+import org.eclipse.rse.internal.connectorservice.dstore.Activator;
+import org.eclipse.rse.internal.connectorservice.dstore.ConnectorServiceResources;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
@@ -113,10 +121,13 @@ public class ConnectionStatusListener implements IDomainListener, IRunnableWithP
 		{
 			Shell shell = getShell();
 			_connectionDown = true;
-			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_UNKNOWNHOST);
-			msg.makeSubstitution(_connection.getPrimarySubSystem().getHost().getAliasName());
+			
+			String fmsgStr = NLS.bind(ConnectorServiceResources.MSG_CONNECT_UNKNOWNHOST, _connection.getPrimarySubSystem().getHost().getAliasName());
+
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, fmsgStr);
 			SystemMessageDialog dialog = new SystemMessageDialog(internalGetShell(), msg);
 			dialog.open();
+
 			try
 			{
 				IRunnableContext runnableContext = getRunnableContext(getShell());
@@ -245,14 +256,23 @@ public class ConnectionStatusListener implements IDomainListener, IRunnableWithP
      */
     protected void showDisconnectErrorMessage(Shell shell, String hostName, int port, Exception exc)
     {
-         //SystemMessage.displayMessage(SystemMessage.MSGTYPE_ERROR,shell,RSEUIPlugin.getResourceBundle(),
-         //                             ISystemMessages.MSG_DISCONNECT_FAILED,
-         //                             hostName, exc.getMessage()); 	
-         //RSEUIPlugin.logError("Disconnect failed",exc); // temporary
-    	 SystemMessageDialog msgDlg = new SystemMessageDialog(shell,
-    	            RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_DISCONNECT_FAILED).makeSubstitution(hostName,exc));
-    	 msgDlg.setException(exc);
-    	 msgDlg.open();
+    	String dfailedMsg = NLS.bind(ConnectorServiceResources.MSG_DISCONNECT_FAILED, hostName);
+
+		StringWriter excWriter = new StringWriter();
+		exc.printStackTrace(new PrintWriter(excWriter));
+		String dmsg = exc.toString();
+		if ((dmsg == null) || (exc instanceof ClassCastException)) dmsg = exc.getClass().getName();
+		String details = dmsg + "\n" + excWriter.toString(); //$NON-NLS-1$    	
+		
+		try{	
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, dfailedMsg, details);
+    	
+			SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);
+			msgDlg.setException(exc);
+			msgDlg.open();
+		}
+		catch (Exception e){			
+		}
     }	
     /**
      * Show an error message when the user cancels the disconnection.
@@ -261,10 +281,8 @@ public class ConnectionStatusListener implements IDomainListener, IRunnableWithP
      */
     protected void showDisconnectCancelledMessage(Shell shell, String hostName, int port)
     {
-         //SystemMessage.displayMessage(SystemMessage.MSGTYPE_ERROR, shell, RSEUIPlugin.getResourceBundle(),
-         //                             ISystemMessages.MSG_DISCONNECT_CANCELLED, hostName);
-    	 SystemMessageDialog msgDlg = new SystemMessageDialog(shell,
-    	            RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_DISCONNECT_CANCELLED).makeSubstitution(hostName));
-    	 msgDlg.open();
+    	String msg = NLS.bind(ConnectorServiceResources.MSG_DISCONNECT_CANCELLED, hostName);
+    	SystemMessageDialog msgDlg = new SystemMessageDialog(shell, new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.CANCEL, msg));
+    	msgDlg.open();
     }
 }

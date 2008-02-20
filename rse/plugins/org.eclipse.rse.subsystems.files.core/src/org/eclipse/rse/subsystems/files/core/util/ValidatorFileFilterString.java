@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [cleanup] fix javadoc.
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.util;
@@ -20,11 +21,13 @@ import java.util.Vector;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.rse.internal.subsystems.files.core.Activator;
+import org.eclipse.rse.internal.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.services.clientserver.NamePatternMatcher;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConfiguration;
-import org.eclipse.rse.ui.ISystemMessages;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.validators.ValidatorFileName;
 import org.eclipse.rse.ui.validators.ValidatorFolderName;
 import org.eclipse.rse.ui.validators.ValidatorUniqueString;
@@ -98,9 +101,9 @@ public class ValidatorFileFilterString
     private void init()
     {
 		//setErrorMessages(RSEUIPlugin.getPluginMessage(FILEMSG_VALIDATE_FILEFILTERSTRING_EMPTY),
-		setErrorMessages(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_NAME_EMPTY),
-		                 RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_VALIDATE_FILEFILTERSTRING_NOTUNIQUE),
-		                 RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_VALIDATE_FILEFILTERSTRING_NOTVALID));  
+		setErrorMessages(new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, SystemFileResources.MSG_VALIDATE_NAME_EMPTY),
+				new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, SystemFileResources.FILEMSG_VALIDATE_FILEFILTERSTRING_NOTUNIQUE),
+				new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, SystemFileResources.FILEMSG_VALIDATE_FILEFILTERSTRING_NOTVALID));  
 		isFileName = isFolderName = true;
     }
     

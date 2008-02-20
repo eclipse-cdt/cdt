@@ -19,6 +19,7 @@
  * Kevin Doyle (IBM) - [199324] [nls] Move dialog SystemMessages should be added/updated
  * Xuan Chen (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
  * Xuan Chen (IBM) - [209827] Update DStore command implementation to enable cancelation of archive operations
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -29,16 +30,19 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemRemoteChangeEvents;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.internal.files.ui.Activator;
+import org.eclipse.rse.internal.files.ui.FileResources;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemBaseCopyAction;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
@@ -115,9 +119,13 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 					{
 						movedFileNamesList = movedFileNamesList + "\n" + (String)(movedFileNames.get(i)); //$NON-NLS-1$
 					}
-					SystemMessage thisMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_MOVE_INTERRUPTED);
-					thisMessage.makeSubstitution(movedFileNamesList);
+					
+					String msgTxt = FileResources.FILEMSG_MOVE_INTERRUPTED;
+					String msgDetails = NLS.bind(FileResources.FILEMSG_MOVE_INTERRUPTED_DETAILS, movedFileNamesList);
+									
+					SystemMessage thisMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
 					SystemMessageDialog.displayErrorMessage(shell, thisMessage);
+				
 					status = Status.CANCEL_STATUS;
 				}
 				else
@@ -194,8 +202,9 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 		ok = ss.move(srcFileOrFolder, targetFolder, newName, monitor);
 		if (!ok)
 		{
-		  SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_MOVE_FILE_FAILED);
-		  msg.makeSubstitution(srcFileOrFolder.getName());
+			String msgTxt = NLS.bind(FileResources.FILEMSG_MOVE_FILE_FAILED, srcFileOrFolder.getName());
+			String msgDetails = FileResources.FILEMSG_MOVE_FILE_FAILED_DETAILS;
+		   SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);		
 		  throw new SystemMessageException(msg); 
 		}
 		else
@@ -240,20 +249,32 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 					
 			        if (selectedFolderPath.equals(selectedParentFile.getAbsolutePath()))
 			        {
-			        	if (targetEqualsParentSrcMsg == null)
-			              targetEqualsParentSrcMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_MOVE_TARGET_EQUALS_PARENT_OF_SOURCE);
+			        	if (targetEqualsParentSrcMsg == null){
+			        		targetEqualsParentSrcMsg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, 
+			        				FileResources.FILEMSG_MOVE_TARGET_EQUALS_PARENT_OF_SOURCE, 
+			        				FileResources.FILEMSG_MOVE_TARGET_EQUALS_PARENT_OF_SOURCE_DETAILS);
+
+			        	
+			        	}
 			            return targetEqualsParentSrcMsg;
 			        }
 			        else if (selectedFolderPath.equals(selectedFile.getAbsolutePath()))
 			        {
-			        	if (targetEqualsSrcMsg == null)
-			              targetEqualsSrcMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_MOVE_TARGET_EQUALS_SOURCE); // todo: different msg
+			        	if (targetEqualsSrcMsg == null){
+			        		targetEqualsSrcMsg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, 
+			        				FileResources.FILEMSG_MOVE_TARGET_EQUALS_SOURCE, 
+			        				FileResources.FILEMSG_MOVE_TARGET_EQUALS_SOURCE_DETAILS);
+			        	}
 			            return targetEqualsSrcMsg;
 			        }
 			        else if (selectedFolder.isDescendantOf(selectedFile))
 			        {
-			        	if (targetDescendsFromSrcMsg == null)
-			        	 targetDescendsFromSrcMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_MOVE_TARGET_DESCENDS_FROM_SOURCE);
+			        	if (targetDescendsFromSrcMsg == null){
+				        		targetDescendsFromSrcMsg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, 
+				        				FileResources.FILEMSG_MOVE_TARGET_DESCENDS_FROM_SOURCE, 
+				        				FileResources.FILEMSG_MOVE_TARGET_DESCENDS_FROM_SOURCE_DETAILS);
+			        		
+			        	}
 			        	return targetDescendsFromSrcMsg;
 			        }
 				}
@@ -267,7 +288,10 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 			// Drives and Root Filters which we can't Move files to.
 			if (firstFilterString.equals("*") || firstFilterString.equals("/*")) { //$NON-NLS-1$ //$NON-NLS-2$
 				if (invalidFilterMsg == null) {
-					invalidFilterMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_MOVE_FILTER_NOT_VALID);
+		        		invalidFilterMsg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, 
+		        				FileResources.FILEMSG_MOVE_FILTER_NOT_VALID, 
+		        				FileResources.FILEMSG_MOVE_FILTER_NOT_VALID_DETAILS);
+
 				}
 				return invalidFilterMsg;
 			}

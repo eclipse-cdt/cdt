@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  *******************************************************************************/
 
 package org.eclipse.rse.internal.connectorservice.dstore;
@@ -25,6 +25,63 @@ public class ConnectorServiceResources extends NLS
 
 	public static String DStore_ConnectorService_Label;
 	public static String DStore_ConnectorService_Description;
+	
+	public static String MSG_CONNECT_UNKNOWNHOST;
+	
+	public static String MSG_DISCONNECT_FAILED; 
+	public static String MSG_DISCONNECT_CANCELLED;
+	
+	public static String MSG_CONNECT_SSL_EXCEPTION;
+	public static String MSG_CONNECT_SSL_EXCEPTION_DETAILS;
+	public static String MSG_STARTING_SERVER_VIA_REXEC;
+	public static String MSG_STARTING_SERVER_VIA_DAEMON;
+
+	public static String MSG_CONNECTING_TO_SERVER;
+	public static String MSG_INITIALIZING_SERVER;
+	public static String MSG_PORT_OUT_RANGE;
+	
+	public static String MSG_COMM_CONNECT_FAILED;
+	public static String MSG_COMM_CONNECT_FAILED_DETAILS;
+	
+	public static String MSG_VALIDATE_PASSWORD_EMPTY;
+	public static String MSG_VALIDATE_PASSWORD_EXPIRED;
+	public static String MSG_VALIDATE_PASSWORD_INVALID;
+	
+	public static String MSG_VALIDATE_PASSWORD_EMPTY_DETAILS;
+	public static String MSG_VALIDATE_PASSWORD_EXPIRED_DETAILS;
+	public static String MSG_VALIDATE_PASSWORD_INVALID_DETAILS;
+	
+	public static String MSG_COMM_USING_SSL;
+	public static String MSG_COMM_NOT_USING_SSL;
+	
+	public static String MSG_COMM_SERVER_OLDER_WARNING;
+	public static String MSG_COMM_CLIENT_OLDER_WARNING;
+	public static String MSG_COMM_SERVER_OLDER_WARNING_DETAILS;
+	public static String MSG_COMM_CLIENT_OLDER_WARNING_DETAILS;
+	
+	public static String MSG_CONNECT_DAEMON_FAILED;
+	public static String MSG_CONNECT_DAEMON_FAILED_EXCEPTION;
+	
+	public static String MSG_COMM_AUTH_FAILED;
+	public static String MSG_COMM_PWD_INVALID;
+	public static String MSG_COMM_AUTH_FAILED_DETAILS;
+	public static String MSG_COMM_PWD_INVALID_DETAILS;
+	
+	public static String MSG_COMM_INCOMPATIBLE_PROTOCOL;
+	public static String MSG_COMM_INCOMPATIBLE_UPDATE;
+	public static String MSG_COMM_INCOMPATIBLE_PROTOCOL_DETAILS;
+	public static String MSG_COMM_INCOMPATIBLE_UPDATE_DETAILS;
+	
+	public static String MSG_CONNECT_FAILED;
+	
+	public static String MSG_OPERATION_CANCELLED;
+
+	public static String MSG_COMM_INVALID_LOGIN; 
+	public static String MSG_COMM_INVALID_LOGIN_DETAILS;
+	
+	
+	public static String MSG_COMM_REXEC_NOTSTARTED;
+	public static String MSG_COMM_REXEC_NOTSTARTED_DETAILS;
 	
 	static {
 		// load message values from bundle file

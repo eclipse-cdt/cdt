@@ -39,8 +39,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemModelChangeEvents;
@@ -70,11 +72,11 @@ import org.eclipse.rse.internal.core.filters.SystemFilterStartHere;
 import org.eclipse.rse.internal.core.model.SystemProfileManager;
 import org.eclipse.rse.internal.ui.SystemPropertyResources;
 import org.eclipse.rse.internal.ui.SystemResources;
+import org.eclipse.rse.internal.ui.subsystems.SubSystemResources;
 import org.eclipse.rse.logging.Logger;
 import org.eclipse.rse.services.IService;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
-import org.eclipse.rse.ui.ISystemMessages;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.SystemPreferencesManager;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
@@ -1736,8 +1738,9 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 			{
 				IHost conn = ss.getHost();
 				String connectionName = conn.getSystemProfileName() + "." + conn.getAliasName(); //$NON-NLS-1$
-				SystemMessage sysMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_LOADING_PROFILE_SHOULDBE_ACTIVATED);
-				sysMsg.makeSubstitution(missingPoolMgrName, connectionName);
+				
+				String msgTxt = NLS.bind(SubSystemResources.MSG_LOADING_PROFILE_SHOULDBE_ACTIVATED, missingPoolMgrName, connectionName);
+				SystemMessage sysMsg = new SimpleSystemMessage(RSECorePlugin.PLUGIN_ID, IStatus.ERROR, msgTxt);
 				SystemBasePlugin.logWarning(sysMsg.getFullMessageID() + ": " + sysMsg.getLevelOneText()); //$NON-NLS-1$
 				if (brokenReferenceWarningsIssued.get(missingPoolMgrName) == null)
 				{
@@ -2630,36 +2633,32 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 */
 	public static String getConnectingMessage(String hostName, int port)
 	{
-		SystemMessage msg = null;
+		String msgTxt = null;
 		if (port > 0)
 		{
-			msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECTWITHPORT_PROGRESS);
-			msg.makeSubstitution(hostName, Integer.toString(port));
+			msgTxt = NLS.bind(SubSystemResources.MSG_CONNECTWITHPORT_PROGRESS, hostName, Integer.toString(port));
 		}
 		else
-		{
-			msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_PROGRESS);
-			msg.makeSubstitution(hostName);
+		{	msgTxt = NLS.bind(SubSystemResources.MSG_CONNECT_PROGRESS, hostName);
 		}
-		return msg.getLevelOneText();
+		return msgTxt;
 	}
 	/**
 	 * Helper method to return the message "Disconnecting from &1..."
 	 */
 	public static String getDisconnectingMessage(String hostName, int port)
 	{
-		SystemMessage msg = null;
+		String msgTxt = null;
 		if (port > 0)
 		{
-			msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_DISCONNECTWITHPORT_PROGRESS);
-			msg.makeSubstitution(hostName, Integer.toString(port));
+			msgTxt = NLS.bind(SubSystemResources.MSG_DISCONNECTWITHPORT_PROGRESS, hostName, Integer.toString(port));
 		}
 		else
 		{
-			msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_DISCONNECT_PROGRESS);
-			msg.makeSubstitution(hostName);
+			msgTxt = NLS.bind(SubSystemResources.MSG_DISCONNECT_PROGRESS, hostName);
+
 		}
-		return msg.getLevelOneText();
+		return msgTxt;
 	}
 
 	/**

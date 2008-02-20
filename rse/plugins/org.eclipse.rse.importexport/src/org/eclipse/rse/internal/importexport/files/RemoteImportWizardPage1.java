@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [174945] split importexport icons from rse.ui
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
@@ -37,16 +38,16 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.files.ui.actions.SystemSelectRemoteFolderAction;
 import org.eclipse.rse.internal.importexport.RemoteImportExportPlugin;
 import org.eclipse.rse.internal.importexport.RemoteImportExportResources;
 import org.eclipse.rse.internal.importexport.RemoteImportExportUtil;
 import org.eclipse.rse.internal.importexport.SystemImportExportResources;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
-import org.eclipse.rse.ui.ISystemMessages;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
@@ -114,7 +115,11 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 	private static final String STORE_CREATE_DESCRIPTION_FILE_ID = "RemoteImportWizardPage1.STORE_CREATE_DESCRIPTION_FILE_ID"; //$NON-NLS-1$
 	private static final String STORE_DESCRIPTION_FILE_NAME_ID = "RemoteImportWizardPage1.STORE_DESCRIPTION_FILE_NAME_ID"; //$NON-NLS-1$
 	// messages
-	protected static final SystemMessage SOURCE_EMPTY_MESSAGE = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_SOURCE_EMPTY);
+	protected static final SystemMessage SOURCE_EMPTY_MESSAGE = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID,
+			IStatus.ERROR,
+			RemoteImportExportResources.FILEMSG_SOURCE_EMPTY,
+			RemoteImportExportResources.FILEMSG_SOURCE_EMPTY_DETAILS);
+
 
 	/**
 	 *	Creates an instance of this class
@@ -411,8 +416,10 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 	 */
 	protected boolean ensureSourceIsValid() {
 		if (((File) sourceDirectory).isDirectory()) return true;
-		SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_FOLDER_IS_FILE);
-		msg.makeSubstitution(((File) sourceDirectory).getAbsolutePath());
+		String msgTxt = RemoteImportExportResources.FILEMSG_FOLDER_IS_FILE;
+		String msgDetails = NLS.bind(RemoteImportExportResources.FILEMSG_FOLDER_IS_FILE_DETAILS, ((File)sourceDirectory).getAbsolutePath());
+		
+		SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
 		setErrorMessage(msg);
 		sourceNameField.setFocus();
 		return false;
@@ -432,8 +439,9 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 		}
 		IStatus status = op.getStatus();
 		if (!status.isOK()) {
-			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_IMPORT_FAILED);
-			msg.makeSubstitution(status);
+			String msgTxt = NLS.bind(RemoteImportExportResources.FILEMSG_IMPORT_FAILED, status);
+			SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, IStatus.ERROR, msgTxt);
+
 			SystemMessageDialog dlg = new SystemMessageDialog(getContainer().getShell(), msg);
 			dlg.openWithDetails();
 			return false;
@@ -481,7 +489,10 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 			boolean ret = executeImportOperation(new RemoteFileImportOperation(data, FileSystemStructureProvider.INSTANCE, this));
 			return ret;
 		}
-		SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_IMPORT_NONE_SELECTED);
+		String msgTxt = RemoteImportExportResources.FILEMSG_IMPORT_NONE_SELECTED;
+		String msgDetails = RemoteImportExportResources.FILEMSG_IMPORT_NONE_SELECTED_DETAILS;
+		
+		SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
 		setErrorMessage(msg);
 		return false;
 	}
@@ -956,7 +967,8 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 		};
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 			public void run(final IProgressMonitor monitor) throws InterruptedException {
-				String msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_IMPORT_FILTERING).getLevelOneText();
+				
+				String msg = RemoteImportExportResources.FILEMSG_IMPORT_FILTERING;
 				monitor.beginTask(msg, IProgressMonitor.UNKNOWN);
 				getSelectedResources(filter, monitor);
 			}
@@ -1028,7 +1040,7 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 		};
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 			public void run(final IProgressMonitor monitor) throws InterruptedException {
-				String msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_IMPORT_FILTERING).getLevelOneText();
+				String msg = RemoteImportExportResources.FILEMSG_IMPORT_FILTERING;
 				monitor.beginTask(msg, IProgressMonitor.UNKNOWN);
 				getSelectedResources(filter, monitor);
 			}
@@ -1318,8 +1330,9 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 		if (msgLine != null)
 			msgLine.setErrorMessage(exc);
 		else {
-			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_UNEXPECTED);
-			msg.makeSubstitution(exc);
+			
+			SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, IStatus.ERROR, 
+					RemoteImportExportResources.MSG_ERROR_UNEXPECTED, exc);
 			pendingErrorMessage = msg;
 		}
 	}

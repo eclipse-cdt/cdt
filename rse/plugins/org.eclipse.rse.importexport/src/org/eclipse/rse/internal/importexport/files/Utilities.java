@@ -9,20 +9,24 @@
  *     IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [180562][api] dont implement IRemoteImportExportConstants
  * Martin Oberhuber (Wind River) - [174945] split importexport icons from rse.ui
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.internal.importexport.IRemoteImportExportConstants;
+import org.eclipse.rse.internal.importexport.RemoteImportExportPlugin;
+import org.eclipse.rse.internal.importexport.RemoteImportExportResources;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
-import org.eclipse.rse.ui.ISystemMessages;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.widgets.Shell;
@@ -89,7 +93,11 @@ public class Utilities {
 		if (sc == null) {
 			// invalid connection
 			ret = false;
-			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_IMPORT_EXPORT_UNABLE_TO_USE_CONNECTION);
+			
+			String msgTxt = RemoteImportExportResources.MSG_IMPORT_EXPORT_UNABLE_TO_USE_CONNECTION;
+			String msgDetails = RemoteImportExportResources.MSG_IMPORT_EXPORT_UNABLE_TO_USE_CONNECTION_DETAILS;
+			
+			SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
 			SystemMessageDialog.show(s, msg);
 			//displayMessage(s, ISystemMessages.MSG_IMPORT_EXPORT_UNABLE_TO_USE_CONNECTION, true);
 		}
@@ -204,11 +212,11 @@ public class Utilities {
 			}
 		} else {
 			o = new Object[] { e.getLocalizedMessage() == null ? e.toString() : e.getLocalizedMessage() };
-			logExceptionError(ISystemMessages.MSG_IMPORT_EXPORT_UNEXPECTED_EXCEPTION, o, e);
+			logExceptionError(NLS.bind(RemoteImportExportResources.MSG_IMPORT_EXPORT_UNEXPECTED_EXCEPTION, o), e);
 			if (s != null) {
-				//displayMessage(s, ISystemMessages.MSG_IMPORT_EXPORT_UNEXPECTED_EXCEPTION, o, false);
-				SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_IMPORT_EXPORT_UNEXPECTED_EXCEPTION);
-				msg.makeSubstitution(o[0]);
+				String msgTxt = NLS.bind(RemoteImportExportResources.MSG_IMPORT_EXPORT_UNEXPECTED_EXCEPTION, o[0]);
+				String msgDetails = RemoteImportExportResources.MSG_IMPORT_EXPORT_UNEXPECTED_EXCEPTION_DETAILS;
+				SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
 				SystemMessageDialog.show(s, msg);
 			}
 		}
@@ -224,15 +232,9 @@ public class Utilities {
 		return s;
 	}
 
-	public static void logExceptionError(String msgId, Throwable exception) {
-		String msg = msgId + " " + RSEUIPlugin.getPluginMessage(msgId).getLevelOneText(); //$NON-NLS-1$
-		SystemBasePlugin.logError(msg, exception);
+	public static void logExceptionError(String msgTxt, Throwable exception) {
+		SystemBasePlugin.logError(msgTxt, exception);
 	}
 
-	public static void logExceptionError(String msgId, Object[] subs, Throwable exception) {
-		SystemMessage sysMsg = RSEUIPlugin.getPluginMessage(msgId);
-		sysMsg.makeSubstitution(subs);
-		String msg = msgId + " " + sysMsg.getLevelOneText(); //$NON-NLS-1$
-		SystemBasePlugin.logError(msg, exception);
-	}
+
 }

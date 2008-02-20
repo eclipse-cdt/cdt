@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  ********************************************************************************/
 
 package org.eclipse.rse.internal.processes.ui.actions;
@@ -24,11 +25,13 @@ import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.events.SystemResourceChangeEvent;
@@ -38,13 +41,13 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.processes.ui.ProcessesPlugin;
 import org.eclipse.rse.internal.processes.ui.SystemProcessesResources;
 import org.eclipse.rse.internal.processes.ui.dialogs.SystemKillDialog;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.clientserver.processes.ISystemProcessRemoteConstants;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcess;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessSubSystem;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.rse.ui.actions.SystemBaseDialogAction;
@@ -327,9 +330,9 @@ public class SystemKillProcessAction extends SystemBaseDialogAction implements I
     	  String msg = exc.getMessage();
     	  if ((msg == null) || (exc instanceof ClassCastException))
     	    msg = exc.getClass().getName();
-    	  SystemMessageDialog msgDlg = 
-    	    new SystemMessageDialog(shell, 
-    	      RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_FAILED).makeSubstitution(msg));
+    		  SystemMessage smsg = new SimpleSystemMessage(ProcessesPlugin.PLUGIN_ID, IStatus.ERROR,
+    				  NLS.bind(SystemProcessesResources.MSG_OPERATION_FAILED, msg));
+    	  SystemMessageDialog msgDlg = new SystemMessageDialog(shell, smsg);
     	  msgDlg.setException(exc);
     	  msgDlg.open();
         }
@@ -354,7 +357,8 @@ public class SystemKillProcessAction extends SystemBaseDialogAction implements I
      */
     protected void showOperationCancelledMessage(Shell shell)
     {
-    	SystemMessageDialog msgDlg = new SystemMessageDialog(shell, RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_CANCELLED));
+    	SystemMessage msg = new SimpleSystemMessage(ProcessesPlugin.PLUGIN_ID, IStatus.CANCEL, SystemProcessesResources.MSG_OPERATION_CANCELLED);
+    	SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);
     	msgDlg.open();
     }	
 

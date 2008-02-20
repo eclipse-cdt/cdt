@@ -22,6 +22,7 @@
  * Kevin Doyle		(IBM)		 - [211374] [ssh] New File on SSH has unnecessary space in its contents
  * David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
  * Martin Oberhuber (Wind River) - [216343] immediate link targets and canonical paths for Sftp
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.files;
@@ -64,7 +65,6 @@ import org.eclipse.rse.services.clientserver.FileTypeMatcher;
 import org.eclipse.rse.services.clientserver.IMatcher;
 import org.eclipse.rse.services.clientserver.NamePatternMatcher;
 import org.eclipse.rse.services.clientserver.PathUtility;
-import org.eclipse.rse.services.clientserver.messages.IndicatorException;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.AbstractFileService;
@@ -229,14 +229,12 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			//FIXME bug 204705: this does not work properly for commands like ls(), due to a Jsch bug 
 			return quoteForJsch(recoded);
 		} catch(UnsupportedEncodingException e) {
-			try {
+
 				//SystemMessage msg = new SystemMessage("RSE","F","9999",'E',e.getMessage(),"Please specify a different encoding in host properties."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				SystemMessage msg = new SystemMessage("RSE","F","9999",'E',e.getMessage(),""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				//throw new RemoteFileIOException(new SystemMessageException(msg));
 				throw new SystemMessageException(msg);
-			} catch(IndicatorException ind) {
-				throw makeSystemMessageException(e);
-			}
+
 		}
 	}
 	

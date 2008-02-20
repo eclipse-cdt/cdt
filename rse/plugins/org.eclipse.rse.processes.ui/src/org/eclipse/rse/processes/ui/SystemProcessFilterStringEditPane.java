@@ -12,24 +12,26 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  ********************************************************************************/
 
 package org.eclipse.rse.processes.ui;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.processes.ui.ProcessesPlugin;
 import org.eclipse.rse.internal.processes.ui.SystemProcessesResources;
 import org.eclipse.rse.internal.processes.ui.view.SystemProcessStatesContentProvider;
 import org.eclipse.rse.internal.ui.SystemResources;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.processes.HostProcessFilterImpl;
 import org.eclipse.rse.services.clientserver.processes.ISystemProcessRemoteConstants;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessSubSystemConfiguration;
-import org.eclipse.rse.ui.ISystemMessages;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.actions.SystemTestFilterStringAction;
@@ -495,7 +497,8 @@ public class SystemProcessFilterStringEditPane extends
 			  notUnique = true;
 			if (notUnique)
 			{
-			  errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_VALIDATE_FILEFILTERSTRING_NOTUNIQUE).makeSubstitution(currFilterString);
+				
+			  errorMessage = new SimpleSystemMessage(ProcessesPlugin.PLUGIN_ID, IStatus.ERROR, NLS.bind(SystemProcessesResources.MSG_VALIDATE_FILEFILTERSTRING_NOTUNIQUE, currFilterString));
 			}
 			controlInError = txtExeName;
 		}

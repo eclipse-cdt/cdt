@@ -39,6 +39,7 @@
  * David McKnight     (IBM)      - [143503] encoding and isBinary needs to be stored in the IFile properties
  * Xuan Chen          (IBM)        - [191370] [dstore] supertransfer zip not deleted when cancelling copy
  * Xuan Chen          (IBM)      - [210816] Archive testcases throw ResourceException if they are run in batch
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -70,6 +71,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
@@ -85,6 +87,7 @@ import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler;
 import org.eclipse.rse.services.clientserver.archiveutils.VirtualChild;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.IFileService;
@@ -100,7 +103,6 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IVirtualRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.util.ValidatorFileUniqueName;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.dialogs.SystemRenameSingleDialog;
@@ -398,10 +400,12 @@ public class UniversalFileTransferUtility
 			
 			IRemoteFile srcFileOrFolder = (IRemoteFile)set.get(i);
 			// first check for existence
-			if (!srcFileOrFolder.exists()){
-				SystemMessage errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_FILE_NOTFOUND);
-				errorMessage.makeSubstitution(srcFileOrFolder.getAbsolutePath(), srcFS.getHostAliasName());
+			if (!srcFileOrFolder.exists()){				
+				String msgTxt = NLS.bind(FileResources.MSG_ERROR_FILE_NOTFOUND, srcFileOrFolder.getAbsolutePath(), srcFS.getHostAliasName());
+				
+				SystemMessage errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt);
 				resultSet.setMessage(errorMessage);
+				
 			}
 			else
 			{
@@ -586,9 +590,11 @@ public class UniversalFileTransferUtility
 			IRemoteFile srcFileOrFolder = (IRemoteFile)set.get(i);
 			if (!srcFileOrFolder.exists())
 			{
-				SystemMessage errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_FILE_NOTFOUND);
-				errorMessage.makeSubstitution(srcFileOrFolder.getAbsolutePath(), srcFS.getHostAliasName());
+				String msgTxt = NLS.bind(FileResources.MSG_ERROR_FILE_NOTFOUND, srcFileOrFolder.getAbsolutePath(), srcFS.getHostAliasName());
+				
+				SystemMessage errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt);
 				resultSet.setMessage(errorMessage);
+				
 			}
 			else
 			{
@@ -743,8 +749,9 @@ public class UniversalFileTransferUtility
 	public static Object downloadResourceToWorkspace(File srcFileOrFolder, IProgressMonitor monitor) {
 		
 		if (!srcFileOrFolder.exists()) {
-			SystemMessage errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_FILE_NOTFOUND);
-			errorMessage.makeSubstitution(srcFileOrFolder.getAbsolutePath(), "LOCALHOST"); //$NON-NLS-1$
+			String msgTxt = NLS.bind(FileResources.MSG_ERROR_FILE_NOTFOUND, srcFileOrFolder.getAbsolutePath(), "LOCALHOST");
+
+			SystemMessage errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt);
 			return errorMessage;
 		}
 		
@@ -1023,8 +1030,9 @@ public class UniversalFileTransferUtility
 		}
 		if (!srcFileOrFolder.exists())
 		{
-			SystemMessage errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_FILE_NOTFOUND);
-			errorMessage.makeSubstitution(srcFileOrFolder.getAbsolutePath(), srcFS.getHostAliasName());
+			String msgTxt = NLS.bind(FileResources.MSG_ERROR_FILE_NOTFOUND, srcFileOrFolder.getAbsolutePath(), srcFS.getHostAliasName());
+			
+			SystemMessage errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt);
 			return errorMessage;
 		}
 
@@ -1232,9 +1240,12 @@ public class UniversalFileTransferUtility
 
 		if (!targetFolder.canWrite())
 		{
-			SystemMessage errorMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_SECURITY_ERROR);
-			errorMsg.makeSubstitution(targetFS.getHostAliasName());
+			String msgTxt = FileResources.FILEMSG_SECURITY_ERROR;
+			String msgDetails = NLS.bind(FileResources.FILEMSG_SECURITY_ERROR_DETAILS, targetFS.getHostAliasName());
+
+			SystemMessage errorMsg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
 			resultSet.setMessage(errorMsg);
+
 			return resultSet;
 		}
 
@@ -1535,8 +1546,9 @@ public class UniversalFileTransferUtility
 
 		if (!targetFolder.canWrite())
 		{
-			SystemMessage errorMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_SECURITY_ERROR);
-			errorMsg.makeSubstitution(targetFS.getHostAliasName());
+			String msgTxt = FileResources.FILEMSG_SECURITY_ERROR;
+			String msgDetails = NLS.bind(FileResources.FILEMSG_SECURITY_ERROR_DETAILS, targetFS.getHostAliasName());
+			SystemMessage errorMsg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
 			return errorMsg;
 		}
 
@@ -2043,16 +2055,9 @@ public class UniversalFileTransferUtility
 						
 						if (shouldExtract)
 						{
-							SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXTRACT_PROGRESS);
-							msg.makeSubstitution(currentSource.getName());
-							monitor.subTask(msg.getLevelOneText());
+							String msgTxt = NLS.bind(FileResources.MSG_EXTRACT_PROGRESS, currentSource.getName());
+							monitor.subTask(msgTxt);
 
-							
-							/* DKM - should not be calling this
-							while (display.readAndDispatch()) {
-								//Process everything on event queue
-							}
-							*/
 							
 							boolean canWrite = true;
 							if (currentTarget != null)

@@ -30,6 +30,7 @@
  * David Dykstal (IBM) - [197036] pulling up subsystem switch logic
  * David Dykstal (IBM) - [217556] remove service subsystem types
  * Martin Oberhuber (Wind River) - [219098][api] FileServiceSubSystem should not be final 
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.servicesubsystem;
@@ -41,7 +42,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemRemoteChangeEvents;
 import org.eclipse.rse.core.events.SystemRemoteChangeEvent;
@@ -50,10 +53,13 @@ import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.RemoteChildrenContentsType;
+import org.eclipse.rse.internal.subsystems.files.core.Activator;
+import org.eclipse.rse.internal.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.services.clientserver.PathUtility;
 import org.eclipse.rse.services.clientserver.SystemSearchString;
 import org.eclipse.rse.services.clientserver.archiveutils.AbsoluteVirtualPath;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.IFileService;
@@ -68,8 +74,6 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileContext;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileContext;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileSubSystem;
-import org.eclipse.rse.ui.ISystemMessages;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 
 /**
@@ -221,7 +225,7 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 				if (userHome == null){
 					
 					// with 207095, it's possible that we could be trying to get user home when not connected	
-					SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_UNEXPECTED);
+					SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, SystemFileResources.MSG_ERROR_UNEXPECTED);
 					throw new SystemMessageException(msg);
 				}
 				return userHome;
@@ -500,7 +504,8 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 		
 		if (parent != null && !parent.canRead())
 		{
-			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_FOLDER_UNREADABLE).makeSubstitution(parentPath);
+			String msgTxt = NLS.bind(SystemFileResources.MSG_FOLDER_UNREADABLE, parentPath);
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.INFO, msgTxt);
 			throw new SystemMessageException(msg);
 		}
 		
@@ -577,7 +582,10 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 
 		if (!destination.canWrite())
 		{
-			SystemMessage msg = RSEUIPlugin.getPluginMessage("RSEF5003").makeSubstitution(remoteFileName, getHostName()); //$NON-NLS-1$
+			String msgTxt = NLS.bind(SystemFileResources.MSG_FILE_CANNOT_BE_SAVED, remoteFileName, getHostName());
+			String msgDetails = SystemFileResources.MSG_FILE_CANNOT_BE_SAVED_DETAILS;
+			
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
 			throw new SystemMessageException(msg);
 		}
 		getFileService().upload(new File(source), remoteParentPath, remoteFileName, isBinary, encoding, hostEncoding, monitor);
@@ -658,7 +666,10 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 			
 			if (!destination.canWrite())
 			{
-				SystemMessage msg = RSEUIPlugin.getPluginMessage("RSEF5003").makeSubstitution(remoteFileNames[i], getHostName()); //$NON-NLS-1$
+				String msgTxt = NLS.bind(SystemFileResources.MSG_FILE_CANNOT_BE_SAVED, remoteFileNames[i], getHostName());
+				String msgDetails = SystemFileResources.MSG_FILE_CANNOT_BE_SAVED_DETAILS;
+				
+				SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
 				throw new SystemMessageException(msg);
 			}
 			

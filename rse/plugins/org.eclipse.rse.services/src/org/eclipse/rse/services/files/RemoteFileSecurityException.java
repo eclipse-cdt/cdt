@@ -12,12 +12,11 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  *******************************************************************************/
 
 package org.eclipse.rse.services.files;
 
-import org.eclipse.rse.services.clientserver.messages.IndicatorException;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 
 /**
@@ -61,10 +60,8 @@ public class RemoteFileSecurityException extends RemoteFileException {
 		if (myMessage == null) {
 			String l1 = "Operation failed. Security violation"; //$NON-NLS-1$
 			String l2 = "Message reported from file system: %1"; //$NON-NLS-1$
-			try {
-				myMessage = new SystemMessage("RSE", "F", "1001", SystemMessage.ERROR, l1, l2); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			} catch (IndicatorException e) {
-			}
+			myMessage = new SystemMessage("RSE", "F", "1001", SystemMessage.ERROR, l1, l2); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
 		}
 		return myMessage;
 	}

@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  ********************************************************************************/
 
 package org.eclipse.rse.services.clientserver.messages;
@@ -56,15 +56,6 @@ public class SystemMessageException extends Exception
     	return msg;
     }
     
-    /**
-     * Tests if the SystemMessage encapsulated by this exception has a long id equal to the
-     * argument.
-     * @param longMessageID the String containing the message id to test.
-     * @return true if the long message id of the message is equal to the supplied message id.
-     */
-    public boolean hasLongID(String longMessageID) {
-    	return getSystemMessage().hasLongID(longMessageID);
-    }
     
     /**
      * Set the SystemMessage being wrapped

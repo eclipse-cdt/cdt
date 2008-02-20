@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *  David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport;
 
@@ -30,6 +30,53 @@ public class RemoteImportExportResources extends NLS {
 	public static String WizardDataTransfer_overwriteNameAndPathQuestion;
 	public static String WizardDataTransfer_exceptionMessage;
 	public static String Question;
+	
+	
+	public static  String FILEMSG_COPY_ROOT;
+	public static  String FILEMSG_COPY_ROOT_DETAILS;
+	
+	public static  String FILEMSG_IMPORT_ERROR;
+	public static  String FILEMSG_IMPORT_PROBLEMS;
+	public static  String FILEMSG_IMPORT_SELF;
+	public static  String FILEMSG_IMPORT_SELF_DETAILS;
+	public static  String FILEMSG_EXPORT_ERROR;
+	public static  String FILEMSG_EXPORT_PROBLEMS;
+	public static  String FILEMSG_NOT_WRITABLE;
+	public static  String FILEMSG_NOT_WRITABLE_DETAILS;
+		
+	public static  String FILEMSG_TARGET_EXISTS;
+	public static  String FILEMSG_TARGET_EXISTS_DETAILS;
+	public static  String FILEMSG_FOLDER_IS_FILE;
+	public static  String FILEMSG_FOLDER_IS_FILE_DETAILS;
+	public static  String FILEMSG_DESTINATION_CONFLICTING;
+	public static  String FILEMSG_DESTINATION_CONFLICTING_DETAILS;
+	public static  String FILEMSG_SOURCE_IS_FILE;
+	public static  String FILEMSG_SOURCE_IS_FILE_DETAILS;
+	public static  String FILEMSG_SOURCE_EMPTY;
+	public static  String FILEMSG_SOURCE_EMPTY_DETAILS;
+	public static  String FILEMSG_EXPORT_FAILED;
+	public static  String FILEMSG_EXPORT_NONE_SELECTED;
+	public static  String FILEMSG_EXPORT_NONE_SELECTED_DETAILS;
+	public static  String FILEMSG_DESTINATION_EMPTY;
+	public static  String FILEMSG_DESTINATION_EMPTY_DETAILS;
+	public static  String FILEMSG_IMPORT_FAILED;
+	public static  String FILEMSG_IMPORT_NONE_SELECTED;
+	public static  String FILEMSG_IMPORT_NONE_SELECTED_DETAILS;
+	public static  String FILEMSG_IMPORT_FILTERING;
+	
+    public static String FILEMSG_CREATE_FOLDER_FAILED;
+    public static String FILEMSG_CREATE_FOLDER_FAILED_DETAILS;
+    
+	// file import/export messages
+	public static String MSG_IMPORT_EXPORT_UNABLE_TO_USE_CONNECTION;
+	public static String MSG_IMPORT_EXPORT_UNEXPECTED_EXCEPTION;
+	public static String MSG_IMPORT_EXPORT_UNABLE_TO_USE_CONNECTION_DETAILS;
+	public static String MSG_IMPORT_EXPORT_UNEXPECTED_EXCEPTION_DETAILS;
+
+	// Unexpected error message
+	public static String MSG_ERROR_UNEXPECTED;
+    
+	
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, RemoteImportExportResources.class);

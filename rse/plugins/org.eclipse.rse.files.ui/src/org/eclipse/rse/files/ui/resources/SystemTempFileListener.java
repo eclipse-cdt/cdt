@@ -19,6 +19,7 @@
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
  * Martin Oberhuber (Wind River) - [199573] Fix potential threading issues in SystemTempFileListener
  * David McKnight   (IBM)        - [205297] Editor upload should not be on main thread
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -48,13 +49,11 @@ import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.internal.files.ui.resources.SystemRemoteEditManager;
-import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.subsystems.files.core.SystemIFileProperties;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileSubSystem;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.swt.widgets.Shell;
@@ -164,8 +163,7 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 		
 		public IStatus runInUIThread(IProgressMonitor monitor)
 		{
-			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_SYNCHRONIZE_PROGRESS);
-			monitor.beginTask(msg.getLevelOneText(), _resources.size());
+			monitor.beginTask(FileResources.MSG_SYNCHRONIZE_PROGRESS, _resources.size());
 			for (int i = 0; i < _resources.size(); i++)
 			{
 				Object resource = _resources.get(i);
@@ -198,9 +196,8 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 					filesToSync = (IFile[])_changedResources.toArray(new IFile[_changedResources.size()]);
 					_changedResources.clear();
 				}
-				SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_SYNCHRONIZE_PROGRESS);
-				monitor.beginTask(msg.getLevelOneText(), IProgressMonitor.UNKNOWN);
-				setName(msg.getLevelOneText());
+				monitor.beginTask(FileResources.MSG_SYNCHRONIZE_PROGRESS, IProgressMonitor.UNKNOWN);
+				setName(FileResources.MSG_SYNCHRONIZE_PROGRESS);
 				for (int i = 0; i < filesToSync.length; i++)
 				{
 					synchronizeTempWithRemote(filesToSync[i], monitor);
@@ -234,9 +231,9 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 					filesToSync = (IFile[])_changedResources.toArray(new IFile[_changedResources.size()]);
 					_changedResources.clear();
 				}
-				SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_SYNCHRONIZE_PROGRESS);
-				monitor.beginTask(msg.getLevelOneText(), IProgressMonitor.UNKNOWN);
-				setName(msg.getLevelOneText());
+				
+				monitor.beginTask(FileResources.MSG_SYNCHRONIZE_PROGRESS, IProgressMonitor.UNKNOWN);
+				setName(FileResources.MSG_SYNCHRONIZE_PROGRESS);
 				for (int i = 0; i < filesToSync.length; i++)
 				{
 					synchronizeTempWithRemote(filesToSync[i], monitor);

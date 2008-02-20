@@ -22,8 +22,10 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.net.Socket;
+import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.dstore.core.client.ClientConnection;
 import org.eclipse.dstore.core.client.ConnectionStatus;
 import org.eclipse.rse.connectorservice.dstore.IUniversalDStoreConstants;
@@ -31,9 +33,8 @@ import org.eclipse.rse.core.model.SystemSignonInformation;
 import org.eclipse.rse.core.subsystems.IRemoteServerLauncher;
 import org.eclipse.rse.core.subsystems.IServerLauncher;
 import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
-import org.eclipse.rse.ui.ISystemMessages;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 
 /**
@@ -480,8 +481,10 @@ public class RexecDstoreServer implements IServerLauncher
 			}
 			
 			if (timeout == 0) {
-				SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_INVALID_LOGIN);
-				msg.makeSubstitution(signonInfo.getHostname(), ""); //$NON-NLS-1$
+				String msgTxt = MessageFormat.format(ConnectorServiceResources.MSG_COMM_INVALID_LOGIN, new Object[] {signonInfo.getHostname()});
+				String msgDetails = MessageFormat.format(ConnectorServiceResources.MSG_COMM_INVALID_LOGIN_DETAILS, new Object[] {""});
+				
+				SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
 				_errorMessage = msg;
 				return port;
 			}
@@ -561,12 +564,16 @@ public class RexecDstoreServer implements IServerLauncher
 		if (index > -1)  // remove the embedded ASCII_TEST_STRING
 			hostMessage = hostMessage.substring(0,index) + hostMessage.substring(index+1+ASCII_TEST_STRING.length());
 		if (hostMessage.indexOf(EZYRD11E) >0 ){
-			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_INVALID_LOGIN);
-			msg.makeSubstitution(signonInfo.getHostname(), hostMessage);
+			String msgTxt = MessageFormat.format(ConnectorServiceResources.MSG_COMM_INVALID_LOGIN, new Object[] {signonInfo.getHostname()});
+			String msgDetails = MessageFormat.format(ConnectorServiceResources.MSG_COMM_INVALID_LOGIN_DETAILS, new Object[] {hostMessage});
+			
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
 			_errorMessage = msg;
 		} else {
-			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_REXEC_NOTSTARTED);
-			msg.makeSubstitution(""+rexecPort, signonInfo.getHostname(), hostMessage); //$NON-NLS-1$
+			String msgTxt = MessageFormat.format(ConnectorServiceResources.MSG_COMM_REXEC_NOTSTARTED, new Object[] {""+rexecPort, signonInfo.getHostname()});
+			String msgDetails = MessageFormat.format(ConnectorServiceResources.MSG_COMM_REXEC_NOTSTARTED_DETAILS, new Object[] {hostMessage});
+			
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
 			_errorMessage = msg;
 			
 		}
@@ -835,9 +842,8 @@ public class RexecDstoreServer implements IServerLauncher
 				
 		if (monitor != null)
 		{
-			SystemMessage cmsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECTING_TO_SERVER);
-			cmsg.makeSubstitution(clientConnection.getPort());
-			monitor.subTask(cmsg.getLevelOneText());
+			String cmsg = MessageFormat.format(ConnectorServiceResources.MSG_CONNECTING_TO_SERVER, new Object[] {clientConnection.getPort()});
+			monitor.subTask(cmsg);
 		}
 				
 		// connect to launched server

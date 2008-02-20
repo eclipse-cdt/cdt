@@ -56,6 +56,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.RSEPreferencesManager;
 import org.eclipse.rse.core.events.ISystemModelChangeEvent;
@@ -81,6 +82,8 @@ import org.eclipse.rse.internal.core.model.ISystemProfileOperation;
 import org.eclipse.rse.internal.core.model.SystemModelChangeEvent;
 import org.eclipse.rse.internal.core.model.SystemProfileManager;
 import org.eclipse.rse.internal.ui.GenericMessages;
+import org.eclipse.rse.internal.ui.subsystems.SubSystemResources;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.ISystemMessages;
@@ -524,13 +527,14 @@ public abstract class SubSystem extends RSEModelObject
                 else
                     if (e instanceof InterruptedException)
                     {
-                        SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_CANCELLED);
-                        msg.makeSubstitution(getHost().getAliasName());
+                    	String msgTxt = NLS.bind(SubSystemResources.MSG_CONNECT_CANCELLED, getHost().getAliasName());
+                        SystemMessage msg = new SimpleSystemMessage(RSECorePlugin.PLUGIN_ID, IStatus.CANCEL, msgTxt);
                         throw new SystemMessageException(msg);
                     }
                     else
                     {
-                        SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED);
+                    	String msgTxt = SubSystemResources.MSG_DISCONNECT_FAILED;
+                        SystemMessage msg = new SimpleSystemMessage(RSECorePlugin.PLUGIN_ID, IStatus.ERROR, msgTxt);
                         throw new SystemMessageException(msg);
                     }
             }
@@ -1299,9 +1303,9 @@ public abstract class SubSystem extends RSEModelObject
           	  	String excMsg = e.getMessage();
           	  	if ((excMsg == null) || (excMsg.length()==0))
           	  		excMsg = "Exception " + e.getClass().getName(); //$NON-NLS-1$
-          	  	SystemMessage sysMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_FAILED);
-          	  	sysMsg.makeSubstitution(excMsg);
-          	  	return new Status(IStatus.ERROR, RSEUIPlugin.PLUGIN_ID, IStatus.OK, sysMsg.getLevelOneText(), e);
+          	  	String msgTxt = NLS.bind(SubSystemResources.MSG_OPERATION_FAILED, excMsg);
+
+          	  	return new Status(IStatus.ERROR, RSEUIPlugin.PLUGIN_ID, IStatus.OK, msgTxt, e);
     		}
     	}
     	
@@ -1344,9 +1348,8 @@ public abstract class SubSystem extends RSEModelObject
           	  	String excMsg = exc.getMessage();
           	  	if ((excMsg == null) || (excMsg.length()==0))
           	  		excMsg = "Exception " + exc.getClass().getName(); //$NON-NLS-1$
-          	  	SystemMessage sysMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_FAILED);
-          	  	sysMsg.makeSubstitution(excMsg);
-          	  	return new Status(IStatus.ERROR, RSEUIPlugin.PLUGIN_ID, IStatus.OK, sysMsg.getLevelOneText(), exc);
+          	  	String msgTxt = NLS.bind(SubSystemResources.MSG_OPERATION_FAILED, excMsg);
+           	  	return new Status(IStatus.ERROR, RSEUIPlugin.PLUGIN_ID, IStatus.OK, msgTxt, exc);
            }            
     	}
     }
@@ -1375,7 +1378,10 @@ public abstract class SubSystem extends RSEModelObject
     		
     	    msg = getResolvingMessage(_filterString);
     	    
-    	    if (!implicitConnect(false, mon, msg, totalWorkUnits)) throw new Exception(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED).makeSubstitution(getHostName()).getLevelOneText());
+    	    if (!implicitConnect(false, mon, msg, totalWorkUnits)){
+    	    	String msgTxt = NLS.bind(SubSystemResources.MSG_CONNECT_FAILED, getHostName());
+    	    	throw new Exception(msgTxt);  
+     	    }
     	    runOutputs = internalResolveFilterString(_filterString, mon);  		
     	}
     }
@@ -1406,7 +1412,10 @@ public abstract class SubSystem extends RSEModelObject
     		
     	    msg = getResolvingMessage(_filterString);
 
-    	    if (!implicitConnect(false, mon, msg, totalWorkUnits)) throw new Exception(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED).makeSubstitution(getHostName()).getLevelOneText());
+    	    if (!implicitConnect(false, mon, msg, totalWorkUnits)){
+    	    	String msgTxt = NLS.bind(SubSystemResources.MSG_CONNECT_FAILED, getHostName());
+    	    	throw new Exception(msgTxt);  
+     	    }
     	    runOutputs = internalResolveFilterStrings(_filterStrings, mon);
     	}
     }
@@ -1444,7 +1453,10 @@ public abstract class SubSystem extends RSEModelObject
     	    }
     	    msg = getResolvingMessage(_filterString);
 
-    	    if (!implicitConnect(false, mon, msg, totalWorkUnits)) throw new Exception(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED).makeSubstitution(getHostName()).getLevelOneText());
+    	    if (!implicitConnect(false, mon, msg, totalWorkUnits)){
+    	    	String msgTxt = NLS.bind(SubSystemResources.MSG_CONNECT_FAILED, getHostName());
+    	    	throw new Exception(msgTxt);  
+     	    }
     	    runOutputs = internalResolveFilterString(_parent, _filterString, mon);
     	}
     }
@@ -1476,7 +1488,10 @@ public abstract class SubSystem extends RSEModelObject
     		
     	    msg = getQueryingMessage(_key);
     	    
-    	    if (!implicitConnect(false, mon, msg, totalWorkUnits)) throw new Exception(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED).makeSubstitution(getHostName()).getLevelOneText());   		
+    	    if (!implicitConnect(false, mon, msg, totalWorkUnits)){
+    	    	String msgTxt = NLS.bind(SubSystemResources.MSG_CONNECT_FAILED, getHostName());
+    	    	throw new Exception(msgTxt);  
+    	    }
     	    runOutputStrings = new String[] {internalGetProperty(_subject, _key, mon)};
     	}
     }
@@ -1510,7 +1525,10 @@ public abstract class SubSystem extends RSEModelObject
     		int totalWorkUnits = IProgressMonitor.UNKNOWN;
     	    msg = getSettingMessage(_key);
 
-    	    if (!implicitConnect(false, mon, msg, totalWorkUnits)) throw new Exception(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED).makeSubstitution(getHostName()).getLevelOneText());    		
+    	    if (!implicitConnect(false, mon, msg, totalWorkUnits)){
+    	    	String msgTxt = NLS.bind(SubSystemResources.MSG_CONNECT_FAILED, getHostName());
+    	    	throw new Exception(msgTxt);  
+    	    }
     	    runOutputs = new Object[] {internalSetProperty(_subject, _key, _value, mon)};
     	}
     }
@@ -1541,7 +1559,10 @@ public abstract class SubSystem extends RSEModelObject
     		int totalWorkUnits = IProgressMonitor.UNKNOWN;    		
     	    msg = getQueryingMessage();
 
-    	    if (!implicitConnect(false, mon, msg, totalWorkUnits)) throw new Exception(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED).makeSubstitution(getHostName()).getLevelOneText());    		
+    	    if (!implicitConnect(false, mon, msg, totalWorkUnits)){ 
+    	    	String msgTxt = NLS.bind(SubSystemResources.MSG_CONNECT_FAILED, getHostName());
+    	    	throw new Exception(msgTxt);    		
+    	    }
     	    runOutputStrings = internalGetProperties(_subject, _keys, mon);
     	}
     }
@@ -1613,7 +1634,10 @@ public abstract class SubSystem extends RSEModelObject
             msg = SubSystemConfiguration.getConnectingMessage(getHostName(), getConnectorService().getPort());        	
             SystemBasePlugin.logInfo(msg);
 
-    	    if (!implicitConnect(true, mon, msg, totalWorkUnits)) throw new Exception(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED).makeSubstitution(getHostName()).getLevelOneText());    		
+    	    if (!implicitConnect(true, mon, msg, totalWorkUnits)){
+    	    	String msgTxt = NLS.bind(SubSystemResources.MSG_CONNECT_FAILED, getHostName());
+    	    	throw new Exception(msgTxt);    		
+    	    }
     	    internalConnect(mon);
 
     	    ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
@@ -2289,14 +2313,18 @@ public abstract class SubSystem extends RSEModelObject
 		String hostName = host.getAliasName();
 		ISystemProfile profile = getSystemProfile();
 		if (registry.getHost(profile, hostName) == null) { // connection no longer exists
-			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECTION_DELETED);
-			msg.makeSubstitution(hostName);
+			String msgTxt = NLS.bind(SubSystemResources.MSG_CONNECTION_DELETED, hostName);
+			
+			SystemMessage msg = new SimpleSystemMessage(RSECorePlugin.PLUGIN_ID, IStatus.ERROR, msgTxt);
 			throw new SystemMessageException(msg);
 		}
 		// yantzi: artemis 6.0, offline support
 		if (isOffline()) {
-			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OFFLINE_CANT_CONNECT);
-			msg.makeSubstitution(hostName);
+			String msgTxt = NLS.bind(SubSystemResources.MSG_OFFLINE_CANT_CONNECT, hostName);
+			String msgDetails = SubSystemResources.MSG_OFFLINE_CANT_CONNECT_DETAILS;
+			
+			SystemMessage msg = new SimpleSystemMessage(RSECorePlugin.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+
 			throw new SystemMessageException(msg);
 		}
 		//DY operation = OPERATION_CONNECT;

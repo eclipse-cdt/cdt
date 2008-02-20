@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -23,14 +24,14 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.services.clientserver.messages.SystemMessage;
+import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.services.search.IHostSearchResultSet;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteSearchResult;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteSearchResultsContentsType;
 import org.eclipse.rse.ui.ISystemIconConstants;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.view.AbstractSystemViewAdapter;
@@ -102,25 +103,25 @@ public class SystemViewRemoteSearchResultSetAdapter extends AbstractSystemViewAd
 			
 			IHostSearchResultSet set = (IHostSearchResultSet)element;
 			String name = set.getName();
-			SystemMessage msg = null;
+			String msg = null;
 				
 			if (set.isRunning()) {
-				msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_RUNNING);
+				msg = FileResources.MSG_OPERATION_RUNNING;
 			}
 			else if (set.isFinished()) {
-				msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_FINISHED);
+				msg = FileResources.MSG_OPERATION_FINISHED;
 			}
 			else if (set.isCancelled()) {
-				msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERTION_STOPPED);
+				msg = FileResources.MSG_OPERTION_STOPPED;
 			}
 			else if (set.isDisconnected()) {
-				msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_DISCONNECTED);
+				msg = FileResources.MSG_OPERATION_DISCONNECTED;
 			}
 			
 			if (msg != null)
 			{
-				msg.makeSubstitution(name);
-				return msg.getLevelOneText();
+				msg = NLS.bind(msg, name);
+				return msg;
 			}
 		}
 		

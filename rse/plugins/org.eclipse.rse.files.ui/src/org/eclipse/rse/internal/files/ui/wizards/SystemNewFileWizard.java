@@ -15,6 +15,7 @@
  * Rupen Mardirossian	(IBM) - [187530] Commented out line 192, in order to stop logging of SystemMessageException
  * Martin Oberhuber (Wind River) - [204669] Fix ftp path concatenation on systems using backslash separator
  * Xuan Chen        (IBM)        - [209828] Need to move the Create operation to a job.
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.wizards;
@@ -27,6 +28,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemRemoteChangeEvents;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
@@ -36,8 +38,10 @@ import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.internal.files.ui.Activator;
 import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.RemoteFileIOException;
@@ -48,7 +52,6 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConfiguration;
 import org.eclipse.rse.subsystems.files.core.subsystems.IVirtualRemoteFile;
 import org.eclipse.rse.ui.ISystemIconConstants;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
@@ -105,13 +108,21 @@ public class SystemNewFileWizard
             {	
             	ok = false;
             	SystemBasePlugin.logDebugMessage(CLASSNAME+ ":", " Creating remote file "+ absName + " failed with RemoteFileIOException " );  	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-            	msg = (RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_CREATE_FILE_FAILED_EXIST)).makeSubstitution(absName);
+            	String msgTxt = FileResources.FILEMSG_CREATE_FILE_FAILED;
+            	String msgDetails = NLS.bind(FileResources.FILEMSG_COPY_FILE_FAILED_DETAILS, absName);
+            	
+            	msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
             	SystemMessageDialog.displayErrorMessage(null, msg);
             } 
             catch (RemoteFileSecurityException e)  
             {
             	ok = false;
-            	msg = (RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_CREATE_FILE_FAILED)).makeSubstitution(absName);
+            	String msgTxt = FileResources.FILEMSG_CREATE_FILE_FAILED;
+            	String msgDetails = NLS.bind(FileResources.FILEMSG_COPY_FILE_FAILED_DETAILS, absName);
+            	
+            	msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+            	
+
             	SystemBasePlugin.logDebugMessage(CLASSNAME+ ":", " Creating remote file "+ absName + " failed with RemoteFileSecurityException ");  	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             	SystemMessageDialog.displayErrorMessage(null, msg);                                               
             } 
@@ -230,7 +241,8 @@ public class SystemNewFileWizard
 			    else
 			    */
 			    {
-			  	   msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_FOLDER_NOTFOUND);
+			       String msgTxt = NLS.bind(FileResources.FILEMSG_FOLDER_NOTFOUND, parentFolder.getAbsolutePath());			    	
+			  	   msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt);
 			       msg.makeSubstitution(parentFolder.getAbsolutePath());            	
 			       mainPage.setMessage(msg);
 			       return false;
@@ -244,9 +256,9 @@ public class SystemNewFileWizard
             	  return false;
             }
             // ok, proceed with actual creation...
-            SystemMessage createMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CREATEFILEGENERIC_PROGRESS); 
-            createMessage.makeSubstitution(name); 
-            CreateNewFileJob createNewFileJob = new CreateNewFileJob(parentFolder, name, absName,  createMessage.getLevelOneText());
+            
+            String msgTxt = NLS.bind(FileResources.MSG_CREATEFILEGENERIC_PROGRESS, name);
+            CreateNewFileJob createNewFileJob = new CreateNewFileJob(parentFolder, name, absName,  msgTxt);
             createNewFileJob.schedule();
 		}
 		return ok;
@@ -311,7 +323,10 @@ public class SystemNewFileWizard
 
 		if (!meets)
 		{
-			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_CREATE_RESOURCE_NOTVISIBLE);
+			String msgTxt = FileResources.FILEMSG_CREATE_RESOURCE_NOTVISIBLE;
+			String msgDetails = FileResources.FILEMSG_CREATE_RESOURCE_NOTVISIBLE_DETAILS;
+			
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
 			SystemMessageDialog msgDlg = new SystemMessageDialog(getShell(), msg);
 			if (msgDlg.openQuestionNoException()) // ask user if they want to proceed
 			  meets = true; // they do, so pretend it meets the criteria

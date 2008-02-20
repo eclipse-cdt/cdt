@@ -9,6 +9,7 @@
  * Martin Oberhuber (Wind River) - initial API and implementation 
  * Martin Oberhuber (Wind River) - copy dialogs from team.cvs.ui 
  * Sheldon D'souza  (Celunite) - adapted from SshConnectorResources
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  *******************************************************************************/
 package org.eclipse.rse.internal.connectorservice.telnet;
 
@@ -31,5 +32,13 @@ public class TelnetConnectorResources extends NLS {
 	public static String PropertySet_Description;	
 	
 	public static String TelnetConnectorService_ErrorDisconnecting;
+	
+	public static String MSG_EXCEPTION_OCCURRED;
+	public static String MSG_COMM_AUTH_FAILED;
+	public static String MSG_COMM_AUTH_FAILED_DETAILS;
 
+
+	public static String MSG_CONNECT_CANCELLED;
+	public static String MSG_DISCONNECT_FAILED;
+	public static String MSG_DISCONNECT_CANCELLED;
 }

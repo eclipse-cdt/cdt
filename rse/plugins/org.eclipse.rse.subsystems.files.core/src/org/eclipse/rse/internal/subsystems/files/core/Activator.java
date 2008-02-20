@@ -14,6 +14,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [180519][api] declaratively register adapter factories
  * Martin Oberhuber (wind River) - [203105] Decouple recursive plugin activation of UI adapters
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.core;
@@ -31,6 +32,8 @@ public class Activator extends AbstractUIPlugin {
 
 	//The shared instance.
 	private static Activator plugin;
+	
+	public static final String PLUGIN_ID = "org.eclipse.rse.subsystems.files.core";
 	
 	/**
 	 * The constructor.

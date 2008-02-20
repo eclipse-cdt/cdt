@@ -19,6 +19,7 @@
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Kevin Doyle		(IBM)		 - [212940] Duplicate Help Context Identifiers
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  ********************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui.view;
@@ -35,12 +36,12 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.shells.ui.ShellResources;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.view.SystemTableViewProvider;
 import org.eclipse.rse.services.clientserver.PathUtility;
-import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.shells.ui.view.CommandEntryViewerConfiguration;
 import org.eclipse.rse.shells.ui.view.SystemCommandEditor;
 import org.eclipse.rse.shells.ui.view.SystemCommandsView;
@@ -49,10 +50,8 @@ import org.eclipse.rse.subsystems.shells.core.model.ISystemOutputRemoteTypes;
 import org.eclipse.rse.subsystems.shells.core.model.RemoteOutput;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.ISystemThemeConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
-import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.actions.SystemCopyToClipboardAction;
 import org.eclipse.rse.ui.actions.SystemPasteFromClipboardAction;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
@@ -494,19 +493,18 @@ FocusListener
 			IRemoteCommandShell command = (IRemoteCommandShell) object;
 			String title = command.getType();
 
-			SystemMessage msg = null;
+			String msgTxt = null;
 			if (!command.isActive())
 			{
-				msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_FINISHED);
+				msgTxt = NLS.bind(ShellResources.MSG_OPERATION_FINISHED, title);
 			}
 			else
 			{
-				msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_RUNNING);
+				msgTxt = NLS.bind(ShellResources.MSG_OPERATION_RUNNING, title);
 			}
 
-			msg.makeSubstitution(title);
-			_title = msg.getLevelOneText();
-//			_tabFolderPage.setText(_title);
+			_title = msgTxt;
+
 		}
 	}
 

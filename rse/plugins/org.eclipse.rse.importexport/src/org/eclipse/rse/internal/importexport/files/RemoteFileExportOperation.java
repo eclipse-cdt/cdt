@@ -10,6 +10,7 @@
  * Martin Oberhuber (Wind River) - [174945] split importexport icons from rse.ui
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
  * David McKnight   (IBM)        - [191479] refreshing destination directory after export
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
@@ -33,12 +34,14 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.internal.importexport.RemoteImportExportPlugin;
+import org.eclipse.rse.internal.importexport.RemoteImportExportResources;
 import org.eclipse.rse.internal.importexport.RemoteImportExportUtil;
 import org.eclipse.rse.internal.importexport.SystemImportExportResources;
 import org.eclipse.rse.services.files.RemoteFileIOException;
@@ -224,9 +227,9 @@ class RemoteFileExportOperation implements IRunnableWithProgress {
 			try {
 				targetFile = new UniFilePlus(Utilities.getIRemoteFile(conn, fullPath.toString()));
 			} catch (NullPointerException e) {
+				String msg = NLS.bind(RemoteImportExportResources.FILEMSG_EXPORT_ERROR, fullPath, RemoteImportExportResources.MSG_IMPORT_EXPORT_UNABLE_TO_USE_CONNECTION);
+				
 				// Assume that communication has failed.  
-				String msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_EXPORT_ERROR,
-						new Object[] { fullPath, RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_IMPORT_EXPORT_UNABLE_TO_USE_CONNECTION).getLevelOneText(), e }).toString();
 				errorTable.add(new Status(IStatus.ERROR, RemoteImportExportPlugin.getDefault().getBundle().getSymbolicName(), 0, msg, e));
 				throw e;
 			}
@@ -238,7 +241,7 @@ class RemoteFileExportOperation implements IRunnableWithProgress {
 				return;
 			}
 			if (!targetFile.canWrite()) {
-				String msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_NOT_WRITABLE, targetFile.getAbsolutePath()).toString();
+				String msg = NLS.bind(RemoteImportExportResources.FILEMSG_NOT_WRITABLE, targetFile.getAbsolutePath());
 				errorTable.add(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, msg, null));
 				monitor.worked(1);
 				return;
@@ -378,7 +381,7 @@ class RemoteFileExportOperation implements IRunnableWithProgress {
 	public IStatus getStatus() {
 		IStatus[] errors = new IStatus[errorTable.size()];
 		errorTable.toArray(errors);
-		String msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_EXPORT_PROBLEMS).getLevelOneText();
+		String msg = RemoteImportExportResources.FILEMSG_EXPORT_PROBLEMS;
 		return new MultiStatus(PlatformUI.PLUGIN_ID, IStatus.OK, errors, msg, null);
 	}
 

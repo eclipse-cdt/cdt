@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [216252] SystemMessages using RSEStatus
  *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver.messages;
@@ -51,6 +51,9 @@ public class SystemMessage
 	 * Unexpected message indicator (same as warning but will log exception & stack in message log)
 	 */
 	public static final char UNEXPECTED = 'U';
+	
+
+	
 
 	// Private variables
 	private char subPrefix = '%';
@@ -58,7 +61,10 @@ public class SystemMessage
 	private String level1NS, level2NS; // level 1 & 2 with NO substitution made
 	private String level1WS, level2WS; // level 1 & 2 with substitutions made.
 	private String component, subComponent;
-	private String messageNumber;
+	
+	
+	private String messageNumber;	
+	
 	private int numSubs = -1;
 	private Object[] subs = null;
 
@@ -73,20 +79,30 @@ public class SystemMessage
 	 * @param number a string that gives the 4 digit message number
 	 * @param l1 Level 1 text that describes the error
 	 * @param l2 Level 2 text that describes any recovery actions or further details
-	 * @throws IndicatorException if a message is attempted to be constructed with an invalid indicator. 
 	 */
-	public SystemMessage(String comp, String sub, String number, char ind, String l1, String l2) throws IndicatorException {
+	public SystemMessage(String comp, String sub, String number, char ind, String l1, String l2) {
 		component = comp.toUpperCase();
 		subComponent = sub.toUpperCase();
 		messageNumber = number.toUpperCase();
-		setIndicator(ind);
-		level1NS = l1.trim();
-		level2NS = l2.trim();
-		level1WS = l1.trim();
-		level2WS = l2.trim();
-
+		try {
+			setIndicator(ind);
+		}
+		catch (IndicatorException e)
+		{
+			indicator = UNEXPECTED;
+		}
+		if (l1 != null){
+			level1NS = l1.trim();
+			level1WS = l1.trim();
+		}
+		if (l2 != null){
+			level2NS = l2.trim();
+			level2WS = l2.trim();
+		}
 	}
+	
 
+	
 	/**
 	 * Use this method to override the default indicator of the message
 	 * @param ind the new indicator. See constants for values.
@@ -122,19 +138,6 @@ public class SystemMessage
 		return messageNumber;
 	}
 
-	/**
-	 * @return the component of this message.
-	 */
-	public String getComponent() {
-		return component;
-	}
-
-	/**
-	 * @return the subcomponent of this message.
-	 */
-	public String getSubComponent() {
-		return subComponent;
-	}
 
 	/**
 	 * Use this method to retrieve the unique number of substitution variables 
@@ -190,34 +193,8 @@ public class SystemMessage
 		return component + subComponent + messageNumber + indicator;
 	}
 
-	/**
-	 * Use this method to retrieve 'long' message ID format:
-	 * 		Component + SubComponent + Number.
-	 * The long message ID is used for retrieving messages from a message file.
-	 * @return String - the long message ID 
-	 **/
-	public String getLongMessageID() {
-		return component + subComponent + messageNumber;
-	}
 
-	/**
-	 * Use this method to retrieve 'standard' message ID format:
-	 * 		Component + Number
-	 * @return String - the full message ID 
-	 **/
-	public String getMessageID() {
-		return component + messageNumber;
-	}
-
-	/**
-	 * Tests if this message has a long id equal to the one supplied in the argument.
-	 * @param messageId the long message id to compare against.
-	 * @return a boolean indicating if the message ids are equal.
-	 */
-	public boolean hasLongID(String messageId) {
-		return getLongMessageID().equals(messageId);
-	}
-
+	
 	/**
 	 * Use this method to set substitution value %1.
 	 * <br>Generally toString() is used on the substitution objects, but there is 
@@ -481,11 +458,6 @@ public class SystemMessage
 	 */
 	protected Object clone() throws CloneNotSupportedException {
 		
-		try {
-			return new SystemMessage(component, subComponent, messageNumber, indicator, level1NS, level2NS);
-		}
-		catch (IndicatorException e) {
-			return null;
-		}
+		return new SystemMessage(component, subComponent, messageNumber, indicator, level1NS, level2NS);
 	}
 }

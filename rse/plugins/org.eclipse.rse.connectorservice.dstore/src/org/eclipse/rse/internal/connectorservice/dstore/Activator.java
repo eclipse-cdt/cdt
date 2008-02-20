@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  ********************************************************************************/
 
 package org.eclipse.rse.internal.connectorservice.dstore;
@@ -31,6 +32,8 @@ public class Activator extends SystemBasePlugin {
 
 	//The shared instance.
 	private static Activator plugin;
+	
+	public final static String PLUGIN_ID = "org.eclipse.rse.connectorservice.dstore"; //$NON-NLS-1$
 	
 	/**
 	 * The constructor.

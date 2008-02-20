@@ -22,6 +22,7 @@
  * Kevin Doyle (IBM) - [186125] Changing encoding of a file is not reflected when it was opened before
  * David McKnight   (IBM)        - [209660] use parent encoding as default, rather than system encoding
  * David McKnight   (IBM)        - [209703] apply encoding and updating remote file when apply on property page
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.propertypages;
@@ -33,14 +34,18 @@ import java.util.List;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
+import org.eclipse.rse.internal.files.ui.Activator;
 import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.internal.subsystems.files.core.SystemFileResources;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.RemoteFileIOException;
 import org.eclipse.rse.services.files.RemoteFileSecurityException;
@@ -48,8 +53,6 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IVirtualRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileEncodingManager;
-import org.eclipse.rse.ui.ISystemMessages;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.propertypages.SystemBasePropertyPage;
 import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
@@ -543,10 +546,14 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
            }
     	  }
    		  catch (RemoteFileIOException exc) {
-             setMessage(RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_IO_ERROR));
+   			  String msgDetails = NLS.bind(FileResources.FILEMSG_IO_ERROR_DETAILS, exc.getMessage());
+   			  setMessage(new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, FileResources.FILEMSG_IO_ERROR, msgDetails));
+
     	  }
    		  catch (RemoteFileSecurityException exc) {
-             setMessage(RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_SECURITY_ERROR));
+   			  String msgDetails = NLS.bind(FileResources.FILEMSG_SECURITY_ERROR_DETAILS, exc.getMessage());
+   			  setMessage(new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, FileResources.FILEMSG_SECURITY_ERROR, msgDetails));
+   			  
     	  }
    		  catch (SystemMessageException e) {
    			  setMessage(e.getSystemMessage());

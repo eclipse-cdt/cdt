@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [180519][api] declaratively register adapter factories
  * David McKnight   (IBM)        - [205820] create the temp files project (if not there) when files.ui is loaded
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui;
@@ -41,6 +42,8 @@ public class Activator extends AbstractUIPlugin
 	private static Activator plugin;
 	
 	private static SystemUniversalTempFileListener _tempFileListener;
+	
+	public final static String PLUGIN_ID = "org.eclipse.rse.files.ui"; //$NON-NLS-1$
 	
 	/**
 	 * The constructor.

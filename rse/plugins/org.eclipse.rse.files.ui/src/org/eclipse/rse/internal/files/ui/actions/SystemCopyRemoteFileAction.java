@@ -18,6 +18,7 @@
  * Kevin Doyle (IBM) - [196588] Move Dialog doesn't show Archives
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  * Xuan Chen (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -26,10 +27,12 @@ import java.util.Vector;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemRemoteChangeEvents;
 import org.eclipse.rse.core.filters.ISystemFilter;
@@ -40,16 +43,18 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.files.ui.dialogs.SystemRemoteFolderDialog;
+import org.eclipse.rse.internal.files.ui.Activator;
+import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.internal.files.ui.resources.SystemRemoteEditManager;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.view.SystemView;
 import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.util.ValidatorFileUniqueName;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemActionViewerFilter;
 import org.eclipse.rse.ui.SystemBasePlugin;
@@ -229,8 +234,9 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 			ok = ss.copy(srcFileOrFolder, targetFolder, newName, null);
 			if (!ok)
 			{
-			  SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_COPY_FILE_FAILED);
-			  msg.makeSubstitution(srcFileOrFolder.getName());
+				String msgTxt = NLS.bind(FileResources.FILEMSG_COPY_FILE_FAILED, srcFileOrFolder.getName());
+				String msgDetails = FileResources.FILEMSG_COPY_FILE_FAILED_DETAILS;
+			  SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
 			  throw new SystemMessageException(msg); 
 			}
 			else

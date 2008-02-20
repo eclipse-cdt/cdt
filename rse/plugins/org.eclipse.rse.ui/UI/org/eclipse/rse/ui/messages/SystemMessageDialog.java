@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [187115] force SystemMessageDialog always into Display thread
  * Martin Oberhuber (Wind River) - [189272] exception when canceling ssh connect
  * David McKnight   (IBM)        - [216596] determine whether to show yes/no or just okay
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  *******************************************************************************/
 
 package org.eclipse.rse.ui.messages;
@@ -30,8 +31,10 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.window.Window;
+import org.eclipse.rse.internal.ui.GenericMessages;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.services.clientserver.messages.IndicatorException;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.ISystemMessages;
@@ -168,7 +171,7 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 	public SystemMessageDialog(Shell parentShell, SystemMessage message) 
 	{
 		this(parentShell,
-			message.getFullMessageID(),
+			(message instanceof SimpleSystemMessage) ?  getStatusTitle(message) : message.getFullMessageID(),
 			message.getLevelOneText(),
 			(new MultiStatus(SystemBasePlugin.getBaseDefault().getSymbolicName(), IStatus.OK, "", new Exception(""))), //$NON-NLS-1$ //$NON-NLS-2$
 			 		0xFFFFF);
@@ -187,6 +190,24 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 		this.displayMask = displayMask;
 		setShellStyle(SWT.DIALOG_TRIM | SWT.RESIZE | SWT.APPLICATION_MODAL);
 	}
+	
+	private static String getStatusTitle(SystemMessage message) {
+		String title = null;
+		// setup image
+		if (message.getIndicator()==SystemMessage.INFORMATION ||
+				message.getIndicator()==SystemMessage.COMPLETION)
+			title = GenericMessages.Information;
+		else if (message.getIndicator()==SystemMessage.INQUIRY)
+			//imageName=DLG_IMG_QUESTION;
+		    title = GenericMessages.Question;
+		else if (message.getIndicator()==SystemMessage.ERROR ||
+				 message.getIndicator()==SystemMessage.UNEXPECTED)
+			title = GenericMessages.Error;
+		else if (message.getIndicator()==SystemMessage.WARNING)
+			title = GenericMessages.Warning;
+		return title;
+	}
+	
 
     private void initImage(SystemMessage message)
     {

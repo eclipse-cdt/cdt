@@ -74,6 +74,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.events.SystemResourceChangeEvent;
@@ -94,6 +95,7 @@ import org.eclipse.rse.core.subsystems.RemoteChildrenContentsType;
 import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
 import org.eclipse.rse.files.ui.resources.UniversalFileTransferUtility;
+import org.eclipse.rse.internal.files.ui.Activator;
 import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.internal.files.ui.actions.SystemCompareFilesAction;
 import org.eclipse.rse.internal.files.ui.actions.SystemCompareWithEditionAction;
@@ -117,6 +119,7 @@ import org.eclipse.rse.services.clientserver.StringCompare;
 import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
 import org.eclipse.rse.services.clientserver.SystemSearchString;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.IFilePermissionsService;
@@ -143,7 +146,6 @@ import org.eclipse.rse.subsystems.files.core.util.ValidatorFileUniqueName;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.SystemMenuManager;
@@ -226,8 +228,8 @@ public class SystemViewRemoteFileAdapter
 	private static PropertyDescriptor[] archiveDescriptorArray = null;
 	private static PropertyDescriptor[] virtualDescriptorArray = null;
 
-	static final SystemMessage _uploadMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_UPLOADING_PROGRESS);
-	static final SystemMessage _downloadMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_DOWNLOADING_PROGRESS);
+	static final String _uploadMessage = FileResources.MSG_UPLOADING_PROGRESS;
+	static final String _downloadMessage = FileResources.MSG_DOWNLOADING_PROGRESS;
 	
 	/**
 	 * Constructor
@@ -748,13 +750,15 @@ public class SystemViewRemoteFileAdapter
 			catch (InterruptedException exc)
 			{
 				children = new SystemMessageObject[1];
-				children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_CANCELLED), ISystemMessageObject.MSGTYPE_CANCEL, element);
-				//System.out.println("Canceled.");
+				SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.CANCEL, FileResources.MSG_EXPAND_CANCELLED);
+				children[0] = new SystemMessageObject(msg, ISystemMessageObject.MSGTYPE_CANCEL, element);
 			}
 			catch (Exception exc)
 			{
 				children = new SystemMessageObject[1];
-				children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_FAILED), ISystemMessageObject.MSGTYPE_ERROR, element);
+				
+				SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, FileResources.MSG_EXPAND_FAILED);
+				children[0] = new SystemMessageObject(msg, ISystemMessageObject.MSGTYPE_ERROR, element);
 				SystemBasePlugin.logError("Exception resolving file filter strings", exc); //$NON-NLS-1$
 			} // message already issued        
 		}
@@ -1636,7 +1640,7 @@ public class SystemViewRemoteFileAdapter
 			
 			if (monitor != null)
 			{	
-			    monitor.beginTask(_downloadMessage.getLevelOneText(),  (int)totalByteSize);
+			    monitor.beginTask(_downloadMessage,  (int)totalByteSize);
 			    //monitor.done();
 			}
 			
@@ -1950,9 +1954,11 @@ public class SystemViewRemoteFileAdapter
 
 			if (!targetFolder.canWrite())
 			{
-				SystemMessage errorMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_SECURITY_ERROR);
-				errorMsg.makeSubstitution(targetFS.getHostAliasName());
+				String msgTxt = FileResources.FILEMSG_SECURITY_ERROR;
+				String msgDetails = NLS.bind(FileResources.FILEMSG_SECURITY_ERROR_DETAILS, targetFS.getHostAliasName());
+				SystemMessage errorMsg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
 				resultSet.setMessage(errorMsg);
+
 				return resultSet;
 			}
 
@@ -1975,7 +1981,7 @@ public class SystemViewRemoteFileAdapter
 					    if (monitor != null)
 						{		
 					    	int size = (int)totalByteSize;
-						    monitor.beginTask(_uploadMessage.getLevelOneText(), size);
+						    monitor.beginTask(_uploadMessage, size);
 						}  
 						// back to hierarchy
 						resultSet = UniversalFileTransferUtility.uploadResourcesFromWorkspace((SystemWorkspaceResourceSet)fromSet, targetFolder, monitor, true);
@@ -2003,13 +2009,14 @@ public class SystemViewRemoteFileAdapter
 									}
 								}
 							}
-							//getMessage("RSEG1125").makeSubstitution(movedFileName));
+
 							if (copiedFileNames != null)
 							{
-								SystemMessage thisMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_COPY_INTERRUPTED);
-								thisMessage.makeSubstitution(copiedFileNames);
+								String msgTxt = FileResources.FILEMSG_COPY_INTERRUPTED;
+								String msgDetails = NLS.bind(FileResources.FILEMSG_COPY_INTERRUPTED_DETAILS, copiedFileNames);
+
+								SystemMessage thisMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
 								resultSet.setMessage(thisMessage);
-								//SystemMessageDialog.displayErrorMessage(shell, thisMessage);
 							}
 						}
 					}
@@ -2084,8 +2091,11 @@ public class SystemViewRemoteFileAdapter
 							IRemoteFile srcFileOrFolder = (IRemoteFile)set.get(i);																									
 							if (!srcFileOrFolder.exists())
 							{
-								SystemMessage errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_FILE_NOTFOUND);
-								errorMessage.makeSubstitution(srcFileOrFolder.getAbsolutePath(), srcFileOrFolder.getSystemConnection().getAliasName());
+								String msgTxt = NLS.bind(FileResources.MSG_ERROR_FILE_NOTFOUND, 
+										srcFileOrFolder.getAbsolutePath(), 
+										srcFileOrFolder.getSystemConnection().getAliasName());
+								
+								SystemMessage errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt);
 								resultSet.setMessage(errorMessage);
 								return resultSet;
 							}
@@ -2165,8 +2175,10 @@ public class SystemViewRemoteFileAdapter
 								else
 								{
 									// need a failed message here
-									SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_COPY_FILE_FAILED);
-									msg.makeSubstitution(srcFileOrFolder.getAbsolutePath());
+									String msgTxt = NLS.bind(FileResources.FILEMSG_COPY_FILE_FAILED, srcFileOrFolder.getAbsolutePath());
+									String msgDetails = FileResources.FILEMSG_COPY_FILE_FAILED_DETAILS;
+									
+									SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
 									resultSet.setMessage(msg);
 								}
 							}
@@ -2191,8 +2203,10 @@ public class SystemViewRemoteFileAdapter
 									//getMessage("RSEG1125").makeSubstitution(movedFileName));
 									if (copiedFileNames != null)
 									{
-										SystemMessage thisMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_COPY_INTERRUPTED);
-										thisMessage.makeSubstitution(copiedFileNames);
+										String msgTxt = FileResources.FILEMSG_COPY_INTERRUPTED;
+										String msgDetails = NLS.bind(FileResources.FILEMSG_COPY_INTERRUPTED_DETAILS, copiedFileNames);
+
+										SystemMessage thisMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
 										SystemMessageDialog.displayErrorMessage(shell, thisMessage);
 									}
 									else
@@ -2264,9 +2278,13 @@ public class SystemViewRemoteFileAdapter
 											thisObject = resultSet.get(i);
 											copiedFileNames = copiedFileNames + "\n" + ((IRemoteFile)resultSet.get(i)).getName(); //$NON-NLS-1$
 										}
-										SystemMessage thisMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_COPY_INTERRUPTED); 
-										thisMessage.makeSubstitution(copiedFileNames);
+										
+										String msgTxt = FileResources.FILEMSG_COPY_INTERRUPTED;
+										String msgDetails = NLS.bind(FileResources.FILEMSG_COPY_INTERRUPTED_DETAILS, copiedFileNames);
+																				
+										SystemMessage thisMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
 										SystemMessageDialog.displayErrorMessage(shell, thisMessage);
+										
 									}
 									else
 									{
@@ -2329,8 +2347,12 @@ public class SystemViewRemoteFileAdapter
 
 			if (!targetFolder.canWrite())
 			{
-				SystemMessage errorMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_SECURITY_ERROR);
-				errorMsg.makeSubstitution(targetFS.getHostAliasName());
+				String msgTxt = FileResources.FILEMSG_SECURITY_ERROR;
+				String msgDetails = NLS.bind(FileResources.FILEMSG_SECURITY_ERROR_DETAILS, targetFS.getHostAliasName());
+				SystemMessage errorMsg = null;
+				
+				errorMsg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+			
 				return errorMsg;
 			}
 
@@ -2437,13 +2459,17 @@ public class SystemViewRemoteFileAdapter
 						IRemoteFile srcFileOrFolder = (IRemoteFile) src;
 						if (!srcFileOrFolder.exists())
 						{
-							SystemMessage errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_FILE_NOTFOUND);
-							errorMessage.makeSubstitution(srcFileOrFolder.getAbsolutePath(), srcFileOrFolder.getSystemConnection().getAliasName());
-							return errorMessage;
+							String msgTxt = NLS.bind(FileResources.MSG_ERROR_FILE_NOTFOUND, 
+									srcFileOrFolder.getAbsolutePath(), 
+									srcFileOrFolder.getSystemConnection().getAliasName());
+							
+							SystemMessage errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt);
+							return errorMessage;							
 						}
 
-						SystemMessage copyMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COPY_PROGRESS);
-						copyMessage.makeSubstitution(srcFileOrFolder.getName(), targetFolder.getAbsolutePath());
+						String msgTxt = NLS.bind(FileResources.MSG_COPY_PROGRESS, srcFileOrFolder.getName(), targetFolder.getAbsolutePath());
+						SystemMessage copyMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.INFO, msgTxt);
+					
 
 						IRemoteFileSubSystem localFS = srcFileOrFolder.getParentRemoteFileSubSystem();
 
@@ -2678,7 +2704,11 @@ public class SystemViewRemoteFileAdapter
 		catch (Exception exc)
 		{
 			ok = false;
-			SystemMessageDialog.displayErrorMessage(shell, RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_DELETE_FILE_FAILED).makeSubstitution(file.toString()));
+			String msgTxt = NLS.bind(FileResources.FILEMSG_DELETE_FILE_FAILED, file.toString());
+			String msgDetails = FileResources.FILEMSG_DELETE_FILE_FAILED_DETAILS;
+	
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+			SystemMessageDialog.displayErrorMessage(shell, msg);
 		}
 		return ok;
 	}
@@ -2717,7 +2747,12 @@ public class SystemViewRemoteFileAdapter
 			catch (Exception exc)
 			{
 				ok = false;
-				SystemMessageDialog.displayErrorMessage(shell, RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_DELETE_FILE_FAILED).makeSubstitution(file.toString()));
+				ok = false;
+				String msgTxt = NLS.bind(FileResources.FILEMSG_DELETE_FILE_FAILED, file.toString());
+				String msgDetails = FileResources.FILEMSG_DELETE_FILE_FAILED_DETAILS;
+				
+				SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+				SystemMessageDialog.displayErrorMessage(shell, msg);
 			}
 		}
 		if (ss != null)

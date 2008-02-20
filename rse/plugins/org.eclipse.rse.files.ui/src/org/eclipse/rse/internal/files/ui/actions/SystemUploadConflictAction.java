@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -34,9 +35,11 @@ import org.eclipse.rse.core.subsystems.SubSystem.SystemMessageDialogRunnable;
 import org.eclipse.rse.files.ui.dialogs.ISaveAsDialog;
 import org.eclipse.rse.files.ui.dialogs.SaveAsDialog;
 import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
+import org.eclipse.rse.internal.files.ui.Activator;
 import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.RemoteFileIOException;
@@ -44,7 +47,6 @@ import org.eclipse.rse.services.files.RemoteFileSecurityException;
 import org.eclipse.rse.subsystems.files.core.SystemIFileProperties;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
@@ -99,12 +101,13 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
                 catch (SystemMessageException e)
                 {
                     SystemBasePlugin.logError("Error in performSaveAs", e); //$NON-NLS-1$
-                    SystemMessage message = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_UNEXPECTED);
+
+                    SystemMessage message = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, FileResources.MSG_ERROR_UNEXPECTED);
                     SystemMessageDialog dialog = new SystemMessageDialog(SystemBasePlugin.getActiveWorkbenchShell(), message);
                     SystemMessageDialogRunnable runnable = ((SubSystem)fs).new SystemMessageDialogRunnable(dialog);
                     Display.getDefault().asyncExec(runnable);
                 }
-
+ 
                 try
                 {                    	
                     // copy temp file to remote system
@@ -372,8 +375,12 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
                 else
                 {
                     enableOkButton(false);
-                    _errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PATH_EMPTY);
+                    _errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR,
+                    		FileResources.MSG_VALIDATE_PATH_EMPTY, 
+                    		FileResources.MSG_VALIDATE_PATH_EMPTY_DETAILS);
+
                     setErrorMessage(_errorMessage);
+
                 }
             }
             else

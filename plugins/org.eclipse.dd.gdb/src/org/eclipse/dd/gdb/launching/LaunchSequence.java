@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.dd.gdb.launching;
 
-import java.util.concurrent.TimeUnit;
-
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
@@ -27,7 +25,6 @@ import org.eclipse.dd.dsf.concurrent.Sequence;
 import org.eclipse.dd.dsf.debug.service.StepQueueManager;
 import org.eclipse.dd.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
-import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
 import org.eclipse.dd.gdb.service.GDBRunControl;
@@ -42,33 +39,12 @@ import org.eclipse.dd.mi.service.MIRegisters;
 import org.eclipse.dd.mi.service.MIStack;
 import org.eclipse.dd.mi.service.command.commands.MIBreakInsert;
 import org.eclipse.dd.mi.service.command.commands.MIExecRun;
-import org.eclipse.dd.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.dd.mi.service.command.output.MIBreakInsertInfo;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
 import org.eclipse.debug.core.DebugException;
 
 public class LaunchSequence extends Sequence {
 
-    public class EntryPointHitEventListener {
-        boolean fAborted = false;
-        boolean fFinished = false;
-        final RequestMonitor fRequestMonitor; 
-        
-        EntryPointHitEventListener(RequestMonitor requestMonitor) {
-            fRequestMonitor = requestMonitor;
-        }
-        
-        @DsfServiceEventHandler 
-        public void eventDispatched(MIStoppedEvent e) {
-            fFinished = true;
-            if (!fAborted) {
-                fSession.removeServiceEventListener(this);
-                fRequestMonitor.done();
-            }
-        }
-    }
-
-    
     Step[] fSteps = new Step[] {
         // Create and initialize the Connection service.
         new Step() { 
@@ -182,56 +158,41 @@ public class LaunchSequence extends Sequence {
             public void execute(final RequestMonitor requestMonitor) {
                 if (!readStopAtMain(requestMonitor)) return;
                 if (!fStopInMain) {
-                    requestMonitor.done();
-                    return;
-                }                    
+                	// Just start the program.
+    				fCommandControl.queueCommand(
+    						new MIExecRun((IContainerDMContext)fCommandControl.getControlDMContext(), new String[0]), 
+    						new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
+    							@Override
+    							protected void handleOK() {
+    								requestMonitor.done();
+    							}
+    						}
+    				);
+                } else {
+                    if (!readStopSymbol(requestMonitor)) return;
                 
-                if (!readStopSymbol(requestMonitor)) return;
-                
-                // Create a listener to wait for the stopped event, and register as even handler.
-                // This handler will execute the requestMonitor.
-                final EntryPointHitEventListener entryPointHitListener = new EntryPointHitEventListener(requestMonitor);
-                fSession.addServiceEventListener(entryPointHitListener, null);
-                
-                // Create a time-out, to abort if breakpoint not hit.
-                fSession.getExecutor().schedule(
-                    new Runnable() { public void run() {
-                        // Only process the event if we have not finished yet (hit the breakpoint).
-                        if (!entryPointHitListener.fFinished) {
-                            // Mark the listener as aborted, and unregister it as event listener.
-                            entryPointHitListener.fAborted = true;
-                            fSession.removeServiceEventListener(entryPointHitListener);
-                            
-                            // Submit the error result for the step.
-                            requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.TARGET_REQUEST_FAILED, "Timed out running to entry point.", null)); //$NON-NLS-1$
-                            requestMonitor.done();
-                        }
-                    }},
-                    60, TimeUnit.SECONDS);
-                
-                // Insert a breakpoint at the requested stop symbol.
-                fCommandControl.queueCommand(
-                    new MIBreakInsert(
-                        (IBreakpointsTargetDMContext)fCommandControl.getControlDMContext(), 
-                        true, false, null, 0, fStopSymbol, 0), 
-                    new DataRequestMonitor<MIBreakInsertInfo>(getExecutor(), requestMonitor) { 
-                        @Override
-                        protected void handleOK() {
-    
-                            // After the break-insert is done, execute the -exec-run command.
-                            fCommandControl.queueCommand(
-                                new MIExecRun((IContainerDMContext)fCommandControl.getControlDMContext(), new String[0]), 
-                                new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
-                                    @Override
-                                    protected void handleOK() {
-                                        // Note : Do we not need to do something with the original requestMonitor?
-                                        // Do nothing.  Execution was resumed and the EntryPointHitEventListener
-                                        // will resume execution
-                                    }
-                                }
-                            );
-                        }
-                    });            
+                    // Insert a breakpoint at the requested stop symbol.
+                    fCommandControl.queueCommand(
+                    		new MIBreakInsert(
+                    				(IBreakpointsTargetDMContext)fCommandControl.getControlDMContext(), 
+                    				true, false, null, 0, fStopSymbol, 0), 
+                    				new DataRequestMonitor<MIBreakInsertInfo>(getExecutor(), requestMonitor) { 
+                    			@Override
+                    			protected void handleOK() {
+
+                    				// After the break-insert is done, execute the -exec-run command.
+                    				fCommandControl.queueCommand(
+                    						new MIExecRun((IContainerDMContext)fCommandControl.getControlDMContext(), new String[0]), 
+                    						new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
+                    							@Override
+                    							protected void handleOK() {
+                                    				requestMonitor.done();
+                    							}
+                    						}
+                    				);
+                    			}
+                    		});
+                }
             }
         },
     };

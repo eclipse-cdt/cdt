@@ -38,7 +38,7 @@ public class PreferencesTestSuite extends DelegatingTestSuiteHolder {
 	 * @return The test suite instance.
 	 */
 	public static Test suite() {
-		TestSuite suite = new TestSuite("RSE Preferences Test Suite"); //$NON-NLS-1$
+		TestSuite suite = new TestSuite("UI Preferences Test Suite"); //$NON-NLS-1$
 		suite.addTestSuite(PreferencesTest.class);
 		return suite;
 	}

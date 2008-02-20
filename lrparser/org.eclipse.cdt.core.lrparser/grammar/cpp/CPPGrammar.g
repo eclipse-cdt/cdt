@@ -996,6 +996,7 @@ simple_declaration_specifiers
       | no_type_declaration_specifiers simple_type_specifier
       | simple_declaration_specifiers simple_type_specifier
       | simple_declaration_specifiers no_type_declaration_specifier
+      | $empty
       
       
 -- struct, union or class!
@@ -1253,6 +1254,11 @@ declarator
       | <openscope-ast> ptr_operator_seq direct_declarator
           /. $Build  consumeDeclaratorWithPointer(true);  $EndBuild ./
 
+function_declarator
+    ::= function_direct_declarator
+      | <openscope-ast> ptr_operator_seq direct_declarator
+          /. $Build  consumeDeclaratorWithPointer(true);  $EndBuild ./
+      
 
 direct_declarator
     ::= basic_direct_declarator
@@ -1430,9 +1436,9 @@ parameter_initializer
 
 
 function_definition
-    ::= declaration_specifiers_opt function_direct_declarator <openscope-ast> ctor_initializer_list_opt function_body
+    ::= declaration_specifiers_opt function_declarator <openscope-ast> ctor_initializer_list_opt function_body
            /. $Build  consumeFunctionDefinition(false);  $EndBuild ./
-      | declaration_specifiers_opt function_direct_declarator 'try' <openscope-ast> ctor_initializer_list_opt function_body <openscope-ast> handler_seq
+      | declaration_specifiers_opt function_declarator 'try' <openscope-ast> ctor_initializer_list_opt function_body <openscope-ast> handler_seq
            /. $Build  consumeFunctionDefinition(true);  $EndBuild ./
 
     

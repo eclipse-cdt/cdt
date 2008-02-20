@@ -8,22 +8,24 @@
  * Contributors:
  *     IBM Corp. - Rational Software - initial implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.search.actions;
 
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ISourceReference;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.search.CSearchMessages;
-import org.eclipse.cdt.internal.ui.search.PDOMSearchElementQuery;
-import org.eclipse.cdt.internal.ui.search.PDOMSearchTextSelectionQuery;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.ui.IWorkbenchSite;
+
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.search.CSearchMessages;
+import org.eclipse.cdt.internal.ui.search.PDOMSearchElementQuery;
+import org.eclipse.cdt.internal.ui.search.PDOMSearchQuery;
+import org.eclipse.cdt.internal.ui.search.PDOMSearchTextSelectionQuery;
 
 
 public abstract class FindAction extends SelectionParseAction {
@@ -35,6 +37,7 @@ public abstract class FindAction extends SelectionParseAction {
 		super( site );
 	}
 	
+	@Override
 	public void run() {
 		ISearchQuery searchJob = null;
 
@@ -42,18 +45,14 @@ public abstract class FindAction extends SelectionParseAction {
 	 	if (selection instanceof IStructuredSelection) {
 	 		Object object = ((IStructuredSelection)selection).getFirstElement();
 	 		if (object instanceof ISourceReference)
-	 			searchJob = new PDOMSearchElementQuery(getScope(), (ISourceReference)object, getLimitTo());
+	 			searchJob = createQuery((ISourceReference) object);
 		} else if (selection instanceof ITextSelection) {
 			ITextSelection selNode = getSelection((ITextSelection)selection);
 			ICElement element = fEditor.getInputCElement();
 			while (element != null && !(element instanceof ITranslationUnit))
 				element = element.getParent();
 			if (element != null) {
-				searchJob = new PDOMSearchTextSelectionQuery(
-						getScope(),
-						(ITranslationUnit)element,
-						selNode,
-						getLimitTo());
+				searchJob = createQuery(element, selNode);
 			}
 		} 
 
@@ -67,6 +66,15 @@ public abstract class FindAction extends SelectionParseAction {
 		NewSearchUI.activateSearchResultView();
 		
 		NewSearchUI.runQueryInBackground(searchJob);
+	}
+
+	protected PDOMSearchQuery createQuery(ISourceReference object) {
+		return new PDOMSearchElementQuery(getScope(), object, getLimitTo());
+	}
+
+	protected PDOMSearchQuery createQuery(ICElement element, ITextSelection selNode) {
+		return new PDOMSearchTextSelectionQuery(getScope(),
+				(ITranslationUnit)element, selNode, getLimitTo());
 	}
 	
     abstract protected String getScopeDescription(); 

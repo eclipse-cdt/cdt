@@ -78,15 +78,19 @@ public class ASTProblem extends ASTNode implements IASTProblem {
         return ParserMessages.getFormattedString(PROBLEM_PATTERN, args);
     }
 
-    public String getMessageWithoutLocation() {
+    public static String getMessageWithoutLocation(int id, String arg) {
         String msg = errorMessages.get(new Integer(id));
         if (msg == null)
             msg = ""; //$NON-NLS-1$
 
         if (arg != null) {
-            return MessageFormat.format(msg, new Object[] { new String(arg) });
+            return MessageFormat.format(msg, arg);
         }
         return msg;
+    }
+    
+    public String getMessageWithoutLocation() {
+    	return getMessageWithoutLocation(id, arg == null ? null : new String(arg));
     }
 
     public boolean checkCategory(int bitmask) {

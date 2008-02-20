@@ -1,16 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2006 QNX Software Systems and others.
+ * Copyright (c) 2006, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * Ed Swartz (Nokia)
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
+ *    Ed Swartz (Nokia)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.search;
 
 import java.util.ArrayList;
@@ -57,10 +56,12 @@ public class PDOMSearchResult extends AbstractTextSearchResult implements IEdito
 		this.query = query;
 	}
 
+	@Override
 	public IEditorMatchAdapter getEditorMatchAdapter() {
 		return this;
 	}
 
+	@Override
 	public IFileMatchAdapter getFileMatchAdapter() {
 		return this;
 	}
@@ -105,7 +106,7 @@ public class PDOMSearchResult extends AbstractTextSearchResult implements IEdito
 	
 	private Match[] computeContainedMatches(AbstractTextSearchResult result, String filename) throws CoreException {
 		IPath pfilename= new Path(filename);
-		List list = new ArrayList(); 
+		List<Match> list = new ArrayList<Match>(); 
 		Object[] elements = result.getElements();
 		for (int i = 0; i < elements.length; ++i) {
 			if (pfilename.equals(IndexLocationFactory.getAbsolutePath(((PDOMSearchElement)elements[i]).getLocation()))) {
@@ -117,7 +118,7 @@ public class PDOMSearchResult extends AbstractTextSearchResult implements IEdito
 				}
 			}
 		}
-		return (Match[])list.toArray(new Match[list.size()]);
+		return list.toArray(new Match[list.size()]);
 	}
 	
 	public Match[] computeContainedMatches(AbstractTextSearchResult result, IEditorPart editor) {
@@ -157,7 +158,7 @@ public class PDOMSearchResult extends AbstractTextSearchResult implements IEdito
 	public String getLabel() {
 		// report pattern and number of matches
 		String label = query.getLabel();
-		String countLabel = Messages.format(CSearchMessages.CSearchResultCollector_matches, new Integer(getElements().length));
+		String countLabel = Messages.format(CSearchMessages.CSearchResultCollector_matches, new Integer(getMatchCount()));
 		return label + " " + countLabel; //$NON-NLS-1$
 	}
 

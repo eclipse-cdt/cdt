@@ -130,4 +130,8 @@ final public class EmptyCIndex implements IIndex {
 	public IIndexFileSet createFileSet() {
 		return new IndexFileSet();
 	}
+
+	public IIndexFile[] getAllFiles() {
+		return IIndexFile.EMPTY_FILE_ARRAY;
+	}
 }

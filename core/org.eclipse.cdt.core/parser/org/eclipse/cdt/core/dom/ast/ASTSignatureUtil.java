@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *     Rational Software - initial implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.core.dom.ast;
 
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayDesignator;
@@ -44,6 +43,7 @@ import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.parser.GCCKeywords;
 import org.eclipse.cdt.core.parser.Keywords;
+import org.eclipse.cdt.internal.core.dom.parser.ASTProblem;
 
 /**
  * This is a utility class to help convert AST elements to Strings corresponding
@@ -1079,4 +1079,10 @@ public class ASTSignatureUtil {
 		return result;
 	}
 
+	/**
+	 * Returns the same message as {@link IASTProblem#getMessageWithoutLocation()}.
+	 */
+	public static String getProblemMessage(int problemID, String detail) {
+		return ASTProblem.getMessageWithoutLocation(problemID, detail);
+	}
 }

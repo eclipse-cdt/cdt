@@ -10,7 +10,6 @@
  *    Markus Schorn (Wind River Systems)
  *    Ed Swartz (Nokia)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.search;
 
 import java.util.HashMap;
@@ -47,10 +46,10 @@ public class PDOMSearchTreeContentProvider implements ITreeContentProvider, IPDO
 
 	private TreeViewer viewer;
 	private PDOMSearchResult result;
-	private Map tree = new HashMap();
+	private Map<Object, Set<Object>> tree = new HashMap<Object, Set<Object>>();
 
 	public Object[] getChildren(Object parentElement) {
-		Set children = (Set)tree.get(parentElement);
+		Set children = tree.get(parentElement);
 		if (children == null)
 			return new Object[0];
 		return children.toArray();
@@ -60,7 +59,7 @@ public class PDOMSearchTreeContentProvider implements ITreeContentProvider, IPDO
 		Iterator p = tree.keySet().iterator();
 		while (p.hasNext()) {
 			Object parent = p.next();
-			Set children = (Set)tree.get(parent);
+			Set children = tree.get(parent);
 			if (children.contains(element))
 				return parent;
 		}
@@ -108,9 +107,9 @@ public class PDOMSearchTreeContentProvider implements ITreeContentProvider, IPDO
 	}
 	
 	private boolean insertChild(Object parent, Object child) {
-		Set children = (Set)tree.get(parent);
+		Set<Object> children = tree.get(parent);
 		if (children == null) {
-			children = new HashSet();
+			children = new HashSet<Object>();
 			tree.put(parent, children);
 		}
 		return children.add(child);
@@ -189,7 +188,7 @@ public class PDOMSearchTreeContentProvider implements ITreeContentProvider, IPDO
 	}
 
 	private boolean addProjectWarningIfApplicable(ICProject cProject) {
-		if (cProject.isOpen()) {
+		if (cProject.getProject().isOpen()) {
 			if (!CCorePlugin.getIndexManager().isProjectIndexed(cProject)) {
 				insertUnindexedProjectWarningElement(cProject);
 				return true;
@@ -237,7 +236,7 @@ public class PDOMSearchTreeContentProvider implements ITreeContentProvider, IPDO
 			// reached the search result
 			return;
 		
-		Set siblings = (Set)tree.get(parent);
+		Set siblings = tree.get(parent);
 		siblings.remove(element);
 		
 		if (siblings.isEmpty()) {
@@ -246,5 +245,4 @@ public class PDOMSearchTreeContentProvider implements ITreeContentProvider, IPDO
 			tree.remove(parent);
 		}
 	}
-	
 }

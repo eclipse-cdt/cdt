@@ -6,11 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * Ed Swartz (Nokia)
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
+ *    Ed Swartz (Nokia)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.search;
 
 import java.util.HashMap;
@@ -72,7 +71,7 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 				
 				projects = (ICProject[]) ArrayUtil.removeNulls(ICProject.class, allProjects);
 			} else {
-				Map projectMap = new HashMap();
+				Map<String, ICProject> projectMap = new HashMap<String, ICProject>();
 				
 				for (int i = 0; i < scope.length; ++i) {
 					ICProject project = scope[i].getCProject();
@@ -80,7 +79,7 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 						projectMap.put(project.getElementName(), project);
 				}
 				
-				projects = (ICProject[])projectMap.values().toArray(new ICProject[projectMap.size()]);
+				projects = projectMap.values().toArray(new ICProject[projectMap.size()]);
 			}
 		} catch (CoreException e) {
 			CUIPlugin.getDefault().log(e);
@@ -126,7 +125,9 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 			if (!filterName(name)) {
 				IASTFileLocation loc = name.getFileLocation();
 				IIndexBinding binding= index.findBinding(name);
-				result.addMatch(new PDOMSearchMatch(index, binding, name, loc.getNodeOffset(), loc.getNodeLength()));
+				result.addMatch(new PDOMSearchMatch(
+						new TypeInfoSearchElement(index, name, binding), 
+						loc.getNodeOffset(), loc.getNodeLength()));
 			}
 		}
 	}
@@ -170,5 +171,28 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 	 */
 	public ICProject[] getProjects() {
 		return projects;
+	}
+	
+	public String getScopeDescription() {
+		StringBuilder buf= new StringBuilder();
+		switch (scope.length) {
+		case 0:
+			break;
+		case 1:
+			buf.append(scope[0].getElementName());
+			break;
+		case 2:
+			buf.append(scope[0].getElementName());
+			buf.append(", "); //$NON-NLS-1$
+			buf.append(scope[1].getElementName());
+			break;
+		default:
+			buf.append(scope[0].getElementName());
+			buf.append(", "); //$NON-NLS-1$
+			buf.append(scope[1].getElementName());
+			buf.append(", ..."); //$NON-NLS-1$
+			break;
+		}
+		return buf.toString();
 	}
 }

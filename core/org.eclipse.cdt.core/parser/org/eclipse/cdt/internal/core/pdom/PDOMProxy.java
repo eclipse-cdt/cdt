@@ -223,4 +223,10 @@ public class PDOMProxy implements IPDOM {
 	public IIndexFragmentFileSet createFileSet() {
 		return new PDOMFileSet();
 	}
+
+	public synchronized IIndexFragmentFile[] getAllFiles() throws CoreException {
+		if (fDelegate != null)
+			return fDelegate.getAllFiles();
+		return IIndexFragmentFile.EMPTY_ARRAY;
+	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 QNX Software Systems and others.
+ * Copyright (c) 2006, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,21 +9,14 @@
  *    QNX - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.search;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Path;
 
-import org.eclipse.cdt.core.browser.ITypeInfo;
-import org.eclipse.cdt.core.browser.IndexTypeInfo;
-import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
-import org.eclipse.cdt.core.index.IIndexName;
 
 /**
  * Element class used to group matches.
@@ -32,37 +25,30 @@ import org.eclipse.cdt.core.index.IIndexName;
  */
 public class PDOMSearchElement implements IAdaptable {
 
-	private final ITypeInfo typeInfo;
 	private final IIndexFileLocation location;
 	
-	public PDOMSearchElement(IIndex index, IIndexName name, IIndexBinding binding) throws CoreException {
-		this.typeInfo= IndexTypeInfo.create(index, binding);
-		this.location= name.getFile().getLocation();
+	public PDOMSearchElement(IIndexFileLocation loc) {
+		this.location= loc;
 	}
 	
+	@Override
 	public int hashCode() {
-		return (typeInfo.getCElementType() *31 + typeInfo.getName().hashCode())*31 + location.hashCode();
+		return location.hashCode();
 	}
 	
+	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof PDOMSearchElement))
 			return false;
-		if (this == obj)
-			return true;
 		PDOMSearchElement other = (PDOMSearchElement)obj;
-		return typeInfo.getCElementType() == other.typeInfo.getCElementType()
-			&& typeInfo.getName().equals(other.typeInfo.getName())
-			&& location.equals(other.location);
+		return location.equals(other.location);
 	}
 
-	public ITypeInfo getTypeInfo() {
-		return typeInfo;
-	}
-	
-	IIndexFileLocation getLocation() {
+	final IIndexFileLocation getLocation() {
 		return location;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public Object getAdapter(Class adapterType) {
 		if (adapterType.isAssignableFrom(IFile.class)) {
 			String fullPath= location.getFullPath();
@@ -72,5 +58,4 @@ public class PDOMSearchElement implements IAdaptable {
 		}
 		return null;
 	}
-
 }

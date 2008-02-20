@@ -232,4 +232,9 @@ public interface IIndexFragment {
 	 * @since 5.0
 	 */
 	IIndexFragmentFileSet createFileSet();
+
+	/**
+	 * @return an array of all files contained in this index.
+	 */
+	IIndexFragmentFile[] getAllFiles() throws CoreException;
 }

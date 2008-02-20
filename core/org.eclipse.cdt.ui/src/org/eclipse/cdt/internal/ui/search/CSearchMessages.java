@@ -90,6 +90,7 @@ public final class CSearchMessages extends NLS {
 	public static String CSearchMessages_IndexRunningIncompleteWarning;
 	public static String PDOMSearchTreeContentProvider_IndexerNotEnabledWarning;
 	public static String PDOMSearchTreeContentProvider_ProjectClosedWarning;
+	public static String PDOMSearchUnresolvedIncludesQuery_title;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, CSearchMessages.class);

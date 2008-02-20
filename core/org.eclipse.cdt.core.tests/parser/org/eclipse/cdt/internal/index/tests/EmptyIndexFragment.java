@@ -118,4 +118,7 @@ public class EmptyIndexFragment implements IIndexFragment {
 	public IIndexFragmentFileSet createFileSet() {
 		return null;
 	}
+	public IIndexFragmentFile[] getAllFiles() {
+		return IIndexFragmentFile.EMPTY_ARRAY;
+	}
 }

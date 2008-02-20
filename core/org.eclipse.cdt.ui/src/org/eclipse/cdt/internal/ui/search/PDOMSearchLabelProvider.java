@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *    Markus Schorn - initial API and implementation
  *    Ed Swartz (Nokia)
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.ui.search;
 
 import java.net.URI;
@@ -22,6 +21,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
+import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.ui.browser.typeinfo.TypeInfoLabelProvider;
@@ -55,10 +55,15 @@ public class PDOMSearchLabelProvider extends LabelProvider {
 		fPage= page;
 	}
 	
+	@Override
 	public Image getImage(Object element) {
-		if (element instanceof PDOMSearchElement)
-			return fTypeInfoLabelProvider.getImage(((PDOMSearchElement)element).getTypeInfo());
+		if (element instanceof TypeInfoSearchElement)
+			return fTypeInfoLabelProvider.getImage(((TypeInfoSearchElement)element).getTypeInfo());
 
+		if (element instanceof ProblemSearchElement) {
+			return CPluginImages.get(CPluginImages.IMG_OBJS_REFACTORING_WARNING);
+		}
+		
 		if (element instanceof IIndexFileLocation
 				|| element instanceof URI) {
 			return CPluginImages.get(CPluginImages.IMG_OBJS_INCLUDE);
@@ -89,9 +94,14 @@ public class PDOMSearchLabelProvider extends LabelProvider {
 		return fCElementLabelProvider.getImage(element);
 	}
 
+	@Override
 	public String getText(Object element) {
-		if (element instanceof PDOMSearchElement) {
-			return fTypeInfoLabelProvider.getText(((PDOMSearchElement)element).getTypeInfo());
+		if (element instanceof TypeInfoSearchElement) {
+			return fTypeInfoLabelProvider.getText(((TypeInfoSearchElement)element).getTypeInfo());
+		}
+		else if (element instanceof ProblemSearchElement) {
+			ProblemSearchElement pse= (ProblemSearchElement) element;
+			return ASTSignatureUtil.getProblemMessage(pse.getProblemID(), pse.getDetail()); 
 		}
 		
 		if (element instanceof IPath) {

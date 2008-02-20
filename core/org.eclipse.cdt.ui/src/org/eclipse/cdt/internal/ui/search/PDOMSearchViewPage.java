@@ -1,15 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2006 QNX Software Systems and others.
+ * Copyright (c) 2006, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Ed Swartz (Nokia)
+ *    QNX - Initial API and implementation
+ *    Ed Swartz (Nokia)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.search;
 
 import org.eclipse.core.runtime.CoreException;
@@ -35,8 +34,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 
 /**
- * @author Doug Schaefer
- *
+ * Implementation of the search view page for index based searches.
  */
 public class PDOMSearchViewPage extends AbstractTextSearchViewPage {
 
@@ -50,11 +48,13 @@ public class PDOMSearchViewPage extends AbstractTextSearchViewPage {
 		super();
 	}
 
+	@Override
 	protected void elementsChanged(Object[] objects) {
 		if (contentProvider != null)
 			contentProvider.elementsChanged(objects);
 	}
 
+	@Override
 	protected void clear() {
 		if (contentProvider != null)
 			contentProvider.clear();
@@ -84,6 +84,7 @@ public class PDOMSearchViewPage extends AbstractTextSearchViewPage {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ViewerComparator#category(java.lang.Object)
 		 */
+		@Override
 		public int category(Object element) {
 			// place status messages first
 			if (element instanceof IStatus) { 
@@ -91,8 +92,8 @@ public class PDOMSearchViewPage extends AbstractTextSearchViewPage {
 			}
 			
 			// keep elements of the same type together
-			if (element instanceof PDOMSearchElement) {
-				PDOMSearchElement searchElement = (PDOMSearchElement)element;
+			if (element instanceof TypeInfoSearchElement) {
+				TypeInfoSearchElement searchElement = (TypeInfoSearchElement)element;
 				int type = searchElement.getTypeInfo().getCElementType();
 				// handle unknown types
 				if (type < 0) {
@@ -122,6 +123,7 @@ public class PDOMSearchViewPage extends AbstractTextSearchViewPage {
 		}
 	}
 	
+	@Override
 	protected void configureTreeViewer(TreeViewer viewer) {
 		contentProvider = new PDOMSearchTreeContentProvider();
 		viewer.setComparator(new SearchViewerComparator());
@@ -129,6 +131,7 @@ public class PDOMSearchViewPage extends AbstractTextSearchViewPage {
 		viewer.setLabelProvider(new PDOMSearchTreeLabelProvider(this));
 	}
 
+	@Override
 	protected void configureTableViewer(TableViewer viewer) {
 		contentProvider = new PDOMSearchListContentProvider();
 		viewer.setComparator(new SearchViewerComparator());
@@ -136,6 +139,7 @@ public class PDOMSearchViewPage extends AbstractTextSearchViewPage {
 		viewer.setLabelProvider(new PDOMSearchListLabelProvider(this));
 	}
 
+	@Override
 	protected void showMatch(Match match, int currentOffset, int currentLength, boolean activate) throws PartInitException {
 		if (!(match instanceof PDOMSearchMatch))
 			return;
@@ -154,6 +158,7 @@ public class PDOMSearchViewPage extends AbstractTextSearchViewPage {
 		}
 	}
 	
+	@Override
 	public StructuredViewer getViewer() {
 		return super.getViewer();
 	}

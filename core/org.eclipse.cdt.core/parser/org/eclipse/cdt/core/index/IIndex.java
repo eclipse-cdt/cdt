@@ -10,7 +10,6 @@
  *    Andrew Ferguson (Symbian)
  *    Bryan Wilkinson (QNX)
  *******************************************************************************/ 
-
 package org.eclipse.cdt.core.index;
 
 import java.util.regex.Pattern;
@@ -363,4 +362,10 @@ public interface IIndex {
 	 * Creates a file-set that can be used with this index as long as you hold a read-lock.
 	 */
 	public IIndexFileSet createFileSet();
+
+	/**
+	 * Returns an array of all files that are part of this index. If a file is parsed in two
+	 * linkages, or in multiple fragments only one of the files will be returned.
+	 */
+	public IIndexFile[] getAllFiles() throws CoreException;
 }

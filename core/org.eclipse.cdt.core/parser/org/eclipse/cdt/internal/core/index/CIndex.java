@@ -476,9 +476,11 @@ public class CIndex implements IIndex {
 	
 	private IndexFilter retargetFilter(final ILinkage linkage, final IndexFilter filter) {
 		return new IndexFilter() {
+			@Override
 			public boolean acceptBinding(IBinding binding) throws CoreException {
 				return filter.acceptBinding(binding);
 			}
+			@Override
 			public boolean acceptLinkage(ILinkage other) {
 				return linkage.getLinkageID() == other.getLinkageID();
 			}
@@ -585,5 +587,15 @@ public class CIndex implements IIndex {
 	
 	public IIndexFileSet createFileSet() {
 		return new IndexFileSet();
+	}
+
+	public IIndexFile[] getAllFiles() throws CoreException {
+		HashMap<IIndexFileLocation, IIndexFile> result= new HashMap<IIndexFileLocation, IIndexFile>();
+		for (IIndexFragment ifrag : fFragments) {
+			for (IIndexFragmentFile iff : ifrag.getAllFiles()) {
+				result.put(iff.getLocation(), iff);
+			}
+		}
+		return result.values().toArray(new IIndexFile[result.size()]);
 	}
 }

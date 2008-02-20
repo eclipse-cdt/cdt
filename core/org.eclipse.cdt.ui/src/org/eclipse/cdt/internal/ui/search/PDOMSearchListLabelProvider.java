@@ -6,11 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * Ed Swartz (Nokia)
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
+ *    Ed Swartz (Nokia)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.search;
 
 import org.eclipse.core.runtime.IPath;
@@ -31,13 +30,17 @@ public class PDOMSearchListLabelProvider extends PDOMSearchLabelProvider {
 		super(page);
 	}
 	
+	@Override
 	public String getText(Object element) {
 		final String text= super.getText(element);
 		
 		if (element instanceof PDOMSearchElement) {
 			PDOMSearchElement searchElement = (PDOMSearchElement)element;
 			final int count= getMatchCount(element);
-			final String filename = " - " + IndexLocationFactory.getPath(searchElement.getLocation()); //$NON-NLS-1$ 
+			final String filename = " - " + IndexLocationFactory.getPath(searchElement.getLocation()); //$NON-NLS-1$
+			if (count == 1) {
+				return text+filename;
+			}
 			return text + filename + " " //$NON-NLS-1$
 				+ Messages.format(CSearchMessages.CSearchResultCollector_matches, new Integer(count)); 
 		} 

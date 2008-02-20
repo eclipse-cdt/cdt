@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Intel Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.internal.ui.help;
 
 import java.util.ArrayList;
@@ -27,10 +37,10 @@ public class CHelpBook implements ICHelpBook {
 
 	private int type;
 	private String title;
-	private TreeMap entries; 
+	private TreeMap<String, CHelpEntry> entries; 
 	
 	public CHelpBook(Element e) {
-		entries = new TreeMap();
+		entries = new TreeMap<String, CHelpEntry>();
 
 		if (e.hasAttribute(ATTR_TITLE))
 			title = e.getAttribute(ATTR_TITLE).trim();
@@ -59,7 +69,7 @@ public class CHelpBook implements ICHelpBook {
 			if(NODE_ENTRY.equals(node.getNodeName())) {
 				CHelpEntry he = new CHelpEntry((Element)node);
 				if (he.isValid()) 
-					add(he.getKeyword(), he);
+					entries.put(he.getKeyword(), he);
 			}
 		}
 	}
@@ -72,16 +82,12 @@ public class CHelpBook implements ICHelpBook {
 		return title;
 	}
 	
-	private void add(String keyword, Object entry) {
-		entries.put(keyword, entry);
-	}
-	
 	public IFunctionSummary getFunctionInfo(
 			ICHelpInvocationContext context,
 			String name) {
 		
 		if (entries.containsKey(name)) {
-			CHelpEntry he = (CHelpEntry)entries.get(name);
+			CHelpEntry he = entries.get(name);
 			IFunctionSummary[] fs = he.getFunctionSummary();
 			if (fs != null && fs.length > 0)
 				return fs[0]; 
@@ -95,11 +101,11 @@ public class CHelpBook implements ICHelpBook {
 	 * @param prefix
 	 * @return matching functions
 	 */
-	public List getMatchingFunctions(
+	public List<IFunctionSummary> getMatchingFunctions(
 			ICHelpInvocationContext context,
 			String prefix) {
 		
-		Collection col = null;
+		Collection<CHelpEntry> col = null;
 		if (prefix == null || prefix.trim().length() == 0) {
 			// return whole data
 			col = entries.values();
@@ -115,22 +121,26 @@ public class CHelpBook implements ICHelpBook {
 			   } else
 				   i--;
 			}
-			SortedMap sm = (i>-1) ?
+			SortedMap<String, CHelpEntry> sm = (i>-1) ?
 				entries.subMap(pr1, new String(bs)) :
 				entries.tailMap(pr1);
 			col = sm.values();	
 		}
-		
-		if (col.size() > 0)
-			return new ArrayList(col);
-		else
+				
+		if (col.size() > 0) {
+			ArrayList<IFunctionSummary> out = new ArrayList<IFunctionSummary>(col.size());
+			for (CHelpEntry he: col) 
+				for (IFunctionSummary fs : he.getFunctionSummary())
+					out.add(fs);
+			return out;
+		} else
 			return null;
 	}
 
 	public ICHelpResourceDescriptor getHelpResources(
 			ICHelpInvocationContext context, String name) {
 		if (entries.containsKey(name)) {
-			CHelpEntry he = (CHelpEntry)entries.get(name);
+			CHelpEntry he = entries.get(name);
 			IHelpResource[] hr = he.getHelpResource();
 			if (hr != null && hr.length > 0)
 				return new HRDescriptor(this, hr); 

@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Intel Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.internal.ui.help;
 
 import java.io.BufferedReader;
@@ -39,10 +49,13 @@ public class CHelpProvider implements ICHelpProvider {
 	private static final String ATTRIB_FILE   = "file"; //$NON-NLS-1$
 	private static final String NODE_HEAD = "documentation"; //$NON-NLS-1$
 	private static final String NODE_BOOK = "helpBook"; //$NON-NLS-1$
+
+	private boolean Done = false;
 	
 	ICHelpBook[] hbs = null;
 	
 	public ICHelpBook[] getCHelpBooks() {
+		waitForDone();
 		return hbs;
 	}
 
@@ -63,18 +76,17 @@ public class CHelpProvider implements ICHelpProvider {
 	public ICHelpResourceDescriptor[] getHelpResources(
 			ICHelpInvocationContext context, ICHelpBook[] helpBooks, String name) {
 
-		ArrayList lst = new ArrayList();
-		for (int i=0; i<helpBooks.length; i++) {
-			if (helpBooks[i] instanceof CHelpBook) {
+		ArrayList<ICHelpResourceDescriptor> lst = new ArrayList<ICHelpResourceDescriptor>();
+		for (ICHelpBook h : helpBooks) {
+			if (h instanceof CHelpBook) {
 				ICHelpResourceDescriptor hrd = 
-					((CHelpBook)helpBooks[i]).getHelpResources(context, name);
+					((CHelpBook)h).getHelpResources(context, name);
 				if (hrd != null)
 					lst.add(hrd);
 			}
 		}
 		if (lst.size() > 0)
-			return (ICHelpResourceDescriptor[])lst.toArray(
-					new ICHelpResourceDescriptor[lst.size()]);
+			return lst.toArray(new ICHelpResourceDescriptor[lst.size()]);
 		else
 			return null;
 	}
@@ -82,50 +94,64 @@ public class CHelpProvider implements ICHelpProvider {
 	public IFunctionSummary[] getMatchingFunctions(
 			ICHelpInvocationContext context, ICHelpBook[] helpBooks,
 			String prefix) {
-		ArrayList lst = new ArrayList();
+		ArrayList<IFunctionSummary> lst = new ArrayList<IFunctionSummary>();
 		for (int i=0; i<helpBooks.length; i++) {
 			if (helpBooks[i] instanceof CHelpBook) {
-				List fs = ((CHelpBook)helpBooks[i]).getMatchingFunctions(context, prefix);
+				List<IFunctionSummary> fs = ((CHelpBook)helpBooks[i]).getMatchingFunctions(context, prefix);
 				if (fs != null) // if null, try with another book
 					lst.addAll(fs);
 			}
 		}
 		if (lst.size() > 0)
-			return (IFunctionSummary[])lst.toArray(new IFunctionSummary[lst.size()]);
+			return lst.toArray(new IFunctionSummary[lst.size()]);
 		else	
 			return null;
 	}
 
 	public void initialize() {
-		loadExtensions();
-		System.out.println();
+//		(new Thread() {
+//		public void run() {
+			loadExtensions();
+//		  }
+//	    }).run();
 	}
 
+	private void waitForDone() {
+		if (hbs != null)
+			return;
+		try {
+			while (! Done ) Thread.sleep(10);
+		} catch (InterruptedException e) {}
+	}
+	
 	private void loadExtensions()
 	{
-		IExtensionPoint extensionPoint = Platform.getExtensionRegistry()
-				.getExtensionPoint(EXTENSION_POINT_ID);
-		if (extensionPoint == null) return;
-		IExtension[] extensions = extensionPoint.getExtensions();
-		if (extensions == null) return;
-		
-		ArrayList chbl = new ArrayList();
-		
-		for (int i = 0; i < extensions.length; ++i)	{
-			String pluginId = extensions[i].getNamespaceIdentifier();			
-			IConfigurationElement[] elements = extensions[i].getConfigurationElements();
-			for (int k = 0; k < elements.length; k++) {
-				if (elements[k].getName().equals(ELEMENT_NAME)) {
-					loadFile(elements[k], chbl, pluginId);
+		try {
+			IExtensionPoint extensionPoint = Platform.getExtensionRegistry()
+			.getExtensionPoint(EXTENSION_POINT_ID);
+			if (extensionPoint != null) {
+				IExtension[] extensions = extensionPoint.getExtensions();
+				if (extensions != null) {
+					ArrayList<ICHelpBook> chbl = new ArrayList<ICHelpBook>();
+					for (IExtension ex: extensions)	{
+						String pluginId = ex.getNamespaceIdentifier();			
+						for (IConfigurationElement el : ex.getConfigurationElements()) {
+							if (el.getName().equals(ELEMENT_NAME)) {
+								loadFile(el, chbl, pluginId);
+							}
+						}
+					}
+					if (chbl.size() > 0) {
+						hbs = chbl.toArray(new ICHelpBook[chbl.size()]);
+					}
 				}
 			}
-		}
-		if (chbl.size() > 0) {
-			hbs = (ICHelpBook[])chbl.toArray(new ICHelpBook[chbl.size()]);
+		} finally {
+			Done = true;
 		}
 	}
 	
-	private void loadFile(IConfigurationElement el, ArrayList chbl, String pluginId) {
+	private void loadFile(IConfigurationElement el, ArrayList<ICHelpBook> chbl, String pluginId) {
 		String fname = el.getAttribute(ATTRIB_FILE);
 		if (fname == null || fname.trim().length() == 0) return;
 		URL x = FileLocator.find(Platform.getBundle(pluginId), new Path(fname), null);

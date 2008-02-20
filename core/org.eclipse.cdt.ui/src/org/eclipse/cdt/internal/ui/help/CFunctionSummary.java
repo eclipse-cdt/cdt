@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Intel Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.internal.ui.help;
 
 import java.util.ArrayList;
@@ -32,7 +42,7 @@ public class CFunctionSummary implements IFunctionSummary {
 		String args = null;
 		String type = null;
 		NodeList list = e.getChildNodes();
-		ArrayList incList = new ArrayList();
+		ArrayList<IRequiredInclude> incList = new ArrayList<IRequiredInclude>();
 		for(int j = 0; j < list.getLength(); j++){
 			Node node = list.item(j);
 			if(node.getNodeType() != Node.ELEMENT_NODE)	
@@ -58,8 +68,7 @@ public class CFunctionSummary implements IFunctionSummary {
 			}
 		}
 		if (incList.size() > 0) 
-			incs = (IRequiredInclude[])incList.toArray(
-						new IRequiredInclude[incList.size()]);
+			incs = incList.toArray(new IRequiredInclude[incList.size()]);
 		fps = new FunctionPrototypeSummary(type + SP + name + LB + args + RB);	
 	}
 	

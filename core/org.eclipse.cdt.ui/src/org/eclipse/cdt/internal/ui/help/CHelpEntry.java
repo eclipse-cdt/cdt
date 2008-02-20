@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Intel Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.internal.ui.help;
 
 import java.util.ArrayList;
@@ -21,8 +31,8 @@ public class CHelpEntry {
 	
 	public CHelpEntry(Element e) {
 		keyword = e.getAttribute(ATTR_KEYWD).trim();
-		ArrayList obs1 = new ArrayList();
-		ArrayList obs2 = new ArrayList();
+		ArrayList<CFunctionSummary> obs1 = new ArrayList<CFunctionSummary>();
+		ArrayList<CHelpTopic> obs2 = new ArrayList<CHelpTopic>();
 		NodeList list = e.getChildNodes();
 		for(int i = 0; i < list.getLength(); i++){
 			Node node = list.item(i);
@@ -34,8 +44,8 @@ public class CHelpEntry {
 				obs2.add(new CHelpTopic((Element)node, keyword));
 			}
 		}
-		fss = (CFunctionSummary[])obs1.toArray(new CFunctionSummary[obs1.size()]);
-		hts = (CHelpTopic[])obs2.toArray(new CHelpTopic[obs2.size()]);
+		fss = obs1.toArray(new CFunctionSummary[obs1.size()]);
+		hts = obs2.toArray(new CHelpTopic[obs2.size()]);
 		
 		if (fss.length == 0 && hts.length == 0)
 			isValid = false; // nothing to display

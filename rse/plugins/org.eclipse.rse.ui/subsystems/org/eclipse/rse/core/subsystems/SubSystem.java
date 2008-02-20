@@ -1785,14 +1785,14 @@ public abstract class SubSystem extends RSEModelObject
     	 else if (exc instanceof java.net.UnknownHostException)
     	 {
     	   SystemBasePlugin.logError("Connection error", exc);    	 //$NON-NLS-1$
-           msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_UNKNOWNHOST);
-           msg.makeSubstitution(hostName);
+    	   String msgTxt = NLS.bind(SubSystemResources.MSG_CONNECT_UNKNOWNHOST, hostName);
+           msg = new SimpleSystemMessage(RSECorePlugin.PLUGIN_ID, IStatus.ERROR, msgTxt, exc);
     	 }
     	 else
     	 {
      	   SystemBasePlugin.logError("Connection error", exc); //$NON-NLS-1$
-           msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED);
-           msg.makeSubstitution(hostName, exc);
+     	   String msgTxt = NLS.bind(SubSystemResources.MSG_CONNECT_FAILED, hostName);
+     	   msg = new SimpleSystemMessage(RSECorePlugin.PLUGIN_ID, IStatus.ERROR, msgTxt, exc);
          }
     	 
     	 SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);

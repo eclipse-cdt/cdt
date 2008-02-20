@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - adapted template for daytime example.
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  ********************************************************************************/
 
 package org.eclipse.rse.examples.daytime;
@@ -31,7 +32,7 @@ public class Activator extends SystemBasePlugin {
 
 	//The shared instance.
 	private static Activator plugin;
-	
+	public static String PLUGIN_ID = "org.eclipse.rse.examples.daytime"; //$NON-NLS-1$
 	/**
 	 * The constructor.
 	 */

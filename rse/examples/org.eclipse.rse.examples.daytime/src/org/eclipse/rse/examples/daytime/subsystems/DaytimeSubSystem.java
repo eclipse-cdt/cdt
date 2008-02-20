@@ -8,11 +8,14 @@
  * Contributors: 
  * Martin Oberhuber (Wind River) - initial API and implementation 
  * David Dykstal (IBM) - [217556] remove service subsystem types
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  *******************************************************************************/
 
 package org.eclipse.rse.examples.daytime.subsystems;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
@@ -23,10 +26,12 @@ import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystem;
+import org.eclipse.rse.examples.daytime.Activator;
+import org.eclipse.rse.examples.daytime.DaytimeResources;
 import org.eclipse.rse.examples.daytime.model.DaytimeResource;
 import org.eclipse.rse.examples.daytime.service.IDaytimeService;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.model.ISystemRegistryUI;
 
@@ -72,8 +77,8 @@ public class DaytimeSubSystem extends SubSystem {
 				node.setDaytime(daytime);
 				return new Object[] { node };
 			} catch(Exception e) {
-				SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED);
-				msg.makeSubstitution(getHostName(), e);
+				String msgTxt = NLS.bind(DaytimeResources.MSG_CONNECT_FAILED, getHostName());
+				SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, e);
 				SystemMessageObject msgobj = new SystemMessageObject(msg, ISystemMessageObject.MSGTYPE_ERROR,this);
 				return new Object[] { msgobj };
 			}

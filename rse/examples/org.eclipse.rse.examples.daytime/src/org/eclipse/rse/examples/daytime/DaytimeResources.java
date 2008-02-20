@@ -7,6 +7,7 @@
  * 
  * Contributors: 
  * Martin Oberhuber (Wind River) - initial API and implementation 
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  *******************************************************************************/
 
 package org.eclipse.rse.examples.daytime;
@@ -28,6 +29,8 @@ public class DaytimeResources extends NLS {
 	public static String DaytimeConnectorService_NotAvailable;
 
 	public static String DaytimeWizard_TestFieldText;
+	
+	public static String MSG_CONNECT_FAILED;
 	
 	static {
 		// load message values from bundle file

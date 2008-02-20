@@ -122,6 +122,8 @@ public class StackFramesVMNode extends AbstractDMVMNode
         try {
             getSession().getExecutor().execute(new DsfRunnable() {
                 public void run() {
+                    if (!checkService(IStack.class, null, update)) return;
+
                     getServicesTracker().getService(IStack.class).getTopFrame(
                         execDmc, 
                         new DataRequestMonitor<IFrameDMContext>(getExecutor(), null) { 

@@ -1597,7 +1597,10 @@ public abstract class SubSystem extends RSEModelObject
     		
     	    msg = getSettingMessage();
 
-    	    if (!implicitConnect(false, mon, msg, totalWorkUnits)) throw new Exception(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED).makeSubstitution(getHostName()).getLevelOneText());    		
+    	    if (!implicitConnect(false, mon, msg, totalWorkUnits)){
+    	    	String msgTxt = NLS.bind(SubSystemResources.MSG_CONNECT_FAILED, getHostName());
+    	    	throw new Exception(msgTxt);    		
+    	    }
     	    runOutputs = new Object[] {internalSetProperties(_subject, _keys, _values, mon)};
     	}
     }

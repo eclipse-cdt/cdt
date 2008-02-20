@@ -8,39 +8,41 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.dd.examples.pda.service.stack;
+package org.eclipse.dd.examples.pda.service.expressions;
 
 import org.eclipse.dd.dsf.datamodel.AbstractDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
-import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
+import org.eclipse.dd.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
 
 /**
  * 
  */
-class FrameDMContext extends AbstractDMContext implements IFrameDMContext {
+public class ExpressionDMContext extends AbstractDMContext implements IExpressionDMContext {
 
-    private final int fLevel;
+    private final String fExpression;
     
-    FrameDMContext(String sessionId, IExecutionDMContext execDmc, int level) {
-        super(sessionId, new IDMContext[] { execDmc });
-        fLevel = level;
+    ExpressionDMContext(String sessionId, IFrameDMContext frameDmc, String expressin) {
+        super(sessionId, new IDMContext[] { frameDmc });
+        fExpression = expressin;
     }
 
-    public int getLevel() { return fLevel; }
+    public String getExpression() { 
+        return fExpression;
+    }
     
     @Override
     public boolean equals(Object other) {
-        return super.baseEquals(other) && ((FrameDMContext)other).fLevel == fLevel;
+        return super.baseEquals(other) && ((ExpressionDMContext)other).fExpression.equals(fExpression);
     }
     
     @Override
     public int hashCode() {
-        return super.baseHashCode() ^ fLevel;
+        return super.baseHashCode() + fExpression.hashCode();
     }
     
     @Override
     public String toString() { 
-        return baseToString() + ".frame[" + fLevel + "]";  //$NON-NLS-1$ //$NON-NLS-2$
+        return baseToString() + ".expression(" + fExpression + ")";  //$NON-NLS-1$ //$NON-NLS-2$
     }
 }

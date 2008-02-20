@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.dd.examples.pda.service.command.commands;
 
-import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.dd.examples.pda.service.command.PDACommandControlDMContext;
+import org.eclipse.dd.examples.pda.service.command.PDACommandResult;
 
 /**
  * Executes next instruciton 
@@ -22,14 +23,14 @@ import org.eclipse.dd.dsf.datamodel.IDMContext;
  *    E: suspended step
  * </pre>
  */
-public class PDAStepCommand extends PDACommandBase<PDACommandBaseResult> {
+public class PDAStepCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDAStepCommand(IDMContext context) {
+    public PDAStepCommand(PDACommandControlDMContext context) {
         super(context, "step");
     }
     
     @Override
-    public PDACommandBaseResult createResult(String resultText) {
-        return new PDACommandBaseResult(resultText);
+    public PDACommandResult createResult(String resultText) {
+        return new PDACommandResult(resultText);
     }
 }

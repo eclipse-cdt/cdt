@@ -59,7 +59,7 @@ public class PDAWatchpoint extends PDALineBreakpoint implements IWatchpoint {
 	public PDAWatchpoint(final IResource resource, final int lineNumber, final String functionName, final String varName, final boolean access, final boolean modification) throws CoreException {
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				IMarker marker = resource.createMarker("org.eclipse.debug.examples.core.pda.markerType.watchpoint");
+				IMarker marker = resource.createMarker("org.eclipse.dd.examples.pda.markerType.watchpoint");
 				setMarker(marker);
 				setEnabled(true);
 				ensureMarker().setAttribute(IMarker.LINE_NUMBER, lineNumber);

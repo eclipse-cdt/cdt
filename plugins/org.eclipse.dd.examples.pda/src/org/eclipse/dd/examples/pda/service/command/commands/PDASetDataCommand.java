@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.dd.examples.pda.service.command.commands;
 
-import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.dd.examples.pda.service.command.PDACommandControlDMContext;
+import org.eclipse.dd.examples.pda.service.command.PDACommandResult;
 
 /**
  * Sets a data value in the data stack at the given location
@@ -20,14 +21,14 @@ import org.eclipse.dd.dsf.datamodel.IDMContext;
  *    R: ok
  * </pre>
  */
-public class PDASetDataCommand extends PDACommandBase<PDACommandBaseResult> {
+public class PDASetDataCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDASetDataCommand(IDMContext context, int index, int value) {
+    public PDASetDataCommand(PDACommandControlDMContext context, int index, int value) {
         super(context, "setdata " + index + " " + value);
     }
     
     @Override
-    public PDACommandBaseResult createResult(String resultText) {
-        return new PDACommandBaseResult(resultText);
+    public PDACommandResult createResult(String resultText) {
+        return new PDACommandResult(resultText);
     }
 }

@@ -13,16 +13,18 @@ package org.eclipse.dd.examples.pda.service.command.commands;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.service.command.ICommand;
 import org.eclipse.dd.dsf.debug.service.command.ICommandResult;
+import org.eclipse.dd.examples.pda.service.command.PDACommandControlDMContext;
+import org.eclipse.dd.examples.pda.service.command.PDACommandResult;
 
 /**
  * 
  */
-abstract public class PDACommandBase<V extends PDACommandBaseResult> implements ICommand<V> {
+abstract public class AbstractPDACommand<V extends PDACommandResult> implements ICommand<V> {
 
     final private IDMContext fContext;
     final private String fRequest;
     
-    public PDACommandBase(IDMContext context, String request) {
+    public AbstractPDACommand(PDACommandControlDMContext context, String request) {
         fContext = context;
         fRequest = request;
     }
@@ -43,8 +45,8 @@ abstract public class PDACommandBase<V extends PDACommandBaseResult> implements 
     
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof PDACommandBase) {
-            PDACommandBase<?> cmd = (PDACommandBase<?>)obj;
+        if (obj instanceof AbstractPDACommand) {
+            AbstractPDACommand<?> cmd = (AbstractPDACommand<?>)obj;
             return fContext.equals(cmd.fContext) && fRequest.equals(cmd.fRequest);
         }
         return false;

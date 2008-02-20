@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.dd.examples.pda.service.command.commands;
 
-import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.dd.examples.pda.service.command.PDACommandControlDMContext;
+import org.eclipse.dd.examples.pda.service.command.PDACommandResult;
 
 /**
  * Sets what events cause the execution to stop.
@@ -25,14 +26,14 @@ import org.eclipse.dd.dsf.datamodel.IDMContext;
  * 
  * Where event_name could be <code>unimpinstr</code> or <code>nosuchlabel</code>.  
  */
-public class PDAEvalCommand extends PDACommandBase<PDACommandBaseResult> {
+public class PDAEvalCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDAEvalCommand(IDMContext context, String operation) {
+    public PDAEvalCommand(PDACommandControlDMContext context, String operation) {
         super(context, "eval " + operation);
     }
     
     @Override
-    public PDACommandBaseResult createResult(String resultText) {
-        return new PDACommandBaseResult(resultText);
+    public PDACommandResult createResult(String resultText) {
+        return new PDACommandResult(resultText);
     }
 }

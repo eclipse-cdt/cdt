@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.dd.examples.pda.service.command.commands;
 
-import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.dd.examples.pda.service.command.PDACommandControlDMContext;
+import org.eclipse.dd.examples.pda.service.command.PDACommandResult;
 
 /**
  * Instructs the debugger to exit.
@@ -20,14 +21,14 @@ import org.eclipse.dd.dsf.datamodel.IDMContext;
  *    R: ok
  * </pre>
  */
-public class PDAExitCommand extends PDACommandBase<PDACommandBaseResult> {
+public class PDAExitCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDAExitCommand(IDMContext context) {
+    public PDAExitCommand(PDACommandControlDMContext context) {
         super(context, "exit");
     }
     
     @Override
-    public PDACommandBaseResult createResult(String resultText) {
-        return new PDACommandBaseResult(resultText);
+    public PDACommandResult createResult(String resultText) {
+        return new PDACommandResult(resultText);
     }
 }

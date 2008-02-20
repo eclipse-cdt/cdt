@@ -10,18 +10,12 @@
  *******************************************************************************/
 package org.eclipse.dd.examples.pda.launch;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.dd.dsf.concurrent.DefaultDsfExecutor;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
-import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.Sequence;
@@ -29,7 +23,6 @@ import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.examples.pda.PDAPlugin;
 import org.eclipse.dd.examples.pda.service.command.PDATerminatedEvent;
 import org.eclipse.debug.core.DebugException;
@@ -52,8 +45,9 @@ public class PDALaunch extends Launch
     @ConfinedToDsfExecutor("getSession().getExecutor()")
     private DsfServicesTracker fTracker;
     
-    private AtomicBoolean fInitialized = new AtomicBoolean(false);
-    private AtomicBoolean fShutDown = new AtomicBoolean(false);
+    private Sequence fInitializationSequence = null;
+    private boolean fInitialized = false;
+    private boolean fShutDown = false;
     
     public PDALaunch(ILaunchConfiguration launchConfiguration, String mode, ISourceLocator locator) {
         super(launchConfiguration, mode, locator);
@@ -70,42 +64,53 @@ public class PDALaunch extends Launch
     
     public DsfSession getSession() { return fSession; }
 
-    @ConfinedToDsfExecutor("getExecutor")
-    public void initializeControl()
-        throws CoreException
+    @ConfinedToDsfExecutor("getSession().getExecutor()")
+    public void initializeServices(String program, int requestPort, int eventPort, final RequestMonitor rm)
     {
+        fTracker = new DsfServicesTracker(PDAPlugin.getBundleContext(), fSession.getId());
+        fSession.addServiceEventListener(PDALaunch.this, null);
         
-        Runnable initRunnable = new DsfRunnable() { 
-            public void run() {
-                fTracker = new DsfServicesTracker(PDAPlugin.getBundleContext(), fSession.getId());
-                fSession.addServiceEventListener(PDALaunch.this, null);
-                fInitialized.set(true);
-                fireChanged();
-            }
-        };
-        
-        // Invoke the execution code and block waiting for the result.
-        try {
-            fExecutor.submit(initRunnable).get();
-        } catch (InterruptedException e) {
-            throw new CoreException(new Status(
-                IStatus.ERROR, PDAPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR, "Error initializing launch", e)); //$NON-NLS-1$
-        } catch (ExecutionException e) {
-            throw new CoreException(new Status(
-                IStatus.ERROR, PDAPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR, "Error initializing launch", e.getCause())); //$NON-NLS-1$
+        synchronized(this) {
+            fInitializationSequence = new PDAServicesInitSequence(
+                getSession(), this, program, requestPort, eventPort, 
+                new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
+                    @Override
+                    protected void handleCompleted() {
+                        boolean doShutdown = false;
+                        synchronized (this)
+                        { 
+                            fInitialized = true;
+                            fInitializationSequence = null;
+                            if (fShutDown) {
+                                doShutdown = true;
+                            }
+                        }
+                        if (doShutdown) {
+                            doShutdown(rm);
+                        } else {
+                            if (getStatus().getSeverity() == IStatus.ERROR) {
+                                rm.setStatus(getStatus());
+                            }
+                            rm.done();
+                        }
+                        fireChanged();
+                    }
+                });
         }
+        getSession().getExecutor().execute(fInitializationSequence);
     }
 
-    @DsfServiceEventHandler public void eventDispatched(PDATerminatedEvent event) {
-        shutdownSession(new RequestMonitor(ImmediateExecutor.getInstance(), null));
+    @DsfServiceEventHandler 
+    public void eventDispatched(PDATerminatedEvent event) {
+        shutdownServices(new RequestMonitor(ImmediateExecutor.getInstance(), null));
     }
 
-    public boolean isInitialized() {
-        return fInitialized.get();
+    public synchronized boolean isInitialized() {
+        return fInitialized;
     }
     
-    public boolean isShutDown() {
-        return fShutDown.get();
+    public synchronized boolean isShutDown() {
+        return fShutDown;
     }
     
     @Override
@@ -138,13 +143,27 @@ public class PDALaunch extends Launch
      * @param rm The request monitor invoked when the shutdown is complete.    
      */
     @ConfinedToDsfExecutor("getSession().getExecutor()")
-    public void shutdownSession(final RequestMonitor rm) {
-        if (fShutDown.getAndSet(true)) {
-            rm.done();
-            return;
+    public void shutdownServices(final RequestMonitor rm) {
+        boolean doShutdown = false;
+        synchronized (this) {
+            if (!fInitialized && fInitializationSequence != null) {
+                fInitializationSequence.cancel(false);
+            } else {
+                doShutdown = !fShutDown && fInitialized;
+            }
+            fShutDown = true;
         }
-            
-        Sequence shutdownSeq = new PDAServicesShutdownSequence(
+
+        if (doShutdown) {
+            doShutdown(rm);
+        } else {
+            rm.done();
+        }
+    }
+    
+    @ConfinedToDsfExecutor("getSession().getExecutor()")
+    private void doShutdown(final RequestMonitor rm) {
+        fExecutor.execute( new PDAServicesShutdownSequence(
             getDsfExecutor(), fSession.getId(),
             new RequestMonitor(fSession.getExecutor(), rm) { 
                 @Override
@@ -166,8 +185,7 @@ public class PDALaunch extends Launch
                     rm.setStatus(getStatus());
                     rm.done();
                 }
-            });
-        fExecutor.execute(shutdownSeq);
+            }) );
     }
     
     @SuppressWarnings("unchecked")

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.dd.examples.pda.service.command.commands;
 
-import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.dd.examples.pda.service.command.PDACommandControlDMContext;
 
 /**
  * Retrieves command stack information 
@@ -20,14 +20,14 @@ import org.eclipse.dd.dsf.datamodel.IDMContext;
  *    R: {file}|{line}|{function}|{var_1}|{var_2}|...#{file}|{line}|{function}|{var_1}|{var_2}|...#...
  * </pre>
  */
-public class PDAStackCommand extends PDACommandBase<PDACommandBaseResult> {
+public class PDAStackCommand extends AbstractPDACommand<PDAStackCommandResult> {
 
-    public PDAStackCommand(IDMContext context) {
+    public PDAStackCommand(PDACommandControlDMContext context) {
         super(context, "stack");
     }
     
     @Override
-    public PDACommandBaseResult createResult(String resultText) {
-        return new PDACommandBaseResult(resultText);
+    public PDAStackCommandResult createResult(String resultText) {
+        return new PDAStackCommandResult(resultText);
     }
 }

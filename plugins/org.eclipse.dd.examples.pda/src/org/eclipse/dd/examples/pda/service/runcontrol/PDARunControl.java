@@ -27,9 +27,11 @@ import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.examples.pda.PDAPlugin;
-import org.eclipse.dd.examples.pda.service.command.PDACommand;
 import org.eclipse.dd.examples.pda.service.command.PDACommandControl;
 import org.eclipse.dd.examples.pda.service.command.PDACommandResult;
+import org.eclipse.dd.examples.pda.service.command.commands.PDAResumeCommand;
+import org.eclipse.dd.examples.pda.service.command.commands.PDAStepCommand;
+import org.eclipse.dd.examples.pda.service.command.commands.PDASuspendCommand;
 import org.osgi.framework.BundleContext;
 
 
@@ -187,7 +189,7 @@ public class PDARunControl extends AbstractDsfService
             fCommandCache.setTargetAvailable(false);
             
             fCommandControl.queueCommand(
-            	new PDACommand(fCommandControl.getDMContext(), "resume"),
+            	new PDAResumeCommand(fCommandControl.getDMContext()),
             	new DataRequestMonitor<PDACommandResult>(getExecutor(), rm) { 
                     @Override
                     protected void handleOK() {
@@ -206,7 +208,7 @@ public class PDARunControl extends AbstractDsfService
 
 		if (canSuspend(context)) {
             fCommandControl.queueCommand(
-                new PDACommand(fCommandControl.getDMContext(), "suspend"),
+                new PDASuspendCommand(fCommandControl.getDMContext()),
                 new DataRequestMonitor<PDACommandResult>(getExecutor(), rm));
             
         } else {
@@ -228,7 +230,7 @@ public class PDARunControl extends AbstractDsfService
             fCommandCache.setTargetAvailable(false);
 
             fCommandControl.queueCommand(
-                new PDACommand(fCommandControl.getDMContext(), "step"),
+                new PDAStepCommand(fCommandControl.getDMContext()),
                 new DataRequestMonitor<PDACommandResult>(getExecutor(), rm));
 
     	} else {

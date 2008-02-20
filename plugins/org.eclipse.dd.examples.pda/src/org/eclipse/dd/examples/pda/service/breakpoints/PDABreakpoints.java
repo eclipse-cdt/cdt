@@ -25,9 +25,11 @@ import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.examples.pda.PDAPlugin;
 import org.eclipse.dd.examples.pda.breakpoints.PDAWatchpoint;
-import org.eclipse.dd.examples.pda.service.command.PDACommand;
 import org.eclipse.dd.examples.pda.service.command.PDACommandControl;
 import org.eclipse.dd.examples.pda.service.command.PDACommandResult;
+import org.eclipse.dd.examples.pda.service.command.commands.PDAClearBreakpointCommand;
+import org.eclipse.dd.examples.pda.service.command.commands.PDASetBreakpointCommand;
+import org.eclipse.dd.examples.pda.service.command.commands.PDAWatchCommand;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -148,7 +150,7 @@ public class PDABreakpoints extends AbstractDsfService implements IBreakpoints
         
         fBreakpoints.add(breakpointCtx);
         fCommandControl.queueCommand(
-            new PDACommand(fCommandControl.getDMContext(), "set " + line), 
+            new PDASetBreakpointCommand(fCommandControl.getDMContext(), line), 
             new DataRequestMonitor<PDACommandResult>(getExecutor(), rm) {
                 @Override
                 protected void handleOK() {
@@ -191,20 +193,18 @@ public class PDABreakpoints extends AbstractDsfService implements IBreakpoints
             return;
         }
         
-        int watchOperation = 0;
+        PDAWatchCommand.WatchOperation watchOperation = PDAWatchCommand.WatchOperation.NONE;
         if (isAccess && isModification) {
-            watchOperation = 3;
+            watchOperation = PDAWatchCommand.WatchOperation.BOTH;
         } else if (isAccess) {
-            watchOperation = 1;
+            watchOperation = PDAWatchCommand.WatchOperation.READ;
         } else if (isModification) {
-            watchOperation = 2;
+            watchOperation = PDAWatchCommand.WatchOperation.WRITE;
         }
-        
-        String watchCommand = "watch " + function + "::" + variable + " " + watchOperation;
         
         fBreakpoints.add(watchpointCtx);
         fCommandControl.queueCommand(
-            new PDACommand(fCommandControl.getDMContext(), watchCommand), 
+            new PDAWatchCommand(fCommandControl.getDMContext(), function, variable, watchOperation), 
             new DataRequestMonitor<PDACommandResult>(getExecutor(), rm) {
                 @Override
                 protected void handleOK() {
@@ -244,7 +244,7 @@ public class PDABreakpoints extends AbstractDsfService implements IBreakpoints
         fBreakpoints.remove(bpCtx);
         
         fCommandControl.queueCommand(
-            new PDACommand(fCommandControl.getDMContext(), "clear " + bpCtx.fLine), 
+            new PDAClearBreakpointCommand(fCommandControl.getDMContext(), bpCtx.fLine), 
             new DataRequestMonitor<PDACommandResult>(getExecutor(), rm));        
     }
 
@@ -252,9 +252,9 @@ public class PDABreakpoints extends AbstractDsfService implements IBreakpoints
         fBreakpoints.remove(bpCtx);
         
         // Watchpoints are cleared using the same command, but with a "no watch" operation
-        String command = "watch " + bpCtx.fFunction + "::" + bpCtx.fVariable + " 0";
         fCommandControl.queueCommand(
-            new PDACommand(fCommandControl.getDMContext(), command), 
+            new PDAWatchCommand(fCommandControl.getDMContext(), bpCtx.fFunction, bpCtx.fVariable, 
+                PDAWatchCommand.WatchOperation.NONE), 
             new DataRequestMonitor<PDACommandResult>(getExecutor(), rm));        
     }
 

@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.dd.examples.pda.service.command.commands;
 
-import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.dd.examples.pda.service.command.PDACommandControlDMContext;
+import org.eclipse.dd.examples.pda.service.command.PDACommandResult;
 
 /**
  * Retrieves variable value 
@@ -20,14 +21,14 @@ import org.eclipse.dd.dsf.datamodel.IDMContext;
  *    R: {variable_value}
  * </pre>
  */
-public class PDAVarCommand extends PDACommandBase<PDACommandBaseResult> {
+public class PDAVarCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDAVarCommand(IDMContext context, int frame, String name) {
-        super(context, "var " + frame + " " + name);
+    public PDAVarCommand(PDACommandControlDMContext context, int frameId, String name) {
+        super(context, "var " + frameId + " " + name);
     }
     
     @Override
-    public PDACommandBaseResult createResult(String resultText) {
-        return new PDACommandBaseResult(resultText);
+    public PDACommandResult createResult(String resultText) {
+        return new PDACommandResult(resultText);
     }
 }

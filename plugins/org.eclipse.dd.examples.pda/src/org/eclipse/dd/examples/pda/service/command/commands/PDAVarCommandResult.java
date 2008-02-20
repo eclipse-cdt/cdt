@@ -10,11 +10,13 @@
  *******************************************************************************/
 package org.eclipse.dd.examples.pda.service.command.commands;
 
+import org.eclipse.dd.examples.pda.service.command.PDACommandResult;
+
 
 /**
  * @see PDAVarCommand
  */
-public class PDAVarCommandResult extends PDACommandBaseResult {
+public class PDAVarCommandResult extends PDACommandResult {
     
     final public int fValue;
     

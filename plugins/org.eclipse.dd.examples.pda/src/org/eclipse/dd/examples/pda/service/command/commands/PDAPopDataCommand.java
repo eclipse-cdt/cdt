@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.dd.examples.pda.service.command.commands;
 
-import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.dd.examples.pda.service.command.PDACommandControlDMContext;
+import org.eclipse.dd.examples.pda.service.command.PDACommandResult;
 
 /**
  * Pops the top value from the data stack  
@@ -20,14 +21,14 @@ import org.eclipse.dd.dsf.datamodel.IDMContext;
  *    R: ok
  * </pre>
  */
-public class PDAPopDataCommand extends PDACommandBase<PDACommandBaseResult> {
+public class PDAPopDataCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDAPopDataCommand(IDMContext context) {
+    public PDAPopDataCommand(PDACommandControlDMContext context) {
         super(context, "popdata");
     }
     
     @Override
-    public PDACommandBaseResult createResult(String resultText) {
-        return new PDACommandBaseResult(resultText);
+    public PDACommandResult createResult(String resultText) {
+        return new PDACommandResult(resultText);
     }
 }

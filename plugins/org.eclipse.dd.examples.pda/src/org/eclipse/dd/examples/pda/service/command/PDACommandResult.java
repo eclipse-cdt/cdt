@@ -10,14 +10,36 @@
  *******************************************************************************/
 package org.eclipse.dd.examples.pda.service.command;
 
-import org.eclipse.dd.examples.pda.service.command.commands.PDACommandBaseResult;
+import org.eclipse.dd.dsf.debug.service.command.ICommand;
+import org.eclipse.dd.dsf.debug.service.command.ICommandResult;
 
 
 /**
- * @see PDACommand
+ * 
  */
-public class PDACommandResult extends PDACommandBaseResult {
-    PDACommandResult(String response) {
-        super(response);
+public class PDACommandResult implements ICommandResult {
+
+    final public String fResponseText;
+    
+    public PDACommandResult(String response) {
+        fResponseText = response;
+    }
+    
+    public <V extends ICommandResult> V getSubsetResult(ICommand<V> command) {
+        return null;
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof PDACommandResult) {
+            PDACommandResult result = (PDACommandResult)obj;
+            return fResponseText.equals(result.fResponseText);
+        }
+        return false;
+    }
+    
+    @Override
+    public int hashCode() {
+        return fResponseText.hashCode();
     }
 }

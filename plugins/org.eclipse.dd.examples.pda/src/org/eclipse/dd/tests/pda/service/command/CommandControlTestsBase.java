@@ -27,7 +27,6 @@ import org.eclipse.dd.dsf.concurrent.Query;
 import org.eclipse.dd.dsf.debug.service.command.IEventListener;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.examples.pda.service.command.PDACommandControl;
-import org.eclipse.dd.examples.pda.service.command.PDACommand;
 import org.eclipse.dd.examples.pda.service.command.PDACommandResult;
 import org.eclipse.dd.tests.pda.util.Launching;
 import org.junit.After;
@@ -106,7 +105,7 @@ public class CommandControlTestsBase {
 
     protected void sendCommand(String command, String expectedResult) throws Throwable {
 
-        final PDACommand testCommand = new PDACommand(fCommandControl.getDMContext(), command);
+        final PDATestCommand testCommand = new PDATestCommand(fCommandControl.getDMContext(), command);
         
         // Test sending the command and checking all listeners were called.
         Query<PDACommandResult> sendCommandQuery = new Query<PDACommandResult>() {

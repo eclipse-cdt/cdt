@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.dd.examples.pda.service.command.commands;
 
-import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.dd.examples.pda.service.command.PDACommandControlDMContext;
+import org.eclipse.dd.examples.pda.service.command.PDACommandResult;
 
 /**
  * Sets a watchpoint on a given variable
@@ -23,7 +24,7 @@ import org.eclipse.dd.dsf.datamodel.IDMContext;
  *    E: suspended watch {watch_operation} {function}::{variable_name}
  * </pre>
  */
-public class PDAWatchCommand extends PDACommandBase<PDACommandBaseResult> {
+public class PDAWatchCommand extends AbstractPDACommand<PDACommandResult> {
 
     public enum WatchOperation { READ, WRITE, BOTH, NONE };
     
@@ -40,12 +41,12 @@ public class PDAWatchCommand extends PDACommandBase<PDACommandBaseResult> {
         }
     }
     
-    public PDAWatchCommand(IDMContext context, String function, String variable, WatchOperation operation) {
+    public PDAWatchCommand(PDACommandControlDMContext context, String function, String variable, WatchOperation operation) {
         super(context, "watch " + function+ "::" + variable + " " + getWatchOperationCode(operation));
     }
     
     @Override
-    public PDACommandBaseResult createResult(String resultText) {
-        return new PDACommandBaseResult(resultText);
+    public PDACommandResult createResult(String resultText) {
+        return new PDACommandResult(resultText);
     }
 }

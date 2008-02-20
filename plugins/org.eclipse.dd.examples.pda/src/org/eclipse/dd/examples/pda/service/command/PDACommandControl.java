@@ -32,8 +32,7 @@ import org.eclipse.dd.dsf.service.AbstractDsfService;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.examples.pda.PDAPlugin;
-import org.eclipse.dd.examples.pda.service.command.commands.PDACommandBase;
-import org.eclipse.dd.examples.pda.service.command.commands.PDACommandBaseResult;
+import org.eclipse.dd.examples.pda.service.command.commands.AbstractPDACommand;
 import org.eclipse.dd.examples.pda.service.command.commands.PDAExitCommand;
 import org.osgi.framework.BundleContext;
 
@@ -45,10 +44,10 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
 
     // Structure used to store command information in services internal queues.
     private static class CommandHandle {
-        final private PDACommandBase<PDACommandBaseResult> fCommand;
-        final private DataRequestMonitor<PDACommandBaseResult> fRequestMonitor;
+        final private AbstractPDACommand<PDACommandResult> fCommand;
+        final private DataRequestMonitor<PDACommandResult> fRequestMonitor;
         
-        CommandHandle(PDACommandBase<PDACommandBaseResult> c, DataRequestMonitor<PDACommandBaseResult> rm) {
+        CommandHandle(AbstractPDACommand<PDACommandResult> c, DataRequestMonitor<PDACommandResult> rm) {
             fCommand = c; 
             fRequestMonitor = rm;
         }
@@ -300,16 +299,16 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
     }
     
     public <V extends ICommandResult> void queueCommand(ICommand<V> command, DataRequestMonitor<V> rm) {
-        if (command instanceof PDACommandBase<?>) {
+        if (command instanceof AbstractPDACommand<?>) {
             // Cast from command with "<V extends ICommandResult>" to a more concrete
             // type to use internally in the command control.
             @SuppressWarnings("unchecked")
-            PDACommandBase<PDACommandBaseResult> pdaCommand = (PDACommandBase<PDACommandBaseResult>)command;
+            AbstractPDACommand<PDACommandResult> pdaCommand = (AbstractPDACommand<PDACommandResult>)command;
             
             // Similarly, cast the request monitor to a more concrete type.
             @SuppressWarnings("unchecked")
-            DataRequestMonitor<PDACommandBaseResult> pdaRM = (DataRequestMonitor<PDACommandBaseResult>)rm;
-            
+            DataRequestMonitor<PDACommandResult> pdaRM = (DataRequestMonitor<PDACommandResult>)rm;
+
             fCommandQueue.add( new CommandHandle(pdaCommand, pdaRM) );
             for (ICommandListener listener : fCommandListeners) {
                 listener.commandQueued(command);
@@ -362,9 +361,9 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
     }
 
     private void processCommandDone(CommandHandle handle, String response) {
-        PDAPlugin.debug(response);
+        PDAPlugin.debug("R: " + response);
         
-        PDACommandBaseResult result = handle.fCommand.createResult(response);
+        PDACommandResult result = handle.fCommand.createResult(response);
         handle.fRequestMonitor.setData(result);
         handle.fRequestMonitor.done();
 
@@ -385,7 +384,7 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
     }
 
     private void processEventReceived(String event) {
-        PDAPlugin.debug(event);
+        PDAPlugin.debug("E: " + event);
         for (IEventListener listener : fEventListeners) {
             listener.eventReceived(event);
         }
@@ -408,7 +407,7 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
             // - and there are commands waiting to be sent.
             CommandHandle handle = fCommandQueue.remove(0); 
             fTxCommands.add(handle);
-            PDAPlugin.debug(handle.fCommand.getRequest());
+            PDAPlugin.debug("C: " + handle.fCommand.getRequest());
             for (ICommandListener listener : fCommandListeners) {
                 listener.commandSent(handle.fCommand);
             }            
@@ -468,7 +467,7 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
         if (!isTerminated()) {
             queueCommand(
                 new PDAExitCommand(fDMContext),
-                new DataRequestMonitor<PDACommandBaseResult>(getExecutor(), rm));
+                new DataRequestMonitor<PDACommandResult>(getExecutor(), rm));
         } else {
             // If already terminated, indicate success.
             rm.done();

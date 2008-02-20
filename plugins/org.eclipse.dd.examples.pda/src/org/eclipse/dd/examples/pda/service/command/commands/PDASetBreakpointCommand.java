@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.dd.examples.pda.service.command.commands;
 
-import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.dd.examples.pda.service.command.PDACommandControlDMContext;
+import org.eclipse.dd.examples.pda.service.command.PDACommandResult;
 
 /**
  * Sets a breakpoint at given line
@@ -23,14 +24,14 @@ import org.eclipse.dd.dsf.datamodel.IDMContext;
  *    E: suspended breakpoint line_number
  * </pre>
  */
-public class PDASetBreakpointCommand extends PDACommandBase<PDACommandBaseResult> {
+public class PDASetBreakpointCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDASetBreakpointCommand(IDMContext context, int line) {
-        super(context, "set " + line);
+    public PDASetBreakpointCommand(PDACommandControlDMContext context, int line) {
+        super(context, "set " + (line - 1));
     }
     
     @Override
-    public PDACommandBaseResult createResult(String resultText) {
-        return new PDACommandBaseResult(resultText);
+    public PDACommandResult createResult(String resultText) {
+        return new PDACommandResult(resultText);
     }
 }

@@ -28,6 +28,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.IValueVariable;
 import org.eclipse.core.variables.VariablesPlugin;
+import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.dd.dsf.concurrent.Query;
 import org.eclipse.dd.examples.pda.PDAPlugin;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -99,12 +101,8 @@ public class PDALaunchDelegate extends LaunchConfigurationDelegate {
         }
 
         launchProcess(launch, program, requestPort, eventPort);
-		
         PDALaunch pdaLaunch = (PDALaunch)launch; 
-
         initServices(pdaLaunch, program, requestPort, eventPort);
-        
-        pdaLaunch.initializeControl();
 	}
 	
 	private void launchProcess(ILaunch launch, String program, int requestPort, int eventPort) throws CoreException {
@@ -149,12 +147,19 @@ public class PDALaunchDelegate extends LaunchConfigurationDelegate {
         DebugPlugin.newProcess(launch, process, path);
 	}
 	
-	private void initServices(PDALaunch pdaLaunch, String program, int requestPort, int eventPort) throws CoreException {
-        final PDAServicesInitSequence initSequence = 
-            new PDAServicesInitSequence(pdaLaunch.getSession(), pdaLaunch, program, requestPort, eventPort);
-        pdaLaunch.getSession().getExecutor().execute(initSequence);
+	private void initServices(final PDALaunch pdaLaunch, final String program, final int requestPort, final int eventPort) 
+	    throws CoreException 
+	{
+	    Query<Object> initQuery = new Query<Object>() {
+	        @Override
+	        protected void execute(DataRequestMonitor<Object> rm) {
+	            pdaLaunch.initializeServices(program, requestPort, eventPort, rm);
+	        }
+	    };
+
+        pdaLaunch.getSession().getExecutor().execute(initQuery);
         try {
-            initSequence.get();
+            initQuery.get();
         } catch (InterruptedException e1) {
             throw new DebugException(new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR, "Interrupted Exception in dispatch thread", e1)); //$NON-NLS-1$
         } catch (ExecutionException e1) {

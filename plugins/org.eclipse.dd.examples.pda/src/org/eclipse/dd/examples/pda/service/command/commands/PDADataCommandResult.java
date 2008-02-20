@@ -14,10 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.eclipse.dd.examples.pda.service.command.PDACommandResult;
+
 /**
  * @see PDADataCommand
  */
-public class PDADataCommandResult extends PDACommandBaseResult {
+public class PDADataCommandResult extends PDACommandResult {
     
     final public int[] fValues;
     

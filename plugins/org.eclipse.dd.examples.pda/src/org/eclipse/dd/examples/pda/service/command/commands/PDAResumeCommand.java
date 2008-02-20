@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.dd.examples.pda.service.command.commands;
 
-import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.dd.examples.pda.service.command.PDACommandControlDMContext;
+import org.eclipse.dd.examples.pda.service.command.PDACommandResult;
 
 /**
  * Resumes the execution  
@@ -21,14 +22,14 @@ import org.eclipse.dd.dsf.datamodel.IDMContext;
  *    E: resumed client
  * </pre>
  */
-public class PDAResumeCommand extends PDACommandBase<PDACommandBaseResult> {
+public class PDAResumeCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDAResumeCommand(IDMContext context) {
+    public PDAResumeCommand(PDACommandControlDMContext context) {
         super(context, "resume");
     }
     
     @Override
-    public PDACommandBaseResult createResult(String resultText) {
-        return new PDACommandBaseResult(resultText);
+    public PDACommandResult createResult(String resultText) {
+        return new PDACommandResult(resultText);
     }
 }

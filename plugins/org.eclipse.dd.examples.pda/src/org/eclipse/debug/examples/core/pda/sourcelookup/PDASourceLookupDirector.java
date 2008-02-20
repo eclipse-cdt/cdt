@@ -12,21 +12,13 @@
 package org.eclipse.debug.examples.core.pda.sourcelookup;
 
 import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector;
-import org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant;
 
 /**
- * PDA source lookup director. For PDA source lookup there is one source
- * lookup participant. 
+ * PDA source lookup director.
  */
 public class PDASourceLookupDirector extends AbstractSourceLookupDirector {
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector#initializeParticipants()
-	 */
 	public void initializeParticipants() {
-		//#ifdef ex4
-//#		// TODO: Exercise 4 - add our participant to this director		
-		//#else
-		addParticipants(new ISourceLookupParticipant[]{new PDASourceLookupParticipant()});
-		//#endif
+	    // No need to add participants here, the surce display adapter will
+	    // add the participant with the correct session ID.
 	}
 }

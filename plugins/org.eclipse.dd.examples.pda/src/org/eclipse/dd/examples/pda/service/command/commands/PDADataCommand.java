@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.dd.examples.pda.service.command.commands;
 
-import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.dd.examples.pda.service.command.PDACommandControlDMContext;
+import org.eclipse.dd.examples.pda.service.command.PDACommandResult;
 
 /**
  * Retrieves data stack information 
@@ -20,14 +21,14 @@ import org.eclipse.dd.dsf.datamodel.IDMContext;
  *    R: {value 1}|{value 2}|{value 3}|...|
  * </pre>
  */
-public class PDADataCommand extends PDACommandBase<PDACommandBaseResult> {
+public class PDADataCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDADataCommand(IDMContext context) {
+    public PDADataCommand(PDACommandControlDMContext context) {
         super(context, "data");
     }
     
     @Override
-    public PDACommandBaseResult createResult(String resultText) {
-        return new PDACommandBaseResult(resultText);
+    public PDACommandResult createResult(String resultText) {
+        return new PDACommandResult(resultText);
     }
 }

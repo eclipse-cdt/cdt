@@ -10,10 +10,7 @@
  *******************************************************************************/
 package org.eclipse.dd.examples.pda.service.stack;
 
-import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.List;
-import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -33,9 +30,10 @@ import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.examples.pda.PDAPlugin;
-import org.eclipse.dd.examples.pda.service.command.PDACommand;
 import org.eclipse.dd.examples.pda.service.command.PDACommandControl;
-import org.eclipse.dd.examples.pda.service.command.PDACommandResult;
+import org.eclipse.dd.examples.pda.service.command.commands.PDAFrame;
+import org.eclipse.dd.examples.pda.service.command.commands.PDAStackCommand;
+import org.eclipse.dd.examples.pda.service.command.commands.PDAStackCommandResult;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -91,16 +89,29 @@ public class PDAStack extends AbstractDsfService implements IStack {
         rm.done();
     }
 
-    public void getFrameData(IFrameDMContext frameCtx, DataRequestMonitor<IFrameDMData> rm) {
+    public void getFrameData(final IFrameDMContext frameCtx, final DataRequestMonitor<IFrameDMData> rm) {
         if ( !(frameCtx instanceof FrameDMContext) ) {
             rm.setStatus(new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, IDsfService.INVALID_HANDLE, "Invalid context " + frameCtx, null)); //$NON-NLS-1$
             rm.done();
             return;
         }
 
-        PDAFrame pdaFrame = ((FrameDMContext)frameCtx).getFrame();
-        rm.setData(new FrameDMData(pdaFrame));
-        rm.done();
+        fCommandCache.execute(
+            new PDAStackCommand(fCommandControl.getDMContext()),
+            new DataRequestMonitor<PDAStackCommandResult>(getExecutor(), rm) {
+                @Override
+                protected void handleOK() {
+                    int frameId = getData().fFrames.length - frameCtx.getLevel() - 1;
+                    if (frameId < 0) {
+                        rm.setStatus(new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, IDsfService.INVALID_HANDLE, "Invalid frame level " + frameCtx, null)); //$NON-NLS-1$
+                        rm.done();
+                        return;
+                    }
+                    
+                    rm.setData(new FrameDMData(getData().fFrames[frameId]));
+                    rm.done();
+                }
+            });
     }
 
     public void getFrames(IDMContext context, final DataRequestMonitor<IFrameDMContext[]> rm) {
@@ -111,15 +122,14 @@ public class PDAStack extends AbstractDsfService implements IStack {
             return;
         }
         
-        fCommandControl.queueCommand(
-            new PDACommand(execCtx, "stack"),
-            new DataRequestMonitor<PDACommandResult>(getExecutor(), rm) {
+        fCommandCache.execute(
+            new PDAStackCommand(fCommandControl.getDMContext()),
+            new DataRequestMonitor<PDAStackCommandResult>(getExecutor(), rm) {
                 @Override
                 protected void handleOK() {
-                    PDAFrame[] frames = parseStackResponse(getData().fResponseText);
-                    IFrameDMContext[] frameCtxs = new IFrameDMContext[frames.length];
-                    for (int i = 0; i < frames.length; i++) {
-                        frameCtxs[i] = new FrameDMContext(getSession().getId(), execCtx, i, frames[i]);
+                    IFrameDMContext[] frameCtxs = new IFrameDMContext[getData().fFrames.length];
+                    for (int i = 0; i < getData().fFrames.length; i++) {
+                        frameCtxs[i] = new FrameDMContext(getSession().getId(), execCtx, i);
                     }
                     rm.setData(frameCtxs);
                     rm.done();
@@ -127,44 +137,59 @@ public class PDAStack extends AbstractDsfService implements IStack {
             });
     }
 
-    public void getLocals(IFrameDMContext frameCtx, DataRequestMonitor<IVariableDMContext[]> rm) {
+    public void getLocals(final IFrameDMContext frameCtx, final DataRequestMonitor<IVariableDMContext[]> rm) {
         if ( !(frameCtx instanceof FrameDMContext) ) {
             rm.setStatus(new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, IDsfService.INVALID_HANDLE, "Invalid context " + frameCtx, null)); //$NON-NLS-1$
             rm.done();
             return;
         }
 
-        PDAFrame pdaFrame = ((FrameDMContext)frameCtx).getFrame();
-        IVariableDMContext[] variableCtxs = new IVariableDMContext[pdaFrame.fVariables.length];
-        for (int i = 0; i < pdaFrame.fVariables.length; i++) {
-            variableCtxs[i] = new VariableDMContext(getSession().getId(), frameCtx, pdaFrame.fVariables[i]);
-        }
-        rm.setData(variableCtxs);
-        rm.done();
+        fCommandCache.execute(
+            new PDAStackCommand(fCommandControl.getDMContext()),
+            new DataRequestMonitor<PDAStackCommandResult>(getExecutor(), rm) {
+                @Override
+                protected void handleOK() {
+                    int frameId = getData().fFrames.length - frameCtx.getLevel() - 1;
+                    if (frameId < 0) {
+                        rm.setStatus(new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, IDsfService.INVALID_HANDLE, "Invalid frame level " + frameCtx, null)); //$NON-NLS-1$
+                        rm.done();
+                        return;
+                    }
+
+                    
+                    PDAFrame pdaFrame = getData().fFrames[frameId];
+                    IVariableDMContext[] variableCtxs = new IVariableDMContext[pdaFrame.fVariables.length];
+                    for (int i = 0; i < pdaFrame.fVariables.length; i++) {
+                        variableCtxs[i] = new VariableDMContext(getSession().getId(), frameCtx, pdaFrame.fVariables[i]);
+                    }
+                    rm.setData(variableCtxs);
+                    rm.done();
+                }
+            });
+
     }
 
     public void getStackDepth(IDMContext context, int maxDepth, final DataRequestMonitor<Integer> rm) {
-        getFrames(
-            context, 
-            new DataRequestMonitor<IFrameDMContext[]>(getExecutor(), rm) {
+        fCommandCache.execute(
+            new PDAStackCommand(fCommandControl.getDMContext()),
+            new DataRequestMonitor<PDAStackCommandResult>(getExecutor(), rm) {
                 @Override
                 protected void handleOK() {
-                    rm.setData(getData().length);
+                    rm.setData(getData().fFrames.length);
                     rm.done();
                 }
             });
     }
 
     public void getTopFrame(IDMContext context, final DataRequestMonitor<IFrameDMContext> rm) {
-        getFrames(
-            context, 
-            new DataRequestMonitor<IFrameDMContext[]>(getExecutor(), rm) {
-                @Override
-                protected void handleOK() {
-                    rm.setData(getData()[0]);
-                    rm.done();
-                }
-            });
+        final IExecutionDMContext execCtx = DMContexts.getAncestorOfType(context, IExecutionDMContext.class);
+        if (execCtx == null) {
+            rm.setStatus(new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, IDsfService.INVALID_HANDLE, "Invalid context " + context, null)); //$NON-NLS-1$
+            rm.done();
+            return;
+        }
+        rm.setData(new FrameDMContext(getSession().getId(), execCtx, 0));
+        rm.done();
     }
 
     public void getVariableData(IVariableDMContext variableCtx, DataRequestMonitor<IVariableDMData> rm) {
@@ -213,36 +238,4 @@ public class PDAStack extends AbstractDsfService implements IStack {
         fCommandCache.setTargetAvailable(true);
         fCommandCache.reset();
     }
-    
-    public static class PDAFrame {
-        PDAFrame(String frameString) {
-            StringTokenizer st = new StringTokenizer(frameString, "|");
-            
-            fFilePath = st.nextToken();
-            fLine = Integer.parseInt(st.nextToken());
-            fFunction = st.nextToken();
-            
-            List<String> variablesList = new ArrayList<String>();
-            while (st.hasMoreTokens()) {
-                variablesList.add(st.nextToken());
-            }
-            fVariables = variablesList.toArray(new String[variablesList.size()]);
-        }
-        
-        final public String fFilePath;
-        final public int fLine;
-        final public String fFunction;
-        final public String[] fVariables;
-    }
-
-    private PDAFrame[] parseStackResponse(String response) { 
-        StringTokenizer st = new StringTokenizer(response, "#");
-        List<PDAFrame> framesList = new ArrayList<PDAFrame>();
-        
-        while (st.hasMoreTokens()) {
-            framesList.add(new PDAFrame(st.nextToken()));
-        }
-        return framesList.toArray(new PDAFrame[framesList.size()]);
-    }    
-
 }

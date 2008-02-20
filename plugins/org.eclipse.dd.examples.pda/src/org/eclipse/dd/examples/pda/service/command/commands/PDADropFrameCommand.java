@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.dd.examples.pda.service.command.commands;
 
-import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.dd.examples.pda.service.command.PDACommandControlDMContext;
+import org.eclipse.dd.examples.pda.service.command.PDACommandResult;
 
 /**
  * Returns from the current frame without executing the rest of instructions.  
@@ -23,14 +24,14 @@ import org.eclipse.dd.dsf.datamodel.IDMContext;
  * </pre>
 
  */
-public class PDADropFrameCommand extends PDACommandBase<PDACommandBaseResult> {
+public class PDADropFrameCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDADropFrameCommand(IDMContext context) {
+    public PDADropFrameCommand(PDACommandControlDMContext context) {
         super(context, "drop");
     }
     
     @Override
-    public PDACommandBaseResult createResult(String resultText) {
-        return new PDACommandBaseResult(resultText);
+    public PDACommandResult createResult(String resultText) {
+        return new PDACommandResult(resultText);
     }
 }

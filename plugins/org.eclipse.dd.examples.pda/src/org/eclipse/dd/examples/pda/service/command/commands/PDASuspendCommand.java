@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.dd.examples.pda.service.command.commands;
 
-import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.dd.examples.pda.service.command.PDACommandControlDMContext;
+import org.eclipse.dd.examples.pda.service.command.PDACommandResult;
 
 /**
  * Suspends execution 
@@ -21,14 +22,14 @@ import org.eclipse.dd.dsf.datamodel.IDMContext;
  *    E: suspended client
  * </pre>
  */
-public class PDASuspendCommand extends PDACommandBase<PDACommandBaseResult> {
+public class PDASuspendCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDASuspendCommand(IDMContext context) {
+    public PDASuspendCommand(PDACommandControlDMContext context) {
         super(context, "suspend");
     }
     
     @Override
-    public PDACommandBaseResult createResult(String resultText) {
-        return new PDACommandBaseResult(resultText);
+    public PDACommandResult createResult(String resultText) {
+        return new PDACommandResult(resultText);
     }
 }

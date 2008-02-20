@@ -48,7 +48,7 @@ public class PDALineBreakpoint extends LineBreakpoint {
 	public PDALineBreakpoint(final IResource resource, final int lineNumber) throws CoreException {
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				IMarker marker = resource.createMarker("org.eclipse.debug.examples.core.pda.markerType.lineBreakpoint");
+				IMarker marker = resource.createMarker("org.eclipse.dd.examples.pda.markerType.lineBreakpoint");
 				setMarker(marker);
 				marker.setAttribute(IBreakpoint.ENABLED, Boolean.TRUE);
 				marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);

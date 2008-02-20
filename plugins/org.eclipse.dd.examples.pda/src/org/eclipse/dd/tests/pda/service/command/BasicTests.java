@@ -23,7 +23,6 @@ import org.eclipse.dd.dsf.concurrent.Query;
 import org.eclipse.dd.dsf.debug.service.command.ICommand;
 import org.eclipse.dd.dsf.debug.service.command.ICommandListener;
 import org.eclipse.dd.dsf.debug.service.command.ICommandResult;
-import org.eclipse.dd.examples.pda.service.command.PDACommand;
 import org.eclipse.dd.examples.pda.service.command.PDACommandResult;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -82,7 +81,7 @@ public class BasicTests extends CommandControlTestsBase {
             }
         });
         
-        final PDACommand testCommand = new PDACommand(fCommandControl.getDMContext(), "data");
+        final PDATestCommand testCommand = new PDATestCommand(fCommandControl.getDMContext(), "data");
         
         // Test sending the command and checking all listeners were called.
         Query<PDACommandResult> sendCommandQuery = new Query<PDACommandResult>() {

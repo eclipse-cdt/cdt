@@ -12,7 +12,7 @@ package org.eclipse.dd.examples.pda.service.stack;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMData;
-import org.eclipse.dd.examples.pda.service.stack.PDAStack.PDAFrame;
+import org.eclipse.dd.examples.pda.service.command.commands.PDAFrame;
 
 /**
  * 
@@ -26,7 +26,7 @@ public class FrameDMData implements IFrameDMData {
     }
     
     public String getFile() {
-        return fFrame.fFilePath;
+        return fFrame.fFilePath.lastSegment();
     }
 
     public String getFunction() {
@@ -34,7 +34,7 @@ public class FrameDMData implements IFrameDMData {
     }
 
     public int getLine() {
-        return fFrame.fLine;
+        return fFrame.fLine + 1;
     }
 
     public int getColumn() {

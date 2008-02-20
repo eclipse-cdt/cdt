@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.dd.examples.pda.service.command.commands;
 
-import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.dd.examples.pda.service.command.PDACommandControlDMContext;
+import org.eclipse.dd.examples.pda.service.command.PDACommandResult;
 
 /**
  * Sets what events cause the execution to stop.
@@ -24,11 +25,11 @@ import org.eclipse.dd.dsf.datamodel.IDMContext;
  * 
  * Where event_name could be <code>unimpinstr</code> or <code>nosuchlabel</code>.  
  */
-public class PDAEventStopCommand extends PDACommandBase<PDACommandBaseResult> {
+public class PDAEventStopCommand extends AbstractPDACommand<PDACommandResult> {
 
     public enum Event { UNIMPINSTR, NOSUCHLABEL };
     
-    public PDAEventStopCommand(IDMContext context, Event event, boolean enable) {
+    public PDAEventStopCommand(PDACommandControlDMContext context, Event event, boolean enable) {
         super(context, 
               "eventstop " + 
               (event == Event.UNIMPINSTR ? "unimpinstr " : "nosuchlabel ") + 
@@ -36,7 +37,7 @@ public class PDAEventStopCommand extends PDACommandBase<PDACommandBaseResult> {
     }
     
     @Override
-    public PDACommandBaseResult createResult(String resultText) {
-        return new PDACommandBaseResult(resultText);
+    public PDACommandResult createResult(String resultText) {
+        return new PDACommandResult(resultText);
     }
 }

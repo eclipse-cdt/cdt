@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.dd.examples.pda.service.command.commands;
 
-import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.dd.examples.pda.service.command.PDACommandControlDMContext;
+import org.eclipse.dd.examples.pda.service.command.PDACommandResult;
 
 /**
  * Sets a variable value 
@@ -20,14 +21,14 @@ import org.eclipse.dd.dsf.datamodel.IDMContext;
  *    R: ok
  * </pre>
  */
-public class PDASetVarCommand extends PDACommandBase<PDACommandBaseResult> {
+public class PDASetVarCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDASetVarCommand(IDMContext context, String variable, int value) {
+    public PDASetVarCommand(PDACommandControlDMContext context, String variable, String value) {
         super(context, "setvar " + variable + " " + value);
     }
     
     @Override
-    public PDACommandBaseResult createResult(String resultText) {
-        return new PDACommandBaseResult(resultText);
+    public PDACommandResult createResult(String resultText) {
+        return new PDACommandResult(resultText);
     }
 }

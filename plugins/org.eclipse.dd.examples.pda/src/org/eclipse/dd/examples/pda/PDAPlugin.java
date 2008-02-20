@@ -169,7 +169,7 @@ public class PDAPlugin extends Plugin {
 	            Query<Object> launchShutdownQuery = new Query<Object>() {
 	                @Override
 	                protected void execute(DataRequestMonitor<Object> rm) {
-	                    pdaLaunch.shutdownSession(rm);
+	                    pdaLaunch.shutdownServices(rm);
 	                }
 	            };
 	            

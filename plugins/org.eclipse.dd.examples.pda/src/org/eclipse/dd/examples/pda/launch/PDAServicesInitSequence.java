@@ -18,6 +18,7 @@ import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.examples.pda.service.breakpoints.PDABreakpointAttributeTranslator;
 import org.eclipse.dd.examples.pda.service.breakpoints.PDABreakpoints;
 import org.eclipse.dd.examples.pda.service.command.PDACommandControl;
+import org.eclipse.dd.examples.pda.service.expressions.PDAExpressions;
 import org.eclipse.dd.examples.pda.service.runcontrol.PDARunControl;
 import org.eclipse.dd.examples.pda.service.stack.PDAStack;
 import org.eclipse.debug.examples.core.pda.sourcelookup.PDASourceLookupDirector;
@@ -37,7 +38,8 @@ public class PDAServicesInitSequence extends Sequence {
         new Step() { 
             @Override
             public void execute(RequestMonitor requestMonitor) {
-                new PDARunControl(fSession).initialize(requestMonitor);
+                fRunControl = new PDARunControl(fSession);
+                fRunControl.initialize(requestMonitor);
             }
         },
         new Step() { 
@@ -71,38 +73,16 @@ public class PDAServicesInitSequence extends Sequence {
                 new PDAStack(fSession).initialize(requestMonitor);
             }
         },
-        /*new Step() { @Override
-        public void execute(RequestMonitor requestMonitor) {
-            new ExpressionService(fSession).initialize(requestMonitor);
-        }},
         new Step() { @Override
-        public void execute(RequestMonitor requestMonitor) {
-            fSourceLookup = new CSourceLookup(fSession);
-            fSourceLookup.initialize(requestMonitor);
-        }},
+            public void execute(RequestMonitor requestMonitor) {
+                new PDAExpressions(fSession).initialize(requestMonitor);
+            }
+        },
         new Step() { @Override
-        public void execute(RequestMonitor requestMonitor) {
-            fSourceLookup.setSourceLookupDirector(
-                fCommandControl.getGDBDMContext(), 
-                ((CSourceLookupDirector)fLaunch.getSourceLocator()));
-            requestMonitor.done();
-        }},
-        new Step() { @Override
-            public void execute(final RequestMonitor requestMonitor) {
-                // Create high-level breakpoint service and install breakpoints 
-                // for the GDB debug context.
-                final MIBreakpointsManager bpmService = new MIBreakpointsManager(fSession, CDebugCorePlugin.PLUGIN_ID);
-                bpmService.initialize(new RequestMonitor(getExecutor(), requestMonitor) {
-                    @Override
-                    protected void handleOK() {
-                        bpmService.startTrackingBreakpoints(fCommandControl.getGDBDMContext(), requestMonitor);
-                    }
-                }); 
-            }},
-        new Step() { @Override
-        public void execute(RequestMonitor requestMonitor) {
-            new MIRegisters(fSession).initialize(requestMonitor);
-        }},*/
+            public void execute(RequestMonitor requestMonitor) {
+                fRunControl.resume(fCommandControl.getDMContext(), requestMonitor);
+            }
+        },
     };
 
     private DsfSession fSession;
@@ -112,12 +92,13 @@ public class PDAServicesInitSequence extends Sequence {
     private int fEventPort;
 
     PDACommandControl fCommandControl;
+    PDARunControl fRunControl;
     PDASourceLookupDirector fSourceLookup;
 
     public PDAServicesInitSequence(DsfSession session, PDALaunch launch, String program, int requestPort, 
-        int eventPort) 
+        int eventPort, RequestMonitor rm) 
     {
-        super(session.getExecutor());
+        super(session.getExecutor(), rm);
         fSession = session;
         fLaunch = launch;
         fProgram = program;

@@ -8,16 +8,17 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.dd.examples.pda.service.command;
+package org.eclipse.dd.tests.pda.service.command;
 
-import org.eclipse.dd.dsf.datamodel.IDMContext;
-import org.eclipse.dd.examples.pda.service.command.commands.PDACommandBase;
+import org.eclipse.dd.examples.pda.service.command.PDACommandControlDMContext;
+import org.eclipse.dd.examples.pda.service.command.PDACommandResult;
+import org.eclipse.dd.examples.pda.service.command.commands.AbstractPDACommand;
 
 /**
  * 
  */
-public class PDACommand extends PDACommandBase<PDACommandResult> {
-    public PDACommand(IDMContext context, String command) {
+class PDATestCommand extends AbstractPDACommand<PDACommandResult> {
+    PDATestCommand(PDACommandControlDMContext context, String command) {
         super(context, command);
     }
     

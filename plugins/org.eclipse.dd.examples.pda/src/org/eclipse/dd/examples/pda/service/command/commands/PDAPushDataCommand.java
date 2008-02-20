@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.dd.examples.pda.service.command.commands;
 
-import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.dd.examples.pda.service.command.PDACommandControlDMContext;
+import org.eclipse.dd.examples.pda.service.command.PDACommandResult;
 
 /**
  * Pushes the given value on top of the data stack.
@@ -20,14 +21,14 @@ import org.eclipse.dd.dsf.datamodel.IDMContext;
  *    R: ok
  * </pre>
  */
-public class PDAPushDataCommand extends PDACommandBase<PDACommandBaseResult> {
+public class PDAPushDataCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDAPushDataCommand(IDMContext context, int value) {
+    public PDAPushDataCommand(PDACommandControlDMContext context, int value) {
         super(context, "pushdata " + value);
     }
     
     @Override
-    public PDACommandBaseResult createResult(String resultText) {
-        return new PDACommandBaseResult(resultText);
+    public PDACommandResult createResult(String resultText) {
+        return new PDACommandResult(resultText);
     }
 }

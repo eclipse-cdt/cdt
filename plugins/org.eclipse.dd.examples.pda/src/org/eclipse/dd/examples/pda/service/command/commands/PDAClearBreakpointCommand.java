@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.dd.examples.pda.service.command.commands;
 
-import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.dd.examples.pda.service.command.PDACommandControlDMContext;
+import org.eclipse.dd.examples.pda.service.command.PDACommandResult;
 
 /**
  * Clears any breakpoint set on given line
@@ -21,14 +22,14 @@ import org.eclipse.dd.dsf.datamodel.IDMContext;
  * </pre>
 
  */
-public class PDAClearBreakpointCommand extends PDACommandBase<PDACommandBaseResult> {
+public class PDAClearBreakpointCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDAClearBreakpointCommand(IDMContext context, int line) {
-        super(context, "clear " + line);
+    public PDAClearBreakpointCommand(PDACommandControlDMContext context, int line) {
+        super(context, "clear " + (line - 1));
     }
     
     @Override
-    public PDACommandBaseResult createResult(String resultText) {
-        return new PDACommandBaseResult(resultText);
+    public PDACommandResult createResult(String resultText) {
+        return new PDACommandResult(resultText);
     }
 }

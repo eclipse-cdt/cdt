@@ -513,6 +513,15 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 	private void modifyBreakpoint(final IBreakpointsTargetDMContext context, final IBreakpoint breakpoint,
 			final List<Map<String, Object>> newAttrsList0, final IMarkerDelta oldValues, final RequestMonitor rm)
 	{
+	    // This method uses several lists to track the changed breakpoints:
+	    // commonAttrsList - attributes which have not changed 
+	    // oldAttrsList - attributes for the breakpoint before the change
+	    // newAttrsList - attributes for the breakpoint after the change
+	    // oldBpContexts - target-side breakpoints from before the change
+	    // newBpContexts - target-side breakpoints after the change
+	    // attrDeltasList - changes in the attributes for each attribute map in 
+	    //     oldAttrsList and newAttrsList
+	    
     	// Get the maps
         final Map<IBreakpoint, List<Map<String, Object>>> platformBPs = fPlatformBPs.get(context);
         final Map<IBreakpoint, List<IBreakpointDMContext>> breakpointIDs = fBreakpointDMContexts.get(context);
@@ -538,26 +547,43 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
             return;
         }
 
-        List<Map<String, Object>> commonAttrsList = getCommonAttributeMaps(newAttrsList0, oldAttrsList0);
+        // Calculate the list of attributes maps that have not changed.  
+        // Immediately add these to the list of new breakpoint contexts,
+        // and remove them from further breakpoint attribute comparisons.
+        final List<Map<String, Object>> commonAttrsList = getCommonAttributeMaps(newAttrsList0, oldAttrsList0);
         final List<IBreakpointDMContext> newBpContexts = new ArrayList<IBreakpointDMContext>(commonAttrsList.size());
 
-        List<Map<String, Object>> newAttrsList = new ArrayList<Map<String, Object>>(newAttrsList0);
+        final List<Map<String, Object>> newAttrsList = new ArrayList<Map<String, Object>>(newAttrsList0);
         newAttrsList.removeAll(commonAttrsList);
         
         List<Map<String, Object>> oldAttrsList = new ArrayList<Map<String, Object>>(oldAttrsList0);
         for (int i = 0; i < oldAttrsList.size(); i++) {
             if (commonAttrsList.contains(oldAttrsList.get(i))) {
-                newBpContexts.add(oldBpContexts.remove(i));
+                if (oldBpContexts.size() > i) {
+                    newBpContexts.add(oldBpContexts.remove(i));
+                }
             }
         }
+        oldAttrsList.removeAll(commonAttrsList);
         
-        final List<Map<String, Object>> attrDeltasArray = getAttributesDeltas(oldAttrsList, newAttrsList);
+        // Create a list of attribute changes.  The lenghth of this list will
+        // always be max(oldAttrList.size(), newAttrsList.size()), padded with
+        // null's if oldAttrsList was longer.
+        final List<Map<String, Object>> attrDeltasList = getAttributesDeltas(oldAttrsList, newAttrsList);
         
+        // Create the request monitor that will be called when all
+        // modifying/inserting/removing is complete.
         final CountingRequestMonitor countingRM = new CountingRequestMonitor(getExecutor(), rm) {
             @Override
             protected void handleCompleted() {
+                // Save the new list of breakpoint contexts and attributes 
                 breakpointIDs.put(breakpoint, newBpContexts);
-                // Update breakpoint status
+                newAttrsList.addAll(commonAttrsList);
+                platformBPs.put(breakpoint, newAttrsList);
+                
+                // Update breakpoint status.  updateBreakpointStatus() cannot
+                // be called on the executor thread, so we need to 
+                // use a Job.
                 new Job("Breakpoint status update") { //$NON-NLS-1$
                     { setSystem(true); }
                     @Override
@@ -571,12 +597,18 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
             }
         };
         
-        countingRM.setDoneCount(attrDeltasArray.size());
+        // Set the count, if could be zero if no breakpoints have actually changed.
+        countingRM.setDoneCount(attrDeltasList.size());
         
-        for (int i = 0; i < attrDeltasArray.size(); i++) {
-            if (attrDeltasArray.get(i) == null) {
+        // Process the changed breakpoints.
+        for (int i = 0; i < attrDeltasList.size(); i++) {
+            if (attrDeltasList.get(i) == null) {
+                // The list of new attribute maps was shorter than the old.
+                // Remove the corresponding target-side bp.
                 fBreakpoints.removeBreakpoint(oldBpContexts.get(i), countingRM);
             } else if ( i >= oldBpContexts.size()) {
+                // The list of new attribute maps was longer, just insert
+                // the new breakpoint
                 final Map<String, Object> attrs = newAttrsList.get(i);
                 fBreakpoints.insertBreakpoint(
                     context, attrs, 
@@ -587,7 +619,10 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
                             countingRM.done();
                         }
                     });
-            } else if ( !fAttributeTranslator.canUpdateAttributes(oldBpContexts.get(i), attrDeltasArray.get(i)) ) {
+            } else if ( !fAttributeTranslator.canUpdateAttributes(oldBpContexts.get(i), attrDeltasList.get(i)) ) {
+                // The attribute translator tells us that the debugger cannot modify the 
+                // breakpoint to change the given attributes.  Remove the breakpoint
+                // and insert a new one.
                 final Map<String, Object> attrs = newAttrsList.get(i);
                 fBreakpoints.removeBreakpoint(
                     oldBpContexts.get(i), 
@@ -606,9 +641,11 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
                         }
                     });
             } else {
+                // The back end can modify the breakpoint.  Update the breakpoint with the 
+                // new attributes.
                 final IBreakpointDMContext bpCtx = oldBpContexts.get(i); 
                 fBreakpoints.updateBreakpoint(
-                    oldBpContexts.get(i), attrDeltasArray.get(i), 
+                    oldBpContexts.get(i), newAttrsList.get(i), 
                     new RequestMonitor(getExecutor(), countingRM) {
                         @Override
                         protected void handleOK() {
@@ -623,7 +660,7 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 	private List<Map<String, Object>> getCommonAttributeMaps(List<Map<String, Object>> array1, List<Map<String, Object>> array2) 
 	{
 	    List<Map<String, Object>> intersection = new LinkedList<Map<String, Object>>();
-	    List<Map<String, Object>> list2 = new ArrayList<Map<String, Object>>(array1);
+	    List<Map<String, Object>> list2 = new ArrayList<Map<String, Object>>(array2);
 	    for (Map<String, Object> array1Map : array1) {
 	        if (list2.remove(array1Map)) {
 	            intersection.add(array1Map);

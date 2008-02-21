@@ -38,4 +38,22 @@
          </enabledWhen>
       </page>
    </extension>
+   
+   
+     <extension point="org.eclipse.ui.menus">
+     <menuContribution locationURI="popup:org.eclipse.rse.ui.view.systemView">
+        <menu id="org.eclipse.rse.ui.useractions.menu"
+              label="Dynamic menu test"
+              mnemonic="useractions.dynamicmenu.mnemonic">
+
+           <dynamic class="org.eclipse.rse.internal.useractions.ui.DynamicMenuTest"
+                    id="org.eclipse.ui.rse.ui.views.dynamicmenutest">
+           </dynamic>
+
+        </menu>
+
+     </menuContribution>
+
+     </extension>
+   
 </plugin>

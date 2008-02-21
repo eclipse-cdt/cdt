@@ -24,7 +24,7 @@ import org.osgi.framework.BundleContext;
 public class Activator extends AbstractUIPlugin {
 	//The shared instance.
 	private static Activator plugin;
-
+	public static final String PLUGIN_ID = "org.eclipse.rse.useractions"; //$NON-NLS-1$
 	/**
 	 * The constructor.
 	 */

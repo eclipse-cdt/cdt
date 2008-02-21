@@ -13,14 +13,16 @@
  *******************************************************************************/
 package org.eclipse.rse.internal.useractions.ui.uda;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.internal.useractions.IUserActionsMessageIds;
+import org.eclipse.rse.internal.useractions.Activator;
 import org.eclipse.rse.internal.useractions.IUserActionsModelChangeEvents;
+import org.eclipse.rse.internal.useractions.UserActionsResources;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.widgets.Composite;
 
 /**
@@ -74,7 +76,7 @@ public class SystemUDTypeTreeView extends SystemUDBaseTreeView {
 	 * Return message for delete confirmation
 	 */
 	protected SystemMessage getDeleteConfirmationMessage() {
-		return RSEUIPlugin.getPluginMessage(IUserActionsMessageIds.MSG_CONFIRM_DELETE_USERTYPE);
+		return new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.WARNING, UserActionsResources.MSG_CONFIRM_DELETE_USERTYPE, UserActionsResources.MSG_CONFIRM_DELETE_USERTYPE_DETAILS);
 	}
 
 	/**

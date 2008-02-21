@@ -73,6 +73,49 @@ public class UserActionsResources extends NLS {
 	public static String	RESID_PROPERTY_COMMENT_LABEL;
 	public static String	RESID_PROPERTY_COMMENT_TOOLTIP;
 	
+	public static  String MSG_VALIDATE_UDANAME_EMPTY;
+	public static  String MSG_VALIDATE_UDANAME_NOTUNIQUE;
+	public static  String MSG_VALIDATE_UDANAME_NOTVALID;
+	public static  String MSG_VALIDATE_UDACMT_EMPTY;
+	public static  String MSG_VALIDATE_UDACMT_NOTVALID;
+	public static  String MSG_VALIDATE_UDACMD_EMPTY;
+	public static  String MSG_VALIDATE_UDACMD_NOTVALID;
+	public static  String MSG_VALIDATE_UDTNAME_EMPTY;
+	public static  String MSG_VALIDATE_UDTNAME_NOTUNIQUE;
+	public static  String MSG_VALIDATE_UDTNAME_NOTVALID;
+	public static  String MSG_VALIDATE_UDTTYPES_EMPTY;
+	public static  String MSG_VALIDATE_UDTTYPES_NOTVALID;
+	public static  String MSG_VALIDATE_COMPILELABEL_EMPTY;
+	public static  String MSG_VALIDATE_COMPILELABEL_NOTUNIQUE;
+	public static  String MSG_VALIDATE_COMPILELABEL_NOTVALID;
+	public static  String MSG_VALIDATE_COMPILESTRING_EMPTY;
+	public static  String MSG_VALIDATE_COMPILESTRING_NOTVALID;
+	public static  String MSG_UDA_LOAD_ERROR;
+	public static  String MSG_UDA_ROOTTAG_ERROR;
+	public static  String MSG_CONFIRM_DELETE_USERACTION;
+	public static  String MSG_CONFIRM_DELETE_USERTYPE;
+
+	public static  String MSG_VALIDATE_UDANAME_EMPTY_DETAILS;
+	public static  String MSG_VALIDATE_UDANAME_NOTUNIQUE_DETAILS;
+	public static  String MSG_VALIDATE_UDANAME_NOTVALID_DETAILS;
+	public static  String MSG_VALIDATE_UDACMT_EMPTY_DETAILS;
+	public static  String MSG_VALIDATE_UDACMT_NOTVALID_DETAILS;
+	public static  String MSG_VALIDATE_UDACMD_EMPTY_DETAILS;
+	public static  String MSG_VALIDATE_UDACMD_NOTVALID_DETAILS;
+	public static  String MSG_VALIDATE_UDTNAME_EMPTY_DETAILS;
+	public static  String MSG_VALIDATE_UDTNAME_NOTUNIQUE_DETAILS;
+	public static  String MSG_VALIDATE_UDTNAME_NOTVALID_DETAILS;
+	public static  String MSG_VALIDATE_UDTTYPES_EMPTY_DETAILS;
+	public static  String MSG_VALIDATE_UDTTYPES_NOTVALID_DETAILS;
+	public static  String MSG_VALIDATE_COMPILELABEL_EMPTY_DETAILS;
+	public static  String MSG_VALIDATE_COMPILELABEL_NOTUNIQUE_DETAILS;
+	public static  String MSG_VALIDATE_COMPILELABEL_NOTVALID_DETAILS;
+	public static  String MSG_VALIDATE_COMPILESTRING_EMPTY_DETAILS;
+	public static  String MSG_VALIDATE_COMPILESTRING_NOTVALID_DETAILS;
+
+	public static  String MSG_UDA_ROOTTAG_ERROR_DETAILS;
+	public static  String MSG_CONFIRM_DELETE_USERACTION_DETAILS;
+	public static  String MSG_CONFIRM_DELETE_USERTYPE_DETAILS;
 	
 	static {
 		// load message values from bundle file

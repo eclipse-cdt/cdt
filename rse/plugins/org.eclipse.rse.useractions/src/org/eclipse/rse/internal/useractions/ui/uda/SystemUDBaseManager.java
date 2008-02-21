@@ -43,8 +43,10 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemResourceHelpers;
 import org.eclipse.rse.core.SystemResourceManager;
@@ -52,7 +54,9 @@ import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.ui.SystemResources;
-import org.eclipse.rse.internal.useractions.IUserActionsMessageIds;
+import org.eclipse.rse.internal.useractions.Activator;
+import org.eclipse.rse.internal.useractions.UserActionsResources;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemMessages;
@@ -425,7 +429,8 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 			// Phil. 08/2002
 			if ((null == docroot) || !docroot.getTagName().equals(getDocumentRootTagName())) {
 				Shell activeShell = getActiveShell();
-				SystemMessage docRootMsg = RSEUIPlugin.getPluginMessage(IUserActionsMessageIds.MSG_UDA_ROOTTAG_ERROR);
+				
+
 				String oldFileName = getFilePath(profile);
 				String newFileName = getFileName() + ".bad"; //$NON-NLS-1$
 				IFile file = getFolder(profile).getFile(getFileName());
@@ -433,6 +438,13 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 					SystemResourceHelpers.getResourceHelpers().renameFile(file, newFileName);
 				} catch (Exception exc) {
 				}
+
+				
+				String msgTxt = NLS.bind(UserActionsResources.MSG_UDA_ROOTTAG_ERROR, getFilePath(profile));
+				String msgDetails = NLS.bind(UserActionsResources.MSG_UDA_ROOTTAG_ERROR_DETAILS, getDocumentRootTagName(), newFileName);
+				
+				SystemMessage docRootMsg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+		
 				doc = createAndPrimeDocument(profile);
 				docRootMsg.makeSubstitution(oldFileName, getDocumentRootTagName(), newFileName);
 				SystemBasePlugin.logWarning(docRootMsg.getLevelOneText());
@@ -445,9 +457,10 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 			// Provide a non-null value.  Might as well prime
 			// with a "proper" doc structure.
 			Document doc = initializeDocument();
-			SystemMessageDialog msgdlg = new SystemMessageDialog(SystemBasePlugin.getActiveWorkbenchShell(), RSEUIPlugin.getPluginMessage(
-			//                         ISystemMessages.MSG_RESTORE_FAILED).makeSubstitution(exc));
-					IUserActionsMessageIds.MSG_UDA_LOAD_ERROR).makeSubstitution(fileName, exc));
+			
+			String msgTxt = NLS.bind(UserActionsResources.MSG_UDA_LOAD_ERROR, fileName);
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, exc);
+			SystemMessageDialog msgdlg = new SystemMessageDialog(SystemBasePlugin.getActiveWorkbenchShell(), msg);
 			msgdlg.open();
 			return doc;
 		}

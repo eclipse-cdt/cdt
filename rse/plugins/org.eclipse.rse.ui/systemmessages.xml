@@ -409,87 +409,7 @@ Kevin Doyle (IBM) - [160769] Added message for invalid filter when moving files
                           <LevelOne>Value %1 not in range</LevelOne>
                           <LevelTwo>The value specified is not within the valid range of %2 to %3</LevelTwo>
                     </Message>
-                    <Message ID="1180" Indicator="E">
-                          <LevelOne>Enter action name</LevelOne>
-                          <LevelTwo>You must enter a name for this action</LevelTwo>
-                    </Message>
-                    <Message ID="1181" Indicator="E">
-                          <LevelOne>Action name is not unique</LevelOne>
-                          <LevelTwo>There is already an action with the given name in the selected profile. Specify a name that is not already in use</LevelTwo>
-                    </Message>
-                    <Message ID="1182" Indicator="E">
-                          <LevelOne>Action name is not valid</LevelOne>
-                          <LevelTwo>The given name is not a valid action name</LevelTwo>
-                    </Message>
-                    <Message ID="1183" Indicator="E">
-                          <LevelOne>Enter comment</LevelOne>
-                          <LevelTwo>You must enter a comment for this action</LevelTwo>
-                    </Message>
-                    <Message ID="1184" Indicator="E">
-                          <LevelOne>Action comment is not valid</LevelOne>
-                          <LevelTwo>The given comment has syntactical errors</LevelTwo>
-                    </Message>
-                    <Message ID="1185" Indicator="E">
-                          <LevelOne>Enter command</LevelOne>
-                          <LevelTwo>You must enter a command for this action</LevelTwo>
-                    </Message>
-                    <Message ID="1186" Indicator="E">
-                          <LevelOne>Action command is not valid</LevelOne>
-                          <LevelTwo>The given command has syntactical errors</LevelTwo>
-                    </Message>
-                    <Message ID="1187" Indicator="E">
-                          <LevelOne>Enter type name</LevelOne>
-                          <LevelTwo>You must enter a name for this collection of resource types</LevelTwo>
-                    </Message>
-                    <Message ID="1188" Indicator="E">
-                          <LevelOne>Type name %1 in use</LevelOne>
-                          <LevelTwo>There is already a named type with the given name. Specify a name that is not already in use</LevelTwo>
-                    </Message>
-                    <Message ID="1189" Indicator="E">
-                          <LevelOne>Type name %1 is not valid</LevelOne>
-                          <LevelTwo>The given name is not valid for a named type. It must not contain blanks</LevelTwo>
-                    </Message>
-                    <Message ID="1190" Indicator="E">
-                          <LevelOne>Specify one or more resource types</LevelOne>
-                          <LevelTwo>You must specify one or more simple or generic resource types to constitute this named type</LevelTwo>
-                    </Message>
-                    <Message ID="1191" Indicator="E">
-                          <LevelOne>Types not valid</LevelOne>
-                          <LevelTwo>Syntactical errors were found in the list of resource types</LevelTwo>
-                    </Message>
-                    <Message ID="1192" Indicator="E">
-                          <LevelOne>Enter source type</LevelOne>
-                          <LevelTwo>You must enter a source type</LevelTwo>
-                    </Message>
-                    <Message ID="1193" Indicator="E">
-                          <LevelOne>Source type "%1" not valid</LevelOne>
-                          <LevelTwo>The source type you entered is not valid.</LevelTwo>
-                    </Message>
-                    <Message ID="1194" Indicator="E">
-                          <LevelOne>Source type "%1" already exists</LevelOne>
-                          <LevelTwo>The source type you entered has already been specified. Specify a unique source type.</LevelTwo>
-                    </Message>
-                    <Message ID="1195" Indicator="E">
-                          <LevelOne>Enter a label for this compile command</LevelOne>
-                          <LevelTwo>You must enter a label for this compile command, that will be shown in menus and lists</LevelTwo>
-                    </Message>
-                    <Message ID="1196" Indicator="E">
-                          <LevelOne>Compile command label "%1" is in use</LevelOne>
-                          <LevelTwo>There is already a compile command with the given label. Specify a label that is not already in use</LevelTwo>
-                    </Message>
-                    <Message ID="1197" Indicator="E">
-                          <LevelOne>Compile command label "%1" is not valid</LevelOne>
-                          <LevelTwo>The given label is not a valid compile label</LevelTwo>
-                    </Message>
-                    <Message ID="1198" Indicator="E">
-                          <LevelOne>Enter command string for this compile command</LevelOne>
-                          <LevelTwo>You must enter a command string for this compile command. This is what is run when this compile command is selected.</LevelTwo>
-                    </Message>
-                    <Message ID="1199" Indicator="E">
-                          <LevelOne>Compile command string "%1" is not valid</LevelOne>
-                          <LevelTwo>The given string is not a valid command.</LevelTwo>
-                    </Message>
-
+   
                     <Message ID="1220" Indicator="E">
                           <LevelOne>Host name '%1' not found or valid</LevelOne>
                           <LevelTwo>A remote system of host name '%1' was not found. If you are working disconnected, de-select the checkbox to verify the host name</LevelTwo>
@@ -498,14 +418,7 @@ Kevin Doyle (IBM) - [160769] Added message for invalid filter when moving files
                           <LevelOne>Verifying host name...</LevelOne>
                           <LevelTwo></LevelTwo>
                     </Message>
-                    <Message ID="1230" Indicator="Q">
-                          <LevelOne>Delete selected user actions?</LevelOne>		
-                          <LevelTwo>This is a permanent deletion of the selected actions and cannot be undone.Select Yes to delete and No to cancel the delete action</LevelTwo>
-                    </Message>
-                    <Message ID="1231" Indicator="Q">
-                          <LevelOne>Delete selected types?</LevelOne>		
-                          <LevelTwo>This is a permanent deletion of the selected types and cannot be undone.Select Yes to delete and No to cancel the delete action</LevelTwo>
-                    </Message>
+
                     <Message ID="1240" Indicator="E">
                           <LevelOne>There is an error on another page</LevelOne>	
                           <LevelTwo>Another page of the wizard has an error that must be corrected before the wizard can be finished</LevelTwo>

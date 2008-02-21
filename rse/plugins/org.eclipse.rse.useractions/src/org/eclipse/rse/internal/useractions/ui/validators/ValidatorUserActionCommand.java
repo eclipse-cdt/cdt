@@ -17,9 +17,11 @@
 
 package org.eclipse.rse.internal.useractions.ui.validators;
 
-import org.eclipse.rse.internal.useractions.IUserActionsMessageIds;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.rse.internal.useractions.Activator;
+import org.eclipse.rse.internal.useractions.UserActionsResources;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 
 /**
@@ -35,7 +37,16 @@ public class ValidatorUserActionCommand implements ISystemValidator {
 	 * but use the default for the "Value not valid" error message
 	 */
 	public ValidatorUserActionCommand() {
-		setErrorMessages(RSEUIPlugin.getPluginMessage(IUserActionsMessageIds.MSG_VALIDATE_UDACMD_EMPTY), RSEUIPlugin.getPluginMessage(IUserActionsMessageIds.MSG_VALIDATE_UDACMD_NOTVALID));
+		String msg1Txt = UserActionsResources.MSG_VALIDATE_UDACMD_EMPTY;
+		String msg1Details = UserActionsResources.MSG_VALIDATE_UDACMD_EMPTY_DETAILS;
+	
+		SystemMessage msg1 = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msg1Txt, msg1Details);
+		
+		String msg2Txt = UserActionsResources.MSG_VALIDATE_UDACMD_NOTVALID;
+		String msg2Details = UserActionsResources.MSG_VALIDATE_UDACMD_NOTVALID_DETAILS;
+		
+		SystemMessage msg2 = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msg2Txt, msg2Details);
+		setErrorMessages(msg1,msg2);
 	}
 
 	/**

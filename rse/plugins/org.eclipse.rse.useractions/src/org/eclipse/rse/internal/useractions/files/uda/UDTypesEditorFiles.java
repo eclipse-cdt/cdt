@@ -18,12 +18,15 @@ import java.util.Iterator;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.rse.internal.useractions.IUserActionsMessageIds;
+import org.eclipse.rse.internal.useractions.Activator;
+import org.eclipse.rse.internal.useractions.UserActionsResources;
 import org.eclipse.rse.internal.useractions.ui.uda.ISystemUDTypeEditPaneTypesSelector;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemUDAResources;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -246,7 +249,14 @@ public class UDTypesEditorFiles implements ISystemUDTypeEditPaneTypesSelector, I
 	 */
 	public SystemMessage validate() {
 		if (typesSelectionList == null) return null;
-		if (!areTypesSelected()) return RSEUIPlugin.getPluginMessage(IUserActionsMessageIds.MSG_VALIDATE_UDTTYPES_EMPTY);
+		
+		
+		
+		if (!areTypesSelected()) {
+			return new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, 
+					UserActionsResources.MSG_VALIDATE_UDTTYPES_EMPTY, 
+					UserActionsResources.MSG_VALIDATE_UDTTYPES_EMPTY_DETAILS);
+		}
 		// validate that user-defined entry field!
 		return validateUserDefinedTypes();
 	}
@@ -263,8 +273,9 @@ public class UDTypesEditorFiles implements ISystemUDTypeEditPaneTypesSelector, I
 		int index = filename.indexOf('.');
 		if (index == filename.length() - 1) {
 			if (index == 0 || (index == 1 && filename.charAt(0) == '*')) {
-				//setErrorMessage(GenericMessages.getString("FileExtension.extensionEmptyMessage")); //$NON-NLS-1$
-				return RSEUIPlugin.getPluginMessage(IUserActionsMessageIds.MSG_VALIDATE_UDTTYPES_NOTVALID);
+				return new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, 
+						UserActionsResources.MSG_VALIDATE_UDTTYPES_NOTVALID, 
+						UserActionsResources.MSG_VALIDATE_UDTTYPES_NOTVALID_DETAILS);
 			}
 		}
 		int startScan = 0;
@@ -276,12 +287,14 @@ public class UDTypesEditorFiles implements ISystemUDTypeEditPaneTypesSelector, I
 		index = filename.indexOf('*', startScan);
 		if (index > -1) {
 			if (filename.length() == 1) {
-				//setErrorMessage(GenericMessages.getString("FileExtension.extensionEmptyMessage")); //$NON-NLS-1$
-				return RSEUIPlugin.getPluginMessage(IUserActionsMessageIds.MSG_VALIDATE_UDTTYPES_NOTVALID);
+				return new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, 
+						UserActionsResources.MSG_VALIDATE_UDTTYPES_NOTVALID, 
+						UserActionsResources.MSG_VALIDATE_UDTTYPES_NOTVALID_DETAILS);
 			}
 			if (index != 0 || filename.charAt(1) != '.') {
-				//setErrorMessage(GenericMessages.getString("FileExtension.fileNameInvalidMessage")); //$NON-NLS-1$
-				return RSEUIPlugin.getPluginMessage(IUserActionsMessageIds.MSG_VALIDATE_UDTTYPES_NOTVALID);
+				return new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, 
+						UserActionsResources.MSG_VALIDATE_UDTTYPES_NOTVALID, 
+						UserActionsResources.MSG_VALIDATE_UDTTYPES_NOTVALID_DETAILS);
 			}
 		}
 		return null;

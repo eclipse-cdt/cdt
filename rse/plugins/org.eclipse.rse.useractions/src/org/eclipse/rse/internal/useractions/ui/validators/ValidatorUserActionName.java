@@ -21,9 +21,11 @@ import java.util.Collection;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.rse.internal.useractions.IUserActionsMessageIds;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.rse.internal.useractions.Activator;
+import org.eclipse.rse.internal.useractions.UserActionsResources;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.validators.ValidatorUniqueString;
 
@@ -66,9 +68,25 @@ public class ValidatorUserActionName extends ValidatorUniqueString implements IS
 	}
 
 	private void init() {
-		super.setErrorMessages(RSEUIPlugin.getPluginMessage(IUserActionsMessageIds.MSG_VALIDATE_UDANAME_EMPTY), RSEUIPlugin.getPluginMessage(IUserActionsMessageIds.MSG_VALIDATE_UDANAME_NOTUNIQUE));
+		String msg1Txt = UserActionsResources.MSG_VALIDATE_UDANAME_EMPTY;
+		String msg1Details = UserActionsResources.MSG_VALIDATE_UDANAME_EMPTY_DETAILS;
+	
+		SystemMessage msg1 = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msg1Txt, msg1Details);
+		
+		String msg2Txt = UserActionsResources.MSG_VALIDATE_UDANAME_NOTUNIQUE;
+		String msg2Details = UserActionsResources.MSG_VALIDATE_UDANAME_NOTUNIQUE_DETAILS;
+		
+		SystemMessage msg2 = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msg2Txt, msg2Details);
+		
+		
+		super.setErrorMessages(msg1, msg2);
 		fUnique = true;
-		msg_Invalid = RSEUIPlugin.getPluginMessage(IUserActionsMessageIds.MSG_VALIDATE_UDANAME_NOTVALID);
+		
+		String msg3Txt = UserActionsResources.MSG_VALIDATE_UDANAME_NOTVALID;
+		String msg3Details = UserActionsResources.MSG_VALIDATE_UDANAME_NOTVALID_DETAILS;
+		
+		SystemMessage msg3 = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msg3Txt, msg3Details);
+		msg_Invalid = msg3;
 	}
 
 	/**

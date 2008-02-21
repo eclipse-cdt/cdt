@@ -359,7 +359,7 @@ public class TelnetConnectorService extends StandardConnectorService implements
 			// SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_UNKNOWNHOST);
 
 			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.CANCEL, 
-					NLS.bind(TelnetConnectorResources.MSG_CONNECT_CANCELLED, _connection.getHost().getAliasName()));
+					NLS.bind(TelnetConnectorResources.MSG_CONNECT_CANCELED, _connection.getHost().getAliasName()));
 	
 			SystemMessageDialog dialog = new SystemMessageDialog(getShell(), msg);
 			dialog.open();
@@ -494,9 +494,9 @@ public class TelnetConnectorService extends StandardConnectorService implements
 				String hostName, int port) {
 			// SystemMessage.displayMessage(SystemMessage.MSGTYPE_ERROR, shell,
 			// RSEUIPlugin.getResourceBundle(),
-			// ISystemMessages.MSG_DISCONNECT_CANCELLED, hostName);
+			// ISystemMessages.MSG_DISCONNECT_CANCELED, hostName);
 			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.CANCEL,
-					NLS.bind(TelnetConnectorResources.MSG_DISCONNECT_CANCELLED, hostName));
+					NLS.bind(TelnetConnectorResources.MSG_DISCONNECT_CANCELED, hostName));
 			SystemMessageDialog msgDlg = new SystemMessageDialog(shell,msg);
 			msgDlg.open();
 		}

@@ -1252,7 +1252,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 		String serverPort = (String)starter.launch(monitor);	
 		if (monitor.isCanceled())
 		{
-			SystemMessage msg = createSystemMessage(IStatus.CANCEL, ConnectorServiceResources.MSG_OPERATION_CANCELLED);
+			SystemMessage msg = createSystemMessage(IStatus.CANCEL, ConnectorServiceResources.MSG_OPERATION_CANCELED);
 			throw new SystemMessageException(msg);
 		}
 		

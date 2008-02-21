@@ -32,7 +32,7 @@ public class ShellStrings extends NLS
 	public static String RSESubSystemOperation_Refresh_Output;
 	
 	public static String MSG_CONNECT_FAILED;	
-	public static String MSG_OPERATION_CANCELLED;
+	public static String MSG_OPERATION_CANCELED;
 
 	
 	static 

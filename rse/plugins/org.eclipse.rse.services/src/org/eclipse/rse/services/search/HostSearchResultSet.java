@@ -221,7 +221,7 @@ public class HostSearchResultSet implements IHostSearchResultSet, IAdaptable
 			IHostSearchResultConfiguration config = (IHostSearchResultConfiguration)iter.next();
 			
 			// if a config is not cancelled, the search is not cancelled
-			if (config.getStatus() != IHostSearchConstants.CANCELLED) {
+			if (config.getStatus() != IHostSearchConstants.CANCELED) {
 				return false;
 			}
 		}

@@ -85,7 +85,7 @@ public class SystemProcessesResources extends NLS
 	public static String	RESID_REMOTE_PROCESSES_EXECUTABLE_TOOLTIP;
 	
 	public static String MSG_OPERATION_FAILED;
-	public static String MSG_OPERATION_CANCELLED;
+	public static String MSG_OPERATION_CANCELED;
 	public static String MSG_EXPAND_FAILED;
 	
 	public static String MSG_VALIDATE_FILEFILTERSTRING_NOTUNIQUE;

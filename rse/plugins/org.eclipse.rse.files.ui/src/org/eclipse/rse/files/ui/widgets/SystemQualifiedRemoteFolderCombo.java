@@ -618,7 +618,7 @@ public class SystemQualifiedRemoteFolderCombo extends Composite
 			}
     	   } catch (InterruptedException exc)
     	   {
-    		   String msgTxt = NLS.bind(FileResources.MSG_CONNECT_CANCELLED, conn.getHostName());
+    		   String msgTxt = NLS.bind(FileResources.MSG_CONNECT_CANCELED, conn.getHostName());
     	     throw new Exception(msgTxt);    	   	 
     	   } catch (Exception exc)
     	   {

@@ -43,9 +43,9 @@ public class SshConnectorResources extends NLS {
 	public static String KeyboardInteractiveDialog_message;
 	public static String KeyboardInteractiveDialog_labelConnection;
 
-	public static String MSG_CONNECT_CANCELLED;
+	public static String MSG_CONNECT_CANCELED;
 	
 	public static String MSG_DISCONNECT_FAILED;
-	public static String MSG_DISCONNECT_CANCELLED;
+	public static String MSG_DISCONNECT_CANCELED;
 	
 }

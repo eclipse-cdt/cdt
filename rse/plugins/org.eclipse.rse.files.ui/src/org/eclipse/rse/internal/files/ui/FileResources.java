@@ -463,7 +463,7 @@ public class FileResources extends NLS
 	
 	public static String MSG_CONNECT_FAILED; 
 	public static String MSG_CONNECT_UNKNOWNHOST;
-	public static String MSG_CONNECT_CANCELLED; 
+	public static String MSG_CONNECT_CANCELED; 
 	
 	public static String MSG_EXCEPTION_OCCURRED;
 
@@ -474,7 +474,7 @@ public class FileResources extends NLS
 	public static String MSG_COPY_PROGRESS;
 	
 	public static String MSG_EXPAND_FAILED;
-	public static String MSG_EXPAND_CANCELLED;
+	public static String MSG_EXPAND_CANCELED;
 	
 	// operation status
 	public static String MSG_OPERATION_RUNNING;

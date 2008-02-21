@@ -750,7 +750,7 @@ public class SystemViewRemoteFileAdapter
 			catch (InterruptedException exc)
 			{
 				children = new SystemMessageObject[1];
-				SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.CANCEL, FileResources.MSG_EXPAND_CANCELLED);
+				SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.CANCEL, FileResources.MSG_EXPAND_CANCELED);
 				children[0] = new SystemMessageObject(msg, ISystemMessageObject.MSGTYPE_CANCEL, element);
 			}
 			catch (Exception exc)

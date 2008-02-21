@@ -31,7 +31,7 @@ public interface IHostSearchConstants {
 	/**
 	 * Status indicating configuration has been cancelled, 2.
 	 */
-	public static final int CANCELLED = 2;
+	public static final int CANCELED = 2;
    
 	/**
 	 * Status indicating configuration has been disconnected, 3.

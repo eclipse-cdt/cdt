@@ -35,7 +35,7 @@ public class OutputRefresh implements Runnable
 	{
 		this.searchConfig = searchConfig;
 		this.isDone = searchConfig.getStatus() == IHostSearchConstants.FINISHED;
-		this.isCancelled = searchConfig.getStatus() == IHostSearchConstants.CANCELLED;
+		this.isCancelled = searchConfig.getStatus() == IHostSearchConstants.CANCELED;
 	}
 
 	public void run() {

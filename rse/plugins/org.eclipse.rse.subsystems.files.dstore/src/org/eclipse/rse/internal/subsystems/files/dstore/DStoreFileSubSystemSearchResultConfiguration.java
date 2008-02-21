@@ -174,7 +174,7 @@ public class DStoreFileSubSystemSearchResultConfiguration extends DStoreSearchRe
 		}
 		else if (_status.getValue().equals("cancelled")) //$NON-NLS-1$
 		{
-			setStatus(IHostSearchConstants.CANCELLED);
+			setStatus(IHostSearchConstants.CANCELED);
 			_status.getDataStore().getDomainNotifier().removeDomainListener(this);
 		}
 		OutputRefresh refresh = new OutputRefresh(this);			

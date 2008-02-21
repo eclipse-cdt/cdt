@@ -526,7 +526,7 @@ public abstract class SubSystem extends RSEModelObject
                 else
                     if (e instanceof InterruptedException)
                     {
-                    	String msgTxt = NLS.bind(SubSystemResources.MSG_CONNECT_CANCELLED, getHost().getAliasName());
+                    	String msgTxt = NLS.bind(SubSystemResources.MSG_CONNECT_CANCELED, getHost().getAliasName());
                         SystemMessage msg = new SimpleSystemMessage(RSECorePlugin.PLUGIN_ID, IStatus.CANCEL, msgTxt);
                         throw new SystemMessageException(msg);
                     }
@@ -1806,7 +1806,7 @@ public abstract class SubSystem extends RSEModelObject
      */
     protected void showConnectCancelledMessage(Shell shell, String hostName, int port)
     {
-    	 String msgTxt = NLS.bind(SubSystemResources.MSG_CONNECT_CANCELLED, hostName);
+    	 String msgTxt = NLS.bind(SubSystemResources.MSG_CONNECT_CANCELED, hostName);
          SystemMessage msg = new SimpleSystemMessage(RSECorePlugin.PLUGIN_ID, IStatus.CANCEL, msgTxt);
     	 SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);
     	 msgDlg.open();     	
@@ -1832,7 +1832,7 @@ public abstract class SubSystem extends RSEModelObject
      */
     protected void showDisconnectCancelledMessage(Shell shell, String hostName, int port)
     {
-     	String msgTxt = NLS.bind(SubSystemResources.MSG_DISCONNECT_CANCELLED, hostName);
+     	String msgTxt = NLS.bind(SubSystemResources.MSG_DISCONNECT_CANCELED, hostName);
     	SystemMessage msg = new SimpleSystemMessage(RSECorePlugin.PLUGIN_ID, IStatus.CANCEL, msgTxt);
   
     	 SystemMessageDialog msgDlg = new SystemMessageDialog(shell,msg);
@@ -1926,7 +1926,7 @@ public abstract class SubSystem extends RSEModelObject
      */
     protected void showOperationCancelledMessage(Shell shell)
     {
-    	String msgTxt = SubSystemResources.MSG_OPERATION_CANCELLED;
+    	String msgTxt = SubSystemResources.MSG_OPERATION_CANCELED;
     	SystemMessage msg = new SimpleSystemMessage(RSECorePlugin.PLUGIN_ID, IStatus.CANCEL, msgTxt);
     	SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);
     	msgDlg.open();

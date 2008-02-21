@@ -112,14 +112,14 @@ public interface IHostSearchResultConfiguration {
 	
 	/**
 	 * Sets the status of the search. One of <code>RUNNING</code>, <code>FINISHED</code>,
-	 * <code>CANCELLED</code>, or <code>DISCONNECTED</code>.
+	 * <code>CANCELED</code>, or <code>DISCONNECTED</code>.
 	 * @param status the status.
 	 */
 	public void setStatus(int status);
 	
 	/**
 	 * Gets the status of the search. One of <code>RUNNING</code>, <code>FINISHED</code>,
-	 * <code>CANCELLED</code>, or <code>DISCONNECTED</code>.
+	 * <code>CANCELED</code>, or <code>DISCONNECTED</code>.
 	 * @return the status of the search.
 	 */
 	public int getStatus();

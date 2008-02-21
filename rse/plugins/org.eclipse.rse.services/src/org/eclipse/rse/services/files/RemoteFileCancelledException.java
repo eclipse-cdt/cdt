@@ -43,8 +43,8 @@ public class RemoteFileCancelledException extends RemoteFileException {
 
 	/*
 	 * TODO dwd update this to retrieve the new messages when those are created
-	 * myMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_CANCELLED);
-	 * public static final String MSG_OPERATION_CANCELLED = "RSEG1067";		
+	 * myMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_CANCELED);
+	 * public static final String MSG_OPERATION_CANCELED = "RSEG1067";		
 	 * <Message ID="1067" Indicator="E">
 	 *   <LevelOne>Operation cancelled.</LevelOne>		
 	 *   <LevelTwo></LevelTwo>

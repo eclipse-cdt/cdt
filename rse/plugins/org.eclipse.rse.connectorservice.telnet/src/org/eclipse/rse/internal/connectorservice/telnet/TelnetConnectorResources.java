@@ -38,7 +38,7 @@ public class TelnetConnectorResources extends NLS {
 	public static String MSG_COMM_AUTH_FAILED_DETAILS;
 
 
-	public static String MSG_CONNECT_CANCELLED;
+	public static String MSG_CONNECT_CANCELED;
 	public static String MSG_DISCONNECT_FAILED;
-	public static String MSG_DISCONNECT_CANCELLED;
+	public static String MSG_DISCONNECT_CANCELED;
 }

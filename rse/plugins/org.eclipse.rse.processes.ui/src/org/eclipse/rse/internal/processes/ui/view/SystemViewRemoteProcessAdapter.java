@@ -186,7 +186,7 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 		/*catch (InterruptedException exc)
 		{
 			children = new SystemMessageObject[1];
-			children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(MSG_EXPAND_CANCELLED), ISystemMessageObject.MSGTYPE_CANCEL, element);
+			children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(MSG_EXPAND_CANCELED), ISystemMessageObject.MSGTYPE_CANCEL, element);
 		}*/
 		catch (Exception exc)
 		{

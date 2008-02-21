@@ -2437,10 +2437,10 @@ public class UniversalFileTransferUtility
 
 				int state = rr.getCancelStatus();
 
-				if (state == RenameRunnable.RENAME_DIALOG_CANCELLED_ALL) {
+				if (state == RenameRunnable.RENAME_DIALOG_CANCELED_ALL) {
 					status = new RenameStatus(IStatus.CANCEL, Activator.getDefault().getBundle().getSymbolicName(), RenameStatus.CANCEL_ALL, "", null); //$NON-NLS-1$
 				}
-				else if (state == RenameRunnable.RENAME_DIALOG_CANCELLED) {
+				else if (state == RenameRunnable.RENAME_DIALOG_CANCELED) {
 					status = new RenameStatus(IStatus.CANCEL, Activator.getDefault().getBundle().getSymbolicName(), IStatus.CANCEL, "", null); //$NON-NLS-1$
 				}
 			}
@@ -2460,19 +2460,19 @@ public class UniversalFileTransferUtility
 		private List _namesInUse = new ArrayList();
 		private int cancelStatus;
 		
-		public static int RENAME_DIALOG_NOT_CANCELLED = -1;
-		public static int RENAME_DIALOG_CANCELLED = 0;
-		public static int RENAME_DIALOG_CANCELLED_ALL = 1;
+		public static int RENAME_DIALOG_NOT_CANCELED = -1;
+		public static int RENAME_DIALOG_CANCELED = 0;
+		public static int RENAME_DIALOG_CANCELED_ALL = 1;
 		
 		public RenameRunnable(IRemoteFile targetFileOrFolder)
 		{
 			_targetFileOrFolder = targetFileOrFolder;
-			cancelStatus = RENAME_DIALOG_NOT_CANCELLED;
+			cancelStatus = RENAME_DIALOG_NOT_CANCELED;
 		}
 		public RenameRunnable(IRemoteFile targetFileOrFolder, List namesInUse)
 		{
 			_targetFileOrFolder = targetFileOrFolder;
-			cancelStatus = RENAME_DIALOG_NOT_CANCELLED;
+			cancelStatus = RENAME_DIALOG_NOT_CANCELED;
 			_namesInUse=namesInUse;
 		}
 		
@@ -2496,10 +2496,10 @@ public class UniversalFileTransferUtility
 				_newName = null;
 				
 				if (dlg.wasCancelledAll()) {
-					cancelStatus = RENAME_DIALOG_CANCELLED_ALL;
+					cancelStatus = RENAME_DIALOG_CANCELED_ALL;
 				}
 				else {
-					cancelStatus = RENAME_DIALOG_CANCELLED;
+					cancelStatus = RENAME_DIALOG_CANCELED;
 				}
 			}
 		}

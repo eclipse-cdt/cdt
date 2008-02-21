@@ -284,7 +284,7 @@ public class SystemNewConnectionPromptObject implements ISystemPromptableObject,
 			result = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_CONNECTIONCREATED), ISystemMessageObject.MSGTYPE_OBJECTCREATED,
 																				null);
 		} else
-			result = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_CANCELLED), ISystemMessageObject.MSGTYPE_CANCEL, null);
+			result = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_CANCELED), ISystemMessageObject.MSGTYPE_CANCEL, null);
 		return new Object[] { result };
 	}
 

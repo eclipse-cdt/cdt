@@ -144,7 +144,7 @@ public class SystemViewAPIProviderForFilterStrings
 		catch (InterruptedException exc)
 		{
 		    children = new SystemMessageObject[1];
-		    children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_CANCELLED),
+		    children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_CANCELED),
 		                                          ISystemMessageObject.MSGTYPE_CANCEL, element);
 		 	System.out.println("Canceled."); //$NON-NLS-1$
 		}

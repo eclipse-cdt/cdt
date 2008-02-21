@@ -107,12 +107,12 @@ public class DStoreSearchService extends AbstractDStoreService implements ISearc
 				}
 				else if (statusStr.equals("cancelled")) //$NON-NLS-1$
 				{
-					config.setStatus(IHostSearchConstants.CANCELLED);
+					config.setStatus(IHostSearchConstants.CANCELED);
 				}
 			}
 			catch (Exception e)
 			{				
-				config.setStatus(IHostSearchConstants.CANCELLED);
+				config.setStatus(IHostSearchConstants.CANCELED);
 			}
 		}				
 	}

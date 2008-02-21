@@ -357,7 +357,7 @@ public class SystemKillProcessAction extends SystemBaseDialogAction implements I
      */
     protected void showOperationCancelledMessage(Shell shell)
     {
-    	SystemMessage msg = new SimpleSystemMessage(ProcessesPlugin.PLUGIN_ID, IStatus.CANCEL, SystemProcessesResources.MSG_OPERATION_CANCELLED);
+    	SystemMessage msg = new SimpleSystemMessage(ProcessesPlugin.PLUGIN_ID, IStatus.CANCEL, SystemProcessesResources.MSG_OPERATION_CANCELED);
     	SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);
     	msgDlg.open();
     }	

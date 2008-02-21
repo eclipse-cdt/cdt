@@ -29,7 +29,7 @@ public class ConnectorServiceResources extends NLS
 	public static String MSG_CONNECT_UNKNOWNHOST;
 	
 	public static String MSG_DISCONNECT_FAILED; 
-	public static String MSG_DISCONNECT_CANCELLED;
+	public static String MSG_DISCONNECT_CANCELED;
 	
 	public static String MSG_CONNECT_SSL_EXCEPTION;
 	public static String MSG_CONNECT_SSL_EXCEPTION_DETAILS;
@@ -74,7 +74,7 @@ public class ConnectorServiceResources extends NLS
 	
 	public static String MSG_CONNECT_FAILED;
 	
-	public static String MSG_OPERATION_CANCELLED;
+	public static String MSG_OPERATION_CANCELED;
 
 	public static String MSG_COMM_INVALID_LOGIN; 
 	public static String MSG_COMM_INVALID_LOGIN_DETAILS;

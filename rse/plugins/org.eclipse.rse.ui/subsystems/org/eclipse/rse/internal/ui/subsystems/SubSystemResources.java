@@ -19,7 +19,7 @@ public class SubSystemResources extends NLS {
 
 	private static String BUNDLE_NAME = "org.eclipse.rse.internal.ui.subsystems";//$NON-NLS-1$
 			
-	public static String MSG_CONNECT_CANCELLED;
+	public static String MSG_CONNECT_CANCELED;
 	public static String MSG_CONNECT_PROGRESS;
 	public static String MSG_CONNECTWITHPORT_PROGRESS;
 	public static String MSG_CONNECT_FAILED;
@@ -28,10 +28,10 @@ public class SubSystemResources extends NLS {
 	public static String MSG_DISCONNECT_PROGRESS;
 	public static String MSG_DISCONNECTWITHPORT_PROGRESS;
 	public static String MSG_DISCONNECT_FAILED;
-	public static String MSG_DISCONNECT_CANCELLED;
+	public static String MSG_DISCONNECT_CANCELED;
 	
 	public static String MSG_OPERATION_FAILED;
-	public static String MSG_OPERATION_CANCELLED;
+	public static String MSG_OPERATION_CANCELED;
 	
 	public static String MSG_LOADING_PROFILE_SHOULDBE_ACTIVATED;
 	public static String MSG_LOADING_PROFILE_SHOULDNOTBE_DEACTIVATED;

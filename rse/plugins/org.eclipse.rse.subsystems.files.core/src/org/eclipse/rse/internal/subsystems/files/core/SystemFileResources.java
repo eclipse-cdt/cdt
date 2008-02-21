@@ -185,7 +185,7 @@ public class SystemFileResources extends NLS
 	public static String MSG_VALIDATE_NAME_NOTVALID;
 	
 	public static String MSG_CONNECT_FAILED;	
-	public static String MSG_OPERATION_CANCELLED;
+	public static String MSG_OPERATION_CANCELED;
 	
 	public static String FILEMSG_FOLDER_NOTEMPTY;
 	public static String FILEMSG_FOLDER_NOTEMPTY_DETAILS;

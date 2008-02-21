@@ -23,6 +23,7 @@ package org.eclipse.rse.internal.files.ui.propertypages;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.BooleanFieldEditor;
@@ -44,12 +45,12 @@ import org.eclipse.rse.internal.files.ui.Activator;
 import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageFile;
 import org.eclipse.rse.subsystems.files.core.model.ISystemFileTransferModeMapping;
 import org.eclipse.rse.subsystems.files.core.model.SystemFileTransferModeMapping;
 import org.eclipse.rse.subsystems.files.core.model.SystemFileTransferModeRegistry;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.Mnemonics;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
@@ -726,7 +727,8 @@ public class UniversalPreferencePage
 // Note by DWD - this path is never taken because the dialog that gathers resource types checks for this condition.
 					SystemMessageFile mf = RSEUIPlugin.getPluginMessageFile();
 					Shell shell = getControl().getShell();
-					SystemMessage message = mf.getMessage(ISystemMessages.MSG_ERROR_FILENAME_INVALID);
+					String msgTxt = FileResources.MSG_ERROR_FILENAME_INVALID;
+					SystemMessage message = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt);
 					SystemMessageDialog.displayErrorMessage(shell, message);
 					return;
 				}

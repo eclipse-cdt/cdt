@@ -19,6 +19,7 @@
  *                                    FILEMSG_RENAME_INTERRUPTED, FILEMSG_DELETE_INTERRUPTED
  *                                    FILEMSG_COPY_INTERRUPTED
  * Xuan Chen   (IBM)        - [209828] Need to move the Create operation to a job.
+ * David McKnight   (IBM)        - [216252] removing unused messages and ids
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -30,7 +31,7 @@ public interface ISystemMessages
 {
 
 	/***************************************************/
-	/* Unused messages (that may still be usable
+	/* Unused messages (that may still be usable)
 	/***************************************************/
 	public static final String MSG_VALIDATE_RENAME_EMPTY    = "RSEG1012"; //MSG_VALIDATE_PREFIX + "ReName.Required"; //$NON-NLS-1$
 	public static final String MSG_VALIDATE_RENAME_NOTVALID = "RSEG1011"; //MSG_VALIDATE_PREFIX + "ReName.NotValid"; //$NON-NLS-1$
@@ -158,6 +159,109 @@ public interface ISystemMessages
 	public static final String FILEMSG_MOVE_INTERRUPTED = "RSEG1245"; //$NON-NLS-1$
 
 	public static final String FILEMSG_COPY_INTERRUPTED = "RSEG1248"; //$NON-NLS-1$
+
+	// -------------------------	
+	// IMPORT/EXPORT MESSAGES...
+	// -------------------------
+	public static final String FILEMSG_COPY_ROOT = "RSEF8050"; //$NON-NLS-1$
+	public static final String FILEMSG_IMPORT_ERROR = "RSEF8052"; //$NON-NLS-1$
+	public static final String FILEMSG_IMPORT_PROBLEMS = "RSEF8054"; //$NON-NLS-1$
+	public static final String FILEMSG_IMPORT_SELF = "RSEF8056";	 //$NON-NLS-1$
+	public static final String FILEMSG_EXPORT_ERROR = "RSEF8057"; //$NON-NLS-1$
+	public static final String FILEMSG_EXPORT_PROBLEMS = "RSEF8058";	 //$NON-NLS-1$
+	public static final String FILEMSG_NOT_WRITABLE = "RSEF8059"; //$NON-NLS-1$
+		
+	public static final String FILEMSG_TARGET_EXISTS = "RSEF8060"; //$NON-NLS-1$
+	public static final String FILEMSG_FOLDER_IS_FILE = "RSEF8061";	 //$NON-NLS-1$
+	public static final String FILEMSG_DESTINATION_CONFLICTING = "RSEF8062";	 //$NON-NLS-1$
+	public static final String FILEMSG_SOURCE_IS_FILE = "RSEF8063";	 //$NON-NLS-1$
+	public static final String FILEMSG_SOURCE_EMPTY = "RSEF8066";	 //$NON-NLS-1$
+	public static final String FILEMSG_EXPORT_FAILED = "RSEF8067";	 //$NON-NLS-1$
+	public static final String FILEMSG_EXPORT_NONE_SELECTED = "RSEF8068";		 //$NON-NLS-1$
+	public static final String FILEMSG_DESTINATION_EMPTY = "RSEF8069";	 //$NON-NLS-1$
+	public static final String FILEMSG_IMPORT_FAILED = "RSEF8070";		 //$NON-NLS-1$
+	public static final String FILEMSG_IMPORT_NONE_SELECTED = "RSEF8071";	 //$NON-NLS-1$
+	public static final String FILEMSG_IMPORT_FILTERING = "RSEF8072";	 //$NON-NLS-1$
+	
+	
+    // Remote File Exception Messages
+  	public static final String FILEMSG_SECURITY_ERROR = "RSEF1001"; //$NON-NLS-1$
+  	public static final String FILEMSG_IO_ERROR = "RSEF1002"; //$NON-NLS-1$
+  	
+  	public static final String FILEMSG_FOLDER_NOTEMPTY = "RSEF1003"; //$NON-NLS-1$
+  	public static final String FILEMSG_FOLDER_NOTFOUND = "RSEF1004"; //$NON-NLS-1$
+  	public static final String FILEMSG_FOLDER_NOTFOUND_WANTTOCREATE = "RSEF1005";  	 //$NON-NLS-1$
+  	public static final String FILEMSG_FILE_NOTFOUND   = "RSEF1006";  	 //$NON-NLS-1$
+
+  	
+	
+	public static final String MSG_ERROR_FOLDER_NOTFOUND = "RSEG1105"; //$NON-NLS-1$
+	public static final String MSG_ERROR_FOLDERORFILE_NOTFOUND = "RSEG1107"; //$NON-NLS-1$
+	public static final String MSG_ERROR_ARCHIVEMANAGEMENT_NOTSUPPORTED = "RSEG1304"; 		 //$NON-NLS-1$
+
+    public static final String MSG_GENERIC_I_TWOPARMS_HELP = "RSEO1005"; //$NON-NLS-1$
+    public static final String MSG_GENERIC_W_TWOPARMS_HELP = "RSEO1006"; //$NON-NLS-1$
+    public static final String MSG_GENERIC_E_TWOPARMS_HELP = "RSEO1007"; //$NON-NLS-1$
+    public static final String MSG_GENERIC_U_TWOPARMS_HELP = "RSEO1008"; //$NON-NLS-1$
+    public static final String MSG_GENERIC_Q_TWOPARMS_HELP = "RSEO1009"; //$NON-NLS-1$
+
+	public static final String MSG_COMM_CONNECT_FAILED 		= "RSEC1001"; //$NON-NLS-1$
+	public static final String MSG_COMM_AUTH_FAILED 		= "RSEC1002"; //$NON-NLS-1$
+
+	public static final String MSG_COMM_SERVER_NOTSTARTED	= "RSEC2301"; //$NON-NLS-1$
+	public static final String MSG_COMM_INVALID_LOGIN		= "RSEC2302"; //$NON-NLS-1$
+	
+	public static final String MSG_COMM_INCOMPATIBLE_PROTOCOL = "RSEC2303"; //$NON-NLS-1$
+	public static final String MSG_COMM_INCOMPATIBLE_UPDATE   = "RSEC2304"; //$NON-NLS-1$
+
+	public static final String MSG_COMM_REXEC_NOTSTARTED      = "RSEC2305"; //$NON-NLS-1$
+	
+	
+	public static final String MSG_COMM_SERVER_OLDER_WARNING  = "RSEC2308"; //$NON-NLS-1$
+	public static final String MSG_COMM_CLIENT_OLDER_WARNING  = "RSEC2309"; //$NON-NLS-1$
+	
+	public static final String MSG_COMM_USING_SSL  = "RSEC2314"; //$NON-NLS-1$
+	public static final String MSG_COMM_NOT_USING_SSL  = "RSEC2315"; //$NON-NLS-1$
+	
+	// Connection doesn't exist
+	public static final String MSG_CONNECTION_DELETED = "RSEF5011"; //$NON-NLS-1$
+	
+	// Remote editing messages
+	public static final String MSG_DOWNLOAD_NO_WRITE = "RSEF5002"; //$NON-NLS-1$
+	public static final String MSG_DOWNLOAD_ALREADY_OPEN_IN_EDITOR = "RSEF5009"; //$NON-NLS-1$
+	public static final String MSG_UPLOAD_FILE_EXISTS = "RSEF5012"; //$NON-NLS-1$
+	
+	public static final String MSG_FOLDER_UNREADABLE = "RSEF5020"; //$NON-NLS-1$
+	
+	// General error message
+	public static final String MSG_ERROR_GENERAL = "RSEO1002"; //$NON-NLS-1$
+	
+	
+	// remote error list title message
+	public static final String MSG_ERROR_LIST_TITLE = "RSEG1500"; //$NON-NLS-1$
+	
+	// name validation
+	public static final String MSG_ERROR_EXTENSION_EMPTY = "RSEF6001"; //$NON-NLS-1$
+	public static final String MSG_ERROR_FILENAME_INVALID = "RSEF6002"; //$NON-NLS-1$
+	
+
+	// cache preferences
+	public static final String MSG_CACHE_UPLOAD_BEFORE_DELETE = "RSEF6101"; //$NON-NLS-1$
+	public static final String MSG_CACHE_UNABLE_TO_SYNCH = "RSEF6102"; //$NON-NLS-1$
+	
+	// remote search messages
+	public static final String MSG_REMOTE_SEARCH_INVALID_REGEX = "RSEG1601"; //$NON-NLS-1$
+	
+
+	// yantzi: artemis 6.0, offline messages
+	public static final String MSG_OFFLINE_CANT_CONNECT			= "RSEC3001"; //$NON-NLS-1$
+	
+	// file import/export messages
+	public static final String MSG_IMPORT_EXPORT_UNABLE_TO_USE_CONNECTION = "RSEF5101";  //$NON-NLS-1$
+	public static final String MSG_IMPORT_EXPORT_UNEXPECTED_EXCEPTION = "RSEF5102"; //$NON-NLS-1$
+	
+	// jar export messages
+	public static final String MSG_REMOTE_JAR_EXPORT_OVERWRITE_FILE = "RSEF5103"; //$NON-NLS-1$
 
 	
 	/***************************************************/
@@ -296,52 +400,6 @@ public interface ISystemMessages
 	public static final String FILEMSG_RENAME_INTERRUPTED = "RSEG1246"; //$NON-NLS-1$
 	public static final String FILEMSG_DELETE_INTERRUPTED = "RSEG1247"; //$NON-NLS-1$
 
-	
-	
-	/******/
-	
-	
-	// -------------------------	
-	// IMPORT/EXPORT MESSAGES...
-	// -------------------------
-	public static final String FILEMSG_COPY_ROOT = "RSEF8050"; //$NON-NLS-1$
-	public static final String FILEMSG_IMPORT_ERROR = "RSEF8052"; //$NON-NLS-1$
-	public static final String FILEMSG_IMPORT_PROBLEMS = "RSEF8054"; //$NON-NLS-1$
-	public static final String FILEMSG_IMPORT_SELF = "RSEF8056";	 //$NON-NLS-1$
-	public static final String FILEMSG_EXPORT_ERROR = "RSEF8057"; //$NON-NLS-1$
-	public static final String FILEMSG_EXPORT_PROBLEMS = "RSEF8058";	 //$NON-NLS-1$
-	public static final String FILEMSG_NOT_WRITABLE = "RSEF8059"; //$NON-NLS-1$
-		
-	public static final String FILEMSG_TARGET_EXISTS = "RSEF8060"; //$NON-NLS-1$
-	public static final String FILEMSG_FOLDER_IS_FILE = "RSEF8061";	 //$NON-NLS-1$
-	public static final String FILEMSG_DESTINATION_CONFLICTING = "RSEF8062";	 //$NON-NLS-1$
-	public static final String FILEMSG_SOURCE_IS_FILE = "RSEF8063";	 //$NON-NLS-1$
-	public static final String FILEMSG_SOURCE_EMPTY = "RSEF8066";	 //$NON-NLS-1$
-	public static final String FILEMSG_EXPORT_FAILED = "RSEF8067";	 //$NON-NLS-1$
-	public static final String FILEMSG_EXPORT_NONE_SELECTED = "RSEF8068";		 //$NON-NLS-1$
-	public static final String FILEMSG_DESTINATION_EMPTY = "RSEF8069";	 //$NON-NLS-1$
-	public static final String FILEMSG_IMPORT_FAILED = "RSEF8070";		 //$NON-NLS-1$
-	public static final String FILEMSG_IMPORT_NONE_SELECTED = "RSEF8071";	 //$NON-NLS-1$
-	public static final String FILEMSG_IMPORT_FILTERING = "RSEF8072";	 //$NON-NLS-1$
-	
-    // --------------------------------
-	// INFO-POPS FOR UNIVERSAL FILE
-	// -------------------------------
-	
-	public static final String NEW_FILE_WIZARD     = "ufwf0000"; //$NON-NLS-1$
-	public static final String NEW_FOLDER_WIZARD   = "ufwr0000"; //$NON-NLS-1$
-	public static final String NEW_FILE_ACTION     = "ufaf0000"; //$NON-NLS-1$
-	public static final String NEW_FOLDER_ACTION   = "ufar0000"; //$NON-NLS-1$
-	
-	
-    // Remote File Exception Messages
-  	public static final String FILEMSG_SECURITY_ERROR = "RSEF1001"; //$NON-NLS-1$
-  	public static final String FILEMSG_IO_ERROR = "RSEF1002"; //$NON-NLS-1$
-  	
-  	public static final String FILEMSG_FOLDER_NOTEMPTY = "RSEF1003"; //$NON-NLS-1$
-  	public static final String FILEMSG_FOLDER_NOTFOUND = "RSEF1004"; //$NON-NLS-1$
-  	public static final String FILEMSG_FOLDER_NOTFOUND_WANTTOCREATE = "RSEF1005";  	 //$NON-NLS-1$
-  	public static final String FILEMSG_FILE_NOTFOUND   = "RSEF1006";  	 //$NON-NLS-1$
 
     // --------------------------
     // SYSTEM VIEW MESSAGES...
@@ -361,13 +419,12 @@ public interface ISystemMessages
     // ----------------------------------
     // GENERIC ERROR CHECKING MESSAGES...
     // ----------------------------------
+
 	public static final String MSG_ERROR_CONNECTION_NOTFOUND = "RSEG1103"; //$NON-NLS-1$
 	public static final String MSG_ERROR_PROFILE_NOTFOUND = "RSEG1104"; //$NON-NLS-1$
-	public static final String MSG_ERROR_FOLDER_NOTFOUND = "RSEG1105"; //$NON-NLS-1$
 	public static final String MSG_ERROR_FILE_NOTFOUND = "RSEG1106"; 		 //$NON-NLS-1$
-	public static final String MSG_ERROR_FOLDERORFILE_NOTFOUND = "RSEG1107"; //$NON-NLS-1$
-	public static final String MSG_ERROR_ARCHIVEMANAGEMENT_NOTSUPPORTED = "RSEG1304"; 		 //$NON-NLS-1$
-		
+
+
     // --------------------------
     // Generic messages, must substitute in values...
     // --------------------------	
@@ -381,19 +438,14 @@ public interface ISystemMessages
     public static final String MSG_GENERIC_E_HELP          = "RSEO1002"; //$NON-NLS-1$
     public static final String MSG_GENERIC_U_HELP          = "RSEO1003"; //$NON-NLS-1$
     public static final String MSG_GENERIC_Q_HELP          = "RSEO1004"; //$NON-NLS-1$
-    public static final String MSG_GENERIC_I_TWOPARMS_HELP = "RSEO1005"; //$NON-NLS-1$
-    public static final String MSG_GENERIC_W_TWOPARMS_HELP = "RSEO1006"; //$NON-NLS-1$
-    public static final String MSG_GENERIC_E_TWOPARMS_HELP = "RSEO1007"; //$NON-NLS-1$
-    public static final String MSG_GENERIC_U_TWOPARMS_HELP = "RSEO1008"; //$NON-NLS-1$
-    public static final String MSG_GENERIC_Q_TWOPARMS_HELP = "RSEO1009"; //$NON-NLS-1$
+
 
     // ----------------------------------
     // COMMUNICATIONS ERROR CHECKING MESSAGES...
     // ----------------------------------
-	public static final String MSG_COMM_CONNECT_FAILED 		= "RSEC1001"; //$NON-NLS-1$
-	public static final String MSG_COMM_AUTH_FAILED 		= "RSEC1002"; //$NON-NLS-1$
+   
 	public static final String MSG_COMM_PWD_INVALID			= "RSEC1004"; //$NON-NLS-1$
-	
+
 	public static final String MSG_COMM_PWD_EXISTS			= "RSEC2101"; //$NON-NLS-1$
 	public static final String MSG_COMM_PWD_MISMATCH		= "RSEC2102"; //$NON-NLS-1$
 	public static final String MSG_COMM_PWD_BLANKFIELD		= "RSEC2103"; //$NON-NLS-1$
@@ -402,64 +454,13 @@ public interface ISystemMessages
 	public static final String MSG_COMM_ENVVAR_NONAME		= "RSEC2002"; //$NON-NLS-1$
 	public static final String MSG_COMM_ENVVAR_INVALIDCHAR	= "RSEC2004"; //$NON-NLS-1$
 	
-	public static final String MSG_COMM_SERVER_NOTSTARTED	= "RSEC2301"; //$NON-NLS-1$
-	public static final String MSG_COMM_INVALID_LOGIN		= "RSEC2302"; //$NON-NLS-1$
-	
-	public static final String MSG_COMM_INCOMPATIBLE_PROTOCOL = "RSEC2303"; //$NON-NLS-1$
-	public static final String MSG_COMM_INCOMPATIBLE_UPDATE   = "RSEC2304"; //$NON-NLS-1$
-
-	
-	public static final String MSG_COMM_REXEC_NOTSTARTED      = "RSEC2305"; //$NON-NLS-1$
-	
 	public static final String MSG_COMM_PORT_WARNING          = "RSEC2306"; //$NON-NLS-1$
-	
-	public static final String MSG_COMM_SERVER_OLDER_WARNING  = "RSEC2308"; //$NON-NLS-1$
-	public static final String MSG_COMM_CLIENT_OLDER_WARNING  = "RSEC2309"; //$NON-NLS-1$
-	
-	public static final String MSG_COMM_USING_SSL  = "RSEC2314"; //$NON-NLS-1$
-	public static final String MSG_COMM_NOT_USING_SSL  = "RSEC2315"; //$NON-NLS-1$
-	
+
+
 	// Unexpected error message
 	public static final String MSG_ERROR_UNEXPECTED = "RSEF8002"; //$NON-NLS-1$
-	
-	// Connection doesn't exist
-	public static final String MSG_CONNECTION_DELETED = "RSEF5011"; //$NON-NLS-1$
-	
-	// Remote editing messages
-	public static final String MSG_DOWNLOAD_NO_WRITE = "RSEF5002"; //$NON-NLS-1$
-	public static final String MSG_DOWNLOAD_ALREADY_OPEN_IN_EDITOR = "RSEF5009"; //$NON-NLS-1$
-	public static final String MSG_UPLOAD_FILE_EXISTS = "RSEF5012"; //$NON-NLS-1$
-	
-	public static final String MSG_FOLDER_UNREADABLE = "RSEF5020"; //$NON-NLS-1$
-	
-	// General error message
-	public static final String MSG_ERROR_GENERAL = "RSEO1002"; //$NON-NLS-1$
 	
 	// file transfer message	
 	public static final String MSG_TRANSFER_INVALID = "RSEG1270"; //$NON-NLS-1$
 	
-	
-	// remote error list title message
-	public static final String MSG_ERROR_LIST_TITLE = "RSEG1500"; //$NON-NLS-1$
-	
-	// name validation
-	public static final String MSG_ERROR_EXTENSION_EMPTY = "RSEF6001"; //$NON-NLS-1$
-	public static final String MSG_ERROR_FILENAME_INVALID = "RSEF6002"; //$NON-NLS-1$
-	
-	// cache preferences
-	public static final String MSG_CACHE_UPLOAD_BEFORE_DELETE = "RSEF6101"; //$NON-NLS-1$
-	public static final String MSG_CACHE_UNABLE_TO_SYNCH = "RSEF6102"; //$NON-NLS-1$
-	
-	// remote search messages
-	public static final String MSG_REMOTE_SEARCH_INVALID_REGEX = "RSEG1601"; //$NON-NLS-1$
-	
-	// yantzi: artemis 6.0, offline messages
-	public static final String MSG_OFFLINE_CANT_CONNECT			= "RSEC3001"; //$NON-NLS-1$
-	
-	// file import/export messages
-	public static final String MSG_IMPORT_EXPORT_UNABLE_TO_USE_CONNECTION = "RSEF5101";  //$NON-NLS-1$
-	public static final String MSG_IMPORT_EXPORT_UNEXPECTED_EXCEPTION = "RSEF5102"; //$NON-NLS-1$
-	
-	// jar export messages
-	public static final String MSG_REMOTE_JAR_EXPORT_OVERWRITE_FILE = "RSEF5103"; //$NON-NLS-1$
 }

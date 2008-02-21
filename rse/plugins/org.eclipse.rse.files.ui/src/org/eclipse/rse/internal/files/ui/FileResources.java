@@ -487,6 +487,9 @@ public class FileResources extends NLS
   	
 	// universal commands
 	public static String MSG_UCMD_INVOCATION_EMPTY;
+
+	// preferences
+	public static String MSG_ERROR_FILENAME_INVALID;
 	
 	static 
 	{

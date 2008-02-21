@@ -17,7 +17,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class SubSystemResources extends NLS {
 
-	private static String BUNDLE_NAME = "org.eclipse.rse.internal.ui.subsystems";//$NON-NLS-1$
+	private static String BUNDLE_NAME = "org.eclipse.rse.internal.ui.subsystems.SubSystemResources";//$NON-NLS-1$
 			
 	public static String MSG_CONNECT_CANCELED;
 	public static String MSG_CONNECT_PROGRESS;

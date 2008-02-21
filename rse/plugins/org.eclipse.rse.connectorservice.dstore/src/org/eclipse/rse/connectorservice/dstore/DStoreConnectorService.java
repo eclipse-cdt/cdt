@@ -509,7 +509,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 	/**
 	 * @see org.eclipse.rse.core.subsystems.IConnectorService#connect(IProgressMonitor)
 	 */
-	protected synchronized void internalConnect(IProgressMonitor monitor) throws Exception
+	protected void internalConnect(IProgressMonitor monitor) throws Exception
 	{
 	    if (isConnected()) {
 	        return;

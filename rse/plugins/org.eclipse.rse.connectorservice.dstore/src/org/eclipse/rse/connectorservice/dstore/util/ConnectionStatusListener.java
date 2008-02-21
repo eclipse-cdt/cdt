@@ -18,8 +18,6 @@
 
 package org.eclipse.rse.connectorservice.dstore.util;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -258,14 +256,9 @@ public class ConnectionStatusListener implements IDomainListener, IRunnableWithP
     {
     	String dfailedMsg = NLS.bind(ConnectorServiceResources.MSG_DISCONNECT_FAILED, hostName);
 
-		StringWriter excWriter = new StringWriter();
-		exc.printStackTrace(new PrintWriter(excWriter));
-		String dmsg = exc.toString();
-		if ((dmsg == null) || (exc instanceof ClassCastException)) dmsg = exc.getClass().getName();
-		String details = dmsg + "\n" + excWriter.toString(); //$NON-NLS-1$    	
-		
+ 			
 		try{	
-			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, dfailedMsg, details);
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, dfailedMsg, exc);
     	
 			SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);
 			msgDlg.setException(exc);

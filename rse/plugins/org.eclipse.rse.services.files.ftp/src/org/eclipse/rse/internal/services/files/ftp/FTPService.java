@@ -116,7 +116,7 @@ import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.services.files.IHostFilePermissions;
 import org.eclipse.rse.services.files.IHostFilePermissionsContainer;
-import org.eclipse.rse.services.files.RemoteFileCancelledException;
+import org.eclipse.rse.services.files.RemoteFileCanceledException;
 import org.eclipse.rse.services.files.RemoteFileException;
 import org.eclipse.rse.services.files.RemoteFileIOException;
 import org.eclipse.rse.services.files.RemoteFileSecurityException;
@@ -562,7 +562,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
     	fileName = checkEncoding(fileName);
 		if (monitor!=null){
 			if (monitor.isCanceled()) {
-				throw new RemoteFileCancelledException();
+				throw new RemoteFileCanceledException();
 			}	
 		}
 		
@@ -602,7 +602,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 				
 				if(!listFiles(monitor))
 				{
-					throw new RemoteFileCancelledException();
+					throw new RemoteFileCanceledException();
 				}
 				
 				synchronized(_fCachePreviousFiles) {
@@ -662,7 +662,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
     	parentPath = checkEncoding(parentPath);
 		if (monitor!=null){
 			if (monitor.isCanceled()) {
-				throw new RemoteFileCancelledException();
+				throw new RemoteFileCanceledException();
 			}	
 		}
 		
@@ -692,7 +692,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 				
 				if(!listFiles(monitor))
 				{
-					throw new RemoteFileCancelledException();
+					throw new RemoteFileCanceledException();
 				}
 				
 				synchronized (_fCachePreviousFiles) {
@@ -757,7 +757,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		
 		if (monitor!=null){
 			if (monitor.isCanceled()) {
-				throw new RemoteFileCancelledException();
+				throw new RemoteFileCanceledException();
 			}	
 		}
 		else{
@@ -899,7 +899,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		
 		if (monitor!=null){
 			if (monitor.isCanceled()) {
-				throw new RemoteFileCancelledException();
+				throw new RemoteFileCanceledException();
 			}	
 		}
 		
@@ -1068,7 +1068,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	{
 		if(monitor.isCanceled())
 		{
-			throw new RemoteFileCancelledException();
+			throw new RemoteFileCanceledException();
 		}
 
 		clearCache(parentPath);
@@ -1279,7 +1279,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
     	
     	if (monitor!=null){
 			if (monitor.isCanceled()) {
-				throw new RemoteFileCancelledException();
+				throw new RemoteFileCanceledException();
 			}	
 		}
 		
@@ -1309,7 +1309,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
     {
     	if(monitor.fMonitor.isCanceled())
 		{
-			throw new RemoteFileCancelledException();
+			throw new RemoteFileCanceledException();
 		}
     	
     	boolean success = false;
@@ -1607,7 +1607,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	public InputStream getInputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException {
 		
 		if (monitor != null && monitor.isCanceled()){
-			throw new RemoteFileCancelledException();
+			throw new RemoteFileCanceledException();
 		}
 
 		InputStream stream = null;
@@ -1642,7 +1642,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
     	remoteFile = checkEncoding(remoteFile);
 				
 		if (monitor != null && monitor.isCanceled()){
-			throw new RemoteFileCancelledException();
+			throw new RemoteFileCanceledException();
 		}
 		
 		OutputStream stream = null;

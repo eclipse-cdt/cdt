@@ -1161,7 +1161,9 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 			clientConnection = null;
 			
 			// yantzi: artemis 6.0, check for invalid login (user ID / pwd) and reprompt for signon information
-			if (msg != null && msg.getLevelOneText().startsWith(NLS.bind(ConnectorServiceResources.MSG_COMM_INVALID_LOGIN, getHostName())))
+			if (msg != null && 
+					// tODO use ID or something instead of string
+					msg.getLevelOneText().startsWith(NLS.bind(ConnectorServiceResources.MSG_COMM_INVALID_LOGIN, getHostName())))
 			{
 				if (launchFailed)
 			    {

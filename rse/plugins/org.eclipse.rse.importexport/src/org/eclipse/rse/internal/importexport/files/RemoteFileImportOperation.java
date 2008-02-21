@@ -35,6 +35,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.internal.importexport.RemoteImportExportPlugin;
 import org.eclipse.rse.internal.importexport.RemoteImportExportResources;
 import org.eclipse.rse.internal.importexport.RemoteImportExportUtil;
@@ -43,8 +44,6 @@ import org.eclipse.rse.services.files.RemoteFileIOException;
 import org.eclipse.rse.services.files.RemoteFileSecurityException;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
-import org.eclipse.rse.ui.ISystemMessages;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.ContainerGenerator;
@@ -436,7 +435,7 @@ public class RemoteFileImportOperation extends WorkspaceModifyOperation {
 			containerResource = getDestinationContainerFor(fileObject);
 		} catch (CoreException e) {
 			IStatus coreStatus = e.getStatus();
-			String newMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_IMPORT_ERROR, new Object[] { fileObject, coreStatus.getMessage(), e }).toString();
+			String newMessage = NLS.bind(RemoteImportExportResources.FILEMSG_IMPORT_ERROR, fileObject, coreStatus.getMessage());
 			IStatus status = new Status(coreStatus.getSeverity(), coreStatus.getPlugin(), coreStatus.getCode(), newMessage, null);
 			errorTable.add(status);
 			return;
@@ -449,7 +448,7 @@ public class RemoteFileImportOperation extends WorkspaceModifyOperation {
 		IPath targetPath = targetResource.getLocation();
 		// Use Files for comparison to avoid platform specific case issues
 		if (targetPath != null && (targetPath.toFile().equals(new File(fileObjectPath)))) {
-			String msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_IMPORT_SELF, fileObjectPath).toString();
+			String msg = NLS.bind(RemoteImportExportResources.FILEMSG_IMPORT_SELF, fileObjectPath);
 			errorTable.add(new Status(IStatus.ERROR, RemoteImportExportPlugin.getDefault().getBundle().getSymbolicName(), 0, msg, null));
 			return;
 		}
@@ -477,15 +476,15 @@ public class RemoteFileImportOperation extends WorkspaceModifyOperation {
 				errorTable.add(e.getStatus());
 			}
 		} catch (RemoteFileIOException e) {
-			String msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_IMPORT_ERROR, new Object[] { fileObjectPath, e.getRemoteException().getLocalizedMessage(), e }).toString();
+			String msg = NLS.bind(RemoteImportExportResources.FILEMSG_IMPORT_ERROR, fileObjectPath, e.getRemoteException().getLocalizedMessage());
 			errorTable.add(new Status(IStatus.ERROR, RemoteImportExportPlugin.getDefault().getBundle().getSymbolicName(), 0, msg, e));
 			return;
 		} catch (RemoteFileSecurityException e) {
-			String msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_IMPORT_ERROR, new Object[] { fileObjectPath, e.getRemoteException().getLocalizedMessage(), e }).toString();
+			String msg = NLS.bind(RemoteImportExportResources.FILEMSG_IMPORT_ERROR, fileObjectPath, e.getRemoteException().getLocalizedMessage());
 			errorTable.add(new Status(IStatus.ERROR, RemoteImportExportPlugin.getDefault().getBundle().getSymbolicName(), 0, msg, e));
 			return;
 		} catch (Exception e) {
-			String msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_IMPORT_ERROR, new Object[] { fileObjectPath, e.getMessage() == null ? e.toString() : e.getMessage(), e }).toString();
+			String msg = NLS.bind(RemoteImportExportResources.FILEMSG_IMPORT_ERROR, fileObjectPath, e.getMessage() == null ? e.toString() : e.getMessage());
 			errorTable.add(new Status(IStatus.ERROR, RemoteImportExportPlugin.getDefault().getBundle().getSymbolicName(), 0, msg, e));
 			return;
 		}

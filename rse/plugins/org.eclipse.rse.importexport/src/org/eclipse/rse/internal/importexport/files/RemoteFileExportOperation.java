@@ -48,8 +48,6 @@ import org.eclipse.rse.services.files.RemoteFileIOException;
 import org.eclipse.rse.services.files.RemoteFileSecurityException;
 import org.eclipse.rse.subsystems.files.core.SystemIFileProperties;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
-import org.eclipse.rse.ui.ISystemMessages;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
@@ -188,8 +186,7 @@ class RemoteFileExportOperation implements IRunnableWithProgress {
 				try {
 					exporter.createFolder(destination);
 				} catch (Exception e) {
-					String msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_EXPORT_ERROR, new Object[] { destination, e.getLocalizedMessage() == null ? e.toString() : e.getMessage(), e })
-							.toString();
+					String msg = NLS.bind(RemoteImportExportResources.FILEMSG_EXPORT_ERROR, destination,  e.getLocalizedMessage() == null ? e.toString() : e.getMessage());
 					errorTable.add(new Status(IStatus.ERROR, RemoteImportExportPlugin.getDefault().getBundle().getSymbolicName(), 0, msg, e));
 				}
 				try {
@@ -278,19 +275,19 @@ class RemoteFileExportOperation implements IRunnableWithProgress {
 			long modTime = file.getModificationStamp();
 			props.setModificationStampAtExport(conn.getHostName(), destination, modTime);
 		} catch (IOException e) {
-			String msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_EXPORT_ERROR, new Object[] { fullPath, e.getLocalizedMessage(), e }).toString();
+			String msg = NLS.bind(RemoteImportExportResources.FILEMSG_EXPORT_ERROR, fullPath, e.getLocalizedMessage());
 			errorTable.add(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, msg, e));
 		} catch (CoreException e) {
-			String msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_EXPORT_ERROR, new Object[] { fullPath, e.getLocalizedMessage(), e }).toString();
+			String msg = NLS.bind(RemoteImportExportResources.FILEMSG_EXPORT_ERROR, fullPath, e.getLocalizedMessage());
 			errorTable.add(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, msg, e));
 		} catch (RemoteFileIOException e) {
-			String msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_EXPORT_ERROR, new Object[] { fullPath, e.getLocalizedMessage(), e }).toString();
+			String msg = NLS.bind(RemoteImportExportResources.FILEMSG_EXPORT_ERROR, fullPath, e.getLocalizedMessage());
 			errorTable.add(new Status(IStatus.ERROR, RemoteImportExportPlugin.getDefault().getBundle().getSymbolicName(), 0, msg, e));
 		} catch (RemoteFileSecurityException e) {
-			String msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_EXPORT_ERROR, new Object[] { fullPath, e.getLocalizedMessage(), e }).toString();
+			String msg = NLS.bind(RemoteImportExportResources.FILEMSG_EXPORT_ERROR, fullPath, e.getLocalizedMessage());
 			errorTable.add(new Status(IStatus.ERROR, RemoteImportExportPlugin.getDefault().getBundle().getSymbolicName(), 0, msg, e));
 		} catch (Exception e) {
-			String msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_EXPORT_ERROR, new Object[] { fullPath, e.getLocalizedMessage(), e }).toString();
+			String msg = NLS.bind(RemoteImportExportResources.FILEMSG_EXPORT_ERROR, fullPath, e.getLocalizedMessage());
 			errorTable.add(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, msg, e));
 		}
 		monitor.worked(1);

@@ -17,6 +17,12 @@
 
 package org.eclipse.rse.services.files;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.osgi.util.NLS;
+
+import org.eclipse.rse.internal.services.Activator;
+import org.eclipse.rse.internal.services.RSEServicesMessages;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 
 /**
@@ -39,29 +45,21 @@ public class RemoteFileSecurityException extends RemoteFileException {
 	 * @param remoteException the original cause of this exception.
 	 */
 	public RemoteFileSecurityException(Exception remoteException) {
-		super(getMyMessage(), remoteException);
-		String secondLevel = remoteException.getMessage();
-		if (secondLevel == null) {
-			secondLevel = remoteException.getClass().getName();
-		}
-		getSystemMessage().makeSubstitution(secondLevel);
+		super(getMyMessage(remoteException), remoteException);
+
 	}
 
-	/*
-	 * TODO dwd update this to retrieve the new messages when those are created
-	 * super(RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_SECURITY_ERROR), remoteException);
-	 * public static final String FILEMSG_SECURITY_ERROR = "RSEF1001";
-	 * <Message ID="1001" Indicator="E">
-	 * <LevelOne>Operation failed. Security violation</LevelOne>
-	 * <LevelTwo>Message reported from file system: %1</LevelTwo>
-	 * </Message>
-	 */
-	private static SystemMessage getMyMessage() {
+	private static SystemMessage getMyMessage(Exception remoteException) {
 		if (myMessage == null) {
-			String l1 = "Operation failed. Security violation"; //$NON-NLS-1$
-			String l2 = "Message reported from file system: %1"; //$NON-NLS-1$
-			myMessage = new SystemMessage("RSE", "F", "1001", SystemMessage.ERROR, l1, l2); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
+			String secondLevel = remoteException.getMessage();
+			if (secondLevel == null) {
+				secondLevel = remoteException.getClass().getName();
+			}
+			
+			String msgTxt = RSEServicesMessages.FILEMSG_SECURITY_VIOLATION;
+			String msgDetails = NLS.bind(RSEServicesMessages.FILEMSG_SECURITY_VIOLATION_DETAILS, secondLevel);
+			
+		    myMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
 		}
 		return myMessage;
 	}

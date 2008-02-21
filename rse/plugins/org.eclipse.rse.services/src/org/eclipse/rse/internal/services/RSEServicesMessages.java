@@ -15,12 +15,25 @@ import org.eclipse.osgi.util.NLS;
 public class RSEServicesMessages extends NLS {
 
 	private static final String BUNDLE_NAME = "org.eclipse.rse.internal.services.messages"; //$NON-NLS-1$
-	static {
-		NLS.initializeMessages(BUNDLE_NAME, RSEServicesMessages.class);
-	}
+
 	private RSEServicesMessages() {
 	}
 
 	public static String Socket_timeout;
+	public static String FILEMSG_OPERATION_FAILED;
+	public static String FILEMSG_OPERATION_FAILED_DETAILS;
+
+	public static String FILEMSG_SECURITY_VIOLATION;
+	public static String FILEMSG_SECURITY_VIOLATION_DETAILS;
+	
+	public static String MSG_OPERATION_CANCELED;
+	
+	public static String FILEMSG_FOLDER_NOT_EMPTY;
+	public static String FILEMSG_FOLDER_NOT_EMPTY_DETAILS;
+
+
+	static {
+		NLS.initializeMessages(BUNDLE_NAME, RSEServicesMessages.class);
+	}
 
 }

@@ -18,13 +18,18 @@
 
 package org.eclipse.rse.services.files;
 
+import org.eclipse.core.runtime.IStatus;
+
+import org.eclipse.rse.internal.services.Activator;
+import org.eclipse.rse.internal.services.RSEServicesMessages;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 
 /**
  * Exception thrown when attempting a file operation and the user
  * canceled it before it could be completed.
  */
-public class RemoteFileCancelledException extends RemoteFileException {
+public class RemoteFileCanceledException extends RemoteFileException {
 
 	/**
 	 * A serialVersionUID is recommended for all serializable classes.
@@ -37,23 +42,14 @@ public class RemoteFileCancelledException extends RemoteFileException {
 	/**
 	 * Constructor 
 	 */
-	public RemoteFileCancelledException() {
+	public RemoteFileCanceledException() {
 		super(getMyMessage());
 	}
 
-	/*
-	 * TODO dwd update this to retrieve the new messages when those are created
-	 * myMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_CANCELED);
-	 * public static final String MSG_OPERATION_CANCELED = "RSEG1067";		
-	 * <Message ID="1067" Indicator="E">
-	 *   <LevelOne>Operation cancelled.</LevelOne>		
-	 *   <LevelTwo></LevelTwo>
-	 * </Message>
-	 */
 	private static SystemMessage getMyMessage() {
-		String l1 = "Operation cancelled."; //$NON-NLS-1$
-		String l2 = ""; //$NON-NLS-1$
-		myMessage = new SystemMessage("RSE", "G", "1067", SystemMessage.ERROR, l1, l2); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		String msgTxt = RSEServicesMessages.MSG_OPERATION_CANCELED;
+
+		myMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt);
 
 		return myMessage;
 	}

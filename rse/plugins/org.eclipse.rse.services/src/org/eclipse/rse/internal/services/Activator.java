@@ -45,7 +45,7 @@ public class Activator extends Plugin {
 
 	//The shared instance.
 	private static Activator plugin;
-
+	public static final String PLUGIN_ID="org.eclipse.rse.services"; //$NON-NLS-1$
 	
 	/**
 	 * The constructor.

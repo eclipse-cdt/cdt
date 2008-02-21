@@ -17,6 +17,11 @@
 
 package org.eclipse.rse.services.files;
 
+import org.eclipse.core.runtime.IStatus;
+
+import org.eclipse.rse.internal.services.Activator;
+import org.eclipse.rse.internal.services.RSEServicesMessages;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 
 /**
@@ -47,21 +52,12 @@ public class RemoteFolderNotEmptyException extends RemoteFileException {
 		super(getMyMessage(), remoteException);
 	}
 
-	/*
-	 * TODO dwd update this to retrieve the new messages when those are created
-	 * super(RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_FOLDER_NOTEMPTY), remoteException);
-	 * public static final String FILEMSG_FOLDER_NOTEMPTY = "RSEF1003";
-	 * <Message ID="1003" Indicator="E">
-	 *   <LevelOne>Folder is not empty. Cannot delete</LevelOne>
-	 *   <LevelTwo>The operation failed. One possible reason is that the folder is not empty</LevelTwo>
-	 * </Message>
-	 */
+
 	private static SystemMessage getMyMessage() {
 		if (myMessage == null) {
-			String l1 = "Folder is not empty. Cannot delete"; //$NON-NLS-1$
-			String l2 = "The operation failed. One possible reason is that the folder is not empty"; //$NON-NLS-1$
-			myMessage = new SystemMessage("RSE", "F", "1003", SystemMessage.ERROR, l1, l2); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
+			String msgTxt = RSEServicesMessages.FILEMSG_FOLDER_NOT_EMPTY;
+			String msgDetails = RSEServicesMessages.FILEMSG_FOLDER_NOT_EMPTY_DETAILS;
+			myMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
 		}
 		return myMessage;
 	}

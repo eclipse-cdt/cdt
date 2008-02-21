@@ -298,7 +298,8 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 	}
 
 	public Element getProjectData(String id) throws CoreException {
-		synchronized(CProjectDescriptionManager.getInstance()){
+	    // avoid deadlock by using different lock here.                                  
+		synchronized(fStorageDataElMap /*CProjectDescriptionManager.getInstance()*/){
 			Element el = (Element)fStorageDataElMap.get(id);
 			if(el == null || el.getParentNode() == null){
 				InternalXmlStorageElement storageEl = (InternalXmlStorageElement)fCfgDes.getStorage(id, false);

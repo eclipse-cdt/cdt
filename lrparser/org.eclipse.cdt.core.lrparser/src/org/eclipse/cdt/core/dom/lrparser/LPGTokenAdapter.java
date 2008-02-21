@@ -23,7 +23,7 @@ import lpg.lpgjavaruntime.PrsStream;
  * 
  * @author Mike Kucera
  */
-class LPGTokenAdapter implements lpg.lpgjavaruntime.IToken {
+public class LPGTokenAdapter implements lpg.lpgjavaruntime.IToken {
 	
 	/** The token object that is being wrapped */
 	private final org.eclipse.cdt.core.parser.IToken token;
@@ -39,6 +39,10 @@ class LPGTokenAdapter implements lpg.lpgjavaruntime.IToken {
 		this.kind = parserKind;
 	}
 
+	public org.eclipse.cdt.core.parser.IToken getWrappedToken() {
+		return token;
+	}
+	
 	public int getAdjunctIndex() {
 		return adjunctIndex;
 	}

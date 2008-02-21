@@ -181,6 +181,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTUsingDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTUsingDirective;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTVisibilityLabel;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTWhileStatement;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 
 
 /**
@@ -206,8 +207,8 @@ public class CPPASTNodeFactory implements ICPPASTNodeFactory {
 		return new CPPASTName();
 	}
 	
-	public ICPPASTOperatorName newCPPOperatorName(char[] name) {
-		return new CPPASTOperatorName(name);
+	public ICPPASTOperatorName newCPPOperatorName(OverloadableOperator op) {
+		return new CPPASTOperatorName(op);
 	}
 
 	public IASTProblem newProblem(int id, char[] arg, boolean error) {

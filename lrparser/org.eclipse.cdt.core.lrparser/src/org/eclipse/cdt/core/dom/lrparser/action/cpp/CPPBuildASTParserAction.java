@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.lrparser.action.cpp;
 
-import static org.eclipse.cdt.core.dom.lrparser.util.CollectionUtils.findFirstAndRemove;
-import static org.eclipse.cdt.core.dom.lrparser.util.CollectionUtils.reverseIterable;
+import static org.eclipse.cdt.core.dom.lrparser.util.CollectionUtils.*;
+
 import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.*;
 
 import java.util.Collections;
@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointer;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
@@ -84,7 +85,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
+import org.eclipse.cdt.core.dom.lrparser.LPGTokenAdapter;
 import org.eclipse.cdt.core.dom.lrparser.action.BuildASTParserAction;
+import org.eclipse.cdt.core.dom.lrparser.util.CollectionUtils;
 import org.eclipse.cdt.core.dom.lrparser.util.DebugUtil;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99ExpressionStatementParser;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym;
@@ -92,6 +95,7 @@ import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPExpressionStatementPars
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPNoCastExpressionParser;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionDeclarator;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 
 /**
  * Semantic actions that build the AST during the parse. 
@@ -133,36 +137,6 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		return new CPPNoCastExpressionParser(CPPParsersym.orderedTerminalSymbols);
 	}
 	
-	
-//	/**
-//	 * Used only for debugging purposes.
-//	 * 
-//	 * Use this to make expression the start symbol for the grammar,
-//	 * it will be inserted into the translation unit inside a function.
-//	 */
-//	@Deprecated public void consumeExpressionAsTranslationUnit() {
-//		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-//		
-//		IASTExpression expression = (IASTExpression) astStack.pop();
-//		
-//		ICPPASTSimpleDeclSpecifier declSpec = nodeFactory.newCPPSimpleDeclSpecifier();
-//		declSpec.setType(IASTSimpleDeclSpecifier.t_int);
-//		
-//		IASTFunctionDeclarator declarator = nodeFactory.newFunctionDeclarator(nodeFactory.newName("main".toCharArray())); //$NON-NLS-1$
-//		
-//		IASTCompoundStatement body = nodeFactory.newCompoundStatement();
-//		body.addStatement(nodeFactory.newExpressionStatement(expression));
-//		
-//		
-//		IASTFunctionDefinition funcDef =
-//			nodeFactory.newFunctionDefinition(declSpec, declarator, body);
-//					
-//		tu.addDeclaration(funcDef);
-//	}
-	
-	
-	
-
 
 	/**
 	 * new_expression
@@ -407,25 +381,31 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		
 		List<IToken> tokens = parser.getRuleTokens();
-		char[] operatorName = concatenateTokens(tokens.subList(1, tokens.size()));
+		tokens = tokens.subList(1, tokens.size());
+		OverloadableOperator operator = getOverloadableOperator(tokens);
 		
-		ICPPASTOperatorName name = nodeFactory.newCPPOperatorName(operatorName);
+		ICPPASTOperatorName name = nodeFactory.newCPPOperatorName(operator);
 		setOffsetAndLength(name);
 		astStack.push(name); 
 		
 		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
+
 	
-	
-	private static char[] concatenateTokens(List<IToken> tokens) {
-		StringBuilder sb = new StringBuilder(20); // longest operator name: operator delete[]
+	private static OverloadableOperator getOverloadableOperator(List<IToken> tokens) {
+		if(tokens.size() == 1) {
+			// TODO this is a hack that I did to save time
+			LPGTokenAdapter coreToken = (LPGTokenAdapter) tokens.get(0);
+			return OverloadableOperator.valueOf(coreToken.getWrappedToken());
+		}
+		else if(matchTokens(tokens, TK_new, TK_LeftBracket, TK_RightBracket)) {
+			return OverloadableOperator.NEW_ARRAY;
+		}
+		else if(matchTokens(tokens, TK_delete, TK_LeftBracket, TK_RightBracket)) {
+			return OverloadableOperator.DELETE_ARRAY;
+		}
 		
-		for(IToken t : tokens)
-			sb.append(t);
-		
-		char[] cs = new char[sb.length()]; 
-		sb.getChars(0, sb.length(), cs, 0);
-		return cs;
+		return null;
 	}
 	
 	
@@ -447,6 +427,17 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
+	
+	private static char[] concatenateTokens(List<IToken> tokens) {
+		StringBuilder sb = new StringBuilder(20); // longest operator name: operator delete[]
+		
+		for(IToken t : tokens)
+			sb.append(t);
+		
+		char[] cs = new char[sb.length()]; 
+		sb.getChars(0, sb.length(), cs, 0);
+		return cs;
+	}
 	
     /**
      * unqualified_id
@@ -1367,6 +1358,11 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
  		ICPPASTFunctionDeclarator declarator = (ICPPASTFunctionDeclarator) astStack.pop();
  		IASTDeclSpecifier declSpec = (IASTDeclSpecifier) astStack.pop(); // may be null
  		
+ 		if(declSpec == null) { // can happen if implicit int is used
+ 			declSpec = nodeFactory.newSimpleDeclSpecifier();
+			setOffsetAndLength(declSpec, parser.getLeftIToken().getStartOffset(), 0);
+		}
+ 		
  		if(isTryBlockDeclarator) {
  		    // perform a shallow copy 
  			ICPPASTFunctionTryBlockDeclarator tryBlockDeclarator = nodeFactory.newFunctionTryBlockDeclarator(declarator.getName());
@@ -1380,7 +1376,6 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
  			for(IASTTypeId exception : declarator.getExceptionSpecification()) {
  				tryBlockDeclarator.addExceptionSpecificationTypeId(exception);
  			}
- 			
  			for(Object handler : handlers) {
  				tryBlockDeclarator.addCatchHandler((ICPPASTCatchHandler)handler);
  	 		}
@@ -1388,8 +1383,16 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
  			declarator = tryBlockDeclarator;
  		}
  		
- 		for(Object initializer : initializers) {
- 			declarator.addConstructorToChain((ICPPASTConstructorChainInitializer)initializer);
+ 		
+ 		if(initializers != null && !initializers.isEmpty()) {
+ 			for(Object initializer : initializers)
+ 	 			declarator.addConstructorToChain((ICPPASTConstructorChainInitializer)initializer);
+ 			
+ 			// recalculate the length of the declarator to include the initializers
+ 			IASTNode lastInitializer = (IASTNode)initializers.get(initializers.size()-1);
+ 			int offset = offset(declarator);
+ 			int length = endOffset(lastInitializer) - offset;
+ 			setOffsetAndLength(declarator, offset, length);
  		}
 
  		IASTFunctionDefinition definition = nodeFactory.newFunctionDefinition(declSpec, declarator, body);

@@ -850,8 +850,10 @@ public abstract class BuildASTParserAction {
 		IASTDeclarator declarator;
 		if(hasDeclarator)
 			declarator = (IASTDeclarator) astStack.pop();
-		else
+		else {
 			declarator = nodeFactory.newDeclarator(nodeFactory.newName());
+			setOffsetAndLength(declarator, parser.getRightIToken().getEndOffset(), 0);
+		}
 			
 		IASTDeclSpecifier declSpecifier = (IASTDeclSpecifier) astStack.pop();
 		IASTTypeId typeId = nodeFactory.newTypeId(declSpecifier, declarator);

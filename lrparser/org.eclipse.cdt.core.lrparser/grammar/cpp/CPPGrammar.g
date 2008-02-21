@@ -305,18 +305,6 @@ $Rules
 <openscope-ast> 
     ::= $empty
           /.$Action $Builder  openASTScope();  $EndBuilder $EndAction./ 
-  
-<openscope-symbol> 
-    ::= $empty
-       --   /.$Action $Resolve  openSymbolScope();  $EndResolve $EndAction./ 
-
-<openscope-declaration> 
-    ::= $empty
-       --   /.$Action $Resolve  openDeclarationScope();  $EndResolve $EndAction./ 
-
-<placeholder>
-    ::= $empty 
-           /.$Action $Builder  consumePlaceHolder();  $EndBuilder $EndAction./ 
 
 <empty>
     ::= $empty 
@@ -370,11 +358,6 @@ external_declaration
       | ERROR_TOKEN
           /. $Build  consumeDeclarationProblem();  $EndBuild ./
       
-
---expression_as_translation_unit
---    ::= expression
---          /. $Build  consumeExpressionAsTranslationUnit(); $EndBuild ./
-
 
 ------------------------------------------------------------------------------------------
 -- Expressions
@@ -996,7 +979,7 @@ simple_declaration_specifiers
       | no_type_declaration_specifiers simple_type_specifier
       | simple_declaration_specifiers simple_type_specifier
       | simple_declaration_specifiers no_type_declaration_specifier
-      | $empty
+      | no_type_declaration_specifiers
       
       
 -- struct, union or class!
@@ -1724,7 +1707,7 @@ template_id_name
           /. $Build  consumeTemplateId();  $EndBuild ./
 
 template_identifier
-    ::= 'identifier'
+    ::= identifier_name
 
 
 template_argument_list

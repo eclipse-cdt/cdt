@@ -53,6 +53,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.lrparser.action.IASTNodeFactory;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousDeclaration;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 
 /**
  * TODO remove CPP from method names.
@@ -62,7 +63,7 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousDeclaration;
 @SuppressWarnings("restriction")
 public interface ICPPASTNodeFactory extends IASTNodeFactory {
 
-	public ICPPASTOperatorName newCPPOperatorName(char[] name);
+	public ICPPASTOperatorName newCPPOperatorName(OverloadableOperator op);
 
 	public ICPPASTNewExpression newCPPNewExpression(IASTExpression placement, IASTExpression initializer, IASTTypeId typeId);
 	

@@ -107,6 +107,7 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
 /**
@@ -1450,7 +1451,7 @@ public class AST2CPPTests extends AST2BaseTest {
     		assertNotNull(methods);
     		int count=0;
     		for(int i=0; i<methods.length; i++) {
-    			boolean eq= Arrays.equals(methods[i].getName().toCharArray(), ICPPASTOperatorName.OPERATOR_ASSIGN);
+    			boolean eq= Arrays.equals(methods[i].getName().toCharArray(), OverloadableOperator.ASSIGN.toCharArray());
     			count+= eq ? 1 : 0;
     		}
     		
@@ -1460,7 +1461,7 @@ public class AST2CPPTests extends AST2BaseTest {
     		assertNotNull(methods);
     		count=0;
     		for(int i=0; i<methods.length; i++) {
-    			boolean eq= Arrays.equals(methods[i].getName().toCharArray(), ICPPASTOperatorName.OPERATOR_ASSIGN);
+    			boolean eq= Arrays.equals(methods[i].getName().toCharArray(), OverloadableOperator.ASSIGN.toCharArray());
     			count+= eq ? 1 : 0;
     		}
     		
@@ -1483,7 +1484,7 @@ public class AST2CPPTests extends AST2BaseTest {
     		assertNotNull(methods);
     		int count=0;
     		for(int i=0; i<methods.length; i++) {
-    			boolean eq= Arrays.equals(methods[i].getName().toCharArray(), ICPPASTOperatorName.OPERATOR_ASSIGN);
+    			boolean eq= Arrays.equals(methods[i].getName().toCharArray(), OverloadableOperator.ASSIGN.toCharArray());
     			count+= eq ? 1 : 0;
     		}
     		
@@ -1493,7 +1494,7 @@ public class AST2CPPTests extends AST2BaseTest {
     		assertNotNull(methods);
     		count=0;
     		for(int i=0; i<methods.length; i++) {
-    			boolean eq= Arrays.equals(methods[i].getName().toCharArray(), ICPPASTOperatorName.OPERATOR_ASSIGN);
+    			boolean eq= Arrays.equals(methods[i].getName().toCharArray(), OverloadableOperator.ASSIGN.toCharArray());
     			count+= eq ? 1 : 0;
     		}
     		

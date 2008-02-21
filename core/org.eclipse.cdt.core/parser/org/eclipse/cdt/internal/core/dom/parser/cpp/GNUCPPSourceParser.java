@@ -396,8 +396,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 case IToken.t_operator:
                     IToken l = LA(1);
                     backup(mark);
-                    throwBacktrack(first.getOffset(), l.getEndOffset()
-                            - first.getOffset());
+                    throwBacktrack(first.getOffset(), l.getEndOffset() - first.getOffset());
                 case IToken.tIDENTIFIER:
                 case IToken.tCOMPLETION:
                 case IToken.tEOC:
@@ -461,14 +460,16 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             TemplateParameterManager templateArgs) throws BacktrackException,
             EndOfFileException {
         // we know this is an operator
+    	
         IToken operatorToken = consume();
         IToken toSend = null;
         IASTTypeId typeId = null;
-        if (LA(1).isOperator() || LT(1) == IToken.tLPAREN
-                || LT(1) == IToken.tLBRACKET) {
-            if ((LT(1) == IToken.t_new || LT(1) == IToken.t_delete)
-                    && LT(2) == IToken.tLBRACKET && LT(3) == IToken.tRBRACKET) {
-                consume(); // new or delete
+        OverloadableOperator op = null;
+        if (LA(1).isOperator() || LT(1) == IToken.tLPAREN || LT(1) == IToken.tLBRACKET) {
+            if ((LT(1) == IToken.t_new || LT(1) == IToken.t_delete) && 
+                 LT(2) == IToken.tLBRACKET && LT(3) == IToken.tRBRACKET) {
+            	op = LT(1) == IToken.t_new ? OverloadableOperator.NEW_ARRAY : OverloadableOperator.DELETE_ARRAY;
+            	consume(); // new or delete
                 consume(); // lbracket
                 toSend = consume(); // rbracket
                 // vector new and delete operators
@@ -476,15 +477,17 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 // operator ()
                 consume(); // "("
                 toSend = consume(); // ")"
+                op = OverloadableOperator.PAREN;
             } else if (LT(1) == IToken.tLBRACKET && LT(2) == IToken.tRBRACKET) {
                 consume(); // "["
                 toSend = consume(); // "]"
-            } else if (LA(1).isOperator())
-                toSend = consume();
+                op = OverloadableOperator.BRACKET;
+            } else if (LA(1).isOperator()) {
+            	toSend = consume();
+            	op = OverloadableOperator.valueOf(toSend);
+            }
             else
-                throwBacktrack(operatorToken.getOffset(),
-                        toSend != null ? toSend.getEndOffset()
-                                - operatorToken.getOffset() : 0);
+                throwBacktrack(operatorToken.getOffset(), 0); // toSend must be null
         } else {
             // must be a conversion function
             IToken t = LA(1);
@@ -516,13 +519,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     toSend, (hasTemplateId ? templateArgs
                             .getTemplateArgumentsList() : null));
 
-            OperatorTokenDuple operator = new OperatorTokenDuple(duple);
+            OperatorTokenDuple operatorDuple = new OperatorTokenDuple(duple, op);
             if (typeId != null) { // if it's a conversion operator
-                operator.setConversionOperator(true);
-                operator.setTypeId(typeId);
+                operatorDuple.setConversionOperator(true);
+                operatorDuple.setTypeId(typeId);
             }
 
-            return createName(operator);
+            return createName(operatorDuple);
         } finally {
             if (grabbedNewInstance)
                 TemplateParameterManager.returnInstance(templateArgs);
@@ -2653,7 +2656,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             IASTTypeId typeId = duple.getTypeId();
             ((CPPASTConversionName) aName).setTypeId(typeId);
         } else {
-            aName = new CPPASTOperatorName(name.toCharArray());
+            aName = new CPPASTOperatorName(duple.getOperator());
         }
 
         if (name instanceof ICPPASTTemplateId) {

@@ -121,7 +121,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 		if( !ia.hasUserDeclaredCopyAssignmentOperator() ) {
 			//copy assignment operator: A& operator = ( const A & ) 
 			IType refType = new CPPReferenceType( clsType );
-			ICPPMethod m = new CPPImplicitMethod( this, ICPPASTOperatorName.OPERATOR_ASSIGN, refType, ps ); 
+			ICPPMethod m = new CPPImplicitMethod( this, OverloadableOperator.ASSIGN.toCharArray(), refType, ps ); 
 			implicits[i++]=m;
 			addBinding( m );
 		}
@@ -483,7 +483,7 @@ class ImplicitsAnalysis {
 			    dcltor = ((IASTFunctionDefinition)members[i]).getDeclarator();
 			}
 			if( !(dcltor instanceof ICPPASTFunctionDeclarator) ||
-				!CharArrayUtils.equals( dcltor.getName().toCharArray(), ICPPASTOperatorName.OPERATOR_ASSIGN ) )
+				!CharArrayUtils.equals( dcltor.getName().toCharArray(), OverloadableOperator.ASSIGN.toCharArray() ) )
 			{
 	        	continue;
 			}

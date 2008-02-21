@@ -53,7 +53,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionTryBlockDeclarator;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
@@ -142,14 +141,14 @@ public class CPPASTTranslationUnit extends CPPASTNode implements ICPPASTTranslat
         IFunctionType newFunctionType = new CPPFunctionType(cpp_void_p, newParms);
         IParameter[] newTheParms = new IParameter[1];
         newTheParms[0] = new CPPBuiltinParameter(newParms[0]);
-        temp = new CPPImplicitFunction(ICPPASTOperatorName.OPERATOR_NEW, theScope, newFunctionType, newTheParms, false);
+        temp = new CPPImplicitFunction(OverloadableOperator.NEW.toCharArray(), theScope, newFunctionType, newTheParms, false);
         try {
         	ASTInternal.addBinding(theScope, temp);
         } catch (DOMException de) {}
 		
 		// void * operator new[] (std::size_t);
 		temp = null;
-        temp = new CPPImplicitFunction(ICPPASTOperatorName.OPERATOR_NEW_ARRAY, theScope, newFunctionType, newTheParms, false);
+        temp = new CPPImplicitFunction(OverloadableOperator.NEW_ARRAY.toCharArray(), theScope, newFunctionType, newTheParms, false);
         try {
         	ASTInternal.addBinding(theScope, temp);
         } catch (DOMException de) {}
@@ -161,14 +160,14 @@ public class CPPASTTranslationUnit extends CPPASTNode implements ICPPASTTranslat
         IFunctionType deleteFunctionType = new CPPFunctionType(cpp_void, deleteParms);
         IParameter[] deleteTheParms = new IParameter[1];
         deleteTheParms[0] = new CPPBuiltinParameter(deleteParms[0]);
-        temp = new CPPImplicitFunction(ICPPASTOperatorName.OPERATOR_DELETE, theScope, deleteFunctionType, deleteTheParms, false);
+        temp = new CPPImplicitFunction(OverloadableOperator.DELETE.toCharArray(), theScope, deleteFunctionType, deleteTheParms, false);
         try {
         	ASTInternal.addBinding(theScope, temp);
         } catch (DOMException de) {}
 		
 		// void operator delete[](void*);
 		temp = null;
-        temp = new CPPImplicitFunction(ICPPASTOperatorName.OPERATOR_DELETE_ARRAY, theScope, deleteFunctionType, deleteTheParms, false);
+        temp = new CPPImplicitFunction(OverloadableOperator.DELETE_ARRAY.toCharArray(), theScope, deleteFunctionType, deleteTheParms, false);
         try {
         	ASTInternal.addBinding(theScope, temp);
         } catch (DOMException de) {}

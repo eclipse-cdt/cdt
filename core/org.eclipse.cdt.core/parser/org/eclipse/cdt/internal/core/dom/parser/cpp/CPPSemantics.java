@@ -3368,17 +3368,17 @@ public class CPPSemantics {
 	    LookupData data = null;
 	    
 	    if( exp instanceof IASTUnaryExpression) {
-	    	astName.setName( ICPPASTOperatorName.OPERATOR_STAR );
+	    	astName.setName( OverloadableOperator.STAR.toCharArray() );
 		    data = new LookupData( astName );
 		    data.forceQualified = true;
 		    data.functionParameters = IASTExpression.EMPTY_EXPRESSION_ARRAY;
 	    } else if( exp instanceof IASTArraySubscriptExpression ){
-		    astName.setName( ICPPASTOperatorName.OPERATOR_BRACKET );
+		    astName.setName( OverloadableOperator.BRACKET.toCharArray() );
 		    data = new LookupData( astName );
 		    data.forceQualified = true;
 		    data.functionParameters = new IASTExpression [] { ((IASTArraySubscriptExpression)exp).getSubscriptExpression() };
 		} else if( exp instanceof IASTFieldReference ){
-			astName.setName( ICPPASTOperatorName.OPERATOR_ARROW );
+			astName.setName( OverloadableOperator.ARROW.toCharArray() );
 			data = new LookupData( astName );
 			data.forceQualified = true;
 			data.functionParameters = IASTExpression.EMPTY_EXPRESSION_ARRAY;

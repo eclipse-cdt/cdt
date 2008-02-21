@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 
 /**
  * This class is used by the GNUCPPSourceParser as an intermediate determinant of whether a 
@@ -28,13 +29,15 @@ public class OperatorTokenDuple implements ITokenDuple {
 	private ITokenDuple token = null;
 	private IASTTypeId typeId = null;
 	private boolean isConversionOperator=false;
+	private OverloadableOperator op = null;
 	
 	/**
 	 * Simple constructor.  token is wrapped by this class.
 	 * @param token
 	 */
-	public OperatorTokenDuple(ITokenDuple token) {
+	public OperatorTokenDuple(ITokenDuple token, OverloadableOperator op) {
 		this.token=token;
+		this.op = op;
 	}
 
 	// below are functions used by GNUCPPSourceParser, see IOperatorTokenDuple
@@ -64,94 +67,67 @@ public class OperatorTokenDuple implements ITokenDuple {
 		this.typeId = typeId;
 	}
 
+	public OverloadableOperator getOperator() {
+		return op;
+	}
+	
 	// below are ITokenDuple functions
-	/* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ITokenDuple#getFirstToken()
-     */
 	public IToken getFirstToken() {
 		return token.getFirstToken();
 	}
-	/* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ITokenDuple#getLastToken()
-     */
+
 	public IToken getLastToken() {
 		return token.getLastToken();
 	}
-	/* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ITokenDuple#getTemplateIdArgLists()
-     */
+
 	public List[] getTemplateIdArgLists() {
 		return token.getTemplateIdArgLists();
 	}
-	/* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ITokenDuple#getLastSegment()
-     */
+
 	public ITokenDuple getLastSegment() {
 		return token.getLastSegment();
 	}
-	/* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ITokenDuple#getLeadingSegments()
-     */
+
 	public ITokenDuple getLeadingSegments() {
 		return token.getLeadingSegments();
 	}
-	/* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ITokenDuple#getSegmentCount()
-     */
+
 	public int getSegmentCount() {
 		return token.getSegmentCount();
 	}
-	/* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ITokenDuple#iterator()
-     */
+
 	public Iterator iterator() {
 		return token.iterator();
 	}
-	/* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ITokenDuple#toCharArray()
-     */
+
 	public char[] toCharArray() {
 		return token.toCharArray();
 	}
-	/* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ITokenDuple#length()
-     */
+
 	public int length() {
 		return token.length();
 	}
-	/* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ITokenDuple#getToken(int)
-     */
+
 	public IToken getToken(int index) {
 		return token.getToken(index);
 	}
-	/* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ITokenDuple#getSegments()
-     */
+
 	public ITokenDuple[] getSegments() {
 		return token.getSegments();
 	}
-	/* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ITokenDuple#getStartOffset()
-     */
+
 	public int getStartOffset() {
 		return token.getStartOffset();
 	}
-	/* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ITokenDuple#getEndOffset()
-     */
+
 	public int getEndOffset() {
 		return token.getEndOffset();
 	}
-	/* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ITokenDuple#extractNameFromTemplateId()
-     */
+
 	public char[] extractNameFromTemplateId() {
 		return token.extractNameFromTemplateId();
 	}
-	/* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
+
 	public String toString() {
 		return token.toString();
 	}

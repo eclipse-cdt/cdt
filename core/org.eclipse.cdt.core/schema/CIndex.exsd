@@ -136,8 +136,8 @@ public class AcmeSDKProvider implements IReadOnlyPDOMProvider {
         return AcmeNature.isAcmeProject(project);
     }
 
-    public IPDOMDescriptor[] getDescriptors(ICProject cproject, ICConfigurationDescription config) {
-        final IPath sdkBase = AcmeSDKAPI.getSDKBase(cproject, config);
+    public IPDOMDescriptor[] getDescriptors(ICConfigurationDescription config) {
+        final IPath sdkBase = AcmeSDKAPI.getSDKBase(config);
         return new IPDOMDescriptor[] { new IPDOMDescriptor() {
             public IIndexLocationConverter getIndexLocationConverter() {
                 return new URIRelativeLocationConverter(URIUtil.toURI(sdkBase));

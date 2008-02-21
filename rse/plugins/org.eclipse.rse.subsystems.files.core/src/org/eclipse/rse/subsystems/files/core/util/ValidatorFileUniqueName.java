@@ -78,8 +78,10 @@ public class ValidatorFileUniqueName
 	    //shell.setCursor(busyCursor);
         org.eclipse.rse.ui.dialogs.SystemPromptDialog.setDisplayCursor(shell, busyCursor);	    
 
-		setErrorMessages(new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, SystemFileResources.MSG_VALIDATE_NAME_EMPTY),
-				new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, SystemFileResources.MSG_VALIDATE_NAME_NOTUNIQUE),
+		setErrorMessages(new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, 
+				SystemFileResources.MSG_VALIDATE_NAME_EMPTY, SystemFileResources.MSG_VALIDATE_NAME_EMPTY_DETAILS),
+				new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, 
+						SystemFileResources.MSG_VALIDATE_NAME_NOTUNIQUE, SystemFileResources.MSG_VALIDATE_NAME_NOTUNIQUE_DETAILS),
 				isFolder ? new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, SystemFileResources.FILEMSG_VALIDATE_FILEFILTERSTRING_NOTUNIQUE) :
 						new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, SystemFileResources.FILEMSG_VALIDATE_FILEFILTERSTRING_NOTVALID));  
 

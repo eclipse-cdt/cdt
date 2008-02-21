@@ -181,8 +181,10 @@ public class SystemFileResources extends NLS
 	public static String FILEMSG_VALIDATE_FILEFILTERSTRING_NOTVALID;
 	public static String FILEMSG_VALIDATE_FILEFILTERSTRING_NOINCLUDES;
 	public static String MSG_VALIDATE_NAME_EMPTY;
+	public static String MSG_VALIDATE_NAME_EMPTY_DETAILS;
 	public static String MSG_VALIDATE_NAME_NOTUNIQUE;
-	public static String MSG_VALIDATE_NAME_NOTVALID;
+	public static String MSG_VALIDATE_NAME_NOTUNIQUE_DETAILS;
+
 	
 	public static String MSG_CONNECT_FAILED;	
 	public static String MSG_OPERATION_CANCELED;

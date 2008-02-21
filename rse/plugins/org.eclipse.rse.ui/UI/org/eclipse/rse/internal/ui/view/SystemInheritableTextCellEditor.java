@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,14 +12,13 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [216252] MessageFormat.format -> NLS.bind
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
-import java.text.MessageFormat;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.ui.widgets.InheritableEntryField;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
@@ -325,7 +324,7 @@ public class SystemInheritableTextCellEditor
 		if (!newValidState) 
 		{
 			// try to insert the current value into the error message.
-			setErrorMessage(MessageFormat.format(getErrorMessage(), new Object[] {value}));
+			setErrorMessage(NLS.bind(getErrorMessage(), value));
 		}
 		valueChanged(oldValidState, newValidState);
 	}
@@ -511,7 +510,7 @@ public class SystemInheritableTextCellEditor
 		if (!newValidState) 
 		{
 			// try to insert the current value into the error message.
-			setErrorMessage(MessageFormat.format(getErrorMessage(), new Object[] {value}));
+			setErrorMessage(NLS.bind(getErrorMessage(), value));
 		}
 		valueChanged(oldValidState, newValidState);
 	}

@@ -86,7 +86,6 @@ import org.eclipse.rse.internal.ui.subsystems.SubSystemResources;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
@@ -1715,8 +1714,9 @@ public abstract class SubSystem extends RSEModelObject
 				if (!supportsCaching())
 				{
 				   // offline and no caching support so throw exception
-				   SystemMessage sMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OFFLINE_CANT_CONNECT);
-				   sMsg.makeSubstitution(getHost().getAliasName());
+					String msgTxt = NLS.bind(SubSystemResources.MSG_OFFLINE_CANT_CONNECT,getHost().getAliasName());
+					String msgDetails = SubSystemResources.MSG_OFFLINE_CANT_CONNECT_DETAILS;
+				   SystemMessage sMsg = new SimpleSystemMessage(RSECorePlugin.PLUGIN_ID, IStatus.INFO, msgTxt, msgDetails);
 				   throw new SystemMessageException(sMsg);
 				}
 					
@@ -1806,10 +1806,8 @@ public abstract class SubSystem extends RSEModelObject
      */
     protected void showConnectCancelledMessage(Shell shell, String hostName, int port)
     {
-         //SystemMessage.displayMessage(SystemMessage.MSGTYPE_ERROR, shell, RSEUIPlugin.getResourceBundle(),
-         //                             ISystemMessages.MSG_CONNECT_CANCELLED, hostName);
-         SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_CANCELLED);
-         msg.makeSubstitution(hostName);
+    	 String msgTxt = NLS.bind(SubSystemResources.MSG_CONNECT_CANCELLED, hostName);
+         SystemMessage msg = new SimpleSystemMessage(RSECorePlugin.PLUGIN_ID, IStatus.CANCEL, msgTxt);
     	 SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);
     	 msgDlg.open();     	
     }	
@@ -1820,12 +1818,10 @@ public abstract class SubSystem extends RSEModelObject
      */
     protected void showDisconnectErrorMessage(Shell shell, String hostName, int port, Exception exc)
     {
-         //SystemMessage.displayMessage(SystemMessage.MSGTYPE_ERROR,shell,RSEUIPlugin.getResourceBundle(),
-         //                             ISystemMessages.MSG_DISCONNECT_FAILED,
-         //                             hostName, exc.getMessage()); 	
-         //RSEUIPlugin.logError("Disconnect failed",exc); // temporary
-    	 SystemMessageDialog msgDlg = new SystemMessageDialog(shell,
-    	            RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_DISCONNECT_FAILED).makeSubstitution(hostName,exc));
+    	String msgTxt = NLS.bind(SubSystemResources.MSG_DISCONNECT_FAILED, hostName);
+    	SystemMessage msg = new SimpleSystemMessage(RSECorePlugin.PLUGIN_ID, IStatus.CANCEL, msgTxt, exc);
+    	
+    	 SystemMessageDialog msgDlg = new SystemMessageDialog(shell,msg);
     	 msgDlg.setException(exc);
     	 msgDlg.open();
     }	
@@ -1836,10 +1832,10 @@ public abstract class SubSystem extends RSEModelObject
      */
     protected void showDisconnectCancelledMessage(Shell shell, String hostName, int port)
     {
-         //SystemMessage.displayMessage(SystemMessage.MSGTYPE_ERROR, shell, RSEUIPlugin.getResourceBundle(),
-         //                             ISystemMessages.MSG_DISCONNECT_CANCELLED, hostName);
-    	 SystemMessageDialog msgDlg = new SystemMessageDialog(shell,
-    	            RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_DISCONNECT_CANCELLED).makeSubstitution(hostName));
+     	String msgTxt = NLS.bind(SubSystemResources.MSG_DISCONNECT_CANCELLED, hostName);
+    	SystemMessage msg = new SimpleSystemMessage(RSECorePlugin.PLUGIN_ID, IStatus.CANCEL, msgTxt);
+  
+    	 SystemMessageDialog msgDlg = new SystemMessageDialog(shell,msg);
     	 msgDlg.open();
     }	
 
@@ -1849,43 +1845,46 @@ public abstract class SubSystem extends RSEModelObject
      */
     protected static String getResolvingMessage(String filterString)
     {
-    	String msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_RESOLVE_PROGRESS).makeSubstitution(filterString).getLevelOneText();
-    	return msg;
+    	String msgTxt = NLS.bind(SubSystemResources.MSG_RESOLVE_PROGRESS, filterString);
+    	return msgTxt;
     }
     /**
      * Helper method to return the message "Running command &1..."
      */
     protected static String getRunningMessage(String cmd)
     {
-    	return RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_RUN_PROGRESS).makeSubstitution(cmd).getLevelOneText();   		
+    	String msgTxt = NLS.bind(SubSystemResources.MSG_RUN_PROGRESS, cmd);
+    	return msgTxt;  		
     }
     /**
      * Helper method to return the message "Querying &1..."
      */
     protected static String getQueryingMessage(String key)
     {
-    	return RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_QUERY_PROGRESS).makeSubstitution(key).getLevelOneText();   		
+    	String msgTxt = NLS.bind(SubSystemResources.MSG_QUERY_PROGRESS, key);
+    	return msgTxt;   		
     }
     /**
      * Helper method to return the message "Setting &1..."
      */
     protected static String getSettingMessage(String key)
     {
-    	return RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_SET_PROGRESS).makeSubstitution(key).getLevelOneText();   		
+    	String msgTxt = NLS.bind(SubSystemResources.MSG_SET_PROGRESS, key);
+    	return msgTxt;		
     }
     /**
      * Helper method to return the message "Querying properties..."
      */
     protected static String getQueryingMessage()
     {
-    	return RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_QUERY_PROPERTIES_PROGRESS).getLevelOneText();   		
+    	return SubSystemResources.MSG_QUERY_PROPERTIES_PROGRESS;		
     }
     /**
      * Helper method to return the message "Setting properties..."
      */
     protected static String getSettingMessage()
     {
-    	return RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_SET_PROPERTIES_PROGRESS).getLevelOneText();   		
+    	return SubSystemResources.MSG_SET_PROPERTIES_PROGRESS;   		
     }
 
     /**
@@ -1907,8 +1906,10 @@ public abstract class SubSystem extends RSEModelObject
     	  String excMsg = exc.getMessage();
     	  if ((excMsg == null) || (excMsg.length()==0))
     	    excMsg = "Exception " + exc.getClass().getName(); //$NON-NLS-1$
-          sysMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_FAILED);
-          sysMsg.makeSubstitution(excMsg);
+    	  
+    	  String msgTxt = NLS.bind(SubSystemResources.MSG_OPERATION_FAILED, excMsg);
+    	  
+          sysMsg = new SimpleSystemMessage(RSECorePlugin.PLUGIN_ID, IStatus.ERROR, msgTxt, exc);
     	
     	
     	 SystemMessageDialog msgDlg = new SystemMessageDialog(shell, sysMsg);
@@ -1925,7 +1926,9 @@ public abstract class SubSystem extends RSEModelObject
      */
     protected void showOperationCancelledMessage(Shell shell)
     {
-    	SystemMessageDialog msgDlg = new SystemMessageDialog(shell, RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_CANCELLED));
+    	String msgTxt = SubSystemResources.MSG_OPERATION_CANCELLED;
+    	SystemMessage msg = new SimpleSystemMessage(RSECorePlugin.PLUGIN_ID, IStatus.CANCEL, msgTxt);
+    	SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);
     	msgDlg.open();
     }	
 

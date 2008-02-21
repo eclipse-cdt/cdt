@@ -9,11 +9,11 @@
  *     IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [174945] split importexport icons from rse.ui
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [216252] MessageFormat.format -> NLS.bind
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
 import java.lang.reflect.InvocationTargetException;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -105,7 +105,7 @@ public class RemoteFileImportActionDelegate extends RemoteFileImportExportAction
 			// do not save settings again
 			importData.setSaveSettings(false);
 		} catch (CoreException ex) {
-			String message = MessageFormat.format(RemoteImportExportResources.IMPORT_EXPORT_ERROR_DESCRIPTION_READ, new Object[] { description.getFullPath(), ex.getStatus().getMessage() });
+			String message = NLS.bind(RemoteImportExportResources.IMPORT_EXPORT_ERROR_DESCRIPTION_READ, description.getFullPath(), ex.getStatus().getMessage());
 			addToStatus(readStatus, message, ex);
 			return null;
 		} finally {
@@ -117,7 +117,7 @@ public class RemoteFileImportActionDelegate extends RemoteFileImportExportAction
 					reader.close();
 				}
 			} catch (CoreException ex) {
-				String message = MessageFormat.format(RemoteImportExportResources.IMPORT_EXPORT_ERROR_DESCRIPTION_CLOSE, new Object[] { description.getFullPath() });
+				String message = NLS.bind(RemoteImportExportResources.IMPORT_EXPORT_ERROR_DESCRIPTION_CLOSE, description.getFullPath());
 				addToStatus(readStatus, message, ex);
 			}
 		}

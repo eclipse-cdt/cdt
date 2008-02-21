@@ -10,12 +10,12 @@
  * Martin Oberhuber (Wind River) - [174945] split importexport icons from rse.ui
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [216252] MessageFormat.format -> NLS.bind
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Hashtable;
@@ -1165,7 +1165,7 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 			String fileExtension = location.getFileExtension();
 			// ensure that file extension is valid
 			if (fileExtension == null || !fileExtension.equals(Utilities.IMPORT_DESCRIPTION_EXTENSION)) {
-				setErrorMessage(MessageFormat.format(RemoteImportExportResources.IMPORT_EXPORT_ERROR_DESCRIPTION_INVALID_EXTENSION, new Object[] { Utilities.IMPORT_DESCRIPTION_EXTENSION }));
+				setErrorMessage(NLS.bind(RemoteImportExportResources.IMPORT_EXPORT_ERROR_DESCRIPTION_INVALID_EXTENSION, Utilities.IMPORT_DESCRIPTION_EXTENSION));
 				return false;
 			}
 		}

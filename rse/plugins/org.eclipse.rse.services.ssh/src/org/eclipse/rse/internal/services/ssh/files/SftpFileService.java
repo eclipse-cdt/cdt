@@ -23,6 +23,7 @@
  * David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
  * Martin Oberhuber (Wind River) - [216343] immediate link targets and canonical paths for Sftp
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [216252] MessageFormat.format -> NLS.bind
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.files;
@@ -36,7 +37,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -684,7 +684,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			  fWorkToDate += count;
 			  Long workToDateKB = new Long(fWorkToDate / 1024L);
 			  Double workPercent = new Double(fWorkPercentFactor * fWorkToDate);
-			  String subDesc = MessageFormat.format(
+			  String subDesc = NLS.bind(
 					  SshServiceResources.SftpFileService_Msg_Progress,
 					  new Object[] {
 						workToDateKB, fMaxWorkKB, workPercent	  

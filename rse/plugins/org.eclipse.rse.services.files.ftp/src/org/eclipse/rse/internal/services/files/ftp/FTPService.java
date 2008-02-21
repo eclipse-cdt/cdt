@@ -71,6 +71,7 @@
  * David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
  * Martin Oberhuber (Wind River) - [216351] Improve cancellation of SystemFetchOperation for files
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [216252] MessageFormat.format -> NLS.bind
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -85,7 +86,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -99,6 +99,7 @@ import org.apache.commons.net.ftp.FTPReply;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.internal.services.files.ftp.parser.IFTPClientConfigFactory;
 import org.eclipse.rse.internal.services.files.ftp.parser.IFTPClientConfigProxy;
@@ -1528,7 +1529,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			  fWorkToDate += count;
 			  Long workToDateKB = new Long(fWorkToDate / 1024L);
 			  Double workPercent = new Double(fWorkPercentFactor * fWorkToDate);
-			  String subDesc = MessageFormat.format(
+			  String subDesc = NLS.bind(
 					 FTPServiceResources.FTP_File_Service_Monitor_Format,  
 					  new Object[] {
 						workToDateKB, fMaxWorkKB, workPercent	  

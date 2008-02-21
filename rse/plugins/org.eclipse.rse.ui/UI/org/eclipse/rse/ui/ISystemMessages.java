@@ -28,88 +28,25 @@ package org.eclipse.rse.ui;
  */
 public interface ISystemMessages 
 {
-	//public static final String PLUGIN_ID ="org.eclipse.rse.ui";
-	//public static final String PREFIX = PLUGIN_ID+".";
-	// Resource Bundle ids
-	//public static final String RESID_PREFIX = PREFIX+"ui.";	
-	// Messages
-	//public static final String MSG_PREFIX = RESID_PREFIX+"msg.";	
-    //public static final String MSG_TITLE = MSG_PREFIX + "Title";
-    //public static final String MSG_TITLEWARNING = MSG_PREFIX + "TitleWarning";    
-    //public static final String MSG_TITLEINFORMATION = MSG_PREFIX + "TitleInformation";
-    //public static final String MSG_TITLECONFIRMATION = MSG_PREFIX + "TitleConfirmation";
 
-    //public static final String MSG_CREATE_PROJECT_ERROR = "RSEG1002"; //MSG_PREFIX + "CreateProjectFailed";    
-    
-  	//public static final String MSG_VALIDATE_PREFIX = MSG_PREFIX + "Validate.";
-	//public static final String MSG_UNDERCONSTRUCTION = "RSEG1001";
-  	
-	public static final String MSG_CONFIRM_RELOADRSE = "RSEG1002"; //$NON-NLS-1$
-
-	public static final String MSG_CONFIRM_ENABLE_CLASSIC_HELP = "RSEG1400"; //$NON-NLS-1$
-	public static final String MSG_ERROR_ENABLE_CLASSIC_HELP   = "RSEG1401"; //$NON-NLS-1$
-		  	
-	public static final String MSG_VALIDATE_NAME_EMPTY    = "RSEG1006"; //$NON-NLS-1$
-	public static final String MSG_VALIDATE_NAME_NOTUNIQUE= "RSEG1007"; //$NON-NLS-1$
-	public static final String MSG_VALIDATE_NAME_NOTVALID = "RSEG1008"; //$NON-NLS-1$
-
+	/***************************************************/
+	/* Unused messages (that may still be usable
+	/***************************************************/
 	public static final String MSG_VALIDATE_RENAME_EMPTY    = "RSEG1012"; //MSG_VALIDATE_PREFIX + "ReName.Required"; //$NON-NLS-1$
-	public static final String MSG_VALIDATE_RENAME_NOTUNIQUE= "RSEG1010"; //MSG_VALIDATE_PREFIX + "ReName.NotUnique"; //$NON-NLS-1$
 	public static final String MSG_VALIDATE_RENAME_NOTVALID = "RSEG1011"; //MSG_VALIDATE_PREFIX + "ReName.NotValid"; //$NON-NLS-1$
- 	public static final String MSG_VALIDATE_RENAME_OLDEQUALSNEW = "RSEG1009"; //MSG_VALIDATE_PREFIX+"ReName.OldEqualsNew"; //$NON-NLS-1$  	
 	
-	public static final String MSG_VALIDATE_PROFILENAME_EMPTY    = "RSEG1014"; //$NON-NLS-1$
-	public static final String MSG_VALIDATE_PROFILENAME_NOTUNIQUE= "RSEG1015"; //$NON-NLS-1$
-	public static final String MSG_VALIDATE_PROFILENAME_NOTVALID = "RSEG1016"; //$NON-NLS-1$
-	public static final String MSG_VALIDATE_PROFILENAME_RESERVED = "RSEG1040"; //$NON-NLS-1$
-		
-	public static final String MSG_VALIDATE_PATH_EMPTY    = "RSEG1032"; //$NON-NLS-1$
-	public static final String MSG_VALIDATE_PATH_NOTUNIQUE= "RSEG1033"; //$NON-NLS-1$
-	public static final String MSG_VALIDATE_PATH_NOTVALID = "RSEG1034"; //$NON-NLS-1$
-		
-	public static final String MSG_VALIDATE_NOT_NUMERIC = "RSEG1017"; //$NON-NLS-1$
-	public static final String MSG_VALIDATE_PORT_EMPTY = "RSEG1027";	 //$NON-NLS-1$
-	public static final String MSG_VALIDATE_PORT_NOTVALID = "RSEG1028";	 //$NON-NLS-1$
-	public static final String MSG_VALIDATE_FOLDERNAME_NOTVALID = "RSEG1018";	 //$NON-NLS-1$
-	public static final String MSG_VALIDATE_FILENAME_NOTVALID   = "RSEG1019";		 //$NON-NLS-1$
-
-	public static final String MSG_VALIDATE_CONNECTIONNAME_EMPTY= "RSEG1021"; //$NON-NLS-1$
-	public static final String MSG_VALIDATE_CONNECTIONNAME_NOTUNIQUE = "RSEG1022"; //$NON-NLS-1$
-	public static final String MSG_VALIDATE_CONNECTIONNAME_NOTUNIQUE_OTHERPROFILE = "RSEG1041";	 //$NON-NLS-1$
 	public static final String MSG_VALIDATE_CONNECTIONNAME_NOTVALID = "RSEG1023"; //$NON-NLS-1$
-	
-	public static final String MSG_VALIDATE_HOSTNAME_EMPTY= "RSEG1024"; //MSG_VALIDATE_PREFIX + "HostNameRequired"; //$NON-NLS-1$
-	public static final String MSG_VALIDATE_USERID_EMPTY  = "RSEG1025"; //$NON-NLS-1$
-	public static final String MSG_VALIDATE_USERID_NOTVALID  = "RSEG1026"; //$NON-NLS-1$
 
-	public static final String MSG_VALIDATE_ENTRY_EMPTY    = "RSEG1029"; //$NON-NLS-1$
-	public static final String MSG_VALIDATE_ENTRY_NOTUNIQUE= "RSEG1030"; //$NON-NLS-1$
-	public static final String MSG_VALIDATE_ENTRY_NOTVALID = "RSEG1031"; //$NON-NLS-1$
-
-	public static final String MSG_VALIDATE_FILTERPOOLNAME_EMPTY    = "RSEG1037"; //$NON-NLS-1$
-	public static final String MSG_VALIDATE_FILTERPOOLNAME_NOTUNIQUE= "RSEG1038"; //$NON-NLS-1$
 	public static final String MSG_VALIDATE_FILTERPOOLNAME_NOTVALID = "RSEG1039"; //$NON-NLS-1$
-			
-	public static final String MSG_VALIDATE_FILTERNAME_EMPTY    = "RSEG1042"; //$NON-NLS-1$
-	public static final String MSG_VALIDATE_FILTERNAME_NOTUNIQUE= "RSEG1043"; //$NON-NLS-1$
+	
 	public static final String MSG_VALIDATE_FILTERNAME_NOTVALID = "RSEG1044"; //$NON-NLS-1$
-			
-	public static final String MSG_VALIDATE_PASSWORD_EMPTY   = "RSEG1035"; //MSG_VALIDATE_PREFIX + "PasswordRequired"; //$NON-NLS-1$
+
 	public static final String MSG_VALIDATE_PASSWORD_EXPIRED = "RSEG1036"; //MSG_VALIDATE_PREFIX + "PasswordExpired";	 //$NON-NLS-1$
 	public static final String MSG_VALIDATE_PASSWORD_INVALID = "RSEG1297"; //$NON-NLS-1$
-	public static final String MSG_VALIDATE_FILTERSTRING_EMPTY    = "RSEG1045"; //$NON-NLS-1$
-	public static final String MSG_VALIDATE_FILTERSTRING_NOTUNIQUE= "RSEG1046"; //$NON-NLS-1$
-	public static final String MSG_VALIDATE_FILTERSTRING_NOTVALID = "RSEG1047"; //$NON-NLS-1$
-	public static final String MSG_VALIDATE_FILTERSTRING_DUPLICATES = "RSEG1048";	 //$NON-NLS-1$
-	public static final String MSG_VALIDATE_FILTERSTRING_ALREADYEXISTS = "RSEG1049";	 //$NON-NLS-1$
-	public static final String MSG_VALIDATE_NUMBER_EMPTY     = "RSEG1170"; //$NON-NLS-1$
-	public static final String MSG_VALIDATE_NUMBER_NOTVALID  = "RSEG1171"; //$NON-NLS-1$
-	public static final String MSG_VALIDATE_NUMBER_OUTOFRANGE= "RSEG1172"; //$NON-NLS-1$
-	
-	public static final String MSG_CONFIRM_DELETE = "RSEG1052";	 //$NON-NLS-1$
+
 	public static final String MSG_CONFIRM_DELETEREMOTE = "RSEG1130";	 //$NON-NLS-1$
 	public static final String MSG_CONFIRM_DELETEPROFILE = "RSEG1053";		 //$NON-NLS-1$
-	public static final String MSG_CONFIRM_CHANGES = "RSEG1201"; //$NON-NLS-1$
+
 	public static final String MSG_CONFIRM_CHANGES_CANCELABLE = "RSEG1202"; //$NON-NLS-1$
 
   	//public static final String MSG_CONNECT_PREFIX = MSG_PREFIX + "Connect.";
@@ -119,7 +56,6 @@ public interface ISystemMessages
 	public static final String MSG_CONNECT_UNKNOWNHOST = "RSEG1057"; //MSG_CONNECT_PREFIX + "UnknownHost";	 //$NON-NLS-1$
 	public static final String MSG_CONNECT_CANCELLED   = "RSEG1058"; //MSG_CONNECT_PREFIX + "Cancelled"; //$NON-NLS-1$
 	
-		
 	public static final String MSG_CONNECT_DAEMON_FAILED = "RSEG1242"; //MSG_CONNECT_PREFIX + "Failed";			 //$NON-NLS-1$
 	public static final String MSG_CONNECT_DAEMON_FAILED_EXCEPTION = "RSEG1243"; //MSG_CONNECT_PREFIX + "Failed";	 //$NON-NLS-1$
 	public static final String MSG_CONNECT_SSL_EXCEPTION = "RSEC2307"; //MSG_CONNECT_PREFIX + "Failed";	 //$NON-NLS-1$
@@ -130,28 +66,21 @@ public interface ISystemMessages
 	public static final String MSG_INITIALIZING_SERVER= "RSEC2313"; //$NON-NLS-1$
 	public static final String MSG_PORT_OUT_RANGE = "RSEC2316"; //$NON-NLS-1$
 	
+
   	//public static final String MSG_DISCONNECT_PREFIX = MSG_PREFIX + "Disconnect.";	
 	public static final String MSG_DISCONNECT_PROGRESS = "RSEG1059"; //MSG_DISCONNECT_PREFIX + "Disconnecting"; //$NON-NLS-1$
 	public static final String MSG_DISCONNECTWITHPORT_PROGRESS = "RSEG1060"; //MSG_DISCONNECT_PREFIX + "DisconnectingWithPort";  	 //$NON-NLS-1$
 	public static final String MSG_DISCONNECT_FAILED      = "RSEG1061"; // MSG_DISCONNECT_PREFIX + "Failed";			 //$NON-NLS-1$
 	public static final String MSG_DISCONNECT_CANCELLED   = "RSEG1062"; //MSG_DISCONNECT_PREFIX + "Cancelled";		 //$NON-NLS-1$
 	
-  	//public static final String MSG_SAVE_PREFIX = MSG_PREFIX + "Save.";	
-  	public static final String MSG_SAVE_FAILED = "RSEG1050"; //MSG_SAVE_PREFIX + "Failed";  	 //$NON-NLS-1$
   	public static final String MSG_RESTORE_FAILED = "RSEG1051"; //$NON-NLS-1$
   	public static final String MSG_SAVE_CHANGES_PENDING = "RSEG1201"; //$NON-NLS-1$
   	  	
-  	//public static final String MSG_EXCEPTION_PREFIX = MSG_PREFIX + "Exception.";	
-	public static final String MSG_EXCEPTION_OCCURRED = "RSEG1003"; //$NON-NLS-1$
-	public static final String MSG_EXCEPTION_DELETING = "RSEG1063"; //""RSEG1004";	 //$NON-NLS-1$
-	public static final String MSG_EXCEPTION_RENAMING = "RSEG1064"; //"RSEG1005"; //MSG_EXCEPTION_PREFIX + "Renaming";		 //$NON-NLS-1$
 	public static final String MSG_EXCEPTION_MOVING   = "RSEG1065"; //MSG_EXCEPTION_PREFIX + "Moving";		  	 //$NON-NLS-1$
-	
+
 	//public static final String MSG_RESOLVE_PREFIX = MSG_PREFIX + "Resolve.";
 	public static final String MSG_RESOLVE_PROGRESS = "RSEG1070"; //$NON-NLS-1$
 	
-	//public static final String MSG_QUERY_PREFIX = MSG_PREFIX + "Query.";
-	public static final String MSG_QUERY_PROGRESS = "RSEG1095";	 //$NON-NLS-1$
 	public static final String MSG_QUERY_PROPERTIES_PROGRESS = "RSEG1096";		 //$NON-NLS-1$
 
 	//public static final String MSG_SET_PREFIX = MSG_PREFIX + "Set.";
@@ -161,18 +90,9 @@ public interface ISystemMessages
 	//public static final String MSG_RUN_PREFIX = MSG_PREFIX + "Run.";
 	public static final String MSG_RUN_PROGRESS = "RSEG1071";	 //$NON-NLS-1$
 
-	//public static final String MSG_COPY_PREFIX = MSG_PREFIX + "Copy.";
-	public static final String MSG_COPY_PROGRESS = "RSEG1072";	 //$NON-NLS-1$
-	public static final String MSG_COPYCONNECTION_PROGRESS = "RSEG1073"; //$NON-NLS-1$
-	public static final String MSG_COPYCONNECTIONS_PROGRESS = "RSEG1074"; //$NON-NLS-1$
-	public static final String MSG_COPYFILTERPOOLS_PROGRESS = "RSEG1075"; //$NON-NLS-1$
-	public static final String MSG_COPYFILTERPOOL_PROGRESS  = "RSEG1076"; //$NON-NLS-1$
-	public static final String MSG_COPYFILTERS_PROGRESS     = "RSEG1077"; //$NON-NLS-1$
-	public static final String MSG_COPYFILTER_PROGRESS      = "RSEG1078"; //$NON-NLS-1$
-	public static final String MSG_COPYFILTERSTRINGS_PROGRESS="RSEG1079"; //$NON-NLS-1$
-	public static final String MSG_COPYFILTERSTRING_PROGRESS ="RSEG1080"; //$NON-NLS-1$
 	public static final String MSG_COPYSUBSYSTEMS_PROGRESS  = "RSEG1081"; //$NON-NLS-1$
 	
+
 	public static final String MSG_DOWNLOAD_PROGRESS        = "RSEG1280"; //$NON-NLS-1$
 	public static final String MSG_UPLOAD_PROGRESS          = "RSEG1281"; //$NON-NLS-1$
 	public static final String MSG_SYNCHRONIZE_PROGRESS     = "RSEG1282"; //$NON-NLS-1$
@@ -181,56 +101,23 @@ public interface ISystemMessages
 	public static final String MSG_DOWNLOADING_PROGRESS     = "RSEG1295"; //$NON-NLS-1$
 	public static final String MSG_UPLOADING_PROGRESS       = "RSEG1296"; //$NON-NLS-1$
 	
-	public static final String MSG_COPYFILTERPOOL_COMPLETE  = "RSEG1082"; //$NON-NLS-1$
-
-	//public static final String MSG_MOVE_PREFIX = MSG_PREFIX + "Move.";
 	public static final String MSG_MOVE_PROGRESS            = "RSEG1083"; // "moving %1 to %2" //$NON-NLS-1$
-	public static final String MSG_MOVECONNECTION_PROGRESS  = "RSEG1084"; //$NON-NLS-1$
-	public static final String MSG_MOVECONNECTIONS_PROGRESS = "RSEG1085"; //$NON-NLS-1$
-	public static final String MSG_MOVEFILTERPOOLS_PROGRESS = "RSEG1086"; //$NON-NLS-1$
-	public static final String MSG_MOVEFILTERPOOL_PROGRESS  = "RSEG1087"; //$NON-NLS-1$
-	public static final String MSG_MOVEFILTERS_PROGRESS     = "RSEG1088"; //$NON-NLS-1$
-	public static final String MSG_MOVEFILTER_PROGRESS      = "RSEG1089"; //$NON-NLS-1$
-	public static final String MSG_MOVEFILTERSTRINGS_PROGRESS="RSEG1090"; //$NON-NLS-1$
-	public static final String MSG_MOVEFILTERSTRING_PROGRESS ="RSEG1091"; //$NON-NLS-1$
-	public static final String MSG_MOVEFILTERPOOL_COMPLETE  = "RSEG1092"; //$NON-NLS-1$
-	
-	public static final String MSG_COPYGENERIC_PROGRESS = "RSEG1115";	 //$NON-NLS-1$
-	public static final String MSG_MOVEGENERIC_PROGRESS = "RSEG1116"; //$NON-NLS-1$
-	public static final String MSG_COPYTHINGGENERIC_PROGRESS = "RSEG1117";	 //$NON-NLS-1$
-	public static final String MSG_MOVETHINGGENERIC_PROGRESS = "RSEG1118"; //$NON-NLS-1$
-	public static final String MSG_RENAMEGENERIC_PROGRESS = "RSEG1142";	 //$NON-NLS-1$
+
 	public static final String MSG_CREATEFILEGENERIC_PROGRESS = "RSEG1143";	 //$NON-NLS-1$
 	public static final String MSG_CREATEFOLDERGENERIC_PROGRESS = "RSEG1144";	 //$NON-NLS-1$
 
+
 	public static final String MSG_SAVING_PROGRESS = "RSEG1119"; //$NON-NLS-1$
 	
-	public static final String MSG_VALIDATE_SRCTYPE_EMPTY    = "RSEG1192"; //$NON-NLS-1$
-	public static final String MSG_VALIDATE_SRCTYPE_NOTVALID = "RSEG1193"; //$NON-NLS-1$
-	public static final String MSG_VALIDATE_SRCTYPE_NOTUNIQUE= "RSEG1194"; //$NON-NLS-1$
-		
-	public static final String MSG_VALIDATE_ARCHIVE_NAME = "RSEG1120"; //$NON-NLS-1$
-
 
 	public static final String FILEMSG_ARCHIVE_CORRUPTED = "RSEG1122"; //$NON-NLS-1$
 	public static final String MSG_FOLDER_INUSE = "RSEG1150"; // defect 42138	 //$NON-NLS-1$
 	public static final String MSG_FILE_INUSE = "RSEG1151"; // defect 42332 //$NON-NLS-1$
 
-	public static final String MSG_FILTERPOOL_CREATED = "RSEG1160"; // defect 42503 //$NON-NLS-1$
-	public static final String MSG_UPDATEFILTER_FAILED = "RSEG1161";  //$NON-NLS-1$
-	public static final String MSG_RENAMEFILTER_FAILED = "RSEG1162";  //$NON-NLS-1$
-	
-	//public static final String MSG_OPERATION_PREFIX = MSG_PREFIX + "Operation.";
-	public static final String MSG_OPERATION_FAILED      = "RSEG1066"; 		 //$NON-NLS-1$
-	public static final String MSG_OPERATION_CANCELLED   = "RSEG1067";		 //$NON-NLS-1$
-
 
 	//public static final String MSG_LOADING_PREFIX = MSG_PREFIX + "Loading.";
 	public static final String MSG_LOADING_PROFILE_SHOULDBE_ACTIVATED = "RSEG1068"; //$NON-NLS-1$
 	public static final String MSG_LOADING_PROFILE_SHOULDNOTBE_DEACTIVATED = "RSEG1069";	 //$NON-NLS-1$
-
-	public static final String MSG_HOSTNAME_NOTFOUND = "RSEG1220";	 //$NON-NLS-1$
-	public static final String MSG_HOSTNAME_VERIFYING = "RSEG1221";	 //$NON-NLS-1$
 
 	public static final String MSG_WIZARD_PAGE_ERROR   = "RSEG1240";	 //$NON-NLS-1$
 	
@@ -241,18 +128,13 @@ public interface ISystemMessages
 	// universal commands
 	public static final String MSG_UCMD_INVOCATION_EMPTY      = "RSEG1260"; //$NON-NLS-1$
 				
+
 	// operation status
 	public static final String MSG_OPERATION_RUNNING		= "RSEG1255"; //$NON-NLS-1$
 	public static final String MSG_OPERATION_FINISHED		= "RSEG1256"; //$NON-NLS-1$
 	public static final String MSG_OPERTION_STOPPED			= "RSEG1257"; //$NON-NLS-1$
 	public static final String MSG_OPERATION_DISCONNECTED	= "RSEG1258";			 //$NON-NLS-1$
 					
-	public static final String MSG_ENCODING_NOT_SUPPORTED = "RSEG1244";	 //$NON-NLS-1$
-					
-				
-    // --------------------------
-    // UNIVERSAL FILE MESSAGES...
-    // --------------------------	
 	public static final String FILEMSG_VALIDATE_FILEFILTERSTRING_EMPTY    = "RSEF1011"; //$NON-NLS-1$
 	public static final String FILEMSG_VALIDATE_FILEFILTERSTRING_NOTUNIQUE= "RSEF1007"; //$NON-NLS-1$
 	public static final String FILEMSG_VALIDATE_FILEFILTERSTRING_NOTVALID = "RSEF1008"; //$NON-NLS-1$
@@ -274,9 +156,150 @@ public interface ISystemMessages
 	public static final String FILEMSG_MOVE_FILTER_NOT_VALID = "RSEF1313"; //$NON-NLS-1$
 	public static final String FILEMSG_DELETING = "RSEF1315"; //$NON-NLS-1$
 	public static final String FILEMSG_MOVE_INTERRUPTED = "RSEG1245"; //$NON-NLS-1$
+
+	public static final String FILEMSG_COPY_INTERRUPTED = "RSEG1248"; //$NON-NLS-1$
+
+	
+	/***************************************************/
+	/* End of Unused messages (that may still be usable
+	/***************************************************/
+	
+	
+	public static final String MSG_CONFIRM_RELOADRSE = "RSEG1002"; //$NON-NLS-1$
+  	
+	public static final String MSG_VALIDATE_NAME_EMPTY    = "RSEG1006"; //$NON-NLS-1$
+	public static final String MSG_VALIDATE_NAME_NOTUNIQUE= "RSEG1007"; //$NON-NLS-1$
+	public static final String MSG_VALIDATE_NAME_NOTVALID = "RSEG1008"; //$NON-NLS-1$
+
+	public static final String MSG_VALIDATE_RENAME_NOTUNIQUE= "RSEG1010"; //MSG_VALIDATE_PREFIX + "ReName.NotUnique"; //$NON-NLS-1$
+ 	public static final String MSG_VALIDATE_RENAME_OLDEQUALSNEW = "RSEG1009"; //MSG_VALIDATE_PREFIX+"ReName.OldEqualsNew"; //$NON-NLS-1$  	
+	
+	public static final String MSG_VALIDATE_PROFILENAME_EMPTY    = "RSEG1014"; //$NON-NLS-1$
+	public static final String MSG_VALIDATE_PROFILENAME_NOTUNIQUE= "RSEG1015"; //$NON-NLS-1$
+	public static final String MSG_VALIDATE_PROFILENAME_NOTVALID = "RSEG1016"; //$NON-NLS-1$
+	public static final String MSG_VALIDATE_PROFILENAME_RESERVED = "RSEG1040"; //$NON-NLS-1$
+		
+	public static final String MSG_VALIDATE_PATH_EMPTY    = "RSEG1032"; //$NON-NLS-1$
+	public static final String MSG_VALIDATE_PATH_NOTUNIQUE= "RSEG1033"; //$NON-NLS-1$
+	public static final String MSG_VALIDATE_PATH_NOTVALID = "RSEG1034"; //$NON-NLS-1$
+		
+	public static final String MSG_VALIDATE_NOT_NUMERIC = "RSEG1017"; //$NON-NLS-1$
+	public static final String MSG_VALIDATE_PORT_EMPTY = "RSEG1027";	 //$NON-NLS-1$
+	public static final String MSG_VALIDATE_PORT_NOTVALID = "RSEG1028";	 //$NON-NLS-1$
+	public static final String MSG_VALIDATE_FOLDERNAME_NOTVALID = "RSEG1018";	 //$NON-NLS-1$
+	public static final String MSG_VALIDATE_FILENAME_NOTVALID   = "RSEG1019";		 //$NON-NLS-1$
+
+	public static final String MSG_VALIDATE_CONNECTIONNAME_EMPTY= "RSEG1021"; //$NON-NLS-1$
+	public static final String MSG_VALIDATE_CONNECTIONNAME_NOTUNIQUE = "RSEG1022"; //$NON-NLS-1$
+	public static final String MSG_VALIDATE_CONNECTIONNAME_NOTUNIQUE_OTHERPROFILE = "RSEG1041";	 //$NON-NLS-1$
+	
+	public static final String MSG_VALIDATE_HOSTNAME_EMPTY= "RSEG1024"; //MSG_VALIDATE_PREFIX + "HostNameRequired"; //$NON-NLS-1$
+	public static final String MSG_VALIDATE_USERID_EMPTY  = "RSEG1025"; //$NON-NLS-1$
+	public static final String MSG_VALIDATE_USERID_NOTVALID  = "RSEG1026"; //$NON-NLS-1$
+
+	public static final String MSG_VALIDATE_ENTRY_EMPTY    = "RSEG1029"; //$NON-NLS-1$
+	public static final String MSG_VALIDATE_ENTRY_NOTUNIQUE= "RSEG1030"; //$NON-NLS-1$
+	public static final String MSG_VALIDATE_ENTRY_NOTVALID = "RSEG1031"; //$NON-NLS-1$
+
+	public static final String MSG_VALIDATE_FILTERPOOLNAME_EMPTY    = "RSEG1037"; //$NON-NLS-1$
+	public static final String MSG_VALIDATE_FILTERPOOLNAME_NOTUNIQUE= "RSEG1038"; //$NON-NLS-1$
+			
+	public static final String MSG_VALIDATE_FILTERNAME_EMPTY    = "RSEG1042"; //$NON-NLS-1$
+	public static final String MSG_VALIDATE_FILTERNAME_NOTUNIQUE= "RSEG1043"; //$NON-NLS-1$
+			
+	public static final String MSG_VALIDATE_PASSWORD_EMPTY   = "RSEG1035"; //MSG_VALIDATE_PREFIX + "PasswordRequired"; //$NON-NLS-1$
+
+	public static final String MSG_VALIDATE_FILTERSTRING_EMPTY    = "RSEG1045"; //$NON-NLS-1$
+	public static final String MSG_VALIDATE_FILTERSTRING_NOTUNIQUE= "RSEG1046"; //$NON-NLS-1$
+	public static final String MSG_VALIDATE_FILTERSTRING_NOTVALID = "RSEG1047"; //$NON-NLS-1$
+	public static final String MSG_VALIDATE_FILTERSTRING_DUPLICATES = "RSEG1048";	 //$NON-NLS-1$
+	public static final String MSG_VALIDATE_FILTERSTRING_ALREADYEXISTS = "RSEG1049";	 //$NON-NLS-1$
+	public static final String MSG_VALIDATE_NUMBER_EMPTY     = "RSEG1170"; //$NON-NLS-1$
+	public static final String MSG_VALIDATE_NUMBER_NOTVALID  = "RSEG1171"; //$NON-NLS-1$
+	public static final String MSG_VALIDATE_NUMBER_OUTOFRANGE= "RSEG1172"; //$NON-NLS-1$
+	
+	public static final String MSG_CONFIRM_DELETE = "RSEG1052";	 //$NON-NLS-1$
+	public static final String MSG_CONFIRM_CHANGES = "RSEG1201"; //$NON-NLS-1$
+
+
+		
+
+  	//public static final String MSG_SAVE_PREFIX = MSG_PREFIX + "Save.";	
+  	public static final String MSG_SAVE_FAILED = "RSEG1050"; //MSG_SAVE_PREFIX + "Failed";  	 //$NON-NLS-1$
+
+  	//public static final String MSG_EXCEPTION_PREFIX = MSG_PREFIX + "Exception.";	
+	public static final String MSG_EXCEPTION_OCCURRED = "RSEG1003"; //$NON-NLS-1$
+	public static final String MSG_EXCEPTION_DELETING = "RSEG1063"; //""RSEG1004";	 //$NON-NLS-1$
+	public static final String MSG_EXCEPTION_RENAMING = "RSEG1064"; //"RSEG1005"; //MSG_EXCEPTION_PREFIX + "Renaming";		 //$NON-NLS-1$
+	
+
+	//public static final String MSG_QUERY_PREFIX = MSG_PREFIX + "Query.";
+	public static final String MSG_QUERY_PROGRESS = "RSEG1095";	 //$NON-NLS-1$
+
+	//public static final String MSG_COPY_PREFIX = MSG_PREFIX + "Copy.";
+	public static final String MSG_COPY_PROGRESS = "RSEG1072";	 //$NON-NLS-1$
+	public static final String MSG_COPYCONNECTION_PROGRESS = "RSEG1073"; //$NON-NLS-1$
+	public static final String MSG_COPYCONNECTIONS_PROGRESS = "RSEG1074"; //$NON-NLS-1$
+	public static final String MSG_COPYFILTERPOOLS_PROGRESS = "RSEG1075"; //$NON-NLS-1$
+	public static final String MSG_COPYFILTERPOOL_PROGRESS  = "RSEG1076"; //$NON-NLS-1$
+	public static final String MSG_COPYFILTERS_PROGRESS     = "RSEG1077"; //$NON-NLS-1$
+	public static final String MSG_COPYFILTER_PROGRESS      = "RSEG1078"; //$NON-NLS-1$
+	public static final String MSG_COPYFILTERSTRINGS_PROGRESS="RSEG1079"; //$NON-NLS-1$
+	public static final String MSG_COPYFILTERSTRING_PROGRESS ="RSEG1080"; //$NON-NLS-1$
+
+	public static final String MSG_COPYFILTERPOOL_COMPLETE  = "RSEG1082"; //$NON-NLS-1$
+
+	//public static final String MSG_MOVE_PREFIX = MSG_PREFIX + "Move.";
+	public static final String MSG_MOVECONNECTION_PROGRESS  = "RSEG1084"; //$NON-NLS-1$
+	public static final String MSG_MOVECONNECTIONS_PROGRESS = "RSEG1085"; //$NON-NLS-1$
+	public static final String MSG_MOVEFILTERPOOLS_PROGRESS = "RSEG1086"; //$NON-NLS-1$
+	public static final String MSG_MOVEFILTERPOOL_PROGRESS  = "RSEG1087"; //$NON-NLS-1$
+	public static final String MSG_MOVEFILTERS_PROGRESS     = "RSEG1088"; //$NON-NLS-1$
+	public static final String MSG_MOVEFILTER_PROGRESS      = "RSEG1089"; //$NON-NLS-1$
+	public static final String MSG_MOVEFILTERSTRINGS_PROGRESS="RSEG1090"; //$NON-NLS-1$
+	public static final String MSG_MOVEFILTERSTRING_PROGRESS ="RSEG1091"; //$NON-NLS-1$
+	public static final String MSG_MOVEFILTERPOOL_COMPLETE  = "RSEG1092"; //$NON-NLS-1$
+	
+	
+	public static final String MSG_COPYGENERIC_PROGRESS = "RSEG1115";	 //$NON-NLS-1$
+	public static final String MSG_MOVEGENERIC_PROGRESS = "RSEG1116"; //$NON-NLS-1$
+	public static final String MSG_COPYTHINGGENERIC_PROGRESS = "RSEG1117";	 //$NON-NLS-1$
+	public static final String MSG_MOVETHINGGENERIC_PROGRESS = "RSEG1118"; //$NON-NLS-1$
+	public static final String MSG_RENAMEGENERIC_PROGRESS = "RSEG1142";	 //$NON-NLS-1$
+
+	public static final String MSG_VALIDATE_SRCTYPE_EMPTY    = "RSEG1192"; //$NON-NLS-1$
+	public static final String MSG_VALIDATE_SRCTYPE_NOTVALID = "RSEG1193"; //$NON-NLS-1$
+	public static final String MSG_VALIDATE_SRCTYPE_NOTUNIQUE= "RSEG1194"; //$NON-NLS-1$
+		
+	public static final String MSG_VALIDATE_ARCHIVE_NAME = "RSEG1120"; //$NON-NLS-1$
+
+
+	public static final String MSG_FILTERPOOL_CREATED = "RSEG1160"; // defect 42503 //$NON-NLS-1$
+	public static final String MSG_UPDATEFILTER_FAILED = "RSEG1161";  //$NON-NLS-1$
+	public static final String MSG_RENAMEFILTER_FAILED = "RSEG1162";  //$NON-NLS-1$
+	
+	//public static final String MSG_OPERATION_PREFIX = MSG_PREFIX + "Operation.";
+	public static final String MSG_OPERATION_FAILED      = "RSEG1066"; 		 //$NON-NLS-1$
+	public static final String MSG_OPERATION_CANCELLED   = "RSEG1067";		 //$NON-NLS-1$
+
+
+	public static final String MSG_HOSTNAME_NOTFOUND = "RSEG1220";	 //$NON-NLS-1$
+	public static final String MSG_HOSTNAME_VERIFYING = "RSEG1221";	 //$NON-NLS-1$
+ 
+	
+	public static final String MSG_ENCODING_NOT_SUPPORTED = "RSEG1244";	 //$NON-NLS-1$
+	
+	
+    // --------------------------
+    // UNIVERSAL FILE MESSAGES...
+    // --------------------------	
 	public static final String FILEMSG_RENAME_INTERRUPTED = "RSEG1246"; //$NON-NLS-1$
 	public static final String FILEMSG_DELETE_INTERRUPTED = "RSEG1247"; //$NON-NLS-1$
-	public static final String FILEMSG_COPY_INTERRUPTED = "RSEG1248"; //$NON-NLS-1$
+
+	
+	
+	/******/
+	
 	
 	// -------------------------	
 	// IMPORT/EXPORT MESSAGES...

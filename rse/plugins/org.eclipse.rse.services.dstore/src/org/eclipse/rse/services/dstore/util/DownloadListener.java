@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes
  * David McKnight   (IBM)        - [162195] new APIs for upload multi and download multi 
  * David McKnight   (IBM)        - [197480] eliminating UI dependencies
+ * David McKnight   (IBM)        - [216252] MessageFormat.format -> NLS.bind
  ********************************************************************************/
 
 package org.eclipse.rse.services.dstore.util;
@@ -21,7 +22,6 @@ package org.eclipse.rse.services.dstore.util;
 
 
 import java.io.File;
-import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.dstore.core.model.DE;
@@ -29,6 +29,7 @@ import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.extra.DomainEvent;
 import org.eclipse.dstore.extra.IDomainListener;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.internal.services.dstore.ServiceResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
@@ -165,7 +166,7 @@ public class DownloadListener implements IDomainListener
 					percentBuf.append(percent);
 					percentBuf.append("%"); //$NON-NLS-1$
 					
-					String str = MessageFormat.format(_percentMsg, new Object[] {current, total, percentBuf});
+					String str = NLS.bind(_percentMsg, new Object[] {current, total, percentBuf});
 					
 					_monitor.subTask(str);
 					

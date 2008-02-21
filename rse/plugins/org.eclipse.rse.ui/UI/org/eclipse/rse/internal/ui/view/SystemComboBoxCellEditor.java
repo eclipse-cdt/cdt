@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,13 +12,12 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [216252] MessageFormat.format -> NLS.bind
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
-import java.text.MessageFormat;
-
 import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.KeyAdapter;
@@ -140,7 +139,7 @@ public class SystemComboBoxCellEditor extends CellEditor
 				} else {
 					// try to insert the current value into the error message.
 					setErrorMessage(
-						MessageFormat.format(getErrorMessage(), new Object[] {items[selection]})); 
+						NLS.bind(getErrorMessage(), items[selection])); 
 				}
 				fireApplyEditorValue();
 			}

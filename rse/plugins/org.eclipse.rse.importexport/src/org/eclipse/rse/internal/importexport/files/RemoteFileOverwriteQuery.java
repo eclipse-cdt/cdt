@@ -8,14 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
+ * David McKnight   (IBM)        - [216252] MessageFormat.format -> NLS.bind
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
-
-import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.internal.importexport.RemoteImportExportResources;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.swt.widgets.Display;
@@ -52,11 +52,11 @@ public class RemoteFileOverwriteQuery implements IOverwriteQuery {
 			//and there are at least 2 segments.
 			if (path.getFileExtension() == null || path.segmentCount() < 2) {
 				//TODO internal class used
-				messageString = MessageFormat.format(RemoteImportExportResources.WizardDataTransfer_existsQuestion, new String[] { pathString });
+				messageString = NLS.bind(RemoteImportExportResources.WizardDataTransfer_existsQuestion, pathString );
 			} else {
 				// TODO internal class used
-				messageString = MessageFormat.format(RemoteImportExportResources.WizardDataTransfer_overwriteNameAndPathQuestion, new String[] { path.lastSegment(),
-						path.removeLastSegments(1).toOSString() });
+				messageString = NLS.bind(RemoteImportExportResources.WizardDataTransfer_overwriteNameAndPathQuestion, path.lastSegment(),
+						path.removeLastSegments(1).toOSString() );
 			}
 			Shell shell = SystemBasePlugin.getActiveWorkbenchShell();
 			// TODO internal class used

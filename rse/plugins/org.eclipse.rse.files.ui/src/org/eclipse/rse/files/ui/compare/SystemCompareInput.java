@@ -15,7 +15,6 @@
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.compare;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +37,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
 import org.eclipse.swt.widgets.Composite;
 
@@ -160,7 +160,7 @@ public class SystemCompareInput extends CompareEditorInput
 			
 			String title;
 			String format = Utilities.getString("ResourceCompare.twoWay.title"); //$NON-NLS-1$
-			title = MessageFormat.format(format, new String[] {_leftResource.getName(), _rightResource.getName()});
+			title = NLS.bind(format, _leftResource.getName(), _rightResource.getName());
 			setTitle(title);
 		}
 		catch (Exception e)

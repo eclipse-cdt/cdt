@@ -34,6 +34,7 @@
  * David McKnight   (IBM)        - [209704] added supportsEncodingConversion()
  * Xuan Chen        (IBM)        - [209827] Update DStore command implementation to enable cancelation of archive operations
  * David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
+ * David McKnight   (IBM)        - [216252] MessageFormat.format -> NLS.bind
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -46,7 +47,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -59,6 +59,7 @@ import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.DataStoreAttributes;
 import org.eclipse.dstore.core.model.DataStoreResources;
 import org.eclipse.dstore.core.model.IDataStoreProvider;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.dstore.universal.miners.UniversalByteStreamHandler;
 import org.eclipse.rse.internal.services.dstore.ServiceResources;
@@ -595,7 +596,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 								
 					monitor.worked(bytesRead);
 					
-					String str = MessageFormat.format(_percentMsg, new Object[] {totalSentBuf, totalBuf, percentBuf});
+					String str = NLS.bind(_percentMsg, new Object[] {totalSentBuf, totalBuf, percentBuf});
 					monitor.subTask(str);					
 
 					isCancelled = monitor.isCanceled();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007,2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -8,16 +8,17 @@
  * Contributors: 
  * Uwe Stieber (Wind River) - initial API and implementation.
  * Javier Montalvo Orus (Symbian) - [174992] default wizard hides special ones 
+ * David McKnight   (IBM)        - [216252] MessageFormat.format -> NLS.bind
  *******************************************************************************/
 package org.eclipse.rse.ui.wizards.newconnection;
 
-import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -126,7 +127,7 @@ public class RSENewConnectionWizardRegistry extends RSEAbstractWizardRegistry {
 								descriptor = candidate;
 							} else {
 								String message = "Duplicated new connection wizard registration for system type ''{0}'' (wizard id = {1})."; //$NON-NLS-1$
-								message = MessageFormat.format(message, new Object[] { id, candidate.getId()});
+								message = NLS.bind(message, id, candidate.getId());
 								RSECorePlugin.getDefault().getLogger().logWarning(message);
 							}
 						}

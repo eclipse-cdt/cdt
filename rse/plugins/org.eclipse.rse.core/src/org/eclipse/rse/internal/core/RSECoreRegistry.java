@@ -13,10 +13,10 @@
  * Contributors:
  * Uwe Stieber (Wind River) - Added system types provider extension.
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
+ * David McKnight   (IBM)        - [216252] MessageFormat.format -> NLS.bind
  ********************************************************************************/
 package org.eclipse.rse.internal.core;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.IRSECoreRegistry;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.IRSESystemTypeProvider;
@@ -157,11 +158,11 @@ public class RSECoreRegistry implements IRSECoreRegistry {
 					accessedSystemTypeCache.put(type.getName(), type);
 					
 					String message = "Successfully registered RSE system type ''{0}'' (id = ''{1}'')."; //$NON-NLS-1$
-					message = MessageFormat.format(message, new Object[] { type.getLabel(), type.getId() });
+					message = NLS.bind(message, type.getLabel(), type.getId());
 					RSECorePlugin.getDefault().getLogger().logInfo(message);
 				} else {
 					String message = "RSE system type contribution skipped. Non-unique system type id (plugin: {0}, id: {1})."; //$NON-NLS-1$
-					message = MessageFormat.format(message, new Object[] { element.getContributor().getName(), type.getId()});
+					message = NLS.bind(message, element.getContributor().getName(), type.getId());
 					RSECorePlugin.getDefault().getLogger().logWarning(message);
 				}
 			}
@@ -188,18 +189,18 @@ public class RSECoreRegistry implements IRSECoreRegistry {
 							accessedSystemTypeCache.put(type.getName(), type);
 
 							String message = "Successfully registered RSE system type ''{0}'' (id = ''{1}'')."; //$NON-NLS-1$
-							message = MessageFormat.format(message, new Object[] { type.getLabel(), type.getId() });
+							message = NLS.bind(message, type.getLabel(), type.getId() );
 							RSECorePlugin.getDefault().getLogger().logInfo(message);
 						} else {
 							String message = "RSE system type contribution skipped. Non-unique system type id (plugin: {0}, id: {1})."; //$NON-NLS-1$
-							message = MessageFormat.format(message, new Object[] { element.getContributor().getName(), type.getId()});
+							message = NLS.bind(message, element.getContributor().getName(), type.getId());
 							RSECorePlugin.getDefault().getLogger().logWarning(message);
 						}
 					}
 				}
 			} catch (CoreException e) {
 				String message = "RSE system types provider failed creation (plugin: {0}, id: {1})."; //$NON-NLS-1$
-				message = MessageFormat.format(message, new Object[] { element.getContributor().getName(), element.getDeclaringExtension().getSimpleIdentifier()});
+				message = NLS.bind(message, element.getContributor().getName(), element.getDeclaringExtension().getSimpleIdentifier());
 				RSECorePlugin.getDefault().getLogger().logError(message, e);
 			}
 		}

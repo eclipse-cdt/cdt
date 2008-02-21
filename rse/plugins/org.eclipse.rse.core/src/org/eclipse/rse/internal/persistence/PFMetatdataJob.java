@@ -13,17 +13,17 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * David Dykstal (IBM) - [188863] created out of SaveRSEDOMJob
+ * David McKnight   (IBM)        - [216252] MessageFormat.format -> NLS.bind
  ********************************************************************************/
 
 package org.eclipse.rse.internal.persistence;
-
-import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.internal.core.RSECoreMessages;
 import org.eclipse.rse.persistence.IRSEPersistenceProvider;
@@ -50,7 +50,7 @@ public class PFMetatdataJob extends Job {
 
 	public PFMetatdataJob(RSEDOM dom, IRSEPersistenceProvider provider) {
 		super("Saving Profile"); //$NON-NLS-1$
-		String title = MessageFormat.format(RSECoreMessages.SaveRSEDOMJob_SavingProfileJobName, new Object[] { dom.getName() });
+		String title = NLS.bind(RSECoreMessages.SaveRSEDOMJob_SavingProfileJobName, dom.getName());
 		setName(title);
 		setRule(new SerializingRule());
 		_dom = dom;

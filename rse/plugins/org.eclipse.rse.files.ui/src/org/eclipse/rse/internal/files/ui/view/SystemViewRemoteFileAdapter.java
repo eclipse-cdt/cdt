@@ -45,11 +45,11 @@
  * David McKnight   (IBM)        - [189873] DownloadJob changed to DownloadAndOpenJob
  * David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
  * David McKnight   (IBM)        - [216252] [nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [216252] MessageFormat.format -> NLS.bind
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
 import java.io.File;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -1428,7 +1428,7 @@ public class SystemViewRemoteFileAdapter
 					((IHostFilePermissionsContainer)rFile.getHostFile()).setPermissions(new PendingHostFilePermissions());
 				}
 				
-				Job deferredFetch = new Job(MessageFormat.format(FileResources.MESSAGE_GETTING_PERMISSIONS, new Object[] {file.getAbsolutePath()}))
+				Job deferredFetch = new Job(NLS.bind(FileResources.MESSAGE_GETTING_PERMISSIONS, file.getAbsolutePath()))
 				{
 					public IStatus run(IProgressMonitor monitor){
 						try

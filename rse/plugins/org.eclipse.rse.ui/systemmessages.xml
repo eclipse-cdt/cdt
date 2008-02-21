@@ -806,15 +806,7 @@ Kevin Doyle (IBM) - [160769] Added message for invalid filter when moving files
                     	<LevelTwo>In the properties for the File subsystem, choose a configuration that supports Archive Management.</LevelTwo>
                     </Message>
 
-                       <!-- classic tools -->
-                    <Message ID="1400" Indicator="Q">
-                    	<LevelOne>This action will take a few minutes. Proceed?</LevelOne>
-                    	<LevelTwo>This action uncompresses a large number of HTML files from a zip file. It will take awhile, and require sufficient disk space. Press Yes to continue, No to cancel.</LevelTwo>
-                    </Message>
-                    <Message ID="1401" Indicator="E">
-                    	<LevelOne>Classic help already enabled.</LevelOne>
-                    	<LevelTwo>The HTML files for the CODE and VisualAge RPG help have already been uncompressed.</LevelTwo>
-                    </Message>
+
 
                     <!-- Dynamic Error List - dynamic message title -->
                     <Message ID="1500" Indicator="E">

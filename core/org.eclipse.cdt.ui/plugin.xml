@@ -824,6 +824,28 @@
             <groupMarker name="rebuild"/>
             <separator name="update"/>
             <separator name="search"/>
+            <separator name="log"/>
+         </menu>
+      </objectContribution>
+      <objectContribution
+            id="org.eclipse.cdt.ui.ctranslationunit.contrib"
+            objectClass="org.eclipse.cdt.core.model.ICElement">
+         <visibility>
+            <objectClass name="org.eclipse.cdt.core.model.ITranslationUnit"/>
+         </visibility>
+         <action
+             class="org.eclipse.cdt.internal.ui.actions.CreateParserLogAction"
+             id="org.eclipse.cdt.ui.parserLogAction"
+             label="%CreateParserLog.name"
+             menubarPath="org.eclipse.cdt.ui.indexmenu/log"/>
+         <menu
+               id="org.eclipse.cdt.ui.indexmenu"
+               label="%Index.menu"
+               path="buildGroup">
+            <groupMarker name="rebuild"/>
+            <separator name="update"/>
+            <separator name="search"/>
+            <separator name="log"/>
          </menu>
       </objectContribution>
       <objectContribution
@@ -846,6 +868,7 @@
             <groupMarker name="rebuild"/>
             <separator name="update"/>
             <separator name="search"/>
+            <separator name="log"/>
          </menu>
       </objectContribution>
       <!-- project explorer shows IProjects, we need to handle this -->
@@ -884,6 +907,7 @@
             <groupMarker name="rebuild"/>
             <separator name="update"/>
             <separator name="search"/>
+            <separator name="log"/>
          </menu>
       </objectContribution>
       <objectContribution

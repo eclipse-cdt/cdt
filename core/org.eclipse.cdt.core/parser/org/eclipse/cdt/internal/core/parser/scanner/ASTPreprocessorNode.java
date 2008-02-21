@@ -220,6 +220,7 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 		return fIsSystemInclude;
 	}
 	
+	@Override
 	IASTNode findSurroundingNode(int sequenceNumber, int length) {
 		final int nameSequencNumber= fName.getOffset();
 		final int nameEndSequencNumber= nameSequencNumber + fName.getLength();
@@ -258,6 +259,7 @@ class ASTMacroDefinition extends ASTPreprocessorNode implements IASTPreprocessor
 	}
 
 	
+	@Override
 	public String getContainingFilename() {
 		if (fName instanceof ASTBuiltinName) {
 			return fName.getContainingFilename();
@@ -281,6 +283,7 @@ class ASTMacroDefinition extends ASTPreprocessorNode implements IASTPreprocessor
 		return (fName == n) ? r_definition : r_unclear;
 	}
 
+	@Override
 	IASTNode findSurroundingNode(int sequenceNumber, int length) {
 		final int nameSequencNumber= fName.getOffset();
 		final int nameEndSequencNumber= nameSequencNumber + fName.getLength();
@@ -311,6 +314,11 @@ class ASTMacroDefinition extends ASTPreprocessorNode implements IASTPreprocessor
 			}
 		}
 		return null;
+	}
+	
+	@Override
+	public String toString() {
+		return getName().toString() + '=' + getExpansion();
 	}
 }
 
@@ -357,6 +365,25 @@ class ASTFunctionStyleMacroDefinition extends ASTMacroDefinition implements IAST
     }
 
 	public void addParameter(IASTFunctionStyleMacroParameter parm) {assert false;}
+	
+	@Override
+	public String toString() {
+		StringBuilder result= new StringBuilder();
+		result.append(getName().toCharArray());
+		result.append('(');
+		boolean needComma= false;
+		for (IASTFunctionStyleMacroParameter param : getParameters()) {
+			if (needComma) {
+				result.append(',');
+			}
+			result.append(param.getParameter());
+			needComma= true;
+		}
+		result.append(')');
+		result.append('=');
+		result.append(getExpansion());
+		return result.toString();
+	}
 }
 
 
@@ -371,6 +398,7 @@ class ASTUndef extends ASTPreprocessorNode implements IASTPreprocessorUndefState
 		return fName;
 	}
 	
+	@Override
 	IASTNode findSurroundingNode(int sequenceNumber, int length) {
 		final int nameSequencNumber= fName.getOffset();
 		final int nameEndSequencNumber= nameSequencNumber + fName.getLength();
@@ -457,6 +485,7 @@ class ASTFileLocation implements IASTFileLocation {
 		return fLocationCtx.getSource(fOffset, fLength);
 	}
 	
+	@Override
 	public String toString() {
 		return getFileName() + "[" + fOffset + "," + (fOffset+fLength) + ")";    //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 	}
@@ -511,6 +540,7 @@ class ASTMacroExpansionLocation implements IASTMacroExpansion {
 		return fOffset;
 	}
 
+	@Override
 	public String toString() {
 		return fContext.getMacroDefinition().getName().toString() + "[" + fOffset + "," + (fOffset+fLength) + ")";    //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 	}

@@ -832,7 +832,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	}
 
 	private static int[] CTX_LINKAGES= {ILinkage.CPP_LINKAGE_ID, ILinkage.C_LINKAGE_ID};
-	private ITranslationUnit getSourceContextTU(IIndex index, int style) {
+	public ITranslationUnit getSourceContextTU(IIndex index, int style) {
 		if (index != null && (style & AST_CONFIGURE_USING_SOURCE_CONTEXT) != 0) {
 			try {
 				fLanguageOfContext= null;

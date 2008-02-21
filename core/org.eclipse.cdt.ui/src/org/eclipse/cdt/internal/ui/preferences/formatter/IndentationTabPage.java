@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences.formatter;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -26,7 +25,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 
 
-public class IndentationTabPage extends ModifyDialogTabPage {
+public class IndentationTabPage extends FormatterTabPage {
 	
 	/**
 	 * Constant array for boolean selection 
@@ -85,8 +84,6 @@ public class IndentationTabPage extends ModifyDialogTabPage {
 		"}"+ //$NON-NLS-1$
 		"} // end namespace FOO"; //$NON-NLS-1$
 
-	private static final String SHOW_WHITESPACE = "showWhitespace"; //$NON-NLS-1$
-	
 	private TranslationUnitPreview fPreview;
 	private String fOldTabChar= null;
 	
@@ -149,25 +146,6 @@ public class IndentationTabPage extends ModifyDialogTabPage {
 	 */
 	public void initializePage() {
 	    fPreview.setPreviewText(PREVIEW);
-	}
-
-	/*
-	 * @see org.eclipse.cdt.internal.ui.preferences.formatter.ModifyDialogTabPage#doCreatePreviewPane(org.eclipse.swt.widgets.Composite, int)
-	 */
-	protected Composite doCreatePreviewPane(Composite composite, int numColumns) {
-		
-		super.doCreatePreviewPane(composite, numColumns);
-		
-		final Map previewPrefs= new HashMap();
-		final CheckboxPreference previewShowWhitespace= new CheckboxPreference(composite, numColumns / 2, previewPrefs, SHOW_WHITESPACE, FALSE_TRUE, 
-		    FormatterMessages.IndentationTabPage_show_whitespace_in_preview_label_text); 
-		fDefaultFocusManager.add(previewShowWhitespace);
-		previewShowWhitespace.addObserver(new Observer() {
-			public void update(Observable o, Object arg) {
-				fPreview.showWhitespace(FALSE_TRUE[1] == previewPrefs.get(SHOW_WHITESPACE));
-			}
-		});
-		return composite;
 	}
 
     /*

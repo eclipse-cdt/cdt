@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,7 +53,7 @@ import org.eclipse.cdt.internal.corext.util.Messages;
 /**
  * The line wrapping tab page.
  */
-public class LineWrappingTabPage extends ModifyDialogTabPage {
+public class LineWrappingTabPage extends FormatterTabPage {
 
     /**
      * Represents a line wrapping category. All members are final.
@@ -437,10 +437,10 @@ public class LineWrappingTabPage extends ModifyDialogTabPage {
 //	);
 	
 	private final Category fArrayInitializerExpressionsCategory= new Category(
-	    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_EXPRESSIONS_IN_ARRAY_INITIALIZER,
+	    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_EXPRESSIONS_IN_INITIALIZER_LIST,
 	    "int array[]= {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17};", //$NON-NLS-1$
-	    FormatterMessages.LineWrappingTabPage_array_init,
-	    FormatterMessages.LineWrappingTabPage_array_init_description
+	    FormatterMessages.LineWrappingTabPage_initializer_list,
+	    FormatterMessages.LineWrappingTabPage_initializer_list_description
 	);
 	
 //	private final Category fExplicitConstructorArgumentsCategory= new Category(
@@ -636,7 +636,7 @@ public class LineWrappingTabPage extends ModifyDialogTabPage {
 
 		createNumberPref(lineWidthGroup, numColumns, FormatterMessages.LineWrappingTabPage_width_indent_option_max_line_width, DefaultCodeFormatterConstants.FORMATTER_LINE_SPLIT, 0, 9999); 
 		createNumberPref(lineWidthGroup, numColumns, FormatterMessages.LineWrappingTabPage_width_indent_option_default_indent_wrapped, DefaultCodeFormatterConstants.FORMATTER_CONTINUATION_INDENTATION, 0, 9999); 
-		createNumberPref(lineWidthGroup, numColumns, FormatterMessages.LineWrappingTabPage_width_indent_option_default_indent_array, DefaultCodeFormatterConstants.FORMATTER_CONTINUATION_INDENTATION_FOR_ARRAY_INITIALIZER, 0, 9999); 
+		createNumberPref(lineWidthGroup, numColumns, FormatterMessages.LineWrappingTabPage_width_indent_option_default_indent_array, DefaultCodeFormatterConstants.FORMATTER_CONTINUATION_INDENTATION_FOR_INITIALIZER_LIST, 0, 9999); 
 
 		fCategoriesViewer= new TreeViewer(composite /*categoryGroup*/, SWT.MULTI | SWT.BORDER | SWT.READ_ONLY | SWT.V_SCROLL );
 		fCategoriesViewer.setContentProvider(new ITreeContentProvider() {

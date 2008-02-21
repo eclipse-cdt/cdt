@@ -104,7 +104,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//	switch (confusefomatter) {
 	//
 	//	case START_CONFUSION:
-	//		SomeFunctionCallWithTypecast(( castConfusion_t)myvar1,
+	//		SomeFunctionCallWithTypecast((castConfusion_t) myvar1,
 	//				(castNoAdditionalConfusion_t) myvar2);
 	//		break;
 	//
@@ -171,7 +171,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 
 	//void foo() {
 	//	for (;;) {
-	//		int a=0;
+	//		int a = 0;
 	//		switch (a) {
 	//		case 0:
 	//			++a;
@@ -380,7 +380,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//			indentation_remains();
 	//		}
 	//
-	//		if (b>a)
+	//		if (b > a)
 	//			indentation_vanishes();
 	//
 	//		break_end();
@@ -391,4 +391,76 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testBracesInMacros_Bug217435() throws Exception {
 		assertFormatterResult();
 	}
+	
+	//int a=1+2;
+	//int b= - a;
+	//int c =b ++/-- b;
+	
+	//int a = 1 + 2;
+	//int b = -a;
+	//int c = b++ / --b;
+	public void testWhitespaceSurroundingOperators() throws Exception {
+		assertFormatterResult();
+	}
+	
+	//void f() {
+	//int *px= :: new int(  0 );
+	//int  py [] =  new   int [5 ] (0, 1,2,3, 4);
+	//int  *pz[ ] =new ( px)int(0);
+	//delete  []  py;
+	//:: delete px;}
+
+	//void f() {
+	//	int *px = ::new int(0);
+	//	int py[] = new int[5](0, 1, 2, 3, 4);
+	//	int *pz[] = new(px) int(0);
+	//	delete[] py;
+	//	::delete px;
+	//}
+	public void testNewAndDeleteExpressions() throws Exception {
+		assertFormatterResult();
+	}
+
+	//namespace   X=
+	//   Y ::
+	// 	    Z ; 
+
+	//namespace X = Y::Z;
+	public void testNamespaceAlias() throws Exception {
+		assertFormatterResult();
+	}
+
+	//using
+	//   typename:: T 
+	//;
+	//using X:: 
+	// T ;
+
+	//using typename ::T;
+	//using X::T;
+	public void testUsingDeclaration() throws Exception {
+		assertFormatterResult();
+	}
+
+	//using 
+	//  namespace 
+	//    X ;
+
+	//using namespace X;
+	public void testUsingDirective() throws Exception {
+		assertFormatterResult();
+	}
+
+	//static void *f(){}
+	//static void * g();
+	//static void* h();
+
+	//static void *f() {
+	//}
+	//static void * g();
+	//static void* h();
+	public void testSpaceBetweenDeclSpecAndDeclarator() throws Exception {
+		assertFormatterResult();
+	}
+
 }

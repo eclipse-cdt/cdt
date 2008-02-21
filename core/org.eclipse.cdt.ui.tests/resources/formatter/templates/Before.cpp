@@ -25,7 +25,7 @@ template<class T> class nonVector {
 private:	T* head;
 
 public:
-	nonVector() {head =new T();}
+	nonVector() {head=new T();}
 	int length() {return 1;}
 	const T& first() const;
 };

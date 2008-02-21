@@ -4,7 +4,7 @@
 
 struct SimpleStruct {
 	int num;
-	char name[ ];
+	char name[];
 	float floatNum;
 };
 

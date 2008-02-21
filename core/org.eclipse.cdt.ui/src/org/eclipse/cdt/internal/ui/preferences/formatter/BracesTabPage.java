@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Group;
 
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 
-public class BracesTabPage extends ModifyDialogTabPage {
+public class BracesTabPage extends FormatterTabPage {
 	
 	/**
 	 * Constant array for boolean selection 
@@ -134,8 +134,8 @@ public class BracesTabPage extends ModifyDialogTabPage {
 		createExtendedBracesCombo(group, numColumns, FormatterMessages.BracesTabPage_option_blocks_in_case, DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_BLOCK_IN_CASE); 
 		createBracesCombo(group, numColumns, FormatterMessages.BracesTabPage_option_switch_case, DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_SWITCH); 
 		
-		ComboPreference arrayInitOption= createBracesCombo(group, numColumns, FormatterMessages.BracesTabPage_option_array_initializer, DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_ARRAY_INITIALIZER); 
-		final CheckboxPreference arrayInitCheckBox= createIndentedCheckboxPref(group, numColumns, FormatterMessages.BracesTabPage_option_keep_empty_array_initializer_on_one_line, DefaultCodeFormatterConstants.FORMATTER_KEEP_EMPTY_ARRAY_INITIALIZER_ON_ONE_LINE, FALSE_TRUE); 
+		ComboPreference arrayInitOption= createBracesCombo(group, numColumns, FormatterMessages.BracesTabPage_option_initializer_list, DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_INITIALIZER_LIST); 
+		final CheckboxPreference arrayInitCheckBox= createIndentedCheckboxPref(group, numColumns, FormatterMessages.BracesTabPage_option_keep_empty_initializer_list_on_one_line, DefaultCodeFormatterConstants.FORMATTER_KEEP_EMPTY_INITIALIZER_LIST_ON_ONE_LINE, FALSE_TRUE); 
 
 		arrayInitOption.addObserver(new Observer() {
 			public void update(Observable o, Object arg) {

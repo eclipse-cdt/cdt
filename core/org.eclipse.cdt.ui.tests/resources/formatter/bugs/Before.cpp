@@ -9,16 +9,16 @@ class AClass : public ABaseClass {AClass(int x) throw(int); void test1() const t
 AClass::AClass(int x)throw(int):ABaseClass(x){for (int i=0;i < 12;i++) {}}
 // keep space between decl spec and declarator
 int
-main(int argc, char **argv) {}
+main(int argc,char **argv) {}
 // handling of string concat
 char* s1= "this "   "is "  "one ""string.";
 char* s2= "this " "is " 
 "one " "string.";
 // macro definition with line comment
 #define ID(x) x  // identity
-int main() {return ID(0);}
+int main(){return ID(0);}
 // semicolons inside for
-void g() {for(int i=0;i<10;++i){}}
+void g(){for(int i=0;i<10;++i){}}
 // https://bugs.eclipse.org/bugs/show_bug.cgi?id=183220
 void bug183220()
 {

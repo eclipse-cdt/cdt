@@ -11,7 +11,8 @@ class Foo {
 };
 
 // TEMPLATE_STRUCT
-template<class Key, class Value, class SortAlgorithm=DefaultSort> struct Map {
+template<class Key, class Value, class SortAlgorithm=DefaultSort>
+struct Map {
 	Key* keys;
 	Value* values;
 	SortAlgorithm* sortAlgorithm;
@@ -25,7 +26,7 @@ private:
 
 public:
 	nonVector() {
-		head =new T();
+		head = new T();
 	}
 	int length() {
 		return 1;
@@ -34,7 +35,8 @@ public:
 };
 
 // TEMPLATE_UNION
-template<class X, class Y, int size=16> union ArrayOverlay {
+template<class X, class Y, int size=16>
+union ArrayOverlay {
 public:
 	X x[size];
 	Y y[size];
@@ -46,7 +48,8 @@ public:
 class TemplateContainer {
 	// these are in an enclosing class
 	template<class Bar> void fum(int i);
-	template<int> void scrum(void) {
+	template<int>
+	void scrum(void) {
 	}
 	;
 };
@@ -62,12 +65,11 @@ template<class Bar> void Foo::fum(int i) {
 }
 
 // TEMPLATE_VARIABLES
-template <bool threads, int inst> char
+template<bool threads, int inst> char
 		* default_alloc_template<threads, inst>::S_start_free = 0;
 
 // an instantiation, not a template:
-complex
-<float> cf(0, 0);
+complex<float> cf(0, 0);
 //template<class Language, class CharacterSet, class SortAlgorithm<CharacterSet> >
 //Dictionary* TheSpellCheckDictionary;
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,7 +48,6 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.preferences.formatter.ModifyDialogTabPage.IModificationListener;
 import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.CustomProfile;
 import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.Profile;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
@@ -57,7 +56,7 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringDialogField;
 
-public abstract class ModifyDialog extends StatusDialog implements IModificationListener {
+public abstract class ModifyDialog extends StatusDialog implements IModifyDialogTabPage.IModificationListener {
     
     /**
      * The keys to retrieve the preferred area from the dialog settings.
@@ -134,7 +133,7 @@ public abstract class ModifyDialog extends StatusDialog implements IModification
 		
 		if (!fNewProfile) {
 			fTabFolder.setSelection(lastFocusNr);
-			((ModifyDialogTabPage)fTabFolder.getSelection()[0].getData()).setInitialFocus();
+			((IModifyDialogTabPage)fTabFolder.getSelection()[0].getData()).setInitialFocus();
 		}
 	}
 	
@@ -171,7 +170,7 @@ public abstract class ModifyDialog extends StatusDialog implements IModification
 			public void widgetDefaultSelected(SelectionEvent e) {}
 			public void widgetSelected(SelectionEvent e) {
 				final TabItem tabItem= (TabItem)e.item;
-				final ModifyDialogTabPage page= (ModifyDialogTabPage)tabItem.getData();
+				final IModifyDialogTabPage page= (IModifyDialogTabPage)tabItem.getData();
 				//				page.fSashForm.setWeights();
 				fDialogSettings.put(fKeyLastFocus, fTabPages.indexOf(page));
 				page.makeVisible();
@@ -202,7 +201,7 @@ public abstract class ModifyDialog extends StatusDialog implements IModification
 				lastWidth= initialSize.x;
 			int lastHeight= fDialogSettings.getInt(fKeyPreferredHight);
 			if (initialSize.y > lastHeight)
-				lastHeight= initialSize.x;
+				lastHeight= initialSize.y;
 			return new Point(lastWidth, lastHeight);
 		} catch (NumberFormatException ex) {
 		}
@@ -309,7 +308,7 @@ public abstract class ModifyDialog extends StatusDialog implements IModification
 		super.createButtonsForButtonBar(parent);
 	}
 
-	protected final void addTabPage(String title, ModifyDialogTabPage tabPage) {
+	protected final void addTabPage(String title, IModifyDialogTabPage tabPage) {
 		final TabItem tabItem= new TabItem(fTabFolder, SWT.NONE);
 		applyDialogFont(tabItem.getControl());
 		tabItem.setText(title);
@@ -333,13 +332,18 @@ public abstract class ModifyDialog extends StatusDialog implements IModification
 	}
 	
     private void doValidate() {
+    	String name= fProfileNameField.getText().trim();
+		if (name.equals(fProfile.getName()) && fProfile.hasEqualSettings(fWorkingValues, fWorkingValues.keySet())) {
+			updateStatus(StatusInfo.OK_STATUS);
+			return;
+		}
+    	
     	IStatus status= validateProfileName();
     	if (status.matches(IStatus.ERROR)) {
     		updateStatus(status);
     		return;
     	}
     	
-    	String name= fProfileNameField.getText().trim();
 		if (!name.equals(fProfile.getName()) && fProfileManager.containsName(name)) {
 			updateStatus(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0, FormatterMessages.ModifyDialog_Duplicate_Status, null));
 			return;

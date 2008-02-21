@@ -42,7 +42,6 @@ import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
 import org.eclipse.cdt.internal.ui.editor.CSourceViewer;
-import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
 import org.eclipse.cdt.internal.ui.text.SimpleCSourceViewerConfiguration;
 
@@ -90,7 +89,7 @@ public abstract class CPreview {
 		}
 	}
 	
-	protected final CSourceViewerConfiguration fViewerConfiguration;
+	protected final SimpleCSourceViewerConfiguration fViewerConfiguration;
 	protected final Document fPreviewDocument;
 	protected final SourceViewer fSourceViewer;
 	protected final IPreferenceStore fPreferenceStore;
@@ -100,7 +99,7 @@ public abstract class CPreview {
 	protected Map fWorkingValues;
 
 	private int fTabSize= 0;
-	private WhitespaceCharacterPainter fWhitespacePainter;
+	private WhitespaceCharacterPainter fWhitespaceCharacterPainter;
 	
 	/**
 	 * Create a new C preview
@@ -126,9 +125,7 @@ public abstract class CPreview {
 		final RGB rgb= PreferenceConverter.getColor(fPreferenceStore, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR);
 		fMarginPainter.setMarginRulerColor(tools.getColorManager().getColor(rgb));
 		fSourceViewer.addPainter(fMarginPainter);
-
-		fWhitespacePainter= new WhitespaceCharacterPainter(fSourceViewer);
-
+		
 		new CSourcePreviewerUpdater();
 		fSourceViewer.setDocument(fPreviewDocument);
 	}
@@ -193,24 +190,26 @@ public abstract class CPreview {
 	    return defaultValue;
 	}		
 	
-	public final Map getWorkingValues() {
+
+	
+	public Map getWorkingValues() {
 		return fWorkingValues;
 	}
 	
-	public final void setWorkingValues(Map workingValues) {
+	
+	public void setWorkingValues(Map workingValues) {
 		fWorkingValues= workingValues;
 	}
-	
-	/**
-	 * Enable/disable display of whitespace characters.
-	 * 
-	 * @param show  flag, whether to display whitespace
-	 */
-	public void showWhitespace(boolean show) {
-		if (show) {
-			fSourceViewer.addPainter(fWhitespacePainter);
+
+	public void showInvisibleCharacters(boolean enable) {
+		if (enable) {
+			if (fWhitespaceCharacterPainter == null) {
+				fWhitespaceCharacterPainter= new WhitespaceCharacterPainter(fSourceViewer);
+				fSourceViewer.addPainter(fWhitespaceCharacterPainter);
+			}
 		} else {
-			fSourceViewer.removePainter(fWhitespacePainter);
+			fSourceViewer.removePainter(fWhitespaceCharacterPainter);
+			fWhitespaceCharacterPainter= null;
 		}
 	}
 }

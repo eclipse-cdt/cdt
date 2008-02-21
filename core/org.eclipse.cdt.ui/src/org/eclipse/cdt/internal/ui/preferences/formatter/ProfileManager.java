@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
 package org.eclipse.cdt.internal.ui.preferences.formatter;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -82,7 +83,7 @@ public abstract class ProfileManager extends Observable {
 		
 		public abstract int getVersion();
 		
-		public boolean hasEqualSettings(Map otherMap, List allKeys) {
+		public boolean hasEqualSettings(Map otherMap, Collection allKeys) {
 			Map settings= getSettings();
 			for (Iterator iter= allKeys.iterator(); iter.hasNext(); ){
 				String key= (String) iter.next();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,7 @@ public class FormatterModifyDialog extends ModifyDialog {
 	protected void addPages(Map values) {
 	    addTabPage(FormatterMessages.ModifyDialog_tabpage_indentation_title, new IndentationTabPage(this, values)); 
 		addTabPage(FormatterMessages.ModifyDialog_tabpage_braces_title, new BracesTabPage(this, values)); 
-//		addTabPage(FormatterMessages.ModifyDialog_tabpage_whitespace_title, new WhiteSpaceTabPage(this, values)); 
+		addTabPage(FormatterMessages.ModifyDialog_tabpage_whitespace_title, new WhiteSpaceTabPage(this, values)); 
 //		addTabPage(FormatterMessages.ModifyDialog_tabpage_blank_lines_title, new BlankLinesTabPage(this, values)); 
 //		addTabPage(FormatterMessages.ModifyDialog_tabpage_new_lines_title, new NewLinesTabPage(this, values)); 
 //		addTabPage(FormatterMessages.ModifyDialog_tabpage_control_statements_title, new ControlStatementsTabPage(this, values)); 

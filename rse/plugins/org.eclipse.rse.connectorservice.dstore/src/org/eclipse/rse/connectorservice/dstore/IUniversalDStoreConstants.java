@@ -14,6 +14,7 @@
  * Contributors:
  * {Name} (company) - description of contribution.
  * David McKnight   (IBM)        - [216596] dstore preferences (timeout, and others)
+ * David McKnight   (IBM)        - [218685] [api][breaking][dstore] Unable to connect when using SSL.
  *******************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore;
@@ -61,7 +62,7 @@ public interface IUniversalDStoreConstants
     
         // Socket timeout preference
     public static final String RESID_PREF_SOCKET_TIMEOUT = RESID_PREF_PREFIX + "sockettimeout"; //$NON-NLS-1$
-    public static final int DEFAULT_PREF_SOCKET_TIMEOUT = 300000;
+    public static final int DEFAULT_PREF_SOCKET_TIMEOUT = 100000;
 
     public static final String RESID_PREF_DO_KEEPALIVE = RESID_PREF_PREFIX + "dokeepalive"; //$NON-NLS-1$
     public static final boolean DEFAULT_PREF_DO_KEEPALIVE = true;

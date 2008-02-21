@@ -23,6 +23,7 @@
  * David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup
  * David McKnight   (IBM)        - [216596] dstore preferences (timeout, and others)
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [218685] [api][breaking][dstore] Unable to connect when using SSL.
  *******************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore;
@@ -648,7 +649,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 			boolean usedSSL = true;
 			setSSLProperties(true);
 			
-			launchStatus = launchServer(clientConnection, info, daemonPort, monitor);
+			launchStatus = launchServer(clientConnection, info, daemonPort, monitor, timeout);
 			if (!launchStatus.isConnected() && !clientConnection.isKnownStatus(launchStatus.getMessage()))
 			{
 				Throwable conE = launchStatus.getException();
@@ -677,7 +678,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 				if (setSSLProperties(false))
 				{
 					usedSSL = false;
-					launchStatus = launchServer(clientConnection, info, daemonPort, monitor);
+					launchStatus = launchServer(clientConnection, info, daemonPort, monitor, timeout);
 				}
 			}
 			

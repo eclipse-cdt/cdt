@@ -24,6 +24,8 @@ public class SimpleSystemMessage extends SystemMessage {
 	 * alternative to message number for ids?
 	 */
 	private String _pluginId;
+
+	private int _severity;
 	
 	/**
 	 * Constructor for messages that use explicit strings and severities rather than
@@ -52,6 +54,7 @@ public class SimpleSystemMessage extends SystemMessage {
 		super("RSE", "G", "-", severityToIndicator(severity), msg, msgDetails);  //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
 	
 		_pluginId = pluginId;
+		_severity = severity;
 	}
 		
 	/**
@@ -67,7 +70,7 @@ public class SimpleSystemMessage extends SystemMessage {
 	public SimpleSystemMessage(String pluginId, int severity, String msg, Throwable e) {
 		super("RSE", "G", "-", severityToIndicator(severity), msg, throwableToDetails(e)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		_pluginId = pluginId;
-
+		_severity = severity;
 	}
 	
 	private static String throwableToDetails(Throwable e){	
@@ -101,7 +104,15 @@ public class SimpleSystemMessage extends SystemMessage {
 	}
 
 	public String getFullMessageID() {
-		return _pluginId + ":" + getIndicator();
+		return _pluginId + ":" + getIndicator(); //$NON-NLS-1$
+	}
+	
+	/**
+	 * Creates a new message with the same component, subcomponent, number, level 1 and level 2 text as this message.
+	 * @see java.lang.Object#clone()
+	 */
+	protected Object clone() throws CloneNotSupportedException {		
+		return new SimpleSystemMessage(_pluginId, _severity, getLevelOneText(), getLevelTwoText());
 	}
 	
 }

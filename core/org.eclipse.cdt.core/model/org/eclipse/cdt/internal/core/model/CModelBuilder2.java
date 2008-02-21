@@ -75,7 +75,6 @@ import org.eclipse.cdt.core.model.IContributedModelBuilder;
 import org.eclipse.cdt.core.model.IProblemRequestor;
 import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousDeclaration;
@@ -90,104 +89,6 @@ import org.eclipse.core.runtime.OperationCanceledException;
  * @since 4.0
  */
 public class CModelBuilder2 implements IContributedModelBuilder {
-
-	/**
-	 * Adapts {@link IASTProblem} to {@link IProblem).
-	 */
-	private static class ProblemAdapter implements IProblem {
-
-		private IASTProblem fASTProblem;
-
-		/**
-		 * @param problem
-		 */
-		public ProblemAdapter(IASTProblem problem) {
-			fASTProblem= problem;
-		}
-
-		/*
-		 * @see org.eclipse.cdt.core.parser.IProblem#checkCategory(int)
-		 */
-		public boolean checkCategory(int bitmask) {
-			return fASTProblem.checkCategory(bitmask);
-		}
-
-		/*
-		 * @see org.eclipse.cdt.core.parser.IProblem#getArguments()
-		 */
-		public String[] getArguments() {
-			return new String[] { fASTProblem.getArguments() };
-		}
-
-		/*
-		 * @see org.eclipse.cdt.core.parser.IProblem#getID()
-		 */
-		public int getID() {
-			return fASTProblem.getID();
-		}
-
-		/*
-		 * @see org.eclipse.cdt.core.parser.IProblem#getMessage()
-		 */
-		public String getMessage() {
-			return fASTProblem.getMessageWithoutLocation();
-		}
-
-		/*
-		 * @see org.eclipse.cdt.core.parser.IProblem#getOriginatingFileName()
-		 */
-		public char[] getOriginatingFileName() {
-			return fASTProblem.getContainingFilename().toCharArray();
-		}
-
-		/*
-		 * @see org.eclipse.cdt.core.parser.IProblem#getSourceEnd()
-		 */
-		public int getSourceEnd() {
-			IASTFileLocation location= fASTProblem.getFileLocation();
-			if (location != null) {
-				return location.getNodeOffset() + location.getNodeLength() - 1;
-			}
-			return -1;
-		}
-
-		/*
-		 * @see org.eclipse.cdt.core.parser.IProblem#getSourceLineNumber()
-		 */
-		public int getSourceLineNumber() {
-			IASTFileLocation location= fASTProblem.getFileLocation();
-			if (location != null) {
-				return location.getStartingLineNumber();
-			}
-			return -1;
-		}
-
-		/*
-		 * @see org.eclipse.cdt.core.parser.IProblem#getSourceStart()
-		 */
-		public int getSourceStart() {
-			IASTFileLocation location= fASTProblem.getFileLocation();
-			if (location != null) {
-				return location.getNodeOffset();
-			}
-			return -1;
-		}
-
-		/*
-		 * @see org.eclipse.cdt.core.parser.IProblem#isError()
-		 */
-		public boolean isError() {
-			return fASTProblem.isError();
-		}
-
-		/*
-		 * @see org.eclipse.cdt.core.parser.IProblem#isWarning()
-		 */
-		public boolean isWarning() {
-			return fASTProblem.isWarning();
-		}
-
-	}
 
 	private final TranslationUnit fTranslationUnit;
 	private String fTranslationUnitFileName;
@@ -340,14 +241,14 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			for (int i= 0; i < problems.length; i++) {
 				IASTProblem problem= problems[i];
 				if (isLocalToFile(problem)) {
-					problemRequestor.acceptProblem(new ProblemAdapter(problem));
+					problemRequestor.acceptProblem(problem);
 				}
 			}
 			problems= CPPVisitor.getProblems(ast);
 			for (int i= 0; i < problems.length; i++) {
 				IASTProblem problem= problems[i];
 				if (isLocalToFile(problem)) {
-					problemRequestor.acceptProblem(new ProblemAdapter(problem));
+					problemRequestor.acceptProblem(problem);
 				}
 			}
 			problemRequestor.endReporting();

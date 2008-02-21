@@ -101,6 +101,7 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IGCCToken;
 import org.eclipse.cdt.core.parser.IParserLogService;
+import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ParserMode;
@@ -2451,7 +2452,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     }
 
     private IASTProblemDeclaration createKnRCProblemDeclaration(int length, int offset) throws EndOfFileException {
-        IASTProblem p = createProblem(IASTProblem.SYNTAX_ERROR, offset, length);
+        IASTProblem p = createProblem(IProblem.SYNTAX_ERROR, offset, length);
         IASTProblemDeclaration pd = createProblemDeclaration();
         pd.setProblem(p);
         ((ASTNode) pd).setOffsetAndLength(((ASTNode) p).getOffset(), ((ASTNode) p).getLength());

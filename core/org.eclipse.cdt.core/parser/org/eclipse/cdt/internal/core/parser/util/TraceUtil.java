@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,7 @@ public class TraceUtil {
 		if( log.isTracing() ) {
 			StringBuffer buffer = new StringBuffer();
 			if( preface != null ) buffer.append( preface );
-			if( problem != null ) buffer.append( problem.getMessage());
+			if( problem != null ) buffer.append( problem.getMessageWithLocation());
 			if( first   != null ) buffer.append( first );
 			if( second  != null ) buffer.append( second );
 			if( third   != null ) buffer.append( third );
@@ -33,7 +33,7 @@ public class TraceUtil {
 		if( log.isTracing() ) {
 			StringBuffer buffer = new StringBuffer();
 			if( preface != null ) buffer.append( preface );
-			if( problem != null ) buffer.append( problem.getMessage());
+			if( problem != null ) buffer.append( problem.getMessageWithLocation());
 			log.traceLog( buffer.toString() );
 		}
 	}
@@ -41,7 +41,7 @@ public class TraceUtil {
 		if( log.isTracing() ) {
 			StringBuffer buffer = new StringBuffer();
 			if( preface != null ) buffer.append( preface );
-			if( problem != null ) buffer.append( problem.getMessage());
+			if( problem != null ) buffer.append( problem.getMessageWithLocation());
 			if( first   != null ) buffer.append( first );
 			if( second  != null ) buffer.append( second );
 			if( third   != null ) buffer.append( third );

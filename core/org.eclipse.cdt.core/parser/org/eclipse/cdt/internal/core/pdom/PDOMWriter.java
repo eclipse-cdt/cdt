@@ -42,6 +42,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
@@ -343,7 +344,7 @@ abstract public class PDOMWriter {
 			final boolean reportAll= fShowScannerProblems && fShowInclusionProblems;
 			IASTProblem[] scannerProblems= ast.getPreprocessorProblems();
 			for (IASTProblem problem : scannerProblems) {
-				if (reportAll || (problem.getID() == IASTProblem.PREPROCESSOR_INCLUSION_NOT_FOUND) == fShowInclusionProblems) {
+				if (reportAll || (problem.getID() == IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND) == fShowInclusionProblems) {
 					reportProblem(problem);
 				}
 			}
@@ -492,7 +493,7 @@ abstract public class PDOMWriter {
 	}
 	
 	private void reportProblem(IASTProblem problem) {
-		String msg= "Indexer: " + problem.getMessage(); //$NON-NLS-1$
+		String msg= "Indexer: " + problem.getMessageWithLocation(); //$NON-NLS-1$
 		System.out.println(msg);
 	}
 

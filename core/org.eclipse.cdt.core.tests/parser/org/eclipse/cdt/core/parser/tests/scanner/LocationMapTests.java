@@ -98,11 +98,13 @@ public class LocationMapTests extends BaseTestCase {
 		return suite(LocationMapTests.class);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		fLocationMap= new LocationMap();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		fLocationMap= null;
 		super.tearDown();
@@ -177,7 +179,9 @@ public class LocationMapTests extends BaseTestCase {
 	private void checkProblem(IASTProblem problem, int id, String arg, String marked, 
 			String filename, int offset, int length, int line, int endline) {
 		assertEquals(id, problem.getID());
-		assertEquals(arg, problem.getArguments());
+		if (arg != null) {
+			assertEquals(arg, problem.getArguments()[0]);
+		}
 		assertFalse(problem.isError());
 		assertTrue(problem.isWarning());
 		checkASTNode(problem, fTu, IASTTranslationUnit.SCANNER_PROBLEM, filename, offset, length, line, endline, marked);
@@ -302,7 +306,7 @@ public class LocationMapTests extends BaseTestCase {
 		fLocationMap.encounterProblem(2, "b".toCharArray(), 5,16);
 		IASTProblem[] problems= fLocationMap.getScannerProblems();
 		assertEquals(3, problems.length);
-		checkProblem(problems[0], 0, "", "", FN, 0,0,1,1);
+		checkProblem(problems[0], 0, null, "", FN, 0,0,1,1);
 		checkProblem(problems[1], 1, "a", "12", FN,1,2,1,1);
 		checkProblem(problems[2], 2, "b", "56789abcdef", FN,5,11,1,1);
 	}

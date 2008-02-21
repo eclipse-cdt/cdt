@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation 
+ *    IBM Rational Software - Initial API and implementation 
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.DOMAST;
 
@@ -112,7 +112,7 @@ public class DOMASTNodeLeaf implements IAdaptable {
 	}
 	
 	public String toString() {
-	    if( node == null ) return BLANK_STRING; //$NON-NLS-1$
+	    if( node == null ) return BLANK_STRING; 
 		StringBuffer buffer = new StringBuffer();
 		
 		Class[] classes = node.getClass().getInterfaces();
@@ -132,7 +132,7 @@ public class DOMASTNodeLeaf implements IAdaptable {
 		
 		if ( node instanceof IASTProblemHolder ) {
 			buffer.append(START_OF_LIST);
-			buffer.append(((IASTProblemHolder)node).getProblem().getMessage());
+			buffer.append(((IASTProblemHolder)node).getProblem().getMessageWithLocation());
 		} else if ( node instanceof IASTSimpleDeclaration ) {
 			String name = null;
 			IASTDeclarator[] decltors = ((IASTSimpleDeclaration)node).getDeclarators();
@@ -287,21 +287,21 @@ public class DOMASTNodeLeaf implements IAdaptable {
 		if ( node == null ) return BLANK_STRING;
        IASTFileLocation f = node.getFileLocation();
        if( f == null )
-           return BLANK_STRING; //$NON-NLS-1$
+           return BLANK_STRING; 
        return f.getFileName();
 	}
 	
 	public int getOffset() {
        IASTFileLocation f = node.getFileLocation();
        if( f == null )
-           return 0; //$NON-NLS-1$
+           return 0; 
        return f.getNodeOffset();
 	}
 	
 	public int getLength() {
        IASTFileLocation f = node.getFileLocation();
        if( f == null )
-           return 0; //$NON-NLS-1$
+           return 0; 
        return f.getNodeLength();
 	}
 	

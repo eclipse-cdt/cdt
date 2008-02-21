@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.ui.text.spelling;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.osgi.util.NLS;
 
 import org.eclipse.cdt.core.parser.IPersistableProblem;
 
@@ -107,6 +108,14 @@ public class CoreSpellingProblem implements IPersistableProblem {
 	 */
 	public String getMessage() {
 		return fMessage;
+	}
+
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IProblem#getMessageWithLocation()
+	 */
+	public String getMessageWithLocation() {
+		return NLS.bind(Messages.Spelling_msgWithLocation, new Object[] {fMessage, fOrigin, fLineNumber});
 	}
 
 	/*

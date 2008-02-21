@@ -61,24 +61,16 @@ public class ASTProblem extends ASTNode implements IASTProblem {
         return !isError;
     }
 
-    public String getMessage() {
-        String msg= getMessageWithoutLocation();
+    public String getMessageWithLocation() {
+        String msg= getMessage();
 
-        IASTFileLocation f = getFileLocation();
-        String file = null;
-        int line = 0;
-        if( f == null )
-        {
-            file = ""; //$NON-NLS-1$
-        } else {
-            file = f.getFileName();
-            line = f.getStartingLineNumber();
-        }
+        char[] file= getOriginatingFileName();
+        int line= getSourceLineNumber();
         Object[] args = new Object[] { msg, file, new Integer(line) };
         return ParserMessages.getFormattedString(PROBLEM_PATTERN, args);
     }
 
-    public static String getMessageWithoutLocation(int id, String arg) {
+    public static String getMessage(int id, String arg) {
         String msg = errorMessages.get(new Integer(id));
         if (msg == null)
             msg = ""; //$NON-NLS-1$
@@ -89,81 +81,121 @@ public class ASTProblem extends ASTNode implements IASTProblem {
         return msg;
     }
     
-    public String getMessageWithoutLocation() {
-    	return getMessageWithoutLocation(id, arg == null ? null : new String(arg));
+    public String getMessage() {
+    	return getMessage(id, arg == null ? null : new String(arg));
     }
 
     public boolean checkCategory(int bitmask) {
         return ((id & bitmask) != 0);
     }
 
-    public String getArguments() {
-        return arg != null ? String.valueOf(arg) : ""; //$NON-NLS-1$
+    public String[] getArguments() {
+        return arg == null ? new String[0] : new String[] {new String(arg)};
     }
 
 
     protected static final Map<Integer, String> errorMessages;
     static {
     	errorMessages = new HashMap<Integer, String>();
-    	errorMessages.put(new Integer(IASTProblem.PREPROCESSOR_POUND_ERROR), 
+    	errorMessages.put(new Integer(PREPROCESSOR_POUND_ERROR), 
     			ParserMessages.getString("ScannerProblemFactory.error.preproc.error")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(IASTProblem.PREPROCESSOR_POUND_WARNING), 
+    	errorMessages.put(new Integer(PREPROCESSOR_POUND_WARNING), 
     			ParserMessages.getString("ScannerProblemFactory.error.preproc.warning")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(IASTProblem.PREPROCESSOR_INCLUSION_NOT_FOUND), 
+    	errorMessages.put(new Integer(PREPROCESSOR_INCLUSION_NOT_FOUND), 
     			ParserMessages.getString("ScannerProblemFactory.error.preproc.inclusionNotFound")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(IASTProblem.PREPROCESSOR_DEFINITION_NOT_FOUND),
+    	errorMessages.put(new Integer(PREPROCESSOR_DEFINITION_NOT_FOUND),
     			ParserMessages.getString("ScannerProblemFactory.error.preproc.definitionNotFound")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(IASTProblem.PREPROCESSOR_INVALID_MACRO_DEFN), 
+    	errorMessages.put(new Integer(PREPROCESSOR_INVALID_MACRO_DEFN), 
     			ParserMessages.getString("ScannerProblemFactory.error.preproc.invalidMacroDefn")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(IASTProblem.PREPROCESSOR_INVALID_MACRO_REDEFN),
+    	errorMessages.put(new Integer(PREPROCESSOR_INVALID_MACRO_REDEFN),
     			ParserMessages.getString("ScannerProblemFactory.error.preproc.invalidMacroRedefn")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(IASTProblem.PREPROCESSOR_UNBALANCE_CONDITION), 
+    	errorMessages.put(new Integer(PREPROCESSOR_UNBALANCE_CONDITION), 
     			ParserMessages.getString("ScannerProblemFactory.error.preproc.unbalancedConditional")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(IASTProblem.PREPROCESSOR_CONDITIONAL_EVAL_ERROR),
+    	errorMessages.put(new Integer(PREPROCESSOR_CONDITIONAL_EVAL_ERROR),
     			ParserMessages.getString("ScannerProblemFactory.error.preproc.conditionalEval")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(IASTProblem.PREPROCESSOR_MACRO_USAGE_ERROR), 
+    	errorMessages.put(new Integer(PREPROCESSOR_MACRO_USAGE_ERROR), 
     			ParserMessages.getString("ScannerProblemFactory.error.preproc.macroUsage")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(IASTProblem.PREPROCESSOR_CIRCULAR_INCLUSION), 
+    	errorMessages.put(new Integer(PREPROCESSOR_CIRCULAR_INCLUSION), 
     			ParserMessages.getString("ScannerProblemFactory.error.preproc.circularInclusion")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(IASTProblem.PREPROCESSOR_INVALID_DIRECTIVE), 
+    	errorMessages.put(new Integer(PREPROCESSOR_INVALID_DIRECTIVE), 
     			ParserMessages.getString("ScannerProblemFactory.error.preproc.invalidDirective")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(IASTProblem.PREPROCESSOR_MACRO_PASTING_ERROR), 
+    	errorMessages.put(new Integer(PREPROCESSOR_MACRO_PASTING_ERROR), 
     			ParserMessages.getString("ScannerProblemFactory.error.preproc.macroPasting")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(IASTProblem.PREPROCESSOR_MISSING_RPAREN_PARMLIST),
+    	errorMessages.put(new Integer(PREPROCESSOR_MISSING_RPAREN_PARMLIST),
     			ParserMessages.getString("ScannerProblemFactory.error.preproc.missingRParen")); //$NON-NLS-1$       
-    	errorMessages.put(new Integer(IASTProblem.PREPROCESSOR_INVALID_VA_ARGS), 
+    	errorMessages.put(new Integer(PREPROCESSOR_INVALID_VA_ARGS), 
     			ParserMessages.getString("ScannerProblemFactory.error.preproc.invalidVaArgs")); //$NON-NLS-1$       
-    	errorMessages.put(new Integer(IASTProblem.SCANNER_INVALID_ESCAPECHAR), 
+    	errorMessages.put(new Integer(SCANNER_INVALID_ESCAPECHAR), 
     			ParserMessages.getString("ScannerProblemFactory.error.scanner.invalidEscapeChar")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(IASTProblem.SCANNER_UNBOUNDED_STRING), 
+    	errorMessages.put(new Integer(SCANNER_UNBOUNDED_STRING), 
     			ParserMessages.getString("ScannerProblemFactory.error.scanner.unboundedString")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(IASTProblem.SCANNER_BAD_FLOATING_POINT), 
+    	errorMessages.put(new Integer(SCANNER_BAD_FLOATING_POINT), 
     			ParserMessages.getString("ScannerProblemFactory.error.scanner.badFloatingPoint")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(IASTProblem.SCANNER_BAD_HEX_FORMAT), 
+    	errorMessages.put(new Integer(SCANNER_BAD_HEX_FORMAT), 
     			ParserMessages.getString("ScannerProblemFactory.error.scanner.badHexFormat")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(IASTProblem.SCANNER_BAD_OCTAL_FORMAT), 
+    	errorMessages.put(new Integer(SCANNER_BAD_OCTAL_FORMAT), 
     			ParserMessages.getString("ScannerProblemFactory.error.scanner.badOctalFormat")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(IASTProblem.SCANNER_BAD_DECIMAL_FORMAT), 
+    	errorMessages.put(new Integer(SCANNER_BAD_DECIMAL_FORMAT), 
     			ParserMessages.getString("ScannerProblemFactory.error.scanner.badDecimalFormat")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(IASTProblem.SCANNER_ASSIGNMENT_NOT_ALLOWED), 
+    	errorMessages.put(new Integer(SCANNER_ASSIGNMENT_NOT_ALLOWED), 
     			ParserMessages.getString("ScannerProblemFactory.error.scanner.assignmentNotAllowed")); //$NON-NLS-1$        
-    	errorMessages.put(new Integer(IASTProblem.SCANNER_DIVIDE_BY_ZERO), 
+    	errorMessages.put(new Integer(SCANNER_DIVIDE_BY_ZERO), 
     			ParserMessages.getString("ScannerProblemFactory.error.scanner.divideByZero")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(IASTProblem.SCANNER_MISSING_R_PAREN), 
+    	errorMessages.put(new Integer(SCANNER_MISSING_R_PAREN), 
     			ParserMessages.getString("ScannerProblemFactory.error.scanner.missingRParen")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(IASTProblem.SCANNER_EXPRESSION_SYNTAX_ERROR), 
+    	errorMessages.put(new Integer(SCANNER_EXPRESSION_SYNTAX_ERROR), 
     			ParserMessages.getString("ScannerProblemFactory.error.scanner.expressionSyntaxError")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(IASTProblem.SCANNER_ILLEGAL_IDENTIFIER), 
+    	errorMessages.put(new Integer(SCANNER_ILLEGAL_IDENTIFIER), 
     			ParserMessages.getString("ScannerProblemFactory.error.scanner.illegalIdentifier")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(IASTProblem.SCANNER_BAD_CONDITIONAL_EXPRESSION),
+    	errorMessages.put(new Integer(SCANNER_BAD_CONDITIONAL_EXPRESSION),
     			ParserMessages.getString("ScannerProblemFactory.error.scanner.badConditionalExpression")); //$NON-NLS-1$        
-    	errorMessages.put(new Integer(IASTProblem.SCANNER_UNEXPECTED_EOF), 
+    	errorMessages.put(new Integer(SCANNER_UNEXPECTED_EOF), 
     			ParserMessages.getString("ScannerProblemFactory.error.scanner.unexpectedEOF")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(IASTProblem.SCANNER_BAD_CHARACTER), 
+    	errorMessages.put(new Integer(SCANNER_BAD_CHARACTER), 
     			ParserMessages.getString("ScannerProblemFactory.error.scanner.badCharacter")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(IASTProblem.SYNTAX_ERROR), 
+    	errorMessages.put(new Integer(SYNTAX_ERROR), 
     			ParserMessages.getString("ParserProblemFactory.error.syntax.syntaxError")); //$NON-NLS-1$
 	}
 
     protected final static String PROBLEM_PATTERN = "BaseProblemFactory.problemPattern"; //$NON-NLS-1$
+
+	/*
+	 * @see org.eclipse.cdt.core.parser.IProblem#getOriginatingFileName()
+	 */
+	public char[] getOriginatingFileName() {
+		return getContainingFilename().toCharArray();
+	}
+
+	/*
+	 * @see org.eclipse.cdt.core.parser.IProblem#getSourceEnd()
+	 */
+	public int getSourceEnd() {
+		final IASTFileLocation location= getFileLocation();
+		if (location != null) {
+			return location.getNodeOffset() + location.getNodeLength() - 1;
+		}
+		return -1;
+	}
+
+	/*
+	 * @see org.eclipse.cdt.core.parser.IProblem#getSourceLineNumber()
+	 */
+	public int getSourceLineNumber() {
+		final IASTFileLocation location= getFileLocation();
+		if (location != null) {
+			return location.getStartingLineNumber();
+		}
+		return -1;
+	}
+
+	/*
+	 * @see org.eclipse.cdt.core.parser.IProblem#getSourceStart()
+	 */
+	public int getSourceStart() {
+		final IASTFileLocation location= getFileLocation();
+		if (location != null) {
+			return location.getNodeOffset();
+		}
+		return -1;
+	}
 }

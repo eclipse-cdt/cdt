@@ -67,6 +67,7 @@ import org.eclipse.cdt.core.parser.AbstractParserLogService;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IGCCToken;
 import org.eclipse.cdt.core.parser.IParserLogService;
+import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
@@ -343,7 +344,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         IASTProblem result = null;
 
         if (bt.getProblem() == null)
-            result = createProblem(IASTProblem.SYNTAX_ERROR, bt.getOffset(), bt
+            result = createProblem(IProblem.SYNTAX_ERROR, bt.getOffset(), bt
                     .getLength());
         else
             result = bt.getProblem();
@@ -383,7 +384,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         }
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         return scanner.toString(); 
     }
 

@@ -147,7 +147,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 
 	private static class ASTProblemException extends RuntimeException {
 		ASTProblemException(IASTProblem problem) {
-			super(problem.getMessage());
+			super(problem.getMessageWithLocation());
 		}
 	}
 
@@ -197,6 +197,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 
 	public CodeFormatterVisitor(DefaultCodeFormatterOptions preferences, Map<String, String> settings, int offset, int length) {
 		localScanner = new Scanner() {
+			@Override
 			public Token nextToken() {
 				Token t= super.nextToken();
 				while (t != null && (t.isWhiteSpace() || t.isPreprocessor())) {
@@ -274,6 +275,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	/*
 	 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTTranslationUnit)
 	 */
+	@Override
 	public int visit(IASTTranslationUnit tu) {
 		// fake new line
 		scribe.lastNumberOfNewLines = 1;
@@ -310,6 +312,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	/*
 	 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
 	 */
+	@Override
 	public int visit(IASTDeclaration node) {
 		startNode(node);
 		int indentLevel= scribe.indentationLevel;
@@ -364,6 +367,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	/*
 	 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTName)
 	 */
+	@Override
 	public int visit(IASTName node) {
 		startNode(node);
 		try {
@@ -383,6 +387,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	/*
 	 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTInitializer)
 	 */
+	@Override
 	public int visit(IASTInitializer node) {
 		if (node instanceof ICPPASTConstructorInitializer) {
 			visit((ICPPASTConstructorInitializer)node);
@@ -416,6 +421,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	/*
 	 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration)
 	 */
+	@Override
 	public int visit(IASTParameterDeclaration parameterDeclaration) {
 		formatNode(parameterDeclaration);
 		endOfNode(parameterDeclaration);
@@ -425,6 +431,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	/*
 	 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTDeclarator)
 	 */
+	@Override
 	public int visit(IASTDeclarator node) {
 		startNode(node);
 		
@@ -472,6 +479,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	/*
 	 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier)
 	 */
+	@Override
 	public int visit(IASTDeclSpecifier node) {
 		startNode(node);
 		try {
@@ -501,6 +509,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	/*
 	 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTExpression)
 	 */
+	@Override
 	public int visit(IASTExpression node) {
 //		scribe.printComment();
 		startNode(node);
@@ -539,6 +548,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	/*
 	 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTStatement)
 	 */
+	@Override
 	public int visit(IASTStatement node) {
 //		scribe.printComment();
 		startNode(node);
@@ -607,6 +617,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	/*
 	 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTTypeId)
 	 */
+	@Override
 	public int visit(IASTTypeId node) {
 		startNode(node);
 		try {
@@ -630,6 +641,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	/*
 	 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator)
 	 */
+	@Override
 	public int visit(IASTEnumerator enumerator) {
 		formatNode(enumerator);
 		endOfNode(enumerator);
@@ -639,6 +651,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	/*
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor#visit(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier)
 	 */
+	@Override
 	public int visit(ICPPASTBaseSpecifier specifier) {
 		formatNode(specifier);
 		endOfNode(specifier);
@@ -648,6 +661,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	/*
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor#visit(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition)
 	 */
+	@Override
 	public int visit(ICPPASTNamespaceDefinition node) {
 		scribe.printComment();
 		startNode(node);
@@ -721,6 +735,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	/*
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor#visit(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter)
 	 */
+	@Override
 	public int visit(ICPPASTTemplateParameter node) {
 		startNode(node);
 		try {

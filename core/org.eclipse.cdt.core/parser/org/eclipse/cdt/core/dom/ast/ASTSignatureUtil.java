@@ -1083,6 +1083,6 @@ public class ASTSignatureUtil {
 	 * Returns the same message as {@link IASTProblem#getMessageWithoutLocation()}.
 	 */
 	public static String getProblemMessage(int problemID, String detail) {
-		return ASTProblem.getMessageWithoutLocation(problemID, detail);
+		return ASTProblem.getMessage(problemID, detail);
 	}
 }

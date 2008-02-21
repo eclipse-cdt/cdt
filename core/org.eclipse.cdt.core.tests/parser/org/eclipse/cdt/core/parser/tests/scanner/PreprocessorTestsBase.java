@@ -168,7 +168,7 @@ public abstract class PreprocessorTestsBase extends BaseTestCase {
 		IASTProblem problem= fLocationResolver.getScannerProblems()[idx];
 		assertEquals(problemID, problem.getID());
 		if (detail != null) {
-			assertEquals(detail, problem.getArguments());
+			assertEquals(detail, problem.getArguments()[0]);
 		}
 	}
 

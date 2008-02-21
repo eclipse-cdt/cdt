@@ -134,6 +134,7 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IGCCToken;
 import org.eclipse.cdt.core.parser.IParserLogService;
+import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
@@ -3721,7 +3722,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                                 if (typeId != null) {
                                     exceptionSpecIds.add(typeId);
                                 } else {
-                                    IASTProblem p = createProblem(IASTProblem.SYNTAX_ERROR, 
+                                    IASTProblem p = createProblem(IProblem.SYNTAX_ERROR, 
                                     		before.getOffset(), before.getLength());
                                 	IASTProblemTypeId typeIdProblem = createTypeIDProblem();
                                     typeIdProblem.setProblem(p);

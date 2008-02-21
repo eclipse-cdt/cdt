@@ -307,7 +307,7 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 	
 	private void output(PrintStream out, String indent,	IASTProblem[] preprocessorProblems) {
 		for (IASTProblem problem : preprocessorProblems) {
-			out.println(indent + problem.getMessage());
+			out.println(indent + problem.getMessageWithLocation());
 		}
 	}
 	

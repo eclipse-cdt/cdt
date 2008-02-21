@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    IBM - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig.gnu;
 
@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import org.eclipse.cdt.core.IMarkerGenerator;
+import org.eclipse.cdt.core.ProblemMarkerInfo;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -28,17 +29,17 @@ import org.eclipse.core.runtime.Path;
 public abstract class AbstractGCCBOPConsoleParserUtility {
     private IProject project;
     private IPath fBaseDirectory;
-    private Vector fDirectoryStack;
+    private Vector<IPath> fDirectoryStack;
     private IMarkerGenerator fMarkerGenerator;
-    private ArrayList fErrors;
+    private ArrayList<Problem> fErrors;
 
     /**
      * 
      */
     public AbstractGCCBOPConsoleParserUtility(IProject project, IPath workingDirectory,
                                               IMarkerGenerator markerGenerator) {
-        fDirectoryStack = new Vector();
-        fErrors = new ArrayList();
+        fDirectoryStack = new Vector<IPath>();
+        fErrors = new ArrayList<Problem>();
         this.project = project;
         fBaseDirectory = project.getLocation();
         if (workingDirectory != null) {
@@ -55,13 +56,13 @@ public abstract class AbstractGCCBOPConsoleParserUtility {
     /**
      * @return Returns the fDirectoryStack.
      */
-    protected Vector getDirectoryStack() {
+    protected Vector<IPath> getDirectoryStack() {
         return fDirectoryStack;
     }
     /**
      * @return Returns the fErrors.
      */
-    protected ArrayList getErrors() {
+    protected ArrayList<Problem> getErrors() {
         return fErrors;
     }
     /**
@@ -79,7 +80,7 @@ public abstract class AbstractGCCBOPConsoleParserUtility {
 
     public IPath getWorkingDirectory() {
         if (fDirectoryStack.size() != 0) {
-            return (IPath) fDirectoryStack.lastElement();
+            return fDirectoryStack.lastElement();
         }
         // Fallback to the Project Location
         // FIXME: if the build did not start in the Project ?
@@ -114,7 +115,7 @@ public abstract class AbstractGCCBOPConsoleParserUtility {
 	protected IPath popDirectory() {
         int i = getDirectoryLevel();
         if (i != 0) {
-            IPath dir = (IPath) fDirectoryStack.lastElement();
+            IPath dir = fDirectoryStack.lastElement();
             fDirectoryStack.removeElementAt(i - 1);
             return dir;
         }
@@ -143,25 +144,25 @@ public abstract class AbstractGCCBOPConsoleParserUtility {
 
     public boolean reportProblems() {
         boolean reset = false;
-        for (Iterator iter = fErrors.iterator(); iter.hasNext(); ) {
-            Problem problem = (Problem) iter.next();
+        for (Iterator<Problem> iter = fErrors.iterator(); iter.hasNext(); ) {
+            Problem problem = iter.next();
             if (problem.severity == IMarkerGenerator.SEVERITY_ERROR_BUILD) {
                 reset = true;
             }
             if (problem.file == null) {
-                fMarkerGenerator.addMarker(
+                fMarkerGenerator.addMarker(new ProblemMarkerInfo(
                     project,
                     problem.lineNumber,
                     problem.description,
                     problem.severity,
-                    problem.variableName);
+                    problem.variableName));
             } else {
-                fMarkerGenerator.addMarker(
+                fMarkerGenerator.addMarker(new ProblemMarkerInfo(
                     problem.file,
                     problem.lineNumber,
                     problem.description,
                     problem.severity,
-                    problem.variableName);
+                    problem.variableName));
             }
         }
         fErrors.clear();
@@ -194,5 +195,4 @@ public abstract class AbstractGCCBOPConsoleParserUtility {
             fErrors.add(problem);
         }
     }
-
 }

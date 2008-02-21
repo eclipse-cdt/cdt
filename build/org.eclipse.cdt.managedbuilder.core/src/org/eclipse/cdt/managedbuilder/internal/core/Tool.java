@@ -2569,7 +2569,9 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		ArrayList flags = new ArrayList();
 		StringBuffer sb = new StringBuffer();
 		for (int index = 0; index < opts.length; index++) {
-			IOption option = opts[index];
+			IOption option = getOptionToSet(opts[index], false);
+			if (option == null)
+				continue;
 			sb.setLength( 0 );
 
 			// check to see if the option has an applicability calculator

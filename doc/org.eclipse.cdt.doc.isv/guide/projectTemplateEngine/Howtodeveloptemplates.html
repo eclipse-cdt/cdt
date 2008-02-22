@@ -60,7 +60,7 @@ pages based on whether the template needs user input or not.
 This document details the schema for writing project templates. The
 schema file <code class="filename">TemplateDescriptorSchema.xsd</code>, which defines the
 structure for the project templates, is part of
-<code class="filename">org.eclipse.cdt.templateengine</code> plug-in. 
+<code class="filename">org.eclipse.cdt.core</code> plug-in. 
 </p>
 <p>
 The structure or schema for a project template is as follows: 
@@ -369,7 +369,7 @@ The <code>process</code> element within the root element of a project
 template defines the processes to be followed to create a project, based on the
 inputs taken. Here is the syntax for this element: 
 </p>
-<p class="CodeBlock"><code>&lt;process type="org.eclipse.cdt.templateengine.&lt;process type&gt;"&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;simple name="name" value=""/&gt; <br><br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;complex name="name"&gt; <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/complex&gt; <br><br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;simple-array name="values"&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/simple-array&gt;<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;complex-array name="name"&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/complex-array&gt; <br><br>&lt;/process&gt;</code></p>
+<p class="CodeBlock"><code>&lt;process type="org.eclipse.cdt.{core|managedbuilder.core}.&lt;process type&gt;"&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;simple name="name" value=""/&gt; <br><br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;complex name="name"&gt; <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/complex&gt; <br><br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;simple-array name="values"&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/simple-array&gt;<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;complex-array name="name"&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/complex-array&gt; <br><br>&lt;/process&gt;</code></p>
 <p>
 A <code>process</code> element defines a single process. A process is
 like a procedure with a set of parameters. In similar terms, the
@@ -380,7 +380,7 @@ arguments for the process matching their types and in the order specified.
 <p>
 You can specify the process type using the <code>type</code> attribute.
 For example, to add files to a project you can use
-<code>org.eclipse.cdt.templateengine.AddFiles</code> as the process type.
+<code>org.eclipse.cdt.core.AddFiles</code> as the process type.
 </p>
 <p>
 A <code>process</code> element may include the following child elements: 
@@ -448,7 +448,7 @@ for the copy process.
 </p>
 <p>
 The Template Engine plug-in provides a set of process types using the
-extension-point <code class="filename">org.eclipse.cdt.templateengine.processType</code>. Using
+extension-point <code class="filename">org.eclipse.cdt.core.templateProcessTypes</code>. Using
 these process types you can describe a process in your template. For example,
 you can describe the copy process by providing the source and destination
 folder names.
@@ -456,7 +456,7 @@ folder names.
 <p>
 The following is a list of process types provided by the Template Engine:
 </p>
-<ul>
+<!--<ul>
 <li>
 <p>
 <b>NewProject</b>: It defines all the parameters required for a
@@ -493,10 +493,10 @@ type of the target binary. It is of type <code>simple</code>.
 configurations for the project. It is of type <code>simple</code>.
 </p>
 </li>
-</ul>
+</ul> -->
 <li>
 <p>
-<b>NewManagedProject</b>: It defines all the parameters
+<i>org.eclipse.cdt.managedbuilder.core.</i><b>NewManagedProject</b>: It defines all the parameters
 required for a new managed project and provides the fully qualified name of the
 class, which processes these parameters.
 </p>
@@ -533,7 +533,7 @@ configurations for the managed project. It is of type <code>simple</code>.
 </ul>
 <li>
 <p>
-<b>Copy</b>: It defines all the parameters required to copy
+<i>org.eclipse.cdt.core.</i><b>Copy</b>: It defines all the parameters required to copy
 files and provides the fully qualified name of the class, which processes these
 parameters.
 </p>
@@ -571,14 +571,14 @@ location.
 </ul>
 <li>
 <p>
-<b>Append</b>: It defines all the parameters required to append
+<i>org.eclipse.cdt.core.</i><b>Append</b>: It defines all the parameters required to append
 files to a project and provides the fully qualified name of the class, which
 processes these parameters. For more information about the parameters, refer to
 the <code>Copy</code> process type described above.
 </p>
 <li>
 <p>
-<b>AddFile</b>: It defines all the parameters required to add a
+<i>org.eclipse.cdt.core.</i><b>AddFile</b>: It defines all the parameters required to add a
 file to the project and provides the fully qualified name of the class, which
 processes these parameters.
 </p>
@@ -603,7 +603,7 @@ process type described above.
 </ul>
 <li>
 <p>
-<b>AddFiles</b>: It defines all the parameters required to add
+<i>org.eclipse.cdt.core.</i><b>AddFiles</b>: It defines all the parameters required to add
 files to a project and provides the fully qualified name of the class, which
 processes these parameters.
 </p>
@@ -628,7 +628,7 @@ process type described above.
 </ul>
 <li>
 <p>
-<b>CreateSourceFolder</b>: It defines all the parameters
+<i>org.eclipse.cdt.core.</i><b>CreateSourceFolder</b>: It defines all the parameters
 required to create a folder for the source files in a project and provides the
 fully qualified name of the class, which processes these parameters.
 </p>
@@ -652,7 +652,7 @@ created. It is of <code>simple</code> type.
 </ul>
 <li>
 <p>
-<b>AddLink</b>: It defines all the parameters required to
+<i>org.eclipse.cdt.core.</i><b>AddLink</b>: It defines all the parameters required to
 create a linked file and provides the fully qualified name of the class, which
 processes these parameters.
 </p>
@@ -682,7 +682,7 @@ file should be created. It is of <code>simple</code> type.
 </ul>
 <li>
 <p>
-<b>CreateIncludeFolder</b>: It defines all the parameters
+<i>org.eclipse.cdt.managedbuilder.core.</i><b>CreateIncludeFolder</b>: It defines all the parameters
 required to create a folder for the header files in a project and provides the
 fully qualified name of the class, which processes these parameters. For
 information about the parameters, refer to the <code>CreateSourceFolder</code>
@@ -690,7 +690,48 @@ process type described above.
 </p>
 <li>
 <p>
-<b>SetMBSStringOptionValue</b>: It defines all the parameters
+<i>org.eclipse.cdt.managedbuilder.core.</i><b>ExcludeResources</b>: It defines all the parameters
+required to exclude resources from a CDT project and provides the
+fully qualified name of the class, which processes these parameters.
+</p>
+<p>
+Here is a list of parameters defined by this process type:
+</p>
+<ul>
+<li>
+<p>
+<em>projectName</em>: Use this parameter to specify the name
+of the project for which resources will be excluded. It is of <code>simple</code>
+type.
+</p>
+<li>
+<p>
+<em>configIdPattern</em>: Use this parameter to specify a regular expression of 
+<code>java.util.regex.Pattern</code> syntax for matching against project configuration ids.
+The resources that match any of the regular expressions given in the <i>filePatterns</i> argument 
+will be excluded from all matching project configurations. It is of <code>simple</code> type.
+</p>
+<li>
+<p>
+<em>filePatterns</em>: Use this parameter to specify a <code>simple-array</code> of 
+<code>java.util.regex.Pattern</code> for matching against project resources to be excluded. The paths that
+will be matched against are workspace relative (include the project folder) and use forward slash as the file separator. 
+That this argument is an array is purely to allow logically separate patterns to be given separately rather than as one big string. 
+If any of the regular expressions matches then the resource in question will be excluded for the matching configuration(s).
+The resources that match any of the regular expressions given in the <i>filePatterns</i> argument 
+will be excluded for all matching project configurations. It is of <code>simple-array</code> type.
+<li>
+<p>
+<em>invertedConfigMatching</em>: If this is set to "true" then the set of configurations for which resources 
+matching any of the specified file patterns will be inverted. This enables you to specify which configurations the 
+files should not be excluded for without having to know what other configurations may exist. It is of <code>simple</code> type.
+</p>
+</li>
+</ul>
+</p>
+<li>
+<p>
+<i>org.eclipse.cdt.managedbuilder.core.</i><b>SetMBSStringOptionValue</b>: It defines all the parameters
 required to create a string option value and provides the fully qualified name
 of the class, which processes these parameters.
 </p>
@@ -733,7 +774,7 @@ the resource. It is of <code>simple</code> type.
 </ul>
 <li>
 <p>
-<b>SetMBSStringListOptionValues</b>: It defines all the
+<i>org.eclipse.cdt.managedbuilder.core.</i><b>SetMBSStringListOptionValues</b>: It defines all the
 parameters required to create a string list of option values and provides the
 fully qualified name of the class, which processes these parameters. The
 parameters required are similar to that of <code>SetMBSStringOptionValue</code>
@@ -743,7 +784,7 @@ option values. For information about the parameters, refer to the
 </p>
 <li>
 <p>
-<b>SetMBSBooleanOptionValue</b>: It defines all the parameters
+<i>org.eclipse.cdt.managedbuilder.core.</i><b>SetMBSBooleanOptionValue</b>: It defines all the parameters
 required to create a boolean option value and provides the fully qualified name
 of the class, which processes these parameters. The parameters required are
 similar to that of <code>SetMBSStringOptionValue</code> process type, only
@@ -753,7 +794,7 @@ For information about the parameters, refer to the
 </p>
 <li>
 <p>
-<b>AppendMBSStringOptionValue</b>: It defines all the
+<i>org.eclipse.cdt.managedbuilder.core.</i><b>AppendToMBSStringOptionValue</b>: It defines all the
 parameters required to append a string option value to an existing string
 option. It also provides the fully qualified name of the class, which processes
 these parameters. For information about the parameters, refer to the
@@ -761,14 +802,21 @@ these parameters. For information about the parameters, refer to the
 </p>
 <li>
 <p>
-<b>AppendCreate</b>: It defines all the parameters required to
+<i>org.eclipse.cdt.managedbuilder.core.</i><b>AppendToMBSStringListOptionValues</b>: It defines all the 
+parameters required to append a string list of option values to an existing string list of option value. 
+It also provides the fully qualified name of the class, which processes these parameters. For information 
+about the parameters, refer to the <code>SetMBSStringListOptionValues</code> process type described above.
+</p>
+<li>
+<p>
+<i>org.eclipse.cdt.core.</i><b>AppendCreate</b>: It defines all the parameters required to
 append or create a file in a project. It also provides the fully qualified name
 of the class, which processes these parameters. For information about the
 parameters, refer to the <code>AddFiles</code> process type described above.
 </p>
 <li>
 <p>
-<b>CreateResourceIdentifier</b>: It defines all the parameters
+<i>org.eclipse.cdt.core.</i><b>CreateResourceIdentifier</b>: It defines all the parameters
 required to append or create a resource identifier. It also provides the fully
 qualified name of the class, which processes these parameters.
 </p>
@@ -789,9 +837,19 @@ type.
 </p>
 </li>
 </ul>
+<li>
+<p>
+<i>org.eclipse.cdt.managedbuilder.core.</i><b>GenerateMakefileWithBuildDescription</b>: 
+</p>
+<ul>
+<li>
+<p><em>projectName: </em>Use this parameter to specify the name
+of the project for which a makefile will be generated from the current project build info. It is of <code>simple</code>
+type.
+</p>
 </li>
 </ul>
-<p>
+<p><br>
 Once the project template has been written, register it with Eclipse to
 make it available for use. For more information on this, refer to
 <A href="Howtoregistertemplates.html#Howto%2eregister%2etemplates">How to register a template with Eclipse</a>.

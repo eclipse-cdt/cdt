@@ -52,7 +52,7 @@ public enum OverloadableOperator {
 	SHIFTR(">>"), 
 	SHIFTL("<<"), 
 	SHIFTLASSIGN("<<="), 
-	SHIFTR_ASSIGN(">>="), 
+	SHIFTRASSIGN(">>="), 
 	BITORASSIGN("|="), 
 	AMPERASSIGN("&="), 
 	XORASSIGN("^="), 
@@ -97,7 +97,7 @@ public enum OverloadableOperator {
 			case IToken.tSHIFTL:        return SHIFTL;
 			case IToken.tSHIFTLASSIGN:  return SHIFTLASSIGN;
 			case IToken.tSHIFTR:        return SHIFTR;
-			case IToken.tSHIFTRASSIGN:  return SHIFTR_ASSIGN;
+			case IToken.tSHIFTRASSIGN:  return SHIFTRASSIGN;
 			case IToken.tXOR:           return XOR;
 			case IToken.tXORASSIGN:     return XORASSIGN;
 			

@@ -50,6 +50,7 @@ import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
+import org.eclipse.cdt.internal.ui.editor.ASTProvider.WAIT_FLAG;
 import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
 
 /**
@@ -137,7 +138,7 @@ public class CMacroExpansionInput {
 		private final Position fTextRegion;
 		private final boolean fAllowSelection;
 		private IASTNode fEnclosingNode;
-		private List fExpansionNodes= new ArrayList();
+		private List<IASTNode> fExpansionNodes= new ArrayList<IASTNode>();
 		private MacroExpansionExplorer fExplorer;
 		private IRegion fExpansionRegion;
 
@@ -221,7 +222,7 @@ public class CMacroExpansionInput {
 			if (node == other) {
 				return other;
 			}
-			List ancestors= new ArrayList();
+			List<IASTNode> ancestors= new ArrayList<IASTNode>();
 			while (node != null) {
 				node= node.getParent();
 				ancestors.add(node);
@@ -241,8 +242,8 @@ public class CMacroExpansionInput {
 			if (fEnclosingNode != null) {
 				int startOffset= Integer.MAX_VALUE;
 				int endOffset= fTextRegion.getOffset() + fTextRegion.getLength();
-				for (Iterator it= fExpansionNodes.iterator(); it.hasNext(); ) {
-					IASTNode node= (IASTNode) it.next();
+				for (Iterator<IASTNode> it= fExpansionNodes.iterator(); it.hasNext(); ) {
+					IASTNode node= it.next();
 					if (node != fEnclosingNode) {
 						while (node != null && node.getParent() != fEnclosingNode) {
 							node= node.getParent();
@@ -282,7 +283,15 @@ public class CMacroExpansionInput {
 		// forbidden
 	}
 
-	public static CMacroExpansionInput create(IEditorPart editor, IRegion hoverRegion, boolean allowSelection) {
+	/**
+	 * Creates an input object for the macro expansion exploration control {@link CMacroExpansionExplorationControl}.
+	 * 
+	 * @param editor  the active editor
+	 * @param textRegion  the text region where to consider macro expansions
+	 * @param force  force computation of the input, if <code>true</code> this may trigger a parse
+	 * @return an instance of {@link CMacroExpansionInput} or <code>null</code> if no macro was found in the region
+	 */
+	public static CMacroExpansionInput create(IEditorPart editor, IRegion textRegion, boolean force) {
 		if (editor == null || !(editor instanceof ITextEditor)) {
 			return null;
 		}
@@ -294,8 +303,9 @@ public class CMacroExpansionInput {
 		}
 		
 		IProgressMonitor monitor= new NullProgressMonitor();
-		ExpansionRegionComputer computer= new ExpansionRegionComputer(tu, hoverRegion, allowSelection);
-		IStatus status= ASTProvider.getASTProvider().runOnAST(tu, ASTProvider.WAIT_ACTIVE_ONLY, monitor, computer);
+		ExpansionRegionComputer computer= new ExpansionRegionComputer(tu, textRegion, force);
+		final WAIT_FLAG waitFlag = force ? ASTProvider.WAIT_ACTIVE_ONLY : ASTProvider.WAIT_NO;
+		IStatus status= ASTProvider.getASTProvider().runOnAST(tu, waitFlag, monitor, computer);
 		if (!status.isOK()) {
 			return null;
 		}
@@ -318,6 +328,15 @@ public class CMacroExpansionInput {
 		return input;
 	}
 
+	/**
+	 * Expand the given text region to span complete lines of the document and
+	 * add a number of lines before and after the region.
+	 * 
+	 * @param region  the text region
+	 * @param document  the underlying text document
+	 * @param contextLines  the number of lines to add
+	 * @return an extended region
+	 */
 	public static final IRegion expandRegion(IRegion region, IDocument document, int contextLines) {
 		try {
 			int start= document.getLineOfOffset(region.getOffset());

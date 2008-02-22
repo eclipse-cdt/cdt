@@ -672,6 +672,7 @@ public class MBSWizardHandler extends CWizardHandler {
 	
 	public void postProcess(IProject newProject) {
 		deleteExtraConfigs(newProject);
+		doCustom();
 	}
 	
 	private void deleteExtraConfigs(IProject newProject) {

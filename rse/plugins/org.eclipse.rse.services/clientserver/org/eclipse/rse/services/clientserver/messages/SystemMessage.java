@@ -24,7 +24,7 @@ import java.io.StringWriter;
  * SystemMessage is used to supply detailed status when an error or other significant event occurs that should
  * be presented to the user or logged. It is structured to capture information from a variety of remote systems.
  */
-public class SystemMessage
+public class SystemMessage implements Cloneable
 {
 
 	/**
@@ -453,23 +453,17 @@ public class SystemMessage
 	}
 
 	/**
-	 * Creates a new message with the same component, subcomponent, number, level 1 and level 2 text as this message.
-	 * <p>
-	 * Note that only the original message is cloned, but no substitutions. The
-	 * cloned message will look like the original object as if substitutions
-	 * have never been made.
+	 * Creates a new message with the same component, subcomponent, number, text message
+	 * and substitutions.
 	 * @see java.lang.Object#clone()
 	 */
-	protected Object clone() throws CloneNotSupportedException {
+	public Object clone() throws CloneNotSupportedException {
 		////Old invalid code - did not work properly for subclasses
 		//return new SystemMessage(component, subComponent, messageNumber, indicator, level1NS, level2NS);
 		SystemMessage result = (SystemMessage)super.clone();
-		//re-initialize substitutions to empty
-		result.level1WS = level1NS;
-		result.level2WS = level2NS;
-		result.subPrefix = '%';
-		result.numSubs = -1;
-		result.subs = null;
+		//clone the array: this might throw runtime exceptions if the 
+		//objects in the array are not cloneable!
+		result.subs = (Object[])subs.clone();
 		return result;
 	}
 }

@@ -107,12 +107,4 @@ public class SimpleSystemMessage extends SystemMessage {
 		return _pluginId + ":" + getIndicator(); //$NON-NLS-1$
 	}
 	
-	/**
-	 * Creates a new message with the same component, subcomponent, number, level 1 and level 2 text as this message.
-	 * @see java.lang.Object#clone()
-	 */
-	protected Object clone() throws CloneNotSupportedException {		
-		return new SimpleSystemMessage(_pluginId, _severity, getLevelOneText(), getLevelTwoText());
-	}
-	
 }

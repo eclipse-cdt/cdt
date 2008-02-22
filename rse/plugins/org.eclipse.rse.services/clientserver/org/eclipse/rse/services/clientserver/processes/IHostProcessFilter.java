@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,17 +11,14 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [220041][api][breaking] Get rid of IHostProcessFilter#getStates()
  ********************************************************************************/
 
 package org.eclipse.rse.services.clientserver.processes;
 
-import java.util.HashMap;
 
 public interface IHostProcessFilter 
 {
-	public HashMap getStates();
-
 	/**
 	 * Return the process name part of this filter string.
 	 */
@@ -48,7 +45,7 @@ public interface IHostProcessFilter
 	public String getPid();
 	
 	/**
-	 * Returns true when all process states are selected. The individal state
+	 * Returns true when all process states are selected. The individual state
 	 * queries will return false in this case.
 	 */
 	public boolean getAnyStatus();
@@ -118,9 +115,25 @@ public interface IHostProcessFilter
 	 */
 	public boolean allows(String status);
 	
+	/**
+	 * Check whether this filter requires that the given state is set.
+	 * @param stateCode state code to check. One of the String constants
+	 *     in {@link ISystemProcessRemoteConstants#ALL_STATES_STR}.
+	 */
 	public boolean getSpecificState(String stateCode);
 	
+	/**
+	 * Change this filter such that it requires the given state to be set.
+	 * @param stateCode state code to check. One of the String constants
+	 *     in {@link ISystemProcessRemoteConstants#ALL_STATES_STR}.
+	 */
 	public void setSpecificState(String stateCode);
 	
-	public boolean satisfiesState(String state);
+	/**
+	 * Check whether a given process state String matches this filter.
+	 * @param stateString A state String, holding a list of state constants 
+	 *     from {@link ISystemProcessRemoteConstants#ALL_STATES_STR},
+	 *     separated by comma (",").
+	 */
+	public boolean satisfiesState(String stateString);
 }

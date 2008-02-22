@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [219975] Fix implementations of clone()
+ * Martin Oberhuber (Wind River) - [220041][api][breaking] Get rid of IHostProcessFilter#getStates()
  *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver.processes;
@@ -37,7 +38,7 @@ import org.eclipse.rse.services.clientserver.NamePatternMatcher;
  *
  * To get the actual filter string back from objects of this class, just call {@link #toString()}.
  * <p>
- * Clients may use or subclass this class. When subclassing, clients need to
+ * Clients may instantiate or subclass this class. When subclassing, clients need to
  * ensure that the subclass is always capable of performing a deep clone 
  * operation with the {@link #clone()} method, so if they add fields of 
  * complex type, these need to be dealt with by overriding {@link #clone()}. 
@@ -214,21 +215,18 @@ public class HostProcessFilterImpl implements IHostProcessFilter, Cloneable
 	    }
 	}
 	
-	public HashMap getStates()
-	{
-		return states;
-	}
-
-	/**
-	 * Return the process name part of this filter string.
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.services.clientserver.processes.IHostProcessFilter#getName()
 	 */
 	public String getName()
 	{
 		return name;
 	}
 
-	/**
-	 * Return the username part of this filter string.
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.services.clientserver.processes.IHostProcessFilter#getUsername()
 	 */
 	public String getUsername()
 	{
@@ -239,49 +237,54 @@ public class HostProcessFilterImpl implements IHostProcessFilter, Cloneable
 		else return username;
 	}
 
-	/**
-	 * Return the process group id (gid) part of this filter string.
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.services.clientserver.processes.IHostProcessFilter#getGid()
 	 */
 	public String getGid()
 	{
 		return gid;
 	}
 	
-	/**
-	 * Return the process parent id (ppid) part of this filter string.
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.services.clientserver.processes.IHostProcessFilter#getPpid()
 	 */
 	public String getPpid()
 	{
 		return ppid;
 	}
 	
-	/**
-	 * Return the process id (pid) part of this filter string.
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.services.clientserver.processes.IHostProcessFilter#getPid()
 	 */
 	public String getPid()
 	{
 		return pid;
 	}
 
-	/**
-	 * Returns true when all process states are selected. The individal state
-	 * queries will return false in this case.
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.services.clientserver.processes.IHostProcessFilter#getAnyStatus()
 	 */
 	public boolean getAnyStatus()
 	{
 		return anystatus;
 	}
 	
-	/**
-	 * Returns the minimum VM size for processes allowed by this filter
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.services.clientserver.processes.IHostProcessFilter#getMinVM()
 	 */
 	public String getMinVM()
 	{
 		return "" + minVM; //$NON-NLS-1$
 	}
 
-	/**
-	 * Returns the maximum VM size for processes allowed by this filter
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.services.clientserver.processes.IHostProcessFilter#getMaxVM()
 	 */
 	public String getMaxVM()
 	{
@@ -289,52 +292,54 @@ public class HostProcessFilterImpl implements IHostProcessFilter, Cloneable
 	}
 
 
-	/**
-	 * Set the name part of this filter string. This can be simple or
-	 * generic, where generic is a name containing one or two asterisks
-	 * anywhere in the name.
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.services.clientserver.processes.IHostProcessFilter#setName(java.lang.String)
 	 */
 	public void setName(String obj)
 	{
 		name = obj;
 	}
 
-	/**
-	 * Set the user id (uid) part of this filter string. This can be simple or
-	 * generic, where generic is a uid containing one or two asterisks anywhere
-	 * in the name.
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.services.clientserver.processes.IHostProcessFilter#setUsername(java.lang.String)
 	 */
 	public void setUsername(String obj)
 	{
 		username = obj;
 	}
 
-	/**
-	 * Set the process group id (gid) part of this filter string.
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.services.clientserver.processes.IHostProcessFilter#setGid(java.lang.String)
 	 */
 	public void setGid(String obj)
 	{
 		gid = obj;
 	}
 	
-	/**
-	 * Set the process parent id part of this filter string.
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.services.clientserver.processes.IHostProcessFilter#setPpid(java.lang.String)
 	 */
 	public void setPpid(String obj)
 	{
 		ppid = obj;
 	}
 	
-	/**
-	 * Set the process id part of this filter string.
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.services.clientserver.processes.IHostProcessFilter#setPid(java.lang.String)
 	 */
 	public void setPid(String obj)
 	{
 		pid = obj;
 	}
 
-	/**
-	 * Select all/any process states
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.services.clientserver.processes.IHostProcessFilter#setAnyStatus()
 	 */
 	public void setAnyStatus()
 	{
@@ -342,8 +347,9 @@ public class HostProcessFilterImpl implements IHostProcessFilter, Cloneable
 		initStates();
 	}
 	
-	/**
-	 * Sets the minimum VM size for processes allowed by this filter
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.services.clientserver.processes.IHostProcessFilter#setMinVM(java.lang.String)
 	 */
 	public void setMinVM(String strMinVM)
 	{
@@ -357,8 +363,9 @@ public class HostProcessFilterImpl implements IHostProcessFilter, Cloneable
 		}
 	}
 
-	/**
-	 * Sets the maximum VM size for processes allowed by this filter
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.services.clientserver.processes.IHostProcessFilter#setMaxVM(java.lang.String)
 	 */
 	public void setMaxVM(String strMaxVM)
 	{
@@ -398,14 +405,9 @@ public class HostProcessFilterImpl implements IHostProcessFilter, Cloneable
 	    return s;
 	}
 	
-	/**
-	 * Returns whether this filter allows a process with the status line
-	 * <code>status</code> to pass through. The status line contains some of the contents of
-	 * the <i>status</i> file contained in the processes numbered directory in
-	 * the /proc filesystem. For example, the status line of process 12345 is
-	 * the contents of the file <i>/proc/12345/stat</i>.
-	 * The status line must be structured as follows:
-	 * "pid|name|status|tgid|ppid|tracerpid|uid|username|gid|vmSize|vmRSS"
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.services.clientserver.processes.IHostProcessFilter#allows(java.lang.String)
 	 */
 	public boolean allows(String status)
 	{
@@ -447,6 +449,10 @@ public class HostProcessFilterImpl implements IHostProcessFilter, Cloneable
 		return true;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.services.clientserver.processes.IHostProcessFilter#getSpecificState(java.lang.String)
+	 */
 	public boolean getSpecificState(String stateCode)
 	{
 		if (anystatus) return true;
@@ -455,6 +461,10 @@ public class HostProcessFilterImpl implements IHostProcessFilter, Cloneable
 		return state.booleanValue();
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.services.clientserver.processes.IHostProcessFilter#setSpecificState(java.lang.String)
+	 */
 	public void setSpecificState(String stateCode)
 	{
 		anystatus = false;
@@ -462,11 +472,15 @@ public class HostProcessFilterImpl implements IHostProcessFilter, Cloneable
 		states.put(stateCode, new Boolean(true));
 	}
 	
-	public boolean satisfiesState(String state)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.services.clientserver.processes.IHostProcessFilter#satisfiesState(java.lang.String)
+	 */
+	public boolean satisfiesState(String stateString)
 	{
 		if (!anystatus)
 		{
-			String[] allStates = state.split(","); //$NON-NLS-1$
+			String[] allStates = stateString.split(","); //$NON-NLS-1$
 			if (allStates == null) return false;
 			if (allStates.length == 0) return false;
 			boolean satisfied = false;

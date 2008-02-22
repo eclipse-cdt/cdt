@@ -54,7 +54,6 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
-import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICMultiConfigDescription;
@@ -144,7 +143,7 @@ import org.w3c.dom.ProcessingInstruction;
  * This is the main entry point for getting at the build information
  * for the managed build system. 
  */
-public class ManagedBuildManager extends AbstractCExtension implements IScannerInfoProvider {
+public class ManagedBuildManager extends AbstractCExtension {
 
 //	private static final QualifiedName buildInfoProperty = new QualifiedName(ManagedBuilderCorePlugin.getUniqueIdentifier(), "managedBuildInfo");	//$NON-NLS-1$
 	private static final String ROOT_NODE_NAME = "ManagedProjectBuildInfo";	//$NON-NLS-1$
@@ -3202,61 +3201,6 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		return buildModelListeners;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#getScannerInformation(org.eclipse.core.resources.IResource)
-	 */
-	public IScannerInfo getScannerInformation(IResource resource) {
-		return (IScannerInfo) getBuildInfo(resource.getProject());
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#subscribe(org.eclipse.cdt.core.parser.IScannerInfoChangeListener)
-	 */
-	public synchronized void subscribe(IResource resource, IScannerInfoChangeListener listener) {
-		IResource project = null;
-		if (resource instanceof IProject) {
-			project = resource;
-		} else if (resource instanceof IFile) {
-			project = ((IFile)resource).getProject();
-		} else {
-			return;
-		}
-		// Get listeners for this resource
-		Map map = getBuildModelListeners();
-		List list = (List) map.get(project);
-		if (list == null) {
-			// Create a new list
-			list = new ArrayList();
-		}
-		if (!list.contains(listener)) {
-			// Add the new listener for the resource
-			list.add(listener);
-			map.put(project, list);
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#unsubscribe(org.eclipse.cdt.core.parser.IScannerInfoChangeListener)
-	 */
-	public synchronized void unsubscribe(IResource resource, IScannerInfoChangeListener listener) {
-		IResource project = null;
-		if (resource instanceof IProject) {
-			project = resource;
-		} else if (resource instanceof IFile) {
-			project = ((IFile)resource).getProject();
-		} else {
-			return;
-		}
-		// Remove the listener
-		Map map = getBuildModelListeners();
-		List list = (List) map.get(project);
-		if (list != null && !list.isEmpty()) {
-			// The list is not empty so try to remove listener
-			list.remove(listener);
-			map.put(project, list);
-		}
-	}
-	
 	private static Map getConfigElementMap() {
 		if (configElementMap == null) {
 			configElementMap = new HashMap();

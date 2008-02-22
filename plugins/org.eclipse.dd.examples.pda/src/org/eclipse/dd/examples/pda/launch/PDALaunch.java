@@ -15,16 +15,14 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.dd.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.dd.dsf.concurrent.DefaultDsfExecutor;
-import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 import org.eclipse.dd.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.Sequence;
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
-import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.examples.pda.PDAPlugin;
-import org.eclipse.dd.examples.pda.service.command.PDATerminatedEvent;
+import org.eclipse.dd.examples.pda.service.PDATerminatedEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.Launch;
@@ -32,23 +30,38 @@ import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.ITerminate;
 
 /**
- * A DSF-based debugger has to override the base launch class in order to
- * supply its own content providers for the debug view.
+ * The PDA launch object. In general, a DSF-based debugger has to override 
+ * the base launch class in order to supply its own content providers for the 
+ * debug view.  Additionally, the PDA launch is used to monitor the state of the
+ * PDA debugger and to shutdown the DSF services and session belonging to the 
+ * launch.
+ * <p>
+ * The PDA launch class mostly contains methods and fields that can be accessed
+ * on any thread.  However, some fields and methods used for managing the DSF
+ * session need to be synchronized using the DSF executor.
+ * </p>
  */
 @ThreadSafe
 public class PDALaunch extends Launch
     implements ITerminate
-{
+{   
+    // DSF executor and session.  Both are created and shutdown by the launch. 
     private final DefaultDsfExecutor fExecutor;
     private final DsfSession fSession;
-    
-    @ConfinedToDsfExecutor("getSession().getExecutor()")
-    private DsfServicesTracker fTracker;
-    
+
+    // Objects used to track the status of the DSF session.
     private Sequence fInitializationSequence = null;
     private boolean fInitialized = false;
     private boolean fShutDown = false;
     
+    /**
+     * Launch constructor creates the launch for given parameters.  The
+     * constructor also creates a DSF session and an executor, so that 
+     * {@link #getSession()} returns a valid value, however no services 
+     * are initialized yet. 
+     * 
+     * @see Launch
+     */
     public PDALaunch(ILaunchConfiguration launchConfiguration, String mode, ISourceLocator locator) {
         super(launchConfiguration, mode, locator);
 
@@ -60,34 +73,68 @@ public class PDALaunch extends Launch
         fSession = DsfSession.startSession(fExecutor, PDAPlugin.ID_PDA_DEBUG_MODEL);
     }
 
-    public DsfExecutor getDsfExecutor() { return fExecutor; }
-    
+    /**
+     * Returns the DSF services session that belongs to this launch.  This 
+     * method will always return a DsfSession object, however if the debugger 
+     * is shut down, the session will no longer active.
+     */
     public DsfSession getSession() { return fSession; }
 
+    /**
+     * Initializes the DSF services using the specified parameters.  This 
+     * method has to be called on the executor thread in order to avoid 
+     * synchronization issues.  
+     */
     @ConfinedToDsfExecutor("getSession().getExecutor()")
     public void initializeServices(String program, int requestPort, int eventPort, final RequestMonitor rm)
     {
-        fTracker = new DsfServicesTracker(PDAPlugin.getBundleContext(), fSession.getId());
+        // Double-check that we're being called in the correct thread.
+        assert fExecutor.isInExecutorThread();
+     
+        // Check if shutdownServices() was called already, which would be 
+        // highly unusual, but if so we don't need to do anything except set 
+        // the initialized flag.
+        synchronized(this) {
+            if (fShutDown) {
+                fInitialized = true;
+                return;
+            }
+        }
+        
+        // Register the launch as listener for services events.
         fSession.addServiceEventListener(PDALaunch.this, null);
         
+        // Initialize the fInitializationSequence attribute in a synchronized
+        // block, because it may be accessed in another thread by shutdown().
+        // The initialization sequence is stored in a field to allow it to be 
+        // canceled if shutdownServices() is called before the sequence 
+        // completes.
         synchronized(this) {
             fInitializationSequence = new PDAServicesInitSequence(
-                getSession(), this, program, requestPort, eventPort, 
+                getSession(), program, requestPort, eventPort, 
                 new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
                     @Override
                     protected void handleCompleted() {
+                        // Set the initialized flag and check whether the 
+                        // shutdown flag is set.  Access the flags in a 
+                        // synchronized section as these flags can be accessed
+                        // on any thread.
                         boolean doShutdown = false;
-                        synchronized (this)
-                        { 
+                        synchronized (this) { 
                             fInitialized = true;
                             fInitializationSequence = null;
                             if (fShutDown) {
                                 doShutdown = true;
                             }
                         }
+                        
                         if (doShutdown) {
+                            // If shutdownServices() was already called, start the 
+                            // shutdown sequence now.
                             doShutdown(rm);
                         } else {
+                            // If there was an error in the startup sequence, 
+                            // report the error to the client.
                             if (getStatus().getSeverity() == IStatus.ERROR) {
                                 rm.setStatus(getStatus());
                             }
@@ -97,18 +144,30 @@ public class PDALaunch extends Launch
                     }
                 });
         }
+        
+        // Finally, execute the sequence. 
         getSession().getExecutor().execute(fInitializationSequence);
     }
 
+    /**
+     * Event handler for a debugger terminated event.    
+     */
     @DsfServiceEventHandler 
     public void eventDispatched(PDATerminatedEvent event) {
         shutdownServices(new RequestMonitor(ImmediateExecutor.getInstance(), null));
     }
 
+    /**
+     * Returns whether the DSF service initialization sequence has completed yet.
+     */
     public synchronized boolean isInitialized() {
         return fInitialized;
     }
     
+    /**
+     * Returns whether the DSF services have been set to shut down.
+     * @return
+     */
     public synchronized boolean isShutDown() {
         return fShutDown;
     }
@@ -144,9 +203,13 @@ public class PDALaunch extends Launch
      */
     @ConfinedToDsfExecutor("getSession().getExecutor()")
     public void shutdownServices(final RequestMonitor rm) {
+        // Check initialize and shutdown flags to determine if the shutdown
+        // sequence can be called yet.
         boolean doShutdown = false;
         synchronized (this) {
             if (!fInitialized && fInitializationSequence != null) {
+                // Launch has not yet initialized, try to cancel the 
+                // shutdown sequence.
                 fInitializationSequence.cancel(false);
             } else {
                 doShutdown = !fShutDown && fInitialized;
@@ -164,7 +227,7 @@ public class PDALaunch extends Launch
     @ConfinedToDsfExecutor("getSession().getExecutor()")
     private void doShutdown(final RequestMonitor rm) {
         fExecutor.execute( new PDAServicesShutdownSequence(
-            getDsfExecutor(), fSession.getId(),
+            fExecutor, fSession.getId(),
             new RequestMonitor(fSession.getExecutor(), rm) { 
                 @Override
                 public void handleCompleted() {
@@ -174,8 +237,6 @@ public class PDALaunch extends Launch
                             PDAPlugin.PLUGIN_ID, -1, new IStatus[]{getStatus()}, "Session shutdown failed", null)); //$NON-NLS-1$
                     }
                     // Last order of business, shutdown the dispatch queue.
-                    fTracker.dispose();
-                    fTracker = null;
                     DsfSession.endSession(fSession);
                     // endSession takes a full dispatch to distribute the 
                     // session-ended event, finish step only after the dispatch.

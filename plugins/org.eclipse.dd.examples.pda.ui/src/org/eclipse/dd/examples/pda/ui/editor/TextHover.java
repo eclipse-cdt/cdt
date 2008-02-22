@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,15 +8,10 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
+ *     Wind River Systems - adopted to use with DSF
  *******************************************************************************/
 package org.eclipse.dd.examples.pda.ui.editor;
 
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IThread;
-import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.ITextViewer;

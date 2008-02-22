@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
+ *     Wind River Systems - adopted to use with DSF
  *******************************************************************************/
 package org.eclipse.dd.examples.pda;
 
@@ -44,9 +45,11 @@ public class PDAPlugin extends Plugin {
 
 	//The shared instance.
 	private static PDAPlugin plugin;
+	
 	//Resource bundle.
 	private ResourceBundle resourceBundle;
 
+	// Bundle context used in registering and retrieving DSF (OSGi) services.
 	private static BundleContext fContext;
 	
 	/**
@@ -60,6 +63,7 @@ public class PDAPlugin extends Plugin {
 	 * location of a local Perl executable (value <code>perlExecutable</code>).
 	 */
 	public static final String VARIALBE_PERL_EXECUTABLE = "dsfPerlExecutable";
+
 	/**
 	 * Launch configuration attribute key. Value is a path to a perl
 	 * program. The path is a string representing a full path

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,16 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
+ *     Wind River Systems - adopted to use with DSF
  *******************************************************************************/
 package org.eclipse.dd.examples.pda.ui;
 
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-import java.util.Map.Entry;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -32,29 +29,16 @@ import org.osgi.framework.BundleContext;
  * The main plugin class to be used in the desktop.
  */
 public class PDAUIPlugin extends AbstractUIPlugin {
+    
+    public static String PLUGIN_ID = "org.eclipse.dd.examples.pda.ui "; 
+    
 	//The shared instance.
 	private static PDAUIPlugin plugin;
-	//Resource bundle.
-	private ResourceBundle resourceBundle;
 	
 	private static BundleContext fContext;
 
 	private final static String ICONS_PATH = "icons/full/";//$NON-NLS-1$
 	private final static String PATH_OBJECT = ICONS_PATH + "obj16/"; //Model object icons //$NON-NLS-1$
-    private final static String PATH_ELOCALTOOL = ICONS_PATH + "elcl16/"; //Enabled local toolbar icons //$NON-NLS-1$
-    private final static String PATH_DLOCALTOOL = ICONS_PATH + "dlcl16/"; //Disabled local toolbar icons //$NON-NLS-1$
-    
-    /**
-     *  Toolbar action to pop data stack
-     */
-    public final static String IMG_ELCL_POP = "IMG_ELCL_POP";
-    public final static String IMG_DLCL_POP = "IMG_DLCL_POP";
-    
-    /**
-     * Toolbar action to push onto data stack
-     */
-    public final static String IMG_ELCL_PUSH = "IMG_ELCL_PUSH";
-    public final static String IMG_DLCL_PUSH = "IMG_DLCL_PUSH";
     
     /**
      * PDA program image
@@ -70,7 +54,7 @@ public class PDAUIPlugin extends AbstractUIPlugin {
     /**
      * Managed colors
      */
-    private Map fColors = new HashMap();
+    private Map<RGB, Color> fColors = new HashMap<RGB, Color>();
     	
 	/**
 	 * The constructor.
@@ -98,12 +82,9 @@ public class PDAUIPlugin extends AbstractUIPlugin {
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
 		plugin = null;
-		resourceBundle = null;
 		fContext = null;
-        Iterator colors = fColors.entrySet().iterator();
-        while (colors.hasNext()) {
-            Map.Entry entry = (Entry) colors.next();
-            ((Color)entry.getValue()).dispose();
+        for (Map.Entry<RGB, Color> entry : fColors.entrySet()) {
+            entry.getValue().dispose();
         }
 	}
 
@@ -118,43 +99,8 @@ public class PDAUIPlugin extends AbstractUIPlugin {
 	    return fContext;
 	}
 	    
-
-	/**
-	 * Returns the string from the plugin's resource bundle,
-	 * or 'key' if not found.
-	 */
-	public static String getResourceString(String key) {
-		ResourceBundle bundle = PDAUIPlugin.getDefault().getResourceBundle();
-		try {
-			return (bundle != null) ? bundle.getString(key) : key;
-		} catch (MissingResourceException e) {
-			return key;
-		}
-	}
-
-	/**
-	 * Returns the plugin's resource bundle,
-	 */
-	public ResourceBundle getResourceBundle() {
-		try {
-			if (resourceBundle == null)
-				resourceBundle = ResourceBundle.getBundle("org.eclipse.debug.examples.ui.pda.DebugUIPluginResources");
-		} catch (MissingResourceException x) {
-			resourceBundle = null;
-		}
-		return resourceBundle;
-	}
-	
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#initializeImageRegistry(org.eclipse.jface.resource.ImageRegistry)
-	 */
 	protected void initializeImageRegistry(ImageRegistry reg) {
 		declareImage(IMG_OBJ_PDA, PATH_OBJECT + "pda.gif");
-	    declareImage(IMG_ELCL_POP, PATH_ELOCALTOOL + "pop.gif");
-	    declareImage(IMG_DLCL_POP, PATH_DLOCALTOOL + "pop.gif");
-	    declareImage(IMG_ELCL_PUSH, PATH_ELOCALTOOL + "push.gif");
-	    declareImage(IMG_DLCL_PUSH, PATH_DLOCALTOOL + "push.gif");
 	}
 	
     /**
@@ -168,7 +114,7 @@ public class PDAUIPlugin extends AbstractUIPlugin {
      * <code>false</code> if this is not a shared image
      */
     private void declareImage(String key, String path) {
-        URL url = BundleUtility.find("org.eclipse.debug.examples.ui", path);
+        URL url = BundleUtility.find("org.eclipse.dd.examples.pda.ui", path);
         ImageDescriptor desc = ImageDescriptor.createFromURL(url);
         getImageRegistry().put(key, desc);
     }
@@ -180,7 +126,7 @@ public class PDAUIPlugin extends AbstractUIPlugin {
      * @return color
      */
     public Color getColor(RGB rgb) {
-        Color color = (Color) fColors.get(rgb);
+        Color color = fColors.get(rgb);
         if (color == null) {
             color= new Color(Display.getCurrent(), rgb);
             fColors.put(rgb, color);

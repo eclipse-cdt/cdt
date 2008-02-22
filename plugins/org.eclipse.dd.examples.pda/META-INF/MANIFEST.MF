@@ -12,10 +12,11 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.dd.dsf.debug;bundle-version="1.0.0",
  org.junit4;bundle-version="4.3.1",
  org.eclipse.cdt.core;bundle-version="5.0.0"
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.dd.examples.pda,
  org.eclipse.dd.examples.pda.breakpoints,
  org.eclipse.dd.examples.pda.launch,
- org.eclipse.dd.examples.pda.service.command,
- org.eclipse.debug.examples.core.pda.sourcelookup
+ org.eclipse.dd.examples.pda.service,
+ org.eclipse.dd.examples.pda.service.commands,
+ org.eclipse.dd.examples.pda.sourcelookup
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

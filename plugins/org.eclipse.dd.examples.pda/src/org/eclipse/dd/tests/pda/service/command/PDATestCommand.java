@@ -10,15 +10,15 @@
  *******************************************************************************/
 package org.eclipse.dd.tests.pda.service.command;
 
-import org.eclipse.dd.examples.pda.service.command.PDACommandControlDMContext;
-import org.eclipse.dd.examples.pda.service.command.PDACommandResult;
-import org.eclipse.dd.examples.pda.service.command.commands.AbstractPDACommand;
+import org.eclipse.dd.examples.pda.service.PDAProgramDMContext;
+import org.eclipse.dd.examples.pda.service.commands.AbstractPDACommand;
+import org.eclipse.dd.examples.pda.service.commands.PDACommandResult;
 
 /**
  * 
  */
 class PDATestCommand extends AbstractPDACommand<PDACommandResult> {
-    PDATestCommand(PDACommandControlDMContext context, String command) {
+    PDATestCommand(PDAProgramDMContext context, String command) {
         super(context, command);
     }
     

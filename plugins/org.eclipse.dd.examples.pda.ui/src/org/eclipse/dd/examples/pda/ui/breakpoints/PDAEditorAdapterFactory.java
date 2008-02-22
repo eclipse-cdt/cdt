@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,25 +8,28 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
+ *     Wind River Systems - adopted to use with DSF
  *******************************************************************************/
 package org.eclipse.dd.examples.pda.ui.breakpoints;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.dd.examples.pda.ui.editor.PDAEditor;
-import org.eclipse.debug.ui.actions.IRunToLineTarget;
 import org.eclipse.debug.ui.actions.IToggleBreakpointsTarget;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 
+
 /**
  * Creates a toggle breakpoint adapter
+ * <p>
+ * This class is identical to the corresponding in PDA debugger implemented in 
+ * org.eclipse.debug.examples.ui.
+ * </p>
  */
 public class PDAEditorAdapterFactory implements IAdapterFactory {
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
-	 */
-	public Object getAdapter(Object adaptableObject, Class adapterType) {
+
+    @SuppressWarnings("unchecked") // IAdapterFactory is Java 1.3
+    public Object getAdapter(Object adaptableObject, Class adapterType) {
 		if (adaptableObject instanceof PDAEditor) {
 			ITextEditor editorPart = (ITextEditor) adaptableObject;
 			IResource resource = (IResource) editorPart.getEditorInput().getAdapter(IResource.class);
@@ -36,22 +39,14 @@ public class PDAEditorAdapterFactory implements IAdapterFactory {
 				    if (adapterType.equals(IToggleBreakpointsTarget.class)) {
 				        return new PDABreakpointAdapter();
 				    }
-					//#ifdef ex7
-//#					// TODO: Exercise 7 - create run to line adapter
-					//#else
-					if (adapterType.equals(IRunToLineTarget.class)) {
-				        return new PDARunToLineAdapter();
-				    }
-					//#endif
 				}
 			}			
 		}
 		return null;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
-	 */
-	public Class[] getAdapterList() {
+
+    @SuppressWarnings("unchecked") // IAdapterFactory is Java 1.3
+    public Class[] getAdapterList() {
 		return new Class[]{IToggleBreakpointsTarget.class};
 	}
 }

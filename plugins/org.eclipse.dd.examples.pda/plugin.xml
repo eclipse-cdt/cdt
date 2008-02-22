@@ -21,14 +21,14 @@
    <extension
          point="org.eclipse.debug.core.sourceLocators">
       <sourceLocator
-            class="org.eclipse.debug.examples.core.pda.sourcelookup.PDASourceLookupDirector"
+            class="org.eclipse.dd.examples.pda.sourcelookup.PDASourceLookupDirector"
             name="DSF PDA Source Locator"
             id="org.eclipse.dd.examples.pda.sourceLocator"/>
    </extension>
    <extension
          point="org.eclipse.debug.core.sourcePathComputers">
       <sourcePathComputer
-            class="org.eclipse.debug.examples.core.pda.sourcelookup.PDASourcePathComputerDelegate"
+            class="org.eclipse.dd.examples.pda.sourcelookup.PDASourcePathComputerDelegate"
             id="org.eclipse.dd.examples.pda.sourcePathComputer"/>
    </extension>
    <extension

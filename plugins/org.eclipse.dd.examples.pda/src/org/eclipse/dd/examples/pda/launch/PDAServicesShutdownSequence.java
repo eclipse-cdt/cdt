@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems and others.
+ * Copyright (c) 2008 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,17 +20,95 @@ import org.eclipse.dd.dsf.debug.service.StepQueueManager;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.examples.pda.PDAPlugin;
-import org.eclipse.dd.examples.pda.service.breakpoints.PDABreakpoints;
-import org.eclipse.dd.examples.pda.service.command.PDACommandControl;
-import org.eclipse.dd.examples.pda.service.expressions.PDAExpressions;
-import org.eclipse.dd.examples.pda.service.runcontrol.PDARunControl;
-import org.eclipse.dd.examples.pda.service.stack.PDAStack;
+import org.eclipse.dd.examples.pda.service.PDABreakpoints;
+import org.eclipse.dd.examples.pda.service.PDACommandControl;
+import org.eclipse.dd.examples.pda.service.PDAExpressions;
+import org.eclipse.dd.examples.pda.service.PDARunControl;
+import org.eclipse.dd.examples.pda.service.PDAStack;
 
+/**
+ * The shutdown sequence for PDA debugger services.  This sequence contains
+ * the series of steps that are executed to properly shutdown the PDA-DSF debug
+ * session.  If any of the individual steps fail, the shutdown will abort.
+ * <p>
+ * Services are shut down in the reverse order of initialization.
+ * </p>   
+ */
 public class PDAServicesShutdownSequence extends Sequence {
+    
+    private final Step[] fSteps = new Step[] { 
+        new Step() {
+            @Override
+            public void execute(RequestMonitor requestMonitor) {
+                // Initialize services tracker.
+                assert PDAPlugin.getBundleContext() != null;
+                fTracker = new DsfServicesTracker(PDAPlugin.getBundleContext(), fSessionId);
+                requestMonitor.done();
+            }
+    
+            @Override
+            public void rollBack(RequestMonitor requestMonitor) {
+                // In case the shutdown sequence aborts, ensure that the 
+                // tracker is properly disposed.
+                fTracker.dispose();
+                fTracker = null;
+                requestMonitor.done();
+            }
+        }, 
+        new Step() {
+            @Override
+            public void execute(RequestMonitor requestMonitor) {
+                shutdownService(PDAExpressions.class, requestMonitor);
+            }
+        }, 
+        new Step() {
+            @Override
+            public void execute(RequestMonitor requestMonitor) {
+                shutdownService(PDAStack.class, requestMonitor);
+            }
+        },
+        new Step() {
+            @Override
+            public void execute(RequestMonitor requestMonitor) {
+                shutdownService(BreakpointsMediator.class, requestMonitor);
+            }
+        }, new Step() {
+            @Override
+            public void execute(RequestMonitor requestMonitor) {
+                shutdownService(PDABreakpoints.class, requestMonitor);
+            }
+        },
+        new Step() {
+            @Override
+            public void execute(RequestMonitor requestMonitor) {
+                shutdownService(StepQueueManager.class, requestMonitor);
+            }
+        },
+        new Step() {
+            @Override
+            public void execute(RequestMonitor requestMonitor) {
+                shutdownService(PDARunControl.class, requestMonitor);
+            }
+        },
+        new Step() {
+            @Override
+            public void execute(RequestMonitor requestMonitor) {
+                shutdownService(PDACommandControl.class, requestMonitor);
+            }
+        }, 
+        new Step() {
+            @Override
+            public void execute(RequestMonitor requestMonitor) {
+                fTracker.dispose();
+                fTracker = null;
+                requestMonitor.done();
+            }
+        } 
+    };
 
-    String fSessionId;
-    DsfServicesTracker fTracker;
-
+    private String fSessionId;
+    private DsfServicesTracker fTracker;
+    
     public PDAServicesShutdownSequence(DsfExecutor executor, String sessionId, RequestMonitor requestMonitor) {
         super(executor, requestMonitor);
         fSessionId = sessionId;
@@ -40,92 +118,6 @@ public class PDAServicesShutdownSequence extends Sequence {
     public Step[] getSteps() {
         return fSteps;
     }
-
-    private final Step[] fSteps = new Step[] { new Step() {
-        @Override
-        public void execute(RequestMonitor requestMonitor) {
-            assert PDAPlugin.getBundleContext() != null;
-            fTracker = new DsfServicesTracker(PDAPlugin.getBundleContext(), fSessionId);
-            requestMonitor.done();
-        }
-
-        @Override
-        public void rollBack(RequestMonitor requestMonitor) {
-            fTracker.dispose();
-            fTracker = null;
-            requestMonitor.done();
-        }
-    }, 
-/*    new Step() {
-        @Override
-        public void execute(RequestMonitor requestMonitor) {
-            shutdownService(MIRegisters.class, requestMonitor);
-        }
-    }, new Step() {
-        @Override
-        public void execute(RequestMonitor requestMonitor) {
-            shutdownService(MIBreakpointsManager.class, requestMonitor);
-        }
-    }, new Step() {
-        @Override
-        public void execute(RequestMonitor requestMonitor) {
-            shutdownService(MIBreakpoints.class, requestMonitor);
-        }
-    }, new Step() {
-        @Override
-        public void execute(RequestMonitor requestMonitor) {
-            shutdownService(CSourceLookup.class, requestMonitor);
-        }
-    },*/ 
-    new Step() {
-        @Override
-        public void execute(RequestMonitor requestMonitor) {
-            shutdownService(PDAExpressions.class, requestMonitor);
-        }
-    }, 
-    new Step() {
-        @Override
-        public void execute(RequestMonitor requestMonitor) {
-            shutdownService(PDAStack.class, requestMonitor);
-        }
-    },
-    new Step() {
-        @Override
-        public void execute(RequestMonitor requestMonitor) {
-            shutdownService(BreakpointsMediator.class, requestMonitor);
-        }
-    }, new Step() {
-        @Override
-        public void execute(RequestMonitor requestMonitor) {
-            shutdownService(PDABreakpoints.class, requestMonitor);
-        }
-    },
-    new Step() {
-        @Override
-        public void execute(RequestMonitor requestMonitor) {
-            shutdownService(StepQueueManager.class, requestMonitor);
-        }
-    },
-    new Step() {
-        @Override
-        public void execute(RequestMonitor requestMonitor) {
-            shutdownService(PDARunControl.class, requestMonitor);
-        }
-    },
-    new Step() {
-        @Override
-        public void execute(RequestMonitor requestMonitor) {
-            shutdownService(PDACommandControl.class, requestMonitor);
-        }
-    }, 
-    new Step() {
-        @Override
-        public void execute(RequestMonitor requestMonitor) {
-            fTracker.dispose();
-            fTracker = null;
-            requestMonitor.done();
-        }
-    } };
 
     @SuppressWarnings("unchecked")
     private void shutdownService(Class clazz, final RequestMonitor requestMonitor) {

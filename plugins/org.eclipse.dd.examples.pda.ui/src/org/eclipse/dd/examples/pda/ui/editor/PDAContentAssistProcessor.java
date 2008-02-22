@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
+ *     Wind River Systems - adopted to use with DSF
  *******************************************************************************/
 package org.eclipse.dd.examples.pda.ui.editor;
 
@@ -41,7 +42,7 @@ public class PDAContentAssistProcessor implements IContentAssistProcessor {
             }
         }
         
-        List proposals = new ArrayList();
+        List<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>();
         String[] keywords = PDAScanner.fgKeywords;
         if (prefix.length() > 0) {
             String word = prefix.toString();
@@ -59,7 +60,7 @@ public class PDAContentAssistProcessor implements IContentAssistProcessor {
             }
         }
         if (!proposals.isEmpty()) {
-            return (ICompletionProposal[]) proposals.toArray(new ICompletionProposal[proposals.size()]);
+            return proposals.toArray(new ICompletionProposal[proposals.size()]);
         }
         return null;
     }

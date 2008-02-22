@@ -27,29 +27,6 @@
       </factory>
    </extension>
 
-   <!--<extension
-         point="org.eclipse.debug.ui.launchShortcuts">
-      <shortcut
-            label="DSF PDA Application"
-            icon="icons/full/obj16/pda.gif"
-            class="org.eclipse.debug.examples.ui.pda.launcher.PDALaunchShortcut"
-            modes="debug"
-            id="org.eclipse.dd.examples.pda.launchShortcut">
-         <contextualLaunch>
-            <enablement>
-               <with variable="selection">
-                  <count value="1"/>
-                  <iterate>
-                     <instanceof value="org.eclipse.core.resources.IFile"/>
-                     <test
-                           value="*.pda"
-                           property="org.eclipse.debug.ui.matchesPattern"/>
-                  </iterate>
-               </with>
-            </enablement>
-         </contextualLaunch>
-      </shortcut>
-   </extension>-->
    <extension
          point="org.eclipse.ui.editors">
       <editor
@@ -133,7 +110,6 @@
             class="org.eclipse.dd.examples.pda.ui.breakpoints.PDAEditorAdapterFactory"
             adaptableType="org.eclipse.dd.examples.pda.ui.editor.PDAEditor">
 			<adapter type="org.eclipse.debug.ui.actions.IToggleBreakpointsTarget"/>
-			<adapter type="org.eclipse.debug.ui.actions.IRunToLineTarget"/>
       </factory>
    </extension> -->
 </plugin>

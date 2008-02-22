@@ -26,7 +26,7 @@ import org.eclipse.dd.dsf.debug.ui.sourcelookup.MISourceDisplayAdapter;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.examples.pda.PDAPlugin;
 import org.eclipse.dd.examples.pda.launch.PDALaunch;
-import org.eclipse.dd.examples.pda.ui.actions.DsfTerminateCommand;
+import org.eclipse.dd.examples.pda.ui.actions.PDATerminateCommand;
 import org.eclipse.dd.examples.pda.ui.viewmodel.PDAVMAdapter;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -45,47 +45,62 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactor
 import org.eclipse.debug.ui.sourcelookup.ISourceDisplay;
 
 /**
- * This implementation of platform adapter factory only retrieves the adapters
- * for the launch object.  It also manages the creation and destruction 
- * of the session-based adapters which are returned by the 
- * IDMContext.getAdapter() methods.
+ * The adapter factory is the central point of control of view model and other
+ * UI adapters of a DSF-based debugger.  As new launches are created and 
+ * old ones removed, this factory manages the life cycle of the associated
+ * UI adapters.    
+ * <p>
+ * As a platform adapter factory, this factory only  provides adapters for
+ * the launch object.  Adapters for all other objects in the DSF model hierarchy
+ * are registered with the DSF session. 
+ * </p>
  */
 @ThreadSafe
 @SuppressWarnings({"restriction"})
 public class PDAAdapterFactory implements IAdapterFactory, ILaunchesListener2
 {
+    /**
+     * Contains the set of adapters that are created for eacy launch instance.
+     */
     @Immutable
-    class LaunchAdapterSet {
+    private static class LaunchAdapterSet {
+        // View Model adapter
         final PDAVMAdapter fViewModelAdapter;
+        
+        // Source lookup and positioning adapter
         final MISourceDisplayAdapter fSourceDisplayAdapter;
+        
+        // Command adapters
         final DsfStepIntoCommand fStepIntoCommand;
         final DsfStepOverCommand fStepOverCommand;
         final DsfStepReturnCommand fStepReturnCommand;
         final DsfSuspendCommand fSuspendCommand;
         final DsfResumeCommand fResumeCommand;
-        final DsfTerminateCommand fTerminateCommand;
+        final PDATerminateCommand fTerminateCommand;
+        
+        // Adapters for integration with other UI actions
         final IDebugModelProvider fDebugModelProvider;
         final PDALaunch fLaunch;
 
         LaunchAdapterSet(PDALaunch launch) {
+            // Initialize launch and session.
             fLaunch = launch;
             DsfSession session = launch.getSession();
             
+            // Initialize VM
             fViewModelAdapter = new PDAVMAdapter(session);
 
-            if (launch.getSourceLocator() instanceof ISourceLookupDirector) {
-                fSourceDisplayAdapter = new MISourceDisplayAdapter(session, (ISourceLookupDirector)launch.getSourceLocator());
-            } else {
-                fSourceDisplayAdapter = null;
-            }
+            // Initialize source lookup
+            fSourceDisplayAdapter = new MISourceDisplayAdapter(session, (ISourceLookupDirector)launch.getSourceLocator());
             session.registerModelAdapter(ISourceDisplay.class, fSourceDisplayAdapter);
             
+            // Initialize retargetable command handler.
             fStepIntoCommand = new DsfStepIntoCommand(session);
             fStepOverCommand = new DsfStepOverCommand(session);
             fStepReturnCommand = new DsfStepReturnCommand(session);
             fSuspendCommand = new DsfSuspendCommand(session);
             fResumeCommand = new DsfResumeCommand(session);
-            fTerminateCommand = new DsfTerminateCommand(session);
+            fTerminateCommand = new PDATerminateCommand(session);
             session.registerModelAdapter(IStepIntoHandler.class, fStepIntoCommand);
             session.registerModelAdapter(IStepOverHandler.class, fStepOverCommand);
             session.registerModelAdapter(IStepReturnHandler.class, fStepReturnCommand);
@@ -93,19 +108,17 @@ public class PDAAdapterFactory implements IAdapterFactory, ILaunchesListener2
             session.registerModelAdapter(IResumeHandler.class, fResumeCommand);
             session.registerModelAdapter(ITerminateHandler.class, fTerminateCommand);
 
+            // Initialize debug model provider
             fDebugModelProvider = new IDebugModelProvider() {
-                // @see org.eclipse.debug.core.model.IDebugModelProvider#getModelIdentifiers()
                 public String[] getModelIdentifiers() {
                     return new String[] { PDAPlugin.ID_PDA_DEBUG_MODEL };
                 }
             };
             session.registerModelAdapter(IDebugModelProvider.class, fDebugModelProvider);
             
-            /*
-             * Registering the launch as an adapter, ensures that this launch, 
-             * and debug model ID will be associated with all DMContexts from this 
-             * session.  
-             */  
+            // Register the launch as an adapter This ensures that the launch, 
+            // and debug model ID will be associated with all DMContexts from this 
+            // session.  
             session.registerModelAdapter(ILaunch.class, fLaunch);
         }
         
@@ -139,10 +152,8 @@ public class PDAAdapterFactory implements IAdapterFactory, ILaunchesListener2
         DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
     }
 
-    /**
-     * This method only actually returns adapters for the launch object.  
-     */
-    @SuppressWarnings("unchecked")
+    // This IAdapterFactory method returns adapters for the PDA launch object only.  
+    @SuppressWarnings("unchecked") // IAdapterFactory is Java 1.3
     public Object getAdapter(Object adaptableObject, Class adapterType) {
         if (!(adaptableObject instanceof PDALaunch)) return null; 
 
@@ -167,20 +178,15 @@ public class PDAAdapterFactory implements IAdapterFactory, ILaunchesListener2
         else return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
-     */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked") // IAdapterFactory is Java 1.3
     public Class[] getAdapterList() {
         return new Class[] { IElementContentProvider.class, IModelProxyFactory.class, IColumnPresentationFactory.class };
     }
 
-    public void sessionEnded(DsfSession session) {
-    }
-
     public void launchesRemoved(ILaunch[] launches) {
         // Dispose the set of adapters for a launch only after the launch is 
-        // removed.
+        // removed from the view.  If the launch is terminated, the adapters
+        // are still needed to populate the contents of the view.
         for (ILaunch launch : launches) {
             if (launch instanceof PDALaunch) {
                 PDALaunch pdaLaunch = (PDALaunch)launch;

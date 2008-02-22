@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems and others.
+ * Copyright (c) 2008 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,29 +15,46 @@ import org.eclipse.dd.dsf.concurrent.Sequence;
 import org.eclipse.dd.dsf.debug.service.BreakpointsMediator;
 import org.eclipse.dd.dsf.debug.service.StepQueueManager;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.examples.pda.service.breakpoints.PDABreakpointAttributeTranslator;
-import org.eclipse.dd.examples.pda.service.breakpoints.PDABreakpoints;
-import org.eclipse.dd.examples.pda.service.command.PDACommandControl;
-import org.eclipse.dd.examples.pda.service.expressions.PDAExpressions;
-import org.eclipse.dd.examples.pda.service.runcontrol.PDARunControl;
-import org.eclipse.dd.examples.pda.service.stack.PDAStack;
-import org.eclipse.debug.examples.core.pda.sourcelookup.PDASourceLookupDirector;
+import org.eclipse.dd.examples.pda.service.PDABreakpointAttributeTranslator;
+import org.eclipse.dd.examples.pda.service.PDABreakpoints;
+import org.eclipse.dd.examples.pda.service.PDACommandControl;
+import org.eclipse.dd.examples.pda.service.PDAExpressions;
+import org.eclipse.dd.examples.pda.service.PDARunControl;
+import org.eclipse.dd.examples.pda.service.PDAStack;
 
+/**
+ * The initialization sequence for PDA debugger services.  This sequence contains
+ * the series of steps that are executed to properly initialize the PDA-DSF debug
+ * session.  If any of the individual steps fail, the initialization will abort.   
+ * <p>
+ * The order in which services are initialized is important.  Some services depend
+ * on other services and they assume that they will be initialized only if those
+ * services are active.  Also the service events are prioritized and their priority
+ * depends on the order in which the services were initialized.
+ * </p>
+ */
 public class PDAServicesInitSequence extends Sequence {
 
     Step[] fSteps = new Step[] {
-        // Create and initialize the Connection service.
-        new Step() { 
+        new Step() 
+        { 
             @Override
             public void execute(RequestMonitor requestMonitor) {
-                // Create the connection.
-                fCommandControl = new PDACommandControl(fSession, fRequestPort, fEventPort);
+                // Create the connection to PDA debugger.
+                fCommandControl = new PDACommandControl(fSession, fProgram, fRequestPort, fEventPort);
                 fCommandControl.initialize(requestMonitor);
+            }
+            
+            @Override
+            public void rollBack(RequestMonitor rm) {
+                // TODO Auto-generated method stub
+                super.rollBack(rm);
             }
         },
         new Step() { 
             @Override
             public void execute(RequestMonitor requestMonitor) {
+                // Start the run control service.
                 fRunControl = new PDARunControl(fSession);
                 fRunControl.initialize(requestMonitor);
             }
@@ -45,62 +62,65 @@ public class PDAServicesInitSequence extends Sequence {
         new Step() { 
             @Override
             public void execute(RequestMonitor requestMonitor) {
+                // Start the service to manage step actions.
                 new StepQueueManager(fSession).initialize(requestMonitor);
             }
         },
         new Step() { 
             @Override
             public void execute(final RequestMonitor requestMonitor) {
-                // Create the low-level breakpoint service 
-                new PDABreakpoints(fSession, fProgram).initialize(new RequestMonitor(getExecutor(), requestMonitor));
+                // Start the low-level breakpoint service 
+                new PDABreakpoints(fSession).initialize(new RequestMonitor(getExecutor(), requestMonitor));
             }
         },
         new Step() { 
             @Override
             public void execute(final RequestMonitor requestMonitor) {
+                // Create the breakpoint mediator and start tracking PDA breakpoints.
+                
                 final BreakpointsMediator bpmService = new BreakpointsMediator(
                     fSession, new PDABreakpointAttributeTranslator());
                 bpmService.initialize(new RequestMonitor(getExecutor(), requestMonitor) {
                     @Override
                     protected void handleOK() {
-                        bpmService.startTrackingBreakpoints(fCommandControl.getDMContext(), requestMonitor);
+                        bpmService.startTrackingBreakpoints(fCommandControl.getProgramDMContext(), requestMonitor);
                     }
                 }); 
             }
         },
         new Step() { @Override
             public void execute(RequestMonitor requestMonitor) {
+                // Start the stack service.
                 new PDAStack(fSession).initialize(requestMonitor);
             }
         },
         new Step() { @Override
             public void execute(RequestMonitor requestMonitor) {
+                // Start the service to track expressions.
                 new PDAExpressions(fSession).initialize(requestMonitor);
             }
         },
         new Step() { @Override
             public void execute(RequestMonitor requestMonitor) {
-                fRunControl.resume(fCommandControl.getDMContext(), requestMonitor);
+                fRunControl.resume(fCommandControl.getProgramDMContext(), requestMonitor);
             }
         },
     };
 
+    // Sequence input parameters, used in initializing services.
     private DsfSession fSession;
-    private PDALaunch fLaunch;
     private String fProgram;
     private int fRequestPort;
     private int fEventPort;
 
-    PDACommandControl fCommandControl;
-    PDARunControl fRunControl;
-    PDASourceLookupDirector fSourceLookup;
+    // Service references, initialized when created and used in initializing other services.
+    private PDACommandControl fCommandControl;
+    private PDARunControl fRunControl;
 
-    public PDAServicesInitSequence(DsfSession session, PDALaunch launch, String program, int requestPort, 
-        int eventPort, RequestMonitor rm) 
+    public PDAServicesInitSequence(DsfSession session, String program, int requestPort, int eventPort, RequestMonitor rm) 
     {
         super(session.getExecutor(), rm);
         fSession = session;
-        fLaunch = launch;
         fProgram = program;
         fRequestPort = requestPort;
         fEventPort = eventPort;

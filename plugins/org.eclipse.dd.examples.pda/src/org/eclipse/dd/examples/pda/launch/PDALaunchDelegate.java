@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
+ *     Wind River Systems - adopted to use with DSF
  *******************************************************************************/
 package org.eclipse.dd.examples.pda.launch;
 
@@ -42,7 +43,7 @@ import org.eclipse.debug.core.sourcelookup.IPersistableSourceLocator2;
 
 
 /**
- * Launches PDA program on a PDA interpretter written in Perl
+ * Launches PDA program on a PDA interpretter written in Perl 
  */
 public class PDALaunchDelegate extends LaunchConfigurationDelegate {
     
@@ -59,9 +60,13 @@ public class PDALaunchDelegate extends LaunchConfigurationDelegate {
     
     @Override
     public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
+        // PDA programs do not require building.
         return false;
     }
 
+    /**
+     * Returns a source locator created based on the attributes in the launch configuration.
+     */
     private ISourceLocator getSourceLocator(ILaunchConfiguration configuration) throws CoreException {
         String type = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, (String)null);
         if (type == null) {
@@ -83,12 +88,7 @@ public class PDALaunchDelegate extends LaunchConfigurationDelegate {
         return null;
     }
 
-    
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate#launch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
-
 	    String program = configuration.getAttribute(PDAPlugin.ATTR_PDA_PROGRAM, (String)null);
 	    if (program == null) {
             abort("Perl program unspecified.", null);
@@ -104,11 +104,21 @@ public class PDALaunchDelegate extends LaunchConfigurationDelegate {
         PDALaunch pdaLaunch = (PDALaunch)launch; 
         initServices(pdaLaunch, program, requestPort, eventPort);
 	}
-	
+
+	/**
+	 * Launches PDA interpreter with the given program.
+	 *  
+	 * @param launch Launch that will contain the new process.
+	 * @param program PDA program to use in the interpreter.
+	 * @param requestPort The port number for connecting the request socket.
+	 * @param eventPort The port number for connecting the events socket.
+	 * 
+	 * @throws CoreException 
+	 */
 	private void launchProcess(ILaunch launch, String program, int requestPort, int eventPort) throws CoreException {
         List<String> commandList = new ArrayList<String>();
         
-        // Perl executable
+        // Find Perl executable
         IValueVariable perl = VariablesPlugin.getDefault().getStringVariableManager().getValueVariable(PDAPlugin.VARIALBE_PERL_EXECUTABLE);
         if (perl == null) {
             abort("Perl executable location undefined. Check value of ${dsfPerlExecutable}.", null);
@@ -130,6 +140,7 @@ public class PDALaunchDelegate extends LaunchConfigurationDelegate {
         }
         commandList.add(vm.getAbsolutePath());
         
+        // Add PDA program
         IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(program));
         if (!file.exists()) {
             abort(MessageFormat.format("Perl program {0} does not exist.", new Object[] {file.getFullPath().toString()}), null);
@@ -137,19 +148,26 @@ public class PDALaunchDelegate extends LaunchConfigurationDelegate {
         
         commandList.add(file.getLocation().toOSString());
         
-        // add debug arguments - i.e. '-debug requestPort eventPort'
+        // Add debug arguments - i.e. '-debug requestPort eventPort'
         commandList.add("-debug");
         commandList.add("" + requestPort);
         commandList.add("" + eventPort);
         
+        // Launch the perl process.
         String[] commandLine = commandList.toArray(new String[commandList.size()]);
         Process process = DebugPlugin.exec(commandLine, null);
+        
+        // Create a debug platform process object and add it to the launch.
         DebugPlugin.newProcess(launch, process, path);
 	}
 	
+	/**
+	 * Calls the launch to initialize DSF services for this launch.
+	 */
 	private void initServices(final PDALaunch pdaLaunch, final String program, final int requestPort, final int eventPort) 
 	    throws CoreException 
 	{
+	    // Synchronization object to use when waiting for the services initialization.
 	    Query<Object> initQuery = new Query<Object>() {
 	        @Override
 	        protected void execute(DataRequestMonitor<Object> rm) {
@@ -157,8 +175,10 @@ public class PDALaunchDelegate extends LaunchConfigurationDelegate {
 	        }
 	    };
 
+	    // Submit the query to the executor.
         pdaLaunch.getSession().getExecutor().execute(initQuery);
         try {
+            // Block waiting for query results.
             initQuery.get();
         } catch (InterruptedException e1) {
             throw new DebugException(new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR, "Interrupted Exception in dispatch thread", e1)); //$NON-NLS-1$
@@ -181,8 +201,6 @@ public class PDALaunchDelegate extends LaunchConfigurationDelegate {
 	
 	/**
 	 * Returns a free port number on localhost, or -1 if unable to find a free port.
-	 * 
-	 * @return a free port number on localhost, or -1 if unable to find a free port
 	 */
 	public static int findFreePort() {
 		ServerSocket socket= null;

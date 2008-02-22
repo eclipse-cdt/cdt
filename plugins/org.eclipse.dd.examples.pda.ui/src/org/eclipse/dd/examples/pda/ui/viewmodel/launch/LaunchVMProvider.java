@@ -32,7 +32,15 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
 
 
 /**
- * 
+ * View Model provider for the Launch (AKA Debug) view.  The PDA debugger is 
+ * single-threaded, so there is no need for a debug target element to be visible
+ * in the debug view.  Therefore the launch VM provider is configured with three nodes:
+ * <ul>
+ * <li> LaunchRootVMNode - This is the root of the PDA view model.</li>  
+ * <li> ThreadVMNode - Supplies the PDA program element.</li>  
+ * <li> StackFramesVMNode - Supplies the stack frame elements.</li>  
+ * <li> StandardProcessVMNode - Supplies elements representing the PDA debugger process.</li>
+ * </ul> 
  */
 @SuppressWarnings("restriction")
 public class LaunchVMProvider extends AbstractDMVMProvider 
@@ -46,15 +54,17 @@ public class LaunchVMProvider extends AbstractDMVMProvider
         IRootVMNode launchNode = new LaunchRootVMNode(this);
         setRootNode(launchNode);
 
-        // Container node to contain all processes and threads
-        IVMNode threadsNode = new ThreadVMNode(this, getSession());
+        // Launch node is a parent to the processes and program nodes.
+        IVMNode threadsNode = new PDAProgramVMNode(this, getSession());
         IVMNode processesNode = new StandardProcessVMNode(this);
         addChildNodes(launchNode, new IVMNode[] { threadsNode, processesNode});
         
+        // Stack frames node is under the PDA program node.
         IVMNode stackFramesNode = new StackFramesVMNode(this, getSession());
         addChildNodes(threadsNode, new IVMNode[] { stackFramesNode });
 
-        
+        // Register the LaunchVM provider as a listener to debug and launch 
+        // events.  These events are used by the launch and processes nodes.
         DebugPlugin.getDefault().addDebugEventListener(this);
         DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
     }
@@ -63,8 +73,8 @@ public class LaunchVMProvider extends AbstractDMVMProvider
     public void handleDebugEvents(final DebugEvent[] events) {
         if (isDisposed()) return;
         
-        // We're in session's executor thread.  Re-dispach to VM Adapter 
-        // executor thread and then call root layout node.
+        // This method may be called on any thread.  Switch to the 
+        // view model executor thread before processing.
         try {
             getExecutor().execute(new Runnable() {
                 public void run() {
@@ -75,7 +85,7 @@ public class LaunchVMProvider extends AbstractDMVMProvider
                     }
                 }});
         } catch (RejectedExecutionException e) {
-            // Ignore.  This exception could be thrown if the provider is being 
+            // Ignore.  This exception could be thrown if the view model is being 
             // shut down.  
         }
     }
@@ -106,8 +116,8 @@ public class LaunchVMProvider extends AbstractDMVMProvider
     private void handleLaunchesEvent(final LaunchesEvent event) {
         if (isDisposed()) return;
         
-        // We're in session's executor thread.  Re-dispach to VM Adapter 
-        // executor thread and then call root layout node.
+        // This method also may be called on any thread.  Switch to the 
+        // view model executor thread before processing.
         try {
             getExecutor().execute(new Runnable() {
                 public void run() {
@@ -119,7 +129,7 @@ public class LaunchVMProvider extends AbstractDMVMProvider
                     }
                 }});
         } catch (RejectedExecutionException e) {
-            // Ignore.  This exception could be thrown if the provider is being 
+            // Ignore.  This exception could be thrown if the view model is being 
             // shut down.  
         }
     }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
+ *     Wind River Systems - adopted to use with DSF
  *******************************************************************************/
 package org.eclipse.dd.examples.pda.ui.breakpoints;
 
@@ -32,6 +33,10 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * Adapter to create breakpoints in PDA files.
+ * <p>
+ * This class is identical to the corresponding in PDA debugger implemented in 
+ * org.eclipse.debug.examples.ui.
+ * </p>
  */
 public class PDABreakpointAdapter implements IToggleBreakpointsTargetExtension {
 	/* (non-Javadoc)

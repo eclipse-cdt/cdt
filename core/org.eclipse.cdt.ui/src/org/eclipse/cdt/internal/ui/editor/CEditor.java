@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.Stack;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -126,12 +127,14 @@ import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.dnd.IDragAndDropService;
 import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.ide.IGotoMarker;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
 import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTargetList;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
+import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
 import org.eclipse.ui.texteditor.ContentAssistAction;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
@@ -139,6 +142,7 @@ import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.ITextEditorDropTargetListener;
 import org.eclipse.ui.texteditor.IUpdate;
+import org.eclipse.ui.texteditor.MarkerUtilities;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 import org.eclipse.ui.texteditor.TextNavigationAction;
 import org.eclipse.ui.texteditor.TextOperationAction;
@@ -213,6 +217,76 @@ import org.eclipse.cdt.internal.ui.viewsupport.SelectionListenerWithASTManager;
  */
 public class CEditor extends TextEditor implements ISelectionChangedListener, ICReconcilingListener {
 
+	/**
+	 * A slightly modified implementation of IGotomarker compared to AbstractDecoratedTextEditor.
+	 * 
+	 * @since 5.0
+	 */
+	private final class GotoMarkerAdapter implements IGotoMarker {
+		/*
+		 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#gotoMarker(org.eclipse.core.resources.IMarker)
+		 */
+		public void gotoMarker(IMarker marker) {
+			if (fIsUpdatingMarkerViews)
+				return;
+			
+			if (getSourceViewer() == null)
+				return;
+
+			int start= MarkerUtilities.getCharStart(marker);
+			int end= MarkerUtilities.getCharEnd(marker);
+			
+			boolean selectLine= start < 0 || end < 0;
+
+			// look up the current range of the marker when the document has been edited
+			IAnnotationModel model= getDocumentProvider().getAnnotationModel(getEditorInput());
+			if (model instanceof AbstractMarkerAnnotationModel) {
+
+				AbstractMarkerAnnotationModel markerModel= (AbstractMarkerAnnotationModel) model;
+				Position pos= markerModel.getMarkerPosition(marker);
+				if (pos != null && !pos.isDeleted()) {
+					// use position instead of marker values
+					start= pos.getOffset();
+					end= pos.getOffset() + pos.getLength();
+					// use position as is
+					selectLine= false;
+				}
+
+				if (pos != null && pos.isDeleted()) {
+					// do nothing if position has been deleted
+					return;
+				}
+			}
+
+			IDocument document= getDocumentProvider().getDocument(getEditorInput());
+
+			if (selectLine) {
+				int line;
+				try {
+					if (start >= 0) {
+						IRegion lineInfo= document.getLineInformationOfOffset(start);
+						start= lineInfo.getOffset();
+						end= start + lineInfo.getLength();
+					}
+					else {
+						line= MarkerUtilities.getLineNumber(marker);
+						// Marker line numbers are 1-based
+						-- line;
+						IRegion lineInfo= document.getLineInformation(line);
+						start= lineInfo.getOffset();
+						end= start + lineInfo.getLength();
+					}
+				} catch (BadLocationException e) {
+					return;
+				}
+			}
+
+			int length= document.getLength();
+			if (end - 1 < length && start < length)
+				selectAndReveal(start, end - start);
+		}
+	}
+
 	class AdaptedSourceViewer extends CSourceViewer  {
 
 		public AdaptedSourceViewer(Composite parent, IVerticalRuler verticalRuler, IOverviewRuler overviewRuler,
@@ -276,13 +350,13 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		public IFormattingContext createFormattingContext() {
 			IFormattingContext context= new FormattingContext();
 
-			Map preferences;
+			Map<String, Object> preferences;
 			ICElement inputCElement= getInputCElement();
 			ICProject cProject= inputCElement != null ? inputCElement.getCProject() : null;
 			if (cProject == null)
-				preferences= new HashMap(CCorePlugin.getOptions());
+				preferences= new HashMap<String, Object>(CCorePlugin.getOptions());
 			else
-				preferences= new HashMap(cProject.getOptions(true));
+				preferences= new HashMap<String, Object>(cProject.getOptions(true));
 
 			if (inputCElement instanceof ITranslationUnit) {
 				ITranslationUnit tu= (ITranslationUnit)inputCElement;
@@ -313,10 +387,10 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 
 		final char fExitCharacter;
 		final char fEscapeCharacter;
-		final Stack fStack;
+		final Stack<BracketLevel> fStack;
 		final int fSize;
 
-		public ExitPolicy(char exitCharacter, char escapeCharacter, Stack stack) {
+		public ExitPolicy(char exitCharacter, char escapeCharacter, Stack<BracketLevel> stack) {
 			fExitCharacter = exitCharacter;
 			fEscapeCharacter = escapeCharacter;
 			fStack = stack;
@@ -330,7 +404,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 
 			if (fSize == fStack.size() && !isMasked(offset)) {
 				if (event.character == fExitCharacter) {
-					BracketLevel level = (BracketLevel) fStack.peek();
+					BracketLevel level = fStack.peek();
 					if (level.fFirstPosition.offset > offset || level.fSecondPosition.offset < offset)
 						return null;
 					if (level.fSecondPosition.offset == offset && length == 0)
@@ -460,7 +534,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		private boolean fCloseAngularBrackets = true;
 		private final String CATEGORY = toString();
 		private IPositionUpdater fUpdater = new ExclusivePositionUpdater(CATEGORY);
-		private Stack fBracketLevelStack = new Stack();
+		private Stack<BracketLevel> fBracketLevelStack = new Stack<BracketLevel>();
 
 		public void setCloseBracketsEnabled(boolean enabled) {
 			fCloseBrackets = enabled;
@@ -626,7 +700,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		 */
 		public void left(LinkedModeModel environment, int flags) {
 
-			final BracketLevel level = (BracketLevel) fBracketLevelStack.pop();
+			final BracketLevel level = fBracketLevelStack.pop();
 
 			if (flags != ILinkedModeListener.EXTERNAL_MODIFICATION)
 				return;
@@ -1136,7 +1210,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	 */
 	private TextViewerDragAdapter fTextViewerDragAdapter;
 
-	private static final Set angularIntroducers = new HashSet();
+	private static final Set<String> angularIntroducers = new HashSet<String>();
 	static {
 		angularIntroducers.add("template"); //$NON-NLS-1$
 		angularIntroducers.add("vector"); //$NON-NLS-1$
@@ -1263,7 +1337,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		if (IContentOutlinePage.class.equals(required)) {
 			return getOutlinePage();
 		}
-		if (required == IShowInTargetList.class) {
+		else if (required == IShowInTargetList.class) {
 			return new IShowInTargetList() {
 				public String[] getShowInTargetIds() {
 					return new String[] { CUIPlugin.CVIEW_ID, IPageLayout.ID_OUTLINE, IPageLayout.ID_RES_NAV };
@@ -1271,7 +1345,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 
 			};
 		}
-		if (required == IShowInSource.class) {
+		else if (required == IShowInSource.class) {
 			ICElement ce= null;
 			try {
 				ce= SelectionConverter.getElementAtOffset(this);
@@ -1288,18 +1362,23 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 				}
 			};
 		}
-		if (ProjectionAnnotationModel.class.equals(required)) {
+		else if (ProjectionAnnotationModel.class.equals(required)) {
 			if (fProjectionSupport != null) {
 				Object adapter = fProjectionSupport.getAdapter(getSourceViewer(), required);
 				if (adapter != null)
 					return adapter;
 			}
 		}
-		if (IContextProvider.class.equals(required)) {
+		else if (IContextProvider.class.equals(required)) {
 			return new CUIHelp.CUIHelpContextProvider(this);
+		}
+		else if (IGotoMarker.class.equals(required)) {
+			IGotoMarker gotoMarker= new GotoMarkerAdapter();
+			return gotoMarker;
 		}
 		return super.getAdapter(required);
 	}
+	
 	/**
 	 * Handles a property change event describing a change
 	 * of the editor's preference store and updates the preference
@@ -2811,7 +2890,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 
 			// Add occurrence annotations
 			int length= fLocations.length;
-			Map annotationMap= new HashMap(length);
+			Map<Annotation, Position> annotationMap= new HashMap<Annotation, Position>(length);
 			for (int i= 0; i < length; i++) {
 
 				if (isCanceled(progressMonitor))
@@ -2840,7 +2919,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 						annotationModel.addAnnotation((Annotation)mapEntry.getKey(), (Position)mapEntry.getValue());
 					}
 				}
-				fOccurrenceAnnotations= (Annotation[])annotationMap.keySet().toArray(new Annotation[annotationMap.keySet().size()]);
+				fOccurrenceAnnotations= annotationMap.keySet().toArray(new Annotation[annotationMap.keySet().size()]);
 			}
 
 			return Status.OK_STATUS;

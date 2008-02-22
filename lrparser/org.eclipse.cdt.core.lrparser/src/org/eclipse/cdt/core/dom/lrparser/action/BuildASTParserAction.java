@@ -68,7 +68,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
+import static org.eclipse.cdt.core.dom.lrparser.util.CollectionUtils.matchTokens;
 import org.eclipse.cdt.core.dom.lrparser.util.DebugUtil;
+import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 
@@ -992,6 +994,10 @@ public abstract class BuildASTParserAction {
 		List<Object> declarators = (hasDeclaratorList) ? astStack.closeScope() : Collections.emptyList();
 		IASTDeclSpecifier declSpecifier = (IASTDeclSpecifier) astStack.pop(); // may be null
 		
+		// do not generate nodes for extra EOC tokens
+		if(matchTokens(parser.getRuleTokens(), CPPParsersym.TK_EndOfCompletion))
+			return;
+
 		if(declSpecifier == null) { // can happen if implicit int is used
 			declSpecifier = nodeFactory.newSimpleDeclSpecifier();
 			setOffsetAndLength(declSpecifier, parser.getLeftIToken().getStartOffset(), 0);

@@ -56,6 +56,8 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 class ASTPrinter {
 	
 	
+	private static boolean PRINT_PARENT_PROPERTIES = false;
+	private static boolean RESOLVE_BINDINGS = false;
 	
 	/**
 	 * Prints the AST to the given PrintStream.
@@ -144,7 +146,8 @@ class ASTPrinter {
 			if(node.getParent() == null && !(node instanceof IASTTranslationUnit)) {
 				out.print("PARENT IS NULL ");
 			}
-			out.print(node.getPropertyInParent());
+			if(PRINT_PARENT_PROPERTIES)
+				out.print(node.getPropertyInParent());
 		}
 		
 		if(n instanceof ICArrayType) {
@@ -379,13 +382,14 @@ class ASTPrinter {
 		@Override
 		public int visit(IASTName name) {
 			print(name);
-			try {
-				IBinding binding = name.resolveBinding();
-				print(binding);
-			} catch(Exception e) {
-				System.out.println("Exception while resolving binding: " + name);
+			if(RESOLVE_BINDINGS) {
+				try {
+					IBinding binding = name.resolveBinding();
+					print(binding);
+				} catch(Exception e) {
+					System.out.println("Exception while resolving binding: " + name);
+				}
 			}
-			
 			indentLevel++;
 			return super.visit(name);
 		}

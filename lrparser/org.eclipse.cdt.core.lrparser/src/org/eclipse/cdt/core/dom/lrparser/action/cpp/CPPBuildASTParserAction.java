@@ -122,8 +122,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 
 	@Override 
 	protected boolean isCompletionToken(IToken token) {
-		// TODO Auto-generated method stub
-		return false;
+		return token.getKind() == CPPParsersym.TK_Completion;
 	}
 	
 	

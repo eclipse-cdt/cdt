@@ -320,16 +320,16 @@ $Rules
 
 
 ']' ::=? 'RightBracket'
-       --| 'EndOfCompletion'
+       | 'EndOfCompletion'
       
 ')' ::=? 'RightParen'
-       --| 'EndOfCompletion'
+       | 'EndOfCompletion'
       
 '}' ::=? 'RightBrace'
-       --| 'EndOfCompletion'
+       | 'EndOfCompletion'
       
 ';' ::=? 'SemiColon'
-       --| 'EndOfCompletion'
+       | 'EndOfCompletion'
 
 
 
@@ -362,6 +362,11 @@ external_declaration
 ------------------------------------------------------------------------------------------
 -- Expressions
 ------------------------------------------------------------------------------------------
+
+identifier_token
+    ::= 'identifier'
+      | 'Completion'
+      
 
 literal
     ::= 'integer'
@@ -411,7 +416,7 @@ unqualified_id_name
 
 -- wrap an identifier in a name node
 identifier_name
-    ::= 'identifier'
+    ::= identifier_token
            /. $Build  consumeIdentifierName();  $EndBuild ./
            
 
@@ -885,7 +890,7 @@ jump_statement
           /. $Build  consumeStatementReturn(true);  $EndBuild ./
       | 'return' ';'
           /. $Build  consumeStatementReturn(false);  $EndBuild ./
-      | 'goto' 'identifier' ';'
+      | 'goto' identifier_token ';'
           /. $Build  consumeStatementGoto();  $EndBuild ./
 
 
@@ -1034,7 +1039,7 @@ function_specifier
 
 
 typedef_name
-    ::= 'identifier'
+    ::= identifier_token
 
 
 --type_specifier
@@ -1103,13 +1108,13 @@ elaborated_type_specifier
 
 
 enum_name
-    ::= 'identifier'
+    ::= identifier_token
 
 
 enum_specifier
     ::= 'enum' '{' <openscope-ast> enumerator_list_opt '}'
           /. $Build  consumeTypeSpecifierEnumeration(false); $EndBuild ./
-      | 'enum' 'identifier' '{' <openscope-ast> enumerator_list_opt '}'
+      | 'enum' identifier_token '{' <openscope-ast> enumerator_list_opt '}'
           /. $Build  consumeTypeSpecifierEnumeration(true); $EndBuild ./
 
 
@@ -1131,7 +1136,7 @@ enumerator_definition
 
 
 enumerator
-    ::= 'identifier'
+    ::= identifier_token
 
 
 namespace_name
@@ -1169,11 +1174,11 @@ unnamed_namespace_definition
 
 
 namespace_alias
-    ::= 'identifier'
+    ::= identifier_token
 
 
 namespace_alias_definition
-    ::= 'namespace' 'identifier' '=' dcolon_opt nested_name_specifier_opt namespace_name ';'
+    ::= 'namespace' identifier_token '=' dcolon_opt nested_name_specifier_opt namespace_name ';'
            /. $Build  consumeNamespaceAliasDefinition(); $EndBuild ./
            
 
@@ -1476,11 +1481,6 @@ class_head -- done
           /. $Build  consumeClassHead(true);  $EndBuild ./
       | class_keyword nested_name_specifier template_id_name <openscope-ast> base_clause_opt
           /. $Build  consumeClassHead(true);  $EndBuild ./
-
-
-identifier_opt
-    ::= 'identifier'
-      | $empty
 
 
 identifier_name_opt

@@ -45,8 +45,8 @@ import org.eclipse.core.runtime.CoreException;
 public abstract class BaseExtensibleLanguage extends AbstractLanguage implements ILanguage, ICLanguageKeywords {
 			
 	
-	private static final boolean DEBUG_PRINT_GCC_AST = false;
-	private static final boolean DEBUG_PRINT_AST = false;
+	private static final boolean DEBUG_PRINT_GCC_AST = true;
+	private static final boolean DEBUG_PRINT_AST = true;
 	
 	/**
 	 * Retrieve the parser (runs after the preprocessor runs).
@@ -148,7 +148,19 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 	
 	public IASTCompletionNode getCompletionNode(CodeReader reader,
 			IScannerInfo scanInfo, ICodeReaderFactory fileCreator,
-			IIndex index, IParserLogService log, int offset) {
+			IIndex index, IParserLogService log, int offset) throws CoreException {
+		
+		
+		if(DEBUG_PRINT_GCC_AST) {
+			ILanguage gppLanguage = GPPLanguage.getDefault();
+			IASTCompletionNode cn = gppLanguage.getCompletionNode(reader, scanInfo, fileCreator, index, log, offset);
+			
+			System.out.println();
+			System.out.println("********************************************************");
+			System.out.println("GPP AST:");
+			DebugUtil.printAST(cn.getTranslationUnit());
+			System.out.println();
+		}
 		
 		// TODO temporary
 		IScannerExtensionConfiguration config = new GCCScannerExtensionConfiguration();
@@ -164,6 +176,14 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 		
 		// the parser will fill in the rest of the AST
 		IASTCompletionNode completionNode = parser.parse(tu);
+		
+		if(DEBUG_PRINT_AST) {
+			System.out.println("Base Extensible Language AST:");
+			DebugUtil.printAST(tu);
+			System.out.println();
+			System.out.println("Completion Node: " + completionNode);
+		}
+		
 		return completionNode;
 	}
 	

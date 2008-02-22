@@ -117,7 +117,7 @@ public class LPGTokenAdapter implements lpg.lpgjavaruntime.IToken {
 		this.tokenIndex = tokenIndex;
 	}
 
-	@Override
+	@Override 
 	public String toString() {
 		return token.toString();
 	}

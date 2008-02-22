@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 QNX Software Systems and others.
+ * Copyright (c) 2004, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  * Ken Ryall (Nokia) - bugs 170027, 105196
  * Ling Wang (Nokia) - bug 176081
  * Freescale Semiconductor - Address watchpoints, https://bugs.eclipse.org/bugs/show_bug.cgi?id=118299
+ * Elena Laskavaia (QNX) - Bug 219863
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core; 
 
@@ -24,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
@@ -48,20 +50,20 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpointManagement2;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDILineBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDILocationBreakpoint;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint2;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITargetConfiguration;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITargetConfiguration2;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint2;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
-import org.eclipse.cdt.debug.core.model.ICWatchpoint2;
 import org.eclipse.cdt.debug.core.model.ICThread;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
+import org.eclipse.cdt.debug.core.model.ICWatchpoint2;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.internal.core.breakpoints.BreakpointProblems;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint;
@@ -867,11 +869,16 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 
 	private ICAddressBreakpoint createAddressBreakpoint( ICDILocationBreakpoint cdiBreakpoint ) throws CDIException, CoreException {
 		IPath execFile = getExecFilePath();
-		String sourceHandle = execFile.toOSString();
+		String binary = execFile.toOSString();
 		IAddress address = getDebugTarget().getAddressFactory().createAddress( cdiBreakpoint.getLocator().getAddress() );
-		ICAddressBreakpoint breakpoint = CDIDebugModel.createAddressBreakpoint( sourceHandle,
-																				sourceHandle, 
-																				ResourcesPlugin.getWorkspace().getRoot(), 
+		ICDILocator location = cdiBreakpoint.getLocator();
+		String file = location.getFile();
+		if (file==null || file.length()==0) file=binary;
+		int line = location.getLineNumber();
+		ICAddressBreakpoint breakpoint = CDIDebugModel.createAddressBreakpoint( binary,
+																				file, 
+																				ResourcesPlugin.getWorkspace().getRoot(),
+																				line,
 																				address, 
 																				cdiBreakpoint.isEnabled(), 
 																				cdiBreakpoint.getCondition().getIgnoreCount(), 

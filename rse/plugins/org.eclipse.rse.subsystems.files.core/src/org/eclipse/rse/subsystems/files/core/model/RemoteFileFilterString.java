@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [219975] Fix implementations of clone()
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.model;
@@ -405,7 +405,9 @@ public class RemoteFileFilterString implements Cloneable
      * Clone this into another filter string object with the same attributes.
      * 
 	 * Subclasses must ensure that such a deep copy operation is always
-	 * possible, so their state must always be cloneable.
+	 * possible, so their state must always be cloneable. Which should 
+	 * always be possible to achieve, since this Object also needs to be
+	 * serializable.
      */
     public Object clone()
     {

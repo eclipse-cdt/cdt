@@ -14,6 +14,7 @@
  * Contributors:
  * David McKnight   (IBM)        - [208951] new priority field
  * Martin Oberhuber (Wind River) - [220020][api][breaking] SystemFileTransferModeRegistry should be internal
+ * Martin Oberhuber (Wind River) - [219975] Fix implementations of clone()
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.core.model;
@@ -159,7 +160,8 @@ public class SystemFileTransferModeMapping implements ISystemFileTransferModeMap
 			return super.clone();
 		}
 		catch (CloneNotSupportedException e) {
-			return null;
+			//assert false; //can never happen
+			throw new RuntimeException(e);
 		}
 	}
 }

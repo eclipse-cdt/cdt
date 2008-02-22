@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [219975] Fix implementations of clone()
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.shells.core.model;
@@ -42,6 +42,11 @@ import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystemConf
  * <p>
  * It is invalid to have both a comma and an asterisk in the same filter string.
  * It is also invalid to have both a comma and a period in the same filter string.
+ * <p>
+ * Clients may use or subclass this class. When subclassing, clients need to
+ * ensure that the subclass is always capable of performing a deep clone 
+ * operation with the {@link #clone()} method, so if they add fields of 
+ * complex type, these need to be dealt with by overriding {@link #clone()}. 
  */
 public class RemoteCommandFilterString implements Cloneable
 {
@@ -140,7 +145,7 @@ public class RemoteCommandFilterString implements Cloneable
 	}
 	
 	 /**
-     * De-hydrate into a string capturing all the attributes
+     * Serialize into a string capturing all the attributes
      */
 	public String toString()
 	{	 
@@ -149,17 +154,25 @@ public class RemoteCommandFilterString implements Cloneable
 	
 	 /**
      * Clone this into another filter string object with the same attributes.
+     * 
+	 * Subclasses must ensure that such a deep copy operation is always
+	 * possible, so their state must always be cloneable. Which should 
+	 * always be possible to achieve, since this Object also needs to be
+	 * serializable.
      */
     public Object clone()
     {
-   	    RemoteCommandFilterString copy = new RemoteCommandFilterString();
-   	    copy.shellStr = shellStr;
-   	    copy.filterByTypes = filterByTypes;
+   	    RemoteCommandFilterString copy = null;
+   	    try {
+   	    	copy = (RemoteCommandFilterString)super.clone();
+   	    } catch(CloneNotSupportedException e) {
+   	    	//assert false; //can never happen
+   	    	throw new RuntimeException(e);
+   	    }
    	    if (types!=null)
    	    {
-   	    	copy.types = new String[types.length];
-   	    	for (int idx=0; idx<types.length; idx++)
-   	    	   copy.types[idx] = types[idx]; // don't think we need to clone strings as they are immutable
+   	    	//duplicate the array in case somebody changes its contents
+   	    	copy.types = (String[])types.clone(); 
    	    }
    	    return copy;
     }	

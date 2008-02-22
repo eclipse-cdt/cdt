@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [180562][api] dont implement ISystemCompileXMLConstants
+ * Martin Oberhuber (Wind River) - [219975] Fix implementations of clone()
  *******************************************************************************/
 package org.eclipse.rse.internal.useractions.ui.compile;
 
@@ -362,11 +363,31 @@ public class SystemCompileCommand implements Cloneable, IAdaptable {
 	}
 
 	/**
-	 * Clone the object. Creates a new compile command and copies all its attributes.
-	 * If a subclass adds additional attributes, this method should be subclassed to clone those attributes.
+	 * Clone the object: creates a new compile command and copies all its attributes.
+	 * 
+	 * During the process of cloning, the Nature is always set to be 
+	 * User-supplied - so even if an IBM-Supplied compile command is cloned,
+	 * the result will be treated as User-supplied. 
+     * 
+	 * Subclasses must ensure that such a deep copy operation is always
+	 * possible, so their state must always be cloneable. Which should 
+	 * always be possible to achieve, since this Object also needs to be
+	 * serializable. If a subclass adds additional complex attributes, 
+	 * this method should be subclassed to clone those attributes.
 	 */
 	public Object clone() {
-		SystemCompileCommand clone = new SystemCompileCommand(getParentType(), getId(), getLabel(), ISystemCompileXMLConstants.NATURE_USER_VALUE, null, getCurrentString(), getMenuOption(), getOrder());
+		////Old invalid method of cloning does not maintain runtime type
+		//SystemCompileCommand clone = new SystemCompileCommand(getParentType(), getId(), getLabel(), ISystemCompileXMLConstants.NATURE_USER_VALUE, null, getCurrentString(), getMenuOption(), getOrder());
+		SystemCompileCommand clone = null;
+		try {
+			clone = (SystemCompileCommand)super.clone();
+		} catch(CloneNotSupportedException e) {
+			//assert false; //can never happen
+			throw new RuntimeException(e);
+		}
+		clone.setNature(ISystemCompileXMLConstants.NATURE_USER_VALUE);
+		clone.setDefaultString(null);
+		clone.configureId();
 		if (jobEnv != null) clone.setJobEnvironment(jobEnv);
 		return clone;
 	}

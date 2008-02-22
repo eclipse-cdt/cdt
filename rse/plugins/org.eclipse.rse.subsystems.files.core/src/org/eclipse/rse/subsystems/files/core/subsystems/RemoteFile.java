@@ -18,6 +18,7 @@
  * David McKnight   (IBM)        - [209660] use parent encoding as default, rather than system encoding
  * David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
  * Martin Oberhuber (Wind River) - [220020][api][breaking] SystemFileTransferModeRegistry should be internal
+ * Martin Oberhuber (Wind River) - [219975] Fix implementations of clone()
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;

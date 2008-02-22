@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [219975] Fix implementations of clone()
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.clientserver.archiveutils;
@@ -530,22 +530,22 @@ public class TarEntry implements Cloneable {
 	 * @see java.lang.Object#clone()
 	 */
 	public Object clone() throws CloneNotSupportedException {
-		TarEntry newEntry = new TarEntry(getName());
-		newEntry.mode = this.mode;
-		newEntry.uid = this.uid;
-		newEntry.gid = this.gid;
-		newEntry.size = this.size;
-		newEntry.mtime = this.mtime;
-		newEntry.chksum = this.chksum;
-		newEntry.typeflag = this.typeflag;
-		newEntry.linkname = this.linkname;
-		newEntry.magic = this.magic;
-		newEntry.version = this.version;
-		newEntry.uname = this.uname;
-		newEntry.gname = this.gname;
-		newEntry.devmajor = this.devmajor;
-		newEntry.devminor = this.devminor;
-		newEntry.prefix = this.prefix;
+		TarEntry newEntry = (TarEntry)super.clone();
+		newEntry.mode = (byte[])this.mode.clone();
+		newEntry.uid = (byte[])this.uid.clone();
+		newEntry.gid = (byte[])this.gid.clone();
+		newEntry.size = (byte[])this.size.clone();
+		newEntry.mtime = (byte[])this.mtime.clone();
+		newEntry.chksum = (byte[])this.chksum.clone();
+		//newEntry.typeflag = this.typeflag;
+		newEntry.linkname = (byte[])this.linkname.clone();
+		newEntry.magic = (byte[])this.magic.clone();
+		newEntry.version = (byte[])this.version.clone();
+		newEntry.uname = (byte[])this.uname.clone();
+		newEntry.gname = (byte[])this.gname.clone();
+		newEntry.devmajor = (byte[])this.devmajor.clone();
+		newEntry.devminor = (byte[])this.devminor.clone();
+		newEntry.prefix = (byte[])this.prefix.clone();
 		return newEntry;
 	}
 }

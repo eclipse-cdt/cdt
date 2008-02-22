@@ -66,7 +66,7 @@ public class ASTProblem extends ASTNode implements IASTProblem {
 
         char[] file= getOriginatingFileName();
         int line= getSourceLineNumber();
-        Object[] args = new Object[] { msg, file, new Integer(line) };
+        Object[] args = new Object[] { msg, new String(file), new Integer(line) };
         return ParserMessages.getFormattedString(PROBLEM_PATTERN, args);
     }
 

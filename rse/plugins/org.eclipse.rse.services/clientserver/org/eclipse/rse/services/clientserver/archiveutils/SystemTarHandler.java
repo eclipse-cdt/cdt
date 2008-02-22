@@ -12,7 +12,6 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
  * Xuan Chen        (IBM)        - [194293] [Local][Archives] Saving file second time in an Archive Errors
  * Xuan Chen        (IBM)        - [199132] [Archives-TAR][Local-Windows] Can't open files in tar archives
  * Xuan Chen        (IBM)        - [160775] [api] rename (at least within a zip) blocks UI thread
@@ -22,7 +21,6 @@
  * Xuan Chen        (IBM)        - [211653] Copy virtual directory with nested directory of tar file did not work
  * Xuan Chen        (IBM)        - [214251] [archive] "Last Modified Time" changed for all virtual files/folders if rename/paste/delete of one virtual file.
  * Xuan Chen        (IBM)        - [191370] [dstore] Supertransfer zip not deleted when cancelling copy
- * Xuan Chen        (IBM)        - [218491] ArchiveHandlerManager#cleanUpVirtualPath is messing up the file separators
  *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver.archiveutils;
@@ -362,7 +360,6 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		
 		/**
 		 * Constructor for the virtual file node.
-		 * @param name the name of the node. 
 		 * @param entry the entry that this node represents.
 		 */
 		public VirtualFileNode(VirtualChild entry) {
@@ -570,8 +567,9 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	
 	/**
 	 * Initializes the handler from the given file and does caching.
-	 * @param file
-	 * @throws IOException
+	 * @param file the file to handle
+	 * @throws IOException in case of error during initialization 
+	 *     (can be thrown by overriding methods) 
 	 */
 	protected void init(File file) throws IOException {
 		this.file = file;
@@ -1326,7 +1324,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	 * @param children an array of virtual children from which to create a tar file.
 	 * @param outStream the tar output stream to use.
 	 * @param omitChildren the set of names for children that should be omitted from the given array of virtual children.
-	 * @param the operation progress monitor
+	 * @param archiveOperationMonitor the operation progress monitor
 	 * @throws IOException if an I/O exception occurs.
 	 */
 	protected boolean createTar(VirtualChild[] children, TarOutputStream outStream, HashSet omitChildren, ISystemOperationMonitor archiveOperationMonitor) throws IOException {
@@ -1356,21 +1354,10 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 			if (children[i].isDirectory) {
 				
 				// include a '/' at the end, since it is a directory
-				TarEntry nextEntry = null;
-				if (!children[i].fullName.endsWith("/")) //$NON-NLS-1$
-				{
-					nextEntry = tarFile.getEntry(children[i].fullName + "/"); //$NON-NLS-1$
-				}
-				else
-				{
-					nextEntry = tarFile.getEntry(children[i].fullName); 
-				}
+				TarEntry nextEntry = tarFile.getEntry(children[i].fullName + "/"); //$NON-NLS-1$
 				
 				// put the entry
-				if (null != nextEntry)
-				{
-					outStream.putNextEntry(nextEntry);
-				}
+				outStream.putNextEntry(nextEntry);
 				
 				// close the entry
 				outStream.closeEntry();
@@ -1444,7 +1431,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	 * will contain the size and last modified time of the file. The entry's
 	 * checksum will be calculated.
 	 * @param file the file for which to create a tar entry.
-	 * @param name the virtual path for the entry.
+	 * @param virtualPath the virtual path for the entry.
 	 * @return the tar entry representing the given file.
 	 */
 	protected TarEntry createTarEntry(File file, String virtualPath) {
@@ -1652,8 +1639,9 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 
 	
 	
-	/**
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#replace(java.lang.String, java.io.File, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#replace(java.lang.String, java.io.File, java.lang.String, org.eclipse.rse.services.clientserver.ISystemOperationMonitor)
 	 */
 	public boolean replace(String fullVirtualName, File file, String name, ISystemOperationMonitor archiveOperationMonitor) {
 		
@@ -1891,8 +1879,9 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		}
 	}
 
-	/**
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#fullRename(java.lang.String, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#fullRename(java.lang.String, java.lang.String, org.eclipse.rse.services.clientserver.ISystemOperationMonitor)
 	 */
 	public boolean fullRename(String fullVirtualName, String newFullVirtualName, ISystemOperationMonitor archiveOperationMonitor) {
 		
@@ -2456,13 +2445,21 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	}
 
 	/**
-	 * @param file
-	 * @param virtualPath
-	 * @param name
-	 * @param encoding
-	 * @param registry
-	 * @return whether the add was successful
-	 */
+	 * Compresses the file <code>file</code> and adds it to the archive,
+	 * saving it in the encoding specified by <code>encoding</code> if 
+	 * saving in text mode.
+	 * Places the file in the virtual directory <code>virtualPath</code>. Pass the
+	 * name as the parameter <code>name</code>. If the virtual path does not exist
+	 * in the archive, create it. If <code>file</code> is a directory, copy it and
+	 * its contents into the archive, maintaining the tree structure.
+	 * @param file the file to be added to the archive
+	 * @param virtualPath the destination of the file
+	 * @param name the name of the result virtual file
+	 * @param encoding the file encoding to use
+	 * @param registry the file type to use (text or binary) 
+	 * @param archiveOperationMonitor the operation progress monitor
+	 * @return true if and only if the add was successful
+	 */	 
 	public boolean add(File file, String virtualPath, String name,
 			String encoding, ISystemFileTypes registry, ISystemOperationMonitor archiveOperationMonitor) {
 		return add(file, virtualPath, name, archiveOperationMonitor);

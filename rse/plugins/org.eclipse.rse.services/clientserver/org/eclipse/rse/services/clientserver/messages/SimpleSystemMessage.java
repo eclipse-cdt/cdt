@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2008 IBM Corporation. All rights reserved.
+ * Copyright (c) 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -10,6 +10,7 @@
  * 
  * Contributors:
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * Martin Oberhuber (Wind River) - [219975] Fix SystemMessage#clone()
  ********************************************************************************/
 package org.eclipse.rse.services.clientserver.messages;
 
@@ -18,7 +19,7 @@ import java.io.StringWriter;
 
 import org.eclipse.core.runtime.IStatus;
 
-public class SimpleSystemMessage extends SystemMessage {
+public class SimpleSystemMessage extends SystemMessage implements Cloneable {
 
 	/**
 	 * alternative to message number for ids?

@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * David McKnight   (IBM)        - [216252] SystemMessages using RSEStatus
+ * Martin Oberhuber (Wind River) - [219975] Fix SystemMessage#clone()
  *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver.messages;

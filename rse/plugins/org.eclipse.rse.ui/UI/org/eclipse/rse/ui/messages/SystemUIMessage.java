@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2004, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [219975] Fix SystemMessage#clone()
  ********************************************************************************/
 
 package org.eclipse.rse.ui.messages;
@@ -24,7 +24,7 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 
 
 
-public class SystemUIMessage extends SystemMessage
+public class SystemUIMessage extends SystemMessage implements Cloneable
 {
 	protected static final int displayMask = IStatus.OK | IStatus.INFO | IStatus.WARNING | IStatus.ERROR; // for IStatus substitution variables		
 
@@ -33,7 +33,7 @@ public class SystemUIMessage extends SystemMessage
 		super(comp,sub,number,ind,l1,l2);
 	}
 
-/**
+	/**
 	 * used to determine the string value of the object 
 	 * it calls toString for all object types except for Exceptions
 	 * where the stack is also rendered

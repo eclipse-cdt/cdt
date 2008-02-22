@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - Cleanup Javadoc.
  *******************************************************************************/
 
 package org.eclipse.rse.core.filters;
@@ -55,44 +55,41 @@ public interface ISystemFilterString extends IRSEBaseReferencedObject, IAdaptabl
 	public void clone(ISystemFilterString targetString);
 
 	/**
-	 * Is this filter string changable? Depends on mof attributes of parent filter
+	 * Check if this filter string is changeable.
+	 * Depends on attributes of parent filter.
 	 */
 	public boolean isChangable();
 
 	/**
-	 * @generated This field/method will be replaced during code generation 
 	 * @return The value of the String attribute
 	 */
 	String getString();
 
 	/**
-	 * @generated This field/method will be replaced during code generation 
 	 * @param value The new value of the String attribute
 	 */
 	void setString(String value);
 
 	/**
-	 * @generated This field/method will be replaced during code generation 
-	 * @return The value of the Type attribute
+     * Returns the type attribute.
+     * Intercepted to return SystemFilterConstants.DEFAULT_TYPE if it is currently null
 	 * Allows tools to have typed filter strings
+	 * @return The value of the Type attribute
 	 */
 	String getType();
 
 	/**
-	 * @generated This field/method will be replaced during code generation 
 	 * @param value The new value of the Type attribute
 	 */
 	void setType(String value);
 
 	/**
-	 * @generated This field/method will be replaced during code generation 
+	 * Check if this is a vendor-supplied filter string versus a user-defined filter string.
 	 * @return The value of the Default attribute
-	 * Is this a vendor-supplied filter string versus a user-defined filter string
 	 */
 	boolean isDefault();
 
 	/**
-	 * @generated This field/method will be replaced during code generation 
 	 * @param value The new value of the Default attribute
 	 */
 	void setDefault(boolean value);

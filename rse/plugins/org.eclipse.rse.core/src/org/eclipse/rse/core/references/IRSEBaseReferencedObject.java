@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - Cleanup Javadoc.
  ********************************************************************************/
 
 package org.eclipse.rse.core.references;
@@ -35,6 +35,7 @@ public interface IRSEBaseReferencedObject {
 	public int removeReference(IRSEBaseReferencingObject ref);
 
 	/**
+	 * Return a count of how many referencing objects reference this object.
 	 * @return a count of how many referencing objects reference this object.
 	 */
 	public int getReferenceCount();

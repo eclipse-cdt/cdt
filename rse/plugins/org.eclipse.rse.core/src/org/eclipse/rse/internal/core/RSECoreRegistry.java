@@ -157,7 +157,7 @@ public class RSECoreRegistry implements IRSECoreRegistry {
 					accessedSystemTypeCache.put(type.getId(), type);
 					accessedSystemTypeCache.put(type.getName(), type);
 					
-					String message = "Successfully registered RSE system type '{0}' (id = '{1}')."; //$NON-NLS-1$
+					String message = "Successfully registered RSE system type ''{0}'' (id = ''{1}'')."; //$NON-NLS-1$
 					message = NLS.bind(message, type.getLabel(), type.getId());
 					RSECorePlugin.getDefault().getLogger().logInfo(message);
 				} else {
@@ -188,7 +188,7 @@ public class RSECoreRegistry implements IRSECoreRegistry {
 							accessedSystemTypeCache.put(type.getId(), type);
 							accessedSystemTypeCache.put(type.getName(), type);
 
-							String message = "Successfully registered RSE system type '{0}' (id = '{1}')."; //$NON-NLS-1$
+							String message = "Successfully registered RSE system type ''{0}'' (id = ''{1}'')."; //$NON-NLS-1$
 							message = NLS.bind(message, type.getLabel(), type.getId() );
 							RSECorePlugin.getDefault().getLogger().logInfo(message);
 						} else {

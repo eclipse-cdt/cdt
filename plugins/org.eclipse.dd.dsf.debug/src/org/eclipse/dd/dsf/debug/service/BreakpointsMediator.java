@@ -427,6 +427,9 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 							list = new LinkedList<IBreakpointDMContext>();
 						list.add(getData());
 						breakpointIDs.put(breakpoint, list);
+					} else {
+                        // TODO (bug 219841): need to add breakpoint error status tracking
+                        // in addition to fBreakpointDMContexts.
 					}
 					installRM.done();
                 }
@@ -628,13 +631,18 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
                     oldBpContexts.get(i), 
                     new RequestMonitor(getExecutor(), countingRM) {
                         @Override
-                        protected void handleOK() {
+                        protected void handleCompleted() {
                             fBreakpoints.insertBreakpoint(
                                 context, attrs,
                                 new DataRequestMonitor<IBreakpointDMContext>(getExecutor(), countingRM) {
                                     @Override
-                                    protected void handleOK() {
-                                        newBpContexts.add(getData());
+                                    protected void handleCompleted() {
+                                        if (getStatus().isOK()) { 
+                                            newBpContexts.add(getData());
+                                        } else {
+                                            // TODO (bug 219841): need to add breakpoint error status tracking
+                                            // in addition to fBreakpointDMContexts.
+                                        }
                                         countingRM.done();
                                     }
                                 });

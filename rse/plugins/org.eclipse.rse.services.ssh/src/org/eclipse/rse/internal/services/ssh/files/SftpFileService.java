@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -684,11 +685,12 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			  fWorkToDate += count;
 			  Long workToDateKB = new Long(fWorkToDate / 1024L);
 			  Double workPercent = new Double(fWorkPercentFactor * fWorkToDate);
-			  String subDesc = NLS.bind(
+			  String subDesc = MessageFormat.format(
 					  SshServiceResources.SftpFileService_Msg_Progress,
 					  new Object[] {
 						workToDateKB, fMaxWorkKB, workPercent	  
 					  });
+
 			  fMonitor.subTask(subDesc);
 		      fMonitor.worked((int)count);
 		      return !(fMonitor.isCanceled());

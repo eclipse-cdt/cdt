@@ -86,6 +86,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -99,7 +100,6 @@ import org.apache.commons.net.ftp.FTPReply;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.internal.services.files.ftp.parser.IFTPClientConfigFactory;
 import org.eclipse.rse.internal.services.files.ftp.parser.IFTPClientConfigProxy;
@@ -1529,11 +1529,11 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			  fWorkToDate += count;
 			  Long workToDateKB = new Long(fWorkToDate / 1024L);
 			  Double workPercent = new Double(fWorkPercentFactor * fWorkToDate);
-			  String subDesc = NLS.bind(
-					 FTPServiceResources.FTP_File_Service_Monitor_Format,  
-					  new Object[] {
-						workToDateKB, fMaxWorkKB, workPercent	  
-					  });
+			  String subDesc = MessageFormat.format(
+						 FTPServiceResources.FTP_File_Service_Monitor_Format,  
+						  new Object[] {
+							workToDateKB, fMaxWorkKB, workPercent	  
+						  });
 			  fMonitor.subTask(subDesc);
 		      fMonitor.worked((int)count);
 		      return !(fMonitor.isCanceled());

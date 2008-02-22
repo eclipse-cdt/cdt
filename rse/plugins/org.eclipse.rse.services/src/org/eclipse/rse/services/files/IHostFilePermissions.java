@@ -151,7 +151,9 @@ public interface IHostFilePermissions {
 	 * Each implementer of the IHostFilePermission API must properly implement
 	 * this method and implement the {@link Cloneable} interface.
 	 * @return the cloned object
-	 * @throws CloneNotSupportedException
+	 * @throws CloneNotSupportedException if an instance cannot be cloned for
+	 *    any reason, e.g. because its state contains complex objects that
+	 *    cannot be cloned.
 	 * @see Object#clone()
 	 */
 	public Object clone() throws CloneNotSupportedException;

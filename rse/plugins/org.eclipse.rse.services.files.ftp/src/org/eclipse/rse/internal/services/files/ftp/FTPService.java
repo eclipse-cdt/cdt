@@ -71,7 +71,6 @@
  * David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
  * Martin Oberhuber (Wind River) - [216351] Improve cancellation of SystemFetchOperation for files
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
- * David McKnight   (IBM)        - [216252] MessageFormat.format -> NLS.bind
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -237,7 +236,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	 * </table>
 	 * 
 	 * @see org.eclipse.rse.core.model.IPropertySet
-	 * @param ftpPropertySet
+	 * @param ftpPropertySet FTP Client Preference Properties to set 
 	 */
 	public void setPropertySet(IPropertySet ftpPropertySet)
 	{

@@ -23,7 +23,6 @@
  * David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
  * Martin Oberhuber (Wind River) - [216343] immediate link targets and canonical paths for Sftp
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
- * David McKnight   (IBM)        - [216252] MessageFormat.format -> NLS.bind
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.files;
@@ -179,7 +178,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	 * Encode String with requested user encoding, in case it differs from Platform default encoding.
 	 * @param s String to encode
 	 * @return encoded String
-	 * @throws SystemMessageException
+	 * @throws SystemMessageException with user message in case the requested encoding is not supported
 	 */
 	protected String recode(String s) throws SystemMessageException {
 		if (fControlEncoding==null) {
@@ -243,7 +242,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	 * Decode String (sftp result) with requested user encoding, in case it differs from Platform default encoding.
 	 * @param s String to decode
 	 * @return decoded String
-	 * @throws SystemMessageException
+	 * @throws SystemMessageException with user message in case the requested encoding is not supported
 	 */
 	protected String decode(String s) throws SystemMessageException {
 		if (fControlEncoding==null) {

@@ -465,8 +465,8 @@ public class SystemMessage
 		//return new SystemMessage(component, subComponent, messageNumber, indicator, level1NS, level2NS);
 		SystemMessage result = (SystemMessage)super.clone();
 		//re-initialize substitutions to empty
-		result.level1WS = null;
-		result.level2WS = null;
+		result.level1WS = level1NS;
+		result.level2WS = level2NS;
 		result.subPrefix = '%';
 		result.numSubs = -1;
 		result.subs = null;

@@ -15,6 +15,7 @@
  * David McKnight   (IBM)        - [162195] new APIs for upload multi and download multi 
  * David McKnight   (IBM)        - [197480] eliminating UI dependencies
  * David McKnight   (IBM)        - [216252] MessageFormat.format -> NLS.bind
+ * Martin Oberhuber (Wind River) - [219952] Use MessageFormat for download progress message
  ********************************************************************************/
 
 package org.eclipse.rse.services.dstore.util;
@@ -22,6 +23,7 @@ package org.eclipse.rse.services.dstore.util;
 
 
 import java.io.File;
+import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.dstore.core.model.DE;
@@ -29,10 +31,7 @@ import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.extra.DomainEvent;
 import org.eclipse.dstore.extra.IDomainListener;
-import org.eclipse.osgi.util.NLS;
-import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.internal.services.dstore.ServiceResources;
-import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 
 public class DownloadListener implements IDomainListener
 {
@@ -47,8 +46,6 @@ public class DownloadListener implements IDomainListener
 	private boolean _isCancelled = false;
 	private long _totalBytesNotified = 0;
 	private long _totalLength;
-
-	private static String _percentMsg = SystemMessage.sub(SystemMessage.sub(SystemMessage.sub(ServiceResources.DStore_Service_Percent_Complete_Message, "&0", "{0}"), "&1", "{1}"), "&2", "{2}");	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 
 	public DownloadListener(DataElement status, File localFile, String remotePath, long totalLength, IProgressMonitor monitor)
 	{
@@ -151,22 +148,14 @@ public class DownloadListener implements IDomainListener
 				
 				try
 				{
-					long percent = (currentLength * 100) / _totalLength;
-												
-						
-					StringBuffer current = new StringBuffer();
-					current.append(currentLength /IUniversalDataStoreConstants.KB_IN_BYTES);
-					current.append(" KB"); //$NON-NLS-1$
-					
-					StringBuffer total = new StringBuffer();
-					total.append(_totalLength / IUniversalDataStoreConstants.KB_IN_BYTES);
-					total.append(" KB"); //$NON-NLS-1$
-					
-					StringBuffer percentBuf = new StringBuffer();
-					percentBuf.append(percent);
-					percentBuf.append("%"); //$NON-NLS-1$
-					
-					String str = NLS.bind(_percentMsg, new Object[] {current, total, percentBuf});
+					double percent = (currentLength * 1.0) / _totalLength;
+					String str = MessageFormat.format(
+						ServiceResources.DStore_Service_Percent_Complete_Message,
+						new Object[] {
+							new Long(currentLength/1024), 
+							new Long(_totalLength/1024),
+							new Double(percent)
+						});
 					
 					_monitor.subTask(str);
 					

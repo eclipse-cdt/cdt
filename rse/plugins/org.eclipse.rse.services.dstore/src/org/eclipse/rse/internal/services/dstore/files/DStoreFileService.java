@@ -35,6 +35,7 @@
  * Xuan Chen        (IBM)        - [209827] Update DStore command implementation to enable cancelation of archive operations
  * David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
  * David McKnight   (IBM)        - [216252] MessageFormat.format -> NLS.bind
+ * Martin Oberhuber (Wind River) - [219952] Use MessageFormat for download progress message
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -47,6 +48,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -59,7 +61,6 @@ import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.DataStoreAttributes;
 import org.eclipse.dstore.core.model.DataStoreResources;
 import org.eclipse.dstore.core.model.IDataStoreProvider;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.dstore.universal.miners.UniversalByteStreamHandler;
 import org.eclipse.rse.internal.services.dstore.ServiceResources;
@@ -98,12 +99,9 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	private int _bufferDownloadSize = IUniversalDataStoreConstants.BUFFER_SIZE;
 	protected ISystemFileTypes _fileTypeRegistry;
 	private String remoteEncoding;
-
 	
 	protected boolean unixStyle = false;
 	
-	private static String _percentMsg = SystemMessage.sub(SystemMessage.sub(SystemMessage.sub(ServiceResources.DStore_Service_Percent_Complete_Message, "&0", "{0}"), "&1", "{1}"), "&2", "{2}");	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
-
 	private static String[] _filterAttributes =  {
 		"attributes",  //$NON-NLS-1$
 		"filter", //$NON-NLS-1$
@@ -579,26 +577,16 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 				
 				if (/*display != null &&*/ monitor != null)
 				{
-					long percent = (totalSent * 100) / totalBytes;
-
-			
-					StringBuffer totalSentBuf = new StringBuffer();
-					totalSentBuf.append((totalSent / IUniversalDataStoreConstants.KB_IN_BYTES));
-					totalSentBuf.append(" KB"); //$NON-NLS-1$
-					
-					StringBuffer totalBuf = new StringBuffer();
-					totalBuf.append(totalBytes / IUniversalDataStoreConstants.KB_IN_BYTES);
-					totalBuf.append(" KB"); //$NON-NLS-1$
-					
-					StringBuffer percentBuf = new StringBuffer();
-					percentBuf.append(percent);
-					percentBuf.append("%"); //$NON-NLS-1$
-								
+					double percent = (totalSent * 1.0) / totalBytes;
 					monitor.worked(bytesRead);
-					
-					String str = NLS.bind(_percentMsg, new Object[] {totalSentBuf, totalBuf, percentBuf});
+					String str = MessageFormat.format(
+						ServiceResources.DStore_Service_Percent_Complete_Message,
+						new Object[] {
+							new Long(totalSent / IUniversalDataStoreConstants.KB_IN_BYTES), 
+							new Long(totalBytes / IUniversalDataStoreConstants.KB_IN_BYTES),
+							new Double(percent)
+						});
 					monitor.subTask(str);					
-
 					isCancelled = monitor.isCanceled();
 				}
 
@@ -1848,9 +1836,11 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	
 	
 	/**
-	 * 
-	 * @param path
-	 * @return could be null if there isn't one mapped right now
+	 * Get a dstore IHostFile object for the given absolute path, provided
+	 * that the file object has been accessed before and is available in our
+	 * file map.
+	 * @param path absolute file path identifying the remote object
+	 * @return Requested file object or <code>null</code> if there isn't one mapped right now
 	 */
 	public IHostFile getHostFile(String path)
 	{

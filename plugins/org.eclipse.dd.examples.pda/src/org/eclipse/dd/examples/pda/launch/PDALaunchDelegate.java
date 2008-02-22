@@ -46,7 +46,7 @@ import org.eclipse.debug.core.sourcelookup.IPersistableSourceLocator2;
  * Launches PDA program on a PDA interpretter written in Perl 
  */
 public class PDALaunchDelegate extends LaunchConfigurationDelegate {
-    
+
     @Override
     public ILaunch getLaunch(ILaunchConfiguration configuration, String mode) throws CoreException {
         // Need to configure the source locator before creating the launch
@@ -54,10 +54,10 @@ public class PDALaunchDelegate extends LaunchConfigurationDelegate {
         // the adapters will be created for the whole session, including 
         // the source lookup adapter.
         ISourceLocator locator = getSourceLocator(configuration);
-        
+
         return new PDALaunch(configuration, mode, locator);
     }
-    
+
     @Override
     public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
         // PDA programs do not require building.
@@ -88,9 +88,9 @@ public class PDALaunchDelegate extends LaunchConfigurationDelegate {
         return null;
     }
 
-	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
-	    String program = configuration.getAttribute(PDAPlugin.ATTR_PDA_PROGRAM, (String)null);
-	    if (program == null) {
+    public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
+        String program = configuration.getAttribute(PDAPlugin.ATTR_PDA_PROGRAM, (String)null);
+        if (program == null) {
             abort("Perl program unspecified.", null);
         }
 
@@ -103,21 +103,21 @@ public class PDALaunchDelegate extends LaunchConfigurationDelegate {
         launchProcess(launch, program, requestPort, eventPort);
         PDALaunch pdaLaunch = (PDALaunch)launch; 
         initServices(pdaLaunch, program, requestPort, eventPort);
-	}
+    }
 
-	/**
-	 * Launches PDA interpreter with the given program.
-	 *  
-	 * @param launch Launch that will contain the new process.
-	 * @param program PDA program to use in the interpreter.
-	 * @param requestPort The port number for connecting the request socket.
-	 * @param eventPort The port number for connecting the events socket.
-	 * 
-	 * @throws CoreException 
-	 */
-	private void launchProcess(ILaunch launch, String program, int requestPort, int eventPort) throws CoreException {
+    /**
+     * Launches PDA interpreter with the given program.
+     *  
+     * @param launch Launch that will contain the new process.
+     * @param program PDA program to use in the interpreter.
+     * @param requestPort The port number for connecting the request socket.
+     * @param eventPort The port number for connecting the events socket.
+     * 
+     * @throws CoreException 
+     */
+    private void launchProcess(ILaunch launch, String program, int requestPort, int eventPort) throws CoreException {
         List<String> commandList = new ArrayList<String>();
-        
+
         // Find Perl executable
         IValueVariable perl = VariablesPlugin.getDefault().getStringVariableManager().getValueVariable(PDAPlugin.VARIALBE_PERL_EXECUTABLE);
         if (perl == null) {
@@ -132,50 +132,50 @@ public class PDALaunchDelegate extends LaunchConfigurationDelegate {
             abort(MessageFormat.format("Specified Perl executable {0} does not exist. Check value of $dsfPerlExecutable.", new Object[]{path}), null);
         }
         commandList.add(path);
-        
+
         // Add PDA VM
         File vm = PDAPlugin.getFileInPlugin(new Path("pdavm/pda.pl"));
         if (vm == null) {
             abort("Missing PDA VM", null);
         }
         commandList.add(vm.getAbsolutePath());
-        
+
         // Add PDA program
         IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(program));
         if (!file.exists()) {
             abort(MessageFormat.format("Perl program {0} does not exist.", new Object[] {file.getFullPath().toString()}), null);
         }
-        
+
         commandList.add(file.getLocation().toOSString());
-        
+
         // Add debug arguments - i.e. '-debug requestPort eventPort'
         commandList.add("-debug");
         commandList.add("" + requestPort);
         commandList.add("" + eventPort);
-        
+
         // Launch the perl process.
         String[] commandLine = commandList.toArray(new String[commandList.size()]);
         Process process = DebugPlugin.exec(commandLine, null);
-        
+
         // Create a debug platform process object and add it to the launch.
         DebugPlugin.newProcess(launch, process, path);
-	}
-	
-	/**
-	 * Calls the launch to initialize DSF services for this launch.
-	 */
-	private void initServices(final PDALaunch pdaLaunch, final String program, final int requestPort, final int eventPort) 
-	    throws CoreException 
-	{
-	    // Synchronization object to use when waiting for the services initialization.
-	    Query<Object> initQuery = new Query<Object>() {
-	        @Override
-	        protected void execute(DataRequestMonitor<Object> rm) {
-	            pdaLaunch.initializeServices(program, requestPort, eventPort, rm);
-	        }
-	    };
+    }
 
-	    // Submit the query to the executor.
+    /**
+     * Calls the launch to initialize DSF services for this launch.
+     */
+    private void initServices(final PDALaunch pdaLaunch, final String program, final int requestPort, final int eventPort) 
+    throws CoreException 
+    {
+        // Synchronization object to use when waiting for the services initialization.
+        Query<Object> initQuery = new Query<Object>() {
+            @Override
+            protected void execute(DataRequestMonitor<Object> rm) {
+                pdaLaunch.initializeServices(program, requestPort, eventPort, rm);
+            }
+        };
+
+        // Submit the query to the executor.
         pdaLaunch.getSession().getExecutor().execute(initQuery);
         try {
             // Block waiting for query results.
@@ -185,37 +185,37 @@ public class PDALaunchDelegate extends LaunchConfigurationDelegate {
         } catch (ExecutionException e1) {
             throw new DebugException(new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Error in launch sequence", e1.getCause())); //$NON-NLS-1$
         }
-	}
-	
-	/**
-	 * Throws an exception with a new status containing the given
-	 * message and optional exception.
-	 * 
-	 * @param message error message
-	 * @param e underlying exception
-	 * @throws CoreException
-	 */
-	private void abort(String message, Throwable e) throws CoreException {
-		throw new CoreException(new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, 0, message, e));
-	}
-	
-	/**
-	 * Returns a free port number on localhost, or -1 if unable to find a free port.
-	 */
-	public static int findFreePort() {
-		ServerSocket socket= null;
-		try {
-			socket= new ServerSocket(0);
-			return socket.getLocalPort();
-		} catch (IOException e) { 
-		} finally {
-			if (socket != null) {
-				try {
-					socket.close();
-				} catch (IOException e) {
-				}
-			}
-		}
-		return -1;		
-	}		
+    }
+
+    /**
+     * Throws an exception with a new status containing the given
+     * message and optional exception.
+     * 
+     * @param message error message
+     * @param e underlying exception
+     * @throws CoreException
+     */
+    private void abort(String message, Throwable e) throws CoreException {
+        throw new CoreException(new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, 0, message, e));
+    }
+
+    /**
+     * Returns a free port number on localhost, or -1 if unable to find a free port.
+     */
+    public static int findFreePort() {
+        ServerSocket socket= null;
+        try {
+            socket= new ServerSocket(0);
+            return socket.getLocalPort();
+        } catch (IOException e) { 
+        } finally {
+            if (socket != null) {
+                try {
+                    socket.close();
+                } catch (IOException e) {
+                }
+            }
+        }
+        return -1;		
+    }		
 }

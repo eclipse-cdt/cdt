@@ -24,7 +24,7 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 
 
 
-public class SystemUIMessage extends SystemMessage implements Cloneable
+public class SystemUIMessage extends SystemMessage
 {
 	protected static final int displayMask = IStatus.OK | IStatus.INFO | IStatus.WARNING | IStatus.ERROR; // for IStatus substitution variables		
 

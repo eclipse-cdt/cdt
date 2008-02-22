@@ -19,14 +19,14 @@ import java.io.StringWriter;
 
 import org.eclipse.core.runtime.IStatus;
 
-public class SimpleSystemMessage extends SystemMessage implements Cloneable {
+public class SimpleSystemMessage extends SystemMessage {
 
 	/**
 	 * alternative to message number for ids?
 	 */
 	private String _pluginId;
 
-	private int _severity;
+	//private int _severity;
 	
 	/**
 	 * Constructor for messages that use explicit strings and severities rather than
@@ -55,7 +55,7 @@ public class SimpleSystemMessage extends SystemMessage implements Cloneable {
 		super("RSE", "G", "-", severityToIndicator(severity), msg, msgDetails);  //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
 	
 		_pluginId = pluginId;
-		_severity = severity;
+		//_severity = severity;
 	}
 		
 	/**
@@ -71,7 +71,7 @@ public class SimpleSystemMessage extends SystemMessage implements Cloneable {
 	public SimpleSystemMessage(String pluginId, int severity, String msg, Throwable e) {
 		super("RSE", "G", "-", severityToIndicator(severity), msg, throwableToDetails(e)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		_pluginId = pluginId;
-		_severity = severity;
+		//_severity = severity;
 	}
 	
 	private static String throwableToDetails(Throwable e){	

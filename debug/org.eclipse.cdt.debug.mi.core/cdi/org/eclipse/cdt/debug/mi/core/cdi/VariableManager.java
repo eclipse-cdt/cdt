@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Alena Laskavaia(QNX) - Bug 197986
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.cdi;
 
@@ -42,8 +43,8 @@ import org.eclipse.cdt.debug.mi.core.cdi.model.ThreadStorage;
 import org.eclipse.cdt.debug.mi.core.cdi.model.ThreadStorageDescriptor;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Variable;
 import org.eclipse.cdt.debug.mi.core.cdi.model.VariableDescriptor;
-import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.CLIPType;
+import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIStackListArguments;
 import org.eclipse.cdt.debug.mi.core.command.MIStackListLocals;
 import org.eclipse.cdt.debug.mi.core.command.MIVarCreate;
@@ -52,13 +53,14 @@ import org.eclipse.cdt.debug.mi.core.command.MIVarUpdate;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIVarChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIVarDeletedEvent;
+import org.eclipse.cdt.debug.mi.core.output.CLIPTypeInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIArg;
 import org.eclipse.cdt.debug.mi.core.output.MIFrame;
-import org.eclipse.cdt.debug.mi.core.output.CLIPTypeInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIStackListArgumentsInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIStackListLocalsInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIVar;
 import org.eclipse.cdt.debug.mi.core.output.MIVarChange;
+import org.eclipse.cdt.debug.mi.core.output.MIVarCreateInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIVarUpdateInfo;
 
 /**
@@ -692,11 +694,17 @@ public class VariableManager extends Manager {
 			// Then create again the variable, set the fVarCreateCMD of Variable class and try again the update command.
 			try {						
 				MIVarCreate var = factory.createMIVarCreate(variable.getName());
-				mi.postCommand(var, -1);						
+				mi.postCommand(var);	
+				MIVarCreateInfo info = var.getMIVarCreateInfo();
+				if (info == null) {
+					throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
+				}
 				variable.setMIVarCreate(var);						
 				update(target, variable, eventList);
 			} catch (MIException e) {
 				throw new MI2CDIException(e);
+			} catch (CDIException e) {
+				throw e;
 			}
 		}
 		variable.setUpdated(true);

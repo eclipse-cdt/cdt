@@ -27,7 +27,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
@@ -69,13 +68,7 @@ public class CElementHandleFactory {
 	
 	public static ICElementHandle internalCreate(ITranslationUnit tu, IBinding binding, boolean definition,
 			IRegion region, long timestamp) throws CoreException, DOMException {	
-		if (binding instanceof ICPPDelegate) {
-			ICPPDelegate delegate= (ICPPDelegate) binding;
-			if (delegate.getDelegateType() == ICPPDelegate.USING_DECLARATION) {
-				binding= delegate.getBinding();
-			}
-		}
-		
+
 		ICElement parentElement= create(tu, binding.getScope());
 		if (parentElement == null) {
 			return null;

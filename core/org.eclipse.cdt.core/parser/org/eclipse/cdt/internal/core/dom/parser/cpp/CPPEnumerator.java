@@ -21,8 +21,6 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.core.runtime.PlatformObject;
 
@@ -30,14 +28,6 @@ import org.eclipse.core.runtime.PlatformObject;
  * @author aniefer
  */
 public class CPPEnumerator extends PlatformObject implements IEnumerator, ICPPInternalBinding {
-    public static class CPPEnumeratorDelegate extends CPPDelegate implements IEnumerator {
-        public CPPEnumeratorDelegate( ICPPUsingDeclaration name, IEnumerator binding ) {
-            super( name, binding );
-        }
-        public IType getType() throws DOMException {
-            return ((IEnumerator)getBinding()).getType();
-        }
-    }
     
     private IASTName enumName;
     /**
@@ -126,13 +116,6 @@ public class CPPEnumerator extends PlatformObject implements IEnumerator, ICPPIn
             scope = scope.getParent();
         }
         return true;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
-     */
-    public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl ) {
-        return new CPPEnumeratorDelegate( usingDecl, this );
     }
 
 	/* (non-Javadoc)

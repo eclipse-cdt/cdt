@@ -11,12 +11,9 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -40,18 +37,12 @@ class PDOMCPPUsingDeclaration extends PDOMCPPBinding implements	ICPPUsingDeclara
 	private static final int NEXT_DELEGATE = PDOMCPPBinding.RECORD_SIZE + 4;
 	@SuppressWarnings({ "hiding", "static-access" })
 	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 8;
-	private ICPPDelegate[] delegates;
+	private IBinding[] delegates;
 	
 	public PDOMCPPUsingDeclaration(PDOM pdom, PDOMNode parent, ICPPUsingDeclaration using)
 			throws CoreException {
 		super(pdom, parent, using.getNameCharArray());
-		ICPPDelegate[] delegates;
-     	try {
-			delegates = using.getDelegates();
-		} catch (DOMException e) {
-			CCorePlugin.log(e);
-			return;
-		}
+		IBinding[] delegates= using.getDelegates();
 		int nextRecord = 0;
 		for (int i = delegates.length; --i >= 0;) {
 			PDOMCPPUsingDeclaration simpleUsing = i > 0 ?
@@ -70,36 +61,37 @@ class PDOMCPPUsingDeclaration extends PDOMCPPBinding implements	ICPPUsingDeclara
 		super(pdom, parent, name);
 	}
 
-	private void setTargetBinding(PDOMLinkage linkage, ICPPDelegate delegate) throws CoreException {
-		PDOMBinding target = getLinkageImpl().adaptBinding(delegate.getBinding());
+	private void setTargetBinding(PDOMLinkage linkage, IBinding delegate) throws CoreException {
+		PDOMBinding target = getLinkageImpl().adaptBinding(delegate);
 		pdom.getDB().putInt(record + TARGET_BINDING, target != null ? target.getRecord() : 0);
 	}
 
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 
+	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_USING_DECLARATION;
 	}
 
-	public ICPPDelegate[] getDelegates() {
+	public IBinding[] getDelegates() {
 		if (delegates == null) {
-			delegates = new ICPPDelegate[1];
+			delegates = new IBinding[1];
 			int i = 0;
 			PDOMCPPUsingDeclaration alias = this;
 			try {
 				do {
-					IBinding binding = alias.getBinding();
-		            if (binding instanceof ICPPDelegateCreator) {
-		                ICPPDelegate delegate = ((ICPPDelegateCreator) binding).createDelegate(this);
-						delegates= (ICPPDelegate[]) ArrayUtil.append(ICPPDelegate.class, delegates, i++, delegate);
-		            } 
+					IBinding delegate = alias.getBinding();
+					if (delegate != null) {
+						delegates= (IBinding[]) ArrayUtil.append(IBinding.class, delegates, i++, delegate);
+					}
 				} while ((alias = alias.getNext()) != null);
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
 			}
-			delegates = (ICPPDelegate[]) ArrayUtil.trim(ICPPDelegate.class, delegates);
+			delegates = (IBinding[]) ArrayUtil.trim(IBinding.class, delegates);
 		}
 		return delegates;
 	}

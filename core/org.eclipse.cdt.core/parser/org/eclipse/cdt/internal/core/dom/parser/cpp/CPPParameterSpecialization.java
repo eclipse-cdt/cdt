@@ -13,12 +13,9 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameter.CPPParameterDelegate;
 
 /**
  * @author aniefer
@@ -86,10 +83,6 @@ public class CPPParameterSpecialization extends CPPSpecialization implements ICP
 
 	public boolean hasDefaultValue() {
 		return getParameter().hasDefaultValue();
-	}
-
-	public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl) {
-		return new CPPParameterDelegate( usingDecl, this );
 	}
 
 	public boolean isExternC() {

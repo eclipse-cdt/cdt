@@ -9,10 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
-/*
- * Created on Mar 16, 2005
- */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ILinkage;
@@ -24,9 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
-import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.core.runtime.PlatformObject;
 
@@ -35,7 +29,7 @@ import org.eclipse.core.runtime.PlatformObject;
  */
 public class CPPUsingDeclaration extends PlatformObject implements ICPPUsingDeclaration, ICPPInternalBinding{
     private IASTName name;
-    private ICPPDelegate [] delegates;
+    private IBinding [] delegates;
     
     public CPPUsingDeclaration( IASTName name, IBinding [] bindings ) {
     	if( name instanceof ICPPASTQualifiedName ){
@@ -43,24 +37,13 @@ public class CPPUsingDeclaration extends PlatformObject implements ICPPUsingDecl
     		name = ns[ ns.length - 1 ];
     	}
         this.name = name;
-        this.delegates = createDelegates( bindings );
+        this.delegates= bindings;
     }
-    
-    private ICPPDelegate [] createDelegates( IBinding [] bindings ){
-        ICPPDelegate [] result = null;
-        for( int i = 0; i < bindings.length; i++ ){
-            if( bindings[i] instanceof ICPPDelegateCreator){
-                ICPPDelegate delegate = ((ICPPDelegateCreator)bindings[i]).createDelegate( this );
-                result = (ICPPDelegate[]) ArrayUtil.append( ICPPDelegate.class, result, delegate );
-            } 
-        }
-        return (ICPPDelegate[]) ArrayUtil.trim( ICPPDelegate.class, result );
-    }
-    
+        
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration#getDelegates()
      */
-    public ICPPDelegate[] getDelegates() {
+    public IBinding[] getDelegates() {
         return delegates;
     }
 
@@ -128,13 +111,6 @@ public class CPPUsingDeclaration extends PlatformObject implements ICPPUsingDecl
             n = n.getParent();
             
         return n;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
-     */
-    public ICPPDelegate createDelegate( ICPPUsingDeclaration usingDecl ) {
-        return null;
     }
 
     /* (non-Javadoc)

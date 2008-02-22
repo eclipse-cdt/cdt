@@ -22,12 +22,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
@@ -159,16 +157,10 @@ public class CPPClassInstance extends CPPInstance implements ICPPClassType, ICPP
 	/* (non-Javadoc)
 	 * @see java.lang.Object#clone()
 	 */
+	@Override
 	public Object clone(){
 		// TODO Auto-generated method stub
 		return this;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
-	 */
-	public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl) {
-		return new CPPClassType.CPPClassTypeDelegate( usingDecl, this );
 	}
 
 	/* (non-Javadoc)
@@ -216,6 +208,7 @@ public class CPPClassInstance extends CPPInstance implements ICPPClassType, ICPP
 		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		return obj instanceof ICPPClassType ? isSameType((ICPPClassType)obj) : false;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.ui.tests.callhierarchy;
 
 import java.io.IOException;
@@ -659,7 +658,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 
 		i1= checkTreeNode(tree, 0, 0, "gf()");	// sf()[f1] <- gf()
 		i2= checkTreeNode(tree, 0, 1, "sf()");   // sf()[f1] <- sf()[f1]
-		checkTreeNode(i0, 2, null);
+		checkTreeNode(tree, 0, 2, null);
 
 		expandTreeItem(i1);
 		expandTreeItem(i2);

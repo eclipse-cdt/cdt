@@ -23,8 +23,6 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.core.runtime.PlatformObject;
@@ -33,17 +31,6 @@ import org.eclipse.core.runtime.PlatformObject;
  * @author aniefer
  */
 public class CPPEnumeration extends PlatformObject implements IEnumeration, ICPPInternalBinding {
-    public static class CPPEnumerationDelegate extends CPPDelegate implements IEnumeration {
-        public CPPEnumerationDelegate( ICPPUsingDeclaration name, IEnumeration binding ) {
-            super( name, binding );
-        }
-        public IEnumerator[] getEnumerators() throws DOMException {
-            return ((IEnumeration)getBinding()).getEnumerators();
-        }
-        public boolean isSameType( IType type ) {
-            return ((IEnumeration)getBinding()).isSameType( type );
-        }
-    }
     private IASTName enumName;
     /**
      * @param specifier
@@ -95,7 +82,8 @@ public class CPPEnumeration extends PlatformObject implements IEnumeration, ICPP
         return enumName;
     }
     
-    public Object clone(){
+    @Override
+	public Object clone(){
         IType t = null;
    		try {
             t = (IType) super.clone();
@@ -145,13 +133,6 @@ public class CPPEnumeration extends PlatformObject implements IEnumeration, ICPP
         return true;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
-     */
-    public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl ) {
-        return new CPPEnumerationDelegate( usingDecl, this );
-    }
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDefinition(org.eclipse.cdt.core.dom.ast.IASTNode)
 	 */
@@ -178,7 +159,7 @@ public class CPPEnumeration extends PlatformObject implements IEnumeration, ICPP
     public boolean isSameType( IType type ) {
         if( type == this )
             return true;
-        if( type instanceof ITypedef || type instanceof IIndexType || type instanceof ICPPDelegate)
+        if( type instanceof ITypedef || type instanceof IIndexType)
             return type.isSameType( this );
         return false;
     }

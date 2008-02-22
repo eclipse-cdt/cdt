@@ -14,12 +14,9 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTypedef.CPPTypedefDelegate;
 
 /**
  * @author aniefer
@@ -54,7 +51,8 @@ public class CPPTypedefSpecialization extends CPPSpecialization implements
     /* (non-Javadoc)
      * @see java.lang.Object#clone()
      */
-    public Object clone() {
+    @Override
+	public Object clone() {
     	IType t = null;
    		try {
             t = (IType) super.clone();
@@ -88,13 +86,6 @@ public class CPPTypedefSpecialization extends CPPSpecialization implements
             return false;
         }
 	    return false;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
-     */
-    public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl ) {
-        return new CPPTypedefDelegate( usingDecl, this );
     }
 
 	public void setType(IType type) {

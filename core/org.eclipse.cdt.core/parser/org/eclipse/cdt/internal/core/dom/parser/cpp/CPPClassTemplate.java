@@ -37,12 +37,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.index.IIndexType;
@@ -55,40 +52,6 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 		ICPPClassTemplate, ICPPClassType, ICPPInternalClassType, ICPPInternalClassTemplate,
 		ICPPInternalClassTypeMixinHost {
 
-	public static class CPPClassTemplateDelegate extends CPPClassType.CPPClassTypeDelegate
-			implements ICPPClassTemplate, ICPPInternalClassTemplate {
-		public CPPClassTemplateDelegate(ICPPUsingDeclaration usingDecl, ICPPClassType cls) {
-			super(usingDecl, cls);
-		}
-		public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() throws DOMException {
-			return ((ICPPClassTemplate)getBinding()).getPartialSpecializations();
-		}
-		public ICPPTemplateParameter[] getTemplateParameters() throws DOMException {
-			return ((ICPPClassTemplate)getBinding()).getTemplateParameters();
-		}
-		public void addSpecialization(IType[] arguments, ICPPSpecialization specialization) {
-			final IBinding binding = getBinding();
-			if (binding instanceof ICPPInternalBinding) {
-				((ICPPInternalTemplate)binding).addSpecialization(arguments, specialization);
-			}
-		}
-		public IBinding instantiate(IType[] arguments) {
-			return ((ICPPInternalTemplateInstantiator)getBinding()).instantiate(arguments);
-		}
-		public ICPPSpecialization deferredInstance(IType[] arguments) {
-			return ((ICPPInternalTemplateInstantiator)getBinding()).deferredInstance(arguments);
-		}
-		public ICPPSpecialization getInstance(IType[] arguments) {
-			return ((ICPPInternalTemplateInstantiator)getBinding()).getInstance(arguments);
-		}
-		public void addPartialSpecialization(ICPPClassTemplatePartialSpecialization spec) {
-			final IBinding binding = getBinding();
-			if (binding instanceof ICPPInternalClassTemplate) {
-				((ICPPInternalClassTemplate)getBinding()).addPartialSpecialization(spec);
-			}
-		}
-	}
-
 	private class FindDefinitionAction extends CPPASTVisitor {
 		private char[] nameArray = CPPClassTemplate.this.getNameCharArray();
 		public IASTName result = null;
@@ -100,6 +63,7 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 			shouldVisitDeclarators    = true;
 		}
 
+		@Override
 		public int visit(IASTName name) {
 			if (name instanceof ICPPASTTemplateId || name instanceof ICPPASTQualifiedName)
 				return PROCESS_CONTINUE;
@@ -128,14 +92,17 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 			return PROCESS_CONTINUE; 
 		}
 
+		@Override
 		public int visit(IASTDeclaration declaration) { 
 			if (declaration instanceof IASTSimpleDeclaration || declaration instanceof ICPPASTTemplateDeclaration)
 				return PROCESS_CONTINUE;
 			return PROCESS_SKIP; 
 		}
+		@Override
 		public int visit(IASTDeclSpecifier declSpec) {
 			return (declSpec instanceof ICPPASTCompositeTypeSpecifier) ? PROCESS_CONTINUE : PROCESS_SKIP; 
 		}
+		@Override
 		public int visit(IASTDeclarator declarator) { return PROCESS_SKIP; }
 	}
 
@@ -147,6 +114,7 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 		this.mixin= new ClassTypeMixin(this);
 	}
 
+	@Override
 	public ICPPSpecialization deferredInstance(IType[] arguments) {
 		ICPPSpecialization instance = getInstance(arguments);
 		if (instance == null) {
@@ -229,15 +197,11 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 		partialSpecializations = (ICPPClassTemplatePartialSpecialization[]) ArrayUtil.trim(ICPPClassTemplatePartialSpecialization.class, partialSpecializations);
 		return partialSpecializations;
 	}
-
-	public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl) {
-		return new CPPClassTemplateDelegate(usingDecl, this);
-	}
 	
 	public boolean isSameType(IType type) {
 		if (type == this)
 			return true;
-		if (type instanceof ITypedef || type instanceof IIndexType || type instanceof ICPPDelegate)
+		if (type instanceof ITypedef || type instanceof IIndexType)
 			return type.isSameType(this);
 		return false;
 	}
@@ -286,6 +250,7 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 		return mixin.findField(name);
 	}
 	
+	@Override
 	public Object clone() {
 		try {
 			return super.clone();
@@ -297,6 +262,7 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 	/* (non-Javadoc)
 	 * For debug purposes only
 	 */
+	@Override
 	public String toString() {
 		return ASTTypeUtil.getType(this);
 	}

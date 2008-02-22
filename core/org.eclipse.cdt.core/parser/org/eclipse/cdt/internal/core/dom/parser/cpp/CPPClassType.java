@@ -40,11 +40,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -59,56 +57,6 @@ import org.eclipse.core.runtime.PlatformObject;
  * @author aniefer
  */
 public class CPPClassType extends PlatformObject implements ICPPInternalClassTypeMixinHost, ICPPClassType, ICPPInternalClassType {
-	public static class CPPClassTypeDelegate extends CPPDelegate implements ICPPClassType {
-		public CPPClassTypeDelegate( ICPPUsingDeclaration usingDecl, ICPPClassType cls ){
-			super( usingDecl, cls );
-		}
-		public ICPPBase[] getBases() throws DOMException {
-			return ((ICPPClassType)getBinding()).getBases();
-		}
-		public IField[] getFields() throws DOMException {
-			return ((ICPPClassType)getBinding()).getFields();
-		}
-		public IField findField( String name ) throws DOMException {
-			return ((ICPPClassType)getBinding()).findField( name );
-		}
-		public ICPPField[] getDeclaredFields() throws DOMException {
-			return ((ICPPClassType)getBinding()).getDeclaredFields();
-		}
-		public ICPPMethod[] getMethods() throws DOMException {
-			return ((ICPPClassType)getBinding()).getMethods();
-		}
-		public ICPPMethod[] getAllDeclaredMethods() throws DOMException {
-			return ((ICPPClassType)getBinding()).getAllDeclaredMethods();
-		}
-		public ICPPMethod[] getDeclaredMethods() throws DOMException {
-			return ((ICPPClassType)getBinding()).getDeclaredMethods();
-		}
-		public ICPPConstructor[] getConstructors() throws DOMException {
-			return ((ICPPClassType)getBinding()).getConstructors();
-		}
-		public IBinding[] getFriends() throws DOMException {
-			return ((ICPPClassType)getBinding()).getFriends();
-		}
-		public int getKey() throws DOMException {
-			return ((ICPPClassType)getBinding()).getKey();
-		}
-		public IScope getCompositeScope() throws DOMException {
-			return ((ICPPClassType)getBinding()).getCompositeScope();
-		}
-		public ICPPMethod[] getConversionOperators() throws DOMException {
-			IBinding binding = getBinding();
-			if( binding instanceof ICPPInternalClassType )
-				return ((ICPPInternalClassType)binding).getConversionOperators();
-			return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
-		}
-		public boolean isSameType( IType type ) {
-			return ((ICPPClassType)getBinding()).isSameType( type );
-		}
-		public ICPPClassType[] getNestedClasses() throws DOMException {
-			return ((ICPPClassType)getBinding()).getNestedClasses();
-		}
-	}
 	public static class CPPClassTypeProblem extends ProblemBinding implements ICPPClassType{
 		public CPPClassTypeProblem( IASTNode node, int id, char[] arg ) {
 			super( node, id, arg );
@@ -144,9 +92,11 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 		public IScope getCompositeScope() throws DOMException {
 			throw new DOMException( this );
 		}
+		@Override
 		public IScope getParent() throws DOMException {
 			throw new DOMException( this );
 		}
+		@Override
 		public IBinding[] find(String name) throws DOMException {
 			throw new DOMException( this );
 		}
@@ -178,6 +128,7 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 			shouldVisitDeclarators    = true;
 		}
 
+		@Override
 		public int visit( IASTName name ){
 			if( name instanceof ICPPASTTemplateId )
 				return PROCESS_SKIP;
@@ -208,14 +159,17 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 			return PROCESS_CONTINUE; 
 		}
 
+		@Override
 		public int visit( IASTDeclaration declaration ){ 
 			if(declaration instanceof IASTSimpleDeclaration || declaration instanceof ICPPASTTemplateDeclaration)
 				return PROCESS_CONTINUE;
 			return PROCESS_SKIP; 
 		}
+		@Override
 		public int visit( IASTDeclSpecifier declSpec ){
 			return (declSpec instanceof ICPPASTCompositeTypeSpecifier ) ? PROCESS_CONTINUE : PROCESS_SKIP; 
 		}
+		@Override
 		public int visit( IASTDeclarator declarator ) 			{ return PROCESS_SKIP; }
 	}
 
@@ -404,11 +358,6 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 		return true;
 	}
 
-	public ICPPDelegate createDelegate( ICPPUsingDeclaration usingDecl ) {
-		return new CPPClassTypeDelegate( usingDecl, this );
-	}
-
-
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
 	}
@@ -418,7 +367,7 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 	public boolean isSameType( IType type ) {
 		if (type == this)
 			return true;
-		if (type instanceof ITypedef || type instanceof IIndexType || type instanceof ICPPDelegate)
+		if (type instanceof ITypedef || type instanceof IIndexType)
 			return type.isSameType(this);
 		return false;
 	}
@@ -467,6 +416,7 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 		return mixin.findField(name);
 	}
 	
+	@Override
 	public Object clone() {
 		try {
 			return super.clone();

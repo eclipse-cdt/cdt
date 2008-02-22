@@ -1,19 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * Bryan Wilkinson (QNX)
- * Andrew Ferguson (Symbian)
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
+ *    Bryan Wilkinson (QNX)
+ *    Andrew Ferguson (Symbian)
  *******************************************************************************/
-/*
- * Created on Mar 11, 2005
- */
 package org.eclipse.cdt.core.parser.tests.ast2;
 
 import java.util.Iterator;
@@ -47,7 +44,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
@@ -1150,8 +1146,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 		assertSame( ((ICPPTemplateInstance)A3).getTemplateDefinition(), A2 );
 
 		ICPPClassTemplate A4 = (ICPPClassTemplate) col.getName(14).resolveBinding();
-		assertTrue( A4 instanceof ICPPDelegate );
-		assertSame( ((ICPPDelegate)A4).getBinding(), A1 );
+		assertSame( A4, A1 );
 	}
 
 	public void testTemplateTemplateParameter() throws Exception {

@@ -1,19 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Bryan Wilkinson (QNX)
- * Markus Schorn (Wind River Systems)
- * Sergey Prigogin (Google)
+ *    IBM - Initial API and implementation
+ *    Bryan Wilkinson (QNX)
+ *    Markus Schorn (Wind River Systems)
+ *    Sergey Prigogin (Google)
  *******************************************************************************/
-/*
- * Created on Mar 11, 2005
- */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -849,6 +846,7 @@ public class CPPTemplates {
 			shouldVisitStatements = true;
 			this.bindings = bindings;
 		}
+		@Override
 		public int visit(IASTName name) {
 			if (name.getBinding() != null) {
 				IBinding binding = name.getBinding();
@@ -870,6 +868,7 @@ public class CPPTemplates {
 			}
 			return PROCESS_CONTINUE;
 		}
+		@Override
 		public int visit(IASTStatement statement) {
 			return PROCESS_SKIP;
 		}
@@ -1428,15 +1427,19 @@ public class CPPTemplates {
 			this.functionParameters = functionParameters;
 			this.templateParameters = templateParameters;
 		}
+		@Override
 		public IParameter[] getParameters() {
 			return functionParameters; 
 		}
+		@Override
 		public ICPPTemplateParameter[] getTemplateParameters() {
 			return templateParameters;
 		}
+		@Override
 		public IScope getScope() {
 			return null;
 		}
+		@Override
 		public IFunctionType getType() {
 			if (type == null) {
 				type = CPPVisitor.createImplicitFunctionType(new CPPBasicType(IBasicType.t_void, 0), functionParameters);
@@ -1532,7 +1535,7 @@ public class CPPTemplates {
 						pType = e.getProblem();
 					}
 				}
-				Cost cost = CPPSemantics.checkStandardConversionSequence(argument, pType);
+				Cost cost = CPPSemantics.checkStandardConversionSequence(argument, pType, false);
 					
 				if (cost == null || cost.rank == Cost.NO_MATCH_RANK) {
 					return false;

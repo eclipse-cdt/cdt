@@ -25,9 +25,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 
@@ -35,20 +33,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
  * @author aniefer
  */
 public class CPPField extends CPPVariable implements ICPPField, ICPPInternalBinding {
-    public static class CPPFieldDelegate extends CPPVariable.CPPVariableDelegate implements ICPPField {
-        public CPPFieldDelegate( ICPPUsingDeclaration name, ICPPField binding ) {
-            super( name, binding );
-        }
-        public int getVisibility() throws DOMException {
-            return ((ICPPField)getBinding()).getVisibility();
-        }
-        public ICPPClassType getClassOwner() throws DOMException {
-        	return ((ICPPField)getBinding()).getClassOwner();
-        }
-		public ICompositeType getCompositeTypeOwner() throws DOMException {
-			return getClassOwner();
-		}
-    }
     public static class CPPFieldProblem extends CPPVariable.CPPVariableProblem implements ICPPField {
         /**
          * @param id
@@ -160,22 +144,17 @@ public class CPPField extends CPPVariable implements ICPPField, ICPPInternalBind
 	/* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable#isMutable()
      */
-    public boolean isMutable() {
+    @Override
+	public boolean isMutable() {
         return hasStorageClass( ICPPASTDeclSpecifier.sc_mutable);
     }
     
-    public boolean isExtern() {
+    @Override
+	public boolean isExtern() {
         //7.1.1-5 The extern specifier can not be used in the declaration of class members
         return false;
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
-     */
-    public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl ) {
-        return new CPPFieldDelegate( usingDecl, this );
-    }
-
 	public ICompositeType getCompositeTypeOwner() throws DOMException {
 		return getClassOwner();
 	}

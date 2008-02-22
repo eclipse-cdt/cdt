@@ -21,12 +21,9 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
-import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -37,36 +34,6 @@ import org.eclipse.core.runtime.PlatformObject;
  * @author aniefer
  */
 public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPInternalBinding {
-    public static class CPPParameterDelegate extends CPPDelegate implements ICPPParameter {
-        public CPPParameterDelegate( ICPPUsingDeclaration name, IParameter binding ) {
-            super( name, binding );
-        }
-        public IType getType() throws DOMException {
-            return ((IParameter)getBinding()).getType();
-        }
-        public boolean isStatic() throws DOMException {
-            return ((IParameter)getBinding()).isStatic();
-        }
-        public boolean isExtern() {
-            return false;
-        }
-        public boolean isAuto() throws DOMException {
-            return ((IParameter)getBinding()).isAuto();
-        }
-        public boolean isRegister() throws DOMException {
-            return ((IParameter)getBinding()).isRegister();
-        }
-        public boolean isMutable() {
-            return false;
-        }
-		public boolean hasDefaultValue() {
-			return ((ICPPParameter)getBinding()).hasDefaultValue();
-		}
-		public boolean isExternC() {
-			return false;
-		}
-    }
-    
     public static class CPPParameterProblem extends ProblemBinding implements ICPPParameter {
         public CPPParameterProblem( IASTNode node, int id, char[] arg ) {
             super( node, id, arg );
@@ -238,13 +205,6 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
      */
     public boolean isGloballyQualified() {
         return false;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
-     */
-    public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl ) {
-        return new CPPParameterDelegate( usingDecl, this );
     }
 
 	/* (non-Javadoc)

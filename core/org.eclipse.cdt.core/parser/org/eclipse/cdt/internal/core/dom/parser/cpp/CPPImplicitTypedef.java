@@ -15,8 +15,6 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 
 /**
  * The CPPImplicitTypedef is used to represent implicit typedefs that exist on the translation
@@ -41,35 +39,40 @@ public class CPPImplicitTypedef extends CPPTypedef implements ITypedef, ICPPInte
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.ITypedef#getType()
      */
-    public IType getType() {
+    @Override
+	public IType getType() {
         return type;
     }
     
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
      */
-    public String getName() {
+    @Override
+	public String getName() {
         return String.valueOf(name);
     }
     
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
      */
-    public char[] getNameCharArray() {
+    @Override
+	public char[] getNameCharArray() {
         return name;
     }
     
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
      */
-    public IScope getScope() {
+    @Override
+	public IScope getScope() {
         return scope;
     }
     
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
      */
-    public boolean isSameType(IType t) {
+    @Override
+	public boolean isSameType(IType t) {
         if( t == this )
             return true;
         if( t instanceof ITypedef ) {
@@ -91,7 +94,8 @@ public class CPPImplicitTypedef extends CPPTypedef implements ITypedef, ICPPInte
     /* (non-Javadoc)
      * @see java.lang.Object#clone()
      */
-    public Object clone(){
+    @Override
+	public Object clone(){
         IType t = null;
         t = (IType) super.clone();
         return t;
@@ -100,49 +104,48 @@ public class CPPImplicitTypedef extends CPPTypedef implements ITypedef, ICPPInte
     /**
      * returns null
      */
-    public IASTNode[] getDeclarations() {
+    @Override
+	public IASTNode[] getDeclarations() {
         return null;
     }
     
     /**
      * returns null
      */
-    public IASTNode getDefinition() {
+    @Override
+	public IASTNode getDefinition() {
         return null;
     }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
-     */
-    public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl) {
-        return new CPPTypedefDelegate( usingDecl, this );
-    }
-    
+        
     /**
      * does nothing
      */
-    public void addDefinition(IASTNode node) {
+    @Override
+	public void addDefinition(IASTNode node) {
         // do nothing
     }
     
     /**
      * does nothing
      */
-    public void addDeclaration(IASTNode node) {
+    @Override
+	public void addDeclaration(IASTNode node) {
         // do nothing
     }
     
     /**
      * does nothing
      */
-    public void removeDeclaration(IASTNode node) {
+    @Override
+	public void removeDeclaration(IASTNode node) {
         // do nothing
     }
     
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedName()
      */
-    public String[] getQualifiedName() {
+    @Override
+	public String[] getQualifiedName() {
         String[] temp = new String[1];
         temp[0] = String.valueOf(name);
         
@@ -152,7 +155,8 @@ public class CPPImplicitTypedef extends CPPTypedef implements ITypedef, ICPPInte
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedNameCharArray()
      */
-    public char[][] getQualifiedNameCharArray() {
+    @Override
+	public char[][] getQualifiedNameCharArray() {
         char[][] temp = new char[1][];
         temp[0] = name;
         
@@ -162,7 +166,8 @@ public class CPPImplicitTypedef extends CPPTypedef implements ITypedef, ICPPInte
     /**
      * returns true
      */
-    public boolean isGloballyQualified() {
+    @Override
+	public boolean isGloballyQualified() {
         return true;
     }
     

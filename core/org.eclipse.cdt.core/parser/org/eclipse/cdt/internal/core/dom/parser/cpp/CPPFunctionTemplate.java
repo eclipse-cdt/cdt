@@ -29,12 +29,10 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 
 /**
@@ -94,29 +92,6 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
 			throw new DOMException( this );
 		}
 	}
-	public static class CPPFunctionTemplateDelegate extends CPPFunction.CPPFunctionDelegate implements ICPPFunctionTemplate, ICPPInternalTemplate {
-        public CPPFunctionTemplateDelegate( ICPPUsingDeclaration name, ICPPFunction binding ) {
-            super( name, binding );
-        }
-        public ICPPTemplateParameter[] getTemplateParameters() throws DOMException {
-            return ((ICPPFunctionTemplate)getBinding()).getTemplateParameters();
-        }
-        public void addSpecialization( IType[] arguments, ICPPSpecialization specialization ) {
-            final IBinding binding = getBinding();
-            if (binding instanceof ICPPInternalBinding) {
-            	((ICPPInternalTemplate)getBinding()).addSpecialization( arguments, specialization );
-            }
-        }
-        public IBinding instantiate( IType[] arguments ) {
-            return ((ICPPInternalTemplateInstantiator)getBinding()).instantiate( arguments );
-        }
-        public ICPPSpecialization deferredInstance( IType[] arguments ) {
-            return ((ICPPInternalTemplateInstantiator)getBinding()).deferredInstance( arguments );
-        }
-        public ICPPSpecialization getInstance( IType[] arguments ) {
-            return ((ICPPInternalTemplateInstantiator)getBinding()).getInstance( arguments );
-        }
-    }
 	
 	protected IFunctionType type = null;
 	/**
@@ -126,6 +101,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
 		super(name);
 	}
 
+	@Override
 	public void addDefinition(IASTNode node) {
 		if( !(node instanceof IASTName) )
 			return;
@@ -136,6 +112,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDeclaration(org.eclipse.cdt.core.dom.ast.IASTNode)
 	 */
+	@Override
 	public void addDeclaration(IASTNode node) {
 		if( !(node instanceof IASTName) )
 			return;
@@ -300,6 +277,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateDefinition#deferredInstance(org.eclipse.cdt.core.dom.ast.IType[])
 	 */
+	@Override
 	public ICPPSpecialization deferredInstance(IType[] arguments) {
 		ICPPSpecialization instance = getInstance( arguments );
 		if( instance == null ){
@@ -424,12 +402,4 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
     public boolean isStatic( boolean resolveAll ) {
     	return hasStorageClass( IASTDeclSpecifier.sc_static );
     }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
-     */
-    public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl ) {
-        return new CPPFunctionTemplateDelegate( usingDecl, this );
-    }
-
 }

@@ -24,7 +24,6 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
@@ -34,9 +33,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
@@ -49,59 +46,6 @@ import org.eclipse.core.runtime.PlatformObject;
  */
 public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInternalFunction {
     
-    public static class CPPFunctionDelegate extends CPPDelegate implements ICPPFunction, ICPPInternalFunction {
-        public CPPFunctionDelegate( ICPPUsingDeclaration usingDecl, ICPPFunction binding ) {
-            super( usingDecl, binding );
-        }
-
-        public IParameter[] getParameters() throws DOMException {
-            return ((ICPPFunction)getBinding()).getParameters();
-        }
-        public IScope getFunctionScope() throws DOMException {
-            return ((ICPPFunction)getBinding()).getFunctionScope();
-        }
-        public IFunctionType getType() throws DOMException {
-            return ((ICPPFunction)getBinding()).getType();
-        }
-        public boolean isStatic() throws DOMException {
-            return ((ICPPFunction)getBinding()).isStatic();
-        }
-        public boolean isMutable() throws DOMException {
-            return ((ICPPFunction)getBinding()).isMutable();
-        }
-        public boolean isInline() throws DOMException {
-            return ((ICPPFunction)getBinding()).isInline();
-        }
-        public boolean isExternC() throws DOMException {
-            return ((ICPPFunction)getBinding()).isExternC();
-        }
-        public boolean isExtern() throws DOMException {
-            return ((ICPPFunction)getBinding()).isExtern();
-        }
-        public boolean isAuto() throws DOMException {
-            return ((ICPPFunction)getBinding()).isAuto();
-        }
-        public boolean isRegister() throws DOMException {
-            return ((ICPPFunction)getBinding()).isRegister();
-        }
-        public boolean takesVarArgs() throws DOMException {
-            return ((ICPPFunction)getBinding()).takesVarArgs();
-        }
-        public boolean isStatic( boolean resolveAll) {
-        	try {
-    			return ASTInternal.isStatic((IFunction) getBinding(), resolveAll);
-    		} catch (DOMException e) {
-    			return false;
-    		}
-        }
-        public IBinding resolveParameter( IASTParameterDeclaration param ) {
-            final IBinding binding = getBinding();
-            if (binding instanceof ICPPInternalFunction) {
-            	return ((ICPPInternalFunction)binding).resolveParameter( param );
-            }
-            return null;
-        }
-    }
     public static class CPPFunctionProblem extends ProblemBinding implements ICPPFunction {
         public CPPFunctionProblem( IASTNode node, int id, char[] arg ) {
             super( node, id, arg );
@@ -505,13 +449,6 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
             scope = scope.getParent();
         }
         return true;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
-     */
-    public ICPPDelegate createDelegate( ICPPUsingDeclaration usingDecl ) {
-        return new CPPFunctionDelegate( usingDecl, this );
     }
 
 	static public boolean hasStorageClass( ICPPInternalFunction function, int storage){

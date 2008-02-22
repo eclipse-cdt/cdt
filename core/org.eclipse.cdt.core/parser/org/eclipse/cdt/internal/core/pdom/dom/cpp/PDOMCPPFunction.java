@@ -22,13 +22,9 @@ import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.internal.core.Util;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IndexCPPSignatureUtil;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -45,7 +41,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  *
  */
-class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverloader, ICPPDelegateCreator {
+class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverloader {
 
 	/**
 	 * Offset of total number of function parameters (relative to the
@@ -108,6 +104,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		setParameters(pft, params);	
 	}
 
+	@Override
 	public void update(final PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 		if (newBinding instanceof ICPPFunction) {
 			IFunction func= (ICPPFunction) newBinding;
@@ -164,10 +161,12 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		super(pdom, bindingRecord);
 	}
 	
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 
+	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPPFUNCTION;
 	}
@@ -248,15 +247,18 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		return getBit(getByte(record + ANNOTATION), PDOMCAnnotation.VARARGS_OFFSET);
 	}
 
+	@Override
 	public Object clone() {
 		throw new PDOMNotImplementedError();
 	}
 	
+	@Override
 	public int pdomCompareTo(PDOMBinding other) {
 		int cmp= super.pdomCompareTo(other);
 		return cmp==0 ? compareSignatures(this, other) : cmp;
 	}
 	
+	@Override
 	public String toString() {
 		StringBuffer result = new StringBuffer();
 		result.append(getName()+" "+ASTTypeUtil.getParameterTypeString(getType())); //$NON-NLS-1$
@@ -283,9 +285,4 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		}
 		return 0;
 	}
-	
-	public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl) {
-		return new CPPFunction.CPPFunctionDelegate(usingDecl, this);
-	}
-	
 }

@@ -13,19 +13,15 @@ package org.eclipse.cdt.internal.core.index.composite.cpp;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionTemplate;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalTemplateInstantiator;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
-public class CompositeCPPFunctionTemplate extends CompositeCPPFunction implements ICPPFunctionTemplate, ICPPInternalTemplateInstantiator, ICPPDelegateCreator {
+public class CompositeCPPFunctionTemplate extends CompositeCPPFunction implements ICPPFunctionTemplate, ICPPInternalTemplateInstantiator {
 
 	public CompositeCPPFunctionTemplate(ICompositesFactory cf, ICPPFunction rbinding) {
 		super(cf, rbinding);
@@ -50,8 +46,4 @@ public class CompositeCPPFunctionTemplate extends CompositeCPPFunction implement
 	public IBinding instantiate(IType[] arguments) {
 		return InternalTemplateInstantiatorUtil.instantiate(arguments, cf, rbinding);
 	}
-
-	public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl) {
-		return new CPPFunctionTemplate.CPPFunctionTemplateDelegate(usingDecl, this);
-	}	
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,13 +8,9 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
-/*
- * Created on Mar 16, 2005
- */
 package org.eclipse.cdt.core.dom.ast.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 
 /**
  * A using declaration introduces a name into the declarative region in which 
@@ -31,5 +27,5 @@ public interface ICPPUsingDeclaration extends ICPPBinding {
      * is a reference. 
      * @return
      */
-    ICPPDelegate [] getDelegates() throws DOMException;
+    IBinding[] getDelegates();
 }

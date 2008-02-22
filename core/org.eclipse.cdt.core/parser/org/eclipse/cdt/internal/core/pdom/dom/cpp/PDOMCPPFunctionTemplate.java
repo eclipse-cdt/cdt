@@ -21,7 +21,6 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
@@ -29,15 +28,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredFunctionInstance;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionTemplate;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplates;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalTemplateInstantiator;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
@@ -55,7 +51,7 @@ import org.eclipse.core.runtime.CoreException;
  */
 class PDOMCPPFunctionTemplate extends PDOMCPPFunction implements
 		ICPPFunctionTemplate, ICPPInternalTemplateInstantiator,
-		IPDOMMemberOwner, ICPPTemplateScope, IIndexScope, ICPPDelegateCreator {
+		IPDOMMemberOwner, ICPPTemplateScope, IIndexScope {
 
 	private static final int TEMPLATE_PARAMS = PDOMCPPFunction.RECORD_SIZE + 0;
 	private static final int INSTANCES = PDOMCPPFunction.RECORD_SIZE + 4;
@@ -76,14 +72,17 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction implements
 		super(pdom, bindingRecord);
 	}
 
+	@Override
 	public void update(PDOMLinkage linkage, IBinding name) {
 		// no support for updating templates, yet.
 	}
 	
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 
+	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_FUNCTION_TEMPLATE;
 	}
@@ -170,6 +169,7 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction implements
 		return CPPTemplates.instantiateTemplate(this, arguments, null);
 	}
 
+	@Override
 	public void addChild(PDOMNode child) throws CoreException {
 		addMember(child);
 	}
@@ -187,6 +187,7 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction implements
 		}
 	}
 
+	@Override
 	public void accept(IPDOMVisitor visitor) throws CoreException {
 		super.accept(visitor);
 		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + TEMPLATE_PARAMS, getLinkageImpl());
@@ -203,6 +204,7 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction implements
 		return CPPSemantics.findBindings( this, name, false );
 	}
 
+	@Override
 	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet)
 			throws DOMException {
 		try {
@@ -217,6 +219,7 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction implements
 		return null;
 	}
 	
+	@Override
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet)
 			throws DOMException {
 		IBinding[] result = null;
@@ -234,9 +237,4 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction implements
 	public IIndexBinding getScopeBinding() {
 		return this;
 	}
-	
-	public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl) {
-		return new CPPFunctionTemplate.CPPFunctionTemplateDelegate(usingDecl, this);
-	}
-	
 }

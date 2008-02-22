@@ -19,12 +19,8 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.internal.core.Util;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -39,7 +35,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  *
  */
-class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable, ICPPDelegateCreator {
+class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 
 	/**
 	 * Offset of pointer to type information for this parameter
@@ -72,6 +68,7 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable, ICPPDelega
 		}
 	}
 
+	@Override
 	public void update(final PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 		if (newBinding instanceof IVariable) {
 			IVariable var= (IVariable) newBinding;
@@ -103,10 +100,12 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable, ICPPDelega
 		super(pdom, record);
 	}
 	
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 
+	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPPVARIABLE;
 	}
@@ -145,11 +144,8 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable, ICPPDelega
 	public boolean isStatic() throws DOMException {
 		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.STATIC_OFFSET);
 	}
-	
-	public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl) {
-		return new CPPVariable.CPPVariableDelegate(usingDecl, this);
-	}
-	
+
+	@Override
 	public int getAdditionalNameFlags(int standardFlags, IASTName name) {
 		if ((standardFlags & PDOMName.IS_REFERENCE) == PDOMName.IS_REFERENCE) {
 			return CPPVariableReadWriteFlags.getReadWriteFlags(name);

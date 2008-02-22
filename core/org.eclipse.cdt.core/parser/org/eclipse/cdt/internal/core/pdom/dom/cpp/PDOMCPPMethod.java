@@ -25,13 +25,9 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.internal.core.Util;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethod;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -46,7 +42,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  * 
  */
-class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod, ICPPDelegateCreator {
+class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 
 	/**
 	 * Offset of remaining annotation information (relative to the beginning of
@@ -82,6 +78,7 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod, ICPPDelegateC
 		super(pdom, record);
 	}
 
+	@Override
 	public void update(final PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 		if (newBinding instanceof ICPPMethod) {
 			ICPPMethod method= (ICPPMethod) newBinding;
@@ -94,10 +91,12 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod, ICPPDelegateC
 		}
 	}
 
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 
+	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPPMETHOD;
 	}
@@ -110,6 +109,7 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod, ICPPDelegateC
 		return getBit(getByte(record + ANNOTATION1), PDOMCPPAnnotation.DESTRUCTOR_OFFSET);
 	}
 
+	@Override
 	public boolean isMutable() throws DOMException {
 		throw new PDOMNotImplementedError();
 	}
@@ -118,24 +118,29 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod, ICPPDelegateC
 		return getBit(getByte(record + ANNOTATION1), PDOMCPPAnnotation.IMPLICIT_METHOD_OFFSET);
 	}
 	
+	@Override
 	public IScope getFunctionScope() throws DOMException {
 		throw new PDOMNotImplementedError();
 	}
 
+	@Override
 	public boolean isExtern() throws DOMException {
 		// ISO/IEC 14882:2003 9.2.6
 		return false;
 	}
 
+	@Override
 	public boolean isExternC() {
 		return false;
 	}
 
+	@Override
 	public boolean isAuto() throws DOMException {
 		// ISO/IEC 14882:2003 9.2.6
 		return false;
 	}
 
+	@Override
 	public boolean isRegister() throws DOMException {
 		// ISO/IEC 14882:2003 9.2.6
 		return false;
@@ -154,6 +159,7 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod, ICPPDelegateC
 		}
 	}
 
+	@Override
 	public Object clone() {
 		throw new PDOMNotImplementedError();
 	}
@@ -165,11 +171,8 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod, ICPPDelegateC
 	public boolean isVolatile() {
 		return getBit(getByte(record + ANNOTATION1), PDOMCAnnotation.VOLATILE_OFFSET + CV_OFFSET);
 	}
-	
-	public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl) {
-		return new CPPMethod.CPPMethodDelegate(usingDecl, this);
-	}
 
+	@Override
 	public int getAdditionalNameFlags(int standardFlags, IASTName name) {
 		if ((standardFlags & PDOMName.IS_REFERENCE) == PDOMName.IS_REFERENCE) {
 			IASTNode parent= name.getParent();

@@ -85,7 +85,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
@@ -103,7 +102,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
@@ -1343,9 +1341,6 @@ public class CPPSemantics {
 		}
 
 	    IBinding binding =  ( n instanceof IBinding) ? (IBinding)n : ((IASTName)n).resolveBinding();
-	    while( binding instanceof ICPPDelegate ){
-	    	binding = ((ICPPDelegate)binding).getBinding();
-	    }
 	    Object [] objs = ( names instanceof Object[] ) ? (Object[])names : null;
 	    int idx = ( objs != null && objs.length > 0 ) ? 0 : -1;
 	    Object o = ( idx != -1 ) ? objs[idx++] : names;
@@ -1355,9 +1350,6 @@ public class CPPSemantics {
 	        if( b instanceof ICPPUsingDeclaration ){
 	        	objs = ArrayUtil.append( Object.class, objs, ((ICPPUsingDeclaration)b).getDelegates() );
 	        } else {
-	        	while( b instanceof ICPPDelegate ){
-	    	    	b = ((ICPPDelegate)b).getBinding();
-	    	    }
 		        if( binding != b )
 		            return true;
 				
@@ -2082,12 +2074,6 @@ public class CPPSemantics {
 	        } else if( temp instanceof IType ){
 	        	if( type == null ){
 	                type = temp;
-	        	} else if( (temp instanceof ICPPDelegate && ((ICPPDelegate)temp).getBinding() == type) ||
-		        	       (type instanceof ICPPDelegate && ((ICPPDelegate)type).getBinding() == temp) ||
-		        	       (type instanceof ICPPDelegate && temp instanceof ICPPDelegate && 
-		        	    	((ICPPDelegate)type).getBinding() == ((ICPPDelegate)temp).getBinding()) )
-	        	{
-	        	    //ok, delegates are synonyms
 	        	} else if( type instanceof ICPPClassTemplate && temp instanceof ICPPSpecialization &&
 						  ((IType) type).isSameType((IType) ((ICPPSpecialization)temp).getSpecializedBinding()))
 				{
@@ -2098,9 +2084,7 @@ public class CPPSemantics {
 	        } else {
 	        	if( obj == null)
 	        		obj = temp;
-	        	else if ( obj == temp ||
-	        			 (temp instanceof ICPPDelegate && ((ICPPDelegate)temp).getBinding() == obj) ||
-	        	         (obj instanceof ICPPDelegate && ((ICPPDelegate)obj).getBinding() == temp)) {
+	        	else if ( obj == temp ) {
 	        	    //ok, delegates are synonyms
 	        	}
 	        	else {
@@ -2171,9 +2155,6 @@ public class CPPSemantics {
 		}
 		if (binding instanceof ICPPSpecialization) {
 			return ((ICPPSpecialization) binding).getSpecializedBinding() instanceof IIndexBinding;
-		}
-		if (binding instanceof ICPPDelegate) {
-			return ((ICPPDelegate) binding).getBinding() instanceof IIndexBinding;
 		}
 		return false;
 	}
@@ -2387,52 +2368,39 @@ public class CPPSemantics {
 		boolean currHasAmbiguousParam = false;	//currFn has an ambiguous parameter conversion (ok if not bestFn)
 		boolean bestHasAmbiguousParam = false;  //bestFn has an ambiguous parameter conversion (not ok, ambiguous)
 
-		IType [] sourceParameters = getSourceParameterTypes( data.functionParameters ); //the parameters the function is being called with
-		IType [] targetParameters = null;
-		boolean sourceVoid = ( data.functionParameters == null || data.functionParameters.length == 0 );
-		int numSourceParams = 0;
-		int targetLength = 0;
-		int numFns = fns.length;
+		final IType[] sourceParameters = getSourceParameterTypes( data.functionParameters ); //the parameters the function is being called with
+		final boolean sourceVoid = ( data.functionParameters == null || data.functionParameters.length == 0 );
+		final IType impliedObjectType = data.getImpliedObjectArgument();
 		
-		IType impliedObjectType = data.getImpliedObjectArgument();
-		
-		outer: for( int fnIdx = 0; fnIdx < numFns; fnIdx++ ){
+		// loop over all functions
+		function_loop: for( int fnIdx = 0; fnIdx < fns.length; fnIdx++ ){
 			currFn = (IFunction) fns[fnIdx];
-			
-			if (currFn == null || bestFn == currFn ||
-					(bestFn instanceof ICPPDelegate && currFn.equals(((ICPPDelegate)bestFn).getBinding())) ||
-					(bestFn != null && currFn instanceof ICPPDelegate && bestFn.equals(((ICPPDelegate)currFn).getBinding())) )
-			{
+			if (currFn == null || bestFn == currFn) {
 				continue;
 			}
 	
-			targetParameters = getTargetParameterTypes( currFn );
-
-			targetLength = targetParameters.length;
-			boolean useImplicitObj = ( currFn instanceof ICPPMethod && !(currFn instanceof ICPPConstructor) );
-			numSourceParams = ( useImplicitObj ) ? sourceParameters.length + 1 : sourceParameters.length;
-			int numTargetParams = 0;
+			final IType[] targetParameters = getTargetParameterTypes(currFn);
+			final int useImplicitObj = (currFn instanceof ICPPMethod && !(currFn instanceof ICPPConstructor)) ? 1 : 0;
+			final int sourceLen= Math.max(sourceParameters.length + useImplicitObj, 1);
+			final int numTargetParams= Math.max(targetParameters.length, 1+useImplicitObj);
 			
-			if( currFnCost == null || currFnCost.length != ((numSourceParams == 0) ? 1 : numSourceParams) ){
-				currFnCost = new Cost [ (numSourceParams == 0) ? 1 : numSourceParams ];	
+			if (currFnCost == null || currFnCost.length != sourceLen) {
+				currFnCost= new Cost[sourceLen];	
 			}
 			
 			comparison = 0;
 			boolean varArgs = false;
-			
-			for( int j = 0; j < numSourceParams || j == 0; j++ ){
-			    if( useImplicitObj ) {
-			        source = ( j == 0 ) ? impliedObjectType : sourceParameters[j - 1];
-			    	numTargetParams = ( targetLength == 1 ) ? 2 : targetLength;
+			boolean isImpliedObject= false;
+			for (int j = 0; j < sourceLen; j++) {
+			    if (useImplicitObj > 0) {
+			    	isImpliedObject= j==0;
+			        source = isImpliedObject ? impliedObjectType : sourceParameters[j - 1];
 			    } else { 
 			        source = sourceParameters[j];
-			        numTargetParams = ( targetLength == 0 ) ? 1 : targetLength;
 			    }
 		    
-				if( j < numTargetParams ){
-				    if( (useImplicitObj && targetLength == 1 && j == 1) ||
-				        (!useImplicitObj && targetLength == 0 && j == 0) )
-				    {
+				if (j < numTargetParams) {
+				    if (j == targetParameters.length) {
 				        target = VOID_TYPE;
 				    } else {
 					    target = targetParameters[j];
@@ -2440,27 +2408,24 @@ public class CPPSemantics {
 				} else 
 					varArgs = true;
 				
-				if( useImplicitObj && j == 0 &&  ASTInternal.isStatic(currFn, false)) {
+				if (isImpliedObject && ASTInternal.isStatic(currFn, false)) {
 				    //13.3.1-4 for static member functions, the implicit object parameter is considered to match any object
-				    cost = new Cost( source, target );
+				    cost = new Cost(source, target);
 					cost.rank = Cost.IDENTITY_RANK;	//exact match, no cost
-				} else if( source == null ){
-				    continue outer;
-				} else if( varArgs ){
-					cost = new Cost( source, null );
+				} else if (source == null) {
+				    continue function_loop;
+				} else if (varArgs) {
+					cost = new Cost(source, null);
 					cost.rank = Cost.ELLIPSIS_CONVERSION;
-				} else if( source.isSameType( target )  ||
-				   	      ( sourceVoid && ((useImplicitObj && j == 1)||(!useImplicitObj && j == 0)) ) )
-				{
+				} else if (source.isSameType(target) || (sourceVoid && j == useImplicitObj)) {
 					cost = new Cost( source, target );
 					cost.rank = Cost.IDENTITY_RANK;	//exact match, no cost
 				} else {
-					cost = checkStandardConversionSequence( source, target );
+					cost = checkStandardConversionSequence( source, target, isImpliedObject);
 					//12.3-4 At most one user-defined conversion is implicitly applied to
 					//a single value.  (also prevents infinite loop)				
-					if( (cost.rank == Cost.NO_MATCH_RANK || cost.rank == Cost.FUZZY_TEMPLATE_PARAMETERS ) && 
-						!data.forUserDefinedConversion )
-					{
+					if (!data.forUserDefinedConversion && (cost.rank == Cost.NO_MATCH_RANK || 
+							cost.rank == Cost.FUZZY_TEMPLATE_PARAMETERS)) { 
 						temp = checkUserDefinedConversionSequence( source, target );
 						if( temp != null ){
 							cost = temp;
@@ -2790,15 +2755,24 @@ public class CPPSemantics {
         }
         return result;
     }
-    
-    static protected Cost checkStandardConversionSequence( IType source, IType target ) throws DOMException {
+    /**
+     * Computes the cost of using the standard conversion sequence from source to target.
+     * @param ignoreDerivedToBaseConversion handles the special case when members of different
+     *    classes are nominated via using-declarations. In such a situation the derived to
+     *    base conversion does not cause any costs.
+     * @throws DOMException
+     */
+    static protected Cost checkStandardConversionSequence( IType source, IType target, boolean isImplicitThis) throws DOMException {
 		Cost cost = lvalue_to_rvalue( source, target );
 		
 		if( cost.source == null || cost.target == null ){
 			return cost;
 		}
 			
-		if( cost.source.isSameType( cost.target ) ){
+		if (cost.source.isSameType(cost.target) || 
+				// 7.3.3.13 for overload resolution the implicit this pointer is treated as if 
+				// it were a pointer to the derived class
+				(isImplicitThis && cost.source instanceof ICPPClassType && cost.target instanceof ICPPClassType)) {
 			cost.rank = Cost.IDENTITY_RANK;
 			return cost;
 		}
@@ -2819,7 +2793,10 @@ public class CPPSemantics {
 			return cost;
 		}
 		
-		if( s.isSameType( t ) ){
+		if (s.isSameType(t) || 
+				// 7.3.3.13 for overload resolution the implicit this pointer is treated as if 
+				// it were a pointer to the derived class
+				(isImplicitThis && s instanceof ICPPClassType && t instanceof ICPPClassType)) {
 			return cost;
 		}
 		
@@ -2868,7 +2845,7 @@ public class CPPSemantics {
 			    }
 			}
 			if( constructor != null && !constructor.isExplicit() ){
-				constructorCost = checkStandardConversionSequence( t, target );
+				constructorCost = checkStandardConversionSequence( t, target, false );
 			}
 		}
 		
@@ -2878,7 +2855,7 @@ public class CPPSemantics {
 			if( ops.length > 0 && !(ops[0] instanceof IProblemBinding) ){
 				Cost [] costs = null;
 				for (int i = 0; i < ops.length; i++) {
-					cost = checkStandardConversionSequence( ops[i].getType().getReturnType(), target );
+					cost = checkStandardConversionSequence( ops[i].getType().getReturnType(), target, false );
 					if( cost.rank != Cost.NO_MATCH_RANK )
 						costs = (Cost[]) ArrayUtil.append( Cost.class, costs, cost );
 				}
@@ -3483,10 +3460,7 @@ public class CPPSemantics {
 		    
 		    if( binding != null )
 		    	if( binding instanceof ICPPUsingDeclaration ){
-		    		try {
-		    			set.addAll( ((ICPPUsingDeclaration)binding).getDelegates() );
-		    		} catch (DOMException e) {
-		    		}
+		    		set.addAll( ((ICPPUsingDeclaration)binding).getDelegates() );
 		    	} else if( binding instanceof CPPCompositeBinding ){
                     set.addAll( ((CPPCompositeBinding)binding).getBindings() );
 			    } else {

@@ -21,10 +21,6 @@ import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPEnumeration.CPPEnumerationDelegate;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -38,7 +34,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  */
 class PDOMCPPEnumeration extends PDOMCPPBinding
-		implements IEnumeration, IIndexType, ICPPBinding, ICPPDelegateCreator {
+		implements IEnumeration, IIndexType, ICPPBinding {
 
 	private static final int FIRST_ENUMERATOR = PDOMBinding.RECORD_SIZE + 0;
 	
@@ -54,10 +50,12 @@ class PDOMCPPEnumeration extends PDOMCPPBinding
 		super(pdom, record);
 	}
 
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 	
+	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPPENUMERATION;
 	}
@@ -100,7 +98,7 @@ class PDOMCPPEnumeration extends PDOMCPPBinding
 	}
 	
 	public boolean isSameType(IType type) {
-		if (type instanceof ITypedef || type instanceof ICPPDelegate) {
+		if (type instanceof ITypedef) {
 			return type.isSameType(this);
 		}
 		
@@ -131,12 +129,8 @@ class PDOMCPPEnumeration extends PDOMCPPBinding
 		return false;
 	}
 
+	@Override
 	public Object clone() {
 		throw new PDOMNotImplementedError();
 	}
-	
-	public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl) {
-		return new CPPEnumerationDelegate(usingDecl, this);
-	}
-
 }

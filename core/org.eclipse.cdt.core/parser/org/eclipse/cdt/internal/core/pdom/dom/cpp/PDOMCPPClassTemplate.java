@@ -28,13 +28,11 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IIndexName;
@@ -42,11 +40,9 @@ import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassScope;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassTemplate;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplates;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalTemplateInstantiator;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
@@ -62,7 +58,7 @@ import org.eclipse.core.runtime.CoreException;
  */
 class PDOMCPPClassTemplate extends PDOMCPPClassType
 		implements ICPPClassTemplate, ICPPInternalTemplateInstantiator,
-		ICPPTemplateScope, ICPPDelegateCreator {
+		ICPPTemplateScope {
 	
 	private static final int PARAMETERS = PDOMCPPClassType.RECORD_SIZE + 0;
 	private static final int INSTANCES = PDOMCPPClassType.RECORD_SIZE + 4;
@@ -84,10 +80,12 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 		super(pdom, bindingRecord);
 	}
 	
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 
+	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_CLASS_TEMPLATE;
 	}
@@ -152,6 +150,7 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 		return null;
 	}
 	
+	@Override
 	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) throws DOMException {
 		try {
 		    if (getDBName().equals(name.toCharArray())) {
@@ -163,9 +162,11 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 		    }
 			
 			IndexFilter filter = new IndexFilter() {
+				@Override
 				public boolean acceptBinding(IBinding binding) {
 					return !(binding instanceof ICPPTemplateParameter || binding instanceof ICPPSpecialization);
 				}
+				@Override
 				public boolean acceptLinkage(ILinkage linkage) {
 					return linkage.getLinkageID() == ILinkage.CPP_LINKAGE_ID;
 				}
@@ -180,6 +181,7 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 		return null;
 	}
 	
+	@Override
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) throws DOMException {
 		IBinding[] result = null;
 		try {
@@ -190,9 +192,11 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 				result = (IBinding[]) ArrayUtil.append(IBinding.class, result, this);
 			}
 			IndexFilter filter = new IndexFilter() {
+				@Override
 				public boolean acceptBinding(IBinding binding) {
 					return !(binding instanceof ICPPTemplateParameter || binding instanceof ICPPSpecialization);
 				}
+				@Override
 				public boolean acceptLinkage(ILinkage linkage) {
 					return linkage.getLinkageID() == ILinkage.CPP_LINKAGE_ID;
 				}
@@ -268,6 +272,7 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 	
 	private PDOMCPPTemplateScope scope;
 	
+	@Override
 	public IIndexScope getParent() {
 		if (scope == null) {
 			scope = new PDOMCPPTemplateScope();
@@ -275,6 +280,7 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 		return scope;
 	}
 
+	@Override
 	public void accept(IPDOMVisitor visitor) throws CoreException {
 		super.accept(visitor);
 		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + PARAMETERS, getLinkageImpl());
@@ -283,6 +289,7 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 		list.accept(visitor);
 	}
 
+	@Override
 	public void addMember(PDOMNode member) throws CoreException {
 		if (member instanceof ICPPTemplateParameter) {
 			PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + PARAMETERS, getLinkageImpl());
@@ -370,6 +377,7 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 		return CPPTemplates.instantiateTemplate(this, arguments, null);
 	}
 	
+	@Override
 	public boolean isSameType(IType type) {
 		if (type instanceof ITypedef) {
 			return type.isSameType(this);
@@ -419,9 +427,5 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 		}
 		
 		return false;
-	}
-	
-	public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl) {
-		return new CPPClassTemplate.CPPClassTemplateDelegate(usingDecl, this);
 	}
 }

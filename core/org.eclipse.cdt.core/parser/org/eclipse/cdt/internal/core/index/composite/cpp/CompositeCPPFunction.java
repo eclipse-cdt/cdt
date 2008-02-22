@@ -17,16 +17,12 @@ import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
-class CompositeCPPFunction extends CompositeCPPBinding implements ICPPFunction, ICPPDelegateCreator {
+class CompositeCPPFunction extends CompositeCPPBinding implements ICPPFunction {
 
 	public CompositeCPPFunction(ICompositesFactory cf, ICPPFunction rbinding) {
 		super(cf, rbinding);
@@ -81,10 +77,12 @@ class CompositeCPPFunction extends CompositeCPPBinding implements ICPPFunction, 
 		return ((ICPPFunction)rbinding).takesVarArgs();
 	}
 
+	@Override
 	public Object clone() {
 		fail(); return null;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer result = new StringBuffer();
 		try {
@@ -93,9 +91,5 @@ class CompositeCPPFunction extends CompositeCPPBinding implements ICPPFunction, 
 			result.append(de);
 		}
 		return result.toString();
-	}
-	
-	public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl) {
-		return new CPPFunction.CPPFunctionDelegate(usingDecl, this);
 	}
 }

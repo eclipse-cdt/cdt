@@ -20,11 +20,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /**
@@ -108,14 +106,6 @@ public class CPPDeferredClassInstance extends CPPInstance implements
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
-	 */
-	public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getKey()
 	 */
 	public int getKey() throws DOMException {
@@ -132,7 +122,8 @@ public class CPPDeferredClassInstance extends CPPInstance implements
 	/* (non-Javadoc)
 	 * @see java.lang.Object#clone()
 	 */
-	 public Object clone() {
+	 @Override
+	public Object clone() {
         return this;
     }
 

@@ -15,15 +15,11 @@ import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPEnumeration.CPPEnumerationDelegate;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
-class CompositeCPPEnumeration extends CompositeCPPBinding implements IEnumeration, ICPPDelegateCreator, IIndexType {
+class CompositeCPPEnumeration extends CompositeCPPBinding implements IEnumeration, IIndexType {
 	public CompositeCPPEnumeration(ICompositesFactory cf, IEnumeration rbinding) {
 		super(cf, (ICPPBinding) rbinding);
 	}
@@ -39,9 +35,6 @@ class CompositeCPPEnumeration extends CompositeCPPBinding implements IEnumeratio
 		return ((IEnumeration)rbinding).isSameType(type);
 	}
 	
+	@Override
 	public Object clone() { fail(); return null; }
-	
-	public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl) {
-		return new CPPEnumerationDelegate(usingDecl, this);
-	}
 }

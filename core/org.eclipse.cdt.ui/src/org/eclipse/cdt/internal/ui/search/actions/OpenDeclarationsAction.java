@@ -13,6 +13,9 @@
 package org.eclipse.cdt.internal.ui.search.actions;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -92,6 +95,7 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 			super(CEditorMessages.getString("OpenDeclarations.dialog.title")); //$NON-NLS-1$
 		}
 
+		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			try {
 				clearStatusLine();
@@ -337,45 +341,20 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 		}
 
 		private IName[] findDefinitions(IIndex index, IASTTranslationUnit ast, int isKind, IBinding binding) throws CoreException {
-			IASTName[] declNames= ast.getDefinitionsInAST(binding);
-			boolean containsUsingDirectives= false;
-			for (int i = 0; i < declNames.length; i++) {
-				IASTName name= declNames[i];
+			List<IASTName> declNames= new ArrayList<IASTName>();
+			declNames.addAll(Arrays.asList(ast.getDefinitionsInAST(binding)));
+			for (Iterator<IASTName> i = declNames.iterator(); i.hasNext();) {
+				IASTName name= i.next();
 				if (name.resolveBinding() instanceof ICPPUsingDeclaration) {
-					containsUsingDirectives= true;
-					break;
+					i.remove();
 				}
 			}
-			if (containsUsingDirectives) {
-				// prevent navigation from using-decl to itself, or prefer using-decls over original defs.
-				declNames= separateUsingDecls(declNames, isKind != KIND_USING_DECL);
-			}
-			if (declNames.length > 0) {
-				return declNames;
+			if (!declNames.isEmpty()) {
+				return declNames.toArray(new IASTName[declNames.size()]);
 			}
 			
 			// 2. Try definition in index
-			IIndexName[] inames= index.findNames(binding, IIndex.FIND_DEFINITIONS | IIndex.SEARCH_ACCROSS_LANGUAGE_BOUNDARIES);
-			if (isKind != KIND_USING_DECL) {
-				// prefer using decls
-				for (int i = 0; i < inames.length; i++) {
-					if (index.findBinding(inames[i]) instanceof ICPPUsingDeclaration) {
-						return new IName[]{inames[i]};
-					}
-				}
-			}
-			return inames;
-		}
-
-		private IASTName[] separateUsingDecls(IASTName[] declNames, boolean keep) {
-			ArrayList<IASTName> result= new ArrayList<IASTName>(declNames.length);
-			for (int i = 0; i < declNames.length; i++) {
-				IASTName name = declNames[i];
-				if (keep == (name.resolveBinding() instanceof ICPPUsingDeclaration)) {
-					result.add(name);
-				}
-			}
-			return result.toArray(new IASTName[result.size()]);
+			return index.findNames(binding, IIndex.FIND_DEFINITIONS | IIndex.SEARCH_ACCROSS_LANGUAGE_BOUNDARIES);
 		}
 
 		private IName[] findDeclarations(IIndex index, IASTTranslationUnit ast,
@@ -394,6 +373,7 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 		}
 	}
 
+	@Override
 	public void run() {
 		selNode = getSelectedStringFromEditor();
 		if (selNode != null) {

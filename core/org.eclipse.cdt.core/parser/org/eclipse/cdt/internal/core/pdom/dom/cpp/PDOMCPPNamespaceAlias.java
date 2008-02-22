@@ -46,6 +46,7 @@ class PDOMCPPNamespaceAlias extends PDOMCPPBinding implements ICPPNamespaceAlias
 		super(pdom, record);
 	}
 
+	@Override
 	public void update(final PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 		if (newBinding instanceof ICPPNamespaceAlias) {
 			ICPPNamespaceAlias alias= (ICPPNamespaceAlias) newBinding;
@@ -64,10 +65,12 @@ class PDOMCPPNamespaceAlias extends PDOMCPPBinding implements ICPPNamespaceAlias
 				namespace != null ? namespace.getRecord() : 0);
 	}
 
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 
+	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPPNAMESPACEALIAS;
 	}
@@ -93,10 +96,6 @@ class PDOMCPPNamespaceAlias extends PDOMCPPBinding implements ICPPNamespaceAlias
 
 	public IBinding[] getMemberBindings() throws DOMException {
 		throw new PDOMNotImplementedError();
-	}
-
-	public int getDelegateType() {
-		return NAMESPACE_ALIAS;
 	}
 
 	public IBinding getBinding() {

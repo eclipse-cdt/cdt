@@ -27,10 +27,8 @@ import java.util.regex.Pattern;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
@@ -42,7 +40,6 @@ import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.internal.core.dom.Linkage;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDelegate;
 import org.eclipse.cdt.internal.core.index.composite.CompositingNotImplementedError;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 import org.eclipse.cdt.internal.core.index.composite.c.CCompositesFactory;
@@ -125,12 +122,7 @@ public class CIndex implements IIndex {
 	public IIndexName[] findNames(IBinding binding, int flags) throws CoreException {
 		LinkedList<IIndexFragmentName> result= new LinkedList<IIndexFragmentName>();
 		if (binding instanceof ICPPUsingDeclaration) {
-			ICPPDelegate[] bindings= null;
-			try {
-				bindings = ((ICPPUsingDeclaration)binding).getDelegates();
-			} catch (DOMException e) {
-				CCorePlugin.log(e);
-			}
+			IBinding[] bindings= ((ICPPUsingDeclaration)binding).getDelegates();
 			if (bindings == null || bindings.length == 0) {
 				return new IIndexName[0];
 			}
@@ -143,18 +135,8 @@ public class CIndex implements IIndex {
 				return multi.toArray(new IIndexName[multi.size()]);
 			}
 			binding= bindings[0];
-		} else if (binding instanceof CPPDelegate) {
-			CPPDelegate delegate= (CPPDelegate) binding;
-			if (delegate.getDelegateType() == ICPPDelegate.USING_DECLARATION) {
-				binding= delegate.getBinding();
-				IIndexFragmentBinding ib= (IIndexFragmentBinding) delegate.getUsingDeclaration().getAdapter(IIndexFragmentBinding.class);
-				if (ib != null) {
-					final IIndexFragmentName[] names= ib.getFragment().findNames(ib, flags);
-					result.addAll(Arrays.asList(names));
-				}
-			}
-		}
-
+		} 
+		
 		int fragCount= 0;
 		for (int i = 0; i < fPrimaryFragmentCount; i++) {
 			final IIndexFragmentName[] names = fFragments[i].findNames(binding, flags);

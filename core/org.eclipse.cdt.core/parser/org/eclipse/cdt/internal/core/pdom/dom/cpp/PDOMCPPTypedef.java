@@ -17,13 +17,9 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTypedef;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
 import org.eclipse.cdt.internal.core.index.CPPTypedefClone;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexType;
@@ -37,7 +33,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  */
 class PDOMCPPTypedef extends PDOMCPPBinding
-		implements ITypedef, ITypeContainer, IIndexType, ICPPDelegateCreator {
+		implements ITypedef, ITypeContainer, IIndexType {
 
 	private static final int TYPE = PDOMBinding.RECORD_SIZE + 0;
 	
@@ -58,6 +54,7 @@ class PDOMCPPTypedef extends PDOMCPPBinding
 		super(pdom, record);
 	}
 
+	@Override
 	public void update(final PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 		if (newBinding instanceof ITypedef) {
 			ITypedef td= (ITypedef) newBinding;
@@ -114,10 +111,12 @@ class PDOMCPPTypedef extends PDOMCPPBinding
 	}
 
 
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 	
+	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPPTYPEDEF;
 	}
@@ -152,12 +151,8 @@ class PDOMCPPTypedef extends PDOMCPPBinding
 
 	public void setType(IType type) { fail(); }
 
+	@Override
 	public Object clone() {
 		return new CPPTypedefClone(this);
 	}
-	
-	public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl) {
-		return new CPPTypedef.CPPTypedefDelegate(usingDecl, this);
-	}
-	
 }

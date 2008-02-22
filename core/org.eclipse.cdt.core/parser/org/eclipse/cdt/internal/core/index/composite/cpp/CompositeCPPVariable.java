@@ -13,15 +13,11 @@ package org.eclipse.cdt.internal.core.index.composite.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
-class CompositeCPPVariable extends CompositeCPPBinding implements ICPPVariable, ICPPDelegateCreator {
+class CompositeCPPVariable extends CompositeCPPBinding implements ICPPVariable {
 
 	public CompositeCPPVariable(ICompositesFactory cf, ICPPVariable delegate) {
 		super(cf, delegate);
@@ -54,9 +50,5 @@ class CompositeCPPVariable extends CompositeCPPBinding implements ICPPVariable, 
 
 	public boolean isStatic() throws DOMException {
 		return ((ICPPVariable)rbinding).isStatic();
-	}
-	
-	public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl) {
-		return new CPPVariable.CPPVariableDelegate(usingDecl, this);
 	}
 }

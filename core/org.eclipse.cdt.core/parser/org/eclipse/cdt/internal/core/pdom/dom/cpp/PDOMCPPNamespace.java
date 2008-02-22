@@ -21,18 +21,14 @@ import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNamespace;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -48,7 +44,7 @@ import org.eclipse.core.runtime.CoreException;
  *
  */
 class PDOMCPPNamespace extends PDOMCPPBinding
-		implements ICPPNamespace, ICPPNamespaceScope, IIndexScope, ICPPDelegateCreator {
+		implements ICPPNamespace, ICPPNamespaceScope, IIndexScope {
 
 	private static final int INDEX_OFFSET = PDOMBinding.RECORD_SIZE + 0;
 
@@ -63,10 +59,12 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 		super(pdom, record);
 	}
 
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 
+	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPPNAMESPACE;
 	}
@@ -75,6 +73,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 		return new BTree(pdom.getDB(), record + INDEX_OFFSET, getLinkageImpl().getIndexComparator());
 	}
 
+	@Override
 	public void accept(final IPDOMVisitor visitor) throws CoreException {
 		if (visitor instanceof IBTreeVisitor) {
 			getIndex().accept((IBTreeVisitor) visitor);
@@ -97,6 +96,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 		}
 	}
 
+	@Override
 	public void addChild(PDOMNode child) throws CoreException {
 		getIndex().insert(child.getRecord());
 	}
@@ -120,6 +120,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}
 
+	@Override
 	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) throws DOMException {
 		try {
 			IBinding[] bindings= getBindingsViaCache(name.toCharArray());
@@ -133,6 +134,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 		return null;
 	}
 	
+	@Override
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) throws DOMException {
 		IBinding[] result = null;
 		try {
@@ -169,6 +171,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 		return true;
 	}
 
+	@Override
 	public boolean mayHaveChildren() {
 		return true;
 	}
@@ -198,9 +201,4 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 	public IIndexBinding getScopeBinding() {
 		return this;
 	}
-	
-	public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl) {
-		return new CPPNamespace.CPPNamespaceDelegate(usingDecl, this);
-	}
-	
 }

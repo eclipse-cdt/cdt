@@ -12,10 +12,8 @@ package org.eclipse.cdt.internal.core.index.composite.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
@@ -28,19 +26,16 @@ class CompositeCPPUsingDeclaration extends CompositeCPPBinding implements ICPPUs
 		fail(); return null;
 	}
 
-	public ICPPDelegate[] getDelegates() throws DOMException {
-		ICPPDelegate[] delegates = ((ICPPUsingDeclaration) rbinding).getDelegates();
-		ICPPDelegate[] composites = new ICPPDelegate[delegates.length];
+	public IBinding[] getDelegates() {
+		IBinding[] delegates = ((ICPPUsingDeclaration) rbinding).getDelegates();
+		IBinding[] composites = new IBinding[delegates.length];
 		int j = 0;
 		for (int i = 0; i < delegates.length; i++) {
-			IBinding binding = delegates[i].getBinding();
+			IBinding binding = delegates[i];
 			if (binding instanceof IIndexFragmentBinding) {
-				binding = cf.getCompositeBinding((IIndexFragmentBinding) binding);
-	            if (binding instanceof ICPPDelegateCreator) {
-	                composites[j++] = ((ICPPDelegateCreator) binding).createDelegate(this);
-	            }
+				composites[j++] = cf.getCompositeBinding((IIndexFragmentBinding) binding);
 			}
 		}
-		return (ICPPDelegate[]) ArrayUtil.trim(ICPPDelegate.class, composites);
+		return (IBinding[]) ArrayUtil.trim(IBinding.class, composites);
 	}
 }

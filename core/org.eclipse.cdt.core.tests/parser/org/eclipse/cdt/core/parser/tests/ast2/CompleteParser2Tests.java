@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,7 +55,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -106,7 +105,8 @@ public class CompleteParser2Tests extends BaseTestCase {
             shouldVisitNames = true;
         }
         public List nameList = new ArrayList();
-        public int visit( IASTName name ){
+        @Override
+		public int visit( IASTName name ){
             nameList.add( name );
             return PROCESS_CONTINUE;
         }
@@ -122,7 +122,8 @@ public class CompleteParser2Tests extends BaseTestCase {
             shouldVisitNames = true;
         }
         public List nameList = new ArrayList();
-        public int visit( IASTName name ){
+        @Override
+		public int visit( IASTName name ){
             nameList.add( name );
             return PROCESS_CONTINUE;
         }
@@ -414,10 +415,10 @@ public class CompleteParser2Tests extends BaseTestCase {
  		assertInstances( col, C, 2 );
  		assertInstances( col, y, 1 );
  		
- 		ICPPDelegate [] ds = using_x.getDelegates();
- 		assertSame( ds[0].getBinding(), x );
- 		assertSame( using_C.getDelegates()[0].getBinding(), C );
- 		assertSame( using_y.getDelegates()[0].getBinding(), y );
+ 		IBinding [] ds = using_x.getDelegates();
+ 		assertSame( ds[0], x );
+ 		assertSame( using_C.getDelegates()[0], C );
+ 		assertSame( using_y.getDelegates()[0], y );
 	}
 	
 	public void testEnumerations() throws Exception
@@ -536,8 +537,8 @@ public class CompleteParser2Tests extends BaseTestCase {
  		assertInstances( col, A, 2 );
  		assertInstances( col, bar, 1 );
  		
- 		assertSame( using_foo.getDelegates()[0].getBinding(), foo );
- 		assertSame( using_bar.getDelegates()[0].getBinding(), bar );
+ 		assertSame( using_foo.getDelegates()[0], foo );
+ 		assertSame( using_bar.getDelegates()[0], bar );
 	}
 	
 	public void testLinkageSpec() throws Exception

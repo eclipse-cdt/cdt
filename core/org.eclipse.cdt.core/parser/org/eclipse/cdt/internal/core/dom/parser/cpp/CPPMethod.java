@@ -28,9 +28,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 
@@ -38,35 +36,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
  * @author aniefer
  */
 public class CPPMethod extends CPPFunction implements ICPPMethod {
-    public static class CPPMethodDelegate extends CPPFunction.CPPFunctionDelegate implements ICPPMethod {
-        public CPPMethodDelegate( ICPPUsingDeclaration name, ICPPMethod binding ) {
-            super( name, binding );
-        }
-        public int getVisibility() throws DOMException {
-            return ((ICPPMethod)getBinding()).getVisibility();
-        }
-        public ICPPClassType getClassOwner() throws DOMException {
-            return ((ICPPMethod)getBinding()).getClassOwner();
-        }
-        public boolean isVirtual() throws DOMException {
-            return ((ICPPMethod)getBinding()).isVirtual();
-        }
-        
-       	/* (non-Javadoc)
-	     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod#isDestructor()
-    	 */
-		public boolean isDestructor() {
-			char[] name = getNameCharArray();
-			if (name.length > 1 && name[0] == '~')
-				return true;
-			
-			return false;
-		}
-		public boolean isImplicit() {
-			return ((ICPPMethod)getBinding()).isImplicit();
-		}
-    }
-    
     public static class CPPMethodProblem extends CPPFunctionProblem implements ICPPMethod {
         /**
          * @param id
@@ -189,6 +158,7 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 		return scope.getClassType();
 	}
 
+	@Override
 	public IScope getScope() {
 	    IASTNode node = (declarations != null && declarations.length > 0) ? declarations[0] : definition;
 		if( node instanceof IASTDeclarator ){
@@ -202,6 +172,7 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 		return CPPVisitor.getContainingScope( node );
 	}
 	
+	@Override
 	public String getName() {
 	    if( definition != null ){
 	        IASTName n = definition.getName();
@@ -217,6 +188,7 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
 	 */
+	@Override
 	public char[] getNameCharArray() {
 	    if( definition != null ){
 	        IASTName n = definition.getName();
@@ -228,13 +200,6 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 	    }
 		return declarations[0].getName().toCharArray();
 	}
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
-     */
-    public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl ) {
-        return new CPPMethodDelegate( usingDecl, this );
-    }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod#isVirtual()
@@ -262,7 +227,8 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction#isInline()
      */
-    public boolean isInline() throws DOMException {
+    @Override
+	public boolean isInline() throws DOMException {
         IASTDeclaration decl = getPrimaryDeclaration();
         if( decl instanceof IASTFunctionDefinition )
             return true;
@@ -276,7 +242,8 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction#isMutable()
      */
-    public boolean isMutable() {
+    @Override
+	public boolean isMutable() {
         return hasStorageClass( this, ICPPASTDeclSpecifier.sc_mutable );
     }
 

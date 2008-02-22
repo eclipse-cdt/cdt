@@ -1,14 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2007 QNX Software Systems and others.
+ * Copyright (c) 2007, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * Anton Leherbauer (Wind River Systems)
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
+ *    Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
@@ -49,7 +49,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
@@ -81,11 +80,12 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 	public DOMCompletionProposalComputer() {
 	}
 	
-	protected List computeCompletionProposals(
+	@Override
+	protected List<CCompletionProposal> computeCompletionProposals(
 			CContentAssistInvocationContext context,
 			IASTCompletionNode completionNode, String prefix) {
 
-		List proposals = new ArrayList();
+		List<CCompletionProposal> proposals = new ArrayList<CCompletionProposal>();
 		
 		if(inPreprocessorDirective(context)) {
 			// add only macros
@@ -145,7 +145,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		return false;
 	}
 
-	private void addMacroProposals(CContentAssistInvocationContext context, String prefix, List proposals) {
+	private void addMacroProposals(CContentAssistInvocationContext context, String prefix, List<CCompletionProposal> proposals) {
 		char[] prefixChars= prefix.toCharArray();
 		IASTCompletionNode completionNode = context.getCompletionNode();
 		IASTPreprocessorMacroDefinition[] macros = completionNode.getTranslationUnit().getMacroDefinitions();
@@ -160,7 +160,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 					handleMacro(macros[i], context, proposals);
 	}
 	
-	private void handleMacro(IASTPreprocessorMacroDefinition macro, CContentAssistInvocationContext context, List proposals) {
+	private void handleMacro(IASTPreprocessorMacroDefinition macro, CContentAssistInvocationContext context, List<CCompletionProposal> proposals) {
 		String macroName = macro.getName().toString();
 		Image image = getImage(CElementImageProvider.getMacroImageDescriptor());
 		
@@ -208,7 +208,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 	
 	protected void handleBinding(IBinding binding,
 			CContentAssistInvocationContext cContext,
-			IASTCompletionContext astContext, List proposals) {
+			IASTCompletionContext astContext, List<CCompletionProposal> proposals) {
 		if ((binding instanceof CPPImplicitFunction
 				|| binding instanceof CPPImplicitFunctionTemplate || binding instanceof CPPImplicitTypedef)
 				&& !(binding instanceof CPPImplicitMethod)) {
@@ -237,7 +237,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		return name.length == 0 || name[0] == '{';
 	}
 
-	private void handleClass(ICPPClassType classType, IASTCompletionContext astContext, CContentAssistInvocationContext context, List proposals) {
+	private void handleClass(ICPPClassType classType, IASTCompletionContext astContext, CContentAssistInvocationContext context, List<CCompletionProposal> proposals) {
 		if (context.isContextInformationStyle()) {
 			try {
 				ICPPConstructor[] constructors = classType.getConstructors();
@@ -257,7 +257,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		}
 	}
 	
-	private void handleFunction(IFunction function, CContentAssistInvocationContext context, List proposals) {	
+	private void handleFunction(IFunction function, CContentAssistInvocationContext context, List<CCompletionProposal> proposals) {	
 		Image image = getImage(function);
 		
 		StringBuffer repStringBuff = new StringBuffer();
@@ -341,7 +341,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		proposals.add(proposal);
 	}
 	
-	private void handleVariable(IVariable variable, CContentAssistInvocationContext context, List proposals) {
+	private void handleVariable(IVariable variable, CContentAssistInvocationContext context, List<CCompletionProposal> proposals) {
 		StringBuffer repStringBuff = new StringBuffer();
 		repStringBuff.append(variable.getName());
 		
@@ -372,7 +372,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 	
 	private void handleNamespace(ICPPNamespace namespace,
 			IASTCompletionContext astContext,
-			CContentAssistInvocationContext cContext, List proposals) {
+			CContentAssistInvocationContext cContext, List<CCompletionProposal> proposals) {
 		if (astContext instanceof ICPPASTQualifiedName) {
 			IASTCompletionContext parent = ((ICPPASTQualifiedName) astContext)
 					.getCompletionContext();
@@ -464,7 +464,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			} else if (binding instanceof ICPPFunctionTemplate) {
 				imageDescriptor = CElementImageProvider.getFunctionImageDescriptor();
 			} else if (binding instanceof ICPPUsingDeclaration) {
-				ICPPDelegate[] delegates = ((ICPPUsingDeclaration)binding).getDelegates();
+				IBinding[] delegates = ((ICPPUsingDeclaration)binding).getDelegates();
 				if (delegates.length > 0)
 					return getImage(delegates[0]);
 			}

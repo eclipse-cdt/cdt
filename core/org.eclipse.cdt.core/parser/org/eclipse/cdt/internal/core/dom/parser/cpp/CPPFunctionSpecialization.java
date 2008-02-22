@@ -24,14 +24,11 @@ import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction.CPPFunctionDelegate;
 
 /**
  * @author aniefer
@@ -154,10 +151,6 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
         return false;
 	}
 
-	public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl) {
-		return new CPPFunctionDelegate( usingDecl, this );
-	}
-
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction#resolveParameter(org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration)
      */
@@ -193,7 +186,8 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
         return null;
     }
     
-    public void addDefinition(IASTNode node) {
+    @Override
+	public void addDefinition(IASTNode node) {
         IASTNode n = node;
 		while( n instanceof IASTName )
 			n = n.getParent();
@@ -202,6 +196,7 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 	    updateParameterBindings( (ICPPASTFunctionDeclarator) n );
         super.addDefinition( n );
 	}
+	@Override
 	public void addDeclaration(IASTNode node) {
 	    IASTNode n = node;
 		while( n instanceof IASTName )

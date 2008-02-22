@@ -31,7 +31,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -700,14 +699,12 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//	}
 	public void testAdvanceUsingDeclaration_Bug217102() throws Exception {
 		IBinding cl = getBindingFromASTName("Bar* Foo", 3);
-		assertTrue(cl instanceof ICPPDelegate);
-		cl= ((ICPPDelegate) cl).getBinding();
+
 		assertEquals("Bar", cl.getName());
 		assertTrue(cl instanceof ICPPClassType);
 		assertEquals("BAR", cl.getScope().getScopeName().toString());
 
 		cl = getBindingFromASTName("Bar* pBar", 3);
-		cl= ((ICPPDelegate) cl).getBinding();
 		assertEquals("Bar", cl.getName());
 		assertTrue(cl instanceof ICPPClassType);
 		assertEquals("BAR", cl.getScope().getScopeName().toString());

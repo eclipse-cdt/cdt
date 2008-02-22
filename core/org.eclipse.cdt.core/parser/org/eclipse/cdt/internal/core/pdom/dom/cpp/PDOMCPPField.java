@@ -16,11 +16,7 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPField;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -30,7 +26,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  *
  */
-class PDOMCPPField extends PDOMCPPVariable implements ICPPField, ICPPDelegateCreator {
+class PDOMCPPField extends PDOMCPPVariable implements ICPPField {
 	
 	public PDOMCPPField(PDOM pdom, PDOMNode parent, ICPPField field)
 			throws CoreException {
@@ -42,11 +38,13 @@ class PDOMCPPField extends PDOMCPPVariable implements ICPPField, ICPPDelegateCre
 	}
 
 	// @Override
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 	
 	// @Override
+	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPPFIELD;
 	}
@@ -65,28 +63,33 @@ class PDOMCPPField extends PDOMCPPVariable implements ICPPField, ICPPDelegateCre
 	}
 
 	// @Override
+	@Override
 	public boolean isMutable() {
 		return getBit(getByte(record + ANNOTATIONS), PDOMCPPAnnotation.MUTABLE_OFFSET);
 	}
 
 	// @Override
+	@Override
 	public boolean isAuto() {
 		// ISO/IEC 14882:2003 9.2.6
 		return false; 
 	}
 
 	// @Override
+	@Override
 	public boolean isExtern() {
 		// ISO/IEC 14882:2003 9.2.6
 		return false; 
 	}
 
 	// @Override
+	@Override
 	public boolean isExternC() {
 		return false; 
 	}
 
 	// @Override
+	@Override
 	public boolean isRegister() {
 		// ISO/IEC 14882:2003 9.2.6
 		return false; 
@@ -95,9 +98,4 @@ class PDOMCPPField extends PDOMCPPVariable implements ICPPField, ICPPDelegateCre
 	public ICompositeType getCompositeTypeOwner() {
 		return getClassOwner();
 	}
-	
-	public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl) {
-		return new CPPField.CPPFieldDelegate(usingDecl, this);
-	}
-	
 }

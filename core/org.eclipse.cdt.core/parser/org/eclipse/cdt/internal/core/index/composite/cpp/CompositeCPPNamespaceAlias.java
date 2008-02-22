@@ -34,8 +34,4 @@ class CompositeCPPNamespaceAlias extends CompositeCPPBinding implements ICPPName
 		IIndexFragmentBinding ns = (IIndexFragmentBinding) ((ICPPNamespaceAlias)rbinding).getBinding();
 		return cf.getCompositeBinding(ns);
 	}
-
-	public int getDelegateType() {
-		return NAMESPACE_ALIAS;
-	}
 }

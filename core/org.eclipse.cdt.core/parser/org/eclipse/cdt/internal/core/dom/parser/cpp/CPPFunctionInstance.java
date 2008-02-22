@@ -19,13 +19,11 @@ import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 
@@ -43,13 +41,6 @@ public class CPPFunctionInstance extends CPPInstance implements ICPPFunction, IC
 	 */
 	public CPPFunctionInstance(ICPPScope scope, IBinding orig, ObjectMap argMap, IType[] args) {
 		super(scope, orig, argMap, args);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
-	 */
-	public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl) {
-		return new CPPFunction.CPPFunctionDelegate( usingDecl, this );
 	}
 
 	/* (non-Javadoc)
@@ -161,7 +152,8 @@ public class CPPFunctionInstance extends CPPInstance implements ICPPFunction, IC
         return null;
     }
     
-    public boolean equals(Object obj) {
+    @Override
+	public boolean equals(Object obj) {
     	if( (obj instanceof ICPPTemplateInstance) && (obj instanceof ICPPFunction)){
     		try {
     			ICPPFunctionType ct1= (ICPPFunctionType) ((ICPPFunction)getSpecializedBinding()).getType();

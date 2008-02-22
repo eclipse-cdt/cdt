@@ -16,9 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -34,6 +32,7 @@ public class CPPTemplateParameter extends PlatformObject implements ICPPTemplate
 		declarations = new IASTName[] { name };
 	}
 
+	@Override
 	public Object clone() {
         IType t = null;
    		try {
@@ -107,14 +106,6 @@ public class CPPTemplateParameter extends PlatformObject implements ICPPTemplate
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
-	 */
-	public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDefinition(org.eclipse.cdt.core.dom.ast.IASTNode)
 	 */
 	public void addDefinition(IASTNode node) {
@@ -149,6 +140,7 @@ public class CPPTemplateParameter extends PlatformObject implements ICPPTemplate
 		return Linkage.CPP_LINKAGE;
 	}
 	
+	@Override
 	public String toString() {
 		return getName();
 	}

@@ -25,8 +25,6 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
@@ -38,32 +36,6 @@ import org.eclipse.core.runtime.PlatformObject;
  * @author aniefer
  */
 public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInternalVariable {
-    public static class CPPVariableDelegate extends CPPDelegate implements ICPPVariable {
-        public CPPVariableDelegate( ICPPUsingDeclaration name, ICPPVariable binding ) {
-            super( name, binding );
-        }
-        public IType getType() throws DOMException {
-            return ((ICPPVariable)getBinding()).getType();
-        }
-        public boolean isStatic() throws DOMException {
-            return ((ICPPVariable)getBinding()).isStatic();
-        }
-        public boolean isMutable() throws DOMException {
-            return ((ICPPVariable)getBinding()).isMutable();
-        }
-        public boolean isExtern() throws DOMException {
-            return ((ICPPVariable)getBinding()).isExtern();
-        }
-        public boolean isExternC() throws DOMException {
-            return ((ICPPVariable)getBinding()).isExternC();
-        }
-        public boolean isAuto() throws DOMException {
-            return ((ICPPVariable)getBinding()).isAuto();
-        }
-        public boolean isRegister() throws DOMException {
-            return ((ICPPVariable)getBinding()).isRegister();
-        }
-    }
     public static class CPPVariableProblem extends ProblemBinding implements ICPPVariable{
         public CPPVariableProblem( IASTNode node, int id, char[] arg ) {
             super( node, id, arg );
@@ -283,13 +255,6 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
             scope = scope.getParent();
         }
         return true;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
-     */
-    public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl ) {
-        return new CPPVariableDelegate( usingDecl, this );
     }
 
 	/* (non-Javadoc)

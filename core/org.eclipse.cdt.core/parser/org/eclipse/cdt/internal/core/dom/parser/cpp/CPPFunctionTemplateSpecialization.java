@@ -13,13 +13,11 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /**
@@ -38,11 +36,6 @@ public class CPPFunctionTemplateSpecialization extends CPPFunctionSpecialization
 	public ICPPTemplateParameter[] getTemplateParameters() throws DOMException {
 		ICPPFunctionTemplate template = (ICPPFunctionTemplate) getSpecializedBinding();
 		return template.getTemplateParameters();
-	}
-
-	public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	public void addSpecialization(IType[] arguments, ICPPSpecialization specialization) {

@@ -18,11 +18,9 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.core.runtime.PlatformObject;
 
@@ -47,13 +45,6 @@ public class CPPNamespaceAlias extends PlatformObject implements ICPPNamespaceAl
      */
     public ICPPNamespaceScope getNamespaceScope() throws DOMException {
         return namespace.getNamespaceScope();
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate#getDelegateType()
-     */
-    public int getDelegateType() {
-        return ICPPDelegate.NAMESPACE_ALIAS;
     }
 
     /* (non-Javadoc)
@@ -123,14 +114,6 @@ public class CPPNamespaceAlias extends PlatformObject implements ICPPNamespaceAl
      */
     public IASTNode getDefinition() {
         return alias;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
-     */
-    public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl ) {
-        // TODO Auto-generated method stub
-        return null;
     }
 
 	/* (non-Javadoc)

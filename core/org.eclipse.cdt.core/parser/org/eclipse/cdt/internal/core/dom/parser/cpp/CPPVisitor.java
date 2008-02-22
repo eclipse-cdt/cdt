@@ -118,7 +118,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -1066,6 +1065,7 @@ public class CPPVisitor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processDeclaration(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
 		 */
+		@Override
 		public int visit(IASTDeclaration declaration) {
 			if ( declaration instanceof IASTProblemHolder )
 				addProblem(((IASTProblemHolder)declaration).getProblem());
@@ -1075,6 +1075,7 @@ public class CPPVisitor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processExpression(org.eclipse.cdt.core.dom.ast.IASTExpression)
 		 */
+		@Override
 		public int visit(IASTExpression expression) {
 			if ( expression instanceof IASTProblemHolder )
 				addProblem(((IASTProblemHolder)expression).getProblem());
@@ -1085,6 +1086,7 @@ public class CPPVisitor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processStatement(org.eclipse.cdt.core.dom.ast.IASTStatement)
 		 */
+		@Override
 		public int visit(IASTStatement statement) {
 			if ( statement instanceof IASTProblemHolder )
 				addProblem(((IASTProblemHolder)statement).getProblem());
@@ -1095,6 +1097,7 @@ public class CPPVisitor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processTypeId(org.eclipse.cdt.core.dom.ast.IASTTypeId)
 		 */
+		@Override
 		public int visit(IASTTypeId typeId) {
 			if ( typeId instanceof IASTProblemHolder )
 				addProblem(((IASTProblemHolder)typeId).getProblem());
@@ -1124,15 +1127,7 @@ public class CPPVisitor {
 			
 			this.bindings = new IBinding[] {binding};
 			if (binding instanceof ICPPUsingDeclaration) {
-				try {
-					ICPPDelegate[] delegates= ((ICPPUsingDeclaration) binding).getDelegates();
-					this.bindings= new IBinding[delegates.length+1];
-					this.bindings[0]= binding;
-					for (int i=0; i < delegates.length; i++) {
-						this.bindings[i+1]= delegates[i].getBinding();
-					}
-				} catch (DOMException e) {
-				}
+				this.bindings= ((ICPPUsingDeclaration) binding).getDelegates();
 				kind= KIND_COMPOSITE;
 			}
 			else if( binding instanceof ILabel )
@@ -1152,6 +1147,7 @@ public class CPPVisitor {
 				kind = KIND_OBJ_FN;
 		}
 		
+		@Override
 		public int visit( IASTName name ){
 			if( name instanceof ICPPASTQualifiedName ) return PROCESS_CONTINUE;
 			
@@ -1245,11 +1241,8 @@ public class CPPVisitor {
 					}
 					// a using declaration is a declaration for the references of its delegates
 					if (nameBinding instanceof ICPPUsingDeclaration) {
-						try {
-							if (ArrayUtil.contains(((ICPPUsingDeclaration) nameBinding).getDelegates(), bindings[i])) {
-								return true;
-							}
-						} catch (DOMException e) {
+						if (ArrayUtil.contains(((ICPPUsingDeclaration) nameBinding).getDelegates(), bindings[i])) {
+							return true;
 						}
 					}
 				}
@@ -1272,13 +1265,6 @@ public class CPPVisitor {
 		while(true) {
 			if (binding instanceof ICPPSpecialization) {
 				binding= ((ICPPSpecialization) binding).getSpecializedBinding();
-			} else if (binding instanceof ICPPDelegate) {
-				ICPPDelegate delegate= (ICPPDelegate) binding;
-				if (delegate.getDelegateType() == ICPPDelegate.USING_DECLARATION) {
-					binding= delegate.getBinding();
-				} else {
-					break;
-				}
 			} else {
 				break;
 			}
@@ -1308,14 +1294,7 @@ public class CPPVisitor {
 			this.bindings = new IBinding[] {binding};
 			
 			if (binding instanceof ICPPUsingDeclaration) {
-				try {
-					ICPPDelegate[] delegates= ((ICPPUsingDeclaration) binding).getDelegates();
-					this.bindings= new IBinding[delegates.length];
-					for (int i = 0; i < delegates.length; i++) {
-						binding= this.bindings[i]= delegates[i].getBinding();
-					}
-				} catch (DOMException e) {
-				}
+				this.bindings= ((ICPPUsingDeclaration) binding).getDelegates();
 				kind= KIND_COMPOSITE;
 			} else if( binding instanceof ILabel ) {
 				kind = KIND_LABEL;
@@ -1332,6 +1311,7 @@ public class CPPVisitor {
 			}
 		}
 		
+		@Override
 		public int visit( IASTName name ){
 			if( name instanceof ICPPASTQualifiedName || name instanceof ICPPASTTemplateId ) return PROCESS_CONTINUE;
 			
@@ -1417,15 +1397,12 @@ public class CPPVisitor {
 					}
 				}
 				if (nameBinding instanceof ICPPUsingDeclaration) {
-					try {
-						ICPPDelegate[] delegates= ((ICPPUsingDeclaration) nameBinding).getDelegates();
-						for (int i = 0; i < delegates.length; i++) {
-							ICPPDelegate delegate = delegates[i];
-							if (isReferenceBinding(delegate.getBinding())) {
-								return true;
-							}
+					IBinding[] delegates= ((ICPPUsingDeclaration) nameBinding).getDelegates();
+					for (int i = 0; i < delegates.length; i++) {
+						IBinding delegate = delegates[i];
+						if (isReferenceBinding(delegate)) {
+							return true;
 						}
-					} catch (DOMException e) {
 					}
 					return false;
 				} else {

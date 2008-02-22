@@ -36,10 +36,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IndexFilter;
@@ -47,8 +45,6 @@ import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassType.CPPClassTypeDelegate;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.index.IIndexType;
@@ -67,7 +63,7 @@ import org.eclipse.core.runtime.CoreException;
  * 
  */
 class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
-		ICPPClassScope, IPDOMMemberOwner, IIndexType, IIndexScope, ICPPDelegateCreator {
+		ICPPClassScope, IPDOMMemberOwner, IIndexType, IIndexScope {
 
 	@SuppressWarnings("static-access")
 	private static final int FIRSTBASE = PDOMCPPBinding.RECORD_SIZE + 0;
@@ -90,6 +86,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 		super(pdom, bindingRecord);
 	}
 
+	@Override
 	public void update(PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 		if (newBinding instanceof ICPPClassType) {
 			ICPPClassType ct= (ICPPClassType) newBinding;
@@ -111,10 +108,12 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 		list.addMember(member);
 	}
 
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 
+	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPPCLASSTYPE;
 	}
@@ -136,7 +135,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 	}
 
 	public boolean isSameType(IType type) {
-		if (type instanceof ITypedef || type instanceof ICPPDelegate) {
+		if (type instanceof ITypedef) {
 			return type.isSameType(this);
 		}
 		
@@ -176,6 +175,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 		}
 	}
 
+	@Override
 	public void accept(IPDOMVisitor visitor) throws CoreException {
 		super.accept(visitor);
 		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + MEMBERLIST, getLinkageImpl());
@@ -304,6 +304,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 		}
 	}
 
+	@Override
 	public boolean isGloballyQualified() throws DOMException {
 		try {
 			return getParentNode() instanceof PDOMLinkage;
@@ -316,6 +317,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 		return this;
 	}
 
+	@Override
 	public void addChild(PDOMNode member) throws CoreException {
 		addMember(member);
 	}
@@ -335,6 +337,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 		return true;
 	}
 
+	@Override
 	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) throws DOMException {
 		try {
 		    final char[] nameChars = name.toCharArray();
@@ -354,6 +357,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 		return null;
 	}
 	
+	@Override
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) throws DOMException {
 		IBinding[] result = null;
 		try {
@@ -399,10 +403,12 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 	
 	// Not implemented
 
+	@Override
 	public Object clone() {fail();return null;}
 	public IField findField(String name) throws DOMException {fail();return null;}
 	public IBinding[] getFriends() throws DOMException {fail();return null;}
 
+	@Override
 	public boolean mayHaveChildren() {
 		return true;
 	}
@@ -433,11 +439,8 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 	public IIndexBinding getScopeBinding() {
 		return this;
 	}
-	
-	public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl) {
-		return new CPPClassTypeDelegate(usingDecl, this);
-	}
 
+	@Override
 	public String toString() {
 		return ASTTypeUtil.getType(this);
 	}

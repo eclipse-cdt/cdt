@@ -17,13 +17,9 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.internal.core.Util;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameter;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
@@ -42,7 +38,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  */
 class PDOMCPPParameter extends PDOMNamedNode
-		implements ICPPParameter, IIndexFragmentBinding, ICPPDelegateCreator {
+		implements ICPPParameter, IIndexFragmentBinding {
 
 	/**
 	 * Offset of pointer to the next parameter (relative to the
@@ -119,10 +115,12 @@ class PDOMCPPParameter extends PDOMNamedNode
 		return flags;
 	}
 
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 
+	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPPPARAMETER;
 	}
@@ -199,6 +197,7 @@ class PDOMCPPParameter extends PDOMNamedNode
 		return null;
 	}
 
+	@Override
 	public char[] getNameCharArray() {
 		try {
 			return super.getNameCharArray();
@@ -243,11 +242,8 @@ class PDOMCPPParameter extends PDOMNamedNode
 	public int getBindingConstant() {
 		return getNodeType();
 	}
-	
-	public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl) {
-		return new CPPParameter.CPPParameterDelegate(usingDecl, this);
-	}
 
+	@Override
 	public void delete(PDOMLinkage linkage) throws CoreException {
 		linkage.deleteType(getType(), record);
 		PDOMCPPParameter next= getNextParameter();

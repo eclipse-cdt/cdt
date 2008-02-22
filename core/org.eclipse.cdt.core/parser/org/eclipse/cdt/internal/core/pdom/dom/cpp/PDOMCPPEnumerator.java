@@ -16,10 +16,6 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPEnumerator;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -30,7 +26,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  *
  */
-class PDOMCPPEnumerator extends PDOMCPPBinding implements IEnumerator, ICPPBinding, ICPPDelegateCreator {
+class PDOMCPPEnumerator extends PDOMCPPBinding implements IEnumerator, ICPPBinding {
 
 	private static final int ENUMERATION = PDOMBinding.RECORD_SIZE + 0;
 	private static final int NEXT_ENUMERATOR = PDOMBinding.RECORD_SIZE + 4;
@@ -49,10 +45,12 @@ class PDOMCPPEnumerator extends PDOMCPPBinding implements IEnumerator, ICPPBindi
 		super(pdom, record);
 	}
 
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 	
+	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPPENUMERATOR;
 	}
@@ -75,9 +73,4 @@ class PDOMCPPEnumerator extends PDOMCPPBinding implements IEnumerator, ICPPBindi
 			return null;
 		}
 	}
-
-	public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl) {
-		return new CPPEnumerator.CPPEnumeratorDelegate(usingDecl, this);
-	}
-	
 }

@@ -20,8 +20,6 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -32,20 +30,6 @@ import org.eclipse.core.runtime.PlatformObject;
  * @author aniefer
  */
 public class CPPTypedef extends PlatformObject implements ITypedef, ITypeContainer, ICPPInternalBinding {
-    public static class CPPTypedefDelegate extends CPPDelegate implements ITypedef, ITypeContainer {
-        public CPPTypedefDelegate(ICPPUsingDeclaration name, ITypedef binding) {
-            super(name, binding);
-        }
-        public IType getType() throws DOMException {
-            return ((ITypedef)getBinding()).getType();
-        }
-        public boolean isSameType(IType type) {
-            return ((ITypedef)getBinding()).isSameType(type);
-        }
-		public void setType(IType type) {
-			((ITypeContainer)getBinding()).setType(type);
-		}
-    }
 
 	private IASTName[] declarations = null;
 	private IType type = null;
@@ -128,7 +112,8 @@ public class CPPTypedef extends PlatformObject implements ITypedef, ITypeContain
 		return CPPVisitor.getContainingScope(declarations[0].getParent());
 	}
 
-    public Object clone() {
+    @Override
+	public Object clone() {
         IType t = null;
    		try {
             t = (IType) super.clone();
@@ -162,13 +147,6 @@ public class CPPTypedef extends PlatformObject implements ITypedef, ITypeContain
             scope = scope.getParent();
         }
         return true;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
-     */
-    public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl) {
-        return new CPPTypedefDelegate(usingDecl, this);
     }
 
 	/* (non-Javadoc)
@@ -207,6 +185,7 @@ public class CPPTypedef extends PlatformObject implements ITypedef, ITypeContain
 		return Linkage.CPP_LINKAGE;
 	}
 
+	@Override
 	public String toString() {
 		return getName();
 	}

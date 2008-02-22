@@ -44,7 +44,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
@@ -198,6 +197,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	
 	List<Runnable> postProcesses = new ArrayList<Runnable>();
 	
+	@Override
 	public PDOMBinding addBinding(IASTName name) throws CoreException {
 		if (name == null || name instanceof ICPPASTQualifiedName)
 			return null;
@@ -230,14 +230,13 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		return pdomBinding;
 	}
 
+	@Override
 	public PDOMBinding addBinding(IBinding binding, IASTName fromName) throws CoreException {
 		// assign names to anonymous types.
 		binding= PDOMASTAdapter.getAdapterForAnonymousASTBinding(binding);
 		if (binding == null) {
 			return null;
 		}
-		// references to the using-declarations delegates are stored with the original binding.
-		binding = unwrapUsingDelarationDelegates(binding);
 
 		PDOMBinding pdomBinding = adaptBinding(binding);
 		if (pdomBinding != null) {
@@ -259,18 +258,6 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			}
 		}
 		return pdomBinding;
-	}
-
-	private IBinding unwrapUsingDelarationDelegates(IBinding binding) {
-		while (binding instanceof ICPPDelegate) {
-			ICPPDelegate d= (ICPPDelegate) binding;
-			if (d.getDelegateType() == ICPPDelegate.USING_DECLARATION) {
-				binding= d.getBinding();
-			} else {
-				break;
-			}
-		}
-		return binding;
 	}
 
 	private void addConstructors(PDOMBinding pdomBinding, ICPPClassType binding)
@@ -582,9 +569,6 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	 */
 	@Override
 	public PDOMBinding doAdaptBinding(IBinding binding) throws CoreException {
-		// references to using-declarations are stored with the original binding.
-		binding= unwrapUsingDelarationDelegates(binding);
-		
 		PDOMNode parent = getAdaptedParent(binding, false);
 		if (parent == this) {
 			int localToFileRec= getLocalToFileRec(null, binding);
@@ -857,6 +841,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		}
 	}
 
+	@Override
 	public IBTreeComparator getIndexComparator() {
 		return new CPPFindBinding.CPPBindingBTreeComparator(pdom);
 	}

@@ -19,22 +19,19 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBase;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassType.CPPClassTypeDelegate;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
-class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType, ICPPDelegateCreator, IIndexType {
+class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType, IIndexType {
 	public CompositeCPPClassType(ICompositesFactory cf, ICPPClassType rbinding) {
 		super(cf, rbinding);
 	}
 
+	@Override
 	public Object clone() {
 		fail(); return null;
 	}
@@ -94,7 +91,8 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 			}
 		}
 		
-	    public Object clone(){
+	    @Override
+		public Object clone(){
 	    	return new CPPBaseDelegate(base, true);
 	    }
 	}
@@ -175,9 +173,5 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 
 	public boolean isSameType(IType type) {
 		return ((ICPPClassType)rbinding).isSameType(type);
-	}
-	
-	public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl) {
-		return new CPPClassTypeDelegate(usingDecl, this);
 	}
 }

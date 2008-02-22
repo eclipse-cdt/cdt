@@ -30,10 +30,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
@@ -46,17 +44,6 @@ import org.eclipse.core.runtime.PlatformObject;
  * @author aniefer
  */
 public class CPPNamespace extends PlatformObject implements ICPPNamespace, ICPPInternalBinding {
-    public static class CPPNamespaceDelegate extends CPPDelegate implements ICPPNamespace {
-        public CPPNamespaceDelegate( ICPPUsingDeclaration name, ICPPNamespace binding ) {
-            super( name, binding );
-        }
-        public ICPPNamespaceScope getNamespaceScope() throws DOMException {
-            return ((ICPPNamespace)getBinding()).getNamespaceScope();
-        }
-		public IBinding[] getMemberBindings() throws DOMException {
-			return ((ICPPNamespace)getBinding()).getMemberBindings();
-		}
-    }
     public static class CPPNamespaceProblem extends ProblemBinding implements ICPPNamespace{
         public CPPNamespaceProblem( IASTNode node, int id, char[] arg ) {
             super( node, id, arg );
@@ -114,7 +101,8 @@ public class CPPNamespace extends PlatformObject implements ICPPNamespace, ICPPI
 	        this.namespaceDef = ns;
 	    }
 
-	    public int visit( ICPPASTNamespaceDefinition namespace) {
+	    @Override
+		public int visit( ICPPASTNamespaceDefinition namespace) {
 	    	ICPPASTNamespaceDefinition orig = namespaceDef, candidate = namespace;
 	    	while( candidate != null ){
 	    		if( !CharArrayUtils.equals( orig.getName().toCharArray(), candidate.getName().toCharArray() ) )
@@ -135,7 +123,8 @@ public class CPPNamespace extends PlatformObject implements ICPPNamespace, ICPPI
 	        return PROCESS_SKIP;
 	    }
 	    
-	    public int visit( IASTDeclaration declaration ){
+	    @Override
+		public int visit( IASTDeclaration declaration ){
 	        if( declaration instanceof ICPPASTLinkageSpecification )
 	            return PROCESS_CONTINUE;
 	        return PROCESS_SKIP;
@@ -155,6 +144,7 @@ public class CPPNamespace extends PlatformObject implements ICPPNamespace, ICPPI
 			shouldVisitDeclarations = true;
 		}
 		
+		@Override
 		public int visit(IASTDeclarator declarator) {
 			while( declarator.getNestedDeclarator() != null )
 				declarator = declarator.getNestedDeclarator();
@@ -165,6 +155,7 @@ public class CPPNamespace extends PlatformObject implements ICPPNamespace, ICPPI
 			
 			return PROCESS_SKIP;
 		}
+		@Override
 		public int visit(IASTDeclSpecifier declSpec) {
 			if( declSpec instanceof ICPPASTCompositeTypeSpecifier ){
 				IBinding binding = ((ICPPASTCompositeTypeSpecifier)declSpec).getName().resolveBinding();
@@ -185,12 +176,14 @@ public class CPPNamespace extends PlatformObject implements ICPPNamespace, ICPPI
 			}
 			return PROCESS_SKIP;
 		}
+		@Override
 		public int visit(ICPPASTNamespaceDefinition namespace) {
 			IBinding binding = namespace.getName().resolveBinding();
 			if( binding != null && !(binding instanceof IProblemBinding) )
 				members.put( binding );
 			return PROCESS_SKIP;
 		}
+		@Override
 		public int visit(IASTDeclaration declaration) {
 			if( declaration instanceof ICPPASTUsingDeclaration ){
 				IBinding binding =((ICPPASTUsingDeclaration)declaration).getName().resolveBinding();
@@ -298,13 +291,6 @@ public class CPPNamespace extends PlatformObject implements ICPPNamespace, ICPPI
      */
     public boolean isGloballyQualified() {
         return true;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
-     */
-    public ICPPDelegate createDelegate(ICPPUsingDeclaration usingDecl ) {
-        return new CPPNamespaceDelegate( usingDecl, this );
     }
 
 	/* (non-Javadoc)

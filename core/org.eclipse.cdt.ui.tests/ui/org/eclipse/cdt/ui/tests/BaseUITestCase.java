@@ -349,7 +349,6 @@ public class BaseUITestCase extends BaseTestCase {
 			}
 			runEventQueue(10);
 		}
-		runEventQueue(30000);
 		fail("Timeout expired waiting for tree node " + label + "{" + i0 + "," + i1 + "}");
 		return null;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,14 +8,18 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-/*
- * Created on Mar 17, 2005
- */
 package org.eclipse.cdt.core.dom.ast.cpp;
+
+import org.eclipse.cdt.core.dom.ast.IBinding;
 
 /**
  * @author aniefer
  */
-public interface ICPPNamespaceAlias extends ICPPNamespace, ICPPDelegate {
+public interface ICPPNamespaceAlias extends ICPPNamespace {
+
+    /**
+     * get the binding of the original namespace.
+     */
+    public IBinding getBinding();
 
 }

@@ -34,7 +34,7 @@ public interface IDMService extends IDsfService {
      * @param dmc Data Model Context for the data model data object to be retrieved.
      * @param rm Request completion monitor to be filled in with the Data Model Data.
      * 
-     * @deprecated This method is not deprecated as there is no compile-time linking
+     * @deprecated This method is now deprecated as there is no compile-time linking
      * between IDMContext and IDMData objects (see bug 205132)
      */
     @Deprecated

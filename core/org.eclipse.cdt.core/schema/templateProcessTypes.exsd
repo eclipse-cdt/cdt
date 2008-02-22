@@ -62,7 +62,7 @@
          <attribute name="processRunner" type="string" use="required">
             <annotation>
                <documentation>
-                  A class that extends org.eclipse.cdt.templateengine.process.ProcessRunner abstract class and implements all its abstract methods. This is the code that actually processes.
+                  A class that extends org.eclipse.cdt.core.templateengine.process.ProcessRunner abstract class and implements all its abstract methods. This is the code that actually processes.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.cdt.templateengine.process.ProcessRunner"/>

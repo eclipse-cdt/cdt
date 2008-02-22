@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186997] No deferred queries in Local Files
  * Kevin Doyle (IBM) - [199871] LocalFileService needs to implement getMessage()
+ * Martin Oberhuber (Wind River) - [220020][api][breaking] SystemFileTransferModeRegistry should be internal
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.files.local;
@@ -41,7 +42,7 @@ import org.eclipse.rse.services.search.IHostSearchResultSet;
 import org.eclipse.rse.services.search.ISearchService;
 import org.eclipse.rse.subsystems.files.core.ILanguageUtilityFactory;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString;
-import org.eclipse.rse.subsystems.files.core.model.SystemFileTransferModeRegistry;
+import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystemConfiguration;
 import org.eclipse.rse.subsystems.files.core.subsystems.IHostFileToRemoteFileAdapter;
@@ -224,7 +225,7 @@ public class LocalFileSubSystemConfiguration extends FileServiceSubSystemConfigu
 	
 	public IFileService createFileService(IHost host)
 	{
-		return new LocalFileService(SystemFileTransferModeRegistry.getInstance(), RSEUIPlugin.getDefault());
+		return new LocalFileService(RemoteFileUtility.getSystemFileTransferModeRegistry(), RSEUIPlugin.getDefault());
 	}
 	
 	public ISearchService createSearchService(IHost host)

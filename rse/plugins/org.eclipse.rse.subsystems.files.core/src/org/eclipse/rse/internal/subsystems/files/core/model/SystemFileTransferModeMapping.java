@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,15 +13,17 @@
  * 
  * Contributors:
  * David McKnight   (IBM)        - [208951] new priority field
+ * Martin Oberhuber (Wind River) - [220020][api][breaking] SystemFileTransferModeRegistry should be internal
  *******************************************************************************/
 
-package org.eclipse.rse.subsystems.files.core.model;
+package org.eclipse.rse.internal.subsystems.files.core.model;
+
+import org.eclipse.rse.subsystems.files.core.model.ISystemFileTransferModeMapping;
 
 
 /**
  * An internal class. Clients must not instantiate or subclass it.
  */
-
 public class SystemFileTransferModeMapping implements ISystemFileTransferModeMapping, Cloneable {
 	
 	public static final int DEFAULT_PRIORITY = Integer.MAX_VALUE;
@@ -55,18 +57,17 @@ public class SystemFileTransferModeMapping implements ISystemFileTransferModeMap
 		setExtension(extension);
 	}
 
-
-
-	/**
-	 * @see ISystemFileTransferModeMapping#getExtension()
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.subsystems.files.core.model.ISystemFileTransferModeMapping#getExtension()
 	 */
 	public String getExtension() {
 		return extension;
 	}
 
-
-	/**
-	 * @see ISystemFileTransferModeMapping#getLabel()
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.subsystems.files.core.model.ISystemFileTransferModeMapping#getLabel()
 	 */
 	public String getLabel() {
 		
@@ -78,30 +79,29 @@ public class SystemFileTransferModeMapping implements ISystemFileTransferModeMap
 		}
 	}
 
-
-	/**
-	 * @see ISystemFileTransferModeMapping#getName()
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.subsystems.files.core.model.ISystemFileTransferModeMapping#getName()
 	 */
 	public String getName() {
 		return name;
 	}
 
-
-	/**
-	 * @see ISystemFileTransferModeMapping#isBinary()
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.subsystems.files.core.model.ISystemFileTransferModeMapping#isBinary()
 	 */
 	public boolean isBinary() {
 		return isBinary;
 	}
 
-
-	/**
-	 * @see ISystemFileTransferModeMapping#isText()
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.subsystems.files.core.model.ISystemFileTransferModeMapping#isText()
 	 */
 	public boolean isText() {
 		return !isBinary();
 	}
-	
 	
 	/**
 	 * Set whether transfer mode is binary
@@ -110,14 +110,12 @@ public class SystemFileTransferModeMapping implements ISystemFileTransferModeMap
 		isBinary = true;
 	}
 	
-	
 	/**
 	 * Set whether transfer mode is text
 	 */
 	public void setAsText() {
 		isBinary = false;
 	}
-	 
 	
 	/**
 	 * Set the name
@@ -125,7 +123,6 @@ public class SystemFileTransferModeMapping implements ISystemFileTransferModeMap
 	public void setName(String name) {
 		this.name = name;
 	}
-	
 	
 	/**
 	 * Set the extension
@@ -136,27 +133,28 @@ public class SystemFileTransferModeMapping implements ISystemFileTransferModeMap
 	
 	/**
 	 * Set the priority - the smaller the number, the higher priority
-	 * @param priority
+	 * @param priority priority to set.
 	 */
 	public void setPriority(int priority) {
 		this.priority = priority;
 	}
 	
-	/**
-	 * Gets the priority - the smaller the number, the higher priority
-	 * @return the priority
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.subsystems.files.core.model.ISystemFileTransferModeMapping#getPriority()
 	 */
 	public int getPriority()
 	{
 		return this.priority;
 	}
 	
-	
 	/**
-	 * Clone this object
+	 * Clone this object.
+	 * 
+	 * Subclasses must ensure that such a deep copy operation is always
+	 * possible, so their state must always be cloneable.
 	 */
 	public Object clone() {
-		
 		try {
 			return super.clone();
 		}

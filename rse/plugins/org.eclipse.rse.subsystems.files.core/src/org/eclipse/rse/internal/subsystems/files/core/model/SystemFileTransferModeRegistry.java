@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,8 +14,9 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  * David McKnight   (IBM)        - [208951] Use remoteFileTypes extension point to determine file types
+ * Martin Oberhuber (Wind River) - [220020][api][breaking] SystemFileTransferModeRegistry should be internal
  *******************************************************************************/
-package org.eclipse.rse.subsystems.files.core.model;
+package org.eclipse.rse.internal.subsystems.files.core.model;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,6 +38,8 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
 import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
+import org.eclipse.rse.subsystems.files.core.model.ISystemFileTransferModeMapping;
+import org.eclipse.rse.subsystems.files.core.model.ISystemFileTransferModeRegistry;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
@@ -67,7 +70,7 @@ public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRe
 	private static final String MODE_ATTRIBUTE = "mode"; //$NON-NLS-1$
 	private static final String BINARY_VALUE = "binary";  //$NON-NLS-1$
 	private static final String TEXT_VALUE = "text"; //$NON-NLS-1$
-	private static final String PRIORITY_ATTRIBUTE = "priority";	
+	private static final String PRIORITY_ATTRIBUTE = "priority"; //$NON-NLS-1$	
 
 	/**
 	 * Constructor for SystemFileTransferModeRegistry
@@ -141,10 +144,10 @@ public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRe
 					}
 					
 					int priority = SystemFileTransferModeMapping.DEFAULT_PRIORITY;
-					String priorityStr = element.getAttribute("priority");
+					String priorityStr = element.getAttribute("priority"); //$NON-NLS-1$
 					try
 					{
-						if (priorityStr != null && !priorityStr.equals("")){
+						if (priorityStr != null && !priorityStr.equals("")){ //$NON-NLS-1$
 							priority = Integer.parseInt(priorityStr);
 						}
 					}

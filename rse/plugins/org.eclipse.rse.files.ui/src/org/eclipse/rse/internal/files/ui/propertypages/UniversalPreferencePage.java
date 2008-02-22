@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -16,6 +16,7 @@
  * David McKnight   (IBM)        - [208951] no longer used editor registry for file type associations
  * David McKnight   (IBM)        - [203114] Usability improvements for file transfer mode prefs
  * David McKnight   (IBM)        - [210142] for accessibility need transfer mode toggle button
+ * Martin Oberhuber (Wind River) - [220020][api][breaking] SystemFileTransferModeRegistry should be internal
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.propertypages;
@@ -44,13 +45,13 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.rse.internal.files.ui.Activator;
 import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
+import org.eclipse.rse.internal.subsystems.files.core.model.SystemFileTransferModeMapping;
+import org.eclipse.rse.internal.subsystems.files.core.model.SystemFileTransferModeRegistry;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageFile;
 import org.eclipse.rse.subsystems.files.core.model.ISystemFileTransferModeMapping;
-import org.eclipse.rse.subsystems.files.core.model.SystemFileTransferModeMapping;
-import org.eclipse.rse.subsystems.files.core.model.SystemFileTransferModeRegistry;
 import org.eclipse.rse.ui.Mnemonics;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;

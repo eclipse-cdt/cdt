@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Martin Oberhuber (Wind River) - [220020][api][breaking] SystemFileTransferModeRegistry should be internal
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.model;
@@ -26,14 +27,25 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
+import org.eclipse.rse.internal.subsystems.files.core.model.SystemFileTransferModeRegistry;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConfiguration;
 
 
-
+/**
+ * Public utility class for dealing with remote file subsystems.
+ * 
+ * Clients may use this class, but not instantiate or subclass it.
+ */
 public class RemoteFileUtility
 {
 
+	/**
+	 * Return the first remote file subsystem associated with a connection.
+	 * @param connection the connection to query.
+	 * @return an IRemoteFileSubSystem instance, or <code>null</code> if
+	 *     no file subsystem is configured with the given connection.
+	 */
 	public static IRemoteFileSubSystem getFileSubSystem(IHost connection)
 	{
 		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
@@ -49,6 +61,11 @@ public class RemoteFileUtility
 		return null;
 	}
 	
+	/**
+	 * Return the list of file subsystems associated with a connection.
+	 * @param connection the connection to query.
+	 * @return a list of IRemoteFileSubSystem instances (may be empty).
+	 */
 	public static IRemoteFileSubSystem[] getFileSubSystems(IHost connection)
 	{
 		List results = new ArrayList();
@@ -65,6 +82,12 @@ public class RemoteFileUtility
 		return (IRemoteFileSubSystem[])results.toArray(new IRemoteFileSubSystem[results.size()]);
 	}
 	
+	/**
+	 * Return the first remote file subsystem configuration associated with a system type.
+	 * @param systemType the system type to query.
+	 * @return an IRemoteFileSubSystemConfiguration instance, or <code>null</code> if
+	 *     no file subsystem is configured with the given system type.
+	 */
 	 public static IRemoteFileSubSystemConfiguration getFileSubSystemConfiguration(IRSESystemType systemType)
 	 {
 			ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
@@ -77,6 +100,15 @@ public class RemoteFileUtility
 				}
 			}
 			return null;
+	 }
+	 
+	 /**
+	  * Return the global SystemFileTransferModeRegistry.
+	  * @return the global SystemFileTransferModeRegistry.
+	  */
+	 public static ISystemFileTransferModeRegistry getSystemFileTransferModeRegistry()
+	 {
+		 return SystemFileTransferModeRegistry.getInstance();
 	 }
 		
 }

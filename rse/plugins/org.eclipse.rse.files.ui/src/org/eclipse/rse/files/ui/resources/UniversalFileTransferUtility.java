@@ -40,6 +40,7 @@
  * Xuan Chen          (IBM)        - [191370] [dstore] supertransfer zip not deleted when cancelling copy
  * Xuan Chen          (IBM)      - [210816] Archive testcases throw ResourceException if they are run in batch
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * Martin Oberhuber (Wind River) - [220020][api][breaking] SystemFileTransferModeRegistry should be internal
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -96,7 +97,6 @@ import org.eclipse.rse.services.files.RemoteFileSecurityException;
 import org.eclipse.rse.services.files.RemoteFolderNotEmptyException;
 import org.eclipse.rse.subsystems.files.core.SystemIFileProperties;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
-import org.eclipse.rse.subsystems.files.core.model.SystemFileTransferModeRegistry;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
@@ -111,7 +111,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * Utility class for doing file transfers on universal systems
+ * Utility class for doing file transfers on universal systems.
+ * 
+ * Clients may use this class, but not instantiate or subclass it.
  */
 public class UniversalFileTransferUtility
 {
@@ -825,7 +827,7 @@ public class UniversalFileTransferUtility
 				long remoteModifiedStamp = srcFileOrFolder.lastModified();
 
 				boolean usedBin = properties.getUsedBinaryTransfer();
-				boolean shouldUseBin = SystemFileTransferModeRegistry.getInstance().isBinary(srcFileOrFolder);
+				boolean shouldUseBin = RemoteFileUtility.getSystemFileTransferModeRegistry().isBinary(srcFileOrFolder);
 				if (storedModifiedStamp == remoteModifiedStamp && (usedBin == shouldUseBin))
 				{
 					return tempFile;
@@ -855,7 +857,7 @@ public class UniversalFileTransferUtility
 		    }
 		    if (tempFile.exists())
 		    {
-				if (SystemFileTransferModeRegistry.getInstance().isText(srcFileOrFolder))
+				if (RemoteFileUtility.getSystemFileTransferModeRegistry().isText(srcFileOrFolder))
 				{
 					try
 					{
@@ -907,7 +909,7 @@ public class UniversalFileTransferUtility
 			}
 
 			// encoding conversion required if it a text file but not an xml file
-			boolean isBinary = SystemFileTransferModeRegistry.getInstance().isBinary(file);
+			boolean isBinary = RemoteFileUtility.getSystemFileTransferModeRegistry().isBinary(file);
 			boolean isEncodingConversionRequired = !isBinary;
 			
 			inputStream = new FileInputStream(file);
@@ -1595,7 +1597,7 @@ public class UniversalFileTransferUtility
 				
 				String srcCharSet = null;
 			
-				boolean isText = SystemFileTransferModeRegistry.getInstance().isText(newPath);
+				boolean isText = RemoteFileUtility.getSystemFileTransferModeRegistry().isText(newPath);
 				if (isText)
 				{
 					try

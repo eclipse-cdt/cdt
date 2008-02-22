@@ -46,6 +46,11 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConf
  * <p>
  * It is invalid to have both a comma and an asterisk in the same filter string.
  * It is also invalid to have both a comma and a period in the same filter string.
+ * 
+ * Clients may use or subclass this class. When subclassing, clients need to
+ * ensure that the subclass is always capable of performing a deep clone 
+ * operation with the {@link #clone()} method, so if they add fields of 
+ * complex type, these need to be dealt with by overriding {@link #clone()}. 
  */
 public class RemoteFileFilterString implements Cloneable
 {
@@ -69,6 +74,7 @@ public class RemoteFileFilterString implements Cloneable
 		subdirs = true;
 		files = true;
 	}
+	
 	/**
 	 * Constructor to use when there is no existing filter string.
 	 * <p>
@@ -86,6 +92,7 @@ public class RemoteFileFilterString implements Cloneable
 		subdirs = true;
 		files = true;
 	}
+	
 	/**
 	 * Constructor to use when an absolute filter string already exists.
 	 */    
@@ -94,6 +101,7 @@ public class RemoteFileFilterString implements Cloneable
 		this(subsysFactory);
 		parse(null, input);    	
 	}
+	
 	/**
 	 * Constructor to use when you have a path and filename filter or comma-separated file types list.
 	 * In the latter case, the last char must be a TYPE_SEP or comma, even for a single type.
@@ -108,6 +116,7 @@ public class RemoteFileFilterString implements Cloneable
 	{
 		PATH_SEP = subsysFactory.getSeparator();
 	}
+	
     /**
      * Set the file name filter. You either call this or setTypes!
      */	
@@ -115,6 +124,7 @@ public class RemoteFileFilterString implements Cloneable
 	{
 		file = obj;
 	}
+	
     /**
      * Set the path to list files and/or folders in
      */	
@@ -122,6 +132,7 @@ public class RemoteFileFilterString implements Cloneable
 	{
 		this.path = path;
 	}
+	
 	/**
 	 * Set the file types to subset by. These are extensions, without the dot, as
 	 *  in java, class, gif, etc.
@@ -132,6 +143,7 @@ public class RemoteFileFilterString implements Cloneable
 		this.types = types;		
 		filterByTypes = (types != null);		
 	}
+	
 	/**
 	 * Allow files?
 	 */
@@ -139,6 +151,7 @@ public class RemoteFileFilterString implements Cloneable
 	{
 		files = set;
 	}
+	
 	/**
 	 * Allow subdirs?
 	 */
@@ -168,6 +181,7 @@ public class RemoteFileFilterString implements Cloneable
 			return getTypesString(types);
 		}
 	}
+	
     /**
      * Concatenate the given file types as a single string, each type comma-separated
      */
@@ -178,6 +192,7 @@ public class RemoteFileFilterString implements Cloneable
     	   typesBuffer.append(typesArray[idx]+","); //$NON-NLS-1$
     	return typesBuffer.toString();
     }
+    
     /**
      * For file types filters, returns the types as a string of concatenated types,
      * comma-delimited. For file name filters, returns null;
@@ -204,13 +219,15 @@ public class RemoteFileFilterString implements Cloneable
 	{
 		return types;
 	}
+	
 	/**
-	 * Subdirs allowed?
+	 * Should the filter show individual files?
 	 */
 	public boolean getShowFiles()
 	{
 		return files;
 	}
+	
 	/**
 	 * Subdirs allowed?
 	 */
@@ -218,6 +235,7 @@ public class RemoteFileFilterString implements Cloneable
 	{
 		return subdirs;
 	}
+	
 	/**
 	 * Return true if this filter string filters by file types versus by file name
 	 */
@@ -242,7 +260,6 @@ public class RemoteFileFilterString implements Cloneable
 	{
 		return toStringNoSwitches().equals("/*"); //$NON-NLS-1$
 	}
-	
 	
 	/**
 	 *
@@ -313,6 +330,7 @@ public class RemoteFileFilterString implements Cloneable
 		 //this.path = fileObj.getAbsolutePath(); // happens for root drives
 		//this.file = fileObj.getName();    	
 	}
+	
     /**
      * Parse the non-folder part of the filter string. Will either be a 
      *  generic name or comma-separated list of types.
@@ -333,6 +351,7 @@ public class RemoteFileFilterString implements Cloneable
     	else
     	  file = filter;
     }
+    
 	/**
 	 * Parse a comma-separated list of strings into an array of strings
 	 */
@@ -353,7 +372,7 @@ public class RemoteFileFilterString implements Cloneable
 	}
 
     /**
-     * De-hydrate into a string capturing all the attributes
+     * Serialize into a string capturing all the attributes
      */
 	public String toString()
 	{
@@ -364,6 +383,7 @@ public class RemoteFileFilterString implements Cloneable
 		  fs += SWITCH_NOFILES;    	  
 		return fs;
 	}
+	
 	/**
 	 * Return the filter as a string, without the switches for no-files, no-folders
 	 */
@@ -379,24 +399,25 @@ public class RemoteFileFilterString implements Cloneable
 		else
 		  fs = path+getFileOrTypes();
 		return fs;
-	}	
+	}
+	
     /**
      * Clone this into another filter string object with the same attributes.
+     * 
+	 * Subclasses must ensure that such a deep copy operation is always
+	 * possible, so their state must always be cloneable.
      */
     public Object clone()
     {
-   	    RemoteFileFilterString copy = new RemoteFileFilterString();
-   	    copy.path = path;
-   	    copy.file = file;
-   	    copy.subdirs = subdirs;
-   	    copy.files = files;
-   	    copy.PATH_SEP = PATH_SEP;
-        copy.filterByTypes = filterByTypes;
-   	    if (types!=null)
-   	    {
-   	    	copy.types = new String[types.length];
-   	    	for (int idx=0; idx<types.length; idx++)
-   	    	   copy.types[idx] = types[idx]; // don't think we need to clone strings as they are immutable
+   	    RemoteFileFilterString copy = null;
+   	    try {
+   	    	copy = (RemoteFileFilterString)super.clone();
+   	    } catch(CloneNotSupportedException e) {
+   	    	//assert false; //can never happen
+   	    	throw new RuntimeException(e);
+   	    }
+   	    if (types!=null) {
+   	    	copy.types = (String[])types.clone();
    	    }
    	    return copy;
     }	

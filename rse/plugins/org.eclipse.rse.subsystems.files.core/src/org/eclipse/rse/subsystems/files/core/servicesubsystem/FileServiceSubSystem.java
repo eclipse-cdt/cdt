@@ -31,6 +31,7 @@
  * David Dykstal (IBM) - [217556] remove service subsystem types
  * Martin Oberhuber (Wind River) - [219098][api] FileServiceSubSystem should not be final 
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * Martin Oberhuber (Wind River) - [220020][api][breaking] SystemFileTransferModeRegistry should be internal
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.servicesubsystem;
@@ -68,7 +69,7 @@ import org.eclipse.rse.services.search.IHostSearchResultConfiguration;
 import org.eclipse.rse.services.search.IHostSearchResultSet;
 import org.eclipse.rse.services.search.ISearchService;
 import org.eclipse.rse.subsystems.files.core.ILanguageUtilityFactory;
-import org.eclipse.rse.subsystems.files.core.model.SystemFileTransferModeRegistry;
+import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.subsystems.IHostFileToRemoteFileAdapter;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileContext;
@@ -537,7 +538,7 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 	
 	protected boolean isBinary(String localEncoding, String hostEncoding, String remotePath)
 	{
-		return SystemFileTransferModeRegistry.getInstance().isBinary(remotePath);	
+		return RemoteFileUtility.getSystemFileTransferModeRegistry().isBinary(remotePath);	
 	}
 	
 	protected boolean isBinary(IRemoteFile source)

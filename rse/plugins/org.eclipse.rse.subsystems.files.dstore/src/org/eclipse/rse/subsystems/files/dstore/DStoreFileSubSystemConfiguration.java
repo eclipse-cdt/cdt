@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Kushal Munir (IBM) - [189352] Set whether file service is Unix-style system or not
  * David McKnight   (IBM)        - [206755] upload and download buffer should be in kbytes, not bytes
+ * Martin Oberhuber (Wind River) - [220020][api][breaking] SystemFileTransferModeRegistry should be internal
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.dstore;
@@ -39,7 +40,7 @@ import org.eclipse.rse.services.search.IHostSearchResultConfiguration;
 import org.eclipse.rse.services.search.IHostSearchResultSet;
 import org.eclipse.rse.services.search.ISearchService;
 import org.eclipse.rse.subsystems.files.core.ILanguageUtilityFactory;
-import org.eclipse.rse.subsystems.files.core.model.SystemFileTransferModeRegistry;
+import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystemConfiguration;
 import org.eclipse.rse.subsystems.files.core.subsystems.IHostFileToRemoteFileAdapter;
@@ -136,7 +137,7 @@ public class DStoreFileSubSystemConfiguration extends FileServiceSubSystemConfig
 	public IFileService createFileService(IHost host)
 	{
 		DStoreConnectorService connectorService = (DStoreConnectorService)getConnectorService(host);
-		DStoreFileService service = new DStoreFileService(connectorService, SystemFileTransferModeRegistry.getInstance(), RSEUIPlugin.getDefault());
+		DStoreFileService service = new DStoreFileService(connectorService, RemoteFileUtility.getSystemFileTransferModeRegistry(), RSEUIPlugin.getDefault());
 		service.setIsUnixStyle(isUnixStyle());
 
 		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();

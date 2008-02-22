@@ -17,6 +17,7 @@
  * David McKnight   (IBM)        - [186363] get rid of obsolete calls to ISubSystem.connect()
  * David McKnight   (IBM)        - [209660] use parent encoding as default, rather than system encoding
  * David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
+ * Martin Oberhuber (Wind River) - [220020][api][breaking] SystemFileTransferModeRegistry should be internal
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
@@ -48,7 +49,7 @@ import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.services.files.IHostFilePermissions;
 import org.eclipse.rse.services.files.IHostFilePermissionsContainer;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString;
-import org.eclipse.rse.subsystems.files.core.model.SystemFileTransferModeRegistry;
+import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.swt.widgets.Display;
 
@@ -68,20 +69,16 @@ import org.eclipse.swt.widgets.Display;
  * that creates this object must call the setter methods to
  * prefill this object with the core required information:
  * <ul>
- *  <li>{@link #RemoteFileImpl(IRemoteFileContext)} constructor sets the parent subsystem
- *  <li>{@link #setAbsolutePath(String, String, boolean, boolean)} to set core attributes
- *  <li>{@link #setExists(boolean)} to set existence attribute
- *  <li>{@link #setLastModified(long)} to set last-modified date
- *  <li>{@link #setLength(long)} to set length in bytes
+ *  <li>{@link #RemoteFile(IRemoteFileContext)} constructor sets the parent subsystem
  * </ul>
+ * A concrete implementation which extends this class, also needs to ensure
+ * that information is properly set by some means such that the {@link IRemoteFile#exists()},
+ * {@link IRemoteFile#getAbsolutePath()}, {@link IRemoteFile#getLength()}
+ * and similar methods can be implemented.
  */
-public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable, Cloneable
+public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 {
-	
-
-
 	protected IRemoteFileContext _context;    
-    protected String fullyQualifiedName;
 
     protected String _label;
     protected Object remoteObj;
@@ -346,13 +343,6 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
     	  return ss.getHost();
     }
           
-	/**
-	 * @see IRemoteFile#getAbsolutePath()
-	 */
-	public String getAbsolutePath() 
-	{
-		return fullyQualifiedName;
-	}
     /**
      * Get fully qualified connection and file name: connection:\path\file
      * Note the separator character between the profile name and the connection name is always '.'
@@ -388,7 +378,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 		if (isDirectory())
 		  return false; 
 		else 
-		  return SystemFileTransferModeRegistry.getInstance().isBinary(this);
+		  return RemoteFileUtility.getSystemFileTransferModeRegistry().isBinary(this);
 	}
 	
 	/**
@@ -399,7 +389,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 		if (isDirectory())
 		  return false; 
 		else 
-		  return SystemFileTransferModeRegistry.getInstance().isText(this);
+		  return RemoteFileUtility.getSystemFileTransferModeRegistry().isText(this);
 	}
  
  
@@ -528,8 +518,9 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 		return this.getAbsolutePathPlusConnection().startsWith(file.getAbsolutePathPlusConnection() + separator);
 	}
 	
-	/**
-	 * @see org.eclipse.rse.core.subsystems.IRemoteContainer#hasContents(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemContainer#hasContents(org.eclipse.rse.core.model.ISystemContentsType)
 	 */
 	public boolean hasContents(ISystemContentsType contentsType) 
 	{
@@ -552,8 +543,9 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 		return result;
 	}
 	
-	/**
-	 * @see org.eclipse.rse.core.subsystems.IRemoteContainer#hasContents(java.lang.String, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IRemoteContainer#hasContents(org.eclipse.rse.core.model.ISystemContentsType, java.lang.String)
 	 */
 	public boolean hasContents(ISystemContentsType contentsType, String filter) {
 		HashMap filters = (HashMap)(_contents.get(contentsType));
@@ -616,8 +608,9 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 		return false;
 	}
 	
-	/**
-	 * @see org.eclipse.rse.core.subsystems.IRemoteContainer#getContents(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemContainer#getContents(org.eclipse.rse.core.model.ISystemContentsType)
 	 */
 	public Object[] getContents(ISystemContentsType contentsType) 
 	{
@@ -641,6 +634,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 		return result.toArray(new IRemoteFile[result.size()]);
 	}
 	
+	/*
 	private Object[] getFiles(Object[] filesAndFolders)
 	{
 		List results = new ArrayList();
@@ -655,6 +649,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 		}
 		return results.toArray();
 	}
+	*/
 	
 	private Object[] getFolders(Object[] filesAndFolders)
 	{
@@ -672,8 +667,9 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 	}
 
 	
-	/**
-	 * @see org.eclipse.rse.core.subsystems.IRemoteContainer#getContents(java.lang.String, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IRemoteContainer#getContents(org.eclipse.rse.core.model.ISystemContentsType, java.lang.String)
 	 */
 	public Object[] getContents(ISystemContentsType contentsType, String filter) 
 	{	
@@ -801,7 +797,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 	 */
 	private boolean isFilterForFileTypes(String filter) {
 		
-		if (filter.endsWith(",")) {
+		if (filter.endsWith(",")) { //$NON-NLS-1$
 			return true;
 		}
 		else {
@@ -839,8 +835,9 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
     
   
 	
-	/**
-	 * @see org.eclipse.rse.core.subsystems.IRemoteContainer#setContents(java.lang.String, java.lang.String, java.lang.Object[])
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IRemoteContainer#setContents(org.eclipse.rse.core.model.ISystemContentsType, java.lang.String, java.lang.Object[])
 	 */
 	public void setContents(ISystemContentsType contentsType, String filter, Object[] con) {
 		
@@ -1163,7 +1160,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 	/**
 	 * Returns the encoding of the remote file. If a user specified value does not exist, then we check
 	 * it's ancestry for an encoding.  Otherwise the encoding of the parent subsystem is returned.
-	 * @see com.ibm.etools.systems.subsystems.IRemoteFile#getEncoding()
+	 * @see IRemoteFile#getEncoding()
 	 */
 	public String getEncoding() {
 		String hostName = getParentRemoteFileSubSystem().getHost().getHostName();

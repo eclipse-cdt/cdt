@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [220020][api][breaking] SystemFileTransferModeRegistry should be internal
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
@@ -26,16 +26,18 @@ import org.eclipse.rse.services.files.IHostFilePermissions;
  */
 public class RemoteFileEmpty extends RemoteFile 
 {
-
-
 	/**
-	 * Constructor for RemoteFileEmptyImpl
+	 * Constructor for RemoteFileEmpty
 	 */
 	public RemoteFileEmpty() 
 	{
 		super(new RemoteFileContext(null,null,null));
 	}
 
+	public String getAbsolutePath()
+	{
+		return ""; //$NON-NLS-1$
+	}
 
 	
 	public String getName()

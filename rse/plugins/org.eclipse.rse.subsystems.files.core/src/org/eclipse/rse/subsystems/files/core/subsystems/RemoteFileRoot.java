@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [220020][api][breaking] SystemFileTransferModeRegistry should be internal
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
@@ -36,9 +36,13 @@ public class RemoteFileRoot extends RemoteFile
 	public RemoteFileRoot(IRemoteFile rootFile) 
 	{
 		super(new RemoteFileContext(null,null,null));
+		setRootFile(rootFile);
 	}
+	
 	/**
-	 * Constructor when root is not known
+	 * Constructor when root is not known.
+	 * Client must call {@link #setRootFile(IRemoteFile)} before any
+	 * get.. calls in this class are actually used.
 	 */
 	public RemoteFileRoot() 
 	{
@@ -161,6 +165,11 @@ public class RemoteFileRoot extends RemoteFile
 	public String getClassification()
 	{
 		return rootFile.getClassification();
+	}
+	
+	public String getAbsolutePath()
+	{
+		return rootFile.getAbsolutePath();
 	}
 	
 	public String getCanonicalPath()

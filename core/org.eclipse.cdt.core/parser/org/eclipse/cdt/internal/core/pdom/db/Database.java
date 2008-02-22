@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 QNX Software Systems and others.
+ * Copyright (c) 2005, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,9 +14,12 @@
 package org.eclipse.cdt.internal.core.pdom.db;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
+import java.nio.channels.ClosedByInterruptException;
+import java.nio.channels.ClosedChannelException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -61,7 +64,8 @@ import org.eclipse.core.runtime.Status;
 public class Database {
 
 	private final File fLocation;
-	private final RandomAccessFile fFile;
+	private final boolean fReadOnly;
+	private RandomAccessFile fFile;
 	private boolean fExclusiveLock= false;	// necessary for any write operation
 	private boolean fLocked;				// necessary for any operation.
 	private boolean fIsMarkedIncomplete= false;
@@ -99,8 +103,9 @@ public class Database {
 	public Database(File location, ChunkCache cache, int version, boolean openReadOnly) throws CoreException {
 		try {
 			fLocation = location;
-			fFile = new RandomAccessFile(location, openReadOnly ? "r" : "rw"); //$NON-NLS-1$ //$NON-NLS-2$
+			fReadOnly= openReadOnly;
 			fCache= cache;
+			openFile();
 			
 			int nChunksOnDisk = (int) (fFile.length() / CHUNK_SIZE);
 			fHeaderChunk= new Chunk(this, 0);
@@ -119,13 +124,46 @@ public class Database {
 		}
 	}
 		
+	private void openFile() throws FileNotFoundException {
+		fFile = new RandomAccessFile(fLocation, fReadOnly ? "r" : "rw"); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
 	void read(ByteBuffer buf, int i) throws IOException {
-		fFile.getChannel().read(buf, i);
+		int retries= 0;
+		do {
+			try {
+				fFile.getChannel().read(buf, i);
+				return;
+			}
+			catch (ClosedChannelException e) {
+				// bug 219834 file may have be closed by interrupting a thread during an I/O operation.
+				reopen(e, ++retries);
+			} 
+		} while (true);
 	}
 
 	void write(ByteBuffer buf, int i) throws IOException {
-		fFile.getChannel().write(buf, i);
+		int retries= 0;
+		do {
+			try {
+				fFile.getChannel().write(buf, i);
+				return;
+			}
+			catch (ClosedChannelException e) {
+				// bug 219834 file may have be closed by interrupting a thread during an I/O operation.
+				reopen(e, ++retries);
+			} 
+		} while(true);
 	}
+
+	private void reopen(ClosedChannelException e, int attempt) throws ClosedChannelException, FileNotFoundException {
+		// only if the current thread was not interrupted we try to reopen the file.
+		if (e instanceof ClosedByInterruptException || attempt >= 20) {
+			throw e;
+		}
+		openFile();
+	}
+
 
 	public void transferTo(FileChannel target) throws IOException {
 		assert fLocked;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 QNX Software Systems and others.
+ * Copyright (c) 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,7 +34,6 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Bryan Wilkinson
- * 
  */
 abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements
 		ICPPSpecialization, IPDOMOverloader {
@@ -100,7 +99,7 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements
 	}
 	
 	private static class NodeCollector implements IPDOMVisitor {
-		private List nodes = new ArrayList();
+		private List<IPDOMNode> nodes = new ArrayList<IPDOMNode>();
 		public boolean visit(IPDOMNode node) throws CoreException {
 			nodes.add(node);
 			return false;
@@ -108,7 +107,7 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements
 		public void leave(IPDOMNode node) throws CoreException {
 		}
 		public IPDOMNode[] getNodes() {
-			return (IPDOMNode[])nodes.toArray(new IPDOMNode[nodes.size()]);
+			return nodes.toArray(new IPDOMNode[nodes.size()]);
 		}
 	}
 	
@@ -159,11 +158,11 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements
 	}
 	
 	public boolean matchesArguments(IType[] arguments) {
-		IType [] args = getArguments();
-		if( args.length == arguments.length ){
+		IType[] args = getArguments();
+		if (args.length == arguments.length) {
 			int i = 0;
-			for(; i < args.length; i++) {
-				if( args[i] == null || !( args[i].isSameType( arguments[i] ) ) )
+			for (; i < args.length; i++) {
+				if (args[i] == null || !args[i].isSameType(arguments[i]))
 					break;
 			}
 			return i == args.length;
@@ -171,18 +170,20 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements
 		return false;
 	}
 	
-	/*
+	/* (non-Javadoc)
 	 * For debug purposes only
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding#toString()
 	 */
+	@Override
 	public String toString() {
-		StringBuffer result = new StringBuffer();
-		result.append(getName()+" <"+ASTTypeUtil.getTypeListString(getArguments())+">"); //$NON-NLS-1$ //$NON-NLS-2$
+		StringBuilder result = new StringBuilder();
+		result.append(getName());
+		result.append(" <"); //$NON-NLS-1$
+		result.append(ASTTypeUtil.getTypeListString(getArguments()));
+		result.append("> "); //$NON-NLS-1$
 		try {
-			result.append(" "+getConstantNameForValue(getLinkageImpl(), getNodeType())); //$NON-NLS-1$
-		} catch(CoreException ce) {
-			result.append(" "+getNodeType()); //$NON-NLS-1$
+			result.append(getConstantNameForValue(getLinkageImpl(), getNodeType()));
+		} catch (CoreException ce) {
+			result.append(getNodeType());
 		}
 		return result.toString();
 	}

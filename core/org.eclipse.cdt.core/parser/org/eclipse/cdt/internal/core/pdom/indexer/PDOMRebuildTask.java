@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
 import java.util.ArrayList;
@@ -94,19 +93,22 @@ public class PDOMRebuildTask implements IPDOMIndexerTask {
 		TodoTaskUpdater.removeTasksFor(project.getProject());
 	}
 
-	private synchronized void createDelegate(ICProject project, IProgressMonitor monitor) throws CoreException {
+	private void createDelegate(ICProject project, IProgressMonitor monitor) throws CoreException {
 		boolean allFiles= TRUE.equals(fIndexer.getProperty(IndexerPreferences.KEY_INDEX_ALL_FILES));
 		List sources= new ArrayList();
 		List headers= allFiles ? sources : null;
 		TranslationUnitCollector collector= new TranslationUnitCollector(sources, headers, allFiles, monitor);
 		project.accept(collector);
 		ITranslationUnit[] tus= (ITranslationUnit[]) sources.toArray(new ITranslationUnit[sources.size()]);
-		fDelegate= fIndexer.createTask(tus, NO_TUS, NO_TUS);
-		if (fDelegate instanceof PDOMIndexerTask) {
-			final PDOMIndexerTask delegate = (PDOMIndexerTask) fDelegate;
-			delegate.setUpateFlags(IIndexManager.UPDATE_ALL);
-			delegate.setParseUpFront();
-			delegate.setAllFilesProvided(allFiles);
+		IPDOMIndexerTask delegate= fIndexer.createTask(tus, NO_TUS, NO_TUS);
+		if (delegate instanceof PDOMIndexerTask) {
+			final PDOMIndexerTask pdomIndexerTask = (PDOMIndexerTask) delegate;
+			pdomIndexerTask.setUpateFlags(IIndexManager.UPDATE_ALL);
+			pdomIndexerTask.setParseUpFront();
+			pdomIndexerTask.setAllFilesProvided(allFiles);
+		}
+		synchronized (this) {
+			fDelegate= delegate;
 		}
 	}
 

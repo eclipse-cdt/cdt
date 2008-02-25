@@ -34,21 +34,21 @@ public class CPPUnknownBinding extends PlatformObject implements ICPPInternalUnk
     private ICPPScope scope = null;
     private IASTName name = null;
     /**
-     * 
+     *
      */
-    public CPPUnknownBinding( ICPPScope scope, IBinding scopeBinding, IASTName name ) {
+    public CPPUnknownBinding(ICPPScope scope, IBinding scopeBinding, IASTName name) {
         super();
         this.scope = scope;
         this.name = name;
         this.scopeBinding = scopeBinding;
     }
 
-    /* (non-Javadoc)```
+    /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknown#getUnknownScope()
      */
     public ICPPScope getUnknownScope() {
-        if( unknownScope == null ){
-            unknownScope = new CPPUnknownScope( this, name );
+        if (unknownScope == null) {
+            unknownScope = new CPPUnknownScope(this, name);
         }
         return unknownScope;
     }
@@ -70,33 +70,33 @@ public class CPPUnknownBinding extends PlatformObject implements ICPPInternalUnk
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDefinition(org.eclipse.cdt.core.dom.ast.IASTNode)
      */
-    public void addDefinition( IASTNode node ) {
+    public void addDefinition(IASTNode node) {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDeclaration(org.eclipse.cdt.core.dom.ast.IASTNode)
      */
-    public void addDeclaration( IASTNode node ) {
+    public void addDeclaration(IASTNode node) {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#removeDeclaration(org.eclipse.cdt.core.dom.ast.IASTNode)
      */
-    public void removeDeclaration( IASTNode node ) {
+    public void removeDeclaration(IASTNode node) {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#getQualifiedName()
      */
     public String[] getQualifiedName() {
-        return CPPVisitor.getQualifiedName( this );
+        return CPPVisitor.getQualifiedName(this);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#getQualifiedNameCharArray()
      */
     public char[][] getQualifiedNameCharArray() {
-    	return CPPVisitor.getQualifiedNameCharArray( this );
+    	return CPPVisitor.getQualifiedNameCharArray(this);
     }
 
     /* (non-Javadoc)
@@ -130,26 +130,33 @@ public class CPPUnknownBinding extends PlatformObject implements ICPPInternalUnk
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknown#resolveUnknown(org.eclipse.cdt.core.parser.util.ObjectMap)
      */
-    public IBinding resolveUnknown( ObjectMap argMap ) throws DOMException {
+    public IBinding resolveUnknown(ObjectMap argMap) throws DOMException {
         IBinding result = this;
-        if( argMap.containsKey( scopeBinding ) ){
-            IType t = (IType) argMap.get( scopeBinding );
-            t = CPPSemantics.getUltimateType( t, false );
-            if( t instanceof ICPPClassType ){
+        if (argMap.containsKey(scopeBinding)) {
+            IType t = (IType) argMap.get(scopeBinding);
+            t = CPPSemantics.getUltimateType(t, false);
+            if (t instanceof ICPPClassType) {
                 IScope s = ((ICPPClassType)t).getCompositeScope();
-                
-                if( s != null && ASTInternal.isFullyCached(s) )
-                	result = s.getBinding( name, true );
-//                CPPSemantics.LookupData data = CPPSemantics.createLookupData( name, false );
-//                CPPSemantics.lookup( data, s );
-//                IBinding result = CPPSemantics.resolveAmbiguities( data, name );
+
+                if (s != null && ASTInternal.isFullyCached(s))
+                	result = s.getBinding(name, true);
+//                CPPSemantics.LookupData data = CPPSemantics.createLookupData(name, false);
+//                CPPSemantics.lookup(data, s);
+//                IBinding result = CPPSemantics.resolveAmbiguities(data, name);
                 return result;
             }
         }
         return result;
     }
-    
+
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
+	}
+
+	/* (non-Javadoc)
+	 * For debug purposes only
+	 */
+	public String toString() {
+		return getName();
 	}
 }

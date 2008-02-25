@@ -25,6 +25,9 @@ public class CPPASTSimpleDeclSpecifier extends CPPASTBaseDeclSpecifier
     private boolean isShort;
     private boolean isLong;
 
+    /**
+     * @see org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier
+     */
     public int getType() {
         return type;
     }
@@ -65,19 +68,19 @@ public class CPPASTSimpleDeclSpecifier extends CPPASTBaseDeclSpecifier
         isShort = value;
     }
 
-    public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitDeclSpecifiers ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+    public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitDeclSpecifiers) {
+		    switch (action.visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
-        if( action.shouldVisitDeclSpecifiers ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+        if (action.shouldVisitDeclSpecifiers) {
+		    switch (action.leave(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         return true;

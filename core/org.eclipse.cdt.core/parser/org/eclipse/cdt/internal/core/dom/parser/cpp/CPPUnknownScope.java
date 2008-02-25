@@ -37,9 +37,9 @@ public class CPPUnknownScope implements ICPPScope, IASTInternalScope {
     private IASTName scopeName = null;
     private CharArrayObjectMap map = null;
     /**
-     * 
+     *
      */
-    public CPPUnknownScope( IBinding binding, IASTName name ) {
+    public CPPUnknownScope(IBinding binding, IASTName name) {
         super();
         this.scopeName = name;
         this.binding = binding;
@@ -62,7 +62,7 @@ public class CPPUnknownScope implements ICPPScope, IASTInternalScope {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
      */
-    public IBinding[] find( String name ) {
+    public IBinding[] find(String name) {
         return null;
     }
 
@@ -76,15 +76,13 @@ public class CPPUnknownScope implements ICPPScope, IASTInternalScope {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#addName(org.eclipse.cdt.core.dom.ast.IASTName)
      */
-    public void addName( IASTName name ) {
-
+    public void addName(IASTName name) {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#removeBinding(org.eclipse.cdt.core.dom.ast.IBinding)
      */
-    public void removeBinding( IBinding binding1 ) {
-
+    public void removeBinding(IBinding binding) {
     }
 
 	public final IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
@@ -98,28 +96,28 @@ public class CPPUnknownScope implements ICPPScope, IASTInternalScope {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#getBinding(org.eclipse.cdt.core.dom.ast.IASTName, boolean)
      */
-    public IBinding getBinding( IASTName name, boolean resolve, IIndexFileSet fileSet ) {
-        if( map == null )
+    public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) {
+        if (map == null)
             map = new CharArrayObjectMap(2);
-        
-        char [] c = name.toCharArray();
-        if( map.containsKey( c ) ){
-            return (IBinding) map.get( c );
-        }
-        
-        IBinding b = new CPPUnknownClass( this, binding, name );
-        name.setBinding( b );
-        map.put( c, b );
 
+        char[] c = name.toCharArray();
+        if (map.containsKey(c)) {
+            return (IBinding) map.get(c);
+        }
+
+        IBinding b = new CPPUnknownClass(this, binding, name);
+        name.setBinding(b);
+        map.put(c, b);
         return b;
     }
-    
-    public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) {
-        if( map == null )
+
+    public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup,
+    		IIndexFileSet fileSet) {
+        if (map == null)
             map = new CharArrayObjectMap(2);
-        
-        char [] c = name.toCharArray();
-        
+
+        char[] c = name.toCharArray();
+
 	    IBinding[] result = null;
 	    if (prefixLookup) {
 	    	Object[] keys = map.keyArray();
@@ -130,9 +128,9 @@ public class CPPUnknownScope implements ICPPScope, IASTInternalScope {
 	    		}
 	    	}
 	    } else {
-	    	result = new IBinding[] { (IBinding) map.get( c ) };
+	    	result = new IBinding[] { (IBinding) map.get(c) };
 	    }
-        
+
 	    result = (IBinding[]) ArrayUtil.trim(IBinding.class, result);
 	    return result;
     }
@@ -140,7 +138,7 @@ public class CPPUnknownScope implements ICPPScope, IASTInternalScope {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#setFullyCached(boolean)
      */
-    public void setFullyCached( boolean b ) {
+    public void setFullyCached(boolean b) {
     }
 
     /* (non-Javadoc)
@@ -156,8 +154,14 @@ public class CPPUnknownScope implements ICPPScope, IASTInternalScope {
     public void flushCache() {
     }
 
-	public void addBinding(IBinding aBinding) {
+	public void addBinding(IBinding binding) {
 		// do nothing, this is part of template magic and not a normal scope
 	}
 
+	/* (non-Javadoc)
+	 * For debug purposes only
+	 */
+	public String toString() {
+		return scopeName.toString();
+	}
 }

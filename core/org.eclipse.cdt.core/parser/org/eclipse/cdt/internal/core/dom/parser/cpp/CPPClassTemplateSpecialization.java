@@ -34,14 +34,14 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 		implements ICPPClassTemplate, ICPPInternalClassTemplate {
 
 	private ObjectMap instances = null;
-	
+
 	/**
 	 * @param specialized
 	 * @param scope
 	 * @param argumentMap
 	 */
-	public CPPClassTemplateSpecialization(IBinding specialized,
-			ICPPScope scope, ObjectMap argumentMap) {
+	public CPPClassTemplateSpecialization(IBinding specialized,	ICPPScope scope,
+			ObjectMap argumentMap) {
 		super(specialized, scope, argumentMap);
 	}
 
@@ -61,31 +61,31 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 	}
 
 	public void addSpecialization(IType[] arguments, ICPPSpecialization specialization) {
-		if( instances == null )
+		if (instances == null)
 			instances = new ObjectMap(2);
-		instances.put( arguments, specialization );
+		instances.put(arguments, specialization);
 	}
-	
-	public ICPPSpecialization getInstance( IType [] arguments ) {
-		if( instances == null )
+
+	public ICPPSpecialization getInstance(IType[] arguments) {
+		if (instances == null)
 			return null;
-		
+
 		int found = -1;
-		for( int i = 0; i < instances.size(); i++ ){
-			IType [] args = (IType[]) instances.keyAt( i );
-			if( args.length == arguments.length ){
+		for (int i = 0; i < instances.size(); i++) {
+			IType[] args = (IType[]) instances.keyAt(i);
+			if (args.length == arguments.length) {
 				int j = 0;
 				for(; j < args.length; j++) {
-					if( !( args[j].isSameType( arguments[j] ) ) )
+					if (!(args[j].isSameType(arguments[j])))
 						break;
 				}
-				if( j == args.length ){
+				if (j == args.length) {
 					found = i;
 					break;
 				}
 			}
 		}
-		if( found != -1 ){
+		if (found != -1) {
 			return (ICPPSpecialization) instances.getAt(found);
 		}
 		return null;
@@ -93,28 +93,32 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 
 	public IBinding instantiate(IType[] arguments) {
 		ICPPTemplateDefinition template = null;
-		
+
 		try {
-			template = CPPTemplates.matchTemplatePartialSpecialization( this, arguments );
+			template = CPPTemplates.matchTemplatePartialSpecialization(this, arguments);
 		} catch (DOMException e) {
 			return e.getProblem();
 		}
-		
-		if( template instanceof IProblemBinding )
+
+		if (template instanceof IProblemBinding) {
 			return template;
-		if( template != null && template instanceof ICPPClassTemplatePartialSpecialization ){
-			return ((ICPPInternalTemplateInstantiator)template).instantiate( arguments );	
 		}
-		
-		return CPPTemplates.instantiateTemplate( this, arguments, argumentMap );
+		if (template != null && template instanceof ICPPClassTemplatePartialSpecialization) {
+			return ((ICPPInternalTemplateInstantiator) template).instantiate(arguments);
+		}
+
+		return CPPTemplates.instantiateTemplate(this, arguments, argumentMap);
 	}
 
 	public ICPPSpecialization deferredInstance(IType[] arguments) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public void addPartialSpecialization( ICPPClassTemplatePartialSpecialization spec ){
+	public void addPartialSpecialization(ICPPClassTemplatePartialSpecialization spec) {
 		//should not occur
+	}
+
+	public String toString() {
+		return getName();
 	}
 }

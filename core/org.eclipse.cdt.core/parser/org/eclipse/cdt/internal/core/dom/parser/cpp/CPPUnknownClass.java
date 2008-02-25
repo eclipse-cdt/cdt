@@ -27,6 +27,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 
 /**
+ * Represents a C++ class for which we don't yet have a complete declaration.
+ *
  * @author aniefer
  */
 public class CPPUnknownClass extends CPPUnknownBinding implements ICPPClassType {
@@ -35,8 +37,8 @@ public class CPPUnknownClass extends CPPUnknownBinding implements ICPPClassType 
      * @param scope
      * @param name
      */
-    public CPPUnknownClass( ICPPScope scope, IBinding scopeBinding, IASTName name ) {
-        super( scope, scopeBinding, name );
+    public CPPUnknownClass(ICPPScope scope, IBinding scopeBinding, IASTName name) {
+        super(scope, scopeBinding, name);
     }
 
     /* (non-Javadoc)
@@ -56,7 +58,7 @@ public class CPPUnknownClass extends CPPUnknownBinding implements ICPPClassType 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.ICompositeType#findField(java.lang.String)
      */
-    public IField findField( String name ) {
+    public IField findField(String name) {
         return null;
     }
 
@@ -126,12 +128,11 @@ public class CPPUnknownClass extends CPPUnknownBinding implements ICPPClassType 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
      */
-    public boolean isSameType( IType type ) {
+    public boolean isSameType(IType type) {
         return type == this;
     }
 
 	public ICPPClassType[] getNestedClasses() {
 		return ICPPClassType.EMPTY_CLASS_ARRAY;
 	}
-
 }

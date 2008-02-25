@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 QNX Software Systems
+ * Copyright (c) 2005, 2008 QNX Software Systems
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,7 +66,7 @@ public class PDOMIndexerJob extends Job {
 			do {
 				synchronized(taskMutex) {
 					currentTask= null;
-					taskMutex.notify();
+					taskMutex.notifyAll();
 
 					// user cancel, tell manager and return
 					if (monitor.isCanceled()) {
@@ -115,7 +115,7 @@ public class PDOMIndexerJob extends Job {
 			pdomManager.cancelledJob(true);
 			synchronized (taskMutex) {
 				currentTask= null;
-				taskMutex.notify();
+				taskMutex.notifyAll();
 			}
 			throw e;
 		}
@@ -124,7 +124,7 @@ public class PDOMIndexerJob extends Job {
 			pdomManager.cancelledJob(true);
 			synchronized (taskMutex) {
 				currentTask= null;
-				taskMutex.notify();
+				taskMutex.notifyAll();
 			}
 			throw e;
 		}

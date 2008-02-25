@@ -63,6 +63,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
+import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.parser.ParserException;
@@ -716,9 +717,9 @@ public class DOMLocationTests extends AST2BaseTest {
 
         IASTProblem[] problems= tu.getPreprocessorProblems();
         assertEquals(3, problems.length);
-        assertEquals(IASTProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, problems[0].getID());
-        assertEquals(IASTProblem.PREPROCESSOR_POUND_WARNING, problems[1].getID());
-        assertEquals(IASTProblem.PREPROCESSOR_INVALID_DIRECTIVE, problems[2].getID());
+        assertEquals(IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, problems[0].getID());
+        assertEquals(IProblem.PREPROCESSOR_POUND_WARNING, problems[1].getID());
+        assertEquals(IProblem.PREPROCESSOR_INVALID_DIRECTIVE, problems[2].getID());
         assertSoleLocation(problems[0], code, "#import \"include_once.h\"");
         assertSoleLocation(problems[1], code, "\"deprecated include\"");
         assertSoleLocation(problems[2], code, "#invalid");        	

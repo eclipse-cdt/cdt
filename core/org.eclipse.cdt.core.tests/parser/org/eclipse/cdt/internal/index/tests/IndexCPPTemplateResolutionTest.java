@@ -15,6 +15,7 @@ import java.util.List;
 
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
@@ -38,8 +39,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
 
 /**
  * Tests for exercising resolution of template bindings against IIndex
@@ -850,42 +853,72 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertInstance(b1, ICPPClassType.class);
 	}
 
-    // template<typename _Tp>
+    // template<typename _TpAllocator>
     // class Allocator {
     // public:
-    //   typedef _Tp& alloc_reference;
-    //   template<typename _Tp1>
+    //   typedef _TpAllocator& alloc_reference;
+    //   template<typename _TpRebind>
     //   struct rebind {
-    //     typedef Allocator<_Tp1> other;
+    //     typedef Allocator<_TpRebind> other;
     //   };
     // };
     //
-    // template<typename _Tp, typename _Alloc>
+    // template<typename _Tp, typename _Alloc = Allocator<_Tp> >
+    // class Vec {
+    // public:
+    //   typedef typename _Alloc::template rebind<_Tp>::other::alloc_reference reference;
+    // };
+
+	// void f(Vec<int>::reference r) {}
+    public void _testRebindPattern_214017_1() throws Exception {
+        IBinding b0= getBindingFromASTName("r)", 1);
+        assertInstance(b0, ICPPVariable.class);
+		IType type = ((ICPPVariable) b0).getType();
+		type = CPPSemantics.getUltimateType(type, false);
+		assertInstance(type, IBasicType.class);
+		assertEquals("int", ASTTypeUtil.getType(type));
+    }
+
+    // template<typename _TpAllocator>
+    // class Allocator {
+    // public:
+    //   typedef _TpAllocator& alloc_reference;
+    //   template<typename _TpRebind>
+    //   struct rebind {
+    //     typedef Allocator<_TpRebind> other;
+    //   };
+    // };
+    //
+    // template<typename _TpBase, typename _AllocBase>
     // class VecBase {
     // public:
-    //   typedef typename _Alloc::template rebind<_Tp>::other _Tp_alloc_type;
+    //   typedef typename _AllocBase::template rebind<_TpBase>::other _Tp_alloc_type;
     // };
     //
     // template<typename _Tp, typename _Alloc = Allocator<_Tp> >
     // class Vec : protected VecBase<_Tp, _Alloc> {
     // public:
     //   typedef typename VecBase<_Tp, _Alloc>::_Tp_alloc_type::alloc_reference reference;
-    //   reference at(int n) {
-    //     return array[n];
-    //   }
-    //   _Tp* array;
-    // };
-
-	// class A {
-    //   public: void m() {}
     // };
     //
-	// void main() {
-    //   Vec<A> a;
-    //   a.at(0).m();
-    // }
-    public void _testRebindPattern_214017() throws Exception {
-        IBinding b0= getBindingFromASTName("m();", 1);
-        assertInstance(b0, ICPPMethod.class);
+    // class A {};
+
+    // void f(Vec<A>::reference r) {}
+    public void _testRebindPattern_214017_2() throws Exception {
+        IBinding b0= getBindingFromASTName("r)", 1);
+        assertInstance(b0, ICPPVariable.class);
+		IType type = ((ICPPVariable) b0).getType();
+		assertInstance(type, ICPPSpecialization.class);
+		ITypedef typedef = (ITypedef) type;
+		ICPPTemplateInstance scope = (ICPPTemplateInstance) typedef.getScope();
+		ObjectMap am = scope.getArgumentMap();
+		ObjectMap argumentMap = ((ICPPSpecialization) type).getArgumentMap();
+		ICPPClassType par1 = (ICPPClassType) argumentMap.getAt(0);  // A
+		ICPPTemplateInstance par2 = (ICPPTemplateInstance) argumentMap.getAt(1); // Allocator <> CPP_DEFERRED_CLASS_INSTANCE
+		IType[] par2Arguments = par2.getArguments();  // [_Tp CPP_TEMPLATE_TYPE_PARAMETER]
+		ObjectMap par2ArgumentMap = par2.getArgumentMap();
+		type = CPPSemantics.getUltimateType(type, false);
+		assertInstance(type, ICPPClassType.class);
+		assertEquals("A", ((ICPPClassType) type).getName());
     }
 }

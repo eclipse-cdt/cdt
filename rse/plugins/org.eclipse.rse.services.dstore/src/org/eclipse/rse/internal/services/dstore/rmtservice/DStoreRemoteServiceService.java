@@ -19,15 +19,14 @@ package org.eclipse.rse.internal.services.dstore.rmtservice;
 
 import org.eclipse.dstore.core.java.IRemoteClassInstance;
 import org.eclipse.dstore.core.model.IDataStoreProvider;
-import org.eclipse.rse.services.clientserver.messages.ISystemMessageProvider;
 import org.eclipse.rse.services.dstore.AbstractDStoreService;
 
 public class DStoreRemoteServiceService extends AbstractDStoreService
 {
 
-	public DStoreRemoteServiceService(IDataStoreProvider dataStoreProvider, ISystemMessageProvider msgProvider)
+	public DStoreRemoteServiceService(IDataStoreProvider dataStoreProvider)
 	{
-		super(dataStoreProvider, msgProvider);
+		super(dataStoreProvider);
 	}
 
 	protected String getMinerId()

@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [216252] use SimpleSystemMessage instead of getMessage()
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore;
@@ -27,6 +27,7 @@ public class Activator extends Plugin {
 
 	//The shared instance.
 	private static Activator plugin;
+	public static final String PLUGIN_ID = "org.eclipse.rse.services.dstore"; //$NON-NLS-1$
 	
 	/**
 	 * The constructor.

@@ -37,8 +37,8 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 public class RemoteFileEncodingManager {
 
 	private static RemoteFileEncodingManager instance;
-	private static final String ENCODINGS_DIR = "encodings";
-	private static final String ENCODINGS_PROPERTIES_FILE = "encodings.properties";
+	private static final String ENCODINGS_DIR = "encodings"; //$NON-NLS-1$
+	private static final String ENCODINGS_PROPERTIES_FILE = "encodings.properties"; //$NON-NLS-1$
 	private boolean isLoaded;
 	private HashMap hostMap;
 	
@@ -193,11 +193,11 @@ public class RemoteFileEncodingManager {
 								hostMap.put(hosts[i].getName(), props);
 							}
 							catch (FileNotFoundException e) {
-								RSEUIPlugin.logError("File " + encodingsFilePath.toOSString() + " could not be found", e);
+								RSEUIPlugin.logError("File " + encodingsFilePath.toOSString() + " could not be found", e); //$NON-NLS-1$ //$NON-NLS-2$
 								continue;
 							}
 							catch (IOException e) {
-								RSEUIPlugin.logError("I/O problems reading file " + encodingsFilePath.toOSString(), e);
+								RSEUIPlugin.logError("I/O problems reading file " + encodingsFilePath.toOSString(), e); //$NON-NLS-1$
 								continue;
 							}
 						}
@@ -270,7 +270,7 @@ public class RemoteFileEncodingManager {
 									created = encodingsFile.createNewFile();
 								}
 								catch (IOException e) {
-									RSEUIPlugin.logError("I/O error when trying to create encodings file " + encodingsFilePath.toOSString(), e);
+									RSEUIPlugin.logError("I/O error when trying to create encodings file " + encodingsFilePath.toOSString(), e); //$NON-NLS-1$
 									created = false;
 								}
 							
@@ -286,11 +286,11 @@ public class RemoteFileEncodingManager {
 								props.store(outStream, null);
 							}
 							catch (FileNotFoundException e) {
-								RSEUIPlugin.logError("File " + encodingsFilePath + " could not be found", e);
+								RSEUIPlugin.logError("File " + encodingsFilePath + " could not be found", e); //$NON-NLS-1$ //$NON-NLS-2$
 								continue;
 							}
 							catch (IOException e) {
-								RSEUIPlugin.logError("I/O problems writing to file " + encodingsFilePath, e);
+								RSEUIPlugin.logError("I/O problems writing to file " + encodingsFilePath, e); //$NON-NLS-1$
 								continue;
 							}
 						}

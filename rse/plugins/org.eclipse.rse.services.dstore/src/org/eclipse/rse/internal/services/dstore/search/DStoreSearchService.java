@@ -17,6 +17,7 @@
  * David McKnight      [190010] Set the status to finish or canceled depending on dstore status.  
  * David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup
  * David McKnight   (IBM)        - [214378] don't mark as finished until we have the results - sleep instead of wait
+ * David McKnight   (IBM)        - [216252] use SimpleSystemMessage instead of getMessage()
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.search;
@@ -31,7 +32,6 @@ import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.internal.services.dstore.ServiceResources;
 import org.eclipse.rse.internal.services.dstore.files.DStoreHostFile;
 import org.eclipse.rse.services.clientserver.SystemSearchString;
-import org.eclipse.rse.services.clientserver.messages.ISystemMessageProvider;
 import org.eclipse.rse.services.dstore.AbstractDStoreService;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.search.IHostSearchConstants;
@@ -42,9 +42,9 @@ import org.eclipse.rse.services.search.ISearchService;
 
 public class DStoreSearchService extends AbstractDStoreService implements ISearchService
 {
-	public DStoreSearchService(IDataStoreProvider provider, ISystemMessageProvider msgProvider)
+	public DStoreSearchService(IDataStoreProvider provider)
 	{
-		super(provider, msgProvider);
+		super(provider);
 	}
 	
 	public String getName()

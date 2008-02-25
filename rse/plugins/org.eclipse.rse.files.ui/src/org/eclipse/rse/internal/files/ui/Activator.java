@@ -44,6 +44,7 @@ public class Activator extends AbstractUIPlugin
 	private static SystemUniversalTempFileListener _tempFileListener;
 	
 	public final static String PLUGIN_ID = "org.eclipse.rse.files.ui"; //$NON-NLS-1$
+	public static final String HELPPREFIX = "org.eclipse.rse.files.ui."; //$NON-NLS-1$
 	
 	/**
 	 * The constructor.

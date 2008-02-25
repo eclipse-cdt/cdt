@@ -16,6 +16,7 @@
  * David McKnight   (IBM)        - [190803] Canceling a long-running dstore job prints "InterruptedException" to stdout  
  * David McKnight   (IBM)        - [207095] check for null datastore
  * David McKnight   (IBM)        - [209593] [api] check for existing query to avoid duplicates
+ * David McKnight   (IBM)        - [216252] use SimpleSystemMessage instead of getMessage()
  *******************************************************************************/
 
 package org.eclipse.rse.services.dstore;
@@ -30,23 +31,20 @@ import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.IDataStoreProvider;
 import org.eclipse.rse.internal.services.dstore.ServiceResources;
-import org.eclipse.rse.services.clientserver.messages.ISystemMessageProvider;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.dstore.util.DStoreStatusMonitor;
 
 public abstract class AbstractDStoreService implements IDStoreService
 {
 	protected IDataStoreProvider _dataStoreProvider;
-	protected ISystemMessageProvider _msgProvider;
 	protected DataElement _minerElement;
 	protected DStoreStatusMonitor _statusMonitor;
 	protected Map _cmdDescriptorMap;
 	protected DataElement _initializeStatus;
 	
-	public AbstractDStoreService(IDataStoreProvider dataStoreProvider, ISystemMessageProvider msgProvider)
+	public AbstractDStoreService(IDataStoreProvider dataStoreProvider)
 	{
 		_dataStoreProvider = dataStoreProvider;
-		_msgProvider = msgProvider; 
 		_cmdDescriptorMap = new HashMap();
 	}
 	
@@ -455,14 +453,5 @@ public abstract class AbstractDStoreService implements IDStoreService
 	}
 	
 	protected abstract String getMinerId();
-	
-	/**
-	 * For now just a dummy method
-	 * @param messageID
-	 * @return the message
-	 */
-	public SystemMessage getMessage(String messageID)
-	{
-		return _msgProvider.getMessage(messageID);
-	}
+
 }

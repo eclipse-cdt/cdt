@@ -35,7 +35,7 @@
  * Xuan Chen        (IBM)        - [209827] Update DStore command implementation to enable cancelation of archive operations
  * David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
  * David McKnight   (IBM)        - [216252] MessageFormat.format -> NLS.bind
- * Martin Oberhuber (Wind River) - [219952] Use MessageFormat for download progress message
+ * David McKnight   (IBM)        - [216252] use SimpleSystemMessage instead of getMessage()
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -55,14 +55,17 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.DataStoreAttributes;
 import org.eclipse.dstore.core.model.DataStoreResources;
 import org.eclipse.dstore.core.model.IDataStoreProvider;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.dstore.universal.miners.UniversalByteStreamHandler;
+import org.eclipse.rse.internal.services.dstore.Activator;
 import org.eclipse.rse.internal.services.dstore.ServiceResources;
 import org.eclipse.rse.services.clientserver.FileTypeMatcher;
 import org.eclipse.rse.services.clientserver.IMatcher;
@@ -71,7 +74,7 @@ import org.eclipse.rse.services.clientserver.ISystemFileTypes;
 import org.eclipse.rse.services.clientserver.NamePatternMatcher;
 import org.eclipse.rse.services.clientserver.PathUtility;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
-import org.eclipse.rse.services.clientserver.messages.ISystemMessageProvider;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.dstore.AbstractDStoreService;
@@ -99,6 +102,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	private int _bufferDownloadSize = IUniversalDataStoreConstants.BUFFER_SIZE;
 	protected ISystemFileTypes _fileTypeRegistry;
 	private String remoteEncoding;
+
 	
 	protected boolean unixStyle = false;
 	
@@ -112,9 +116,9 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		DataStoreResources.FALSE,
 		"2"}; //$NON-NLS-1$
 	
-	public DStoreFileService(IDataStoreProvider dataStoreProvider, ISystemFileTypes fileTypeRegistry, ISystemMessageProvider msgProvider)
+	public DStoreFileService(IDataStoreProvider dataStoreProvider, ISystemFileTypes fileTypeRegistry)
 	{
-		super(dataStoreProvider, msgProvider);
+		super(dataStoreProvider);
 		_fileElementMap = new HashMap();
 		_dstoreFileMap = new HashMap();
 		_fileTypeRegistry = fileTypeRegistry;
@@ -797,7 +801,10 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			else if (resultChild.getType().equals(IUniversalDataStoreConstants.DOWNLOAD_RESULT_FILE_NOT_FOUND_EXCEPTION))
 			{
 				localFile.delete();
-				SystemMessage msg = getMessage("RSEF1001").makeSubstitution(IUniversalDataStoreConstants.DOWNLOAD_RESULT_FILE_NOT_FOUND_EXCEPTION); //$NON-NLS-1$
+				
+				String msgTxt = ServiceResources.FILEMSG_SECURITY_ERROR;
+				String msgDetails = NLS.bind(ServiceResources.FILEMSG_SECURITY_ERROR_DETAILS, IUniversalDataStoreConstants.DOWNLOAD_RESULT_FILE_NOT_FOUND_EXCEPTION);
+				SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
 				throw new SystemMessageException(msg);
 			}
 			else if (resultChild.getType().equals(IUniversalDataStoreConstants.DOWNLOAD_RESULT_UNSUPPORTED_ENCODING_EXCEPTION))
@@ -812,7 +819,11 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			else if (resultChild.getType().equals(IUniversalDataStoreConstants.DOWNLOAD_RESULT_IO_EXCEPTION))
 			{
 				localFile.delete();
-				SystemMessage msg = getMessage("RSEF1001").makeSubstitution(IUniversalDataStoreConstants.DOWNLOAD_RESULT_IO_EXCEPTION); //$NON-NLS-1$
+				
+				String msgTxt = ServiceResources.FILEMSG_SECURITY_ERROR;
+				String msgDetails = NLS.bind(ServiceResources.FILEMSG_SECURITY_ERROR_DETAILS, IUniversalDataStoreConstants.DOWNLOAD_RESULT_IO_EXCEPTION);
+				SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+
 				throw new SystemMessageException(msg);
 				//IOException e = new IOException(resultChild.getName());
 				//UniversalSystemPlugin.logError(CLASSNAME + "." + "copy: " + "error reading file " + remotePath, e);
@@ -1026,7 +1037,10 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 					else if (resultChild.getType().equals(IUniversalDataStoreConstants.DOWNLOAD_RESULT_FILE_NOT_FOUND_EXCEPTION))
 					{
 						localFile.delete();
-						SystemMessage msg = getMessage("RSEF1001").makeSubstitution(IUniversalDataStoreConstants.DOWNLOAD_RESULT_FILE_NOT_FOUND_EXCEPTION); //$NON-NLS-1$
+						
+						String msgTxt = ServiceResources.FILEMSG_SECURITY_ERROR;
+						String msgDetails = NLS.bind(ServiceResources.FILEMSG_SECURITY_ERROR_DETAILS, IUniversalDataStoreConstants.DOWNLOAD_RESULT_FILE_NOT_FOUND_EXCEPTION);
+						SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
 						throw new SystemMessageException(msg);
 					}
 					else if (resultChild.getType().equals(IUniversalDataStoreConstants.DOWNLOAD_RESULT_UNSUPPORTED_ENCODING_EXCEPTION))
@@ -1042,7 +1056,9 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 					else if (resultChild.getType().equals(IUniversalDataStoreConstants.DOWNLOAD_RESULT_IO_EXCEPTION))
 					{
 						localFile.delete();
-						SystemMessage msg = getMessage("RSEF1001").makeSubstitution(IUniversalDataStoreConstants.DOWNLOAD_RESULT_IO_EXCEPTION); //$NON-NLS-1$
+						String msgTxt = ServiceResources.FILEMSG_SECURITY_ERROR;
+						String msgDetails = NLS.bind(ServiceResources.FILEMSG_SECURITY_ERROR_DETAILS, IUniversalDataStoreConstants.DOWNLOAD_RESULT_IO_EXCEPTION);
+						SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
 						throw new SystemMessageException(msg);
 						//IOException e = new IOException(resultChild.getName());
 						//UniversalSystemPlugin.logError(CLASSNAME + "." + "copy: " + "error reading file " + remotePath, e);
@@ -1272,23 +1288,31 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		
 		if (null != monitor && monitor.isCanceled())
 		{
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.CANCEL, ServiceResources.MSG_OPERATION_CANCELED);
 			//This operation has been canceled by the user.
-			throw new SystemMessageException(getMessage("RSEG1067")); //$NON-NLS-1$
+			throw new SystemMessageException(msg); 
 		}
 		
 		if (FileSystemMessageUtil.getSourceMessage(status).equals(IServiceConstants.SUCCESS)) 
 			return new DStoreHostFile(de);
 		else if (FileSystemMessageUtil.getSourceMessage(status).equals(IServiceConstants.FAILED_WITH_EXIST))
-		{
-			throw new SystemMessageException(getMessage("RSEF1303").makeSubstitution(remotePath)); //$NON-NLS-1$
+		{	
+			String msgTxt = ServiceResources.FILEMSG_CREATE_FILE_FAILED_EXIST;
+			String msgDetails = NLS.bind(ServiceResources.FILEMSG_CREATE_FILE_FAILED_EXIST_DETAILS, remotePath);
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+			throw new SystemMessageException(msg); 
 		}
 		else
-		{
+		{			
 			// for 196035 - throwing security exception instead of message exception
-			Exception e= new SystemMessageException(getMessage("RSEF1302").makeSubstitution(remotePath));  //$NON-NLS-1$
+			String msgTxt = ServiceResources.FILEMSG_CREATE_FILE_FAILED;
+			String msgDetails = ServiceResources.FILEMSG_CREATE_FILE_FAILED_DETAILS;
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+		
+			
+			Exception e= new SystemMessageException(msg);  
 			RemoteFileSecurityException messageException = new RemoteFileSecurityException(e);
 			 throw messageException;
-			//throw new SystemMessageException(getMessage("RSEF1302").makeSubstitution(remotePath)); //$NON-NLS-1$
 		}	
 	}
 
@@ -1304,19 +1328,26 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		if (null != monitor && monitor.isCanceled())
 		{
 			//This operation has been canceled by the user.
-			throw new SystemMessageException(getMessage("RSEG1067")); //$NON-NLS-1$
+			throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.CANCEL, ServiceResources.MSG_OPERATION_CANCELED)); 
 		}
 		
 		if (FileSystemMessageUtil.getSourceMessage(status).equals(IServiceConstants.SUCCESS)) 
 			return new DStoreHostFile(de);
 		else if(FileSystemMessageUtil.getSourceMessage(status).equals(IServiceConstants.FAILED_WITH_EXIST))
 		{
-			throw new SystemMessageException(getMessage("RSEF1309").makeSubstitution(remotePath)); //$NON-NLS-1$
+			String msgTxt = ServiceResources.FILEMSG_CREATE_FOLDER_FAILED_EXIST;
+			String msgDetails = NLS.bind(ServiceResources.FILEMSG_CREATE_FOLDER_FAILED_EXIST_DETAILS, remotePath);
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+			throw new SystemMessageException(msg); 
 		}
 		else
 		{
+			String msgTxt = ServiceResources.FILEMSG_CREATE_FILE_FAILED;
+			String msgDetails = NLS.bind(ServiceResources.FILEMSG_CREATE_FILE_FAILED_DETAILS, remotePath);
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+
 			// for 196035 - throwing security exception instead of message exception
-			Exception e= new SystemMessageException(getMessage("RSEF1304").makeSubstitution(remotePath));  //$NON-NLS-1$
+			Exception e= new SystemMessageException(msg); 
 			RemoteFileSecurityException messageException = new RemoteFileSecurityException(e);
 			 throw messageException;
 			//throw new SystemMessageException(getMessage("RSEF1304").makeSubstitution(remotePath)); //$NON-NLS-1$ 
@@ -1333,7 +1364,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		if (null != monitor && monitor.isCanceled())
 		{
 			//This operation has been canceled by the user.
-			throw new SystemMessageException(getMessage("RSEG1067")); //$NON-NLS-1$
+			throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.CANCEL, ServiceResources.MSG_OPERATION_CANCELED));
 		}
 		String sourceMsg = FileSystemMessageUtil.getSourceMessage(status);
 		// When running a server older than 2.0.1 success is not set for directories, so we must
@@ -1341,7 +1372,11 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		if (sourceMsg.equals(IServiceConstants.SUCCESS) || sourceMsg.equals("")) { //$NON-NLS-1$
 			return true;
 		} else {
-			throw new SystemMessageException(getMessage("RSEF1300").makeSubstitution(FileSystemMessageUtil.getSourceLocation(status)));	 //$NON-NLS-1$
+			String msgTxt = NLS.bind(ServiceResources.FILEMSG_DELETE_FILE_FAILED, FileSystemMessageUtil.getSourceLocation(status));
+			String msgDetails = ServiceResources.FILEMSG_DELETE_FILE_FAILED_DETAILS;
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+			
+			throw new SystemMessageException(msg);	
 		}
 	}
 	
@@ -1361,7 +1396,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		if (null != monitor && monitor.isCanceled())
 		{
 			//This operation has been canceled by the user.
-			throw new SystemMessageException(getMessage("RSEG1067")); //$NON-NLS-1$
+			throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.CANCEL, ServiceResources.MSG_OPERATION_CANCELED)); 
 		}
 		String sourceMsg = FileSystemMessageUtil.getSourceMessage(status);
 		// When running a server older than 2.0.1 success is not set for directories, so we must
@@ -1369,7 +1404,11 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		if (sourceMsg.equals(IServiceConstants.SUCCESS) || sourceMsg.equals("")) { //$NON-NLS-1$
 			return true;
 		} else {
-			throw new SystemMessageException(getMessage("RSEF1300").makeSubstitution(FileSystemMessageUtil.getSourceLocation(status)));	 //$NON-NLS-1$
+			String msgTxt = NLS.bind(ServiceResources.FILEMSG_DELETE_FILE_FAILED, FileSystemMessageUtil.getSourceLocation(status));
+			String msgDetails = ServiceResources.FILEMSG_DELETE_FILE_FAILED_DETAILS;
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+			
+			throw new SystemMessageException(msg);	
 		}
 	}
 
@@ -1396,14 +1435,19 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		if (status == null) return false;
 		if (null != monitor && monitor.isCanceled())
 		{
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.CANCEL, ServiceResources.MSG_OPERATION_CANCELED);
 			//This operation has been canceled by the user.
-			throw new SystemMessageException(getMessage("RSEG1067")); //$NON-NLS-1$
+			throw new SystemMessageException(msg);
 		}
 		if (FileSystemMessageUtil.getSourceMessage(status).equals(IServiceConstants.SUCCESS)) 
 			return true;
 		else
 		{
-			throw new SystemMessageException(getMessage("RSEF1301").makeSubstitution(FileSystemMessageUtil.getSourceLocation(status))); //$NON-NLS-1$
+			String msgTxt = NLS.bind(ServiceResources.FILEMSG_RENAME_FILE_FAILED, FileSystemMessageUtil.getSourceLocation(status));
+			String msgDetails = ServiceResources.FILEMSG_RENAME_FILE_FAILED_DETAILS;
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+			
+			throw new SystemMessageException(msg);	
 		}	
 	}
 	
@@ -1593,20 +1637,11 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 				
 				if (status.getAttribute(DE.A_SOURCE).equals(IServiceConstants.FAILED)) {
 
-					throw new SystemMessageException(getMessage("RSEF1306").makeSubstitution(srcName)); //$NON-NLS-1$
-					/*
-					// for an unexpected error, we don't have an error message from the server
-					if (errMsg.equals(UNEXPECTED_ERROR)) {
-						msg = SystemPlugin.getPluginMessage(MSG_ERROR_UNEXPECTED).getLevelOneText();
-					}
-					else {
-						msg = errMsg;
-					}
+					String msgTxt = NLS.bind(ServiceResources.FILEMSG_COPY_FILE_FAILED, srcName);
+					String msgDetails = ServiceResources.FILEMSG_COPY_FILE_FAILED_DETAILS;
+					SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
 					
-					
-					throw new RemoteFileIOException(new Exception(msg));
-					/*/
-
+					throw new SystemMessageException(msg);	
 				}
 			}
 			catch (InterruptedException e)
@@ -1614,7 +1649,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 				if (monitor != null && monitor.isCanceled())
 				{
 					//This operation has been canceled by the user.
-					throw new SystemMessageException(getMessage("RSEG1067")); //$NON-NLS-1$
+					throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.CANCEL, ServiceResources.MSG_OPERATION_CANCELED)); 
 				}
 				// cancel monitor if it's still not canceled
 				if (monitor != null && !monitor.isCanceled())
@@ -1655,7 +1690,12 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 				getStatusMonitor(ds).waitForUpdate(status, monitor);
 				
 				if (status.getAttribute(DE.A_SOURCE).equals(IServiceConstants.FAILED)) {
-					throw new SystemMessageException(getMessage("RSEF1306").makeSubstitution(srcNames[0])); //$NON-NLS-1$
+					
+					String msgTxt = NLS.bind(ServiceResources.FILEMSG_COPY_FILE_FAILED, srcNames[0]);
+					String msgDetails = ServiceResources.FILEMSG_COPY_FILE_FAILED_DETAILS;
+					SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+					
+					throw new SystemMessageException(msg);	
 				}
 			}
 			catch (InterruptedException e)
@@ -1663,7 +1703,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 				if (monitor != null && monitor.isCanceled())
 				{
 					//This operation has been canceled by the user.
-					throw new SystemMessageException(getMessage("RSEG1067")); //$NON-NLS-1$
+					throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.CANCEL, ServiceResources.MSG_OPERATION_CANCELED)); 
 				}
 				// cancel monitor if it's still not canceled
 				if (monitor != null && !monitor.isCanceled())

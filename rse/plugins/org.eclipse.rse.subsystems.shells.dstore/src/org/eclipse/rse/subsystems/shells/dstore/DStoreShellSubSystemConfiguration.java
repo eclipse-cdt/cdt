@@ -32,7 +32,6 @@ import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.IServiceCommandShell;
 import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.ShellServiceSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.ShellServiceSubSystemConfiguration;
-import org.eclipse.rse.ui.RSEUIPlugin;
 
 /**
  * Provides a factory for generating instances of the class
@@ -64,7 +63,7 @@ public class DStoreShellSubSystemConfiguration extends ShellServiceSubSystemConf
 	public ISubSystem createSubSystemInternal(IHost host) 
 	{
 		DStoreConnectorService connectorService = (DStoreConnectorService)getConnectorService(host);
-		ISubSystem subsys = new ShellServiceSubSystem(host, connectorService, new DStoreShellService(connectorService, RSEUIPlugin.getDefault()));
+		ISubSystem subsys = new ShellServiceSubSystem(host, connectorService, new DStoreShellService(connectorService));
 		return subsys;
 	}
 
@@ -88,7 +87,7 @@ public class DStoreShellSubSystemConfiguration extends ShellServiceSubSystemConf
 	
 	public IShellService createShellService(IHost host)
 	{
-		return new DStoreShellService((IDataStoreProvider)getConnectorService(host), RSEUIPlugin.getDefault());
+		return new DStoreShellService((IDataStoreProvider)getConnectorService(host));
 	}
 
 	public boolean supportsCommands()

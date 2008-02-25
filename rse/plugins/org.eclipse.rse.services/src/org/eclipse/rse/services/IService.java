@@ -17,7 +17,6 @@
 package org.eclipse.rse.services;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 
 public interface IService
 {
@@ -25,5 +24,4 @@ public interface IService
 	public String getDescription();
 	public void initService(IProgressMonitor monitor);
 	public void uninitService(IProgressMonitor monitor);
-	public SystemMessage getMessage(String messageID);
 }

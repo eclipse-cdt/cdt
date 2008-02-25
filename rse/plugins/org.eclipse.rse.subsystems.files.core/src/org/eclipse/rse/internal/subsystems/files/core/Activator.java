@@ -33,7 +33,7 @@ public class Activator extends AbstractUIPlugin {
 	//The shared instance.
 	private static Activator plugin;
 	
-	public static final String PLUGIN_ID = "org.eclipse.rse.subsystems.files.core";
+	public static final String PLUGIN_ID = "org.eclipse.rse.subsystems.files.core"; //$NON-NLS-1$
 	
 	/**
 	 * The constructor.

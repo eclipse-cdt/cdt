@@ -42,6 +42,19 @@ Kevin Doyle (IBM) - [160769] Added message for invalid filter when moving files
                           <LevelOne>Enter name</LevelOne>
                           <LevelTwo>You must enter a name in the field where the cursor is positioned.</LevelTwo>
                     </Message>
+                    <Message ID="1007" Indicator="E">
+                          <LevelOne>Name in use</LevelOne>
+                          <LevelTwo>This name is already used by another resource. Enter a unique name.</LevelTwo>
+                    </Message>
+                    <Message ID="1008" Indicator="E">
+                          <LevelOne>Name not valid</LevelOne>
+                          <LevelTwo>The name entered does not have valid syntax</LevelTwo>
+                    </Message>
+                    <Message ID="1009" Indicator="E">
+                          <LevelOne>You must rename %1</LevelOne>
+                          <LevelTwo>You have left the new name the same as the old name. Enter a new name that is different from the old name.</LevelTwo>
+                    </Message>
+                    
        
                     <Message ID="1010" Indicator="E">
                           <LevelOne>Name %1 is specified more than once</LevelOne>

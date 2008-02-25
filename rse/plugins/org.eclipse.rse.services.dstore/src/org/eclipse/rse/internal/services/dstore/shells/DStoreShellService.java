@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * David McKnight   (IBM)        - [190803] Canceling a long-running dstore job prints "InterruptedException" to stdout
  * David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup 
+ * David McKnight   (IBM)        - [216252] use SimpleSystemMessage instead of getMessage()
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.shells;
@@ -28,7 +29,6 @@ import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.IDataStoreProvider;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.internal.services.dstore.ServiceResources;
-import org.eclipse.rse.services.clientserver.messages.ISystemMessageProvider;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.dstore.AbstractDStoreService;
 import org.eclipse.rse.services.dstore.util.DStoreStatusMonitor;
@@ -41,9 +41,9 @@ public class DStoreShellService extends AbstractDStoreService implements IShellS
 	protected DataElement _envMinerElement;
 	protected DataElement _envMinerStatus;
 	
-	public DStoreShellService(IDataStoreProvider dataStoreProvider, ISystemMessageProvider msgProvider)
+	public DStoreShellService(IDataStoreProvider dataStoreProvider)
 	{
-		super(dataStoreProvider, msgProvider);
+		super(dataStoreProvider);
 	}
 	
 	

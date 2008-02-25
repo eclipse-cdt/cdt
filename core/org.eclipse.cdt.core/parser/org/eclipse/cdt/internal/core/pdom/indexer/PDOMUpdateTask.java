@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,10 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -39,7 +37,7 @@ public class PDOMUpdateTask implements IPDOMIndexerTask {
 	private final IndexerProgress fProgress;
 	private final int fUpdateOptions;
 	private volatile IPDOMIndexerTask fDelegate;
-	private ArrayList fFilesAndFolders= null;
+	private ArrayList<ICElement> fFilesAndFolders= null;
 
 	public PDOMUpdateTask(IPDOMIndexer indexer, int updateOptions) {
 		fIndexer= indexer;
@@ -77,33 +75,34 @@ public class PDOMUpdateTask implements IPDOMIndexerTask {
 		}
 	}
 	
-	private synchronized void createDelegate(ICProject project, IProgressMonitor monitor) throws CoreException {
-		HashSet set= new HashSet();
+	private void createDelegate(ICProject project, IProgressMonitor monitor) throws CoreException {
+		HashSet<ITranslationUnit> set= new HashSet<ITranslationUnit>();
 		TranslationUnitCollector collector= new TranslationUnitCollector(set, set, monitor);
 		if (fFilesAndFolders == null) {
 			project.accept(collector);
 		}
 		else {
-			for (Iterator iterator = fFilesAndFolders.iterator(); iterator.hasNext();) {
-				ICElement elem = (ICElement) iterator.next();
+			for (ICElement elem : fFilesAndFolders) {
 				elem.accept(collector);
 			}
 		}
-		ITranslationUnit[] tus= (ITranslationUnit[]) set.toArray(new ITranslationUnit[set.size()]);
-		fDelegate= fIndexer.createTask(tus, NO_TUS, NO_TUS);
-		if (fDelegate instanceof PDOMIndexerTask) {
-			final PDOMIndexerTask task = (PDOMIndexerTask) fDelegate;
+		ITranslationUnit[] tus= set.toArray(new ITranslationUnit[set.size()]);
+		IPDOMIndexerTask delegate= fIndexer.createTask(tus, NO_TUS, NO_TUS);
+		if (delegate instanceof PDOMIndexerTask) {
+			final PDOMIndexerTask task = (PDOMIndexerTask) delegate;
 			task.setUpdateFlags(fUpdateOptions);
 		}
+		synchronized (this) {
+			fDelegate= delegate;
+		}
 	}
-
 
 	public synchronized IndexerProgress getProgressInformation() {
 		return fDelegate != null ? fDelegate.getProgressInformation() : fProgress;
 	}
 
-	public void setTranslationUnitSelection(List filesAndFolders) {
-		fFilesAndFolders= new ArrayList(filesAndFolders.size());
+	public void setTranslationUnitSelection(List<ICElement> filesAndFolders) {
+		fFilesAndFolders= new ArrayList<ICElement>(filesAndFolders.size());
 		fFilesAndFolders.addAll(filesAndFolders);
 	}
 }

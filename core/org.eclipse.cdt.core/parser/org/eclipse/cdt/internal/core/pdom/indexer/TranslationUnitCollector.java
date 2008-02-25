@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
 import java.util.Collection;
@@ -20,11 +19,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 final class TranslationUnitCollector implements ICElementVisitor {
-	private final Collection fSources;
-	private final Collection fHeaders;
+	private final Collection<ITranslationUnit> fSources;
+	private final Collection<ITranslationUnit> fHeaders;
 	private final IProgressMonitor fProgressMonitor;
 
-	public TranslationUnitCollector(Collection sources, Collection headers, IProgressMonitor pm) {
+	public TranslationUnitCollector(Collection<ITranslationUnit> sources, Collection<ITranslationUnit> headers, IProgressMonitor pm) {
 		fSources= sources;
 		fHeaders= headers;
 		fProgressMonitor= pm;

@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
 import java.util.ArrayList;
@@ -101,19 +100,22 @@ public class PDOMRebuildTask implements IPDOMIndexerTask {
 		}
 	}
 
-	private synchronized void createDelegate(ICProject project, IProgressMonitor monitor) throws CoreException {
+	private void createDelegate(ICProject project, IProgressMonitor monitor) throws CoreException {
 		boolean allFiles= TRUE.equals(fIndexer.getProperty(IndexerPreferences.KEY_INDEX_ALL_FILES));
 		List<ITranslationUnit> sources= new ArrayList<ITranslationUnit>();
 		List<ITranslationUnit> headers= allFiles ? sources : null;
 		TranslationUnitCollector collector= new TranslationUnitCollector(sources, headers, monitor);
 		project.accept(collector);
 		ITranslationUnit[] tus= sources.toArray(new ITranslationUnit[sources.size()]);
-		fDelegate= fIndexer.createTask(tus, NO_TUS, NO_TUS);
-		if (fDelegate instanceof PDOMIndexerTask) {
-			final PDOMIndexerTask delegate = (PDOMIndexerTask) fDelegate;
-			delegate.setUpdateFlags(IIndexManager.UPDATE_ALL);
-			delegate.setParseUpFront();
-			delegate.setWriteInfoToLog();
+		IPDOMIndexerTask delegate= fIndexer.createTask(tus, NO_TUS, NO_TUS);
+		if (delegate instanceof PDOMIndexerTask) {
+			final PDOMIndexerTask pdomIndexerTask = (PDOMIndexerTask) delegate;
+			pdomIndexerTask.setUpdateFlags(IIndexManager.UPDATE_ALL);
+			pdomIndexerTask.setParseUpFront();
+			pdomIndexerTask.setWriteInfoToLog();
+		}
+		synchronized (this) {
+			fDelegate= delegate;
 		}
 	}
 

@@ -23,6 +23,7 @@
  * Xuan Chen        (IBM)        - [210555] [regression] NPE when deleting a file on SSH
  * Kevin Doyle		(IBM)		 - [208778] [efs][api] RSEFileStore#getOutputStream() does not support EFS#APPEND
  * David McKnight   (IBM)        - [209704] added supportsEncodingConversion()
+ * David McKnight   (IBM)        - [216252] use SimpleSystemMessage instead of getMessage()
  *******************************************************************************/
 
 package org.eclipse.rse.services.files;
@@ -35,7 +36,6 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
 
@@ -123,14 +123,7 @@ public abstract class AbstractFileService implements IFileService
 				return true;
 		} 
 	}
-	
-	/**
-	 * Dummy impl for now
-	 */	
-	public SystemMessage getMessage(String messageID)
-	{
-		return null;
-	}
+
 
 	public boolean deleteBatch(String[] remoteParents, String[] fileNames, IProgressMonitor monitor) throws SystemMessageException
 	{

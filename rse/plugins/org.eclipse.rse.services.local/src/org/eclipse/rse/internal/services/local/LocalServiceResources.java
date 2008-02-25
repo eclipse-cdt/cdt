@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [216252] use SimpleSystemMessage instead of getMessage()
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local;
@@ -30,6 +30,29 @@ public class LocalServiceResources extends NLS
 	public static String Local_File_Service_Description;
 	public static String Local_Process_Service_Description;
 	public static String Local_Shell_Service_Description;
+	
+	public static String MSG_OPERATION_CANCELED;
+	
+	public static String FILEMSG_FILE_NOT_SAVED;
+	public static String FILEMSG_FILE_NOT_SAVED_DETAILS;
+	
+	public static String FILEMSG_ARCHIVE_CORRUPTED;
+	public static String FILEMSG_ARCHIVE_CORRUPTED_DETAILS;
+	
+	public static String FILEMSG_CREATE_VIRTUAL_FAILED;
+	public static String FILEMSG_CREATE_VIRTUAL_FAILED_DETAILS;
+	
+	public static String FILEMSG_DELETE_VIRTUAL_FAILED;
+	public static String FILEMSG_DELETE_VIRTUAL_FAILED_DETAILS;
+	
+    public static  String FILEMSG_RENAME_FILE_FAILED;
+    public static  String FILEMSG_RENAME_FILE_FAILED_DETAILS;
+    
+    public static  String FILEMSG_COPY_FILE_FAILED;
+    public static  String FILEMSG_COPY_FILE_FAILED_DETAILS;
+	
+	public static String FILEMSG_DELETING;
+	public static String FILEMSG_COPYING;
 	
 	static {
 		// load message values from bundle file

@@ -32,6 +32,7 @@
  * David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
  * Radoslav Gerganov (ProSyst)   - [218173] [local] non-generic filters don't work
  * Martin Oberhuber (Wind River) - [188330] Problems Copying files with $ in name
+ * David McKnight   (IBM)        - [216252] use SimpleSystemMessage instead of getMessage()
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -56,6 +57,9 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.rse.internal.services.local.Activator;
 import org.eclipse.rse.internal.services.local.ILocalService;
 import org.eclipse.rse.internal.services.local.LocalServiceResources;
 import org.eclipse.rse.services.clientserver.FileTypeMatcher;
@@ -71,6 +75,7 @@ import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler;
 import org.eclipse.rse.services.clientserver.archiveutils.VirtualChild;
 import org.eclipse.rse.services.clientserver.messages.ISystemMessageProvider;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.AbstractFileService;
@@ -543,11 +548,12 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			if (null != monitor && monitor.isCanceled())
 			{
 				//This operation has been canceled by the user.
-				throw new SystemMessageException(getMessage("RSEG1067")); //$NON-NLS-1$
+				throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.CANCEL, LocalServiceResources.MSG_OPERATION_CANCELED)); 
 			}
 			// SystemPlugin.logError("LocalFileSubSystemImpl.copyToArchive(): Handler's add() method returned false.");
-			SystemMessage msg = getMessage("RSEF5006"); //$NON-NLS-1$
-			msg.makeSubstitution(destination.getName(), "localhost"); //$NON-NLS-1$
+			String msgTxt = NLS.bind(LocalServiceResources.FILEMSG_FILE_NOT_SAVED, destination.getName(), "localhost");
+			String msgDetails = LocalServiceResources.FILEMSG_FILE_NOT_SAVED_DETAILS;
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
 			throw new SystemMessageException(msg);
 		}
 		else
@@ -895,8 +901,9 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 					{
 						if (!ArchiveHandlerManager.getInstance().createEmptyArchive(fileToCreate))
 						{
-							// SystemPlugin.logError("LocalFileSubSystemImpl.createFile(): HandlerManager's createEmptyArchive() method returned false.");
-							throw new SystemMessageException(getMessage("RSEG1122")); //$NON-NLS-1$
+							SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, 
+									LocalServiceResources.FILEMSG_ARCHIVE_CORRUPTED, LocalServiceResources.FILEMSG_ARCHIVE_CORRUPTED_DETAILS);
+							throw new SystemMessageException(msg);
 						}
 					}
 				}
@@ -935,10 +942,12 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 				if (null != monitor && monitor.isCanceled())
 				{
 					//This operation has been canceled by the user.
-					throw new SystemMessageException(getMessage("RSEG1067")); //$NON-NLS-1$
+					throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.CANCEL, LocalServiceResources.MSG_OPERATION_CANCELED)); 
 				}
-				SystemMessage msg = getMessage("RSEG1124"); //$NON-NLS-1$
-				msg.makeSubstitution(newFile); 
+				
+				String msgTxt = NLS.bind(LocalServiceResources.FILEMSG_CREATE_VIRTUAL_FAILED, newFile);
+				String msgDetails = LocalServiceResources.FILEMSG_CREATE_VIRTUAL_FAILED_DETAILS;
+				SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
 				throw new SystemMessageException(msg);
 			}
 		}
@@ -947,8 +956,9 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 	
 	private void throwCorruptArchiveException(String classAndMethod) throws SystemMessageException
 	{
-		// SystemPlugin.logError(classAndMethod + ": Couldn't instantiate archive handler. Archive could be corrupted.");
-		throw new SystemMessageException(getMessage("RSEG1122")); //$NON-NLS-1$
+		SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, 
+				LocalServiceResources.FILEMSG_ARCHIVE_CORRUPTED, LocalServiceResources.FILEMSG_ARCHIVE_CORRUPTED_DETAILS);
+		throw new SystemMessageException(msg);
 	}
 	
 	protected File getContainingArchive(File file)
@@ -1008,10 +1018,12 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 				if (null != monitor && monitor.isCanceled())
 				{
 					//This operation has been canceled by the user.
-					throw new SystemMessageException(getMessage("RSEG1067")); //$NON-NLS-1$
+					throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.CANCEL, LocalServiceResources.MSG_OPERATION_CANCELED)); 
 				}
-				SystemMessage msg = getMessage("RSEG1124"); //$NON-NLS-1$
-				msg.makeSubstitution(newFolder); 
+				
+				String msgTxt = NLS.bind(LocalServiceResources.FILEMSG_CREATE_VIRTUAL_FAILED, newFolder);
+				String msgDetails = LocalServiceResources.FILEMSG_CREATE_VIRTUAL_FAILED_DETAILS;
+				SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
 				throw new SystemMessageException(msg);
 			}
 		}
@@ -1051,12 +1063,12 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 	public boolean deleteBatch(String[] remoteParents, String[] fileNames, IProgressMonitor monitor) throws SystemMessageException
 	{
 		boolean ok = true;
-		SystemMessage msg = getMessage("RSEF1315");   //$NON-NLS-1$
-		String deletingMessage = msg.makeSubstitution("").getLevelOneText(); //$NON-NLS-1$
+		String deletingMessage = NLS.bind(LocalServiceResources.FILEMSG_DELETING, "");
 		monitor.beginTask(deletingMessage, remoteParents.length);
 		for (int i = 0; i < remoteParents.length; i++)
 		{
-			monitor.subTask(msg.makeSubstitution(fileNames[i]).getLevelOneText());
+			deletingMessage = NLS.bind(LocalServiceResources.FILEMSG_DELETING, fileNames[i]);
+			monitor.subTask(deletingMessage);
 			ok = ok && delete(remoteParents[i], fileNames[i], monitor);
 			monitor.worked(1);
 		}
@@ -1110,10 +1122,12 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			if (monitor != null && monitor.isCanceled())
 			{
 				//This operation has been canceled by the user.
-				throw new SystemMessageException(getMessage("RSEG1067")); //$NON-NLS-1$
+				throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.CANCEL, LocalServiceResources.MSG_OPERATION_CANCELED)); 
 			}
 			// SystemPlugin.logError("LocalFileSubSystemImpl.deleteFromArchive(): Archive Handler's delete method returned false. Couldn't delete virtual object.");
-			throw new SystemMessageException(getMessage("RSEG1125").makeSubstitution(destination)); //$NON-NLS-1$
+			String msgTxt = NLS.bind(LocalServiceResources.FILEMSG_DELETE_VIRTUAL_FAILED, destination);
+			String msgDetails = LocalServiceResources.FILEMSG_DELETE_VIRTUAL_FAILED_DETAILS;
+			throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails));
 		}
 		return true;
 	}
@@ -1136,7 +1150,9 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		if (!result)
 		{
 			// for 192705, we need to throw an exception when rename fails
-			throw new SystemMessageException(getMessage("RSEF1301").makeSubstitution(newFile)); //$NON-NLS-1$
+			String msgTxt = NLS.bind(LocalServiceResources.FILEMSG_RENAME_FILE_FAILED, newFile);
+			String msgDetails = LocalServiceResources.FILEMSG_RENAME_FILE_FAILED_DETAILS;
+			throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails)); 
 		}
 		return result;
 	}
@@ -1180,11 +1196,13 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 				if (null != monitor && monitor.isCanceled())
 				{
 					//This operation has been canceled by the user.
-					throw new SystemMessageException(getMessage("RSEG1067")); //$NON-NLS-1$
+					throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.CANCEL, LocalServiceResources.MSG_OPERATION_CANCELED)); 
 				}
-				// SystemPlugin.logError("LocalFileSubSystemImpl.renameVirtualFile(): Archive Handler's rename method returned false. Couldn't rename virtual object.");
-				//SystemMessageDialog.displayErrorMessage(shell, RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_RENAME_FILE_FAILED).makeSubstitution(file.toString()));
-				throw new SystemMessageException(getMessage("RSEF1301").makeSubstitution(child.fullName)); //$NON-NLS-1$
+				
+				// for 192705, we need to throw an exception when rename fails
+				String msgTxt = NLS.bind(LocalServiceResources.FILEMSG_RENAME_FILE_FAILED, child.fullName);
+				String msgDetails = LocalServiceResources.FILEMSG_RENAME_FILE_FAILED_DETAILS;
+				throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails)); 
 			}
 			return retval;
 		}
@@ -1395,11 +1413,13 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 				if (monitor != null && monitor.isCanceled())
 				{
 					//This operation has been canceled by the user.
-					throw new SystemMessageException(getMessage("RSEG1067")); //$NON-NLS-1$
+					throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.CANCEL, LocalServiceResources.MSG_OPERATION_CANCELED)); 
 				}
-				// SystemPlugin.logError("LocalFileSubSystemImpl.renameVirtualFile(): Archive Handler's rename method returned false. Couldn't rename virtual object.");
-				//SystemMessageDialog.displayErrorMessage(shell, RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_RENAME_FILE_FAILED).makeSubstitution(file.toString()));
-				throw new SystemMessageException(getMessage("RSEF1301").makeSubstitution(child.fullName)); //$NON-NLS-1$
+				
+				// for 192705, we need to throw an exception when rename fails
+				String msgTxt = NLS.bind(LocalServiceResources.FILEMSG_RENAME_FILE_FAILED, child.fullName);
+				String msgDetails = LocalServiceResources.FILEMSG_RENAME_FILE_FAILED_DETAILS;
+				throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails)); 
 			}
 			return returnValue;
 		}
@@ -1413,7 +1433,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		if (monitor != null && monitor.isCanceled())
 		{
 			//This operation has been canceled by the user.
-			throw new SystemMessageException(getMessage("RSEG1067")); //$NON-NLS-1$
+			throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.CANCEL, LocalServiceResources.MSG_OPERATION_CANCELED)); 
 		}
 		if (child.isDirectory)
 		{
@@ -1425,14 +1445,19 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			}
 			catch (IOException e)
 			{
-				// SystemPlugin.logError("LocalFileSubSystemImpl.copy(): Could not create temp file.", e);
-				throw new SystemMessageException(getMessage("Copy failed")); //$NON-NLS-1$
+				String msgTxt = NLS.bind(LocalServiceResources.FILEMSG_COPY_FILE_FAILED, sourceFolderOrFile);
+				String msgDetails = LocalServiceResources.FILEMSG_COPY_FILE_FAILED_DETAILS;
+
+				throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails));
 			}
 			tempSource.delete();
 			if (!tempSource.mkdir())
 			{
+				String msgTxt = NLS.bind(LocalServiceResources.FILEMSG_COPY_FILE_FAILED, sourceFolderOrFile);
+				String msgDetails = LocalServiceResources.FILEMSG_COPY_FILE_FAILED_DETAILS;
+				
 				// SystemPlugin.logError("LocalFileSubSystemImpl.copy(): Couldn't create temp dir.");
-				throw new SystemMessageException(getMessage("RSEG1306").makeSubstitution(sourceFolderOrFile)); //$NON-NLS-1$
+				throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails));
 			}
 			ISystemArchiveHandler handler = child.getHandler();
 			if (handler == null)
@@ -1450,7 +1475,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 				if (monitor != null && monitor.isCanceled())
 				{
 					//This operation has been canceled by the user.
-					throw new SystemMessageException(getMessage("RSEG1067")); //$NON-NLS-1$
+					throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.CANCEL, LocalServiceResources.MSG_OPERATION_CANCELED)); 
 				}
 			}
 			return returnValue;
@@ -1513,12 +1538,12 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 	public boolean copyBatch(String[] srcParents, String[] srcNames, String tgtParent, IProgressMonitor monitor) throws SystemMessageException 
 	{
 		boolean ok = true;
-		SystemMessage msg = getMessage("RSEG1117");   //$NON-NLS-1$
-		String deletingMessage = msg.makeSubstitution("").getLevelOneText(); //$NON-NLS-1$
+		String deletingMessage = NLS.bind(LocalServiceResources.FILEMSG_COPYING, "");
 		monitor.beginTask(deletingMessage, srcParents.length);
 		for (int i = 0; i < srcParents.length; i++)
 		{
-			monitor.subTask(msg.makeSubstitution(srcNames[i]).getLevelOneText());
+			deletingMessage = NLS.bind(LocalServiceResources.FILEMSG_COPYING, srcNames[i]);
+			monitor.subTask(deletingMessage);
 			ok = ok && copy(srcParents[i], srcNames[i], tgtParent, srcNames[i], monitor);
 			monitor.worked(1);
 		}
@@ -1637,10 +1662,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		
 		return stream;
 	}	
-	
-	public SystemMessage getMessage(String messageID) {
-		return (_msgProvider != null ? _msgProvider.getMessage(messageID) : super.getMessage(messageID));
-	}
+
 
 	public int getCapabilities(IHostFile file) {
 		int capabilities = 0;

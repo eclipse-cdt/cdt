@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.core.cdescriptor.tests.CDescriptorTests;
 import org.eclipse.cdt.core.internal.errorparsers.tests.ErrorParserTests;
 import org.eclipse.cdt.core.internal.tests.PositionTrackerTests;
+import org.eclipse.cdt.core.internal.tests.StringBuilderTest;
 import org.eclipse.cdt.core.language.AllLanguageTests;
 import org.eclipse.cdt.core.model.tests.AllCoreTests;
 import org.eclipse.cdt.core.model.tests.BinaryTests;
@@ -68,6 +69,7 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		suite.addTest(ElementDeltaTests.suite());
 		suite.addTest(WorkingCopyTests.suite());
         suite.addTest(PositionTrackerTests.suite());
+        suite.addTest(StringBuilderTest.suite());
         suite.addTest(AllLanguageTests.suite());
 				
 		// Add in PDOM tests

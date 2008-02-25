@@ -124,7 +124,10 @@ public class MacroExpansionTracker {
 			StringBuilder after= new StringBuilder();
 			toString(result, lexInput, before, replace, after);
 			int offset= before.length();
-			before.append(replace).append(after);
+			// workaround bug 220158
+			final CharSequence csr= replace;
+			final CharSequence csa= after;
+			before.append(csr).append(csa);
 			before.append(lexInput, endOffset, lexInput.length-endOffset);
 			fPreStep= before.toString();
 			fReplacement= new ReplaceEdit(offset, replace.length(), fReplacementText);

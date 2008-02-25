@@ -96,20 +96,15 @@ public abstract class APathEntry extends PathEntry {
 					return false;
 				}
 				
-				int i=0;
-				// performance: iterate to first non-identical path
-				for (; i < excludeLength; i++) {
-					if (exclusionPatterns[i] == otherExcludes[i]) {
-						continue;
-					}
-				}
 				Set<String> excludeSet = new HashSet<String>();
 				Set<String> otherSet = new HashSet<String>();
-				for (; i < excludeLength; i++) {
-					// compare toStrings instead of IPaths
-					// since IPath.equals is specified to ignore trailing separators
-					excludeSet.add(exclusionPatterns[i].toString());
-					otherSet.add(otherExcludes[i].toString());
+				for (int i=0; i < excludeLength; i++) {
+					if (exclusionPatterns[i] != otherExcludes[i]) {
+						// compare toStrings instead of IPaths
+						// since IPath.equals is specified to ignore trailing separators
+						excludeSet.add(exclusionPatterns[i].toString());
+						otherSet.add(otherExcludes[i].toString());
+					}
 				}
 				if (!excludeSet.equals(otherSet)) {
 					return false;

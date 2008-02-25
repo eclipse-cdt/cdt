@@ -7,6 +7,7 @@
  * 
  * Contributors: 
  * Martin Oberhuber (Wind River) - initial API and implementation 
+ * David McKnight   (IBM)        - [216252] use SimpleSystemMessage instead of getMessage()
  *******************************************************************************/
 
 package org.eclipse.rse.examples.daytime.service;
@@ -20,7 +21,6 @@ import java.net.UnknownHostException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.rse.examples.daytime.DaytimeResources;
-import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 
 /**
  * The DaytimeService implements the UI-less protocol for accessing the
@@ -47,10 +47,6 @@ public class DaytimeService implements IDaytimeService {
 		//nothing to do
 	}
 
-	public SystemMessage getMessage(String messageID) {
-		//dummy impl for now
-		return null;
-	}
 
 	public void setHostName(String hostname) {
 		fHostname = hostname;

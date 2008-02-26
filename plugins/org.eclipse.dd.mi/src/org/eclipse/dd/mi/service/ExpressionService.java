@@ -631,7 +631,14 @@ public class ExpressionService extends AbstractDsfService implements IExpression
     			new DataRequestMonitor<MIDataEvaluateExpressionInfo>(getExecutor(), rm) {
     				@Override
     				protected void handleOK() {
-    					final String addrStr = getData().getValue();
+    					String tmpAddrStr = getData().getValue();
+    					
+    					// Deal with adresses of contents of a char* which is in
+    					// the form of "0x12345678 \"This is a string\""
+    					int split = tmpAddrStr.indexOf(' '); 
+    			    	if (split != -1) tmpAddrStr = tmpAddrStr.substring(0, split);
+    			    	final String addrStr = tmpAddrStr;
+    			    	
     					fExpressionCache.execute(
     						new MIDataEvaluateExpression<MIDataEvaluateExpressionInfo>(sizeDmc), 
     						new DataRequestMonitor<MIDataEvaluateExpressionInfo>(getExecutor(), rm) {

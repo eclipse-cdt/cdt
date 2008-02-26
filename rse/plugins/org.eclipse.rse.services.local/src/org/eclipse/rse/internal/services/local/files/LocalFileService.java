@@ -74,7 +74,6 @@ import org.eclipse.rse.services.clientserver.archiveutils.AbsoluteVirtualPath;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler;
 import org.eclipse.rse.services.clientserver.archiveutils.VirtualChild;
-import org.eclipse.rse.services.clientserver.messages.ISystemMessageProvider;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
@@ -125,17 +124,13 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 	private String  _osCmdShell = null;
 	
 	protected ISystemFileTypes _fileTypeRegistry;
-	protected ISystemMessageProvider _msgProvider;
 	
 	public LocalFileService(ISystemFileTypes fileTypeRegistry)
 	{
 		_fileTypeRegistry = fileTypeRegistry;
 	}
 	
-	public LocalFileService (ISystemFileTypes fileTypeRegistry, ISystemMessageProvider msgProvider) {
-		this(fileTypeRegistry);
-		_msgProvider = msgProvider;
-	}
+
 	
 	public String getName()
 	{

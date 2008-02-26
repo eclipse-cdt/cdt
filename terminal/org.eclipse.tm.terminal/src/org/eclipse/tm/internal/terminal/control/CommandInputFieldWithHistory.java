@@ -7,7 +7,7 @@
  * 
  * Contributors: 
  * Michael Scharf (Wind River) - initial implementation
- * Michael Scharf (Wing River) - fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=211659
+ * Michael Scharf (Wing River) - [211659] Add field assist to terminal input field
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.control;
 import java.util.ArrayList;

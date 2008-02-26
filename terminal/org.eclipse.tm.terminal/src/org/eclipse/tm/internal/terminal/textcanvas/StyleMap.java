@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,9 @@
  *
  * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
+ * Michael Scharf (Wind River) - [205260] Terminal does not take the font from the preferences
  * Michael Scharf (Wind River) - [209746] There are cases where some colors not displayed correctly
+ * Michael Scharf (Wind River) - [206328] Terminal does not draw correctly with proportional fonts
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.textcanvas;
 

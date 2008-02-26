@@ -17,7 +17,10 @@ import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -92,6 +95,9 @@ public class DocCommentHighlightingTest extends BaseUITestCase {
 
 		AbstractTextEditor fEditor= (CEditor) EditorTestHelper.openInEditor(ResourceTestHelper.findFile(fTestFilename), true);
 		fSourceViewer= EditorTestHelper.getSourceViewer(fEditor);
+		// source positions depend on Windows line separator
+		adjustLineSeparator(fSourceViewer.getDocument(), "\r\n");
+		fEditor.doSave(new NullProgressMonitor());
 		assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 0, 10000, 100));
 	}
 
@@ -103,6 +109,22 @@ public class DocCommentHighlightingTest extends BaseUITestCase {
 
 		super.tearDown();
 	}
+
+	/**
+	 * Make the document use the given line separator.
+	 * 
+	 * @param document
+	 * @param lineSeparator
+	 */
+	private void adjustLineSeparator(IDocument document, String lineSeparator) throws BadLocationException {
+		for (int i= 0; i < document.getNumberOfLines(); i++) {
+			String delimiter= document.getLineDelimiter(i);
+			if (delimiter != null && !delimiter.equals(lineSeparator)) {
+				IRegion lineRegion= document.getLineInformation(i);
+				document.replace(lineRegion.getOffset() + lineRegion.getLength(), delimiter.length(), lineSeparator);
+			}
+		}
+ 	}
 
 	protected List/*<Position>*/ findRangesColored(RGB rgb) {
 		List result= new ArrayList();

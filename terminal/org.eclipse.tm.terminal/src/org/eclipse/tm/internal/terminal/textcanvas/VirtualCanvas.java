@@ -145,7 +145,9 @@ public abstract class VirtualCanvas extends Canvas {
 	}
 
 	/**
-	 * @param gc
+	 * Paint the virtual canvas.
+	 * Override to implement actual paint method.
+	 * @param gc graphics context to paint in
 	 */
 	abstract protected void paint(GC gc);
 	protected Color getTerminalBackgroundColor() {
@@ -203,9 +205,9 @@ public abstract class VirtualCanvas extends Canvas {
 	}
 	
 	/**
-	 * Sets the extend of the virtual display ares
-	 * @param width
-	 * @param height
+	 * Sets the extent of the virtual display area
+	 * @param width width of the display area
+	 * @param height height of the display area
 	 */
 	protected void setVirtualExtend(int width, int height) {
 		fVirtualBounds.width=width;
@@ -233,7 +235,7 @@ public abstract class VirtualCanvas extends Canvas {
 	}
 	/**
 	 * @param x
-	 * @return the virtual coordinate in scree space
+	 * @return the virtual coordinate in screen space
 	 */
 	protected int virtualXtoScreen(int x) {
 		return x+fVirtualBounds.x;

@@ -113,7 +113,7 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 	}
 	/**
 	 * Add a line to the history. 
-	 * @param line
+	 * @param line The line to be added to the history.
 	 */
 	protected void pushLine(String line) {
 		endHistoryMode();
@@ -158,7 +158,7 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 		return buff.toString();
 	}
 	/**
-	 * @param currLine
+	 * @param currLine Line of text to be moved in history
 	 * @param count (+1 or -1) for forward and backward movement. -1 goes back
 	 * @return the new string to be displayed in the command line or null,
 	 * if the limit is reached.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2003, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [206892] State handling: Only allow connect when CLOSED
  * Michael Scharf (Wind River) - [209656] ClassCastException in TerminalView under Eclipse-3.4M3
  * Michael Scharf (Wind River) - [189774] Ctrl+V does not work in the command input field. 
+ * Michael Scharf (Wind River) - [217999] Duplicate context menu entries in Terminal
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 

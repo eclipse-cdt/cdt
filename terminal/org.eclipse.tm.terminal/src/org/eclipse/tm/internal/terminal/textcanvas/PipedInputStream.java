@@ -76,8 +76,9 @@ public class PipedInputStream extends InputStream {
 		}
 		/**
 		 * Writes a single byte to the buffer. Blocks if the buffer is full.
-		 * @param b
-		 * @throws InterruptedException
+		 * @param b byte to write to the buffer
+		 * @throws InterruptedException when the thread is interrupted while waiting
+		 *     for the buffer to become ready
 		 * Must be called with a lock on this!
 		 */
 		public void write(byte b) throws InterruptedException {
@@ -112,7 +113,8 @@ public class PipedInputStream extends InputStream {
 		/**
 		 * Read a single byte. Blocks until a byte is available.
 		 * @return a byte from the buffer
-		 * @throws InterruptedException
+		 * @throws InterruptedException when the thread is interrupted while waiting
+		 *     for the buffer to become ready
 		 * Must be called with a lock on this!
 		 */
 		public int read() throws InterruptedException {
@@ -224,7 +226,8 @@ public class PipedInputStream extends InputStream {
 	/**
 	 * Waits until data is available for reading.
 	 * @param millis see {@link Object#wait(long)}
-	 * @throws InterruptedException
+	 * @throws InterruptedException when the thread is interrupted while waiting
+	 *     for the buffer to become ready
 	 */
 	public void waitForAvailable(long millis) throws InterruptedException {
 		synchronized(fQueue) {

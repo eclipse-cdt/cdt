@@ -186,9 +186,9 @@ abstract public class GridCanvas extends VirtualCanvas {
 	 * Override when you need this information....
 	 * Is only called if the values change (well, almost)
 	 * @param x origin of visible cells
-	 * @param y
+	 * @param y origin of visible cells
 	 * @param width number of cells visible in x direction
-	 * @param height
+	 * @param height number of cells visible in y direction
 	 */
 	protected void visibleCellRectangleChanged(int x, int y, int width, int height) {
 	}

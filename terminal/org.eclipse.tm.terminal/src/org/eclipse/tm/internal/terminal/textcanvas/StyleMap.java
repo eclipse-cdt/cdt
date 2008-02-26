@@ -214,7 +214,8 @@ public class StyleMap {
 		return fProportional;
 	}
 	/**
-	 * @param c
+	 * Return the offset in pixels required to center a given character
+	 * @param c the character to measure
 	 * @return the offset in x direction to center this character
 	 */
 	public int getCharOffset(char c) {

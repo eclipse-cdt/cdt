@@ -172,6 +172,67 @@
       </description>
    </category-def>
 <!-- END_2_0_2 -->
+<!-- BEGIN_2_0_3 -->
+   <feature url="features/org.eclipse.rse.core_2.0.3.v20080225-7P-7IEB7sQRz0SoiTb.jar" id="org.eclipse.rse.core" version="2.0.3.v20080225-7P-7IEB7sQRz0SoiTb">
+      <category name="TM and RSE 2.0.3"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.dstore_2.0.1.v20070926-7F-4DUUEF6FALu.jar" id="org.eclipse.rse.dstore" version="2.0.1.v20070926-7F-4DUUEF6FALu">
+      <category name="TM and RSE 2.0.3"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.ftp_2.0.3.v20080225-7737D_kE77a7PDI4I7B.jar" id="org.eclipse.rse.ftp" version="2.0.3.v20080225-7737D_kE77a7PDI4I7B">
+      <category name="TM and RSE 2.0.3"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.local_2.0.1.v20070705-7_-2AgI99h9l9l.jar" id="org.eclipse.rse.local" version="2.0.1.v20070705-7_-2AgI99h9l9l">
+      <category name="TM and RSE 2.0.3"/>
+   </feature>
+   <feature url="features/org.eclipse.rse_2.0.3.v20080225-7D-7A8mJIoa9WAvksISSE8yz-C.jar" id="org.eclipse.rse" version="2.0.3.v20080225-7D-7A8mJIoa9WAvksISSE8yz-C">
+      <category name="TM and RSE 2.0.3"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.sdk_2.0.3.v20080225-7J-7EE7ZoHQURqoFwQQpz0MuGUHD.jar" id="org.eclipse.rse.sdk" version="2.0.3.v20080225-7J-7EE7ZoHQURqoFwQQpz0MuGUHD">
+      <category name="TM and RSE 2.0.3"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.ssh_2.0.3.v20080225-78-6_kE77a7OAU.jar" id="org.eclipse.rse.ssh" version="2.0.3.v20080225-78-6_kE77a7OAU">
+      <category name="TM and RSE 2.0.3"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.telnet_2.0.1.v20070704-637AAgI99h9mBW4I7B.jar" id="org.eclipse.rse.telnet" version="2.0.1.v20070704-637AAgI99h9mBW4I7B">
+      <category name="TM and RSE 2.0.3"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.examples_2.0.0.v20070609-6--9oA55P5M7Q.jar" id="org.eclipse.rse.examples" version="2.0.0.v20070609-6--9oA55P5M7Q">
+      <category name="TM and RSE 2.0.3"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.remotecdt_2.0.1.v20070926-4-18s733G3K5H.jar" id="org.eclipse.rse.remotecdt" version="2.0.1.v20070926-4-18s733G3K5H">
+      <category name="TM and RSE 2.0.3"/>
+   </feature>
+   <feature url="features/org.eclipse.tm.discovery_2.0.0.v20070611-7J--E8McIJNJCPr.jar" id="org.eclipse.tm.discovery" version="2.0.0.v20070611-7J--E8McIJNJCPr">
+      <category name="TM and RSE 2.0.3"/>
+   </feature>
+   <feature url="features/org.eclipse.tm.terminal_1.0.3.v20080225-1-27w31191336.jar" id="org.eclipse.tm.terminal" version="1.0.3.v20080225-1-27w31191336">
+      <category name="TM and RSE 2.0.3"/>
+   </feature>
+   <feature url="features/org.eclipse.tm.terminal.serial_1.0.2.v20071030-1-17w31182141.jar" id="org.eclipse.tm.terminal.serial" version="1.0.2.v20071030-1-17w31182141">
+      <category name="TM and RSE 2.0.3"/>
+   </feature>
+   <feature url="features/org.eclipse.tm.terminal.ssh_1.0.3.v20080225-1-27w31191336.jar" id="org.eclipse.tm.terminal.ssh" version="1.0.3.v20080225-1-27w31191336">
+      <category name="TM and RSE 2.0.3"/>
+   </feature>
+   <feature url="features/org.eclipse.tm.terminal.telnet_1.0.3.v20080225-1-27w31191336.jar" id="org.eclipse.tm.terminal.telnet" version="1.0.3.v20080225-1-27w31191336">
+      <category name="TM and RSE 2.0.3"/>
+   </feature>
+   <feature url="features/org.eclipse.tm.terminal.view_1.0.3.v20080225-1-27w31191336.jar" id="org.eclipse.tm.terminal.view" version="1.0.3.v20080225-1-27w31191336">
+      <category name="TM and RSE 2.0.3"/>
+   </feature>
+   <feature url="features/org.eclipse.tm.terminal.sdk_1.0.3.v20080225-7_-7QAvNRwRYVZHJaTqlhNDDqELO.jar" id="org.eclipse.tm.terminal.sdk" version="1.0.3.v20080225-7_-7QAvNRwRYVZHJaTqlhNDDqELO">
+      <category name="TM and RSE 2.0.3"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.tests_2.0.1.v20070926-6-19oA55P5SAG.jar" id="org.eclipse.rse.tests" version="2.0.1.v20070926-6-19oA55P5SAG">
+      <category name="TM and RSE 2.0.3"/>
+   </feature>
+   <category-def name="TM and RSE 2.0.3" label="TM and RSE 2.0.3">
+      <description>
+         Features and add-ons of the 2.0.3 release of Target Management / RSE.
+      </description>
+   </category-def>
+<!-- END_2_0_3 -->
 <!-- BEGIN_3_0 -->
    <feature url="features/org.eclipse.rse.core_3.0.0.qualifier.jar" id="org.eclipse.rse.core" version="3.0.0.qualifier">
       <category name="TM and RSE 3.0"/>

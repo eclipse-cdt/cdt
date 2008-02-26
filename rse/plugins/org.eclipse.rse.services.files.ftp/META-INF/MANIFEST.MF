@@ -7,7 +7,7 @@ Bundle-Activator: org.eclipse.rse.internal.services.files.ftp.Activator
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.rse.services;bundle-version="[2.0.0,3.0.0)",
+ org.eclipse.rse.services;bundle-version="[3.0.0,4.0.0)",
  org.apache.commons.net;bundle-version="[1.4.1,2.0.0)";visibility:="reexport",
  org.eclipse.rse.core;bundle-version="[3.0.0,4.0.0)"
 Bundle-ActivationPolicy: lazy

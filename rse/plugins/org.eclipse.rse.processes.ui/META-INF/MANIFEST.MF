@@ -21,7 +21,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.rse.subsystems.shells.core;bundle-version="[3.0.0,4.0.0)",
  org.eclipse.rse.subsystems.files.core;bundle-version="[3.0.0,4.0.0)",
  org.eclipse.rse.subsystems.processes.core;bundle-version="[3.0.0,4.0.0)",
- org.eclipse.rse.services;bundle-version="[2.0.0,3.0.0)",
+ org.eclipse.rse.services;bundle-version="[3.0.0,4.0.0)",
  org.eclipse.rse.core;bundle-version="[3.0.0,4.0.0)",
  org.eclipse.rse.ui;bundle-version="[3.0.0,4.0.0)"
 Export-Package: org.eclipse.rse.internal.processes.ui;x-internal:=true,

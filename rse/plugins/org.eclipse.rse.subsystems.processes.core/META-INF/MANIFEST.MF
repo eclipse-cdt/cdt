@@ -12,7 +12,7 @@ Export-Package:
  org.eclipse.rse.subsystems.processes.core.subsystem.impl,
  org.eclipse.rse.subsystems.processes.servicesubsystem
 art: true
-Require-Bundle: org.eclipse.rse.services;bundle-version="[2.0.0,3.0.0)",
+Require-Bundle: org.eclipse.rse.services;bundle-version="[3.0.0,4.0.0)",
  org.eclipse.core.runtime,
  org.eclipse.swt,
  org.eclipse.ui,

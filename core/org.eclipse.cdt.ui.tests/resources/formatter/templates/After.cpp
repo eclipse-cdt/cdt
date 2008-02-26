@@ -11,7 +11,7 @@ class Foo {
 };
 
 // TEMPLATE_STRUCT
-template<class Key, class Value, class SortAlgorithm=DefaultSort>
+template<class Key, class Value, class SortAlgorithm = DefaultSort>
 struct Map {
 	Key* keys;
 	Value* values;
@@ -35,7 +35,7 @@ public:
 };
 
 // TEMPLATE_UNION
-template<class X, class Y, int size=16>
+template<class X, class Y, int size = 16>
 union ArrayOverlay {
 public:
 	X x[size];

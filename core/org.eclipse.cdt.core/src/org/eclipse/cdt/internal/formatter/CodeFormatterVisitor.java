@@ -164,6 +164,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		public boolean fSpaceAfterComma= true;
 		public boolean fSpaceAfterOpeningParen;
 		public boolean fSpaceBeforeClosingParen;
+		public boolean fSpaceBetweenEmptyParen;
 		public boolean fSpaceBeforeOpeningParen;
 		public int fContinuationIndentation= -1;
 		public ListAlignment(int mode) {
@@ -421,9 +422,26 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration)
 	 */
 	@Override
-	public int visit(IASTParameterDeclaration parameterDeclaration) {
-		formatRaw(parameterDeclaration);
-		endOfNode(parameterDeclaration);
+	public int visit(IASTParameterDeclaration node) {
+		startNode(node);
+		try {
+			// decl-specifier
+			final IASTDeclSpecifier declSpec= node.getDeclSpecifier();
+			if (declSpec != null) {
+				declSpec.accept(this);
+			}
+			// declarator
+			final IASTDeclarator declarator= node.getDeclarator();
+			boolean needSpace= declarator.getPointerOperators().length > 0 && scribe.printComment();
+			if (needSpace) {
+				scribe.space();
+			}
+			if (declarator != null) {
+				declarator.accept(this);
+			}
+		} finally {
+			endOfNode(node);
+		}
 		return PROCESS_SKIP;
 	}
 
@@ -632,11 +650,17 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			if (node instanceof IASTProblemHolder) {
 				throw new ASTProblemException(((IASTProblemHolder)node).getProblem());
 			}
-			IASTDeclSpecifier declSpec= node.getDeclSpecifier();
+			// decl-specifier
+			final IASTDeclSpecifier declSpec= node.getDeclSpecifier();
 			if (declSpec != null) {
 				declSpec.accept(this);
 			}
-			IASTDeclarator declarator= node.getAbstractDeclarator();
+			// declarator
+			final IASTDeclarator declarator= node.getAbstractDeclarator();
+			boolean needSpace= declarator.getPointerOperators().length > 0 && scribe.printComment();
+			if (needSpace) {
+				scribe.space();
+			}
 			if (declarator != null) {
 				declarator.accept(this);
 			}
@@ -869,7 +893,10 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		node.getName().accept(this);
 		IASTTypeId defaultType= node.getDefaultType();
 		if (defaultType != null) {
-			scribe.printNextToken(Token.tASSIGN, scribe.printComment());
+			scribe.printNextToken(Token.tASSIGN, preferences.insert_space_before_assignment_operator);
+			if (preferences.insert_space_after_assignment_operator) {
+				scribe.space();
+			}
 			defaultType.accept(this);
 		}
 		return PROCESS_SKIP;
@@ -898,7 +925,10 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		}
 		IASTExpression defaultValue= node.getDefaultValue();
 		if (defaultValue != null) {
-			scribe.printNextToken(Token.tASSIGN, scribe.printComment());
+			scribe.printNextToken(Token.tASSIGN, preferences.insert_space_before_assignment_operator);
+			if (preferences.insert_space_after_assignment_operator) {
+				scribe.space();
+			}
 			defaultValue.accept(this);
 		}
 		return PROCESS_SKIP;
@@ -907,12 +937,8 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	private int visit(ICPPASTConstructorInitializer node) {
 		startNode(node);
 		try {
-			scribe.printNextToken(Token.tLPAREN, false);
-			final IASTExpression value= node.getExpression();
-			if (value != null) {
-				value.accept(this);
-			}
-			scribe.printNextToken(Token.tRPAREN, false);
+			// format like a function call
+			formatFunctionCallArguments(node.getExpression());
 		} finally {
 			endOfNode(node);
 		}
@@ -1078,12 +1104,11 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 
 	private int visit(IASTStandardFunctionDeclarator node) {
 		final List<IASTParameterDeclaration> parameters = Arrays.asList(node.getParameters());
-		final boolean forceSpaceInsideParen= parameters.isEmpty() && !node.takesVarArgs()
-				&& preferences.insert_space_between_empty_parens_in_method_declaration;
 		final ListAlignment align= new ListAlignment(preferences.alignment_for_parameters_in_method_declaration);
 		align.fSpaceBeforeOpeningParen= preferences.insert_space_before_opening_paren_in_method_declaration;
 		align.fSpaceAfterOpeningParen= preferences.insert_space_after_opening_paren_in_method_declaration;
-		align.fSpaceBeforeClosingParen= preferences.insert_space_before_closing_paren_in_method_declaration || forceSpaceInsideParen;
+		align.fSpaceBeforeClosingParen= preferences.insert_space_before_closing_paren_in_method_declaration;
+		align.fSpaceBetweenEmptyParen= preferences.insert_space_between_empty_parens_in_method_declaration;
 		align.fSpaceBeforeComma= preferences.insert_space_before_comma_in_method_declaration_parameters;
 		align.fSpaceAfterComma= preferences.insert_space_after_comma_in_method_declaration_parameters;
 		formatList(parameters, align, true, node.takesVarArgs());
@@ -1124,6 +1149,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		ListAlignment align= new ListAlignment(preferences.alignment_for_parameters_in_method_declaration);
 		align.fSpaceAfterOpeningParen= preferences.insert_space_after_opening_paren_in_method_declaration;
 		align.fSpaceBeforeClosingParen= preferences.insert_space_before_closing_paren_in_method_declaration;
+		align.fSpaceBetweenEmptyParen= preferences.insert_space_between_empty_parens_in_method_declaration;
 		align.fSpaceBeforeComma= preferences.insert_space_before_comma_in_method_declaration_parameters;
 		align.fSpaceAfterComma= preferences.insert_space_after_comma_in_method_declaration_parameters;
 		formatList(parameters, align, true, false);
@@ -1607,7 +1633,11 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			if (peekNextToken() == Token.tIDENTIFIER) {
 				scribe.skipToToken(Token.tRPAREN);
 			}
-			scribe.printNextToken(Token.tRPAREN, align.fSpaceBeforeClosingParen);
+			if (elementsLength == 0 && !addEllipsis) {
+				scribe.printNextToken(Token.tRPAREN, align.fSpaceBetweenEmptyParen);
+			} else {
+				scribe.printNextToken(Token.tRPAREN, align.fSpaceBeforeClosingParen);
+			}
 		}
 	}
 
@@ -1707,26 +1737,38 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	private int visit(IASTFunctionCallExpression node) {
 		node.getFunctionNameExpression().accept(this);
 		IASTExpression paramExpr= node.getParameterExpression();
-		scribe.printNextToken(Token.tLPAREN, preferences.insert_space_before_opening_paren_in_method_invocation);
-		if (preferences.insert_space_after_opening_paren_in_method_invocation) {
-			scribe.space();
-		}
-		if (paramExpr != null) {
-			if (paramExpr instanceof IASTExpressionList) {
-				final IASTExpressionList exprList= (IASTExpressionList)paramExpr;
-				final List<IASTExpression> expressions = Arrays.asList(exprList.getExpressions());
-				final ListAlignment align= new ListAlignment(preferences.alignment_for_arguments_in_method_invocation);
-				align.fSpaceBeforeComma= preferences.insert_space_before_comma_in_method_invocation_arguments;
-				align.fSpaceAfterComma= preferences.insert_space_after_comma_in_method_invocation_arguments;
-				formatList(expressions, align, false, false);
-			} else {
-				paramExpr.accept(this);
-			}
-		} else if (preferences.insert_space_between_empty_parens_in_method_invocation) {
-			scribe.space();
-		}
-		scribe.printNextToken(Token.tRPAREN, preferences.insert_space_before_closing_paren_in_method_invocation);
+		formatFunctionCallArguments(paramExpr);
     	return PROCESS_SKIP;
+	}
+
+	/**
+	 * Formats given expression as a function call, ie. enclosed in parenthesis.
+	 * 
+	 * @param argumentExpr  the argument expression, may be <code>null</code>
+	 */
+	private void formatFunctionCallArguments(IASTExpression argumentExpr) {
+		final List<IASTExpression> expressions;
+		if (argumentExpr != null) {
+			if (argumentExpr instanceof IASTExpressionList) {
+				// argument list
+				final IASTExpressionList exprList= (IASTExpressionList)argumentExpr;
+				expressions= Arrays.asList(exprList.getExpressions());
+			} else {
+				// single argument
+				expressions= Collections.singletonList(argumentExpr);
+			}
+		} else {
+			// no arguments
+			expressions= Collections.emptyList();
+		}
+		final ListAlignment align= new ListAlignment(preferences.alignment_for_arguments_in_method_invocation);
+		align.fSpaceBeforeOpeningParen= preferences.insert_space_before_opening_paren_in_method_invocation;
+		align.fSpaceAfterOpeningParen= preferences.insert_space_after_opening_paren_in_method_invocation;
+		align.fSpaceBeforeClosingParen= preferences.insert_space_before_closing_paren_in_method_invocation;
+		align.fSpaceBetweenEmptyParen= preferences.insert_space_between_empty_parens_in_method_invocation;
+		align.fSpaceBeforeComma= preferences.insert_space_before_comma_in_method_invocation_arguments;
+		align.fSpaceAfterComma= preferences.insert_space_after_comma_in_method_invocation_arguments;
+		formatList(expressions, align, true, false);
 	}
 
 	private int visit(IASTExpressionList node) {

@@ -6,9 +6,7 @@ class T;
 class X;
 class Y;
 class Bar;
-class Foo {
-	template<class Bar> void fum(int i);
-};
+class Foo { template<class Bar> void fum(int i); };
 
 // TEMPLATE_STRUCT
 template<class Key, class Value, class SortAlgorithm=DefaultSort>

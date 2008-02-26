@@ -280,7 +280,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 
 	//template<typename T> class B {
 	//};
-	//template<typename T1, typename T2=B<T1> > class A {
+	//template<typename T1, typename T2 = B<T1> > class A {
 	//};
 	public void testNestedTemplateParameters_Bug206801() throws Exception {
 		assertFormatterResult();
@@ -463,4 +463,32 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//typedef signed int TInt;
+	//extern void Bar();  // should not have space between parens
+	//
+	//void Foo()    // should not have space between parens
+	//{
+	//  TInt a(3);  // should become TInt a( 3 );
+	//  Bar();   // should not have space between parens
+	//}
+
+	//typedef signed int TInt;
+	//extern void Bar(); // should not have space between parens
+	//
+	//void Foo() // should not have space between parens
+	//	{
+	//	TInt a( 3 ); // should become TInt a( 3 );
+	//	Bar(); // should not have space between parens
+	//	}
+	public void testSpaceBetweenParen_Bug217918() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_METHOD_DECLARATION, DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_STATEMENTS_COMPARE_TO_BODY, DefaultCodeFormatterConstants.FALSE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_PAREN_IN_METHOD_DECLARATION, CCorePlugin.INSERT);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_PAREN_IN_METHOD_DECLARATION, CCorePlugin.INSERT);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BETWEEN_EMPTY_PARENS_IN_METHOD_DECLARATION, CCorePlugin.DO_NOT_INSERT);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_PAREN_IN_METHOD_INVOCATION, CCorePlugin.INSERT);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_PAREN_IN_METHOD_INVOCATION, CCorePlugin.INSERT);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BETWEEN_EMPTY_PARENS_IN_METHOD_INVOCATION, CCorePlugin.DO_NOT_INSERT);
+		assertFormatterResult();
+	}
 }

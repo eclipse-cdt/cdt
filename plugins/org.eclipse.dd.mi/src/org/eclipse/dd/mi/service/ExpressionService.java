@@ -892,7 +892,7 @@ public class ExpressionService extends AbstractDsfService implements IExpression
     @DsfServiceEventHandler 
     public void eventDispatched(IMemoryChangedEvent e) {
         fExpressionCache.reset();
-        // We must also deal with our MIVariableManager since it
-        // caches variable values, which may now have changed
+        // MIVariableManager separately traps this event
     }
+
 }

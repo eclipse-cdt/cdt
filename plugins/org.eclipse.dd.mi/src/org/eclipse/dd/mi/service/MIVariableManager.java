@@ -33,6 +33,7 @@ import org.eclipse.dd.dsf.debug.service.IStack;
 import org.eclipse.dd.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMData;
+import org.eclipse.dd.dsf.debug.service.IMemory.IMemoryChangedEvent;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.dd.dsf.debug.service.command.ICommand;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControl;
@@ -1629,6 +1630,13 @@ public class MIVariableManager extends AbstractDsfService implements ICommandCon
 		return MIPlugin.getBundleContext();
 	}
     
+    private void markAllOutOfDate() {
+    	MIRootVariableObject root;
+    	while ((root = updatedRootList.poll()) != null) {
+    		root.markAsOutOfDate();
+    	}       
+    }
+
     @DsfServiceEventHandler 
     public void eventDispatched(IRunControl.IResumedDMEvent e) {
     	// Program has resumed, all variable objects need to be updated.
@@ -1636,13 +1644,20 @@ public class MIVariableManager extends AbstractDsfService implements ICommandCon
     	// to deal with those.  Also, to optimize this operation, we have
     	// a list of all roots that have been updated, so we only have to
     	// set those to needing to be updated.
-    	MIRootVariableObject root;
-    	while ((root = updatedRootList.poll()) != null) {
-    		root.markAsOutOfDate();
-    	}
+    	markAllOutOfDate();
     }
     
     @DsfServiceEventHandler 
     public void eventDispatched(IRunControl.ISuspendedDMEvent e) {
     }
+    
+    @DsfServiceEventHandler 
+    public void eventDispatched(IMemoryChangedEvent e) {
+    	// Some memory has changed.  We currently do not know the address
+    	// of each of our variable objects, so there is no way to know
+    	// which one is affected.  Mark them all as out of date.
+    	// The views will fully refresh on a MemoryChangedEvent
+    	markAllOutOfDate();
+    }
+
 }

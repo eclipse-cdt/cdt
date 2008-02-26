@@ -8,13 +8,19 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
+//#ifdef excercises
 package org.eclipse.dd.examples.dsf.requestmonitor;
+//#else
+//#package org.eclipse.dd.examples.dsf.requestmonitor.answers;
+//#endif
 
 import java.util.Arrays;
 import java.util.concurrent.Executor;
 
 import org.eclipse.dd.dsf.concurrent.CountingRequestMonitor;
+//#ifdef answers
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
+//#endif
 import org.eclipse.dd.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 
@@ -45,43 +51,42 @@ public class AsyncQuicksort {
     {
         if (right > left) {
             int pivot = left;
-            //#ifdef request_monitors_ex2
-//#         // TODO: Request Monitors Exercise 2 - Convert partition to an async. method.
-//#         int newPivot = partition(array, left, right, pivot);
-//#         int newPivot = getData();
-//#         printArray(array, left, right, newPivot);
-//#            
-//#         CountingRequestMonitor countingRm = new CountingRequestMonitor(fgExecutor, rm);
-//#         asyncQuicksort(array, left, newPivot - 1, countingRm);
-//#         asyncQuicksort(array, newPivot + 1, right, countingRm);
-//#         countingRm.setDoneCount(2);
-            //#else
-            asyncPartition(
-                array, left, right, pivot, 
-                new DataRequestMonitor<Integer>(fgExecutor, rm) {
-                    @Override
-                    protected void handleCompleted() {
-                        int newPivot = getData();
-                        printArray(array, left, right, newPivot);
-                        
-                        CountingRequestMonitor countingRm = new CountingRequestMonitor(fgExecutor, rm);
-                        asyncQuicksort(array, left, newPivot - 1, countingRm);
-                        asyncQuicksort(array, newPivot + 1, right, countingRm);
-                        countingRm.setDoneCount(2);
-                    }
-            });
-            //#endif
+         //#ifdef excercises
+         // TODO: Request Monitors Exercise 2 - Convert partition to an async. method.
+         int newPivot = partition(array, left, right, pivot);
+         printArray(array, left, right, newPivot);
+            
+         CountingRequestMonitor countingRm = new CountingRequestMonitor(fgExecutor, rm);
+         asyncQuicksort(array, left, newPivot - 1, countingRm);
+         asyncQuicksort(array, newPivot + 1, right, countingRm);
+         countingRm.setDoneCount(2);
+         //#else
+//#            asyncPartition(
+//#                array, left, right, pivot, 
+//#                new DataRequestMonitor<Integer>(fgExecutor, rm) {
+//#                    @Override
+//#                    protected void handleCompleted() {
+//#                        int newPivot = getData();
+//#                        printArray(array, left, right, newPivot);
+//#                       
+//#                        CountingRequestMonitor countingRm = new CountingRequestMonitor(fgExecutor, rm);
+//#                        asyncQuicksort(array, left, newPivot - 1, countingRm);
+//#                        asyncQuicksort(array, newPivot + 1, right, countingRm);
+//#                        countingRm.setDoneCount(2);
+//#                    }
+//#            });
+        //#endif
 
         } else {
             rm.done();
         }
     }
     
-    //#ifdef request_monitors_ex2
-//# // TODO: Request Monitors Exercise 2 - Convert partition to an async. method.
-//# static int partition(int[] array, int left, int right, int pivot)
+    //#ifdef excercises
+    // TODO Exercise 2 - Convert partition to an asynchronous method.
+    static int partition(int[] array, int left, int right, int pivot)
     //#else
-    static void asyncPartition(int[] array, int left, int right, int pivot, DataRequestMonitor<Integer> rm)
+//#    static void asyncPartition(int[] array, int left, int right, int pivot, DataRequestMonitor<Integer> rm)
     //#endif
     {
         int pivotValue = array[pivot];
@@ -99,12 +104,12 @@ public class AsyncQuicksort {
         array[right] = array[store];
         array[store] = pivotValue;
         
-        //#ifdef request_monitors_ex2
-//#     // TODO: Request Monitors Exercise 2 - Convert partition to an async. method.
-//#     return store;
+        //#ifdef excercises
+        // TODO: Request Monitors Exercise 2 - Convert partition to an async. method.
+        return store;
         //#else
-        rm.setData(store);
-        rm.done();
+//#        rm.setData(store);
+//#        rm.done();
         //#endif
     }
     

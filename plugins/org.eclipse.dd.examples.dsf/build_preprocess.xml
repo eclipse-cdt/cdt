@@ -8,24 +8,25 @@
  
  	 Contributors:
     	 IBM Corporation - initial API and implementation
+         Wind River Systems - adopted to use with DSF
 
      EclipseCon    
-     Debug Tutorial Exercises
+     DSF Tutorial Exercises
      ====================================================================== -->
 <project name="EclipseCon" default="generateAll">
 	<description>
-            Debug Tutorial Exercises
+            DSF Tutorial Exercises
     </description>
 
-	<taskdef name="preprocess" classname="org.eclipse.dd.examples.ant.tasks.PreProcessor" classpath="../bin" />
-	<property name="workspace" location="c:\eclipse-dev\dev-3.4" />
+	<taskdef name="preprocess" classname="org.eclipse.dd.examples.ant.tasks.PreProcessor" classpath="bin" />
+	<property name="$workspace" location="c:\eclipse-dev\dev-3.4" />
 	<property name="srcBase" location="${workspace}/org.eclipse.dd.examples.dsf/src_preprocess" />
 	<property name="destBase" location="${workspace}/org.eclipse.dd.examples.dsf/src" />
 
 	<!-- ================================= 
           target: generateAll              
          ================================= -->
-	<target name="generateAll" description="--> Debug Tutorial Exercises">
+	<target name="generateAll" description="--> DSF Tutorial Exercises">
 		
     <!-- = = = = = = = = = = = = = = = = =
           macrodef: process          
@@ -34,17 +35,19 @@
         <attribute name="packagedir"/>
     	<attribute name="symbols"/>
         <sequential>
-            <delete dir="@{destBase}/${packagedir}/excercise"/>
-            <delete dir="@{destBase}/${packagedir}/answer"/>
-            <mkdir dir="@{destBase}/${packagedir}/excercise"/>
-            <mkdir dir="@{destBase}/${packagedir}/answer"/>
-        	<preprocess destdir="@{destBase}/${packagedir}/excercise" symbols="@{symbols}">
-        		<fileset dir="@{destBase}/${packagedir}"/>
+            <delete dir="src/@{packagedir}"/>
+            <mkdir dir="src/@{packagedir}"/>
+            <mkdir dir="src/@{packagedir}/answers"/>
+        	<preprocess destdir="src/@{packagedir}" symbols="excercises">
+        		<fileset dir="src_preprocess/@{packagedir}"/>
+        	</preprocess>
+        	<preprocess destdir="src/@{packagedir}/answers" symbols="answers">
+        		<fileset dir="src_preprocess/@{packagedir}"/>
         	</preprocess>
         </sequential>
     </macrodef>
 
-	<process packagedir="${srcBase}/org/eclipse/dd/examples/dsf/requestmonitor" symbols="request_monitors_ex1"/>
+	<process packagedir="org/eclipse/dd/examples/dsf/requestmonitor" symbols="answers"/>
 	</target>
 
 </project>

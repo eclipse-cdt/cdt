@@ -8,10 +8,10 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-//#ifdef request_monitors_ex1
-//#package org.eclipse.dd.examples.dsf.requestmonitor.excercise;
+//#ifdef excercises
+package org.eclipse.dd.examples.dsf.requestmonitor;
 //#else
-package org.eclipse.dd.examples.dsf.requestmonitor.answer;
+//#package org.eclipse.dd.examples.dsf.requestmonitor.answers;
 //#endif
 
 import java.util.concurrent.Executor;
@@ -37,23 +37,21 @@ public class AsyncHelloWorld {
 
     static void asyncHelloWorld(RequestMonitor rm) {
         System.out.println("Hello world");
-        //#ifdef request_monitors_ex1
-//#     // TODO: Request Monitors Exercise 1 - Call a second async. 
-//#     // "Hello world 2" method.   
-//#     rm.done();
+        //#ifdef excercises
+        // TODO Exercise 1: - Call the second async. "Hello world 2" method.   
+        rm.done();
         //#else
-        RequestMonitor rm2 = new RequestMonitor(ImmediateExecutor.getInstance(), rm);
-        asyncHelloWorld2(rm2);
+//#        RequestMonitor rm2 = new RequestMonitor(ImmediateExecutor.getInstance(), rm);
+//#        asyncHelloWorld2(rm2);
         //#endif
     }
     
-    //#ifdef request_monitors_ex1
-//# // TODO: Request Monitors Exercise 1 - Add a second async.
-//# // "Hello world 2" method.   
+    //#ifdef excercises
+    // TODO: Exercise 1 - Add a second async. "Hello world 2" method.   
     //#else
-    static void asyncHelloWorld2(RequestMonitor rm) {
-        System.out.println("Hello world 2");
-        rm.done();
-    }
+//#    static void asyncHelloWorld2(RequestMonitor rm) {
+//#        System.out.println("Hello world 2");
+//#        rm.done();
+//#    }
     //#endif
 }

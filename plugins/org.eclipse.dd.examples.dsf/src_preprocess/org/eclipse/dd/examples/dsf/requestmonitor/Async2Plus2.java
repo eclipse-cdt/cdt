@@ -8,7 +8,11 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
+//#ifdef excercises
 package org.eclipse.dd.examples.dsf.requestmonitor;
+//#else
+//#package org.eclipse.dd.examples.dsf.requestmonitor.answers;
+//#endif
 
 import java.util.concurrent.Executor;
 

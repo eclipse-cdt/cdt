@@ -535,11 +535,11 @@ public class MBSWizardHandler extends CWizardHandler {
 				cfgFirst = cfgDes; 
 		}
 		mngr.setProjectDescription(project, des);
-		doPostProcess(project);
-		doCustom();
+		doTemplatesPostProcess(project);
+		doCustom(project);
 	}
 	
-	protected void doPostProcess(IProject prj) {
+	protected void doTemplatesPostProcess(IProject prj) {
 		if(entryInfo == null)
 			return;
 		
@@ -648,7 +648,7 @@ public class MBSWizardHandler extends CWizardHandler {
 		return null;
 	}
 	
-	protected void doCustom() {
+	protected void doCustom(IProject newProject) {
 		IRunnableWithProgress[] operations = MBSCustomPageManager.getOperations();
 		if(operations != null)
 			for(int k = 0; k < operations.length; k++)
@@ -661,11 +661,21 @@ public class MBSWizardHandler extends CWizardHandler {
 				}
 	}
 	
-	public void postProcess(IProject newProject) {
+	public void postProcess(IProject newProject, boolean created) {
 		deleteExtraConfigs(newProject);
-		doCustom();
+		// calls are required only if the project was
+		// created before for <Advanced Settings> feature.
+		if (created) {
+			doTemplatesPostProcess(newProject);
+			doCustom(newProject);
+		}
 	}
 	
+	/**
+	 * Deletes configurations 
+	 * 
+	 * @param newProject - affected project
+	 */
 	private void deleteExtraConfigs(IProject newProject) {
 		if (isChanged()) return; // no need to delete 
 		if (listener != null && listener.isCurrent()) return; // nothing to delete

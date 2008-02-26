@@ -181,13 +181,14 @@ implements IExecutableExtension, IWizardWithMemory
 	}
 
 	public boolean performFinish() {
+		boolean needsPost = (newProject != null && !isChanged());
 		// create project if it is not created yet
-		if (getProject(fMainPage.isCurrent(), true) == null) return false;
-		fMainPage.h_selected.postProcess(newProject);
+		if (getProject(fMainPage.isCurrent(), true) == null) 
+			return false;
+		fMainPage.h_selected.postProcess(newProject, needsPost);
 		try {
 			setCreated();
 		} catch (CoreException e) {
-			// TODO log or display a message
 			e.printStackTrace();
 			return false;
 		}

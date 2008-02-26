@@ -171,9 +171,14 @@ public class CWizardHandler implements Cloneable {
 	/**
 	 * Called when Finish button pressed, 
 	 * even if project was created before.
-	 * @param proj
+	 * 
+	 * @param prj - affected project
+	 * @param created - true if the project was created before
 	 */
-	public void postProcess(IProject proj) {}
+	public void postProcess(IProject prj, boolean created) {
+		doTemplatesPostProcess(prj);
+		doCustom(prj);
+	}
 
 	/**
 	 * Checks whether this item can be added to Wizard tree
@@ -214,4 +219,37 @@ public class CWizardHandler implements Cloneable {
 		}
 		return sb.toString();	
 	}
+	
+	/**
+	 * Called after project creation in order to apply
+	 * template-specific settings.
+	 * 
+	 * Can be called 2 or more times:
+	 * - each time when user presses <Advanced Settings> button 
+	 * - when user presses <Finish> button.
+	 * If <Adv. settings> were not invoked, called once.
+	 *   
+	 * Since the project is cleared before each method call,
+	 * no need to check whether it has been called before.
+	 * 
+	 * @param prj - affected project.
+	 */
+protected void doTemplatesPostProcess(IProject prj) {}
+
+/**
+ * Called after project creation in order to apply
+ * settings from custom pages.
+ * 
+ * Can be called 2 or more times:
+ * - each time when user presses <Advanced Settings> button 
+ * - when user presses <Finish> button.
+ * If <Adv. settings> were not invoked, called once.
+ *
+ * Since the project is cleared before each doCustom() call,
+ * no need to check whether it has been called before.
+ * @param prj - affected project.
+ */
+	
+protected void doCustom(IProject prj) {}
+
 }

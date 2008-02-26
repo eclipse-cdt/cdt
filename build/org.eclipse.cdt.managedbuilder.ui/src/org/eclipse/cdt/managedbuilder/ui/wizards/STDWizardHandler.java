@@ -80,9 +80,8 @@ public class STDWizardHandler extends MBSWizardHandler {
 		}
 		mngr.setProjectDescription(project, des);
 		
-		doPostProcess(project);
-		// process custom pages
-		doCustom();
+		doTemplatesPostProcess(project);
+		doCustom(project);
 	}
 	public boolean canCreateWithoutToolchain() { return true; } 
 	

@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.core.pdom;
 
 import java.net.URI;
@@ -543,7 +542,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		}
 		try {
 			Object context= fResolver.getInputFile(ifile.getLocation());
-			if (context != null) {
+			if (context != null && fResolver.isSourceUnit(context)) {
 				contextMap.put(ifile, context); 
 				return context;
 			}

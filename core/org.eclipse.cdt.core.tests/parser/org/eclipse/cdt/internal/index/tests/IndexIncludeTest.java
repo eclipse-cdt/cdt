@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.index.tests;
 
 import java.io.ByteArrayInputStream;
@@ -56,6 +55,7 @@ public class IndexIncludeTest extends IndexTestBase {
 		super(name);
 	}
 
+	@Override
 	public void setUp() throws Exception {
 		super.setUp();
 		if (fProject == null) {
@@ -68,6 +68,7 @@ public class IndexIncludeTest extends IndexTestBase {
 		fIndex= CCorePlugin.getIndexManager().getIndex(fProject);
 	}
 	
+	@Override
 	public void tearDown() throws Exception {
 		super.tearDown();
 	}
@@ -295,6 +296,50 @@ public class IndexIncludeTest extends IndexTestBase {
 		}
 		
 	}
+	
+	// #define SOME_MACRO1 ok_1_220358
+	// #define SOME_MACRO2 ok_2_220358
+	
+	// int SOME_MACRO1;
+	
+	// int SOME_MACRO2;
+
+	// #include "header1.h"
+	// #include "header2.h"
+	public void testParsingInContext_bug220358() throws Exception {
+		StringBuffer[] sources= getContentsForTest(4);
+		IFile h1= TestSourceReader.createFile(fProject.getProject(), "header1.h", sources[0].toString());
+		IFile h2= TestSourceReader.createFile(fProject.getProject(), "header2.h", sources[1].toString());
+		IFile s1= TestSourceReader.createFile(fProject.getProject(), "s1.cpp", sources[3].toString());
+		// make sure it is parsed in context
+		waitForIndexer();
+		CCorePlugin.getIndexManager().reindex(fProject);
+		waitForIndexer();
+
+		fIndex.acquireReadLock();
+		try {
+			IIndexBinding[] binding= fIndex.findBindings("ok_1_220358".toCharArray(), IndexFilter.ALL_DECLARED, NPM);
+			assertEquals(1, binding.length);
+			assertTrue(binding[0] instanceof IVariable);
+		}
+		finally {
+			fIndex.releaseReadLock();
+		}
+		
+		// change header2:
+		h2= TestSourceReader.createFile(fProject.getProject(), "header2.h", sources[2].toString());
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, h2, INDEXER_WAIT_TIME);
+		fIndex.acquireReadLock();
+		try {
+			IIndexBinding[] binding= fIndex.findBindings("ok_2_220358".toCharArray(), IndexFilter.ALL_DECLARED, NPM);
+			assertEquals(1, binding.length);
+			assertTrue(binding[0] instanceof IVariable);
+		}
+		finally {
+			fIndex.releaseReadLock();
+		}		
+	}
+	
 	
 	// #include "resolved20070426.h"
 	public void testFixedContext() throws Exception {

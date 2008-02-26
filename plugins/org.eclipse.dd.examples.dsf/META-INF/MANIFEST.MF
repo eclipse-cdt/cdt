@@ -12,7 +12,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.debug.ui,
  org.eclipse.dd.dsf,
  org.eclipse.ui,
- org.eclipse.dd.dsf.ui
- 
+ org.eclipse.dd.dsf.ui,
+ org.apache.ant;bundle-version="1.7.0";resolution:=optional 
 Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

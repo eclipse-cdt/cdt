@@ -60,8 +60,8 @@ public class TerminalTextData implements ITerminalTextData {
 	/**
 	 * Show the first 100 lines
 	 * see {@link #toMultiLineText(ITerminalTextDataReadOnly, int, int)}
-	 * @param term
-	 * @return a string representaron of the terminal
+	 * @param term A read-only terminal model
+	 * @return a string representation of the terminal
 	 */
 	static public String toMultiLineText(ITerminalTextDataReadOnly term) {
 		return toMultiLineText(term, 0, 100);
@@ -156,9 +156,9 @@ public class TerminalTextData implements ITerminalTextData {
 
 	/**
 	 * Notify snapshot that a region was scrolled
-	 * @param startLine
-	 * @param size
-	 * @param shift
+	 * @param startLine first line of scrolled region
+	 * @param size size of scrolled region (number of lines)
+	 * @param shift delta by which the region is scrolled
 	 */
 	protected void sendScrolledToSnapshots(int startLine,int size, int shift) {
 		for (int i = 0; i < fSnapshots.length; i++) {
@@ -172,7 +172,7 @@ public class TerminalTextData implements ITerminalTextData {
 	}
 	/**
 	 * Removes the snapshot from the @observer@ list
-	 * @param snapshot
+	 * @param snapshot A snapshot of a terminal model
 	 */
 	protected void removeSnapshot(TerminalTextDataSnapshot snapshot) {
 		// poor mans approach to modify the array

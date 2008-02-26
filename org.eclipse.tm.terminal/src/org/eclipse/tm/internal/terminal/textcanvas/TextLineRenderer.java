@@ -7,6 +7,8 @@
  *
  * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
+ * Michael Scharf (Wind River) - [205260] Terminal does not take the font from the preferences
+ * Michael Scharf (Wind River) - [206328] Terminal does not draw correctly with proportional fonts
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.textcanvas;
 

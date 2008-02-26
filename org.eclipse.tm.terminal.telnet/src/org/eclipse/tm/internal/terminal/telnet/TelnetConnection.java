@@ -11,6 +11,7 @@
  * Ted Williams (Wind River) - repackaged into org.eclipse namespace 
  * Michael Scharf (Wind River) - split into core, view and connector plugins 
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
+ * Michael Scharf (Wind River) - [209665] Add ability to log byte streams from terminal
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.telnet;
 

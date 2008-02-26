@@ -30,7 +30,6 @@ import org.eclipse.rse.services.processes.IProcessService;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IHostProcessToRemoteProcessAdapter;
 import org.eclipse.rse.subsystems.processes.servicesubsystem.ProcessServiceSubSystem;
 import org.eclipse.rse.subsystems.processes.servicesubsystem.ProcessServiceSubSystemConfiguration;
-import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 public class LocalProcessSubSystemConfiguration extends ProcessServiceSubSystemConfiguration 
@@ -110,7 +109,7 @@ public class LocalProcessSubSystemConfiguration extends ProcessServiceSubSystemC
 	public IProcessService createProcessService(IHost host)
 	{
 		//LocalConnectorService connectorService = (LocalConnectorService)getConnectorService(host);
-		return new LocalProcessService(RSEUIPlugin.getDefault());
+		return new LocalProcessService();
 	}  
 	
 	/* (non-Javadoc)

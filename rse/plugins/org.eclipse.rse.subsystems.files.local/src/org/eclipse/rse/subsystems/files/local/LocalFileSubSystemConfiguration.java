@@ -47,7 +47,6 @@ import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSyst
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystemConfiguration;
 import org.eclipse.rse.subsystems.files.core.subsystems.IHostFileToRemoteFileAdapter;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 
 
@@ -225,7 +224,7 @@ public class LocalFileSubSystemConfiguration extends FileServiceSubSystemConfigu
 	
 	public IFileService createFileService(IHost host)
 	{
-		return new LocalFileService(RemoteFileUtility.getSystemFileTransferModeRegistry(), RSEUIPlugin.getDefault());
+		return new LocalFileService(RemoteFileUtility.getSystemFileTransferModeRegistry());
 	}
 	
 	public ISearchService createSearchService(IHost host)

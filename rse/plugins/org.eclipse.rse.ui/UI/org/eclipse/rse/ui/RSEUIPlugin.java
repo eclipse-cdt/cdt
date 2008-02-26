@@ -67,7 +67,6 @@ import org.eclipse.rse.internal.ui.view.SubSystemConfigurationAdapterFactory;
 import org.eclipse.rse.internal.ui.view.SystemViewAdapterFactory;
 import org.eclipse.rse.internal.ui.view.team.SystemTeamViewResourceAdapterFactory;
 import org.eclipse.rse.persistence.IRSEPersistenceManager;
-import org.eclipse.rse.services.clientserver.messages.ISystemMessageProvider;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageFile;
 import org.eclipse.rse.ui.internal.model.SystemRegistryUI;
@@ -78,7 +77,7 @@ import org.osgi.framework.BundleContext;
 /**
  * Plugin for the core remote systems support.
  */
-public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvider
+public class RSEUIPlugin extends SystemBasePlugin
 {
 	 public class InitRSEJob extends Job {
 	    	public InitRSEJob() {

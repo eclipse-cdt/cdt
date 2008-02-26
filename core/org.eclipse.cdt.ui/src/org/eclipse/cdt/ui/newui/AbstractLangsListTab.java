@@ -28,6 +28,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.PaintEvent;
@@ -45,6 +47,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
@@ -76,6 +79,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 	protected boolean toAllCfgs = false;
 	protected boolean toAllLang = false;
 	protected Label  lb1, lb2;
+	protected TableColumn columnToFit = null; 
 	
 	protected ICLanguageSetting lang;
 	protected LinkedList<ICLanguageSettingEntry> incs;
@@ -116,7 +120,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 	    gd = new GridData(GridData.FILL_BOTH);
 	    gd.widthHint = 255;
 	    table.setLayoutData(gd);
-  	    table.setHeaderVisible(true);
+  	    table.setHeaderVisible(isHeaderVisible());
   	    table.setLinesVisible(true);
 
   	    sashForm.setWeights(DEFAULT_SASH_WEIGHTS);
@@ -163,6 +167,15 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
     				buttonPressed(1);
 	    	}
 	    });
+	    
+	    table.addControlListener(new ControlListener() {
+			public void controlMoved(ControlEvent e) {
+				setColumnToFit();
+			}
+			public void controlResized(ControlEvent e) {
+				setColumnToFit();
+			}});
+	    
 	    setupLabel(usercomp, EMPTY_STR, 1, 0);
 	    
 	    lb1 = new Label(usercomp, SWT.BORDER | SWT.CENTER);
@@ -696,6 +709,15 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		ICLanguageSetting[] se = new ICLanguageSetting[ob.length];
 		System.arraycopy(ob, 0, se, 0, ob.length);
 		return se;
+	}
+
+	protected boolean isHeaderVisible() {
+		return true;
+	}
+
+	protected void setColumnToFit() {
+		if (columnToFit != null)
+			columnToFit.setWidth(table.getBounds().width - 4);
 	}
 
 }

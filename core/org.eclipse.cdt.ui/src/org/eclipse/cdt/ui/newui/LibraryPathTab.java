@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,6 @@
 package org.eclipse.cdt.ui.newui;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.accessibility.AccessibleAdapter;
-import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableColumn;
 
@@ -29,21 +27,11 @@ public class LibraryPathTab extends AbstractLangsListTab implements IPathEntrySt
 	private static final int[] PRIVATE_SASH_WEIGHTS = new int[] { 0, 30 };
 
 	public void additionalTableSet() {
-		  TableColumn c = new TableColumn(table, SWT.NONE);
-		  c.setWidth(300);
-		  c.setText(UIMessages.getString("LibraryPathTab.0")); //$NON-NLS-1$
-		  table.getAccessible().addAccessibleListener(
-				new AccessibleAdapter() {                       
-                    public void getName(AccessibleEvent e) {
-                            e.result = UIMessages.getString("LibraryPathTab.0"); //$NON-NLS-1$
-                    }
-                }
-		  );
+		  columnToFit = new TableColumn(table, SWT.NONE);
 	}
 
 	public void createControls(Composite parent) {
 		super.createControls(parent);
-//		((GridData)langTree.getLayoutData()).widthHint = 0;
   	    sashForm.setWeights(PRIVATE_SASH_WEIGHTS);
 		langTree.setVisible(false);
 	}
@@ -81,5 +69,11 @@ public class LibraryPathTab extends AbstractLangsListTab implements IPathEntrySt
 		return null;
 	}
 	
-	public int getKind() { return ICSettingEntry.LIBRARY_PATH; }
+	public int getKind() { 
+		return ICSettingEntry.LIBRARY_PATH; 
+	}
+	
+	protected boolean isHeaderVisible() {
+		return false;
+	}
 }

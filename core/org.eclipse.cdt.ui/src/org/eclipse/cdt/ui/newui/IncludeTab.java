@@ -12,8 +12,6 @@
 package org.eclipse.cdt.ui.newui;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.accessibility.AccessibleAdapter;
-import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.widgets.TableColumn;
 
 import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
@@ -23,16 +21,8 @@ import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 public class IncludeTab extends AbstractLangsListTab {
 	
    public void additionalTableSet() {
-	   TableColumn c = new TableColumn(table, SWT.NONE);
-	   c.setWidth(210);
-	   c.setText(UIMessages.getString("IncludeTab.0")); //$NON-NLS-1$
-	   table.getAccessible().addAccessibleListener(
-			   new AccessibleAdapter() {                       
-	               public void getName(AccessibleEvent e) {
-	                       e.result = UIMessages.getString("IncludeTab.0"); //$NON-NLS-1$
-	               }
-			   }
-		);
+	   columnToFit = new TableColumn(table, SWT.NONE);
+	   columnToFit.setText(UIMessages.getString("IncludeTab.0")); //$NON-NLS-1$
 	   showBIButton.setSelection(true);
    }
 	

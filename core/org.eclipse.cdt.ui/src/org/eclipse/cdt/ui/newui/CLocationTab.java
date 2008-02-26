@@ -183,7 +183,12 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 			break;
 		// create / link	
 		case 1:
-			NewFolderDialog  d = new NewFolderDialog(shell, page.getProject()); 
+			NewFolderDialog  d = new NewFolderDialog(shell, page.getProject()) {
+				public void create() {
+					super.create();
+					handleAdvancedButtonSelect();
+				}
+			};
 			if (d.open() == Window.OK) {
 				IFolder f = (IFolder)d.getFirstResult();
 				src.add(new _Entry(newEntry(f, new IPath[0], !f.isLinked())));

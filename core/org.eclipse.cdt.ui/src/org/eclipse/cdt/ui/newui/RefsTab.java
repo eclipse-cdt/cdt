@@ -15,12 +15,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.TreeEvent;
+import org.eclipse.swt.events.TreeListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -32,15 +33,14 @@ import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 
 public class RefsTab extends AbstractCPropertyTab {
 	
-	TreeViewer tv;
 	public Composite comp;
-	Tree tree;
+	private Tree tree;
 
 	static private final String ACTIVE = "[" + UIMessages.getString("RefsTab.3") + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	
 	public void createControls(Composite parent) {
 		super.createControls(parent);
-		initButtons(new String[] {UIMessages.getString("RefsTab.0"), UIMessages.getString("RefsTab.1"), UIMessages.getString("RefsTab.2")}, 120); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		initButtons(new String[] {UIMessages.getString("RefsTab.0"), UIMessages.getString("RefsTab.2")}, 120); //$NON-NLS-1$ //$NON-NLS-2$
 		usercomp.setLayout(new GridLayout(1, false));
 		
 		tree = new Tree(usercomp, SWT.SINGLE | SWT.CHECK | SWT.BORDER);
@@ -84,11 +84,25 @@ public class RefsTab extends AbstractCPropertyTab {
 			    			parent.setChecked(false);
 			    		}
 		    		}
+					
 					saveChecked();
 			    }
+				updateButtons();
 			}
 		});
+		
+		tree.addTreeListener(new TreeListener() {
+			public void treeCollapsed(TreeEvent e) {
+				updateButtons(e, false, true); 
+			}
+			public void treeExpanded(TreeEvent e) {
+				updateButtons(e, true, false); 
+			}});
+			
 	}
+	
+	
+	
 	
 	// Class which represents "Active" configuration
 	class ActiveCfg {
@@ -102,20 +116,11 @@ public class RefsTab extends AbstractCPropertyTab {
 	}
 
     public void buttonPressed(int n) {
-   		TreeItem[] items = tree.getItems();
-   		switch (n) {
-    	case 0: // expand
-    	case 1: // expand selected
-    	case 2: // collapse
-     		for (int i=0; i<items.length; i++) 
-     			items[i].setExpanded(n==0 || (n==1 && items[i].getChecked()));
-    		break;
-    	default:	
-    		break;
-    	}
+   		for (TreeItem item : tree.getItems()) 
+   			item.setExpanded(n==0);
     }
 
-	public void updateData(ICResourceDescription cfgd) {
+	protected void updateData(ICResourceDescription cfgd) {
 		if (page.isMultiCfg()) {
 			setAllVisible(false, null);
 		} else {
@@ -149,7 +154,7 @@ public class RefsTab extends AbstractCPropertyTab {
 		getResDesc().getConfiguration().setReferenceInfo(refs);
 	}
 
-    public void initData() {
+    private void initData() {
 		tree.removeAll();
 		IProject p = page.getProject();
 		if (p == null) return;
@@ -190,6 +195,7 @@ public class RefsTab extends AbstractCPropertyTab {
 				}
 			}
 		}
+		updateButtons();
 	}
 
 	protected void performApply(ICResourceDescription src, ICResourceDescription dst) {
@@ -205,6 +211,25 @@ public class RefsTab extends AbstractCPropertyTab {
 		getResDesc().getConfiguration().setReferenceInfo(new HashMap<String, String>());
 		initData();
 	}
-	protected void updateButtons() {} // Do nothing. No buttons to update.
+	
+	protected void updateButtons() {
+		updateButtons(null, false, false);
+	}
+
+	private void updateButtons(TreeEvent e, boolean stateE, boolean stateC) {
+		boolean cntE = stateE;
+		boolean cntC = stateC;
+   		for (TreeItem item : tree.getItems()) {
+   			if (e != null && e.widget.equals(item))
+   				continue;
+   			if (item.getExpanded())
+   				cntE = true;
+   			else 
+   				cntC = true;
+   		}
+		buttonSetEnabled(0, cntC); // Expand All 
+		buttonSetEnabled(1, cntE); // Collapse all 
+	}
+
 }
 

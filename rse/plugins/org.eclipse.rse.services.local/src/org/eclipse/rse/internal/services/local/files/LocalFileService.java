@@ -33,6 +33,7 @@
  * Radoslav Gerganov (ProSyst)   - [218173] [local] non-generic filters don't work
  * Martin Oberhuber (Wind River) - [188330] Problems Copying files with $ in name
  * David McKnight   (IBM)        - [216252] use SimpleSystemMessage instead of getMessage()
+ * David McKnight   (IBM)        - [220241] JJ: IRemoteFileSubSystem.list() on the Local file subsystem does not return correct results
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -728,7 +729,6 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 				}
 				return results;
 			} catch (IOException e) {
-				// FIXME: Do something!
 				return null;
 			}
 		} else {
@@ -736,10 +736,13 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			if (monitor != null && monitor.isCanceled()) {
 				return null;
 			}
+			/* bug 220241 - don't need this block of code 
+			 *  listFiles() with a filter will still return all folders (they don't have to match)
 			if (!fFilter.isGeneric()) {
 				File file = new File(localParent, fileFilter);
 				return convertToHostFiles(new File[] { file }, type);
 			}
+			*/
 			if (localParent.exists()) {
 				File[] files = localParent.listFiles(fFilter);
 				return convertToHostFiles(files, type);

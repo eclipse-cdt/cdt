@@ -1,0 +1,159 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>DSF Common Patterns</title>
+</head>
+<body>
+<h2 style="text-align: center;">DSF Common Patterns<br>
+</h2>
+<h4>Summary</h4>
+<h3>DSF</h3>
+<ul>
+  <li>Customizing, componentization, performance.</li>
+</ul>
+<h3>Asynchronous Methods</h3>
+One of the central features of DSF is that it relies very heavily on
+the use of asynchronous methods.&nbsp; <span
+ style="font-style: italic;">Asynchronous methods</span> here mean
+simply methods that <span style="font-weight: bold;">use a callback
+object to indicate their completion</span>. The use of asynchronous
+methods can be very contageous in a system, where if a lower level API
+is composed of asynchronous methods, a higher level system which uses
+those methods also has to have asynchronous methods in its interface
+(or risk blocking its calling thread).<br>
+<br>
+TODO? : diagram of a layered system with asynchronous APIs<br>
+<h4>Request Monitor</h4>
+There is a standard callback object used in DSF, the request
+monitor.&nbsp; A request monitor has the following features:<br>
+<ul>
+  <li><span style="text-decoration: underline;">Executor</span> - A
+argument to the request monitor constructor allows the user to specify
+what executor should be used to invoke the callback method.&nbsp; <br>
+  </li>
+  <li><span style="text-decoration: underline;">Status</span> -
+Asynchronous methods that take a callback can always set the status
+indicating the success or failure of the call.</li>
+  <li><span style="text-decoration: underline;">Callback Methods</span>
+- The request monitor declares several protected methods which are
+invoked when the callback is invoked: handleCompleted(), handleOK(),
+handleError(), etc.&nbsp; The users may override these methods as
+needed to perform additional processing upon asynchronous method
+completion.</li>
+  <li><span style="text-decoration: underline;">Parent Request Monitor</span>
+- If the method calling an asynchronous method is itself asynchronous,
+it may set its argument request monitor as the parent of the request
+monitor it is creating.&nbsp; The parent request monitor will be <br>
+automatically invoked when the lower level request monitor is completed.</li>
+</ul>
+Following is the snippet from a the "hello world" example of using a
+request monitor:<br>
+<pre><a name="line26"> 26: </a><strong><font color="#4169e1"><a
+ name="AsyncHelloWorld"></a>public class AsyncHelloWorld </font></strong>{<br><br><a
+ name="line28"> 28: </a><strong><font color="#4169e1">    public static void main(String[] args)</font></strong> {<br><a
+ name="line29"> 29: </a>        Executor executor = ImmediateExecutor.getInstance();<br><a
+ name="line30"> 30: </a>        RequestMonitor rm = new RequestMonitor(executor, null);<br><a
+ name="line31"> 31: </a>        asyncHelloWorld(rm);<br><a name="line32"> 32: </a>    }<br><br><a
+ name="line34"> 34: </a>    static void asyncHelloWorld(RequestMonitor rm) {<br><a
+ name="line35"> 35: </a>        System.out.println(<font color="#666666">"Hello world"</font>);<br><a
+ name="line36"> 36: </a>        rm.done();<br><a name="line37"> 37: </a>    }<br></pre>
+<ul>
+  <li>Line 29 creates an "immediate executor".&nbsp; Unlike more
+sophisticated executors, the immediate executor simply invokes the
+runnable it receives immediately.&nbsp; It does not use any threads and
+it will never throw a RejectedExecutionException.</li>
+  <li>Line 30 creates the request monitor.&nbsp; This program does not
+perform any processing after the callback is invoked, so it does not
+override RequestMonitor's completion methods.</li>
+  <li>Line 36 marks the callback as completed and implicilty invokes
+the callback method.&nbsp; As a contract with the caller, the
+asynchronous method has to invoke done() when its finished.&nbsp; As
+there is no compiler support for ensuring that the asynchronous method
+completes the request monitor,&nbsp; failure to do so results in common
+but often suble and difficult to track down bugs.<br>
+  </li>
+</ul>
+<h4>Data Request Monitor</h4>
+The base request monitor is useful for returning status of the
+asynchronous method, but they do not have an option of returning a
+value to the caller.&nbsp; DataRequestMonitor can be used for that
+purpose. A simple example of using the data request monitor:<br>
+<pre><a name="line22"> 22: </a><strong><font color="#4169e1"><a
+ name="Async2Plus2"></a>public class Async2Plus2 </font></strong>{<br><br><a
+ name="line24"> 24: </a><strong><font color="#4169e1">    public static void main(String[] args)</font></strong> {<br><a
+ name="line25"> 25: </a>        Executor executor = ImmediateExecutor.getInstance();<br><a
+ name="line26"> 26: </a>        DataRequestMonitor&lt;Integer&gt; rm = <br><a
+ name="line27"> 27: </a>            new DataRequestMonitor&lt;Integer&gt;(executor, null) {<br><a
+ name="line28"> 28: </a>                @Override<br><a name="line29"> 29: </a><strong><font
+ color="#4169e1">                protected void handleCompleted()</font></strong> {<br><a
+ name="line30"> 30: </a>                    System.out.println(<font
+ color="#666666">"2 + 2 = "</font> + getData());<br><a name="line31"> 31: </a>                }<br><a
+ name="line32"> 32: </a>            };<br><a name="line33"> 33: </a>        asyncAdd(2, 2, rm);<br><a
+ name="line34"> 34: </a>    }<br><br><a name="line36"> 36: </a>    static void asyncAdd(int value1, int value2, DataRequestMonitor&lt;Integer&gt; rm) {<br><a
+ name="line37"> 37: </a>        rm.setData(value1 + value2);<br><a
+ name="line38"> 38: </a>        rm.done();<br><a name="line39"> 39: </a>    }<br><a
+ name="line40"> 40: </a>}<br></pre>
+<ul>
+  <li>Lines 26-27 create the data request monitor using a local class
+declaraion.&nbsp; Note the type parameter to DataRequestMonitor allows
+for compiler checking of the type when calling getData() and setData()
+methods.</li>
+  <li>Lines 29-31 override the standard callback to print the result of
+the calculation to the console.<br>
+  </li>
+</ul>
+<h4>Multi-Request Monitor</h4>
+A common problem when using asynchronous is that several asynchronous
+methods need to be called in parallel, so the calling method needs to
+somehow manage the completion of several request monitors.&nbsp;
+CountingRequestMonitor can be used for this purpose.&nbsp; It is
+configured such that it's done() method needs to be called a <span
+ style="font-style: italic;">count</span> number of times before the
+callback method is invoked.&nbsp; <br>
+The following snipped from the AsyncQuicksort example shows a simple
+example of using the CountingRequestMonitor:<br>
+<pre><a name="line42"> 42: </a>    static void asyncQuicksort(final int[] array, final int left, <br><a
+ name="line43"> 43: </a>        final int right, RequestMonitor rm) <br><a
+ name="line44"> 44: </a>    {<br><a name="line45"> 45: </a>        <font
+ color="#4169e1">if</font> (right &gt; left) {<br><a name="line46"> 46: </a>            int pivot = left;<br><a
+ name="line47"> 47: </a>            int newPivot = partition(array, left, right, pivot); <br><a
+ name="line48"> 48: </a>            printArray(array, left, right, newPivot);<br><a
+ name="line49"> 49: </a>            <br><a name="line50"> 50: </a>            CountingRequestMonitor countingRm = new CountingRequestMonitor(fgExecutor, rm);<br><a
+ name="line51"> 51: </a>            asyncQuicksort(array, left, newPivot - 1, countingRm);<br><a
+ name="line52"> 52: </a>            asyncQuicksort(array, newPivot + 1, right, countingRm);<br><a
+ name="line53"> 53: </a>            countingRm.setDoneCount(2);<br><a
+ name="line54"> 54: </a>        } <font color="#4169e1">else</font> {<br><a
+ name="line55"> 55: </a>            rm.done();<br><a name="line56"> 56: </a>        }<br><a
+ name="line57"> 57: </a>    }<br></pre>
+<ul>
+  <li>Line 50 creates the CountingRequestMonitor.&nbsp; Note that the
+parent request monitor is set to the request monitor from the
+asyncQuicksort() argument.&nbsp; This parent request monitor is
+automatically called when the counting request monitor is completed.</li>
+  <li>Lines 51 and 52, use the same instance of counting request
+monitor when calling the sub-routine.&nbsp; Each sub-routine will call
+done() on the counting request monitor.</li>
+  <li>Line 53 sets the count to the number of sub-routines called with
+the counting request monitor.&nbsp; Note that the done count can be set
+after calling the sub-routines, because the counting request monitor
+will not be completed until the count is set. <br>
+  </li>
+  <li>Line 55 Don't forget to complete the request monitor in all
+execution paths!<br>
+  </li>
+</ul>
+<h3>Non-Executor Thread</h3>
+<h4>Future</h4>
+<h4>Query</h4>
+<h4>Concurrency Annotations<br>
+</h4>
+<h3>Services</h3>
+<h4>OSGi</h4>
+<h4>Session</h4>
+<h4>Tracker</h4>
+<h3>Data Model</h3>
+<h3>View Model</h3>
+<h4>Adapter, Provider, Node</h4>
+<h4>Timers</h4>
+</body>
+</html>

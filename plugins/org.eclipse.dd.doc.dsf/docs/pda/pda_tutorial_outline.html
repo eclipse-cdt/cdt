@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>How to write a DSF-based debugger</title>
+</head>
+<body>
+<h2 style="text-align: center;">How to write a DSF-based debugger <br>
+</h2>
+<h4>Summary</h4>
+<h3>DSF</h3>
+<ul>
+  <li>Customizing, componentization, performance.</li>
+  <li>GDB Reference Implementation<br>
+  </li>
+</ul>
+<h3>Push Down Automata (PDA) <br>
+</h3>
+<ul>
+  <li>Cut and Paste<br>
+  </li>
+</ul>
+<h3>PDA debugger <br>
+</h3>
+<ul>
+  <li>Cut and Paste</li>
+</ul>
+<h3>Launching <br>
+</h3>
+<ul>
+  <li>Create custom launch object PDALaunch</li>
+</ul>
+<pre width="200"><a name="line51"> 51: </a><strong><font color="#4169e1">    public ILaunch getLaunch(ILaunchConfiguration configuration, String mode)</font></strong> <font
+ color="#4169e1">throws</font> CoreException {<br><br><a name="line52"> 52: </a>        <font
+ color="#b22222">// Need to configure the source locator before creating the launch</font><br><a
+ name="line53"> 53: </a>        <font color="#b22222">// because once the launch is created and added to launch manager, </font><br><a
+ name="line54"> 54: </a>        <font color="#b22222">// the adapters will be created for the whole session, including </font><br><a
+ name="line55"> 55: </a>        <font color="#b22222">// the source lookup adapter.</font><br><a
+ name="line56"> 56: </a>        ISourceLocator locator = getSourceLocator(configuration);<br><br><a
+ name="line58"> 58: </a>        <font color="#4169e1">return</font> new PDALaunch(configuration, mode, locator);<br><a
+ name="line59"> 59: </a>    }<br></pre>
+<ul>
+  <li>Creating DSF session and executor</li>
+  <li>Services Initialize Sequence</li>
+  <li>Optional diagram showing the relationship between the above</li>
+  <li>Shutting down (is hard to do)<br>
+  </li>
+</ul>
+<h3>Connecting <br>
+</h3>
+<ul>
+  <li>First service, mechanics of DSF services?</li>
+  <li>Sockets, queues, synchronization</li>
+  <li>Diagram showing relationship of different command control
+components<br>
+  </li>
+  <li>Event and command listeners<br>
+  </li>
+</ul>
+<h3><span style="font-weight: bold;">View Model</span></h3>
+<ul>
+  <li>The adapter glue</li>
+  <li>View Model components<br>
+  </li>
+  <li>Launch view VM provider</li>
+  <li>Program VM Node<br>
+  </li>
+</ul>
+<h3>Run Control</h3>
+<ul>
+  <li>Second service, depends on command control</li>
+  <li>Tracking program running state <br>
+  </li>
+</ul>
+<h3>Breakpoints</h3>
+<ul>
+  <li>Target Side Breakpoints</li>
+  <li>Mediator</li>
+  <li>Diagram showing Mediator's role<br>
+  </li>
+</ul>
+<h3>Stack</h3>
+<ul>
+  <li>Command Cache at work<br>
+  </li>
+</ul>
+<h3>Source Display</h3>
+<ul>
+  <li>Source lookup director<br>
+  </li>
+</ul>
+<h3>Variables</h3>
+<ul>
+  <li>Reading and writing variables<br>
+  </li>
+  <li>Formatted values</li>
+  <li>Expressions view<br>
+  </li>
+</ul>
+</body>
+</html>

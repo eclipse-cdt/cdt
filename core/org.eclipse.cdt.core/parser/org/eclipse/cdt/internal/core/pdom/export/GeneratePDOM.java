@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2008 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.index.IIndexLocationConverter;
+import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.index.export.IExportProjectProvider;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.LanguageManager;
@@ -66,9 +67,17 @@ public class GeneratePDOM implements ISafeRunnable {
 		
 		// index the project
 		IndexerPreferences.set(cproject.getProject(), IndexerPreferences.KEY_INDEXER_ID, indexerID);
-		CCorePlugin.getIndexManager().joinIndexer(Integer.MAX_VALUE, new NullProgressMonitor());
 		
 		try {
+			final IIndexManager im = CCorePlugin.getIndexManager();
+			for (int i = 0; i < 20; i++) {
+				im.joinIndexer(Integer.MAX_VALUE, new NullProgressMonitor());
+				if (!im.isIndexerSetupPostponed(cproject)) {
+					break;
+				}
+				Thread.sleep(200);
+			}
+		
 			CCoreInternals.getPDOMManager().exportProjectPDOM(cproject, targetLocation, converter);
 			WritablePDOM exportedPDOM= new WritablePDOM(targetLocation, converter, LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
 			exportedPDOM.acquireWriteLock(0);

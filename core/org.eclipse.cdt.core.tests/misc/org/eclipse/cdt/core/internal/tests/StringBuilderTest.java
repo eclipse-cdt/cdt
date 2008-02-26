@@ -11,6 +11,8 @@
 
 package org.eclipse.cdt.core.internal.tests;
 
+import java.lang.reflect.Method;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -37,5 +39,18 @@ public class StringBuilderTest extends TestCase {
     	b2.append("b");
     	b1.append(b2);
     	assertEquals("ab", b1.toString());
+    }
+    
+    public void testStringBuilderMethods() throws Exception {
+    	Class clazz= StringBuilder.class;
+		Method method= clazz.getMethod("append", CharSequence.class);  
+		assertNotNull(method);
+    	try {
+    		method= clazz.getMethod("append", StringBuilder.class);
+    		fail();
+    	}
+    	catch (NoSuchMethodException m) {
+    		// ok
+    	}
     }
 }

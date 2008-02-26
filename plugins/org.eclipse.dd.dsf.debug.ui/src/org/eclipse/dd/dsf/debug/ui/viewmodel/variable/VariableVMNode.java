@@ -26,9 +26,9 @@ import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.internal.ui.DsfDebugUIPlugin;
 import org.eclipse.dd.dsf.debug.service.IExpressions;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues;
+import org.eclipse.dd.dsf.debug.service.IMemory;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IStack;
-import org.eclipse.dd.dsf.debug.service.IExpressions.IExpressionChangedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.dd.dsf.debug.service.IExpressions.IExpressionDMData;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
@@ -77,12 +77,12 @@ public class VariableVMNode extends AbstractExpressionVMNode
          * @see buildDelta()
          */
         
-        if (e instanceof IRunControl.ISuspendedDMEvent) {
+        // When an expression changes or memory, we must do a full refresh
+        // see Bug 213061 and Bug 214550
+        if (e instanceof IRunControl.ISuspendedDMEvent ||
+            e instanceof IExpressions.IExpressionChangedDMEvent ||
+            e instanceof IMemory.IMemoryChangedEvent) {
             return IModelDelta.CONTENT;
-        }
-        
-        if ( e instanceof IExpressions.IExpressionChangedDMEvent) {
-            return IModelDelta.STATE;
         }
 
         if (e instanceof PropertyChangeEvent && 
@@ -95,20 +95,15 @@ public class VariableVMNode extends AbstractExpressionVMNode
     }
 
     public void buildDelta(final Object event, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor requestMonitor) {
-    
-        if (event instanceof IRunControl.ISuspendedDMEvent) {
+
+        // When an expression changes or memory, we must do a full refresh
+        // see Bug 213061 and Bug 214550
+        if (event instanceof IRunControl.ISuspendedDMEvent ||
+            event instanceof IExpressions.IExpressionChangedDMEvent ||
+            event instanceof IMemory.IMemoryChangedEvent) {
             parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
         } 
         
-        if ( event instanceof IExpressions.IExpressionChangedDMEvent) {
-            /*
-             *  Logically one would think that STATE should be specified here. But we specifiy CONTENT
-             *  as well so that if there sub expressions which are affected in some way ( such as with
-             *  an expanded union then they will show the changes also.
-             */
-            parentDelta.addNode( createVMContext(((IExpressions.IExpressionChangedDMEvent)event).getDMContext()), IModelDelta.CONTENT | IModelDelta.STATE );
-        }
-
         if (event instanceof PropertyChangeEvent && 
             ((PropertyChangeEvent)event).getProperty() == IDebugVMConstants.CURRENT_FORMAT_STORAGE) 
         {
@@ -492,14 +487,14 @@ public class VariableVMNode extends AbstractExpressionVMNode
     }
 
     public int getDeltaFlagsForExpression(IExpression expression, Object event) {
-        if (event instanceof IRunControl.ISuspendedDMEvent) {
+        // When an expression changes or memory, we must do a full refresh
+        // see Bug 213061 and Bug 214550
+        if (event instanceof IRunControl.ISuspendedDMEvent ||
+            event instanceof IExpressions.IExpressionChangedDMEvent ||
+            event instanceof IMemory.IMemoryChangedEvent) {
             return IModelDelta.CONTENT;
         } 
         
-        if (event instanceof IExpressionChangedDMEvent) {
-            return IModelDelta.CONTENT;
-        }
-
         if (event instanceof PropertyChangeEvent && 
             ((PropertyChangeEvent)event).getProperty() == IDebugVMConstants.CURRENT_FORMAT_STORAGE) 
         {
@@ -517,20 +512,14 @@ public class VariableVMNode extends AbstractExpressionVMNode
     public void buildDeltaForExpressionElement(Object element, int elementIdx, Object event, VMDelta parentDelta,
         RequestMonitor rm) 
     {
-        if (event instanceof IRunControl.ISuspendedDMEvent) {
+        // When an expression changes or memory, we must do a full refresh
+        // see Bug 213061 and Bug 214550
+        if (event instanceof IRunControl.ISuspendedDMEvent ||
+            event instanceof IExpressions.IExpressionChangedDMEvent ||
+            event instanceof IMemory.IMemoryChangedEvent) {
             parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
         } 
         
-        if ( event instanceof IExpressions.IExpressionChangedDMEvent) {
-            /*
-             *  Logically one would think that STATE should be specified here. But we specify CONTENT
-             *  as well so that if there sub expressions which are affected in some way ( such as with
-             *  an expanded union then they will show the changes also.
-             */
-            parentDelta.addNode(element, IModelDelta.CONTENT);
-        }
-        
-
         if (event instanceof PropertyChangeEvent && 
             ((PropertyChangeEvent)event).getProperty() == IDebugVMConstants.CURRENT_FORMAT_STORAGE) 
         {

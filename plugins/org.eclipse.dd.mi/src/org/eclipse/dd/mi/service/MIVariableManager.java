@@ -818,7 +818,7 @@ public class MIVariableManager extends AbstractDsfService implements ICommandCon
 		 * @param rm
 		 *            The request monitor to indicate the operation is finished
 		 */
-		private void writeValue(String value, final String formatId, final RequestMonitor rm) {
+		private void writeValue(String value, String formatId, final RequestMonitor rm) {
 
 			// If the variable is a complex structure (including an array), then we cannot write to it
 			if (isComplex()) {
@@ -830,8 +830,8 @@ public class MIVariableManager extends AbstractDsfService implements ICommandCon
 			
 			// First deal with the format.  For GDB, the way to specify a format is to prefix the value with
 			// 0x for hex, 0 for octal etc  So we need to make sure that 'value' has this prefix.
-			// Note that there is no way to specify a binary format for GDB so we convert 'value' 
-			// into a decimal format.  
+			// Note that there is no way to specify a binary format for GDB up to and including
+			// GDB 6.7.1, so we convert 'value' into a decimal format.  
 			// If the formatId is NATURAL, we do nothing for now because it is more complicated.
 			// For example for a bool, a value of "true" is correct and should be left as is,
 			// but for a pointer a value of 16 should be sent to GDB as 0x16.  To figure this out,
@@ -854,6 +854,8 @@ public class MIVariableManager extends AbstractDsfService implements ICommandCon
 					rm.done();
 					return;
 				}
+				
+				formatId = IFormattedValues.DECIMAL_FORMAT;
 			}
 			else if (formatId.equals(IFormattedValues.DECIMAL_FORMAT)) {
 				// nothing to do
@@ -867,6 +869,16 @@ public class MIVariableManager extends AbstractDsfService implements ICommandCon
 				rm.done();
 				return;
 			}
+			
+			// If the value has not changed, no need to set it.
+			// Return a status info so that handleOK is not called and we don't send
+			// an ExpressionChanged event
+			if (value.equals(getValue(formatId))) {
+				rm.setStatus(new Status(IStatus.INFO, MIPlugin.PLUGIN_ID, IDsfService.NOT_SUPPORTED, 
+						"Setting to the same value of: " + value, null)); //$NON-NLS-1$
+				rm.done();
+				return;				
+			}
 
 			// No need to be in ready state or to lock the object
 			fCommandControl.queueCommand(
@@ -874,7 +886,20 @@ public class MIVariableManager extends AbstractDsfService implements ICommandCon
 					new DataRequestMonitor<MIVarAssignInfo>(getExecutor(), rm) {
 						@Override
 						protected void handleOK() {
-							resetValues(getData().getValue());
+							// We must also mark all variable objects
+							// as out-of-date. This is because some variable objects may be affected
+							// by this one having changed.
+							// e.g., 
+							//    int i;  
+							//    int* pi = &i;
+							// Here, if 'i' is changed by the user, then 'pi' will also change
+							// Since there is no way to know this unless we keep track of all addresses,
+							// we must mark everything as out-of-date.  See bug 213061
+							markAllOutOfDate();
+							
+							// Useless since we just marked everything as out-of-date
+							// resetValues(getData().getValue());
+							
 							rm.done();
 						}
 					});

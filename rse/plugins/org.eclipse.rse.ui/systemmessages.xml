@@ -422,7 +422,10 @@ Kevin Doyle (IBM) - [160769] Added message for invalid filter when moving files
                           <LevelOne>Value %1 not in range</LevelOne>
                           <LevelTwo>The value specified is not within the valid range of %2 to %3</LevelTwo>
                     </Message>
-   
+                       <Message ID="1201" Indicator="Q">
+                          <LevelOne>Changes pending. Save changes?</LevelOne>
+                          <LevelTwo>You have changes pending. Select Yes to save those changes. Select No to discard those changes</LevelTwo>
+                    </Message>
                     <Message ID="1220" Indicator="E">
                           <LevelOne>Host name '%1' not found or valid</LevelOne>
                           <LevelTwo>A remote system of host name '%1' was not found. If you are working disconnected, de-select the checkbox to verify the host name</LevelTwo>

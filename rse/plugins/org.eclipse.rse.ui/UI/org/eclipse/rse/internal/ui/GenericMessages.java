@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [220309] [nls] Some GenericMessages and SubSystemResources should move from UI to Core
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui;
@@ -34,15 +35,6 @@ public class GenericMessages extends NLS
 	public static String RefreshAction_dialogTitle;
 
 	public static String TransferOperation_message;
-	public static String RSESubSystemOperation_message;
-	public static String RSESubSystemOperation_Connect_message;
-	public static String RSESubSystemOperation_Disconnect_message;
-	public static String RSESubSystemOperation_Get_properties_message;
-	public static String RSESubSystemOperation_Get_property_message;
-	public static String RSESubSystemOperation_Resolve_filter_strings_message;
-	public static String RSESubSystemOperation_Set_properties_message;
-	public static String RSESubSystemOperation_Set_property_message;
-	public static String RSESubSystemOperation_Notifying_registry_message;
 
 	// ==============================================================================
 	// Property Pages

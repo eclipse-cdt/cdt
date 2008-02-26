@@ -29,6 +29,7 @@
  *                                a subsystem configuration is actually used for a host.
  * David Dykstal (IBM) - [217556] remove service subsystem types
  * Martin Oberhuber (Wind River) - [cleanup] Avoid using SystemStartHere in production code
+ * David McKnight   (IBM)        - [220309] [nls] Some GenericMessages and SubSystemResources should move from UI to Core
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -72,7 +73,6 @@ import org.eclipse.rse.internal.core.filters.SystemFilterStartHere;
 import org.eclipse.rse.internal.core.model.SystemProfileManager;
 import org.eclipse.rse.internal.ui.SystemPropertyResources;
 import org.eclipse.rse.internal.ui.SystemResources;
-import org.eclipse.rse.internal.ui.subsystems.SubSystemResources;
 import org.eclipse.rse.logging.Logger;
 import org.eclipse.rse.services.IService;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
@@ -1739,7 +1739,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 				IHost conn = ss.getHost();
 				String connectionName = conn.getSystemProfileName() + "." + conn.getAliasName(); //$NON-NLS-1$
 				
-				String msgTxt = NLS.bind(SubSystemResources.MSG_LOADING_PROFILE_SHOULDBE_ACTIVATED, missingPoolMgrName, connectionName);
+				String msgTxt = NLS.bind(RSECoreMessages.MSG_LOADING_PROFILE_SHOULDBE_ACTIVATED, missingPoolMgrName, connectionName);
 				SystemMessage sysMsg = new SimpleSystemMessage(RSECorePlugin.PLUGIN_ID, IStatus.ERROR, msgTxt);
 				SystemBasePlugin.logWarning(sysMsg.getFullMessageID() + ": " + sysMsg.getLevelOneText()); //$NON-NLS-1$
 				if (brokenReferenceWarningsIssued.get(missingPoolMgrName) == null)
@@ -2636,10 +2636,10 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		String msgTxt = null;
 		if (port > 0)
 		{
-			msgTxt = NLS.bind(SubSystemResources.MSG_CONNECTWITHPORT_PROGRESS, hostName, Integer.toString(port));
+			msgTxt = NLS.bind(RSECoreMessages.MSG_CONNECTWITHPORT_PROGRESS, hostName, Integer.toString(port));
 		}
 		else
-		{	msgTxt = NLS.bind(SubSystemResources.MSG_CONNECT_PROGRESS, hostName);
+		{	msgTxt = NLS.bind(RSECoreMessages.MSG_CONNECT_PROGRESS, hostName);
 		}
 		return msgTxt;
 	}
@@ -2651,11 +2651,11 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		String msgTxt = null;
 		if (port > 0)
 		{
-			msgTxt = NLS.bind(SubSystemResources.MSG_DISCONNECTWITHPORT_PROGRESS, hostName, Integer.toString(port));
+			msgTxt = NLS.bind(RSECoreMessages.MSG_DISCONNECTWITHPORT_PROGRESS, hostName, Integer.toString(port));
 		}
 		else
 		{
-			msgTxt = NLS.bind(SubSystemResources.MSG_DISCONNECT_PROGRESS, hostName);
+			msgTxt = NLS.bind(RSECoreMessages.MSG_DISCONNECT_PROGRESS, hostName);
 
 		}
 		return msgTxt;

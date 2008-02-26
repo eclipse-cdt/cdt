@@ -9,6 +9,7 @@
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  * Martin Oberhuber (Wind River) - [184095] combined RSEModelResources and persistence.Messages into this file
  * Martin Oberhuber (Wind River) - [215820] Move SystemRegistry implementation to Core
+ * David McKnight   (IBM)        - [220309] [nls] Some GenericMessages and SubSystemResources should move from UI to Core
  ********************************************************************************/
 package org.eclipse.rse.internal.core;
 
@@ -62,6 +63,54 @@ public class RSECoreMessages extends NLS {
 	public static String MSG_COPYCONNECTION_PROGRESS;  //RSEG1073
 	public static String MSG_COPYFILTERPOOLS_PROGRESS; //RSEG1075
 	public static String MSG_COPYSUBSYSTEMS_PROGRESS;  //RSEG1081
+	
+	
+	public static String RSESubSystemOperation_message;
+	public static String RSESubSystemOperation_Connect_message;
+	public static String RSESubSystemOperation_Disconnect_message;
+	public static String RSESubSystemOperation_Get_properties_message;
+	public static String RSESubSystemOperation_Get_property_message;
+	public static String RSESubSystemOperation_Resolve_filter_strings_message;
+	public static String RSESubSystemOperation_Set_properties_message;
+	public static String RSESubSystemOperation_Set_property_message;
+	public static String RSESubSystemOperation_Notifying_registry_message;
+	
+    // messages
+	public static String MSG_CONNECT_CANCELED;
+	public static String MSG_CONNECT_PROGRESS;
+	public static String MSG_CONNECTWITHPORT_PROGRESS;
+	public static String MSG_CONNECT_FAILED;
+	public static String MSG_CONNECT_UNKNOWNHOST;
+	
+	public static String MSG_DISCONNECT_PROGRESS;
+	public static String MSG_DISCONNECTWITHPORT_PROGRESS;
+	public static String MSG_DISCONNECT_FAILED;
+	public static String MSG_DISCONNECT_CANCELED;
+	
+	public static String MSG_OPERATION_FAILED;
+	public static String MSG_OPERATION_CANCELED;
+	
+	public static String MSG_LOADING_PROFILE_SHOULDBE_ACTIVATED;
+	
+	// Connection doesn't exist
+	public static String MSG_CONNECTION_DELETED;
+	public static String MSG_CONNECTION_DELETED_DETAILS; 
+	
+	// yantzi: artemis 6.0, offline messages
+	public static String MSG_OFFLINE_CANT_CONNECT;
+	public static String MSG_OFFLINE_CANT_CONNECT_DETAILS;
+	
+	public static String MSG_RESOLVE_PROGRESS;
+
+	public static String MSG_QUERY_PROGRESS;
+	public static String MSG_QUERY_PROPERTIES_PROGRESS;
+
+	public static String MSG_SET_PROGRESS;
+	public static String MSG_SET_PROPERTIES_PROGRESS;
+
+	public static String MSG_RUN_PROGRESS;
+
+	public static String MSG_COPY_PROGRESS;
 	
 	private RSECoreMessages() {
 	}

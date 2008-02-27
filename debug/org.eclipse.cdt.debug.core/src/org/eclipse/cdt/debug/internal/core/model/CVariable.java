@@ -61,6 +61,10 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 		int sizeof();
 		void invalidateValue();
 		void preserve();
+		
+		// Note: the CDI object association can change; e.g., if a "Cast to Type"
+		// or "Display as Array" is done on the element.
+		ICDIObject getCdiObject();
 	}
 
 	/**
@@ -636,6 +640,14 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 		fName = name;
 	}
 
+	public ICDIObject getCdiObject() {
+		IInternalVariable iv = getCurrentInternalVariable();
+		if ( iv != null ) {
+			return iv.getCdiObject();
+		}
+		return null;
+	}
+	
 	protected CSettingsManager getFormatManager() {
 		return ((CDebugTarget) getDebugTarget()).getFormatManager();
 	}

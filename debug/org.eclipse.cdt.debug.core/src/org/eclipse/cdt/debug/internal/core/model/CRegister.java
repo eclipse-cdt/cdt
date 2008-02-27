@@ -318,6 +318,10 @@ public class CRegister extends CVariable implements ICRegister {
 		public boolean isSameDescriptor( ICDIVariableDescriptor desc ) {
 			return getCDIVariableObject().equals( desc );
 		}
+		
+		public ICDIObject getCdiObject() {
+			return fCDIRegister;
+		}		
 	}
 
 	/**

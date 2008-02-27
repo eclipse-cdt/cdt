@@ -13,6 +13,7 @@ package org.eclipse.cdt.debug.internal.core.model;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIArgumentDescriptor;
 import org.eclipse.cdt.debug.core.cdi.model.ICDILocalVariableDescriptor;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITargetConfiguration2;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
@@ -303,6 +304,9 @@ public class CLocalVariable extends CVariable {
 
 		public boolean isSameDescriptor( ICDIVariableDescriptor desc ) {
 			return getCDIVariableObject().equals( desc );
+		}
+		public ICDIObject getCdiObject() {
+			return fCDIVariable;
 		}
 	}
 

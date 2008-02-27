@@ -312,6 +312,10 @@ public class CGlobalVariable extends CVariable implements ICGlobalVariable {
 		public boolean isSameDescriptor( ICDIVariableDescriptor desc ) {
 			return getCDIVariableObject().equals( desc );
 		}
+		
+		public ICDIObject getCdiObject() {
+			return fCDIVariable;
+		}
 	}
 
 	private IGlobalVariableDescriptor fDescriptor;

@@ -131,16 +131,16 @@ public class DefaultCodeFormatterConstants {
 //	 * @see #createAlignmentValue(boolean, int, int)
 //	 */
 //	public static final String FORMATTER_ALIGNMENT_FOR_BINARY_EXPRESSION = CCorePlugin.PLUGIN_ID + ".formatter.alignment_for_binary_expression";	 //$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option for alignment of compact if
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.alignment_for_compact_if"
-//	 *     - possible values:   values returned by <code>createAlignmentValue(boolean, int, int)</code> call
-//	 *     - default:           createAlignmentValue(false, WRAP_ONE_PER_LINE, INDENT_BY_ONE)
-//	 * </pre>
-//	 * @see #createAlignmentValue(boolean, int, int)
-//	 */
-//	public static final String FORMATTER_ALIGNMENT_FOR_COMPACT_IF = CCorePlugin.PLUGIN_ID + ".formatter.alignment_for_compact_if";	 //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option for alignment of compact if
+	 *     - option id:         "org.eclipse.cdt.core.formatter.alignment_for_compact_if"
+	 *     - possible values:   values returned by <code>createAlignmentValue(boolean, int, int)</code> call
+	 *     - default:           createAlignmentValue(false, WRAP_ONE_PER_LINE, INDENT_BY_ONE)
+	 * </pre>
+	 * @see #createAlignmentValue(boolean, int, int)
+	 */
+	public static final String FORMATTER_ALIGNMENT_FOR_COMPACT_IF = CCorePlugin.PLUGIN_ID + ".formatter.alignment_for_compact_if";	 //$NON-NLS-1$
 	/**
 	 * <pre>
 	 * FORMATTER / Option for alignment of conditional expression
@@ -211,26 +211,26 @@ public class DefaultCodeFormatterConstants {
 //	 * @see #createAlignmentValue(boolean, int, int)
 //	 */
 //	public static final String FORMATTER_ALIGNMENT_FOR_SELECTOR_IN_METHOD_INVOCATION = CCorePlugin.PLUGIN_ID + ".formatter.alignment_for_selector_in_method_invocation";	 //$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option for alignment of superclass in type declaration
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.alignment_for_superclass_in_type_declaration"
-//	 *     - possible values:   values returned by <code>createAlignmentValue(boolean, int, int)</code> call
-//	 *     - default:           createAlignmentValue(false, WRAP_NEXT_SHIFTED, INDENT_DEFAULT)
-//	 * </pre>
-//	 * @see #createAlignmentValue(boolean, int, int)
-//	 */
-//	public static final String FORMATTER_ALIGNMENT_FOR_SUPERCLASS_IN_TYPE_DECLARATION = CCorePlugin.PLUGIN_ID + ".formatter.alignment_for_superclass_in_type_declaration";	 //$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option for alignment of throws clause in method declaration
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.alignment_for_throws_clause_in_method_declaration"
-//	 *     - possible values:   values returned by <code>createAlignmentValue(boolean, int, int)</code> call
-//	 *     - default:           createAlignmentValue(false, WRAP_COMPACT, INDENT_DEFAULT)
-//	 * </pre>
-//	 * @see #createAlignmentValue(boolean, int, int)
-//	 */
-//	public static final String FORMATTER_ALIGNMENT_FOR_THROWS_CLAUSE_IN_METHOD_DECLARATION = CCorePlugin.PLUGIN_ID + ".formatter.alignment_for_throws_clause_in_method_declaration";	 //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option for alignment of base-clause in type declaration
+	 *     - option id:         "org.eclipse.cdt.core.formatter.alignment_for_base_clause_in_type_declaration"
+	 *     - possible values:   values returned by <code>createAlignmentValue(boolean, int, int)</code> call
+	 *     - default:           createAlignmentValue(false, WRAP_NEXT_SHIFTED, INDENT_DEFAULT)
+	 * </pre>
+	 * @see #createAlignmentValue(boolean, int, int)
+	 */
+	public static final String FORMATTER_ALIGNMENT_FOR_BASE_CLAUSE_IN_TYPE_DECLARATION = CCorePlugin.PLUGIN_ID + ".formatter.alignment_for_base_clause_in_type_declaration";	 //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option for alignment of throws clause in method declaration
+	 *     - option id:         "org.eclipse.cdt.core.formatter.alignment_for_throws_clause_in_method_declaration"
+	 *     - possible values:   values returned by <code>createAlignmentValue(boolean, int, int)</code> call
+	 *     - default:           createAlignmentValue(false, WRAP_COMPACT, INDENT_DEFAULT)
+	 * </pre>
+	 * @see #createAlignmentValue(boolean, int, int)
+	 */
+	public static final String FORMATTER_ALIGNMENT_FOR_THROWS_CLAUSE_IN_METHOD_DECLARATION = CCorePlugin.PLUGIN_ID + ".formatter.alignment_for_throws_clause_in_method_declaration";	 //$NON-NLS-1$
 //
 //	/**
 //	 * <pre>
@@ -916,17 +916,17 @@ public class DefaultCodeFormatterConstants {
 	 * @see CCorePlugin#DO_NOT_INSERT
 	 */
 	public static final String FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_METHOD_DECLARATION_PARAMETERS = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_after_comma_in_method_declaration_parameters"; //$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to insert a space after the comma in the exception names in a throws clause of a method declaration
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_after_comma_in_method_declaration_throws"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_METHOD_DECLARATION_THROWS = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_after_comma_in_method_declaration_throws"; //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option to insert a space after the comma in the exception names in a throws clause of a method declaration
+	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_after_comma_in_method_declaration_throws"
+	 *     - possible values:   { INSERT, DO_NOT_INSERT }
+	 *     - default:           INSERT
+	 * </pre>
+	 * @see CCorePlugin#INSERT
+	 * @see CCorePlugin#DO_NOT_INSERT
+	 */
+	public static final String FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_METHOD_DECLARATION_THROWS = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_after_comma_in_method_declaration_throws"; //$NON-NLS-1$
 	/**
 	 * <pre>
 	 * FORMATTER / Option to insert a space after the comma in the arguments of a method invocation
@@ -1488,17 +1488,17 @@ public class DefaultCodeFormatterConstants {
 	 * @see CCorePlugin#DO_NOT_INSERT
 	 */
 	public static final String FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_METHOD_DECLARATION_PARAMETERS = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_comma_in_method_declaration_parameters"; //$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to insert a space before comma in the exception names of the throws clause of a method declaration
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_comma_in_method_declaration_throws"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           DO_NOT_INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_METHOD_DECLARATION_THROWS = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_comma_in_method_declaration_throws"; //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option to insert a space before comma in the exception names of the throws clause of a method declaration
+	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_comma_in_method_declaration_throws"
+	 *     - possible values:   { INSERT, DO_NOT_INSERT }
+	 *     - default:           DO_NOT_INSERT
+	 * </pre>
+	 * @see CCorePlugin#INSERT
+	 * @see CCorePlugin#DO_NOT_INSERT
+	 */
+	public static final String FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_METHOD_DECLARATION_THROWS = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_comma_in_method_declaration_throws"; //$NON-NLS-1$
 	/**
 	 * <pre>
 	 * FORMATTER / Option to insert a space before comma in the arguments of a method invocation

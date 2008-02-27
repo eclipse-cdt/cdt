@@ -949,12 +949,8 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		final IASTName member= node.getMemberInitializerId();
 		if (member!= null) {
 			member.accept(this);
-			scribe.printNextToken(Token.tLPAREN, false);
-			final IASTExpression value= node.getInitializerValue();
-			if (value != null) {
-				value.accept(this);
-			}
-			scribe.printNextToken(Token.tRPAREN, false);
+			// format like a function call
+			formatFunctionCallArguments(node.getInitializerValue());
 		} else {
 			formatRaw(node);
 		}
@@ -1052,12 +1048,10 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	}
 
 	private void formatExceptionSpecification(final IASTTypeId[] exceptionSpecification) {
-		// TLETODO [formatter] need special alignment for exception specification
 		if (exceptionSpecification.length > 0) {
 			Alignment alignment =scribe.createAlignment(
 					"exceptionSpecification", //$NON-NLS-1$
-					// need configurable alignment
-					Alignment.M_COMPACT_SPLIT,
+					preferences.alignment_for_throws_clause_in_method_declaration,
 					exceptionSpecification.length,
 					scribe.scanner.getCurrentPosition());
 	
@@ -1067,19 +1061,23 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 				try {
 					scribe.alignFragment(alignment, 0);
 					scribe.printNextToken(Token.t_throw, true);
+					// preferences.insert_space_before_opening_paren_in_exception_specification_throw
 					scribe.printNextToken(Token.tLPAREN, scribe.printComment());
+					if (false /* preferences.insert_space_after_opening_paren_in_exception_specification_throw */ ) {
+						scribe.space();
+					}
 					exceptionSpecification[0].accept(this);
 					for (int i = 1; i < exceptionSpecification.length; i++) {
 						// insert_space_before_comma_in_method_declaration_throws
-						scribe.printNextToken(Token.tCOMMA, preferences.insert_space_before_comma_in_initializer_list);
+						scribe.printNextToken(Token.tCOMMA, preferences.insert_space_before_comma_in_method_declaration_throws);
 						scribe.printTrailingComment();
-						// insert_space_after_comma_in_method_declaration_throws
-						if (preferences.insert_space_after_comma_in_initializer_list) {
+						if (preferences.insert_space_after_comma_in_method_declaration_throws) {
 							scribe.space();
 						}
 						scribe.alignFragment(alignment, i);
 		    			exceptionSpecification[i].accept(this);
 					}
+					// preferences.insert_space_before_closing_paren_in_exception_specification_throw
 					scribe.printNextToken(Token.tRPAREN, scribe.printComment());
 					ok = true;
 				} catch (AlignmentException e) {
@@ -1385,7 +1383,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			if (preferences.insert_space_after_colon_in_base_clause) {
 				scribe.space();
 			}
-			final ListAlignment align= new ListAlignment(Alignment.M_COMPACT_SPLIT);
+			final ListAlignment align= new ListAlignment(preferences.alignment_for_base_clause_in_type_declaration);
 			align.fSpaceAfterComma= preferences.insert_space_after_comma_in_base_types;
 			align.fSpaceBeforeComma= preferences.insert_space_before_comma_in_base_types;
 			formatList(baseSpecifiers, align, false, false);
@@ -2346,7 +2344,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 					scribe.printNextToken(Token.tRBRACE, true);
 					scribe.printTrailingComment();
 				} else {
-                    formatLeftCurlyBrace(line, preferences.brace_position_for_block);
+					formatLeftCurlyBrace(line, preferences.brace_position_for_block);
 					thenStatement.accept(this);
 					if (elseStatement != null && (preferences.insert_new_line_before_else_in_if_statement)) {
 						scribe.startNewLine();

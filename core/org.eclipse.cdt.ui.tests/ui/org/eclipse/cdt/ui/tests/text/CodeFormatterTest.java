@@ -28,6 +28,7 @@ import org.eclipse.cdt.ui.tests.BaseUITestCase;
 
 import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
 import org.eclipse.cdt.internal.formatter.DefaultCodeFormatterOptions;
+import org.eclipse.cdt.internal.formatter.align.Alignment;
 
 /**
  * Tests for the CodeFormatter.
@@ -489,6 +490,45 @@ public class CodeFormatterTest extends BaseUITestCase {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_PAREN_IN_METHOD_INVOCATION, CCorePlugin.INSERT);
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_PAREN_IN_METHOD_INVOCATION, CCorePlugin.INSERT);
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BETWEEN_EMPTY_PARENS_IN_METHOD_INVOCATION, CCorePlugin.DO_NOT_INSERT);
+		assertFormatterResult();
+	}
+
+	//class Example: public FooClass, public virtual BarClass {};
+	
+	//class Example:
+	//		public FooClass,
+	//		public virtual BarClass {
+	//};
+	public void testAlignmentOfClassDefinitionBaseClause1_Bug192656() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_BASE_CLAUSE_IN_TYPE_DECLARATION, 
+				Integer.toString(Alignment.M_ONE_PER_LINE_SPLIT | Alignment.M_FORCE));
+		assertFormatterResult();
+	}
+
+	//class Example: public FooClass, public virtual BarClass {};
+	
+	//class Example:	public FooClass,
+	//				public virtual BarClass {
+	//};
+	public void testAlignmentOfClassDefinitionBaseClause2_Bug192656() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_BASE_CLAUSE_IN_TYPE_DECLARATION, 
+				Integer.toString(Alignment.M_NEXT_PER_LINE_SPLIT | Alignment.M_FORCE | Alignment.M_INDENT_ON_COLUMN));
+		assertFormatterResult();
+	}
+
+	//class Example: { void foo() throw(int); };
+	//void Example::foo()throw(int){}
+
+	//class Example: {
+	//	void foo()
+	//		throw(int);
+	//};
+	//void Example::foo()
+	//	throw(int) {
+	//}
+	public void testAlignmentOfExceptionSpecificationInMethodDeclaration_Bug191980() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_THROWS_CLAUSE_IN_METHOD_DECLARATION, 
+				Integer.toString(Alignment.M_ONE_PER_LINE_SPLIT | Alignment.M_FORCE | Alignment.M_INDENT_BY_ONE));
 		assertFormatterResult();
 	}
 }

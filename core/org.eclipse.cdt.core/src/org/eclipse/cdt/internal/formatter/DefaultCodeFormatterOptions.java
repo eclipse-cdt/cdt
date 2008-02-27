@@ -65,8 +65,8 @@ public class DefaultCodeFormatterOptions {
 	public int alignment_for_enumerator_list;
 	public int alignment_for_expression_list;
 	public int alignment_for_parameters_in_method_declaration;
-//	public int alignment_for_superclass_in_type_declaration;
-//	public int alignment_for_throws_clause_in_method_declaration;
+	public int alignment_for_base_clause_in_type_declaration;
+	public int alignment_for_throws_clause_in_method_declaration;
 	
 //	public boolean align_type_members_on_columns;
 	
@@ -137,7 +137,7 @@ public class DefaultCodeFormatterOptions {
 //	public boolean insert_space_after_comma_in_for_inits;
 	public boolean insert_space_after_comma_in_method_invocation_arguments;
 	public boolean insert_space_after_comma_in_method_declaration_parameters;
-//	public boolean insert_space_after_comma_in_method_declaration_throws;
+	public boolean insert_space_after_comma_in_method_declaration_throws;
 	public boolean insert_space_after_comma_in_declarator_list;
 	public boolean insert_space_after_comma_in_expression_list;
 	public boolean insert_space_after_comma_in_base_types;
@@ -189,7 +189,7 @@ public class DefaultCodeFormatterOptions {
 //	public boolean insert_space_before_comma_in_for_inits;
 	public boolean insert_space_before_comma_in_method_invocation_arguments;
 	public boolean insert_space_before_comma_in_method_declaration_parameters;
-//	public boolean insert_space_before_comma_in_method_declaration_throws;
+	public boolean insert_space_before_comma_in_method_declaration_throws;
 	public boolean insert_space_before_comma_in_declarator_list;
 	public boolean insert_space_before_comma_in_expression_list;
 	public boolean insert_space_before_comma_in_base_types;
@@ -259,7 +259,7 @@ public class DefaultCodeFormatterOptions {
 		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_METHOD_INVOCATION, getAlignment(this.alignment_for_arguments_in_method_invocation));
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ASSIGNMENT, getAlignment(this.alignment_for_assignment));
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_BINARY_EXPRESSION, getAlignment(this.alignment_for_binary_expression));
-//		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_COMPACT_IF, getAlignment(this.alignment_for_compact_if));
+		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_COMPACT_IF, getAlignment(this.alignment_for_compact_if));
 		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_CONDITIONAL_EXPRESSION, getAlignment(this.alignment_for_conditional_expression));
 		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_EXPRESSIONS_IN_INITIALIZER_LIST, getAlignment(this.alignment_for_expressions_in_initializer_list));
 		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_DECLARATOR_LIST, getAlignment(this.alignment_for_declarator_list));
@@ -267,8 +267,8 @@ public class DefaultCodeFormatterOptions {
 		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_EXPRESSION_LIST, getAlignment(this.alignment_for_expression_list));
 		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION, getAlignment(this.alignment_for_parameters_in_method_declaration));
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_SELECTOR_IN_METHOD_INVOCATION, getAlignment(this.alignment_for_selector_in_method_invocation));
-//		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_SUPERCLASS_IN_TYPE_DECLARATION, getAlignment(this.alignment_for_superclass_in_type_declaration));
-//		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_THROWS_CLAUSE_IN_METHOD_DECLARATION, getAlignment(this.alignment_for_throws_clause_in_method_declaration));
+		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_BASE_CLAUSE_IN_TYPE_DECLARATION, getAlignment(this.alignment_for_base_clause_in_type_declaration));
+		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_THROWS_CLAUSE_IN_METHOD_DECLARATION, getAlignment(this.alignment_for_throws_clause_in_method_declaration));
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGN_TYPE_MEMBERS_ON_COLUMNS, this.align_type_members_on_columns ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_INITIALIZER_LIST, this.brace_position_for_initializer_list);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_BLOCK, this.brace_position_for_block);
@@ -332,7 +332,7 @@ public class DefaultCodeFormatterOptions {
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_FOR_INITS, this.insert_space_after_comma_in_for_inits? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_METHOD_INVOCATION_ARGUMENTS, this.insert_space_after_comma_in_method_invocation_arguments? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_METHOD_DECLARATION_PARAMETERS, this.insert_space_after_comma_in_method_declaration_parameters? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
-//		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_METHOD_DECLARATION_THROWS, this.insert_space_after_comma_in_method_declaration_throws? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
+		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_METHOD_DECLARATION_THROWS, this.insert_space_after_comma_in_method_declaration_throws? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_DECLARATOR_LIST, this.insert_space_after_comma_in_declarator_list? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_EXPRESSION_LIST, this.insert_space_after_comma_in_expression_list? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_BASE_TYPES, this.insert_space_after_comma_in_base_types? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
@@ -384,7 +384,7 @@ public class DefaultCodeFormatterOptions {
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_FOR_INITS, this.insert_space_before_comma_in_for_inits? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_METHOD_INVOCATION_ARGUMENTS, this.insert_space_before_comma_in_method_invocation_arguments? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_METHOD_DECLARATION_PARAMETERS, this.insert_space_before_comma_in_method_declaration_parameters? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
-//		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_METHOD_DECLARATION_THROWS, this.insert_space_before_comma_in_method_declaration_throws? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
+		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_METHOD_DECLARATION_THROWS, this.insert_space_before_comma_in_method_declaration_throws? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_DECLARATOR_LIST, this.insert_space_before_comma_in_declarator_list? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_EXPRESSION_LIST, this.insert_space_before_comma_in_expression_list? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_BASE_TYPES, this.insert_space_before_comma_in_base_types? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
@@ -485,16 +485,16 @@ public class DefaultCodeFormatterOptions {
 //				this.alignment_for_binary_expression =  Alignment.M_COMPACT_SPLIT;
 //			}
 //		}
-//		final Object alignmentForCompactIfOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_COMPACT_IF);
-//		if (alignmentForCompactIfOption != null) {
-//			try {
-//				this.alignment_for_compact_if = Integer.parseInt((String) alignmentForCompactIfOption);
-//			} catch (NumberFormatException e) {
-//				this.alignment_for_compact_if = Alignment.M_ONE_PER_LINE_SPLIT | Alignment.M_INDENT_BY_ONE;
-//			} catch (ClassCastException e) {
-//				this.alignment_for_compact_if = Alignment.M_ONE_PER_LINE_SPLIT | Alignment.M_INDENT_BY_ONE;
-//			}
-//		}
+		final Object alignmentForCompactIfOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_COMPACT_IF);
+		if (alignmentForCompactIfOption != null) {
+			try {
+				this.alignment_for_compact_if = Integer.parseInt((String) alignmentForCompactIfOption);
+			} catch (NumberFormatException e) {
+				this.alignment_for_compact_if = Alignment.M_ONE_PER_LINE_SPLIT | Alignment.M_INDENT_BY_ONE;
+			} catch (ClassCastException e) {
+				this.alignment_for_compact_if = Alignment.M_ONE_PER_LINE_SPLIT | Alignment.M_INDENT_BY_ONE;
+			}
+		}
 		final Object alignmentForConditionalExpressionOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_CONDITIONAL_EXPRESSION);
 		if (alignmentForConditionalExpressionOption != null) {
 			try {
@@ -555,26 +555,26 @@ public class DefaultCodeFormatterOptions {
 				this.alignment_for_parameters_in_method_declaration = Alignment.M_COMPACT_SPLIT;
 			}
 		}
-//		final Object alignmentForSuperclassInTypeDeclarationOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_SUPERCLASS_IN_TYPE_DECLARATION);
-//		if (alignmentForSuperclassInTypeDeclarationOption != null) {
-//			try {
-//				this.alignment_for_superclass_in_type_declaration = Integer.parseInt((String) alignmentForSuperclassInTypeDeclarationOption);
-//			} catch (NumberFormatException e) {
-//				this.alignment_for_superclass_in_type_declaration = Alignment.M_NEXT_SHIFTED_SPLIT;
-//			} catch(ClassCastException e) {
-//				this.alignment_for_superclass_in_type_declaration = Alignment.M_NEXT_SHIFTED_SPLIT;
-//			}
-//		}
-//		final Object alignmentForThrowsClauseInMethodDeclarationOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_THROWS_CLAUSE_IN_METHOD_DECLARATION);
-//		if (alignmentForThrowsClauseInMethodDeclarationOption != null) {
-//			try {
-//				this.alignment_for_throws_clause_in_method_declaration = Integer.parseInt((String) alignmentForThrowsClauseInMethodDeclarationOption);
-//			} catch (NumberFormatException e) {
-//				this.alignment_for_throws_clause_in_method_declaration = Alignment.M_COMPACT_SPLIT;
-//			} catch(ClassCastException e) {
-//				this.alignment_for_throws_clause_in_method_declaration = Alignment.M_COMPACT_SPLIT;
-//			}
-//		}
+		final Object alignmentForBaseClauseInTypeDeclarationOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_BASE_CLAUSE_IN_TYPE_DECLARATION);
+		if (alignmentForBaseClauseInTypeDeclarationOption != null) {
+			try {
+				this.alignment_for_base_clause_in_type_declaration = Integer.parseInt((String) alignmentForBaseClauseInTypeDeclarationOption);
+			} catch (NumberFormatException e) {
+				this.alignment_for_base_clause_in_type_declaration = Alignment.M_NEXT_SHIFTED_SPLIT;
+			} catch(ClassCastException e) {
+				this.alignment_for_base_clause_in_type_declaration = Alignment.M_NEXT_SHIFTED_SPLIT;
+			}
+		}
+		final Object alignmentForThrowsClauseInMethodDeclarationOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_THROWS_CLAUSE_IN_METHOD_DECLARATION);
+		if (alignmentForThrowsClauseInMethodDeclarationOption != null) {
+			try {
+				this.alignment_for_throws_clause_in_method_declaration = Integer.parseInt((String) alignmentForThrowsClauseInMethodDeclarationOption);
+			} catch (NumberFormatException e) {
+				this.alignment_for_throws_clause_in_method_declaration = Alignment.M_COMPACT_SPLIT;
+			} catch(ClassCastException e) {
+				this.alignment_for_throws_clause_in_method_declaration = Alignment.M_COMPACT_SPLIT;
+			}
+		}
 //		final Object alignTypeMembersOnColumnsOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_ALIGN_TYPE_MEMBERS_ON_COLUMNS);
 //		if (alignTypeMembersOnColumnsOption != null) {
 //			this.align_type_members_on_columns = DefaultCodeFormatterConstants.TRUE.equals(alignTypeMembersOnColumnsOption);
@@ -937,10 +937,10 @@ public class DefaultCodeFormatterOptions {
 		if (insertSpaceAfterCommaInMethodDeclarationParametersOption != null) {
 			this.insert_space_after_comma_in_method_declaration_parameters = CCorePlugin.INSERT.equals(insertSpaceAfterCommaInMethodDeclarationParametersOption);
 		}
-//		final Object insertSpaceAfterCommaInMethodDeclarationThrowsOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_METHOD_DECLARATION_THROWS);
-//		if (insertSpaceAfterCommaInMethodDeclarationThrowsOption != null) {
-//			this.insert_space_after_comma_in_method_declaration_throws = CCorePlugin.INSERT.equals(insertSpaceAfterCommaInMethodDeclarationThrowsOption);
-//		}
+		final Object insertSpaceAfterCommaInMethodDeclarationThrowsOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_METHOD_DECLARATION_THROWS);
+		if (insertSpaceAfterCommaInMethodDeclarationThrowsOption != null) {
+			this.insert_space_after_comma_in_method_declaration_throws = CCorePlugin.INSERT.equals(insertSpaceAfterCommaInMethodDeclarationThrowsOption);
+		}
 		final Object insertSpaceAfterCommaInMultipleFieldDeclarationsOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_DECLARATOR_LIST);
 		if (insertSpaceAfterCommaInMultipleFieldDeclarationsOption != null) {
 			this.insert_space_after_comma_in_declarator_list = CCorePlugin.INSERT.equals(insertSpaceAfterCommaInMultipleFieldDeclarationsOption);
@@ -1149,10 +1149,10 @@ public class DefaultCodeFormatterOptions {
 		if (insertSpaceBeforeCommaInMethodDeclarationParametersOption != null) {
 			this.insert_space_before_comma_in_method_declaration_parameters = CCorePlugin.INSERT.equals(insertSpaceBeforeCommaInMethodDeclarationParametersOption);
 		}
-//		final Object insertSpaceBeforeCommaInMethodDeclarationThrowsOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_METHOD_DECLARATION_THROWS);
-//		if (insertSpaceBeforeCommaInMethodDeclarationThrowsOption != null) {
-//			this.insert_space_before_comma_in_method_declaration_throws = CCorePlugin.INSERT.equals(insertSpaceBeforeCommaInMethodDeclarationThrowsOption);
-//		}
+		final Object insertSpaceBeforeCommaInMethodDeclarationThrowsOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_METHOD_DECLARATION_THROWS);
+		if (insertSpaceBeforeCommaInMethodDeclarationThrowsOption != null) {
+			this.insert_space_before_comma_in_method_declaration_throws = CCorePlugin.INSERT.equals(insertSpaceBeforeCommaInMethodDeclarationThrowsOption);
+		}
 		final Object insertSpaceBeforeCommaInMultipleFieldDeclarationsOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_DECLARATOR_LIST);
 		if (insertSpaceBeforeCommaInMultipleFieldDeclarationsOption != null) {
 			this.insert_space_before_comma_in_declarator_list = CCorePlugin.INSERT.equals(insertSpaceBeforeCommaInMultipleFieldDeclarationsOption);
@@ -1375,8 +1375,8 @@ public class DefaultCodeFormatterOptions {
 		this.alignment_for_enumerator_list = Alignment.M_ONE_PER_LINE_SPLIT;
 		this.alignment_for_parameters_in_method_declaration = Alignment.M_COMPACT_SPLIT;
 //		this.alignment_for_selector_in_method_invocation = Alignment.M_COMPACT_SPLIT;
-//		this.alignment_for_superclass_in_type_declaration = Alignment.M_COMPACT_SPLIT;
-//		this.alignment_for_throws_clause_in_method_declaration = Alignment.M_COMPACT_SPLIT;
+		this.alignment_for_base_clause_in_type_declaration = Alignment.M_NEXT_PER_LINE_SPLIT;
+		this.alignment_for_throws_clause_in_method_declaration = Alignment.M_COMPACT_SPLIT;
 //		this.align_type_members_on_columns = false;
 		this.brace_position_for_initializer_list = DefaultCodeFormatterConstants.END_OF_LINE;
 		this.brace_position_for_block = DefaultCodeFormatterConstants.END_OF_LINE;
@@ -1442,7 +1442,7 @@ public class DefaultCodeFormatterOptions {
 		this.insert_space_after_comma_in_enum_declarations = true;
 		this.insert_space_after_comma_in_method_invocation_arguments = true;
 		this.insert_space_after_comma_in_method_declaration_parameters = true;
-//		this.insert_space_after_comma_in_method_declaration_throws = true;
+		this.insert_space_after_comma_in_method_declaration_throws = true;
 		this.insert_space_after_comma_in_declarator_list = true;
 		this.insert_space_after_comma_in_expression_list = true;
 		this.insert_space_after_comma_in_base_types = true;
@@ -1495,7 +1495,7 @@ public class DefaultCodeFormatterOptions {
 //		this.insert_space_before_comma_in_for_inits = false;
 		this.insert_space_before_comma_in_method_invocation_arguments = false;
 		this.insert_space_before_comma_in_method_declaration_parameters = false;
-//		this.insert_space_before_comma_in_method_declaration_throws = false;
+		this.insert_space_before_comma_in_method_declaration_throws = false;
 		this.insert_space_before_comma_in_declarator_list = false;
 		this.insert_space_before_comma_in_expression_list = false;
 		this.insert_space_before_comma_in_base_types = false;

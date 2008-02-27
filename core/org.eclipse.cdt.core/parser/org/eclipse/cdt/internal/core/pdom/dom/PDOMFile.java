@@ -52,6 +52,7 @@ import org.eclipse.core.runtime.CoreException;
 public class PDOMFile implements IIndexFragmentFile {
 	private final PDOM pdom;
 	private final int record;
+	private IIndexFileLocation location;
 
 	private static final int FIRST_NAME = 0;
 	private static final int FIRST_INCLUDE = 4;
@@ -90,6 +91,7 @@ public class PDOMFile implements IIndexFragmentFile {
 
 	public PDOMFile(PDOM pdom, IIndexFileLocation location, int linkageID) throws CoreException {
 		this.pdom = pdom;
+		this.location= location;
 		Database db = pdom.getDB();
 		record = db.malloc(RECORD_SIZE);
 		String locationString = pdom.getLocationConverter().toInternalFormat(location);
@@ -109,6 +111,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		return record;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == this)
 			return true;
@@ -119,6 +122,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		return false;
 	}
 
+	@Override
 	public final int hashCode() {
 		return System.identityHashCode(pdom) + 41*record;
 	}
@@ -135,6 +139,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		int oldRecord = db.getInt(record + LOCATION_REPRESENTATION);
 		db.free(oldRecord);
 		db.putInt(record + LOCATION_REPRESENTATION, db.newString(internalLocation).getRecord());
+		location= null;
 	}
 	
 	public int getLinkageID() throws CoreException {
@@ -491,12 +496,14 @@ public class PDOMFile implements IIndexFragmentFile {
 	}
 
 	public IIndexFileLocation getLocation() throws CoreException {
-		Database db = pdom.getDB();
-		String raw = db.getString(db.getInt(record + LOCATION_REPRESENTATION)).getString();
-		IIndexFileLocation result = pdom.getLocationConverter().fromInternalFormat(raw);
-		if(result==null)
-			throw new CoreException(CCorePlugin.createStatus(Messages.getString("PDOMFile.toExternalProblem")+raw)); //$NON-NLS-1$
-		return result;
+		if (location == null) {
+			Database db = pdom.getDB();
+			String raw = db.getString(db.getInt(record + LOCATION_REPRESENTATION)).getString();
+			location= pdom.getLocationConverter().fromInternalFormat(raw);
+			if(location==null)
+				throw new CoreException(CCorePlugin.createStatus(Messages.getString("PDOMFile.toExternalProblem")+raw)); //$NON-NLS-1$
+		}
+		return location;
 	}
 	
 	public boolean hasContent() throws CoreException {

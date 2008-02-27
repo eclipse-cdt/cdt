@@ -9,7 +9,6 @@
  *    Markus Schorn - initial API and implementation
  *    Andrew Ferguson (Symbian)
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.core.pdom;
 
 import java.io.File;
@@ -75,11 +74,17 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 		finally {
 			fPathResolver= origResolver;
 		}
+		
+		final IIndexFileLocation location = pdomFile.getLocation();
+		fEvent.fClearedFiles.remove(location);
+		fEvent.fFilesWritten.add(location);
 	}
 
 	public void clearFile(IIndexFragmentFile file, Collection<IIndexFileLocation> contextsRemoved) throws CoreException {
 		assert file.getIndexFragment() == this;
-		((PDOMFile) file).clear(contextsRemoved);		
+		((PDOMFile) file).clear(contextsRemoved);	
+		
+		fEvent.fClearedFiles.add(file.getLocation());
 	}
 	
 	@Override

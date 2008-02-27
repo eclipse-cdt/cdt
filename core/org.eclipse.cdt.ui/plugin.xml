@@ -2548,4 +2548,20 @@
             singleline="org.eclipse.cdt.ui.text.doctools.doxygen.DoxygenSingleConfiguration">
       </owner>
    </extension>
+   <extension
+         point="org.eclipse.ui.decorators">
+      <decorator
+            class="org.eclipse.cdt.internal.ui.viewsupport.IndexedFilesLabelProvider"
+            id="org.eclipse.cdt.ui.indexedFiles"
+            label="%indexedFilesDecorator.label"
+            lightweight="true"
+            state="false">
+         <enablement>
+            <or>
+               <objectClass name="org.eclipse.cdt.core.model.ITranslationUnit"/>
+               <objectClass name="org.eclipse.core.resources.IFile"/>
+            </or>
+         </enablement>
+      </decorator>
+   </extension>
  </plugin>

@@ -26,6 +26,7 @@ import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFileSet;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentInclude;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentName;
+import org.eclipse.cdt.internal.core.pdom.PDOM.ChangeEvent;
 import org.eclipse.cdt.internal.core.pdom.PDOM.IListener;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.core.runtime.CoreException;
@@ -214,9 +215,11 @@ public class PDOMProxy implements IPDOM {
 		catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 		}
+		ChangeEvent event= new ChangeEvent();
+		event.fReloaded= true;
 		for (Iterator<IListener> iterator = fListeners.iterator(); iterator.hasNext();) {
 			IListener listener = iterator.next();
-			listener.handleChange(fDelegate);
+			listener.handleChange(fDelegate, event);
 		}
 	}
 

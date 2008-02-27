@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation.
+ * Copyright (c) 2006, 2008 IBM Corporation.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.pdom.tests;
 
 import junit.framework.Test;
@@ -48,12 +47,14 @@ public class CPPFunctionTests extends PDOMTestBase {
 		return suite(CPPFunctionTests.class);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		project = createProject("functionTests");
 		pdom = (PDOM) CCoreInternals.getPDOMManager().getPDOM(project);
 		pdom.acquireReadLock();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		pdom.releaseReadLock();
 		if (project != null) {
@@ -172,17 +173,17 @@ public class CPPFunctionTests extends PDOMTestBase {
 		for (int i = 0; i < 2; i++) {
 			ICPPFunction function = (ICPPFunction) bindings[i];
 			assertEquals(1, pdom.findNames(function, IIndex.FIND_DECLARATIONS_DEFINITIONS).length);
-			assertEquals(1, pdom.getDefinitions(function).length);
+			assertEquals(1, pdom.findNames(function, IIndex.FIND_DEFINITIONS).length);
 			IParameter[] parameters = function.getParameters();
 			switch (parameters.length) {
 			case 0:
 				assertFalse(seen[0]);
-				assertEquals(1, pdom.getReferences(function).length);
+				assertEquals(1, pdom.findNames(function, IIndex.FIND_REFERENCES).length);
 				seen[0] = true;
 				break;
 			case 1:
 				assertFalse(seen[1]);
-				assertEquals(2, pdom.getReferences(function).length);
+				assertEquals(2, pdom.findNames(function, IIndex.FIND_REFERENCES).length);
 				assertEquals("p1", parameters[0].getName());
 				assertEquals(IBasicType.t_int, ((ICPPBasicType) parameters[0].getType()).getType());
 				seen[1] = true;

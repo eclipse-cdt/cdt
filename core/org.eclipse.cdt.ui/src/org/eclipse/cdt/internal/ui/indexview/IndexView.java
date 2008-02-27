@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 QNX Software Systems and others.
+ * Copyright (c) 2005, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -80,7 +80,7 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 	Filter filter = new Filter();
 	public boolean isLinking = false;
 	private volatile boolean fUpdateRequested= false;
-	private Map fTimestampPerProject= new HashMap();
+	private Map<String, Long> fTimestampPerProject= new HashMap<String, Long>();
 	private IndexContentProvider contentProvider;
 
 	
@@ -112,6 +112,7 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 	
 	private static class Filter extends ViewerFilter {
 		public boolean showExternalDefs = false;
+		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			if (element instanceof IndexNode) {
 				IndexNode node= (IndexNode)element;
@@ -151,9 +152,9 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 	}
 		
 	private static class Children implements IPDOMVisitor {
-		private ArrayList fNodes;
+		private ArrayList<IPDOMNode> fNodes;
 		public Children() {
-			fNodes= new ArrayList();
+			fNodes= new ArrayList<IPDOMNode>();
 		}
 		public boolean visit(IPDOMNode node) throws CoreException {
 			fNodes.add(node);
@@ -162,7 +163,7 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 		public void leave(IPDOMNode node) throws CoreException {
 		}
 		public IPDOMNode[] getNodes() {
-			return (IPDOMNode[]) fNodes.toArray(new IPDOMNode[fNodes.size()]);
+			return fNodes.toArray(new IPDOMNode[fNodes.size()]);
 		}
 	}
 			
@@ -171,6 +172,7 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 			super(disp);
 		}
 		
+		@Override
 		public Object getParent(Object element) {
 			if (element instanceof IndexNode) {
 				return ((IndexNode) element).fParent;
@@ -181,6 +183,7 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 			return null;
 		}
 
+		@Override
 		protected Object[] syncronouslyComputeChildren(Object parentElement) {
 			if (parentElement instanceof ICModel) {
 				ICModel element = (ICModel) parentElement;
@@ -205,6 +208,7 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 		}
 
 
+		@Override
 		protected Object[] asyncronouslyComputeChildren(Object parentElement, IProgressMonitor monitor) {
 			try {
 				if (parentElement instanceof ICProject) {
@@ -218,7 +222,7 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 					IndexNode node= (IndexNode) parentElement;
 					ICProject cproject= node.getProject();
 					if (cproject != null && cproject.getProject().isOpen()) {
-						Long ts= (Long) fTimestampPerProject.get(cproject.getElementName());
+						Long ts= fTimestampPerProject.get(cproject.getElementName());
 						IPDOM pdom= CCoreInternals.getPDOMManager().getPDOM(cproject);
 						pdom.acquireReadLock();
 						try {
@@ -283,6 +287,7 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 		}
 	}
 	
+	@Override
 	public void createPartControl(Composite parent) {
 		viewer = new ExtendedTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		contentProvider= new IndexContentProvider(getSite().getShell().getDisplay());
@@ -333,6 +338,7 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 		});
 	}
 	
+	@Override
 	public void dispose() {
 		super.dispose();
 		ICModel model = CoreModel.getDefault().getCModel();
@@ -404,11 +410,12 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 		manager.add(discardExternalDefsAction);
 	}
 	
+	@Override
 	public void setFocus() {
 		viewer.getControl().setFocus();
 	}
 
-	public void handleChange(PDOM pdom) {
+	public void handleChange(PDOM pdom, PDOM.ChangeEvent e) {
 		requestUpdate();
 	}
 
@@ -450,19 +457,19 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 				try {
 					IPDOM pdom = CCoreInternals.getPDOMManager().getPDOM((ICProject)delta.getElement());
 					pdom.addListener(this);
-					handleChange(null);
+					handleChange(null, null);
 				} catch (CoreException e) {
 				}
 				break;
 			case ICElementDelta.REMOVED:
-				handleChange(null);
+				handleChange(null, null);
 				break;
 			}
 		}
 	}
 
 	public long getLastWriteAccess(ICProject cproject) {
-		Long result= (Long) fTimestampPerProject.get(cproject.getElementName());
+		Long result= fTimestampPerProject.get(cproject.getElementName());
 		return result == null ? -1 : result.longValue();
 	}
 }

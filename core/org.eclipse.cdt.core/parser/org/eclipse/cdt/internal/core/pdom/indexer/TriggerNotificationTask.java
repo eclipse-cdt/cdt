@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,8 +15,13 @@ import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
 import org.eclipse.cdt.internal.core.pdom.IndexerProgress;
 import org.eclipse.cdt.internal.core.pdom.PDOMManager;
 import org.eclipse.cdt.internal.core.pdom.WritablePDOM;
+import org.eclipse.cdt.internal.core.pdom.PDOM.ChangeEvent;
 import org.eclipse.core.runtime.IProgressMonitor;
 
+/**
+ * Used to trigger a change notification when a pdom is loaded.
+ * In this situation the pdom itself does not generate a notification.
+ */
 public class TriggerNotificationTask implements IPDOMIndexerTask {
 
 	private WritablePDOM fPDOM;
@@ -36,6 +41,8 @@ public class TriggerNotificationTask implements IPDOMIndexerTask {
 	}
 
 	public void run(IProgressMonitor monitor) {
-		fManager.handleChange(fPDOM);
+		ChangeEvent event= new ChangeEvent();
+		event.fReloaded= true;
+		fManager.handleChange(fPDOM, event);
 	}
 }

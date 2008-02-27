@@ -20,15 +20,16 @@ import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
-import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -45,7 +46,6 @@ import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexLinkage;
 import org.eclipse.cdt.core.index.IIndexLocationConverter;
 import org.eclipse.cdt.core.index.IIndexMacro;
-import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
@@ -168,6 +168,30 @@ public class PDOM extends PlatformObject implements IPDOM {
 		assert END <= Database.CHUNK_SIZE;
 	}
 	
+	public static class ChangeEvent {
+		public Set<IIndexFileLocation> fClearedFiles= new HashSet<IIndexFileLocation>();
+		public Set<IIndexFileLocation> fFilesWritten= new HashSet<IIndexFileLocation>();
+		public boolean fCleared= false;
+		public boolean fReloaded= false;
+
+		private void setCleared() {
+			fReloaded= false;
+			fCleared= true;
+			fClearedFiles.clear();
+			fFilesWritten.clear();
+		}
+
+		public void clear() {
+			fReloaded= fCleared= false;
+			fClearedFiles.clear();
+			fFilesWritten.clear();
+		}
+	}
+	public static interface IListener {
+		public void handleChange(PDOM pdom, ChangeEvent event);
+	}
+
+
 	// Local caches
 	protected Database db;
 	private BTree fileIndex;
@@ -177,8 +201,9 @@ public class PDOM extends PlatformObject implements IPDOM {
 	private IIndexLocationConverter locationConverter;
 	private Map<String, IPDOMLinkageFactory> fPDOMLinkageFactoryCache;
 	private HashMap<Object, Object> fResultCache= new HashMap<Object, Object>();
+	private List<IListener> listeners;
+	protected ChangeEvent fEvent= new ChangeEvent();
 
-	
 	public PDOM(File dbPath, IIndexLocationConverter locationConverter, Map<String, IPDOMLinkageFactory> linkageFactoryMappings) throws CoreException {
 		this(dbPath, locationConverter, ChunkCache.getSharedInstance(), linkageFactoryMappings);
 	}
@@ -231,12 +256,6 @@ public class PDOM extends PlatformObject implements IPDOM {
 		}
 	}
 
-	public static interface IListener {
-		public void handleChange(PDOM pdom);
-	}
-
-	private List<IListener> listeners;
-
 	public void addListener(IListener listener) {
 		if (listeners == null)
 			listeners = new LinkedList<IListener>();
@@ -249,12 +268,12 @@ public class PDOM extends PlatformObject implements IPDOM {
 		listeners.remove(listener);
 	}
 
-	private void fireChange() {
+	private void fireChange(ChangeEvent event) {
 		if (listeners == null)
 			return;
 		Iterator<IListener> i = listeners.iterator();
 		while (i.hasNext())
-			i.next().handleChange(this);
+			i.next().handleChange(this, event);
 	}
 
 	public Database getDB() {
@@ -311,6 +330,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		// Clear out the database, everything is set to zero.
 		db.clear(CURRENT_VERSION);
 		clearCaches();
+		fEvent.setCleared();
 	}
 	
 	void reloadFromFile(File file) throws CoreException {
@@ -325,40 +345,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 		loadDatabase(file, db.getChunkCache());
 		db.setExclusiveLock();
 		oldFile.delete();
+		fEvent.fReloaded= true;
 	}		
 
 	public boolean isEmpty() throws CoreException {
 		return getFirstLinkageRecord() == 0;
-	}
-
-	/**
-	 * @deprecated use findDefinitions() instead
-	 */
-	public IName[] getDefinitions(IBinding binding) throws CoreException {
-		if (binding instanceof PDOMBinding) {
-			List<PDOMName> names = new ArrayList<PDOMName>();
-			for (PDOMName name = ((PDOMBinding)binding).getFirstDefinition();
-			name != null;
-			name = name.getNextInBinding())
-				names.add(name);
-			return names.toArray(new IIndexName[names.size()]);
-		}
-		return IIndexFragmentName.EMPTY_NAME_ARRAY;
-	}
-
-	/**
-	 * @deprecated use findReferences() instead
-	 */
-	public IName[] getReferences(IBinding binding) throws CoreException {
-		if (binding instanceof PDOMBinding) {
-			List<PDOMName> names = new ArrayList<PDOMName>();
-			for (PDOMName name = ((PDOMBinding)binding).getFirstReference();
-			name != null;
-			name = name.getNextInBinding())
-				names.add(name);
-			return names.toArray(new IIndexName[names.size()]);
-		}
-		return IIndexFragmentName.EMPTY_NAME_ARRAY;
 	}
 
 	public IIndexFragmentBinding findBinding(IASTName name) throws CoreException {
@@ -669,13 +660,15 @@ public class PDOM extends PlatformObject implements IPDOM {
 		}
 		assert lockCount == -1;
 		lastWriteAccess= System.currentTimeMillis();
+		final ChangeEvent event= fEvent;
+		fEvent= new ChangeEvent();
 		synchronized (mutex) {
 			if (lockCount < 0)
 				lockCount= establishReadLocks;
 			mutex.notifyAll();
 			db.setLocked(lockCount != 0);
 		}
-		fireChange();
+		fireChange(event);
 	}
 
 
@@ -932,6 +925,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		IndexFilter filter= null;
 		if (binding instanceof IFunction) {
 			filter= new IndexFilter() {
+				@Override
 				public boolean acceptBinding(IBinding binding) {
 					try {
 						if (binding instanceof ICPPFunction) {
@@ -945,6 +939,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		} else if (binding instanceof IVariable) {
 			if (!(binding instanceof IField) && !(binding instanceof IParameter)) {
 				filter= new IndexFilter() {
+					@Override
 					public boolean acceptBinding(IBinding binding) {
 						try {
 							if (binding instanceof ICPPVariable) {

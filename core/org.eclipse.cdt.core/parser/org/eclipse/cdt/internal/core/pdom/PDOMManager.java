@@ -143,12 +143,11 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	private static final ISchedulingRule INIT_INDEXER_SCHEDULING_RULE = new PerInstanceSchedulingRule();
 
 	/**
-	 * Protects indexerJob, currentTask and taskQueue.
+	 * Protects fIndexerJob, fCurrentTask and fTaskQueue.
 	 */
-    private Object fTaskQueueMutex = new Object();
+	private final LinkedList<IPDOMIndexerTask> fTaskQueue = new LinkedList<IPDOMIndexerTask>();
     private PDOMIndexerJob fIndexerJob;
 	private IPDOMIndexerTask fCurrentTask;
-	private LinkedList<IPDOMIndexerTask> fTaskQueue = new LinkedList<IPDOMIndexerTask>();
 	private int fSourceCount, fHeaderCount, fTickCount;
 	
     /**
@@ -165,6 +164,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	private CModelListener fCModelListener= new CModelListener(this);
 	private ILanguageMappingChangeListener fLanguageChangeListener = new LanguageMappingChangeListener(this);
 	private final ICProjectDescriptionListener fProjectDescriptionListener;
+	private final JobChangeListener fJobChangeListener;
 	
 	private IndexFactory fIndexFactory= new IndexFactory(this);
     private IndexProviderManager fIndexProviderManager = new IndexProviderManager();
@@ -178,9 +178,11 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	private HashMap<IProject, PCL> fPrefListeners= new HashMap<IProject, PCL>();
 	private ArrayList<IndexerSetupParticipant> fSetupParticipants= new ArrayList<IndexerSetupParticipant>();
 	private HashSet<ICProject> fPostponedProjects= new HashSet<ICProject>();
+	private int fLastNotifiedState= IndexerStateEvent.STATE_IDLE;
     
 	public PDOMManager() {
 		fProjectDescriptionListener= new CProjectDescriptionListener(this);
+		fJobChangeListener= new JobChangeListener(this);
 	}
 	
 	public Job startup() {
@@ -207,7 +209,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		// order to avoid a race condition where its not noticed
 		// that new projects are being created
 		initializeDatabaseCache();
-
+		Job.getJobManager().addJobChangeListener(fJobChangeListener);
 		fIndexProviderManager.startup();
 		
 		final CoreModel model = CoreModel.getDefault();
@@ -234,15 +236,16 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(fCModelListener);
 		LanguageManager.getInstance().unregisterLanguageChangeListener(fLanguageChangeListener);
 		PDOMIndexerJob jobToCancel= null;
-		synchronized (fTaskQueueMutex) {
+		synchronized (fTaskQueue) {
 			fTaskQueue.clear();
 			jobToCancel= fIndexerJob;
 		}
 		
 		if (jobToCancel != null) {
-			assert !Thread.holdsLock(fTaskQueueMutex);
+			assert !Thread.holdsLock(fTaskQueue);
 			jobToCancel.cancelJobs(null, false);
 		}
+		Job.getJobManager().removeJobChangeListener(fJobChangeListener);
 	}
 
 	private void initializeDatabaseCache() {
@@ -589,7 +592,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		if (indexer != null) {
 			getReferencingProjects(indexer.getProject().getProject(), referencing);
 		}
-    	synchronized (fTaskQueueMutex) {
+    	synchronized (fTaskQueue) {
     		int i=0;
     		for (Iterator<IPDOMIndexerTask> it = fTaskQueue.iterator(); it.hasNext();) {
 				final IPDOMIndexerTask task= it.next();
@@ -608,7 +611,6 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 				fIndexerJob = new PDOMIndexerJob(this);
 				fIndexerJob.setRule(INDEXER_SCHEDULING_RULE);
 				fIndexerJob.schedule();
-	    		notifyState(IndexerStateEvent.STATE_BUSY);
 			}
 		}
     }
@@ -626,11 +628,10 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
 	IPDOMIndexerTask getNextTask() {
 		IPDOMIndexerTask result= null;
-    	synchronized (fTaskQueueMutex) {
+    	synchronized (fTaskQueue) {
     		if (fTaskQueue.isEmpty()) {
     			fCurrentTask= null;
         		fIndexerJob= null;
-        		notifyState(IndexerStateEvent.STATE_IDLE);
     		}
     		else {
     			if (fCurrentTask != null) {
@@ -647,14 +648,13 @@ public class PDOMManager implements IWritableIndexManager, IListener {
     }
     
     void cancelledJob(boolean byManager) {
-    	synchronized (fTaskQueueMutex) {
+    	synchronized (fTaskQueue) {
     		fCurrentTask= null;
     		if (!byManager) {
     			fTaskQueue.clear();
     		}
     		if (fTaskQueue.isEmpty()) {
         		fIndexerJob= null;
-        		notifyState(IndexerStateEvent.STATE_IDLE);
     		}
     		else {
     			fIndexerJob = new PDOMIndexerJob(this);
@@ -857,7 +857,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
 	private void cancelIndexerJobs(IPDOMIndexer indexer) {
 		PDOMIndexerJob jobToCancel= null;
-		synchronized (fTaskQueueMutex) {
+		synchronized (fTaskQueue) {
 			for (Iterator<IPDOMIndexerTask> iter = fTaskQueue.iterator(); iter.hasNext();) {
 				IPDOMIndexerTask task= iter.next();
 				if (task.getIndexer() == indexer) {
@@ -868,7 +868,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		}
 		
 		if (jobToCancel != null) {
-			assert !Thread.holdsLock(fTaskQueueMutex);
+			assert !Thread.holdsLock(fTaskQueue);
 			jobToCancel.cancelJobs(indexer, true);
 		}
 	}    
@@ -922,43 +922,43 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		fStateListeners.remove(listener);
 	}
 
-    private void notifyState(final int state) {
-    	if (state == IndexerStateEvent.STATE_IDLE) {
-    		synchronized(fTaskQueueMutex) {
-    			fTaskQueueMutex.notifyAll();
+    void fireStateChange(final int state) {
+    	synchronized(fStateListeners) {
+    		if (fLastNotifiedState == state) {
+    			return;
     		}
-    	}
-    	
-    	if (fStateListeners.isEmpty()) {
-    		return;
-    	}
-    	Job notify= new Job(Messages.PDOMManager_notifyJob_label) {
-    		@Override
-			protected IStatus run(IProgressMonitor monitor) {
-    			fIndexerStateEvent.setState(state);
-    			Object[] listeners= fStateListeners.getListeners();
-    			monitor.beginTask(Messages.PDOMManager_notifyTask_message, listeners.length);
-    			for (int i = 0; i < listeners.length; i++) {
-    				final IIndexerStateListener listener = (IIndexerStateListener) listeners[i];
-    				SafeRunner.run(new ISafeRunnable(){
-    					public void handleException(Throwable exception) {
-    						CCorePlugin.log(exception);
-    					}
-    					public void run() throws Exception {
-    						listener.indexChanged(fIndexerStateEvent);
-    					}
-    				});
-    				monitor.worked(1);
+    		fLastNotifiedState= state;
+    		if (fStateListeners.isEmpty()) {
+    			return;
+    		}
+    		Job notify= new Job(Messages.PDOMManager_notifyJob_label) {
+    			@Override
+    			protected IStatus run(IProgressMonitor monitor) {
+    				fIndexerStateEvent.setState(state);
+    				Object[] listeners= fStateListeners.getListeners();
+    				monitor.beginTask(Messages.PDOMManager_notifyTask_message, listeners.length);
+    				for (int i = 0; i < listeners.length; i++) {
+    					final IIndexerStateListener listener = (IIndexerStateListener) listeners[i];
+    					SafeRunner.run(new ISafeRunnable(){
+    						public void handleException(Throwable exception) {
+    							CCorePlugin.log(exception);
+    						}
+    						public void run() throws Exception {
+    							listener.indexChanged(fIndexerStateEvent);
+    						}
+    					});
+    					monitor.worked(1);
+    				}
+    				return Status.OK_STATUS;
     			}
-    			return Status.OK_STATUS;
-    		}
-    	};
-		notify.setRule(NOTIFICATION_SCHEDULING_RULE);
-    	notify.setSystem(true);
-    	notify.schedule();
+    		};
+    		notify.setRule(NOTIFICATION_SCHEDULING_RULE);
+    		notify.setSystem(true);
+    		notify.schedule();
+    	}
 	}
 
-	public void handleChange(PDOM pdom) {
+	public void handleChange(PDOM pdom, final PDOM.ChangeEvent e) {
 		if (fChangeListeners.isEmpty()) {
 			return;
 		}
@@ -973,7 +973,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			Job notify= new Job(Messages.PDOMManager_notifyJob_label) {
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
-					fIndexChangeEvent.setAffectedProject(finalProject);
+					fIndexChangeEvent.setAffectedProject(finalProject, e);
 					Object[] listeners= fChangeListeners.getListeners();
 					monitor.beginTask(Messages.PDOMManager_notifyTask_message, listeners.length);
 					for (int i = 0; i < listeners.length; i++) {
@@ -1032,11 +1032,11 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	}
 		
 	int getMonitorMessage(IProgressMonitor monitor, int currentTicks, int base) {
-		assert !Thread.holdsLock(fTaskQueueMutex);
+		assert !Thread.holdsLock(fTaskQueue);
 		
 		int sourceCount, sourceEstimate, headerCount, tickCount, tickEstimate;
 		String detail= null;
-		synchronized (fTaskQueueMutex) {
+		synchronized (fTaskQueue) {
 			// add historic data
 			sourceCount= sourceEstimate= fSourceCount;
 			headerCount= fHeaderCount;

@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * David Dykstal (IBM) - [197036] refactored switch configuration
  * David Dykstal (IBM) - [217556] remove service subsystem types
+ * David McKnight (IBM) - [220524] internalSwitchServiceSubSystemConfiguration -> internalSwitchSubSystemConfiguration
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.processes.servicesubsystem;
@@ -147,9 +148,9 @@ public class ProcessServiceSubSystem extends RemoteProcessSubSystemImpl implemen
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.SubSystem#internalSwitchServiceSubSystemConfiguration(org.eclipse.rse.core.subsystems.ISubSystemConfiguration)
+	 * @see org.eclipse.rse.core.subsystems.SubSystem#internalSwitchSubSystemConfiguration(org.eclipse.rse.core.subsystems.ISubSystemConfiguration)
 	 */
-	protected void internalSwitchServiceSubSystemConfiguration(ISubSystemConfiguration configuration) 
+	protected void internalSwitchSubSystemConfiguration(ISubSystemConfiguration configuration) 
 	{
 			IProcessServiceSubSystemConfiguration config = (IProcessServiceSubSystemConfiguration) configuration;
 			IHost host = getHost();

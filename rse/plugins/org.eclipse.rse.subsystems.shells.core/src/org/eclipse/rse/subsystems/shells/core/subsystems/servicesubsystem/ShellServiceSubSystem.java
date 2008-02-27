@@ -17,6 +17,7 @@
  * David McKnight   (IBM)        - [191599] Need to pass in shell encoding
  * David Dykstal (IBM) - [197036] refactored switch configuration
  * David Dykstal (IBM) - [217556] remove service subsystem types
+ * David McKnight (IBM) - [220524] internalSwitchServiceSubSystemConfiguration -> internalSwitchSubSystemConfiguration
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem;
@@ -214,9 +215,9 @@ public final class ShellServiceSubSystem extends RemoteCmdSubSystem implements I
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.SubSystem#internalSwitchServiceSubSystemConfiguration(org.eclipse.rse.core.subsystems.ISubSystemConfiguration)
+	 * @see org.eclipse.rse.core.subsystems.SubSystem#internalServiceSubSystemConfiguration(org.eclipse.rse.core.subsystems.ISubSystemConfiguration)
 	 */
-	protected void internalSwitchServiceSubSystemConfiguration(ISubSystemConfiguration newConfiguration) {
+	protected void internalSwitchSubSystemConfiguration(ISubSystemConfiguration newConfiguration) {
 		IShellServiceSubSystemConfiguration configuration = (IShellServiceSubSystemConfiguration) newConfiguration;
 		IHost host = getHost();
 		setShellService(configuration.getShellService(host));

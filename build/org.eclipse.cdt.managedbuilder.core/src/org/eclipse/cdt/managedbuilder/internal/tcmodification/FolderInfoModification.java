@@ -316,10 +316,12 @@ public class FolderInfoModification extends ToolListModification implements IFol
 		foInfoPaths.add(path);
 		
 		Map toolPathsMap = tcApplicabilityPaths.fToolPathMap;
-		for(Iterator iter = toolSet.iterator(); iter.hasNext(); ){
-			Set set = new HashSet();
-			toolPathsMap.put(iter.next(), set);
-			set.add(path);
+		if(toolSet != null){
+			for(Iterator iter = toolSet.iterator(); iter.hasNext(); ){
+				Set set = new HashSet();
+				toolPathsMap.put(iter.next(), set);
+				set.add(path);
+			}
 		}
 		
 		calculateChildPaths(pathMap, path, curTc, foInfoPaths, toolPathsMap, fileInfoPaths);

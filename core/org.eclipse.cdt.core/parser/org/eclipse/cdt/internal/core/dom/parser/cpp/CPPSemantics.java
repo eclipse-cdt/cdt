@@ -1022,7 +1022,7 @@ public class CPPSemantics {
 		IIndexFileSet fileSet= IIndexFileSet.EMPTY;
 		boolean isIndexBased= false;
 		if (data.tu != null) {
-			final IIndexFileSet fs= data.tu.getFileSet();
+			final IIndexFileSet fs= data.tu.getIndexFileSet();
 			if (fs != null) {
 				fileSet= fs;
 				isIndexBased= true;

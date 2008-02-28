@@ -11,33 +11,20 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import java.util.List;
-
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
-import org.eclipse.cdt.core.dom.IName;
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
-import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
-import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -57,73 +44,34 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
-import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.index.IIndexFile;
-import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.GCCBuiltinSymbolProvider.CPPBuiltinParameter;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
-import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
-import org.eclipse.cdt.internal.core.parser.scanner.ISkippedIndexedFilesListener;
 import org.eclipse.cdt.internal.core.parser.scanner.IncludeFileContent;
-import org.eclipse.core.runtime.CoreException;
 
 /**
- * @author jcamelon
+ * C++-specific implementation of a translation-unit.
  */
-public class CPPASTTranslationUnit extends CPPASTNode implements ICPPASTTranslationUnit, IASTAmbiguityParent, ISkippedIndexedFilesListener {
-    
-    private static final IASTPreprocessorStatement[] EMPTY_PREPROCESSOR_STATEMENT_ARRAY = new IASTPreprocessorStatement[0];
-    private static final IASTPreprocessorMacroDefinition[] EMPTY_PREPROCESSOR_MACRODEF_ARRAY = new IASTPreprocessorMacroDefinition[0];
-    private static final IASTPreprocessorIncludeStatement[] EMPTY_PREPROCESSOR_INCLUSION_ARRAY = new IASTPreprocessorIncludeStatement[0];
-    private static final String EMPTY_STRING = ""; //$NON-NLS-1$
-    private static final IASTProblem[] EMPTY_PROBLEM_ARRAY = new IASTProblem[0];
-    private static final IASTName[] EMPTY_NAME_ARRAY = new IASTName[0];
-
-    private IASTDeclaration[] decls = new IASTDeclaration[32];
-    private ICPPNamespace binding = null;
-    private CPPNamespaceScope scope = null;
-    private ILocationResolver resolver;
-    private IIndex index;
-    private IIndexFileSet fIndexFileSet;
-	private boolean fIsHeader= true;
+public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPASTTranslationUnit, IASTAmbiguityParent {
+    private CPPNamespaceScope fScope = null;
+    private ICPPNamespace fBinding = null;
 	private CPPScopeMapper fScopeMapper= new CPPScopeMapper(this);
 	
 	public CPPASTTranslationUnit() {
 	}
 	
-    @Override
-	public IASTTranslationUnit getTranslationUnit() {
-    	return this;
-    }
-    
-    public void addDeclaration(IASTDeclaration d) {
-        decls = (IASTDeclaration [])ArrayUtil.append( IASTDeclaration.class, decls, d );
-        if (d != null) {
-			d.setParent(this);
-			d.setPropertyInParent(OWNED_DECLARATION);
-		}
-    }
-
-
-    public IASTDeclaration[] getDeclarations() {
-        if (decls == null)
-            return IASTDeclaration.EMPTY_DECLARATION_ARRAY;
-        return (IASTDeclaration[]) ArrayUtil.trim( IASTDeclaration.class, decls );
-    }
-
     public CPPNamespaceScope getScope() {
-        if (scope == null) {
-            scope = new CPPNamespaceScope(this);
-			addBuiltinOperators(scope);
+        if (fScope == null) {
+            fScope = new CPPNamespaceScope(this);
+			addBuiltinOperators(fScope);
         }
-		
-        return scope;
+        return fScope;
     }
 	
 	private void addBuiltinOperators(IScope theScope) {
@@ -173,37 +121,17 @@ public class CPPASTTranslationUnit extends CPPASTNode implements ICPPASTTranslat
         } catch (DOMException de) {}
 	}
 	
-    public IASTName[] getDeclarationsInAST(IBinding b) {
-        if( b instanceof IMacroBinding )
-        {
-            if( resolver == null )
-                return EMPTY_NAME_ARRAY;
-            return resolver.getDeclarations( (IMacroBinding)b );
+    public IASTName[] getDeclarationsInAST(IBinding binding) {
+        if (binding instanceof IMacroBinding) {
+        	return getMacroDefinitionsInAST((IMacroBinding) binding);
         }
-        return CPPVisitor.getDeclarations( this, b );
-    }
-
-    public IName[] getDeclarations(IBinding b) {
-        IName[] names = getDeclarationsInAST(b);
-        if (names.length == 0 && index != null) {
-        	try {
-        		names = index.findDeclarations(b);
-        	} catch (CoreException e) {
-        		CCorePlugin.log(e);
-        		return names;
-        	}
-        }
-        
-        return names;
+        return CPPVisitor.getDeclarations(this, binding);
     }
 
     public IASTName[] getDefinitionsInAST(IBinding binding) {
-    	if (binding instanceof IMacroBinding) {
-    		if( resolver == null )
-    			return EMPTY_NAME_ARRAY;
-    		return resolver.getDeclarations((IMacroBinding)binding);
+        if (binding instanceof IMacroBinding) {
+        	return getMacroDefinitionsInAST((IMacroBinding) binding);
         }
-        
     	IASTName[] names = CPPVisitor.getDeclarations(this, binding);
         for (int i = 0; i < names.length; i++) {
             if (!names[i].isDefinition())
@@ -213,29 +141,11 @@ public class CPPASTTranslationUnit extends CPPASTNode implements ICPPASTTranslat
         return (IASTName[])ArrayUtil.removeNulls(IASTName.class, names);
     }
 
-    public IName[] getDefinitions(IBinding binding) {
-    	IName[] names = getDefinitionsInAST(binding);
-        if (names.length == 0 && index != null) {
-        	try {
-        		names = index.findDefinitions(binding);
-        	} catch (CoreException e) {
-        		CCorePlugin.log(e);
-        		return names;
-        	}
+    public IASTName[] getReferences(IBinding binding) {
+        if (binding instanceof IMacroBinding) {
+            return getMacroReferencesInAST((IMacroBinding) binding);
         }
-        
-        return names;
-    }
-
-
-    public IASTName[] getReferences(IBinding b) {
-        if( b instanceof IMacroBinding )
-        {
-            if( resolver == null )
-        		  return EMPTY_NAME_ARRAY;
-            return resolver.getReferences( (IMacroBinding)b );
-        }
-        return CPPVisitor.getReferences(this, b);
+        return CPPVisitor.getReferences(this, binding);
     }
     
     private class CPPFindNodeForOffsetAction extends CPPASTVisitor {
@@ -383,12 +293,12 @@ public class CPPASTTranslationUnit extends CPPASTNode implements ICPPASTTranslat
 
     public IASTNode selectNodeForLocation(String path, int realOffset, int realLength) {
     	IASTNode result= null;
-		if (resolver != null) {
-	    	int start= resolver.getSequenceNumberForFileOffset(path, realOffset);
+		if (fLocationResolver != null) {
+	    	int start= fLocationResolver.getSequenceNumberForFileOffset(path, realOffset);
 	    	if (start >= 0) {
 	    		int length= realLength < 1 ? 0 : 
-	    			resolver.getSequenceNumberForFileOffset(path, realOffset+realLength-1) + 1 - start;
-	    		result= resolver.findSurroundingPreprocessorNode(start, length);
+	    			fLocationResolver.getSequenceNumberForFileOffset(path, realOffset+realLength-1) + 1 - start;
+	    		result= fLocationResolver.findSurroundingPreprocessorNode(start, length);
 	    		if (result == null) {
 	    			CPPFindNodeForOffsetAction nodeFinder = new CPPFindNodeForOffsetAction(start, length);
 	    			accept(nodeFinder);
@@ -399,117 +309,20 @@ public class CPPASTTranslationUnit extends CPPASTNode implements ICPPASTTranslat
 		return result;
     }
 
-
-    public IASTPreprocessorMacroDefinition[] getMacroDefinitions() {
-       if( resolver == null ) return EMPTY_PREPROCESSOR_MACRODEF_ARRAY;
-       IASTPreprocessorMacroDefinition [] result = resolver.getMacroDefinitions();
-       return result;
-    }
-
-    public IASTPreprocessorMacroDefinition[] getBuiltinMacroDefinitions() {
-       if( resolver == null ) return EMPTY_PREPROCESSOR_MACRODEF_ARRAY;
-       IASTPreprocessorMacroDefinition [] result = resolver.getBuiltinMacroDefinitions();
-       return result;
-    }
-
-    public IASTPreprocessorIncludeStatement[] getIncludeDirectives() {
-       if( resolver == null ) return EMPTY_PREPROCESSOR_INCLUSION_ARRAY;
-       IASTPreprocessorIncludeStatement [] result = resolver.getIncludeDirectives();
-       return result;
-    }
-
-    public IASTPreprocessorStatement[] getAllPreprocessorStatements() {
-        if (resolver == null)
-            return EMPTY_PREPROCESSOR_STATEMENT_ARRAY;
-        IASTPreprocessorStatement [] result = resolver.getAllPreprocessorStatements();
-        return result;
-    }
-
-    public void setLocationResolver(ILocationResolver resolver) {
-        this.resolver = resolver;
-        resolver.setRootNode( this );
-    }
-
     public IBinding resolveBinding() {
-        if (binding == null)
-            binding = new CPPNamespace(this);
-        return binding;
+        if (fBinding == null)
+            fBinding = new CPPNamespace(this);
+        return fBinding;
     }
-
-    public IASTProblem[] getPreprocessorProblems() {
-        if (resolver == null)
-            return EMPTY_PROBLEM_ARRAY;
-        IASTProblem[] result = resolver.getScannerProblems();
-        for (int i = 0; i < result.length; ++i) {
-            IASTProblem p = result[i];
-            p.setParent(this);
-            p.setPropertyInParent(IASTTranslationUnit.SCANNER_PROBLEM);
-        }
-        return result;
-    }
-
-	public int getPreprocessorProblemsCount() {
-		return resolver == null ? 0 : resolver.getScannerProblemsCount();
-	}
-
-	public String getFilePath() {
-		if (resolver == null)
-			return EMPTY_STRING;
-		return new String(resolver.getTranslationUnitPath());
-	}
 	
-    @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitTranslationUnit){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
-		}
-        IASTDeclaration [] ds = getDeclarations();
-        for( int i = 0; i < ds.length; i++ ){
-            if( !ds[i].accept( action ) ) return false;
-        }
-        
-        if( action.shouldVisitTranslationUnit){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
-		}
-        return true;
-    }
-    
-    public IASTFileLocation flattenLocationsToFile(IASTNodeLocation[] nodeLocations) {
-        if( resolver == null )
-            return null;
-        return resolver.flattenLocations( nodeLocations );
-    }
-
-    public IDependencyTree getDependencyTree() {
-        if( resolver == null )
-            return null;
-        return resolver.getDependencyTree();
-    }
-
-	public String getContainingFilename(int offset) {
-		if( resolver == null )
-			return EMPTY_STRING;
-		return resolver.getContainingFilePath( offset );
-	}
-    
     public void replace(IASTNode child, IASTNode other) {
-        if( decls == null ) return;
-        for( int i = 0; i < decls.length; ++i )
-        {
-           if( decls[i] == null ) break;
-           if( decls[i] == child )
-           {
-               other.setParent( child.getParent() );
-               other.setPropertyInParent( child.getPropertyInParent() );
-               decls[i] = (IASTDeclaration) other;
+        if (fDeclarations == null) return;
+        for(int i=0; i < fDeclarations.length; ++i) {
+           if (fDeclarations[i] == null) break;
+           if (fDeclarations[i] == child) {
+               other.setParent(child.getParent());
+               other.setPropertyInParent(child.getPropertyInParent());
+               fDeclarations[i] = (IASTDeclaration) other;
            }
         }
     }
@@ -517,54 +330,19 @@ public class CPPASTTranslationUnit extends CPPASTNode implements ICPPASTTranslat
     public ParserLanguage getParserLanguage() {
         return ParserLanguage.CPP;
     }
-    
-    public IIndex getIndex() {
-    	return index;
-    }
-    
-    public void setIndex(IIndex pdom) {
-    	this.index = pdom;
-    	if (index != null) {
-    		fIndexFileSet= index.createFileSet();
-    	}
-    }
 
-	public IASTComment[] getComments() {
-		if (resolver != null) {
-			return resolver.getComments();
-		}
-		return new IASTComment[0];
-	}
-
-	@SuppressWarnings("unchecked")
-	public Object getAdapter(Class adapter) {
-		if (adapter.isAssignableFrom(resolver.getClass())) {
-			return resolver;
-		}
-		if (adapter.isAssignableFrom(IIndexFileSet.class)) {
-			return fIndexFileSet;
-		}
-		return null;
-	}
-
-	public boolean isHeaderUnit() {
-		return fIsHeader;
-	}
-
-	public void setIsHeaderUnit(boolean headerUnit) {
-		fIsHeader= headerUnit;
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getLinkage()
+	 */
+	public ILinkage getLinkage() {
+		return Linkage.CPP_LINKAGE;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.scanner.ISkippedIndexedFilesListener#skippedFile(org.eclipse.cdt.internal.core.parser.scanner.IncludeFileContent)
 	 */
 	public void skippedFile(int offset, IncludeFileContent fileContent) {
-		if (fIndexFileSet != null) {
-			final List<IIndexFile> files= fileContent.getFilesIncluded();
-			for (IIndexFile indexFile : files) {
-				fIndexFileSet.add(indexFile);
-			}
-		}
+		super.skippedFile(offset, fileContent);
 		fScopeMapper.registerAdditionalDirectives(offset, fileContent.getUsingDirectives());
 	}	
 	
@@ -578,16 +356,5 @@ public class CPPASTTranslationUnit extends CPPASTNode implements ICPPASTTranslat
 	 */
 	void handleAdditionalDirectives(ICPPNamespaceScope scope) {
 		fScopeMapper.handleAdditionalDirectives(scope);
-	}
-
-	IIndexFileSet getFileSet() {
-		return fIndexFileSet;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getLinkage()
-	 */
-	public ILinkage getLinkage() {
-		return Linkage.CPP_LINKAGE;
 	}
 }

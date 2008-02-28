@@ -1,0 +1,19 @@
+/*******************************************************************************
+ * Copyright (c) 2008 Intel Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Intel Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.cdt.managedbuilder.gnu.ui;
+
+import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
+
+public class GprofAppCalculator extends ProfAppCalculator implements IOptionApplicability {
+	protected String getOptionIdPattern() {
+		return ".compiler.option.debugging.gprof";
+	}
+}

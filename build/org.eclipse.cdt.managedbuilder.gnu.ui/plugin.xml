@@ -204,6 +204,22 @@
 			  		value="true"/>
 			  </enablement>
 		 </outputType>
+         <option
+               applicabilityCalculator="org.eclipse.cdt.managedbuilder.gnu.ui.GprofAppCalculator"
+               command="-pg"
+               defaultValue="false"
+               id="gnu.c.link.option.debugging.gprof"
+               name="%Option.Posix.Debug.gprof"
+               valueType="boolean">
+         </option>
+         <option
+               applicabilityCalculator="org.eclipse.cdt.managedbuilder.gnu.ui.ProfAppCalculator"
+               command="-p"
+               defaultValue="false"
+               id="gnu.c.link.option.debugging.prof"
+               name="%Option.Posix.Debug.prof"
+               valueType="boolean">
+         </option>
       </tool>
       <tool
             natureFilter="ccnature"
@@ -389,6 +405,22 @@
 			  		value="true"/>
 			  </enablement>
          </outputType>
+         <option
+               applicabilityCalculator="org.eclipse.cdt.managedbuilder.gnu.ui.GprofAppCalculator"
+               command="-pg"
+               defaultValue="false"
+               id="gnu.cpp.link.option.debugging.gprof"
+               name="%Option.Posix.Debug.gprof"
+               valueType="boolean">
+         </option>
+         <option
+               applicabilityCalculator="org.eclipse.cdt.managedbuilder.gnu.ui.ProfAppCalculator"
+               command="-p"
+               defaultValue="false"
+               id="gnu.cpp.link.option.debugging.prof"
+               name="%Option.Posix.Debug.prof"
+               valueType="boolean">
+         </option>
       </tool>
       <tool
             natureFilter="both"

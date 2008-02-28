@@ -457,10 +457,13 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			final IASTPointerOperator[] pointerOperators= node.getPointerOperators();
 			formatPointers(pointerOperators);
 			if (node instanceof IASTStandardFunctionDeclarator) {
-				// preserve newline between decl-specifier and declarator
-				// TLETODO need alignment for function definition
-				if (scribe.preserveNewLine()) {
-					scribe.space();
+				if (preferences.insert_new_line_before_identifier_in_function_declaration) {
+					scribe.startNewLine();
+				} else {
+					// preserve newline if not explicitely requested
+					if (scribe.preserveNewLine()) {
+						scribe.space();
+					}
 				}
 			}
 			IASTName name= node.getName();
@@ -1181,12 +1184,14 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			for (int i = 0; i < arrayModifiers.length; i++) {
 				IASTArrayModifier arrayModifier = arrayModifiers[i];
 				scribe.printNextToken(Token.tLBRACKET, preferences.insert_space_before_opening_bracket);
-				if (preferences.insert_space_after_opening_bracket ) {
-					scribe.space();
+				boolean emptyBrackets= arrayModifier.getConstantExpression() == null
+						&& !(arrayModifier instanceof ICASTArrayModifier);
+				if (!emptyBrackets) {
+					if (preferences.insert_space_after_opening_bracket) {
+						scribe.space();
+					}
 				}
-				boolean emptyBrackets= arrayModifier.getConstantExpression() == null;
 				if (arrayModifier instanceof ICASTArrayModifier) {
-					emptyBrackets= false;
 					final ICASTArrayModifier cArrayModifier= (ICASTArrayModifier)arrayModifier;
 					if (scribe.printModifiers()) {
 						scribe.space();
@@ -1198,13 +1203,14 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 						scribe.space();
 					}
 				}
-				boolean forceSpace= emptyBrackets && preferences.insert_space_between_empty_brackets;
 				try {
 					arrayModifier.accept(this);
 				} catch (ASTProblemException e) {
 					scribe.skipToToken(Token.tRBRACKET);
 				}
-				scribe.printNextToken(Token.tRBRACKET, preferences.insert_space_before_closing_bracket || forceSpace);
+				boolean insertSpace= emptyBrackets ? preferences.insert_space_between_empty_brackets
+						: preferences.insert_space_before_closing_bracket;
+				scribe.printNextToken(Token.tRBRACKET, insertSpace);
 			}
 		}
 		return PROCESS_SKIP;
@@ -1243,6 +1249,8 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		if (preferences.insert_space_after_opening_angle_bracket_in_template_parameters) {
 			scribe.space();
 		}
+		
+		// template parameters
 		final ICPPASTTemplateParameter[] templateParameters= node.getTemplateParameters();
 		if (templateParameters.length > 0) {
 			final ListAlignment align= new ListAlignment(Alignment.M_COMPACT_SPLIT);
@@ -1254,11 +1262,27 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		if (preferences.insert_space_after_closing_angle_bracket_in_template_parameters) {
 			scribe.space();
 		}
+
+		// declaration
 		final IASTDeclaration declaration= node.getDeclaration();
-		// preserve newline if any
-		// TLETODO need alignment for template declaration
-		scribe.preserveNewLine();
+		if (preferences.insert_new_line_after_template_declaration) {
+			scribe.startNewLine();
+			if (preferences.indent_declaration_compare_to_template_header) {
+				scribe.indent();
+			}
+		} else {
+			// preserve newline if not explicitely requested
+			scribe.preserveNewLine();
+		}
+
 		declaration.accept(this);
+
+		if (preferences.insert_new_line_after_template_declaration) {
+			if (preferences.indent_declaration_compare_to_template_header) {
+				scribe.unIndent();
+			}
+		}
+		
 		return PROCESS_SKIP;
 	}
 
@@ -1424,6 +1448,13 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			}
 			scribe.startNewLine();
 		}
+		if (preferences.indent_body_declarations_compare_to_access_specifier) {
+			scribe.indent();
+		}
+		scribe.printComment();
+		if (preferences.indent_body_declarations_compare_to_access_specifier) {
+			scribe.unIndent();
+		}
 		if (preferences.indent_access_specifier_compare_to_type_header) {
 			scribe.unIndent();
 		}
@@ -1435,9 +1466,6 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	}
 
 	private int visit(ICPPASTVisiblityLabel node) {
-		if (!preferences.indent_access_specifier_compare_to_type_header) {
-			scribe.unIndent();
-		}
 		if (node.getNodeLocations()[0] instanceof IASTMacroExpansion) {
 			skipNode(node);
 		} else {
@@ -1455,10 +1483,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			if (peekNextToken() != Token.tCOLON) {
 				scribe.skipToToken(Token.tCOLON);
 			}
-			scribe.printNextToken(Token.tCOLON, false/*preferences.insert_space_before_colon_in_visibility_label */);
-		}
-		if (!preferences.indent_access_specifier_compare_to_type_header) {
-			scribe.indent();
+			scribe.printNextToken(Token.tCOLON, false/*preferences.insert_space_before_colon_in_access specifier*/);
 		}
 		return PROCESS_SKIP;
 	}
@@ -1655,6 +1680,9 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	}
 
 	private int visit(ICPPASTCatchHandler node) {
+		if (preferences.insert_new_line_before_catch_in_try_statement) {
+			scribe.startNewLine();
+		}
 		scribe.printNextToken(Token.t_catch, true);
 		scribe.printNextToken(Token.tLPAREN, preferences.insert_space_before_opening_paren_in_catch);
 		if (preferences.insert_space_after_opening_paren_in_catch) {
@@ -2184,10 +2212,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		scribe.printNextToken(Token.t_delete);
 		if (node.isVectored()) {
 			scribe.printNextToken(Token.tLBRACKET, preferences.insert_space_before_opening_bracket);
-			if (preferences.insert_space_after_opening_bracket || preferences.insert_space_between_empty_brackets) {
-				scribe.space();
-			}
-			scribe.printNextToken(Token.tRBRACKET, preferences.insert_space_before_closing_bracket);
+			scribe.printNextToken(Token.tRBRACKET, preferences.insert_space_between_empty_brackets);
 		}
 		scribe.space();
 		node.getOperand().accept(this);

@@ -531,6 +531,17 @@ public class DefaultCodeFormatterConstants {
 	public static final String FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_ACCESS_SPECIFIER = CCorePlugin.PLUGIN_ID + ".formatter.indent_body_declarations_compare_to_access_specifier"; //$NON-NLS-1$
 	/**
 	 * <pre>
+	 * FORMATTER / Option to indent template declaration compare to template header
+	 *     - option id:         "org.eclipse.cdt.core.formatter.indent_declaration_compare_to_template_header"
+	 *     - possible values:   { TRUE, FALSE }
+	 *     - default:           FALSE
+	 * </pre>
+	 * @see #TRUE
+	 * @see #FALSE
+	 */
+	public static final String FORMATTER_INDENT_DECLARATION_COMPARE_TO_TEMPLATE_HEADER = CCorePlugin.PLUGIN_ID + ".formatter.indent_declaration_compare_to_template_header"; //$NON-NLS-1$
+	/**
+	 * <pre>
 	 * FORMATTER / Option to indent body declarations compare to its enclosing namespace header
 	 *     - option id:         "org.eclipse.cdt.core.formatter.indent_body_declarations_compare_to_namespace_header"
 	 *     - possible values:   { TRUE, FALSE }
@@ -640,7 +651,17 @@ public class DefaultCodeFormatterConstants {
 	 * @see CCorePlugin#DO_NOT_INSERT
 	 */
 	public static final String FORMATTER_INSERT_NEW_LINE_AFTER_OPENING_BRACE_IN_INITIALIZER_LIST = CCorePlugin.PLUGIN_ID + ".formatter.insert_new_line_after_opening_brace_in_array_initializer";//$NON-NLS-1$
-
+	/**
+	 * <pre>
+	 * FORMATTER / Option to insert a new line after template declaration
+	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_new_line_after_template_declaration"
+	 *     - possible values:   { INSERT, DO_NOT_INSERT }
+	 *     - default:           INSERT
+	 * </pre>
+	 * @see CCorePlugin#INSERT
+	 * @see CCorePlugin#DO_NOT_INSERT
+	 */
+	public static final String FORMATTER_INSERT_NEW_LINE_AFTER_TEMPLATE_DECLARATION = CCorePlugin.PLUGIN_ID + ".formatter.insert_new_line_after_template_declaration";//$NON-NLS-1$
 	/**
 	 * <pre>
 	 * FORMATTER / Option to insert a new line at the end of the current file if missing
@@ -652,17 +673,17 @@ public class DefaultCodeFormatterConstants {
 	 * @see CCorePlugin#DO_NOT_INSERT
 	 */
 	public static final String FORMATTER_INSERT_NEW_LINE_AT_END_OF_FILE_IF_MISSING = CCorePlugin.PLUGIN_ID + ".formatter.insert_new_line_at_end_of_file_if_missing";//$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to insert a new line before the catch keyword in try statement
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_new_line_before_catch_in_try_statement"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           DO_NOT_INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_NEW_LINE_BEFORE_CATCH_IN_TRY_STATEMENT = CCorePlugin.PLUGIN_ID + ".formatter.insert_new_line_before_catch_in_try_statement"; //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option to insert a new line before the catch keyword in try statement
+	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_new_line_before_catch_in_try_statement"
+	 *     - possible values:   { INSERT, DO_NOT_INSERT }
+	 *     - default:           DO_NOT_INSERT
+	 * </pre>
+	 * @see CCorePlugin#INSERT
+	 * @see CCorePlugin#DO_NOT_INSERT
+	 */
+	public static final String FORMATTER_INSERT_NEW_LINE_BEFORE_CATCH_IN_TRY_STATEMENT = CCorePlugin.PLUGIN_ID + ".formatter.insert_new_line_before_catch_in_try_statement"; //$NON-NLS-1$
 	/**
 	 * <pre>
 	 * FORMATTER / Option to insert a new line before the closing brace in an initializer list
@@ -685,17 +706,6 @@ public class DefaultCodeFormatterConstants {
 	 * @see CCorePlugin#DO_NOT_INSERT
 	 */
 	public static final String FORMATTER_INSERT_NEW_LINE_BEFORE_ELSE_IN_IF_STATEMENT = CCorePlugin.PLUGIN_ID + ".formatter.insert_new_line_before_else_in_if_statement"; //$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to insert a new line before the finally keyword in try statement
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_new_line_before_finally_in_try_statement"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           DO_NOT_INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_NEW_LINE_BEFORE_FINALLY_IN_TRY_STATEMENT = CCorePlugin.PLUGIN_ID + ".formatter.insert_new_line_before_finally_in_try_statement"; //$NON-NLS-1$
 	/**
 	 * <pre>
 	 * FORMATTER / Option to insert a new line before while in do statement
@@ -707,6 +717,17 @@ public class DefaultCodeFormatterConstants {
 	 * @see CCorePlugin#DO_NOT_INSERT
 	 */
 	public static final String FORMATTER_INSERT_NEW_LINE_BEFORE_WHILE_IN_DO_STATEMENT = CCorePlugin.PLUGIN_ID + ".formatter.insert_new_line_before_while_in_do_statement"; //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option to insert a new line before the identifier in a function declaration
+	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_new_line_before_identifier_in_function_declaration"
+	 *     - possible values:   { INSERT, DO_NOT_INSERT }
+	 *     - default:           INSERT
+	 * </pre>
+	 * @see CCorePlugin#INSERT
+	 * @see CCorePlugin#DO_NOT_INSERT
+	 */
+	public static final String FORMATTER_INSERT_NEW_LINE_BEFORE_IDENTIFIER_IN_FUNCTION_DECLARATION = CCorePlugin.PLUGIN_ID + ".formatter.insert_new_line_before_identifier_in_function_declaration"; //$NON-NLS-1$
 	/**
 	 * <pre>
 	 * FORMATTER / Option to insert a new line in an empty block

@@ -531,4 +531,34 @@ public class CodeFormatterTest extends BaseUITestCase {
 				Integer.toString(Alignment.M_ONE_PER_LINE_SPLIT | Alignment.M_FORCE | Alignment.M_INDENT_BY_ONE));
 		assertFormatterResult();
 	}
+
+	//int foo(){try{}catch(...){}}
+	//float* bar();
+	//template<typename _CharT, typename _Traits>class basic_ios : public ios_base{public:
+	//  // Types:
+	//};
+	
+	//int
+	//foo()
+	//{
+	//  try
+	//    {
+	//    }
+	//  catch (...)
+	//    {
+	//    }
+	//}
+	//float*
+	//bar();
+	//template<typename _CharT, typename _Traits>
+	//  class basic_ios : public ios_base
+	//  {
+	//  public:
+	//    // Types:
+	//  };
+	public void testGNUCodingStyleConformance_Bug192764() throws Exception {
+		fOptions= DefaultCodeFormatterOptions.getGNUSettings().getMap();
+		assertFormatterResult();
+	}
+
 }

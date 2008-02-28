@@ -1,6 +1,6 @@
 #!/bin/sh
 #*******************************************************************************
-# Copyright (c) 2006, 2007 Wind River Systems, Inc.
+# Copyright (c) 2006, 2008 Wind River Systems, Inc.
 # All rights reserved. This program and the accompanying materials 
 # are made available under the terms of the Eclipse Public License v1.0 
 # which accompanies this distribution, and is available at 
@@ -41,32 +41,28 @@ case ${uname_s}${uname_m} in
 esac
 
 # prepare the base Eclipse installation in folder "eclipse"
-if [ ! -f eclipse/plugins/org.eclipse.swt_3.3.0.v3346.jar ]; then
+if [ ! -f eclipse/plugins/org.eclipse.swt_3.4.0.v3428a.jar ]; then
   curdir2=`pwd`
   if [ ! -d eclipse -o -h eclipse ]; then
-    if [ -d eclipse-3.3-${ep_arch} ]; then
-      rm -rf eclipse-3.3-${ep_arch}
+    if [ -d eclipse-3.4M5-${ep_arch} ]; then
+      rm -rf eclipse-3.4M5-${ep_arch}
     fi
-    mkdir eclipse-3.3-${ep_arch}
-    cd eclipse-3.3-${ep_arch}
+    mkdir eclipse-3.4M5-${ep_arch}
+    cd eclipse-3.4M5-${ep_arch}
   else
     rm -rf eclipse
   fi
-  ## Eclipse Platform 3.3
-  #wget "http://download.eclipse.org/eclipse/downloads/drops/R-3.3-200706251500/eclipse-platform-3.3-${ep_arch}.tar.gz"
-  #tar xfvz eclipse-platform-3.3-${ep_arch}.tar.gz
-  #rm eclipse-platform-3.3-${ep_arch}.tar.gz
-  # Eclipse SDK 3.3: Need the SDK so we can link into docs
+  # Eclipse SDK 3.4M5: Need the SDK so we can link into docs
   echo "Getting Eclipse SDK..."
-  wget "http://download.eclipse.org/eclipse/downloads/drops/R-3.3-200706251500/eclipse-SDK-3.3-${ep_arch}.tar.gz"
-  tar xfvz eclipse-SDK-3.3-${ep_arch}.tar.gz
-  rm eclipse-SDK-3.3-${ep_arch}.tar.gz
+  wget "http://download.eclipse.org/eclipse/downloads/drops/S-3.4M5-200802071530/eclipse-SDK-3.4M5-${ep_arch}.tar.gz"
+  tar xfvz eclipse-SDK-3.4M5-${ep_arch}.tar.gz
+  rm eclipse-SDK-3.4M5-${ep_arch}.tar.gz
   cd "${curdir2}"
   if [ ! -d eclipse -o -h eclipse ]; then
     if [ -e eclipse ]; then 
       rm eclipse
     fi
-    ln -s eclipse-3.3-${ep_arch}/eclipse eclipse
+    ln -s eclipse-3.4M5-${ep_arch}/eclipse eclipse
   fi
 fi
 if [ ! -f eclipse/startup.jar ]; then
@@ -84,44 +80,50 @@ if [ ! -f eclipse/startup.jar ]; then
   fi
   cd ${curdir2}
 fi
-if [ ! -f eclipse/plugins/org.eclipse.cdt.core_4.0.0.200706261300.jar ]; then
-  # CDT 4.0.0 Runtime
+if [ ! -f eclipse/plugins/org.eclipse.cdt.core_5.0.0.200802111122.jar ]; then
+  # CDT 5.0M5 Runtime
   echo "Getting CDT Runtime..."
-  wget "http://download.eclipse.org/tools/cdt/releases/europa/dist/cdt-master-4.0.0.zip"
+  wget "http://download.eclipse.org/tools/cdt/builds/5.0.0/I.I200802111122/cdt-master-5.0.0-I200802111122.zip"
   #java \
   #  -classpath eclipse/plugins/org.eclipse.help.base_3.3.0.v20070606.jar \
   CDTTMP=`pwd`/tmp.$$
   mkdir ${CDTTMP}
   cd ${CDTTMP}
-  unzip ../cdt-master-4.0.0.zip
+  unzip ../cdt-master-5.0.0-I200802111122.zip
   cd ..
   java -jar eclipse/plugins/org.eclipse.equinox.launcher_1.0.0.v20070606.jar \
     -application org.eclipse.update.core.standaloneUpdate \
     -command install \ 
     -from file://${CDTTMP} \
     -featureId org.eclipse.cdt \
-    -version 4.0.0.200706261300
+    -version 5.0.0.200802111122
   rm -rf ${CDTTMP}
-  rm cdt-master-4.0.0.zip
+  rm cdt-master-5.0.0-I200802111122.zip
 fi
-if [ ! -f eclipse/plugins/org.eclipse.emf.doc_2.3.0.v200706262000/doc.zip ]; then
-  # Need EMF 2.3.0 SDK for Service Discovery ISV Docs Backlinks
+if [ ! -f eclipse/plugins/org.eclipse.emf.doc_2.4.0.v200802090050.jar ]; then
+  # Need EMF 2.4 SDK for Service Discovery ISV Docs Backlinks
   echo "Getting EMF SDK..."
-  wget "http://download.eclipse.org/modeling/emf/emf/downloads/drops/2.3.0/R200706262000/emf-sdo-xsd-SDK-2.3.0.zip"
-  unzip -o emf-sdo-xsd-SDK-2.3.0.zip
-  rm emf-sdo-xsd-SDK-2.3.0.zip 
+  wget "http://download.eclipse.org/modeling/emf/emf/downloads/drops/2.4.0/S200802090050/emf-sdo-xsd-SDK-2.4.0M5.zip"
+  unzip -o emf-sdo-xsd-SDK-2.4.0M5.zip
+  rm emf-sdo-xsd-SDK-2.4.0M5.zip 
 fi
-if [ ! -f eclipse/plugins/org.junit_3.8.2.v200706111738/junit.jar ]; then
+if [ ! -f eclipse/plugins/org.junit_3.8.2.v200711021030/junit.jar ]; then
   # Eclipse Test Framework
   echo "Getting Eclipse Test Framework..."
-  wget "http://download.eclipse.org/eclipse/downloads/drops/R-3.3-200706251500/eclipse-test-framework-3.3.zip"
-  unzip -o eclipse-test-framework-3.3.zip
-  rm eclipse-test-framework-3.3.zip
+  wget "http://download.eclipse.org/eclipse/downloads/drops/S-3.4M5-200802071530/eclipse-test-framework-3.4M5.zip"
+  unzip -o eclipse-test-framework-3.4M5.zip
+  rm eclipse-test-framework-3.4M5.zip
+fi
+if [ ! -f eclipse/plugins/gnu.io.rxtx_2.1.7.4_v20071016.jar ]; then
+  echo "Getting RXTX..."
+  wget "http://rxtx.qbang.org/eclipse/downloads/RXTX-SDK-I20071016-1945.zip"
+  unzip -o RXTX-SDK-I20071016-1945.zip
+  rm RXTX-SDK-I20071016-1945.zip
 fi
 
 # checkout the basebuilder
-baseBuilderTag=RC4_33
-if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.core_3.3.0.v20070608-1300.jar \
+baseBuilderTag=M5_34
+if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.core_3.4.0.v20080206-0010.jar \
   -o ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.build/pdebuild.jar ]; then
   if [ -d org.eclipse.releng.basebuilder ]; then
     echo "Re-getting basebuilder from CVS..."

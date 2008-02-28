@@ -11,10 +11,13 @@
 package org.eclipse.cdt.ui.newui;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
@@ -174,7 +177,7 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 		switch (x) {
 		// add
 		case 0:
-			String[] ss = getProjectDialog(shell, EMPTY_STR);
+			String[] ss = getProjectDialog(shell);
 			if (ss != null) {
 				for (int i=0; i<ss.length; i++)
 					src.add(new _Entry(newEntry(new Path(ss[i]), new IPath[0], true)));
@@ -280,10 +283,14 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 		return page.isForProject();
 	}
 	
-	private String[] getProjectDialog(Shell shell, String text) {
-		IPath path = new Path(text);
+	private String[] getProjectDialog(Shell shell) {
+		IPath path = new Path(EMPTY_STR);
 		
-		LocDialog dialog = new LocDialog(shell);
+		Set<IPath> set = new HashSet<IPath>(src.size());
+		for (_Entry e : src)
+			set.add(e.getPath());
+		
+		LocDialog dialog = new LocDialog(shell, set);
 		dialog.setInput(page.getProject());
 	
 		IResource container = null;
@@ -300,20 +307,106 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 			if (resources != null) {
 				String[] ss = new String[resources.length];
 				for (int i=0; i<resources.length; i++)
-					ss[i] = ((IResource)resources[i]).getFullPath().toString();
+					ss[i] = ((Holder)resources[i]).getPath().toString();
 				return ss;
 			}
 		}
 		return null;
 	}
 
+	/**
+	 * This class should hold elements for source location tree 
+	 */
+	class Holder implements IAdaptable {
+		private IFolder  f = null;
+		private boolean isRoot = false;
+		private IPath p = null;
+		
+		Holder(IProject _p) {
+			f = _p.getFolder(_p.getName());
+			isRoot = true;
+			p = _p.getFullPath();
+		}
+		
+		Holder(IFolder _f) {
+			f = _f;
+			isRoot = false;
+			p = _f.getFullPath();
+		}
+		
+		public Object getAdapter(Class adapter) {
+			return f.getAdapter(adapter);
+		}
+		public boolean isRoot() {
+			return isRoot;
+		}
+		public IFolder getFolder() {
+			return f;
+		}
+		public IPath getPath() {
+			return p;
+		}
+	}
+	
 	class LocDialog extends  ElementTreeSelectionDialog {
-	    public LocDialog(Shell parent) {
-	        super(parent, new WorkbenchLabelProvider(), new WorkbenchContentProvider());
+		Set <IPath> existing;
+		
+		public LocDialog(Shell parent, Set <IPath> ex) {
+			super(parent,
+					
+			new WorkbenchLabelProvider() {
+ 			    protected String decorateText(String input, Object element) {
+			    	if (element instanceof Holder &&
+			    	    ((Holder)element).isRoot())
+			    			return UIMessages.getString("CLocationTab.8"); //$NON-NLS-1$
+			    	return super.decorateText(input, element);
+			    }
+			},
+			
+			new WorkbenchContentProvider() {
+				public Object[] getChildren(Object element) {
+					if (element instanceof IProject) {
+						Object[] ob1 = super.getChildren(element);
+						Object[] ob2 = new Object[ob1.length + 1];
+						int cnt = 0;
+						ob2[cnt++] = new Holder((IProject)element);
+						for (Object ob: ob1) {
+							if (ob instanceof IFolder)
+								ob2[cnt++] = new Holder((IFolder)ob);
+						}
+						ob1 = new Object[cnt];
+						System.arraycopy(ob2, 0, ob1, 0, cnt);
+						return ob1;
+					} else if (element instanceof Holder) {
+						Holder h = (Holder)element;
+						if (h.isRoot())
+							return new Object[0];
+						Object[] ob1 = super.getChildren(h.getFolder());
+						Object[] ob2 = new Object[ob1.length];
+						int cnt = 0;
+						for (Object ob: ob1) {
+							if (ob instanceof IFolder)
+								ob2[cnt++] = new Holder((IFolder)ob);
+						}
+						ob1 = new Object[cnt];
+						System.arraycopy(ob2, 0, ob1, 0, cnt);
+						return ob1;
+					} else 
+						return super.getChildren(element);
+				}
+			});
+			
 			addFilter(new ViewerFilter () {
 				public boolean select(Viewer viewer, Object parentElement, Object element) {
-					return element instanceof IFolder;
+					if (! (element instanceof Holder))
+						return false;
+					if (existing == null || existing.size() == 0)
+						return true;
+					Holder h = (Holder)element;
+					return (! existing.contains(h.getPath()));
 				}});
-	    }
+			
+			existing = ex;
+		}
 	}	
 }

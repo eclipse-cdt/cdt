@@ -127,8 +127,6 @@ public class NewSourceFolderWizardPage extends NewElementWizardPage {
 		fExcludeInOthersFields.setDialogFieldListener(adapter);
 		fExcludeInOthersFields.setLabelText(NewFolderWizardMessages.getString("NewSourceFolderWizardPage.exclude.label")); //$NON-NLS-1$
 		
-//TODO		fExcludeInOthersFields.setEnabled(CoreModel.ENABLED.equals(CoreModel.getOption(CoreModel.CORE_ENABLE_CLASSPATH_EXCLUSION_PATTERNS)));
-		
 		fRootStatus= new StatusInfo();
 		fProjectStatus= new StatusInfo();
 	}
@@ -214,6 +212,9 @@ public class NewSourceFolderWizardPage extends NewElementWizardPage {
 		LayoutUtil.setHorizontalGrabbing(fProjectField.getTextControl(null));	
 		LayoutUtil.setWidthHint(fRootDialogField.getTextControl(null), maxFieldWidth);	
 			
+		// Bug #220003 : consistency between New Source Folder dialog and Source Location Property tab.
+		fExcludeInOthersFields.setSelection(true);
+		
 		setControl(composite);
 		Dialog.applyDialogFont(composite);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, ICHelpContextIds.NEW_SRCFLDER_WIZARD_PAGE);		
@@ -333,7 +334,7 @@ public class NewSourceFolderWizardPage extends NewElementWizardPage {
 						return;
 					}
 				}
-				ArrayList newEntries= new ArrayList(fEntries.length + 1);
+				ArrayList<IPathEntry> newEntries= new ArrayList<IPathEntry>(fEntries.length + 1);
 				int projectEntryIndex= -1;
 				
 				for (int i= 0; i < fEntries.length; i++) {
@@ -352,7 +353,7 @@ public class NewSourceFolderWizardPage extends NewElementWizardPage {
 				
 				IPathEntry newEntry= CoreModel.newSourceEntry(path);
 				
-				Set modified= new HashSet();				
+				Set<IPathEntry> modified= new HashSet<IPathEntry>();				
 				if (fExcludeInOthersFields.isSelected()) {
 					addExclusionPatterns(newEntry, newEntries, modified);
 					newEntries.add(CoreModel.newSourceEntry(path));
@@ -365,7 +366,7 @@ public class NewSourceFolderWizardPage extends NewElementWizardPage {
 					}
 				}
 					
-				fNewEntries= (IPathEntry[]) newEntries.toArray(new IPathEntry[newEntries.size()]);
+				fNewEntries= newEntries.toArray(new IPathEntry[newEntries.size()]);
 
 				ICModelStatus status= PathEntryManager.getDefault().validatePathEntry(fCurrCProject, fNewEntries);
 				if (!status.isOK()) {
@@ -387,10 +388,10 @@ public class NewSourceFolderWizardPage extends NewElementWizardPage {
 		}
 	}
 	
-	private void addExclusionPatterns(IPathEntry newEntry, List existing, Set modifiedEntries) {
+	private void addExclusionPatterns(IPathEntry newEntry, List<IPathEntry> existing, Set<IPathEntry> modifiedEntries) {
 		IPath entryPath= newEntry.getPath();
 		for (int i= 0; i < existing.size(); i++) {
-			IPathEntry curr= (IPathEntry) existing.get(i);
+			IPathEntry curr= existing.get(i);
 			IPath currPath= curr.getPath();
 			if (curr.getEntryKind() == IPathEntry.CDT_SOURCE && currPath.isPrefixOf(entryPath)) {
 				IPath[] exclusionFilters= ((ISourceEntry)curr).getExclusionPatterns();
@@ -452,8 +453,7 @@ public class NewSourceFolderWizardPage extends NewElementWizardPage {
 	
 	private void addEntryToAllCfgs(ICProjectDescription des, ICSourceEntry entry, boolean removeProj) throws WriteAccessException, CoreException{
 		ICConfigurationDescription cfgs[] = des.getConfigurations();
-		for(int i = 0; i < cfgs.length; i++){
-			ICConfigurationDescription cfg = cfgs[i];
+		for(ICConfigurationDescription cfg : cfgs){
 			ICSourceEntry[] entries = cfg.getSourceEntries();
 			entries = addEntry(entries, entry, removeProj);
 			cfg.setSourceEntries(entries);
@@ -461,15 +461,14 @@ public class NewSourceFolderWizardPage extends NewElementWizardPage {
 	}
 	
 	private ICSourceEntry[] addEntry(ICSourceEntry[] entries, ICSourceEntry entry, boolean removeProj){
-		Set set = new HashSet();
-		for(int i = 0; i < entries.length; i++){
-			if(removeProj && new Path(entries[i].getValue()).segmentCount() == 1)
+		Set<ICSourceEntry> set = new HashSet<ICSourceEntry>();
+		for(ICSourceEntry se : entries){
+			if(removeProj && new Path(se.getValue()).segmentCount() == 1)
 				continue;
-			
-			set.add(entries[i]);
+			set.add(se);
 		}
 		set.add(entry);
-		return (ICSourceEntry[])set.toArray(new ICSourceEntry[set.size()]);
+		return set.toArray(new ICSourceEntry[set.size()]);
 	}
 	
 	// ------------- choose dialogs

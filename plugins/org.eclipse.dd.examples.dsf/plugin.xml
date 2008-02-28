@@ -28,19 +28,19 @@
             <groupMarker name="concurrent"/>
          </menu>
          <action
-               class="org.eclipse.dd.examples.dsf.concurrent.CancellableInputCoalescingSlowDataProviderAction"
+               class="org.eclipse.dd.examples.dsf.dataviewer.CancellableInputCoalescingSlowDataProviderAction"
                id="org.eclipse.dd.dsf.test.cancellableInputCoalescingSlowDataProvider"
                label="Open Dialog with Cancellable Input-Coalescing Slow Data Provider"
                menubarPath="org.eclipse.dd.dsf.examples.timers/concurrent"
                style="push"/>
          <action
-               class="org.eclipse.dd.examples.dsf.concurrent.InputCoalescingSlowDataProviderAction"
+               class="org.eclipse.dd.examples.dsf.dataviewer.InputCoalescingSlowDataProviderAction"
                id="org.eclipse.dd.dsf.test.inputCoalescingSlowDataProvider"
                label="Open Dialog with Input-Coalescing Slow Data Provider"
                menubarPath="org.eclipse.dd.dsf.examples.timers/concurrent"
                style="push"/>
          <action
-               class="org.eclipse.dd.examples.dsf.concurrent.SlowDataProviderAction"
+               class="org.eclipse.dd.examples.dsf.dataviewer.SlowDataProviderAction"
                id="org.eclipse.dd.dsf.test.slowDataProvider"
                label="Open Dialog with Slow Data Provider"
                menubarPath="org.eclipse.dd.dsf.examples.timers/concurrent"

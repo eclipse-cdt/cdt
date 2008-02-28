@@ -33,7 +33,6 @@
          = = = = = = = = = = = = = = = = = -->
     <macrodef name="process">
         <attribute name="packagedir"/>
-    	<attribute name="symbols"/>
         <sequential>
             <delete dir="src/@{packagedir}"/>
             <mkdir dir="src/@{packagedir}"/>
@@ -47,7 +46,8 @@
         </sequential>
     </macrodef>
 
-	<process packagedir="org/eclipse/dd/examples/dsf/requestmonitor" symbols="answers"/>
+	<process packagedir="org/eclipse/dd/examples/dsf/requestmonitor"/>
+    <process packagedir="org/eclipse/dd/examples/dsf/dataviewer"/>
 	</target>
 
 </project>

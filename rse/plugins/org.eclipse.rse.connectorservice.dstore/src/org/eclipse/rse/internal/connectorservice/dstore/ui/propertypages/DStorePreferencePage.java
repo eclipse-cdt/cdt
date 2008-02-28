@@ -10,6 +10,7 @@
  * 
  * Contributors:
  * David McKnight   (IBM)        - [216596] dstore preferences (timeout, and others)
+ * David McKnight  (IBM)         - [220123][dstore] Configurable timeout on irresponsiveness
  ********************************************************************************/
 package org.eclipse.rse.internal.connectorservice.dstore.ui.propertypages;
 
@@ -28,6 +29,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
@@ -38,24 +40,31 @@ public class DStorePreferencePage extends PreferencePage implements IWorkbenchPr
 
 	private Text _connectionTimeout;
 	private Button _doKeepaliveButton;
+	private Text _keepaliveResponseTimeout;
+	private Text _socketReadTimeout;
+	
 	private Button _cacheRemoteClassesButton;
 	private Button _showMismatchedServerWarningButton;
 	
 	protected Control createContents(Composite gparent) {
 		Composite parent = SystemWidgetHelpers.createComposite(gparent, 2);
-		
+	
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		parent.setLayout(layout);
 		parent.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
+
+		Composite connectComposite = SystemWidgetHelpers.createComposite(parent, 2);	
 		
-		SystemWidgetHelpers.createLabel(parent, DStoreResources.RESID_PREFERENCE_CONNECTION_TIMEOUT_LABEL);
+		SystemWidgetHelpers.createLabel(connectComposite, DStoreResources.RESID_PREFERENCE_CONNECTION_TIMEOUT_LABEL);
 		
-		_connectionTimeout = new Text(parent, SWT.BORDER);
-		GridData gd = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
+		_connectionTimeout = new Text(connectComposite, SWT.BORDER);
+		//GridData gd = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.widthHint = 75;
-		_connectionTimeout.setLayoutData(gd);
-		_connectionTimeout.setTextLimit(5);
+		gd.horizontalSpan =1;
+		_connectionTimeout.setLayoutData(gd);		
+		_connectionTimeout.setTextLimit(10);
 		_connectionTimeout.setToolTipText(DStoreResources.RESID_PREFERENCE_CONNECTION_TIMEOUT_TOOLTIP);
 		_connectionTimeout.addVerifyListener(new VerifyListener()
 		{
@@ -69,11 +78,7 @@ public class DStorePreferencePage extends PreferencePage implements IWorkbenchPr
 				}
 			}
 		});
-		
-		_doKeepaliveButton = SystemWidgetHelpers.createCheckBox(parent, DStoreResources.RESID_PREFERENCE_DO_KEEPALIVE_LABEL, this);
-		_doKeepaliveButton.setToolTipText(DStoreResources.RESID_PREFERENCE_DO_KEEPALIVE_TOOLTIP);
-		_doKeepaliveButton.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, true, false));
-		((GridData)_doKeepaliveButton.getLayoutData()).horizontalSpan = 2;
+			
 		
 		_cacheRemoteClassesButton = SystemWidgetHelpers.createCheckBox(parent, DStoreResources.RESID_PREFERENCE_CACHE_REMOTE_CLASSES_LABEL, this);
 		_cacheRemoteClassesButton.setToolTipText(DStoreResources.RESID_PREFERENCE_CACHE_REMOTE_CLASSES_TOOLTIP);
@@ -85,6 +90,70 @@ public class DStorePreferencePage extends PreferencePage implements IWorkbenchPr
 		_showMismatchedServerWarningButton.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, true, false));
 		((GridData)_showMismatchedServerWarningButton.getLayoutData()).horizontalSpan = 2;		
 		
+		
+		// keepalive stuff
+		Group keepaliveGroup = SystemWidgetHelpers.createGroupComposite(parent, 2, DStoreResources.RESID_PREFERENCE_KEEPALIVE_LABEL);
+        layout = new GridLayout();
+        layout.numColumns = 2;
+        keepaliveGroup.setLayout(layout);
+        GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL
+                | GridData.GRAB_HORIZONTAL);
+        keepaliveGroup.setLayoutData(data);
+
+		
+		
+		_doKeepaliveButton = SystemWidgetHelpers.createCheckBox(keepaliveGroup, DStoreResources.RESID_PREFERENCE_DO_KEEPALIVE_LABEL, this);
+		_doKeepaliveButton.setToolTipText(DStoreResources.RESID_PREFERENCE_DO_KEEPALIVE_TOOLTIP);
+		_doKeepaliveButton.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, true, false));
+		((GridData)_doKeepaliveButton.getLayoutData()).horizontalSpan = 2;
+		
+		
+		SystemWidgetHelpers.createLabel(keepaliveGroup, DStoreResources.RESID_PREFERENCE_KEEPALIVE_SOCKET_READ_TIMEOUT_LABEL);
+		
+		_socketReadTimeout = new Text(keepaliveGroup, SWT.BORDER);
+		gd = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
+		gd.widthHint = 75;
+		gd.horizontalSpan =1;
+		_socketReadTimeout.setLayoutData(gd);
+		_socketReadTimeout.setTextLimit(10);
+		_socketReadTimeout.setToolTipText(DStoreResources.RESID_PREFERENCE_KEEPALIVE_SOCKET_READ_TIMEOUT_TOOLTIP);
+		_socketReadTimeout.addVerifyListener(new VerifyListener()
+		{
+			public void verifyText(VerifyEvent e)
+			{
+				e.doit = true;
+				for (int loop = 0; loop < e.text.length(); loop++)
+				{
+					if (!Character.isDigit(e.text.charAt(loop)))
+						e.doit = false;
+				}
+			}
+		});
+		
+		SystemWidgetHelpers.createLabel(keepaliveGroup, DStoreResources.RESID_PREFERENCE_KEEPALIVE_RESPONSE_TIMEOUT_LABEL);
+		
+		_keepaliveResponseTimeout = new Text(keepaliveGroup, SWT.BORDER);
+		gd = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
+		gd.widthHint = 75;
+		gd.horizontalSpan =1;
+		_keepaliveResponseTimeout.setLayoutData(gd);
+		_keepaliveResponseTimeout.setTextLimit(10);
+		_keepaliveResponseTimeout.setToolTipText(DStoreResources.RESID_PREFERENCE_KEEPALIVE_RESPONSE_TIMEOUT_TOOLTIP);
+		_keepaliveResponseTimeout.addVerifyListener(new VerifyListener()
+		{
+			public void verifyText(VerifyEvent e)
+			{
+				e.doit = true;
+				for (int loop = 0; loop < e.text.length(); loop++)
+				{
+					if (!Character.isDigit(e.text.charAt(loop)))
+						e.doit = false;
+				}
+			}
+		});
+		
+		
+	
 		
 		initControls();
 		return parent;
@@ -131,6 +200,28 @@ public class DStorePreferencePage extends PreferencePage implements IWorkbenchPr
 		}
 		_doKeepaliveButton.setSelection(doKeepalive);
 		
+		int socketTimeout = 0;
+		if (store.contains(IUniversalDStoreConstants.RESID_PREF_SOCKET_READ_TIMEOUT)){
+			socketTimeout = store.getInt(IUniversalDStoreConstants.RESID_PREF_SOCKET_READ_TIMEOUT);
+		}
+		else {
+			socketTimeout = IUniversalDStoreConstants.DEFAULT_PREF_SOCKET_READ_TIMEOUT;
+			store.setDefault(IUniversalDStoreConstants.RESID_PREF_SOCKET_READ_TIMEOUT, socketTimeout);
+		}
+		_socketReadTimeout.setText(""+socketTimeout); //$NON-NLS-1$
+		_socketReadTimeout.setEnabled(doKeepalive);
+		
+		int keepaliveTimeout = 0;
+		if (store.contains(IUniversalDStoreConstants.RESID_PREF_KEEPALIVE_RESPONSE_TIMEOUT)){
+			keepaliveTimeout = store.getInt(IUniversalDStoreConstants.RESID_PREF_KEEPALIVE_RESPONSE_TIMEOUT);	
+		}
+		else {
+			keepaliveTimeout = IUniversalDStoreConstants.DEFAULT_PREF_KEEPALIVE_RESPONSE_TIMEOUT;
+			store.setDefault(IUniversalDStoreConstants.RESID_PREF_KEEPALIVE_RESPONSE_TIMEOUT, keepaliveTimeout);
+		}
+		_keepaliveResponseTimeout.setText(""+keepaliveTimeout); //$NON-NLS-1$
+		_keepaliveResponseTimeout.setEnabled(doKeepalive);
+		
 		// show mismatched server warning
 		boolean showMismatchedWarning = false;
 		if (store.contains(IUniversalDStoreConstants.ALERT_MISMATCHED_SERVER)){
@@ -157,6 +248,16 @@ public class DStorePreferencePage extends PreferencePage implements IWorkbenchPr
 		boolean doKeepalive = _doKeepaliveButton.getSelection();
 		store.setValue(IUniversalDStoreConstants.RESID_PREF_DO_KEEPALIVE, doKeepalive);
 		
+		// socket read timeout 
+		String socketTimeoutStr = _socketReadTimeout.getText();
+		int socketTimeout = Integer.parseInt(socketTimeoutStr);
+		store.setValue(IUniversalDStoreConstants.RESID_PREF_SOCKET_READ_TIMEOUT, socketTimeout);
+		
+		// keepalive response timeout
+		String keepaliveTimeoutStr = _keepaliveResponseTimeout.getText();
+		int keepaliveTimeout = Integer.parseInt(keepaliveTimeoutStr);
+		store.setValue(IUniversalDStoreConstants.RESID_PREF_KEEPALIVE_RESPONSE_TIMEOUT, keepaliveTimeout);
+		
 		// cache remote classes
 		boolean cacheRemoteClasses = _cacheRemoteClassesButton.getSelection();
 		store.setValue(IUniversalDStoreConstants.RESID_PREF_CACHE_REMOTE_CLASSES, cacheRemoteClasses);				
@@ -176,6 +277,17 @@ public class DStorePreferencePage extends PreferencePage implements IWorkbenchPr
 		boolean doKeepalive = IUniversalDStoreConstants.DEFAULT_PREF_DO_KEEPALIVE;
 		_doKeepaliveButton.setSelection(doKeepalive);
 		
+		// socket read timeout 
+		int socketTimeout = IUniversalDStoreConstants.DEFAULT_PREF_SOCKET_READ_TIMEOUT;
+		_socketReadTimeout.setText(""+socketTimeout); //$NON-NLS-1$
+		_socketReadTimeout.setEnabled(doKeepalive);
+		
+		// keepalive response timeout
+		int keepaliveTimeout = IUniversalDStoreConstants.DEFAULT_PREF_KEEPALIVE_RESPONSE_TIMEOUT;
+		_keepaliveResponseTimeout.setText(""+keepaliveTimeout); //$NON-NLS-1$
+		_keepaliveResponseTimeout.setEnabled(doKeepalive);
+		
+		
 		// show mismatched server warning
 		boolean showMismatchedWarning = IUniversalDStoreConstants.DEFAULT_ALERT_MISMATCHED_SERVER;
 		_showMismatchedServerWarningButton.setSelection(showMismatchedWarning);
@@ -191,8 +303,13 @@ public class DStorePreferencePage extends PreferencePage implements IWorkbenchPr
 	}
 
 	public void handleEvent(Event event) {
-		// TODO Auto-generated method stub
-		
+		if (event.widget == _doKeepaliveButton){
+			boolean isEnabled = _doKeepaliveButton.getSelection();
+			
+			_socketReadTimeout.setEnabled(isEnabled);
+			_keepaliveResponseTimeout.setEnabled(isEnabled);
+			
+		}
 	}
 
 	public boolean performOk() {

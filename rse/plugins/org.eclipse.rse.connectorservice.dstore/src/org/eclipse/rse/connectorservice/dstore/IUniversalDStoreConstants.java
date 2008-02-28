@@ -15,6 +15,7 @@
  * {Name} (company) - description of contribution.
  * David McKnight   (IBM)        - [216596] dstore preferences (timeout, and others)
  * David McKnight   (IBM)        - [218685] [api][breaking][dstore] Unable to connect when using SSL.
+ * David McKnight  (IBM)         - [220123][dstore] Configurable timeout on irresponsiveness
  *******************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore;
@@ -66,6 +67,14 @@ public interface IUniversalDStoreConstants
 
     public static final String RESID_PREF_DO_KEEPALIVE = RESID_PREF_PREFIX + "dokeepalive"; //$NON-NLS-1$
     public static final boolean DEFAULT_PREF_DO_KEEPALIVE = true;
+    
+    public static final String RESID_PREF_KEEPALIVE_RESPONSE_TIMEOUT = RESID_PREF_PREFIX + "keepalivetimeout";
+    public static final int DEFAULT_PREF_KEEPALIVE_RESPONSE_TIMEOUT = 60000;
+    
+    public static final String RESID_PREF_SOCKET_READ_TIMEOUT = RESID_PREF_PREFIX + "socketreadtimeout";
+    public static final int DEFAULT_PREF_SOCKET_READ_TIMEOUT = 3600000; 
+    
+   
     
 	public static final String ALERT_MISMATCHED_SERVER = RESID_PREFIX + "alert.mismatched.server"; //$NON-NLS-1$
 	public static final boolean DEFAULT_ALERT_MISMATCHED_SERVER = true;

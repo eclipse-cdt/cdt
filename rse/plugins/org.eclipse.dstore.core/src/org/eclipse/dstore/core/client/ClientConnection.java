@@ -15,6 +15,7 @@
  * David McKnight  (IBM)  - [205986] daemon handshake needs a timeout
  * David McKnight  (IBM)  - [218685] [dstore] Unable to connect when using SSL.
  * Martin Oberhuber (Wind River) - [219260][dstore][regression] Cannot connect to dstore daemon
+ * David McKnight  (IBM)   [220123][dstore] Configurable timeout on irresponsiveness
  *******************************************************************************/
 
 package org.eclipse.dstore.core.client;
@@ -319,6 +320,7 @@ public class ClientConnection
 	{
 		if (_isConnected)
 		{
+			_dataStore.removeDataStorePreferenceListener(_receiver);
 			_dataStore.setConnected(false);
 
 			if (_isRemote)
@@ -331,6 +333,7 @@ public class ClientConnection
 			}
 
 			_commandHandler.finish();
+
 
 			try
 			{
@@ -602,6 +605,7 @@ public class ClientConnection
 		_updateHandler.setDataStore(_dataStore);
 
 		_receiver = new ClientReceiver(_theSocket, _dataStore);
+		_dataStore.addDataStorePreferenceListener(_receiver);
 		_receiver.start();
 
 		_isConnected = true;

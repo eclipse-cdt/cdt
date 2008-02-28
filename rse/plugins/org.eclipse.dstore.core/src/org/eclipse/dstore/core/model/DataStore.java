@@ -15,6 +15,7 @@
  * Michael Berger (IBM) - 146326 fixed erroneously disconnected dstore elements.
  * Michael Berger (IBM) - 145799 added refresh() method with depth parameter.
  * David McKnight (IBM) - 202822 findDeleted should not be synchronized
+ * David McKnight  (IBM)   [220123][dstore] Configurable timeout on irresponsiveness
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -103,6 +104,9 @@ public final class DataStore
 	private ArrayList _minersLocations;
 	private ArrayList _localClassLoaders;
 	private HashMap _dataStorePreferences;
+	
+	private List _dataStorePreferenceListeners;
+
 	
 	private ISSLProperties _sslProperties;
 
@@ -2066,11 +2070,28 @@ public final class DataStore
 		DataElement cmd = findCommandDescriptor(DataStoreSchema.C_SCHEMA);//localDescriptorQuery(_root.getDescriptor(), DataStoreSchema.C_SCHEMA, 1);
 		return command(cmd, _dummy);
 	}
-
+	
+	/**
+	 * Sets a property value preference on the client and server datastore
+	 * @param property the property to set
+	 * @param value the value of the property
+	 */
 	public void setPreference(String property, String value)
 	{
+		setPreference(property, value, true);
+	}
+
+	/**
+	 * Sets a property value preference on the client datastore.  If remoteAndLocal is set
+	 * then the property get set on the server side as well as the client.
+	 * @param property the property to set
+	 * @param value the value of the property
+	 * @param remoteAndLocal whether to propagate the change to the server 
+	 */
+	public void setPreference(String property, String value, boolean remoteAndLocal)
+	{
 		_dataStorePreferences.put(property, value);
-		if (isVirtual())
+		if (isVirtual() && remoteAndLocal) 
 		{
 			DataElement cmd = findCommandDescriptor(DataStoreSchema.C_SET_PREFERENCE);
 			if (cmd != null)
@@ -2079,12 +2100,41 @@ public final class DataStore
 				prefObj.setAttribute(DE.A_VALUE, value);
 				command(cmd, prefObj, true);
 			}
+		} 
+
+		// notify that preferences have changed
+		for (int i = 0; i < _dataStorePreferenceListeners.size(); i++){
+			IDataStorePreferenceListener listener = (IDataStorePreferenceListener)_dataStorePreferenceListeners.get(i);
+			listener.preferenceChanged(property, value);
 		}
 	}
 	
 	public String getPreference(String property)
 	{
 		return (String)_dataStorePreferences.get(property);
+	}
+	
+	/**
+	 * Adds a preference change listener to the DataStore
+	 * @param listener
+	 */
+	public void addDataStorePreferenceListener(IDataStorePreferenceListener listener){
+		_dataStorePreferenceListeners.add(listener);
+	}
+	
+	/**
+	 * Removes a specific preference change listener from the Datastore
+	 * @param listener
+	 */
+	public void removeDataStorePreferenceListener(IDataStorePreferenceListener listener){
+		_dataStorePreferenceListeners.remove(listener);
+	}
+	
+	/**
+	 * Removes all the preference change listeners
+	 */
+	public void removeAllDataStorePreferenceListeners(){
+		_dataStorePreferenceListeners.clear();
 	}
 	
 	/**
@@ -3469,12 +3519,14 @@ public final class DataStore
 		_lastCreatedElements = new ArrayList();
 		_minersLocations = new ArrayList();
 
+
 		_random = new Random(System.currentTimeMillis());
 
 		_objDescriptorMap = new HashMap(100);
 		_cmdDescriptorMap = new HashMap(100);
 		_relDescriptorMap = new HashMap(100);
 		_dataStorePreferences = new HashMap(10);
+		_dataStorePreferenceListeners = new ArrayList();
 		
 		_hashMap = new HashMap(2 * _initialSize);
 		_recycled = new ArrayList(_initialSize);
@@ -3497,6 +3549,7 @@ public final class DataStore
 			{
 				_serverIdleShutdownTimeout = Integer.parseInt(serverIdleShutdownTimeout);
 			}
+
 		}
 		
 		

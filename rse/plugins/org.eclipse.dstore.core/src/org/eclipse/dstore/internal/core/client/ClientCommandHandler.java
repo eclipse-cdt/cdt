@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight  (IBM)   [220123][dstore] Configurable timeout on irresponsiveness
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.client;
@@ -379,4 +379,5 @@ public class ClientCommandHandler extends CommandHandler
 			super.waitForInput();
 		}
 	}
+
 }

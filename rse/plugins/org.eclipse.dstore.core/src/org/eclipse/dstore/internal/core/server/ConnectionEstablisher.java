@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight  (IBM)   [220123][dstore] Configurable timeout on irresponsiveness
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.server;
@@ -146,6 +146,7 @@ public class ConnectionEstablisher
 	{
 		_updateHandler.removeSenderWith(receiver.socket());
 		_receivers.remove(receiver);
+		_dataStore.removeDataStorePreferenceListener(receiver);
 		//if (_receivers.size() == 0)
 		{
 			_continue = false;
@@ -185,6 +186,8 @@ public class ConnectionEstablisher
 				newSocket.setKeepAlive(true);
 
 				ServerReceiver receiver = new ServerReceiver(newSocket, this);
+				_dataStore.addDataStorePreferenceListener(receiver);
+				
 				Sender sender = new Sender(newSocket, _dataStore);
 
 				// add this connection to list of elements

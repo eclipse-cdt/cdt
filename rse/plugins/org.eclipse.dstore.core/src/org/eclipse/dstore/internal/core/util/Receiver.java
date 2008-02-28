@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight  (IBM)   [220123][dstore] Configurable timeout on irresponsiveness
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.util;
@@ -24,12 +24,13 @@ import java.net.UnknownHostException;
 
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
+import org.eclipse.dstore.core.model.IDataStorePreferenceListener;
 
 /**
  * This class is used for receiving data from a socket in the DataStore 
  * communication layer.
  */
-public abstract class Receiver extends Thread
+public abstract class Receiver extends Thread implements IDataStorePreferenceListener
 {
 
 
@@ -66,6 +67,20 @@ public abstract class Receiver extends Thread
 		catch (IOException ioe)
 		{
 			//System.out.println("Receiver:" + ioe);
+		}
+		
+		// keepalive preferences	
+		String keepAliveResponseTimeout = System.getProperty(XMLparser.KEEPALIVE_RESPONSE_TIMEOUT_PREFERENCE);
+		if (keepAliveResponseTimeout != null){
+			preferenceChanged(XMLparser.KEEPALIVE_RESPONSE_TIMEOUT_PREFERENCE, keepAliveResponseTimeout);
+		}
+		String iosocketReadTimeout = System.getProperty(XMLparser.IO_SOCKET_READ_TIMEOUT_PREFERENCE);
+		if (iosocketReadTimeout != null){
+			preferenceChanged(XMLparser.IO_SOCKET_READ_TIMEOUT_PREFERENCE, iosocketReadTimeout);
+		}
+		String enableKeepAlive = System.getProperty(XMLparser.KEEPALIVE_ENABLED_PREFERENCE);
+		if (enableKeepAlive != null){
+			preferenceChanged(XMLparser.KEEPALIVE_ENABLED_PREFERENCE, enableKeepAlive);
 		}
 	}
 
@@ -164,4 +179,25 @@ public abstract class Receiver extends Thread
 	 * @param e an exception that occurred
 	 */
 	public abstract void handleError(Throwable e);
+	
+	
+	public void preferenceChanged(String property, String value)
+	{
+		//System.out.println("setting preference: "+property + "="+value);
+		if (property.equals(XMLparser.IO_SOCKET_READ_TIMEOUT_PREFERENCE)){
+			int timeout = Integer.parseInt(value);
+			_xmlParser.setIOSocketReadTimeout(timeout);
+		}
+		else if (property.equals(XMLparser.KEEPALIVE_RESPONSE_TIMEOUT_PREFERENCE)){
+			int timeout = Integer.parseInt(value);
+			_xmlParser.setKeepaliveResponseTimeout(timeout);
+		}
+		else if (property.equals(XMLparser.KEEPALIVE_ENABLED_PREFERENCE)){
+			boolean enable = true;
+			if (value.equals("false")) //$NON-NLS-1$
+				enable = false;
+			_xmlParser.setEnableKeepalive(enable);
+		}
+	}
+	
 }

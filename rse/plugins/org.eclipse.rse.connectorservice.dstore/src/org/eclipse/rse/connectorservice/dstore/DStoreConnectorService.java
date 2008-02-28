@@ -24,6 +24,7 @@
  * David McKnight   (IBM)        - [216596] dstore preferences (timeout, and others)
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [218685] [api][breaking][dstore] Unable to connect when using SSL.
+ * David McKnight  (IBM)         - [220123][dstore] Configurable timeout on irresponsiveness
  *******************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore;
@@ -52,6 +53,7 @@ import org.eclipse.dstore.core.model.IDataStoreConstants;
 import org.eclipse.dstore.core.model.IDataStoreProvider;
 import org.eclipse.dstore.core.model.ISSLProperties;
 import org.eclipse.dstore.internal.core.client.ClientSSLProperties;
+import org.eclipse.dstore.internal.core.util.XMLparser;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.osgi.util.NLS;
@@ -952,9 +954,28 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 			{
 				//	 register the preference for remote class caching with the datastore
 				boolean cacheRemoteClasses = store.getBoolean(IUniversalDStoreConstants.RESID_PREF_CACHE_REMOTE_CLASSES);
+
+				// this preference is set on the server side
+				dataStore.setPreference(RemoteClassLoader.CACHING_PREFERENCE, cacheRemoteClasses ? "true" : "false", true); //$NON-NLS-1$  //$NON-NLS-2$
 				
-				dataStore.setPreference(RemoteClassLoader.CACHING_PREFERENCE, cacheRemoteClasses ? "true" : "false"); //$NON-NLS-1$  //$NON-NLS-2$
-				
+				if (serverVersion >= 9){ // keepalive preferences
+					boolean doKeepalive = store.getBoolean(IUniversalDStoreConstants.RESID_PREF_DO_KEEPALIVE);
+					
+					int keepaliveResponseTimeout = store.getInt(IUniversalDStoreConstants.RESID_PREF_KEEPALIVE_RESPONSE_TIMEOUT);
+					if (keepaliveResponseTimeout == 0){ // use the default
+						keepaliveResponseTimeout = IUniversalDStoreConstants.DEFAULT_PREF_KEEPALIVE_RESPONSE_TIMEOUT;
+					}
+					
+					int socketTimeout =  store.getInt(IUniversalDStoreConstants.RESID_PREF_SOCKET_READ_TIMEOUT);
+					if (socketTimeout == 0){ // use the default
+						socketTimeout = IUniversalDStoreConstants.DEFAULT_PREF_SOCKET_READ_TIMEOUT;
+					}
+
+					// these preferences are only for the client
+					dataStore.setPreference(XMLparser.KEEPALIVE_ENABLED_PREFERENCE, doKeepalive ? "true" : "false", false);  //$NON-NLS-1$//$NON-NLS-2$
+					dataStore.setPreference(XMLparser.KEEPALIVE_RESPONSE_TIMEOUT_PREFERENCE, ""+ keepaliveResponseTimeout, false); //$NON-NLS-1$
+					dataStore.setPreference(XMLparser.IO_SOCKET_READ_TIMEOUT_PREFERENCE, ""+socketTimeout, false); //$NON-NLS-1$
+				}
 			}
 			else
 			{						

@@ -10,6 +10,7 @@
  * 
  * Contributors:
  * David McKnight   (IBM)        - [216596] dstore preferences (timeout, and others)
+ * David McKnight  (IBM)         - [220123][dstore] Configurable timeout on irresponsiveness
  ********************************************************************************/
 package org.eclipse.rse.internal.connectorservice.dstore;
 
@@ -25,11 +26,19 @@ public class DStoreResources extends NLS {
 	public static String RESID_PREFERENCE_DO_KEEPALIVE_LABEL;
 	public static String RESID_PREFERENCE_DO_KEEPALIVE_TOOLTIP;
 	
+	public static String RESID_PREFERENCE_KEEPALIVE_SOCKET_READ_TIMEOUT_LABEL;
+	public static String RESID_PREFERENCE_KEEPALIVE_SOCKET_READ_TIMEOUT_TOOLTIP;
+	
+	public static String RESID_PREFERENCE_KEEPALIVE_RESPONSE_TIMEOUT_LABEL;
+	public static String RESID_PREFERENCE_KEEPALIVE_RESPONSE_TIMEOUT_TOOLTIP;
+	
 	public static String RESID_PREFERENCE_CACHE_REMOTE_CLASSES_LABEL;
 	public static String RESID_PREFERENCE_CACHE_REMOTE_CLASSES_TOOLTIP;
 	
 	public static String RESID_PREFERENCE_SHOW_MISMATCHED_SERVER_LABEL;
 	public static String RESID_PREFERENCE_SHOW_MISMATCHED_SERVER_TOOLTIP;
+		
+	public static String RESID_PREFERENCE_KEEPALIVE_LABEL;
 	
 	static 
 	{

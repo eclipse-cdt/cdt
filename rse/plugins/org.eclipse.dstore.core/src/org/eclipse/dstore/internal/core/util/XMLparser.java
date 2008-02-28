@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight  (IBM)   [220123][dstore] Configurable timeout on irresponsiveness
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.util;
@@ -50,9 +50,13 @@ import org.eclipse.dstore.core.model.DataStoreResources;
  */
 public class XMLparser
 {
+	public static final String KEEPALIVE_RESPONSE_TIMEOUT_PREFERENCE = "DSTORE_KEEPALIVE_RESPONSE_TIMEOUT"; //$NON-NLS-1$
+	public static final String IO_SOCKET_READ_TIMEOUT_PREFERENCE = "DSTORE_IO_SOCKET_READ_TIMEOUT"; //$NON-NLS-1$
+	public static final String KEEPALIVE_ENABLED_PREFERENCE = "DSTORE_KEEPALIVE_ENABLED"; //$NON-NLS-1$
 	
-	public static final int IO_SOCKET_READ_TIMEOUT = 3600000;
-	public static final long KEEPALIVE_RESPONSE_TIMEOUT = 60000;
+	public int IO_SOCKET_READ_TIMEOUT = 3600000;
+	public long KEEPALIVE_RESPONSE_TIMEOUT = 60000;
+	
 	public static final boolean VERBOSE_KEEPALIVE = false;
 	
 	private DataStore _dataStore;
@@ -116,8 +120,37 @@ public class XMLparser
 		_objStack = new Stack();
 		_maxBuffer = 100000;
 		_byteBuffer = new byte[_maxBuffer];
+				
 	}
 
+	/**
+	 * Set whether to enable keepalive
+	 * @param enable
+	 */
+	public void setEnableKeepalive(boolean enable){
+		// if false, we ignore the keepalive stuff
+		_isKeepAliveCompatible = enable;
+	}
+	
+	/**
+	 * Set the keepalive response timeout
+	 * @param timeout the time to wait for a response after 
+	 *        initiating a keepalivfe request
+	 */
+	public void setKeepaliveResponseTimeout(int timeout){
+		// the new value will be picked up on the next readLine() call
+		KEEPALIVE_RESPONSE_TIMEOUT = timeout;
+	}
+
+	/**
+	 * Set the socket read timeout
+	 * @param timeout the time to wait before initiating a keepalive request
+	 */
+	public void setIOSocketReadTimeout(int timeout){
+		// the new value will be picked up on the next readLine() call
+		IO_SOCKET_READ_TIMEOUT = timeout; 		
+	}
+	
 	/**
 	 * Read a file from the pipe
 	 * @param reader the pipe reader
@@ -149,32 +182,6 @@ public class XMLparser
 		}
 
 		int written = 0;
-		
-//		// hack to deal with platform inconsistencies
-//		// only needed on the server side
-//		if (!_dataStore.isVirtual())
-//		{
-//			try
-//			{
-//				synchronized (reader)
-//				{
-//					int first = reader.read();
-//					
-//					if (first != 10) {
-//						written = 1;
-//						buffer[0] = (byte) first;
-//					}
-//					else {
-//						System.out.println("First byte is 10!");
-//					}
-//				}
-//			}
-//			catch (IOException e)
-//			{
-//				_dataStore.trace(e);
-//			}
-//		}
-
 		while (written < size)
 		{
 			try

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Wind River Systems   - Modified for new DSF Reference Implementation
+ *     Ericsson             - Modified for bug 219920
  *******************************************************************************/
 
 package org.eclipse.dd.mi.service.command.commands;
@@ -110,11 +111,30 @@ public class MIBreakInsert extends MICommand<MIBreakInsertInfo>
         if (opts.length > 0) {
             setOptions(opts);
         }
-        setParameters(new String[]{line});
+        setParameters(new Adjustable[]{ new PathAdjustable(line)});
     }
 
     @Override
     public MIBreakInsertInfo getResult(MIOutput output) {
         return new MIBreakInsertInfo(output);
     }
+    
+	/**
+	 * This adjustable makes sure that the path parameter will not get the
+	 * backslashes substituted with double backslashes.
+	 */
+	private class PathAdjustable
+			extends
+			org.eclipse.dd.mi.service.command.commands.MICommand.MIStandardParameterAdjustable {
+
+		public PathAdjustable(String path) {
+			super(path);
+		}
+
+		@Override
+		public String getAdjustedValue() {
+			String adjustedValue = super.getAdjustedValue();
+			return adjustedValue.replace("\\\\", "\\"); //$NON-NLS-1$//$NON-NLS-2$
+		}
+	}
 }

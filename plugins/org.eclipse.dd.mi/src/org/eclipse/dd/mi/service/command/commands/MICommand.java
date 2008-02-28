@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,10 +8,14 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Wind River Systems   - Modified for new DSF Reference Implementation
- *     Ericsson 		  	- Modified for additional features in DSF Reference implementation
+ *     Ericsson 		  	- Modified for additional features in DSF Reference implementation and bug 219920
  *******************************************************************************/
 
 package org.eclipse.dd.mi.service.command.commands;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
@@ -31,8 +35,8 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
      */
     final static String[] empty = new String[0];
     
-    String[] fOptions = empty;
-    String[] fParameters = empty;
+    List<Adjustable> fOptions = new ArrayList<Adjustable>();
+    List<Adjustable> fParameters = new ArrayList<Adjustable>();
     String   fOperation = new String();
     IDMContext fCtx;
     
@@ -60,10 +64,30 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
     	assert(ctx != null && DMContexts.getAncestorOfType(ctx, MIControlDMContext.class) != null);
     	fCtx = ctx;
         fOperation = operation;
-        fOptions = options;
-        fParameters = params;
+        fOptions = optionsToAdjustables(options);
+        fParameters = parametersToAdjustables(params);
     }
+
+	private final List<Adjustable> optionsToAdjustables(String[] options) {
+		List<Adjustable> result = new ArrayList<Adjustable>();
+		if (options != null) {
+			for (String option : options) {
+				result.add(new MIStandardOptionAdjustable(option));
+			}
+		}
+		return result;
+	}
     
+	private final List<Adjustable> parametersToAdjustables(String[] parameters) {
+		List<Adjustable> result = new ArrayList<Adjustable>();
+		if (parameters != null) {
+			for (String parameter : parameters) {
+				result.add(new MIStandardParameterAdjustable(parameter));
+			}
+		}
+		return result;
+	}
+	
     public String getCommandControlFilter() {
         MIControlDMContext controlDmc = DMContexts.getAncestorOfType(getContext(), MIControlDMContext.class);
         return controlDmc.getCommandControlFilter();
@@ -81,11 +105,15 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
      * returned if there are no options.
      */
     public String[] getOptions() {
-        return fOptions;
+		List<String> result = new ArrayList<String>();
+		for (Adjustable option : fOptions) {
+			result.add(option.getValue());
+		}
+		return result.toArray(new String[fOptions.size()]);
     }
 
     public void setOptions(String[] options) {
-        fOptions = options;
+    	fOptions = optionsToAdjustables(options);
     }
 
     /*
@@ -93,13 +121,21 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
      * returned if there are no parameters.
      */
     public String[] getParameters() {
-        return fParameters;
+		List<String> result = new ArrayList<String>();
+		for (Adjustable parameter : fParameters) {
+			result.add(parameter.getValue());
+		}
+		return result.toArray(new String[fParameters.size()]);
     }
 
     public void setParameters(String[] params) {
-        fParameters = params;
+		fParameters = parametersToAdjustables(params);
     }
 
+	public void setParameters(Adjustable... params) {
+		fParameters = Arrays.asList(params);
+	}
+    
     /*
      * Returns the constructed command.
      */
@@ -149,78 +185,38 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
     }
     
     protected String optionsToString() {
-        String[] options = getOptions();
-        StringBuffer sb = new StringBuffer();
-        if (options != null && options.length > 0) {
-            for (int i = 0; i < options.length; i++) {
-                String option = options[i];
-                // If the option argument contains " or \ it must be escaped
-                if (option.indexOf('"') != -1 || option.indexOf('\\') != -1) {
-                    StringBuffer buf = new StringBuffer();
-                    for (int j = 0; j < option.length(); j++) {
-                        char c = option.charAt(j);
-                        if (c == '"' || c == '\\') {
-                            buf.append('\\');
-                        }
-                        buf.append(c);
-                    }
-                    option = buf.toString();
-                }
-
-                // If the option contains a space according to
-                // GDB/MI spec we must surround it with double quotes.
-                if (option.indexOf('\t') != -1 || option.indexOf(' ') != -1) {
-                    sb.append(' ').append('"').append(option).append('"');
-                } else {
-                    sb.append(' ').append(option);
-                }
-            }
-        }
-        return sb.toString().trim();
+		StringBuffer sb = new StringBuffer();
+		if (fOptions != null && fOptions.size() > 0) {
+			for (Adjustable option : fOptions) {
+				sb.append(option.getAdjustedValue());
+			}
+		}
+		return sb.toString().trim();
     }
 
     protected String parametersToString() {
-        String[] parameters = getParameters();
-        String[] options = getOptions();
-        StringBuffer buffer = new StringBuffer();
-        if (parameters != null && parameters.length > 0) {
-            // According to GDB/MI spec
-            // Add a "--" separator if any parameters start with "-"
-            if (options != null && options.length > 0) {
-                for (int i = 0; i < parameters.length; i++) {
-                    if (parameters[i].startsWith("-")) { //$NON-NLS-1$
-                        buffer.append('-').append('-');
-                        break;
-                    }
-                }
-            }
+		String[] options = getOptions();
+		StringBuffer buffer = new StringBuffer();
+		if (fParameters != null && fParameters.size() > 0) {
+			// According to GDB/MI spec
+			// Add a "--" separator if any parameters start with "-"
+			if (options != null && options.length > 0) {
+				for (Adjustable parameter : fParameters) {
+					if (parameter.getValue().startsWith("-")) {//$NON-NLS-1$
+						buffer.append('-').append('-');
+						break;
+					}
+				}
+			}
 
-            StringBuffer sb = new StringBuffer();
-            for (int i = 0; i < parameters.length; i++) {
-                // We need to escape the double quotes and the backslash.
-                sb.setLength(0);
-                String param = parameters[i];
-                for (int j = 0; j < param.length(); j++) {
-                    char c = param.charAt(j);
-                    if (c == '"' || c == '\\') {
-                        sb.append('\\');
-                    }
-                    sb.append(c);
-                }
-
-                // If the string contains spaces instead of escaping
-                // surround the parameter with double quotes.
-                if (containsWhitespace(param)) {
-                    sb.insert(0, '"');
-                    sb.append('"');
-                }
-                buffer.append(' ').append(sb);
-            }
-        }
-        return buffer.toString().trim();
+			for (Adjustable parameter : fParameters) {
+				buffer.append(' ').append(parameter.getAdjustedValue());
+			}
+		}
+		return buffer.toString().trim();
     }
 
-    protected boolean containsWhitespace(String s) {
+    protected static boolean containsWhitespace(String s) {
         for (int i = 0; i < s.length(); i++) {
             if (Character.isWhitespace(s.charAt(i))) {
                 return true;
@@ -253,4 +249,87 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
     public String toString() {
         return constructCommand();
     }
+
+	public static class MIStandardOptionAdjustable extends MICommandAdjustable {
+
+		public MIStandardOptionAdjustable(String option) {
+			super(option);
+		}
+
+		public String getAdjustedValue() {
+			StringBuilder builder = new StringBuilder();
+			String option = value;
+			// If the option argument contains " or \ it must be escaped
+			if (option.indexOf('"') != -1 || option.indexOf('\\') != -1) {
+				StringBuilder buf = new StringBuilder();
+				for (int j = 0; j < option.length(); j++) {
+					char c = option.charAt(j);
+					if (c == '"' || c == '\\') {
+						buf.append('\\');
+					}
+					buf.append(c);
+				}
+				option = buf.toString();
+			}
+
+			// If the option contains a space according to
+			// GDB/MI spec we must surround it with double quotes.
+			if (option.indexOf('\t') != -1 || option.indexOf(' ') != -1) {
+				builder.append(' ').append('"').append(option).append('"');
+			} else {
+				builder.append(' ').append(option);
+			}
+			return builder.toString();
+		}
+	}
+
+	public static class MIStandardParameterAdjustable extends
+			MICommandAdjustable {
+		public MIStandardParameterAdjustable(String parameter) {
+			super(parameter);
+		}
+
+		public String getAdjustedValue() {
+			StringBuilder builder = new StringBuilder();
+			for (int j = 0; j < value.length(); j++) {
+				char c = value.charAt(j);
+				if (c == '"' || c == '\\') {
+					builder.append('\\');
+				}
+				builder.append(c);
+			}
+
+			// If the string contains spaces instead of escaping
+			// surround the parameter with double quotes.
+			if (containsWhitespace(value)) {
+				builder.insert(0, '"');
+				builder.append('"');
+			}
+
+			return builder.toString();
+		}
+	}
+
+	public static abstract class MICommandAdjustable implements Adjustable {
+
+		protected final String value;
+
+		/**
+		 * Creates a new instance.
+		 * 
+		 * @param builder
+		 *            The string builder is an optimization option, if two
+		 *            commands are not processed at the same time a shared
+		 *            builder can be used to save memory.
+		 * @param value
+		 *            The value that should be adjusted.
+		 */
+		public MICommandAdjustable(String value) {
+			this.value = value;
+		}
+
+		public String getValue() {
+			return value;
+		}
+	}
 }

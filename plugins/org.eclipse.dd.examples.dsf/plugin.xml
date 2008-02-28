@@ -6,12 +6,12 @@
          point="org.eclipse.ui.views">
       <category
             name="DSF Examples"
-            id="org.eclipse.dd.dsf.examples.timers">
+            id="org.eclipse.dd.examples.dsf">
       </category>
       <view
             name="Timers View"
             icon="icons/timer.gif"
-            category="org.eclipse.dd.dsf.examples.timers"
+            category="org.eclipse.dd.examples.dsf"
             class="org.eclipse.dd.examples.dsf.timers.TimersView"
             id="org.eclipse.dd.dsf.examples.model.TimersAlarmsView">
       </view>
@@ -22,34 +22,16 @@
             id="org.eclipse.dd.dsf.test.actionSet"
             label="DSF Examples">
          <menu
-               id="org.eclipse.dd.dsf.examples.timers"
+               id="org.eclipse.dd.examples.dsf"
                label="DSF Examples"
                path="additions">
             <groupMarker name="concurrent"/>
          </menu>
          <action
-               class="org.eclipse.dd.examples.dsf.dataviewer.CancellableInputCoalescingSlowDataProviderAction"
-               id="org.eclipse.dd.dsf.test.cancellableInputCoalescingSlowDataProvider"
-               label="Open Dialog with Cancellable Input-Coalescing Slow Data Provider"
-               menubarPath="org.eclipse.dd.dsf.examples.timers/concurrent"
-               style="push"/>
-         <action
-               class="org.eclipse.dd.examples.dsf.dataviewer.InputCoalescingSlowDataProviderAction"
-               id="org.eclipse.dd.dsf.test.inputCoalescingSlowDataProvider"
-               label="Open Dialog with Input-Coalescing Slow Data Provider"
-               menubarPath="org.eclipse.dd.dsf.examples.timers/concurrent"
-               style="push"/>
-         <action
-               class="org.eclipse.dd.examples.dsf.dataviewer.SlowDataProviderAction"
-               id="org.eclipse.dd.dsf.test.slowDataProvider"
-               label="Open Dialog with Slow Data Provider"
-               menubarPath="org.eclipse.dd.dsf.examples.timers/concurrent"
-               style="push"/>
-         <action
                class="org.eclipse.dd.examples.dsf.filebrowser.FileBrowserAction"
                id="org.eclipse.dd.dsf.test.fileBrowser"
                label="Open File Browser Dialog"
-               menubarPath="org.eclipse.dd.dsf.examples.timers/concurrent"
+               menubarPath="org.eclipse.dd.examples.dsf/concurrent"
                style="push"/>
       </actionSet>
    </extension>

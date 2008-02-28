@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation 
+ *    IBM Rational Software - Initial API and implementation 
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.DOMAST;
 
@@ -64,6 +64,7 @@ import org.eclipse.ui.views.properties.PropertySheet;
 
 import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -87,9 +88,7 @@ import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
-import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.model.CModelException;
@@ -373,11 +372,11 @@ public class DOMAST extends ViewPart {
 	         start=System.currentTimeMillis();
 	         if (aTu instanceof CPPASTTranslationUnit ) {
 	            action = new CPPPopulateASTViewAction(aTu, monitor);
-	            aTu.accept( (CPPASTVisitor) action);
+	            aTu.accept( (ASTVisitor) action);
 	         } 
 	         else if (aTu instanceof CASTTranslationUnit){
 	            action = new CPopulateASTViewAction(aTu, monitor);
-	            aTu.accept( (CASTVisitor) action);
+	            aTu.accept( (ASTVisitor) action);
 	         }
 	         monitor.worked(30);
              System.out.println(DOM_AST_VIEW_DONE + GENERATING_INITIAL_TREE + COLON_SPACE + (System.currentTimeMillis()- start) );

@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -15,9 +15,9 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
@@ -79,10 +79,10 @@ public class CPPASTTemplatedTypeTemplateParameter extends CPPASTNode implements
 		}
     }
 
-    public boolean accept( ASTVisitor action ){
-        if( action instanceof CPPASTVisitor &&
-            ((CPPASTVisitor)action).shouldVisitTemplateParameters ){
-		    switch( ((CPPASTVisitor)action).visit( this ) ){
+    @Override
+	public boolean accept( ASTVisitor action ){
+    	if (action.shouldVisitTemplateParameters && action instanceof ICPPASTVisitor) {
+		    switch( ((ICPPASTVisitor)action).visit( this ) ){
 	            case ASTVisitor.PROCESS_ABORT : return false;
 	            case ASTVisitor.PROCESS_SKIP  : return true;
 	            default : break;
@@ -96,14 +96,13 @@ public class CPPASTTemplatedTypeTemplateParameter extends CPPASTNode implements
         if( name != null ) if( !name.accept( action ) ) return false;
         if( defaultValue != null ) if( !defaultValue.accept( action ) ) return false;
         
-        if( action instanceof CPPASTVisitor &&
-                ((CPPASTVisitor)action).shouldVisitTemplateParameters ){
-    		    switch( ((CPPASTVisitor)action).leave( this ) ){
-    	            case ASTVisitor.PROCESS_ABORT : return false;
-    	            case ASTVisitor.PROCESS_SKIP  : return true;
-    	            default : break;
-    	        }
+    	if (action.shouldVisitTemplateParameters && action instanceof ICPPASTVisitor) {
+    		switch( ((ICPPASTVisitor)action).leave( this ) ){
+    		case ASTVisitor.PROCESS_ABORT : return false;
+    		case ASTVisitor.PROCESS_SKIP  : return true;
+    		default : break;
     		}
+    	}
         return true;
     }
 

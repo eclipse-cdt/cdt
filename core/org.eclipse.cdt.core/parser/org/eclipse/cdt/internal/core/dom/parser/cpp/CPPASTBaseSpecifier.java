@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Bryan Wilkinson (QNX)
+ *    IBM - Initial API and implementation
+ *    Bryan Wilkinson (QNX)
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -19,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 
@@ -71,10 +72,10 @@ public class CPPASTBaseSpecifier extends CPPASTNode implements
 		}
     }
 
-    public boolean accept(ASTVisitor action) {
-        if (action instanceof CPPASTVisitor &&
-            ((CPPASTVisitor)action).shouldVisitBaseSpecifiers) {
-		    switch (((CPPASTVisitor)action).visit(this)) {
+    @Override
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitBaseSpecifiers && action instanceof ICPPASTVisitor) {
+		    switch (((ICPPASTVisitor)action).visit(this)) {
 	            case ASTVisitor.PROCESS_ABORT : return false;
 	            case ASTVisitor.PROCESS_SKIP  : return true;
 	            default : break;
@@ -83,9 +84,8 @@ public class CPPASTBaseSpecifier extends CPPASTNode implements
 
         if (!name.accept(action)) return false;
 
-        if (action instanceof CPPASTVisitor &&
-                ((CPPASTVisitor)action).shouldVisitBaseSpecifiers) {
-    		    switch (((CPPASTVisitor)action).leave(this)) {
+        if (action.shouldVisitBaseSpecifiers && action instanceof ICPPASTVisitor) {
+    		    switch (((ICPPASTVisitor)action).leave(this)) {
     	            case ASTVisitor.PROCESS_ABORT : return false;
     	            case ASTVisitor.PROCESS_SKIP  : return true;
     	            default : break;

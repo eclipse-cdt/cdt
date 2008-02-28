@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,43 +8,26 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Yuan Zhang / Beth Tibbitts (IBM Research)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
-/*
- * Created on Mar 8, 2005
- */
 package org.eclipse.cdt.core.dom.ast.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 
 /**
  * This subclass of ASTVisitor that allows for better control in traversing C.
- * 
- * @ref ASTVisitor
- * @author jcamelon
  */
-public abstract class CASTVisitor extends ASTVisitor {
-	/**
-	 * Override this value in your subclass if you do wish to visit designators.
-	 */
-	public boolean shouldVisitDesignators = false;
+public abstract class CASTVisitor extends ASTVisitor implements ICASTVisitor {
 
-	/**
-	 * Function to override if you wish to visit designators in your
-	 * implementation.  This does a top-down traversal.
-	 * 
-	 * @param designator
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.c.ICASTVisitor#visit(org.eclipse.cdt.core.dom.ast.c.ICASTDesignator)
 	 */
 	public int visit(ICASTDesignator designator) {
 		return PROCESS_CONTINUE;
 	}
-	
-	/**
-	 * Function to override if you wish to visit designators in your
-	 * implementation: this does a bottom-up traversal.
-	 * @param designator
-	 * @return
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.c.ICASTVisitor#leave(org.eclipse.cdt.core.dom.ast.c.ICASTDesignator)
 	 */
 	public int leave(ICASTDesignator designator) {
 		return PROCESS_CONTINUE;

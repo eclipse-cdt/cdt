@@ -90,7 +90,6 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			shouldVisitEnumerators= true;
 			shouldVisitTranslationUnit= false;
 			shouldVisitProblems= true;
-			shouldVisitComments= false;
 			shouldVisitBaseSpecifiers= true;
 			shouldVisitNamespaces= true;
 			shouldVisitTemplateParameters= true;
@@ -108,48 +107,63 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			}
 			return PROCESS_CONTINUE;
 		}
+		@Override
 		public int visit(ICPPASTBaseSpecifier specifier) {
 			return processNode(specifier);
 		}
+		@Override
 		public int visit(ICPPASTNamespaceDefinition namespace) {
 			return processNode(namespace);
 		}
+		@Override
 		public int visit(ICPPASTTemplateParameter parameter) {
 			return processNode(parameter);
 		}
+		@Override
 		public int visit(IASTDeclaration declaration) {
 			return processNode(declaration);
 		}
+		@Override
 		public int visit(IASTDeclarator declarator) {
 			return processNode(declarator);
 		}
+		@Override
 		public int visit(IASTDeclSpecifier declSpec) {
 			return processNode(declSpec);
 		}
+		@Override
 		public int visit(IASTEnumerator enumerator) {
 			return processNode(enumerator);
 		}
+		@Override
 		public int visit(IASTExpression expression) {
 			return processNode(expression);
 		}
+		@Override
 		public int visit(IASTInitializer initializer) {
 			return processNode(initializer);
 		}
+		@Override
 		public int visit(IASTName name) {
 			return processNode(name);
 		}
+		@Override
 		public int visit(IASTParameterDeclaration parameterDeclaration) {
 			return processNode(parameterDeclaration);
 		}
+		@Override
 		public int visit(IASTProblem problem) {
 			return processNode(problem);
 		}
+		@Override
 		public int visit(IASTStatement statement) {
 			return processNode(statement);
 		}
+		@Override
 		public int visit(IASTTranslationUnit tu) {
 			return processNode(tu);
 		}
+		@Override
 		public int visit(IASTTypeId typeId) {
 			return processNode(typeId);
 		}
@@ -190,6 +204,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		/*
 		 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTTranslationUnit)
 		 */
+		@Override
 		public int visit(IASTTranslationUnit tu) {
 			fFilePath= tu.getFilePath();
 			
@@ -215,6 +230,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		/*
 		 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
 		 */
+		@Override
 		public int visit(IASTDeclaration declaration) {
 			if (!declaration.isPartOfTranslationUnitFile()) {
 				return PROCESS_SKIP;
@@ -228,6 +244,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		/*
 		 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#leave(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
 		 */
+		@Override
 		public int leave(IASTDeclaration declaration) {
 			if (!shouldVisitCatchHandlers && declaration instanceof IASTFunctionDefinition) {
 				shouldVisitCatchHandlers= true;
@@ -244,6 +261,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		/*
 		 * @see org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor#visit(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition)
 		 */
+		@Override
 		public int visit(ICPPASTNamespaceDefinition namespace) {
 			if (!namespace.isPartOfTranslationUnitFile()) {
 				return PROCESS_SKIP;
@@ -257,6 +275,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		/*
 		 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier)
 		 */
+		@Override
 		public int visit(IASTDeclSpecifier declSpec) {
 			if (checkForMacro(declSpec)) {
 				return PROCESS_SKIP;
@@ -267,6 +286,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		/*
 		 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTDeclarator)
 		 */
+		@Override
 		public int visit(IASTDeclarator declarator) {
 			if (checkForMacro(declarator)) {
 				return PROCESS_SKIP;
@@ -280,6 +300,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		/*
 		 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTExpression)
 		 */
+		@Override
 		public int visit(IASTExpression expression) {
 			if (checkForMacro(expression)) {
 				return PROCESS_SKIP;
@@ -290,6 +311,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		/*
 		 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTStatement)
 		 */
+		@Override
 		public int visit(IASTStatement statement) {
 			if (!shouldVisitCatchHandlers && statement instanceof ICPPASTCatchHandler) {
 				return PROCESS_SKIP;
@@ -303,6 +325,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		/*
 		 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTName)
 		 */
+		@Override
 		public int visit(IASTName name) {
 			if (checkForMacro(name)) {
 				return PROCESS_SKIP;
@@ -481,9 +504,9 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 	private HighlightingStyle[] fHighlightings;
 
 	/** Background job's added highlighted positions */
-	private List fAddedPositions= new ArrayList();
+	private List<Position> fAddedPositions= new ArrayList<Position>();
 	/** Background job's removed highlighted positions */
-	private List fRemovedPositions= new ArrayList();
+	private List<Object> fRemovedPositions= new ArrayList<Object>();
 	/** Number of removed positions */
 	private int fNOfRemovedPositions;
 
@@ -578,8 +601,8 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 	 */
 	private void reconcilePositions(IASTTranslationUnit ast, PositionCollector visitor) {
 		ast.accept(visitor);
-		List oldPositions= fRemovedPositions;
-		List newPositions= new ArrayList(fNOfRemovedPositions);
+		List<Object> oldPositions= fRemovedPositions;
+		List<Object> newPositions= new ArrayList<Object>(fNOfRemovedPositions);
 		for (int i= 0, n= oldPositions.size(); i < n; i ++) {
 			Object current= oldPositions.get(i);
 			if (current != null)
@@ -587,10 +610,8 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		}
 		fRemovedPositions= newPositions;
 		// positions need to be sorted by ascending offset
-		Collections.sort(fAddedPositions, new Comparator() {
-			public int compare(Object o1, Object o2) {
-				final Position p1= (Position)o1;
-				final Position p2= (Position)o2;
+		Collections.sort(fAddedPositions, new Comparator<Position>() {
+			public int compare(final Position p1, final Position p2) {
 				return p1.getOffset() - p2.getOffset();
 			}});
 	}
@@ -602,7 +623,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 	 * @param addedPositions the added positions
 	 * @param removedPositions the removed positions
 	 */
-	private void updatePresentation(TextPresentation textPresentation, List addedPositions, List removedPositions) {
+	private void updatePresentation(TextPresentation textPresentation, List<Position> addedPositions, List<Object> removedPositions) {
 		Runnable runnable= fJobPresenter.createUpdateRunnable(textPresentation, addedPositions, removedPositions);
 		if (runnable == null)
 			return;
@@ -687,6 +708,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			
 			if (element != null) {
 				fJob= new Job(CEditorMessages.getString("SemanticHighlighting_job")) { //$NON-NLS-1$
+					@Override
 					protected IStatus run(final IProgressMonitor monitor) {
 						if (oldJob != null) {
 							try {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
-/*
- * Created on Mar 8, 2005
- */
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -21,86 +18,48 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBas
  * C++ specific visitor class.
  * <br>The visit() methods implement a top-down traversal of the AST,
  * and the leave() methods implement a bottom-up traversal.
- * 
- * @author jcamelon
  */
-public abstract class CPPASTVisitor extends ASTVisitor {
+public abstract class CPPASTVisitor extends ASTVisitor implements ICPPASTVisitor {
 
-	/**
-	 * Overide this value if you wish to visit base specifiers off composite
-	 * types.
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor#visit(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier)
 	 */
-	public boolean shouldVisitBaseSpecifiers = false;
-
-	/**
-	 * Overide this value if you wish to visit namespaces.
-	 */
-	public boolean shouldVisitNamespaces = false;
-
-	/**
-	 * Overide this value if you wish to visit template parameters.
-	 */
-	public boolean shouldVisitTemplateParameters = false;
-
-	/**
-	 * Visit BaseSpecifiers.
-	 * 
-	 * @param specifier
-	 * @return
-	 */
-	public int visit(ICPPASTBaseSpecifier specifier) {
+	public int visit(ICPPASTBaseSpecifier baseSpecifier) {
 		return PROCESS_CONTINUE;
 	}
 
-	/**
-	 * Visit namespace definitions.
-	 * 
-	 * @param namespace
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor#visit(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition)
 	 */
-	public int visit(ICPPASTNamespaceDefinition namespace) {
+	public int visit(ICPPASTNamespaceDefinition namespaceDefinition) {
 		return PROCESS_CONTINUE;
 	}
 
-	/**
-	 * Visit template parameter.
-	 * 
-	 * @param parameter
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor#visit(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter)
 	 */
-	public int visit(ICPPASTTemplateParameter parameter) {
-		return PROCESS_CONTINUE;
-	}
-	/**
-	 * Visit BaseSpecifiers.
-	 * Bottom-up traversal.
-	 * 
-	 * @param specifier
-	 * @return
-	 */
-	public int leave(ICPPASTBaseSpecifier specifier) {
+	public int visit(ICPPASTTemplateParameter templateParameter) {
 		return PROCESS_CONTINUE;
 	}
 
-	/**
-	 * Visit namespace definitions.
-	 * Bottom-up traversal.
-	 * 
-	 * @param namespace
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor#leave(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier)
 	 */
-	public int leave(ICPPASTNamespaceDefinition namespace) {
+	public int leave(ICPPASTBaseSpecifier baseSpecifier) {
 		return PROCESS_CONTINUE;
 	}
 
-	/**
-	 * Visit template parameter.
-	 * Bottom-up traversal.
-	 * 
-	 * @param parameter
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor#leave(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition)
 	 */
-	public int leave(ICPPASTTemplateParameter parameter) {
+	public int leave(ICPPASTNamespaceDefinition namespaceDefinition) {
+		return PROCESS_CONTINUE;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor#leave(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter)
+	 */
+	public int leave(ICPPASTTemplateParameter templateParameter) {
 		return PROCESS_CONTINUE;
 	}
 }

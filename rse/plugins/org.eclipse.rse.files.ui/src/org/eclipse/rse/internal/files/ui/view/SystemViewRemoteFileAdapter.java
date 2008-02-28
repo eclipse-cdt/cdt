@@ -46,6 +46,7 @@
  * David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
  * David McKnight   (IBM)        - [216252] [nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [216252] MessageFormat.format -> NLS.bind
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -97,6 +98,7 @@ import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
 import org.eclipse.rse.files.ui.resources.UniversalFileTransferUtility;
 import org.eclipse.rse.internal.files.ui.Activator;
 import org.eclipse.rse.internal.files.ui.FileResources;
+import org.eclipse.rse.internal.files.ui.ISystemFileConstants;
 import org.eclipse.rse.internal.files.ui.actions.SystemCompareFilesAction;
 import org.eclipse.rse.internal.files.ui.actions.SystemCompareWithEditionAction;
 import org.eclipse.rse.internal.files.ui.actions.SystemEditFilesAction;
@@ -119,6 +121,8 @@ import org.eclipse.rse.services.clientserver.StringCompare;
 import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
 import org.eclipse.rse.services.clientserver.SystemSearchString;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
+import org.eclipse.rse.services.clientserver.messages.CommonMessages;
+import org.eclipse.rse.services.clientserver.messages.ICommonMessageIds;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
@@ -750,14 +754,19 @@ public class SystemViewRemoteFileAdapter
 			catch (InterruptedException exc)
 			{
 				children = new SystemMessageObject[1];
-				SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.CANCEL, FileResources.MSG_EXPAND_CANCELED);
+				SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+						ICommonMessageIds.MSG_EXPAND_CANCELED,
+						IStatus.CANCEL, CommonMessages.MSG_EXPAND_CANCELED);
 				children[0] = new SystemMessageObject(msg, ISystemMessageObject.MSGTYPE_CANCEL, element);
 			}
 			catch (Exception exc)
 			{
 				children = new SystemMessageObject[1];
 				
-				SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, FileResources.MSG_EXPAND_FAILED);
+				SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+						ICommonMessageIds.MSG_EXPAND_FAILED,
+						IStatus.ERROR, 
+						CommonMessages.MSG_EXPAND_FAILED);
 				children[0] = new SystemMessageObject(msg, ISystemMessageObject.MSGTYPE_ERROR, element);
 				SystemBasePlugin.logError("Exception resolving file filter strings", exc); //$NON-NLS-1$
 			} // message already issued        
@@ -1956,7 +1965,9 @@ public class SystemViewRemoteFileAdapter
 			{
 				String msgTxt = FileResources.FILEMSG_SECURITY_ERROR;
 				String msgDetails = NLS.bind(FileResources.FILEMSG_SECURITY_ERROR_DETAILS, targetFS.getHostAliasName());
-				SystemMessage errorMsg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+				SystemMessage errorMsg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+						ISystemFileConstants.FILEMSG_SECURITY_ERROR,
+						IStatus.ERROR, msgTxt, msgDetails);
 				resultSet.setMessage(errorMsg);
 
 				return resultSet;
@@ -2015,7 +2026,9 @@ public class SystemViewRemoteFileAdapter
 								String msgTxt = FileResources.FILEMSG_COPY_INTERRUPTED;
 								String msgDetails = NLS.bind(FileResources.FILEMSG_COPY_INTERRUPTED_DETAILS, copiedFileNames);
 
-								SystemMessage thisMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+								SystemMessage thisMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+										ISystemFileConstants.FILEMSG_COPY_INTERRUPTED,
+										IStatus.ERROR, msgTxt, msgDetails);
 								resultSet.setMessage(thisMessage);
 							}
 						}
@@ -2095,7 +2108,9 @@ public class SystemViewRemoteFileAdapter
 										srcFileOrFolder.getAbsolutePath(), 
 										srcFileOrFolder.getSystemConnection().getAliasName());
 								
-								SystemMessage errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt);
+								SystemMessage errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+										ISystemFileConstants.MSG_ERROR_FILE_NOTFOUND,
+										IStatus.ERROR, msgTxt);
 								resultSet.setMessage(errorMessage);
 								return resultSet;
 							}
@@ -2178,7 +2193,9 @@ public class SystemViewRemoteFileAdapter
 									String msgTxt = NLS.bind(FileResources.FILEMSG_COPY_FILE_FAILED, srcFileOrFolder.getAbsolutePath());
 									String msgDetails = FileResources.FILEMSG_COPY_FILE_FAILED_DETAILS;
 									
-									SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+									SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+											ISystemFileConstants.FILEMSG_COPY_FILE_FAILED,
+											IStatus.ERROR, msgTxt, msgDetails);
 									resultSet.setMessage(msg);
 								}
 							}
@@ -2206,7 +2223,9 @@ public class SystemViewRemoteFileAdapter
 										String msgTxt = FileResources.FILEMSG_COPY_INTERRUPTED;
 										String msgDetails = NLS.bind(FileResources.FILEMSG_COPY_INTERRUPTED_DETAILS, copiedFileNames);
 
-										SystemMessage thisMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+										SystemMessage thisMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+												ISystemFileConstants.FILEMSG_COPY_INTERRUPTED,
+												IStatus.ERROR, msgTxt, msgDetails);
 										SystemMessageDialog.displayErrorMessage(shell, thisMessage);
 									}
 									else
@@ -2282,7 +2301,9 @@ public class SystemViewRemoteFileAdapter
 										String msgTxt = FileResources.FILEMSG_COPY_INTERRUPTED;
 										String msgDetails = NLS.bind(FileResources.FILEMSG_COPY_INTERRUPTED_DETAILS, copiedFileNames);
 																				
-										SystemMessage thisMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+										SystemMessage thisMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+												ISystemFileConstants.FILEMSG_COPY_INTERRUPTED,
+												IStatus.ERROR, msgTxt, msgDetails);
 										SystemMessageDialog.displayErrorMessage(shell, thisMessage);
 										
 									}
@@ -2351,7 +2372,9 @@ public class SystemViewRemoteFileAdapter
 				String msgDetails = NLS.bind(FileResources.FILEMSG_SECURITY_ERROR_DETAILS, targetFS.getHostAliasName());
 				SystemMessage errorMsg = null;
 				
-				errorMsg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+				errorMsg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+						ISystemFileConstants.FILEMSG_SECURITY_ERROR,
+						IStatus.ERROR, msgTxt, msgDetails);
 			
 				return errorMsg;
 			}
@@ -2463,12 +2486,16 @@ public class SystemViewRemoteFileAdapter
 									srcFileOrFolder.getAbsolutePath(), 
 									srcFileOrFolder.getSystemConnection().getAliasName());
 							
-							SystemMessage errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt);
+							SystemMessage errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+									ISystemFileConstants.MSG_ERROR_FILE_NOTFOUND,
+									IStatus.ERROR, msgTxt);
 							return errorMessage;							
 						}
 
-						String msgTxt = NLS.bind(FileResources.MSG_COPY_PROGRESS, srcFileOrFolder.getName(), targetFolder.getAbsolutePath());
-						SystemMessage copyMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.INFO, msgTxt);
+						String msgTxt = NLS.bind(CommonMessages.MSG_COPY_PROGRESS, srcFileOrFolder.getName(), targetFolder.getAbsolutePath());
+						SystemMessage copyMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+								ICommonMessageIds.MSG_COPY_PROGRESS,
+								IStatus.INFO, msgTxt);
 					
 
 						IRemoteFileSubSystem localFS = srcFileOrFolder.getParentRemoteFileSubSystem();
@@ -2707,7 +2734,9 @@ public class SystemViewRemoteFileAdapter
 			String msgTxt = NLS.bind(FileResources.FILEMSG_DELETE_FILE_FAILED, file.toString());
 			String msgDetails = FileResources.FILEMSG_DELETE_FILE_FAILED_DETAILS;
 	
-			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+					ISystemFileConstants.FILEMSG_DELETE_FILE_FAILED,
+					IStatus.ERROR, msgTxt, msgDetails);
 			SystemMessageDialog.displayErrorMessage(shell, msg);
 		}
 		return ok;
@@ -2751,7 +2780,9 @@ public class SystemViewRemoteFileAdapter
 				String msgTxt = NLS.bind(FileResources.FILEMSG_DELETE_FILE_FAILED, file.toString());
 				String msgDetails = FileResources.FILEMSG_DELETE_FILE_FAILED_DETAILS;
 				
-				SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+				SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+						ISystemFileConstants.FILEMSG_DELETE_FILE_FAILED,
+						IStatus.ERROR, msgTxt, msgDetails);
 				SystemMessageDialog.displayErrorMessage(shell, msg);
 			}
 		}

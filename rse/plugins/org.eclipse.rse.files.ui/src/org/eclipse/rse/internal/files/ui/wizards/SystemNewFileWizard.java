@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [204669] Fix ftp path concatenation on systems using backslash separator
  * Xuan Chen        (IBM)        - [209828] Need to move the Create operation to a job.
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.wizards;
@@ -40,6 +41,7 @@ import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.files.ui.Activator;
 import org.eclipse.rse.internal.files.ui.FileResources;
+import org.eclipse.rse.internal.files.ui.ISystemFileConstants;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
@@ -111,7 +113,9 @@ public class SystemNewFileWizard
             	String msgTxt = FileResources.FILEMSG_CREATE_FILE_FAILED;
             	String msgDetails = NLS.bind(FileResources.FILEMSG_COPY_FILE_FAILED_DETAILS, absName);
             	
-            	msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+            	msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+            			ISystemFileConstants.FILEMSG_COPY_FILE_FAILED,
+            			IStatus.ERROR, msgTxt, msgDetails);
             	SystemMessageDialog.displayErrorMessage(null, msg);
             } 
             catch (RemoteFileSecurityException e)  
@@ -120,7 +124,9 @@ public class SystemNewFileWizard
             	String msgTxt = FileResources.FILEMSG_CREATE_FILE_FAILED;
             	String msgDetails = NLS.bind(FileResources.FILEMSG_COPY_FILE_FAILED_DETAILS, absName);
             	
-            	msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+            	msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+            			ISystemFileConstants.FILEMSG_COPY_FILE_FAILED,
+            			IStatus.ERROR, msgTxt, msgDetails);
             	
 
             	SystemBasePlugin.logDebugMessage(CLASSNAME+ ":", " Creating remote file "+ absName + " failed with RemoteFileSecurityException ");  	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -242,7 +248,9 @@ public class SystemNewFileWizard
 			    */
 			    {
 			       String msgTxt = NLS.bind(FileResources.FILEMSG_FOLDER_NOTFOUND, parentFolder.getAbsolutePath());			    	
-			  	   msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt);
+			  	   msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+			  			   ISystemFileConstants.FILEMSG_FILE_NOTFOUND,
+			  			   IStatus.ERROR, msgTxt);
 			       msg.makeSubstitution(parentFolder.getAbsolutePath());            	
 			       mainPage.setMessage(msg);
 			       return false;
@@ -326,7 +334,9 @@ public class SystemNewFileWizard
 			String msgTxt = FileResources.FILEMSG_CREATE_RESOURCE_NOTVISIBLE;
 			String msgDetails = FileResources.FILEMSG_CREATE_RESOURCE_NOTVISIBLE_DETAILS;
 			
-			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+					ISystemFileConstants.FILEMSG_CREATE_RESOURCE_NOTVISIBLE,
+					IStatus.ERROR, msgTxt, msgDetails);
 			SystemMessageDialog msgDlg = new SystemMessageDialog(getShell(), msg);
 			if (msgDlg.openQuestionNoException()) // ask user if they want to proceed
 			  meets = true; // they do, so pretend it meets the criteria

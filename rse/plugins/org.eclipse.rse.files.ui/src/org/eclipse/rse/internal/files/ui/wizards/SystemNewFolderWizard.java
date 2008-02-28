@@ -15,6 +15,7 @@
  * David Dykstal (IBM) - [188718] fix error messages showing up as info messages on wizard page
  * Xuan Chen        (IBM)        - [209828] Need to move the Create operation to a job.
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.wizards;
@@ -28,6 +29,7 @@ import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.internal.files.ui.Activator;
 import org.eclipse.rse.internal.files.ui.FileResources;
+import org.eclipse.rse.internal.files.ui.ISystemFileConstants;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
@@ -93,7 +95,9 @@ public class SystemNewFolderWizard
             	SystemBasePlugin.logDebugMessage(CLASSNAME+ ":", " Creating remote file "+ absName + " failed with RemoteFileIOException " );  	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             	String msgTxt = FileResources.FILEMSG_CREATE_FILE_FAILED_EXIST;
             	String msgDetails = NLS.bind(FileResources.FILEMSG_CREATE_FILE_FAILED_EXIST_DETAILS, absName);            	
-            	msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+            	msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+            			ISystemFileConstants.FILEMSG_CREATE_FILE_FAILED_EXIST,
+            			IStatus.ERROR, msgTxt, msgDetails);
             	SystemMessageDialog.displayErrorMessage(null, msg);
             } 
             catch (RemoteFileSecurityException e)  
@@ -101,7 +105,9 @@ public class SystemNewFolderWizard
             	ok = false;
             	String msgTxt = FileResources.FILEMSG_CREATE_FOLDER_FAILED_EXIST;
             	String msgDetails = NLS.bind(FileResources.FILEMSG_CREATE_FOLDER_FAILED_EXIST_DETAILS, absName);            	
-            	msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);            	
+            	msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+            			ISystemFileConstants.FILEMSG_CREATE_FOLDER_FAILED_EXIST,
+            			IStatus.ERROR, msgTxt, msgDetails);            	
             	SystemBasePlugin.logDebugMessage(CLASSNAME+ ":", " Creating remote folder "+ absName + " failed with RemoteFileSecurityException ");  	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             	SystemMessageDialog.displayErrorMessage(null, msg);                                               
             } 
@@ -220,7 +226,9 @@ public class SystemNewFolderWizard
 			    */
 			    {
 			      String msgTxt = NLS.bind(FileResources.FILEMSG_FILE_NOTFOUND, parentFolder.getAbsolutePath());			    				    	
-			  	   msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt);
+			  	   msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+			  			   ISystemFileConstants.FILEMSG_FILE_NOTFOUND,
+			  			   IStatus.ERROR, msgTxt);
       	
 			       mainPage.setMessage(msg);
 			       return false;
@@ -284,7 +292,9 @@ public class SystemNewFolderWizard
 			String msgTxt = FileResources.FILEMSG_CREATE_RESOURCE_NOTVISIBLE;
 			String msgDetails = FileResources.FILEMSG_CREATE_RESOURCE_NOTVISIBLE_DETAILS;
 			
-			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.WARNING, msgTxt, msgDetails);
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+					ISystemFileConstants.FILEMSG_CREATE_RESOURCE_NOTVISIBLE,
+					IStatus.WARNING, msgTxt, msgDetails);
 			SystemMessageDialog msgDlg = new SystemMessageDialog(getShell(), msg);
 			if (msgDlg.openQuestionNoException()) // ask user if they want to proceed
 			  meets = true; // they do, so pretend it meets the criteria

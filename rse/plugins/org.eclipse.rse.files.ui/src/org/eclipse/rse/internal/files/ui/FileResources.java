@@ -16,6 +16,7 @@
  * David McKnight(IBM) - [210142] for accessibility need transfer mode toggle button
  * David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
  * David McKnight   (IBM)        - [216252] [nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui;
@@ -356,8 +357,7 @@ public class FileResources extends NLS
 
 	
 	// messages
-	public static String MSG_ERROR_UNEXPECTED;
-	
+
 	public static String MSG_ERROR_FOLDER_NOTFOUND;
 	public static String MSG_ERROR_FILE_NOTFOUND; 
 	public static String MSG_ERROR_FOLDERORFILE_NOTFOUND;
@@ -461,26 +461,13 @@ public class FileResources extends NLS
 	public static String MSG_VALIDATE_PATH_NOTUNIQUE_DETAILS;
 	public static String MSG_VALIDATE_PATH_NOTVALID_DETAILS;
 	
-	public static String MSG_CONNECT_FAILED; 
-	public static String MSG_CONNECT_UNKNOWNHOST;
-	public static String MSG_CONNECT_CANCELED; 
-	
-	public static String MSG_EXCEPTION_OCCURRED;
+
 
 	// remote search messages
 	public static String MSG_REMOTE_SEARCH_INVALID_REGEX;
 	public static String MSG_REMOTE_SEARCH_INVALID_REGEX_DETAILS;
 	
-	public static String MSG_COPY_PROGRESS;
-	
-	public static String MSG_EXPAND_FAILED;
-	public static String MSG_EXPAND_CANCELED;
-	
-	// operation status
-	public static String MSG_OPERATION_RUNNING;
-	public static String MSG_OPERATION_FINISHED;
-	public static String MSG_OPERTION_STOPPED;
-	public static String MSG_OPERATION_DISCONNECTED;	
+
 	
 	public static String MSG_CREATEFILEGENERIC_PROGRESS;
 	public static String MSG_CREATEFOLDERGENERIC_PROGRESS;

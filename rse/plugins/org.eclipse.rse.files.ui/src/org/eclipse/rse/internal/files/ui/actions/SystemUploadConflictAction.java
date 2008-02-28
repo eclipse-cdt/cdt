@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -37,8 +38,11 @@ import org.eclipse.rse.files.ui.dialogs.SaveAsDialog;
 import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
 import org.eclipse.rse.internal.files.ui.Activator;
 import org.eclipse.rse.internal.files.ui.FileResources;
+import org.eclipse.rse.internal.files.ui.ISystemFileConstants;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
+import org.eclipse.rse.services.clientserver.messages.CommonMessages;
+import org.eclipse.rse.services.clientserver.messages.ICommonMessageIds;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
@@ -102,7 +106,9 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
                 {
                     SystemBasePlugin.logError("Error in performSaveAs", e); //$NON-NLS-1$
 
-                    SystemMessage message = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, FileResources.MSG_ERROR_UNEXPECTED);
+                    SystemMessage message = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+                    		ICommonMessageIds.MSG_ERROR_UNEXPECTED,
+                    		IStatus.ERROR, CommonMessages.MSG_ERROR_UNEXPECTED);
                     SystemMessageDialog dialog = new SystemMessageDialog(SystemBasePlugin.getActiveWorkbenchShell(), message);
                     SystemMessageDialogRunnable runnable = ((SubSystem)fs).new SystemMessageDialogRunnable(dialog);
                     Display.getDefault().asyncExec(runnable);
@@ -375,7 +381,9 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
                 else
                 {
                     enableOkButton(false);
-                    _errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR,
+                    _errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID,                     		
+                    		ISystemFileConstants.MSG_VALIDATE_PATH_EMPTY,
+                    		IStatus.ERROR,
                     		FileResources.MSG_VALIDATE_PATH_EMPTY, 
                     		FileResources.MSG_VALIDATE_PATH_EMPTY_DETAILS);
 

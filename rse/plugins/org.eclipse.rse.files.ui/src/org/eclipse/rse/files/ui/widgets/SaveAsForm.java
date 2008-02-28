@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.widgets;
@@ -23,6 +24,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.internal.files.ui.Activator;
 import org.eclipse.rse.internal.files.ui.FileResources;
+import org.eclipse.rse.internal.files.ui.ISystemFileConstants;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
@@ -115,7 +117,9 @@ public class SaveAsForm extends SystemSelectRemoteFileOrFolderForm {
 			{
 				String msgTxt = NLS.bind(FileResources.MSG_UPLOAD_FILE_EXISTS, fileName);
 
-				SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.WARNING, msgTxt);
+				SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+						ISystemFileConstants.MSG_UPLOAD_FILE_EXISTS,
+						IStatus.WARNING, msgTxt);
 				SystemMessageDialog dlg = new SystemMessageDialog(getShell(), msg);
 				ok = dlg.openQuestionNoException();
 

@@ -17,6 +17,7 @@
  * Kevin Doyle (IBM) - [187427] Selecting an Archive will check Search Archives checkbox
  * Martin Oberhuber (Wind River) - [196936] Hide disabled system types
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.search;
@@ -44,6 +45,7 @@ import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.internal.files.ui.Activator;
 import org.eclipse.rse.internal.files.ui.FileResources;
+import org.eclipse.rse.internal.files.ui.ISystemFileConstants;
 import org.eclipse.rse.internal.ui.view.search.SystemSearchUI;
 import org.eclipse.rse.internal.ui.view.search.SystemSearchViewPart;
 import org.eclipse.rse.services.clientserver.SystemSearchString;
@@ -679,7 +681,9 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 					String msgTxt = FileResources.MSG_REMOTE_SEARCH_INVALID_REGEX;
 					String msgDetails = NLS.bind(FileResources.MSG_REMOTE_SEARCH_INVALID_REGEX_DETAILS, searchString);
 
-					SystemMessage message = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+					SystemMessage message = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+							ISystemFileConstants.MSG_REMOTE_SEARCH_INVALID_REGEX,
+							IStatus.ERROR, msgTxt, msgDetails);
 					SystemMessageDialog.displayErrorMessage(getShell(), message);
 
 					stringCombo.setFocus();
@@ -699,7 +703,9 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 					String msgTxt = FileResources.MSG_REMOTE_SEARCH_INVALID_REGEX;
 					String msgDetails = NLS.bind(FileResources.MSG_REMOTE_SEARCH_INVALID_REGEX_DETAILS, fileNameString);
 					
-					SystemMessage message = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+					SystemMessage message = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+							ISystemFileConstants.MSG_REMOTE_SEARCH_INVALID_REGEX,
+							IStatus.ERROR, msgTxt, msgDetails);
 					SystemMessageDialog.displayErrorMessage(getShell(), message);				
 
 					fileNameCombo.setFocus();

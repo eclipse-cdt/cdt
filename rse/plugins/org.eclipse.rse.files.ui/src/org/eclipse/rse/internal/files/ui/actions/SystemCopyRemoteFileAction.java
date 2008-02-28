@@ -19,6 +19,7 @@
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  * Xuan Chen (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -45,6 +46,7 @@ import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.files.ui.dialogs.SystemRemoteFolderDialog;
 import org.eclipse.rse.internal.files.ui.Activator;
 import org.eclipse.rse.internal.files.ui.FileResources;
+import org.eclipse.rse.internal.files.ui.ISystemFileConstants;
 import org.eclipse.rse.internal.files.ui.resources.SystemRemoteEditManager;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.view.SystemView;
@@ -236,7 +238,9 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 			{
 				String msgTxt = NLS.bind(FileResources.FILEMSG_COPY_FILE_FAILED, srcFileOrFolder.getName());
 				String msgDetails = FileResources.FILEMSG_COPY_FILE_FAILED_DETAILS;
-			  SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+			  SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+					  ISystemFileConstants.FILEMSG_COPY_FILE_FAILED,
+					  IStatus.ERROR, msgTxt, msgDetails);
 			  throw new SystemMessageException(msg); 
 			}
 			else

@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.propertypages;
@@ -42,6 +43,7 @@ import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.files.ui.Activator;
 import org.eclipse.rse.internal.files.ui.FileResources;
+import org.eclipse.rse.internal.files.ui.ISystemFileConstants;
 import org.eclipse.rse.internal.files.ui.resources.SystemRemoteEditManager;
 import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
 import org.eclipse.rse.internal.ui.GenericMessages;
@@ -610,7 +612,9 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 		List dirtyEditors = new ArrayList();
 		if (!getDirtyReplicas(dirtyEditors))
 		{
-			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, FileResources.MSG_CACHE_UNABLE_TO_SYNCH);
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+					ISystemFileConstants.MSG_CACHE_UNABLE_TO_SYNCH,
+					IStatus.ERROR, FileResources.MSG_CACHE_UNABLE_TO_SYNCH);
 			SystemMessageDialog dlg = new SystemMessageDialog(getShell(), msg);
 			dlg.open();
 
@@ -629,7 +633,9 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 			WorkbenchContentProvider cprovider = new WorkbenchContentProvider();
 			SystemTableViewProvider lprovider = new SystemTableViewProvider();
 
-			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, FileResources.MSG_CACHE_UPLOAD_BEFORE_DELETE);
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+					ISystemFileConstants.MSG_CACHE_UPLOAD_BEFORE_DELETE,
+					IStatus.ERROR, FileResources.MSG_CACHE_UPLOAD_BEFORE_DELETE);
 
 			ListSelectionDialog dlg =
 				new ListSelectionDialog(getShell(), input, cprovider, lprovider, msg.getLevelOneText());

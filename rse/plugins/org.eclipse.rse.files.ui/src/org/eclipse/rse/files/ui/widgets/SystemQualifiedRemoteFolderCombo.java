@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
  * David McKnight   (IBM)        - [186363] get rid of obsolete calls to ISubSystem.connect()
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.widgets;
@@ -34,6 +35,7 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.files.ui.actions.SystemSelectRemoteFolderAction;
 import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.internal.subsystems.files.core.SystemFileResources;
+import org.eclipse.rse.services.clientserver.messages.CommonMessages;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
@@ -618,11 +620,11 @@ public class SystemQualifiedRemoteFolderCombo extends Composite
 			}
     	   } catch (InterruptedException exc)
     	   {
-    		   String msgTxt = NLS.bind(FileResources.MSG_CONNECT_CANCELED, conn.getHostName());
+    		   String msgTxt = NLS.bind(CommonMessages.MSG_CONNECT_CANCELED, conn.getHostName());
     	     throw new Exception(msgTxt);    	   	 
     	   } catch (Exception exc)
     	   {
-    		   String msgTxt = NLS.bind(FileResources.MSG_CONNECT_FAILED, conn.getHostName());
+    		   String msgTxt = NLS.bind(CommonMessages.MSG_CONNECT_FAILED, conn.getHostName());
       	     throw new Exception(msgTxt);    	     	   	 
     	   }     	   
     	}

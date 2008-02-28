@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -26,7 +27,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.internal.files.ui.FileResources;
+import org.eclipse.rse.services.clientserver.messages.CommonMessages;
 import org.eclipse.rse.services.search.IHostSearchResultSet;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteSearchResult;
@@ -106,16 +107,16 @@ public class SystemViewRemoteSearchResultSetAdapter extends AbstractSystemViewAd
 			String msg = null;
 				
 			if (set.isRunning()) {
-				msg = FileResources.MSG_OPERATION_RUNNING;
+				msg = CommonMessages.MSG_OPERATION_RUNNING;
 			}
 			else if (set.isFinished()) {
-				msg = FileResources.MSG_OPERATION_FINISHED;
+				msg = CommonMessages.MSG_OPERATION_FINISHED;
 			}
 			else if (set.isCancelled()) {
-				msg = FileResources.MSG_OPERTION_STOPPED;
+				msg = CommonMessages.MSG_OPERTION_STOPPED;
 			}
 			else if (set.isDisconnected()) {
-				msg = FileResources.MSG_OPERATION_DISCONNECTED;
+				msg = CommonMessages.MSG_OPERATION_DISCONNECTED;
 			}
 			
 			if (msg != null)

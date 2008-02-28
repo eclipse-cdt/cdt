@@ -26,6 +26,7 @@
  * David McKnight   (IBM)        - [210812] for text transfer, need to tell editor to use local encoding
  * Xuan Chen        (IBM)        - [210816] Archive testcases throw ResourceException if they are run in batch
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  *******************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -59,10 +60,13 @@ import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.files.ui.Activator;
 import org.eclipse.rse.internal.files.ui.FileResources;
+import org.eclipse.rse.internal.files.ui.ISystemFileConstants;
 import org.eclipse.rse.internal.files.ui.actions.SystemDownloadConflictAction;
 import org.eclipse.rse.internal.files.ui.resources.SystemFileNameHelper;
 import org.eclipse.rse.internal.files.ui.resources.SystemRemoteEditManager;
 import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
+import org.eclipse.rse.services.clientserver.messages.CommonMessages;
+import org.eclipse.rse.services.clientserver.messages.ICommonMessageIds;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
@@ -1108,7 +1112,9 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			if (!remoteFile.exists())
 			{
 				String msgTxt = NLS.bind(FileResources.MSG_ERROR_FILE_NOTFOUND, remotePath, subsystem.getHost().getHostName());
-				SystemMessage message = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt);		
+				SystemMessage message = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+						ISystemFileConstants.MSG_ERROR_FILE_NOTFOUND,
+						IStatus.ERROR, msgTxt);		
 				
 				SystemMessageDialog dialog = new SystemMessageDialog(shell, message);
 				dialog.open();
@@ -1146,7 +1152,9 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 
 					String msgTxt = NLS.bind(FileResources.MSG_DOWNLOAD_NO_WRITE, remotePath, subsystem.getHost().getHostName());
 					String msgDetails = NLS.bind(FileResources.MSG_DOWNLOAD_NO_WRITE_DETAILS, remotePath, subsystem.getHost().getHostName());
-					SystemMessage message = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.WARNING, msgTxt, msgDetails);		
+					SystemMessage message = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+							ISystemFileConstants.MSG_DOWNLOAD_NO_WRITE,
+							IStatus.WARNING, msgTxt, msgDetails);		
 					SystemMessageDialog dialog = new SystemMessageDialog(shell, message);
 
 					boolean answer = dialog.openQuestion();
@@ -1171,7 +1179,9 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			{
 				String msgTxt = NLS.bind(FileResources.MSG_DOWNLOAD_ALREADY_OPEN_IN_EDITOR, remotePath, subsystem.getHost().getHostName());
 				String msgDetails = NLS.bind(FileResources.MSG_DOWNLOAD_ALREADY_OPEN_IN_EDITOR_DETAILS, remotePath, subsystem.getHost().getHostName());
-				SystemMessage message = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.WARNING, msgTxt, msgDetails);		
+				SystemMessage message = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+						ISystemFileConstants.MSG_DOWNLOAD_ALREADY_OPEN_IN_EDITOR,
+						IStatus.WARNING, msgTxt, msgDetails);		
 
 				SystemMessageDialog dialog = new SystemMessageDialog(shell, message);
 
@@ -1232,7 +1242,9 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			if (!remoteFile.exists())
 			{
 				String msgTxt = NLS.bind(FileResources.MSG_ERROR_FILE_NOTFOUND, remotePath, subsystem.getHost().getHostName());
-				SystemMessage message = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt);		
+				SystemMessage message = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+						ISystemFileConstants.MSG_ERROR_FILE_NOTFOUND,
+						IStatus.ERROR, msgTxt);		
 				
 				DisplayMessageDialog dd = new DisplayMessageDialog(message);
 				Display.getDefault().syncExec(dd);
@@ -1270,7 +1282,9 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 					
 					String msgTxt = NLS.bind(FileResources.MSG_DOWNLOAD_NO_WRITE, remotePath, subsystem.getHost().getHostName());
 					String msgDetails = NLS.bind(FileResources.MSG_DOWNLOAD_NO_WRITE_DETAILS, remotePath, subsystem.getHost().getHostName());
-					SystemMessage message = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.WARNING, msgTxt, msgDetails);
+					SystemMessage message = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+							ISystemFileConstants.MSG_DOWNLOAD_NO_WRITE,
+							IStatus.WARNING, msgTxt, msgDetails);
 
 					DisplayQuestionDialog dd = new DisplayQuestionDialog(message);
 					Display.getDefault().syncExec(dd);
@@ -1840,9 +1854,11 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			catch (InvocationTargetException e)
 			{
 				SystemBasePlugin.logError("Error in performSaveAs", e); //$NON-NLS-1$
-				String msgTxt = FileResources.MSG_ERROR_UNEXPECTED;
+				String msgTxt = CommonMessages.MSG_ERROR_UNEXPECTED;
 				
-				SystemMessage message = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt);
+				SystemMessage message = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+						ICommonMessageIds.MSG_ERROR_UNEXPECTED,
+						IStatus.ERROR, msgTxt);
 				SystemMessageDialog dialog = new SystemMessageDialog(SystemBasePlugin.getActiveWorkbenchShell(), message);
 				dialog.open();
 				
@@ -1870,9 +1886,11 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 					catch (Exception e)
 					{
 						SystemBasePlugin.logError("Error in performSaveAs", e); //$NON-NLS-1$
-						String msgTxt = FileResources.MSG_ERROR_UNEXPECTED;
+						String msgTxt = CommonMessages.MSG_ERROR_UNEXPECTED;
 						
-						SystemMessage message = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt);
+						SystemMessage message = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+								ICommonMessageIds.MSG_ERROR_UNEXPECTED,
+								IStatus.ERROR, msgTxt);
 						SystemMessageDialog dialog = new SystemMessageDialog(SystemBasePlugin.getActiveWorkbenchShell(), message);
 						dialog.open();
 						

@@ -20,6 +20,7 @@
  * Xuan Chen (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
  * Xuan Chen (IBM) - [209827] Update DStore command implementation to enable cancelation of archive operations
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -38,6 +39,7 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.files.ui.Activator;
 import org.eclipse.rse.internal.files.ui.FileResources;
+import org.eclipse.rse.internal.files.ui.ISystemFileConstants;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
@@ -123,7 +125,9 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 					String msgTxt = FileResources.FILEMSG_MOVE_INTERRUPTED;
 					String msgDetails = NLS.bind(FileResources.FILEMSG_MOVE_INTERRUPTED_DETAILS, movedFileNamesList);
 									
-					SystemMessage thisMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+					SystemMessage thisMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, 							
+							ISystemFileConstants.FILEMSG_MOVE_INTERRUPTED,
+							IStatus.ERROR, msgTxt, msgDetails);
 					SystemMessageDialog.displayErrorMessage(shell, thisMessage);
 				
 					status = Status.CANCEL_STATUS;
@@ -204,7 +208,9 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 		{
 			String msgTxt = NLS.bind(FileResources.FILEMSG_MOVE_FILE_FAILED, srcFileOrFolder.getName());
 			String msgDetails = FileResources.FILEMSG_MOVE_FILE_FAILED_DETAILS;
-		   SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);		
+		   SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+				   ISystemFileConstants.FILEMSG_MOVE_FILE_FAILED,
+				   IStatus.ERROR, msgTxt, msgDetails);		
 		  throw new SystemMessageException(msg); 
 		}
 		else
@@ -250,7 +256,9 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 			        if (selectedFolderPath.equals(selectedParentFile.getAbsolutePath()))
 			        {
 			        	if (targetEqualsParentSrcMsg == null){
-			        		targetEqualsParentSrcMsg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, 
+			        		targetEqualsParentSrcMsg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+			        				ISystemFileConstants.FILEMSG_MOVE_TARGET_EQUALS_PARENT_OF_SOURCE,
+			        				IStatus.ERROR, 
 			        				FileResources.FILEMSG_MOVE_TARGET_EQUALS_PARENT_OF_SOURCE, 
 			        				FileResources.FILEMSG_MOVE_TARGET_EQUALS_PARENT_OF_SOURCE_DETAILS);
 
@@ -261,7 +269,9 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 			        else if (selectedFolderPath.equals(selectedFile.getAbsolutePath()))
 			        {
 			        	if (targetEqualsSrcMsg == null){
-			        		targetEqualsSrcMsg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, 
+			        		targetEqualsSrcMsg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+			        				ISystemFileConstants.FILEMSG_MOVE_TARGET_EQUALS_SOURCE,
+			        				IStatus.ERROR, 
 			        				FileResources.FILEMSG_MOVE_TARGET_EQUALS_SOURCE, 
 			        				FileResources.FILEMSG_MOVE_TARGET_EQUALS_SOURCE_DETAILS);
 			        	}
@@ -270,7 +280,9 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 			        else if (selectedFolder.isDescendantOf(selectedFile))
 			        {
 			        	if (targetDescendsFromSrcMsg == null){
-				        		targetDescendsFromSrcMsg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, 
+				        		targetDescendsFromSrcMsg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+				        				ISystemFileConstants.FILEMSG_MOVE_TARGET_DESCENDS_FROM_SOURCE,
+				        				IStatus.ERROR, 
 				        				FileResources.FILEMSG_MOVE_TARGET_DESCENDS_FROM_SOURCE, 
 				        				FileResources.FILEMSG_MOVE_TARGET_DESCENDS_FROM_SOURCE_DETAILS);
 			        		
@@ -288,7 +300,9 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 			// Drives and Root Filters which we can't Move files to.
 			if (firstFilterString.equals("*") || firstFilterString.equals("/*")) { //$NON-NLS-1$ //$NON-NLS-2$
 				if (invalidFilterMsg == null) {
-		        		invalidFilterMsg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, 
+		        		invalidFilterMsg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+		        				ISystemFileConstants.FILEMSG_MOVE_FILTER_NOT_VALID,
+		        				IStatus.ERROR, 
 		        				FileResources.FILEMSG_MOVE_FILTER_NOT_VALID, 
 		        				FileResources.FILEMSG_MOVE_FILTER_NOT_VALID_DETAILS);
 

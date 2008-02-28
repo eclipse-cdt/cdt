@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.widgets;
@@ -28,6 +29,7 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.files.ui.Activator;
 import org.eclipse.rse.internal.files.ui.FileResources;
+import org.eclipse.rse.internal.files.ui.ISystemFileConstants;
 import org.eclipse.rse.internal.files.ui.actions.SystemSelectFileTypesAction;
 import org.eclipse.rse.internal.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
@@ -507,7 +509,9 @@ public class SystemFileFilterStringEditPane
 			{
 				if (textTypes.getText().trim().length() == 0)
 				{
-					errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, FileResources.FILEMSG_ERROR_NOFILETYPES, FileResources.FILEMSG_ERROR_NOFILETYPES_DETAILS);
+					errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+							ISystemFileConstants.FILEMSG_ERROR_NOFILETYPES,
+							IStatus.ERROR, FileResources.FILEMSG_ERROR_NOFILETYPES, FileResources.FILEMSG_ERROR_NOFILETYPES_DETAILS);
 				}
 			}
 			controlInError = textFile;
@@ -521,7 +525,9 @@ public class SystemFileFilterStringEditPane
 			if (notUnique)
 			{
 				String msgTxt = NLS.bind(FileResources.FILEMSG_VALIDATE_FILEFILTERSTRING_NOTUNIQUE, currFilterString);
-				errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt);
+				errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+						ISystemFileConstants.FILEMSG_VALIDATE_FILEFILTERSTRING_NOTUNIQUE,
+						IStatus.ERROR, msgTxt);
 			}
 			controlInError = textFile;
 		}		  
@@ -639,7 +645,9 @@ public class SystemFileFilterStringEditPane
 					}
 					// no path validator, so just use default path empty message
 					else {
-						errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, FileResources.MSG_VALIDATE_PATH_EMPTY, FileResources.MSG_VALIDATE_PATH_EMPTY_DETAILS);
+						errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+								ISystemFileConstants.MSG_VALIDATE_PATH_EMPTY,
+								IStatus.ERROR, FileResources.MSG_VALIDATE_PATH_EMPTY, FileResources.MSG_VALIDATE_PATH_EMPTY_DETAILS);
 					}
 				}
 				// KM: defect 53210
@@ -655,7 +663,9 @@ public class SystemFileFilterStringEditPane
 						}
 						// no path validator, so just use default path empty message
 						else {
-							errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, FileResources.MSG_VALIDATE_PATH_EMPTY, FileResources.MSG_VALIDATE_PATH_EMPTY_DETAILS);
+							errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+									ISystemFileConstants.MSG_VALIDATE_PATH_EMPTY,
+									IStatus.ERROR, FileResources.MSG_VALIDATE_PATH_EMPTY, FileResources.MSG_VALIDATE_PATH_EMPTY_DETAILS);
 						}						
 					}
 				}

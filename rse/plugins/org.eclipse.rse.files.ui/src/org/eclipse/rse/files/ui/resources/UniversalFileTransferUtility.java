@@ -41,6 +41,7 @@
  * Xuan Chen          (IBM)      - [210816] Archive testcases throw ResourceException if they are run in batch
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * Martin Oberhuber (Wind River) - [220020][api][breaking] SystemFileTransferModeRegistry should be internal
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -81,6 +82,7 @@ import org.eclipse.rse.core.model.SystemWorkspaceResourceSet;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.files.ui.Activator;
 import org.eclipse.rse.internal.files.ui.FileResources;
+import org.eclipse.rse.internal.files.ui.ISystemFileConstants;
 import org.eclipse.rse.internal.files.ui.resources.SystemFileNameHelper;
 import org.eclipse.rse.internal.files.ui.resources.SystemRemoteEditManager;
 import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
@@ -405,7 +407,9 @@ public class UniversalFileTransferUtility
 			if (!srcFileOrFolder.exists()){				
 				String msgTxt = NLS.bind(FileResources.MSG_ERROR_FILE_NOTFOUND, srcFileOrFolder.getAbsolutePath(), srcFS.getHostAliasName());
 				
-				SystemMessage errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt);
+				SystemMessage errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+						ISystemFileConstants.MSG_ERROR_FILE_NOTFOUND,
+						IStatus.ERROR, msgTxt);
 				resultSet.setMessage(errorMessage);
 				
 			}
@@ -594,7 +598,9 @@ public class UniversalFileTransferUtility
 			{
 				String msgTxt = NLS.bind(FileResources.MSG_ERROR_FILE_NOTFOUND, srcFileOrFolder.getAbsolutePath(), srcFS.getHostAliasName());
 				
-				SystemMessage errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt);
+				SystemMessage errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+						ISystemFileConstants.MSG_ERROR_FILE_NOTFOUND,
+						IStatus.ERROR, msgTxt);
 				resultSet.setMessage(errorMessage);
 				
 			}
@@ -751,9 +757,11 @@ public class UniversalFileTransferUtility
 	public static Object downloadResourceToWorkspace(File srcFileOrFolder, IProgressMonitor monitor) {
 		
 		if (!srcFileOrFolder.exists()) {
-			String msgTxt = NLS.bind(FileResources.MSG_ERROR_FILE_NOTFOUND, srcFileOrFolder.getAbsolutePath(), "LOCALHOST");
+			String msgTxt = NLS.bind(FileResources.MSG_ERROR_FILE_NOTFOUND, srcFileOrFolder.getAbsolutePath(), "LOCALHOST"); //$NON-NLS-1$
 
-			SystemMessage errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt);
+			SystemMessage errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+					ISystemFileConstants.MSG_ERROR_FILE_NOTFOUND,					
+					IStatus.ERROR, msgTxt);
 			return errorMessage;
 		}
 		
@@ -1034,7 +1042,9 @@ public class UniversalFileTransferUtility
 		{
 			String msgTxt = NLS.bind(FileResources.MSG_ERROR_FILE_NOTFOUND, srcFileOrFolder.getAbsolutePath(), srcFS.getHostAliasName());
 			
-			SystemMessage errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt);
+			SystemMessage errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+					ISystemFileConstants.MSG_ERROR_FILE_NOTFOUND,
+					IStatus.ERROR, msgTxt);
 			return errorMessage;
 		}
 
@@ -1245,7 +1255,9 @@ public class UniversalFileTransferUtility
 			String msgTxt = FileResources.FILEMSG_SECURITY_ERROR;
 			String msgDetails = NLS.bind(FileResources.FILEMSG_SECURITY_ERROR_DETAILS, targetFS.getHostAliasName());
 
-			SystemMessage errorMsg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+			SystemMessage errorMsg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+					ISystemFileConstants.FILEMSG_SECURITY_ERROR,
+					IStatus.ERROR, msgTxt, msgDetails);
 			resultSet.setMessage(errorMsg);
 
 			return resultSet;
@@ -1550,7 +1562,9 @@ public class UniversalFileTransferUtility
 		{
 			String msgTxt = FileResources.FILEMSG_SECURITY_ERROR;
 			String msgDetails = NLS.bind(FileResources.FILEMSG_SECURITY_ERROR_DETAILS, targetFS.getHostAliasName());
-			SystemMessage errorMsg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+			SystemMessage errorMsg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+					ISystemFileConstants.FILEMSG_SECURITY_ERROR,
+					IStatus.ERROR, msgTxt, msgDetails);
 			return errorMsg;
 		}
 

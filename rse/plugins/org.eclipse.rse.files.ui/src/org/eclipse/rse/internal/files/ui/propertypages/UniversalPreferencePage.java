@@ -17,6 +17,7 @@
  * David McKnight   (IBM)        - [203114] Usability improvements for file transfer mode prefs
  * David McKnight   (IBM)        - [210142] for accessibility need transfer mode toggle button
  * Martin Oberhuber (Wind River) - [220020][api][breaking] SystemFileTransferModeRegistry should be internal
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.propertypages;
@@ -44,6 +45,7 @@ import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.window.Window;
 import org.eclipse.rse.internal.files.ui.Activator;
 import org.eclipse.rse.internal.files.ui.FileResources;
+import org.eclipse.rse.internal.files.ui.ISystemFileConstants;
 import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
 import org.eclipse.rse.internal.subsystems.files.core.model.SystemFileTransferModeMapping;
 import org.eclipse.rse.internal.subsystems.files.core.model.SystemFileTransferModeRegistry;
@@ -729,7 +731,9 @@ public class UniversalPreferencePage
 					SystemMessageFile mf = RSEUIPlugin.getPluginMessageFile();
 					Shell shell = getControl().getShell();
 					String msgTxt = FileResources.MSG_ERROR_FILENAME_INVALID;
-					SystemMessage message = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt);
+					SystemMessage message = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+							ISystemFileConstants.MSG_ERROR_FILENAME_INVALID,
+							IStatus.ERROR, msgTxt);
 					SystemMessageDialog.displayErrorMessage(shell, message);
 					return;
 				}

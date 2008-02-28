@@ -28,46 +28,19 @@
   Platform Runtime is the minimum requirement for core RSE and Terminal.
   Discovery needs EMF, and the RemoteCDT integration needs CDT.</li>
 <li>Important Bug Fixes, Enhancements and API changes:<ul>
-<li><b>Permissions, Owner and Group</b> of remote files on DStore, SSH and FTP connections 
-  can now be shown in the Property sheet and the Table view. There is also a new
-  Property page to modify Permissions, Owner and Group if that is supported by the
-  file service. New API was introduced to support this
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=209593">209593</a>].</li>
-<li><b>Lazy Loading of Filter Pools</b> accounts for improved RSE startup time
-  and decreased memory footprint due to fewer plugins being loaded
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=197036">197036</a>].</li>
-<li>The RSE "<b>Link with Editor</b>" action has been fixed. A new <tt>IViewLinker</tt>
-  API as well as extensions to the <tt>ISystemTree</tt> API were made to get this done
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=187711">187711</a>].</li>
-<li><b>Filters</b> are now <b>connection-private</b> by default
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=160403">160403</a>].</li>
-<li><b>SSH Keepalive</b> added to avoid connections time out. The keepalive is
-  hardcoded to 5 minutes for now and will be made user-configurable in the future
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=155026">155026</a>].</li>
-<li>A <b>Connection Timeout Preference</b> has been added for dstore
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=216596">216596</a>].</li>
-<li>In the optional <b>Terminal Input Field</b>, field assist (Ctrl+Space) has been
-  added to easily access commands that were entered previously
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=211659">211659</a>].</li>
-<li>API: <b>SystemRegistry</b> is now accessible for non-UI plugins without starting
-  RSEUIPlugin before (there still is a dependency into SWT only, which we hope
-  to remove with the next milestone)
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=215820">215820</a>].</li>
-<li>API: <b>Nested Property Sets</b> are now supported for more complex descriptions
-  of hosts
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=217715">217715</a>].</li>
-<li>Several smaller bug fixes have been made for search results, archive
-  handling, and thread-safety.</li> 
+<li>API: Several <b>SystemMessages and Shared Resource Strings</b> have been moved
+  from RSEUIPlugin to non-UI
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=216252">216252</a>].</li>
 </ul></li>
-<li>At least 49 bugs were fixed: Use 
-  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2008-01-05&chfieldto=2008-02-18&chfield=resolution&cmdtype=doit"> -->
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2008-01-05&chfieldto=2008-02-18&chfield=resolution&cmdtype=doit&negate0=1&field0-0-0=target_milestone&type0-0-0=substring&value0-0-0=2.0.&field0-0-1=target_milestone&type0-0-1=regexp&value0-0-1=3.0%20M%5B34%5D">
-  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=3.0+M5&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit"> -->
+<li>At least ?? bugs were fixed: Use 
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2008-02-19&chfieldto=2008-04-07&chfield=resolution&cmdtype=doit&negate0=1&field0-0-0=target_milestone&type0-0-0=substring&value0-0-0=2.0.&field0-0-1=target_milestone&type0-0-1=regexp&value0-0-1=3.0%20M%5B345%5D">
+  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=3.0+M6&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit"> -->
   this query</a> to show the list of bugs fixed since the last milestone,
-  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.0M4-200801071150/">
-  TM 3.0M4</a>
-  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.0M4-200801071150/buildNotes.php">build notes</a>].</li>
-<li>For details on checkins, see the
+  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.0M5-200802181400/">
+  TM 3.0M5</a>
+  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.0M5-200802181400/buildNotes.php">build notes</a>].</li>
+<li>For details on checkins, see
+  <a href="http://www.eclipse.org/dsdp/tm/searchcvs.php">TM SearchCVS</a>, the
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/N-changelog/index.html">
   RSE CVS changelog</a>, and the
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/N-changelog/core/index.html">
@@ -136,7 +109,22 @@ user attention. A short hint on what needs to change is given directly in the li
 More information can be found in the associated bugzilla items.
 
 <ul>
-<li>TM @buildId@ Breaking API Changes [<a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&product=Target+Management&target_milestone=3.0+M5&resolution=FIXED&keywords_type=allwords&keywords=api&cmdtype=doit">query</a>]
+<li>TM @buildId@ Breaking API Changes [<a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&product=Target+Management&target_milestone=3.0+M6&resolution=FIXED&keywords_type=allwords&keywords=api&cmdtype=doit">query</a>]
+<ul>
+<li><b>SystemFileTransferModeRegistry</b> has been moved to internal class. <code>ISystemFileTransferModeRegistry</code> can now
+    be accessed by calling new API <code>RemoteFileUtility.getSystemFileTransferModeRegistry()</code>
+    instead
+    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=220020">220020</a>].</li>
+<li>Several <b>SystemMessages and Shared Resource Strings</b> have been moved to different packages in order
+    to allow better integration with other Eclipse projects and better UI/Non-UI splitting. A list of related
+    breaking API changes is attached to bug
+    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=216252">216252</a>].</li>
+<li>Some deprecated or not correctly working methods have been removed but should not have
+    been used by any clients anyways
+    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=219975">219975</a>]
+    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=220041">220041</a>].</li>
+</ul></li>
+<li>TM 3.0M5 Breaking API Changes [<a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&product=Target+Management&target_milestone=3.0+M5&resolution=FIXED&keywords_type=allwords&keywords=api&cmdtype=doit">query</a>]
 <ul>
 <li><b>Removed</b> <tt>IServiceSubSystem</tt> and related types in order to simplify the code, and allow better lazy initialization.
     <tt>ISubSystem.getServiceType()</tt> is now used to know whether a given subsystem
@@ -246,8 +234,8 @@ The following critical or major bugs are currently known.
 We'll strive to fix these as soon as possible.
 <ul>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=218387">bug 218387</a> - maj - [efs] Eclipse hangs on startup of a Workspace with a large efs-shared file system on a slow connection</li>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=198395">bug 198395</a> - maj - [dstore] Can connect to DStore with expired password</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=208185">bug 208185</a> - maj - [terminal][serial] terminal can hang the UI when text is entered while the backend side is not reading characters</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=198395">bug 198395</a> - maj - [dstore] Can connect to DStore with expired password</li>
 </ul>
 <!--
 <p>No major or critical bugs are known at the time of release.

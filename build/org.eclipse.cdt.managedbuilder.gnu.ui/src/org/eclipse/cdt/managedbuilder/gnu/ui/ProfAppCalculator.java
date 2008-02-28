@@ -23,7 +23,7 @@ public class ProfAppCalculator implements IOptionApplicability {
 	protected static final String COMPILER_PATTERN = ".compiler.";
 	
 	protected String getOptionIdPattern() {
-		return ".compiler.option.debugging.gprof";
+		return ".compiler.option.debugging.prof";
 	}
 	
 	public boolean isOptionEnabled(IBuildObject configuration,

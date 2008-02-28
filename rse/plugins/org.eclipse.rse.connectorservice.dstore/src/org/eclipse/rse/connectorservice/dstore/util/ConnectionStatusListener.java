@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * David McKnight   (IBM)        - [216252] SystemMessages using RSEStatus
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  ********************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore.util;
@@ -34,7 +35,8 @@ import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
 import org.eclipse.rse.internal.connectorservice.dstore.Activator;
-import org.eclipse.rse.internal.connectorservice.dstore.ConnectorServiceResources;
+import org.eclipse.rse.services.clientserver.messages.CommonMessages;
+import org.eclipse.rse.services.clientserver.messages.ICommonMessageIds;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -120,9 +122,9 @@ public class ConnectionStatusListener implements IDomainListener, IRunnableWithP
 			Shell shell = getShell();
 			_connectionDown = true;
 			
-			String fmsgStr = NLS.bind(ConnectorServiceResources.MSG_CONNECT_UNKNOWNHOST, _connection.getPrimarySubSystem().getHost().getAliasName());
+			String fmsgStr = NLS.bind(CommonMessages.MSG_CONNECT_UNKNOWNHOST, _connection.getPrimarySubSystem().getHost().getAliasName());
 
-			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, fmsgStr);
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, ICommonMessageIds.MSG_CONNECT_UNKNOWNHOST, IStatus.ERROR, fmsgStr);
 			SystemMessageDialog dialog = new SystemMessageDialog(internalGetShell(), msg);
 			dialog.open();
 
@@ -254,11 +256,11 @@ public class ConnectionStatusListener implements IDomainListener, IRunnableWithP
      */
     protected void showDisconnectErrorMessage(Shell shell, String hostName, int port, Exception exc)
     {
-    	String dfailedMsg = NLS.bind(ConnectorServiceResources.MSG_DISCONNECT_FAILED, hostName);
+    	String dfailedMsg = NLS.bind(CommonMessages.MSG_DISCONNECT_FAILED, hostName);
 
  			
 		try{	
-			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, dfailedMsg, exc);
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, ICommonMessageIds.MSG_DISCONNECT_FAILED, IStatus.ERROR, dfailedMsg, exc);
     	
 			SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);
 			msgDlg.setException(exc);
@@ -274,8 +276,8 @@ public class ConnectionStatusListener implements IDomainListener, IRunnableWithP
      */
     protected void showDisconnectCancelledMessage(Shell shell, String hostName, int port)
     {
-    	String msg = NLS.bind(ConnectorServiceResources.MSG_DISCONNECT_CANCELED, hostName);
-    	SystemMessageDialog msgDlg = new SystemMessageDialog(shell, new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.CANCEL, msg));
+    	String msg = NLS.bind(CommonMessages.MSG_DISCONNECT_CANCELED, hostName);
+    	SystemMessageDialog msgDlg = new SystemMessageDialog(shell, new SimpleSystemMessage(Activator.PLUGIN_ID, ICommonMessageIds.MSG_DISCONNECT_CANCELED, IStatus.CANCEL, msg));
     	msgDlg.open();
     }
 }

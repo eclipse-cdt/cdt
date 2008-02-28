@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * David McKnight   (IBM)        - [216252] use SimpleSystemMessage instead of getMessage()
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore;
@@ -35,8 +36,6 @@ public class ServiceResources extends NLS
 	
 	public static String DStore_Service_ProgMon_Initializing_Message;
 	public static String DStore_Service_Percent_Complete_Message;
-	
-	public static String MSG_OPERATION_CANCELED;
 	
     // Remote File Exception Messages
   	public static String FILEMSG_SECURITY_ERROR;

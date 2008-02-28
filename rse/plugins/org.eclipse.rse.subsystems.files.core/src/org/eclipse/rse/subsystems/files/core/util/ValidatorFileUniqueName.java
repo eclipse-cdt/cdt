@@ -14,6 +14,7 @@
  * Contributors:
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.util;
@@ -21,6 +22,7 @@ import java.util.Vector;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.rse.internal.subsystems.files.core.Activator;
+import org.eclipse.rse.internal.subsystems.files.core.ISystemFileMessageIds;
 import org.eclipse.rse.internal.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
@@ -78,12 +80,20 @@ public class ValidatorFileUniqueName
 	    //shell.setCursor(busyCursor);
         org.eclipse.rse.ui.dialogs.SystemPromptDialog.setDisplayCursor(shell, busyCursor);	    
 
-		setErrorMessages(new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, 
+		setErrorMessages(new SimpleSystemMessage(Activator.PLUGIN_ID, 
+				ISystemFileMessageIds.MSG_VALIDATE_NAME_EMPTY,
+				IStatus.ERROR, 
 				SystemFileResources.MSG_VALIDATE_NAME_EMPTY, SystemFileResources.MSG_VALIDATE_NAME_EMPTY_DETAILS),
-				new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, 
+				new SimpleSystemMessage(Activator.PLUGIN_ID, 
+						ISystemFileMessageIds.MSG_VALIDATE_NAME_NOTUNIQUE,
+						IStatus.ERROR, 
 						SystemFileResources.MSG_VALIDATE_NAME_NOTUNIQUE, SystemFileResources.MSG_VALIDATE_NAME_NOTUNIQUE_DETAILS),
-				isFolder ? new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, SystemFileResources.FILEMSG_VALIDATE_FILEFILTERSTRING_NOTUNIQUE) :
-						new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, SystemFileResources.FILEMSG_VALIDATE_FILEFILTERSTRING_NOTVALID));  
+				isFolder ? new SimpleSystemMessage(Activator.PLUGIN_ID, 
+						ISystemFileMessageIds.FILEMSG_VALIDATE_FILEFILTERSTRING_NOTUNIQUE,
+						IStatus.ERROR, SystemFileResources.FILEMSG_VALIDATE_FILEFILTERSTRING_NOTUNIQUE) :
+						new SimpleSystemMessage(Activator.PLUGIN_ID, 
+								ISystemFileMessageIds.FILEMSG_VALIDATE_FILEFILTERSTRING_NOTVALID,
+								IStatus.ERROR, SystemFileResources.FILEMSG_VALIDATE_FILEFILTERSTRING_NOTVALID));  
 
 		try
 		{

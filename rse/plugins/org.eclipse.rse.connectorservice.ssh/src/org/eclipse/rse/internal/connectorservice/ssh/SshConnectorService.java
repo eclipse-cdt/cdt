@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [203500] Support encodings for SSH Sftp paths
  * Martin Oberhuber (Wind River) - [155026] Add keepalives for SSH connection
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  *******************************************************************************/
 
 package org.eclipse.rse.internal.connectorservice.ssh;
@@ -50,6 +51,8 @@ import org.eclipse.rse.core.subsystems.CommunicationsEvent;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
 import org.eclipse.rse.internal.services.ssh.ISshSessionProvider;
+import org.eclipse.rse.services.clientserver.messages.CommonMessages;
+import org.eclipse.rse.services.clientserver.messages.ICommonMessageIds;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -280,8 +283,10 @@ public class SshConnectorService extends StandardConnectorService implements ISs
 			//TODO allow users to reconnect from this dialog
 			//SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_UNKNOWNHOST);
 
-			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.CANCEL, 
-					NLS.bind(SshConnectorResources.MSG_CONNECT_CANCELED, _connection.getHost().getAliasName()));
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+					ICommonMessageIds.MSG_CONNECT_CANCELED, IStatus.CANCEL, 
+					NLS.bind(CommonMessages.MSG_CONNECT_CANCELED, 
+							_connection.getHost().getAliasName()));
 
 			SystemMessageDialog dialog = new SystemMessageDialog(getShell(), msg);
 			dialog.open();
@@ -400,7 +405,7 @@ public class SshConnectorService extends StandardConnectorService implements ISs
 	         //                             ISystemMessages.MSG_DISCONNECT_FAILED,
 	         //                             hostName, exc.getMessage()); 	
 	         //RSEUIPlugin.logError("Disconnect failed",exc); // temporary
-	    	SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, NLS.bind(SshConnectorResources.MSG_DISCONNECT_FAILED, hostName), exc);
+	    	SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, ICommonMessageIds.MSG_DISCONNECT_FAILED, IStatus.ERROR, NLS.bind(CommonMessages.MSG_DISCONNECT_FAILED, hostName), exc);
 	    	 SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);
 	    	 msgDlg.setException(exc);
 	    	 msgDlg.open();
@@ -415,7 +420,7 @@ public class SshConnectorService extends StandardConnectorService implements ISs
 	    {
 	         //SystemMessage.displayMessage(SystemMessage.MSGTYPE_ERROR, shell, RSEUIPlugin.getResourceBundle(),
 	         //                             ISystemMessages.MSG_DISCONNECT_CANCELED, hostName)
-	    	SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.CANCEL, NLS.bind(SshConnectorResources.MSG_DISCONNECT_CANCELED, hostName));
+	    	SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, ICommonMessageIds.MSG_DISCONNECT_CANCELED, IStatus.CANCEL, NLS.bind(CommonMessages.MSG_DISCONNECT_CANCELED, hostName));
 	    	 SystemMessageDialog msgDlg = new SystemMessageDialog(shell,msg);
 	    	 msgDlg.open();
 	    }

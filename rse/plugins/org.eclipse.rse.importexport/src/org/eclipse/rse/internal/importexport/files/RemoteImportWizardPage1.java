@@ -11,6 +11,8 @@
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [216252] MessageFormat.format -> NLS.bind
+ * David McKnight   (IBM)        - [219792] use background query when doing import
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
@@ -32,19 +34,29 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.files.ui.actions.SystemSelectRemoteFolderAction;
+import org.eclipse.rse.internal.importexport.IRemoteImportExportConstants;
 import org.eclipse.rse.internal.importexport.RemoteImportExportPlugin;
 import org.eclipse.rse.internal.importexport.RemoteImportExportResources;
 import org.eclipse.rse.internal.importexport.RemoteImportExportUtil;
 import org.eclipse.rse.internal.importexport.SystemImportExportResources;
+import org.eclipse.rse.services.clientserver.messages.CommonMessages;
+import org.eclipse.rse.services.clientserver.messages.ICommonMessageIds;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
@@ -67,6 +79,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
@@ -83,6 +96,110 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
  *	Page 1 of the base resource import-from-file-system Wizard
  */
 class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listener, ISystemWizardPage {
+	
+	private class DummyProvider implements ISelectionProvider {
+
+			public void addSelectionChangedListener(
+					ISelectionChangedListener listener) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			public ISelection getSelection() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			public void removeSelectionChangedListener(
+					ISelectionChangedListener listener) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			public void setSelection(ISelection selection) {
+				// TODO Auto-generated method stub
+				
+			}						
+	}
+	
+	private class QueryAllJob extends Job
+	{
+		private Object _fileSystemObject;
+		private IImportStructureProvider _provider;
+		private MinimizedFileSystemElement _element;
+		public QueryAllJob(Object fileSystemObject, IImportStructureProvider provider, MinimizedFileSystemElement element){
+			super("Querying All"); //$NON-NLS-1$
+			_fileSystemObject = fileSystemObject;
+			_provider = provider;
+			_element = element;
+		}
+
+		
+		public IStatus run(IProgressMonitor monitor){
+			query(_fileSystemObject, _element, monitor);
+
+
+				Display.getDefault().asyncExec(new Runnable(){
+					public void run(){
+						selectionGroup.setAllSelections(true);
+					}
+				});
+	
+			return Status.OK_STATUS;
+		}
+		
+		private void query(Object parent, MinimizedFileSystemElement element, IProgressMonitor monitor){
+			List children = _provider.getChildren(parent);
+			if (children == null) children = new ArrayList(1);
+
+			Iterator childrenEnum = children.iterator();
+			
+			List resultsToQuery = new ArrayList();
+			
+			while (childrenEnum.hasNext()) {
+				Object child = childrenEnum.next();
+				String elementLabel = _provider.getLabel(child);
+				//Create one level below
+				MinimizedFileSystemElement result = new MinimizedFileSystemElement(elementLabel, element, _provider.isFolder(child));
+				result.setFileSystemObject(child);
+				
+				if (child instanceof UniFilePlus){
+					if (((UniFilePlus)child).isDirectory()){
+						resultsToQuery.add(result);
+					}
+				}
+			}
+
+			// only with first level query do this to asynchronously update the table view
+			if (element == _element){
+				Display.getDefault().asyncExec(new Runnable(){
+					public void run(){
+						DummyProvider provider = new DummyProvider();
+						
+						ISelection sel1 = new StructuredSelection(_element.getParent());
+						SelectionChangedEvent evt1 = new SelectionChangedEvent(provider, sel1);
+						selectionGroup.selectionChanged(evt1);
+						
+						ISelection sel2 = new StructuredSelection(_element);					
+						SelectionChangedEvent evt2 = new SelectionChangedEvent(provider, sel2);
+						selectionGroup.selectionChanged(evt2);
+					}
+				});
+			}
+			
+			for (int i = 0; i < resultsToQuery.size(); i++) {
+				MinimizedFileSystemElement celement = (MinimizedFileSystemElement)resultsToQuery.get(i);
+				query(celement.getFileSystemObject(), celement, monitor);
+				celement.setPopulated(true);
+			}
+			
+			element.setPopulated(true);
+		}
+		
+	}
+	
+	
+	
 	private Object sourceDirectory = null;
 	private String helpId;
 	private Composite parentComposite;
@@ -116,6 +233,7 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 	private static final String STORE_DESCRIPTION_FILE_NAME_ID = "RemoteImportWizardPage1.STORE_DESCRIPTION_FILE_NAME_ID"; //$NON-NLS-1$
 	// messages
 	protected static final SystemMessage SOURCE_EMPTY_MESSAGE = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID,
+			IRemoteImportExportConstants.FILEMSG_SOURCE_EMPTY,
 			IStatus.ERROR,
 			RemoteImportExportResources.FILEMSG_SOURCE_EMPTY,
 			RemoteImportExportResources.FILEMSG_SOURCE_EMPTY_DETAILS);
@@ -380,16 +498,22 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 	protected MinimizedFileSystemElement createRootElement(Object fileSystemObject, IImportStructureProvider provider) {
 		boolean isContainer = provider.isFolder(fileSystemObject);
 		String elementLabel = provider.getLabel(fileSystemObject);
+		
 		// Use an empty label so that display of the element's full name
 		// doesn't include a confusing label
 		MinimizedFileSystemElement dummyParent = new MinimizedFileSystemElement("", null, true); //$NON-NLS-1$
-		dummyParent.setPopulated();
 		MinimizedFileSystemElement result = new MinimizedFileSystemElement(elementLabel, dummyParent, isContainer);
 		result.setFileSystemObject(fileSystemObject);
-		//Get the files for the element so as to build the first level
-		result.getFiles(provider);
+		
+		QueryAllJob query = new QueryAllJob(fileSystemObject, provider, result);
+		query.schedule();
+		
+		////Get the files for the element so as to build the first level
+		//result.getFiles(provider);
+
 		return dummyParent;
 	}
+	
 
 	/**
 	 *	Create the import source specification widgets
@@ -419,7 +543,9 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 		String msgTxt = RemoteImportExportResources.FILEMSG_FOLDER_IS_FILE;
 		String msgDetails = NLS.bind(RemoteImportExportResources.FILEMSG_FOLDER_IS_FILE_DETAILS, ((File)sourceDirectory).getAbsolutePath());
 		
-		SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+		SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, 
+				IRemoteImportExportConstants.FILEMSG_FOLDER_IS_FILE,
+				IStatus.ERROR, msgTxt, msgDetails);
 		setErrorMessage(msg);
 		sourceNameField.setFocus();
 		return false;
@@ -440,8 +566,18 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 		IStatus status = op.getStatus();
 		if (!status.isOK()) {
 			String msgTxt = NLS.bind(RemoteImportExportResources.FILEMSG_IMPORT_FAILED, status);
-			SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, IStatus.ERROR, msgTxt);
-
+			
+			SystemMessage msg = null;
+			if (status.getException() != null){
+				msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, 
+						IRemoteImportExportConstants.FILEMSG_IMPORT_FAILED,
+						IStatus.ERROR, msgTxt, status.getException());
+			} else {
+				msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, 
+						IRemoteImportExportConstants.FILEMSG_IMPORT_FAILED,
+						IStatus.ERROR, msgTxt);
+			}
+			
 			SystemMessageDialog dlg = new SystemMessageDialog(getContainer().getShell(), msg);
 			dlg.openWithDetails();
 			return false;
@@ -492,11 +628,16 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 		String msgTxt = RemoteImportExportResources.FILEMSG_IMPORT_NONE_SELECTED;
 		String msgDetails = RemoteImportExportResources.FILEMSG_IMPORT_NONE_SELECTED_DETAILS;
 		
-		SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+		SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, 
+				IRemoteImportExportConstants.FILEMSG_IMPORT_NONE_SELECTED,
+				IStatus.ERROR, msgTxt, msgDetails);
 		setErrorMessage(msg);
 		return false;
 	}
 
+
+
+	
 	/**
 	 * Returns a content provider for <code>FileSystemElement</code>s that returns 
 	 * only files as children.
@@ -508,9 +649,9 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 
 			public Object[] getChildren(Object o) {
 				if (o instanceof MinimizedFileSystemElement && !busy) {
-					busy = true;
 					final MinimizedFileSystemElement element = (MinimizedFileSystemElement) o;
 					final Object[] oa = new Object[1];
+					busy = true;
 					BusyIndicator.showWhile(sourceComposite.getDisplay(), new Runnable() {
 						public void run() {
 							oa[0] = element.getFiles(FileSystemStructureProvider.INSTANCE).getChildren(element);
@@ -546,9 +687,9 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 
 			public Object[] getChildren(Object o) {
 				if (o instanceof MinimizedFileSystemElement && !busy) {
-					busy = true;
 					final MinimizedFileSystemElement element = (MinimizedFileSystemElement) o;
 					final Object[] oa = new Object[1];
+					busy = true;
 					BusyIndicator.showWhile(sourceComposite.getDisplay(), new Runnable() {
 						public void run() {
 							oa[0] = element.getFolders(FileSystemStructureProvider.INSTANCE).getChildren(element);
@@ -563,11 +704,10 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 			public boolean hasChildren(Object o) {
 				if (o instanceof MinimizedFileSystemElement) {
 					MinimizedFileSystemElement element = (MinimizedFileSystemElement) o;
-					if (element.isPopulated())
-						return getChildren(element).length > 0;
-					else {
-						//If we have not populated then wait until asked
+					if (!element.isPopulated()){
 						return true;
+					} else {
+						return getChildren(element).length > 0;
 					}
 				}
 				return false;
@@ -1331,8 +1471,10 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 			msgLine.setErrorMessage(exc);
 		else {
 			
-			SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, IStatus.ERROR, 
-					RemoteImportExportResources.MSG_ERROR_UNEXPECTED, exc);
+			SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, 
+					ICommonMessageIds.MSG_ERROR_UNEXPECTED,
+					IStatus.ERROR, 
+					CommonMessages.MSG_ERROR_UNEXPECTED, exc);
 			pendingErrorMessage = msg;
 		}
 	}

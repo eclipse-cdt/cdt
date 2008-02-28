@@ -13,12 +13,14 @@
  * Contributors:
  * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
  *                                API to the user actions plugin
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared                                
  ********************************************************************************/
 
 package org.eclipse.rse.internal.useractions.ui.validators;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.rse.internal.useractions.Activator;
+import org.eclipse.rse.internal.useractions.IUserActionsMessageIds;
 import org.eclipse.rse.internal.useractions.UserActionsResources;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
@@ -40,12 +42,16 @@ public class ValidatorUserActionComment implements ISystemValidator {
 		String msg1Txt = UserActionsResources.MSG_VALIDATE_UDACMT_EMPTY;
 		String msg1Details = UserActionsResources.MSG_VALIDATE_UDACMT_EMPTY_DETAILS;
 	
-		SystemMessage msg1 = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msg1Txt, msg1Details);
+		SystemMessage msg1 = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+				IUserActionsMessageIds.MSG_VALIDATE_UDACMT_EMPTY,
+				IStatus.ERROR, msg1Txt, msg1Details);
 		
 		String msg2Txt = UserActionsResources.MSG_VALIDATE_UDACMT_NOTVALID;
 		String msg2Details = UserActionsResources.MSG_VALIDATE_UDACMT_NOTVALID_DETAILS;
 		
-		SystemMessage msg2 = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msg2Txt, msg2Details);
+		SystemMessage msg2 = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+				IUserActionsMessageIds.MSG_VALIDATE_UDACMT_NOTVALID,
+				IStatus.ERROR, msg2Txt, msg2Details);
 		
 		setErrorMessages(msg1, msg2);
 	}

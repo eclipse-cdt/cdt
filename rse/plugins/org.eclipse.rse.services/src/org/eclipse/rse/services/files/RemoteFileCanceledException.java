@@ -14,6 +14,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [216351] Improve cancellation of SystemFetchOperation for files
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  *******************************************************************************/
 
 package org.eclipse.rse.services.files;
@@ -21,7 +22,8 @@ package org.eclipse.rse.services.files;
 import org.eclipse.core.runtime.IStatus;
 
 import org.eclipse.rse.internal.services.Activator;
-import org.eclipse.rse.internal.services.RSEServicesMessages;
+import org.eclipse.rse.services.clientserver.messages.CommonMessages;
+import org.eclipse.rse.services.clientserver.messages.ICommonMessageIds;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 
@@ -47,9 +49,11 @@ public class RemoteFileCanceledException extends RemoteFileException {
 	}
 
 	private static SystemMessage getMyMessage() {
-		String msgTxt = RSEServicesMessages.MSG_OPERATION_CANCELED;
+		String msgTxt = CommonMessages.MSG_OPERATION_CANCELED;
 
-		myMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt);
+		myMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+				ICommonMessageIds.MSG_OPERATION_CANCELED,
+				IStatus.ERROR, msgTxt);
 
 		return myMessage;
 	}

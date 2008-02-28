@@ -32,6 +32,7 @@
  * Martin Oberhuber (Wind River) - [219098][api] FileServiceSubSystem should not be final 
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * Martin Oberhuber (Wind River) - [220020][api][breaking] SystemFileTransferModeRegistry should be internal
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.servicesubsystem;
@@ -55,11 +56,14 @@ import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.RemoteChildrenContentsType;
 import org.eclipse.rse.internal.subsystems.files.core.Activator;
+import org.eclipse.rse.internal.subsystems.files.core.ISystemFileMessageIds;
 import org.eclipse.rse.internal.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.services.clientserver.PathUtility;
 import org.eclipse.rse.services.clientserver.SystemSearchString;
 import org.eclipse.rse.services.clientserver.archiveutils.AbsoluteVirtualPath;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
+import org.eclipse.rse.services.clientserver.messages.CommonMessages;
+import org.eclipse.rse.services.clientserver.messages.ICommonMessageIds;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
@@ -226,7 +230,10 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 				if (userHome == null){
 					
 					// with 207095, it's possible that we could be trying to get user home when not connected	
-					SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, SystemFileResources.MSG_ERROR_UNEXPECTED);
+					SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+							ICommonMessageIds.MSG_ERROR_UNEXPECTED,
+							IStatus.ERROR, 
+							CommonMessages.MSG_ERROR_UNEXPECTED);
 					throw new SystemMessageException(msg);
 				}
 				return userHome;
@@ -506,7 +513,9 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 		if (parent != null && !parent.canRead())
 		{
 			String msgTxt = NLS.bind(SystemFileResources.MSG_FOLDER_UNREADABLE, parentPath);
-			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.INFO, msgTxt);
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+					ISystemFileMessageIds.MSG_FOLDER_UNREADABLE,
+					IStatus.INFO, msgTxt);
 			throw new SystemMessageException(msg);
 		}
 		
@@ -586,7 +595,9 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 			String msgTxt = NLS.bind(SystemFileResources.MSG_FILE_CANNOT_BE_SAVED, remoteFileName, getHostName());
 			String msgDetails = SystemFileResources.MSG_FILE_CANNOT_BE_SAVED_DETAILS;
 			
-			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+					ISystemFileMessageIds.MSG_FILE_CANNOT_BE_SAVED,
+					IStatus.ERROR, msgTxt, msgDetails);
 			throw new SystemMessageException(msg);
 		}
 		getFileService().upload(new File(source), remoteParentPath, remoteFileName, isBinary, encoding, hostEncoding, monitor);
@@ -670,7 +681,9 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 				String msgTxt = NLS.bind(SystemFileResources.MSG_FILE_CANNOT_BE_SAVED, remoteFileNames[i], getHostName());
 				String msgDetails = SystemFileResources.MSG_FILE_CANNOT_BE_SAVED_DETAILS;
 				
-				SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+				SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+						ISystemFileMessageIds.MSG_FILE_CANNOT_BE_SAVED,
+						IStatus.ERROR, msgTxt, msgDetails);
 				throw new SystemMessageException(msg);
 			}
 			

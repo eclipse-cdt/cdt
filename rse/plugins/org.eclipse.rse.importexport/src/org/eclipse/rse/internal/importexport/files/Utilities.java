@@ -10,6 +10,7 @@
  * Martin Oberhuber (Wind River) - [180562][api] dont implement IRemoteImportExportConstants
  * Martin Oberhuber (Wind River) - [174945] split importexport icons from rse.ui
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
@@ -97,7 +98,9 @@ public class Utilities {
 			String msgTxt = RemoteImportExportResources.MSG_IMPORT_EXPORT_UNABLE_TO_USE_CONNECTION;
 			String msgDetails = RemoteImportExportResources.MSG_IMPORT_EXPORT_UNABLE_TO_USE_CONNECTION_DETAILS;
 			
-			SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+			SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, 
+					IRemoteImportExportConstants.MSG_IMPORT_EXPORT_UNABLE_TO_USE_CONNECTION,
+					IStatus.ERROR, msgTxt, msgDetails);
 			SystemMessageDialog.show(s, msg);
 			//displayMessage(s, ISystemMessages.MSG_IMPORT_EXPORT_UNABLE_TO_USE_CONNECTION, true);
 		}
@@ -216,7 +219,9 @@ public class Utilities {
 			if (s != null) {
 				String msgTxt = NLS.bind(RemoteImportExportResources.MSG_IMPORT_EXPORT_UNEXPECTED_EXCEPTION, o[0]);
 				String msgDetails = RemoteImportExportResources.MSG_IMPORT_EXPORT_UNEXPECTED_EXCEPTION_DETAILS;
-				SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+				SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, 
+						IRemoteImportExportConstants.MSG_IMPORT_EXPORT_UNEXPECTED_EXCEPTION,
+						IStatus.ERROR, msgTxt, msgDetails);
 				SystemMessageDialog.show(s, msg);
 			}
 		}

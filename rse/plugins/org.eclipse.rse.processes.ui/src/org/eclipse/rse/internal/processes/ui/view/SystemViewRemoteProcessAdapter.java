@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  ********************************************************************************/
 
 package org.eclipse.rse.internal.processes.ui.view;
@@ -32,8 +33,9 @@ import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.core.model.SystemRemoteResourceSet;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.processes.ui.ProcessesPlugin;
-import org.eclipse.rse.internal.processes.ui.SystemProcessesResources;
 import org.eclipse.rse.internal.processes.ui.actions.SystemKillProcessAction;
+import org.eclipse.rse.services.clientserver.messages.CommonMessages;
+import org.eclipse.rse.services.clientserver.messages.ICommonMessageIds;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.processes.IHostProcessFilter;
@@ -191,7 +193,10 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 		catch (Exception exc)
 		{
 			children = new SystemMessageObject[1];
-			SystemMessage msg = new SimpleSystemMessage(ProcessesPlugin.PLUGIN_ID, IStatus.ERROR, SystemProcessesResources.MSG_EXPAND_FAILED);
+			SystemMessage msg = new SimpleSystemMessage(ProcessesPlugin.PLUGIN_ID, 
+					ICommonMessageIds.MSG_EXPAND_FAILED,
+					IStatus.ERROR, 					
+					CommonMessages.MSG_EXPAND_FAILED);
 			children[0] = new SystemMessageObject(msg, ISystemMessageObject.MSGTYPE_ERROR, element);
 			SystemBasePlugin.logError("Exception resolving file filter strings", exc); //$NON-NLS-1$
 		}

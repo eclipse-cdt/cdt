@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  *******************************************************************************/
 
 package org.eclipse.rse.internal.processes.ui;
@@ -84,9 +85,7 @@ public class SystemProcessesResources extends NLS
 	public static String	RESID_REMOTE_PROCESSES_EXECUTABLE_LABEL;
 	public static String	RESID_REMOTE_PROCESSES_EXECUTABLE_TOOLTIP;
 	
-	public static String MSG_OPERATION_FAILED;
-	public static String MSG_OPERATION_CANCELED;
-	public static String MSG_EXPAND_FAILED;
+
 	
 	public static String MSG_VALIDATE_FILEFILTERSTRING_NOTUNIQUE;
 

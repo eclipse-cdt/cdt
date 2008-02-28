@@ -9,6 +9,7 @@
  * Martin Oberhuber (Wind River) - initial API and implementation 
  * David Dykstal (IBM) - [217556] remove service subsystem types
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  *******************************************************************************/
 
 package org.eclipse.rse.examples.daytime.subsystems;
@@ -27,9 +28,10 @@ import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.examples.daytime.Activator;
-import org.eclipse.rse.examples.daytime.DaytimeResources;
 import org.eclipse.rse.examples.daytime.model.DaytimeResource;
 import org.eclipse.rse.examples.daytime.service.IDaytimeService;
+import org.eclipse.rse.services.clientserver.messages.CommonMessages;
+import org.eclipse.rse.services.clientserver.messages.ICommonMessageIds;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -77,8 +79,8 @@ public class DaytimeSubSystem extends SubSystem {
 				node.setDaytime(daytime);
 				return new Object[] { node };
 			} catch(Exception e) {
-				String msgTxt = NLS.bind(DaytimeResources.MSG_CONNECT_FAILED, getHostName());
-				SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, e);
+				String msgTxt = NLS.bind(CommonMessages.MSG_CONNECT_FAILED, getHostName());
+				SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, ICommonMessageIds.MSG_CONNECT_FAILED, IStatus.ERROR, msgTxt, e);
 				SystemMessageObject msgobj = new SystemMessageObject(msg, ISystemMessageObject.MSGTYPE_ERROR,this);
 				return new Object[] { msgobj };
 			}

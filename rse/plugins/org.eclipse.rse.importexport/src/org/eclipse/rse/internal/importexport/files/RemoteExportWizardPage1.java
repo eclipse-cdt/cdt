@@ -10,6 +10,7 @@
  * Martin Oberhuber (Wind River) - [174945] split importexport icons from rse.ui
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [216252] MessageFormat.format -> NLS.bind
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
@@ -33,10 +34,13 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.files.ui.actions.SystemSelectRemoteFolderAction;
+import org.eclipse.rse.internal.importexport.IRemoteImportExportConstants;
 import org.eclipse.rse.internal.importexport.RemoteImportExportPlugin;
 import org.eclipse.rse.internal.importexport.RemoteImportExportResources;
 import org.eclipse.rse.internal.importexport.RemoteImportExportUtil;
 import org.eclipse.rse.internal.importexport.SystemImportExportResources;
+import org.eclipse.rse.services.clientserver.messages.CommonMessages;
+import org.eclipse.rse.services.clientserver.messages.ICommonMessageIds;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
@@ -94,7 +98,9 @@ class RemoteExportWizardPage1 extends WizardExportResourcesPage implements Liste
 	private static final String STORE_CREATE_DESCRIPTION_FILE_ID = "RemoteExportWizard.STORE_CREATE_DESCRIPTION_FILE_ID"; //$NON-NLS-1$
 	private static final String STORE_DESCRIPTION_FILE_NAME_ID = "RemoteExportWizard.STORE_DESCRIPTION_FILE_NAME_ID"; //$NON-NLS-1$
 	//messages
-	private static final SystemMessage DESTINATION_EMPTY_MESSAGE = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, IStatus.ERROR, 
+	private static final SystemMessage DESTINATION_EMPTY_MESSAGE = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, 
+			IRemoteImportExportConstants.FILEMSG_DESTINATION_EMPTY,
+			IStatus.ERROR, 
 			RemoteImportExportResources.FILEMSG_DESTINATION_EMPTY,
 			RemoteImportExportResources.FILEMSG_DESTINATION_EMPTY_DETAILS);
 
@@ -279,14 +285,18 @@ class RemoteExportWizardPage1 extends WizardExportResourcesPage implements Liste
 			String msgTxt = RemoteImportExportResources.FILEMSG_TARGET_EXISTS;
 			String msgDetails = NLS.bind(RemoteImportExportResources.FILEMSG_TARGET_EXISTS_DETAILS, directory.getAbsolutePath());
 			
-			SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+			SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, 
+					IRemoteImportExportConstants.FILEMSG_TARGET_EXISTS,
+					IStatus.ERROR, msgTxt, msgDetails);
 			SystemMessageDialog dlg = new SystemMessageDialog(getContainer().getShell(), msg);
 			if (!dlg.openQuestionNoException()) return false;
 			if (!directory.mkdirs()) {
 				msgTxt = RemoteImportExportResources.FILEMSG_CREATE_FOLDER_FAILED;
 				msgDetails = NLS.bind(RemoteImportExportResources.FILEMSG_CREATE_FOLDER_FAILED_DETAILS, directory.getAbsolutePath());
 				
-				msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+				msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, 
+						IRemoteImportExportConstants.FILEMSG_CREATE_FOLDER_FAILED,
+						IStatus.ERROR, msgTxt, msgDetails);
 				msg.makeSubstitution(directory.getAbsolutePath());
 				setErrorMessage(msg);
 				giveFocusToDestination();
@@ -308,7 +318,9 @@ class RemoteExportWizardPage1 extends WizardExportResourcesPage implements Liste
 			String msgTxt = RemoteImportExportResources.FILEMSG_SOURCE_IS_FILE;
 			String msgDetails = NLS.bind(RemoteImportExportResources.FILEMSG_SOURCE_IS_FILE_DETAILS, targetDirectory.getAbsolutePath());
 						
-			SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+			SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, 
+					IRemoteImportExportConstants.FILEMSG_SOURCE_IS_FILE,
+					IStatus.ERROR, msgTxt, msgDetails);
 
 			setErrorMessage(msg);
 			giveFocusToDestination();
@@ -340,7 +352,9 @@ class RemoteExportWizardPage1 extends WizardExportResourcesPage implements Liste
 		IStatus status = op.getStatus();
 		if (!status.isOK()) {
 			String msgTxt = NLS.bind(RemoteImportExportResources.FILEMSG_EXPORT_FAILED, status);
-			SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, IStatus.ERROR, msgTxt);
+			SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, 
+					IRemoteImportExportConstants.FILEMSG_EXPORT_FAILED,
+					IStatus.ERROR, msgTxt);
 			SystemMessageDialog dlg = new SystemMessageDialog(getContainer().getShell(), msg);
 			dlg.openWithDetails();
 			return false;
@@ -385,7 +399,9 @@ class RemoteExportWizardPage1 extends WizardExportResourcesPage implements Liste
 			String msgTxt = RemoteImportExportResources.FILEMSG_EXPORT_NONE_SELECTED;
 			String msgDetails = RemoteImportExportResources.FILEMSG_EXPORT_NONE_SELECTED_DETAILS;
 			
-			SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+			SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, 
+					IRemoteImportExportConstants.FILEMSG_EXPORT_NONE_SELECTED,
+					IStatus.ERROR, msgTxt, msgDetails);
 			setErrorMessage(msg);
 			return false;
 		}
@@ -527,7 +543,9 @@ class RemoteExportWizardPage1 extends WizardExportResourcesPage implements Liste
 		if (!ret) {
 			String msgTxt = RemoteImportExportResources.MSG_IMPORT_EXPORT_UNABLE_TO_USE_CONNECTION;
 			String msgDetails = RemoteImportExportResources.MSG_IMPORT_EXPORT_UNABLE_TO_USE_CONNECTION_DETAILS;
-			SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+			SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, 
+					IRemoteImportExportConstants.MSG_IMPORT_EXPORT_UNABLE_TO_USE_CONNECTION,
+					IStatus.ERROR, msgTxt, msgDetails);
 			SystemMessageDialog.show(getShell(), msg);
 		}
 		return ret;
@@ -659,7 +677,9 @@ class RemoteExportWizardPage1 extends WizardExportResourcesPage implements Liste
 			String msgTxt = NLS.bind(RemoteImportExportResources.FILEMSG_DESTINATION_CONFLICTING, conflictingContainer);
 			String msgDetails = RemoteImportExportResources.FILEMSG_DESTINATION_CONFLICTING_DETAILS;
 			
-			SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+			SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, 
+					IRemoteImportExportConstants.FILEMSG_DESTINATION_CONFLICTING,
+					IStatus.ERROR, msgTxt, msgDetails);
 			setErrorMessage(msg);
 			giveFocusToDestination();
 			return false;
@@ -857,8 +877,10 @@ class RemoteExportWizardPage1 extends WizardExportResourcesPage implements Liste
 		if (msgLine != null)
 			msgLine.setErrorMessage(exc);
 		else {
-			String msgTxt = RemoteImportExportResources.MSG_ERROR_UNEXPECTED;			
-			SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, IStatus.ERROR, msgTxt, exc);
+			String msgTxt = CommonMessages.MSG_ERROR_UNEXPECTED;			
+			SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, 
+					ICommonMessageIds.MSG_ERROR_UNEXPECTED,
+					IStatus.ERROR, msgTxt, exc);
 
 			pendingErrorMessage = msg;
 			super.setErrorMessage(msg.getLevelOneText());

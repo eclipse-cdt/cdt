@@ -10,6 +10,7 @@
  * Martin Oberhuber (Wind River) - [174945] split importexport icons from rse.ui
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [216252] MessageFormat.format -> NLS.bind
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
@@ -25,6 +26,7 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.rse.internal.importexport.IRemoteImportExportConstants;
 import org.eclipse.rse.internal.importexport.RemoteImportExportPlugin;
 import org.eclipse.rse.internal.importexport.RemoteImportExportProblemDialog;
 import org.eclipse.rse.internal.importexport.RemoteImportExportResources;
@@ -141,7 +143,9 @@ public class RemoteFileExportActionDelegate extends RemoteFileImportExportAction
 			if (!status.isOK()) {
 				String msgTxt = NLS.bind(RemoteImportExportResources.FILEMSG_EXPORT_FAILED, status);
 				
-				SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, IStatus.ERROR, msgTxt);
+				SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, 
+						IRemoteImportExportConstants.FILEMSG_EXPORT_FAILED,
+						IStatus.ERROR, msgTxt);
 
 				SystemMessageDialog dlg = new SystemMessageDialog(getShell(), msg);
 				dlg.openWithDetails();

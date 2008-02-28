@@ -9,11 +9,9 @@ package org.eclipse.rse.internal.importexport.files;
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *  David McKnight   (IBM)        - [219792] use background query when doing import
+ *  David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  *******************************************************************************/
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import org.eclipse.ui.model.AdaptableList;
 
 // Similar to org.eclipse.ui.wizards.datatransfer.MinimizedFileSystemElement
@@ -42,7 +40,6 @@ public class MinimizedFileSystemElement extends FileSystemElement {
 	 * of this folder.
 	 */
 	public AdaptableList getFiles(IImportStructureProvider provider) {
-		if (!populated) populate(provider);
 		return super.getFiles();
 	}
 
@@ -52,48 +49,14 @@ public class MinimizedFileSystemElement extends FileSystemElement {
 	 * of this folder.
 	 */
 	public AdaptableList getFolders(IImportStructureProvider provider) {
-		if (!populated) populate(provider);
 		return super.getFolders();
 	}
 
-	/**
-	 * Return whether or not population has happened for the receiver.
-	 */
-	// IFS: made method public
+	public void setPopulated(boolean populated) {
+		this.populated = populated;
+	}
+	
 	public boolean isPopulated() {
-		return this.populated;
-	}
-
-	/**
-	 * Return whether or not population has not happened for the receiver.
-	 */
-	boolean notPopulated() {
-		return !this.populated;
-	}
-
-	/**
-	 * Populate the files and folders of the receiver using the suppliec structure provider.
-	 * @param provider org.eclipse.ui.wizards.datatransfer.IImportStructureProvider
-	 */
-	private void populate(IImportStructureProvider provider) {
-		Object fileSystemObject = getFileSystemObject();
-		List children = provider.getChildren(fileSystemObject);
-		if (children == null) children = new ArrayList(1);
-		Iterator childrenEnum = children.iterator();
-		while (childrenEnum.hasNext()) {
-			Object child = childrenEnum.next();
-			String elementLabel = provider.getLabel(child);
-			//Create one level below
-			MinimizedFileSystemElement result = new MinimizedFileSystemElement(elementLabel, this, provider.isFolder(child));
-			result.setFileSystemObject(child);
-		}
-		setPopulated();
-	}
-
-	/**
-	 * Set whether or not population has happened for the receiver to true.
-	 */
-	public void setPopulated() {
-		this.populated = true;
+		return populated;
 	}
 }

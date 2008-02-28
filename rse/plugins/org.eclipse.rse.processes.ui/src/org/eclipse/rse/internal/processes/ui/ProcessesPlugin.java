@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [180519][api] declaratively register rse.processes.ui adapter factories
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  ********************************************************************************/
 
 package org.eclipse.rse.internal.processes.ui;
@@ -33,7 +34,7 @@ import org.osgi.framework.BundleContext;
  */
 public class ProcessesPlugin extends SystemBasePlugin {
 
-	public static final String PLUGIN_ID = "org.eclipse.rse.processes.ui";
+	public static final String PLUGIN_ID = "org.eclipse.rse.processes.ui"; //$NON-NLS-1$
 	
 	//The shared instance.
 	private static ProcessesPlugin plugin;

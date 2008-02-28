@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  *******************************************************************************/
 
 package org.eclipse.rse.internal.connectorservice.dstore;
@@ -26,10 +27,6 @@ public class ConnectorServiceResources extends NLS
 	public static String DStore_ConnectorService_Label;
 	public static String DStore_ConnectorService_Description;
 	
-	public static String MSG_CONNECT_UNKNOWNHOST;
-	
-	public static String MSG_DISCONNECT_FAILED; 
-	public static String MSG_DISCONNECT_CANCELED;
 	
 	public static String MSG_CONNECT_SSL_EXCEPTION;
 	public static String MSG_CONNECT_SSL_EXCEPTION_DETAILS;
@@ -62,20 +59,11 @@ public class ConnectorServiceResources extends NLS
 	public static String MSG_CONNECT_DAEMON_FAILED;
 	public static String MSG_CONNECT_DAEMON_FAILED_EXCEPTION;
 	
-	public static String MSG_COMM_AUTH_FAILED;
-	public static String MSG_COMM_PWD_INVALID;
-	public static String MSG_COMM_AUTH_FAILED_DETAILS;
-	public static String MSG_COMM_PWD_INVALID_DETAILS;
-	
 	public static String MSG_COMM_INCOMPATIBLE_PROTOCOL;
 	public static String MSG_COMM_INCOMPATIBLE_UPDATE;
 	public static String MSG_COMM_INCOMPATIBLE_PROTOCOL_DETAILS;
 	public static String MSG_COMM_INCOMPATIBLE_UPDATE_DETAILS;
 	
-	public static String MSG_CONNECT_FAILED;
-	
-	public static String MSG_OPERATION_CANCELED;
-
 	public static String MSG_COMM_INVALID_LOGIN; 
 	public static String MSG_COMM_INVALID_LOGIN_DETAILS;
 	

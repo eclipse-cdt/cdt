@@ -24,6 +24,7 @@
  * David McKnight   (IBM)        - [210109] store constants in IFileService rather than IFileServiceConstants
  * David McKnight   (IBM)        - [211472] [api][breaking] IRemoteObjectResolver.getObjectWithAbsoluteName() needs a progress monitor
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
@@ -64,6 +65,7 @@ import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.RemoteChildrenContentsType;
 import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.internal.subsystems.files.core.Activator;
+import org.eclipse.rse.internal.subsystems.files.core.ISystemFileMessageIds;
 import org.eclipse.rse.internal.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.services.clientserver.FileTypeMatcher;
 import org.eclipse.rse.services.clientserver.IClientServerConstants;
@@ -707,7 +709,9 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 				else if (parent != null && !parentExists) {
 					children = new SystemMessageObject[1];
 					String msgTxt = NLS.bind(SystemFileResources.FILEMSG_FILE_NOTFOUND, parent.getAbsolutePath());
-					SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt);
+					SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+							ISystemFileMessageIds.FILEMSG_FILE_NOTFOUND,
+							IStatus.ERROR, msgTxt);
 					children[0] = new SystemMessageObject(msg, ISystemMessageObject.MSGTYPE_ERROR, null);
 				}
 			}

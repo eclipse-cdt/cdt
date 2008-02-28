@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *  David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ *  David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport;
 
@@ -73,8 +74,6 @@ public class RemoteImportExportResources extends NLS {
 	public static String MSG_IMPORT_EXPORT_UNABLE_TO_USE_CONNECTION_DETAILS;
 	public static String MSG_IMPORT_EXPORT_UNEXPECTED_EXCEPTION_DETAILS;
 
-	// Unexpected error message
-	public static String MSG_ERROR_UNEXPECTED;
     
 	
 	static {

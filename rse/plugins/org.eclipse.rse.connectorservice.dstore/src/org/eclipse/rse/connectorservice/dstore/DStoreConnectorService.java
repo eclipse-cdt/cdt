@@ -25,6 +25,7 @@
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [218685] [api][breaking][dstore] Unable to connect when using SSL.
  * David McKnight  (IBM)         - [220123][dstore] Configurable timeout on irresponsiveness
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  *******************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore;
@@ -33,7 +34,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.security.cert.X509Certificate;
 import java.util.List;
-import java.util.Vector;
 
 import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLHandshakeException;
@@ -75,8 +75,11 @@ import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.internal.connectorservice.dstore.Activator;
 import org.eclipse.rse.internal.connectorservice.dstore.ConnectorServiceResources;
+import org.eclipse.rse.internal.connectorservice.dstore.IConnectorServiceMessageIds;
 import org.eclipse.rse.internal.connectorservice.dstore.RexecDstoreServer;
 import org.eclipse.rse.internal.ui.SystemPropertyResources;
+import org.eclipse.rse.services.clientserver.messages.CommonMessages;
+import org.eclipse.rse.services.clientserver.messages.ICommonMessageIds;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
@@ -88,7 +91,6 @@ import org.eclipse.rse.ui.actions.DisplaySystemMessageAction;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.subsystems.StandardConnectorService;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Version;
 
@@ -696,17 +698,20 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 					{
 						String pmsg = null;
 						String pmsgDetails = null;
+						String msgId = null;
 						boolean expired = isPasswordExpired(launchMsg);
 						if (expired){
 							pmsg = ConnectorServiceResources.MSG_VALIDATE_PASSWORD_EXPIRED;
 							pmsgDetails = ConnectorServiceResources.MSG_VALIDATE_PASSWORD_EXPIRED_DETAILS;
+							msgId = IConnectorServiceMessageIds.MSG_VALIDATE_PASSWORD_EXPIRED;
 						}
 						else {
 							pmsg = ConnectorServiceResources.MSG_VALIDATE_PASSWORD_INVALID;
 							pmsgDetails = ConnectorServiceResources.MSG_VALIDATE_PASSWORD_INVALID_DETAILS;
+							msgId = IConnectorServiceMessageIds.MSG_VALIDATE_PASSWORD_INVALID;
 						}
 						
-						SystemMessage message = createSystemMessage(IStatus.ERROR, pmsg, pmsgDetails);
+						SystemMessage message = createSystemMessage(msgId,IStatus.ERROR, pmsg, pmsgDetails);
 						getCredentialsProvider().repairCredentials(message);
 						newCredentials = (SystemSignonInformation) getCredentialsProvider().getCredentials();
 						launchStatus = changePassword(clientConnection, oldCredentials, serverLauncher, monitor, newCredentials.getPassword());
@@ -731,7 +736,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 					String portRange = launchMsg.substring(colonIndex + 1);
 					
 					String pmsg =NLS.bind(ConnectorServiceResources.MSG_PORT_OUT_RANGE, portRange);		
-					SystemMessage message = createSystemMessage(IStatus.ERROR, pmsg);
+					SystemMessage message = createSystemMessage(IConnectorServiceMessageIds.MSG_PORT_OUT_RANGE, IStatus.ERROR, pmsg);
 
 					ShowConnectMessage msgAction = new ShowConnectMessage(message);
 					Display.getDefault().asyncExec(msgAction);
@@ -857,7 +862,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 			if (clientConnection.getDataStore().usingSSL() && store.getBoolean(ISystemPreferencesConstants.ALERT_SSL))
 			{
 				String cmsg = NLS.bind(ConnectorServiceResources.MSG_COMM_USING_SSL, getHostName());
-				msg = createSystemMessage(IStatus.INFO, cmsg);
+				msg = createSystemMessage(IConnectorServiceMessageIds.MSG_COMM_USING_SSL, IStatus.INFO, cmsg);
 				
 				DisplayHidableSystemMessageAction msgAction = new DisplayHidableSystemMessageAction(msg, store, ISystemPreferencesConstants.ALERT_SSL);
 				Display.getDefault().syncExec(msgAction);
@@ -870,7 +875,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 			else if (!clientConnection.getDataStore().usingSSL() && store.getBoolean(ISystemPreferencesConstants.ALERT_NONSSL))
 			{
 				String cmsg = NLS.bind(ConnectorServiceResources.MSG_COMM_NOT_USING_SSL, getHostName());
-				msg = createSystemMessage(IStatus.INFO, cmsg);			
+				msg = createSystemMessage(IConnectorServiceMessageIds.MSG_COMM_NOT_USING_SSL, IStatus.INFO, cmsg);			
 			
 				DisplayHidableSystemMessageAction msgAction = new DisplayHidableSystemMessageAction(msg, store, ISystemPreferencesConstants.ALERT_NONSSL);
 				Display.getDefault().syncExec(msgAction);
@@ -929,7 +934,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 					String cmsg = NLS.bind(ConnectorServiceResources.MSG_COMM_CLIENT_OLDER_WARNING, getHostName());
 					String cmsgDetail = ConnectorServiceResources.MSG_COMM_CLIENT_OLDER_WARNING_DETAILS;
 					
-					msg = createSystemMessage(IStatus.WARNING, cmsg, cmsgDetail);
+					msg = createSystemMessage(IConnectorServiceMessageIds.MSG_COMM_CLIENT_OLDER_WARNING, IStatus.WARNING, cmsg, cmsgDetail);
 
 				}
 				else if (message.startsWith(ClientConnection.SERVER_OLDER))
@@ -937,7 +942,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 					String cmsg = NLS.bind(ConnectorServiceResources.MSG_COMM_SERVER_OLDER_WARNING, getHostName());
 					String cmsgDetail = ConnectorServiceResources.MSG_COMM_SERVER_OLDER_WARNING_DETAILS;
 					
-					msg = createSystemMessage(IStatus.WARNING, cmsg, cmsgDetail);
+					msg = createSystemMessage(IConnectorServiceMessageIds.MSG_COMM_SERVER_OLDER_WARNING, IStatus.WARNING, cmsg, cmsgDetail);
 				}
 				
 				if (store.getBoolean(IUniversalDStoreConstants.ALERT_MISMATCHED_SERVER)){
@@ -1020,7 +1025,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 					else
 					{
 						String cmsg = NLS.bind(ConnectorServiceResources.MSG_CONNECT_SSL_EXCEPTION, launchStatus.getMessage());
-						msg = createSystemMessage(IStatus.ERROR, cmsg);
+						msg = createSystemMessage(IConnectorServiceMessageIds.MSG_CONNECT_SSL_EXCEPTION, IStatus.ERROR, cmsg);
 					}
 				} 	
 		    }
@@ -1034,7 +1039,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 					Throwable exception = launchStatus.getException();
 					String fmsg = NLS.bind(ConnectorServiceResources.MSG_CONNECT_DAEMON_FAILED_EXCEPTION, getHostName(), ""+serverLauncher.getDaemonPort()); //$NON-NLS-1$
 										
-					msg = createSystemMessage(IStatus.ERROR, fmsg, exception);
+					msg = createSystemMessage(IConnectorServiceMessageIds.MSG_CONNECT_DAEMON_FAILED_EXCEPTION, IStatus.ERROR, fmsg, exception);
 				}
 				else if (launchMsg != null && launchMsg.indexOf(IDataStoreConstants.AUTHENTICATION_FAILED) != -1)
 				{
@@ -1044,10 +1049,10 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 				    }
 				
 					// Display error message
-					String msgTxt = ConnectorServiceResources.MSG_COMM_AUTH_FAILED;
-					String msgDetails = NLS.bind(ConnectorServiceResources.MSG_COMM_AUTH_FAILED_DETAILS, getHostName());
+					String msgTxt = CommonMessages.MSG_COMM_AUTH_FAILED;
+					String msgDetails = NLS.bind(CommonMessages.MSG_COMM_AUTH_FAILED_DETAILS, getHostName());
 					
-					msg = createSystemMessage(IStatus.ERROR, msgTxt, msgDetails);
+					msg = createSystemMessage(ICommonMessageIds.MSG_COMM_AUTH_FAILED, IStatus.ERROR, msgTxt, msgDetails);
 
 					DisplaySystemMessageAction msgAction = new DisplaySystemMessageAction(msg);
 					Display.getDefault().syncExec(msgAction);
@@ -1092,12 +1097,14 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 					{
 						String msgTxt = ConnectorServiceResources.MSG_VALIDATE_PASSWORD_INVALID;
 						String msgDetails = ConnectorServiceResources.MSG_VALIDATE_PASSWORD_INVALID_DETAILS;
+						String msgId = IConnectorServiceMessageIds.MSG_VALIDATE_PASSWORD_INVALID;
 						if (isPasswordExpired(launchMsg)){
 							msgTxt = ConnectorServiceResources.MSG_VALIDATE_PASSWORD_EXPIRED;
 							msgDetails = ConnectorServiceResources.MSG_VALIDATE_PASSWORD_EXPIRED_DETAILS;
+							msgId = IConnectorServiceMessageIds.MSG_VALIDATE_PASSWORD_EXPIRED;
 						}
 					
-						SystemMessage message = createSystemMessage(IStatus.ERROR, msgTxt, msgDetails);
+						SystemMessage message = createSystemMessage(msgId, IStatus.ERROR, msgTxt, msgDetails);
 						
 						getCredentialsProvider().repairCredentials(message);
 						newCredentials = (SystemSignonInformation) getCredentialsProvider().getCredentials();
@@ -1129,7 +1136,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 				else if (launchMsg != null)
 				{					
 					String msgTxt = NLS.bind(ConnectorServiceResources.MSG_CONNECT_DAEMON_FAILED, getHostName(), clientConnection.getPort());
-					msg = createSystemMessage(IStatus.ERROR, msgTxt, launchMsg);
+					msg = createSystemMessage(IConnectorServiceMessageIds.MSG_CONNECT_DAEMON_FAILED, IStatus.ERROR, msgTxt, launchMsg);
 				}
 			}
 			
@@ -1141,22 +1148,22 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 					String msgTxt = NLS.bind(ConnectorServiceResources.MSG_COMM_INCOMPATIBLE_UPDATE, getHostName());	
 					String msgDetails = ConnectorServiceResources.MSG_COMM_INCOMPATIBLE_UPDATE_DETAILS;
 					
-					msg = createSystemMessage(IStatus.ERROR, msgTxt, msgDetails);
+					msg = createSystemMessage(IConnectorServiceMessageIds.MSG_COMM_INCOMPATIBLE_UPDATE, IStatus.ERROR, msgTxt, msgDetails);
 				}
 				else if (connectStatus.getMessage().startsWith(ClientConnection.INCOMPATIBLE_PROTOCOL))
 				{
 					String msgTxt = NLS.bind(ConnectorServiceResources.MSG_COMM_INCOMPATIBLE_PROTOCOL, getHostName());	
 					String msgDetails = ConnectorServiceResources.MSG_COMM_INCOMPATIBLE_PROTOCOL_DETAILS;
 					
-					msg = createSystemMessage(IStatus.ERROR, msgTxt, msgDetails);
+					msg = createSystemMessage(IConnectorServiceMessageIds.MSG_COMM_INCOMPATIBLE_PROTOCOL, IStatus.ERROR, msgTxt, msgDetails);
 				}
 				else
 				{
 					Throwable exception = connectStatus.getException();
 					if (exception != null)
 					{
-						String msgTxt = NLS.bind(ConnectorServiceResources.MSG_CONNECT_FAILED, getHostName());
-						msg = createSystemMessage(IStatus.ERROR, msgTxt, exception);
+						String msgTxt = NLS.bind(CommonMessages.MSG_CONNECT_FAILED, getHostName());
+						msg = createSystemMessage(ICommonMessageIds.MSG_CONNECT_FAILED, IStatus.ERROR, msgTxt, exception);
 					}
 				}
 			}
@@ -1167,7 +1174,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 				SystemBasePlugin.logError("Failed to connect to remote system", null); //$NON-NLS-1$
 				String msgTxt = NLS.bind(ConnectorServiceResources.MSG_COMM_CONNECT_FAILED, getHostName());
 				String msgDetails = NLS.bind(ConnectorServiceResources.MSG_COMM_CONNECT_FAILED_DETAILS, getHostName());
-				msg = createSystemMessage(IStatus.ERROR, msgTxt, msgDetails);
+				msg = createSystemMessage(IConnectorServiceMessageIds.MSG_COMM_CONNECT_FAILED, IStatus.ERROR, msgTxt, msgDetails);
 			}
 
 			// if, for some reason, we don't have a message
@@ -1176,7 +1183,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 				SystemBasePlugin.logError("Failed to connect to remote system" + connectStatus.getMessage(), null); //$NON-NLS-1$
 				String msgTxt = NLS.bind(ConnectorServiceResources.MSG_COMM_CONNECT_FAILED, getHostName());
 				String msgDetails = NLS.bind(ConnectorServiceResources.MSG_COMM_CONNECT_FAILED_DETAILS, getHostName());
-				msg = createSystemMessage(IStatus.ERROR, msgTxt, msgDetails);
+				msg = createSystemMessage(IConnectorServiceMessageIds.MSG_COMM_CONNECT_FAILED, IStatus.ERROR, msgTxt, msgDetails);
 			}
 
 			clientConnection.disconnect();
@@ -1276,7 +1283,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 		String serverPort = (String)starter.launch(monitor);	
 		if (monitor.isCanceled())
 		{
-			SystemMessage msg = createSystemMessage(IStatus.CANCEL, ConnectorServiceResources.MSG_OPERATION_CANCELED);
+			SystemMessage msg = createSystemMessage(ICommonMessageIds.MSG_OPERATION_CANCELED, IStatus.CANCEL, CommonMessages.MSG_OPERATION_CANCELED);
 			throw new SystemMessageException(msg);
 		}
 		
@@ -1385,20 +1392,6 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 		return false;
 	}
 
-	/**
-	 * Show any warning messages returned by host api calls.
-	 * @param shell Parent UI
-	 * @param warnings Vector of String or toString()'able messages.
-	 */
-	public void showWarningMsgs(Shell shell, Vector warnings)
-	{
-		for (int idx = 0; idx < warnings.size(); idx++)
-		{
-			SystemMessage msg = createSystemMessage(IStatus.WARNING, warnings.elementAt(idx).toString());
-			SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);
-			msgDlg.open();
-		}
-	}
 
 	/**
 	 * @return The DataStore currently being used by this connection.
@@ -1449,16 +1442,16 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 	}
 	
 
-	protected SystemMessage createSystemMessage(int severity, String msg) {
-		return createSystemMessage(severity, msg, (String)null);
+	protected SystemMessage createSystemMessage(String msgId, int severity, String msg) {
+		return createSystemMessage(msgId, severity, msg, (String)null);
 	}
 	
-	protected SystemMessage createSystemMessage(int severity, String msg, Throwable e) {
-		return new SimpleSystemMessage(Activator.PLUGIN_ID, severity, msg, e);
+	protected SystemMessage createSystemMessage(String msgId, int severity, String msg, Throwable e) {
+		return new SimpleSystemMessage(Activator.PLUGIN_ID, msgId, severity, msg, e);
 	}
 	
-	protected SystemMessage createSystemMessage(int severity, String msg, String msgDetails) {
-		return new SimpleSystemMessage(Activator.PLUGIN_ID, severity, msg, msgDetails);
+	protected SystemMessage createSystemMessage(String msgId, int severity, String msg, String msgDetails) {
+		return new SimpleSystemMessage(Activator.PLUGIN_ID, msgId, severity, msg, msgDetails);
 	}	
 }
 

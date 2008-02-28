@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  ********************************************************************************/
 
 package org.eclipse.rse.internal.connectorservice.dstore;
@@ -482,9 +483,9 @@ public class RexecDstoreServer implements IServerLauncher
 			
 			if (timeout == 0) {
 				String msgTxt = NLS.bind(ConnectorServiceResources.MSG_COMM_INVALID_LOGIN, signonInfo.getHostname());
-				String msgDetails = NLS.bind(ConnectorServiceResources.MSG_COMM_INVALID_LOGIN_DETAILS, "");
+				String msgDetails = NLS.bind(ConnectorServiceResources.MSG_COMM_INVALID_LOGIN_DETAILS, ""); //$NON-NLS-1$
 				
-				SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+				SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IConnectorServiceMessageIds.MSG_COMM_INVALID_LOGIN, IStatus.ERROR, msgTxt, msgDetails);
 				_errorMessage = msg;
 				return port;
 			}
@@ -567,13 +568,13 @@ public class RexecDstoreServer implements IServerLauncher
 			String msgTxt = NLS.bind(ConnectorServiceResources.MSG_COMM_INVALID_LOGIN, signonInfo.getHostname());
 			String msgDetails = NLS.bind(ConnectorServiceResources.MSG_COMM_INVALID_LOGIN_DETAILS, hostMessage);
 			
-			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IConnectorServiceMessageIds.MSG_COMM_INVALID_LOGIN, IStatus.ERROR, msgTxt, msgDetails);
 			_errorMessage = msg;
 		} else {
-			String msgTxt = NLS.bind(ConnectorServiceResources.MSG_COMM_REXEC_NOTSTARTED, ""+rexecPort, signonInfo.getHostname());
+			String msgTxt = NLS.bind(ConnectorServiceResources.MSG_COMM_REXEC_NOTSTARTED, ""+rexecPort, signonInfo.getHostname()); //$NON-NLS-1$
 			String msgDetails = NLS.bind(ConnectorServiceResources.MSG_COMM_REXEC_NOTSTARTED_DETAILS, hostMessage);
 			
-			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IConnectorServiceMessageIds.MSG_COMM_REXEC_NOTSTARTED, IStatus.ERROR, msgTxt, msgDetails);
 			_errorMessage = msg;
 			
 		}

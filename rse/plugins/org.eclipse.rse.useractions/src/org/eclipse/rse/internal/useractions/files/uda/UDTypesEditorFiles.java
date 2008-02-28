@@ -9,6 +9,7 @@
  * IBM Corporation - initial API and implementation
  * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
  *                                API to the user actions plugin
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared                              
  *******************************************************************************/
 package org.eclipse.rse.internal.useractions.files.uda;
 
@@ -23,6 +24,7 @@ import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.rse.internal.useractions.Activator;
+import org.eclipse.rse.internal.useractions.IUserActionsMessageIds;
 import org.eclipse.rse.internal.useractions.UserActionsResources;
 import org.eclipse.rse.internal.useractions.ui.uda.ISystemUDTypeEditPaneTypesSelector;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemUDAResources;
@@ -253,7 +255,9 @@ public class UDTypesEditorFiles implements ISystemUDTypeEditPaneTypesSelector, I
 		
 		
 		if (!areTypesSelected()) {
-			return new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, 
+			return new SimpleSystemMessage(Activator.PLUGIN_ID, 
+					IUserActionsMessageIds.MSG_VALIDATE_UDTTYPES_EMPTY,
+					IStatus.ERROR, 
 					UserActionsResources.MSG_VALIDATE_UDTTYPES_EMPTY, 
 					UserActionsResources.MSG_VALIDATE_UDTTYPES_EMPTY_DETAILS);
 		}
@@ -273,7 +277,9 @@ public class UDTypesEditorFiles implements ISystemUDTypeEditPaneTypesSelector, I
 		int index = filename.indexOf('.');
 		if (index == filename.length() - 1) {
 			if (index == 0 || (index == 1 && filename.charAt(0) == '*')) {
-				return new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, 
+				return new SimpleSystemMessage(Activator.PLUGIN_ID, 
+						IUserActionsMessageIds.MSG_VALIDATE_UDTTYPES_NOTVALID,
+						IStatus.ERROR, 
 						UserActionsResources.MSG_VALIDATE_UDTTYPES_NOTVALID, 
 						UserActionsResources.MSG_VALIDATE_UDTTYPES_NOTVALID_DETAILS);
 			}
@@ -287,12 +293,16 @@ public class UDTypesEditorFiles implements ISystemUDTypeEditPaneTypesSelector, I
 		index = filename.indexOf('*', startScan);
 		if (index > -1) {
 			if (filename.length() == 1) {
-				return new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, 
+				return new SimpleSystemMessage(Activator.PLUGIN_ID, 
+						IUserActionsMessageIds.MSG_VALIDATE_UDTTYPES_NOTVALID,
+						IStatus.ERROR, 
 						UserActionsResources.MSG_VALIDATE_UDTTYPES_NOTVALID, 
 						UserActionsResources.MSG_VALIDATE_UDTTYPES_NOTVALID_DETAILS);
 			}
 			if (index != 0 || filename.charAt(1) != '.') {
-				return new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, 
+				return new SimpleSystemMessage(Activator.PLUGIN_ID, 						
+						IUserActionsMessageIds.MSG_VALIDATE_UDTTYPES_NOTVALID,
+						IStatus.ERROR, 
 						UserActionsResources.MSG_VALIDATE_UDTTYPES_NOTVALID, 
 						UserActionsResources.MSG_VALIDATE_UDTTYPES_NOTVALID_DETAILS);
 			}

@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  ********************************************************************************/
 
 package org.eclipse.rse.internal.processes.ui.actions;
@@ -41,6 +42,8 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.processes.ui.ProcessesPlugin;
 import org.eclipse.rse.internal.processes.ui.SystemProcessesResources;
 import org.eclipse.rse.internal.processes.ui.dialogs.SystemKillDialog;
+import org.eclipse.rse.services.clientserver.messages.CommonMessages;
+import org.eclipse.rse.services.clientserver.messages.ICommonMessageIds;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
@@ -330,8 +333,10 @@ public class SystemKillProcessAction extends SystemBaseDialogAction implements I
     	  String msg = exc.getMessage();
     	  if ((msg == null) || (exc instanceof ClassCastException))
     	    msg = exc.getClass().getName();
-    		  SystemMessage smsg = new SimpleSystemMessage(ProcessesPlugin.PLUGIN_ID, IStatus.ERROR,
-    				  NLS.bind(SystemProcessesResources.MSG_OPERATION_FAILED, msg));
+    		  SystemMessage smsg = new SimpleSystemMessage(ProcessesPlugin.PLUGIN_ID, 
+    				  ICommonMessageIds.MSG_OPERATION_FAILED,
+    				  IStatus.ERROR,
+    				  NLS.bind(CommonMessages.MSG_OPERATION_FAILED, msg));
     	  SystemMessageDialog msgDlg = new SystemMessageDialog(shell, smsg);
     	  msgDlg.setException(exc);
     	  msgDlg.open();
@@ -357,7 +362,10 @@ public class SystemKillProcessAction extends SystemBaseDialogAction implements I
      */
     protected void showOperationCancelledMessage(Shell shell)
     {
-    	SystemMessage msg = new SimpleSystemMessage(ProcessesPlugin.PLUGIN_ID, IStatus.CANCEL, SystemProcessesResources.MSG_OPERATION_CANCELED);
+    	SystemMessage msg = new SimpleSystemMessage(ProcessesPlugin.PLUGIN_ID, 
+    			ICommonMessageIds.MSG_OPERATION_CANCELED,
+    			IStatus.CANCEL, 
+    			CommonMessages.MSG_OPERATION_CANCELED);
     	SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);
     	msgDlg.open();
     }	

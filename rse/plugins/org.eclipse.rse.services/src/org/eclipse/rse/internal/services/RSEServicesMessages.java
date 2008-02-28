@@ -7,6 +7,7 @@
  * 
  * Contributors: 
  * Martin Oberhuber (Wind River) - initial API and implementation
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  *******************************************************************************/
 package org.eclipse.rse.internal.services;
 
@@ -25,8 +26,6 @@ public class RSEServicesMessages extends NLS {
 
 	public static String FILEMSG_SECURITY_VIOLATION;
 	public static String FILEMSG_SECURITY_VIOLATION_DETAILS;
-	
-	public static String MSG_OPERATION_CANCELED;
 	
 	public static String FILEMSG_FOLDER_NOT_EMPTY;
 	public static String FILEMSG_FOLDER_NOT_EMPTY_DETAILS;

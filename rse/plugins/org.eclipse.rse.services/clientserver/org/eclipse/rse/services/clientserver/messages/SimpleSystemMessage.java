@@ -11,6 +11,7 @@
  * Contributors:
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * Martin Oberhuber (Wind River) - [219975] Fix SystemMessage#clone()
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  ********************************************************************************/
 package org.eclipse.rse.services.clientserver.messages;
 
@@ -21,12 +22,8 @@ import org.eclipse.core.runtime.IStatus;
 
 public class SimpleSystemMessage extends SystemMessage {
 
-	/**
-	 * alternative to message number for ids?
-	 */
 	private String _pluginId;
-
-	//private int _severity;
+	private String _messageId;
 	
 	/**
 	 * Constructor for messages that use explicit strings and severities rather than
@@ -34,11 +31,13 @@ public class SimpleSystemMessage extends SystemMessage {
 	 * file stuff.
 	 * 
 	 * @param pluginId the id of the originating plugin
+	 * @param messageId the unique id of the message
 	 * @param severity using IStatus severities
 	 * @param msg the message text
 	 */
-	public SimpleSystemMessage(String pluginId, int severity, String msg) {
-		this(pluginId, severity, msg, (String)null);
+	public SimpleSystemMessage(String pluginId, String messageId, int severity, String msg) {
+		this(pluginId, messageId, severity, msg, (String)null);
+		_messageId = messageId; 
 	}
 	
 	/**
@@ -47,15 +46,16 @@ public class SimpleSystemMessage extends SystemMessage {
 	 * file stuff.
 	 * 
 	 * @param pluginId the id of the originating plugin
+	 * @param messageId the unique id of the message
 	 * @param severity using IStatus severities
 	 * @param msg the message text
 	 * @param msgDetails the message details
 	 */
-	public SimpleSystemMessage(String pluginId, int severity, String msg, String msgDetails) {
+	public SimpleSystemMessage(String pluginId, String messageId, int severity, String msg, String msgDetails) {
 		super("RSE", "G", "-", severityToIndicator(severity), msg, msgDetails);  //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
 	
 		_pluginId = pluginId;
-		//_severity = severity;
+		_messageId = pluginId;
 	}
 		
 	/**
@@ -64,14 +64,15 @@ public class SimpleSystemMessage extends SystemMessage {
 	 * file stuff.
 	 * 
 	 * @param pluginId the id of the originating plugin
+	 * @param messageId the unique id of the message
 	 * @param severity using IStatus severities
 	 * @param msg the message text
 	 * @param e an exception to convert into details
 	 */
-	public SimpleSystemMessage(String pluginId, int severity, String msg, Throwable e) {
+	public SimpleSystemMessage(String pluginId, String messageId, int severity, String msg, Throwable e) {
 		super("RSE", "G", "-", severityToIndicator(severity), msg, throwableToDetails(e)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		_pluginId = pluginId;
-		//_severity = severity;
+		_messageId = messageId;
 	}
 	
 	private static String throwableToDetails(Throwable e){	
@@ -105,7 +106,7 @@ public class SimpleSystemMessage extends SystemMessage {
 	}
 
 	public String getFullMessageID() {
-		return _pluginId + ":" + getIndicator(); //$NON-NLS-1$
+		return _messageId;
 	}
 	
 }

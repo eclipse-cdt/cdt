@@ -11,6 +11,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
  *                                API to the user actions plugin
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared                               
  *******************************************************************************/
 
 package org.eclipse.rse.internal.useractions.ui.uda;
@@ -55,6 +56,7 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.useractions.Activator;
+import org.eclipse.rse.internal.useractions.IUserActionsMessageIds;
 import org.eclipse.rse.internal.useractions.UserActionsResources;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
@@ -443,7 +445,9 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 				String msgTxt = NLS.bind(UserActionsResources.MSG_UDA_ROOTTAG_ERROR, getFilePath(profile));
 				String msgDetails = NLS.bind(UserActionsResources.MSG_UDA_ROOTTAG_ERROR_DETAILS, getDocumentRootTagName(), newFileName);
 				
-				SystemMessage docRootMsg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+				SystemMessage docRootMsg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+						IUserActionsMessageIds.MSG_UDA_ROOTTAG_ERROR,
+						IStatus.ERROR, msgTxt, msgDetails);
 		
 				doc = createAndPrimeDocument(profile);
 				docRootMsg.makeSubstitution(oldFileName, getDocumentRootTagName(), newFileName);
@@ -459,7 +463,9 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 			Document doc = initializeDocument();
 			
 			String msgTxt = NLS.bind(UserActionsResources.MSG_UDA_LOAD_ERROR, fileName);
-			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, exc);
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+					IUserActionsMessageIds.MSG_UDA_LOAD_ERROR,
+					IStatus.ERROR, msgTxt, exc);
 			SystemMessageDialog msgdlg = new SystemMessageDialog(SystemBasePlugin.getActiveWorkbenchShell(), msg);
 			msgdlg.open();
 			return doc;

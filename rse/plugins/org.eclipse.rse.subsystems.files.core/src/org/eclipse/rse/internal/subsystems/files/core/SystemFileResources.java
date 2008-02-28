@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.core;
@@ -185,10 +186,7 @@ public class SystemFileResources extends NLS
 	public static String MSG_VALIDATE_NAME_NOTUNIQUE;
 	public static String MSG_VALIDATE_NAME_NOTUNIQUE_DETAILS;
 
-	
-	public static String MSG_CONNECT_FAILED;	
-	public static String MSG_OPERATION_CANCELED;
-	
+
 	public static String FILEMSG_FOLDER_NOTEMPTY;
 	public static String FILEMSG_FOLDER_NOTEMPTY_DETAILS;
   	public static String FILEMSG_FOLDER_NOTFOUND;
@@ -196,7 +194,7 @@ public class SystemFileResources extends NLS
   	public static String FILEMSG_FOLDER_NOTFOUND_WANTTOCREATE_DETAILS;  
   	public static String FILEMSG_FILE_NOTFOUND;
   	
-	public static String MSG_ERROR_UNEXPECTED;
+
 	
 	public static String MSG_FOLDER_UNREADABLE;
 	

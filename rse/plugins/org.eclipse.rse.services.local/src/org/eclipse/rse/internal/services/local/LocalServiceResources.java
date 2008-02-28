@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * David McKnight   (IBM)        - [216252] use SimpleSystemMessage instead of getMessage()
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local;
@@ -31,8 +32,7 @@ public class LocalServiceResources extends NLS
 	public static String Local_Process_Service_Description;
 	public static String Local_Shell_Service_Description;
 	
-	public static String MSG_OPERATION_CANCELED;
-	
+
 	public static String FILEMSG_FILE_NOT_SAVED;
 	public static String FILEMSG_FILE_NOT_SAVED_DETAILS;
 	

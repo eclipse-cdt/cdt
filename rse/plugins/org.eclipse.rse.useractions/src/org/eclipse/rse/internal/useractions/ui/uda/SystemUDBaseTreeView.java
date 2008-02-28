@@ -11,6 +11,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
  *                                API to the user actions plugin
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared                                                               
  *******************************************************************************/
 
 package org.eclipse.rse.internal.useractions.ui.uda;
@@ -33,6 +34,7 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.ui.view.SystemViewMenuListener;
 import org.eclipse.rse.internal.useractions.Activator;
+import org.eclipse.rse.internal.useractions.IUserActionsMessageIds;
 import org.eclipse.rse.internal.useractions.UserActionsResources;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
@@ -402,7 +404,9 @@ public class SystemUDBaseTreeView extends TreeViewer implements IMenuListener, I
 	 * Return message for delete confirmation
 	 */
 	protected SystemMessage getDeleteConfirmationMessage() {
-		return new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, UserActionsResources.MSG_CONFIRM_DELETE_USERACTION, UserActionsResources.MSG_CONFIRM_DELETE_USERTYPE_DETAILS);
+		return new SimpleSystemMessage(Activator.PLUGIN_ID, 
+				IUserActionsMessageIds.MSG_CONFIRM_DELETE_USERACTION,
+				IStatus.ERROR, UserActionsResources.MSG_CONFIRM_DELETE_USERACTION, UserActionsResources.MSG_CONFIRM_DELETE_USERTYPE_DETAILS);
 	}
 
 	/**

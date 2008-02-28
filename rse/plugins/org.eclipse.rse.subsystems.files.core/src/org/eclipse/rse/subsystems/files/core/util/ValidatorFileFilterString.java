@@ -14,6 +14,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [cleanup] fix javadoc.
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.util;
@@ -23,6 +24,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.rse.internal.subsystems.files.core.Activator;
+import org.eclipse.rse.internal.subsystems.files.core.ISystemFileMessageIds;
 import org.eclipse.rse.internal.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.services.clientserver.NamePatternMatcher;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
@@ -101,10 +103,15 @@ public class ValidatorFileFilterString
     private void init()
     {
 		//setErrorMessages(RSEUIPlugin.getPluginMessage(FILEMSG_VALIDATE_FILEFILTERSTRING_EMPTY),
-		setErrorMessages(new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, 
-				SystemFileResources.MSG_VALIDATE_NAME_EMPTY, SystemFileResources.MSG_VALIDATE_NAME_EMPTY_DETAILS),
-				new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, SystemFileResources.FILEMSG_VALIDATE_FILEFILTERSTRING_NOTUNIQUE),
-				new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, SystemFileResources.FILEMSG_VALIDATE_FILEFILTERSTRING_NOTVALID));  
+		setErrorMessages(new SimpleSystemMessage(Activator.PLUGIN_ID, 
+				ISystemFileMessageIds.MSG_VALIDATE_NAME_EMPTY,
+				IStatus.ERROR, SystemFileResources.MSG_VALIDATE_NAME_EMPTY, SystemFileResources.MSG_VALIDATE_NAME_EMPTY_DETAILS),
+				new SimpleSystemMessage(Activator.PLUGIN_ID, 
+						ISystemFileMessageIds.FILEMSG_VALIDATE_FILEFILTERSTRING_NOTUNIQUE,
+						IStatus.ERROR, SystemFileResources.FILEMSG_VALIDATE_FILEFILTERSTRING_NOTUNIQUE),
+				new SimpleSystemMessage(Activator.PLUGIN_ID, 
+						ISystemFileMessageIds.FILEMSG_VALIDATE_FILEFILTERSTRING_NOTVALID,
+						IStatus.ERROR, SystemFileResources.FILEMSG_VALIDATE_FILEFILTERSTRING_NOTVALID));  
 		isFileName = isFolderName = true;
     }
     

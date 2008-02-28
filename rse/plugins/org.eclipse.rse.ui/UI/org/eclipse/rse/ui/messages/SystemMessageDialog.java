@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [189272] exception when canceling ssh connect
  * David McKnight   (IBM)        - [216596] determine whether to show yes/no or just okay
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  *******************************************************************************/
 
 package org.eclipse.rse.ui.messages;
@@ -34,7 +35,6 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.rse.internal.ui.GenericMessages;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.services.clientserver.messages.IndicatorException;
-import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.ISystemMessages;
@@ -171,7 +171,7 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 	public SystemMessageDialog(Shell parentShell, SystemMessage message) 
 	{
 		this(parentShell,
-			(message instanceof SimpleSystemMessage) ?  getStatusTitle(message) : message.getFullMessageID(),
+			message.getFullMessageID(),
 			message.getLevelOneText(),
 			(new MultiStatus(SystemBasePlugin.getBaseDefault().getSymbolicName(), IStatus.OK, "", new Exception(""))), //$NON-NLS-1$ //$NON-NLS-2$
 			 		0xFFFFF);

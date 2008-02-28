@@ -8,6 +8,7 @@
  * Contributors: 
  * Martin Oberhuber (Wind River) - initial API and implementation 
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  *******************************************************************************/
 
 package org.eclipse.rse.examples.daytime;
@@ -29,8 +30,6 @@ public class DaytimeResources extends NLS {
 	public static String DaytimeConnectorService_NotAvailable;
 
 	public static String DaytimeWizard_TestFieldText;
-	
-	public static String MSG_CONNECT_FAILED;
 	
 	static {
 		// load message values from bundle file

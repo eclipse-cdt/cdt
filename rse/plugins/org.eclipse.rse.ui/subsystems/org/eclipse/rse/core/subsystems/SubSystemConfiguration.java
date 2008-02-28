@@ -30,6 +30,7 @@
  * David Dykstal (IBM) - [217556] remove service subsystem types
  * Martin Oberhuber (Wind River) - [cleanup] Avoid using SystemStartHere in production code
  * David McKnight   (IBM)        - [220309] [nls] Some GenericMessages and SubSystemResources should move from UI to Core
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -67,6 +68,7 @@ import org.eclipse.rse.core.model.ISystemProfileManager;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
 import org.eclipse.rse.internal.core.RSECoreMessages;
+import org.eclipse.rse.internal.core.SystemResourceConstants;
 import org.eclipse.rse.internal.core.filters.SystemFilterPoolManager;
 import org.eclipse.rse.internal.core.filters.SystemFilterPoolWrapperInformation;
 import org.eclipse.rse.internal.core.filters.SystemFilterStartHere;
@@ -75,6 +77,7 @@ import org.eclipse.rse.internal.ui.SystemPropertyResources;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.logging.Logger;
 import org.eclipse.rse.services.IService;
+import org.eclipse.rse.services.clientserver.messages.CommonMessages;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.SystemBasePlugin;
@@ -1740,7 +1743,9 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 				String connectionName = conn.getSystemProfileName() + "." + conn.getAliasName(); //$NON-NLS-1$
 				
 				String msgTxt = NLS.bind(RSECoreMessages.MSG_LOADING_PROFILE_SHOULDBE_ACTIVATED, missingPoolMgrName, connectionName);
-				SystemMessage sysMsg = new SimpleSystemMessage(RSECorePlugin.PLUGIN_ID, IStatus.ERROR, msgTxt);
+				SystemMessage sysMsg = new SimpleSystemMessage(RSECorePlugin.PLUGIN_ID, 
+						SystemResourceConstants.MSG_LOADING_PROFILE_SHOULDBE_ACTIVATED,						
+						IStatus.ERROR, msgTxt);
 				SystemBasePlugin.logWarning(sysMsg.getFullMessageID() + ": " + sysMsg.getLevelOneText()); //$NON-NLS-1$
 				if (brokenReferenceWarningsIssued.get(missingPoolMgrName) == null)
 				{
@@ -2636,10 +2641,10 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		String msgTxt = null;
 		if (port > 0)
 		{
-			msgTxt = NLS.bind(RSECoreMessages.MSG_CONNECTWITHPORT_PROGRESS, hostName, Integer.toString(port));
+			msgTxt = NLS.bind(CommonMessages.MSG_CONNECTWITHPORT_PROGRESS, hostName, Integer.toString(port));
 		}
 		else
-		{	msgTxt = NLS.bind(RSECoreMessages.MSG_CONNECT_PROGRESS, hostName);
+		{	msgTxt = NLS.bind(CommonMessages.MSG_CONNECT_PROGRESS, hostName);
 		}
 		return msgTxt;
 	}
@@ -2651,11 +2656,11 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		String msgTxt = null;
 		if (port > 0)
 		{
-			msgTxt = NLS.bind(RSECoreMessages.MSG_DISCONNECTWITHPORT_PROGRESS, hostName, Integer.toString(port));
+			msgTxt = NLS.bind(CommonMessages.MSG_DISCONNECTWITHPORT_PROGRESS, hostName, Integer.toString(port));
 		}
 		else
 		{
-			msgTxt = NLS.bind(RSECoreMessages.MSG_DISCONNECT_PROGRESS, hostName);
+			msgTxt = NLS.bind(CommonMessages.MSG_DISCONNECT_PROGRESS, hostName);
 
 		}
 		return msgTxt;

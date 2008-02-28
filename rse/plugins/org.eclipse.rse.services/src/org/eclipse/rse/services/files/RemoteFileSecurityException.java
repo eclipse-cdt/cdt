@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  *******************************************************************************/
 
 package org.eclipse.rse.services.files;
@@ -59,7 +60,9 @@ public class RemoteFileSecurityException extends RemoteFileException {
 			String msgTxt = RSEServicesMessages.FILEMSG_SECURITY_VIOLATION;
 			String msgDetails = NLS.bind(RSEServicesMessages.FILEMSG_SECURITY_VIOLATION_DETAILS, secondLevel);
 			
-		    myMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt, msgDetails);
+		    myMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+		    		"RSEF1001", //$NON-NLS-1$
+		    		IStatus.ERROR, msgTxt, msgDetails);
 		}
 		return myMessage;
 	}

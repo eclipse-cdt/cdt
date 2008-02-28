@@ -17,7 +17,8 @@
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
  * Martin Oberhuber (Wind River) - [187218] Fix error reporting for connect()
  * Kevin Doyle (IBM)			 - [187083] Launch Shell action available on folders inside virtual files 
- * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible 
+ * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui.actions;
@@ -298,7 +299,9 @@ public class SystemCommandAction extends SystemBaseAction
 			if (theNewName.length() == 0)
 			{
 				String msgTxt = ShellResources.MSG_UCMD_INVOCATION_EMPTY;
-				_errorMessage = new SimpleSystemMessage(ShellsUIPlugin.PLUGIN_ID, IStatus.ERROR, msgTxt);
+				_errorMessage = new SimpleSystemMessage(ShellsUIPlugin.PLUGIN_ID, 
+						"RSEG1260", //$NON-NLS-1$
+						IStatus.ERROR, msgTxt);
 			}
 
 			if (_errorMessage != null)

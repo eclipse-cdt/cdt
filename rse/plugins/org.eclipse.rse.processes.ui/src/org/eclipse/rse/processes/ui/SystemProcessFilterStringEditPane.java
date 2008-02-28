@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  ********************************************************************************/
 
 package org.eclipse.rse.processes.ui;
@@ -498,7 +499,10 @@ public class SystemProcessFilterStringEditPane extends
 			if (notUnique)
 			{
 				
-			  errorMessage = new SimpleSystemMessage(ProcessesPlugin.PLUGIN_ID, IStatus.ERROR, NLS.bind(SystemProcessesResources.MSG_VALIDATE_FILEFILTERSTRING_NOTUNIQUE, currFilterString));
+			  errorMessage = new SimpleSystemMessage(ProcessesPlugin.PLUGIN_ID, 
+					  "RSEF1007", //$NON-NLS-1$
+					  IStatus.ERROR, 					  
+					  NLS.bind(SystemProcessesResources.MSG_VALIDATE_FILEFILTERSTRING_NOTUNIQUE, currFilterString));
 			}
 			controlInError = txtExeName;
 		}

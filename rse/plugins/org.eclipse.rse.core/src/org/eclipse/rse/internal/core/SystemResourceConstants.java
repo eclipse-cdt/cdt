@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * David Dykstal (IBM) - removed RESOURCE_TEAMPROFILE_NAME
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core;
@@ -30,4 +31,14 @@ public interface SystemResourceConstants
     public static final String RESOURCE_TYPE_FILTERS_FOLDER_NAME = "TypeFilters";         //$NON-NLS-1$
     public static final String RESOURCE_USERACTIONS_FOLDER_NAME = "UserActions"; //$NON-NLS-1$
     public static final String RESOURCE_COMPILECOMMANDS_FOLDER_NAME = "CompileCommands"; //$NON-NLS-1$
+    
+    
+	// yantzi: artemis 6.0, offline messages
+	public static final String MSG_OFFLINE_CANT_CONNECT			= "RSEC3001"; //$NON-NLS-1$
+	// Connection doesn't exist
+	public static final String MSG_CONNECTION_DELETED = "RSEF5011"; //$NON-NLS-1$
+	
+	public static final String MSG_LOADING_PROFILE_SHOULDBE_ACTIVATED = "RSEG1068"; //$NON-NLS-1$
+	public static final String MSG_LOADING_PROFILE_SHOULDNOTBE_DEACTIVATED = "RSEG1069";	 //$NON-NLS-1$
+
 }

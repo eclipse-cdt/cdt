@@ -10,6 +10,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
  *                                API to the user actions plugin
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared                               
  *******************************************************************************/
 package org.eclipse.rse.internal.useractions.ui.uda;
 
@@ -19,6 +20,7 @@ import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.useractions.Activator;
+import org.eclipse.rse.internal.useractions.IUserActionsMessageIds;
 import org.eclipse.rse.internal.useractions.IUserActionsModelChangeEvents;
 import org.eclipse.rse.internal.useractions.UserActionsResources;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
@@ -76,7 +78,9 @@ public class SystemUDTypeTreeView extends SystemUDBaseTreeView {
 	 * Return message for delete confirmation
 	 */
 	protected SystemMessage getDeleteConfirmationMessage() {
-		return new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.WARNING, UserActionsResources.MSG_CONFIRM_DELETE_USERTYPE, UserActionsResources.MSG_CONFIRM_DELETE_USERTYPE_DETAILS);
+		return new SimpleSystemMessage(Activator.PLUGIN_ID, 
+				IUserActionsMessageIds.MSG_CONFIRM_DELETE_USERTYPE,
+				IStatus.WARNING, UserActionsResources.MSG_CONFIRM_DELETE_USERTYPE, UserActionsResources.MSG_CONFIRM_DELETE_USERTYPE_DETAILS);
 	}
 
 	/**

@@ -18,6 +18,7 @@
  * Sheldon D'souza (Celunite) - [194464] fix create multiple telnet shells quickly
  * Martin Oberhuber (Wind River) - [186761] make the port setting configurable
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  *******************************************************************************/
 package org.eclipse.rse.internal.connectorservice.telnet;
 
@@ -47,6 +48,8 @@ import org.eclipse.rse.core.subsystems.CommunicationsEvent;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
 import org.eclipse.rse.internal.services.telnet.ITelnetSessionProvider;
+import org.eclipse.rse.services.clientserver.messages.CommonMessages;
+import org.eclipse.rse.services.clientserver.messages.ICommonMessageIds;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
@@ -205,11 +208,16 @@ public class TelnetConnectorService extends StandardConnectorService implements
 				//from the remote side with the SystemMessageException for user diagnostics
 				SystemMessage msg;
 				if (nestedException!=null) {
-					msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, TelnetConnectorResources.MSG_EXCEPTION_OCCURRED, nestedException);
+					msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+							ICommonMessageIds.MSG_EXCEPTION_OCCURRED,
+							IStatus.ERROR, 
+							CommonMessages.MSG_EXCEPTION_OCCURRED, nestedException);
 				} else {
-					msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, 
-							TelnetConnectorResources.MSG_COMM_AUTH_FAILED,
-							NLS.bind(TelnetConnectorResources.MSG_COMM_AUTH_FAILED_DETAILS, getHost().getAliasName()));
+					msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+							ICommonMessageIds.MSG_COMM_AUTH_FAILED,
+							IStatus.ERROR, 
+							CommonMessages.MSG_COMM_AUTH_FAILED,
+							NLS.bind(CommonMessages.MSG_COMM_AUTH_FAILED_DETAILS, getHost().getAliasName()));
 
 					msg.makeSubstitution(getHost().getAliasName());
 				}
@@ -358,8 +366,10 @@ public class TelnetConnectorService extends StandardConnectorService implements
 			// TODO allow users to reconnect from this dialog
 			// SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_UNKNOWNHOST);
 
-			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.CANCEL, 
-					NLS.bind(TelnetConnectorResources.MSG_CONNECT_CANCELED, _connection.getHost().getAliasName()));
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+					ICommonMessageIds.MSG_CONNECT_CANCELED,
+					IStatus.CANCEL, 
+					NLS.bind(CommonMessages.MSG_CONNECT_CANCELED, _connection.getHost().getAliasName()));
 	
 			SystemMessageDialog dialog = new SystemMessageDialog(getShell(), msg);
 			dialog.open();
@@ -478,8 +488,10 @@ public class TelnetConnectorService extends StandardConnectorService implements
 			// ISystemMessages.MSG_DISCONNECT_FAILED,
 			// hostName, exc.getMessage());
 			// RSEUIPlugin.logError("Disconnect failed",exc); // temporary
-			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR,
-					NLS.bind(TelnetConnectorResources.MSG_DISCONNECT_FAILED, hostName), exc);
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+					ICommonMessageIds.MSG_DISCONNECT_FAILED,
+					IStatus.ERROR,
+					NLS.bind(CommonMessages.MSG_DISCONNECT_FAILED, hostName), exc);
 			
 			SystemMessageDialog msgDlg = new SystemMessageDialog(shell,msg);
 			msgDlg.setException(exc);
@@ -495,8 +507,10 @@ public class TelnetConnectorService extends StandardConnectorService implements
 			// SystemMessage.displayMessage(SystemMessage.MSGTYPE_ERROR, shell,
 			// RSEUIPlugin.getResourceBundle(),
 			// ISystemMessages.MSG_DISCONNECT_CANCELED, hostName);
-			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.CANCEL,
-					NLS.bind(TelnetConnectorResources.MSG_DISCONNECT_CANCELED, hostName));
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+					ICommonMessageIds.MSG_DISCONNECT_CANCELED,
+					IStatus.CANCEL,
+					NLS.bind(CommonMessages.MSG_DISCONNECT_CANCELED, hostName));
 			SystemMessageDialog msgDlg = new SystemMessageDialog(shell,msg);
 			msgDlg.open();
 		}

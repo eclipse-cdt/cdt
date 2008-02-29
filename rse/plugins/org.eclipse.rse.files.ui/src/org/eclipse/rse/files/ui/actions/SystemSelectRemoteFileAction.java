@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,11 +12,11 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Xuan Chen (IBM) - [220999] [api] Need to change class SystemSelectRemoteFileAction to use SystemRemoteFileDialog
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.actions;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -24,11 +24,13 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.files.ui.ISystemAddFileListener;
-import org.eclipse.rse.files.ui.dialogs.SystemSelectRemoteFileOrFolderDialog;
+import org.eclipse.rse.files.ui.dialogs.SystemRemoteFileDialog;
 import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
+import org.eclipse.rse.ui.SystemActionViewerFilter;
 import org.eclipse.rse.ui.actions.SystemBaseDialogAction;
+import org.eclipse.rse.ui.dialogs.SystemRemoteResourceDialog;
 import org.eclipse.rse.ui.validators.IValidatorRemoteSelection;
 import org.eclipse.swt.widgets.Shell;
 
@@ -84,6 +86,7 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
 	private ISystemAddFileListener addButtonCallback = null;
 	private IValidatorRemoteSelection selectionValidator;
 	private List viewerFilters = new ArrayList();
+	private SystemActionViewerFilter customViewerFilter = null;
 
 	/**
 	 * Constructor that uses default action label and tooltip
@@ -385,12 +388,27 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
     public IRemoteFile[] getSelectedFiles()
     {
     	Object o = getValue();
-    	if (o instanceof IRemoteFile[])
-    	  return (IRemoteFile[])o;
-    	else if (o instanceof IRemoteFile)
-    	  return new IRemoteFile[] {(IRemoteFile)o};
-        else
-    	  return new IRemoteFile[0];
+    	if (o instanceof Object[]) {
+    		
+    		Object[] temp = (Object[])o;
+    			
+    		IRemoteFile[] files = new IRemoteFile[temp.length];
+    		
+    		// ensure all objects are IRemoteFiles
+    		for (int i = 0; i < temp.length; i++) {
+    			
+    			if (temp[i] instanceof IRemoteFile) {
+    				files[i] = (IRemoteFile)temp[i];
+    			}
+    			// should never happen
+    			else {
+    				return new IRemoteFile[0];
+    			}
+    		}
+    			
+    		return files;
+    	}
+    	return null;
     }
 
     /**
@@ -419,6 +437,11 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
     	return outputConnection;
     }
 
+    public void setCustomViewerFilter(SystemActionViewerFilter filter)
+	{
+		customViewerFilter = filter;
+	}
+    
     // -------------------
     // INTERNAL METHODS...
     // -------------------
@@ -428,19 +451,25 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
 	 */
 	protected Dialog createDialog(Shell shell)
 	{
-		SystemSelectRemoteFileOrFolderDialog dlg = null;
+		SystemRemoteFileDialog dlg = null;
 		if (dlgTitle == null)
-		  dlg = new SystemSelectRemoteFileOrFolderDialog(shell, true); // true => file vs folder mode
+		  dlg = new SystemRemoteFileDialog(shell); 
 		else
-		  dlg = new SystemSelectRemoteFileOrFolderDialog(shell, dlgTitle, true); // true => file vs folder mode
-		dlg.setShowNewConnectionPrompt(showNewConnectionPrompt);
+		  dlg = new SystemRemoteFileDialog(shell, dlgTitle); 
+		
+		
 		dlg.setMultipleSelectionMode(multipleSelectionMode);
-		if (restrictFolders)
-		  dlg.setRestrictFolders(true);
+		if (systemConnection != null)
+		{
+			dlg.setDefaultSystemConnection(systemConnection, onlyConnection);
+		}
+		dlg.setCustomViewerFilter(customViewerFilter);
+		
 		if (message != null)
 		  dlg.setMessage(message);
 		if (treeTip != null)
 		  dlg.setSelectionTreeToolTipText(treeTip);
+		/*
 		if (systemConnection != null)
 		{
 			if (onlyConnection)			   
@@ -448,33 +477,35 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
 		    else
 		      dlg.setDefaultConnection(systemConnection);
 		}
+		*/
+		
 		if (systemTypes != null)
 		  dlg.setSystemTypes(systemTypes);
-		if (expandDepth != 0)
-		  dlg.setAutoExpandDepth(expandDepth);
-		if (fileTypes != null)
-		  dlg.setFileTypes(fileTypes); // must be called before setRootFolder!
+		
 		if (preSelection != null)
 		  dlg.setPreSelection(preSelection);		  
-		else if (rootFolderConnection != null)
-		  dlg.setRootFolder(rootFolderConnection, rootFolderAbsPath);		
+		
 		if (showPropertySheet)
 		  if (showPropertySheetDetailsButton)
 		    dlg.setShowPropertySheet(true, showPropertySheetDetailsButtonInitialState);
 		  else
 		    dlg.setShowPropertySheet(true);
+		/*
 		if (addButtonCallback != null)
           if ((addLabel!=null) || (addToolTipText!=null))
             dlg.enableAddMode(addButtonCallback, addLabel, addToolTipText);
           else
             dlg.enableAddMode(addButtonCallback);
+         */
         if (selectionValidator != null)
           dlg.setSelectionValidator(selectionValidator);
-
+        /*
         if (!allowFolderSelection) {
             dlg.setAllowFolderSelection(allowFolderSelection);
         }
+        */
         
+		/*
         // add viewer filters if any
         if (viewerFilters != null) {
         	Iterator iter = viewerFilters.iterator();
@@ -484,6 +515,7 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
         		dlg.addViewerFilter(filter);
         	}
         }
+        */
 
 		return dlg;
 	}    
@@ -493,16 +525,16 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
 	 */
 	protected Object getDialogValue(Dialog dlg)
 	{
-		SystemSelectRemoteFileOrFolderDialog ourDlg = (SystemSelectRemoteFileOrFolderDialog)dlg;
+		SystemRemoteResourceDialog ourDlg = (SystemRemoteResourceDialog)dlg;
 		Object outputObject = null;
 		outputConnection = null;
 		if (!ourDlg.wasCancelled())
 		{
-		    outputConnection = ourDlg.getSelectedConnection();
 		    if (multipleSelectionMode)
 			  outputObject = ourDlg.getSelectedObjects();
 			else
-			  outputObject = ourDlg.getSelectedObject();
+			  outputObject = ourDlg.getSelectedObject();		  
+		    outputConnection = ourDlg.getSelectedConnection();
 		}
 		return outputObject; // parent class calls setValue on what we return
 	}

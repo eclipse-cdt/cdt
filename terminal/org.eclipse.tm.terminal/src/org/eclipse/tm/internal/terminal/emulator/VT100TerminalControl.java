@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2003, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@
  * Martin Oberhuber (Wind River) - [207785] NPE when trying to send char while no longer connected
  * Michael Scharf (Wind River) - [209665] Add ability to log byte streams from terminal
  * Ruslan Sychev (Xored Software) - [217675] NPE or SWTException when closing Terminal View while connection establishing
+ * Michael Scharf (Wing River) - [196447] The optional terminal input line should be resizeable
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
@@ -518,7 +519,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		GridLayout layout=new GridLayout();
 		layout.marginWidth=0;
 		layout.marginHeight=0;
-
+		layout.verticalSpacing=0;
 		fWndParent.setLayout(layout);
 
 		ITerminalTextDataSnapshot snapshot=fTerminalModel.makeSnapshot();

@@ -8,6 +8,7 @@
  * Contributors: 
  * Michael Scharf (Wind River) - initial implementation
  * Michael Scharf (Wing River) - [211659] Add field assist to terminal input field
+ * Michael Scharf (Wing River) - [196447] The optional terminal input line should be resizeable
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.control;
 import java.util.ArrayList;
@@ -24,8 +25,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.fieldassist.ContentAssistCommandAdapter;
 
@@ -108,6 +113,7 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 	 * The input text field.
 	 */
 	private Text fInputField;
+	private Sash fSash;
 	public CommandInputFieldWithHistory(int maxHistorySize) {
 		fMaxSize=maxHistorySize;
 	}
@@ -200,8 +206,31 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 		fEditedHistory=null;
 		fEditHistoryPos=0;
 	}
-	public void createControl(Composite parent,final ITerminalViewControl terminal) {
-		fInputField=new Text(parent, SWT.SINGLE|SWT.BORDER);
+	public void createControl(final Composite parent,final ITerminalViewControl terminal) {
+//		fSash = new Sash(parent,SWT.HORIZONTAL|SWT.SMOOTH);
+		fSash = new Sash(parent,SWT.HORIZONTAL);
+		final GridData gd_sash = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		gd_sash.heightHint=5;
+		fSash.setLayoutData(gd_sash);
+		fSash.addListener (SWT.Selection, new Listener () {
+			public void handleEvent (Event e) {
+				// no idea why this is needed
+				GridData gdata = (GridData) fInputField.getLayoutData();
+				Rectangle sashRect = fSash.getBounds ();
+				Rectangle containerRect = parent.getClientArea ();
+				
+				int h=fInputField.getLineHeight();
+				// make sure the input filed hight is a multiple of the line height
+				gdata.heightHint = Math.max(((containerRect.height-e.y-sashRect.height)/h)*h,h);
+				// do not show less then one line
+				e.y=Math.min(e.y,containerRect.height-h);
+				fInputField.setLayoutData(gdata);
+				parent.layout();
+				// else the content assist icon will be replicated
+				parent.redraw();
+			}
+		});
+		fInputField=new Text(parent, SWT.MULTI|SWT.BORDER|SWT.WRAP|SWT.V_SCROLL);
 		GridData data=new GridData(SWT.FILL, SWT.FILL, true, false);
 		boolean installDecoration=true;
 		if(installDecoration) {
@@ -262,6 +291,8 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 		fInputField.getParent().layout(true);
 	}
 	public void dispose() {
+		fSash.dispose();
+		fSash=null;
 		fInputField.dispose();
 		fInputField=null;
 		

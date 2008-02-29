@@ -55,7 +55,7 @@ public class SimpleSystemMessage extends SystemMessage {
 		super("RSE", "G", "-", severityToIndicator(severity), msg, msgDetails);  //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
 	
 		_pluginId = pluginId;
-		_messageId = pluginId;
+		_messageId = messageId;
 	}
 		
 	/**
@@ -73,6 +73,58 @@ public class SimpleSystemMessage extends SystemMessage {
 		super("RSE", "G", "-", severityToIndicator(severity), msg, throwableToDetails(e)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		_pluginId = pluginId;
 		_messageId = messageId;
+	}
+	
+	/**
+	 * Constructor for messages that use explicit strings and severities rather than
+	 * parsing a message file.  This is part of the work to migrate away from the message
+	 * file stuff.
+	 * 
+	 * This constructor does not supply a message id.  It is preferred that a message id is used since 
+	 * it allows easier identification of a unique message.
+	 * 
+	 * @param pluginId the id of the originating plugin
+	 * @param severity using IStatus severities
+	 * @param msg the message text
+	 */
+	public SimpleSystemMessage(String pluginId, int severity, String msg) {
+		this(pluginId, severity, msg, (String)null);
+	}
+	
+	/**
+	 * Constructor for messages that use explicit strings and severities rather than
+	 * parsing a message file.  This is part of the work to migrate away from the message
+	 * file stuff.
+	 * 
+	 * This constructor does not supply a message id.  It is preferred that a message id is used since 
+	 * it allows easier identification of a unique message.
+	 * 
+	 * @param pluginId the id of the originating plugin
+	 * @param severity using IStatus severities
+	 * @param msg the message text
+	 * @param msgDetails the message details
+	 */
+	public SimpleSystemMessage(String pluginId, int severity, String msg, String msgDetails) {
+		super("RSE", "G", "-", severityToIndicator(severity), msg, msgDetails);  //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$	
+		_pluginId = pluginId;
+	}
+		
+	/**
+	 * Constructor for messages that use explicit strings and severities rather than
+	 * parsing a message file.  This is part of the work to migrate away from the message
+	 * file stuff.
+	 * 
+	 * This constructor does not supply a message id.  It is preferred that a message id is used since 
+	 * it allows easier identification of a unique message.
+	 * 
+	 * @param pluginId the id of the originating plugin
+	 * @param severity using IStatus severities
+	 * @param msg the message text
+	 * @param e an exception to convert into details
+	 */
+	public SimpleSystemMessage(String pluginId, int severity, String msg, Throwable e) {
+		super("RSE", "G", "-", severityToIndicator(severity), msg, throwableToDetails(e)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		_pluginId = pluginId;
 	}
 	
 	private static String throwableToDetails(Throwable e){	
@@ -106,7 +158,12 @@ public class SimpleSystemMessage extends SystemMessage {
 	}
 
 	public String getFullMessageID() {
-		return _messageId;
+		if (_messageId != null){
+			return _messageId;
+		}
+		else {
+			return _pluginId + ":" + getIndicator(); //$NON-NLS-1$
+		}
 	}
 	
 }

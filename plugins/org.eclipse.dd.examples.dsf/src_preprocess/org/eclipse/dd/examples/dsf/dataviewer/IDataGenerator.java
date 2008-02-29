@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems and others.
+ * Copyright (c) 2006, 2008 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,11 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
+//#ifdef excercises
 package org.eclipse.dd.examples.dsf.dataviewer;
+//#else
+//#package org.eclipse.dd.examples.dsf.dataviewer.answers;
+//#endif
 
 import java.util.Set;
 
@@ -23,15 +27,19 @@ import org.eclipse.dd.dsf.concurrent.ThreadSafe;
  * view to receive events indicating when the data supplied by the generator 
  * is changed. 
  */
-@ThreadSafe
+//#ifdef excercises
+//TODO Excercise 3 - Add an annotationindicating allowed concurrency access
+//#else
+//#@ThreadSafe
+//#endif
 public interface IDataGenerator {
 
     // Constants which control the data generator behavior.
     // Changing the count range can stress the scalability of the system, while
     // changing of the process delay and random change interval can stress 
     // its performance.
-    final static int MIN_COUNT = 50;
-    final static int MAX_COUNT = 100;
+    final static int MIN_COUNT = 100;
+    final static int MAX_COUNT = 200;
     final static int PROCESSING_DELAY = 10;
     final static int RANDOM_CHANGE_INTERVAL = 10000;
     final static int RANDOM_COUNT_CHANGE_INTERVALS = 3;

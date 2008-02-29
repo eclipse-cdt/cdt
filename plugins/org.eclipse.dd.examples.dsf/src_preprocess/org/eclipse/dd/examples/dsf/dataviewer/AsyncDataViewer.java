@@ -8,7 +8,11 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
+//#ifdef excercises
 package org.eclipse.dd.examples.dsf.dataviewer;
+//#else
+//#package org.eclipse.dd.examples.dsf.dataviewer.answers;
+//#endif
 
 import java.util.HashSet;
 import java.util.Iterator;

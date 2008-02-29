@@ -15,7 +15,9 @@ package org.eclipse.dd.examples.dsf.dataviewer;
 //#endif
 
 import java.util.HashSet;
-import java.util.Iterator;
+//#ifdef answers
+//#import java.util.Iterator;
+//#endif
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -25,14 +27,16 @@ import java.util.concurrent.TimeUnit;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.dd.dsf.concurrent.ConfinedToDsfExecutor;
+//#ifdef answers
+//#import org.eclipse.dd.dsf.concurrent.ConfinedToDsfExecutor;
+//#import org.eclipse.dd.dsf.concurrent.Immutable;
+//#import org.eclipse.dd.dsf.concurrent.ThreadSafe;
+//#endif
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DefaultDsfExecutor;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
-import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
-import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.eclipse.dd.examples.dsf.DsfExamplesPlugin;
 
 /**

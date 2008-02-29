@@ -324,6 +324,18 @@ public class DStorePreferencePage extends PreferencePage implements IWorkbenchPr
 		boolean doKeepalive = _doKeepaliveButton.getSelection();
 		store.setValue(IUniversalDStoreConstants.RESID_PREF_DO_KEEPALIVE, doKeepalive);
 		
+		
+		// socket read timeout 
+		String socketTimeoutStr = _socketReadTimeout.getText();
+		int socketTimeout = Integer.parseInt(socketTimeoutStr);
+		store.setValue(IUniversalDStoreConstants.RESID_PREF_SOCKET_READ_TIMEOUT, socketTimeout);
+		
+		// keepalive response timeout
+		String keepaliveTimeoutStr = _keepaliveResponseTimeout.getText();
+		int keepaliveTimeout = Integer.parseInt(keepaliveTimeoutStr);
+		store.setValue(IUniversalDStoreConstants.RESID_PREF_KEEPALIVE_RESPONSE_TIMEOUT, keepaliveTimeout);
+		
+		
 		// cache remote classes
 		boolean cacheRemoteClasses = _cacheRemoteClassesButton.getSelection();
 		store.setValue(IUniversalDStoreConstants.RESID_PREF_CACHE_REMOTE_CLASSES, cacheRemoteClasses);				

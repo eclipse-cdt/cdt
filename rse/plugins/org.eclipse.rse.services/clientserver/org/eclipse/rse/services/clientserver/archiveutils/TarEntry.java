@@ -13,14 +13,17 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [219975] Fix implementations of clone()
+ * Xuan Chen (IBM) - [api] SystemTarHandler has inconsistent API
  *******************************************************************************/
 
-package org.eclipse.rse.internal.services.clientserver.archiveutils;
+package org.eclipse.rse.services.clientserver.archiveutils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
+import org.eclipse.rse.internal.services.clientserver.archiveutils.ITarConstants;
 
 /**
  * This class represents a tar file entry.

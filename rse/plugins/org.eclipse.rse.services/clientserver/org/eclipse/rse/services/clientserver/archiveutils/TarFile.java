@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,9 +13,10 @@
  * 
  * Contributors:
  * {Name} (company) - description of contribution.
+ * Xuan Chen (IBM) - [api] SystemTarHandler has inconsistent API
  *******************************************************************************/
 
-package org.eclipse.rse.internal.services.clientserver.archiveutils;
+package org.eclipse.rse.services.clientserver.archiveutils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,6 +25,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Vector;
+
+import org.eclipse.rse.internal.services.clientserver.archiveutils.ITarConstants;
 
 /**
  * This class is used to read entries from a tar file.

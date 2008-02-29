@@ -21,6 +21,7 @@
  * Xuan Chen        (IBM)        - [211653] Copy virtual directory with nested directory of tar file did not work
  * Xuan Chen        (IBM)        - [214251] [archive] "Last Modified Time" changed for all virtual files/folders if rename/paste/delete of one virtual file.
  * Xuan Chen        (IBM)        - [191370] [dstore] Supertransfer zip not deleted when cancelling copy
+ * Xuan Chen        (IBM)        - [api] SystemTarHandler has inconsistent API
  *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver.archiveutils;
@@ -43,8 +44,6 @@ import java.util.Vector;
 
 import org.eclipse.rse.internal.services.clientserver.archiveutils.ITarConstants;
 import org.eclipse.rse.internal.services.clientserver.archiveutils.SystemArchiveUtil;
-import org.eclipse.rse.internal.services.clientserver.archiveutils.TarEntry;
-import org.eclipse.rse.internal.services.clientserver.archiveutils.TarFile;
 import org.eclipse.rse.internal.services.clientserver.archiveutils.TarOutputStream;
 import org.eclipse.rse.services.clientserver.ISystemFileTypes;
 import org.eclipse.rse.services.clientserver.ISystemOperationMonitor;

@@ -31,6 +31,7 @@ import junit.framework.Assert;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.IRSEUserIdConstants;
 import org.eclipse.rse.core.PasswordPersistenceManager;
@@ -41,6 +42,8 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.SystemSignonInformation;
+import org.eclipse.rse.core.subsystems.IRemoteServerLauncher;
+import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
@@ -50,6 +53,8 @@ import org.eclipse.rse.tests.RSETestsPlugin;
 import org.eclipse.rse.tests.core.connection.IRSEConnectionManager;
 import org.eclipse.rse.tests.core.connection.IRSEConnectionProperties;
 import org.eclipse.rse.tests.testsubsystem.interfaces.ITestSubSystem;
+import org.eclipse.rse.ui.ISystemPreferencesConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.widgets.Display;
 import org.osgi.framework.Bundle;
 
@@ -216,18 +221,20 @@ public class RSEConnectionManager implements IRSEConnectionManager {
 		Assert.assertNotNull("FAILED(findOrCreateConnection): Failed to find and/or create system profile '" + profileName + "'!", profile); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		String name = properties.getProperty(IRSEConnectionProperties.ATTR_NAME);
-		Assert.assertNotSame("FAILED(findOrCreateConnection): Invalid host name!", "unknown", name); //$NON-NLS-1$ //$NON-NLS-2$
+		Assert.assertFalse("FAILED(findOrCreateConnection): Invalid host name!", "unknown".equals(name)); //$NON-NLS-1$ //$NON-NLS-2$
 		connection = systemRegistry.getHost(profile, name);
 		if (connection == null) {
 				String userId = properties.getProperty(IRSEConnectionProperties.ATTR_USERID);
-				Assert.assertNotSame("FAILED(findOrCreateConnection): Invalid user id name!", "unknown", userId); //$NON-NLS-1$ //$NON-NLS-2$
+				Assert.assertFalse("FAILED(findOrCreateConnection): Invalid user id name!", "unknown".equals(userId)); //$NON-NLS-1$ //$NON-NLS-2$
 				String password = properties.getProperty(IRSEConnectionProperties.ATTR_PASSWORD);
-				Assert.assertNotSame("FAILED(findOrCreateConnection): Invalid user password name!", "unknown", password); //$NON-NLS-1$ //$NON-NLS-2$
+				Assert.assertFalse("FAILED(findOrCreateConnection): Invalid user password name!", "unknown".equals(password)); //$NON-NLS-1$ //$NON-NLS-2$
 				String address = properties.getProperty(IRSEConnectionProperties.ATTR_ADDRESS);
-				Assert.assertNotSame("FAILED(findOrCreateConnection): Invalid remote system ip address or dns name!", "unknown", address); //$NON-NLS-1$ //$NON-NLS-2$
+				Assert.assertFalse("FAILED(findOrCreateConnection): Invalid remote system ip address or dns name!", "unknown".equals(address)); //$NON-NLS-1$ //$NON-NLS-2$
 				String systemTypeId = properties.getProperty(IRSEConnectionProperties.ATTR_SYSTEM_TYPE_ID);
-				Assert.assertNotSame("FAILED(findOrCreateConnection): Invalid system type!", "unknown", systemTypeId); //$NON-NLS-1$ //$NON-NLS-2$
+				Assert.assertFalse("FAILED(findOrCreateConnection): Invalid system type!", "unknown".equals(systemTypeId)); //$NON-NLS-1$ //$NON-NLS-2$
 				IRSESystemType systemType = RSECorePlugin.getTheCoreRegistry().getSystemTypeById(systemTypeId);
+				String daemonPort = properties.getProperty(IRSEConnectionProperties.ATTR_DAEMON_PORT);
+				Assert.assertFalse("FAILED(findOrCreateConnection): Invalid port!", "unknown".equals(daemonPort)); //$NON-NLS-1$ //$NON-NLS-2$
 				
 				exception = null;
 				cause = null;
@@ -243,6 +250,15 @@ public class RSEConnectionManager implements IRSEConnectionManager {
 				if (userId != null && password != null) {
 					SystemSignonInformation info = new SystemSignonInformation(address, userId, password, systemType);
 					PasswordPersistenceManager.getInstance().add(info, true, true);
+				}
+				
+				if (daemonPort != null) {
+					int daemonPortNum = Integer.parseInt(daemonPort);
+					IServerLauncherProperties connProperties = connection.getConnectorServices()[0].getRemoteServerLauncherProperties();
+					if (connProperties instanceof IRemoteServerLauncher) {
+						IRemoteServerLauncher launcher = (IRemoteServerLauncher) connProperties;
+						launcher.setDaemonPort(daemonPortNum);
+					}
 				}
 		}
 		Assert.assertNotNull("FAILED(findOrCreateConnection): Failed to find and/or create connection IHost object!", connection); //$NON-NLS-1$

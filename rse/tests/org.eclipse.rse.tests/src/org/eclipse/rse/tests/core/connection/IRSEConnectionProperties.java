@@ -23,7 +23,8 @@ public interface IRSEConnectionProperties {
 	public final String ATTR_ADDRESS = "address"; //$NON-NLS-1$
 	public final String ATTR_USERID = "userid"; //$NON-NLS-1$
 	public final String ATTR_PASSWORD = "password"; //$NON-NLS-1$
-
+	public final String ATTR_DAEMON_PORT = "daemon_port"; //$NON-NLS-1$
+	
 	/**
 	 * Returns the associated property stored under the specified key.
 	 * 

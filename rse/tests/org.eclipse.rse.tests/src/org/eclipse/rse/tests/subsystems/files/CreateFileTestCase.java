@@ -15,27 +15,24 @@
 
 package org.eclipse.rse.tests.subsystems.files;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.SystemStartHere;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.internal.core.model.SystemRegistry;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
+import org.eclipse.rse.tests.core.connection.IRSEConnectionProperties;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 
 public class CreateFileTestCase extends FileServiceBaseTest {
 
-	private String SYSTEM_ADDRESS = "sles8rm";//"SLES8RM";
-	private String USER_ID = "xxxxxx";
-	private String PASSWORD = "xxxxxx"; //"xxxxxx";
 	private IHost host;
 	//TODO: See if additional characters in the name should work.
 	// Also make sure if there are that they can be entered in the New
@@ -56,37 +53,31 @@ public class CreateFileTestCase extends FileServiceBaseTest {
 		return null;
 	}
 	
-	protected IHost getSSHHost()
-	{
-		IHost sshHost = null;
-
-		String SYSTEM_TYPE_ID = IRSESystemType.SYSTEMTYPE_SSH_ONLY_ID;
-		String SYSTEM_NAME = SYSTEM_ADDRESS + "_ssh";
-
-		sshHost = getRemoteSystemConnection(SYSTEM_TYPE_ID, SYSTEM_ADDRESS, SYSTEM_NAME, USER_ID, PASSWORD);
-		assertNotNull(sshHost);
-		return sshHost;
+	public void testCreateFileFTP() throws Exception {
+		//-test-author-:KevinDoyle
+		
+		// Calculate the location of the test connection properties
+		IPath location = getTestDataLocation("", false); //$NON-NLS-1$
+		assertNotNull("Cannot locate test data! Missing test data location?", location); //$NON-NLS-1$
+		location = location.append("ftpConnection.properties"); //$NON-NLS-1$
+		assertNotNull("Failed to construct location to 'connection.properties' test data file!", location); //$NON-NLS-1$
+		assertTrue("Required test data file seems to be not a file!", location.toFile().isFile()); //$NON-NLS-1$
+		assertTrue("Required test data file is not readable!", location.toFile().canRead()); //$NON-NLS-1$
+		
+		// Load the properties from the calculated location without backing up defaults
+		IRSEConnectionProperties properties = getConnectionManager().loadConnectionProperties(location, false);
+		assertNotNull("Failed to load test connection properties from location " + location.toOSString(), properties); //$NON-NLS-1$
+		
+		// Lookup and create the connection now if necessary
+		host = getConnectionManager().findOrCreateConnection(properties);
+		assertNotNull("Failed to create connection " + properties.getProperty(IRSEConnectionProperties.ATTR_NAME), host); //$NON-NLS-1$
+		
+		createFileAndAssertProperties();
 	}
-	
-	protected IHost getFTPHost()
-	{
-		IHost ftpHost = null;
-
-		String SYSTEM_TYPE_ID = IRSESystemType.SYSTEMTYPE_FTP_ONLY_ID;
-		String SYSTEM_NAME = SYSTEM_ADDRESS + "_ftp";
-
-		ftpHost = getRemoteSystemConnection(SYSTEM_TYPE_ID, SYSTEM_ADDRESS, SYSTEM_NAME, USER_ID, PASSWORD);
-		assertNotNull(ftpHost);
-		return ftpHost;
-	}
-	
-	protected IHost getDStoreHost()
-	{
-		IHost dstoreHost = null;
-
-		String SYSTEM_TYPE_ID = IRSESystemType.SYSTEMTYPE_LINUX_ID;
-		String SYSTEM_NAME = SYSTEM_ADDRESS + "_dstore";
-
+		
+	public void testCreateFileDStore() throws Exception {
+		//-test-author-:KevinDoyle
+		
 		//Ensure that the SSL acknowledge dialog does not show up. 
 		//We need to setDefault first in order to set the value of a preference.  
 		IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
@@ -95,28 +86,45 @@ public class CreateFileTestCase extends FileServiceBaseTest {
 
 		store.setValue(ISystemPreferencesConstants.ALERT_SSL, false);
 		store.setValue(ISystemPreferencesConstants.ALERT_NONSSL, false);
-
-		dstoreHost = getRemoteSystemConnection(SYSTEM_TYPE_ID, SYSTEM_ADDRESS, SYSTEM_NAME, USER_ID, PASSWORD);
-		assertNotNull(dstoreHost);
 		
-		return dstoreHost;
-	}
-	
-	public void testCreateFileFTP() throws Exception {
-		//-test-author-:KevinDoyle
-		host = getFTPHost();
-		createFileAndAssertProperties();
-	}
+		// Calculate the location of the test connection properties
+		IPath location = getTestDataLocation("", false); //$NON-NLS-1$
+		assertNotNull("Cannot locate test data! Missing test data location?", location); //$NON-NLS-1$
+		location = location.append("linuxConnection.properties"); //$NON-NLS-1$
+		assertNotNull("Failed to construct location to 'connection.properties' test data file!", location); //$NON-NLS-1$
+		assertTrue("Required test data file seems to be not a file!", location.toFile().isFile()); //$NON-NLS-1$
+		assertTrue("Required test data file is not readable!", location.toFile().canRead()); //$NON-NLS-1$
 		
-	public void testCreateFileDStore() throws Exception {
-		//-test-author-:KevinDoyle
-		host = getDStoreHost();
+		// Load the properties from the calculated location without backing up defaults
+		IRSEConnectionProperties properties = getConnectionManager().loadConnectionProperties(location, false);
+		assertNotNull("Failed to load test connection properties from location " + location.toOSString(), properties); //$NON-NLS-1$
+		
+		// Lookup and create the connection now if necessary
+		host = getConnectionManager().findOrCreateConnection(properties);
+		assertNotNull("Failed to create connection " + properties.getProperty(IRSEConnectionProperties.ATTR_NAME), host); //$NON-NLS-1$
+		
 		createFileAndAssertProperties();
 	}
 		
 	public void testCreateFileSSH() throws Exception {
 		//-test-author-:KevinDoyle
-		host = getSSHHost();
+		
+		// Calculate the location of the test connection properties
+		IPath location = getTestDataLocation("", false); //$NON-NLS-1$
+		assertNotNull("Cannot locate test data! Missing test data location?", location); //$NON-NLS-1$
+		location = location.append("sshConnection.properties"); //$NON-NLS-1$
+		assertNotNull("Failed to construct location to 'connection.properties' test data file!", location); //$NON-NLS-1$
+		assertTrue("Required test data file seems to be not a file!", location.toFile().isFile()); //$NON-NLS-1$
+		assertTrue("Required test data file is not readable!", location.toFile().canRead()); //$NON-NLS-1$
+		
+		// Load the properties from the calculated location without backing up defaults
+		IRSEConnectionProperties properties = getConnectionManager().loadConnectionProperties(location, false);
+		assertNotNull("Failed to load test connection properties from location " + location.toOSString(), properties); //$NON-NLS-1$
+		
+		// Lookup and create the connection now if necessary
+		host = getConnectionManager().findOrCreateConnection(properties);
+		assertNotNull("Failed to create connection " + properties.getProperty(IRSEConnectionProperties.ATTR_NAME), host); //$NON-NLS-1$
+		
 		createFileAndAssertProperties();
 	}
 	
@@ -157,7 +165,7 @@ public class CreateFileTestCase extends FileServiceBaseTest {
 				fss.disconnect();
 				tempDirectory = null;
 			}
-			SystemRegistry.getInstance().deleteHost(host);
+			getConnectionManager().removeConnection(host.getSystemProfile().getName(), host.getName());
 			host = null;
 		}
 	}

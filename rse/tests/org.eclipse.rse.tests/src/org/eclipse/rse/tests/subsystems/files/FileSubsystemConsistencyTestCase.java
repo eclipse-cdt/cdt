@@ -17,10 +17,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.SystemStartHere;
@@ -29,6 +29,7 @@ import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.tests.RSETestsPlugin;
+import org.eclipse.rse.tests.core.connection.IRSEConnectionProperties;
 import org.eclipse.rse.tests.core.connection.RSEBaseConnectionTestCase;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -42,18 +43,7 @@ public class FileSubsystemConsistencyTestCase extends RSEBaseConnectionTestCase 
 	private List _connections;
 	private List _samplePaths;
 	
-	private String SYSTEM_ADDRESS = "dmcknigh3";//"SLES8RM";
-	private String USER_ID = "dmcknigh";
-	private String PASSWORD = null;//"xxxxxx";
-	
 	private String LOCALTEMPDIR = "C:\\temp";
-	
-	/*
-	private SYSTEM_ADDRESS = "dmcknigh3";
-	private USER_ID = "tester";
-	private PASSWORD = null;"xxxxxx";
-	*/
-		
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.tests.core.RSECoreTestCase#tearDown()
@@ -134,11 +124,22 @@ public class FileSubsystemConsistencyTestCase extends RSEBaseConnectionTestCase 
 	{
 		IHost sshHost = null;
 
-		String SYSTEM_TYPE_ID = IRSESystemType.SYSTEMTYPE_SSH_ONLY_ID;
-		String SYSTEM_NAME = SYSTEM_ADDRESS + "_ssh";
+		// Calculate the location of the test connection properties
+		IPath location = getTestDataLocation("", false); //$NON-NLS-1$
+		assertNotNull("Cannot locate test data! Missing test data location?", location); //$NON-NLS-1$
+		location = location.append("sshConnection.properties"); //$NON-NLS-1$
+		assertNotNull("Failed to construct location to 'connection.properties' test data file!", location); //$NON-NLS-1$
+		assertTrue("Required test data file seems to be not a file!", location.toFile().isFile()); //$NON-NLS-1$
+		assertTrue("Required test data file is not readable!", location.toFile().canRead()); //$NON-NLS-1$
+		
+		// Load the properties from the calculated location without backing up defaults
+		IRSEConnectionProperties properties = getConnectionManager().loadConnectionProperties(location, false);
+		assertNotNull("Failed to load test connection properties from location " + location.toOSString(), properties); //$NON-NLS-1$
+		
+		// Lookup and create the connection now if necessary
+		sshHost = getConnectionManager().findOrCreateConnection(properties);
+		assertNotNull("Failed to create connection " + properties.getProperty(IRSEConnectionProperties.ATTR_NAME), sshHost); //$NON-NLS-1$
 
-		sshHost = getRemoteSystemConnection(SYSTEM_TYPE_ID, SYSTEM_ADDRESS, SYSTEM_NAME, USER_ID, PASSWORD);
-		assertNotNull(sshHost);
 		return sshHost;
 	}
 	
@@ -146,21 +147,29 @@ public class FileSubsystemConsistencyTestCase extends RSEBaseConnectionTestCase 
 	{
 		IHost ftpHost = null;
 
-		String SYSTEM_TYPE_ID = IRSESystemType.SYSTEMTYPE_FTP_ONLY_ID;
-		String SYSTEM_NAME = SYSTEM_ADDRESS + "_ftp";
-
-		ftpHost = getRemoteSystemConnection(SYSTEM_TYPE_ID, SYSTEM_ADDRESS, SYSTEM_NAME, USER_ID, PASSWORD);
-		assertNotNull(ftpHost);
+		// Calculate the location of the test connection properties
+		IPath location = getTestDataLocation("", false); //$NON-NLS-1$
+		assertNotNull("Cannot locate test data! Missing test data location?", location); //$NON-NLS-1$
+		location = location.append("ftpConnection.properties"); //$NON-NLS-1$
+		assertNotNull("Failed to construct location to 'connection.properties' test data file!", location); //$NON-NLS-1$
+		assertTrue("Required test data file seems to be not a file!", location.toFile().isFile()); //$NON-NLS-1$
+		assertTrue("Required test data file is not readable!", location.toFile().canRead()); //$NON-NLS-1$
+		
+		// Load the properties from the calculated location without backing up defaults
+		IRSEConnectionProperties properties = getConnectionManager().loadConnectionProperties(location, false);
+		assertNotNull("Failed to load test connection properties from location " + location.toOSString(), properties); //$NON-NLS-1$
+		
+		// Lookup and create the connection now if necessary
+		ftpHost = getConnectionManager().findOrCreateConnection(properties);
+		assertNotNull("Failed to create connection " + properties.getProperty(IRSEConnectionProperties.ATTR_NAME), ftpHost); //$NON-NLS-1$
+		
 		return ftpHost;
 	}
 	
 	protected IHost getDStoreHost()
 	{
 		IHost dstoreHost = null;
-
-		String SYSTEM_TYPE_ID = IRSESystemType.SYSTEMTYPE_LINUX_ID;
-		String SYSTEM_NAME = SYSTEM_ADDRESS + "_dstore";
-
+		
 		//Ensure that the SSL acknowledge dialog does not show up. 
 		//We need to setDefault first in order to set the value of a preference.  
 		IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
@@ -170,8 +179,21 @@ public class FileSubsystemConsistencyTestCase extends RSEBaseConnectionTestCase 
 		store.setValue(ISystemPreferencesConstants.ALERT_SSL, false);
 		store.setValue(ISystemPreferencesConstants.ALERT_NONSSL, false);
 
-		dstoreHost = getRemoteSystemConnection(SYSTEM_TYPE_ID, SYSTEM_ADDRESS, SYSTEM_NAME, USER_ID, PASSWORD);
-		assertNotNull(dstoreHost);
+		// Calculate the location of the test connection properties
+		IPath location = getTestDataLocation("", false); //$NON-NLS-1$
+		assertNotNull("Cannot locate test data! Missing test data location?", location); //$NON-NLS-1$
+		location = location.append("linuxConnection.properties"); //$NON-NLS-1$
+		assertNotNull("Failed to construct location to 'connection.properties' test data file!", location); //$NON-NLS-1$
+		assertTrue("Required test data file seems to be not a file!", location.toFile().isFile()); //$NON-NLS-1$
+		assertTrue("Required test data file is not readable!", location.toFile().canRead()); //$NON-NLS-1$
+		
+		// Load the properties from the calculated location without backing up defaults
+		IRSEConnectionProperties properties = getConnectionManager().loadConnectionProperties(location, false);
+		assertNotNull("Failed to load test connection properties from location " + location.toOSString(), properties); //$NON-NLS-1$
+		
+		// Lookup and create the connection now if necessary
+		dstoreHost = getConnectionManager().findOrCreateConnection(properties);
+		assertNotNull("Failed to create connection " + properties.getProperty(IRSEConnectionProperties.ATTR_NAME), dstoreHost); //$NON-NLS-1$
 		
 		return dstoreHost;
 	}

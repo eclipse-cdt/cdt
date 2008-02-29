@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Xuan Chen (IBM) - [220995] [api] Need to add setCustomViewFilter API to SystemSelectRemoteFileAction
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.actions;
@@ -23,6 +24,7 @@ import org.eclipse.rse.files.ui.dialogs.SystemRemoteFileDialog;
 import org.eclipse.rse.files.ui.dialogs.SystemRemoteFolderDialog;
 import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
+import org.eclipse.rse.ui.SystemActionViewerFilter;
 import org.eclipse.rse.ui.actions.SystemBaseDialogAction;
 import org.eclipse.rse.ui.dialogs.SystemRemoteResourceDialog;
 import org.eclipse.rse.ui.validators.IValidatorRemoteSelection;
@@ -80,6 +82,7 @@ public class SystemSelectRemoteFolderAction extends SystemBaseDialogAction
 	private boolean  onlyConnection = false;
 	private ISystemAddFileListener addButtonCallback = null;
 	private IValidatorRemoteSelection selectionValidator;
+	private SystemActionViewerFilter customViewerFilter = null;
 	
 	/**
 	 * Constructor that uses default action label and tooltip
@@ -434,6 +437,11 @@ public class SystemSelectRemoteFolderAction extends SystemBaseDialogAction
     	return outputConnection;
     }
     
+    public void setCustomViewerFilter(SystemActionViewerFilter filter)
+	{
+		customViewerFilter = filter;
+	}
+    
     // -------------------
     // INTERNAL METHODS...
     // -------------------
@@ -471,6 +479,7 @@ public class SystemSelectRemoteFolderAction extends SystemBaseDialogAction
 		{
 			dlg.setDefaultSystemConnection(systemConnection, onlyConnection);
 		}
+		dlg.setCustomViewerFilter(customViewerFilter);
 		
 		/*
 		SystemSelectRemoteFileOrFolderDialog dlg = null;

@@ -4320,12 +4320,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 if (LA(1).hashCode() == checkOffset)
                     failParseWithErrorHandling();
             } catch (EndOfFileException e) {
-                if (translationUnit.getDeclarations().length != 0) {
-                	ASTNode d = (ASTNode) translationUnit.getDeclarations()[translationUnit.getDeclarations().length - 1];
-                    ((ASTNode) translationUnit).setLength(d.getOffset() + d.getLength());
-                } else
-                    ((ASTNode) translationUnit).setLength(0);
-                break;
+            	break;
             } catch (BacktrackException b) {
                 try {
                     // Mark as failure and try to reach a recovery point
@@ -4349,6 +4344,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     // nothing
                 }
             }
+        }
+        IASTDeclaration[] declarations = translationUnit.getDeclarations();
+        if (declarations.length != 0) {
+            ASTNode d = (ASTNode) declarations[declarations.length-1];
+            ((ASTNode) translationUnit).setLength(d.getOffset() + d.getLength());
+        } else {
+            ((ASTNode) translationUnit).setLength(0);
         }
     }
 

@@ -13,19 +13,9 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
-import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
-import org.eclipse.cdt.core.dom.ast.IASTStatement;
-import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
@@ -33,13 +23,6 @@ import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
-import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionTryBlockDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
@@ -48,7 +31,6 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.GCCBuiltinSymbolProvider.CPPBuiltinParameter;
@@ -148,167 +130,6 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
         return CPPVisitor.getReferences(this, binding);
     }
     
-    private class CPPFindNodeForOffsetAction extends CPPASTVisitor {
-    	{
-    		shouldVisitNames          = true;
-    		shouldVisitDeclarations   = true;
-    		shouldVisitInitializers   = true;
-    		shouldVisitParameterDeclarations = true;
-    		shouldVisitDeclarators    = true;
-    		shouldVisitDeclSpecifiers = true;
-    		shouldVisitExpressions    = true;
-    		shouldVisitStatements     = true;
-    		shouldVisitTypeIds        = true;
-    		shouldVisitEnumerators    = true;
-    		shouldVisitBaseSpecifiers = true;
-    		shouldVisitNamespaces     = true;
-    	}
-    	
-    	IASTNode foundNode = null;
-    	int offset = 0;
-    	int length = 0;
-    	
-    	/**
-		 * 
-		 */
-		public CPPFindNodeForOffsetAction(int offset, int length) {
-			this.offset = offset;
-			this.length = length;
-		}
-    	
-    	public int processNode(IASTNode node) {
-    		if (foundNode != null)
-    			return PROCESS_ABORT;
-    		
-    		if (node instanceof ASTNode &&
-    				((ASTNode)node).getOffset() == offset &&
-    				((ASTNode)node).getLength() == length) {
-    			foundNode = node;
-    			return PROCESS_ABORT;
-    		}
-    		
-    		// skip the rest of this node if the selection is outside of its bounds
-    		if (node instanceof ASTNode &&
-    				offset > ((ASTNode)node).getOffset() + ((ASTNode)node).getLength())
-    			return PROCESS_SKIP;
-    		
-    		return PROCESS_CONTINUE;
-    	}
-    	
- 
-    	@Override
-		public int visit(IASTDeclaration declaration) {
-    		// use declarations to determine if the search has gone past the offset (i.e. don't know the order the visitor visits the nodes)
-    		if (declaration instanceof ASTNode && ((ASTNode)declaration).getOffset() > offset)
-    			return PROCESS_ABORT;
-    		
-    		return processNode(declaration);
-    	}
-    	
-
-    	@Override
-		public int visit(IASTDeclarator declarator) {
-    		int ret = processNode(declarator);
-    		
-    		IASTPointerOperator[] ops = declarator.getPointerOperators();
-    		for(int i=0; i<ops.length; i++)
-    			processNode(ops[i]);
-    		
-    		if (declarator instanceof IASTArrayDeclarator) {
-    			IASTArrayModifier[] mods = ((IASTArrayDeclarator)declarator).getArrayModifiers();
-    			for(int i=0; i<mods.length; i++)
-    				processNode(mods[i]);
-    		}
-    		
-    		if (declarator instanceof ICPPASTFunctionDeclarator) {
-    			ICPPASTConstructorChainInitializer[] chainInit = ((ICPPASTFunctionDeclarator)declarator).getConstructorChain();
-    			for(int i=0; i<chainInit.length; i++) {
-    				processNode(chainInit[i]);
-    			}
-    			
-    			if( declarator instanceof ICPPASTFunctionTryBlockDeclarator ){
-    				ICPPASTCatchHandler [] catchHandlers = ((ICPPASTFunctionTryBlockDeclarator)declarator).getCatchHandlers();
-    				for( int i = 0; i < catchHandlers.length; i++ ){
-    					processNode(catchHandlers[i]);
-    				}
-    			}	
-    		}
-    		
-    		return ret;
-    	}
-    	
- 
-    	public int processDesignator(ICASTDesignator designator) {
-    		return processNode(designator);
-    	}
-
-    	@Override
-		public int visit(IASTDeclSpecifier declSpec) {
-    		return processNode(declSpec);
-    	}
-
-    	@Override
-		public int visit(IASTEnumerator enumerator) {
-    		return processNode(enumerator);
-    	}
-
-    	@Override
-		public int visit(IASTExpression expression) {
-    		return processNode(expression);
-    	}
- 
-    	@Override
-		public int visit(IASTInitializer initializer) {
-    		return processNode(initializer);
-    	}
-    	
-    	@Override
-		public int visit(IASTName name) {
-    		if ( name.toString() != null )
-    			return processNode(name);
-    		return PROCESS_CONTINUE;
-    	}
-    	
-    	@Override
-		public int visit(
-    			IASTParameterDeclaration parameterDeclaration) {
-    		return processNode(parameterDeclaration);
-    	}
-    	
-    	@Override
-		public int visit(IASTStatement statement) {
-    		return processNode(statement);
-    	}
-    	
-    	@Override
-		public int visit(IASTTypeId typeId) {
-    		return processNode(typeId);
-    	}
-
-    	public IASTNode getNode() {
-    		return foundNode;
-    	}
-    }
-    
-
-    public IASTNode selectNodeForLocation(String path, int realOffset, int realLength) {
-    	IASTNode result= null;
-		if (fLocationResolver != null) {
-	    	int start= fLocationResolver.getSequenceNumberForFileOffset(path, realOffset);
-	    	if (start >= 0) {
-	    		int length= realLength < 1 ? 0 : 
-	    			fLocationResolver.getSequenceNumberForFileOffset(path, realOffset+realLength-1) + 1 - start;
-	    		result= fLocationResolver.findSurroundingPreprocessorNode(start, length);
-	    		if (result == null) {
-	    			CPPFindNodeForOffsetAction nodeFinder = new CPPFindNodeForOffsetAction(start, length);
-	    			accept(nodeFinder);
-	    			result = nodeFinder.getNode();
-	    		}
-	    	}    	
-		}
-		return result;
-    }
-
     public IBinding resolveBinding() {
         if (fBinding == null)
             fBinding = new CPPNamespace(this);
@@ -341,6 +162,7 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.scanner.ISkippedIndexedFilesListener#skippedFile(org.eclipse.cdt.internal.core.parser.scanner.IncludeFileContent)
 	 */
+	@Override
 	public void skippedFile(int offset, IncludeFileContent fileContent) {
 		super.skippedFile(offset, fileContent);
 		fScopeMapper.registerAdditionalDirectives(offset, fileContent.getUsingDirectives());

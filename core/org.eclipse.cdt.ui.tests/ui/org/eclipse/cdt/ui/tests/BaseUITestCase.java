@@ -328,12 +328,13 @@ public class BaseUITestCase extends BaseTestCase {
 				final String text= firstItem.getText();
 				if (text.length() > 0 && !text.equals("...")) {
 					item= root.getItem(i1);
-					assertNotNull("Unexpected tree node " + item.getText(), label);
-					if (label.equals(item.getText())) {
+					itemText= item.getText();
+					assertNotNull("Unexpected tree node " + itemText, label);
+					if (label.equals(itemText)) {
 						return item;
 					}
 					if (i > 100) {
-						assertEquals(label, item.getText());
+						assertEquals(label, itemText);
 						return item;
 					}
 				}
@@ -349,7 +350,7 @@ public class BaseUITestCase extends BaseTestCase {
 			}
 			runEventQueue(10);
 		}
-		fail("Timeout expired waiting for tree node " + label + "{" + i0 + "," + i1 + "}");
+		assertEquals("Timeout expired waiting for tree node {" + i0 + "," + i1 + "}", label, itemText);
 		return null;
 	}
 }

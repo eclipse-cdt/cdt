@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
@@ -307,5 +308,28 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	
 	public final IIndexFileSet getIndexFileSet() {
 		return fIndexFileSet;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getNodeForLocation(org.eclipse.cdt.core.dom.ast.IASTNodeLocation)
+	 */
+	public final IASTNode selectNodeForLocation(String path, int realOffset, int realLength) {
+    	IASTNode result= null;
+		if (fLocationResolver != null) {
+	    	int start= fLocationResolver.getSequenceNumberForFileOffset(path, realOffset);
+	    	if (start >= 0) {
+	    		int length= realLength < 1 ? 0 : 
+	    			fLocationResolver.getSequenceNumberForFileOffset(path, realOffset+realLength-1) + 1 - start;
+	    		result= fLocationResolver.findSurroundingPreprocessorNode(start, length);
+	    		if (result == null) {
+	    			FindNodeForOffsetAction nodeFinder = new FindNodeForOffsetAction(start, length);
+	    			accept(nodeFinder);
+	    			result = nodeFinder.getNode();
+	    		}
+	    	}    	
+		}
+		return result;
 	}
 }

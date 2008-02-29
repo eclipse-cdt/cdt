@@ -38,6 +38,7 @@ import org.eclipse.dd.dsf.debug.service.command.IEventListener;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.mi.internal.MIPlugin;
+import org.eclipse.dd.mi.service.command.commands.CLICommand;
 import org.eclipse.dd.mi.service.command.commands.CLIExecAbort;
 import org.eclipse.dd.mi.service.command.commands.MIGDBShowExitCode;
 import org.eclipse.dd.mi.service.command.output.MIConst;
@@ -78,6 +79,20 @@ public class MIInferiorProcess extends Process
 
     @ConfinedToDsfExecutor("fSession#getExecutor")
     private boolean fDisposed = false;
+    
+    /**
+     * Counter for tracking console commands sent by services.  
+     * 
+     * The CLI 'monitor' command produces target output which should 
+     * not be written to the target console, since it is in response to a CLI
+     * command.  In fact, CLI commands should never have their output sent
+     * to the target console.
+     *   
+     * This counter is incremented any time a CLI command is seen.  It is 
+     * decremented whenever a CLI command is finished.  When counter 
+     * value is 0, the inferior process writes the target output. 
+     */
+    private int fSuppressTargetOutputCounter = 0;
 
     Integer fExitCode = null;
 
@@ -357,6 +372,7 @@ public class MIInferiorProcess extends Process
                     }
                 }
             } else if (oobr instanceof MITargetStreamOutput) {
+            	if (fSuppressTargetOutputCounter > 0) return;
                 MITargetStreamOutput tgtOut = (MITargetStreamOutput)oobr;
                 if (fInputStreamPiped != null && tgtOut.getString() != null) {
                     try {
@@ -374,14 +390,20 @@ public class MIInferiorProcess extends Process
     }
     
     public void commandSent(ICommand<? extends ICommandResult> command) {
-        // No action 
+        if (command instanceof CLICommand<?>) {
+            fSuppressTargetOutputCounter++;
+        }
     }
     
     public void commandRemoved(ICommand<? extends ICommandResult> command) {
         // No action 
     }
     
-    public void commandDone(ICommand<? extends ICommandResult> cmd, ICommandResult result) {
+    public void commandDone(ICommand<? extends ICommandResult> command, ICommandResult result) {
+    	if (command instanceof CLICommand<?>) {
+            fSuppressTargetOutputCounter--;
+        }
+
         MIInfo cmdResult = (MIInfo) result ;
         MIOutput output =  cmdResult.getMIOutput();
         MIResultRecord rr = output.getMIResultRecord();

@@ -31,6 +31,8 @@
 <li>API: Several <b>SystemMessages and Shared Resource Strings</b> have been moved
   from RSEUIPlugin to non-UI
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=216252">216252</a>].</li>
+<li>A new downloadable package is now available for the RSE User Actions framework
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=187395">187395</a>].</li>
 </ul></li>
 <li>At least ?? bugs were fixed: Use 
   <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2008-02-19&chfieldto=2008-04-07&chfield=resolution&cmdtype=doit&negate0=1&field0-0-0=target_milestone&type0-0-0=substring&value0-0-0=2.0.&field0-0-1=target_milestone&type0-0-1=regexp&value0-0-1=3.0%20M%5B345%5D">

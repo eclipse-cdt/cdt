@@ -146,7 +146,7 @@
         <td><small>&nbsp;</small><br/>
 			A Launch Configuration for running and debugging C/C++
 			programs on a remote host through RSE-provided shell
-			and file services, and gdbserver. Requires CDT and RSE.
+			and file services, and gdbserver. Requires CDT 3.0 or later.
 			Includes Source.
         </td>
     </tr>
@@ -155,6 +155,15 @@
 		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-examples-@buildId@.zip">RSE-examples-@buildId@.zip</a></td>
         <td><small>&nbsp;</small><br/>
         	Tutorial code and example projects for developing against RSE SDK.
+        	Includes Source.
+        </td>
+    </tr>
+	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
+		<td>All</td>
+		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-useractions-@buildId@.zip">RSE-useractions-@buildId@.zip</a></td>
+        <td><small>&nbsp;</small><br/>
+        	Additional Framework for user-defined actions and compile commands.
+        	Includes Source.
         </td>
     </tr>
 </table>

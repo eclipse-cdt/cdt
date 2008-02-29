@@ -1041,8 +1041,7 @@ public class SystemResources extends NLS
 	public static String ACTION_HISTORY_MOVEBACKWARD_LABEL;
 	public static String ACTION_HISTORY_MOVEBACKWARD_TOOLTIP;
 	
-	
-	public static String ACTION_CONTENT_ASSIST;
+
 	public static String ACTION_SHOW_TOOLTIP_INFORMATION;
 	
 

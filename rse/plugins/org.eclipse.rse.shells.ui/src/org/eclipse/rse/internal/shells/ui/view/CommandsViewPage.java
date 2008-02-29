@@ -42,6 +42,7 @@ import org.eclipse.rse.internal.shells.ui.ShellResources;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.view.SystemTableViewProvider;
 import org.eclipse.rse.services.clientserver.PathUtility;
+import org.eclipse.rse.services.clientserver.messages.CommonMessages;
 import org.eclipse.rse.shells.ui.view.CommandEntryViewerConfiguration;
 import org.eclipse.rse.shells.ui.view.SystemCommandEditor;
 import org.eclipse.rse.shells.ui.view.SystemCommandsView;
@@ -303,7 +304,7 @@ FocusListener
 		Label label = new Label(_inputContainer, SWT.NONE);
 		label.setText(ShellResources.RESID_COMMANDSVIEW_COMMAND_LABEL);
 
-		_inputEntry = new SystemCommandEditor(_viewPart.getViewSite(), _inputContainer, SWT.SINGLE | SWT.BORDER, 50, _entryViewerConfiguration, "", SystemResources.ACTION_CONTENT_ASSIST); //$NON-NLS-1$
+		_inputEntry = new SystemCommandEditor(_viewPart.getViewSite(), _inputContainer, SWT.SINGLE | SWT.BORDER, 50, _entryViewerConfiguration, "", ShellResources.ACTION_CONTENT_ASSIST); //$NON-NLS-1$
 		_inputEntry.getTextWidget().setToolTipText(ShellResources.RESID_COMMANDSVIEW_COMMAND_TOOLTIP);
 		
 			
@@ -496,11 +497,11 @@ FocusListener
 			String msgTxt = null;
 			if (!command.isActive())
 			{
-				msgTxt = NLS.bind(ShellResources.MSG_OPERATION_FINISHED, title);
+				msgTxt = NLS.bind(CommonMessages.MSG_OPERATION_FINISHED, title);
 			}
 			else
 			{
-				msgTxt = NLS.bind(ShellResources.MSG_OPERATION_RUNNING, title);
+				msgTxt = NLS.bind(CommonMessages.MSG_OPERATION_RUNNING, title);
 			}
 
 			_title = msgTxt;

@@ -38,7 +38,12 @@ public class AsyncHelloWorld {
     static void asyncHelloWorld(RequestMonitor rm) {
         System.out.println("Hello world");
         //#ifdef excercises
-        // TODO Exercise 1: - Call the second async. "Hello world 2" method.   
+        // TODO Exercise 1: - Call the second async. "Hello world 2" method.
+        // Hint: Calling an asynchronous method requires passing to it a 
+        // request monitor.  A new request monitor can be constructed with 
+        // a parent RequestMonitor as an argument argument.  The parent gets 
+        // completed automatically when the lower level request monitor is 
+        // completed.
         rm.done();
         //#else
 //#        RequestMonitor rm2 = new RequestMonitor(ImmediateExecutor.getInstance(), rm);

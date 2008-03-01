@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.dd.dsf.concurrent.ConfinedToDsfExecutor;
+import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 import org.eclipse.dd.dsf.concurrent.ImmediateExecutor;
@@ -51,10 +53,12 @@ import org.eclipse.swt.widgets.Table;
  * to check the canceled state of the requests and ignore them.
  * </p>
  */
+@ConfinedToDsfExecutor("fDisplayExecutor")
 public class AsyncDataViewer 
     implements ILazyContentProvider, IDataGenerator.Listener
 {
     // Executor to use instead of Display.asyncExec().
+    @ThreadSafe
     final private DsfExecutor fDisplayExecutor;
     
     // The viewer and generator that this content provider using.
@@ -106,10 +110,12 @@ public class AsyncDataViewer
         return Math.min((table.getBounds().height / table.getItemHeight()) + 2, itemCount - top);
     }   
     
+    @ThreadSafe
     public void countChanged() {
         queryItemCount();
     }
     
+    @ThreadSafe
     public void valuesChanged(final Set<Integer> indexes) {
         // Mark the changed items in table viewer as dirty, this will 
         // trigger update requests for these indexes if they are 

@@ -122,6 +122,12 @@ public class SyncDataViewer
     }
     
     private void refreshViewer() {
+        //#ifdef excercises
+        // TODO Excercise 5 - Add a call to getElements() to force a deadlock.
+        //#else
+//#        getElements(null);
+        //#endif
+        
         // This method may be called on any thread, switch to the display 
         // thread before calling the viewer.
         Display display = fViewer.getControl().getDisplay(); 
@@ -148,7 +154,12 @@ public class SyncDataViewer
         tableViewer.getControl().setLayoutData(data);
 
         // Create the data generator.
+        //#ifdef excercises
+        // TODO Excercise 5 - Use the DataGeneratorWithExecutor() instead.
         final IDataGenerator generator = new DataGeneratorWithThread();
+        //#else
+//#        final IDataGenerator generator = new DataGeneratorWithExecutor();     
+        //#endif
         
         // Create the content provider which will populate the viewer.
         SyncDataViewer contentProvider = new SyncDataViewer(tableViewer, generator);

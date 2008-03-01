@@ -50,7 +50,7 @@ import org.eclipse.dd.examples.dsf.DsfExamplesPlugin;
  * </p>
  */
 //#ifdef excercises
-// TODO Excercise 3 - Add an annotationindicating allowed concurrency access
+// TODO Excercise 4 - Add an annotationindicating allowed concurrency access
 //#else
 //#@ThreadSafe
 //#endif
@@ -59,7 +59,8 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
     // Request objects are used to serialize the interface calls into objects
     // which can then be pushed into a queue.
     //#ifdef excercises
-    // TODO Excercise 3 - Add an annotationindicating allowed concurrency access
+    // TODO Excercise 4 - Add an annotationindicating allowed concurrency access
+    // Hint: Request and its subclasses have all their fields declared as final.
     //#else
 //#    @Immutable
     //#endif
@@ -72,7 +73,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
     }
     
     //#ifdef excercises
-    // TODO Excercise 3 - Add an annotationindicating allowed concurrency access
+    // TODO Excercise 4 - Add an annotationindicating allowed concurrency access
     //#else
 //#    @Immutable
     //#endif
@@ -83,7 +84,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
     } 
 
     //#ifdef excercises
-    // TODO Excercise 3 - Add an annotationindicating allowed concurrency access
+    // TODO Excercise 4 - Add an annotationindicating allowed concurrency access
     //#else
 //#    @Immutable
     //#endif
@@ -97,7 +98,10 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
 
     // The executor used to access all internal data of the generator.
     //#ifdef excercises
-    // TODO Excercise 3 - Add an annotation indicating allowed concurrency access
+    // TODO Excercise 4 - Add an annotation indicating allowed concurrency access
+    // Hint: If a member does not have an annotation, the programmer can assume
+    // that the concurrency rule that applies to the class also applies to this
+    // member.
     //#endif
     private DsfExecutor fExecutor;
     
@@ -106,7 +110,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
     // method reads from it.
     // The executor used to access all internal data of the generator.
     //#ifdef excercises
-    // TODO Excercise 3 - Add an annotationindicating allowed concurrency access
+    // TODO Excercise 4 - Add an annotationindicating allowed concurrency access
     //#else
 //#    @ConfinedToDsfExecutor("fExecutor")
     //#endif
@@ -115,7 +119,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
     // List of listeners is not synchronized, it also has to be accessed
     // using the executor.
     //#ifdef excercises
-    // TODO Excercise 3 - Add an annotationindicating allowed concurrency access
+    // TODO Excercise 4 - Add an annotationindicating allowed concurrency access
     //#else
 //#    @ConfinedToDsfExecutor("fExecutor")
     //#endif
@@ -123,7 +127,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
 
     // Current number of elements in this generator.
     //#ifdef excercises
-    // TODO Excercise 3 - Add an annotationindicating allowed concurrency access
+    // TODO Excercise 4 - Add an annotationindicating allowed concurrency access
     //#else
 //#    @ConfinedToDsfExecutor("fExecutor")
     //#endif
@@ -131,7 +135,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
     
     // Counter used to determine when to reset the element count.
     //#ifdef excercises
-    // TODO Excercise 3 - Add an annotationindicating allowed concurrency access
+    // TODO Excercise 4 - Add an annotationindicating allowed concurrency access
     //#else
 //#    @ConfinedToDsfExecutor("fExecutor")
     //#endif
@@ -139,7 +143,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
     
     // Elements which were modified since the last reset.
     //#ifdef excercises
-    // TODO Excercise 3 - Add an annotationindicating allowed concurrency access
+    // TODO Excercise 4 - Add an annotationindicating allowed concurrency access
     //#else
 //#    @ConfinedToDsfExecutor("fExecutor")
     //#endif
@@ -147,14 +151,14 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
     
     // Flag used to ensure that requests are processed sequentially.
     //#ifdef excercises
-    // TODO Excercise 3 - Add an annotationindicating allowed concurrency access
+    // TODO Excercise 4 - Add an annotationindicating allowed concurrency access
     //#else
 //#    @ConfinedToDsfExecutor("fExecutor")
     //#endif
     private boolean fServiceQueueInProgress = false;
  
     //#ifdef excercises
-    // TODO Excercise 3 - Add an annotation indicating allowed concurrency access
+    // TODO Excercise 4 - Add an annotation indicating allowed concurrency access
     //#endif
     public DataGeneratorWithExecutor() {
         // Create the executor
@@ -173,7 +177,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
     }
      
     //#ifdef excercises
-    // TODO Excercise 3 - Add an annotation indicating allowed concurrency access
+    // TODO Excercise 4 - Add an annotation indicating allowed concurrency access
     //#endif
     public void shutdown(final RequestMonitor rm) {
         try {
@@ -199,7 +203,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
     }
 
     //#ifdef excercises
-    // TODO Excercise 3 - Add an annotation indicating allowed concurrency access
+    // TODO Excercise 4 - Add an annotation indicating allowed concurrency access
     //#endif
     public void getCount(final DataRequestMonitor<Integer> rm) {
         try {
@@ -216,7 +220,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
     }
     
     //#ifdef excercises
-    // TODO Excercise 3 - Add an annotation indicating allowed concurrency access
+    // TODO Excercise 4 - Add an annotation indicating allowed concurrency access
     //#endif
     public void getValue(final int index, final DataRequestMonitor<String> rm) { 
         try {
@@ -233,7 +237,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
     } 
 
     //#ifdef excercises
-    // TODO Excercise 3 - Add an annotation indicating allowed concurrency access
+    // TODO Excercise 4 - Add an annotation indicating allowed concurrency access
     //#endif
     public void addListener(final Listener listener) {
         try {
@@ -246,7 +250,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
     }
 
     //#ifdef excercises
-    // TODO Excercise 3 - Add an annotation indicating allowed concurrency access
+    // TODO Excercise 4 - Add an annotation indicating allowed concurrency access
     //#endif
     public void removeListener(final Listener listener) {
         try {
@@ -260,14 +264,18 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
 
     // Main processing function of this generator.
     //#ifdef excercises
-    // TODO Excercise 3 - Add an annotationindicating allowed concurrency access
+    // TODO Excercise 4 - Add an annotationindicating allowed concurrency access
     //#else
 //#    @ConfinedToDsfExecutor("fExecutor")
     //#endif
     private void serviceQueue() {
         
         //#ifdef excercises
-        // TODO Excercise 4 - Add logic to discard requests from queue.
+        // TODO Excercise 3 - Add logic to discard requests from queue.
+        // Hint: Since serviceQueue() is called using the executor, and the 
+        // fQueue list can only be modified when running in the executor 
+        // thread.  This method can safely iterate and modify fQueue without 
+        // risk of race conditions or concurrent modification exceptions.
         //#else
 //#        for (Iterator<Request> requestItr = fQueue.iterator(); requestItr.hasNext();) {
 //#            Request request = requestItr.next();
@@ -311,7 +319,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
     }
     
     //#ifdef excercises
-    // TODO Excercise 3 - Add an annotationindicating allowed concurrency access
+    // TODO Excercise 4 - Add an annotationindicating allowed concurrency access
     //#else
 //#    @ConfinedToDsfExecutor("fExecutor")
     //#endif
@@ -324,7 +332,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
     }
 
     //#ifdef excercises
-    // TODO Excercise 3 - Add an annotationindicating allowed concurrency access
+    // TODO Excercise 4 - Add an annotationindicating allowed concurrency access
     //#else
 //#    @ConfinedToDsfExecutor("fExecutor")
     //#endif
@@ -344,7 +352,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
      * This method simulates changes in the supplier's data set.
      */
     //#ifdef excercises
-    // TODO Excercise 3 - Add an annotationindicating allowed concurrency access
+    // TODO Excercise 4 - Add an annotationindicating allowed concurrency access
     //#else
 //#    @ConfinedToDsfExecutor("fExecutor")
     //#endif
@@ -362,7 +370,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
      * Calculates new size for provider's data set.
      */
     //#ifdef excercises
-    // TODO Excercise 3 - Add an annotationindicating allowed concurrency access
+    // TODO Excercise 4 - Add an annotationindicating allowed concurrency access
     //#else
 //#    @ConfinedToDsfExecutor("fExecutor")
     //#endif
@@ -384,7 +392,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
      * Invalidates a random range of indexes.
      */
     //#ifdef excercises
-    // TODO Excercise 3 - Add an annotationindicating allowed concurrency access
+    // TODO Excercise 4 - Add an annotationindicating allowed concurrency access
     //#else
 //#    @ConfinedToDsfExecutor("fExecutor")
     //#endif

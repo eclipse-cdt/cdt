@@ -34,7 +34,7 @@ public class AsyncQuicksort {
 
     public static void main(String[] args) {
         final int[] array = {5, 7, 8, 3, 2, 1, 9, 5, 4};
-        
+
         System.out.println("To sort: " + Arrays.toString(array));
         asyncQuicksort(
             array, 0, array.length - 1, 
@@ -51,16 +51,19 @@ public class AsyncQuicksort {
     {
         if (right > left) {
             int pivot = left;
-         //#ifdef excercises
-         // TODO: Request Monitors Exercise 2 - Convert partition to an async. method.
-         int newPivot = partition(array, left, right, pivot);
-         printArray(array, left, right, newPivot);
-            
-         CountingRequestMonitor countingRm = new CountingRequestMonitor(fgExecutor, rm);
-         asyncQuicksort(array, left, newPivot - 1, countingRm);
-         asyncQuicksort(array, newPivot + 1, right, countingRm);
-         countingRm.setDoneCount(2);
-         //#else
+            //#ifdef excercises
+            // TODO: Exercise 2 - Convert the call to partition into an
+            // asynchronous call to asyncPartition().
+            // Hint: The rest of the code below should be executed inside
+            // the DataRequestMonitor.handleCompleted() overriding method.
+            int newPivot = partition(array, left, right, pivot);
+            printArray(array, left, right, newPivot);
+
+            CountingRequestMonitor countingRm = new CountingRequestMonitor(fgExecutor, rm);
+            asyncQuicksort(array, left, newPivot - 1, countingRm);
+            asyncQuicksort(array, newPivot + 1, right, countingRm);
+            countingRm.setDoneCount(2);
+            //#else
 //#            asyncPartition(
 //#                array, left, right, pivot, 
 //#                new DataRequestMonitor<Integer>(fgExecutor, rm) {
@@ -75,15 +78,16 @@ public class AsyncQuicksort {
 //#                        countingRm.setDoneCount(2);
 //#                    }
 //#            });
-        //#endif
-
+            //#endif
         } else {
             rm.done();
         }
     }
-    
+
     //#ifdef excercises
     // TODO Exercise 2 - Convert partition to an asynchronous method.
+    // Hint: a DataRequestMonitor<Integer> should be used to carry the 
+    // return value to the caller.
     static int partition(int[] array, int left, int right, int pivot)
     //#else
 //#    static void asyncPartition(int[] array, int left, int right, int pivot, DataRequestMonitor<Integer> rm)
@@ -103,16 +107,17 @@ public class AsyncQuicksort {
         }
         array[right] = array[store];
         array[store] = pivotValue;
-        
+
         //#ifdef excercises
-        // TODO: Request Monitors Exercise 2 - Convert partition to an async. method.
+        // TODO: Request Monitors Exercise 2 - Return the data to caller using 
+        // a request monitor.
         return store;
         //#else
-//#        rm.setData(store);
-//#        rm.done();
+        //#        rm.setData(store);
+        //#        rm.done();
         //#endif
     }
-    
+
     static void printArray(int[] array, int left, int right, int pivot) {
         StringBuffer buffer = new StringBuffer();
         for (int i = 0; i < array.length; i++ ) {
@@ -133,7 +138,7 @@ public class AsyncQuicksort {
                 buffer.append(' ');
             }
         }
-        
+
         System.out.println(buffer);
     }
 }

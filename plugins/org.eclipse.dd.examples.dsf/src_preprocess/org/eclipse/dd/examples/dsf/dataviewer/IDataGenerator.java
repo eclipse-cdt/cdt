@@ -18,7 +18,9 @@ import java.util.Set;
 
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
-import org.eclipse.dd.dsf.concurrent.ThreadSafe;
+//#ifdef answers
+//#import org.eclipse.dd.dsf.concurrent.ThreadSafe;
+//#endif
 
 /**
  * Data generator is simple source of data used to populate the example table 
@@ -28,7 +30,7 @@ import org.eclipse.dd.dsf.concurrent.ThreadSafe;
  * is changed. 
  */
 //#ifdef excercises
-//TODO Excercise 3 - Add an annotationindicating allowed concurrency access
+//TODO Excercise 4 - Add an annotationindicating allowed concurrency access
 //#else
 //#@ThreadSafe
 //#endif

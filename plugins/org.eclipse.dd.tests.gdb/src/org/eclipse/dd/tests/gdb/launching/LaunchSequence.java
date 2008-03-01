@@ -34,6 +34,7 @@ import org.eclipse.dd.mi.service.CSourceLookup;
 import org.eclipse.dd.mi.service.ExpressionService;
 import org.eclipse.dd.mi.service.MIBreakpoints;
 import org.eclipse.dd.mi.service.MIBreakpointsManager;
+import org.eclipse.dd.mi.service.MIDisassembly;
 import org.eclipse.dd.mi.service.MIMemory;
 import org.eclipse.dd.mi.service.MIRegisters;
 import org.eclipse.dd.mi.service.MIStack;
@@ -226,6 +227,10 @@ public class LaunchSequence extends Sequence {
         public void execute(RequestMonitor requestMonitor) {
             new MIRegisters(fSession).initialize(requestMonitor);
         }},
+        new Step() { @Override
+            public void execute(RequestMonitor requestMonitor) {
+                new MIDisassembly(fSession).initialize(requestMonitor);
+            }},
         /*new Step() { public void execute(RequestMonitor requestMonitor) {
             new GDBVariables(fSession).initialize(requestMonitor);
         }},*/

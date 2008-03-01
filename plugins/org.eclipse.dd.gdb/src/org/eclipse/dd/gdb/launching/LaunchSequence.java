@@ -33,6 +33,7 @@ import org.eclipse.dd.mi.service.CSourceLookup;
 import org.eclipse.dd.mi.service.ExpressionService;
 import org.eclipse.dd.mi.service.MIBreakpoints;
 import org.eclipse.dd.mi.service.MIBreakpointsManager;
+import org.eclipse.dd.mi.service.MIDisassembly;
 import org.eclipse.dd.mi.service.MIMemory;
 import org.eclipse.dd.mi.service.MIModules;
 import org.eclipse.dd.mi.service.MIRegisters;
@@ -121,6 +122,10 @@ public class LaunchSequence extends Sequence {
         public void execute(RequestMonitor requestMonitor) {
             new MIRegisters(fSession).initialize(requestMonitor);
         }},
+        new Step() { @Override
+            public void execute(RequestMonitor requestMonitor) {
+                new MIDisassembly(fSession).initialize(requestMonitor);
+            }},
         /*
          * If needed, insert breakpoint at main and run to it.
          */

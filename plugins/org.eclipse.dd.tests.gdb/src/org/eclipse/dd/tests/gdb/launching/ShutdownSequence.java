@@ -23,6 +23,7 @@ import org.eclipse.dd.mi.service.CSourceLookup;
 import org.eclipse.dd.mi.service.ExpressionService;
 import org.eclipse.dd.mi.service.MIBreakpoints;
 import org.eclipse.dd.mi.service.MIBreakpointsManager;
+import org.eclipse.dd.mi.service.MIDisassembly;
 import org.eclipse.dd.mi.service.MIMemory;
 import org.eclipse.dd.mi.service.MIRegisters;
 import org.eclipse.dd.mi.service.MIStack;
@@ -59,6 +60,7 @@ public class ShutdownSequence extends Sequence {
                 requestMonitor.done();
             } 
         },
+        new Step() { @Override public void execute(RequestMonitor requestMonitor) { shutdownService(MIDisassembly.class, requestMonitor); }},
         new Step() { @Override public void execute(RequestMonitor requestMonitor) { shutdownService(MIRegisters.class, requestMonitor); }},
         new Step() {
             // Uninstall the breakpoints before the service is shut down.

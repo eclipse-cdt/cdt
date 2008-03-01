@@ -24,6 +24,7 @@ import org.eclipse.dd.mi.service.CSourceLookup;
 import org.eclipse.dd.mi.service.ExpressionService;
 import org.eclipse.dd.mi.service.MIBreakpoints;
 import org.eclipse.dd.mi.service.MIBreakpointsManager;
+import org.eclipse.dd.mi.service.MIDisassembly;
 import org.eclipse.dd.mi.service.MIMemory;
 import org.eclipse.dd.mi.service.MIModules;
 import org.eclipse.dd.mi.service.MIRegisters;
@@ -62,6 +63,11 @@ public class ShutdownSequence extends Sequence {
             fTracker.dispose();
             fTracker = null;
             requestMonitor.done();
+        }
+    }, new Step() {
+        @Override
+        public void execute(RequestMonitor requestMonitor) {
+            shutdownService(MIDisassembly.class, requestMonitor);
         }
     }, new Step() {
         @Override

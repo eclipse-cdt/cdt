@@ -89,7 +89,7 @@ public class TestLaunchDelegate extends AbstractCLaunchDelegate
 		}		
 	}
 
-	private void launchLocalDebugSession( ILaunchConfiguration config, ILaunch l, IProgressMonitor monitor ) throws CoreException {
+	private void launchLocalDebugSession( final ILaunchConfiguration config, ILaunch l, IProgressMonitor monitor ) throws CoreException {
 		if ( monitor.isCanceled() ) {
 			return;
 		}
@@ -151,8 +151,9 @@ public class TestLaunchDelegate extends AbstractCLaunchDelegate
                     GDBControl gdbControl = tracker.getService(GDBControl.class);
                     if (gdbControl != null) {
                         IMemoryBlockRetrieval memRetrieval = new DsfMemoryBlockRetrieval(
-                            GDB_DEBUG_MODEL_ID, gdbControl.getGDBDMContext());
+                            GDB_DEBUG_MODEL_ID, config, gdbControl.getGDBDMContext());
                         launch.getSession().registerModelAdapter(IMemoryBlockRetrieval.class, memRetrieval);
+                        ((DsfMemoryBlockRetrieval) memRetrieval).initialize();
                     }
                     tracker.dispose();
                     return null;

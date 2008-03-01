@@ -58,6 +58,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 
     private BigInteger fBlockAddress;
     private int fLength;
+    private int fWordSize;
     private MemoryByte[] fBlock;
     
     private ArrayList<Object> fConnections = new ArrayList<Object>();
@@ -72,9 +73,10 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
      * @param modelId      - 
      * @param expression   - the displayed expression in the UI
      * @param address      - the actual memory block start address
-     * @param length       - the memory block length (could be 0)
+     * @param word_size    - the number of bytes per address
+     * @param length       - the requested block length (could be 0)
      */
-    DsfMemoryBlock(DsfMemoryBlockRetrieval retrieval, String modelId, String expression, BigInteger address, long length) {
+    DsfMemoryBlock(DsfMemoryBlockRetrieval retrieval, String modelId, String expression, BigInteger address, int word_size, long length) {
 
     	fLaunch      = retrieval.getLaunch();
     	fDebugTarget = retrieval.getDebugTarget();
@@ -85,6 +87,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 
         // Current block information
         fBlockAddress = address;
+        fWordSize     = word_size;
         fLength       = (int) length;
         fBlock        = null;
 
@@ -413,7 +416,6 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 
     	// For the IAddress interface
     	final Addr64 address = new Addr64(bigAddress);
-    	final int word_size = 1;
     	
         // Use a Query to synchronize the downstream calls  
         Query<MemoryByte[]> query = new Query<MemoryByte[]>() {
@@ -423,7 +425,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 			    if (memoryService != null) {
 			        // Go for it
 			        memoryService.getMemory( 
-			            fRetrieval.getContext(), address, 0, word_size, (int) length,
+			            fRetrieval.getContext(), address, 0, fWordSize, (int) length,
 			            new DataRequestMonitor<MemoryByte[]>(fRetrieval.getExecutor(), drm) {
 			                @Override
 			                protected void handleOK() {
@@ -460,9 +462,8 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 
     	// For the IAddress interface
     	final Addr64 address = new Addr64(fBaseAddress);
-    	final int word_size = 1;
 
-        // Use a Query to synchronise the downstream calls  
+        // Use a Query to synchronize the downstream calls  
         Query<MemoryByte[]> query = new Query<MemoryByte[]>() {
 			@Override
 			protected void execute(final DataRequestMonitor<MemoryByte[]> drm) {
@@ -470,7 +471,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 			    if (memoryService != null) {
 			        // Go for it
 	    	        memoryService.setMemory(
-		    	  	      fRetrieval.getContext(), address, offset, word_size, bytes.length, bytes,
+		    	  	      fRetrieval.getContext(), address, offset, fWordSize, bytes.length, bytes,
 		    	  	      new RequestMonitor(fRetrieval.getExecutor(), null));
 			    }
 				

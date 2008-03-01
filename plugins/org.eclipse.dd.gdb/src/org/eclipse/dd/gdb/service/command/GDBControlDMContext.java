@@ -11,6 +11,7 @@
 package org.eclipse.dd.gdb.service.command;
 
 import org.eclipse.dd.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
+import org.eclipse.dd.dsf.debug.service.IDisassembly.IDisassemblyDMContext;
 import org.eclipse.dd.dsf.debug.service.IMemory.IMemoryDMContext;
 import org.eclipse.dd.dsf.debug.service.IModules.ISymbolDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
@@ -23,7 +24,7 @@ import org.eclipse.dd.mi.service.command.MIControlDMContext;
  */
 public class GDBControlDMContext extends MIControlDMContext
     implements IContainerDMContext, ISymbolDMContext, IMemoryDMContext, IBreakpointsTargetDMContext, ISourceLookupDMContext, 
-        ISignalsDMContext 
+        ISignalsDMContext, IDisassemblyDMContext 
 {
 
     public GDBControlDMContext(String sessionId, String commandControlId) {

@@ -26,6 +26,8 @@ import org.eclipse.dd.dsf.concurrent.DsfExecutable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 
 /**
  * DSF executor which uses the display thread to run the submitted runnables 
@@ -61,10 +63,16 @@ public class DisplayDsfExecutor extends DefaultDsfExecutor
      */
     private final Display fDisplay;
     
-    
 	private DisplayDsfExecutor(Display display) {
 		super("Display DSF Executor"); //$NON-NLS-1$
 		fDisplay = display;
+		fDisplay.addListener(SWT.Dispose, new Listener() {
+		    public void handleEvent(Event event) {
+		        if (event.type == SWT.Dispose) {
+                    DisplayDsfExecutor.super.shutdownNow();
+		        }
+		    }
+		});
 	}
 	
 	/**
@@ -151,7 +159,7 @@ public class DisplayDsfExecutor extends DefaultDsfExecutor
     				});
 				} catch (SWTException swtException) {
 				    if (swtException.code == SWT.ERROR_DEVICE_DISPOSED) {
-				        DisplayDsfExecutor.super.shutdown();
+				        DisplayDsfExecutor.super.shutdownNow();
 				    }
 				}
 			}

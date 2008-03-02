@@ -95,10 +95,9 @@ import org.eclipse.ui.progress.UIJob;
 
 public class TraditionalRendering extends AbstractMemoryRendering implements IRepositionableMemoryRendering
 {
-	Rendering fRendering;
-    
-    private Action displayEndianBigAction;
-    private Action displayEndianLittleAction;
+	protected Rendering fRendering;
+    protected Action displayEndianBigAction;
+    protected Action displayEndianLittleAction;
     
     private IWorkbenchAdapter fWorkbenchAdapter;
     private IMemoryBlockConnection fConnection;
@@ -1086,7 +1085,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 }
 
 
-class TraditionalMemoryByte extends MemoryByte
+class TraditionalMemoryByte extends MemoryByte implements IMemoryByte
 {
 	private boolean isEdited = false;
 	

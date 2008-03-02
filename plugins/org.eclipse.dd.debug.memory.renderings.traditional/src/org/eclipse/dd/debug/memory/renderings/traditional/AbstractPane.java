@@ -61,7 +61,184 @@ public abstract class AbstractPane extends Canvas
     protected int fRowCount = 0;
     
     protected boolean fPaneVisible = true;
+    
+    class AbstractPaneMouseListener implements MouseListener
+    {
+        public void mouseUp(MouseEvent me)
+        { 
+            positionCaret(me.x, me.y);
 
+            fCaret.setVisible(true);
+
+            if(fSelectionInProgress && me.button == 1)
+            {
+                endSelection(me.x, me.y);
+            }
+            
+            fSelectionInProgress = fSelectionStarted = false;
+        }
+
+        public void mouseDown(MouseEvent me)
+        {
+            AbstractPane.this.forceFocus();
+
+            positionCaret(me.x, me.y);
+
+            fCaret.setVisible(false);
+
+            if(me.button == 1)
+            {
+                // if shift is down and we have an existing start address,
+                // append selection
+                if((me.stateMask & SWT.SHIFT) != 0
+                    && fRendering.getSelection().getStart() != null)
+                {
+
+                    // if the pane doesn't have a selection start (the
+                    // selection was created in a different pane)
+                    // then initialize the pane's selection start to the
+                    // rendering's selection start
+                    if(AbstractPane.this.fSelectionStartAddress == null)
+                        AbstractPane.this.fSelectionStartAddress = fRendering
+                            .getSelection().getStart();
+
+                    AbstractPane.this.fSelectionStarted = true;
+
+                    AbstractPane.this.appendSelection(me.x, me.y);
+
+                }
+                else
+                {
+                    // start a new selection
+
+                    AbstractPane.this.startSelection(me.x, me.y);
+                }
+            }
+        }
+
+        public void mouseDoubleClick(MouseEvent me)
+        {
+        	handleMouseDoubleClick(me);
+        }
+    	
+    }
+
+    class AbstractPaneMouseMoveListener implements MouseMoveListener
+    {
+        public void mouseMove(MouseEvent me)
+        {
+            if(fSelectionStarted)
+            {
+            	fSelectionInProgress = true;
+                appendSelection(me.x, me.y);
+            }
+        }
+    }
+    
+    class AbstractPaneKeyListener implements KeyListener
+    {
+        public void keyPressed(KeyEvent ke)
+        {
+           	fOldSubCellCaretPosition = fSubCellCaretPosition;
+            if((ke.stateMask & SWT.SHIFT) != 0)
+            {
+                switch(ke.keyCode)
+                {
+                    case SWT.ARROW_RIGHT:
+                    case SWT.ARROW_LEFT:
+                    case SWT.ARROW_UP:
+                    case SWT.ARROW_DOWN:
+                    case SWT.PAGE_DOWN:
+                    case SWT.PAGE_UP:
+                        if(fRendering.getSelection().getStart() == null)
+                        {
+                            fRendering.getSelection().setStart(fCaretAddress.add(BigInteger.valueOf(
+                            	fRendering.getAddressesPerColumn())), fCaretAddress);
+                        }
+                        break;
+                }
+            }
+
+            if(ke.keyCode == SWT.ARROW_RIGHT)
+            {
+            	handleRightArrowKey();
+            }
+            else if(ke.keyCode == SWT.ARROW_LEFT || ke.keyCode == SWT.BS)
+            {
+            	handleLeftArrowKey();
+            }
+            else if(ke.keyCode == SWT.ARROW_DOWN)
+            {
+            	handleDownArrowKey();
+            }
+            else if(ke.keyCode == SWT.ARROW_UP)
+            {
+            	handleUpArrowKey();
+           }
+            else if(ke.keyCode == SWT.PAGE_DOWN)
+            {
+            	handlePageDownKey();
+            }
+            else if(ke.keyCode == SWT.PAGE_UP)
+            {
+            	handlePageUpKey();
+            }
+            else if(ke.keyCode == SWT.ESC)
+            {
+                fRendering.getViewportCache().clearEditBuffer();
+            }
+            else if(ke.character == '\r')
+            {
+                fRendering.getViewportCache().writeEditBuffer();
+            }
+            else if(Rendering.isValidEditCharacter(ke.character))
+            {
+            	if(fRendering.getSelection().hasSelection())
+            	{
+            		setCaretAddress(fRendering.getSelection().getLow());
+            		fSubCellCaretPosition = 0;
+            	}
+            	
+                editCell(fCaretAddress, fSubCellCaretPosition, ke.character);
+            }
+
+            if((ke.stateMask & SWT.SHIFT) != 0)
+            {
+                switch(ke.keyCode)
+                {
+                    case SWT.ARROW_RIGHT:
+                    case SWT.ARROW_LEFT:
+                    case SWT.ARROW_UP:
+                    case SWT.ARROW_DOWN:
+                    case SWT.PAGE_DOWN:
+                    case SWT.PAGE_UP:
+                        fRendering.getSelection().setEnd(fCaretAddress.add(BigInteger.valueOf(
+                        	fRendering.getAddressesPerColumn())), 
+                            fCaretAddress);
+                        break;
+                }
+            }
+            else if(ke.keyCode != SWT.SHIFT) 
+            // if shift key, keep selection, we might add to it
+            {
+                fRendering.getSelection().clear();
+            }
+        }
+
+        public void keyReleased(KeyEvent ke)
+        {
+            // do nothing
+        }
+    }
+    
+    class AbstractPanePaintListener implements PaintListener
+    {
+        public void paintControl(PaintEvent pe)
+        {
+            AbstractPane.this.paint(pe);
+        }
+    }
+    
     public AbstractPane(Rendering rendering)
     {
         super(rendering, SWT.DOUBLE_BUFFERED);
@@ -87,257 +264,13 @@ public abstract class AbstractPane extends Canvas
         fCaret.setSize(1, gc.stringExtent("|").y); //$NON-NLS-1$
         gc.dispose();
 
-        this.addPaintListener(new PaintListener()
-        {
-            public void paintControl(PaintEvent pe)
-            {
-                AbstractPane.this.paint(pe);
-            }
-        });
+        this.addPaintListener(createPaintListener());
 
-        this.addMouseListener(new MouseListener()
-        {
-            public void mouseUp(MouseEvent me)
-            { 
-                positionCaret(me.x, me.y);
+        this.addMouseListener(createMouseListener());
 
-                fCaret.setVisible(true);
+        this.addMouseMoveListener(createMouseMoveListener());
 
-                if(fSelectionInProgress && me.button == 1)
-                {
-                    endSelection(me.x, me.y);
-                }
-                
-                fSelectionInProgress = fSelectionStarted = false;
-            }
-
-            public void mouseDown(MouseEvent me)
-            {
-                AbstractPane.this.forceFocus();
-
-                positionCaret(me.x, me.y);
-
-                fCaret.setVisible(false);
-
-                if(me.button == 1)
-                {
-                    // if shift is down and we have an existing start address,
-                    // append selection
-                    if((me.stateMask & SWT.SHIFT) != 0
-                        && fRendering.getSelection().getStart() != null)
-                    {
-
-                        // if the pane doesn't have a selection start (the
-                        // selection was created in a different pane)
-                        // then initialize the pane's selection start to the
-                        // rendering's selection start
-                        if(AbstractPane.this.fSelectionStartAddress == null)
-                            AbstractPane.this.fSelectionStartAddress = fRendering
-                                .getSelection().getStart();
-
-                        AbstractPane.this.fSelectionStarted = true;
-
-                        AbstractPane.this.appendSelection(me.x, me.y);
-
-                    }
-                    else
-                    {
-                        // start a new selection
-
-                        AbstractPane.this.startSelection(me.x, me.y);
-                    }
-                }
-            }
-
-            public void mouseDoubleClick(MouseEvent me)
-            {
-            	try
-            	{
-            		BigInteger address = getViewportAddress(me.x / getCellWidth(), me.y
-            			/ getCellHeight());
-            		
-            		fRendering.getSelection().clear();
-            		fRendering.getSelection().setStart(address.add(BigInteger
-                            .valueOf(fRendering.getAddressesPerColumn())), address);
-            		fRendering.getSelection().setEnd(address.add(BigInteger
-                            .valueOf(fRendering.getAddressesPerColumn())), address);
-            	}
-            	catch(DebugException de)
-            	{
-            		// do nothing
-            	}
-            }
-        });
-
-        this.addMouseMoveListener(new MouseMoveListener()
-        {
-            public void mouseMove(MouseEvent me)
-            {
-                if(fSelectionStarted)
-                {
-                	fSelectionInProgress = true;
-                    appendSelection(me.x, me.y);
-                }
-            }
-        });
-
-        this.addKeyListener(new KeyListener()
-        {
-            public void keyPressed(KeyEvent ke)
-            {
-               	fOldSubCellCaretPosition = fSubCellCaretPosition;
-                if((ke.stateMask & SWT.SHIFT) != 0)
-                {
-                    switch(ke.keyCode)
-                    {
-                        case SWT.ARROW_RIGHT:
-                        case SWT.ARROW_LEFT:
-                        case SWT.ARROW_UP:
-                        case SWT.ARROW_DOWN:
-                        case SWT.PAGE_DOWN:
-                        case SWT.PAGE_UP:
-                            if(fRendering.getSelection().getStart() == null)
-                            {
-                                fRendering.getSelection().setStart(fCaretAddress.add(BigInteger.valueOf(
-                                	fRendering.getAddressesPerColumn())), fCaretAddress);
-                            }
-                            break;
-                    }
-                }
-
-                if(ke.keyCode == SWT.ARROW_RIGHT)
-                {
-                    fSubCellCaretPosition++;
-                    if(fSubCellCaretPosition >= getCellCharacterCount())
-                    {
-                        fSubCellCaretPosition = 0;
-                        // Ensure that caret is within the addressable range
-                        BigInteger newCaretAddress = fCaretAddress.add(BigInteger
-                            .valueOf(getNumberOfBytesRepresentedByColumn() / fRendering.getAddressableSize()));
-                        if(newCaretAddress.compareTo(fRendering.getMemoryBlockEndAddress()) > 0)
-                        {
-                        	fSubCellCaretPosition = getCellCharacterCount();
-                        }
-                        else
-                        {
-                            setCaretAddress(newCaretAddress);
-                        }
-                    }
-                    updateCaret();
-                    ensureCaretWithinViewport();
-                }
-                else if(ke.keyCode == SWT.ARROW_LEFT || ke.keyCode == SWT.BS)
-                {
-                    fSubCellCaretPosition--;
-                    if(fSubCellCaretPosition < 0)
-                    {
-                        fSubCellCaretPosition = getCellCharacterCount() - 1;
-                        // Ensure that caret is within the addressable range
-                        BigInteger newCaretAddress = fCaretAddress.subtract(BigInteger
-                            .valueOf(getNumberOfBytesRepresentedByColumn() / fRendering.getAddressableSize()));
-                        if(newCaretAddress.compareTo(fRendering.getMemoryBlockStartAddress()) < 0)
-                        {
-                        	fSubCellCaretPosition = 0;
-                        }
-                        else
-                        {
-                            setCaretAddress(newCaretAddress);
-                        }
-
-                    }
-                    updateCaret();
-                    ensureCaretWithinViewport();
-                }
-                else if(ke.keyCode == SWT.ARROW_DOWN)
-                {
-                	// Ensure that caret is within the addressable range
-                    BigInteger newCaretAddress = fCaretAddress.add(BigInteger
-                        .valueOf(fRendering.getAddressableCellsPerRow()));
-                    setCaretAddress(newCaretAddress);
-
-                    updateCaret();
-                    ensureCaretWithinViewport();
-                }
-                else if(ke.keyCode == SWT.ARROW_UP)
-                {
-                    // Ensure that caret is within the addressable range
-                    BigInteger newCaretAddress = fCaretAddress.subtract(BigInteger
-                        .valueOf(fRendering.getAddressableCellsPerRow()));
-                    setCaretAddress(newCaretAddress);
-                        
-                    updateCaret();
-                    ensureCaretWithinViewport();
-                }
-                else if(ke.keyCode == SWT.PAGE_DOWN)
-                {
-                	// Ensure that caret is within the addressable range
-                    BigInteger newCaretAddress = fCaretAddress.add(BigInteger
-                        .valueOf(fRendering.getAddressableCellsPerRow()
-                            * (fRendering.getRowCount() - 1)));
-
-                    setCaretAddress(newCaretAddress);
-
-                    updateCaret();
-                    ensureCaretWithinViewport();
-                }
-                else if(ke.keyCode == SWT.PAGE_UP)
-                {
-                	// Ensure that caret is within the addressable range
-                    BigInteger newCaretAddress = fCaretAddress.subtract(BigInteger
-                        .valueOf(fRendering.getAddressableCellsPerRow()
-                            * (fRendering.getRowCount() - 1)));
-                    setCaretAddress(newCaretAddress);
-
-                    updateCaret();
-                    ensureCaretWithinViewport();
-                }
-                else if(ke.keyCode == SWT.ESC)
-                {
-                    fRendering.getViewportCache().clearEditBuffer();
-                }
-                else if(ke.character == '\r')
-                {
-                    fRendering.getViewportCache().writeEditBuffer();
-                }
-                else if(Rendering.isValidEditCharacter(ke.character))
-                {
-                	if(fRendering.getSelection().hasSelection())
-                	{
-                		setCaretAddress(fRendering.getSelection().getLow());
-                		fSubCellCaretPosition = 0;
-                	}
-                	
-                    editCell(fCaretAddress, fSubCellCaretPosition, ke.character);
-                }
-
-                if((ke.stateMask & SWT.SHIFT) != 0)
-                {
-                    switch(ke.keyCode)
-                    {
-                        case SWT.ARROW_RIGHT:
-                        case SWT.ARROW_LEFT:
-                        case SWT.ARROW_UP:
-                        case SWT.ARROW_DOWN:
-                        case SWT.PAGE_DOWN:
-                        case SWT.PAGE_UP:
-                            fRendering.getSelection().setEnd(fCaretAddress.add(BigInteger.valueOf(
-                            	fRendering.getAddressesPerColumn())), 
-                                fCaretAddress);
-                            break;
-                    }
-                }
-                else if(ke.keyCode != SWT.SHIFT) 
-                // if shift key, keep selection, we might add to it
-                {
-                    fRendering.getSelection().clear();
-                }
-            }
-
-            public void keyReleased(KeyEvent ke)
-            {
-                // do nothing
-            }
-        });
+        this.addKeyListener(createKeyListener());
 
         this.addFocusListener(new FocusListener()
         {
@@ -362,6 +295,133 @@ public abstract class AbstractPane extends Canvas
             {
             }
         });
+    }
+    
+    protected MouseListener createMouseListener(){
+    	return new AbstractPaneMouseListener();
+    }
+    
+    protected MouseMoveListener createMouseMoveListener(){
+    	return new AbstractPaneMouseMoveListener();
+    }
+
+    protected KeyListener createKeyListener(){
+    	return new AbstractPaneKeyListener();
+    }
+
+    protected PaintListener createPaintListener(){
+    	return new AbstractPanePaintListener();
+    }
+
+    protected void handleRightArrowKey()
+    {
+    	fSubCellCaretPosition++;
+        if(fSubCellCaretPosition >= getCellCharacterCount())
+        {
+            fSubCellCaretPosition = 0;
+            // Ensure that caret is within the addressable range
+            BigInteger newCaretAddress = fCaretAddress.add(BigInteger
+                .valueOf(getNumberOfBytesRepresentedByColumn() / fRendering.getAddressableSize()));
+            if(newCaretAddress.compareTo(fRendering.getMemoryBlockEndAddress()) > 0)
+            {
+            	fSubCellCaretPosition = getCellCharacterCount();
+            }
+            else
+            {
+                setCaretAddress(newCaretAddress);
+            }
+        }
+        updateCaret();
+        ensureCaretWithinViewport();    	
+    }
+    
+    protected void handleLeftArrowKey()
+    {
+        fSubCellCaretPosition--;
+        if(fSubCellCaretPosition < 0)
+        {
+            fSubCellCaretPosition = getCellCharacterCount() - 1;
+            // Ensure that caret is within the addressable range
+            BigInteger newCaretAddress = fCaretAddress.subtract(BigInteger
+                .valueOf(getNumberOfBytesRepresentedByColumn() / fRendering.getAddressableSize()));
+            if(newCaretAddress.compareTo(fRendering.getMemoryBlockStartAddress()) < 0)
+            {
+            	fSubCellCaretPosition = 0;
+            }
+            else
+            {
+                setCaretAddress(newCaretAddress);
+            }
+
+        }
+        updateCaret();
+        ensureCaretWithinViewport();    	
+    }
+
+    protected void handleDownArrowKey()
+    {
+    	// Ensure that caret is within the addressable range
+        BigInteger newCaretAddress = fCaretAddress.add(BigInteger
+            .valueOf(fRendering.getAddressableCellsPerRow()));
+        setCaretAddress(newCaretAddress);
+
+        updateCaret();
+        ensureCaretWithinViewport();    	
+    }
+    
+    protected void handleUpArrowKey()
+    {
+        // Ensure that caret is within the addressable range
+        BigInteger newCaretAddress = fCaretAddress.subtract(BigInteger
+            .valueOf(fRendering.getAddressableCellsPerRow()));
+        setCaretAddress(newCaretAddress);
+            
+        updateCaret();
+        ensureCaretWithinViewport();
+    }
+    
+    protected void handlePageDownKey()
+    {
+    	// Ensure that caret is within the addressable range
+        BigInteger newCaretAddress = fCaretAddress.add(BigInteger
+            .valueOf(fRendering.getAddressableCellsPerRow()
+                * (fRendering.getRowCount() - 1)));
+
+        setCaretAddress(newCaretAddress);
+
+        updateCaret();
+        ensureCaretWithinViewport();
+    }
+    
+    protected void handlePageUpKey()
+    {
+    	// Ensure that caret is within the addressable range
+        BigInteger newCaretAddress = fCaretAddress.subtract(BigInteger
+            .valueOf(fRendering.getAddressableCellsPerRow()
+                * (fRendering.getRowCount() - 1)));
+        setCaretAddress(newCaretAddress);
+
+        updateCaret();
+        ensureCaretWithinViewport();    	
+    }
+    
+    protected void handleMouseDoubleClick(MouseEvent me)
+    {
+    	try
+    	{
+    		BigInteger address = getViewportAddress(me.x / getCellWidth(), me.y
+    			/ getCellHeight());
+    		
+    		fRendering.getSelection().clear();
+    		fRendering.getSelection().setStart(address.add(BigInteger
+                    .valueOf(fRendering.getAddressesPerColumn())), address);
+    		fRendering.getSelection().setEnd(address.add(BigInteger
+                    .valueOf(fRendering.getAddressesPerColumn())), address);
+    	}
+    	catch(DebugException de)
+    	{
+    		// do nothing
+    	}
     }
     
     protected boolean isPaneVisible()

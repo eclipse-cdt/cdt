@@ -63,11 +63,11 @@ public class Rendering extends Composite implements IDebugEventSetListener
 
     // controls
 
-    private AddressPane fAddressPane;
+    protected AddressPane fAddressPane;
 
-    private DataPane fBinaryPane;
+    protected DataPane fBinaryPane;
 
-    private TextPane fTextPane;
+    protected TextPane fTextPane;
 
     private GoToAddressComposite fAddressBar;
     
@@ -231,30 +231,16 @@ public class Rendering extends Composite implements IDebugEventSetListener
                 switch(se.detail)
                 {
                     case SWT.ARROW_DOWN:
-                        fViewportAddress = fViewportAddress.add(BigInteger
-                            .valueOf(getAddressableCellsPerRow()));
-                        ensureViewportAddressDisplayable();
-                        redrawPanes();
+                    	handleDownArrow();
                         break;
                     case SWT.PAGE_DOWN:
-                        fViewportAddress = fViewportAddress.add(BigInteger
-                            .valueOf(getAddressableCellsPerRow()
-                                * (Rendering.this.getRowCount() - 1)));
-                        ensureViewportAddressDisplayable();
-                        redrawPanes();
+                    	handlePageDown();
                         break;
                     case SWT.ARROW_UP:
-                        fViewportAddress = fViewportAddress.subtract(BigInteger
-                            .valueOf(getAddressableCellsPerRow()));
-                        ensureViewportAddressDisplayable();
-                        redrawPanes();
+                    	handleUpArrow();
                         break;
                     case SWT.PAGE_UP:
-                        fViewportAddress = fViewportAddress.subtract(BigInteger
-                            .valueOf(getAddressableCellsPerRow()
-                                * (Rendering.this.getRowCount() - 1)));
-                        ensureViewportAddressDisplayable();
-                        redrawPanes();
+                    	handlePageUp();
                         break;
                     case SWT.SCROLL_LINE:
                     	if(getVerticalBar().getSelection() == getVerticalBar().getMinimum())
@@ -312,77 +298,8 @@ public class Rendering extends Composite implements IDebugEventSetListener
             }
         });
 
-        this.setLayout(new Layout()
-        {
-            public void layout(Composite composite, boolean changed)
-            {
-            	int xOffset = 0;
-            	if(Rendering.this.getHorizontalBar().isVisible())
-                	xOffset = Rendering.this.getHorizontalBar().getSelection();
-            	
-                int x = xOffset * -1;
-                int y = 0;
-                
-                if(fAddressBarControl.isVisible())
-                {
-                	fAddressBarControl.setBounds(0, 0,
-                        Rendering.this.getBounds().width, fAddressBarControl
-                            .computeSize(100, 30).y); // FIXME
-                    //y = fAddressBarControl.getBounds().height;
-                }
-
-                if(fAddressPane.isPaneVisible())
-                {
-                    fAddressPane.setBounds(x, y,
-                        fAddressPane.computeSize(0, 0).x, Rendering.this
-                            .getBounds().height
-                            - y);
-                    x = fAddressPane.getBounds().x
-                        + fAddressPane.getBounds().width;
-                }
-
-                if(fBinaryPane.isPaneVisible())
-                {
-                    fBinaryPane.setBounds(x, y,
-                        fBinaryPane.computeSize(0, 0).x, Rendering.this
-                            .getBounds().height
-                            - y);
-                    x = fBinaryPane.getBounds().x
-                        + fBinaryPane.getBounds().width;
-                }
-
-                if(fTextPane.isPaneVisible())
-                {
-                    fTextPane.setBounds(x, y, 
-                    	Math.max(fTextPane.computeSize(0, 0).x, Rendering.this.getClientArea().width 
-                    		- x - xOffset), Rendering.this.getBounds().height - y);
-                }
-
-                if(getClientArea().width >= fTextPane.getBounds().x + fTextPane.getBounds().width + xOffset)
-                {
-                	Rendering.this.getHorizontalBar().setVisible(false);
-                }
-                else
-                {
-                	ScrollBar horizontal = Rendering.this.getHorizontalBar();
-                	
-                	horizontal.setVisible(true);
-                	horizontal.setMinimum(0);
-                	horizontal.setMaximum(fTextPane.getBounds().x 
-                		+ fTextPane.getBounds().width + xOffset);
-                	horizontal.setThumb(getClientArea().width);
-                	horizontal.setPageIncrement(40); // TODO ?
-                	horizontal.setIncrement(20); // TODO ?
-                }
-            }
-
-            protected Point computeSize(Composite composite, int wHint,
-                int hHint, boolean flushCache)
-            {
-                return new Point(100, 100); // dummy data
-            }
-        });
-
+        setLayout();
+        
         this.addControlListener(new ControlListener()
         {
             public void controlMoved(ControlEvent ce)
@@ -398,6 +315,114 @@ public class Rendering extends Composite implements IDebugEventSetListener
         DebugPlugin.getDefault().addDebugEventListener(this);
     }
 
+    protected void setLayout()
+    {
+	    this.setLayout(new Layout()
+	    {
+	        public void layout(Composite composite, boolean changed)
+	        {
+	        	int xOffset = 0;
+	        	if(Rendering.this.getHorizontalBar().isVisible())
+	            	xOffset = Rendering.this.getHorizontalBar().getSelection();
+	        	
+	            int x = xOffset * -1;
+	            int y = 0;
+	            
+	            if(fAddressBarControl.isVisible())
+	            {
+	            	fAddressBarControl.setBounds(0, 0,
+	                    Rendering.this.getBounds().width, fAddressBarControl
+	                        .computeSize(100, 30).y); // FIXME
+	                //y = fAddressBarControl.getBounds().height;
+	            }
+	
+	            if(fAddressPane.isPaneVisible())
+	            {
+	                fAddressPane.setBounds(x, y,
+	                    fAddressPane.computeSize(0, 0).x, Rendering.this
+	                        .getBounds().height
+	                        - y);
+	                x = fAddressPane.getBounds().x
+	                    + fAddressPane.getBounds().width;
+	            }
+	
+	            if(fBinaryPane.isPaneVisible())
+	            {
+	                fBinaryPane.setBounds(x, y,
+	                    fBinaryPane.computeSize(0, 0).x, Rendering.this
+	                        .getBounds().height
+	                        - y);
+	                x = fBinaryPane.getBounds().x
+	                    + fBinaryPane.getBounds().width;
+	            }
+	
+	            if(fTextPane.isPaneVisible())
+	            {
+	                fTextPane.setBounds(x, y, 
+	                	Math.max(fTextPane.computeSize(0, 0).x, Rendering.this.getClientArea().width 
+	                		- x - xOffset), Rendering.this.getBounds().height - y);
+	            }
+	
+	            if(getClientArea().width >= fTextPane.getBounds().x + fTextPane.getBounds().width + xOffset)
+	            {
+	            	Rendering.this.getHorizontalBar().setVisible(false);
+	            }
+	            else
+	            {
+	            	ScrollBar horizontal = Rendering.this.getHorizontalBar();
+	            	
+	            	horizontal.setVisible(true);
+	            	horizontal.setMinimum(0);
+	            	horizontal.setMaximum(fTextPane.getBounds().x 
+	            		+ fTextPane.getBounds().width + xOffset);
+	            	horizontal.setThumb(getClientArea().width);
+	            	horizontal.setPageIncrement(40); // TODO ?
+	            	horizontal.setIncrement(20); // TODO ?
+	            }
+	        }
+	
+	        protected Point computeSize(Composite composite, int wHint,
+	            int hHint, boolean flushCache)
+	        {
+	            return new Point(100, 100); // dummy data
+	        }
+	    });
+    }
+    
+    protected void handleDownArrow()
+    {
+        fViewportAddress = fViewportAddress.add(BigInteger
+                .valueOf(getAddressableCellsPerRow()));
+            ensureViewportAddressDisplayable();
+            redrawPanes();    	
+    }
+    
+    protected void handleUpArrow()
+    {
+    	fViewportAddress = fViewportAddress.subtract(BigInteger
+            .valueOf(getAddressableCellsPerRow()));
+        ensureViewportAddressDisplayable();
+        redrawPanes();
+    }
+    
+    protected void handlePageDown()
+    {
+        fViewportAddress = fViewportAddress.add(BigInteger
+                .valueOf(getAddressableCellsPerRow()
+                    * (Rendering.this.getRowCount() - 1)));
+            ensureViewportAddressDisplayable();
+            redrawPanes();    	
+    }
+
+    protected void handlePageUp()
+    {
+        fViewportAddress = fViewportAddress.subtract(BigInteger
+                .valueOf(getAddressableCellsPerRow()
+                    * (Rendering.this.getRowCount() - 1)));
+            ensureViewportAddressDisplayable();
+            redrawPanes();    	
+    }
+    
     protected AddressPane createAddressPane()
     {
     	return new AddressPane(this);
@@ -561,7 +586,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
         return false;
     }
 
-    private IMemoryBlockExtension getMemoryBlock()
+    protected IMemoryBlockExtension getMemoryBlock()
     {
         IMemoryBlock block = fParent.getMemoryBlock();
         if(block != null)
@@ -576,12 +601,12 @@ public class Rendering extends Composite implements IDebugEventSetListener
     	return fParent.getBigBaseAddress();
     }
 
-    protected int getAddressableSize()
+    public int getAddressableSize()
     {
     	return fParent.getAddressableSize();
     }
     
-    protected ViewportCache getViewportCache()
+    protected IViewportCache getViewportCache()
     {
         return fViewportCache;
     }
@@ -589,7 +614,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
     public MemoryByte[] getBytes(BigInteger address, int bytes)
         throws DebugException
     {
-        return fViewportCache.getBytes(address, bytes);
+        return getViewportCache().getBytes(address, bytes);
     }
 
     // default visibility for performance
@@ -599,7 +624,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
     {
     }
     
-    class ViewportCache extends Thread
+    class ViewportCache extends Thread implements IViewportCache
     {
     	class ArchiveDeltas implements Request
     	{
@@ -665,7 +690,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
             }
         }
 
-        protected void refresh()
+        public void refresh()
         {
             assert Thread.currentThread().equals(
                 Display.getDefault().getThread()) : TraditionalRenderingMessages
@@ -677,7 +702,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
             }
         }
         
-        protected void archiveDeltas()
+        public void archiveDeltas()
         {
         	assert Thread.currentThread().equals(
                 Display.getDefault().getThread()) : TraditionalRenderingMessages
@@ -886,7 +911,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
         }
 
         // bytes will be fetched from cache
-        protected MemoryByte[] getBytes(BigInteger address, int bytesRequested)
+        public MemoryByte[] getBytes(BigInteger address, int bytesRequested)
             throws DebugException
         {
             assert Thread.currentThread().equals(
@@ -933,7 +958,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
             return bytes;    
         }
 
-        private boolean containsEditedCell(BigInteger address)
+        public boolean containsEditedCell(BigInteger address)
         {
             assert Thread.currentThread().equals(
                 Display.getDefault().getThread()) : TraditionalRenderingMessages
@@ -951,7 +976,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
             return (MemoryByte[]) fEditBuffer.get(address);
         }
 
-        protected void clearEditBuffer()
+        public void clearEditBuffer()
         {
             assert Thread.currentThread().equals(
                 Display.getDefault().getThread()) : TraditionalRenderingMessages
@@ -961,7 +986,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
             Rendering.this.redrawPanes();
         }
 
-        protected void writeEditBuffer()
+        public void writeEditBuffer()
         {
             assert Thread.currentThread().equals(
                 Display.getDefault().getThread()) : TraditionalRenderingMessages
@@ -997,7 +1022,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
             clearEditBuffer();
         }
 
-        protected void setEditedValue(BigInteger address, MemoryByte[] bytes)
+        public void setEditedValue(BigInteger address, MemoryByte[] bytes)
         {
             assert Thread.currentThread().equals(
                 Display.getDefault().getThread()) : TraditionalRenderingMessages
@@ -1334,9 +1359,9 @@ public class Rendering extends Composite implements IDebugEventSetListener
     {
     	if(!this.isDisposed())
     	{
-    		if(this.isVisible() && fViewportCache != null)
+    		if(this.isVisible() && getViewportCache() != null)
     		{
-    			fViewportCache.refresh();
+    			getViewportCache().refresh();
     		}
     		else
     		{
@@ -1348,7 +1373,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
     
     protected void archiveDeltas()
     {
-    	fViewportCache.archiveDeltas();
+    	this.getViewportCache().archiveDeltas();
     }
 
     public void gotoAddress(BigInteger address)
@@ -1364,7 +1389,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
         redrawPanes();
     }
 
-    protected void setViewportStartAddress(BigInteger newAddress)
+    public void setViewportStartAddress(BigInteger newAddress)
     {
         fViewportAddress = newAddress;
     }
@@ -1615,6 +1640,36 @@ public class Rendering extends Composite implements IDebugEventSetListener
         }
     }
 
+	protected void redrawPane(int paneId)
+	{
+    	if(!isDisposed() && this.isVisible())
+    	{
+    		AbstractPane pane = null;
+    		if(paneId == Rendering.PANE_ADDRESS)
+    		{
+    			pane = fAddressPane;
+    		}
+    		else if(paneId == Rendering.PANE_BINARY)
+    		{
+    			pane = fBinaryPane;
+    		}
+    		if(paneId == Rendering.PANE_TEXT)
+    		{
+    			pane = fTextPane;
+    		}
+	        if(pane != null && pane.isPaneVisible())
+	        {
+	        	pane.redraw();
+	        	pane.setRowCount();
+	            if(pane.isFocusControl())
+	            	pane.updateCaret();
+	        }
+	
+    	}
+    	
+    	fParent.updateRenderingLabels();
+	}
+	
     protected void redrawPanes()
     {
     	if(!isDisposed() && this.isVisible())

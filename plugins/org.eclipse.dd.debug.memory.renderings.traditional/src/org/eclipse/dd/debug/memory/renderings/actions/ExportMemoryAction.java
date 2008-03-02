@@ -159,16 +159,20 @@ public class ExportMemoryAction implements IViewActionDelegate {
 								buf.append(bString);
 							}
 							
-							BigInteger checksum = BigInteger.ZERO;
+							/*
+							 * The least significant byte of the one's complement of the sum of the values
+	                         * represented by the pairs of characters making up the records length, address,
+	                         * and the code/data fields.
+							 */
+							byte checksum = 0;
 							
 							for(int i = 0; i < buf.length(); i+=2)
 							{
-								BigInteger value = new BigInteger(buf.substring(i, i+1), 16);
-								checksum = checksum.add(value);
+								BigInteger value = new BigInteger(buf.substring(i, i+2), 16);
+								checksum += value.byteValue();
 							}
 							
-							buf.append(BigInteger.valueOf(0xFF - checksum.byteValue()).and(
-									BigInteger.valueOf(0xFF)).toString(16));
+							buf.append(BigInteger.valueOf(0xFF - checksum).and(BigInteger.valueOf(0xFF)).toString(16));
 							
 							writer.write(buf.toString().toUpperCase());
 							writer.write("\n");

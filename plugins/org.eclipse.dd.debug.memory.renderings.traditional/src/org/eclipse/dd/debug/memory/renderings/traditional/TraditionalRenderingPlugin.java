@@ -15,7 +15,8 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class TraditionalRenderingPlugin extends AbstractUIPlugin 
 {
-
+	private static final String PLUGIN_ID = "org.eclipse.dd.debug.memory.renderings.traditional"; //$NON-NLS-1$
+	
 	private static TraditionalRenderingPlugin plugin;
 	
 	public TraditionalRenderingPlugin() 
@@ -29,5 +30,12 @@ public class TraditionalRenderingPlugin extends AbstractUIPlugin
 	 */
 	public static TraditionalRenderingPlugin getDefault() {
 		return plugin;
+	}
+	
+	/**
+	 * Returns the unique identifier for this plugin.
+	 */
+	public static String getUniqueIdentifier() {
+		return PLUGIN_ID;
 	}
 }

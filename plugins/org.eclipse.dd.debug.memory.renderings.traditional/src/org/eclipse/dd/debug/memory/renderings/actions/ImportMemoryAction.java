@@ -21,9 +21,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.dd.debug.memory.renderings.traditional.TraditionalRenderingPlugin;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
-import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.memory.MemoryView;
 import org.eclipse.debug.internal.ui.views.memory.MemoryViewIdRegistry;
@@ -89,7 +89,7 @@ public class ImportMemoryAction implements IViewActionDelegate {
 				BigInteger start = (BigInteger) results[2];
 				File file = (File) results[3];
 				
-				if("S-Record".equals(format))
+				if("S-Record".equals(format)) //$NON-NLS-1$
 				{
 					downloadSRecord(file, start, useCustomAddress.booleanValue(), (IMemoryBlockExtension) memBlock); // FIXME
 				}
@@ -101,6 +101,7 @@ public class ImportMemoryAction implements IViewActionDelegate {
 	private void downloadSRecord(final File inputFile, final BigInteger startAddress, final boolean useCustomAddress, final IMemoryBlockExtension memblock)
 	{
 		Job job = new Job("Memory Download from S-Record File"){ //$NON-NLS-1$
+			@Override
 			public IStatus run(IProgressMonitor monitor) {
 				
 				try
@@ -125,7 +126,7 @@ public class ImportMemoryAction implements IViewActionDelegate {
 							jobs = jobs.divide(factor);
 						}
 							
-						monitor.beginTask("Transferring Data", jobs.intValue());
+						monitor.beginTask("Transferring Data", jobs.intValue()); //$NON-NLS-1$
 						
 						BigInteger jobCount = BigInteger.ZERO;
 						String line = reader.readLine();
@@ -139,11 +140,11 @@ public class ImportMemoryAction implements IViewActionDelegate {
 							
 							BigInteger recordAddress = null;
 				
-							if("S3".equals(recordType))
+							if("S3".equals(recordType)) //$NON-NLS-1$
 								addressSize = 4;
-							else if("S1".equals(recordType))
+							else if("S1".equals(recordType)) //$NON-NLS-1$
 								addressSize = 2;
-							else if("S2".equals(recordType))
+							else if("S2".equals(recordType)) //$NON-NLS-1$
 								addressSize = 3;
 							
 							recordAddress = new BigInteger(line.substring(position, position + addressSize * 2), 16);
@@ -161,6 +162,31 @@ public class ImportMemoryAction implements IViewActionDelegate {
 								data[i] = new BigInteger(line.substring(position++, position++ + 1), 16).byteValue();
 							}
 
+							/*
+							 * The least significant byte of the one's complement of the sum of the values
+	                         * represented by the pairs of characters making up the records length, address,
+	                         * and the code/data fields.
+							 */
+							StringBuffer buf = new StringBuffer(line.substring(2));
+							byte checksum = 0;
+							
+							for(int i = 0; i < buf.length(); i+=2)
+							{
+								BigInteger value = new BigInteger(buf.substring(i, i+2), 16);
+								checksum += value.byteValue();
+							}
+							
+							/*
+							 * Since we included the checksum in the checksum calculation the checksum
+							 * ( if correct ) will always be 0xFF which is -1 using the signed byte size
+							 * calculation here.
+							 */
+							if ( checksum != (byte) -1 ) {
+								reader.close();
+								monitor.done();
+								return new Status( IStatus.ERROR, TraditionalRenderingPlugin.getUniqueIdentifier(), "Checksum failure of line = " + line); //$NON-NLS-1$
+							}
+							
 							// FIXME error on incorrect checksum
 							
 							memblock.setValue(recordAddress.subtract(memblock.getBigBaseAddress()), data);

@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.IASTMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -110,19 +111,23 @@ public class CMacroExpansionInput {
     		return PROCESS_CONTINUE;
     	}
     	
+		@Override
 		public int visit(IASTTranslationUnit tu) {
     		return processNode(tu);
     	}
     	
-    	public int visit(IASTDeclaration declaration) {
+    	@Override
+		public int visit(IASTDeclaration declaration) {
     		return processNode(declaration);
     	}
     	
-    	public int visit(IASTExpression expression) {
+    	@Override
+		public int visit(IASTExpression expression) {
     		return processNode(expression);
     	}
  
-    	public int visit(IASTStatement statement) {
+    	@Override
+		public int visit(IASTStatement statement) {
     		return processNode(statement);
     	}
     	
@@ -159,7 +164,7 @@ public class CMacroExpansionInput {
 					IBinding binding= macroName.getBinding();
 					// skip macro references that belong to a macro definition or an undef directive
 					if (binding instanceof IMacroBinding && !macroName.isDefinition() &&
-							macroName.getParent() instanceof IASTTranslationUnit) {
+							macroName.getParent() instanceof IASTPreprocessorMacroExpansion) {
 						addExpansionNode(node);
 						createMacroExpansionExplorer(ast);
 						return Status.OK_STATUS;

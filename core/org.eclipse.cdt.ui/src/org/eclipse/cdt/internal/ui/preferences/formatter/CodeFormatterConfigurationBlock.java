@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -98,10 +98,7 @@ public class CodeFormatterConfigurationBlock extends ProfileConfigurationBlock {
 	 */
 	public CodeFormatterConfigurationBlock(IProject project, PreferencesAccess access) {
 		super(project, access, DIALOGSTORE_LASTSAVELOADPATH);
-		if (project == null) {
-			//TLETODO formatter customizable on project level?
-			fCustomCodeFormatterBlock= new CustomCodeFormatterBlock(access);
-		}
+		fCustomCodeFormatterBlock= new CustomCodeFormatterBlock(project, access);
 	}
 
 	protected IProfileVersioner createProfileVersioner() {
@@ -116,12 +113,9 @@ public class CodeFormatterConfigurationBlock extends ProfileConfigurationBlock {
 	    return new FormatterProfileManager(profiles, context, access, profileVersioner);
     }
 	
-	
 	protected void configurePreview(Composite composite, int numColumns, ProfileManager profileManager) {
-		if (fCustomCodeFormatterBlock != null) {
-			fCustomCodeFormatterBlock.createContents(composite);
-		}
-		
+		fCustomCodeFormatterBlock.createContents(composite);
+
 		createLabel(composite, FormatterMessages.CodingStyleConfigurationBlock_preview_label_text, numColumns);
 		TranslationUnitPreview result= new TranslationUnitPreview(profileManager.getSelected().getSettings(), composite);
 		result.setFormatterId(fCustomCodeFormatterBlock.getFormatterId());
@@ -138,7 +132,6 @@ public class CodeFormatterConfigurationBlock extends ProfileConfigurationBlock {
 		new PreviewController(profileManager);
 	}
 
-    
     protected ModifyDialog createModifyDialog(Shell shell, Profile profile, ProfileManager profileManager, ProfileStore profileStore, boolean newProfile) {
         return new FormatterModifyDialog(shell, profile, profileManager, profileStore, newProfile, FORMATTER_DIALOG_PREFERENCE_KEY, DIALOGSTORE_LASTSAVELOADPATH);
     }

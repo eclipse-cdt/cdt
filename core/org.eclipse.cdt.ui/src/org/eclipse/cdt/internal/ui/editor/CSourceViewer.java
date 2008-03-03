@@ -169,6 +169,7 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 
 		if (configuration instanceof CSourceViewerConfiguration) {
 			CSourceViewerConfiguration cConfiguration= (CSourceViewerConfiguration)configuration;
+			cConfiguration.resetScanners();
 			fOutlinePresenter= cConfiguration.getOutlinePresenter(this);
 			if (fOutlinePresenter != null)
 				fOutlinePresenter.install(this);
@@ -404,7 +405,7 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 		Assert.isNotNull(listener);
 
 		if (fTextPresentationListeners == null)
-			fTextPresentationListeners= new ArrayList();
+			fTextPresentationListeners= new ArrayList<ITextPresentationListener>();
 
 		fTextPresentationListeners.remove(listener);
 		fTextPresentationListeners.add(0, listener);

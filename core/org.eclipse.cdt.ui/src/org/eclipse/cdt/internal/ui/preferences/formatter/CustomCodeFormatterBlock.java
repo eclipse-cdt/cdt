@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,11 +18,13 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Observable;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -47,7 +49,7 @@ import org.eclipse.cdt.internal.ui.preferences.PreferencesAccess;
  */
 public class CustomCodeFormatterBlock extends Observable {
 
-	private HashMap idMap = new HashMap();
+	private HashMap<String, String> idMap = new HashMap<String, String>();
 	private IEclipsePreferences fPrefs;
 	private String fDefaultFormatterId;
 	private Combo fFormatterCombo;
@@ -55,11 +57,29 @@ public class CustomCodeFormatterBlock extends Observable {
 	private static final String ATTR_ID = "id"; //$NON-NLS-1$
 	private static final String DEFAULT = FormatterMessages.CustomCodeFormatterBlock_default_formatter;
 
-	public CustomCodeFormatterBlock(PreferencesAccess access) {
-		fPrefs = access.getInstanceScope().getNode(CUIPlugin.PLUGIN_ID);
-		IEclipsePreferences defaults= access.getDefaultScope().getNode(CUIPlugin.PLUGIN_ID);
+	public CustomCodeFormatterBlock(IProject project, PreferencesAccess access) {
+		final IScopeContext scope;
+		final IEclipsePreferences defaults;
+		if (project != null) {
+			scope= access.getProjectScope(project);
+			defaults= access.getInstanceScope().getNode(CCorePlugin.PLUGIN_ID);
+		} else {
+			scope= access.getInstanceScope();
+			defaults= access.getDefaultScope().getNode(CCorePlugin.PLUGIN_ID);
+		}
+		fPrefs= scope.getNode(CCorePlugin.PLUGIN_ID);
 		fDefaultFormatterId= defaults.get(CCorePreferenceConstants.CODE_FORMATTER, null);
-
+		if (fDefaultFormatterId == null) {
+			// backward compatibility: use UI prefs
+			IEclipsePreferences instance= access.getInstanceScope().getNode(CUIPlugin.PLUGIN_ID);
+			fDefaultFormatterId= instance.get(CCorePreferenceConstants.CODE_FORMATTER, null);
+			if (fDefaultFormatterId != null) {
+				instance.remove(CCorePreferenceConstants.CODE_FORMATTER);
+				if (project != null) {
+					defaults.put(CCorePreferenceConstants.CODE_FORMATTER, fDefaultFormatterId);
+				}
+			}
+		}
 		initializeFormatters();
 	}
 
@@ -68,8 +88,8 @@ public class CustomCodeFormatterBlock extends Observable {
 			return;
 		}
 		String text = fFormatterCombo.getText();
-		String formatterId = (String)idMap.get(text);
-		if (formatterId != null && formatterId.length() > 0) {
+		String formatterId = idMap.get(text);
+		if (formatterId != null && !formatterId.equals(fDefaultFormatterId)) {
 			fPrefs.put(CCorePreferenceConstants.CODE_FORMATTER, formatterId);
 		} else {
 			// simply reset to the default one.
@@ -78,11 +98,7 @@ public class CustomCodeFormatterBlock extends Observable {
 	}
 
 	public void performDefaults() {
-		if (fDefaultFormatterId != null) {
-			fPrefs.put(CCorePreferenceConstants.CODE_FORMATTER, fDefaultFormatterId);
-		} else {
-			fPrefs.remove(CCorePreferenceConstants.CODE_FORMATTER);
-		}
+		fPrefs.remove(CCorePreferenceConstants.CODE_FORMATTER);
 
 		if (fFormatterCombo == null) {
 			return;
@@ -110,7 +126,7 @@ public class CustomCodeFormatterBlock extends Observable {
 		if (fFormatterCombo == null) {
 			return fPrefs.get(CCorePreferenceConstants.CODE_FORMATTER, fDefaultFormatterId);
 		}
-		String formatterId= (String)idMap.get(fFormatterCombo.getText());
+		String formatterId= idMap.get(fFormatterCombo.getText());
 		return formatterId;
 	}
 
@@ -134,9 +150,9 @@ public class CustomCodeFormatterBlock extends Observable {
 				handleFormatterChanged();
 			}
 		});
-		Iterator items = idMap.keySet().iterator();
+		Iterator<String> items = idMap.keySet().iterator();
 		while (items.hasNext()) {
-			fFormatterCombo.add((String) items.next());
+			fFormatterCombo.add(items.next());
 		}
 
 		final String noteTitle= FormatterMessages.CustomCodeFormatterBlock_formatter_note;
@@ -175,8 +191,8 @@ public class CustomCodeFormatterBlock extends Observable {
 	}
 
 	private void initializeFormatters() {
-		idMap = new HashMap();
-		idMap.put(DEFAULT, null);
+		idMap = new HashMap<String, String>();
+		idMap.put(DEFAULT, CCorePreferenceConstants.DEFAULT_CODE_FORMATTER);
 		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, CCorePlugin.FORMATTER_EXTPOINT_ID);
 		if (point != null) {
 			IExtension[] exts = point.getExtensions();

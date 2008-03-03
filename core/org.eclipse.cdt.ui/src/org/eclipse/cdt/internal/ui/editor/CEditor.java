@@ -16,15 +16,18 @@ package org.eclipse.cdt.internal.ui.editor;
 
 
 import java.text.CharacterIterator;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -126,6 +129,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.dnd.IDragAndDropService;
+import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.ide.IGotoMarker;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
@@ -135,6 +139,7 @@ import org.eclipse.ui.part.IShowInTargetList;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
+import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.texteditor.ContentAssistAction;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
@@ -204,10 +209,12 @@ import org.eclipse.cdt.internal.ui.text.CWordFinder;
 import org.eclipse.cdt.internal.ui.text.CWordIterator;
 import org.eclipse.cdt.internal.ui.text.DocumentCharacterIterator;
 import org.eclipse.cdt.internal.ui.text.ICReconcilingListener;
+import org.eclipse.cdt.internal.ui.text.PreferencesAdapter;
 import org.eclipse.cdt.internal.ui.text.Symbols;
 import org.eclipse.cdt.internal.ui.text.c.hover.SourceViewerInformationControl;
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 import org.eclipse.cdt.internal.ui.util.CUIHelp;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.internal.ui.viewsupport.ISelectionListenerWithAST;
 import org.eclipse.cdt.internal.ui.viewsupport.SelectionListenerWithASTManager;
 
@@ -372,10 +379,12 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 				preferences.put(DefaultCodeFormatterConstants.FORMATTER_CURRENT_FILE, tu.getResource());
 			}
 
-			// custom formatter specified?
-			String customFormatterId= getPreferenceStore().getString(CCorePreferenceConstants.CODE_FORMATTER);
-			if (customFormatterId != null) {
-				preferences.put(CCorePreferenceConstants.CODE_FORMATTER, customFormatterId);
+			if (cProject == null) {
+				// custom formatter specified?
+				String customFormatterId= getPreferenceStore().getString(CCorePreferenceConstants.CODE_FORMATTER);
+				if (customFormatterId != null) {
+					preferences.put(CCorePreferenceConstants.CODE_FORMATTER, customFormatterId);
+				}
 			}
 			context.setProperty(FormattingContextProperties.CONTEXT_PREFERENCES, preferences);
 
@@ -1234,17 +1243,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	 * Default constructor.
 	 */
 	public CEditor() {
-		super();
-	}
-
-	/**
-	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#initializeEditor()
-	 */
-	protected void initializeEditor() {
-		IPreferenceStore store= CUIPlugin.getDefault().getCombinedPreferenceStore();
-		setPreferenceStore(store);
-		CTextTools textTools = CUIPlugin.getDefault().getTextTools();
-		setSourceViewerConfiguration(new CSourceViewerConfiguration(textTools.getColorManager(), store, this, textTools.getDocumentPartitioning()));
 		setDocumentProvider(CUIPlugin.getDefault().getDocumentProvider());
 
 		setEditorContextMenuId("#CEditorContext"); //$NON-NLS-1$
@@ -1252,29 +1250,50 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		setOutlinerContextMenuId("#CEditorOutlinerContext"); //$NON-NLS-1$
 
 		fCEditorErrorTickUpdater = new CEditorErrorTickUpdater(this);
+	}
 
-		fStickyOccurrenceAnnotations= store.getBoolean(PreferenceConstants.EDITOR_STICKY_OCCURRENCES);
+	/**
+	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#initializeEditor()
+	 */
+	protected void initializeEditor() {
 	}
 
 	/**
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#doSetInput(org.eclipse.ui.IEditorInput)
 	 */
 	protected void doSetInput(IEditorInput input) throws CoreException {
-		boolean reuse= getEditorInput() != null;
+		ISourceViewer sourceViewer= getSourceViewer();
+		if (!(sourceViewer instanceof ISourceViewerExtension2)) {
+			setPreferenceStore(createCombinedPreferenceStore(input));
+			internalDoSetInput(input);
+			return;
+		}
+
+		// uninstall & unregister preference store listener
+		getSourceViewerDecorationSupport(sourceViewer).uninstall();
+		((ISourceViewerExtension2)sourceViewer).unconfigure();
+
+		setPreferenceStore(createCombinedPreferenceStore(input));
+
+		// install & register preference store listener
+		sourceViewer.configure(getSourceViewerConfiguration());
+		getSourceViewerDecorationSupport(sourceViewer).install(getPreferenceStore());
+
+		internalDoSetInput(input);
+	}
+
+	private void internalDoSetInput(IEditorInput input) throws CoreException {
+		ISourceViewer sourceViewer= getSourceViewer();
+		CSourceViewer cSourceViewer= null;
+		if (sourceViewer instanceof CSourceViewer) {
+			cSourceViewer= (CSourceViewer) sourceViewer;
+		}
+
+		IPreferenceStore store= getPreferenceStore();
+		if (cSourceViewer != null && isFoldingEnabled() && (store == null || !store.getBoolean(PreferenceConstants.EDITOR_SHOW_SEGMENTS)))
+			cSourceViewer.prepareDelayedProjection();
 
 		super.doSetInput(input);
-
-		if (reuse) {
-			// in case language changed, need to reconfigure the viewer
-			ISourceViewer viewer= getSourceViewer();
-			if (viewer instanceof ISourceViewerExtension2) {
-				ISourceViewerExtension2 viewerExt2= (ISourceViewerExtension2)viewer;
-				viewerExt2.unconfigure();
-				CSourceViewerConfiguration cConfig= (CSourceViewerConfiguration)getSourceViewerConfiguration();
-				cConfig.resetScanners();
-				viewer.configure(cConfig);
-			}
-		}
 
 		setOutlinePageInput(fOutlinePage, input);
 
@@ -1284,13 +1303,31 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		if (fCEditorErrorTickUpdater != null) {
 			fCEditorErrorTickUpdater.updateEditorImage(getInputCElement());
 		}
-		
 		ICElement element= getInputCElement();
 		if (element instanceof ITranslationUnit) {
 			fBracketMatcher.configure(((ITranslationUnit)element).getLanguage());
 		} else {
 			fBracketMatcher.configure(null);
 		}
+	}
+
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#setPreferenceStore(org.eclipse.jface.preference.IPreferenceStore)
+	 * @since 5.0
+	 */
+	protected void setPreferenceStore(IPreferenceStore store) {
+		super.setPreferenceStore(store);
+		SourceViewerConfiguration sourceViewerConfiguration= getSourceViewerConfiguration();
+		if (!(sourceViewerConfiguration instanceof CSourceViewerConfiguration)) {
+			CTextTools textTools= CUIPlugin.getDefault().getTextTools();
+			setSourceViewerConfiguration(new CSourceViewerConfiguration(textTools.getColorManager(), store, this, ICPartitions.C_PARTITIONING));
+		}
+
+		if (getSourceViewer() instanceof CSourceViewer)
+			((CSourceViewer)getSourceViewer()).setPreferenceStore(store);
+
+		fMarkOccurrenceAnnotations= store.getBoolean(PreferenceConstants.EDITOR_MARK_OCCURRENCES);
+		fStickyOccurrenceAnnotations= store.getBoolean(PreferenceConstants.EDITOR_STICKY_OCCURRENCES);
 	}
 
 	/**
@@ -2171,6 +2208,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		if (sourceViewer instanceof ITextViewerExtension)
 			((ITextViewerExtension) sourceViewer).prependVerifyKeyListener(fBracketInserter);
 
+		if (isMarkingOccurrences())
+			installOccurrencesFinder(false);
 	}
 
 	/*
@@ -2735,11 +2774,11 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		}
 
 		// delayed installation of mark occurrences
-		if (!fMarkOccurrenceAnnotations && isMarkingOccurrences())
-			getSite().getShell().getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					installOccurrencesFinder(true);
-				}});
+//		if (!fMarkOccurrenceAnnotations && isMarkingOccurrences())
+//			getSite().getShell().getDisplay().asyncExec(new Runnable() {
+//				public void run() {
+//					installOccurrencesFinder(true);
+//				}});
 	}
 
 	/**
@@ -3172,6 +3211,27 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 			}
 			fOccurrenceAnnotations= null;
 		}
+	}
+
+	/**
+	 * Creates and returns the preference store for this editor with the given input.
+	 *
+	 * @param input The editor input for which to create the preference store
+	 * @return the preference store for this editor
+	 */
+	private IPreferenceStore createCombinedPreferenceStore(IEditorInput input) {
+		List<IPreferenceStore> stores= new ArrayList<IPreferenceStore>(3);
+
+		ICProject project= EditorUtility.getCProject(input);
+		if (project != null) {
+			stores.add(new EclipsePreferencesAdapter(new ProjectScope(project.getProject()), CCorePlugin.PLUGIN_ID));
+		}
+
+		stores.add(CUIPlugin.getDefault().getPreferenceStore());
+		stores.add(new PreferencesAdapter(CCorePlugin.getDefault().getPluginPreferences()));
+		stores.add(EditorsUI.getPreferenceStore());
+
+		return new ChainedPreferenceStore(stores.toArray(new IPreferenceStore[stores.size()]));
 	}
 
 }

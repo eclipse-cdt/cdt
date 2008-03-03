@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,20 +8,17 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Sergey Prigogin, Google
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.preferences;
 
 
-import org.eclipse.core.runtime.IAdaptable;
-
 import org.eclipse.core.resources.IProject;
-
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.preference.IPreferencePageContainer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-
-import org.eclipse.jface.preference.IPreferencePageContainer;
-
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 import org.eclipse.ui.preferences.IWorkingCopyManager;
@@ -47,7 +44,7 @@ public class CodeFormatterPreferencePage extends PropertyAndPreferencePage {
 		setTitle(PreferencesMessages.CodeFormatterPreferencePage_title);		 
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
@@ -65,21 +62,21 @@ public class CodeFormatterPreferencePage extends PropertyAndPreferencePage {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ICHelpContextIds.CODEFORMATTER_PREFERENCE_PAGE);
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.cdt.internal.ui.preferences.PropertyAndPreferencePage#createPreferenceContent(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createPreferenceContent(Composite composite) {
 		return fConfigurationBlock.createContents(composite);
 	}
 	
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.cdt.internal.ui.preferences.PropertyAndPreferencePage#hasProjectSpecificOptions(org.eclipse.core.resources.IProject)
 	 */
 	protected boolean hasProjectSpecificOptions(IProject project) {
 		return fConfigurationBlock.hasProjectSpecificOptions(project);
 	}
 	
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.cdt.internal.ui.preferences.PropertyAndPreferencePage#enableProjectSpecificSettings(boolean)
 	 */
 	protected void enableProjectSpecificSettings(boolean useProjectSpecificSettings) {
@@ -89,23 +86,21 @@ public class CodeFormatterPreferencePage extends PropertyAndPreferencePage {
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.cdt.internal.ui.preferences.PropertyAndPreferencePage#getPreferencePageID()
 	 */
 	protected String getPreferencePageID() {
 		return PREF_ID;
 	}
 	
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.cdt.internal.ui.preferences.PropertyAndPreferencePage#getPropertyPageID()
 	 */
 	protected String getPropertyPageID() {
-		return null;
-		// project specific settings unsupported for now
-//		return PROP_ID;
+		return PROP_ID;
 	}
 	
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
 	 */
 	public void dispose() {
@@ -115,7 +110,7 @@ public class CodeFormatterPreferencePage extends PropertyAndPreferencePage {
 		super.dispose();
 	}
 	
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.preference.IPreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
@@ -125,7 +120,7 @@ public class CodeFormatterPreferencePage extends PropertyAndPreferencePage {
 		super.performDefaults();
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
 	public boolean performOk() {
@@ -135,7 +130,7 @@ public class CodeFormatterPreferencePage extends PropertyAndPreferencePage {
 		return super.performOk();
 	}
 	
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
 	public void performApply() {
@@ -145,7 +140,7 @@ public class CodeFormatterPreferencePage extends PropertyAndPreferencePage {
 		super.performApply();
 	}
 	
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.cdt.internal.ui.preferences.PropertyAndPreferencePage#setElement(org.eclipse.core.runtime.IAdaptable)
 	 */
 	public void setElement(IAdaptable element) {

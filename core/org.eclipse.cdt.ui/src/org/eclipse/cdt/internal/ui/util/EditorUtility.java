@@ -618,4 +618,28 @@ public class EditorUtility {
 		}
 		return store;
 	}
+
+	/**
+	 * Returns the C project for a given editor input or <code>null</code> if no corresponding
+	 * C project exists.
+	 *
+	 * @param input the editor input
+	 * @return the corresponding C project
+	 *
+	 * @since 5.0
+	 */
+	public static ICProject getCProject(IEditorInput input) {
+		ICProject cProject= null;
+		if (input instanceof IFileEditorInput) {
+			IProject project= ((IFileEditorInput)input).getFile().getProject();
+			if (project != null) {
+				cProject= CoreModel.getDefault().create(project);
+				if (!cProject.exists())
+					cProject= null;
+			}
+		} else if (input instanceof ITranslationUnitEditorInput) {
+			cProject= ((ITranslationUnitEditorInput)input).getTranslationUnit().getCProject();
+		}
+		return cProject;
+	}
 }

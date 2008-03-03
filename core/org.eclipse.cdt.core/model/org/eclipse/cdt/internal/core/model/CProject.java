@@ -50,11 +50,15 @@ import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.osgi.service.prefs.BackingStoreException;
 
 public class CProject extends Openable implements ICProject {
 
@@ -242,15 +246,14 @@ public class CProject extends Openable implements ICProject {
 	 * @see org.eclipse.cdt.core.model.ICProject#getOption(String, boolean)
 	 */
 	public String getOption(String optionName, boolean inheritCCoreOptions) {
-
 		if (CModelManager.OptionNames.contains(optionName)) {
-			Preferences preferences = getPreferences();
-
-			if (preferences == null || preferences.isDefault(optionName)) {
-				return inheritCCoreOptions ? CCorePlugin.getOption(optionName) : null;
+			IEclipsePreferences preferences = getPreferences();
+			final String cCoreDefault= inheritCCoreOptions ? CCorePlugin.getOption(optionName) : null;
+			if (preferences == null) {
+				return cCoreDefault;
 			}
-
-			return preferences.getString(optionName).trim();
+			String value= preferences.get(optionName, cCoreDefault).trim();
+			return value == null ? null : value.trim();
 		}
 
 		return null;
@@ -261,30 +264,25 @@ public class CProject extends Openable implements ICProject {
 	 */
 	public Map getOptions(boolean inheritCCoreOptions) {
 		// initialize to the defaults from CCorePlugin options pool
-		Map options = inheritCCoreOptions ? CCorePlugin.getOptions() : new HashMap(5);
+		Map options= inheritCCoreOptions ? CCorePlugin.getOptions() : new HashMap(5);
 
-		Preferences preferences = getPreferences();
+		IEclipsePreferences preferences = getPreferences();
 		if (preferences == null)
 			return options;
-		HashSet optionNames = CModelManager.OptionNames;
+		HashSet optionNames= CModelManager.OptionNames;
 
-		// get preferences set to their default
-		if (inheritCCoreOptions) {
-			String[] defaultPropertyNames = preferences.defaultPropertyNames();
-			for (int i = 0; i < defaultPropertyNames.length; i++) {
-				String propertyName = defaultPropertyNames[i];
-				if (optionNames.contains(propertyName)) {
-					options.put(propertyName, preferences.getDefaultString(propertyName).trim());
+		// create project options
+		try {
+			String[] propertyNames= preferences.keys();
+			for (int i= 0; i < propertyNames.length; i++){
+				String propertyName= propertyNames[i];
+				String value= preferences.get(propertyName, null);
+				if (value != null && optionNames.contains(propertyName)){
+					options.put(propertyName, value.trim());
 				}
 			}
-		}
-		// get custom preferences not set to their default
-		String[] propertyNames = preferences.propertyNames();
-		for (int i = 0; i < propertyNames.length; i++) {
-			String propertyName = propertyNames[i];
-			if (optionNames.contains(propertyName)) {
-				options.put(propertyName, preferences.getString(propertyName).trim());
-			}
+		} catch (BackingStoreException e) {
+			// ignore silently
 		}
 		return options;
 	}
@@ -296,11 +294,20 @@ public class CProject extends Openable implements ICProject {
 		if (!CModelManager.OptionNames.contains(optionName))
 			return; // unrecognized option
 
-		Preferences preferences = getPreferences();
-		preferences.setDefault(optionName, CUSTOM_DEFAULT_OPTION_VALUE); // empty string isn't the default (26251)
-		preferences.setValue(optionName, optionValue);
-
-		savePreferences(preferences);
+		IEclipsePreferences projectPreferences= getPreferences();
+		if (optionValue == null) {
+			// remove preference
+			projectPreferences.remove(optionName);
+		} else {
+			projectPreferences.put(optionName, optionValue);
+		}
+		
+		// Dump changes
+		try {
+			projectPreferences.flush();
+		} catch (BackingStoreException e) {
+			// problem with pref store - quietly ignore
+		}
 	}
 
 	/**
@@ -332,28 +339,15 @@ public class CProject extends Openable implements ICProject {
 	/**
 	 * Returns the project custom preference pool.
 	 * Project preferences may include custom encoding.
+	 * @return IEclipsePreferences or <code>null</code> if the project
+	 * 	does not have a C nature.
 	 */
-	private Preferences getPreferences() {
+	private IEclipsePreferences getPreferences() {
 		if (!(isCProject())) {
 			return null;
 		}
-		Preferences preferences = new Preferences();
-		Iterator iter = CModelManager.OptionNames.iterator();
-
-		while (iter.hasNext()) {
-			String qualifiedName = (String) iter.next();
-			String dequalifiedName = qualifiedName.substring(CCorePlugin.PLUGIN_ID.length() + 1);
-			String value = null;
-
-			try {
-				value = resource.getPersistentProperty(new QualifiedName(CCorePlugin.PLUGIN_ID, dequalifiedName));
-			} catch (CoreException e) {
-			}
-
-			if (value != null)
-				preferences.setValue(qualifiedName, value);
-		}
-
+		IScopeContext context= new ProjectScope(getProject());
+		final IEclipsePreferences preferences= context.getNode(CCorePlugin.PLUGIN_ID);
 		return preferences;
 	}
 

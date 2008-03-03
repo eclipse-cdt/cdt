@@ -78,7 +78,8 @@ public final class Platform {
 				if (org.eclipse.core.runtime.Platform.OS_WIN32.equals(getOS())) {
 					cmd = new String[] {"cmd", "/c", "set", "PROCESSOR_ARCHITECTURE"};  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				} else {
-					cmd = new String[] {"uname", "-p"};  //$NON-NLS-1$//$NON-NLS-2$
+                  // We don't use "uname -p" since it returns "unknown" on some Linux systems.
+                  cmd = new String[] {"uname", "-m"};  //$NON-NLS-1$//$NON-NLS-2$
 				}
 	
 				try {

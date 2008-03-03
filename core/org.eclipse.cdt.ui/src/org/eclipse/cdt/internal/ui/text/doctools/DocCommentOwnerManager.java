@@ -89,18 +89,21 @@ public class DocCommentOwnerManager {
 	}
 
 	/**
-	 * @param owner the non-null doc-comment owner
+	 * @param newOwner the non-null doc-comment owner
 	 */
-	public void setWorkspaceCommentOwner(IDocCommentOwner owner) {
-		if(owner == null)
+	public void setWorkspaceCommentOwner(IDocCommentOwner newOwner) {
+		if(newOwner == null)
 			throw new IllegalArgumentException();
-		IDocCommentOwner old= fWorkspaceOwner;
-		fWorkspaceOwner= owner;
+		
+		if(!fWorkspaceOwner.getID().equals(newOwner.getID())) {
+			IDocCommentOwner oldOwner= fWorkspaceOwner;
+			fWorkspaceOwner= newOwner;
 
-		Preferences prefs= new InstanceScope().getNode(QUALIFIER).node(WORKSPACE_DOC_TOOL_NODE);
-		prefs.put(PREFKEY_WORKSPACE_DEFAULT, owner.getID());
-
-		fireWorkspaceOwnershipChanged(old, fWorkspaceOwner);
+			Preferences prefs= new InstanceScope().getNode(QUALIFIER).node(WORKSPACE_DOC_TOOL_NODE);
+			prefs.put(PREFKEY_WORKSPACE_DEFAULT, newOwner.getID());
+			
+			fireWorkspaceOwnershipChanged(oldOwner, fWorkspaceOwner);
+		}
 	}
 
 	/**
@@ -142,26 +145,29 @@ public class DocCommentOwnerManager {
 
 	/**
 	 * @param resource a non-null resource to map a comment owner to
-	 * @param owner the new owner to assign, or null to inherit the parent's mapping
+	 * @param newOwner the new owner to assign, or null to inherit the parent's mapping
 	 * @param removeSubMappings if the resource is an {@link IContainer}, then remove any mappings
 	 * children have. <em>This is currently unimplemented.</em>
 	 */
 	/*
 	 * Note - this implementation currently ignores removeSubMappings.
 	 */
-	public void setCommentOwner(IResource resource, IDocCommentOwner owner, boolean removeSubMappings) {
+	public void setCommentOwner(IResource resource, IDocCommentOwner newOwner, boolean removeSubMappings) {
 		Assert.isNotNull(resource);
 
 		if(ResourcesPlugin.getWorkspace().getRoot().equals(resource)) {
-			setWorkspaceCommentOwner(owner);
+			setWorkspaceCommentOwner(newOwner);
 			return;
 		}
 
 		ProjectMap pm= getProjectMap(resource);
-		IDocCommentOwner old= getCommentOwner(resource);
-		pm.setCommentOwner(resource, owner);
-		IDocCommentOwner n3w= getCommentOwner(resource);
-		fireOwnershipChanged(resource, removeSubMappings, old, n3w);
+		IDocCommentOwner oldOwner= getCommentOwner(resource);
+		pm.setCommentOwner(resource, newOwner);
+		
+		IDocCommentOwner newLogicalOwner= getCommentOwner(resource);
+		if(!newLogicalOwner.getID().equals(oldOwner.getID())) { 
+			fireOwnershipChanged(resource, removeSubMappings, oldOwner, newLogicalOwner);
+		}
 	}
 
 	/**
@@ -186,7 +192,7 @@ public class DocCommentOwnerManager {
 	 * @param listener removes a listener from those registered for doc-comment ownership events
 	 */
 	public void removeListener(IDocCommentOwnershipListener listener) {
-		fListeners.add(listener);
+		fListeners.remove(listener);
 	}
 
 	/*
@@ -243,15 +249,15 @@ public class DocCommentOwnerManager {
 		return result;
 	}
 
-	private void fireOwnershipChanged(IResource resource, boolean recursive, IDocCommentOwner old, IDocCommentOwner n3w) {
+	private void fireOwnershipChanged(IResource resource, boolean submappingsRemoved, IDocCommentOwner oldOwner, IDocCommentOwner newOwner) {
 		for(Iterator i= fListeners.iterator(); i.hasNext();) {
-			((IDocCommentOwnershipListener)i.next()).ownershipChanged(resource, recursive, old, n3w);
+			((IDocCommentOwnershipListener)i.next()).ownershipChanged(resource, submappingsRemoved, oldOwner, newOwner);
 		}
 	}
 
-	private void fireWorkspaceOwnershipChanged(IDocCommentOwner old, IDocCommentOwner n3w) {
+	private void fireWorkspaceOwnershipChanged(IDocCommentOwner oldOwner, IDocCommentOwner newOwner) {
 		for(Iterator i= fListeners.iterator(); i.hasNext();) {
-			((IDocCommentOwnershipListener)i.next()).workspaceOwnershipChanged(old, n3w);
+			((IDocCommentOwnershipListener)i.next()).workspaceOwnershipChanged(oldOwner, newOwner);
 		}
 	}
 }

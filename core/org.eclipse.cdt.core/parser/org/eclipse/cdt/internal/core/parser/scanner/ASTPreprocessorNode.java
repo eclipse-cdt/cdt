@@ -413,7 +413,7 @@ class ASTUndef extends ASTPreprocessorNode implements IASTPreprocessorUndefState
 		fName= new ASTPreprocessorName(this, IASTPreprocessorUndefStatement.MACRO_NAME, nameNumber, nameEndNumber, name, binding);
 	}
 
-	public IASTName getMacroName() {
+	public ASTPreprocessorName getMacroName() {
 		return fName;
 	}
 	

@@ -51,7 +51,7 @@ public class LocationMap implements ILocationResolver {
     private ArrayList<ASTProblem> fProblems= new ArrayList<ASTProblem>();
     private ArrayList<ASTComment> fComments= new ArrayList<ASTComment>();
     private ArrayList<ASTMacroDefinition> fBuiltinMacros= new ArrayList<ASTMacroDefinition>();
-	private ArrayList<IASTName> fMacroReferences= new ArrayList<IASTName>();
+	private ArrayList<ASTPreprocessorName> fMacroReferences= new ArrayList<ASTPreprocessorName>();
 	
     private LocationCtxFile fRootContext= null;
     private LocationCtx fCurrentContext= null;
@@ -176,7 +176,7 @@ public class LocationMap implements ILocationResolver {
 		return fCurrentContext;
 	}
 	
-	private void addMacroReference(IASTName name) {
+	private void addMacroReference(ASTPreprocessorName name) {
 		fMacroReferences.add(name);
 	}
 
@@ -460,7 +460,28 @@ public class LocationMap implements ILocationResolver {
 		// search for a macro-expansion
 		LocationCtxMacroExpansion ctx= fRootContext.findSurroundingMacroExpansion(sequenceNumber, length);
 		if (ctx != null) {
-			return ctx.findNode(sequenceNumber, length, matchKind);
+			ASTNode candidate= ctx.findNode(sequenceNumber, length, matchKind);
+			int imageOffset= ctx.fEndOffsetInParent + sequenceNumber - ctx.fSequenceNumber;
+			if (fTranslationUnit != null) {
+				FindNodeByImageLocation visitor= new FindNodeByImageLocation(ctx.fSequenceNumber, ctx.getSequenceLength(), imageOffset, length, matchKind);
+				fTranslationUnit.accept(visitor);
+				ASTNode candidate2= visitor.getNode();
+				if (matchKind.isBetterMatch(candidate2, candidate)) {
+					candidate= candidate2;
+				}
+			}
+			ASTPreprocessorName[] nested= ctx.getNestedMacroReferences();
+			for (ASTPreprocessorName name : nested) {
+				IASTImageLocation imageLoc= name.getImageLocation();
+				if (imageLoc != null && imageLoc.getLocationKind() == IASTImageLocation.ARGUMENT_TO_MACRO_EXPANSION) {
+					if (matchKind.rangeMatches(imageLoc.getNodeOffset(), imageLoc.getNodeLength(), imageOffset, length)) {
+						if (matchKind.isBetterMatch(name, candidate)) {
+							candidate= name;
+						}
+					}
+				}
+			}
+			return candidate;
 		}
 		
 		return null;
@@ -590,15 +611,15 @@ public class LocationMap implements ILocationResolver {
 		return result.toArray(new IASTName[result.size()]);
 	}
 	
-	public IASTName[] getNestedMacroReferences(ASTMacroExpansion expansion) {
+	public ASTPreprocessorName[] getNestedMacroReferences(ASTMacroExpansion expansion) {
 		final IASTName explicitRef= expansion.getMacroReference(); 
-		List<IASTName> result= new ArrayList<IASTName>();
-		for (IASTName name : fMacroReferences) {
+		List<ASTPreprocessorName> result= new ArrayList<ASTPreprocessorName>();
+		for (ASTPreprocessorName name : fMacroReferences) {
 			if (name.getParent() == expansion && name != explicitRef) {
 				result.add(name);
 			}
 		}
-		return result.toArray(new IASTName[result.size()]);
+		return result.toArray(new ASTPreprocessorName[result.size()]);
 	}
 
 	public IDependencyTree getDependencyTree() {

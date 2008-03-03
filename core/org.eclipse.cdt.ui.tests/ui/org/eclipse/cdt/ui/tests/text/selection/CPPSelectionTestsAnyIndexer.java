@@ -943,14 +943,16 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
         assertNode("MY_PAR", offset0, decl);
     }
     
-    //    #define MY_MACRO 0xDEADBEEF
-    //    #define MY_PAR( aRef );
+    //  #define MY_MACRO 0xDEADBEEF
+    //  #define MY_PAR( aRef ) aRef;
+    //  int gvar;
 
 	//  #include "macrodef.h"
 	//	int basictest(void){
 	//	   int tester = MY_PAR(MY_MACRO);
+    //     tester= MY_PAR(gvar);
     //  }
-    public void _testMacroNavigation_Bug208300() throws Exception {
+    public void testMacroNavigation_Bug208300() throws Exception {
         StringBuffer[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
@@ -969,6 +971,11 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
         offset1 = scode.indexOf("MY_MACRO");
         decl = testF3(file, offset1);
         assertNode("MY_MACRO", offset0, decl);
+
+        offset0 = hcode.indexOf("gvar");
+        offset1 = scode.indexOf("gvar");
+        decl = testF3(file, offset1);
+        assertNode("gvar", offset0, decl);
     }
     
     //  int wurscht;

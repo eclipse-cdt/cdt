@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Symbian Software Ltd. and others.
+ * Copyright (c) 2006, 2008 Symbian Software Ltd. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *    Andrew Ferguson (Symbian) - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.core.index;
+
+import java.net.URI;
 
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -120,12 +122,17 @@ public class IndexLocationFactory {
 	}
 	
 	/**
-	 * Returns an IIndexFileLocation for the specified workspace file
+	 * Returns an IIndexFileLocation for the specified workspace file, or <code>null</code> if it does not
+	 * have a location.
 	 * @param file
 	 * @return an IIndexFileLocation for the specified workspace file
 	 */
 	public static IIndexFileLocation getWorkspaceIFL(IFile file) {
-		return new IndexFileLocation(file.getLocationURI(), file.getFullPath().toString());
+		final URI locationURI = file.getLocationURI();
+		if (locationURI != null) {
+			return new IndexFileLocation(locationURI, file.getFullPath().toString());
+		}
+		return null;
 	}
 	
 	/**

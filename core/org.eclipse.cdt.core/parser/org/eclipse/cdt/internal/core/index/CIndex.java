@@ -187,6 +187,9 @@ public class CIndex implements IIndex {
 	}
 
 	public IIndexFile[] getFiles(IIndexFileLocation location) throws CoreException {
+		if (location == null) {
+			return IIndexFile.EMPTY_FILE_ARRAY;
+		}
 		ArrayList<IIndexFragmentFile> result= new ArrayList<IIndexFragmentFile>();
 		BitSet linkages= new BitSet();
 		for (int i = 0; i < fPrimaryFragmentCount; i++) {

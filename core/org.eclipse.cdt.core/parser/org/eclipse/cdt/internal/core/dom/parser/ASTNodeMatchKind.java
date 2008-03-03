@@ -48,12 +48,18 @@ public class ASTNodeMatchKind {
 	 * Returns whether the node matches the selection.
 	 */
 	public boolean matches(ASTNode node, int selOffset, int selLength) {
-		if (fNamesOnly && node instanceof IASTName == false) {
-			return false;
-		}
-		
-		final int nodeOffset= node.getOffset();
-		final int nodeLength= node.getLength();
+		return isAcceptableNode(node) && rangeMatches(node.getOffset(), node.getLength(), selOffset, selLength);
+	}
+
+	public boolean isAcceptableNode(ASTNode astNode) {
+		return !fNamesOnly || astNode instanceof IASTName;
+	}
+
+	/**
+	 * Returns whether the node range matches the selection.
+	 */
+	public boolean rangeMatches(final int nodeOffset, final int nodeLength, int selOffset,
+			int selLength) {
 		switch(fRelation) {
 		case EXACT:
 			return selOffset == nodeOffset && selLength == nodeLength;
@@ -63,7 +69,7 @@ public class ASTNodeMatchKind {
 			return nodeOffset <= selOffset && selOffset+selLength <= nodeOffset+nodeLength;
 		default:
 			assert false;
-		return false;
+			return false;
 		}
 	}
 

@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.parser.scanner;
 import java.util.ArrayList;
 
 import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
@@ -130,7 +129,7 @@ class LocationCtxMacroExpansion extends LocationCtx {
 		return null;
 	}
 
-	public IASTName[] getNestedMacroReferences() {
+	public ASTPreprocessorName[] getNestedMacroReferences() {
 		return fLocationMap.getNestedMacroReferences((ASTMacroExpansion) fExpansionName.getParent());
 	}
 }

@@ -249,6 +249,9 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 
 			final Object tu= fFilesToUpdate[i];
 			final IIndexFileLocation ifl= fResolver.resolveFile(tu);
+			if (ifl == null) 
+				continue;
+			
 			final boolean isSourceUnit= fResolver.isSourceUnit(tu);
 			final boolean isExcludedSource= isSourceUnit && !fIndexFilesWithoutConfiguration && !fResolver.isFileBuildConfigured(tu);
 			final IIndexFragmentFile[] indexFiles= fIndex.getWritableFiles(ifl);
@@ -393,6 +396,8 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 					}
 					final Object tu = iterator.next();
 					IIndexFileLocation ifl= fResolver.resolveFile(tu);
+					if (ifl == null)
+						continue;
 					IIndexFragmentFile[] ifiles= fIndex.getWritableFiles(ifl);
 					for (int i = 0; i < ifiles.length; i++) {
 						IIndexFragmentFile ifile = ifiles[i];
@@ -470,6 +475,8 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 					return;
 				final Object tu= iter.next();
 				final IIndexFileLocation ifl = fResolver.resolveFile(tu);
+				if (ifl == null) 
+					continue;
 				final FileContent info= getFileInfo(linkageID, ifl);
 				if (info != null && info.fRequestUpdate && !info.fIsUpdated) {
 					info.fRequestIsCounted= false;

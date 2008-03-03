@@ -20,7 +20,6 @@ import java.io.StringWriter;
 
 import org.eclipse.core.runtime.IStatus;
 
-import org.eclipse.rse.internal.services.Activator;
 
 public class SimpleSystemMessage extends SystemMessage {
 
@@ -109,8 +108,6 @@ public class SimpleSystemMessage extends SystemMessage {
 		super("RSE", "G", "-", severityToIndicator(severity), msg, msgDetails);  //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$	
 		_pluginId = pluginId;
 		
-		// no message id - log this info
-		Activator.trace("SimpleSystemMessage with no message id in "+pluginId); //$NON-NLS-1$
 	}
 		
 	/**
@@ -129,9 +126,6 @@ public class SimpleSystemMessage extends SystemMessage {
 	public SimpleSystemMessage(String pluginId, int severity, String msg, Throwable e) {
 		super("RSE", "G", "-", severityToIndicator(severity), msg, throwableToDetails(e)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		_pluginId = pluginId;
-		
-		// no message id - log this info
-		Activator.trace("SimpleSystemMessage with no message id in "+pluginId); //$NON-NLS-1$
 	}
 	
 	private static String throwableToDetails(Throwable e){	

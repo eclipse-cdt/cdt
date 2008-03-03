@@ -90,6 +90,8 @@ public class ShellResources extends NLS
 	// universal commands
 	public static String MSG_UCMD_INVOCATION_EMPTY;
 
+	public static String MSG_OPERATION_RUNNING;
+	public static String MSG_OPERATION_FINISHED;
 	
 	public static String ACTION_CONTENT_ASSIST;
 

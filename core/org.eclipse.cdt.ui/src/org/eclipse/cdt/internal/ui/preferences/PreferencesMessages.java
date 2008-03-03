@@ -190,6 +190,8 @@ public final class PreferencesMessages extends NLS {
 	public static String CEditorPreferencePage_WorkspaceDefaultLabel;
 
 	public static String SmartTypingConfigurationBlock_autoclose_title;
+	public static String SmartTypingConfigurationBlock_autoindent_newlines;
+	public static String SmartTypingConfigurationBlock_autoindent_title;
 	public static String SmartTypingConfigurationBlock_tabs_title;
 	public static String SmartTypingConfigurationBlock_tabs_message_tab_text;
 	public static String SmartTypingConfigurationBlock_tabs_message_others_text;

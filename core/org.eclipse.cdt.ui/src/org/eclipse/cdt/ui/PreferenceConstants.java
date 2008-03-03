@@ -711,6 +711,15 @@ public class PreferenceConstants {
 	public static final String EDITOR_SMART_TAB= "smart_tab"; //$NON-NLS-1$
 
 	/**
+	 * A named preference that controls whether the 'auto indent' feature is
+	 * enabled.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 */
+	public final static String EDITOR_AUTO_INDENT= "autoIndent"; //$NON-NLS-1$
+
+	/**
 	 * The id of the best match hover contributed for extension point
 	 * <code>org.eclipse.cdt.ui.textHovers</code>.
 	 *
@@ -1397,6 +1406,7 @@ public class PreferenceConstants {
 		store.setDefault(PreferenceConstants.EDITOR_SMART_TAB, true);
 		store.setDefault(PreferenceConstants.EDITOR_WRAP_STRINGS, true);
 		store.setDefault(PreferenceConstants.EDITOR_ESCAPE_STRINGS, false);
+		store.setDefault(PreferenceConstants.EDITOR_AUTO_INDENT, true);
 
 		store.setDefault(PreferenceConstants.ENSURE_NEWLINE_AT_EOF, false);
 

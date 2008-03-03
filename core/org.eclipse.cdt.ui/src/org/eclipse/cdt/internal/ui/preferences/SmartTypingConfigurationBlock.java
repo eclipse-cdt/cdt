@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sergey Prigogin, Google
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.preferences;
@@ -53,6 +54,7 @@ class SmartTypingConfigurationBlock extends AbstractConfigurationBlock {
 	private OverlayPreferenceStore.OverlayKey[] createOverlayStoreKeys() {
 		return new OverlayPreferenceStore.OverlayKey[] {
 			new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_SMART_PASTE),
+			new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_AUTO_INDENT),
 			
 			new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_CLOSE_STRINGS),
 			new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_CLOSE_BRACKETS),
@@ -99,10 +101,22 @@ class SmartTypingConfigurationBlock extends AbstractConfigurationBlock {
 		composite= createSubsection(control, null, PreferencesMessages.SmartTypingConfigurationBlock_strings_title); 
 		addStringsSection(composite);
 
+		composite= createSubsection(control, null, PreferencesMessages.SmartTypingConfigurationBlock_autoindent_title); 
+		addAutoIndentSection(composite);
+
 		scrolled.setContent(control);
 		final Point size= control.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		scrolled.setMinSize(size.x, size.y);
 		return scrolled;
+	}
+
+	private void addAutoIndentSection(Composite composite) {
+		GridLayout layout= new GridLayout();
+		composite.setLayout(layout);
+
+		String label;
+		label= PreferencesMessages.SmartTypingConfigurationBlock_autoindent_newlines;
+		addCheckBox(composite, label, PreferenceConstants.EDITOR_AUTO_INDENT, 0);
 	}
 
 	private void addStringsSection(Composite composite) {

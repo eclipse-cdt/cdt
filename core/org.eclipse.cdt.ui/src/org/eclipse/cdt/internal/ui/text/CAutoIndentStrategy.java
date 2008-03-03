@@ -245,6 +245,10 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 	}
 
 	private void smartIndentAfterNewLine(IDocument d, DocumentCommand c) {
+		int docLength = d.getLength();
+		if (c.offset == -1 || docLength == 0)
+			return;
+
 		int addIndent= 0;
 		CHeuristicScanner scanner= new CHeuristicScanner(d);
 		try {
@@ -253,32 +257,34 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 				scanner = new CHeuristicScanner(d, fPartitioning, ICPartitions.C_PREPROCESSOR);
 				addIndent= 1;
 			}
-		} catch (BadLocationException exc) {
-		}
-		int docLength = d.getLength();
-		if (c.offset == -1 || docLength == 0)
-			return;
-		int p = (c.offset == docLength ? c.offset - 1 : c.offset);
 
-		CIndenter indenter = new CIndenter(d, scanner, fProject);
-		StringBuffer indent = indenter.computeIndentation(c.offset);
-		if (indent == null)
-			indent = new StringBuffer(); 
-		if (addIndent > 0 && indent.length() == 0) {
-			indent= indenter.createReusingIndent(indent, addIndent);
-		}
-		try {
-			int line = d.getLineOfOffset(p);
+			int line = d.getLineOfOffset(c.offset);
+			IRegion reg = d.getLineInformation(line);
+			int start = reg.getOffset();
+			int lineEnd = start + reg.getLength();
+
+			StringBuffer indent= null;
+			CIndenter indenter= new CIndenter(d, scanner, fProject);
+			if (getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_AUTO_INDENT)) {
+				indent= indenter.computeIndentation(c.offset);
+			} else {
+				// reuse existing indent
+				int wsEnd= findEndOfWhiteSpace(d, start, c.offset);
+				if (wsEnd > start) {
+					indent= new StringBuffer(d.get(start, wsEnd - start));
+					addIndent= 0;
+				}
+			}
+			if (indent == null) {
+				indent= new StringBuffer(); 
+			}
+			if (addIndent > 0 && indent.length() == 0) {
+				indent= indenter.createReusingIndent(indent, addIndent);
+			}
 
 			StringBuffer buf = new StringBuffer(c.text + indent);
-
-			IRegion reg = d.getLineInformation(line);
-			int lineEnd = reg.getOffset() + reg.getLength();
-
 			int contentStart = findEndOfWhiteSpace(d, c.offset, lineEnd);
 			c.length =  Math.max(contentStart - c.offset, 0);
-
-			int start = reg.getOffset();
 
 			// insert closing brace on new line after an unclosed opening brace
 			if (getBracketCount(d, start, c.offset, true) > 0 && fCloseBrace && !isClosedBrace(d, c.offset, c.length)) {
@@ -1121,14 +1127,10 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 			return;
 		}
 		
-		/*
-         * I removed the workaround for 48339 as I believe the recent changes to 
-         * FastCPartitioner are enough to fix this.
-         */
 		boolean isNewLine= c.length == 0 && c.text != null && isLineDelimiter(d, c.text);
 		if (isNewLine) {
 			smartIndentAfterNewLine(d, c);
-		} else if (c.text.length() == 1) {
+		} else if (c.text.length() == 1 && getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_AUTO_INDENT)) {
 			smartIndentOnKeypress(d, c);
 		} else if (c.text.length() > 1 && getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_SMART_PASTE)) {
 			smartPaste(d, c); // no smart backspace for paste

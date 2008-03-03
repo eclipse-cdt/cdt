@@ -24,12 +24,14 @@ import junit.framework.TestSuite;
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.ui.text.doctools.DefaultMultilineCommentAutoEditStrategy;
 
@@ -399,6 +401,38 @@ public class CAutoIndentTest extends AbstractAutoEditTest {
 		);
 		
 		assertNoError();
+	}
+
+	public void testAutoIndentDisabled_Bug219923() throws Exception  {
+		AutoEditTester tester = createAutoEditTester(); //$NON-NLS-1$
+		IPreferenceStore store= PreferenceConstants.getPreferenceStore();
+		try {
+			store.setValue(PreferenceConstants.EDITOR_AUTO_INDENT, false);
+			tester.type("void main() {\n"); //$NON-NLS-1$
+			assertEquals(1, tester.getCaretLine());
+			// Nested statement is not indented
+			assertEquals(0, tester.getCaretColumn());
+			// The brace was closed automatically.
+			assertEquals("}", tester.getLine(1)); //$NON-NLS-1$
+			tester.type('\t');
+			tester.type('\n');
+			// indent from previous line
+			assertEquals(1, tester.getCaretColumn());
+			tester.type('{');
+			tester.type('\n');
+			// indent from previous line
+			assertEquals(1, tester.getCaretColumn());
+			tester.type('}');
+			tester.type('\n');
+			// indent from previous line
+			assertEquals(1, tester.getCaretColumn());
+			tester.backspace();
+			tester.type('\n');
+			// indent from previous line
+			assertEquals(0, tester.getCaretColumn());
+		} finally {
+			store.setToDefault(PreferenceConstants.EDITOR_AUTO_INDENT);
+		}
 	}
 
 	private void assertNoError() {

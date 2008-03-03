@@ -44,6 +44,8 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
+import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
+
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.IndentUtil;
 import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
@@ -244,7 +246,7 @@ public class IndentAction extends TextEditorAction {
 					indent= document.get(offset, wsStart - offset) + computed;
 				}
 			}
-		} 
+		}
 		
 		// standard C code indentation
 		if (indent == null) {
@@ -360,7 +362,7 @@ public class IndentAction extends TextEditorAction {
 	 * @return the indent size as defined in the current formatter preferences
 	 */
 	private int getIndentSize() {
-		return getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_INDENTATION_SIZE, 4);
+		return CodeFormatterUtil.getIndentWidth(getCProject());
 	}
 
 	/**

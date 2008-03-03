@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Symbian Ltd and others.
+ * Copyright (c) 2005, 2008 Symbian Ltd and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,9 @@ import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 /**
  * Implements the functionality that is needed to hold options and option
@@ -58,11 +61,11 @@ public abstract class HoldsOptions extends BuildObject implements IHoldsOptions,
 	//  Members that must have the same values on creation as the derived class
 	private boolean resolved;
 	//  Parent and children
-	private Vector categoryIds;
-	private Map categoryMap;
-	private List childOptionCategories;
-	private Vector optionList;
-	private Map optionMap;
+	private Vector<String> categoryIds;
+	private Map<String, IOptionCategory> categoryMap;
+	private List<IOptionCategory> childOptionCategories;
+	private Vector<Option> optionList;
+	private Map<String, Option> optionMap;
 	//  Miscellaneous
 	private boolean isDirty = false;
 	private boolean rebuildState;
@@ -71,6 +74,7 @@ public abstract class HoldsOptions extends BuildObject implements IHoldsOptions,
 	 *  C O N S T R U C T O R S
 	 */
 	
+	@SuppressWarnings("unused")
 	private HoldsOptions() {
 		// prevent accidental construction of class without setting up
 		// resolved
@@ -94,9 +98,9 @@ public abstract class HoldsOptions extends BuildObject implements IHoldsOptions,
 		
 		boolean copyIds = id.equals(source.id);
 		if (source.optionList != null) {
-			Iterator iter = source.getOptionList().listIterator();
+			Iterator<Option> iter = source.getOptionList().listIterator();
 			while (iter.hasNext()) {
-				Option option = (Option) iter.next();
+				Option option = iter.next();
 				int nnn = ManagedBuildManager.getRandomNumber();
 				String subId;
 				String subName;
@@ -194,7 +198,7 @@ public abstract class HoldsOptions extends BuildObject implements IHoldsOptions,
 	 */
 	protected void serialize(ICStorageElement element) throws BuildException {
 		
-		Iterator iter;
+		Iterator<IOptionCategory> iter;
 		
 		if (childOptionCategories != null) {
 			iter = childOptionCategories.listIterator();
@@ -205,10 +209,10 @@ public abstract class HoldsOptions extends BuildObject implements IHoldsOptions,
 			}
 		}
 		
-		List optionElements = getOptionList();
-		iter = optionElements.listIterator();
-		while (iter.hasNext()) {
-			Option option = (Option) iter.next();
+		List<Option> optionElements = getOptionList();
+		Iterator<Option> iter2 = optionElements.listIterator();
+		while (iter2.hasNext()) {
+			Option option = iter2.next();
 			ICStorageElement optionElement = element.createChild(OPTION);
 			option.serialize(optionElement);
 		}
@@ -235,7 +239,7 @@ public abstract class HoldsOptions extends BuildObject implements IHoldsOptions,
 	 * @see org.eclipse.cdt.managedbuilder.core.IHoldsOptions#createOptions(IHoldsOptions)
 	 */
 	public void createOptions(IHoldsOptions superClass) {
-		Iterator iter = ((HoldsOptions)superClass).getOptionList().listIterator();
+		Iterator<Option> iter = ((HoldsOptions)superClass).getOptionList().listIterator();
 		while (iter.hasNext()) {
 			Option optionChild = (Option) iter.next();
 			int nnn = ManagedBuildManager.getRandomNumber();
@@ -272,7 +276,7 @@ public abstract class HoldsOptions extends BuildObject implements IHoldsOptions,
 			options = superClass.getOptions();
 		}
 		// Our options take precedence.
-		Vector ourOpts = getOptionList();
+		Vector<Option> ourOpts = getOptionList();
 		if (options != null) {
 			for (int i = 0; i < ourOpts.size(); i++) {
 				int j = options.length;
@@ -410,9 +414,9 @@ public abstract class HoldsOptions extends BuildObject implements IHoldsOptions,
 	/* (non-Javadoc)
 	 * Memory-safe way to access the vector of category IDs
 	 */
-	private Vector getCategoryIds() {
+	private Vector<String> getCategoryIds() {
 		if (categoryIds == null) {
-			categoryIds = new Vector();
+			categoryIds = new Vector<String>();
 		}
 		return categoryIds;
 	}
@@ -422,7 +426,7 @@ public abstract class HoldsOptions extends BuildObject implements IHoldsOptions,
 	 */
 	public void addChildCategory(IOptionCategory category) {
 		if (childOptionCategories == null)
-			childOptionCategories = new ArrayList();
+			childOptionCategories = new ArrayList<IOptionCategory>();
 		childOptionCategories.add(category);
 	}
 	
@@ -436,9 +440,9 @@ public abstract class HoldsOptions extends BuildObject implements IHoldsOptions,
 	/* (non-Javadoc)
 	 * Memeory-safe way to access the map of category IDs to categories
 	 */
-	private Map getCategoryMap() {
+	private Map<String, IOptionCategory> getCategoryMap() {
 		if (categoryMap == null) {
-			categoryMap = new HashMap();
+			categoryMap = new HashMap<String, IOptionCategory>();
 		}
 		return categoryMap;
 	}
@@ -446,9 +450,9 @@ public abstract class HoldsOptions extends BuildObject implements IHoldsOptions,
 	/* (non-Javadoc)
 	 * Memory-safe way to access the list of options
 	 */
-	private Vector getOptionList() {
+	private Vector<Option> getOptionList() {
 		if (optionList == null) {
-			optionList = new Vector();
+			optionList = new Vector<Option>();
 		}
 		return optionList;
 	}
@@ -456,9 +460,9 @@ public abstract class HoldsOptions extends BuildObject implements IHoldsOptions,
 	/* (non-Javadoc)
 	 * Memory-safe way to access the list of IDs to options
 	 */
-	private Map getOptionMap() {
+	private Map<String, Option> getOptionMap() {
 		if (optionMap == null) {
-			optionMap = new HashMap();
+			optionMap = new HashMap<String, Option>();
 		}
 		return optionMap;
 	}
@@ -495,15 +499,12 @@ public abstract class HoldsOptions extends BuildObject implements IHoldsOptions,
 	 */
 	protected boolean isDirty() {
 		// If I need saving, just say yes
-		if (isDirty) return true;
+		if (isDirty) 
+			return true;
 		
-		// Otherwise see if any options need saving
-		List optionElements = getOptionList();
-		Iterator iter = optionElements.listIterator();
-		while (iter.hasNext()) {
-			Option option = (Option) iter.next();
-			if (option.isDirty()) return true;
-		}
+		for (Option option : getOptionList())
+			if (option.isDirty()) 
+				return true;
 		
 		return isDirty;
 	}
@@ -516,13 +517,9 @@ public abstract class HoldsOptions extends BuildObject implements IHoldsOptions,
 		this.isDirty = isDirty;
 		// Propagate "false" to the children
 		if (!isDirty) {
-			List optionElements = getOptionList();
-			Iterator iter = optionElements.listIterator();
-			while (iter.hasNext()) {
-				Option option = (Option) iter.next();
+			for (Option option : getOptionList())
 				if(!option.isExtensionElement())
 					option.setDirty(false);
-			}
 		}
 	}
 	
@@ -534,15 +531,11 @@ public abstract class HoldsOptions extends BuildObject implements IHoldsOptions,
 		if (!resolved) {
 			resolved = true;
 			//  Call resolveReferences on our children
-			Iterator optionIter = getOptionList().iterator();
-			while (optionIter.hasNext()) {
-				Option current = (Option)optionIter.next();
+			for (Option current : getOptionList()) {
 				current.resolveReferences();
 			}
 			// Somewhat wasteful, but use the vector to retrieve the categories in proper order
-			Iterator catIter = getCategoryIds().iterator();
-			while (catIter.hasNext()) {
-				String id = (String)catIter.next();
+			for (String id : getCategoryIds()) {
 				IOptionCategory current = (IOptionCategory)getCategoryMap().get(id);
 				if (current instanceof Tool) {
 					((Tool)current).resolveReferences();
@@ -560,8 +553,30 @@ public abstract class HoldsOptions extends BuildObject implements IHoldsOptions,
 	 */
 	public IOption getOptionToSet(IOption option, boolean adjustExtension) throws BuildException{
 		IOption setOption = null;
-		if(option.getOptionHolder() != this)
-			option = getOptionBySuperClassId(option.getId());
+		// start changes
+		if(option.getOptionHolder() != this) {
+			// option = getOptionBySuperClassId(option.getId());
+			IOption op = getOptionBySuperClassId(option.getId());
+			if (op == null && option.getSuperClass() != null) {
+				op = getOptionBySuperClassId(option.getSuperClass().getId());
+				if (op == null) {
+					ManagedBuilderCorePlugin.log(
+						new Status(
+							IStatus.ERROR, 
+							ManagedBuilderCorePlugin.getUniqueIdentifier(), 
+							IStatus.OK, 
+							"Cannot get OptionToSet for option " + 
+								option.getId() + " @ holder " + 
+								option.getOptionHolder().getId() + "\nI'm holder " +
+								getId(),
+							null)							
+					);
+				} else
+					option = op;
+			} else
+				option = op;
+		}
+		// end changes
 		
 		if(adjustExtension){
 			for(; option != null && !option.isExtensionElement(); option=option.getSuperClass()){}
@@ -623,12 +638,9 @@ public abstract class HoldsOptions extends BuildObject implements IHoldsOptions,
 			return true;
 		
 		// Otherwise see if any options need saving
-		List optionElements = getOptionList();
-		Iterator iter = optionElements.listIterator();
-		while (iter.hasNext()) {
-			Option option = (Option) iter.next();
-			if (option.needsRebuild()) return true;
-		}
+		for (Option option : getOptionList())
+			if (option.needsRebuild()) 
+				return true;
 		
 		return rebuildState;
 	}
@@ -640,15 +652,10 @@ public abstract class HoldsOptions extends BuildObject implements IHoldsOptions,
 		rebuildState = rebuild;
 		
 		// Propagate "false" to the children
-		if (!rebuildState) {
-			List optionElements = getOptionList();
-			Iterator iter = optionElements.listIterator();
-			while (iter.hasNext()) {
-				Option option = (Option) iter.next();
+		if (!rebuildState)
+			for (Option option : getOptionList())
 				if(!option.isExtensionElement())
 					option.setRebuildState(false);
-			}
-		}
 	}
 
 	public void propertiesChanged() {
@@ -710,33 +717,24 @@ public abstract class HoldsOptions extends BuildObject implements IHoldsOptions,
 	protected abstract IResourceInfo getParentResourceInfo();
 
 	public String[] getRequiredTypeIds() {
-		List list = new ArrayList();
-		IOption options[] = getOptions();
-		for(int i = 0; i < options.length; i++){
-			Option option = (Option)options[i];
-			list.addAll(Arrays.asList(option.getRequiredTypeIds()));
-		}
-		return (String[])list.toArray(new String[list.size()]);
+		List<String> list = new ArrayList<String>();
+		for(IOption op : getOptions())
+			list.addAll(Arrays.asList(((Option)op).getRequiredTypeIds()));
+		return list.toArray(new String[list.size()]);
 	}
 
 	public String[] getSupportedTypeIds() {
-		List list = new ArrayList();
-		IOption options[] = getOptions();
-		for(int i = 0; i < options.length; i++){
-			Option option = (Option)options[i];
-			list.addAll(Arrays.asList(option.getSupportedTypeIds()));
-		}
-		return (String[])list.toArray(new String[list.size()]);
+		List<String> list = new ArrayList<String>();
+		for(IOption op : getOptions())
+			list.addAll(Arrays.asList(((Option)op).getSupportedTypeIds()));
+		return list.toArray(new String[list.size()]);
 	}
 
 	public String[] getSupportedValueIds(String typeId) {
-		List list = new ArrayList();
-		IOption options[] = getOptions();
-		for(int i = 0; i < options.length; i++){
-			Option option = (Option)options[i];
-			list.addAll(Arrays.asList(option.getSupportedValueIds(typeId)));
-		}
-		return (String[])list.toArray(new String[list.size()]);
+		List<String> list = new ArrayList<String>();
+		for(IOption op : getOptions())
+			list.addAll(Arrays.asList(((Option)op).getSupportedValueIds(typeId)));
+		return list.toArray(new String[list.size()]);
 	}
 
 	public boolean requiresType(String typeId) {
@@ -757,12 +755,9 @@ public abstract class HoldsOptions extends BuildObject implements IHoldsOptions,
 			return true;
 		
 		if(optionList != null && optionList.size() != 0){
-			Option option;
-			for(Iterator iter = optionList.iterator(); iter.hasNext();){
-				option = (Option)iter.next();
+			for(Option option : optionList)
 				if(option.hasCustomSettings())
 					return true;
-			}
 		}
 		
 		return false;

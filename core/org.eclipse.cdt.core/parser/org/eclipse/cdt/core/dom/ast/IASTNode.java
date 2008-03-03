@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,7 +36,7 @@ public interface IASTNode {
 	 * 
 	 * Where the node is completely generated within a macro expansion,
 	 * IASTNodeLocation [] result will have one element in it, and it will be an
-	 * IASTMacroExpansion.
+	 * {@link IASTMacroExpansionLocation}.
 	 * 
 	 * Nodes that span file context into a macro expansion (and potentially out
 	 * of the macro expansion again) result in an IASTNodeLocation [] result

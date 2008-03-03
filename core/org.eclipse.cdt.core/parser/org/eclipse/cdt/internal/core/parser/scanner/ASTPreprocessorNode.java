@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroParameter;
 import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
-import org.eclipse.cdt.core.dom.ast.IASTMacroExpansion;
+import org.eclipse.cdt.core.dom.ast.IASTMacroExpansionLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIfdefStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIfndefStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorObjectStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorPragmaStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorUndefStatement;
@@ -41,6 +42,8 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree.IASTInclusionNode;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNodeMatchKind;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNodeMatchKind.Relation;
 
 /**
  * Models various AST-constructs obtained from the preprocessor.
@@ -69,10 +72,36 @@ abstract class ASTPreprocessorNode extends ASTNode {
 	}
 
 	/**
-	 * Returns a subnode surrounding the given range or this.
+	 * Returns a matching node or null.
 	 */
-	IASTNode findSurroundingNode(int sequenceNumber, int length) {
-		return this;
+	ASTNode findNode(int sequenceNumber, int length, ASTNodeMatchKind matchKind) {
+		if (matchKind.matches(this, sequenceNumber, length)) {
+			return this;
+		}
+		return null;
+	}
+	
+	/** 
+	 * Helper method for preprocessor nodes containing a name
+	 */
+	protected ASTNode findNode(int sequenceNumber, int length, ASTPreprocessorName name, ASTNodeMatchKind matchKind) {
+		ASTNode n1, n2;
+		if (matchKind.getRelationToSelection() == Relation.SURROUNDING) {
+			n1= name;
+			n2= this;
+		}
+		else {
+			n1= this;
+			n2= name;
+		}
+		
+		if (matchKind.matches(n1, sequenceNumber, length)) {
+			return n1;
+		}
+		if (matchKind.matches(n2, sequenceNumber, length)) {
+			return n2;
+		}
+		return null;
 	}
 }
 
@@ -221,13 +250,8 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 	}
 	
 	@Override
-	IASTNode findSurroundingNode(int sequenceNumber, int length) {
-		final int nameSequencNumber= fName.getOffset();
-		final int nameEndSequencNumber= nameSequencNumber + fName.getLength();
-		if (nameSequencNumber <= sequenceNumber && sequenceNumber+length <= nameEndSequencNumber) {
-			return fName;
-		}
-		return this;
+	ASTNode findNode(int sequenceNumber, int length, ASTNodeMatchKind matchKind) {
+		return findNode(sequenceNumber, length, fName, matchKind);
 	}
 }
 
@@ -284,13 +308,8 @@ class ASTMacroDefinition extends ASTPreprocessorNode implements IASTPreprocessor
 	}
 
 	@Override
-	IASTNode findSurroundingNode(int sequenceNumber, int length) {
-		final int nameSequencNumber= fName.getOffset();
-		final int nameEndSequencNumber= nameSequencNumber + fName.getLength();
-		if (nameSequencNumber <= sequenceNumber && sequenceNumber+length <= nameEndSequencNumber) {
-			return fName;
-		}
-		return this;
+	ASTNode findNode(int sequenceNumber, int length, ASTNodeMatchKind matchKind) {
+		return findNode(sequenceNumber, length, fName, matchKind);
 	}
 
 	public void setExpansion(String exp) {assert false;}
@@ -399,13 +418,8 @@ class ASTUndef extends ASTPreprocessorNode implements IASTPreprocessorUndefState
 	}
 	
 	@Override
-	IASTNode findSurroundingNode(int sequenceNumber, int length) {
-		final int nameSequencNumber= fName.getOffset();
-		final int nameEndSequencNumber= nameSequencNumber + fName.getLength();
-		if (nameSequencNumber <= sequenceNumber && sequenceNumber+length <= nameEndSequencNumber) {
-			return fName;
-		}
-		return this;
+	ASTNode findNode(int sequenceNumber, int length, ASTNodeMatchKind matchKind) {
+		return findNode(sequenceNumber, length, fName, matchKind);
 	}
 }
 
@@ -503,7 +517,42 @@ class ASTFileLocation implements IASTFileLocation {
 	}
 }
 
-class ASTMacroExpansionLocation implements IASTMacroExpansion {
+class ASTMacroExpansion extends ASTPreprocessorNode implements IASTPreprocessorMacroExpansion {
+
+	private LocationCtxMacroExpansion fContext;
+
+	public ASTMacroExpansion(IASTNode parent, int startNumber, int endNumber) {
+		super(parent, IASTTranslationUnit.MACRO_EXPANSION, startNumber, endNumber);
+	}
+
+	void setContext(LocationCtxMacroExpansion expansionCtx) {
+		fContext= expansionCtx;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion#getName()
+	 */
+	public ASTMacroReferenceName getMacroReference() {
+		return fContext.getMacroReference();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion#getMacroDefinition()
+	 */
+	public IASTPreprocessorMacroDefinition getMacroDefinition() {
+		return fContext.getMacroDefinition();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion#getNestedExpansions()
+	 */
+	public IASTName[] getNestedMacroReferences() {
+		return fContext.getNestedMacroReferences();
+	}
+}
+
+@SuppressWarnings("deprecation")
+class ASTMacroExpansionLocation implements IASTMacroExpansionLocation, org.eclipse.cdt.core.dom.ast.IASTMacroExpansion {
 
 	private LocationCtxMacroExpansion fContext;
 	private int fOffset;
@@ -513,6 +562,13 @@ class ASTMacroExpansionLocation implements IASTMacroExpansion {
 		fContext= macroExpansionCtx;
 		fOffset= offset;
 		fLength= length;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IASTMacroExpansionLocation#getExpansion()
+	 */
+	public IASTPreprocessorMacroExpansion getExpansion() {
+		return fContext.getExpansion();
 	}
 
 	public IASTNodeLocation[] getExpansionLocations() {

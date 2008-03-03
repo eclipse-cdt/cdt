@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
- * Anton Leherbauer (Wind River Systems)
+ *    IBM Rational Software - Initial API and implementation
+ *    Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.DOMAST;
 
@@ -180,7 +180,7 @@ public class ShowInDOMViewAction extends ActionDelegate implements
 			
 			// the selection is within a file currently shown in the DOM AST View
 			if (tu != null && file != null && view instanceof DOMAST) {
-				IASTNode node = tu.selectNodeForLocation(file, offset, length);
+				IASTNode node = tu.getNodeSelector(file).findNode(offset, length);
 				if (node != null && ((DOMAST)view).getContentProvider() instanceof DOMAST.ViewContentProvider) {
 					boolean success = ((DOMAST.ViewContentProvider)((DOMAST)view).getContentProvider()).findAndSelect(node, true); // use offsets when searching for node equality
                     if( ! success )

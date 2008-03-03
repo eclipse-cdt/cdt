@@ -47,7 +47,7 @@ public abstract class FindAction extends SelectionParseAction {
 	 		if (object instanceof ISourceReference)
 	 			searchJob = createQuery((ISourceReference) object);
 		} else if (selection instanceof ITextSelection) {
-			ITextSelection selNode = getSelection((ITextSelection)selection);
+			ITextSelection selNode = (ITextSelection)selection;
 			ICElement element = fEditor.getInputCElement();
 			while (element != null && !(element instanceof ITranslationUnit))
 				element = element.getParent();

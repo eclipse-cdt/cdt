@@ -39,49 +39,47 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 
 public class FindNodeForOffsetAction extends CPPASTVisitor implements ICASTVisitor, ICPPASTVisitor {
-	private IASTNode fFoundNode = null;
-	private int fOffset = 0;
-	private int fLength = 0;
+	private ASTNode fCandidate= null;
+	private final int fOffset;
+	private final int fLength;
+	private final ASTNodeMatchKind fMatchKind;
 
-	public FindNodeForOffsetAction(int offset, int length) {
+	public FindNodeForOffsetAction(int offset, int length, ASTNodeMatchKind matchKind) {
+		fMatchKind= matchKind;
 		fOffset = offset;
 		fLength = length;
 
 		shouldVisitNames = true;
-		shouldVisitDeclarations = true;
-		shouldVisitInitializers = true;
-		shouldVisitParameterDeclarations = true;
-		shouldVisitDeclarators = true;
-		shouldVisitDeclSpecifiers = true;
-		shouldVisitDesignators = true;
-		shouldVisitEnumerators    = true;
-		shouldVisitExpressions = true;
-		shouldVisitStatements = true;
-		shouldVisitTypeIds = true;
-		shouldVisitEnumerators = true;
-		shouldVisitBaseSpecifiers = true;
-		shouldVisitNamespaces     = true;
-		shouldVisitTemplateParameters= true;
-		shouldVisitTranslationUnit= true;
+		shouldVisitDeclarations= true;
+		
+		shouldVisitInitializers=
+		shouldVisitParameterDeclarations=
+		shouldVisitDeclarators=
+		shouldVisitDeclSpecifiers=
+		shouldVisitDesignators=
+		shouldVisitEnumerators=
+		shouldVisitExpressions=
+		shouldVisitStatements=
+		shouldVisitTypeIds=
+		shouldVisitEnumerators=
+		shouldVisitBaseSpecifiers=
+		shouldVisitNamespaces=
+		shouldVisitTemplateParameters=
+		shouldVisitTranslationUnit= !matchKind.matchNamesOnly();
 	}
 
 	public int processNode(IASTNode node) {
-		if (fFoundNode != null)
-			return PROCESS_ABORT;
-
 		if (node instanceof ASTNode) {
-			final int offset = ((ASTNode) node).getOffset();
-			final int length = ((ASTNode) node).getLength();
-			
-			if (offset == fOffset && length == fLength) {
-				fFoundNode = node;
-				return PROCESS_ABORT;
+			final ASTNode astNode = (ASTNode) node;
+			if (astNode.getOffset() > fOffset+fLength || astNode.getOffset() + astNode.getLength() < fOffset) {
+				return PROCESS_SKIP;
 			}
 
-			// skip the rest of this node if the selection is outside of its
-			// bounds
-			if (fOffset > offset + length)
-				return PROCESS_SKIP;
+			if (fMatchKind.matches(astNode, fOffset, fLength)) {
+				if (fCandidate == null || !fMatchKind.isBetterMatch(fCandidate, astNode)) {
+					fCandidate= astNode;
+				}
+			}
 		}
 		return PROCESS_CONTINUE;
 	}
@@ -90,8 +88,7 @@ public class FindNodeForOffsetAction extends CPPASTVisitor implements ICASTVisit
 	public int visit(IASTDeclaration declaration) {
 		// use declarations to determine if the search has gone past the
 		// offset (i.e. don't know the order the visitor visits the nodes)
-		if (declaration instanceof ASTNode
-				&& ((ASTNode) declaration).getOffset() > fOffset)
+		if (declaration instanceof ASTNode && ((ASTNode) declaration).getOffset() > fOffset + fLength)
 			return PROCESS_ABORT;
 
 		return processNode(declaration);
@@ -208,7 +205,7 @@ public class FindNodeForOffsetAction extends CPPASTVisitor implements ICASTVisit
 		return processNode(tu);
 	}
 
-	public IASTNode getNode() {
-		return fFoundNode;
+	public ASTNode getNode() {
+		return fCandidate;
 	}
 }

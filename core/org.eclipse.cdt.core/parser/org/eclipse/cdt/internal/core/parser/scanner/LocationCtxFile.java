@@ -13,7 +13,7 @@ package org.eclipse.cdt.internal.core.parser.scanner;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.eclipse.cdt.core.dom.ast.IASTMacroExpansion;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
 
 /**
  * A location context representing a file.
@@ -105,7 +105,7 @@ class LocationCtxFile extends LocationCtxContainer {
 		return sequenceNumber >= child.fSequenceNumber + child.getSequenceLength();
 	}
 
-	public void collectExplicitMacroExpansions(int offset, int length, ArrayList<IASTMacroExpansion> result) {
+	public void collectMacroExpansions(int offset, int length, ArrayList<IASTPreprocessorMacroExpansion> list) {
 		Collection<LocationCtx> children= getChildren();
 		for (LocationCtx ctx : children) {
 			// context must start before the end of the search range
@@ -115,7 +115,7 @@ class LocationCtxFile extends LocationCtxContainer {
 			if (ctx instanceof LocationCtxMacroExpansion) {
 				// expansion must end after the search start
 				if (ctx.fEndOffsetInParent > offset) {
-					result.add(new ASTMacroExpansionLocation(((LocationCtxMacroExpansion) ctx), 0, ctx.getSequenceLength()));
+					list.add((IASTPreprocessorMacroExpansion) ((LocationCtxMacroExpansion)ctx).getMacroReference().getParent());
 				}
 			}
 		}

@@ -19,12 +19,11 @@ import java.util.List;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
-import org.eclipse.cdt.core.dom.ast.IASTMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -32,7 +31,10 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNodeMatchKind;
 import org.eclipse.cdt.internal.core.dom.parser.ASTProblem;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNodeMatchKind.Relation;
 
 /**
  * Converts the offsets relative to various contexts to the global sequence number. Also creates and stores
@@ -136,7 +138,7 @@ public class LocationMap implements ILocationResolver {
 	 * @param imageLocationInfo the image-location for the name of the macro.
 	 */
 	public IASTName encounterImplicitMacroExpansion(IMacroBinding macro, ImageLocationInfo imageLocationInfo) {
-		return new ASTMacroReferenceName(fTranslationUnit, 0, 0, macro, imageLocationInfo);
+		return new ASTMacroReferenceName(null, 0, 0, macro, imageLocationInfo);
 	}
 	
 	/**
@@ -157,16 +159,19 @@ public class LocationMap implements ILocationResolver {
 		int endNumber= getSequenceNumberForOffset(endOffset);
 		final int length= endNumber-nameNumber;
 		
-		ASTMacroReferenceName expansion= new ASTMacroReferenceName(fTranslationUnit, nameNumber, nameEndNumber, macro, null);
+		ASTMacroExpansion expansion= new ASTMacroExpansion(fTranslationUnit, nameNumber, endNumber);
+		ASTMacroReferenceName explicitRef= new ASTMacroReferenceName(expansion, nameNumber, nameEndNumber, macro, null);
 		for (int i = 0; i < implicitMacroReferences.length; i++) {
 			ASTMacroReferenceName name = (ASTMacroReferenceName) implicitMacroReferences[i];
-			name.setOffsetAndLength(nameNumber, length);
 			name.setParent(expansion);
+			name.setOffsetAndLength(nameNumber, length);
 			addMacroReference(name);
 		}
-		addMacroReference(expansion);
+		addMacroReference(explicitRef);
 		
-		fCurrentContext= new LocationCtxMacroExpansion(this, (LocationCtxContainer) fCurrentContext, nameOffset, endOffset, endNumber, contextLength, imageLocations, expansion);
+		LocationCtxMacroExpansion expansionCtx= new LocationCtxMacroExpansion(this, (LocationCtxContainer) fCurrentContext, nameOffset, endOffset, endNumber, contextLength, imageLocations, explicitRef);
+		expansion.setContext(expansionCtx);
+		fCurrentContext= expansionCtx;
 		fLastChildInsertionOffset= 0;
 		return fCurrentContext;
 	}
@@ -361,17 +366,17 @@ public class LocationMap implements ILocationResolver {
 		return floc.getSource();
 	}
     
-	public IASTMacroExpansion[] getMacroExpansions(IASTFileLocation loc) {
+	public IASTPreprocessorMacroExpansion[] getMacroExpansions(IASTFileLocation loc) {
 		ASTFileLocation floc= convertFileLocation(loc);
 		if (floc == null) {
-			return new IASTMacroExpansion[0];
+			return IASTPreprocessorMacroExpansion.EMPTY_ARRAY;
 		}
 		
 		LocationCtxFile ctx= floc.getLocationContext();
-		ArrayList<IASTMacroExpansion> list= new ArrayList<IASTMacroExpansion>();
+		ArrayList<IASTPreprocessorMacroExpansion> list= new ArrayList<IASTPreprocessorMacroExpansion>();
 		
-		ctx.collectExplicitMacroExpansions(floc.getNodeOffset(), floc.getNodeLength(), list);
-		return list.toArray(new IASTMacroExpansion[list.size()]);
+		ctx.collectMacroExpansions(floc.getNodeOffset(), floc.getNodeLength(), list);
+		return list.toArray(new IASTPreprocessorMacroExpansion[list.size()]);
 	}
 
 	private ASTFileLocation convertFileLocation(IASTFileLocation loc) {
@@ -429,21 +434,24 @@ public class LocationMap implements ILocationResolver {
 		return null;
 	}
 
-	public IASTNode findSurroundingPreprocessorNode(int sequenceNumber, int length) {
+	public ASTNode findPreprocessorNode(int sequenceNumber, int length, ASTNodeMatchKind matchKind) {
 		int lower=0;
 		int upper= fDirectives.size()-1;
 		while(lower <= upper) {
 			int middle= (lower+upper)/2;
-			ASTPreprocessorNode node= fDirectives.get(middle);
-			final int nodeSequenceNumber= node.getOffset();
-			if (nodeSequenceNumber <= sequenceNumber) {
-				final int nodeEndSequenceNumber= nodeSequenceNumber + node.getLength();
-				if (sequenceNumber+length <= nodeEndSequenceNumber) {
-					return node.findSurroundingNode(sequenceNumber, length);
+			ASTPreprocessorNode candidate= fDirectives.get(middle);
+			ASTNode result= candidate.findNode(sequenceNumber, length, matchKind);
+			if (result != null) {
+				if (matchKind.getRelationToSelection() == Relation.FIRST_CONTAINED) {
+					if (middle>lower) {
+						upper= middle; // if (upper-lower == 1) then middle==lower
+						continue;
+					}
 				}
-				else {
-					lower= middle+1;
-				}
+				return result;
+			}
+			if (matchKind.isLowerBound(candidate, sequenceNumber, length)) {
+				lower= middle+1;
 			}
 			else {
 				upper= middle-1;
@@ -452,12 +460,7 @@ public class LocationMap implements ILocationResolver {
 		// search for a macro-expansion
 		LocationCtxMacroExpansion ctx= fRootContext.findSurroundingMacroExpansion(sequenceNumber, length);
 		if (ctx != null) {
-			ASTMacroReferenceName candidate= ctx.getMacroReference();
-			final int candSequenceNumber = candidate.getOffset();
-			final int candEndSequenceNumber = candSequenceNumber + candidate.getLength();
-			if (candSequenceNumber <= sequenceNumber && sequenceNumber + length <= candEndSequenceNumber) {
-				return candidate;
-			}
+			return ctx.findNode(sequenceNumber, length, matchKind);
 		}
 		
 		return null;
@@ -587,10 +590,11 @@ public class LocationMap implements ILocationResolver {
 		return result.toArray(new IASTName[result.size()]);
 	}
 	
-	public IASTName[] getImplicitMacroReferences(IASTName ref) {
+	public IASTName[] getNestedMacroReferences(ASTMacroExpansion expansion) {
+		final IASTName explicitRef= expansion.getMacroReference(); 
 		List<IASTName> result= new ArrayList<IASTName>();
 		for (IASTName name : fMacroReferences) {
-			if (name.getParent() == ref) {
+			if (name.getParent() == expansion && name != explicitRef) {
 				result.add(name);
 			}
 		}

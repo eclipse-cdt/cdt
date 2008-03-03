@@ -43,6 +43,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -359,6 +360,9 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 								macroLength= macroDef.getName().toCharArray().length;
 							}
 							IASTNode macroNode= node.getTranslationUnit().selectNodeForLocation(fFilePath, useOffset, macroLength);
+							if (macroNode instanceof IASTPreprocessorMacroExpansion) {
+								macroNode= ((IASTPreprocessorMacroExpansion) macroNode).getMacroReference();
+							}
 							if (macroNode != null && visitMacro(macroNode, macroLength)) {
 								fMinLocation= useOffset + macroLength;
 							}

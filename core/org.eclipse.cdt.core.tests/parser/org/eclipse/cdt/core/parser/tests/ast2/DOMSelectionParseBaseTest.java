@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *    IBM Rational Software - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -48,17 +48,12 @@ public class DOMSelectionParseBaseTest extends DOMFileBasePluginTest {
 	protected IASTNode parse(IFile file, int offset1, int offset2, boolean expectedToPass) throws Exception {
 		ITranslationUnit tu = (ITranslationUnit)CCorePlugin.getDefault().getCoreModel().create(file);
 		IASTTranslationUnit ast = tu.getAST();
-		IASTName[] names = tu.getLanguage().getSelectedNames(ast, offset1, offset2 - offset1);
-		
+		IASTName name= ast.getNodeSelector(null).findName(offset1, offset2 - offset1);
+
 		if (!expectedToPass) return null;
 		
-		if (names.length == 0) {
-			assertFalse(true);
-		} else {
-			return names[0];
-		}		
-		
-		return null;
+		assertNotNull(name);
+		return name;
 	}
 	
 	protected IName[] getDeclarationOffTU(IASTName name) {

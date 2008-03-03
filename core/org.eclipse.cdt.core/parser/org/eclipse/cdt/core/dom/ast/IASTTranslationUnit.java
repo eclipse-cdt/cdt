@@ -115,15 +115,23 @@ public interface IASTTranslationUnit extends IASTNode, IAdaptable {
 	 * @return List of IASTName nodes representing uses of the binding
 	 */
 	public IASTName[] getReferences(IBinding binding);
+	
+	
+	/**
+	 * Returns an IASTNodeSelector object for finding nodes by file offsets.
+	 * The object is suitable for working in one of the files that is part of
+	 * the translation unit.
+	 * @param filePath file of interest, as returned by {@link IASTFileLocation#getFileName()},
+	 * or <code>null</code> to specify the root source of the translation-unit.
+	 * @return an IASTNodeSelector.
+	 * @since 5.0
+	 */
+	public IASTNodeSelector getNodeSelector(String filePath);
  
 	/**
-	 * Select the node in the treat that best fits the offset/length/file path. 
-	 * 
-	 * @param path - file name specified through path
-	 * @param offset - location in the file as an offset
-	 * @param length - length of selection
-	 * @return <code>IASTNode</code> that best fits
+	 * @deprecated use {@link #getNodeSelector(String)}, instead.
 	 */
+	@Deprecated
 	public IASTNode selectNodeForLocation(String path, int offset, int length);
 
 	/**
@@ -158,6 +166,11 @@ public interface IASTTranslationUnit extends IASTNode, IAdaptable {
 	public IASTPreprocessorStatement[] getAllPreprocessorStatements();
 
 	/**
+	 * Returns an array with all macro expansions of this translation unit.
+	 */
+	public IASTPreprocessorMacroExpansion[] getMacroExpansions();
+	
+	/**
 	 * Get all preprocessor and scanner problems.
 	 * @return <code>IASTProblem[]</code>
 	 */
@@ -182,9 +195,16 @@ public interface IASTTranslationUnit extends IASTNode, IAdaptable {
      */
     public IASTFileLocation flattenLocationsToFile( IASTNodeLocation [] nodeLocations );
     
-    public static final ASTNodeProperty EXPANSION_NAME = new ASTNodeProperty(
+    /**
+     * @deprecated names for macro expansions are nested inside of {@link IASTPreprocessorMacroExpansion}.
+     */
+    @Deprecated
+	public static final ASTNodeProperty EXPANSION_NAME = new ASTNodeProperty(
     "IASTTranslationUnit.EXPANSION_NAME - IASTName generated for macro expansions."); //$NON-NLS-1$
-    
+
+    public static final ASTNodeProperty MACRO_EXPANSION = new ASTNodeProperty(
+    "IASTTranslationUnit.MACRO_EXPANSION - IASTPreprocessorMacroExpansion node for macro expansions."); //$NON-NLS-1$
+
     
     public static interface IDependencyTree
     {

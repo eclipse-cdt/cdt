@@ -6,10 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX Software Systems - Initial API and implementation
- * Anton Leherbauer (Wind River Systems)
+ *    QNX Software Systems - Initial API and implementation
+ *    Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.text.c.hover;
 
 import java.io.IOException;
@@ -124,23 +123,19 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 		public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
 			if (ast != null) {
 				try {
-					IASTName[] names;
-					names = lang.getSelectedNames(ast, fTextRegion.getOffset(), fTextRegion.getLength());
-					if (names != null && names.length >= 1) {
-						for (int i = 0; i < names.length; i++) {
-							IASTName name= names[i];
-							IBinding binding= name.resolveBinding();
-							if (binding != null) {
-								if (binding instanceof IProblemBinding) {
-									if (DEBUG) fSource= "Cannot resolve " + new String(name.toCharArray()); //$NON-NLS-1$
-								} else if (binding instanceof IMacroBinding) {
-									fSource= computeSourceForMacro(ast, name, binding);
-								} else {
-									fSource= computeSourceForBinding(ast, binding);
-								}
-								if (fSource != null) {
-									return Status.OK_STATUS;
-								}
+					IASTName name= ast.getNodeSelector(null).findSurroundingName(fTextRegion.getOffset(), fTextRegion.getLength());
+					if (name != null) {
+						IBinding binding= name.resolveBinding();
+						if (binding != null) {
+							if (binding instanceof IProblemBinding) {
+								if (DEBUG) fSource= "Cannot resolve " + new String(name.toCharArray()); //$NON-NLS-1$
+							} else if (binding instanceof IMacroBinding) {
+								fSource= computeSourceForMacro(ast, name, binding);
+							} else {
+								fSource= computeSourceForBinding(ast, binding);
+							}
+							if (fSource != null) {
+								return Status.OK_STATUS;
 							}
 						}
 					}
@@ -559,6 +554,7 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 	/*
 	 * @see ITextHover#getHoverInfo(ITextViewer, IRegion)
 	 */
+	@Override
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
 		IEditorPart editor = getEditor();
 		if (editor != null) {
@@ -777,6 +773,7 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 	 * @see org.eclipse.jface.text.ITextHoverExtension#getHoverControlCreator()
 	 * @since 3.0
 	 */
+	@Override
 	public IInformationControlCreator getHoverControlCreator() {
 		return new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell parent) {

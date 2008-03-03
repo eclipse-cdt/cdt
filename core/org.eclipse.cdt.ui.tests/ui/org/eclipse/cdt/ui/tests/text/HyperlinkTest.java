@@ -122,6 +122,7 @@ public class HyperlinkTest extends TestCase {
 		
 		assertHyperlink(CPP_CODE.indexOf("#include") + 2, 0, "#include <stdio.h>".length()); 
 		assertHyperlink(CPP_CODE.indexOf("<stdio.h>") + 2, 0, "#include <stdio.h>".length());
+		assertHyperlink(CPP_CODE.indexOf("<stdio.h>") + "<stdio.h".length(), 0, "#include <stdio.h>".length());
 		
 		// hovering over the whitspace inside an include still results in a hyperlink
 		assertHyperlink(CPP_CODE.indexOf("<stdio.h>") - 1, 0, "#include <stdio.h>".length());

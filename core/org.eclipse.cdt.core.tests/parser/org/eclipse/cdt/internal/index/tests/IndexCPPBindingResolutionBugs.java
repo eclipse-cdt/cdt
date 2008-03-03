@@ -234,7 +234,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	// ns::A a;
 	// class B {};
 	public void testBug188324() throws Exception {
-		IASTName name= findNames("B", 1)[0];
+		IASTName name= findName("B", 1);
 		IBinding b0= getBindingFromASTName("ns::A", 2);
 		assertInstance(b0, ICPPNamespace.class);
 		ICPPNamespace ns= (ICPPNamespace) b0;
@@ -389,9 +389,9 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 		IBinding binding= getBindingFromASTName("Y {", 1);
 		assertTrue(binding instanceof ICPPNamespace);
 		ICPPNamespace adapted= (ICPPNamespace) strategy.getIndex().adaptBinding(binding);
-		IASTName[] names= findNames("Ambiguity problem", 9);
-		assertEquals(1, names.length);
-		IBinding binding2= adapted.getNamespaceScope().getBinding(names[0], true);
+		IASTName name= findName("Ambiguity problem", 9);
+		assertNotNull(name);
+		IBinding binding2= adapted.getNamespaceScope().getBinding(name, true);
 	}
 	
 	// namespace X {int i;}

@@ -14,25 +14,25 @@ package org.eclipse.cdt.internal.core.parser.scanner;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
-import org.eclipse.cdt.core.dom.ast.IASTMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNodeMatchKind;
 
 
 /**
  * Interface between the ast and the location-resolver for resolving offsets.
  * @since 5.0
  */
-public interface ILocationResolver {
-    
+public interface ILocationResolver {    
 	/**
 	 * Introduces the ast translation unit to the location resolver. Must be called before any tokens from the
 	 * scanner are obtained.
@@ -126,7 +126,7 @@ public interface ILocationResolver {
 	 * Returns the sequence-number for the given file-path and offset, or <code>-1</code> if this file
 	 * is not part of the translation-unit.
 	 * @param filePath a file path or <code>null</code> to specify the root of the translation unit.
-	 * @param fileOffset an offset into the source of the file.
+	 * @param fileOffset an offset into the source of the file, or <code>-1</code>.
 	 */
 	int getSequenceNumberForFileOffset(String filePath, int fileOffset);
 
@@ -139,8 +139,12 @@ public interface ILocationResolver {
 	 * Returns a preprocessor node surrounding the given range, or <code>null</code>. The result is either a
 	 * preprocessing directive ({@link IASTPreprocessorStatement}) or a name contained therein {@link IASTName} or 
 	 * a macro expansion ({@link IASTName}).
+	 * 
+	 * @param sequenceNumber the sequence number of the start of the interesting region.
+	 * @param length the sequence length of the interesting region.
+	 * @param matchOption the kind of the desired match.
 	 */
-	IASTNode findSurroundingPreprocessorNode(int sequenceNumber, int length);
+	ASTNode findPreprocessorNode(int sequenceNumber, int length, ASTNodeMatchKind matchOption);
 
 	/**
 	 * Returns whether the specified sequence number points into the root file of the
@@ -161,13 +165,5 @@ public interface ILocationResolver {
 	 * @return an array of macro expansions.
 	 * @since 5.0
 	 */
-	IASTMacroExpansion[] getMacroExpansions(IASTFileLocation loc);
-
-	/**
-	 * Returns all implicit macro references related to an explicit one.
-	 * @param ref an explicit macro expansion.
-	 * @return an array of names representing implicit macro expansions.
-	 * @since 5.0
-	 */
-	IASTName[] getImplicitMacroReferences(IASTName ref);
+	IASTPreprocessorMacroExpansion[] getMacroExpansions(IASTFileLocation loc);
 }

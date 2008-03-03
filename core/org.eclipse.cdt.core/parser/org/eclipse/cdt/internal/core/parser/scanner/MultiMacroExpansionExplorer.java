@@ -17,9 +17,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
-import org.eclipse.cdt.core.dom.ast.IASTMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
@@ -65,7 +65,7 @@ public class MultiMacroExpansionExplorer extends MacroExpansionExplorer {
 			throw new IllegalArgumentException();
 		}
 		final ILocationResolver resolver = getResolver(tu);
-		final IASTMacroExpansion[] expansions= resolver.getMacroExpansions(loc);
+		final IASTPreprocessorMacroExpansion[] expansions= resolver.getMacroExpansions(loc);
 		final int count= expansions.length;
 
 		loc = extendLocation(loc, expansions);
@@ -78,13 +78,13 @@ public class MultiMacroExpansionExplorer extends MacroExpansionExplorer {
 		final int firstOffset= loc.getNodeOffset();
 		int bidx= -1;
 		int didx= -1;
-		for (IASTMacroExpansion expansion : expansions) {
+		for (IASTPreprocessorMacroExpansion expansion : expansions) {
 			IASTName ref= expansion.getMacroReference();
 			if (ref != null) {
 				ArrayList<IASTName> refs= new ArrayList<IASTName>();
 				refs.add(ref);
-				refs.addAll(Arrays.asList(resolver.getImplicitMacroReferences(ref)));
-				IASTFileLocation refLoc= expansion.asFileLocation();
+				refs.addAll(Arrays.asList(expansion.getNestedMacroReferences()));
+				IASTFileLocation refLoc= expansion.getFileLocation();
 				int from= refLoc.getNodeOffset()-firstOffset;
 				int to= from+refLoc.getNodeLength();
 				fBoundaries[++bidx]= from;
@@ -105,14 +105,14 @@ public class MultiMacroExpansionExplorer extends MacroExpansionExplorer {
 		return resolver;
 	}
 
-	private IASTFileLocation extendLocation(IASTFileLocation loc, final IASTMacroExpansion[] expansions) {
+	private IASTFileLocation extendLocation(IASTFileLocation loc, final IASTPreprocessorMacroExpansion[] expansions) {
 		final int count= expansions.length;
 		if (count > 0) {
 			int from= loc.getNodeOffset();
 			int to= from+loc.getNodeLength();
 
-			final int lfrom = expansions[0].asFileLocation().getNodeOffset();
-			final IASTFileLocation l= expansions[count-1].asFileLocation();
+			final int lfrom = expansions[0].getFileLocation().getNodeOffset();
+			final IASTFileLocation l= expansions[count-1].getFileLocation();
 			final int lto= l.getNodeOffset() + l.getNodeLength();
 			
 			if (lfrom < from || lto > to) {

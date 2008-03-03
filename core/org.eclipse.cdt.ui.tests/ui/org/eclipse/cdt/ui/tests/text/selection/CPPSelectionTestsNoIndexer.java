@@ -265,10 +265,7 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
             	ITranslationUnit tu= CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput());
         		IStatus ok= ASTProvider.getASTProvider().runOnAST(tu, ASTProvider.WAIT_YES, monitor, new ASTRunnable() {
         			public IStatus runOnAST(ILanguage language, IASTTranslationUnit ast) throws CoreException {
-                        IASTName[] names = language.getSelectedNames(ast, textSel.getOffset(), textSel.getLength());
-                        if (names != null && names.length > 0)
-                            result[0]= names[0];
-        	
+        				result[0]= ast.getNodeSelector(null).findName(textSel.getOffset(), textSel.getLength());        	
         				return Status.OK_STATUS;
         			}
         		});
@@ -280,7 +277,7 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
         return null;
     }
     	
-    public void _testBug93281() throws Exception {
+    public void testBug93281() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("class Point{                         \n"); //$NON-NLS-1$
         buffer.append("public:                              \n"); //$NON-NLS-1$
@@ -900,7 +897,7 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
         assertEquals(((ASTNode)decl).getLength(), 1);
     }
     
-    public void _testBug95229() throws Exception {
+    public void testBug95229() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("struct A {\n"); //$NON-NLS-1$
         buffer.append("operator short(); // F3 on operator causes an infinite loop\n"); //$NON-NLS-1$

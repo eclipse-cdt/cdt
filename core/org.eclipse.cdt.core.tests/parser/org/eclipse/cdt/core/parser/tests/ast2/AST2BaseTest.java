@@ -13,9 +13,7 @@ package org.eclipse.cdt.core.parser.tests.ast2;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.ListIterator;
 
 import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
@@ -44,8 +42,6 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
-import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.ISourceCodeParser;
 import org.eclipse.cdt.core.dom.parser.c.ANSICParserExtensionConfiguration;
@@ -56,7 +52,6 @@ import org.eclipse.cdt.core.dom.parser.cpp.ANSICPPParserExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.GPPParserExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.GPPScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.ICPPParserExtensionConfiguration;
-import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
@@ -443,22 +438,16 @@ public class AST2BaseTest extends BaseTestCase {
     	}
     	
     	private IBinding binding(String section, int len) {
-    		ILanguage language = isCPP ? GPPLanguage.getDefault() : GCCLanguage.getDefault();
-    		IASTName[] names= language.getSelectedNames(tu, contents.indexOf(section), len);
-    		List lnames= new ArrayList(Arrays.asList(names));
-    		for(ListIterator li= lnames.listIterator(); li.hasNext(); ) {
-    			IASTName name= (IASTName) li.next();
-    			if(name.getRawSignature().length()!=len) {
-    				li.remove();
-    			}
-    		}
-    		names= (IASTName[]) lnames.toArray(new IASTName[lnames.size()]);
-    		assertEquals("found " + names.length + " names for \""+section.substring(0, len)+"\"", 1, names.length);
+    		final int offset = contents.indexOf(section);
+    		final String selection = section.substring(0, len);
+			IASTName name= tu.getNodeSelector(null).findName(offset, len);
+			assertNotNull("did not find \""+selection+"\"", name);
+    		assertEquals(selection, name.getRawSignature());
     			
-    		IBinding binding = names[0].resolveBinding();
-    		assertNotNull("No binding for "+names[0].getRawSignature(), binding);
+    		IBinding binding = name.resolveBinding();
+    		assertNotNull("No binding for "+name.getRawSignature(), binding);
     		
-    		return names[0].resolveBinding();
+    		return name.resolveBinding();
     	}
     }
 }

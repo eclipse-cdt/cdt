@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
@@ -60,6 +61,7 @@ class ASTPreprocessorName extends ASTPreprocessorNode implements IASTName {
 	public char[] toCharArray() {
 		return fName;
 	}    	
+	@Override
 	public String toString() {
 		return new String(fName);
 	}
@@ -72,6 +74,7 @@ class ASTPreprocessorDefinition extends ASTPreprocessorName {
 		super(parent, property, startNumber, endNumber, name, binding);
 	}
 
+	@Override
 	public boolean isDefinition() {
 		return true;
 	}
@@ -86,10 +89,12 @@ class ASTBuiltinName extends ASTPreprocessorDefinition {
 		fFileLocation= floc;
 	}
 
+	@Override
 	public boolean contains(IASTNode node) {
 		return node==this;
 	}
 
+	@Override
 	public String getContainingFilename() {
 		if (fFileLocation == null) {
 			return ""; //$NON-NLS-1$
@@ -97,10 +102,12 @@ class ASTBuiltinName extends ASTPreprocessorDefinition {
 		return fFileLocation.getFileName();
 	}
 
+	@Override
 	public IASTFileLocation getFileLocation() {
 		return fFileLocation;
 	}
 
+	@Override
 	public IASTNodeLocation[] getNodeLocations() {
 		if (fFileLocation == null) {
 			return new IASTNodeLocation[0];
@@ -108,6 +115,7 @@ class ASTBuiltinName extends ASTPreprocessorDefinition {
 		return new IASTNodeLocation[]{fFileLocation};
 	}
 
+	@Override
 	public String getRawSignature() {
 		if (fFileLocation == null) {
 			return ""; //$NON-NLS-1$
@@ -119,8 +127,8 @@ class ASTBuiltinName extends ASTPreprocessorDefinition {
 class ASTMacroReferenceName extends ASTPreprocessorName {
 	private ImageLocationInfo fImageLocationInfo;
 	
-	public ASTMacroReferenceName(IASTNode parent, int offset, int endOffset, IMacroBinding macro, ImageLocationInfo imgLocationInfo) {
-		super(parent, IASTTranslationUnit.EXPANSION_NAME, offset, endOffset, macro.getNameCharArray(), macro);
+	public ASTMacroReferenceName(IASTPreprocessorMacroExpansion parent, int offset, int endOffset, IMacroBinding macro, ImageLocationInfo imgLocationInfo) {
+		super(parent, IASTPreprocessorMacroExpansion.EXPANSION_NAME, offset, endOffset, macro.getNameCharArray(), macro);
 		fImageLocationInfo= imgLocationInfo;
 	}
 

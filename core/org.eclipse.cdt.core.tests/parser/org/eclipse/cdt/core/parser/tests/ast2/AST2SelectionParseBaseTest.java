@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -60,7 +61,7 @@ public class AST2SelectionParseBaseTest extends FileBasePluginTest {
 	
 	protected IASTNode parse(IFile file, ParserLanguage lang, int offset, int length) throws ParserException {
 		IASTTranslationUnit tu = parse(file, lang, false, false);
-		return tu.selectNodeForLocation(tu.getFilePath(), offset, length);
+		return tu.getNodeSelector(null).findNode(offset, length);
 	}
 	
 	protected IASTNode parse(String code, ParserLanguage lang, int offset, int length, boolean expectedToPass) throws ParserException {
@@ -69,7 +70,7 @@ public class AST2SelectionParseBaseTest extends FileBasePluginTest {
 	
 	protected IASTNode parse(String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems, int offset, int length) throws ParserException {
 		IASTTranslationUnit tu = parse(code, lang, useGNUExtensions, expectNoProblems);
-		return tu.selectNodeForLocation(tu.getFilePath(), offset, length);
+		return tu.getNodeSelector(null).findNode(offset, length);
 	}	
 
     /**

@@ -21,8 +21,10 @@ import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
+import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -139,11 +141,20 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 			return EMPTY_PREPROCESSOR_MACRODEF_ARRAY;
 		return fLocationResolver.getMacroDefinitions();
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getMacroExpansions()
+	 */
+	public IASTPreprocessorMacroExpansion[] getMacroExpansions() {
+		if (fLocationResolver == null)
+			return IASTPreprocessorMacroExpansion.EMPTY_ARRAY;
+		return fLocationResolver.getMacroExpansions(getFileLocation());
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getMacroDefinitions()
+	 * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getBuiltinMacroDefinitions()
 	 */
 	public final IASTPreprocessorMacroDefinition[] getBuiltinMacroDefinitions() {
 		if (fLocationResolver == null)
@@ -316,20 +327,10 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	 * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getNodeForLocation(org.eclipse.cdt.core.dom.ast.IASTNodeLocation)
 	 */
 	public final IASTNode selectNodeForLocation(String path, int realOffset, int realLength) {
-    	IASTNode result= null;
-		if (fLocationResolver != null) {
-	    	int start= fLocationResolver.getSequenceNumberForFileOffset(path, realOffset);
-	    	if (start >= 0) {
-	    		int length= realLength < 1 ? 0 : 
-	    			fLocationResolver.getSequenceNumberForFileOffset(path, realOffset+realLength-1) + 1 - start;
-	    		result= fLocationResolver.findSurroundingPreprocessorNode(start, length);
-	    		if (result == null) {
-	    			FindNodeForOffsetAction nodeFinder = new FindNodeForOffsetAction(start, length);
-	    			accept(nodeFinder);
-	    			result = nodeFinder.getNode();
-	    		}
-	    	}    	
-		}
-		return result;
+		return getNodeSelector(path).findNode(realOffset, realLength);
+	}
+	
+	public final IASTNodeSelector getNodeSelector(String filePath) {
+		return new ASTNodeSelector(this, fLocationResolver, filePath);
 	}
 }

@@ -232,7 +232,7 @@ public class IndexBugsTests extends BaseTestCase {
 		// make sure the ast is correct
 		ITranslationUnit tu= (ITranslationUnit) fCProject.findElement(new Path(fileName));
 		IASTTranslationUnit ast= tu.getAST();
-		IASTName name= (IASTName) ast.selectNodeForLocation(tu.getLocation().toString(), indexOfDecl, funcName.length());
+		IASTName name= (IASTName) ast.getNodeSelector(null).findNode(indexOfDecl, funcName.length());
 		IBinding astBinding= name.resolveBinding();
 
 		IName[] astDecls= ast.getDeclarations(astBinding);

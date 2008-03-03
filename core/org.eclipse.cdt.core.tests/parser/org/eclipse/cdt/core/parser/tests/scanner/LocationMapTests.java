@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIfdefStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIfndefStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorPragmaStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorUndefStatement;
@@ -471,15 +472,15 @@ public class LocationMapTests extends BaseTestCase {
 		IASTName[] refs= fLocationMap.getReferences(macro3);
 		assertEquals(1, refs.length);
 		IASTName macro3ref= refs[0];
-		checkName(refs[0], macro3, "n3", fTu, IASTTranslationUnit.EXPANSION_NAME, ROLE_REFERENCE, FN, 110, 5, 2, 2, new String(LONGDIGITS, 110, 5));
+		checkName(refs[0], macro3, "n3", refs[0].getParent(), IASTPreprocessorMacroExpansion.EXPANSION_NAME, ROLE_REFERENCE, FN, 110, 5, 2, 2, new String(LONGDIGITS, 110, 5));
 
 		refs= fLocationMap.getReferences(macro1);
 		assertEquals(1, refs.length);
-		checkName(refs[0], macro1, "n1", macro3ref, IASTTranslationUnit.EXPANSION_NAME, ROLE_REFERENCE, FN, 110, 15, 2, 2, new String(LONGDIGITS, 110, 15));
+		checkName(refs[0], macro1, "n1", refs[0].getParent(), IASTPreprocessorMacroExpansion.EXPANSION_NAME, ROLE_REFERENCE, FN, 110, 15, 2, 2, new String(LONGDIGITS, 110, 15));
 
 		refs= fLocationMap.getReferences(macro2);
 		assertEquals(1, refs.length);
-		checkName(refs[0], macro2, "n2", macro3ref, IASTTranslationUnit.EXPANSION_NAME, ROLE_REFERENCE, FN, 110, 15, 2, 2, new String(LONGDIGITS, 110, 15));
+		checkName(refs[0], macro2, "n2", refs[0].getParent(), IASTPreprocessorMacroExpansion.EXPANSION_NAME, ROLE_REFERENCE, FN, 110, 15, 2, 2, new String(LONGDIGITS, 110, 15));
 	}
 	
 	public void testContexts() {

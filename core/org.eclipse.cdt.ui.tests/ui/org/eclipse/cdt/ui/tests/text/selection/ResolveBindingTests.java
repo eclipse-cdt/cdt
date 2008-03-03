@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -76,9 +76,9 @@ public class ResolveBindingTests extends BaseUITestCase  {
 		
 		assertNotNull("No language for file " + astTU.getFilePath().toString(), language);
 		
-		IASTName[] names= language.getSelectedNames(astTU, offset, len);
-		assertEquals(1, names.length);
-		return names[0];
+		IASTName name= astTU.getNodeSelector(null).findName(offset, len);
+		assertNotNull(name);
+		return name;
 	}
 
 	private void checkBinding(IASTName name, Class clazz) {

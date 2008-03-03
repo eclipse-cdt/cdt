@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.hyperlink.IHyperlink;
@@ -28,8 +27,9 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexManager;
@@ -38,8 +38,6 @@ import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
-
-import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
 
 public class CElementHyperlinkDetector implements IHyperlinkDetector {
 
@@ -50,23 +48,15 @@ public class CElementHyperlinkDetector implements IHyperlinkDetector {
 	}
 	
 	
-	public IHyperlink[] detectHyperlinks(ITextViewer textViewer, IRegion region, boolean canShowMultipleHyperlinks) {
-		if (region == null || canShowMultipleHyperlinks || !(fTextEditor instanceof CEditor))
+	public IHyperlink[] detectHyperlinks(ITextViewer textViewer, final IRegion region, boolean canShowMultipleHyperlinks) {
+		if (region == null || canShowMultipleHyperlinks || fTextEditor == null)
 			return null;
 		
-		CEditor editor = (CEditor) fTextEditor;
-		int offset = region.getOffset();
-		
-		final IAction openAction= editor.getAction("OpenDeclarations"); //$NON-NLS-1$
+		final IAction openAction= fTextEditor.getAction("OpenDeclarations"); //$NON-NLS-1$
 		if (openAction == null)
 			return null;
-
-		// reuse the logic from Open Decl that recognizes a word in the editor
-		final ITextSelection selection = OpenDeclarationsAction.selectWord(offset, editor);
-		if(selection == null)
-			return null;
 		
-		final IWorkingCopy workingCopy = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput());
+		final IWorkingCopy workingCopy = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(fTextEditor.getEditorInput());
 		if (workingCopy == null) {
 			return null;
 		}
@@ -90,28 +80,31 @@ public class CElementHyperlinkDetector implements IHyperlinkDetector {
 			IStatus status= ASTProvider.getASTProvider().runOnAST(workingCopy, ASTProvider.WAIT_YES, null, new ASTRunnable() {
 				public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
 					if (ast != null) {
-						IASTName[] selectedNames= 
-							lang.getSelectedNames(ast, selection.getOffset(), selection.getLength());
-
-						IRegion linkRegion= null;
-						if(selectedNames.length > 0 && selectedNames[0] != null) { // found a name
+						final int offset= region.getOffset();
+						final int length= Math.max(1, region.getLength());
+						final IASTNodeSelector nodeSelector= ast.getNodeSelector(null);
+						IASTName selectedName= nodeSelector.findSurroundingName(offset, length);
+						IASTFileLocation linkLocation= null;
+						if (selectedName != null) { // found a name
 							// prefer include statement over the include name
-							if (selectedNames[0].getParent() instanceof IASTPreprocessorIncludeStatement) {
-								IASTFileLocation loc= selectedNames[0].getParent().getFileLocation();
-								if (loc != null) {
-									linkRegion= new Region(loc.getNodeOffset(), loc.getNodeLength());
-								}
+							if (selectedName.getParent() instanceof IASTPreprocessorIncludeStatement) {
+								linkLocation= selectedName.getParent().getFileLocation();
 							}
-							if (linkRegion == null) {
-								linkRegion = new Region(selection.getOffset(), selection.getLength());
+							else {
+								linkLocation= selectedName.getFileLocation();
 							}
 						}
 						else { 
-							linkRegion = matchIncludeStatement(ast, selection);
+							// search for include statement
+							final IASTNode cand= nodeSelector.findSurroundingNode(offset, length);
+							if (cand instanceof IASTPreprocessorIncludeStatement) {
+								linkLocation= cand.getFileLocation();
+							}
 						}
-
-						if(linkRegion != null)
-							result[0]= new CElementHyperlink(linkRegion, openAction);
+						if (linkLocation != null) {
+							result[0]= 	new CElementHyperlink(
+									new Region(linkLocation.getNodeOffset(), linkLocation.getNodeLength()), openAction);
+						}
 					}
 					return Status.OK_STATUS;
 				}
@@ -125,29 +118,4 @@ public class CElementHyperlinkDetector implements IHyperlinkDetector {
 		
 		return result[0] == null ? null : result;
 	}
-	
-	
-	/**
-	 * Returns the region that represents an include directive if one is found
-	 * that matches the selection, null otherwise.
-	 */
-	private IRegion matchIncludeStatement(IASTTranslationUnit ast, ITextSelection selection) {
-		IASTPreprocessorStatement[] preprocs = ast.getAllPreprocessorStatements();
-		for (int i = 0; i < preprocs.length; ++i) {
-			
-			if (!(preprocs[i] instanceof IASTPreprocessorIncludeStatement))
-				continue;
-			
-			IASTFileLocation loc = preprocs[i].getFileLocation();
-			if (loc != null
-					&& loc.getFileName().equals(ast.getFilePath())
-					&& loc.getNodeOffset() < selection.getOffset()
-					&& loc.getNodeOffset() + loc.getNodeLength() > selection.getOffset()) {
-				
-				return new Region(loc.getNodeOffset(), loc.getNodeLength());
-			}
-		}
-		return null;
-	}
-
 }

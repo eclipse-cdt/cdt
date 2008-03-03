@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -220,10 +220,7 @@ public class BaseSelectionTestsIndexer extends BaseUITestCase {
             	ITranslationUnit tu = (ITranslationUnit)CoreModel.getDefault().create(file);
         		IStatus ok= ASTProvider.getASTProvider().runOnAST(tu, ASTProvider.WAIT_YES, monitor, new ASTRunnable() {
         			public IStatus runOnAST(ILanguage language, IASTTranslationUnit ast) throws CoreException {
-                        IASTName[] names = language.getSelectedNames(ast, textSel.getOffset(), textSel.getLength());
-                        if (names != null && names.length > 0)
-                            result[0]= names[0];
-        	
+        				result[0]= ast.getNodeSelector(null).findName(textSel.getOffset(), textSel.getLength());
         				return Status.OK_STATUS;
         			}
         		});

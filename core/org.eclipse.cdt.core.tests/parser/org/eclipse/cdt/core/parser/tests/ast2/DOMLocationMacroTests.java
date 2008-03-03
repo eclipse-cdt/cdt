@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,12 +18,13 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
-import org.eclipse.cdt.core.dom.ast.IASTMacroExpansion;
+import org.eclipse.cdt.core.dom.ast.IASTMacroExpansionLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPointer;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorFunctionStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorObjectStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorUndefStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
@@ -57,12 +58,12 @@ public class DOMLocationMacroTests extends AST2BaseTest {
             assertEquals( d.getName().toString(), "D"); //$NON-NLS-1$
             IASTNodeLocation [] declaratorLocations = d.getNodeLocations();
             assertEquals( declaratorLocations.length, 1 );
-            IASTMacroExpansion expansion = (IASTMacroExpansion) declaratorLocations[0];
-            IASTPreprocessorObjectStyleMacroDefinition fromExpansion = (IASTPreprocessorObjectStyleMacroDefinition) expansion.getMacroDefinition();
+            IASTMacroExpansionLocation expansion = (IASTMacroExpansionLocation) declaratorLocations[0];
+            IASTPreprocessorObjectStyleMacroDefinition fromExpansion = (IASTPreprocessorObjectStyleMacroDefinition) expansion.getExpansion().getMacroDefinition();
             assertEqualsMacros( fromExpansion, ABC );
             assertEquals( expansion.getNodeOffset(), 0 );
             assertEquals( expansion.getNodeLength(), 1 );
-            IASTNodeLocation [] macroLocation = expansion.getExpansionLocations();
+            IASTNodeLocation [] macroLocation = expansion.getExpansion().getNodeLocations();
             assertEquals( macroLocation.length, 1 );
             assertTrue( macroLocation[0] instanceof IASTFileLocation );
             assertEquals( macroLocation[0].getNodeOffset(), code.indexOf( "int ABC;") + "int ".length() ); //$NON-NLS-1$ //$NON-NLS-2$
@@ -84,12 +85,12 @@ public class DOMLocationMacroTests extends AST2BaseTest {
             assertEquals( d.getPointerOperators().length, 1 );
             IASTNodeLocation [] declaratorLocations = d.getNodeLocations();
             assertEquals( declaratorLocations.length, 1 );
-            IASTMacroExpansion expansion = (IASTMacroExpansion) declaratorLocations[0];
-            IASTPreprocessorObjectStyleMacroDefinition fromExpansion = (IASTPreprocessorObjectStyleMacroDefinition) expansion.getMacroDefinition();
+            IASTMacroExpansionLocation expansion = (IASTMacroExpansionLocation) declaratorLocations[0];
+            IASTPreprocessorObjectStyleMacroDefinition fromExpansion = (IASTPreprocessorObjectStyleMacroDefinition) expansion.getExpansion().getMacroDefinition();
             assertEqualsMacros( fromExpansion, ABC );
             assertEquals( expansion.getNodeOffset(), 0 );
             assertEquals( 2, expansion.getNodeLength() );
-            IASTNodeLocation [] macroLocation = expansion.getExpansionLocations();
+            IASTNodeLocation [] macroLocation = expansion.getExpansion().getNodeLocations();
             assertEquals( macroLocation.length, 1 );
             assertTrue( macroLocation[0] instanceof IASTFileLocation );
             assertEquals( macroLocation[0].getNodeOffset(), code.indexOf( "int ABC;") + "int ".length() ); //$NON-NLS-1$ //$NON-NLS-2$
@@ -98,22 +99,22 @@ public class DOMLocationMacroTests extends AST2BaseTest {
             IASTName n = d.getName();
             IASTNodeLocation [] nameLocations = n.getNodeLocations();
             assertEquals( nameLocations.length, 1 );
-            final IASTMacroExpansion nodeLocation = (IASTMacroExpansion) nameLocations[0];
+            final IASTMacroExpansionLocation nodeLocation = (IASTMacroExpansionLocation) nameLocations[0];
             assertEquals( nodeLocation.getNodeOffset(), 1 );
             assertEquals( nodeLocation.getNodeLength(), 1 );
             
-            assertEquals( nodeLocation.getExpansionLocations()[0].getNodeOffset(), macroLocation[0].getNodeOffset() );
-            assertEquals( nodeLocation.getExpansionLocations()[0].getNodeLength(), macroLocation[0].getNodeLength() );
+            assertEquals( nodeLocation.getExpansion().getNodeLocations()[0].getNodeOffset(), macroLocation[0].getNodeOffset() );
+            assertEquals( nodeLocation.getExpansion().getNodeLocations()[0].getNodeLength(), macroLocation[0].getNodeLength() );
             
             IASTPointer po = (IASTPointer) d.getPointerOperators()[0];
             assertFalse( po.isConst() );
             assertFalse( po.isVolatile() );
-            IASTMacroExpansion pointerLocation = (IASTMacroExpansion) po.getNodeLocations()[0];
+            IASTMacroExpansionLocation pointerLocation = (IASTMacroExpansionLocation) po.getNodeLocations()[0];
             assertEquals( pointerLocation.getNodeOffset(), 0 );
             assertEquals( pointerLocation.getNodeLength(), 1 );
-            assertEquals( pointerLocation.getExpansionLocations()[0].getNodeOffset(), macroLocation[0].getNodeOffset() );
-            assertEquals( pointerLocation.getExpansionLocations()[0].getNodeLength(), macroLocation[0].getNodeLength() );
-            assertEqualsMacros( pointerLocation.getMacroDefinition(), nodeLocation.getMacroDefinition() );
+            assertEquals( pointerLocation.getExpansion().getNodeLocations()[0].getNodeOffset(), macroLocation[0].getNodeOffset() );
+            assertEquals( pointerLocation.getExpansion().getNodeLocations()[0].getNodeLength(), macroLocation[0].getNodeLength() );
+            assertEqualsMacros( pointerLocation.getExpansion().getMacroDefinition(), nodeLocation.getExpansion().getMacroDefinition() );
         }
     }    
     
@@ -129,11 +130,11 @@ public class DOMLocationMacroTests extends AST2BaseTest {
             IASTSimpleDeclSpecifier declSpec = (IASTSimpleDeclSpecifier) var.getDeclSpecifier();
             IASTNodeLocation [] declSpecLocations = declSpec.getNodeLocations();
             assertEquals( declSpecLocations.length, 2 );
-            IASTMacroExpansion expansion = (IASTMacroExpansion) declSpecLocations[0];
-            assertEqualsMacros( defXYZ, expansion.getMacroDefinition() );
+            IASTMacroExpansionLocation expansion = (IASTMacroExpansionLocation) declSpecLocations[0];
+            assertEqualsMacros( defXYZ, expansion.getExpansion().getMacroDefinition() );
             assertEquals( expansion.getNodeOffset(), 0 );
             assertEquals( expansion.getNodeLength(), 1 );
-            IASTNodeLocation [] expansionLocations = expansion.getExpansionLocations();
+            IASTNodeLocation [] expansionLocations = expansion.getExpansion().getNodeLocations();
             assertEquals( expansionLocations.length, 1 );
             assertTrue( expansionLocations[0] instanceof IASTFileLocation );
             assertEquals( expansionLocations[0].getNodeOffset(), code.indexOf( "XYZ int")); //$NON-NLS-1$
@@ -165,8 +166,8 @@ public class DOMLocationMacroTests extends AST2BaseTest {
             IASTFileLocation start_loc = (IASTFileLocation) locations[0];
             assertEquals( start_loc.getNodeOffset(), code.indexOf( "int") ); //$NON-NLS-1$
             assertEquals( start_loc.getNodeLength(), "int ".length()); //$NON-NLS-1$
-            IASTMacroExpansion mac_loc = (IASTMacroExpansion) locations[1];
-            final IASTPreprocessorMacroDefinition C_PO2 = mac_loc.getMacroDefinition();
+            IASTMacroExpansionLocation mac_loc = (IASTMacroExpansionLocation) locations[1];
+            final IASTPreprocessorMacroDefinition C_PO2 = mac_loc.getExpansion().getMacroDefinition();
             assertEqualsMacros( C_PO, C_PO2 );
             assertEquals( 0, mac_loc.getNodeOffset());
             assertEquals( 2, mac_loc.getNodeLength() );
@@ -198,24 +199,24 @@ public class DOMLocationMacroTests extends AST2BaseTest {
             final IASTNodeLocation[] nodeLocations = var.getNodeLocations();
             
             assertEquals( 10, nodeLocations.length );
-            IASTMacroExpansion first_loc = (IASTMacroExpansion) nodeLocations[0];
-            assertEqualsMacros( first_loc.getMacroDefinition(), XYZ );
+            IASTMacroExpansionLocation first_loc = (IASTMacroExpansionLocation) nodeLocations[0];
+            assertEqualsMacros( first_loc.getExpansion().getMacroDefinition(), XYZ );
             IASTFileLocation second_loc = (IASTFileLocation) nodeLocations[1];
             assertEquals( 1, second_loc.getNodeLength() );
-            IASTMacroExpansion third_loc = (IASTMacroExpansion) nodeLocations[2];
-            assertEqualsMacros( third_loc.getMacroDefinition(), IT );
+            IASTMacroExpansionLocation third_loc = (IASTMacroExpansionLocation) nodeLocations[2];
+            assertEqualsMacros( third_loc.getExpansion().getMacroDefinition(), IT );
             IASTFileLocation fourth_loc = (IASTFileLocation) nodeLocations[3];
             assertEquals( 1, fourth_loc.getNodeLength() );
-            IASTMacroExpansion fifth_loc = (IASTMacroExpansion) nodeLocations[4];
-            assertEqualsMacros( fifth_loc.getMacroDefinition(), C_PO );
+            IASTMacroExpansionLocation fifth_loc = (IASTMacroExpansionLocation) nodeLocations[4];
+            assertEqualsMacros( fifth_loc.getExpansion().getMacroDefinition(), C_PO );
             IASTFileLocation sixth_loc = (IASTFileLocation) nodeLocations[5];
             assertEquals( 1, sixth_loc.getNodeLength() );
-            IASTMacroExpansion seventh_loc = (IASTMacroExpansion) nodeLocations[6];
-            assertEqualsMacros( seventh_loc.getMacroDefinition(), C_PO );
+            IASTMacroExpansionLocation seventh_loc = (IASTMacroExpansionLocation) nodeLocations[6];
+            assertEqualsMacros( seventh_loc.getExpansion().getMacroDefinition(), C_PO );
             IASTFileLocation eighth_loc = (IASTFileLocation) nodeLocations[7];
             assertEquals( 1, eighth_loc.getNodeLength() );
-            IASTMacroExpansion ninth_loc = (IASTMacroExpansion) nodeLocations[8];
-            assertEqualsMacros( ninth_loc.getMacroDefinition(), V );
+            IASTMacroExpansionLocation ninth_loc = (IASTMacroExpansionLocation) nodeLocations[8];
+            assertEqualsMacros( ninth_loc.getExpansion().getMacroDefinition(), V );
             IASTFileLocation tenth_loc = (IASTFileLocation) nodeLocations[9];
             assertEquals( 1, tenth_loc.getNodeLength() );
 
@@ -244,13 +245,13 @@ public class DOMLocationMacroTests extends AST2BaseTest {
             IASTSimpleDeclaration memchr = (IASTSimpleDeclaration) tu.getDeclarations()[0];
             IASTNodeLocation [] locations = memchr.getNodeLocations();
             assertEquals( locations.length, 4 );
-            IASTMacroExpansion loc_1 = (IASTMacroExpansion) locations[0];
-            assertEqualsMacros( _PTR, loc_1.getMacroDefinition() );
+            IASTMacroExpansionLocation loc_1 = (IASTMacroExpansionLocation) locations[0];
+            assertEqualsMacros( _PTR, loc_1.getExpansion().getMacroDefinition() );
             IASTFileLocation loc_2 = (IASTFileLocation) locations[1];
             assertEquals( loc_2.getNodeOffset(), code.indexOf( "     _EXFUN(")); //$NON-NLS-1$
             assertEquals( loc_2.getNodeLength(), "     ".length() ); //$NON-NLS-1$
-            IASTMacroExpansion loc_3 = (IASTMacroExpansion) locations[2];
-            assertEqualsMacros( _EXFUN, loc_3.getMacroDefinition() );
+            IASTMacroExpansionLocation loc_3 = (IASTMacroExpansionLocation) locations[2];
+            assertEqualsMacros( _EXFUN, loc_3.getExpansion().getMacroDefinition() );
             IASTFileLocation loc_4 = (IASTFileLocation) locations[3];
             assertEquals( loc_4.getNodeOffset(), code.indexOf( ";")); //$NON-NLS-1$
             assertEquals( loc_4.getNodeLength(), 1 );
@@ -292,8 +293,8 @@ public class DOMLocationMacroTests extends AST2BaseTest {
             IASTName [] firstReferences = tu.getReferences( binding1 );
             IASTName [] firstDeclarations = tu.getDeclarationsInAST( binding1 );
             assertEquals( firstReferences.length, 2 );
-            assertEquals( firstReferences[0].getPropertyInParent(), IASTTranslationUnit.EXPANSION_NAME );
-            assertEquals( firstReferences[0].getParent(), tu );
+            assertEquals( firstReferences[0].getPropertyInParent(), IASTPreprocessorMacroExpansion.EXPANSION_NAME );
+            assertEquals( firstReferences[0].getParent().getParent(), tu );
             assertEquals( firstReferences[1].getPropertyInParent(), IASTPreprocessorUndefStatement.MACRO_NAME );
             assertTrue( firstReferences[1].getParent() instanceof IASTPreprocessorUndefStatement );
             assertEquals( firstDeclarations.length, 1 );
@@ -301,10 +302,9 @@ public class DOMLocationMacroTests extends AST2BaseTest {
             IASTName [] secondReferences = tu.getReferences(binding2);
             IASTName [] secondDeclarations = tu.getDeclarationsInAST( binding2 );
             assertEquals( 1, secondReferences.length );
-            assertEquals( secondReferences[0].getPropertyInParent(), IASTTranslationUnit.EXPANSION_NAME );
-            assertEquals( secondReferences[0].getParent(), tu );
+            assertEquals( secondReferences[0].getPropertyInParent(), IASTPreprocessorMacroExpansion.EXPANSION_NAME );
+            assertEquals( secondReferences[0].getParent().getParent(), tu );
             assertSame( ABC2.getName(), secondDeclarations[0]);
-            
         }
     }
     
@@ -357,8 +357,8 @@ public class DOMLocationMacroTests extends AST2BaseTest {
             assertNotNull(expr.getFileLocation()); 
             IASTNodeLocation [] locations = expr.getNodeLocations();
             assertEquals(1, locations.length);
-            IASTMacroExpansion macroExpansion = (IASTMacroExpansion) locations[0];
-            IASTNodeLocation[] expLocations= macroExpansion.getExpansionLocations();
+            IASTMacroExpansionLocation macroExpansion = (IASTMacroExpansionLocation) locations[0];
+            IASTNodeLocation[] expLocations= macroExpansion.getExpansion().getNodeLocations();
             assertEquals(1, expLocations.length);
             assertEquals(code.indexOf("FUNCTION(1)"), expLocations[0].getNodeOffset());
             assertEquals("FUNCTION(1)".length(), expLocations[0].getNodeLength());
@@ -373,8 +373,8 @@ public class DOMLocationMacroTests extends AST2BaseTest {
         assertNotNull(expr.getFileLocation()); 
         IASTNodeLocation [] locations = expr.getNodeLocations();
         assertEquals(1, locations.length);
-        IASTMacroExpansion macroExpansion = (IASTMacroExpansion) locations[0];
-        IASTNodeLocation[] expLocations= macroExpansion.getExpansionLocations();
+        IASTMacroExpansionLocation macroExpansion = (IASTMacroExpansionLocation) locations[0];
+        IASTNodeLocation[] expLocations= macroExpansion.getExpansion().getNodeLocations();
         assertEquals(1, expLocations.length);
         IASTFileLocation fileLocation = expLocations[0].asFileLocation();
         assertEquals(index, fileLocation.getNodeOffset());

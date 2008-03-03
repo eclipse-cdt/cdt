@@ -130,11 +130,9 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 			int selectionStart = selNode.getOffset();
 			int selectionLength = selNode.getLength();
 				
-			IASTName[] selectedNames = lang.getSelectedNames(ast, selectionStart, selectionLength);
-			 
-			if (selectedNames.length > 0 && selectedNames[0] != null) { // just right, only one name selected
-				boolean found = false;
-				IASTName searchName = selectedNames[0];
+			IASTName searchName= ast.getNodeSelector(null).findSurroundingName(selectionStart, selectionLength);
+			if (searchName != null) { // just right, only one name selected
+				boolean found= false;
 				final IASTNode parent = searchName.getParent();
 				if (parent instanceof IASTPreprocessorIncludeStatement) {
 					openInclude(((IASTPreprocessorIncludeStatement) parent));

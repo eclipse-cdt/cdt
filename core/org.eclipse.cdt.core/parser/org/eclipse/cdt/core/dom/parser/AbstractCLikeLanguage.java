@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.AbstractLanguage;
@@ -180,13 +181,17 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 	
 	
 	public IASTName[] getSelectedNames(IASTTranslationUnit ast, int start, int length) {
-		IASTNode selectedNode= ast.selectNodeForLocation(ast.getFilePath(), start, length);
+		IASTNode selectedNode= ast.getNodeSelector(null).findNode(start, length);
 
 		if (selectedNode == null)
 			return new IASTName[0];
 
 		if (selectedNode instanceof IASTName)
 			return new IASTName[] { (IASTName) selectedNode };
+		
+		if (selectedNode instanceof IASTPreprocessorMacroExpansion) {
+			return new IASTName[] {((IASTPreprocessorMacroExpansion) selectedNode).getMacroReference()};
+		}
 
 		NameCollector collector = new NameCollector();
 		selectedNode.accept(collector);

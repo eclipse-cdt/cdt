@@ -95,13 +95,9 @@ public interface ILanguage extends IAdaptable {
 	/**
 	 * Gather the list of IASTNames that appear the selection with the given start offset
 	 * and length in the given ITranslationUnit.
-	 * 
-	 * @param tu
-	 * @param start
-	 * @param length
-	 * @param style
-	 * @return
+	 * @deprecated use {@link IASTTranslationUnit#getNodeSelector(String)}, instead.
 	 */
+	@Deprecated
 	public IASTName[] getSelectedNames(IASTTranslationUnit ast, int start, int length);
 	
 	/**

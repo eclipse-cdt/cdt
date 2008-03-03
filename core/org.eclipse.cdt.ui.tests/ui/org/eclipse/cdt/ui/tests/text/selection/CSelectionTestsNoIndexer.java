@@ -287,10 +287,7 @@ public class CSelectionTestsNoIndexer extends BaseUITestCase {
             	ITranslationUnit tu = (ITranslationUnit)CoreModel.getDefault().create(file);
         		IStatus ok= ASTProvider.getASTProvider().runOnAST(tu, ASTProvider.WAIT_YES, monitor, new ASTRunnable() {
         			public IStatus runOnAST(ILanguage language, IASTTranslationUnit ast) throws CoreException {
-                        IASTName[] names = language.getSelectedNames(ast, textSel.getOffset(), textSel.getLength());
-                        if (names != null && names.length > 0)
-                            result[0]= names[0];
-        	
+        				result[0]= ast.getNodeSelector(null).findName(textSel.getOffset(), textSel.getLength());
         				return Status.OK_STATUS;
         			}
         		});

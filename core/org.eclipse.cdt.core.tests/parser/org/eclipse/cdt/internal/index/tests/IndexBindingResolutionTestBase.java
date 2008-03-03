@@ -1,21 +1,18 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Symbian Software Systems and others.
+ * Copyright (c) 2006, 2008 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
- * IBM Corporation
+ *    Andrew Ferguson (Symbian) - Initial implementation
+ *    IBM Corporation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ListIterator;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
@@ -32,11 +29,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexManager;
-import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.LanguageManager;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
@@ -74,30 +67,21 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		this.strategy = strategy;
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		strategy.setUp();
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		strategy.tearDown();
 		super.tearDown();
 	}
 	
-	protected IASTName[] findNames(String section, int len) {
-		// get the language from the language manager
-		ILanguage language = null;
+	protected IASTName findName(String section, int len) {
 		IASTTranslationUnit ast = strategy.getAst();
-		try {
-			IProject project = strategy.getCProject().getProject();
-			ICConfigurationDescription configuration = CoreModel.getDefault().getProjectDescription(project, false).getActiveConfiguration();
-			language = LanguageManager.getInstance().getLanguageForFile(ast.getFilePath(), project, configuration);
-		} catch (CoreException e) {
-			fail("Unexpected exception while getting language for file.");
-		}
-		
-		assertNotNull("No language for file " + ast.getFilePath().toString(), language);
-		return language.getSelectedNames(ast, strategy.getTestData()[1].indexOf(section), len);
+		return ast.getNodeSelector(null).findName(strategy.getTestData()[1].indexOf(section), len);
 	}
 	
 	/**
@@ -113,21 +97,14 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	 * @return the associated name's binding
 	 */
 	protected IBinding getBindingFromASTName(String section, int len) {
-		IASTName[] names= findNames(section, len);
-		List lnames= new ArrayList(Arrays.asList(names));
-		for(ListIterator li= lnames.listIterator(); li.hasNext(); ) {
-			IASTName name= (IASTName) li.next();
-			if(name.getRawSignature().length()!=len) {
-				li.remove();
-			}
-		}
-		names= (IASTName[]) lnames.toArray(new IASTName[lnames.size()]);
-		assertEquals("<>1 name found for \""+section+"\"", 1, names.length);
+		IASTName name= findName(section, len);
+		assertNotNull("name not found for \""+section+"\"", name);
+		assertEquals(section.substring(0, len), name.getRawSignature());
 		
-		IBinding binding = names[0].resolveBinding();
-		assertNotNull("No binding for "+names[0].getRawSignature(), binding);
-		assertFalse("Binding is a ProblemBinding for name "+names[0].getRawSignature(), IProblemBinding.class.isAssignableFrom(names[0].resolveBinding().getClass()));
-		return names[0].resolveBinding();
+		IBinding binding = name.resolveBinding();
+		assertNotNull("No binding for "+name.getRawSignature(), binding);
+		assertFalse("Binding is a ProblemBinding for name "+name.getRawSignature(), IProblemBinding.class.isAssignableFrom(name.resolveBinding().getClass()));
+		return name.resolveBinding();
 	}
 
 	/**
@@ -137,13 +114,14 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	 * @return the associated name's binding
 	 */
 	protected IBinding getProblemFromASTName(String section, int len) {
-		IASTName[] names= findNames(section, len);
-		assertEquals("<>1 name found for \""+section+"\"", 1, names.length);
+		IASTName name= findName(section, len);
+		assertNotNull("name not found for \""+section+"\"", name);
+		assertEquals(section.substring(0, len), name.getRawSignature());
 		
-		IBinding binding = names[0].resolveBinding();
-		assertNotNull("No binding for "+names[0].getRawSignature(), binding);
-		assertTrue("Binding is not a ProblemBinding for name "+names[0].getRawSignature(), IProblemBinding.class.isAssignableFrom(names[0].resolveBinding().getClass()));
-		return names[0].resolveBinding();
+		IBinding binding = name.resolveBinding();
+		assertNotNull("No binding for "+name.getRawSignature(), binding);
+		assertTrue("Binding is not a ProblemBinding for name "+name.getRawSignature(), IProblemBinding.class.isAssignableFrom(name.resolveBinding().getClass()));
+		return name.resolveBinding();
 	}
 	
 	protected static void assertQNEquals(String expectedQN, IBinding b) {

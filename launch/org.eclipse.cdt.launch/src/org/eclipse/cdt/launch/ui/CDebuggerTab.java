@@ -13,6 +13,7 @@
 package org.eclipse.cdt.launch.ui;
 
 import java.io.IOException;
+import java.text.Collator;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -181,12 +182,9 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		ICDebugConfiguration[] debugConfigs;
 		String configPlatform = getPlatform(config);
 		debugConfigs = CDebugCorePlugin.getDefault().getActiveDebugConfigurations();
-		Arrays.sort(debugConfigs, new Comparator() {
-
-			public int compare(Object o1, Object o2) {
-				ICDebugConfiguration ic1 = (ICDebugConfiguration)o1;
-				ICDebugConfiguration ic2 = (ICDebugConfiguration)o2;
-				return ic1.getName().compareTo(ic2.getName());
+		Arrays.sort(debugConfigs, new Comparator<ICDebugConfiguration>() {
+			public int compare(ICDebugConfiguration c1, ICDebugConfiguration c2) {
+				return Collator.getInstance().compare(c1.getName(), c2.getName());
 			}
 		});
 		List list = new ArrayList();
@@ -399,14 +397,9 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 			setErrorMessage(LaunchMessages.getString("CDebuggerTab.No_debugger_available")); //$NON-NLS-1$
 			return false;
 		}
-		if (!validatePlatform(config, debugConfig)) {
-			setErrorMessage(LaunchMessages.getString("CDebuggerTab.Platform_is_not_supported")); //$NON-NLS-1$
-			return false;
-		}
-		if (!validateCPU(config, debugConfig)) {
-			setErrorMessage(LaunchMessages.getString("CDebuggerTab.CPU_is_not_supported")); //$NON-NLS-1$
-			return false;
-		}
+		// We do not validate platform and CPU compatibility to avoid accidentally disabling
+		// a valid configuration. It's much better to let an incompatible configuration through
+		// than to disable a valid one.
 		return true;
 	}
 

@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICFileDescription;
 import org.eclipse.cdt.core.settings.model.ICMultiItemsHolder;
 import org.eclipse.cdt.core.settings.model.ICMultiResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
@@ -437,15 +438,18 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 			return;
 		combo.removeAll();
 		boolean prj = page.isForProject();
-		IConfiguration c = null;
-		ITool t = null;
 		if (prj || tool != null) {
 			for (ICConfigurationDescription cf : page.getCfgsEditable()) {
+				IConfiguration c = null;
+				ITool t = null;
 				if (prj) {
 					c = getCfg(cf);
 				} else {
-					ICResourceDescription r = cf.getResourceDescription(cfgdescr.getPath(), false);
-					t = getRcbsTool((IFileInfo)getResCfg(r));
+					ICResourceDescription r = cf.getResourceDescription(cfgdescr.getPath(), true);
+					if (r != null && r instanceof ICFileDescription)
+						t = getRcbsTool((IFileInfo)getResCfg(r));
+					if (t == null)
+						continue; // there's no specific resconfig for this configuration 
 				}
 				String s = null;
 				switch (field) {

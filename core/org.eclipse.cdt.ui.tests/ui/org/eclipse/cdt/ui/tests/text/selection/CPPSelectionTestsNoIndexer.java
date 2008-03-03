@@ -1012,4 +1012,21 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
     		assertEquals(((ASTNode)decl).getOffset(), code.length() + od2);
     	}
     }
+    
+    // #define EMPTY
+    // EMPTY void foo() {}
+    public void testEmptyMacro_Bug198649() throws Exception {
+    	String code= getContentsForTest(1)[0].toString();
+    	String[] filenames= {"testBug198649.c", "testBug198649.cpp"};
+    	for (int i=0; i<2; i++) {
+    		IFile file = importFile(filenames[i], code);
+    		int od1 = code.indexOf("EMPTY");
+    		int or1 = code.indexOf("EMPTY", od1+1);
+
+    		IASTNode decl = testF3(file, or1);
+    		assertTrue(decl instanceof IASTName);
+    		assertEquals(((IASTName)decl).toString(), "EMPTY"); //$NON-NLS-1$
+    		assertEquals(((ASTNode)decl).getOffset(), od1);
+    	}
+    }
 }

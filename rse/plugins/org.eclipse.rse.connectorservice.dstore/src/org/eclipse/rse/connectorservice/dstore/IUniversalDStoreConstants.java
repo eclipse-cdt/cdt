@@ -68,10 +68,10 @@ public interface IUniversalDStoreConstants
     public static final String RESID_PREF_DO_KEEPALIVE = RESID_PREF_PREFIX + "dokeepalive"; //$NON-NLS-1$
     public static final boolean DEFAULT_PREF_DO_KEEPALIVE = true;
     
-    public static final String RESID_PREF_KEEPALIVE_RESPONSE_TIMEOUT = RESID_PREF_PREFIX + "keepalivetimeout";
+    public static final String RESID_PREF_KEEPALIVE_RESPONSE_TIMEOUT = RESID_PREF_PREFIX + "keepalivetimeout"; //$NON-NLS-1$
     public static final int DEFAULT_PREF_KEEPALIVE_RESPONSE_TIMEOUT = 60000;
     
-    public static final String RESID_PREF_SOCKET_READ_TIMEOUT = RESID_PREF_PREFIX + "socketreadtimeout";
+    public static final String RESID_PREF_SOCKET_READ_TIMEOUT = RESID_PREF_PREFIX + "socketreadtimeout"; //$NON-NLS-1$
     public static final int DEFAULT_PREF_SOCKET_READ_TIMEOUT = 3600000; 
     
    

@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
+ * David McKnight   (IBM)        - [221095] [dstore][launcher] Specified REXEC port number is not used
  ********************************************************************************/
 
 package org.eclipse.rse.internal.connectorservice.dstore;
@@ -362,6 +363,7 @@ public class RexecDstoreServer implements IServerLauncher
 	public void setServerLauncherProperties(IServerLauncherProperties propertyInfo)
 	{
 		this.propertyInfo = propertyInfo;
+				
 		// set path...
 		this.cwd = ((IRemoteServerLauncher)propertyInfo).getServerPath();
 		char separatorChar = signonInfo.getSystemType().isWindows() ? '\\' : '/';			
@@ -369,6 +371,10 @@ public class RexecDstoreServer implements IServerLauncher
 			cwd += separatorChar;
 	    // set script...
 	    this.invocation = ((IRemoteServerLauncher)propertyInfo).getServerScript();  
+	    
+	    // set port
+	    this.rexecPort = ((IRemoteServerLauncher)propertyInfo).getRexecPort();
+	    
 	}
 	
 	/**

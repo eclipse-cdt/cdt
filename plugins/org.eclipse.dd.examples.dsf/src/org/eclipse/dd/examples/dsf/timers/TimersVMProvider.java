@@ -10,60 +10,42 @@
  *******************************************************************************/
 package org.eclipse.dd.examples.dsf.timers;
 
-import org.eclipse.core.runtime.IAdaptable;
+import java.util.concurrent.RejectedExecutionException;
+
+import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMAdapter;
 import org.eclipse.dd.dsf.ui.viewmodel.IRootVMNode;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMNode;
-import org.eclipse.dd.dsf.ui.viewmodel.RootVMNode;
-import org.eclipse.dd.dsf.ui.viewmodel.DefaultVMModelProxyStrategy;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
+import org.eclipse.dd.examples.dsf.timers.AlarmService.TriggersChangedEvent;
+import org.eclipse.dd.examples.dsf.timers.TimerService.TimersChangedEvent;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 
 /**
- * 
+ * The View Model provider for the Timers view.  This provider allows for 
+ * switching between two different view layouts:
+ * <ol>
+ *  <li>Timers -> Triggers -> Alarms</li>
+ *  <li>Triggers -> Timers -> Alarms</li>
+ * </ol>  
+ * A special event is sent when the layout is changed in order to generate
+ * a proper delta to refresh the view. 
  */
 @SuppressWarnings("restriction")
 public class TimersVMProvider extends AbstractDMVMProvider {
 
-    /**
-     * The object to be set to the viewer that shows contents supplied by this provider.
-     * @see org.eclipse.jface.viewers.TreeViewer#setInput(Object)  
-     */
-    private final IAdaptable fViewerInputObject = 
-        new IAdaptable() {
-            /**
-             * The input object provides the viewer access to the viewer model adapter.
-             */
-            @SuppressWarnings("unchecked")
-            public Object getAdapter(Class adapter) {
-                if ( adapter.isInstance(getVMAdapter()) ) {
-                    return getVMAdapter();
-                }
-                return null;
-            }
-            
-            @Override
-            public String toString() {
-                return "Timers View Root"; //$NON-NLS-1$
-            }
-        };
-
-    private DefaultVMModelProxyStrategy fModelProxyStrategy;
-
-        
+    /** Event indicating that the timers view layout has changed */
+    public static class TimersViewLayoutChanged {}
+    
     /** Enumeration of possible layouts for the timers view model */
-    public enum ViewLayout { ALARMS_AT_TOP, TIMERS_AT_TOP }
+    public enum ViewLayout { TRIGGERS_AT_TOP, TIMERS_AT_TOP }
     
     public TimersVMProvider(AbstractVMAdapter adapter, IPresentationContext presentationContext, DsfSession session) {
         super(adapter, presentationContext, session);
-        setViewLayout(ViewLayout.ALARMS_AT_TOP);   
-    }
-    
-    
-    public Object getViewerInputObject() {
-        return fViewerInputObject;
+        // Set the initial view layout.
+        setViewLayout(ViewLayout.TIMERS_AT_TOP);   
     }
     
     /** 
@@ -71,33 +53,30 @@ public class TimersVMProvider extends AbstractDMVMProvider {
      * @param layout New layout to use.
      */
     public void setViewLayout(ViewLayout layout) {
-        if (layout == ViewLayout.ALARMS_AT_TOP) {
-            IRootVMNode root = new RootVMNode(this); 
-            IVMNode alarmsNode = new AlarmsVMNode(this, getSession());
-            IVMNode timersNode0 = new TimersVMNode(this, getSession());
-            addChildNodes(root, new IVMNode[] { alarmsNode, timersNode0 });
+        clearNodes();
+        if (layout == ViewLayout.TRIGGERS_AT_TOP) {
+            IRootVMNode root = new TimersRootVMNode(this); 
+            IVMNode alarmsNode = new TriggersVMNode(this, getSession());
+            addChildNodes(root, new IVMNode[] { alarmsNode });
             IVMNode timersNode = new TimersVMNode(this, getSession());
             addChildNodes(alarmsNode, new IVMNode[] { timersNode });
-            IVMNode alarmStatusNode = new AlarmStatusVMNode(this, getSession());
+            IVMNode alarmStatusNode = new AlarmsVMNode(this, getSession());
             addChildNodes(timersNode, new IVMNode[] { alarmStatusNode });
             setRootNode(root);
         } else if (layout == ViewLayout.TIMERS_AT_TOP) {
-            IRootVMNode root = new RootVMNode(this); 
+            IRootVMNode root = new TimersRootVMNode(this); 
             IVMNode timersNode = new TimersVMNode(this, getSession());
             addChildNodes(root, new IVMNode[] { timersNode });
-            IVMNode alarmsNode = new AlarmsVMNode(this, getSession());
+            IVMNode alarmsNode = new TriggersVMNode(this, getSession());
             addChildNodes(timersNode, new IVMNode[] { alarmsNode });
-            IVMNode alarmStatusNode = new AlarmStatusVMNode(this, getSession());
+            IVMNode alarmStatusNode = new AlarmsVMNode(this, getSession());
             addChildNodes(alarmsNode, new IVMNode[] { alarmStatusNode });
             setRootNode(root);
         }
         
-        /* TODO: replace with an event
-            fModelProxyStrategy.fireModelChanged(
-                new ModelDelta(getRootElement(), IModelDelta.CONTENT));
-        */
+        handleEvent(new TimersViewLayoutChanged());
     }
-
+    
     @Override
     public IColumnPresentation createColumnPresentation(IPresentationContext context, Object element) {
         return new TimersViewColumnPresentation();
@@ -107,5 +86,36 @@ public class TimersVMProvider extends AbstractDMVMProvider {
     public String getColumnPresentationId(IPresentationContext context, Object element) {
         return TimersViewColumnPresentation.ID;
     }
-    
+
+    // Add a handler for the triggers and timers changed events.  The 
+    // AbstractDMVMProvider superclass automatically registers this provider
+    // for all IDMEvent events, however these two events do not implement
+    // IDMEvent
+    @DsfServiceEventHandler
+    public void eventDispatched(final TriggersChangedEvent event) {
+        if (isDisposed()) return;
+
+        try {
+            getExecutor().execute(new Runnable() {
+                public void run() {
+                    if (isDisposed()) return;
+                    handleEvent(event);
+                }
+            });
+        } catch (RejectedExecutionException e) {}
+    }
+
+    @DsfServiceEventHandler
+    public void eventDispatched(final TimersChangedEvent event) {
+        if (isDisposed()) return;
+
+        try {
+            getExecutor().execute(new Runnable() {
+                public void run() {
+                    if (isDisposed()) return;
+                    handleEvent(event);
+                }
+            });
+        } catch (RejectedExecutionException e) {}
+    }
 }

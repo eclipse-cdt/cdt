@@ -16,16 +16,18 @@ import org.eclipse.dd.dsf.service.DsfSession;
 
 /**
  * Startup sequence for the timers session.  With only two services, this is 
- * a very simple sequence.  Last step creates the first timer and alarm.
+ * a very simple sequence. 
  */
-class ServicesStartupSequence extends Sequence {
+public class ServicesStartupSequence extends Sequence {
 
-    DsfSession fSession;
+    final private DsfSession fSession;
+    
+    // The reference to the services are saved to use in the last step.
     private TimerService fTimerService = null;
     private AlarmService fAlarmService = null;
     
 
-    ServicesStartupSequence(DsfSession session) {
+    public ServicesStartupSequence(DsfSession session) {
         super(session.getExecutor());
         fSession = session;
     }
@@ -46,8 +48,9 @@ class ServicesStartupSequence extends Sequence {
         new Step() { 
             @Override
             public void execute(RequestMonitor requestMonitor) {
+                // Create the first timer and trigger.
                 fTimerService.startTimer();
-                fAlarmService.createAlarm(5);
+                fAlarmService.createTrigger(5);
                 requestMonitor.done();
             }}
     };

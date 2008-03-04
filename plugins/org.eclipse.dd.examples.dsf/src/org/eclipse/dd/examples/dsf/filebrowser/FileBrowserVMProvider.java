@@ -64,6 +64,7 @@ public class FileBrowserVMProvider extends AbstractVMProvider
         addChildNodes(root, new IVMNode[] { fileSystemRoots });
         IVMNode files = new FileVMNode(this);
         addChildNodes(fileSystemRoots, new IVMNode[] { files });
+        addChildNodes(files, new IVMNode[] { files });
         setRootNode(root);
     }
     

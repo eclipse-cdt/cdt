@@ -20,15 +20,19 @@ import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.examples.dsf.DsfExamplesPlugin;
 
 /**
- * Shutdown sequence that stops the services in the timers session.  
- *
+ * Sequence that stops the services in the timers session.  
  */
-class ServicesShutdownSequence extends Sequence {
+public class ServicesShutdownSequence extends Sequence {
 
-    DsfSession fSession;
+    // Session to that the services are running in.
+    final private DsfSession fSession;
+    
+    // DSF Services is created as the first step of the sequence.  It 
+    // cannot be created by the constructor because it can only be called
+    // in the session thread.
     DsfServicesTracker fTracker;
 
-    ServicesShutdownSequence(DsfSession session) {
+    public ServicesShutdownSequence(DsfSession session) {
         super(session.getExecutor());
         fSession = session;
     }
@@ -43,6 +47,8 @@ class ServicesShutdownSequence extends Sequence {
             
             @Override
             public void rollBack(RequestMonitor requestMonitor) {
+                // Dispose the tracker in case shutdown sequence is aborted
+                // and is rolled back.
                 fTracker.dispose();
                 fTracker = null;
                 requestMonitor.done();
@@ -63,6 +69,7 @@ class ServicesShutdownSequence extends Sequence {
         new Step() { 
             @Override
             public void execute(RequestMonitor requestMonitor) {
+                // Dispose the tracker after the services are shut down.
                 fTracker.dispose();
                 fTracker = null;
                 requestMonitor.done();
@@ -73,18 +80,18 @@ class ServicesShutdownSequence extends Sequence {
     @Override
     public Step[] getSteps() { return fSteps; }
 
-    /**
-     * Convenience method that shuts down given service.  Only service class 
-     * is used to identify the service. 
-     */
+    // A convenience method that shuts down given service.  Only service class 
+    // is used to identify the service. 
     private <V extends IDsfService> void shutdownService(Class<V> clazz, RequestMonitor requestMonitor) {
         IDsfService service = fTracker.getService(clazz);
         if (service != null) {
             service.shutdown(requestMonitor);
         }
         else {
-            requestMonitor.setStatus(new Status(IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR,  
-                                      "Service '" + clazz.getName() + "' not found.", null));             //$NON-NLS-1$ //$NON-NLS-2$
+            requestMonitor.setStatus(new Status(
+                IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID, 
+                IDsfService.INTERNAL_ERROR,  
+                "Service '" + clazz.getName() + "' not found.", null));             
             requestMonitor.done();
         }
     }

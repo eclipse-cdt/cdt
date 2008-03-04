@@ -190,7 +190,7 @@ class FileVMNode
     }
 
     public void getContextsForEvent(VMDelta parentDelta, Object event, DataRequestMonitor<IVMContext[]> rm) {
-        rm.setStatus(new Status(IStatus.OK, DsfUIPlugin.PLUGIN_ID, IDsfService.NOT_SUPPORTED, "", null)); //$NON-NLS-1$
+        rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfService.NOT_SUPPORTED, "", null)); //$NON-NLS-1$
         rm.done();
     }
     

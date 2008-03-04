@@ -34,4 +34,9 @@ class FileVMContext extends AbstractVMContext {
     public int hashCode() {
         return fFile.hashCode();
     }
+    
+    @Override
+    public String toString() {
+        return fFile.toString();
+    }
 }

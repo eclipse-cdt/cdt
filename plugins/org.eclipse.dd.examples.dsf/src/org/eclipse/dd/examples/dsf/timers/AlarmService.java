@@ -11,163 +11,114 @@
 package org.eclipse.dd.examples.dsf.timers;
 
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.AbstractDMContext;
 import org.eclipse.dd.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
-import org.eclipse.dd.dsf.datamodel.IDMData;
-import org.eclipse.dd.dsf.datamodel.IDMService;
 import org.eclipse.dd.dsf.service.AbstractDsfService;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.examples.dsf.DsfExamplesPlugin;
-import org.eclipse.dd.examples.dsf.timers.TimerService.TimerDMC;
-import org.eclipse.dd.examples.dsf.timers.TimerService.TimerData;
-import org.eclipse.dd.examples.dsf.timers.TimerService.TimerTickEvent;
+import org.eclipse.dd.examples.dsf.timers.TimerService.TimerDMContext;
+import org.eclipse.dd.examples.dsf.timers.TimerService.TimerTickDMEvent;
 import org.osgi.framework.BundleContext;
 
 /**
- * Alarm service tracks a set of alarm objects which are occacionally
- * triggered by the timers from the TimerService. 
+ * The alarm service tracks triggers and alarms.  Triggers have a specified
+ * value and can be created and removed independently.  Alarms are created
+ * for a specific timer and a trigger, and can indicate whether an alarm is
+ * triggered. 
  * <p>
  * This service depends on the TimerService, so the TimerService has to be
- * running before this service is initialized.  However, the alarm objects
- * themeselves do not depend on the timers, they can be listed, created, 
- * removed without any timers present.  So a separate context object exists
- * to track alarm status, which requires both an alarm and a timer in order
- * to exist. 
+ * initialized before this service is initialized. 
+ * </p>
  */
 public class AlarmService extends AbstractDsfService
-    implements IDMService
 {
-    /**
-     * Event indicating that the list of alarms is changed and the clients 
-     * which display alarms should re-query this list. 
-     */
-    public class AlarmsChangedEvent extends AbstractDMEvent<IDMContext> {
-        AlarmsChangedEvent() { super(fAlarmsContext); }
-    }
+    /** Event indicating that the list of triggers is changed. */
+    @Immutable
+    public static class TriggersChangedEvent {}
 
-    /**
-     * Context representing an alarm tracked by this service.
-     */
-    public static class AlarmDMC extends AbstractDMContext {
+    /** Context representing an alarm tracked by this service. */
+    @Immutable
+    public static class TriggerDMContext extends AbstractDMContext {
         /** Alarm number, also index into alarm map */
-        final int fAlarm;
+        final int fNumber;
         
-        public AlarmDMC(AlarmService service, int alarm) {
-            super(service, new IDMContext[] { service.fAlarmsContext });
-            fAlarm = alarm;
+        private TriggerDMContext(String sessionId, int number) {
+            super(sessionId, new IDMContext[0]);
+            fNumber = number;
         }
         
         @Override
         public boolean equals(Object other) {
-            return baseEquals(other) && ((AlarmDMC)other).fAlarm == fAlarm;
+            return baseEquals(other) && 
+                ((TriggerDMContext)other).fNumber == fNumber;
+        }
+        
+        public int getTriggerNumber() {
+            return fNumber;
         }
         
         @Override
-        public int hashCode() { return baseHashCode() + fAlarm; }
+        public int hashCode() { 
+            return baseHashCode() + fNumber; 
+        }
+        
         @Override
-        public String toString() { return baseToString() + ".alarm[" + fAlarm + "]"; } //$NON-NLS-1$ //$NON-NLS-2$
+        public String toString() { 
+            return baseToString() + ".trigger[" + fNumber + "]"; 
+        }
     }            
     
     /**
-     * Data object containing information about the alarm.   This object 
-     * references internal service data, so it has to guard agains this data 
-     * being obsolete.
-     */
-    public class AlarmData implements IDMData {
-        private int fAlarmNumber;
-        
-        AlarmData(int alarmNumber) { fAlarmNumber = alarmNumber; }
-        public boolean isValid() { return fAlarms.containsKey(fAlarmNumber); }
-        public int getAlarmNumber() { return fAlarmNumber; }
-        
-        public int getTriggeringValue() {
-            if (!isValid()) return -1;
-            return fAlarms.get(fAlarmNumber);
-        }
-    }
-
-    /**
      * Context representing the "triggered" status of an alarm with respect to 
-     * a specific timer.  Having this object separate from the alarm itself 
-     * allows the alarm object to exist independently of the timers. 
+     * a specific timer.   
      */
-    public class AlarmStatusContext extends AbstractDMContext {
-        /**
-         * An alarm status requires both a timer and alarm context, both of which
-         * become parents of the status context.
-         */
-        public AlarmStatusContext(AbstractDsfService service, TimerDMC timerCtx, AlarmDMC alarmCtx) {
-            super(service.getSession().getId(), new IDMContext[] { timerCtx, alarmCtx });
+    @Immutable
+    public static class AlarmDMContext extends AbstractDMContext {
+        // An alarm requires both a timer and alarm context, both of which
+        // become parents of the alarm context.
+        // Note: beyond the parent contexts this context does not contain
+        // any other data, because no other data is needed.
+        private AlarmDMContext(String sessionId, 
+            TimerDMContext timerCtx, TriggerDMContext alarmCtx) 
+        {
+            super(sessionId, new IDMContext[] { timerCtx, alarmCtx });
         }
 
         @Override
         public boolean equals(Object other) { return baseEquals(other); }
+        
         @Override
-        public int hashCode() { return baseHashCode(); }         
+        public int hashCode() { return baseHashCode(); }
+        
         @Override
         public String toString() {
-            return baseToString() + ":alarm_status"; //$NON-NLS-1$
+            return baseToString() + ":alarm"; //$NON-NLS-1$
         }        
     }            
     
     /**
-     * Data about alarm status.  No surprises here.
-     *
+     * Event indicating that an alarm has been triggered by a timer. 
      */
-    public class AlarmStatusData implements IDMData {
-        private boolean fIsTriggered;
-
-        public boolean isValid() { return true; }
-        AlarmStatusData(boolean triggered) { fIsTriggered = triggered; }
-        public boolean isTriggered() { return fIsTriggered; }
-    }
-    
-    /**
-     * Event indicating that an alarm has been triggered by a timer.  The
-     * status context object's parents indicate which alarm and timer are 
-     * involved.
-     */
-    public class AlarmTriggeredEvent extends AbstractDMEvent<AlarmStatusContext> {
-        public AlarmTriggeredEvent(AlarmStatusContext context) {
+    public class AlarmTriggeredEvent extends AbstractDMEvent<AlarmDMContext> {
+        public AlarmTriggeredEvent(AlarmDMContext context) {
             super(context);
         }
     }
 
+    private int fTriggerNumberCounter = 1;
+    private Map<TriggerDMContext, Integer> fTriggers = 
+        new LinkedHashMap<TriggerDMContext, Integer>();
     
-    /** Parent context for all alarms */
-    private final IDMContext fAlarmsContext;
-
-    /** Counter for generating alarm numbers */
-    private int fAlarmCounter = 1;
-
-    /** Map holding the alarms */
-    private Map<Integer,Integer> fAlarms = new TreeMap<Integer,Integer>();
-    
-    /** Constructor requires only the session for this service */
     AlarmService(DsfSession session) {
         super(session);
-        fAlarmsContext = new AbstractDMContext(this, new IDMContext[0]) {
-            private final Object fHashObject = new Object();
-            
-            @Override
-            public boolean equals(Object obj) { return (this == obj); };
-            
-            @Override
-            public int hashCode() { return fHashObject.hashCode(); }
-            
-            @Override
-            public String toString() { return "#alarms"; } //$NON-NLS-1$
-        };
     }
     
     @Override 
@@ -181,17 +132,20 @@ public class AlarmService extends AbstractDsfService
             new RequestMonitor(getExecutor(), requestMonitor) { 
                 @Override
                 protected void handleOK() {
+                    // After super-class is finished initializing
+                    // perform TimerService initialization.
                     doInitialize(requestMonitor);
                 }});
     }
             
-    /** 
-     * Initialization routine registers the service, and adds it as a listener 
-     * to service events. 
-     */
     private void doInitialize(RequestMonitor requestMonitor) {
+        // Add this class as a listener for service events, in order to receive 
+        // TimerTickEvent events.
         getSession().addServiceEventListener(this, null);
+        
+        // Register service
         register(new String[]{AlarmService.class.getName()}, new Hashtable<String,String>());
+        
         requestMonitor.done();
     }
 
@@ -204,158 +158,95 @@ public class AlarmService extends AbstractDsfService
 
     public boolean isValid() { return true; }
     
-    @SuppressWarnings("unchecked")
-    public void getModelData(IDMContext dmc, DataRequestMonitor<?> rm) {
-        if (dmc instanceof AlarmDMC) {
-            getAlarmData((AlarmDMC)dmc, (DataRequestMonitor<AlarmData>)rm);
-            return;
-        } else if (dmc instanceof AlarmStatusContext) {
-            getAlarmStatusData((AlarmStatusContext)dmc, (DataRequestMonitor<AlarmStatusData>)rm);
-            return;
-        } else if (dmc == fAlarmsContext) {
-            ((DataRequestMonitor<AlarmService>)rm).setData(this);
-        } else {
-            rm.setStatus(new Status(IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID, INVALID_HANDLE, "Unknown DMC type", null)); //$NON-NLS-1$
-        }
-        rm.done();            
-    }
-    
-    /**
-     * Listener for timer ticks events.  If a timer triggers an alarm, this 
-     * service needs to issue an alarm triggered event.
-     * @param event
-     */
     @DsfServiceEventHandler
-    public void eventDispatched(TimerTickEvent event) {
-        final TimerDMC timerContext = event.getDMContext();
+    public void eventDispatched(TimerTickDMEvent event) {
+        final TimerDMContext timerContext = event.getDMContext();
         
-        getServicesTracker().getService(TimerService.class).getTimerData(
-            event.getDMContext(), 
-            new DataRequestMonitor<TimerData>(getExecutor(), null) { 
-                @Override
-                protected void handleCompleted() {
-                    if (!getStatus().isOK()) return;
-                    checkAlarmsForTimer(timerContext, getData().getTimerValue());
-                }
-                @Override public String toString() { return "Got timer data: " + getData(); } //$NON-NLS-1$
-            });
+        int timerValue = getServicesTracker().getService(TimerService.class).
+            getTimerValue(event.getDMContext());
+        
+        //  If a timer triggers an alarm, this  service needs to issue an alarm 
+        // triggered event.
+        checkAlarmsForTimer(timerContext, timerValue);
     }
 
-    /**
-     * Checks the existing alarms for whether they are triggered by given timer.  
-     * @param timerContext Context of the timer that is changed.
-     * @param timerValue Current value of the timer.
-     */
-    private void checkAlarmsForTimer(TimerDMC timerContext, int timerValue) {
-        for (Map.Entry<Integer,Integer> entry : fAlarms.entrySet()) {
+    private void checkAlarmsForTimer(TimerDMContext timerContext, int timerValue) {
+        // Check the existing alarms for whether they are triggered by given 
+        // timer.  
+        for (Map.Entry<TriggerDMContext, Integer> entry : fTriggers.entrySet()) {
             if (timerValue == entry.getValue()) {
-                getSession().dispatchEvent(new AlarmTriggeredEvent(
-                    new AlarmStatusContext(this, timerContext, new AlarmDMC(this, entry.getKey()))),
-                    getProperties());
+                // Generate the AlarmTriggeredEvent
+                AlarmDMContext alarmCtx = new AlarmDMContext(
+                    getSession().getId(), timerContext, entry.getKey());
+                getSession().dispatchEvent( 
+                    new AlarmTriggeredEvent(alarmCtx), getProperties());
             }
         }
     }
 
     
-    /**
-     * Retrieves the list of alarm contexts.
-     * 
-     * <br>Note: this method doesn't need to be asynchronous, because all the 
-     * data is stored locally.  But using an asynchronous method makes this a
-     * more applicable example.
-     *   
-     * @param rm Return data token.
-     */
-    public void getAlarms(DataRequestMonitor<AlarmDMC[]> rm) {
-        AlarmDMC[] alarmContexts = new AlarmDMC[fAlarms.size()];
-        int i = 0;
-        for (int alarm : fAlarms.keySet()) {
-            alarmContexts[i++] = new AlarmDMC(this, alarm);
+    /** Returns the list of triggers. */
+    public TriggerDMContext[] getTriggers() {
+        return fTriggers.keySet().toArray(new TriggerDMContext[fTriggers.size()]);
+    }
+
+    /** Returns the trigger value. */
+    public int getTriggerValue(TriggerDMContext alarmCtx) {
+        Integer value = fTriggers.get(alarmCtx);
+        if (value != null) {
+            return value;
+        } else {
+            return -1;
         }
-        rm.setData(alarmContexts);
-        rm.done();
     }
 
-    /**
-     * Retrieves the data object for given alarm context.
-     * 
-     * <br>Note: likewise this method doesn't need to be asynchronous.
-     */
-    public void getAlarmData(AlarmDMC alarmCtx, DataRequestMonitor<AlarmData> rm) {
-        if (!fAlarms.containsKey(alarmCtx.fAlarm)) {
-            rm.setStatus(new Status(
-                IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID, INVALID_HANDLE, "Alarm context invalid", null)); //$NON-NLS-1$
-            rm.done();
-            return;
+    /** Returns the alarm context for given timer and trigger contexts. */
+    public AlarmDMContext getAlarmS(TriggerDMContext alarmCtx, TimerDMContext timerCtx) {
+        return new AlarmDMContext(getSession().getId(), timerCtx, alarmCtx);
+    }
+
+    /** Returns true if the given alarm is triggered */
+    public boolean isAlarmTriggered(AlarmDMContext alarmCtx) {
+        // Extract the timer and trigger contexts.  They should always be part 
+        // of the alarm.
+        TimerService.TimerDMContext timerCtx = DMContexts.getAncestorOfType(
+            alarmCtx, TimerService.TimerDMContext.class);
+        TriggerDMContext triggerCtx = DMContexts.getAncestorOfType(
+            alarmCtx, TriggerDMContext.class);
+
+        assert triggerCtx != null && timerCtx != null;
+
+        // Find the trigger and check whether the timers value has surpassed it. 
+        if (fTriggers.containsKey(triggerCtx)) {
+            int timerValue = getServicesTracker().getService(TimerService.class).
+                getTimerValue(timerCtx);
+            
+            return timerValue >= fTriggers.get(triggerCtx);
         }
-        rm.setData(new AlarmData(alarmCtx.fAlarm));
-        rm.done();
-    }
-
-    /**
-     * Returns the alarm status context object, for given timer and alarms.  
-     * 
-     * <br>Note: this method is synchronous... for variety.
-     */
-    public AlarmStatusContext getAlarmStatus(AlarmDMC alarmCtx, TimerDMC timerCtx) {
-        return new AlarmStatusContext(this, timerCtx, alarmCtx);
-    }
-
-    /**
-     * Returns the data object for given alarm status object.
-     */
-    public void getAlarmStatusData(AlarmStatusContext alarmStatusCtx, final DataRequestMonitor<AlarmStatusData> rm) {
-        final TimerService.TimerDMC timerCtx = DMContexts.getAncestorOfType(
-            alarmStatusCtx, TimerService.TimerDMC.class);
-        final AlarmDMC alarmCtx = DMContexts.getAncestorOfType(
-            alarmStatusCtx, AlarmDMC.class);
-
-        assert alarmCtx != null && timerCtx != null;
         
-        getServicesTracker().getService(TimerService.class).getTimerData(
-            timerCtx,
-            new DataRequestMonitor<TimerData>(getExecutor(), rm) { 
-                @Override
-                protected void handleOK() {
-                    if (!fAlarms.containsKey(alarmCtx.fAlarm)) {
-                        rm.setStatus(new Status(
-                            IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID, INVALID_HANDLE, "Alarm context invalid", null)); //$NON-NLS-1$
-                        rm.done();
-                        return;
-                    }
-                    boolean isTriggered = getData().getTimerValue() >= fAlarms.get(alarmCtx.fAlarm);
-                    rm.setData(new AlarmStatusData(isTriggered));
-                    rm.done();
-                }
-            });
+        return false;
     }
     
-    /**
-     * Creates a new alarm object with given value.
-     * @return context of the new alarm.
-     */
-    public AlarmDMC createAlarm(int value) {
-        int newAlarm = fAlarmCounter++; 
-        fAlarms.put(newAlarm, value);
-        getSession().dispatchEvent(new AlarmsChangedEvent(), getProperties());
-        return new AlarmDMC(this, newAlarm);
+    /** Creates a new alarm object with given value. */
+    public TriggerDMContext createTrigger(int value) {
+        TriggerDMContext triggerCtx = 
+            new TriggerDMContext(getSession().getId(), fTriggerNumberCounter++);
+        fTriggers.put(triggerCtx, value);
+        getSession().dispatchEvent(new TriggersChangedEvent(), getProperties());
+        return triggerCtx;
     }    
     
     /** Removes given alarm from service. */
-    public void deleteAlarm(AlarmDMC alarmCtx) {
-        fAlarms.remove(alarmCtx.fAlarm);
-        getSession().dispatchEvent(new AlarmsChangedEvent(), getProperties());
+    public void deleteTrigger(TriggerDMContext alarmCtx) {
+        fTriggers.remove(alarmCtx);
+        getSession().dispatchEvent(new TriggersChangedEvent(), getProperties());
     }
     
-    /**
-     * Changes the value of the given alarm.  
-     * @param dmc Alarm to change
-     * @param newValue New alarm value.
-     */
-    public void setAlarmValue(AlarmDMC dmc, int newValue) {
-        if (fAlarms.containsKey(dmc.fAlarm)) {
-            fAlarms.put(dmc.fAlarm, newValue);
+    /** Changes the value of the given trigger. */
+    public void setTriggerValue(TriggerDMContext ctx, int newValue) {
+        if (fTriggers.containsKey(ctx)) {
+            fTriggers.put(ctx, newValue);
         }
-        getSession().dispatchEvent(new AlarmsChangedEvent(), getProperties());
+        getSession().dispatchEvent(new TriggersChangedEvent(), getProperties());
     }
 }

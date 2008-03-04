@@ -25,18 +25,14 @@ public class TimersViewColumnPresentation implements IColumnPresentation {
     public static final String COL_ID = ID + ".COL_ID"; //$NON-NLS-1$
     public static final String COL_VALUE = ID + ".COL_VALUE"; //$NON-NLS-1$
     
-    // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#init(org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
     public void init(IPresentationContext context) {}
 
-    // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#dispose()
     public void dispose() {}
 
-    // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getAvailableColumns()
     public String[] getAvailableColumns() {
         return new String[] { COL_ID, COL_VALUE };
     }
 
-    // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getHeader(java.lang.String)
     public String getHeader(String id) {
         if (COL_ID.equals(id)) {
             return "ID"; //$NON-NLS-1$
@@ -46,22 +42,18 @@ public class TimersViewColumnPresentation implements IColumnPresentation {
         return null;
     }
 
-    // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getId()
     public String getId() {
         return ID;
     }
 
-    // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getImageDescriptor(java.lang.String)
     public ImageDescriptor getImageDescriptor(String id) {
         return null;
     }
 
-    // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getInitialColumns()
     public String[] getInitialColumns() {
         return getAvailableColumns();
     }
 
-    // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#isOptional()
     public boolean isOptional() {
         return true;
     }

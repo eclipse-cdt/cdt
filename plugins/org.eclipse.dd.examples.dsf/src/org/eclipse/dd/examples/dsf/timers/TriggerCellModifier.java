@@ -11,6 +11,7 @@
 package org.eclipse.dd.examples.dsf.timers;
 
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
@@ -23,8 +24,7 @@ import org.eclipse.dd.dsf.service.DsfServices;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.examples.dsf.DsfExamplesPlugin;
-import org.eclipse.dd.examples.dsf.timers.AlarmService.AlarmDMC;
-import org.eclipse.dd.examples.dsf.timers.AlarmService.AlarmData;
+import org.eclipse.dd.examples.dsf.timers.AlarmService.TriggerDMContext;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.swt.widgets.Shell;
@@ -32,58 +32,56 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
- * 
+ * Cell modifier used to edit the trigger value.
  */
-@ThreadSafeAndProhibitedFromDsfExecutor("")
-public class AlarmCellModifier implements ICellModifier {
+@ThreadSafeAndProhibitedFromDsfExecutor("fSession.getExecutor()")
+public class TriggerCellModifier implements ICellModifier {
 
     private final DsfSession fSession;
     
-    /** 
-     * Need to use the OSGi service tracker here (instead of DsfServiceTracker), 
-     * because we're accessing it in non-dispatch thread.  DsfServiceTracker is not
-     * thread-safe.
-     */
+    // Need to use the OSGi service tracker (instead of DsfServiceTracker), 
+    // because it's being accessed on multiple threads.
     @ThreadSafe
     private ServiceTracker fServiceTracker;
 
     /**
-     * Constructor for the modifier requires a valid DSF session in order to 
+     * Constructor for the modifier requires a valid session in order to 
      * initialize the service tracker.  
      * @param session DSF session this modifier will use.
      */
-    public AlarmCellModifier(DsfSession session) {
+    public TriggerCellModifier(DsfSession session) {
         fSession = session;
     }
 
     public boolean canModify(Object element, String property) {
-        return TimersViewColumnPresentation.COL_VALUE.equals(property) && getAlarmDMC(element) != null; 
+        return TimersViewColumnPresentation.COL_VALUE.equals(property) && 
+            getAlarmDMC(element) != null; 
     }
 
     public Object getValue(Object element, String property) {
-        if (!TimersViewColumnPresentation.COL_VALUE.equals(property)) return ""; //$NON-NLS-1$
+        if (!TimersViewColumnPresentation.COL_VALUE.equals(property)) return ""; 
         
-        // Get the DMC and the session.  If element is not an alarm DMC, or 
-        // session is stale, then bail out. 
-        AlarmDMC dmc = getAlarmDMC(element);
-        if (dmc == null) return ""; //$NON-NLS-1$
-        DsfSession session = DsfSession.getSession(dmc.getSessionId());
-        if (session == null) return ""; //$NON-NLS-1$
+        // Get the context and the session.  If element is not an trigger 
+        // context or if the session is stale then bail out. 
+        TriggerDMContext triggerCtx = getAlarmDMC(element);
+        if (triggerCtx == null) return ""; 
+        DsfSession session = DsfSession.getSession(triggerCtx.getSessionId());
+        if (session == null) return ""; 
         
-        /*
-         * Create the query to request the value from service.  
-         * Note: no need to guard against RejectedExecutionException, because 
-         * DsfSession.getSession() above would only return an active session. 
-         */ 
-        GetValueQuery query = new GetValueQuery(dmc);
-        session.getExecutor().execute(query);
+        // Create the query to request the value from service.  
+        GetValueQuery query = new GetValueQuery(triggerCtx);
+        try {
+            session.getExecutor().execute(query);
+        } catch (RejectedExecutionException e) {
+            return "";
+        }
         try {
             return query.get().toString();
         } catch (InterruptedException e) {
             assert false;
-            return ""; //$NON-NLS-1$
+            return ""; 
         } catch (ExecutionException e) {
-            return ""; //$NON-NLS-1$
+            return ""; 
         }
     }
 
@@ -91,7 +89,7 @@ public class AlarmCellModifier implements ICellModifier {
     public void modify(Object element, String property, Object value) {
         if (!TimersViewColumnPresentation.COL_VALUE.equals(property)) return;
 
-        AlarmDMC dmc = getAlarmDMC(element);
+        TriggerDMContext dmc = getAlarmDMC(element);
         if (dmc == null) return;
         DsfSession session = DsfSession.getSession(dmc.getSessionId());
         if (session == null) return;
@@ -105,31 +103,32 @@ public class AlarmCellModifier implements ICellModifier {
             try {
                 intValue = new Integer(((String)value).trim());
             } catch (NumberFormatException e) {
-                MessageDialog.openError(shell, "Invalid Value", "Please enter a positive integer"); //$NON-NLS-1$ //$NON-NLS-2$
+                MessageDialog.openError(shell, "Invalid Value", 
+                    "Please enter a positive integer");  
                 return;
             }
             if (intValue.intValue() <= 0) {
-                MessageDialog.openError(shell, "Invalid Value", "Please enter a positive integer"); //$NON-NLS-1$ //$NON-NLS-2$
+                MessageDialog.openError(shell, "Invalid Value", 
+                    "Please enter a positive integer");  
                 return;
             }
         }
 
-        /*
-         * Create the query to write the value to the service.
-         * Note: no need to guard against RejectedExecutionException, because 
-         * DsfSession.getSession() above would only return an active session. 
-         */ 
+        // Create the query to write the value to the service.
         SetValueQuery query = new SetValueQuery(dmc, intValue);
 
-        session.getExecutor().execute(query);
-
+        try {
+            session.getExecutor().execute(query);
+        } catch (RejectedExecutionException e) {
+            // View must be shutting down, no need to show error dialog.
+        }
         try {
             // Return value is irrelevant, any error would come through with an exception.
             query.get().toString();
         } catch (InterruptedException e) {
             assert false;
         } catch (ExecutionException e) {
-            // View must be shutting down, no need to show erro dialog.
+            // View must be shutting down, no need to show error dialog.
         }
     }
 
@@ -151,15 +150,16 @@ public class AlarmCellModifier implements ICellModifier {
         return null;
     }
 
-    private AlarmDMC getAlarmDMC(Object element) {
+    private TriggerDMContext getAlarmDMC(Object element) {
         if (element instanceof IAdaptable) {
-            return (AlarmDMC)((IAdaptable)element).getAdapter(AlarmDMC.class);
+            return (TriggerDMContext)((IAdaptable)element).getAdapter(TriggerDMContext.class);
         }
         return null;
     }
 
     @ThreadSafe
-    private synchronized AlarmService getService(AlarmDMC dmc) {
+    private synchronized AlarmService getService(TriggerDMContext dmc) {
+        // Create and initialize the service tracker if needed.
     	String serviceId = DsfServices.createServiceFilter( AlarmService.class, fSession.getId() ); 
         if (fServiceTracker == null) {
             try {
@@ -172,26 +172,25 @@ public class AlarmCellModifier implements ICellModifier {
                 return null;
             }
         }
+        // Get the service.
         return (AlarmService)fServiceTracker.getService();
     }
+
     
     private class GetValueQuery extends Query<Integer> {
+        final TriggerDMContext fDmc;
         
-        final AlarmDMC fDmc;
-        
-        private GetValueQuery(AlarmDMC dmc) {
+        private GetValueQuery(TriggerDMContext dmc) {
             super();
             fDmc = dmc; 
         }
         
         @Override
         protected void execute(final DataRequestMonitor<Integer> rm) {
-            /*
-             * Guard against the session being disposed.  If session is disposed
-             * it could mean that the executor is shut-down, which in turn 
-             * could mean that we can't execute the "done" argument.
-             * In that case, cancel to notify waiting thread.
-             */ 
+            // Guard against the session being disposed.  If session is disposed
+            // it could mean that the executor is shut-down, which in turn 
+            // could mean that we can't execute the "done" argument.
+            // In that case, cancel to notify waiting thread.
             final DsfSession session = DsfSession.getSession(fDmc.getSessionId());
             if (session == null) {
                 cancel(false);
@@ -201,34 +200,30 @@ public class AlarmCellModifier implements ICellModifier {
             AlarmService service = getService(fDmc);
             if (service == null) {
                 rm.setStatus(new Status(IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID, IDsfService.INVALID_STATE, 
-                                          "Service not available", null)); //$NON-NLS-1$
+                                          "Service not available", null)); 
+                rm.done();
                 return;
             }
             
-            service.getAlarmData(fDmc, new DataRequestMonitor<AlarmData>(session.getExecutor(), rm) {
-                @Override
-                protected void handleCompleted() {
-                    // We're in another dispatch, so we must guard against executor shutdown again. 
-                    if (DsfSession.isSessionActive(session.getId())) {
-                        super.handleCompleted();
-                    }
-                }
-                
-                @Override
-                protected void handleOK() {
-                    rm.setData(getData().getTriggeringValue());
-                    rm.done();
-                }
-            });
+            int value = service.getTriggerValue(fDmc);
+            if (value == -1) {
+                rm.setStatus(new Status(IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID, IDsfService.INVALID_HANDLE, 
+                    "Invalid context", null)); 
+                rm.done();                
+                return;
+            }
+            
+            rm.setData(value);
+            rm.done();
         }
     }
 
     private class SetValueQuery extends Query<Object> {
         
-        AlarmDMC fDmc;
+        TriggerDMContext fDmc;
         int fValue;
         
-        SetValueQuery(AlarmDMC dmc, int value) {
+        SetValueQuery(TriggerDMContext dmc, int value) {
             super();
             fDmc = dmc;
             fValue = value;
@@ -247,13 +242,13 @@ public class AlarmCellModifier implements ICellModifier {
             AlarmService service = getService(fDmc);
             if (service == null) {
                 rm.setStatus(new Status(IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID, IDsfService.INVALID_STATE, 
-                                          "Service not available", null)); //$NON-NLS-1$
+                                          "Service not available", null)); 
                 rm.done();
                 return;
             }
 
             // Finally set the value and return.
-            service.setAlarmValue(fDmc, fValue);
+            service.setTriggerValue(fDmc, fValue);
             
             // Return value is irrelevant.
             rm.setData(new Object());

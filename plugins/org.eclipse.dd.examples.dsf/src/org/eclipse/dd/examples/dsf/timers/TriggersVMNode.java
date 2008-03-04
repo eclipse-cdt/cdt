@@ -28,26 +28,31 @@ import org.eclipse.dd.dsf.ui.viewmodel.properties.LabelImage;
 import org.eclipse.dd.dsf.ui.viewmodel.properties.LabelText;
 import org.eclipse.dd.dsf.ui.viewmodel.properties.PropertyBasedLabelProvider;
 import org.eclipse.dd.examples.dsf.DsfExamplesPlugin;
-import org.eclipse.dd.examples.dsf.timers.TimerService.TimerDMContext;
+import org.eclipse.dd.examples.dsf.timers.AlarmService.TriggerDMContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
+import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.ICellModifier;
+import org.eclipse.jface.viewers.TextCellEditor;
+import org.eclipse.swt.widgets.Composite;
 
 
 /**
- * View model node that defines how timer DMContexts are displayed in the view. Timers
- * change with every tick of the timer, so the label has to be repained 
- * upon timer tick events.
- * @see TimerDMContext
+ * View model node that defines how alarm DMContexts are displayed in the view.  Alarm
+ * nodes are fairly static, once they are created their label doesn't change.
+ * @see TriggerDMContext 
  */
 @SuppressWarnings("restriction")
-class TimersVMNode extends AbstractDMVMNode 
-    implements IElementLabelProvider, IElementPropertiesProvider
+class TriggersVMNode extends AbstractDMVMNode 
+    implements IElementEditor, IElementPropertiesProvider, IElementLabelProvider
 {
-    private static final String PROP_TIMER_NUMBER = "alarmNumber"; 
-    private static final String PROP_TIMER_VALUE = "alarmTriggerValue"; 
+    private static final String PROP_TRIGGER_NUMBER = "alarmNumber"; 
+    private static final String PROP_TRIGGER_VALUE = "alarmTriggerValue"; 
     
     // Create and configure the label provider.
     private static final PropertyBasedLabelProvider fgLabelProvider;
@@ -56,8 +61,8 @@ class TimersVMNode extends AbstractDMVMNode
 
         LabelColumnInfo idCol = new LabelColumnInfo(
             new LabelAttribute[] { 
-                new LabelText(new MessageFormat("Timer #{0}"), 
-                    new String[] { PROP_TIMER_NUMBER }), 
+                new LabelText(new MessageFormat("Trigger #{0}"), 
+                    new String[] { PROP_TRIGGER_NUMBER }), 
                 new LabelImage(DsfExamplesPlugin.getDefault().getImageRegistry().
                     getDescriptor(DsfExamplesPlugin.IMG_ALARM))
             });
@@ -66,35 +71,32 @@ class TimersVMNode extends AbstractDMVMNode
         LabelColumnInfo valueCol = new LabelColumnInfo(
             new LabelAttribute[] { 
                 new LabelText(new MessageFormat("{0}"), 
-                    new String[] { PROP_TIMER_VALUE }) 
+                    new String[] { PROP_TRIGGER_VALUE }) 
             });
         fgLabelProvider.setColumnInfo(TimersViewColumnPresentation.COL_VALUE, 
             valueCol);            
-        
     }
 
+    private TriggerCellModifier fAlarmCellModifier;
     
-    public TimersVMNode(AbstractDMVMProvider provider, DsfSession session) {
-        super(provider, session, TimerDMContext.class);
-    }
-    
-    public void update(ILabelUpdate[] updates) {
-        fgLabelProvider.update(updates);
+    public TriggersVMNode(AbstractDMVMProvider provider, DsfSession session) {
+        super(provider, session, TriggerDMContext.class);
     }
     
     @Override
     protected void updateElementsInSessionThread(final IChildrenUpdate update) {
         if (!checkService(AlarmService.class, null, update)) return;
 
-        // Retrieve the timer DMContexts, create the corresponding VMCs array, and 
-        // set them as result.
-        TimerDMContext[] timers = 
-            getServicesTracker().getService(TimerService.class).getTimers();
-        fillUpdateWithVMCs(update, timers);
+        TriggerDMContext[] triggers = 
+            getServicesTracker().getService(AlarmService.class).getTriggers();
+        fillUpdateWithVMCs(update, triggers);
         update.done();
     }
 
-
+    public void update(ILabelUpdate[] updates) {
+        fgLabelProvider.update(updates);
+    }
+    
     public void update(final IPropertiesUpdate[] updates) {
         // Switch to the session thread before processing the updates.
         try {
@@ -113,55 +115,83 @@ class TimersVMNode extends AbstractDMVMNode
 
     @ConfinedToDsfExecutor("getSession#getExecutor")
     private void updatePropertiesInSessionThread(final IPropertiesUpdate update) {
-        // Find the timer context in the element being updated
-        final TimerDMContext dmc = findDmcInPath(
-            update.getViewerInput(), update.getElementPath(), TimerDMContext.class);
+        // Find the trigger context in the element being updated
+        TriggerDMContext triggerCtx = findDmcInPath( 
+            update.getViewerInput(), update.getElementPath(), TriggerDMContext.class);
         
         // If either update or service are not valid, fail the update and exit.
-        if (!checkDmc(dmc, update) || 
-            !checkService(TimerService.class, null, update)) 
+        if (!checkDmc(triggerCtx, update) || 
+            !checkService(AlarmService.class, null, update)) 
         {
-           return;
+            return;
         }
         
-        TimerService timerService = 
-            getServicesTracker().getService(TimerService.class, null);
-        int value = timerService.getTimerValue(dmc);
+        // Calculate and set the update properties.
+        AlarmService alarmService = 
+            getServicesTracker().getService(AlarmService.class, null); 
+        int value = alarmService.getTriggerValue(triggerCtx);
         
         if (value == -1) {
             handleFailedUpdate(update);
             return;
-        }
+        } 
 
-        update.setProperty(PROP_TIMER_NUMBER, dmc.getTimerNumber());
-        update.setProperty(PROP_TIMER_VALUE, value);
+        update.setProperty(PROP_TRIGGER_NUMBER, triggerCtx.getTriggerNumber());
+        update.setProperty(PROP_TRIGGER_VALUE, value);
         update.done();
     }
+    
+    public CellEditor getCellEditor(IPresentationContext context, String columnId, 
+        Object element, Composite parent) 
+    {
+        // Create a cell editor to modify the trigger value.
+        if (TimersViewColumnPresentation.COL_VALUE.equals(columnId)) { 
+            return new TextCellEditor(parent);
+        } 
+        return null;
+    }
 
+    // Note: this method is synchronized because IElementEditor.getCellModifier can be called
+    // on any thread, even though in practice it should be only called on the UI thread.
+    public ICellModifier getCellModifier(IPresentationContext context, 
+        Object element) 
+    {
+        // Create the cell modifier if needed.
+        if (fAlarmCellModifier == null) {
+            fAlarmCellModifier = new TriggerCellModifier(getSession());
+        }
+        return fAlarmCellModifier; 
+    }
+    
     public int getDeltaFlags(Object e) {
-        // This node generates delta if the timers have changed, or if the 
-        // label has changed.
-        if (e instanceof TimerService.TimerTickDMEvent) {
-            return IModelDelta.STATE;
-        } else if (e instanceof TimerService.TimersChangedEvent) {
+        // Since the label for triggers doesn't change, this node will generate 
+        // delta info only if the list of alarms is changed.
+        if (e instanceof AlarmService.TriggersChangedEvent) {
             return IModelDelta.CONTENT;
         }
         return IModelDelta.NO_CHANGE;
     }
-
-    public void buildDelta(Object e, VMDelta parentDelta, int nodeOffset, RequestMonitor requestMonitor) {
-        if (e instanceof TimerService.TimerTickDMEvent) {
-            // Add delta indicating that the given timer has changed.
-            parentDelta.addNode( createVMContext(((TimerService.TimerTickDMEvent)e).getDMContext()), IModelDelta.STATE );
-        } else if (e instanceof TimerService.TimersChangedEvent) {
-            // The list of timers has changed, which means that the parent 
+    
+    
+    public void buildDelta(Object event, VMDelta parentDelta, int nodeOffset, 
+        RequestMonitor requestMonitor) 
+    {
+        if (event instanceof AlarmService.TriggersChangedEvent) {
+            // The list of alarms has changed, which means that the parent 
             // node needs to refresh its contents, which in turn will re-fetch the
             // elements from this node.
             parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
         }
         requestMonitor.done();
+    } 
+    
+    @Override
+    public void dispose() {
+        if (fAlarmCellModifier != null) {
+            fAlarmCellModifier.dispose();
+        }
+        super.dispose();
     }
-
 
     public String getPropertyDescription(String property) {
         return null;
@@ -170,5 +200,4 @@ class TimersVMNode extends AbstractDMVMNode
     public String getPropertyName(String property) {
         return null;
     }
-
 }

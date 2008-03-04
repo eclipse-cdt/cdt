@@ -12,19 +12,20 @@ package org.eclipse.dd.examples.dsf.timers;
 
 import java.util.concurrent.ExecutionException;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.dd.dsf.concurrent.DefaultDsfExecutor;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
+import org.eclipse.dd.dsf.ui.viewmodel.IVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.dd.examples.dsf.DsfExamplesPlugin;
-import org.eclipse.dd.examples.dsf.timers.TimerService.TimerDMC;
+import org.eclipse.dd.examples.dsf.timers.TimerService.TimerDMContext;
 import org.eclipse.dd.examples.dsf.timers.TimersVMProvider.ViewLayout;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.jface.action.Action;
@@ -33,6 +34,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -42,17 +44,23 @@ import org.eclipse.ui.part.ViewPart;
 
 
 /**
- * Example view which displays data from timers and alarms DSF services.  This 
- * starts a new DSF session and configures the services for it.  Then it 
- * configures a data model provider to process the service data and display it
- * in a flexible-hierarchy asynchronous viewer.
+ * Example view which displays data from timers and alarms services. It starts 
+ * a new DSF session and configures the services for it.  Then it configures 
+ * a data model provider to process the service data and display it in a 
+ * flexible-hierarchy asynchronous viewer.
  */
 @SuppressWarnings("restriction")
 public class TimersView extends ViewPart {
     
+    /** Timers view ID */
+    public static final String ID_VIEW_TIMERS = "org.eclipse.dd.examples.dsf.TimersView";
+    
     /** Asynchronous tree viewer from the platform debug.ui plugin. */
 	private TreeModelViewer fViewer;
     
+	/** Presentation context of the timers viewer */
+	private PresentationContext fPresentationContext;
+	
     /** DSF executor to use for a new session with timers and alarms services */
     private DsfExecutor fExecutor;
     
@@ -63,7 +71,7 @@ public class TimersView extends ViewPart {
     private DsfServicesTracker fServices;
     
     /** Adapter used to provide view model for flexible-hierarchy viewer */
-    private TimersModelAdapter fTimersModelAdapter;
+    private TimersVMAdapter fTimersVMAdapter;
     
     /** Action which toggles the layout in the viewer */
     private Action fToggleLayoutAction;
@@ -71,45 +79,41 @@ public class TimersView extends ViewPart {
     /** Action that adds a new timer */
 	private Action fAddTimerAction;
     
-    /** Action that adds a new alarm */
-    private Action fAddAlarmAction;
+    /** Action that adds a new trigger */
+    private Action fAddTriggerAction;
     
-    /** Action that removes the selected alarm or timer */
+    /** Action that removes the selected trigger or timer */
 	private Action fRemoveAction;
 
 	public TimersView() {}
 
 	/**
-	 * This is a callback that will allow us to create the viewer and 
+	 * This is a call-back that will allow us to create the viewer and 
      * initialize it.  For this view, it creates the DSF session, along
      * with its services.  Then it creates the viewer model adapter and 
      * registers it with the session.
 	 */
 	@Override
     public void createPartControl(Composite parent) {
-        /*
-         * Create the Flexible Hierarchy viewer.  Also create a presentation
-         * context which will be given to the content/label provider adapters 
-         * to distinguish this view from other flex-hierarchy views. 
-         */
-        final IPresentationContext presentationContext = new PresentationContext("org.eclipse.dd.examples.dsf.timers"); //$NON-NLS-1$
-		fViewer = new TreeModelViewer(parent, SWT.VIRTUAL | SWT.FULL_SELECTION, presentationContext);
+        // Create the Flexible Hierarchy viewer.  Also create a presentation
+        // context which will be given to the content/label provider adapters 
+        // to distinguish this view from other flexible-hierarchy views. 
+        fPresentationContext = new PresentationContext(ID_VIEW_TIMERS); 
+		fViewer = new TreeModelViewer(
+		    parent, SWT.VIRTUAL | SWT.FULL_SELECTION, fPresentationContext);
         
-        /*
-         * Create the executor, which will be used exclusively with this view, 
-         * as well as a session and a services tracker for managing references 
-         * to services.
-         */
+        // Create the executor, which will be used exclusively with this view, 
+        // as well as a session and a services tracker for managing references 
+        // to services.
         fExecutor = new DefaultDsfExecutor();
-        fSession = DsfSession.startSession(fExecutor, "org.eclipse.dd.examples.dsf.timers"); //$NON-NLS-1$
-        fServices = new DsfServicesTracker(DsfExamplesPlugin.getBundleContext(), fSession.getId());
+        fSession = DsfSession.startSession(fExecutor, "Timers(DSF Example)"); 
+        fServices = new DsfServicesTracker(
+            DsfExamplesPlugin.getBundleContext(), fSession.getId());
 
-        /*
-         * Start the services using a sequence.  The sequence runs in the 
-         * dispatch thread, so we have to block this thread using Future.get() 
-         * until it completes.  The Future.get() will throw an exception if 
-         * the sequence fails.
-         */
+        // Start the services using a sequence.  The sequence runs in the 
+        // session executor thread, therefore the thread calling this method 
+        // has to block using Future.get() until the sequence it completes.  
+        // The Future.get() will throw an exception if the sequence fails.
         ServicesStartupSequence startupSeq = new ServicesStartupSequence(fSession);
         fSession.getExecutor().execute(startupSeq);
         try {
@@ -118,20 +122,38 @@ public class TimersView extends ViewPart {
         } catch (ExecutionException e) { assert false;
         }
         
-        /*
-         * Create the flexible hierarchy content/label adapter. Then register 
-         * it with the session. 
-         */
-        fTimersModelAdapter = new TimersModelAdapter(fSession, presentationContext);
-        fSession.registerModelAdapter(IElementContentProvider.class, fTimersModelAdapter);
-        fSession.registerModelAdapter(IModelProxyFactory.class, fTimersModelAdapter);
-        fSession.registerModelAdapter(IColumnPresentationFactory.class, fTimersModelAdapter);
+        // Create the flexible hierarchy content/label adapter. Then register 
+        // it with the session.
+        fTimersVMAdapter = new TimersVMAdapter(fSession, fPresentationContext);
+        fSession.registerModelAdapter(
+            IElementContentProvider.class, fTimersVMAdapter);
+        fSession.registerModelAdapter(
+            IModelProxyFactory.class, fTimersVMAdapter);
+        fSession.registerModelAdapter(
+            IColumnPresentationFactory.class, fTimersVMAdapter);
         
-        /*
-         * Set the root element for the timers tree viewer.  The root element 
-         * comes from the content provider.
-         */
-        fViewer.setInput(fTimersModelAdapter.getTimersVMProvider().getViewerInputObject());
+        // Create the input object for the view.  This object needs to return
+        // the VM adapter through the IAdaptable interface when queried for the 
+        // flexible hierarchy adapters.
+        final IAdaptable viewerInputObject = 
+            new IAdaptable() {
+                /**
+                 * The input object provides the viewer access to the viewer model adapter.
+                 */
+                @SuppressWarnings("unchecked")
+                public Object getAdapter(Class adapter) {
+                    if ( adapter.isInstance(fTimersVMAdapter) ) {
+                        return fTimersVMAdapter;
+                    }
+                    return null;
+                }
+                
+                @Override
+                public String toString() {
+                    return "Timers View Root"; //$NON-NLS-1$
+                }
+            };
+        fViewer.setInput(viewerInputObject);
         
 		makeActions();
 		contributeToActionBars();
@@ -140,21 +162,24 @@ public class TimersView extends ViewPart {
     @Override
     public void dispose() {
         try {
-            /*
-             * First dispose the view model, which is the client of services.
-             * We are not in the dispatch thread
-             */
+            // First dispose the view model, which is the client of services.
+            // This operation needs to be performed in the session executor 
+            // thread.  Block using Future.get() until this call completes.
             fSession.getExecutor().submit(new Runnable() { 
                 public void run() {
                     fSession.unregisterModelAdapter(IElementContentProvider.class);
                     fSession.unregisterModelAdapter(IModelProxyFactory.class);
                     fSession.unregisterModelAdapter(IColumnPresentationFactory.class);
-                    fTimersModelAdapter.dispose();
-                    fTimersModelAdapter = null;
                 }}).get();
-            
-            // Then invoke the shutdown sequence for the services.
-            ServicesShutdownSequence shutdownSeq = new ServicesShutdownSequence(fSession);
+
+            // Dispose the VM adapter.
+            fTimersVMAdapter.dispose();
+            fTimersVMAdapter = null;
+
+            // Next invoke the shutdown sequence for the services.  Sequence
+            // class also implements Future.get()...
+            ServicesShutdownSequence shutdownSeq = 
+                new ServicesShutdownSequence(fSession);
             fSession.getExecutor().execute(shutdownSeq);
             try {
                 shutdownSeq.get();
@@ -162,7 +187,7 @@ public class TimersView extends ViewPart {
             } catch (ExecutionException e) { assert false;
             }
             
-            // Finally end the session and the executor:
+            // Finally end the session and the executor.
             fSession.getExecutor().submit(new Runnable() { 
                 public void run() {
                     DsfSession.endSession(fSession);
@@ -173,7 +198,6 @@ public class TimersView extends ViewPart {
         } catch (InterruptedException e) {
         } catch (ExecutionException e) {
         }
-        //fViewer.dispose();
         super.dispose();
     }
 
@@ -185,7 +209,7 @@ public class TimersView extends ViewPart {
 	private void fillLocalToolBar(IToolBarManager manager) {
         manager.add(fToggleLayoutAction);
 		manager.add(fAddTimerAction);
-        manager.add(fAddAlarmAction);
+        manager.add(fAddTriggerAction);
 		manager.add(fRemoveAction);
 		manager.add(new Separator());
 	}
@@ -195,97 +219,105 @@ public class TimersView extends ViewPart {
             @Override
             public void run() {
                 // Get the toggle state of the action while on UI thread.
-                final ViewLayout layout = isChecked() ? ViewLayout.ALARMS_AT_TOP : ViewLayout.TIMERS_AT_TOP;
+                final ViewLayout layout = isChecked() ? ViewLayout.TRIGGERS_AT_TOP : ViewLayout.TIMERS_AT_TOP;
                 
-                // Switch to executor thread to perform the change in layout.
-                fExecutor.submit(new Runnable() { public void run() {
-                    fTimersModelAdapter.getTimersVMProvider().setViewLayout(layout);
-                }});
+                IVMProvider provider = fTimersVMAdapter.getVMProvider(fPresentationContext); 
+                ((TimersVMProvider)provider).setViewLayout(layout);
             }
         };
         fToggleLayoutAction.setToolTipText("Toggle Layout"); //$NON-NLS-1$
         fToggleLayoutAction.setImageDescriptor(DsfExamplesPlugin.getDefault().getImageRegistry().getDescriptor(
             DsfExamplesPlugin.IMG_LAYOUT_TOGGLE));
         
-        fAddTimerAction = new Action("Add New Timer") { //$NON-NLS-1$
+        fAddTimerAction = new Action("Add New Timer") { 
 			@Override
             public void run() {
-                fExecutor.submit(new Runnable() { public void run() {
-                    // Only need to create the new timer, the events will cause 
-                    // the view to refresh.
-                    fServices.getService(TimerService.class).startTimer();
-                }});
+                fExecutor.execute(new Runnable() { 
+                    public void run() {
+                        // Only need to create the new timer, the events will 
+                        // cause the view to refresh.
+                        fServices.getService(TimerService.class).startTimer();
+                    }
+                });
 			}
 		};
-		fAddTimerAction.setToolTipText("Add new timer"); //$NON-NLS-1$
-		fAddTimerAction.setImageDescriptor(DsfExamplesPlugin.getDefault().getImageRegistry().getDescriptor(
-            DsfExamplesPlugin.IMG_TIMER));
+		fAddTimerAction.setToolTipText("Add a new timer"); 
+		fAddTimerAction.setImageDescriptor(
+		    getImage(DsfExamplesPlugin.IMG_TIMER));
 
-        fAddAlarmAction = new Action("Add New Alarm") { //$NON-NLS-1$
+        fAddTriggerAction = new Action("Add New Trigger") { 
             @Override
             public void run() {
-                // Ask user for the new alarm value.
+                // Ask user for the new trigger value.
                 InputDialog inputDialog = new InputDialog(
-                    fViewer.getControl().getShell(), 
-                    "New Alarm",  //$NON-NLS-1$
-                    "Please enter alarm time", //$NON-NLS-1$
-                    "", //$NON-NLS-1$
+                    getSite().getShell(), 
+                    "New Trigger",  
+                    "Please enter trigger value", 
+                    "", 
                     new IInputValidator() {
                         public String isValid(String input) {
                             try {
                                 int i= Integer.parseInt(input);
                                 if (i <= 0)
-                                    return "Please enter a positive integer";  //$NON-NLS-1$
+                                    return "Please enter a positive integer";  
     
                             } catch (NumberFormatException x) {
-                                return "Please enter a positive integer";  //$NON-NLS-1$
+                                return "Please enter a positive integer";  
                             }
                             return null;
                         }                    
                     }
                 );
                 if (inputDialog.open() != Window.OK) return;
-                int tmpAlarmValue = -1;
+                int tmpTriggerValue = -1;
                 try {
-                    tmpAlarmValue = Integer.parseInt(inputDialog.getValue());
+                    tmpTriggerValue = Integer.parseInt(inputDialog.getValue());
                 } catch (NumberFormatException x) { assert false; }
-                final int alarmValue = tmpAlarmValue;
-                fExecutor.submit(new Runnable() { public void run() {
-                    // Create the new alarm.
-                    fServices.getService(AlarmService.class).createAlarm(alarmValue);
-                }});
+                final int triggerValue = tmpTriggerValue;
+                fExecutor.execute(new Runnable() { 
+                    public void run() {
+                        // Create the new trigger
+                        fServices.getService(AlarmService.class).
+                            createTrigger(triggerValue);
+                    }
+                });
             }
         };
-        fAddAlarmAction.setToolTipText("Add new alarm"); //$NON-NLS-1$
-        fAddAlarmAction.setImageDescriptor(DsfExamplesPlugin.getDefault().getImageRegistry().getDescriptor(
-            DsfExamplesPlugin.IMG_ALARM));
+        fAddTriggerAction.setToolTipText("Add a new trigger"); 
+        fAddTriggerAction.setImageDescriptor(
+            getImage(DsfExamplesPlugin.IMG_ALARM));
 
-		fRemoveAction = new Action("Remove") { //$NON-NLS-1$
+		fRemoveAction = new Action("Remove") { 
             @Override
             public void run() {
-                final Object selectedElement = ((IStructuredSelection)fViewer.getSelection()).getFirstElement();
+                final Object selectedElement = 
+                    ((IStructuredSelection)fViewer.getSelection()).getFirstElement();
                 if (!(selectedElement instanceof IDMVMContext)) return;
-                final IDMContext selectedDmc = ((IDMVMContext)selectedElement).getDMContext();
-                // Based on the DMC from the selection, call the appropriate service to 
-                // remove the item.
-                if (selectedDmc instanceof TimerDMC) {
-                    fExecutor.submit(new Runnable() { public void run() {
+                final IDMContext selectedCtx = 
+                    ((IDMVMContext)selectedElement).getDMContext();
+                // Based on the context from the selection, call the 
+                // appropriate service to remove the item.
+                if (selectedCtx instanceof TimerDMContext) {
+                    fExecutor.execute(new Runnable() { public void run() {
                         fServices.getService(TimerService.class).killTimer(
-                            ((TimerDMC)selectedDmc));
+                            ((TimerDMContext)selectedCtx));
                     }});
-                } else if (selectedDmc instanceof AlarmService.AlarmDMC) {
-                    fExecutor.submit(new Runnable() { public void run() {
-                        fServices.getService(AlarmService.class).deleteAlarm(
-                            (AlarmService.AlarmDMC)selectedDmc);
+                } else if (selectedCtx instanceof AlarmService.TriggerDMContext) {
+                    fExecutor.execute(new Runnable() { public void run() {
+                        fServices.getService(AlarmService.class).deleteTrigger(
+                            (AlarmService.TriggerDMContext)selectedCtx);
                     }});
                 }
 			}
 		};
-		fRemoveAction.setToolTipText("Remove selected item"); //$NON-NLS-1$
-		fRemoveAction.setImageDescriptor(DsfExamplesPlugin.getDefault().getImageRegistry().getDescriptor(
-            DsfExamplesPlugin.IMG_REMOVE));
+		fRemoveAction.setToolTipText("Remove selected item"); 
+		fRemoveAction.setImageDescriptor( getImage(DsfExamplesPlugin.IMG_REMOVE) );
 	}
 
+	private ImageDescriptor getImage(String key) {
+        return DsfExamplesPlugin.getDefault().getImageRegistry().getDescriptor(key);
+	}
+	
 	/**
 	 * Passing the focus request to the viewer's control.
 	 */

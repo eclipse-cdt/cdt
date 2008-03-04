@@ -63,6 +63,7 @@ import org.eclipse.cdt.core.settings.model.ICFolderDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICMultiFolderDescription;
+import org.eclipse.cdt.core.settings.model.ICMultiItemsHolder;
 import org.eclipse.cdt.core.settings.model.ICMultiResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingBase;
@@ -85,6 +86,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 	protected LinkedList<ICLanguageSettingEntry> incs;
 	protected ArrayList<ICSettingEntry> exported; 
 	protected SashForm sashForm;
+	protected ICLanguageSetting [] ls; // all languages known
 	
 	protected final static String[] BUTTONS = {ADD_STR, EDIT_STR, DEL_STR, 
 			UIMessages.getString("AbstractLangsListTab.2"), //$NON-NLS-1$
@@ -341,7 +343,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		updateExport();
 		langTree.removeAll();
 		TreeItem firstItem = null;
-		ICLanguageSetting []ls = getLangSetting(cfg);
+		ls = getLangSetting(cfg);
 		if (ls != null) {
 			Arrays.sort(ls, CDTListComparator.getInstance());
 			for (int i=0; i<ls.length; i++) {
@@ -564,18 +566,33 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 	}
 	
 	protected void performApply(ICResourceDescription src, ICResourceDescription dst) {
-		ICLanguageSetting [] sr = getLangSetting(src);
-		ICLanguageSetting [] ds = getLangSetting(dst);
-		if (sr == null || ds == null || sr.length != ds.length) return;
 		if (page.isMultiCfg()) {
-			//	TODO: Apply for multi !
-			
-		} else {
-			for (int i=0; i<sr.length; i++) {
-				ds[i].setSettingEntries(getKind(), sr[i].getSettingEntries(getKind()));
+			ICLanguageSetting [] sr = ls;
+			if (dst instanceof ICMultiItemsHolder) {
+				for (Object ob : ((ICMultiItemsHolder)dst).getItems()) {
+					if (ob instanceof ICResourceDescription) {
+						ICLanguageSetting [] ds = getLangSetting((ICResourceDescription)ob);			
+						if (ds == null || sr.length != ds.length) return;
+						for (int i=0; i<sr.length; i++) {
+							ICLanguageSettingEntry[] ents = null;
+							ents = sr[i].getSettingEntries(getKind());
+							ds[i].setSettingEntries(getKind(), ents);
+						}
+					}
+				}
 			}
-		}
+		} else {
+			ICLanguageSetting [] sr = getLangSetting(src);
+			ICLanguageSetting [] ds = getLangSetting(dst);
+			if (sr == null || ds == null || sr.length != ds.length) return;
+			for (int i=0; i<sr.length; i++) {
+				ICLanguageSettingEntry[] ents = null;
+				ents = sr[i].getSettingEntries(getKind());
+				ds[i].setSettingEntries(getKind(), ents);
+			}
+		}	
 	}
+	
 	protected void performDefaults() {
 		TreeItem[] tis = langTree.getItems();
 		for (int i=0; i<tis.length; i++) {

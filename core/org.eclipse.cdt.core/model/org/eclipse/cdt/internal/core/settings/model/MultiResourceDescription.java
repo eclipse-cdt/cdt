@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICFileDescription;
 import org.eclipse.cdt.core.settings.model.ICFolderDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
+import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICMultiResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingContainer;
@@ -190,8 +191,7 @@ public abstract class MultiResourceDescription extends MultiItemsHolder implemen
 		return fRess;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public void setSettingEntries(ICLanguageSetting lang, int kind, List incs, boolean toAll) {
+	public void setSettingEntries(ICLanguageSetting lang, int kind, List<ICLanguageSettingEntry> incs, boolean toAll) {
 		for (int i=0; i<fRess.length; i++) {
 			if (fRess[i] instanceof ICFolderDescription) {
 				String n = lang.getName();

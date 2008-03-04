@@ -14,5 +14,5 @@ import java.util.List;
 
 public interface ICMultiResourceDescription extends ICResourceDescription, ICMultiItemsHolder {
 
-	void setSettingEntries(ICLanguageSetting lang, int kind, List incs, boolean toAll);
+	void setSettingEntries(ICLanguageSetting lang, int kind, List<ICLanguageSettingEntry> incs, boolean toAll);
 }

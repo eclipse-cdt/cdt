@@ -11,6 +11,8 @@
 package org.eclipse.cdt.core.settings.model;
 
 import org.eclipse.cdt.internal.core.settings.model.MultiConfigDescription;
+import org.eclipse.cdt.internal.core.settings.model.MultiFileDescription;
+import org.eclipse.cdt.internal.core.settings.model.MultiFolderDescription;
 
 /**
  *
@@ -35,13 +37,6 @@ public abstract class MultiItemsHolder implements ICMultiItemsHolder {
 	 * 
 	 * @param rds - array of cfg.descs
 	 *  
-	 * @param mode - string list display and write mode
-	 * @see DMODE_CONJUNCTION
-	 * @see DMODE_EMPTY
-	 * @see DMODE_ALL
-	 * @see WMODE_DIFF
-	 * @see WMODE_CURRENT
-	 *
 	 * @return multiple cfg.description or single cfg.desc.
 	 */
 	public static ICConfigurationDescription createCDescription(ICConfigurationDescription[] rds) {
@@ -51,5 +46,33 @@ public abstract class MultiItemsHolder implements ICMultiItemsHolder {
 			return rds[0];
 		else
 			return new MultiConfigDescription(rds);
+	}
+	/**
+	 * This method is put here to prevent UI from 
+	 * accessing constructors in "internal" dirs. 
+	 * 
+	 * Creates multiple resource description, it
+	 * can be either MultiFile or MultiFolder.
+	 * If there's 1 description in array, 
+	 * it's returned itself. 
+	 * 
+	 * @param rds - array of resource descs
+	 *  
+	 * @return multiple res.description or single res.desc.
+	 */
+	public static ICResourceDescription createRDescription(ICResourceDescription[] rds) {
+		if (rds == null || rds.length == 0)
+			return null;
+		else if (rds.length == 1)
+			return rds[0];
+		else if (rds[0] instanceof ICFolderDescription) {
+			ICFolderDescription[] fds = new ICFolderDescription[rds.length];
+			System.arraycopy(rds, 0, fds, 0, rds.length);
+			return new MultiFolderDescription(fds);
+		} else {
+			ICFileDescription[] fds = new ICFileDescription[rds.length];
+			System.arraycopy(rds, 0, fds, 0, rds.length);
+			return new MultiFileDescription(fds);
+		}
 	}
 }

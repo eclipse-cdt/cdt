@@ -466,9 +466,14 @@ implements
 		
 		if (needs) { 
 			if (isMultiCfg()) {
-				lc = resd;
+				ICResourceDescription[] rds = (ICResourceDescription[])((ICMultiItemsHolder)resd).getItems();
+				for (int i=0; i<rds.length; i++) {
+					ICConfigurationDescription c = local_prjd.getConfigurationById(rds[i].getConfiguration().getId());
+					rds[i] = getResDesc(c);
+				}
+				lc = MultiItemsHolder.createRDescription(rds);
 			} else {
-				ICConfigurationDescription c = needs ? local_prjd.getConfigurationById(resd.getConfiguration().getId()) : null;
+				ICConfigurationDescription c = local_prjd.getConfigurationById(resd.getConfiguration().getId());
 				lc = getResDesc(c);
 			}
 		}

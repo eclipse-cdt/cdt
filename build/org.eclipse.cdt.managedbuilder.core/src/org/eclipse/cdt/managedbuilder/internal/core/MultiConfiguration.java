@@ -96,7 +96,6 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#calculateTargetTool()
 	 */
 	public ITool calculateTargetTool() {
-		System.out.println("Strange multi access: MultiConfiguration.calculateTargetTool()"); //$NON-NLS-1$
 		return curr().calculateTargetTool();
 	}
 
@@ -1056,7 +1055,6 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObjectPropertiesContainer#getBuildProperties()
 	 */
 	public IBuildObjectProperties getBuildProperties() {
-		System.out.println("Strange multi access: MultiConfiguration.getBuildProperties()"); //$NON-NLS-1$
 		return curr().getBuildProperties();
 	}
 

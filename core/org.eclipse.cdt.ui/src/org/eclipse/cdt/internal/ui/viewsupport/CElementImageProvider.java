@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -88,6 +88,11 @@ public class CElementImageProvider {
 	 * Show implements overrlay. 
 	 */	
 	public final static int OVERLAY_IMPLEMENTS= 0x40;
+	
+	/**
+	 * Show external file overlay.
+	 */
+	public final static int OVERLAY_EXTERNAL= 0x80;
 	
 	public static final Point SMALL_SIZE= new Point(16, 16);
 	public static final Point BIG_SIZE= new Point(22, 16);
@@ -480,6 +485,9 @@ public class CElementImageProvider {
 //		if ((renderFlags & OVERLAY_IMPLEMENTS) !=0) {
 //			flags |= CElementImageDescriptor.IMPLEMENTS;
 //		}
+		if ((renderFlags & OVERLAY_EXTERNAL) != 0) {
+			flags |= CElementImageDescriptor.EXTERNAL_FILE;
+		}
 		return flags;			
 	}	
 	

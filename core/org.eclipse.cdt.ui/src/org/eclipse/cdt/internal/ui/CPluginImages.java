@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -268,9 +268,11 @@ public class CPluginImages {
     public static final ImageDescriptor DESC_OVR_READ_ACCESS= create(T_OVR, "read.gif"); //$NON-NLS-1$
     public static final ImageDescriptor DESC_OVR_READ_WRITE_ACCESS= create(T_OVR, "readwrite.gif"); //$NON-NLS-1$
     public static final ImageDescriptor DESC_OVR_WRITE_ACCESS= create(T_OVR, "write.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_OVR_EXTERNAL_FILE= create(T_OVR, "external_file.gif"); //$NON-NLS-1$
     
 	public static final ImageDescriptor DESC_OVR_WARNING= create(T_OVR, "warning_co.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OVR_ERROR= create(T_OVR, "error_co.gif"); //$NON-NLS-1$
+
 
 	public static final ImageDescriptor DESC_WIZABAN_NEW_PROJ= create(T_WIZBAN, "newcprj_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_WIZBAN_NEWCLASS= create(T_WIZBAN, "newclass_wiz.gif");	 //$NON-NLS-1$

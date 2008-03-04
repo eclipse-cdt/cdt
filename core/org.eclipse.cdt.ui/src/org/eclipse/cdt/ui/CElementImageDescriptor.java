@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
  *     Markus Schorn (Wind River Systems)
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
@@ -54,7 +55,7 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
 	 */
 	public final static int RUNNABLE= 		0x010;
 	
-	/** Flag to render the waring adornment */
+	/** Flag to render the warning adornment */
 	public final static int WARNING=		0x020;
 	
 	/** Flag to render the error adornment */
@@ -96,6 +97,9 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
 
     /** Flag to render the 'read access' adornment for references to variables or fields */
 	public static final int WRITE_ACCESS = 0x20000;      
+
+    /** Flag to render the 'external file' adornment for translation units */
+	public static final int EXTERNAL_FILE = 0x40000;
 
 	private ImageDescriptor fBaseImage;
 	private int fFlags;
@@ -292,7 +296,12 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
 			data= CPluginImages.DESC_OVR_WRITE_ACCESS.getImageData();
 			drawImage(data, 0, 0);
 		}
-	}		
+		
+		if ((fFlags & EXTERNAL_FILE) != 0) {
+			data= CPluginImages.DESC_OVR_EXTERNAL_FILE.getImageData();
+			drawImage(data, 0, 0);
+		}
+	}
 
 	private void drawBottomLeft() {
 		Point size= getSize();

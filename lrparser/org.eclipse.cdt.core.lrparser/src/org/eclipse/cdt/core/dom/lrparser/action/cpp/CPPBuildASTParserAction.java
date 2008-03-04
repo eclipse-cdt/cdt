@@ -94,6 +94,7 @@ import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPExpressionStatementParser;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPNoCastExpressionParser;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym;
+import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPSizeofExpressionParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 
@@ -136,6 +137,11 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		return new CPPNoCastExpressionParser(CPPParsersym.orderedTerminalSymbols);
 	}
 	
+	
+	@Override
+	protected IParser getSizeofExpressionParser() {
+		return new CPPSizeofExpressionParser(CPPParsersym.orderedTerminalSymbols);
+	}
 
 	/**
 	 * new_expression

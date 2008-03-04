@@ -375,7 +375,7 @@ public C99Parser(String[] mapFrom) {  // constructor
             //
             // Rule 41:  unary_expression ::= sizeof ( type_name )
             //
-            case 41: { action.   consumeExpressionSizeofTypeId();             break;
+            case 41: { action.   consumeExpressionTypeId(IASTTypeIdExpression.op_sizeof);             break;
             }  
   
             //

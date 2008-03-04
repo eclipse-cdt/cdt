@@ -238,7 +238,7 @@ unary_expression
       | 'sizeof' unary_expression
           /. $Build  consumeExpressionUnaryOperator(IASTUnaryExpression.op_sizeof);  $EndBuild ./
       | 'sizeof' '(' type_name ')'
-          /. $Build  consumeExpressionSizeofTypeId();  $EndBuild ./  
+          /. $Build  consumeExpressionTypeId(IASTTypeIdExpression.op_sizeof);  $EndBuild ./  
           
 
 cast_expression

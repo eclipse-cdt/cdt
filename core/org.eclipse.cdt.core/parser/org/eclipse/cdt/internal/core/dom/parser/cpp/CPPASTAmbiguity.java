@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 //no change for leave()
-import java.util.Arrays;
-
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -36,7 +34,8 @@ public abstract class CPPASTAmbiguity extends CPPASTNode {
             shouldVisitNames = true;
         }
 
-        public int visit(IASTName name) {
+        @Override
+		public int visit(IASTName name) {
         	if (name != null) {
         		namesPos++;
         		names = (IASTName[]) ArrayUtil.append(IASTName.class, names, name);
@@ -52,30 +51,28 @@ public abstract class CPPASTAmbiguity extends CPPASTNode {
 
     protected abstract IASTNode[] getNodes();
 
-    public boolean accept(ASTVisitor visitor) {
+    @Override
+	public boolean accept(ASTVisitor visitor) {
         IASTNode[] nodez = getNodes();
-//        if( debugging  ) 
-//            printNode();
-        int[] issues = new int[nodez.length];
-        for (int i = 0; i < nodez.length; ++i) {
-            IASTNode s = nodez[i];
-            s.accept( visitor );
-            CPPASTNameCollector resolver = new CPPASTNameCollector();
-            s.accept(resolver);
-            IASTName[] names = resolver.getNames();
-            for (int j = 0; j < names.length; ++j) {
+        int[] problems = new int[nodez.length];
+        for(int i = 0; i < nodez.length; ++i) {
+            IASTNode node = nodez[i];
+            node.accept(visitor);
+            CPPASTNameCollector nameCollector = new CPPASTNameCollector();
+            node.accept(nameCollector);
+            IASTName[] names = nameCollector.getNames();
+            for(IASTName name : names) {
                 try {
-                    IBinding b = names[j].resolveBinding();
-                    if (b == null || b instanceof IProblemBinding)
-                        ++issues[i];
+                    IBinding b = name.resolveBinding();
+                    if(b == null || b instanceof IProblemBinding)
+                        ++problems[i];
                 } catch (Exception t) {
-                    ++issues[i];
+                    ++problems[i];
                 }
             }
-            if (names.length > 0) {
+            if(names.length > 0) {
                 IScope scope = CPPVisitor.getContainingScope(names[0]);
-                if( scope != null )
-                {
+                if( scope != null ) {
                     try {
                         ASTInternal.flushCache(scope);
                     } catch (DOMException de) {}
@@ -83,11 +80,11 @@ public abstract class CPPASTAmbiguity extends CPPASTNode {
             }
         }
         int bestIndex = 0;
-        int bestValue = issues[0];
-        for (int i = 1; i < issues.length; ++i) {
-            if (issues[i] < bestValue) {
+        int bestValue = problems[0];
+        for (int i = 1; i < problems.length; ++i) {
+            if (problems[i] < bestValue) {
                 bestIndex = i;
-                bestValue = issues[i];
+                bestValue = problems[i];
             }
         }
 
@@ -95,15 +92,5 @@ public abstract class CPPASTAmbiguity extends CPPASTNode {
         owner.replace(this, nodez[bestIndex]);
         return true;
     }
-
-//    protected void printNode() {
-//        System.out.println( "Ambiguity " + getClass().getName() + ": ");
-//        IASTNode [] nodes = getNodes();
-//        for( int i = 0; i < nodes.length; ++i )
-//        {
-//            System.out.print( "\t" + i + " : " );
-//            System.out.println( ASTSignatureUtil.getNodeSignature(nodes[i]) );
-//        }
-//    }
 
 }

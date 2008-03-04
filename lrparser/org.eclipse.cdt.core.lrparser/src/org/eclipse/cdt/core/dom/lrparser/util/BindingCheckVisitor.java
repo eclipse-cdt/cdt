@@ -37,13 +37,13 @@ class BindingCheckVisitor extends CASTVisitor {
 		shouldVisitEnumerators = true;
 		shouldVisitTranslationUnit = true;
 		shouldVisitProblems = false;
-		shouldVisitComments = false;
 		shouldVisitDesignators = true;
 	}
 	
+	@Override
 	public int visit(IASTName name) {
 		if(name.getBinding() == null)
-			throw new AssertionError("Binding did not get pre-resolved: '" + name + "'");
+			throw new AssertionError("Binding did not get pre-resolved: '" + name + "'"); //$NON-NLS-1$ //$NON-NLS-2$
 		return PROCESS_CONTINUE;
 	}
 

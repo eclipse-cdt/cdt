@@ -38,14 +38,11 @@ import java.util.List;
 
 import lpg.lpgjavaruntime.IToken;
 
-import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -53,10 +50,8 @@ import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointer;
-import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
@@ -64,8 +59,6 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
-import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
-import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
@@ -90,10 +83,8 @@ import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99ExpressionStatementPars
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99NoCastExpressionParser;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99SizeofExpressionParser;
+import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
-import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
-import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTAmbiguousExpression;
 
 /**
  * Semantic actions called by the C99 parser to build an AST.
@@ -148,6 +139,10 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 		return new C99NoCastExpressionParser(C99Parsersym.orderedTerminalSymbols);
 	}
 	
+	@Override
+	protected IParser getSizeofExpressionParser() {
+		return new C99SizeofExpressionParser(CPPParsersym.orderedTerminalSymbols);
+	}
 	
 	
 	/********************************************************************
@@ -193,28 +188,28 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
-	/**
-	 * Lots of rules, no need to list them.
-	 * @param operator From IASTUnaryExpression
-	 */
-	public void consumeExpressionSizeofTypeId() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
-		IASTTypeId typeId = (IASTTypeId) astStack.pop();
-		IASTTypeIdExpression expr = nodeFactory.newTypeIdExpression(IASTTypeIdExpression.op_sizeof, typeId);
-		setOffsetAndLength(expr);
-		
-		// try parsing as an expression to resolve ambiguities
-		C99SizeofExpressionParser secondaryParser = new C99SizeofExpressionParser(C99Parsersym.orderedTerminalSymbols); 
-		IASTNode alternateExpr = runSecondaryParser(secondaryParser);
-		
-		if(alternateExpr == null || alternateExpr instanceof IASTProblemExpression)
-			astStack.push(expr);
-		else
-			astStack.push(nodeFactory.newAmbiguousExpression(expr, (IASTExpression)alternateExpr));
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
-	}
+//	/**
+//	 * Lots of rules, no need to list them.
+//	 * @param operator From IASTUnaryExpression
+//	 */
+//	public void consumeExpressionSizeofTypeId() {
+//		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
+//		
+//		IASTTypeId typeId = (IASTTypeId) astStack.pop();
+//		IASTTypeIdExpression expr = nodeFactory.newTypeIdExpression(IASTTypeIdExpression.op_sizeof, typeId);
+//		setOffsetAndLength(expr);
+//		
+//		// try parsing as an expression to resolve ambiguities
+//		C99SizeofExpressionParser secondaryParser = new C99SizeofExpressionParser(C99Parsersym.orderedTerminalSymbols); 
+//		IASTNode alternateExpr = runSecondaryParser(secondaryParser);
+//		
+//		if(alternateExpr == null || alternateExpr instanceof IASTProblemExpression)
+//			astStack.push(expr);
+//		else
+//			astStack.push(nodeFactory.newAmbiguousExpression(expr, (IASTExpression)alternateExpr));
+//		
+//		if(TRACE_AST_STACK) System.out.println(astStack);
+//	}
 	
 	
 	/**

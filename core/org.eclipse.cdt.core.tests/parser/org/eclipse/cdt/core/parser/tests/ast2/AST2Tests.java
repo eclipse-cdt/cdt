@@ -4184,15 +4184,12 @@ public class AST2Tests extends AST2BaseTest {
 		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP, false ); 
 		CNameCollector col = new CNameCollector();
 		tu.accept(col);
-		Iterator i = col.nameList.iterator();
-		while (i.hasNext()) {
-		    IASTName n = (IASTName) i.next();
-		    if (n.isReference() && "f1".equals(n.toString())) {
+		for(Object o : col.nameList) {
+			IASTName n = (IASTName)o; 
+		    if (n.isReference() && "f1".equals(n.toString()))
 			    assertTrue(n.resolveBinding() instanceof IProblemBinding);
-		    }
-		    else {
+		    else
 		    	assertFalse(n.resolveBinding() instanceof IProblemBinding);
-		    }
 		}
     }
     

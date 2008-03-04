@@ -75,6 +75,10 @@
 		<antcall target="generate_cpp">
             <param name="grammar_name" value="CPPNoCastExpressionParser"/>
 		</antcall>
+		<!-- Generate parser for disambiguating sizeof expressions -->
+		<antcall target="generate_cpp">
+            <param name="grammar_name" value="CPPSizeofExpressionParser"/>
+		</antcall>
 	</target>
 	
 	

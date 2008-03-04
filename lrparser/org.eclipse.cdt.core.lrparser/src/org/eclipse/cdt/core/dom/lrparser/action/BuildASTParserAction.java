@@ -57,6 +57,7 @@ import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
 import org.eclipse.cdt.core.dom.ast.IASTProblemHolder;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -70,6 +71,8 @@ import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
 import static org.eclipse.cdt.core.dom.lrparser.util.CollectionUtils.matchTokens;
 import org.eclipse.cdt.core.dom.lrparser.util.DebugUtil;
+import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym;
+import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99SizeofExpressionParser;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
@@ -137,6 +140,13 @@ public abstract class BuildASTParserAction {
 	 * used to disambiguate casts. 
 	 */
 	protected abstract IParser getNoCastExpressionParser();
+	
+	
+	/**
+	 * Expression parser that treats all sizeof and typeid expressions
+	 * as unary expressions.
+	 */
+	protected abstract IParser getSizeofExpressionParser();
 	
 	
 	
@@ -408,16 +418,37 @@ public abstract class BuildASTParserAction {
 			}
 		}
 		
+		IASTNode result;
 		if(expressionStatement == null)
-			astStack.push(declarationStatement);
+			result = declarationStatement;
+		else if(isImplicitInt(decl))
+			result = expressionStatement;
 		else
-			astStack.push(nodeFactory.newAmbiguousStatement(declarationStatement, expressionStatement));
+			result = nodeFactory.newAmbiguousStatement(declarationStatement, expressionStatement);
 			
+		astStack.push(result);
 		
 		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
+	/**
+	 * TODO : don't think this is correct.
+	 * 
+     * Returns true if the given declaration has unspecified type,
+     * in this case the type defaults to int and is know as "implicit int".
+     */
+    protected static boolean isImplicitInt(IASTDeclaration declaration) {
+    	if(declaration instanceof IASTSimpleDeclaration) {
+    		IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration)declaration).getDeclSpecifier();
+    		if(declSpec instanceof IASTSimpleDeclSpecifier && 
+    		   ((IASTSimpleDeclSpecifier)declSpec).getType() == IASTSimpleDeclSpecifier.t_unspecified) {
+    			
+    			return true;
+    		}
+    	}
+    	return false;
+    }
   	
 	
 	/**
@@ -591,9 +622,26 @@ public abstract class BuildASTParserAction {
 		IASTTypeId typeId = (IASTTypeId) astStack.pop();
 		IASTTypeIdExpression expr = nodeFactory.newTypeIdExpression(operator, typeId);
 		setOffsetAndLength(expr);
-		astStack.push(expr);
+		
+		// try parsing as an expression to resolve ambiguities
+		IParser secondaryParser = getSizeofExpressionParser(); 
+		IASTNode alternateExpr = runSecondaryParser(secondaryParser);
+		
+		if(alternateExpr == null || alternateExpr instanceof IASTProblemExpression)
+			astStack.push(expr);
+		else
+			astStack.push(nodeFactory.newAmbiguousExpression(expr, (IASTExpression)alternateExpr));
 		
 		if(TRACE_AST_STACK) System.out.println(astStack);
+		
+//		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
+//		
+//		IASTTypeId typeId = (IASTTypeId) astStack.pop();
+//		IASTTypeIdExpression expr = nodeFactory.newTypeIdExpression(operator, typeId);
+//		setOffsetAndLength(expr);
+//		astStack.push(expr);
+//		
+//		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	

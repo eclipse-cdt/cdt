@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - fix 158765: content assist miss disables enter
  * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
  *                                API to the user actions plugin
+ * Radoslav Gerganov (ProSyst) - [181563] Fix hardcoded Ctrl+Space for remote shell content assist
  ********************************************************************************/
 
 package org.eclipse.rse.shells.ui.view;
@@ -37,7 +38,6 @@ import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.IWidgetTokenKeeper;
 import org.eclipse.jface.text.TextEvent;
-import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -46,12 +46,7 @@ import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.view.SystemViewMenuListener;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.validators.ISystemValidator;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.custom.VerifyKeyListener;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -143,44 +138,6 @@ public class SystemCommandEditor extends SourceViewer
 				fireModifyEvents(cmdText, errorMessage);
 			}
 		});
-		getTextWidget().addKeyListener(new KeyAdapter()
-		{
-			public void keyReleased(KeyEvent e)
-			{
-	
-				if (!e.doit)
-					return;
-					
-				if (e.stateMask == SWT.CTRL)
-				{
-					// DKM - using this now since SWT isn't providing statemask with verify key events
-					switch (e.character)
-					{
-						case ' ' :
-							//bug 158765: enter may be disabled only when the widget is shown,
-							//not if content assist is requested (since results may be empty)
-							//setInCodeAssist(true);
-							doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
-							//e.doit = false;
-							break;
-
-						case 'z' - 'a' + 1 :
-							// CTRL-Z
-							doOperation(ITextOperationTarget.UNDO);
-							//e.doit = false;
-							break;
-					}
-				}
-
-			}
-		});
-		prependVerifyKeyListener(new VerifyKeyListener()
-		{
-			public void verifyKey(VerifyEvent event)
-			{
-				handleVerifyKeyPressed(event);
-			}
-		});
 		initializeActions();
 	}
 	public String getCommandText()
@@ -257,8 +214,8 @@ public class SystemCommandEditor extends SourceViewer
 		menu.appendToGroup(
 			ITextEditorActionConstants.GROUP_EDIT,
 			(IAction) fGlobalActions.get(ITextEditorActionConstants.SELECT_ALL));
-		menu.add(new Separator("group.generate")); //$NON-NLS-1$
-		menu.appendToGroup("group.generate", (IAction) fGlobalActions.get("ContentAssistProposal")); //$NON-NLS-1$ //$NON-NLS-2$
+		menu.add(new Separator(ITextEditorActionConstants.GROUP_GENERATE));
+		menu.appendToGroup(ITextEditorActionConstants.GROUP_GENERATE, (IAction) fGlobalActions.get("ContentAssistProposal")); //$NON-NLS-1$
 	}
 	private IActionBars getActionBars()
 	{
@@ -302,7 +259,6 @@ public class SystemCommandEditor extends SourceViewer
 		_caAction.setText(contentAssistText); 
 		_caAction.setEnabled(true);
 		fGlobalActions.put("ContentAssistProposal", _caAction); //$NON-NLS-1$
-		
 		
 		setActionHandlers();
 		 
@@ -379,32 +335,6 @@ public class SystemCommandEditor extends SourceViewer
 				 ((IUpdate) action).update();
 		}
 	}
-	private void handleVerifyKeyPressed(VerifyEvent event)
-	{		
-		if (!event.doit)
-			return;
-			
-		// DKM - moved to key press handler since for some reason SWT doesn't provide statemask anymore
-			/*
-		if (event.character == 0 && (event.keyCode & SWT.KEYCODE_BIT) == 0)
-		{
-			return;
-		}
-		switch (event.character)
-		{
-			case ' ' :
-				doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
-				event.doit = false;
-				break;
-				// CTRL-Z
-			case (int) 'z' - (int) 'a' + 1 :
-				doOperation(ITextOperationTarget.UNDO);
-				event.doit = false;
-				break;
-		}
-	*/
-	}
-	
 	
 	public void setInCodeAssist(boolean flag)
 	{

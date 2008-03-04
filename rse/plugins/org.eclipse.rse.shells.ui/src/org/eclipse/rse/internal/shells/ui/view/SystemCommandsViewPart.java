@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -16,8 +16,9 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [174945] Remove obsolete icons from rse.shells.ui
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
- * David McKnight   (IBM)        - [165680] "Show in Remote Shell View" does not work
- * Kevin Doyle 		(IBM)		 - [198534] Shell Menu Enablement Issue's
+ * David McKnight (IBM) - [165680] "Show in Remote Shell View" does not work
+ * Kevin Doyle (IBM) - [198534] Shell Menu Enablement Issue's
+ * Radoslav Gerganov (ProSyst) - [181563] Fix hardcoded Ctrl+Space for remote shell content assist
  ********************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui.view;
@@ -36,7 +37,9 @@ import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -54,6 +57,7 @@ import org.eclipse.rse.internal.shells.ui.actions.SystemBaseShellAction;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.shells.ui.RemoteCommandHelpers;
+import org.eclipse.rse.shells.ui.view.SystemCommandEditor;
 import org.eclipse.rse.shells.ui.view.SystemViewRemoteOutputAdapter;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
@@ -78,8 +82,10 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.CellEditorActionHandler;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 
 /**
  * This is the desktop view wrapper of the System View viewer.
@@ -132,8 +138,22 @@ public class SystemCommandsViewPart
 		}
 	}
 
-
-	
+	/**
+	 * Content assist action for all remote shells. It is activated with
+	 * the default key binding for content assistance used in the workbench.
+	 */
+	class ContentAssistAction extends Action {
+	  
+	  public void run() {
+	    if (_folder != null) {
+	      CommandsViewPage currentTabItem = _folder.getCurrentTabItem();
+	      if (currentTabItem != null) {
+	        SystemCommandEditor editor = currentTabItem.getEditor();
+	        editor.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
+	      }
+	    }
+	  }
+	}
 
 	public class ShellAction extends BrowseAction
 	{
@@ -321,6 +341,11 @@ public class SystemCommandsViewPart
 		ISelectionService selectionService = getSite().getWorkbenchWindow().getSelectionService();
 		selectionService.addSelectionListener(this);
 		
+		IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
+		ContentAssistAction caAction = new ContentAssistAction();
+		caAction.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
+		// the handler is automatically deactivated in the dispose() method of this view
+		handlerService.activateHandler(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, new ActionHandler(caAction));
 
 		SystemWidgetHelpers.setHelp(_folder, RSEUIPlugin.HELPPREFIX + "ucmd0000"); //$NON-NLS-1$
 

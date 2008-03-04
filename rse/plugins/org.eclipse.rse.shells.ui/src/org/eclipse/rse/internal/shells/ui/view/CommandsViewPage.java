@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -18,8 +18,9 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
- * Kevin Doyle		(IBM)		 - [212940] Duplicate Help Context Identifiers
- * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * Kevin Doyle (IBM) - [212940] Duplicate Help Context Identifiers
+ * David McKnight (IBM) - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * Radoslav Gerganov (ProSyst) - [181563] Fix hardcoded Ctrl+Space for remote shell content assist
  ********************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui.view;
@@ -536,6 +537,10 @@ FocusListener
 	public SystemCommandsView getViewer()
 	{
 		return _viewer;
+	}
+	
+	SystemCommandEditor getEditor() {
+	  return _inputEntry;
 	}
 
 	public void updateOutput()

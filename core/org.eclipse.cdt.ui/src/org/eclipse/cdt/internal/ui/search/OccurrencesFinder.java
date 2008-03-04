@@ -30,7 +30,7 @@ public class OccurrencesFinder implements IOccurrencesFinder {
 	private IASTName fSelectedNode;
 	private IBinding fTarget;
 
-	private List/*<OccurrenceLocation>*/fResult;
+	private List<OccurrenceLocation> fResult;
 	private String fDescription;
 	
 	public OccurrencesFinder() {
@@ -52,7 +52,7 @@ public class OccurrencesFinder implements IOccurrencesFinder {
 	
 	private void performSearch() {
 		if (fResult == null) {
-			fResult= new ArrayList/*<OccurrenceLocation>*/();
+			fResult= new ArrayList<OccurrenceLocation>();
 			IASTName[] names= fRoot.getDeclarationsInAST(fTarget);
 			for (int i= 0; i < names.length; i++) {
 				IASTName candidate= names[i];
@@ -74,7 +74,7 @@ public class OccurrencesFinder implements IOccurrencesFinder {
 		performSearch();
 		if (fResult.isEmpty())
 			return null;
-		return (OccurrenceLocation[]) fResult.toArray(new OccurrenceLocation[fResult.size()]);
+		return fResult.toArray(new OccurrenceLocation[fResult.size()]);
 	}
 
 	public IASTTranslationUnit getASTRoot() {

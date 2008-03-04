@@ -91,7 +91,6 @@ import org.eclipse.core.runtime.OperationCanceledException;
 public class CModelBuilder2 implements IContributedModelBuilder {
 
 	private final TranslationUnit fTranslationUnit;
-	private String fTranslationUnitFileName;
 	private ASTAccessVisibility fCurrentVisibility;
 	private Stack<ASTAccessVisibility> fVisibilityStack;
 	private IProgressMonitor fProgressMonitor;
@@ -182,7 +181,6 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 	 * @throws DOMException
 	 */
 	private void buildModel(IASTTranslationUnit ast) throws CModelException, DOMException {
-		fTranslationUnitFileName= ast.getFilePath();
 		fVisibilityStack= new Stack<ASTAccessVisibility>();
 
 		// includes
@@ -256,7 +254,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 	}
 
 	private boolean isLocalToFile(IASTNode node) {
-		return fTranslationUnitFileName.equals(node.getContainingFilename());
+		return node.isPartOfTranslationUnitFile();
 	}
 
 	private Include createInclusion(Parent parent, IASTPreprocessorIncludeStatement inclusion, Set<Include> allIncludes) throws CModelException{

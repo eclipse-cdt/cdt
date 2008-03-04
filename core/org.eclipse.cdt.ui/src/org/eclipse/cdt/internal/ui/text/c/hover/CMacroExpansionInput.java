@@ -28,16 +28,13 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
-import org.eclipse.cdt.core.dom.ast.IASTMacroExpansion;
+import org.eclipse.cdt.core.dom.ast.IASTMacroExpansionLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
+import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
-import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
@@ -62,81 +59,6 @@ import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
 public class CMacroExpansionInput {
 
 	/**
-	 * AST visitor to find a node (declaration, statement or expression) enclosing a given source range.
-	 */
-    private static class FindEnclosingNodeAction extends ASTVisitor {
-    	{
-    		shouldVisitTranslationUnit= true;
-    		shouldVisitDeclarations   = true;
-    		shouldVisitStatements     = true;
-    		shouldVisitExpressions    = true;
-    	}
-    	
-    	private final int fOffset;
-    	private final int fEndOffset;
-		private final String fFilePath;
-    	private IASTNode fBestMatch= null;
-		private int fBestOffset= -1;
-		private int fBestEndOffset= Integer.MAX_VALUE;
-    	
-		public FindEnclosingNodeAction(String filePath, int offset, int length) {
-			fFilePath= filePath;
-			fOffset= offset;
-			fEndOffset= offset + length;
-		}
-    	
-    	private int processNode(IASTNode node) {
-    		IASTFileLocation location= node.getFileLocation();
-    		if (location != null && fFilePath.equals(location.getFileName())) {
-    			final int startOffset = location.getNodeOffset();
-				if (startOffset <= fOffset) {
-    				int endOffset= startOffset + location.getNodeLength();
-    				if (endOffset >= fEndOffset || node instanceof IASTTranslationUnit) {
-    					if (startOffset > fBestOffset || endOffset < fBestEndOffset) {
-	    					fBestMatch= node;
-	    					fBestOffset= startOffset;
-	    					fBestEndOffset= endOffset;
-	    					boolean isPerfectMatch= startOffset == fOffset || endOffset == fEndOffset;
-	    					if (isPerfectMatch) {
-	    						return PROCESS_ABORT;
-	    					}
-    					}
-    				} else {
-            			return PROCESS_SKIP;
-    				}
-    			} else {
-        			return PROCESS_ABORT;
-    			}
-    		}
-    		return PROCESS_CONTINUE;
-    	}
-    	
-		@Override
-		public int visit(IASTTranslationUnit tu) {
-    		return processNode(tu);
-    	}
-    	
-    	@Override
-		public int visit(IASTDeclaration declaration) {
-    		return processNode(declaration);
-    	}
-    	
-    	@Override
-		public int visit(IASTExpression expression) {
-    		return processNode(expression);
-    	}
- 
-    	@Override
-		public int visit(IASTStatement statement) {
-    		return processNode(statement);
-    	}
-    	
-    	public IASTNode getNode() {
-    		return fBestMatch;
-    	}
-    }
-
-	/**
 	 * Computes the expansion region for a selection.
 	 */
 	private static class ExpansionRegionComputer implements ASTRunnable {
@@ -157,8 +79,9 @@ public class CMacroExpansionInput {
 		 */
 		public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
 			if (ast != null) {
-				// try macro name match first
-				IASTNode node= ast.selectNodeForLocation(ast.getFilePath(), fTextRegion.getOffset(), fTextRegion.getLength());
+				final IASTNodeSelector nodeSelector = ast.getNodeSelector(ast.getFilePath());
+				// try exact macro name match first
+				IASTNode node= nodeSelector.findName(fTextRegion.getOffset(), fTextRegion.getLength());
 				if (node instanceof IASTName) {
 					IASTName macroName= (IASTName) node;
 					IBinding binding= macroName.getBinding();
@@ -172,21 +95,17 @@ public class CMacroExpansionInput {
 				}
 				if (fAllowSelection) {
 					// selection
-					FindEnclosingNodeAction nodeFinder= new FindEnclosingNodeAction(ast.getFilePath(), fTextRegion.getOffset(), fTextRegion.getLength());
-					ast.accept(nodeFinder);
-					fEnclosingNode= nodeFinder.getNode();
+					fEnclosingNode= nodeSelector.findSurroundingNode(fTextRegion.getOffset(), fTextRegion.getLength());
 					if (fEnclosingNode != null) {
 						boolean macroOccurrence= false;
 						IASTNodeLocation[] locations= fEnclosingNode.getNodeLocations();
 						for (int i = 0; i < locations.length; i++) {
 							IASTNodeLocation location= locations[i];
-							if (location instanceof IASTMacroExpansion) {
+							if (location instanceof IASTMacroExpansionLocation) {
 								IASTFileLocation fileLocation= location.asFileLocation();
 								if (fileLocation != null && ast.getFilePath().equals(fileLocation.getFileName())) {
 									if (fTextRegion.overlapsWith(fileLocation.getNodeOffset(), fileLocation.getNodeLength())) {
-										nodeFinder= new FindEnclosingNodeAction(ast.getFilePath(), fileLocation.getNodeOffset(), fileLocation.getNodeLength());
-										ast.accept(nodeFinder);
-										addExpansionNode(nodeFinder.getNode());
+										addExpansionNode(nodeSelector.findSurroundingNode(fileLocation.getNodeOffset(), fileLocation.getNodeLength()));
 										macroOccurrence= true;
 									}
 								}

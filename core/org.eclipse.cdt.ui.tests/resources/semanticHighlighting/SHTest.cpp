@@ -1,5 +1,6 @@
 #define INT      int
 #define FUNCTION_MACRO(arg) globalFunc(arg)
+#define EMPTY_MACRO(arg) 
 
 enum Enumeration {
     enumerator
@@ -11,6 +12,7 @@ static int globalStaticVariable = 0;
 
 void globalFunc(int a);
 static void globalStaticFunc() {
+    EMPTY_MACRO(n);
 };
 
 class Base1 {};
@@ -134,3 +136,7 @@ int f()
 {
   return n;
 }
+
+//http://bugs.eclipse.org/220392
+#define EMPTY
+EMPTY int f();

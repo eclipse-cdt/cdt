@@ -56,7 +56,7 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
-import org.eclipse.cdt.core.dom.ast.IASTMacroExpansion;
+import org.eclipse.cdt.core.dom.ast.IASTMacroExpansionLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -1466,7 +1466,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	}
 
 	private int visit(ICPPASTVisiblityLabel node) {
-		if (node.getNodeLocations()[0] instanceof IASTMacroExpansion) {
+		if (node.getNodeLocations()[0] instanceof IASTMacroExpansionLocation) {
 			skipNode(node);
 		} else {
 			switch (node.getVisibility()) {
@@ -1911,7 +1911,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			formatLeftCurlyBrace(line, brace_position);
 	        formatOpeningBrace(brace_position, preferences.insert_space_before_opening_brace_in_initializer_list);
 	        if (preferences.insert_new_line_after_opening_brace_in_initializer_list) {
-	        	scribe.printNewLine();
+	        	scribe.startNewLine();
 	        }
 	        if (preferences.insert_space_after_opening_brace_in_initializer_list) {
 	        	scribe.space();
@@ -2751,7 +2751,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		}
 		IASTNodeLocation[] locations= node.getNodeLocations();
 		if (locations.length == 0) {
-		} else if (locations[0] instanceof IASTMacroExpansion) {
+		} else if (locations[0] instanceof IASTMacroExpansionLocation) {
 			IASTFileLocation expansionLocation= locations[0].asFileLocation();
 			int startOffset= expansionLocation.getNodeOffset();
 			int endOffset= startOffset + expansionLocation.getNodeLength();
@@ -2803,7 +2803,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		IASTNodeLocation[] locations= node.getNodeLocations();
 		for (int i= 0; i < locations.length; i++) {
 			IASTNodeLocation nodeLocation= locations[i];
-			if (nodeLocation instanceof IASTMacroExpansion) {
+			if (nodeLocation instanceof IASTMacroExpansionLocation) {
 				IASTFileLocation expansionLocation= nodeLocation.asFileLocation();
 				int startOffset= expansionLocation.getNodeOffset();
 				int endOffset= startOffset + expansionLocation.getNodeLength();
@@ -2908,7 +2908,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		IASTNodeLocation[] locations= node.getNodeLocations();
 		if (locations.length == 0) {
 		} else if (node instanceof IASTProblemHolder) {
-		} else if (locations[0] instanceof IASTMacroExpansion) {
+		} else if (locations[0] instanceof IASTMacroExpansionLocation) {
 			IASTFileLocation expansionLocation= locations[0].asFileLocation();
 			IASTFileLocation fileLocation= node.getFileLocation();
 			return expansionLocation.getNodeOffset() == fileLocation.getNodeOffset();

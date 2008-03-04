@@ -158,12 +158,10 @@ import com.ibm.icu.text.BreakIterator;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.core.model.CModelException;
@@ -3079,48 +3077,15 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 
 		OccurrenceLocation[] locations= null;
 
-		IASTNode selectedNode= astRoot.selectNodeForLocation(astRoot.getFilePath(), wordRegion.getOffset(), wordRegion.getLength());
-		if (selectedNode == null && astRoot instanceof ICPPASTTranslationUnit && wordRegion.getOffset() > 0) {
-			// destructor?
-			 try {
-				if (document.getChar(wordRegion.getOffset() - 1) == '~') {
-					 selectedNode= astRoot.selectNodeForLocation(astRoot.getFilePath(), wordRegion.getOffset() - 1, wordRegion.getLength() + 1);
-				 }
-			} catch (BadLocationException exc) {
-				// should not happen
-			}
-		}
-		final class NameFinder extends ASTVisitor {
-			private IASTName fName;
+		IASTNodeSelector selector= astRoot.getNodeSelector(astRoot.getFilePath());
+		IASTName name= selector.findSurroundingName(wordRegion.getOffset(), wordRegion.getLength());
 
-			public NameFinder() {
-				shouldVisitNames= true;
-			}
-			public int visit(IASTName name) {
-				fName= name;
-				return PROCESS_ABORT;
-			}
-			public IASTName getName() {
-				return fName;
-			}
-		}
-
-		if (selectedNode != null) {
-			IASTName name;
-			if (selectedNode instanceof IASTName) {
-				name= (IASTName) selectedNode;
-			} else {
-				NameFinder nameFinder= new NameFinder();
-				selectedNode.accept(nameFinder);
-				name= nameFinder.getName();
-			}
-			if (name != null) {
-				IBinding binding= name.resolveBinding();
-				if (binding != null) {
-					OccurrencesFinder occurrencesFinder= new OccurrencesFinder();
-					if (occurrencesFinder.initialize(astRoot, name) == null) {
-						locations= occurrencesFinder.getOccurrences();
-					}
+		if (name != null) {
+			IBinding binding= name.resolveBinding();
+			if (binding != null) {
+				OccurrencesFinder occurrencesFinder= new OccurrencesFinder();
+				if (occurrencesFinder.initialize(astRoot, name) == null) {
+					locations= occurrencesFinder.getOccurrences();
 				}
 			}
 		}

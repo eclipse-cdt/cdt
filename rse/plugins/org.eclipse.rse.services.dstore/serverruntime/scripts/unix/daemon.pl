@@ -24,7 +24,7 @@ $isHelp = $helpFlag cmp $port;
 if ($isHelp == 0)
 {
    print("command usage:\n");
-   print("daemon.linux [<port> | <low port>-<high port>] [ <low server port>-<high server port>]\n");    
+   print("daemon.pl [<port> | <low port>-<high port>] [ <low server port>-<high server port>]\n");    
  0;
 }
 else

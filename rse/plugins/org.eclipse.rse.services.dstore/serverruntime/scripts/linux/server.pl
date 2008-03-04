@@ -13,9 +13,7 @@
 
 $port = $ARGV[0];
 $timeout = $ARGV[1];
-$packaged_as = $ARGV[2];
-$clientUserID = $ARGV[3];
-
+$clientUserID = $ARGV[2];
 
 $dir= $ENV{PWD};
 #print("path $dir");
@@ -28,18 +26,7 @@ $ENV{A_PLUGIN_PATH}="$plugins_dir/";
 $oldClasspath = $ENV{CLASSPATH};
 
 
-if ($packaged_as eq "jar")
-{
-    $ENV{"CLASSPATH"}="$plugins_dir:$plugins_dir/dstore_extra_server.jar:$plugins_dir/dstore_core.jar:$plugins_dir/dstore_miners.jar:$plugins_dir/clientserver.jar:$oldClasspath";
-}
-if ($packaged_as eq "src")
-{
-    $ENV{"CLASSPATH"}="$plugins_dir:$oldClasspath";
-}
-if (!defined($packaged_as))
-{
-    $ENV{"CLASSPATH"}="$plugins_dir:$plugins_dir/dstore_extra_server.jar:$plugins_dir/dstore_core.jar:$plugins_dir/dstore_miners.jar:$plugins_dir/clientserver.jar:$oldClasspath";
-}
+$ENV{"CLASSPATH"}="$plugins_dir:$plugins_dir/dstore_extra_server.jar:$plugins_dir/dstore_core.jar:$plugins_dir/dstore_miners.jar:$plugins_dir/clientserver.jar:$oldClasspath";
 
 if (!defined($timeout))
 {

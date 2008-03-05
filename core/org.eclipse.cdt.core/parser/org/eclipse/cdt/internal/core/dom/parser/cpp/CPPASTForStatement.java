@@ -30,16 +30,16 @@ public class CPPASTForStatement extends CPPASTNode implements ICPPASTForStatemen
     private IASTExpression iterationExpression;
     private IASTStatement body, init;
 
-    private IASTDeclaration cond_declaration;
+    private IASTDeclaration condDeclaration;
 
     
     public CPPASTForStatement() {
 	}
 
-	public CPPASTForStatement(IASTStatement init,  IASTDeclaration cond_declaration,
+	public CPPASTForStatement(IASTStatement init,  IASTDeclaration condDeclaration,
 			IASTExpression iterationExpression, IASTStatement body) {
     	setInitializerStatement(init);
-    	setConditionDeclaration(cond_declaration);
+    	setConditionDeclaration(condDeclaration);
     	setIterationExpression(iterationExpression);
     	setBody(body);
 	}
@@ -47,7 +47,7 @@ public class CPPASTForStatement extends CPPASTNode implements ICPPASTForStatemen
     public CPPASTForStatement(IASTStatement init, IASTExpression condition,
 			IASTExpression iterationExpression, IASTStatement body) {
     	setInitializerStatement(init);
-    	setConditionExpression(iterationExpression);
+    	setConditionExpression(condition);
     	setIterationExpression(iterationExpression);
     	setBody(body);
 	}
@@ -104,7 +104,7 @@ public class CPPASTForStatement extends CPPASTNode implements ICPPASTForStatemen
 		}
         if( init != null ) if( !init.accept( action ) ) return false;
         if( condition != null ) if( !condition.accept( action ) ) return false;
-        if( cond_declaration != null ) if( !cond_declaration.accept( action ) ) return false;
+        if( condDeclaration != null ) if( !condDeclaration.accept( action ) ) return false;
         if( iterationExpression != null ) if( !iterationExpression.accept( action ) ) return false;
         if( body != null ) if( !body.accept( action ) ) return false;
         
@@ -131,11 +131,11 @@ public class CPPASTForStatement extends CPPASTNode implements ICPPASTForStatemen
             other.setParent( child.getParent() );
             condition  = (IASTExpression) other;
         }
-        if( child == cond_declaration )
+        if( child == condDeclaration )
         {
             other.setPropertyInParent( child.getPropertyInParent() );
             other.setParent( child.getParent() );
-            cond_declaration  = (IASTDeclaration) other;
+            condDeclaration  = (IASTDeclaration) other;
         }
         
         if( child == iterationExpression )
@@ -165,7 +165,7 @@ public class CPPASTForStatement extends CPPASTNode implements ICPPASTForStatemen
     }
 
     public void setConditionDeclaration(IASTDeclaration d) {
-        cond_declaration = d;
+        condDeclaration = d;
         if (d != null) {
 			d.setParent(this);
 			d.setPropertyInParent(CONDITION_DECLARATION);
@@ -173,6 +173,6 @@ public class CPPASTForStatement extends CPPASTNode implements ICPPASTForStatemen
     }
 
     public IASTDeclaration getConditionDeclaration() {
-        return cond_declaration;
+        return condDeclaration;
     }
 }

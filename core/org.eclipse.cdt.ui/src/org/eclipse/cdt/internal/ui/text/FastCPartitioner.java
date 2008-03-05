@@ -42,7 +42,7 @@ public class FastCPartitioner extends FastPartitioner {
 					if (!fDocument.get(offset - 2, 2).equals("*/")) { //$NON-NLS-1$
 						return region;
 					}
-				} else if (ICPartitions.C_SINGLE_LINE_COMMENT.equals(region .getType())) {
+				} else if (ICPartitions.C_SINGLE_LINE_COMMENT.equals(region.getType())) {
 					if (fDocument.getChar(offset - 1) != '\n') {
 						return region;
 					}
@@ -50,7 +50,11 @@ public class FastCPartitioner extends FastPartitioner {
 					if (!fDocument.get(offset - 2, 2).equals("*/")) { //$NON-NLS-1$
 						return region;
 					}
-				} else if (ICPartitions.C_SINGLE_LINE_DOC_COMMENT.equals(region .getType())) {
+				} else if (ICPartitions.C_SINGLE_LINE_DOC_COMMENT.equals(region.getType())) {
+					if (fDocument.getChar(offset - 1) != '\n') {
+						return region;
+					}
+				} else if (ICPartitions.C_PREPROCESSOR.equals(region.getType())) {
 					if (fDocument.getChar(offset - 1) != '\n') {
 						return region;
 					}

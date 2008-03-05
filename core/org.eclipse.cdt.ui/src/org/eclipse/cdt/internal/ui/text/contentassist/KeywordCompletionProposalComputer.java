@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2007 QNX Software Systems and others.
+ * Copyright (c) 2007, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Bryan Wilkinson (QNX) - Initial API and implementation
+ *     Bryan Wilkinson (QNX) - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
@@ -18,6 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.swt.graphics.Image;
 
@@ -35,21 +37,53 @@ import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 
 public class KeywordCompletionProposalComputer extends ParsingBasedProposalComputer implements ICompletionProposalComputer {
 
-	protected List computeCompletionProposals(
+	protected List<CCompletionProposal> computeCompletionProposals(
 			CContentAssistInvocationContext context,
 			IASTCompletionNode completionNode, String prefix)
 			throws CoreException {
 
+		if (prefix.length() == 0) {
+			try {
+				prefix= context.computeIdentifierPrefix().toString();
+			} catch (BadLocationException exc) {
+				CUIPlugin.getDefault().log(exc);
+			}
+		}
 		// No prefix, no completions
         if (prefix.length() == 0 || context.isContextInformationStyle())
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
 
         String[] keywords;
-		if(inPreprocessorDirective(context.getDocument(), context.getInvocationOffset())) {
+		List<CCompletionProposal> proposals = new ArrayList<CCompletionProposal>();
+
+		if (inPreprocessorDirective(context)) {
+			// TODO split this into a separate proposal computer?
+			boolean needDirectiveKeyword= inPreprocessorKeyword(context);
 			keywords= preprocessorKeywords;
+
+			// add matching preprocessor keyword proposals
+			ImageDescriptor imagedesc = CElementImageProvider.getKeywordImageDescriptor();
+			Image image = imagedesc != null ? CUIPlugin.getImageDescriptorRegistry().get(imagedesc) : null;
+			for (int i = 0; i < keywords.length; ++i) {
+				String repString= keywords[i];
+				if (repString.startsWith(prefix)) {
+					int repLength = prefix.length();
+					int repOffset = context.getInvocationOffset() - repLength;
+					if (prefix.charAt(0) == '#') {
+						// strip leading '#' from replacement
+						repLength--;
+						repOffset++;
+						repString= repString.substring(1);
+					} else if (needDirectiveKeyword) {
+						continue;
+					}
+					proposals.add(new CCompletionProposal(repString, repOffset,
+							repLength, image, keywords[i], 1, context.getViewer()));
+				}
+			}	        
 		} else {
 	        if (!isValidContext(completionNode))
-	            return Collections.EMPTY_LIST;
+	            return Collections.emptyList();
 	        
 	        ITranslationUnit tu = context.getTranslationUnit();
 	        
@@ -57,21 +91,18 @@ public class KeywordCompletionProposalComputer extends ParsingBasedProposalCompu
 	        if (tu != null && tu.isCLanguage())
 	            keywords = ckeywords;
 	        
+			// add matching keyword proposals
+	        ImageDescriptor imagedesc = CElementImageProvider.getKeywordImageDescriptor();
+	        Image image = imagedesc != null ? CUIPlugin.getImageDescriptorRegistry().get(imagedesc) : null;
+	        for (int i = 0; i < keywords.length; ++i) {
+	            if (keywords[i].startsWith(prefix)) {
+	                int repLength = prefix.length();
+	                int repOffset = context.getInvocationOffset() - repLength;
+	                proposals.add(new CCompletionProposal(keywords[i], repOffset,
+							repLength, image, keywords[i], 1, context.getViewer()));
+	            }
+	        }
 		}
-		
-		List proposals = new ArrayList();
-		
-		// add matching keyword proposals
-        ImageDescriptor imagedesc = CElementImageProvider.getKeywordImageDescriptor();
-        Image image = imagedesc != null ? CUIPlugin.getImageDescriptorRegistry().get(imagedesc) : null;
-        for (int i = 0; i < keywords.length; ++i) {
-            if (keywords[i].startsWith(prefix)) {
-                int repLength = prefix.length();
-                int repOffset = context.getInvocationOffset() - repLength;
-                proposals.add(new CCompletionProposal(keywords[i], repOffset,
-						repLength, image, keywords[i], 1, context.getViewer()));
-            }
-        }
         
         return proposals;
 	}
@@ -100,26 +131,53 @@ public class KeywordCompletionProposalComputer extends ParsingBasedProposalCompu
 		
 		return false;
 	}
-	
+
 	/**
-	 * Check if given offset is inside a preprocessor directive.
+	 * Test whether the invocation offset is inside or before the preprocessor directive keyword.
 	 * 
-	 * @param doc  the document
-	 * @param offset  the offset to check
-	 * @return <code>true</code> if offset is inside a preprocessor directive
+	 * @param context  the invocation context
+	 * @return <code>true</code> if the invocation offset is inside or before the directive keyword 
 	 */
-	private boolean inPreprocessorDirective(IDocument doc, int offset) {
-		if (offset > 0 && offset == doc.getLength()) {
-		--offset;
-		}
+	private boolean inPreprocessorKeyword(CContentAssistInvocationContext context) {
+		IDocument doc = context.getDocument();
+		int offset = context.getInvocationOffset();
+		
 		try {
-			return ICPartitions.C_PREPROCESSOR
-					.equals(TextUtilities.getContentType(doc, ICPartitions.C_PARTITIONING, offset, false));
+			final ITypedRegion partition= TextUtilities.getPartition(doc, ICPartitions.C_PARTITIONING, offset, true);
+			if (ICPartitions.C_PREPROCESSOR.equals(partition.getType())) {
+				String ppPrefix= doc.get(partition.getOffset(), offset - partition.getOffset());
+				if (ppPrefix.matches("\\s*#\\s*\\w*")) { //$NON-NLS-1$
+					// we are inside the directive keyword
+					return true;
+				}
+			}
+			
 		} catch (BadLocationException exc) {
 		}
 		return false;
 	}
-	
+
+	/**
+	 * Check if the invocation offset is inside a preprocessor directive.
+	 * 
+	 * @param context  the content asist invocation context
+	 * @return <code>true</code> if invocation offset is inside a preprocessor directive
+	 */
+	private boolean inPreprocessorDirective(CContentAssistInvocationContext context) {
+		IDocument doc = context.getDocument();
+		int offset = context.getInvocationOffset();
+		
+		try {
+			final ITypedRegion partition= TextUtilities.getPartition(doc, ICPartitions.C_PARTITIONING, offset, true);
+			if (ICPartitions.C_PREPROCESSOR.equals(partition.getType())) {
+				return true;
+			}
+			
+		} catch (BadLocationException exc) {
+		}
+		return false;
+	}
+
     // These are the keywords we complete
     // We only do the ones that are >= 5 characters long
     private static String [] ckeywords = {
@@ -199,16 +257,17 @@ public class KeywordCompletionProposalComputer extends ParsingBasedProposalCompu
     };
 
     private static String [] preprocessorKeywords = {
-        Directives.POUND_DEFINE,
-        Directives.POUND_ELIF,
+        Directives.POUND_DEFINE + ' ',
+        Directives.POUND_ELIF + ' ',
         Directives.POUND_ELSE,
         Directives.POUND_ENDIF,
-        Directives.POUND_ERROR,
-        Directives.POUND_IF,
-        Directives.POUND_IFDEF,
-        Directives.POUND_IFNDEF,
-        Directives.POUND_INCLUDE,
-        Directives.POUND_PRAGMA,
-        Directives.POUND_UNDEF,
+        Directives.POUND_ERROR + ' ',
+        Directives.POUND_IF + ' ',
+        Directives.POUND_IFDEF + ' ',
+        Directives.POUND_IFNDEF + ' ',
+        Directives.POUND_INCLUDE + ' ',
+        Directives.POUND_PRAGMA + ' ',
+        Directives.POUND_UNDEF + ' ',
+        "defined" //$NON-NLS-1$
     };
 }

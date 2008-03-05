@@ -18,6 +18,7 @@ import java.util.List;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.swt.graphics.Image;
 
@@ -88,8 +89,17 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		List<CCompletionProposal> proposals = new ArrayList<CCompletionProposal>();
 		
 		if(inPreprocessorDirective(context)) {
-			// add only macros
-			addMacroProposals(context, prefix, proposals);
+			if (!inPreprocessorKeyword(context)) {
+				// add only macros
+				if (prefix.length() == 0) {
+					try {
+						prefix= context.computeIdentifierPrefix().toString();
+					} catch (BadLocationException exc) {
+						CUIPlugin.getDefault().log(exc);
+					}
+				}
+				addMacroProposals(context, prefix, proposals);
+			}
 		} else {
 			boolean handleMacros= false;
 			IASTName[] names = completionNode.getNames();
@@ -124,22 +134,46 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 	}
 
 	/**
-	 * Check if given offset is inside a preprocessor directive.
+	 * Test whether the invocation offset is inside or before the preprocessor directive keyword.
 	 * 
-	 * @param doc  the document
-	 * @param offset  the offset to check
-	 * @return <code>true</code> if offset is inside a preprocessor directive
+	 * @param context  the invocation context
+	 * @return <code>true</code> if the invocation offset is inside or before the directive keyword 
+	 */
+	private boolean inPreprocessorKeyword(CContentAssistInvocationContext context) {
+		IDocument doc = context.getDocument();
+		int offset = context.getInvocationOffset();
+		
+		try {
+			final ITypedRegion partition= TextUtilities.getPartition(doc, ICPartitions.C_PARTITIONING, offset, true);
+			if (ICPartitions.C_PREPROCESSOR.equals(partition.getType())) {
+				String ppPrefix= doc.get(partition.getOffset(), offset - partition.getOffset());
+				if (ppPrefix.matches("\\s*#\\s*\\w*")) { //$NON-NLS-1$
+					// we are inside the directive keyword
+					return true;
+				}
+			}
+			
+		} catch (BadLocationException exc) {
+		}
+		return false;
+	}
+
+	/**
+	 * Check if the invocation offset is inside a preprocessor directive.
+	 * 
+	 * @param context  the content asist invocation context
+	 * @return <code>true</code> if invocation offset is inside a preprocessor directive
 	 */
 	private boolean inPreprocessorDirective(CContentAssistInvocationContext context) {
-		IDocument doc = context.getViewer().getDocument();
-		int offset = context.getParseOffset();
+		IDocument doc = context.getDocument();
+		int offset = context.getInvocationOffset();
 		
-		if (offset > 0 && offset == doc.getLength()) {
-		--offset;
-		}
 		try {
-			return ICPartitions.C_PREPROCESSOR
-					.equals(TextUtilities.getContentType(doc, ICPartitions.C_PARTITIONING, offset, false));
+			final ITypedRegion partition= TextUtilities.getPartition(doc, ICPartitions.C_PARTITIONING, offset, true);
+			if (ICPartitions.C_PREPROCESSOR.equals(partition.getType())) {
+				return true;
+			}
+			
 		} catch (BadLocationException exc) {
 		}
 		return false;

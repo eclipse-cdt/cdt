@@ -695,7 +695,25 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//#i/*cursor*/
 	public void testCompletePreprocessorDirective() throws Exception {
 		final String[] expected= {
-				"#if", "#ifdef", "#ifndef", "#include"
+				"#if ", "#ifdef ", "#ifndef ", "#include "
+		};
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_ID_STRINGS);
+	}
+	
+	//#  d/*cursor*/
+	public void testCompletePreprocessorDirective2() throws Exception {
+		final String[] expected= {
+				"define "
+		};
+		assertCompletionResults(fCursorOffset, expected,
+				AbstractContentAssistTest.COMPARE_REP_STRINGS);
+	}
+	
+	//#  if d/*cursor*/
+	public void testCompletePreprocessorDirective3() throws Exception {
+		final String[] expected= {
+				"defined"
 		};
 		assertCompletionResults(fCursorOffset, expected,
 				AbstractContentAssistTest.COMPARE_ID_STRINGS);

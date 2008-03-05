@@ -354,7 +354,7 @@ public class ASTNodeSelectorTest extends AST2BaseTest {
 		int x1= fCode.indexOf("EXPLICIT;");
 		testContainedName(x1, fCode.length(), "EXPLICIT");
 		testName(x1, x1+8, "EXPLICIT");
-		testEnclosingName(x1, 0, "EXPLICIT");
+		testEnclosingName(x1, x1, "EXPLICIT");
 	}
 
 	// #define shift_offsets
@@ -367,6 +367,64 @@ public class ASTNodeSelectorTest extends AST2BaseTest {
 		int x1= fCode.indexOf("NESTED)");
 		testContainedName(x1, fCode.length(), "NESTED");
 		testName(x1, x1+6, "NESTED");
-		testEnclosingName(x1, 0, "NESTED");
+		testEnclosingName(x1, x1, "NESTED");
 	}
+	
+	// #define id(x,y) x y
+	// id(int a, =1);
+	// id(int b=, a);
+	public void testImageLocations() {
+		int a1= fCode.indexOf("a");
+		int a2= fCode.indexOf("a", a1+1);
+		int b1= fCode.indexOf("b");
+
+		testName(a1, a1+1, "a");
+		testContainedName(a1-1, a2+2, "a");
+		testEnclosingName(a1, a1, "a");
+		testEnclosingName(a1+1, a1+1, "a");
+
+		testName(a2, a2+1, "a");
+		testContainedName(a2-1, a2+2, "a");
+		testEnclosingName(a2, a2, "a");
+		testEnclosingName(a2+1, a2+1, "a");
+
+		testEnclosingNode(a1-1, a1+1, "id(int a, =1)");
+		testContainedNode(a1-8, a1+1, "id");
+	}
+	
+	// namespace ns {int a;}
+	// int x= ns::a;
+	// #define M int b;
+	// M
+	// #define N() int c;
+	// N()
+	// #define O
+	// #define P()
+	// P()O
+	public void testOrdering() {
+		int x1= fCode.indexOf("ns::a");
+		int x2= x1 + "ns::a".length();
+		testContainedName(x1, x2, "ns");
+		testEnclosingName(x2-1, x2-1, "a");
+		testEnclosingName(x2, x2, "a");
+		
+		x1= fCode.indexOf("M"); x1= fCode.indexOf("M", x1+1);
+		testNode(x1, x1+1, "M");
+		testEnclosingNode(x1, x1, "M");
+		testEnclosingNode(x1+1, x1+1, "M");
+		testContainedNode(x1-1, x1+2, "M");
+
+		x1= fCode.indexOf("N"); x1= fCode.indexOf("N", x1+1);
+		testNode(x1, x1+1, "N");
+		testEnclosingNode(x1, x1, "N");
+		testEnclosingNode(x1+1, x1+1, "N");
+		testContainedNode(x1-1, x1+2, "N");
+		
+		x1= fCode.indexOf("O"); x1= fCode.indexOf("O", x1+1);
+		testNode(x1, x1+1, "O");
+		testEnclosingNode(x1, x1, "O");
+		testEnclosingNode(x1+1, x1+1, "O");
+		testContainedNode(x1-1, x1+2, "O");
+	}
+	
 }

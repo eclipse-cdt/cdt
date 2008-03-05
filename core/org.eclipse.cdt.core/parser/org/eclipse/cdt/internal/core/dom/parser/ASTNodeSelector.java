@@ -52,6 +52,9 @@ public class ASTNodeSelector implements IASTNodeSelector {
 		if (!fIsValid) {
 			return null;
 		}
+		if (lengthInFile < 0) {
+			throw new IllegalArgumentException("Length cannot be less than zero."); //$NON-NLS-1$
+		}
 		int sequenceLength;
 		int altSequenceNumber= -1;
 		int sequenceNumber= fLocationResolver.getSequenceNumberForFileOffset(fFilePath, offsetInFile);

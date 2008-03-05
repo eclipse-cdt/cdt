@@ -144,7 +144,7 @@ public class ASTNodeSpecification<T extends IASTNode> {
 		final int endOffset= offset+length;
 		switch(fRelation) {
 		case EXACT_MATCH:
-			return !isParent(cand, fBestNode);
+			return isParent(fBestNode, cand);
 		case FIRST_CONTAINED:
 			if (offset < fBestOffset) {
 				return true;
@@ -153,7 +153,7 @@ public class ASTNodeSpecification<T extends IASTNode> {
 				if (endOffset < fBestEndOffset) {
 					return true;
 				}
-				return endOffset == fBestEndOffset && !isParent(cand, fBestNode);
+				return endOffset == fBestEndOffset && isParent(fBestNode, cand);
 			}
 			return false;
 		case ENCLOSING: 
@@ -161,7 +161,7 @@ public class ASTNodeSpecification<T extends IASTNode> {
 			if (length < bestLength) {
 				return true;
 			}
-			return length == bestLength && !isParent(cand, fBestNode);
+			return length == bestLength && isParent(fBestNode, cand);
 		default:
 			assert false;
 			return false;

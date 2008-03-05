@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [221488] Fix lazy initialization in getInstance()
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.clientserver.java;
@@ -24,7 +24,7 @@ package org.eclipse.rse.internal.services.clientserver.java;
  */
 public class ClassFileUTF8Reader {
 	
-	private static ClassFileUTF8Reader instance;
+	private static ClassFileUTF8Reader instance = new ClassFileUTF8Reader();
 
 	/**
 	 * Constructor.
@@ -38,11 +38,6 @@ public class ClassFileUTF8Reader {
 	 * @return the singleton instance.
 	 */
 	public static final ClassFileUTF8Reader getInstance() {
-		
-		if (instance == null) {
-			instance = new ClassFileUTF8Reader();
-		}
-		
 		return instance;
 	}
 	

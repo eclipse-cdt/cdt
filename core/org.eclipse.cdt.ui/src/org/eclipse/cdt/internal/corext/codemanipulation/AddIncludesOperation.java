@@ -96,9 +96,9 @@ public class AddIncludesOperation implements IWorkspaceRunnable {
 				for(int j = 0; j < toAdd.size(); j++) {
 					IRequiredInclude req = (IRequiredInclude)toAdd.get(j);
 					if (req.isStandard()) {
-						insert.append("#include <" + req.getIncludeName() + ">\n"); //$NON-NLS-1$ //$NON-NLS-2$
+						insert.append("#include <" + req.getIncludeName() + ">").append(newLine); //$NON-NLS-1$ //$NON-NLS-2$
 					} else {
-						insert.append("#include \"" + req.getIncludeName() + "\"\n"); //$NON-NLS-1$ //$NON-NLS-2$
+						insert.append("#include \"" + req.getIncludeName() + "\"").append(newLine); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				}
 				

@@ -283,7 +283,7 @@ public class LocationMapTests extends BaseTestCase {
 	private void checkMacroUndef(IASTPreprocessorStatement s, IBinding binding, String image, String name, String nameImage, 
 			String filename, int offset, int length, int line, int nameOffset, int nameLength) {
 		IASTPreprocessorUndefStatement st= (IASTPreprocessorUndefStatement) s;
-		checkName(st.getMacroName(), binding, name, st, IASTPreprocessorUndefStatement.MACRO_NAME, ROLE_UNCLEAR, filename, nameOffset, nameLength, line, line, nameImage);
+		checkName(st.getMacroName(), binding, name, st, IASTPreprocessorStatement.MACRO_NAME, ROLE_UNCLEAR, filename, nameOffset, nameLength, line, line, nameImage);
 		checkASTNode(st, fTu, PROP_PST, filename, offset, length, line, line, image);
 	}
 
@@ -344,8 +344,8 @@ public class LocationMapTests extends BaseTestCase {
 
 	public void testIf() {
 		init(DIGITS);
-		fLocationMap.encounterPoundIf(0, 0, 0, 0, false);
-		fLocationMap.encounterPoundIf(0, 1, 3, 16, true);
+		fLocationMap.encounterPoundIf(0, 0, 0, 0, false, IASTName.EMPTY_NAME_ARRAY);
+		fLocationMap.encounterPoundIf(0, 1, 3, 16, true, IASTName.EMPTY_NAME_ARRAY);
 		IASTPreprocessorStatement[] prep= fLocationMap.getAllPreprocessorStatements();
 		assertEquals(2, prep.length);
 		checkIf(prep[0], "", "", false, FN, 0, 0, 1);
@@ -354,8 +354,8 @@ public class LocationMapTests extends BaseTestCase {
 
 	public void testIfdef() {
 		init(DIGITS);
-		fLocationMap.encounterPoundIfdef(0, 0, 0, 0, false);
-		fLocationMap.encounterPoundIfdef(0, 1, 3, 16, true);
+		fLocationMap.encounterPoundIfdef(0, 0, 0, 0, false, null);
+		fLocationMap.encounterPoundIfdef(0, 1, 3, 16, true, null);
 		IASTPreprocessorStatement[] prep= fLocationMap.getAllPreprocessorStatements();
 		assertEquals(2, prep.length);
 		checkIfdef(prep[0], "", "", false, FN, 0, 0, 1);
@@ -364,8 +364,8 @@ public class LocationMapTests extends BaseTestCase {
 
 	public void testIfndef() {
 		init(DIGITS);
-		fLocationMap.encounterPoundIfndef(0, 0, 0, 0, false);
-		fLocationMap.encounterPoundIfndef(0, 1, 3, 16, true);
+		fLocationMap.encounterPoundIfndef(0, 0, 0, 0, false, null);
+		fLocationMap.encounterPoundIfndef(0, 1, 3, 16, true, null);
 		IASTPreprocessorStatement[] prep= fLocationMap.getAllPreprocessorStatements();
 		assertEquals(2, prep.length);
 		checkIfndef(prep[0], "", "", false, FN, 0, 0, 1);
@@ -374,8 +374,8 @@ public class LocationMapTests extends BaseTestCase {
 
 	public void testElif() {
 		init(DIGITS);
-		fLocationMap.encounterPoundElif(0, 0, 0, 0, false);
-		fLocationMap.encounterPoundElif(0, 1, 3, 16, true);
+		fLocationMap.encounterPoundElif(0, 0, 0, 0, false, IASTName.EMPTY_NAME_ARRAY);
+		fLocationMap.encounterPoundElif(0, 1, 3, 16, true, IASTName.EMPTY_NAME_ARRAY);
 		IASTPreprocessorStatement[] prep= fLocationMap.getAllPreprocessorStatements();
 		assertEquals(2, prep.length);
 		checkElif(prep[0], "", "", false, FN, 0, 0, 1);
@@ -476,11 +476,11 @@ public class LocationMapTests extends BaseTestCase {
 
 		refs= fLocationMap.getReferences(macro1);
 		assertEquals(1, refs.length);
-		checkName(refs[0], macro1, "n1", refs[0].getParent(), IASTPreprocessorMacroExpansion.EXPANSION_NAME, ROLE_REFERENCE, FN, 110, 15, 2, 2, new String(LONGDIGITS, 110, 15));
+		checkName(refs[0], macro1, "n1", refs[0].getParent(), IASTPreprocessorMacroExpansion.NESTED_EXPANSION_NAME, ROLE_REFERENCE, FN, 110, 15, 2, 2, new String(LONGDIGITS, 110, 15));
 
 		refs= fLocationMap.getReferences(macro2);
 		assertEquals(1, refs.length);
-		checkName(refs[0], macro2, "n2", refs[0].getParent(), IASTPreprocessorMacroExpansion.EXPANSION_NAME, ROLE_REFERENCE, FN, 110, 15, 2, 2, new String(LONGDIGITS, 110, 15));
+		checkName(refs[0], macro2, "n2", refs[0].getParent(), IASTPreprocessorMacroExpansion.NESTED_EXPANSION_NAME, ROLE_REFERENCE, FN, 110, 15, 2, 2, new String(LONGDIGITS, 110, 15));
 	}
 	
 	public void testContexts() {

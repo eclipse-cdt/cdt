@@ -95,7 +95,7 @@ public class CMacroExpansionInput {
 				}
 				if (fAllowSelection) {
 					// selection
-					fEnclosingNode= nodeSelector.findSurroundingNode(fTextRegion.getOffset(), fTextRegion.getLength());
+					fEnclosingNode= nodeSelector.findEnclosingNode(fTextRegion.getOffset(), fTextRegion.getLength());
 					if (fEnclosingNode != null) {
 						boolean macroOccurrence= false;
 						IASTNodeLocation[] locations= fEnclosingNode.getNodeLocations();
@@ -105,7 +105,7 @@ public class CMacroExpansionInput {
 								IASTFileLocation fileLocation= location.asFileLocation();
 								if (fileLocation != null && ast.getFilePath().equals(fileLocation.getFileName())) {
 									if (fTextRegion.overlapsWith(fileLocation.getNodeOffset(), fileLocation.getNodeLength())) {
-										addExpansionNode(nodeSelector.findSurroundingNode(fileLocation.getNodeOffset(), fileLocation.getNodeLength()));
+										addExpansionNode(nodeSelector.findEnclosingNode(fileLocation.getNodeOffset(), fileLocation.getNodeLength()));
 										macroOccurrence= true;
 									}
 								}

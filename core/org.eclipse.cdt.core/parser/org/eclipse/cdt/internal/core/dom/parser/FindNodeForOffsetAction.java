@@ -38,16 +38,15 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 
+/**
+ * Visitor to search for nodes by file offsets.
+ * @since 5.0
+ */
 public class FindNodeForOffsetAction extends CPPASTVisitor implements ICASTVisitor, ICPPASTVisitor {
-	private ASTNode fCandidate= null;
-	private final int fOffset;
-	private final int fLength;
-	private final ASTNodeMatchKind fMatchKind;
+	private final ASTNodeSpecification<?> fNodeSpec;
 
-	public FindNodeForOffsetAction(int offset, int length, ASTNodeMatchKind matchKind) {
-		fMatchKind= matchKind;
-		fOffset = offset;
-		fLength = length;
+	public FindNodeForOffsetAction(ASTNodeSpecification<?> nodeSpec) {
+		fNodeSpec= nodeSpec;
 
 		shouldVisitNames = true;
 		shouldVisitDeclarations= true;
@@ -65,21 +64,16 @@ public class FindNodeForOffsetAction extends CPPASTVisitor implements ICASTVisit
 		shouldVisitBaseSpecifiers=
 		shouldVisitNamespaces=
 		shouldVisitTemplateParameters=
-		shouldVisitTranslationUnit= !matchKind.matchNamesOnly();
+		shouldVisitTranslationUnit= !nodeSpec.requiresClass(IASTName.class);
 	}
 
 	public int processNode(IASTNode node) {
 		if (node instanceof ASTNode) {
 			final ASTNode astNode = (ASTNode) node;
-			if (astNode.getOffset() > fOffset+fLength || astNode.getOffset() + astNode.getLength() < fOffset) {
+			if (!fNodeSpec.canContainMatches(astNode)) {
 				return PROCESS_SKIP;
 			}
-
-			if (fMatchKind.matches(astNode, fOffset, fLength)) {
-				if (fCandidate == null || !fMatchKind.isBetterMatch(fCandidate, astNode)) {
-					fCandidate= astNode;
-				}
-			}
+			fNodeSpec.visit(astNode);
 		}
 		return PROCESS_CONTINUE;
 	}
@@ -88,7 +82,7 @@ public class FindNodeForOffsetAction extends CPPASTVisitor implements ICASTVisit
 	public int visit(IASTDeclaration declaration) {
 		// use declarations to determine if the search has gone past the
 		// offset (i.e. don't know the order the visitor visits the nodes)
-		if (declaration instanceof ASTNode && ((ASTNode) declaration).getOffset() > fOffset + fLength)
+		if (declaration instanceof ASTNode && ((ASTNode) declaration).getOffset() > fNodeSpec.getSequenceEnd())
 			return PROCESS_ABORT;
 
 		return processNode(declaration);
@@ -203,9 +197,5 @@ public class FindNodeForOffsetAction extends CPPASTVisitor implements ICASTVisit
 	@Override
 	public int visit(IASTTranslationUnit tu) {
 		return processNode(tu);
-	}
-
-	public ASTNode getNode() {
-		return fCandidate;
 	}
 }

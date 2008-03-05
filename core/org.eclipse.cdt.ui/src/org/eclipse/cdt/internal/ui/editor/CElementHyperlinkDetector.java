@@ -10,7 +10,6 @@
  *     IBM Corporation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.editor;
 
 import org.eclipse.core.runtime.CoreException;
@@ -83,7 +82,7 @@ public class CElementHyperlinkDetector implements IHyperlinkDetector {
 						final int offset= region.getOffset();
 						final int length= Math.max(1, region.getLength());
 						final IASTNodeSelector nodeSelector= ast.getNodeSelector(null);
-						IASTName selectedName= nodeSelector.findSurroundingName(offset, length);
+						IASTName selectedName= nodeSelector.findEnclosingName(offset, length);
 						IASTFileLocation linkLocation= null;
 						if (selectedName != null) { // found a name
 							// prefer include statement over the include name
@@ -96,7 +95,7 @@ public class CElementHyperlinkDetector implements IHyperlinkDetector {
 						}
 						else { 
 							// search for include statement
-							final IASTNode cand= nodeSelector.findSurroundingNode(offset, length);
+							final IASTNode cand= nodeSelector.findEnclosingNode(offset, length);
 							if (cand instanceof IASTPreprocessorIncludeStatement) {
 								linkLocation= cand.getFileLocation();
 							}

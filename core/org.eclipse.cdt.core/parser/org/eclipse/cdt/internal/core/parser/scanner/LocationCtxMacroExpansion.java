@@ -16,9 +16,6 @@ import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNodeMatchKind;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNodeMatchKind.Relation;
 
 /**
  * A location context representing macro expansions.
@@ -74,7 +71,7 @@ class LocationCtxMacroExpansion extends LocationCtx {
 	}
 	
 	@Override
-	public LocationCtxMacroExpansion findSurroundingMacroExpansion(int sequenceNumber, int length) {
+	public LocationCtxMacroExpansion findEnclosingMacroExpansion(int sequenceNumber, int length) {
 		return this;
 	}
 
@@ -105,26 +102,6 @@ class LocationCtxMacroExpansion extends LocationCtx {
 			else if (info.fTokenOffsetInExpansion > nextToCheck) {
 				return null;
 			}
-		}
-		return null;
-	}
-
-	public ASTNode findNode(int sequenceNumber, int length, ASTNodeMatchKind matchKind) {
-		ASTNode n1, n2;
-		if (matchKind.getRelationToSelection() == Relation.SURROUNDING) {
-			n1= fExpansionName;
-			n2= (ASTNode) fExpansionName.getParent();
-		}
-		else {
-			n1= (ASTNode) fExpansionName.getParent();
-			n2= fExpansionName;
-		} 
-		
-		if (matchKind.matches(n1, sequenceNumber, length)) {
-			return n1;
-		}
-		if (matchKind.matches(n2, sequenceNumber, length)) {
-			return n2;
 		}
 		return null;
 	}

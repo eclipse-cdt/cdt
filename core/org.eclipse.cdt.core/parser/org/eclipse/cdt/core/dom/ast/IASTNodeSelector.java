@@ -11,8 +11,10 @@
 package org.eclipse.cdt.core.dom.ast;
 
 /**
- * Interface for searching nodes of a file in a translation unit. An instance of this interface can
- * be obtained via {@link IASTTranslationUnit#getNodeSelector(String)}.
+ * Interface for searching nodes in a translation unit. An instance of this interface, responsible
+ * for one file contained in a translation-unit, can be obtained using 
+ * {@link IASTTranslationUnit#getNodeSelector(String)}.
+ * 
  * @since 5.0
  */
 public interface IASTNodeSelector {
@@ -23,9 +25,9 @@ public interface IASTNodeSelector {
 	IASTName findName(int offset, int length);
 
 	/**
-	 * Returns the smallest name surrounding the given range, or <code>null</code> if there is no such node.
+	 * Returns the smallest name enclosing the given range, or <code>null</code> if there is no such node.
 	 */
-	IASTName findSurroundingName(int offset, int length);
+	IASTName findEnclosingName(int offset, int length);
 
 	/**
 	 * Returns the first name contained in the given range, or <code>null</code> if there is no such node.
@@ -34,16 +36,31 @@ public interface IASTNodeSelector {
 
 	/**
 	 * Returns the node for the exact given range, or <code>null</code> if there is no such node.
+	 * <p>
+	 * For nodes with the same location, macro-expansions ({@link IASTPreprocessorMacroExpansion}) are preferred
+	 * over c/c++-nodes and children are preferred over their parents.
 	 */
 	IASTNode findNode(int offset, int length);
 
 	/**
-	 * Returns the smallest node surrounding the given range, or <code>null</code> if there is no such node.
+	 * Returns the smallest node enclosing the given range, or <code>null</code> if there is no such node.
+	 * <p>
+	 * For nodes with the same location, macro-expansions ({@link IASTPreprocessorMacroExpansion}) are preferred
+	 * over c/c++-nodes nodes and children are preferred over their parents.
+	 * Prefers children over parents.
 	 */
-	IASTNode findSurroundingNode(int offset, int length);
+	IASTNode findEnclosingNode(int offset, int length);
 
 	/**
 	 * Returns the first node contained in the given range, or <code>null</code> if there is no such node.
+	 * <p>
+	 * For nodes with the same location, macro-expansions ({@link IASTPreprocessorMacroExpansion}) are preferred
+	 * over c/c++-nodes nodes and children are preferred over their parents.
 	 */
 	IASTNode findFirstContainedNode(int offset, int length);
+	
+	/**
+	 * Returns a macro expansion enclosing the given range, or <code>null</code>.
+	 */
+	IASTPreprocessorMacroExpansion findEnclosingMacroExpansion(int offset, int length);
 }

@@ -94,7 +94,7 @@ abstract class LocationCtx implements ILocationCtx {
 	/**
 	 * Returns the macro-expansion surrounding or augmenting the given range, or <code>null</code>.
 	 */
-	public LocationCtxMacroExpansion findSurroundingMacroExpansion(int sequenceNumber, int length) {
+	public LocationCtxMacroExpansion findEnclosingMacroExpansion(int sequenceNumber, int length) {
 		return null;
 	}
 

@@ -1073,4 +1073,29 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
         input = part.getEditorInput();
         assertEquals("s.c", ((FileEditorInput)input).getFile().getName());
     }
+    
+    //    #define ADD_TEXT(txt1,txt2) txt1" "txt2 
+    //    #define ADD(a,b) (a + b)
+    //    void main(void) {
+    //    #if defined(ADD_TEXT) && defined(ADD)
+    //    #endif
+    //    }
+    public void testNavigationInDefinedExpression_215906() throws Exception {
+        StringBuffer[] buffers= getContents(1);
+        String code= buffers[0].toString();
+        IFile file = importFile("s.cpp", code); 
+        TestSourceReader.waitUntilFileIsIndexed(index, file, MAX_WAIT_TIME);
+        IASTNode decl;
+        int offset1, offset2;
+
+        offset1 = code.indexOf("ADD_TEXT");
+        offset2 = code.indexOf("ADD_TEXT", offset1+1);
+        decl= testF3(file, offset2);
+        assertNode("ADD_TEXT", offset1, decl);
+        
+        offset1 = code.indexOf("ADD", offset1+1);
+        offset2 = code.indexOf("ADD", offset2+1);
+        decl= testF3(file, offset2);
+        assertNode("ADD", offset1, decl);
+    }
 }

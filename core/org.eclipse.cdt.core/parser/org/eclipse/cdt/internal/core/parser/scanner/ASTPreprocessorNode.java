@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorObjectStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorPragmaStatement;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorUndefStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -42,8 +43,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree.IASTInclusionNode;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNodeMatchKind;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNodeMatchKind.Relation;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNodeSpecification;
 
 /**
  * Models various AST-constructs obtained from the preprocessor.
@@ -72,36 +72,10 @@ abstract class ASTPreprocessorNode extends ASTNode {
 	}
 
 	/**
-	 * Returns a matching node or null.
+	 * Searches nodes by file location.
 	 */
-	ASTNode findNode(int sequenceNumber, int length, ASTNodeMatchKind matchKind) {
-		if (matchKind.matches(this, sequenceNumber, length)) {
-			return this;
-		}
-		return null;
-	}
-	
-	/** 
-	 * Helper method for preprocessor nodes containing a name
-	 */
-	protected ASTNode findNode(int sequenceNumber, int length, ASTPreprocessorName name, ASTNodeMatchKind matchKind) {
-		ASTNode n1, n2;
-		if (matchKind.getRelationToSelection() == Relation.SURROUNDING) {
-			n1= name;
-			n2= this;
-		}
-		else {
-			n1= this;
-			n2= name;
-		}
-		
-		if (matchKind.matches(n1, sequenceNumber, length)) {
-			return n1;
-		}
-		if (matchKind.matches(n2, sequenceNumber, length)) {
-			return n2;
-		}
-		return null;
+	void findNode(ASTNodeSpecification<?> nodeSpec) {
+		nodeSpec.visit(this);
 	}
 }
 
@@ -174,14 +148,35 @@ class ASTElse extends ASTPreprocessorNode implements IASTPreprocessorElseStateme
 }
 
 class ASTIfndef extends ASTDirectiveWithCondition implements IASTPreprocessorIfndefStatement {
-	public ASTIfndef(IASTTranslationUnit parent, int startNumber, int condNumber, int condEndNumber, boolean active) {
-		super(parent, startNumber, condNumber, condEndNumber, active);
+	private ASTMacroReferenceName fMacroRef;
+
+	public ASTIfndef(IASTTranslationUnit parent, int startNumber, int condNumber, int condEndNumber, boolean taken, IMacroBinding macro) {
+		super(parent, startNumber, condNumber, condEndNumber, taken);
+		if (macro != null) {
+			fMacroRef= new ASTMacroReferenceName(this, IASTPreprocessorStatement.MACRO_NAME, condNumber, condEndNumber, macro, null);
+		}
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IASTPreprocessorIfdefStatement#getMacroReference()
+	 */
+	public ASTPreprocessorName getMacroReference() {
+		return fMacroRef;
 	}
 }
 
 class ASTIfdef extends ASTDirectiveWithCondition implements IASTPreprocessorIfdefStatement {
-	public ASTIfdef(IASTTranslationUnit parent, int startNumber, int condNumber, int condEndNumber, boolean active) {
-		super(parent, startNumber, condNumber, condEndNumber, active);
+	ASTMacroReferenceName fMacroRef;
+	public ASTIfdef(IASTTranslationUnit parent, int startNumber, int condNumber, int condEndNumber, boolean taken, IMacroBinding macro) {
+		super(parent, startNumber, condNumber, condEndNumber, taken);
+		if (macro != null) {
+			fMacroRef= new ASTMacroReferenceName(this, IASTPreprocessorStatement.MACRO_NAME, condNumber, condEndNumber, macro, null);
+		}
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IASTPreprocessorIfdefStatement#getMacroReference()
+	 */
+	public ASTPreprocessorName getMacroReference() {
+		return fMacroRef;
 	}
 }
 
@@ -250,8 +245,9 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 	}
 	
 	@Override
-	ASTNode findNode(int sequenceNumber, int length, ASTNodeMatchKind matchKind) {
-		return findNode(sequenceNumber, length, fName, matchKind);
+	void findNode(ASTNodeSpecification<?> nodeSpec) {
+		super.findNode(nodeSpec);
+		nodeSpec.visit(fName);
 	}
 }
 
@@ -308,8 +304,9 @@ class ASTMacroDefinition extends ASTPreprocessorNode implements IASTPreprocessor
 	}
 
 	@Override
-	ASTNode findNode(int sequenceNumber, int length, ASTNodeMatchKind matchKind) {
-		return findNode(sequenceNumber, length, fName, matchKind);
+	void findNode(ASTNodeSpecification<?> nodeSpec) {
+		super.findNode(nodeSpec);
+		nodeSpec.visit(fName);
 	}
 
 	public void setExpansion(String exp) {assert false;}
@@ -410,16 +407,11 @@ class ASTUndef extends ASTPreprocessorNode implements IASTPreprocessorUndefState
 	private final ASTPreprocessorName fName;
 	public ASTUndef(IASTTranslationUnit parent, char[] name, int startNumber, int nameNumber, int nameEndNumber, IBinding binding) {
 		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, startNumber, nameEndNumber);
-		fName= new ASTPreprocessorName(this, IASTPreprocessorUndefStatement.MACRO_NAME, nameNumber, nameEndNumber, name, binding);
+		fName= new ASTPreprocessorName(this, IASTPreprocessorStatement.MACRO_NAME, nameNumber, nameEndNumber, name, binding);
 	}
 
 	public ASTPreprocessorName getMacroName() {
 		return fName;
-	}
-	
-	@Override
-	ASTNode findNode(int sequenceNumber, int length, ASTNodeMatchKind matchKind) {
-		return findNode(sequenceNumber, length, fName, matchKind);
 	}
 }
 
@@ -546,8 +538,12 @@ class ASTMacroExpansion extends ASTPreprocessorNode implements IASTPreprocessorM
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion#getNestedExpansions()
 	 */
-	public IASTName[] getNestedMacroReferences() {
+	public ASTPreprocessorName[] getNestedMacroReferences() {
 		return fContext.getNestedMacroReferences();
+	}
+
+	public LocationCtxMacroExpansion getContext() {
+		return fContext;
 	}
 }
 

@@ -10,16 +10,15 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser;
 
-import org.eclipse.cdt.core.dom.ast.IASTMacroExpansionLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNodeMatchKind.Relation;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNodeSpecification.Relation;
 import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
 
 /**
- * Class to support searching for nodes by offsets.
+ * Class to support searching for nodes by file offsets.
  * @since 5.0
  */
 public class ASTNodeSelector implements IASTNodeSelector {
@@ -49,85 +48,99 @@ public class ASTNodeSelector implements IASTNodeSelector {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IASTNodeSelector#getNode(int, int)
 	 */
-	private IASTNode getNode(int offset, int length, ASTNodeMatchKind matchKind) {
+	private <T extends IASTNode> T findNode(int offsetInFile, int lengthInFile, Relation relation, Class<T> requiredClass) {
 		if (!fIsValid) {
 			return null;
 		}
-		
-    	final int sequenceNumber= fLocationResolver.getSequenceNumberForFileOffset(fFilePath, offset);
+		int sequenceLength;
+		int altSequenceNumber= -1;
+		int sequenceNumber= fLocationResolver.getSequenceNumberForFileOffset(fFilePath, offsetInFile);
     	if (sequenceNumber < 0) {
     		return null;
     	}
-    	final int sequenceLength= length <= 0 ? 0 : 
-    		fLocationResolver.getSequenceNumberForFileOffset(fFilePath, offset+length-1) + 1 - sequenceNumber; 
-
-    	ASTNode preCand= searchPreprocessor(sequenceNumber, sequenceLength, matchKind);
-    	if (preCand != null && matchKind.getRelationToSelection() != Relation.FIRST_CONTAINED) {
-    		return preCand;
-    	}
-    	ASTNode astCand= searchAST(sequenceNumber, sequenceLength, matchKind);
-		return matchKind.isBetterMatch(preCand, astCand) ? preCand : astCand;
-	}
-
-	private ASTNode searchPreprocessor(int sequenceNumber, int sequenceLength,	ASTNodeMatchKind matchKind) {
-		return fLocationResolver.findPreprocessorNode(sequenceNumber, sequenceLength, matchKind);
-	}
-
-	private ASTNode searchAST(int sequenceNumber, int length, ASTNodeMatchKind matchKind) {
-		FindNodeForOffsetAction nodeFinder= new FindNodeForOffsetAction(sequenceNumber, length, matchKind);
-		fTu.accept(nodeFinder);
-		ASTNode result= nodeFinder.getNode();
-		// don't accept matches from the ast enclosed in a macro expansion (possible for contained matches, only)
-		if (result != null &&
-				matchKind.getRelationToSelection() == Relation.FIRST_CONTAINED) {
-			IASTNodeLocation[] loc= result.getNodeLocations();
-			if (loc.length > 0 && loc[0] instanceof IASTMacroExpansionLocation) {
-				return null;
+		if (lengthInFile > 0) {
+			sequenceLength= fLocationResolver.getSequenceNumberForFileOffset(fFilePath, offsetInFile+lengthInFile-1) + 1 - sequenceNumber;
+		}
+		else {
+			sequenceLength= 0;
+			if (offsetInFile > 0) {
+				altSequenceNumber= fLocationResolver.getSequenceNumberForFileOffset(fFilePath, offsetInFile-1);
+				if (altSequenceNumber+1 == sequenceNumber) {
+					altSequenceNumber= -1;
+				}
+				else {
+					// we are on a context boundary and we need to check the variant to the left and
+					// the one to the right
+ 					sequenceLength= 1;
+				}
 			}
 		}
-		return result;
+		final ASTNodeSpecification<T> nodeSpec= new ASTNodeSpecification<T>(relation, requiredClass, offsetInFile, lengthInFile);
+		nodeSpec.setRangeInSequence(sequenceNumber, sequenceLength);
+    	getNode(nodeSpec);
+    	if (altSequenceNumber != -1) {
+    		nodeSpec.setRangeInSequence(altSequenceNumber, sequenceLength);
+        	getNode(nodeSpec);
+    	}
+    	return nodeSpec.getBestNode();
+	}
+
+	private <T extends IASTNode> T getNode(ASTNodeSpecification<T> nodeSpec) {
+		fLocationResolver.findPreprocessorNode(nodeSpec);
+    	if (!nodeSpec.requiresClass(IASTPreprocessorMacroExpansion.class)) {
+    		FindNodeForOffsetAction nodeFinder= new FindNodeForOffsetAction(nodeSpec);
+    		fTu.accept(nodeFinder);
+    	}
+		return nodeSpec.getBestNode();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IASTNodeSelector#getFirstContainedNode(int, int)
 	 */
 	public IASTNode findFirstContainedNode(int offset, int length) {
-		return getNode(offset, length, ASTNodeMatchKind.MATCH_FIRST_CONTAINED);
+		return findNode(offset, length, Relation.FIRST_CONTAINED, IASTNode.class);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IASTNodeSelector#getNode(int, int)
 	 */
 	public IASTNode findNode(int offset, int length) {
-		return getNode(offset, length, ASTNodeMatchKind.MATCH_EXACT);
+		return findNode(offset, length, Relation.EXACT_MATCH, IASTNode.class);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IASTNodeSelector#getSurroundingNode(int, int)
 	 */
-	public IASTNode findSurroundingNode(int offset, int length) {
-		return getNode(offset, length, ASTNodeMatchKind.MATCH_SURROUNDING);
+	public IASTNode findEnclosingNode(int offset, int length) {
+		return findNode(offset, length, Relation.ENCLOSING, IASTNode.class);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IASTNodeSelector#getFirstContainedNode(int, int)
 	 */
 	public IASTName findFirstContainedName(int offset, int length) {
-		return (IASTName) getNode(offset, length, ASTNodeMatchKind.MATCH_FIRST_NAME_CONTAINED);
+		return findNode(offset, length, Relation.FIRST_CONTAINED, IASTName.class);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IASTNodeSelector#getNode(int, int)
 	 */
 	public IASTName findName(int offset, int length) {
-		return (IASTName) getNode(offset, length, ASTNodeMatchKind.MATCH_EXACT_NAME);
+		return findNode(offset, length, Relation.EXACT_MATCH, IASTName.class);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IASTNodeSelector#getSurroundingNode(int, int)
 	 */
-	public IASTName findSurroundingName(int offset, int length) {
-		return (IASTName) getNode(offset, length, ASTNodeMatchKind.MATCH_SURROUNDING_NAME);
+	public IASTName findEnclosingName(int offset, int length) {
+		return findNode(offset, length, Relation.ENCLOSING, IASTName.class);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IASTNodeSelector#findSurrundingMacroExpansion(int, int)
+	 */
+	public IASTPreprocessorMacroExpansion findEnclosingMacroExpansion(int offset, int length) {
+		return findNode(offset, length, Relation.ENCLOSING, IASTPreprocessorMacroExpansion.class);
+	}
+ 
 }

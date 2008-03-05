@@ -32,22 +32,21 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNodeMatchKind;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNodeSpecification;
 
+/**
+ * Visitor to select nodes by image-location.
+ * @since 5.0
+ */
 public class FindNodeByImageLocation extends CPPASTVisitor implements ICASTVisitor, ICPPASTVisitor {
-	private ASTNode fCandidate= null;
 	private final int fOffset;
 	private final int fLength;
-	private final ASTNodeMatchKind fMatchKind;
-	private int fImageOffset;
-	private int fImageLength;
+	private final ASTNodeSpecification<?> fNodeSpec;
 
-	public FindNodeByImageLocation(int offset, int length, int imgOffset, int imgLength, ASTNodeMatchKind matchKind) {
-		fMatchKind= matchKind;
+	public FindNodeByImageLocation(int offset, int length, ASTNodeSpecification<?> nodeSpec) {
+		fNodeSpec= nodeSpec;
 		fOffset = offset;
 		fLength = length;
-		fImageOffset= imgOffset;
-		fImageLength= imgLength;
 
 		shouldVisitNames = true;
 		shouldVisitDeclarations= true;
@@ -65,7 +64,7 @@ public class FindNodeByImageLocation extends CPPASTVisitor implements ICASTVisit
 		shouldVisitBaseSpecifiers=
 		shouldVisitNamespaces=
 		shouldVisitTemplateParameters=
-		shouldVisitTranslationUnit= !matchKind.matchNamesOnly();
+		shouldVisitTranslationUnit= !nodeSpec.requiresClass(IASTName.class);
 	}
 
 	public int processNode(IASTNode node) {
@@ -75,14 +74,10 @@ public class FindNodeByImageLocation extends CPPASTVisitor implements ICASTVisit
 				return PROCESS_SKIP;
 			}
 
-			if (fMatchKind.isAcceptableNode(astNode)) {
+			if (fNodeSpec.isAcceptableNode(astNode)) {
 				IASTImageLocation imageLocation= astNode.getImageLocation();
 				if (imageLocation != null && imageLocation.getLocationKind() == IASTImageLocation.ARGUMENT_TO_MACRO_EXPANSION) {
-					if (fMatchKind.rangeMatches(imageLocation.getNodeOffset(), imageLocation.getNodeLength(), fImageOffset, fImageLength)) {
-						if (fCandidate == null || !fMatchKind.isBetterMatch(fCandidate, astNode)) {
-							fCandidate= astNode;
-						}
-					}
+					fNodeSpec.visit(astNode, imageLocation);
 				}
 			}
 		}
@@ -183,9 +178,5 @@ public class FindNodeByImageLocation extends CPPASTVisitor implements ICASTVisit
 	@Override
 	public int visit(IASTTranslationUnit tu) {
 		return processNode(tu);
-	}
-
-	public ASTNode getNode() {
-		return fCandidate;
 	}
 }

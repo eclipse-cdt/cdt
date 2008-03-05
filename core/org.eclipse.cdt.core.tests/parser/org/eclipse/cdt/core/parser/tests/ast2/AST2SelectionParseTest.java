@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,11 +64,11 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 		String code = "void f() { int x; x=3; }"; //$NON-NLS-1$
 		int offset1 = code.indexOf( "x=" ); //$NON-NLS-1$
 		int length = "x".length(); //$NON-NLS-1$
-		IASTNode node = parse( code, ParserLanguage.C, offset1, length );
+		IASTNode node = parse( code, ParserLanguage.C, offset1, length ).getParent();
 		assertNotNull(node);
 		assertTrue( node instanceof IASTIdExpression );
 		assertEquals(((IASTIdExpression)node).getName().toString(), "x"); //$NON-NLS-1$
-		node = parse( code, ParserLanguage.CPP, offset1, length );
+		node = parse( code, ParserLanguage.CPP, offset1, length ).getParent();
 		assertNotNull(node);
 		assertTrue( node instanceof IASTIdExpression );
 		assertEquals(((IASTIdExpression)node).getName().toString(), "x"); //$NON-NLS-1$
@@ -83,7 +83,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 		String code = "int x(){x( );}"; //$NON-NLS-1$
 		int offset1 = code.indexOf( "x( " ); //$NON-NLS-1$
 		int length = "x".length(); //$NON-NLS-1$
-		IASTNode node = parse( code, ParserLanguage.C, offset1, length );
+		IASTNode node = parse( code, ParserLanguage.C, offset1, length ).getParent();
 		assertNotNull(node);
 		assertTrue( node instanceof IASTIdExpression );
 		assertEquals(((IASTIdExpression)node).getName().toString(), "x"); //$NON-NLS-1$
@@ -91,7 +91,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IFunction);
 		assertEquals(((IFunction)name.resolveBinding()).getName(), "x"); //$NON-NLS-1$
-		node = parse( code, ParserLanguage.CPP, offset1, length );
+		node = parse( code, ParserLanguage.CPP, offset1, length ).getParent();
 		assertNotNull(node);
 		assertTrue( node instanceof IASTIdExpression );
 		assertEquals(((IASTIdExpression)node).getName().toString(), "x"); //$NON-NLS-1$
@@ -184,7 +184,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 		String code = "int main( int argc ) { int x = argc; }"; //$NON-NLS-1$
 		int offset1 = code.indexOf( "argc;" ); //$NON-NLS-1$
 		int length = "argc".length(); //$NON-NLS-1$
-		IASTNode node = parse( code, ParserLanguage.C, offset1, length );
+		IASTNode node = parse( code, ParserLanguage.C, offset1, length ).getParent().getParent();
 		assertNotNull(node);
 		assertTrue( node instanceof IASTInitializerExpression );
 		assertEquals( ((IASTIdExpression)((IASTInitializerExpression)node).getExpression()).getName().toString(), "argc" ); //$NON-NLS-1$
@@ -192,7 +192,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IParameter);
 		assertEquals(((IParameter)name.resolveBinding()).getName(), "argc"); //$NON-NLS-1$
-		node = parse( code, ParserLanguage.CPP, offset1, length );
+		node = parse( code, ParserLanguage.CPP, offset1, length ).getParent().getParent();
 		assertNotNull(node);
 		assertTrue( node instanceof IASTInitializerExpression );
 		assertEquals( ((IASTIdExpression)((IASTInitializerExpression)node).getExpression()).getName().toString(), "argc" ); //$NON-NLS-1$
@@ -357,6 +357,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 			{
 				case 0:
 				case 1: 
+					node= node.getParent().getParent();
 					assertTrue(node instanceof IASTTypeId);
 					assertEquals(((IASTNamedTypeSpecifier)((IASTTypeId)node).getDeclSpecifier()).getName().toString(), "Gonzo"); //$NON-NLS-1$
 					name = ((IASTNamedTypeSpecifier)((IASTTypeId)node).getDeclSpecifier()).getName();
@@ -425,7 +426,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 		String code = writer.toString();
 		int startIndex = code.indexOf( "foo(1)"); //$NON-NLS-1$
 		int length = "foo".length(); //$NON-NLS-1$
-		IASTNode node = parse( code, ParserLanguage.C, startIndex, length );
+		IASTNode node = parse( code, ParserLanguage.C, startIndex, length ).getParent();
 		assertNotNull(node);
 		assertTrue(node instanceof IASTIdExpression);
 		assertEquals(((IASTIdExpression)node).getName().toString(), "foo"); //$NON-NLS-1$
@@ -433,7 +434,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IFunction);
 		assertEquals(((IFunction)name.resolveBinding()).getName(), "foo"); //$NON-NLS-1$
-		node = parse( code, ParserLanguage.CPP, startIndex, length );
+		node = parse( code, ParserLanguage.CPP, startIndex, length ).getParent();
 		assertNotNull(node);
 		assertTrue(node instanceof IASTIdExpression);
 		assertEquals(((IASTIdExpression)node).getName().toString(), "foo"); //$NON-NLS-1$
@@ -466,7 +467,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 		assertTrue(name.resolveBinding() instanceof IEnumeration);
 		assertEquals(((IEnumeration)name.resolveBinding()).getName(), "EColours"); //$NON-NLS-1$
 		startIndex = codeCPP.indexOf( "EColours color"); //$NON-NLS-1$
-		node = parse( codeCPP, ParserLanguage.CPP, startIndex, length );
+		node = parse( codeCPP, ParserLanguage.CPP, startIndex, length ).getParent();
 		assertNotNull(node);
 		assertTrue(node instanceof IASTNamedTypeSpecifier);
 		assertEquals(((IASTNamedTypeSpecifier)node).getName().toString(), "EColours"); //$NON-NLS-1$
@@ -519,7 +520,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 		String code = writer.toString();
 		int startIndex = code.indexOf( "static_function( file )"); //$NON-NLS-1$
 		int length = "static_function".length(); //$NON-NLS-1$
-		IASTNode node = parse( code, ParserLanguage.C, startIndex, length );
+		IASTNode node = parse( code, ParserLanguage.C, startIndex, length ).getParent();
 		assertNotNull(node);
 		assertTrue(node instanceof IASTIdExpression);
 		assertEquals(((IASTIdExpression)node).getName().toString(), "static_function"); //$NON-NLS-1$
@@ -527,7 +528,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IFunction);
 		assertEquals(((IFunction)name.resolveBinding()).getName(), "static_function"); //$NON-NLS-1$
-		node = parse( code, ParserLanguage.CPP, startIndex, length );
+		node = parse( code, ParserLanguage.CPP, startIndex, length ).getParent();
 		assertNotNull(node);
 		assertTrue(node instanceof IASTIdExpression);
 		assertEquals(((IASTIdExpression)node).getName().toString(), "static_function"); //$NON-NLS-1$
@@ -569,7 +570,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 		int startIndex = code.indexOf( "/**/fprintf") + 4; //$NON-NLS-1$
 		int length = "fprintf".length(); //$NON-NLS-1$
 		
-		IASTNode node = parse( code, ParserLanguage.C, startIndex, length );
+		IASTNode node = parse( code, ParserLanguage.C, startIndex, length ).getParent();
 		assertNotNull(node);
 		assertTrue(node instanceof IASTIdExpression);
 		assertEquals(((IASTIdExpression)node).getName().toString(), "fprintf"); //$NON-NLS-1$
@@ -577,7 +578,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IFunction);
 		assertEquals(((IFunction)name.resolveBinding()).getName(), "fprintf"); //$NON-NLS-1$
-		node = parse( code, ParserLanguage.CPP, startIndex, length );
+		node = parse( code, ParserLanguage.CPP, startIndex, length ).getParent();
 		assertNotNull(node);
 		assertTrue(node instanceof IASTIdExpression);
 		assertEquals(((IASTIdExpression)node).getName().toString(), "fprintf"); //$NON-NLS-1$
@@ -614,7 +615,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 		assertTrue(name.resolveBinding() instanceof ICompositeType);
 		assertEquals(((ICompositeType)name.resolveBinding()).getName(), "Squaw"); //$NON-NLS-1$
 		startIndex = codeCPP.indexOf( "sizeof( ") + "sizeof( ".length();  //$NON-NLS-1$ //$NON-NLS-2$
-		node = parse( codeCPP, ParserLanguage.CPP, startIndex, length );
+		node = parse( codeCPP, ParserLanguage.CPP, startIndex, length ).getParent().getParent();
 		assertNotNull(node);
 		assertTrue(node instanceof IASTTypeId);
 		assertEquals(((IASTNamedTypeSpecifier)((IASTTypeId)node).getDeclSpecifier()).getName().toString(), "Squaw"); //$NON-NLS-1$
@@ -638,7 +639,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 		String code = writer.toString();
 		int startIndex = code.indexOf( "return ") + "return ".length();  //$NON-NLS-1$ //$NON-NLS-2$
 		int length = "FOUND_ME".length(); //$NON-NLS-1$
-		IASTNode node = parse( code, ParserLanguage.CPP, startIndex, length );
+		IASTNode node = parse( code, ParserLanguage.CPP, startIndex, length ).getParent();
 		assertNotNull(node);
 		assertTrue(node instanceof IASTIdExpression);
 		assertEquals(((IASTIdExpression)node).getName().toString(), "FOUND_ME"); //$NON-NLS-1$
@@ -739,7 +740,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 	    String code = writer.toString();
 	    int startIndex = code.indexOf( "new B" ) + 4; //$NON-NLS-1$
 	    int length = "B".length(); //$NON-NLS-1$
-		IASTNode node = parse( code, ParserLanguage.CPP, startIndex, length );
+		IASTNode node = parse( code, ParserLanguage.CPP, startIndex, length ).getParent().getParent();
 		assertNotNull(node);
 		assertTrue(node instanceof IASTTypeId);
 		assertEquals(((IASTNamedTypeSpecifier)((IASTTypeId)node).getDeclSpecifier()).getName().toString(), "B"); //$NON-NLS-1$
@@ -758,7 +759,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 	    String code = writer.toString();
 	    int startIndex = code.indexOf( "(A*)" ) + 1; //$NON-NLS-1$
 	    int length = "A".length(); //$NON-NLS-1$
-		IASTNode node = parse( code, ParserLanguage.CPP, startIndex, length );
+		IASTNode node = parse( code, ParserLanguage.CPP, startIndex, length ).getParent();
 		assertNotNull(node);
 		assertTrue(node instanceof IASTNamedTypeSpecifier);
 		assertEquals(((IASTNamedTypeSpecifier)node).getName().toString(), "A"); //$NON-NLS-1$
@@ -845,7 +846,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 		
 		index = code.indexOf( "Card( int rank );") + 10; //$NON-NLS-1$
 		length = "rank".length(); //$NON-NLS-1$
-		node = parse( code, ParserLanguage.CPP, index, length );
+		node = parse( code, ParserLanguage.CPP, index, length ).getParent();
 		assertNotNull(node);
 		assertTrue(node instanceof IASTDeclarator);
 		assertEquals(((IASTDeclarator)node).getName().toString(), "rank"); //$NON-NLS-1$
@@ -855,7 +856,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 		assertEquals(((IVariable)name.resolveBinding()).getName(), "rank"); //$NON-NLS-1$
 
 		index = code.indexOf( "int rank;") + 4; //$NON-NLS-1$
-		node = parse( code, ParserLanguage.CPP, index, length );
+		node = parse( code, ParserLanguage.CPP, index, length ).getParent();
 		assertNotNull(node);
 		assertTrue(node instanceof IASTDeclarator);
 		assertEquals(((IASTDeclarator)node).getName().toString(), "rank"); //$NON-NLS-1$
@@ -898,7 +899,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 		
 		index = code.indexOf( "Card::Card( int rank )") + 16; //$NON-NLS-1$
 		length = "rank".length(); //$NON-NLS-1$
-		node = parse( code, ParserLanguage.CPP, index, length );
+		node = parse( code, ParserLanguage.CPP, index, length ).getParent();
 		assertNotNull(node);
 		assertTrue(node instanceof IASTDeclarator);
 		assertEquals(((IASTDeclarator)node).getName().toString(), "rank"); //$NON-NLS-1$
@@ -958,7 +959,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 		assertEquals(((ICPPField)name.resolveBinding()).getName(), "rank"); //$NON-NLS-1$
 		
 		index = code.indexOf( "this->rank = rank;") + 13; //$NON-NLS-1$
-		node = parse( code, ParserLanguage.CPP, index, length );
+		node = parse( code, ParserLanguage.CPP, index, length ).getParent();
 		assertNotNull(node);
 		assertTrue(node instanceof IASTIdExpression);
 		assertEquals(((IASTIdExpression)node).getName().toString(), "rank"); //$NON-NLS-1$
@@ -999,7 +1000,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 		
 		index = code.indexOf( "this->rank = getRank();") + 13; //$NON-NLS-1$
 		length = "getRank".length(); //$NON-NLS-1$
-		node = parse( code, ParserLanguage.CPP, index, length );
+		node = parse( code, ParserLanguage.CPP, index, length ).getParent();
 		assertNotNull(node);
 		assertTrue(node instanceof IASTIdExpression);
 		assertEquals(((IASTIdExpression)node).getName().toString(), "getRank"); //$NON-NLS-1$
@@ -1037,7 +1038,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 		String code = writer.toString();
 		int index = code.indexOf( "void f(int itself){}") + 11; //$NON-NLS-1$
 		int length = "itself".length(); //$NON-NLS-1$
-		IASTNode node = parse( code, ParserLanguage.C, index, length );
+		IASTNode node = parse( code, ParserLanguage.C, index, length ).getParent();
 		assertNotNull(node);
 		assertTrue(node instanceof IASTDeclarator);
 		assertEquals(((IASTDeclarator)node).getName().toString(), "itself"); //$NON-NLS-1$
@@ -1045,7 +1046,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IVariable);
 		assertEquals(((IVariable)name.resolveBinding()).getName(), "itself"); //$NON-NLS-1$
-		node = parse( code, ParserLanguage.CPP, index, length );
+		node = parse( code, ParserLanguage.CPP, index, length ).getParent();
 		assertNotNull(node);
 		assertTrue(node instanceof IASTDeclarator);
 		assertEquals(((IASTDeclarator)node).getName().toString(), "itself"); //$NON-NLS-1$
@@ -1119,7 +1120,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 		String code = buffer.toString();
 		int index = code.indexOf("x;"); //$NON-NLS-1$
 		int length = "x".length(); //$NON-NLS-1$
-		IASTNode node = parse( code, ParserLanguage.C, true, true, index, length );
+		IASTNode node = parse( code, ParserLanguage.C, true, true, index, length ).getParent();
 		assertNotNull(node);
 		assertTrue(node instanceof IASTDeclarator);
 		assertEquals(((IASTDeclarator)node).getName().toString(), "x"); //$NON-NLS-1$
@@ -1138,7 +1139,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 		String code = buffer.toString();
 		int index = code.indexOf("x;"); //$NON-NLS-1$
 		int length = "x".length(); //$NON-NLS-1$
-		IASTNode node = parse( code, ParserLanguage.C, true, true, index, length );
+		IASTNode node = parse( code, ParserLanguage.C, true, true, index, length ).getParent();
 		assertNotNull(node);
 		assertTrue(node instanceof IASTDeclarator);
 		assertEquals(((IASTDeclarator)node).getName().toString(), "x"); //$NON-NLS-1$
@@ -1177,7 +1178,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 		String code = buffer.toString();
 		int index = code.indexOf("y;"); //$NON-NLS-1$
 		int length = "y".length(); //$NON-NLS-1$
-		IASTNode node = parse( code, ParserLanguage.C, true, true, index, length );
+		IASTNode node = parse( code, ParserLanguage.C, true, true, index, length ).getParent();
 		assertNotNull(node);
 		assertTrue(node instanceof IASTDeclarator);
 		assertEquals(((IASTDeclarator)node).getName().toString(), "y"); //$NON-NLS-1$
@@ -1198,7 +1199,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 		String code = buffer.toString();
 		int index = code.indexOf("c x;"); //$NON-NLS-1$
 		int length = "c".length(); //$NON-NLS-1$
-		IASTNode node = parse( code, ParserLanguage.C, true, true, index, length );
+		IASTNode node = parse( code, ParserLanguage.C, true, true, index, length ).getParent();
 		assertNotNull(node);
 		assertTrue(node instanceof IASTNamedTypeSpecifier);
 		assertEquals(((IASTNamedTypeSpecifier)node).getName().toString(), "c"); //$NON-NLS-1$
@@ -1209,7 +1210,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 		
 		index = code.indexOf("x;"); //$NON-NLS-1$
 		length = "x".length(); //$NON-NLS-1$
-		node = parse( code, ParserLanguage.C, true, true, index, length );
+		node = parse( code, ParserLanguage.C, true, true, index, length ).getParent();
 		assertNotNull(node);
 		assertTrue(node instanceof IASTDeclarator);
 		assertEquals(((IASTDeclarator)node).getName().toString(), "x"); //$NON-NLS-1$
@@ -1308,7 +1309,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 		String code = buffer.toString();
 		int index = code.indexOf("b,a"); //$NON-NLS-1$
 		int length = "b".length(); //$NON-NLS-1$
-		IASTNode node = parse( code, ParserLanguage.C, true, true, index, length );
+		IASTNode node = parse( code, ParserLanguage.C, true, true, index, length ).getParent();
 		assertNotNull(node);
 		assertTrue(node instanceof IASTDeclarator);
 		IASTName name = ((IASTDeclarator)node).getName();
@@ -1518,7 +1519,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 		
 		index = code.indexOf("c;"); //$NON-NLS-1$
 		length = "c".length(); //$NON-NLS-1$
-		node = parse( code, ParserLanguage.CPP, index, length );
+		node = parse( code, ParserLanguage.CPP, index, length ).getParent();
 		assertNotNull(node);
 		assertTrue( node instanceof IASTDeclarator);
 		assertEquals(((IASTDeclarator)node).getName().toString(), "c"); //$NON-NLS-1$
@@ -1648,7 +1649,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 	public void testBug86126() throws Exception {
 		String header= "foo"+System.currentTimeMillis()+".h";
 		String source= "blah"+System.currentTimeMillis()+".c";
-		importFile(header, "int x;\r\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		importFile(header, "int x;\r\n"); //$NON-NLS-1$ 
 		String code = "#include \""+header+"\"\r\n"; //$NON-NLS-1$
 		IFile file = importFile(source, code);
 		int offset1 = code.indexOf( "#include \""+header+"\"" ); //$NON-NLS-1$

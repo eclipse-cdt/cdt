@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
+import java.util.ArrayList;
+
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.util.CharArrayMap;
@@ -41,13 +44,22 @@ class ExpressionEvaluator {
 
 	private Token fTokens;
 	private CharArrayMap<PreprocessorMacro> fDictionary;
+	private ArrayList<IASTName> fMacrosInDefinedExpressions= new ArrayList<IASTName>();
+	private LocationMap fLocationMap;
 
-	public boolean evaluate(TokenList condition, CharArrayMap<PreprocessorMacro> macroDictionary) throws EvalException {
+	public boolean evaluate(TokenList condition, CharArrayMap<PreprocessorMacro> macroDictionary, LocationMap map) throws EvalException {
 		fTokens= condition.first();
 		fDictionary= macroDictionary;
+		fLocationMap= map;
+		fMacrosInDefinedExpressions.clear();
 		return expression() != 0;
 	}
-
+	
+	public IASTName[] clearMacrosInDefinedExpression() {
+		IASTName[] result= fMacrosInDefinedExpressions.toArray(new IASTName[fMacrosInDefinedExpressions.size()]);
+		fMacrosInDefinedExpressions.clear();
+		return result;
+	}
 
     private long expression() throws EvalException {
         return conditionalExpression();
@@ -254,7 +266,11 @@ class ExpressionEvaluator {
     	if (LA() != IToken.tIDENTIFIER) {
     		throw new EvalException(IProblem.SCANNER_ILLEGAL_IDENTIFIER, null);
     	}
-    	int result= fDictionary.containsKey(fTokens.getCharImage()) ? 1 : 0;
+    	PreprocessorMacro macro= fDictionary.get(fTokens.getCharImage());
+    	if (macro != null) {
+    		fMacrosInDefinedExpressions.add(fLocationMap.encounterDefinedExpression(macro, fTokens.getOffset(), fTokens.getEndOffset()));
+    	}
+    	int result= macro != null ? 1 : 0;
     	consume();
     	if (parenthesis) {
     		if (LA() != IToken.tRPAREN) {

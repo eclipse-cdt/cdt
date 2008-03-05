@@ -128,7 +128,7 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 		public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
 			if (ast != null) {
 				try {
-					IASTName name= ast.getNodeSelector(null).findSurroundingName(fTextRegion.getOffset(), fTextRegion.getLength());
+					IASTName name= ast.getNodeSelector(null).findEnclosingName(fTextRegion.getOffset(), fTextRegion.getLength());
 					if (name != null) {
 						IBinding binding= name.resolveBinding();
 						if (binding != null) {

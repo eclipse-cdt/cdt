@@ -48,7 +48,7 @@ public class PDOMSearchTextSelectionQuery extends PDOMSearchQuery {
 		return ASTProvider.getASTProvider().runOnAST(tu, ASTProvider.WAIT_YES, monitor, new ASTRunnable() {
 			public IStatus runOnAST(ILanguage language, IASTTranslationUnit ast) throws CoreException {
 				if (ast != null) {
-					IASTName searchName= ast.getNodeSelector(null).findSurroundingName(selection.getOffset(), selection.getLength());
+					IASTName searchName= ast.getNodeSelector(null).findEnclosingName(selection.getOffset(), selection.getLength());
 					if (searchName != null) {
 						IBinding binding = searchName.resolveBinding();
 						if (binding != null)

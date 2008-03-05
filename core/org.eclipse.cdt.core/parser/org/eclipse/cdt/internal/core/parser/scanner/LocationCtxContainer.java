@@ -101,11 +101,11 @@ class LocationCtxContainer extends LocationCtx {
 	}
 
 	@Override
-	public final LocationCtxMacroExpansion findSurroundingMacroExpansion(int sequenceNumber, int length) {
+	public final LocationCtxMacroExpansion findEnclosingMacroExpansion(int sequenceNumber, int length) {
 		int testEnd= length > 1 ? sequenceNumber+length-1 : sequenceNumber;
 		final LocationCtx child= findChildLessOrEqualThan(sequenceNumber, true);
 		if (child != null && child.fSequenceNumber+child.getSequenceLength() > testEnd) {
-			return child.findSurroundingMacroExpansion(sequenceNumber, length);
+			return child.findEnclosingMacroExpansion(sequenceNumber, length);
 		}
 		return null;
 	}

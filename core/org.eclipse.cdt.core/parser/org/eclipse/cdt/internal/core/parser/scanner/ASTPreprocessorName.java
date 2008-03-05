@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
@@ -127,8 +126,8 @@ class ASTBuiltinName extends ASTPreprocessorDefinition {
 class ASTMacroReferenceName extends ASTPreprocessorName {
 	private ImageLocationInfo fImageLocationInfo;
 	
-	public ASTMacroReferenceName(IASTPreprocessorMacroExpansion parent, int offset, int endOffset, IMacroBinding macro, ImageLocationInfo imgLocationInfo) {
-		super(parent, IASTPreprocessorMacroExpansion.EXPANSION_NAME, offset, endOffset, macro.getNameCharArray(), macro);
+	public ASTMacroReferenceName(IASTNode parent, ASTNodeProperty property, int offset, int endOffset, IMacroBinding macro, ImageLocationInfo imgLocationInfo) {
+		super(parent, property, offset, endOffset, macro.getNameCharArray(), macro);
 		fImageLocationInfo= imgLocationInfo;
 	}
 

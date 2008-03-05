@@ -24,8 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNodeMatchKind;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNodeSpecification;
 
 
 /**
@@ -136,16 +135,13 @@ public interface ILocationResolver {
 	char[] getUnpreprocessedSignature(IASTFileLocation loc);
 	
 	/**
-	 * Returns a preprocessor node surrounding the given range, or <code>null</code>. The result is either a
-	 * preprocessing directive ({@link IASTPreprocessorStatement}) or a name contained therein {@link IASTName} or 
-	 * a macro expansion ({@link IASTName}).
+	 * Searches for a preprocessor node matching the given specification. Candidates are passed to 
+	 * nodeSpec, which selects and stores the best result.
 	 * 
-	 * @param sequenceNumber the sequence number of the start of the interesting region.
-	 * @param length the sequence length of the interesting region.
-	 * @param matchOption the kind of the desired match.
+	 * @param nodeSpec specification of node to search for.
 	 */
-	ASTNode findPreprocessorNode(int sequenceNumber, int length, ASTNodeMatchKind matchOption);
-
+	void findPreprocessorNode(ASTNodeSpecification<?> nodeSpec);
+	
 	/**
 	 * Returns whether the specified sequence number points into the root file of the
 	 * translation unit, or not.

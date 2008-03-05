@@ -130,7 +130,7 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 			int selectionStart = selNode.getOffset();
 			int selectionLength = selNode.getLength();
 				
-			IASTName searchName= ast.getNodeSelector(null).findSurroundingName(selectionStart, selectionLength);
+			IASTName searchName= ast.getNodeSelector(null).findEnclosingName(selectionStart, selectionLength);
 			if (searchName != null) { // just right, only one name selected
 				boolean found= false;
 				final IASTNode parent = searchName.getParent();

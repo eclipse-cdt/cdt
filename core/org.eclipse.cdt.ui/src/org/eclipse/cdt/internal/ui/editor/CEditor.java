@@ -299,6 +299,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 			super(parent, verticalRuler, overviewRuler, showAnnotationsOverview, styles, store);
 		}
 
+		@Override
 		public IContentAssistant getContentAssistant() {
 			return fContentAssistant;
 		}
@@ -306,6 +307,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		/*
 		 * @see ITextOperationTarget#doOperation(int)
 		 */
+		@Override
 		public void doOperation(int operation) {
 
 			if (getTextWidget() == null)
@@ -332,6 +334,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		/*
 		 * @see IWidgetTokenOwner#requestWidgetToken(IWidgetTokenKeeper)
 		 */
+		@Override
 		public boolean requestWidgetToken(IWidgetTokenKeeper requester) {
 			if (PlatformUI.getWorkbench().getHelpSystem().isContextHelpDisplayed())
 				return false;
@@ -342,6 +345,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		 * @see IWidgetTokenOwnerExtension#requestWidgetToken(IWidgetTokenKeeper, int)
 		 * @since 3.0
 		 */
+		@Override
 		public boolean requestWidgetToken(IWidgetTokenKeeper requester, int priority) {
 			if (PlatformUI.getWorkbench().getHelpSystem().isContextHelpDisplayed())
 				return false;
@@ -352,6 +356,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		 * @see org.eclipse.jface.text.source.SourceViewer#createFormattingContext()
 		 * @since 3.0
 		 */
+		@Override
 		public IFormattingContext createFormattingContext() {
 			IFormattingContext context= new FormattingContext();
 
@@ -796,6 +801,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		/*
 		 * @see org.eclipse.jface.action.IAction#run()
 		 */
+		@Override
 		public void run() {
 			// Check whether sub word navigation is enabled.
 			final IPreferenceStore store = getPreferenceStore();
@@ -861,6 +867,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.CEditor.NextSubWordAction#setCaretPosition(int)
 		 */
+		@Override
 		protected void setCaretPosition(final int position) {
 			getTextWidget().setCaretOffset(modelOffset2WidgetOffset(getSourceViewer(), position));
 		}
@@ -883,6 +890,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.CEditor.NextSubWordAction#setCaretPosition(int)
 		 */
+		@Override
 		protected void setCaretPosition(final int position) {
 			if (!validateEditorInputState())
 				return;
@@ -908,6 +916,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.CEditor.NextSubWordAction#findNextPosition(int)
 		 */
+		@Override
 		protected int findNextPosition(int position) {
 			return fIterator.following(position);
 		}
@@ -937,6 +946,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.CEditor.NextSubWordAction#setCaretPosition(int)
 		 */
+		@Override
 		protected void setCaretPosition(final int position) {
 			final ISourceViewer viewer = getSourceViewer();
 
@@ -976,6 +986,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		/*
 		 * @see org.eclipse.jface.action.IAction#run()
 		 */
+		@Override
 		public void run() {
 			// Check whether sub word navigation is enabled.
 			final IPreferenceStore store = getPreferenceStore();
@@ -1041,6 +1052,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.CEditor.PreviousSubWordAction#setCaretPosition(int)
 		 */
+		@Override
 		protected void setCaretPosition(final int position) {
 			getTextWidget().setCaretOffset(modelOffset2WidgetOffset(getSourceViewer(), position));
 		}
@@ -1063,6 +1075,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.CEditor.PreviousSubWordAction#setCaretPosition(int)
 		 */
+		@Override
 		protected void setCaretPosition(int position) {
 			if (!validateEditorInputState())
 				return;
@@ -1087,6 +1100,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.CEditor.PreviousSubWordAction#findPreviousPosition(int)
 		 */
+		@Override
 		protected int findPreviousPosition(int position) {
 			return fIterator.preceding(position);
 		}
@@ -1116,6 +1130,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.CEditor.PreviousSubWordAction#setCaretPosition(int)
 		 */
+		@Override
 		protected void setCaretPosition(final int position) {
 			final ISourceViewer viewer = getSourceViewer();
 
@@ -1253,12 +1268,14 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	/**
 	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#initializeEditor()
 	 */
+	@Override
 	protected void initializeEditor() {
 	}
 
 	/**
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#doSetInput(org.eclipse.ui.IEditorInput)
 	 */
+	@Override
 	protected void doSetInput(IEditorInput input) throws CoreException {
 		ISourceViewer sourceViewer= getSourceViewer();
 		if (!(sourceViewer instanceof ISourceViewerExtension2)) {
@@ -1313,6 +1330,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#setPreferenceStore(org.eclipse.jface.preference.IPreferenceStore)
 	 * @since 5.0
 	 */
+	@Override
 	protected void setPreferenceStore(IPreferenceStore store) {
 		super.setPreferenceStore(store);
 		SourceViewerConfiguration sourceViewerConfiguration= getSourceViewerConfiguration();
@@ -1349,7 +1367,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	/**
      * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
 	 */
-    public boolean isSaveAsAllowed() {
+    @Override
+	public boolean isSaveAsAllowed() {
 		return true;
 	}
 	/**
@@ -1368,6 +1387,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	/**
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter(Class required) {
 		if (IContentOutlinePage.class.equals(required)) {
 			return getOutlinePage();
@@ -1421,6 +1441,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	 *
 	 * @param event the property change event
 	 */
+	@Override
 	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
 		String property = event.getProperty();
 
@@ -1547,6 +1568,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#initializeViewerColors(org.eclipse.jface.text.source.ISourceViewer)
 	 */
+	@Override
 	protected void initializeViewerColors(ISourceViewer viewer) {
 		// is handled by CSourceViewer
 	}
@@ -1821,6 +1843,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#installTabsToSpacesConverter()
 	 * @since 4.0
 	 */
+	@Override
 	protected void installTabsToSpacesConverter() {
 		ISourceViewer sourceViewer= getSourceViewer();
 		SourceViewerConfiguration config= getSourceViewerConfiguration();
@@ -1856,6 +1879,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#isTabsToSpacesConversionEnabled()
 	 * @since 4.0
 	 */
+	@Override
 	protected boolean isTabsToSpacesConversionEnabled() {
 		ICElement element= getInputCElement();
 		ICProject project= element == null ? null : element.getCProject();
@@ -1870,7 +1894,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
     /**
      * @see org.eclipse.ui.IWorkbenchPart#dispose()
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
 
 		ISourceViewer sourceViewer = getSourceViewer();
 		if (sourceViewer instanceof ITextViewerExtension)
@@ -1943,6 +1968,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	/**
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#canHandleMove(org.eclipse.ui.IEditorInput, org.eclipse.ui.IEditorInput)
 	 */
+	@Override
 	protected boolean canHandleMove(IEditorInput originalElement, IEditorInput movedElement) {
 		String oldLanguage = ""; //$NON-NLS-1$
 		if (originalElement instanceof IFileEditorInput) {
@@ -1977,6 +2003,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	/**
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#createActions()
 	 */
+	@Override
 	protected void createActions() {
 		super.createActions();
 
@@ -2088,6 +2115,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	/**
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#editorContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
 	 */
+	@Override
 	public void editorContextMenuAboutToShow(IMenuManager menu) {
 		// marker for contributions to the top
 		menu.add(new GroupMarker(ICommonMenuConstants.GROUP_TOP));
@@ -2135,6 +2163,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#rulerContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
 	 */
+	@Override
 	protected void rulerContextMenuAboutToShow(IMenuManager menu) {
 		super.rulerContextMenuAboutToShow(menu);
 		IMenuManager foldingMenu= new MenuManager(CEditorMessages.getString("CEditor.menu.folding"), "projection"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -2174,6 +2203,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	 * @see org.eclipse.ui.part.WorkbenchPart#getOrientation()
 	 * @since 4.0
 	 */
+	@Override
 	public int getOrientation() {
 		// C/C++ editors are always left to right by default
 		return SWT.LEFT_TO_RIGHT;
@@ -2182,6 +2212,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 
@@ -2213,6 +2244,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#installTextDragAndDrop(org.eclipse.jface.text.source.ISourceViewer)
 	 */
+	@Override
 	protected void installTextDragAndDrop(ISourceViewer viewer) {
 		if (fTextViewerDragAdapter != null) {
 			// already installed, enable it
@@ -2239,6 +2271,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#uninstallTextDragAndDrop(org.eclipse.jface.text.source.ISourceViewer)
 	 */
+	@Override
 	protected void uninstallTextDragAndDrop(ISourceViewer viewer) {
 		if (fTextViewerDragAdapter != null) {
 			// uninstall not possible, disable instead
@@ -2249,6 +2282,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#getSourceViewerDecorationSupport(org.eclipse.jface.text.source.ISourceViewer)
 	 */
+	@Override
 	protected SourceViewerDecorationSupport getSourceViewerDecorationSupport(ISourceViewer viewer) {
 		if (fSourceViewerDecorationSupport == null) {
 			fSourceViewerDecorationSupport= new CSourceViewerDecorationSupport(this, viewer, getOverviewRuler(), getAnnotationAccess(), getSharedColors());
@@ -2260,6 +2294,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#configureSourceViewerDecorationSupport(org.eclipse.ui.texteditor.SourceViewerDecorationSupport)
 	 */
+	@Override
 	protected void configureSourceViewerDecorationSupport(SourceViewerDecorationSupport support) {
 		super.configureSourceViewerDecorationSupport(support);
 		//Enhance the stock source viewer decorator with a bracket matcher
@@ -2387,6 +2422,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	/*
 	 * Get the dektop's StatusLineManager
 	 */
+	@Override
 	protected IStatusLineManager getStatusLineManager() {
 		IEditorActionBarContributor contributor = getEditorSite().getActionBarContributor();
 		if (contributor instanceof EditorActionBarContributor) {
@@ -2412,6 +2448,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#createNavigationActions()
 	 */
+	@Override
 	protected void createNavigationActions() {
 		super.createNavigationActions();
 
@@ -2457,6 +2494,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#createSourceViewer(org.eclipse.swt.widgets.Composite, org.eclipse.jface.text.source.IVerticalRuler, int)
 	 */
+	@Override
 	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
 		IPreferenceStore store= getPreferenceStore();
 		ISourceViewer sourceViewer =
@@ -2555,6 +2593,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	/*
 	 * @see org.eclipse.ui.editors.text.TextEditor#initializeKeyBindingScopes()
 	 */
+	@Override
 	protected void initializeKeyBindingScopes() {
 		setKeyBindingScopes(new String [] { "org.eclipse.cdt.ui.cEditorScope" } ); //$NON-NLS-1$
 	}
@@ -2562,6 +2601,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	/*
 	 * @see AbstractTextEditor#affectsTextPresentation(PropertyChangeEvent)
 	 */
+	@Override
 	protected boolean affectsTextPresentation(PropertyChangeEvent event) {
 		SourceViewerConfiguration configuration = getSourceViewerConfiguration();
 		if (configuration instanceof CSourceViewerConfiguration) {
@@ -2582,6 +2622,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#performRevert()
 	 */
+	@Override
 	protected void performRevert() {
 		ProjectionViewer projectionViewer = (ProjectionViewer) getSourceViewer();
 		projectionViewer.setRedraw(false);
@@ -2612,7 +2653,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
      *
      * @param msg message to be set
      */
-    protected void setStatusLineErrorMessage(String msg) {
+    @Override
+	protected void setStatusLineErrorMessage(String msg) {
     	IEditorStatusLine statusLine = (IEditorStatusLine) getAdapter(IEditorStatusLine.class);
     	if (statusLine != null)
     		statusLine.setMessage(true, msg, null);
@@ -2624,6 +2666,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	 * @param msg message to be set
 	 * @since 3.0
 	 */
+	@Override
 	protected void setStatusLineMessage(String msg) {
 		IEditorStatusLine statusLine = (IEditorStatusLine) getAdapter(IEditorStatusLine.class);
 		if (statusLine != null)
@@ -2719,6 +2762,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#collectContextMenuPreferencePages()
 	 */
+	@Override
 	protected String[] collectContextMenuPreferencePages() {
 		// Add C/C++ Editor relevant pages
 		String[] parentPrefPageIds = super.collectContextMenuPreferencePages();
@@ -2848,6 +2892,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#updateStateDependentActions()
 	 */
+	@Override
 	protected void updateStateDependentActions() {
 		super.updateStateDependentActions();
 		fGenerateActionGroup.editorStateChanged();
@@ -2905,6 +2950,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		/*
 		 * @see Job#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
+		@Override
 		public IStatus run(IProgressMonitor progressMonitor) {
 			if (isCanceled(progressMonitor))
 				return Status.CANCEL_STATUS;
@@ -3078,7 +3124,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		OccurrenceLocation[] locations= null;
 
 		IASTNodeSelector selector= astRoot.getNodeSelector(astRoot.getFilePath());
-		IASTName name= selector.findSurroundingName(wordRegion.getOffset(), wordRegion.getLength());
+		IASTName name= selector.findEnclosingName(wordRegion.getOffset(), wordRegion.getLength());
 
 		if (name != null) {
 			IBinding binding= name.resolveBinding();

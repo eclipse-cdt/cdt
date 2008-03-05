@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
@@ -31,10 +32,8 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNodeMatchKind;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNodeSpecification;
 import org.eclipse.cdt.internal.core.dom.parser.ASTProblem;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNodeMatchKind.Relation;
 
 /**
  * Converts the offsets relative to various contexts to the global sequence number. Also creates and stores
@@ -138,8 +137,19 @@ public class LocationMap implements ILocationResolver {
 	 * @param imageLocationInfo the image-location for the name of the macro.
 	 */
 	public IASTName encounterImplicitMacroExpansion(IMacroBinding macro, ImageLocationInfo imageLocationInfo) {
-		return new ASTMacroReferenceName(null, 0, 0, macro, imageLocationInfo);
+		return new ASTMacroReferenceName(null, IASTPreprocessorMacroExpansion.NESTED_EXPANSION_NAME, 0, 0, macro, imageLocationInfo);
 	}
+	
+	/**
+	 * Creates a name representing a macro in a defined-expression. The returned name can be fed into 
+	 * {@link #encounterPoundIf(int, int, int, int, boolean, IASTName[])}.
+	 */
+	public IASTName encounterDefinedExpression(IMacroBinding macro, int startOffset, int endOffset) {
+		int startNumber= getSequenceNumberForOffset(startOffset);
+		int endNumber= getSequenceNumberForOffset(endOffset);
+		return new ASTMacroReferenceName(null, IASTPreprocessorStatement.MACRO_NAME, startNumber, endNumber, macro, null);
+	}
+	
 	
 	/**
 	 * Creates a new context for the result of a (recursive) macro-expansion.
@@ -160,14 +170,14 @@ public class LocationMap implements ILocationResolver {
 		final int length= endNumber-nameNumber;
 		
 		ASTMacroExpansion expansion= new ASTMacroExpansion(fTranslationUnit, nameNumber, endNumber);
-		ASTMacroReferenceName explicitRef= new ASTMacroReferenceName(expansion, nameNumber, nameEndNumber, macro, null);
+		ASTMacroReferenceName explicitRef= new ASTMacroReferenceName(expansion, IASTPreprocessorMacroExpansion.EXPANSION_NAME, nameNumber, nameEndNumber, macro, null);
+		addMacroReference(explicitRef);
 		for (int i = 0; i < implicitMacroReferences.length; i++) {
 			ASTMacroReferenceName name = (ASTMacroReferenceName) implicitMacroReferences[i];
 			name.setParent(expansion);
 			name.setOffsetAndLength(nameNumber, length);
 			addMacroReference(name);
 		}
-		addMacroReference(explicitRef);
 		
 		LocationCtxMacroExpansion expansionCtx= new LocationCtxMacroExpansion(this, (LocationCtxContainer) fCurrentContext, nameOffset, endOffset, endNumber, contextLength, imageLocations, explicitRef);
 		expansion.setContext(expansionCtx);
@@ -177,7 +187,9 @@ public class LocationMap implements ILocationResolver {
 	}
 	
 	private void addMacroReference(ASTPreprocessorName name) {
-		fMacroReferences.add(name);
+		if (name != null) {
+			fMacroReferences.add(name);
+		}
 	}
 
 	/**
@@ -233,12 +245,22 @@ public class LocationMap implements ILocationResolver {
 		fDirectives.add(new ASTElse(fTranslationUnit, startOffset, endOffset, isActive));
 	}
 
-	public void encounterPoundElif(int startOffset, int condOffset, int condEndOffset, int endOffset, boolean isActive) {
+	public void encounterPoundElif(int startOffset, int condOffset, int condEndOffset, int endOffset, boolean isActive, 
+			IASTName[] macrosInDefinedExpression) {
 		startOffset= getSequenceNumberForOffset(startOffset); 	
 		condOffset= getSequenceNumberForOffset(condOffset);		
 		condEndOffset= getSequenceNumberForOffset(condEndOffset);
 		// compatible with 4.0: endOffset= getSequenceNumberForOffset(endOffset);
-		fDirectives.add(new ASTElif(fTranslationUnit, startOffset, condOffset, condEndOffset, isActive));
+		final ASTElif elif = new ASTElif(fTranslationUnit, startOffset, condOffset, condEndOffset, isActive);
+		fDirectives.add(elif);
+		
+		for (int i = 0; i < macrosInDefinedExpression.length; i++) {
+			ASTMacroReferenceName name = (ASTMacroReferenceName) macrosInDefinedExpression[i];
+			name.setParent(elif);
+			name.setPropertyInParent(IASTPreprocessorStatement.MACRO_NAME);
+			addMacroReference(name);
+		}
+
 	}
 
 	public void encounterPoundEndIf(int startOffset, int endOffset) {
@@ -263,30 +285,42 @@ public class LocationMap implements ILocationResolver {
 		fDirectives.add(new ASTPragma(fTranslationUnit, startOffset, condOffset, condEndOffset));
 	}
 
-	public void encounterPoundIfdef(int startOffset, int condOffset, int condEndOffset, int endOffset, boolean isActive) {
+	public void encounterPoundIfdef(int startOffset, int condOffset, int condEndOffset, int endOffset, boolean taken, IMacroBinding macro) {
 		startOffset= getSequenceNumberForOffset(startOffset);
 		condOffset= getSequenceNumberForOffset(condOffset);
 		condEndOffset= getSequenceNumberForOffset(condEndOffset);
 		// not using endOffset, compatible with 4.0: endOffset= getSequenceNumberForOffset(endOffset);
-		fDirectives.add(new ASTIfdef(fTranslationUnit, startOffset, condOffset, condEndOffset, isActive));
+		final ASTIfdef ifdef = new ASTIfdef(fTranslationUnit, startOffset, condOffset, condEndOffset, taken, macro);
+		fDirectives.add(ifdef);
+		addMacroReference(ifdef.getMacroReference());
 	}
 
-	public void encounterPoundIfndef(int startOffset, int condOffset, int condEndOffset, int endOffset, boolean isActive) {
+	public void encounterPoundIfndef(int startOffset, int condOffset, int condEndOffset, int endOffset, boolean taken, IMacroBinding macro) {
 		startOffset= getSequenceNumberForOffset(startOffset);
 		condOffset= getSequenceNumberForOffset(condOffset);
 		condEndOffset= getSequenceNumberForOffset(condEndOffset);
 		// not using endOffset, compatible with 4.0: endOffset= getSequenceNumberForOffset(endOffset);
-		fDirectives.add(new ASTIfndef(fTranslationUnit, startOffset, condOffset, condEndOffset, isActive));
+		final ASTIfndef ifndef = new ASTIfndef(fTranslationUnit, startOffset, condOffset, condEndOffset, taken, macro);
+		fDirectives.add(ifndef);
+		addMacroReference(ifndef.getMacroReference());
 	}
 
-	public void encounterPoundIf(int startOffset, int condOffset, int condEndOffset, int endOffset, boolean isActive) {
+	public void encounterPoundIf(int startOffset, int condOffset, int condEndOffset, int endOffset, boolean isActive,
+			IASTName[] macrosInDefinedExpression) {
 		startOffset= getSequenceNumberForOffset(startOffset);	
 		condOffset= getSequenceNumberForOffset(condOffset);		
 		condEndOffset= getSequenceNumberForOffset(condEndOffset);
 		// not using endOffset, compatible with 4.0: endOffset= getSequenceNumberForOffset(endOffset);
-		fDirectives.add(new ASTIf(fTranslationUnit, startOffset, condOffset, condEndOffset, isActive));
+		final ASTIf astif = new ASTIf(fTranslationUnit, startOffset, condOffset, condEndOffset, isActive);
+		fDirectives.add(astif);
+		for (int i = 0; i < macrosInDefinedExpression.length; i++) {
+			ASTMacroReferenceName name = (ASTMacroReferenceName) macrosInDefinedExpression[i];
+			name.setParent(astif);
+			name.setPropertyInParent(IASTPreprocessorStatement.MACRO_NAME);
+			addMacroReference(name);
+		}
 	}
-
+	
 	public void encounterPoundDefine(int startOffset, int nameOffset, int nameEndOffset, int expansionOffset, int endOffset, IMacroBinding macrodef) {
 		startOffset= getSequenceNumberForOffset(startOffset);	
 		nameOffset= getSequenceNumberForOffset(nameOffset);		
@@ -434,59 +468,93 @@ public class LocationMap implements ILocationResolver {
 		return null;
 	}
 
-	public ASTNode findPreprocessorNode(int sequenceNumber, int length, ASTNodeMatchKind matchKind) {
-		int lower=0;
-		int upper= fDirectives.size()-1;
-		while(lower <= upper) {
-			int middle= (lower+upper)/2;
-			ASTPreprocessorNode candidate= fDirectives.get(middle);
-			ASTNode result= candidate.findNode(sequenceNumber, length, matchKind);
-			if (result != null) {
-				if (matchKind.getRelationToSelection() == Relation.FIRST_CONTAINED) {
-					if (middle>lower) {
-						upper= middle; // if (upper-lower == 1) then middle==lower
-						continue;
-					}
-				}
-				return result;
+	public void findPreprocessorNode(ASTNodeSpecification<?> nodeSpec) {
+		final int sequenceStart= nodeSpec.getSequenceStart();
+		final int sequenceEnd= nodeSpec.getSequenceEnd();
+		
+		// check directives
+		int from= findLastNodeBefore(fDirectives, sequenceStart);
+		for (int i= from+1; i < fDirectives.size(); i++) {
+			ASTPreprocessorNode directive= fDirectives.get(i);
+			if (directive.getOffset() > sequenceEnd) {
+				break;
 			}
-			if (matchKind.isLowerBound(candidate, sequenceNumber, length)) {
-				lower= middle+1;
-			}
-			else {
-				upper= middle-1;
-			}
+			directive.findNode(nodeSpec);
 		}
-		// search for a macro-expansion
-		LocationCtxMacroExpansion ctx= fRootContext.findSurroundingMacroExpansion(sequenceNumber, length);
-		if (ctx != null) {
-			ASTNode candidate= ctx.findNode(sequenceNumber, length, matchKind);
-			int imageOffset= ctx.fEndOffsetInParent + sequenceNumber - ctx.fSequenceNumber;
-			if (fTranslationUnit != null) {
-				FindNodeByImageLocation visitor= new FindNodeByImageLocation(ctx.fSequenceNumber, ctx.getSequenceLength(), imageOffset, length, matchKind);
-				fTranslationUnit.accept(visitor);
-				ASTNode candidate2= visitor.getNode();
-				if (matchKind.isBetterMatch(candidate2, candidate)) {
-					candidate= candidate2;
-				}
+		
+		// check macro references and expansions
+		from= findLastMacroReferenceBefore(fMacroReferences, sequenceStart);
+		for (int i= from+1; i < fMacroReferences.size(); i++) {
+			ASTPreprocessorNode macroRef= fMacroReferences.get(i);
+			if (macroRef.getOffset() > sequenceEnd) {
+				break;
 			}
-			ASTPreprocessorName[] nested= ctx.getNestedMacroReferences();
-			for (ASTPreprocessorName name : nested) {
-				IASTImageLocation imageLoc= name.getImageLocation();
-				if (imageLoc != null && imageLoc.getLocationKind() == IASTImageLocation.ARGUMENT_TO_MACRO_EXPANSION) {
-					if (matchKind.rangeMatches(imageLoc.getNodeOffset(), imageLoc.getNodeLength(), imageOffset, length)) {
-						if (matchKind.isBetterMatch(name, candidate)) {
-							candidate= name;
+			if (macroRef.getPropertyInParent() == IASTPreprocessorMacroExpansion.NESTED_EXPANSION_NAME) {
+				continue;
+			}
+			nodeSpec.visit(macroRef);
+			IASTNode parent= macroRef.getParent();
+			if (parent instanceof ASTMacroExpansion) {
+				ASTMacroExpansion expansion= (ASTMacroExpansion) parent;
+				assert expansion.getMacroReference() == macroRef;
+
+				if (nodeSpec.canContainMatches(expansion)) {
+					nodeSpec.visit(expansion);
+					if (!nodeSpec.requiresClass(IASTPreprocessorMacroExpansion.class)) {
+						LocationCtxMacroExpansion ctx= expansion.getContext();
+						if (fTranslationUnit != null) {
+							FindNodeByImageLocation visitor= new FindNodeByImageLocation(ctx.fSequenceNumber, ctx.getSequenceLength(), nodeSpec);
+							fTranslationUnit.accept(visitor);
+						}
+						ASTPreprocessorName[] nestedMacros= expansion.getNestedMacroReferences();
+						for (ASTPreprocessorName nested : nestedMacros) {
+							IASTImageLocation imgLoc= nested.getImageLocation();
+							if (imgLoc != null && imgLoc.getLocationKind() == IASTImageLocation.ARGUMENT_TO_MACRO_EXPANSION) {
+								nodeSpec.visit(nested, imgLoc);
+							}
 						}
 					}
 				}
 			}
-			return candidate;
 		}
-		
-		return null;
 	}
 	
+    private int findLastNodeBefore(ArrayList<? extends ASTPreprocessorNode> nodes, int sequenceStart) {
+    	int lower=-1;
+    	int upper= nodes.size()-1;
+    	while(lower < upper) {
+    		int middle= (lower+upper+1)/2;
+    		ASTPreprocessorNode candidate= nodes.get(middle);
+    		if (candidate.getOffset() + candidate.getLength() >= sequenceStart) {
+    			upper= middle-1;
+    		}
+    		else {
+    			lower= middle;
+    		}
+    	}
+    	return lower;
+	}
+
+    private int findLastMacroReferenceBefore(ArrayList<? extends ASTPreprocessorName> nodes, int sequenceStart) {
+    	int lower=-1;
+    	int upper= nodes.size()-1;
+    	while(lower < upper) {
+    		int middle= (lower+upper+1)/2;
+    		ASTPreprocessorNode candidate= nodes.get(middle);
+    		IASTNode parent= candidate.getParent();
+    		if (parent instanceof ASTMacroExpansion) {
+    			candidate= (ASTMacroExpansion) parent;
+    		}
+    		if (candidate.getOffset() + candidate.getLength() >= sequenceStart) {
+    			upper= middle-1;
+    		}
+    		else {
+    			lower= middle;
+    		}
+    	}
+    	return lower;
+	}
+
 	public int getSequenceNumberForFileOffset(String filePath, int fileOffset) {
 		LocationCtx ctx= fRootContext;
 		if (filePath != null) {

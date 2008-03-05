@@ -883,7 +883,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     		condEndOffset= lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
     		int endOffset= lexer.currentToken().getEndOffset();
     		if (fCurrentContext.changeBranch(ScannerContext.BRANCH_ELIF)) {
-    			fLocationMap.encounterPoundElif(startOffset, condOffset, condEndOffset, endOffset, false);
+    			fLocationMap.encounterPoundElif(startOffset, condOffset, condEndOffset, endOffset, false, IASTName.EMPTY_NAME_ARRAY);
     			skipOverConditionalCode(lexer, false);
     		} 
     		else {
@@ -1132,17 +1132,18 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
 		final int endOffset= lexer.currentToken().getEndOffset();
     	final char[] namechars= name.getCharImage();
-        boolean isActive= (fMacroDictionary.get(namechars) != null) == positive;
+        PreprocessorMacro macro= fMacroDictionary.get(namechars);
+        boolean isActive= (macro != null) == positive;
         
     	fCurrentContext.changeBranch(ScannerContext.BRANCH_IF);        
         if (positive) {
-        	fLocationMap.encounterPoundIfdef(startOffset, name.getOffset(), name.getEndOffset(), endOffset, isActive);
+        	fLocationMap.encounterPoundIfdef(startOffset, name.getOffset(), name.getEndOffset(), endOffset, isActive, macro);
         }
         else {
-        	fLocationMap.encounterPoundIfndef(startOffset, name.getOffset(), name.getEndOffset(), endOffset, isActive);
+        	fLocationMap.encounterPoundIfndef(startOffset, name.getOffset(), name.getEndOffset(), endOffset, isActive, macro);
         }
 
-        if (!isActive) {
+        if ((macro == null) == positive) {
         	skipOverConditionalCode(lexer, true);
         }
     }
@@ -1154,19 +1155,20 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     	final int condEndOffset= getTokensWithinPPDirective(lexer, true, condition);
     	final int endOffset= lexer.currentToken().getEndOffset();
     	
+    	fExpressionEvaluator.clearMacrosInDefinedExpression();
     	if (condition.first() == null) {
     		handleProblem(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR, null, startOffset, endOffset);
     	}
     	else {
     		try {
-				isActive= fExpressionEvaluator.evaluate(condition, fMacroDictionary);
+				isActive= fExpressionEvaluator.evaluate(condition, fMacroDictionary, fLocationMap);
 			} catch (EvalException e) {
 				handleProblem(e.getProblemID(), e.getProblemArg(), condOffset, endOffset);
 			}
     	}
 
 		fCurrentContext.changeBranch(ScannerContext.BRANCH_IF);
-    	fLocationMap.encounterPoundIf(startOffset, condOffset, condEndOffset, endOffset, isActive);
+    	fLocationMap.encounterPoundIf(startOffset, condOffset, condEndOffset, endOffset, isActive, fExpressionEvaluator.clearMacrosInDefinedExpression());
 		
     	if (!isActive) {
     		skipOverConditionalCode(lexer, true);
@@ -1247,21 +1249,21 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         		int endOffset= lexer.currentToken().getEndOffset();
         		nesting++;
         		fCurrentContext.changeBranch(ScannerContext.BRANCH_IF);
-        		fLocationMap.encounterPoundIfdef(pound.getOffset(), ident.getOffset(), ident.getEndOffset(), endOffset, false);
+        		fLocationMap.encounterPoundIfdef(pound.getOffset(), ident.getOffset(), ident.getEndOffset(), endOffset, false, null);
         		break;
         	case IPreprocessorDirective.ppIfndef:
         		lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
         		endOffset= lexer.currentToken().getEndOffset();
         		nesting++;
         		fCurrentContext.changeBranch(ScannerContext.BRANCH_IF);
-        		fLocationMap.encounterPoundIfndef(pound.getOffset(), ident.getOffset(), ident.getEndOffset(), endOffset, false);
+        		fLocationMap.encounterPoundIfndef(pound.getOffset(), ident.getOffset(), ident.getEndOffset(), endOffset, false, null);
         		break;
         	case IPreprocessorDirective.ppIf: 
         		int condEndOffset= lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
         		endOffset= lexer.currentToken().getEndOffset();
         		nesting++;
         		fCurrentContext.changeBranch(ScannerContext.BRANCH_IF);
-        		fLocationMap.encounterPoundIf(pound.getOffset(), ident.getOffset(), condEndOffset, endOffset, false);
+        		fLocationMap.encounterPoundIf(pound.getOffset(), ident.getOffset(), condEndOffset, endOffset, false, IASTName.EMPTY_NAME_ARRAY);
         		break;
         	case IPreprocessorDirective.ppElse: 
         		lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
@@ -1279,13 +1281,14 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         	case IPreprocessorDirective.ppElif: 
         		if (fCurrentContext.changeBranch(ScannerContext.BRANCH_ELIF)) {
         	    	boolean isActive= false;
+        	    	fExpressionEvaluator.clearMacrosInDefinedExpression();
         	    	int condOffset= lexer.nextToken().getOffset();
         			if (nesting == 0 && takeElseBranch) {
             	    	TokenList condition= new TokenList();
         				condEndOffset= getTokensWithinPPDirective(lexer, true, condition);
         				if (condition.first() != null) {
         					try {
-        						isActive= fExpressionEvaluator.evaluate(condition, fMacroDictionary);
+        						isActive= fExpressionEvaluator.evaluate(condition, fMacroDictionary, fLocationMap);
         					} catch (EvalException e) {
         						handleProblem(e.getProblemID(), e.getProblemArg(), condOffset, condEndOffset);
         					}
@@ -1296,7 +1299,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         			}
         			endOffset= lexer.currentToken().getEndOffset();
         			fCurrentContext.changeBranch(ScannerContext.BRANCH_ELIF);
-        	    	fLocationMap.encounterPoundElif(pound.getOffset(), condOffset, condEndOffset, endOffset, isActive);
+					fLocationMap.encounterPoundElif(pound.getOffset(), condOffset, condEndOffset, endOffset, isActive, fExpressionEvaluator.clearMacrosInDefinedExpression());
         			
         	    	if (isActive) {
         	    		return;

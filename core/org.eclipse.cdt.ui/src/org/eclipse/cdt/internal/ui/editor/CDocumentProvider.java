@@ -60,6 +60,7 @@ import org.eclipse.ui.texteditor.spelling.SpellingAnnotation;
 
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICModelMarker;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IProblemRequestor;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
@@ -97,7 +98,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		private final boolean fIsProblem;
 		private final String[] fArguments;
 		private final String fMarkerType;
-		private List fOverlaids;
+		private List<ICAnnotation> fOverlaids;
 
 		public ProblemAnnotation(IProblem problem, ITranslationUnit tu) {
 			fTranslationUnit= tu;
@@ -153,7 +154,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		 */
 		public void addOverlaid(ICAnnotation annotation) {
 			if (fOverlaids == null)
-				fOverlaids= new ArrayList(1);
+				fOverlaids= new ArrayList<ICAnnotation>(1);
 			fOverlaids.add(annotation);
 		}
 	
@@ -171,7 +172,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		/*
 		 * @see ICAnnotation#getOverlaidIterator()
 		 */
-		public Iterator getOverlaidIterator() {
+		public Iterator<ICAnnotation> getOverlaidIterator() {
 			if (fOverlaids != null)
 				return fOverlaids.iterator();
 			return null;
@@ -205,7 +206,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 			Object fValue;
 		}
 		
-		private List fList= new ArrayList(2);
+		private List<Entry> fList= new ArrayList<Entry>(2);
 		private int fAnchor= 0;
 		
 		public ReverseMap() {
@@ -218,7 +219,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 			// behind anchor
 			int length= fList.size();
 			for (int i= fAnchor; i < length; i++) {
-				entry= (Entry) fList.get(i);
+				entry= fList.get(i);
 				if (entry.fPosition.equals(position)) {
 					fAnchor= i;
 					return entry.fValue;
@@ -227,7 +228,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 			
 			// before anchor
 			for (int i= 0; i < fAnchor; i++) {
-				entry= (Entry) fList.get(i);
+				entry= fList.get(i);
 				if (entry.fPosition.equals(position)) {
 					fAnchor= i;
 					return entry.fValue;
@@ -241,7 +242,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 			Entry entry;
 			int length= fList.size();
 			for (int i= 0; i < length; i++) {
-				entry= (Entry) fList.get(i);
+				entry= fList.get(i);
 				if (entry.fPosition.equals(position))
 					return i;
 			}
@@ -256,7 +257,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 				entry.fValue= value;
 				fList.add(entry);
 			} else {
-				Entry entry= (Entry) fList.get(index);
+				Entry entry= fList.get(index);
 				entry.fValue= value;
 			}
 		}
@@ -322,20 +323,20 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		
 		private static class ProblemRequestorState {
 			boolean fInsideReportingSequence= false;
-			List fReportedProblems;
+			List<IProblem> fReportedProblems;
 		}
 		
-		private ThreadLocal fProblemRequestorState= new ThreadLocal();
+		private ThreadLocal<ProblemRequestorState> fProblemRequestorState= new ThreadLocal<ProblemRequestorState>();
 		private int fStateCount= 0;
 		
 		private ITranslationUnit fTranslationUnit;
-		private List fGeneratedAnnotations;
+		private List<ProblemAnnotation> fGeneratedAnnotations;
 		private IProgressMonitor fProgressMonitor;
 		private boolean fIsActive= false;
 		
 		private ReverseMap fReverseMap= new ReverseMap();
-		private List fPreviouslyOverlaid= null; 
-		private List fCurrentlyOverlaid= new ArrayList();
+		private List<CMarkerAnnotation> fPreviouslyOverlaid= null; 
+		private List<CMarkerAnnotation> fCurrentlyOverlaid= new ArrayList<CMarkerAnnotation>();
 		
 		
 		public TranslationUnitAnnotationModel(IResource resource) {
@@ -415,7 +416,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		 * @see IProblemRequestor#beginReporting()
 		 */
 		public void beginReporting() {
-			ProblemRequestorState state= (ProblemRequestorState) fProblemRequestorState.get();
+			ProblemRequestorState state= fProblemRequestorState.get();
 			if (state == null)
 				internalBeginReporting(false);				
 		}
@@ -424,7 +425,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		 * @see org.eclipse.cdt.internal.ui.text.java.IProblemRequestorExtension#beginReportingSequence()
 		 */
 		public void beginReportingSequence() {
-			ProblemRequestorState state= (ProblemRequestorState) fProblemRequestorState.get();
+			ProblemRequestorState state= fProblemRequestorState.get();
 			if (state == null)
 				internalBeginReporting(true);
 		}
@@ -436,10 +437,10 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		 *            call is issued from inside a reporting sequence
 		 */
 		private void internalBeginReporting(boolean insideReportingSequence) {
-			if (fTranslationUnit != null && fTranslationUnit.getCProject().isOnSourceRoot(fTranslationUnit.getResource())) {
+			if (fTranslationUnit != null) {
 				ProblemRequestorState state= new ProblemRequestorState();
 				state.fInsideReportingSequence= insideReportingSequence;
-				state.fReportedProblems= new ArrayList();
+				state.fReportedProblems= new ArrayList<IProblem>();
 				synchronized (getLockObject()) {
 					fProblemRequestorState.set(state);
 					++fStateCount;
@@ -452,7 +453,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		 */
 		public void acceptProblem(IProblem problem) {
 			if (isActive()) {
-				ProblemRequestorState state= (ProblemRequestorState) fProblemRequestorState.get();
+				ProblemRequestorState state= fProblemRequestorState.get();
 				if (state != null)
 					state.fReportedProblems.add(problem);
 			}
@@ -462,7 +463,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		 * @see IProblemRequestor#endReporting()
 		 */
 		public void endReporting() {
-			ProblemRequestorState state= (ProblemRequestorState) fProblemRequestorState.get();
+			ProblemRequestorState state= fProblemRequestorState.get();
 			if (state != null && !state.fInsideReportingSequence)
 				internalEndReporting(state);
 		}
@@ -471,7 +472,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		 * @see org.eclipse.cdt.internal.ui.text.java.IProblemRequestorExtension#endReportingSequence()
 		 */
 		public void endReportingSequence() {
-			ProblemRequestorState state= (ProblemRequestorState) fProblemRequestorState.get();
+			ProblemRequestorState state= fProblemRequestorState.get();
 			if (state != null && state.fInsideReportingSequence)
 				internalEndReporting(state);
 		}
@@ -491,7 +492,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		/**
 		 * Signals the end of problem reporting.
 		 */
-		private void reportProblems(List reportedProblems) {
+		private void reportProblems(List<IProblem> reportedProblems) {
 			if (fProgressMonitor != null && fProgressMonitor.isCanceled())
 				return;
 			
@@ -502,7 +503,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 				boolean isCanceled= false;
 				
 				fPreviouslyOverlaid= fCurrentlyOverlaid;
-				fCurrentlyOverlaid= new ArrayList();
+				fCurrentlyOverlaid= new ArrayList<CMarkerAnnotation>();
 				
 				if (fGeneratedAnnotations.size() > 0) {
 					temporaryProblemsChanged= true;	
@@ -512,7 +513,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 				
 				if (reportedProblems != null && reportedProblems.size() > 0) {
 					
-					Iterator e= reportedProblems.iterator();
+					Iterator<IProblem> e= reportedProblems.iterator();
 					while (e.hasNext()) {
 						
 						if (fProgressMonitor != null && fProgressMonitor.isCanceled()) {
@@ -520,7 +521,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 							break;
 						}
 						
-						IProblem problem= (IProblem) e.next();
+						IProblem problem= e.next();
 						Position position= createPositionFromProblem(problem);
 						if (position != null) {
 							
@@ -550,9 +551,9 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 			if (isCanceled) {
 				fCurrentlyOverlaid.addAll(fPreviouslyOverlaid);
 			} else if (fPreviouslyOverlaid != null) {
-				Iterator e= fPreviouslyOverlaid.iterator();
+				Iterator<CMarkerAnnotation> e= fPreviouslyOverlaid.iterator();
 				while (e.hasNext()) {
-					CMarkerAnnotation annotation= (CMarkerAnnotation) e.next();
+					CMarkerAnnotation annotation= e.next();
 					annotation.setOverlay(null);
 				}
 			}			
@@ -589,7 +590,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		 * Tells this annotation model to collect temporary problems from now on.
 		 */
 		private void startCollectingProblems() {
-			fGeneratedAnnotations= new ArrayList();  
+			fGeneratedAnnotations= new ArrayList<ProblemAnnotation>();  
 		}
 		
 		/**
@@ -637,6 +638,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		/*
 		 * @see AnnotationModel#addAnnotation(Annotation, Position, boolean)
 		 */
+		@SuppressWarnings("unchecked")
 		protected void addAnnotation(Annotation annotation, Position position, boolean fireModelChanged) throws BadLocationException {				
 			super.addAnnotation(annotation, position, fireModelChanged);
 			
@@ -645,10 +647,10 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 				if (cached == null)
 					fReverseMap.put(position, annotation);
 				else if (cached instanceof List) {
-					List list= (List) cached;
+					List<Annotation> list= (List<Annotation>) cached;
 					list.add(annotation);
 				} else if (cached instanceof Annotation) {
-					List list= new ArrayList(2);
+					List<Object> list= new ArrayList<Object>(2);
 					list.add(cached);
 					list.add(annotation);
 					fReverseMap.put(position, list);
@@ -778,6 +780,16 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		if (element instanceof ITranslationUnit) {
 			return (ITranslationUnit) element;
 		}
+		if (element == null) {
+			// not in a source folder?
+			final IPath location= file.getLocation();
+			if (location != null) {
+				ICProject cproject= CoreModel.getDefault().create(file.getProject());
+				if (cproject != null) {
+					return CoreModel.getDefault().createTranslationUnitFrom(cproject, location);
+				}
+			}
+		}
 		return null;
 	}
 
@@ -811,9 +823,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 			ILocationProvider locationProvider= (ILocationProvider)adaptable.getAdapter(ILocationProvider.class);
 			if (locationProvider != null) {
 				IPath location= locationProvider.getPath(element);
-				if (location != null) {
-					original= createTranslationUnit(location);
-				}
+				original= createTranslationUnit(location);
 			}
 		}
 
@@ -860,6 +870,9 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	 * @return a translation unit or <code>null</code>
 	 */
 	private ITranslationUnit createTranslationUnit(IPath location) {
+		if (location == null) {
+			return null;
+		}
 		IEditorInput input= EditorUtility.getEditorInputForLocation(location, null);
 		if (input instanceof ITranslationUnitEditorInput) {
 			return ((ITranslationUnitEditorInput)input).getTranslationUnit();

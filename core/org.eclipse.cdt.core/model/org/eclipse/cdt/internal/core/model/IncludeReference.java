@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Ed Swartz (Nokia)
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.model;
@@ -92,7 +93,7 @@ public class IncludeReference extends Openable implements IIncludeReference {
 	 * @see org.eclipse.cdt.internal.core.model.CContainer#computeChildren(org.eclipse.cdt.internal.core.model.OpenableInfo, org.eclipse.core.resources.IResource)
 	 */
 	protected boolean computeChildren(OpenableInfo info, IResource res) throws CModelException {
-			ArrayList vChildren = new ArrayList();
+			ArrayList<ICElement> vChildren = new ArrayList<ICElement>();
 			File file = null;
 			if (fPath != null) {
 				file = fPath.toFile();
@@ -131,7 +132,7 @@ public class IncludeReference extends Openable implements IIncludeReference {
 	 * @see org.eclipse.cdt.core.model.IIncludeReference#isOnIncludeEntry(org.eclipse.core.runtime.IPath)
 	 */
 	public boolean isOnIncludeEntry(IPath path) {
-		if (fIncludeEntry.getIncludePath().isPrefixOf(path) 
+		if (fIncludeEntry.getFullIncludePath().isPrefixOf(path) 
 				&& !CoreModelUtil.isExcluded(path, fIncludeEntry.fullExclusionPatternChars())) {
 			return true;
 		}

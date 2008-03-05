@@ -251,8 +251,7 @@ public abstract class BuildASTParserAction {
 	protected static void setOffsetAndLength(IASTNode node, int offset, int length) {
 		((ASTNode)node).setOffsetAndLength(offset, length);
 	}
-	
-	
+
 	
 	/**
 	 * Creates a IASTName node from an identifier token.
@@ -871,7 +870,6 @@ public abstract class BuildASTParserAction {
 		// these two expressions may be null, see consumeExpressionOptional()
 		IASTExpression expr3 = (IASTExpression) astStack.pop();
 		IASTExpression expr2 = (IASTExpression) astStack.pop();
-		
 		IASTNode node = (IASTNode) astStack.pop(); // may be an expression or a declaration
 		
 		IASTStatement initializer;
@@ -881,6 +879,8 @@ public abstract class BuildASTParserAction {
 			initializer = nodeFactory.newDeclarationStatement((IASTDeclaration)node);
 		else // its null
 			initializer = nodeFactory.newNullStatement();
+		
+		setOffsetAndLength(initializer, offset(node), length(node));
 		
 		IASTForStatement forStat = nodeFactory.newForStatement(initializer, expr2, expr3, body);
 		setOffsetAndLength(forStat);
@@ -1284,10 +1284,10 @@ public abstract class BuildASTParserAction {
 	public void consumeInitializer() {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		
-		IASTExpression assignmentExpr = (IASTExpression) astStack.pop();
-		IASTInitializerExpression expr = nodeFactory.newInitializerExpression(assignmentExpr);
-        setOffsetAndLength(expr);
-        astStack.push(expr);
+		IASTExpression expr = (IASTExpression) astStack.pop();
+		IASTInitializerExpression initializer = nodeFactory.newInitializerExpression(expr);
+        setOffsetAndLength(initializer);
+        astStack.push(initializer);
         
         if(TRACE_AST_STACK) System.out.println(astStack);
 	}

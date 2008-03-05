@@ -67,11 +67,52 @@ public class C99CompleteParser2Tests extends CompleteParser2Tests {
 //	}
 
 	
+	@Override
 	public void testBug102376() throws Exception { // gcc extension
 		try {
 			super.testBug102376();
 			fail();
 		} catch(AssertionFailedError _) { }
 	}
+
+	@Override
+	public void test158192_declspec_in_declarator() throws Exception {
+		try {
+			super.test158192_declspec_in_declarator();
+			fail();
+		} catch(AssertionFailedError _) { }
+	}
+
+	@Override
+	public void test158192_declspec_on_class() throws Exception {
+		try {
+			super.test158192_declspec_on_class();
+			fail();
+		} catch(AssertionFailedError _) { }
+	}
+
+	@Override
+	public void test158192_declspec_on_variable() throws Exception {
+		try {
+			super.test158192_declspec_on_variable();
+			fail();
+		} catch(AssertionFailedError _) { }
+	}
 	
+	@Override
+	public void testPredefinedSymbol_bug70928() throws Exception {
+		try {
+			super.testPredefinedSymbol_bug70928();
+			fail();
+		} catch(AssertionFailedError _) { }
+	}
+	
+	@Override
+	public void testBug64010() throws Exception { // 10000 else-ifs, busts LPG's stack
+		try {
+			super.testBug64010();
+			fail();
+		} catch(AssertionFailedError _) { }
+	}
+
 }

@@ -146,30 +146,23 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	/**
 	 * new_expression
      *     ::= dcolon_opt 'new' new_placement_opt new_type_id <openscope-ast> new_array_expressions_op new_initializer_opt
-     *       | dcolon_opt 'new' new_placement_opt '(' type_id ')' new_initializer_opt
+     *       | dcolon_opt 'new' new_placement_opt '(' type_id ')' <openscope-ast> new_array_expressions_op new_initializer_opt
 	 */
 	public void consumeExpressionNew(boolean isNewTypeId) {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 
 		IASTExpression initializer = (IASTExpression) astStack.pop(); // may be null
-		
-		List<Object> arrayExpressions = Collections.emptyList();
-		if(isNewTypeId) {
-			arrayExpressions = astStack.closeScope();
-		}
-		
+		List<Object> arrayExpressions = astStack.closeScope();
 		IASTTypeId typeId = (IASTTypeId) astStack.pop();
 		IASTExpression placement = (IASTExpression) astStack.pop(); // may be null
-		
 		boolean hasDoubleColon = astStack.pop() == PLACE_HOLDER;
 		
 		ICPPASTNewExpression newExpression = nodeFactory.newCPPNewExpression(placement, initializer, typeId);
 		newExpression.setIsGlobal(hasDoubleColon);
 		newExpression.setIsNewTypeId(isNewTypeId);
 		
-		for(Object expr : arrayExpressions) {
+		for(Object expr : arrayExpressions)
 			newExpression.addNewTypeIdArrayExpression((IASTExpression)expr);
-		}
 		
 		setOffsetAndLength(newExpression);
 		astStack.push(newExpression);
@@ -188,9 +181,8 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		IASTName name = nodeFactory.newName();
 		IASTDeclarator declarator = nodeFactory.newDeclarator(name);
 		
-		for(Object pointer : astStack.closeScope()) {
+		for(Object pointer : astStack.closeScope())
 			declarator.addPointerOperator((IASTPointerOperator)pointer);
-		}
 		
 		setOffsetAndLength(declarator);
 		astStack.push(declarator);

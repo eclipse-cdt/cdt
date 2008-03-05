@@ -37,7 +37,6 @@ class BindingCheckVisitor extends CASTVisitor {
 		shouldVisitEnumerators = true;
 		shouldVisitTranslationUnit = true;
 		shouldVisitProblems = false;
-		shouldVisitDesignators = true;
 	}
 	
 	@Override

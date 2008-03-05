@@ -572,16 +572,12 @@ unary_expression
 new_expression -- done
     ::= dcolon_opt 'new' new_placement_opt new_type_id <openscope-ast> new_array_expressions_opt new_initializer_opt
           /. $Build  consumeExpressionNew(true);  $EndBuild ./
-      | dcolon_opt 'new' new_placement_opt '(' type_id ')' new_initializer_opt
+      | dcolon_opt 'new' new_placement_opt '(' type_id ')' <openscope-ast> new_array_expressions_opt new_initializer_opt
           /. $Build  consumeExpressionNew(false);  $EndBuild ./
 
 
-new_placement -- done
+new_placement_opt
     ::= '(' expression_list ')'
-
-
-new_placement_opt -- done
-    ::= new_placement
       | $empty
           /. $Build  consumeEmpty();  $EndBuild ./
 
@@ -613,11 +609,11 @@ new_array_expressions_opt
       | $empty
 
 
-new_initializer -- done
+new_initializer
     ::= '(' expression_list_opt ')'  -- even if the parens are there we get null in the AST
     
     
-new_initializer_opt -- done
+new_initializer_opt
     ::= new_initializer
       | $empty
            /. $Build  consumeEmpty();  $EndBuild ./
@@ -1334,6 +1330,7 @@ type_id
 
 
 -- more lenient than spec, but easier to deal with
+-- TODO are conflicts resolved by using the more strict rule? 
 type_specifier_seq
     ::= declaration_specifiers
 
@@ -1554,6 +1551,7 @@ bit_field_declarator
 
 constant_initializer
     ::= '=' constant_expression
+            /. $Build  consumeInitializer();  $EndBuild ./
 
 
 base_clause

@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * David McKnight  (IBM)   [220123][dstore] Configurable timeout on irresponsiveness
+ * David McKnight  (IBM)   [221601][dstore] xmlparser needs to be able to handle very large attributes
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.util;
@@ -395,12 +396,18 @@ public class XMLparser
 						default:				       
 							break;
 					}
-					
+
 					if (offset >= _maxBuffer)
 					{
-						done = true;
+						int newMaxBuffer = 2 * _maxBuffer;
+						byte[] newBuffer = new byte[newMaxBuffer];
+						for (int i = 0; i < _maxBuffer; i++){
+							newBuffer[i] = _byteBuffer[i];
+						}
+						
+						_maxBuffer = newMaxBuffer;
+						_byteBuffer = newBuffer;
 					}
-
 					_byteBuffer[offset] = aByte;
 					offset++;  
 				}

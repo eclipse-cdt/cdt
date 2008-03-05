@@ -356,7 +356,7 @@ public class EditorUtility {
 	 * @param context  an element related to the target file, may be <code>null</code>
 	 * @return an <code>IFile</code> or <code>null</code>
 	 */
-	private static IFile getWorkspaceFileAtLocation(IPath location, ICElement context) {
+	public static IFile getWorkspaceFileAtLocation(IPath location, ICElement context) {
 		IProject project= null;
 		if (context != null) {
 			ICProject cProject= context.getCProject();

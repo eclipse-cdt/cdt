@@ -19,6 +19,7 @@ import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.filebuffers.LocationKind;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -43,6 +44,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.IPositionConverter;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
@@ -68,6 +71,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ILanguage;
@@ -88,6 +92,7 @@ import org.eclipse.cdt.internal.corext.util.Strings;
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 import org.eclipse.cdt.internal.ui.text.CCodeReader;
 import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
 
 /**
  * A text hover presenting the source of the element under the cursor.
@@ -128,7 +133,13 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 						IBinding binding= name.resolveBinding();
 						if (binding != null) {
 							if (binding instanceof IProblemBinding) {
-								if (DEBUG) fSource= "Cannot resolve " + new String(name.toCharArray()); //$NON-NLS-1$
+								// report problem as source comment
+								if (DEBUG) {
+									IProblemBinding problem= (IProblemBinding) binding;
+									fSource= "/* Indexer Problem!\n" + //$NON-NLS-1$
+											" * " + problem.getMessage() +  //$NON-NLS-1$
+											"\n */"; //$NON-NLS-1$
+								}
 							} else if (binding instanceof IMacroBinding) {
 								fSource= computeSourceForMacro(ast, name, binding);
 							} else {
@@ -178,13 +189,13 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 				if (source != null) {
 					return source;
 				}
-				IASTFunctionStyleMacroParameter[] parameters= {};
+				IASTFunctionStyleMacroParameter[] parameters= null;
 				if (macroDef instanceof IASTPreprocessorFunctionStyleMacroDefinition) {
 					parameters= ((IASTPreprocessorFunctionStyleMacroDefinition)macroDef).getParameters();
 				}
-				StringBuffer buf= new StringBuffer(macroName.length + macroDef.getExpansion().length() + parameters.length*5 + 10);
+				StringBuffer buf= new StringBuffer(macroName.length + macroDef.getExpansion().length() + 20);
 				buf.append("#define ").append(macroName); //$NON-NLS-1$
-				if (parameters.length > 0) {
+				if (parameters != null) {
 					buf.append('(');
 					for (int i = 0; i < parameters.length; i++) {
 						if (i > 0) {
@@ -245,6 +256,9 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 			if (fileLocation == null) {
 				return null;
 			}
+			int nodeOffset= fileLocation.getNodeOffset();
+			int nodeLength= fileLocation.getNodeLength();
+			
 			String fileName= fileLocation.getFileName();
 			if (DEBUG) System.out.println("[CSourceHover] Computing source for " + new String(name.toCharArray()) + " in " + fileName);  //$NON-NLS-1$//$NON-NLS-2$
 			IPath location= Path.fromOSString(fileName);
@@ -256,12 +270,31 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 					location= fTU.getResource().getFullPath();
 					locationKind= LocationKind.IFILE;
 				}
+			} else {
+				// try to resolve path to a resource for proper encoding (bug 221029)
+				IFile file= EditorUtility.getWorkspaceFileAtLocation(location, fTU);
+				if (file != null) {
+					location= file.getFullPath();
+					locationKind= LocationKind.IFILE;
+					if (name instanceof IIndexName) {
+						// need to adjust index offsets to current offsets
+						// in case file has been modified since last index time
+						IIndexName indexName= (IIndexName) name;
+						long timestamp= indexName.getFile().getTimestamp();
+						IPositionConverter converter= CCorePlugin.getPositionTrackerManager().findPositionConverter(file, timestamp);
+						if (converter != null) {
+							IRegion currentLocation= converter.historicToActual(new Region(nodeOffset, nodeLength));
+							nodeOffset= currentLocation.getOffset();
+							nodeLength= currentLocation.getLength();
+						}
+					}
+				}
 			}
 			ITextFileBufferManager mgr= FileBuffers.getTextFileBufferManager();
 			mgr.connect(location, locationKind, fMonitor);
 			ITextFileBuffer buffer= mgr.getTextFileBuffer(location, locationKind);
 			try {
-				IRegion nameRegion= new Region(fileLocation.getNodeOffset(), fileLocation.getNodeLength());
+				IRegion nameRegion= new Region(nodeOffset, nodeLength);
 				final int nameOffset= nameRegion.getOffset();
 				final int sourceStart;
 				final int sourceEnd;
@@ -648,7 +681,10 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 		int nextNonWS= scanner.findNonWhitespaceForwardInAnyPartition(sourceEnd + 1, lineEnd);
 		if (nextNonWS != CHeuristicScanner.NOT_FOUND) {
 			String contentType= TextUtilities.getContentType(doc, ICPartitions.C_PARTITIONING, nextNonWS, false);
-			if (ICPartitions.C_MULTI_LINE_COMMENT.equals(contentType) || ICPartitions.C_SINGLE_LINE_COMMENT.equals(contentType)) {
+			if (ICPartitions.C_MULTI_LINE_COMMENT.equals(contentType)
+					|| ICPartitions.C_MULTI_LINE_DOC_COMMENT.equals(contentType) 
+					|| ICPartitions.C_SINGLE_LINE_COMMENT.equals(contentType)
+					|| ICPartitions.C_SINGLE_LINE_DOC_COMMENT.equals(contentType)) {
 				sourceEnd= lineEnd;
 			}
 		}
@@ -677,7 +713,8 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 		while (currentOffset > bound) {
 			partition= TextUtilities.getPartition(doc, ICPartitions.C_PARTITIONING, currentOffset, true);
 			currentOffset= partition.getOffset() - 1;
-			if (ICPartitions.C_MULTI_LINE_COMMENT.equals(partition.getType())) {
+			if (ICPartitions.C_MULTI_LINE_COMMENT.equals(partition.getType()) 
+					|| ICPartitions.C_MULTI_LINE_DOC_COMMENT.equals(partition.getType())) {
 				final int partitionOffset= partition.getOffset();
 				final int startLine= doc.getLineOfOffset(partitionOffset);
 				final int lineOffset= doc.getLineOffset(startLine);
@@ -686,7 +723,8 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 					return lineOffset;
 				}
 				return commentOffset;
-			} else if (ICPartitions.C_SINGLE_LINE_COMMENT.equals(partition.getType())) {
+			} else if (ICPartitions.C_SINGLE_LINE_COMMENT.equals(partition.getType())
+					|| ICPartitions.C_SINGLE_LINE_DOC_COMMENT.equals(partition.getType())) {
 				final int partitionOffset= partition.getOffset();
 				final int startLine= doc.getLineOfOffset(partitionOffset);
 				final int lineOffset= doc.getLineOffset(startLine);

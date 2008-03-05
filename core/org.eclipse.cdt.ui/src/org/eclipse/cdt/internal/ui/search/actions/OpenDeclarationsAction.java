@@ -68,10 +68,32 @@ import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
 import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 
-public class OpenDeclarationsAction extends SelectionParseAction {
+public class OpenDeclarationsAction extends SelectionParseAction implements ASTRunnable {
 	public static boolean sIsJUnitTest = false;	
-	public static final IASTName[] BLANK_NAME_ARRAY = new IASTName[0];
-	ITextSelection selNode;
+	
+	private static final int KIND_OTHER = 0;
+	private static final int KIND_USING_DECL = 1;
+	private static final int KIND_DEFINITION = 2;
+
+	private class WrapperJob extends Job {
+		WrapperJob() {
+			super(CEditorMessages.getString("OpenDeclarations.dialog.title")); //$NON-NLS-1$
+		}
+		@Override
+		protected IStatus run(IProgressMonitor monitor) {
+			try {
+				return performNavigation(monitor);
+			}
+			catch (CoreException e) {
+				return e.getStatus();
+			}
+		}		
+	}
+	
+	
+	ITextSelection fTextSelection;
+	private IWorkingCopy fWorkingCopy;
+	private IIndex fIndex;
 
 	/**
 	 * Creates a new action with the given editor
@@ -83,299 +105,282 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 		setDescription(CEditorMessages.getString("OpenDeclarations.description")); //$NON-NLS-1$
 	}
 
-	private class Runner extends Job implements ASTRunnable {
-		private static final int KIND_OTHER = 0;
-		private static final int KIND_USING_DECL = 1;
-		private static final int KIND_DEFINITION = 2;
-		
-		private IWorkingCopy fWorkingCopy;
-		private IIndex fIndex;
+	
+	protected IStatus performNavigation(IProgressMonitor monitor) throws CoreException {
+		clearStatusLine();
 
-		Runner() {
-			super(CEditorMessages.getString("OpenDeclarations.dialog.title")); //$NON-NLS-1$
+		fWorkingCopy = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(fEditor.getEditorInput());
+		if (fWorkingCopy == null)
+			return Status.CANCEL_STATUS;
+
+		fIndex= CCorePlugin.getIndexManager().getIndex(fWorkingCopy.getCProject(),
+				IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_DEPENDENT);
+
+		try {
+			fIndex.acquireReadLock();
+		} catch (InterruptedException e) {
+			return Status.CANCEL_STATUS;
 		}
 
-		@Override
-		protected IStatus run(IProgressMonitor monitor) {
-			try {
-				clearStatusLine();
-				
-				fWorkingCopy = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(fEditor.getEditorInput());
-				if (fWorkingCopy == null)
-					return Status.CANCEL_STATUS;
-
-				fIndex= CCorePlugin.getIndexManager().getIndex(fWorkingCopy.getCProject(),
-						IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_DEPENDENT);
-				
-				try {
-					fIndex.acquireReadLock();
-				} catch (InterruptedException e) {
-					return Status.CANCEL_STATUS;
-				}
-
-				try {
-					return ASTProvider.getASTProvider().runOnAST(fWorkingCopy, ASTProvider.WAIT_YES, monitor, this);
-				} finally {
-					fIndex.releaseReadLock();
-				}
-			} catch (CoreException e) {
-				return e.getStatus();
-			}
+		try {
+			return ASTProvider.getASTProvider().runOnAST(fWorkingCopy, ASTProvider.WAIT_YES, monitor, this);
+		} finally {
+			fIndex.releaseReadLock();
 		}
+	}
 
-		public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
-			if (ast == null) {
+	public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
+		if (ast == null) {
+			return Status.OK_STATUS;
+		}
+		int selectionStart = fTextSelection.getOffset();
+		int selectionLength = fTextSelection.getLength();
+
+		IASTName searchName= ast.getNodeSelector(null).findEnclosingName(selectionStart, selectionLength);
+		if (searchName != null) { // just right, only one name selected
+			boolean found= false;
+			final IASTNode parent = searchName.getParent();
+			if (parent instanceof IASTPreprocessorIncludeStatement) {
+				openInclude(((IASTPreprocessorIncludeStatement) parent));
 				return Status.OK_STATUS;
 			}
-			int selectionStart = selNode.getOffset();
-			int selectionLength = selNode.getLength();
-				
-			IASTName searchName= ast.getNodeSelector(null).findEnclosingName(selectionStart, selectionLength);
-			if (searchName != null) { // just right, only one name selected
-				boolean found= false;
-				final IASTNode parent = searchName.getParent();
-				if (parent instanceof IASTPreprocessorIncludeStatement) {
-					openInclude(((IASTPreprocessorIncludeStatement) parent));
-					return Status.OK_STATUS;
-				}
-				IBinding binding = searchName.resolveBinding();
-				if (binding != null && !(binding instanceof IProblemBinding)) {
-					int isKind= KIND_OTHER;
-					if (searchName.isDefinition()) {
-						if (binding instanceof ICPPUsingDeclaration) {
-							isKind= KIND_USING_DECL;
-						} else {
-							isKind= KIND_DEFINITION;
-						}
+			IBinding binding = searchName.resolveBinding();
+			if (binding != null && !(binding instanceof IProblemBinding)) {
+				int isKind= KIND_OTHER;
+				if (searchName.isDefinition()) {
+					if (binding instanceof ICPPUsingDeclaration) {
+						isKind= KIND_USING_DECL;
+					} else {
+						isKind= KIND_DEFINITION;
 					}
-					IName[] declNames = findNames(fIndex, ast, isKind, binding);
-					if (declNames.length == 0) {
-						if (binding instanceof ICPPSpecialization) {
-							// bug 207320, handle template instances
-							IBinding specialized= ((ICPPSpecialization) binding).getSpecializedBinding();
-							if (specialized != null && !(specialized instanceof IProblemBinding)) {
-								declNames = findNames(fIndex, ast, KIND_DEFINITION, specialized);
-							}
-						} else if (binding instanceof ICPPMethod) {
-							// bug 86829, handle implicit methods.
-							ICPPMethod method= (ICPPMethod) binding;
-							if (method.isImplicit()) {
-								try {
-									IBinding clsBinding= method.getClassOwner();
-									if (clsBinding != null && !(clsBinding instanceof IProblemBinding)) {
-										declNames= findNames(fIndex, ast, KIND_OTHER, clsBinding);
-									}
-								} catch (DOMException e) {
-									// don't log problem bindings.
+				}
+				IName[] declNames = findNames(fIndex, ast, isKind, binding);
+				if (declNames.length == 0) {
+					if (binding instanceof ICPPSpecialization) {
+						// bug 207320, handle template instances
+						IBinding specialized= ((ICPPSpecialization) binding).getSpecializedBinding();
+						if (specialized != null && !(specialized instanceof IProblemBinding)) {
+							declNames = findNames(fIndex, ast, KIND_DEFINITION, specialized);
+						}
+					} else if (binding instanceof ICPPMethod) {
+						// bug 86829, handle implicit methods.
+						ICPPMethod method= (ICPPMethod) binding;
+						if (method.isImplicit()) {
+							try {
+								IBinding clsBinding= method.getClassOwner();
+								if (clsBinding != null && !(clsBinding instanceof IProblemBinding)) {
+									declNames= findNames(fIndex, ast, KIND_OTHER, clsBinding);
 								}
+							} catch (DOMException e) {
+								// don't log problem bindings.
 							}
 						}
 					}
-					if (navigateViaCElements(fWorkingCopy.getCProject(), fIndex, declNames)) {
-						found= true;
-					}
-					else {
-						// leave old method as fallback for local variables, parameters and 
-						// everything else not covered by ICElementHandle.
-						found = navigateOneLocation(declNames);
-					}
 				}
-				if (!found) {
-					reportSymbolLookupFailure(new String(searchName.toCharArray()));
+				if (navigateViaCElements(fWorkingCopy.getCProject(), fIndex, declNames)) {
+					found= true;
 				}
-				return Status.OK_STATUS;
-			} 
-			
-			// Check if we're in an include statement
-			IASTPreprocessorStatement[] preprocs = ast.getAllPreprocessorStatements();
-			for (int i = 0; i < preprocs.length; ++i) {
-				if (!(preprocs[i] instanceof IASTPreprocessorIncludeStatement))
-					continue;
-				IASTPreprocessorIncludeStatement incStmt = (IASTPreprocessorIncludeStatement)preprocs[i];
-				IASTFileLocation loc = preprocs[i].getFileLocation();
-				if (loc != null
-						&& loc.getFileName().equals(ast.getFilePath())
-						&& loc.getNodeOffset() < selectionStart
-						&& loc.getNodeOffset() + loc.getNodeLength() > selectionStart) {
-					// Got it
-					openInclude(incStmt);
-					return Status.OK_STATUS;
+				else {
+					// leave old method as fallback for local variables, parameters and 
+					// everything else not covered by ICElementHandle.
+					found = navigateOneLocation(declNames);
 				}
 			}
-			reportSelectionMatchFailure();
-			return Status.OK_STATUS; 
-		}
+			if (!found) {
+				reportSymbolLookupFailure(new String(searchName.toCharArray()));
+			}
+			return Status.OK_STATUS;
+		} 
 
-		private void openInclude(IASTPreprocessorIncludeStatement incStmt) {
-			String name = null;
-			if (incStmt.isResolved())
-				name = incStmt.getPath();
-			
-			if (name != null) {
-				final IPath path = new Path(name);
+		// Check if we're in an include statement
+		IASTPreprocessorStatement[] preprocs = ast.getAllPreprocessorStatements();
+		for (int i = 0; i < preprocs.length; ++i) {
+			if (!(preprocs[i] instanceof IASTPreprocessorIncludeStatement))
+				continue;
+			IASTPreprocessorIncludeStatement incStmt = (IASTPreprocessorIncludeStatement)preprocs[i];
+			IASTFileLocation loc = preprocs[i].getFileLocation();
+			if (loc != null
+					&& loc.getFileName().equals(ast.getFilePath())
+					&& loc.getNodeOffset() < selectionStart
+					&& loc.getNodeOffset() + loc.getNodeLength() > selectionStart) {
+				// Got it
+				openInclude(incStmt);
+				return Status.OK_STATUS;
+			}
+		}
+		reportSelectionMatchFailure();
+		return Status.OK_STATUS; 
+	}
+
+	private void openInclude(IASTPreprocessorIncludeStatement incStmt) {
+		String name = null;
+		if (incStmt.isResolved())
+			name = incStmt.getPath();
+
+		if (name != null) {
+			final IPath path = new Path(name);
+			runInUIThread(new Runnable() {
+				public void run() {
+					try {
+						open(path, 0, 0);
+					} catch (CoreException e) {
+						CUIPlugin.getDefault().log(e);
+					}
+				}
+			});
+		} else {
+			reportIncludeLookupFailure(new String(incStmt.getName().toCharArray()));
+		}
+	}
+
+	private boolean navigateOneLocation(IName[] declNames) {
+		for (int i = 0; i < declNames.length; i++) {
+			IASTFileLocation fileloc = declNames[i].getFileLocation();
+			if (fileloc != null) {
+
+				final IPath path = new Path(fileloc.getFileName());
+				final int offset = fileloc.getNodeOffset();
+				final int length = fileloc.getNodeLength();
+
 				runInUIThread(new Runnable() {
 					public void run() {
 						try {
-							open(path, 0, 0);
+							open(path, offset, length);
 						} catch (CoreException e) {
 							CUIPlugin.getDefault().log(e);
 						}
 					}
 				});
-			} else {
-				reportIncludeLookupFailure(new String(incStmt.getName().toCharArray()));
+				return true;
 			}
 		}
+		return false;
+	}
 
-		private boolean navigateOneLocation(IName[] declNames) {
-			for (int i = 0; i < declNames.length; i++) {
-				IASTFileLocation fileloc = declNames[i].getFileLocation();
-				if (fileloc != null) {
-
-					final IPath path = new Path(fileloc.getFileName());
-					final int offset = fileloc.getNodeOffset();
-					final int length = fileloc.getNodeLength();
-
-					runInUIThread(new Runnable() {
-						public void run() {
-							try {
-								open(path, offset, length);
-							} catch (CoreException e) {
-								CUIPlugin.getDefault().log(e);
-							}
-						}
-					});
-					return true;
+	private boolean navigateViaCElements(ICProject project, IIndex index, IName[] declNames) {
+		final ArrayList<ICElement> elements= new ArrayList<ICElement>();
+		for (int i = 0; i < declNames.length; i++) {
+			try {
+				ICElement elem = getCElementForName(project, index, declNames[i]);
+				if (elem instanceof ISourceReference) {
+					elements.add(elem);
 				}
+			} catch (CoreException e) {
+				CUIPlugin.getDefault().log(e);
 			}
+		}
+		if (elements.isEmpty()) {
 			return false;
 		}
 
-		private boolean navigateViaCElements(ICProject project, IIndex index, IName[] declNames) {
-			final ArrayList<ICElement> elements= new ArrayList<ICElement>();
-			for (int i = 0; i < declNames.length; i++) {
-				try {
-					ICElement elem = getCElementForName(project, index, declNames[i]);
-					if (elem instanceof ISourceReference) {
-						elements.add(elem);
+		runInUIThread(new Runnable() {
+			public void run() {
+				ISourceReference target= null;
+				if (elements.size() == 1) {
+					target= (ISourceReference) elements.get(0);
+				}
+				else {
+					if (sIsJUnitTest) {
+						throw new RuntimeException("ambiguous input"); //$NON-NLS-1$
 					}
-				} catch (CoreException e) {
-					CUIPlugin.getDefault().log(e);
+					ICElement[] elemArray= elements.toArray(new ICElement[elements.size()]);
+					target = (ISourceReference) OpenActionUtil.selectCElement(elemArray, getSite().getShell(),
+							CEditorMessages.getString("OpenDeclarationsAction.dialog.title"), CEditorMessages.getString("OpenDeclarationsAction.selectMessage"), //$NON-NLS-1$ //$NON-NLS-2$
+							CElementBaseLabels.ALL_DEFAULT | CElementBaseLabels.MF_POST_FILE_QUALIFIED, 0);
+				}
+				if (target != null) {
+					ITranslationUnit tu= target.getTranslationUnit();
+					ISourceRange sourceRange;
+					try {
+						sourceRange = target.getSourceRange();
+						if (tu != null && sourceRange != null) {
+							open(tu.getLocation(), sourceRange.getIdStartPos(), sourceRange.getIdLength());
+						}
+					} catch (CoreException e) {
+						CUIPlugin.getDefault().log(e);
+					}
 				}
 			}
-			if (elements.isEmpty()) {
-				return false;
-			}
-			
-			runInUIThread(new Runnable() {
-				public void run() {
-					ISourceReference target= null;
-					if (elements.size() == 1) {
-						target= (ISourceReference) elements.get(0);
-					}
-					else {
-						if (sIsJUnitTest) {
-							throw new RuntimeException("ambiguous input"); //$NON-NLS-1$
-						}
-						ICElement[] elemArray= elements.toArray(new ICElement[elements.size()]);
-						target = (ISourceReference) OpenActionUtil.selectCElement(elemArray, getSite().getShell(),
-								CEditorMessages.getString("OpenDeclarationsAction.dialog.title"), CEditorMessages.getString("OpenDeclarationsAction.selectMessage"), //$NON-NLS-1$ //$NON-NLS-2$
-								CElementBaseLabels.ALL_DEFAULT | CElementBaseLabels.MF_POST_FILE_QUALIFIED, 0);
-					}
-					if (target != null) {
-						ITranslationUnit tu= target.getTranslationUnit();
-						ISourceRange sourceRange;
-						try {
-							sourceRange = target.getSourceRange();
-							if (tu != null && sourceRange != null) {
-								open(tu.getLocation(), sourceRange.getIdStartPos(), sourceRange.getIdLength());
-							}
-						} catch (CoreException e) {
-							CUIPlugin.getDefault().log(e);
-						}
-					}
-				}
-			});
-			return true;
-		}
+		});
+		return true;
+	}
 
-		private ICElementHandle getCElementForName(ICProject project, IIndex index, IName declName) 
-				throws CoreException {
-			if (declName instanceof IIndexName) {
-				return IndexUI.getCElementForName(project, index, (IIndexName) declName);
-			}
-			if (declName instanceof IASTName) {
-				IASTName astName = (IASTName) declName;
-				IBinding binding= astName.resolveBinding();
-				if (binding != null) {
-					ITranslationUnit tu= IndexUI.getTranslationUnit(project, astName);
-					if (tu != null) {
-						IASTFileLocation loc= astName.getFileLocation();
-						IRegion region= new Region(loc.getNodeOffset(), loc.getNodeLength());
-						return CElementHandleFactory.create(tu, binding, astName.isDefinition(), region, 0);
-					}
+	private ICElementHandle getCElementForName(ICProject project, IIndex index, IName declName) 
+	throws CoreException {
+		if (declName instanceof IIndexName) {
+			return IndexUI.getCElementForName(project, index, (IIndexName) declName);
+		}
+		if (declName instanceof IASTName) {
+			IASTName astName = (IASTName) declName;
+			IBinding binding= astName.resolveBinding();
+			if (binding != null) {
+				ITranslationUnit tu= IndexUI.getTranslationUnit(project, astName);
+				if (tu != null) {
+					IASTFileLocation loc= astName.getFileLocation();
+					IRegion region= new Region(loc.getNodeOffset(), loc.getNodeLength());
+					return CElementHandleFactory.create(tu, binding, astName.isDefinition(), region, 0);
 				}
-				return null;
 			}
 			return null;
 		}
+		return null;
+	}
 
-		private IName[] findNames(IIndex index, IASTTranslationUnit ast, int isKind, IBinding binding) throws CoreException {
-			IName[] declNames;
+	private IName[] findNames(IIndex index, IASTTranslationUnit ast, int isKind, IBinding binding) throws CoreException {
+		IName[] declNames;
+		if (isKind == KIND_DEFINITION) {
+			declNames= findDeclarations(index, ast, binding);
+		} else {
+			declNames= findDefinitions(index, ast, isKind, binding);
+		}
+
+		if (declNames.length == 0) {
 			if (isKind == KIND_DEFINITION) {
-				declNames= findDeclarations(index, ast, binding);
-			} else {
 				declNames= findDefinitions(index, ast, isKind, binding);
+			} else {
+				declNames= findDeclarations(index, ast, binding);
 			}
-			
-			if (declNames.length == 0) {
-				if (isKind == KIND_DEFINITION) {
-					declNames= findDefinitions(index, ast, isKind, binding);
-				} else {
-					declNames= findDeclarations(index, ast, binding);
-				}
+		}
+		return declNames;
+	}
+
+	private IName[] findDefinitions(IIndex index, IASTTranslationUnit ast, int isKind, IBinding binding) throws CoreException {
+		List<IASTName> declNames= new ArrayList<IASTName>();
+		declNames.addAll(Arrays.asList(ast.getDefinitionsInAST(binding)));
+		for (Iterator<IASTName> i = declNames.iterator(); i.hasNext();) {
+			IASTName name= i.next();
+			if (name.resolveBinding() instanceof ICPPUsingDeclaration) {
+				i.remove();
 			}
-			return declNames;
+		}
+		if (!declNames.isEmpty()) {
+			return declNames.toArray(new IASTName[declNames.size()]);
 		}
 
-		private IName[] findDefinitions(IIndex index, IASTTranslationUnit ast, int isKind, IBinding binding) throws CoreException {
-			List<IASTName> declNames= new ArrayList<IASTName>();
-			declNames.addAll(Arrays.asList(ast.getDefinitionsInAST(binding)));
-			for (Iterator<IASTName> i = declNames.iterator(); i.hasNext();) {
-				IASTName name= i.next();
-				if (name.resolveBinding() instanceof ICPPUsingDeclaration) {
-					i.remove();
-				}
-			}
-			if (!declNames.isEmpty()) {
-				return declNames.toArray(new IASTName[declNames.size()]);
-			}
-			
-			// 2. Try definition in index
-			return index.findNames(binding, IIndex.FIND_DEFINITIONS | IIndex.SEARCH_ACCROSS_LANGUAGE_BOUNDARIES);
-		}
+		// 2. Try definition in index
+		return index.findNames(binding, IIndex.FIND_DEFINITIONS | IIndex.SEARCH_ACCROSS_LANGUAGE_BOUNDARIES);
+	}
 
-		private IName[] findDeclarations(IIndex index, IASTTranslationUnit ast,
-				IBinding binding) throws CoreException {
-			IName[] declNames= ast.getDeclarationsInAST(binding);
-			for (int i = 0; i < declNames.length; i++) {
-				IName name = declNames[i];
-				if (name.isDefinition()) 
-					declNames[i]= null;
-			}
-			declNames= (IName[]) ArrayUtil.removeNulls(IName.class, declNames);
-			if (declNames.length == 0) {
-				declNames= index.findNames(binding, IIndex.FIND_DECLARATIONS | IIndex.SEARCH_ACCROSS_LANGUAGE_BOUNDARIES);
-			}
-			return declNames;
+	private IName[] findDeclarations(IIndex index, IASTTranslationUnit ast,
+			IBinding binding) throws CoreException {
+		IName[] declNames= ast.getDeclarationsInAST(binding);
+		for (int i = 0; i < declNames.length; i++) {
+			IName name = declNames[i];
+			if (name.isDefinition()) 
+				declNames[i]= null;
 		}
+		declNames= (IName[]) ArrayUtil.removeNulls(IName.class, declNames);
+		if (declNames.length == 0) {
+			declNames= index.findNames(binding, IIndex.FIND_DECLARATIONS | IIndex.SEARCH_ACCROSS_LANGUAGE_BOUNDARIES);
+		}
+		return declNames;
 	}
 
 	@Override
 	public void run() {
-		selNode = getSelectedStringFromEditor();
-		if (selNode != null) {
-			new Runner().schedule();
+		fTextSelection = getSelectedStringFromEditor();
+		if (fTextSelection != null) {
+			new WrapperJob().schedule();
 		}
 	}
 
@@ -392,10 +397,10 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 	 * For the purpose of regression testing.
 	 * @since 4.0
 	 */
-	public void runSync() {
-		selNode = getSelectedStringFromEditor();
-		if (selNode != null) {
-			new Runner().run(new NullProgressMonitor());
+	public void runSync() throws CoreException {
+		fTextSelection = getSelectedStringFromEditor();
+		if (fTextSelection != null) {
+			performNavigation(new NullProgressMonitor());
 		}
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,20 +10,14 @@
  *     Markus Schorn (Wind River Systems)
  *     Gerhard Schaber (Wind River Systems)
  *******************************************************************************/
-/*
- * Created on Jun 24, 2003
- */
 package org.eclipse.cdt.core.model.util;
-
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IEnumerator;
 import org.eclipse.cdt.core.model.IField;
 import org.eclipse.cdt.core.model.IFunctionDeclaration;
 import org.eclipse.cdt.core.model.IInheritance;
@@ -35,6 +29,9 @@ import org.eclipse.cdt.core.model.ITypeDef;
 import org.eclipse.cdt.core.model.IVariableDeclaration;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.core.model.CoreModelMessages;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * Creates labels for ICElement objects.
@@ -257,6 +254,9 @@ public class CElementBaseLabels {
 			case ICElement.C_VARIABLE:
 			case ICElement.C_VARIABLE_DECLARATION:
 				getVariableLabel( (IVariableDeclaration) element, flags, buf);
+				break;
+			case ICElement.C_ENUMERATOR:
+				getEnumeratorLabel((IEnumerator) element, flags, buf);
 				break;
 			case ICElement.C_CLASS:
 			case ICElement.C_STRUCT:
@@ -502,6 +502,41 @@ public class CElementBaseLabels {
 		}
 		} catch (CModelException e) {
 			CCorePlugin.log(e);
+		}
+	}
+
+	/**
+	 * Appends the label for an enumerator to a StringBuffer.
+	 * @param var an enumerator
+	 * @param flags any of the F_* flags, and MF_POST_FILE_QUALIFIED
+	 * @param buf the buffer to append the label
+	 */
+	public static void getEnumeratorLabel(IEnumerator var, int flags, StringBuffer buf ) {
+		//qualification
+		if( getFlag( flags, F_FULLY_QUALIFIED ) ){
+			ICElement parent = var.getParent();
+			if (parent != null && parent.exists() && parent.getElementType() == ICElement.C_NAMESPACE) {
+				getTypeLabel( parent, T_FULLY_QUALIFIED, buf );
+				buf.append( "::" ); //$NON-NLS-1$
+			}
+		}
+		
+		buf.append( var.getElementName() );
+						
+		// post qualification
+		if( getFlag(flags, F_POST_QUALIFIED)) {
+			ICElement parent = var.getParent();
+			if (parent != null && parent.exists() && parent.getElementType() == ICElement.C_NAMESPACE) {
+				buf.append( CONCAT_STRING );
+				getTypeLabel( var.getParent(), T_FULLY_QUALIFIED, buf );
+			}
+		}
+		if( getFlag(flags, MF_POST_FILE_QUALIFIED)) {
+			IPath path= var.getPath();
+			if (path != null) {
+				buf.append( CONCAT_STRING );
+				buf.append(path.toString());
+			}
 		}
 	}
 

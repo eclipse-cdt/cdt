@@ -142,6 +142,7 @@
 <!-- ================================================================================== -->
 
    <extension-point id="subsystemConfigurations" name="%extPoint.subsystemConfigurations" schema="schema/subsystemConfigurations.exsd"/>
+   <extension-point id="modelInitializers" name="%extPoint.modelInitializers" schema="schema/modelInitializers.exsd"/>
 
 <!-- ================================================================= -->
 <!-- 		PreferencesInitializers                                    -->

@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.rse.core" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appinfo>
+         <meta.schema plugin="org.eclipse.rse.core" id="modelInitializers" name="Model Initializers"/>
+      </appinfo>
+      <documentation>
+         A model initializer is used to create supplemental connections and filter pools after the RSE model has been restored from its persistent form. The base RSE uses this extension point to supply the &quot;Local&quot; connection if one has not already been created for this workspace. Other extenders of RSE may use this to augment the mode in other ways. An initializer is run at the end of the initialization job begun by RSE when it is activated.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="modelInitializer" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="modelInitializer">
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A class that implements &lt;b&gt;org.eclipse.rse.core.IRSEModelInitializer&lt;/b&gt;.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.rse.core.model.RSEModelInitializer"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="since"/>
+      </appinfo>
+      <documentation>
+         3.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="examples"/>
+      </appinfo>
+      <documentation>
+         An example taken from the plug-in org.eclipse.rse.ui:
+&lt;pre&gt;
+&lt;extension point=&quot;org.eclipse.rse.core.modelInitializers&quot;&gt;
+   &lt;modelInitializer class=&quot;org.eclipse.rse.internal.ui.RSEUIPluginModelInitializer&quot;/&gt;
+&lt;/extension&gt;
+&lt;/pre&gt;
+      </documentation>
+   </annotation>
+
+
+
+   <annotation>
+      <appinfo>
+         <meta.section type="copyright"/>
+      </appinfo>
+      <documentation>
+         Copyright (c) 2008 IBM Corporation and others. All rights reserved.
+This program and the accompanying materials are made available under the terms
+of the Eclipse Public License v1.0 which accompanies this distribution, and is
+available at http://www.eclipse.org/legal/epl-v10.html
+&lt;br/&gt;
+&lt;br/&gt;Contributors:
+&lt;br/&gt;David Dykstal (IBM) - [197167] adding notification and waiting for RSE model
+      </documentation>
+   </annotation>
+
+</schema>

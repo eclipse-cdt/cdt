@@ -54,6 +54,17 @@ public class RSECoreMessages extends NLS {
 	// Password Persistence Manager
 	public static String DefaultSystemType_Label;
 	
+	// InitRSEJob
+	public static String InitRSEJob_initializer_ended_in_error;
+	public static String InitRSEJob_initializer_failed_to_load;
+	public static String InitRSEJob_initializer_interrupted;
+	public static String InitRSEJob_initializing_rse;
+	public static String InitRSEJob_job_interrupted;
+	public static String InitRSEJob_joining_job;
+	public static String InitRSEJob_listener_ended_in_error;
+	public static String InitRSEJob_waiting_for_initializer;
+	public static String InitRSEJob_waiting_for_job;
+	
 	// SystemRegistry: Loading Profile Warning Messages - See also ISystemMessages
 	public static String MSG_LOADING_PROFILE_WARNING_FILTERPOOL_REFS;
 	public static String MSG_LOADING_PROFILE_WARNING_FILTERPOOL_REF;

@@ -20,6 +20,7 @@
  * Uwe Stieber (Wind River) - [192611] RSE Core plugin may fail to initialize because of cyclic code invocation
  * Martin Oberhuber (Wind River) - [165674] Sort subsystem configurations by priority then Id
  * Martin Oberhuber (Wind River) - [215820] Move SystemRegistry implementation to Core
+ * David Dykstal (IBM) - [197167] adding notification and waiting for RSE model
  ********************************************************************************/
 package org.eclipse.rse.core;
 
@@ -31,12 +32,14 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.rse.core.comm.SystemKeystoreProviderManager;
 import org.eclipse.rse.core.model.ISystemProfileManager;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
+import org.eclipse.rse.internal.core.InitRSEJob;
 import org.eclipse.rse.internal.core.RSECoreRegistry;
 import org.eclipse.rse.internal.core.model.SystemProfileManager;
 import org.eclipse.rse.internal.core.model.SystemRegistry;
@@ -57,17 +60,38 @@ import org.osgi.framework.BundleContext;
 public class RSECorePlugin extends Plugin {
 
 	/**
+	 * The plugin id for this plugin. Value "org.eclipse.rse.core".
+	 */
+	public static final String PLUGIN_ID = "org.eclipse.rse.core"; //$NON-NLS-1$
+	
+	/**
 	 * Current release as a number (multiplied by 100). E.g. 300 is for release 3.0.0
 	 */
 	public static final int CURRENT_RELEASE = 200; // updated to new release
 
-	public static final String PLUGIN_ID = "org.eclipse.rse.core";
-	
 	/**
 	 * Current release as a string.
 	 */
 	public static final String CURRENT_RELEASE_NAME = "2.0.0";  //$NON-NLS-1$
 
+	/**
+	 * Value 1.
+	 * Used in isInitComplete(int) which will return true if the model phase of the 
+	 * initialization is complete.
+	 * Clients must not assume any particular ordering 
+	 * among phases based on the value.
+	 */
+	public static final int INIT_MODEL = 1;
+	
+	/**
+	 * Value 999.
+	 * Used in isInitComplete(int) which will return true if all phases of  
+	 * initialization are complete.
+	 * Clients must not assume any particular ordering 
+	 * among phases based on the value.
+	 */
+	public static final int INIT_ALL = 999;
+	
 	private static RSECorePlugin plugin = null; // the singleton instance of this plugin
 	private Logger logger = null;
 	private ISystemRegistry _systemRegistry = null;
@@ -80,6 +104,49 @@ public class RSECorePlugin extends Plugin {
 	 */
 	public static RSECorePlugin getDefault() {
 		return plugin;
+	}
+	
+	/**
+	 * Waits until the RSE model has been fully restored from its persistent form. Should be used 
+	 * before accessing pieces of the model.
+	 * @return an IStatus indicating how the initialization ended.
+	 * @throws InterruptedException if this wait was interrupted for some reason.
+	 */
+	public static IStatus waitForInitCompletion() throws InterruptedException {
+		return InitRSEJob.getInstance().waitForCompletion();
+	}
+	
+	/**
+	 * @param phase the phase identifier.
+	 * @return true if initialization of the RSE model is complete for that phase.
+	 * It will return true if the 
+	 * initialization for that phase has completed regardless its status of that completion.
+	 * @throws IllegalArgumentException if the phase is undefined.
+	 * @see #INIT_ALL
+	 * @see #INIT_MODEL
+	 */
+	public static boolean isInitComplete(int phase) {
+		return InitRSEJob.getInstance().isComplete(phase);
+	}
+	
+	/**
+	 * Adds a new listener to the set of listeners to be notified when initialization phases complete.
+	 * If the listener is added after the phase has completed it will not be invoked.
+	 * If the listener is already in the set it will not be added again.
+	 * Listeners may be notified in any order.
+	 * @param listener the listener to be added
+	 */
+	public static void addInitListener(IRSEInitListener listener) {
+		InitRSEJob.getInstance().addInitListener(listener);
+	}
+	
+	/**
+	 * Removes a listener to the set of listeners to be notified when phases complete.
+	 * If the listener is not in the set this does nothing.
+	 * @param listener the listener to be removed
+	 */
+	public static void removeInitListener(IRSEInitListener listener) {
+		InitRSEJob.getInstance().removeInitListener(listener);
 	}
 
 	/**
@@ -185,6 +252,8 @@ public class RSECorePlugin extends Plugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		registerKeystoreProviders();
+		InitRSEJob job = InitRSEJob.getInstance();
+		job.schedule();
 	}
 
 	/*

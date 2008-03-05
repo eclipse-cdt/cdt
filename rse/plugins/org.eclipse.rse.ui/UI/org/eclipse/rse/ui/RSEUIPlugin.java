@@ -30,28 +30,20 @@
  * David McKnight   (IBM)        - [196838] Don't recreate local after it has been deleted        
  * David Dykstal (IBM) - [197036] formatted the initialize job to be able to read it                     
  * Martin Oberhuber (Wind River) - [215820] Move SystemRegistry implementation to Core
+ * David Dykstal (IBM) - [197167] adding notification and waiting for RSE model
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
 
-import java.io.File;
 import java.net.URL;
 import java.util.Vector;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdapterManager;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemResourceManager;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.events.SystemResourceChangeEvent;
-import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemProfileManager;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
@@ -59,7 +51,6 @@ import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
 import org.eclipse.rse.internal.core.model.SystemProfileManager;
 import org.eclipse.rse.internal.core.model.SystemRegistry;
 import org.eclipse.rse.internal.ui.RSESystemTypeAdapterFactory;
-import org.eclipse.rse.internal.ui.SystemResourceListener;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.actions.SystemShowPreferencesPageAction;
 import org.eclipse.rse.internal.ui.subsystems.SubSystemConfigurationProxyAdapterFactory;
@@ -79,43 +70,6 @@ import org.osgi.framework.BundleContext;
  */
 public class RSEUIPlugin extends SystemBasePlugin
 {
-	 public class InitRSEJob extends Job {
-	    	public InitRSEJob() {
-	    		// IMPORTANT: The name of this job must not ever be changed. It is part of the API, 
-	    		// because clients can use it to find the InitRSEJob by name, such that they can join it.
-	    		super("Initialize RSE"); //$NON-NLS-1$
-	    	} 
-	    	
-	    	public IStatus run(IProgressMonitor monitor) {    		
-	            //System.err.println("InitRSEJob started"); //$NON-NLS-1$
-	    		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
-        		RSECorePlugin.getTheSystemProfileManager(); // create folders per profile
-			    // add workspace listener for our project
-	        	IProject remoteSystemsProject = SystemResourceManager.getRemoteSystemsProject(false);
-	        	SystemResourceListener listener = SystemResourceListener.getListener(remoteSystemsProject);
-			    SystemResourceManager.startResourceEventListening(listener);
-		    	// determining whether to create an initial local connection
-				IPath statePath = RSECorePlugin.getDefault().getStateLocation();
-				IPath markPath = statePath.append("localHostCreated.mark"); //$NON-NLS-1$
-				File markFile = new File(markPath.toOSString());
-				if (!markFile.exists() && SystemPreferencesManager.getShowLocalConnection()) {		
-					// create the connection only if the local system type is enabled
-					IRSESystemType systemType = RSECorePlugin.getTheCoreRegistry().getSystemTypeById(IRSESystemType.SYSTEMTYPE_LOCAL_ID);
-					if (systemType != null && systemType.isEnabled()) {
-						ISystemProfileManager profileManager = RSECorePlugin.getTheSystemProfileManager(); 
-						ISystemProfile profile = profileManager.getDefaultPrivateSystemProfile();
-						String userName = System.getProperty("user.name"); //$NON-NLS-1$
-						registry.createLocalHost(profile, SystemResources.TERM_LOCAL, userName);
-						try { 
-							markFile.createNewFile(); 
-						} 
-						catch(Exception e){}
-					}				       
-				}
-	            //System.err.println("InitRSEJob done"); //$NON-NLS-1$
-				return Status.OK_STATUS;
-	    	}
-	    }
 	
 	public static final String PLUGIN_ID  = "org.eclipse.rse.ui"; //$NON-NLS-1$ 	
 	public static final String HELPPREFIX = "org.eclipse.rse.ui."; //$NON-NLS-1$
@@ -453,8 +407,6 @@ public class RSEUIPlugin extends SystemBasePlugin
 	    svraf = new SystemTeamViewResourceAdapterFactory();
 	    svraf.registerWithManager(manager);
 	    
-		InitRSEJob initJob = new InitRSEJob();
-		initJob.schedule();
 	}
 
     /**

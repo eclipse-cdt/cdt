@@ -71,4 +71,12 @@
           name="Tests Only">
     </systemType>
  </extension>
+ 
+ <extension point="org.eclipse.rse.core.modelInitializers">
+ 	<modelInitializer class="org.eclipse.rse.tests.initialization.GoodInitializer"/>
+ 	<modelInitializer class="org.eclipse.rse.tests.initialization.BadInitializer"/>
+ 	<modelInitializer class="org.eclipse.rse.tests.initialization.UglyInitializer"/>
+ 	<modelInitializer class="org.eclipse.rse.tests.initialization.ListenerInitializer"/>
+ </extension>
+ 
 </plugin>

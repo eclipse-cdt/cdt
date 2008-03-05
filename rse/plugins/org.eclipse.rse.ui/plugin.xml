@@ -490,5 +490,11 @@ Martin Oberhuber (Wind River) - [185552] Remove remoteSystemsViewPreferencesActi
             </includes>
         </viewerContentBinding>
     </extension>
+    <extension
+          point="org.eclipse.rse.core.modelInitializers">
+       <modelInitializer
+             class="org.eclipse.rse.internal.ui.RSEUIPluginModelInitializer">
+       </modelInitializer>
+    </extension>
 	
 </plugin>

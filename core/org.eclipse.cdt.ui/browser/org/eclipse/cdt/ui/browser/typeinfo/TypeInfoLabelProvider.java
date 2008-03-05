@@ -69,6 +69,7 @@ public class TypeInfoLabelProvider extends LabelProvider {
 	/* non java-doc
 	 * @see ILabelProvider#getText
 	 */
+	@Override
 	public String getText(Object element) {
 		if (! (element instanceof ITypeInfo)) 
 			return super.getText(element);
@@ -95,7 +96,7 @@ public class TypeInfoLabelProvider extends LabelProvider {
 			}
 			buf.append(qualifiedName.getFullyQualifiedName());
 		}
-		if (isSet(SHOW_PARAMETERS) && typeInfo.getCElementType() == ICElement.C_FUNCTION) {
+		if (isSet(SHOW_PARAMETERS) && typeInfo.getCElementType() == ICElement.C_FUNCTION || typeInfo.getCElementType() == ICElement.C_MACRO) {
 			if (typeInfo instanceof IFunctionInfo) {
 				IFunctionInfo functionInfo= (IFunctionInfo)typeInfo;
 				String[] params= functionInfo.getParameters();
@@ -157,6 +158,7 @@ public class TypeInfoLabelProvider extends LabelProvider {
 	/* non java-doc
 	 * @see ILabelProvider#getImage
 	 */	
+	@Override
 	public Image getImage(Object element) {
 		if (!(element instanceof ITypeInfo)) 
 			return super.getImage(element);	

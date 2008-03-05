@@ -73,6 +73,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 			setPriority(Job.LONG);
 		}
 
+		@Override
 		public IStatus run(final IProgressMonitor monitor) {
 			monitor.beginTask(OpenTypeMessages.ElementSelectionDialog_UpdateElementsJob_inProgress, IProgressMonitor.UNKNOWN);
 			final ITypeInfo[] elements= getElementsByPrefix(fCurrentPrefix, monitor);
@@ -108,6 +109,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 			fMonitor= monitor;
 		}
 
+		@Override
 		public void done(IJobChangeEvent event) {
 			fDone= true;
 			final Shell shell= getShell();
@@ -122,6 +124,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 			}
 		}
 
+		@Override
 		public void running(final IJobChangeEvent event) {
 			fDone= false;
 			final Shell shell= getShell();
@@ -172,6 +175,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 	/*
 	 * @see org.eclipse.cdt.ui.browser.typeinfo.TypeSelectionDialog#create()
 	 */
+	@Override
 	public void create() {
 		super.create();
 		// trigger initial query
@@ -181,6 +185,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 	/*
 	 * @see org.eclipse.cdt.ui.browser.typeinfo.TypeSelectionDialog#close()
 	 */
+	@Override
 	public boolean close() {
 		fUpdateJob.cancel();
 		return super.close();
@@ -199,6 +204,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 	/*
 	 * @see org.eclipse.ui.dialogs.AbstractElementListSelectionDialog#setMatchEmptyString(boolean)
 	 */
+	@Override
 	public void setMatchEmptyString(boolean matchEmptyString) {
 		super.setMatchEmptyString(matchEmptyString);
 		fAllowEmptyString= matchEmptyString;
@@ -219,6 +225,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 	/*
 	 * @see org.eclipse.cdt.ui.browser.typeinfo.TypeSelectionDialog#showLowLevelFilter()
 	 */
+	@Override
 	protected boolean showLowLevelFilter() {
 		// the low-level filter is useless for us
 		return false;
@@ -227,6 +234,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 	/*
 	 * @see org.eclipse.ui.dialogs.TwoPaneElementSelector#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public Control createDialogArea(Composite parent) {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, fHelpContextId);
 		return super.createDialogArea(parent);
@@ -235,6 +243,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 	/*
 	 * @see org.eclipse.ui.dialogs.TwoPaneElementSelector#createLowerList(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Table createLowerList(Composite parent) {
 		Table table= super.createLowerList(parent);
 		createProgressMonitorPart(parent);
@@ -268,9 +277,10 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 		if (monitor.isCanceled()) {
 			return null;
 		}
-		HashSet types = new HashSet();
+		HashSet<IndexTypeInfo> types = new HashSet<IndexTypeInfo>();
 		if(prefix != null) {
 			final IndexFilter filter= new IndexFilter() {
+				@Override
 				public boolean acceptBinding(IBinding binding) throws CoreException {
 					if (isVisibleType(IndexModelUtil.getElementType(binding))) {
 						return IndexFilter.ALL_DECLARED.acceptBinding(binding);
@@ -310,9 +320,10 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 				CCorePlugin.log(ie);
 			}
 		}
-		return (ITypeInfo[])types.toArray(new ITypeInfo[types.size()]);
+		return types.toArray(new ITypeInfo[types.size()]);
 	}
 	
+	@Override
 	protected final void setListElements(Object[] elements) {
 		super.setListElements(elements);
 	}
@@ -320,14 +331,18 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 	/**
 	 * @deprecated Unsupported
 	 */
+	@Deprecated
+	@Override
 	public void setElements(Object[] elements) {
 		throw new UnsupportedOperationException();
 	}
 	
+	@Override
 	protected void handleEmptyList() {
 		updateOkState();
 	}
 	
+	@Override
 	protected Text createFilterText(Composite parent) {
 		final Text result = super.createFilterText(parent);
 		Listener listener = new Listener() {

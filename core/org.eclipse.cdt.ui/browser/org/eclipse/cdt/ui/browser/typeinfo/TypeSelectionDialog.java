@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,7 +62,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 		private StringMatcher fNameMatcher = null;
 		private StringMatcher[] fSegmentMatchers = null;
 		private boolean fMatchGlobalNamespace = false;
-		private Collection fVisibleTypes = new HashSet();
+		private Collection<Integer> fVisibleTypes = new HashSet<Integer>();
 		private boolean fShowLowLevelTypes = false;
 		
 		/*
@@ -107,12 +107,12 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 			fNameMatcher = fSegmentMatchers[fSegmentMatchers.length-1];
 		}
 		
-		public void setVisibleTypes(Collection visibleTypes) {
+		public void setVisibleTypes(Collection<Integer> visibleTypes) {
 			fVisibleTypes.clear();
 			fVisibleTypes.addAll(visibleTypes);
 		}
 
-		public Collection getVisibleTypes() {
+		public Collection<Integer> getVisibleTypes() {
 			return fVisibleTypes;
 		}
 		
@@ -228,7 +228,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 
 	// the filter matcher contains state information, must not be static
 	private final TypeFilterMatcher fFilterMatcher = new TypeFilterMatcher();
-	private Set fKnownTypes = new HashSet(ALL_TYPES.length);
+	private Set<Integer> fKnownTypes = new HashSet<Integer>(ALL_TYPES.length);
 	private Text fTextWidget;
 	private boolean fSelectFilterText = false;
 	private FilteredList fNewFilteredList;
@@ -296,7 +296,8 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.AbstractElementListSelectionDialog#createFilterText(org.eclipse.swt.widgets.Composite)
 	 */
- 	protected Text createFilterText(Composite parent) {
+ 	@Override
+	protected Text createFilterText(Composite parent) {
  		fTextWidget = super.createFilterText(parent);
 
 		// create type checkboxes below filter text
@@ -308,7 +309,8 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.AbstractElementListSelectionDialog#createFilteredList(org.eclipse.swt.widgets.Composite)
 	 */
- 	protected FilteredList createFilteredList(Composite parent) {
+ 	@Override
+	protected FilteredList createFilteredList(Composite parent) {
  		fNewFilteredList = super.createFilteredList(parent);
 		fNewFilteredList.setFilterMatcher(fFilterMatcher);
 		fNewFilteredList.setComparator(fStringComparator);
@@ -316,7 +318,8 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 		if (fNewFilteredList != null) {
 			fNewFilteredList.getAccessible().addAccessibleListener(
 	            new AccessibleAdapter() {                       
-	                public void getName(AccessibleEvent e) {
+	                @Override
+					public void getName(AccessibleEvent e) {
 	                        e.result = TypeInfoMessages.TypeSelectionDialog_upperLabel;
 	                }
 	            }
@@ -328,6 +331,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#create()
 	 */
+	@Override
 	public void create() {
 		super.create();
 		if (fSelectFilterText)
@@ -337,6 +341,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 	/*
 	 * @see Window#close()
 	 */
+	@Override
 	public boolean close() {
 		writeSettings(getDialogSettings());
 		return super.close();
@@ -345,6 +350,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 	/*
 	 * @see org.eclipse.jface.window.Window#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		readSettings(getDialogSettings());
 		return super.createContents(parent);
@@ -400,6 +406,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 		checkbox.setImage(icon);
 		checkbox.setSelection(fFilterMatcher.getVisibleTypes().contains(fTypeObject));
 		checkbox.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (e.widget instanceof Button) {
 					Button checkbox = (Button) e.widget;
@@ -458,6 +465,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 			checkbox.setText(name);
 			checkbox.setSelection(fFilterMatcher.getShowLowLevelTypes());
 			checkbox.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					if (e.widget instanceof Button) {
 						Button button = (Button) e.widget;
@@ -614,6 +622,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 	/* (non-Cdoc)
 	 * @see org.eclipse.jface.window.Window#getInitialSize()
 	 */
+	@Override
 	protected Point getInitialSize() {
 		Point result = super.getInitialSize();
 		if (fSize != null) {
@@ -629,6 +638,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 	/* (non-Cdoc)
 	 * @see org.eclipse.jface.window.Window#getInitialLocation(org.eclipse.swt.graphics.Point)
 	 */
+	@Override
 	protected Point getInitialLocation(Point initialSize) {
 		Point result = super.getInitialLocation(initialSize);
 		if (fLocation != null) {
@@ -650,18 +660,20 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 	/*
 	 * @see org.eclipse.ui.dialogs.SelectionStatusDialog#computeResult()
 	 */
+	@Override
 	protected void computeResult() {
 		ITypeInfo selection = (ITypeInfo) getLowerSelectedElement();
 		if (selection == null)
 			return;
 			
-		List result = new ArrayList(1);
+		List<ITypeInfo> result = new ArrayList<ITypeInfo>(1);
 		result.add(selection);
 		setResult(result);
 	}
 	
-    public Object[] getFoldedElements(int index) {
-    	ArrayList result= new ArrayList();
+    @Override
+	public Object[] getFoldedElements(int index) {
+    	ArrayList<IndexTypeInfo> result= new ArrayList<IndexTypeInfo>();
     	Object[] typeInfos= super.getFoldedElements(index);
     	if (typeInfos != null) {
     		for (int i = 0; i < typeInfos.length; i++) {
@@ -674,7 +686,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
     	return result.toArray();
     }
 
-	private void addFoldedElements(IndexTypeInfo typeInfo, ArrayList result) {
+	private void addFoldedElements(IndexTypeInfo typeInfo, ArrayList<IndexTypeInfo> result) {
 		ITypeReference[] refs= typeInfo.getReferences();
 		for (int i = 0; i < refs.length; i++) {
 			result.add(new IndexTypeInfo(typeInfo, refs[i]));

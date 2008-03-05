@@ -125,7 +125,16 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	 */
 	public static IndexTypeInfo create(IIndex index, IIndexMacro macro) {
 		final char[] name= macro.getNameCharArray();
-		return new IndexTypeInfo(new String[] {new String(name)}, ICElement.C_MACRO, index);
+		final char[][] ps= macro.getParameterList();
+		String[] params= null;
+		if (ps != null) {
+			params= new String[ps.length];
+			int i=-1;
+			for (char[] p : ps) {
+				params[++i]= new String(p);
+			}
+		}
+		return new IndexTypeInfo(new String[] {new String(name)}, ICElement.C_MACRO, params, null, index);
 	}
 
 	private IndexTypeInfo(String[] fqn, IIndexFileLocation fileLocal, int elementType, IIndex index, String[] params, String returnType, ITypeReference reference) {
@@ -412,10 +421,12 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 			HashMap<IIndexFileLocation, IIndexFile> iflMap= new HashMap<IIndexFileLocation, IIndexFile>();
 			for (int i = 0; i < ibs.length; i++) {
 				IIndexMacro macro= ibs[i];
-				if (checkFile(iflMap, macro.getFile())) {
-					IndexTypeReference ref= createReference(macro);
-					if (ref != null) {
-						references.add(ref);
+				if (checkParameters(macro.getParameterList())) {
+					if (checkFile(iflMap, macro.getFile())) {
+						IndexTypeReference ref= createReference(macro);
+						if (ref != null) {
+							references.add(ref);
+						}
 					}
 				}
 			}
@@ -427,6 +438,21 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 			index.releaseReadLock();
 		}
 		return references.toArray(new IndexTypeReference[references.size()]);
+	}
+
+	private boolean checkParameters(char[][] parameterList) {
+		if (parameterList == null) {
+			return params == null;
+		}
+		if (params == null || parameterList.length != params.length) {
+			return false;
+		}
+		for (int i = 0; i < parameterList.length; i++) {
+			if (!params[i].equals(new String(parameterList[i]))) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -520,6 +546,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 		return returnType;
 	}
 
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -532,6 +559,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	/**
 	 * Type info objects are equal if they compute the same references.
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;

@@ -18,7 +18,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -82,7 +81,7 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 		}
 
 		// -include
-		List includeFiles= new ArrayList();
+		List<String> includeFiles= new ArrayList<String>();
 		if(isPresent(OPT_INCLUDE)) {
 			includeFiles.addAll(getParameters(OPT_INCLUDE));				
 		}
@@ -112,7 +111,7 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 	private ICProject createCCProject(
 			final String projectName,
 			final File location,
-			final List includeFiles
+			final List<String> includeFiles
 	) throws CoreException {
 		final IWorkspace ws = ResourcesPlugin.getWorkspace();
 		final ICProject newProject[] = new ICProject[1];
@@ -136,11 +135,10 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 				content.createLink(new Path(location.getAbsolutePath()), IResource.NONE, null);
 
 				// Setup path entries
-				List entries= new ArrayList(Arrays.asList(CoreModel.getRawPathEntries(cproject)));
+				List<IPathEntry> entries= new ArrayList<IPathEntry>(Arrays.asList(CoreModel.getRawPathEntries(cproject)));
 
 				// pre-include files
-				for(Iterator j= includeFiles.iterator(); j.hasNext(); ) {
-					String path= (String) j.next(); 
+				for(String path : includeFiles) {
 					entries.add(CoreModel.newIncludeFileEntry(project.getFullPath(), new Path(path)));
 				}
 				
@@ -150,7 +148,7 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 				// any additional entries
 				entries.addAll(getAdditionalRawEntries());
 				
-				cproject.setRawPathEntries((IPathEntry[]) entries.toArray(new IPathEntry[entries.size()]),
+				cproject.setRawPathEntries(entries.toArray(new IPathEntry[entries.size()]),
 						new NullProgressMonitor()
 				);
 			
@@ -168,8 +166,8 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 	 * Get additional raw entries (above those added as part of the ExternalExportProjectProvider functionality)
 	 * @return a list of additional entries to add to the project
 	 */
-	protected List getAdditionalRawEntries() {
-		List entries= new ArrayList();
+	protected List<IPathEntry> getAdditionalRawEntries() {
+		List<IPathEntry> entries= new ArrayList<IPathEntry>();
 		entries.add(CoreModel.newIncludeEntry(content.getProjectRelativePath(), null, content.getLocation(), true));
 		return entries;
 	}
@@ -181,7 +179,6 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 	}
 
 	/*
-	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.core.index.export.IExportProjectProvider#getLocationConverter(org.eclipse.cdt.core.model.ICProject)
 	 */
 	public IIndexLocationConverter getLocationConverter(final ICProject cproject) {
@@ -189,11 +186,10 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 	}
 
 	/*
-	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.core.index.export.IExportProjectProvider#getExportProperties()
 	 */
-	public Map getExportProperties() {
-		Map properties= new HashMap();
+	public Map<String,String> getExportProperties() {
+		Map<String,String> properties= new HashMap<String,String>();
 		Date now= Calendar.getInstance().getTime();
 		properties.put(ORG_ECLIPSE_CDT_CORE_INDEX_EXPORT_DATESTAMP,
 				DateFormat.getDateInstance().format(now)

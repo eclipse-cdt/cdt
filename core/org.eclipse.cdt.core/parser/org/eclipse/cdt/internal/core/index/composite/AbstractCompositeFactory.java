@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2008 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.CoreException;
  */
 public abstract class AbstractCompositeFactory implements ICompositesFactory {	
 	protected IIndex index;
-	private Comparator fragmentComparator;
+	private Comparator<IIndexFragmentBinding> fragmentComparator;
 	
 	public AbstractCompositeFactory(IIndex index) {
 		this.index= index;
@@ -42,7 +42,6 @@ public abstract class AbstractCompositeFactory implements ICompositesFactory {
 	}
 	
 	/*
-	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.index.composite.ICompositesFactory#getCompositeBindings(org.eclipse.cdt.core.index.IIndex, org.eclipse.cdt.internal.core.index.IIndexFragmentBinding[])
 	 */
 	public final IIndexBinding[] getCompositeBindings(IIndexFragmentBinding[] bindings) {
@@ -52,7 +51,7 @@ public abstract class AbstractCompositeFactory implements ICompositesFactory {
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/* 
 	 * @see org.eclipse.cdt.internal.core.index.composite.cpp.ICompositesFactory#getComposites(org.eclipse.cdt.core.index.IIndex, org.eclipse.cdt.internal.core.index.IIndexFragmentBinding[][])
 	 */
 	public final IIndexBinding[] getCompositeBindings(IIndexFragmentBinding[][] fragmentBindings) {
@@ -66,11 +65,11 @@ public abstract class AbstractCompositeFactory implements ICompositesFactory {
 	 * @return an array of unique bindings
 	 */
 	protected IIndexFragmentBinding[] mergeBindingArrays(IIndexFragmentBinding[][] fragmentBindings) {
-		TreeSet ts = new TreeSet(fragmentComparator);
+		TreeSet<IIndexFragmentBinding> ts = new TreeSet<IIndexFragmentBinding>(fragmentComparator);
 		for(int i=0; i<fragmentBindings.length; i++)
 			for(int j=0; j<fragmentBindings[i].length; j++)
 				ts.add(fragmentBindings[i][j]);
-		return (IIndexFragmentBinding[]) ts.toArray(new IIndexFragmentBinding[ts.size()]);
+		return ts.toArray(new IIndexFragmentBinding[ts.size()]);
 	}
 	
 	/**
@@ -98,23 +97,18 @@ public abstract class AbstractCompositeFactory implements ICompositesFactory {
 		throw new CompositingNotImplementedError();
 	}
 	
-	private static class FragmentBindingComparator implements Comparator {
+	private static class FragmentBindingComparator implements Comparator<IIndexFragmentBinding> {
 		private IIndexFragmentBindingComparator[] comparators;
 		
 		FragmentBindingComparator(IIndexFragmentBindingComparator[] comparators) {
 			this.comparators= comparators;
 		}
 		
-		public int compare(Object o1, Object o2) {
-			if(o1 instanceof IIndexFragmentBinding && o2 instanceof IIndexFragmentBinding) {
-				IIndexFragmentBinding f1= (IIndexFragmentBinding) o1;
-				IIndexFragmentBinding f2= (IIndexFragmentBinding) o2;
-				
-				for(int i=0; i<comparators.length; i++) {
-					int cmp= comparators[i].compare(f1, f2);
-					if(cmp!=Integer.MIN_VALUE) {
-						return cmp;
-					}
+		public int compare(IIndexFragmentBinding f1, IIndexFragmentBinding f2) {
+			for(int i=0; i<comparators.length; i++) {
+				int cmp= comparators[i].compare(f1, f2);
+				if(cmp!=Integer.MIN_VALUE) {
+					return cmp;
 				}
 			}
 			throw new IllegalArgumentException();

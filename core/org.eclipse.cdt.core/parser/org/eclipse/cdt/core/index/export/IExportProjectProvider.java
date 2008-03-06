@@ -13,8 +13,11 @@ package org.eclipse.cdt.core.index.export;
 import java.util.Map;
 
 import org.eclipse.cdt.core.index.IIndexLocationConverter;
+import org.eclipse.cdt.core.index.ResourceContainerRelativeLocationConverter;
+import org.eclipse.cdt.core.index.URIRelativeLocationConverter;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 
 /**
  * An IExportProjectProvider provides a configured ICProject suitable set up for
@@ -62,5 +65,5 @@ public interface IExportProjectProvider {
 	 * @return a Map of String typed key value pairs representing ISV specific properties. This
 	 * may return null.
 	 */
-	public Map/*<String,String>*/ getExportProperties();	
+	public Map<String,String> getExportProperties();	
 }

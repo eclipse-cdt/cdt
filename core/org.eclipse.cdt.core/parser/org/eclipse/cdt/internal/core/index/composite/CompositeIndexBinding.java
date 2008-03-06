@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
-import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -73,7 +72,7 @@ public abstract class CompositeIndexBinding implements IIndexBinding {
 	}
 	
 	public IScope getScope() throws DOMException {
-		return cf.getCompositeScope((IIndexScope)rbinding.getScope());
+		return cf.getCompositeScope(rbinding.getScope());
 	}
 	
 	public boolean hasDefinition() throws CoreException {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2008 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,24 +28,24 @@ public class ReadOnlyPDOMProviderBridge implements IIndexFragmentProvider {
 	protected IReadOnlyPDOMProvider opp;
 
 	public ReadOnlyPDOMProviderBridge(IReadOnlyPDOMProvider opp) {
-		this.opp = opp;
+		this.opp= opp;
 	}
 
 	public IIndexFragment[] getIndexFragments(ICConfigurationDescription config) throws CoreException {
-		IPDOMDescriptor[] descs = opp.getDescriptors(config);
+		IPDOMDescriptor[] descriptions = opp.getDescriptors(config);
 
-		List preresult = new ArrayList();
+		List<PDOM> result = new ArrayList<PDOM>();
 
-		if(descs!=null) {
-			for(int i=0; i<descs.length; i++) {
-				PDOM pdom= PDOMCache.getInstance().getPDOM(descs[i].getLocation(), descs[i].getIndexLocationConverter()); 
+		if(descriptions!=null) {
+			for(IPDOMDescriptor dsc : descriptions) {
+				PDOM pdom= PDOMCache.getInstance().getPDOM(dsc.getLocation(), dsc.getIndexLocationConverter()); 
 				if(pdom!=null) {
-					preresult.add(pdom);
+					result.add(pdom);
 				}
 			}
 		}
 
-		return (IIndexFragment[]) preresult.toArray(new IIndexFragment[preresult.size()]);
+		return result.toArray(new IIndexFragment[result.size()]);
 	}
 
 	public boolean providesFor(ICProject cproject) throws CoreException {

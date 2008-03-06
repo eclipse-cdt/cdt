@@ -63,7 +63,7 @@ public class LanguageManager {
 	
 	private static LanguageManager instance;
 	private Map fLanguageCache = new HashMap();
-	private Map fPDOMLinkageFactoryCache= new HashMap();
+	private Map<String, IPDOMLinkageFactory> fPDOMLinkageFactoryCache= new HashMap<String, IPDOMLinkageFactory>();
 	private Map fContentTypeToLanguageCache= new HashMap();
 	private Map fLanguageConfigurationCache = new HashMap();
 	private boolean fIsFullyCached;
@@ -300,7 +300,7 @@ public class LanguageManager {
 	 * @return a map.
 	 * @since 4.0
 	 */
-	public Map getPDOMLinkageFactoryMappings() {
+	public Map<String, IPDOMLinkageFactory> getPDOMLinkageFactoryMappings() {
 		if (!fPDOMLinkageFactoryCache.isEmpty())
 			return Collections.unmodifiableMap(fPDOMLinkageFactoryCache);
 		

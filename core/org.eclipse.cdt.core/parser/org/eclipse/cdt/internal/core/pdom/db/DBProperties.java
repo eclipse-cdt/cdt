@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2008 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -80,11 +80,11 @@ public class DBProperties {
 	}
 
 	/**
-	 * Returns a Set of property names (Strings) stored in this object
-	 * @return a Set of property names (Strings) stored in this object
+	 * Returns the Set of property names stored in this object
+	 * @return the Set of property names stored in this object
 	 * @throws CoreException
 	 */
-	public Set getKeySet() throws CoreException {
+	public Set<String> getKeySet() throws CoreException {
 		return DBProperty.getKeySet(db, index);
 	}
 
@@ -225,8 +225,8 @@ public class DBProperties {
 			return result[0];
 		}
 		
-		public static Set getKeySet(final Database db, final BTree index) throws CoreException {
-			final Set result= new HashSet();
+		public static Set<String> getKeySet(final Database db, final BTree index) throws CoreException {
+			final Set<String> result= new HashSet<String>();
 			index.accept(new IBTreeVisitor(){
 				public int compare(int record) throws CoreException {
 					return 0;

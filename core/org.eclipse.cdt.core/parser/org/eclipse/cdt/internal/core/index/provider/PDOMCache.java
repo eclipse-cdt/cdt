@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2008 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,13 +26,13 @@ import org.eclipse.core.runtime.IPath;
  * Internal singleton map maintained for non-project PDOM objects
  */
 class PDOMCache {
-	private Map/*<File, PDOM>*/ path2pdom; // gives the PDOM for a particular path
+	private Map<File, PDOM> path2pdom; // gives the PDOM for a particular path
 
 	private static PDOMCache singleton;
 	private static Object singletonMutex = new Object();
 
 	private PDOMCache() {
-		this.path2pdom = new HashMap();
+		this.path2pdom = new HashMap<File, PDOM>();
 	}
 
 	/**
@@ -61,11 +61,11 @@ class PDOMCache {
 
 		synchronized(path2pdom) {
 			if(path2pdom.containsKey(file)) {
-				result = (PDOM) path2pdom.get(file);
+				result= path2pdom.get(file);
 			}
 			if(result==null) {
 				try {
-					result = new PDOM(file, converter, LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
+					result= new PDOM(file, converter, LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
 					path2pdom.put(file, result);
 				} catch(CoreException ce) {
 					CCorePlugin.log(ce);

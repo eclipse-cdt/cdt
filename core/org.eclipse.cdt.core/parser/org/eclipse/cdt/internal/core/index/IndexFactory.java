@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,12 +56,11 @@ public class IndexFactory {
 		boolean addDependent=    (options & ADD_DEPENDENT) != 0;
 		boolean skipProvided= (options & SKIP_PROVIDED) != 0;
 		
-		HashMap map= new HashMap();
-		Collection selectedProjects= getProjects(projects, addDependencies, addDependent, map, new Integer(1));
+		HashMap<IProject, Integer> map= new HashMap<IProject, Integer>();
+		Collection<ICProject> selectedProjects= getProjects(projects, addDependencies, addDependent, map, new Integer(1));
 		
-		HashMap fragments= new LinkedHashMap();
-		for (Iterator iter = selectedProjects.iterator(); iter.hasNext(); ) {
-			ICProject cproject = (ICProject) iter.next();
+		HashMap<String, IIndexFragment> fragments= new LinkedHashMap<String, IIndexFragment>();
+		for(ICProject cproject : selectedProjects) {
 			IIndexFragment pdom= fPDOMManager.getPDOM(cproject);
 			if (pdom != null) {
 				safeAddFragment(fragments, pdom);
@@ -79,12 +77,11 @@ public class IndexFactory {
 		int primaryFragmentCount= fragments.size();
 		
 		if (!addDependencies) {
-			projects= (ICProject[]) selectedProjects.toArray(new ICProject[selectedProjects.size()]);
+			projects= selectedProjects.toArray(new ICProject[selectedProjects.size()]);
 			selectedProjects.clear();
 			// don't clear the map, so projects are not selected again
 			selectedProjects= getProjects(projects, true, false, map, new Integer(2));
-			for (Iterator iter = selectedProjects.iterator(); iter.hasNext(); ) {
-				ICProject cproject = (ICProject) iter.next();
+			for(ICProject cproject : selectedProjects) {
 				IIndexFragment pdom= fPDOMManager.getPDOM(cproject);
 				safeAddFragment(fragments, pdom);
 				
@@ -94,12 +91,12 @@ public class IndexFactory {
 			}
 		}
 		
-		Collection pdoms= fragments.values();
-		return new CIndex((IIndexFragment[]) pdoms.toArray(new IIndexFragment[pdoms.size()]), primaryFragmentCount); 
+		Collection<IIndexFragment> pdoms= fragments.values();
+		return new CIndex(pdoms.toArray(new IIndexFragment[pdoms.size()]), primaryFragmentCount); 
 	}
 
 	public IWritableIndex getWritableIndex(ICProject project) throws CoreException {		
-		Map readOnlyFrag= new LinkedHashMap();
+		Map<String, IIndexFragment> readOnlyFrag= new LinkedHashMap<String, IIndexFragment>();
 		IWritableIndexFragment pdom= (IWritableIndexFragment) fPDOMManager.getPDOM(project);
 		if (pdom == null) {
 			throw new CoreException(CCorePlugin.createStatus(
@@ -107,23 +104,21 @@ public class IndexFactory {
 		}
 		safeAddProvidedFragments(project, readOnlyFrag);
 
-		Collection selectedProjects= getProjects(new ICProject[] {project}, true, false, new HashMap(), new Integer(1));		
+		Collection<ICProject> selectedProjects= getProjects(new ICProject[] {project}, true, false, new HashMap<IProject, Integer>(), new Integer(1));		
 		selectedProjects.remove(project);
 		
-		for (Iterator iter = selectedProjects.iterator(); iter.hasNext(); ) {
-			ICProject cproject = (ICProject) iter.next();
+		for(ICProject cproject : selectedProjects) {
 			safeAddFragment(readOnlyFrag, fPDOMManager.getPDOM(cproject));
 		}
 				
-		Collection roPdoms= readOnlyFrag.values();
-		return new WritableCIndex(pdom, (IIndexFragment[]) roPdoms.toArray(new IIndexFragment[roPdoms.size()]) );
+		Collection<IIndexFragment> roPdoms= readOnlyFrag.values();
+		return new WritableCIndex(pdom, roPdoms.toArray(new IIndexFragment[roPdoms.size()]) );
 	}
 	
-	private Collection getProjects(ICProject[] projects, boolean addDependencies, boolean addDependent, HashMap map, Integer markWith) {
-		List projectsToSearch= new ArrayList();
+	private Collection<ICProject> getProjects(ICProject[] projects, boolean addDependencies, boolean addDependent, HashMap<IProject, Integer> map, Integer markWith) {
+		List<IProject> projectsToSearch= new ArrayList<IProject>();
 		
-		for (int i = 0; i < projects.length; i++) {
-			ICProject cproject = projects[i];
+		for(ICProject cproject : projects) {
 			IProject project= cproject.getProject();
 			checkAddProject(project, map, projectsToSearch, markWith);
 			projectsToSearch.add(project);
@@ -131,7 +126,7 @@ public class IndexFactory {
 		
 		if (addDependencies || addDependent) {
 			for (int i=0; i<projectsToSearch.size(); i++) {
-				IProject project= (IProject) projectsToSearch.get(i);
+				IProject project= projectsToSearch.get(i);
 				IProject[] nextLevel;
 				try {
 					if (addDependencies) {
@@ -154,11 +149,10 @@ public class IndexFactory {
 		}
 		
 		CoreModel cm= CoreModel.getDefault();
-		Collection result= new ArrayList();
-		for (Iterator iter= map.entrySet().iterator(); iter.hasNext(); ) {
-			Map.Entry entry= (Map.Entry) iter.next();
+		Collection<ICProject> result= new ArrayList<ICProject>();
+		for(Map.Entry<IProject, Integer> entry : map.entrySet()) {
 			if (entry.getValue() == markWith) {
-				ICProject cproject= cm.create((IProject) entry.getKey());
+				ICProject cproject= cm.create(entry.getKey());
 				if (cproject != null) {
 					result.add(cproject);
 				}
@@ -167,7 +161,7 @@ public class IndexFactory {
 		return result;
 	}
 
-	private void checkAddProject(IProject project, HashMap map, List projectsToSearch, Integer markWith) {
+	private void checkAddProject(IProject project, HashMap<IProject, Integer> map, List<IProject> projectsToSearch, Integer markWith) {
 		if (map.get(project) == null) {
 			if (project.isOpen()) {
 				map.put(project, markWith);
@@ -185,7 +179,7 @@ public class IndexFactory {
 	 * @param id2fragment the map to add the entry to
 	 * @param fragment the fragment or null (which will result in no action)
 	 */
-	private void safeAddFragment(Map id2fragment, IIndexFragment fragment) {
+	private void safeAddFragment(Map<String, IIndexFragment> id2fragment, IIndexFragment fragment) {
 		if(fragment!=null) {
 			try {
 				fragment.acquireReadLock();
@@ -210,7 +204,7 @@ public class IndexFactory {
 	 * @param cproject
 	 * @param fragments
 	 */
-	private void safeAddProvidedFragments(ICProject cproject, Map fragments) {
+	private void safeAddProvidedFragments(ICProject cproject, Map<String, IIndexFragment> fragments) {
 		ICProjectDescription pd= CoreModel.getDefault().getProjectDescription(cproject.getProject(), false);
 		if(pd!=null) {
 			IndexProviderManager ipm = CCoreInternals.getPDOMManager().getIndexProviderManager();
@@ -218,8 +212,8 @@ public class IndexFactory {
 			if (cfg != null) {
 				try {
 					IIndexFragment[] pFragments= ipm.getProvidedIndexFragments(cfg);
-					for(int i=0; i<pFragments.length; i++) {
-						safeAddFragment(fragments, pFragments[i]);
+					for(IIndexFragment fragment : pFragments) {
+						safeAddFragment(fragments, fragment);
 					}
 				} catch(CoreException ce) {
 					CCorePlugin.log(ce);

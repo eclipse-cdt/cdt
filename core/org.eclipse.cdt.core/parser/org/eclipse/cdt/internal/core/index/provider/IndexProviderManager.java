@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2008 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,8 +67,8 @@ public final class IndexProviderManager implements IElementChangedListener {
 	private static final String ATTRIBUTE_CLASS = "class"; //$NON-NLS-1$
 
 	private IIndexFragmentProvider[] allProviders;
-	private Map/*<List,Boolean>*/ provisionMap;
-	private Set/*<String>*/ compatibleFragmentUnavailable;
+	private Map<ProvisionMapKey,Boolean> provisionMap;
+	private Set<String> compatibleFragmentUnavailable;
 	private VersionRange pdomVersionRange;
 	
 	public IndexProviderManager() {
@@ -88,13 +88,13 @@ public final class IndexProviderManager implements IElementChangedListener {
 	 */
 	public void reset(VersionRange pdomVersionRange) {
 		this.allProviders= new IIndexFragmentProvider[0];
-		this.provisionMap= new HashMap();
+		this.provisionMap= new HashMap<ProvisionMapKey,Boolean>();
 		this.pdomVersionRange= pdomVersionRange;
-		this.compatibleFragmentUnavailable= new HashSet();
+		this.compatibleFragmentUnavailable= new HashSet<String>();
 	}
 
 	public void startup() {
-		List providers = new ArrayList();
+		List<IIndexProvider> providers = new ArrayList<IIndexProvider>();
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IExtensionPoint indexProviders = registry.getExtensionPoint(CCorePlugin.INDEX_UNIQ_ID);
 		IExtension[] extensions = indexProviders.getExtensions();
@@ -123,7 +123,7 @@ public final class IndexProviderManager implements IElementChangedListener {
 		}
 
 		CoreModel.getDefault().addElementChangedListener(this);
-		this.allProviders = (IIndexFragmentProvider[]) providers.toArray(new IIndexFragmentProvider[providers.size()]);
+		this.allProviders = providers.toArray(new IIndexFragmentProvider[providers.size()]);
 	}
 
 	/**
@@ -135,7 +135,7 @@ public final class IndexProviderManager implements IElementChangedListener {
 	 * @return the array of IIndexFragment objects for the current state
 	 */
 	public IIndexFragment[] getProvidedIndexFragments(ICConfigurationDescription config) throws CoreException {
-		Map id2fragment = new HashMap();
+		Map<String, IIndexFragment> id2fragment = new HashMap<String, IIndexFragment>();
 
 		IProject project= config.getProjectDescription().getProject();
 		for(int i=0; i<allProviders.length; i++) {
@@ -158,11 +158,10 @@ public final class IndexProviderManager implements IElementChangedListener {
 		}
 
 		// Make log entries for any fragments which have no compatible equivalents
-		List preresult= new ArrayList();
-		for(Iterator i=id2fragment.entrySet().iterator(); i.hasNext(); ) {
-			Map.Entry entry= (Map.Entry) i.next();
+		List<IIndexFragment> preresult= new ArrayList<IIndexFragment>();
+		for(Map.Entry<String, IIndexFragment> entry : id2fragment.entrySet()) {
 			if(entry.getValue()==null) {
-				String key= (String) entry.getKey();
+				String key= entry.getKey();
 				if(!compatibleFragmentUnavailable.contains(key)) {
 					String msg= MessageFormat.format(
 						Messages.IndexProviderManager_NoCompatibleFragmentsAvailable,
@@ -176,7 +175,7 @@ public final class IndexProviderManager implements IElementChangedListener {
 				preresult.add(entry.getValue());
 			}
 		}
-		return (IIndexFragment[]) preresult.toArray(new IIndexFragment[preresult.size()]);
+		return preresult.toArray(new IIndexFragment[preresult.size()]);
 	}
 	
 	/**
@@ -201,7 +200,7 @@ public final class IndexProviderManager implements IElementChangedListener {
 	 * @param id2fragment
 	 * @param candidate
 	 */
-	private void processCandidate(Map id2fragment, IIndexFragment candidate) throws InterruptedException, CoreException {
+	private void processCandidate(Map<String, IIndexFragment> id2fragment, IIndexFragment candidate) throws InterruptedException, CoreException {
 		String cid= null, csver= null, cformatID= null;
 		try {
 			candidate.acquireReadLock();
@@ -214,7 +213,7 @@ public final class IndexProviderManager implements IElementChangedListener {
 		assert cid!=null && csver!=null && cformatID!=null;
 
 		Version cver= Version.parseVersion(csver); // illegal argument exception
-		IIndexFragment existing= (IIndexFragment) id2fragment.get(cid);
+		IIndexFragment existing= id2fragment.get(cid);
 		
 		if(getCurrentlySupportedVersionRangeForFormat(cformatID).isIncluded(cver)) {
 			if(existing != null) {
@@ -284,9 +283,7 @@ public final class IndexProviderManager implements IElementChangedListener {
 	}
 
 	private boolean providesForProject(IIndexProvider provider, IProject project) {
-		List key = new ArrayList();
-		key.add(provider);
-		key.add(project);
+		ProvisionMapKey key= new ProvisionMapKey(provider, project);
 
 		if(!provisionMap.containsKey(key)) {
 			try {
@@ -298,7 +295,7 @@ public final class IndexProviderManager implements IElementChangedListener {
 			}
 		}
 
-		return ((Boolean) provisionMap.get(key)).booleanValue();
+		return provisionMap.get(key).booleanValue();
 	}
 
 	public void elementChanged(ElementChangedEvent event) {
@@ -324,18 +321,46 @@ public final class IndexProviderManager implements IElementChangedListener {
 			final ICProject cproject = (ICProject)delta.getElement();
 			switch (delta.getKind()) {
 			case ICElementDelta.REMOVED:
-				List toRemove = new ArrayList();
-				for(Iterator i = provisionMap.keySet().iterator(); i.hasNext(); ) {
-					List key = (List) i.next();
-					if(key.contains(cproject.getProject())) {
+				List<ProvisionMapKey> toRemove = new ArrayList<ProvisionMapKey>();
+				for(Iterator<ProvisionMapKey> i = provisionMap.keySet().iterator(); i.hasNext(); ) {
+					ProvisionMapKey key = i.next();
+					if(key.getProject().equals(cproject.getProject())) {
 						toRemove.add(key);
 					}
 				}
-				for(Iterator i = toRemove.iterator(); i.hasNext(); ) {
-					provisionMap.remove(i.next());
+				for(ProvisionMapKey key : toRemove) {
+					provisionMap.remove(key);
 				}
 				break;
 			}
+		}
+	}
+	
+	private static class ProvisionMapKey {
+		private final IIndexProvider provider;
+		private final IProject project;
+		
+		ProvisionMapKey(IIndexProvider provider, IProject project) {
+			this.provider= provider;
+			this.project= project;
+		}
+		
+		@Override
+		public boolean equals(Object obj) {
+			if(obj instanceof ProvisionMapKey) {
+				ProvisionMapKey other= (ProvisionMapKey) obj;
+				return other.project.equals(project) && other.provider.equals(provider);
+			}
+			return false;
+		}
+		
+		@Override
+		public int hashCode() {
+			return project.hashCode() ^ provider.hashCode();
+		}
+		
+		public IProject getProject() {
+			return project;
 		}
 	}
 }

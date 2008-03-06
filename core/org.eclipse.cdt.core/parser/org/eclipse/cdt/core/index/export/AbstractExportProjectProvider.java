@@ -24,33 +24,32 @@ import org.eclipse.core.runtime.Status;
 
 
 /**
- * An IExportProjectProvider suitable for subclassing. It provides convenience methods
- * for obtaining options and their parameters from the command-line.
+ * An IExportProjectProvider implementation intended to be sub-classed by clients. It
+ * provides convenience methods for obtaining options and their parameters from the
+ * command-line.
  * 
  * @see ExternalExportProjectProvider for usage scenarios
  */
 public abstract class AbstractExportProjectProvider implements IExportProjectProvider {
 	public static final IProgressMonitor NPM= new NullProgressMonitor();
 	
-	private Map arguments;
+	private Map<String, List<String>> arguments;
 	private String[] appArguments;
 	
 	public AbstractExportProjectProvider() {}
 	
 	/**
-	 * 
-	 * @return
+	 * @return the application arguments
 	 */
 	protected String[] getApplicationArguments() {
-		return (String[]) appArguments.clone();
+		return appArguments.clone();
 	}
 	
 	/*
-	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.core.index.export.IExportProjectProvider#setApplicationArguments(java.lang.String[])
 	 */
 	public void setApplicationArguments(String[] arguments) {
-		this.appArguments= (String[]) arguments.clone();
+		this.appArguments= arguments.clone();
 		this.arguments= Collections.unmodifiableMap(CLIUtil.parseToMap(arguments));
 	}
 
@@ -61,7 +60,7 @@ public abstract class AbstractExportProjectProvider implements IExportProjectPro
 	 * the mapping option=>[p1,p2,p3] will be present in the map
 	 * @return a mapping from string option to parameter string list
 	 */
-	protected Map getParsedArgs() {
+	protected Map<String,List<String>> getParsedArgs() {
 		return arguments;
 	}
 	
@@ -74,17 +73,16 @@ public abstract class AbstractExportProjectProvider implements IExportProjectPro
 	 * not be present, or if it does not have exactly one parameter
 	 */
 	public String getSingleString(String option) throws CoreException {
-		return (String) CLIUtil.getArg(arguments, option, 1).get(0);
+		return CLIUtil.getArg(arguments, option, 1).get(0);
 	}
 	
 	/**
-	 * 
 	 * @param option
-	 * @return
+	 * @return the list of parameters given with this option
 	 * @throws CoreException
 	 */
-	public List getParameters(String option) {
-		return (List) arguments.get(option); 
+	public List<String> getParameters(String option) {
+		return arguments.get(option); 
 	}
 	
 	/**
@@ -105,7 +103,7 @@ public abstract class AbstractExportProjectProvider implements IExportProjectPro
 	 * @return
 	 * @throws CoreException
 	 */
-	public List getParameters(String option, int expected) throws CoreException {
+	public List<String> getParameters(String option, int expected) throws CoreException {
 		return CLIUtil.getArg(arguments, option, expected);
 	}
 	

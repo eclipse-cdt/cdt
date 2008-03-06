@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.PrintStream;
 import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -53,7 +54,7 @@ public class GeneratePDOMApplication implements IApplication {
 	 */
 	public static final int ECODE_EXPECTED_FAILURE= 1;
 	
-	private static Map/*<String,IProjectForExportManager>*/ projectInitializers;
+	private static Map<String,IExportProjectProvider> projectInitializers;
 
 	/**
 	 * Starts this application
@@ -76,7 +77,7 @@ public class GeneratePDOMApplication implements IApplication {
 	
 	private Object startImpl(IApplicationContext context) throws CoreException {
 		String[] appArgs= (String[]) context.getArguments().get(IApplicationContext.APPLICATION_ARGS);
-		Map arguments= CLIUtil.parseToMap(appArgs);
+		Map<String,List<String>> arguments= CLIUtil.parseToMap(appArgs);
 		output(Messages.GeneratePDOMApplication_Initializing);
 
 		setupCLIProgressProvider();
@@ -86,17 +87,17 @@ public class GeneratePDOMApplication implements IApplication {
 			output(MessageFormat.format(Messages.GeneratePDOMApplication_UsingDefaultProjectProvider, new Object[] {DEFAULT_PROJECT_PROVIDER}));
 			pproviderFQN= DEFAULT_PROJECT_PROVIDER;
 		} else {
-			pproviderFQN= (String) CLIUtil.getArg(arguments, OPT_PROJECTPROVIDER, 1).get(0);
+			pproviderFQN= CLIUtil.getArg(arguments, OPT_PROJECTPROVIDER, 1).get(0);
 		}
-		String target= (String) CLIUtil.getArg(arguments, OPT_TARGET, 1).get(0); 
+		String target= CLIUtil.getArg(arguments, OPT_TARGET, 1).get(0); 
 		boolean quiet= arguments.get(OPT_QUIET)!=null;
 
 		String indexerID= IPDOMManager.ID_FAST_INDEXER;
-		String[] indexerIDs= (String[]) arguments.get(OPT_INDEXER_ID);
+		List<String> indexerIDs= arguments.get(OPT_INDEXER_ID);
 		if(indexerIDs!=null) {
-			if(indexerIDs.length==1) {
-				indexerID= indexerIDs[0];
-			} else if(indexerIDs.length>1) {
+			if(indexerIDs.size()==1) {
+				indexerID= indexerIDs.get(0);
+			} else if(indexerIDs.size()>1) {
 				fail(MessageFormat.format(Messages.GeneratePDOMApplication_InvalidIndexerID, new Object[] {OPT_INDEXER_ID}));
 			}
 		}
@@ -149,7 +150,7 @@ public class GeneratePDOMApplication implements IApplication {
 	 */
 	private static synchronized IExportProjectProvider getExportProjectProvider(String fqn) {
 		if(projectInitializers==null) {
-			projectInitializers = new HashMap();
+			projectInitializers = new HashMap<String, IExportProjectProvider>();
 			IExtensionRegistry registry = Platform.getExtensionRegistry();
 			IExtensionPoint indexExtensions = registry.getExtensionPoint(CCorePlugin.INDEX_UNIQ_ID);
 			IExtension[] extensions = indexExtensions.getExtensions();
@@ -170,12 +171,12 @@ public class GeneratePDOMApplication implements IApplication {
 			}
 		}
 
-		IExportProjectProvider initer = (IExportProjectProvider) projectInitializers.get(fqn);
+		IExportProjectProvider initer = projectInitializers.get(fqn);
 		return initer;
 	}
 
 	/**
-	 * In this application, the usual progress reports are redirected to stdoutt
+	 * In this application, the usual progress reports are redirected to standard out
 	 */
 	private void setupCLIProgressProvider() {
 		ProgressProvider pp = new ProgressProvider() {

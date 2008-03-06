@@ -20,16 +20,13 @@ import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
  *
  */
 public class ParserFactory {
-				
-	public static IParserLogService createDefaultLogService()
-	{
+	private static IParserLogService defaultLogService = new DefaultLogService();
+	
+	public static IParserLogService createDefaultLogService() {
 		return defaultLogService;
 	}
 	
-	public static Set getKeywordSet( KeywordSetKey key, ParserLanguage language )
-	{
+	public static Set<String> getKeywordSet(KeywordSetKey key, ParserLanguage language) {
 		return KeywordSets.getKeywords( key, language ); 
 	}
-	
-	private static IParserLogService defaultLogService = new DefaultLogService();
 }

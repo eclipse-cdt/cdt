@@ -36,8 +36,8 @@ public class CLIUtil {
 	 * @return
 	 * @throws CoreException if the number of parameters is not the specified expected number
 	 */
-	public static List getArg(Map arguments, String opt, int number) throws CoreException {
-		List list = (List) arguments.get(opt);
+	public static List<String> getArg(Map<String, List<String>> arguments, String opt, int number) throws CoreException {
+		List<String> list = arguments.get(opt);
 		if(list==null || list.size()!=number) {
 			String msg= MessageFormat.format(Messages.CLIUtil_OptionParametersMismatch, new Object[] {opt, ""+number}); //$NON-NLS-1$
 			GeneratePDOMApplication.fail(msg);
@@ -51,19 +51,19 @@ public class CLIUtil {
 	 * @param args
 	 * @return
 	 */
-	public static Map/*<String,List<String>>*/ parseToMap(String[] args) {
-		Map result = new HashMap();
+	public static Map<String,List<String>> parseToMap(String[] args) {
+		Map<String,List<String>> result = new HashMap<String,List<String>>();
 		String current = null;
 		for(int i=0; i<args.length; i++) {
 			if(args[i].startsWith("-")) { //$NON-NLS-1$
 				current = args[i];
-				result.put(current, new ArrayList());
+				result.put(current, new ArrayList<String>());
 			} else {
 				if(current==null) {
 					current= UNQUALIFIED_PARAMETERS;
-					result.put(current, new ArrayList());
+					result.put(current, new ArrayList<String>());
 				}
-				((List) result.get(current)).add(args[i]);
+				(result.get(current)).add(args[i]);
 			}
 		}
 		return result;

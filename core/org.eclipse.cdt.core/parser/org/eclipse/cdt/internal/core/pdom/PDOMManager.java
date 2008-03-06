@@ -368,7 +368,6 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private Map<String, IPDOMLinkageFactory> getLinkageFactories() {
 		return LanguageManager.getInstance().getPDOMLinkageFactoryMappings();
 	}

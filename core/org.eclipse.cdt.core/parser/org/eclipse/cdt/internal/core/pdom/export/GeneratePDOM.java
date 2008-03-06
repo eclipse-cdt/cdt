@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.pdom.export;
 
 import java.io.File;
 import java.text.MessageFormat;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -34,8 +33,8 @@ import org.eclipse.core.runtime.NullProgressMonitor;
  * An ISafeRunnable which
  * <ul>
  * <li>Creates a project for export
- * <li>Exports the pdom
- * <li>Writes new properties to the pdom
+ * <li>Exports the PDOM
+ * <li>Writes new properties to the PDOM
  * <ul>
  */
 public class GeneratePDOM implements ISafeRunnable {
@@ -82,11 +81,10 @@ public class GeneratePDOM implements ISafeRunnable {
 			WritablePDOM exportedPDOM= new WritablePDOM(targetLocation, converter, LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
 			exportedPDOM.acquireWriteLock(0);
 			try {
-				Map exportProperties= pm.getExportProperties();
+				Map<String,String> exportProperties= pm.getExportProperties();
 				if(exportProperties!=null) {
-					for(Iterator i = exportProperties.entrySet().iterator(); i.hasNext(); ) {
-						Map.Entry entry = (Map.Entry) i.next();
-						exportedPDOM.setProperty((String) entry.getKey(), (String) entry.getValue());
+					for(Map.Entry<String,String> entry : exportProperties.entrySet()) {
+						exportedPDOM.setProperty(entry.getKey(), entry.getValue());
 					}
 				}
 				// fake PDOM-version to that which can be safely read by the CDT-version
@@ -104,7 +102,6 @@ public class GeneratePDOM implements ISafeRunnable {
 	}
 
 	public void handleException(Throwable exception) {
-		// subclass for custom behaviour
 		CCorePlugin.log(exception);
 	}
 	

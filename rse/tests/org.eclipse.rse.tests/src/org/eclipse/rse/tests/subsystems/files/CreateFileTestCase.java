@@ -15,9 +15,7 @@
 
 package org.eclipse.rse.tests.subsystems.files;
 
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.SystemStartHere;
@@ -27,9 +25,6 @@ import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
-import org.eclipse.rse.tests.core.connection.IRSEConnectionProperties;
-import org.eclipse.rse.ui.ISystemPreferencesConstants;
-import org.eclipse.rse.ui.RSEUIPlugin;
 
 public class CreateFileTestCase extends FileServiceBaseTest {
 
@@ -56,75 +51,29 @@ public class CreateFileTestCase extends FileServiceBaseTest {
 	public void testCreateFileFTP() throws Exception {
 		//-test-author-:KevinDoyle
 		
-		// Calculate the location of the test connection properties
-		IPath location = getTestDataLocation("", false); //$NON-NLS-1$
-		assertNotNull("Cannot locate test data! Missing test data location?", location); //$NON-NLS-1$
-		location = location.append("ftpConnection.properties"); //$NON-NLS-1$
-		assertNotNull("Failed to construct location to 'connection.properties' test data file!", location); //$NON-NLS-1$
-		assertTrue("Required test data file seems to be not a file!", location.toFile().isFile()); //$NON-NLS-1$
-		assertTrue("Required test data file is not readable!", location.toFile().canRead()); //$NON-NLS-1$
-		
-		// Load the properties from the calculated location without backing up defaults
-		IRSEConnectionProperties properties = getConnectionManager().loadConnectionProperties(location, false);
-		assertNotNull("Failed to load test connection properties from location " + location.toOSString(), properties); //$NON-NLS-1$
-		
-		// Lookup and create the connection now if necessary
-		host = getConnectionManager().findOrCreateConnection(properties);
-		assertNotNull("Failed to create connection " + properties.getProperty(IRSEConnectionProperties.ATTR_NAME), host); //$NON-NLS-1$
-		
+		host = getFTPHost();		
 		createFileAndAssertProperties();
 	}
 		
-	public void testCreateFileDStore() throws Exception {
+	public void testCreateFileLinux() throws Exception {
 		//-test-author-:KevinDoyle
-		
-		//Ensure that the SSL acknowledge dialog does not show up. 
-		//We need to setDefault first in order to set the value of a preference.  
-		IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
-		store.setDefault(ISystemPreferencesConstants.ALERT_SSL, ISystemPreferencesConstants.DEFAULT_ALERT_SSL);
-		store.setDefault(ISystemPreferencesConstants.ALERT_NONSSL, ISystemPreferencesConstants.DEFAULT_ALERT_NON_SSL);
 
-		store.setValue(ISystemPreferencesConstants.ALERT_SSL, false);
-		store.setValue(ISystemPreferencesConstants.ALERT_NONSSL, false);
-		
-		// Calculate the location of the test connection properties
-		IPath location = getTestDataLocation("", false); //$NON-NLS-1$
-		assertNotNull("Cannot locate test data! Missing test data location?", location); //$NON-NLS-1$
-		location = location.append("linuxConnection.properties"); //$NON-NLS-1$
-		assertNotNull("Failed to construct location to 'connection.properties' test data file!", location); //$NON-NLS-1$
-		assertTrue("Required test data file seems to be not a file!", location.toFile().isFile()); //$NON-NLS-1$
-		assertTrue("Required test data file is not readable!", location.toFile().canRead()); //$NON-NLS-1$
-		
-		// Load the properties from the calculated location without backing up defaults
-		IRSEConnectionProperties properties = getConnectionManager().loadConnectionProperties(location, false);
-		assertNotNull("Failed to load test connection properties from location " + location.toOSString(), properties); //$NON-NLS-1$
-		
 		// Lookup and create the connection now if necessary
-		host = getConnectionManager().findOrCreateConnection(properties);
-		assertNotNull("Failed to create connection " + properties.getProperty(IRSEConnectionProperties.ATTR_NAME), host); //$NON-NLS-1$
-		
+		host = getLinuxHost();
 		createFileAndAssertProperties();
 	}
 		
 	public void testCreateFileSSH() throws Exception {
 		//-test-author-:KevinDoyle
 		
-		// Calculate the location of the test connection properties
-		IPath location = getTestDataLocation("", false); //$NON-NLS-1$
-		assertNotNull("Cannot locate test data! Missing test data location?", location); //$NON-NLS-1$
-		location = location.append("sshConnection.properties"); //$NON-NLS-1$
-		assertNotNull("Failed to construct location to 'connection.properties' test data file!", location); //$NON-NLS-1$
-		assertTrue("Required test data file seems to be not a file!", location.toFile().isFile()); //$NON-NLS-1$
-		assertTrue("Required test data file is not readable!", location.toFile().canRead()); //$NON-NLS-1$
+		host = getSSHHost();		
+		createFileAndAssertProperties();
+	}
+	
+	public void testCreateFileWindows() throws Exception {
+		//-test-author-:KevinDoyle
 		
-		// Load the properties from the calculated location without backing up defaults
-		IRSEConnectionProperties properties = getConnectionManager().loadConnectionProperties(location, false);
-		assertNotNull("Failed to load test connection properties from location " + location.toOSString(), properties); //$NON-NLS-1$
-		
-		// Lookup and create the connection now if necessary
-		host = getConnectionManager().findOrCreateConnection(properties);
-		assertNotNull("Failed to create connection " + properties.getProperty(IRSEConnectionProperties.ATTR_NAME), host); //$NON-NLS-1$
-		
+		host = getWindowsHost();		
 		createFileAndAssertProperties();
 	}
 	

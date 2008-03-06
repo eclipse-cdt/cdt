@@ -14,7 +14,6 @@ package org.eclipse.rse.tests.subsystems.files;
 import junit.framework.TestSuite;
 
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.SystemStartHere;
@@ -64,22 +63,7 @@ public class FileServiceArchiveTestDStoreWindows extends FileServiceArchiveTest 
 	
 	protected void setupFileSubSystem() {
 		
-		//We need to delay if it is first case run after a workspace startup
-		SYSTEM_TYPE_ID = IRSESystemType.SYSTEMTYPE_WINDOWS_ID;
-		SYSTEM_ADDRESS = "LOCALHOST";
-		SYSTEM_NAME = "LOCALHOST_ds";
-		
-		//Ensure that the SSL acknowledge dialog does not show up. 
-		//We need to setDefault first in order to set the value of a preference.  
-		IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
-		store.setDefault(ISystemPreferencesConstants.ALERT_SSL, ISystemPreferencesConstants.DEFAULT_ALERT_SSL);
-		store.setDefault(ISystemPreferencesConstants.ALERT_NONSSL, ISystemPreferencesConstants.DEFAULT_ALERT_NON_SSL);
-		fPreference_ALERT_SSL = store.getBoolean(ISystemPreferencesConstants.ALERT_SSL);
-		fPreference_ALERT_NONSSL = store.getBoolean(ISystemPreferencesConstants.ALERT_NONSSL);
-		store.setValue(ISystemPreferencesConstants.ALERT_SSL, false);
-		store.setValue(ISystemPreferencesConstants.ALERT_NONSSL, false);
-
-		IHost dstoreHost = getRemoteSystemConnection(SYSTEM_TYPE_ID, SYSTEM_ADDRESS, SYSTEM_NAME, "", "");
+		IHost dstoreHost = getWindowsHost();
 		assertTrue(dstoreHost != null);
 		ISystemRegistry sr = SystemStartHere.getSystemRegistry(); 
 		ISubSystem[] ss = sr.getServiceSubSystems(dstoreHost, IFileService.class);
@@ -102,17 +86,6 @@ public class FileServiceArchiveTestDStoreWindows extends FileServiceArchiveTest 
 		try 
 		{
 			IConnectorService connectionService = fss.getConnectorService();
-			//If you want to change the daemon to another port, uncomment following statements
-			/*
-			IServerLauncherProperties properties = connectionService.getRemoteServerLauncherProperties();
-			
-			if (properties instanceof IRemoteServerLauncher)
-			{
-				IRemoteServerLauncher sl = (IRemoteServerLauncher)properties;
-				sl.setDaemonPort(4075);
-				
-			}
-			*/
 			
 			//If you want to connect to a running server, uncomment the following statements
 			/*
@@ -127,6 +100,7 @@ public class FileServiceArchiveTestDStoreWindows extends FileServiceArchiveTest 
 			*/
 			//End here.
 
+			connectionService.acquireCredentials(false);
 			connectionService.connect(mon);
 			 
 		} catch(Exception e) {

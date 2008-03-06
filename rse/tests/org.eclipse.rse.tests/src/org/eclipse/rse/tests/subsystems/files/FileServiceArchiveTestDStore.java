@@ -18,7 +18,6 @@ import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.ISystemResourceSet;
@@ -116,31 +115,7 @@ public class FileServiceArchiveTestDStore extends FileServiceArchiveTest {
 	
 	protected void setupFileSubSystem() {
 		
-		//We need to delay if it is first case run after a workspace startup
-		SYSTEM_TYPE_ID = IRSESystemType.SYSTEMTYPE_LINUX_ID;
-		SYSTEM_ADDRESS = "SLES8RM";
-		SYSTEM_NAME = "sles8rm_ds";
-		USER_ID = "xuanchen";
-		PASSWORD = "xxxxxx";
-		
-		/*
-		SYSTEM_ADDRESS = "dmcknigh3";
-		SYSTEM_NAME = "dmcknigh3_ds";
-		USER_ID = "tester";
-		PASSWORD = "xxxxxx";
-		*/
-
-		//Ensure that the SSL acknowledge dialog does not show up. 
-		//We need to setDefault first in order to set the value of a preference.  
-		IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
-		store.setDefault(ISystemPreferencesConstants.ALERT_SSL, ISystemPreferencesConstants.DEFAULT_ALERT_SSL);
-		store.setDefault(ISystemPreferencesConstants.ALERT_NONSSL, ISystemPreferencesConstants.DEFAULT_ALERT_NON_SSL);
-		fPreference_ALERT_SSL = store.getBoolean(ISystemPreferencesConstants.ALERT_SSL);
-		fPreference_ALERT_NONSSL = store.getBoolean(ISystemPreferencesConstants.ALERT_NONSSL);
-		store.setValue(ISystemPreferencesConstants.ALERT_SSL, false);
-		store.setValue(ISystemPreferencesConstants.ALERT_NONSSL, false);
-
-		IHost dstoreHost = getRemoteSystemConnection(SYSTEM_TYPE_ID, SYSTEM_ADDRESS, SYSTEM_NAME, USER_ID, PASSWORD);
+		IHost dstoreHost = getLinuxHost();
 		assertNotNull(dstoreHost);
 		ISystemRegistry sr = SystemStartHere.getSystemRegistry(); 
 		ISubSystem[] ss = sr.getServiceSubSystems(dstoreHost, IFileService.class);
@@ -163,17 +138,6 @@ public class FileServiceArchiveTestDStore extends FileServiceArchiveTest {
 		try 
 		{
 			IConnectorService connectionService = fss.getConnectorService();
-			//If you want to change the daemon to another port, uncomment following statements
-			/*
-			IServerLauncherProperties properties = connectionService.getRemoteServerLauncherProperties();
-			
-			if (properties instanceof IRemoteServerLauncher)
-			{
-				IRemoteServerLauncher sl = (IRemoteServerLauncher)properties;
-				sl.setDaemonPort(8008);
-				
-			}
-			*/
 			
 			//If you want to connect to a running server, uncomment the following statements
 			/*
@@ -187,7 +151,8 @@ public class FileServiceArchiveTestDStore extends FileServiceArchiveTest {
 			}
 			*/
 			//end here
-
+			
+			connectionService.acquireCredentials(false);
 			connectionService.connect(mon);
 			 
 		} catch(Exception e) {
@@ -267,15 +232,7 @@ public class FileServiceArchiveTestDStore extends FileServiceArchiveTest {
 		//Then, we need to retrieve children of the tempDir to cache their information.
 		fss.resolveFilterString(tempDir, null, mon);
 		
-		//Now, we need to have a Windows DStore connection, so that we could use super transfer to copy
-		//directory from DStore Unix/Linux to DStore Windows
-		//We need to delay if it is first case run after a workspace startup
-		String systemTypeID = IRSESystemType.SYSTEMTYPE_WINDOWS_ID;
-		String systemAddress = "LOCALHOST";
-		String systemName = "LOCALHOST_ds";
-		
-
-		IHost dstoreHost = getRemoteSystemConnection(systemTypeID, systemAddress, systemName, "", "");
+		IHost dstoreHost = getWindowsHost();
 		assertNotNull(dstoreHost);
 		ISystemRegistry sr = SystemStartHere.getSystemRegistry(); 
 		ISubSystem[] ss = sr.getServiceSubSystems(dstoreHost, IFileService.class);
@@ -287,6 +244,7 @@ public class FileServiceArchiveTestDStore extends FileServiceArchiveTest {
 		}
 		assertNotNull(dstoreWindowsFss);
 		IConnectorService dstoreWindowsConnectionService = dstoreWindowsFss.getConnectorService();
+		dstoreWindowsConnectionService.acquireCredentials(false);
 		dstoreWindowsConnectionService.connect(mon);
 		
 		//Then, create a temparory directory the My Home of the DStore Windows

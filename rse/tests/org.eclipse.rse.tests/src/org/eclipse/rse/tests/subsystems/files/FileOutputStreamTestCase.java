@@ -21,9 +21,7 @@ import java.net.URI;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.SystemStartHere;
@@ -34,9 +32,6 @@ import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
-import org.eclipse.rse.tests.core.connection.IRSEConnectionProperties;
-import org.eclipse.rse.ui.ISystemPreferencesConstants;
-import org.eclipse.rse.ui.RSEUIPlugin;
 
 public class FileOutputStreamTestCase extends FileServiceBaseTest {
 
@@ -56,101 +51,9 @@ public class FileOutputStreamTestCase extends FileServiceBaseTest {
 		return null;
 	}
 	
-	protected IHost getSSHHost()
-	{
-		// Calculate the location of the test connection properties
-		IPath location = getTestDataLocation("", false); //$NON-NLS-1$
-		assertNotNull("Cannot locate test data! Missing test data location?", location); //$NON-NLS-1$
-		location = location.append("sshConnection.properties"); //$NON-NLS-1$
-		assertNotNull("Failed to construct location to 'connection.properties' test data file!", location); //$NON-NLS-1$
-		assertTrue("Required test data file seems to be not a file!", location.toFile().isFile()); //$NON-NLS-1$
-		assertTrue("Required test data file is not readable!", location.toFile().canRead()); //$NON-NLS-1$
-		
-		// Load the properties from the calculated location without backing up defaults
-		IRSEConnectionProperties properties = getConnectionManager().loadConnectionProperties(location, false);
-		assertNotNull("Failed to load test connection properties from location " + location.toOSString(), properties); //$NON-NLS-1$
-		
-		// Lookup and create the connection now if necessary
-		host = getConnectionManager().findOrCreateConnection(properties);
-		assertNotNull("Failed to create connection " + properties.getProperty(IRSEConnectionProperties.ATTR_NAME), host); //$NON-NLS-1$
-		
-		return host;
-	}
-	
-	protected IHost getFTPHost()
-	{
-		// Calculate the location of the test connection properties
-		IPath location = getTestDataLocation("", false); //$NON-NLS-1$
-		assertNotNull("Cannot locate test data! Missing test data location?", location); //$NON-NLS-1$
-		location = location.append("ftpConnection.properties"); //$NON-NLS-1$
-		assertNotNull("Failed to construct location to 'connection.properties' test data file!", location); //$NON-NLS-1$
-		assertTrue("Required test data file seems to be not a file!", location.toFile().isFile()); //$NON-NLS-1$
-		assertTrue("Required test data file is not readable!", location.toFile().canRead()); //$NON-NLS-1$
-		
-		// Load the properties from the calculated location without backing up defaults
-		IRSEConnectionProperties properties = getConnectionManager().loadConnectionProperties(location, false);
-		assertNotNull("Failed to load test connection properties from location " + location.toOSString(), properties); //$NON-NLS-1$
-		
-		// Lookup and create the connection now if necessary
-		host = getConnectionManager().findOrCreateConnection(properties);
-		assertNotNull("Failed to create connection " + properties.getProperty(IRSEConnectionProperties.ATTR_NAME), host); //$NON-NLS-1$
-		
-		return host;
-	}
-	
-	protected IHost getLocalHost() {
-		// Calculate the location of the test connection properties
-		IPath location = getTestDataLocation("", false); //$NON-NLS-1$
-		assertNotNull("Cannot locate test data! Missing test data location?", location); //$NON-NLS-1$
-		location = location.append("localConnection.properties"); //$NON-NLS-1$
-		assertNotNull("Failed to construct location to 'connection.properties' test data file!", location); //$NON-NLS-1$
-		assertTrue("Required test data file seems to be not a file!", location.toFile().isFile()); //$NON-NLS-1$
-		assertTrue("Required test data file is not readable!", location.toFile().canRead()); //$NON-NLS-1$
-		
-		// Load the properties from the calculated location without backing up defaults
-		IRSEConnectionProperties properties = getConnectionManager().loadConnectionProperties(location, false);
-		assertNotNull("Failed to load test connection properties from location " + location.toOSString(), properties); //$NON-NLS-1$
-		
-		// Lookup and create the connection now if necessary
-		host = getConnectionManager().findOrCreateConnection(properties);
-		assertNotNull("Failed to create connection " + properties.getProperty(IRSEConnectionProperties.ATTR_NAME), host); //$NON-NLS-1$
-		
-		return host;
-	}
-	
-	protected IHost getDStoreHost()
-	{
-		//Ensure that the SSL acknowledge dialog does not show up. 
-		//We need to setDefault first in order to set the value of a preference.  
-		IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
-		store.setDefault(ISystemPreferencesConstants.ALERT_SSL, ISystemPreferencesConstants.DEFAULT_ALERT_SSL);
-		store.setDefault(ISystemPreferencesConstants.ALERT_NONSSL, ISystemPreferencesConstants.DEFAULT_ALERT_NON_SSL);
-
-		store.setValue(ISystemPreferencesConstants.ALERT_SSL, false);
-		store.setValue(ISystemPreferencesConstants.ALERT_NONSSL, false);
-		
-		// Calculate the location of the test connection properties
-		IPath location = getTestDataLocation("", false); //$NON-NLS-1$
-		assertNotNull("Cannot locate test data! Missing test data location?", location); //$NON-NLS-1$
-		location = location.append("linuxConnection.properties"); //$NON-NLS-1$
-		assertNotNull("Failed to construct location to 'connection.properties' test data file!", location); //$NON-NLS-1$
-		assertTrue("Required test data file seems to be not a file!", location.toFile().isFile()); //$NON-NLS-1$
-		assertTrue("Required test data file is not readable!", location.toFile().canRead()); //$NON-NLS-1$
-		
-		// Load the properties from the calculated location without backing up defaults
-		IRSEConnectionProperties properties = getConnectionManager().loadConnectionProperties(location, false);
-		assertNotNull("Failed to load test connection properties from location " + location.toOSString(), properties); //$NON-NLS-1$
-		
-		// Lookup and create the connection now if necessary
-		host = getConnectionManager().findOrCreateConnection(properties);
-		assertNotNull("Failed to create connection " + properties.getProperty(IRSEConnectionProperties.ATTR_NAME), host); //$NON-NLS-1$
-		
-		return host;
-	}
-	
 	public void testRSEFileStoreAppendOutputStreamLocal() throws Exception {
 		//-test-author-:KevinDoyle
-		host = getLocalHost();
+		host = getLocalSystemConnection();
 		outputStreamFileWriting(EFS.APPEND);
 	}
 		
@@ -160,9 +63,15 @@ public class FileOutputStreamTestCase extends FileServiceBaseTest {
 		outputStreamFileWriting(EFS.APPEND);
 	}
 		
-	public void testRSEFileStoreAppendOutputStreamDStore() throws Exception {
+	public void testRSEFileStoreAppendOutputStreamLinux() throws Exception {
 		//-test-author-:KevinDoyle
-		host = getDStoreHost();
+		host = getLinuxHost();
+		outputStreamFileWriting(EFS.APPEND);
+	}
+	
+	public void testRSEFileStoreAppendOutputStreamWindows() throws Exception {
+		//-test-author-:KevinDoyle
+		host = getWindowsHost();
 		outputStreamFileWriting(EFS.APPEND);
 	}
 		
@@ -174,7 +83,7 @@ public class FileOutputStreamTestCase extends FileServiceBaseTest {
 	
 	public void testRSEFileStoreOverwriteOutputStreamLocal() throws Exception {
 		//-test-author-:KevinDoyle
-		host = getLocalHost();
+		host = getLocalSystemConnection();
 		outputStreamFileWriting(EFS.NONE);
 	}
 		
@@ -184,9 +93,15 @@ public class FileOutputStreamTestCase extends FileServiceBaseTest {
 		outputStreamFileWriting(EFS.NONE);
 	}
 		
-	public void testRSEFileStoreOverwriteOutputStreamDStore() throws Exception {
+	public void testRSEFileStoreOverwriteOutputStreamLinux() throws Exception {
 		//-test-author-:KevinDoyle
-		host = getDStoreHost();
+		host = getLinuxHost();
+		outputStreamFileWriting(EFS.NONE);
+	}
+	
+	public void testRSEFileStoreOverwriteOutputStreamWindows() throws Exception {
+		//-test-author-:KevinDoyle
+		host = getWindowsHost();
 		outputStreamFileWriting(EFS.NONE);
 	}
 		

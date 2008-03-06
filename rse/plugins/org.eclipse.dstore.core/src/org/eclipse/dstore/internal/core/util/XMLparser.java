@@ -126,7 +126,7 @@ public class XMLparser
 
 	/**
 	 * Set whether to enable keepalive
-	 * @param enable
+	 * @param enable <code>true</code> to enable keepalive
 	 */
 	public void setEnableKeepalive(boolean enable){
 		// if false, we ignore the keepalive stuff
@@ -136,7 +136,7 @@ public class XMLparser
 	/**
 	 * Set the keepalive response timeout
 	 * @param timeout the time to wait for a response after 
-	 *        initiating a keepalivfe request
+	 *        initiating a keepalive request
 	 */
 	public void setKeepaliveResponseTimeout(int timeout){
 		// the new value will be picked up on the next readLine() call
@@ -401,10 +401,7 @@ public class XMLparser
 					{
 						int newMaxBuffer = 2 * _maxBuffer;
 						byte[] newBuffer = new byte[newMaxBuffer];
-						for (int i = 0; i < _maxBuffer; i++){
-							newBuffer[i] = _byteBuffer[i];
-						}
-						
+						System.arraycopy(_byteBuffer, 0, newBuffer, 0, _maxBuffer);
 						_maxBuffer = newMaxBuffer;
 						_byteBuffer = newBuffer;
 					}

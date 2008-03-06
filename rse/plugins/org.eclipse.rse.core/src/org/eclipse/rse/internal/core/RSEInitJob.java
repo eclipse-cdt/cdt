@@ -62,9 +62,11 @@ public final class RSEInitJob extends Job {
 				throw new InterruptedException();
 			}
 		}
-		public synchronized void done() {
-			isComplete = true;
-			notifyAll();
+		public void done() {
+			synchronized (this) {
+				isComplete = true;
+				notifyAll();
+			}
 			notifyListeners(phaseNumber);
 		}
 		public synchronized void cancel() {

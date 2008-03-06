@@ -96,7 +96,7 @@ Following is the snippet from a the
 "hello world" example of using a
 request monitor:<br>
 <div style="margin-left: 20px;">
-<table style="text-align: left; background-color: rgb(238, 238, 255);"
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
  border="0" cellpadding="5" cellspacing="0">
   <tbody>
     <tr>
@@ -172,7 +172,7 @@ value to the caller.&nbsp; DataRequestMonitor can be used for that
 purpose. A simple example of using the data request monitor:<br>
 <br>
 <div style="margin-left: 20px;">
-<table style="text-align: left; background-color: rgb(238, 238, 255);"
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
  border="0" cellpadding="5" cellspacing="0">
   <tbody>
     <tr>
@@ -226,7 +226,7 @@ The following snipped from the AsyncQuicksort example shows a simple
 example of using the CountingRequestMonitor:<br>
 <br>
 <div style="margin-left: 20px;">
-<table style="text-align: left; background-color: rgb(238, 238, 255);"
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
  border="0" cellpadding="5" cellspacing="0">
   <tbody>
     <tr>
@@ -280,7 +280,7 @@ execution paths!</li>
       <td
  style="text-align: left; background-color: rgb(255, 204, 204);"><span
  style="text-decoration: underline;">Excercise 2</span>: Converting a
-synchronous method into an asynchronous one, is another common task in
+synchronous method into an asynchronous one is another common task in
 DSF.&nbsp; This excercise converts the AsyncQuicksort.partition()
 method into asynchronous AsyncQuicksort.asyncPartition().&nbsp; <br>
       <p><span style="font-style: italic;">Look
@@ -301,7 +301,7 @@ viewer and an asynchronous data generator.<br>
 data access methods:<br>
 </p>
 <div style="margin-left: 20px;">
-<table style="text-align: left; background-color: rgb(238, 238, 255);"
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
  border="0" cellpadding="5" cellspacing="0">
   <tbody>
     <tr>
@@ -355,7 +355,7 @@ following snippet
 from SyncDataViewer.getElements()&nbsp; shows the use of Query:<br>
 <br>
 <div style="margin-left: 20px;">
-<table style="text-align: left; background-color: rgb(238, 238, 255);"
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
  border="0" cellpadding="5" cellspacing="0">
   <tbody>
     <tr>
@@ -407,7 +407,8 @@ an executor.&nbsp; <br>
 java.util.concurrent.Future.get() method, implemented by Query, until
 the request monitor from the execute() method is completed.</li>
 </ul>
-<table border="0" cellpadding="5" cellspacing="30">
+<table style="text-align: left; margin-left: auto; margin-right: auto;"
+ border="0" cellpadding="5" cellspacing="30">
   <tbody>
     <tr>
       <td style="text-align: center; vertical-align: middle;"><img
@@ -417,14 +418,12 @@ the request monitor from the execute() method is completed.</li>
     </tr>
     <tr>
       <td style="vertical-align: top;"><small><span
- style="font-weight: bold;">Image 1: Sequence diagram of Query use in
-getElements().</span></small><br>
+ style="font-weight: bold;">Image 1: Detailed sequence of calling
+IDataGenerator.getCount() in SyncDataViewer.getElements().</span></small><br>
       </td>
     </tr>
   </tbody>
 </table>
-<span style="font-style: italic; color: rgb(255, 0, 0);"></span><br>
-<br>
 <br>
 <table
  style="width: 95%; text-align: left; margin-left: auto; margin-right: auto; background-color: rgb(255, 255, 204); font-style: italic;"
@@ -440,10 +439,6 @@ for completion of the asynchronous methods called by execute().</td>
     </tr>
   </tbody>
 </table>
-<br>
-<p style="font-style: italic;"><span style="color: rgb(255, 0, 0);">TODO
-?: add a sequence diagram of the deadlock scenario</span><br>
-</p>
 <p> </p>
 <h4>Synchronization</h4>
 Managing race conditions and deadlocks is one of the most challanging
@@ -455,7 +450,7 @@ to the executor thread.&nbsp; The following is an example of this from
 the DataGeneratorWithExecutor:<br>
 <br>
 <div style="margin-left: 20px;">
-<table style="text-align: left; background-color: rgb(238, 238, 255);"
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
  border="0" cellpadding="5" cellspacing="0">
   <tbody>
     <tr>
@@ -503,7 +498,8 @@ left out.</span><br>
     </tr>
   </tbody>
 </table>
-<table border="0" cellpadding="5" cellspacing="30">
+<table style="text-align: left; margin-left: auto; margin-right: auto;"
+ border="0" cellpadding="5" cellspacing="30">
   <tbody>
     <tr>
       <td style="text-align: center;"><img
@@ -517,11 +513,11 @@ left out.</span><br>
     </tr>
     <tr>
       <td style="vertical-align: top;"><small><span
- style="font-weight: bold;">Image 1: Synchronization using multiple
+ style="font-weight: bold;">Image 2: Synchronization using multiple
 locks on data.</span></small><br>
       </td>
       <td style="vertical-align: top;"><small><span
- style="font-weight: bold;">Image 2: Synchronization using a single
+ style="font-weight: bold;">Image 3: Synchronization using a single
 DSF executor thread.</span></small><br>
       </td>
     </tr>
@@ -535,7 +531,7 @@ thread-based implementation this loop is implemented in the run method
 of the generator's thread:<br>
 <br>
 <div style="margin-left: 20px;">
-<table style="text-align: left; background-color: rgb(238, 238, 255);"
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
  border="0" cellpadding="5" cellspacing="0">
   <tbody>
     <tr>
@@ -592,7 +588,7 @@ servicing the queue, which is called by every method that adds a new
 request to the queue:<br>
 </p>
 <div style="margin-left: 20px;">
-<table style="text-align: left; background-color: rgb(238, 238, 255);"
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
  border="0" cellpadding="5" cellspacing="0">
   <tbody>
     <tr>
@@ -780,17 +776,764 @@ module.</span></p>
     </tr>
   </tbody>
 </table>
+<h3><span style="font-weight: bold;">Timers Example</span></h3>
+<span style="font-weight: bold;"></span>The <span
+ style="font-style: italic;">Timers</span> example, found in the <span
+ style="font-style: italic;">org.eclipse.dd.examples.dsf.timers</span>
+package, is used as a reference throughout the following
+sections.&nbsp; It is useful to get familiar with this example at this
+time.<br>
+<p>Timer example defines the following two services:<br>
+</p>
+<ul>
+  <li><span style="text-decoration: underline;">TimerService</span> -
+This service manages a set of timers where each timer's value is
+incremented every second.&nbsp; The timer service contains the
+following features:<br>
+  </li>
+  <ul>
+    <li><span style="font-style: italic;">startTimer()</span> method -
+Allows user to create a new timer.&nbsp; It returns the Data Model
+context for the new timer.<br>
+    </li>
+    <li><span style="font-style: italic;">killTimer()</span> method -
+Allows the user to delete the given timer.&nbsp; It requires a timer
+context.<br>
+    </li>
+    <li><span style="font-style: italic;">getTimers()</span> method -
+Returns the array of contexts for existing timers.<br>
+    </li>
+    <li><span style="font-style: italic;">getTimerValue()</span> method
+- Returns the current value for the given timer context.<br>
+    </li>
+    <li><span style="font-style: italic;">TimerTickEvent</span> event
+class - An event that is generated for every timer, every time its
+value changes (once per second).&nbsp; The event contains the timer's
+context.<br>
+    </li>
+  </ul>
+  <li><span style="text-decoration: underline;">AlarmService</span> -
+This service manages a set of triggers and alarms.&nbsp; Triggers can
+be created and destroyed independently.&nbsp; Alarms represent a timer
+and a trigger combined.&nbsp; The Alarm service has the following
+features:</li>
+  <ul>
+    <li><span style="font-style: italic;">createTrigger()</span> method
+- Creates a new trigger with a given value.&nbsp; It returns a context
+to the new trigger.<br>
+    </li>
+    <li><span style="font-style: italic;">deleteTrigger()</span> method
+- Deletes the trigger for the given context.<br>
+    </li>
+    <li><span style="font-style: italic;">setTriggerValue()</span>
+method - Sets the value of a trigger to the given value.<br>
+    </li>
+    <li><span style="font-style: italic;">getAlarm()</span> method -
+Gets the alarm for the specified timer and trigger contexts.&nbsp; It
+returns an alarm context object.<br>
+    </li>
+    <li><span style="font-style: italic;">AlarmTriggeredDMEvent</span>
+event class - An event that is generated for every timer that trips the
+given trigger by surpassing its value.&nbsp; The event contains an
+alarm context.<br>
+    </li>
+  </ul>
+</ul>
+The Timers example also features a user interface for displaying and
+manipulating the data in the example's services.&nbsp; The principal
+component of this UI is a view that can be opened by following the
+menus: <span style="font-style: italic;">Window-&gt;Show View-&gt;Other</span>,
+then selecting <span style="font-style: italic;">DSF
+Examples-&gt;Timers</span> View in the selection dialog.&nbsp; This
+view contains a tree viewer which displays the timers, triggers, and
+alarms in a hierarchy.&nbsp; The alarms are only shown when triggered
+and are automatically selected upon a triggered event.<br>
+<table style="text-align: left; margin-left: auto; margin-right: auto;"
+ border="0" cellpadding="5" cellspacing="30">
+  <tbody>
+    <tr>
+      <td style="text-align: center; vertical-align: middle;"><img
+ title="Screen shot of the Timers view."
+ style="width: 635px; height: 234px;" alt="" src="timers_1.png"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><small><span
+ style="font-weight: bold;">Image 4: Screen shot of the Timers view.</span></small><br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+Other features of the Timers example UI include:<br>
+<ul>
+  <li><span style="text-decoration: underline;">New Timer action</span>
+- Adds a new timer, which immediately shows up in the view.</li>
+  <li><span style="text-decoration: underline;">New Trigger action</span>
+- Opens a dialog where the user enters the value of the new
+trigger.&nbsp; Upon OK, the dialog creates a new trigger that is added
+to the view.</li>
+  <li><span style="text-decoration: underline;">Remove action</span> -
+Removes a timer or a trigger, whichever is currently selected in the
+viewer.<br>
+  </li>
+  <li><span style="text-decoration: underline;">Toggle Layout action</span>
+- Switches the hierarchy in the tree to either <span
+ style="font-style: italic;">Timers-&gt;Triggers-&gt;Alarm</span> or <span
+ style="font-style: italic;">Triggers-&gt;Timers-&gt;Alarm</span></li>
+  <li><span style="text-decoration: underline;">Edit Trigger Value cell
+editor</span> - changes the value of the selected trigger.<span
+ style="font-style: italic;"><br>
+    </span></li>
+</ul>
 <h3>Services</h3>
 <h4>OSGi</h4>
+DSF builds on top of OSGi services APIs.&nbsp;&nbsp; OSGi offers a rich
+API for managing services and it is important to understand some of the
+OSGi service API basics in order to use DSF<br>
+<ul>
+  <li><span style="text-decoration: underline;">Registration</span> -
+Services need to register and unregister themselves with OSGi framework</li>
+  <ul>
+    <li><span style="font-style: italic;">BundleContext.registerService()</span>
+- registers a service, it returns a ServiceRegistration object which
+should be retained by the caller.</li>
+    <li><span style="font-style: italic;">ServiceRegistration.unregister()</span>
+- unregisters a service.</li>
+  </ul>
+  <li><span style="text-decoration: underline;">References</span> -
+Clients wishing to use a service, need to obtain a reference to the
+service.&nbsp; OSGi features reference counting for services.</li>
+  <ul>
+    <li>BundleContext.getServiceReference(),
+BundleContext.getServiceReferences(),
+BundleContext.getAllServiceReferences() - methods for retrieving a
+reference to a service using a class name and/or a property filter.</li>
+    <li>BundleContext.ungetService() - Releases a service reference and
+decrements its use count.</li>
+  </ul>
+  <li><span style="text-decoration: underline;">Events</span> - Clients
+using services should listen to service events.&nbsp; Events are issued
+when services are added/removed/modified.</li>
+  <ul>
+    <li>org.osgi.framework.ServiceListener - interface for a service
+listener.&nbsp; Objects implementing this interface can be registered
+with the BundleContext</li>
+  </ul>
+</ul>
+<br>
+<table
+ style="width: 95%; text-align: left; margin-left: auto; margin-right: auto; background-color: rgb(255, 255, 204); font-style: italic;"
+ border="0" cellpadding="10" cellspacing="0">
+  <tbody>
+    <tr>
+      <td style="text-align: left;"> Note: The service APIs all use the
+BundleContext and they require the BundleContext to be active.&nbsp;
+This means DSF-based debugger integrations initialize after the plugin
+is started, but&nbsp; that they also shut down before the plugin is
+stopped.&nbsp; The first part is not difficult, but the second part
+usually requires that the plugin's BundleActivator.stop() method shuts
+down the debugger.<br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
 <h4>Session</h4>
+DSF-based debugger integrations can register many services and there
+can be multiple instances of debuggers registering services with the
+same interfaces.&nbsp; To help coordinate services in a give debugger
+instance and distinguish the services between the instances of
+debuggers, DSF services are organized into sessions.<br>
+<p>DSF Session features include:<br>
+</p>
+<ul>
+  <li><span style="text-decoration: underline;">Unique Session ID</span>
+- This ID is used to distinguish services from different
+sessions.&nbsp; Clients may also obtain a session instance using an ID
+through a static method.<br>
+  </li>
+  <li>Session Lifecycle Events - Clients may register to listen when
+sessions are started and ended.<br>
+  </li>
+  <li><span style="text-decoration: underline;">DSF Executor</span> -
+Eash session has a (single-threaded) DSF Executor&nbsp; associated with
+it, though multiple sessions could share a single executor.&nbsp; More
+about session executor in the next section.</li>
+  <li><span style="text-decoration: underline;">Service Events</span> -
+The session is used to dispatch service events.&nbsp; More on events in
+following sections.</li>
+  <li><span style="text-decoration: underline;">Model Adapters</span> -
+A session allws an adapter to be registered, which will be returned by
+all Data Model contexts in a given session for a given adapter
+type.&nbsp; More information about Data Model is described in the Data
+Model section.<br>
+  </li>
+</ul>
+<h4>Executor</h4>
+All the services registered with the same session share a single DSF
+Executor.&nbsp; By convention, all public service interfaces should be
+restricted to being called in this executor thread.&nbsp; This point
+goes back to the primary synchronization mechanism of DSF.&nbsp;
+Following this rule greatly simplifies the task of protecting the
+integrity of service state information.<br>
+<br>
+<table
+ style="width: 95%; text-align: left; margin-left: auto; margin-right: auto; background-color: rgb(255, 255, 204); font-style: italic;"
+ border="0" cellpadding="10" cellspacing="0">
+  <tbody>
+    <tr>
+      <td style="text-align: left;"> Note: All service public methods
+should be called using the session's DSF executor. </td>
+    </tr>
+  </tbody>
+</table>
+<br>
 <h4>Tracker</h4>
+Using the OSGi APIs for accessing services directly can be very
+cumbersome.&nbsp; A client retrieving a service reference is
+responsible for retaining the ServiceReference object and for calling
+BundleContext.ungetService() to avoid leaking the refernce.&nbsp; Also,
+since a service may be un-registered at any time, the clients need to
+listen for events indicating when a service is unregistered.&nbsp;
+Fortunately there are two utilities which help with this task<br>
+<br>
+<table style="text-align: left; width: 100%;" border="0"
+ cellpadding="10" cellspacing="0">
+  <tbody>
+    <tr>
+      <th style="vertical-align: top; text-decoration: underline;"><br>
+      </th>
+      <th style="vertical-align: top;">org.osgi.util.tracker.ServiceTracker<br>
+      </th>
+      <th style="vertical-align: top;">org.eclipse.dd.dsf.service.DsfServicesTracker<br>
+      </th>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; text-decoration: underline;">Services
+tracked<br>
+      </td>
+      <td style="vertical-align: top;">Tracks all services with a given
+class name or filter.&nbsp; <br>
+      </td>
+      <td style="vertical-align: top;">Tracks all services within a
+given DSF session.&nbsp; <br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; text-decoration: underline;">Thread
+safety</td>
+      <td style="vertical-align: top;">Thread safe</td>
+      <td style="vertical-align: top;">Restricted to the session
+executor thread.</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; text-decoration: underline;">Accessor
+methods<br>
+      </td>
+      <td style="vertical-align: top;">
+      <ul style="list-style-type: circle;">
+        <li><span style="font-style: italic;">getService()</span> -
+return the first service instance matching the class/filter</li>
+        <li><span style="font-style: italic;">getServices()</span> -
+returns all references matching the specified class/filter.</li>
+      </ul>
+      <ul style="list-style-type: circle;">
+      </ul>
+      </td>
+      <td style="vertical-align: top;">
+      <ul style="list-style-type: circle;">
+        <li><span style="font-style: italic;">getService(Class)</span>
+- Returns the first service instance matching given class</li>
+        <li><span style="font-style: italic;">getService(Class, String)</span>
+- Returns the first service instance matching given class and filter.<br>
+        </li>
+      </ul>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; text-decoration: underline;">Activation/Disposal
+methods<br>
+      </td>
+      <td style="vertical-align: top;">
+      <ul style="list-style-type: circle;">
+        <li><span style="font-style: italic;">open()</span> - Starts
+tracking maching services.</li>
+        <li><span style="font-style: italic;">close()</span> - Shuts
+down and un-gets all service references.</li>
+      </ul>
+      </td>
+      <td style="vertical-align: top;">
+      <ul style="list-style-type: circle;">
+        <li><span style="font-style: italic;">&lt;constructor&gt;</span>
+- DSF services tracker can be used immediately after being constucted.</li>
+        <li><span style="font-style: italic;">dispose() </span>-
+Disposes and un-gets all service references held by the tracker.<br>
+        </li>
+      </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<table
+ style="width: 95%; text-align: left; margin-left: auto; margin-right: auto; background-color: rgb(255, 255, 204); font-style: italic;"
+ border="0" cellpadding="10" cellspacing="0">
+  <tbody>
+    <tr>
+      <td style="text-align: left;"> Note: All service trackers must be
+disposed (or closed).&nbsp; Failing to dispose a tracker results in a
+service reference leak.<br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<h4>Initialization / Shutdown</h4>
+<span style="text-decoration: underline;"></span>Every DSF service must
+implement the IDsfService.initialize() and IDsfService.shutdown()
+methods.&nbsp; These methods can only be called in the session executor
+thread&nbsp; and are asynchronous.&nbsp; As the last step in
+initialization, a service should register itself.&nbsp; Likewise as the
+first step of shut-down a service should unregister itself.&nbsp; Also
+during initialization, each service should call
+DsfSession.getAndIncrementServiceStartupCounter(), in order to obtain
+the startup number of the service.&nbsp; This number is used in
+prioritizing the service events.<br>
+<p>Starting up a large number of DSF services requires calling a number
+of asynchronous method in a pre-defined sequence.&nbsp; Implementing
+this startup code can be cumbersome and DSF provides a quitility for
+implementing it: org.eclipse.dd.dsf.concurrent.Sequence.&nbsp; <br>
+</p>
+<p>Here's
+an example of how the Sequence is extended to perform the task of
+shutting down the services in the
+Timers example:<br>
+</p>
+<div style="margin-left: 20px;">
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
+ border="0" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2" rowspan="1" style="vertical-align: top;"><span
+ style="font-family: monospace; font-weight: bold;">org.eclipse.dd.examples.dsf.timers.ServicesStartupSequence</span><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 10px;"><br>
+      </td>
+      <td style="vertical-align: top;">
+      <pre><a name="line25"> 25: </a><strong><font color="#4169e1"><a
+ name="ServicesShutdownSequence"></a>public class ServicesShutdownSequence extends Sequence </font></strong>{<br><br><a
+ name="line27"> 27: </a>    <font color="#b22222">// Session to that the services are running in.</font><br><a
+ name="line28"> 28: </a>    final private DsfSession fSession;<br><a
+ name="line29"> 29: </a>    <br><a name="line30"> 30: </a>    <font
+ color="#b22222">// DSF Services is created as the first step of the sequence.  It </font><br><a
+ name="line31"> 31: </a>    <font color="#b22222">// cannot be created by the constructor because it can only be called</font><br><a
+ name="line32"> 32: </a>    <font color="#b22222">// in the session thread.</font><br><a
+ name="line33"> 33: </a>    DsfServicesTracker fTracker;<br><br><a
+ name="line35"> 35: </a><strong><font color="#4169e1">    public ServicesShutdownSequence(DsfSession session)</font></strong> {<br><a
+ name="line36"> 36: </a>        super(session.getExecutor());<br><a
+ name="line37"> 37: </a>        fSession = session;<br><a name="line38"> 38: </a>    }<br><a
+ name="line39"> 39: </a>    <br><a name="line40"> 40: </a>    Step[] fSteps = new Step[] {<br><a
+ name="line41"> 41: </a>        new Step() { <br><a name="line42"> 42: </a>            @Override<br><a
+ name="line43"> 43: </a><strong><font color="#4169e1">            public void execute(RequestMonitor requestMonitor)</font></strong> {<br><a
+ name="line44"> 44: </a>                fTracker = new DsfServicesTracker(DsfExamplesPlugin.getBundleContext(), fSession.getId());<br><a
+ name="line45"> 45: </a>                requestMonitor.done();<br><a
+ name="line46"> 46: </a>            }<br><a name="line47"> 47: </a>            <br><a
+ name="line48"> 48: </a>            @Override<br><a name="line49"> 49: </a><strong><font
+ color="#4169e1">            public void rollBack(RequestMonitor requestMonitor)</font></strong> {<br><a
+ name="line50"> 50: </a>                <font color="#b22222">// Dispose the tracker in case shutdown sequence is aborted</font><br><a
+ name="line51"> 51: </a>                <font color="#b22222">// and is rolled back.</font><br><a
+ name="line52"> 52: </a>                fTracker.dispose();<br><a
+ name="line53"> 53: </a>                fTracker = null;<br><a
+ name="line54"> 54: </a>                requestMonitor.done();<br><a
+ name="line55"> 55: </a>            } <br><a name="line56"> 56: </a>        },<br><a
+ name="line57"> 57: </a>        new Step() { <br><a name="line58"> 58: </a>            @Override<br><a
+ name="line59"> 59: </a><strong><font color="#4169e1">            public void execute(RequestMonitor requestMonitor)</font></strong> {<br><a
+ name="line60"> 60: </a>                shutdownService(AlarmService.class, requestMonitor);<br><a
+ name="line61"> 61: </a>            }<br><a name="line62"> 62: </a>        },<br><a
+ name="line63"> 63: </a>        new Step() { <br><a name="line64"> 64: </a>            @Override<br><a
+ name="line65"> 65: </a><strong><font color="#4169e1">            public void execute(RequestMonitor requestMonitor)</font></strong> {<br><a
+ name="line66"> 66: </a>                shutdownService(TimerService.class, requestMonitor);<br><a
+ name="line67"> 67: </a>            }<br><a name="line68"> 68: </a>        },<br><a
+ name="line69"> 69: </a>        new Step() { <br><a name="line70"> 70: </a>            @Override<br><a
+ name="line71"> 71: </a><strong><font color="#4169e1">            public void execute(RequestMonitor requestMonitor)</font></strong> {<br><a
+ name="line72"> 72: </a>                <font color="#b22222">// Dispose the tracker after the services are shut down.</font><br><a
+ name="line73"> 73: </a>                fTracker.dispose();<br><a
+ name="line74"> 74: </a>                fTracker = null;<br><a
+ name="line75"> 75: </a>                requestMonitor.done();<br><a
+ name="line76"> 76: </a>            }<br><a name="line77"> 77: </a>        }<br><a
+ name="line78"> 78: </a>    };<br><a name="line79"> 79: </a>    <br><a
+ name="line80"> 80: </a>    @Override<br><a name="line81"> 81: </a>    public Step[] getSteps() { <font
+ color="#4169e1">return</font> fSteps; }<br><br><a name="line83"> 83: </a>    <font
+ color="#b22222">// A convenience method that shuts down given service.  Only service class </font><br><a
+ name="line84"> 84: </a>    <font color="#b22222">// is used to identify the service. </font><br><a
+ name="line85"> 85: </a>    private &lt;V extends IDsfService&gt; void shutdownService(Class&lt;V&gt; clazz, RequestMonitor requestMonitor) {<br><a
+ name="line86"> 86: </a>        IDsfService service = fTracker.getService(clazz);<br><a
+ name="line87"> 87: </a>        <font color="#4169e1">if</font> (service != null) {<br><a
+ name="line88"> 88: </a>            service.shutdown(requestMonitor);<br><a
+ name="line89"> 89: </a>        }<br><a name="line90"> 90: </a>        <font
+ color="#4169e1">else</font> {<br><a name="line91"> 91: </a>            requestMonitor.setStatus(new Status(<br><a
+ name="line92"> 92: </a>                IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID, <br><a
+ name="line93"> 93: </a>                IDsfService.INTERNAL_ERROR,  <br><a
+ name="line94"> 94: </a>                <font color="#666666">"Service '"</font> + clazz.getName() + <font
+ color="#666666">"' not found."</font>, null));             <br><a
+ name="line95"> 95: </a>            requestMonitor.done();<br><a
+ name="line96"> 96: </a>        }<br><a name="line97"> 97: </a>    }<br><a
+ name="line99"> 99: </a>}</pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<ul>
+  <li>Line 40 initializes an array of Step objects which are invoked by
+the Sequence logic.&nbsp; Each Step class is an inner class with access
+to <br>
+shared data in the ServicesShutdownSequence class.</li>
+  <li>Line 81 implements the protected method used by the Sequence
+class to access the steps.</li>
+  <li>Line 85 encapsulates the repetitive logic of finding and shutting
+down a given service.</li>
+  <li>Line 73 disposes the DsfServicesTracker used by the sequence.</li>
+</ul>
+<p>
+Below is the code snipped that invokes the ServicesShutdownSequence in
+the Timers example:<br>
+</p>
+<div style="margin-left: 20px;">
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
+ border="0" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2" rowspan="1" style="vertical-align: top;"><span
+ style="font-family: monospace; font-weight: bold;">org.eclipse.dd.examples.dsf.timers.TimersView</span><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 10px;"><br>
+      </td>
+      <td style="vertical-align: top;">
+      <pre><a name="line181">181: </a>            ServicesShutdownSequence shutdownSeq = <br><a
+ name="line182">182: </a>                new ServicesShutdownSequence(fSession);<br><a
+ name="line183">183: </a>            fSession.getExecutor().execute(shutdownSeq);<br><a
+ name="line184">184: </a>            <font color="#4169e1">try</font> {<br><a
+ name="line185">185: </a>                shutdownSeq.get();<br><a
+ name="line186">186: </a>            } <font color="#4169e1">catch</font> (InterruptedException e) { assert false;<br><a
+ name="line187">187: </a>            } <font color="#4169e1">catch</font> (ExecutionException e) { assert false;<br><a
+ name="line188">188: </a>            }<br></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<ul>
+  <li>Line 183 submits the sequence to the session executor.&nbsp; <br>
+  </li>
+  <li>Line 185 calls the Future.get() method of the sequence to block
+the calling thread until the sequence completes.</li>
+</ul>
+<table
+ style="width: 95%; text-align: left; margin-left: auto; margin-right: auto; background-color: rgb(255, 255, 204); font-style: italic;"
+ border="0" cellpadding="10" cellspacing="0">
+  <tbody>
+    <tr>
+      <td style="text-align: left;"> Note: Sequence implements the
+java.util.concurrent.Future interface just like the DSF Query
+object.&nbsp; However, if the sequence needs to be invoked from the
+executor thread, the Future.get() method cannot be used (or a deadlock
+would occur).&nbsp; Instead the sequence should be constructed with a
+custom request monitor to be invoked at the completion of the sequence.<br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+<h4>Events</h4>
+DSF provides a somewhat unusual event mechanism, where event listeners
+do not implement any particular listener interface.&nbsp; Instead,
+event listeners use the <span style="font-style: italic;">DsfServiceEventHandler</span>
+annotation to identify listener methods.&nbsp; DSF finds the annotated
+listener methods using reflection.&nbsp; <br>
+<p>To generate an event a service must:<br>
+</p>
+<ol>
+  <li>Call <span style="font-style: italic;">DsfSession.dispatchEvent(Object
+event, Dictionary&lt;String, String&gt; serviceProperties)</span>
+method.&nbsp; The second parameter allows service listeners to filter
+events using specific service properties.</li>
+</ol>
+In order to receive DSF events a client must:<br>
+<ol>
+  <li>Declare a <span style="font-style: italic;">public</span> event
+listener method (method name is not important), which takes an <span
+ style="font-style: italic;">event</span> parameter. The type of the
+event parameter depends on the event, where the listener will receive
+all service events which can be cast to the declared type.&nbsp; A
+second optional parameter of type <span style="font-style: italic;">Dictionary&lt;String,
+String&gt;</span> allows the event listener to examine the properties
+of the service that is sending the event.</li>
+  <li>Add itself as a service event listener by calling <span
+ style="font-style: italic;">DsfSession.addServiceEventListener()</span>.</li>
+</ol>
+<table
+ style="width: 95%; text-align: left; margin-left: auto; margin-right: auto; background-color: rgb(255, 255, 204); font-style: italic;"
+ border="0" cellpadding="10" cellspacing="0">
+  <tbody>
+    <tr>
+      <td style="text-align: left;"> Note: DsfSession.dispatchEvent()
+calls event listeners in a separate Runnable submitted to the session
+executor.&nbsp; This is significant because the event listeners may
+call other service methods changing the overall state of the
+system.&nbsp; It also implies that the event listeners are always
+called in the session executor thread.<br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+<table
+ style="width: 95%; text-align: left; margin-left: auto; margin-right: auto; background-color: rgb(255, 255, 204); font-style: italic;"
+ border="0" cellpadding="10" cellspacing="0">
+  <tbody>
+    <tr>
+      <td style="text-align: left;"> Note: Service events are
+prioritized.&nbsp; Listeners which themselves are services are called
+first, in the order that they were initialized.&nbsp; All other
+listenres are called after the services.<br>
+      </td>
+    </tr>
+  </tbody>
+</table>
 <h3>Data Model</h3>
-<h3>View Model</h3>
-<h4>Adapter, Provider, Node</h4>
-<h4>Timers</h4>
+The term <span style="font-style: italic;">Data Model</span> refers to
+the natural structure of data that is being retrieved by the DSF
+services.&nbsp; One of the great challanges of creating an user
+interface for a debugger is that the amount of of data that is
+available on the target is much greater than what can be practially
+presented to the user.&nbsp; Therefere the debugger services need to
+break up the data into chunks with appropriate granularity to achieve
+maximum performance and usability.<br>
+<h4>IDMContext</h4>
+The IDMContext represents a handle to a chunk of data in the Data
+Model.&nbsp; This interface is a minimal, yet central feature of the
+Data Model API.<br>
+<p>What a Data Model context is:<br>
+</p>
+<ul>
+  <li><span style="text-decoration: underline;">It is hierarchical.</span>&nbsp;
+Contexts can have other contexts as parents.&nbsp; The hierarchy of
+contexts in a given system roughly defines that system's overall Data
+Model.&nbsp; More on context hierarchy <br>
+    <span style="text-decoration: underline;"></span></li>
+  <li><span style="text-decoration: underline;">It extends the </span><span
+ style="font-style: italic; text-decoration: underline;">org.eclipse.core.runtime.IAdaptable</span><span
+ style="text-decoration: underline;"> interface.</span>&nbsp; This
+allows decorators, retargetable actions, etc. to be associated with a
+context.</li>
+  <li><span style="text-decoration: underline;">It is associated with a
+single DSF session.</span>&nbsp; The IDMContext.getSessionID() returns
+the session ID of the given context.&nbsp; This allows all clients to
+get a handle on the session and the executor needed to access the DSF
+services that the context originated from.<br>
+  </li>
+  <li><span style="text-decoration: underline;">It is thread safe.</span>
+This allows context objects to be stored and compared in viewers,
+caches, and other clients which may implement their own threading model.<br>
+  </li>
+  <li><span style="text-decoration: underline;">It is light-weight and
+preferably immutable.</span> This allows contexts to be stored by
+clients that may persist beyond the life of the services that
+originated them.&nbsp; If a context holds references to a lot of data
+or it may prevent that data from being garbage collected.</li>
+</ul>
+What a Data Model context is NOT:<br>
+<ul>
+  <li><span style="text-decoration: underline;">It is NOT a reference
+to a service.</span>&nbsp; Context should not return a reference to a
+service directly because clients should use the appropriate OSGi APIs
+to obtain references to DSF services.&nbsp; <br>
+  </li>
+  <li><span style="text-decoration: underline;">It is NOT persistable.</span>&nbsp;
+Since a context returns a context ID, it is valid only for the life of
+a single DSF session.&nbsp;</li>
+</ul>
+<br>
+<table
+ style="width: 95%; text-align: left; margin-left: auto; margin-right: auto; background-color: rgb(255, 255, 204); font-style: italic;"
+ border="0" cellpadding="10" cellspacing="0">
+  <tbody>
+    <tr>
+      <td style="text-align: left;"> Note: An IDMContext object can be
+used to retrieve <span style="text-decoration: underline;">any</span>
+type of data object from the service.&nbsp; Although there is an
+IDMData marker interface defined, its presence it historical and its
+use is optional.<br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<h4>Context Hierarchy</h4>
+One of the most powerful features of the IDMContext interface is that
+is is hierarchical.&nbsp; The <span style="font-style: italic;">IDMContext.getParents()</span>
+method returns the immediate ancestors of a given context and following
+the parents' parents allows clients to traverse the full hierarchy of a
+context.&nbsp; <br>
+<p>The use of the context hierarchy may be best explained with use of
+the Timers example.&nbsp; In the timers example there are three
+contexts that are used:<br>
+</p>
+<ul>
+</ul>
+<ol>
+  <li><span style="text-decoration: underline;">Timer</span> - no
+parent contexts<br>
+  </li>
+  <li><span style="text-decoration: underline;">Trigger</span> - no
+parent contexts<br>
+  </li>
+  <li><span style="text-decoration: underline;">Alarm</span> - requires
+both a timer and a trigger as parent contexts</li>
+</ol>
+<ul>
+</ul>
+From these, only the third one has any parents (and any hierarchy), the
+code snippet below shows how these parents are used in the AlarmService:<br>
 <br>
 <div style="margin-left: 20px;">
-<table style="text-align: left; background-color: rgb(238, 238, 255);"
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
+ border="0" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2" rowspan="1" style="vertical-align: top;"><span
+ style="font-family: monospace; font-weight: bold;">org.eclipse.dd.examples.dsf.timers.AlarmService.isAlarmTriggered()</span><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 10px;"><br>
+      </td>
+      <td style="vertical-align: top;">
+      <pre><a name="line209">209: </a><strong><font color="#4169e1">    public boolean isAlarmTriggered(AlarmDMContext alarmCtx)</font></strong> {<br><a
+ name="line210">210: </a>        <font color="#b22222">// Extract the timer and trigger contexts.  They should always be part </font><br><a
+ name="line211">211: </a>        <font color="#b22222">// of the alarm.</font><br><a
+ name="line212">212: </a>        TimerService.TimerDMContext timerCtx = DMContexts.getAncestorOfType(<br><a
+ name="line213">213: </a>            alarmCtx, TimerService.TimerDMContext.class);<br><a
+ name="line214">214: </a>        TriggerDMContext triggerCtx = DMContexts.getAncestorOfType(<br><a
+ name="line215">215: </a>            alarmCtx, TriggerDMContext.class);<br><br><a
+ name="line217">217: </a>        assert triggerCtx != null &amp;&amp; timerCtx != null;<br><br><a
+ name="line219">219: </a>        <font color="#b22222">// Find the trigger and check whether the timers value has surpassed it. </font><br><a
+ name="line220">220: </a>        <font color="#4169e1">if</font> (fTriggers.containsKey(triggerCtx)) {<br><a
+ name="line221">221: </a>            int timerValue = getServicesTracker().getService(TimerService.class).<br><a
+ name="line222">222: </a>                getTimerValue(timerCtx);<br><a
+ name="line223">223: </a>            <br><a name="line224">224: </a>            <font
+ color="#4169e1">return</font> timerValue &gt;= fTriggers.get(triggerCtx);<br><a
+ name="line225">225: </a>        }<br><a name="line226">226: </a>        <br><a
+ name="line227">227: </a>        <font color="#4169e1">return</font> false;<br><a
+ name="line228">228: </a>    }<br></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<ul>
+  <li>Lines 212 and 214 search the context hierarchy of the alarm
+context for the timer and trigger contexts.&nbsp; <br>
+  </li>
+</ul>
+<table
+ style="width: 95%; text-align: left; margin-left: auto; margin-right: auto; background-color: rgb(255, 255, 204); font-style: italic;"
+ border="0" cellpadding="10" cellspacing="0">
+  <tbody>
+    <tr>
+      <td style="text-align: left;"> Note: Methods that take a context
+as an argument can specify the generic IDMContext as the argument type,
+then search this context for a specific context type.&nbsp; The benefit
+of this technique is increased flexibility, at the cost of compile-time
+type checking, and it is used throughout DSF to avoid dependencies
+between service interfaces.<br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<h4>DMContexts</h4>
+Searching the context hierarchy can be tedious to implement, the
+DMContexts utility class contains a few static methods to simplify this
+task:<br>
+<ul>
+  <li><span style="text-decoration: underline;">getAncestorOfType()</span>
+- Searches for a context of a specific type in the hierarchy of the
+given context.</li>
+  <li><span style="text-decoration: underline;">isAncestorOf()</span> -
+Checks whether the one of the argument contexts is in the hierarchy of
+the other.</li>
+  <li><span style="text-decoration: underline;">toList()</span> -
+Converts all the contexts in a hierarchy of the give context into a
+list.</li>
+</ul>
+<h3>View Model</h3>
+View Model refers to the ideal <span style="font-style: italic;">user-presentable</span>
+structure of the data.&nbsp; This is in contrast to the Data Model,
+which refers to the <span style="font-style: italic;">natural</span>
+data structure, although the two often end up being the same.&nbsp;
+Never the less, the needs of the user presentation often change so the
+central feature of the View Model is the ability to customize it.<br>
+<h4>Flexible Hierarchy</h4>
+View Model builds on the <span style="font-style: italic;">flexible
+hierarchy</span> API introduced by Debug
+Platform team in release 3.2.&nbsp; The flexible hierarchy API has a
+few distinguishing features:<br>
+<ol>
+  <li>There are provider interfaces for every aspect of data
+presentation in the viewer (content, label, columns, etc.).&nbsp; <br>
+  </li>
+  <li>The provider interfaces are retrieved by the viewer <span
+ style="text-decoration: underline;">for each element</span> in the
+viewer<span style="font-style: italic;"></span>.&nbsp; This allows the
+view content to be populated from multiple sources.</li>
+  <li>Provider interfaces are asynchronous.&nbsp; <br>
+  </li>
+</ol>
+<table
+ style="width: 95%; text-align: left; margin-left: auto; margin-right: auto; background-color: rgb(255, 255, 204); font-style: italic;"
+ border="0" cellpadding="10" cellspacing="0">
+  <tbody>
+    <tr>
+      <td style="text-align: left;"> Note: Flexible Hierarchy is still
+a provisional API in Eclipse Platform 3.4.&nbsp; This virtually
+guarantees that DSF will break backward API compatibility in future
+releases.&nbsp; However, these APIs have now been widely used by open
+source projects such as DD and CDT and also by many commercial Eclipse
+integrations, so the API changes are likely to be small and mostly
+related to packaging.<br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<h4>Adapter Problem<br>
+</h4>
+The number two feature of flexible hierarchy API is implemented using
+the adapter pattern.&nbsp; One down-side of the adapter pattern is that
+there can only be one instance of an adapter of a particular type
+registered for a given element.&nbsp; For flexible hierarchy providers,
+it means that each provider must implement the element presentation
+logic for every view that the element appears in, and as a result
+adding a new view can force changing a large number of modules.<br>
+<p><span style="color: rgb(255, 0, 0);">TODO: add a diagram of the
+adapter pattern used by multiple views.<br>
+</span><span style="color: rgb(255, 0, 0);"></span></p>
+<p>To overcome the adapter pattern limitation, the View Model uses
+wrapper objects.&nbsp; The wrapper objects are held by the viewer and
+they redirect the requests for different flexible hierarchy providers
+to the appropriate modules. <br>
+</p>
+<p><span style="color: rgb(255, 0, 0);">TODO: add a diagram of the View
+Model hierarchy adapter pattern use<br>
+</span><span style="color: rgb(255, 0, 0);"></span></p>
+<h4>IVMAdapter -&gt; IVMProvider -&gt; IVMNode -&gt; IVMContext</h4>
+<br>
+<br>
+<br>
+<br>
+<div style="margin-left: 20px;">
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
  border="0" cellpadding="5" cellspacing="0">
   <tbody>
     <tr>

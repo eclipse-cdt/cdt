@@ -28,7 +28,6 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -44,13 +43,10 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IFunctionDeclaration;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 import org.eclipse.cdt.internal.ui.util.StatusLineHandler;
-import org.eclipse.cdt.internal.ui.viewsupport.FindNameForSelectionVisitor;
 import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 
 public class TypeHierarchyUI {
@@ -114,6 +110,7 @@ public class TypeHierarchyUI {
 				final Display display= Display.getCurrent();
 
 				Job job= new Job(Messages.TypeHierarchyUI_OpenTypeHierarchy) {
+					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						try {
 							StatusLineHandler.clearStatusLine(editor.getSite());
@@ -147,7 +144,7 @@ public class TypeHierarchyUI {
 
 			index.acquireReadLock();
 			try {
-				IASTName name= getSelectedName(index, editorInput, sel);
+				IASTName name= IndexUI.getSelectedName(editorInput, sel);
 				if (name != null) {
 					IBinding binding= name.resolveBinding();
 					if (!isValidInput(binding)) {
@@ -258,21 +255,6 @@ public class TypeHierarchyUI {
 			return elems[0];
 		}
 		return IndexUI.findAnyDeclaration(index, project, binding);
-	}
-
-	private static IASTName getSelectedName(IIndex index, IEditorInput editorInput, IRegion sel) throws CoreException {
-		int selectionStart = sel.getOffset();
-		int selectionLength = sel.getLength();
-
-		IWorkingCopy workingCopy = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editorInput);
-		if (workingCopy == null)
-			return null;
-		
-		int options= ITranslationUnit.AST_SKIP_INDEXED_HEADERS;
-		IASTTranslationUnit ast = workingCopy.getAST(index, options);
-		FindNameForSelectionVisitor finder= new FindNameForSelectionVisitor(ast.getFilePath(), selectionStart, selectionLength);
-		ast.accept(finder);
-		return finder.getSelectedName();
 	}
 
 	public static boolean isValidInput(IBinding binding) {

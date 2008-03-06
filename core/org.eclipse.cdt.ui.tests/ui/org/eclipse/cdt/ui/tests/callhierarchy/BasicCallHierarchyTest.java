@@ -82,7 +82,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		checkTreeNode(tree, 0, "proto()");
 		checkTreeNode(tree, 0, 0, "main()");
 
-		editor.selectAndReveal(content.indexOf("func(); //ref"), 7);
+		editor.selectAndReveal(content.indexOf("func(); //ref"), 4);
 		openCallHierarchy(editor);
 		checkTreeNode(tree, 0, "func()");
 		checkTreeNode(tree, 0, 0, "main()");
@@ -737,7 +737,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 			checkTreeNode(tree, 0, "proto(int)");
 			checkTreeNode(tree, 0, 0, "main(int)");
 
-			editor.selectAndReveal(content.indexOf("func(1); //ref"), 7);
+			editor.selectAndReveal(content.indexOf("func(1); //ref"), 4);
 			openCallHierarchy(editor);
 			checkTreeNode(tree, 0, "func(int)");
 			checkTreeNode(tree, 0, 0, "main(int)");

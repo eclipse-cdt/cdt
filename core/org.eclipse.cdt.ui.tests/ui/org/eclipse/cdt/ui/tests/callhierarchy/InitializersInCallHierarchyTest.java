@@ -37,7 +37,7 @@ public class InitializersInCallHierarchyTest extends CallHierarchyBaseTest {
 		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
 		CEditor editor = openFile(file);
 
-		editor.selectAndReveal(content.indexOf("a"), 5);
+		editor.selectAndReveal(content.indexOf("a"), 1);
 		openCallHierarchy(editor);
 		Tree tree = getCHTreeViewer().getTree();
 		checkTreeNode(tree, 0, "a");

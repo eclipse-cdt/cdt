@@ -368,9 +368,14 @@ public class IndexUI {
 	}
 
 	public static IASTName getSelectedName(IEditorInput editorInput, ITextSelection selection) throws CoreException {
-		final int selectionStart = selection.getOffset();
-		final int selectionLength = selection.getLength();
+		return getSelectedName(editorInput, selection.getOffset(), selection.getLength());
+	}
 
+	public static IASTName getSelectedName(IEditorInput editorInput, IRegion selection) throws CoreException {
+		return getSelectedName(editorInput, selection.getOffset(), selection.getLength());
+	}
+
+	private static IASTName getSelectedName(IEditorInput editorInput, final int offset, final int length) {
 		IWorkingCopy workingCopy = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editorInput);
 		if (workingCopy == null)
 			return null;
@@ -379,9 +384,7 @@ public class IndexUI {
 		ASTProvider.getASTProvider().runOnAST(workingCopy, ASTProvider.WAIT_YES, null, new ASTRunnable() {
 			public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
 				if (ast != null) {
-					FindNameForSelectionVisitor finder= new FindNameForSelectionVisitor(ast.getFilePath(), selectionStart, selectionLength);
-					ast.accept(finder);
-					result[0]= finder.getSelectedName();
+					result[0]= ast.getNodeSelector(null).findEnclosingName(offset, length);
 				}
 				return Status.OK_STATUS;
 			}

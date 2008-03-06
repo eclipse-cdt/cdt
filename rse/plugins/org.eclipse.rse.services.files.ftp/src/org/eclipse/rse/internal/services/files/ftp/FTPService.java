@@ -15,7 +15,7 @@
  * Javier Montalvo Orus (Symbian) - Fixing 140323 - provided implementation for delete, move and rename.
  * Javier Montalvo Orus (Symbian) - Bug 140348 - FTP did not use port number
  * Michael Berger (IBM) - Fixing 140404 - FTP new file creation does not work
- * Javier Montalvo Orus (Symbian) - Migrate to jakarta commons net FTP client
+ * Javier Montalvo Orus (Symbian) - Migrate to apache commons net FTP client
  * Javier Montalvo Orus (Symbian) - Fixing 161211 - Cannot expand /pub folder as anonymous on ftp.wacom.com
  * Javier Montalvo Orus (Symbian) - Fixing 161238 - [ftp] expand "My Home" node on ftp.ibiblio.org as anonymous fails
  * Javier Montalvo Orus (Symbian) - Fixing 160922 - create folder/file fails for FTP service

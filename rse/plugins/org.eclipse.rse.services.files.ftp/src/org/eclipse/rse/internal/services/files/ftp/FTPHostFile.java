@@ -13,7 +13,7 @@
  * 
  * Contributors:
  * Michael Berger (IBM) - Fixing 140408 - FTP upload does not work
- * Javier Montalvo Orús (Symbian) - Migrate to jakarta commons net FTP client
+ * Javier Montalvo Orús (Symbian) - Migrate to apache commons net FTP client
  * Javier Montalvo Orus (Symbian) - Fixing 161211 - Cannot expand /pub folder as anonymous on ftp.wacom.com
  * Javier Montalvo Orus (Symbian) - Fixing 161238 - [ftp] connections to VMS servers are not usable
  * Javier Montalvo Orus (Symbian) - Fixing 176216 - [api] FTP sould provide API to allow clients register their own FTPListingParser

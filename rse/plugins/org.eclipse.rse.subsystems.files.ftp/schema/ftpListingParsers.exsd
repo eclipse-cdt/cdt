@@ -111,7 +111,7 @@ languages which do not meet this requirement are included if a
 common alternative set of short month names is known to be used.
 This means that users who can tell us of additional such encodings
 may get them added to the list of supported languages by contacting
-the jakarta-commons-net team.
+the Apache Commons Net team.
 &lt;strong&gt; Please note that this attribute will NOT be used to determine a locale-based date format for the language.  &lt;/strong&gt;  
 Experience has shown that many if not most FTP servers outside the
 United States employ the standard &lt;code&gt;en_US&lt;/code&gt; date format 

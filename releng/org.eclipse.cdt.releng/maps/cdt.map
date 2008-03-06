@@ -72,6 +72,7 @@ plugin@org.eclipse.cdt.make.xlc.core=@cdtTag@,:pserver:anonymous@dev.eclipse.org
 plugin@org.eclipse.cdt.managedbuilder.xlc.core=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/xlc/org.eclipse.cdt.managedbuilder.xlc.core
 plugin@org.eclipse.cdt.managedbuilder.xlc.ui=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/xlc/org.eclipse.cdt.managedbuilder.xlc.ui
 feature@org.eclipse.cdt.xlc.feature=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/xlc/org.eclipse.cdt.xlc.feature
+feature@org.eclipse.cdt.xlc.sdk=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/xlc/org.eclipse.cdt.xlc.sdk-feature
 
 ! C99 parser
 !plugin@org.eclipse.cdt.core.parser.c99=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/c99/org.eclipse.cdt.core.parser.c99

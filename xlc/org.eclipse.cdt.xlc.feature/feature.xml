@@ -19,12 +19,8 @@
    </license>
 
    <url>
-      <update label="%updateSiteName" url="http://download.eclipse.org/tools/cdt/releases/europa/"/>
+      <update label="%updateSiteName" url="http://download.eclipse.org/tools/cdt/releases/ganymede/"/>
    </url>
-   
-   <includes
-         id="org.eclipse.cdt.xlc.source"
-         version="0.0.0"/>
 
    <requires>
       <import plugin="org.eclipse.ui"/>

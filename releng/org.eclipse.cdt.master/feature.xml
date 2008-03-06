@@ -45,4 +45,8 @@
          id="org.eclipse.cdt.xlc.feature"
          version="0.0.0"/>
 
+   <includes
+         id="org.eclipse.cdt.xlc.sdk"
+         version="0.0.0"/>
+
 </feature>

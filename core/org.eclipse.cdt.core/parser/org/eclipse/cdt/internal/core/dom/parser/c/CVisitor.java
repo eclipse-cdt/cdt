@@ -797,7 +797,7 @@ public class CVisitor {
 		    IASTNode parent = declarator.getParent();
 			if ( CharArrayUtils.equals(declarator.getName().toCharArray(), name.toCharArray()) ){
 				binding = resolveBinding( parent, CURRENT_SCOPE );
-				if( binding != null ) {
+				if( binding != null && binding instanceof IIndexBinding == false) {
 				    if( binding instanceof ICInternalFunction )
 				        ((ICInternalFunction)binding).addDeclarator( (ICASTKnRFunctionDeclarator) declarator );
 				    else 

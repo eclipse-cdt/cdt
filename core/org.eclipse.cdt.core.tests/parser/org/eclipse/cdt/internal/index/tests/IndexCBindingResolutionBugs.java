@@ -327,4 +327,25 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 		assertTrue(tAST.isSameType(tIndex));
 		assertTrue(tIndex.isSameType(tAST));
 	}
+	
+	// int myFunc();
+	
+	// int myFunc(var)
+	// int var; 
+	// { 
+	//   return var; 
+	// } 
+	// int main(void) {
+	//    return myFunc(0);
+	// }
+	public void testKRStyleFunction_Bug216791() throws DOMException {
+		// struct
+		IBinding b = getBindingFromASTName("myFunc(", 6);
+		assertTrue(b instanceof IFunction);
+		IFunction f= (IFunction) b;
+		IParameter[] params= f.getParameters();
+		assertEquals(1, params.length);
+		assertTrue(params[0].getType() instanceof IBasicType);
+		assertEquals(IBasicType.t_int, ((IBasicType)params[0].getType()).getType());
+	}
 }

@@ -22,8 +22,7 @@ import org.eclipse.rse.core.IRSEModelInitializer;
 public class UglyInitializer implements IRSEModelInitializer {
 	
 	private static UglyInitializer instance = null;
-	boolean isComplete = false;
-	boolean wasRun = false;
+	volatile boolean wasRun = false;
 	
 	public static UglyInitializer getInstance() {
 		return instance;
@@ -33,13 +32,6 @@ public class UglyInitializer implements IRSEModelInitializer {
 		instance = this;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.IRSEModelInitializer#isComplete()
-	 */
-	public boolean isComplete() {
-		return isComplete;
-	}
-	
 	public boolean wasRun() {
 		return wasRun;
 	}
@@ -48,19 +40,29 @@ public class UglyInitializer implements IRSEModelInitializer {
 	 * @see org.eclipse.rse.core.IRSEModelInitializer#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IStatus run(IProgressMonitor monitor) {
-		wasRun = true;
-		Job job = new Job("test initializer job") {
+		Job job1 = new Job("test initializer job 1") {
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
-					Thread.sleep(5000l); // sleep for a bit
+					Thread.sleep(3000); // sleep for a bit
 				} catch (InterruptedException e) {
 					// eat the exception
 				}
-				isComplete = true;
 				return Status.OK_STATUS;
 			}
 		};
-		job.schedule(1000l);
+		Job job2 = new Job("test initializer job 2") {
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					Thread.sleep(3000); // sleep for a bit
+				} catch (InterruptedException e) {
+					// eat the exception
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job1.schedule(1000);
+		job2.schedule(2000);
+		wasRun = true;
 		return Status.OK_STATUS;
 	}
 

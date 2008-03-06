@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * David Dykstal (IBM) - [188863] created out of SaveRSEDOMJob
  * David McKnight   (IBM)        - [216252] MessageFormat.format -> NLS.bind
+ * David Dykstal (IBM) - [197167] adding notification and waiting for RSE model
  ********************************************************************************/
 
 package org.eclipse.rse.internal.persistence;
@@ -35,6 +36,8 @@ import org.eclipse.rse.persistence.dom.RSEDOM;
  * save a DOM to the workspace metadata area. A DOM corresponds to a profile.
  */
 public class PFMetatdataJob extends Job {
+	
+	private static Object jobFamily = RSECorePlugin.getThePersistenceManager();
 
 	private RSEDOM _dom;
 	private IRSEPersistenceProvider _provider;
@@ -67,7 +70,7 @@ public class PFMetatdataJob extends Job {
 	}
 	
 	public boolean belongsTo(Object family) {
-		Object[] families = new Object[] {RSECorePlugin.getThePersistenceManager()};
+		Object[] families = new Object[] {jobFamily};
 		for (int i = 0; i < families.length; i++) {
 			Object object = families[i];
 			if (family == object) return true;

@@ -17,12 +17,11 @@ import org.eclipse.rse.core.IRSEModelInitializer;
 import org.eclipse.rse.core.RSECorePlugin;
 
 /**
- * A plain vanilla initializer that does its thing without exceptions.
+ * An initializer that adds a listener to the initialization job.
  */
 public class ListenerInitializer implements IRSEModelInitializer {
 	
 	private static ListenerInitializer instance = null;
-	private boolean isComplete = false;
 	private boolean wasRun = false;
 	private InitListener listener = new InitListener();
 	
@@ -34,13 +33,6 @@ public class ListenerInitializer implements IRSEModelInitializer {
 		instance = this;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.IRSEModelInitializer#isComplete()
-	 */
-	public boolean isComplete() {
-		return isComplete;
-	}
-	
 	public boolean wasRun() {
 		return wasRun;
 	}
@@ -55,7 +47,6 @@ public class ListenerInitializer implements IRSEModelInitializer {
 	public IStatus run(IProgressMonitor monitor) {
 		RSECorePlugin.addInitListener(listener);
 		wasRun = true;
-		isComplete = true;
 		return Status.OK_STATUS;
 	}
 

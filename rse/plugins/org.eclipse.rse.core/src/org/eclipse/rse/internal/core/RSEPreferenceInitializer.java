@@ -25,6 +25,8 @@ public class RSEPreferenceInitializer extends AbstractPreferenceInitializer {
 		Preferences prefs = RSECorePlugin.getDefault().getPluginPreferences();
 		// The ID of the default persistence provider
 		prefs.setDefault(IRSEPreferenceNames.DEFAULT_PERSISTENCE_PROVIDER, "org.eclipse.rse.persistence.MetadataPropertyFileProvider"); //$NON-NLS-1$
+		// whether or not to create a local connection in a fresh workspace
+		prefs.setDefault(IRSEPreferenceNames.CREATE_LOCAL_CONNECTION, true);
 	}
 
 }

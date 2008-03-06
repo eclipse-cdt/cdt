@@ -16,12 +16,11 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.rse.core.IRSEModelInitializer;
 
 /**
- * An ill-behaved initializer that returns a lousy status
+ * An initializer that returns a warning status
  */
 public class BadInitializer implements IRSEModelInitializer {
 	
 	private static BadInitializer instance = null;
-	private boolean isComplete = false;
 	private boolean wasRun = false;
 	
 	public static BadInitializer getInstance() {
@@ -32,13 +31,6 @@ public class BadInitializer implements IRSEModelInitializer {
 		instance = this;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.IRSEModelInitializer#isComplete()
-	 */
-	public boolean isComplete() {
-		return isComplete;
-	}
-	
 	public boolean wasRun() {
 		return wasRun;
 	}
@@ -47,9 +39,8 @@ public class BadInitializer implements IRSEModelInitializer {
 	 * @see org.eclipse.rse.core.IRSEModelInitializer#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IStatus run(IProgressMonitor monitor) {
+		IStatus result = new Status(IStatus.WARNING, "org.eclipse.rse.tests", "bwaahahaha");
 		wasRun = true;
-		IStatus result = new Status(IStatus.ERROR, "org.eclipse.rse.tests", "bwaahahaha");
-		// oh darn, forgot to set the "isComplete"!
 		return result;
 	}
 

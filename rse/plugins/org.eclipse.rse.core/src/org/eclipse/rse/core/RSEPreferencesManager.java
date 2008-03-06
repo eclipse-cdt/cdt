@@ -8,6 +8,7 @@
  * David Dykstal (IBM) - initial API and implementation
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
+ * David Dykstal (IBM) - [197167] adding notification and waiting for RSE model
  ********************************************************************************/
 package org.eclipse.rse.core;
 
@@ -445,6 +446,15 @@ public class RSEPreferencesManager {
 			}
 		}
 		return keyValues;
+	}
+	
+	/**
+	 * @return the boolean value indicating whether or not to create a local connection on a fresh workspace.
+	 */
+	public static boolean getCreateLocalConnection() {
+		Preferences prefs = RSECorePlugin.getDefault().getPluginPreferences();
+		boolean result = prefs.getBoolean(IRSEPreferenceNames.CREATE_LOCAL_CONNECTION);
+		return result;
 	}
 
 	/*

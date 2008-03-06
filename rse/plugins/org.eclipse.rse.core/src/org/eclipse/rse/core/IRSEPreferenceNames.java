@@ -7,6 +7,7 @@
  * Contributors:
  * Kushal Munir (IBM) - Initial API and implementation.
  * David Dykstal (IBM) - updated with comments, removed keys that are not to be used globally
+ * David Dykstal (IBM) - [197167] adding notification and waiting for RSE model
  ********************************************************************************/
 package org.eclipse.rse.core;
 
@@ -56,5 +57,12 @@ public interface IRSEPreferenceNames {
 	 * This value is part of the API and may be used to customize products.
 	 */
 	public static final String DEFAULT_PERSISTENCE_PROVIDER = "DEFAULT_PERSISTENCE_PROVIDER"; //$NON-NLS-1$ 
+	
+	/**
+	 * The key of the string containing the id of the boolean value to create a local connection.
+	 * Value is "CREATE_LOCAL_CONNECTION".
+	 * This value is part of the API and may be used to customize products.
+	 */
+	public static final String CREATE_LOCAL_CONNECTION = "CREATE_LOCAL_CONNECTION"; //$NON-NLS-1$
 	
 }

@@ -40,6 +40,7 @@ import java.util.Vector;
 
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemResourceManager;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
@@ -51,6 +52,7 @@ import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
 import org.eclipse.rse.internal.core.model.SystemProfileManager;
 import org.eclipse.rse.internal.core.model.SystemRegistry;
 import org.eclipse.rse.internal.ui.RSESystemTypeAdapterFactory;
+import org.eclipse.rse.internal.ui.RSEUIInitJob;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.actions.SystemShowPreferencesPageAction;
 import org.eclipse.rse.internal.ui.subsystems.SubSystemConfigurationProxyAdapterFactory;
@@ -407,6 +409,8 @@ public class RSEUIPlugin extends SystemBasePlugin
 	    svraf = new SystemTeamViewResourceAdapterFactory();
 	    svraf.registerWithManager(manager);
 	    
+	    Job initJob = new RSEUIInitJob();
+	    initJob.schedule();
 	}
 
     /**

@@ -39,7 +39,7 @@ import org.eclipse.rse.core.comm.SystemKeystoreProviderManager;
 import org.eclipse.rse.core.model.ISystemProfileManager;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
-import org.eclipse.rse.internal.core.InitRSEJob;
+import org.eclipse.rse.internal.core.RSEInitJob;
 import org.eclipse.rse.internal.core.RSECoreRegistry;
 import org.eclipse.rse.internal.core.model.SystemProfileManager;
 import org.eclipse.rse.internal.core.model.SystemRegistry;
@@ -75,6 +75,15 @@ public class RSECorePlugin extends Plugin {
 	public static final String CURRENT_RELEASE_NAME = "2.0.0";  //$NON-NLS-1$
 
 	/**
+	 * Value 0.
+	 * Used in isInitComplete(int) which will return true if all phases of  
+	 * initialization are complete.
+	 * Clients must not assume any particular ordering 
+	 * among phases based on the value.
+	 */
+	public static final int INIT_ALL = 0;
+	
+	/**
 	 * Value 1.
 	 * Used in isInitComplete(int) which will return true if the model phase of the 
 	 * initialization is complete.
@@ -84,14 +93,14 @@ public class RSECorePlugin extends Plugin {
 	public static final int INIT_MODEL = 1;
 	
 	/**
-	 * Value 999.
-	 * Used in isInitComplete(int) which will return true if all phases of  
-	 * initialization are complete.
+	 * Value 2.
+	 * Used in isInitComplete(int) which will return true if the initializer phase of the 
+	 * initialization is complete.
 	 * Clients must not assume any particular ordering 
 	 * among phases based on the value.
 	 */
-	public static final int INIT_ALL = 999;
-	
+	public static final int INIT_INITIALIZER = 2;
+
 	private static RSECorePlugin plugin = null; // the singleton instance of this plugin
 	private Logger logger = null;
 	private ISystemRegistry _systemRegistry = null;
@@ -113,7 +122,20 @@ public class RSECorePlugin extends Plugin {
 	 * @throws InterruptedException if this wait was interrupted for some reason.
 	 */
 	public static IStatus waitForInitCompletion() throws InterruptedException {
-		return InitRSEJob.getInstance().waitForCompletion();
+		return RSEInitJob.getInstance().waitForCompletion();
+	}
+	
+	/**
+	 * Waits until the RSE has completed a specific phase of its initialization.
+	 * @param phase the phase to wait for completion.
+	 * @throws InterruptedException if this wait was interrupted for some reason.
+	 * @throws IllegalArgumentException if the phase is undefined.
+	 * @see #INIT_ALL
+	 * @see #INIT_INITIALIZER
+	 * @see #INIT_MODEL
+	 */
+	public static void waitForInitCompletion(int phase) throws InterruptedException {
+		RSEInitJob.getInstance().waitForCompletion(phase);
 	}
 	
 	/**
@@ -123,10 +145,11 @@ public class RSECorePlugin extends Plugin {
 	 * initialization for that phase has completed regardless its status of that completion.
 	 * @throws IllegalArgumentException if the phase is undefined.
 	 * @see #INIT_ALL
+	 * @see #INIT_INITIALIZER
 	 * @see #INIT_MODEL
 	 */
 	public static boolean isInitComplete(int phase) {
-		return InitRSEJob.getInstance().isComplete(phase);
+		return RSEInitJob.getInstance().isComplete(phase);
 	}
 	
 	/**
@@ -137,7 +160,7 @@ public class RSECorePlugin extends Plugin {
 	 * @param listener the listener to be added
 	 */
 	public static void addInitListener(IRSEInitListener listener) {
-		InitRSEJob.getInstance().addInitListener(listener);
+		RSEInitJob.getInstance().addInitListener(listener);
 	}
 	
 	/**
@@ -146,7 +169,7 @@ public class RSECorePlugin extends Plugin {
 	 * @param listener the listener to be removed
 	 */
 	public static void removeInitListener(IRSEInitListener listener) {
-		InitRSEJob.getInstance().removeInitListener(listener);
+		RSEInitJob.getInstance().removeInitListener(listener);
 	}
 
 	/**
@@ -252,7 +275,7 @@ public class RSECorePlugin extends Plugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		registerKeystoreProviders();
-		InitRSEJob job = InitRSEJob.getInstance();
+		RSEInitJob job = RSEInitJob.getInstance();
 		job.schedule();
 	}
 
@@ -261,10 +284,10 @@ public class RSECorePlugin extends Plugin {
 	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
-		super.stop(context);
 		LoggerFactory.freeLogger(this);
 		logger = null;
 		plugin = null;
+		super.stop(context);
 	}
 
 	/**

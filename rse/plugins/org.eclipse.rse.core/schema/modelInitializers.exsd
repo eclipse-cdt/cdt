@@ -54,6 +54,21 @@
                </appinfo>
             </annotation>
          </attribute>
+         <attribute name="type">
+            <annotation>
+               <documentation>
+                  The type of initialization that is to take place. If this is a one time initialization for this workspace then use &quot;workspace&quot;. If this initialization is to occur at the beginning of each workspace session then use &quot;session&quot;. If nothing is specfied then &quot;session&quot; is assumed.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="workspace">
+                  </enumeration>
+                  <enumeration value="session">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
       </complexType>
    </element>
 

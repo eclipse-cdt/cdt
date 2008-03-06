@@ -21,7 +21,6 @@ import org.eclipse.rse.core.IRSEModelInitializer;
 public class GoodInitializer implements IRSEModelInitializer {
 	
 	private static GoodInitializer instance = null;
-	private boolean isComplete = false;
 	private boolean wasRun = false;
 	
 	public static GoodInitializer getInstance() {
@@ -32,13 +31,6 @@ public class GoodInitializer implements IRSEModelInitializer {
 		instance = this;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.IRSEModelInitializer#isComplete()
-	 */
-	public boolean isComplete() {
-		return isComplete;
-	}
-	
 	public boolean wasRun() {
 		return wasRun;
 	}
@@ -48,7 +40,6 @@ public class GoodInitializer implements IRSEModelInitializer {
 	 */
 	public IStatus run(IProgressMonitor monitor) {
 		wasRun = true;
-		isComplete = true;
 		return Status.OK_STATUS;
 	}
 

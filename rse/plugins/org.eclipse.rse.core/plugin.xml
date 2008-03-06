@@ -152,5 +152,12 @@
       <initializer class="org.eclipse.rse.internal.core.RSEPreferenceInitializer"/>
 	  <initializer class="org.eclipse.rse.internal.logging.LoggingPreferenceInitializer"/>
    </extension>
+   <extension
+         point="org.eclipse.rse.core.modelInitializers">
+      <modelInitializer
+            class="org.eclipse.rse.internal.core.RSELocalConnectionInitializer"
+            type="workspace">
+      </modelInitializer>
+   </extension>
  
 </plugin>

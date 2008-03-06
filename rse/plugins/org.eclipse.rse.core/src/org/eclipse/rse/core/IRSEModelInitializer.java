@@ -23,18 +23,8 @@ public interface IRSEModelInitializer {
 	 * Runs the initializer. The initializer should set the monitor to done when complete.
 	 * @param monitor the monitor that measures progress of this initializer.
 	 * @return an IStatus indicating the success of the initializer. The status will
-	 * be logged if it is not an OK status. If a status is an IStatus.Error then the 
-	 * initializer will be assumed to have failed and will not be queried for its 
-	 * completion status.
+	 * be logged if it is not an OK status.
 	 */
 	public IStatus run(IProgressMonitor monitor);
 
-	/**
-	 * Reports if an initializer is complete. If an initializer runs synchronously then it must
-	 * report true immediately after it is run.
-	 * An initializer may choose to do some of its work asynchronously. If so, it must 
-	 * report true when the initializer considers its work to be complete.
-	 * @return true if the initializer has completed its initialization.
-	 */
-	public boolean isComplete();
 }

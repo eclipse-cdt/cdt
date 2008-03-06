@@ -3102,9 +3102,11 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		if (document == null)
 			return;
 
-		final IRegion wordRegion= CWordFinder.findWord(document, selection.getOffset());
-		if (wordRegion == null) {
-			return;
+		if (getSelectionProvider() instanceof ISelectionValidator) {
+			ISelectionValidator validator= (ISelectionValidator)getSelectionProvider();
+			if (!validator.isValid(selection)) {
+				return;
+			}
 		}
 
 		boolean hasChanged= false;
@@ -3117,14 +3119,14 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 				if (markOccurrenceTargetRegion.getOffset() <= offset && offset <= markOccurrenceTargetRegion.getOffset() + markOccurrenceTargetRegion.getLength())
 					return;
 			}
-			fMarkOccurrenceTargetRegion= wordRegion;
+			fMarkOccurrenceTargetRegion= CWordFinder.findWord(document, offset);
 			fMarkOccurrenceModificationStamp= currentModificationStamp;
 		}
 
 		OccurrenceLocation[] locations= null;
 
 		IASTNodeSelector selector= astRoot.getNodeSelector(astRoot.getFilePath());
-		IASTName name= selector.findEnclosingName(wordRegion.getOffset(), wordRegion.getLength());
+		IASTName name= selector.findEnclosingName(selection.getOffset(), selection.getLength());
 
 		if (name != null) {
 			IBinding binding= name.resolveBinding();

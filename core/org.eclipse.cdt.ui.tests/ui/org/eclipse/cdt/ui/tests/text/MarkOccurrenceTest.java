@@ -356,6 +356,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		}
 		assertNotNull(fMatch);
 
+		fMatch= new Region(fMatch.getOffset(), fMatch.getLength() - 1);
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
 		
 		assertOccurrences(2);

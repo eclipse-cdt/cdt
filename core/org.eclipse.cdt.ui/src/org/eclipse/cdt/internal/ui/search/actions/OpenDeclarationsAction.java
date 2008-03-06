@@ -76,6 +76,7 @@ import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 
 public class OpenDeclarationsAction extends SelectionParseAction implements ASTRunnable {
 	public static boolean sIsJUnitTest = false;	
+	public static boolean sAllowFallback= true;
 	
 	private static final int KIND_OTHER = 0;
 	private static final int KIND_USING_DECL = 1;
@@ -218,7 +219,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 
 	private boolean navigationFallBack(IASTTranslationUnit ast) {
 		// bug 102643, as a fall-back we look up the selected word in the index
-		if (fSelectedText != null && fSelectedText.length() > 0) {
+		if (sAllowFallback && fSelectedText != null && fSelectedText.length() > 0) {
 			try {
 				final ICProject project = fWorkingCopy.getCProject();
 				final char[] name = fSelectedText.toCharArray();

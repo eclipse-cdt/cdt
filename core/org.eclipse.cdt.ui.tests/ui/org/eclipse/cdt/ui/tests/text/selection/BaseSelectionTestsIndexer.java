@@ -77,6 +77,7 @@ public class BaseSelectionTestsIndexer extends BaseUITestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		OpenDeclarationsAction.sIsJUnitTest= true;
+		OpenDeclarationsAction.sAllowFallback= false;
 	}
 	
 	public void waitForIndex(int maxSec) throws Exception {

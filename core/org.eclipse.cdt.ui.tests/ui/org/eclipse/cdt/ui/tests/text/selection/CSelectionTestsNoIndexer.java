@@ -118,6 +118,7 @@ public class CSelectionTestsNoIndexer extends BaseUITestCase {
     protected void setUp() throws Exception {
     	super.setUp();
     	OpenDeclarationsAction.sIsJUnitTest= true;
+		OpenDeclarationsAction.sAllowFallback= false;    	
     	initProject();
     }
     
@@ -684,4 +685,24 @@ public class CSelectionTestsNoIndexer extends BaseUITestCase {
         assertEquals(((ASTNode)decl).getLength(), 11);
     }
 
+    // int myFunc(var) 
+    // int var; 
+	// { 
+	//     return var; 
+	// } 
+	//
+	// int main(void) 
+	// { 
+	//     return myFunc(0); 
+	// }
+    public void testKRstyleFunctions_Bug221635() throws Exception {
+        String code= getContentsForTest(1)[0].toString();
+        IFile file = importFile("source.c", code); 
+        int offset= code.indexOf("myFunc(0)");
+        IASTNode decl= testF3(file, offset);
+        assertTrue(decl instanceof IASTName);
+        final IASTName name = (IASTName) decl;
+		assertTrue(name.isDefinition());
+        assertEquals("myFunc", name.toString());
+    }
 }

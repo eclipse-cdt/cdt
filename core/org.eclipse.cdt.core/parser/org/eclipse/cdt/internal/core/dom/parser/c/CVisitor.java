@@ -117,6 +117,7 @@ public class CVisitor {
 		{
 			shouldVisitNames = true;
 		}
+		@Override
 		public int visit(IASTName name) {
 			if ( name.getBinding() != null ) {
                 try {
@@ -180,6 +181,7 @@ public class CVisitor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processDeclaration(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
 		 */
+		@Override
 		public int visit(IASTDeclaration declaration) {
 			if ( declaration instanceof IASTProblemHolder )
 				addProblem(((IASTProblemHolder)declaration).getProblem());
@@ -190,6 +192,7 @@ public class CVisitor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processExpression(org.eclipse.cdt.core.dom.ast.IASTExpression)
 		 */
+		@Override
 		public int visit(IASTExpression expression) {
 			if ( expression instanceof IASTProblemHolder )
 				addProblem(((IASTProblemHolder)expression).getProblem());
@@ -200,6 +203,7 @@ public class CVisitor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processStatement(org.eclipse.cdt.core.dom.ast.IASTStatement)
 		 */
+		@Override
 		public int visit(IASTStatement statement) {
 			if ( statement instanceof IASTProblemHolder )
 				addProblem(((IASTProblemHolder)statement).getProblem());
@@ -210,6 +214,7 @@ public class CVisitor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processTypeId(org.eclipse.cdt.core.dom.ast.IASTTypeId)
 		 */
+		@Override
 		public int visit(IASTTypeId typeId) {
 			if ( typeId instanceof IASTProblemHolder )
 				addProblem(((IASTProblemHolder)typeId).getProblem());
@@ -269,6 +274,7 @@ public class CVisitor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processDeclarator(org.eclipse.cdt.core.dom.ast.IASTDeclarator)
 		 */
+		@Override
 		public int visit(IASTDeclarator declarator) {
 			//GCC allows declarations in expressions, so we have to continue from the 
 			//declarator in case there is something in the initializer expression
@@ -308,6 +314,7 @@ public class CVisitor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processDeclSpecifier(org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier)
 		 */
+		@Override
 		public int visit(IASTDeclSpecifier declSpec) {
 			if ( compositeTypeDeclared && declSpec instanceof ICASTTypedefNameSpecifier )  
 				return PROCESS_CONTINUE;
@@ -345,6 +352,7 @@ public class CVisitor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processEnumerator(org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator)
 		 */
+		@Override
 		public int visit(IASTEnumerator enumerator) {
 			if( binding instanceof IEnumerator && enumerator.getName().resolveBinding() == binding ){
 				addName( enumerator.getName() );
@@ -356,6 +364,7 @@ public class CVisitor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processStatement(org.eclipse.cdt.core.dom.ast.IASTStatement)
 		 */
+		@Override
 		public int visit(IASTStatement statement) {
 			if ( statement instanceof IASTLabelStatement && binding instanceof ILabel ){
 				if ( ((IASTLabelStatement)statement).getName().resolveBinding() == binding ) 
@@ -395,6 +404,7 @@ public class CVisitor {
 				kind = KIND_OBJ_FN;
 		}
 		
+		@Override
 		public int visit( IASTName name ){
 			ASTNodeProperty prop = name.getPropertyInParent();
 			switch( kind ){
@@ -811,7 +821,7 @@ public class CVisitor {
 		    IASTNode parent = declarator.getParent();
 			if ( CharArrayUtils.equals(declarator.getName().toCharArray(), name.toCharArray()) ){
 				binding = resolveBinding( parent, CURRENT_SCOPE );
-				if( binding != null ) {
+				if( binding != null && binding instanceof IIndexBinding == false) {
 				    if( binding instanceof ICInternalFunction )
 				        ((ICInternalFunction)binding).addDeclarator( (ICASTKnRFunctionDeclarator) declarator );
 				    else 

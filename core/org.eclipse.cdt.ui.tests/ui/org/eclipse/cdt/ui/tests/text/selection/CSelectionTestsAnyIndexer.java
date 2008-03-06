@@ -33,6 +33,8 @@ import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
+import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
+
 public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexer {
 
 	private static final int MAX_WAIT_TIME = 8000;
@@ -503,6 +505,8 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
     
     // #define DR_ACCESS_FNS(DR)
     public void testNavigationInMacroDefinition_Bug102643() throws Exception {
+		OpenDeclarationsAction.sAllowFallback= true;
+		
         StringBuffer[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
@@ -517,5 +521,34 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
         IEditorPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor(); 
         IEditorInput input = part.getEditorInput();
         assertEquals("source.cpp", ((FileEditorInput)input).getFile().getName());
+    }    
+    
+    // int myFunc();
+    
+    // int myFunc(var) 
+    // int var; 
+	// { 
+	//     return var; 
+	// } 
+	//
+	// int main(void) 
+	// { 
+	//     return myFunc(0); 
+	// }
+    public void testKRstyleFunctions_Bug221635() throws Exception {
+        final StringBuffer[] contents = getContentsForTest(2);
+        String hcode= contents[0].toString();
+		String code= contents[1].toString();
+        IFile hfile = importFile("aheader.h", hcode); 
+        IFile file = importFile("source.c", code); 
+        int offset= code.indexOf("myFunc(0)");
+        TestSourceReader.waitUntilFileIsIndexed(index, file, MAX_WAIT_TIME);
+
+        IASTNode decl= testF3(file, offset);
+        assertTrue(decl instanceof IASTName);
+        final IASTName name = (IASTName) decl;
+		assertTrue(name.isDefinition());
+        assertEquals("myFunc", name.toString());
     }
+
 }

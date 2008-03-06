@@ -145,6 +145,7 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
     	super.setUp();
     	initProject();
     	OpenDeclarationsAction.sIsJUnitTest= true;
+		OpenDeclarationsAction.sAllowFallback= false;    	
     }
     
     protected void tearDown() throws Exception {

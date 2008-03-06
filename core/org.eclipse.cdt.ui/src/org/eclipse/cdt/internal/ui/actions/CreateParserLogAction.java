@@ -252,15 +252,19 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 	private void outputUnresolvedIncludes(ICProject prj, IIndex index, PrintStream out, String indent, 
 			IASTPreprocessorIncludeStatement[] includeDirectives, int linkageID) throws CoreException {
 		ASTFilePathResolver resolver= new ProjectIndexerInputAdapter(prj);
+		HashSet<IIndexFileLocation> handled= new HashSet<IIndexFileLocation>();
 		for (IASTPreprocessorIncludeStatement include : includeDirectives) {
 			if (include.isActive() && include.isResolved()) {
-				outputUnresolvedIncludes(index, out, indent, resolver.resolveASTPath(include.getPath()), linkageID);
+				outputUnresolvedIncludes(index, out, indent, resolver.resolveASTPath(include.getPath()), linkageID, handled);
 			}
 		}
 	}
 
 	private void outputUnresolvedIncludes(IIndex index, PrintStream out, String indent, 
-			IIndexFileLocation ifl, int linkageID) throws CoreException {
+			IIndexFileLocation ifl, int linkageID, HashSet<IIndexFileLocation> handled) throws CoreException {
+		if (!handled.add(ifl)) {
+			return;
+		}
 		IIndexFile ifile= index.getFile(linkageID, ifl);
 		if (ifile == null) {
 			out.println(indent + ifl.getURI() + " is not indexed"); //$NON-NLS-1$
@@ -270,7 +274,7 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 			for (IIndexInclude inc : includes) {
 				if (inc.isActive()) {
 					if (inc.isResolved()) {
-						outputUnresolvedIncludes(index, out, indent, inc.getIncludesLocation(), linkageID);
+						outputUnresolvedIncludes(index, out, indent, inc.getIncludesLocation(), linkageID, handled);
 					}
 					else {
 						out.println(indent + "Unresolved inclusion: " + inc.getName() + " in file " +  //$NON-NLS-1$//$NON-NLS-2$

@@ -677,8 +677,12 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			  //String desc = ((op==SftpProgressMonitor.PUT)? 
               //        "Uploading " : "Downloading ")+srcFile;
 			  String desc = srcFile;
+			  if (Activator.isTracingOn()) {
+				  Activator.trace("Sftp-monitor: "+max+", "+desc); //$NON-NLS-1$ //$NON-NLS-2$
+			  }
 			  //TODO avoid cast from long to int
 			  fMonitor.beginTask(desc, (int)max);
+			 
 		  }
 		  public boolean count(long count){
 			  fWorkToDate += count;
@@ -690,11 +694,19 @@ public class SftpFileService extends AbstractFileService implements IFileService
 						workToDateKB, fMaxWorkKB, workPercent	  
 					  });
 
+			  if (Activator.isTracingOn()) {
+				  System.out.print('#'); 
+			  }
 			  fMonitor.subTask(subDesc);
 		      fMonitor.worked((int)count);
 		      return !(fMonitor.isCanceled());
 		  }
 		  public void end(){
+			  if (Activator.isTracingOn()) {
+				  System.out.println();
+				  System.out.println("Sftp-monitor <--"); //$NON-NLS-1$
+				  System.out.flush();
+			  }
 			  fMonitor.done();
 		  }
 	}

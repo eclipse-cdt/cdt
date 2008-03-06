@@ -311,7 +311,7 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
         // Install the individual breakpoints on the executor thread
         // Requires a counting monitor to know when we're done
         final CountingRequestMonitor countingRm = new CountingRequestMonitor(getExecutor(), rm);
-        countingRm.setDoneCount(platformBPs.size());
+        countingRm.setDoneCount(initialPlatformBPs.size());
 
         for (final IBreakpoint bp : initialPlatformBPs.keySet()) {
             final List<Map<String, Object>> attrs = initialPlatformBPs.get(bp);

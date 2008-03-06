@@ -42,6 +42,7 @@ public class TextTestSuite extends TestSuite {
 		addTest(ShiftActionTest.suite());
 		addTest(CodeFormatterTest.suite());
 		addTest(CIndenterTest.suite());
+		addTest(TemplateFormatterTest.suite());
 		
 		// Break iterator tests.
 		addTest(CBreakIteratorTest.suite());

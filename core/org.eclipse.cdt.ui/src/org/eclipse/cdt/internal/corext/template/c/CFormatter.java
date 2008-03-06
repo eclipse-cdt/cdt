@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@
 package org.eclipse.cdt.internal.corext.template.c;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -26,10 +25,8 @@ import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.TypedPosition;
 import org.eclipse.jface.text.rules.FastPartitioner;
-import org.eclipse.jface.text.source.LineRange;
 import org.eclipse.jface.text.templates.DocumentTemplateContext;
 import org.eclipse.jface.text.templates.GlobalTemplateVariables;
 import org.eclipse.jface.text.templates.TemplateBuffer;
@@ -98,7 +95,6 @@ public class CFormatter {
 			
 			internalFormat(document, context, buffer);
 			convertLineDelimiters(document);
-			convertTabs(document);
 			if (isReplacedAreaEmpty(context))
 				trimStart(document);
 			
@@ -135,50 +131,6 @@ public class CFormatter {
 			String lineDelimiter= document.getLineDelimiter(line);
 			if (lineDelimiter != null)
 				document.replace(region.getOffset() + region.getLength(), lineDelimiter.length(), fLineDelimiter);
-		}
-	}
-
-	/**
-	 * Converts tabs into spaces if such conversion is required according
-	 * to the current code style.
-	 *
-	 * @param document the document to process.
-	 * @throws BadLocationException
-	 */
-	private void convertTabs(IDocument document) throws BadLocationException {
-		int lines= document.getNumberOfLines();
-		if (lines == 0)
-			return;
-
-		String option;
-		if (fProject == null)
-			option= CCorePlugin.getOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR);
-		else
-			option= fProject.getOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, true);
-
-		if (!CCorePlugin.SPACE.equals(option))
-			return;
-
-		int tabWidth= CodeFormatterUtil.getTabWidth(fProject);
-		char[] spaces= null;
-		for (int line= 0; line < lines; line++) {
-			IRegion region= document.getLineInformation(line);
-			int offset= region.getOffset();
-			int length = region.getLength();
-			for (int i= 0; i < length; i++) {
-				char c= document.getChar(offset + i); 
-				if (c == '\t') {
-					int numSpaces= tabWidth - i % tabWidth;
-					if (spaces == null) {
-						spaces= new char[tabWidth];
-						Arrays.fill(spaces, ' ');
-					}
-					document.replace(offset + i, 1, String.valueOf(spaces, 0, numSpaces));
-					numSpaces--;
-					i += numSpaces;
-					length += numSpaces;
-				}
-			}
 		}
 	}
 
@@ -226,13 +178,49 @@ public class CFormatter {
 			throw new BadLocationException(); // fall back to indenting
 		
 		edit.apply(doc, TextEdit.UPDATE_REGIONS);
-	}	
+	}
 
 	private void indent(IDocument document, TemplateBuffer buffer) throws BadLocationException, MalformedTreeException {
-		String indent = CodeFormatterUtil.createIndentString(fInitialIndentLevel, fProject);
 		prefixSelectionLines(document, buffer);
-		int lineCount= document.getNumberOfLines();
-		IndentUtil.indentLines(document, new LineRange(0, lineCount), indent);
+		adjustIndentation(document);
+	}
+
+	/**
+	 * Convert leading tabs to correct indentation and add initial indentation level.
+	 * 
+	 * @param document
+	 * @throws BadLocationException 
+	 */
+	private void adjustIndentation(IDocument document) throws BadLocationException {
+		int lines= document.getNumberOfLines();
+		if (lines == 0)
+			return;
+
+		String option;
+		if (fProject == null)
+			option= CCorePlugin.getOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR);
+		else
+			option= fProject.getOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, true);
+
+		boolean useSpaces= CCorePlugin.SPACE.equals(option);
+		int indentWidth= CodeFormatterUtil.getIndentWidth(fProject);
+		int tabWidth= CodeFormatterUtil.getTabWidth(fProject);
+		
+		for (int line= 0; line < lines; ++line) {
+			IRegion lineRegion= document.getLineInformation(line);
+			String indent= IndentUtil.getCurrentIndent(document, line, false);
+			int tabs= 0;
+			for (int i = 0; i < indent.length(); i++) {
+				if (indent.charAt(i) == '\t') {
+					tabs++;
+				} else {
+					break;
+				}
+			}
+			int totalIndentWidth= (fInitialIndentLevel + tabs) * indentWidth + IndentUtil.computeVisualLength(indent.substring(tabs), tabWidth);
+			String newIndent= IndentUtil.changePrefix("", totalIndentWidth, tabWidth, useSpaces); //$NON-NLS-1$
+			document.replace(lineRegion.getOffset(), indent.length(), newIndent);
+		}
 	}
 
 	/**
@@ -259,13 +247,18 @@ public class CFormatter {
 							String prefix= document.get(startOffset, offset - startOffset);
 							String shift= trimAtOffset(offset, document);
 							delta -= shift.length();
-							if (shift.length() > 0 && startLine < endLine) {
+							if (startLine < endLine) {
 								int shiftWidth= IndentUtil.computeVisualLength(shift, tabWidth);
 								for (int line= startLine + 1; line <= endLine; ++line) {
-									delta -= IndentUtil.cutIndent(document, line, shiftWidth, tabWidth);
+									String currentIndent= IndentUtil.getCurrentIndent(document, line, false);
+									int indentWidth= IndentUtil.computeVisualLength(currentIndent, tabWidth);
+									int newIndentWidth= Math.max(0, indentWidth - shiftWidth);
+									// replace current indent with prefix + spaces
+									String newIndent= IndentUtil.changePrefix(prefix, prefix.length() + newIndentWidth, 1, true);
 									int lineOffset= document.getLineOffset(line);
-									document.replace(lineOffset, 0, prefix);
-									delta += prefix.length();
+									document.replace(lineOffset, currentIndent.length(), newIndent);
+									delta -= currentIndent.length();
+									delta += newIndent.length();
 								}
 							}
 						} catch (BadLocationException exc) {
@@ -286,7 +279,7 @@ public class CFormatter {
 		private static final String CATEGORY= "__template_variables"; //$NON-NLS-1$
 		private Document fDocument;
 		private final TemplateBuffer fBuffer;
-		private List fPositions;
+		private List<TypedPosition> fPositions;
 		
 		/**
 		 * Creates a new tracker.
@@ -361,11 +354,11 @@ public class CFormatter {
 			return fBuffer;
 		}
 		
-		private List createRangeMarkers(TemplateVariable[] variables, IDocument document) throws MalformedTreeException, BadLocationException {
-			Map markerToOriginal= new HashMap();
+		private List<TypedPosition> createRangeMarkers(TemplateVariable[] variables, IDocument document) throws MalformedTreeException, BadLocationException {
+			Map<ReplaceEdit, String> markerToOriginal= new HashMap<ReplaceEdit, String>();
 			
 			MultiTextEdit root= new MultiTextEdit(0, document.getLength());
-			List edits= new ArrayList();
+			List<TextEdit> edits= new ArrayList<TextEdit>();
 			boolean hasModifications= false;
 			for (int i= 0; i != variables.length; i++) {
 				final TemplateVariable variable= variables[i];
@@ -396,12 +389,12 @@ public class CFormatter {
 				root.apply(document, TextEdit.UPDATE_REGIONS);
 			}
 			
-			List positions= new ArrayList();
-			for (Iterator it= edits.iterator(); it.hasNext();) {
-				TextEdit edit= (TextEdit) it.next();
+			List<TypedPosition> positions= new ArrayList<TypedPosition>();
+			for (Iterator<TextEdit> it= edits.iterator(); it.hasNext();) {
+				TextEdit edit= it.next();
 				try {
 					// abuse TypedPosition to piggy back the original contents of the position
-					final TypedPosition pos= new TypedPosition(edit.getOffset(), edit.getLength(), (String) markerToOriginal.get(edit));
+					final TypedPosition pos= new TypedPosition(edit.getOffset(), edit.getLength(), markerToOriginal.get(edit));
 					document.addPosition(CATEGORY, pos);
 					positions.add(pos);
 				} catch (BadPositionCategoryException x) {
@@ -417,11 +410,11 @@ public class CFormatter {
 			return length == 0 || value.trim().length() == 0;
 		}
 		
-		private void removeRangeMarkers(List positions, IDocument document, TemplateVariable[] variables) throws MalformedTreeException, BadLocationException, BadPositionCategoryException {
+		private void removeRangeMarkers(List<TypedPosition> positions, IDocument document, TemplateVariable[] variables) throws MalformedTreeException, BadLocationException, BadPositionCategoryException {
 			
 			// revert previous changes
-			for (Iterator it= positions.iterator(); it.hasNext();) {
-				TypedPosition position= (TypedPosition) it.next();
+			for (Iterator<TypedPosition> it= positions.iterator(); it.hasNext();) {
+				TypedPosition position= it.next();
 				// remove and re-add in order to not confuse ExclusivePositionUpdater
 				document.removePosition(CATEGORY, position);
 				final String original= position.getType();
@@ -432,13 +425,13 @@ public class CFormatter {
 				document.addPosition(position);
 			}
 			
-			Iterator it= positions.iterator();
+			Iterator<TypedPosition> it= positions.iterator();
 			for (int i= 0; i != variables.length; i++) {
 				TemplateVariable variable= variables[i];
 
 				int[] offsets= new int[variable.getOffsets().length];
 				for (int j= 0; j != offsets.length; j++)
-					offsets[j]= ((Position) it.next()).getOffset();
+					offsets[j]= it.next().getOffset();
 
 				variable.setOffsets(offsets);   
 			}

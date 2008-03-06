@@ -622,8 +622,14 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 			setBackgroundText(msg);
 		usercomp.setVisible(visible);
 		buttoncomp.setVisible(visible);
-		page.getAButton().setVisible(visible);
-		page.getDButton().setVisible(visible);
+		if (page != null) {
+			Button b = page.getAButton();
+			if (b != null)
+				b.setVisible(visible);
+			b = page.getDButton();
+			if (b != null)
+				b.setVisible(visible);
+		}
 	}
 	
 	/**

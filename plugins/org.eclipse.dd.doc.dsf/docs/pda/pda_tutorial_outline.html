@@ -10,9 +10,63 @@
 <h3>DSF</h3>
 <ul>
   <li>Customizing, componentization, performance.</li>
-  <li>GDB Reference Implementation<br>
+  <li>GDB Reference Implementation</li>
+</ul>
+<h4>Debug Services</h4>
+Use of services is intended to allow for maximum level of extendability
+and customization.&nbsp; To achieve this, service interfaces should
+encapsulate functionality that logically belongs together and at the
+same time allow for a managable number of services which have a clear
+hierarchy.&nbsp; DSF defines a set of standard debug interfaces (in the
+org.eclipse.dd.dsf.debug plugin), and supplies a set of classes that
+populate the standard debug views using those interfaces (in the
+org.eclipse.dd.dsf.debug.ui plugin).&nbsp; However there are very few
+dependencies in these service interfaces and a given debugger
+implementation may leave out or replace any of them as its custom
+functionality dictates.&nbsp; <br>
+<p>The standard debug service interfaces include:</p>
+<ul>
+  <li><span style="text-decoration: underline;">BreakpiontsMediator</span>
+- Not actually an interface, but a utility service implementation which
+mediates between IDE and target-side&nbsp; breakpoints.<br>
+  </li>
+  <li><span style="text-decoration: underline;">IBreakpionts</span> -
+Service for managing target-side breakpoints.<br>
+  </li>
+  <li><span style="text-decoration: underline;">IDisassembly</span> -
+Service for retrieving lines of disassembly.<br>
+  </li>
+  <li><span style="text-decoration: underline;">IExpressions</span> -
+Service for evaluating expressions, including variables.<br>
+  </li>
+  <li><span style="text-decoration: underline;">IMemory</span> -
+Service for reading target memory.<br>
+  </li>
+  <li><span style="text-decoration: underline;">IModules</span> -
+Service for examining target executable module information.<br>
+  </li>
+  <li><span style="text-decoration: underline;">IRegisters</span> -
+Service for reading register data.<br>
+  </li>
+  <li><span style="text-decoration: underline;">IRunControl</span> -
+Service for controlling execution state of the target.<br>
+  </li>
+  <li><span style="text-decoration: underline;">ISourceLookup</span> -
+Service for mapping target-side to host-side source paths.&nbsp; This
+service is intended to be used by other services and not to replace the
+platform source lookup APIs.<br>
+  </li>
+  <li><span style="text-decoration: underline;">IStack</span> - Service
+for reading stack information.<br>
+  </li>
+  <li><span style="text-decoration: underline;">ISymbols</span> -
+Service for reading symbol information about the loaded modules.<br>
   </li>
 </ul>
+<h4><br>
+</h4>
+<br>
+<br>
 <h3>Push Down Automata (PDA) <br>
 </h3>
 <ul>

@@ -85,6 +85,14 @@ public class PDOMProxy implements IPDOM {
 		return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}
 
+	public synchronized IIndexFragmentBinding[] findBindings(char[] name, boolean filescope,
+			IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+		if (fDelegate != null)
+			return fDelegate.findBindings(name, filescope, filter, monitor);
+
+		return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
+	}
+
 	public synchronized IIndexFragmentBinding[] findBindingsForPrefix(char[] prefix, boolean filescope,
 			IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		if (fDelegate != null)

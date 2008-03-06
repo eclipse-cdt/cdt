@@ -10,7 +10,6 @@
  *    Bryan Wilkinson (QNX)
  *    Andrew Ferguson (Symbian)
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.core.index;
 
 import java.util.regex.Pattern;
@@ -177,6 +176,12 @@ public interface IIndexFragment {
 	 * Returns the timestamp of the last modification to the index.
 	 */
 	long getLastWriteAccess();
+
+	/**
+	 * Returns all bindings with the given name, accepted by the given filter
+	 * @param monitor to report progress, may be <code>null</code>
+	 */
+	IIndexFragmentBinding[] findBindings(char[] name, boolean filescope, IndexFilter filter, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Returns all bindings with the given prefix, accepted by the given filter

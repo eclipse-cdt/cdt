@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,6 +55,7 @@ import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexInclude;
+import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
@@ -265,7 +266,7 @@ public class IndexUI {
 		if (binding != null) {
 			IIndexName[] defs= index.findNames(binding, IIndex.FIND_DEFINITIONS | IIndex.SEARCH_ACCROSS_LANGUAGE_BOUNDARIES);
 
-			ArrayList result= new ArrayList();
+			ArrayList<ICElementHandle> result= new ArrayList<ICElementHandle>();
 			for (int i = 0; i < defs.length; i++) {
 				IIndexName in = defs[i];
 				ICElementHandle definition= getCElementForName((ICProject) null, index, in);
@@ -274,7 +275,7 @@ public class IndexUI {
 				}
 				
 			}
-			return (ICElementHandle[]) result.toArray(new ICElementHandle[result.size()]);
+			return result.toArray(new ICElementHandle[result.size()]);
 		}
 		return EMPTY_ELEMENTS;
 	}
@@ -309,7 +310,10 @@ public class IndexUI {
 	}
 	
 	public static ITranslationUnit getTranslationUnit(ICProject cproject, IName name) {
-		final IASTFileLocation fileLocation = name.getFileLocation();
+		return getTranslationUnit(cproject, name.getFileLocation());
+	}
+
+	private static ITranslationUnit getTranslationUnit(ICProject cproject, final IASTFileLocation fileLocation) {
 		if (fileLocation != null) {
 			IPath path= Path.fromOSString(fileLocation.getFileName());
 			try {
@@ -336,6 +340,17 @@ public class IndexUI {
 		IRegion region= new Region(declName.getNodeOffset(), declName.getNodeLength());
 		long timestamp= declName.getFile().getTimestamp();
 		return CElementHandleFactory.create(tu, index.findBinding(declName), declName.isDefinition(), region, timestamp);
+	}
+
+	public static ICElementHandle getCElementForMacro(ICProject preferProject, IIndex index, IIndexMacro macro) 
+			throws CoreException {
+		ITranslationUnit tu= getTranslationUnit(preferProject, macro.getFileLocation());
+		if (tu != null) {
+			IRegion region= new Region(macro.getNodeOffset(), macro.getNodeLength());
+			long timestamp= macro.getFile().getTimestamp();
+			return CElementHandleFactory.create(tu, macro, region, timestamp);
+		}
+		return null;
 	}
 
 	public static ICElementHandle findAnyDeclaration(IIndex index, ICProject preferProject, IBinding binding) 

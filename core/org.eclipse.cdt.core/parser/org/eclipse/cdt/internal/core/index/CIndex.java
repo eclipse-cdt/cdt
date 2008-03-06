@@ -146,7 +146,7 @@ public class CIndex implements IIndex {
 			}
 		}
 		// bug 192352, files can reside in multiple fragments, remove duplicates
-		if (fragCount > 1) {
+		if (fragCount > 1 || (flags & IIndex.SEARCH_ACCROSS_LANGUAGE_BOUNDARIES) != 0) {
 			HashMap<String, IIndexFile> fileMap= new HashMap<String, IIndexFile>();
 			for (Iterator<IIndexFragmentName> iterator = result.iterator(); iterator.hasNext();) {
 				final IIndexFragmentName name = iterator.next();
@@ -395,7 +395,7 @@ public class CIndex implements IIndex {
 	}
 
 	public IIndexBinding[] findBindings(char[] name, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
-		return findBindings(new char[][]{name}, filter, monitor);
+		return findBindings(name, true, filter, monitor);
 	}
 
 	/*
@@ -484,6 +484,33 @@ public class CIndex implements IIndex {
 					for (int i = 0; i < fPrimaryFragmentCount; i++) {
 						try {
 							IBinding[] part = fFragments[i].findBindingsForPrefix(prefix, filescope, retargetFilter(linkages[j], filter), monitor);
+							fragmentBindings[i] = new IIndexFragmentBinding[part.length];
+							System.arraycopy(part, 0, fragmentBindings[i], 0, part.length);
+						} catch (CoreException e) {
+							CCorePlugin.log(e);
+							fragmentBindings[i] = IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
+						}
+					}
+					ICompositesFactory factory = getCompositesFactory(linkages[j].getLinkageID());
+					result.add(factory.getCompositeBindings(fragmentBindings));
+				}
+			}
+			return flatten(result);
+		}
+	}
+
+	public IIndexBinding[] findBindings(char[] name, boolean filescope, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+		if(SPECIALCASE_SINGLES && fFragments.length==1) {
+			return fFragments[0].findBindings(name, filescope, filter, monitor);
+		} else {
+			List<IIndexBinding[]> result = new ArrayList<IIndexBinding[]>();
+			ILinkage[] linkages = Linkage.getAllLinkages();
+			for(int j=0; j < linkages.length; j++) {
+				if(filter.acceptLinkage(linkages[j])) {
+					IIndexFragmentBinding[][] fragmentBindings = new IIndexFragmentBinding[fPrimaryFragmentCount][];
+					for (int i = 0; i < fPrimaryFragmentCount; i++) {
+						try {
+							IBinding[] part = fFragments[i].findBindings(name, filescope, retargetFilter(linkages[j], filter), monitor);
 							fragmentBindings[i] = new IIndexFragmentBinding[part.length];
 							System.arraycopy(part, 0, fragmentBindings[i], 0, part.length);
 						} catch (CoreException e) {

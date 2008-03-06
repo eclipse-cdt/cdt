@@ -25,6 +25,8 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.Region;
@@ -36,8 +38,8 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
@@ -45,8 +47,11 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.index.IIndexName;
+import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ILanguage;
@@ -66,6 +71,7 @@ import org.eclipse.cdt.internal.ui.actions.OpenActionUtil;
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
+import org.eclipse.cdt.internal.ui.text.CWordFinder;
 import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 
 public class OpenDeclarationsAction extends SelectionParseAction implements ASTRunnable {
@@ -92,8 +98,10 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 	
 	
 	ITextSelection fTextSelection;
+	private String fSelectedText;
 	private IWorkingCopy fWorkingCopy;
 	private IIndex fIndex;
+	private IProgressMonitor fMonitor;
 
 	/**
 	 * Creates a new action with the given editor
@@ -109,6 +117,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 	protected IStatus performNavigation(IProgressMonitor monitor) throws CoreException {
 		clearStatusLine();
 
+		fMonitor= monitor;
 		fWorkingCopy = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(fEditor.getEditorInput());
 		if (fWorkingCopy == null)
 			return Status.CANCEL_STATUS;
@@ -136,7 +145,8 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 		int selectionStart = fTextSelection.getOffset();
 		int selectionLength = fTextSelection.getLength();
 
-		IASTName searchName= ast.getNodeSelector(null).findEnclosingName(selectionStart, selectionLength);
+		final IASTNodeSelector nodeSelector = ast.getNodeSelector(null);
+		IASTName searchName= nodeSelector.findEnclosingName(selectionStart, selectionLength);
 		if (searchName != null) { // just right, only one name selected
 			boolean found= false;
 			final IASTNode parent = searchName.getParent();
@@ -186,30 +196,52 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 					found = navigateOneLocation(declNames);
 				}
 			}
-			if (!found) {
+			if (!found && !navigationFallBack(ast)) {
 				reportSymbolLookupFailure(new String(searchName.toCharArray()));
 			}
 			return Status.OK_STATUS;
 		} 
 
 		// Check if we're in an include statement
-		IASTPreprocessorStatement[] preprocs = ast.getAllPreprocessorStatements();
-		for (int i = 0; i < preprocs.length; ++i) {
-			if (!(preprocs[i] instanceof IASTPreprocessorIncludeStatement))
-				continue;
-			IASTPreprocessorIncludeStatement incStmt = (IASTPreprocessorIncludeStatement)preprocs[i];
-			IASTFileLocation loc = preprocs[i].getFileLocation();
-			if (loc != null
-					&& loc.getFileName().equals(ast.getFilePath())
-					&& loc.getNodeOffset() < selectionStart
-					&& loc.getNodeOffset() + loc.getNodeLength() > selectionStart) {
-				// Got it
-				openInclude(incStmt);
+		if (searchName == null) {
+			IASTNode node= nodeSelector.findEnclosingNode(selectionStart, selectionLength);
+			if (node instanceof IASTPreprocessorIncludeStatement) {
+				openInclude(((IASTPreprocessorIncludeStatement) node));
 				return Status.OK_STATUS;
 			}
 		}
-		reportSelectionMatchFailure();
+		if (!navigationFallBack(ast)) {
+			reportSelectionMatchFailure();
+		}
 		return Status.OK_STATUS; 
+	}
+
+	private boolean navigationFallBack(IASTTranslationUnit ast) {
+		// bug 102643, as a fall-back we look up the selected word in the index
+		if (fSelectedText != null && fSelectedText.length() > 0) {
+			try {
+				final ICProject project = fWorkingCopy.getCProject();
+				final char[] name = fSelectedText.toCharArray();
+				List<ICElement> elems= new ArrayList<ICElement>();
+				final IndexFilter filter = IndexFilter.getDeclaredBindingFilter(ast.getLinkage().getLinkageID(), false);
+				IIndexMacro[] macros= fIndex.findMacros(name, filter, fMonitor);
+				for (IIndexMacro macro : macros) {
+					ICElement elem= IndexUI.getCElementForMacro(project, fIndex, macro);
+					if (elem != null) {
+						elems.add(elem);
+					}
+				}
+				IIndexBinding[] bindings = fIndex.findBindings(name, filter, fMonitor);
+				for (IBinding binding : bindings) {
+					final IName[] names = findNames(fIndex, ast, KIND_OTHER, binding);
+					convertToCElements(project, fIndex, names, elems);
+				}
+				return navigateCElements(elems);
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+			}
+		}
+		return false;
 	}
 
 	private void openInclude(IASTPreprocessorIncludeStatement incStmt) {
@@ -259,6 +291,12 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 
 	private boolean navigateViaCElements(ICProject project, IIndex index, IName[] declNames) {
 		final ArrayList<ICElement> elements= new ArrayList<ICElement>();
+		convertToCElements(project, index, declNames, elements);
+		return navigateCElements(elements);
+	}
+
+
+	private void convertToCElements(ICProject project, IIndex index, IName[] declNames, List<ICElement> elements) {
 		for (int i = 0; i < declNames.length; i++) {
 			try {
 				ICElement elem = getCElementForName(project, index, declNames[i]);
@@ -269,6 +307,9 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 				CUIPlugin.getDefault().log(e);
 			}
 		}
+	}
+	
+	private boolean navigateCElements(final List<ICElement> elements) {
 		if (elements.isEmpty()) {
 			return false;
 		}
@@ -378,7 +419,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 
 	@Override
 	public void run() {
-		fTextSelection = getSelectedStringFromEditor();
+		computeSelectedWord();
 		if (fTextSelection != null) {
 			new WrapperJob().schedule();
 		}
@@ -398,9 +439,31 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 	 * @since 4.0
 	 */
 	public void runSync() throws CoreException {
-		fTextSelection = getSelectedStringFromEditor();
+		computeSelectedWord();
 		if (fTextSelection != null) {
 			performNavigation(new NullProgressMonitor());
+		}
+	}
+
+
+	private void computeSelectedWord() {
+		fTextSelection = getSelectedStringFromEditor();
+		fSelectedText= null;
+		if (fTextSelection != null) {
+			if (fTextSelection.getLength() > 0) {
+				fSelectedText= fTextSelection.getText();
+			}
+			else {
+				IDocument document= fEditor.getDocumentProvider().getDocument(fEditor.getEditorInput());
+				IRegion reg= CWordFinder.findWord(document, fTextSelection.getOffset());
+				if (reg != null && reg.getLength() > 0) {
+					try {
+						fSelectedText= document.get(reg.getOffset(), reg.getLength());
+					} catch (BadLocationException e) {
+						CCorePlugin.log(e);
+					}
+				}
+			}
 		}
 	}
 }

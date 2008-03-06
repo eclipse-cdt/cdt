@@ -54,6 +54,12 @@ public class EmptyIndexFragment implements IIndexFragment {
 		return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}
 
+	public IIndexFragmentBinding[] findBindings(char[] name,
+			boolean filescope, IndexFilter filter, IProgressMonitor monitor)
+			throws CoreException {
+		return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
+	}
+
 	public IIndexFragmentBinding[] findBindingsForPrefix(char[] prefix,
 			boolean filescope, IndexFilter filter, IProgressMonitor monitor)
 			throws CoreException {

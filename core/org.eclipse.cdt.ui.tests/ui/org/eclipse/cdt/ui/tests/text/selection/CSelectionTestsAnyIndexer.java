@@ -451,14 +451,14 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
         assertNode("MY_PAR", offset0, decl);
     }
     
-    //    #define MY_MACRO 0xDEADBEEF
-    //    #define MY_PAR( aRef );
+    //  #define MY_MACRO 0xDEADBEEF
+    //  #define MY_PAR( aRef ) aRef
 
 	//  #include "macrodef.h"
 	//	int basictest(void){
 	//	   int tester = MY_PAR(MY_MACRO);
     //  }
-    public void _testMacroNavigation_Bug208300() throws Exception {
+    public void testMacroNavigation_Bug208300() throws Exception {
         StringBuffer[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
@@ -497,5 +497,25 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
         IEditorPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor(); 
         IEditorInput input = part.getEditorInput();
         assertEquals("aheader.h", ((FileEditorInput)input).getFile().getName());
+    }
+    
+    // #define DR_NUM_DIMENSIONS(DR) VEC_length (tree, DR_ACCESS_FNS (DR))
+    
+    // #define DR_ACCESS_FNS(DR)
+    public void testNavigationInMacroDefinition_Bug102643() throws Exception {
+        StringBuffer[] buffers= getContents(2);
+        String hcode= buffers[0].toString();
+        String scode= buffers[1].toString();
+        IFile hfile = importFile("aheader.h", hcode); 
+        IFile file = importFile("source.cpp", scode); 
+        TestSourceReader.waitUntilFileIsIndexed(index, file, MAX_WAIT_TIME);
+        IASTNode decl;
+        int offset0, offset1;
+
+        offset1 = hcode.indexOf("DR_ACC");
+        testF3(hfile, offset1);
+        IEditorPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor(); 
+        IEditorInput input = part.getEditorInput();
+        assertEquals("source.cpp", ((FileEditorInput)input).getFile().getName());
     }
 }

@@ -37,6 +37,7 @@
  * David McKnight   (IBM)        - [216252] MessageFormat.format -> NLS.bind
  * David McKnight   (IBM)        - [216252] use SimpleSystemMessage instead of getMessage()
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
+ * Radoslav Gerganov (ProSyst)   - [216195] [dstore] Saving empty file fails
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -264,7 +265,13 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	
 		try
 		{	
-			
+			String byteStreamHandlerId = getByteStreamHandlerId();
+			String remotePath = remoteParent + getSeparator(remoteParent) + remoteFile;
+
+			// create an empty file on the host and append data to it later
+			// this handles the case of uploading empty files as well
+			getDataStore().replaceFile(remotePath, new byte[] {}, 0, isBinary, byteStreamHandlerId);
+
 //			DataElement uploadLog = findUploadLog();
 			findUploadLog();
 //			listener = new FileTransferStatusListener(remotePath, shell, monitor, getConnectorService(), ds, uploadLog);
@@ -275,7 +282,6 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			// read in the file
 			bufInputStream = new BufferedInputStream(inputStream, buffer_size);
 
-			boolean first = true;
 			byte[] buffer = new byte[buffer_size];
 			byte[] convBytes;
 			int numToRead = 0;
@@ -311,9 +317,6 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 					
 				totalSent += bytesRead;
 
-				String byteStreamHandlerId = getByteStreamHandlerId();
-				String remotePath = remoteParent + getSeparator(remoteParent) + remoteFile;
-				
 				if (!isBinary && hostEncoding != null) 
 				{
 					String tempStr = new String(buffer, 0, bytesRead);
@@ -350,27 +353,13 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 
 					convBytes = tempStr.getBytes(hostEncoding);
 				
-					if (first)
-					{ // send first set of bytes
-						first = false;
-						getDataStore().replaceFile(remotePath, convBytes, convBytes.length, true, byteStreamHandlerId);
-					}
-					else
-					{ // append subsequent segments
-						getDataStore().replaceAppendFile(remotePath, convBytes, convBytes.length, true, byteStreamHandlerId);
-					}
+					// append subsequent segments
+					getDataStore().replaceAppendFile(remotePath, convBytes, convBytes.length, true, byteStreamHandlerId);
 				}
 				else // binary
 				{
-					if (first)
-					{ // send first set of bytes
-						first = false;
-						getDataStore().replaceFile(remotePath, buffer, bytesRead, true, byteStreamHandlerId);
-					}
-					else
-					{ // append subsequent segments
-						getDataStore().replaceAppendFile(remotePath, buffer, bytesRead, true, byteStreamHandlerId);
-					}
+					// append subsequent segments
+					getDataStore().replaceAppendFile(remotePath, buffer, bytesRead, true, byteStreamHandlerId);
 				}			
 		
 				
@@ -459,12 +448,12 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	
 		try
 		{	
-			// if the file is empty, create new empty file on host
-			if (totalBytes == 0)
-			{
-				IHostFile created = createFile(remoteParent, remoteFile, monitor);
-				return created.exists();
-			}
+			String byteStreamHandlerId = getByteStreamHandlerId();
+			String remotePath = remoteParent + getSeparator(remoteParent) + remoteFile;
+
+			// create an empty file and append data to it later
+			// this handles the case of uploading empty files as well
+			getDataStore().replaceFile(remotePath, new byte[] {}, 0, isBinary, byteStreamHandlerId);
 		
 			if (monitor != null)
 			{
@@ -484,7 +473,6 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			inputStream = new FileInputStream(file);
 			bufInputStream = new BufferedInputStream(inputStream, buffer_size);
 
-			boolean first = true;
 			byte[] buffer = new byte[buffer_size];
 			byte[] convBytes;
 			int numToRead = 0;
@@ -520,9 +508,6 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 					
 				totalSent += bytesRead;
 
-				String byteStreamHandlerId = getByteStreamHandlerId();
-				String remotePath = remoteParent + getSeparator(remoteParent) + remoteFile;
-				
 				if (!isBinary && srcEncoding != null && hostEncoding != null) 
 				{
 					String tempStr = new String(buffer, 0, bytesRead, srcEncoding);
@@ -559,27 +544,13 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 					
 					convBytes = codePageConverter.convertClientStringToRemoteBytes(tempStr, hostEncoding, this);
 				
-					if (first)
-					{ // send first set of bytes
-						first = false;
-						getDataStore().replaceFile(remotePath, convBytes, convBytes.length, true, byteStreamHandlerId);
-					}
-					else
-					{ // append subsequent segments
-						getDataStore().replaceAppendFile(remotePath, convBytes, convBytes.length, true, byteStreamHandlerId);
-					}
+					// append subsequent segments
+					getDataStore().replaceAppendFile(remotePath, convBytes, convBytes.length, true, byteStreamHandlerId);
 				}
 				else // binary
 				{
-					if (first)
-					{ // send first set of bytes
-						first = false;
-						getDataStore().replaceFile(remotePath, buffer, bytesRead, true, byteStreamHandlerId);
-					}
-					else
-					{ // append subsequent segments
-						getDataStore().replaceAppendFile(remotePath, buffer, bytesRead, true, byteStreamHandlerId);
-					}
+					// append subsequent segments
+					getDataStore().replaceAppendFile(remotePath, buffer, bytesRead, true, byteStreamHandlerId);
 				}			
 		
 				

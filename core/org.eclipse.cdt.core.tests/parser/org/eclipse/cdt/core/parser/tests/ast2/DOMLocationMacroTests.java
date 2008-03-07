@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorFunctionStyleMacroDefinition
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorObjectStyleMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorUndefStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
@@ -295,7 +296,7 @@ public class DOMLocationMacroTests extends AST2BaseTest {
             assertEquals( firstReferences.length, 2 );
             assertEquals( firstReferences[0].getPropertyInParent(), IASTPreprocessorMacroExpansion.EXPANSION_NAME );
             assertEquals( firstReferences[0].getParent().getParent(), tu );
-            assertEquals( firstReferences[1].getPropertyInParent(), IASTPreprocessorUndefStatement.MACRO_NAME );
+            assertEquals( firstReferences[1].getPropertyInParent(), IASTPreprocessorStatement.MACRO_NAME );
             assertTrue( firstReferences[1].getParent() instanceof IASTPreprocessorUndefStatement );
             assertEquals( firstDeclarations.length, 1 );
             assertSame( ABC1.getName(), firstDeclarations[0] );

@@ -163,6 +163,7 @@ public abstract class ASTVisitor {
 		return PROCESS_CONTINUE;
 	}
 	
+	@Deprecated
 	public int visit( IASTComment comment){
 		return PROCESS_CONTINUE;
 	}

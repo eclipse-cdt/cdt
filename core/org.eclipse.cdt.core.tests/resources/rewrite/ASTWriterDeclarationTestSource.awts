@@ -1,0 +1,109 @@
+//!ASMDeclarationTest
+//%CPP
+asm("movl %1, %%eax;");
+
+//!FunctionDefinitionTest
+//%CPP
+int foo()
+{
+    return 1;
+}
+
+
+//!SimpleDeclarationTest
+//%CPP
+int i = 2, y = 3;
+int b = 0;
+
+//!ExplicitTemplateInstantion
+//%CPP
+template class vector<int>;
+
+//!GPPExplicitTemplateInstantion
+//%CPP GNU
+static template class vector<int>;
+inline template class vector<int>;
+inline template class vector<int>;
+
+//!LinkageSpecification
+//%CPP
+extern "C" typedef void FUNC();
+
+
+//!NamespaceAlias
+//%CPP
+namespace kurz = ziemlichlangernamespace;
+
+//!NamespaceDefinition
+//%CPP
+namespace ziemlichlangernamespace
+{
+}
+
+//!TemplateDeclaration
+//%CPP
+template<class T> class vector
+{
+};
+
+//!NestedTemplateDeclaration
+//%CPP
+template<template <class T> class K> class vector
+{
+};
+
+//!TemplateSpecialization
+//%CPP
+template<> class MyQueue<double>
+{
+    std::vector<double> data;
+public:
+    void Add(const double& );
+    void Remove();
+    void Print();
+};
+
+//!UsingDeclaration
+//%CPP
+struct A
+{
+    void f();
+    enum E{ e};
+    union 
+    {
+        int u;
+    };
+};
+struct B : A
+{
+    using A::f;
+    using typename A::e;
+    using A::u;
+};
+
+//!UsingDirective
+//%CPP
+using namespace B;
+
+
+//!VisibilityLabel
+//%CPP
+class A
+{
+public:
+    int hallo();
+protected:
+    int b, c;
+private:
+    int p;
+};
+
+//!CommentBeforeSimpleDeclaration
+//%CPP
+//Comment
+int i = 2;
+
+//!typename qualfier
+//%CPP
+typename T::A *a6;
+

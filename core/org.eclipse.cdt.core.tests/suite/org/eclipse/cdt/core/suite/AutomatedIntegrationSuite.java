@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.model.tests.BinaryTests;
 import org.eclipse.cdt.core.model.tests.ElementDeltaTests;
 import org.eclipse.cdt.core.model.tests.WorkingCopyTests;
 import org.eclipse.cdt.core.parser.tests.ParserTestSuite;
+import org.eclipse.cdt.core.parser.tests.rewrite.RewriteTests;
 import org.eclipse.cdt.core.tests.templateengine.AllTemplateEngineTests;
 import org.eclipse.cdt.internal.index.tests.IndexTests;
 import org.eclipse.cdt.internal.pdom.tests.PDOMTests;
@@ -57,7 +58,7 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		super(name);
 	}
 	
-	public static Test suite() {
+	public static Test suite() throws Exception {
 		final AutomatedIntegrationSuite suite = new AutomatedIntegrationSuite();
 		
 		// Add all success tests
@@ -71,6 +72,7 @@ public class AutomatedIntegrationSuite extends TestSuite {
         suite.addTest(PositionTrackerTests.suite());
         suite.addTest(StringBuilderTest.suite());
         suite.addTest(AllLanguageTests.suite());
+        suite.addTest(RewriteTests.suite());
 				
 		// Add in PDOM tests
 		suite.addTest(PDOMTests.suite());

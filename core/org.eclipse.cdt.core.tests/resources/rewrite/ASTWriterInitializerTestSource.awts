@@ -1,0 +1,37 @@
+//!InitializerExpressionTest
+//%CPP
+int i = 0;
+
+//!InitializerListTest
+//%CPP
+struct A
+{
+    int x;
+    struct B
+    {
+        int i;
+        int j;
+    } b;
+} abs = {1, {2, 3}};
+
+//!DesignatedInitializer
+//%C
+typedef struct 
+{
+    int x;
+    int y;
+} Coord;
+Coord xy = {.y = 10, .x = 11};
+
+//!CPPConstructorInitializer
+//%CPP
+int i(3);
+
+//!CArrayDesignator
+//%C
+struct ABC
+{
+    int def[10];
+};
+struct ABC instance = {.def[0] = 9};
+

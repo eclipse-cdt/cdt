@@ -325,7 +325,6 @@ public class CCorePlugin extends Plugin {
 		// do harmless stuff first.
 		cdtLog = new CDTLogWriter(CCorePlugin.getDefault().getStateLocation().append(".log").toFile()); //$NON-NLS-1$
 		configurePluginDebugOptions();
-		getPluginPreferences().setDefault(PREF_USE_STRUCTURAL_PARSE_MODE, false);
         PositionTrackerManager.getInstance().install();
 
         // new project model needs to register the resource listener first.

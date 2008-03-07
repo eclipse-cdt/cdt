@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
 import org.eclipse.cdt.ui.text.contentassist.ICEditorContentAssistInvocationContext;
 
@@ -120,26 +121,23 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 		ICProject proj= getProject();
 		if (proj == null) return null;
 		
-		try{
+		try {
 			IIndexManager manager= CCorePlugin.getIndexManager();
-			if (manager.isProjectIndexed(proj)) {
-				fIndex = CCorePlugin.getIndexManager().getIndex(proj,
-						IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_DEPENDENT);
+			fIndex = manager.getIndex(proj, IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_DEPENDENT);
 
-				try {
-					fIndex.acquireReadLock();
-				} catch (InterruptedException e) {
-					fIndex = null;
-				}
+			try {
+				fIndex.acquireReadLock();
+			} catch (InterruptedException e) {
+				fIndex = null;
 			}
 
-			int flags = ITranslationUnit.AST_SKIP_ALL_HEADERS | ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT;
-			if (fIndex == null) {
-				flags = 0;
-			}
+			boolean parseNonIndexed= CUIPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.PREF_USE_STRUCTURAL_PARSE_MODE);
+			int flags = parseNonIndexed ? ITranslationUnit.AST_SKIP_INDEXED_HEADERS : ITranslationUnit.AST_SKIP_ALL_HEADERS;
+			flags |= ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT;
 			
 			fCN = fTU.getCompletionNode(fIndex, flags, offset);
 		} catch (CoreException e) {
+			CUIPlugin.getDefault().log(e);
 		}
 		
 		return fCN;

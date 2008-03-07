@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -122,7 +123,7 @@ public class CPPImplicitFunction extends CPPFunction implements ICPPFunction, IC
             ((CPPParameter)binding).addDeclaration( n );
         }
         if( declarations != null ){
-            for( int j = 0; j < declarations.length; j++ ){
+            for( int j = 0; j < declarations.length && declarations[j] != null; j++ ){
                 temp = declarations[j].getParameters()[i];
                 IASTName n = temp.getDeclarator().getName();
                 n.setBinding( binding );

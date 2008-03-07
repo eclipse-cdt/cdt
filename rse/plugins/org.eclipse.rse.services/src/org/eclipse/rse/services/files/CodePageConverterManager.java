@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007,2008 IBM Corporation. All rights reserved.
+ * Copyright (c) 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -10,9 +10,8 @@
  * 
  * Contributors:
  * {Name} (company) - description of contribution.
- * David McKnight   (IBM)        - [209704] [api] Ability to override default encoding conversion needed.
- * David McKnight   (IBM)        - [212229] using default code page converter that isn't null
- * David McKnight    (IBM)  -[220379] [api] Provide a means for contributing custom BIDI encodings
+ * David McKnight (IBM) - [209704] [api] Ability to override default encoding conversion needed.
+ * David McKnight (IBM) - [212229] using default code page converter that isn't null
  ********************************************************************************/
 package org.eclipse.rse.services.files;
 

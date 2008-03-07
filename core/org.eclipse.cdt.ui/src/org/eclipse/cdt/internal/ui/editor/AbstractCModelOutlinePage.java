@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,9 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
@@ -24,7 +21,6 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -38,7 +34,9 @@ import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
@@ -56,6 +54,7 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.util.CElementBaseLabels;
+import org.eclipse.cdt.ui.CElementGrouping;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
@@ -83,6 +82,40 @@ import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCLabelProvider;
  */
 public abstract class AbstractCModelOutlinePage extends Page implements IContentOutlinePage, ISelectionChangedListener {
 
+	/**
+	 * A specialized tree viewer for outline content.
+	 *
+	 * @since 5.0
+	 */
+	private static class OutlineTreeViewer extends ProblemTreeViewer {
+
+		public OutlineTreeViewer(Composite parent, int flags) {
+			super(parent, flags);
+		}
+		/*
+		 * @see TreeViewer#internalExpandToLevel
+		 */
+		protected void internalExpandToLevel(Widget node, int level) {
+			if (node instanceof Item) {
+				Item i= (Item) node;
+				final Object data = i.getData();
+				// don't expand groupings by default
+				if (data instanceof CElementGrouping) {
+					return;
+				} else if (data instanceof ICElement) {
+					// expand classes and namespaces
+					final int elementType = ((ICElement) data).getElementType();
+					if (elementType != ICElement.C_CLASS 
+							&& elementType != ICElement.C_TEMPLATE_CLASS 
+							&& elementType != ICElement.C_NAMESPACE) {
+						return;
+					}
+				}
+			}
+			super.internalExpandToLevel(node, level);
+		}
+	}
+
 	protected static class IncludeGroupingAction extends Action {
 		AbstractCModelOutlinePage fOutLinePage;
 
@@ -101,11 +134,7 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 		 * Runs the action.
 		 */
 		public void run() {
-			boolean oldValue = isIncludesGroupingEnabled();
 			PreferenceConstants.getPreferenceStore().setValue(PreferenceConstants.OUTLINE_GROUP_INCLUDES, isChecked());
-			if (oldValue != isChecked()) {
-				fOutLinePage.contentUpdated();
-			}
 		}
 
 		public boolean isIncludesGroupingEnabled () {
@@ -188,41 +217,6 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 	}
 
 	/**
-	 * Called by the editor to signal that the content has updated.
-	 */
-	public void contentUpdated() {
-		if (fInput != null) {				
-			final TreeViewer treeViewer= getTreeViewer();
-			if (treeViewer != null && !treeViewer.getControl().isDisposed()) {
-				treeViewer.getControl().getDisplay().asyncExec(new Runnable() {
-					public void run() {
-						if (!treeViewer.getControl().isDisposed()) {
-							ISelection sel= treeViewer.getSelection();
-							treeViewer.setSelection(updateSelection(sel));		
-							treeViewer.refresh();
-						}
-					}
-				});
-			}
-		}
-	}
-
-	protected ISelection updateSelection(ISelection sel) {
-		ArrayList newSelection= new ArrayList();
-		if (sel instanceof IStructuredSelection) {
-			Iterator iter= ((IStructuredSelection)sel).iterator();
-			for (;iter.hasNext();) {
-				//ICElement elem= fInput.findEqualMember((ICElement)iter.next());
-				Object o = iter.next();
-				if (o instanceof ICElement) {
-					newSelection.add(o);
-				}
-			}
-		}
-		return new StructuredSelection(newSelection);
-	}
-
-	/**
 	 * Sets the selected element to the one at the current cursor position in the editor.
 	 */
 	public void synchronizeSelectionWithEditor() {
@@ -282,10 +276,10 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 	}
 
 	protected ProblemTreeViewer createTreeViewer(Composite parent) {
-		fTreeViewer = new ProblemTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		fTreeViewer = new OutlineTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		fTreeViewer.setContentProvider(createContentProvider(fTreeViewer));
 		fTreeViewer.setLabelProvider(new DecoratingCLabelProvider(new AppearanceAwareLabelProvider(TEXT_FLAGS, IMAGE_FLAGS), true));
-		fTreeViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
+		fTreeViewer.setAutoExpandLevel(2);
 		fTreeViewer.setUseHashlookup(true);
 		fTreeViewer.addSelectionChangedListener(this);
 		return fTreeViewer;

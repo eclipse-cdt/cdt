@@ -1,19 +1,18 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 QNX Software Systems and others.
+ * Copyright (c) 2002, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX Software Systems - Initial API and implementation
- * Anton Leherbauer (Wind River Systems)
+ *     QNX Software Systems - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -39,7 +38,6 @@ import org.eclipse.cdt.internal.core.model.CShiftData;
 import org.eclipse.cdt.internal.core.model.SourceManipulation;
 
 import org.eclipse.cdt.internal.ui.BaseCElementContentProvider;
-import org.eclipse.cdt.internal.ui.util.StringMatcher;
 
 /**
  * Manages contents of the outliner.
@@ -58,8 +56,8 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 	/** Property change listener. */
 	private IPropertyChangeListener fPropertyListener;
 
-	/** Filter for files to outline. */
-	private StringMatcher filter = new StringMatcher("*", true, false); //$NON-NLS-1$
+	/** Flag indicating that we are waiting for a delta to populate the view. */
+	private boolean fInitialDeltaPending;
 
 	public CContentOutlinerProvider(TreeViewer viewer) {
 		this(viewer, null);
@@ -78,17 +76,6 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 	}
 
 	/**
-	 * Sets new filter and updates contents.
-	 * 
-	 * @param newFilter
-	 *            New filter.
-	 */
-	public void updateFilter(String newFilter) {
-		filter = new StringMatcher(newFilter, true, false);
-		contentUpdated();
-	}
-
-	/**
 	 * Called by the editor to signal that the content has updated.
 	 */
 	public void contentUpdated() {
@@ -96,11 +83,16 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 			treeViewer.getControl().getDisplay().asyncExec(new Runnable() {
 				public void run() {
 					if (!treeViewer.getControl().isDisposed()) {
-						// setting the selection here causes a secondary editor to scroll
-						// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=191358
-//						final ISelection sel = treeViewer.getSelection();
-//						treeViewer.setSelection(updateSelection(sel));
-						treeViewer.refresh();
+						if (fInitialDeltaPending) {
+							fInitialDeltaPending= false;
+							treeViewer.setInput(root);
+						} else {
+							// setting the selection here causes a secondary editor to scroll
+							// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=191358
+	//						final ISelection sel = treeViewer.getSelection();
+	//						treeViewer.setSelection(updateSelection(sel));
+							treeViewer.refresh();
+						}
 					}
 				}
 			});
@@ -189,21 +181,13 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 		if (element instanceof ITranslationUnit) {
 			ITranslationUnit unit= (ITranslationUnit)element;
 			if (!unit.isOpen()) {
+				fInitialDeltaPending= true;
 				children= new Object[] { new PendingUpdateAdapter() };
 			}
 		}
 		if (children == null) {
 			children = super.getChildren(element);
 		}
-		List filtered = new ArrayList();
-		for (int i = 0; i < children.length; i++) {
-			if (filter.match(children[i].toString())) {
-				filtered.add(children[i]);
-			}
-		}
-		int size = filtered.size();
-		children = new Object[size];
-		filtered.toArray(children);
 		return children;
 	}
 
@@ -222,13 +206,13 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 	 * @return Updated selection.
 	 */
 	protected ISelection updateSelection(ISelection sel) {
-		final ArrayList newSelection = new ArrayList();
+		final ArrayList<ICElement> newSelection = new ArrayList<ICElement>();
 		if (sel instanceof IStructuredSelection) {
 			final Iterator iter = ((IStructuredSelection) sel).iterator();
 			while (iter.hasNext()) {
 				final Object o = iter.next();
 				if (o instanceof ICElement) {
-					newSelection.add(o);
+					newSelection.add((ICElement)o);
 				}
 			}
 		}
@@ -261,7 +245,6 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 			final ICElementDelta delta = findElement(root, e.getDelta());
 			if (delta != null) {
 				contentUpdated();
-				return;
 			}
 		}
 
@@ -353,8 +336,7 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 						contentUpdated();
 					}
 				}
-			} else if (prop
-					.equals(PreferenceConstants.OUTLINE_GROUP_NAMESPACES)) {
+			} else if (prop.equals(PreferenceConstants.OUTLINE_GROUP_NAMESPACES)) {
 				Object newValue = event.getNewValue();
 				if (newValue instanceof Boolean) {
 					boolean value = ((Boolean) newValue).booleanValue();

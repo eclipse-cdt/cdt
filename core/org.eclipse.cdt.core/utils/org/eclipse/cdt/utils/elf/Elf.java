@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -117,6 +117,7 @@ public class Elf {
 		public final static int EM_M32R = 88;
 		public final static int EM_MN10300 = 89;
 		public final static int EM_MN10200 = 90;
+		public final static int EM_XTENSA = 94;
 		public final static int EM_MSP430 = 105;
 		public final static int EM_BLACKFIN = 106;
 		public final static int EM_EXCESS = 111;
@@ -831,6 +832,9 @@ public class Elf {
 				break;
 			case Elf.ELFhdr.EM_MSP430 :
 				attrib.cpu = "msp430"; //$NON-NLS-1$
+				break;
+			case Elf.ELFhdr.EM_XTENSA:
+				attrib.cpu = "xtensa"; //$NON-NLS-1$
 				break;
 			case Elf.ELFhdr.EM_ST100:
 				attrib.cpu = "st100"; //$NON-NLS-1$

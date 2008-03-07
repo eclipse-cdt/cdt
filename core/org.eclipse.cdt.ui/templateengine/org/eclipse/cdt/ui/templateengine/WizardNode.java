@@ -97,7 +97,7 @@ class WizardNode implements IWizardNode {
 			}
 			
 			public boolean performFinish() {
-				Map/*<String, String>*/ valueStore = template.getValueStore();
+				Map<String, String> valueStore = template.getValueStore();
 				finishPressed = true;
 				getContainer().updateButtons();
 				IWizardPage[] wpages = getPages();

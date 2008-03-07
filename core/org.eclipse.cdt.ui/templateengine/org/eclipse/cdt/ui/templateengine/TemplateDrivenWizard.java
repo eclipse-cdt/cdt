@@ -28,6 +28,7 @@ import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 
 import org.eclipse.cdt.core.templateengine.process.ProcessFailureException;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.templateengine.pages.UIWizardPage;
 
 
 /**
@@ -37,14 +38,14 @@ import org.eclipse.cdt.ui.CUIPlugin;
  *  
  */
 public abstract class TemplateDrivenWizard extends Wizard {
-	protected List/*<IWizardPage>*/ pagesBeforeTemplatePages = new ArrayList/*<IWizardPage>*/();
-	protected List/*<IWizardPage>*/ pagesAfterTemplatePages = new ArrayList/*<IWizardPage>*/();
+	protected List<IWizardPage> pagesBeforeTemplatePages = new ArrayList<IWizardPage>();
+	protected List<IWizardPage> pagesAfterTemplatePages = new ArrayList<IWizardPage>();
 	
 	protected Template template;
 	protected int pageIndex;
-	protected Map/*<String, UIWizardPage>*/ templatePages;
+	protected Map<String, UIWizardPage> templatePages;
 	protected Composite pageContainer;
-	protected List/*<String>*/ templatePagesOrderVector;
+	protected List<String> templatePagesOrderVector;
 	
 	public final void addPage(IWizardPage page) {
         page.setWizard(this);
@@ -84,13 +85,13 @@ public abstract class TemplateDrivenWizard extends Wizard {
 	public IWizardPage getPreviousPage(IWizardPage page) {
 		if (pageIndex > pagesBeforeTemplatePages.size() + templatePagesOrderVector.size()) {//current is some page after template pages other than the first post-template page
 			pageIndex--;
-			return (IWizardPage) pagesAfterTemplatePages.get(pageIndex - pagesBeforeTemplatePages.size() - templatePagesOrderVector.size());
+			return pagesAfterTemplatePages.get(pageIndex - pagesBeforeTemplatePages.size() - templatePagesOrderVector.size());
 		} else if (pageIndex > pagesBeforeTemplatePages.size()) {//current is some template page other than the first
 			pageIndex--;
-	        return (IWizardPage) templatePages.get(templatePagesOrderVector.get(pageIndex - pagesBeforeTemplatePages.size()));
+	        return templatePages.get(templatePagesOrderVector.get(pageIndex - pagesBeforeTemplatePages.size()));
 		} else if (pageIndex > 0) {
 			pageIndex--;
-			return (IWizardPage) pagesBeforeTemplatePages.get(pageIndex);
+			return pagesBeforeTemplatePages.get(pageIndex);
 		}
 		return null;
 	}
@@ -98,7 +99,7 @@ public abstract class TemplateDrivenWizard extends Wizard {
 	public IWizardPage getNextPage(IWizardPage page) {
 		if (pageIndex < pagesBeforeTemplatePages.size() - 1) {//current is a page before template pages that is not the final one
 			pageIndex++;
-			return (IWizardPage) pagesBeforeTemplatePages.get(pageIndex);
+			return pagesBeforeTemplatePages.get(pageIndex);
 		} else if (pageIndex < pagesBeforeTemplatePages.size() + templatePagesOrderVector.size() - 1) {
 			if(pageIndex == pagesBeforeTemplatePages.size() - 1) {//current is final page before template pages
 				Template template = getTemplate();
@@ -110,7 +111,7 @@ public abstract class TemplateDrivenWizard extends Wizard {
 				}
 			}//else current is some template page other than the final one
 			pageIndex++;
-			IWizardPage nextPage = (IWizardPage) templatePages.get(templatePagesOrderVector.get(pageIndex - pagesBeforeTemplatePages.size()));
+			IWizardPage nextPage = templatePages.get(templatePagesOrderVector.get(pageIndex - pagesBeforeTemplatePages.size()));
 	        nextPage.setWizard(this);
 	        if (nextPage.getControl() == null) {
 	        	nextPage.createControl(pageContainer);
@@ -118,7 +119,7 @@ public abstract class TemplateDrivenWizard extends Wizard {
 	        return nextPage;
 		} else if (pageIndex < pagesBeforeTemplatePages.size() + templatePagesOrderVector.size() + pagesAfterTemplatePages.size() - 1) {//current is final template page or a page after the final template page
 			pageIndex++;
-			return (IWizardPage) pagesAfterTemplatePages.get(pageIndex - pagesBeforeTemplatePages.size() - templatePagesOrderVector.size());
+			return pagesAfterTemplatePages.get(pageIndex - pagesBeforeTemplatePages.size() - templatePagesOrderVector.size());
 		}
 		return null;
 	}

@@ -71,9 +71,9 @@ public class UIBooleanWidget extends InputUIElement {
 	/**
 	 * @return HashMap which contains the values in the Boolean Widget.
 	 */
-	public Map/*<String, String>*/ getValues() {
+	public Map<String, String> getValues() {
 
-		Map/*<String, String>*/ retMap = new HashMap/*<String, String>*/();
+		Map<String, String> retMap = new HashMap<String, String>();
 		retMap.put(uiAttribute.get(InputUIElement.ID), new Boolean(booleanValue).toString());
 
 		return retMap;
@@ -84,8 +84,9 @@ public class UIBooleanWidget extends InputUIElement {
 	 * 
 	 * @param valueMap
 	 */
-	public void setValues(Map/*<String, String>*/ valueMap) {
-		booleanValue = new Boolean((String) valueMap.get(uiAttribute.get(InputUIElement.ID))).booleanValue();
+	@Override
+	public void setValues(Map<String, String> valueMap) {
+		booleanValue = new Boolean(valueMap.get(uiAttribute.get(InputUIElement.ID))).booleanValue();
 	}
 
 	/**
@@ -100,10 +101,10 @@ public class UIBooleanWidget extends InputUIElement {
 		this.uiComposite = uiComposite;
 
 		label = new Label(uiComposite, SWT.LEFT);
-		label.setText((String) uiAttribute.get(InputUIElement.WIDGETLABEL));
+		label.setText(uiAttribute.get(InputUIElement.WIDGETLABEL));
 
 		if (uiAttribute.get(InputUIElement.DESCRIPTION) != null){
-			String tipText = (String) uiAttribute.get(UIElement.DESCRIPTION);
+			String tipText = uiAttribute.get(UIElement.DESCRIPTION);
 			tipText = tipText.replaceAll("\\\\r\\\\n", "\r\n"); //$NON-NLS-1$ //$NON-NLS-2$
 			label.setToolTipText(tipText);
 		}
@@ -134,7 +135,7 @@ public class UIBooleanWidget extends InputUIElement {
 	 */
 	public boolean isValid() {
 		boolean retVal = true;
-		String mandatory = (String) uiAttribute.get(InputUIElement.MANDATORY);
+		String mandatory = uiAttribute.get(InputUIElement.MANDATORY);
 
 		if (!booleanValue && mandatory.equalsIgnoreCase(TemplateEngineHelper.BOOLTRUE)) {
 			retVal = false;

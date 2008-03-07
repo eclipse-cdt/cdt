@@ -59,7 +59,7 @@ public class UIStringListWidget extends InputUIElement {
 	 */
 	protected UIComposite uiComposite;
 	
-	protected List itemsList;
+	protected List<String> itemsList;
 
 	/**
 	 * Constructor.
@@ -67,17 +67,17 @@ public class UIStringListWidget extends InputUIElement {
 	 * @param attribute
 	 *            attribute associated with this widget.
 	 */
-	public UIStringListWidget(UIAttributes/*<String, String>*/ attribute) {
+	public UIStringListWidget(UIAttributes attribute) {
 		super(attribute);
 		uiAttribute = attribute;
-		itemsList = new ArrayList();
+		itemsList = new ArrayList<String>();
 	}
 
 	/**
 	 * @return String_List value contained in the String_List Widget.
 	 */
-	public Map/*<String, String>*/ getValues() {
-		Map/*<String, String>*/ retMap = new HashMap/*<String, String>*/();
+	public Map<String, String> getValues() {
+		Map<String, String> retMap = new HashMap<String, String>();
 		String itemString = new String();
 		for (int i = 0; i < itemsList.size(); i++) {
 			itemString = itemString + itemsList.get(i) + "|"; //$NON-NLS-1$
@@ -116,7 +116,7 @@ public class UIStringListWidget extends InputUIElement {
 		uiComposite = composite;
 
 		label = new Label(composite, SWT.LEFT);
-		label.setText((String) uiAttribute.get(InputUIElement.WIDGETLABEL));
+		label.setText(uiAttribute.get(InputUIElement.WIDGETLABEL));
 
 		GridData gd = new GridData();
 		gd.verticalAlignment = SWT.BEGINNING;
@@ -124,7 +124,7 @@ public class UIStringListWidget extends InputUIElement {
 		label.setLayoutData(gd);
 
 		if (uiAttribute.get(InputUIElement.DESCRIPTION) != null){
-			String tipText = (String) uiAttribute.get(UIElement.DESCRIPTION);
+			String tipText = uiAttribute.get(UIElement.DESCRIPTION);
 			tipText = tipText.replaceAll("\\\\r\\\\n", "\r\n"); //$NON-NLS-1$ //$NON-NLS-2$, $NON-NLS-2$
 			label.setToolTipText(tipText);
 		}
@@ -133,7 +133,7 @@ public class UIStringListWidget extends InputUIElement {
 		flcComposite.setLayout(new GridLayout());
 		flcComposite.setLayoutData(gridData);
 
-		fileListControl = new FileListControl(flcComposite, (String) uiAttribute.get(InputUIElement.WIDGETLABEL), 0);
+		fileListControl = new FileListControl(flcComposite, uiAttribute.get(InputUIElement.WIDGETLABEL), 0);
 		fileListControl.setList((String[])itemsList.toArray());
 		fileListControl.setSelection(0);
 		fileListControl.addChangeListener(new IFileListChangeListener(){
@@ -145,7 +145,7 @@ public class UIStringListWidget extends InputUIElement {
 	}
 
 	/**
-	 * Based on the stae of this Widget return true or false. This return value
+	 * Based on the stage of this Widget return true or false. This return value
 	 * will be used by the UIPage to update its(UIPage) state. Return value
 	 * depends on the value contained in String List Widget. If value contained
 	 * is null and Mandatory value from attributes.
@@ -154,7 +154,7 @@ public class UIStringListWidget extends InputUIElement {
 	 */
 	public boolean isValid() {
 		boolean retVal = true;
-		String mandatory = (String) uiAttribute.get(InputUIElement.MANDATORY);
+		String mandatory = uiAttribute.get(InputUIElement.MANDATORY);
 
 		if ((itemsList == null || itemsList.size() == 0) && (mandatory.equalsIgnoreCase(TemplateEngineHelper.BOOLTRUE))) {
 			retVal = false;

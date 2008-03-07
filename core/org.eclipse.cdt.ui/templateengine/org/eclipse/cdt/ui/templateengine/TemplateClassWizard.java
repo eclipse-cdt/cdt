@@ -21,8 +21,10 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 
+import org.eclipse.cdt.core.templateengine.TemplateCore;
+
 public class TemplateClassWizard extends TemplatesChoiceWizard implements INewWizard, IExecutableExtension {
-	
+
 	public static final String WIZARD_ID = TemplateClassWizard.class.getName();
 
 	private IWizardDataPage[] pagesBeforeTemplatePages;
@@ -32,12 +34,12 @@ public class TemplateClassWizard extends TemplatesChoiceWizard implements INewWi
 	private ProjectSelectionPage projectSelectionPage;
 
 	private IConfigurationElement configElement;
-	
+
 	public TemplateClassWizard() {
 		super();
 		setWindowTitle(Messages.getString("TemplateClassWizard.0")); //$NON-NLS-1$
 		//TODO: Fix the imagedescriptor later.
-//		setDefaultPageImageDescriptor(TemplateEnginePlugin.imageDescriptorFromPlugin(TemplateEnginePlugin.getDefault().getWizardIconPluginID(), TemplateEnginePlugin.getDefault().getWizardIconFile()));
+		//setDefaultPageImageDescriptor(TemplateEnginePlugin.imageDescriptorFromPlugin(TemplateEnginePlugin.getDefault().getWizardIconPluginID(), TemplateEnginePlugin.getDefault().getWizardIconFile()));
 	}
 
 	public String getListSelectionTitle()
@@ -61,7 +63,7 @@ public class TemplateClassWizard extends TemplatesChoiceWizard implements INewWi
 			projectSelectionPage.setTitle(Messages.getString("TemplateClassWizard.4")); //$NON-NLS-1$
 			projectSelectionPage.setDescription(Messages.getString("TemplateClassWizard.5")); //$NON-NLS-1$
 			projectSelectionPage.init(selection);
- 			pagesBeforeTemplatePages = new IWizardDataPage[] {projectSelectionPage};
+			pagesBeforeTemplatePages = new IWizardDataPage[] {projectSelectionPage};
 		}
 		return pagesBeforeTemplatePages;
 	}
@@ -74,15 +76,13 @@ public class TemplateClassWizard extends TemplatesChoiceWizard implements INewWi
 	}
 
 	public Template[] getTemplates() {
-		SortedSet templateList = new TreeSet(Template.TEMPLATE_ID_CASE_INSENSITIVE_COMPARATOR);
-
+		SortedSet<TemplateCore> templateList = new TreeSet<TemplateCore>(Template.TEMPLATE_ID_CASE_INSENSITIVE_COMPARATOR);
 		templateList.addAll(Arrays.asList(TemplateEngineUI.getDefault().getTemplates()));
-
-		return (Template[]) templateList.toArray(new Template[templateList.size()]);
+		return templateList.toArray(new Template[templateList.size()]);
 	}
 
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
-        configElement = config;
+		configElement = config;
 	}
 
 	public boolean performFinish() {
@@ -127,6 +127,6 @@ public class TemplateClassWizard extends TemplatesChoiceWizard implements INewWi
 	}
 
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		
+
 	}
 }

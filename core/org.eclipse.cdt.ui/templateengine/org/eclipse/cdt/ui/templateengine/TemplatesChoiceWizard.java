@@ -51,10 +51,10 @@ public abstract class TemplatesChoiceWizard extends Wizard implements ITemplates
 		for(int i=0; i<pages.length; i++) {
 			addPage(pages[i]);
 		}
-		
+
 		templateListSelectionPage = new TemplateListSelectionPage(this);
 		addPage(templateListSelectionPage);
-		
+
 		pages = getPagesAfterTemplatePages();
 		for(int i=0; i<pages.length; i++) {
 			addPage(pages[i]);
@@ -79,41 +79,41 @@ public abstract class TemplatesChoiceWizard extends Wizard implements ITemplates
 	protected abstract IWizardDataPage[] getPagesBeforeTemplatePages();
 
 	protected abstract IWizardDataPage[] getPagesAfterTemplatePages();
-	
+
 	protected abstract IWizardDataPage[] getPagesAfterTemplateSelection();
-	
+
 	IWizardDataPage[] getPagesAfterTemplateSelectionWithExtraPages(Template template) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 		IWizardDataPage[] pages = getPagesAfterTemplateSelection();
 		TemplateInfo templateInfo = template.getTemplateInfo();
 		IPagesAfterTemplateSelectionProvider extraPagesProvider = (IPagesAfterTemplateSelectionProvider) templateInfo.getExtraPagesProvider();
 		if (extraPagesProvider != null) {
-			List/*<IWizardDataPage>*/ pageList = new ArrayList/*<IWizardDataPage>*/(Arrays.asList(pages));
+			List<IWizardDataPage> pageList = new ArrayList<IWizardDataPage>(Arrays.asList(pages));
 			IWizardDataPage[] extraPages = extraPagesProvider.createAdditionalPages(this, workbench, selection);
 			pageList.addAll(Arrays.asList(extraPages));
-			pages = (IWizardDataPage[]) pageList.toArray(new IWizardDataPage[pageList.size()]);
+			pages = pageList.toArray(new IWizardDataPage[pageList.size()]);
 		}
 		return pages;		
 	}
-	
+
 	IWizardDataPage[] getExtraCreatedPages(Template template) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 		TemplateInfo templateInfo = template.getTemplateInfo();
 		IPagesAfterTemplateSelectionProvider extraPagesProvider = (IPagesAfterTemplateSelectionProvider) templateInfo.getExtraPagesProvider();
 		if (extraPagesProvider != null) {
-			List/*<IWizardDataPage>*/ pageList = new ArrayList/*<IWizardDataPage>*/();
+			List<IWizardDataPage> pageList = new ArrayList<IWizardDataPage>();
 			IWizardDataPage[] extraPages = extraPagesProvider.getCreatedPages(this);
 			pageList.addAll(Arrays.asList(extraPages));
-			return (IWizardDataPage[]) pageList.toArray(new IWizardDataPage[pageList.size()]);
+			return pageList.toArray(new IWizardDataPage[pageList.size()]);
 		}
 		return new IWizardDataPage[0];		
 	}
-	
+
 	public boolean performFinish() {
 		IRunnableWithProgress op= new WorkspaceModifyDelegatingOperation(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				finishPage(monitor);
 			}
 		});
-		
+
 		try {
 			getContainer().run(true, false, op);
 		} catch (InvocationTargetException e) {
@@ -122,35 +122,35 @@ public abstract class TemplatesChoiceWizard extends Wizard implements ITemplates
 			return false;
 		}
 		return true;
-		
+
 	}
 
 	private boolean finishPage(IProgressMonitor monitor) {
-	    IStatus[] statuses = templateListSelectionPage.getTemplate().executeTemplateProcesses(monitor, false);
-	    if (statuses.length == 1 && statuses[0].getException() instanceof ProcessFailureException) {
-	    	TemplateEngineUIUtil.showError(statuses[0].getMessage(), statuses[0].getException());
-		    return false;
-	    } else {
-	    	if (DEBUG) {
-		    	String msg = Messages.getString("TemplatesChoiceWizard.3"); //$NON-NLS-1$
-		    	TemplateEngineUIUtil.showStatusDialog(msg, new MultiStatus(CUIPlugin.getPluginId(), IStatus.OK, statuses, msg, null));
-	    	}
-		    return true;
-	    }
+		IStatus[] statuses = templateListSelectionPage.getTemplate().executeTemplateProcesses(monitor, false);
+		if (statuses.length == 1 && statuses[0].getException() instanceof ProcessFailureException) {
+			TemplateEngineUIUtil.showError(statuses[0].getMessage(), statuses[0].getException());
+			return false;
+		} else {
+			if (DEBUG) {
+				String msg = Messages.getString("TemplatesChoiceWizard.3"); //$NON-NLS-1$
+				TemplateEngineUIUtil.showStatusDialog(msg, new MultiStatus(CUIPlugin.getPluginId(), IStatus.OK, statuses, msg, null));
+			}
+			return true;
+		}
 	}
-	
+
 	/**
 	 * Returns the Data in Non-Template Pages.
 	 * @return Map,
 	 */
-	public Map/*<String, String>*/ getAllDataInNonTemplatePages() {
-		Map/*<String, String>*/ map = new HashMap/*<String, String>*/();
-		
+	public Map<String, String> getAllDataInNonTemplatePages() {
+		Map<String, String> map = new HashMap<String, String>();
+
 		IWizardDataPage[] pages = getPagesBeforeTemplatePages();
 		for(int i=0; i<pages.length; i++) {
 			map.putAll(pages[i].getPageData());
 		}
-		
+
 		pages = getPagesAfterTemplateSelection();
 		for(int i=0; i<pages.length; i++) {
 			map.putAll(pages[i].getPageData());
@@ -164,26 +164,26 @@ public abstract class TemplatesChoiceWizard extends Wizard implements ITemplates
 		for(int i=0; i<pages.length; i++) {
 			map.putAll(pages[i].getPageData());
 		}
-		
+
 		pages = getPagesAfterTemplatePages();
 		for(int i=0; i<pages.length; i++) {
 			map.putAll(pages[i].getPageData());
 		}
-		
+
 		return map;
 	}
 
 	/**
 	 * initializes the workbench
 	 */
-    public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
-        this.workbench = workbench;
-        this.selection = currentSelection;
-        initializeDefaultPageImageDescriptor();
-    }
+	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
+		this.workbench = workbench;
+		this.selection = currentSelection;
+		initializeDefaultPageImageDescriptor();
+	}
 
 	protected void initializeDefaultPageImageDescriptor() {
-//		setDefaultPageImageDescriptor(descriptor);
+		// setDefaultPageImageDescriptor(descriptor);
 	}
 
 	public Template getSelectedTemplate() {
@@ -193,6 +193,4 @@ public abstract class TemplatesChoiceWizard extends Wizard implements ITemplates
 	public void adjustTemplateValues(Template template) {
 		// Give the wizard a chance to adjust template values before they go into the page controls.
 	}
-
-	
 }

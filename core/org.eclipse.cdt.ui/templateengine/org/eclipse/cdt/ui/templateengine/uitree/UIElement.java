@@ -61,25 +61,25 @@ public abstract class UIElement {
 	/**
 	 * get the attributes of this UIElement
 	 */
-	public UIAttributes/*<String, String>*/ getAttributes() {
+	public UIAttributes getAttributes() {
 		return attribute;
 	}
 
 	/**
-	 * set the Values of UIElements from the given HashMap. This method is called recursively on all the childrens, if the UIElement instance on which this mehtod called is a GenericUIElementGroup. return void.
+	 * set the Values of UIElements from the given HashMap. This method is called recursively on all the children, if the UIElement instance on which this mehtod called is a GenericUIElementGroup. return void.
 	 */
-	public abstract void setValues(Map/*<String, String>*/ valueMap);
+	public abstract void setValues(Map<String, String> valueMap);
 
 	/**
-	 * get The values as a HashMap. This method is called recursively on all the childrens, if the UIElement instance on which this mehtod called is a GenericUIElementGroup.
+	 * get The values as a HashMap. This method is called recursively on all the children, if the UIElement instance on which this mehtod called is a GenericUIElementGroup.
 	 * @return  HashMap.
 	 */
 	public abstract Map<String, String> getValues();
 
 	/**
 	 * This method adds UIWidets to UIComposite. This method is called
-	 * recursively on all the childrens, if the UIElement instance on which this
-	 * mehtod called is a GenericUIElementGroup.
+	 * recursively on all the children, if the UIElement instance on which this
+	 * method called is a GenericUIElementGroup.
 	 * 
 	 * @param uiComposite
 	 */
@@ -87,7 +87,7 @@ public abstract class UIElement {
 
 	/**
 	 * disposes the widget. This method is called recursively on all the
-	 * childrens, if the UIElement instance on which this mehtod is called, is a
+	 * children, if the UIElement instance on which this method is called, is a
 	 * GenericUIElementGroup.
 	 * 
 	 */

@@ -53,7 +53,7 @@ public class Template extends TemplateCore {
 	private TemplateDescriptor templateDescriptor;
 	private UIElementTreeBuilderManager uiElementTreeBuilderManager;
 	private UIPagesProvider uiPagesProvider;
-	private Map/*<String, UIWizardPage>*/ pageMap;
+	private Map<String, UIWizardPage> pageMap;
 	
 	public Template(TemplateInfo templateInfo) throws TemplateInitializationException {
 		super(templateInfo);
@@ -69,9 +69,9 @@ public class Template extends TemplateCore {
 	 * 4. Request the UIPagesProvider to generate UIPages for the Tree. 
 	 * 5. return the HashMap of UIPages.
 	 */
-	public Map/*<String, UIWizardPage>*/ getUIPages() {
+	public Map<String, UIWizardPage> getUIPages() {
 		if (pageMap == null) {
-			pageMap = new HashMap/*<String, UIWizardPage>*/();
+			pageMap = new HashMap<String, UIWizardPage>();
 			List rootPropertyGrouplist = templateDescriptor.getPropertyGroupList();
 			
 			uiPagesProvider.clearOrderVector();
@@ -91,7 +91,7 @@ public class Template extends TemplateCore {
 	
 	
 	public IWizardPage[] getTemplateWizardPages(IWizardPage predatingPage, IWizardPage followingPage, IWizard wizard) {
-		List pages= new ArrayList();
+		List<IWizardDataPage> pages= new ArrayList<IWizardDataPage>();
 //		if (predatingPage != null) { 
 //			pages.add(predatingPage);
 //		}
@@ -142,7 +142,7 @@ public class Template extends TemplateCore {
 		
 		followingPage.setPreviousPage(predatingPage);	
 		
-		return (IWizardPage[]) pages.toArray(new IWizardPage[pages.size()]);
+		return pages.toArray(new IWizardPage[pages.size()]);
 	}
 	
 	IWizardDataPage[] getExtraCreatedPages(IWorkbenchWizard wizard, IWorkbench workbench, IStructuredSelection selection) {
@@ -160,7 +160,7 @@ public class Template extends TemplateCore {
 	 * @return List,which contains Page display order
 	 */
 
-	public List/*<String>*/ getPagesOrderVector() {
+	public List<String> getPagesOrderVector() {
 		return uiPagesProvider.getOrderVector();
 	}
 
@@ -197,7 +197,7 @@ public class Template extends TemplateCore {
 			}
 		};
 		try {
-			wmo.run(monitor); // TODO support progress monitors
+			wmo.run(monitor);
 		} catch(InterruptedException ie) {
 			throw new RuntimeException(ie);
 		} catch(InvocationTargetException ite) {

@@ -37,7 +37,7 @@ public class UISelectWidget extends InputUIElement {
 	/**
 	 * Attributes associated with this widget.
 	 */
-	protected UIAttributes/*<String, String>*/ uiAttribute;
+	protected UIAttributes uiAttribute;
 
 	/**
 	 * Select widget.
@@ -78,9 +78,9 @@ public class UISelectWidget extends InputUIElement {
 		this.itemSelected = itemSelected;
 	}
 
-	public Map/*<String, String>*/ getValues() {
+	public Map<String, String> getValues() {
 
-		Map/*<String, String>*/ retMap = new HashMap/*<String, String>*/();
+		Map<String, String> retMap = new HashMap<String, String>();
 		retMap.put(uiAttribute.get(InputUIElement.ID), itemSelected);
 
 		return retMap;
@@ -91,8 +91,8 @@ public class UISelectWidget extends InputUIElement {
 	 * 
 	 * @param valueMap
 	 */
-	public void setValues(Map/*<String, String>*/ valueMap) {
-		itemSelected = (String) valueMap.get(uiAttribute.get(InputUIElement.ID));
+	public void setValues(Map<String, String> valueMap) {
+		itemSelected = valueMap.get(uiAttribute.get(InputUIElement.ID));
 		
 		if (combo != null) {
 			String[] items = combo.getItems();
@@ -117,7 +117,7 @@ public class UISelectWidget extends InputUIElement {
 		uiComposite = composite;
 
 		label = new Label(composite, SWT.LEFT);
-		label.setText((String) uiAttribute.get(InputUIElement.WIDGETLABEL));
+		label.setText(uiAttribute.get(InputUIElement.WIDGETLABEL));
 
 		gridData = new GridData();
 		gridData.horizontalAlignment = GridData.FILL;
@@ -167,7 +167,7 @@ public class UISelectWidget extends InputUIElement {
 	 */
 	public boolean isValid() {
 		boolean retVal = true;
-		String mandatory = (String) uiAttribute.get(InputUIElement.MANDATORY);
+		String mandatory = uiAttribute.get(InputUIElement.MANDATORY);
 
 		if ((itemSelected == null || itemSelected.equals("") //$NON-NLS-1$
 		|| itemSelected.trim().length() < 1) && (mandatory.equalsIgnoreCase(TemplateEngineHelper.BOOLTRUE))) {

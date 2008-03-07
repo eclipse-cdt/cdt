@@ -28,12 +28,10 @@ import org.eclipse.cdt.ui.templateengine.uitree.uiwidgets.UISpecialListWidget;
 import org.eclipse.cdt.ui.templateengine.uitree.uiwidgets.UIStringListWidget;
 import org.eclipse.cdt.ui.templateengine.uitree.uiwidgets.UITextWidget;
 
-
 /**
  * UIElementTreeBuilderHelper provides methods to convert an Element (XML) into
  * UIElement. The UIElement can be a simple UI Widget or a group.
  */
-
 public class UIElementTreeBuilderHelper implements IUIElementTreeBuilderHelper {
 
 	/**
@@ -91,14 +89,14 @@ public class UIElementTreeBuilderHelper implements IUIElementTreeBuilderHelper {
 	/**
 	 * Given an XML Element, representing a PropertyElement. A UIElement for the
 	 * same is returned. The Type attribute is verified, based on Type
-	 * approprioate UIWidget is instantiated.
+	 * appropriate UIWidget is instantiated.
 	 * 
 	 * @param uiAttributes
 	 * @return UIElement.
 	 */
 	private UIElement getUIWidget(UIAttributes/*<String, String>*/ uiAttributes) {
 
-		String type = (String) uiAttributes.get(InputUIElement.TYPE);
+		String type= uiAttributes.get(InputUIElement.TYPE);
 
 		UIElement widgetElement = null;
 		String itemName = null;
@@ -108,7 +106,7 @@ public class UIElementTreeBuilderHelper implements IUIElementTreeBuilderHelper {
 		String valueStr = null;
 		String selected = null;
 
-		if (new Boolean((String)uiAttributes.get(InputUIElement.HIDDEN)).booleanValue())
+		if (new Boolean(uiAttributes.get(InputUIElement.HIDDEN)).booleanValue())
 			return null;
 		if (type.equalsIgnoreCase("") || type == null) //$NON-NLS-1$
 			return null;
@@ -124,11 +122,11 @@ public class UIElementTreeBuilderHelper implements IUIElementTreeBuilderHelper {
 
 		if (type.equalsIgnoreCase(InputUIElement.SELECTTYPE)) {
 
-			HashMap/*<String, String>*/ itemMap = new HashMap/*<String, String>*/();
-			List/*<Element>*/ itemList = TemplateEngine.getChildrenOfElement(element);
+			HashMap<String, String> itemMap = new HashMap<String, String>();
+			List<Element> itemList = TemplateEngine.getChildrenOfElement(element);
 
 			for (int i = 0, l = itemList.size(); i < l; i++) {
-				Element itemElement = (Element) itemList.get(i);
+				Element itemElement = itemList.get(i);
 				NamedNodeMap itemAttrList = itemElement.getAttributes();
 
 				for (int j = 0, l1 = itemAttrList.getLength(); j < l1; j++) {

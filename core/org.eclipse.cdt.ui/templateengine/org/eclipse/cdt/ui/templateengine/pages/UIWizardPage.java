@@ -74,7 +74,7 @@ public class UIWizardPage extends UIPage implements IWizardDataPage, PatternEven
 	 * @param uiElement
 	 *            The UIElement group.
 	 */
-	public UIWizardPage(String title, String pageName, UIElement uiElement, Map/*<String, String>*/ valueStore) {
+	public UIWizardPage(String title, String pageName, UIElement uiElement, Map<String, String> valueStore) {
 		super(title, uiElement, valueStore);
 		name = pageName;
 		validInvalid = new HashMap<Object, String>();

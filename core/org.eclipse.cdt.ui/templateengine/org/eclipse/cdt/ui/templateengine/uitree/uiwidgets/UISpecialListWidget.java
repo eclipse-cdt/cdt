@@ -37,7 +37,7 @@ public class UISpecialListWidget extends UIStringListWidget {
 	 * @param attribute
 	 *            attribute associated with this widget.
 	 */
-	public UISpecialListWidget(UIAttributes/*<String, String>*/ attribute) {
+	public UISpecialListWidget(UIAttributes attribute) {
 		super(attribute);
 		uiAttribute = attribute;
 	}
@@ -54,7 +54,7 @@ public class UISpecialListWidget extends UIStringListWidget {
 		uiComposite = composite;
 
 		label = new Label(composite, SWT.LEFT);
-		label.setText((String) uiAttribute.get(InputUIElement.WIDGETLABEL));
+		label.setText(uiAttribute.get(InputUIElement.WIDGETLABEL));
 
 		GridData gd = new GridData();
 		gd.verticalAlignment = SWT.BEGINNING;
@@ -62,7 +62,7 @@ public class UISpecialListWidget extends UIStringListWidget {
 		label.setLayoutData(gd);
 
 		if (uiAttribute.get(InputUIElement.DESCRIPTION) != null){
-			String tipText = (String) uiAttribute.get(UIElement.DESCRIPTION);
+			String tipText = uiAttribute.get(UIElement.DESCRIPTION);
 			tipText = tipText.replaceAll("\\\\r\\\\n", "\r\n"); //$NON-NLS-1$, //$NON-NLS-2$
 			label.setToolTipText(tipText);
 		}
@@ -71,7 +71,7 @@ public class UISpecialListWidget extends UIStringListWidget {
 		flcComposite.setLayout(new GridLayout());
 		flcComposite.setLayoutData(gridData);
 
-		fileListControl = new FileListControl(flcComposite, (String) uiAttribute.get(InputUIElement.WIDGETLABEL), 1);
+		fileListControl = new FileListControl(flcComposite, uiAttribute.get(InputUIElement.WIDGETLABEL), 1);
 		fileListControl.setList((String[])itemsList.toArray());
 		fileListControl.setSelection(0);
 		fileListControl.addChangeListener(new IFileListChangeListener(){

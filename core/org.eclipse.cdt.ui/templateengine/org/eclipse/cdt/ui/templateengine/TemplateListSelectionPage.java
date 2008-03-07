@@ -250,7 +250,7 @@ class TemplateListSelectionPage extends WizardSelectionPage implements ISelectio
 		return changed;
 	}
 
-	Map/*<String, String>*/ getDataInPreviousPages() {
+	Map<String, String> getDataInPreviousPages() {
 		return parentWizard.getAllDataInNonTemplatePages();
 	}
 

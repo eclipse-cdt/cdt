@@ -10,25 +10,19 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.templateengine.uitree;
 
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.cdt.core.templateengine.TemplateEngineHelper;
 import org.eclipse.cdt.core.templateengine.TemplateInfo;
 
 /**
- * 
  * Every UIElement will be associated with attributes. This class extends
  * HashMap. It just provides a convenient way to store Key , value pairs. This
  * class is for clarity in usage. We need not use HashMap for attributes,
  * instead we can use UIAttributes for attributes.
- * 
  */
-
-public class UIAttributes/*<K, V>*/ extends HashMap/*<String, String>*/ {
-
+public class UIAttributes extends HashMap<String, String> {
 	private static final long serialVersionUID = 0000000000L;
 	private TemplateInfo templateInfo;
 	
@@ -36,25 +30,16 @@ public class UIAttributes/*<K, V>*/ extends HashMap/*<String, String>*/ {
 		this.templateInfo = templateInfo;
 	}
 	
-	public Object/*V*/ put(Object/*K*/ key, Object/*V*/ value) {
-		value = TemplateEngineHelper.externalizeTemplateString(templateInfo, (String)value);
-		Object/*V*/ v = super.put(key, value);
-		return v;
+	public String put(String key, String value) {
+		value = TemplateEngineHelper.externalizeTemplateString(templateInfo, value);
+		return super.put(key, value);
 	}
 
-	public void putAll(Map/*<? extends K, ? extends V>*/ map) {
-		Collection keys = map.keySet();
-		for (Iterator iterator = keys.iterator(); iterator.hasNext();) {
-			Object key = iterator.next();
-			Object value = map.get(key);
-			value = TemplateEngineHelper.externalizeTemplateString(templateInfo, (String) value);
+	public void putAll(Map<? extends String, ? extends String> map) {
+		for(String key : map.keySet()) {
+			String value = map.get(key);
+			value = TemplateEngineHelper.externalizeTemplateString(templateInfo, value);
 			super.put(key, value);
 		}
 	}
-
-	public Object/*V*/ remove(Object key) {
-		Object/*V*/ v = super.remove(key);
-		return v;
-	}
-	
 }

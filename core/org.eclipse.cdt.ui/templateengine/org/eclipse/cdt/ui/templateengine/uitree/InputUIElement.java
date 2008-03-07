@@ -43,7 +43,7 @@ public abstract class InputUIElement extends UIElement {
 	public static final String SELECTED = new String("selected"); //$NON-NLS-1$
 
 
-	protected InputUIElement(UIAttributes/*<String, String>*/ uiAttribute) {
+	protected InputUIElement(UIAttributes uiAttribute) {
 		super(uiAttribute);
 	}
 

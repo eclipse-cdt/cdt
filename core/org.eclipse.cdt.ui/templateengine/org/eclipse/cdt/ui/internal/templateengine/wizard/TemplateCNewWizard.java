@@ -31,7 +31,7 @@ public class TemplateCNewWizard extends CNewWizard {
 	 */
 	public EntryDescriptor[] createItems(boolean supportedOnly, IWizard wizard) {
 		Template[] templates = TemplateEngineUI.getDefault().getTemplates();
-		ArrayList items = new ArrayList();
+		ArrayList<EntryDescriptor> items = new ArrayList<EntryDescriptor>();
 		
 		for (int k=0; k < templates.length; k++) {
 			TemplateInfo templateInfo = templates[k].getTemplateInfo();
@@ -43,7 +43,7 @@ public class TemplateCNewWizard extends CNewWizard {
 						null,
 						null));
 		}
-		return (EntryDescriptor[])items.toArray(new EntryDescriptor[items.size()]);
+		return items.toArray(new EntryDescriptor[items.size()]);
 	}
 
 	public void setDependentControl(Composite parent,

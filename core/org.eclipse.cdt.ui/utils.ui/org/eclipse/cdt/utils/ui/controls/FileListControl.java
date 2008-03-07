@@ -84,7 +84,7 @@ public class FileListControl {
 	 */
 	class SelectPathInputDialog extends InputDialog {
 		private int type;
-		/* True if user sucessfully set the text value by a browse dialog */
+		/* True if user successfully set the text value by a browse dialog */
 		private boolean fSetByBrowseDialog = false;
 		
 
@@ -321,7 +321,7 @@ public class FileListControl {
 	private IVariableContextInfo contextInfo;
 	private IResource rc;
 
-	private java.util.List listeners = new ArrayList();
+	private java.util.List<IFileListChangeListener> listeners = new ArrayList<IFileListChangeListener>();
 	private String oldValue[];
 	
 	//images

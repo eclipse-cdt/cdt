@@ -40,7 +40,7 @@ public class UIComposite extends Composite {
 	/**
 	 * The list of PatternEventListeners.
 	 */
-	private Vector/*<PatternEventListener>*/ vector;
+	private Vector<PatternEventListener> vector;
 
 	/**
 	 * parent Composite, and The UIElement corresponding to this page.
@@ -48,10 +48,10 @@ public class UIComposite extends Composite {
 	 * @param parent
 	 * @param uiElement
 	 */
-	public UIComposite(Composite parent, UIElement uiElement, Map/*<String, String>*/ valueStore) {
+	public UIComposite(Composite parent, UIElement uiElement, Map<String, String> valueStore) {
 		super(parent, SWT.NONE);
 
-		vector = new Vector/*<PatternEventListener>*/();
+		vector = new Vector<PatternEventListener>();
 		GridLayout layout = new GridLayout(2, false);
 		layout.marginWidth = 10;
 		layout.marginHeight = 5;
@@ -81,14 +81,14 @@ public class UIComposite extends Composite {
 	}
 
 	/**
-	 * On occurance of PatternEvent this method is called to ivoke
+	 * On occurrence of PatternEvent this method is called to invoke
 	 * patternPerformed on all the registered listeners. In our application, we
 	 * will have just one registered listener.
 	 */
 
 	public void firePatternEvent(PatternEvent patternEvent) {
 		for (int i = 0; i < vector.size(); i++) {
-			((PatternEventListener) vector.get(i)).patternPerformed(patternEvent);
+			vector.get(i).patternPerformed(patternEvent);
 		}
 	}
 
@@ -97,7 +97,7 @@ public class UIComposite extends Composite {
 	 * in turn will invoke the getValues on the UIElement (widgets). This
 	 * returns an HashMap of Values.
 	 */
-	public Map/*<String, String>*/ getPageData() {
+	public Map<String, String> getPageData() {
 		return uiElement.getValues();
 	}
 

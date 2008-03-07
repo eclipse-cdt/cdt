@@ -33,11 +33,11 @@ public class UIPagesProvider {
 	/**
 	 * maintains the Page display order.
 	 */
-	private List/*<String>*/ orderVector;
+	private List<String> orderVector;
 
 
 	public UIPagesProvider() {
-		orderVector = new ArrayList();
+		orderVector = new ArrayList<String>();
 	}
 	
 	/**
@@ -45,7 +45,7 @@ public class UIPagesProvider {
 	 * 
 	 * @return Vector
 	 */
-	public List/*<String>*/ getOrderVector() {
+	public List<String> getOrderVector() {
 		return orderVector;
 	}
 
@@ -53,7 +53,7 @@ public class UIPagesProvider {
 	 * re-initialize the Vector.
 	 */
 	public void clearOrderVector() {
-		orderVector = new ArrayList/*<String>*/();
+		orderVector = new ArrayList<String>();
 	}
 
 	/**
@@ -66,9 +66,9 @@ public class UIPagesProvider {
 	 *            UIElement group root element. Which can be converted to a
 	 *            UIPage.
 	 * @param valueStore
-	 * @return HashMap, UIPages corresonding to param aUIElement.
+	 * @return HashMap, UIPages corresponding to param aUIElement.
 	 */
-	public Map/*<String, UIWizardPage>*/ getWizardUIPages(UIElement uiElement, Map/*<String, String>*/ valueStore) {
+	public Map<String, UIWizardPage> getWizardUIPages(UIElement uiElement, Map<String, String> valueStore) {
 		int childCount = 0;
 
 		try {
@@ -78,7 +78,7 @@ public class UIPagesProvider {
 		}
 
 		// HashMap of UIPages
-		HashMap/*<String, UIWizardPage>*/ pageMap = new HashMap/*<String, UIWizardPage>*/();
+		HashMap<String, UIWizardPage> pageMap = new HashMap<String, UIWizardPage>();
 
 		// If uiElement contains other group elements as children.
 		if (hasChildUIGroupElement(uiElement)) {
@@ -93,12 +93,12 @@ public class UIPagesProvider {
 		}
 		else {
 			if ((hasChildUIElement(uiElement))) {
-				String title = (String) uiElement.getAttributes().get(UIElement.TITLE);
-				String description = (String) (uiElement.getAttributes()).get(UIElement.DESCRIPTION);
+				String title = uiElement.getAttributes().get(UIElement.TITLE);
+				String description = (uiElement.getAttributes()).get(UIElement.DESCRIPTION);
 				UIWizardPage uiPage = new UIWizardPage(title, description, uiElement, valueStore);
 
 				pageMap.put((uiElement.getAttributes()).get(UIElement.ID), uiPage);
-				addToOrderVector((String) (uiElement.getAttributes()).get(UIElement.ID));
+				addToOrderVector((uiElement.getAttributes()).get(UIElement.ID));
 			}
 		}
 		return pageMap;
@@ -159,10 +159,8 @@ public class UIPagesProvider {
 	 * @param pageId
 	 */
 	private void addToOrderVector(String pageId) {
-		String containerIds = null;
-		for (int i = 0; i < orderVector.size(); i++) {
-			containerIds = (String) orderVector.get(i);
-			if (containerIds.equalsIgnoreCase(pageId))
+		for(String id : orderVector) {
+			if (id.equalsIgnoreCase(pageId))
 				return;
 		}
 		orderVector.add(pageId);

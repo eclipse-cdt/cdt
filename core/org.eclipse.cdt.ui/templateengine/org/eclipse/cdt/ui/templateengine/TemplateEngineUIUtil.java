@@ -38,7 +38,7 @@ public class TemplateEngineUIUtil {
 		IStatus status;
 		if (t != null) {
 			if (t instanceof ProcessFailureException) {
-				List/*<IStatus>*/ statuses = ((ProcessFailureException) t).getStatuses();
+				List<IStatus> statuses = ((ProcessFailureException) t).getStatuses();
 				if (statuses == null || statuses.isEmpty()) {
 					Throwable p = t;
 					do {
@@ -50,10 +50,10 @@ public class TemplateEngineUIUtil {
 					if (statuses == null || statuses.isEmpty()) {
 						status = new Status(IStatus.ERROR, CUIPlugin.getPluginId(), IStatus.ERROR, t.getMessage(), t);
 					} else {
-						status = new MultiStatus(CUIPlugin.getPluginId(), IStatus.ERROR, (IStatus[]) statuses.toArray(new IStatus[statuses.size()]), t.getMessage(), t);
+						status = new MultiStatus(CUIPlugin.getPluginId(), IStatus.ERROR, statuses.toArray(new IStatus[statuses.size()]), t.getMessage(), t);
 					}
 				} else {
-					status = new MultiStatus(CUIPlugin.getPluginId(), IStatus.ERROR, (IStatus[]) statuses.toArray(new IStatus[statuses.size()]), t.getMessage(), t);
+					status = new MultiStatus(CUIPlugin.getPluginId(), IStatus.ERROR, statuses.toArray(new IStatus[statuses.size()]), t.getMessage(), t);
 				}
 			} else if (t instanceof CoreException) {
 				status = ((CoreException) t).getStatus();
@@ -75,7 +75,7 @@ public class TemplateEngineUIUtil {
 	}
 	
 	/**
-	 * Shows the Status meassage in Dialog Box.
+	 * Shows the Status message in Dialog Box.
 	 * @param message
 	 * @param status
      * 

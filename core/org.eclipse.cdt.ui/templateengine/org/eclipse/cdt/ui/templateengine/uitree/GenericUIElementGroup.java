@@ -44,7 +44,7 @@ public class GenericUIElementGroup extends UIElement {
 	/**
 	 * child list for this UIElement
 	 */
-	private List/*<UIElement>*/ childList;
+	private List<UIElement> childList;
 
 	/**
 	 * Call UIElement constructor by passing Attributes as param.
@@ -54,14 +54,13 @@ public class GenericUIElementGroup extends UIElement {
 	public GenericUIElementGroup(UIGroupTypeEnum type, UIAttributes/*<String, String>*/ attribute) {
 		super(attribute);
 		this.type = type;
-		this.childList = new ArrayList/*<UIElement>*/();
+		this.childList = new ArrayList<UIElement>();
 	}
 
 	/*
-	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.templateengine.uitree.UIElement#setValues(java.util.Map)
 	 */
-	public void setValues(Map/*<String, String>*/ valueMap) {
+	public void setValues(Map<String,String> valueMap) {
 		int childCount = getChildCount();
 
 		for (int i = 0; i < childCount; i++) {
@@ -70,11 +69,10 @@ public class GenericUIElementGroup extends UIElement {
 	}
 
 	/*
-	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.templateengine.uitree.UIElement#getValues()
 	 */
-	public Map/*<String, String>*/ getValues() {
-		HashMap/*<String, String>*/ valueMap = new HashMap/*<String, String>*/();
+	public Map<String, String> getValues() {
+		HashMap<String, String> valueMap = new HashMap<String, String>();
 		int childCount = getChildCount();
 
 		for (int i = 0; i < childCount; i++) {
@@ -85,7 +83,6 @@ public class GenericUIElementGroup extends UIElement {
 	}
 
 	/*
-	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.templateengine.uitree.UIElement#createWidgets(org.eclipse.cdt.ui.templateengine.uitree.uiwidgets.UIComposite)
 	 */
 	public void createWidgets(UIComposite uiComposite) {
@@ -123,7 +120,7 @@ public class GenericUIElementGroup extends UIElement {
 	 * @return child uiElement
 	 */
 	public UIElement getChild(int index) {
-		return (UIElement) childList.get(index);
+		return childList.get(index);
 	}
 
 	/**
@@ -157,7 +154,6 @@ public class GenericUIElementGroup extends UIElement {
 	}
 
 	/*
-	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.templateengine.uitree.UIElement#isValid()
 	 */
 	public boolean isValid() {

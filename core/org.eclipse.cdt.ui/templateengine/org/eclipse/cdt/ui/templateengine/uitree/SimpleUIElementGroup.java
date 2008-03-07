@@ -22,21 +22,21 @@ import org.eclipse.cdt.ui.templateengine.uitree.uiwidgets.UIComposite;
 
 public class SimpleUIElementGroup extends GenericUIElementGroup {
 
-	public SimpleUIElementGroup(UIAttributes/*<String, String>*/ attribute) {
+	public SimpleUIElementGroup(UIAttributes attribute) {
 		super(UIGroupTypeEnum.PAGES_ONLY, attribute);
 	}
 
 	/**
 	 * @see UIElement
 	 */
-	public void setValues(Map/*<String, String>*/ valueMap) {
+	public void setValues(Map<String, String> valueMap) {
 		super.setValues(valueMap);
 	}
 
 	/**
 	 * @see UIElement
 	 */
-	public Map/*<String, String>*/ getValues() {
+	public Map<String, String> getValues() {
 		return super.getValues();
 	}
 

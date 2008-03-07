@@ -13,6 +13,7 @@ package org.eclipse.cdt.utils.ui.controls;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.SWT;
@@ -54,7 +55,7 @@ public class RadioButtonsArea extends Composite {
 	
 	private SelectionListener listener;
 	
-	private ArrayList externalListeners = new ArrayList();
+	private List<SelectionListener> externalListeners = new ArrayList<SelectionListener>();
 
 	private Composite area = null; 
 	/**

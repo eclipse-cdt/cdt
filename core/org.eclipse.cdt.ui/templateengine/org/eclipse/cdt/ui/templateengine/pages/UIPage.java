@@ -56,7 +56,7 @@ public abstract class UIPage extends DialogPage {
 	/**
 	 * ValueStore for this instance of Template.
 	 */
-	private Map/*<String, String>*/ valueStore;
+	private Map<String, String> valueStore;
 
 	/**
 	 * Title set for this WizardPage.
@@ -77,12 +77,12 @@ public abstract class UIPage extends DialogPage {
 	 * @param element
 	 *            The group UIElement.
 	 */
-	protected UIPage(String name, UIElement element, Map/*<String, String>*/ valueStore) {
+	protected UIPage(String name, UIElement element, Map<String, String> valueStore) {
 		super(name);
 		setTitle(name);
-		setDescription((String) element.getAttributes().get(UIElement.DESCRIPTION));
+		setDescription(element.getAttributes().get(UIElement.DESCRIPTION));
 		try {
-			String imageLoc = (String) element.getAttributes().get(UIElement.IMAGELOCATION);
+			String imageLoc = element.getAttributes().get(UIElement.IMAGELOCATION);
 			if (imageLoc != null) {
 				URL url = FileLocator.toFileURL(FileLocator.find(CCorePlugin.getDefault().getBundle(), new Path(imageLoc), null));
 				imageDescriptor = ImageDescriptor.createFromURL(url);
@@ -93,15 +93,14 @@ public abstract class UIPage extends DialogPage {
 
 		super.setImageDescriptor(imageDescriptor);
 		//TODO: Fix the imagedescriptor later.
-//		setImageDescriptor(TemplateEnginePlugin.imageDescriptorFromPlugin(TemplateEnginePlugin.getDefault().getWizardIconPluginID(), TemplateEnginePlugin.getDefault().getWizardIconFile()));
+		//setImageDescriptor(TemplateEnginePlugin.imageDescriptorFromPlugin(TemplateEnginePlugin.getDefault().getWizardIconPluginID(), TemplateEnginePlugin.getDefault().getWizardIconFile()));
 
 		title = name;
 		uiElement = element;
 		uiElement.setValues(valueStore);
 		this.valueStore = valueStore;
 		//TODO: Check the from which plugin the PLUGIN_ID comes from i.e. from CCorePlugin or CUIPlugin
-		pageId = CUIPlugin.getPluginId() + "." + //$NON-NLS-1$
-				(uiElement.getAttributes()).get(UIElement.ID);
+		pageId = CUIPlugin.getPluginId() + "." + (uiElement.getAttributes()).get(UIElement.ID); //$NON-NLS-1$
 	}
 
 	/**

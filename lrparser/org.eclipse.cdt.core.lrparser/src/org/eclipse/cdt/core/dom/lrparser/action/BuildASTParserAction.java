@@ -420,8 +420,8 @@ public abstract class BuildASTParserAction {
 		IASTNode result;
 		if(expressionStatement == null)
 			result = declarationStatement;
-		else if(isImplicitInt(decl))
-			result = expressionStatement;
+		//else if(isImplicitInt(decl))
+		//	result = expressionStatement;
 		else
 			result = nodeFactory.newAmbiguousStatement(declarationStatement, expressionStatement);
 			
@@ -437,17 +437,17 @@ public abstract class BuildASTParserAction {
      * Returns true if the given declaration has unspecified type,
      * in this case the type defaults to int and is know as "implicit int".
      */
-    protected static boolean isImplicitInt(IASTDeclaration declaration) {
-    	if(declaration instanceof IASTSimpleDeclaration) {
-    		IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration)declaration).getDeclSpecifier();
-    		if(declSpec instanceof IASTSimpleDeclSpecifier && 
-    		   ((IASTSimpleDeclSpecifier)declSpec).getType() == IASTSimpleDeclSpecifier.t_unspecified) {
-    			
-    			return true;
-    		}
-    	}
-    	return false;
-    }
+//    protected static boolean isImplicitInt(IASTDeclaration declaration) {
+//    	if(declaration instanceof IASTSimpleDeclaration) {
+//    		IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration)declaration).getDeclSpecifier();
+//    		if(declSpec instanceof IASTSimpleDeclSpecifier && 
+//    		   ((IASTSimpleDeclSpecifier)declSpec).getType() == IASTSimpleDeclSpecifier.t_unspecified) {
+//    			
+//    			return true;
+//    		}
+//    	}
+//    	return false;
+//    }
   	
 	
 	/**
@@ -880,7 +880,8 @@ public abstract class BuildASTParserAction {
 		else // its null
 			initializer = nodeFactory.newNullStatement();
 		
-		setOffsetAndLength(initializer, offset(node), length(node));
+		if(node != null)
+			setOffsetAndLength(initializer, offset(node), length(node));
 		
 		IASTForStatement forStat = nodeFactory.newForStatement(initializer, expr2, expr3, body);
 		setOffsetAndLength(forStat);

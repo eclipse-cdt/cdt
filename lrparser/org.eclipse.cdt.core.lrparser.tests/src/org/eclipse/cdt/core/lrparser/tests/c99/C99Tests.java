@@ -102,7 +102,7 @@ public class C99Tests extends AST2Tests {
     
     
 	
-	public void testBug93980() { // some wierd gcc extension I think
+    public void testBug93980() { // some wierd gcc extension I think
 		try {
 			super.testBug93980();
 			fail();

@@ -535,13 +535,18 @@ postfix_expression
 -- instead of pseudo_destructor_name. But the difference is I have different
 -- token types, so maybe I do need this rule.
 pseudo_destructor_name
-    ::= dcolon_opt nested_name_specifier_opt type_name '::' '~' type_name
+    ::= dcolon_opt nested_name_specifier_opt type_name '::' destructor_type_name
           /. $Build  consumePsudoDestructorName(true);  $EndBuild ./
-      | dcolon_opt nested_name_specifier 'template' template_id_name '::' '~' type_name
+      | dcolon_opt nested_name_specifier 'template' template_id_name '::' destructor_type_name
           /. $Build  consumePsudoDestructorName(true);  $EndBuild ./
-      | dcolon_opt nested_name_specifier_opt '~' type_name
+      | dcolon_opt nested_name_specifier_opt destructor_type_name
           /. $Build  consumePsudoDestructorName(false);  $EndBuild ./
 
+
+destructor_type_name
+    ::= '~' type_name
+          /. $Build  consumeDestructorName();  $EndBuild ./
+          
 
 unary_expression
     ::= postfix_expression
@@ -1076,7 +1081,7 @@ simple_type_specifier_token
 -- last two rules moved here from simple_type_specifier
 type_name  -- all identifiers of some kind
     ::= class_name
-      | enum_name      -- identifier
+      | enum_name 
       | typedef_name
 
 

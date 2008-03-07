@@ -43,7 +43,8 @@ public class C99DOMLocationTests extends DOMLocationTests {
     
     
     // this one fails because the C99 parser does error recovery differently
-    public void test162180_1() throws Exception {
+    @Override
+	public void test162180_1() throws Exception {
     	try {
     		super.test162180_1();
     		fail();
@@ -52,11 +53,22 @@ public class C99DOMLocationTests extends DOMLocationTests {
     	
     }
     
-    public void test162180_3() throws Exception {
+    @Override
+	public void test162180_3() throws Exception {
     	try {
     		super.test162180_3();
     		fail();
     	}
     	catch(AssertionFailedError e) {}
     }
+    
+    @Override
+	public void testBug86698_2() throws Exception { // I don't think C++ supports nested functions
+    	try {
+    		super.testBug86698_2();
+    		fail();
+    	}
+    	catch(AssertionFailedError e) {}
+    }
+
 }

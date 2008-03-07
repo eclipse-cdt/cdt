@@ -130,6 +130,7 @@ public class DOMToISOCPPTokenMap implements ITokenMap {
 			case t_protected   : return TK_protected;
 			case t_public      : return TK_public;
 			case t_register    : return TK_register;
+			case t_reinterpret_cast : return TK_reinterpret_cast;
 			case t_return      : return TK_return;
 			case t_short       : return TK_short;
 			case t_sizeof      : return TK_sizeof;

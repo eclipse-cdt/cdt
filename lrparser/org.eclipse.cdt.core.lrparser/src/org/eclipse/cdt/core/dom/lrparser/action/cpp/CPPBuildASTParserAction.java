@@ -306,7 +306,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		boolean hasDColon = astStack.pop() == PLACE_HOLDER;
 		
 		nestedNames.addFirst(name);
-		ICPPASTQualifiedName qualifiedName = createQualifiedName(nestedNames, hasDColon);
+		IASTName qualifiedName = createQualifiedName(nestedNames, hasDColon);
 		
 		ICPPASTTypenameExpression typenameExpr = nodeFactory.newCPPTypenameExpression(qualifiedName, expr, isTemplate);
 		
@@ -677,19 +677,22 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	
 	/**
 	 * Creates a qualified name from a list of names (that must be in reverse order).
-	 * Does not set the offset and length.
 	 */
-	private ICPPASTQualifiedName createQualifiedName(LinkedList<IASTName> nestedNames, boolean startsWithColonColon) {
+	private IASTName createQualifiedName(LinkedList<IASTName> nestedNames, boolean startsWithColonColon) {
+		if(!startsWithColonColon && nestedNames.size() == 1) { // its actually an unqualified name
+			return nestedNames.get(0);
+		}
+		
 		ICPPASTQualifiedName qualifiedName = nodeFactory.newCPPQualifiedName();
+		qualifiedName.setFullyQualified(startsWithColonColon);
+		
+		for(IASTName name : reverseIterable(nestedNames))
+			qualifiedName.addName(name);
 		
 		int startOffset = offset(nestedNames.getLast());
 		int length = endOffset(nestedNames.getFirst()) - startOffset;
 		setOffsetAndLength(qualifiedName, startOffset, length);
 		
-		for(IASTName name : reverseIterable(nestedNames))
-			qualifiedName.addName(name);
-		
-		qualifiedName.setFullyQualified(startsWithColonColon);
 		return qualifiedName;
 	}
 	
@@ -725,29 +728,25 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	
 	/**
 	 * pseudo_destructor_name
-     *     ::= dcolon_opt nested_name_specifier_opt type_name '::' '~' type_name
-     *       | dcolon_opt nested_name_specifier 'template' template_id '::' '~' type_name
-     *       | dcolon_opt nested_name_specifier_opt '~' type_name
+     *     ::= dcolon_opt nested_name_specifier_opt type_name '::' destructor_type_name
+     *       | dcolon_opt nested_name_specifier 'template' template_id '::' destructor_type_name
+     *       | dcolon_opt nested_name_specifier_opt destructor_type_name
      */
 	@SuppressWarnings("unchecked")
 	public void consumePsudoDestructorName(boolean hasExtraTypeName) {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		
-		IASTName extraTypeName = null;
-		if(hasExtraTypeName)
-			extraTypeName = (IASTName) astStack.pop();
-		
-		IASTName typeName = (IASTName) astStack.pop(); // or tempalte_id
-		
+		IASTName destructorTypeName = (IASTName) astStack.pop();
+		IASTName extraName = hasExtraTypeName ? (IASTName) astStack.pop() : null;
 		LinkedList<IASTName> nestedNames = (LinkedList<IASTName>) astStack.pop();
 		boolean hasDColon = astStack.pop() == PLACE_HOLDER;
 		
-		nestedNames.addFirst(typeName);
-		
 		if(hasExtraTypeName)
-			nestedNames.addFirst(extraTypeName);
+			nestedNames.addFirst(extraName);
 		
-		ICPPASTQualifiedName qualifiedName = createQualifiedName(nestedNames, hasDColon);
+		nestedNames.addFirst(destructorTypeName);
+		
+		IASTName qualifiedName = createQualifiedName(nestedNames, hasDColon);
 		
 		setOffsetAndLength(qualifiedName);
 		astStack.push(qualifiedName);

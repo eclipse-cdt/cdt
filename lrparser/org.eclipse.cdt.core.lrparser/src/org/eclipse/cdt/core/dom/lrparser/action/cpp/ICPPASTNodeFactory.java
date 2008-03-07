@@ -87,7 +87,7 @@ public interface ICPPASTNodeFactory extends IASTNodeFactory {
 
 	public ICPPASTSimpleTypeConstructorExpression newCPPSimpleTypeConstructorExpression(int type, IASTExpression expression);
 
-	public ICPPASTTypenameExpression newCPPTypenameExpression(ICPPASTQualifiedName qualifiedName, IASTExpression expr, boolean isTemplate);
+	public ICPPASTTypenameExpression newCPPTypenameExpression(IASTName qualifiedName, IASTExpression expr, boolean isTemplate);
 
 	public ICPPASTNamespaceAlias newNamespaceAlias(IASTName alias, IASTName qualifiedName);
 	

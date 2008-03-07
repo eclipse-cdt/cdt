@@ -406,8 +406,7 @@ public class CPPASTNodeFactory implements ICPPASTNodeFactory {
 		return new CPPASTSimpleTypeConstructorExpression(type, expression);
 	}
 
-	public ICPPASTTypenameExpression newCPPTypenameExpression(
-			ICPPASTQualifiedName qualifiedName, IASTExpression expr, boolean isTemplate) {
+	public ICPPASTTypenameExpression newCPPTypenameExpression(IASTName qualifiedName, IASTExpression expr, boolean isTemplate) {
 		return new CPPASTTypenameExpression(qualifiedName, expr, isTemplate);
 	}
 

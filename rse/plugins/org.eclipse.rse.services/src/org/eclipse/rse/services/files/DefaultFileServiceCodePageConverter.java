@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2007,2008 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -10,6 +10,7 @@
  * 
  * Contributors:
  * David McKnight    (IBM)  -[209704] [api][dstore] Ability to override default encoding conversion needed.
+ * David McKnight    (IBM)  -[220379] [api] Provide a means for contributing custom BIDI encodings
  ********************************************************************************/
 package org.eclipse.rse.services.files;
 
@@ -20,8 +21,8 @@ import java.io.FileOutputStream;
 
 public class DefaultFileServiceCodePageConverter implements
 		IFileServiceCodePageConverter {
-
-	public byte[] convertClientStringToRemoteBytes(String clientString,
+	
+	public byte[] convertClientStringToRemoteBytes(String remotePath, String clientString,
 			String remoteEncoding, IFileService fs) {
 		try
 		{
@@ -33,7 +34,7 @@ public class DefaultFileServiceCodePageConverter implements
 		return clientString.getBytes();
 	}
 
-	public void convertFileFromRemoteEncoding(File file, String remoteEncoding,
+	public void convertFileFromRemoteEncoding(String remotePath, File file, String remoteEncoding,
 			String localEncoding, IFileService fs) {
 		
 		// read in the file
@@ -71,5 +72,6 @@ public class DefaultFileServiceCodePageConverter implements
 	public int getPriority(String remoteEString, IFileService fs){
 		return 1000;
 	}
+
 
 }

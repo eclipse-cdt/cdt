@@ -38,6 +38,7 @@
  * David McKnight   (IBM)        - [216252] use SimpleSystemMessage instead of getMessage()
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * Radoslav Gerganov (ProSyst)   - [216195] [dstore] Saving empty file fails
+ * David McKnight    (IBM)       - [220379] [api] Provide a means for contributing custom BIDI encodings
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -542,7 +543,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 					}
 
 					
-					convBytes = codePageConverter.convertClientStringToRemoteBytes(tempStr, hostEncoding, this);
+					convBytes = codePageConverter.convertClientStringToRemoteBytes(remotePath, tempStr, hostEncoding, this);
 				
 					// append subsequent segments
 					getDataStore().replaceAppendFile(remotePath, convBytes, convBytes.length, true, byteStreamHandlerId);
@@ -766,7 +767,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 
 					IFileServiceCodePageConverter codePageConverter = CodePageConverterManager.getCodePageConverter(encoding, this);
 					
-					codePageConverter.convertFileFromRemoteEncoding(localFile, encoding, localEncoding, this);
+					codePageConverter.convertFileFromRemoteEncoding(remotePath, localFile, encoding, localEncoding, this);
 				}
 					
 				
@@ -1008,7 +1009,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 							String localEncoding = System.getProperty("file.encoding"); //$NON-NLS-1$
 							IFileServiceCodePageConverter codePageConverter = CodePageConverterManager.getCodePageConverter(hostEncodings[i], this);
 
-							codePageConverter.convertFileFromRemoteEncoding(localFile, hostEncodings[i], localEncoding, this);
+							codePageConverter.convertFileFromRemoteEncoding(remoteElement.getName(), localFile, hostEncodings[i], localEncoding, this);
 						}
 						
 						result = true;

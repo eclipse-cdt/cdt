@@ -138,12 +138,15 @@ public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingS
 					index= ast.getIndex();
 				}
 				try {
-					if (ast == null) {
-						((ICReconcilingListener)fEditor).reconciled(ast, forced, fProgressMonitor);
+					if (ast == null || fProgressMonitor.isCanceled()) {
+						((ICReconcilingListener)fEditor).reconciled(null, forced, fProgressMonitor);
 					} else {
 						synchronized (ast) {
 							((ICReconcilingListener)fEditor).reconciled(ast, forced, fProgressMonitor);
 						}
+					}
+					if (fProgressMonitor.isCanceled()) {
+						aboutToBeReconciled();
 					}
 				} catch(Exception e) {
 					IStatus status= new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, IStatus.OK, "Error in CDT UI during reconcile", e);  //$NON-NLS-1$

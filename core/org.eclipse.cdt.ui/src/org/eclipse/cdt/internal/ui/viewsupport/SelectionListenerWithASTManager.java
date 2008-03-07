@@ -17,9 +17,10 @@ import java.util.Map;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.text.ISelectionValidator;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -54,18 +55,24 @@ public class SelectionListenerWithASTManager {
 		return fgDefault;
 	}
 	
-	
+	private static class SingletonRule implements ISchedulingRule {
+		public boolean contains(ISchedulingRule rule) {
+			return rule == this;
+		}
+		public boolean isConflicting(ISchedulingRule rule) {
+			return rule == this;
+		}
+	}
+
 	private final static class PartListenerGroup {
 		private ITextEditor fPart;
 		private ISelectionListener fPostSelectionListener;
 		private ISelectionChangedListener fSelectionListener;
 		private Job fCurrentJob;
 		private ListenerList fAstListeners;
-		/**
-		 * Lock to avoid having more than one calculateAndInform job in parallel.
-		 * Only jobs may synchronize on this as otherwise deadlocks are possible.
-		 */
-		private final Object fJobLock= new Object();
+		/** Rule to make sure only one job is running at a time */
+		private final ISchedulingRule fJobRule= new SingletonRule();
+		private ISelectionValidator fValidator;
 		
 		public PartListenerGroup(ITextEditor editorPart) {
 			fPart= editorPart;
@@ -97,8 +104,12 @@ public class SelectionListenerWithASTManager {
 			if (isEmpty()) {
 				fPart.getEditorSite().getPage().addPostSelectionListener(fPostSelectionListener);
 				ISelectionProvider selectionProvider= fPart.getSelectionProvider();
-				if (selectionProvider != null)
-						selectionProvider.addSelectionChangedListener(fSelectionListener);
+				if (selectionProvider != null) {
+					selectionProvider.addSelectionChangedListener(fSelectionListener);
+					if (selectionProvider instanceof ISelectionValidator) {
+						fValidator= (ISelectionValidator) selectionProvider;
+					}
+				}
 			}
 			fAstListeners.add(listener);
 		}
@@ -108,8 +119,10 @@ public class SelectionListenerWithASTManager {
 			if (isEmpty()) {
 				fPart.getEditorSite().getPage().removePostSelectionListener(fPostSelectionListener);
 				ISelectionProvider selectionProvider= fPart.getSelectionProvider();
-				if (selectionProvider != null)
+				if (selectionProvider != null) {
 					selectionProvider.removeSelectionChangedListener(fSelectionListener);
+				}
+				fValidator= null;
 			}
 		}
 		
@@ -130,23 +143,32 @@ public class SelectionListenerWithASTManager {
 			
 			fCurrentJob= new Job(Messages.SelectionListenerWithASTManager_jobName) { 
 				public IStatus run(IProgressMonitor monitor) {
-					if (monitor == null) {
-						monitor= new NullProgressMonitor();
-					}
-					synchronized (fJobLock) {
+					if (!monitor.isCanceled() && isSelectionValid(selection)) {
 						return calculateASTandInform(workingCopy, selection, monitor);
 					}
+					return Status.OK_STATUS;
 				}
 			};
 			fCurrentJob.setPriority(Job.DECORATE);
 			fCurrentJob.setSystem(true);
+			fCurrentJob.setRule(fJobRule);
 			fCurrentJob.schedule();
 		}
 
+		/**
+		 * Verify that selection is still valid.
+		 * 
+		 * @param selection
+		 * @return <code>true</code> if selection is valid
+		 */
+		protected boolean isSelectionValid(ITextSelection selection) {
+			return fValidator == null || fValidator.isValid(selection);
+		}
+
 		protected IStatus calculateASTandInform(final IWorkingCopy workingCopy, final ITextSelection selection, final IProgressMonitor monitor) {
-			return ASTProvider.getASTProvider().runOnAST(workingCopy, ASTProvider.WAIT_YES, monitor, new ASTRunnable() {
+			return ASTProvider.getASTProvider().runOnAST(workingCopy, ASTProvider.WAIT_ACTIVE_ONLY, monitor, new ASTRunnable() {
 				public IStatus runOnAST(ILanguage lang, IASTTranslationUnit astRoot) {
-					if (astRoot != null && !monitor.isCanceled()) {
+					if (astRoot != null && !monitor.isCanceled() && isSelectionValid(selection)) {
 						Object[] listeners;
 						synchronized (PartListenerGroup.this) {
 							listeners= fAstListeners.getListeners();
@@ -162,7 +184,6 @@ public class SelectionListenerWithASTManager {
 		}
 	}
 	
-		
 	private Map<ITextEditor, PartListenerGroup> fListenerGroups;
 	
 	private SelectionListenerWithASTManager() {

@@ -2579,7 +2579,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	 */
 	private IRegion fMarkOccurrenceTargetRegion;
 
-	private OccurrencesFinderJob fOccurrencesFinderJob;
+	private OccurrencesAnnotationUpdaterJob fOccurrencesAnnotationUpdaterJob;
 	private OccurrencesFinderJobCanceler fOccurrencesFinderJobCanceler;
 	private ISelectionListenerWithAST fPostSelectionListenerWithAST;
 
@@ -2815,12 +2815,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 			((ICReconcilingListener)listeners[i]).reconciled(ast, force, progressMonitor);
 		}
 
-		// delayed installation of mark occurrences
-//		if (!fMarkOccurrenceAnnotations && isMarkingOccurrences())
-//			getSite().getShell().getDisplay().asyncExec(new Runnable() {
-//				public void run() {
-//					installOccurrencesFinder(true);
-//				}});
 	}
 
 	/**
@@ -2911,11 +2905,11 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	}
 
 	/**
-	 * Finds and marks occurrence annotations.
+	 * Updates occurrence annotations.
 	 *
 	 * @since 5.0
 	 */
-	class OccurrencesFinderJob extends Job {
+	class OccurrencesAnnotationUpdaterJob extends Job {
 
 		private final IDocument fDocument;
 		private final ISelection fSelection;
@@ -2923,16 +2917,12 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		private boolean fCanceled= false;
 		private final OccurrenceLocation[] fLocations;
 
-		public OccurrencesFinderJob(IDocument document, OccurrenceLocation[] locations, ISelection selection) {
+		public OccurrencesAnnotationUpdaterJob(IDocument document, OccurrenceLocation[] locations, ISelection selection, ISelectionValidator validator) {
 			super(CEditorMessages.getString("CEditor_markOccurrences_job_name")); //$NON-NLS-1$
 			fDocument= document;
 			fSelection= selection;
 			fLocations= locations;
-
-			if (getSelectionProvider() instanceof ISelectionValidator)
-				fPostSelectionValidator= (ISelectionValidator)getSelectionProvider();
-			else
-				fPostSelectionValidator= null;
+			fPostSelectionValidator= validator;
 		}
 
 		// cannot use cancel() because it is declared final
@@ -3049,8 +3039,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
 		 */
 		public void documentAboutToBeChanged(DocumentEvent event) {
-			if (fOccurrencesFinderJob != null)
-				fOccurrencesFinderJob.doCancel();
+			if (fOccurrencesAnnotationUpdaterJob != null)
+				fOccurrencesAnnotationUpdaterJob.doCancel();
 		}
 
 		/*
@@ -3088,9 +3078,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	 * @since 5.0
 	 */
 	protected void updateOccurrenceAnnotations(ITextSelection selection, IASTTranslationUnit astRoot) {
-
-		if (fOccurrencesFinderJob != null)
-			fOccurrencesFinderJob.cancel();
+		if (fOccurrencesAnnotationUpdaterJob != null)
+			fOccurrencesAnnotationUpdaterJob.cancel();
 
 		if (!fMarkOccurrenceAnnotations)
 			return;
@@ -3102,8 +3091,9 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		if (document == null)
 			return;
 
-		if (getSelectionProvider() instanceof ISelectionValidator) {
-			ISelectionValidator validator= (ISelectionValidator)getSelectionProvider();
+		ISelectionValidator validator= null;
+		if (fForcedMarkOccurrencesSelection != selection && getSelectionProvider() instanceof ISelectionValidator) {
+			validator= (ISelectionValidator)getSelectionProvider();
 			if (!validator.isValid(selection)) {
 				return;
 			}
@@ -3125,10 +3115,22 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 
 		OccurrenceLocation[] locations= null;
 
-		IASTNodeSelector selector= astRoot.getNodeSelector(astRoot.getFilePath());
+		IASTNodeSelector selector= astRoot.getNodeSelector(null);
 		IASTName name= selector.findEnclosingName(selection.getOffset(), selection.getLength());
 
+		if (validator != null && !validator.isValid(selection)) {
+			return;
+		}
+
 		if (name != null) {
+//			try {
+//				IASTFileLocation location= name.getFileLocation();
+//				if (!document.get(location.getNodeOffset(), location.getNodeLength()).equals(name.toString())) {
+//					System.err.println("CEditor.updateOccurrenceAnnotations() invalid ast");
+//					return;
+//				}
+//			} catch (BadLocationException exc) {
+//			}
 			IBinding binding= name.resolveBinding();
 			if (binding != null) {
 				OccurrencesFinder occurrencesFinder= new OccurrencesFinder();
@@ -3138,7 +3140,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 			}
 		}
 
-		if (locations == null) {
+		if (locations == null || locations.length == 0) {
 			if (!fStickyOccurrenceAnnotations)
 				removeOccurrenceAnnotations();
 			else if (hasChanged) // check consistency of current annotations
@@ -3146,11 +3148,12 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 			return;
 		}
 
-		fOccurrencesFinderJob= new OccurrencesFinderJob(document, locations, selection);
+		fOccurrencesAnnotationUpdaterJob= new OccurrencesAnnotationUpdaterJob(document, locations, selection, validator);
+		// we are already in a background job
 		//fOccurrencesFinderJob.setPriority(Job.DECORATE);
 		//fOccurrencesFinderJob.setSystem(true);
 		//fOccurrencesFinderJob.schedule();
-		fOccurrencesFinderJob.run(new NullProgressMonitor());
+		fOccurrencesAnnotationUpdaterJob.run(new NullProgressMonitor());
 	}
 
 	protected void installOccurrencesFinder(boolean forceUpdate) {
@@ -3180,9 +3183,9 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	protected void uninstallOccurrencesFinder() {
 		fMarkOccurrenceAnnotations= false;
 
-		if (fOccurrencesFinderJob != null) {
-			fOccurrencesFinderJob.cancel();
-			fOccurrencesFinderJob= null;
+		if (fOccurrencesAnnotationUpdaterJob != null) {
+			fOccurrencesAnnotationUpdaterJob.cancel();
+			fOccurrencesAnnotationUpdaterJob= null;
 		}
 
 		if (fOccurrencesFinderJobCanceler != null) {

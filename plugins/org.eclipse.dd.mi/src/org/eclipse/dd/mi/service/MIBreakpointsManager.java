@@ -9,7 +9,8 @@
  *     Wind River - Initial API and implementation
  *     Ericsson   - High-level breakpoints integration
  *     Ericsson   - Added breakpoint filter support 
- *     Ericsson   - Re-factored the service and put a few comments  
+ *     Ericsson   - Re-factored the service and put a few comments
+ *     Ericsson   - Added Action support  
  *******************************************************************************/
 
 package org.eclipse.dd.mi.service;
@@ -24,6 +25,8 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.RejectedExecutionException;
 
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
+import org.eclipse.cdt.debug.core.breakpointactions.BreakpointActionManager;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpointExtension;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
@@ -65,10 +68,13 @@ import org.eclipse.dd.mi.internal.MIPlugin;
 import org.eclipse.dd.mi.service.MIBreakpoints.BreakpointAddedEvent;
 import org.eclipse.dd.mi.service.MIBreakpoints.BreakpointRemovedEvent;
 import org.eclipse.dd.mi.service.MIBreakpoints.BreakpointUpdatedEvent;
+import org.eclipse.dd.mi.service.MIBreakpoints.MIBreakpointDMContext;
 import org.eclipse.dd.mi.service.MIRunControl.MIExecutionDMC;
+import org.eclipse.dd.mi.service.breakpoint.actions.BreakpointActionAdapter;
 import org.eclipse.dd.mi.service.command.events.MIBreakpointHitEvent;
 import org.eclipse.dd.mi.service.command.events.MIGDBExitEvent;
 import org.eclipse.dd.mi.service.command.events.MIWatchpointScopeEvent;
+import org.eclipse.dd.mi.service.command.events.MIWatchpointTriggerEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointListener;
 import org.eclipse.debug.core.IBreakpointManager;
@@ -98,7 +104,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     ISourceLookup      fSourceLookup;
     IBreakpoints       fBreakpoints;
     IBreakpointManager fBreakpointManager;  // Platform breakpoint manager (not this!)
-    // FIXME: MIBreakpointsActionManager fBreakpointActionManager;
+    BreakpointActionManager fBreakpointActionManager;
 
     ///////////////////////////////////////////////////////////////////////////
     // Breakpoints tracking
@@ -159,7 +165,6 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
 
     ///////////////////////////////////////////////////////////////////////////
     // String constants
-    // FIXME: Extract to some centralized location
     ///////////////////////////////////////////////////////////////////////////
 
     private static final String NULL_STRING = ""; //$NON-NLS-1$
@@ -230,7 +235,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         fSourceLookup   = getServicesTracker().getService(ISourceLookup.class);
         fBreakpoints    = getServicesTracker().getService(IBreakpoints.class);
         fBreakpointManager = DebugPlugin.getDefault().getBreakpointManager();
-        // FIXME: fBreakpointActionManager = new MIBreakpointsActionManager();
+        fBreakpointActionManager = CDebugCorePlugin.getDefault().getBreakpointActionManager();
 
         // Register to the useful events
         getSession().addServiceEventListener(this, null);
@@ -1134,20 +1139,23 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     // IServiceEventListener
     ///////////////////////////////////////////////////////////////////////////
 
+    //-------------------------------------------------------------------------
+    // Breakpoints
+    //-------------------------------------------------------------------------
+
     @DsfServiceEventHandler 
     public void eventDispatched(BreakpointAddedEvent e) {
+    	// Nothing to do - already handled by breakpointAdded()
     }
 
     @DsfServiceEventHandler 
     public void eventDispatched(BreakpointUpdatedEvent e) {
+    	// Nothing to do - already handled by breakpointChanged()
     }
 
     @DsfServiceEventHandler 
     public void eventDispatched(BreakpointRemovedEvent e) {
-    }
-
-    @DsfServiceEventHandler 
-    public void eventDispatched(MIBreakpointHitEvent e) {
+    	// Nothing to do - already handled by breakpointRemoved()
     }
 
     /*
@@ -1159,6 +1167,67 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     @DsfServiceEventHandler
     public void eventDispatched(MIWatchpointScopeEvent e) {
     }
+
+    //-------------------------------------------------------------------------
+    // Breakpoint actions
+    //-------------------------------------------------------------------------
+
+    @DsfServiceEventHandler 
+    public void eventDispatched(MIBreakpointHitEvent e) {
+        performBreakpointAction(e.getNumber());
+    }
+
+    @DsfServiceEventHandler 
+    public void eventDispatched(MIWatchpointTriggerEvent e) {
+        performBreakpointAction(e.getNumber());
+    }
+
+    private void performBreakpointAction(int number) {
+        // Identify the platform breakpoint
+        final ICBreakpoint breakpoint = findPlatformBreakpoint(number);
+
+        // FIXME: Temporary hack to have a context
+        Object[] contexts = fTargetBPs.keySet().toArray();
+        final IBreakpointsTargetDMContext context = (IBreakpointsTargetDMContext) contexts[0];
+
+        // Perform the actions asynchronously (otherwise we can have a deadlock...)
+        new Job("Breakpoint action") { //$NON-NLS-1$
+            { setSystem(true); }
+            @Override
+            protected IStatus run(IProgressMonitor monitor) {
+                // FIXME: Rename MyAdaptableType to something more relevant
+                fBreakpointActionManager.executeActions(breakpoint, new BreakpointActionAdapter(getExecutor(), getServicesTracker(), context));
+                return Status.OK_STATUS;
+            };
+        }.schedule();
+    }
+
+    // Helper function to locate the platform breakpoint corresponding
+    // to the target breakpoint/watchpoint that was just hit
+    // FIXME: Need a way to identify the correct context where the BP was hit
+    // because it impacts the action (expression evaluation and resume delay).
+    // This means that the Breakpoint/WatchpointHitEvent will need to
+    // provide some extra info...
+    private ICBreakpoint findPlatformBreakpoint(int targetBreakpointID) {
+        Set<IBreakpointsTargetDMContext> targets = fTargetBPs.keySet();
+        for (IBreakpointsTargetDMContext target : targets) {
+            Map<IBreakpointDMContext, ICBreakpoint> bps = fTargetBPs.get(target);
+            Set<IBreakpointDMContext> contexts = bps.keySet();
+            for (IBreakpointDMContext context : contexts) {
+                if (context instanceof MIBreakpointDMContext) {
+                    MIBreakpointDMContext ctx = (MIBreakpointDMContext) context;
+                    if (ctx.getReference() == targetBreakpointID) {
+                        return bps.get(context);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    //-------------------------------------------------------------------------
+    // Session exit
+    //-------------------------------------------------------------------------
 
     @DsfServiceEventHandler 
     public void eventDispatched(MIGDBExitEvent e) {

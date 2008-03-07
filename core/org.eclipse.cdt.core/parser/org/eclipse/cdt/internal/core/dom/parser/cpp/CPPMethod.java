@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,9 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-/*
- * Created on Dec 1, 2004
- */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -116,6 +113,9 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 		if( declarations != null ){
 			for( int i = 0; i < declarations.length; i++ ){
 			    IASTDeclarator dtor = declarations[i];
+			    if (dtor == null) {
+			    	break;
+			    }
 			    while( dtor.getParent() instanceof IASTDeclarator )
 			        dtor = (IASTDeclarator) dtor.getParent();
 				IASTDeclaration decl = (IASTDeclaration) dtor.getParent();

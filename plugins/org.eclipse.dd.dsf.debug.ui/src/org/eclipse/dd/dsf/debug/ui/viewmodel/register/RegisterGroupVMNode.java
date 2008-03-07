@@ -132,6 +132,7 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
 
     @Override
     protected void updateElementsInSessionThread(final IChildrenUpdate update) {
+        if (!checkService(IRegisters.class, null, update)) return;
         getServicesTracker().getService(IRegisters.class).getRegisterGroups(
             createCompositeDMVMContext(update),
             new DataRequestMonitor<IRegisterGroupDMContext[]>(getSession().getExecutor(), null) { 

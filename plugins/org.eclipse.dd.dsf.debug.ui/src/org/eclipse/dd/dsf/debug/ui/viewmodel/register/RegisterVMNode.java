@@ -161,6 +161,8 @@ public class RegisterVMNode extends AbstractExpressionVMNode
      */
     private void updateFormattedRegisterValue(final ILabelUpdate update, final int labelIndex, final IRegisterDMContext dmc)
     {
+        if (!checkService(IRegisters.class, null, update)) return;
+        
         final IRegisters regService = getServicesTracker().getService(IRegisters.class);
         /*
          *  First select the format to be used. This involves checking so see that the preference
@@ -362,6 +364,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
 
     @Override
     protected void updateElementsInSessionThread(final IChildrenUpdate update) {
+        if (!checkService(IRegisters.class, null, update)) return;
         getServicesTracker().getService(IRegisters.class).getRegisters(
             createCompositeDMVMContext(update),
             new DataRequestMonitor<IRegisterDMContext[]>(getSession().getExecutor(), null) { 

@@ -43,7 +43,7 @@ public class ModulesVMNode extends AbstractDMVMNode
     
     @Override
     protected void updateElementsInSessionThread(final IChildrenUpdate update) {
-        if (!checkService(IRegisters.class, null, update)) return;
+        if (!checkService(IModules.class, null, update)) return;
         
         final ISymbolDMContext symDmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), ISymbolDMContext.class) ;
         

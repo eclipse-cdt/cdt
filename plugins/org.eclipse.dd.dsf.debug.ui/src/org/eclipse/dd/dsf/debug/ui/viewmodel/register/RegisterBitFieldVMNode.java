@@ -273,6 +273,8 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
     protected void updateLabelInSessionThread(ILabelUpdate[] updates) {
         for (final ILabelUpdate update : updates) {
             
+            if (!checkService(IRegisters.class, null, update)) continue;
+            
             final IBitFieldDMContext dmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IRegisters.IBitFieldDMContext.class);
             
             getDMVMProvider().getModelData(
@@ -366,6 +368,8 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
             handleFailedUpdate(update);
             return;
         }          
+        
+        if (!checkService(IRegisters.class, null, update)) return;
         
         getServicesTracker().getService(IRegisters.class).getBitFields(
             regDmc,

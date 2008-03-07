@@ -1766,7 +1766,7 @@ public class DefaultCodeFormatterOptions {
 //		this.insert_new_line_in_empty_method_body = true;
 //		this.insert_new_line_in_empty_type_declaration = true;
 
-		this.compact_else_if = false;
+		this.compact_else_if = true;
 		this.keep_guardian_clause_on_one_line = false;
 		this.keep_else_statement_on_same_line = false;
 		this.keep_empty_initializer_list_on_one_line = false;

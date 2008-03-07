@@ -17,9 +17,11 @@
 package org.eclipse.rse.services.clientserver.messages;
 
 /**
- * used to indicate that the indicator is not valid. 
+ * used to indicate that the indicator is not valid.
+ * @deprecated This exception is no longer used and client code should not
+ *    try catching it unless it wants to be compatible with earlier RSE versions. 
  */
-public class IndicatorException extends Exception 
+public class IndicatorException extends RuntimeException 
 {
 	/**
 	 * 

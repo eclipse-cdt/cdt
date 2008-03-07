@@ -26,6 +26,7 @@
  * David McKnight   (IBM)        - [218685] [api][breaking][dstore] Unable to connect when using SSL.
  * David McKnight  (IBM)         - [220123][dstore] Configurable timeout on irresponsiveness
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
+ * David McKnight   (IBM)        - [220123] [api][dstore] Configurable timeout on irresponsiveness
  *******************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore;
@@ -963,7 +964,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 				// this preference is set on the server side
 				dataStore.setPreference(RemoteClassLoader.CACHING_PREFERENCE, cacheRemoteClasses ? "true" : "false", true); //$NON-NLS-1$  //$NON-NLS-2$
 				
-				if (serverVersion >= 9){ // keepalive preferences
+				if (serverVersion >= 8){ // keepalive preferences
 					boolean doKeepalive = store.getBoolean(IUniversalDStoreConstants.RESID_PREF_DO_KEEPALIVE);
 					
 					int keepaliveResponseTimeout = store.getInt(IUniversalDStoreConstants.RESID_PREF_KEEPALIVE_RESPONSE_TIMEOUT);

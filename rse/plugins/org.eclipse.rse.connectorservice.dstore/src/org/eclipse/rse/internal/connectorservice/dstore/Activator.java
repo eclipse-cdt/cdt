@@ -13,13 +13,13 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [220123] [api][dstore] Configurable timeout on irresponsiveness
  ********************************************************************************/
 
 package org.eclipse.rse.internal.connectorservice.dstore;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.connectorservice.dstore.IUniversalDStoreConstants;
-import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.osgi.framework.BundleContext;
@@ -48,11 +48,36 @@ public class Activator extends SystemBasePlugin {
 	public void start(BundleContext context) throws Exception 
 	{
 		super.start(context);
-        IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
-    	store.setDefault(IUniversalDStoreConstants.RESID_PREF_SOCKET_TIMEOUT, IUniversalDStoreConstants.DEFAULT_PREF_SOCKET_TIMEOUT);
-		store.setDefault(ISystemPreferencesConstants.ALERT_SSL, ISystemPreferencesConstants.DEFAULT_ALERT_SSL);
-		store.setDefault(ISystemPreferencesConstants.ALERT_NONSSL, ISystemPreferencesConstants.DEFAULT_ALERT_NON_SSL);
 
+		initializeDefaultPreferences();
+	}
+	
+	
+	public void initializeDefaultPreferences() {
+		IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
+
+		int timeout = IUniversalDStoreConstants.DEFAULT_PREF_SOCKET_TIMEOUT;
+		store.setDefault(IUniversalDStoreConstants.RESID_PREF_SOCKET_TIMEOUT, timeout);	
+		
+		// do keepalive
+		boolean doKeepalive = IUniversalDStoreConstants.DEFAULT_PREF_DO_KEEPALIVE;
+		store.setValue(IUniversalDStoreConstants.RESID_PREF_DO_KEEPALIVE, doKeepalive);
+		
+		// socket read timeout 
+		int socketTimeout = IUniversalDStoreConstants.DEFAULT_PREF_SOCKET_READ_TIMEOUT;
+		store.setDefault(IUniversalDStoreConstants.RESID_PREF_SOCKET_READ_TIMEOUT, socketTimeout);
+		
+		// keepalive response timeout
+		int keepaliveTimeout = IUniversalDStoreConstants.DEFAULT_PREF_KEEPALIVE_RESPONSE_TIMEOUT;
+		store.setDefault(IUniversalDStoreConstants.RESID_PREF_KEEPALIVE_RESPONSE_TIMEOUT, keepaliveTimeout);		
+		
+		// show mismatched server warning
+		boolean showMismatchedWarning = IUniversalDStoreConstants.DEFAULT_ALERT_MISMATCHED_SERVER;
+		store.setDefault(IUniversalDStoreConstants.ALERT_MISMATCHED_SERVER, showMismatchedWarning);
+
+		// cache remote classes
+		boolean cacheRemoteClasses = IUniversalDStoreConstants.DEFAULT_PREF_CACHE_REMOTE_CLASSES;
+		store.setDefault(IUniversalDStoreConstants.RESID_PREF_CACHE_REMOTE_CLASSES, cacheRemoteClasses);				
 	}
 
 	/**

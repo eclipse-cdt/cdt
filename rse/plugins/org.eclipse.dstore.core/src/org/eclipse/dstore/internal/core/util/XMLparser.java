@@ -82,6 +82,7 @@ public class XMLparser
 	private Throwable _panicException = null;
 	
 	private boolean _isKeepAliveCompatible = false;
+	private boolean _isKeepAliveEnabled = true;
 	private boolean _firstTime = true;
 	
 	private KeepAliveRequestThread _kart = null;
@@ -131,6 +132,7 @@ public class XMLparser
 	public void setEnableKeepalive(boolean enable){
 		// if false, we ignore the keepalive stuff
 		_isKeepAliveCompatible = enable;
+		_isKeepAliveEnabled = enable;
 	}
 	
 	/**
@@ -308,34 +310,36 @@ public class XMLparser
 		    boolean inquotes = false;
 			while (!done)
 			{
-
-				if (_firstTime)
+				if (_isKeepAliveEnabled)
 				{
-					_initialKart = new KeepAliveRequestThread(KEEPALIVE_RESPONSE_TIMEOUT);
-					_firstTime = false;
-					if (VERBOSE_KEEPALIVE) System.out.println("Starting initial KeepAlive thread."); //$NON-NLS-1$
-					_initialKart.start();
-					continue;
-				}
-				else if (_initialKart != null && !_initialKart.isAlive())
-				{
-					if (!_initialKart.failed())
+					if (_firstTime)
 					{
-						_isKeepAliveCompatible = true;
-						if (VERBOSE_KEEPALIVE) System.out.println("KeepAlive compatible."); //$NON-NLS-1$
-						_initialKart = null;
-					}			
-					else
+						_initialKart = new KeepAliveRequestThread(KEEPALIVE_RESPONSE_TIMEOUT);
+						_firstTime = false;
+						if (VERBOSE_KEEPALIVE) System.out.println("Starting initial KeepAlive thread."); //$NON-NLS-1$
+						_initialKart.start();
+						continue;
+					}
+					else if (_initialKart != null && !_initialKart.isAlive())
 					{
-						_isKeepAliveCompatible = false;
-						if (VERBOSE_KEEPALIVE) System.out.println("KeepAlive incompatible."); //$NON-NLS-1$
-						_initialKart = null;
+						if (!_initialKart.failed())
+						{
+							_isKeepAliveCompatible = true;
+							if (VERBOSE_KEEPALIVE) System.out.println("KeepAlive compatible."); //$NON-NLS-1$
+							_initialKart = null;
+						}			
+						else
+						{
+							_isKeepAliveCompatible = false;
+							if (VERBOSE_KEEPALIVE) System.out.println("KeepAlive incompatible."); //$NON-NLS-1$
+							_initialKart = null;
+						}
 					}
 				}
-
+				
 				int in = -1;
 				
-				if (_isKeepAliveCompatible)
+				if (_isKeepAliveEnabled && _isKeepAliveCompatible)
 				{	
 					socket.setSoTimeout(IO_SOCKET_READ_TIMEOUT);
 					try
@@ -349,14 +353,16 @@ public class XMLparser
 							done = true;
 							if (_dataStore.isVirtual()) handlePanic(new Exception("KeepAlive request to server wasnt answered in time.")); //$NON-NLS-1$
 							else handlePanic(new Exception("KeepAlive request to client wasnt answered in time.")); //$NON-NLS-1$
-							continue;
+							return null;
 						}
 						else
 						{
-							_kart = new KeepAliveRequestThread(KEEPALIVE_RESPONSE_TIMEOUT);
-							if (VERBOSE_KEEPALIVE) System.out.println("No activity on socket. KeepAlive thread started."); //$NON-NLS-1$
-							_kart.start();
-							continue;
+							if (_kart == null){
+								_kart = new KeepAliveRequestThread(KEEPALIVE_RESPONSE_TIMEOUT);
+								if (VERBOSE_KEEPALIVE) System.out.println("No activity on socket. KeepAlive thread started."); //$NON-NLS-1$
+								_kart.start();
+								continue;
+							}
 						}
 					}
 				}
@@ -671,7 +677,7 @@ public class XMLparser
 								}
 								else if (_isKeepAlive)
 								{
-									if (VERBOSE_KEEPALIVE) System.out.println("KeepAlive request received, sending confirmation."); //$NON-NLS-1$
+									if (VERBOSE_KEEPALIVE) System.out.println("KeepAlive request received, sending confirmation."); //$NON-NLS-1$									
 									result.getDataStore().sendKeepAliveConfirmation();
 									_isKeepAlive = false;
 								}

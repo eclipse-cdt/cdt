@@ -50,49 +50,48 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
 	public CPPFunctionScope(IASTFunctionDeclarator physicalNode) {
 		super(physicalNode);
 	}
-
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#addBinding(org.eclipse.cdt.core.dom.ast.IBinding)
 	 */
 	public void addBinding(IBinding binding) {
 	    //3.3.4 only labels have function scope
-	    if( !( binding instanceof ILabel ) )
+	    if (!(binding instanceof ILabel))
 	        return;
 	    
-	    if( labels == CharArrayObjectMap.EMPTY_MAP )
-	        labels = new CharArrayObjectMap( 2 );
+	    if (labels == CharArrayObjectMap.EMPTY_MAP)
+	        labels = new CharArrayObjectMap(2);
 	    
-	    labels.put( binding.getNameCharArray(), binding );
+	    labels.put(binding.getNameCharArray(), binding);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#getBinding(int, char[])
 	 */
-	public IBinding getBinding( IASTName name ) {
-	    return (IBinding) labels.get( name.toCharArray() );
+	public IBinding getBinding(IASTName name) {
+	    return (IBinding) labels.get(name.toCharArray());
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
 	 */
 	public IBinding[] find(String name) throws DOMException {
-	    char [] n = name.toCharArray();
-	    List bindings = new ArrayList();
+	    char[] n = name.toCharArray();
+	    List<IBinding> bindings = new ArrayList<IBinding>();
 	    
 	    for (int i = 0; i < labels.size(); i++) {
 	    	char[] key = labels.keyAt(i);
 	    	if (CharArrayUtils.equals(key, n)) {
-	    		bindings.add(labels.get(key));
+	    		bindings.add((IBinding) labels.get(key));
 	    	}
 	    }
 	    
-	    IBinding[] additional = super.find( name );
+	    IBinding[] additional = super.find(name);
 	    for (int i = 0; i < additional.length; i++) {
 	    	bindings.add(additional[i]);
 	    }
 	    
-	    return (IBinding[]) bindings.toArray(new IBinding[bindings.size()]);
+	    return bindings.toArray(new IBinding[bindings.size()]);
 	}
 	
 	public IScope getParent() throws DOMException {
@@ -100,26 +99,25 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
 	    //could loop since resolving functions requires resolving their parameter types
 	    IASTFunctionDeclarator fdtor = (IASTFunctionDeclarator) getPhysicalNode();
 	    IASTName name = fdtor.getName();
-	    if( name instanceof ICPPASTQualifiedName ){
+	    if (name instanceof ICPPASTQualifiedName) {
 	        ICPPASTQualifiedName qual = (ICPPASTQualifiedName) name;
-	        IASTName [] ns = qual.getNames();
-	        if( ns.length > 1){
+	        IASTName[] ns = qual.getNames();
+	        if (ns.length > 1) {
 	            IBinding binding = ns[ ns.length - 2 ].resolveBinding();
 	            if (binding == null)
 	            	return null;
-	            else if( binding instanceof ICPPClassType )
+	            else if (binding instanceof ICPPClassType)
 	                return ((ICPPClassType)binding).getCompositeScope();
-	            else if( binding instanceof ICPPNamespace )
+	            else if (binding instanceof ICPPNamespace)
 	                return ((ICPPNamespace)binding).getNamespaceScope();
 	            return binding.getScope();
-	        } else if( qual.isFullyQualified() ){
+	        } else if (qual.isFullyQualified()) {
 	            return qual.getTranslationUnit().getScope();
 	        }
 	    } 
 	        
-	    return CPPVisitor.getContainingScope( name );
+	    return CPPVisitor.getContainingScope(name);
 	}
-
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope#getBodyScope()
@@ -127,21 +125,20 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
     public IScope getBodyScope() {
         IASTFunctionDeclarator fnDtor = (IASTFunctionDeclarator) getPhysicalNode();
         IASTNode parent = fnDtor.getParent();
-        if( parent instanceof IASTFunctionDefinition ){
+        if (parent instanceof IASTFunctionDefinition) {
             IASTStatement body = ((IASTFunctionDefinition)parent).getBody();
-            if( body instanceof IASTCompoundStatement )
+            if (body instanceof IASTCompoundStatement)
                 return ((IASTCompoundStatement)body).getScope();
         }
         return null;
     }
-
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#getScopeName()
      */
     public IName getScopeName() {
         IASTNode node = getPhysicalNode();
-        if( node instanceof ICPPASTFunctionDeclarator ){
+        if (node instanceof ICPPASTFunctionDeclarator) {
             return ((ICPPASTFunctionDeclarator)node).getName();
         }
         return null;

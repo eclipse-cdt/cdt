@@ -254,18 +254,18 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 	
 	@Override
 	public int pdomCompareTo(PDOMBinding other) {
-		int cmp= super.pdomCompareTo(other);
-		return cmp==0 ? compareSignatures(this, other) : cmp;
+		int cmp = super.pdomCompareTo(other);
+		return cmp == 0 ? compareSignatures(this, other) : cmp;
 	}
 	
 	@Override
 	public String toString() {
-		StringBuffer result = new StringBuffer();
-		result.append(getName()+" "+ASTTypeUtil.getParameterTypeString(getType())); //$NON-NLS-1$
+		StringBuilder result = new StringBuilder();
+		result.append(getName() + ASTTypeUtil.getParameterTypeString(getType()));
 		try {
-			result.append(" "+getConstantNameForValue(getLinkageImpl(), getNodeType())); //$NON-NLS-1$
-		} catch(CoreException ce) {
-			result.append(" "+getNodeType()); //$NON-NLS-1$
+			result.append(" " + getConstantNameForValue(getLinkageImpl(), getNodeType())); //$NON-NLS-1$
+		} catch (CoreException e) {
+			result.append(" " + getNodeType()); //$NON-NLS-1$
 		}
 		return result.toString();
 	}

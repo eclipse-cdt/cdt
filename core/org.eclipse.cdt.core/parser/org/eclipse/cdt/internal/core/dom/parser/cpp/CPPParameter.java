@@ -35,38 +35,38 @@ import org.eclipse.core.runtime.PlatformObject;
  */
 public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPInternalBinding {
     public static class CPPParameterProblem extends ProblemBinding implements ICPPParameter {
-        public CPPParameterProblem( IASTNode node, int id, char[] arg ) {
-            super( node, id, arg );
+        public CPPParameterProblem(IASTNode node, int id, char[] arg) {
+            super(node, id, arg);
         }
         public IType getType() throws DOMException {
-            throw new DOMException( this );
+            throw new DOMException(this);
         }
         public boolean isStatic() throws DOMException {
-            throw new DOMException( this );
+            throw new DOMException(this);
         }
         public boolean isExtern() throws DOMException {
-            throw new DOMException( this );
+            throw new DOMException(this);
         }
         public boolean isAuto() throws DOMException {
-            throw new DOMException( this );        
+            throw new DOMException(this);        
         }
         public boolean isRegister() throws DOMException {
-            throw new DOMException( this );
+            throw new DOMException(this);
         }
 		public boolean hasDefaultValue() {
             return false;
 		}
 		public boolean isMutable() throws DOMException {
-            throw new DOMException( this );
+            throw new DOMException(this);
 		}
 		public String[] getQualifiedName() throws DOMException {
-            throw new DOMException( this );
+            throw new DOMException(this);
 		}
 		public char[][] getQualifiedNameCharArray() throws DOMException {
-            throw new DOMException( this );
+            throw new DOMException(this);
 		}
 		public boolean isGloballyQualified() throws DOMException {
-            throw new DOMException( this );
+            throw new DOMException(this);
 		}
 		public boolean isExternC() {
 			return false;
@@ -74,14 +74,14 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
     }
 
 	private IType type = null;
-	private IASTName [] declarations = null;
+	private IASTName[] declarations = null;
 	
 	
-	public CPPParameter( IASTName name ){
-		this.declarations = new IASTName [] { name };
+	public CPPParameter(IASTName name) {
+		this.declarations = new IASTName[] { name };
 	}
 	
-	public CPPParameter( IType type ){
+	public CPPParameter(IType type) {
 	    this.type = type;
 	}
 	
@@ -99,18 +99,18 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
         return null;
     }
 
-	public void addDeclaration( IASTNode node ){
-		if( !(node instanceof IASTName ) )
+	public void addDeclaration(IASTNode node) {
+		if (!(node instanceof IASTName))
 			return;
 		IASTName name = (IASTName) node;
-		if( declarations == null )
+		if (declarations == null) {
 	        declarations = new IASTName[] { name };
-	    else {
-	        //keep the lowest offset declaration in [0]
-			if( declarations.length > 0 && ((ASTNode)node).getOffset() < ((ASTNode)declarations[0]).getOffset() ){
-				declarations = (IASTName[]) ArrayUtil.prepend( IASTName.class, declarations, name );
+		} else {
+	        //keep the lowest offset declaration in[0]
+			if (declarations.length > 0 && ((ASTNode)node).getOffset() < ((ASTNode)declarations[0]).getOffset()) {
+				declarations = (IASTName[]) ArrayUtil.prepend(IASTName.class, declarations, name);
 			} else {
-				declarations = (IASTName[]) ArrayUtil.append( IASTName.class, declarations, name );
+				declarations = (IASTName[]) ArrayUtil.append(IASTName.class, declarations, name);
 			}
 	    }
 	}
@@ -119,14 +119,14 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 		ArrayUtil.remove(declarations, node);
 	}
 	
-	private IASTName getPrimaryDeclaration(){
-	    if( declarations != null ){
-	        for( int i = 0; i < declarations.length && declarations[i] != null; i++ ){
+	private IASTName getPrimaryDeclaration() {
+	    if (declarations != null) {
+	        for (int i = 0; i < declarations.length && declarations[i] != null; i++) {
 	            IASTNode node = declarations[i].getParent();
-	            while( !(node instanceof IASTDeclaration) )
+	            while (!(node instanceof IASTDeclaration))
 	                node = node.getParent();
 	            
-	            if( node instanceof IASTFunctionDefinition )
+	            if (node instanceof IASTFunctionDefinition)
 	                return declarations[i];
 	        }
 	        return declarations[0];
@@ -138,7 +138,7 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 	 */
 	public String getName() {
 	    IASTName name = getPrimaryDeclaration();
-	    if( name != null )
+	    if (name != null)
 	        return name.toString();
 	    return CPPSemantics.EMPTY_NAME;
 	}
@@ -148,7 +148,7 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 	 */
 	public char[] getNameCharArray() {
 	    IASTName name = getPrimaryDeclaration();
-	    if( name != null )
+	    if (name != null)
 	        return name.toCharArray();
 	    return CPPSemantics.EMPTY_NAME_ARRAY;
 	}
@@ -157,14 +157,14 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
 	 */
 	public IScope getScope() {
-		return CPPVisitor.getContainingScope( getPrimaryDeclaration() );
+		return CPPVisitor.getContainingScope(getPrimaryDeclaration());
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getPhysicalNode()
 	 */
 	public IASTNode getPhysicalNode() {
-	    if( declarations != null )
+	    if (declarations != null)
 	        return declarations[0];
 		return null;
 	}
@@ -173,8 +173,8 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 	 * @see org.eclipse.cdt.core.dom.ast.IVariable#getType()
 	 */
 	public IType getType() {
-		if( type == null && declarations != null ){
-			type = CPPVisitor.createType( (IASTDeclarator) declarations[0].getParent() );
+		if (type == null && declarations != null) {
+			type = CPPVisitor.createType((IASTDeclarator) declarations[0].getParent());
 		}
 		return type;
 	}
@@ -190,14 +190,14 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedName()
      */
     public String[] getQualifiedName() {
-        return new String [] { getName() };
+        return new String[] { getName() };
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedNameCharArray()
      */
     public char[][] getQualifiedNameCharArray() {
-        return new char[][]{ getNameCharArray() };
+        return new char[][] { getNameCharArray() };
     }
 
     /* (non-Javadoc)
@@ -211,7 +211,7 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDefinition(org.eclipse.cdt.core.dom.ast.IASTNode)
 	 */
 	public void addDefinition(IASTNode node) {
-		addDeclaration( node );
+		addDeclaration(node);
 	}
 
     /* (non-Javadoc)
@@ -234,29 +234,29 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
      * @see org.eclipse.cdt.core.dom.ast.IVariable#isAuto()
      */
     public boolean isAuto() {
-        return hasStorageClass( IASTDeclSpecifier.sc_auto );
+        return hasStorageClass(IASTDeclSpecifier.sc_auto);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IVariable#isRegister()
      */
     public boolean isRegister() {
-        return hasStorageClass( IASTDeclSpecifier.sc_register );
+        return hasStorageClass(IASTDeclSpecifier.sc_register);
     }
     
-    public boolean hasStorageClass( int storage ){
+    public boolean hasStorageClass(int storage) {
 	    IASTNode[] ns = getDeclarations();
-        if( ns == null )
+        if (ns == null)
             return false;
         
-        for( int i = 0; i < ns.length && ns[i] != null; i++ ){
+        for (int i = 0; i < ns.length && ns[i] != null; i++) {
             IASTNode parent = ns[i].getParent();
-            while( !(parent instanceof IASTDeclaration) )
+            while (!(parent instanceof IASTDeclaration))
                 parent = parent.getParent();
             
-            if( parent instanceof IASTSimpleDeclaration ){
+            if (parent instanceof IASTSimpleDeclaration) {
                 IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration)parent).getDeclSpecifier();
-                if( declSpec.getStorageClass() == storage )
+                if (declSpec.getStorageClass() == storage)
                     return true;
             }
         }
@@ -264,14 +264,14 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 	}
 
 	public IASTInitializer getDefaultValue() {
-		if( declarations == null )
+		if (declarations == null)
 			return null;
 		for (int i = 0; i < declarations.length && declarations[i] != null; i++) {
 			IASTNode parent = declarations[i].getParent();
-			while( parent.getPropertyInParent() == IASTDeclarator.NESTED_DECLARATOR )
+			while (parent.getPropertyInParent() == IASTDeclarator.NESTED_DECLARATOR)
 				parent = parent.getParent();
 			IASTInitializer init = ((IASTDeclarator)parent).getInitializer();
-			if( init != null )
+			if (init != null)
 				return init;
 		}
 		return null;
@@ -287,5 +287,11 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 
 	public boolean isExternC() {
 		return false;
+	}
+	
+	@Override
+	public String toString() {
+		String name = getName();
+		return name.length() != 0 ? name : "<unnamed>"; //$NON-NLS-1$
 	}
 }

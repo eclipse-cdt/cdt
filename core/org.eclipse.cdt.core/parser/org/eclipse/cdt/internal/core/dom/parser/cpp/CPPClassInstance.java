@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
@@ -25,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
@@ -199,6 +203,63 @@ public class CPPClassInstance extends CPPInstance implements ICPPClassType, ICPP
 				return ((CPPClassSpecializationScope)scope).getConversionOperators();
 		}
 		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
+	}
+
+	/**
+	 * Returns a combined argument map of this class and all its base template classes.
+	 * This combined map helps with instantiation of members of template classes that subclass
+	 * other template classes (see AST2TemplateTests#testRebindPattern_214017_2()).
+	 */
+	@Override
+	public ObjectMap getArgumentMap() {
+		ObjectMap argMap = argumentMap;
+		List<ICPPSpecialization> bases = null;
+		try {
+			for (ICPPBase base : getBases()) {
+				IBinding baseClass = base.getBaseClass();
+				if (baseClass instanceof ICPPSpecialization) {
+					if (bases == null) {
+						bases = new ArrayList<ICPPSpecialization>();
+					}
+					bases.add((ICPPSpecialization) baseClass);
+				}
+			}
+			if (bases != null) {
+				for (int i = 0; i < bases.size(); i++) {
+					for (ICPPBase base : ((ICPPClassType) bases.get(i)).getBases()) {
+						IBinding baseClass = base.getBaseClass();
+						if (baseClass instanceof ICPPSpecialization) {
+							bases.add((ICPPSpecialization) baseClass);
+						}
+					}
+					if (bases.size() > 20) {  // Protect against cyclic inheritance.
+						break;
+					}
+				}
+			}
+		} catch (DOMException e) {
+			// Ignore 
+		}
+
+		if (bases != null) {
+			for (ICPPSpecialization base : bases) {
+				// Protect against infinite recursion.
+				ObjectMap baseArgMap = base instanceof CPPClassInstance ?
+						((CPPClassInstance) base).argumentMap : base.getArgumentMap();
+				if (!baseArgMap.isEmpty()) {
+					if (argMap == argumentMap) {
+						argMap = (ObjectMap) argumentMap.clone();
+					}
+					for (int i = 0; i < baseArgMap.size(); i++) {
+						Object key = baseArgMap.keyAt(i);
+						if (!argMap.containsKey(key)) {
+							argMap.put(key, baseArgMap.getAt(i));
+						}
+					}
+				}
+			}
+		}
+		return argMap;
 	}
 
 	@Override

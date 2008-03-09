@@ -583,6 +583,10 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 	
 	@Override
 	public String toString() {
-		return getName() + ASTTypeUtil.getParameterTypeString(getType()); //$NON-NLS-1$
+		StringBuilder result = new StringBuilder();
+		result.append(getName());
+		IFunctionType t = getType();
+		result.append(t != null ? ASTTypeUtil.getParameterTypeString(t) : "()"); //$NON-NLS-1$
+		return result.toString();
 	}
 }

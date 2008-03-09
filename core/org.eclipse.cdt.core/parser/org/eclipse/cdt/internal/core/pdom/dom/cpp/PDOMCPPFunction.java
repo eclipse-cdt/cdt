@@ -261,7 +261,9 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 	@Override
 	public String toString() {
 		StringBuilder result = new StringBuilder();
-		result.append(getName() + ASTTypeUtil.getParameterTypeString(getType()));
+		result.append(getName());
+		IFunctionType t = getType();
+		result.append(t != null ? ASTTypeUtil.getParameterTypeString(t) : "()"); //$NON-NLS-1$
 		try {
 			result.append(" " + getConstantNameForValue(getLinkageImpl(), getNodeType())); //$NON-NLS-1$
 		} catch (CoreException e) {

@@ -1073,6 +1073,29 @@ public class AsmPartitionerTest extends TestCase {
 		}
 	}
 
+	public void testSingleLineComment_CppStyle() throws BadLocationException {
+		fDocument.set("//  single line comment");
+		int p1= fDocument.getLength();
+		ITypedRegion[] result= fDocument.computePartitioning(0, fDocument.getLength());
+		TypedRegion[] expectation= {
+			new TypedRegion(0,  p1, ICPartitions.C_SINGLE_LINE_COMMENT)
+		};
+		checkPartitioning(expectation, result);
+		
+		fDocument.replace(p1++, 0, "\nlabel: opcode arg1,arg2  ");
+		int p2= fDocument.getLength();
+		fDocument.replace(p2, 0, "// end-of-line comment");
+		int p3= fDocument.getLength();
+
+		result= fDocument.computePartitioning(0, fDocument.getLength());
+		expectation= new TypedRegion[] {
+			new TypedRegion(0,  p1, ICPartitions.C_SINGLE_LINE_COMMENT),
+			new TypedRegion(p1, p2-p1, IDocument.DEFAULT_CONTENT_TYPE),
+			new TypedRegion(p2, p3-p2, ICPartitions.C_SINGLE_LINE_COMMENT)
+		};
+		checkPartitioning(expectation, result);
+	}
+
 	public void testSingleLineComment_Hash() throws BadLocationException {
 		// to get single line comment partitions for # lines, 
 		// we need to configure the partitioner

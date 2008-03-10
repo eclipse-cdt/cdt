@@ -30,6 +30,7 @@ import org.eclipse.cdt.internal.ui.text.BufferedDocumentScanner;
  * <ul>
  * <li>C multi line comments</li>
  * <li>Assembly line comments</li>
+ * <li>C++ line comments</li>
  * <li>C string literals</li>
  * <li>Assembly character literals</li>
  * <li>C preprocessor directives</li>
@@ -364,21 +365,21 @@ public final class AsmPartitionScanner implements IPartitionTokenScanner, ICPart
 
 				switch (ch) {
 				case '/':
-					// unsupported: C++ line comment
-//					if (fLast == SLASH) {
-//						if (fTokenLength - getLastLength(fLast) > 0) {
-//							return preFix(CCODE, SINGLE_LINE_COMMENT, NONE, 2);
-//						} else {
-//							preFix(CCODE, SINGLE_LINE_COMMENT, NONE, 2);
-//							fTokenOffset += fTokenLength;
-//							fTokenLength= fPrefixLength;
-//							break;
-//						}
-//					} else {
+					// supported by gnu preprocessor
+					if (fLast == SLASH) {
+						if (fTokenLength - getLastLength(fLast) > 0) {
+							return preFix(CCODE, SINGLE_LINE_COMMENT, NONE, 2);
+						} else {
+							preFix(CCODE, SINGLE_LINE_COMMENT, NONE, 2);
+							fTokenOffset += fTokenLength;
+							fTokenLength= fPrefixLength;
+							break;
+						}
+					} else {
 						fTokenLength++;
 						fLast= SLASH;
 						break;
-//					}
+					}
 	
 				case '*':
 					if (fLast == SLASH) {

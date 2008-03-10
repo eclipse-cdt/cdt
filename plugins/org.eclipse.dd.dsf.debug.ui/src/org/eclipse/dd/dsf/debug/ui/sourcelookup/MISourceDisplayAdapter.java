@@ -546,4 +546,9 @@ public class MISourceDisplayAdapter implements ISourceDisplay
     public void eventDispatched(StepQueueManager.ISteppingTimedOutEvent e) {
         startAnnotationClearingJob(e.getDMContext());        
     }    
+    
+    @DsfServiceEventHandler
+    public void eventDispatched(IRunControl.ISuspendedDMEvent e) {
+        fPrevModelContext = null;
+    }
 }

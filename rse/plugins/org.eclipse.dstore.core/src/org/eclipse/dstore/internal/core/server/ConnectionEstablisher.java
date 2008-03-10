@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * David McKnight  (IBM)   [220123][dstore] Configurable timeout on irresponsiveness
+ * David McKnight  (IBM)   [220892][dstore] Backward compatibility: Server and Daemon should support old clients
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.server;
@@ -421,10 +422,15 @@ public class ConnectionEstablisher
 	{ 
 	   	try
 	   	{
-			BufferedWriter bwriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), DE.ENCODING_UTF_8));
+		BufferedWriter bwriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), DE.ENCODING_UTF_8));
 	   		PrintWriter writer = new PrintWriter(bwriter);
 
-			writer.println(DataStoreAttributes.DATASTORE_VERSION);
+	   		String version = DataStoreAttributes.DATASTORE_VERSION;
+	   		String preferenceVersion = System.getProperty("DSTORE_VERSION"); //$NON-NLS-1$
+	   		if (preferenceVersion != null && preferenceVersion.length() > 0){
+	   			version = preferenceVersion;
+	   		}	   		
+			writer.println(version);
 			writer.flush();
 	   	}
 	   	catch (IOException e)

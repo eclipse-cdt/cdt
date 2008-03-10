@@ -141,6 +141,8 @@ public final class DataStore
 	private ArrayList _waitingStatuses = null;
 	
 	private String _userPreferencesDirectory = null;
+	private IDataStoreCompatibilityHandler _compatibilityHandler;
+	
 	
 	private HashMap _classReqRepository;
 	private File _cacheJar;
@@ -437,6 +439,28 @@ public final class DataStore
 		_commandHandler = commandHandler;
 	}
 
+	/**
+	 * Set the compatibility handler for the client.  This is used when potential compatibility
+	 * problems are run into - i.e. localDescriptorQuery fails
+	 * @param handler the compatibilityHandler to use
+	 */
+	public void setCompatibilityHandler(IDataStoreCompatibilityHandler handler){
+		_compatibilityHandler = handler;
+	}
+
+	/**
+	 * Get the compatibility handler for the client.  This is used when potential compatibility
+	 * problems are run into - i.e. localDescriptorQuery fails
+	 * @return the compatibilityHandler
+	 */
+	public IDataStoreCompatibilityHandler getCompatibilityHandler(){
+		if (_compatibilityHandler == null){
+			_compatibilityHandler = new DefaultDataStoreCompatibilityHandler(this);
+		}
+		return _compatibilityHandler;
+	}
+	
+	
 	/**
 	 * Sets the time the update handler sleeps in between update requests 
 	 *
@@ -2613,6 +2637,7 @@ public final class DataStore
 			}
 		}
 
+		getCompatibilityHandler().handleMissingCommand(descriptor, keyName);
 		return null;
 	}
 

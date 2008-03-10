@@ -16,6 +16,7 @@
  * David McKnight  (IBM)  - [218685] [dstore] Unable to connect when using SSL.
  * Martin Oberhuber (Wind River) - [219260][dstore][regression] Cannot connect to dstore daemon
  * David McKnight  (IBM)   [220123][dstore] Configurable timeout on irresponsiveness
+ * David McKnight   (IBM) - [220892][dstore] Backward compatibility: Server and Daemon should support old clients
  *******************************************************************************/
 
 package org.eclipse.dstore.core.client;
@@ -42,6 +43,7 @@ import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.DataStoreAttributes;
+import org.eclipse.dstore.core.model.IDataStoreCompatibilityHandler;
 import org.eclipse.dstore.core.model.IDataStoreConstants;
 import org.eclipse.dstore.core.model.ISSLProperties;
 import org.eclipse.dstore.core.server.ServerLauncher;
@@ -107,18 +109,7 @@ public class ClientConnection
 
 	private ArrayList _loaders;
 
-	private static final int HANDSHAKE_INCORRECT = 0;
-	private static final int HANDSHAKE_SERVER_OLDER = 1;
-	private static final int HANDSHAKE_CORRECT = 2;
-	private static final int HANDSHAKE_UNEXPECTED = 3;
-	private static final int HANDSHAKE_SERVER_NEWER = 4;
-	private static final int HANDSHAKE_SERVER_RECENT_OLDER = 5;
-	private static final int HANDSHAKE_SERVER_RECENT_NEWER = 6;
-	private static final int HANDSHAKE_TIMEOUT = 7;
-	
-	private static final int VERSION_INDEX_PROTOCOL = 0;
-	private static final int VERSION_INDEX_VERSION  = 1;
-	private static final int VERSION_INDEX_MINOR    = 2;
+
 	public static String INCOMPATIBLE_SERVER_UPDATE = "Incompatible DataStore."; //$NON-NLS-1$
 	public static String INCOMPATIBLE_CLIENT_UPDATE = "Incompatible DataStore."; //$NON-NLS-1$
 	public static String SERVER_OLDER = "Older DataStore Server."; //$NON-NLS-1$
@@ -204,8 +195,14 @@ public class ClientConnection
 		_dataStore.setSSLProperties(properties);
 	}
 
+	public void setCompatibilityHandler(IDataStoreCompatibilityHandler handler){
+		_dataStore.setCompatibilityHandler(handler);
+	}
 
-
+	public IDataStoreCompatibilityHandler getCompatibilityHandler(){
+		return _dataStore.getCompatibilityHandler();
+	}
+	
 	/**
 	 * Specifies the loaders used to instantiate the miners
 	 *
@@ -503,18 +500,18 @@ public class ClientConnection
 			int handshakeResult = doHandShake();
 			switch (handshakeResult)
 			{
-			case HANDSHAKE_CORRECT:
+			case IDataStoreCompatibilityHandler.HANDSHAKE_CORRECT:
 				result = doConnect(ticket);
 				break;
-			case HANDSHAKE_SERVER_RECENT_NEWER:
+			case IDataStoreCompatibilityHandler.HANDSHAKE_SERVER_RECENT_NEWER:
 				result = doConnect(ticket);
 				result.setMessage(CLIENT_OLDER);
 				break;
-			case HANDSHAKE_SERVER_RECENT_OLDER:
+			case IDataStoreCompatibilityHandler.HANDSHAKE_SERVER_RECENT_OLDER:
 				result = doConnect(ticket);
 				result.setMessage(SERVER_OLDER);
 				break;
-			case HANDSHAKE_SERVER_NEWER:
+			case IDataStoreCompatibilityHandler.HANDSHAKE_SERVER_NEWER:
 			{
 				msg = INCOMPATIBLE_CLIENT_UPDATE;
 				msg += "\nThe server running on " //$NON-NLS-1$
@@ -524,7 +521,7 @@ public class ClientConnection
 					+ " is a newer DataStore server."; //$NON-NLS-1$
 				break;
 			}
-			case HANDSHAKE_SERVER_OLDER:
+			case IDataStoreCompatibilityHandler.HANDSHAKE_SERVER_OLDER:
 			{
 				msg = INCOMPATIBLE_SERVER_UPDATE;
 				msg += "\nThe server running on " //$NON-NLS-1$
@@ -534,7 +531,7 @@ public class ClientConnection
 					+ " is an older DataStore server."; //$NON-NLS-1$
 				break;
 			}
-			case HANDSHAKE_INCORRECT:
+			case IDataStoreCompatibilityHandler.HANDSHAKE_INCORRECT:
 			{
 				msg = CANNOT_CONNECT;
 				msg += INCOMPATIBLE_PROTOCOL;
@@ -545,13 +542,13 @@ public class ClientConnection
 					+ " is not a valid DataStore server."; //$NON-NLS-1$
 				break;
 			}
-			case HANDSHAKE_UNEXPECTED:
+			case IDataStoreCompatibilityHandler.HANDSHAKE_UNEXPECTED:
 			{
 				msg = CANNOT_CONNECT;
 				msg += "Unexpected exception."; //$NON-NLS-1$
 				break;
 			}
-			case HANDSHAKE_TIMEOUT:
+			case IDataStoreCompatibilityHandler.HANDSHAKE_TIMEOUT:
 			{
 				msg = CANNOT_CONNECT;
 				msg += "Timeout waiting for socket activity."; //$NON-NLS-1$
@@ -863,86 +860,22 @@ public class ClientConnection
 			}
 			catch (InterruptedIOException e)
 			{
-				return HANDSHAKE_TIMEOUT;
+				return IDataStoreCompatibilityHandler.HANDSHAKE_TIMEOUT;
 			}
 			_theSocket.setSoTimeout(0);
-
-			String[] clientVersionStr = DataStoreAttributes.DATASTORE_VERSION.split("\\.");			 //$NON-NLS-1$
+			
 			String[] serverVersionStr = handshake.split("\\."); //$NON-NLS-1$
-
-			_dataStore.setServerVersion(Integer.parseInt(serverVersionStr[VERSION_INDEX_VERSION]));
-			_dataStore.setServerMinor(Integer.parseInt(serverVersionStr[VERSION_INDEX_MINOR]));
+			int serverVersion = Integer.parseInt(serverVersionStr[IDataStoreCompatibilityHandler.VERSION_INDEX_VERSION]);
+			_dataStore.setServerVersion(serverVersion);
+			_dataStore.setServerMinor(Integer.parseInt(serverVersionStr[IDataStoreCompatibilityHandler.VERSION_INDEX_MINOR]));
 			
-			
-			if (handshake.equals(DataStoreAttributes.DATASTORE_VERSION))
-			{
-				return HANDSHAKE_CORRECT;
-			}
-			else
-			{
-				if (handshake.startsWith("<DataElement")) //$NON-NLS-1$
-				{
-					return HANDSHAKE_SERVER_OLDER;
-				}
-				else if (serverVersionStr[VERSION_INDEX_PROTOCOL].equals(clientVersionStr[VERSION_INDEX_PROTOCOL]))
-				{
-					if (_clientVersion == 0)
-					{
-						_clientVersion =  Integer.parseInt(clientVersionStr[VERSION_INDEX_VERSION]);		
-					}
-					int serverVersion = _dataStore.getServerVersion();
-					if (serverVersion== _clientVersion)
-					{
-						// major versions match so should be compatible
-						return HANDSHAKE_CORRECT;
-					}
-					else
-					{
-						if (serverVersion > _clientVersion)
-						{
-							// newer server
-							if (serverVersion - 1 == _clientVersion)
-							{
-								return HANDSHAKE_SERVER_RECENT_NEWER;
-							}
-							else
-							{
-								return HANDSHAKE_SERVER_NEWER;
-							}
-						}
-						else
-						{
-							// newer client
-							if (serverVersion + 1 == _clientVersion)
-							{
-								return HANDSHAKE_SERVER_RECENT_OLDER;
-							}
-							else if (serverVersion + 2 == _clientVersion)
-							{
-								// TODO we shouldn't be allowing this but
-								// wanting to see if old (non-open RSE server still works with open RSE)
-								return HANDSHAKE_SERVER_RECENT_OLDER;
-							}
-							else
-							{							
-								return HANDSHAKE_SERVER_OLDER;
-							}
-						}
-					}
-				}
-				else
-				{
-					//System.out.println("handshake=" + handshake);
-					return HANDSHAKE_INCORRECT;
-				}
-			}
-
+			return getCompatibilityHandler().checkCompatibility(handshake);
 		}
 		catch (Exception e)
 		{
-			return HANDSHAKE_UNEXPECTED;
+			return IDataStoreCompatibilityHandler.HANDSHAKE_UNEXPECTED;
 		}
-
+		
 	}
 		
 	public boolean isKnownStatus(String status)

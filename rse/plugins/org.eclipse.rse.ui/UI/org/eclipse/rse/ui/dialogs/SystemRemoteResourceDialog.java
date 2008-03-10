@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [190442] made SystemActionViewerFilter API
  * Kevin Doyle (IBM) - [198114] Allowed to move file into existing folder/archive on first attempt
+ * Xuan Chen (IBM) - [220999] [api] Need to change class SystemSelectRemoteFileAction to use SystemRemoteFileDialog
  ********************************************************************************/
 
 package org.eclipse.rse.ui.dialogs;
@@ -53,6 +54,7 @@ public abstract class SystemRemoteResourceDialog extends SystemPromptDialog
 	{		
 		_form = new SystemResourceSelectionForm(getShell(), parent, this, _inputProvider, getVerbiage(), _multipleSelectionMode, getMessageLine());
 		initForm();
+		_form.setPreSelection(_preSelection);
 		createMessageLine(parent);
 		return _form.getInitialFocusControl();
 	}
@@ -247,7 +249,13 @@ public abstract class SystemRemoteResourceDialog extends SystemPromptDialog
 		else
 		  setOutputObject(null);
 		return closeDialog;
-	}	
+	}
+	
+	public void setShowNewConnectionPrompt(boolean showNewConnectionPrompt)
+	{
+		_inputProvider.setAllowNewConnection(showNewConnectionPrompt);
+	}
+	
 	/**
 	 * Private method.
 	 * <p>

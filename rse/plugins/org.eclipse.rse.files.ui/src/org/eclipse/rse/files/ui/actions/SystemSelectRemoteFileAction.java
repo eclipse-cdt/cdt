@@ -13,21 +13,23 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Xuan Chen (IBM) - [220999] [api] Need to change class SystemSelectRemoteFileAction to use SystemRemoteFileDialog
+ * Xuan Chen (IBM) - [220999] [api] Also need to remove unnecessary APIs
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.actions;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.model.IHost;
-import org.eclipse.rse.files.ui.ISystemAddFileListener;
 import org.eclipse.rse.files.ui.dialogs.SystemRemoteFileDialog;
 import org.eclipse.rse.internal.files.ui.FileResources;
-import org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString;
+import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
+import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.ui.SystemActionViewerFilter;
 import org.eclipse.rse.ui.actions.SystemBaseDialogAction;
 import org.eclipse.rse.ui.dialogs.SystemRemoteResourceDialog;
@@ -44,10 +46,7 @@ import org.eclipse.swt.widgets.Shell;
  *   <li>{@link #setHost(IHost) or #setDefaultConnection(SystemConnection)}
  *   <li>{@link #setSystemType(IRSESystemType)} or {@link #setSystemTypes(IRSESystemType[])}
  *   <li>{@link #setRootFolder(IHost, String)} or {@link #setRootFolder(IRemoteFile)} or {@link #setPreSelection(IRemoteFile)}
- *   <li>{@link #setFileTypes(String[])} or {@link #setFileTypes(String)} 
- *   <li>{@link #setAutoExpandDepth(int)}
  *   <li>{@link #setShowPropertySheet(boolean)} or {@link #setShowPropertySheet(boolean,boolean)}
- *   <li>{@link #enableAddMode(ISystemAddFileListener)}
  *   <li>{@link #setMultipleSelectionMode(boolean)}
  *   <li>{@link #setSelectionValidator(IValidatorRemoteSelection)}
  * </ul>
@@ -71,19 +70,14 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
     private IHost systemConnection, outputConnection;
     private IHost rootFolderConnection;
     private IRemoteFile preSelection;
-    private String   rootFolderAbsPath, fileTypes;   
+    private String   rootFolderAbsPath;   
     private String   message, treeTip, dlgTitle;
-	private String   addLabel, addToolTipText;
-    private int      expandDepth = 0;
     private boolean  showNewConnectionPrompt = true;
-    private boolean  restrictFolders = false;
 	private boolean  showPropertySheet = false;
 	private boolean  showPropertySheetDetailsButtonInitialState;
 	private boolean  showPropertySheetDetailsButton = false;
 	private boolean  multipleSelectionMode = false;
 	private boolean  onlyConnection = false;
-	private boolean allowFolderSelection = true;
-	private ISystemAddFileListener addButtonCallback = null;
 	private IValidatorRemoteSelection selectionValidator;
 	private List viewerFilters = new ArrayList();
 	private SystemActionViewerFilter customViewerFilter = null;
@@ -101,8 +95,8 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
 	 * Constructor when you have your own action label and tooltip
 	 * 
 	 * @param shell The shell to hang the dialog off of	 
-	 * @param label
-	 * @param tooltip
+	* @param label string to display in menu or toolbar
+	 * @param tooltip string to display when user hovers mouse over action.
 	 */
 	public SystemSelectRemoteFileAction(Shell shell, String label, String tooltip)
 	{
@@ -172,15 +166,6 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
     	this.showNewConnectionPrompt = show;
     }
 
-    /**
-     * Specify the zero-based auto-expand level for the tree. The default is zero, meaning
-     *   only show the connections.
-     */
-    public void setAutoExpandDepth(int depth)
-    {
-    	this.expandDepth = depth;
-    }
-		    
 	/**
      * Set the root folder from which to start listing files.
      * This version identifies the folder via a connection object and absolute path.
@@ -193,6 +178,24 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
 	{
 		rootFolderConnection = connection;
 		rootFolderAbsPath = folderAbsolutePath;
+		
+		IRemoteFileSubSystem ss  =	RemoteFileUtility.getFileSubSystem(rootFolderConnection);	
+		if (ss != null)
+		{
+			try
+			{
+			IRemoteFile rootFolder = ss.getRemoteFileObject(rootFolderAbsPath, new NullProgressMonitor());
+			if (rootFolder != null)
+			{
+				setPreSelection(rootFolder);
+			}
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+		onlyConnection = true;
 	}
 	/**
      * Set the root folder from which to start listing files.
@@ -223,61 +226,6 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
 	{
 		preSelection = selection;
 	}
-
-	/**
-	 * For files mode, restrict the files list by an array of file types
-	 */
-	public void setFileTypes(String[] fileTypes)
-	{
-		if (fileTypes != null)
-          this.fileTypes = RemoteFileFilterString.getTypesString(fileTypes);
-        else
-          this.fileTypes = null;
-	}
-	/**
-	 * For files mode, restrict the files list by a comman-delimited array of file types.
-	 * The last type must also end in a comma. Eg "java, class," or "class,".
-	 */
-	public void setFileTypes(String fileTypes)
-	{
-		this.fileTypes = fileTypes;
-	}
-
-    /**
-     * Specify whether setRootFolder should prevent the user from being able to see or select 
-     *  any other folder. This causes two effects:
-     * <ol>
-     *   <li>The special filter for root/drives is not shown
-     *   <li>No subfolders are listed in the root folder
-     * </ol>
-     */
-    public void setRestrictFolders(boolean restrict)
-    {
-    	this.restrictFolders = restrict;
-    }
-
-    /**
-     * Enable Add mode. This means the OK button is replaced with an Add button, and
-     * the Cancel with a Close button. When Add is pressed, the caller is called back.
-     * The dialog is not exited until Close is pressed.
-     * <p>
-     * When a library is selected, the caller is called back to decide to enable the Add
-     * button or not.
-     */
-    public void enableAddMode(ISystemAddFileListener caller)
-    {
-    	this.addButtonCallback = caller;
-    }
-    /**
-     * Overloaded method that allows setting the label and tooltip text of the Add button.
-     * If you pass null for the label, the default is used ("Add").
-     */
-    public void enableAddMode(ISystemAddFileListener caller, String addLabel, String addToolTipText)
-    {
-    	enableAddMode(caller);
-    	this.addLabel = addLabel;
-    	this.addToolTipText = addToolTipText;
-    }    
 
     /**
      * Show the property sheet on the right hand side, to show the properties of the
@@ -459,6 +407,8 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
 		
 		
 		dlg.setMultipleSelectionMode(multipleSelectionMode);
+		dlg.setShowNewConnectionPrompt(showNewConnectionPrompt);
+		
 		if (systemConnection != null)
 		{
 			dlg.setDefaultSystemConnection(systemConnection, onlyConnection);
@@ -547,13 +497,4 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
 		viewerFilters.add(filter);
 	}
 	
-	/**
-	 * Sets whether to allow folder selection. The default selection validator will use this to
-	 * determine whether the OK button will be enabled when a folder is selected. The default
-	 * is <code>true</code>.
-	 * @param allow <code>true</code> to allow folder selection, <code>false</code> otherwise.
-	 */
-	public void setAllowFolderSelection(boolean allow) {
-	    allowFolderSelection = allow;
-	}
 }

@@ -13,17 +13,20 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Xuan Chen (IBM) - [220995] [api] Need to add setCustomViewFilter API to SystemSelectRemoteFileAction
+ * Xuan Chen (IBM) - [220995] [api] Need to remove unnecessary APIs.
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.actions;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.model.IHost;
-import org.eclipse.rse.files.ui.ISystemAddFileListener;
 import org.eclipse.rse.files.ui.dialogs.SystemRemoteFileDialog;
 import org.eclipse.rse.files.ui.dialogs.SystemRemoteFolderDialog;
 import org.eclipse.rse.internal.files.ui.FileResources;
+import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
+import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.ui.SystemActionViewerFilter;
 import org.eclipse.rse.ui.actions.SystemBaseDialogAction;
 import org.eclipse.rse.ui.dialogs.SystemRemoteResourceDialog;
@@ -40,10 +43,7 @@ import org.eclipse.swt.widgets.Shell;
  *   <li>{@link #setShowNewConnectionPrompt(boolean)}
  *   <li>{@link #setHost(IHost) or #setDefaultConnection(SystemConnection)}
  *   <li>{@link #setSystemType(IRSESystemType)} or {@link #setSystemTypes(IRSESystemType[])}
- *   <li>{@link #setRootFolder(IHost, String)} or {@link #setRootFolder(IRemoteFile)} or {@link #setPreSelection(IRemoteFile)}
- *   <li>{@link #setAutoExpandDepth(int)}
  *   <li>{@link #setShowPropertySheet(boolean)}
- *   <li>{@link #enableAddMode(ISystemAddFileListener)}
  *   <li>{@link #setMultipleSelectionMode(boolean)}
  *   <li>{@link #setSelectionValidator(IValidatorRemoteSelection)}
  * </ul>
@@ -70,17 +70,12 @@ public class SystemSelectRemoteFolderAction extends SystemBaseDialogAction
     private IRemoteFile preSelection;
     private String   rootFolderAbsPath;
     private String   message, treeTip, dlgTitle;
-	private String   addLabel, addToolTipText;
-    private int      expandDepth = 0;
     private boolean  showNewConnectionPrompt = true;
-    private boolean  restrictFolders = false;
 	private boolean  showPropertySheet = false;
 	private boolean  showPropertySheetDetailsButtonInitialState;
 	private boolean  showPropertySheetDetailsButton = false;
 	private boolean  multipleSelectionMode = false;
-	private boolean  allowForMultipleParents = false;
 	private boolean  onlyConnection = false;
-	private ISystemAddFileListener addButtonCallback = null;
 	private IValidatorRemoteSelection selectionValidator;
 	private SystemActionViewerFilter customViewerFilter = null;
 	
@@ -97,8 +92,8 @@ public class SystemSelectRemoteFolderAction extends SystemBaseDialogAction
 	 * Constructor when you have your own action label and tooltip
 	 * 
 	 * @param shell The shell to hang the dialog off of	 
-	 * @param label
-	 * @param tooltip
+	 * @param label string to display in menu or toolbar
+	 * @param tooltip string to display when user hovers mouse over action.
 	 */
 	public SystemSelectRemoteFolderAction(Shell shell, String label, String tooltip)
 	{
@@ -183,21 +178,13 @@ public class SystemSelectRemoteFolderAction extends SystemBaseDialogAction
     	else
     	  setSystemTypes(new IRSESystemType[] {systemType});
     }
-
+    
     /**
      * Set to true if a "New Connection..." special connection is to be shown for creating new connections
      */
     public void setShowNewConnectionPrompt(boolean show)
     {
     	this.showNewConnectionPrompt = show;
-    }
-    /**
-     * Specify the zero-based auto-expand level for the tree. The default is zero, meaning
-     *   only show the connections.
-     */
-    public void setAutoExpandDepth(int depth)
-    {
-    	this.expandDepth = depth;
     }
 	
 	/**
@@ -220,6 +207,24 @@ public class SystemSelectRemoteFolderAction extends SystemBaseDialogAction
 	{
 		rootFolderConnection = connection;
 		rootFolderAbsPath = folderAbsolutePath;
+		
+		IRemoteFileSubSystem ss  =	RemoteFileUtility.getFileSubSystem(rootFolderConnection);	
+		if (ss != null)
+		{
+			try
+			{
+			IRemoteFile rootFolder = ss.getRemoteFileObject(rootFolderAbsPath, new NullProgressMonitor());
+			if (rootFolder != null)
+			{
+				setPreSelection(rootFolder);
+			}
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+		onlyConnection = true;
 	}
 	/**
      * Set the root folder from which to start listing folders.
@@ -258,41 +263,6 @@ public class SystemSelectRemoteFolderAction extends SystemBaseDialogAction
 	{
 		preSelection = selection;
 	}
-
-    /**
-     * Specify whether setRootFolder should prevent the user from being able to see or select 
-     *  any other folder. This causes this effect:
-     * <ol>
-     *   <li>The special filter for root/drives is not shown
-     * </ol>
-     */
-    public void setRestrictFolders(boolean restrict)
-    {
-    	restrictFolders = true;
-    }
-
-    /**
-     * Enable Add mode. This means the OK button is replaced with an Add button, and
-     * the Cancel with a Close button. When Add is pressed, the caller is called back.
-     * The dialog is not exited until Close is pressed.
-     * <p>
-     * When a library is selected, the caller is called back to decide to enable the Add
-     * button or not.
-     */
-    public void enableAddMode(ISystemAddFileListener caller)
-    {
-    	this.addButtonCallback = caller;
-    }
-    /**
-     * Overloaded method that allows setting the label and tooltip text of the Add button.
-     * If you pass null for the label, the default is used ("Add").
-     */
-    public void enableAddMode(ISystemAddFileListener caller, String addLabel, String addToolTipText)
-    {
-    	enableAddMode(caller);
-    	this.addLabel = addLabel;
-    	this.addToolTipText = addToolTipText;
-    }    
 
     /**
      * Show the property sheet on the right hand side, to show the properties of the
@@ -336,14 +306,6 @@ public class SystemSelectRemoteFolderAction extends SystemBaseDialogAction
     public void setMultipleSelectionMode(boolean multiple)
     {
     	this.multipleSelectionMode = multiple;
-    }
-    
-    /*
-     * Indicates whether to allow selection of objects from differnet parents
-     */
-    public void setAllowForMultipleParents(boolean multiple)
-    {
-    	this.allowForMultipleParents = multiple;
     }
     
     /**
@@ -487,16 +449,18 @@ public class SystemSelectRemoteFolderAction extends SystemBaseDialogAction
 		  dlg = new SystemSelectRemoteFileOrFolderDialog(shell, false); // false => folder vs file mode
 		else
 		  dlg = new SystemSelectRemoteFileOrFolderDialog(shell, dlgTitle, false); // false => folder vs file mode
-		
+		*/
 		
 		
 		dlg.setShowNewConnectionPrompt(showNewConnectionPrompt);
 		dlg.setMultipleSelectionMode(multipleSelectionMode);
+		
+		/*
 		dlg.setAllowForMultipleParents(allowForMultipleParents);
 		if (restrictFolders)
 		  dlg.setRestrictFolders(true);
-		  
-		  		
+		
+		
 		if (systemConnection != null)
 		{
 			if (onlyConnection)			   
@@ -519,6 +483,7 @@ public class SystemSelectRemoteFolderAction extends SystemBaseDialogAction
 		  */
 		if (preSelection != null)
 		  dlg.setPreSelection(preSelection);		 
+		
 		/*
 		else if (rootFolderConnection != null)
 		  dlg.setRootFolder(rootFolderConnection, rootFolderAbsPath);

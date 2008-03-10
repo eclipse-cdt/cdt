@@ -341,7 +341,14 @@ public class XMLparser
 				
 				if (_isKeepAliveEnabled && _isKeepAliveCompatible)
 				{	
-					socket.setSoTimeout(IO_SOCKET_READ_TIMEOUT);
+					if (_kart == null || !_kart.isAlive()){  // normal read wait
+						socket.setSoTimeout(IO_SOCKET_READ_TIMEOUT);
+					}
+					else { // read wait time when awaking a keepalive response
+						// otherwise, if IO_SOCKET_READ_TIMEOUT is bigger we don't get out of here until IO_SOCKET_READ_TIMEOUT is complete
+						socket.setSoTimeout((int)KEEPALIVE_RESPONSE_TIMEOUT);
+					}
+					
 					try
 					{
 						in = reader.read();

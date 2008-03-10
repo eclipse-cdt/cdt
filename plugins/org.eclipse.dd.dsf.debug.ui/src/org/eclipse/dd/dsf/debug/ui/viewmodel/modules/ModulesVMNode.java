@@ -17,7 +17,6 @@ import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.debug.internal.ui.DsfDebugUIPlugin;
 import org.eclipse.dd.dsf.debug.service.IModules;
-import org.eclipse.dd.dsf.debug.service.IRegisters;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IModules.IModuleDMContext;
 import org.eclipse.dd.dsf.debug.service.IModules.IModuleDMData;

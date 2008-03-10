@@ -2097,19 +2097,19 @@ public class AST2TemplateTests extends AST2BaseTest {
     	assertTrue(name.resolveBinding() instanceof IParameter);
     }
 
-    // template<typename _TpA>
+    // template<typename TpA>
     // class A {
     // public:
-    //   typedef _TpA ta;
+    //   typedef TpA ta;
     // };
 	//
-    // template<typename _TpB>
+    // template<typename TpB>
     // class B {
     // public:
-    //   typedef typename A<_TpB>::ta tb;
+    //   typedef typename A<TpB>::ta tb;
     // };
     //
-    // void f(A<int>::tb r) {}
+    // void f(B<int>::tb r) {}
     public void _testTemplateTypedef_214447() throws Exception {
     	StringBuffer buffer = getContents(1)[0];
     	IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, true, true);
@@ -2144,7 +2144,7 @@ public class AST2TemplateTests extends AST2BaseTest {
     // };
     //
     // void f(Vec<int>::reference r) {}
-    public void _testRebindPattern_214447_2() throws Exception {
+    public void _testRebindPattern_214447_1() throws Exception {
     	StringBuffer buffer = getContents(1)[0];
     	IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, true, true);
 
@@ -2184,7 +2184,7 @@ public class AST2TemplateTests extends AST2BaseTest {
     // };
     //
     // void f(Vec<int>::reference r) {}
-    public void _testRebindPattern_214017_3() throws Exception {
+    public void _testRebindPattern_214017_2() throws Exception {
     	StringBuffer buffer = getContents(1)[0];
     	IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, true, true);
 

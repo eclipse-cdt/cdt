@@ -2097,6 +2097,36 @@ public class AST2TemplateTests extends AST2BaseTest {
     	assertTrue(name.resolveBinding() instanceof IParameter);
     }
 
+    // template<typename _TpA>
+    // class A {
+    // public:
+    //   typedef _TpA ta;
+    // };
+	//
+    // template<typename _TpB>
+    // class B {
+    // public:
+    //   typedef typename A<_TpB>::ta tb;
+    // };
+    //
+    // void f(A<int>::tb r) {}
+    public void _testTemplateTypedef_214447() throws Exception {
+    	StringBuffer buffer = getContents(1)[0];
+    	IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, true, true);
+
+    	CPPNameCollector col = new CPPNameCollector();
+    	tu.accept(col);
+    	for (IASTName name : col.nameList) {
+   			if ("r".equals(String.valueOf(name))) {
+   	    		IBinding b0 = name.resolveBinding();
+   				IType type = ((ICPPVariable) b0).getType();
+   				type = CPPSemantics.getUltimateType(type, false);
+   				assertInstance(type, IBasicType.class);
+				assertEquals("int", ASTTypeUtil.getType(type));
+   			}
+		}
+    }
+
     // template<typename _TpAllocator>
     // class Allocator {
     // public:
@@ -2114,7 +2144,47 @@ public class AST2TemplateTests extends AST2BaseTest {
     // };
     //
     // void f(Vec<int>::reference r) {}
-    public void _testRebindPattern_214447() throws Exception {
+    public void _testRebindPattern_214447_2() throws Exception {
+    	StringBuffer buffer = getContents(1)[0];
+    	IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, true, true);
+
+    	CPPNameCollector col = new CPPNameCollector();
+    	tu.accept(col);
+    	for (IASTName name : col.nameList) {
+   			if ("r".equals(String.valueOf(name))) {
+   	    		IBinding b0 = name.resolveBinding();
+   				IType type = ((ICPPVariable) b0).getType();
+   				type = CPPSemantics.getUltimateType(type, false);
+   				assertInstance(type, IBasicType.class);
+				assertEquals("int", ASTTypeUtil.getType(type));
+   			}
+		}
+    }
+
+    // template<typename _TpAllocator>
+    // class Allocator {
+    // public:
+    //   typedef _TpAllocator& alloc_reference;
+    //   template<typename _TpRebind>
+    //   struct rebind {
+    //     typedef Allocator<_TpRebind> other;
+    //   };
+    // };
+    //
+    // template<typename _TpBase, typename _AllocBase>
+    // class VecBase {
+    // public:
+    //   typedef typename _AllocBase::template rebind<_TpBase>::other _Tp_alloc_type;
+    // };
+    //
+    // template<typename _Tp, typename _Alloc = Allocator<_Tp> >
+    // class Vec : protected VecBase<_Tp, _Alloc> {
+    // public:
+    //   typedef typename VecBase<_Tp, _Alloc>::_Tp_alloc_type::alloc_reference reference;
+    // };
+    //
+    // void f(Vec<int>::reference r) {}
+    public void _testRebindPattern_214017_3() throws Exception {
     	StringBuffer buffer = getContents(1)[0];
     	IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, true, true);
 

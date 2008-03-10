@@ -27,7 +27,7 @@ import org.eclipse.dd.dsf.concurrent.Sequence;
 import org.eclipse.dd.dsf.debug.service.StepQueueManager;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.gdb.launching.GdbLaunch;
+import org.eclipse.dd.gdb.launch.launching.GdbLaunch;
 import org.eclipse.dd.gdb.service.GDBRunControl;
 import org.eclipse.dd.gdb.service.command.GDBControl;
 import org.eclipse.dd.mi.service.CSourceLookup;

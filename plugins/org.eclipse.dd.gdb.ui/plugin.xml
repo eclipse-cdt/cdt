@@ -2,26 +2,12 @@
 <?eclipse version="3.0"?>
 <plugin>
 
-   <extension point="org.eclipse.debug.ui.launchConfigurationTabGroups">
-      <launchConfigurationTabGroup
-            type="org.eclipse.dd.mi.launch.localCLaunch"
-            class="org.eclipse.dd.gdb.internal.ui.launching.DsfMIlRunLaunchConfigurationTabGroup"
-            id="org.eclipse.dd.mi.launch.localRunLaunchTabGroup">
-      </launchConfigurationTabGroup>
-   </extension>
    
-   <extension point="org.eclipse.debug.ui.launchConfigurationTypeImages">
-      <launchConfigurationTypeImage
-            icon="icons/full/obj16/c_app.gif" 	
-            configTypeID="org.eclipse.dd.mi.launch.localCLaunch"
-            id="org.eclipse.dd.mi.launch.localRunLaunchImage">
-      </launchConfigurationTypeImage>
-   </extension>
 
    <extension point="org.eclipse.core.runtime.adapters">
       <factory 
         	class="org.eclipse.dd.gdb.internal.ui.GdbAdapterFactory" 
-	        adaptableType="org.eclipse.dd.gdb.launching.GdbLaunch">
+	        adaptableType="org.eclipse.dd.gdb.launch.launching.GdbLaunch">
          <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider"/>
          <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory"/>
          <adapter type="org.eclipse.debug.ui.contexts.ISuspendTrigger"/>

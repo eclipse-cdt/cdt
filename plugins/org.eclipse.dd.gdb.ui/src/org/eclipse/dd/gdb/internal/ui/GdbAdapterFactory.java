@@ -27,8 +27,9 @@ import org.eclipse.dd.dsf.debug.ui.sourcelookup.MISourceDisplayAdapter;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.ui.actions.DsfTerminateCommand;
 import org.eclipse.dd.gdb.internal.ui.viewmodel.GdbViewModelAdapter;
-import org.eclipse.dd.gdb.launching.GdbLaunch;
-import org.eclipse.dd.gdb.launching.GdbLaunchDelegate;
+import org.eclipse.dd.gdb.launch.launching.GdbLaunch;
+import org.eclipse.dd.gdb.launch.launching.GdbLocalLaunchDelegate;
+import org.eclipse.dd.gdb.launch.launching.GdbRemoteLaunchDelegate;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchesListener2;
@@ -48,7 +49,7 @@ import org.eclipse.debug.ui.sourcelookup.ISourceDisplay;
 
 /**
  * This implementation of platform adapter factory only retrieves the adapters
- * for the launch object.  But it also manages the creation and descruction 
+ * for the launch object.  But it also manages the creation and destruction 
  * of the session-based adapters which are returned by the 
  * IDMContext.getAdapter() methods.
  */
@@ -101,7 +102,8 @@ public class GdbAdapterFactory
             fDebugModelProvider = new IDebugModelProvider() {
                 // @see org.eclipse.debug.core.model.IDebugModelProvider#getModelIdentifiers()
                 public String[] getModelIdentifiers() {
-                    return new String[] { GdbLaunchDelegate.GDB_DEBUG_MODEL_ID };
+                    return new String[] { GdbLocalLaunchDelegate.GDB_DEBUG_MODEL_ID,
+                    		              GdbRemoteLaunchDelegate.GDB_DEBUG_MODEL_ID};
                 }
             };
             session.registerModelAdapter(IDebugModelProvider.class, fDebugModelProvider);

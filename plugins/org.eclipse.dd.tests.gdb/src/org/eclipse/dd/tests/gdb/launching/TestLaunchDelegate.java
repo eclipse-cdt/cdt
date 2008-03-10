@@ -35,7 +35,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.eclipse.dd.dsf.debug.model.DsfMemoryBlockRetrieval;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
-import org.eclipse.dd.gdb.launching.GdbLaunch;
+import org.eclipse.dd.gdb.launch.launching.GdbLaunch;
 import org.eclipse.dd.gdb.service.command.GDBControl;
 import org.eclipse.dd.mi.service.command.AbstractCLIProcess;
 import org.eclipse.dd.mi.service.command.MIInferiorProcess;

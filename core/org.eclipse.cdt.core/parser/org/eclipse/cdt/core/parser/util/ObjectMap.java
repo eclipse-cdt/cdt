@@ -139,13 +139,11 @@ public class ObjectMap extends ObjectTable {
 	}
 	
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder("{");
 		for (int i = 0; i < size(); i++) {
 			Object key = keyAt(i);
 			if (key != null) {
-				if (sb.length() == 0) {
-					sb.append("{");
-				} else {
+				if (sb.length() > 1) {
 					sb.append(", ");
 				}
 				Object value = valueTable[i];

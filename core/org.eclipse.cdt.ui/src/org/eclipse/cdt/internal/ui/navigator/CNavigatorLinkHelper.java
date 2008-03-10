@@ -22,6 +22,7 @@ import org.eclipse.ui.navigator.ILinkHelper;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
 
@@ -62,6 +63,8 @@ public class CNavigatorLinkHelper implements ILinkHelper {
 			if (file != null && CoreModel.hasCNature(file.getProject())) {
 				element= CoreModel.getDefault().create(file);
 			}
+		} else {
+			element= ((IWorkingCopy) element).getOriginalElement();
 		}
 		return (element != null) ? new StructuredSelection(element) : StructuredSelection.EMPTY;
 	}

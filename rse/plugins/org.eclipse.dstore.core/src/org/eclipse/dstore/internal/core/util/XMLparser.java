@@ -357,12 +357,12 @@ public class XMLparser
 						}
 						else
 						{
-							if (_kart == null){
+							if (_kart == null || !_kart.isAlive()){
 								_kart = new KeepAliveRequestThread(KEEPALIVE_RESPONSE_TIMEOUT);
 								if (VERBOSE_KEEPALIVE) System.out.println("No activity on socket. KeepAlive thread started."); //$NON-NLS-1$
 								_kart.start();
 								continue;
-							}
+							}							
 						}
 					}
 				}

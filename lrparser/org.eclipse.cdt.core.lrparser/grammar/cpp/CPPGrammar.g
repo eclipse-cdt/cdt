@@ -805,8 +805,6 @@ constant_expression_opt
 -- Statements
 ------------------------------------------------------------------------------------------
 
--- TODO: declarations in conditions
-
 statement
     ::= labeled_statement
       | expression_statement
@@ -895,8 +893,12 @@ jump_statement
           /. $Build  consumeStatementGoto();  $EndBuild ./
 
 
+-- Nested functions are not part of the C++ spec, but several
+-- of the parser test cases expect them to work.
 declaration_statement
     ::= block_declaration
+          /. $Build  consumeStatementDeclaration();  $EndBuild ./
+      | function_definition  -- not spec
           /. $Build  consumeStatementDeclaration();  $EndBuild ./
 
 
@@ -908,20 +910,20 @@ declaration_statement
 
 declaration
     ::= block_declaration
-      | function_definition         -- done
-      | template_declaration        -- done
-      | explicit_instantiation      -- done
-      | explicit_specialization     -- done
-      | linkage_specification       -- done
-      | namespace_definition        -- done
+      | function_definition
+      | template_declaration
+      | explicit_instantiation
+      | explicit_specialization
+      | linkage_specification
+      | namespace_definition
 
 
 block_declaration
-    ::= simple_declaration          -- done
-      | asm_definition              -- done
-      | namespace_alias_definition  -- done
-      | using_declaration           -- done
-      | using_directive             -- done
+    ::= simple_declaration
+      | asm_definition
+      | namespace_alias_definition
+      | using_declaration
+      | using_directive
 
 
 declaration_seq
@@ -1573,30 +1575,31 @@ base_specifier_list
       | base_specifier_list ',' base_specifier
 
 
--- make this more lenient, allow virtual both before and after
+
 base_specifier
     ::= dcolon_opt nested_name_specifier_opt class_name
-          /. $Build  consumeBaseSpecifier(false);  $EndBuild ./
-      | virtual_opt access_specifier_keyword virtual_opt dcolon_opt nested_name_specifier_opt class_name
-          /. $Build  consumeBaseSpecifier(true);  $EndBuild ./
+          /. $Build  consumeBaseSpecifier(false, false);  $EndBuild ./
+      | 'virtual' access_specifier_keyword_opt dcolon_opt nested_name_specifier_opt class_name
+          /. $Build  consumeBaseSpecifier(true, true);  $EndBuild ./
+      | access_specifier_keyword 'virtual' dcolon_opt nested_name_specifier_opt class_name
+          /. $Build  consumeBaseSpecifier(true, true);  $EndBuild ./
+      | access_specifier_keyword dcolon_opt nested_name_specifier_opt class_name
+          /. $Build  consumeBaseSpecifier(true, false);  $EndBuild ./
 
-
-virtual_opt
-    ::= 'virtual' 
-          /. $Build  consumePlaceHolder();  $EndBuild ./
-      | $empty
-          /. $Build  consumeEmpty();  $EndBuild ./
       
-
 access_specifier_keyword
     ::= 'private'
+          /. $Build  consumeAccessKeywordToken();  $EndBuild ./
       | 'protected'
+          /. $Build  consumeAccessKeywordToken();  $EndBuild ./
       | 'public'
+          /. $Build  consumeAccessKeywordToken();  $EndBuild ./
 
 
 access_specifier_keyword_opt
     ::= access_specifier_keyword
       | $empty
+          /. $Build  consumeEmpty();  $EndBuild ./
 
 
 conversion_function_id_name
@@ -1684,9 +1687,16 @@ template_parameter_list
       | template_parameter_list ',' template_parameter
 
 
+-- TODO There is an ambiguity in the spec grammar here, 
+-- "class X" should be parsed as a type_parameter
+-- and not as a parameter_declaration. Here precedence is used to disambiguate
+-- but it would be better to refactor the grammar to remove the conflict.
+
 template_parameter
-    ::= type_parameter
-      | parameter_declaration
+    ::=? type_parameter
+    
+template_parameter
+    ::= parameter_declaration
 
 
 type_parameter

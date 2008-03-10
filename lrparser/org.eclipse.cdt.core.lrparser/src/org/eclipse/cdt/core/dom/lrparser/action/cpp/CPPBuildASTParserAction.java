@@ -96,6 +96,7 @@ import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPNoCastExpressionParser;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPSizeofExpressionParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionDeclarator;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 
 /**
@@ -389,6 +390,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	}
 
 	
+	@SuppressWarnings("restriction")
 	private static OverloadableOperator getOverloadableOperator(List<IToken> tokens) {
 		if(tokens.size() == 1) {
 			// TODO this is a hack that I did to save time
@@ -400,6 +402,12 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		}
 		else if(matchTokens(tokens, TK_delete, TK_LeftBracket, TK_RightBracket)) {
 			return OverloadableOperator.DELETE_ARRAY;
+		}
+		else if(matchTokens(tokens, TK_LeftBracket, TK_RightBracket)) {
+			return OverloadableOperator.BRACKET;
+		}
+		else if(matchTokens(tokens, TK_LeftParen, TK_RightParen)) {
+			return OverloadableOperator.PAREN;
 		}
 		
 		return null;
@@ -678,6 +686,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	/**
 	 * Creates a qualified name from a list of names (that must be in reverse order).
 	 */
+	@SuppressWarnings("restriction")
 	private IASTName createQualifiedName(LinkedList<IASTName> nestedNames, boolean startsWithColonColon) {
 		if(!startsWithColonColon && nestedNames.size() == 1) { // its actually an unqualified name
 			return nestedNames.get(0);
@@ -686,8 +695,17 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		ICPPASTQualifiedName qualifiedName = nodeFactory.newCPPQualifiedName();
 		qualifiedName.setFullyQualified(startsWithColonColon);
 		
-		for(IASTName name : reverseIterable(nestedNames))
+		StringBuilder signature = new StringBuilder(startsWithColonColon ? "::" : ""); //$NON-NLS-1$ //$NON-NLS-2$
+		boolean first = true;
+		for(IASTName name : reverseIterable(nestedNames)) {
 			qualifiedName.addName(name);
+			if(!first)
+				signature.append("::"); //$NON-NLS-1$
+			signature.append(name.toString());
+			first = false;
+		}
+		 
+		((CPPASTQualifiedName)qualifiedName).setSignature(signature.toString());
 		
 		int startOffset = offset(nestedNames.getLast());
 		int length = endOffset(nestedNames.getFirst()) - startOffset;
@@ -863,7 +881,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		
 		List<Object> declarations = astStack.closeScope();
-		IASTName namespaceName = (hasName) ? (IASTName) astStack.pop() : null;
+		IASTName namespaceName = hasName ? (IASTName)astStack.pop() : nodeFactory.newName();
 		
 		ICPPASTNamespaceDefinition definition = nodeFactory.newNamespaceDefinition(namespaceName);
 		
@@ -1077,7 +1095,8 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	public void consumeVisibilityLabel() {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 
-		int visibility = getAccessSpecifier(parser.getLeftIToken());
+		IToken specifier = (IToken)astStack.pop();
+		int visibility = getAccessSpecifier(specifier);
 		ICPPASTVisiblityLabel visibilityLabel = nodeFactory.newVisibilityLabel(visibility);
 		setOffsetAndLength(visibilityLabel);
 		astStack.push(visibilityLabel);
@@ -1098,23 +1117,21 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	
 	/**
 	 * base_specifier
-	 *     ::= dcolon_opt nested_name_specifier_opt class_name
-	 *       | virtual_opt access_specifier_keyword virtual_opt dcolon_opt nested_name_specifier_opt class_name
+     *     ::= dcolon_opt nested_name_specifier_opt class_name
+     *       | 'virtual' access_specifier_keyword_opt dcolon_opt nested_name_specifier_opt class_name
+     *       | access_specifier_keyword 'virtual' dcolon_opt nested_name_specifier_opt class_name
+     *       | access_specifier_keyword dcolon_opt nested_name_specifier_opt class_name
 	 */
-	public void consumeBaseSpecifier(boolean hasAccessSpecifier) {
+	public void consumeBaseSpecifier(boolean hasAccessSpecifier, boolean isVirtual) {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		
 		IASTName name = subRuleQualifiedName(false);
-		boolean isVirtual = false;
-		int visibility = 0; // this is the default value that the DOM parser uses
 		
+		int visibility = 0; // this is the default value that the DOM parser uses
 		if(hasAccessSpecifier) {
-			boolean hasVirtualKeyword2 = astStack.pop() == PLACE_HOLDER;
-			boolean hasVirtualKeyword1 = astStack.pop() == PLACE_HOLDER;
-			isVirtual = hasVirtualKeyword1 | hasVirtualKeyword2;
-			
-			IToken accessSpecifierToken = parser.getRuleTokens().get(hasVirtualKeyword1 ? 1 : 0);
-			visibility = getAccessSpecifier(accessSpecifierToken);
+			IToken accessSpecifierToken = (IToken) astStack.pop();
+			if(accessSpecifierToken != null)
+				visibility = getAccessSpecifier(accessSpecifierToken);
 		}
 		
 		ICPPASTBaseSpecifier baseSpecifier = nodeFactory.newBaseSpecifier(name, visibility, isVirtual);
@@ -1124,6 +1141,18 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 		
+	
+	/**
+	 * Gets the current token and places it on the stack for later consumption.
+	 */
+	public void consumeAccessKeywordToken() {
+		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
+		
+		astStack.push(parser.getRightIToken());
+		
+		if(TRACE_AST_STACK) System.out.println(astStack);
+	}
+	
 	
 	/**
 	 * class_specifier

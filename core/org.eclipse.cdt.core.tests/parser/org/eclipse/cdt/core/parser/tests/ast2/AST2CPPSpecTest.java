@@ -5583,8 +5583,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	struct A {
 	virtual void f();
 	};
-	struct B1 : A { // note nonvirtual
-	derivation
+	struct B1 : A { // note nonvirtual derivation
 	void f();
 	};
 	struct B2 : A {
@@ -5609,8 +5608,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		buffer.append("struct A {\n"); //$NON-NLS-1$
 		buffer.append("virtual void f();\n"); //$NON-NLS-1$
 		buffer.append("};\n"); //$NON-NLS-1$
-		buffer.append("struct B1 : A { // note nonvirtual\n"); //$NON-NLS-1$
-		buffer.append("derivation\n"); //$NON-NLS-1$
+		buffer.append("struct B1 : A { // note nonvirtual derivation\n"); //$NON-NLS-1$
 		buffer.append("void f();\n"); //$NON-NLS-1$
 		buffer.append("};\n"); //$NON-NLS-1$
 		buffer.append("struct B2 : A {\n"); //$NON-NLS-1$
@@ -5741,20 +5739,21 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
 	}
 	
-	/**
-	 [--Start Example(CPP 10.4-2b):
-	struct C {
-	virtual void f() { }=0; // illformed
-	};
-	 --End Example]
-	 */
-	public void test10_4s2b() throws Exception {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("struct C {\n"); //$NON-NLS-1$
-		buffer.append("virtual void f() { }=0; // illformed\n"); //$NON-NLS-1$
-		buffer.append("};\n"); //$NON-NLS-1$
-		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
-	}
+	// Not legal C++
+//	/**
+//	 [--Start Example(CPP 10.4-2b):
+//	struct C {
+//	virtual void f() { }=0; // illformed
+//	};
+//	 --End Example]
+//	 */
+//	public void test10_4s2b() throws Exception {
+//		StringBuffer buffer = new StringBuffer();
+//		buffer.append("struct C {\n"); //$NON-NLS-1$
+//		buffer.append("virtual void f() { }=0; // illformed\n"); //$NON-NLS-1$
+//		buffer.append("};\n"); //$NON-NLS-1$
+//		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
+//	}
 	
 	/**
 	 [--Start Example(CPP 10.4-3):

@@ -95,6 +95,7 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 		/*
 		 * @see TreeViewer#internalExpandToLevel
 		 */
+		@Override
 		protected void internalExpandToLevel(Widget node, int level) {
 			if (node instanceof Item) {
 				Item i= (Item) node;
@@ -103,16 +104,31 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 				if (data instanceof CElementGrouping) {
 					return;
 				} else if (data instanceof ICElement) {
-					// expand classes and namespaces
-					final int elementType = ((ICElement) data).getElementType();
-					if (elementType != ICElement.C_CLASS 
-							&& elementType != ICElement.C_TEMPLATE_CLASS 
-							&& elementType != ICElement.C_NAMESPACE) {
+					if (!shouldExpandElement((ICElement)data)) {
 						return;
 					}
 				}
 			}
 			super.internalExpandToLevel(node, level);
+		}
+		
+		private boolean shouldExpandElement(ICElement cElement) {
+			final ICElement parent= cElement.getParent();
+			if (parent == null) {
+				return false;
+			}
+			// expand classes and namespaces
+			final int elementType= cElement.getElementType();
+			final int parentType= parent.getElementType();
+			switch (elementType) {
+			case ICElement.C_CLASS:
+			case ICElement.C_TEMPLATE_CLASS:
+				return parentType == ICElement.C_UNIT || parentType == ICElement.C_NAMESPACE;
+			case ICElement.C_NAMESPACE:
+				return parentType == ICElement.C_UNIT;
+			default:
+				return false;
+			}
 		}
 	}
 
@@ -279,7 +295,7 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 		fTreeViewer = new OutlineTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		fTreeViewer.setContentProvider(createContentProvider(fTreeViewer));
 		fTreeViewer.setLabelProvider(new DecoratingCLabelProvider(new AppearanceAwareLabelProvider(TEXT_FLAGS, IMAGE_FLAGS), true));
-		fTreeViewer.setAutoExpandLevel(2);
+		fTreeViewer.setAutoExpandLevel(3);
 		fTreeViewer.setUseHashlookup(true);
 		fTreeViewer.addSelectionChangedListener(this);
 		return fTreeViewer;

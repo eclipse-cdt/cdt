@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * David McKnight  (IBM)   [220123][dstore] Configurable timeout on irresponsiveness
+ * David McKnight  (IBM)   [222003] Client remains connected after server terminates
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.util;
@@ -111,6 +112,15 @@ public abstract class Receiver extends Thread implements IDataStorePreferenceLis
 			while (!_canExit)
 			{
 				handleInput();
+			}
+			
+			if (_canExit){
+				// is this an unexpected exit?
+				if (_dataStore.isConnected()){
+					// server exited without client exit
+					Exception e = new Exception("Server terminated unexpectedly");
+					handleError(e);
+				}
 			}
 		}
 		catch (Exception e)

@@ -1485,7 +1485,7 @@ public class CPPSemantics {
 			
 			//9-2 a class name is also inserted into the scope of the class itself
 			IASTName n = comp.getName();
-			if( nameMatches( data, n ) ) {
+			if( nameMatches( data, n, scope) ) {
 				found = (IASTName[]) ArrayUtil.append( IASTName.class, found, n );
 		    }
 		} else if ( parent instanceof ICPPASTNamespaceDefinition ){
@@ -1716,14 +1716,14 @@ public class CPPSemantics {
     		    	dtor = dtor.getNestedDeclarator();
     			IASTName declName = dtor.getName();
     			ASTInternal.addName( scope,  declName );
-    			if( !data.typesOnly && nameMatches( data, declName ) ) {
+    			if( !data.typesOnly && nameMatches( data, declName, scope ) ) {
     			    return declName;
     		    }
             }
 		} else if( node instanceof ICPPASTTemplateParameter ){
 			IASTName name = CPPTemplates.getTemplateParameterName( (ICPPASTTemplateParameter) node );
 			ASTInternal.addName( scope,  name );
-			if( nameMatches( data, name ) ) {
+			if( nameMatches( data, name, scope ) ) {
 		        return name;
 		    }
 		}
@@ -1742,7 +1742,7 @@ public class CPPSemantics {
 					IASTName declaratorName = declarator.getName();
 					ASTInternal.addName( scope,  declaratorName );
 					if( !data.typesOnly || simpleDeclaration.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef ) {
-						if( nameMatches( data, declaratorName ) ) {
+						if( nameMatches( data, declaratorName, scope ) ) {
 							if( resultName == null )
 							    resultName = declaratorName;
 							else if( resultArray == null )
@@ -1805,7 +1805,7 @@ public class CPPSemantics {
 			        if( enumerator == null ) break;
 			        tempName = enumerator.getName();
 			        ASTInternal.addName( scope,  tempName );
-			        if( !data.typesOnly && nameMatches( data, tempName ) ) {
+			        if( !data.typesOnly && nameMatches( data, tempName, scope ) ) {
 			            if( resultName == null )
 						    resultName = tempName;
 						else if( resultArray == null )
@@ -1817,7 +1817,7 @@ public class CPPSemantics {
 			}
 			if( specName != null ) {
 			    ASTInternal.addName( scope,  specName );
-			    if( nameMatches( data, specName ) ) {
+			    if( nameMatches( data, specName, scope ) ) {
 				    if( resultName == null )
 					    resultName = specName;
 					else if( resultArray == null )
@@ -1834,18 +1834,18 @@ public class CPPSemantics {
 				name = ns[ ns.length - 1 ];
 			}
 			ASTInternal.addName( scope,  name );
-			if( nameMatches( data, name ) ) {
+			if( nameMatches( data, name, scope ) ) {
 				return name;
 			}
 		} else if( declaration instanceof ICPPASTNamespaceDefinition ){
 			IASTName namespaceName = ((ICPPASTNamespaceDefinition) declaration).getName();
 			ASTInternal.addName( scope,  namespaceName );
-			if( nameMatches( data, namespaceName ) )
+			if( nameMatches( data, namespaceName, scope ) )
 				return namespaceName;
 		} else if( declaration instanceof ICPPASTNamespaceAlias ){
 			IASTName alias = ((ICPPASTNamespaceAlias) declaration).getAlias();
 			ASTInternal.addName( scope,  alias );
-			if( nameMatches( data, alias ) )
+			if( nameMatches( data, alias, scope ) )
 				return alias;
 		} else if( declaration instanceof IASTFunctionDefinition ){
 			IASTFunctionDefinition functionDef = (IASTFunctionDefinition) declaration;
@@ -1856,7 +1856,7 @@ public class CPPSemantics {
 				IASTName declName = declarator.getName();
 				ASTInternal.addName( scope,  declName );
 	
-			    if( !data.typesOnly && nameMatches( data, declName ) ) {
+			    if( !data.typesOnly && nameMatches( data, declName, scope ) ) {
 					return declName;
 				}
 			}
@@ -1867,11 +1867,20 @@ public class CPPSemantics {
 		return resultName;
 	}
 
-	private static final boolean nameMatches( LookupData data, IASTName potential ){
+	private static final boolean nameMatches( LookupData data, IASTName potential, IScope scope) throws DOMException{
 	    if( potential instanceof ICPPASTQualifiedName ){
+	    	IASTNode phn= ASTInternal.getPhysicalNodeOfScope(scope);
+			if (phn instanceof ICPPASTCompositeTypeSpecifier == false && phn instanceof ICPPASTNamespaceDefinition == false)
+				return false;
+
 	        //A qualified name implies the name actually belongs to a different scope, and should
-	        //not be considered here.
-	        return false;
+	        //not be considered here, except the qualifier names the scope itself
+			final IASTName[] qn= ((ICPPASTQualifiedName) potential).getNames();
+			final IASTName ln= qn[qn.length-1];
+			if (CPPVisitor.getContainingScope(ln) != scope) 
+				return false;
+				
+			potential= ln;
 	    }
 	    char[] c = potential.toCharArray();
 	    char [] n = data.name();

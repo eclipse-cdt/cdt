@@ -5729,4 +5729,101 @@ public class AST2CPPTests extends AST2BaseTest {
     	bh.assertNonProblem("func(qualified)", 4);
     	bh.assertNonProblem("func(unqualified)", 4);
     }
+    
+    
+	// class Test {
+	//    void Test::member1();
+	//    void Test::member2() {};
+	// };
+	// void Test::member1(){
+	//    member2();
+	// }
+	public void testQualifiedMemberDeclaration_Bug222026() throws Exception {
+    	final String code = getContents(1)[0].toString();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+    	
+    	IBinding b= bh.assertNonProblem("member1", 7);
+		IBinding b2= bh.assertNonProblem("member1(){", 7);
+		assertTrue(b instanceof ICPPMethod);
+		ICPPMethod m1= (ICPPMethod) b;
+		assertEquals("member1", m1.getName());
+		assertEquals("Test", m1.getScope().getScopeName().toString());
+		assertSame(b, b2);
+		
+		bh= new BindingAssertionHelper(code, true);
+    	b= bh.assertNonProblem("member2", 7);
+		b2= bh.assertNonProblem("member2();", 7);
+		assertTrue(b instanceof ICPPMethod);
+		m1= (ICPPMethod) b;
+		assertEquals("member2", m1.getName());
+		assertEquals("Test", m1.getScope().getScopeName().toString());
+		assertSame(b, b2);
+
+		// different resolution order
+		bh= new BindingAssertionHelper(code, true);
+		b2= bh.assertNonProblem("member1(){", 7);
+    	b= bh.assertNonProblem("member1", 7);
+		assertTrue(b instanceof ICPPMethod);
+		m1= (ICPPMethod) b;
+		assertEquals("member1", m1.getName());
+		assertEquals("Test", m1.getScope().getScopeName().toString());
+		assertSame(b, b2);
+		
+		bh= new BindingAssertionHelper(code, true);
+		b2= bh.assertNonProblem("member2();", 7);
+    	b= bh.assertNonProblem("member2", 7);
+		assertTrue(b instanceof ICPPMethod);
+		m1= (ICPPMethod) b;
+		assertEquals("member2", m1.getName());
+		assertEquals("Test", m1.getScope().getScopeName().toString());
+		assertSame(b, b2);
+	}
+
+	// namespace Test {
+	//    void Test::member1();
+	//    void Test::member2() {};
+	// }
+	// void Test::member1(){
+	//    member2();
+	// }
+	public void testQualifiedMemberDeclarationInNamespace_Bug222026() throws Exception {
+    	final String code = getContents(1)[0].toString();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+    	
+    	IBinding b= bh.assertNonProblem("member1", 7);
+		IBinding b2= bh.assertNonProblem("member1(){", 7);
+		assertTrue(b instanceof ICPPFunction);
+		ICPPFunction m1= (ICPPFunction) b;
+		assertEquals("member1", m1.getName());
+		assertEquals("Test", m1.getScope().getScopeName().toString());
+		assertSame(b, b2);
+		
+		bh= new BindingAssertionHelper(code, true);
+    	b= bh.assertNonProblem("member2", 7);
+		b2= bh.assertNonProblem("member2();", 7);
+		assertTrue(b instanceof ICPPFunction);
+		m1= (ICPPFunction) b;
+		assertEquals("member2", m1.getName());
+		assertEquals("Test", m1.getScope().getScopeName().toString());
+		assertSame(b, b2);
+
+		// different resolution order
+		bh= new BindingAssertionHelper(code, true);
+		b2= bh.assertNonProblem("member1(){", 7);
+    	b= bh.assertNonProblem("member1", 7);
+		assertTrue(b instanceof ICPPFunction);
+		m1= (ICPPFunction) b;
+		assertEquals("member1", m1.getName());
+		assertEquals("Test", m1.getScope().getScopeName().toString());
+		assertSame(b, b2);
+		
+		bh= new BindingAssertionHelper(code, true);
+		b2= bh.assertNonProblem("member2();", 7);
+    	b= bh.assertNonProblem("member2", 7);
+		assertTrue(b instanceof ICPPFunction);
+		m1= (ICPPFunction) b;
+		assertEquals("member2", m1.getName());
+		assertEquals("Test", m1.getScope().getScopeName().toString());
+		assertSame(b, b2);
+	}
 }

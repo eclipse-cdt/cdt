@@ -134,6 +134,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 		}
 	}
 
+	@Override
 	public IScope getParent() {
 	    ICPPASTCompositeTypeSpecifier compType = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
 	    IASTName compName = compType.getName();
@@ -147,6 +148,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#addBinding(org.eclipse.cdt.core.dom.ast.IBinding)
 	 */
+	@Override
 	public void addBinding(IBinding binding) {
 	    if (binding instanceof ICPPConstructor) {
 	        addConstructor(binding);
@@ -155,11 +157,16 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
         super.addBinding(binding);
 	}
 
-	public void addName(IASTName name) {
-		if (name instanceof ICPPASTQualifiedName)
-			return;
-
+	@Override
+	public void addName(IASTName name) throws DOMException {
 		IASTNode parent = name.getParent();
+		if (name instanceof ICPPASTQualifiedName) {
+			final IASTName[] qn= ((ICPPASTQualifiedName) name).getNames();
+			final IASTName ln= qn[qn.length-1];
+			if (CPPVisitor.getContainingScope(name) != CPPVisitor.getContainingScope(ln)) {
+				return;
+			}
+		}
 		if (parent instanceof IASTDeclarator) {
 			if (CPPVisitor.isConstructor(this, (IASTDeclarator) parent)) {
 				addConstructor(name);
@@ -194,6 +201,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#getBinding(int, char[])
 	 */
+	@Override
 	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) throws DOMException {
 	    char[] c = name.toCharArray();
 
@@ -213,6 +221,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	    return super.getBinding(name, resolve, fileSet);
 	}
 
+	@Override
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) throws DOMException {
 	    char[] c = name.toCharArray();
 
@@ -298,6 +307,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
 	 */
+	@Override
 	public IBinding[] find(String name) throws DOMException {
 	    char[] n = name.toCharArray();
 	    ICPPASTCompositeTypeSpecifier compType = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
@@ -370,6 +380,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	/* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#removeBinding(org.eclipse.cdt.core.dom.ast.IBinding)
      */
+	@Override
 	public void removeBinding(IBinding binding) {
 	    if (binding instanceof ICPPConstructor) {
 	        removeBinding(CONSTRUCTOR_KEY, binding);

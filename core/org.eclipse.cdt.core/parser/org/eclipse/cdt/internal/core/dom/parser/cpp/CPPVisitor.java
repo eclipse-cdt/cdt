@@ -167,16 +167,21 @@ public class CPPVisitor {
 			if( binding instanceof IProblemBinding && parent instanceof ICPPASTQualifiedName 
 					&& !(parent.getParent() instanceof ICPPASTNamespaceAlias))
 			{
-				if( ((IProblemBinding)binding).getID() == IProblemBinding.SEMANTIC_MEMBER_DECLARATION_NOT_FOUND ){
+				final ICPPASTQualifiedName qname= (ICPPASTQualifiedName)parent;
+			    final IASTName[] ns= qname.getNames();
+			    if (ns[ns.length-1] != name) 
+			    	return binding;
+				
+				parent = parent.getParent();
+			    if( ((IProblemBinding)binding).getID() == IProblemBinding.SEMANTIC_MEMBER_DECLARATION_NOT_FOUND ){
 					IASTNode node = getContainingBlockItem( name.getParent() );
-					if( node.getPropertyInParent() != IASTCompositeTypeSpecifier.MEMBER_DECLARATION )
+					ASTNodeProperty prop= node.getPropertyInParent();
+					if (prop != IASTCompositeTypeSpecifier.MEMBER_DECLARATION && prop != ICPPASTNamespaceDefinition.OWNED_DECLARATION)
 						return binding;
+					
+				    if (getContainingScope(qname) != getContainingScope(name))
+				        return binding;
 				}
-			    IASTName [] ns = ((ICPPASTQualifiedName)parent).getNames();
-			    if( ns[ ns.length - 1 ] == name )
-					parent = parent.getParent();
-			    else
-			        return binding;
 			} else {
 				return binding;
 			}

@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2008 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
- * Bryan Wilkinson (QNX)
+ *    Andrew Ferguson (Symbian) - Initial implementation
+ *    Bryan Wilkinson (QNX)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
@@ -44,7 +44,8 @@ public class TemplateInstanceUtil {
 			if(specd instanceof ICPPTemplateDefinition) {
 				keysToAdapt= ((ICPPTemplateDefinition)specd).getTemplateParameters();
 			}
-			for(int i=0; i<keys.length; i++) {
+			final int length= Math.min(keys.length, keysToAdapt.length); 
+			for(int i=0; i<length; i++) {
 				IType type= (IType) preresult.get(keys[i]);
 				result.put(
 						cf.getCompositeBinding((IIndexFragmentBinding)keysToAdapt[i]),

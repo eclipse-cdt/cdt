@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
@@ -73,14 +74,25 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 
 	protected CharArrayObjectMap bindings = null;
 	
-	public void addName(IASTName name) {
+	public void addName(IASTName name) throws DOMException {
 		if( bindings == null )
 			bindings = new CharArrayObjectMap(1);
-		if( name instanceof ICPPASTQualifiedName ){
-			//name belongs to a different scope, don't add it here
-			return;
+		char[] c;
+		if (name instanceof ICPPASTQualifiedName) {
+			if (physicalNode instanceof ICPPASTCompositeTypeSpecifier == false &&
+					physicalNode instanceof ICPPASTNamespaceDefinition == false) 
+				return;
+
+			//name belongs to a different scope, don't add it here except it names this scope
+			final IASTName[] ns= ((ICPPASTQualifiedName) name).getNames();
+			final IASTName ln= ns[ns.length-1];
+		    if (CPPVisitor.getContainingScope(name) != CPPVisitor.getContainingScope(ln))
+		    	return;
+			c= ln.toCharArray();
 		}
-		char [] c = name.toCharArray();
+		else {
+			c= name.toCharArray();
+		}
 		Object o = bindings.get( c );
 		if( o != null ){
 		    if( o instanceof ObjectSet ){

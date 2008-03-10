@@ -259,7 +259,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 		return getASTName().toCharArray();
 	}
 	
-	private IASTName getASTName() {
+	protected IASTName getASTName() {
 		IASTDeclarator dtor = (definition != null) ? definition : declarations[0];
 	    IASTDeclarator nested= dtor.getNestedDeclarator();
 	    while (nested != null) {

@@ -13,8 +13,7 @@ package org.eclipse.cdt.internal.core.dom.rewrite.changegenerator;
 import org.eclipse.osgi.util.NLS;
 
 /**
- * mstodo
- *
+ * External strings for the change generator.
  * @since 5.0
  */
 public class Messages extends NLS {

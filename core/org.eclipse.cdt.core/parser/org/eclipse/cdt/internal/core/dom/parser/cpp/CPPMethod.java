@@ -176,32 +176,13 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 	}
 	
 	@Override
-	public String getName() {
-	    if( definition != null ){
-	        IASTName n = definition.getName();
-	        if( n instanceof ICPPASTQualifiedName ){
-	            IASTName [] ns = ((ICPPASTQualifiedName)n).getNames();
-	            return ns[ ns.length - 1 ].toString();
-	        }
-	        return n.toString();
+	protected IASTName getASTName() {
+		IASTName name= definition != null ? definition.getName() : declarations[0].getName();
+	    if( name instanceof ICPPASTQualifiedName ){
+	    	final IASTName[] ns = ((ICPPASTQualifiedName)name).getNames();
+	    	return ns[ns.length - 1];
 	    }
-		return declarations[0].getName().toString();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
-	 */
-	@Override
-	public char[] getNameCharArray() {
-	    if( definition != null ){
-	        IASTName n = definition.getName();
-	        if( n instanceof ICPPASTQualifiedName ){
-	            IASTName [] ns = ((ICPPASTQualifiedName)n).getNames();
-	            return ns[ ns.length - 1 ].toCharArray();
-	        }
-	        return n.toCharArray();
-	    }
-		return declarations[0].getName().toCharArray();
+	    return name;
 	}
 
     /* (non-Javadoc)

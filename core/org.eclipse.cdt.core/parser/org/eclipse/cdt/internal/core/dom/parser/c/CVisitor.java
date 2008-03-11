@@ -449,7 +449,7 @@ public class CVisitor {
 		private boolean sameBinding(IBinding binding1, IBinding binding2) {
 			if (binding1 == binding2)
 				return true;
-			if (binding1.equals(binding2))
+			if (binding1 != null && binding1.equals(binding2))
 				return true;
 			return false;
 		}

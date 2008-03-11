@@ -332,7 +332,7 @@
               <enumeratedOptionValue
                     command="-qobjmodel=ibm"
                     id="org.eclipse.cdt.managedbuilder.xlc.ui.cpp.option.objectmodel.ibm"
-                    name="%Option.objmodel.ibm">
+                    name="%Option.objectmodel.ibm">
               </enumeratedOptionValue>
            </option>
            <option

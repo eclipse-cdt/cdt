@@ -72,14 +72,13 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIfdefStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIfndefStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
+import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ISourceRange;
@@ -90,10 +89,12 @@ import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.ui.text.folding.ICFoldingStructureProvider;
 
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
 import org.eclipse.cdt.internal.core.model.ASTCache;
 
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.editor.ASTProvider.WAIT_FLAG;
 import org.eclipse.cdt.internal.ui.text.DocumentCharacterIterator;
 import org.eclipse.cdt.internal.ui.text.ICReconcilingListener;
 
@@ -104,6 +105,143 @@ import org.eclipse.cdt.internal.ui.text.ICReconcilingListener;
  * </p>
  */
 public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvider {
+
+	/**
+	 * A visitor to collect compund statement positions.
+	 *
+	 * @since 5.0
+	 */
+	private final class StatementVisitor extends ASTVisitor {
+		{
+			shouldVisitStatements = true;
+			shouldVisitDeclarations = true;
+		}
+		private final Stack<StatementRegion> fStatements;
+		int fLevel= 0;
+		String fFunction= ""; //$NON-NLS-1$
+
+		private StatementVisitor(Stack<StatementRegion> statements) {
+			fStatements = statements;
+		}
+
+		public int visit(IASTStatement statement) {
+			++fLevel;
+			// if it's not part of the displayed - file, we don't need it
+			if (!statement.isPartOfTranslationUnitFile())
+				return PROCESS_SKIP;// we neither need its descendants
+			try {
+				StatementRegion mr;
+				IASTFileLocation fl;
+				if (statement instanceof IASTIfStatement) {
+					IASTIfStatement ifstmt = (IASTIfStatement) statement;
+					fl = ifstmt.getFileLocation();
+					if (fl==null) return PROCESS_CONTINUE;
+					int ifOffset= fl.getNodeOffset();
+					IASTStatement tmp;
+					mr = createRegion();
+					tmp = ifstmt.getThenClause();
+					if (tmp==null) return PROCESS_CONTINUE;
+					fl = tmp.getFileLocation();
+					mr.setLength(fl.getNodeOffset() + fl.getNodeLength() - ifOffset);
+					mr.setOffset(ifOffset);
+					mr.inclusive = !(tmp instanceof IASTCompoundStatement);
+					tmp = ifstmt.getElseClause();
+					if (tmp==null || tmp instanceof IASTIfStatement) {
+						mr.inclusive = true;
+						fStatements.push(mr);
+						return PROCESS_CONTINUE;
+					}
+					fStatements.push(mr);
+					mr = createRegion();
+					fl = tmp.getFileLocation();
+					mr.setLength(fl.getNodeLength());
+					mr.setOffset(fl.getNodeOffset());
+					mr.inclusive = true;
+					fStatements.push(mr);
+					return PROCESS_CONTINUE;
+				}
+				mr = createRegion();
+				mr.inclusive = true;
+				if (statement instanceof IASTDoStatement)
+					mr.inclusive = false;
+				if (statement instanceof IASTSwitchStatement) {
+					IASTStatement switchstmt = ((IASTSwitchStatement)statement).getBody();
+					if (switchstmt instanceof IASTCompoundStatement) {
+						IASTStatement[] stmts = ((IASTCompoundStatement)switchstmt).getStatements();
+						boolean pushedMR = false;
+						for (int i = 0; i < stmts.length; i++) {
+							IASTStatement tmpstmt = stmts[i];
+							StatementRegion tmpmr;
+							if (!(tmpstmt instanceof IASTCaseStatement || tmpstmt instanceof IASTDefaultStatement)) {
+								if (!pushedMR) return PROCESS_SKIP;
+								IASTFileLocation tmpfl = tmpstmt.getFileLocation();
+								tmpmr = fStatements.peek();
+								tmpmr.setLength(tmpfl.getNodeLength()+tmpfl.getNodeOffset()-tmpmr.getOffset());
+								if (tmpstmt instanceof IASTBreakStatement) pushedMR = false;
+								continue;
+							}
+							IASTFileLocation tmpfl;
+							tmpmr = createRegion();
+							tmpmr.level= fLevel+1;
+							tmpmr.inclusive = true;
+							if (tmpstmt instanceof IASTCaseStatement) {
+								IASTCaseStatement casestmt = (IASTCaseStatement) tmpstmt;
+								tmpfl = casestmt.getExpression().getFileLocation();
+								tmpmr.setOffset(tmpfl.getNodeOffset());
+								tmpmr.setLength(tmpfl.getNodeLength());
+							} else if (tmpstmt instanceof IASTDefaultStatement) {
+								IASTDefaultStatement defstmt = (IASTDefaultStatement) tmpstmt;
+								tmpfl = defstmt.getFileLocation();
+								tmpmr.setOffset(tmpfl.getNodeOffset()+tmpfl.getNodeLength());
+								tmpmr.setLength(0);
+							}
+							fStatements.push(tmpmr);
+							pushedMR = true;
+						}
+					}
+				}
+				if (statement instanceof IASTForStatement ||
+						statement instanceof IASTWhileStatement ||
+						statement instanceof IASTDoStatement ||
+						statement instanceof IASTSwitchStatement) {
+					fl = statement.getFileLocation();
+					mr.setLength(fl.getNodeLength());
+					mr.setOffset(fl.getNodeOffset());
+					fStatements.push(mr);
+				}
+				return PROCESS_CONTINUE;
+			} catch (Exception e) {
+				CUIPlugin.getDefault().log(e);
+				return PROCESS_ABORT;
+			}
+		}
+
+		public int leave(IASTStatement statement) {
+			--fLevel;
+			return PROCESS_CONTINUE;
+		}
+
+		public int visit(IASTDeclaration declaration) {
+			if (!declaration.isPartOfTranslationUnitFile())
+				return PROCESS_SKIP;// we neither need its descendants
+			if (declaration instanceof IASTFunctionDefinition) {
+				final IASTFunctionDeclarator declarator = ((IASTFunctionDefinition)declaration).getDeclarator();
+				if (declarator != null) {
+					fFunction= new String(declarator.getName().toCharArray());
+				}
+			}
+			return PROCESS_CONTINUE;
+		}
+
+		public int leave(IASTDeclaration declaration) {
+			fFunction= ""; //$NON-NLS-1$
+			return PROCESS_CONTINUE;
+		}
+
+		private StatementRegion createRegion() {
+			return new StatementRegion(fFunction, fLevel);
+		}
+	}
 
 	/**
 	 * Listen to cursor position changes.
@@ -119,10 +257,10 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	}
 
 	/**
-	 * Reconcile annotation positions from preprocessor branches.
+	 * Update folding positions triggered by reconciler.
 	 */
-	private class PreprocessorBranchesReconciler implements ICReconcilingListener {
-		volatile boolean fReconciling;
+	private class FoldingStructureReconciler implements ICReconcilingListener {
+		private volatile boolean fReconciling;
 
 		/*
 		 * @see org.eclipse.cdt.internal.ui.text.ICReconcilingListener#aboutToBeReconciled()
@@ -135,23 +273,55 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		 * @see org.eclipse.cdt.internal.ui.text.ICReconcilingListener#reconciled(IASTTranslationUnit, boolean, IProgressMonitor)
 		 */
 		public void reconciled(IASTTranslationUnit ast, boolean force, IProgressMonitor progressMonitor) {
-			if (fInput == null || fReconciling) {
+			if (fInput == null || progressMonitor.isCanceled()) {
 				return;
 			}
-			if (fPreprocessorBranchFoldingEnabled && ast == null) {
-				return;
+			synchronized (this) {
+				if (fReconciling) {
+					return;
+				}
+				fReconciling= true;
 			}
-			fReconciling= true;
 			try {
-				FoldingStructureComputationContext ctx= createContext(fInitialReconcilePending);
+				final boolean initialReconcile= fInitialReconcilePending;
 				fInitialReconcilePending= false;
+				FoldingStructureComputationContext ctx= createContext(initialReconcile);
 				if (ctx != null) {
-					ctx.fAST= ast;
+					if (initialReconcile || !hasSyntaxError(ast)) {
+						ctx.fAST= ast;
+					}
 					update(ctx);
 				}
 			} finally {
 				fReconciling= false;
 			}
+		}
+
+		/**
+		 * Test whether the given ast contains one or more syntax errors.
+		 * 
+		 * @param ast
+		 * @return <code>true</code> if the ast contains a syntax error
+		 */
+		private boolean hasSyntaxError(IASTTranslationUnit ast) {
+			if (ast == null) {
+				return false;
+			}
+			IASTProblem[] problems= ast.getPreprocessorProblems();
+			for (int i = 0; i < problems.length; i++) {
+				IASTProblem problem = problems[i];
+				if ((problem.getID() & (IASTProblem.SYNTAX_ERROR | IASTProblem.SCANNER_RELATED)) != 0) {
+					return true;
+				}
+			}
+			problems= CPPVisitor.getProblems(ast);
+			for (int i = 0; i < problems.length; i++) {
+				IASTProblem problem = problems[i];
+				if ((problem.getID() & (IASTProblem.SYNTAX_ERROR | IASTProblem.SCANNER_RELATED)) != 0) {
+					return true;
+				}
+			}
+			return false;
 		}
 
 	}
@@ -314,8 +484,10 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 
 	private static class CProjectionAnnotation extends ProjectionAnnotation {
 
+		public final static int CMODEL= 0;
 		public final static int COMMENT= 1;
 		public final static int BRANCH= 2;
+		public final static int STATEMENT= 3;
 		
 		private Object fKey;
 		private int fCategory;
@@ -360,7 +532,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 			return "CProjectionAnnotation:\n" + //$NON-NLS-1$
 					"\tkey: \t"+ fKey + "\n" + //$NON-NLS-1$ //$NON-NLS-2$
 					"\tcollapsed: \t" + isCollapsed() + "\n" + //$NON-NLS-1$ //$NON-NLS-2$
-					"\tcomment: \t" + isComment() + "\n"; //$NON-NLS-1$ //$NON-NLS-2$
+					"\tcategory: \t" + getCategory() + "\n"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
@@ -374,6 +546,9 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		}
 	}
 
+	private static final class Counter {
+		int fCount;
+	}
 	
 	/**
 	 * Projection position that will return two foldable regions: one folding away
@@ -447,7 +622,6 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		 * @see org.eclipse.jface.text.source.projection.IProjectionPosition#computeCaptionOffset(org.eclipse.jface.text.IDocument)
 		 */
 		public int computeCaptionOffset(IDocument document) {
-//			return 0;
 			DocumentCharacterIterator sequence= new DocumentCharacterIterator(document, offset, offset + length);
 			return findFirstContent(sequence, 0);
 		}
@@ -486,8 +660,9 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 				 * received lines below. */
 				if (fElement instanceof ISourceReference) {
 					ISourceRange sourceRange= ((ISourceReference) fElement).getSourceRange();
-					if (sourceRange != null)
+					if (sourceRange != null) {
 						nameStart= sourceRange.getIdStartPos();
+					}
 				}
 			} catch (CModelException e) {
 				// ignore and use default
@@ -540,8 +715,12 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 				// need a reconcile here?
 				if (fElement instanceof ISourceReference) {
 					ISourceRange sourceRange= ((ISourceReference) fElement).getSourceRange();
-					if (sourceRange != null)
+					if (sourceRange != null) {
 						nameStart= sourceRange.getIdStartPos();
+						if (nameStart < offset) {
+							nameStart= offset;
+						}
+					}
 				}
 			} catch (CModelException e) {
 				// ignore and use default
@@ -612,26 +791,18 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	 */
 	private static class Branch extends ModifiableRegion {
 
-		private boolean fTaken;
+		private final boolean fTaken;
+		public final String fCondition;
 		public boolean fInclusive;
 
-		/**
-		 * @param offset
-		 * @param taken
-		 */
-		Branch(int offset, boolean taken) {
-			super(offset, 0);
-			fTaken= taken;
+		Branch(int offset, boolean taken, String key) {
+			this(offset, 0, taken, key);
 		}
 
-		/**
-		 * @param offset
-		 * @param length
-		 * @param taken
-		 */
-		Branch(int offset, int length, boolean taken) {
+		Branch(int offset, int length, boolean taken, String key) {
 			super(offset, length);
 			fTaken= taken;
+			fCondition= key;
 		}
 
 		public void setEndOffset(int endOffset) {
@@ -652,7 +823,6 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	private ITextEditor fEditor;
 	private ProjectionListener fProjectionListener;
 	protected ICElement fInput;
-	private IElementChangedListener fElementListener;
 	
 	private boolean fCollapseHeaderComments= true;
 	private boolean fCollapseComments= false;
@@ -668,7 +838,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	private boolean fCommentFoldingEnabled= true;
 
 	private ICReconcilingListener fReconilingListener;
-	boolean fInitialReconcilePending= true;
+	private volatile boolean fInitialReconcilePending= true;
 
 	private int fCursorPosition;
 
@@ -747,9 +917,8 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		handleProjectionDisabled();
 
 		if (fEditor instanceof CEditor) {
-			fInitialReconcilePending= true;
 			initialize();
-			fReconilingListener= new PreprocessorBranchesReconciler();
+			fReconilingListener= new FoldingStructureReconciler();
 			((CEditor)fEditor).addReconcileListener(fReconilingListener);
 			fSelectionListener= new SelectionListener();
 			fEditor.getSelectionProvider().addSelectionChangedListener(fSelectionListener);
@@ -767,10 +936,6 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	 * </p>
 	 */
 	protected void handleProjectionDisabled() {
-		if (fElementListener != null) {
-			CoreModel.getDefault().removeElementChangedListener(fElementListener);
-			fElementListener= null;
-		}
 		if (fReconilingListener != null) {
 			((CEditor)fEditor).removeReconcileListener(fReconilingListener);
 			fReconilingListener= null;
@@ -786,6 +951,8 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	 */
 	public final void initialize() {
 		if (DEBUG) System.out.println("DefaultCFoldingStructureProvider.initialize()"); //$NON-NLS-1$
+		fInitialReconcilePending= true;
+		fCursorPosition= -1;
 		update(createInitialContext());
 	}
 
@@ -833,7 +1000,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	}
 
 	private void update(FoldingStructureComputationContext ctx) {
-	    if (ctx == null)
+	    if (ctx == null || !isConsistent(fInput))
 			return;
 
 		if (!fInitialReconcilePending && fSelectionListener != null) {
@@ -846,16 +1013,16 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		List<CProjectionAnnotation> updates= new ArrayList<CProjectionAnnotation>();
 		
 		computeFoldingStructure(ctx);
-		Map updated= ctx.fMap;
-		Map previous= computeCurrentStructure(ctx);
+		Map<CProjectionAnnotation,Position> updated= ctx.fMap;
+		Map<Object, List<Tuple>> previous= computeCurrentStructure(ctx);
 
 		Iterator e= updated.keySet().iterator();
 		while (e.hasNext()) {
 			CProjectionAnnotation newAnnotation= (CProjectionAnnotation) e.next();
 			Object key= newAnnotation.getElement();
-			Position newPosition= (Position) updated.get(newAnnotation);
+			Position newPosition= updated.get(newAnnotation);
 
-			List annotations= (List) previous.get(key);
+			List annotations= previous.get(key);
 			if (annotations == null) {
 				if (DEBUG) System.out.println("DefaultCFoldingStructureProvider.update() new annotation " + newAnnotation); //$NON-NLS-1$
 
@@ -868,16 +1035,18 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 					Tuple tuple= (Tuple) x.next();
 					CProjectionAnnotation existingAnnotation= tuple.annotation;
 					Position existingPosition= tuple.position;
-					if (newAnnotation.isComment() == existingAnnotation.isComment()) {
-						if (existingPosition != null && (!newPosition.equals(existingPosition) || ctx.allowCollapsing() && existingAnnotation.isCollapsed() != newAnnotation.isCollapsed())) {
+					if (newAnnotation.getCategory() == existingAnnotation.getCategory()) {
+						final boolean collapseChanged = ctx.allowCollapsing() && existingAnnotation.isCollapsed() != newAnnotation.isCollapsed();
+						if (existingPosition != null && (collapseChanged || !newPosition.equals(existingPosition))) {
 							existingPosition.setOffset(newPosition.getOffset());
 							existingPosition.setLength(newPosition.getLength());
-							if (ctx.allowCollapsing() && existingAnnotation.isCollapsed() != newAnnotation.isCollapsed())
+							if (collapseChanged) {
 								if (DEBUG) System.out.println("DefaultCFoldingStructureProvider.update() change annotation " + newAnnotation); //$NON-NLS-1$
 								if (newAnnotation.isCollapsed())
 									existingAnnotation.markCollapsed();
 								else
 									existingAnnotation.markExpanded();
+							}
 							updates.add(existingAnnotation);
 						}
 						matched= true;
@@ -924,7 +1093,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	 * result is that more annotations are changed and fewer get
 	 * deleted/re-added.
 	 */
-	private void match(List<CProjectionAnnotation> deletions, Map additions,
+	private void match(List<CProjectionAnnotation> deletions, Map<CProjectionAnnotation,Position> additions,
 			List<CProjectionAnnotation> changes, FoldingStructureComputationContext ctx) {
 		if (deletions.isEmpty() || (additions.isEmpty() && changes.isEmpty()))
 			return;
@@ -936,7 +1105,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		while (deletionIterator.hasNext()) {
 			CProjectionAnnotation deleted= (CProjectionAnnotation) deletionIterator.next();
 			Position deletedPosition= ctx.getModel().getPosition(deleted);
-			if (deletedPosition == null)
+			if (deletedPosition == null || deletedPosition.length < 5)
 				continue;
 			
 			Tuple deletedTuple= new Tuple(deleted, deletedPosition);
@@ -977,11 +1146,11 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	 * annotations. The positions for the
 	 * <code>CProjectionAnnotation</code> instances in
 	 * <code>annotations</code> can be found in the passed
-	 * <code>positionMap</code> or <code>fCachedModel</code> if
+	 * <code>positionMap</code> or in the model if
 	 * <code>positionMap</code> is <code>null</code>.
 	 * <p>
 	 * A tuple is said to match another if their annotations have the
-	 * same comment flag and their position offsets are equal.
+	 * same category and their position offsets are equal.
 	 * </p>
 	 * <p>
 	 * If a match is found, the annotation gets removed from
@@ -995,12 +1164,12 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	 *        or <code>null</code>
 	 * @return a matching tuple or <code>null</code> for no match
 	 */
-	private Tuple findMatch(Tuple tuple, Collection annotations, Map positionMap, FoldingStructureComputationContext ctx) {
-		Iterator it= annotations.iterator();
+	private Tuple findMatch(Tuple tuple, Collection<CProjectionAnnotation> annotations, Map<CProjectionAnnotation,Position> positionMap, FoldingStructureComputationContext ctx) {
+		Iterator<CProjectionAnnotation> it= annotations.iterator();
 		while (it.hasNext()) {
-			CProjectionAnnotation annotation= (CProjectionAnnotation) it.next();
-			if (tuple.annotation.isComment() == annotation.isComment()) {
-				Position position= positionMap == null ? ctx.getModel().getPosition(annotation) : (Position) positionMap.get(annotation);
+			CProjectionAnnotation annotation= it.next();
+			if (tuple.annotation.getCategory() == annotation.getCategory()) {
+				Position position= positionMap == null ? ctx.getModel().getPosition(annotation) : positionMap.get(annotation);
 				if (position == null)
 					continue;
 
@@ -1014,8 +1183,10 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		return null;
 	}
 
-	private Map computeCurrentStructure(FoldingStructureComputationContext ctx) {
+	private Map<Object, List<Tuple>> computeCurrentStructure(FoldingStructureComputationContext ctx) {
 		boolean includeBranches= fPreprocessorBranchFoldingEnabled && ctx.fAST != null;
+		boolean includeStmts= fStatementsFoldingEnabled && ctx.fAST != null;
+		boolean includeCModel= ctx.fAST != null && isConsistent(fInput);
 		Map<Object, List<Tuple>> map= new HashMap<Object, List<Tuple>>();
 		ProjectionAnnotationModel model= ctx.getModel();
 		Iterator e= model.getAnnotationIterator();
@@ -1023,17 +1194,31 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 			Object annotation= e.next();
 			if (annotation instanceof CProjectionAnnotation) {
 				CProjectionAnnotation cAnnotation= (CProjectionAnnotation) annotation;
-				if (!includeBranches && cAnnotation.getCategory() == CProjectionAnnotation.BRANCH) {
-					continue;
+				final boolean include;
+				switch (cAnnotation.getCategory()) {
+				case CProjectionAnnotation.BRANCH:
+					include= includeBranches;
+					break;
+				case CProjectionAnnotation.STATEMENT:
+					include= includeStmts;
+					break;
+				case CProjectionAnnotation.CMODEL:
+					include= includeCModel;
+					break;
+				default:
+					include= true;
+					break;
 				}
 				Position position= model.getPosition(cAnnotation);
-				Assert.isNotNull(position);
-				List<Tuple> list= map.get(cAnnotation.getElement());
-				if (list == null) {
-					list= new ArrayList<Tuple>(2);
-					map.put(cAnnotation.getElement(), list);
+				assert position != null;
+				if (include || position.length < 5) {
+					List<Tuple> list= map.get(cAnnotation.getElement());
+					if (list == null) {
+						list= new ArrayList<Tuple>(2);
+						map.put(cAnnotation.getElement(), list);
+					}
+					list.add(new Tuple(cAnnotation, position));
 				}
-				list.add(new Tuple(cAnnotation, position));
 			}
 		}
 
@@ -1062,13 +1247,15 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		}
 		if (fPreprocessorBranchFoldingEnabled || fStatementsFoldingEnabled) {
 			IASTTranslationUnit ast= ctx.getAST();
-			if (ast == null) {
+			if (ast != null) {
+				computeFoldingStructure(ast, ctx);
+			} else if (fInitialReconcilePending) {
+				final WAIT_FLAG waitFlag= ASTProvider.WAIT_ACTIVE_ONLY;
 				final ASTProvider astProvider= CUIPlugin.getDefault().getASTProvider();
-				IStatus status= astProvider.runOnAST(getInputElement(), ASTProvider.WAIT_ACTIVE_ONLY, null, new ASTCache.ASTRunnable() {
+				IStatus status= astProvider.runOnAST(getInputElement(), waitFlag, null, new ASTCache.ASTRunnable() {
 					public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
 						if (ast != null) {
 							ctx.fAST= ast;
-							fInitialReconcilePending= false;
 							computeFoldingStructure(ast, ctx);
 						}
 						return Status.OK_STATUS;
@@ -1077,11 +1264,10 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 				if (status.matches(IStatus.ERROR)) {
 					CUIPlugin.getDefault().log(status);
 				}
-			} else {
-				computeFoldingStructure(ast, ctx);
 			}
 		}
-		if (!fInitialReconcilePending || isConsistent(fInput)) {
+		if (ctx.getAST() != null && isConsistent(fInput)) {
+			fInitialReconcilePending= false;
 			IParent parent= (IParent) fInput;
 			try {
 				computeFoldingStructure(parent.getChildren(), ctx);
@@ -1089,7 +1275,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 			}
 		}
 	}
-	
+
 	static boolean isConsistent(ICElement element) {
 		if (element instanceof ITranslationUnit) {
 			try {
@@ -1100,155 +1286,36 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		return false;
 	}
 
-	private static class ModifiableRegionExtra extends ModifiableRegion {
-		/*
-		 * A modifiable region with extra information about the region it holds.
-		 * It tells us whether or not to include the last line of the region
-		 */
-		public boolean inclusive;
-		public String function;
+	/**
+	 * A modifiable region with extra information about the region it holds.
+	 * It tells us whether or not to include the last line of the region
+	 */
+	private static class StatementRegion extends ModifiableRegion {
+		public final String function;
 		public int level;
+		public boolean inclusive;
+		public StatementRegion(String function, int level) {
+			this.function= function; 
+			this.level= level;
+		}
 	}
 
 	/**
-	 * Computes folding structure for preprocessor branches for the given AST.
+	 * Computes folding structure of statements for the given AST.
 	 * 
 	 * @param ast
 	 * @param ctx
 	 */
 	private void computeStatementFoldingStructure(IASTTranslationUnit ast, FoldingStructureComputationContext ctx) {
-		final Stack<ModifiableRegionExtra> iral= new Stack<ModifiableRegionExtra>();
-		ast.accept(new ASTVisitor() {
-			{
-				shouldVisitStatements = true;
-				shouldVisitDeclarations = true;
-			}
-			int fLevel= 0;
-			String fFunction= ""; //$NON-NLS-1$
-			public int visit(IASTStatement statement) {
-				++fLevel;
-				// if it's not part of the displayed - file, we don't need it
-				if (!statement.isPartOfTranslationUnitFile())
-					return PROCESS_SKIP;// we neither need its descendants
-				try {
-					ModifiableRegionExtra mr;
-					IASTFileLocation fl;
-					if (statement instanceof IASTIfStatement) {
-						IASTIfStatement ifstmt = (IASTIfStatement) statement;
-						fl = ifstmt.getFileLocation();
-						if (fl==null) return PROCESS_CONTINUE;
-						int ifOffset= fl.getNodeOffset();
-						IASTStatement tmp;
-						mr = new ModifiableRegionExtra();
-						mr.function= fFunction;
-						mr.level= fLevel;
-						tmp = ifstmt.getThenClause();
-						if (tmp==null) return PROCESS_CONTINUE;
-						fl = tmp.getFileLocation();
-						mr.setLength(fl.getNodeOffset() + fl.getNodeLength() - ifOffset);
-						mr.setOffset(ifOffset);
-						mr.inclusive = false;
-						tmp = ifstmt.getElseClause();
-						if (tmp==null) {
-							mr.inclusive = true;
-							iral.push(mr);
-							return PROCESS_CONTINUE;
-						}
-						iral.push(mr);
-						mr = new ModifiableRegionExtra();
-						mr.function= fFunction;
-						mr.level= fLevel;
-						fl = tmp.getFileLocation();
-						mr.setLength(fl.getNodeLength());
-						mr.setOffset(fl.getNodeOffset());
-						mr.inclusive = true;
-						iral.push(mr);
-						return PROCESS_CONTINUE;
-					}
-					mr = new ModifiableRegionExtra();
-					mr.function= fFunction;
-					mr.level= fLevel;
-					mr.inclusive = true;
-					if (statement instanceof IASTDoStatement)
-						mr.inclusive = false;
-					if (statement instanceof IASTSwitchStatement) {
-						IASTStatement switchstmt = ((IASTSwitchStatement)statement).getBody();
-						if (switchstmt instanceof IASTCompoundStatement) {
-							IASTStatement[] stmts = ((IASTCompoundStatement)switchstmt).getStatements();
-							boolean pushedMR = false;
-							for (int i = 0; i < stmts.length; i++) {
-								IASTStatement tmpstmt = stmts[i];
-								ModifiableRegionExtra tmpmr;
-								if (!(tmpstmt instanceof IASTCaseStatement || tmpstmt instanceof IASTDefaultStatement)) {
-									if (!pushedMR) return PROCESS_SKIP;
-									IASTFileLocation tmpfl = tmpstmt.getFileLocation();
-									tmpmr = iral.peek();
-									tmpmr.setLength(tmpfl.getNodeLength()+tmpfl.getNodeOffset()-tmpmr.getOffset());
-									if (tmpstmt instanceof IASTBreakStatement) pushedMR = false;
-									continue;
-								}
-								IASTFileLocation tmpfl;
-								tmpmr = new ModifiableRegionExtra();
-								tmpmr.function= fFunction;
-								tmpmr.level= fLevel+1;
-								tmpmr.inclusive = true;
-								if (tmpstmt instanceof IASTCaseStatement) {
-									IASTCaseStatement casestmt = (IASTCaseStatement) tmpstmt;
-									tmpfl = casestmt.getExpression().getFileLocation();
-									tmpmr.setOffset(tmpfl.getNodeOffset());
-									tmpmr.setLength(tmpfl.getNodeLength());
-								} else if (tmpstmt instanceof IASTDefaultStatement) {
-									IASTDefaultStatement defstmt = (IASTDefaultStatement) tmpstmt;
-									tmpfl = defstmt.getFileLocation();
-									tmpmr.setOffset(tmpfl.getNodeOffset()+tmpfl.getNodeLength());
-									tmpmr.setLength(0);
-								}
-								iral.push(tmpmr);
-								pushedMR = true;
-							}
-						}
-					}
-					if (statement instanceof IASTForStatement ||
-							statement instanceof IASTWhileStatement ||
-							statement instanceof IASTDoStatement ||
-							statement instanceof IASTSwitchStatement) {
-						fl = statement.getFileLocation();
-						mr.setLength(fl.getNodeLength());
-						mr.setOffset(fl.getNodeOffset());
-						iral.push(mr);
-					}
-					return PROCESS_CONTINUE;
-				} catch (Exception e) {
-					CUIPlugin.getDefault().log(e);
-					return PROCESS_ABORT;
-				}
-			}
-			public int leave(IASTStatement statement) {
-				--fLevel;
-				return PROCESS_CONTINUE;
-			}
-			public int visit(IASTDeclaration declaration) {
-				if (!declaration.isPartOfTranslationUnitFile())
-					return PROCESS_SKIP;// we neither need its descendants
-				if (declaration instanceof IASTFunctionDefinition) {
-					final IASTFunctionDeclarator declarator = ((IASTFunctionDefinition)declaration).getDeclarator();
-					if (declarator != null) {
-						fFunction= new String(declarator.getName().toCharArray());
-					}
-				}
-				return PROCESS_CONTINUE;
-			}
-			public int leave(IASTDeclaration declaration) {
-				fFunction= ""; //$NON-NLS-1$
-				return PROCESS_CONTINUE;
-			}
-		});
+		final Stack<StatementRegion> iral= new Stack<StatementRegion>();
+		ast.accept(new StatementVisitor(iral));
 		while (!iral.empty()) {
-			ModifiableRegionExtra mr = iral.pop();
+			StatementRegion mr = iral.pop();
 			IRegion aligned = alignRegion(mr, ctx,mr.inclusive);
 			if (aligned != null) {
 				Position alignedPos= new Position(aligned.getOffset(), aligned.getLength());
-				ctx.addProjectionRange(new CProjectionAnnotation(false, mr.function + mr.level + computeKey(mr, ctx), false), alignedPos);
+				ctx.addProjectionRange(new CProjectionAnnotation(
+						false, mr.function + mr.level + computeKey(mr, ctx), CProjectionAnnotation.STATEMENT), alignedPos);
 			}
 		}
 	}
@@ -1275,7 +1342,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 			computeStatementFoldingStructure(ast, ctx);
 
 		if (fPreprocessorBranchFoldingEnabled)
-			computePreprocessorFoldingStructure(ast, ctx, fileName);
+			computePreprocessorFoldingStructure(ast, ctx);
 	}
 
 	/**
@@ -1283,10 +1350,8 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	 * 
 	 * @param ast
 	 * @param ctx
-	 * @param fileName
 	 */
-	private void computePreprocessorFoldingStructure(IASTTranslationUnit ast,
-			FoldingStructureComputationContext ctx, String fileName) {
+	private void computePreprocessorFoldingStructure(IASTTranslationUnit ast, FoldingStructureComputationContext ctx) {
 		List<Branch> branches = new ArrayList<Branch>();
 		Stack<Branch> branchStack = new Stack<Branch>();
 
@@ -1304,13 +1369,13 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 			}
 			if (statement instanceof IASTPreprocessorIfStatement) {
 				IASTPreprocessorIfStatement ifStmt = (IASTPreprocessorIfStatement)statement;
-				branchStack.push(new Branch(stmtLocation.getNodeOffset(), ifStmt.taken()));
+				branchStack.push(new Branch(stmtLocation.getNodeOffset(), ifStmt.taken(), "#if " + new String(ifStmt.getCondition()))); //$NON-NLS-1$
 			} else if (statement instanceof IASTPreprocessorIfdefStatement) {
 				IASTPreprocessorIfdefStatement ifdefStmt = (IASTPreprocessorIfdefStatement)statement;
-				branchStack.push(new Branch(stmtLocation.getNodeOffset(), ifdefStmt.taken()));
+				branchStack.push(new Branch(stmtLocation.getNodeOffset(), ifdefStmt.taken(), "#ifdef " + new String(ifdefStmt.getCondition()))); //$NON-NLS-1$
 			} else if (statement instanceof IASTPreprocessorIfndefStatement) {
 				IASTPreprocessorIfndefStatement ifndefStmt = (IASTPreprocessorIfndefStatement)statement;
-				branchStack.push(new Branch(stmtLocation.getNodeOffset(), ifndefStmt.taken()));
+				branchStack.push(new Branch(stmtLocation.getNodeOffset(), ifndefStmt.taken(), "#ifndef " + new String(ifndefStmt.getCondition()))); //$NON-NLS-1$
 			} else if (statement instanceof IASTPreprocessorElseStatement) {
 				if (branchStack.isEmpty()) {
 					// #else without #if
@@ -1318,7 +1383,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 				}
 				Branch branch= branchStack.pop();
 				IASTPreprocessorElseStatement elseStmt = (IASTPreprocessorElseStatement)statement;
-				branchStack.push(new Branch(stmtLocation.getNodeOffset(), elseStmt.taken()));
+				branchStack.push(new Branch(stmtLocation.getNodeOffset(), elseStmt.taken(), branch.fCondition));
 				branch.setEndOffset(stmtLocation.getNodeOffset());
 				branches.add(branch);
 			} else if (statement instanceof IASTPreprocessorElifStatement) {
@@ -1328,7 +1393,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 				}
 				Branch branch= branchStack.pop();
 				IASTPreprocessorElifStatement elifStmt = (IASTPreprocessorElifStatement) statement;
-				branchStack.push(new Branch(stmtLocation.getNodeOffset(), elifStmt.taken()));
+				branchStack.push(new Branch(stmtLocation.getNodeOffset(), elifStmt.taken(), branch.fCondition));
 				branch.setEndOffset(stmtLocation.getNodeOffset());
 				branches.add(branch);
 			} else if (statement instanceof IASTPreprocessorEndifStatement) {
@@ -1342,13 +1407,23 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 				branches.add(branch);
 			}
 		}
-		for (Iterator iter = branches.iterator(); iter.hasNext(); ) {
-			Branch branch= (Branch) iter.next();
+
+		Map<String, Counter> keys= new HashMap<String, Counter>(branches.size());
+		for (Iterator<Branch> iter = branches.iterator(); iter.hasNext(); ) {
+			Branch branch= iter.next();
 			IRegion aligned = alignRegion(branch, ctx, branch.fInclusive);
 			if (aligned != null) {
 				Position alignedPos= new Position(aligned.getOffset(), aligned.getLength());
 				final boolean collapse= !branch.taken() && ctx.collapseInactiveCode() && !alignedPos.includes(fCursorPosition);
-				ctx.addProjectionRange(new CProjectionAnnotation(collapse, computeKey(branch, ctx), false), alignedPos);
+				// compute a stable key
+				String key = branch.fCondition;
+				Counter counter= keys.get(key);
+				if (counter == null) {
+					keys.put(key, new Counter());
+				} else {
+					key= Integer.toString(counter.fCount++) + key;
+				}
+				ctx.addProjectionRange(new CProjectionAnnotation(collapse, key, CProjectionAnnotation.BRANCH), alignedPos);
 			}
 		}
 	}
@@ -1362,7 +1437,9 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	 */
 	private Object computeKey(Position pos, FoldingStructureComputationContext ctx) {
 		try {
-			return ctx.getDocument().get(pos.offset, Math.min(16, pos.length));
+			final IDocument document= ctx.getDocument();
+			IRegion line= document.getLineInformationOfOffset(pos.offset);
+			return document.get(pos.offset, Math.min(16, line.getOffset() + line.getLength() - pos.offset));
 		} catch (BadLocationException exc) {
 			return exc;
 		}
@@ -1445,8 +1522,8 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		}
 		if (!comments.isEmpty()) {
 			// first comment starting before line 10 is considered the header comment
-			Iterator iter = comments.iterator();
-			Tuple tuple = (Tuple) iter.next();
+			Iterator<Tuple> iter = comments.iterator();
+			Tuple tuple = iter.next();
 			int lineNr = doc.getLineOfOffset(tuple.position.getOffset());
 			if (lineNr < 10) {
 				if (ctx.collapseHeaderComments()) {
@@ -1457,7 +1534,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 			}
 			ctx.addProjectionRange(tuple.annotation, tuple.position);
 			while (iter.hasNext()) {
-				tuple = (Tuple) iter.next();
+				tuple = iter.next();
 				ctx.addProjectionRange(tuple.annotation, tuple.position);
 			}
 		}

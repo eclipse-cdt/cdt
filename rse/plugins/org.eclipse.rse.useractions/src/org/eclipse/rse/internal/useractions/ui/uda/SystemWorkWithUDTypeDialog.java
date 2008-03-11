@@ -17,7 +17,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
@@ -41,6 +40,7 @@ import org.eclipse.swt.widgets.Widget;
 public class SystemWorkWithUDTypeDialog extends SystemPromptDialog implements ISystemUDWorkWithDialog, Listener, Runnable, ISystemUDAEditPaneHoster {
 	protected Shell shell; // shell hosting this viewer
 	protected ResourceBundle rb;
+	protected SystemUDActionSubsystem udaActionSubsystem;
 	protected ISubSystem subsystem;
 	protected ISubSystemConfiguration subsystemFactory;
 	protected ISystemProfile profile;
@@ -58,11 +58,12 @@ public class SystemWorkWithUDTypeDialog extends SystemPromptDialog implements IS
 	/**
 	 * Constructor when we have a subsystem
 	 */
-	public SystemWorkWithUDTypeDialog(Shell shell, ISubSystem ss) {
+	public SystemWorkWithUDTypeDialog(Shell shell, ISubSystem ss, SystemUDActionSubsystem udaActionSubsystem) {
 		super(shell, SystemUDAResources.RESID_WORKWITH_UDT_TITLE);
-		setCancelButtonLabel(SystemResources.BUTTON_CLOSE);
+		setCancelButtonLabel(SystemUDAResources.BUTTON_CLOSE);
 		setShowOkButton(false);
 		this.shell = shell;
+		this.udaActionSubsystem = udaActionSubsystem;
 		this.subsystem = ss;
 		this.subsystemFactory = subsystem.getSubSystemConfiguration();
 		this.profile = subsystem.getSystemProfile();
@@ -76,7 +77,7 @@ public class SystemWorkWithUDTypeDialog extends SystemPromptDialog implements IS
 	 */
 	public SystemWorkWithUDTypeDialog(Shell shell, ISubSystemConfiguration ssFactory, ISystemProfile profile) {
 		super(shell, SystemUDAResources.RESID_WORKWITH_UDT_TITLE);
-		setCancelButtonLabel(SystemResources.BUTTON_CLOSE);
+		setCancelButtonLabel(SystemUDAResources.BUTTON_CLOSE);
 		setShowOkButton(false);
 		this.shell = shell;
 		this.subsystemFactory = ssFactory;
@@ -119,7 +120,7 @@ public class SystemWorkWithUDTypeDialog extends SystemPromptDialog implements IS
 		Composite composite = SystemWidgetHelpers.createComposite(parent, nbrColumns);
 		// create tree view on left
 		if (subsystem != null)
-			treeView = new SystemUDTypeTreeView(composite, this, subsystem);
+			treeView = new SystemUDTypeTreeView(composite, this, subsystem, udaActionSubsystem);
 		else
 			treeView = new SystemUDTypeTreeView(composite, this, subsystemFactory, profile);
 		Control c = treeView.getControl();
@@ -143,7 +144,7 @@ public class SystemWorkWithUDTypeDialog extends SystemPromptDialog implements IS
 		// 	editpane =  getUDActionSubsystem().getCustomUDTypeEditPane( subsystem, this, treeView);
 		//else	   
 		//	editpane =  getUDActionSubsystem().getCustomUDTypeEditPane( subsystemFactory, profile, this, treeView);
-		editpane = getUDActionSubsystem().getCustomUDTypeEditPane(subsystem, subsystemFactory, profile, this, treeView);
+		editpane = getUDActionSubsystem().getCustomUDTypeEditPane(this, treeView);
 		editpane.createContents(rightSideComposite);
 		// now add a visual separator line
 		addSeparatorLine(rightSideComposite, 1);
@@ -176,7 +177,10 @@ public class SystemWorkWithUDTypeDialog extends SystemPromptDialog implements IS
 			}
 			// add listeners, after expansion...		
 			treeView.addSelectionChangedListener(editpane);
-			type = (SystemUDTypeElement) udtm.findByName(null, typeToPreSelect, preSelectTypeDomain);
+			if (subsystem != null)
+			{
+				type = (SystemUDTypeElement) udtm.findByName(subsystem.getSystemProfile(), typeToPreSelect, preSelectTypeDomain);
+			}
 			if (type != null) objectToPreSelect = type;
 		} else {
 			//treeView.expandDomainNodes();
@@ -201,16 +205,7 @@ public class SystemWorkWithUDTypeDialog extends SystemPromptDialog implements IS
 	 * Return the user defined action subsystem
 	 */
 	protected SystemUDActionSubsystem getUDActionSubsystem() {
-		/* FIXME - UDA not coupled with subsystem API anymore
-		 if (subsystem!=null)
-		 return subsystem.getUDActionSubsystem();
-		 else
-		 {
-		 return ((ISubsystemFactoryAdapter)subsystemFactory.getAdapter(ISubsystemFactoryAdapter.class)).getActionSubSystem(subsystemFactory, null);
-
-		 }
-		 */
-		return null;
+		return udaActionSubsystem;
 	}
 
 	/**

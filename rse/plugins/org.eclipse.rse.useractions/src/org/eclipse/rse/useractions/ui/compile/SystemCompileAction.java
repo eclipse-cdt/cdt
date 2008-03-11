@@ -10,7 +10,7 @@
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  * David Dykstal (IBM) - [186589] move user actions API out of org.eclipse.rse.ui   
  *******************************************************************************/
-package org.eclipse.rse.internal.useractions.ui.compile;
+package org.eclipse.rse.useractions.ui.compile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,10 +18,14 @@ import java.util.List;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.internal.ui.GenericMessages;
 import org.eclipse.rse.internal.ui.view.SystemTableViewProvider;
 import org.eclipse.rse.internal.useractions.Activator;
 import org.eclipse.rse.internal.useractions.IUserActionsImageIds;
+import org.eclipse.rse.internal.useractions.ui.compile.SystemCompilableSource;
+import org.eclipse.rse.internal.useractions.ui.compile.SystemCompileCommand;
+import org.eclipse.rse.internal.useractions.ui.compile.SystemCompileManager;
+import org.eclipse.rse.internal.useractions.ui.compile.SystemCompileType;
+import org.eclipse.rse.internal.useractions.ui.uda.SystemUDAResources;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
@@ -178,10 +182,10 @@ public class SystemCompileAction extends SystemBaseAction {
 			WorkbenchContentProvider cprovider = new WorkbenchContentProvider();
 			SystemTableViewProvider lprovider = new SystemTableViewProvider(null);
 			// TODO: Cannot use WorkbenchMessages -- it's internal
-			ListSelectionDialog dlg = new ListSelectionDialog(getShell(), input, cprovider, lprovider, GenericMessages.EditorManager_saveResourcesMessage);
+			ListSelectionDialog dlg = new ListSelectionDialog(getShell(), input, cprovider, lprovider, SystemUDAResources.EditorManager_saveResourcesMessage);
 			dlg.setInitialSelections(input.getChildren());
 			// TODO: Cannot use WorkbenchMessages -- it's internal
-			dlg.setTitle(GenericMessages.EditorManager_saveResourcesTitle);
+			dlg.setTitle(SystemUDAResources.EditorManager_saveResourcesTitle);
 			int result = dlg.open();
 			//Just return false to prevent the operation continuing
 			if (result == IDialogConstants.CANCEL_ID) return false;

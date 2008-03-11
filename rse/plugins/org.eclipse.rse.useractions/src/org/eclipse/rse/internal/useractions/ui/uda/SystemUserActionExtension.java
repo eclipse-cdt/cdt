@@ -61,7 +61,7 @@ public class SystemUserActionExtension {
 			return true;
 		else {
 			//FIXME migrate to using ID
-			return (types.indexOf(type.getName()) >= 0);
+			return (types.indexOf(type.getId()) >= 0);
 		}
 	}
 }

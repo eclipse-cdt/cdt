@@ -19,11 +19,11 @@ import java.util.Vector;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.ISystemProfile;
-import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.useractions.UserActionsIcon;
 import org.eclipse.rse.internal.useractions.ui.SystemCmdSubstVarList;
+import org.eclipse.rse.internal.useractions.ui.uda.ISystemUDAConstants;
 import org.eclipse.rse.internal.useractions.ui.uda.ISystemUDAEditPaneHoster;
 import org.eclipse.rse.internal.useractions.ui.uda.ISystemUDTreeView;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemUDAResources;
@@ -283,7 +283,7 @@ public class UDActionSubsystemFiles extends SystemUDActionSubsystem {
 	 * @param cmdString - the resolved command
 	 * @param cmdSubSystem - this connection's command subsystem, which will run the command
 	 * @param context - the selected IRemoteFile object
-	 * @param viewer 
+	 * @param viewer the viewer that originated the compile action
 	 * @return true if we should continue, false if something went wrong
 	 */
 	protected boolean runCommand(Shell shell, SystemUDActionElement action, String cmdString, IRemoteCmdSubSystem cmdSubSystem, Object context, Viewer viewer) {
@@ -356,8 +356,8 @@ public class UDActionSubsystemFiles extends SystemUDActionSubsystem {
 	/** 
 	 * Subclasses may override to provide a custom type edit pane subclass 
 	 */
-	public SystemUDTypeEditPane getCustomUDTypeEditPane(ISubSystem ss, ISubSystemConfiguration ssf, ISystemProfile profile, ISystemUDAEditPaneHoster parent, ISystemUDTreeView tv) {
-		return new UDTypesEditPaneFiles(ss, ssf, profile, parent, tv);
+	public SystemUDTypeEditPane getCustomUDTypeEditPane(ISystemUDAEditPaneHoster parent, ISystemUDTreeView tv) {
+		return new UDTypesEditPaneFiles(this, parent, tv);
 	}
 
 	/**
@@ -445,9 +445,19 @@ public class UDActionSubsystemFiles extends SystemUDActionSubsystem {
 	public static SystemUDActionElement[] primeDefaultUniversalActions(SystemUDActionManager actionMgr, ISystemProfile profile, Vector vectorOfActions) {
 		Vector v = vectorOfActions;
 		if (v == null) v = new Vector();
+		String osType = actionMgr.getActionSubSystem().getOSType();
+		String userDefinedActionPropertySetName = ISystemUDAConstants.USER_DEFINED_ACTION_PROPRERTY_SET_PREFIX + osType + "." + actionMgr.getDocumentRootTagName(); //$NON-NLS-1$
+		IPropertySet userDefinedActionPropertySet = profile.getPropertySet(userDefinedActionPropertySetName);
+		if (null == userDefinedActionPropertySet)
+		{
+			userDefinedActionPropertySet = profile.createPropertySet(userDefinedActionPropertySetName);
+			userDefinedActionPropertySet.addProperty(ISystemUDAConstants.RELEASE_ATTR, ISystemUDAConstants.RELEASE_VALUE);
+			userDefinedActionPropertySet.addProperty(ISystemUDAConstants.UDA_ROOT_ATTR, actionMgr.getDocumentRootTagName());
+		}
 		// add file actions
 		int domain = DOMAIN_FILE;
 		SystemUDActionElement newAction;
+		//IPropertySet domainFilePropertySet = userDefinedActionPropertySet.createPropertySet(DOMAINS[1]);
 		for (int idx = 0; idx < FILE_ACTIONS.length; idx++) {
 			newAction = actionMgr.addAction(profile, FILE_ACTIONS[idx][0], domain);
 			v.addElement(newAction);

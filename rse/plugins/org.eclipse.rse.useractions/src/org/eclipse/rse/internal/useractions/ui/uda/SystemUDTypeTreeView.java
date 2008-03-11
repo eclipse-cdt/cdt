@@ -35,9 +35,9 @@ public class SystemUDTypeTreeView extends SystemUDBaseTreeView {
 	/**
 	 * Constructor when we have a subsystem
 	 */
-	public SystemUDTypeTreeView(Composite parent, ISystemUDWorkWithDialog editPane, ISubSystem ss) {
+	public SystemUDTypeTreeView(Composite parent, ISystemUDWorkWithDialog editPane, ISubSystem ss, SystemUDActionSubsystem udaActionSubsystem) {
 		/* FIXME - UDA not coupled with subsystem API anymore */
-		super(parent, editPane, ss, /*ss.getUDActionSubsystem().getUDTypeManager()*/null);
+		super(parent, editPane, ss, udaActionSubsystem.getUDTypeManager());
 	}
 
 	/**

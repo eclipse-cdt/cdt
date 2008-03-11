@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  *******************************************************************************/
-package org.eclipse.rse.internal.useractions.ui.compile;
+package org.eclipse.rse.useractions.ui.compile;
 
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -18,6 +18,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.internal.useractions.UserActionsResources;
+import org.eclipse.rse.internal.useractions.ui.compile.SystemCompileCascadeByProfileAction;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemPreferencesManager;

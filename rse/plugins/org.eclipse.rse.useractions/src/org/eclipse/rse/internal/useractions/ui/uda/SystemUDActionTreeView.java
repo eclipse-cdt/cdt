@@ -28,9 +28,8 @@ public class SystemUDActionTreeView extends SystemUDBaseTreeView {
 	/**
 	 * Constructor when we have a subsystem
 	 */
-	public SystemUDActionTreeView(Composite parent, ISystemUDWorkWithDialog editPane, ISubSystem ss) {
-		// FIXME - UDA can't be coupled with subsystem API
-		super(parent, editPane, ss, /*ss.getUDActionSubsystem().getUDActionManager()*/null);
+	public SystemUDActionTreeView(Composite parent, ISystemUDWorkWithDialog editPane, ISubSystem ss, SystemUDActionSubsystem udaActionSubsystem) {
+		super(parent, editPane, ss, udaActionSubsystem.getUDActionManager());
 	}
 
 	/**

@@ -24,8 +24,8 @@ import org.eclipse.swt.widgets.Shell;
 public class UniversalCompileProfile extends SystemCompileProfile {
 	/**
 	 * Constructor for UniversalCompileProfile.
-	 * @param manager
-	 * @param profileName
+	 * @param manager SystemCompileManager of this compile file
+	 * @param profileName System profile name
 	 */
 	public UniversalCompileProfile(SystemCompileManager manager, String profileName) {
 		super(manager, profileName);

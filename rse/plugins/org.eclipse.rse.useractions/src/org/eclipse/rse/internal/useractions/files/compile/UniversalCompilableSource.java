@@ -23,10 +23,11 @@ import org.eclipse.swt.widgets.Shell;
 public class UniversalCompilableSource extends SystemCompilableSource {
 	/**
 	 * Constructor for UniversalCompilableSource.
-	 * @param shell
-	 * @param firstSelection
-	 * @param compileCmd
-	 * @param isPrompt
+	 * @param shell - the shell to use if need to prompt
+	 * @param firstSelection - the selected compilable source member
+	 * @param compileCmd - the Compile Command that is to be run against the selected compilable source member
+	 * @param isPrompt - true if the user choose the flavor of the action to prompt the compile command
+	 * @param viewer - the viewer that originated the compile action
 	 */
 	public UniversalCompilableSource(Shell shell, Object firstSelection, SystemCompileCommand compileCmd, boolean isPrompt, Viewer viewer) {
 		super(shell, firstSelection, compileCmd, isPrompt, viewer);

@@ -12,10 +12,11 @@ package org.eclipse.rse.internal.useractions.ui.uda;
  *******************************************************************************/
 import java.util.StringTokenizer;
 
+import org.eclipse.rse.core.model.IProperty;
+import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.internal.useractions.UserActionsIcon;
 import org.eclipse.swt.graphics.Image;
-import org.w3c.dom.Element;
 
 /**
  * Represents a single user defined action, as an adaptable
@@ -42,7 +43,7 @@ public class SystemUDActionElement extends SystemXMLElementWrapper {
 	 * @param profile - The system profile which owns this action
 	 * @param domainType - The integer representation of the domain this is in (or this is, for a domain element)
 	 */
-	public SystemUDActionElement(Element e, SystemUDActionManager am, ISystemProfile profile, int domainType) {
+	public SystemUDActionElement(IPropertySet e, SystemUDActionManager am, ISystemProfile profile, int domainType) {
 		super(e, am, profile, domainType);
 	}
 
@@ -79,15 +80,28 @@ public class SystemUDActionElement extends SystemXMLElementWrapper {
 	/**
 	 * Return value of the "Comment" sub-tag
 	 */
+	
 	public String getComment() {
-		return getTextNode(COMMENT_TAG);
+		//Get the property for this 
+		IProperty commentProperty = elm.getProperty(COMMENT_TAG);
+		if (commentProperty != null)
+		{
+			return commentProperty.getValue();
+		}
+		return "";  //$NON-NLS-1$
 	}
 
 	/**
 	 * Return value of the "Command" sub-tag, which is the current command value
 	 */
 	public String getCommand() {
-		return getTextNode(COMMAND_TAG);
+		//Get the property for this 
+		IProperty commentProperty = elm.getProperty(COMMAND_TAG);
+		if (commentProperty != null)
+		{
+			return commentProperty.getValue();
+		}
+		return "";  //$NON-NLS-1$
 	}
 
 	/**
@@ -129,22 +143,38 @@ public class SystemUDActionElement extends SystemXMLElementWrapper {
 	 * Return value of the "FileTypes" sub-tag
 	 */
 	public String[] getFileTypes() {
-		String fts = getTextNode(FILETYPES_TAG);
-		// returns an empty string if no attribute
-		StringTokenizer st = new StringTokenizer(fts);
-		int n = st.countTokens();
-		String sa[] = new String[n];
-		for (int i = 0; i < n; i++) {
-			sa[i] = st.nextToken();
+		//Get the property for this 
+		IProperty fileTypeProperty = elm.getProperty(FILETYPES_TAG);
+		if (fileTypeProperty != null)
+		{
+			String fts = fileTypeProperty.getValue();
+			// returns an empty string if no attribute
+			StringTokenizer st = new StringTokenizer(fts);
+			int n = st.countTokens();
+			String sa[] = new String[n];
+			for (int i = 0; i < n; i++) {
+				sa[i] = st.nextToken();
+			}
+			return sa;
 		}
-		return sa;
+
+		return new String[0];
 	}
 
 	/**
 	 * Set the value of the "Comment" sub-tag
 	 */
 	public void setComment(String s) {
-		setTextNode(COMMENT_TAG, s);
+		IProperty commentProperty = elm.getProperty(COMMENT_TAG);
+		if (null != commentProperty)
+		{
+			commentProperty.setValue(s);
+		}
+		else
+		{
+			elm.addProperty(COMMENT_TAG, s);
+		}
+		
 		setUserChanged(true);
 	}
 
@@ -152,7 +182,15 @@ public class SystemUDActionElement extends SystemXMLElementWrapper {
 	 * Set the value of the "Command" sub-tag.
 	 */
 	public void setCommand(String s) {
-		setTextNode(COMMAND_TAG, s);
+		IProperty commandProperty = elm.getProperty(COMMAND_TAG);
+		if (null != commandProperty)
+		{
+			commandProperty.setValue(s);
+		}
+		else
+		{
+			elm.addProperty(COMMAND_TAG, s);
+		}
 		setUserChanged(true);
 	}
 
@@ -204,7 +242,17 @@ public class SystemUDActionElement extends SystemXMLElementWrapper {
 		for (int i = 0; i < sa.length; i++) {
 			s = s + " " + sa[i]; //$NON-NLS-1$
 		}
-		setTextNode(FILETYPES_TAG, s);
+		
+		IProperty fileTypeProperty = elm.getProperty(FILETYPES_TAG);
+		if (null != fileTypeProperty)
+		{
+			fileTypeProperty.setValue(s);
+		}
+		else
+		{
+			elm.addProperty(FILETYPES_TAG, s);
+		}
+		
 		setUserChanged(true);
 	}
 

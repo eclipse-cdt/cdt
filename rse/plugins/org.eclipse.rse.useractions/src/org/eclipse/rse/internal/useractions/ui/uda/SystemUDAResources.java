@@ -260,6 +260,18 @@ public class SystemUDAResources extends NLS {
 	public static String RESID_PREF_UDAS_CASCADEBYPROFILE_LABEL;
 	public static String RESID_PREF_UDAS_CASCADEBYPROFILE_TOOLTIP;
 	public static String SystemCompileManager_0;
+	
+	//Resources used to be in other internal plugins:
+	public static String EditorManager_saveResourcesMessage;
+	public static String EditorManager_saveResourcesTitle;
+	
+	public static String BUTTON_CLOSE;
+	public static String RESID_PP_PROPERTIES_TYPE_LABEL; 
+	public static String RESID_PP_PROPERTIES_TYPE_TOOLTIP;
+	public static String ACTION_CASCADING_NEW_LABEL;
+	public static String ACTION_CASCADING_NEW_TOOLTIP;
+
+	
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, SystemUDAResources.class);

@@ -1,0 +1,124 @@
+package org.eclipse.rse.internal.useractions.ui;
+
+import java.util.ArrayList;
+
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.core.model.ISystemProfile;
+import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
+import org.eclipse.rse.internal.useractions.ui.compile.SystemCompileCommand;
+import org.eclipse.rse.internal.useractions.ui.compile.SystemCompileManager;
+import org.eclipse.rse.internal.useractions.ui.compile.SystemCompileProfile;
+import org.eclipse.rse.internal.useractions.ui.compile.SystemCompileType;
+import org.eclipse.rse.ui.SystemBasePlugin;
+import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
+import org.eclipse.rse.ui.view.SystemAdapterHelpers;
+import org.eclipse.rse.useractions.files.compile.ISystemCompileManagerAdapter;
+import org.eclipse.rse.useractions.ui.compile.SystemCompileAction;
+import org.eclipse.rse.useractions.ui.compile.SystemWorkWithCompileCommandsAction;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.CompoundContributionItem;
+
+public class SystemDynamicCompileMenu extends CompoundContributionItem 
+{
+	private class TestContribution extends ActionContributionItem {
+		
+		public TestContribution(Action action)
+		{
+			super(action);
+		}
+		
+		/*
+		public void fill(Menu menu, int index) 
+		{
+			
+			MenuItem menuItem = new MenuItem(menu, SWT.RADIO);
+			menuItem.setText("My First Contribution");
+		}
+		*/
+	}
+
+	protected IContributionItem[] getContributionItems() {
+		
+		ArrayList returnedItemList = new ArrayList();
+		
+		ISystemProfile[] activeProfiles = RSECorePlugin.getTheSystemRegistry().getActiveSystemProfiles();
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		ISelection selection = window.getSelectionService().getSelection();
+		Object firstSelection = ((IStructuredSelection) selection).getFirstElement();
+		
+		Shell shell = SystemBasePlugin.getActiveWorkbenchShell();
+		
+		for (int idx = 0; idx < activeProfiles.length; idx++)
+		{
+			String srcType = null;
+			ISystemRemoteElementAdapter rmtAdapter = SystemAdapterHelpers.getRemoteAdapter(firstSelection);
+			if (rmtAdapter != null) {
+				srcType = rmtAdapter.getRemoteSourceType(firstSelection);
+				if (srcType == null)
+					srcType = "null"; //$NON-NLS-1$
+				else if (srcType.equals("")) //$NON-NLS-1$
+					srcType = "blank"; //$NON-NLS-1$
+			} 
+			 ISubSystem subsystem = rmtAdapter.getSubSystem(firstSelection);
+			 ISubSystemConfiguration ssc = subsystem.getSubSystemConfiguration();
+			 
+			 SystemCompileManager compileManager = null;
+			 
+			 if (firstSelection instanceof IAdaptable) {
+				 ISystemCompileManagerAdapter	adapter = (ISystemCompileManagerAdapter)((IAdaptable)firstSelection).getAdapter(ISystemCompileManagerAdapter.class);
+				 if (null != adapter)
+				 {
+					 compileManager = adapter.getSystemCompileManager(ssc);
+				 }
+			 }
+			 
+			 if (null != compileManager)
+			 {
+				 SystemCompileManager thisCompileManager = compileManager;
+				 SystemCompileProfile compileProfile = thisCompileManager.getCompileProfile(activeProfiles[idx]);
+				 // compileProfile.addContributions(firstSelection);
+				 SystemCompileType compileType = compileProfile.getCompileType(srcType);
+				 
+				 if (compileType != null)
+				 {
+					 SystemCompileCommand[] cmds = compileType.getCompileCommandsArray();
+					 for (int idx2=0; idx2<cmds.length; idx2++)
+					 {
+						 SystemCompileAction action = new SystemCompileAction(shell, cmds[idx2], true);
+						 action.setSelection(selection);
+						 TestContribution testContribution = new TestContribution(action);
+						 returnedItemList.add(testContribution);
+						 //ourSubMenu.add(action);
+					 }
+				 }
+			 }
+			
+		}
+		
+		// add a separator before Work With Compile Commands... menu item
+		//ourSubMenu.add(new Separator());
+		// add Work With Commands... action
+		
+		   // Here's where you would dynamically generate your list
+		SystemWorkWithCompileCommandsAction workWithCompileCommandAction = new SystemWorkWithCompileCommandsAction(shell, true);
+		workWithCompileCommandAction.setSelection(selection);
+		TestContribution testContribution = new TestContribution(workWithCompileCommandAction);
+		returnedItemList.add(testContribution);
+        IContributionItem[] list = (IContributionItem[])returnedItemList.toArray(new ActionContributionItem[]{});
+		//String[] array = (String[])arrayList.toArray(new String[]{});
+        //SystemCascadingCompileAction promptAction = new SystemCascadingCompileAction(null, true);
+        //list[0] = new TestContribution(/*promptAction*/);
+
+        return list;
+	}
+
+}

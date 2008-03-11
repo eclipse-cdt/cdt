@@ -10,12 +10,10 @@ package org.eclipse.rse.internal.useractions.files.uda;
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-import org.eclipse.rse.core.model.ISystemProfile;
-import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.useractions.ui.uda.ISystemUDAEditPaneHoster;
 import org.eclipse.rse.internal.useractions.ui.uda.ISystemUDTreeView;
 import org.eclipse.rse.internal.useractions.ui.uda.ISystemUDTypeEditPaneTypesSelector;
+import org.eclipse.rse.internal.useractions.ui.uda.SystemUDActionSubsystem;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemUDTypeEditPane;
 import org.eclipse.swt.widgets.Composite;
 
@@ -30,12 +28,12 @@ import org.eclipse.swt.widgets.Composite;
 public class UDTypesEditPaneFiles extends SystemUDTypeEditPane {
 	/**
 	 * Constructor for UDTypesEditPaneFiles.
-	 * @param ss
-	 * @param parent
-	 * @param tv
+	 * @param udaActionSubsys User Defined Action subsystem
+	 * @param parent any dialog or property page that wants to host a user action edit pane.
+	 * @param tv User Defined Action tree view
 	 */
-	public UDTypesEditPaneFiles(ISubSystem ss, ISubSystemConfiguration ssf, ISystemProfile profile, ISystemUDAEditPaneHoster parent, ISystemUDTreeView tv) {
-		super(ss, ssf, profile, parent, tv);
+	public UDTypesEditPaneFiles(SystemUDActionSubsystem udaActionSubsys, ISystemUDAEditPaneHoster parent, ISystemUDTreeView tv) {
+		super(udaActionSubsys, parent, tv);
 	}
 
 	/**

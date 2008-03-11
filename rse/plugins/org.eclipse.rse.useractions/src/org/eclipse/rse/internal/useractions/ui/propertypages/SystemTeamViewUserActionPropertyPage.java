@@ -13,10 +13,10 @@ package org.eclipse.rse.internal.useractions.ui.propertypages;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.useractions.UserActionsResources;
 import org.eclipse.rse.internal.useractions.ui.uda.ISystemUDAEditPaneHoster;
 import org.eclipse.rse.internal.useractions.ui.uda.ISystemUDTreeView;
+import org.eclipse.rse.internal.useractions.ui.uda.SystemUDAResources;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemUDActionEditPane;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemUDActionElement;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemUDActionSubsystem;
@@ -63,7 +63,7 @@ public class SystemTeamViewUserActionPropertyPage extends SystemBasePropertyPage
 		// Inner composite
 		composite_prompts = SystemWidgetHelpers.createComposite(parent, 2);
 		// Type prompt
-		labelType = createLabeledLabel(composite_prompts, SystemResources.RESID_PP_PROPERTIES_TYPE_LABEL, SystemResources.RESID_PP_PROPERTIES_TYPE_TOOLTIP);
+		labelType = createLabeledLabel(composite_prompts, SystemUDAResources.RESID_PP_PROPERTIES_TYPE_LABEL, SystemUDAResources.RESID_PP_PROPERTIES_TYPE_TOOLTIP);
 		labelType.setText(UserActionsResources.RESID_PP_USERACTION_TYPE_VALUE);
 		// Profile prompt
 		labelProfile = createLabeledLabel(composite_prompts, UserActionsResources.RESID_PP_USERACTION_PROFILE_LABEL, UserActionsResources.RESID_PP_USERACTION_PROFILE_TOOLTIP);

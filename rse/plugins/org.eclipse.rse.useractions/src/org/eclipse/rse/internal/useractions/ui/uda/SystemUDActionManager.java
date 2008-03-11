@@ -11,17 +11,16 @@
  *******************************************************************************/
 package org.eclipse.rse.internal.useractions.ui.uda;
 
-import java.io.File;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.useractions.UserActionsIcon;
 import org.eclipse.rse.internal.useractions.UserActionsPersistenceUtil;
 import org.eclipse.swt.graphics.Image;
-import org.w3c.dom.Element;
 
 /**
  * Instances of this class hold the UDA definitions unique to:
@@ -39,9 +38,8 @@ import org.w3c.dom.Element;
 public class SystemUDActionManager extends SystemUDBaseManager
 //       implements ErrorHandler,
 		implements ITreeContentProvider {
-	private static final String XE_ROOT = "Actions"; //$NON-NLS-1$
+	private static final String XE_ROOT = ISystemUDAConstants.ACTIONS_ROOT; 
 	private static final String XE_ACTION = "Action"; //$NON-NLS-1$
-	private final static String UDA_FILENAME = "uda.xml"; //$NON-NLS-1$
 
 	/**
 	 * Constructor
@@ -82,13 +80,6 @@ public class SystemUDActionManager extends SystemUDBaseManager
 	 */
 	protected boolean doMigration(ISystemProfile profile, String oldRelease) {
 		return getActionSubSystem().doActionsMigration(profile, oldRelease);
-	}
-
-	/**
-	 * Get name of the xml file used to persist the actions.
-	 */
-	public String getFileName() {
-		return UDA_FILENAME;
 	}
 
 	/**
@@ -149,23 +140,6 @@ public class SystemUDActionManager extends SystemUDBaseManager
 	}
 
 	/**
-	 * Return true if there are any actions, currently.
-	 */
-	public boolean hasActions(ISystemProfile profile, ISubSystemConfiguration ssFactory) {
-		boolean hasActions = false;
-		boolean folderExists = UserActionsPersistenceUtil.testUserActionsFolder(profile.getName(), ssFactory);
-		if (folderExists) {
-			String fileName = getFilePath(profile);
-			if (fileName != null) {
-				File file = new File(fileName);
-				if (file.canRead()) hasActions = true;
-			}
-		}
-		//System.out.println("Inside hasActions for SystemUDActionManager, for ssFactory "+ssFactory.getId()+": "+hasActions);
-		return hasActions;
-	}
-
-	/**
 	 * Return xml element wrapper objects for all actions, for the 
 	 *  given domain, or for the whole document if domain is -1 (iff
 	 *  domains not supported).
@@ -219,7 +193,7 @@ public class SystemUDActionManager extends SystemUDBaseManager
 	 * Given an xml element node, create an instance of the appropriate
 	 * subclass of SystemXMLElementWrapper to represent it.
 	 */
-	public SystemXMLElementWrapper createElementWrapper(Element xmlElementToWrap, ISystemProfile profile, int domain) {
+	public SystemXMLElementWrapper createElementWrapper(IPropertySet xmlElementToWrap, ISystemProfile profile, int domain) {
 		SystemUDActionElement elementWrapper = new SystemUDActionElement(xmlElementToWrap, this, profile, domain);
 		return elementWrapper;
 	}

@@ -19,6 +19,7 @@ import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.ui.view.team.SystemTeamViewSubSystemConfigurationNode;
 import org.eclipse.rse.internal.useractions.IUserActionsImageIds;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemUDAResources;
+import org.eclipse.rse.internal.useractions.ui.uda.SystemUDActionSubsystem;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemWorkWithUDTypeDialog;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -31,6 +32,7 @@ import org.eclipse.swt.widgets.Shell;
 public class SystemWorkWithFileTypesAction extends SystemBaseDialogAction {
 	private ISubSystem subsystem = null;
 	private ISubSystemConfiguration subsystemFactory = null;
+	private SystemUDActionSubsystem udaActionSubsystem;
 	private ISystemProfile profile;
 	private SystemWorkWithUDTypeDialog ourDlg = null;
 	private String typeToPreSelect = null;
@@ -41,11 +43,12 @@ public class SystemWorkWithFileTypesAction extends SystemBaseDialogAction {
 	/**
 	 * Constructor when we have a subsystem
 	 * @param parent The Shell of the parent UI for this dialog
-	 * @param subSystem The subsystem we are launching this from/for
+	 * @param udaActionSubsystem The User Define Action subsystem we are launching this from/for
 	 */
-	public SystemWorkWithFileTypesAction(Shell parent, ISubSystem subSystem) {
+	public SystemWorkWithFileTypesAction(Shell parent, SystemUDActionSubsystem udaActionSubsystem) {
 		this(parent);
-		this.subsystem = subSystem;
+		this.udaActionSubsystem = udaActionSubsystem;
+		this.subsystem = udaActionSubsystem.getSubsystem();
 		if (subsystem != null) {
 			this.subsystemFactory = subsystem.getSubSystemConfiguration();
 			this.profile = subsystem.getSystemProfile();
@@ -115,7 +118,7 @@ public class SystemWorkWithFileTypesAction extends SystemBaseDialogAction {
 			profile = ssfNode.getProfile();
 		}
 		if (subsystem != null)
-			ourDlg = new SystemWorkWithUDTypeDialog(parent, subsystem);
+			ourDlg = new SystemWorkWithUDTypeDialog(parent, subsystem, udaActionSubsystem);
 		else
 			ourDlg = new SystemWorkWithUDTypeDialog(parent, subsystemFactory, profile);
 		if (typeToPreSelect != null) ourDlg.preSelectType(preSelectTypeDomain, typeToPreSelect);

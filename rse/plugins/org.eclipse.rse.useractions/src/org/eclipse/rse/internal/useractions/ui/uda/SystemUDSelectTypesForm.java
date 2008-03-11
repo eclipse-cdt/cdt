@@ -383,7 +383,7 @@ public class SystemUDSelectTypesForm implements SelectionListener {
 			} else if (src == editButton) {
 				SystemWorkWithFileTypesAction editTypesAction = null;
 				if (subsystem != null)
-					editTypesAction = new SystemWorkWithFileTypesAction(shell, subsystem);
+					editTypesAction = new SystemWorkWithFileTypesAction(shell, udtm.getActionSubSystem());
 				else
 					editTypesAction = new SystemWorkWithFileTypesAction(shell, subsystemFactory, profile);
 				if (selection != null) {

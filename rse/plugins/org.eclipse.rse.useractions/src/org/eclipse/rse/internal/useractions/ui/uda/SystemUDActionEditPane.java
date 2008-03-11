@@ -88,6 +88,7 @@ public class SystemUDActionEditPane implements SelectionListener, // for the che
 	// Current selection not valid if errorMessage not null
 	protected SystemMessage errorMessage;
 	protected ISubSystem subsystem;
+	protected SystemUDActionSubsystem udaActionSubsys;
 	protected ISubSystemConfiguration subsystemFactory;
 	protected ISystemProfile profile;
 	public SystemUDActionElement currentAction;
@@ -119,11 +120,12 @@ public class SystemUDActionEditPane implements SelectionListener, // for the che
 	/**
 	 * Constructor when we have a subsystem or a subsystemconfiguration/profile pair.
 	 */
-	public SystemUDActionEditPane(ISubSystem subsys, ISubSystemConfiguration ssf, ISystemProfile profile, ISystemUDAEditPaneHoster parent, ISystemUDTreeView tv) {
+	public SystemUDActionEditPane(SystemUDActionSubsystem udaActionSubsys, ISystemUDAEditPaneHoster parent, ISystemUDTreeView tv) {
 		super();
-		this.subsystem = subsys;
-		this.subsystemFactory = (ssf == null) ? subsys.getSubSystemConfiguration() : ssf;
-		this.profile = (profile == null) ? subsys.getSystemProfile() : profile;
+		this.udaActionSubsys = udaActionSubsys;
+		this.subsystem = udaActionSubsys.getSubsystem();
+		this.subsystemFactory = subsystem.getSubSystemConfiguration();
+		this.profile = (profile == null) ? subsystem.getSystemProfile() : profile;
 		parentDialog = parent;
 		treeView = tv;
 		commandField = new SystemCommandTextField(getCommandTextViewerConfiguration());
@@ -134,15 +136,7 @@ public class SystemUDActionEditPane implements SelectionListener, // for the che
 	 * Return the user defined action subsystem
 	 */
 	protected SystemUDActionSubsystem getUDActionSubsystem() {
-		// FIXME - uda can't be coupled to subsystem api
-		//		if (subsystem!=null)
-		//			return subsystem.getUDActionSubsystem();
-		//		else
-		//		{
-		//			ISubsystemFactoryAdapter adapter = (ISubsystemFactoryAdapter)subsystemFactory.getAdapter(ISubsystemFactoryAdapter.class);
-		//			return adapter.getActionSubSystem(subsystemFactory, null);
-		//		}
-		return null;
+		return udaActionSubsys;
 	}
 
 	/**
@@ -166,13 +160,6 @@ public class SystemUDActionEditPane implements SelectionListener, // for the che
 	 */
 	protected ISubSystem getSubSystem() {
 		return subsystem;
-	}
-
-	/**
-	 * For child classes to access current subsystem factory.
-	 */
-	protected ISubSystemConfiguration getSubSystemFactory() {
-		return subsystemFactory;
 	}
 
 	/**
@@ -246,7 +233,7 @@ public class SystemUDActionEditPane implements SelectionListener, // for the che
 	// ------------------------------
 	/**
 	 * Method createContents.
-	 * @param parent
+	 * @param parent parent of this pane
 	 * @return Control
 	 */
 	public Control createContents(Composite parent) {
@@ -318,10 +305,12 @@ public class SystemUDActionEditPane implements SelectionListener, // for the che
 		//Label filler2 = SystemWidgetHelpers.createLabel(comp, "");
 		//((GridData)filler2.getLayoutData()).horizontalSpan = nbrColumns;
 		// TYPE SELECTION FORM
-		if (subsystem != null)
-			selectTypesForm = createSelectTypesForm(parentDialog.getShell(), subsystem);
+		if (udaActionSubsys != null)
+			selectTypesForm = createSelectTypesForm(parentDialog.getShell(), subsystem, udaActionSubsys);
 		else
-			selectTypesForm = createSelectTypesForm(parentDialog.getShell(), subsystemFactory, profile);
+		{
+			// FIXME: Xuan  - selectTypesForm = createSelectTypesForm(parentDialog.getShell(), profile);
+		}
 		if (selectTypesForm != null) {
 			selectTypesForm.createContents(comp, nbrColumns);
 		}
@@ -683,25 +672,12 @@ public class SystemUDActionEditPane implements SelectionListener, // for the che
 	 * Or override and return null to not prompt user for file types in your edit pane.
 	 * @return the created form, or null if you don't wish to include the GUI for selecting types
 	 */
-	protected SystemUDSelectTypesForm createSelectTypesForm(Shell shell, ISubSystem subsystem) {
-		// FIXME - UDA can't be coupled to subsystem api
-		//		if (getUDActionSubsystem().supportsTypes())
-		//		  return new SystemUDSelectTypesForm(shell, subsystem, subsystem.getUDActionSubsystem().getUDTypeManager());
-		//		else
-		return null;
-	}
-
-	/**
-	 * Override to use when we have a subsystem factory vs subsystem... eg, when launched from Team view.
-	 */
-	protected SystemUDSelectTypesForm createSelectTypesForm(Shell shell, ISubSystemConfiguration subsystemFactory, ISystemProfile profile) {
-		// FIXME - UDA can't be coupled to subsystem api
-		//		if (getUDActionSubsystem().supportsTypes())
-		//		{
-		//			ISubsystemFactoryAdapter adapter = (ISubsystemFactoryAdapter)subsystemFactory.getAdapter(ISubsystemFactoryAdapter.class);
-		//		  return new SystemUDSelectTypesForm(shell, subsystemFactory, profile, adapter.getActionSubSystem(subsystemFactory, null).getUDTypeManager());
-		//		}
-		//		else
+	protected SystemUDSelectTypesForm createSelectTypesForm(Shell shell, ISubSystem subsystem, SystemUDActionSubsystem udaActionSubsys) {
+		
+		if (udaActionSubsys.supportsTypes())
+		{
+			  return new SystemUDSelectTypesForm(shell, subsystem, udaActionSubsys.getUDTypeManager());
+		}
 		return null;
 	}
 

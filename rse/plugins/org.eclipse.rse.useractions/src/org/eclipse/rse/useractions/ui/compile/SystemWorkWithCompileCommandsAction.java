@@ -11,8 +11,9 @@
  * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
  *                                API to the user actions plugin
  *******************************************************************************/
-package org.eclipse.rse.internal.useractions.ui.compile;
+package org.eclipse.rse.useractions.ui.compile;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.model.ISystemProfile;
@@ -20,6 +21,9 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.ui.view.team.SystemTeamViewSubSystemConfigurationNode;
 import org.eclipse.rse.internal.useractions.IUserActionsImageIds;
+import org.eclipse.rse.internal.useractions.ui.compile.SystemCompileManager;
+import org.eclipse.rse.internal.useractions.ui.compile.SystemCompileProfile;
+import org.eclipse.rse.internal.useractions.ui.compile.SystemWorkWithCompileCommandsDialog;
 import org.eclipse.rse.internal.useractions.ui.compile.teamview.SystemTeamViewCompileTypeNode;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemUDAResources;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
@@ -27,6 +31,7 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemBaseDialogAction;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.SystemAdapterHelpers;
+import org.eclipse.rse.useractions.files.compile.ISystemCompileManagerAdapter;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -113,33 +118,46 @@ public class SystemWorkWithCompileCommandsAction extends SystemBaseDialogAction 
 			if (currSystemProfile == null) currSystemProfile = subsystem.getSystemProfile();
 		}
 		if (ssf != null) {
-			/* FIXME - compile actions not coupled with subsystem API anymore
-
-			 compileManager = ssf.getCompileManager();
-			 if (subsystem != null)
-			 {
-			 compileManager.setSystemConnection(subsystem.getHost());			
+			
+			 ISubSystemConfiguration ssc = subsystem.getSubSystemConfiguration();
+			 
+			 
+			 
+			 if (inputObject instanceof IAdaptable) {
+				 ISystemCompileManagerAdapter	adapter = (ISystemCompileManagerAdapter)((IAdaptable)inputObject).getAdapter(ISystemCompileManagerAdapter.class);
+				 if (null != adapter)
+				 {
+					 compileManager = adapter.getSystemCompileManager(ssc);
+				 }
 			 }
-			 if (currSystemProfile != null)
-			 currProfile = compileManager.getCompileProfile(currSystemProfile);
-			 currProfiles = compileManager.getAllCompileProfiles();
-			 */
-			caseSensitive = ssf.isCaseSensitive();
+			 
+			 if (null != compileManager)
+			 {
+				 if (currSystemProfile != null)
+				 {
+					 currProfile = compileManager.getCompileProfile(currSystemProfile);
+					 currProfiles = compileManager.getAllCompileProfiles();
+				 }
+			
+				caseSensitive = ssf.isCaseSensitive();
+		
+				SystemWorkWithCompileCommandsDialog dlg = new SystemWorkWithCompileCommandsDialog(shell, compileManager, currProfile);
+				/* FIXME - currProfiles cannot be null since above stuff was commented out
+				 if (currProfiles != null) {
+				 dlg.setProfiles(currProfiles);
+				 }
+				 */
+				dlg.setProfiles(currProfiles);
+				dlg.setCaseSensitive(caseSensitive);
+				if (inputObject instanceof SystemTeamViewCompileTypeNode) {
+					SystemTeamViewCompileTypeNode node = (SystemTeamViewCompileTypeNode) inputObject;
+					dlg.setCompileType(node.getCompileType());
+					dlg.setSupportsAddSrcTypeButton(false);
+				}
+				return dlg;
+			 }
 		}
-		SystemWorkWithCompileCommandsDialog dlg = new SystemWorkWithCompileCommandsDialog(shell, compileManager, currProfile);
-		/* FIXME - currProfiles cannot be null since above stuff was commented out
-		 if (currProfiles != null) {
-		 dlg.setProfiles(currProfiles);
-		 }
-		 */
-		dlg.setProfiles(currProfiles);
-		dlg.setCaseSensitive(caseSensitive);
-		if (inputObject instanceof SystemTeamViewCompileTypeNode) {
-			SystemTeamViewCompileTypeNode node = (SystemTeamViewCompileTypeNode) inputObject;
-			dlg.setCompileType(node.getCompileType());
-			dlg.setSupportsAddSrcTypeButton(false);
-		}
-		return dlg;
+		return null;
 	}
 
 	/**

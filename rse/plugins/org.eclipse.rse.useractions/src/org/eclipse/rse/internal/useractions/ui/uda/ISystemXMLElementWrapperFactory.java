@@ -10,8 +10,8 @@ package org.eclipse.rse.internal.useractions.ui.uda;
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
+import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.ISystemProfile;
-import org.w3c.dom.Element;
 
 /**
  * @author coulthar
@@ -24,7 +24,7 @@ public interface ISystemXMLElementWrapperFactory {
 	 * Given an xml element node, create an instance of the appropriate
 	 * subclass of SystemXMLElementWrapper to represent it.
 	 */
-	public SystemXMLElementWrapper createElementWrapper(Element xmlElementToWrap, ISystemProfile profile, int domain);
+	public SystemXMLElementWrapper createElementWrapper(IPropertySet xmlElementToWrap, ISystemProfile profile, int domain);
 
 	/**
 	 * Return the tag name for these elements. Will be "Action" or "Type"

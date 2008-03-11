@@ -24,10 +24,10 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -40,8 +40,6 @@ import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.internal.ui.GenericMessages;
-import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.view.SystemTableViewProvider;
 import org.eclipse.rse.internal.useractions.UserActionsIcon;
 import org.eclipse.rse.internal.useractions.ui.ISystemSubstitutor;
@@ -87,6 +85,7 @@ public abstract class SystemUDActionSubsystem implements ISystemSubstitutor {
 	protected SystemUDAResolvedTypes udaResolvedTypes;
 	protected SystemUDActionElement currentAction; // current action being processed
 	protected boolean testAction; // is current action the test action?
+	protected String osType = "default"; //$NON-NLS-1$
 
 	/**
 	 * Constructor
@@ -120,7 +119,7 @@ public abstract class SystemUDActionSubsystem implements ISystemSubstitutor {
 	 * @return translated label
 	 */
 	protected String getNewNodeActionLabel() {
-		return SystemResources.ACTION_CASCADING_NEW_LABEL;
+		return SystemUDAResources.ACTION_CASCADING_NEW_LABEL;
 	}
 
 	/**
@@ -131,7 +130,7 @@ public abstract class SystemUDActionSubsystem implements ISystemSubstitutor {
 	 * @return translated label
 	 */
 	protected String getNewNodeTypeLabel() {
-		return SystemResources.ACTION_CASCADING_NEW_LABEL;
+		return SystemUDAResources.ACTION_CASCADING_NEW_LABEL;
 	}
 
 	/**
@@ -235,7 +234,7 @@ public abstract class SystemUDActionSubsystem implements ISystemSubstitutor {
 	 * @param tv - the tree view if the parent is a dialog.
 	 *	 */
 	public SystemUDActionEditPane getCustomUDActionEditPane(ISubSystem ss, ISubSystemConfiguration ssFactory, ISystemProfile profile, ISystemUDAEditPaneHoster parent, ISystemUDTreeView tv) {
-		return new SystemUDActionEditPane(ss, ssFactory, profile, parent, tv);
+		return new SystemUDActionEditPane(this, parent, tv);
 	}
 
 	/** 
@@ -257,30 +256,11 @@ public abstract class SystemUDActionSubsystem implements ISystemSubstitutor {
 	/** 
 	 * Subclasses may override to provide a custom type edit pane subclass. 
 	 * Subclasses should override if they want to return their own types pane.
-	 * @param ss - the subsystem if you have it. If you don't have it, pass null.
-	 * @param ssconfig - the subsystem factory, if you don't have the subsystem.
-	 * @param profile - the subsystem factory, if you don't have the subsystem.
 	 * @param parent - the hosting dialog/property page
 	 * @param tv - the tree view if the parent is a dialog.
 	 */
-	public SystemUDTypeEditPane getCustomUDTypeEditPane(ISubSystem ss, ISubSystemConfiguration ssconfig, ISystemProfile profile, ISystemUDAEditPaneHoster parent, ISystemUDTreeView tv) {
-		return new SystemUDTypeEditPane(ss, ssconfig, profile, parent, tv);
-	}
-
-	/** 
-	 * Historical.
-	 * Now replaced with {@link #getCustomUDTypeEditPane(ISubSystem, ISubSystemConfiguration, ISystemProfile, ISystemUDAEditPaneHoster, ISystemUDTreeView)}  
-	 */
-	protected final SystemUDTypeEditPane getCustomUDTypeEditPane(ISubSystem ss, ISystemUDAEditPaneHoster parent, ISystemUDTreeView tv) {
-		return getCustomUDTypeEditPane(ss, null, null, parent, tv);
-	}
-
-	/** 
-	 * Historical.
-	 * Now replaced with {@link #getCustomUDTypeEditPane(ISubSystem, ISubSystemConfiguration, ISystemProfile, ISystemUDAEditPaneHoster, ISystemUDTreeView)}  
-	 */
-	public SystemUDTypeEditPane getCustomUDTypeEditPane(ISubSystemConfiguration ssFactory, ISystemProfile profile, ISystemUDAEditPaneHoster parent, ISystemUDTreeView tv) {
-		return getCustomUDTypeEditPane(null, ssFactory, profile, parent, tv);
+	public SystemUDTypeEditPane getCustomUDTypeEditPane(ISystemUDAEditPaneHoster parent, ISystemUDTreeView tv) {
+		return new SystemUDTypeEditPane(this, parent, tv);
 	}
 
 	// **************************************************************
@@ -364,7 +344,7 @@ public abstract class SystemUDActionSubsystem implements ISystemSubstitutor {
 	 * @param viewer - the viewer we are running this from. Used to do the refresh if requested in this action. Can be null.
 	 */
 	public void run(Shell shell, SystemUDActionElement action, IStructuredSelection selection, ISystemResourceChangeListener viewer) {
-		Assert.isLegal(shell != null, "shell argument is null"); //$NON-NLS-1$
+		//Assert.isLegal(shell != null, "shell argument is null"); //$NON-NLS-1$
 		processingSelection(true);
 		Iterator elements = selection.iterator();
 		this.currentAction = action;
@@ -500,7 +480,7 @@ public abstract class SystemUDActionSubsystem implements ISystemSubstitutor {
 				Thread.sleep(500L);
 			} catch (Exception exc) {
 			} // defect 46380: give action's command time to run? I don't know, but this works!
-			sr.fireEvent(viewer, new SystemResourceChangeEvent(sr, ISystemResourceChangeEvents.EVENT_REFRESH_SELECTED_PARENT, null));
+			sr.fireEvent(viewer, new SystemResourceChangeEvent(sr, ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE, null));
 			// todo! verify we are sending the right event! ok, done... its the right one.
 		}
 		if (testWriter != null && testFile != null) {
@@ -769,7 +749,7 @@ public abstract class SystemUDActionSubsystem implements ISystemSubstitutor {
 	 * If given a profile, the list is scoped to that, else it includes actions
 	 *  for all active profiles.
 	 */
-	public void addUserActions(IMenuManager menu, IStructuredSelection selection, ISystemProfile profile, Shell shell) {
+	public Action[] addUserActions(IMenuManager menu, IStructuredSelection selection, ISystemProfile profile, Shell shell) {
 		// access UDA tree for this subsystem
 		SystemUDActionManager actMgr = getUDActionManager();
 		// Go through each profile for this subsystem's factory
@@ -781,28 +761,39 @@ public abstract class SystemUDActionSubsystem implements ISystemSubstitutor {
 		int domain = -1;
 		if (supportsDomains()) {
 			domain = getDomainFromSelection(selection);
-			if (domain == -1) return;
+			if (domain == -1) 
+				return new Action[0];
 		}
 		boolean multiSelection = (selection.size() != 1);
+		ArrayList actionList = new ArrayList();
 		for (int idx = 0; idx < profiles.length; idx++) {
 			profile = profiles[idx];
-			SystemUDActionElement[] actions = actMgr.getActions(null, profile, domain);
+			SystemUDActionElement[] actionElements = actMgr.getActions(null, profile, domain);
 			// Scan UDA's for matching types and add to menu.
 			// if any match, then create the initial UDA submenu cascade item
-			for (int i = 0; i < actions.length; i++) {
-				SystemUDActionElement action = actions[i];
-				if (!action.getShow()) continue;
-				if (multiSelection && action.getSingleSelection()) continue;
-				if (supportsDomains() && (domain != action.getDomain())) continue; // newly added... we were getting file actions on folders
-				if (!supportsTypes() || meetsSelection(action, selection, domain)) {
-					SystemUDAsBaseAction uda = new SystemUDAsBaseAction(action, shell, this);
+			for (int i = 0; i < actionElements.length; i++) {
+				SystemUDActionElement actionElement = actionElements[i];
+				if (!actionElement.getShow()) continue;
+				if (multiSelection && actionElement.getSingleSelection()) continue;
+				if (supportsDomains() && (domain != actionElement.getDomain())) continue; // newly added... we were getting file actions on folders
+				if (!supportsTypes() || meetsSelection(actionElement, selection, domain)) {
+					SystemUDAsBaseAction uda = new SystemUDAsBaseAction(actionElement, shell, this);
 					uda.setSelection(selection);
 					uda.setShell(shell);
 					uda.setEnabled(!getWorkingOfflineMode());
-					menu.add(uda);
+					actionList.add(uda);
+					if (null != menu)
+					{
+						menu.add(uda);
+					}
+					
 				}
 			} // end for-loop
 		} // end for all profiles loop
+		Action[] list = (Action[])actionList.toArray(new Action[]{});
+		
+		return list;
+		
 	}
 
 	/**
@@ -1120,9 +1111,9 @@ public abstract class SystemUDActionSubsystem implements ISystemSubstitutor {
 			WorkbenchContentProvider cprovider = new WorkbenchContentProvider();
 			SystemTableViewProvider lprovider = new SystemTableViewProvider();
 			// TODO: Cannot use WorkbenchMessages -- it's internal
-			ListSelectionDialog dlg = new ListSelectionDialog(SystemBasePlugin.getActiveWorkbenchShell(), input, cprovider, lprovider, GenericMessages.EditorManager_saveResourcesMessage);
+			ListSelectionDialog dlg = new ListSelectionDialog(SystemBasePlugin.getActiveWorkbenchShell(), input, cprovider, lprovider, SystemUDAResources.EditorManager_saveResourcesMessage);
 			dlg.setInitialSelections(input.getChildren());
-			dlg.setTitle(GenericMessages.EditorManager_saveResourcesTitle);
+			dlg.setTitle(SystemUDAResources.EditorManager_saveResourcesTitle);
 			int result = dlg.open();
 			//Just return false to prevent the operation continuing
 			if (result == IDialogConstants.CANCEL_ID) return false;
@@ -1143,5 +1134,10 @@ public abstract class SystemUDActionSubsystem implements ISystemSubstitutor {
 	 * @param processingSelection true before proecssing, false after processing	 
 	 */
 	protected void processingSelection(boolean processingSelection) {
+	}
+	
+	public String getOSType()
+	{
+		return osType;
 	}
 }

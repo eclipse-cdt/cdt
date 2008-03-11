@@ -12,21 +12,12 @@
  *******************************************************************************/
 package org.eclipse.rse.internal.useractions.ui.uda;
 
-import java.io.File;
 import java.util.Vector;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.rse.core.SystemResourceHelpers;
+import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.ISystemProfile;
-import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.useractions.UserActionsIcon;
-import org.eclipse.rse.internal.useractions.UserActionsPersistenceUtil;
-import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.swt.graphics.Image;
-import org.w3c.dom.Element;
 
 /**
  * Instances of this class hold the UDA Type definitions unique to
@@ -40,11 +31,9 @@ import org.w3c.dom.Element;
  *
  */
 public class SystemUDTypeManager extends SystemUDBaseManager {
-	private static final String XE_ROOT = "FileTypes"; //$NON-NLS-1$
+	private static final String XE_ROOT = ISystemUDAConstants.FILETYPES_ROOT;
 	public static final String XE_TYPE = "Type"; //$NON-NLS-1$
 	public static final String ALL_TYPE = "ALL"; //$NON-NLS-1$
-	public final static String UDT_FILENAME = "udtype.xml"; //$NON-NLS-1$
-	private boolean oldFolderChecked = false;
 
 	/**
 	 * Constructor
@@ -67,12 +56,6 @@ public class SystemUDTypeManager extends SystemUDBaseManager {
 		return UserActionsIcon.USERTYPE_NEW.getImage();
 	}
 
-	/**
-	 * Get the name of the file to persist to: udtype.xml
-	 */
-	public String getFileName() {
-		return UDT_FILENAME;
-	}
 
 	/**
 	 * Overridable extension point for child classes to do migration of their document.
@@ -109,7 +92,7 @@ public class SystemUDTypeManager extends SystemUDBaseManager {
 	 * Given an xml element node, create an instance of the appropriate
 	 * subclass of SystemXMLElementWrapper to represent it.
 	 */
-	public SystemXMLElementWrapper createElementWrapper(Element xmlElementToWrap, ISystemProfile profile, int domain) {
+	public SystemXMLElementWrapper createElementWrapper(IPropertySet xmlElementToWrap, ISystemProfile profile, int domain) {
 		SystemUDTypeElement elementWrapper = new SystemUDTypeElement(xmlElementToWrap, this, domain);
 		return elementWrapper;
 	}
@@ -150,68 +133,9 @@ public class SystemUDTypeManager extends SystemUDBaseManager {
 		return getActionSubSystem().primeDefaultTypes(this);
 	}
 
-	// -------------------------------------------------------------------
-	// OVERRIDE OF PARENT METHODS TO ACCOUNT FOR THE FACT TYPES ARE STORED
-	//  ONLY BY SUBSYSTEM FACTORY, NOT PROFILE
-	// -------------------------------------------------------------------
-	/**
-	 * Get the folder containing the xml file used to persist the actions,
-	 *  for the given profile
-	 */
-	protected IFolder getDocumentFolder(ISubSystemConfiguration subsystemFactory, ISystemProfile profile) {
-		// return new location, as of R2
-		IFolder typesFolder = UserActionsPersistenceUtil.getTypeFiltersFolder(subsystemFactory);
-		// we check here for any residual old types files from R1. If found, we move it
-		// to the new location right away!
-		// TODO: DELETE THIS EXPENSIVE LOGIC AFTER A FEW RELEASES.
-		if (!oldFolderChecked && (profile != null)) {
-			//if (profile == null)
-			//  profile = subsystem.getSystemProfile();
-			//System.out.println("Is profile null? " + (profile==null));
-			IFolder oldFolder = UserActionsPersistenceUtil.getUserActionsFolder(profile.getName(), subsystemFactory);
-			IFile oldFile = oldFolder.getFile(getFileName());
-			if (exists(oldFile)) {
-				//System.out.println("Attempt to move old types folder...");
-				try {
-					if (!typesFolder.exists()) // if new folder location does not exist yet, create it...
-					{
-						SystemResourceHelpers.getResourceHelpers().createFolder(typesFolder);
-					}
-					SystemResourceHelpers.getResourceHelpers().moveFile(typesFolder, oldFile); // now move old file to new folder
-				} catch (Exception exc) {
-					SystemBasePlugin.logError("Exception moving old types file! ", exc); //$NON-NLS-1$
-				}
-			}
-			oldFolderChecked = true;
-		}
-		return typesFolder;
-	}
 
-	/**
-	 * For some reason the exists() method on IResource is fundamentally not reliable.
-	 * Because of this, we resort to looking ourselves at the file system.
-	 */
-	protected boolean exists(IResource resource) {
-		boolean exists = true;
-		IPath localOSLocation = resource.getLocation();
-		if (localOSLocation == null) {
-			//System.out.println("Testing if old file exists, and localOSLocation is null");
-			exists = false; // what else?    	
-		} else {
-			File osFile = new File(localOSLocation.toOSString());
-			//System.out.println("Testing if old file exists : " + localOSLocation.toOSString() + "... " + osFile.exists() );
-			exists = osFile.exists();
-		}
-		return exists;
-	}
 
-	/**
-	 * Intended for IMPORT actions only, where no Subsystem instance available:
-	 */
-	public void setFolder(String profileName, String factoryId) {
-		//importCaseFolder = SystemResourceManager.getUserActionsFolder(profileName, factoryId);
-		importCaseFolder = UserActionsPersistenceUtil.getTypeFiltersFolder(factoryId);
-	}
+
 
 	/**
 	 * Indicate data has changed for the given profile
@@ -229,7 +153,8 @@ public class SystemUDTypeManager extends SystemUDBaseManager {
 	 *  its types, or null if not found
 	 */
 	public String getTypesForTypeName(String typeName, int domain) {
-		SystemUDTypeElement element = (SystemUDTypeElement) findByName(null, typeName, domain);
+		ISystemProfile profile = getSubSystem().getSystemProfile();
+		SystemUDTypeElement element = (SystemUDTypeElement) findByName(profile, typeName, domain);
 		if (element != null)
 			return element.getTypes();
 		else
@@ -247,7 +172,7 @@ public class SystemUDTypeManager extends SystemUDBaseManager {
 	 * @return array of type objects
 	 */
 	public SystemUDTypeElement[] getTypes(Vector v, int domain) {
-		v = super.getXMLWrappers(v, domain, null);
+		v = super.getXMLWrappers(v, domain, _udas.getSubsystem().getSystemProfile());
 		if (v == null) return new SystemUDTypeElement[0];
 		SystemUDTypeElement[] types = new SystemUDTypeElement[v.size()];
 		for (int idx = 0; idx < types.length; idx++)
@@ -290,7 +215,8 @@ public class SystemUDTypeManager extends SystemUDBaseManager {
 	 *  and is typed to return SystemUDTypeElement
 	 */
 	public SystemUDTypeElement addType(int domain, String name) {
-		return (SystemUDTypeElement) super.addElement(null, domain, name);
+		ISystemProfile profile = getSubSystem().getSystemProfile();
+		return (SystemUDTypeElement) super.addElement(profile, domain, name);
 	}
 
 	/**
@@ -311,7 +237,8 @@ public class SystemUDTypeManager extends SystemUDBaseManager {
 	 * Save user data
 	 */
 	public void saveUserData() {
-		super.saveUserData(null);
+		ISystemProfile profile = getActionSubSystem().getSubsystem().getSystemProfile();
+		super.saveUserData(profile);
 	}
 	/*
 	 * Get our xml document

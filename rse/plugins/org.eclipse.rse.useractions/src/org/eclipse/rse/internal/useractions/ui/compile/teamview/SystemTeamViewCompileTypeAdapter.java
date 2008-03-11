@@ -20,11 +20,11 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.internal.useractions.UserActionsResources;
 import org.eclipse.rse.internal.useractions.ui.compile.SystemCompileCommand;
-import org.eclipse.rse.internal.useractions.ui.compile.SystemWorkWithCompileCommandsAction;
 import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.view.AbstractSystemViewAdapter;
 import org.eclipse.rse.ui.view.ISystemPropertyConstants;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
+import org.eclipse.rse.useractions.ui.compile.SystemWorkWithCompileCommandsAction;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 

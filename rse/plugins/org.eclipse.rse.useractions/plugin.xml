@@ -39,21 +39,31 @@
       </page>
    </extension>
    
-   
-     <extension point="org.eclipse.ui.menus">
+   <extension point="org.eclipse.ui.menus">
      <menuContribution locationURI="popup:org.eclipse.rse.ui.view.systemView">
-        <menu id="org.eclipse.rse.ui.useractions.menu"
-              label="Dynamic menu test"
-              mnemonic="useractions.dynamicmenu.mnemonic">
-
-           <dynamic class="org.eclipse.rse.internal.useractions.ui.DynamicMenuTest"
-                    id="org.eclipse.ui.rse.ui.views.dynamicmenutest">
+        <menu id="org.eclipse.rse.ui.useractions.compile.menu"
+              label="%DynamicLabel.CompileActionNode"
+              mnemonic="useractions.dynamiccompilemenu.mnemonic">
+           <dynamic class="org.eclipse.rse.internal.useractions.ui.SystemDynamicCompileMenu"
+                    id="org.eclipse.ui.rse.ui.views.dynamiccompilemenu">
            </dynamic>
-
+           <!--
+           <visibleWhen>
+             <instanceof
+                  value="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile"/>
+           </visibleWhen>
+           -->
         </menu>
-
+        
+        <menu id="org.eclipse.rse.ui.useractions.useraction.menu"
+              label="%DynamicLabel.UserActionNode"
+              mnemonic="useractions.dynamicuseractionmenu.mnemonic">
+           <dynamic class="org.eclipse.rse.internal.useractions.ui.SystemDynamicUserActionMenu"
+                    id="org.eclipse.ui.rse.ui.views.dynamicuseractionmenu">
+           </dynamic>
+        </menu>
+       
      </menuContribution>
-
      </extension>
-   
+	
 </plugin>

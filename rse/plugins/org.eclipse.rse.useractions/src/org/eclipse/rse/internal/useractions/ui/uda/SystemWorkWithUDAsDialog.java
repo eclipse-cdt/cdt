@@ -16,7 +16,6 @@ import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
@@ -56,6 +55,7 @@ public class SystemWorkWithUDAsDialog extends SystemPromptDialog implements ISys
 	// inputs
 	protected ISubSystem subsystem;
 	protected ISubSystemConfiguration subsystemFactory;
+	protected SystemUDActionSubsystem udaActionSubsystem;
 	//protected String           defaultProfileName; 
 	//protected String[]         defaultProfileNames;
 	protected ISystemProfile[] systemProfiles;
@@ -68,13 +68,14 @@ public class SystemWorkWithUDAsDialog extends SystemPromptDialog implements ISys
 	/**
 	 * Constructor when we have a subsystem
 	 */
-	public SystemWorkWithUDAsDialog(Shell shell, ISubSystem ss) {
+	public SystemWorkWithUDAsDialog(Shell shell, ISubSystem ss, SystemUDActionSubsystem udaActionSubsystem) {
 		super(shell, SystemUDAResources.RESID_WORKWITH_UDAS_TITLE);
-		setCancelButtonLabel(SystemResources.BUTTON_CLOSE);
+		setCancelButtonLabel(SystemUDAResources.BUTTON_CLOSE);
 		setShowOkButton(false);
 		this.shell = shell;
 		this.subsystem = ss;
 		this.subsystemFactory = ss.getSubSystemConfiguration();
+		this.udaActionSubsystem = udaActionSubsystem;
 		setProfiles(RSECorePlugin.getTheSystemProfileManager().getActiveSystemProfiles(), subsystem.getSystemProfile());
 		//setMinimumSize(600, 520); // x, y
 		//pack();
@@ -84,12 +85,13 @@ public class SystemWorkWithUDAsDialog extends SystemPromptDialog implements ISys
 	/**
 	 * Constructor when we have a subsystem factory
 	 */
-	public SystemWorkWithUDAsDialog(Shell shell, ISubSystemConfiguration ssFactory, ISystemProfile profile) {
+	public SystemWorkWithUDAsDialog(Shell shell, ISubSystemConfiguration ssFactory, ISystemProfile profile, SystemUDActionSubsystem udaActionSubsystem) {
 		super(shell, SystemUDAResources.RESID_WORKWITH_UDAS_TITLE);
-		setCancelButtonLabel(SystemResources.BUTTON_CLOSE);
+		setCancelButtonLabel(SystemUDAResources.BUTTON_CLOSE);
 		setShowOkButton(false);
 		this.shell = shell;
 		this.subsystemFactory = ssFactory;
+		this.udaActionSubsystem = udaActionSubsystem;
 		setProfiles(RSECorePlugin.getTheSystemProfileManager().getActiveSystemProfiles(), profile);
 		//setMinimumSize(600, 520); // x, y
 		//pack();
@@ -126,15 +128,7 @@ public class SystemWorkWithUDAsDialog extends SystemPromptDialog implements ISys
 	 * Return the user defined action subsystem
 	 */
 	protected SystemUDActionSubsystem getUDActionSubsystem() {
-		/* FIXME - UDA not coupled with subsystem API anymore
-		 if (subsystem!=null)
-		 return subsystem.getUDActionSubsystem();
-		 else
-		 {
-		 return ((ISubsystemFactoryAdapter)subsystemFactory.getAdapter(ISubsystemFactoryAdapter.class)).getActionSubSystem(subsystemFactory, null);
-		 }
-		 */
-		return null;
+		return udaActionSubsystem;
 	}
 
 	/**
@@ -155,9 +149,12 @@ public class SystemWorkWithUDAsDialog extends SystemPromptDialog implements ISys
 			getUDActionSubsystem().getUDActionManager().setCurrentProfile(currentProfile);
 		// create tree view on left
 		if (subsystem != null)
-			treeView = new SystemUDActionTreeView(composite, this, subsystem);
+			treeView = new SystemUDActionTreeView(composite, this, subsystem, udaActionSubsystem);
 		else
-			treeView = new SystemUDActionTreeView(composite, this, subsystemFactory, currentProfile);
+		{
+			// FIXME - Xuan 
+			//treeView = new SystemUDActionTreeView(composite, this, subsystemFactory, currentProfile);
+		}
 		Control c = treeView.getControl();
 		//c.setToolTipText(RSEUIPlugin.getString(RESID_UDA_TREE_TIP));
 		GridData data = (GridData) c.getLayoutData();

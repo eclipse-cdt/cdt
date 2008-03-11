@@ -28,7 +28,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemModelChangeEvents;
-import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.view.SystemViewMenuListener;
 import org.eclipse.rse.internal.useractions.IUserActionsModelChangeEvents;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemUDAResources;
@@ -122,7 +121,7 @@ public class SystemWorkWithCompileCommandsDialog extends SystemPromptDialog impl
 		this.currentCompProfile = currentCompProfile;
 		this.compProfiles = new SystemCompileProfile[] { currentCompProfile };
 		this.supportsAddSrcTypeButton = true;
-		setCancelButtonLabel(SystemResources.BUTTON_CLOSE);
+		setCancelButtonLabel(SystemUDAResources.BUTTON_CLOSE);
 		setShowOkButton(false);
 		setOutputObject(null);
 		setHelp();

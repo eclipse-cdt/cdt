@@ -19,8 +19,8 @@ import org.eclipse.rse.internal.useractions.ui.compile.SystemCompileManager;
 public class LocalCompileProfile extends UniversalCompileProfile {
 	/**
 	 * Constructor 
-	 * @param manager
-	 * @param profileName
+	 * @param manager SystemCompileManager of this compile file
+	 * @param profileName System profile name
 	 */
 	public LocalCompileProfile(SystemCompileManager manager, String profileName) {
 		super(manager, profileName);

@@ -18,7 +18,6 @@ package org.eclipse.rse.internal.useractions.ui.propertypages;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemModelChangeEvents;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.useractions.IUserActionsModelChangeEvents;
 import org.eclipse.rse.internal.useractions.UserActionsResources;
 import org.eclipse.rse.internal.useractions.ui.compile.ISystemCompileCommandEditPaneHoster;
@@ -27,6 +26,7 @@ import org.eclipse.rse.internal.useractions.ui.compile.SystemCompileCommand;
 import org.eclipse.rse.internal.useractions.ui.compile.SystemCompileCommandEditPane;
 import org.eclipse.rse.internal.useractions.ui.compile.SystemCompileManager;
 import org.eclipse.rse.internal.useractions.ui.compile.teamview.SystemTeamViewCompileCommandNode;
+import org.eclipse.rse.internal.useractions.ui.uda.SystemUDAResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.propertypages.SystemBasePropertyPage;
@@ -70,8 +70,8 @@ public class SystemTeamViewCompileCommandPropertyPage extends SystemBaseProperty
 		nbrColumns = 2;
 		composite_prompts = SystemWidgetHelpers.createComposite(parent, nbrColumns);
 		// Type prompt
-		String typeLabel = SystemResources.RESID_PP_PROPERTIES_TYPE_LABEL;
-		String typeTooltip = SystemResources.RESID_PP_PROPERTIES_TYPE_TOOLTIP;
+		String typeLabel = SystemUDAResources.RESID_PP_PROPERTIES_TYPE_LABEL;
+		String typeTooltip = SystemUDAResources.RESID_PP_PROPERTIES_TYPE_TOOLTIP;
 		labelType = SystemWidgetHelpers.createLabeledLabel(composite_prompts, typeLabel, typeTooltip, false);
 		labelType.setText(UserActionsResources.RESID_PP_COMPILECMD_TYPE_VALUE);
 		// Profile prompt

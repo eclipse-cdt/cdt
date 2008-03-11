@@ -11,32 +11,13 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
  *                                API to the user actions plugin
- * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared                               
  *******************************************************************************/
 
 package org.eclipse.rse.internal.useractions.ui.uda;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -44,38 +25,24 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.RSECorePlugin;
-import org.eclipse.rse.core.SystemResourceHelpers;
 import org.eclipse.rse.core.SystemResourceManager;
+import org.eclipse.rse.core.model.IPropertySet;
+import org.eclipse.rse.core.model.IPropertySetContainer;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.internal.ui.SystemResources;
-import org.eclipse.rse.internal.useractions.Activator;
-import org.eclipse.rse.internal.useractions.IUserActionsMessageIds;
-import org.eclipse.rse.internal.useractions.UserActionsResources;
-import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemIconConstants;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
-import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.model.IWorkbenchAdapter;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
+
 
 /**
  * Instances of this class hold the UDA definitions unique to
@@ -96,7 +63,7 @@ import org.xml.sax.SAXParseException;
  * Architecturally, this class and the SystemXMLElementWrapper class 
  *  encapsulate all knowledge of the fact the underlying store is a xml document.
  */
-public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChangeListener, ISystemXMLElementWrapperFactory, ITreeContentProvider {
+public abstract class SystemUDBaseManager implements IResourceChangeListener, ISystemXMLElementWrapperFactory, ITreeContentProvider {
 	// state
 	protected SystemUDActionSubsystem _udas;
 	protected IFolder importCaseFolder; // Only set during Import processing
@@ -109,13 +76,13 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 	private Hashtable hasChangedByProfile;
 	private Hashtable dirPathByProfile;
 	// used by subclasses that are not profile-indexed
-	private Document udocNoProfile;
+	private IPropertySet udocNoProfile;
 	private boolean hasChangedNoProfile = false;
 	private Object[] dirPathNoProfile;
 	// Profile for which we are working for actions for...
 	private ISystemProfile currentlyActiveProfile; // set in UDA GUI
 	// Clipboard copy/paste support
-	private Element currentNodeClone = null;
+	private IPropertySet currentNodeClone = null;
 	private String currentNodeCloneID = ""; //$NON-NLS-1$
 	//	private String  currentNodeCloneName = ""; //$NON-NLS-1$
 	private int currentNodeCloneDomain = -1;
@@ -167,7 +134,7 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 	 * Given an xml element node, create an instance of the appropriate
 	 * subclass of SystemXMLElementWrapper to represent it.
 	 */
-	public abstract SystemXMLElementWrapper createElementWrapper(Element xmlElementToWrap, ISystemProfile profile, int domain);
+	public abstract SystemXMLElementWrapper createElementWrapper(IPropertySet xmlElementToWrap, ISystemProfile profile, int domain);
 
 	// -----------------------------------------------------------	
 	// ITREECONTENTPROVIDER METHODS...
@@ -213,7 +180,17 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 				if (!wrapper.isDomain())
 					return false;
 				else
-					return (wrapper.getElement().getFirstChild() != null);
+				{
+					IPropertySet[] childrenPropertySet = wrapper.getElement().getPropertySets();
+					if (childrenPropertySet == null || childrenPropertySet.length == 0)
+					{
+						return false;
+					}
+					else
+					{
+						return true;
+					}
+				}
 			} else
 				return false;
 		} else if (element == null) {
@@ -276,11 +253,11 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 	 */
 	public Vector getXMLWrappers(Vector children, Object parentOrDomain, ISystemProfile profile) {
 		int domain = -1;
-		Element parentElement = null;
+		IPropertySet parentElement = null;
 		if (parentOrDomain instanceof SystemXMLElementWrapper) {
 			parentElement = ((SystemXMLElementWrapper) parentOrDomain).getElement();
 			domain = ((SystemXMLElementWrapper) parentOrDomain).getDomain();
-		} else if (parentOrDomain instanceof Element) parentElement = (Element) parentOrDomain;
+		} else if (parentOrDomain instanceof IPropertySet) parentElement = (IPropertySet) parentOrDomain;
 		children = SystemXMLElementWrapper.getChildren(children, parentElement, getDocument(profile), profile, this, domain);
 		return children;
 	}
@@ -315,34 +292,6 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 		 */
 	}
 
-	/**
-	 * Return name of the xml file used to persist the actions
-	 */
-	public abstract String getFileName();
-
-	/**
-	 * Initialize a new document
-	 */
-	public Document initializeDocument() {
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder builder = null;
-		Document doc = null;
-		try {
-			builder = factory.newDocumentBuilder();
-		} catch (ParserConfigurationException e) {
-		}
-		if (builder != null) {
-			doc = builder.newDocument();
-			//       Document doc= new DocumentImpl();
-			// create root element. Eg <Actions> or <Types>
-			Element root = doc.createElement(getDocumentRootTagName());
-			// set current release as an attribute
-			root.setAttribute(ISystemUDAConstants.RELEASE_ATTR, CURRENT_RELEASE_NAME);
-			// assign root
-			doc.appendChild(root); // Add Root to Document
-		}
-		return doc;
-	}
 
 	/**
 	 * Get the current subsystem. Will be null for import, or working in team view when
@@ -365,112 +314,26 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 		else
 			return null;
 	}
+	
+	
 
-	/**
-	 * Get the path of the XML document containing the user actions,
-	 *  for the given profile (and current subsystem)
-	 */
-	protected String getFilePath(ISystemProfile profile) {
-		IFolder folder = getFolder(profile);
-		if (folder == null) return null;
-		String fn = folder.getLocation().toOSString() + File.separator + getFileName();
-		// System.out.println("UD file: " + fn);
-		return fn;
-	}
-
-	/**
-	 * Build a vector of the folder names, in order, from workspace
-	 * to our data file.  Do once only.
-	 * (To be used when resolving resource change events)
-	 */
-	private void resolveDirPath(ISystemProfile profile) {
-		//     System.out.println("UD file:"  );
-		Vector dirFolder = new Vector();
-		dirFolder.add(getFileName());
-		IContainer folder = getFolder(profile);
-		while (folder != null) {
-			// Insert at start of vector
-			String s = folder.getName();
-			// Workspace is empty string, dont add it
-			if (!"".equals(s)) //$NON-NLS-1$
-			{
-				dirFolder.add(0, s);
-				//  System.out.println("+" + s );
-			}
-			folder = folder.getParent();
-		}
-		Object[] dirPath = dirFolder.toArray();
-		setProfileIndexedInstanceVariable_dirPath(profile, dirPath);
-	}
 
 	/**
 	 * loadAndParseXMLFile:
 	 * tries to load and parse the specified XML file.
-	 * @param fileName the name of xml file which will contain the messages
 	 * @param profile the profile in which the user defined actions are kept
 	 * @return the document containing the user defined actions
 	 */
-	protected Document loadAndParseXMLFile(String fileName, ISystemProfile profile) {
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder parser = null;
-		try {
-			parser = factory.newDocumentBuilder();
-		} catch (ParserConfigurationException e) {
-			SystemBasePlugin.logError("SystemUDBaseManager: loadAndParseXMLFile, configuration not valid " + e.toString(), e); //$NON-NLS-1$
-			return null;
-		}
-		//		DOMParser parser = new DOMParser();
-		parser.setErrorHandler(this);
-		try {
-			Document doc = parser.parse(fileName);
-			// verify the document is what we expect...
-			Element docroot = doc.getDocumentElement(); // get Root Element
-			// ?? Confirm root is XE_ROOT ??
-			// ok, I took on the job of handling this. I also decided to put it 
-			// here so we don't have this code scattered everywhere after calls to getDocument()
-			// Phil. 08/2002
-			if ((null == docroot) || !docroot.getTagName().equals(getDocumentRootTagName())) {
-				Shell activeShell = getActiveShell();
-				
-
-				String oldFileName = getFilePath(profile);
-				String newFileName = getFileName() + ".bad"; //$NON-NLS-1$
-				IFile file = getFolder(profile).getFile(getFileName());
-				try {
-					SystemResourceHelpers.getResourceHelpers().renameFile(file, newFileName);
-				} catch (Exception exc) {
-				}
-
-				
-				String msgTxt = NLS.bind(UserActionsResources.MSG_UDA_ROOTTAG_ERROR, getFilePath(profile));
-				String msgDetails = NLS.bind(UserActionsResources.MSG_UDA_ROOTTAG_ERROR_DETAILS, getDocumentRootTagName(), newFileName);
-				
-				SystemMessage docRootMsg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
-						IUserActionsMessageIds.MSG_UDA_ROOTTAG_ERROR,
-						IStatus.ERROR, msgTxt, msgDetails);
+	protected IPropertySet loadAndParseXMLFile(ISystemProfile profile) {
 		
-				doc = createAndPrimeDocument(profile);
-				docRootMsg.makeSubstitution(oldFileName, getDocumentRootTagName(), newFileName);
-				SystemBasePlugin.logWarning(docRootMsg.getLevelOneText());
-				if (activeShell != null) {
-					SystemMessageDialog.displayErrorMessage(activeShell, docRootMsg);
-				}
-			}
-			return doc;
-		} catch (Exception exc) {
-			// Provide a non-null value.  Might as well prime
-			// with a "proper" doc structure.
-			Document doc = initializeDocument();
-			
-			String msgTxt = NLS.bind(UserActionsResources.MSG_UDA_LOAD_ERROR, fileName);
-			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
-					IUserActionsMessageIds.MSG_UDA_LOAD_ERROR,
-					IStatus.ERROR, msgTxt, exc);
-			SystemMessageDialog msgdlg = new SystemMessageDialog(SystemBasePlugin.getActiveWorkbenchShell(), msg);
-			msgdlg.open();
-			return doc;
-		}
+		String osType = _udas.getOSType();
+		String udaRootPropertySetName = ISystemUDAConstants.USER_DEFINED_ACTION_PROPRERTY_SET_PREFIX + osType + "." + getDocumentRootTagName(); //$NON-NLS-1$
+		IPropertySet userDefinedActionPropertySet = profile.getPropertySet(udaRootPropertySetName);
+		
+		return userDefinedActionPropertySet;
+		
 	}
+
 
 	// **********************************************************
 	//  ErrorHandler Interface:    (XML SAX parsing)
@@ -546,18 +409,13 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 			ISystemProfile[] activeProfiles = getActiveSystemProfiles();
 			for (int idx = 0; idx < activeProfiles.length; idx++) {
 				ISystemProfile profile = activeProfiles[idx];
-				ensureDirPathResolved(profile);
+				//ensureDirPathResolved(profile);
 				searchDelta(profile, delta, 0);
 			}
 		} else {
-			ensureDirPathResolved(null);
+			//ensureDirPathResolved(null);
 			searchDelta(null, delta, 0);
 		}
-	}
-
-	private void ensureDirPathResolved(ISystemProfile profile) {
-		Object[] dirPath = getProfileIndexedInstanceVariable_dirPath(profile);
-		if (dirPath == null) resolveDirPath(profile);
 	}
 
 	private void searchDelta(ISystemProfile profile, IResourceDelta parent, int nestLevel) {
@@ -631,6 +489,7 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 	 * Get the release of the document. Eg, value of the "release"attribute of the root.
 	 * If not set then we assume it is release "4.0"
 	 */
+	/*
 	public String getDocumentRelease(ISystemProfile profile) {
 		Document doc = getDocument(profile);
 		Element root = doc.getDocumentElement();
@@ -640,17 +499,24 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 		else
 			return rel;
 	}
+	*/
 
 	/**
 	 * Load document for given SystemProfile only if not already done.
 	 */
-	public Document getDocument(ISystemProfile profile) {
-		Document doc = getProfileIndexedInstanceVariable_Document(profile);
+	public IPropertySet getDocument(ISystemProfile profile) {
+		IPropertySet doc = getProfileIndexedInstanceVariable_Document(profile);
 		if (doc == null) {
 			doc = loadUserData(profile);
+			if (doc == null)
+			{
+				//No user action for this profile
+				return doc;
+			}
 			setProfileIndexedInstanceVariable_Document(profile, doc);
 			// document is good. Now, check the release date stamped on it.
 			// if not the current release, then we must consider migration...	
+			/*
 			Element docroot = doc.getDocumentElement();
 			String docRelease = docroot.getAttribute(ISystemUDAConstants.RELEASE_ATTR);
 			if ((docRelease == null) || (docRelease.length() == 0)) docRelease = "4.0"; //$NON-NLS-1$
@@ -663,8 +529,10 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 					saveUserData(profile);
 				}
 			}
+			*/
 		} else {
 		}
+		
 		return doc;
 	}
 
@@ -676,12 +544,6 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 	 */
 	protected abstract boolean doMigration(ISystemProfile profile, String oldRelease);
 
-	/**
-	 * Get the active shell so we can show an error message
-	 */
-	private Shell getActiveShell() {
-		return Display.getCurrent().getActiveShell();
-	}
 
 	/**
 	 * Indicate the data has changed for the document for the given system profile
@@ -708,32 +570,6 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 	}
 
 	/**
-	 * Get the folder containing the xml file used to persist the actions,
-	 *  for the given profile
-	 */
-	private IFolder getFolder(ISystemProfile profile) {
-		ISubSystem subsystem = getSubSystem();
-		// Import action:  no subsystem
-		if ((subsystem == null) && (getSubSystemFactory() == null))
-			return importCaseFolder;
-		else {
-			if ((profile == null) && (subsystem != null)) profile = subsystem.getSystemProfile();
-			return getDocumentFolder(getSubSystemFactory(), profile);
-		}
-	}
-
-	/**
-	 * Get the folder containing the xml file used to persist the actions,
-	 *  for the given profile
-	 */
-	protected abstract IFolder getDocumentFolder(ISubSystemConfiguration subsystemFactory, ISystemProfile profile);
-
-	/**
-	 * Intended for IMPORT actions only, where no Subsystem instance available:
-	 */
-	public abstract void setFolder(String profileName, String factoryId);
-
-	/**
 	 * Indicate data has changed for the given profile
 	 */
 	protected void dataChanged(ISystemProfile profile) {
@@ -742,10 +578,11 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 	/**
 	 * Load the user actions from the XML document, for the given profile
 	 */
-	protected Document loadUserData(ISystemProfile profile) {
+	protected IPropertySet loadUserData(ISystemProfile profile) {
 		//System.out.println("UD load: " + getFileName() );
 		dataChanged(profile); // not sure why we call this, at this time!! Phil
 		setProfileIndexedInstanceVariable_hasChanged(profile, false);
+		/*
 		String fn = getFilePath(profile);
 		Document doc = null;
 		if (!(new File(fn)).canRead())
@@ -753,25 +590,49 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 		else
 			doc = loadAndParseXMLFile(fn, profile);
 		//addListener();
-		return doc;
+		*/ 
+		//We use PropertySet to store User Action instead.
+		//We need to get the compile command information from the system profile now.
+		//Get the propertySet first
+		String osType = _udas.getOSType();
+		String udaRootPropertySetName = ISystemUDAConstants.USER_DEFINED_ACTION_PROPRERTY_SET_PREFIX + osType + "." + getDocumentRootTagName(); //$NON-NLS-1$
+		IPropertySet udaRootPropertySet = profile.getPropertySet(udaRootPropertySetName);
+		if (null == udaRootPropertySet)
+		{
+			if (profile.isDefaultPrivate()) // we only prime the user's private profile with default compile commands
+			{
+				udaRootPropertySet = createAndPrimeDocument(profile);
+			}
+		}
+		else
+		{
+			udaRootPropertySet = loadAndParseXMLFile(profile);
+		}
+		return udaRootPropertySet;
 	}
 
 	/**
 	 * Create and prime the XML document
 	 */
-	protected Document createAndPrimeDocument(ISystemProfile profile) {
-		Document doc = initializeDocument();
-		setProfileIndexedInstanceVariable_Document(profile, doc);
+	protected IPropertySet createAndPrimeDocument(ISystemProfile profile) {
+		//Document doc = initializeDocument();
+		//setProfileIndexedInstanceVariable_Document(profile, doc);
 		SystemXMLElementWrapper[] primedElements = primeDocument(profile);
 		if (primedElements != null) {
 			for (int idx = 0; idx < primedElements.length; idx++) {
 				SystemXMLElementWrapper newElement = primedElements[idx];
 				newElement.setIBM(true);
-				newElement.setUserChanged(false);
+				newElement.setUserChanged(true);
 			}
 		}
 		saveUserData(profile);
-		return doc;
+		
+		String osType = _udas.getOSType();
+		String udaRootPropertySetName = ISystemUDAConstants.USER_DEFINED_ACTION_PROPRERTY_SET_PREFIX + osType + "." + getDocumentRootTagName(); //$NON-NLS-1$
+		IPropertySet userDefinedActionPropertySet = profile.getPropertySet(udaRootPropertySetName);
+		
+		return userDefinedActionPropertySet;
+		
 	}
 
 	/**
@@ -783,108 +644,30 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 			//System.out.println("UD save: No changes. " + getFileName() );
 			return;
 		}
-		/* Old way of toggling off/on resource change monitoring wasnt working
-		 for case of two connections with same subsystems with UDA data loaded,
-		 and user changes UDA data in one.  Change wasn't propagated to other,
-		 which might later update the UDA file with old data.
-		 
-		 Better appraoch is to toggle my (ignoreMyResourceChange) flag around
-		 my update, and check that flag in my resource change listener so that I
-		 dont reload the data I just saved.  (But other connection subsystem
-		 instances do.)
-		 */
-		String fn = getFilePath(profile);
-		// Disable our resource change monitoring temporarily while we
-		// update the XML file
-		ignoreMyResourceChange = true;
-		SystemResourceManager.turnOffResourceEventListening();
-		File xf = new File(fn);
-		if (!xf.getParentFile().exists()) // test added by Phil
-		{
-			xf.getParentFile().mkdirs(); // this is bad! Who refreshes from local? 
-			try { // ok, now we do. I added this. Phil
-				getFolder(profile).getParent().refreshLocal(IResource.DEPTH_INFINITE, null);
-			} catch (Exception exc) {
-			}
-		}
-		Document udoc = getProfileIndexedInstanceVariable_Document(profile);
-		try // address various file I/O exceptions
-		{
-			FileOutputStream fo = new FileOutputStream(xf);
-			try {
-				Source source = new DOMSource(udoc);
-				Result result = new StreamResult(fo);
-				Transformer t = TransformerFactory.newInstance().newTransformer();
-				t.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
-				t.transform(source, result);
-			} catch (TransformerConfigurationException e) {
-			} catch (TransformerFactoryConfigurationError e) {
-			} catch (TransformerException e) {
-			}
-			//			XMLSerializer xs = new XMLSerializer(fo, null);
-			//			// Select "readable" format.  (multiple lines)
-			//			OutputFormat fmt = new OutputFormat(udoc);
-			//			xs.setOutputFormat(fmt);
-			//			fmt.setIndenting(true);
-			//			fmt.setIndent(1); // 0 turns off indenting
-			//			// Line width 300, so that we don't cut long comments/commands/actions at a certain length.
-			//			fmt.setLineWidth(300);
-			//			fmt.setPreserveSpace(true);
-			//			xs.serialize(udoc);
-			//			fo.close();
-			//      fo = null;
-			setProfileIndexedInstanceVariable_hasChanged(profile, false);
-			// Always refresh-from-local:
-			// If this saves, don't want next refresh-from-local to trigger
-			// a change event when we were the ones to change it.  (and have the
-			// current data already loaded.)
-			// Refresh the workspace to recognise (new) file.
-			//    getFolder().refreshLocal( IResource.DEPTH_ONE, null);
-			// A more specific refresh:
-			IFile file = getFolder(profile).getFile(getFileName());
-			//		file.touch(null);
-			file.refreshLocal(IResource.DEPTH_ONE, null);
-		} catch (Exception exc) {
-			//        if (null != fo)
-			//          fo.close();
-			SystemMessageDialog msgdlg = new SystemMessageDialog(SystemBasePlugin.getActiveWorkbenchShell(), RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_SAVE_FAILED).makeSubstitution(exc));
-			msgdlg.open();
-		}
+		profile.commit();
 		ignoreMyResourceChange = false;
 		SystemResourceManager.turnOnResourceEventListening();
-	}
-
-	/**
-	 * Refresh the xml file from disk. Eg equivalent to use selecting Refresh.
-	 */
-	public void refreshLocal(ISystemProfile profile) {
-		try {
-			IFile file = getFolder(profile).getFile(getFileName());
-			file.touch(null);
-			file.refreshLocal(IResource.DEPTH_ONE, null);
-		} catch (Exception e) {
-			SystemBasePlugin.logError("Error refreshing in SystemUDBaseManager.", e); //$NON-NLS-1$
-		}
 	}
 
 	/**
 	 * Move given element down one in document, save document
 	 * @return true if move successful
 	 */
-	public boolean moveElementDown(SystemXMLElementWrapper elementWrapper, SystemXMLElementWrapper nextNextElementWrapper) {
+	public boolean moveElementDown(SystemXMLElementWrapper elementWrapper/*, SystemXMLElementWrapper nextNextElementWrapper*/) {
 		getDocument(elementWrapper.getProfile());
-		Element element = elementWrapper.getElement();
-		try {
-			Node parentElement = element.getParentNode();
-			//Node nextElement = element.getNextSibling();
-			//Node nextNextElement = nextElement.getNextSibling();
-			if (nextNextElementWrapper != null)
-				parentElement.insertBefore(element, nextNextElementWrapper.getElement());
-			else
-				parentElement.insertBefore(element, null);
-		} catch (Exception exc) {
-			SystemBasePlugin.logError("Error moving user action/type down", exc); //$NON-NLS-1$
-			return false;
+		IPropertySet element = elementWrapper.getElement();
+		IPropertySetContainer parentElement = element.getContainer();
+		IPropertySet[] allChildren = parentElement.getPropertySets();
+		for (int i = 0; i < allChildren.length; ++i)
+		{
+			if (allChildren[i] == element)
+			{
+				if (i < allChildren.length - 1) //not the last one
+				{
+					allChildren[i] = allChildren[i+1];
+					allChildren[i+1] = element;
+				}
+			}
 		}
 		saveUserData(elementWrapper.getProfile());
 		return true;
@@ -894,16 +677,21 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 	 * Move given element up one in document, save document
 	 * @return true if move successful
 	 */
-	public boolean moveElementUp(SystemXMLElementWrapper elementWrapper, SystemXMLElementWrapper previousElementWrapper) {
+	public boolean moveElementUp(SystemXMLElementWrapper elementWrapper/*, SystemXMLElementWrapper previousElementWrapper*/) {
 		getDocument(elementWrapper.getProfile());
-		Element element = elementWrapper.getElement();
-		try {
-			Node parentElement = element.getParentNode();
-			//Node previousElement = element.getPreviousSibling();
-			parentElement.insertBefore(element, previousElementWrapper.getElement());
-		} catch (Exception exc) {
-			SystemBasePlugin.logError("Error moving user action/type up", exc); //$NON-NLS-1$
-			return false;
+		IPropertySet element = elementWrapper.getElement();
+		IPropertySetContainer parentElement = element.getContainer();
+		IPropertySet[] allChildren = parentElement.getPropertySets();
+		for (int i = 0; i < allChildren.length; ++i)
+		{
+			if (allChildren[i] == element)
+			{
+				if (i > 0) //not the first one
+				{
+					allChildren[i] = allChildren[i-1];
+					allChildren[i-1] = element;
+				}
+			}
 		}
 		saveUserData(elementWrapper.getProfile());
 		return true;
@@ -916,6 +704,8 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 	 * if the reference in the clipboard corresponds to a node clone in this object.
 	 * @return an id that uniquely identifies the cloned node, or null if it failed.
 	 */
+	//TODO - XUAN
+	/*
 	public String prepareClipboardCopy(SystemXMLElementWrapper elementWrapper) {
 		getDocument(elementWrapper.getProfile());
 		Element element = elementWrapper.getElement();
@@ -933,6 +723,7 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 		//		currentNodeCloneName = elementWrapper.getName();
 		return currentNodeCloneID;
 	}
+	*/
 
 	/**
 	 * Test if the given ID, read from the clipboard, matches a node we prepared for
@@ -953,17 +744,20 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 	 */
 	public SystemXMLElementWrapper pasteClipboardCopy(SystemXMLElementWrapper selectedElementWrapper, String id) {
 		getDocument(selectedElementWrapper.getProfile());
-		Element selectedElement = selectedElementWrapper.getElement();
+		IPropertySet selectedElement = selectedElementWrapper.getElement();
 		SystemXMLElementWrapper pastedElementWrapper = null;
 		try {
-			Node parentElement = null;
-			Element pastedElement = null;
+			IPropertySetContainer parentElement = null;
+			IPropertySet pastedElement = null;
 			if (selectedElementWrapper.isDomain()) {
 				parentElement = selectedElement;
-				pastedElement = (Element) parentElement.appendChild(currentNodeClone);
+				parentElement.addPropertySet(currentNodeClone);
+				pastedElement = currentNodeClone;
 			} else {
-				parentElement = selectedElement.getParentNode();
-				pastedElement = (Element) parentElement.insertBefore(currentNodeClone, selectedElement);
+				parentElement = selectedElement.getContainer();
+				//TODO - Xuan: need to take care of order here.
+				parentElement.addPropertySet(currentNodeClone);
+				pastedElement = currentNodeClone;
 			}
 			pastedElementWrapper = createElementWrapper(pastedElement, selectedElementWrapper.getProfile(), selectedElementWrapper.getDomain());
 			pastedElementWrapper.setName(getUniqueCloneName(pastedElementWrapper));
@@ -1007,6 +801,7 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 	 * Returns root elements for the currently set profile (see setCurrentProfile).
 	 * If this is null, returns root elements for all active profiles
 	 */
+	
 	public Object[] getElements(Object element) {
 		if (!supportsProfiles())
 			return getElements((ISystemProfile) null, element);
@@ -1018,6 +813,7 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 				return getElements(getActiveSystemProfiles(), element);
 		}
 	}
+	
 
 	/**
 	 * Return root elements for given profile.
@@ -1062,7 +858,7 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 		// if domains not supported, return singleton New item, plus wrappers
 		//  of any action/type elements found
 		else {
-			Element parentDomainElement = null;
+			IPropertySetContainer parentDomainElement = null;
 			if (onlyDomain == -1)
 				v.add(SystemUDTreeViewNewItem.getOnlyNewItem(isUserActionsManager(), getNewNodeLabel()));
 			else
@@ -1089,7 +885,7 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 	 * @return translated value for "New" in new icon. Default is "New"
 	 */
 	protected String getNewNodeLabel() {
-		return SystemResources.ACTION_CASCADING_NEW_LABEL;
+		return SystemUDAResources.ACTION_CASCADING_NEW_LABEL;
 	}
 
 	/**
@@ -1143,10 +939,10 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 	 * Find a child element of a given name.
 	 * Returns the xml node element or null
 	 */
-	public Element findChildByName(ISystemProfile profile, String name, int domain) {
-		Document xdoc = getDocument(profile);
+	public IPropertySet findChildByName(ISystemProfile profile, String name, int domain) {
+		IPropertySet xdoc = getDocument(profile);
 		if (getActionSubSystem().supportsDomains() && (domain >= 0)) {
-			Element domainElement = findDomainElement(xdoc, domain);
+			IPropertySet domainElement = findDomainElement(xdoc, domain);
 			return SystemXMLElementWrapper.findChildByName(domainElement, xdoc, getTagName(), name);
 		} else {
 			return SystemXMLElementWrapper.findChildByName(null, xdoc, getTagName(), name);
@@ -1158,7 +954,7 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 	 * Returns the wrapper of the xml node element or null
 	 */
 	public SystemXMLElementWrapper findByName(ISystemProfile profile, String name, int domain) {
-		Element element = findChildByName(profile, name, domain);
+		IPropertySet element = findChildByName(profile, name, domain);
 		if (element == null)
 			return null;
 		else
@@ -1169,9 +965,9 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 	 * Get a list of existing names, for unique-name checking.
 	 */
 	public Vector getExistingNames(ISystemProfile profile, int domain) {
-		Document xdoc = getDocument(profile);
+		IPropertySet xdoc = getDocument(profile);
 		if (getActionSubSystem().supportsDomains() && (domain >= 0)) {
-			Element domainElement = findDomainElement(xdoc, domain);
+			IPropertySet domainElement = findDomainElement(xdoc, domain);
 			if (domainElement == null) return new Vector(); // defect 46147
 			return SystemXMLElementWrapper.getExistingNames(domainElement, xdoc, getTagName());
 		} else {
@@ -1185,17 +981,34 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 	 *  and creates and returns a wrapper object for it.
 	 */
 	public SystemXMLElementWrapper addElement(ISystemProfile profile, int domain, String name) {
-		Document xdoc = getDocument(profile);
-		SystemXMLElementWrapper newElementWrapper = null;
-		Element newtag = xdoc.createElement(getTagName());
-		newtag.setAttribute("Name", uppercaseName() ? name.toUpperCase() : name); //$NON-NLS-1$
+		
+		String osType = _udas.getOSType();
+		String udaRootPropertySetName = ISystemUDAConstants.USER_DEFINED_ACTION_PROPRERTY_SET_PREFIX + osType + "." + getDocumentRootTagName(); //$NON-NLS-1$
+		//String userDefinedActionPropertySetName = ISystemUDAConstants.USER_DEFINED_ACTION_PROPRERTY_SET_PREFIX + osType;
+		//ISystemProfile systemProfile = SystemRegistry.getInstance().getSystemProfile(profile.getName());
+		IPropertySet udaRootPropertySet = profile.getPropertySet(udaRootPropertySetName);
+		if (udaRootPropertySet == null)
+		{
+			udaRootPropertySet = profile.createPropertySet(udaRootPropertySetName);
+			udaRootPropertySet.addProperty(ISystemUDAConstants.RELEASE_ATTR, CURRENT_RELEASE_NAME);
+			udaRootPropertySet.addProperty(ISystemUDAConstants.UDA_ROOT_ATTR, getDocumentRootTagName());
+		}
+		IPropertySet child = null;
 		// Get domain element, create if necessary
-		if (getActionSubSystem().supportsDomains()) {
-			Element se = findOrCreateDomainElement(xdoc, domain);
-			se.appendChild(newtag);
-		} else
-			xdoc.getDocumentElement().appendChild(newtag);
-		newElementWrapper = createElementWrapper(newtag, profile, domain);
+		if (getActionSubSystem().supportsDomains()) 
+		{
+			IPropertySet se = findOrCreateDomainElement(udaRootPropertySet, domain);
+			child = se.createPropertySet(name);
+		} 
+		else
+		{
+			child = udaRootPropertySet.createPropertySet(name);
+		}
+		child.addProperty(ISystemUDAConstants.NAME_ATTR, uppercaseName() ? name.toUpperCase() : name);
+		child.addProperty(ISystemUDAConstants.TYPE_ATTR, getTagName());
+		SystemXMLElementWrapper newElementWrapper = null;
+		
+		newElementWrapper = createElementWrapper(child, profile, domain);
 		setChanged(profile);
 		return newElementWrapper;
 	}
@@ -1215,7 +1028,7 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 	/**
 	 * Set the profile-indexed document instance variable
 	 */
-	private void setProfileIndexedInstanceVariable_Document(ISystemProfile profile, Document doc) {
+	private void setProfileIndexedInstanceVariable_Document(ISystemProfile profile, IPropertySet doc) {
 		if (!supportsProfiles())
 			udocNoProfile = doc;
 		else
@@ -1225,11 +1038,11 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 	/**
 	 * Get the profile-indexed document instance variable
 	 */
-	private Document getProfileIndexedInstanceVariable_Document(ISystemProfile profile) {
+	private IPropertySet getProfileIndexedInstanceVariable_Document(ISystemProfile profile) {
 		if (!supportsProfiles())
 			return udocNoProfile;
 		else
-			return (Document) udocsByProfile.get(profile);
+			return (IPropertySet) udocsByProfile.get(profile);
 	}
 
 	/**
@@ -1262,16 +1075,6 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 	}
 
 	/**
-	 * Set the profile-indexed dir-path instance variable
-	 */
-	private void setProfileIndexedInstanceVariable_dirPath(ISystemProfile profile, Object[] dirPath) {
-		if (!supportsProfiles())
-			dirPathNoProfile = dirPath;
-		else
-			dirPathByProfile.put(profile, dirPath);
-	}
-
-	/**
 	 * Get the dir-path has-changed instance variable
 	 */
 	private Object[] getProfileIndexedInstanceVariable_dirPath(ISystemProfile profile) {
@@ -1290,7 +1093,12 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 	 * returns null
 	 */
 	protected SystemXMLElementWrapper getDomainWrapper(ISystemProfile profile, int domain) {
-		Element element = findDomainElement(getDocument(profile), domain);
+		IPropertySet udaRootPropertySet = getDocument(profile);
+		if (udaRootPropertySet == null)
+		{
+			return null;
+		}
+		IPropertySet element = findDomainElement(getDocument(profile), domain);
 		if (element != null)
 			return createDomainElementWrapper(element, profile, domain);
 		else
@@ -1305,23 +1113,20 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 	 *  not the order they are found in the document!
 	 */
 	protected Vector createExistingDomainElementWrappers(Vector v, ISystemProfile profile) {
-		Document xdoc = getDocument(profile);
-		Element docroot = xdoc.getDocumentElement();
+		IPropertySet xdoc = getDocument(profile);
 		// get the "domain" children of the root, in the pre-determined order of domains
-		NodeList subList = docroot.getChildNodes();
-		if ((subList == null) || (subList.getLength() == 0)) return v;
+		IPropertySet[] subList = xdoc.getPropertySets();
+		if ((subList == null) || (subList.length == 0)) return v;
 		String[] domains = getActionSubSystem().getDomainNames();
-		int subListLen = subList.getLength();
+		int subListLen = subList.length;
 		for (int idx = 0; idx < domains.length; idx++) {
-			Element match = null;
+			IPropertySet match = null;
 			for (int jdx = 0; (match == null) && (jdx < subListLen); jdx++) {
-				Node currNode = subList.item(jdx);
-				if ((currNode instanceof Element) &&
-				// is "Domain" tag, and "Type" attr value matches domains[idx]?
-						isDomainElement((Element) currNode, domains[idx])) {
+				IPropertySet currNode = subList[jdx];
+				if (isDomainElement(currNode, domains[idx])) {
 					//Element currElement = (Element)currNode;
 					//if (currElement.getAttribute(XE_DOMTYPE).equals(domains[idx]))
-					match = (Element) currNode;
+					match = currNode;
 				}
 			}
 			if (match != null) v.add(createDomainElementWrapper(match, profile, idx));
@@ -1332,7 +1137,7 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 	/**
 	 * Create a domain element wrapper
 	 */
-	protected SystemXMLElementWrapper createDomainElementWrapper(Element xmlDomainElementToWrap, ISystemProfile profile, int domain) {
+	protected SystemXMLElementWrapper createDomainElementWrapper(IPropertySet xmlDomainElementToWrap, ISystemProfile profile, int domain) {
 		return createElementWrapper(xmlDomainElementToWrap, profile, domain);
 	}
 
@@ -1340,7 +1145,7 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 	 * Given an xml action/type document, try to find a domain element ("Domain" tag)
 	 *  of the given domain type. If not found, do NOT create it.
 	 */
-	protected Element findDomainElement(Document xdoc, int domain) {
+	protected IPropertySet findDomainElement(IPropertySet xdoc, int domain) {
 		return findOrCreateDomainElement(xdoc, domain, false);
 	}
 
@@ -1348,7 +1153,7 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 	 * Given an xml action/type document, try to find a domain element ("Domain" tag)
 	 *  of the given untranslated name ("Type" attribute). If not found, create it.
 	 */
-	protected Element findOrCreateDomainElement(Document xdoc, int domain) {
+	protected IPropertySet findOrCreateDomainElement(IPropertySet xdoc, int domain) {
 		return findOrCreateDomainElement(xdoc, domain, true);
 	}
 
@@ -1356,7 +1161,25 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 	 * Given an xml action/type document, try to find a domain element ("Domain" tag)
 	 *  of the given untranslated name ("Type" attribute). If not found, optionally create it.
 	 */
-	protected Element findOrCreateDomainElement(Document xdoc, int domain, boolean create) {
+	protected IPropertySet findOrCreateDomainElement(IPropertySet xdoc, int domain, boolean create) {
+		
+		IPropertySet[] domainSets = xdoc.getPropertySets();
+		String domainName = getActionSubSystem().mapDomainName(domain); // unxlated name. Eg "Type" parm
+		IPropertySet domainElement = null;
+		for (int i = 0; i < domainSets.length; i++)
+		{
+			IPropertySet thisDomain = domainSets[i];
+			if (null != thisDomain)
+			{
+				if (isDomainElement(thisDomain, domainName)) 
+				{
+					domainElement = thisDomain;
+				}
+			}
+
+		}
+		
+		/*
 		NodeList subList = xdoc.getDocumentElement().getChildNodes();
 		String domainName = getActionSubSystem().mapDomainName(domain); // unxlated name. Eg "Type" parm
 		Element domainElement = null;
@@ -1368,6 +1191,7 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 				}
 			}
 		}
+		*/
 		if (create && (domainElement == null)) domainElement = createDomainElement(xdoc, domain);
 		return domainElement;
 	}
@@ -1377,11 +1201,11 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 	 * @param xdoc - the document to add it to. Will be added as child of root
 	 * @param domain - the integer representation of the domain, used to get its name and translated name
 	 */
-	protected Element createDomainElement(Document xdoc, int domain) {
-		Element element = xdoc.createElement(ISystemUDAConstants.XE_DOMAIN);
-		xdoc.getDocumentElement().appendChild(element);
-		element.setAttribute(ISystemUDAConstants.XE_DOMTYPE, getActionSubSystem().mapDomainName(domain));
-		element.setAttribute(ISystemUDAConstants.XE_DOMNAME, getActionSubSystem().mapDomainXlatedName(domain));
+	protected IPropertySet createDomainElement(IPropertySet xdoc, int domain) {
+		IPropertySet element = xdoc.createPropertySet(getActionSubSystem().mapDomainXlatedName(domain));
+		element.addProperty(ISystemUDAConstants.XE_DOMTYPE, getActionSubSystem().mapDomainName(domain));
+		element.addProperty(ISystemUDAConstants.XE_DOMNAME, getActionSubSystem().mapDomainXlatedName(domain));
+		element.addProperty(ISystemUDAConstants.TYPE_ATTR, ISystemUDAConstants.XE_DOMAIN);
 		return element;
 	}
 
@@ -1392,15 +1216,15 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 	 * Given an xml Element object, return true if it is a Domain
 	 *  element. That is, if its tag name is "Domain"
 	 */
-	public static boolean isDomainElement(Element element) {
-		return (element.getTagName().equals(ISystemUDAConstants.XE_DOMAIN));
+	public static boolean isDomainElement(IPropertySet element) {
+		return (element.getPropertyValue(ISystemUDAConstants.TYPE_ATTR).equals(ISystemUDAConstants.XE_DOMAIN));
 	}
 
 	/**
 	 * Given an xml Element object, return true if it is a Domain
 	 *  element and its "Type" attribute matches the given name.
 	 */
-	public static boolean isDomainElement(Element element, String domainName) {
+	public static boolean isDomainElement(IPropertySet element, String domainName) {
 		return isDomainElement(element) && domainTypeEquals(element, domainName);
 	}
 
@@ -1408,8 +1232,8 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 	 * Given an xml Domain element, return true if it's "type" attribute matches 
 	 *  the given untranslated domain name
 	 */
-	public static boolean domainTypeEquals(Element element, String domainName) {
-		return (element.getAttribute(ISystemUDAConstants.XE_DOMTYPE).equals(domainName));
+	public static boolean domainTypeEquals(IPropertySet element, String domainName) {
+		return (element.getPropertyValue(ISystemUDAConstants.XE_DOMTYPE).equals(domainName));
 	}
 
 	/**
@@ -1423,17 +1247,32 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 	 * Do so by traversing the tree backwards, back to the Document root,
 	 * then forwards again to verify the child links are in place.
 	 */
-	public static boolean inCurrentTree(Node n) {
-		if (n instanceof Document) return true;
-		Node parent = n.getParentNode();
+	public static boolean inCurrentTree(IPropertySet n) {
+		String udaRootType = n.getPropertyValue(ISystemUDAConstants.UDA_ROOT_ATTR);
+		if (udaRootType != null && (udaRootType.equals(ISystemUDAConstants.ACTIONS_ROOT) || udaRootType.equals(ISystemUDAConstants.FILETYPES_ROOT)))
+		{
+			//It is one of the UDA related root.
+			return true;
+		}
+		IPropertySetContainer parent = n.getContainer();
 		if (null == parent) return false;
 		// Recursive, walk tree back to root, then finally Document.
-		if (!inCurrentTree(parent)) return false;
+		if (parent instanceof IPropertySet)
+		{
+			if (!inCurrentTree((IPropertySet)parent)) return false;
+		}
+		else
+		{
+			return false;
+		}
 		// Finally, check this is still a child of the parent
-		Node sibling = parent.getFirstChild();
-		while (null != sibling) {
-			if (n == sibling) return true;
-			sibling = sibling.getNextSibling();
+		IPropertySet[] siblings = parent.getPropertySets();
+		for (int i=0; i<siblings.length; i++)
+		{
+			if (n == siblings[i])
+			{
+				return true;
+			}
 		}
 		return false;
 	}

@@ -14,32 +14,17 @@
 package org.eclipse.rse.internal.useractions.ui.compile;
 
 import java.io.File;
-import java.util.Iterator;
 import java.util.Vector;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Result;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.RSECorePlugin;
-import org.eclipse.rse.core.SystemResourceHelpers;
+import org.eclipse.rse.core.model.IProperty;
+import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.ISystemProfile;
-import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.swt.widgets.Shell;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
 
 /**
  * A SystemCompileProfile has a one-to-one correspondence with a SystemProfile. There is one
@@ -181,7 +166,9 @@ public abstract class SystemCompileProfile {
 	 *  folder.
 	 */
 	public void writeToDisk() {
-		write(compileTypes);
+		//We need to get the compile command information from the system profile now.
+		ISystemProfile systemProfile = RSECorePlugin.getTheSystemProfileManager().getSystemProfile(profileName);
+		write(compileTypes, systemProfile);
 		isRead = false;
 	}
 
@@ -277,6 +264,29 @@ public abstract class SystemCompileProfile {
 	 */
 	private Vector read() {
 		Vector types = null;
+		
+		//We need to get the compile command information from the system profile now.
+		//Get the propertySet first
+		String osType = getParentManager().getOSType();
+		String compileCommandPropertySetName = ISystemCompileXMLConstants.COMPILE_COMMAND_PROPRERTY_SET_PREFIX + osType;
+		ISystemProfile systemProfile = RSECorePlugin.getTheSystemProfileManager().getSystemProfile(profileName);
+		IPropertySet compileCommandPropertySet = systemProfile.getPropertySet(compileCommandPropertySetName);
+		if (null == compileCommandPropertySet)
+		{
+			if (parentManager.wantToPrimeWithDefaults(this)) // we only prime the user's private profile with default compile commands
+			{
+				types = writeDefaults(systemProfile);
+			}
+			else 
+			{
+				return new Vector();
+			}
+		}
+		else
+		{
+			types = getTypes(systemProfile);
+		}
+		/*
 		File file = getCompileProfileJavaFile();
 		// If the file does not exist, then write all IBM supplied default
 		// types and compile names first before reading
@@ -288,14 +298,7 @@ public abstract class SystemCompileProfile {
 				return new Vector();
 			}
 		}
-		try {
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder builder = factory.newDocumentBuilder();
-			Document doc = builder.parse(file);
-			types = getTypes(doc);
-		} catch (Exception e) {
-			SystemBasePlugin.logError("Error reading compile names XML file for profile " + getProfileName(), e); //$NON-NLS-1$
-		}
+		*/
 		return types;
 	}
 
@@ -303,70 +306,82 @@ public abstract class SystemCompileProfile {
 	 * Get all the compile types.
 	 * @return a vector of SystemCompileType objects.
 	 */
-	private Vector getTypes(Document doc) {
+	private Vector getTypes(ISystemProfile systemProfile) {
 		Vector types = new Vector();
-		Element root = doc.getDocumentElement();
-		String oldvrm = root.getAttribute(ISystemCompileXMLConstants.VERSION_ATTRIBUTE);
-		boolean oldversion = (oldvrm != null) && !oldvrm.equals(ISystemCompileXMLConstants.VERSION_VALUE);
-		NodeList list = doc.getElementsByTagName(ISystemCompileXMLConstants.TYPE_ELEMENT);
+		//Get the propertySet first
+		String osType = getParentManager().getOSType();
+		String compileCommandPropertySetName = ISystemCompileXMLConstants.COMPILE_COMMAND_PROPRERTY_SET_PREFIX + osType;
+		IPropertySet compileCommandPropertySet = systemProfile.getPropertySet(compileCommandPropertySetName);
+		if (null == compileCommandPropertySet)
+		{
+			return null;
+		}
+		IPropertySet[] list = compileCommandPropertySet.getPropertySets(); //This is for all the compile types
 		if (list == null) return types;
-		for (int i = 0; i < list.getLength(); i++) {
-			Node node = list.item(i);
-			NamedNodeMap map = node.getAttributes();
-			// get the type
-			Node typeAttr = map.getNamedItem(ISystemCompileXMLConstants.TYPE_ATTRIBUTE);
-			String type = typeAttr.getNodeValue();
-			// get the label of the last compile name
-			Node lastUsedAttr = map.getNamedItem(ISystemCompileXMLConstants.LASTUSED_ATTRIBUTE);
-			String lastUsed = lastUsedAttr.getNodeValue();
+		
+		for (int i = 0; i < list.length; i++) {
+			IPropertySet compileType = list[i]; //This is one compile type 
+			IPropertySet[] compileNameList = compileType.getPropertySets();
+			
+			IProperty typeProperty = compileType.getProperty(ISystemCompileXMLConstants.TYPE_ATTRIBUTE);
+			String type = typeProperty.getValue();
+			IProperty lastUsedProperty = compileType.getProperty(ISystemCompileXMLConstants.LASTUSED_ATTRIBUTE);
+			String lastUsed = lastUsedProperty.getValue();
+			
 			SystemCompileType newType = new SystemCompileType(this, type);
-			NodeList childList = node.getChildNodes();
-			for (int j = 0; j < childList.getLength(); j++) {
-				Node child = childList.item(j);
-				NamedNodeMap childAttrMap = child.getAttributes();
+			
+			for (int j = 0; j < compileNameList.length; j++) {
+				IPropertySet compileName = compileNameList[j]; //This is one compilename 
 				// get the name of the compile name
-				Node nameAttr = childAttrMap.getNamedItem(ISystemCompileXMLConstants.LABEL_ATTRIBUTE);
-				String name = nameAttr.getNodeValue();
+				IProperty labelProperty = compileName.getProperty(ISystemCompileXMLConstants.LABEL_ATTRIBUTE);
+				String name = labelProperty.getValue();
 				// get the nature of the compile name
-				Node natureAttr = childAttrMap.getNamedItem(ISystemCompileXMLConstants.NATURE_ATTRIBUTE);
-				String nature = natureAttr.getNodeValue();
+				IProperty natureProperty = compileName.getProperty(ISystemCompileXMLConstants.NATURE_ATTRIBUTE);
+				String nature = natureProperty.getValue();
 				// get the default command string
-				Node defaultAttr = childAttrMap.getNamedItem(ISystemCompileXMLConstants.DEFAULT_ATTRIBUTE);
-				String defaultString = (defaultAttr != null) ? defaultAttr.getNodeValue() : ""; //$NON-NLS-1$
+				IProperty defaultProperty = compileName.getProperty(ISystemCompileXMLConstants.DEFAULT_ATTRIBUTE);
+				String defaultString = (defaultProperty != null) ? defaultProperty.getValue() : ""; //$NON-NLS-1$ 
 				// get the current string
-				Node currentAttr = childAttrMap.getNamedItem(ISystemCompileXMLConstants.CURRENT_ATTRIBUTE);
-				String currentString = currentAttr.getNodeValue();
+				IProperty currentProperty = compileName.getProperty(ISystemCompileXMLConstants.CURRENT_ATTRIBUTE);
+				String currentString = currentProperty.getValue();
 				// get the menu option
-				Node menuAttr = childAttrMap.getNamedItem(ISystemCompileXMLConstants.MENU_ATTRIBUTE);
-				String menuOption = menuAttr.getNodeValue();
+				IProperty menuProperty = compileName.getProperty(ISystemCompileXMLConstants.MENU_ATTRIBUTE);
+				String menuOption = menuProperty.getValue();
 				// get the jobenv option
-				Node jobenvAttr = childAttrMap.getNamedItem(ISystemCompileXMLConstants.JOBENV_ATTRIBUTE);
+				IProperty jobenvProperty = compileName.getProperty(ISystemCompileXMLConstants.JOBENV_ATTRIBUTE);
 				String jobEnv = null;
-				if (jobenvAttr != null) jobEnv = jobenvAttr.getNodeValue();
+				if (null != jobenvProperty)
+				{
+					jobEnv = jobenvProperty.getValue();
+				}
 				// get the ordering
+				IProperty orderProperty = compileName.getProperty(ISystemCompileXMLConstants.ORDER_ATTRIBUTE);
 				int order = j;
-				Node orderAttr = childAttrMap.getNamedItem(ISystemCompileXMLConstants.ORDER_ATTRIBUTE);
 				// to ensure previous beta customers do not have problems
-				if (orderAttr != null) {
-					order = Integer.valueOf(orderAttr.getNodeValue()).intValue();
+				if (null != orderProperty)
+				{
+					order = Integer.valueOf(orderProperty.getValue()).intValue();
 				}
 				// get the id option
-				Node idAttr = childAttrMap.getNamedItem(ISystemCompileXMLConstants.ID_ATTRIBUTE);
+				IProperty idProperty = compileName.getProperty(ISystemCompileXMLConstants.ID_ATTRIBUTE);
 				String id = null;
-				if (idAttr != null) {
-					id = idAttr.getNodeValue();
+				if (null != idProperty)
+				{
+					id = idProperty.getValue();
 				}
 				// get the label editable option
-				Node labelEditableAttr = childAttrMap.getNamedItem(ISystemCompileXMLConstants.LABEL_EDITABLE_ATTRIBUTE);
+				IProperty labelEditableProperty = compileName.getProperty(ISystemCompileXMLConstants.LABEL_EDITABLE_ATTRIBUTE);
 				String labelEditable = null;
-				if (labelEditableAttr != null) {
-					labelEditable = labelEditableAttr.getNodeValue();
+				if (null != labelEditableProperty)
+				{
+					labelEditable = labelEditableProperty.getValue();
 				}
-				// get the label editable option
-				Node stringEditableAttr = childAttrMap.getNamedItem(ISystemCompileXMLConstants.STRING_EDITABLE_ATTRIBUTE);
+				// get the string editable option
+				IProperty stringEditableProperty = compileName.getProperty(ISystemCompileXMLConstants.STRING_EDITABLE_ATTRIBUTE);
 				String stringEditable = null;
-				if (stringEditableAttr != null) {
-					stringEditable = stringEditableAttr.getNodeValue();
+				if (null != stringEditableProperty)
+				{
+					stringEditable = stringEditableProperty.getValue();
 				}
 				// id can be null, in which case the contructor will try to configure the id automatically
 				// so no need to check for id == null here
@@ -387,7 +402,10 @@ public abstract class SystemCompileProfile {
 				}
 				if (jobEnv != null) newCmd.setJobEnvironment(jobEnv);
 				if (name.equalsIgnoreCase(lastUsed)) newType.setLastUsedCompileCommand(newCmd);
+				//TODO - XUAN need to handling migration later on
+				/*
 				if (oldversion) newCmd = migrateCompileCommand(newCmd, oldvrm);
+				*/
 				newType.addCompileCommandInOrder(newCmd);
 			}
 			// add compile type and all its contents to the types list
@@ -399,6 +417,8 @@ public abstract class SystemCompileProfile {
 		// We only want to add these new default types to the default private profile.
 		// Warning:: this will not handle the case where we want to change a default compile command for
 		// an existing type with a new release. Need to modify the code below for that.
+		//TODO - XUAN need to handling migration later on
+		/*
 		if (parentManager.wantToPrimeWithDefaults(this) && oldversion) {
 			SystemDefaultCompileCommands allCmds = parentManager.getDefaultCompileCommands();
 			if (allCmds == null) {
@@ -449,6 +469,7 @@ public abstract class SystemCompileProfile {
 				}
 			}
 		}
+		*/
 		return types;
 	}
 
@@ -501,55 +522,59 @@ public abstract class SystemCompileProfile {
 	/**
 	 * Write the contents of the file, given the contents as a Vector of SystemCompileType objects.
 	 */
-	private void write(Vector types) {
-		File file = getCompileProfileJavaFile();
-		try {
-			DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder builder = builderFactory.newDocumentBuilder();
-			Document doc = builder.getDOMImplementation().createDocument(null, ISystemCompileXMLConstants.ROOT_ELEMENT, null);
-			// get root element and set attributes
-			Element root = doc.getDocumentElement();
-			root.setAttribute(ISystemCompileXMLConstants.VERSION_ATTRIBUTE, ISystemCompileXMLConstants.VERSION_VALUE);
-			// write the copyright info
-			Element copyright = doc.createElement(ISystemCompileXMLConstants.COPYRIGHT_ELEMENT);
-			Text copyrightText = doc.createTextNode(ISystemCompileXMLConstants.COPYRIGHT_TEXT);
-			copyright.appendChild(copyrightText);
-			root.appendChild(copyright);
-			// write type and compile commands for each
-			for (int i = 0; i < types.size(); i++) {
-				SystemCompileType type = (SystemCompileType) (types.get(i));
-				Element typeElement = doc.createElement(ISystemCompileXMLConstants.TYPE_ELEMENT);
-				typeElement.setAttribute(ISystemCompileXMLConstants.TYPE_ATTRIBUTE, type.getType());
-				SystemCompileCommand lastUsedCompileName = type.getLastUsedCompileCommand();
-				String lastUsedName = null;
-				if (lastUsedCompileName == null) {
-					lastUsedName = ""; //$NON-NLS-1$
-				} else {
-					lastUsedName = lastUsedCompileName.getLabel();
-				}
-				typeElement.setAttribute(ISystemCompileXMLConstants.LASTUSED_ATTRIBUTE, lastUsedName);
-				Vector cmds = type.getCompileCommands();
-				for (int j = 0; j < cmds.size(); j++) {
-					SystemCompileCommand cmd = (SystemCompileCommand) (cmds.get(j));
-					Element cmdElement = doc.createElement(ISystemCompileXMLConstants.COMPILECOMMAND_ELEMENT);
-					if (cmd.getId() != null) {
-						cmdElement.setAttribute(ISystemCompileXMLConstants.ID_ATTRIBUTE, cmd.getId());
-					}
-					cmdElement.setAttribute(ISystemCompileXMLConstants.LABEL_ATTRIBUTE, cmd.getLabel());
-					cmdElement.setAttribute(ISystemCompileXMLConstants.NATURE_ATTRIBUTE, cmd.getNature());
-					cmdElement.setAttribute(ISystemCompileXMLConstants.DEFAULT_ATTRIBUTE, cmd.getDefaultString());
-					cmdElement.setAttribute(ISystemCompileXMLConstants.CURRENT_ATTRIBUTE, cmd.getCurrentString());
-					cmdElement.setAttribute(ISystemCompileXMLConstants.MENU_ATTRIBUTE, cmd.getMenuOption());
-					cmdElement.setAttribute(ISystemCompileXMLConstants.ORDER_ATTRIBUTE, String.valueOf(j));
-					cmdElement.setAttribute(ISystemCompileXMLConstants.LABEL_EDITABLE_ATTRIBUTE, String.valueOf(cmd.isLabelEditable()));
-					cmdElement.setAttribute(ISystemCompileXMLConstants.STRING_EDITABLE_ATTRIBUTE, String.valueOf(cmd.isCommandStringEditable()));
-					if (cmd.getJobEnvironment() != null) {
-						cmdElement.setAttribute(ISystemCompileXMLConstants.JOBENV_ATTRIBUTE, cmd.getJobEnvironment());
-					}
-					typeElement.appendChild(cmdElement);
-				}
-				root.appendChild(typeElement);
+	private void write(Vector types, ISystemProfile systemProfile) {
+		
+		//Get the propertySet first
+		String osType = getParentManager().getOSType();
+		String compileCommandPropertySetName = ISystemCompileXMLConstants.COMPILE_COMMAND_PROPRERTY_SET_PREFIX + osType;
+		IPropertySet compileCommandPropertySet = systemProfile.getPropertySet(compileCommandPropertySetName);
+		if (null == compileCommandPropertySet)
+		{
+			compileCommandPropertySet = systemProfile.createPropertySet(compileCommandPropertySetName);
+		}
+		// write type and compile commands for each
+		for (int i = 0; i < types.size(); i++) {
+			SystemCompileType compileType = (SystemCompileType) (types.get(i));
+			//Element typeElement = doc.createElement(ISystemCompileXMLConstants.TYPE_ELEMENT);
+			//typeElement.setAttribute(ISystemCompileXMLConstants.TYPE_ATTRIBUTE, type.getType());
+			SystemCompileCommand lastUsedCompileName = compileType.getLastUsedCompileCommand();
+			String lastUsedName = null;
+			if (lastUsedCompileName == null) {
+				lastUsedName = ""; //$NON-NLS-1$
+			} else {
+				lastUsedName = lastUsedCompileName.getLabel();
 			}
+			//now create a propertySet for this compile type
+			
+			IPropertySet thisCompileTypePropertySet = compileCommandPropertySet.createPropertySet(compileType.getType() + i);
+			//Set its properties.
+			thisCompileTypePropertySet.addProperty(ISystemCompileXMLConstants.LASTUSED_ATTRIBUTE, lastUsedName);
+			thisCompileTypePropertySet.addProperty(ISystemCompileXMLConstants.TYPE_ATTRIBUTE, compileType.getType());
+			Vector cmds = compileType.getCompileCommands();
+			for (int j = 0; j < cmds.size(); j++) {
+				SystemCompileCommand cmd = (SystemCompileCommand) (cmds.get(j));
+				IPropertySet thisCompileCommandPropertySet = thisCompileTypePropertySet.createPropertySet(cmd.getLabel() + j);
+				if (null != cmd.getId())
+				{
+					thisCompileCommandPropertySet.addProperty(ISystemCompileXMLConstants.ID_ATTRIBUTE, cmd.getId());
+				}
+				thisCompileCommandPropertySet.addProperty(ISystemCompileXMLConstants.LABEL_ATTRIBUTE, cmd.getLabel());
+				thisCompileCommandPropertySet.addProperty(ISystemCompileXMLConstants.NATURE_ATTRIBUTE, cmd.getNature());
+				thisCompileCommandPropertySet.addProperty(ISystemCompileXMLConstants.DEFAULT_ATTRIBUTE, cmd.getDefaultString());
+				thisCompileCommandPropertySet.addProperty(ISystemCompileXMLConstants.CURRENT_ATTRIBUTE, cmd.getCurrentString());
+				thisCompileCommandPropertySet.addProperty(ISystemCompileXMLConstants.ID_ATTRIBUTE, cmd.getId());
+				thisCompileCommandPropertySet.addProperty(ISystemCompileXMLConstants.MENU_ATTRIBUTE, cmd.getMenuOption());
+				thisCompileCommandPropertySet.addProperty(ISystemCompileXMLConstants.ORDER_ATTRIBUTE, String.valueOf(j));
+				thisCompileCommandPropertySet.addProperty(ISystemCompileXMLConstants.LABEL_EDITABLE_ATTRIBUTE, String.valueOf(cmd.isLabelEditable()));
+				if (cmd.getJobEnvironment() != null) {
+					thisCompileCommandPropertySet.addProperty(ISystemCompileXMLConstants.JOBENV_ATTRIBUTE, cmd.getJobEnvironment());
+				}
+				
+			}
+		}
+		//Need to persist it.
+		systemProfile.commit();
+		/*
 			// write out document to XML file
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
 			Transformer transformer = transformerFactory.newTransformer();
@@ -558,18 +583,16 @@ public abstract class SystemCompileProfile {
 			transformer.transform(input, output);
 			// now refresh the eclipse workspace model for the parent folder, to recognize changes we made
 			SystemResourceHelpers.getResourceHelpers().refreshResource(getCompileFolder());
-		} catch (Exception e) {
-			SystemBasePlugin.logError("Error writing compile names xml file for profile " + getProfileName(), e); //$NON-NLS-1$
-		}
+		*/
 	}
 
 	/**
 	 * Prime document with default (supplied) types and names.
 	 * Return true if any written, false if none to write.
 	 */
-	private boolean writeDefaults() {
+	private Vector writeDefaults(ISystemProfile systemProfile) {
 		SystemDefaultCompileCommands allCmds = parentManager.getDefaultCompileCommands();
-		if (allCmds == null) return false;
+		if (allCmds == null) return null;
 		String[] defaultTypes = allCmds.getAllDefaultSuppliedSourceTypes();
 		Vector types = new Vector();
 		for (int i = 0; i < defaultTypes.length; i++) {
@@ -595,9 +618,9 @@ public abstract class SystemCompileProfile {
 			}
 			types.add(type);
 		}
-		write(types);
+		write(types, systemProfile);
 		//printCommandsByType(types); // temporary, for debugging
-		return (defaultTypes.length > 0);
+		return types;
 	}
 
 	/**

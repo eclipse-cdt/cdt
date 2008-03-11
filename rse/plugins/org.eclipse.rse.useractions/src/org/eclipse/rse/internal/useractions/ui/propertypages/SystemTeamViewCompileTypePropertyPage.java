@@ -10,9 +10,9 @@ package org.eclipse.rse.internal.useractions.ui.propertypages;
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.useractions.UserActionsResources;
 import org.eclipse.rse.internal.useractions.ui.compile.teamview.SystemTeamViewCompileTypeNode;
+import org.eclipse.rse.internal.useractions.ui.uda.SystemUDAResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.propertypages.SystemBasePropertyPage;
 import org.eclipse.swt.widgets.Composite;
@@ -43,8 +43,8 @@ public class SystemTeamViewCompileTypePropertyPage extends SystemBasePropertyPag
 		// Inner composite
 		Composite composite_prompts = SystemWidgetHelpers.createComposite(parent, 2);
 		// Type prompt
-		String typeLabel = SystemResources.RESID_PP_PROPERTIES_TYPE_LABEL;
-		String typeTooltip = SystemResources.RESID_PP_PROPERTIES_TYPE_TOOLTIP;
+		String typeLabel = SystemUDAResources.RESID_PP_PROPERTIES_TYPE_LABEL;
+		String typeTooltip = SystemUDAResources.RESID_PP_PROPERTIES_TYPE_TOOLTIP;
 		labelType = createLabeledLabel(composite_prompts, typeLabel, typeTooltip);
 		labelType.setText(UserActionsResources.RESID_PP_COMPILETYPE_TYPE_VALUE);
 		// Profile prompt

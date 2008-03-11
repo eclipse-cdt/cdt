@@ -9,6 +9,7 @@ public interface ISystemCompileXMLConstants {
 	// The file name to use to store the xml file that
 	// holds info on compile name associations for a 
 	// profile
+	public static final String COMPILE_COMMAND_PROPRERTY_SET_PREFIX = "CC."; //$NON-NLS-1$
 	public static final String FILE_NAME = "compileCommands.xml"; //$NON-NLS-1$
 	// root tag
 	/**
@@ -40,7 +41,7 @@ public interface ISystemCompileXMLConstants {
 	 * The xml element is named "compiletype".
 	 */
 	public static final String TYPE_ELEMENT = "compiletype"; //$NON-NLS-1$
-	public static final String TYPE_ATTRIBUTE = "type"; //$NON-NLS-1$
+	public static final String TYPE_ATTRIBUTE = "sourcetype"; //$NON-NLS-1$
 	/**
 	 * The name of the attribute holding the last-used compile command. This value identifies that 
 	 *   command via its label value. 

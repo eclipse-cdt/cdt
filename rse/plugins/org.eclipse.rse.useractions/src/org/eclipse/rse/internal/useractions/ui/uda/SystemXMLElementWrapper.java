@@ -16,43 +16,41 @@ import java.util.Vector;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.rse.core.model.IProperty;
+import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.swt.graphics.Image;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
+
 
 /**
- * This is a base class for classes that wrapper xml elements.
- * Eg, there are child classes to represent action xml elements, and
- *  type xml elements.
+ * This is a base class for classes that wrapper UDA elements.
+ * Eg, there are child classes to represent action UDA elements, and
+ *  type UDA elements.
  */
 public abstract class SystemXMLElementWrapper implements IAdaptable {
 	//parameters
-	protected Element elm;
+	protected IPropertySet elm;
 	private boolean isDomainElement;
 	private SystemUDBaseManager database; // For setChanged()
 	private ISystemProfile profile;
 	private int domainType;
 	// constants
 	/**
-	 * What we store in XML document for TRUE
+	 * What we store in UDA document for TRUE
 	 */
-	private static final String XML_TRUE = "True"; //$NON-NLS-1$
+	private static final String UDA_TRUE = "True"; //$NON-NLS-1$
 	/**
-	 * What we store in XML document for FALSE
+	 * What we store in UDA document for FALSE
 	 */
-	private static final String XML_FALSE = "False"; //$NON-NLS-1$
+	private static final String UDA_FALSE = "False"; //$NON-NLS-1$
 	/**
 	 * The XML attribute name for the "IBM-Supplied" attribute
 	 */
-	private static final String XML_ATTR_VENDOR = "Vendor"; //$NON-NLS-1$
+	private static final String UDA_ATTR_VENDOR = "Vendor"; //$NON-NLS-1$
 	/**
 	 * The XML attribute name for the "User-Changed" attribute
 	 */
-	private static final String XML_ATTR_CHANGED = "UserChanged"; //$NON-NLS-1$
+	private static final String UDA_ATTR_CHANGED = "UserChanged"; //$NON-NLS-1$
 	/**
 	 * The value we place in the Vendor attribute for IBM-supplied actions/types
 	 */
@@ -60,15 +58,15 @@ public abstract class SystemXMLElementWrapper implements IAdaptable {
 
 	/**
 	 * Constructor
-	 * @param elm - The actual xml document element for this action/type
+	 * @param elm - The actual UDA element for this action/type
 	 * @param mgr - The parent manager of these actions/types
 	 * @param profile - The system profile which owns this action
 	 * @param domainType - The integer representation of the domain this is in (or this is, for a domain element)
 	 */
-	public SystemXMLElementWrapper(Element elm, SystemUDBaseManager mgr, ISystemProfile profile, int domainType) {
+	public SystemXMLElementWrapper(IPropertySet elm, SystemUDBaseManager mgr, ISystemProfile profile, int domainType) {
 		super();
 		this.elm = elm;
-		this.isDomainElement = elm.getTagName().equals(ISystemUDAConstants.XE_DOMAIN);
+		this.isDomainElement = elm.getPropertyValue(ISystemUDAConstants.TYPE_ATTR).equals(ISystemUDAConstants.XE_DOMAIN);
 		this.domainType = domainType;
 		database = mgr;
 		this.profile = profile;
@@ -115,41 +113,41 @@ public abstract class SystemXMLElementWrapper implements IAdaptable {
 	}
 
 	/**
-	 * Get the XML document element this node wraps
+	 * Get the UDA element this node wraps
 	 */
-	public Element getElement() {
+	public IPropertySet getElement() {
 		return elm;
 	}
 
 	/**
 	 * Get the document this element is a part of
 	 */
-	public Document getDocument() {
+	public IPropertySet getDocument() {
 		// this method added by phil.
 		// this allows getChildren in xxxmanager classes to avoid deducing the document
-		return elm.getOwnerDocument();
+		return (IPropertySet)elm.getContainer();
 	}
 
 	/**
-	 * Get the parent xml domain element of this element.
+	 * Get the parent UDA element of this element.
 	 * If domains aren't supported, this will return null
 	 */
-	public Element getParentDomainElement() {
-		Element parent = getParentElement();
-		if ((parent != null) && parent.getTagName().equals(ISystemUDAConstants.XE_DOMAIN))
+	public IPropertySet getParentDomainElement() {
+		IPropertySet parent = getParentElement();
+		if ((parent != null) && parent.getPropertyValue(ISystemUDAConstants.NAME_ATTR).equals(ISystemUDAConstants.XE_DOMAIN))
 			return parent;
 		else
 			return null;
 	}
 
 	/**
-	 * Get the parent xml element of this element.
+	 * Get the parent UDA element of this element.
 	 * Only returns null if this is the root, which should never happen.
 	 */
-	public Element getParentElement() {
-		Node parent = elm.getParentNode();
-		if (parent instanceof Element)
-			return (Element) parent;
+	public IPropertySet getParentElement() {
+		Object parent = elm.getContainer();
+		if (parent instanceof IPropertySet)
+			return (IPropertySet) parent;
 		else
 			return null;
 	}
@@ -174,7 +172,7 @@ public abstract class SystemXMLElementWrapper implements IAdaptable {
 	 * Return the value of this node's "Name" attribute
 	 */
 	public String getName() {
-		return elm.getAttribute(ISystemUDAConstants.NAME_ATTR);
+		return elm.getPropertyValue(ISystemUDAConstants.NAME_ATTR);
 	}
 
 	/**
@@ -184,11 +182,22 @@ public abstract class SystemXMLElementWrapper implements IAdaptable {
 	 */
 	public void setName(String s) {
 		if (isIBM()) {
-			String orgName = elm.getAttribute(ISystemUDAConstants.ORIGINAL_NAME_ATTR);
+			String orgName = elm.getPropertyValue(ISystemUDAConstants.ORIGINAL_NAME_ATTR);
 			if ((orgName != null) && (orgName.length() > 0)) {
 				// no need to do anything, as its already set.
-			} else
-				elm.setAttribute(ISystemUDAConstants.ORIGINAL_NAME_ATTR, getName());
+			} 
+			else
+			{
+				IProperty property = elm.getProperty(ISystemUDAConstants.ORIGINAL_NAME_ATTR);
+				if (null == property)
+				{
+					elm.addProperty(ISystemUDAConstants.ORIGINAL_NAME_ATTR, getName());
+				}
+				else
+				{
+					property.setValue(getName());
+				}
+			}
 		}
 		setAttribute(ISystemUDAConstants.NAME_ATTR, s);
 		setUserChanged(true);
@@ -198,7 +207,7 @@ public abstract class SystemXMLElementWrapper implements IAdaptable {
 	 * For IBM-supplied elements that have been edited, returns the original IBM-supplied name
 	 */
 	public String getOriginalName() {
-		String s = elm.getAttribute(ISystemUDAConstants.ORIGINAL_NAME_ATTR);
+		String s = elm.getPropertyValue(ISystemUDAConstants.ORIGINAL_NAME_ATTR);
 		if ((s == null) || (s.length() == 0))
 			return getName();
 		else
@@ -210,7 +219,7 @@ public abstract class SystemXMLElementWrapper implements IAdaptable {
 	 * That is, is this an IBM-supplied tag?
 	 */
 	public boolean isIBM() {
-		String vendor = elm.getAttribute(XML_ATTR_VENDOR);
+		String vendor = elm.getPropertyValue(UDA_ATTR_VENDOR);
 		if (vendor == null)
 			return false;
 		else
@@ -221,7 +230,7 @@ public abstract class SystemXMLElementWrapper implements IAdaptable {
 	 * Set the name of the vendor who supplied this user action or type
 	 */
 	public void setVendor(String vendor) {
-		setAttribute(XML_ATTR_VENDOR, vendor);
+		setAttribute(UDA_ATTR_VENDOR, vendor);
 	}
 
 	/**
@@ -229,7 +238,7 @@ public abstract class SystemXMLElementWrapper implements IAdaptable {
 	 * May be null, if created by a user
 	 */
 	public String getVendor() {
-		return elm.getAttribute(XML_ATTR_VENDOR);
+		return elm.getPropertyValue(UDA_ATTR_VENDOR);
 	}
 
 	/**
@@ -238,9 +247,9 @@ public abstract class SystemXMLElementWrapper implements IAdaptable {
 	 */
 	public void setIBM(boolean isFromIBM) {
 		if (isFromIBM)
-			setAttribute(XML_ATTR_VENDOR, VENDOR_IBM);
+			setAttribute(UDA_ATTR_VENDOR, VENDOR_IBM);
 		else
-			setAttribute(XML_ATTR_VENDOR, null);
+			setAttribute(UDA_ATTR_VENDOR, null);
 	}
 
 	/**
@@ -254,7 +263,7 @@ public abstract class SystemXMLElementWrapper implements IAdaptable {
 		else if (isDomainElement)
 			changed = false;
 		else
-			changed = getBooleanAttribute(XML_ATTR_CHANGED, false);
+			changed = getBooleanAttribute(UDA_ATTR_CHANGED, false);
 		//System.out.println("Inside isUserChanged, returning "+changed+": isIBM()="+isIBM()+", isDomainElement="+isDomainElement);
 		return changed;
 	}
@@ -263,7 +272,7 @@ public abstract class SystemXMLElementWrapper implements IAdaptable {
 	 * Set the value of this tag's "user-changed" attribute
 	 */
 	public void setUserChanged(boolean isUserChanged) {
-		if (isIBM() && !isDomainElement) setBooleanAttribute(XML_ATTR_CHANGED, isUserChanged);
+		if (isIBM() && !isDomainElement) setBooleanAttribute(UDA_ATTR_CHANGED, isUserChanged);
 	}
 
 	/**
@@ -271,82 +280,23 @@ public abstract class SystemXMLElementWrapper implements IAdaptable {
 	 */
 	public void deleteElement() {
 		// Not intended for root.  Only for Actions
-		elm.getParentNode().removeChild(elm);
+		//elm.getParentNode().removeChild(elm);
+		elm.getContainer().removePropertySet(elm.getName());
 	}
-
-	// --------------------------
-	// INTERNAL HELPER METHODS...
-	// --------------------------
-	/**
-	 * Given the name of a child xml tag, return the data for that tag
-	 */
-	protected String getTextNode(String tagname) {
-		Element tag = getChildTag(tagname, false);
-		if (null != tag) {
-			Node n = tag.getFirstChild();
-			if (null != n) {
-				if (n instanceof Text) {
-					Text tn = (Text) n;
-					return tn.getData();
-				}
-			}
-		}
-		return ""; //$NON-NLS-1$
-	}
-
-	/**
-	 * Given the name of a child xml tag and a data value,
-	 *  update the data of that tag
-	 */
-	protected void setTextNode(String tagname, String val) {
-		Element tag = getChildTag(tagname, true);
-		if (null != tag) {
-			database.setChanged(profile);
-			// ?? Loop on all children, removing?
-			Node n = tag.getFirstChild();
-			if (null != n) {
-				if (n instanceof Text) {
-					Text tn = (Text) n;
-					tn.setData(val);
-					return;
-				}
-				// ?? Loop on all children, removing?
-				tag.removeChild(n);
-			}
-			tag.appendChild(elm.getOwnerDocument().createTextNode(val));
-			return;
-		}
-	}
-
-	/**
-	 * Given a tag name, return the xml node for that child tag
-	 * @param tagname - the name of the tag to find
-	 * @param create - true if tag is to be created if not found
-	 */
-	protected Element getChildTag(String tagname, boolean create) {
-		NodeList subList = elm.getChildNodes();
-		if (null != subList) {
-			for (int i = 0; i < subList.getLength(); i++) {
-				Node sn = subList.item(i);
-				if (sn instanceof Element) {
-					Element se = (Element) sn;
-					if (tagname.equals(se.getTagName())) return se;
-				}
-			}
-		}
-		if (create) {
-			Element newchild = elm.getOwnerDocument().createElement(tagname);
-			elm.appendChild(newchild);
-			return newchild;
-		}
-		return null;
-	}
-
+	
 	/**
 	 * Set the value of a boolean attribute
 	 */
 	public void setBooleanAttribute(String attr, boolean b) {
-		elm.setAttribute(attr, (b) ? XML_TRUE : XML_FALSE);
+		IProperty property = elm.getProperty(attr);
+		if (null == property)
+		{
+			elm.addProperty(attr, (b) ? UDA_TRUE : UDA_FALSE);
+		}
+		else
+		{
+			property.setValue((b) ? UDA_TRUE : UDA_FALSE);
+		}
 		database.setChanged(profile);
 	}
 
@@ -355,8 +305,8 @@ public abstract class SystemXMLElementWrapper implements IAdaptable {
 	 * @param attr - name of the attribute to query
 	 */
 	public boolean getBooleanAttribute(String attr) {
-		String val = elm.getAttribute(attr);
-		if (XML_TRUE.equals(val)) return true;
+		String val = elm.getPropertyValue(attr);
+		if (UDA_TRUE.equals(val)) return true;
 		return false;
 	}
 
@@ -366,9 +316,9 @@ public abstract class SystemXMLElementWrapper implements IAdaptable {
 	 * @param defaultValue - value to return if the attribute is not found
 	 */
 	public boolean getBooleanAttribute(String attr, boolean defaultValue) {
-		String val = elm.getAttribute(attr);
+		String val =  elm.getPropertyValue(attr);
 		if (val == null) return defaultValue;
-		if (XML_TRUE.equals(val)) return true;
+		if (UDA_TRUE.equals(val)) return true;
 		return false;
 	}
 
@@ -377,7 +327,7 @@ public abstract class SystemXMLElementWrapper implements IAdaptable {
 	 * Specify a default value to return if the attribute is not found
 	 */
 	public String getAttribute(String attr, String defaultValue) {
-		String value = elm.getAttribute(attr);
+		String value =  elm.getPropertyValue(attr);
 		if (value == null) value = defaultValue;
 		return value;
 	}
@@ -387,9 +337,21 @@ public abstract class SystemXMLElementWrapper implements IAdaptable {
 	 */
 	public void setAttribute(String attr, String value) {
 		if (value != null)
-			elm.setAttribute(attr, value);
+		{
+			IProperty property = elm.getProperty(attr);
+			if (property == null)
+			{
+				elm.addProperty(attr, value);
+			}
+			else
+			{
+				property.setValue(value);
+			}
+		}
 		else
-			elm.removeAttribute(attr);
+		{
+			elm.removeProperty(attr);
+		}
 		database.setChanged(profile);
 	}
 
@@ -400,7 +362,7 @@ public abstract class SystemXMLElementWrapper implements IAdaptable {
 	 * Always returns a non-null vector, although it may be empty
 	 */
 	public Vector getExistingNames() {
-		Element parentElement = null;
+		IPropertySet parentElement = null;
 		String currName = null;
 		if (isDomain())
 			parentElement = this.getElement();
@@ -418,31 +380,28 @@ public abstract class SystemXMLElementWrapper implements IAdaptable {
 	 * Given a parent element XML node, returns all child action names.
 	 * Always returns a non-null vector, although it may be empty
 	 */
-	public Vector getExistingNames(Element parentElement, Document xdoc) {
+	public Vector getExistingNames(IPropertySet parentElement, IPropertySet xdoc) {
 		return getExistingNames(parentElement, xdoc, getTagName());
 	}
 
 	/**
 	 * For unique-name checking.
-	 * Given a parent element XML node, returns all child action names.
+	 * Given a parent UDA node, returns all child action names.
 	 * Always returns a non-null vector of Strings, although it may be empty
 	 */
-	public static Vector getExistingNames(Element parentElement, Document xdoc, String tagName) {
+	public static Vector getExistingNames(IPropertySet parentElement, IPropertySet xdoc, String tagName) {
 		Vector nameList = new Vector();
-		Element se = null;
-		NodeList subList = null;
+		IPropertySet[] subList = null;
 		if (parentElement != null)
-			subList = parentElement.getChildNodes();
+			subList = parentElement.getPropertySets();
 		else
-			subList = xdoc.getElementsByTagName(tagName);
+			subList = xdoc.getPropertySets();
 		if (subList != null) {
-			for (int idx = 0; idx < subList.getLength(); idx++) {
-				Node sn = subList.item(idx);
-				if (sn instanceof Element) {
-					se = (Element) sn;
-					if (se.getTagName().equals(tagName)) {
-						nameList.add(se.getAttribute(ISystemUDAConstants.NAME_ATTR));
-					}
+			for (int idx = 0; idx < subList.length; idx++) {
+				IPropertySet sn = subList[idx];
+				if (sn.getPropertyValue(ISystemUDAConstants.TYPE_ATTR).equals(tagName))
+				{
+					nameList.add(sn.getPropertyValue(ISystemUDAConstants.NAME_ATTR));
 				}
 			} // end for all subnodes
 		} // end if sublist != null		
@@ -450,23 +409,10 @@ public abstract class SystemXMLElementWrapper implements IAdaptable {
 	}
 
 	/**
-	 * Returns element wrappers of children (if this is a domain) or siblings
-	 */
-	public Vector getChildren(Vector children, ISystemProfile profile) {
-		Element parentElement = null;
-		if (isDomain())
-			parentElement = this.getElement();
-		else
-			parentElement = getParentElement();
-		children = getChildren(children, parentElement, getDocument(), profile);
-		return children;
-	}
-
-	/**
 	 * Given a parent element XML node, returns wrappers of all child tags of which we are interested
 	 * Always returns a non-null vector, although it may be empty
 	 */
-	public Vector getChildren(Vector children, Element parentElement, Document xdoc, ISystemProfile profile) {
+	public Vector getChildren(Vector children, IPropertySet parentElement, IPropertySet xdoc, ISystemProfile profile) {
 		return getChildren(children, parentElement, xdoc, profile, database, getDomain());
 	}
 
@@ -476,23 +422,22 @@ public abstract class SystemXMLElementWrapper implements IAdaptable {
 	 * If the parentElement is null, uses the roots of the given document. Should only be true if domains not supported!
 	 * @return Vector of SystemXMLElementWrapper objects
 	 */
-	public static Vector getChildren(Vector children, Element parentElement, Document xdoc, ISystemProfile profile, ISystemXMLElementWrapperFactory factory, int domain) {
+	public static Vector getChildren(Vector children, IPropertySet parentElement, IPropertySet xdoc, ISystemProfile profile, ISystemXMLElementWrapperFactory factory, int domain) {
 		if (children == null) children = new Vector();
 		String tagName = factory.getTagName();
-		Element se = null;
-		NodeList subList = null;
+		
+		IPropertySet[] subList = null;
 		if (parentElement != null)
-			subList = parentElement.getChildNodes();
+			subList = parentElement.getPropertySets();
 		else
-			subList = xdoc.getElementsByTagName(tagName);
+			subList = xdoc.getPropertySets();
 		if (subList != null) {
-			for (int idx = 0; idx < subList.getLength(); idx++) {
-				Node sn = subList.item(idx);
-				if (sn instanceof Element) {
-					se = (Element) sn;
-					if (se.getTagName().equals(tagName)) {
-						children.add(factory.createElementWrapper(se, profile, domain));
-					}
+			for (int idx = 0; idx < subList.length; idx++) {
+				IPropertySet sn = subList[idx];
+				if (sn.getPropertyValue(ISystemUDAConstants.TYPE_ATTR).equals(tagName))
+				{
+					SystemXMLElementWrapper thisWrapper = factory.createElementWrapper(sn, profile, domain);
+					children.add(thisWrapper);
 				}
 			} // end for all subnodes
 		} // end if sublist != null		
@@ -504,19 +449,22 @@ public abstract class SystemXMLElementWrapper implements IAdaptable {
 	 * Given a parent element XML node, returns the xml Element node with the given name attribute,
 	 *  or null if not found.
 	 */
-	public static Element findChildByName(Element parentElement, Document xdoc, String tagName, String searchName) {
-		Element match = null;
-		NodeList subList = null;
+	public static IPropertySet findChildByName(IPropertySet parentElement, IPropertySet xdoc, String tagName, String searchName) {
+		IPropertySet match = null;
+		IPropertySet[] subList = null;
 		if (parentElement != null)
-			subList = parentElement.getChildNodes();
+			subList = parentElement.getPropertySets();
 		else
-			subList = xdoc.getElementsByTagName(tagName);
+			subList = xdoc.getPropertySets();
 		if (subList != null) {
-			for (int idx = 0; (match == null) && (idx < subList.getLength()); idx++) {
-				Node sn = subList.item(idx);
-				if (sn instanceof Element) {
-					if (((Element) sn).getTagName().equals(tagName)) {
-						if (((Element) sn).getAttribute(ISystemUDAConstants.NAME_ATTR).equals(searchName)) match = (Element) sn;
+			for (int idx = 0; (match == null) && (idx < subList.length); idx++) {
+				IPropertySet sn = subList[idx];
+				if (sn.getName().equals(searchName))
+				{
+					IProperty typeProperty = sn.getProperty(ISystemUDAConstants.TYPE_ATTR);
+					if (typeProperty.getValue().equals(tagName))
+					{
+						match = sn;
 					}
 				}
 			} // end for all subnodes

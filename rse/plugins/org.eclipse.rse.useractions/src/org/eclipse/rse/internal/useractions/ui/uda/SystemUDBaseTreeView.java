@@ -29,6 +29,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemModelChangeEvents;
+import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
@@ -45,7 +46,6 @@ import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
@@ -54,8 +54,6 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 /**
  * Base class for tree views for both actions and types.
@@ -417,8 +415,8 @@ public class SystemUDBaseTreeView extends TreeViewer implements IMenuListener, I
 	public boolean doMoveUp() {
 		IStructuredSelection selection = (IStructuredSelection) getSelection();
 		SystemXMLElementWrapper firstSelect = (SystemXMLElementWrapper) selection.getFirstElement();
-		SystemXMLElementWrapper previousElement = (SystemXMLElementWrapper) getSelectedPreviousTreeItem().getData();
-		boolean moved = docManager.moveElementUp(firstSelect, previousElement);
+		//SystemXMLElementWrapper previousElement = (SystemXMLElementWrapper) getSelectedPreviousTreeItem().getData();
+		boolean moved = docManager.moveElementUp(firstSelect/*, previousElement*/);
 		if (moved) {
 			refreshElementParent(firstSelect);
 			selectElement(firstSelect);
@@ -436,10 +434,9 @@ public class SystemUDBaseTreeView extends TreeViewer implements IMenuListener, I
 	public boolean doMoveDown() {
 		IStructuredSelection selection = (IStructuredSelection) getSelection();
 		SystemXMLElementWrapper firstSelect = (SystemXMLElementWrapper) selection.getFirstElement();
-		TreeItem nextNextItem = getSelectedNextNextTreeItem();
-		SystemXMLElementWrapper nextElement = null;
-		if (nextNextItem != null) nextElement = (SystemXMLElementWrapper) nextNextItem.getData();
-		boolean moved = docManager.moveElementDown(firstSelect, nextElement);
+		//SystemXMLElementWrapper nextElement = null;
+		//if (nextNextItem != null) nextElement = (SystemXMLElementWrapper) nextNextItem.getData();
+		boolean moved = docManager.moveElementDown(firstSelect/*, nextElement*/);
 		if (moved) {
 			refreshElementParent(firstSelect);
 			selectElement(firstSelect);
@@ -455,6 +452,7 @@ public class SystemUDBaseTreeView extends TreeViewer implements IMenuListener, I
 	 * Called by the SystemChangeFilterActionCopyString action class.
 	 */
 	public boolean doCopy() {
+		/*
 		IStructuredSelection selection = (IStructuredSelection) getSelection();
 		SystemXMLElementWrapper firstSelect = (SystemXMLElementWrapper) selection.getFirstElement();
 		if (clipboard == null) clipboard = new Clipboard(getShell().getDisplay());
@@ -462,6 +460,7 @@ public class SystemUDBaseTreeView extends TreeViewer implements IMenuListener, I
 		if (id == null) return false;
 		TextTransfer transfer = TextTransfer.getInstance();
 		clipboard.setContents(new Object[] { id }, new Transfer[] { transfer });
+		*/
 		return true;
 	}
 
@@ -634,7 +633,7 @@ public class SystemUDBaseTreeView extends TreeViewer implements IMenuListener, I
 	 * If it is not currently shown in the tree, or there is no parent, returns null.
 	 */
 	public TreeItem findParentItem(SystemXMLElementWrapper element) {
-		Element parentElement = element.getParentDomainElement();
+		IPropertySet parentElement = element.getParentDomainElement();
 		TreeItem parentItem = null;
 		if (parentElement != null)
 			parentItem = findElement(parentElement);
@@ -677,7 +676,7 @@ public class SystemUDBaseTreeView extends TreeViewer implements IMenuListener, I
 	 * Given an xml node, find the wrapper for the element in the tree,
 	 *  scanning entire tree.
 	 */
-	private TreeItem findElement(Node searchNode) {
+	private TreeItem findElement(IPropertySet searchNode) {
 		TreeItem match = null;
 		TreeItem[] roots = getTree().getItems();
 		for (int idx = 0; (match == null) && (idx < roots.length); idx++)
@@ -689,11 +688,11 @@ public class SystemUDBaseTreeView extends TreeViewer implements IMenuListener, I
 	 * Given an xml node and parent tree item, find the wrapper for the element in the tree
 	 *  under the given parent.
 	 */
-	private TreeItem findElement(TreeItem parentItem, Node searchNode) {
+	private TreeItem findElement(TreeItem parentItem, IPropertySet searchNode) {
 		TreeItem match = null;
 		// first, check for match on the given parent itself...
 		Object itemData = parentItem.getData();
-		Element itemNode = null;
+		IPropertySet itemNode = null;
 		if ((itemData != null) && (itemData instanceof SystemXMLElementWrapper)) {
 			itemNode = ((SystemXMLElementWrapper) itemData).getElement();
 			if (itemNode == searchNode) return parentItem;

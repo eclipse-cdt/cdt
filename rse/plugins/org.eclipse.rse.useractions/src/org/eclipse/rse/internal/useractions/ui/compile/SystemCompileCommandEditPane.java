@@ -313,7 +313,7 @@ public class SystemCompileCommandEditPane implements SelectionListener, ISystemC
 
 	/**
 	 * Populate the pane with the GUI widgets
-	 * @param parent
+	 * @param parent of the pane
 	 * @return Control
 	 */
 	public Control createContents(Composite parent) {

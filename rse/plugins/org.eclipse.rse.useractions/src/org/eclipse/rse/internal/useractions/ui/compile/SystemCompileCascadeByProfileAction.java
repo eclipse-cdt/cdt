@@ -12,9 +12,12 @@
  *******************************************************************************/
 package org.eclipse.rse.internal.useractions.ui.compile;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.rse.core.model.ISystemProfile;
+import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.ui.view.SystemViewMenuListener;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -22,6 +25,8 @@ import org.eclipse.rse.ui.actions.SystemBaseDummyAction;
 import org.eclipse.rse.ui.actions.SystemBaseSubMenuAction;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.SystemAdapterHelpers;
+import org.eclipse.rse.useractions.files.compile.ISystemCompileManagerAdapter;
+import org.eclipse.rse.useractions.ui.compile.SystemCompileAction;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -91,22 +96,37 @@ public class SystemCompileCascadeByProfileAction extends SystemBaseSubMenuAction
 				srcType = "blank"; //$NON-NLS-1$
 		} else
 			return ourSubMenu; // should never happen
-		/* FIXME - compile actions not coupled with subsystem API anymore
 		 ISubSystem subsystem = rmtAdapter.getSubSystem(firstSelection);
-		 SystemCompileProfile compileProfile = subsystem.getParentSubSystemFactory().getCompileManager().getCompileProfile(profile);
-		 // compileProfile.addContributions(firstSelection);
-		 SystemCompileType compileType = (SystemCompileType)compileProfile.getCompileType(srcType);
+		 ISubSystemConfiguration ssc = subsystem.getSubSystemConfiguration();
 		 
-		 if (compileType != null)
-		 {
-		 SystemCompileCommand[] cmds = compileType.getCompileCommandsArray();
-		 for (int idx=0; idx<cmds.length; idx++)
-		 {
-		 SystemCompileAction action = new SystemCompileAction(shell, cmds[idx], isPrompt);
-		 ourSubMenu.add(action);
+		 SystemCompileManager compileManager = null;
+		 
+		 if (firstSelection instanceof IAdaptable) {
+			 ISystemCompileManagerAdapter	adapter = (ISystemCompileManagerAdapter)((IAdaptable)firstSelection).getAdapter(ISystemCompileManagerAdapter.class);
+			 if (null != adapter)
+			 {
+				 compileManager = adapter.getSystemCompileManager(ssc);
+			 }
 		 }
+		 
+		 if (null != compileManager)
+		 {
+			 SystemCompileManager thisCompileManager = compileManager;
+			 SystemCompileProfile compileProfile = thisCompileManager.getCompileProfile(profile);
+			 // compileProfile.addContributions(firstSelection);
+			 SystemCompileType compileType = compileProfile.getCompileType(srcType);
+			 
+			 if (compileType != null)
+			 {
+				 SystemCompileCommand[] cmds = compileType.getCompileCommandsArray();
+				 for (int idx=0; idx<cmds.length; idx++)
+				 {
+					 SystemCompileAction action = new SystemCompileAction(shell, cmds[idx], isPrompt);
+					 ourSubMenu.add(action);
+				 }
+			 }
 		 }
-		 */
+		 
 		return ourSubMenu;
 	}
 }

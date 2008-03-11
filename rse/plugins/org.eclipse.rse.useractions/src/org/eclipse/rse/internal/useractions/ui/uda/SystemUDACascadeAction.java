@@ -84,7 +84,7 @@ public class SystemUDACascadeAction extends SystemBaseSubMenuAction implements I
 		}
 		ourSubMenu.add(new Separator(ISystemContextMenuConstants.GROUP_WORKWITH));
 		if (wwAction == null) {
-			wwAction = new SystemWorkWithUDAsAction(shell, udsubsystem.getSubsystem());
+			wwAction = new SystemWorkWithUDAsAction(shell, udsubsystem.getSubsystem(), udsubsystem);
 			wwAction.setText(SystemUDAResources.RESID_WORKWITH_UDAS_ACTION_LABEL);
 			wwAction.setToolTipText(SystemUDAResources.RESID_WORKWITH_UDAS_ACTION_TOOLTIP);
 			wwAction.allowOnMultipleSelection(true);

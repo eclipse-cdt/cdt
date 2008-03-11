@@ -49,6 +49,7 @@ public class SystemUDTypeEditPane implements ISelectionChangedListener {
 	private Text textName;
 	private ISystemUDTypeEditPaneTypesSelector typesEditor;
 	// input
+	protected SystemUDActionSubsystem udaActionSubsys;
 	protected ISubSystem subsystem;
 	protected ISubSystemConfiguration subsystemFactory;
 	protected ISystemProfile profile;
@@ -79,11 +80,12 @@ public class SystemUDTypeEditPane implements ISelectionChangedListener {
 	/**
 	 * Constructor 
 	 */
-	public SystemUDTypeEditPane(ISubSystem ss, ISubSystemConfiguration ssf, ISystemProfile profile, ISystemUDAEditPaneHoster parent, ISystemUDTreeView tv) {
+	public SystemUDTypeEditPane(SystemUDActionSubsystem udaActionSubsys, ISystemUDAEditPaneHoster parent, ISystemUDTreeView tv) {
 		super();
-		subsystem = ss;
-		subsystemFactory = (ssf == null) ? ss.getSubSystemConfiguration() : ssf;
-		this.profile = (profile == null) ? ss.getSystemProfile() : profile;
+		this.udaActionSubsys = udaActionSubsys;
+		subsystem = udaActionSubsys.getSubsystem();
+		subsystemFactory = subsystem.getSubSystemConfiguration();
+		this.profile =  subsystem.getSystemProfile();
 		//this.subsystemFactory = ss.getParentSubSystemFactory();
 		//this.profile = ss.getSystemProfile();
 		treeView = tv;
@@ -442,16 +444,7 @@ public class SystemUDTypeEditPane implements ISelectionChangedListener {
 	 * Return the user defined action subsystem
 	 */
 	protected SystemUDActionSubsystem getUDActionSubsystem() {
-		/* FIXME - UDA not coupled with subsystem API anymore
-		 if (subsystem!=null)
-		 return subsystem.getUDActionSubsystem();
-		 else
-		 {
-		 ISubsystemFactoryAdapter adapter = (ISubsystemFactoryAdapter)subsystemFactory.getAdapter(ISubsystemFactoryAdapter.class);
-		 return adapter.getActionSubSystem(subsystemFactory, null);
-		 }
-		 */
-		return null;
+		return udaActionSubsys;
 	}
 
 	/**

@@ -21,6 +21,7 @@ import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.ui.view.team.SystemTeamViewSubSystemConfigurationNode;
 import org.eclipse.rse.internal.useractions.IUserActionsImageIds;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemUDAResources;
+import org.eclipse.rse.internal.useractions.ui.uda.SystemUDActionSubsystem;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemWorkWithUDAsDialog;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -34,15 +35,17 @@ public class SystemWorkWithUDAsAction extends SystemBaseDialogAction {
 	private ISubSystem subsystem = null;
 	private ISubSystemConfiguration subsystemFactory = null;
 	private ISystemProfile profile;
+	private SystemUDActionSubsystem udaActionSubsystem = null;
 
 	/**
 	 * Constructor when starting with a subsystem (such as in RS view)
 	 * @param parent The Shell of the parent UI for this dialog
 	 * @param subSystem The subsystem we are launching this from/for
 	 */
-	public SystemWorkWithUDAsAction(Shell parent, ISubSystem subSystem) {
+	public SystemWorkWithUDAsAction(Shell parent, ISubSystem subSystem, SystemUDActionSubsystem udaActionSubsystem) {
 		this(parent);
 		setSubSystem(subSystem);
+		setActionSubsystem(udaActionSubsystem);
 		setAvailableOffline(true);
 	}
 
@@ -51,9 +54,10 @@ public class SystemWorkWithUDAsAction extends SystemBaseDialogAction {
 	 * @param parent The Shell of the parent UI for this dialog
 	 * @param subSystemFactory The subsystem factory we are launching this from/for
 	 */
-	public SystemWorkWithUDAsAction(Shell parent, ISubSystemConfiguration subSystemFactory, ISystemProfile profile) {
+	public SystemWorkWithUDAsAction(Shell parent, ISubSystemConfiguration subSystemFactory, ISystemProfile profile, SystemUDActionSubsystem udaActionSubsystem) {
 		this(parent);
 		setSubSystemFactory(subsystemFactory, profile);
+		setActionSubsystem(udaActionSubsystem);
 	}
 
 	/**
@@ -117,6 +121,9 @@ public class SystemWorkWithUDAsAction extends SystemBaseDialogAction {
 		this.profile = profile;
 	}
 
+	public void setActionSubsystem(SystemUDActionSubsystem udaActionSubsystem) {
+		this.udaActionSubsystem = udaActionSubsystem;
+	}
 	/**
 	 * Called by SystemBaseAction when selection is set.
 	 * Our opportunity to verify we are allowed for this selected type.
@@ -156,9 +163,9 @@ public class SystemWorkWithUDAsAction extends SystemBaseDialogAction {
 		}
 		SystemWorkWithUDAsDialog dlg = null;
 		if (subsystem != null)
-			dlg = new SystemWorkWithUDAsDialog(parent, subsystem);
+			dlg = new SystemWorkWithUDAsDialog(parent, subsystem, udaActionSubsystem);
 		else
-			dlg = new SystemWorkWithUDAsDialog(parent, subsystemFactory, profile);
+			dlg = new SystemWorkWithUDAsDialog(parent, subsystemFactory, profile, udaActionSubsystem);
 		return dlg;
 	}
 

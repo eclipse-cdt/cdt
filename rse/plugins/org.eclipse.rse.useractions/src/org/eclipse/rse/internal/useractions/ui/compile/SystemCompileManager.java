@@ -35,6 +35,7 @@ import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.SystemAdapterHelpers;
+import org.eclipse.rse.useractions.ui.compile.SystemCascadingCompileAction;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -83,6 +84,7 @@ public abstract class SystemCompileManager {
 	private Hashtable compileProfilesPerProfile = new Hashtable();
 	private Hashtable compileSubstitutorsPerConnection = new Hashtable();
 	protected IHost systemConnection;
+	protected String osType = "default";  //$NON-NLS-1$
 	protected ISubSystemConfiguration subsystemFactory;
 	/**
 	 * As last set by calling setCurrentCompileCommand. Sometimes needed by subclasses.
@@ -419,5 +421,10 @@ public abstract class SystemCompileManager {
 
 	public String getSourceTypePromptMRITooltip() {
 		return SystemUDAResources.RESID_WWCOMPCMDS_TYPES_TOOLTIP;
+	}
+	
+	public String getOSType()
+	{
+		return osType;
 	}
 }

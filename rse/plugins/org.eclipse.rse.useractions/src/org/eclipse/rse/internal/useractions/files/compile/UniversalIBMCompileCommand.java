@@ -19,8 +19,8 @@ import org.eclipse.rse.internal.useractions.ui.compile.SystemDefaultCompileComma
 public class UniversalIBMCompileCommand extends SystemDefaultCompileCommand {
 	/**
 	 * Constructor for UniversalCompileIBMCommand.
-	 * @param commandLabel
-	 * @param commandName
+	 * @param commandLabel label of the command		
+	 * @param commandName name of the command
 	 */
 	public UniversalIBMCompileCommand(String commandLabel, String commandName) {
 		super(commandLabel, commandName);
@@ -28,7 +28,7 @@ public class UniversalIBMCompileCommand extends SystemDefaultCompileCommand {
 
 	/**
 	 * Constructor for UniversalCompileIBMCommand.
-	 * @param commandName
+	 * @param commandName name of the command
 	 */
 	public UniversalIBMCompileCommand(String commandName) {
 		super(commandName);

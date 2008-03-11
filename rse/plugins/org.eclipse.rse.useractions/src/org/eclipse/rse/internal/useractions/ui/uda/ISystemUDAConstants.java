@@ -16,6 +16,13 @@ package org.eclipse.rse.internal.useractions.ui.uda;
  * Constants used throughout the User Defined Action framework.
  */
 public interface ISystemUDAConstants {
+	
+	public static final String USER_DEFINED_ACTION_PROPRERTY_SET_PREFIX = "UDA."; //$NON-NLS-1$
+	
+	static final String UDA_ROOT_ATTR = "uda_root"; //$NON-NLS-1$
+	static final String FILETYPES_ROOT = "FileTypes"; //$NON-NLS-1$
+	static final String ACTIONS_ROOT = "Actions"; //$NON-NLS-1$
+	
 	/**
 	 * The name of the xml tag for domain tags.
 	 * Domains are used to partition actions. 
@@ -28,7 +35,7 @@ public interface ISystemUDAConstants {
 	 *  identifies the domain type. Its values will be
 	 *  an untranslated name like "Object" or "Folder".
 	 */
-	public static final String XE_DOMTYPE = "Type"; //$NON-NLS-1$
+	public static final String XE_DOMTYPE = "DomainType"; //$NON-NLS-1$
 	/**
 	 * The name of the xml attribute of domain tags which
 	 *  identifies the domain name. Its values will be
@@ -40,6 +47,11 @@ public interface ISystemUDAConstants {
 	 */
 	public static final String NAME_ATTR = "Name"; //$NON-NLS-1$
 	/**
+	 * The type of the attribute we consistently use to store an element's name
+	 */
+	public static final String TYPE_ATTR = "Type"; //$NON-NLS-1$
+	
+	/**
 	 * The name of the attribute we consistently use to store an element's original IBM-supplied name
 	 */
 	public static final String ORIGINAL_NAME_ATTR = "OriginalName"; //$NON-NLS-1$
@@ -47,4 +59,6 @@ public interface ISystemUDAConstants {
 	 * The name of the attribute we consistently use to store a release number
 	 */
 	public static final String RELEASE_ATTR = "release"; //$NON-NLS-1$
+	
+	public static final String RELEASE_VALUE = "7.5"; //$NON-NLS-1$
 }

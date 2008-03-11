@@ -27,6 +27,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
@@ -100,6 +102,16 @@ import org.eclipse.cdt.internal.ui.util.EditorUtility;
 public class CSourceHover extends AbstractCEditorTextHover implements ITextHoverExtension, IInformationProviderExtension2 {
 
 	private static final boolean DEBUG = false;
+
+	private static class SingletonRule implements ISchedulingRule {
+		public static final ISchedulingRule INSTANCE = new SingletonRule();
+		public boolean contains(ISchedulingRule rule) {
+			return rule == this;
+		}
+		public boolean isConflicting(ISchedulingRule rule) {
+			return rule == this;
+		}
+	}
 
 	/**
 	 * Computes the source location for a given identifier.
@@ -787,10 +799,26 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 		return source.substring(i);
 	}
 
-	private String searchInIndex(ITranslationUnit tUnit, IRegion textRegion) {
-		IProgressMonitor monitor= new NullProgressMonitor();
-		ComputeSourceRunnable computer= new ComputeSourceRunnable(tUnit, textRegion);
-		ASTProvider.getASTProvider().runOnAST(tUnit, ASTProvider.WAIT_NO, monitor, computer);
+	private String searchInIndex(final ITranslationUnit tUnit, IRegion textRegion) {
+		final ComputeSourceRunnable computer= new ComputeSourceRunnable(tUnit, textRegion);
+		Job job= new Job(CHoverMessages.CSourceHover_jobTitle) {
+			protected IStatus run(IProgressMonitor monitor) {
+				return ASTProvider.getASTProvider().runOnAST(tUnit, ASTProvider.WAIT_ACTIVE_ONLY, monitor, computer);
+			}
+		};
+		// If the hover thread is interrupted this might have negative
+		// effects on the index - see http://bugs.eclipse.org/219834
+		// Therefore we schedule a job to decouple the parsing from this thread.
+		job.setPriority(Job.DECORATE);
+		job.setSystem(true);
+		job.setRule(SingletonRule.INSTANCE);
+		job.schedule();
+		try {
+			job.join();
+		} catch (InterruptedException exc) {
+			job.cancel();
+			return null;
+		}
 		return computer.getSource();
 	}
 

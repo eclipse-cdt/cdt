@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others. All rights reserved.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors: 
- * Anton Leherbauer (Wind River Systems) - initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *     Anton Leherbauer (Wind River Systems) - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  ******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
@@ -40,7 +40,7 @@ public class ASTCache {
 	/** Full parse mode (no PDOM) */
 	public static int PARSE_MODE_FULL= ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT;
 	/** Fast parse mode (use PDOM) */
-	public static int PARSE_MODE_FAST= ITranslationUnit.AST_SKIP_INDEXED_HEADERS | ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT;
+	public static int PARSE_MODE_FAST= ITranslationUnit.AST_SKIP_ALL_HEADERS | ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT;
 
 	/**
 	 * Do something with an AST.
@@ -71,7 +71,7 @@ public class ASTCache {
 	 * write access afterwards.
 	 */
 	private long fLastWriteOnIndex;
-	/** Inidicates whether the AST is currenty being computed */
+	/** Indicates whether the AST is currently being computed */
 	private boolean fIsReconciling;
 
 	/**

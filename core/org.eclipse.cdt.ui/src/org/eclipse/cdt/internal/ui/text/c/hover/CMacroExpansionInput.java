@@ -17,8 +17,9 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -48,7 +49,6 @@ import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
-import org.eclipse.cdt.internal.ui.editor.ASTProvider.WAIT_FLAG;
 import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
 
 /**
@@ -57,6 +57,16 @@ import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
  * @since 5.0
  */
 public class CMacroExpansionInput {
+
+	private static class SingletonRule implements ISchedulingRule {
+		public static final ISchedulingRule INSTANCE = new SingletonRule();
+		public boolean contains(ISchedulingRule rule) {
+			return rule == this;
+		}
+		public boolean isConflicting(ISchedulingRule rule) {
+			return rule == this;
+		}
+	}
 
 	/**
 	 * Computes the expansion region for a selection.
@@ -199,8 +209,6 @@ public class CMacroExpansionInput {
 	}
 
 	MacroExpansionExplorer fExplorer;
-	IDocument fDocument;
-	IRegion fRegion;
 	boolean fStartWithFullExpansion= true;
 
 	private CMacroExpansionInput() {
@@ -226,30 +234,39 @@ public class CMacroExpansionInput {
 			return null;
 		}
 		
-		IProgressMonitor monitor= new NullProgressMonitor();
 		ExpansionRegionComputer computer= new ExpansionRegionComputer(tu, textRegion, force);
-		final WAIT_FLAG waitFlag = force ? ASTProvider.WAIT_ACTIVE_ONLY : ASTProvider.WAIT_NO;
-		IStatus status= ASTProvider.getASTProvider().runOnAST(tu, waitFlag, monitor, computer);
-		if (!status.isOK()) {
-			return null;
-		}
-		IRegion region= computer.getExpansionRegion();
-		if (region == null) {
-			return null;
-		}
+		doRunOnAST(computer, tu, force);
+
 		MacroExpansionExplorer explorer= computer.getMacroExpansionExplorer();
 		if (explorer == null) {
 			return null;
 		}
-		ITextEditor textEditor= (ITextEditor)editor;
-		IDocument document= textEditor.getDocumentProvider().getDocument(editorInput);
-		
+
 		CMacroExpansionInput input= new CMacroExpansionInput();
 		input.fExplorer= explorer;
-		input.fDocument= document;
-		input.fRegion= region;
 
 		return input;
+	}
+
+	private static void doRunOnAST(final ASTRunnable runnable, final ITranslationUnit tu, boolean force) {
+		Job job= new Job(CHoverMessages.CMacroExpansionInput_jobTitle) {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				return ASTProvider.getASTProvider().runOnAST(tu, ASTProvider.WAIT_ACTIVE_ONLY, monitor, runnable);
+			}};
+
+		// If the hover thread is interrupted this might have negative
+		// effects on the index - see http://bugs.eclipse.org/219834
+		// Therefore we schedule a job to decouple the parsing from this thread.
+		job.setPriority(force ? Job.INTERACTIVE : Job.DECORATE);
+		job.setSystem(true);
+		job.setRule(SingletonRule.INSTANCE);
+		job.schedule();
+		try {
+			job.join();
+		} catch (InterruptedException exc) {
+			job.cancel();
+		}
 	}
 
 	/**

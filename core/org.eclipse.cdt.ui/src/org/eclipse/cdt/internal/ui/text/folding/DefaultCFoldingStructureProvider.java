@@ -118,7 +118,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		 * @see org.eclipse.cdt.internal.ui.text.ICReconcilingListener#reconciled(IASTTranslationUnit, boolean, IProgressMonitor)
 		 */
 		public void reconciled(IASTTranslationUnit ast, boolean force, IProgressMonitor progressMonitor) {
-			if (fInput == null || fReconciling) {
+			if (fInput == null || fReconciling || progressMonitor.isCanceled()) {
 				return;
 			}
 			if (fPreprocessorBranchFoldingEnabled && ast == null) {
@@ -729,7 +729,6 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		handleProjectionDisabled();
 
 		if (fEditor instanceof CEditor) {
-			fInitialReconcilePending= true;
 			initialize();
 			fReconilingListener= new PreprocessorBranchesReconciler();
 			((CEditor)fEditor).addReconcileListener(fReconilingListener);
@@ -768,6 +767,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	 */
 	public final void initialize() {
 		if (DEBUG) System.out.println("DefaultCFoldingStructureProvider.initialize()"); //$NON-NLS-1$
+		fInitialReconcilePending= true;
 		update(createInitialContext());
 	}
 
@@ -853,12 +853,13 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 						if (existingPosition != null && (!newPosition.equals(existingPosition) || ctx.allowCollapsing() && existingAnnotation.isCollapsed() != newAnnotation.isCollapsed())) {
 							existingPosition.setOffset(newPosition.getOffset());
 							existingPosition.setLength(newPosition.getLength());
-							if (ctx.allowCollapsing() && existingAnnotation.isCollapsed() != newAnnotation.isCollapsed())
+							if (ctx.allowCollapsing() && existingAnnotation.isCollapsed() != newAnnotation.isCollapsed()) {
 								if (DEBUG) System.out.println("DefaultCFoldingStructureProvider.update() change annotation " + newAnnotation); //$NON-NLS-1$
 								if (newAnnotation.isCollapsed())
 									existingAnnotation.markCollapsed();
 								else
 									existingAnnotation.markExpanded();
+							}
 							updates.add(existingAnnotation);
 						}
 						matched= true;

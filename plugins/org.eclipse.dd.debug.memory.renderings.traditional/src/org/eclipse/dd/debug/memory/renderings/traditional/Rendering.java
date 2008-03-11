@@ -243,6 +243,8 @@ public class Rendering extends Composite implements IDebugEventSetListener
                     	handlePageUp();
                         break;
                     case SWT.SCROLL_LINE:
+                    // See: BUG 203068 selection event details broken on GTK < 2.6 
+                    default:
                     	if(getVerticalBar().getSelection() == getVerticalBar().getMinimum())
                     	{
                     		// Set view port start address to the start address of the Memory Block
@@ -268,14 +270,10 @@ public class Rendering extends Composite implements IDebugEventSetListener
                         // getVerticalBar().setToolTipText(Rendering.this.getAddressString(fViewportAddress));
                         
                         // Update the addresses on the Address pane. 
-                    	// Do not update the Binary and Text panes until dragging of the thumb nail stops
                         if(fAddressPane.isPaneVisible())
                         {
                             fAddressPane.redraw();
                         }                        
-                    	break;
-                    case SWT.NONE:
-                        // Dragging of the thumb nail stops. Redraw the panes
                         redrawPanes();
                     	break;
                 }

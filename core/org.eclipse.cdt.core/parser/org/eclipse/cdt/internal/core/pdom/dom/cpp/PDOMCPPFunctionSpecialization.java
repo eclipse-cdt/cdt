@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -61,6 +62,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 	/**
 	 * The size in bytes of a PDOMCPPFunction record in the database.
 	 */
+	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPSpecialization.RECORD_SIZE + 13;
 	
 	public PDOMCPPFunctionSpecialization(PDOM pdom, PDOMNode parent, ICPPFunction function, PDOMBinding specialized) throws CoreException {
@@ -82,13 +84,14 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 			ft= getType();
 			IParameter[] params= function.getParameters();
 			IType[] paramTypes= ft.getParameterTypes();
-			db.putInt(record + NUM_PARAMS, params.length);
 			
 			ICPPFunction sFunc= (ICPPFunction) ((ICPPSpecialization)function).getSpecializedBinding();
 			IParameter[] sParams= sFunc.getParameters();
 			IType[] sParamTypes= sFunc.getType().getParameterTypes();
 			
-			for (int i=0; i<params.length; ++i) {
+			final int length= Math.min(sParamTypes.length, params.length);
+			db.putInt(record + NUM_PARAMS, length);
+			for (int i=0; i<length; ++i) {
 				int typeRecord= i<paramTypes.length && paramTypes[i]!=null ? ((PDOMNode)paramTypes[i]).getRecord() : 0;
 				//TODO shouldn't need to make new parameter (find old one)
 				PDOMCPPParameter sParam = new PDOMCPPParameter(pdom, this, sParams[i], sParamTypes[i]);
@@ -104,12 +107,14 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 		super(pdom, bindingRecord);
 	}
 	
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 
+	@Override
 	public int getNodeType() {
-		return PDOMCPPLinkage.CPP_FUNCTION_SPECIALIZATION;
+		return IIndexCPPBindingConstants.CPP_FUNCTION_SPECIALIZATION;
 	}
 
 	public PDOMCPPParameterSpecialization getFirstParameter() throws CoreException {
@@ -200,6 +205,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 		return false; 
 	}
 
+	@Override
 	public int pdomCompareTo(PDOMBinding other) {
 		int cmp= super.pdomCompareTo(other);
 		return cmp==0 ? PDOMCPPFunction.compareSignatures(this, other) : cmp;

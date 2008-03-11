@@ -17,6 +17,8 @@
 
 package org.eclipse.rse.core.filters;
 
+import java.util.List;
+
 import org.eclipse.rse.core.model.IRSEModelObject;
 import org.eclipse.rse.core.references.IRSEPersistableReferencedObject;
 
@@ -137,57 +139,57 @@ public interface ISystemFilterPool extends IRSEPersistableReferencedObject, ISys
 	/**
 	 * @return The value of the Name attribute
 	 */
-	String getName();
+	public String getName();
 
 	/**
 	 * @param value The new value of the Name attribute
 	 */
-	void setName(String value);
+	public void setName(String value);
 
 	/**
 	 * @return The value of the Type attribute
 	 * Allows tools to have typed filter pools.
 	 * Type is not interpreted by the filter pool, but may be used by a subsystem.
 	 */
-	String getType();
+	public String getType();
 
 	/**
 	 * @param value The new value of the Type attribute
 	 * Allows tools to have typed filter pools.
 	 * Type is not interpreted by the filter pool, but may be used by a subsystem.
 	 */
-	void setType(String value);
+	public void setType(String value);
 
 	/**
 	 * @return The value of the SupportsNestedFilters attribute
 	 */
-	boolean isSupportsNestedFilters();
+	public boolean isSupportsNestedFilters();
 
 	/**
 	 * @param value The new value of the SupportsNestedFilters attribute
 	 */
-	void setSupportsNestedFilters(boolean value);
+	public void setSupportsNestedFilters(boolean value);
 
 	/**
 	 * @return The value of the Deletable attribute
 	 */
-	boolean isDeletable();
+	public boolean isDeletable();
 
 	/**
 	 * @param value The new value of the Deletable attribute
 	 */
-	void setDeletable(boolean value);
+	public void setDeletable(boolean value);
 
 	/**
 	 * @return The value of the Default attribute
 	 * true if this is a vendor-supplied pool versus user-created pool
 	 */
-	boolean isDefault();
+	public boolean isDefault();
 
 	/**
 	 * @param value The new value of the Default attribute
 	 */
-	void setDefault(boolean value);
+	public void setDefault(boolean value);
 
 	/**
 	 * Sets the attribute for this filter pool that determines whether strings of 
@@ -195,45 +197,45 @@ public interface ISystemFilterPool extends IRSEPersistableReferencedObject, ISys
 	 * this attribute is inherited from the containing filter pool manager.
 	 * @param value The new value of the StringsCaseSensitive attribute
 	 */
-	void setStringsCaseSensitive(boolean value);
+	public void setStringsCaseSensitive(boolean value);
 
 	/**
 	 * Unsets the StringsCaseSensitive attribute. Causes the case sensitivity of the
 	 * filter pool to be determined by its filter pool manager.
 	 */
-	void unsetStringsCaseSensitive();
+	public void unsetStringsCaseSensitive();
 
 	/**
 	 * @return <b>true</b> if the StringsCaseSensitive attribute has been set
 	 */
-	boolean isSetStringsCaseSensitive();
+	public boolean isSetStringsCaseSensitive();
 
 	/**
 	 * @return The list of Filters references
 	 */
-	java.util.List getFilters();
+	public List getFilters();
 
 	/**
 	 * @return The value of the SupportsDuplicateFilterStrings attribute
 	 */
-	boolean isSupportsDuplicateFilterStrings();
+	public boolean isSupportsDuplicateFilterStrings();
 
 	/**
 	 * @param value The new value of the SupportsDuplicateFilterStrings attribute
 	 */
-	void setSupportsDuplicateFilterStrings(boolean value);
+	public void setSupportsDuplicateFilterStrings(boolean value);
 
 	/**
 	 * @return The value of the Release attribute
 	 * The release in which this filter pool was initially created.
 	 * Typically, will be the version and release times 10, as in 40 or 51.
 	 */
-	int getRelease();
+	public int getRelease();
 
 	/**
 	 * @param value The new value of the Release attribute
 	 */
-	void setRelease(int value);
+	public void setRelease(int value);
 
 	/**
 	 * Returns the value of the '<em><b>Single Filter String Only</b></em>' attribute.
@@ -246,7 +248,7 @@ public interface ISystemFilterPool extends IRSEPersistableReferencedObject, ISys
 	 * @see #unsetSingleFilterStringOnly()
 	 * @see #setSingleFilterStringOnly(boolean)
 	 */
-	boolean isSingleFilterStringOnly();
+	public boolean isSingleFilterStringOnly();
 
 	/**
 	 * Sets the value of the '{@link org.eclipse.rse.core.filters.ISystemFilterPool#isSingleFilterStringOnly <em>Single Filter String Only</em>}' attribute.
@@ -257,7 +259,7 @@ public interface ISystemFilterPool extends IRSEPersistableReferencedObject, ISys
 	 * @see #unsetSingleFilterStringOnly()
 	 * @see #isSingleFilterStringOnly()
 	 */
-	void setSingleFilterStringOnly(boolean value);
+	public void setSingleFilterStringOnly(boolean value);
 
 	/**
 	 * Unsets the value of the '{@link org.eclipse.rse.core.filters.ISystemFilterPool#isSingleFilterStringOnly <em>Single Filter String Only</em>}' attribute.
@@ -266,7 +268,7 @@ public interface ISystemFilterPool extends IRSEPersistableReferencedObject, ISys
 	 * @see #isSingleFilterStringOnly()
 	 * @see #setSingleFilterStringOnly(boolean)
 	 */
-	void unsetSingleFilterStringOnly();
+	public void unsetSingleFilterStringOnly();
 
 	/**
 	 * Returns whether the value of the '{@link org.eclipse.rse.core.filters.ISystemFilterPool#isSingleFilterStringOnly <em>Single Filter String Only</em>}' attribute is set.
@@ -277,7 +279,7 @@ public interface ISystemFilterPool extends IRSEPersistableReferencedObject, ISys
 	 * @see #isSingleFilterStringOnly()
 	 * @see #setSingleFilterStringOnly(boolean)
 	 */
-	boolean isSetSingleFilterStringOnly();
+	public boolean isSetSingleFilterStringOnly();
 
 	/**
 	 * Returns the value of the '<em><b>Owning Parent Name</b></em>' attribute.
@@ -288,14 +290,14 @@ public interface ISystemFilterPool extends IRSEPersistableReferencedObject, ISys
 	 * @return the value of the '<em>Owning Parent Name</em>' attribute.
 	 * @see #setOwningParentName(String)
 	 */
-	String getOwningParentName();
+	public String getOwningParentName();
 
 	/**
 	 * Sets the value of the '{@link org.eclipse.rse.core.filters.ISystemFilterPool#getOwningParentName <em>Owning Parent Name</em>}' attribute.
 	 * @param value the new value of the '<em>Owning Parent Name</em>' attribute.
 	 * @see #getOwningParentName()
 	 */
-	void setOwningParentName(String value);
+	public void setOwningParentName(String value);
 
 	/**
 	 * Returns the value of the '<em><b>Non Renamable</b></em>' attribute.
@@ -305,13 +307,13 @@ public interface ISystemFilterPool extends IRSEPersistableReferencedObject, ISys
 	 * @return the value of the '<em>Non Renamable</em>' attribute.
 	 * @see #setNonRenamable(boolean)
 	 */
-	boolean isNonRenamable();
+	public boolean isNonRenamable();
 
 	/**
 	 * Sets the value of the '{@link org.eclipse.rse.core.filters.ISystemFilterPool#isNonRenamable <em>Non Renamable</em>}' attribute.
 	 * @param value the new value of the '<em>Non Renamable</em>' attribute.
 	 * @see #isNonRenamable()
 	 */
-	void setNonRenamable(boolean value);
+	public void setNonRenamable(boolean value);
 	
 }

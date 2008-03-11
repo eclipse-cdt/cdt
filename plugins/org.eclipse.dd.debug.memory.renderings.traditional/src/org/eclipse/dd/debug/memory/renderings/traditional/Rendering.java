@@ -636,6 +636,26 @@ public class Rendering extends Composite implements IDebugEventSetListener
             BigInteger startAddress;
 
             BigInteger endAddress;
+            
+            public AddressPair(BigInteger start, BigInteger end)
+            {
+            	startAddress = start;
+            	endAddress = end;
+            }
+
+			@Override
+			public boolean equals(Object obj) {
+				if(obj == null)
+					return false;
+				if(obj instanceof AddressPair)
+				{
+					return ((AddressPair) obj).startAddress.equals(startAddress)
+						&& ((AddressPair) obj).endAddress.equals(endAddress);
+				}
+				
+				return false;
+			}
+            
         }
 
         class MemoryUnit
@@ -669,6 +689,8 @@ public class Rendering extends Composite implements IDebugEventSetListener
         private HashMap fEditBuffer = new HashMap();
 
         private boolean fDisposed = false;
+        
+        private Object fLastQueued = null;
 
         private Vector fQueue = new Vector();
 
@@ -713,30 +735,26 @@ public class Rendering extends Composite implements IDebugEventSetListener
                 queueRequestArchiveDeltas();
             }
         }
-
-        
         
         private void queueRequest(BigInteger startAddress, BigInteger endAddress)
         {
-            AddressPair pair = new AddressPair();
-            pair.startAddress = startAddress;
-            pair.endAddress = endAddress;
-            synchronized(fQueue)
-            {
-                fQueue.addElement(pair);
-            }
-            synchronized(this)
-            {
-                this.notify();
-            }
+            AddressPair pair = new AddressPair(startAddress, endAddress);
+            if(!pair.equals(fLastQueued))
+            	queue(pair);
         }
         
         private void queueRequestArchiveDeltas()
         {
         	ArchiveDeltas archive = new ArchiveDeltas();
+        	queue(archive);
+        }
+        
+        private void queue(Object element)
+        {
         	synchronized(fQueue)
             {
-                fQueue.addElement(archive);
+                fQueue.addElement(element);
+                fLastQueued = element;
             }
             synchronized(this)
             {
@@ -777,7 +795,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
                 }
                 else if(pair != null)
                 {
-                    populateCache(pair.startAddress, pair.endAddress);
+                	populateCache(pair.startAddress, pair.endAddress);
                 }
                 else
                 {

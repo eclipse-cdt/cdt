@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.widgets.Shell;
@@ -210,7 +211,10 @@ public class LaunchUIPlugin extends AbstractUIPlugin implements IDebugEventSetLi
 					IProcess proc = (IProcess)o;
 					ICProject cproject = null;
 					try {
-						cproject = AbstractCLaunchDelegate.getCProject(proc.getLaunch().getLaunchConfiguration());
+						ILaunchConfiguration launchConfig = proc.getLaunch().getLaunchConfiguration();
+						if (launchConfig != null) {
+							cproject = AbstractCLaunchDelegate.getCProject(launchConfig);
+						}
 					} catch (CoreException e) {
 					}
 					if (cproject != null) {

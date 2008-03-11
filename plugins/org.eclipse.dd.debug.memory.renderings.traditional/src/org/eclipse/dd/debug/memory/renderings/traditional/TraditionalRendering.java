@@ -20,6 +20,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.dd.debug.memory.renderings.traditional.Rendering.Selection;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
@@ -982,20 +983,45 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 
 	// selection is terminology for caret position
     public BigInteger getSelectedAddress() {
-    	return fRendering.getCaretAddress();
+    	IMemorySelection selection = fRendering.getSelection();
+    	if (selection == null || selection.getStart() == null)
+    		return fRendering.getCaretAddress();
+    	
+   		return selection.getStartLow();     	
 	}
 
 	public MemoryByte[] getSelectedAsBytes() {
-		try
+		try	
 		{
-			return fRendering.getViewportCache().getBytes(
-				fRendering.getCaretAddress(), fRendering.getBytesPerColumn());
+			// default to the caret address and the cell count size
+			BigInteger startAddr = fRendering.getCaretAddress();
+			int byteCount = fRendering.getBytesPerColumn();
+			
+			// Now see if there's a selection
+			IMemorySelection selection = fRendering.getSelection();
+	    	if (selection != null && selection.getStart() != null)
+	    	{
+	    		// The implementation is such that just having a caret somewhere
+	    		// (without multiple cells being selected) constitutes a selection,
+	    		// except for when the rendering is in its initial state. I.e.,
+	    		// just because we get here doesn't mean the user has selected more
+	    		// than one cell.
+	    		
+	    		startAddr = getSelectedAddress();
+	    		
+	    		if (selection.getHigh() != null) 
+	    		{
+		    		byteCount = selection.getHigh().subtract(selection.getLow()).intValue() * fRendering.getAddressableSize();
+	    		}
+	    	}
+			return fRendering.getViewportCache().getBytes(startAddr, byteCount);
+	    	
 		}
 		catch(DebugException de)
 		{
 			// FIXME log?
 			return null;
-		}
+		}		
 	}
 
 	public void goToAddress(final BigInteger address) throws DebugException {

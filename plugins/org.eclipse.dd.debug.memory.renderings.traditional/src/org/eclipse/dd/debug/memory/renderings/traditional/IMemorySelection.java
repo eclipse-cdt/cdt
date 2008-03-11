@@ -12,6 +12,8 @@ public interface IMemorySelection
 
     public BigInteger getEnd();
     
+    public BigInteger getStartLow();
+    
     public void setStart(BigInteger high, BigInteger low);
     
     public void setEnd(BigInteger high, BigInteger low);

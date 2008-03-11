@@ -1237,6 +1237,10 @@ public class Rendering extends Composite implements IDebugEventSetListener
                 return fStartLow;
         }
     
+        public BigInteger getStartLow() {
+        	return fStartLow;
+        }
+        
         public BigInteger getEnd()
         {
             // if there is no end, return null

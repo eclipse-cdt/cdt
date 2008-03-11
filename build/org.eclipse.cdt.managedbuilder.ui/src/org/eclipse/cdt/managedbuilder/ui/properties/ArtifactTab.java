@@ -113,18 +113,24 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 	private void typeChanged() {
 		int n = c1.getSelectionIndex();
 		if (n != savedPos) {
+			setProjectType(n);
 			savedPos = n;
-			try {
-				if (fCfg instanceof IMultiConfiguration) {
-					((IMultiConfiguration)fCfg).setBuildProperty(PROPERTY, values[n].getId());
-				} else {				
-					if (fProperties == null) return;
-					fProperties.setProperty(PROPERTY, values[n].getId());
-				}
-			} catch (CoreException ex) {
-				ManagedBuilderUIPlugin.log(ex);
-			}
 			updateData(getResDesc());
+		}
+	}
+
+	private void setProjectType(int n) {
+		try {
+			String s = values[n].getId();
+			if (fCfg instanceof IMultiConfiguration) {
+				((IMultiConfiguration)fCfg).setBuildProperty(PROPERTY, s);
+			} else {				
+				if (fProperties == null) 
+					return;
+				fProperties.setProperty(PROPERTY, s);
+			}
+		} catch (CoreException ex) {
+			ManagedBuilderUIPlugin.log(ex);
 		}
 	}
 	
@@ -227,6 +233,15 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 	protected void performDefaults() {
 		fCfg.setArtifactName(fCfg.getManagedProject().getDefaultArtifactName());
 		fCfg.setArtifactExtension(null);
+		// workaround for bad extension setting (always "exe"):
+		// set wrong project type temporary 
+		// and then set right one back
+		if (c1.getItemCount() > 1) {
+			int right = c1.getSelectionIndex();
+			int wrong = (right == 0) ? 1 : 0;
+			setProjectType(wrong);
+			setProjectType(right);
+		}
 		if (tTool != null)
 			tTool.setOutputPrefixForPrimaryOutput(null);
 		else if (fCfg instanceof IMultiConfiguration)
@@ -267,6 +282,9 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 		Set<String> set   = (Set<String>)combo.getData(SSET);
 		if (field == null || set == null)
 			return;
+		
+		canModify = false;
+		String oldStr = combo.getText();
 		combo.removeAll();
 		for (ICConfigurationDescription cf : page.getCfgsEditable()) {
 			IConfiguration c = getCfg(cf);
@@ -288,5 +306,7 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 		}
 		if (set.size() > 0) 
 			combo.setItems(set.toArray(new String[set.size()]));
+		combo.setText(oldStr);
+		canModify = true;
 	}
 }

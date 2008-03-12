@@ -30,7 +30,8 @@ import org.eclipse.dd.dsf.concurrent.RequestMonitor;
  * is changed. 
  */
 //#ifdef excercises
-//TODO Excercise 4 - Add an annotationindicating allowed concurrency access
+// TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
+// indicating allowed thread access to this class/method/member
 //#else
 //#@ThreadSafe
 //#endif

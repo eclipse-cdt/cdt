@@ -113,8 +113,10 @@ public class AsyncQuicksort {
         // a request monitor.
         return store;
         //#else
-        //#        rm.setData(store);
-        //#        rm.done();
+//#        // Java 5 automatically converts the int type of the store variable
+//#        // to an Integer object.
+//#        rm.setData(store);
+//#        rm.done();
         //#endif
     }
 

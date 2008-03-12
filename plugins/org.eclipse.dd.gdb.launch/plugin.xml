@@ -12,7 +12,7 @@
             modes="debug">
       </launchConfigurationType>
       <launchConfigurationType
-            delegate="org.eclipse.dd.gdb.launch.launching.GdbLocalLaunchDelegate"
+            delegate="org.eclipse.dd.gdb.launch.launching.GdbRemoteLaunchDelegate"
             id="org.eclipse.dd.gdb.launch.remoteCLaunch"
             modes="debug"
             name="Remote C/C++ Application  (Experimental - DSF)"

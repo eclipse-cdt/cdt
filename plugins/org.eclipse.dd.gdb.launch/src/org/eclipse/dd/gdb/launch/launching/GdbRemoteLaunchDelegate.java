@@ -79,15 +79,6 @@ implements ILaunchConfigurationDelegate2
 			return;
 		}
 		try {
-			// Hack until we fix the tabs
-			try {
-				ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();
-				wc.setAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE, IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE );
-				wc.doSave();
-			}
-			catch( CoreException e ) {
-			}
-			// END HACK
 			String debugMode = config.getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE, IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE );
 			if ( debugMode.equals( IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE ) ) {
 				launchRemoteDebugSession( config, launch, monitor );

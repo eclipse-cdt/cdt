@@ -14,11 +14,16 @@ import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
 
 /**
- * This command connects to a remote target using TCP/IP.
+ * This command connects to a remote target.
  */
 public class MITargetSelect extends MICommand<MIInfo> {
 
 	public MITargetSelect(IDMContext ctx, String host, String port) {
 		super(ctx, "-target-select extended-remote " + host + ":" + port); //$NON-NLS-1$ //$NON-NLS-2$
 	}
+	
+	public MITargetSelect(IDMContext ctx, String serialDevice) {
+		super(ctx, "-target-select extended-remote " + serialDevice); //$NON-NLS-1$
+	}
+
 }

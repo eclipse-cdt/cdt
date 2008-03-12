@@ -86,7 +86,7 @@ public class GDBControl extends AbstractMIControl {
     private static int fgInstanceCounter = 0;
     private final GDBControlDMContext fControlDmc;
 
-    public enum SessionType { RUN, ATTACH, CORE }
+    public enum SessionType { RUN, ATTACH, CORE, REMOTE }
     private SessionType fSessionType;
     
     private boolean fConnected = false;

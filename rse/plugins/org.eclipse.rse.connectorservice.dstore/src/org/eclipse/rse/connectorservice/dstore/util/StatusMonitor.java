@@ -287,7 +287,10 @@ public class StatusMonitor implements IDomainListener, ICommunicationsListener
         WaitThreshold = wait*10; // 1 second means 10 sleep(100ms)
       else if ( wait == -1 ) // force a diagnostic
 	  		 WaitThreshold = -1;
-         
+      
+	  int nudges = 0; // nudges used for waking up server with slow connections
+      // nudge up to 12 times before giving up
+ 
       if (display != null) 
 		{
 			// Current thread is UI thread
@@ -319,8 +322,13 @@ public class StatusMonitor implements IDomainListener, ICommunicationsListener
                    
 				  if (WaitThreshold == 0)
 				    {
-				        // no diagnostic factory but there is a timeout
-				        return status;  // returning the undone status object
+                   	wakeupServer(status);
+                    
+			        // no diagnostic factory but there is a timeout
+                	if (nudges >= 12)
+                		return status;  // returning the undone status object
+                	
+                	nudges++;
 				    }
                     else if (_networkDown)
                     {
@@ -359,8 +367,13 @@ public class StatusMonitor implements IDomainListener, ICommunicationsListener
 
                    if (WaitThreshold == 0)
 				    {
+                     	wakeupServer(status);
+                        
 				        // no diagnostic factory but there is a timeout
-				        return status;  // returning the undone status object
+                    	if (nudges >= 12)
+                    		return status;  // returning the undone status object
+                    	
+                    	nudges++;
 				    }
                     else if (_networkDown)
                     {
@@ -375,6 +388,19 @@ public class StatusMonitor implements IDomainListener, ICommunicationsListener
 		return status;
 	}
 
+	private void wakeupServer(DataElement status)
+	{
+		if (status != null)
+		{
+			// token command to wake up update handler
+			DataElement cmdDescriptor = _dataStore.findCommandDescriptor("C_REFRESH"); //$NON-NLS-1$
+			DataElement subject = status.getParent().get(0);
+			if (cmdDescriptor != null)
+			{
+				_dataStore.command(cmdDescriptor, subject);
+			}
+		}
+	}
 
     /**
      * Start diagnostic 

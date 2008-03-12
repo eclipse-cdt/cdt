@@ -16,6 +16,7 @@
  * David McKnight   (IBM)        - [197480] eliminating UI dependencies
  * David McKnight   (IBM)        - [216252] MessageFormat.format -> NLS.bind
  * Martin Oberhuber (Wind River) - [219952] Use MessageFormat for download progress message
+ * David McKnight   (IBM)        - [222448] [dstore] update DownloadListener to handle timeouts and nudge
  ********************************************************************************/
 
 package org.eclipse.rse.services.dstore.util;
@@ -230,14 +231,13 @@ public class DownloadListener implements IDomainListener
 	 */
 	public DataElement waitForUpdate(int wait) throws InterruptedException
 	{
-
+		// Prevent infinite looping by introducing a threshold for wait 
+		int WaitThreshold = 50; //default. sleep(100ms) for 150 times  		
+		
 		if (wait > 0)
-		{
-		}
-		else if (wait == -1)
-		{
-		}
-
+			WaitThreshold = wait * 10; // 1 second means 10 sleep(100ms)
+		else if (wait == -1) // force a diagnostic
+			WaitThreshold = -1;
 						
 		{
 			// Current thread is not UI thread
@@ -263,10 +263,35 @@ public class DownloadListener implements IDomainListener
 				{
 				    Thread.sleep(100);
 					updateDownloadState();
+					
+					if (WaitThreshold > 0) // update timer count if
+					 {
+	                        // threshold not reached
+	                        --WaitThreshold; // decrement the timer count
+					 }
+					 else if (WaitThreshold == 0)
+					 {
+						 // try to wake up the server
+						 wakeupServer(_status);
+					 }
 				}
 			}
 		}
 		return _status;
+	}
+	
+	private void wakeupServer(DataElement status)
+	{
+		if (status != null)
+		{
+			// token command to wake up update handler
+			DataElement cmdDescriptor = _dataStore.findCommandDescriptor("C_REFRESH"); //$NON-NLS-1$
+			DataElement subject = status.getParent().get(0);
+			if (cmdDescriptor != null)
+			{
+				_dataStore.command(cmdDescriptor, subject);
+			}
+		}
 	}
 
 	public void cancelDownload()

@@ -2046,19 +2046,21 @@ public class CommonBuilder extends ACBuilder {
 	}
 
 	// Turn the string into an array.
-	String[] makeArray(String string) {
+	private String[] makeArray(String string) {
 		string = string.trim();
 		char[] array = string.toCharArray();
-		ArrayList aList = new ArrayList();
-		StringBuffer buffer = new StringBuffer();
+		ArrayList<String> aList = new ArrayList<String>();
+		StringBuilder buffer = new StringBuilder();
 		boolean inComment = false;
 		for (int i = 0; i < array.length; i++) {
 			char c = array[i];
+			boolean needsToAdd = true;
 			if (array[i] == '"' || array[i] == '\'') {
 				if (i > 0 && array[i - 1] == '\\') {
 					inComment = false;
 				} else {
 					inComment = !inComment;
+					needsToAdd = false; // skip it
 				}
 			}
 			if (c == ' ' && !inComment) {
@@ -2068,10 +2070,10 @@ public class CommonBuilder extends ACBuilder {
 						aList.add(str);
 					}
 				}
-//				aList.add(buffer.toString());
-				buffer = new StringBuffer();
+				buffer = new StringBuilder();
 			} else {
-				buffer.append(c);
+				if (needsToAdd)
+					buffer.append(c);
 			}
 		}
 		if (buffer.length() > 0){
@@ -2080,7 +2082,7 @@ public class CommonBuilder extends ACBuilder {
 				aList.add(str);
 			}
 		}
-		return (String[]) aList.toArray(new String[aList.size()]);
+		return aList.toArray(new String[aList.size()]);
 	}
 
 	private void removeAllMarkers(IProject currProject) throws CoreException {

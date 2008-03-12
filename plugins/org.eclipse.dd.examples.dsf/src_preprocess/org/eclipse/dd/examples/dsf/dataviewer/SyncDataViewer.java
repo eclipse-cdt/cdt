@@ -8,7 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-//#ifdef excercises
+//#ifdef exercises
 package org.eclipse.dd.examples.dsf.dataviewer;
 //#else
 //#package org.eclipse.dd.examples.dsf.dataviewer.answers;
@@ -122,8 +122,8 @@ public class SyncDataViewer
     }
     
     private void refreshViewer() {
-        //#ifdef excercises
-        // TODO Excercise 5 - Add a call to getElements() to force a deadlock.
+        //#ifdef exercises
+        // TODO Exercise 5 - Add a call to getElements() to force a deadlock.
         //#else
 //#        getElements(null);
         //#endif
@@ -154,8 +154,8 @@ public class SyncDataViewer
         tableViewer.getControl().setLayoutData(data);
 
         // Create the data generator.
-        //#ifdef excercises
-        // TODO Excercise 5 - Use the DataGeneratorWithExecutor() instead.
+        //#ifdef exercises
+        // TODO Exercise 5 - Use the DataGeneratorWithExecutor() instead.
         final IDataGenerator generator = new DataGeneratorWithThread();
         //#else
 //#        final IDataGenerator generator = new DataGeneratorWithExecutor();     

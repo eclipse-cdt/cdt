@@ -30,7 +30,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Tests that excercise the Sequence object.
+ * Tests that exercise the Sequence object.
  */
 public class DsfSequenceTests {
     TestDsfExecutor fExecutor;

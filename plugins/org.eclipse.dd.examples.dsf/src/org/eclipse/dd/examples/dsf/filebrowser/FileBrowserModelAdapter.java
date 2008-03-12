@@ -24,8 +24,8 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
  * IDMContext.getAdapter() and IVMContext.getAdapter() methods, 
  * which both call {@link DsfSession#getModelAdapter(Class)}.
  * <p>
- * The adapter implementation for this excercise is hard-coded to provide 
- * contents for only one view.  In turn the view contens are determined using 
+ * The adapter implementation for this exercise is hard-coded to provide 
+ * contents for only one view.  In turn the view contents are determined using 
  * the configurable ViewModelProvider.  For demonstration purposes, this model
  * adapter has two different layout configurations that can be used.  These 
  * layout configurations can be set by calling the {@link #setViewLayout} method.

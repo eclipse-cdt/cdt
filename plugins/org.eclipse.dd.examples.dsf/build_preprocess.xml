@@ -37,7 +37,7 @@
             <delete dir="src/@{packagedir}"/>
             <mkdir dir="src/@{packagedir}"/>
             <mkdir dir="src/@{packagedir}/answers"/>
-        	<preprocess destdir="src/@{packagedir}" symbols="excercises">
+        	<preprocess destdir="src/@{packagedir}" symbols="exercises">
         		<fileset dir="src_preprocess/@{packagedir}"/>
         	</preprocess>
         	<preprocess destdir="src/@{packagedir}/answers" symbols="answers">

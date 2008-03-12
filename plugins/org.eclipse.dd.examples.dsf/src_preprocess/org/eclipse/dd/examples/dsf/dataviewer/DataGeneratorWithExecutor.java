@@ -8,7 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-//#ifdef excercises
+//#ifdef exercises
 package org.eclipse.dd.examples.dsf.dataviewer;
 //#else
 //#package org.eclipse.dd.examples.dsf.dataviewer.answers;
@@ -49,7 +49,7 @@ import org.eclipse.dd.examples.dsf.DsfExamplesPlugin;
  * be accessed while running in the executor thread.
  * </p>
  */
-//#ifdef excercises
+//#ifdef exercises
 //TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
 //indicating allowed thread access to this class/method/member
 //#else
@@ -59,8 +59,8 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
 
     // Request objects are used to serialize the interface calls into objects
     // which can then be pushed into a queue.
-    //#ifdef excercises
-    // TODO Excercise 4 - Add an annotationindicating allowed concurrency access
+    //#ifdef exercises
+    // TODO Ecercise 4 - Add an annotationindicating allowed concurrency access
     // Hint: Request and its subclasses have all their fields declared as final.
     //#else
 //#    @Immutable
@@ -73,7 +73,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
         }
     }
     
-    //#ifdef excercises
+    //#ifdef exercises
     // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
     // indicating allowed thread access to this class/method/member
     //#else
@@ -85,7 +85,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
         }
     } 
 
-    //#ifdef excercises
+    //#ifdef exercises
     // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
     // indicating allowed thread access to this class/method/member
     //#else
@@ -100,7 +100,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
     } 
 
     // The executor used to access all internal data of the generator.
-    //#ifdef excercises
+    //#ifdef exercises
     // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
     // indicating allowed thread access to this class/method/member
     // Hint: If a member does not have an annotation, the programmer can assume
@@ -113,7 +113,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
     // and shutdown() methods write into the queue, while the serviceQueue()
     // method reads from it.
     // The executor used to access all internal data of the generator.
-    //#ifdef excercises
+    //#ifdef exercises
     // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
     // indicating allowed thread access to this class/method/member
     //#else
@@ -123,7 +123,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
 
     // List of listeners is not synchronized, it also has to be accessed
     // using the executor.
-    //#ifdef excercises
+    //#ifdef exercises
     // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
     // indicating allowed thread access to this class/method/member
     //#else
@@ -132,7 +132,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
     private List<Listener> fListeners = new LinkedList<Listener>();
 
     // Current number of elements in this generator.
-    //#ifdef excercises
+    //#ifdef exercises
     // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
     // indicating allowed thread access to this class/method/member
     //#else
@@ -141,7 +141,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
     private int fCount = MIN_COUNT;
     
     // Counter used to determine when to reset the element count.
-    //#ifdef excercises
+    //#ifdef exercises
     // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
     // indicating allowed thread access to this class/method/member
     //#else
@@ -150,7 +150,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
     private int fCountResetTrigger = 0;
     
     // Elements which were modified since the last reset.
-    //#ifdef excercises
+    //#ifdef exercises
     // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
     // indicating allowed thread access to this class/method/member
     //#else
@@ -159,7 +159,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
     private Set<Integer> fChangedIndexes = new HashSet<Integer>();
     
     // Flag used to ensure that requests are processed sequentially.
-    //#ifdef excercises
+    //#ifdef exercises
     // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
     // indicating allowed thread access to this class/method/member
     //#else
@@ -167,7 +167,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
     //#endif
     private boolean fServiceQueueInProgress = false;
  
-    //#ifdef excercises
+    //#ifdef exercises
     // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
     // indicating allowed thread access to this class/method/member
     //#endif
@@ -187,7 +187,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
             TimeUnit.MILLISECONDS);
     }
      
-    //#ifdef excercises
+    //#ifdef exercises
     // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
     // indicating allowed thread access to this class/method/member
     //#endif
@@ -214,7 +214,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
         }
     }
 
-    //#ifdef excercises
+    //#ifdef exercises
     // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
     // indicating allowed thread access to this class/method/member
     //#endif
@@ -232,7 +232,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
         }
     }
     
-    //#ifdef excercises
+    //#ifdef exercises
     // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
     // indicating allowed thread access to this class/method/member
     //#endif
@@ -250,7 +250,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
         }
     } 
 
-    //#ifdef excercises
+    //#ifdef exercises
     // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
     // indicating allowed thread access to this class/method/member
     //#endif
@@ -264,7 +264,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
         } catch (RejectedExecutionException e) {}
     }
 
-    //#ifdef excercises
+    //#ifdef exercises
     // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
     // indicating allowed thread access to this class/method/member
     //#endif
@@ -279,7 +279,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
     }
 
     // Main processing function of this generator.
-    //#ifdef excercises
+    //#ifdef exercises
     // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
     // indicating allowed thread access to this class/method/member
     //#else
@@ -287,8 +287,8 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
     //#endif
     private void serviceQueue() {
         
-        //#ifdef excercises
-        // TODO Excercise 3 - Add logic to discard requests from queue.
+        //#ifdef exercises
+        // TODO Exercise 3 - Add logic to discard cancelled requests from queue.
         // Hint: Since serviceQueue() is called using the executor, and the 
         // fQueue list can only be modified when running in the executor 
         // thread.  This method can safely iterate and modify fQueue without 
@@ -335,7 +335,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
         }
     }
     
-    //#ifdef excercises
+    //#ifdef exercises
     // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
     // indicating allowed thread access to this class/method/member
     //#else
@@ -349,7 +349,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
         rm.done();
     }
 
-    //#ifdef excercises
+    //#ifdef exercises
     // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
     // indicating allowed thread access to this class/method/member
     //#else
@@ -370,7 +370,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
     /**
      * This method simulates changes in the supplier's data set.
      */
-    //#ifdef excercises
+    //#ifdef exercises
     // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
     // indicating allowed thread access to this class/method/member
     //#else
@@ -389,7 +389,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
     /**
      * Calculates new size for provider's data set.
      */
-    //#ifdef excercises
+    //#ifdef exercises
     // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
     // indicating allowed thread access to this class/method/member
     //#else
@@ -412,7 +412,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
     /**
      * Invalidates a random range of indexes.
      */
-    //#ifdef excercises
+    //#ifdef exercises
     // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
     // indicating allowed thread access to this class/method/member
     //#else

@@ -8,7 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-//#ifdef excercises
+//#ifdef exercises
 package org.eclipse.dd.examples.dsf.dataviewer;
 //#else
 //#package org.eclipse.dd.examples.dsf.dataviewer.answers;
@@ -29,7 +29,7 @@ import org.eclipse.dd.dsf.concurrent.RequestMonitor;
  * view to receive events indicating when the data supplied by the generator 
  * is changed. 
  */
-//#ifdef excercises
+//#ifdef exercises
 // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
 // indicating allowed thread access to this class/method/member
 //#else

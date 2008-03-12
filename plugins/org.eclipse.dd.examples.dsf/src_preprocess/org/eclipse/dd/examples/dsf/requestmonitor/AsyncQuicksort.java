@@ -8,7 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-//#ifdef excercises
+//#ifdef exercises
 package org.eclipse.dd.examples.dsf.requestmonitor;
 //#else
 //#package org.eclipse.dd.examples.dsf.requestmonitor.answers;
@@ -51,7 +51,7 @@ public class AsyncQuicksort {
     {
         if (right > left) {
             int pivot = left;
-            //#ifdef excercises
+            //#ifdef exercises
             // TODO: Exercise 2 - Convert the call to partition into an
             // asynchronous call to asyncPartition().
             // Hint: The rest of the code below should be executed inside
@@ -84,7 +84,7 @@ public class AsyncQuicksort {
         }
     }
 
-    //#ifdef excercises
+    //#ifdef exercises
     // TODO Exercise 2 - Convert partition to an asynchronous method.
     // Hint: a DataRequestMonitor<Integer> should be used to carry the 
     // return value to the caller.
@@ -108,7 +108,7 @@ public class AsyncQuicksort {
         array[right] = array[store];
         array[store] = pivotValue;
 
-        //#ifdef excercises
+        //#ifdef exercises
         // TODO: Request Monitors Exercise 2 - Return the data to caller using 
         // a request monitor.
         return store;

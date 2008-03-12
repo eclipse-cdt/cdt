@@ -8,7 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-//#ifdef excercises
+//#ifdef exercises
 package org.eclipse.dd.examples.dsf.requestmonitor;
 //#else
 //#package org.eclipse.dd.examples.dsf.requestmonitor.answers;
@@ -37,7 +37,7 @@ public class AsyncHelloWorld {
 
     static void asyncHelloWorld(RequestMonitor rm) {
         System.out.println("Hello world");
-        //#ifdef excercises
+        //#ifdef exercises
         // TODO Exercise 1: - Call the second async. "Hello world 2" method.
         // Hint: Calling an asynchronous method requires passing to it a 
         // request monitor.  A new request monitor can be constructed with 
@@ -51,7 +51,7 @@ public class AsyncHelloWorld {
         //#endif
     }
     
-    //#ifdef excercises
+    //#ifdef exercises
     // TODO: Exercise 1 - Add a second async. "Hello world 2" method.   
     //#else
 //#    static void asyncHelloWorld2(RequestMonitor rm) {

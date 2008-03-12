@@ -31,7 +31,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Tests that excercise the Query object.
+ * Tests that exercise the Query object.
  */
 public class DsfQueryTests {
     TestDsfExecutor fExecutor;

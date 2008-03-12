@@ -8,7 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-//#ifdef excercises
+//#ifdef exercises
 package org.eclipse.dd.examples.dsf.requestmonitor;
 //#else
 //#package org.eclipse.dd.examples.dsf.requestmonitor.answers;

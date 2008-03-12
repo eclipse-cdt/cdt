@@ -14,6 +14,11 @@ package org.eclipse.cdt.internal.ui.refactoring.utils;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 
+/**
+ * Enum that represents C++ visibilities, with methods to convert to
+ * and from ICPPASTVisiblityLabel.
+ *
+ */
 public enum VisibilityEnum {
 	
 	v_public(Messages.VisibilityEnum_public),  

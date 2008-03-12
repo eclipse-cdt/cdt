@@ -22,6 +22,8 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
 
 /**
+ * 3 radio buttons in a group, labeled according to the corresponding visibility name (public, private, protected).
+ * 
  * @author Thomas Corbat
  *
  */

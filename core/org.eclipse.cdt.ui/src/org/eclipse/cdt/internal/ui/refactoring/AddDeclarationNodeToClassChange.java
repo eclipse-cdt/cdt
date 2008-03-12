@@ -27,6 +27,13 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTVisibilityLabel;
 
 import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
 
+/**
+ * Adds a declaration to an existing class via the ModificationCollector. It automatically searches 
+ * the correct insertion point for the desired visibility.
+ * 
+ * @author Mirko Stocker
+ *
+ */
 public class AddDeclarationNodeToClassChange {
 
 	private final ICPPASTCompositeTypeSpecifier nodeClass;

@@ -17,9 +17,12 @@ import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.parser.KeywordSetKey;
 import org.eclipse.cdt.core.parser.ParserLanguage;
+
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
 
 /**
+ * Class to verify that an identifier meets the C++ rules for valid names.
+ * 
  * @author Thomas Corbat
  *
  */
@@ -27,6 +30,10 @@ public class IdentifierHelper {
 
 	private static final String QUOTE = Messages.IdentifierHelper_quote; 
 
+	/**
+	 * @param identifier to check
+	 * @return an instance of IdentifierResult that holds the outcome of the validation
+	 */
 	public static IdentifierResult checkIdentifierName(String identifier){
 
 		if(identifier == null){

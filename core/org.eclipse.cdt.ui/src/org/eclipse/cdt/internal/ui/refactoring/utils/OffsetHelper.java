@@ -15,10 +15,13 @@ import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTMacroExpansionLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
+
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
- * @author Emanuel Graf IFS
+ * Some helper methods that calculate offsets from nodes.
+ * 
+ * @author Emanuel Graf
  *
  */
 public class OffsetHelper {

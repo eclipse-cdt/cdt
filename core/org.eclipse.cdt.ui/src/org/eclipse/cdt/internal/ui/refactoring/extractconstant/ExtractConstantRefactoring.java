@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2007, 2008 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -66,6 +66,13 @@ import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
 import org.eclipse.cdt.internal.ui.refactoring.NameNVisibilityInformation;
 import org.eclipse.cdt.internal.ui.refactoring.utils.TranslationUnitHelper;
 
+/**
+ * The central class of the Extract Constant Refactoring. Does all the work like checking pre- and 
+ * postconditions and collecting/creating the modifications to the AST.
+ * 
+ * @author Mirko Stocker
+ *
+ */
 public class ExtractConstantRefactoring extends CRefactoring {
 	
 	private IASTLiteralExpression target = null;
@@ -107,7 +114,6 @@ public class ExtractConstantRefactoring extends CRefactoring {
 
 		if(isProgressMonitorCanceld(sm, initStatus)) return initStatus;
 		
-		//Feststellen das nur einer Markiert ist.
 		boolean oneMarked = isOneMarked(literalExpressionVector, textSelection);
 		if(!oneMarked){ 
 			//No or more than one marked
@@ -124,7 +130,6 @@ public class ExtractConstantRefactoring extends CRefactoring {
 
 		if(isProgressMonitorCanceld(sm, initStatus)) return initStatus;
 				
-		// Alle Knoten zum ersetzen finden
 		findAllNodesForReplacement(literalExpressionVector);
 		
 		info.addNamesToUsedNames(findAllDeclaredNames());

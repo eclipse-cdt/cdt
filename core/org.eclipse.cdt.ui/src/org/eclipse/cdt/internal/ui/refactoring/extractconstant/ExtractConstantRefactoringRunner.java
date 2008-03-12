@@ -33,9 +33,6 @@ public class ExtractConstantRefactoringRunner extends RefactoringRunner  {
 		super(file, selection, window);
 	}
 
-
-
-
 	@Override
 	public void run() {
 		NameNVisibilityInformation info = new NameNVisibilityInformation();
@@ -57,5 +54,4 @@ public class ExtractConstantRefactoringRunner extends RefactoringRunner  {
 			CUIPlugin.getDefault().log(e);
 		}
 	}
-
 }

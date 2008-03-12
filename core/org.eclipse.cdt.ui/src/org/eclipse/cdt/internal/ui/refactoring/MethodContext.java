@@ -29,6 +29,11 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTVisibilityLabel;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 
+/**
+ * Represents a function or method and adds some useful helper methods to
+ * determine if methods are in the same class.
+ *
+ */
 public class MethodContext {
 	public enum ContextType{ NONE, FUNCTION, METHOD }
 

@@ -28,8 +28,11 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.IdentifierResult;
 import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
 
 /**
+ * Holds a NameAndVisibilityComposite and deals with the extract refactoring
+ * specific implementation and propagates the inputs made in the wizard ui back
+ * to the refactoring via the NameNVisibilityInformation object.
+ *	
  * @author Emanuel Graf
- *
  */
 public abstract class ExtractInputPage extends UserInputWizardPage {
 

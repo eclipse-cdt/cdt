@@ -16,6 +16,10 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 
+/**
+ * Represents the visibility of an IASTName.
+ * 
+ */
 public class Visibility {
 
 	/**
@@ -53,9 +57,7 @@ public class Visibility {
 	 */
 	public static final Visibility UNKNOWN = new Visibility(){ };
 	
-	
-
-	private Visibility(){  }
+	private Visibility(){}
 	
 	public static Visibility getVisibility(IASTName name){
 		try {
@@ -87,6 +89,4 @@ public class Visibility {
 	public String toString() {
 		return stringValue();
 	}
-	
-	
 }

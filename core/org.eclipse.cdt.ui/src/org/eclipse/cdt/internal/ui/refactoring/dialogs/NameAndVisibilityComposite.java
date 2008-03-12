@@ -25,6 +25,12 @@ import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
 
+/**
+  * Composite to query for a name and visibility.
+  * 
+  * @author Thomas Corbat
+  *
+  */
 public class NameAndVisibilityComposite extends Composite {
 	
 	private LabeledTextField constantName;

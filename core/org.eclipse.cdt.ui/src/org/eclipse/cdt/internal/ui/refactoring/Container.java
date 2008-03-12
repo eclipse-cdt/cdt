@@ -11,17 +11,21 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring;
 
-public class Container<T>{
+/**
+ * Simple container for one Object, with getters and setters.
+ * 
+ * @author Mirko Stocker
+ *
+ * @param <T> The type of the encapsulated node.
+ */
+public class Container<T> {
 	private T object;
 	
 	public Container(T object) {
-		super();
 		this.object = object;
 	}
 
 	public Container() {
-		super();
-		this.object = null;
 	}
 
 	public T getObject() {

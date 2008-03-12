@@ -27,6 +27,8 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.osgi.util.NLS;
 
 /**
+ * A Change for creating a new file with the given name, content and encoding at the specified path.
+ * 
  * @author Emanuel Graf
  *
  */

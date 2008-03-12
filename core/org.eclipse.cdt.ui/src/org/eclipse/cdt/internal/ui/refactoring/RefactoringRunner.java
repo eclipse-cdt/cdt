@@ -17,6 +17,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
 /**
+ * Base class for all refactoring runners.
+ * 
  * @author Emanuel Graf
  *
  */

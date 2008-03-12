@@ -60,6 +60,11 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTDeclarationAmbiguity;
 
 import org.eclipse.cdt.internal.ui.refactoring.utils.EclipseObjects;
 
+/**
+ * The baseclass for all other refactorings, provides some common implementations for
+ * condition checking, change generating, selection handling and translation unit loading.
+ *
+ */
 public abstract class CRefactoring extends Refactoring {
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	private static final int AST_STYLE = ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT | ITranslationUnit.AST_SKIP_INDEXED_HEADERS;

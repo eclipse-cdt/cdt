@@ -22,7 +22,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
- * @author Emanuel Graf IFS
+ * Some helper methods to access part of the content of an ifile 
+ * 
+ * @author Emanuel Graf
  *
  */
 public class FileContentHelper {

@@ -11,9 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.utils;
 
-import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -33,11 +30,24 @@ import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.model.ICElement;
+
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+
+/**
+ * A collection of helper methods to interact with the 
+ * workbench's IDocuments and IFiles
+ *
+ */
 public class EclipseObjects {
 	static public IWorkbenchPage getActivePage() {
-		return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		return getActiveWindow().getActivePage();
 	}
 	
+	/**
+	 * @return the active, visible TextEditor
+	 */
 	static public IEditorPart getActiveEditor() {
 		IEditorPart editor = null;
 
@@ -51,6 +61,12 @@ public class EclipseObjects {
 		return editor;
 	}
 	
+	/**
+	 * Goes through all open editors to find the one with the specified file. 
+	 * 
+	 * @param file to search for
+	 * @return the editor or null
+	 */
 	static public IEditorPart getEditorForFile(IFile file) {
 		IWorkbenchPage page = getActivePage();
 		IEditorReference[] editors = page.getEditorReferences();
@@ -70,29 +86,30 @@ public class EclipseObjects {
 		return null;
 	}
 	
+	/**
+	 * @return the file from the active editor
+	 */
 	static public IFile getActiveFile(){
-		IEditorInput edi = getActiveEditor().getEditorInput();
+		IEditorInput editorInput = getActiveEditor().getEditorInput();
 
 		IFile aFile = null;
-		if(edi instanceof IFileEditorInput){
-			aFile = ((IFileEditorInput)edi).getFile();
+		if(editorInput instanceof IFileEditorInput){
+			aFile = ((IFileEditorInput)editorInput).getFile();
 		}
 		
 		return aFile;
 	}
 	
+	/**
+	 * @return the document from the currently active editor
+	 */
 	static public IDocument getActiveDocument() {
 		return getDocument( getActiveEditor() );
 	}
 	
-	static public IDocument getDocument() {
-		ITextEditor txtEditor = ((ITextEditor)getActiveEditor());
-		if(txtEditor == null)
-			return null;
-		IDocumentProvider prov = txtEditor.getDocumentProvider();
-		return prov.getDocument(txtEditor.getEditorInput());
-	}
-	
+	/**
+	 * @return the document opened in the editor 
+	 */
 	static public IDocument getDocument(IEditorPart editor) {
 		ITextEditor txtEditor = ((ITextEditor)editor);
 		IDocumentProvider prov = txtEditor.getDocumentProvider();
@@ -103,11 +120,18 @@ public class EclipseObjects {
 		return PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 	}
 
+	/**
+	 * @return get the document that corresponds to the file
+	 */
 	public static IDocument getDocument(IFile file) {
 		IEditorPart editor = getEditorForFile(file);
 		return getDocument(editor);
 	}
 	
+	/**
+	 * @return return the file that contains the selection or the 
+	 * active file if there is no present selection
+	 */
 	static public IFile getFile(ISelection selection) {
 		if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
 			IFile file = getFile((IStructuredSelection)selection);
@@ -132,11 +156,17 @@ public class EclipseObjects {
 		return file;
 	}
 	
+	/**
+	 * @return the file at the specified path string
+	 */
 	public static IFile getFileForPathString(String path) {
 		IPath ipath = new Path(path);
 		return ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(ipath);
 	}
 	
+	/**
+	 * @return the file containing the node
+	 */
 	public static IFile getFile(IASTNode node){
 		if(node == null)
 			return null;

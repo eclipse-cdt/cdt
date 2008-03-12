@@ -12,6 +12,11 @@
 
 package org.eclipse.cdt.internal.ui.refactoring.utils;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+
 import org.eclipse.cdt.core.dom.CDOM;
 import org.eclipse.cdt.core.dom.IASTServiceProvider.UnsupportedDialectException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -20,14 +25,21 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
-import org.eclipse.cdt.internal.ui.refactoring.Container;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 
+import org.eclipse.cdt.internal.ui.refactoring.Container;
+
+/**
+ * A collection of methods that deal with IASTTranslationUnits.
+ * 
+ * @author Mirko Stocker
+ *
+ */
 public class TranslationUnitHelper {
 
+	/**
+	 * @param filename to load the translation unit from
+	 * @return the translation unit for the file or null
+	 */
 	public static IASTTranslationUnit loadTranslationUnit(String filename) {
 
 		if (filename != null) {
@@ -38,7 +50,11 @@ public class TranslationUnitHelper {
 
 		return null;
 	}
-
+	
+	/**
+	 * @param tmpFile to load the translation unit from
+	 * @return the translation unit for the file or null
+	 */
 	public static IASTTranslationUnit loadTranslationUnit(IFile tmpFile) {
 		if (tmpFile != null) {
 			try {
@@ -51,6 +67,9 @@ public class TranslationUnitHelper {
 		return null;
 	}
 
+	/**
+	 * Visits all names in the TU to find the specified name
+	 */
 	public static IASTName findNameInTranslationUnit(IASTTranslationUnit transUnit, IASTNode oldName) {
 		final String oldFileName = oldName.getFileLocation().getFileName();
 		final IASTFileLocation pos = oldName.getFileLocation();
@@ -77,6 +96,9 @@ public class TranslationUnitHelper {
 		return nameCon.getObject();
 	}
 	
+	/**
+	 * @return the first node in the translation unit or null
+	 */
 	public static IASTNode getFirstNode(IASTTranslationUnit unit) {
 		IASTDeclaration firstNode = null;
 		for (IASTDeclaration each : unit.getDeclarations()) {

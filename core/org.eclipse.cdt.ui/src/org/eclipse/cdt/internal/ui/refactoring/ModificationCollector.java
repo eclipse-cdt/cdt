@@ -24,10 +24,10 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 
 /**
- * @author Mirko Stocker
- * 
  * A ModificationCollector can be passed through a refactoring and manages the rewriters 
  * and additional changes a refactoring can create.
+ * 
+ * @author Mirko Stocker
  */
 public class ModificationCollector {
 	

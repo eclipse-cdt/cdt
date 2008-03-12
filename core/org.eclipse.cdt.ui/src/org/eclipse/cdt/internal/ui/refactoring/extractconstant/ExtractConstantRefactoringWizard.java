@@ -17,6 +17,9 @@ import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
 import org.eclipse.cdt.internal.ui.refactoring.NameNVisibilityInformation;
 import org.eclipse.cdt.internal.ui.refactoring.dialogs.ExtractInputPage;
 
+/**
+ * The wizard page for Extract Constant Refactoring, creates the UI page.
+ */
 public class ExtractConstantRefactoringWizard extends RefactoringWizard {
 
 	private ExtractInputPage page;
@@ -33,5 +36,4 @@ public class ExtractConstantRefactoringWizard extends RefactoringWizard {
 		addPage(page);
 
 	}
-
 }

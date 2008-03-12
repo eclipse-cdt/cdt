@@ -26,12 +26,14 @@ import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 /**
+ * The counterpart to the CreateFileChange, a change to delete a file. 
+ * 
  * @author Emanuel Graf
  *
  */
 public class DeleteFileChange extends Change {
 	
-	private IPath path;
+	private final IPath path;
 	private String source;
 
 	public DeleteFileChange(IPath path) {

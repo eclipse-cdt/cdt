@@ -15,6 +15,10 @@ import java.util.Vector;
 
 import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
 
+/**
+ * Associate a name with a visibility and holds a list of used names.
+ *
+ */
 public class NameNVisibilityInformation {
 	
 	private String name = "";	 //$NON-NLS-1$

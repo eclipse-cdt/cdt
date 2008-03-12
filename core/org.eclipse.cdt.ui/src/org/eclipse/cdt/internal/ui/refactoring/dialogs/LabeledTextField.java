@@ -19,6 +19,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 /**
+ * A text field with an associated label, displayed side-by-side.
+ *
  * @author Mirko Stocker
  *
  */

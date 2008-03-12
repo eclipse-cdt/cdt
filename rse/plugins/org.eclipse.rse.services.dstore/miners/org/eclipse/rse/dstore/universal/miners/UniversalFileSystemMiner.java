@@ -15,20 +15,21 @@
  * Martin Oberhuber (Wind River) - Fix 154874 - handle files with space or $ in the name 
  * Xuan Chen (IBM) - Fix 160768 - [refresh][dstore] Refresh on renamed node within a zip does not work; 
  * Xuan Chen (IBM) - Fix 189487 - copy and paste a folder did not work - workbench hang
- * Xuan Chen (IBM)        - [189681] [dstore][linux] Refresh Folder in My Home messes up Refresh in Root
- * Xuan Chen (IBM)        - [191280] [dstore] Expand fails for folder "/folk" with 3361 children
+ * Xuan Chen (IBM) - [189681] [dstore][linux] Refresh Folder in My Home messes up Refresh in Root
+ * Xuan Chen (IBM) - [191280] [dstore] Expand fails for folder "/folk" with 3361 children
  * Kevin Doyle (IBM) - [195709] Windows Copying doesn't work when path contains space
  * Kevin Doyle (IBM) - [196211] DStore Move tries rename if that fails copy/delete
- * Xuan Chen (IBM)        - [198046] [dstore] Cannot copy a folder into an archive file
- * Xuan Chen (IBM)        - [191367] with supertransfer on, Drag & Drop Folder from DStore to DStore doesn't work
+ * Xuan Chen (IBM) - [198046] [dstore] Cannot copy a folder into an archive file
+ * Xuan Chen (IBM) - [191367] with supertransfer on, Drag & Drop Folder from DStore to DStore doesn't work
  * Martin Oberhuber (Wind River) - [199548] Avoid touching files on setReadOnly() if unnecessary
  * Kevin Doyle (IBM) - [191548]  Deleting Read-Only directory removes it from view and displays no error
- * Xuan Chen (IBM)        - [202949] [archives] copy a folder from one connection to an archive file in a different connection does not work
+ * Xuan Chen (IBM) - [202949] [archives] copy a folder from one connection to an archive file in a different connection does not work
  * Xuan Chen (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
- * David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup
+ * David McKnight (IBM) - [196624] dstore miner IDs should be String constants rather than dynamic lookup
  * Xuan Chen (IBM) - [209827] Update DStore command implementation to enable cancelation of archive operations
  * Xuan Chen (IBM) - [194481] [dstore][Archive] Save Conflict After Renaming a File that is Open
- * David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
+ * David McKnight (IBM) - [209593] [api] add support for "file permissions" and "owner" properties for unix files
+ * Johnson Ma (Wind River) - [195402] Add tar.gz archive support
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -69,6 +70,7 @@ import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler;
 import org.eclipse.rse.services.clientserver.archiveutils.SystemJarHandler;
 import org.eclipse.rse.services.clientserver.archiveutils.SystemTarHandler;
+import org.eclipse.rse.services.clientserver.archiveutils.SystemTgzHandler;
 import org.eclipse.rse.services.clientserver.archiveutils.SystemZipHandler;
 import org.eclipse.rse.services.clientserver.archiveutils.VirtualChild;
 import org.eclipse.rse.services.clientserver.java.ClassFileUtil;
@@ -98,6 +100,8 @@ public class UniversalFileSystemMiner extends Miner {
 		_archiveHandlerManager = ArchiveHandlerManager.getInstance();
 		_archiveHandlerManager.setRegisteredHandler("zip", SystemZipHandler.class); //$NON-NLS-1$
 		_archiveHandlerManager.setRegisteredHandler("jar", SystemJarHandler.class); //$NON-NLS-1$
+		_archiveHandlerManager.setRegisteredHandler("tar.gz", SystemTgzHandler.class); //$NON-NLS-1$
+		_archiveHandlerManager.setRegisteredHandler("tgz", SystemTgzHandler.class); //$NON-NLS-1$
 		_archiveHandlerManager.setRegisteredHandler("tar", SystemTarHandler.class); //$NON-NLS-1$
 	}
 

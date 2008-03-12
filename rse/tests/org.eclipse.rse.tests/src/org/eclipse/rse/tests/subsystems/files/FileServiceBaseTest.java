@@ -1,16 +1,17 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others. 
+ * Copyright (c) 2007, 2008 IBM Corporation and others. 
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html 
  * 
  * Contributors: 
- * Xuan Chen (IBM)               - initial API and implementation
+ * Xuan Chen (IBM) - initial API and implementation
  *   - <copied code from org.eclipse.core.tests.internal.localstore/LocalStoreTest (Copyright IBM)>
  *   - <copied code from org.eclipse.core.tests.harness/CoreTest (Copyright IBM)>
  *   - <copied code from org.eclipse.core.tests.resources/ResourceTest (Copyright IBM)>
  *   - <copied code from org.eclipse.core.tests.harness/CoreTest (Copyright IBM)>
+ * Martin Oberhuber (Wind River) - [195402] Add constructor with test name
  *******************************************************************************/
 package org.eclipse.rse.tests.subsystems.files;
 
@@ -54,6 +55,14 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 	
 	public static int TYPE_FILE = 0;
 	public static int TYPE_FOLDER = 1;
+
+	/**
+	 * Constructor with specific test name.
+	 * @param name test to execute
+	 */
+	public FileServiceBaseTest(String name) {
+		super(name);
+	}
 	
 	public void setUp() throws Exception {
 		super.setUp();
@@ -261,7 +270,7 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 	 * 
 	 * @param target the file to create
 	 * @param content content of the new file
-	 * @throws CoreException
+	 * @throws CoreException in case of failure
 	 */
 	protected void createFile(IFileStore target, String content) throws CoreException {
 		target.delete(EFS.NONE, null);

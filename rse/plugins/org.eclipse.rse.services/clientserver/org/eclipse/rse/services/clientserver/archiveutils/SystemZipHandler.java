@@ -1389,8 +1389,8 @@ public class SystemZipHandler implements ISystemArchiveHandler
 	 * @param dest The ZipOutputStream representing the zip file where the
 	 * children are to be recreated
 	 * @param omitChildren The set of names of children to omit when creating
-	 * the zipfile. Null or empty set if there are no ommisions.
-	 * @throws IOException
+	 * the zipfile. Null or empty set if there are no omissions.
+	 * @throws IOException in case of a file I/O error
 	 */
 	protected boolean recreateZipDeleteEntries(VirtualChild[] vcList, ZipOutputStream dest, HashSet omitChildren, ISystemOperationMonitor archiveOperationMonitor) throws IOException
 	{
@@ -2563,8 +2563,9 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		return ""; //$NON-NLS-1$
 	}
 
-	/**
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#isExecutable(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#getClassification(java.lang.String)
 	 */
 	public String getClassification(String fullVirtualName) {
 		return getClassification(fullVirtualName, true);
@@ -2573,7 +2574,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 	/**
 	 * Same as getClassification(String), but you can choose whether to leave the zip file
 	 * open after the method is closed.
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#isExecutable(java.lang.String)
+	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#getClassification(java.lang.String)
 	 */
 	public String getClassification(String fullVirtualName, boolean closeZipFile) {
 		

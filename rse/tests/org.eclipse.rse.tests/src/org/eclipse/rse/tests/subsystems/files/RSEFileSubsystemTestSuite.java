@@ -8,6 +8,7 @@
  * Contributors: 
  * Martin Oberhuber (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - organize, enable and tag test cases
+ * Johnson Ma (Wind River) - [195402] Add tar.gz archive support
  *******************************************************************************/
 package org.eclipse.rse.tests.subsystems.files;
 
@@ -54,6 +55,7 @@ public class RSEFileSubsystemTestSuite extends DelegatingTestSuiteHolder {
 		// we run in problems with that. The test needs to be executed manually with
 		// the ftp server to use possibly changed to whatever host will do.
 		suite.addTestSuite(FTPFileSubsystemTestCase.class);
+		suite.addTestSuite(FileServiceTgzArchiveTest.class);
 		
 		return suite;
 	}

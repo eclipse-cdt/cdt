@@ -9,6 +9,7 @@
  * Xuan Chen (IBM)               - initial API and implementation
  * Martin Oberhuber (Wind River) - Fix Javadoc warnings
  * Martin Oberhuber (Wind River) - organize, enable and tag test cases
+ * Martin Oberhuber (Wind River) - [195402] Add constructor with test name
  *******************************************************************************/
 package org.eclipse.rse.tests.subsystems.files;
 
@@ -41,7 +42,15 @@ public class FileServiceArchiveTestDStore extends FileServiceArchiveTest {
 	
 	private boolean fPreference_ALERT_SSL;
 	private boolean fPreference_ALERT_NONSSL;
-	
+
+	/**
+	 * Constructor with specific test name.
+	 * @param name test to execute
+	 */
+	public FileServiceArchiveTestDStore(String name) {
+		super(name);
+	}
+
 	public static junit.framework.Test suite() {
 		TestSuite suite = new TestSuite("FileServiceArchiveTestDStore");
 		

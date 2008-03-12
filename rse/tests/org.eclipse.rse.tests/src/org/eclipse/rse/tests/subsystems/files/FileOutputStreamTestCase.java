@@ -11,6 +11,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [cleanup] Avoid using SystemStartHere in production code
  * Martin Oberhuber (Wind River) - organize, enable and tag test cases
+ * Martin Oberhuber (Wind River) - [195402] Add constructor with test name
  ********************************************************************************/
 
 package org.eclipse.rse.tests.subsystems.files;
@@ -37,7 +38,15 @@ public class FileOutputStreamTestCase extends FileServiceBaseTest {
 
 	private IHost host = null;
 	private IRemoteFile tempDirectory;
-	
+
+	/**
+	 * Constructor with specific test name.
+	 * @param name test to execute
+	 */
+	public FileOutputStreamTestCase(String name) {
+		super(name);
+	}
+
 	private IRemoteFileSubSystem getRemoteFileSubSystem(IHost host) {
 		IRemoteFileSubSystem fss = null;
 		ISystemRegistry sr = SystemStartHere.getSystemRegistry(); 

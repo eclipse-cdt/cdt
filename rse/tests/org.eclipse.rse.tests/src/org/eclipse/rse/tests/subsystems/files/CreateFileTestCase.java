@@ -11,6 +11,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [cleanup] Avoid using SystemStartHere in production code
  * Martin Oberhuber (Wind River) - organize, enable and tag test cases
+ * Martin Oberhuber (Wind River) - [195402] Add constructor with test name
  ********************************************************************************/
 
 package org.eclipse.rse.tests.subsystems.files;
@@ -34,7 +35,15 @@ public class CreateFileTestCase extends FileServiceBaseTest {
 	// File Dialog.  This string can be so using this for base test.
 	private String fileName = "a !@#${a}'%^&()_ =[]~+-'`;,.txt"; //$NON-NLS-1$
 	private IRemoteFile tempDirectory = null;
-	
+
+	/**
+	 * Constructor with specific test name.
+	 * @param name test to execute
+	 */
+	public CreateFileTestCase(String name) {
+		super(name);
+	}
+
 	private IRemoteFileSubSystem getRemoteFileSubSystem(IHost host) {
 		IRemoteFileSubSystem fss = null;
 		ISystemRegistry sr = SystemStartHere.getSystemRegistry(); 

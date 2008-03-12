@@ -6,8 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Xuan Chen (IBM)               - initial API and implementation
+ * Xuan Chen (IBM) - initial API and implementation
  * Martin Oberhuber (Wind River) - Fix Javadoc warnings
+ * Martin Oberhuber (Wind River) - [195402] Add constructor with test name
  *******************************************************************************/
 package org.eclipse.rse.tests.subsystems.files;
 
@@ -28,6 +29,14 @@ public class FileServiceArchiveTestDStoreWindows extends FileServiceArchiveTest 
 
 	private boolean fPreference_ALERT_SSL;
 	private boolean fPreference_ALERT_NONSSL;
+
+	/**
+	 * Constructor with specific test name.
+	 * @param name test to execute
+	 */
+	public FileServiceArchiveTestDStoreWindows(String name) {
+		super(name);
+	}
 
 	public static junit.framework.Test suite() {
 		

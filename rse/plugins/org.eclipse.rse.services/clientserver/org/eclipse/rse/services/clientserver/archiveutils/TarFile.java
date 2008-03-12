@@ -12,8 +12,8 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
  * Xuan Chen (IBM) - [api] SystemTarHandler has inconsistent API
+ * Johnson Ma (Wind River) - [195402] Add tar.gz archive support
  *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver.archiveutils;
@@ -197,8 +197,9 @@ public class TarFile {
 	 * Gets the input stream for the tar file.
 	 * @return the input stream for the tar file.
 	 * @throws FileNotFoundException if the file does not exist.
+	 * @since 3.0
 	 */
-	private InputStream getInputStream() throws FileNotFoundException {
+	protected InputStream getInputStream() throws FileNotFoundException {
 		FileInputStream stream = new FileInputStream(file);
 		return stream;
 	}

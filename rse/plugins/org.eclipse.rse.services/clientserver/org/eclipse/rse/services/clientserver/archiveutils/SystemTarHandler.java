@@ -12,16 +12,17 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * Xuan Chen        (IBM)        - [194293] [Local][Archives] Saving file second time in an Archive Errors
- * Xuan Chen        (IBM)        - [199132] [Archives-TAR][Local-Windows] Can't open files in tar archives
- * Xuan Chen        (IBM)        - [160775] [api] rename (at least within a zip) blocks UI thread
- * Xuan Chen        (IBM)        - [209828] Need to move the Create operation to a job.
- * Xuan Chen        (IBM)        - [209825] Update SystemTarHandler so that archive operations could be cancelable.
- * Xuan Chen        (IBM)        - [211551] NPE when moving multiple folders from one tar file to another tar file
- * Xuan Chen        (IBM)        - [211653] Copy virtual directory with nested directory of tar file did not work
- * Xuan Chen        (IBM)        - [214251] [archive] "Last Modified Time" changed for all virtual files/folders if rename/paste/delete of one virtual file.
- * Xuan Chen        (IBM)        - [191370] [dstore] Supertransfer zip not deleted when cancelling copy
- * Xuan Chen        (IBM)        - [api] SystemTarHandler has inconsistent API
+ * Xuan Chen (IBM) - [194293] [Local][Archives] Saving file second time in an Archive Errors
+ * Xuan Chen (IBM) - [199132] [Archives-TAR][Local-Windows] Can't open files in tar archives
+ * Xuan Chen (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
+ * Xuan Chen (IBM) - [209828] Need to move the Create operation to a job.
+ * Xuan Chen (IBM) - [209825] Update SystemTarHandler so that archive operations could be cancelable.
+ * Xuan Chen (IBM) - [211551] NPE when moving multiple folders from one tar file to another tar file
+ * Xuan Chen (IBM) - [211653] Copy virtual directory with nested directory of tar file did not work
+ * Xuan Chen (IBM) - [214251] [archive] "Last Modified Time" changed for all virtual files/folders if rename/paste/delete of one virtual file.
+ * Xuan Chen (IBM) - [191370] [dstore] Supertransfer zip not deleted when cancelling copy
+ * Xuan Chen (IBM) - [api] SystemTarHandler has inconsistent API
+ * Johnson Ma (Wind River) - [195402][api] Add tar.gz archive support
  *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver.archiveutils;
@@ -30,6 +31,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilePermission;
 import java.io.IOException;
@@ -1228,7 +1230,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 			
 					// open a new temp file which will be our destination for the new tar file
 					outputTempFile = new File(file.getAbsolutePath() + "temp"); //$NON-NLS-1$
-					outStream = new TarOutputStream(new FileOutputStream(outputTempFile));
+					outStream = getTarOutputStream(outputTempFile);
 		
 					// get all the entries in the current tar				  
 					VirtualChild[] children = getVirtualChildrenList(archiveOperationMonitor);
@@ -1669,7 +1671,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 			// open a new temp file which will be our destination for the new tar file
 			File outputTempFile = new File(getArchive().getAbsolutePath() + "temp"); //$NON-NLS-1$
 			
-			TarOutputStream outStream = new TarOutputStream(new FileOutputStream(outputTempFile));
+			TarOutputStream outStream = getTarOutputStream(outputTempFile);
 			
 			// get all the entries
 			VirtualChild[] children = getVirtualChildrenList(archiveOperationMonitor);
@@ -1778,7 +1780,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		
 				// open a new temp file which will be our destination for the new tar file
 				outputTempFile = new File(file.getAbsolutePath() + "temp"); //$NON-NLS-1$
-				TarOutputStream outStream = new TarOutputStream(new FileOutputStream(outputTempFile));
+				TarOutputStream outStream = getTarOutputStream(outputTempFile);
 			
 				// get all the entries in the current tar				  
 				VirtualChild[] children = getVirtualChildrenList(archiveOperationMonitor);
@@ -1905,7 +1907,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 			
 				// open a new temp file which will be our destination for the new tar file
 				outputTempFile = new File(file.getAbsolutePath() + "temp"); //$NON-NLS-1$
-				TarOutputStream outStream = new TarOutputStream(new FileOutputStream(outputTempFile));
+				TarOutputStream outStream = getTarOutputStream(outputTempFile);
 				
 				// get all the entries
 				VirtualChild[] children = getVirtualChildrenList(archiveOperationMonitor);
@@ -2192,7 +2194,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 				
 				// open a new temp file which will be our destination for the new tar file
 				outputTempFile = new File(file.getAbsolutePath() + "temp"); //$NON-NLS-1$
-				outStream = new TarOutputStream(new FileOutputStream(outputTempFile));
+				outStream = getTarOutputStream(outputTempFile);
 				
 				// get all the entries
 				VirtualChild[] children = getVirtualChildrenList(archiveOperationMonitor);
@@ -2343,7 +2345,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		try {
 
 			// create output stream
-			TarOutputStream outStream = new TarOutputStream(new FileOutputStream(file));
+			TarOutputStream outStream = getTarOutputStream(file);
 			
 			// close output stream, so we have an empty tar file
 			outStream.close();
@@ -2608,5 +2610,18 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		{
 			archiveOperationMonitor.setDone(true);
 		}
+	}
+	
+	/**
+	 * Get the tar output stream for a given file. 
+	 * This method can be overridden by subclass to return compressed output steam if needed. 
+	 * @param outputFile the output file to create stream
+	 * @return OutputStream the output stream to write 
+	 * @throws FileNotFoundException when the output file doesn't exists
+     * @since 3.0
+	 */
+	protected TarOutputStream getTarOutputStream(File outputFile) throws FileNotFoundException {
+		TarOutputStream outStream = new TarOutputStream(new FileOutputStream(outputFile));
+		return outStream;
 	}
 }

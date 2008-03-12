@@ -12,11 +12,11 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
- * Xuan Chen        (IBM)        - [194293] [Local][Archives] Saving file second time in an Archive Errors
- * Xuan Chen (IBM)        - [202949] [archives] copy a folder from one connection to an archive file in a different connection does not work
- * Xuan Chen (IBM)        - [160775] [api] rename (at least within a zip) blocks UI thread
- * Xuan Chen (IBM)        - [218491] ArchiveHandlerManager#cleanUpVirtualPath is messing up the file separators (with updated fix)
+ * Xuan Chen (IBM) - [194293] [Local][Archives] Saving file second time in an Archive Errors
+ * Xuan Chen (IBM) - [202949] [archives] copy a folder from one connection to an archive file in a different connection does not work
+ * Xuan Chen (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
+ * Xuan Chen (IBM) - [218491] ArchiveHandlerManager#cleanUpVirtualPath is messing up the file separators (with updated fix)
+ * Johnson Ma (Wind River) - [195402] [api] add tar.gz archive support
  *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver.archiveutils;
@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * This class manages all the Archive Handlers that correspond to the archive file that the system
@@ -40,6 +41,7 @@ public class ArchiveHandlerManager
 	public static final String VIRTUAL_SEPARATOR = "#virtual#/"; //$NON-NLS-1$
 	public static final String VIRTUAL_CANONICAL_SEPARATOR = "#virtual#"; //$NON-NLS-1$
 	public static final String VIRTUAL_FOLDER_SEPARATOR = "/"; //$NON-NLS-1$
+	public static final String EXTENSION_SEPARATOR = "."; //$NON-NLS-1$
 	
 	//	the singleton instance
 	protected static ArchiveHandlerManager _instance = new ArchiveHandlerManager(); 
@@ -116,7 +118,7 @@ public class ArchiveHandlerManager
 		}
 		else
 		{
-			if (_handlerTypes.containsKey(getExtension(file)))
+			if (getRegisteredExtension(file)!=null)
 			{
 				return true;
 			}
@@ -136,20 +138,50 @@ public class ArchiveHandlerManager
 	 */
 	public boolean isRegisteredArchive(String filename)
 	{
-		if (_handlerTypes.containsKey(getExtension(filename)))
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+		return getRegisteredExtension(filename) == null?false:true;
 	}	
+	
+	/**
+	 * check if the file extension is registered archive type. 
+	 * notice here, the getExtension method does't work for name like fool.tar.gz
+	 * @param file the file to check
+	 * @return registered extension or null
+	 * @since 3.0
+	 */
+	protected String getRegisteredExtension(File file) 
+	{
+		String fileName = file.getName();
+		return getRegisteredExtension(fileName);
+	}
+	
+	/**
+	 * check if the file extension is registered archive type. 
+	 * @param fileName the file name to check
+	 * @return registered extension or null
+	 * @since 3.0
+	 */
+	protected String getRegisteredExtension(String fileName) 
+	{
+		fileName = fileName.toLowerCase();
+		Iterator itor = _handlerTypes.keySet().iterator();
+		while(itor.hasNext()) 
+		{
+			String ext = ((String)itor.next()).toLowerCase();
+			if (fileName.endsWith(EXTENSION_SEPARATOR + ext))
+			{
+				return ext;
+			} 
+				
+		}
+		return null;
+	}
+	
 	/** 
 	 * @param file the file whose extension we are computing.
 	 * @return the extension of <code>file</code>. "Extension" is
 	 * defined as any letters in the filename after the last ".". 
 	 * Returns "" if there is no extension.
+	 * @deprecated Use {@link #getRegisteredExtension(File)} instead
 	 */
 	protected String getExtension(File file)
 	{
@@ -159,11 +191,13 @@ public class ArchiveHandlerManager
 		return filename.substring(i+1).toLowerCase();
 	}
 	
+	
 	/** 
 	 * @param filename the name of the file whose extension we are computing.
 	 * @return the extension of <code>filename</code>. "Extension" is
 	 * defined as any letters in the filename after the last ".". 
 	 * Returns "" if there is no extension.
+	 * * @deprecated Use {@link #getRegisteredExtension(String)} instead
 	 */
 	protected String getExtension(String filename)
 	{
@@ -212,10 +246,9 @@ public class ArchiveHandlerManager
 		}
 		else {
 			// find registered handler based on file's extension
-			String ext = getExtension(file);
-			if (!_handlerTypes.containsKey(ext))
+			String ext = getRegisteredExtension(file);
+			if (ext == null)
 			{
-				//System.out.println("Unknown archive file type: " + ext);
 				return null;
 			}
 			else
@@ -375,7 +408,7 @@ public class ArchiveHandlerManager
 			//need to process it.
 			//But virtual path should neither start with "\", nor contains
 			//":".  So for those two cases, we could just return the fullVirtualName
-			if (fullVirtualName.indexOf(":") != -1 || fullVirtualName.trim().startsWith("\\"))
+			if (fullVirtualName.indexOf(":") != -1 || fullVirtualName.trim().startsWith("\\")) //$NON-NLS-1$ //$NON-NLS-2$
 			{
 				return fullVirtualName; 
 			}

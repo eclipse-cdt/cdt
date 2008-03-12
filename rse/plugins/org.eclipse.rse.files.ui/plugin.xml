@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
 This program and the accompanying materials are made available under the terms
 of the Eclipse Public License v1.0 which accompanies this distribution, and is 
 available at http://www.eclipse.org/legal/epl-v10.html
@@ -15,9 +15,9 @@ Contributors:
 Martin Oberhuber (Wind River) - [180519] declaratively register adapter factories
 Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
 Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
-David McKnight   (IBM)        - [187711] Link with Editor action for System View
-David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
-
+David McKnight (IBM) - [187711] Link with Editor action for System View
+David McKnight (IBM) - [209593] [api] add support for "file permissions" and "owner" properties for unix files
+Johnson Ma (Wind River) - [195402] Add tar.gz archive support
 -->
 <?eclipse version="3.0"?>
 <plugin>
@@ -307,6 +307,18 @@ David McKnight   (IBM)        - [209593] [api] add support for "file permissions
             name="SystemJarHandler"
             class="org.eclipse.rse.services.clientserver.archiveutils.SystemJarHandler"
             id="org.eclipse.rse.services.clientserver.archiveutils.systemjarhandler">
+      </archivehandler>
+      <archivehandler
+            fileNameExtension="tar.gz"
+            name="SystemTargzHandler"
+            class="org.eclipse.rse.services.clientserver.archiveutils.SystemTgzHandler"
+            id="org.eclipse.rse.services.clientserver.archiveutils.systemtargzhandler">
+      </archivehandler>
+      <archivehandler
+            fileNameExtension="tgz"
+            name="SystemTgzHandler"
+            class="org.eclipse.rse.services.clientserver.archiveutils.SystemTgzHandler"
+            id="org.eclipse.rse.services.clientserver.archiveutils.systemtgzhandler">
       </archivehandler>
       <archivehandler
             fileNameExtension="tar"

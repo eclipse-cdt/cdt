@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,7 @@ import org.eclipse.ui.navigator.ICommonActionExtensionSite;
 import org.eclipse.ui.navigator.ICommonViewerWorkbenchSite;
 import org.eclipse.ui.operations.UndoRedoActionGroup;
 
-import org.eclipse.cdt.refactoring.actions.CRefactoringActionGroup;
+import org.eclipse.cdt.ui.refactoring.actions.CRefactoringActionGroup;
 
 import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
 
@@ -41,6 +41,7 @@ public class CNavigatorRefactorActionProvider extends CommonActionProvider {
 	/*
 	 * @see org.eclipse.ui.navigator.CommonActionProvider#init(org.eclipse.ui.navigator.ICommonActionExtensionSite)
 	 */
+	@Override
 	public void init(ICommonActionExtensionSite actionSite) {
 		site = actionSite;
 		resourceRefactorGroup= new CNavigatorRefactorActionGroup(site.getViewSite().getShell(), (Tree)site.getStructuredViewer().getControl());
@@ -55,12 +56,14 @@ public class CNavigatorRefactorActionProvider extends CommonActionProvider {
 		}
 }
 
+	@Override
 	public void dispose() {
 		undoRedoGroup.dispose();
 		resourceRefactorGroup.dispose();
 		cElementRefactorGroup.dispose();
 	}
 
+	@Override
 	public void fillActionBars(IActionBars actionBars) {
 		undoRedoGroup.fillActionBars(actionBars);
 		resourceRefactorGroup.fillActionBars(actionBars);
@@ -68,18 +71,21 @@ public class CNavigatorRefactorActionProvider extends CommonActionProvider {
 		cElementRefactorGroup.fillActionBars(actionBars);
 	}
 
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		undoRedoGroup.fillContextMenu(menu);
 		resourceRefactorGroup.fillContextMenu(menu);
 		cElementRefactorGroup.fillContextMenu(menu);
 	}
 
+	@Override
 	public void setContext(ActionContext context) {
 		undoRedoGroup.setContext(context);
 		resourceRefactorGroup.setContext(convertToResources(context));
 		cElementRefactorGroup.setContext(context);
 	}
 
+	@Override
 	public void updateActionBars() {
 		undoRedoGroup.updateActionBars();
 		resourceRefactorGroup.updateActionBars();

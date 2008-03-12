@@ -1,0 +1,35 @@
+//!before the class
+//#org.eclipse.cdt.ui.tests.refactoring.utils.TranslationUnitHelperTest
+//@.config
+filename=A.h
+offset_unix=27
+offset_win=30
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+	A();
+	void foo();
+};
+
+#endif /*A_H_*/
+
+
+//!before a typedef
+//#org.eclipse.cdt.ui.tests.refactoring.utils.TranslationUnitHelperTest
+//@.config
+filename=A.h
+offset_unix=0
+offset_win=0
+//@A.h
+typedef int nummere;
+
+class A
+{
+public:
+	A();
+};
+

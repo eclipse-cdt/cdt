@@ -68,6 +68,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.model.IWorkingCopyProvider;
 
+import org.eclipse.cdt.internal.core.dom.rewrite.ASTRewriteAnalyzer;
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
 import org.eclipse.cdt.internal.corext.template.c.CContextType;
 import org.eclipse.cdt.internal.corext.template.c.CodeTemplateContextType;
@@ -85,6 +86,7 @@ import org.eclipse.cdt.internal.ui.editor.CustomBufferFactory;
 import org.eclipse.cdt.internal.ui.editor.SharedTextColors;
 import org.eclipse.cdt.internal.ui.editor.WorkingCopyManager;
 import org.eclipse.cdt.internal.ui.editor.asm.AsmTextTools;
+import org.eclipse.cdt.internal.ui.refactoring.CTextFileChangeFactory;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
 import org.eclipse.cdt.internal.ui.text.PreferencesAdapter;
 import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverDescriptor;
@@ -461,6 +463,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	/*
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 
@@ -480,9 +483,11 @@ public class CUIPlugin extends AbstractUIPlugin {
 		CDTContextActivator.getInstance().install();
 		
 		DocCommentOwnerManager.getInstance().addListener(new EditorReopener());
+		ASTRewriteAnalyzer.setCTextFileChangeFactory(new CTextFileChangeFactory());
 		
 		// start make-ui plugin, such that it can check for project conversions.
 		Job job= new Job(Messages.CUIPlugin_jobStartMakeUI) {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				Bundle bundle= Platform.getBundle("org.eclipse.cdt.make.ui"); //$NON-NLS-1$
 				try {
@@ -507,6 +512,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	/* (non-Javadoc)
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		CDTContextActivator.getInstance().uninstall();
 		if (fASTProvider != null) {
@@ -711,6 +717,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 				/**
 				 * {@inheritDoc}
 				 */
+				@Override
 				public IConfigurationElement getConfigurationElement(Object object) {
 					return ((CEditorTextHoverDescriptor)object).getConfigurationElement();
 				}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *    Markus Schorn - initial API and implementation
  *    Ed Swartz (Nokia)
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.ui.includebrowser;
 
 import java.util.ArrayList;
@@ -113,7 +112,7 @@ public class IBViewPart extends ViewPart
     private IMemento fMemento;
     private boolean fShowsMessage;
     private IBNode fLastNavigationNode;
-	private ArrayList fHistoryEntries= new ArrayList(MAX_HISTORY_SIZE);
+	private ArrayList<ITranslationUnit> fHistoryEntries= new ArrayList<ITranslationUnit>(MAX_HISTORY_SIZE);
 
     // widgets
     private PageBook fPagebook;
@@ -147,7 +146,8 @@ public class IBViewPart extends ViewPart
 	private IBSetInputJob fSetInputJob;
 
     
-    public void setFocus() {
+    @Override
+	public void setFocus() {
         fPagebook.setFocus();
     }
 
@@ -206,6 +206,7 @@ public class IBViewPart extends ViewPart
         updateDescription();
         final Display display= Display.getCurrent();
         Job job= new Job(IBMessages.IBViewPart_jobCheckInput) {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					IIndex index= CCorePlugin.getIndexManager().getIndex(input.getCProject());
@@ -246,6 +247,7 @@ public class IBViewPart extends ViewPart
 		fRefreshAction.setEnabled(!fShowsMessage);
 	}
 
+	@Override
 	public void createPartControl(Composite parent) {
 		fSetInputJob= new IBSetInputJob(this, Display.getCurrent());
 		
@@ -271,6 +273,7 @@ public class IBViewPart extends ViewPart
     	}
     }
 	
+	@Override
 	public void dispose() {
 		if (fContextActivation != null) {
 			IContextService ctxService = (IContextService)getSite().getService(IContextService.class);
@@ -329,13 +332,15 @@ public class IBViewPart extends ViewPart
     }
 
 
-    public void init(IViewSite site, IMemento memento) throws PartInitException {
+    @Override
+	public void init(IViewSite site, IMemento memento) throws PartInitException {
         fMemento= memento;
         super.init(site, memento);
     }
 
 
-    public void saveState(IMemento memento) {
+    @Override
+	public void saveState(IMemento memento) {
         if (fWorkingSetFilter != null) {
             fWorkingSetFilter.getUI().saveState(memento, KEY_WORKING_SET_FILTER);
         }
@@ -410,17 +415,20 @@ public class IBViewPart extends ViewPart
 
     private void createActions() {
         fWorkingSetFilterUI= new WorkingSetFilterUI(this, fMemento, KEY_WORKING_SET_FILTER) {
-            protected void onWorkingSetChange() {
+            @Override
+			protected void onWorkingSetChange() {
                 updateWorkingSetFilter(this);
             }
-            protected void onWorkingSetNameChange() {
+            @Override
+			protected void onWorkingSetNameChange() {
                 updateDescription();
             }
         }; 
 
         fIncludedByAction= 
             new Action(IBMessages.IBViewPart_showIncludedBy_label, IAction.AS_RADIO_BUTTON) { 
-                public void run() {
+                @Override
+				public void run() {
                     if (isChecked()) {
                         onSetDirection(true);
                     }
@@ -431,7 +439,8 @@ public class IBViewPart extends ViewPart
 
         fIncludesToAction= 
             new Action(IBMessages.IBViewPart_showIncludesTo_label, IAction.AS_RADIO_BUTTON) { 
-                public void run() {
+                @Override
+				public void run() {
                     if (isChecked()) {
                         onSetDirection(false);
                     }
@@ -441,7 +450,8 @@ public class IBViewPart extends ViewPart
         CPluginImages.setImageDescriptors(fIncludesToAction, CPluginImages.T_LCL, CPluginImages.IMG_ACTION_SHOW_RELATES_TO);       
 
         fInactiveFilter= new ViewerFilter() {
-            public boolean select(Viewer viewer, Object parentElement, Object element) {
+            @Override
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
                 if (element instanceof IBNode) {
                     IBNode node= (IBNode) element;
                     return node.isActiveCode();
@@ -450,7 +460,8 @@ public class IBViewPart extends ViewPart
             }
         };
         fFilterInactiveAction= new Action(IBMessages.IBViewPart_hideInactive_label, IAction.AS_CHECK_BOX) {
-            public void run() {
+            @Override
+			public void run() {
                 if (isChecked()) {
                     fTreeViewer.addFilter(fInactiveFilter);
                 }
@@ -463,7 +474,8 @@ public class IBViewPart extends ViewPart
         CPluginImages.setImageDescriptors(fFilterInactiveAction, CPluginImages.T_LCL, CPluginImages.IMG_ACTION_HIDE_INACTIVE);       
 
         fSystemFilter= new ViewerFilter() {
-            public boolean select(Viewer viewer, Object parentElement, Object element) {
+            @Override
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
                 if (element instanceof IBNode) {
                     IBNode node= (IBNode) element;
                     return !node.isSystemInclude();
@@ -472,7 +484,8 @@ public class IBViewPart extends ViewPart
             }
         };
         fFilterSystemAction= new Action(IBMessages.IBViewPart_hideSystem_label, IAction.AS_CHECK_BOX) {
-            public void run() {
+            @Override
+			public void run() {
                 if (isChecked()) {
                     fTreeViewer.addFilter(fSystemFilter);
                 }
@@ -486,13 +499,15 @@ public class IBViewPart extends ViewPart
         
         fSorterAlphaNumeric= new ViewerComparator();
         fSorterReferencePosition= new ViewerComparator() {
-            public int category(Object element) {
+            @Override
+			public int category(Object element) {
                 if (element instanceof IBNode) {
                     return 0;
                 }
                 return 1;
             }
-            public int compare(Viewer viewer, Object e1, Object e2) {
+            @Override
+			public int compare(Viewer viewer, Object e1, Object e2) {
                 if (!(e1 instanceof IBNode)) {
                     if (!(e2 instanceof IBNode)) {
                         return 0;
@@ -509,13 +524,15 @@ public class IBViewPart extends ViewPart
         };
         
         fShowFolderInLabelsAction= new Action(IBMessages.IBViewPart_showFolders_label, IAction.AS_CHECK_BOX) {
-            public void run() {
+            @Override
+			public void run() {
                 onShowFolderInLabels(isChecked());
             }
         };
         fShowFolderInLabelsAction.setToolTipText(IBMessages.IBViewPart_showFolders_tooltip);
         fNextAction = new Action(IBMessages.IBViewPart_nextMatch_label) {
-            public void run() {
+            @Override
+			public void run() {
                 onNextOrPrevious(true);
             }
         };
@@ -523,7 +540,8 @@ public class IBViewPart extends ViewPart
         CPluginImages.setImageDescriptors(fNextAction, CPluginImages.T_LCL, CPluginImages.IMG_SHOW_NEXT);       
 
         fPreviousAction = new Action(IBMessages.IBViewPart_previousMatch_label) {
-            public void run() {
+            @Override
+			public void run() {
                 onNextOrPrevious(false);
             }
         };
@@ -531,7 +549,8 @@ public class IBViewPart extends ViewPart
         CPluginImages.setImageDescriptors(fPreviousAction, CPluginImages.T_LCL, CPluginImages.IMG_SHOW_PREV);       
 
         fRefreshAction = new Action(IBMessages.IBViewPart_refresh_label) {
-            public void run() {
+            @Override
+			public void run() {
                 onRefresh();
             }
         };
@@ -694,7 +713,8 @@ public class IBViewPart extends ViewPart
             // open include
             if (node.getParent() != null && node.getDirectiveFile() != null) {
                 m.add(new Action(IBMessages.IBViewPart_showInclude_label) {
-                    public void run() {
+                    @Override
+					public void run() {
                         onShowInclude(selection);
                     }
                 });
@@ -707,15 +727,6 @@ public class IBViewPart extends ViewPart
                 ofa.selectionChanged(selection);
                 m.add(ofa);
 
-                // open with
-                // keep the menu shorter, no open with support
-//                final IResource r= tu.getResource();
-//                if (r != null) {
-//                    IMenuManager submenu= new MenuManager(IBMessages.IBViewPart_OpenWithMenu_label); 
-//                    submenu.add(new OpenWithMenu(page, r));
-//                    m.add(submenu);
-//                }
-
                 // show in
                 IMenuManager submenu= new MenuManager(IBMessages.IBViewPart_ShowInMenu_label);
                 submenu.add(ContributionItemFactory.VIEWS_SHOW_IN.create(getSite().getWorkbenchWindow()));
@@ -723,7 +734,8 @@ public class IBViewPart extends ViewPart
             	if (node.getParent() != null) {
                     m.add(new Separator());
             		m.add(new Action(Messages.format(IBMessages.IBViewPart_FocusOn_label, tu.getPath().lastSegment())) {
-            			public void run() {
+            			@Override
+						public void run() {
             				setInput(tu);
             			}
             		});
@@ -804,7 +816,7 @@ public class IBViewPart extends ViewPart
 	}
 
 	public ITranslationUnit[] getHistoryEntries() {
-		return (ITranslationUnit[]) fHistoryEntries.toArray(new ITranslationUnit[fHistoryEntries.size()]);
+		return fHistoryEntries.toArray(new ITranslationUnit[fHistoryEntries.size()]);
 	}
 
 	public void setHistoryEntries(ITranslationUnit[] remaining) {

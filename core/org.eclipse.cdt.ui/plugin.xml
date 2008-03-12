@@ -234,6 +234,7 @@
          <actionSet id="org.eclipse.cdt.ui.buildConfigActionSet"/>
          <actionSet id="org.eclipse.cdt.ui.NavigationActionSet"/>
          <actionSet id="org.eclipse.cdt.ui.OpenActionSet"/>
+         <actionSet id="org.eclipse.cdt.ui.CodingActionSet"/>
          <actionSet id="org.eclipse.ui.edit.text.actionSet.presentation"/>
 
          <showInPart id="org.eclipse.cdt.ui.includeBrowser"/>
@@ -1125,6 +1126,39 @@
    <extension
          point="org.eclipse.ui.actionSets">
       <actionSet
+            label="%CodingActionSet.label"
+            description="%CodingActionSet.description"
+            visible="false"
+            id="org.eclipse.cdt.ui.CodingActionSet">
+         <menu
+               label="%Refactoring.menu.label"
+               path="edit"
+               id="org.eclipse.jdt.ui.refactoring.menu">
+            <separator name="reorgGroup"/>
+            <separator name="codingGroup"/>
+            <separator name="reorgGroup2"/>
+            <separator name="typeGroup"/>
+            <separator name="typeGroup2"/>
+            <separator name="codingGroup2"/>
+            <separator name="typeGroup3"/>            
+         </menu>
+         <!-- reorg group  -->
+         <action
+               definitionId="org.eclipse.cdt.ui.edit.text.rename.element"
+               label="%Refactoring.renameAction.label"
+               menubarPath="org.eclipse.jdt.ui.refactoring.menu/reorgGroup"
+               id="org.eclipse.cdt.ui.actions.Rename"
+               retarget="true">
+         </action>
+         <action
+               definitionId="org.eclipse.cdt.ui.refactor.extract.constant"
+               label="%Refactoring.extractConstant.label"
+               menubarPath="org.eclipse.jdt.ui.refactoring.menu/codingGroup"
+               id="org.eclipse.cdt.ui.actions.ExtractConstant"
+               retarget="true">
+         </action>
+      </actionSet>
+      <actionSet
             label="%CSearchActionSet.label"
             description="%CSearchActionSet.description"
             visible="false"
@@ -1551,6 +1585,21 @@
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.open.quick.macro.explorer"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+     <key
+            sequence="M2+M3+R"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.edit.text.rename.element"/>
+   	 <key
+            sequence="M2+M3+R"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            contextId="org.eclipse.cdt.ui.cViewScope"
+            commandId="org.eclipse.cdt.ui.edit.text.rename.element"/>
+     <key
+            sequence="M3+C"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.refactor.extract.constant"/>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -1714,6 +1763,27 @@
             description="%ActionDefinition.showMacroExplorer.description"
             categoryId="org.eclipse.cdt.ui.category.source"
             id="org.eclipse.cdt.ui.edit.open.quick.macro.explorer"/>
+      <category
+	        name="%category.refactoring.name"
+	        description="%category.refactoring.description"
+	        id="org.eclipse.cdt.ui.category.refactoring"/>
+	  <command
+	        categoryId="org.eclipse.cdt.ui.category.refactoring"
+	        id="org.eclipse.cdt.ui.refactoring.command.ExtractConstant"
+	        name="%refactoringExtractConstant.label"/>
+      <command
+            name="%ActionDefinition.renameElement.name"
+            description="%ActionDefinition.renameElement.description"
+            categoryId="org.eclipse.cdt.ui.category.refactoring"
+            id="org.eclipse.cdt.ui.edit.text.rename.element">
+      </command>
+      <command
+            name="%ActionDefinition.extractConstant.name"
+            description="%ActionDefinition.extractConstant.description"
+            categoryId="org.eclipse.cdt.ui.category.refactoring"
+            id="org.eclipse.cdt.ui.refactor.extract.constant">
+      </command>
+	        
    </extension>
    <extension
          id="pdomSearchPage"
@@ -1744,6 +1814,11 @@
                id="org.eclipse.search.SearchResultView">
          </part>
       </actionSetPartAssociation>
+            <actionSetPartAssociation targetID="org.eclipse.cdt.ui.CodingActionSet">
+         <part id="org.eclipse.cdt.ui.editor.CEditor"/>
+         <part id="org.eclipse.cdt.ui.CView"/>
+      </actionSetPartAssociation>
+      
       <actionSetPartAssociation
             targetID="org.eclipse.ui.edit.text.actionSet.annotationNavigation">
          <part
@@ -2565,6 +2640,23 @@
             multiline="org.eclipse.cdt.ui.text.doctools.doxygen.DoxygenMultilineConfiguration"
             singleline="org.eclipse.cdt.ui.text.doctools.doxygen.DoxygenSingleConfiguration">
       </owner>
+   </extension>
+   <extension
+         point="org.eclipse.ltk.ui.refactoring.changePreviewViewers">
+         <changePreviewViewer
+            class="org.eclipse.cdt.internal.ui.refactoring.dialogs.CreateFileChangePreview"
+    		id="org.eclipse.cdt.internal.ui.refactoring.createFileChangePreviewhangePreview">
+         <enablement>
+            <instanceof value="org.eclipse.cdt.internal.ui.refactoring.CreateFileChange"/>
+         </enablement>
+      </changePreviewViewer>
+         <changePreviewViewer
+            class="org.eclipse.cdt.internal.ui.refactoring.dialogs.CTextEditChangePreviewViewer"
+    		id="org.eclipse.cdt.internal.ui.refactoring.CTextChangePreviewhangePreview">
+         <enablement>
+            <instanceof value="org.eclipse.cdt.ui.refactoring.CTextFileChange"/>
+         </enablement>
+      </changePreviewViewer>
    </extension>
    <extension
          point="org.eclipse.ui.decorators">

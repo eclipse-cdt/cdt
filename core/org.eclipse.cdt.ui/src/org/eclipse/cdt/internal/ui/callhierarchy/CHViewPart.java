@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
 import java.util.ArrayList;
@@ -64,9 +63,9 @@ import org.eclipse.cdt.core.model.IFunction;
 import org.eclipse.cdt.core.model.IMethod;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.util.CElementBaseLabels;
-import org.eclipse.cdt.refactoring.actions.CRefactoringActionGroup;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
+import org.eclipse.cdt.ui.refactoring.actions.CRefactoringActionGroup;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
@@ -97,7 +96,7 @@ public class CHViewPart extends ViewPart {
     private CHNode fNavigationNode;
     private int fNavigationDetail;
     
-	private ArrayList fHistoryEntries= new ArrayList(MAX_HISTORY_SIZE);
+	private ArrayList<ICElement> fHistoryEntries= new ArrayList<ICElement>(MAX_HISTORY_SIZE);
 
     // widgets
     private PageBook fPagebook;
@@ -136,7 +135,8 @@ public class CHViewPart extends ViewPart {
 	private IContextActivation fContextActivation;
 
     
-    public void setFocus() {
+    @Override
+	public void setFocus() {
         fPagebook.setFocus();
     }
 
@@ -192,6 +192,7 @@ public class CHViewPart extends ViewPart {
 		return false;
 	}
 
+	@Override
 	public void createPartControl(Composite parent) {
         fPagebook = new PageBook(parent, SWT.NULL);
         fPagebook.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -214,6 +215,7 @@ public class CHViewPart extends ViewPart {
     	}
     }
 	
+	@Override
 	public void dispose() {
 		if (fContextActivation != null) {
 			IContextService ctxService = (IContextService)getSite().getService(IContextService.class);
@@ -267,13 +269,15 @@ public class CHViewPart extends ViewPart {
         updateSorter();
     }
 
-    public void init(IViewSite site, IMemento memento) throws PartInitException {
+    @Override
+	public void init(IViewSite site, IMemento memento) throws PartInitException {
         fMemento= memento;
         super.init(site, memento);
     }
 
 
-    public void saveState(IMemento memento) {
+    @Override
+	public void saveState(IMemento memento) {
         if (fWorkingSetFilterUI != null) {
         	fWorkingSetFilterUI.saveState(memento, KEY_WORKING_SET_FILTER);
         }
@@ -341,17 +345,20 @@ public class CHViewPart extends ViewPart {
     	fRefactoringActionGroup= new CRefactoringActionGroup(this);
     	
     	fWorkingSetFilterUI= new WorkingSetFilterUI(this, fMemento, KEY_WORKING_SET_FILTER) {
-            protected void onWorkingSetChange() {
+            @Override
+			protected void onWorkingSetChange() {
                 updateWorkingSetFilter(this);
             }
-            protected void onWorkingSetNameChange() {
+            @Override
+			protected void onWorkingSetNameChange() {
                 updateDescription();
             }
         };
 
         fReferencedByAction= 
             new Action(CHMessages.CHViewPart_ShowCallers_label, IAction.AS_RADIO_BUTTON) { 
-                public void run() {
+                @Override
+				public void run() {
                     if (isChecked()) {
                         onSetShowReferencedBy(true);
                     }
@@ -362,7 +369,8 @@ public class CHViewPart extends ViewPart {
 
         fMakesReferenceToAction= 
             new Action(CHMessages.CHViewPart_ShowCallees_label, IAction.AS_RADIO_BUTTON) { 
-                public void run() {
+                @Override
+				public void run() {
                     if (isChecked()) {
                         onSetShowReferencedBy(false);
                     }
@@ -372,7 +380,8 @@ public class CHViewPart extends ViewPart {
         CPluginImages.setImageDescriptors(fMakesReferenceToAction, CPluginImages.T_LCL, CPluginImages.IMG_ACTION_SHOW_RELATES_TO);       
 
         fVariableFilter= new ViewerFilter() {
-            public boolean select(Viewer viewer, Object parentElement, Object element) {
+            @Override
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
                 if (element instanceof CHNode) {
                 	CHNode node= (CHNode) element;
                     return !node.isVariableOrEnumerator();
@@ -381,7 +390,8 @@ public class CHViewPart extends ViewPart {
             }
         };
         fFilterVariablesAction= new Action(CHMessages.CHViewPart_FilterVariables_label, IAction.AS_CHECK_BOX) {
-            public void run() {
+            @Override
+			public void run() {
                 if (isChecked()) {
                     fTreeViewer.addFilter(fVariableFilter);
                 }
@@ -392,38 +402,18 @@ public class CHViewPart extends ViewPart {
         };
         fFilterVariablesAction.setToolTipText(CHMessages.CHViewPart_FilterVariables_tooltip);
         CPluginImages.setImageDescriptors(fFilterVariablesAction, CPluginImages.T_LCL, CPluginImages.IMG_ACTION_HIDE_FIELDS);       
-
-//        fMacroFilter= new ViewerFilter() {
-//            public boolean select(Viewer viewer, Object parentElement, Object element) {
-//                if (element instanceof CHNode) {
-//                    CHNode node= (CHNode) element;
-//                    return !node.isMacro();
-//                }
-//                return true;
-//            }
-//        };
-//        fFilterMacrosAction= new Action(CHMessages.CHViewPart_HideMacros_label, IAction.AS_CHECK_BOX) {
-//            public void run() {
-//                if (isChecked()) {
-//                    fTreeViewer.addFilter(fMacroFilter);
-//                }
-//                else {
-//                    fTreeViewer.removeFilter(fMacroFilter);
-//                }
-//            }
-//        };
-//        fFilterMacrosAction.setToolTipText(CHMessages.CHViewPart_HideMacros_tooltip);
-//        CPluginImages.setImageDescriptors(fFilterMacrosAction, CPluginImages.T_LCL, CPluginImages.IMG_ACTION_HIDE_MACROS);       
         
         fSorterAlphaNumeric= new ViewerComparator();
         fSorterReferencePosition= new ViewerComparator() {
-            public int category(Object element) {
+            @Override
+			public int category(Object element) {
                 if (element instanceof CHNode) {
                     return 0;
                 }
                 return 1;
             }
-            public int compare(Viewer viewer, Object e1, Object e2) {
+            @Override
+			public int compare(Viewer viewer, Object e1, Object e2) {
                 if (!(e1 instanceof CHNode)) {
                     if (!(e2 instanceof CHNode)) {
                         return 0;
@@ -442,26 +432,30 @@ public class CHViewPart extends ViewPart {
         };
         
         fShowReference= new Action(CHMessages.CHViewPart_ShowReference_label) {
-        	public void run() {
+        	@Override
+			public void run() {
         		onShowSelectedReference(fTreeViewer.getSelection());
         	}
         };
         fShowReference.setToolTipText(CHMessages.CHViewPart_ShowReference_tooltip);	
         fOpenElement= new Action(CHMessages.CHViewPart_Open_label) {
-        	public void run() {
+        	@Override
+			public void run() {
         		onOpenElement(fTreeViewer.getSelection());
         	}
         };
         fOpenElement.setToolTipText(CHMessages.CHViewPart_Open_tooltip);
         
         fShowFilesInLabelsAction= new Action(CHMessages.CHViewPart_ShowFiles_label, IAction.AS_CHECK_BOX) {
-            public void run() {
+            @Override
+			public void run() {
                 onShowFilesInLabels(isChecked());
             }
         };
         fShowFilesInLabelsAction.setToolTipText(CHMessages.CHViewPart_ShowFiles_tooltip);
         fNextAction = new Action(CHMessages.CHViewPart_NextReference_label) {
-            public void run() {
+            @Override
+			public void run() {
                 onNextOrPrevious(true);
             }
         };
@@ -469,7 +463,8 @@ public class CHViewPart extends ViewPart {
         CPluginImages.setImageDescriptors(fNextAction, CPluginImages.T_LCL, CPluginImages.IMG_SHOW_NEXT);       
 
         fPreviousAction = new Action(CHMessages.CHViewPart_PreviousReference_label) {
-            public void run() {
+            @Override
+			public void run() {
                 onNextOrPrevious(false);
             }
         };
@@ -477,7 +472,8 @@ public class CHViewPart extends ViewPart {
         CPluginImages.setImageDescriptors(fPreviousAction, CPluginImages.T_LCL, CPluginImages.IMG_SHOW_PREV);       
 
         fRefreshAction = new Action(CHMessages.CHViewPart_Refresh_label) {
-            public void run() {
+            @Override
+			public void run() {
                 onRefresh();
             }
         };
@@ -705,6 +701,7 @@ public class CHViewPart extends ViewPart {
 					String label= Messages.format(CHMessages.CHViewPart_FocusOn_label, 
 							CElementLabels.getTextLabel(element, CElementBaseLabels.ALL_FULLY_QUALIFIED | CElementBaseLabels.M_PARAMETER_TYPES));
 					menu.appendToGroup(IContextMenuConstants.GROUP_OPEN, new Action(label) {
+						@Override
 						public void run() {
 							setInput(element);
 						}
@@ -784,7 +781,7 @@ public class CHViewPart extends ViewPart {
 	}
 
 	public ICElement[] getHistoryEntries() {
-		return (ICElement[]) fHistoryEntries.toArray(new ICElement[fHistoryEntries.size()]);
+		return fHistoryEntries.toArray(new ICElement[fHistoryEntries.size()]);
 	}
 
 	public void setHistoryEntries(ICElement[] remaining) {

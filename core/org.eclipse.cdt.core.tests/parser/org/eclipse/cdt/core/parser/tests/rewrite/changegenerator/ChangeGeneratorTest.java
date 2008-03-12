@@ -19,13 +19,13 @@ import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.parser.tests.rewrite.TestHelper;
 import org.eclipse.cdt.core.tests.BaseTestFramework;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
-import org.eclipse.cdt.internal.core.dom.rewrite.changegenerator.CTextFileChange;
 import org.eclipse.cdt.internal.core.dom.rewrite.changegenerator.ChangeGenerator;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.Document;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
+import org.eclipse.ltk.core.refactoring.TextFileChange;
 
 public abstract class ChangeGeneratorTest extends BaseTestFramework {
 
@@ -63,8 +63,8 @@ public abstract class ChangeGeneratorTest extends BaseTestFramework {
 			changegenartor.generateChange(unit);
 			Document doc = new Document(source);
 			for(Change curChange : ((CompositeChange)changegenartor.getChange()).getChildren()){
-				if (curChange instanceof CTextFileChange) {
-					CTextFileChange textChange = (CTextFileChange) curChange;
+				if (curChange instanceof TextFileChange) {
+					TextFileChange textChange = (TextFileChange) curChange;
 					textChange.getEdit().apply(doc);
 				}
 			}

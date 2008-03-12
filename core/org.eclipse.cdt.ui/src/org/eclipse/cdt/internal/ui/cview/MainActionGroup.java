@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,9 +39,9 @@ import org.eclipse.ui.ide.IDEActionFactory;
 
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.refactoring.actions.CRefactoringActionGroup;
 import org.eclipse.cdt.ui.actions.CustomFiltersActionGroup;
 import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
+import org.eclipse.cdt.ui.refactoring.actions.CRefactoringActionGroup;
 
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
@@ -91,6 +91,7 @@ public class MainActionGroup extends CViewActionGroup {
 	/**
 	 * Handles key events in viewer.
 	 */
+	@Override
 	public void handleKeyPressed(KeyEvent event) {
 		refactorGroup.handleKeyPressed(event);
 		openFileGroup.handleKeyPressed(event);
@@ -102,6 +103,7 @@ public class MainActionGroup extends CViewActionGroup {
 	/**
 	 * Handles key events in viewer.
 	 */
+	@Override
 	public void handleKeyReleased(KeyEvent event) {
 		refactorGroup.handleKeyReleased(event);
 		openFileGroup.handleKeyReleased(event);
@@ -110,6 +112,7 @@ public class MainActionGroup extends CViewActionGroup {
 		buildGroup.handleKeyReleased(event);
 	}
 
+	@Override
 	protected void makeActions() {
 		final Viewer viewer = getCView().getViewer();
 		IShellProvider shellProvider = getCView().getViewSite();
@@ -147,8 +150,8 @@ public class MainActionGroup extends CViewActionGroup {
 		workingSetGroup.setWorkingSet(getCView().getWorkingSet());
 		fCustomFiltersActionGroup= new CustomFiltersActionGroup(getCView(), getCView().getViewer());
 
-		addBookmarkAction = new AddBookmarkAction(shell);
-		addTaskAction = new AddTaskAction(shell);
+		addBookmarkAction = new AddBookmarkAction(shellProvider, true);
+		addTaskAction = new AddTaskAction(shellProvider);
 
 		// Importing/exporting.
 		importAction = new ImportResourcesAction(getCView().getSite().getWorkbenchWindow());
@@ -170,6 +173,7 @@ public class MainActionGroup extends CViewActionGroup {
 	 * Called when the context menu is about to open. Override to add your own
 	 * context dependent menu contributions.
 	 */
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		IStructuredSelection celements = (IStructuredSelection) getCView().getViewer().getSelection();
 		IStructuredSelection resources = SelectionConverter.convertSelectionToResources(celements);
@@ -233,6 +237,7 @@ public class MainActionGroup extends CViewActionGroup {
 	 * Extends the superclass implementation to set the context in the
 	 * subgroups.
 	 */
+	@Override
 	public void setContext(ActionContext context) {
 		super.setContext(context);
 		gotoGroup.setContext(context);
@@ -276,6 +281,7 @@ public class MainActionGroup extends CViewActionGroup {
 		}
 	}
 	
+	@Override
 	public void runDefaultAction(IStructuredSelection selection) {
 		openFileGroup.runDefaultAction(selection);
 		openProjectGroup.runDefaultAction(selection);
@@ -291,6 +297,7 @@ public class MainActionGroup extends CViewActionGroup {
 	 * if the selection in the viewer hasn't. E.g. A project was opened or
 	 * closed.
 	 */
+	@Override
 	public void updateActionBars() {
 		IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
 
@@ -311,6 +318,7 @@ public class MainActionGroup extends CViewActionGroup {
 		crefactoringActionGroup.updateActionBars();
 	}
 
+	@Override
 	public void fillActionBars(IActionBars actionBars) {
 		actionBars.setGlobalActionHandler(IDEActionFactory.BOOKMARK.getId(), addBookmarkAction);
 		actionBars.setGlobalActionHandler(IDEActionFactory.ADD_TASK.getId(), addTaskAction);
@@ -339,11 +347,13 @@ public class MainActionGroup extends CViewActionGroup {
 
 	//---- Persistent state -----------------------------------------------------------------------
 
+	@Override
 	public void restoreFilterAndSorterState(IMemento memento) {
 		//fWorkingSetFilterActionGroup.restoreState(memento);
 		fCustomFiltersActionGroup.restoreState(memento);
 	}
 	
+	@Override
 	public void saveFilterAndSorterState(IMemento memento) {
 		//fWorkingSetFilterActionGroup.saveState(memento);
 		fCustomFiltersActionGroup.saveState(memento);
@@ -353,6 +363,7 @@ public class MainActionGroup extends CViewActionGroup {
 	    return fCustomFiltersActionGroup;
 	}
 
+	@Override
 	public void dispose() {
 		importAction.dispose();
 		exportAction.dispose();

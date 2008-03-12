@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.typehierarchy;
 
 import org.eclipse.osgi.util.NLS;
@@ -22,7 +21,6 @@ public class Messages extends NLS {
 	public static String OpenTypeInHierarchyAction_message;
 	public static String OpenTypeInHierarchyAction_title;
 	public static String OpenTypeInHierarchyAction_upperListLabel;
-	public static String THGraph_error_elementNotFound;
 	public static String THHierarchyModel_errorComputingHierarchy;
 	public static String THHierarchyModel_Job_title;
 	public static String THHistoryDropDownAction_ClearHistory;
@@ -65,7 +63,6 @@ public class Messages extends NLS {
 	public static String THViewPart_VerticalOrientation;
 	public static String TypeHierarchyUI_OpenFailure_message;
 	public static String TypeHierarchyUI_OpenTypeHierarchy;
-	public static String TypeHierarchyUI_SelectFromList;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

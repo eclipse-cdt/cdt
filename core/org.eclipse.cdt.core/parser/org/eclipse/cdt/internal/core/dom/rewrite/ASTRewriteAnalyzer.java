@@ -12,13 +12,27 @@ package org.eclipse.cdt.internal.core.dom.rewrite;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.rewrite.changegenerator.ChangeGenerator;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.ltk.core.refactoring.Change;
+import org.eclipse.ltk.core.refactoring.TextFileChange;
 
 public class ASTRewriteAnalyzer {
+	private static ICTextFileChangeFactory sFileChangeFactory;
 
 	public static Change rewriteAST(IASTTranslationUnit root, ASTModificationStore modificationStore) {
 		ChangeGenerator rewriter = new ChangeGenerator(modificationStore);
 		rewriter.generateChange(root);
 		return rewriter.getChange();
+	}
+
+	public static void setCTextFileChangeFactory(ICTextFileChangeFactory factory) {
+		sFileChangeFactory= factory;
+	}
+	
+	public static TextFileChange createCTextFileChange(IFile file) {
+		if (sFileChangeFactory == null) {
+			return new TextFileChange(file.getName(), file);
+		}
+		return sFileChangeFactory.createCTextFileChange(file);
 	}
 }

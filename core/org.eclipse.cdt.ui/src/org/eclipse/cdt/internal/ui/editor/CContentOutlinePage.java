@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,10 +15,10 @@ package org.eclipse.cdt.internal.ui.editor;
 
 import org.eclipse.ui.actions.ActionGroup;
 
-import org.eclipse.cdt.refactoring.actions.CRefactoringActionGroup;
 import org.eclipse.cdt.ui.actions.CustomFiltersActionGroup;
 import org.eclipse.cdt.ui.actions.MemberFilterActionGroup;
 import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
+import org.eclipse.cdt.ui.refactoring.actions.CRefactoringActionGroup;
 
 import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
 
@@ -40,24 +40,29 @@ public class CContentOutlinePage extends AbstractCModelOutlinePage {
 		return (CEditor)fEditor;
 	}
 
+	@Override
 	protected SelectionSearchGroup createSearchActionGroup() {
 		return new SelectionSearchGroup(this);
 	}
 
+	@Override
 	protected OpenViewActionGroup createOpenViewActionGroup() {
 		OpenViewActionGroup ovag= new OpenViewActionGroup(this);
 		ovag.setEnableIncludeBrowser(true);
 		return ovag;
 	}
 
+	@Override
 	protected ActionGroup createRefactoringActionGroup() {
 		return new CRefactoringActionGroup(this);
 	}
 
+	@Override
 	protected ActionGroup createCustomFiltersActionGroup() {
 		return new CustomFiltersActionGroup("org.eclipse.cdt.ui.COutlinePage", getTreeViewer()); //$NON-NLS-1$
 	}
 
+	@Override
 	protected ActionGroup createMemberFilterActionGroup() {
 		return new MemberFilterActionGroup(getTreeViewer(), "COutlineViewer"); //$NON-NLS-1$
 	}

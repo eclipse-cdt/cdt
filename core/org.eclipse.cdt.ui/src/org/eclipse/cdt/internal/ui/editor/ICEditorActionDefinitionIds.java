@@ -81,13 +81,6 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	public static final String OPEN_DECL= "org.eclipse.cdt.ui.edit.opendecl"; //$NON-NLS-1$
     
 	/**
-	 * Action definition ID of the open definition action
-	 * (value <code>"org.eclipse.cdt.ui.edit.opendef"</code>).
-	 * @deprecated see bug 167162
-	 */
-	public static final String OPEN_DEF= "org.eclipse.cdt.ui.edit.opendef"; //$NON-NLS-1$
-
-	/**
 	 * Action definition ID of the show in C/C++ Projects View action
 	 * (value <code>"org.eclipse.cdt.ui.edit.opencview"</code>).
 	 */
@@ -98,7 +91,13 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	 * (value <code>"org.eclipse.cdt.ui.edit.text.rename.element"</code>).
 	 */
 	public static final String RENAME_ELEMENT= "org.eclipse.cdt.ui.edit.text.rename.element"; //$NON-NLS-1$
-	
+
+	/**
+	 * Action definition ID of the refactor -> extract constant action
+	 * (value <code>"org.eclipse.cdt.ui.refactor.extract.constant"</code>).
+	 */
+	public static final String EXTRACT_CONSTANT= "org.eclipse.cdt.ui.refactor.extract.constant"; //$NON-NLS-1$
+
 	/**
 	 * Action definition ID of the refactor -> undo action
 	 * (value <code>"org.eclipse.cdt.ui.edit.text.undo.action"</code>).

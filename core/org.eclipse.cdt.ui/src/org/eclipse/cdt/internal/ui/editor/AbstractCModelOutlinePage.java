@@ -138,7 +138,7 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 		public IncludeGroupingAction(AbstractCModelOutlinePage outlinePage) {
 			super(ActionMessages.getString("IncludesGroupingAction.label")); //$NON-NLS-1$
 			setDescription(ActionMessages.getString("IncludesGroupingAction.description")); //$NON-NLS-1$
-			setToolTipText(ActionMessages.getString("IncludeGroupingAction.tooltip")); //$NON-NLS-1$
+			setToolTipText(ActionMessages.getString("IncludesGroupingAction.tooltip")); //$NON-NLS-1$
 			CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, CPluginImages.IMG_MENU_GROUP_INCLUDE);
 
 			boolean enabled= isIncludesGroupingEnabled();
@@ -149,6 +149,7 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 		/**
 		 * Runs the action.
 		 */
+		@Override
 		public void run() {
 			PreferenceConstants.getPreferenceStore().setValue(PreferenceConstants.OUTLINE_GROUP_INCLUDES, isChecked());
 		}
@@ -177,6 +178,7 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 		/**
 		 * Runs the action.
 		 */
+		@Override
 		public void run() {
 			boolean checked = isChecked();
 			PreferenceConstants.getPreferenceStore().setValue(PreferenceConstants.OUTLINE_LINK_TO_EDITOR, checked);
@@ -301,6 +303,7 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 		return fTreeViewer;
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		fTreeViewer = createTreeViewer(parent);
 		initDragAndDrop();
@@ -344,6 +347,7 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(control, ICHelpContextIds.COUTLINE_VIEW);
 	}
 
+	@Override
 	public void dispose() {
 		if (fTreeViewer != null) {
 			fTreeViewer.removeSelectionChangedListener(this);
@@ -498,6 +502,7 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 		}
 	}
 
+	@Override
 	public Control getControl() {
 		if (fTreeViewer == null)
 			return null;
@@ -531,6 +536,7 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 	/**
 	 * Sets focus to a part in the page.
 	 */
+	@Override
 	public void setFocus() {
 		fTreeViewer.getControl().setFocus();
 	}

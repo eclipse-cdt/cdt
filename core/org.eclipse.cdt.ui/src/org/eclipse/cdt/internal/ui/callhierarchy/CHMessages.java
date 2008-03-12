@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
 import org.eclipse.osgi.util.NLS;
@@ -27,13 +26,10 @@ public class CHMessages extends NLS {
 	public static String CHViewPart_FilterVariables_label;
 	public static String CHViewPart_FilterVariables_tooltip;
 	public static String CHViewPart_FocusOn_label;
-	public static String CHViewPart_HideMacros_label;
-	public static String CHViewPart_HideMacros_tooltip;
 	public static String CHViewPart_NextReference_label;
 	public static String CHViewPart_NextReference_tooltip;
 	public static String CHViewPart_Open_label;
 	public static String CHViewPart_Open_tooltip;
-	public static String CHViewPart_OpenReference_label;
 	public static String CHViewPart_PreviousReference_label;
 	public static String CHViewPart_PreviousReference_tooltip;
 	public static String CHViewPart_Refresh_label;

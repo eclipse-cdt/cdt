@@ -198,4 +198,21 @@
        </owner>
     </extension>
     
+    <extension point="org.eclipse.ltk.core.refactoring.renameParticipants">
+       <renameParticipant
+            class="org.eclipse.cdt.ui.tests.refactoring.rename.TestRenameParticipant"
+            name="TestRenameParticipant"
+            id="org.eclipse.cdt.ui.tests.TestRenameParticipant"> 
+          <enablement>
+             <with variable="affectedNatures">
+                <iterate operator="or">
+                   <equals value="org.eclipse.cdt.core.cnature"/>
+                </iterate>
+             </with>
+             <with variable="element">
+   	            <instanceof value="org.eclipse.cdt.core.dom.ast.IBinding"/>
+             </with>
+          </enablement>
+       </renameParticipant>
+   	</extension>    
 </plugin>

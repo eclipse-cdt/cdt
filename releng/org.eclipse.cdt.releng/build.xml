@@ -275,12 +275,6 @@
 			<param name="tagmodule" value="org.eclipse.cdt/all/org.eclipse.cdt.core.win32"/>
 		</antcall>
 		<antcall target="tagone">
-			<param name="tagmodule" value="org.eclipse.cdt/all/org.eclipse.cdt.refactoring"/>
-		</antcall>
-		<antcall target="tagone">
-			<param name="tagmodule" value="org.eclipse.cdt/all/org.eclipse.cdt.refactoring.tests"/>
-		</antcall>
-		<antcall target="tagone">
 			<param name="tagmodule" value="org.eclipse.cdt/all/org.eclipse.cdt.ui"/>
 		</antcall>
 		<antcall target="tagone">

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
@@ -17,7 +18,9 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IArchive;
 import org.eclipse.cdt.core.model.IArchiveContainer;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.internal.core.util.MementoTokenizer;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 public class ArchiveContainer extends Openable implements IArchiveContainer {
@@ -46,6 +49,22 @@ public class ArchiveContainer extends Openable implements IArchiveContainer {
 		// this will bootstrap/start the runner for the project.
 		CModelManager.getDefault().getBinaryRunner(getCProject());
 		return true;
+	}
+
+	@Override
+	public ICElement getHandleFromMemento(String token, MementoTokenizer memento) {
+		return null;
+	}
+
+	@Override
+	public void getHandleMemento(StringBuilder buff) {
+		((CElement)getParent()).getHandleMemento(buff);
+	}
+
+	@Override
+	protected char getHandleMementoDelimiter() {
+		Assert.isTrue(false, "Should not be called"); //$NON-NLS-1$
+		return 0;
 	}
 
 }

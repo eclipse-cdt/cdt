@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,19 +7,27 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.model;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IFunctionDeclaration;
 import org.eclipse.cdt.core.model.IOpenable;
 import org.eclipse.cdt.core.model.ISourceManipulation;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.ITemplate;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.util.MementoTokenizer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -176,7 +184,7 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 	}
 
 	/*
-	 * @see JavaElement#generateInfos
+	 * @see CElement#generateInfos
 	 */
 	protected void generateInfos(Object info, Map newElements, IProgressMonitor pm) throws CModelException {
 		Openable openableParent = (Openable)getOpenableParent();
@@ -213,6 +221,127 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 		} catch (CModelException e) {
 			//
 		}
+	}
+
+	/*
+	 * @see CElement
+	 */
+	public ICElement getHandleFromMemento(String token, MementoTokenizer memento) {
+		switch (token.charAt(0)) {
+			case CEM_SOURCEELEMENT:
+				if (!memento.hasMoreTokens()) return this;
+				token= memento.nextToken();
+				// element name
+				final String elementName;
+				if (token.charAt(0) != CEM_ELEMENTTYPE) {
+					elementName= token;
+					token= memento.nextToken();
+				} else {
+					// anonymous
+					elementName= ""; //$NON-NLS-1$
+				}
+				// element type
+				assert token.charAt(0) == CEM_ELEMENTTYPE;
+				String typeString= memento.nextToken();
+				int elementType;
+				try {
+					elementType= Integer.parseInt(typeString);
+				} catch (NumberFormatException nfe) {
+					CCorePlugin.log(nfe);
+					return null;
+				}
+				token= null;
+				// optional: parameters
+				String[] mementoParams= {};
+				if (memento.hasMoreTokens()) {
+					List<String> params= new ArrayList<String>();
+					do {
+						token= memento.nextToken();
+						if (token.charAt(0) != CEM_PARAMETER) {
+							break;
+						}
+						params.add(memento.nextToken());
+						token= null;
+					} while (memento.hasMoreTokens());
+					mementoParams= params.toArray(new String[params.size()]);
+				}
+ 				CElement element= null;
+				ICElement[] children;
+				try {
+					children= getChildren();
+				} catch (CModelException exc) {
+					CCorePlugin.log(exc);
+					return null;
+				}
+				switch (elementType) {
+				case ICElement.C_FUNCTION:
+				case ICElement.C_FUNCTION_DECLARATION:
+				case ICElement.C_METHOD:
+				case ICElement.C_METHOD_DECLARATION:
+				case ICElement.C_TEMPLATE_FUNCTION:
+				case ICElement.C_TEMPLATE_FUNCTION_DECLARATION:
+				case ICElement.C_TEMPLATE_METHOD:
+				case ICElement.C_TEMPLATE_METHOD_DECLARATION:
+					for (int i = 0; i < children.length; i++) {
+						if (elementType == children[i].getElementType() 
+								&& elementName.equals(children[i].getElementName())) {
+							assert children[i] instanceof IFunctionDeclaration;
+							String[] functionParams= ((IFunctionDeclaration)children[i]).getParameterTypes();
+							if (Arrays.equals(functionParams, mementoParams)) {
+								element= (CElement) children[i];
+								break;
+							}
+						}
+					}
+					break;
+				case ICElement.C_TEMPLATE_CLASS:
+				case ICElement.C_TEMPLATE_STRUCT:
+				case ICElement.C_TEMPLATE_UNION:
+					for (int i = 0; i < children.length; i++) {
+						if (elementType == children[i].getElementType() 
+								&& elementName.equals(children[i].getElementName())) {
+							assert children[i] instanceof ITemplate;
+							String[] templateParams= ((ITemplate)children[i]).getTemplateParameterTypes();
+							if (Arrays.equals(templateParams, mementoParams)) {
+								element= (CElement) children[i];
+								break;
+							}
+						}
+					}
+					break;
+				default:
+					for (int i = 0; i < children.length; i++) {
+						if (elementType == children[i].getElementType() 
+								&& elementName.equals(children[i].getElementName())) {
+							element= (CElement) children[i];
+							break;
+						}
+					}
+					break;
+				}
+				if (element != null) {
+					if (token != null) {
+						return element.getHandleFromMemento(token, memento);
+					} else {
+						return element.getHandleFromMemento(memento);
+					}
+				}
+		}
+		return null;
+	}
+
+	@Override
+	public void getHandleMemento(StringBuilder buff) {
+		((CElement)getParent()).getHandleMemento(buff);
+		buff.append(getHandleMementoDelimiter());
+		escapeMementoName(buff, getElementName());
+		buff.append(CEM_ELEMENTTYPE);
+		buff.append(Integer.toString(getElementType()));
+	}
+
+	@Override
+	protected char getHandleMementoDelimiter() {
+		return CElement.CEM_SOURCEELEMENT;
 	}
 
 }

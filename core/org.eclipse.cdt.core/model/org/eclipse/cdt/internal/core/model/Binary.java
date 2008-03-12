@@ -35,9 +35,11 @@ import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.core.util.MementoTokenizer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -514,4 +516,21 @@ public class Binary extends Openable implements IBinary {
 	public boolean showInBinaryContainer() {
 		return showInBinaryContainer;
 	}
+
+	@Override
+	public ICElement getHandleFromMemento(String token, MementoTokenizer memento) {
+		return null;
+	}
+
+	@Override
+	public void getHandleMemento(StringBuilder buff) {
+		((CElement)getParent()).getHandleMemento(buff);
+	}
+
+	@Override
+	protected char getHandleMementoDelimiter() {
+		Assert.isTrue(false, "Should not be called"); //$NON-NLS-1$
+		return 0;
+	}
+
 }

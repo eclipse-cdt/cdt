@@ -19,8 +19,10 @@ import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.IBinaryElement;
 import org.eclipse.cdt.core.model.IBinaryModule;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.internal.core.util.MementoTokenizer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -97,6 +99,22 @@ public class BinaryModule extends Parent implements IBinaryModule {
 	 */
 	protected void generateInfos(Object info, Map newElements, IProgressMonitor monitor) throws CModelException {
 		newElements.put(this, info);
+	}
+
+	@Override
+	public ICElement getHandleFromMemento(String token, MementoTokenizer memento) {
+		return null;
+	}
+
+	@Override
+	public void getHandleMemento(StringBuilder buff) {
+		((CElement)getParent()).getHandleMemento(buff);
+	}
+
+	@Override
+	protected char getHandleMementoDelimiter() {
+		Assert.isTrue(false, "Should not be called"); //$NON-NLS-1$
+		return 0;
 	}
 
 }

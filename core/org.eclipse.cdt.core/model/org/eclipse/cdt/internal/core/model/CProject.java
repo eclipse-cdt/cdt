@@ -48,12 +48,14 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
+import org.eclipse.cdt.internal.core.util.MementoTokenizer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -739,6 +741,60 @@ public class CProject extends Openable implements ICProject {
 		if (pinfo != null){
 			pinfo.resetCaches();
 		}
+	}
+
+	@Override
+	public ICElement getHandleFromMemento(String token, MementoTokenizer memento) {
+		switch (token.charAt(0)) {
+		case CEM_SOURCEROOT:
+			IPath rootPath = Path.EMPTY;
+			token = null;
+			while (memento.hasMoreTokens()) {
+				token = memento.nextToken();
+				char firstChar = token.charAt(0);
+				if (firstChar != CEM_SOURCEFOLDER && firstChar != CEM_TRANSLATIONUNIT) {
+					rootPath.append(token);
+					token= null;
+				} else {
+					break;
+				}
+			}
+			if (!rootPath.isAbsolute()) {
+				rootPath= getProject().getFullPath().append(rootPath);
+			}
+			CElement root = (CElement)findSourceRoot(rootPath);
+			if (root != null) {
+				if (token != null) {
+					return root.getHandleFromMemento(token, memento);
+				} else {
+					return root.getHandleFromMemento(memento);
+				}
+			}
+			break;
+		case CEM_TRANSLATIONUNIT:
+			if (!memento.hasMoreTokens()) return this;
+			String tuName = memento.nextToken();
+			final IPath path= Path.fromPortableString(tuName);
+			CElement tu= null;
+			try {
+				tu= (CElement) findElement(path);
+			} catch (CModelException exc) {
+				CCorePlugin.log(exc);
+			}
+			if (tu == null) {
+				tu= (CElement) CoreModel.getDefault().createTranslationUnitFrom(this, path);
+			}
+			if (tu != null) {
+				return tu.getHandleFromMemento(memento);
+			}
+			break;
+		}
+		return null;
+	}
+
+	@Override
+	protected char getHandleMementoDelimiter() {
+		return CEM_CPROJECT;
 	}
 
 }

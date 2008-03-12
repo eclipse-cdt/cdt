@@ -40,6 +40,8 @@ public class AllCoreTests {
         // each class being tested
 		suite.addTest(AllLanguageInterfaceTests.suite());
         suite.addTest(CModelTests.suite());
+        suite.addTest(CModelElementsTests.suite());
+        suite.addTest(CModelIdentifierTests.suite());
         suite.addTest(CModelExceptionTest.suite());
         suite.addTest(FlagTests.suite());
         suite.addTest(ArchiveTests.suite());

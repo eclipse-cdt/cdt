@@ -19,9 +19,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -42,6 +44,7 @@ import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IContributedModelBuilder;
+import org.eclipse.cdt.core.model.IFunctionDeclaration;
 import org.eclipse.cdt.core.model.IInclude;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.INamespace;
@@ -49,6 +52,7 @@ import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.IProblemRequestor;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.ITemplate;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IUsing;
 import org.eclipse.cdt.core.model.IWorkingCopy;
@@ -64,6 +68,7 @@ import org.eclipse.cdt.internal.core.dom.NullCodeReaderFactory;
 import org.eclipse.cdt.internal.core.dom.SavedCodeReaderFactory;
 import org.eclipse.cdt.internal.core.index.IndexBasedCodeReaderFactory;
 import org.eclipse.cdt.internal.core.pdom.indexer.ProjectIndexerInputAdapter;
+import org.eclipse.cdt.internal.core.util.MementoTokenizer;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
@@ -954,6 +959,130 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			return path;
 		}
 		return super.getPath();
+	}
+
+	@Override
+	public ICElement getHandleFromMemento(String token, MementoTokenizer memento) {
+		switch (token.charAt(0)) {
+		case CEM_SOURCEELEMENT:
+			if (!memento.hasMoreTokens()) return this;
+			token= memento.nextToken();
+			// element name
+			final String elementName;
+			if (token.charAt(0) != CEM_ELEMENTTYPE) {
+				elementName= token;
+				token= memento.nextToken();
+			} else {
+				// anonymous
+				elementName= ""; //$NON-NLS-1$
+			}
+			// element type
+			assert token.charAt(0) == CEM_ELEMENTTYPE;
+			String typeString= memento.nextToken();
+			int elementType;
+			try {
+				elementType= Integer.parseInt(typeString);
+			} catch (NumberFormatException nfe) {
+				CCorePlugin.log(nfe);
+				return null;
+			}
+			token= null;
+			// optional: parameters
+			String[] mementoParams= {};
+			if (memento.hasMoreTokens()) {
+				List<String> params= new ArrayList<String>();
+				do {
+					token= memento.nextToken();
+					if (token.charAt(0) != CEM_PARAMETER) {
+						break;
+					}
+					params.add(memento.nextToken());
+					token= null;
+				} while (memento.hasMoreTokens());
+				mementoParams= params.toArray(new String[params.size()]);
+			}
+			CElement element= null;
+			ICElement[] children;
+			try {
+				children= getChildren();
+			} catch (CModelException exc) {
+				CCorePlugin.log(exc);
+				return null;
+			}
+			switch (elementType) {
+			case ICElement.C_FUNCTION:
+			case ICElement.C_FUNCTION_DECLARATION:
+			case ICElement.C_METHOD:
+			case ICElement.C_METHOD_DECLARATION:
+			case ICElement.C_TEMPLATE_FUNCTION:
+			case ICElement.C_TEMPLATE_FUNCTION_DECLARATION:
+			case ICElement.C_TEMPLATE_METHOD:
+			case ICElement.C_TEMPLATE_METHOD_DECLARATION:
+				// search for matching function
+				for (int i = 0; i < children.length; i++) {
+					if (elementType == children[i].getElementType() 
+							&& elementName.equals(children[i].getElementName())) {
+						assert children[i] instanceof IFunctionDeclaration;
+						String[] functionParams= ((IFunctionDeclaration)children[i]).getParameterTypes();
+						if (Arrays.equals(functionParams, mementoParams)) {
+							element= (CElement) children[i];
+							break;
+						}
+					}
+				}
+				break;
+			case ICElement.C_TEMPLATE_CLASS:
+			case ICElement.C_TEMPLATE_STRUCT:
+			case ICElement.C_TEMPLATE_UNION:
+				// search for matching template type
+				for (int i = 0; i < children.length; i++) {
+					if (elementType == children[i].getElementType() 
+							&& elementName.equals(children[i].getElementName())) {
+						assert children[i] instanceof ITemplate;
+						String[] templateParams= ((ITemplate)children[i]).getTemplateParameterTypes();
+						if (Arrays.equals(templateParams, mementoParams)) {
+							element= (CElement) children[i];
+							break;
+						}
+					}
+				}
+				break;
+			default:
+				// search for matching element
+				for (int i = 0; i < children.length; i++) {
+					if (elementType == children[i].getElementType() 
+							&& elementName.equals(children[i].getElementName())) {
+						element= (CElement) children[i];
+						break;
+					}
+				}
+				break;
+			}
+			if (element != null) {
+				if (token != null) {
+					return element.getHandleFromMemento(token, memento);
+				} else {
+					return element.getHandleFromMemento(memento);
+				}
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public void getHandleMemento(StringBuilder buff) {
+		if (getResource() == null) {
+			((CElement)getCProject()).getHandleMemento(buff);
+			buff.append(getHandleMementoDelimiter());
+			escapeMementoName(buff, getPath().toPortableString());
+		} else {
+			super.getHandleMemento(buff);
+		}
+	}
+	
+	@Override
+	protected char getHandleMementoDelimiter() {
+		return CElement.CEM_TRANSLATIONUNIT;
 	}
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
@@ -24,8 +25,10 @@ import org.eclipse.cdt.core.model.ISourceManipulation;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.util.MementoTokenizer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -245,6 +248,22 @@ public class BinaryElement extends CElement implements IBinaryElement, ISourceMa
 	 * @see org.eclipse.cdt.internal.core.model.CElement#generateInfos(java.lang.Object, java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected void generateInfos(Object info, Map newElements, IProgressMonitor monitor) throws CModelException {
+	}
+
+	@Override
+	public ICElement getHandleFromMemento(String token, MementoTokenizer memento) {
+		return null;
+	}
+
+	@Override
+	public void getHandleMemento(StringBuilder buff) {
+		((CElement)getParent()).getHandleMemento(buff);
+	}
+
+	@Override
+	protected char getHandleMementoDelimiter() {
+		Assert.isTrue(false, "Should not be called"); //$NON-NLS-1$
+		return 0;
 	}
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Anton Leherbauer (Wind River Systems)
  *******************************************************************************/ 
 
 package org.eclipse.cdt.internal.core.model.ext;
@@ -293,4 +294,39 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 		}
 		return ASTAccessVisibility.PUBLIC;
 	}
+
+	/**
+	 * @see ICElement
+	 */
+	public String getHandleIdentifier() {
+		return getHandleMemento();
+	}
+
+	public String getHandleMemento(){
+		StringBuilder buff = new StringBuilder();
+		getHandleMemento(buff);
+		return buff.toString();
+	}
+
+	protected void getHandleMemento(StringBuilder buff) {
+		final ICElement parent= getParent();
+		if (parent instanceof CElement) {
+			((CElement)parent).getHandleMemento(buff);
+		} else if (parent instanceof CElementHandle) {
+			((CElementHandle)parent).getHandleMemento(buff);
+		}
+		buff.append(getHandleMementoDelimiter());
+		CElement.escapeMementoName(buff, getElementName());
+		buff.append(CElement.CEM_ELEMENTTYPE);
+		buff.append(Integer.toString(getElementType()));
+	}
+
+	/**
+	 * Returns the <code>char</code> that marks the start of this handles
+	 * contribution to a memento.
+	 */
+	protected char getHandleMementoDelimiter() {
+		return CElement.CEM_SOURCEELEMENT;
+	}
+
 }

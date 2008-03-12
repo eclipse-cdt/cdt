@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
@@ -15,8 +16,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.IBinaryParser;
-import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryArchive;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -27,6 +28,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.util.MementoTokenizer;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -268,4 +270,24 @@ public class CContainer extends Openable implements ICContainer {
 		}
 		return celement;
 	}
+	
+	@Override
+	public ICElement getHandleFromMemento(String token, MementoTokenizer memento) {
+		switch (token.charAt(0)) {
+			case CEM_TRANSLATIONUNIT:
+				if (!memento.hasMoreTokens()) return this;
+				String tuName = memento.nextToken();
+				CElement tu = (CElement) getTranslationUnit(tuName);
+				if (tu != null) {
+					return tu.getHandleFromMemento(memento);
+				}
+		}
+		return null;
+	}
+
+	@Override
+	protected char getHandleMementoDelimiter() {
+		return CElement.CEM_SOURCEFOLDER;
+	}
+
 }

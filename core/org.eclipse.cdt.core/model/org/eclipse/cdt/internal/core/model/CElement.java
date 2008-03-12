@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.model;
@@ -31,6 +32,7 @@ import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.internal.core.util.MementoTokenizer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.CoreException;
@@ -39,8 +41,22 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PlatformObject;
 
+/**
+ * TLETODO Document CElement.
+ *
+ * @since 5.0
+ */
 public abstract class CElement extends PlatformObject implements ICElement {
 	
+	public static final char CEM_ESCAPE = '\\';
+	public static final char CEM_CPROJECT = '=';
+	public static final char CEM_SOURCEROOT = '/';
+	public static final char CEM_SOURCEFOLDER = '<';
+	public static final char CEM_TRANSLATIONUNIT = '{';
+	public static final char CEM_SOURCEELEMENT = '[';
+	public static final char CEM_PARAMETER = '(';
+	public static final char CEM_ELEMENTTYPE = '#';
+
 	protected static final CElement[] NO_ELEMENTS = new CElement[0];
 	protected int fType;
 	
@@ -508,4 +524,82 @@ public abstract class CElement extends PlatformObject implements ICElement {
 		}
 	}
 
+	/*
+	 * @see org.eclipse.cdt.core.model.ICElement#getHandleIdentifier()
+	 */
+	public String getHandleIdentifier() {
+		return getHandleMemento();
+	}
+
+	/**
+	 * Builds a string representation of this element.
+	 * 
+	 * @return  the string representation
+	 */
+	public String getHandleMemento(){
+		StringBuilder buff = new StringBuilder();
+		getHandleMemento(buff);
+		return buff.toString();
+	}
+
+	/**
+	 * Append this elements memento string to the given buffer.
+	 * 
+	 * @param buff  the buffer building the memento string
+	 */
+	public void getHandleMemento(StringBuilder buff) {
+		((CElement)getParent()).getHandleMemento(buff);
+		buff.append(getHandleMementoDelimiter());
+		escapeMementoName(buff, getElementName());
+	}
+
+	/**
+	 * Returns the <code>char</code> that marks the start of this handles
+	 * contribution to a memento.
+	 */
+	protected abstract char getHandleMementoDelimiter();
+
+	/**
+	 * Creates a C element handle from the given memento.
+	 * 
+	 * @param memento  the memento tokenizer
+	 */
+	public ICElement getHandleFromMemento(MementoTokenizer memento) {
+		if (!memento.hasMoreTokens()) return this;
+		String token = memento.nextToken();
+		return getHandleFromMemento(token, memento);
+	}
+
+	/**
+	 * Creates a C element handle from the given memento.
+	 * The given token is the current delimiter indicating the type of the next token(s).
+	 * 
+	 * @param token  the curren memento token
+	 * @param memento  the memento tokenizer
+	 */
+	public abstract ICElement getHandleFromMemento(String token, MementoTokenizer memento);
+
+	/**
+	 * Escape special characters in the given name and append the result to buffer.
+	 * 
+	 * @param buffer  the buffer to build the memento string
+	 * @param mementoName  the name to escape
+	 */
+	public static void escapeMementoName(StringBuilder buffer, String mementoName) {
+		for (int i = 0, length = mementoName.length(); i < length; i++) {
+			char character = mementoName.charAt(i);
+			switch (character) {
+			case CEM_ESCAPE:
+			case CEM_CPROJECT:
+			case CEM_TRANSLATIONUNIT:
+			case CEM_SOURCEROOT:
+			case CEM_SOURCEFOLDER:
+			case CEM_SOURCEELEMENT:
+			case CEM_ELEMENTTYPE:
+			case CEM_PARAMETER:
+				buffer.append(CEM_ESCAPE);
+			}
+			buffer.append(character);
+		}
+	}
 }

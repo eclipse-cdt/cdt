@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
@@ -19,6 +20,7 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.core.util.MementoTokenizer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -26,6 +28,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 public class CModel extends Openable implements ICModel {
@@ -216,6 +219,31 @@ public class CModel extends Openable implements ICModel {
 		}
 		((CModelInfo)getElementInfo()).setNonCResources(null);
 		return true;
+	}
+
+	@Override
+	public ICElement getHandleFromMemento(String token, MementoTokenizer memento) {
+		switch (token.charAt(0)) {
+		case CEM_CPROJECT:
+			if (!memento.hasMoreTokens()) return this;
+			String projectName = memento.nextToken();
+			CElement project = (CElement)getCProject(projectName);
+			if (project != null) {
+				return project.getHandleFromMemento(memento);
+			}
+		}
+		return null;
+	}
+	
+	@Override
+	public void getHandleMemento(StringBuilder buff) {
+		buff.append(getElementName());
+	}
+	
+	@Override
+	protected char getHandleMementoDelimiter(){
+		Assert.isTrue(false, "Should not be called"); //$NON-NLS-1$
+		return 0;
 	}
 
 }

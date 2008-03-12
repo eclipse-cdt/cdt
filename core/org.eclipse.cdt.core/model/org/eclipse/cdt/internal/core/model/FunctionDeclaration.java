@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Rational Software - Initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *     Rational Software - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.model;
@@ -165,6 +166,15 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 	 */
 	public void setVolatile(boolean isVolatile) throws CModelException {
 		getFunctionInfo().setVolatile(isVolatile);
+	}
+
+	@Override
+	public void getHandleMemento(StringBuilder buff) {
+		super.getHandleMemento(buff);
+		for (int i = 0; i < fParameterTypes.length; i++) {
+			buff.append(CEM_PARAMETER);
+			escapeMementoName(buff, fParameterTypes[i]);
+		}
 	}
 
 }

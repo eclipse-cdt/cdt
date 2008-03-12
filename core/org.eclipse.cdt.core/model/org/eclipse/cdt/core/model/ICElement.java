@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.model;
 
@@ -413,4 +414,19 @@ public interface ICElement extends IAdaptable {
 	 * @throws CModelException
 	 */
 	void accept(ICElementVisitor visitor) throws CoreException;
+	
+
+	/**
+	 * Returns a string representation of this element handle. The format of
+	 * the string is not specified; however, the identifier is stable across
+	 * workspace sessions, and can be used to recreate this handle via the
+	 * <code>CoreModel.create(String)</code> method.
+	 *
+	 * @return the string handle identifier
+	 * @see CoreModel#create(java.lang.String)
+	 * 
+	 * @since 5.0
+	 */
+	String getHandleIdentifier();
+
 }

@@ -17,6 +17,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -38,6 +39,7 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
+import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.core.runtime.CoreException;
@@ -84,11 +86,11 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 				return;
 
 			//name belongs to a different scope, don't add it here except it names this scope
-			final IASTName[] ns= ((ICPPASTQualifiedName) name).getNames();
-			final IASTName ln= ns[ns.length-1];
-		    if (CPPVisitor.getContainingScope(name) != CPPVisitor.getContainingScope(ln))
+			final ICPPASTQualifiedName qname = (ICPPASTQualifiedName) name;
+			final IASTName[] ns= qname.getNames();
+		    if (!canDenoteScopeMember(qname))
 		    	return;
-			c= ln.toCharArray();
+			c=  ns[ns.length-1].toCharArray(); 
 		}
 		else {
 			c= name.toCharArray();
@@ -105,6 +107,28 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 		    }
 		} else {
 		    bindings.put( c, name );
+		}
+	}
+
+	boolean canDenoteScopeMember(ICPPASTQualifiedName name) {
+		IScope scope= this;
+		IASTName[] na= name.getNames();
+		try {
+			for (int i= na.length-2; i >= 0; i++) {
+				if (scope == null) 
+					return false;
+				IASTName n= na[i];
+				final IName scopeName = scope.getScopeName();
+				if (scopeName == null || !CharArrayUtils.equals(scopeName.toCharArray(), n.toCharArray())) 
+					return false;
+				scope= scope.getParent();
+			}
+			if (!name.isFullyQualified() || scope == null) {
+				return true;
+			}
+			return ASTInternal.getPhysicalNodeOfScope(scope) instanceof IASTTranslationUnit;
+		} catch (DOMException e) {
+			return false;
 		}
 	}
 

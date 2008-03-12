@@ -1875,12 +1875,12 @@ public class CPPSemantics {
 
 	        //A qualified name implies the name actually belongs to a different scope, and should
 	        //not be considered here, except the qualifier names the scope itself
-			final IASTName[] qn= ((ICPPASTQualifiedName) potential).getNames();
-			final IASTName ln= qn[qn.length-1];
-			if (CPPVisitor.getContainingScope(ln) != scope) 
-				return false;
+			final ICPPASTQualifiedName qname = (ICPPASTQualifiedName) potential;
+		    if (scope instanceof CPPScope == false || ((CPPScope) scope).canDenoteScopeMember(qname))
+		    	return false;
 				
-			potential= ln;
+			final IASTName[] qn= qname.getNames();
+			potential= qn[qn.length-1];
 	    }
 	    char[] c = potential.toCharArray();
 	    char [] n = data.name();

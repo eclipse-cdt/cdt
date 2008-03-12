@@ -4327,7 +4327,7 @@ public class AST2Tests extends AST2BaseTest {
     	ba.assertProblem("fa(5",  2);
     	ICPPFunction fb= ba.assertNonProblem("fb(5", 2, ICPPFunction.class);
     	ba.assertProblem("fc(5", 2);
-    	ba.assertNonProblem("fd(5 v",2);
+    	ba.assertProblem("fd(5",2);
     	
     	assertEquals(ASTTypeUtil.getParameterTypeString(fb.getType()), "(const int &)");
 	}
@@ -4348,5 +4348,95 @@ public class AST2Tests extends AST2BaseTest {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);    	
     	ba.assertNonProblem("f_const(2",  6, ICPPFunction.class);
     	ba.assertProblem("f_nonconst(2",  9);
+	}
+	
+	//	class B {};
+	//
+	//	class C { 
+	//	public: 
+	//		operator const B() const { return *new B();}
+	//	}; 
+	//
+	//	void foo(B b) {}
+	//
+	//	int refs() {
+	//		const C c= *new C();
+	//		const B b= *new B();
+	//
+	//		foo(b); 
+	//		foo(c); 
+	//	}
+	public void _testBug222444_a() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		ICPPFunction foo1= ba.assertNonProblem("foo(b", 3, ICPPFunction.class);
+		ICPPFunction foo2= ba.assertNonProblem("foo(c", 3, ICPPFunction.class);
+	}
+	
+	//	class B {};
+	//
+	//	class A {
+	//	public:
+	//		A() {}
+	//		A(const A&) {}
+	//		A(int i) {}
+	//		A(B b, int i=5) {}
+	//	};
+	//
+	//	class C {
+	//		public:
+	//			C() {}
+	//		operator A&() {return *new A();}
+	//	};
+	//
+	//	class D {
+	//		public:
+	//			D() {}
+	//		operator A() {return *new A();}
+	//	};
+	//
+	//
+	//	void foo1(A a) {}
+	//	void foo2(A& a) {}
+	//
+	//	int refs() {
+	//		A a;
+	//		B b;
+	//		C c;
+	//		D d;
+	//
+	//		foo1(a); 
+	//		foo2(a); // not copied
+	//
+	//		foo1(3); 
+	//		foo2(4); // should be an error (222418)
+	//
+	//		foo2(A(5)); // should be an error (222418)
+	//		foo2(A(6)); // should be an error (222418)
+	//
+	//		foo1(c);
+	//		foo2(c);
+	//
+	//		foo1(d);
+	//		foo2(d); // should be an error
+	//
+	//		foo1(b); 
+	//		foo2(b); // should be an error
+	//
+	//		return 0;
+	//	}
+	public void _testBug222444_b() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true); 
+		ba.assertNonProblem("foo1(a)", 4);
+		ba.assertNonProblem("foo2(a)", 4);
+		ba.assertNonProblem("foo1(3)", 4);
+		ba.assertProblem("foo2(4)", 4);
+		ba.assertProblem("foo1(A", 4);
+		ba.assertProblem("foo2(A", 4);
+		ba.assertNonProblem("foo1(c)", 4);
+		ba.assertNonProblem("foo2(c)", 4);
+		ba.assertNonProblem("foo1(d)", 4);
+		ba.assertProblem("foo2(d)", 4);
+		ba.assertNonProblem("foo1(b)", 4);
+		ba.assertProblem("foo2(b)", 4);
 	}
 }

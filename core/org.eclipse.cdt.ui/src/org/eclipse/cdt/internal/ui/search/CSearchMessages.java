@@ -25,19 +25,14 @@ public final class CSearchMessages extends NLS {
 	public static String group_references;
 	public static String CSearchResultCollector_matches;
 	public static String CSearchPage_searchFor_label;
-	public static String CSearchPage_searchFor_type;
 	public static String CSearchPage_searchFor_namespace;
 	public static String CSearchPage_searchFor_method;
 	public static String CSearchPage_searchFor_function;
 	public static String CSearchPage_searchFor_field;
 	public static String CSearchPage_searchFor_variable;
-	public static String CSearchPage_searchFor_class;
-	public static String CSearchPage_searchFor_struct;
 	public static String CSearchPage_searchFor_union;
 	public static String CSearchPage_searchFor_enum;
 	public static String CSearchPage_searchFor_enumr;
-	public static String CSearchPage_searchFor_derived;
-	public static String CSearchPage_searchFor_friend;
 	public static String CSearchPage_searchFor_typedef;
 	public static String CSearchPage_searchFor_macro;
 	public static String CSearchPage_searchFor_any;
@@ -53,8 +48,6 @@ public final class CSearchMessages extends NLS {
 	public static String CSearch_FindDeclarationAction_tooltip;
 	public static String CSearch_FindDeclarationsProjectAction_label;
 	public static String CSearch_FindDeclarationsProjectAction_tooltip;
-	public static String CSearch_FindDeclarationsInWorkingSetAction_label;
-	public static String CSearch_FindDeclarationsInWorkingSetAction_tooltip;
 	public static String CSearch_FindReferencesAction_label;
 	public static String CSearch_FindReferencesAction_tooltip;
 	public static String CSearch_FindReferencesProjectAction_label;
@@ -65,7 +58,6 @@ public final class CSearchMessages extends NLS {
 	public static String WorkspaceScope;
 	public static String WorkingSetScope;
 	public static String SelectionScope;
-	public static String HierarchyScope;
 	public static String ProjectScope;
 	public static String PDOMSearch_query_refs_label;
 	public static String PDOMSearch_query_defs_label;
@@ -83,7 +75,6 @@ public final class CSearchMessages extends NLS {
 	public static String OccurrencesFinder_label_singular;
 	public static String OccurrencesFinder_label_plural;
 	public static String OccurrencesFinder_occurrence_description;
-	public static String OccurrencesFinder_occurrence_write_description;
 
 	public static String PDOMSearchListContentProvider_IndexerNotEnabledMessageFormat;
 	public static String PDOMSearchListContentProvider_ProjectClosedMessageFormat;

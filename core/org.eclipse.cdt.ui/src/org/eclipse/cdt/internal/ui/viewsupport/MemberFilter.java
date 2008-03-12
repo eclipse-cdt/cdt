@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2006 IBM Corporation and others.
+ * Copyright (c) 2001, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Rational Software - initial implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.viewsupport;
 
@@ -29,6 +30,7 @@ public class MemberFilter extends ViewerFilter{
 	public static final int FILTER_NONPUBLIC= 1;
 	public static final int FILTER_STATIC= 2;
 	public static final int FILTER_FIELDS= 4;
+	/** @deprecated Unsupported filter constant */
 	public static final int FILTER_LOCALTYPES= 8;
 	
 	private int fFilterProperties;

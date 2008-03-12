@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.cview;
 
@@ -150,7 +151,7 @@ public class CopyAction extends SelectionListenerAction {
 		} catch (SWTError e) {
 			if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD)
 				throw e;
-			if (MessageDialog.openQuestion(shell, CViewMessages.getString("CopyToClipboardProblemDialog.title"), CViewMessages.getString("CopyToClipboardProblemDialog.message"))) //$NON-NLS-1$ //$NON-NLS-2$
+			if (MessageDialog.openQuestion(shell, CViewMessages.getString("CopyToClipboardProblemDialog_title"), CViewMessages.getString("CopyToClipboardProblemDialog_message"))) //$NON-NLS-1$ //$NON-NLS-2$
 				setClipboard(resources, fileNames, names);
 		}
 	}

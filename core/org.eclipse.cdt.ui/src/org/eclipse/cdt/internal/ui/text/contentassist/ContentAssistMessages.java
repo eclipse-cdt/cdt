@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,10 @@ final class ContentAssistMessages extends NLS {
 
 	private static final String BUNDLE_NAME= ContentAssistMessages.class.getName();
 
+	static {
+		NLS.initializeMessages(BUNDLE_NAME, ContentAssistMessages.class);
+	}
+
 	private ContentAssistMessages() {
 		// Do not instantiate
 	}
@@ -29,11 +33,8 @@ final class ContentAssistMessages extends NLS {
 	public static String ContentAssistProcessor_all_disabled_message;
 	public static String ContentAssistProcessor_all_disabled_preference_link;
 	public static String ContentAssistProcessor_all_disabled_title;
-
-	static {
-		NLS.initializeMessages(BUNDLE_NAME, ContentAssistMessages.class);
-	}
-
+	public static String ContentAssistProcessor_no_completions;
+	
 	public static String ContentAssistProcessor_computing_proposals;
 	public static String ContentAssistProcessor_collecting_proposals;
 	public static String ContentAssistProcessor_sorting_proposals;
@@ -54,6 +55,4 @@ final class ContentAssistMessages extends NLS {
 	public static String ContentAssistProcessor_toggle_affordance_click_gesture;
 	public static String ContentAssistProcessor_toggle_affordance_update_message;
 	public static String ContentAssistProcessor_empty_message;
-	public static String ContentAssistHistory_serialize_error;
-	public static String ContentAssistHistory_deserialize_error;
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,7 +61,6 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
 
-import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.cdt.internal.ui.dialogs.OptionalMessageDialog;
 import org.eclipse.cdt.internal.ui.util.Messages;
 
@@ -383,7 +382,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 			return null;
 		if (fErrorMessage != null)
 			return fErrorMessage;
-		return CUIMessages.getString("CEditor.contentassist.noCompletions"); //$NON-NLS-1$
+		return ContentAssistMessages.ContentAssistProcessor_no_completions;
 	}
 
 	/*

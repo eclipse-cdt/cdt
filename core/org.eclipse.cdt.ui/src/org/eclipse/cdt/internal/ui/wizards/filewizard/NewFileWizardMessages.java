@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 QNX Software Systems and others.
+ * Copyright (c) 2004, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,17 +23,11 @@ public final class NewFileWizardMessages extends NLS {
 
 	public static String AbstractFileCreationWizard_title;
 	public static String AbstractFileCreationWizardPage_description;
-	public static String AbstractFileCreationWizardPage_error_SelectedProjectError;
-	public static String AbstractFileCreationWizardPage_error_DefaultSourceFolderError;
-	public static String AbstractFileCreationWizardPage_error_NotAvailableForNonCProjects;
 	public static String AbstractFileCreationWizardPage_sourceFolder_label;
 	public static String AbstractFileCreationWizardPage_sourceFolder_button;
-	public static String AbstractFileCreationWizardPage_ChooseSourceFolderDialog_title;
-	public static String AbstractFileCreationWizardPage_ChooseSourceFolderDialog_description;
 	public static String AbstractFileCreationWizardPage_error_EnterSourceFolderName;
 	public static String AbstractFileCreationWizardPage_error_NotAFolder;
 	public static String AbstractFileCreationWizardPage_error_NotASourceFolder;
-	public static String AbstractFileCreationWizardPage_error_ProjectClosed;
 	public static String AbstractFileCreationWizardPage_error_FolderDoesNotExist;
 	public static String AbstractFileCreationWizardPage_template_label;
 	public static String AbstractFileCreationWizardPage_configure_label;

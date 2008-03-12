@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 QNX Software Systems and others.
+ * Copyright (c) 2002, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX Software Systems - Initial API and implementation
- * IBM Corporation
+ *     QNX Software Systems - Initial API and implementation
+ *     IBM Corporation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.preferences;
@@ -21,6 +22,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -234,9 +236,9 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 			try {
 				int value = Integer.parseInt(number);
 				if (value < 0)
-					status.setError(PreferencesMessages.CEditorPreferencePage_invalid_input); 
+					status.setError(NLS.bind(PreferencesMessages.CEditorPreferencePage_invalid_input, number)); 
 			} catch (NumberFormatException e) {
-				status.setError(PreferencesMessages.CEditorPreferencePage_invalid_input); 
+				status.setError(NLS.bind(PreferencesMessages.CEditorPreferencePage_invalid_input, number)); 
 			}
 		}
 		return status;

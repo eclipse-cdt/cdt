@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,15 +23,7 @@ public final class TemplateMessages extends NLS {
 	}
 
 	public static String CContextType_variable_description_file;
-	public static String CContextType_variable_description_array;
-	public static String CContextType_variable_description_array_type;
-	public static String CContextType_variable_description_array_element;
-	public static String CContextType_variable_description_index;
-	public static String CContextType_variable_description_collector;
-	public static String CContextType_variable_description_iterator;
-	public static String CContextType_variable_description_arguments;
 	public static String CContextType_variable_description_enclosing_method;
-	public static String CContextType_variable_description_enclosing_type;
 	public static String CContextType_variable_description_enclosing_project;
 	public static String CContextType_variable_description_enclosing_method_arguments;
 	public static String CContextType_variable_description_return_type;

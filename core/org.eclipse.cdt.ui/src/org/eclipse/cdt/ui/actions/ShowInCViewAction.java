@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.ui.actions;
@@ -57,7 +58,7 @@ public class ShowInCViewAction extends SelectionProviderAction {
 		setToolTipText(CEditorMessages.getString("ShowInCView.tooltip")); //$NON-NLS-1$
 		setDescription(CEditorMessages.getString("ShowInCView.description")); //$NON-NLS-1$
 		this.page = page;
-		setDescription(CEditorMessages.getString("ShowInCView.toolTip")); //$NON-NLS-1$
+		setDescription(CEditorMessages.getString("ShowInCView.tooltip")); //$NON-NLS-1$
 		//WorkbenchHelp.setHelp(this, ICHelpContextIds.SHOW_IN_CVIEW_ACTION);
 	}
 

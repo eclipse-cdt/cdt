@@ -94,8 +94,8 @@ public class FileTransferDragAdapter implements TransferDragSourceListener {
 
 		public void execute(IProgressMonitor monitor) throws CoreException {
 			try {
-				monitor.beginTask(CUIMessages.getString("DragAdapter.refreshing"), roots.size()); //$NON-NLS-1$
-				MultiStatus status = new MultiStatus(CUIPlugin.getPluginId(), IStatus.OK, CUIMessages.getString("DragAdapter.problem"), null); //$NON-NLS-1$
+				monitor.beginTask(CUIMessages.getString("FileTransferDragAdapter.refreshing"), roots.size()); //$NON-NLS-1$
+				MultiStatus status = new MultiStatus(CUIPlugin.getPluginId(), IStatus.OK, CUIMessages.getString("FileTransferDragAdapter.problem"), null); //$NON-NLS-1$
 
 				for (Iterator iterator = roots.iterator(); iterator.hasNext();) {
 					IResource resource = (IResource) iterator.next();
@@ -180,8 +180,8 @@ public class FileTransferDragAdapter implements TransferDragSourceListener {
 		} catch (InterruptedException e) {
 			// Do nothing. Operation has been canceled by user.
 		} catch (InvocationTargetException e) {
-			String message = CUIMessages.getString("Problem while moving or copying files."); //$NON-NLS-1$
-			String title = CUIMessages.getString("Drag & Drop"); //$NON-NLS-1$
+			String message = CUIMessages.getString("FileTransferDragAdapter.problem"); //$NON-NLS-1$
+			String title = CUIMessages.getString("FileTransferDragAdapter.problemTitle"); //$NON-NLS-1$
 
 			ExceptionHandler.handle(e, title, message);
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sergey Prigogin, Google
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.preferences;
@@ -24,6 +25,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -43,7 +45,6 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
 
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
-import org.eclipse.cdt.internal.ui.util.Messages;
 import org.eclipse.cdt.internal.ui.util.PixelConverter;
 
 /**
@@ -437,9 +438,9 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 			try {
 				int value= Integer.parseInt(number);
 				if (value < 0)
-					status.setError(Messages.format(PreferencesMessages.CEditorPreferencePage_invalid_input, number)); 
+					status.setError(NLS.bind(PreferencesMessages.CEditorPreferencePage_invalid_input, number)); 
 			} catch (NumberFormatException e) {
-				status.setError(Messages.format(PreferencesMessages.CEditorPreferencePage_invalid_input, number)); 
+				status.setError(NLS.bind(PreferencesMessages.CEditorPreferencePage_invalid_input, number)); 
 			}
 		}
 		return status;

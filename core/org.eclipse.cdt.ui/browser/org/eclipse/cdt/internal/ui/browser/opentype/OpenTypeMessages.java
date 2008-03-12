@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 QNX Software Systems and others.
+ * Copyright (c) 2004, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,19 +21,11 @@ public final class OpenTypeMessages extends NLS {
 		// Do not instantiate
 	}
 
-	public static String OpenTypeAction_exception_title;
-	public static String OpenTypeAction_exception_message;
-	public static String OpenTypeAction_notypes_title;
-	public static String OpenTypeAction_notypes_message;
-	public static String OpenTypeAction_description;
-	public static String OpenTypeAction_tooltip;
-	public static String OpenTypeAction_label;
 	public static String OpenTypeAction_errorTitle;
 	public static String OpenTypeAction_errorOpenEditor;
 	public static String OpenTypeAction_errorTypeNotFound;
 	public static String OpenTypeDialog_title;
 	public static String OpenTypeDialog_message;
-	public static String OpenTypeDialog_filter;
 	public static String ElementSelectionDialog_UpdateElementsJob_name;
 	public static String ElementSelectionDialog_UpdateElementsJob_inProgress;
 

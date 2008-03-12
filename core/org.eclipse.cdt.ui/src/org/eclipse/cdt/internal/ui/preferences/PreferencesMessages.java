@@ -39,14 +39,14 @@ public final class PreferencesMessages extends NLS {
 	public static String CEditorPreferencePage_colors;
 	public static String CEditorPreferencePage_invalid_input;
 	public static String CEditorPreferencePage_empty_input;
-	public static String CEditorPreferencePage_ContentAssistPage_searchGroupTitle;
-	public static String CEditorPreferencePage_ContentAssistPage_searchGroupCurrentFileOption;
-	public static String CEditorPreferencePage_ContentAssistPage_searchGroupCurrentProjectOption;
+//	public static String CEditorPreferencePage_ContentAssistPage_searchGroupTitle;
+//	public static String CEditorPreferencePage_ContentAssistPage_searchGroupCurrentFileOption;
+//	public static String CEditorPreferencePage_ContentAssistPage_searchGroupCurrentProjectOption;
 	public static String CEditorPreferencePage_ContentAssistPage_insertionGroupTitle;
 	public static String CEditorPreferencePage_ContentAssistPage_insertSingleProposalAutomatically;
 	public static String CEditorPreferencePage_ContentAssistPage_insertCommonProposalAutomatically;
-	public static String CEditorPreferencePage_ContentAssistPage_showProposalsInAlphabeticalOrder;
-	public static String CEditorPreferencePage_ContentAssistPage_timeoutDelay;
+//	public static String CEditorPreferencePage_ContentAssistPage_showProposalsInAlphabeticalOrder;
+//	public static String CEditorPreferencePage_ContentAssistPage_timeoutDelay;
 	public static String CEditorPreferencePage_ContentAssistPage_autoActivationGroupTitle;
 	public static String CEditorPreferencePage_ContentAssistPage_autoActivationEnableDot;
 	public static String CEditorPreferencePage_ContentAssistPage_autoActivationEnableArrow;
@@ -90,11 +90,6 @@ public final class PreferencesMessages extends NLS {
 	public static String CEditorColoringConfigurationBlock_underline;
 	public static String CEditorColoringConfigurationBlock_strikethrough;
 	public static String CEditorPreferencePage_colorPage_systemDefault;
-	public static String CEditorPreferencePage_colorPage_foreground;
-	public static String CEditorPreferencePage_colorPage_color;
-	public static String CEditorPreferencePage_colorPage_bold;
-	public static String CEditorPreferencePage_colorPage_preview;
-	public static String CEditorPreferencePage_behaviorPage_tabSpace;
 	public static String CEditorPreferencePage_behaviorPage_ensureNewline;
 	public static String CEditorPreferencePage_behaviorPage_matchingBrackets;
 	public static String CEditorPreferencePage_behaviorPage_subWordNavigation;
@@ -175,7 +170,6 @@ public final class PreferencesMessages extends NLS {
 	public static String ProposalFilterPreferencesUtil_defaultFilterName;
 
 	public static String CEditorPreferencePage_typing_tabTitle;
-	public static String CEditorPreferencePage_typing_description;
 	public static String CEditorPreferencePage_closeStrings;
 	public static String CEditorPreferencePage_closeBrackets;
 	public static String CEditorPreferencePage_closeAngularBrackets;
@@ -217,7 +211,6 @@ public final class PreferencesMessages extends NLS {
 	public static String TodoTaskConfigurationBlock_markers_tasks_priority_column;
 	public static String TodoTaskConfigurationBlock_markers_tasks_setdefault_button;
 	public static String TodoTaskConfigurationBlock_casesensitive_label;
-	public static String TodoTaskConfigurationBlock_needsbuild_title;
 	public static String TodoTaskConfigurationBlock_tasks_default;
 
 	public static String TodoTaskInputDialog_new_title;
@@ -252,8 +245,6 @@ public final class PreferencesMessages extends NLS {
 	public static String SpellingPreferencePage_dictionary_none;
 	public static String SpellingPreferencePage_locale_error;
 	public static String SpellingPreferencePage_filedialog_title;
-	public static String SpellingPreferencePage_filter_dictionary_label;
-	public static String SpellingPreferencePage_filter_all_label;
 	public static String SpellingPreferencePage_enable_contentassist_label;
 	public static String SpellingPreferencePage_group_user;
 	public static String SpellingPreferencePage_group_dictionary;
@@ -285,8 +276,6 @@ public final class PreferencesMessages extends NLS {
 	public static String ContentTypeMappingsDialog_language;
 	public static String ContentTypeMappingsDialog_allConfigurations;
 
-	public static String FileLanguagesPropertyPage_languageLabel;
-	public static String FileLanguagesPropertyPage_inheritedProjectMappingsGroup;
 	public static String FileLanguagesPropertyPage_contentTypeLabel;
 	public static String FileLanguagesPropertyPage_inheritedFromSystem;
 	public static String FileLanguagesPropertyPage_inheritedFromProject;
@@ -312,7 +301,6 @@ public final class PreferencesMessages extends NLS {
 	public static String ProjectSelectionDialog_filter;
 
 	public static String CodeTemplatesPreferencePage_title;
-	public static String CodeTemplateBlock_link_tooltip;
 	public static String CodeTemplateBlock_templates_comment_node;
 	public static String CodeTemplateBlock_templates_code_node;
 	public static String CodeTemplateBlock_templates_file_node;
@@ -366,7 +354,7 @@ public final class PreferencesMessages extends NLS {
 	public static String EditTemplateDialog_paste;
 	public static String EditTemplateDialog_select_all;
 	public static String EditTemplateDialog_content_assist;
-	public static String EditTemplateDialog_autoinsert;
+//	public static String EditTemplateDialog_autoinsert;
 
 	public static String MarkOccurrencesConfigurationBlock_title;
 	public static String MarkOccurrencesConfigurationBlock_link;

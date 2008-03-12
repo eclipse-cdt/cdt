@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2006 IBM Corporation and others.
+ * Copyright (c) 2001, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Rational Software - initial implementation
  *     Markus Schorn (Wind River Systems)
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.ui.actions;
 
@@ -45,8 +46,10 @@ public class MemberFilterActionGroup extends ActionGroup {
 	public static final int FILTER_STATIC= MemberFilter.FILTER_STATIC;
 	public static final int FILTER_FIELDS= MemberFilter.FILTER_FIELDS;
 	
+	/** @deprecated Unsupported filter constant */
 	public static final int FILTER_LOCALTYPES= MemberFilter.FILTER_LOCALTYPES;
-	public static final int ALL_FILTERS= FILTER_NONPUBLIC | FILTER_FIELDS | FILTER_STATIC | FILTER_LOCALTYPES;
+	
+	public static final int ALL_FILTERS= FILTER_NONPUBLIC | FILTER_FIELDS | FILTER_STATIC;
 	
 	private static final String TAG_HIDEFIELDS= "hidefields"; //$NON-NLS-1$
 	private static final String TAG_HIDESTATIC= "hidestatic"; //$NON-NLS-1$
@@ -140,7 +143,7 @@ public class MemberFilterActionGroup extends ActionGroup {
 	 * @param inViewMenu if <code>true</code> the actions are added to the view
 	 * menu. If <code>false</code> they are added to the toobar.
 	 * @param availableFilters Specifies which filter action should be contained. <code>FILTER_NONPUBLIC</code>,
-	 * <code>FILTER_STATIC</code>, <code>FILTER_FIELDS</code> and <code>FILTER_LOCALTYPES</code>
+	 * <code>FILTER_STATIC</code> and <code>FILTER_FIELDS</code>
 	 * or a combination of these constants are possible values. Use <code>ALL_FILTERS</code> to select all available filters.
 	 */
 	public MemberFilterActionGroup(StructuredViewer viewer, String viewerId, boolean inViewMenu, int availableFilters) {	
@@ -201,22 +204,6 @@ public class MemberFilterActionGroup extends ActionGroup {
 			hideNonPublic.setToolTipText(ActionMessages.getString("MemberFilterActionGroup.hide_nonpublic.tooltip")); //$NON-NLS-1$
 			CPluginImages.setImageDescriptors(hideNonPublic, CPluginImages.T_LCL, "public_co.gif"); //$NON-NLS-1$
 			actions.add(hideNonPublic);
-		}
-		
-		// local types
-		filterProperty= FILTER_LOCALTYPES;
-		if (isSet(filterProperty, availableFilters)) {
-			boolean filterEnabled= store.getBoolean(getPreferenceKey(filterProperty));
-			if (filterEnabled) {
-				fFilter.addFilter(filterProperty);
-			}
-			title= ActionMessages.getString("MemberFilterActionGroup.hide_localtypes.label"); //$NON-NLS-1$
-			helpContext= ICHelpContextIds.FILTER_LOCALTYPES_ACTION;
-			MemberFilterAction hideLocalTypes= new MemberFilterAction(this, title, filterProperty, helpContext, filterEnabled);
-			hideLocalTypes.setDescription(ActionMessages.getString("MemberFilterActionGroup.hide_localtypes.description")); //$NON-NLS-1$
-			hideLocalTypes.setToolTipText(ActionMessages.getString("MemberFilterActionGroup.hide_localtypes.tooltip")); //$NON-NLS-1$
-			CPluginImages.setImageDescriptors(hideLocalTypes, CPluginImages.T_LCL, "localtypes_co.gif"); //$NON-NLS-1$
-			actions.add(hideLocalTypes);
 		}
 		
 		// order corresponds to order in toolbar

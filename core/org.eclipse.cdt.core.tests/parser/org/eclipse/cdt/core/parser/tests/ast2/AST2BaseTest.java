@@ -397,6 +397,10 @@ public class AST2BaseTest extends BaseTestCase {
 		public int size() { return nameList.size(); } 
 	}
 	
+	protected String getAboveComment() throws IOException {
+		return getContents(1)[0].toString();
+	}
+	
 	protected StringBuffer[] getContents(int sections) throws IOException {
 		return TestSourceReader.getContentsForTest(
 				CTestPlugin.getDefault().getBundle(), "parser", getClass(), getName(), sections);
@@ -435,6 +439,13 @@ public class AST2BaseTest extends BaseTestCase {
     		IBinding binding= binding(section, len);
     		assertTrue("Binding is a ProblemBinding for name: "+section, !(binding instanceof IProblemBinding));
     		return binding;
+    	}
+    	
+    	public <T extends IBinding> T assertNonProblem(String section, int len, Class<T> type) {
+    		IBinding binding= binding(section, len);
+    		assertTrue("Binding is a ProblemBinding for name: "+section, !(binding instanceof IProblemBinding));
+    		assertInstance(binding, type);
+    		return type.cast(binding);
     	}
     	
     	private IBinding binding(String section, int len) {

@@ -18,6 +18,7 @@ import java.util.Iterator;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
@@ -90,6 +91,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
 import org.eclipse.cdt.core.dom.ast.c.ICExternalBinding;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.parser.ParserLanguage;
@@ -4212,4 +4214,139 @@ public class AST2Tests extends AST2BaseTest {
     		cpp= !cpp;
     	} while(cpp);
     }
+    
+	//    void f1(int& r) {}
+	//    void f2(const int& r) {}
+	//    void f3(volatile int& r) {}
+	//    void f4(const volatile int& r) {}
+	//
+	//    void ref() {
+	//    	int i= 1;
+	//    	const int ci= 1;
+	//    	volatile int vi= 2;
+	//    	const volatile int cvi = 3;
+	//    	
+	//    	f1(i);
+	//    	f1(ci); // should be an error
+	//    	f1(vi); // should be an error
+	//    	f1(cvi); // should be an error
+	//    	
+	//    	f2(i);
+	//    	f2(ci);
+	//    	f2(vi); // should be an error
+	//    	f2(cvi); // should be an error
+	//    	
+	//    	f3(i);
+	//    	f3(ci); // should be an error
+	//    	f3(vi);
+	//    	f3(cvi); // should be an error
+	//    	
+	//    	f4(i); 
+	//    	f4(ci);
+	//    	f4(vi);
+	//    	f4(cvi);
+	//    }
+    public void _testBug222418_a() throws Exception {
+    	BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+    	ba.assertNonProblem("f1(i)",2);
+    	ba.assertProblem("f1(ci)",  2);
+    	ba.assertProblem("f1(vi)",  2);
+    	ba.assertProblem("f1(cvi)", 2);
+
+    	ba.assertNonProblem("f2(i)", 2);
+    	ba.assertNonProblem("f2(ci)",2);
+    	ba.assertProblem("f2(vi)",   2);
+    	ba.assertProblem("f2(cvi)",  2);
+
+    	ba.assertNonProblem("f3(i)", 2);
+    	ba.assertProblem("f3(ci)",   2);
+    	ba.assertNonProblem("f3(vi)",2);
+    	ba.assertProblem("f3(cvi)",  2);
+
+    	ba.assertNonProblem("f4(i)",  2);
+    	ba.assertNonProblem("f4(ci)", 2);
+    	ba.assertNonProblem("f4(vi)", 2);
+    	ba.assertNonProblem("f4(cvi)",2);
+    }
+    
+	//    void f1(int& r) {} // 1
+	//    void f1(const int& r) {} // 2 
+	//    void f1(volatile int& r) {} // 3
+	//    void f1(const volatile int& r) {} // 4
+	//
+	//    void ref() {
+	//    	int i= 1;
+	//    	const int ci= 1;
+	//    	volatile int vi= 2;
+	//    	const volatile int cvi = 3;
+	//    	
+	//    	f1(i); // (1)
+	//    	f1(ci); // (2) 
+	//    	f1(vi); // (3)
+	//    	f1(cvi); // (4)
+	//    }
+    public void _testBug222418_b() throws Exception {
+    	BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+    	
+    	ICPPFunction f1_1= ba.assertNonProblem("f1(i)",  2, ICPPFunction.class);
+    	ICPPFunction f1_2= ba.assertNonProblem("f1(ci)", 2, ICPPFunction.class);
+    	ICPPFunction f1_3= ba.assertNonProblem("f1(vi)", 2, ICPPFunction.class);
+    	ICPPFunction f1_4= ba.assertNonProblem("f1(cvi)",2, ICPPFunction.class);
+    	
+    	assertEquals(ASTTypeUtil.getParameterTypeString(f1_1.getType()), "(int &)");
+    	assertEquals(ASTTypeUtil.getParameterTypeString(f1_2.getType()), "(const int &)");
+    	assertEquals(ASTTypeUtil.getParameterTypeString(f1_3.getType()), "(volatile int &)");
+    	assertEquals(ASTTypeUtil.getParameterTypeString(f1_4.getType()), "(const volatile int &)");
+    }
+    
+	//    void f1(int r) {} // 1
+	//    void f1(const int r) {} // 2 
+	//    void f1(volatile int r) {} // 3
+	//    void f1(const volatile int r) {} // 4
+    public void testBug222418_b_regression() throws Exception {
+    	BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);    	
+    	ba.assertNonProblem("f1(int",  2, ICPPFunction.class);
+    	ba.assertProblem("f1(const i", 2);
+    	ba.assertProblem("f1(vol", 2);
+    	ba.assertProblem("f1(const v",2);
+    }
+    
+	//    void fa(int& r) {}
+	//    void fb(const int& r) {}
+	//    void fc(volatile int& r) {}
+	//    void fd(const volatile int& r) {}
+	//
+	//    void ref() {
+	//    	fa(5); // should be an error
+	//    	fb(5); // ok 
+	//    	fc(5); // should be an error
+	//    	fd(5); // should be an error
+	//    }
+	public void _testBug222418_c() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);    	
+    	ba.assertProblem("fa(5",  2);
+    	ICPPFunction fb= ba.assertNonProblem("fb(5", 2, ICPPFunction.class);
+    	ba.assertProblem("fc(5", 2);
+    	ba.assertNonProblem("fd(5 v",2);
+    	
+    	assertEquals(ASTTypeUtil.getParameterTypeString(fb.getType()), "(const int &)");
+	}
+	
+	//	class X {
+	//		public:
+	//			X(int x) {}
+	//	};
+	//
+	//	void f_nonconst(X& x) {}
+	//	void f_const(const X& x) {}
+	//
+	//	void ref() {
+	//		f_const(2);
+	//		f_nonconst(2); // should be an error
+	//	}
+	public void _testBug222418_d() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);    	
+    	ba.assertNonProblem("f_const(2",  6, ICPPFunction.class);
+    	ba.assertProblem("f_nonconst(2",  9);
+	}
 }

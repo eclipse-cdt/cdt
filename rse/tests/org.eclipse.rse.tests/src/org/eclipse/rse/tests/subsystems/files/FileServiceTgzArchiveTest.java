@@ -17,6 +17,7 @@ public class FileServiceTgzArchiveTest extends FileServiceArchiveBaseTest {
 
 	public FileServiceTgzArchiveTest(String name) {
 		super(name);
+		//-test-author-:JohnsonMa:9
 		tarSourceFileName1 = "source.tar.gz";
 		tarSourceFileName2 = "mynewtar.tgz";
 		tarSourceForOpenTest = "tarSourceForOpen.TAR.gz";

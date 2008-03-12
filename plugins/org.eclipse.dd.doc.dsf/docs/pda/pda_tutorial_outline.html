@@ -2205,9 +2205,42 @@ it does not exist the update request fails.&nbsp; <br>
   <li>Lines 377-382 verify that only the data access attributes of the
 watchpoint were modified.</li>
   <li>Lines 387 -398 re-insert the watchpoint which effectively updates
-the watchpoint attributes.<br>
-  </li>
+the watchpoint attributes.</li>
 </ul>
+<h4>Listing Breakpoints</h4>
+The PDA Breakpoints service tracks the inserted breakpoints using the <span
+ style="font-style: italic;">fBreakpoints</span> field.&nbsp; Returning
+the list of breakpoints only requires returning the current state of
+this field.<br>
+<h4>Retrieving Breakpoint Detailed Data</h4>
+The simple PDA debugger does not track detailed breakpoint data, such
+has hit counts, addresses etc.&nbsp; So this function simply returns an
+error.<br>
+<h3>Breakpoints Mediator</h3>
+With the APIs for managing IDE and Target-Side breakpoints clearly
+defined, there is a need for a component which will keep the two sets
+of breakpoint objects synchronized.&nbsp; DSF provides a standard
+BreakpointsMediator service to accomplish this task.&nbsp; <br>
+<table style="text-align: left; margin-left: auto; margin-right: auto;"
+ border="0" cellpadding="5" cellspacing="30">
+  <tbody>
+    <tr>
+      <td style="text-align: center; vertical-align: middle;"><img
+ style="width: 788px; height: 289px;"
+ title="Mediating IDE and Target-Side breakpoints" alt=""
+ src="breakpoints_1.png"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><small><span
+ style="font-weight: bold;">Image 3: Mediating IDE and Target-Side
+breakpoints</span></small><br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+<br>
 <ul>
   <li>Target Side Breakpoints</li>
   <li>Mediator</li>

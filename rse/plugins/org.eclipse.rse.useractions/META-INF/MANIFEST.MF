@@ -21,6 +21,7 @@ Require-Bundle: org.eclipse.core.resources,
 Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.rse.useractions.ui.compile,
+ org.eclipse.rse.useractions.ui.uda,
  org.eclipse.rse.useractions.files.compile,
  org.eclipse.rse.useractions.files.uda,
  org.eclipse.rse.internal.useractions.ui.compile,

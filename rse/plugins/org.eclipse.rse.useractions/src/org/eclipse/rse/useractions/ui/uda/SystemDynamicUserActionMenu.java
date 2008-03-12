@@ -1,4 +1,4 @@
-package org.eclipse.rse.internal.useractions.ui;
+package org.eclipse.rse.useractions.ui.uda;
 
 import java.util.ArrayList;
 
@@ -15,6 +15,7 @@ import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemUDAResources;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemUDActionSubsystem;
 import org.eclipse.rse.internal.useractions.ui.uda.actions.SystemWorkWithUDAsAction;
+import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.SystemAdapterHelpers;
@@ -51,6 +52,10 @@ public class SystemDynamicUserActionMenu extends CompoundContributionItem
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		ISelection selection = window.getSelectionService().getSelection();
 		Object firstSelection = ((IStructuredSelection) selection).getFirstElement();
+		if (firstSelection == null || (!(firstSelection instanceof IRemoteFile)))
+		{
+			return new IContributionItem[0];
+		}
 		ISystemRemoteElementAdapter rmtAdapter = SystemAdapterHelpers.getRemoteAdapter(firstSelection);
 		
 		 ISubSystem subsystem = rmtAdapter.getSubSystem(firstSelection);

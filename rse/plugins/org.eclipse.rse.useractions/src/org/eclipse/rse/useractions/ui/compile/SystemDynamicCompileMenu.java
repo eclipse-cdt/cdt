@@ -1,4 +1,4 @@
-package org.eclipse.rse.internal.useractions.ui;
+package org.eclipse.rse.useractions.ui.compile;
 
 import java.util.ArrayList;
 
@@ -16,12 +16,11 @@ import org.eclipse.rse.internal.useractions.ui.compile.SystemCompileCommand;
 import org.eclipse.rse.internal.useractions.ui.compile.SystemCompileManager;
 import org.eclipse.rse.internal.useractions.ui.compile.SystemCompileProfile;
 import org.eclipse.rse.internal.useractions.ui.compile.SystemCompileType;
+import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.SystemAdapterHelpers;
 import org.eclipse.rse.useractions.files.compile.ISystemCompileManagerAdapter;
-import org.eclipse.rse.useractions.ui.compile.SystemCompileAction;
-import org.eclipse.rse.useractions.ui.compile.SystemWorkWithCompileCommandsAction;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -54,7 +53,10 @@ public class SystemDynamicCompileMenu extends CompoundContributionItem
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		ISelection selection = window.getSelectionService().getSelection();
 		Object firstSelection = ((IStructuredSelection) selection).getFirstElement();
-		
+		if (firstSelection == null || (!(firstSelection instanceof IRemoteFile)))
+		{
+			return new IContributionItem[0];
+		}
 		Shell shell = SystemBasePlugin.getActiveWorkbenchShell();
 		
 		for (int idx = 0; idx < activeProfiles.length; idx++)

@@ -13,6 +13,7 @@
  * Martin Oberhuber (Wind River) - [198790] make SSH createSession() protected
  * Mikhail Kalugin <fourdman@xored.com> - [201864] Fix Terminal SSH keyboard interactive authentication
  * Martin Oberhuber (Wind River) - [155026] Add keepalives for SSH connection
+ * Johnson Ma (Wind River) - [218880] Add UI setting for ssh keepalives
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.ssh;
 
@@ -68,7 +69,6 @@ class SshConnection extends Thread {
         Session session = service.createSession(hostname, port, username);
         //session.setTimeout(getSshTimeoutInMillis());
         session.setTimeout(0); //never time out on the session
-        session.setServerAliveInterval(300000); //5 minutes
         session.setServerAliveCountMax(6); //give up after 6 tries (remote will be dead after 30 min)
         if (password != null)
 			session.setPassword(password);
@@ -87,6 +87,7 @@ class SshConnection extends Thread {
 	public void run() {
 		try {
 			int nTimeout = fConn.getTelnetSettings().getTimeout() * 1000;
+			int nKeepalive = fConn.getTelnetSettings().getKeepalive() * 1000;
 			String host = fConn.getTelnetSettings().getHost();
 			String user = fConn.getTelnetSettings().getUser();
 			String password = fConn.getTelnetSettings().getPassword();
@@ -108,6 +109,9 @@ class SshConnection extends Thread {
             //config.put("StrictHostKeyChecking", "no");
             //session.setConfig(config);
             //ui.aboutToConnect();
+            if (nKeepalive > 0) {
+                session.setServerAliveInterval(nKeepalive); //default is 5 minutes
+            }
 			session.connect(nTimeout);   // making connection with timeout.
 
 			ChannelShell channel=(ChannelShell) session.openChannel("shell"); //$NON-NLS-1$

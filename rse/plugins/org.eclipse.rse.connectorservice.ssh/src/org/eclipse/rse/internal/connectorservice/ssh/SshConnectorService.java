@@ -15,8 +15,9 @@
  * Martin Oberhuber (Wind River) - [198790] make SSH createSession() protected
  * Martin Oberhuber (Wind River) - [203500] Support encodings for SSH Sftp paths
  * Martin Oberhuber (Wind River) - [155026] Add keepalives for SSH connection
- * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
- * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
+ * David McKnight (IBM) - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight (IBM) - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
+ * Johnson Ma (Wind River) - [218880] Add UI setting for ssh keepalives
  *******************************************************************************/
 
 package org.eclipse.rse.internal.connectorservice.ssh;
@@ -45,7 +46,11 @@ import com.jcraft.jsch.UserInfo;
 
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.ILabeledObject;
+import org.eclipse.rse.core.model.IProperty;
+import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.ISystemRegistry;
+import org.eclipse.rse.core.model.PropertyType;
 import org.eclipse.rse.core.model.SystemSignonInformation;
 import org.eclipse.rse.core.subsystems.CommunicationsEvent;
 import org.eclipse.rse.core.subsystems.IConnectorService;
@@ -67,6 +72,12 @@ public class SshConnectorService extends StandardConnectorService implements ISs
 {
 	private static final int SSH_DEFAULT_PORT = 22;
 	private static final int CONNECT_DEFAULT_TIMEOUT = 60; //seconds
+	
+	/** Property Keys. These are API because they are stored persistently. */
+	private static final String PROPERTY_SET_SSH_SETTINGS = "SSH Settings"; //$NON-NLS-1$
+	private static final String PROPERTY_KEY_TIMEOUT = "timeout(sec)"; //$NON-NLS-1$
+	private static final String PROPERTY_KEY_KEEPALIVE = "keepalive(sec)"; //$NON-NLS-1$
+	
     private Session session;
     private SessionLostHandler fSessionLostHandler;
 	/** Indicates the default string encoding on this platform */
@@ -75,6 +86,7 @@ public class SshConnectorService extends StandardConnectorService implements ISs
 	public SshConnectorService(IHost host) {
 		super(SshConnectorResources.SshConnectorService_Name, SshConnectorResources.SshConnectorService_Description, host, SSH_DEFAULT_PORT);
 		fSessionLostHandler = null;
+		getPropertySet();
 	}
 
 	//----------------------------------------------------------------------
@@ -93,9 +105,35 @@ public class SshConnectorService extends StandardConnectorService implements ISs
         if (service == null)
         	return null;
         Session session = service.createSession(hostname, port, username);
-        //session.setTimeout(getSshTimeoutInMillis());
-        session.setTimeout(0); //never time out on the session
-        session.setServerAliveInterval(300000); //5 minutes
+        
+        IPropertySet propertySet = getPropertySet();
+		String timeoutStr = propertySet.getPropertyValue(PROPERTY_KEY_TIMEOUT);
+		int timeout = 0; //default is never timeout
+		try {
+        	int value = Integer.parseInt(timeoutStr);
+        	if (value > 0) {
+        		timeout = value * 1000;
+        	}
+        } catch (NumberFormatException e) {
+        	//wrong input - should never happen because property type is Integer
+        }
+        session.setTimeout(timeout);
+        
+        int keepalive = 300000; //default is 5 minutes
+        String keepaliveStr = propertySet.getPropertyValue(PROPERTY_KEY_KEEPALIVE);
+        try {
+        	int value = Integer.parseInt(keepaliveStr);
+        	if (value >= 0) {
+        		keepalive = value * 1000;
+        	}
+        } catch (NumberFormatException e) {
+        	//wrong input - should never happen because property type is Integer
+        }
+        if (keepalive > 0) {
+            session.setServerAliveInterval(keepalive);
+        }
+        
+        
         session.setServerAliveCountMax(6); //give up after 6 tries (remote will be dead after 30 min)
         if (password != null)
 			session.setPassword(password);
@@ -577,6 +615,34 @@ public class SshConnectorService extends StandardConnectorService implements ISs
 	
 	public boolean requiresUserId() {
 		return false;
+	}
+	
+	private IPropertySet getPropertySet()
+	{
+		IPropertySet propertySet = getPropertySet(PROPERTY_SET_SSH_SETTINGS);
+		if(propertySet==null) {
+			propertySet = createPropertySet(PROPERTY_SET_SSH_SETTINGS);
+		}
+		if (propertySet instanceof ILabeledObject) {
+			//RSE 3.0 and later: translatable labels for properties
+			String label = SshConnectorResources.SSH_SETTINGS_LABEL;
+			((ILabeledObject)propertySet).setLabel(label);
+		}
+
+		//timeout
+		IProperty p = propertySet.getProperty(PROPERTY_KEY_TIMEOUT);
+		if (p==null) {
+			p = propertySet.addProperty(PROPERTY_KEY_TIMEOUT, "0", PropertyType.getIntegerPropertyType()); //$NON-NLS-1$
+		}
+		p.setLabel(SshConnectorResources.PROPERTY_LABEL_TIMEOUT);
+
+		//keepalive
+		p = propertySet.getProperty(PROPERTY_KEY_KEEPALIVE);
+		if (p==null) {
+			p = propertySet.addProperty(PROPERTY_KEY_KEEPALIVE,"300", PropertyType.getIntegerPropertyType()); //$NON-NLS-1$
+		}
+		p.setLabel(SshConnectorResources.PROPERTY_LABEL_KEEPALIVE);
+		return propertySet;
 	}
 
 }

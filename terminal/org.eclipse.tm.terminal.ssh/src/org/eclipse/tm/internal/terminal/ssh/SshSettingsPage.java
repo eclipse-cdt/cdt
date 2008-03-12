@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -8,6 +8,7 @@
  * Contributors: 
  * Michael Scharf (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
+ * Johnson Ma (Wind River) - [218880] Add UI setting for ssh keepalives
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.ssh;
 
@@ -23,6 +24,7 @@ public class SshSettingsPage implements ISettingsPage {
 	private Text fHostText;
 	private Text fUser;
 	private Text fTimeout;
+	private Text fKeepalive;
 	private final SshSettings fTerminalSettings;
 	private Text fPort;
 	private Text fPassword;
@@ -36,12 +38,14 @@ public class SshSettingsPage implements ISettingsPage {
 		fTerminalSettings.setPassword(fPassword.getText());
 		fTerminalSettings.setPort(fPort.getText());
 		fTerminalSettings.setTimeout(fTimeout.getText());
+		fTerminalSettings.setKeepalive(fKeepalive.getText());
 	}
 
 	public void loadSettings() {
 		if(fTerminalSettings!=null) {
 			fHostText.setText(get(fTerminalSettings.getHost(),""));//$NON-NLS-1$
 			fTimeout.setText(get(fTerminalSettings.getTimeoutString(),"0"));//$NON-NLS-1$
+			fKeepalive.setText(get(fTerminalSettings.getKeepaliveString(),"300"));//$NON-NLS-1$
 			fUser.setText(get(fTerminalSettings.getUser(),""));//$NON-NLS-1$
 			fPort.setText(get(fTerminalSettings.getPortString(),"22"));//$NON-NLS-1$
 			fPassword.setText(get(fTerminalSettings.getPassword(),""));//$NON-NLS-1$
@@ -67,6 +71,8 @@ public class SshSettingsPage implements ISettingsPage {
 		fUser = createTextField(composite, SshMessages.USER);
 		fPassword = createTextField(composite, SshMessages.PASSWORD,SWT.PASSWORD);
 		fTimeout = createTextField(composite, SshMessages.TIMEOUT);
+		fKeepalive = createTextField(composite, SshMessages.KEEPALIVE);
+		fKeepalive.setToolTipText(SshMessages.KEEPALIVE_Tooltip);
 		fPort = createTextField(composite, SshMessages.PORT);
 		loadSettings();
 	}

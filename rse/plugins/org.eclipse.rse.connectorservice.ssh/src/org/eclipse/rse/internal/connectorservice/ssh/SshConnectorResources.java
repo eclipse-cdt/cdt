@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -8,8 +8,9 @@
  * Contributors: 
  * Martin Oberhuber (Wind River) - initial API and implementation 
  * Martin Oberhuber (Wind River) - copy dialogs from team.cvs.ui 
- * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
- * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
+ * David McKnight (IBM) - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight (IBM) - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
+ * Johnson Ma (Wind River) - [218880] Add UI setting for ssh keepalives
  *******************************************************************************/
 
 package org.eclipse.rse.internal.connectorservice.ssh;
@@ -43,6 +44,9 @@ public class SshConnectorResources extends NLS {
 
 	public static String KeyboardInteractiveDialog_message;
 	public static String KeyboardInteractiveDialog_labelConnection;
-
+	
+	public static String SSH_SETTINGS_LABEL;
+	public static String PROPERTY_LABEL_TIMEOUT;
+	public static String PROPERTY_LABEL_KEEPALIVE;
 	
 }

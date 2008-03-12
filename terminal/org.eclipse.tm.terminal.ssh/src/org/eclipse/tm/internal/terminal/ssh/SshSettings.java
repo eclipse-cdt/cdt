@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -9,6 +9,7 @@
  * Michael Scharf (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  * Mikhail Kalugin <fourdman@xored.com> - [201867] Improve Terminal SSH connection summary string
+ * Johnson Ma (Wind River) - [218880] Add UI setting for ssh keepalives
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.ssh;
 
@@ -20,6 +21,7 @@ public class SshSettings implements ISshSettings {
     protected String fPassword;
     protected String fPort;
     protected String fTimeout;
+    protected String fKeepalive;
 	public String getHost() {
 		return fHost;
 	}
@@ -41,6 +43,7 @@ public class SshSettings implements ISshSettings {
 		fUser = store.get("User");//$NON-NLS-1$
 		fPort = store.get("Port");//$NON-NLS-1$
 		fTimeout = store.get("Timeout");//$NON-NLS-1$
+		fKeepalive = store.get("Keepalive");//$NON-NLS-1$
 	}
 
 
@@ -49,6 +52,7 @@ public class SshSettings implements ISshSettings {
 		store.put("User", fUser);//$NON-NLS-1$
 		store.put("Port", fPort);//$NON-NLS-1$
 		store.put("Timeout", fTimeout);//$NON-NLS-1$
+		store.put("Keepalive", fKeepalive);//$NON-NLS-1$
 	}
 
 
@@ -65,6 +69,21 @@ public class SshSettings implements ISshSettings {
 
 	public void setTimeout(String timeout) {
 		fTimeout = timeout;
+	}
+	
+	public int getKeepalive() {
+		try {
+			return Integer.parseInt(fKeepalive);
+		} catch (NumberFormatException numberFormatException) {
+			return 300;
+		}
+	}
+	public String getKeepaliveString() {
+		return fKeepalive;
+	}
+
+	public void setKeepalive(String keepalive) {
+		fKeepalive = keepalive;
 	}
 
 	public String getUser() {

@@ -4,15 +4,213 @@
   <title>How to write a DSF-based debugger</title>
 </head>
 <body>
-<h2 style="text-align: center;">How to write a DSF-based debugger <br>
-</h2>
+<h1 style="text-align: center;">How to write a DSF-based debugger <br>
+</h1>
 <h4>Summary</h4>
 <h3>DSF</h3>
 <ul>
   <li>Customizing, componentization, performance.</li>
   <li>GDB Reference Implementation</li>
 </ul>
-<h4>Debug Services</h4>
+<h2>Push Down Automata (PDA) <br>
+</h2>
+The Push Down Automata (PDA) debugger example is used as the basis for
+this tutorial.&nbsp; Before starting the tutorial it is best to
+familiarize with the features of the debugger.<br>
+<h3>Running the Example</h3>
+Launch the PDA debugger with these twelve "easy" steps:<br>
+<ol>
+  <li>Download and install Eclipse development environment, either the <span
+ style="font-style: italic;">Eclipse Classic 3.4 </span>or <span
+ style="font-style: italic;">Eclipse IDE for C/C++ Developers</span><br>
+  </li>
+  <li>Install the DSF SDK feature to build against, by performing
+either:<br>
+  </li>
+  <ol style="list-style-type: lower-alpha;">
+    <li>Using update manager, install the <span
+ style="font-style: italic;">Debugger Services Framework end-user and
+extender SDK</span>, found in the <span style="font-style: italic;">Ganymede
+Discovery Site</span> under <span style="font-style: italic;">Remote
+Access and Device Development</span>.</li>
+    <li>Check out <span style="font-style: italic;">org.eclipse.dd.dsf
+and org.eclipse.dd.dsf.ui</span> plugins, found in the <span
+ style="font-style: italic;">/cvsroot/dsdp</span> repository under <span
+ style="font-style: italic;">org.eclipse.dd.dsf/plugins</span>
+directory.</li>
+  </ol>
+  <li>Check out the <span style="font-style: italic;">org.eclipse.dd.examples.pda</span>
+and <span style="font-style: italic;">org.eclipse.dd.examples.pda.ui </span>plugins,
+found <span style="font-style: italic;">/cvsroot/dsdp</span> in the <span
+ style="font-style: italic;">org.eclipse.dd.dsf/plugins</span>
+directory.</li>
+  <li>Build the PDA plugins.</li>
+  <li>Create an instance of an <span style="font-style: italic;">Eclipse
+Application</span> launch configuration and launch it in Debug mode.<br>
+  </li>
+  <li>Switch to the new Eclipse IDE Application</li>
+  <li>Create a new empty project: <br>
+  </li>
+  <ol style="list-style-type: lower-alpha;">
+    <li>Select the <span style="font-style: italic;">File-&gt;New-&gt;Project...</span>
+action</li>
+    <li>Select <span style="font-style: italic;">General-&gt;Project</span>
+in the <span style="font-style: italic;">New Project</span> dialog.</li>
+    <li>Enter a name for the new project (e.g. "PDA")</li>
+  </ol>
+  <li>Link in the folder with PDA examples from the <span
+ style="font-style: italic;">org.eclipse.dd.examples.pda</span> plugin.</li>
+  <ol style="list-style-type: lower-alpha;">
+    <li>Right-click on the new Project and select <span
+ style="font-style: italic;">New-&gt;Folder</span><br>
+    </li>
+    <li>Click on the <span style="font-style: italic;">Advanced
+&gt;&gt;</span> button at the bottom of the <span
+ style="font-style: italic;">New Folder</span> dialog.</li>
+    <li>Select the <span style="font-style: italic;">Link to folder in
+the filesystem</span> check box.</li>
+    <li>Type in or browse to the <span style="font-style: italic;">samples</span>
+directory found in the <span style="font-style: italic;">org.eclipse.dd.examples.pda</span>
+plugin.</li>
+  </ol>
+  <li>Open the PDA editor by double-clicking on the PDA file (e.g. <span
+ style="font-style: italic;">fibonacci.pda)</span>.&nbsp; See note
+below.<br>
+  </li>
+  <li>Set a breakpoint in the program by double-clicking in the editor
+gutter.</li>
+  <li>Launch the PDA debugger</li>
+  <ol style="list-style-type: lower-alpha;">
+    <li>Set the <span style="font-style: italic;">dsfPerlDebugger</span>
+variable to point to the Perl executable in your system.&nbsp;
+Variables can be set in the <span style="font-style: italic;">Windows-&gt;Preferences-&gt;Run/Debug-&gt;String
+Substitution</span> preference page.</li>
+    <li>Create a new launch configuration of type <span
+ style="font-style: italic;">DSF PDA Application</span></li>
+    <li>In the Main tab, enter the workspace path to the program name
+(e.g. <span style="font-style: italic;">/PDA/samples/fibonacci.pda</span>).</li>
+    <li>Select <span style="font-style: italic;">Debug</span> to
+launch the PDA debugger.</li>
+  </ol>
+  <li>Step, select stack frames, debug...</li>
+</ol>
+<table
+ style="width: 95%; text-align: left; margin-left: auto; margin-right: auto; background-color: rgb(255, 255, 204); font-style: italic;"
+ border="0" cellpadding="10" cellspacing="0">
+  <tbody>
+    <tr>
+      <td style="text-align: left;">Note: If the Debug Platform example
+plugins (org.eclipse.debug.examples.*) were previously installed in the
+same workspace as the DSF PDA example, the two examples will both have
+an editor registered for the ".pda" file type.&nbsp; To ensure that the
+right editor is opened, right click on the PDA file in the Navigator,
+and select Open With-&gt;PDA(DSF) Editor.&nbsp; The editor that is
+opened should have the DSF-PDA icon: <img
+ style="width: 16px; height: 16px;" alt="" title="PDA debugger icon."
+ src="pda.gif"> </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+<table
+ style="width: 95%; text-align: left; margin-left: auto; margin-right: auto; background-color: rgb(255, 255, 204); font-style: italic;"
+ border="0" cellpadding="10" cellspacing="0">
+  <tbody>
+    <tr>
+      <td style="text-align: left;">Note: A Perl
+interpreter is required for PDA. Linux&reg;&#8482; comes with Perl. For
+Microsoft&reg;
+Windows&reg;, we use either ActivePerl (<a
+ href="http://www.activeperl.com/">http://www.activeperl.com/</a>) or
+Indigo Perl (<a href="http://www.indigostar.com/">http://www.indigostar.com/</a>).<br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<h3>Language</h3>
+<p>To demonstrate how to write a debugger for Eclipse, we need a
+language and a run time to debug. For this example, we chose an
+enhanced push down automata (PDA) assembly language and a simple
+interpreter implemented in Perl. Each line contains a single operation
+and any number of arguments. Our language differs from a standard PDA
+in two major ways:</p>
+<ul>
+  <li>Our language has a control stack and thus has call-return
+subroutines.</li>
+  <li>Our language allows data to be stored either on the data stack or
+in named variables on the control stack.</li>
+</ul>
+<p>Here is an annotated example of the Fibonacci computation (note that
+the annotations themselves are not valid syntax in this language &#8211; in
+this language, all comments must start at column 1 and be the entire
+line):</p>
+<br>
+<div style="margin-left: 20px;">
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
+ border="0" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2" rowspan="1" style="vertical-align: top;"><span
+ style="font-family: monospace; font-weight: bold;">samples/fibonacci.pda</span><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 10px;"><br>
+      </td>
+      <td style="vertical-align: top;">
+      <pre>push 6<br>call Fibonacci      <i>function call with one argument on the data stack</i><br>output              <i>print result to stdout</i><br>halt<br>#<br># f(n) = f(n-1) + f(n-2)<br># f(0) = 1<br># f(1) = 1<br>#<br>:fibonacci<br>var n               <i>define variable n on control stack</i><br>pop $n              <i>get n from data stack</i><br>push $n<br>branch_not_zero gt0<br>push 1              <i>f(0) = 1</i><br><br>return              <i>return with one value on data stack</i><br>:gt0 <br>push $n<br>dec<br>branch_not_zero gt1<br>push 1              <i>f(1) = 1</i><br>return              <i>return with one value on data stack</i><br>:gt1<br>push $n             <i>stack: n</i><br>dec                 <i>stack: n-1</i><br>call fibonacci      <i>stack: f(n-1)</i><br><br>push $n             <i>stack: f(n-1) n</i><br>dec                 <i>stack: f(n-1) n-1</i><br>dec                 <i>stack: f(n-1) n-2</i><br>call Fibonacci      <i>stack: f(n-1) f(n-2)</i><br>add                 <i>stack: f(n-1)+f(n-2)</i><br>return              <i>return with one value on data stack</i></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<h3>Debug Protocol</h3>
+<p>Our PDA assembly language interpreter can be started in either run
+mode or debug mode. When started in debug mode, the interpreter listens
+for debug commands on a specified local TCP socket and sends debug
+events to a separate local TCP socket.&nbsp; A detailed description of
+the protocol can be found in <span style="font-style: italic;">org.eclipse.dd.examples.pda/pdavm/docs/protocol.html</span>,
+but the lists below show a quick overview.<br>
+</p>
+<p>The commands include:</p>
+<ul>
+  <li><samp>clear N</samp> &#8211; clear the breakpoint on line N</li>
+  <li><samp>data</samp> &#8211; return the contents of the data stack; the
+data is returned from oldest to newest as a single string
+&#8220;value|value|value|&#8230;|value|&#8221;</li>
+  <li><samp>exit</samp> &#8211; end the interpreter</li>
+  <li><samp>resume</samp> &#8211; resume full speed execution of the program</li>
+  <li><samp>set N</samp> &#8211; set a breakpoint on line N</li>
+  <li><samp>stack</samp> &#8211; return the contents of the control stack
+(program counters, function and variable names); the stack is returned
+from oldest to newest as a single string &#8220;frame#frame#frame#&#8230;#frame&#8221;.
+Each frame is a string &#8220;filename|pc|function name|variable
+name|variable name| &#8230;|variable name&#8221;</li>
+  <li><samp>step</samp> &#8211; single step forward</li>
+  <li><samp>suspend</samp> &#8211; end full speed execution and listen for
+debug commands</li>
+  <li><samp>var N M</samp> &#8211; return the contents of a variable M from
+the control stack frame N (stack frames are indexed from 0).</li>
+</ul>
+<p>The debug events that are reported asynchronously to the second
+socket include:</p>
+<ul>
+  <li><samp>started</samp> &#8211; the interpreter has started (guaranteed to
+be the first event sent)</li>
+  <li><samp>terminated</samp> &#8211; the interpreter has terminated
+(guaranteed to be the last event sent)</li>
+  <li><samp>suspended X</samp> &#8211; the interpreter has suspended and
+entered debug mode; X is the cause of the suspension, either step or
+client or breakpoint N</li>
+  <li><samp>resumed X</samp> &#8211; the interpreter has resumed execution in
+run mode; X is the cause of the resume, either step or client</li>
+  <li><samp>unimplemented instruction X</samp> &#8211; an unimplemented
+instruction was encountered</li>
+  <li><samp>no such label X</samp> &#8211; a branch or call to an unknown
+label was encountered</li>
+</ul>
+<h2>Debug Services</h2>
+<p style="color: rgb(255, 0, 0);">TODO: remove this sesion?</p>
 Use of services is intended to allow for maximum level of extendability
 and customization.&nbsp; To achieve this, service interfaces should
 encapsulate functionality that logically belongs together and at the
@@ -63,86 +261,1970 @@ for reading stack information.<br>
 Service for reading symbol information about the loaded modules.<br>
   </li>
 </ul>
-<h4><br>
-</h4>
+<h2>Step 1 - Launching <br>
+</h2>
+The first task in integrating a debugger in Eclipse is creating and
+managing the debugger process.&nbsp; The Eclipse Platform provides an
+extensive API for this purpose, which is nicely presented in the <i><a
+ href="http://www.eclipse.org/articles/Article-Launch-Framework/launch.html">We
+Have Lift-off: The Launching Framework in Eclipse</a> </i>article.&nbsp;
+This section (as this tutorial) concentrates on the DSF-specific tasks
+of launching the PDA debugger.<br>
+<h3>Launch Delegate</h3>
+At first glance, there's nothing unusual about the PDA debugger launch
+delegate.&nbsp; Just like the Debug Platform version it:<br>
+<ol>
+  <li>finds the Perl executable,</li>
+  <li>finds free socket ports for debugger communication,</li>
+  <li>finds the PDA program</li>
+  <li>launches Perl to run the interpreter</li>
+</ol>
+The major difference is that it does not create an instance of the
+standard debug model <span style="font-style: italic;">IDebugTerget</span>
+object.&nbsp; Instead it implements the <span
+ style="font-style: italic;">getLaunch()</span> method in the <span
+ style="font-style: italic;">ILaunchConfigurationDelegate2</span>
+extension interface, in order to create a custom launch object:<br>
 <br>
+<div style="margin-left: 20px;">
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
+ border="0" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2" rowspan="1" style="vertical-align: top;"><span
+ style="font-family: monospace; font-weight: bold;">org.eclipse.dd.examples.pda.launch.PDALaunchDelegate
+- getLaunch()</span> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 10px;"><br>
+      </td>
+      <td style="vertical-align: top;">
+      <pre width="200"><i><a name="line51"> 51: </a><strong><font
+ color="#4169e1"> public ILaunch getLaunch(ILaunchConfiguration configuration, String mode)</font></strong> <font
+ color="#4169e1">throws</font> CoreException {<br><br><a name="line52"> 52: </a> <font
+ color="#b22222">    // Need to configure the source locator before creating the launch</font><br><a
+ name="line53"> 53: </a> <font color="#b22222">    // because once the launch is created and added to launch manager, </font><br><a
+ name="line54"> 54: </a> <font color="#b22222">    // the adapters will be created for the whole session, including </font><br><a
+ name="line55"> 55: </a> <font color="#b22222">    // the source lookup adapter.</font><br><a
+ name="line56"> 56: </a>     ISourceLocator locator = getSourceLocator(configuration);<br><br><a
+ name="line58"> 58: </a> <font color="#4169e1">    return</font> new PDALaunch(configuration, mode, locator);<br><a
+ name="line59"> 59: </a> }<br></i></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<ul>
+</ul>
+<h3>PDALaunch</h3>
+The PDALaunch object plays two main roles:<br>
+<ol>
+  <li>Serve as the root element of the PDA View Model hierarchy</li>
+  <li>Manage the lifecycle of the DSF session, its services, and the
+executor that belongs to the session.&nbsp; <br>
+  </li>
+</ol>
+The first task will be described in the View Model section, the second
+task is described here.&nbsp; <br>
 <br>
-<h3>Push Down Automata (PDA) <br>
+Even though the PDALaunch constructor is called
+long before the debugging services are created, the session and the
+executor need to be available to the UI clients that present the launch
+object in the Debug view.<br>
+<br>
+<div style="margin-left: 20px;">
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
+ border="0" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2" rowspan="1" style="vertical-align: top;"> <span
+ style="font-family: monospace; font-weight: bold;">org.eclipse.dd.examples.pda.launch.PDALaunch
+- &lt;&lt;constructor&gt;&gt;</span> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 10px;"><br>
+      </td>
+      <td style="vertical-align: top;">
+      <pre><a name="line65"> 65: </a><strong><font color="#4169e1">    public PDALaunch(ILaunchConfiguration launchConfiguration, String mode, ISourceLocator locator)</font></strong> {<br><a
+ name="line66"> 66: </a>        super(launchConfiguration, mode, locator);<br><br><a
+ name="line68"> 68: </a>        <font color="#b22222">// Create the dispatch queue to be used by debugger control and services </font><br><a
+ name="line69"> 69: </a>        <font color="#b22222">// that belong to this launch</font><br><a
+ name="line70"> 70: </a>        final DefaultDsfExecutor dsfExecutor = new DefaultDsfExecutor(PDAPlugin.ID_PDA_DEBUG_MODEL);<br><a
+ name="line71"> 71: </a>        dsfExecutor.prestartCoreThread();<br><a
+ name="line72"> 72: </a>        fExecutor = dsfExecutor;<br><a
+ name="line73"> 73: </a>        fSession = DsfSession.startSession(fExecutor, PDAPlugin.ID_PDA_DEBUG_MODEL);<br><a
+ name="line74"> 74: </a>    }<br></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<ul>
+  <li>Lines 70 and 73 create the executor and the session
+respectively. <br>
+  </li>
+</ul>
+As the last step of the launch process, after the Perl process is
+started, the launch delegate calls the launch to initialize the DSF
+services.&nbsp; There is an expected race condition between
+initializeServices() and shutdownServices() routines in that the PDA
+process may run to completion and exit while the initialize services
+routine is still running.&nbsp; Also, the user may terminate the
+program while the initialization sequene is still running.&nbsp; The
+use of fInitializationSequence variable and other flags protects deals
+with this race condition.<br>
+<br>
+<div style="margin-left: 20px;">
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
+ border="0" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2" rowspan="1" style="vertical-align: top;"> <span
+ style="font-family: monospace; font-weight: bold;">org.eclipse.dd.examples.pda.launch.PDALaunch
+- intializeServices()</span> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 10px;"><br>
+      </td>
+      <td style="vertical-align: top;">
+      <pre><a name="line90"> 90: </a>    @ConfinedToDsfExecutor(<font
+ color="#666666">"getSession().getExecutor()"</font>)<br><a
+ name="line91"> 91: </a><strong><font color="#4169e1">    public void initializeServices(String program, int requestPort, int eventPort, final RequestMonitor rm)</font></strong><br><a
+ name="line92"> 92: </a>    {<br><a name="line93"> 93: </a>        <font
+ color="#b22222">// Double-check that we're being called in the correct thread.</font><br><a
+ name="line94"> 94: </a>        assert fExecutor.isInExecutorThread();<br><br><a
+ name="line96"> 96: </a>        <font color="#b22222">// Check if shutdownServices() was called already, which would be </font><br><a
+ name="line97"> 97: </a>        <font color="#b22222">// highly unusual, but if so we don't need to do anything except set </font><br><a
+ name="line98"> 98: </a>        <font color="#b22222">// the initialized flag.</font><br><a
+ name="line99"> 99: </a>        synchronized(this) {<br><a
+ name="line100">100: </a>            <font color="#4169e1">if</font> (fShutDown) {<br><a
+ name="line101">101: </a>                fInitialized = true;<br><a
+ name="line102">102: </a>                <font color="#4169e1">return</font>;<br><a
+ name="line103">103: </a>            }<br><a name="line104">104: </a>        }<br><br><a
+ name="line106">106: </a>        <font color="#b22222">// Register the launch as listener for services events.</font><br><a
+ name="line107">107: </a>        fSession.addServiceEventListener(PDALaunch.this, null);<br><br><a
+ name="line109">109: </a>        <font color="#b22222">// The initialization sequence is stored in a field to allow it to be </font><br><a
+ name="line110">110: </a>        <font color="#b22222">// canceled if shutdownServices() is called before the sequence </font><br><a
+ name="line111">111: </a>        <font color="#b22222">// completes.</font><br><a
+ name="line112">112: </a>        fInitializationSequence = new PDAServicesInitSequence(<br><a
+ name="line113">113: </a>            getSession(), program, requestPort, eventPort, <br><a
+ name="line114">114: </a>            new RequestMonitor(ImmediateExecutor.getInstance(), rm) {<br><a
+ name="line115">115: </a>                @Override<br><a name="line116">116: </a><strong><font
+ color="#4169e1">                protected void handleCompleted()</font></strong> {<br><a
+ name="line117">117: </a>                    <font color="#b22222">// Set the initialized flag and check whether the </font><br><a
+ name="line118">118: </a>                    <font color="#b22222">// shutdown flag is set.  Access the flags in a </font><br><a
+ name="line119">119: </a>                    <font color="#b22222">// synchronized section as these flags can be accessed</font><br><a
+ name="line120">120: </a>                    <font color="#b22222">// on any thread.</font><br><a
+ name="line121">121: </a>                    boolean doShutdown = false;<br><a
+ name="line122">122: </a>                    synchronized (this) { <br><a
+ name="line123">123: </a>                        fInitialized = true;<br><a
+ name="line124">124: </a>                        fInitializationSequence = null;<br><a
+ name="line125">125: </a>                        <font color="#4169e1">if</font> (fShutDown) {<br><a
+ name="line126">126: </a>                            doShutdown = true;<br><a
+ name="line127">127: </a>                        }<br><a name="line128">128: </a>                    }<br><br><a
+ name="line130">130: </a>                    <font color="#4169e1">if</font> (doShutdown) {<br><a
+ name="line131">131: </a>                        <font color="#b22222">// If shutdownServices() was already called, start the </font><br><a
+ name="line132">132: </a>                        <font color="#b22222">// shutdown sequence now.</font><br><a
+ name="line133">133: </a>                        doShutdown(rm);<br><a
+ name="line134">134: </a>                    } <font color="#4169e1">else</font> {<br><a
+ name="line135">135: </a>                        <font color="#b22222">// If there was an error in the startup sequence, </font><br><a
+ name="line136">136: </a>                        <font color="#b22222">// report the error to the client.</font><br><a
+ name="line137">137: </a>                        <font color="#4169e1">if</font> (getStatus().getSeverity() == IStatus.ERROR) {<br><a
+ name="line138">138: </a>                            rm.setStatus(getStatus());<br><a
+ name="line139">139: </a>                        }<br><a name="line140">140: </a>                        rm.done();<br><a
+ name="line141">141: </a>                    }<br><a name="line142">142: </a>                    fireChanged();<br><a
+ name="line143">143: </a>                }<br><a name="line144">144: </a>            });<br><br><a
+ name="line146">146: </a>        <font color="#b22222">// Finally, execute the sequence. </font><br><a
+ name="line147">147: </a>        getSession().getExecutor().execute(fInitializationSequence);<br><a
+ name="line148">148: </a>    }<br></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<ul>
+  <li>Line 88 declares the initializeServices() to be invoked only
+within the session executor thread.&nbsp; This is to protect access to
+the fInitializationSequence variable and to allow the call on line 107
+to be made without use of another runnable.</li>
+</ul>
+Due to race conditions between debugger events and user commands, the <span
+ style="font-style: italic;">shutdownServices()</span> routine may be
+invoked more than once.&nbsp; The shutdown logic must protect against
+these race conditions.<br>
+<br>
+<div style="margin-left: 20px;">
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
+ border="0" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2" rowspan="1" style="vertical-align: top;"> <span
+ style="font-family: monospace; font-weight: bold;">org.eclipse.dd.examples.pda.launch.PDALaunch
+- shutdownServices()</span> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 10px;">
+      <pre><a name="line202">202: </a>    @ConfinedToDsfExecutor(<font
+ color="#666666">"getSession().getExecutor()"</font>)<br><a
+ name="line203">203: </a><strong><font color="#4169e1">    public void shutdownServices(final RequestMonitor rm)</font></strong> {<br><a
+ name="line204">204: </a>        <font color="#b22222">// Check initialize and shutdown flags to determine if the shutdown</font><br><a
+ name="line205">205: </a>        <font color="#b22222">// sequence can be called yet.</font><br><a
+ name="line206">206: </a>        boolean doShutdown = false;<br><a
+ name="line207">207: </a>        synchronized (this) {<br><a
+ name="line208">208: </a>            <font color="#4169e1">if</font> (!fInitialized &amp;&amp; fInitializationSequence != null) {<br><a
+ name="line209">209: </a>                <font color="#b22222">// Launch has not yet initialized, try to cancel the </font><br><a
+ name="line210">210: </a>                <font color="#b22222">// shutdown sequence.</font><br><a
+ name="line211">211: </a>                fInitializationSequence.cancel(false);<br><a
+ name="line212">212: </a>            } <font color="#4169e1">else</font> {<br><a
+ name="line213">213: </a>                doShutdown = !fShutDown &amp;&amp; fInitialized;<br><a
+ name="line214">214: </a>            }<br><a name="line215">215: </a>            fShutDown = true;<br><a
+ name="line216">216: </a>        }<br><br><a name="line218">218: </a>        <font
+ color="#4169e1">if</font> (doShutdown) {<br><a name="line219">219: </a>            doShutdown(rm);<br><a
+ name="line220">220: </a>        } <font color="#4169e1">else</font> {<br><a
+ name="line221">221: </a>            rm.done();<br><a name="line222">222: </a>        }<br><a
+ name="line223">223: </a>    }<br><br><a name="line225">225: </a>    @ConfinedToDsfExecutor(<font
+ color="#666666">"getSession().getExecutor()"</font>)<br><a
+ name="line226">226: </a><strong><font color="#4169e1">    private void doShutdown(final RequestMonitor rm)</font></strong> {<br><a
+ name="line227">227: </a>        fExecutor.execute( new PDAServicesShutdownSequence(<br><a
+ name="line228">228: </a>            fExecutor, fSession.getId(),<br><a
+ name="line229">229: </a>            new RequestMonitor(fSession.getExecutor(), rm) { <br><a
+ name="line230">230: </a>                @Override<br><a name="line231">231: </a><strong><font
+ color="#4169e1">                public void handleCompleted()</font></strong> {<br><a
+ name="line232">232: </a>                    fSession.removeServiceEventListener(PDALaunch.this);<br><a
+ name="line233">233: </a>                    <font color="#4169e1">if</font> (!getStatus().isOK()) {<br><a
+ name="line234">234: </a>                        PDAPlugin.getDefault().getLog().log(new MultiStatus(<br><a
+ name="line235">235: </a>                            PDAPlugin.PLUGIN_ID, -1, new IStatus[]{getStatus()}, <font
+ color="#666666">"Session shutdown failed"</font>, null)); <font
+ color="#b22222">//$NON-NLS-1$</font><br><a name="line236">236: </a>                    }<br><a
+ name="line237">237: </a>                    <font color="#b22222">// Last order of business, shutdown the dispatch queue.</font><br><a
+ name="line238">238: </a>                    DsfSession.endSession(fSession);<br><a
+ name="line239">239: </a>                    <font color="#b22222">// endSession takes a full dispatch to distribute the </font><br><a
+ name="line240">240: </a>                    <font color="#b22222">// session-ended event, finish step only after the dispatch.</font><br><a
+ name="line241">241: </a>                    fExecutor.shutdown();<br><a
+ name="line242">242: </a>                    fireTerminate();<br><br><a
+ name="line244">244: </a>                    rm.setStatus(getStatus());<br><a
+ name="line245">245: </a>                    rm.done();<br><a
+ name="line246">246: </a>                }<br><a name="line247">247: </a>            }) );<br><a
+ name="line248">248: </a>    }<br><br></pre>
+      </td>
+      <td style="vertical-align: top;"> <br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<h3>Launch/Shutdown Sequence</h3>
+The actual task of calling the asynchronous <span
+ style="font-style: italic;">IDsfService</span>'s <span
+ style="font-style: italic;">initialize()</span> and <span
+ style="font-style: italic;">shutdown()</span> methods is implemented
+using the <span style="font-style: italic;">Sequence</span>
+object.&nbsp; The following listing shows part of the declaration of
+the
+<span style="font-style: italic;">Sequence.Step</span> objects which
+perform the service initialization:<br>
+<br>
+<div style="margin-left: 20px;">
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
+ border="0" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2" rowspan="1" style="vertical-align: top;"><span
+ style="font-family: monospace; font-weight: bold;">org.eclipse.dd.examples.pda.launch.PDAServicesInitSequence
+- fSteps</span> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 10px;"><br>
+      </td>
+      <td style="vertical-align: top;">
+      <pre><a name="line38"> 38: </a>    Step[] fSteps = new Step[] {<br><a
+ name="line39"> 39: </a>        new Step() <br><a name="line40"> 40: </a>        { <br><a
+ name="line41"> 41: </a>            @Override<br><a name="line42"> 42: </a><strong><font
+ color="#4169e1">            public void execute(RequestMonitor requestMonitor)</font></strong> {<br><a
+ name="line43"> 43: </a>                <font color="#b22222">// Create the connection to PDA debugger.</font><br><a
+ name="line44"> 44: </a>                fCommandControl = new PDACommandControl(fSession, fProgram, fRequestPort, fEventPort);<br><a
+ name="line45"> 45: </a>                fCommandControl.initialize(requestMonitor);<br><a
+ name="line46"> 46: </a>            }<br><a name="line47"> 47: </a>        },<br><a
+ name="line48"> 48: </a>        new Step() { <br><a name="line49"> 49: </a>            @Override<br><a
+ name="line50"> 50: </a><strong><font color="#4169e1">            public void execute(RequestMonitor requestMonitor)</font></strong> {<br><a
+ name="line51"> 51: </a>                <font color="#b22222">// Start the run control service.</font><br><a
+ name="line52"> 52: </a>                fRunControl = new PDARunControl(fSession);<br><a
+ name="line53"> 53: </a>                fRunControl.initialize(requestMonitor);<br><a
+ name="line54"> 54: </a>            }<br><a name="line55"> 55: </a>        },<br><a
+ name="line56"> 56: </a>        new Step() { <br><a name="line57"> 57: </a>            @Override<br><a
+ name="line58"> 58: </a><strong><font color="#4169e1">            public void execute(RequestMonitor requestMonitor)</font></strong> {<br><a
+ name="line59"> 59: </a>                <font color="#b22222">// Start the service to manage step actions.</font><br><a
+ name="line60"> 60: </a>                new StepQueueManager(fSession).initialize(requestMonitor);<br><a
+ name="line61"> 61: </a>            }<br><a name="line62"> 62: </a>        },<br> ...<a
+ name="line63"></a><br></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<h2>Step 2 - Connecting&nbsp;</h2>
+With the launch framework in place, the debugger back end is running
+and the DSF session and executor are started.&nbsp; The next step is to
+create the first service and to connect to the debugger.&nbsp; DSF
+defines a debug interface: <span style="font-style: italic;">ICommandControl</span>
+which abstracts a debugger connection as a facility that processes
+commands and generates events.&nbsp; The ICommandControl method allow
+for three major functions:<br>
+<ol>
+  <li><span style="text-decoration: underline;">Queue/Remove/Cancel
+commands</span> - It is assumed that the command control service uses a
+queue to hold commands that are to be sent to the debugger.&nbsp; As
+long as commands are still in the queue, clients can remove the
+commands so they are never sent.&nbsp; Even after the commands are
+sent, the clients may request to cancel a running command, although
+there is no guarantee that the debugger supports that.</li>
+  <li><span style="text-decoration: underline;">Listening to Commands
+Queued/Sent/Completed</span> - Clients can listen to all command
+traffic in order to implement custom processing.</li>
+  <li><span style="text-decoration: underline;">Listening to Events</span>
+- Events are messages from the debugger which are not direct responses
+to any commands.&nbsp; Many clients need to listen to events such as
+target state change events.<br>
+  </li>
+</ol>
+<span style="font-style: italic;"></span>
+<table style="text-align: left; margin-left: auto; margin-right: auto;"
+ border="0" cellpadding="5" cellspacing="30">
+  <tbody>
+    <tr>
+      <td style="text-align: center; vertical-align: middle;"><img
+ style="width: 400px; height: 655px;"
+ title="PDA Command Control Diagram" alt="" src="connecting_1.png"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><small><span
+ style="font-weight: bold;">Image 1: PDA Command Control Diagram</span></small><br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<h3>Synchronization</h3>
+Since there are several threads being used by the PDA Command Control
+protecting state data becomes very important. <br>
+<br>
+Most of the state data in the command control service is protected
+using the session thread, i.e. they can only be accessed while
+executing in the session executor's thread:<br>
+<br>
+<div style="margin-left: 20px;">
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
+ border="0" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2" rowspan="1" style="vertical-align: top;"><span
+ style="font-family: monospace; font-weight: bold;">org.eclipse.dd.examples.pda.service.PDACommandControl
+- members declaration</span> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 10px;">
+      <pre><a name="line56"> 56: </a>    <font color="#b22222">// Parameters that the command control is created with.</font><br><a
+ name="line57"> 57: </a>    final private String fProgram;<br><a
+ name="line58"> 58: </a>    final private int fRequestPort;<br><a
+ name="line59"> 59: </a>    final private int fEventPort;<br><br><a
+ name="line61"> 61: </a>    <font color="#b22222">// Queue of commands waiting to be sent to the debugger.  As long as commands</font><br><a
+ name="line62"> 62: </a>    <font color="#b22222">// are in this queue, they can still be removed by clients. </font><br><a
+ name="line63"> 63: </a>    private final List&lt;CommandHandle&gt; fCommandQueue = new LinkedList&lt;CommandHandle&gt;();<br><a
+ name="line64"> 64: </a>    <br><a name="line65"> 65: </a>    <font
+ color="#b22222">// Queue of commands that are being sent to the debugger.  This queue is read</font><br><a
+ name="line66"> 66: </a>    <font color="#b22222">// by the send job, so as soon as commands are inserted into this queue, they can</font><br><a
+ name="line67"> 67: </a>    <font color="#b22222">// be considered as sent.</font><br><a
+ name="line68"> 68: </a>    @ThreadSafe<br><a name="line69"> 69: </a>    private final BlockingQueue&lt;CommandHandle&gt; fTxCommands = new LinkedBlockingQueue&lt;CommandHandle&gt;();<br><a
+ name="line70"> 70: </a>    <br><a name="line71"> 71: </a>    <font
+ color="#b22222">// Flag indicating that the PDA debugger started</font><br><a
+ name="line72"> 72: </a>    private boolean fStarted = false;<br><a
+ name="line73"> 73: </a>    <br><a name="line74"> 74: </a>    <font
+ color="#b22222">// Flag indicating that the PDA debugger has been disconnected </font><br><a
+ name="line75"> 75: </a>    @ThreadSafe<br><a name="line76"> 76: </a>    private boolean fTerminated = false;<br><a
+ name="line77"> 77: </a>    <br><a name="line78"> 78: </a>    <font
+ color="#b22222">//  Data Model context of this command control. </font><br><a
+ name="line79"> 79: </a>    private PDAProgramDMContext fDMContext;<br><br><a
+ name="line81"> 81: </a>    <font color="#b22222">// Synchronous listeners for commands and events.</font><br><a
+ name="line82"> 82: </a>    private final List&lt;ICommandListener&gt; fCommandListeners = new ArrayList&lt;ICommandListener&gt;();<br><a
+ name="line83"> 83: </a>    private final List&lt;IEventListener&gt;   fEventListeners = new ArrayList&lt;IEventListener&gt;();<br><a
+ name="line84"> 84: </a>    <br><a name="line85"> 85: </a>    <font
+ color="#b22222">// Sockets for communicating with PDA debugger </font><br><a
+ name="line86"> 86: </a>    @ThreadSafe<br><a name="line87"> 87: </a>    private Socket fRequestSocket;<br><a
+ name="line88"> 88: </a>    @ThreadSafe<br><a name="line89"> 89: </a>    private PrintWriter fRequestWriter;<br><a
+ name="line90"> 90: </a>    @ThreadSafe<br><a name="line91"> 91: </a>    private BufferedReader fRequestReader;<br><a
+ name="line92"> 92: </a>    @ThreadSafe<br><a name="line93"> 93: </a>    private Socket fEventSocket;<br><a
+ name="line94"> 94: </a>    @ThreadSafe<br><a name="line95"> 95: </a>    private BufferedReader fEventReader;<br><br><a
+ name="line97"> 97: </a>    <font color="#b22222">// Jobs servicing the sockets.</font><br><a
+ name="line98"> 98: </a>    private EventDispatchJob fEventDispatchJob;<br><a
+ name="line99"> 99: </a>    private CommandSendJob fCommandSendJob;<br></pre>
+      </td>
+      <td style="vertical-align: top;"> <br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<ol>
+</ol>
+<ul>
+  <li>Line 63 declares the main command queue <span
+ style="font-style: italic;">fCommandQueue</span>.&nbsp; Commands sit
+in this queue until the command channel is free to send.</li>
+  <li>Line 69 declares a second command queue <span
+ style="font-style: italic;">fTxCommands</span>.&nbsp; This queue is
+used only as a means of synchronization with the send job.</li>
+  <li>Line 76 declares the <span style="font-style: italic;">fTerminated</span>
+flag.&nbsp; It needs to be thread safe to allow the command and event
+processing jobs to access it.<br>
+  </li>
+  <li>Lines 86-95 declare the commuication sockets.&nbsp; They are
+marked as thread-safe though only used by dedicated threads after being
+created.</li>
+</ul>
+Following is an example of how the access to session-thread protected
+variables is implemented.<br>
+<br>
+<div style="margin-left: 20px;">
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
+ border="0" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2" rowspan="1" style="vertical-align: top;"><span
+ style="font-family: monospace; font-weight: bold;">org.eclipse.dd.examples.pda.service.PDACommandControl.EventDispatchJob
+- run()</span> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 10px;"><br>
+      </td>
+      <td style="vertical-align: top;">
+      <pre><a name="line300">300: </a><strong><font color="#4169e1">        protected IStatus run(IProgressMonitor monitor)</font></strong> {<br><a
+ name="line301">301: </a>            <font color="#4169e1">while</font> (!isTerminated()) {<br><a
+ name="line302">302: </a>                <font color="#4169e1">try</font> {<br><a
+ name="line303">303: </a>                    <font color="#b22222">// Wait for an event.</font><br><a
+ name="line304">304: </a>                    final String event = fEventReader.readLine();<br><a
+ name="line305">305: </a>                    <font color="#4169e1">if</font> (event != null) {<br><a
+ name="line306">306: </a>                        <font color="#4169e1">try</font> {<br><a
+ name="line307">307: </a>                            <font
+ color="#b22222">// Process the event in executor thread.</font><br><a
+ name="line308">308: </a>                            getExecutor().execute(new DsfRunnable() {<br><a
+ name="line309">309: </a><strong><font color="#4169e1">                                public void run()</font></strong> {<br><a
+ name="line310">310: </a>                                    processEventReceived(event);<br><a
+ name="line311">311: </a>                                }<br><a
+ name="line312">312: </a>                            });<br><a
+ name="line313">313: </a>                        } <font color="#4169e1">catch</font> (RejectedExecutionException e) {}                <br><a
+ name="line314">314: </a>                    } <font color="#4169e1">else</font> {<br><a
+ name="line315">315: </a>                        <font color="#4169e1">break</font>;<br><a
+ name="line316">316: </a>                    }<br><a name="line317">317: </a>                } <font
+ color="#4169e1">catch</font> (IOException e) {<br><a name="line318">318: </a>                    <font
+ color="#4169e1">break</font>;<br><a name="line319">319: </a>                }<br><a
+ name="line320">320: </a>            }<br><a name="line321">321: </a>            <font
+ color="#4169e1">if</font> (!isTerminated()) {<br><a name="line322">322: </a>                <font
+ color="#b22222">// Exception from the event socket is an indicator that the PDA debugger</font><br><a
+ name="line323">323: </a>                <font color="#b22222">// has exited.  Call setTerminated() in executor thread.</font><br><a
+ name="line324">324: </a>                <font color="#4169e1">try</font> {<br><a
+ name="line325">325: </a>                    getExecutor().execute(new DsfRunnable() {<br><a
+ name="line326">326: </a><strong><font color="#4169e1">                        public void run()</font></strong> {<br><a
+ name="line327">327: </a>                            setTerminated();<br><a
+ name="line328">328: </a>                        }<br><a name="line329">329: </a>                    });<br><a
+ name="line330">330: </a>                } <font color="#4169e1">catch</font> (RejectedExecutionException e) {}                <br><a
+ name="line331">331: </a>            }<br><a name="line332">332: </a>            <font
+ color="#4169e1">return</font> Status.OK_STATUS;<br><a name="line333">333: </a>        }<br><a
+ name="line334">334: </a>        <br><a name="line335">335: </a>    }<br></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<ul>
+  <li>Line 300 declares the <span style="font-style: italic;">run()</span>
+command of the event dispatch job.&nbsp; It executes this loop reading
+the events socket until the socket is closed or the PDA debugger is
+terminated</li>
+  <li>Line 308 submits a runnable to switch to the session executor
+thread.</li>
+  <li>Line 310 calls a method to process the event.<br>
+  </li>
+</ul>
+</div>
+<h3>Command/Event Listeners</h3>
+As mentioned before there are two types of listeners that can be
+registered with the comands control: <span style="font-style: italic;">event
+listners </span>and command listeners.&nbsp; The most important
+feature of these listeners, is that they are called by the command
+control <span style="font-style: italic;">synchronously</span>.&nbsp;
+As a result of this, the command listeners can expect to see the state
+of the command queue that is consistent with the event they just
+received.&nbsp; However, if clients need to modify the queue as a
+result of the event, they should only do it in a separate runnable,
+otherwise other command listeners may encounter the command control in
+an inconsistent state.<br>
+<br>
+<div style="margin-left: 20px;">
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
+ border="0" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2" rowspan="1" style="vertical-align: top;"><span
+ style="font-family: monospace; font-weight: bold;">org.eclipse.dd.examples.pda.service.PDACommandControl
+- queueCommand()</span> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 10px;">
+      <pre><a name="line337">337: </a>    public &lt;V extends ICommandResult&gt; void queueCommand(ICommand&lt;V&gt; command, DataRequestMonitor&lt;V&gt; rm) {<br><a
+ name="line338">338: </a>        <font color="#4169e1">if</font> (command instanceof AbstractPDACommand&lt;?&gt;) {<br><a
+ name="line339">339: </a>            <font color="#b22222">// Cast from command with "&lt;V extends ICommandResult&gt;" to a more concrete</font><br><a
+ name="line340">340: </a>            <font color="#b22222">// type to use internally in the command control.</font><br><a
+ name="line341">341: </a>            @SuppressWarnings(<font
+ color="#666666">"unchecked"</font>)<br><a name="line342">342: </a>            AbstractPDACommand&lt;PDACommandResult&gt; pdaCommand = (AbstractPDACommand&lt;PDACommandResult&gt;)command;<br><a
+ name="line343">343: </a>            <br><a name="line344">344: </a>            <font
+ color="#b22222">// Similarly, cast the request monitor to a more concrete type.</font><br><a
+ name="line345">345: </a>            @SuppressWarnings(<font
+ color="#666666">"unchecked"</font>)<br><a name="line346">346: </a>            DataRequestMonitor&lt;PDACommandResult&gt; pdaRM = (DataRequestMonitor&lt;PDACommandResult&gt;)rm;<br><br><a
+ name="line348">348: </a>            <font color="#b22222">// Add the command to the queue and notify command listeners.</font><br><a
+ name="line349">349: </a>            fCommandQueue.add( new CommandHandle(pdaCommand, pdaRM) );<br><a
+ name="line350">350: </a>            <font color="#4169e1">for</font> (ICommandListener listener : fCommandListeners) {<br><a
+ name="line351">351: </a>                listener.commandQueued(command);<br><a
+ name="line352">352: </a>            }<br><a name="line353">353: </a>            <br><a
+ name="line354">354: </a>            <font color="#b22222">// In a separate dispatch cycle.  This allows command listeners to repond to the </font><br><a
+ name="line355">355: </a>            <font color="#b22222">// command queued event.  </font><br><a
+ name="line356">356: </a>            getExecutor().execute(new DsfRunnable() {<br><a
+ name="line357">357: </a><strong><font color="#4169e1">                public void run()</font></strong> {<br><a
+ name="line358">358: </a>                    processQueues();<br><a
+ name="line359">359: </a>                }<br><a name="line360">360: </a>            });<br><a
+ name="line361">361: </a>            <br><a name="line362">362: </a>        } <font
+ color="#4169e1">else</font> {<br><a name="line363">363: </a>            PDAPlugin.failRequest(rm, INTERNAL_ERROR, <font
+ color="#666666">"Unrecognized command: "</font> + command);<br><a
+ name="line364">364: </a>        }<br><a name="line365">365: </a>    }<br></pre>
+      </td>
+      <td style="vertical-align: top;"> <br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<ul>
+  <li>Line 349 adds the new command to the queue.</li>
+  <li>Lines 350-352 call the command listeners to notify them of the
+new command.</li>
+  <li>Lines 356-360 submit a separate runnable to read the queue and to
+send commands to the debugger.&nbsp; The separate runnable is used to
+allow the command listeners to modify the queue as well.</li>
+</ul>
+<h3>PDAProgramDMContext</h3>
+Finally the command control also declares a Data Model context, which
+is a parent to all other contexts for a given PDA debugger
+session.&nbsp; Each command used with the command control has to
+implement the ICommand.getContext() method, which returns the context
+that the command is acting on.&nbsp; In PDA debugger, this context is
+always the <span style="font-style: italic;">PDAProgramDMContext</span>
+instance returned by <span style="font-style: italic;">PDACommandControl.getProgramDMContext()</span>.
+However in other debuggers this context can have two other functions:<br>
+<ol>
+  <li><span style="text-decoration: underline;">To identify the command
+control instnace</span> - In debugger sessions that connect to multiple
+back ends, the context can be used to identify which command control
+should process a given command.</li>
+  <li><span style="text-decoration: underline;">To help control
+debugger command protocol state</span> - The PDA debug protocol is
+stateless, which means that any command acts independently of any
+commands that came before it.&nbsp; For debuggers which do have
+protocol state, e.g. GDB/MI, the command control needs to check the
+context of each command and set the protocol by preceeding the command
+being processed with other commands.<br>
+  </li>
+</ol>
+<span style="font-weight: bold;"></span>
+<h3>PDA Commands</h3>
+To increase type safetly and make the code more readable the plain text
+PDA commands are abstracted using specific command objects.&nbsp; Below
+is an example of a command class:<br>
+<br>
+<div style="margin-left: 20px;">
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
+ border="0" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2" rowspan="1" style="vertical-align: top;"><span
+ style="font-family: monospace; font-weight: bold;">org.eclipse.dd.examples.pda.service.commands.PDADataCommand</span>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 10px;"><br>
+      </td>
+      <td style="vertical-align: top;">
+      <pre><a name="line15"> 15: </a><font color="#b22222">/**</font><br><a
+ name="line16"> 16: </a><font color="#b22222"> * Retrieves data stack information </font><br><a
+ name="line17"> 17: </a><font color="#b22222"> * </font><br><a
+ name="line18"> 18: </a><font color="#b22222"> * &lt;pre&gt;</font><br><a
+ name="line19"> 19: </a><font color="#b22222"> *    C: data</font><br><a
+ name="line20"> 20: </a><font color="#b22222"> *    R: {value 1}|{value 2}|{value 3}|...|</font><br><a
+ name="line21"> 21: </a><font color="#b22222"> * &lt;/pre&gt;</font><br><a
+ name="line22"> 22: </a><font color="#b22222"> */</font><br><a
+ name="line23"> 23: @Immutable<br> 24: </a><strong><font color="#4169e1"><a
+ name="PDADataCommand"></a>public class PDADataCommand extends AbstractPDACommand</font></strong>&lt;PDADataCommandResult&gt; {<br> 25:<br><a
+ name="line25"> 26: </a><strong><font color="#4169e1">    public PDADataCommand(PDAProgramDMContext context)</font></strong> {<br><a
+ name="line26"> 27: </a>        super(context, <font color="#666666">"data"</font>);<br><a
+ name="line27"> 28: </a>    }<br><a name="line28"> 29: </a>    <br><a
+ name="line29"> 30: </a>    @Override<br><a name="line30"> 31: </a><strong><font
+ color="#4169e1">    public PDADataCommandResult createResult(String resultText)</font></strong> {<br><a
+ name="line31"> 32: </a>        <font color="#4169e1">return</font> new PDADataCommandResult(resultText);<br><a
+ name="line32"> 33: </a>    }<br><a name="line33"> 34: </a>}<br></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<ul>
+  <li>Line 23 declares the class, using the <span
+ style="font-style: italic;">PDADataCommandResult</span> class as the
+type for the result which has to be generated by this command.</li>
+  <li>Line 31 creates and returns the PDADataCommandResult object,
+which parses the command result string.</li>
+</ul>
+Here is the corresponding data result class:<br>
+<br>
+<div style="margin-left: 20px;">
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
+ border="0" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2" rowspan="1" style="vertical-align: top;"><span
+ style="font-family: monospace; font-weight: bold;">org.eclipse.dd.examples.pda.service.commands.PDADataCommandResult</span>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 10px;"><br>
+      </td>
+      <td style="vertical-align: top;">
+      <pre><a name="line21"> 20: @Immutable<br> 21: </a><strong><font
+ color="#4169e1"><a name="PDADataCommandResult"></a>public class PDADataCommandResult extends PDACommandResult </font></strong>{<br><a
+ name="line22"> 22: </a>    <br><a name="line23"> 23: </a>    final public String[] fValues;<br><a
+ name="line24"> 24: </a>    <br><a name="line25"> 25: </a>    PDADataCommandResult(String response) {<br><a
+ name="line26"> 26: </a>        super(response);<br><a name="line27"> 27: </a>        StringTokenizer st = new StringTokenizer(response, <font
+ color="#666666">"|"</font>);<br><a name="line28"> 28: </a>        List&lt;String&gt; valuesList = new ArrayList&lt;String&gt;();<br><a
+ name="line29"> 29: </a>        <br><a name="line30"> 30: </a>        <font
+ color="#4169e1">while</font> (st.hasMoreTokens()) {<br><a name="line31"> 31: </a>            String token = st.nextToken();<br><a
+ name="line32"> 32: </a>            <font color="#4169e1">if</font> (token.length() != 0) {<br><a
+ name="line33"> 33: </a>                valuesList.add(st.nextToken());<br><a
+ name="line34"> 34: </a>            }<br><a name="line35"> 35: </a>        }<br><a
+ name="line36"> 36: </a>        <br><a name="line37"> 37: </a>        fValues = new String[valuesList.size()];<br><a
+ name="line38"> 38: </a>        <font color="#4169e1">for</font> (int i = 0; i &lt; valuesList.size(); i++) {<br><a
+ name="line39"> 39: </a>            fValues[i] = valuesList.get(i);<br><a
+ name="line40"> 40: </a>        }<br><a name="line41"> 41: </a>    }<br><a
+ name="line42"> 42: </a>}</pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<ul>
+  <li>Line 23 declares the parsed result.&nbsp; It is declared public
+but also final, protecting it from being modified by clients.<br>
+  </li>
+</ul>
+<br>
+<table
+ style="width: 95%; text-align: left; margin-left: auto; margin-right: auto; background-color: rgb(255, 255, 204); font-style: italic;"
+ border="0" cellpadding="10" cellspacing="0">
+  <tbody>
+    <tr>
+      <td style="text-align: left;">Note: Command and command results
+can be stored in a cache as keys and values.&nbsp; Making them
+immutable helps guard the integrity of these caches. </td>
+    </tr>
+  </tbody>
+</table>
+<h2><span style="font-weight: bold;"></span></h2>
+<h2><span style="font-weight: bold;">Step 3 - View Model</span></h2>
+<h3>Adapter Glue<br>
 </h3>
+<table
+ style="width: 95%; text-align: left; margin-left: auto; margin-right: auto; background-color: rgb(255, 255, 204); font-style: italic;"
+ border="0" cellpadding="10" cellspacing="0">
+  <tbody>
+    <tr>
+      <td style="text-align: left;">The adapter mechanism is something
+like the glue of Eclipse APIs, since it allows object to be associated
+with each without having any
+explicit dependencies.&nbsp; Just like glue it works best when the
+mating
+parts are clean and closely fitted together, where just a little glue
+does the job.&nbsp; If too much glue is used to put together many
+odd
+parts, the whole thing can turn into a big sticky mess that falls apart
+at the lightest touch.</td>
+    </tr>
+  </tbody>
+</table>
+<br>
+After connecting to the debugger, the next step is to get something to
+display in the debugger views.&nbsp; Flexible Hierarchy viewers depend
+heavily on the adapter mechanism to associate the presentation classes
+with the objects being presented.&nbsp; The first step to connect the
+DSF
+View Model for the debugger views is to register an adapter factory for
+the custom <span style="font-style: italic;">PDALaunch</span> object:<br>
+<br>
+<div style="margin-left: 20px;">
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
+ border="0" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2" rowspan="1" style="vertical-align: top;"><span
+ style="font-family: monospace; font-weight: bold;">org.eclipse.dd.examples.pda.ui/plugin.xml
+- PDA adapter factory declaration</span> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 10px;">
+      <pre>   &lt;extension<br>         point="org.eclipse.core.runtime.adapters"&gt;<br>      &lt;factory<br>            class="org.eclipse.dd.examples.pda.ui.PDAAdapterFactory"<br>            adaptableType="org.eclipse.dd.examples.pda.launch.PDALaunch"&gt;<br>         &lt;adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider"/&gt;<br>         &lt;adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory"/&gt;<br>      &lt;/factory&gt;<br>   &lt;/extension&gt;<br></pre>
+      </td>
+      <td style="vertical-align: top;"> <br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<br>
+The adapter factory has two jobs:<br>
+<ol>
+  <li>Return the PDAVMAdapter instance as the content provider for the
+PDALaunch element.</li>
+  <li>Register and manage the life-cycle of all other adapters required
+for a functioning debugger.</li>
+</ol>
+The first job is performed by the IAdapterFactory.getAdapter() method
+listed below:<br>
+<br>
+<div style="margin-left: 20px;">
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
+ border="0" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2" rowspan="1" style="vertical-align: top;"><span
+ style="font-family: monospace; font-weight: bold;">org.eclipse.dd.examples.pda.ui.PDAAdapterFactory
+- getAdapter()</span> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 10px;"><br>
+      </td>
+      <td style="vertical-align: top;">
+      <pre><a name="line157">157: </a><strong><font color="#4169e1">    public Object getAdapter(Object adaptableObject, Class adapterType)</font></strong> {<br><a
+ name="line158">158: </a>        <font color="#4169e1">if</font> (!(adaptableObject instanceof PDALaunch)) <font
+ color="#4169e1">return</font> null; <br><br><a name="line160">160: </a>        PDALaunch launch = (PDALaunch)adaptableObject;<br><br><a
+ name="line162">162: </a>        <font color="#b22222">// Find the correct set of adapters based on the launch.  If not found</font><br><a
+ name="line163">163: </a>        <font color="#b22222">// it means that we have a new launch, and we have to create a </font><br><a
+ name="line164">164: </a>        <font color="#b22222">// new set of adapters. </font><br><a
+ name="line165">165: </a>        LaunchAdapterSet adapterSet;<br><a
+ name="line166">166: </a>        synchronized(fLaunchAdapterSets) {<br><a
+ name="line167">167: </a>            adapterSet = fLaunchAdapterSets.get(launch);<br><a
+ name="line168">168: </a>            <font color="#4169e1">if</font> (adapterSet == null) {<br><a
+ name="line169">169: </a>                adapterSet = new LaunchAdapterSet(launch);<br><a
+ name="line170">170: </a>                fLaunchAdapterSets.put(launch, adapterSet);<br><a
+ name="line171">171: </a>            }<br><a name="line172">172: </a>        }<br><a
+ name="line173">173: </a>        <br><a name="line174">174: </a>        <font
+ color="#b22222">// Returns the adapter type for the launch object.</font><br><a
+ name="line175">175: </a>        <font color="#4169e1">if</font> (adapterType.equals(IElementContentProvider.class)) <font
+ color="#4169e1">return</font> adapterSet.fViewModelAdapter;<br><a
+ name="line176">176: </a>        <font color="#4169e1">else</font> <font
+ color="#4169e1">if</font> (adapterType.equals(IModelProxyFactory.class)) <font
+ color="#4169e1">return</font> adapterSet.fViewModelAdapter;<br><a
+ name="line177">177: </a>        <font color="#4169e1">else</font> <font
+ color="#4169e1">return</font> null;<br><a name="line178">178: </a>    }<br></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
 <ul>
-  <li>Cut and Paste<br>
+  <li>Lines 158-160 verify that the adaptable object is of correct type.</li>
+  <li>Lines 165-172 check if the given launch has been seen
+before.&nbsp; It if is a new launch, it means that new adapters need to
+be created and registered for this debug session.</li>
+  <li>Lines 175-176 Return the requested adapters for the PDALaunch
+object.<br>
   </li>
 </ul>
-<h3>PDA debugger <br>
+The LaunchAdapterSet constructor is responsible for creating and
+registering all other adapters for the new debug session.&nbsp;
+However, instead of using the platform adapter factory mechanism, the
+adapters are registered with the DSF session object and are returned as
+adapters to the Data Model's <span style="font-style: italic;">IDMContext</span>
+object.<br>
+<br>
+<div style="margin-left: 20px;">
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
+ border="0" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2" rowspan="1" style="vertical-align: top;"><span
+ style="font-family: monospace; font-weight: bold;">org.eclipse.dd.examples.pda.ui.PDAAdapterFactory.LaunchAdapterSet
+- &lt;&lt;constructor&gt;&gt;</span> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 10px;">
+      <pre><a name="line85"> 85: </a>        LaunchAdapterSet(PDALaunch launch) {<br><a
+ name="line86"> 86: </a>            <font color="#b22222">// Initialize launch and session.</font><br><a
+ name="line87"> 87: </a>            fLaunch = launch;<br><a
+ name="line88"> 88: </a>            DsfSession session = launch.getSession();<br><a
+ name="line89"> 89: </a>            <br><a name="line90"> 90: </a>            <font
+ color="#b22222">// Initialize VM</font><br><a name="line91"> 91: </a>            fViewModelAdapter = new PDAVMAdapter(session);<br><br><a
+ name="line93"> 93: </a>            <font color="#b22222">// Initialize source lookup</font><br><a
+ name="line94"> 94: </a>            fSourceDisplayAdapter = new MISourceDisplayAdapter(session, (ISourceLookupDirector)launch.getSourceLocator());<br><a
+ name="line95"> 95: </a>            session.registerModelAdapter(ISourceDisplay.class, fSourceDisplayAdapter);<br><a
+ name="line96"> 96: </a>            <br><a name="line97"> 97: </a>            <font
+ color="#b22222">// Initialize retargetable command handler.</font><br><a
+ name="line98"> 98: </a>            fStepIntoCommand = new DsfStepIntoCommand(session);<br><a
+ name="line99"> 99: </a>            fStepOverCommand = new DsfStepOverCommand(session);<br><a
+ name="line100">100: </a>            fStepReturnCommand = new DsfStepReturnCommand(session);<br><a
+ name="line101">101: </a>            fSuspendCommand = new DsfSuspendCommand(session);<br><a
+ name="line102">102: </a>            fResumeCommand = new DsfResumeCommand(session);<br><a
+ name="line103">103: </a>            fTerminateCommand = new PDATerminateCommand(session);<br><a
+ name="line104">104: </a>            session.registerModelAdapter(IStepIntoHandler.class, fStepIntoCommand);<br><a
+ name="line105">105: </a>            session.registerModelAdapter(IStepOverHandler.class, fStepOverCommand);<br><a
+ name="line106">106: </a>            session.registerModelAdapter(IStepReturnHandler.class, fStepReturnCommand);<br><a
+ name="line107">107: </a>            session.registerModelAdapter(ISuspendHandler.class, fSuspendCommand);<br><a
+ name="line108">108: </a>            session.registerModelAdapter(IResumeHandler.class, fResumeCommand);<br><a
+ name="line109">109: </a>            session.registerModelAdapter(ITerminateHandler.class, fTerminateCommand);<br><br><a
+ name="line111">111: </a>            <font color="#b22222">// Initialize debug model provider</font><br><a
+ name="line112">112: </a>            fDebugModelProvider = new IDebugModelProvider() {<br><a
+ name="line113">113: </a>                public String[] getModelIdentifiers() {<br><a
+ name="line114">114: </a>                    <font color="#4169e1">return</font> new String[] { PDAPlugin.ID_PDA_DEBUG_MODEL };<br><a
+ name="line115">115: </a>                }<br><a name="line116">116: </a>            };<br><a
+ name="line117">117: </a>            session.registerModelAdapter(IDebugModelProvider.class, fDebugModelProvider);<br><a
+ name="line118">118: </a>            <br><a name="line119">119: </a>            <font
+ color="#b22222">// Register the launch as an adapter This ensures that the launch, </font><br><a
+ name="line120">120: </a>            <font color="#b22222">// and debug model ID will be associated with all DMContexts from this </font><br><a
+ name="line121">121: </a>            <font color="#b22222">// session.  </font><br><a
+ name="line122">122: </a>            session.registerModelAdapter(ILaunch.class, fLaunch);<br><a
+ name="line123">123: </a>        }<br></pre>
+      </td>
+      <td style="vertical-align: top;"> <br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<ul>
+</ul>
+<ul>
+  <li>Line 91 creates the View Model Adapter.&nbsp; This adapter is
+used to populate the content of all the Flexible Hierarchy debugger
+views for the given PDA debugger instgance.</li>
+  <li>Line 94-95 register the source display adapter (the "MI" prefix
+is a historical left over).</li>
+  <li>Lines 98-109 register handlers for common debug commands.</li>
+  <li>Lines 112 -116 Regiter an adapter to provide debug model
+ID.&nbsp; It is used by Debug Platform to enable custom keybord
+shortcuts for the debugger.</li>
+  <li>Line 122 associates the launch object with the PDA debugger
+elements.&nbsp; This enables some actions in debug view which access
+the launch (such as <span style="font-style: italic;">Edit Source
+Lookup</span>).</li>
+</ul>
+Each adapter set is created new for each PDA debug session.&nbsp; They
+also need to be disposed when they are no longer needed.&nbsp; It could
+be expected that the adapters should be disposed when the PDA debugger
+is terminated.&nbsp; However, the terminated debug session still
+appears in the Debug view, and this requires the adapters to be
+present.&nbsp; Instead, the adapters are removed when the corresponding
+PDA launch is removed:<br>
+<br>
+<div style="margin-left: 20px;">
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
+ border="0" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2" rowspan="1" style="vertical-align: top;"><span
+ style="font-family: monospace; font-weight: bold;">org.eclipse.dd.examples.pda.ui.PDAAdapterFactory
+- launchesRemoved()</span> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 10px;"><br>
+      </td>
+      <td style="vertical-align: top;">
+      <pre><a name="line185">185: </a><strong><font color="#4169e1">    public void launchesRemoved(ILaunch[] launches)</font></strong> {<br><a
+ name="line186">186: </a>        <font color="#b22222">// Dispose the set of adapters for a launch only after the launch is </font><br><a
+ name="line187">187: </a>        <font color="#b22222">// removed from the view.  If the launch is terminated, the adapters</font><br><a
+ name="line188">188: </a>        <font color="#b22222">// are still needed to populate the contents of the view.</font><br><a
+ name="line189">189: </a>        <font color="#4169e1">for</font> (ILaunch launch : launches) {<br><a
+ name="line190">190: </a>            <font color="#4169e1">if</font> (launch instanceof PDALaunch) {<br><a
+ name="line191">191: </a>                PDALaunch pdaLaunch = (PDALaunch)launch;<br><a
+ name="line192">192: </a>                synchronized(fLaunchAdapterSets) {<br><a
+ name="line193">193: </a>                    <font color="#4169e1">if</font> ( fLaunchAdapterSets.containsKey(pdaLaunch) ) {<br><a
+ name="line194">194: </a>                        fLaunchAdapterSets.remove(pdaLaunch).dispose();<br><a
+ name="line195">195: </a>                    }<br><a name="line196">196: </a>                }<br><a
+ name="line197">197: </a>            }                <br><a
+ name="line198">198: </a>        }<br><a name="line199">199: </a>    }<br></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<h3>PDA View Model</h3>
+The PDAVMAdapter creates the VM Providers on demand for each debugger
+view it supports:<br>
+<br>
+<div style="margin-left: 20px;">
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
+ border="0" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2" rowspan="1" style="vertical-align: top;"><span
+ style="font-family: monospace; font-weight: bold;">org.eclipse.dd.examples.pda.ui.viewmodel.PDAVMAdapter
+- createViewModelProvider()</span> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 10px;"><br>
+      </td>
+      <td style="vertical-align: top;">
+      <pre><a name="line43"> 43: </a><strong><font color="#4169e1">    protected AbstractDMVMProvider createViewModelProvider(IPresentationContext context)</font></strong> {<br><a
+ name="line44"> 44: </a>        <font color="#4169e1">if</font> ( IDebugUIConstants.ID_DEBUG_VIEW.equals(context.getId()) ) {<br><a
+ name="line45"> 45: </a>            <font color="#4169e1">return</font> new PDALaunchVMProvider(this, context, getSession()); <br><a
+ name="line46"> 46: </a>        } <font color="#4169e1">else</font> <font
+ color="#4169e1">if</font> (IDebugUIConstants.ID_VARIABLE_VIEW.equals(context.getId()) ) {<br><a
+ name="line47"> 47: </a>            <font color="#4169e1">return</font> new VariableVMProvider(this, context, getSession());<br><a
+ name="line48"> 48: </a>        } <font color="#4169e1">else</font> <font
+ color="#4169e1">if</font> (IDebugUIConstants.ID_EXPRESSION_VIEW.equals(context.getId()) ) {<br><a
+ name="line49"> 49: </a>            <font color="#4169e1">return</font> new ExpressionVMProvider(this, context, getSession());<br><a
+ name="line50"> 50: </a>        } <br><a name="line51"> 51: </a>        <font
+ color="#4169e1">return</font> null;<br><a name="line52"> 52: </a>    }    <br></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<ul>
+  <li>Line 45 creates a VM Provider for the debug view.&nbsp; This
+provider is created custom for the PDA debugger.</li>
+  <li>Lines 47 and 49 create VM Providers for the <span
+ style="font-style: italic;">Variables</span> and <span
+ style="font-style: italic;">Expressions</span> views
+respectively.&nbsp; These providers are implemented in the <span
+ style="font-style: italic;">org.eclipse.dd.dsf.debug.ui</span> plugin
+and are reused here without modification.<br>
+  </li>
+</ul>
+<h3>Launch VM Provider</h3>
+"Launch" actually refers to the internal name of the Debug view.&nbsp;
+The PDA debugger has a somewhat simpler presentation in Debug view than
+most debuggers because it does not support multiple threads so it has
+the thread node shown directly below the launch node.<br>
+<br>
+<table style="text-align: left; margin-left: auto; margin-right: auto;"
+ border="0" cellpadding="5" cellspacing="30">
+  <tbody>
+    <tr>
+      <td style="text-align: center; vertical-align: middle;"><img
+ style="width: 392px; height: 231px;" title="Debug view screen capture"
+ alt="" src="launch_1.png"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><small><span
+ style="font-weight: bold;">Image 2: Debug view screen capture</span></small><br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+The PDALaunchVMProvider constructor creates the VM Nodes and arranges
+them in a hierarchy that mirrors the screen-shot in <span
+ style="font-style: italic;">Image 2</span>.<br>
+<br>
+<div style="margin-left: 20px;">
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
+ border="0" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2" rowspan="1" style="vertical-align: top;"><span
+ style="font-family: monospace; font-weight: bold;">org.eclipse.dd.examples.pda.ui.viewmodel.launch.PDALaunchVMProvider
+- &lt;&lt;constructor&gt;&gt;</span> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 10px;"><br>
+      </td>
+      <td style="vertical-align: top;">
+      <pre><a name="line50"> 50: </a><strong><font color="#4169e1">    public PDALaunchVMProvider(AbstractVMAdapter adapter, IPresentationContext presentationContext, DsfSession session)</font></strong> <br><a
+ name="line51"> 51: </a>    {<br><a name="line52"> 52: </a>        super(adapter, presentationContext, session);<br><a
+ name="line53"> 53: </a>        <br><a name="line54"> 54: </a>        IRootVMNode launchNode = new LaunchRootVMNode(this);<br><a
+ name="line55"> 55: </a>        setRootNode(launchNode);<br><br><a
+ name="line57"> 57: </a>        <font color="#b22222">// Launch node is a parent to the processes and program nodes.</font><br><a
+ name="line58"> 58: </a>        IVMNode pdaProgramNode = new PDAProgramVMNode(this, getSession());<br><a
+ name="line59"> 59: </a>        IVMNode processesNode = new StandardProcessVMNode(this);<br><a
+ name="line60"> 60: </a>        addChildNodes(launchNode, new IVMNode[] { pdaProgramNode, processesNode});<br><a
+ name="line61"> 61: </a>        <br><a name="line62"> 62: </a>        <font
+ color="#b22222">// Stack frames node is under the PDA program node.</font><br><a
+ name="line63"> 63: </a>        IVMNode stackFramesNode = new StackFramesVMNode(this, getSession());<br><a
+ name="line64"> 64: </a>        addChildNodes(pdaProgramNode, new IVMNode[] { stackFramesNode });<br><br><a
+ name="line66"> 66: </a>        <font color="#b22222">// Register the LaunchVM provider as a listener to debug and launch </font><br><a
+ name="line67"> 67: </a>        <font color="#b22222">// events.  These events are used by the launch and processes nodes.</font><br><a
+ name="line68"> 68: </a>        DebugPlugin.getDefault().addDebugEventListener(this);<br><a
+ name="line69"> 69: </a>        DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);<br><a
+ name="line70"> 70: </a>    }<br></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<ul>
+  <li>Lines 54,55 create the root node for the PDA hierarchy, which
+tracks the single PDA Launch element.</li>
+  <li>Line 58 creates the PDA program node, which tracks the single PDA
+program execution context. <br>
+  </li>
+  <li>Line 59 creates the processes node.&nbsp; This node supplies the
+elements corresponding to process objects returned by
+ILaunch.getProcesses().&nbsp; <br>
+  </li>
+  <li>Line 60 sets the program and processes nodes as children of the
+root node so that their elements appear under the launch.</li>
+  <li>Lines 63,64 add the stack frame node as a child directly under
+the program node.</li>
+  <li>Line 68 adds the Launch VM Provider as a listener to the standard
+debug model events.&nbsp; These events are used by the <span
+ style="font-style: italic;">StandardProcessVMNode</span> to update the
+processes' state.<br>
+  </li>
+  <li>Line 69 add the Launch VM Provider as a listener to the launch
+events.&nbsp; These events are used by the LaunchVMRootNode to update
+the state and content of the launch if it has been changed or
+terminated.</li>
+</ul>
+<h3>PDA Program VM Node</h3>
+<ul>
+</ul>
+<h4>Elements</h4>
+The PDA Program Node is the most complex component of the PDA View
+Model.&nbsp; It supplies an element representing the PDA program and it
+operates in three modes:<br>
+<ol>
+  <li><span style="text-decoration: underline;">Not Initialized</span>
+- After the <span style="font-style: italic;">PDALaunch</span> object
+has been created, but the services have not yet been initialized.&nbsp;
+In this mode the PDA Program is not shown in Debug view.<br>
+  </li>
+  <li><span style="text-decoration: underline;">Running</span> - After
+the PDALaunch and PDACommandControl are initialized, the <span
+ style="font-style: italic;">PDAProgramDMContext</span> object is used
+as the underlying Data Model element shown in Debug view.&nbsp; <br>
+  </li>
+  <li><span style="text-decoration: underline;">Shut down</span> -
+After a program has terminated, it is still shown in the Debug view, as
+is consistent with the established workflow.&nbsp; However, at this
+point the <span style="font-style: italic;">PDACommandControl</span>
+service is shut down and the <span style="font-style: italic;">PDAProgramDMContext</span>
+is not available.&nbsp; Hence, a separate TerminatedProgramVMContext
+wrapper element is used which does not have an underlying Data Model
+element.</li>
+</ol>
+The following two methods implement the logic of supplying the elements
+of the above modes:<br>
+<br>
+<div style="margin-left: 20px;">
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
+ border="0" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2" rowspan="1" style="vertical-align: top;"><span
+ style="font-family: monospace; font-weight: bold;">org.eclipse.dd.examples.pda.ui.viewmodel.launch.PDALaunchVMNode
+- update(IChildrenUpdate[])</span> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 10px;">
+      <pre><a name="line119">119: </a>    @Override<br><a name="line120">120: </a><strong><font
+ color="#4169e1">    public void update(IChildrenUpdate[] updates)</font></strong> {<br><a
+ name="line121">121: </a>        <font color="#4169e1">for</font> (IChildrenUpdate update : updates) {<br><a
+ name="line122">122: </a>            PDALaunch launch = findLaunchInPath(update.getElementPath());<br><a
+ name="line123">123: </a>            <font color="#4169e1">if</font> (launch != null &amp;&amp; launch.isInitialized() &amp;&amp; launch.isShutDown()) {<br><a
+ name="line124">124: </a>                <font color="#b22222">// If the debug session has been shut down, add a dummy </font><br><a
+ name="line125">125: </a>                <font color="#b22222">// VM context representing the PDA thread.</font><br><a
+ name="line126">126: </a>                update.setChild(new TerminatedProgramVMContext(getVMProvider().getVMAdapter(), this), 0);<br><a
+ name="line127">127: </a>                update.done();<br><a
+ name="line128">128: </a>            } <font color="#4169e1">else</font> {<br><a
+ name="line129">129: </a>                super.update(new IChildrenUpdate[] { update });<br><a
+ name="line130">130: </a>            }<br><a name="line131">131: </a>        }<br><a
+ name="line132">132: </a>    }<br><a name="line133">133: </a>    <br><a
+ name="line134">134: </a>    @Override<br><a name="line135">135: </a><strong><font
+ color="#4169e1">    protected void updateElementsInSessionThread(final IChildrenUpdate update)</font></strong> {<br><a
+ name="line136">136: </a>        <font color="#b22222">// Get the instance of the service.  Note that there is no race condition</font><br><a
+ name="line137">137: </a>        <font color="#b22222">// in getting the service since this method is called only in the </font><br><a
+ name="line138">138: </a>        <font color="#b22222">// service executor thread.</font><br><a
+ name="line139">139: </a>        final PDACommandControl commandControl = getServicesTracker().getService(PDACommandControl.class);<br><br><a
+ name="line141">141: </a>        <font color="#b22222">// Check if the service is available.  If it is not, no elements are </font><br><a
+ name="line142">142: </a>        <font color="#b22222">// updated.</font><br><a
+ name="line143">143: </a>        <font color="#4169e1">if</font> (commandControl == null) {<br><a
+ name="line144">144: </a>            handleFailedUpdate(update);<br><a
+ name="line145">145: </a>            <font color="#4169e1">return</font>;<br><a
+ name="line146">146: </a>        }<br><a name="line147">147: </a>        <br><a
+ name="line148">148: </a>        update.setChild(createVMContext(commandControl.getProgramDMContext()), 0);<br><a
+ name="line149">149: </a>        update.done();<br><a name="line150">150: </a>    }<br></pre>
+      </td>
+      <td style="vertical-align: top;"> <br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<br>
+<ul>
+  <li>Line 120 overrides the <span style="font-style: italic;">AbstractDMVMNode.update(IChildrenUpdate[])</span>
+update in order to update the terminated element if the PDA program is
+already terminated.&nbsp; The super-class implementation only changes
+the execution thread to the DSF session and calls <span
+ style="font-style: italic;">updateElementsInSessionThread()</span>,
+which is not needed nor possible after the PDA program is terminated.</li>
+  <li>Line 126 cretes the dummy View Model context which represents a
+terminated PDA program.</li>
+  <li>Line 135 implements the elements update method which is called in
+the DSF session thread.&nbsp; <br>
+  </li>
+  <li>Line 139 retrieves the PDACommandControl service and line 143
+confirms that it is still available.&nbsp; Normally if the DSF session
+is still active, then the service should also be available.&nbsp;
+However if the session is in the process of shutting down, this call
+may be caught in a race condition, therefore a check if service is
+available is necessary.</li>
+</ul>
+<h4>Label</h4>
+Calculating the label for the PDA program element is also split into
+two parts depending on whether the program is terminated.&nbsp;
+Similarly as when calculating the element, if the program is
+terminated, the label is calculated in the View Model thread, if the
+program is running, the execution is switched to the session executor
+thread.&nbsp; This is accomplished in the <span
+ style="font-style: italic;">update(ILabelUpdate[])</span>
+implementation:<br>
+<br>
+<div style="margin-left: 20px;">
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
+ border="0" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2" rowspan="1" style="vertical-align: top;"><span
+ style="font-family: monospace; font-weight: bold;">org.eclipse.dd.examples.pda.ui.viewmodel.launch.PDALaunchVMNode
+- </span><span style="font-family: monospace; font-weight: bold;">update(ILabelUpdate[])</span>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 10px;"><br>
+      </td>
+      <td style="vertical-align: top;">
+      <pre><a name="line152">152: </a><strong><font color="#4169e1">    public void update(final ILabelUpdate[] updates)</font></strong> {<br><a
+ name="line153">153: </a>        <font color="#4169e1">for</font> (final ILabelUpdate update : updates) {<br><a
+ name="line154">154: </a>            <font color="#4169e1">if</font> (update.getElement() instanceof TerminatedProgramVMContext) {<br><a
+ name="line155">155: </a>                <font color="#b22222">// If the element is a terminated program, update the label </font><br><a
+ name="line156">156: </a>                <font color="#b22222">// in the View Model thread.</font><br><a
+ name="line157">157: </a>                updateTerminatedThreadLabel(update);<br><a
+ name="line158">158: </a>            } <font color="#4169e1">else</font> {<br><a
+ name="line159">159: </a>                <font color="#b22222">// If the element is the PDA Program context, try to switch</font><br><a
+ name="line160">160: </a>                <font color="#b22222">// to the DSF session thread before updating the label.</font><br><a
+ name="line161">161: </a>                <font color="#4169e1">try</font> {<br><a
+ name="line162">162: </a>                    getSession().getExecutor().execute(new DsfRunnable() {<br><a
+ name="line163">163: </a><strong><font color="#4169e1">                        public void run()</font></strong> {<br><a
+ name="line164">164: </a>                            updateProgramLabelInSessionThread(update);<br><a
+ name="line165">165: </a>                        }});<br><a
+ name="line166">166: </a>                } <font color="#4169e1">catch</font> (RejectedExecutionException e) {<br><a
+ name="line167">167: </a>                    <font color="#b22222">// Acceptable race condition: DSF session terminated.</font><br><a
+ name="line168">168: </a>                    handleFailedUpdate(update);<br><a
+ name="line169">169: </a>                }<br><a name="line170">170: </a>            }<br><a
+ name="line171">171: </a>        }<br><a name="line172">172: </a>    }<br></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<ul>
+  <li>Line 153 iterates through the udptes. The
+IElementLabelProvider.update() method takes an array of updates as an
+argument to allow the implementation to process the udpates in bunches,
+improving performance.&nbsp; <br>
+  </li>
+  <li>Line 157 calls a subroutine to handle the terminated program
+label.</li>
+  <li>Lines 161-169 call a subroutine to update the active program's
+session.&nbsp; The execution thread is first changed to the session
+executor thread.</li>
+</ul>
+The <span style="font-style: italic;">updateProgramLabelInSessionThread()</span>
+is rather long, but it is useful to look at it in detail because it is
+representative of what all label providers must do.<br>
+<br>
+<div style="margin-left: 20px;">
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
+ border="0" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2" rowspan="1" style="vertical-align: top;"><span
+ style="font-family: monospace; font-weight: bold;">org.eclipse.dd.examples.pda.ui.viewmodel.launch.PDALaunchVMNode
+- updateProgramLabelInSessionThread()</span> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 10px;"><br>
+      </td>
+      <td style="vertical-align: top;">
+      <pre><a name="line174">174: </a>    @ConfinedToDsfExecutor(<font
+ color="#666666">"getSession().getExecutor()"</font>)<br><a
+ name="line175">175: </a><strong><font color="#4169e1">    private void updateProgramLabelInSessionThread(final ILabelUpdate update)</font></strong> {<br><a
+ name="line176">176: </a>        <font color="#b22222">// Get a reference to the run control service.</font><br><a
+ name="line177">177: </a>        final IRunControl runControl = getServicesTracker().getService(IRunControl.class);<br><a
+ name="line178">178: </a>        <font color="#4169e1">if</font> (runControl == null) {<br><a
+ name="line179">179: </a>            handleFailedUpdate(update);<br><a
+ name="line180">180: </a>            <font color="#4169e1">return</font>;<br><a
+ name="line181">181: </a>        }<br><a name="line182">182: </a>        <br><a
+ name="line183">183: </a>        <font color="#b22222">// Find the PDA program context.</font><br><a
+ name="line184">184: </a>        final PDAProgramDMContext programCtx = <br><a
+ name="line185">185: </a>            findDmcInPath(update.getViewerInput(), update.getElementPath(), PDAProgramDMContext.class);<br><br><a
+ name="line187">187: </a>        <font color="#b22222">// Call service to get current program state</font><br><a
+ name="line188">188: </a>        final boolean isSuspended = runControl.isSuspended(programCtx);<br><br><a
+ name="line190">190: </a>        <font color="#b22222">// Set the program icon based on the running state of the program.</font><br><a
+ name="line191">191: </a>        String imageKey = null;<br><a
+ name="line192">192: </a>        <font color="#4169e1">if</font> (isSuspended) {<br><a
+ name="line193">193: </a>            imageKey = IDebugUIConstants.IMG_OBJS_THREAD_SUSPENDED;<br><a
+ name="line194">194: </a>        } <font color="#4169e1">else</font> {<br><a
+ name="line195">195: </a>            imageKey = IDebugUIConstants.IMG_OBJS_THREAD_RUNNING;<br><a
+ name="line196">196: </a>        }<br><a name="line197">197: </a>        update.setImageDescriptor(DebugUITools.getImageDescriptor(imageKey), 0);<br><br><a
+ name="line199">199: </a>        <font color="#b22222">// Retrieve the last state chagne reason </font><br><a
+ name="line200">200: </a>        runControl.getExecutionData(<br><a
+ name="line201">201: </a>            programCtx, <br><a name="line202">202: </a>            new DataRequestMonitor&lt;IExecutionDMData&gt;(ImmediateExecutor.getInstance(), null) <br><a
+ name="line203">203: </a>            { <br><a name="line204">204: </a>                @Override<br><a
+ name="line205">205: </a><strong><font color="#4169e1">                public void handleCompleted()</font></strong>{<br><a
+ name="line206">206: </a>                    <font color="#b22222">// If the request failed, fail the udpate. </font><br><a
+ name="line207">207: </a>                    <font color="#4169e1">if</font> (!getStatus().isOK()) {<br><a
+ name="line208">208: </a>                        handleFailedUpdate(update);<br><a
+ name="line209">209: </a>                        <font color="#4169e1">return</font>;<br><a
+ name="line210">210: </a>                    }<br><a name="line211">211: </a>    <br><a
+ name="line212">212: </a>                    <font color="#b22222">// Compose the thread name string.</font><br><a
+ name="line213">213: </a>                    final StringBuilder builder = new StringBuilder(); <br><a
+ name="line214">214: </a>    <br><a name="line215">215: </a>                    builder.append(<font
+ color="#666666">"PDA ["</font>);<br><a name="line216">216: </a>                    builder.append(programCtx.getProgram());<br><a
+ name="line217">217: </a>                    builder.append(<font
+ color="#666666">"]"</font>);<br><a name="line218">218: </a>                    <br><a
+ name="line219">219: </a>                    <font color="#4169e1">if</font>(isSuspended) {<br><a
+ name="line220">220: </a>                        builder.append(<font
+ color="#666666">" (Suspended"</font>); <br><a name="line221">221: </a>                    } <font
+ color="#4169e1">else</font> {<br><a name="line222">222: </a>                        builder.append(<font
+ color="#666666">" (Running"</font>); <br><a name="line223">223: </a>                    }<br><a
+ name="line224">224: </a>                    <font color="#b22222">// Reason will be null before ContainerSuspendEvent is fired</font><br><a
+ name="line225">225: </a>                    <font color="#4169e1">if</font>(getData().getStateChangeReason() != null) {<br><a
+ name="line226">226: </a>                        builder.append(<font
+ color="#666666">" : "</font>); <br><a name="line227">227: </a>                        builder.append(getData().getStateChangeReason());<br><a
+ name="line228">228: </a>                    }<br><a name="line229">229: </a>                    builder.append(<font
+ color="#666666">")"</font>); <br><a name="line230">230: </a>                    update.setLabel(builder.toString(), 0);<br><a
+ name="line231">231: </a>                    update.done();<br><a
+ name="line232">232: </a>                }<br><a name="line233">233: </a>            });        <br><a
+ name="line234">234: </a>    }<br></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<ul>
+  <li>Line 174 declares the routine as to be called only on the session
+thread.&nbsp; Accessing services on a different thread is a violation
+of their API contract.</li>
+  <li>Lines 177-184 retrieve the <span style="font-style: italic;">IRunControl</span>
+service, always checking that the service is actually available.</li>
+  <li>Lines 184,185 retrieve the PDAProgramDMContext from the
+update.&nbsp; This context can actually be expected to be in the <span
+ style="font-style: italic;">IDMVMConext</span> wrapper returned by <span
+ style="font-style: italic;">IViewerUpdate.getElement()</span>.&nbsp;
+However the <span style="font-style: italic;">AbstractDMVMNode.findDmcInPath()</span>
+utility method searches the full tree path in the update and is
+typically used to extract the Data Model context from the update.</li>
+  <li>Line 188 retrieves the running state of the program using a
+synchronous IRunControl.isSuspended() method.</li>
+  <li>Lines 191-197 calculate and update the program icon based on the
+running state of the program.</li>
+  <li>Lines 200-233 call an asynchronous IRunControl.getExecutionData()
+method to retrieve additional information about the state of the PDA
+program.&nbsp; The label update is completed only after request monitor
+of this method is called.</li>
+  <li>Lines 207-210 perform error handling.</li>
+  <li>Lines 213-229 finally calcuate the label string for the
+program.&nbsp; <br>
+  </li>
+  <li>On line 227, The result of the <span style="font-style: italic;">getExecutionData()</span>
+call, accessed using <span style="font-style: italic;">DataRequestMonitor.getData()</span>,
+is used to fill in the reason for the current state of the program.</li>
+  <li>Line 230 writes the label to the upate.&nbsp; This call assumes
+that there is no columns in Debug view, so it uses <span
+ style="font-style: italic;">0</span> as the column index.<br>
+  </li>
+</ul>
+<h4>Delta</h4>
+Translating the Data Model events into <span
+ style="font-style: italic;">IModelDelta</span> objects that can be
+processed by the Flehible Hierarchy views, is the most complicated task
+performed by the View Model infrastructure.&nbsp; The model deltas
+require that a path be formed by the IModelDelta objects which matches
+the hierarchy elements found in the view, including such details as
+indexes of elements and their number at each level.&nbsp; Normally this
+requires that the model event handler should know the full hierarchy of
+the elements in a given view.&nbsp; However, with the DSF View Model,
+this logic is split into two parts:<br>
+<ol>
+  <li>The event handler in the VM Provider</li>
+  <li>The build delta methods in the VM Nodes.</li>
+</ol>
+The debug model event handler below is an example of the event handler
+implementation in the VM Provider.&nbsp; The event handler for Data
+Model events is already implemented in the <span
+ style="font-style: italic;">AbstractDMVMProvider</span> base class:<br>
+<br>
+<div style="margin-left: 20px;">
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
+ border="0" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2" rowspan="1" style="vertical-align: top;"><span
+ style="font-family: monospace; font-weight: bold;">org.eclipse.dd.examples.pda.ui.viewmodel.launch.PDALaunchVMProvider
+- handleDebugEvents()</span> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 10px;">
+      <pre><a name="line73"> 73: </a><strong><font color="#4169e1">    public void handleDebugEvents(final DebugEvent[] events)</font></strong> {<br><a
+ name="line74"> 74: </a>        <font color="#4169e1">if</font> (isDisposed()) <font
+ color="#4169e1">return</font>;<br><a name="line75"> 75: </a>        <br><a
+ name="line76"> 76: </a>        <font color="#b22222">// This method may be called on any thread.  Switch to the </font><br><a
+ name="line77"> 77: </a>        <font color="#b22222">// view model executor thread before processing.</font><br><a
+ name="line78"> 78: </a>        <font color="#4169e1">try</font> {<br><a
+ name="line79"> 79: </a>            getExecutor().execute(new Runnable() {<br><a
+ name="line80"> 80: </a><strong><font color="#4169e1">                public void run()</font></strong> {<br><a
+ name="line81"> 81: </a>                    <font color="#4169e1">if</font> (isDisposed()) <font
+ color="#4169e1">return</font>;<br><a name="line82"> 82: </a>    <br><a
+ name="line83"> 83: </a>                    <font color="#4169e1">for</font> (final DebugEvent event : events) {<br><a
+ name="line84"> 84: </a>                        handleEvent(event);<br><a
+ name="line85"> 85: </a>                    }<br><a name="line86"> 86: </a>                }});<br><a
+ name="line87"> 87: </a>        } <font color="#4169e1">catch</font> (RejectedExecutionException e) {<br><a
+ name="line88"> 88: </a>            <font color="#b22222">// Ignore.  This exception could be thrown if the view model is being </font><br><a
+ name="line89"> 89: </a>            <font color="#b22222">// shut down.  </font><br><a
+ name="line90"> 90: </a>        }<br><a name="line91"> 91: </a>    }<br></pre>
+      </td>
+      <td style="vertical-align: top;"> <br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<ul>
+  <li>Line 84 calls the base class <span style="font-style: italic;">handleEvent()</span>
+method which does the hard work care of calling the VM Nodes to build
+and send the delta to the views.</li>
+</ul>
+The PDA program node implements methods to add the delta nodes for its
+elements:<br>
+<br>
+<div style="margin-left: 20px;">
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
+ border="0" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2" rowspan="1" style="vertical-align: top;"><span
+ style="font-family: monospace; font-weight: bold;">org.eclipse.dd.examples.pda.ui.viewmodel.launch.PDALaunchVMNode
+- buildDelta()</span> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 10px;"><br>
+      </td>
+      <td style="vertical-align: top;">
+      <pre><a name="line265">265: </a><strong><font color="#4169e1">    public int getDeltaFlags(Object e)</font></strong> {<br><a
+ name="line266">266: </a>        <font color="#4169e1">if</font>(e instanceof IResumedDMEvent || e instanceof ISuspendedDMEvent) {<br><a
+ name="line267">267: </a>            <font color="#4169e1">return</font> IModelDelta.STATE;<br><a
+ name="line268">268: </a>        } <br><a name="line269">269: </a>        <font
+ color="#4169e1">if</font> (e instanceof PDAStartedEvent) {<br><a
+ name="line270">270: </a>            <font color="#4169e1">return</font> IModelDelta.EXPAND | IModelDelta.SELECT;<br><a
+ name="line271">271: </a>        }<br><a name="line272">272: </a>        <font
+ color="#4169e1">return</font> IModelDelta.NO_CHANGE;<br><a
+ name="line273">273: </a>    }<br>274:<br><a name="line275">275: </a><strong><font
+ color="#4169e1">    public void buildDelta(Object e, VMDelta parentDelta, int nodeOffset, RequestMonitor rm)</font></strong> {<br><a
+ name="line276">276: </a>        <font color="#4169e1">if</font>(e instanceof IResumedDMEvent || e instanceof ISuspendedDMEvent) {<br><a
+ name="line277">277: </a>            <font color="#b22222">// If a suspended/resumed event is received, just update the </font><br><a
+ name="line278">278: </a>            <font color="#b22222">// state of the program.  StackFramesVMNode will take care of </font><br><a
+ name="line279">279: </a>            <font color="#b22222">// refreshing the stack frames.</font><br><a
+ name="line280">280: </a>            parentDelta.addNode(createVMContext(((IDMEvent&lt;?&gt;)e).getDMContext()), IModelDelta.STATE);<br><a
+ name="line281">281: </a>        } <br><a name="line282">282: </a>        <font
+ color="#4169e1">if</font> (e instanceof PDAStartedEvent) {<br><a
+ name="line283">283: </a>            <font color="#b22222">// When debug session is started expand and select the program.</font><br><a
+ name="line284">284: </a>            <font color="#b22222">// If the program hits a breakpoint, the top stack frame will then</font><br><a
+ name="line285">285: </a>            <font color="#b22222">// be selected.</font><br><a
+ name="line286">286: </a>            parentDelta.addNode(createVMContext(((PDAStartedEvent)e).getDMContext()), IModelDelta.EXPAND | IModelDelta.SELECT);            <br><a
+ name="line287">287: </a>        }<br><a name="line288">288: </a>        rm.done();<br><a
+ name="line289">289: </a>    }<br><a name="line290">290: </a>}<br></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<ul>
+  <li>Lines 265-273 implement the synchronous
+IVMNode.getDeltaFlags().&nbsp; This method only needs to return what
+flags this node <span style="font-style: italic;">may</span> create
+for the given event and it is used optimize the logic of building the
+model deltas.</li>
+  <li>Line 270 tells the View Model logic that this node may add the
+IModelDelta.EXPAND and IModelDelta.SELECT flags.&nbsp; These flags are
+especially costly in calculating the delta, because they require
+calculating of indexes and element counts for all nodes in the path to
+this node.</li>
+  <li>Lines 276-281 handle the run control events.&nbsp; They tell the
+view to refresh the label of the PDA program.&nbsp; The flags needed to
+refresh the stack frames are added to the delta by the
+StackFramesVMNode.</li>
+  <li>Line 280 adds a delta element to the parent delta.&nbsp; With a
+call to <span style="font-style: italic;">AbstractDMVMNode.createVMContext()</span>,
+it creates a wrapper element based on the Data Model context contained
+in the event.&nbsp; <br>
+  </li>
+  <li>Lines 282-287 handle the started event, which is issued when the
+PDACommandControl service is initialized.&nbsp; It causes the PDA
+context to be selected.<br>
+  </li>
+  <li>Line 288 completes the execution of this asynchronous method.</li>
+</ul>
+<table
+ style="width: 95%; text-align: left; margin-left: auto; margin-right: auto; background-color: rgb(255, 255, 204); font-style: italic;"
+ border="0" cellpadding="10" cellspacing="0">
+  <tbody>
+    <tr>
+      <td style="text-align: left;">Note: In theory, each VM Node
+should only generate delta flags that only affect its own
+elements.&nbsp; In this way, the layout of the VM Nodes in a view could
+be costomized as needed.&nbsp; In practice, testing and fine-tuning of
+the view requires adjustments in the flags returned by the various VM
+Nodes in a given view. </td>
+    </tr>
+  </tbody>
+</table>
+<h2>Step 4 - Run Control</h2>
+Up to this point most of the work in creating the new PDA debugger has
+gone into infrastructure.&nbsp; Now it is time to start adding
+functionality to do some actual debugging.&nbsp; The work needed to get
+run control functionality implemented is all encapsulated in the <span
+ style="font-style: italic;">PDARunControl</span> service.<br>
+<h3>State Tracking<br>
 </h3>
+The primary function of the run control system is to track the current
+execution state of the program and to issue the corresponding events to
+the run control service clients.&nbsp; Both of these tasks are
+accomplished by the ICommandControl's IEventListner.eventReceived()
+implementation in combination with service event handlers for
+IRunControl.IResumedDMEvent and IRunControl.ISuspendedDMEvent.&nbsp; It
+may seem odd that the run control service is listening to its own
+events in order to change its internal state, but doing so guarantees
+that the execution state reported by the service is consistent with the
+events it sends out.<br>
+<br>
+<div style="margin-left: 20px;">
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
+ border="0" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2" rowspan="1" style="vertical-align: top;"><span
+ style="font-family: monospace; font-weight: bold;">org.eclipse.dd.examples.pda.service.PDARunControl
+- eventReceived()</span> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 10px;"><br>
+      </td>
+      <td style="vertical-align: top;">
+      <pre><a name="line181">181: </a><strong><font color="#4169e1">    public void eventReceived(Object output)</font></strong> {<br><a
+ name="line182">182: </a>        <font color="#4169e1">if</font> (!(output instanceof String)) <font
+ color="#4169e1">return</font>;<br><a name="line183">183: </a>        String event = (String)output;<br><a
+ name="line184">184: </a>        <br><a name="line185">185: </a>        <font
+ color="#b22222">// Handle PDA debugger suspended/resumed events and issue the </font><br><a
+ name="line186">186: </a>        <font color="#b22222">// corresponding Data Model events.  Do not update the state</font><br><a
+ name="line187">187: </a>        <font color="#b22222">// information until we start dispatching the service events.</font><br><a
+ name="line188">188: </a>        <font color="#4169e1">if</font> (event.startsWith(<font
+ color="#666666">"suspended"</font>)) {<br><a name="line189">189: </a>            IDMEvent&lt;?&gt; dmEvent = new SuspendedEvent(fCommandControl.getProgramDMContext(), event);<br><a
+ name="line190">190: </a>            getSession().dispatchEvent(dmEvent, getProperties());<br><a
+ name="line191">191: </a>        } <font color="#4169e1">else</font> <font
+ color="#4169e1">if</font> (event.startsWith(<font color="#666666">"resumed"</font>)) {<br><a
+ name="line192">192: </a>            IDMEvent&lt;?&gt; dmEvent = new ResumedEvent(fCommandControl.getProgramDMContext(), event);<br><a
+ name="line193">193: </a>            getSession().dispatchEvent(dmEvent, getProperties());<br><a
+ name="line194">194: </a>        }<br><a name="line195">195: </a>    }<br><a
+ name="line196">196: </a>    <br><a name="line197">197: </a>    <br><a
+ name="line198">198: </a>    @DsfServiceEventHandler <br><a
+ name="line199">199: </a><strong><font color="#4169e1">    public void eventDispatched(ResumedEvent e)</font></strong> {<br><a
+ name="line200">200: </a>        <font color="#b22222">// This service should be the first to receive the ResumedEvent, </font><br><a
+ name="line201">201: </a>        <font color="#b22222">// (before any other listeners are called).  Here, update the</font><br><a
+ name="line202">202: </a>        <font color="#b22222">// service state information based on the the resumed event.</font><br><a
+ name="line203">203: </a>        fSuspended = false;<br><a
+ name="line204">204: </a>        fResumePending = false;<br><a
+ name="line205">205: </a>        fStateChangeReason = e.getReason();<br><a
+ name="line206">206: </a>        fStepping = e.getReason().equals(StateChangeReason.STEP);<br><a
+ name="line207">207: </a>    }    <br>208:<br>209:<br><a name="line210">210: </a>    @DsfServiceEventHandler <br><a
+ name="line211">211: </a><strong><font color="#4169e1">    public void eventDispatched(SuspendedEvent e)</font></strong> {<br><a
+ name="line212">212: </a>        <font color="#b22222">// This service should be the first to receive the SuspendedEvent also, </font><br><a
+ name="line213">213: </a>        <font color="#b22222">// (before any other listeners are called).  Here, update the</font><br><a
+ name="line214">214: </a>        <font color="#b22222">// service state information based on the the suspended event.</font><br><a
+ name="line215">215: </a>        fStateChangeReason = e.getReason();<br><a
+ name="line216">216: </a>        fResumePending = false;<br><a
+ name="line217">217: </a>        fSuspended = true;<br><a name="line218">218: </a>        fStepping = false;<br><a
+ name="line219">219: </a>    }<br></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
 <ul>
-  <li>Cut and Paste</li>
+  <li>Lines 181-195 implement the IEventListener.eventReceived()
+method.&nbsp; This method is called any time an out of band record is
+received from the PDA debugger.&nbsp; <br>
+  </li>
+  <li>Lines 182, 183 cast the opaque output object from PDA debugger to
+a String.&nbsp; The type of this object depends on the specific
+debugger connection implementation.&nbsp; For the PDA debugger, the
+events are always a String.</li>
+  <li>Lines 188-193 generate the suspended/resumed Data Model events.</li>
+  <li>Lines 199-207 implement the ResumedEvent Data Model event
+handler.&nbsp; This handler is guaranteed to be called first by the DSF
+service event framework, before any other listeners are called. It
+updates the flags tracking the current state of the debugger.&nbsp; As
+usual, no synchronization is needed because these flags can only be
+modified in the session executor thread.</li>
+  <li>Line 205 retrieves the state change reason from the resumed
+event.&nbsp; This reason is calculated by the <span
+ style="font-style: italic;">ResumedEvent</span> constructor based on
+the event string received from the PDA debugger.</li>
+  <li>Lines 211-219 update the state flags based on the stopped event.</li>
 </ul>
-<h3>Launching <br>
-</h3>
+One remarkable aspect of the state tracking logic is the use of the <span
+ style="font-style: italic;">fResumePending</span> flag.&nbsp; This
+flag is set to true when a resume or step command is sent to the PDA
+debugger.&nbsp; It is then used by the canResume() method to disallow
+sending another resume command.&nbsp; This kind of predictive state
+logic an improve the efficiency of the IDE commands.<br>
+<br>
+<div style="margin-left: 20px;">
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
+ border="0" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2" rowspan="1" style="vertical-align: top;"><span
+ style="font-family: monospace; font-weight: bold;">org.eclipse.dd.examples.pda.service.PDARunControl
+- canResume()</span> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 10px;"><br>
+      </td>
+      <td style="vertical-align: top;">
+      <pre><a name="line222">222: </a><strong><font color="#4169e1">    public boolean canResume(IExecutionDMContext context)</font></strong> {<br><a
+ name="line223">223: </a>        <font color="#4169e1">return</font> isSuspended(context) &amp;&amp; !fResumePending;<br><a
+ name="line224">224: </a>    }<br></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<h3>Commands</h3>
+The command control commands all follow the same patter shown below by
+example of the resume() command:<br>
+<br>
+<div style="margin-left: 20px;">
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
+ border="0" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2" rowspan="1" style="vertical-align: top;"><span
+ style="font-family: monospace; font-weight: bold;">org.eclipse.dd.examples.pda.service.PDARunControl
+- resume()</span> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 10px;"><br>
+      </td>
+      <td style="vertical-align: top;">
+      <pre><a name="line238">238: </a><strong><font color="#4169e1">    public void resume(IExecutionDMContext context, final RequestMonitor rm)</font></strong> {<br><a
+ name="line239">239: </a>        assert context != null;<br>240:<br><a
+ name="line241">241: </a>        <font color="#4169e1">if</font> (canResume(context)) { <br><a
+ name="line242">242: </a>            fResumePending = true;<br><a
+ name="line243">243: </a>            fCommandControl.queueCommand(<br><a
+ name="line244">244: </a>                new PDAResumeCommand(fCommandControl.getProgramDMContext()),<br><a
+ name="line245">245: </a>                new DataRequestMonitor&lt;PDACommandResult&gt;(getExecutor(), rm) { <br><a
+ name="line246">246: </a>                    @Override<br><a
+ name="line247">247: </a><strong><font color="#4169e1">                    protected void handleErrorOrCancel()</font></strong> {<br><a
+ name="line248">248: </a>                        <font color="#b22222">// If the resume command failed, we no longer</font><br><a
+ name="line249">249: </a>                        <font color="#b22222">// expect to receive a resumed event.</font><br><a
+ name="line250">250: </a>                        fResumePending = false;<br>251:                         super.handleErrorOrCancel();<br><a
+ name="line251">252: </a>                    }<br><a name="line252">253: </a>                }<br><a
+ name="line253">254: </a>            );<br><a name="line254">255: </a>        }<font
+ color="#4169e1"> else</font> {<br><a name="line255">256: </a>            PDAPlugin.failRequest(rm, INVALID_STATE, <font
+ color="#666666">"Given context: "</font> + context + <font
+ color="#666666">", is already running."</font>);<br><a name="line256">257: </a>        }<br><a
+ name="line257">258: </a>    }<br></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
 <ul>
-  <li>Create custom launch object PDALaunch</li>
-</ul>
-<pre width="200"><a name="line51"> 51: </a><strong><font color="#4169e1">    public ILaunch getLaunch(ILaunchConfiguration configuration, String mode)</font></strong> <font
- color="#4169e1">throws</font> CoreException {<br><br><a name="line52"> 52: </a>        <font
- color="#b22222">// Need to configure the source locator before creating the launch</font><br><a
- name="line53"> 53: </a>        <font color="#b22222">// because once the launch is created and added to launch manager, </font><br><a
- name="line54"> 54: </a>        <font color="#b22222">// the adapters will be created for the whole session, including </font><br><a
- name="line55"> 55: </a>        <font color="#b22222">// the source lookup adapter.</font><br><a
- name="line56"> 56: </a>        ISourceLocator locator = getSourceLocator(configuration);<br><br><a
- name="line58"> 58: </a>        <font color="#4169e1">return</font> new PDALaunch(configuration, mode, locator);<br><a
- name="line59"> 59: </a>    }<br></pre>
-<ul>
-  <li>Creating DSF session and executor</li>
-  <li>Services Initialize Sequence</li>
-  <li>Optional diagram showing the relationship between the above</li>
-  <li>Shutting down (is hard to do)<br>
+  <li>Line 241 checks if the resume command can be called.&nbsp; If
+not, the command fails immediately.</li>
+  <li>Line 242 updates the <span style="font-style: italic;">fResumePending</span>
+state flag.</li>
+  <li>Lines 244-253 send the resume command to the PDA debugger. <br>
+  </li>
+  <li>Lines 247-252 adds error handling in case the result command
+fails.&nbsp; It resotres the service state.</li>
+  <li>Line 251 calls the super class's handleErrorOrCancel()
+method.&nbsp; The super class relays the error status to the parent
+request monitor and completes it.<br>
   </li>
 </ul>
-<h3>Connecting <br>
-</h3>
-<ul>
-  <li>First service, mechanics of DSF services?</li>
-  <li>Sockets, queues, synchronization</li>
-  <li>Diagram showing relationship of different command control
-components<br>
-  </li>
-  <li>Event and command listeners<br>
-  </li>
-</ul>
-<h3><span style="font-weight: bold;">View Model</span></h3>
-<ul>
-  <li>The adapter glue</li>
-  <li>View Model components<br>
-  </li>
-  <li>Launch view VM provider</li>
-  <li>Program VM Node<br>
-  </li>
-</ul>
-<h3>Run Control</h3>
 <ul>
   <li>Second service, depends on command control</li>
   <li>Tracking program running state <br>
   </li>
 </ul>
-<h3>Breakpoints</h3>
+<h3>IExecutionDMData</h3>
+There is very little data that the run control servie interface returns
+for a given execution context.&nbsp; The intention behind this is to
+allow the service to remain very generic and thus applicable to any
+debugger.&nbsp; In specific debuggers, additional data about processes,
+threads, cores, etc, should be retrieved from other services or service
+extensions.&nbsp; IExpressionDMData is the only object which is
+retrieved asynchronously from the run control service, and it only
+contains the state change reason for the last debugger state
+change.&nbsp; <br>
+<h2>Step 5 - Breakpoints</h2>
+Managing breakpoints is one of the complicated tasks that need to be
+implemented by Eclipse debuggers.&nbsp; The source of this complexity
+is the fact that Eclipse breakpoints (IDE breakpoints) are managed
+independently of breakpoints that are installed in the debugger
+(target-side breakpoints).&nbsp; The Eclipse debugger integration has
+to keep these two sets of breakpoints synchronized.&nbsp; <br>
+<h3>IDE Breakpoints</h3>
+Eclipse breakpoints are based on markers, which are special tags in the
+Eclispe resource system and are associated with files and
+folders.&nbsp; By using markers, breakpoints gain the benefit of the
+resource system synchronization mechanism and the automatic
+persistence.&nbsp; Also some other cool features such as adjusting the
+breakpoint line number when the source file is edited, are also
+automatically gained by using markers.&nbsp; <br>
+<p>An eclipse breakpoint declaration comes in three parts:<br>
+</p>
+<ol>
+  <li>org.eclipse.core.resources.markers extension - A debugger must
+use this extension to declare a marker type for the new
+breakpoint.&nbsp; Markers are hierarchical and a breakpoint should have
+one of the platform breakpoint objects as a super type.</li>
+  <li>org.eclipse.debug.core.breakpoints extension - A breakpoint must
+be declared using this extension point, which requires a valid marker
+type.</li>
+  <li>org.eclipse.debug.core.model.IBreakpoint implementation - A
+breakpoint object must implement this interface.</li>
+</ol>
+Finally, in order to have breakpoints to appear in the Breakpoints
+view, they need to be registered with the breakpoint manager, which is
+represented by the org.eclipse.debug.core.IBreakpointManager
+interface.&nbsp; The breakpoint manager also relays events for
+notifying of breakpoint changes and for a debugger it is the central
+object used to find the IDE breakpoints that need to be installed on
+target.<br>
+<br>
+Code listings are omitted here since implementing Eclipse breakpoints
+is described in fine detail the <a style="font-style: italic;"
+ href="http://www.eclipse.org/articles/Article-Debugger/how-to.html">How
+to write an Eclipse debugger</a> article.<br>
+<p> </p>
+<h3>Target-Side Breakpoints</h3>
+DSF defines the IBreakpoints interface for a service which the fuctions
+of managing breakpoints installed on the target.&nbsp; These functions
+include:<br>
+<ul>
+  <li>Installing a breakpoint<br>
+  </li>
+  <li>removing a breakpoint</li>
+  <li>changing breakpoint attributes (if supported)</li>
+  <li>listing installed breakpoints</li>
+  <li>retrieving breakpoint detailed data</li>
+</ul>
+<h4>Breakpoint Context<br>
+</h4>
+It is expected that primary client of this service is going to be
+another service which reads IDE Breakpoints, however under certain
+circumstances such as launching or testing, this interface could be
+used by other clients, therefore it is desirable that the interface
+itself should not have any dependencies on the IDE Breakpoint
+API.&nbsp; To remain generic, the attributes for breakpoints to be
+created or update are specified using a simple property bag of type: <span
+ style="font-style: italic;">Map&lt;String, Object&gt;</span>.&nbsp;
+After the target-side breakpoint is created, it is represented using an
+opaque Data Model context of type <span style="font-style: italic;">IBreakpointDMContext</span>.&nbsp;
+As an example the PDA line breakpoint context implementation is the
+following:<br>
+<br>
+<div style="margin-left: 20px;">
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
+ border="0" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2" rowspan="1" style="vertical-align: top;"><span
+ style="font-family: monospace; font-weight: bold;">org.eclipse.dd.examples.pda.service.PDABreakpoints
+- BreakpointDMContext</span> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 10px;"><br>
+      </td>
+      <td style="vertical-align: top;">
+      <pre><a name="line50"> 50: </a>    private static class BreakpointDMContext extends AbstractDMContext implements IBreakpointDMContext {<br> 51:<br><a
+ name="line52"> 52: </a>        final Integer fLine;<br> 53:<br><a
+ name="line54"> 54: </a><strong><font color="#4169e1">        public BreakpointDMContext(String sessionId, PDAProgramDMContext commandControlCtx, Integer line)</font></strong> {<br><a
+ name="line55"> 55: </a>            super(sessionId, new IDMContext[] { commandControlCtx });<br><a
+ name="line56"> 56: </a>            fLine = line;<br><a name="line57"> 57: </a>        }<br> 58:<br><a
+ name="line59"> 59: </a>        @Override<br><a name="line60"> 60: </a><strong><font
+ color="#4169e1">        public boolean equals(Object obj)</font></strong> {<br><a
+ name="line61"> 61: </a>            <font color="#4169e1">return</font> baseEquals(obj) &amp;&amp; (fLine.equals(((BreakpointDMContext) obj).fLine));<br><a
+ name="line62"> 62: </a>        }<br> 63:<br><a name="line64"> 64: </a>        @Override<br><a
+ name="line65"> 65: </a><strong><font color="#4169e1">        public int hashCode()</font></strong> {<br><a
+ name="line66"> 66: </a>            <font color="#4169e1">return</font> baseHashCode() + fLine.hashCode();<br><a
+ name="line67"> 67: </a>        }<br> 68:<br><a name="line69"> 69: </a>        @Override<br><a
+ name="line70"> 70: </a><strong><font color="#4169e1">        public String toString()</font></strong> {<br><a
+ name="line71"> 71: </a>            <font color="#4169e1">return</font> baseToString() + <font
+ color="#666666">".breakpoint("</font> + fLine + <font color="#666666">")"</font>;  <font
+ color="#b22222">//$NON-NLS-1$//$NON-NLS-2$*/</font><br><a name="line72"> 72: </a>        }<br><a
+ name="line73"> 73: </a>    }<br><br></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<ul>
+  <li>Line 52 declares the fLine variable, which uniquely identifies a
+line breakpoint in a PDA debug session.</li>
+</ul>
+It is also important to note that the IBreakpoints interface is
+designed to work with debuggers that can track separate breakpoint sets
+for different cores/processes/threads.&nbsp; Each context which
+represents a "breakpoint space" must implement an <span
+ style="font-style: italic;">IBreakpointsTargetDMContext</span>
+interface, which is then used as a parent context of the <span
+ style="font-style: italic;">IBreakpointDMContext</span> object
+instances.<br>
+<h4>Inserting a Breakpoint</h4>
+PDA debugger supports two types of breakpoints.&nbsp; The
+IBreakpoints.insertBreakpoint() implementation performs the task of
+what type of breakpoint should be installed and delegates to the proper
+subroutine:<br>
+<br>
+<div style="margin-left: 20px;">
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
+ border="0" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2" rowspan="1" style="vertical-align: top;"><span
+ style="font-family: monospace; font-weight: bold;">org.eclipse.dd.examples.pda.service.PDABreakpoints
+- insertBreakpoint()</span> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 10px;"><br>
+      </td>
+      <td style="vertical-align: top;">
+      <pre><a name="line180">180: </a>        public void insertBreakpoint(IBreakpointsTargetDMContext context, Map&lt;String, Object&gt; attributes, <br><a
+ name="line181">181: </a>            DataRequestMonitor&lt;IBreakpointDMContext&gt; rm) <br><a
+ name="line182">182: </a>        {<br><a name="line183">183: </a>            Boolean enabled = (Boolean)attributes.get(IBreakpoint.ENABLED);<br><a
+ name="line184">184: </a>            <font color="#4169e1">if</font> (enabled != null &amp;&amp; !enabled.booleanValue()) {<br><a
+ name="line185">185: </a>                <font color="#b22222">// If the breakpoint is disabled, just fail the request. </font><br><a
+ name="line186">186: </a>                PDAPlugin.failRequest(rm, REQUEST_FAILED, <font
+ color="#666666">"Breakpoint is disabled"</font>);<br><a name="line187">187: </a>            } <font
+ color="#4169e1">else</font> {<br><a name="line188">188: </a>                String type = (String) attributes.get(ATTR_BREAKPOINT_TYPE);<br><a
+ name="line189">189: </a>    <br><a name="line190">190: </a>                <font
+ color="#4169e1">if</font> (PDA_LINE_BREAKPOINT.equals(type)) {<br><a
+ name="line191">191: </a>                    <font color="#b22222">// Retrieve the PDA program context from the context given in the </font><br><a
+ name="line192">192: </a>                    <font color="#b22222">// argument.  This service is typically only called by the </font><br><a
+ name="line193">193: </a>                    <font color="#b22222">// breakpoints mediator, which was called with the program context</font><br><a
+ name="line194">194: </a>                    <font color="#b22222">// in the services initialization sequence.  So checking if </font><br><a
+ name="line195">195: </a>                    <font color="#b22222">// programCtx != null is mostly a formality.</font><br><a
+ name="line196">196: </a>                    PDAProgramDMContext programCtx = DMContexts.getAncestorOfType(context, PDAProgramDMContext.class);<br><a
+ name="line197">197: </a>                    <font color="#4169e1">if</font> (programCtx != null) {<br><a
+ name="line198">198: </a>                        doInsertBreakpoint(programCtx, attributes, rm);<br><a
+ name="line199">199: </a>                    } <font color="#4169e1">else</font> {<br><a
+ name="line200">200: </a>                        PDAPlugin.failRequest(rm, INVALID_HANDLE, <font
+ color="#666666">"Unknown breakpoint type"</font>);<br><a name="line201">201: </a>                    }<br><a
+ name="line202">202: </a>                }<br><a name="line203">203: </a>                <font
+ color="#4169e1">else</font> <font color="#4169e1">if</font> (PDA_WATCHPOINT.equals(type)) {<br><a
+ name="line204">204: </a>                    doInsertWatchpoint(attributes, rm);<br><a
+ name="line205">205: </a>                }<br><a name="line206">206: </a>                <font
+ color="#4169e1">else</font> {<br><a name="line207">207: </a>                    PDAPlugin.failRequest(rm, REQUEST_FAILED, <font
+ color="#666666">"Unknown breakpoint type"</font>);<br><a name="line208">208: </a>                }<br><a
+ name="line209">209: </a>            }<br><a name="line210">210: </a>        }</pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<ul>
+  <li>Lines 183-186 determine if the breakpoint is enabled.&nbsp; If it
+is not, the insert command fails with an expected error.&nbsp; <br>
+  </li>
+  <li>Line 188 retrieves the breakpoint type attribute, shich is used
+to determine which breakpoint insert subroutine to call.</li>
+  <li>Line 196 retrieves the <span style="font-style: italic;">PDAProgramDMContext</span>
+from the breakpoint target context.&nbsp; This context is the only
+breakpoints target context in the PDA debugger.</li>
+  <li>Finally, lines 198 and 207 delegate to the proper subroutine to
+create the breakpoint.</li>
+</ul>
+The doInserBreakpoint() subroutine is listed next:<br>
+<br>
+<div style="margin-left: 20px;">
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
+ border="0" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2" rowspan="1" style="vertical-align: top;"><span
+ style="font-family: monospace; font-weight: bold;">org.eclipse.dd.examples.pda.service.PDABreakpoints
+- doInsertBreakpoint()</span> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 10px;"><br>
+      </td>
+      <td style="vertical-align: top;">
+      <pre><a name="line212">212: </a>    private void doInsertBreakpoint(PDAProgramDMContext programCtx, final Map&lt;String, Object&gt; attributes, final DataRequestMonitor&lt;IBreakpointDMContext&gt; rm) <br><a
+ name="line213">213: </a>    {<br><a name="line214">214: </a>        <font
+ color="#b22222">// Compare the program path in the breakpoint with the path in the PDA </font><br><a
+ name="line215">215: </a>        <font color="#b22222">// program context. Only insert the breakpoint if the program matches. </font><br><a
+ name="line216">216: </a>        String program = (String)attributes.get(ATTR_PROGRAM_PATH);<br><a
+ name="line217">217: </a>        <font color="#4169e1">if</font> (!programCtx.getProgram().equals(program)) {<br><a
+ name="line218">218: </a>            PDAPlugin.failRequest(rm, REQUEST_FAILED, <font
+ color="#666666">"Invalid file name"</font>);<br><a name="line219">219: </a>            <font
+ color="#4169e1">return</font>;<br><a name="line220">220: </a>        }<br><br><a
+ name="line222">222: </a>        <font color="#b22222">// Retrieve the line.</font><br><a
+ name="line223">223: </a>        Integer line = (Integer)attributes.get(IMarker.LINE_NUMBER);<br><a
+ name="line224">224: </a>        <font color="#4169e1">if</font> (line == null) {<br><a
+ name="line225">225: </a>            PDAPlugin.failRequest(rm, REQUEST_FAILED, <font
+ color="#666666">"No breakpoint line specified"</font>);<br><a
+ name="line226">226: </a>            <font color="#4169e1">return</font>;<br><a
+ name="line227">227: </a>        }<br><br><a name="line229">229: </a>        <font
+ color="#b22222">// Create a new breakpoint context object and check that it's not </font><br><a
+ name="line230">230: </a>        <font color="#b22222">// installed already. PDA can only track a single breakpoint at a </font><br><a
+ name="line231">231: </a>        <font color="#b22222">// given line, attempting to set the second breakpoint should fail.</font><br><a
+ name="line232">232: </a>        final BreakpointDMContext breakpointCtx = <br><a
+ name="line233">233: </a>            new BreakpointDMContext(getSession().getId(), fCommandControl.getProgramDMContext(), line);<br><a
+ name="line234">234: </a>        <font color="#4169e1">if</font> (fBreakpoints.contains(breakpointCtx)) {<br><a
+ name="line235">235: </a>            PDAPlugin.failRequest(rm, REQUEST_FAILED, <font
+ color="#666666">"Breakpoint already set"</font>);<br><a name="line236">236: </a>            <font
+ color="#4169e1">return</font>;<br><a name="line237">237: </a>        }<br><br><a
+ name="line239">239: </a>        <font color="#b22222">// Add the new breakpoint context to the list of known breakpoints.  </font><br><a
+ name="line240">240: </a>        <font color="#b22222">// Adding it here, before the set command is completed will prevent </font><br><a
+ name="line241">241: </a>        <font color="#b22222">// a possibility of a second breakpoint being installed in the same </font><br><a
+ name="line242">242: </a>        <font color="#b22222">// location while this breakpoint is being processed.  It will also</font><br><a
+ name="line243">243: </a>        <font color="#b22222">// allow the breakpoint to be removed or updated even while it is </font><br><a
+ name="line244">244: </a>        <font color="#b22222">// still being processed here.</font><br><a
+ name="line245">245: </a>        fBreakpoints.add(breakpointCtx);<br><a
+ name="line246">246: </a>        fCommandControl.queueCommand(<br><a
+ name="line247">247: </a>            new PDASetBreakpointCommand(fCommandControl.getProgramDMContext(), line), <br><a
+ name="line248">248: </a>            new DataRequestMonitor&lt;PDACommandResult&gt;(getExecutor(), rm) {<br><a
+ name="line249">249: </a>                @Override<br><a name="line250">250: </a><strong><font
+ color="#4169e1">                protected void handleOK()</font></strong> {<br><a
+ name="line251">251: </a>                    rm.setData(breakpointCtx);<br><a
+ name="line252">252: </a>                    rm.done();<br><a
+ name="line253">253: </a>                }<br><br><a name="line255">255: </a>                @Override<br><a
+ name="line256">256: </a><strong><font color="#4169e1">                protected void handleErrorOrCancel()</font></strong> {<br><a
+ name="line257">257: </a>                    <font color="#b22222">// If inserting of the breakpoint failed, remove it from</font><br><a
+ name="line258">258: </a>                    <font color="#b22222">// the set of installed breakpoints.</font><br><a
+ name="line259">259: </a>                    fBreakpoints.remove(breakpointCtx);<br><a
+ name="line260">260: </a>                    super.handleErrorOrCancel();<br><a
+ name="line261">261: </a>                }<br><a name="line262">262: </a>            });<br><a
+ name="line263">263: </a>    }<br><br></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<h4>Removing a Breakpoint</h4>
+The PDABreakpoints.removeBreakpoint() command takes the
+IBreakpointDMContext as an argument, but otherwise follows the same
+general logic as the insertBreakpoint() implementation.<br>
+<h4>Updating a Breakpoint</h4>
+Updating a breakpoint involves motifying some of the attributes of an
+existing breakpoint.&nbsp; Not all debuggers may support this
+functionality and for debuggers that do, not all types of breakpoints
+and not all attributes may be updated.&nbsp; The IBreakpoints interface
+does not provide a way for the clients to discover what breakpoints and
+what attributes may be updated.&nbsp; It is up to the client to know
+this information in advance.&nbsp; <br>
+<p>The PDA debugger allows watchpoints to be updated, but only with
+respect to what operations may trigger the watchpoint:<br>
+</p>
+<div style="margin-left: 20px;">
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
+ border="0" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2" rowspan="1" style="vertical-align: top;"><span
+ style="font-family: monospace; font-weight: bold;">org.eclipse.dd.examples.pda.service.PDABreakpoints
+- updateBreakpoint()</span> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 10px;"><br>
+      </td>
+      <td style="vertical-align: top;">
+      <pre><a name="line367">367: </a>    public void updateBreakpoint(final IBreakpointDMContext bpCtx, Map&lt;String, Object&gt; attributes, final RequestMonitor rm) {<br><a
+ name="line368">368: </a>        <font color="#4169e1">if</font> (!fBreakpoints.contains(bpCtx)) {<br><a
+ name="line369">369: </a>            PDAPlugin.failRequest(rm, REQUEST_FAILED, <font
+ color="#666666">"Breakpoint not installed"</font>);<br><a
+ name="line370">370: </a>            <font color="#4169e1">return</font>;<br><a
+ name="line371">371: </a>        }<br><br><a name="line373">373: </a>        <font
+ color="#4169e1">if</font> (bpCtx instanceof BreakpointDMContext) {<br><a
+ name="line374">374: </a>            PDAPlugin.failRequest(rm, NOT_SUPPORTED, <font
+ color="#666666">"Modifying PDA breakpoints is not supported"</font>);<br><a
+ name="line375">375: </a>        } <font color="#4169e1">else</font> <font
+ color="#4169e1">if</font> (bpCtx instanceof WatchpointDMContext) {<br><a
+ name="line376">376: </a>            WatchpointDMContext wpCtx = (WatchpointDMContext)bpCtx;<br><a
+ name="line377">377: </a>            <font color="#4169e1">if</font> (!wpCtx.fFunction.equals(attributes.get(PDAWatchpoint.FUNCTION_NAME)) || <br><a
+ name="line378">378: </a>                !wpCtx.fVariable.equals(attributes.get(PDAWatchpoint.VAR_NAME)) )<br><a
+ name="line379">379: </a>            {<br><a name="line380">380: </a>                PDAPlugin.failRequest(rm, REQUEST_FAILED, <font
+ color="#666666">"Cannot modify watchpoint function or variable"</font>);<br><a
+ name="line381">381: </a>                <font color="#4169e1">return</font>;<br><a
+ name="line382">382: </a>            }<br><a name="line383">383: </a>            <br><a
+ name="line384">384: </a>            <font color="#b22222">// PDA debugger can only track one watchpoint in the same location, </font><br><a
+ name="line385">385: </a>            <font color="#b22222">// so we can simply remove the existing context from the set and </font><br><a
+ name="line386">386: </a>            <font color="#b22222">// call insert again.  </font><br><a
+ name="line387">387: </a>            fBreakpoints.remove(bpCtx);<br><a
+ name="line388">388: </a>            doInsertWatchpoint(<br><a
+ name="line389">389: </a>                attributes, <br><a
+ name="line390">390: </a>                new DataRequestMonitor&lt;IBreakpointDMContext&gt;(getExecutor(), rm) {<br><a
+ name="line391">391: </a>                    @Override<br><a
+ name="line392">392: </a><strong><font color="#4169e1">                    protected void handleOK()</font></strong> {<br><a
+ name="line393">393: </a>                        <font color="#b22222">// The inserted watchpoint context will equal the </font><br><a
+ name="line394">394: </a>                        <font color="#b22222">// current context.</font><br><a
+ name="line395">395: </a>                        assert bpCtx.equals(getData());<br><a
+ name="line396">396: </a>                        rm.done();<br><a
+ name="line397">397: </a>                    }<br><a name="line398">398: </a>                });<br><a
+ name="line399">399: </a>        } <font color="#4169e1">else</font> {<br><a
+ name="line400">400: </a>            PDAPlugin.failRequest(rm, INVALID_HANDLE, <font
+ color="#666666">"Invalid breakpoint"</font>);<br><a name="line401">401: </a>        }<br><a
+ name="line402">402: </a>    }<br><br></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<ul>
+  <li>Lines 368-371 verify that the given breakpoint exists.&nbsp; If
+it does not exist the update request fails.&nbsp; <br>
+  </li>
+  <li>Lines 377-382 verify that only the data access attributes of the
+watchpoint were modified.</li>
+  <li>Lines 387 -398 re-insert the watchpoint which effectively updates
+the watchpoint attributes.<br>
+  </li>
+</ul>
 <ul>
   <li>Target Side Breakpoints</li>
   <li>Mediator</li>
   <li>Diagram showing Mediator's role<br>
   </li>
 </ul>
-<h3>Stack</h3>
+<h2>Step 6 - Stack</h2>
 <ul>
   <li>Command Cache at work<br>
   </li>
 </ul>
-<h3>Source Display</h3>
+<h2>Step 7 - Source Display</h2>
 <ul>
   <li>Source lookup director<br>
   </li>
 </ul>
-<h3>Variables</h3>
+<h2>Step 8 - Variables</h2>
 <ul>
   <li>Reading and writing variables<br>
   </li>
@@ -150,5 +2232,23 @@ components<br>
   <li>Expressions view<br>
   </li>
 </ul>
+<div style="margin-left: 20px;">
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
+ border="0" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2" rowspan="1" style="vertical-align: top;"><span
+ style="font-family: monospace; font-weight: bold;">org.eclipse.dd.examples.dsf.timers.TimersVMNode</span>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 10px;"><br>
+      </td>
+      <td style="vertical-align: top;"> <br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
 </body>
 </html>

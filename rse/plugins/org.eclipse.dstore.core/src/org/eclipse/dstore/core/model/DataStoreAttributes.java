@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * David McKnight (IBM) - update version to 9.0.0
+ * David McKnight (IBM) - [220892] version back to 8.1.0 since protocol hasn't changed
  ********************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -25,7 +26,7 @@ package org.eclipse.dstore.core.model;
 public class DataStoreAttributes
 {
 
-	public static final String DATASTORE_VERSION = "DataStore.9.0.0"; //$NON-NLS-1$
+	public static final String DATASTORE_VERSION = "DataStore.8.1.0"; //$NON-NLS-1$
 
 	public static final int A_PLUGIN_PATH = 0;
 	public static final int A_ROOT_NAME = 1;

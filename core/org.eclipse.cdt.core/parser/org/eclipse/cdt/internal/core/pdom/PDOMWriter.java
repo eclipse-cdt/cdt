@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.core.pdom;
 
 import java.util.ArrayList;
@@ -199,11 +198,9 @@ abstract public class PDOMWriter {
 					} catch (RuntimeException e) {
 						stati.add(CCorePlugin.createStatus(
 								NLS.bind(Messages.PDOMWriter_errorWhileParsing, ifl.getURI().getPath()), e));
-						break;
 					} catch (PDOMNotImplementedError e) {
 						stati.add(CCorePlugin.createStatus(
 								NLS.bind(Messages.PDOMWriter_errorWhileParsing, ifl.getURI().getPath()), e));
-						break;
 					}
 					if (i<ifls.length-1) {
 						updateFileCount(0, 0, 1); // update header count

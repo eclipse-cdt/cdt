@@ -626,12 +626,17 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		}
 		
 		IIndexFileLocation[] ifls= orderedIFLs.toArray(new IIndexFileLocation[orderedIFLs.size()]);
-		addSymbols(ast, ifls, fIndex, 1, false, configHash, fTodoTaskUpdater, pm);
-		for (IIndexFileLocation ifl : ifls) {
-			info= getFileInfo(linkageID, ifl);
-			assert info != null;
-			if (info != null) {
-				info.fIsUpdated= true;
+		try {
+			addSymbols(ast, ifls, fIndex, 1, false, configHash, fTodoTaskUpdater, pm);
+		}
+		finally {
+			// mark as updated in any case, to avoid parsing files that caused an exception to be thrown.
+			for (IIndexFileLocation ifl : ifls) {
+				info= getFileInfo(linkageID, ifl);
+				assert info != null;
+				if (info != null) {
+					info.fIsUpdated= true;
+				}
 			}
 		}
 	}

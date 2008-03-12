@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.core.pdom;
 
 import java.util.ArrayList;
@@ -214,11 +213,11 @@ abstract public class PDOMWriter {
 						} catch (RuntimeException e) {
 							stati.add(CCorePlugin.createStatus(
 									NLS.bind(Messages.PDOMWriter_errorWhileParsing, path.getURI().getPath()), e));
-							break;
+							file= index.getWritableFile(path);
 						} catch (PDOMNotImplementedError e) {
 							stati.add(CCorePlugin.createStatus(
 									NLS.bind(Messages.PDOMWriter_errorWhileParsing, path.getURI().getPath()), e));
-							break;
+							file= index.getWritableFile(path);
 						}
 						boolean wasRequested= postAddToIndex(path, file);
 

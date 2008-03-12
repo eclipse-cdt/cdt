@@ -200,10 +200,10 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 						}
 					}
 				}
-				if (statement instanceof IASTForStatement ||
-						statement instanceof IASTWhileStatement ||
-						statement instanceof IASTDoStatement ||
-						statement instanceof IASTSwitchStatement) {
+				if (statement instanceof IASTForStatement
+						|| statement instanceof IASTWhileStatement
+						|| statement instanceof IASTDoStatement
+						|| statement instanceof IASTSwitchStatement) {
 					fl = statement.getFileLocation();
 					mr.setLength(fl.getNodeLength());
 					mr.setOffset(fl.getNodeOffset());
@@ -228,13 +228,16 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 				final IASTFunctionDeclarator declarator = ((IASTFunctionDefinition)declaration).getDeclarator();
 				if (declarator != null) {
 					fFunction= new String(declarator.getName().toCharArray());
+					fLevel= 0;
 				}
 			}
 			return PROCESS_CONTINUE;
 		}
 
 		public int leave(IASTDeclaration declaration) {
-			fFunction= ""; //$NON-NLS-1$
+			if (declaration instanceof IASTFunctionDefinition) {
+				fFunction= ""; //$NON-NLS-1$
+			}
 			return PROCESS_CONTINUE;
 		}
 

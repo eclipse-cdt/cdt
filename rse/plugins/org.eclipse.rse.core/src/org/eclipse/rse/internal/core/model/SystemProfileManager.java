@@ -18,6 +18,7 @@
  * Yu-Fen Kuo (MontaVista) - [189271] [team] New Profile's are always active
  *                         - [189219] [team] Inactive Profiles become active after workbench restart
  * David Dykstal (IBM) - [197036] added implementation of run() for commit transaction support
+ * David Dykstal (IBM) - [222376] NPE if starting on a workspace with an old mark and a renamed default profile
  *******************************************************************************/
 
 package org.eclipse.rse.internal.core.model;
@@ -45,6 +46,7 @@ public class SystemProfileManager implements ISystemProfileManager {
 	private static SystemProfileManager singleton = null;
 	private boolean restoring = false; 
 	private boolean active = true;
+	private ISystemProfile defaultProfile = null;
 
 	/**
 	 * Ordinarily there should be only one instance of a SystemProfileManager
@@ -253,18 +255,16 @@ public class SystemProfileManager implements ISystemProfileManager {
 		String oldName = profile.getName();
 		boolean isActive = isSystemProfileActive(oldName);
 		_profiles.remove(profile);
-		/* FIXME in EMF the profiles are "owned" by the Resource, and only referenced by the profile manager,
-		 * so just removing it from the manager is not enough, it must also be removed from its resource.
-		 * No longer needed since EMF is not in use.
-		 * Resource res = profile.eResource();
-		 * if (res != null)
-		 * res.getContents().remove(profile);
-		 */
-		if (isActive) RSEPreferencesManager.deleteActiveProfile(oldName);
-//		invalidateCache();
+		if (isActive) {
+			RSEPreferencesManager.deleteActiveProfile(oldName);
+		}
 		if (persist) {
 			IRSEPersistenceProvider provider = profile.getPersistenceProvider();
 			RSECorePlugin.getThePersistenceManager().deleteProfile(provider, oldName);
+		}
+		if (profile == defaultProfile) {
+			defaultProfile = null;
+			ensureDefaultPrivateProfile();
 		}
 	}
 
@@ -420,7 +420,7 @@ public class SystemProfileManager implements ISystemProfileManager {
 	 * @see org.eclipse.rse.core.model.ISystemProfileManager#getDefaultPrivateSystemProfile()
 	 */
 	public ISystemProfile getDefaultPrivateSystemProfile() {
-		return getSystemProfile(RSEPreferencesManager.getDefaultPrivateSystemProfileName());
+		return defaultProfile;
 	}
 
 	/* (non-Javadoc)
@@ -454,6 +454,7 @@ public class SystemProfileManager implements ISystemProfileManager {
 		String initProfileName = RSEPreferencesManager.getDefaultPrivateSystemProfileName();
 		ISystemProfile profile = internalCreateSystemProfile(initProfileName);
 		profile.setDefaultPrivate(true);
+		defaultProfile = profile;
 	}
 
 	private ISystemProfile internalCreateSystemProfile(String name) {
@@ -463,36 +464,41 @@ public class SystemProfileManager implements ISystemProfileManager {
 		return profile;
 	}
 
+	/**
+	 * Ensure that one profile is always the default profile
+	 */
 	private void ensureDefaultPrivateProfile() {
-		// Ensure that one Profile is the default Profile - defect 48995 NH	
-		boolean defaultProfileExists = false;
-		for (Iterator z = _profiles.iterator(); z.hasNext() && !defaultProfileExists;) {
-			ISystemProfile profile = (ISystemProfile) z.next();
-			defaultProfileExists = profile.isDefaultPrivate();
+		if (defaultProfile == null) {
+			for (Iterator z = _profiles.iterator(); z.hasNext() && defaultProfile == null;) {
+				ISystemProfile profile = (ISystemProfile) z.next();
+				if (profile.isDefaultPrivate()) {
+					defaultProfile = profile;
+				}
+			}
 		}
-		if (!defaultProfileExists) {
+		if (defaultProfile == null) {
 			// find one with the right name
 			String defaultPrivateProfileName = RSEPreferencesManager.getDefaultPrivateSystemProfileName();
-			for (Iterator z = _profiles.iterator(); z.hasNext() && !defaultProfileExists;) {
+			for (Iterator z = _profiles.iterator(); z.hasNext() && defaultProfile == null;) {
 				ISystemProfile profile = (ISystemProfile) z.next();
 				if (profile.getName().equals(defaultPrivateProfileName)) {
 					profile.setDefaultPrivate(true);
-					defaultProfileExists = true;
+					defaultProfile = profile;
 				}
 			}
 		}
-		if (!defaultProfileExists) {
+		if (defaultProfile == null) {
 			// Find the first profile that is not the Team profile and make it the default private profile 	
 			String defaultTeamProfileName = RSEPreferencesManager.getDefaultTeamProfileName();
-			for (Iterator z = _profiles.iterator(); z.hasNext() && !defaultProfileExists;) {
+			for (Iterator z = _profiles.iterator(); z.hasNext() && defaultProfile == null;) {
 				ISystemProfile profile = (ISystemProfile) z.next();
 				if (!profile.getName().equals(defaultTeamProfileName)) {
 					profile.setDefaultPrivate(true);
-					defaultProfileExists = true;
+					defaultProfile = profile;
 				}
 			}
 		}
-		if (!defaultProfileExists) {
+		if (defaultProfile == null) {
 			// If Team is the only profile - then put a message in the log and create the default private profile
 			Logger logger = RSECorePlugin.getDefault().getLogger();
 			logger.logWarning("Only one Profile Team exists - there is no Default Profile"); //$NON-NLS-1$

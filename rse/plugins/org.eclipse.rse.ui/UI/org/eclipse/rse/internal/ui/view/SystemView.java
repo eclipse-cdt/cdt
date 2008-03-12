@@ -48,6 +48,7 @@
  * David McKnight   (IBM)        - [199424] api to create tree items after query complete
  * David McKnight   (IBM)        - [187711] expandTo to handle filters specially
  * Martin Oberhuber (Wind River) - [218524][api] Remove deprecated ISystemViewInputProvider#getShell()
+ * David Dykstal (IBM) - [222376] NPE if starting on a workspace with an old mark and a renamed default profile
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -3436,7 +3437,10 @@ public class SystemView extends SafeTreeViewer
 		while (i.hasNext()) {
 			Object element = i.next();
 			if (parentElement == null) {
-				parentItem = getParentItem((Item) findItem(element));
+				Item item = (Item) findItem(element);
+				if (item != null) {
+					parentItem = getParentItem(item);
+				}
 				if ((parentItem != null) && (parentItem instanceof Item)) parentElement = ((Item) parentItem).getData();
 			}
 			if (getViewAdapter(element) != null) {

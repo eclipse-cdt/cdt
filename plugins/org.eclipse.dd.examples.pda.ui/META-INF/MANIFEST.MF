@@ -18,7 +18,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.dd.dsf.ui;bundle-version="1.0.0",
  org.eclipse.dd.dsf.debug;bundle-version="1.0.0",
  org.eclipse.dd.dsf.debug.ui;bundle-version="1.0.0"
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.dd.examples.pda.ui,
  org.eclipse.dd.examples.pda.ui.breakpoints,
  org.eclipse.dd.examples.pda.ui.editor,

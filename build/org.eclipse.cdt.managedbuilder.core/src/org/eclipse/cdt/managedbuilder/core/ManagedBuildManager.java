@@ -204,7 +204,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 	// Tool-chains defined in the manifest files
 	private static SortedMap extensionToolChainMap;
 	// Tools defined in the manifest files
-	private static SortedMap extensionToolMap;
+	private static SortedMap<String, Tool> extensionToolMap;
 	// Target Platforms defined in the manifest files
 	private static Map extensionTargetPlatformMap;
 	// Builders defined in the manifest files
@@ -440,13 +440,13 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * 
 	 * @return Map
 	 */
-	public static SortedMap getExtensionToolMap() {
+	public static SortedMap<String, Tool> getExtensionToolMap() {
 		try {
 			loadExtensions();
 		} catch (BuildException e) {
 		}
 		if (extensionToolMap == null) {
-			extensionToolMap = new TreeMap();
+			extensionToolMap = new TreeMap<String, Tool>();
 		}
 		return extensionToolMap;
 	}
@@ -457,9 +457,9 @@ public class ManagedBuildManager extends AbstractCExtension {
 		} catch (BuildException e) {
 		}
 		if (extensionToolMap == null) {
-			extensionToolMap = new TreeMap();
+			extensionToolMap = new TreeMap<String, Tool>();
 		}
-		return (Tool[])extensionToolMap.values().toArray(new Tool[extensionToolMap.size()]);
+		return extensionToolMap.values().toArray(new Tool[extensionToolMap.size()]);
 	}
 
 	/* (non-Javadoc)

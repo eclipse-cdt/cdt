@@ -14,7 +14,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -119,13 +118,13 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	private Map<String, InputType> inputTypeMap;
 	private Vector<OutputType> outputTypeList;
 	private Map<String, OutputType> outputTypeMap;
-	private List envVarBuildPathList;
+	private List<IEnvVarBuildPath> envVarBuildPathList;
 	//  Managed Build model attributes
 	private String unusedChildren;
 	private Boolean isAbstract;
 	private String command;
 	private List<String> inputExtensions;
-	private List interfaceExtensions;
+	private List<String> interfaceExtensions;
 	private Integer natureFilter;
 	private String outputExtensions;
 	private String outputFlag;
@@ -156,10 +155,10 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	private boolean rebuildState;
 	private BooleanExpressionApplicabilityCalculator booleanExpressionCalculator;
 	
-	private HashMap typeToDataMap = new HashMap(2);
+	private HashMap<IInputType, CLanguageData> typeToDataMap = new HashMap<IInputType, CLanguageData>(2);
 	private boolean fDataMapInited;
 	private List identicalList;
-	private HashMap discoveredInfoMap = new HashMap(2);
+	private HashMap<Object, PathInfoCache> discoveredInfoMap = new HashMap<Object, PathInfoCache>(2);
 	private String scannerConfigDiscoveryProfileId;
 
 	/*
@@ -360,6 +359,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		setSuperClassInternal(toolSuperClass);
 	}
 
+	@SuppressWarnings("unchecked")
 	public Tool(IBuildObject parent, String toolSuperClassId, String Id, String name, Tool tool){
 		super(resolvedDefault);
 		this.parent = parent;
@@ -404,10 +404,10 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			commandLinePattern = new String(tool.commandLinePattern);
 		}
 		if (tool.inputExtensions != null) {
-			inputExtensions = new ArrayList(tool.inputExtensions);
+			inputExtensions = new ArrayList<String>(tool.inputExtensions);
 		}
 		if (tool.interfaceExtensions != null) {
-			interfaceExtensions = new ArrayList(tool.interfaceExtensions);
+			interfaceExtensions = new ArrayList<String>(tool.interfaceExtensions);
 		}
 		if (tool.natureFilter != null) {
 			natureFilter = new Integer(tool.natureFilter.intValue());
@@ -441,7 +441,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		optionPathConverter = tool.optionPathConverter ;
 		
 		if(tool.envVarBuildPathList != null)
-			envVarBuildPathList = new ArrayList(tool.envVarBuildPathList);
+			envVarBuildPathList = new ArrayList<IEnvVarBuildPath>(tool.envVarBuildPathList);
 		
 //		tool.updateScannerInfoSettingsToInputTypes();
 
@@ -449,10 +449,8 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		super.copyChildren(tool);
 		//  Clone the children
 		if (tool.inputTypeList != null) {
-			discoveredInfoMap = (HashMap)tool.discoveredInfoMap.clone();
-			Iterator iter = tool.getInputTypeList().listIterator();
-			while (iter.hasNext()) {
-				InputType inputType = (InputType) iter.next();
+			discoveredInfoMap = (HashMap<Object, PathInfoCache>)tool.discoveredInfoMap.clone();
+			for (InputType inputType : tool.getInputTypeList()) {
 				PathInfoCache cache = (PathInfoCache)discoveredInfoMap.remove(getTypeKey(inputType));
 				int nnn = ManagedBuildManager.getRandomNumber();
 				String subId;
@@ -472,9 +470,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			}
 		}
 		if (tool.outputTypeList != null) {
-			Iterator iter = tool.getOutputTypeList().listIterator();
-			while (iter.hasNext()) {
-				OutputType outputType = (OutputType) iter.next();
+			for (OutputType outputType : tool.getOutputTypeList()) {
 				int nnn = ManagedBuildManager.getRandomNumber();
 				String subId;
 				String subName;
@@ -535,10 +531,10 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			commandLinePattern = tool.commandLinePattern;
 		}
 		if (inputExtensions == null && tool.inputExtensions != null) {
-			inputExtensions = new ArrayList(tool.inputExtensions);
+			inputExtensions = new ArrayList<String>(tool.inputExtensions);
 		}
 		if (interfaceExtensions == null && tool.interfaceExtensions != null) {
-			interfaceExtensions = new ArrayList(tool.interfaceExtensions);
+			interfaceExtensions = new ArrayList<String>(tool.interfaceExtensions);
 		}
 		if (natureFilter == null) {
 			natureFilter = tool.natureFilter;
@@ -580,15 +576,13 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			optionPathConverter = tool.optionPathConverter ;
 		
 		if(envVarBuildPathList == null && tool.envVarBuildPathList != null)
-			envVarBuildPathList = new ArrayList(tool.envVarBuildPathList);
+			envVarBuildPathList = new ArrayList<IEnvVarBuildPath>(tool.envVarBuildPathList);
 		
 		//  Clone the children in superclass
 		super.copyNonoverriddenSettings(tool);
 		//  Clone the children
 		if (inputTypeList == null && tool.inputTypeList != null) {
-			Iterator iter = tool.getInputTypeList().listIterator();
-			while (iter.hasNext()) {
-				InputType inputType = (InputType) iter.next();
+			for (InputType inputType : tool.getInputTypeList()) {
 				int nnn = ManagedBuildManager.getRandomNumber();
 				String subId;
 				String subName;
@@ -604,9 +598,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			}
 		}
 		if (outputTypeList == null && tool.outputTypeList != null) {
-			Iterator iter = tool.getOutputTypeList().listIterator();
-			while (iter.hasNext()) {
-				OutputType outputType = (OutputType) iter.next();
+			for (OutputType outputType : tool.getOutputTypeList()) {
 				int nnn = ManagedBuildManager.getRandomNumber();
 				String subId;
 				String subName;
@@ -702,7 +694,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		if (headers != null) {
 			StringTokenizer tokenizer = new StringTokenizer(headers, DEFAULT_SEPARATOR);
 			while (tokenizer.hasMoreElements()) {
-				getInterfaceExtensionsList().add(tokenizer.nextElement());
+				getInterfaceExtensionsList().add((String)tokenizer.nextElement());
 			}
 		}
 		
@@ -867,7 +859,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			if (headers != null) {
 				StringTokenizer tokenizer = new StringTokenizer(headers, DEFAULT_SEPARATOR);
 				while (tokenizer.hasMoreElements()) {
-					getInterfaceExtensionsList().add(tokenizer.nextElement());
+					getInterfaceExtensionsList().add((String)tokenizer.nextElement());
 				}
 			}
 		}
@@ -1013,10 +1005,8 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			
 			// input file extensions
 			if (getInputExtensionsList().size() > 0) {
-				String inputs;
-				List list = getInputExtensionsList();
-				Iterator iter = list.listIterator();
-				inputs = (String)iter.next();
+				Iterator<String> iter = getInputExtensionsList().listIterator();
+				String inputs = iter.next();
 				while (iter.hasNext()) {
 					inputs += DEFAULT_SEPARATOR;
 					inputs += iter.next();
@@ -1026,10 +1016,8 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			
 			// interface (header file) extensions
 			if (getInterfaceExtensionsList().size() > 0) {
-				String headers;
-				List list = getInterfaceExtensionsList();
-				Iterator iter = list.listIterator();
-				headers = (String)iter.next();
+				Iterator<String> iter = getInterfaceExtensionsList().listIterator();
+				String headers = iter.next();
 				while (iter.hasNext()) {
 					headers += DEFAULT_SEPARATOR;
 					headers += iter.next();
@@ -1081,23 +1069,11 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			super.serialize(element);
 
 			// Serialize my children
-//			updateScannerInfoSettingsToInputTypes();
-			
-			Iterator iter;
-			List typeElements = getInputTypeList();
-			iter = typeElements.listIterator();
-			while (iter.hasNext()) {
-				InputType type = (InputType) iter.next();
-				ICStorageElement typeElement = element.createChild(INPUT_TYPE);
-				type.serialize(typeElement);
-			}
-			typeElements = getOutputTypeList();
-			iter = typeElements.listIterator();
-			while (iter.hasNext()) {
-				OutputType type = (OutputType) iter.next();
-				ICStorageElement typeElement = element.createChild(OUTPUT_TYPE);
-				type.serialize(typeElement);
-			}
+			for (InputType type : getInputTypeList()) 
+				type.serialize(element.createChild(INPUT_TYPE));
+
+			for (OutputType type : getOutputTypeList())
+				type.serialize(element.createChild(OUTPUT_TYPE));
 
 			// Note: command line generator cannot be specified in a project file because
 			//       an IConfigurationElement is needed to load it!
@@ -1133,34 +1109,6 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			// TODO: issue an error message
 		}
 	}
-	
-//	private void updateScannerInfoSettingsToInputTypes(){
-//		if(isExtensionTool)
-//			return;
-//
-//		HashMap scannerCfgMap = getScannerInfoMap(false);
-//		if(scannerCfgMap != null){
-//			scannerCfgMap = (HashMap)scannerCfgMap.clone();
-//			for(Iterator iter = scannerCfgMap.entrySet().iterator(); iter.hasNext();){
-//				Map.Entry entry = (Map.Entry)iter.next();
-//				String id = (String)entry.getKey();
-//				InputType type = (InputType)getInputTypeById(id);
-//				if(type == null)
-//					continue;
-//				
-//				ScannerConfigInfoFactory2.BuildProperty info = (ScannerConfigInfoFactory2.BuildProperty)entry.getValue();
-//				if(info.isDirty()){
-//					if(type.isExtensionElement()){
-//						type = (InputType)getEdtableInputType(type);
-//					}
-//					type.setScannerConfigBuilderInfo(info);
-//				} else {
-//					if(type.getScannerConfigBuilderInfoElement(false) != null)
-//						type.setScannerConfigBuilderInfo(info);
-//				}
-//			}
-//		}
-//	}
 
 	/*
 	 *  P A R E N T   A N D   C H I L D   H A N D L I N G
@@ -1201,15 +1149,6 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 				data.updateInputType(type);
 				typeToDataMap.put(type, data);
 			}
-			
-//			HashMap scannerInfoMap = getScannerInfoMap(false);
-//			if(scannerInfoMap != null){
-//				IScannerConfigBuilderInfo2 info = (IScannerConfigBuilderInfo2)scannerInfoMap.get(getTypeKey(superClass));
-//				if(info != null){
-//					info = ScannerConfigInfoFactory2.create(new CfgInfoContext(getParentResourceInfo(), this, type), info, info.getSelectedProfileId());
-//					scannerInfoMap.put(getTypeKey(type), info);
-//				}
-//			}
 		}
 		addInputType(type);
 		setDirty(true);
@@ -1241,7 +1180,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			types = ((Tool)getSuperClass()).getAllInputTypes();
 		}
 		// Our options take precedence.
-		Vector ourTypes = getInputTypeList();
+		Vector<InputType> ourTypes = getInputTypeList();
 		if (types != null) {
 			for (int i = 0; i < ourTypes.size(); i++) {
 				IInputType ourType = (IInputType)ourTypes.get(i);
@@ -1268,15 +1207,15 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 				}
 			}
 		} else {
-			types = (IInputType[])ourTypes.toArray(new IInputType[ourTypes.size()]);
+			types = ourTypes.toArray(new IInputType[ourTypes.size()]);
 		}
 		return types;
 	}
 
 
 	private boolean hasInputTypes() {
-		Vector ourTypes = getInputTypeList();
-		if (ourTypes.size() > 0) return true;
+		if (getInputTypeList().size() > 0) 
+			return true;
 		return false;
 	}
 	
@@ -1334,7 +1273,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			types = ((Tool)getSuperClass()).getAllOutputTypes();
 		}
 		// Our options take precedence.
-		Vector ourTypes = getOutputTypeList();
+		Vector<OutputType> ourTypes = getOutputTypeList();
 		if (types != null) {
 			for (int i = 0; i < ourTypes.size(); i++) {
 				IOutputType ourType = (IOutputType)ourTypes.get(i);
@@ -1357,7 +1296,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 				}
 			}
 		} else {
-			types = (IOutputType[])ourTypes.toArray(new IOutputType[ourTypes.size()]);
+			types = ourTypes.toArray(new IOutputType[ourTypes.size()]);
 		}
 		return types;
 	}
@@ -1791,10 +1730,10 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			if (exts.length > 0) return exts;
 		}
 		// If none, use the input extensions specified for the Tool (backwards compatibility)
-		List extsList = getInputExtensionsAttribute();
+		List<String> extsList = getInputExtensionsAttribute();
 		// Use the first entry in the list
 		if (extsList != null && extsList.size() > 0) {
-			return (String[])extsList.toArray(new String[extsList.size()]);
+			return extsList.toArray(new String[extsList.size()]);
 		}
 		return EMPTY_STRING_ARRAY;
 	}
@@ -1803,32 +1742,13 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getAllInputExtensions()
 	 */
 	public String[] getAllInputExtensions() {
-//		IInputType[] types = getInputTypes();
-//		if (types != null && types.length > 0) {
-//			List allExts = new ArrayList();
-//			for (int i=0; i<types.length; i++) {
-//				String[] exts = types[i].getSourceExtensions(this);
-//				for (int j=0; j<exts.length; j++) {
-//					allExts.add(exts[j]);
-//				}
-//			}
-//			if (allExts.size() > 0) {
-//				return (String[])allExts.toArray(new String[allExts.size()]);
-//			}
-//		}
-//		// If none, use the input extensions specified for the Tool (backwards compatibility)
-//		List extsList = getInputExtensionsAttribute();
-//		if (extsList != null && extsList.size() > 0) {
-//			return (String[])extsList.toArray(new String[extsList.size()]);
-//		}
-//		return EMPTY_STRING_ARRAY;
 		return getAllInputExtensions(getProject());
 	}
 
 	public String[] getAllInputExtensions(IProject project) {
 		IInputType[] types = getInputTypes();
 		if (types != null && types.length > 0) {
-			List allExts = new ArrayList();
+			List<String> allExts = new ArrayList<String>();
 			for (int i=0; i<types.length; i++) {
 				String[] exts = ((InputType)types[i]).getSourceExtensions(this, project);
 				for (int j=0; j<exts.length; j++) {
@@ -1836,13 +1756,13 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 				}
 			}
 			if (allExts.size() > 0) {
-				return (String[])allExts.toArray(new String[allExts.size()]);
+				return allExts.toArray(new String[allExts.size()]);
 			}
 		}
 		// If none, use the input extensions specified for the Tool (backwards compatibility)
-		List extsList = getInputExtensionsAttribute();
+		List<String> extsList = getInputExtensionsAttribute();
 		if (extsList != null && extsList.size() > 0) {
-			return (String[])extsList.toArray(new String[extsList.size()]);
+			return extsList.toArray(new String[extsList.size()]);
 		}
 		return EMPTY_STRING_ARRAY;
 	}
@@ -1886,24 +1806,24 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getAdditionalDependencies()
 	 */
+	@SuppressWarnings("unchecked")
 	public IPath[] getAdditionalDependencies() {
-		List allDeps = new ArrayList();
+		List<IPath> allDeps = new ArrayList<IPath>();
 		IInputType[] types = getInputTypes();
 		for (int i=0; i<types.length; i++) {
 			IInputType type = types[i];
 			//  Additional dependencies come from 2 places.
 			//  1.  From AdditionalInput childen
-			IPath[] deps = type.getAdditionalDependencies();
-			for (int j=0; j<deps.length; j++) {
-				allDeps.add(deps[j]);
-			}
+			for (IPath p : type.getAdditionalDependencies())
+				allDeps.add(p);
+		
 			//  2.  From InputTypes that other than the primary input type
 			if (type != getPrimaryInputType()) {
 				if (type.getOptionId() != null) {
 					IOption option = getOptionBySuperClassId(type.getOptionId());
 					if (option != null) {
 						try {
-							List inputs = new ArrayList();
+							List<IPath> inputs = new ArrayList<IPath>();
 							int optType = option.getValueType();
 							if (optType == IOption.STRING) {
 								inputs.add(Path.fromOSString(option.getStringValue()));
@@ -1916,12 +1836,10 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 									optType == IOption.LIBRARY_FILES ||
 									optType == IOption.MACRO_FILES
 									) {
-								List inputNames = (List)option.getValue();
+								List<String> inputNames = (List<String>)option.getValue();
 								filterValues(optType, inputNames);
-								for (int j=0; j<inputNames.size(); j++) {
-									
-									inputs.add(Path.fromOSString((String)inputNames.get(j)));
-								}
+								for (String s : inputNames)
+									inputs.add(Path.fromOSString(s));
 							}
 							allDeps.addAll(inputs);
 						} catch( BuildException ex ) {
@@ -1939,16 +1857,13 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getAdditionalResources()
 	 */
 	public IPath[] getAdditionalResources() {
-		List allRes = new ArrayList();
-		IInputType[] types = getInputTypes();
-		for (int i=0; i<types.length; i++) {
-			IInputType type = types[i];
+		List<IPath> allRes = new ArrayList<IPath>();
+		for (IInputType type : getInputTypes()) {
 			//  Additional resources come from 2 places.
 			//  1.  From AdditionalInput childen
-			IPath[] res = type.getAdditionalResources();
-			for (int j=0; j<res.length; j++) {
-				allRes.add(res[j]);
-			}
+			for (IPath r : type.getAdditionalResources())
+				allRes.add(r);
+			
 			//  2.  From InputTypes that other than the primary input type
 			if (type != getPrimaryInputType()) {
 				String var = type.getBuildVariable();
@@ -1957,7 +1872,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 				}
 			}
 		}
-		return (IPath[])allRes.toArray(new IPath[allRes.size()]);
+		return allRes.toArray(new IPath[allRes.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -1966,16 +1881,13 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	public String[] getAllDependencyExtensions() {
 		IInputType[] types = getInputTypes();
 		if (types != null && types.length > 0) {
-			List allExts = new ArrayList();
-			for (int i=0; i<types.length; i++) {
-				String[] exts = types[i].getDependencyExtensions(this);
-				for (int j=0; j<exts.length; j++) {
-					allExts.add(exts[j]);
-				}
-			}
-			if (allExts.size() > 0) {
-				return (String[])allExts.toArray(new String[allExts.size()]);
-			}
+			List<String> allExts = new ArrayList<String>();
+			for (IInputType t : types) 
+				for (String s : t.getDependencyExtensions(this))
+					allExts.add(s);
+			
+			if (allExts.size() > 0)
+				return allExts.toArray(new String[allExts.size()]);
 		}
 		// If none, use the header extensions specified for the Tool (backwards compatibility)
 		List<String> extsList = getHeaderExtensionsAttribute();
@@ -1989,27 +1901,27 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getInterfaceExtension()
 	 * @deprecated
 	 */
-	public List getInterfaceExtensions() {
+	public List<String> getInterfaceExtensions() {
 		return getHeaderExtensionsAttribute();
 	}
 
-	private List getHeaderExtensionsAttribute() {
+	private List<String> getHeaderExtensionsAttribute() {
 		if (interfaceExtensions == null || interfaceExtensions.size() == 0) {
 			// If I have a superClass, ask it
 			if (getSuperClass() != null) {
 				return ((Tool)getSuperClass()).getHeaderExtensionsAttribute();
 			} else {
 			    if (interfaceExtensions == null) {
-			        interfaceExtensions = new ArrayList();
+			        interfaceExtensions = new ArrayList<String>();
 			    }
 			}
 		}
 		return interfaceExtensions;
 	}
 
-	private List getInterfaceExtensionsList() {
+	private List<String> getInterfaceExtensionsList() {
 		if (interfaceExtensions == null) {
-			interfaceExtensions = new ArrayList();
+			interfaceExtensions = new ArrayList<String>();
 		}
 		return interfaceExtensions;
 	}
@@ -2566,12 +2478,14 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 				SupplierBasedCdtVariableSubstitutor macroSubstitutor,
 				IMacroContextInfoProvider provider) throws BuildException {
 		IOption[] opts = getOptions();
-		ArrayList flags = new ArrayList();
+		ArrayList<String> flags = new ArrayList<String>();
 		StringBuffer sb = new StringBuffer();
-		for (int index = 0; index < opts.length; index++) {
-			IOption option = getOptionToSet(opts[index], false);
+		for (IOption op : opts) {
+			IOption option = getOptionToSet(op, false);
 			if (option == null)
 				continue;
+			option.setValue(op.getValue());
+
 			sb.setLength( 0 );
 
 			// check to see if the option has an applicability calculator
@@ -2893,23 +2807,16 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		if (isDirty) return true;
 		
 		// Check my children
-		List typeElements = getInputTypeList();
-		Iterator iter = typeElements.listIterator();
-		while (iter.hasNext()) {
-			InputType type = (InputType) iter.next();
-			if (type.isDirty()) return true;
-		}
-		typeElements = getOutputTypeList();
-		iter = typeElements.listIterator();
-		while (iter.hasNext()) {
-			OutputType type = (OutputType) iter.next();
-			if (type.isDirty()) return true;
-		}
+		for (InputType type : getInputTypeList())
+			if (type.isDirty()) 
+				return true;
+		for (OutputType type : getOutputTypeList())
+			if (type.isDirty()) 
+				return true;
 		
 		// Otherwise see if any options need saving
-		if (super.isDirty()) {
+		if (super.isDirty()) 
 			return true;
-		}
 		
 		return isDirty;
 	}
@@ -2923,18 +2830,11 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		super.setDirty(isDirty);
 		// Propagate "false" to the children
 		if (!isDirty) {
-			List typeElements = getInputTypeList();
-			Iterator iter = typeElements.listIterator();
-			while (iter.hasNext()) {
-				InputType type = (InputType) iter.next();
+			for (InputType type : getInputTypeList())
 				type.setDirty(false);
-			}
-			typeElements = getOutputTypeList();
-			iter = typeElements.listIterator();
-			while (iter.hasNext()) {
-				OutputType type = (OutputType) iter.next();
+
+			for (OutputType type : getOutputTypeList())
 				type.setDirty(false);
-			}
 		}
 	}
 
@@ -2963,16 +2863,11 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			//  Resolve HoldsOptions 
 			super.resolveReferences();
 			//  Call resolveReferences on our children
-			Iterator typeIter = getInputTypeList().iterator();
-			while (typeIter.hasNext()) {
-				InputType current = (InputType)typeIter.next();
+			for (InputType current : getInputTypeList())
 				current.resolveReferences();
-			}
-			typeIter = getOutputTypeList().iterator();
-			while (typeIter.hasNext()) {
-				OutputType current = (OutputType)typeIter.next();
+
+			for (OutputType current : getOutputTypeList())
 				current.resolveReferences();
-			}
 		}		
 	}
 	
@@ -3110,7 +3005,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		if(path == null)
 			return;
 		if(envVarBuildPathList == null)
-			envVarBuildPathList = new ArrayList();
+			envVarBuildPathList = new ArrayList<IEnvVarBuildPath>();
 			
 		envVarBuildPathList.add(path);
 	}
@@ -3132,7 +3027,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			String high = (String) ManagedBuildManager.getExtensionToolMap()
 					.lastKey();
 
-			SortedMap subMap = null;
+			SortedMap<String, Tool> subMap = null;
 			if (superClassId.compareTo(high) <= 0) {
 				subMap = ManagedBuildManager.getExtensionToolMap().subMap(
 						superClassId, high + "\0"); //$NON-NLS-1$
@@ -3162,12 +3057,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			String version = ManagedBuildManager
 					.getVersionFromIdAndVersion(superClassId);
 
-			Collection c = subMap.values();
-			ITool[] toolElements = (ITool[]) c.toArray(new ITool[c.size()]);
-
-			for (int i = 0; i < toolElements.length; i++) {
-				ITool toolElement = toolElements[i];
-
+			for (ITool toolElement : subMap.values()) {
 				if (ManagedBuildManager.getIdFromIdAndVersion(
 						toolElement.getId()).compareTo(baseId) > 0)
 					break;
@@ -3381,18 +3271,13 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			return true;
 		
 		// Check my children
-		List typeElements = getInputTypeList();
-		Iterator iter = typeElements.listIterator();
-		while (iter.hasNext()) {
-			InputType type = (InputType) iter.next();
-			if (type.needsRebuild()) return true;
-		}
-		typeElements = getOutputTypeList();
-		iter = typeElements.listIterator();
-		while (iter.hasNext()) {
-			OutputType type = (OutputType) iter.next();
-			if (type.needsRebuild()) return true;
-		}
+		for (InputType type : getInputTypeList())
+			if (type.needsRebuild()) 
+				return true;
+		
+		for (OutputType type : getOutputTypeList())
+			if (type.needsRebuild()) 
+				return true;
 
 		return super.needsRebuild();
 	}
@@ -3413,18 +3298,11 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			super.setRebuildState(rebuild);
 			
 			if (!rebuild) {
-				List typeElements = getInputTypeList();
-				Iterator iter = typeElements.listIterator();
-				while (iter.hasNext()) {
-					InputType type = (InputType) iter.next();
+				for (InputType type : getInputTypeList()) 
 					type.setRebuildState(false);
-				}
-				typeElements = getOutputTypeList();
-				iter = typeElements.listIterator();
-				while (iter.hasNext()) {
-					OutputType type = (OutputType) iter.next();
+				
+				for (OutputType type : getOutputTypeList()) 
 					type.setRebuildState(false);
-				}
 			}
 		}
 	}
@@ -3442,7 +3320,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		if(fDataMapInited)
 			return;
 		
-		List types = getLanguageInputTypes();
+		List<IInputType> types = getLanguageInputTypes();
 //		List datas = new ArrayList();
 		
 		if(types != null){
@@ -3520,11 +3398,11 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		return found;
 	}
 	
-	private List getLanguageInputTypes(){
-		List list = new ArrayList();
-		IInputType types[] = getInputTypes();
-		for(int i = 0; i < types.length; i++){
-			InputType type = (InputType)types[i];
+	private List<IInputType> getLanguageInputTypes(){
+		List<IInputType> list = new ArrayList<IInputType>();
+		IInputType[] types = getInputTypes(); 
+		for(IInputType t : types){
+			InputType type = (InputType)t;
 			if(isLanguageInputType(type, false))
 				list.add(type);
 		}
@@ -3532,9 +3410,9 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			if(types.length == 1){
 				list.add(types[0]);
 			} else {
-				for(int i = 0; i < types.length; i++){
-					if(types[i].getPrimaryInput()){
-						list.add(types[i]);
+				for(IInputType t : types){
+					if(t.getPrimaryInput()){
+						list.add(t);
 						break;
 					}
 				}
@@ -3549,7 +3427,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 
 	public CLanguageData[] getCLanguageDatas() {
 		initDataMap();
-		return (CLanguageData[])typeToDataMap.values().toArray(new BuildLanguageData[typeToDataMap.size()]);
+		return typeToDataMap.values().toArray(new BuildLanguageData[typeToDataMap.size()]);
 	}
 
 	public IInputType getInputTypeForCLanguageData(CLanguageData data) {
@@ -3811,11 +3689,10 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	}
 	
 	public IConfigurationElement getConverterModificationElement(ITool toTool){
-		Map map = ManagedBuildManager.getConversionElements(this);
+		Map<String, IConfigurationElement> map = ManagedBuildManager.getConversionElements(this);
 		IConfigurationElement element = null;
 		if(!map.isEmpty()){
-			for(Iterator iter = map.values().iterator(); iter.hasNext();){
-				IConfigurationElement el = (IConfigurationElement)iter.next();
+			for(IConfigurationElement el : map.values()){
 				String toId = el.getAttribute("toId"); //$NON-NLS-1$
 				ITool to = toTool;
 				if(toId != null){
@@ -3868,13 +3745,13 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			supported = props.getSupportedTypeIds();
 		} else {
 			BooleanExpressionApplicabilityCalculator calc = getBooleanExpressionCalculator();
-			List list = new ArrayList();
+			List<String> list = new ArrayList<String>();
 			if(calc != null){
 				list.addAll(Arrays.asList(calc.getReferencedPropertyIds()));
 			}
 			
 			list.addAll(Arrays.asList(super.getSupportedTypeIds()));
-			supported = (String[])list.toArray(new String[list.size()]);
+			supported = list.toArray(new String[list.size()]);
 		}
 		return supported;
 	}
@@ -3886,13 +3763,13 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			supported = props.getSupportedValueIds(typeId);
 		} else {
 			BooleanExpressionApplicabilityCalculator calc = getBooleanExpressionCalculator();
-			List list = new ArrayList();
+			List<String> list = new ArrayList<String>();
 			if(calc != null){
 				list.addAll(Arrays.asList(calc.getReferencedValueIds(typeId)));
 			}
 			
 			list.addAll(Arrays.asList(super.getSupportedValueIds(typeId)));
-			supported = (String[])list.toArray(new String[list.size()]);
+			supported = list.toArray(new String[list.size()]);
 		}
 		return supported;
 	}
@@ -3912,13 +3789,13 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		errorParserIds = null;
 	}
 	
-	void removeErrorParsers(Set set){
-		Set oldSet = contributeErrorParsers(null);
+	void removeErrorParsers(Set<String> set){
+		Set<String> oldSet = contributeErrorParsers(null);
 		if(oldSet == null)
-			oldSet = new HashSet();
+			oldSet = new HashSet<String>();
 		
 		oldSet.removeAll(set);
-		setErrorParserList((String[])oldSet.toArray(new String[oldSet.size()]));
+		setErrorParserList(oldSet.toArray(new String[oldSet.size()]));
 	}
 	
 	public void setErrorParserList(String[] ids) {
@@ -4130,13 +4007,11 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	}
 	
 	public IOption[] getOptionsOfType(int type){
-		IOption options[] = getOptions();
-		List list = new ArrayList();
-		for(int i = 0; i < options.length; i++){
+		List<IOption> list = new ArrayList<IOption>();
+		for(IOption op : getOptions()){
 			try {
-				if(options[i].getValueType() == type){
-					list.add(options[i]);
-				}
+				if(op.getValueType() == type)
+					list.add(op);
 			} catch (BuildException e) {
 				ManagedBuilderCorePlugin.log(e);
 			}
@@ -4144,17 +4019,16 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		return (Option[])list.toArray(new Option[list.size()]);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void filterValues(int type, List values){
 		if(values.size() == 0)
 			return;
 		
 		int opType = Option.getOppositeType(type);
 		if(opType != 0){
-			IOption opOptions[] = getOptionsOfType(opType);
-			Set filterSet = new HashSet();
-			for(int i = 0; i < opOptions.length; i++){
-				List opList = (List)opOptions[i].getValue();
-				filterSet.addAll(opList);
+			Set<Object> filterSet = new HashSet<Object>();
+			for(IOption op : getOptionsOfType(opType)){
+				filterSet.addAll((List<Object>)op.getValue());
 			}
 			
 			if(filterSet.size() != 0){

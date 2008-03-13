@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
@@ -16,7 +17,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -312,53 +312,45 @@ public class Binary extends Openable implements IBinary {
 				// Also check for relative path names and attempt to resolve
 				// them relative to the executable.
 
+				if (filename.startsWith(".")) { //$NON-NLS-1$
+					filename = obj.getPath().removeLastSegments(1).append(filename).toOSString();
+				}
+				File file = new File(filename);
 				try {
-					File file = new File(filename);
 					if (file.exists()) {
-						filename = file.getCanonicalPath();
-					} else if (filename.startsWith(".")) { //$NON-NLS-1$
-						file = new File(obj.getPath().removeLastSegments(1).toOSString(), filename);
 						filename = file.getCanonicalPath();
 					}
 				} catch (IOException e) { // Do nothing.
 				}
 
+				// Create a translation unit for this file and add it as a child of the binary
+				String id = CoreModel.getRegistedContentTypeId(getCProject().getProject(), file.getName());
+				if (id == null) {
+					// Don't add files we can't get an ID for.
+					continue;
+				}
 				// See if this source file is already in the project.
 				// We check this to determine if we should create a TranslationUnit or ExternalTranslationUnit
-				IFile sourceFile = getCProject().getProject().getFile(filename);
-				URI uri = sourceFile.getLocationURI();
-
 				IFile wkspFile = null;
-				if (sourceFile.exists())
-					wkspFile = sourceFile;
-				else {
-					IFile[] filesInWP = ResourcesPlugin
-					.getWorkspace().getRoot()
-							.findFilesForLocationURI(uri);
+				IFile[] filesInWP = ResourcesPlugin
+				.getWorkspace().getRoot()
+						.findFilesForLocation(new Path(filename));
 
-					for (int j = 0; j < filesInWP.length; j++) {
-						if (filesInWP[j].isAccessible()) {
-							wkspFile = filesInWP[j];
-							break;
-						}
+				for (int j = 0; j < filesInWP.length; j++) {
+					if (filesInWP[j].isAccessible()) {
+						wkspFile = filesInWP[j];
+						break;
 					}
 				}
+				
+				TranslationUnit tu;
+				if (wkspFile != null)
+					tu = new TranslationUnit(this, wkspFile, id);
+				else
+					tu = new ExternalTranslationUnit(this, file.toURI(), id);
 
-				// Create a translation unit for this file and add it as a child of the binary
-				String id = CoreModel.getRegistedContentTypeId(sourceFile
-						.getProject(), sourceFile.getName());
-
-				if (id != null)
-				{ // Don't add files we can't get an ID for.
-					TranslationUnit tu;
-					if (wkspFile != null)
-						tu = new TranslationUnit(this, wkspFile, id);
-					else
-						tu = new ExternalTranslationUnit(this, uri, id);
-
-					if (! info.includesChild(tu))
-						info.addChild(tu);					
-				}
+				if (! info.includesChild(tu))
+					info.addChild(tu);					
 			}
 			return true;
 		}

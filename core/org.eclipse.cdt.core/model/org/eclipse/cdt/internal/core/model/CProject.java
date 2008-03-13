@@ -776,12 +776,13 @@ public class CProject extends Openable implements ICProject {
 			String tuName = memento.nextToken();
 			final IPath path= Path.fromPortableString(tuName);
 			CElement tu= null;
-			try {
-				tu= (CElement) findElement(path);
-			} catch (CModelException exc) {
-				CCorePlugin.log(exc);
-			}
-			if (tu == null) {
+			if (!path.isAbsolute()) {
+				try {
+					tu= (CElement) findElement(path);
+				} catch (CModelException exc) {
+					CCorePlugin.log(exc);
+				}
+			} else {
 				tu= (CElement) CoreModel.getDefault().createTranslationUnitFrom(this, path);
 			}
 			if (tu != null) {

@@ -638,7 +638,15 @@ public class EditorUtility {
 					cProject= null;
 			}
 		} else if (input instanceof ITranslationUnitEditorInput) {
-			cProject= ((ITranslationUnitEditorInput)input).getTranslationUnit().getCProject();
+			final ITranslationUnit tu= ((ITranslationUnitEditorInput)input).getTranslationUnit();
+			if (tu != null) {
+				cProject= tu.getCProject();
+			} else if (input instanceof ExternalEditorInput) {
+				IResource resource= ((ExternalEditorInput) input).getMarkerResource();
+				if (resource instanceof IProject) {
+					cProject= CoreModel.getDefault().create((IProject) resource);
+				}
+			}
 		}
 		return cProject;
 	}

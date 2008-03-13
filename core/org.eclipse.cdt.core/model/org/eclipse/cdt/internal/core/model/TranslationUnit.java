@@ -1074,7 +1074,10 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		if (getResource() == null) {
 			((CElement)getCProject()).getHandleMemento(buff);
 			buff.append(getHandleMementoDelimiter());
-			escapeMementoName(buff, getPath().toPortableString());
+			final IPath location= getLocation();
+			if (location != null) {
+				escapeMementoName(buff, location.toPortableString());
+			}
 		} else {
 			super.getHandleMemento(buff);
 		}

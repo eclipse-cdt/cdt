@@ -13,7 +13,7 @@ package org.eclipse.cdt.core.dom.lrparser.action.c99;
 import static org.eclipse.cdt.core.dom.lrparser.action.c99.CNamespace.GOTO_LABEL;
 import static org.eclipse.cdt.core.dom.lrparser.action.c99.CNamespace.IDENTIFIER;
 import static org.eclipse.cdt.core.dom.lrparser.action.c99.CNamespace.STRUCT_TAG;
-import static org.eclipse.cdt.core.dom.lrparser.util.CollectionUtils.reverseIterable;
+import static org.eclipse.cdt.core.parser.util.CollectionUtils.reverseIterable;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -36,7 +36,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
 import org.eclipse.cdt.core.dom.lrparser.action.ScopedStack;
-import org.eclipse.cdt.core.dom.lrparser.util.DebugUtil;
+import org.eclipse.cdt.core.parser.util.DebugUtil;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings.C99ArrayType;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings.C99BasicType;

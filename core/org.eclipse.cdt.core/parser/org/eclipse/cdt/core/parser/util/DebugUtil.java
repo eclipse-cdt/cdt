@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.core.dom.lrparser.util;
+package org.eclipse.cdt.core.parser.util;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 
@@ -58,19 +58,4 @@ public class DebugUtil {
 		System.out.println(message);
 	}
 	
-	
-	/**
-	 * Prints a textual representation of the AST to stdout.
-	 */
-	public static void printAST(IASTTranslationUnit tu) {
-		ASTPrinter.printAST(tu);
-	}
-	
-	/**
-	 * Throws an AssertionError if any of the bindings in
-	 * the given AST cannot be resolved.
-	 */
-	public static void assertBindings(IASTTranslationUnit tu) throws AssertionError {
-		tu.accept(BindingCheckVisitor.VISITOR);
-	}
 }

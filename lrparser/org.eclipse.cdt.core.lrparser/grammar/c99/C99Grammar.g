@@ -105,7 +105,6 @@ $Globals
 /.	
 	import org.eclipse.cdt.core.dom.lrparser.action.c99.C99ASTNodeFactory;
 	import org.eclipse.cdt.core.dom.lrparser.action.c99.C99BuildASTParserAction;
-	import org.eclipse.cdt.core.dom.lrparser.action.c99.C99TypedefTrackerParserAction;
 ./
 $End
 

@@ -139,7 +139,6 @@ $Globals
 	import org.eclipse.cdt.core.dom.lrparser.action.cpp.CPPBuildASTParserAction;
 	import org.eclipse.cdt.core.dom.lrparser.IParser;
 	import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
-	import org.eclipse.cdt.core.dom.lrparser.util.DebugUtil;
 ./
 $End
 
@@ -1344,7 +1343,7 @@ type_specifier_seq
 
 
 abstract_declarator
-    ::= direct_abstract_declarator 
+    ::=? direct_abstract_declarator 
       | <openscope-ast> ptr_operator_seq 
           /. $Build  consumeDeclaratorWithPointer(false);  $EndBuild ./
       | <openscope-ast> ptr_operator_seq direct_abstract_declarator
@@ -1352,8 +1351,10 @@ abstract_declarator
       
       
 direct_abstract_declarator
-    ::= basic_direct_abstract_declarator
-      | array_direct_abstract_declarator
+    ::=? basic_direct_abstract_declarator
+    
+direct_abstract_declarator
+    ::= array_direct_abstract_declarator
       | function_direct_abstract_declarator
       
 
@@ -1773,7 +1774,7 @@ handler
 exception_declaration
     ::= type_specifier_seq <openscope-ast> declarator
           /. $Build  consumeDeclarationSimple(true);  $EndBuild ./
-      | type_specifier_seq <openscope-ast> abstract_declarator
+      | type_specifier_seq <openscope-ast> abstract_declarator  -- TODO might need to be abstract_declarator_without_function, might be too lenient, what exactly can you catch?
           /. $Build  consumeDeclarationSimple(true);  $EndBuild ./
       | type_specifier_seq
           /. $Build  consumeDeclarationSimple(false);  $EndBuild ./

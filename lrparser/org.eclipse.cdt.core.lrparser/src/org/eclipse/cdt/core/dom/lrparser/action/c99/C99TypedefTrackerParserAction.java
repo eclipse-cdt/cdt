@@ -15,7 +15,7 @@ import java.util.LinkedList;
 import lpg.lpgjavaruntime.IToken;
 
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
-import org.eclipse.cdt.core.dom.lrparser.util.DebugUtil;
+import org.eclipse.cdt.core.parser.util.DebugUtil;
 /**
  * A simple set of trial and undo actions that just keep track
  * of typedef names. This information is then fed back to the parser

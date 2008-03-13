@@ -57,7 +57,6 @@ import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
 import org.eclipse.cdt.core.dom.ast.IASTProblemHolder;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
-import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -69,10 +68,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
-import static org.eclipse.cdt.core.dom.lrparser.util.CollectionUtils.matchTokens;
-import org.eclipse.cdt.core.dom.lrparser.util.DebugUtil;
-import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym;
-import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99SizeofExpressionParser;
+import org.eclipse.cdt.core.parser.util.DebugUtil;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
@@ -279,6 +275,23 @@ public abstract class BuildASTParserAction {
 		return secondaryParser.getSecondaryParseResult();
 	}
 	
+	
+	
+	/**
+	 * Allows simple pattern match testing of lists of tokens.
+	 * 
+	 * @throws NullPointerException if source or pattern is null
+	 */
+	public static boolean matchTokens(List<IToken> source, Integer ... pattern) {
+		if(source.size() != pattern.length) // throws NPE if either parameter is null
+			return false;
+		
+		for(int i = 0, n = pattern.length; i < n; i++) {
+			if(source.get(i).getKind() != pattern[i].intValue())
+				return false;
+		}
+		return true;
+	}
 	
 	/*************************************************************************************************************
 	 * Start of actions.

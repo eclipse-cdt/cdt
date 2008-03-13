@@ -16,7 +16,6 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.dom.lrparser.action.ITokenMap;
-import org.eclipse.cdt.core.dom.lrparser.util.DebugUtil;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.c.GCCScannerExtensionConfiguration;
 import org.eclipse.cdt.core.index.IIndex;
@@ -28,6 +27,8 @@ import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.core.parser.util.ASTPrinter;
+import org.eclipse.cdt.core.parser.util.DebugUtil;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTTranslationUnit;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
@@ -110,7 +111,7 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 			System.out.println("Parsing");
 			System.out.println("Options: " + options);
 			System.out.println("GPP AST:");
-			DebugUtil.printAST(gtu);
+			ASTPrinter.print(gtu);
 			System.out.println();
 		}
 
@@ -131,7 +132,7 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 		
 		if(DEBUG_PRINT_AST) {
 			System.out.println("Base Extensible Language AST:");
-			DebugUtil.printAST(tu);
+			ASTPrinter.print(tu);
 		}
 		
 		return tu;
@@ -158,7 +159,7 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 			System.out.println();
 			System.out.println("********************************************************");
 			System.out.println("GPP AST:");
-			DebugUtil.printAST(cn.getTranslationUnit());
+			ASTPrinter.print(cn.getTranslationUnit());
 			System.out.println();
 		}
 		
@@ -179,7 +180,7 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 		
 		if(DEBUG_PRINT_AST) {
 			System.out.println("Base Extensible Language AST:");
-			DebugUtil.printAST(tu);
+			ASTPrinter.print(tu);
 			System.out.println();
 			System.out.println("Completion Node: " + completionNode);
 		}

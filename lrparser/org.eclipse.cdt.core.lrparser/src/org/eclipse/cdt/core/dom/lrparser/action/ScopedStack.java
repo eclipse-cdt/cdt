@@ -11,7 +11,7 @@
 
 package org.eclipse.cdt.core.dom.lrparser.action;
 
-import static org.eclipse.cdt.core.dom.lrparser.util.CollectionUtils.reverseIterable;
+import static org.eclipse.cdt.core.parser.util.CollectionUtils.reverseIterable;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -169,7 +169,7 @@ public class ScopedStack<T> {
 		printScope(topScope);
 		System.out.println(separator);
 		
-		for(LinkedList<T> list : reverseIterable(scopeStack)) {
+		for(List<T> list : reverseIterable(scopeStack)) {
 			printScope(list);
 		}
 		

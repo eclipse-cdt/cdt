@@ -19,14 +19,12 @@ import java.util.*;
 import org.eclipse.cdt.core.dom.ast.*;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
-import org.eclipse.cdt.core.dom.lrparser.util.DebugUtil;	
 
 import org.eclipse.cdt.core.dom.lrparser.action.ITokenMap;
 import org.eclipse.cdt.core.dom.lrparser.action.TokenMap;
 
 import org.eclipse.cdt.core.dom.lrparser.action.c99.C99ASTNodeFactory;
 import org.eclipse.cdt.core.dom.lrparser.action.c99.C99BuildASTParserAction;
-import org.eclipse.cdt.core.dom.lrparser.action.c99.C99TypedefTrackerParserAction;
 
 public class C99ExpressionStatementParser extends PrsStream implements RuleAction , IParserActionTokenProvider, IParser   
 {

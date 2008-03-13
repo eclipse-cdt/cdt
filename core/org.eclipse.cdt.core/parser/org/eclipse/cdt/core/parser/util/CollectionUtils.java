@@ -8,13 +8,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.core.dom.lrparser.util;
+package org.eclipse.cdt.core.parser.util;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-
-import lpg.lpgjavaruntime.IToken;
 
 
 /**
@@ -56,6 +54,10 @@ public final class CollectionUtils {
 	/**
 	 * Allows a foreach loop to iterate backwards over a list
 	 * from the end to the start.
+	 * 
+	 * eg)
+	 * for(Object o : reverseIterable(list)) { ... }
+	 * 
 	 * @throws NullPointerException if list is null
 	 */
 	public static <T> Iterable<T> reverseIterable(final List<T> list) {
@@ -69,9 +71,9 @@ public final class CollectionUtils {
 	 * 
 	 * This is useful for using an iterator in a foreach loop directly.
 	 * 
-	 * ex)
+	 * eg)
 	 * 
-	 * foreach(Object o : iterable(list.listIterator())) {
+	 * for(Object o : iterable(list.listIterator())) {
 	 *     // do something
 	 * }
 	 * 
@@ -89,22 +91,6 @@ public final class CollectionUtils {
 	}
 	
 	
-	/**
-	 * Allows simple pattern match testing of lists of tokens.
-	 * 
-	 * @throws NullPointerException if source or pattern is null
-	 */
-	public static boolean matchTokens(List<IToken> source, Integer ... pattern) {
-		if(source.size() != pattern.length) // throws NPE if either parameter is null
-			return false;
-		
-		for(int i = 0, n = pattern.length; i < n; i++) {
-			if(source.get(i).getKind() != pattern[i].intValue())
-				return false;
-		}
-		return true;
-	}
-	
 	
 	/**
 	 * Finds the first object in the heterogeneous list that is an instance of 
@@ -116,12 +102,12 @@ public final class CollectionUtils {
 	 * @throws UnsupportedOperationException if the list's Iterator does not support the remove() method
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> T findFirstAndRemove(List<Object> list, Class<T> clazz) {
-		for(Iterator<Object> iter = list.iterator(); iter.hasNext();) {
+	public static <T> T findFirstAndRemove(List<?> list, Class<T> clazz) {
+		for(Iterator<?> iter = list.iterator(); iter.hasNext();) {
 			Object o = iter.next();
 			if(clazz.isInstance(o)) {
 				iter.remove();
-				return (T) o;
+				return (T) o; // safe
 			}
 		}
 		return null;

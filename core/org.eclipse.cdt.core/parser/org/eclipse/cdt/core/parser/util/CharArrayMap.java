@@ -19,12 +19,31 @@ import java.util.TreeMap;
 
 
 /**
- * A facade for a Map that allows char[] slices to be used as keys.
+ * Provides functionality similar to a Map, with the feature that char arrays 
+ * and sections of char arrays (known as slices) may be used as keys.
  * 
- * @see ICharArrayMap for API docs
+ * This class is useful because small pieces of an existing large char[] buffer
+ * can be directly used as map keys. This avoids the need to create many String 
+ * objects as would normally be needed as keys in a standard java.util.Map.
+ * Thus performance is improved in the CDT core.
+ *
+ * Most methods are overloaded with two versions, one that uses a
+ * section of a char[] as the key (a slice), and one that uses
+ * the entire char[] as the key.
+ * 
+ * This class is intended as a replacement for CharArrayObjectMap.
+ * 
+ * ex:
+ * char[] key = "one two three".toCharArray();
+ * map.put(key, 4, 3, new Integer(99));
+ * map.get(key, 4, 3); // returns 99
+ * map.get("two".toCharArray()); // returns 99
+ * 
  * @author Mike Kucera
+ *
+ * @param <V>  
  */
-public final class CharArrayMap<V> implements ICharArrayMap<V> {
+public final class CharArrayMap<V> {
 
 	/**
 	 * Wrapper class used as keys in the map. The purpose
@@ -82,10 +101,11 @@ public final class CharArrayMap<V> implements ICharArrayMap<V> {
             return result;
         }
         
-        @Override 
+        @SuppressWarnings("nls")
+		@Override 
         public String toString() {
         	String slice = new String(buffer, start, length);
-        	return "'" + slice + "'@(" + start + "," + length + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+        	return "'" + slice + "'@(" + start + "," + length + ")"; 
         }
         
         
@@ -152,60 +172,103 @@ public final class CharArrayMap<V> implements ICharArrayMap<V> {
     	map = new HashMap<Key,V>(initialCapacity);
     }
     
-    
+    /**
+	 * Creates a new mapping in this map, uses the given array slice as the key.
+	 * If the map previously contained a mapping for this key, the old value is replaced.
+	 * @throws NullPointerException if chars is null
+	 * @throws IndexOutOfBoundsException if the boundaries specified by start and length are out of range
+	 */
     public void put(char[] chars, int start, int length, V value) {
     	checkBoundaries(chars, start, length);
         map.put(new Key(chars, start, length), value);
     }
 
-    
+    /**
+	 * Creates a new mapping in this map, uses all of the given array as the key.
+	 * If the map previously contained a mapping for this key, the old value is replaced.
+	 * @throws NullPointerException if chars is null
+	 */
     public void put(char[] chars, V value) {
         map.put(new Key(chars), value);
     }
 
-    
+    /**
+	 * Returns the value to which the specified array slice is mapped in this map, 
+	 * or null if the map contains no mapping for this key. 
+	 * @throws NullPointerException if chars is null
+	 * @throws IndexOutOfBoundsException if the boundaries specified by start and length are out of range
+	 */
     public V get(char[] chars, int start, int length) {
     	checkBoundaries(chars, start, length);
         return map.get(new Key(chars, start, length));
     }
 
-    
+    /**
+	 * Returns the value to which the specified array is mapped in this map, 
+	 * or null if the map contains no mapping for this key. 
+	 * @throws NullPointerException if chars is null
+	 */
     public V get(char[] chars) {
         return map.get(new Key(chars));
     }
 
-    
+    /**
+	 * Removes the mapping for the given array slice if present.
+	 * Returns the value object that corresponded to the key
+	 * or null if the key was not in the map.
+	 * @throws NullPointerException if chars is null
+	 * @throws IndexOutOfBoundsException if the boundaries specified by start and length are out of range
+	 */
     public V remove(char[] chars, int start, int length) {
     	checkBoundaries(chars, start, length);
     	return map.remove(new Key(chars, start, length));
     }
     
-    
+    /**
+	 * Removes the mapping for the given array if present.
+	 * Returns the value object that corresponded to the key
+	 * or null if the key was not in the map.
+	 * @throws NullPointerException if chars is null
+	 */
     public V remove(char[] chars) {
     	return map.remove(new Key(chars));
     }
 
-    
+    /**
+	 * Returns true if the given key has a value associated with it in the map.
+	 * @throws NullPointerException if chars is null
+	 * @throws IndexOutOfBoundsException if the boundaries specified by start and length are out of range
+	 */
     public boolean containsKey(char[] chars, int start, int length) {
     	checkBoundaries(chars, start, length);
     	return map.containsKey(new Key(chars, start, length));
     }
 
-    
+    /**
+	 * Returns true if the given key has a value associated with it in the map.
+	 * @throws NullPointerException if chars is null
+	 */
     public boolean containsKey(char[] chars) {
     	return map.containsKey(new Key(chars));
     }
     
-    
+    /**
+	 * Returns true if the given value is contained in the map.
+	 */
     public boolean containsValue(V value) {
     	return map.containsValue(value);
     }
 
-    
+    /** 
+	 * Use this in a foreach loop.
+	 */
     public Collection<V> values() {
         return map.values();
     }
 
+    /**
+	 * Returns the keys stored in the map.
+	 */
     public Collection<char[]> keys() {
     	Set<Key> keys= map.keySet();
     	ArrayList<char[]> r= new ArrayList<char[]>(keys.size());
@@ -215,17 +278,23 @@ public final class CharArrayMap<V> implements ICharArrayMap<V> {
         return r;
     }
 
-    
+    /**
+	 * Removes all mappings from the map.
+	 */
     public void clear() {
     	map.clear();
     }
 
-    
+    /**
+	 * Returns the number of mappings.
+	 */
     public int size() {
     	return map.size();
     }
 
-
+    /**
+	 * Returns true if the map is empty.
+	 */
     public boolean isEmpty() {
     	return map.isEmpty();
     }

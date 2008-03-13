@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.core.dom.lrparser.util;
+package org.eclipse.cdt.core.parser.util;
 
 import java.io.PrintStream;
 
@@ -50,82 +50,103 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 /**
  * A utility that prints an AST to the console, useful for debugging purposes.
  * 
+ * 
  * @author Mike Kucera
  */
-@SuppressWarnings({"restriction","nls"})
-class ASTPrinter {
-	
+@SuppressWarnings("nls")
+public class ASTPrinter {
 	
 	private static boolean PRINT_PARENT_PROPERTIES = false;
 	private static boolean RESOLVE_BINDINGS = false;
 	
 	/**
 	 * Prints the AST to the given PrintStream.
+	 * 
+	 * @return Always returns false, boolean return type allows this method
+	 * to be called from a conditional breakpoint during debugging.
 	 */
-	public static void printAST(IASTTranslationUnit root, PrintStream stream) {
-		PrintStream out = stream == null ? System.out : stream;
+	public static boolean print(IASTNode root, PrintStream out) {
 		if(root == null) {
 			out.println("null"); 
-			return;
+			return false;
 		}
-
-		PrintVisitor visitor = new PrintVisitor(out);
 		
-		IASTPreprocessorStatement[] preStats = root.getAllPreprocessorStatements();
-		if(preStats != null) {
-			for(int i = 0; i < preStats.length; i++) {
-				print(out, 0, preStats[i]);
+		if(root instanceof IASTTranslationUnit) {
+			IASTPreprocessorStatement[] preStats = ((IASTTranslationUnit)root).getAllPreprocessorStatements();
+			if(preStats != null) {
+				for(IASTPreprocessorStatement stat : preStats)
+					print(out, 0, stat);
 			}
 		}
 
-		root.accept(visitor);
+		root.accept(new PrintVisitor(out));
 		
-		IASTProblem[] problems = root.getPreprocessorProblems();
-		if(problems != null) {
-			for(int i = 0; i < problems.length; i++) {
-				print(out, 0, problems[i]);
+		if(root instanceof IASTTranslationUnit) {
+			IASTProblem[] problems = ((IASTTranslationUnit)root).getPreprocessorProblems();
+			if(problems != null) {
+				for(IASTProblem problem : problems)
+					print(out, 0, problem);
+			}
+			
+			IASTComment[] comments = ((IASTTranslationUnit)root).getComments();
+			if(comments != null) {
+				for(IASTComment comment : comments)
+					print(out, 0, comment);
 			}
 		}
-		
-		IASTComment[] comments = root.getComments();
-		if(comments != null) {
-			for(int i = 0; i < comments.length; i++) {
-				print(out, 0, comments[i]);
-			}
-		}
+		return false;
 	}
 
 	
 		
 	/**
 	 * Prints the AST to stdout.
+	 * 
+	 * @return Always returns false, boolean return type allows this method
+	 * to be called from a conditional breakpoint during debugging.
 	 */
-	public static void printAST(IASTTranslationUnit root) {
-		printAST(root, null);
+	public static boolean print(IASTNode root) {
+		return print(root, System.out);
 	}
 	
 	
-	public static void printProblems(IASTTranslationUnit root, PrintStream stream) {
-		PrintStream out = stream == null ? System.out : stream;
+	/**
+	 * Prints problem nodes in the AST to the given printstream.
+	 * 
+	 * @return Always returns false, boolean return type allows this method
+	 * to be called from a conditional breakpoint during debugging.
+	 */
+	public static boolean printProblems(IASTNode root, PrintStream out) {
 		if(root == null) {
 			out.println("null");
-			return;
+			return false;
 		}
 		
-		ProblemVisitor visitor = new ProblemVisitor(out);
-		root.accept(visitor);
+		root.accept(new ProblemVisitor(out));
 		
-		IASTProblem[] problems = root.getPreprocessorProblems();
-		if(problems != null) {
-			for(int i = 0; i < problems.length; i++) {
-				print(out, 0, problems[i]);
+		if(root instanceof IASTTranslationUnit) {
+			IASTProblem[] problems = ((IASTTranslationUnit)root).getPreprocessorProblems();
+			if(problems != null) {
+				for(IASTProblem problem : problems) {
+					print(out, 0, problem);
+				}
 			}
 		}
+		
+		return false;
 	}
 	
-	public static void printProblems(IASTTranslationUnit root) {
-		printProblems(root, System.out);
+	
+	/**
+	 * Prints problem nodes in the AST to stdout.
+	 * 
+	 * @return Always returns false, boolean return type allows this method
+	 * to be called from a conditional breakpoint during debugging.
+	 */
+	public static boolean printProblems(IASTNode root) {
+		return printProblems(root, System.out);
 	}
+	
 	
 	
 	private static void print(PrintStream out, int indentLevel, Object n) {
@@ -142,7 +163,7 @@ class ASTPrinter {
 		
 		if(n instanceof ASTNode) {
 			ASTNode node = (ASTNode) n;
-			out.print(" (" + node.getOffset() + "," + node.getLength() + ") ");  //$NON-NLS-2$ //$NON-NLS-3$
+			out.print(" (" + node.getOffset() + "," + node.getLength() + ") ");
 			if(node.getParent() == null && !(node instanceof IASTTranslationUnit)) {
 				out.print("PARENT IS NULL ");
 			}

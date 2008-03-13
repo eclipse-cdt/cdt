@@ -236,7 +236,7 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
             while (!isTerminated()) {
                 synchronized(fTxCommands) {
                     try {
-                        // Remove comamnd from send queue.
+                        // Remove command from send queue.
                         final CommandHandle commandHandle = fTxCommands.take();
                         
                         // Send the request to PDA
@@ -351,7 +351,7 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
                 listener.commandQueued(command);
             }
             
-            // In a separate dispatch cycle.  This allows command listeners to repond to the 
+            // In a separate dispatch cycle.  This allows command listeners to respond to the 
             // command queued event.  
             getExecutor().execute(new DsfRunnable() {
                 public void run() {

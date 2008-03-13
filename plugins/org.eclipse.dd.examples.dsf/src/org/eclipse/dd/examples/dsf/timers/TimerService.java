@@ -100,7 +100,7 @@ public class TimerService extends AbstractDsfService
     
     @Override 
     protected BundleContext getBundleContext() {
-        return DsfExamplesPlugin.getBundleContext();
+        return DsfExamplesPlugin.getDefault().getBundle().getBundleContext();
     }    
 
     @Override 

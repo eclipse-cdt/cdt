@@ -107,8 +107,8 @@ public class AlarmService extends AbstractDsfService
     /**
      * Event indicating that an alarm has been triggered by a timer. 
      */
-    public class AlarmTriggeredEvent extends AbstractDMEvent<AlarmDMContext> {
-        public AlarmTriggeredEvent(AlarmDMContext context) {
+    public class AlarmTriggeredDMEvent extends AbstractDMEvent<AlarmDMContext> {
+        public AlarmTriggeredDMEvent(AlarmDMContext context) {
             super(context);
         }
     }
@@ -123,7 +123,7 @@ public class AlarmService extends AbstractDsfService
     
     @Override 
     protected BundleContext getBundleContext() {
-        return DsfExamplesPlugin.getBundleContext();
+        return DsfExamplesPlugin.getDefault().getBundle().getBundleContext();
     }    
 
     @Override 
@@ -179,7 +179,7 @@ public class AlarmService extends AbstractDsfService
                 AlarmDMContext alarmCtx = new AlarmDMContext(
                     getSession().getId(), timerContext, entry.getKey());
                 getSession().dispatchEvent( 
-                    new AlarmTriggeredEvent(alarmCtx), getProperties());
+                    new AlarmTriggeredDMEvent(alarmCtx), getProperties());
             }
         }
     }
@@ -201,7 +201,7 @@ public class AlarmService extends AbstractDsfService
     }
 
     /** Returns the alarm context for given timer and trigger contexts. */
-    public AlarmDMContext getAlarmS(TriggerDMContext alarmCtx, TimerDMContext timerCtx) {
+    public AlarmDMContext getAlarm(TriggerDMContext alarmCtx, TimerDMContext timerCtx) {
         return new AlarmDMContext(getSession().getId(), timerCtx, alarmCtx);
     }
 

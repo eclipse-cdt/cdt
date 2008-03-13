@@ -60,7 +60,7 @@ class AlarmsVMNode extends AbstractDMVMNode
         
         // Get the alarm context then check the triggered value.  
         final AlarmDMContext alarmStatusDmc = getServicesTracker().getService(AlarmService.class).
-            getAlarmS(alarmDmc, timerDmc);
+            getAlarm(alarmDmc, timerDmc);
         boolean triggered = getServicesTracker().getService(AlarmService.class).
             isAlarmTriggered(alarmStatusDmc); 
         
@@ -84,7 +84,7 @@ class AlarmsVMNode extends AbstractDMVMNode
     
     
     public int getDeltaFlags(Object e) {
-        if (e instanceof AlarmService.AlarmTriggeredEvent) {
+        if (e instanceof AlarmService.AlarmTriggeredDMEvent) {
             return IModelDelta.ADDED | IModelDelta.SELECT | IModelDelta.EXPAND;
         }
         return IModelDelta.NO_CHANGE;
@@ -93,10 +93,10 @@ class AlarmsVMNode extends AbstractDMVMNode
     public void buildDelta(Object e, VMDelta parentDelta, int nodeOffset, RequestMonitor requestMonitor) {
         // The alarm element is added when and selected upon a triggered event.  
         // Parent element is also expanded allow the alarm to be selected.
-        if (e instanceof AlarmService.AlarmTriggeredEvent) {
+        if (e instanceof AlarmService.AlarmTriggeredDMEvent) {
             parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.EXPAND);
             parentDelta.addNode(
-                createVMContext( ((AlarmService.AlarmTriggeredEvent)e).getDMContext() ),
+                createVMContext( ((AlarmService.AlarmTriggeredDMEvent)e).getDMContext() ),
                 0,
                 IModelDelta.ADDED | IModelDelta.SELECT);
         }

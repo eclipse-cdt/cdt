@@ -114,11 +114,10 @@
 			<replacefilter token="@buildVersion@" value="${branchVersion}.${timestamp}"/>
 		</replace>
 		<copy file="pack.properties" todir="${buildDirectory}/site/eclipse"/>
-		<!-- for some reason LPG isn't getting picked up-->
-		<!--
-		<copy file="${buildDirectory}/plugins/net.sourceforge.lpg.lpgjavaruntime_1.1.0.v200706111738.jar"
+		<!-- for some reason LPG isn't getting picked up-->		
+		<copy file="${buildDirectory}/plugins/net.sourceforge.lpg.lpgjavaruntime_1.1.0.v200711021030.jar"
 			todir="${buildDirectory}/site/eclipse/plugins"/>
-		-->
+
 		<zip destfile="${zipsdir}/${masterFile}"
 			basedir="${buildDirectory}/site/eclipse"/>
 	</target>

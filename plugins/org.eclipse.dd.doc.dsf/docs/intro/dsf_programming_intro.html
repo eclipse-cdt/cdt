@@ -1,16 +1,21 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-  <title>DSF Common Patterns</title>
+  <title>Introduction to Programming with DSF</title>
 </head>
 <body>
-<h2 style="text-align: center;"><a class="mozTocH2"
- name="mozTocId598041"></a>DSF Common Patterns<br>
-</h2>
-<ul id="mozToc">
-<!--mozToc h3 1 h4 2-->
-  <li><a href="#mozTocId211695">1 Introduction
-    </a></li>
+<h1 style="text-align: center;"><a class="mozTocH2"
+ name="mozTocId598041"></a>Introduction to Programming with DSF</h1>
+<h4>Summary</h4>
+This tutorial intorduces the reader to common techniques and patterns
+used in the Debugger Services Framework (DSF), which is developed by
+the <a href="http://www.eclipse.org/dsdp/dd/">DSDP Device Debugging
+project</a>.&nbsp; It also gives a good overview of the framework's
+more advanced features.<br>
+<h4>Table of Contents</h4>
+<ul class="readonly" id="mozToc">
+<!--mozToc h2 1 h3 2-->
+  <li><a href="#mozTocId211695">1 Introduction</a></li>
   <li><a href="#mozTocId53346">2 Examples
     </a></li>
   <li><a href="#mozTocId218018">3 Asynchronous Methods</a>
@@ -18,7 +23,7 @@
       <li><a href="#mozTocId111595">3.1 Request Monitor</a></li>
       <li><a href="#mozTocId579960">3.2 Data Request
 Monitor</a></li>
-      <li><a href="#mozTocId161601">3. 4 Multi-Request
+      <li><a href="#mozTocId161601">3. 3 Multi-Request
 Monitor</a></li>
     </ul>
   </li>
@@ -61,21 +66,37 @@ Shutdown</a></li>
         </a></li>
     </ul>
   </li>
+  <li><a href="#mozTocId942991">9 Next Steps</a></li>
 </ul>
-<h3><a class="mozTocH3" name="mozTocId211695"></a>1 Introduction</h3>
-This document contains a tutorial for the basic features of the
-Debugger Services Framework (DSF), created by the DSDP Device Debugging
-project.<br>
-<h3><a class="mozTocH3" name="mozTocId53346"></a>2 Examples<br>
-</h3>
-Running example code is and performing included exercises is very
+<h4>Copyright</h4>
+Copyright (c) 2008 Wind River Systems and others. All rights
+reserved. This program and the accompanying materials are made
+available under the terms of the Eclipse Public License v1.0 which
+accompanies this distribution, and is available at
+http://www.eclipse.org/legal/epl-v10.html<br>
+<br>
+Contributors:<br>
+<ul>
+  <li>Wind River Systems - initial content<br>
+  </li>
+</ul>
+<hr style="width: 100%; height: 2px;">
+<h2>1 Examples<br>
+</h2>
+Running example code and performing included exercises is very
 helpful in following this tutorial.&nbsp; In order to run the examples
 in this tutorial the following is needed:<br>
 <ol>
-  <li>Download and install Eclipse development environment, either the <span
- style="font-style: italic;">Eclipse Classic 3.4 </span>or <span
- style="font-style: italic;">Eclipse IDE for C/C++ Developers</span><br>
+  <li>Download and install the Eclipse SDK 3.4 (<a
+ href="http://download.eclipse.org/eclipse/downloads">http://download.eclipse.org/eclipse/downloads</a>)</li>
+  <li>nstall the Eclipse IDE for C/C++ 5.0:<br>
   </li>
+  <ol style="list-style-type: lower-alpha;">
+    <li>Using Update Manager, install the <span
+ style="font-style: italic;">C and C++ Development</span> SDK, found in
+the <span style="font-style: italic;">Ganymede
+Discovery Site</span>.</li>
+  </ol>
   <li>Install the DSF SDK feature to build against, by performing
 either:<br>
   </li>
@@ -87,7 +108,7 @@ Discovery Site</span> under <span style="font-style: italic;">Remote
 Access and Device Development</span>.</li>
     <li>Check out <span style="font-style: italic;">org.eclipse.dd.dsf
 and org.eclipse.dd.dsf.ui</span> plugins, found in the <span
- style="font-style: italic;">/cvsroot/dsdp</span> repository under <span
+ style="font-style: italic;">/cvsroot/dsdp</span> repository in the <span
  style="font-style: italic;">org.eclipse.dd.dsf/plugins</span>
 directory.</li>
   </ol>
@@ -118,7 +139,7 @@ requires an Eclipse Application to be launched (see the <a
     </li>
   </ol>
 </ol>
-<h3><a class="mozTocH3" name="mozTocId218018"></a>3 Asynchronous Methods</h3>
+<h2><a class="mozTocH3" name="mozTocId218018"></a>2 Asynchronous Methods</h2>
 One of the central features of DSF is that it relies very heavily on
 the use of asynchronous methods.&nbsp; <span
  style="font-style: italic;">Asynchronous methods</span> here mean
@@ -129,7 +150,7 @@ is composed of asynchronous methods, a higher level system which uses
 those methods also has to have asynchronous methods in its interface
 (or risk blocking its calling thread).<span
  style="font-style: italic; color: rgb(255, 0, 0);"></span><br>
-<h4><a class="mozTocH4" name="mozTocId111595"></a>3.1 Request Monitor</h4>
+<h3><a class="mozTocH4" name="mozTocId111595"></a>2.1 Request Monitor</h3>
 There is a standard callback object used in DSF, the request
 monitor.&nbsp; A request monitor has the following features:<br>
 <ul>
@@ -146,15 +167,18 @@ invoked when the callback is invoked: handleCompleted(), handleOK(),
 handleError(), etc.&nbsp; The users may override these methods as
 needed to perform additional processing upon asynchronous method
 completion.</li>
-  <li><span style="text-decoration: underline;">Parent Request Monitor</span>
+  <li style="color: rgb(0, 0, 0);"><span
+ style="text-decoration: underline;">Parent Request
+Monitor</span>
 - If the method calling an asynchronous method is itself asynchronous,
 it may set its argument request monitor as the parent of the request
-monitor it is creating.&nbsp; The parent request monitor will be <br>
+monitor it is creating.&nbsp; The parent request monitor will be
 automatically invoked when the lower level request monitor is completed.</li>
 </ul>
 Following is the snippet from a the
 "hello world" example of using a
 request monitor:<br>
+<br>
 <div style="margin-left: 20px;">
 <table style="text-align: left; background-color: rgb(238, 238, 238);"
  border="0" cellpadding="5" cellspacing="0">
@@ -241,8 +265,8 @@ module.</p>
   </tbody>
 </table>
 <br>
-<h4><a class="mozTocH4" name="mozTocId579960"></a>3.2 Data Request
-Monitor</h4>
+<h3><a class="mozTocH4" name="mozTocId579960"></a>2.2 Data Request
+Monitor</h3>
 The base request monitor is useful for returning
 status of the
 asynchronous method, but they do not have an option of returning a
@@ -292,8 +316,8 @@ methods.</li>
 the calculation to the console.<br>
   </li>
 </ul>
-<h4><a class="mozTocH4" name="mozTocId161601"></a>3. 4 Multi-Request
-Monitor</h4>
+<h3><a class="mozTocH4" name="mozTocId161601"></a>2.3 Multi-Request
+Monitor</h3>
 A common problem when using asynchronous is that several asynchronous
 methods need to be called in parallel, so the calling method needs to
 somehow manage the completion of several request monitors.&nbsp;
@@ -336,21 +360,39 @@ example of using the CountingRequestMonitor:<br>
 </table>
 </div>
 <ul>
-  <li>Line 50 creates the CountingRequestMonitor.&nbsp; Note that the
-parent request monitor is set to the request monitor from the
+  <li>Line 51 creates the CountingRequestMonitor.&nbsp; Its parent
+request monitor is set to the request monitor from the
 asyncQuicksort() argument.&nbsp; This parent request monitor is
-automatically called when the counting request monitor is completed.</li>
-  <li>Lines 51 and 52, use the same instance of counting request
+automatically called when the counting request monitor is completed.
+(see note)<br>
+  </li>
+  <li>Lines 52 and 53, use the same instance of counting request
 monitor when calling the sub-routine.&nbsp; Each sub-routine will call
 done() on the counting request monitor.</li>
-  <li>Line 53 sets the count to the number of sub-routines called with
+  <li>Line 54 sets the count to the number of sub-routines called with
 the counting request monitor.&nbsp; Note that the done count can be set
 after calling the sub-routines, because the counting request monitor
 will not be completed until the count is set. <br>
   </li>
-  <li>Line 55 Don't forget to complete the request monitor in all
+  <li>Line 55: Don't forget to complete the request monitor in all
 execution paths!</li>
 </ul>
+<table
+ style="width: 95%; text-align: left; margin-left: auto; margin-right: auto; background-color: rgb(255, 255, 204); font-style: italic;"
+ border="0" cellpadding="10" cellspacing="0">
+  <tbody>
+    <tr>
+      <td style="text-align: left;">Note: The use of a parent request
+monitor can simplify the code when implementing nested asynchronous
+methods, since the parent requrest monitor is automatically completed
+when the child requrest monitor is completed.&nbsp; Unfortunately,
+failing to specify a parent request monitor when it is expected can
+sometimes lead to bugs.<br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
 <table
  style="width: 95%; text-align: left; margin-left: auto; margin-right: auto; background-color: rgb(255, 255, 204);"
  border="0" cellpadding="10" cellspacing="0">
@@ -360,7 +402,7 @@ execution paths!</li>
  style="text-align: left; background-color: rgb(255, 204, 204);"><span
  style="text-decoration: underline;">Exercise 2</span>: Converting a
 synchronous method into an asynchronous one is another common task in
-DSF.&nbsp; This excercise converts the AsyncQuicksort.partition()
+DSF.&nbsp; This exercise converts the AsyncQuicksort.partition()
 method into asynchronous AsyncQuicksort.asyncPartition().&nbsp; <br>
       <p><span style="font-style: italic;">Look
 for comments preceeded with "// TODO Exercise 2" in the
@@ -370,7 +412,7 @@ module.</span></p>
     </tr>
   </tbody>
 </table>
-<h3><a class="mozTocH3" name="mozTocId732289"></a>4 Concurrency</h3>
+<h2><a class="mozTocH3" name="mozTocId732289"></a>3 Concurrency</h2>
 The simple examples in previous section used asynchronous method
 signatures, however no real asynchronous work was performed since all
 execution was performed in the main thread.&nbsp; This section examines
@@ -422,7 +464,7 @@ synchronous IStructuredContentProvider interface.<br>
   <li>AsyncDataViewer - Table-based viewer which implements an
 asynchronous ILazyContentProvider interface.</li>
 </ol>
-<h4><a class="mozTocH4" name="mozTocId548320"></a>4.1 Query</h4>
+<h3><a class="mozTocH4" name="mozTocId548320"></a>3.1 Query</h3>
 DSF is designed to facilitate use of asynchronous APIs.&nbsp; However,
 sometimes there are situations where a synchronous method has to be
 implemented to call an asynchronous method.&nbsp; One utility used to
@@ -519,7 +561,7 @@ for completion of the asynchronous methods called by execute().</td>
   </tbody>
 </table>
 <p> </p>
-<h4><a class="mozTocH4" name="mozTocId605480"></a>4.2 Synchronization</h4>
+<h3><a class="mozTocH4" name="mozTocId605480"></a>3.2 Synchronization</h3>
 Managing race conditions and deadlocks is one of the most challanging
 problems of large multi-threaded systems.&nbsp; DSF uses a
 single-threaded executor as the primary mechanism for safe-guarding
@@ -602,7 +644,7 @@ DSF executor thread.</span></small><br>
     </tr>
   </tbody>
 </table>
-Comparing other parts of the two data generator implementation shows
+Comparing other parts of the two data generator implementations shows
 that using the synchronization mechanism above is the principal
 difference between the two implementations.&nbsp; One notable exception
 is the principal processing loop in each data generator.&nbsp; In the
@@ -659,7 +701,7 @@ of the generator's thread:<br>
 <ul>
   <li>Line 141 creates the loop that runs continuously until the break
 statement on line 159.</li>
-  <li>Line 149 implements the artcificial processing delay that is
+  <li>Line 149 implements the artificial processing delay that is
 executed for each request.</li>
 </ul>
 <p>In contrast the executor-based generator uses a dedicated method for
@@ -720,7 +762,7 @@ that the queue servicing runnable is not scheduled too often.</li>
   <li>Line 212 calls the ExecutorService.schedule() method to run the
 queue servicing runnable, with a delay that simulates the request
 processing time.</li>
-  <li>Line 224, after servicing runnableis finished, calls
+  <li>Line 224, after servicing runnable is finished, calls
 serviceQueue() again to process the next item in the queue.</li>
 </ul>
 <table
@@ -751,7 +793,7 @@ threads can call a request monitor when finished.<br>
 the single-threaded executor concurrency model is that as long as a
 method is guaranteed to run in the executor thread, this method may
 access and modify any of the variables protected by this
-executor.&nbsp; This excercise demonstrates performing a somewhat more
+executor.&nbsp; This exercise demonstrates performing a somewhat more
 complicated operation on protected state data.<br>
       <p><span style="font-style: italic;">Look
 for comments preceeded with "// TODO Exercise 3" in the
@@ -761,7 +803,7 @@ module.</span></p>
     </tr>
   </tbody>
 </table>
-<h4><a class="mozTocH4" name="mozTocId375384"></a>4.3 Annotations</h4>
+<h3><a class="mozTocH4" name="mozTocId375384"></a>3.3 Annotations</h3>
 In any multi-threaded system it can become very difficult to determine
 what are the rules governing access to the various data objects.&nbsp;
 In a DSF system, it is even more important to identify which data
@@ -778,7 +820,7 @@ org.eclipse.dd.dsf.concurrent<br>
   <li><span style="text-decoration: underline;">ThreadSafe</span> -
 Indicates that the given element can be accessed on any thread.&nbsp;
 Typically, if this annotation is used, the given member or class uses
-syncrhonized or atomic objects to protect its data.</li>
+synchronized or atomic objects to protect its data.</li>
   <li><span style="text-decoration: underline;">Immutable</span> -
 Immutable objects cannot be modified after they are created, thus they
 are also thread-safe.&nbsp; The easiest way to make an object
@@ -822,7 +864,7 @@ add them.<br>
       <td
  style="text-align: left; background-color: rgb(255, 204, 204);">
       <p><span style="text-decoration: underline;">Exercise 4</span>:
-This excercise adds the appropriate synchronization annotations to the
+This exercise adds the appropriate synchronization annotations to the
 methods and fields of DataProviderWithExecutor. <br>
       </p>
       <p><span style="font-style: italic;">Look
@@ -843,7 +885,7 @@ module.</span></p>
       <td
  style="text-align: left; background-color: rgb(255, 204, 204);"><span
  style="text-decoration: underline;">Exercise 5</span>: It is all too
-easy to get into a deadlock situation.&nbsp; This excercise
+easy to get into a deadlock situation.&nbsp; This exercise
 purposefully puts the data viewer system into a deadlock.&nbsp; The
 deadlock first renders the data viewer unusable, but the main thread
 also gets deadlocked when attempting to exit the program.<br>
@@ -855,8 +897,8 @@ module.</span></p>
     </tr>
   </tbody>
 </table>
-<h3><a class="mozTocH3" name="mozTocId801197"></a><span><a
- name="Timers_Example"></a>5 Timers Example</span></h3>
+<h2><a class="mozTocH3" name="mozTocId801197"></a><span><a
+ name="Timers_Example"></a>4 Timers Example</span></h2>
 <span style="font-weight: bold;"></span>The <span
  style="font-style: italic;">Timers</span> example, found in the <span
  style="font-style: italic;">org.eclipse.dd.examples.dsf.timers</span>
@@ -886,7 +928,7 @@ Returns the array of contexts for existing timers.<br>
     <li><span style="font-style: italic;">getTimerValue()</span> method
 - Returns the current value for the given timer context.<br>
     </li>
-    <li><span style="font-style: italic;">TimerTickEvent</span> event
+    <li><span style="font-style: italic;">TimerTickDMEvent</span> event
 class - An event that is generated for every timer, every time its
 value changes (once per second).&nbsp; The event contains the timer's
 context.<br>
@@ -965,8 +1007,8 @@ editor</span> - changes the value of the selected trigger.<span
  style="font-style: italic;"><br>
     </span></li>
 </ul>
-<h3><a class="mozTocH3" name="mozTocId334813"></a>6 Services</h3>
-<h4><a class="mozTocH4" name="mozTocId807768"></a>6.1 OSGi</h4>
+<h2><a class="mozTocH3" name="mozTocId334813"></a>5 Services</h2>
+<h3><a class="mozTocH4" name="mozTocId807768"></a>5.1 OSGi</h3>
 DSF builds on top of OSGi services APIs.&nbsp;&nbsp; OSGi offers a rich
 API for managing services and it is important to understand some of the
 OSGi service API basics in order to use DSF<br>
@@ -1018,10 +1060,10 @@ down the debugger.<br>
   </tbody>
 </table>
 <br>
-<h4><a class="mozTocH4" name="mozTocId197384"></a>6.2 Session</h4>
+<h3><a class="mozTocH4" name="mozTocId197384"></a>5.2 Session</h3>
 DSF-based debugger integrations can register many services and there
 can be multiple instances of debuggers registering services with the
-same interfaces.&nbsp; To help coordinate services in a give debugger
+same interfaces.&nbsp; To help coordinate services in a given debugger
 instance and distinguish the services between the instances of
 debuggers, DSF services are organized into sessions.<br>
 <p>DSF Session features include:<br>
@@ -1049,7 +1091,7 @@ type.&nbsp; More information about Data Model is described in the Data
 Model section.<br>
   </li>
 </ul>
-<h4><a class="mozTocH4" name="mozTocId686334"></a>6.3 Executor</h4>
+<h3><a class="mozTocH4" name="mozTocId686334"></a>5.3 Executor</h3>
 All the services registered with the same session share a single DSF
 Executor.&nbsp; By convention, all public service interfaces should be
 restricted to being called in this executor thread.&nbsp; This point
@@ -1068,7 +1110,7 @@ should be called using the session's DSF executor. </td>
   </tbody>
 </table>
 <br>
-<h4><a class="mozTocH4" name="mozTocId255165"></a>6.4 Tracker</h4>
+<h3><a class="mozTocH4" name="mozTocId255165"></a>5.4 Tracker</h3>
 Using the OSGi APIs for accessing services directly can be very
 cumbersome.&nbsp; A client retrieving a service reference is
 responsible for retaining the ServiceReference object and for calling
@@ -1167,8 +1209,8 @@ service reference leak.<br>
     </tr>
   </tbody>
 </table>
-<h4><a class="mozTocH4" name="mozTocId642142"></a>6.5 Initialization /
-Shutdown</h4>
+<h3><a class="mozTocH4" name="mozTocId642142"></a>5.5 Initialization /
+Shutdown</h3>
 <span style="text-decoration: underline;"></span>Every DSF service must
 implement the IDsfService.initialize() and IDsfService.shutdown()
 methods.&nbsp; These methods can only be called in the session executor
@@ -1195,7 +1237,7 @@ Timers example:<br>
   <tbody>
     <tr>
       <td colspan="2" rowspan="1" style="vertical-align: top;"><span
- style="font-family: monospace; font-weight: bold;">org.eclipse.dd.examples.dsf.timers.ServicesStartupSequence</span><br>
+ style="font-family: monospace; font-weight: bold;">org.eclipse.dd.examples.dsf.timers.ServicesShutdownSequence</span><br>
       </td>
     </tr>
     <tr>
@@ -1329,7 +1371,7 @@ custom request monitor to be invoked at the completion of the sequence.<br>
   </tbody>
 </table>
 <br>
-<h4><a class="mozTocH4" name="mozTocId750708"></a>6.6 Events</h4>
+<h3><a class="mozTocH4" name="mozTocId750708"></a>5.6 Events</h3>
 DSF provides a somewhat unusual event mechanism, where event listeners
 do not implement any particular listener interface.&nbsp; Instead,
 event listeners use the <span style="font-style: italic;">DsfServiceEventHandler</span>
@@ -1385,16 +1427,16 @@ listeners are called after the services.<br>
     </tr>
   </tbody>
 </table>
-<h3><a class="mozTocH3" name="mozTocId868515"></a>7 Data Model</h3>
+<h2><a class="mozTocH3" name="mozTocId868515"></a>6 Data Model</h2>
 The term <span style="font-style: italic;">Data Model</span> refers to
 the natural structure of data that is being retrieved by the DSF
 services.&nbsp; One of the great challenges of creating an user
-interface for a debugger is that the amount of of data that is
+interface for a debugger is that the amount of data that is
 available on the target is much greater than what can be practically
 presented to the user.&nbsp; Therefore the debugger services need to
 break up the data into chunks with appropriate granularity to achieve
 maximum performance and usability.<br>
-<h4><a class="mozTocH4" name="mozTocId605051"></a>7.1 IDMContext</h4>
+<h3><a class="mozTocH4" name="mozTocId605051"></a>6.1 IDMContext</h3>
 The IDMContext represents a handle to a chunk of data in the Data
 Model.&nbsp; This interface is a minimal, yet central feature of the
 Data Model API.<br>
@@ -1453,7 +1495,7 @@ use is optional.<br>
     </tr>
   </tbody>
 </table>
-<h4><a class="mozTocH4" name="mozTocId76941"></a>7.2 Context Hierarchy</h4>
+<h3><a class="mozTocH4" name="mozTocId76941"></a>6.2 Context Hierarchy</h3>
 One of the most powerful features of the IDMContext interface is that
 is is hierarchical.&nbsp; The <span style="font-style: italic;">IDMContext.getParents()</span>
 method returns the immediate ancestors of a given context and following
@@ -1535,7 +1577,7 @@ between service interfaces.<br>
     </tr>
   </tbody>
 </table>
-<h4><a class="mozTocH4" name="mozTocId734154"></a>7.3 DMContexts</h4>
+<h3><a class="mozTocH4" name="mozTocId734154"></a>6.3 DMContexts</h3>
 Searching the context hierarchy can be tedious to implement, the
 DMContexts utility class contains a few static methods to simplify this
 task:<br>
@@ -1550,14 +1592,14 @@ the other.</li>
 Converts all the contexts in a hierarchy of the give context into a
 list.</li>
 </ul>
-<h3><a class="mozTocH3" name="mozTocId34489"></a>8 View Model</h3>
+<h2><a class="mozTocH3" name="mozTocId34489"></a>7 View Model</h2>
 View Model refers to the ideal <span style="font-style: italic;">user-presentable</span>
 structure of the data.&nbsp; This is in contrast to the Data Model,
 which refers to the <span style="font-style: italic;">natural</span>
 data structure, although the two often end up being the same.&nbsp;
 Never the less, the needs of the user presentation often change so the
 central feature of the View Model is the ability to customize it.<br>
-<h4><a class="mozTocH4" name="mozTocId476260"></a>8.1 Flexible Hierarchy</h4>
+<h3><a class="mozTocH4" name="mozTocId476260"></a>7.1 Flexible Hierarchy</h3>
 View Model builds on the <span style="font-style: italic;">flexible
 hierarchy</span> API introduced by Debug
 Platform team in release 3.2.&nbsp; The flexible hierarchy API has a
@@ -1589,8 +1631,8 @@ related to packaging.<br>
     </tr>
   </tbody>
 </table>
-<h4><a class="mozTocH4" name="mozTocId64152"></a>8.2 Adapter Problem<br>
-</h4>
+<h3><a class="mozTocH4" name="mozTocId64152"></a>7.2 Adapter Problem<br>
+</h3>
 The number two feature of flexible hierarchy API is implemented using
 the adapter pattern.&nbsp; One down-side of the adapter pattern is that
 there can only be one instance of an adapter of a particular type
@@ -1638,7 +1680,7 @@ element, for use with different views.</span></small><br>
     </tr>
   </tbody>
 </table>
-<h4><a class="mozTocH4" name="mozTocId337284"></a>8.4 API</h4>
+<h3><a class="mozTocH4" name="mozTocId337284"></a>7.3 API</h3>
 The View Model uses four principal types of elements when processing
 adapter requests from flexible hierarchy viewers.&nbsp; These are:<br>
 <ol>
@@ -1663,7 +1705,7 @@ element that is being wrapped, as well as to the VM Node and VM Adapter
 that it originated from.<br>
   </li>
 </ol>
-<h4><a class="mozTocH4" name="mozTocId935122"></a>8.5 Content Provider</h4>
+<h3><a class="mozTocH4" name="mozTocId935122"></a>7.4 Content Provider</h3>
 The most important job of the View Model is to supply the content, in
 form of element wrappers, to the viewers.&nbsp; The flexible hierarchy
 interface for this provider is listed below:<br>
@@ -1844,7 +1886,7 @@ array, and sets those VM Contexts to the update.</li>
   <li>Line 94 completes the update.<br>
   </li>
 </ul>
-<h4><a class="mozTocH4" name="mozTocId484572"></a>8.6 Model Event Proxy</h4>
+<h3><a class="mozTocH4" name="mozTocId484572"></a>7.5 Model Event Proxy</h3>
 Another important job of the View Model is to translate the events that
 originate from the Data Model into generic events (<span
  style="font-style: italic;">deltas</span>) that the viewer can
@@ -1875,9 +1917,11 @@ factory is implemented using abstract base classes in the <span
  style="font-style: italic;">org.eclipse.dd.dsf.ui.viewmodel</span>
 package.&nbsp; Instead, a typical DSF application only has to implement
 two interfaces in order to support event proxying:<br>
-<p><span style="text-decoration: underline;">Event handling in VM
-Provider<br>
-</span>The following listing from the Timers example shows the handling
+<h4>Event handling in VM
+Provider</h4>
+<h4><span style="text-decoration: underline;"></span></h4>
+<p><span style="text-decoration: underline;"></span>The following
+listing from the Timers example shows the handling
 of a model event:<br>
 </p>
 <div style="margin-left: 20px;">
@@ -1920,7 +1964,7 @@ their own single-threaded executor which is used to protect its state.</li>
 method which continues the event processing.<br>
   </li>
 </ul>
-<span style="text-decoration: underline;">Processing events in VM Nodes</span><br>
+<h4>Processing events in VM Nodes</h4>
 The following listing shows how the nodes translate the events into
 model delta components:<br>
 <br>
@@ -1981,9 +2025,9 @@ They add a flag to the parent delta element, instructing it to refresh
 all the elements managed by this node.<br>
   </li>
 </ul>
-<h4><a class="mozTocH4" name="mozTocId504316"></a>8.7 Property Provider
+<h3><a class="mozTocH4" name="mozTocId504316"></a>7.6 Property Provider
 / Label Provider<br>
-</h4>
+</h3>
 The <span style="font-style: italic;">IElementPropertyProvider</span>
 interface is not actually part of the Flexible Hierarchy API, but an
 extension interface added by DSF.&nbsp; View Model implementers can use
@@ -2093,8 +2137,12 @@ expected VM Context class.&nbsp; Then extracting the model object from
 the VM Context wrapper.</li>
   <li>Line 127 retrieves element data from the service.</li>
   <li>Lines 136-137 write the element properties into the property
-update.<br>
-  </li>
+update.</li>
 </ul>
+<h2><a class="mozTocH2" name="mozTocId942991"></a>8 Next Steps</h2>
+The DSF framework is (as its name implies) designed for integrating a
+debugger into Eclipse.&nbsp; The follow up tutorial is <span
+ style="font-style: italic;">How to write a DSF-based debugger</span>
+and it walks through the steps of implementing a debugger integration.<br>
 </body>
 </html>

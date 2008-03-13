@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.CDOM;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariableManager;
 import org.eclipse.cdt.core.index.IIndexManager;
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
@@ -257,11 +258,16 @@ public class CCorePlugin extends Plugin {
 	}
 	
 	public static void log(Throwable e) {
-		if ( e instanceof CoreException ) {
-			log(((CoreException)e).getStatus());
-		} else {
-			log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, "Error", e)); //$NON-NLS-1$
+		log("Error", e); //$NON-NLS-1$
+	}
+	
+	public static void log(String message, Throwable e) {
+		Throwable nestedException;
+		if (e instanceof CModelException 
+				&& (nestedException = ((CModelException)e).getException()) != null) {
+			e = nestedException;
 		}
+		log(createStatus(message, e));
 	}
 
 	public static IStatus createStatus(String msg) {
@@ -273,7 +279,7 @@ public class CCorePlugin extends Plugin {
 	}
 	
 	public static void log(IStatus status) {
-		((Plugin) getDefault()).getLog().log(status);
+		getDefault().getLog().log(status);
 	}
 
 	// ------ CPlugin

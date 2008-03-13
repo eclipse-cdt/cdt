@@ -278,12 +278,16 @@ public class CUIPlugin extends AbstractUIPlugin {
 		return fgCPlugin;
 	}
 
-	public void log(Throwable e) {
-		log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, "Error", e)); //$NON-NLS-1$
+	public static void log(Throwable e) {
+		log("Error", e); //$NON-NLS-1$
 	}
 
-	public void log(IStatus status) {
-		getLog().log(status);
+	public static void log(String message, Throwable e) {
+		log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, message, e));
+	}
+
+	public static void log(IStatus status) {
+		getDefault().getLog().log(status);
 	}
 	
 	public void logErrorMessage(String message) {
@@ -297,7 +301,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	*/
 	public static void errorDialog(Shell shell, String title, String message, IStatus s, boolean logError) {
 		if (logError)
-		    getDefault().log(s);
+		    log(s);
 		
 		// if the 'message' resource string and the IStatus' message are the same,
 		// don't show both in the dialog
@@ -313,7 +317,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	*/
 	public static void errorDialog(Shell shell, String title, String message, Throwable t, boolean logError) {
 		if (logError)
-		    getDefault().log(t);	
+		    log(t);	
 		
 		IStatus status;
 		if (t instanceof CoreException) {

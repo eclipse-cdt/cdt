@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,10 +8,12 @@
  * Contributors:
  *     Rational Software - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
@@ -75,7 +77,7 @@ public class CommitWorkingCopyOperation extends CModelOperation {
 	 */
 	protected void executeOperation() throws CModelException {
 		try {
-			beginTask("workingCopy.commit", 2); //$NON-NLS-1$
+			beginTask(CoreModelMessages.getString("workingCopy.commit"), 2); //$NON-NLS-1$
 			WorkingCopy wc = (WorkingCopy)getElementToProcess();
 			ITranslationUnit tu = wc.getOriginalElement();
 		

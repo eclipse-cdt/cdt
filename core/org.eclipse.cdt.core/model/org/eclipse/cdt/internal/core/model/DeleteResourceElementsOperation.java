@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *     IBM - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
@@ -33,7 +34,7 @@ public class DeleteResourceElementsOperation extends MultiOperation {
 	 * @see MultiOperation
 	 */
 	protected String getMainTaskName() {
-		return "operation.deleteResourceProgress"; //$NON-NLS-1$
+		return CoreModelMessages.getString("operation.deleteResourceProgress"); //$NON-NLS-1$
 	}
 
 	/**

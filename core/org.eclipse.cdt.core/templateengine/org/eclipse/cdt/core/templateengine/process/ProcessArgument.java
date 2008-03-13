@@ -207,12 +207,12 @@ public class ProcessArgument {
 			case ProcessParameter.COMPLEX_ARRAY:
 				params = param.getComplexChildren();
 				for(int i=0; i<complexValueArray.length; i++) {
-					ProcessArgument[] complexValue = complexValueArray[i];
-					if (params.length != complexValue.length) {
+					ProcessArgument[] cValue = complexValueArray[i];
+					if (params.length != cValue.length) {
 						return false;
 					}
-					for (int j = 0; j < complexValue.length; j++) {
-						if (!complexValue[j].isOfParameterType(params[j])) {
+					for (int j = 0; j < cValue.length; j++) {
+						if (!cValue[j].isOfParameterType(params[j])) {
 							return false;
 						}
 					}
@@ -256,9 +256,9 @@ public class ProcessArgument {
 				return true;
 			case ProcessParameter.COMPLEX_ARRAY:
 				for(int i=0; i<complexValueArray.length; i++) {
-					ProcessArgument[] complexValue =complexValueArray[i];
-					for(int j=0; j<complexValue.length; j++) {
-						ProcessArgument arg = complexValue[j];
+					ProcessArgument[] cValue =complexValueArray[i];
+					for(int j=0; j<cValue.length; j++) {
+						ProcessArgument arg = cValue[j];
 						if (!arg.areAllMacrosExpandable()) {
 							return false;
 						}
@@ -297,9 +297,9 @@ public class ProcessArgument {
 				return null;
 			case ProcessParameter.COMPLEX_ARRAY:
 				for(int i=0; i<complexValueArray.length; i++) {
-					ProcessArgument[] complexValue =complexValueArray[i];
-					for(int j=0; j<complexValue.length; j++) {
-						ProcessArgument arg = complexValue[j];
+					ProcessArgument[] cValue =complexValueArray[i];
+					for(int j=0; j<cValue.length; j++) {
+						ProcessArgument arg = cValue[j];
 						if ((macro = arg.getFirstNonExpandableMacro()) != null) {
 							return macro;
 						}
@@ -351,9 +351,9 @@ public class ProcessArgument {
 				break;
 			case ProcessParameter.COMPLEX_ARRAY:
 				for(int i=0; i<complexValueArray.length; i++) {
-					ProcessArgument[] complexValue =complexValueArray[i];
-					for(int j=0; j<complexValue.length; j++) {
-						ProcessArgument arg = complexValue[j];
+					ProcessArgument[] cValue =complexValueArray[i];
+					for(int j=0; j<cValue.length; j++) {
+						ProcessArgument arg = cValue[j];
 						arg.resolve();
 					}
 				}

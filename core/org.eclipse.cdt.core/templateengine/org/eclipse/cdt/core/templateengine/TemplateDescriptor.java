@@ -71,10 +71,10 @@ public class TemplateDescriptor {
 	 * 
 	 * @return default values with keys
 	 */
-	public Map<String, String> getTemplateDefaults(Element rootElement) {
+	public Map<String, String> getTemplateDefaults(Element element) {
 		Map<String, String> templateDefaults = new HashMap<String, String>();
 		Element propertyGroupElement;
-		List<Element> children = TemplateEngine.getChildrenOfElement(rootElement);
+		List<Element> children = TemplateEngine.getChildrenOfElement(element);
 		for (int i = 0, l = children.size(); i < l; i++) {
 			propertyGroupElement = children.get(i);
 			if (isNestedElement(propertyGroupElement)) {
@@ -134,24 +134,24 @@ public class TemplateDescriptor {
 	}
 
 	/**
-	 * This mehtod is to get the complex property-group from template descriptor
+	 * This method is to get the complex property-group from template descriptor
 	 * root element. complex means a property-group contains other
 	 * property-group(s)
 	 * 
-	 * @param rootElement
+	 * @param element
 	 *            root element of type JDOM Element
-	 * @return porperty-group root element of type JDOM Element
+	 * @return property-group root element of type JDOM Element
 	 */
-	public Element getRootPropertyGroup(Element rootElement) {
-		if (rootElement != null) {
-			String rootElementName = rootElement.getNodeName();
-			if (rootElementName.equalsIgnoreCase(PROPERTY_GROUP) && isNestedElement(rootElement)) {
-				return rootElement;
+	public Element getRootPropertyGroup(Element element) {
+		if (element != null) {
+			String rootElementName = element.getNodeName();
+			if (rootElementName.equalsIgnoreCase(PROPERTY_GROUP) && isNestedElement(element)) {
+				return element;
 			}
-			return rootElement;
+			return element;
 		} else {
 			String nextPGElementName = null;
-			List<Element> propertyGroupList = TemplateEngine.getChildrenOfElement(rootElement);
+			List<Element> propertyGroupList = TemplateEngine.getChildrenOfElement(element);
 			for (int i = 0, l = propertyGroupList.size(); i < l; i++) {
 				Element nextPGElement = propertyGroupList.get(i);
 				if (isNestedElement(nextPGElement))

@@ -43,7 +43,7 @@ public class ConditionalProcessGroup {
 	private String conditionString;
 	private String lValue;
 	private String rValue;
-	private Operator op;
+	private Operator operator;
 	private List<Process> processes;
 	private String id;
 	
@@ -80,13 +80,13 @@ public class ConditionalProcessGroup {
 			} else {
 				int op = conditionString.indexOf(ProcessHelper.EQUALS);
 				if (op != -1) {
-					this.op = Operator.EQUALS;
+					this.operator = Operator.EQUALS;
 					lValue = conditionString.substring(0, op);
 					rValue = conditionString.substring(op + ProcessHelper.EQUALS.length());
 				} else {
 					op = conditionString.indexOf(ProcessHelper.NOT_EQUALS);
 					if (op != -1) {
-						this.op = Operator.NOT_EQUALS;
+						this.operator = Operator.NOT_EQUALS;
 						lValue = conditionString.substring(0, op);
 						rValue = conditionString.substring(op + ProcessHelper.NOT_EQUALS.length());
 					}//else an unsupported operation where this condition is ignored.
@@ -125,17 +125,17 @@ public class ConditionalProcessGroup {
 
 	/**
 	 * Creates the Process from the process Elements.
-	 * @param template
+	 * @param templateCore
 	 * @param processElements
 	 */
-	private void createProcessObjects(TemplateCore template, List<Element> processElements) {
-		this.template = template;
+	private void createProcessObjects(TemplateCore templateCore, List<Element> processElements) {
+		this.template = templateCore;
 		this.processes = new ArrayList<Process>(processElements.size());
 		for (int j = 0, l = processElements.size(); j < l; j++) {
 			Element processElem = processElements.get(j);
 			if (processElem.getNodeName().equals(TemplateDescriptor.PROCESS)) {
 				String processId = id + "--> Process " + (j + 1) + " (" + processElem.getAttribute(Process.ELEM_TYPE) + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				processes.add(new Process(template, processElem, processId));
+				processes.add(new Process(templateCore, processElem, processId));
 			}
 		}
 	}
@@ -188,16 +188,16 @@ public class ConditionalProcessGroup {
 			return false;
 		}
 		Map<String, String> valueStore = template.getValueStore();
-		String lValue = this.lValue;
-		String rValue = this.rValue;
+		String processedLValue= lValue;
+		String processedRValue= rValue;
 		for(String value : macros) {
-			lValue = lValue.replaceAll(ProcessHelper.START_PATTERN + value + ProcessHelper.END_PATTERN, valueStore.get(value));
-			rValue = rValue.replaceAll(ProcessHelper.START_PATTERN + value + ProcessHelper.END_PATTERN, valueStore.get(value));
+			processedLValue = processedLValue.replaceAll(ProcessHelper.START_PATTERN + value + ProcessHelper.END_PATTERN, valueStore.get(value));
+			processedRValue = processedRValue.replaceAll(ProcessHelper.START_PATTERN + value + ProcessHelper.END_PATTERN, valueStore.get(value));
 		}
-		if(op.equals(Operator.EQUALS)) {
-			return lValue.equals(rValue);
-		} else if(op.equals(Operator.NOT_EQUALS)) {
-			return !lValue.equals(rValue);
+		if(operator.equals(Operator.EQUALS)) {
+			return processedLValue.equals(processedRValue);
+		} else if(operator.equals(Operator.NOT_EQUALS)) {
+			return !processedLValue.equals(processedRValue);
 		} else {
 			return false;
 		}

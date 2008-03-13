@@ -57,10 +57,10 @@ public class Process {
 
 	/**
 	 * This method build the necessary Arguments for the process 
-	 * @param template
+	 * @param templateCore
 	 * @param element
 	 */
-	private void buildArgs(TemplateCore template, Element element) {
+	private void buildArgs(TemplateCore templateCore, Element element) {
 		List<Element> children = TemplateEngine.getChildrenOfElement(element);
 		ProcessParameter[] params = processRunner.getProcessParameters();
 		List<ProcessArgument> list = new ArrayList<ProcessArgument>(params.length);
@@ -70,14 +70,14 @@ public class Process {
 			boolean childrenRemain = childIndex < children.size();
 			Element child = (childrenRemain ? children.get(childIndex) : null);
 			if (param.isExternal() && (!childrenRemain || !param.getName().equals(child.getAttribute(ProcessArgument.ELEM_NAME)))) {
-				list.add(new ProcessArgument(template, param));
+				list.add(new ProcessArgument(templateCore, param));
 			} else if (childrenRemain) {
-				list.add(new ProcessArgument(template, child));
+				list.add(new ProcessArgument(templateCore, child));
 				childIndex++;
 			}
 		}
 		while (childIndex < children.size()) {
-			list.add(new ProcessArgument(template, children.get(childIndex++)));
+			list.add(new ProcessArgument(templateCore, children.get(childIndex++)));
 		}
 		args = list.toArray(new ProcessArgument[list.size()]);
 	}

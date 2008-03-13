@@ -14,6 +14,7 @@
  * Contributors:
  * David McKnight  (IBM)   [220123][dstore] Configurable timeout on irresponsiveness
  * David McKnight  (IBM)   [221601][dstore] xmlparser needs to be able to handle very large attributes
+ * David McKnight  (IBM)   [222163][dstore] Special characters from old server are not restored
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.util;
@@ -109,7 +110,10 @@ public class XMLparser
 	public static String STR_LT = "&lt;"; //$NON-NLS-1$
 	public static String STR_GT = "&gt;"; //$NON-NLS-1$
 	public static String STR_SEMI = "&#59;"; //$NON-NLS-1$
-	
+
+	public static String STR_NL = "&#92;&#110;";	 //$NON-NLS-1$
+	public static String STR_CR = "&#92;&#114;"; //$NON-NLS-1$
+	public static String STR_EOL = "&#92;&#48;"; //$NON-NLS-1$
 	
 	/**
 	 * Constructor
@@ -506,6 +510,7 @@ public class XMLparser
 			if (xmlTag != null)
 			{
 				String trimmedTag = xmlTag.trim();
+
 				
 				if (_dataStore.getReferenceTag() == null)
 				{
@@ -979,8 +984,11 @@ public class XMLparser
 									.replaceAll(STR_QUOTE, "\"") //$NON-NLS-1$
 									.replaceAll(STR_APOS, "\'") //$NON-NLS-1$
 									.replaceAll(STR_LT, "<") //$NON-NLS-1$
-									.replaceAll(STR_GT, ">"); //$NON-NLS-1$
-			return converted;						
+									.replaceAll(STR_GT, ">") //$NON-NLS-1$
+									.replaceAll(STR_NL, "\n") //$NON-NLS-1$
+									.replaceAll(STR_CR, "\r") //$NON-NLS-1$
+									.replaceAll(STR_EOL, "\0"); //$NON-NLS-1$
+			return converted;
 		}
 		else
 		{

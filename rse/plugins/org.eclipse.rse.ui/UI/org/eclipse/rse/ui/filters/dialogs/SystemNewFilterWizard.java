@@ -16,6 +16,7 @@
 
 package org.eclipse.rse.ui.filters.dialogs;
 
+import java.util.Arrays;
 import java.util.Vector;
 
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -426,16 +427,21 @@ public class SystemNewFilterWizard
 	}
 	/**
 	 * Reusable method to return a name validator for renaming a filter.
-	 * @param the current filter object on updates. Can be null for new names. Used
-	 *  to remove from the existing name list the current filter's name.
+	 * @param container the current filter object on updates. Can be null for new names. Used
+	 * to remove from the existing name list the current filter's name.
+	 * @param filter the filter whose name should be removed from the validation list. May be null if the list from the container
+	 * should be used intact.
+	 * @return a name validator
 	 */
-	public static ISystemValidator getFilterNameValidator(ISystemFilterContainer container,ISystemFilter filter)
-	{
-    	Vector v = container.getSystemFilterNames();
-    	if (filter != null)
-    	  v.removeElement(filter.getName());
-	    ValidatorFilterName filterNameValidator = new ValidatorFilterName(v);		
-	    return filterNameValidator;
+	public static ISystemValidator getFilterNameValidator(ISystemFilterContainer container, ISystemFilter filter) {
+		String[] names = container.getSystemFilterNames(); 
+		Vector v = new Vector(names.length);
+		v.addAll(Arrays.asList(names));
+		if (filter != null) {
+			v.removeElement(filter.getName());
+		}
+		ValidatorFilterName filterNameValidator = new ValidatorFilterName(v);
+		return filterNameValidator;
 	}	
 
 	/**
@@ -616,12 +622,14 @@ public class SystemNewFilterWizard
 	 * @param shell the shell that hosts this wizard.
 	 * @param filterParent the parent of this filter - usually a filter pool
 	 * @param aliasName the name of the filter itself
-	 * @param filterStrings a Vector of string that contain the specification of this filter
+	 * @param filterStringsVector a Vector of string that contain the specification of this filter
 	 * @param type the type of the filter used when interpreting the filter, usually supplied by a subsystem
 	 * @return the ISystemFilter that was created
 	 * @throws Exception if an error occurs
 	 */
-	public ISystemFilter createNewFilter(Shell shell, ISystemFilterContainer filterParent, String aliasName, Vector filterStrings, String type) throws Exception {
+	public ISystemFilter createNewFilter(Shell shell, ISystemFilterContainer filterParent, String aliasName, Vector filterStringsVector, String type) throws Exception {
+		String[] filterStrings = new String[filterStringsVector.size()];
+		filterStringsVector.toArray(filterStrings);
 		ISystemFilter newFilter = null;
 		ISystemFilterPoolManager fpMgr = filterParent.getSystemFilterPoolManager();
 		if (type == null)

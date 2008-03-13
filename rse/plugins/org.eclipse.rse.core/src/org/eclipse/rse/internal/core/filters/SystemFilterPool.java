@@ -21,19 +21,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.rse.core.RSECorePlugin;
-import org.eclipse.rse.core.SystemResourceHelpers;
-import org.eclipse.rse.core.filters.IRSEFilterNamingPolicy;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManagerProvider;
-import org.eclipse.rse.core.filters.SystemFilterNamingPolicy;
 import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.internal.core.RSECoreMessages;
@@ -60,27 +55,17 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 	
 	/**
 	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
 	 * @see #getName()
-	 * @generated
-	 * @ordered
 	 */
 	protected static final String NAME_EDEFAULT = null;
 
     private String name;
 	/**
 	 * The default value of the '{@link #getType() <em>Type</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
 	 * @see #getType()
-	 * @generated
-	 * @ordered
 	 */
 	protected static final String TYPE_EDEFAULT = null;
 
-    private int savePolicy;
-    private IRSEFilterNamingPolicy namingPolicy = null;
     private ISystemFilterPoolManager mgr;
     private SystemFilterContainerCommonMethods helpers = null;
     private Object filterPoolData = null;
@@ -93,13 +78,10 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 	 * @generated This field/method will be replaced during code generation.
 	 */
 	protected String type = TYPE_EDEFAULT;
+
 	/**
 	 * The default value of the '{@link #isSupportsNestedFilters() <em>Supports Nested Filters</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
 	 * @see #isSupportsNestedFilters()
-	 * @generated
-	 * @ordered
 	 */
 	protected static final boolean SUPPORTS_NESTED_FILTERS_EDEFAULT = false;
 
@@ -107,41 +89,33 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 	 * @generated This field/method will be replaced during code generation.
 	 */
 	protected boolean supportsNestedFilters = SUPPORTS_NESTED_FILTERS_EDEFAULT;
+
 	/**
 	 * The default value of the '{@link #isDeletable() <em>Deletable</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
 	 * @see #isDeletable()
-	 * @generated
-	 * @ordered
 	 */
 	protected static final boolean DELETABLE_EDEFAULT = false;
 
 	/**
 	 * @generated This field/method will be replaced during code generation.
 	 */
+
 	protected boolean deletable = DELETABLE_EDEFAULT;
 	/**
 	 * The default value of the '{@link #isDefault() <em>Default</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
 	 * @see #isDefault()
-	 * @generated
-	 * @ordered
 	 */
+
 	protected static final boolean DEFAULT_EDEFAULT = false;
 
 	/**
 	 * @generated This field/method will be replaced during code generation.
 	 */
 	protected boolean default_ = DEFAULT_EDEFAULT;
+
 	/**
 	 * The default value of the '{@link #isStringsCaseSensitive() <em>Strings Case Sensitive</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
 	 * @see #isStringsCaseSensitive()
-	 * @generated
-	 * @ordered
 	 */
 	protected static final boolean STRINGS_CASE_SENSITIVE_EDEFAULT = false;
 
@@ -149,22 +123,15 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 	 * @generated This field/method will be replaced during code generation.
 	 */
 	protected boolean stringsCaseSensitive = STRINGS_CASE_SENSITIVE_EDEFAULT;
+
 	/**
 	 * This is true if the Strings Case Sensitive attribute has been set.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
 	 */
 	protected boolean stringsCaseSensitiveESet = false;
 
 	/**
 	 * The default value of the '{@link #isSupportsDuplicateFilterStrings() <em>Supports Duplicate Filter Strings</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
 	 * @see #isSupportsDuplicateFilterStrings()
-	 * @generated
-	 * @ordered
 	 */
 	protected static final boolean SUPPORTS_DUPLICATE_FILTER_STRINGS_EDEFAULT = false;
 
@@ -172,13 +139,10 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 	 * @generated This field/method will be replaced during code generation.
 	 */
 	protected boolean supportsDuplicateFilterStrings = SUPPORTS_DUPLICATE_FILTER_STRINGS_EDEFAULT;
+
 	/**
 	 * The default value of the '{@link #getRelease() <em>Release</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
 	 * @see #getRelease()
-	 * @generated
-	 * @ordered
 	 */
 	protected static final int RELEASE_EDEFAULT = 0;
 
@@ -186,79 +150,52 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 	 * @generated This field/method will be replaced during code generation.
 	 */
 	protected int release = RELEASE_EDEFAULT;
+
 	/**
 	 * The default value of the '{@link #isSingleFilterStringOnly() <em>Single Filter String Only</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
 	 * @see #isSingleFilterStringOnly()
-	 * @generated
-	 * @ordered
 	 */
 	protected static final boolean SINGLE_FILTER_STRING_ONLY_EDEFAULT = false;
 
 	/**
 	 * The cached value of the '{@link #isSingleFilterStringOnly() <em>Single Filter String Only</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
 	 * @see #isSingleFilterStringOnly()
-	 * @generated
-	 * @ordered
 	 */
 	protected boolean singleFilterStringOnly = SINGLE_FILTER_STRING_ONLY_EDEFAULT;
 
 	/**
 	 * This is true if the Single Filter String Only attribute has been set.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
 	 */
 	protected boolean singleFilterStringOnlyESet = false;
 
 	/**
 	 * The default value of the '{@link #getOwningParentName() <em>Owning Parent Name</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
 	 * @see #getOwningParentName()
-	 * @generated
-	 * @ordered
 	 */
 	protected static final String OWNING_PARENT_NAME_EDEFAULT = null;
 
 	/**
 	 * The cached value of the '{@link #getOwningParentName() <em>Owning Parent Name</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
 	 * @see #getOwningParentName()
-	 * @generated
-	 * @ordered
 	 */
 	protected String owningParentName = OWNING_PARENT_NAME_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #isNonRenamable() <em>Non Renamable</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
 	 * @see #isNonRenamable()
-	 * @generated
-	 * @ordered
 	 */
 	protected static final boolean NON_RENAMABLE_EDEFAULT = false;
 
 	/**
 	 * The cached value of the '{@link #isNonRenamable() <em>Non Renamable</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
 	 * @see #isNonRenamable()
-	 * @generated
-	 * @ordered
 	 */
 	protected boolean nonRenamable = NON_RENAMABLE_EDEFAULT;
 
 	/**
 	 * @generated This field/method will be replaced during code generation.
 	 */
-	protected java.util.List filters = null;
+	protected List filters = new ArrayList(10);
 
 	/**
 	 * Default constructor
@@ -269,7 +206,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 		helpers = new SystemFilterContainerCommonMethods();
 	   	setRelease(RSECorePlugin.CURRENT_RELEASE);
 		if (!initialized) {
-			initialize(poolName, savePolicy, namingPolicy);
+			initialize(poolName);
 		}
         setDeletable(isDeletable); // mof attribute
         setSupportsNestedFilters(allowNestedFilters); // cascades to each filter
@@ -278,22 +215,16 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     /*
      * Private helper method to core initialization, from either createXXX or restore.
      */
-	protected void initialize(String name,
-	                          int savePolicy, IRSEFilterNamingPolicy namingPolicy)
+	protected void initialize(String name)
 	{
         setName(name); // mof attribute
-        setSavePolicy(savePolicy);
-        setNamingPolicy(namingPolicy);
-        
         initialized = true;
 	}
 
 
-	//protected Vector internalGetFilters()
-	protected java.util.List internalGetFilters()	
+	protected List internalGetFilters()	
 	{
-		//return filters;
-		return getFilters(); // mof-supplied in parent class
+		return filters;
 	}
 
     /**
@@ -308,47 +239,6 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     	  return null;
     }
     	
-	/**
-	 * Set the save file policy. See constants in {@link org.eclipse.rse.internal.core.filters.ISystemFilterConstants SystemFilterConstants}. 
-	 * One of:
-     * <ul>
-     *   <li>SAVE_POLICY_ONE_FILEANDFOLDER_PER_POOL - one file and folder per pool
-     *   <li>SAVE_POLICY_ONE_FILE_PER_POOL_SAME_FOLDER - one file per pool, all files in one folder
-     *   <li>SAVE_POLICY_ONE_FILE_PER_FILTER - one file per filter, one folder per pool
-     * </ul> 
-	 * This method is called by the SystemFilterPoolManager.
-	 */
-	public void setSavePolicy(int policy)
-	{
-		if (this.savePolicy != policy)
-		{
-			this.savePolicy = policy;
-			setDirty(true);
-		}
-	}
-
-    /**
-     * Set the naming policy used when saving data to disk.
-     * @see org.eclipse.rse.core.filters.IRSEFilterNamingPolicy
-     */
-    public void setNamingPolicy(IRSEFilterNamingPolicy namingPolicy)
-    {
-    	if (this.namingPolicy != namingPolicy)
-    	{
-    		this.namingPolicy = namingPolicy;
-    		setDirty(true);
-    	}
-    }
-
-    /**
-     * Get the naming policy currently used when saving data to disk.
-     * @see org.eclipse.rse.core.filters.IRSEFilterNamingPolicy
-     */
-    public IRSEFilterNamingPolicy getNamingPolicy()
-    {
-    	return namingPolicy;
-    }
-	
     /**
      * Set whether filters in this pool support nested filters.
      * Important to note this is stored in every filter as well as this filter pool.
@@ -361,12 +251,11 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     	  for (int idx=0; idx<filters.length; idx++)
     	     filters[idx].setSupportsNestedFilters(supports);   	
     }
+
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
+	 * @param newSupportsNestedFilters
 	 */
-	public void setSupportsNestedFiltersGen(boolean newSupportsNestedFilters)
+	private void setSupportsNestedFiltersGen(boolean newSupportsNestedFilters)
 	{
 		supportsNestedFilters = newSupportsNestedFilters;
 	}
@@ -383,12 +272,11 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     	  for (int idx=0; idx<filters.length; idx++)
     	     filters[idx].setSupportsDuplicateFilterStrings(supports);   	
     }
+    
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
+	 * @param newSupportsDuplicateFilterStrings
 	 */
-	public void setSupportsDuplicateFilterStringsGen(boolean newSupportsDuplicateFilterStrings)
+	private void setSupportsDuplicateFilterStringsGen(boolean newSupportsDuplicateFilterStrings)
 	{
 		supportsDuplicateFilterStrings = newSupportsDuplicateFilterStrings;
     	setDirty(true);
@@ -407,12 +295,8 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     	     filters[idx].setStringsCaseSensitive(supports);   	
     	setDirty(true);
     }
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setStringsCaseSensitiveGen(boolean newStringsCaseSensitive)
+	
+	private void setStringsCaseSensitiveGen(boolean newStringsCaseSensitive)
 	{
 		stringsCaseSensitive = newStringsCaseSensitive;
 		stringsCaseSensitiveESet = true;
@@ -502,20 +386,16 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 		return type;
 	}
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilterPool#isDeletable()
 	 */
 	public boolean isDeletable()
 	{
 		return deletable;
 	}
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilterPool#setDeletable(boolean)
 	 */
 	public void setDeletable(boolean newDeletable)
 	{
@@ -523,20 +403,16 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     	setDirty(true);
 	}
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilterPool#isDefault()
 	 */
 	public boolean isDefault()
 	{
 		return default_;
 	}
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilterPool#setDefault(boolean)
 	 */
 	public void setDefault(boolean newDefault)
 	{
@@ -673,7 +549,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
      * @param aliasName The name to give the new filter. Must be unique for this pool.
      * @param filterStrings The list of String objects that represent the filter strings.
      */    
-    public ISystemFilter createSystemFilter(String aliasName, Vector filterStrings)
+    public ISystemFilter createSystemFilter(String aliasName, String[] filterStrings)
     {    	
     	ISystemFilter newFilter = helpers.createSystemFilter(internalGetFilters(), this, aliasName, filterStrings);
     	newFilter.setSupportsNestedFilters(supportsNestedFilters());
@@ -687,18 +563,15 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
      * Return Vector of String objects: the names of existing filters in this container.
      * Needed by name validators for New and Rename actions to verify new name is unique.
      */
-    public Vector getSystemFilterNames()
+    public String[] getSystemFilterNames()
     {
-    	return helpers.getSystemFilterNames(internalGetFilters());
+    	List filters = internalGetFilters();
+    	List names = helpers.getSystemFilterNames(filters);
+    	String[] result = new String[names.size()];
+    	names.toArray(result);
+    	return result;
     }
     
-    /**
-     * Return the nested filters as a Vector
-     */
-    public Vector getSystemFiltersVector()
-    {
-    	return helpers.getSystemFiltersVector(internalGetFilters());
-    }
     /**
      * Return how many filters are defined in this filter container
      */
@@ -805,23 +678,6 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     }   
 
     /**
-     * Private helper method to deduce filter names from disk files.
-     * Will populate and return a list.
-     * Only makes sense to use if the save policy is one file per filter.
-     */
-    protected static Vector deduceFilterNames(IFolder folder, IRSEFilterNamingPolicy namingPolicy)
-    {
-    	Vector filterNames = SystemResourceHelpers.getResourceHelpers().convertToVectorAndStrip(
-    	          SystemResourceHelpers.getResourceHelpers().listFiles(folder,
-    	                                                               namingPolicy.getFilterSaveFileNamePrefix(),
-    	                                                               ISystemFilterConstants.SAVEFILE_SUFFIX),
-    	          namingPolicy.getFilterSaveFileNamePrefix(), ISystemFilterConstants.SAVEFILE_SUFFIX);    	          		
-    	return filterNames;
-    }
-
-
-
-    /**
      * Order filters according to user preferences.
      * <p>
      * While the framework has all the code necessary to arrange filters and save/restore
@@ -832,14 +688,13 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
      */
     public void orderSystemFilters(String[] names)
     {
-    	java.util.List filterList = internalGetFilters();
-    	ISystemFilter[] filters = new ISystemFilter[names.length];
-    	for (int idx=0; idx<filters.length; idx++)
-    	   filters[idx] = getSystemFilter(names[idx]); // convert name to filter
-    	filterList.clear();
-    	for (int idx=0; idx<filters.length; idx++)
+    	ISystemFilter[] filterArray = new ISystemFilter[names.length];
+    	for (int idx=0; idx<filterArray.length; idx++)
+    	   filterArray[idx] = getSystemFilter(names[idx]); // convert name to filter
+    	filters.clear();
+    	for (int idx=0; idx<filterArray.length; idx++)
     	{
-    	   filterList.add(filters[idx]); 
+    	   filters.add(filterArray[idx]); 
     	}
         helpers.invalidateCache();
     }
@@ -850,89 +705,10 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     // -----------------------
 
     /**
-     * Restore specific filter pool. You should not call this directly, as it is possible
-     *  that certain data is not restored if the save policy is one file per filter. Rather,
-     *  you should call the createSystemFilterPoolMethod.
-     * @param name name of pool to restore. Used to deduce file name for save policy of one file per pool.
-     * @param savePolicy policy used to save the pool. One of the following from SystemFilterPoolManager:
-     * <ul>
-     *   <li>SAVE_POLICY_ONE_FILEANDFOLDER_PER_POOL - one file and folder per pool
-     *   <li>SAVE_POLICY_ONE_FILE_PER_POOL_SAME_FOLDER - one file per pool, all files in one folder
-     *   <li>SAVE_POLICY_ONE_FILE_PER_FILTER - one file per filter, one folder per pool
-     * </ul> 
-     * @param namingPolicy The names to use for file and folders when persisting to disk. Pass
-     *     null to just use the defaults.
-     * @return SystemFilterPool object if restored ok, null if error encountered. If null, call getLastException().
-     * @see org.eclipse.rse.internal.core.filters.ISystemFilterConstants
-     */
-    protected static ISystemFilterPool restore(String name, int savePolicy, 
-                                              IRSEFilterNamingPolicy namingPolicy)
-           throws Exception
-    {
-        if (namingPolicy == null)
-          namingPolicy = SystemFilterNamingPolicy.getNamingPolicy();
-        
-      // FIXME  SystemFilterImpl.initMOF(); // to be safe
-        
-        ISystemFilterPool pool = null;
-        /* FIXME
-        SystemFilterPool poolImpl = null;
-        switch(savePolicy)
-        {
-           case SAVE_POLICY_ONE_FILEANDFOLDER_PER_POOL:
-             pool = restoreFromOneFile(mofHelpers, folder, name, namingPolicy, true);
-             poolImpl = (SystemFilterPoolImpl)pool;
-             break;
-
-           case SAVE_POLICY_ONE_FILE_PER_POOL_SAME_FOLDER:
-             pool = restoreFromOneFile(mofHelpers, folder, name, namingPolicy, true);
-             poolImpl = (SystemFilterPoolImpl)pool;
-             break;
-
-           case SAVE_POLICY_ONE_FILE_PER_FILTER:
-             pool = restoreFromOneFile(mofHelpers, folder, name, namingPolicy, false); // restore data part
-             poolImpl = (SystemFilterPoolImpl)pool;
-             //pool = createPool();
-             
-             poolImpl.setFolder(folder); // SystemFilter's restore will query it
-             pool.setNamingPolicy(namingPolicy); // SystemFilter's restore will query it
-             Vector filterNames = deduceFilterNames(folder, namingPolicy);
-             if (filterNames != null)
-             {
-               Exception lastException = null;
-               for (int idx=0; idx<filterNames.size(); idx++)
-               {
-               	  try {
-                    SystemFilter filter = 
-                      SystemFilterImpl.restore(mofHelpers, folder, (String)filterNames.elementAt(idx), pool, namingPolicy);
-                    poolImpl.addSystemFilter(filter);
-               	  } catch (Exception exc) {lastException = exc;}
-               }               
-               if (lastException != null)
-               {
-               	 // todo, something! We want to signal the error, but not prevent pool from being restored.
-               	 // Only option: log it somewhere.
-               }
-               else
-               	 poolImpl.sortFilters();                 
-             }  
-             break;        	
-        }   
-        if (poolImpl != null)
-        {        
-          poolImpl.initialize(name,savePolicy,namingPolicy);
-        }
-        */
-        return pool;
-    }
-    
-
-    /**
      * Internal use method
      */
     protected void initializeFilterStrings()
     {
-    	java.util.List filters = getFilters();
     	Iterator i = filters.iterator();
     	while (i.hasNext())
     	  ((SystemFilter)i.next()).initializeFilterStrings();
@@ -946,20 +722,19 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
      */
     protected void sortFilters()
     {
-    	java.util.List filterList = getFilters(); // get java.util.List
-    	if (filterList.size() <= 1) // not enough to sort?
+    	if (filters.size() <= 1) // not enough to sort?
     	  return; // outa here!
     	if (debug)
     	  printFilterList("Before sorting"); //$NON-NLS-1$
         helpers.invalidateCache(); // force re-gen of array from java.util.List on next getSystemFilters() request
-    	ISystemFilter[] filters = getSystemFilters(); // convert java.util.List to array    	
-    	boolean[] processed = new boolean[filters.length];
+    	ISystemFilter[] filterArray = getSystemFilters(); // convert java.util.List to array    	
+    	boolean[] processed = new boolean[filterArray.length];
     	//for (int idx=0;idx<processed.length;idx++)
     	   //processed[idx] = false;
-    	filterList.clear(); // clear java.util.List
+    	filters.clear(); // clear java.util.List
     	//boolean done = false;
     	int processedCount = 0;
-    	int totalCount = filters.length;
+    	int totalCount = filterArray.length;
     	int nextHighest = -1;
     	int firstMatchIdx = -1;
     	int round = 0;
@@ -977,7 +752,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     	  {
     	  	 if (!processed[idx])
     	  	 {
-    	  	   int currOrder = filters[idx].getRelativeOrder();
+    	  	   int currOrder = filterArray[idx].getRelativeOrder();
     	  	   if (currOrder < nextHighest)
     	  	   {
     	  	   	 nextHighest = currOrder;
@@ -995,7 +770,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     	  //System.out.println("Round " + round + ": nextHighest = " + nextHighest + ", firstMatchIdx = " + firstMatchIdx);
     	  if (firstMatchIdx != -1)
     	  {
-    	  	filterList.add(filters[firstMatchIdx]);
+    	  	filters.add(filterArray[firstMatchIdx]);
     	  	processed[firstMatchIdx] = true;
     	  	++processedCount;
     	  }
@@ -1017,31 +792,6 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     	}
     	System.out.println();
     }
-
-
-
-    /**
-     * Return the root save file name without the extension .xmi
-     */
-    protected static String getRootSaveFileName(ISystemFilterPool pool)
-    {
-        return getRootSaveFileName(pool.getNamingPolicy(), pool.getName());
-    }
-    /**
-     * Return the root save file name without the extension .xmi
-     */
-    protected static String getRootSaveFileName(ISystemFilterPool pool, String newName)
-    {
-        return getRootSaveFileName(pool.getNamingPolicy(), newName);
-    }
-    /**
-     * Return the root save file name without the extension .xmi
-     */
-    protected static String getRootSaveFileName(IRSEFilterNamingPolicy namingPolicy, String poolName)
-    {
-    	return namingPolicy.getFilterPoolSaveFileName(poolName);
-    }
-
 
 	/**
 	 * Return the unique reference name of this object.
@@ -1097,17 +847,14 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 		return stringsCaseSensitiveESet;
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilterPool#getFilters()
 	 */
-	public java.util.List getFilters()
+	public ISystemFilter[] getFilters()
 	{
-		if (filters == null)
-		{
-			filters = new ArrayList();
-			//FIXME new EObjectContainmenteList(SystemFilter.class, this, FiltersPackage.SYSTEM_FILTER_POOL__FILTERS);
-		}
-		return filters;
+		ISystemFilter[] result = new ISystemFilter[filters.size()];
+		filters.toArray(result);
+		return result;
 	}
 
 	/**
@@ -1148,20 +895,9 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 		else
 		  return getSystemFilterPoolManager().isSingleFilterStringOnly();
 	}
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public boolean isSingleFilterStringOnlyGen()
-	{
-		return singleFilterStringOnly;
-	}
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilterPool#setSingleFilterStringOnly(boolean)
 	 */
 	public void setSingleFilterStringOnly(boolean newSingleFilterStringOnly)
 	{
@@ -1170,10 +906,8 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     	setDirty(true);
 	}
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilterPool#unsetSingleFilterStringOnly()
 	 */
 	public void unsetSingleFilterStringOnly()
 	{
@@ -1182,30 +916,24 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     	setDirty(true);
 	}
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilterPool#isSetSingleFilterStringOnly()
 	 */
 	public boolean isSetSingleFilterStringOnly()
 	{
 		return singleFilterStringOnlyESet;
 	}
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilterPool#getOwningParentName()
 	 */
 	public String getOwningParentName()
 	{
 		return owningParentName;
 	}
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilterPool#setOwningParentName(java.lang.String)
 	 */
 	public void setOwningParentName(String newOwningParentName)
 	{
@@ -1216,20 +944,16 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 		}
 	}
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilterPool#isNonRenamable()
 	 */
 	public boolean isNonRenamable()
 	{
 		return nonRenamable;
 	}
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilterPool#setNonRenamable(boolean)
 	 */
 	public void setNonRenamable(boolean newNonRenamable)
 	{

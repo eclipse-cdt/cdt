@@ -18,7 +18,6 @@
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
-import java.util.Vector;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -262,19 +261,13 @@ public class SystemViewFilterPoolAdapter extends AbstractSystemViewAdapter
 	/**
 	 * Return a validator for verifying the new name is correct.
 	 */
-    public ISystemValidator getNameValidator(Object element)
-    {
-		ISystemFilterPool fp = (ISystemFilterPool)element;   
+	public ISystemValidator getNameValidator(Object element) {
+		ISystemFilterPool fp = (ISystemFilterPool) element;
 		ISystemFilterPoolManager mgr = fp.getSystemFilterPoolManager();
-		Vector v = mgr.getSystemFilterPoolNamesVector();
-		/*
-		if (fp != null) // might be called by the New wizard vs rename action
-		  v.removeElement(fp.getName());
-		*/
-    	ISystemValidator nameValidator = new ValidatorFilterPoolName(v);
-    	//System.out.println("Inside getNameValidator for SystemViewFilterPoolAdapter");
-	    return nameValidator;    	
-    }	
+		String[] names = mgr.getSystemFilterPoolNames();
+		ISystemValidator nameValidator = new ValidatorFilterPoolName(names);
+		return nameValidator;
+	}	
 
     /**
      * Parent override.

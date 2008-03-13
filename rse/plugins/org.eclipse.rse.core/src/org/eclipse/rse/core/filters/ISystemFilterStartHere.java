@@ -16,12 +16,6 @@ import org.eclipse.rse.logging.Logger;
 public interface ISystemFilterStartHere {
 
 	/**
-	 * Factory method to return an instance populated with defaults.
-	 * You can then simply override whatever is desired via setXXX methods.
-	 */
-	public IRSEFilterNamingPolicy createSystemFilterNamingPolicy();
-
-	/**
 	 * Factory to create a filter pool manager, when you do NOT want it to worry about 
 	 *  saving and restoring the filter data to disk. Rather, you will save and restore
 	 *  yourself.
@@ -50,8 +44,7 @@ public interface ISystemFilterStartHere {
 	 *   this manager will contain references to.
 	 * @param name the name of the filter pool reference manager. This is not currently 
 	 *   used, but you may find a use for it. 
-	 * @param namingPolicy the naming policy object which will return the name of that one file.
 	 */
 	public ISystemFilterPoolReferenceManager createSystemFilterPoolReferenceManager(ISystemFilterPoolReferenceManagerProvider caller, ISystemFilterPoolManagerProvider relatedPoolMgrProvider,
-			String name, IRSEFilterNamingPolicy namingPolicy);
+			String name);
 }

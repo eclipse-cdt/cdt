@@ -21,6 +21,8 @@
 
 package org.eclipse.rse.internal.core.filters;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.rse.core.RSECorePlugin;
@@ -218,7 +220,10 @@ public class SystemFilterPoolReference extends SystemPersistableReferencingObjec
 	 * @see org.eclipse.rse.core.filters.ISystemFilterContainerReference#getSystemFilterReferences(org.eclipse.rse.core.subsystems.ISubSystem)
 	 */
 	public ISystemFilterReference[] getSystemFilterReferences(ISubSystem subSystem) {
-		return containerHelper.getSystemFilterReferences(subSystem);
+		List references = containerHelper.getSystemFilterReferences(subSystem);
+		ISystemFilterReference[] result = new ISystemFilterReference[references.size()];
+		references.toArray(result);
+		return result;
 	}
 
 	/* (non-Javadoc)

@@ -20,17 +20,14 @@
 
 package org.eclipse.rse.internal.core.filters;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.rse.core.filters.IRSEFilterNamingPolicy;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterContainer;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
@@ -81,7 +78,7 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 	 * Private internal way to get filters. Makes it easy to change in future, if we don't use MOF.
 	 */
 	private List internalGetFilters() {
-		return getNestedFilters();
+		return nestedFilters;
 	}
 
 	/**
@@ -114,7 +111,7 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 	 * @param aliasName The name to give the new filter. Must be unique for this pool.
 	 * @param filterStrings The list of String objects that represent the filter strings.
 	 */
-	public ISystemFilter createSystemFilter(String aliasName, Vector filterStrings) {
+	public ISystemFilter createSystemFilter(String aliasName, String[] filterStrings) {
 		ISystemFilter newFilter = helpers.createSystemFilter(internalGetFilters(), getParentFilterPool(), aliasName, filterStrings);
 		newFilter.setSupportsNestedFilters(true); // presumably it does since it is nested itself.
 		newFilter.setSupportsDuplicateFilterStrings(supportsDuplicateFilterStrings());
@@ -126,7 +123,6 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 	 * Internal use method
 	 */
 	public void initializeFilterStrings() {
-		List filterStrings = getStrings();
 		Iterator i = filterStrings.iterator();
 		while (i.hasNext())
 			((ISystemFilterString) i.next()).setParentSystemFilter(this);
@@ -241,15 +237,12 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 	 * Return Vector of String objects: the names of existing filters in this container.
 	 * Needed by name validators for New and Rename actions to verify new name is unique.
 	 */
-	public Vector getSystemFilterNames() {
-		return helpers.getSystemFilterNames(internalGetFilters());
-	}
-
-	/**
-	 * Return the nested filters as a Vector
-	 */
-	public Vector getSystemFiltersVector() {
-		return helpers.getSystemFiltersVector(internalGetFilters());
+	public String[] getSystemFilterNames() {
+		List filters = internalGetFilters();
+		List names = helpers.getSystemFilterNames(filters);
+		String[] result = new String[names.size()];
+		names.toArray(result);
+		return result;
 	}
 
 	/**
@@ -386,26 +379,6 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 	}
 
 	/**
-	 * Return filter strings as a Vector of String objects.
-	 * This vector may be empty but will never be null.
-	 */
-	public Vector getFilterStringsVector() {
-		String[] strings = getFilterStrings();
-		List stringList = Arrays.asList(strings);
-		Vector result = new Vector(stringList);
-		return result;
-	}
-
-	/**
-	 * Get this filter's filter strings as a Vector of FilterString objects
-	 */
-	public Vector getFilterStringObjectsVector() {
-		Vector result = new Vector(filterStrings.size());
-		result.addAll(filterStrings);
-		return result;
-	}
-
-	/**
 	 * Return how many filter strings are defined in this filter.
 	 */
 	public int getFilterStringCount() {
@@ -448,7 +421,7 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 	}
 
 	/**
-	 * Get this filter's filter string objects as an array
+	 * Get this filter's filter string objects as an array.
 	 */
 	public ISystemFilterString[] getSystemFilterStrings() {
 		ISystemFilterString[] result = new ISystemFilterString[filterStrings.size()];
@@ -576,16 +549,17 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 	 * This is all nested filters and all filter strings.
 	 */
 	public Object[] getChildren() {
-		Vector strings = getFilterStringsVector();
-		Vector filters = getSystemFiltersVector();
+		String[] strings = getFilterStrings();
+		ISystemFilter[] filters = getSystemFilters();
 		Vector vChildren = new Vector();
 
 		// start with nested filters...
-		for (int idx = 0; idx < filters.size(); idx++)
-			vChildren.addElement(filters.elementAt(idx));
+		for (int idx = 0; idx < filters.length; idx++) {
+			vChildren.addElement(filters[idx]);
+		}
 		// continue with resolved filter string objects...
-		for (int idx = 0; idx < strings.size(); idx++) {
-			String filterString = (String) strings.elementAt(idx);
+		for (int idx = 0; idx < strings.length; idx++) {
+			String filterString = strings[idx];
 			vChildren.addElement(filterString);
 		}
 
@@ -628,71 +602,6 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 			return pool.getSystemFilterPoolManager();
 		else
 			return null;
-	}
-
-	// -----------------------
-	// SAVE/RESTORE METHODS...
-	// -----------------------
-
-	/**
-	 * Restore specific filter. Used when save policy is SAVE_POLICY_ONE_FILE_PER_FILTER
-	 * @param folder the folder containing the saved file.
-	 * @param name The name of the saved filter. The file name is derived from this.
-	 * @param parentPool the SystemFilterPool that is the parent of this filter. Will be perpetuated to nested filters.
-	 * @param namingPolicy Tells us how to derive file name from filter name. Can be null for default prefix name.
-	 * @return SystemFilter object if restored ok, null if error encountered. If null, call getLastException().
-	 * @deprecated no longer used
-	 */
-	public static ISystemFilter restore(IFolder folder, String name, ISystemFilterPool parentPool, IRSEFilterNamingPolicy namingPolicy) throws Exception {
-		/* code no longer needed since restore is done by importers, not by MOF/EMF
-		String fileName = getRootSaveFileName(namingPolicy, name);
-		
-		List ext = mofHelpers.restore(folder,fileName);
-		
-		// should be exactly one...
-		Iterator iList = ext.iterator();
-		SystemFilter filter = (SystemFilter)iList.next();
-		if (parentPool != null)
-		  filter.setParentFilterPool(parentPool);                
-		((SystemFilterImpl)filter).initializeFilterStrings();
-		return filter;
-		*/
-		return null;
-	}
-
-	/**
-	 * Return the root save file name without the extension .xmi
-	 * @deprecated no longer used
-	 */
-	protected static String getRootSaveFileName(ISystemFilter filter) {
-		return getRootSaveFileName(getNamingPolicy(filter), filter.getName());
-	}
-
-	/**
-	 * Return the root save file name without the extension .xmi
-	 * @deprecated no longer used
-	 */
-	protected static String getRootSaveFileName(IRSEFilterNamingPolicy namingPolicy, String name) {
-		return namingPolicy.getFilterSaveFileName(name);
-	}
-
-	/**
-	 * Return naming policy
-	 * @deprecated no longer used
-	 */
-	protected static IRSEFilterNamingPolicy getNamingPolicy(ISystemFilter filter) {
-		return filter.getParentFilterPool().getNamingPolicy();
-	}
-
-	/**
-	 * Ensure given path ends with path separator.
-	 * @deprecated no longer used
-	 */
-	public static String addPathTerminator(String path) {
-		if (!path.endsWith(File.separator)) path = path + File.separatorChar;
-		//else
-		//  path = path;
-		return path;
 	}
 
 	/*-------------------
@@ -841,18 +750,22 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.filters.ISystemFilter#getNestedFilters()
 	 */
-	public List getNestedFilters() {
+	public ISystemFilter[] getNestedFilters() {
 		if (nestedFilters == null) {
 			nestedFilters = new ArrayList();
 		}
-		return nestedFilters;
+		ISystemFilter[] result = new ISystemFilter[nestedFilters.size()];
+		nestedFilters.toArray(result);
+		return result;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.filters.ISystemFilter#getStrings()
 	 */
-	public List getStrings() {
-		return filterStrings;
+	public ISystemFilterString[] getStrings() {
+		ISystemFilterString[] result = new ISystemFilterString[filterStrings.size()];
+		filterStrings.toArray(result);
+		return result;
 	}
 
 	/* (non-Javadoc)
@@ -1014,8 +927,7 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 	 */
 	public IRSEPersistableContainer[] getPersistableChildren() {
 		List children = new ArrayList(20);
-		List nf = getNestedFilters(); // guaranteed to not be null, none of these should be simple filters
-		children.addAll(nf);
+		children.addAll(nestedFilters);
 		children.addAll(filterStrings);
 		children.addAll(Arrays.asList(getPropertySets()));
 		IRSEPersistableContainer[] result = new IRSEPersistableContainer[children.size()];

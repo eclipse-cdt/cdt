@@ -17,9 +17,6 @@
 
 package org.eclipse.rse.core.filters;
 
-import java.util.List;
-import java.util.Vector;
-
 import org.eclipse.rse.core.model.IRSEModelObject;
 import org.eclipse.rse.core.references.IRSEReferencedObject;
 
@@ -35,83 +32,70 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 
 	/**
 	 * Returns the value of the '<em><b>Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
 	 * <p>
 	 * This is the name of the filter. It may be present in the user interface and is also 
 	 * used to refer to the filter when it is persisted.
 	 * </p>
-	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Name</em>' attribute.
 	 * @see #setName(String)
 	 */
-	String getName();
+	public String getName();
 
 	/**
 	 * Sets the value of the '{@link org.eclipse.rse.core.filters.ISystemFilter#getName <em>Name</em>}' attribute.
-	 * <!-- begin-user-doc -->
 	 * This is the name of the filter. It may be present in the user interface and is also 
 	 * used to refer to the filter when it is persisted.
-	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Name</em>' attribute.
 	 * @see #getName()
 	 */
-	void setName(String value);
+	public void setName(String value);
 
 	/**
 	 * Returns the value of the '<em><b>Type</b></em>' attribute.
-	 * <!-- begin-user-doc -->
 	 * <p>
 	 * Filters may be further typed for use by subsystems. The type is also uninterpreted by the 
 	 * filter. The type may be used to select a parser/interpreter for the filter strings.
 	 * </p>
-	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Type</em>' attribute.
 	 * @see #setType(String)
 	 */
-	String getType();
+	public String getType();
 
 	/**
 	 * Sets the value of the '{@link org.eclipse.rse.core.filters.ISystemFilter#getType <em>Type</em>}' attribute.
-	 * <!-- begin-user-doc -->
 	 * Filters may be further typed for use by subsystems. The type is also uninterpreted by the 
 	 * filter. The type may be used to select a parser/interpreter for the filter strings.
-	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Type</em>' attribute.
 	 * @see #getType()
 	 */
-	void setType(String value);
+	public void setType(String value);
 
 	/**
 	 * Returns the value of the '<em><b>Supports Nested Filters</b></em>' attribute.
-	 * <!-- begin-user-doc -->
 	 * <p>
 	 * Specifies whether filters may be nested or not. If nested the intent is to apply this filter
 	 * to the results of the parent filter - further restricting the resources selected by the 
 	 * parent filter. However, it is up to the subsystem to interpret exactly what "nesting" means.
 	 * </p>
-	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Supports Nested Filters</em>' attribute.
 	 * @see #setSupportsNestedFilters(boolean)
 	 */
-	boolean isSupportsNestedFilters();
+	public boolean isSupportsNestedFilters();
 
 	/**
 	 * Sets the value of the '{@link org.eclipse.rse.core.filters.ISystemFilter#isSupportsNestedFilters <em>Supports Nested Filters</em>}' attribute.
-	 * <!-- begin-user-doc -->
 	 * <p>
 	 * Specifies whether filters may be nested or not. If nested the intent is to apply this filter
 	 * to the results of the parent filter - further restricting the resources selected by the 
 	 * parent filter. However, it is up to the subsystem to interpret exactly what "nesting" means.
 	 * </p>
-	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Supports Nested Filters</em>' attribute.
 	 * @see #isSupportsNestedFilters()
 	 */
-	void setSupportsNestedFilters(boolean value);
+	public void setSupportsNestedFilters(boolean value);
 
 	/**
 	 * Returns the value of the '<em><b>Relative Order</b></em>' attribute.
-	 * <!-- begin-user-doc -->
 	 * <p>
 	 * The relative order of a filter is intended to be used
 	 * by a persistence mechanism to keep the filters in a particular order
@@ -119,29 +103,25 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	 * occur later in the pool. It may be employed in the absence of another
 	 * mechanism for maintaining order.
 	 * </p>
-	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Relative Order</em>' attribute.
 	 * @see #setRelativeOrder(int)
 	 */
-	int getRelativeOrder();
+	public int getRelativeOrder();
 
 	/**
 	 * Sets the value of the '{@link org.eclipse.rse.core.filters.ISystemFilter#getRelativeOrder <em>Relative Order</em>}' attribute.
-	 * <!-- begin-user-doc -->
 	 * The relative order of a filter is intended to be used
 	 * by a persistence mechanism to keep the filters in a particular order
 	 * when restoring them into a filter pool. Filters with higher numbers should
 	 * occur later in the pool. It may be employed in the absence of another
 	 * mechanism for maintaining order.
-	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Relative Order</em>' attribute.
 	 * @see #getRelativeOrder()
 	 */
-	void setRelativeOrder(int value);
+	public void setRelativeOrder(int value);
 
 	/**
 	 * Returns the value of the '<em><b>Default</b></em>' attribute.
-	 * <!-- begin-user-doc -->
 	 * <p>
 	 * This filter is a "default" filter in this filter pool.
 	 * The meaning of "default" is determined by the subsystem in which it is deployed.
@@ -149,29 +129,25 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	 * That is, the filter is "vendor supplied".
 	 * There is no restriction on the number of default filters in a pool.
 	 * </p>
-	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Default</em>' attribute.
 	 * @see #setDefault(boolean)
 	 */
-	boolean isDefault();
+	public boolean isDefault();
 
 	/**
 	 * Sets the value of the '{@link org.eclipse.rse.core.filters.ISystemFilter#isDefault <em>Default</em>}' attribute.
-	 * <!-- begin-user-doc -->
 	 * Make this filter is a "default" filter in this filter pool.
 	 * The meaning of "default" is determined by the subsystem in which it is deployed.
 	 * It typically means that the filter is supplied by the subsystem at the time the subsystem is created.
 	 * That is, the filter is "vendor supplied".
 	 * There is no restriction on the number of default filters in a pool.
-	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Default</em>' attribute.
 	 * @see #isDefault()
 	 */
-	void setDefault(boolean value);
+	public void setDefault(boolean value);
 
 	/**
 	 * Returns the value of the '<em><b>Strings Case Sensitive</b></em>' attribute.
-	 * <!-- begin-user-doc -->
 	 * <p>
 	 * An attribute that may be used by the subystems when interpreting the filter. Used
 	 * to indicate whether or not comparisons involving the filter should be considered
@@ -182,17 +158,15 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	 * If unset the value
 	 * returned is from the parent filter pool.
 	 * </p>
-	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Strings Case Sensitive</em>' attribute.
 	 * @see #isSetStringsCaseSensitive()
 	 * @see #unsetStringsCaseSensitive()
 	 * @see #setStringsCaseSensitive(boolean)
 	 */
-	boolean isStringsCaseSensitive();
+	public boolean isStringsCaseSensitive();
 
 	/**
 	 * Sets the value of the '{@link org.eclipse.rse.core.filters.ISystemFilter#isStringsCaseSensitive <em>Strings Case Sensitive</em>}' attribute.
-	 * <!-- begin-user-doc -->
 	 * <p>
 	 * An attribute that may be used by the subystems when interpreting the filter. Used
 	 * to indicate whether or not comparisons involving the filter should be considered
@@ -202,7 +176,6 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	 * <p>
 	 * This will cause this attribute to be set in this filter.
 	 * </p>
-	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Strings Case Sensitive</em>' attribute.
 	 * @see #isSetStringsCaseSensitive()
 	 * @see #unsetStringsCaseSensitive()
@@ -212,7 +185,6 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 
 	/**
 	 * Unsets the value of the '{@link org.eclipse.rse.core.filters.ISystemFilter#isStringsCaseSensitive <em>Strings Case Sensitive</em>}' attribute.
-	 * <!-- begin-user-doc -->
 	 * <p>
 	 * An attribute that may be used by the subystems when interpreting the filter. Used
 	 * to indicate whether or not comparisons involving the filter should be considered
@@ -221,16 +193,14 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	 * </p><p>
 	 * Causes this filter to use the value specified by the parent filter pool.
 	 * </p>
-	 * <!-- end-user-doc -->
 	 * @see #isSetStringsCaseSensitive()
 	 * @see #isStringsCaseSensitive()
 	 * @see #setStringsCaseSensitive(boolean)
 	 */
-	void unsetStringsCaseSensitive();
+	public void unsetStringsCaseSensitive();
 
 	/**
 	 * Returns whether the value of the '{@link org.eclipse.rse.core.filters.ISystemFilter#isStringsCaseSensitive <em>Strings Case Sensitive</em>}' attribute is set.
-	 * <!-- begin-user-doc -->
 	 * <p>
 	 * An attribute that may be used by the subystems when interpreting the filter. Used
 	 * to indicate whether or not comparisons involving the filter should be considered
@@ -240,17 +210,15 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	 * This will be true if this attribute is explicitly specified for this filter. It will be false if this
 	 * is being inherited from the parent filter pool.
 	 * </p>
-	 * <!-- end-user-doc -->
 	 * @return whether the value of the '<em>Strings Case Sensitive</em>' attribute is set.
 	 * @see #unsetStringsCaseSensitive()
 	 * @see #isStringsCaseSensitive()
 	 * @see #setStringsCaseSensitive(boolean)
 	 */
-	boolean isSetStringsCaseSensitive();
+	public boolean isSetStringsCaseSensitive();
 
 	/**
 	 * Returns the value of the '<em><b>Promptable</b></em>' attribute.
-	 * <!-- begin-user-doc -->
 	 * <p>
 	 * An attribute that may be used by the subystems when interpreting the filter. 
 	 * Typically used to indicate whether or not some sort of prompting is to occur when the
@@ -258,15 +226,13 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	 * the start of a wizard or dialog. It may also have an effect on whether 
 	 * the state of the filter is saved when the workbench is shut down.
 	 * </p>
-	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Promptable</em>' attribute.
 	 * @see #setPromptable(boolean)
 	 */
-	boolean isPromptable();
+	public boolean isPromptable();
 
 	/**
 	 * Sets the value of the '{@link org.eclipse.rse.core.filters.ISystemFilter#isPromptable <em>Promptable</em>}' attribute.
-	 * <!-- begin-user-doc -->
 	 * <p>
 	 * An attribute that may be used by the subystems when interpreting the filter. 
 	 * Typically used to indicate whether or not some sort of prompting is to occur when the
@@ -274,25 +240,22 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	 * the start of a wizard or dialog. It may also have an effect on whether 
 	 * the state of the filter is saved when the workbench is shut down.
 	 * </p>
-	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Promptable</em>' attribute.
 	 * @see #isPromptable()
 	 */
-	void setPromptable(boolean value);
+	public void setPromptable(boolean value);
 
 	/**
 	 * Returns the value of the '<em><b>Supports Duplicate Filter Strings</b></em>' attribute.
-	 * <!-- begin-user-doc -->
 	 * <p>
 	 * This attribute may be used by subsystems when interpreting the filter.
 	 * Typically used when adding filter strings to the filter or as a hint when
 	 * applying the filter to the resources understood by the subsystem.
 	 * </p>
-	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Supports Duplicate Filter Strings</em>' attribute.
 	 * @see #setSupportsDuplicateFilterStrings(boolean)
 	 */
-	boolean isSupportsDuplicateFilterStrings();
+	public boolean isSupportsDuplicateFilterStrings();
 
 	/**
 	 * Does this support duplicate filter strings?
@@ -302,153 +265,130 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 
 	/**
 	 * Sets the value of the '{@link org.eclipse.rse.core.filters.ISystemFilter#isSupportsDuplicateFilterStrings <em>Supports Duplicate Filter Strings</em>}' attribute.
-	 * <!-- begin-user-doc -->
 	 * <p>
 	 * This attribute may be used by subsystems when interpreting the filter.
 	 * Typically used when adding filter strings to the filter or as a hint when
 	 * applying the filter to the resources understood by the subsystem.
 	 * </p>
-	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Supports Duplicate Filter Strings</em>' attribute.
 	 * @see #isSupportsDuplicateFilterStrings()
 	 */
-	void setSupportsDuplicateFilterStrings(boolean value);
+	public void setSupportsDuplicateFilterStrings(boolean value);
 
 	/**
 	 * Returns the value of the '<em><b>Non Deletable</b></em>' attribute.
-	 * <!-- begin-user-doc -->
 	 * <p>
 	 * An attribute that can be used when managing filters in filter pools.
 	 * Some filters should not be deleted.
 	 * </p>
-	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Non Deletable</em>' attribute.
 	 * @see #setNonDeletable(boolean)
 	 */
-	boolean isNonDeletable();
+	public boolean isNonDeletable();
 
 	/**
 	 * Sets the value of the '{@link org.eclipse.rse.core.filters.ISystemFilter#isNonDeletable <em>Non Deletable</em>}' attribute.
-	 * <!-- begin-user-doc -->
 	 * <p>
 	 * An attribute that can be used when managing filters in filter pools.
 	 * Some filters should not be deleted.
 	 * </p>
-	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Non Deletable</em>' attribute.
 	 * @see #isNonDeletable()
 	 */
-	void setNonDeletable(boolean value);
+	public void setNonDeletable(boolean value);
 
 	/**
 	 * Returns the value of the '<em><b>Non Renamable</b></em>' attribute.
-	 * <!-- begin-user-doc -->
 	 * <p>
 	 * An attribute that can be used when managing filters in filter pools.
 	 * Some filters should not be renamed.
 	 * </p>
-	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Non Renamable</em>' attribute.
 	 * @see #setNonRenamable(boolean)
 	 */
-	boolean isNonRenamable();
+	public boolean isNonRenamable();
 
 	/**
 	 * Sets the value of the '{@link org.eclipse.rse.core.filters.ISystemFilter#isNonRenamable <em>Non Renamable</em>}' attribute.
-	 * <!-- begin-user-doc -->
 	 * <p>
 	 * An attribute that can be used when managing filters in filter pools.
 	 * Some filters should not be renamed.
 	 * </p>
-	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Non Renamable</em>' attribute.
 	 * @see #isNonRenamable()
 	 */
-	void setNonRenamable(boolean value);
+	public void setNonRenamable(boolean value);
 
 	/**
 	 * Returns the value of the '<em><b>Non Changable</b></em>' attribute.
-	 * <!-- begin-user-doc -->
 	 * <p>
 	 * An attribute that can be used when managing filters in filter pools.
 	 * Some filters should not be modifiable.
 	 * </p>
-	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Non Changable</em>' attribute.
 	 * @see #setNonChangable(boolean)
 	 */
-	boolean isNonChangable();
+	public boolean isNonChangable();
 
 	/**
 	 * Sets the value of the '{@link org.eclipse.rse.core.filters.ISystemFilter#isNonChangable <em>Non Changable</em>}' attribute.
-	 * <!-- begin-user-doc -->
 	 * <p>
 	 * An attribute that can be used when managing filters in filter pools.
 	 * Some filters should not be modifiable.
 	 * </p>
-	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Non Changable</em>' attribute.
 	 * @see #isNonChangable()
 	 */
-	void setNonChangable(boolean value);
+	public void setNonChangable(boolean value);
 
 	/**
 	 * Returns the value of the '<em><b>Strings Non Changable</b></em>' attribute.
-	 * <!-- begin-user-doc -->
 	 * <p>
 	 * An attribute that can be used when managing filters in filter pools.
 	 * Some filters contain filter strings that should not be modifiable.
 	 * </p>
-	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Strings Non Changable</em>' attribute.
 	 * @see #setStringsNonChangable(boolean)
 	 */
-	boolean isStringsNonChangable();
+	public boolean isStringsNonChangable();
 
 	/**
 	 * Sets the value of the '{@link org.eclipse.rse.core.filters.ISystemFilter#isStringsNonChangable <em>Strings Non Changable</em>}' attribute.
-	 * <!-- begin-user-doc -->
 	 * <p>
 	 * An attribute that can be used when managing filters in filter pools.
 	 * Some filters contain filter strings that should not be modifiable.
 	 * </p>
-	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Strings Non Changable</em>' attribute.
 	 * @see #isStringsNonChangable()
 	 */
-	void setStringsNonChangable(boolean value);
+	public void setStringsNonChangable(boolean value);
 
 	/**
 	 * Returns the value of the '<em><b>Release</b></em>' attribute.
-	 * <!-- begin-user-doc -->
 	 * <p>
 	 * This is an attribute specifying the release level of the  
 	 * filter. This will be persisted in the filter definition and
 	 * can be used to migrate the internal form of the filter.
 	 * </p>
-	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Release</em>' attribute.
 	 * @see #setRelease(int)
 	 */
-	int getRelease();
+	public int getRelease();
 
 	/**
 	 * Sets the value of the '{@link org.eclipse.rse.core.filters.ISystemFilter#getRelease <em>Release</em>}' attribute.
-	 * <!-- begin-user-doc -->
 	 * <p>
 	 * This is an attribute specifying the release level of the  
 	 * filter. This will be persisted in the filter definition and
 	 * can be used to migrate the internal form of the filter.
 	 * </p>
-	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Release</em>' attribute.
 	 * @see #getRelease()
 	 */
-	void setRelease(int value);
+	public void setRelease(int value);
 
 	/**
 	 * Returns the value of the '<em><b>Single Filter String Only</b></em>' attribute.
-	 * <!-- begin-user-doc -->
 	 * <p>
 	 * This attribute specifies that the filter may contain only a single 
 	 * filter string. Used by a filter manager to ensure that the 
@@ -458,17 +398,15 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	 * This attribute may be set or unset. If unset this value will be inherited
 	 * from the parent filter pool.
 	 * </p>
-	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Single Filter String Only</em>' attribute.
 	 * @see #isSetSingleFilterStringOnly()
 	 * @see #unsetSingleFilterStringOnly()
 	 * @see #setSingleFilterStringOnly(boolean)
 	 */
-	boolean isSingleFilterStringOnly();
+	public boolean isSingleFilterStringOnly();
 
 	/**
 	 * Sets the value of the '{@link org.eclipse.rse.core.filters.ISystemFilter#isSingleFilterStringOnly <em>Single Filter String Only</em>}' attribute.
-	 * <!-- begin-user-doc -->
 	 * <p>
 	 * This attribute specifies that the filter may contain only a single 
 	 * filter string. Used by a filter manager to ensure that the 
@@ -478,84 +416,71 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	 * This causes the attribute to be set for this filter, ignoring the value 
 	 * specified for the parent filter pool.
 	 * </p>
-	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Single Filter String Only</em>' attribute.
 	 * @see #isSetSingleFilterStringOnly()
 	 * @see #unsetSingleFilterStringOnly()
 	 * @see #isSingleFilterStringOnly()
 	 */
-	void setSingleFilterStringOnly(boolean value);
+	public void setSingleFilterStringOnly(boolean value);
 
 	/**
 	 * Unsets the value of the '{@link org.eclipse.rse.core.filters.ISystemFilter#isSingleFilterStringOnly <em>Single Filter String Only</em>}' attribute.
-	 * <!-- begin-user-doc -->
 	 * This causes the value of this attribute to be inherited from the parent filter pool.
-	 * <!-- end-user-doc -->
 	 * @see #isSetSingleFilterStringOnly()
 	 * @see #isSingleFilterStringOnly()
 	 * @see #setSingleFilterStringOnly(boolean)
 	 */
-	void unsetSingleFilterStringOnly();
+	public void unsetSingleFilterStringOnly();
 
 	/**
 	 * Returns whether the value of the '{@link org.eclipse.rse.core.filters.ISystemFilter#isSingleFilterStringOnly <em>Single Filter String Only</em>}' attribute is set.
-	 * <!-- begin-user-doc -->
 	 * If true then the value of this attribute is set in this filter. If false it is inherited from the parent filter pool.
-	 * <!-- end-user-doc -->
 	 * @return whether the value of the '<em>Single Filter String Only</em>' attribute is set.
 	 * @see #unsetSingleFilterStringOnly()
 	 * @see #isSingleFilterStringOnly()
 	 * @see #setSingleFilterStringOnly(boolean)
 	 */
-	boolean isSetSingleFilterStringOnly();
+	public boolean isSetSingleFilterStringOnly();
 
 	/**
 	 * Returns the value of the '<em><b>Nested Filters</b></em>' containment reference list.
 	 * The list contents are of type {@link org.eclipse.rse.core.filters.ISystemFilter}.
 	 * It is bidirectional and its opposite is '{@link org.eclipse.rse.core.filters.ISystemFilter#getParentFilter <em>Parent Filter</em>}'.
-	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If this filter can contain child filters this will return the list of children.
 	 * </p>
-	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Nested Filters</em>' containment reference list.
 	 * @see org.eclipse.rse.core.filters.ISystemFilter#getParentFilter
 	 */
-	List getNestedFilters();
+	public ISystemFilter[] getNestedFilters();
 
 	/**
 	 * Returns the value of the '<em><b>Parent Filter</b></em>' container reference.
 	 * It is bidirectional and its opposite is '{@link org.eclipse.rse.core.filters.ISystemFilter#getNestedFilters <em>Nested Filters</em>}'.
-	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If this filter can be nested inside another this will return the parent filter. Will be 
 	 * null if there is no parent.
 	 * </p>
-	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Parent Filter</em>' container reference.
 	 * @see #setParentFilter(ISystemFilter)
 	 * @see org.eclipse.rse.core.filters.ISystemFilter#getNestedFilters
 	 */
-	ISystemFilter getParentFilter();
+	public ISystemFilter getParentFilter();
 
 	/**
 	 * Sets the value of the '{@link org.eclipse.rse.core.filters.ISystemFilter#getParentFilter <em>Parent Filter</em>}' container reference.
-	 * <!-- begin-user-doc -->
 	 * This is used by a filter manager to set the parent filter when one filter is nested inside another.
-	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Parent Filter</em>' container reference.
 	 * @see #getParentFilter()
 	 */
-	void setParentFilter(ISystemFilter value);
+	public void setParentFilter(ISystemFilter value);
 
 	/**
 	 * Returns the value of the '<em><b>Strings</b></em>' containment reference list.
 	 * The list contents are of type {@link org.eclipse.rse.core.filters.ISystemFilterString}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Strings</em>' containment reference list.
 	 */
-	List getStrings();
+	public ISystemFilterString[] getStrings();
 
 	/**
 	 * @return the parent pool of this filter. For nested filters, this will walk up the parent chain
@@ -571,13 +496,6 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	public void setParentFilterPool(ISystemFilterPool parentPool);
 
 	/**
-	 * Set this filter's filter strings by giving a Vector of String objects.
-	 * This will construct the filter strings objects.
-	 * @param strings the vector of String objects.
-	 */
-	public void setFilterStrings(Vector strings);
-
-	/**
 	 * Set this filter's filter strings by giving an array of String objects.
 	 * This will construct the filter strings objects.
 	 * @param strings the array of String objects.
@@ -585,22 +503,14 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	public void setFilterStrings(String[] strings);
 
 	/**
-	 * @return this filter's filter strings as a Vector of String objects
-	 */
-	public Vector getFilterStringsVector();
-
-	/**
-	 * @return this filter's filter strings as a Vector of IFilterString objects
-	 */
-	public Vector getFilterStringObjectsVector();
-
-	/**
-	 * @return this filter's filter strings as an array of String objects
+	 * @return this filter's filter strings as an array of String objects. This array will
+	 * not be null, but may be empty.
 	 */
 	public String[] getFilterStrings();
 
 	/**
-	 * @return this filter's filter string objects as an array of IFilterString objects
+	 * @return this filter's filter string objects as an array of IFilterString objects.
+	 * This array will not be null, but may be empty.
 	 */
 	public ISystemFilterString[] getSystemFilterStrings();
 

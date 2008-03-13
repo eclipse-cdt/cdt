@@ -26,9 +26,6 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
  * Represents a shadow or reference to a system filter.
  * Such references are only transient, not savable to disk.
  */
-/**
- * @lastgen interface SystemFilterReference extends SystemReferencingObject, SystemFilterContainerReference {}
- */
 public interface ISystemFilterReference extends IRSEReferencingObject, ISystemFilterContainerReference, ISystemContainer {
 	/**
 	 * Return the reference manager which is managing this filter reference
@@ -51,7 +48,7 @@ public interface ISystemFilterReference extends IRSEReferencingObject, ISystemFi
 
 	/**
 	 * Sets the subsystem that contains this reference
-	 * @param subSystem
+	 * @param subSystem the subsystem that holds this reference
 	 */
 	public void setSubSystem(ISubSystem subSystem);
 

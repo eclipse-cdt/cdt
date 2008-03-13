@@ -15,8 +15,11 @@
  ********************************************************************************/
 
 package org.eclipse.rse.core.filters;
+
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
@@ -28,8 +31,6 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.core.filters.SystemFilterContainerReferenceCommonMethods;
 import org.eclipse.rse.internal.core.filters.SystemFilterStringReference;
 import org.eclipse.rse.internal.references.SystemReferencingObject;
-
-
 
 /**
  * Represents a shadow or reference to a system filter.
@@ -46,49 +47,44 @@ import org.eclipse.rse.internal.references.SystemReferencingObject;
 /**
  * @lastgen class SystemFilterReferenceImpl extends SystemReferencingObjectImpl implements IAdaptable, SystemFilterReference, SystemReferencingObject {}
  */
-public class SystemFilterReference extends SystemReferencingObject implements IAdaptable, ISystemFilterReference
-{
+public class SystemFilterReference extends SystemReferencingObject implements IAdaptable, ISystemFilterReference {
 	private SystemFilterContainerReferenceCommonMethods containerHelper = null;
-	private ISystemFilterContainerReference parent = null; 	
+	private ISystemFilterContainerReference parent = null;
 	private ISystemFilter referencedFilter = null;
 	private ISystemFilterStringReference[] referencedFilterStrings = null;
 	protected boolean persistent;
 	protected boolean isStale;
 //	protected Object[] cachedContents;
 	protected ISubSystem _subSystem;
-	
+
 	protected HashMap cachedContents;
-	
+
 	public static final boolean PERSISTENT_YES = true;
-	public static final boolean PERSISTENT_NO  = false;
+	public static final boolean PERSISTENT_NO = false;
+
 	/**
-	 * Constructor. Typically called by MOF.
+	 * Constructor.
 	 */
-	protected SystemFilterReference() 
-	{
+	protected SystemFilterReference() {
 		super();
 		containerHelper = new SystemFilterContainerReferenceCommonMethods(this);
 		persistent = true;
 		isStale = true;
 		cachedContents = new HashMap();
 	}
+
 	/**
 	 * Create a new instance of this class.
 	 * @param parent The SystemFilterReference or SystemFilterPoolReference object that we are a child of.
 	 * @param filter The master object to be referenced.
 	 * @param persistent Whether we should formally register our reference with the target filter or not.
 	 */
-	public static ISystemFilterReference createSystemFilterReference(ISubSystem subSystem,
-																	ISystemFilterContainerReference parent, 
-	                                                                ISystemFilter filter,
-	                                                                boolean persistent)
-	{
-		//SystemFilterReferenceImpl newRef = (SystemFilterReferenceImpl)SystemFilterImpl.initMOF().createSystemFilterReference();
-		SystemFilterReference newRef = new SystemFilterReference(); // more efficient?
+	public static ISystemFilterReference createSystemFilterReference(ISubSystem subSystem, ISystemFilterContainerReference parent, ISystemFilter filter, boolean persistent) {
+		SystemFilterReference newRef = new SystemFilterReference();
 		newRef.persistent = persistent;
 		newRef.setSubSystem(subSystem);
 		newRef.setParent(parent);
-		newRef.setReferencedFilter(filter);		
+		newRef.setReferencedFilter(filter);
 		filter.addReference(newRef);
 		return newRef;
 	}
@@ -97,113 +93,102 @@ public class SystemFilterReference extends SystemReferencingObject implements IA
 	 * Gets the subsystem that contains this reference
 	 * @return the subsystem
 	 */
-	public ISubSystem getSubSystem()
-	{
+	public ISubSystem getSubSystem() {
 		return _subSystem;
 	}
-	
+
 	/**
 	 * Sets the subsystem that contains this reference
-	 * @param subSystem
+	 * @param subSystem the subsystem that holds this reference
 	 */
-	public void setSubSystem(ISubSystem subSystem)
-	{
+	public void setSubSystem(ISubSystem subSystem) {
 		_subSystem = subSystem;
 	}
-	
+
 	/**
 	 * Return the reference manager which is managing this filter reference
 	 * framework object.
 	 */
-	public ISystemFilterPoolReferenceManager getFilterPoolReferenceManager()
-	{
+	public ISystemFilterPoolReferenceManager getFilterPoolReferenceManager() {
 		ISystemFilterPoolReference pool = getParentSystemFilterReferencePool();
 		if (pool != null)
-		  return pool.getFilterPoolReferenceManager();
+			return pool.getFilterPoolReferenceManager();
 		else
-		  return null;
+			return null;
 	}
-	
+
 	/**
 	 * Return the object which instantiated the pool reference manager object.
 	 * Makes it easy to get back to the point of origin, given any filter reference
 	 * framework object
 	 */
-    public ISystemFilterPoolReferenceManagerProvider getProvider()
-    {
-    	ISystemFilterPoolReferenceManager mgr = getFilterPoolReferenceManager();
-    	if (mgr != null)
-    	{
-    		ISystemFilterPoolReferenceManagerProvider provider = mgr.getProvider();
-    		if (provider == null)
-    		{
-    			provider = getSubSystem();
-    		}
-    		return provider;
-    	}
-    	else
-    	  return null;
-    }
+	public ISystemFilterPoolReferenceManagerProvider getProvider() {
+		ISystemFilterPoolReferenceManager mgr = getFilterPoolReferenceManager();
+		if (mgr != null) {
+			ISystemFilterPoolReferenceManagerProvider provider = mgr.getProvider();
+			if (provider == null) {
+				provider = getSubSystem();
+			}
+			return provider;
+		} else
+			return null;
+	}
 
-    
-    /**
-     * If this is a reference to a nested filter, the parent is the
-     * reference to the nested filter's parent. Else, it is the 
-     * reference to the parent filter pool
-     */
-    public void setParent(ISystemFilterContainerReference parent)
-    {
-    	this.parent = parent;
-    }    
-    /**
-     * The parent will either by a SystemFilterPoolReference or
-     *  a SystemFilterReference.
-     */
-    public ISystemFilterContainerReference getParent()
-    {
-    	return parent;
-    }
+	/**
+	 * If this is a reference to a nested filter, the parent is the
+	 * reference to the nested filter's parent. Else, it is the 
+	 * reference to the parent filter pool
+	 */
+	public void setParent(ISystemFilterContainerReference parent) {
+		this.parent = parent;
+	}
+
+	/**
+	 * The parent will either by a SystemFilterPoolReference or
+	 *  a SystemFilterReference.
+	 */
+	public ISystemFilterContainerReference getParent() {
+		return parent;
+	}
 
 	/**
 	 * Return the filter to which we reference...
 	 */
-	public ISystemFilter getReferencedFilter()
-	{
-		return persistent ? (ISystemFilter)super.getReferencedObject() : referencedFilter;
+	public ISystemFilter getReferencedFilter() {
+		return persistent ? (ISystemFilter) super.getReferencedObject() : referencedFilter;
 	}
+
 	/**
 	 * Set the filter to which we reference...
 	 */
-	public void setReferencedFilter(ISystemFilter filter)
-	{
+	public void setReferencedFilter(ISystemFilter filter) {
 		if (persistent)
-		  super.setReferencedObject(filter);
+			super.setReferencedObject(filter);
 		else
-		  referencedFilter = filter;
+			referencedFilter = filter;
 	}
 
-    /**
-     * If this is a reference to a nested filter, the parent is the
-     * reference to the nested filter's parent. Else, it is the 
-     * reference to the parent filter pool
-     */
-    public ISystemFilterPoolReference getParentSystemFilterReferencePool()
-    {
-    	if (parent instanceof ISystemFilterPoolReference)
-    	  return (ISystemFilterPoolReference)parent;
-    	else
-    	  return ((ISystemFilterReference)parent).getParentSystemFilterReferencePool();
-    }
-    /**
+	/**
+	 * If this is a reference to a nested filter, the parent is the
+	 * reference to the nested filter's parent. Else, it is the 
+	 * reference to the parent filter pool
+	 */
+	public ISystemFilterPoolReference getParentSystemFilterReferencePool() {
+		if (parent instanceof ISystemFilterPoolReference)
+			return (ISystemFilterPoolReference) parent;
+		else
+			return ((ISystemFilterReference) parent).getParentSystemFilterReferencePool();
+	}
+
+	/**
 	 * This is the method required by the IAdaptable interface.
 	 * Given an adapter class type, return an object castable to the type, or
 	 *  null if this is not possible.
 	 */
-    public Object getAdapter(Class adapterType)
-    {
-   	    return Platform.getAdapterManager().getAdapter(this, adapterType);	
-    }   
-		
+	public Object getAdapter(Class adapterType) {
+		return Platform.getAdapterManager().getAdapter(this, adapterType);
+	}
+
 	// -------------------------------------------------------------
 	// Methods common with SystemFilterPoolReferenceImpl, and hence
 	//  abstracted out into SystemFilterContainerReference...
@@ -217,10 +202,10 @@ public class SystemFilterReference extends SystemReferencingObject implements IA
 	 * true that we only hold a SystemFilter. Hence, this is the same
 	 * as calling getReferenceFilter and casting the result.
 	 */
-	public ISystemFilterContainer getReferencedSystemFilterContainer()
-	{
+	public ISystemFilterContainer getReferencedSystemFilterContainer() {
 		return getReferencedFilter();
 	}
+
 	/**
 	 * Build and return an array of SystemFilterReference objects.
 	 * Each object is created new. There is one for each of the filters
@@ -229,159 +214,141 @@ public class SystemFilterReference extends SystemReferencingObject implements IA
 	 * return a fresh one if something changes in the underlying 
 	 * filter list.
 	 */
-	public ISystemFilterReference[] getSystemFilterReferences(ISubSystem subSystem)
-	{
-		return containerHelper.getSystemFilterReferences(subSystem);
-	}	
-    /**
-     * Create a single filter refererence to a given filter. 
-     * If there already is a reference to this filter, it is returned.
-     * If not, a new reference is created and appended to the end of the existing filter reference array.
-     * @see #getExistingSystemFilterReference(ISubSystem, ISystemFilter)
-     */
-    public ISystemFilterReference getSystemFilterReference(ISubSystem subSystem, ISystemFilter filter)
-    {
-    	//return containerHelper.generateFilterReference(filter);
-    	return containerHelper.generateAndRecordFilterReference(subSystem, filter);
-    }	
-    /**
-     * Return an existing reference to a given system filter. 
-     * If no reference currently exists to this filter, returns null.
-     * @see #getSystemFilterReference(ISubSystem, ISystemFilter)
-     */
-    public ISystemFilterReference getExistingSystemFilterReference(ISubSystem subSystem, ISystemFilter filter)
-    {
-    	return containerHelper.getExistingSystemFilterReference(subSystem, filter);
-    }	
-	
-    /**
-     * Return true if the referenced pool or filter has filters.
-     */
-    public boolean hasFilters()
-    {
-    	return containerHelper.hasFilters();
-    }    
+	public ISystemFilterReference[] getSystemFilterReferences(ISubSystem subSystem) {
+		List references = containerHelper.getSystemFilterReferences(subSystem);
+		ISystemFilterReference[] result = new ISystemFilterReference[references.size()];
+		references.toArray(result);
+		return result;
+	}
 
-    /**
-     * Return count of the number of filters in the referenced pool or filter
-     */
-    public int getFilterCount()
-    {
-    	return containerHelper.getFilterCount();
-    }
+	/**
+	 * Create a single filter refererence to a given filter. 
+	 * If there already is a reference to this filter, it is returned.
+	 * If not, a new reference is created and appended to the end of the existing filter reference array.
+	 * @see #getExistingSystemFilterReference(ISubSystem, ISystemFilter)
+	 */
+	public ISystemFilterReference getSystemFilterReference(ISubSystem subSystem, ISystemFilter filter) {
+		//return containerHelper.generateFilterReference(filter);
+		return containerHelper.generateAndRecordFilterReference(subSystem, filter);
+	}
 
-    /**
-     * Return the name of the SystemFilter or SystemFilterPool that we reference.
-     * For such objects this is what we show in the GUI.
-     */	
-	public String getName()
-	{
+	/**
+	 * Return an existing reference to a given system filter. 
+	 * If no reference currently exists to this filter, returns null.
+	 * @see #getSystemFilterReference(ISubSystem, ISystemFilter)
+	 */
+	public ISystemFilterReference getExistingSystemFilterReference(ISubSystem subSystem, ISystemFilter filter) {
+		return containerHelper.getExistingSystemFilterReference(subSystem, filter);
+	}
+
+	/**
+	 * Return true if the referenced pool or filter has filters.
+	 */
+	public boolean hasFilters() {
+		return containerHelper.hasFilters();
+	}
+
+	/**
+	 * Return count of the number of filters in the referenced pool or filter
+	 */
+	public int getFilterCount() {
+		return containerHelper.getFilterCount();
+	}
+
+	/**
+	 * Return the name of the SystemFilter or SystemFilterPool that we reference.
+	 * For such objects this is what we show in the GUI.
+	 */
+	public String getName() {
 		ISystemFilter filter = getReferencedFilter();
 		if (filter != null)
-		  return filter.getName();
+			return filter.getName();
 		else
-		  return ""; //$NON-NLS-1$
+			return ""; //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Override of Object method. Turn this filter in an outputable string
 	 */
-	public String toString()
-	{
+	public String toString() {
 		return getName();
 	}
-	
-    // -------------------------------------------------
-    // Methods for returning filter string references...
-    // -------------------------------------------------
-    /**
-     * Return the number of filter strings in the referenced filter
-     */
-    public int getSystemFilterStringCount()
-    {
-    	int count = 0;
-    	ISystemFilter referencedFilter = getReferencedFilter();
-    	if (referencedFilter != null)
-    	  count = referencedFilter.getFilterStringCount();
-    	return count;
-    }
-    /**
-     * Get the filter strings contained by this filter. But get references to each,
-     *  not the masters.
-     */
-    public ISystemFilterStringReference[] getSystemFilterStringReferences()
-    {    	
-        // These reference objects are built on the fly, each time, rather than
-        //  maintaining a persisted list of such references. The reason
-        //  is we do no at this time allow users to subset the master list
-        //  of strings maintained by a filter. Hence, we always simply
-        //  return a complete list. However, to save memory we try to only
-        //  re-gen the list if something has changed.
-    	java.util.List mofList = getReferencedFilter().getStrings();
-    	boolean needToReGen = compareFilterStrings(mofList);    	
-    	if (needToReGen)
-    	  referencedFilterStrings = generateFilterStringReferences(mofList);
-    	return referencedFilterStrings;
-    }
 
-    /**
-     * Create a single filter string refererence to a given filter string
-     */
-    public ISystemFilterStringReference getSystemFilterStringReference(ISystemFilterString filterString)
-    {
-    	return new SystemFilterStringReference(this, filterString);  
-    }	
+	// -------------------------------------------------
+	// Methods for returning filter string references...
+	// -------------------------------------------------
+	/**
+	 * Return the number of filter strings in the referenced filter
+	 */
+	public int getSystemFilterStringCount() {
+		int count = 0;
+		ISystemFilter referencedFilter = getReferencedFilter();
+		if (referencedFilter != null) count = referencedFilter.getFilterStringCount();
+		return count;
+	}
 
-    
-    /**
-     * To save memory, we try to only regenerate the referenced filter list
-     * if something has changed.
-     */
-    private boolean compareFilterStrings(java.util.List newFilterStrings)
-    {
-    	boolean mustReGen = false;
-    	if (newFilterStrings == null)
-    	{
-    	  if (referencedFilterStrings != null)
-    	    return true;
-    	  else
-    	    return false;
-    	}
-    	else if (referencedFilterStrings == null)
-    	{
-          return true; // newFilterStrings != null && referencedFilterStrings == null        	 
-    	}
-    	// both old and new are non-null
-        if (newFilterStrings.size() != referencedFilterStrings.length)
-          return true;
-        Iterator i = newFilterStrings.iterator();
-        for (int idx=0; !mustReGen && (idx<referencedFilterStrings.length); idx++)
-        {
-           ISystemFilterString newFilterString = (ISystemFilterString)i.next();
-           if (!(referencedFilterStrings[idx].getReferencedFilterString().equals(newFilterString)))
-             mustReGen = true;
-        }               	
-    	return mustReGen;
-    }
-        
-    /**
-     * To save the memory of an intermediate array, we create the filter string references 
-     * directly from the MOF model...
-     */
-    private ISystemFilterStringReference[] generateFilterStringReferences(java.util.List newFilterStrings)
-    {
-    	if (newFilterStrings == null)
-    	  return null;
-    	ISystemFilterStringReference[] refs = new ISystemFilterStringReference[newFilterStrings.size()];
-        Iterator i = newFilterStrings.iterator();
-        int idx = 0;
-        while (i.hasNext())
-        {
-    	   refs[idx++] = getSystemFilterStringReference((ISystemFilterString)i.next());    		            
-        }               	
-    	return refs;
-    }
-    
+	/**
+	 * Get the filter strings contained by this filter. But get references to each,
+	 *  not the masters.
+	 */
+	public ISystemFilterStringReference[] getSystemFilterStringReferences() {
+		// These reference objects are built on the fly, each time, rather than
+		//  maintaining a persisted list of such references. The reason
+		//  is we do no at this time allow users to subset the master list
+		//  of strings maintained by a filter. Hence, we always simply
+		//  return a complete list. However, to save memory we try to only
+		//  re-gen the list if something has changed.
+		ISystemFilterString[] filterStrings = getReferencedFilter().getStrings();
+		List filterStringList = Arrays.asList(filterStrings);
+		boolean needToReGen = compareFilterStrings(filterStringList);
+		if (needToReGen) referencedFilterStrings = generateFilterStringReferences(filterStringList);
+		return referencedFilterStrings;
+	}
+
+	/**
+	 * Create a single filter string refererence to a given filter string
+	 */
+	public ISystemFilterStringReference getSystemFilterStringReference(ISystemFilterString filterString) {
+		return new SystemFilterStringReference(this, filterString);
+	}
+
+	/**
+	 * To save memory, we try to only regenerate the referenced filter list
+	 * if something has changed.
+	 */
+	private boolean compareFilterStrings(List newFilterStrings) {
+		boolean mustReGen = false;
+		if (newFilterStrings == null) {
+			if (referencedFilterStrings != null)
+				return true;
+			else
+				return false;
+		} else if (referencedFilterStrings == null) {
+			return true; // newFilterStrings != null && referencedFilterStrings == null        	 
+		}
+		// both old and new are non-null
+		if (newFilterStrings.size() != referencedFilterStrings.length) return true;
+		Iterator i = newFilterStrings.iterator();
+		for (int idx = 0; !mustReGen && (idx < referencedFilterStrings.length); idx++) {
+			ISystemFilterString newFilterString = (ISystemFilterString) i.next();
+			if (!(referencedFilterStrings[idx].getReferencedFilterString().equals(newFilterString))) mustReGen = true;
+		}
+		return mustReGen;
+	}
+
+	/**
+	 * Get references to filter strings from a list of the filter strings
+	 */
+	private ISystemFilterStringReference[] generateFilterStringReferences(List newFilterStrings) {
+		if (newFilterStrings == null) return null;
+		ISystemFilterStringReference[] refs = new ISystemFilterStringReference[newFilterStrings.size()];
+		Iterator i = newFilterStrings.iterator();
+		int idx = 0;
+		while (i.hasNext()) {
+			refs[idx++] = getSystemFilterStringReference((ISystemFilterString) i.next());
+		}
+		return refs;
+	}
 
 	// -----------------------------------
 	// IRSEReferencingObject methods...
@@ -390,108 +357,95 @@ public class SystemFilterReference extends SystemReferencingObject implements IA
 	/**
 	 * Set the object to which we reference. Override of inherited
 	 */
-	public void setReferencedObject(IRSEBaseReferencedObject obj)
-	{
-		setReferencedFilter((ISystemFilter)obj);
+	public void setReferencedObject(IRSEBaseReferencedObject obj) {
+		setReferencedFilter((ISystemFilter) obj);
 	}
+
 	/**
 	 * Get the object which we reference. Override of inherited
 	 */
-	public IRSEBaseReferencedObject getReferencedObject()
-	{
+	public IRSEBaseReferencedObject getReferencedObject() {
 		return getReferencedFilter();
 	}
+
 	/**
 	 * Fastpath to getReferencedObject().removeReference(this).
 	 * @return new reference count of master object
 	 */
-	public int removeReference()
-	{
+	public int removeReference() {
 		int count = 0;
-		if (persistent)
-		  super.removeReference();
+		if (persistent) super.removeReference();
 		setReferencedFilter(null);
 		return count;
 	}
-	
-    /* (non-Javadoc)
-     * @see org.eclipse.rse.model.ISystemContainer#hasContents(org.eclipse.rse.model.ISystemContentsType)
-     */
-    public boolean hasContents(ISystemContentsType contentsType)
-    {
-        if (cachedContents.containsKey(contentsType))
-        {
-            return true;
-        }
-        return false;
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.rse.model.ISystemContainer#getContents(org.eclipse.rse.model.ISystemContentsType)
-     */
-    public Object[] getContents(ISystemContentsType contentsType)
-    {
-        return (Object[])cachedContents.get(contentsType);
-    }
-   
-    public void setContents(ISystemContentsType type, Object[] cachedContents)
-    {
-        this.cachedContents.put(type, cachedContents);
-        
-        isStale = false;
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.rse.model.ISystemContainer#isStale()
-     */
-    public boolean isStale()
-    {
-	      return isStale;
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.rse.model.ISystemContainer#markStale(boolean)
-     */
-    public void markStale(boolean isStale)
-    {
-    	markStale(isStale, true);
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.rse.model.ISystemContainer#markStale(boolean)
-     */
-    public void markStale(boolean isStale, boolean clearCache)
-    {
-        this.isStale = isStale;
-        if (clearCache && isStale)
-        {
-	        Iterator iterator = cachedContents.values().iterator();
-	        while (iterator.hasNext())
-	        {
-	        	Object[] arr = (Object[])iterator.next();
-	        	for (int i = 0; i < arr.length; i++)
-	        	{
-	        		Object obj = arr[i];
-	        		if (obj instanceof ISystemContainer)
-	        		{
-	        			((ISystemContainer)obj).markStale(true);
-	        		}
-	        	}
-	        }
-	        cachedContents.clear();
-        }
-    }
 
-    public boolean commit() 
-	{
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.model.ISystemContainer#hasContents(org.eclipse.rse.model.ISystemContentsType)
+	 */
+	public boolean hasContents(ISystemContentsType contentsType) {
+		if (cachedContents.containsKey(contentsType)) {
+			return true;
+		}
 		return false;
 	}
-    
-    public IRSEPersistableContainer getPersistableParent() {
-    	return null;
-    }
-    
-    public IRSEPersistableContainer[] getPersistableChildren() {
-    	return IRSEPersistableContainer.NO_CHILDREN;
-    }
-    
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.model.ISystemContainer#getContents(org.eclipse.rse.model.ISystemContentsType)
+	 */
+	public Object[] getContents(ISystemContentsType contentsType) {
+		return (Object[]) cachedContents.get(contentsType);
+	}
+
+	public void setContents(ISystemContentsType type, Object[] cachedContents) {
+		this.cachedContents.put(type, cachedContents);
+
+		isStale = false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.model.ISystemContainer#isStale()
+	 */
+	public boolean isStale() {
+		return isStale;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.model.ISystemContainer#markStale(boolean)
+	 */
+	public void markStale(boolean isStale) {
+		markStale(isStale, true);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.model.ISystemContainer#markStale(boolean)
+	 */
+	public void markStale(boolean isStale, boolean clearCache) {
+		this.isStale = isStale;
+		if (clearCache && isStale) {
+			Iterator iterator = cachedContents.values().iterator();
+			while (iterator.hasNext()) {
+				Object[] arr = (Object[]) iterator.next();
+				for (int i = 0; i < arr.length; i++) {
+					Object obj = arr[i];
+					if (obj instanceof ISystemContainer) {
+						((ISystemContainer) obj).markStale(true);
+					}
+				}
+			}
+			cachedContents.clear();
+		}
+	}
+
+	public boolean commit() {
+		return false;
+	}
+
+	public IRSEPersistableContainer getPersistableParent() {
+		return null;
+	}
+
+	public IRSEPersistableContainer[] getPersistableChildren() {
+		return IRSEPersistableContainer.NO_CHILDREN;
+	}
+
 }

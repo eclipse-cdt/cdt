@@ -48,27 +48,23 @@ public class DStoreWindowsFileSubSystemConfiguration extends DStoreFileSubSystem
 		      // ----------------------
 		      // "My Home" filter...
 		      // ----------------------
-		      Vector filterStrings = new Vector();
+		      String[] filterStrings = new String[] {".\\*"}; //$NON-NLS-1$
 		      RemoteFileFilterString myHomeFilterString = new RemoteFileFilterString(this);
 		      myHomeFilterString.setPath(getSeparator());
-		      filterStrings.add(".\\*"); //$NON-NLS-1$
 		      ISystemFilter filter = mgr.createSystemFilter(pool, SystemFileResources.RESID_FILTER_MYHOME,filterStrings);
 		      filter.setNonChangable(true);
 		      filter.setSingleFilterStringOnly(true);
 		      
-		      filterStrings = new Vector();
 		      RemoteFileFilterString defaultFilterString = new RemoteFileFilterString(this);
-		      filterStrings.add(defaultFilterString.toString());	
+		      filterStrings = new String[] {defaultFilterString.toString()};
 		      String filterName = SystemFileResources.RESID_FILTER_DRIVES;
 
 		      mgr.createSystemFilter(pool, filterName, filterStrings);
 		  }
 		 else
 		 {
-			 Vector filterStrings = new Vector();
-			 filterStrings = new Vector();
 		      RemoteFileFilterString defaultFilterString = new RemoteFileFilterString(this);
-		      filterStrings.add(defaultFilterString.toString());	
+			 String[] filterStrings = new String[] {defaultFilterString.toString()};
 		      String filterName = SystemFileResources.RESID_FILTER_DRIVES;
 
 		      mgr.createSystemFilter(pool, filterName, filterStrings);

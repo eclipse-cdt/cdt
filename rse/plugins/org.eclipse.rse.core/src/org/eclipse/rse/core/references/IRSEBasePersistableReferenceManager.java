@@ -17,7 +17,6 @@
 
 package org.eclipse.rse.core.references;
 
-import org.eclipse.core.resources.IFolder;
 
 /**
  * A class for managing a list of shadow objects that reference master objects.
@@ -139,29 +138,6 @@ public interface IRSEBasePersistableReferenceManager {
 	 * null if no reference found.
 	 */
 	public IRSEBasePersistableReferencingObject getReferencedObject(IRSEBasePersistableReferencedObject object);
-
-	/**
-	 * Attempt to save contents of manager to disk. Only call if not doing your own save from
-	 *  your own model that uses a subclass of this.
-	 * @param folder The folder in which to save the manager.
-	 * @param fileName The unqualified file name to save to. Should include extension, such as .xmi
-	 */
-	public void save(IFolder folder, String fileName) throws Exception;
-
-	/**
-	 * After restoring this from disk, there is only the referenced object name,
-	 * not the referenced object pointer, for each referencing object.
-	 * <p>
-	 * This method is called after restore and for each restored object in the list must:
-	 * <ol>
-	 *   <li>Do what is necessary to find the referenced object, and set the internal reference pointer.
-	 *   <li>Call addReference(this) on that object so it can maintain it's in-memory list
-	 *          of all referencing objects.
-	 * </ol>
-	 * @return true if resolved successfully. False if some references were not found and
-	 *  hence those referencing objects removed from the restored list.
-	 */
-	public boolean resolveReferencesAfterRestore();
 
 	/**
 	 * @generated This field/method will be replaced during code generation 

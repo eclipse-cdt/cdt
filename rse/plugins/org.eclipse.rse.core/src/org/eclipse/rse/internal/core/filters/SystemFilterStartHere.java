@@ -16,15 +16,11 @@
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.filters;
-
-import org.eclipse.rse.core.filters.IRSEFilterNamingPolicy;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManagerProvider;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManagerProvider;
-import org.eclipse.rse.core.filters.ISystemFilterSavePolicies;
 import org.eclipse.rse.core.filters.ISystemFilterStartHere;
-import org.eclipse.rse.core.filters.SystemFilterNamingPolicy;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.logging.Logger;
 
@@ -64,16 +60,6 @@ public class SystemFilterStartHere
 	}
 	
     /**
-     * Factory method to return an instance populated with defaults.
-     * You can then simply override whatever is desired via setXXX methods.
-     */
-    public IRSEFilterNamingPolicy createSystemFilterNamingPolicy()
-    {
-    	return SystemFilterNamingPolicy.getNamingPolicy();
-    }
-	
-	
-    /**
      * Factory to create a filter pool manager, when you do NOT want it to worry about 
      *  saving and restoring the filter data to disk. Rather, you will save and restore
      *  yourself.
@@ -96,7 +82,7 @@ public class SystemFilterStartHere
                                                   boolean allowNestedFilters)
     {
     	return SystemFilterPoolManager.createSystemFilterPoolManager(profile, logger, caller, 
-    	             name, allowNestedFilters, ISystemFilterSavePolicies.SAVE_POLICY_NONE, null);
+    	             name, allowNestedFilters);
     }
 
 
@@ -112,16 +98,15 @@ public class SystemFilterStartHere
      * @param relatedPoolMgrProvider The manager provider that own the master list of filter pools that 
      *   this manager will contain references to.
      * @param name the name of the filter pool reference manager. This is not currently 
-     *   used, but you may find a use for it. 
-     * @param namingPolicy the naming policy object which will return the name of that one file.
+     *   used, but you may find a use for it.
      */
     public ISystemFilterPoolReferenceManager createSystemFilterPoolReferenceManager(
                                                     ISystemFilterPoolReferenceManagerProvider caller,
                                                     ISystemFilterPoolManagerProvider relatedPoolMgrProvider,
-                                                    String name, IRSEFilterNamingPolicy namingPolicy)
+                                                    String name)
     {
     	return SystemFilterPoolReferenceManager.createSystemFilterPoolReferenceManager(
-    	  caller, relatedPoolMgrProvider, null, name, ISystemFilterSavePolicies.SAVE_POLICY_NONE, namingPolicy);
+    	  caller, relatedPoolMgrProvider, name);
     }
 
 

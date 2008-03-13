@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.rse.core.references.IRSEBasePersistableReferenceManager;
 import org.eclipse.rse.core.references.IRSEBasePersistableReferencedObject;
 import org.eclipse.rse.core.references.IRSEBasePersistableReferencingObject;
@@ -40,11 +39,7 @@ import org.eclipse.rse.core.references.IRSEBasePersistableReferencingObject;
 public class SystemPersistableReferenceManager implements IRSEBasePersistableReferenceManager {
 	/**
 	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
 	 * @see #getName()
-	 * @generated
-	 * @ordered
 	 */
 	protected static final String NAME_EDEFAULT = null;
 
@@ -264,141 +259,6 @@ public class SystemPersistableReferenceManager implements IRSEBasePersistableRef
 	// ---------------------------------------------------------------------------
 	// Methods for saving and restoring if not doing your own in your own subclass
 	// ---------------------------------------------------------------------------
-
-	/**
-	 * <b>YOU MUST OVERRIDE THIS METHOD!</b>
-	 * <p>
-	 * After restoring this from disk, there is only the referenced object name,
-	 * not the referenced object pointer, for each referencing object.
-	 * <p>
-	 * This method is called after restore and for each restored object in the list must:
-	 * <ol>
-	 *   <li>Do what is necessary to find the referenced object, and set the internal reference pointer.
-	 *   <li>Call addReference(this) on that object so it can maintain it's in-memory list
-	 *          of all referencing objects.
-	 * </ol>
-	 * @return true if resolved successfully. False if some references were not found and
-	 *  hence those referencing objects removed from the restored list.
-	 */
-	public boolean resolveReferencesAfterRestore() {
-		return false;
-	}
-
-	/**
-	 * Attempt to save contents of manager to disk. Only call if not doing your own save from
-	 *  your own model that uses a subclass of this.
-	 * @param folder The folder in which to save the manager.
-	 * @param fileName The unqualified file name to save to. Should include extension, such as .xmi
-	 */
-	public void save(IFolder folder, String fileName) throws Exception {
-		/* FIXME
-		 initMOF();        
-		 String path = folder.getLocation().toOSString();
-		 String saveFileName = addPathTerminator(path)+fileName;
-		 File saveFile = new File(saveFileName);
-		 boolean exists = saveFile.exists();    
-		 saveFileName = saveFile.toURL().toString();
-		 Resource.Factory.Registry reg = Resource.Factory.Registry.INSTANCE;
-		 
-		 Resource.Factory resFactory = reg.getFactory(URI.createURI(saveFileName));
-		 //java.util.List ext   = resFactory.createExtent(); // MOF way
-		 //ext.add(this); // MOF way
-		 Resource mofRes = resFactory.createResource(URI.createURI(saveFileName));
-		 mofRes.getContents().add(this);
-		 try
-		 {
-		 mofRes.save(EMPTY_MAP);
-		 } catch (Exception e)
-		 {
-		 if (debug)
-		 {        	
-		 System.out.println("Error saving SystemPersistableReferenceManager "+getName() + " to "+saveFile+": " + e.getClass().getName() + ": " + e.getMessage());
-		 e.printStackTrace();
-		 }
-		 throw e;
-		 }
-
-		 // if this is the first time we have created this file, we must update Eclipse
-		 // resource tree to know about it...
-		 if (!exists || !folder.exists())        
-		 {
-		 try 
-		 {
-		 //RSEUIPlugin.logWarning("Calling refreshLocal on project after saving MOF file: " + saveFileName);
-		 folder.getProject().refreshLocal(IResource.DEPTH_INFINITE, null);               
-		 } catch(Exception exc) 
-		 {
-		 System.out.println("Exception doing refreshLocal on project: " + exc.getClass().getName());
-		 }
-		 }
-		 else
-		 {
-		 try 
-		 {
-		 //RSEUIPlugin.logWarning("Calling refreshLocal on project after saving MOF file: " + saveFileName);
-		 folder.refreshLocal(IResource.DEPTH_ONE, null);               
-		 } catch(Exception exc) 
-		 {
-		 System.out.println("Exception doing refreshLocal on project: " + exc.getClass().getName());
-		 }
-		 }        
-		 */
-	}
-
-	/**
-	 * Restore a persisted manager from disk.
-	 * <p>
-	 * After restoration, YOU MUST CALL {@link #resolveReferencesAfterRestore() resolveReferencesAfterRestore}
-	 * This presumes yours subclass has overridden that method!
-	 * <p>
-	 * @param folder The folder in which the saved manager exists.
-	 * @param fileName The unqualified save file name including extension such as .xmi
-	 * @return The restored object, or null if given file not found. Any other error gives an exception.
-	 */
-	public static IRSEBasePersistableReferenceManager restore(IFolder folder, String fileName) throws Exception {
-		IRSEBasePersistableReferenceManager mgr = new SystemPersistableReferenceManager();
-		/*FIXME        
-		 initMOF();
-		 Resource.Factory.Registry reg = Resource.Factory.Registry.INSTANCE;
-		 String path = folder.getLocation().toOSString();
-		 String saveFile = addPathTerminator(path)+fileName;		
-		 //ResourceSet resourceSet = // MOF way
-		 // Resource.Factory.Registry.getResourceSetFactory().makeResourceSet();
-		 Resource res1 = null;
-		 try
-		 {
-		 // res1 = resourceSet.load(saveFile); MOF way           
-		 Resource.Factory resFactory = reg.getFactory(URI.createURI(saveFile));
-		 res1 = resFactory.createResource(URI.createURI(saveFile));
-		 res1.load(EMPTY_MAP);
-		 }
-		 catch (java.io.FileNotFoundException e)
-		 {
-		 if (debug)
-		 System.out.println("SystemPersistableReferenceManager file not found: "+saveFile);
-		 return null;
-		 }
-		 catch (Exception e)
-		 {
-		 if (debug)
-		 {
-		 System.out.println("Error loading SystemPersistableReferenceManager from file: "+saveFile+": " + e.getClass().getName() + ": " + e.getMessage());
-		 e.printStackTrace();
-		 }
-		 throw e;
-		 }        
-
-		 java.util.List ext1 = res1.getContents();
-
-		 // should be exactly one...
-		 Iterator iList = ext1.iterator();
-		 mgr = (SystemPersistableReferenceManager)iList.next();
-
-		 if (debug)
-		 System.out.println("Ok. SystemPersistableReferenceManager "+mgr.getName()+" restored successfully.");
-		 */
-		return mgr;
-	}
 
 	/**
 	 * Ensure given path ends with path separator.

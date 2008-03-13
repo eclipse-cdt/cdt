@@ -28,8 +28,6 @@
 
 package org.eclipse.rse.internal.ui.view;
 
-import java.util.Vector;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -659,49 +657,32 @@ public class SystemViewFilterReferenceAdapter
 	 * Return a validator for verifying the new name is correct.
 	 * @param element either a filter for a rename action, or a filter pool for a "new" action.
 	 */
-	public ISystemValidator getNameValidator(Object element)
-	{
+	public ISystemValidator getNameValidator(Object element) {
 		ISystemFilter filter = null;
 		ISystemFilterPool pool = null;
-		Vector filterNames = null;
-		if (element instanceof ISystemFilterReference)
-		{
+		String[] filterNames = null;
+		if (element instanceof ISystemFilterReference) {
 			filter = getFilter(element);
 			pool = filter.getParentFilterPool();
 			if (pool != null)
 				filterNames = pool.getSystemFilterNames();
-			else
-			{
+			else {
 				ISystemFilter parentFilter = filter.getParentFilter();
 				filterNames = parentFilter.getSystemFilterNames();
 			}
-		}
-		else if (element instanceof ISystemFilter)
-		{
+		} else if (element instanceof ISystemFilter) {
 			filter = (ISystemFilter) element;
 			pool = filter.getParentFilterPool();
 			if (pool != null)
 				filterNames = pool.getSystemFilterNames();
-			else
-			{
+			else {
 				ISystemFilter parentFilter = filter.getParentFilter();
 				filterNames = parentFilter.getSystemFilterNames();
 			}
-		}
-		else
-		{
+		} else {
 			pool = (ISystemFilterPool) element;
 			filterNames = pool.getSystemFilterNames();
 		}
-		/*		
-		if (filter != null)
-		{
-		  filterNames.removeElement(filter.getName()); // remove current filter's name
-		  System.out.println("Existing names for " + filter.getName());
-		  for (int idx=0; idx<filterNames.size(); idx++)
-		     System.out.println("...: " + filterNames.elementAt(idx));		
-		}
-		*/
 		ISystemValidator nameValidator = new ValidatorFilterName(filterNames);
 		return nameValidator;
 	}

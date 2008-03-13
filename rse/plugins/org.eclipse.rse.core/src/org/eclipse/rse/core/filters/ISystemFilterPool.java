@@ -17,8 +17,6 @@
 
 package org.eclipse.rse.core.filters;
 
-import java.util.List;
-
 import org.eclipse.rse.core.model.IRSEModelObject;
 import org.eclipse.rse.core.references.IRSEPersistableReferencedObject;
 
@@ -32,18 +30,6 @@ public interface ISystemFilterPool extends IRSEPersistableReferencedObject, ISys
 	 * @return the object that instantiated the filter pool manager owning this filter pool
 	 */
 	public ISystemFilterPoolManagerProvider getProvider();
-
-	/**
-	 * Set the naming policy used when saving data to disk.
-	 * @see org.eclipse.rse.core.filters.IRSEFilterNamingPolicy
-	 */
-	public void setNamingPolicy(IRSEFilterNamingPolicy namingPolicy);
-
-	/**
-	 * Get the naming policy currently used when saving data to disk.
-	 * @see org.eclipse.rse.core.filters.IRSEFilterNamingPolicy
-	 */
-	public IRSEFilterNamingPolicy getNamingPolicy();
 
 	/**
 	 * @return true if filters in this pool support nested filters.
@@ -120,16 +106,6 @@ public interface ISystemFilterPool extends IRSEPersistableReferencedObject, ISys
 	 * @param names the names of the filters in this pool in the order they should be returned.
 	 */
 	public void orderSystemFilters(String[] names);
-
-	/**
-	 * Set the save file policy. See constants in SystemFilterConstants. One of:
-	 * <ul>
-	 *   <li>SAVE_POLICY_ONE_FILE_PER_POOL
-	 *   <li>SAVE_POLICY_ONE_FILE_PER_FILTER
-	 * </ul>
-	 * This method is called by the SystemFilterPoolManager.
-	 */
-	public void setSavePolicy(int policy);
 
 	/**
 	 * @return the id of the filter pool. Used for referencing this filter pool from filter pool references.
@@ -211,9 +187,9 @@ public interface ISystemFilterPool extends IRSEPersistableReferencedObject, ISys
 	public boolean isSetStringsCaseSensitive();
 
 	/**
-	 * @return The list of Filters references
+	 * @return An array of filters in this pool
 	 */
-	public List getFilters();
+	public ISystemFilter[] getFilters();
 
 	/**
 	 * @return The value of the SupportsDuplicateFilterStrings attribute

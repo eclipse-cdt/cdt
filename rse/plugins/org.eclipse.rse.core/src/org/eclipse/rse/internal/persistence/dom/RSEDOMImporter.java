@@ -48,7 +48,6 @@ import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.core.subsystems.SubSystemFilterNamingPolicy;
 import org.eclipse.rse.internal.core.model.SystemProfile;
 import org.eclipse.rse.internal.core.model.SystemProfileManager;
 import org.eclipse.rse.persistence.dom.IRSEDOMConstants;
@@ -288,7 +287,7 @@ public class RSEDOMImporter {
 
 			if (factory.supportsFilters()) {
 				ISystemFilterStartHere startHere = _registry.getSystemFilterStartHere();
-				ISystemFilterPoolReferenceManager fprMgr = startHere.createSystemFilterPoolReferenceManager(subSystem, factory, name, new SubSystemFilterNamingPolicy());
+				ISystemFilterPoolReferenceManager fprMgr = startHere.createSystemFilterPoolReferenceManager(subSystem, factory, name);
 				subSystem.setFilterPoolReferenceManager(fprMgr);
 				ISystemFilterPoolManager defaultFilterPoolManager = factory.getFilterPoolManager(host.getSystemProfile());
 				fprMgr.setDefaultSystemFilterPoolManager(defaultFilterPoolManager);
@@ -331,17 +330,12 @@ public class RSEDOMImporter {
 		int release = getIntegerValue(node, IRSEDOMConstants.ATTRIBUTE_RELEASE);
 		boolean isSetSingleFilterStringOnly = getBooleanValue(node, IRSEDOMConstants.ATTRIBUTE_SINGLE_FILTER_STRING_ONLY);
 
-		Vector filterStrings = new Vector();
-
 		// create the filter strings
 		RSEDOMNode[] filterStringNodes = node.getChildren(IRSEDOMConstants.TYPE_FILTER_STRING);
+		String[] filterStrings = new String[filterStringNodes.length];
 		for (int i = 0; i < filterStringNodes.length; i++) {
 			RSEDOMNode filterStringNode = filterStringNodes[i];
-
-			//  might not have to restore the filter strings this way
-			//restoreFilterString(filter, filterStringNode);
-
-			filterStrings.add(filterStringNode.getName());
+			filterStrings[i] = filterStringNode.getName();
 		}
 
 		// create the filter

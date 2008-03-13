@@ -65,7 +65,7 @@ public class SystemFilterContainerCommonMethods
 	 * @param aliasName The name to give the new filter. Must be unique for this pool.
 	 * @param filterStrings The list of String objects that represent the filter strings.
 	 */
-	public ISystemFilter createSystemFilter(java.util.List filters, ISystemFilterPool parentPool, String aliasName, Vector filterStrings) {
+	public ISystemFilter createSystemFilter(java.util.List filters, ISystemFilterPool parentPool, String aliasName, String[] filterStrings) {
 		ISystemFilter newFilter = null;
 
 		// FIXME - not using error message and null return
@@ -95,7 +95,7 @@ public class SystemFilterContainerCommonMethods
 	 * @param aliasName The name to give the new filter. Must be unique for this pool.
 	 * @param filterStrings The list of String objects that represent the filter strings.
 	 */
-	public ISystemFilter createSystemFilter(Vector filters, ISystemFilterPool parentPool, String aliasName, Vector filterStrings) {
+	public ISystemFilter createSystemFilter(Vector filters, ISystemFilterPool parentPool, String aliasName, String[] filterStrings) {
 		ISystemFilter newFilter = null;
 		boolean exists = getSystemFilter(filters, aliasName) != null;
 		if (exists) {
@@ -112,7 +112,7 @@ public class SystemFilterContainerCommonMethods
 	 * Internal encapsulation of mof effort to create new filter, and setting of
 	 * the core attributes.
 	 */
-	private ISystemFilter internalCreateSystemFilter(ISystemFilterPool parentPool, String aliasName, Vector filterStrings) {
+	private ISystemFilter internalCreateSystemFilter(ISystemFilterPool parentPool, String aliasName, String[] filterStrings) {
 		ISystemFilter newFilter = null;
 		try {
 			newFilter = new SystemFilter();
@@ -415,7 +415,7 @@ public class SystemFilterContainerCommonMethods
 	 */
 	public ISystemFilter cloneSystemFilter(java.util.List filters, ISystemFilter filter, String aliasName) {
 
-		ISystemFilter copy = createSystemFilter(filters, filter.getParentFilterPool(), aliasName, filter.getFilterStringsVector());
+		ISystemFilter copy = createSystemFilter(filters, filter.getParentFilterPool(), aliasName, filter.getFilterStrings());
 		internalAfterCloneSystemFilter(filter, copy);
 		// now clone nested filters...
 		ISystemFilter[] nested = filter.getSystemFilters();
@@ -433,7 +433,7 @@ public class SystemFilterContainerCommonMethods
 	 */
 	public ISystemFilter cloneSystemFilter(Vector filters, ISystemFilter filter, String aliasName) {
 
-		ISystemFilter copy = createSystemFilter(filters, filter.getParentFilterPool(), aliasName, filter.getFilterStringsVector());
+		ISystemFilter copy = createSystemFilter(filters, filter.getParentFilterPool(), aliasName, filter.getFilterStrings());
 		internalAfterCloneSystemFilter(filter, copy);
 		// now clone nested filters...
 		ISystemFilter[] nested = filter.getSystemFilters();

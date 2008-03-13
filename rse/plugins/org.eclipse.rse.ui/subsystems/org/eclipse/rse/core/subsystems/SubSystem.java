@@ -3229,7 +3229,6 @@ public abstract class SubSystem extends RSEModelObject
 					ISystemFilterPoolReference poolReference = (ISystemFilterPoolReference) z.next();
 					fprm.addSystemFilterPoolReference(poolReference);
 				}
-				fprm.resolveReferencesAfterRestore();
 			}
 			filterEventFilterPoolReferencesReset(); // signal a resource change event
 		}

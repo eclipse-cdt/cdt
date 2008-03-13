@@ -57,7 +57,6 @@ import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager;
-import org.eclipse.rse.core.filters.ISystemFilterSavePolicies;
 import org.eclipse.rse.core.filters.ISystemFilterString;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ILabeledObject;
@@ -138,7 +137,6 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	private static final ISubSystem[] EMPTY_SUBSYSTEM_ARRAY = new ISubSystem[0];
 
 	// filters stuff...
-	protected SubSystemFilterNamingPolicy filterNamingPolicy = new SubSystemFilterNamingPolicy();
 	protected ISystemFilterPoolManager[] filterPoolManagers = null;
 	protected Hashtable filterPoolManagersPerProfile = new Hashtable();
 
@@ -991,7 +989,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 				// that are stored with a subsystem.
 				//SystemFilterPoolManager[] relatedFilterPoolManagers =
 				//  getReferencableFilterPoolManagers(conn.getSystemProfile());
-				ISystemFilterPoolReferenceManager fprMgr = SystemFilterStartHere.getInstance().createSystemFilterPoolReferenceManager(subsys, this, subsys.getName(), filterNamingPolicy);
+				ISystemFilterPoolReferenceManager fprMgr = SystemFilterStartHere.getInstance().createSystemFilterPoolReferenceManager(subsys, this, subsys.getName());
 				subsys.setFilterPoolReferenceManager(fprMgr);
 				ISystemFilterPoolManager defaultFilterPoolManager = getFilterPoolManager(conn.getSystemProfile());
 				fprMgr.setDefaultSystemFilterPoolManager(defaultFilterPoolManager);
@@ -1082,7 +1080,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 				// that are stored with a subsystem.
 				//SystemFilterPoolManager[] relatedFilterPoolManagers =
 				//  getReferencableFilterPoolManagers(newConnection.getSystemProfile());
-				ISystemFilterPoolReferenceManager newRefMgr = SystemFilterStartHere.getInstance().createSystemFilterPoolReferenceManager(subsys, this, subsys.getName(), filterNamingPolicy);
+				ISystemFilterPoolReferenceManager newRefMgr = SystemFilterStartHere.getInstance().createSystemFilterPoolReferenceManager(subsys, this, subsys.getName());
 				ISystemFilterPoolManager defaultFilterPoolManager = null;
 				if (copyProfileOperation)
 					defaultFilterPoolManager = getFilterPoolManager(newConnection.getSystemProfile());
@@ -1613,8 +1611,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 				Logger logger = RSECorePlugin.getDefault().getLogger();
 				String managerName = getFilterPoolManagerName(profile);
 				boolean supportsNested = supportsNestedFilters();
-				int savePolicy = ISystemFilterSavePolicies.SAVE_POLICY_ONE_FILE_PER_FILTER;
-				mgr = SystemFilterPoolManager.createSystemFilterPoolManager(profile, logger, this, managerName, supportsNested, savePolicy, filterNamingPolicy);// the filter pool manager name
+				mgr = SystemFilterPoolManager.createSystemFilterPoolManager(profile, logger, this, managerName, supportsNested);// the filter pool manager name
 				mgr.setSingleFilterStringOnly(!supportsMultipleFilterStrings()); 
 				mgr.setWasRestored(false); // not yet initialized
 			} catch (Exception exc) {
@@ -1666,10 +1663,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	
 		ISystemFilterPoolManager oldMgr = getFilterPoolManager(oldProfile); // will restore it if necessary
 
-			ISystemFilterPoolManager mgr = SystemFilterPoolManager.createSystemFilterPoolManager(newProfile, RSECorePlugin.getDefault().getLogger(), this, // the caller
-		getFilterPoolManagerName(newProfile), // the filter pool manager name
-		supportsNestedFilters(), // whether or not nested filters are allowed
-	ISystemFilterSavePolicies.SAVE_POLICY_ONE_FILE_PER_FILTER, filterNamingPolicy);
+			ISystemFilterPoolManager mgr = SystemFilterPoolManager.createSystemFilterPoolManager(newProfile, RSECorePlugin.getDefault().getLogger(), this, getFilterPoolManagerName(newProfile), supportsNestedFilters());
 		mgr.setStringsCaseSensitive(oldMgr.areStringsCaseSensitive());
 		mgr.setSupportsDuplicateFilterStrings(oldMgr.supportsDuplicateFilterStrings());
 		addFilterPoolManager(newProfile, mgr);
@@ -2556,7 +2550,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 				// that are stored with a subsystem.
 				//SystemFilterPoolManager[] relatedFilterPoolManagers =
 				//  getReferencableFilterPoolManagers(conn.getSystemProfile());
-				ISystemFilterPoolReferenceManager fprMgr = SystemFilterStartHere.getInstance().createSystemFilterPoolReferenceManager(subsys, this, subsys.getName(), filterNamingPolicy);
+				ISystemFilterPoolReferenceManager fprMgr = SystemFilterStartHere.getInstance().createSystemFilterPoolReferenceManager(subsys, this, subsys.getName());
 				subsys.setFilterPoolReferenceManager(fprMgr);
 				ISystemFilterPoolManager defaultFilterPoolManager = getFilterPoolManager(conn.getSystemProfile());
 				fprMgr.setDefaultSystemFilterPoolManager(defaultFilterPoolManager);

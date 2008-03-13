@@ -21,10 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.rse.core.SystemResourceHelpers;
-import org.eclipse.rse.core.filters.IRSEFilterNamingPolicy;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
@@ -33,8 +29,6 @@ import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManagerProvider;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
-import org.eclipse.rse.core.filters.ISystemFilterSavePolicies;
-import org.eclipse.rse.core.filters.SystemFilterNamingPolicy;
 import org.eclipse.rse.core.references.IRSEBasePersistableReferencingObject;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.references.SystemPersistableReferenceManager;
@@ -48,20 +42,12 @@ import org.eclipse.rse.internal.references.SystemPersistableReferenceManager;
  * There will be one of these instantiated for a subsystem. Filter pool references can 
  * be moved within a subsystem and this manager provides that function as well.
  */
-/** 
- * @lastgen class SystemFilterPoolReferenceManagerImpl extends SystemPersistableReferenceManagerImpl implements SystemFilterPoolReferenceManager, SystemPersistableReferenceManager {}
- */
 public class SystemFilterPoolReferenceManager extends SystemPersistableReferenceManager implements ISystemFilterPoolReferenceManager {
-	//private SystemFilterPoolManager[]                poolMgrs = null;
 	private ISystemFilterPoolManagerProvider poolMgrProvider = null;
 	private ISystemFilterPoolManager defaultPoolMgr = null;
 	private ISystemFilterPoolReferenceManagerProvider caller = null;
-	private IRSEFilterNamingPolicy namingPolicy = null;
-	private int savePolicy = ISystemFilterSavePolicies.SAVE_POLICY_NONE;
 	private Object mgrData = null;
-	private IFolder mgrFolder = null;
 	private boolean initialized = false;
-	private boolean noSave;
 	private boolean noEvents;
 	private boolean fireEvents = true;
 	private ISystemFilterPoolReference[] fpRefsArray = null;
@@ -82,40 +68,18 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
 	 *   object via the getProvider method call.
 	 * @param relatedPoolManagerProvider The managers that owns the master list of filter pools that 
 	 *   this manager will contain references to.
-	 * @param mgrFolder the folder that will hold the persisted file. This is used when
-	 *   the save policy is SAVE_POLICY_ONE_FILE_PER_MANAGER. For SAVE_POLICY_NONE, this
-	 *   is not used. If it is used, it is created if it does not already exist.
-	 * @param name the name of the filter pool reference manager. This is used when 
-	 *   the save policy is SAVE_POLICY_ONE_FILE_PER_MANAGER, to deduce the file name.
-	 * @param savePolicy The save policy for the filter pool references list. One of the
-	 *   following from the {@link org.eclipse.rse.internal.core.filters.ISystemFilterConstants SystemFilterConstants} 
-	 *   interface:
-	 *   <ul>
-	 *     <li>SAVE_POLICY_NONE - no files, all save/restore handled elsewhere
-	 *     <li>SAVE_POLICY_ONE_FILE_PER_MANAGER - one file: mgrName.xmi
-	 *   </ul> 
-	 * @param namingPolicy The names to use for file and folders when persisting to disk. Pass
-	 *     null to just use the defaults, or if using SAVE_POLICY_NONE.
+	 * @param name the name of the filter pool reference manager.
 	 * @return a filter pool reference manager
 	 */
-	public static ISystemFilterPoolReferenceManager createSystemFilterPoolReferenceManager(ISystemFilterPoolReferenceManagerProvider caller,
-			ISystemFilterPoolManagerProvider relatedPoolManagerProvider, IFolder mgrFolder, String name, int savePolicy, IRSEFilterNamingPolicy namingPolicy) {
+	public static ISystemFilterPoolReferenceManager createSystemFilterPoolReferenceManager(ISystemFilterPoolReferenceManagerProvider caller,	ISystemFilterPoolManagerProvider relatedPoolManagerProvider, String name) {
 		SystemFilterPoolReferenceManager mgr = null;
 
-		if (mgrFolder != null) SystemResourceHelpers.getResourceHelpers().ensureFolderExists(mgrFolder);
-		if (namingPolicy == null) namingPolicy = SystemFilterNamingPolicy.getNamingPolicy();
-		try {
-			if (savePolicy != ISystemFilterSavePolicies.SAVE_POLICY_NONE) mgr = (SystemFilterPoolReferenceManager) restore(caller, mgrFolder, name, namingPolicy);
-		} catch (Exception exc) // real error trying to restore, versus simply not found.
-		{
-			// todo: something. Log the exception somewhere?
-		}
 		if (mgr == null) // not found or some serious error.
 		{
 			mgr = createManager();
 		}
 		if (mgr != null) {
-			mgr.initialize(caller, mgrFolder, name, savePolicy, namingPolicy, relatedPoolManagerProvider);
+			mgr.initialize(caller, name, relatedPoolManagerProvider);
 		}
 
 		return mgr;
@@ -132,9 +96,8 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
 	/*
 	 * Private helper method to initialize state
 	 */
-	protected void initialize(ISystemFilterPoolReferenceManagerProvider caller, IFolder folder, String name, int savePolicy, IRSEFilterNamingPolicy namingPolicy,
-			ISystemFilterPoolManagerProvider relatedPoolManagerProvider) {
-		if (!initialized) initialize(caller, folder, name, savePolicy, namingPolicy); // core data
+	protected void initialize(ISystemFilterPoolReferenceManagerProvider caller, String name, ISystemFilterPoolManagerProvider relatedPoolManagerProvider) {
+		if (!initialized) initialize(caller, name); // core data
 		//setSystemFilterPoolManagers(relatedPoolManagers);
 		setSystemFilterPoolManagerProvider(relatedPoolManagerProvider);
 	}
@@ -143,12 +106,9 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
 	 * Private helper method to do core initialization.
 	 * Might be called from either the static factory method or the static restore method.
 	 */
-	protected void initialize(ISystemFilterPoolReferenceManagerProvider caller, IFolder folder, String name, int savePolicy, IRSEFilterNamingPolicy namingPolicy) {
-		this.mgrFolder = folder;
+	protected void initialize(ISystemFilterPoolReferenceManagerProvider caller, String name) {
 		setProvider(caller);
 		setName(name);
-		this.savePolicy = savePolicy;
-		setNamingPolicy(namingPolicy);
 		initialized = true;
 	}
 
@@ -279,24 +239,6 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
 	}
 
 	/**
-	 * Set the naming policy used when saving data to disk.
-	 * @see org.eclipse.rse.core.filters.IRSEFilterNamingPolicy
-	 * @param namingPolicy the naming policy - no longer used.
-	 */
-	public void setNamingPolicy(IRSEFilterNamingPolicy namingPolicy) {
-		this.namingPolicy = namingPolicy;
-	}
-
-	/**
-	 * Get the naming policy currently used when saving data to disk.
-	 * @see org.eclipse.rse.core.filters.IRSEFilterNamingPolicy
-	 * @return the naming policy - no longer used.
-	 */
-	public IRSEFilterNamingPolicy getNamingPolicy() {
-		return namingPolicy;
-	}
-
-	/**
 	 * This is to set transient data that is subsequently queryable.
 	 * @param data the data associated with this pool reference manager.
 	 */
@@ -309,26 +251,6 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
 	 */
 	public Object getSystemFilterPoolReferenceManagerData() {
 		return mgrData;
-	}
-
-	/**
-	 * Set the name. This is an override of mof-generated method
-	 * in order to potentially rename the disk file for a save
-	 * policy of SAVE_POLICY_ONE_FILE_PER_MANAGER.
-	 * No longer used.
-	 * @param name the name of this reference manager.
-	 */
-	public void setName(String name) {
-		if (savePolicy == ISystemFilterSavePolicies.SAVE_POLICY_ONE_FILE_PER_MANAGER) {
-			IFile file = getResourceHelpers().getFile(getFolder(), getSaveFileName());
-			super.setName(name);
-			String newFileName = getSaveFileName();
-			try {
-				getResourceHelpers().renameFile(file, newFileName);
-			} catch (Exception exc) {
-			}
-		} else
-			super.setName(name);
 	}
 
 	// ---------------------------------------------------
@@ -345,7 +267,6 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
 			if (pool != null) fpRefs[idx].resetReferencedFilterPoolName(pool.getReferenceName());
 		}
 		invalidateFilterPoolReferencesCache(); // just in case!
-		quietSave();
 	}
 
 	/**
@@ -374,7 +295,6 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
 		invalidateFilterPoolReferencesCache();
 		// callback to provider so they can fire events in their GUI
 		if (fireEvents && (caller != null)) caller.filterEventFilterPoolReferencesReset();
-		quietSave();
 	}
 
 	/**
@@ -410,7 +330,6 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
 		int count = addReferencingObject(filterPoolReference);
 		filterPoolReference.setParentReferenceManager(this); // DWD - should be done in addReferencingObject?
 		invalidateFilterPoolReferencesCache();
-		quietSave();
 		return count;
 	}
 
@@ -423,7 +342,6 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
 		filterPoolReference.removeReference();
 		filterPoolReference.setReferencedObject(newPool);
 		if (fireEvents && (caller != null)) caller.filterEventFilterPoolReferenceReset(filterPoolReference);
-		quietSave();
 	}
 
 	/**
@@ -440,7 +358,6 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
 			count = super.removeAndDeReferenceReferencingObject(filterPoolReference);
 		invalidateFilterPoolReferencesCache();
 		if (fireEvents && (caller != null)) caller.filterEventFilterPoolReferenceDeleted(filterPoolReference);
-		quietSave();
 		return count;
 	}
 
@@ -470,7 +387,6 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
 		int oldPos = super.getReferencingObjectPosition(filterPoolRef);
 		super.moveReferencingObjectPosition(pos, filterPoolRef);
 		invalidateFilterPoolReferencesCache();
-		if (!noSave) quietSave();
 		if (fireEvents && (caller != null) && !noEvents) {
 			ISystemFilterPoolReference[] refs = new ISystemFilterPoolReference[1];
 			refs[0] = filterPoolRef;
@@ -488,7 +404,7 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
 	 */
 	public void moveSystemFilterPoolReferences(ISystemFilterPoolReference[] filterPoolRefs, int delta) {
 		int[] oldPositions = new int[filterPoolRefs.length];
-		noEvents = noSave = true;
+		noEvents = true;
 		for (int idx = 0; idx < filterPoolRefs.length; idx++)
 			oldPositions[idx] = getSystemFilterPoolReferencePosition(filterPoolRefs[idx]);
 		if (delta > 0) // moving down, process backwards
@@ -498,8 +414,7 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
 			for (int idx = 0; idx < filterPoolRefs.length; idx++)
 				moveSystemFilterPoolReference(filterPoolRefs[idx], oldPositions[idx] + delta);
 		invalidateFilterPoolReferencesCache();
-		noEvents = noSave = false;
-		quietSave();
+		noEvents = false;
 		if (fireEvents && (caller != null)) caller.filterEventFilterPoolReferencesRePositioned(filterPoolRefs, delta);
 	}
 
@@ -549,7 +464,6 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
 		addReferencingObject(filterPoolReference);
 		filterPoolReference.setParentReferenceManager(this); // DWD - should be done in addReferencingObject?
 		invalidateFilterPoolReferencesCache();
-		quietSave();
 		if (fireEvents && (caller != null)) caller.filterEventFilterPoolReferenceCreated(filterPoolReference);
 		return filterPoolReference;
 	}
@@ -562,7 +476,6 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
 		addReferencingObject(filterPoolReference);
 		filterPoolReference.setParentReferenceManager(this); // DWD - should be done in addReferencingObject?
 		invalidateFilterPoolReferencesCache();
-		quietSave();
 		if (fireEvents && (caller != null)) caller.filterEventFilterPoolReferenceCreated(filterPoolReference);
 		return filterPoolReference;
 	}
@@ -580,7 +493,6 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
 			filterPoolReference.removeReference();
 			newCount = removeReferencingObject(filterPoolReference);
 			invalidateFilterPoolReferencesCache();
-			quietSave();
 			// callback to provider so they can fire events in their GUI
 			if (fireEvents && (caller != null)) {
 				caller.filterEventFilterPoolReferenceDeleted(filterPoolReference);
@@ -605,7 +517,6 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
 			String oldName = poolRef.getReferencedObjectName();
 			poolRef.resetReferencedFilterPoolName(pool.getReferenceName());
 			invalidateFilterPoolReferencesCache();
-			quietSave();
 			if (fireEvents && (caller != null)) caller.filterEventFilterPoolReferenceRenamed(poolRef, oldName);
 		}
 	}
@@ -630,7 +541,6 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
 				filterPoolReference.setParentReferenceManager(this); // DWD - should be done in addReferencingObject?
 			}
 			invalidateFilterPoolReferencesCache();
-			quietSave();
 			if (fireEvents && (caller != null)) caller.filterEventFilterPoolReferencesReset();
 		}
 	}
@@ -726,215 +636,6 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
 		return match;
 	}
 
-	// -----------------------
-	// SAVE/RESTORE METHODS...
-	// -----------------------
-	private void quietSave() {
-		try {
-			save();
-		} catch (Exception exc) {
-			// TODO log exception
-		}
-	}
-
-	/**
-	 * Save all the filter pools to disk.     
-	 * Only called if the save policy is not "none".
-	 * No longer used.
-	 * @throws Exception
-	 */
-	public void save() throws Exception {
-		switch (savePolicy) {
-			// ONE FILE PER FILTER POOL REFERENCE MANAGER
-			case ISystemFilterSavePolicies.SAVE_POLICY_ONE_FILE_PER_MANAGER:
-				saveToOneFile();
-				break;
-		}
-	}
-
-	/**
-	 * Save this reference manager to disk.
-	 * Used only if using the reference manager to save a single file to disk.
-	 * No longer used.
-	 * @return true if the save succeeded
-	 * @throws Exception
-	 */
-	protected boolean saveToOneFile() throws Exception {
-		/* FIXME
-		 String saveFileName = getSaveFilePathAndName();
-		 File saveFile = new File(saveFileName);
-		 boolean exists = saveFile.exists();
-		 saveFileName = saveFile.toURL().toString();
-		 Resource.Factory.Registry reg = Resource.Factory.Registry.INSTANCE;
-		 Resource.Factory resFactory = reg.getFactory(URI.createURI(saveFileName));
-		 //System.out.println("Saving filter pool ref mgr "+getName()+" to: " + saveFile);
-		 //java.util.List ext = resFactory.createExtent(); mof way
-		 //ext.add(this);
-		 Resource res = resFactory.createResource(URI.createURI(saveFileName));
-		 res.getContents().add(this);
-		 try
-		 {
-		 res.save(EMPTY_MAP);
-		 } catch (Exception e)
-		 {
-		 if (debug)
-		 {
-		 System.out.println("Error saving filter pool ref mgr "+getName() + " to "+saveFile+": " + e.getClass().getName() + ": " + e.getMessage());
-		 e.printStackTrace();
-		 }
-		 throw e;
-		 }    
-		 // if this is the first time we have created this file, we must update Eclipse
-		 // resource tree to know about it...
-		 if (!exists)
-		 {
-		 try {
-		 mgrFolder.getProject().refreshLocal(IResource.DEPTH_INFINITE, null);               
-		 } catch(Exception exc) {}
-		 }        
-		 */
-		return true;
-	}
-
-	/**
-	 * Restore the filter pools from disk.
-	 * After restoring, you must call resolveReferencesAfterRestore.
-	 * No longer used.
-	 * @param caller The object that is calling this, which must implement SystemFilterPoolReferenceManagerProvider
-	 * @param mgrFolder folder containing filter pool references file.
-	 * @param name the name of the manager to restore. File name is derived from it when saving to one file.
-	 * @param namingPolicy to get file name prefix, via getFilterPoolReferenceManagerFileNamePrefix(). Pass null to use default.
-	 * @return the restored manager, or null if it does not exist.
-	 * @throws Exception if anything else went wrong
-	 */
-	public static ISystemFilterPoolReferenceManager restore(ISystemFilterPoolReferenceManagerProvider caller, IFolder mgrFolder, String name, IRSEFilterNamingPolicy namingPolicy) throws Exception {
-		if (namingPolicy == null) namingPolicy = SystemFilterNamingPolicy.getNamingPolicy();
-		ISystemFilterPoolReferenceManager mgr = restoreFromOneFile(mgrFolder, name, namingPolicy);
-		if (mgr != null) {
-			((SystemFilterPoolReferenceManager) mgr).initialize(caller, mgrFolder, name, ISystemFilterSavePolicies.SAVE_POLICY_ONE_FILE_PER_MANAGER, namingPolicy); // core data
-		}
-		return mgr;
-	}
-
-	/**
-	 * Restore the filter pools from disk, assuming default for a naming policy.
-	 * No longer used.
-	 * @param caller The object that is calling this, which must implement SystemFilterPoolReferenceManagerProvider
-	 * @param mgrFolder folder containing filter pool references file.
-	 * @param name the name of the manager to restore. File name is derived from it when saving to one file.
-	 * @return the restored manager, or null if it does not exist.
-	 * @throws Exception if anything else went wrong
-	 */
-	public static ISystemFilterPoolReferenceManager restore(ISystemFilterPoolReferenceManagerProvider caller, IFolder mgrFolder, String name) throws Exception {
-		return restore(caller, mgrFolder, name, null);
-	}
-
-	/**
-	 * Restore filter pools when all are stored in one file.
-	 * No longer used.
-	 * @param mgrFolder The folder containing the file to restore from.
-	 * @param name The name of the manager, from which the file name is derived.
-	 * @param namingPolicy Naming prefix information for persisted data file names.
-	 * @return the restored manager, or null if it does not exist.
-	 * @throws Exception if anything else went wrong
-	 */
-	protected static ISystemFilterPoolReferenceManager restoreFromOneFile(IFolder mgrFolder, String name, IRSEFilterNamingPolicy namingPolicy) throws Exception {
-		ISystemFilterPoolReferenceManager mgr = null;
-		/* FIXME
-		 Resource.Factory.Registry reg = Resource.Factory.Registry.INSTANCE;
-		 //ResourceSet resourceSet = MOF WAY
-		 // Resource.Factory.Registry.getResourceSetFactory().makeResourceSet();
-		 Resource res = null;
-		 String saveFile = getSaveFilePathAndName(mgrFolder, name, namingPolicy);
-		 try
-		 {
-		 //res = resourceSet.load(saveFile); MOF Way
-		 Resource.Factory resFactory = reg.getFactory(URI.createURI(saveFile));
-		 res = resFactory.createResource(URI.createURI(saveFile));
-		 res.load(EMPTY_MAP);
-		 }
-		 catch (java.io.FileNotFoundException e)
-		 {
-		 System.out.println("Restore error: Filter pool ref mgr "+name+" missing its file: "+saveFile);
-		 return null;
-		 }
-		 catch (Exception e)
-		 {
-		 if (debug)
-		 {
-		 System.out.println("Error restoring filter pool ref mgr "+name+" file "+saveFile+": " + e.getClass().getName() + ": " + e.getMessage());
-		 e.printStackTrace();
-		 }
-		 throw e;
-		 }
-
-		 java.util.List ext = res.getContents();
-
-		 // should be exactly one system filter pool manager...
-		 Iterator iList = ext.iterator();
-		 mgr = (SystemFilterPoolReferenceManager)iList.next();
-		 if (debug)
-		 System.out.println("Filter Pool Ref Mgr "+name+" loaded successfully.");
-		 */
-		return mgr;
-	}
-
-	/**
-	 * After restoring this from disk, there is only the referenced object name,
-	 * not the referenced object pointer, for each referencing object.
-	 * <p>
-	 * This method is called after restore and for each restored object in the list must:
-	 * <ol>
-	 *   <li>Do what is necessary to find the referenced object, and set the internal reference pointer.
-	 *   <li>Call addReference(this) on that object so it can maintain it's in-memory list of all referencing objects.
-	 *   <li>Set the important transient variables 
-	 * </ol>
-	 * @param relatedPoolMgrProvider the filter pool manager provider that created the filter pools we reference
-	 * (usually a subsystem configuration)
-	 * @param provider the host of this reference manager, so you can later call getProvider
-	 * @return A Vector of SystemFilterPoolReferences that were not successfully resolved, or null if all
-	 * were resolved.
-	 */
-	public Vector resolveReferencesAfterRestore(ISystemFilterPoolManagerProvider relatedPoolMgrProvider, ISystemFilterPoolReferenceManagerProvider provider) {
-		setSystemFilterPoolManagerProvider(relatedPoolMgrProvider);
-		setProvider(provider);
-		ISystemFilterPoolManager[] relatedManagers = getSystemFilterPoolManagers();
-		if (relatedManagers != null) {
-			Vector badRefs = new Vector();
-			ISystemFilterPoolReference[] poolRefs = getSystemFilterPoolReferences();
-			if (poolRefs != null) {
-				for (int idx = 0; idx < poolRefs.length; idx++) {
-					String poolName = poolRefs[idx].getReferencedFilterPoolName();
-					String mgrName = poolRefs[idx].getReferencedFilterPoolManagerName();
-
-					ISystemFilterPool refdPool = getFilterPool(relatedManagers, mgrName, poolName);
-					if ((refdPool == null) && (getFilterPoolManager(relatedManagers, mgrName) == null)) {
-						//System.out.println("...looking for broken reference for "+mgrName+"."+poolName);
-						refdPool = relatedPoolMgrProvider.getSystemFilterPoolForBrokenReference(this, mgrName, poolName);
-					}
-					if (refdPool != null) {
-						poolRefs[idx].setReferenceToFilterPool(refdPool); // calls refdPool.addReference(poolRef)
-					} else {
-						badRefs.addElement(poolRefs[idx]);
-					}
-				}
-				if (badRefs.size() == 0)
-					return null;
-				else {
-					for (int idx = 0; idx < badRefs.size(); idx++) {
-						ISystemFilterPoolReference badRef = (ISystemFilterPoolReference) badRefs.elementAt(idx);
-						//badRef.setReferenceBroken(true);
-						super.removeReferencingObject(badRef);
-					}
-					invalidateFilterPoolReferencesCache();
-					quietSave();
-					return badRefs;
-				}
-			}
-		}
-		return null;
-	}
-
 	/**
 	 * Utility method to scan across all filter pools in a given named filter pool manager, for a match
 	 * on a given filter pool name.
@@ -966,80 +667,6 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
 	// ------------------
 	// HELPER METHODS...
 	// ------------------
-
-	/**
-	 * If saving all info in one file, this returns the fully qualified name of that file,
-	 * given the unadorned manager name and the prefix (if any) to adorn with.
-	 * No longer used.
-	 * @param mgrFolder The folder in which to save a reference manager.
-	 * @param name The name of the file for a filter pool reference manager.
-	 * @param namingPolicy The naming policy for a filter pool reference manager
-	 * @return The name of the path to which to save the references in a filter pool reference manager.
-	 */
-	protected static String getSaveFilePathAndName(IFolder mgrFolder, String name, IRSEFilterNamingPolicy namingPolicy) {
-		return SystemFilter.addPathTerminator(getFolderPath(mgrFolder)) + getSaveFileName(namingPolicy.getReferenceManagerSaveFileName(name));
-	}
-
-	/**
-	 * Appends the correct extension to the file name where this manager is saved.
-	 * No longer used.
-	 * @param fileNameNoSuffix the file name <i>sans</i> suffix.
-	 * @return the unqualified file name used to store this to disk.
-	 */
-	protected static String getSaveFileName(String fileNameNoSuffix) {
-		return fileNameNoSuffix + ISystemFilterConstants.SAVEFILE_SUFFIX;
-	}
-
-	/**
-	 * @return the full path name of the file in which to save this manager.
-	 */
-	protected String getSaveFilePathAndName() {
-		return SystemFilter.addPathTerminator(getFolderPath(mgrFolder)) + getSaveFileName();
-	}
-
-	/**
-	 * @return the simple name of the file in which to save this manager.
-	 */
-	protected String getSaveFileName() {
-		return getSaveFileName(namingPolicy.getReferenceManagerSaveFileName(getName()));
-	}
-
-	/**
-	 * @return the folder that this manager is contained in.
-	 */
-	public IFolder getFolder() {
-		return mgrFolder;
-	}
-
-	/**
-	 * Set the folder that this manager is contained in.
-	 * @param newFolder the new folder
-	 */
-	public void resetManagerFolder(IFolder newFolder) {
-		mgrFolder = newFolder;
-	}
-
-	/**
-	 * @return the path of the folder that contains this manager.
-	 */
-	public String getFolderPath() {
-		return getResourceHelpers().getFolderPath(mgrFolder);
-	}
-
-	/**
-	 * @param folder the folder to find the path for
-	 * @return the path of the given folder
-	 */
-	public static String getFolderPath(IFolder folder) {
-		return SystemResourceHelpers.getResourceHelpers().getFolderPath(folder);
-	}
-
-	/*
-	 * To reduce typing...
-	 */
-	private SystemResourceHelpers getResourceHelpers() {
-		return SystemResourceHelpers.getResourceHelpers();
-	}
 
 	public String toString() {
 		return getName();

@@ -18,66 +18,15 @@
 
 package org.eclipse.rse.core.filters;
 
-import java.util.Vector;
-
 import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.ISystemProfile;
 
 /**
  * A filter pool manager manages filter pools.
  * <p>
- * Each filter pool that is managed becomes a folder on disk.
- * <p>
- * To create a filter pool manager instance, use the factory methods
- *  in SystemFilterPoolManagerImpl in the ...impl package.
- * You must pass a folder that represents the anchor point for the 
- *  pools managed by this manager instance.
- * <p>
- * Depending on your tools' needs, you have four choices about how
- * the filter pools and filters are persisted to disk. The decision is
- * made at the time you instantiate the pool manager and is one of the
- * following constants from the {@link SystemFilterConstants} interface:
- * <ul>
- *   <li>SAVE_POLICY_ONE_FILE_PER_MANAGER - one file: mgrName.xmi
- *   <li>SAVE_POLICY_ONE_FILEANDFOLDER_PER_POOL - one file and folder per pool
- *   <li>SAVE_POLICY_ONE_FILE_PER_POOL_SAME_FOLDER - one file per pool, all files in one folder
- *   <li>SAVE_POLICY_ONE_FILE_PER_FILTER - one file per filter, one folder per pool
- * </ul> 
- * <p>
- * With the policy of one file per pool, there are two possibilities regarding
- * the folder structure:
- * <ul>
- *   <li>Each pool gets its own subfolder, and the pool's xmi file goes in 
- *         the pool's unique subfolder: SAVE_POLICY_ONE_FILEANDFOLDER_PER_POOL
- *   <li>There are no subfolders per pool, all the xmi pool files go in the 
- *         same folder as specified when creating this manager instance:
- *         SAVE_POLICY_ONE_FILE_PER_POOL_SAME_FOLDER
- * </ul>
- * <p>
- * With the policy of one file per filter, each filter pool must have its own folder.
- * <p>
- * With an instantiated filter pool manager (most tools will only need
- *  one such instance), you now simply call its methods to work with
- *  filter pools. For example, use it to:
- *  <ul>
- *    <li>Restore all filter pools from disk
- *    <li>Save all, or individual, filter pools to disk
- *    <li>Get a list of existing filter pools
- *    <li>Create filter pools
- *    <li>Delete filter pools
- *    <li>Re-order filter pools
- *    <li>Clone filter pools
- *    <li>Rename filter pools
- *    <li>Save all, or individual, filter pools
- *  </ul>
- * All the underlying file system work is handled for you.
- * <p>
  * Further, this is the front door for working with filters too. By forcing all
  * filter related activity through a single point like this, we can ensure that
  * all changes are saved to disk, and events are fired properly.
- */
-/** 
- * @lastgen interface SystemFilterPoolManager  {}
  */
 public interface ISystemFilterPoolManager extends IRSEPersistableContainer {
 	// ---------------------------------
@@ -165,11 +114,6 @@ public interface ISystemFilterPoolManager extends IRSEPersistableContainer {
 	 * Get array of filter pool names currently existing.
 	 */
 	public String[] getSystemFilterPoolNames();
-
-	/**
-	 * Get vector of filter pool names currently existing.
-	 */
-	public Vector getSystemFilterPoolNamesVector();
 
 	/**
 	 * Return array of SystemFilterPools managed by this manager.
@@ -312,11 +256,11 @@ public interface ISystemFilterPoolManager extends IRSEPersistableContainer {
 	 * @param aliasName The name to give the new filter. Must be unique for this pool.
 	 * @param filterStrings The list of String objects that represent the filter strings.
 	 */
-	public ISystemFilter createSystemFilter(ISystemFilterContainer parent, String aliasName, Vector filterStrings) throws Exception;
+	public ISystemFilter createSystemFilter(ISystemFilterContainer parent, String aliasName, String[] filterStrings) throws Exception;
 
 	/**
 	 * Creates a new system filter that is typed.
-	 * Same as {@link #createSystemFilter(ISystemFilterContainer, String, Vector)} but 
+	 * Same as {@link #createSystemFilter(ISystemFilterContainer, String, String[])} but 
 	 *  takes a filter type as an additional parameter.
 	 * <p>
 	 * A filter's type is an arbitrary string that is not interpreted or used by the base framework. This
@@ -328,11 +272,11 @@ public interface ISystemFilterPoolManager extends IRSEPersistableContainer {
 	 * @param filterStrings The list of String objects that represent the filter strings.
 	 * @param type The type of this filter
 	 */
-	public ISystemFilter createSystemFilter(ISystemFilterContainer parent, String aliasName, Vector filterStrings, String type) throws Exception;
+	public ISystemFilter createSystemFilter(ISystemFilterContainer parent, String aliasName, String[] filterStrings, String type) throws Exception;
 
 	/**
 	 * Creates a new system filter that is typed and promptable
-	 * Same as {@link #createSystemFilter(ISystemFilterContainer, String ,Vector, String)} but 
+	 * Same as {@link #createSystemFilter(ISystemFilterContainer, String ,String[], String)} but 
 	 *  takes a boolean indicating if it is promptable.
 	 * <p>
 	 * A promptable filter is one in which the user is prompted for information at expand time.
@@ -345,7 +289,7 @@ public interface ISystemFilterPoolManager extends IRSEPersistableContainer {
 	 * @param type The type of this filter
 	 * @param promptable Pass true if this is a promptable filter
 	 */
-	public ISystemFilter createSystemFilter(ISystemFilterContainer parent, String aliasName, Vector filterStrings, String type, boolean promptable) throws Exception;
+	public ISystemFilter createSystemFilter(ISystemFilterContainer parent, String aliasName, String[] filterStrings, String type, boolean promptable) throws Exception;
 
 	/**
 	 * Delete an existing system filter.
@@ -566,12 +510,6 @@ public interface ISystemFilterPoolManager extends IRSEPersistableContainer {
 	 * @param value The new value of the StringsCaseSensitive attribute
 	 */
 	void setStringsCaseSensitive(boolean value);
-
-	/**
-	 * @generated This field/method will be replaced during code generation 
-	 * @return The list of Pools references
-	 */
-	java.util.List getPools();
 
 	/**
 	 * @generated This field/method will be replaced during code generation 

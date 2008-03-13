@@ -97,15 +97,14 @@ public class SystemFilterNewFilterPoolWizardDefaultMainPage
 	 * Either call this or override getFilterPoolManagerNames, or leave null and this prompt will
 	 * not show.
 	 */
-	public void setFilterPoolManagers(ISystemFilterPoolManager[] mgrs)
-	{
+	public void setFilterPoolManagers(ISystemFilterPoolManager[] mgrs) {
 		mgrNames = new String[mgrs.length];
 		validatorsByManager = new ISystemValidator[mgrNames.length];
-		for (int idx=0; idx<mgrs.length; idx++)
-		{
-		   mgrNames[idx] = mgrs[idx].getName();
-		   ISystemValidator iiv = new ValidatorFilterPoolName(mgrs[idx].getSystemFilterPoolNamesVector());		   
-		   validatorsByManager[idx] = iiv;
+		for (int idx = 0; idx < mgrs.length; idx++) {
+			ISystemFilterPoolManager manager = mgrs[idx];
+			mgrNames[idx] = manager.getName();
+			ISystemValidator iiv = new ValidatorFilterPoolName(manager.getSystemFilterPoolNames());
+			validatorsByManager[idx] = iiv;
 		}
 	}
 	/**

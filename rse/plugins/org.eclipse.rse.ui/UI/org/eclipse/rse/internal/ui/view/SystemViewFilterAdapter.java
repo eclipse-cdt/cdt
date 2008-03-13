@@ -22,6 +22,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
+import java.util.Arrays;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IAdaptable;
@@ -278,19 +279,17 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter
 		
 		// normal filters...
     	//Vector strings = filter.getFilterStringsVector();
-		Vector strings = filter.getFilterStringObjectsVector();
-		Vector filters = filter.getSystemFiltersVector();
+		ISystemFilterString[] filterStrings = filter.getSystemFilterStrings();
+		ISystemFilter[] filters = filter.getSystemFilters();
     	Vector vChildren = new Vector();
 
         // start with nested filters...
-    	for (int idx=0; idx < filters.size(); idx++)
-    	   vChildren.addElement(filters.elementAt(idx));  
+    	for (int idx=0; idx < filters.length; idx++)
+    	   vChildren.addElement(filters[idx]);  
     	// continue with resolved filter string objects...
-    	for (int idx=0; idx < strings.size(); idx++)
+    	for (int idx=0; idx < filterStrings.length; idx++)
     	{
-    	   //String filterString = (String)strings.elementAt(idx);
-		   ISystemFilterString filterString = (ISystemFilterString)strings.elementAt(idx);
-    	   vChildren.addElement(filterString);
+    	   vChildren.addElement(filterStrings[idx]);
     	}
     	
     	// convert whole thing to an array...
@@ -482,35 +481,28 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter
 	 * @param element either a filter for a rename action, or a filter pool for a "new" action.
 	 * @return a validator for verifying the new name is correct.
 	 */
-    public ISystemValidator getNameValidator(Object element)
-    { 
+    public ISystemValidator getNameValidator(Object element) {
 		ISystemFilter filter = null;
 		ISystemFilterPool pool = null;
-		Vector filterNames = null;
-		if (element instanceof ISystemFilter)
-		{
-		  filter = (ISystemFilter)element;
-		  pool = filter.getParentFilterPool(); 
-		  if (pool != null)
-		    filterNames = pool.getSystemFilterNames();
-		  else
-		  {
-		  	ISystemFilter parentFilter = filter.getParentFilter();
-		  	filterNames = parentFilter.getSystemFilterNames();
-		  }
+		String[] filterNames = null;
+		if (element instanceof ISystemFilter) {
+			filter = (ISystemFilter) element;
+			pool = filter.getParentFilterPool();
+			if (pool != null)
+				filterNames = pool.getSystemFilterNames();
+			else {
+				ISystemFilter parentFilter = filter.getParentFilter();
+				filterNames = parentFilter.getSystemFilterNames();
+			}
+		} else {
+			pool = (ISystemFilterPool) element;
+			filterNames = pool.getSystemFilterNames();
 		}
-		else
-		{
-		  pool = (ISystemFilterPool)element;
-  	      filterNames = pool.getSystemFilterNames();		  
-		}
-		/*
-		if (filter != null)
-		  filterNames.removeElement(filter.getName()); // remove current filter's name
-		*/
-    	ISystemValidator nameValidator = new ValidatorFilterName(filterNames); 
-	    return nameValidator;
-    }	
+		Vector names = new Vector(filterNames.length);
+		names.addAll(Arrays.asList(filterNames));
+		ISystemValidator nameValidator = new ValidatorFilterName(filterNames);
+		return nameValidator;
+	}	
 
     /**
      * Parent override.

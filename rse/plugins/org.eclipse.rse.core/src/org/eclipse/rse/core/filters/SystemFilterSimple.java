@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.rse.core.model.ISystemContainer;
@@ -78,7 +77,7 @@ public class SystemFilterSimple extends SystemFilter implements ISystemContainer
 	 */
 	public void clone(ISystemFilter targetFilter) {
 		super.clone(targetFilter);
-		targetFilter.setFilterStrings(getFilterStringsVector());
+		targetFilter.setFilterStrings(getFilterStrings());
 	}
 
 	// -------------------------------------------------------
@@ -198,28 +197,10 @@ public class SystemFilterSimple extends SystemFilter implements ISystemContainer
 	}
 
 	/**
-	 * Return filter strings as a Vector of String objects
-	 */
-	public Vector getFilterStringsVector() {
-		Vector result = new Vector(filterStrings.size());
-		result.addAll(filterStrings);
-		return result;
-	}
-
-	/**
 	 * Return how many filter strings are defined in this filter.
 	 */
 	public int getFilterStringCount() {
 		return filterStrings.size();
-	}
-
-	/**
-	 * Set all the filter strings for this filter.
-	 * @param newStrings Vector of String objects
-	 */
-	public void setFilterStrings(Vector newStrings) {
-		filterStrings.clear();
-		filterStrings.addAll(newStrings);
 	}
 
 	/**
@@ -382,24 +363,17 @@ public class SystemFilterSimple extends SystemFilter implements ISystemContainer
 	}
 
 	/**
-	 * Overridden to return null
+	 * Overridden to return an empty array
 	 */
-	public Vector getSystemFilterNames() {
-		return null;
+	public String[] getSystemFilterNames() {
+		return new String[0];
 	}
 
 	/**
-	 * Overridden to return null
+	 * Overridden to return an empty array
 	 */
-	public java.util.List getNestedFilters() {
-		return null;
-	}
-
-	/**
-	 * Overridden to return null
-	 */
-	public Vector getSystemFiltersVector() {
-		return null;
+	public ISystemFilter[] getNestedFilters() {
+		return new ISystemFilter[0];
 	}
 
 	/**
@@ -417,10 +391,10 @@ public class SystemFilterSimple extends SystemFilter implements ISystemContainer
 	}
 
 	/**
-	 * Overridden to return null
+	 * Overridden to return an empty array
 	 */
-	public java.util.List getStrings() {
-		return null;
+	public ISystemFilterString[] getStrings() {
+		return new ISystemFilterString[0];
 	}
 
 	/**

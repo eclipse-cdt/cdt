@@ -15,6 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.propertypages;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 import java.util.Vector;
 
@@ -247,7 +248,9 @@ public class SystemFilterStringPropertyPage extends SystemBasePropertyPage imple
 			editPaneComposite.setEnabled(false);
 		else if (filterStringValidator == null)
 		{
-			Vector existingStrings = filter.getFilterStringsVector();
+			String[] filterStrings = filter.getFilterStrings();
+			Vector existingStrings = new Vector(filterStrings.length);
+			existingStrings.addAll(Arrays.asList(filterStrings));
 			existingStrings.remove(filterstring);
 			filterStringValidator = new ValidatorFilterString(existingStrings, filter.isStringsCaseSensitive());
 			if (dupeFilterStringMessage != null)

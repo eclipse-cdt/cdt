@@ -17,9 +17,6 @@
 
 package org.eclipse.rse.core.filters;
 
-import java.util.Vector;
-
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.rse.core.references.IRSEBasePersistableReferenceManager;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 
@@ -258,40 +255,4 @@ public interface ISystemFilterPoolReferenceManager extends IRSEBasePersistableRe
 	 */
 	public int getSystemFilterReferencePosition(ISubSystem subSystem, ISystemFilter filter);
 
-	// -------------------------
-	// SAVE / RESTORE METHODS...
-	// -------------------------
-	/**
-	 * After restoring this from disk, there is only the referenced object name,
-	 * not the referenced object pointer, for each referencing object.
-	 * <p>
-	 * This method is called after restore and for each restored object in the list must:
-	 * <ol>
-	 *   <li>Do what is necessary to find the referenced object, and set the internal reference pointer.
-	 *   <li>Call addReference(this) on that object so it can maintain it's in-memory list
-	 *          of all referencing objects.
-	 *   <li>Set the important transient variables 
-	 * </ol>
-	 * @param relatedPoolMgrProvider the creator of the filter pool managers that hold filter pools we reference
-	 * @param provider the host of this reference manager, so you can later call getProvider
-	 * @return A Vector of SystemFilterPoolReferences that were not successfully resolved, or null if all
-	 *   were resolved.
-	 */
-	public Vector resolveReferencesAfterRestore(ISystemFilterPoolManagerProvider relatedPoolMgrProvider, ISystemFilterPoolReferenceManagerProvider provider);
-
-	/**
-	 * Save all the filter pool references to disk.     
-	 * Use only if not doing your own saving, else override or set save policy to none.
-	 */
-	public void save() throws Exception;
-
-	/**
-	 * Return the folder that this manager is contained in.
-	 */
-	public IFolder getFolder();
-
-	/**
-	 * Reset the folder that this manager is contained in.
-	 */
-	public void resetManagerFolder(IFolder newFolder);
 }

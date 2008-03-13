@@ -16,8 +16,6 @@
  *******************************************************************************/
 package org.eclipse.rse.core.filters;
 
-import java.util.Vector;
-
 import org.eclipse.rse.core.model.IRSEPersistableContainer;
 
 /**
@@ -44,7 +42,7 @@ public interface ISystemFilterContainer extends IRSEPersistableContainer {
 	 * @param aliasName The name to give the new filter. Must be unique for this pool.
 	 * @param filterStrings The list of String objects that represent the filter strings.
 	 */
-	public ISystemFilter createSystemFilter(String aliasName, Vector filterStrings);
+	public ISystemFilter createSystemFilter(String aliasName, String[] filterStrings);
 
 	/**
 	 * Adds given filter to the list without populating the filter strings.
@@ -57,12 +55,7 @@ public interface ISystemFilterContainer extends IRSEPersistableContainer {
 	 * @return Vector of String objects: the names of existing filters in this container.
 	 * Typically used by name validators for New and Rename actions to verify new name is unique.
 	 */
-	public Vector getSystemFilterNames();
-
-	/**
-	 * @return a Vector of the ISystemFilter objects contained in this filter container.
-	 */
-	public Vector getSystemFiltersVector();
+	public String[] getSystemFilterNames();
 
 	/**
 	 * @return an array of the ISystemFilter objects contained in this filter container.

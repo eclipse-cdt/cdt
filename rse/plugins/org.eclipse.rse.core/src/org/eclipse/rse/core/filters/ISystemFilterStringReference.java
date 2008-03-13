@@ -20,9 +20,8 @@ package org.eclipse.rse.core.filters;
 import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
 
 /**
- * Represents a reference to a master filter string.
- * Needed so GUI can show the same filter string multiple times.
- * This is not modelled in MOF.
+ * Represents a reference to a filter string.
+ * Needed so the UI can show the same filter string multiple times.
  */
 public interface ISystemFilterStringReference extends IRSEBaseReferencingObject {
 	/**
@@ -57,4 +56,4 @@ public interface ISystemFilterStringReference extends IRSEBaseReferencingObject 
 	 * Same as getReferencedFilterString().getString()
 	 */
 	public String getString();
-} //SystemFilterStringReference
+}

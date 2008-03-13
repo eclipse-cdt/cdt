@@ -19,14 +19,10 @@
 package org.eclipse.rse.internal.core.filters;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.rse.core.RSECorePlugin;
-import org.eclipse.rse.core.filters.IRSEFilterNamingPolicy;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterContainer;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
@@ -59,10 +55,8 @@ import org.eclipse.rse.logging.Logger;
  * This class is not intended to be subclassed by clients.
  */
 public class SystemFilterPoolManager extends RSEPersistableObject implements ISystemFilterPoolManager {
-//	private ISystemFilterPool[] poolArray = null; // cache for performance
 	private ISystemFilterPoolManagerProvider caller = null;
 	private Object poolMgrData;
-//	private Vector poolNames;
 	private boolean initialized = false;
 
 	private boolean suspendCallbacks = false;
@@ -74,22 +68,14 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 
 	/**
 	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
 	 * @see #getName()
-	 * @generated
-	 * @ordered
 	 */
 	protected static final String NAME_EDEFAULT = null;
 
 	protected String name = NAME_EDEFAULT;
 	/**
 	 * The default value of the '{@link #isSupportsNestedFilters() <em>Supports Nested Filters</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
 	 * @see #isSupportsNestedFilters()
-	 * @generated
-	 * @ordered
 	 */
 	protected static final boolean SUPPORTS_NESTED_FILTERS_EDEFAULT = false;
 
@@ -99,11 +85,7 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 	protected boolean supportsNestedFilters = SUPPORTS_NESTED_FILTERS_EDEFAULT;
 	/**
 	 * The default value of the '{@link #isStringsCaseSensitive() <em>Strings Case Sensitive</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
 	 * @see #isStringsCaseSensitive()
-	 * @generated
-	 * @ordered
 	 */
 	protected static final boolean STRINGS_CASE_SENSITIVE_EDEFAULT = false;
 
@@ -113,11 +95,7 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 	protected boolean stringsCaseSensitive = STRINGS_CASE_SENSITIVE_EDEFAULT;
 	/**
 	 * The default value of the '{@link #isSupportsDuplicateFilterStrings() <em>Supports Duplicate Filter Strings</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
 	 * @see #isSupportsDuplicateFilterStrings()
-	 * @generated
-	 * @ordered
 	 */
 	protected static final boolean SUPPORTS_DUPLICATE_FILTER_STRINGS_EDEFAULT = false;
 
@@ -127,30 +105,18 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 	protected boolean supportsDuplicateFilterStrings = SUPPORTS_DUPLICATE_FILTER_STRINGS_EDEFAULT;
 	/**
 	 * This is true if the Supports Duplicate Filter Strings attribute has been set.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
 	 */
 	protected boolean supportsDuplicateFilterStringsESet = false;
 
 	/**
 	 * The default value of the '{@link #isSingleFilterStringOnly() <em>Single Filter String Only</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
 	 * @see #isSingleFilterStringOnly()
-	 * @generated
-	 * @ordered
 	 */
 	protected static final boolean SINGLE_FILTER_STRING_ONLY_EDEFAULT = false;
 
 	/**
 	 * The cached value of the '{@link #isSingleFilterStringOnly() <em>Single Filter String Only</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
 	 * @see #isSingleFilterStringOnly()
-	 * @generated
-	 * @ordered
 	 */
 	protected boolean singleFilterStringOnly = SINGLE_FILTER_STRING_ONLY_EDEFAULT;
 
@@ -184,22 +150,9 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 	 * @param allowNestedFilters true if filters inside filter pools in this manager are
 	 *   to allow nested filters. This is the default, but can be overridden at the 
 	 *   individual filter pool level.
-	 * @param savePolicy The save policy for the filter pools and filters. One of the
-	 *   following constants from the 
-	 *   {@link ISystemFilterConstants} interface:
-	 *   <ul>
-	 *     <li>SAVE_POLICY_NONE - no files, all save/restore handled elsewhere
-	 *     <li>SAVE_POLICY_ONE_FILE_PER_MANAGER - one file: mgrName.xmi
-	 *     <li>SAVE_POLICY_ONE_FILEANDFOLDER_PER_POOL - one file and folder per pool
-	 *     <li>SAVE_POLICY_ONE_FILE_PER_POOL_SAME_FOLDER - one file per pool, all files in one folder
-	 *     <li>SAVE_POLICY_ONE_FILE_PER_FILTER - one file per filter, one folder per pool
-	 *   </ul> 
-	 * @param namingPolicy The names to use for file and folders when persisting to disk. Pass
-	 *     null to just use the defaults, or if using SAVE_POLICY_NONE.
 	 */
 	public static ISystemFilterPoolManager createSystemFilterPoolManager(ISystemProfile profile, Logger logger, 
-			ISystemFilterPoolManagerProvider caller, String name, boolean allowNestedFilters,
-			int savePolicy, IRSEFilterNamingPolicy namingPolicy) {
+			ISystemFilterPoolManagerProvider caller, String name, boolean allowNestedFilters) {
 		SystemFilterPoolManager mgr = new SystemFilterPoolManager(profile);
 		mgr.initialize(logger, caller, name, allowNestedFilters);
 		return mgr;
@@ -213,25 +166,6 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 			initialize(logger, caller, name); // core data
 		}
 		setSupportsNestedFilters(allowNestedFilters); // cascade it down    	
-//		invalidatePoolCache();
-//		List pools = getPools();
-//		ISystemFilterPool pool = null;
-//		Vector poolNames = getSystemFilterPoolNamesVector();
-//		for (int idx = 0; idx < poolNames.size(); idx++) {
-//			String poolName = (String) poolNames.elementAt(idx);
-////			pool = RSECorePlugin.getThePersistenceManager().restoreFilterPool(poolName);
-//			pool = null; // that's what the above returned
-//			pool.setSystemFilterPoolManager(this);
-//			pools.add(pool);
-//
-//			/** FIXME test
-//			 if (pool.specialCaseNoDataRestored)
-//			 {
-//			 pool.setDeletable(true); // what else to do?
-//			 //pool.setSupportsNestedFilters(allowNestedFilters); will be cascaded down anyway
-//			 }
-//			 */
-//		}
 	}
 
 	/*
@@ -320,19 +254,14 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
 	 */
-	public void setSupportsDuplicateFilterStringsGen(boolean newSupportsDuplicateFilterStrings) {
+	private void setSupportsDuplicateFilterStringsGen(boolean newSupportsDuplicateFilterStrings) {
 		supportsDuplicateFilterStrings = newSupportsDuplicateFilterStrings;
 		supportsDuplicateFilterStringsESet = true;
 	}
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilterPoolManager#isStringsCaseSensitive()
 	 */
 	public boolean isStringsCaseSensitive() {
 		return stringsCaseSensitive;
@@ -363,11 +292,8 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
 	 */
-	public void setStringsCaseSensitiveGen(boolean newStringsCaseSensitive) {
+	private void setStringsCaseSensitiveGen(boolean newStringsCaseSensitive) {
 		stringsCaseSensitive = newStringsCaseSensitive;
 	}
 
@@ -420,33 +346,13 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 	 * Get list of filter pool names currently existing.
 	 */
 	public String[] getSystemFilterPoolNames() {
-		Vector v = getSystemFilterPoolNamesVector();
-		String[] names = new String[v.size()];
-		for (int idx = 0; idx < names.length; idx++)
-			names[idx] = (String) v.elementAt(idx);
-		return names;
-	}
-
-	/**
-	 * Get list of filter pool names currently existing.
-	 */
-	public Vector getSystemFilterPoolNamesVector() {
-		Vector result = new Vector(pools.size());
-		for (Iterator z = pools.iterator(); z.hasNext();) {
-			ISystemFilterPool pool = (ISystemFilterPool) z.next();
-			String poolName = pool.getName(); 
-			result.add(poolName);
+		ISystemFilterPool[] pools = getSystemFilterPools();
+		String[] names = new String[pools.length];
+		for (int i = 0; i < pools.length; i++) {
+			ISystemFilterPool pool = pools[i];
+			names[i] = pool.getName();
 		}
-		return result;
-//		List pools = getPools();
-//		if ((poolNames == null) || (poolNames.size() != pools.size())) // been invalidated?
-//		{
-//			poolNames = new Vector();
-//			Iterator i = pools.iterator();
-//			while (i.hasNext())
-//				poolNames.addElement(((ISystemFilterPool) i.next()).getName());
-//		}
-//		return poolNames;
+		return names;
 	}
 
 	/*
@@ -724,7 +630,7 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 	 * @param aliasName The name to give the new filter. Must be unique for this pool.
 	 * @param filterStrings The list of String objects that represent the filter strings.
 	 */
-	public ISystemFilter createSystemFilter(ISystemFilterContainer parent, String aliasName, Vector filterStrings) throws Exception {
+	public ISystemFilter createSystemFilter(ISystemFilterContainer parent, String aliasName, String[] filterStrings) throws Exception {
 		ISystemFilter newFilter = null;
 		ISystemFilterPool parentPool = null;
 		if (parent instanceof ISystemFilterPool)
@@ -740,7 +646,7 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 
 	/**
 	 * Creates a new system filter that is typed.
-	 * Same as {@link #createSystemFilter(ISystemFilterContainer, String, Vector)} but 
+	 * Same as {@link #createSystemFilter(ISystemFilterContainer, String, String[])} but 
 	 *  takes a filter type as an additional parameter.
 	 * <p>
 	 * A filter's type is an arbitrary string that is not interpreted or used by the base framework. This
@@ -752,7 +658,7 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 	 * @param filterStrings The list of String objects that represent the filter strings.
 	 * @param type The type of this filter
 	 */
-	public ISystemFilter createSystemFilter(ISystemFilterContainer parent, String aliasName, Vector filterStrings, String type) throws Exception {
+	public ISystemFilter createSystemFilter(ISystemFilterContainer parent, String aliasName, String[] filterStrings, String type) throws Exception {
 		boolean oldSuspendSave = suspendSave;
 		boolean oldSuspendCallbacks = suspendCallbacks;
 		suspendSave = true;
@@ -779,7 +685,7 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 
 	/**
 	 * Creates a new system filter that is typed and promptable
-	 * Same as {@link #createSystemFilter(ISystemFilterContainer, String ,Vector, String)} but 
+	 * Same as {@link #createSystemFilter(ISystemFilterContainer, String ,String[], String)} but 
 	 *  takes a boolean indicating if it is promptable.
 	 * <p>
 	 * A promptable filter is one in which the user is prompted for information at expand time.
@@ -792,7 +698,7 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 	 * @param type The type of this filter
 	 * @param promptable Pass true if this is a promptable filter
 	 */
-	public ISystemFilter createSystemFilter(ISystemFilterContainer parent, String aliasName, Vector filterStrings, String type, boolean promptable) throws Exception {
+	public ISystemFilter createSystemFilter(ISystemFilterContainer parent, String aliasName, String[] filterStrings, String type, boolean promptable) throws Exception {
 		boolean oldSuspendSave = suspendSave;
 		boolean oldSuspendCallbacks = suspendCallbacks;
 		suspendSave = true;
@@ -1252,29 +1158,6 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 	}
 
 	/**
-	 * Restore filter pools when all are stored in one file
-	 * @param logger The logging object to log errors to
-	 * @param mgrFolder The folder containing the file to restore from.
-	 * @param name The name of the manager, from which the file name is derived.
-	 * @param namingPolicy Naming prefix information for persisted data file names.
-	 */
-	protected static ISystemFilterPoolManager restoreFromOneFile(Logger logger, IFolder mgrFolder, String name, IRSEFilterNamingPolicy namingPolicy) throws Exception {
-		/* FIXME
-		 String fileName = getRootSaveFileName(namingPolicy, name);
-		 
-		 List ext = getMOFHelpers(logger).restore(mgrFolder,fileName);
-		 
-		 SystemFilterPoolManager mgr = null;
-
-		 // should be exactly one system filter pool manager...
-		 Iterator iList = ext.iterator();
-		 mgr = (SystemFilterPoolManager)iList.next();
-		 return mgr;	
-		 */
-		return null;
-	}
-
-	/**
 	 * Return our logger
 	 */
 	public Logger getLogger() {
@@ -1382,18 +1265,6 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 	}
 
 	/**
-	 * @generated This field/method will be replaced during code generation 
-	 */
-	public List getPools() {
-//		if (pools == null) {
-//			pools = new ArrayList();
-//		}
-		List result = new ArrayList(pools.size());
-		result.addAll(pools);
-		return result;
-	}
-
-	/**
 	 * @generated This field/method will be replaced during code generation.
 	 */
 	public void setSupportsNestedFiltersGen(boolean newSupportsNestedFilters) {
@@ -1422,19 +1293,15 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 		return supportsDuplicateFilterStringsESet;
 	}
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilterPoolManager#isSingleFilterStringOnly()
 	 */
 	public boolean isSingleFilterStringOnly() {
 		return singleFilterStringOnly;
 	}
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilterPoolManager#setSingleFilterStringOnly(boolean)
 	 */
 	public void setSingleFilterStringOnly(boolean newSingleFilterStringOnly) {
 		boolean oldSingleFilterStringOnly = singleFilterStringOnly;

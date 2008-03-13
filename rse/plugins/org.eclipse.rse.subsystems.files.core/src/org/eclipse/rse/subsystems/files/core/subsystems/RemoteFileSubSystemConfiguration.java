@@ -341,22 +341,14 @@ public abstract class RemoteFileSubSystemConfiguration extends SubSystemConfigur
 		  if (pool != null && isUserPrivateProfile(mgr))
 		  {
 				    
-		      Vector filterStrings = new Vector();
-		      /*
-		      RemoteFileFilterString rootsFilterString = new RemoteFileFilterString(this);
-		      filterStrings.add(rootsFilterString.toString());
-		      mgr.createSystemFilter(pool, rb.getString(ISystemFileConstants.RESID_FILTER_ROOTS),filterStrings);    		    	
-		      */
-	
 
 		      // ----------------------
 		      // "My Home" filter...
 		      // ----------------------
-		      filterStrings = new Vector();
 		      RemoteFileFilterString myHomeFilterString = new RemoteFileFilterString(this);
 		      myHomeFilterString.setPath(getSeparator());
-		      filterStrings.add("./*"); //$NON-NLS-1$
-		      ISystemFilter filter = mgr.createSystemFilter(pool, SystemFileResources.RESID_FILTER_MYHOME,filterStrings);
+		      String[] filterStrings = new String[] {"./*"}; //$NON-NLS-1$
+		      ISystemFilter filter = mgr.createSystemFilter(pool, SystemFileResources.RESID_FILTER_MYHOME, filterStrings);
 		      filter.setNonChangable(true);
 		      filter.setSingleFilterStringOnly(true);
 		      
@@ -387,10 +379,9 @@ public abstract class RemoteFileSubSystemConfiguration extends SubSystemConfigur
 		      // ----------------------
 		      // "Root Files" filter...
 		      // ----------------------
-		      filterStrings = new Vector();
 		      RemoteFileFilterString rootFilesFilterString = new RemoteFileFilterString(this);
 		      rootFilesFilterString.setPath(getSeparator());
-		      filterStrings.add(rootFilesFilterString.toString());		      
+		      filterStrings = new String[] {rootFilesFilterString.toString()};
 		      mgr.createSystemFilter(pool, SystemFileResources.RESID_FILTER_ROOTFILES,filterStrings);		      
 		  }
 		  else
@@ -400,10 +391,9 @@ public abstract class RemoteFileSubSystemConfiguration extends SubSystemConfigur
 			    // ----------------------
 		      // "Root Files" filter...
 		      // ----------------------
-		      Vector filterStrings = new Vector();
 		      RemoteFileFilterString rootFilesFilterString = new RemoteFileFilterString(this);
 		      rootFilesFilterString.setPath(getSeparator());
-		      filterStrings.add(rootFilesFilterString.toString());		      
+		      String[] filterStrings = new String[] {rootFilesFilterString.toString()};
 		      mgr.createSystemFilter(pool, SystemFileResources.RESID_FILTER_ROOTFILES,filterStrings);
 		  }
 		  //else

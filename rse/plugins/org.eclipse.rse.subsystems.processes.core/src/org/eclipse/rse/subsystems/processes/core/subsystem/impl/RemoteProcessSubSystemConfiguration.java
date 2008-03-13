@@ -96,41 +96,36 @@ public abstract class RemoteProcessSubSystemConfiguration extends
 		  if (isUserPrivateProfile(mgr))
 		  {
 				    
-		      Vector filterStrings = new Vector();	
 
 		      // ----------------------
 		      // "All Processes" filter...
 		      // ----------------------
-		      filterStrings = new Vector();
 		      HostProcessFilterImpl allProcessesFilterString = new HostProcessFilterImpl();
-		      filterStrings.add(allProcessesFilterString.toString());
-		      ISystemFilter filter = mgr.createSystemFilter(pool, SystemProcessesCoreResources.RESID_PROPERTY_PROCESS_DEFAULTFILTER_LABEL,filterStrings);
+		      String[] filterStrings = new String[] {allProcessesFilterString.toString()};	
+		      ISystemFilter filter = mgr.createSystemFilter(pool, SystemProcessesCoreResources.RESID_PROPERTY_PROCESS_DEFAULTFILTER_LABEL, filterStrings);
 		      filter.setNonChangable(true);
 		      filter.setSingleFilterStringOnly(true);      
 		      
 		      //------------------------
 		      // "My Processes" filter...
 		      // ----------------------
-		      filterStrings = new Vector();
 		      HostProcessFilterImpl myProcessesFilterString = new HostProcessFilterImpl();
 		      myProcessesFilterString.setUsername("${user.id}"); //$NON-NLS-1$
 		      
-		      filterStrings.add(myProcessesFilterString.toString());
-		      filter = mgr.createSystemFilter(pool, SystemProcessesCoreResources.RESID_PROPERTY_PROCESS_MYPROCESSESFILTER_LABEL,filterStrings);
+		      filterStrings = new String[] {myProcessesFilterString.toString()};
+		      filter = mgr.createSystemFilter(pool, SystemProcessesCoreResources.RESID_PROPERTY_PROCESS_MYPROCESSESFILTER_LABEL, filterStrings);
 		      filter.setNonChangable(true);
 		      filter.setSingleFilterStringOnly(true);  
 		}
 		else
 		{
-			 Vector filterStrings = new Vector();	
 
 		      // ----------------------
 		      // "All Processes" filter...
 		      // ----------------------
-		      filterStrings = new Vector();
 		      HostProcessFilterImpl allProcessesFilterString = new HostProcessFilterImpl();
-		      filterStrings.add(allProcessesFilterString.toString());
-		      ISystemFilter filter = mgr.createSystemFilter(pool, SystemProcessesCoreResources.RESID_PROPERTY_PROCESS_DEFAULTFILTER_LABEL,filterStrings);
+				 String[] filterStrings = new String[] {allProcessesFilterString.toString()};	
+		      ISystemFilter filter = mgr.createSystemFilter(pool, SystemProcessesCoreResources.RESID_PROPERTY_PROCESS_DEFAULTFILTER_LABEL, filterStrings);
 		      filter.setNonChangable(true);
 		      filter.setSingleFilterStringOnly(true); 
 		}

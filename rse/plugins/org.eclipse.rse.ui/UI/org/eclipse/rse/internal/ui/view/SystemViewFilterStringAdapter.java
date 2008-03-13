@@ -18,6 +18,8 @@
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IAdaptable;
@@ -225,17 +227,21 @@ public class SystemViewFilterStringAdapter extends AbstractSystemViewAdapter
 	/**
 	 * Perform the delete action.
 	 */
-	public boolean doDelete(Shell shell, Object element, IProgressMonitor monitor)  throws Exception
-	{
+	public boolean doDelete(Shell shell, Object element, IProgressMonitor monitor) throws Exception {
 		ISystemFilterString filterString = getFilterString(element);
-		ISystemFilter filter = filterString.getParentSystemFilter();	
+		ISystemFilter filter = filterString.getParentSystemFilter();
 		ISystemFilterPoolManager fpMgr = filterString.getSystemFilterPoolManager();
-		Vector strings = filter.getSystemFiltersVector();
-		String[] filterStrings = new String[strings.size()-1];
-		for (int idx=0; idx<filterStrings.length; idx++)
-			filterStrings[idx] = ((ISystemFilterString)strings.elementAt(idx)).toString();
-		strings.remove(filterString);
-		fpMgr.updateSystemFilter(filter, filter.getName(), filterStrings);		
+		String[] oldStrings = filter.getFilterStrings();
+		List workingStrings = new ArrayList(oldStrings.length);
+		for (int i = 0; i < oldStrings.length; i++) {
+			String oldString = oldStrings[i];
+			if (!filterString.equals(oldStrings[i])) {
+				workingStrings.add(oldString);
+			}
+		}
+		String[] newStrings = new String[workingStrings.size()];
+		workingStrings.toArray(newStrings);
+		fpMgr.updateSystemFilter(filter, filter.getName(), newStrings);
 		return true;
 	}
 	

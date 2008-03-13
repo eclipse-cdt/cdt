@@ -18,6 +18,7 @@
 
 package org.eclipse.rse.files.ui.widgets;
 
+import java.util.Arrays;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IStatus;
@@ -802,7 +803,9 @@ public class SystemFileFilterStringEditPane
 	 */
 	public static ValidatorFileFilterString getFileFilterStringValidator(ISystemFilter filter, String filterString)
 	{
-    	Vector v = filter.getFilterStringsVector();
+		String[] strings = filter.getFilterStrings();
+    	Vector v = new Vector(strings.length);
+    	v.addAll(Arrays.asList(strings));
     	if (filterString != null)
     	  v.removeElement(filterString);
     	IRemoteFileSubSystemConfiguration ssFactory = (IRemoteFileSubSystemConfiguration)filter.getProvider();

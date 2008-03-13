@@ -117,16 +117,14 @@ public class LocalFileSubSystemConfiguration extends FileServiceSubSystemConfigu
 	    	  String myHomeFilterName = SystemFileResources.RESID_FILTER_MYHOME;
 	    	  RemoteFileFilterString myDocsFilterString = new RemoteFileFilterString(this);
 	    	  myDocsFilterString.setPath(System.getProperty("user.home") + getSeparator()); //$NON-NLS-1$
-	    	  Vector myDocsFilterStrings = new Vector();
-	    	  myDocsFilterStrings.add(myDocsFilterString.toString());
+	    	  String[] myDocsFilterStrings = new String[] {myDocsFilterString.toString()};
 	    	  mgr.createSystemFilter(pool, myHomeFilterName, myDocsFilterStrings);
 			  
 			  
-		      Vector filterStrings = new Vector();
 		      RemoteFileFilterString defaultFilterString = new RemoteFileFilterString(this);
 		      if (!_isWindows)
 		        defaultFilterString.setPath(getSeparator());
-		      filterStrings.add(defaultFilterString.toString());
+		      String[] filterStrings = new String[] {defaultFilterString.toString()};
 		      //System.out.println("creating filter...");	
 		      String filterName = null;
 		      if (_isWindows)
@@ -137,11 +135,10 @@ public class LocalFileSubSystemConfiguration extends FileServiceSubSystemConfigu
 		  }
 		  else
 		  {
-			  Vector filterStrings = new Vector();
 		      RemoteFileFilterString defaultFilterString = new RemoteFileFilterString(this);
 		      if (!_isWindows)
 		        defaultFilterString.setPath(getSeparator());
-		      filterStrings.add(defaultFilterString.toString());
+			  String[] filterStrings = new String[] {defaultFilterString.toString()};
 		      //System.out.println("creating filter...");	
 		      String filterName = null;
 		      if (_isWindows)

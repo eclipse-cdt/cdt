@@ -1,0 +1,386 @@
+
+<html>
+<head>
+<title>PDAExpressions.java</title>
+<meta name="generator" content="java2html 0.9.2">
+<meta name="date" content="2008-02-22T00:00:40+00:00">
+</head>
+
+<body bgcolor="#FFFFFF">
+<pre width="80"><a name="line1">  1: </a><font color="#B22222">/*******************************************************************************</font>
+<a name="line2">  2: </a><font color="#B22222"> * Copyright (c) 2008 Wind River Systems and others.</font>
+<a name="line3">  3: </a><font color="#B22222"> * All rights reserved. This program and the accompanying materials</font>
+<a name="line4">  4: </a><font color="#B22222"> * are made available under the terms of the Eclipse Public License v1.0</font>
+<a name="line5">  5: </a><font color="#B22222"> * which accompanies this distribution, and is available at</font>
+<a name="line6">  6: </a><font color="#B22222"> * http://www.eclipse.org/legal/epl-v10.html</font>
+<a name="line7">  7: </a><font color="#B22222"> * </font>
+<a name="line8">  8: </a><font color="#B22222"> * Contributors:</font>
+<a name="line9">  9: </a><font color="#B22222"> *     Wind River Systems - initial API and implementation</font>
+<a name="line10"> 10: </a><font color="#B22222"> *******************************************************************************/</font>
+<a name="line11"> 11: </a>package org.eclipse.dd.examples.pda.service;
+
+<a name="line13"> 13: </a><font color="#228B22">import java.util.Hashtable;</font>
+<a name="line14"> 14: </a><font color="#228B22">import java.util.Map;</font>
+
+<a name="line16"> 16: </a><font color="#228B22">import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;</font>
+<a name="line17"> 17: </a><font color="#228B22">import org.eclipse.dd.dsf.concurrent.Immutable;</font>
+<a name="line18"> 18: </a><font color="#228B22">import org.eclipse.dd.dsf.concurrent.RequestMonitor;</font>
+<a name="line19"> 19: </a><font color="#228B22">import org.eclipse.dd.dsf.datamodel.AbstractDMContext;</font>
+<a name="line20"> 20: </a><font color="#228B22">import org.eclipse.dd.dsf.datamodel.AbstractDMEvent;</font>
+<a name="line21"> 21: </a><font color="#228B22">import org.eclipse.dd.dsf.datamodel.DMContexts;</font>
+<a name="line22"> 22: </a><font color="#228B22">import org.eclipse.dd.dsf.datamodel.IDMContext;</font>
+<a name="line23"> 23: </a><font color="#228B22">import org.eclipse.dd.dsf.debug.service.IExpressions;</font>
+<a name="line24"> 24: </a><font color="#228B22">import org.eclipse.dd.dsf.debug.service.IStack;</font>
+<a name="line25"> 25: </a><font color="#228B22">import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterDMContext;</font>
+<a name="line26"> 26: </a><font color="#228B22">import org.eclipse.dd.dsf.debug.service.IRunControl.IResumedDMEvent;</font>
+<a name="line27"> 27: </a><font color="#228B22">import org.eclipse.dd.dsf.debug.service.IRunControl.ISuspendedDMEvent;</font>
+<a name="line28"> 28: </a><font color="#228B22">import org.eclipse.dd.dsf.debug.service.IRunControl.StateChangeReason;</font>
+<a name="line29"> 29: </a><font color="#228B22">import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;</font>
+<a name="line30"> 30: </a><font color="#228B22">import org.eclipse.dd.dsf.debug.service.command.CommandCache;</font>
+<a name="line31"> 31: </a><font color="#228B22">import org.eclipse.dd.dsf.service.AbstractDsfService;</font>
+<a name="line32"> 32: </a><font color="#228B22">import org.eclipse.dd.dsf.service.DsfServiceEventHandler;</font>
+<a name="line33"> 33: </a><font color="#228B22">import org.eclipse.dd.dsf.service.DsfSession;</font>
+<a name="line34"> 34: </a><font color="#228B22">import org.eclipse.dd.examples.pda.PDAPlugin;</font>
+<a name="line35"> 35: </a><font color="#228B22">import org.eclipse.dd.examples.pda.service.commands.PDACommandResult;</font>
+<a name="line36"> 36: </a><font color="#228B22">import org.eclipse.dd.examples.pda.service.commands.PDASetVarCommand;</font>
+<a name="line37"> 37: </a><font color="#228B22">import org.eclipse.dd.examples.pda.service.commands.PDAVarCommand;</font>
+<a name="line38"> 38: </a><font color="#228B22">import org.osgi.framework.BundleContext;</font>
+
+<a name="line40"> 40: </a><font color="#B22222">/**</font>
+<a name="line41"> 41: </a><font color="#B22222"> * </font>
+<a name="line42"> 42: </a><font color="#B22222"> */</font>
+<a name="line43"> 43: </a><strong><font color="#4169E1"><a name="PDAExpressions"></a>public class PDAExpressions extends AbstractDsfService implements IExpressions </font></strong>{
+
+<a name="line45"> 45: </a>    @Immutable
+<a name="line46"> 46: </a>    private static class ExpressionDMContext extends AbstractDMContext implements IExpressionDMContext {
+
+<a name="line48"> 48: </a>        final private String fExpression;
+<a name="line49"> 49: </a>        
+<a name="line50"> 50: </a>        ExpressionDMContext(String sessionId, IFrameDMContext frameDmc, String expressin) {
+<a name="line51"> 51: </a>            super(sessionId, new IDMContext[] { frameDmc });
+<a name="line52"> 52: </a>            fExpression = expressin;
+<a name="line53"> 53: </a>        }
+
+<a name="line55"> 55: </a><strong><font color="#4169E1">        public String getExpression()</font></strong> { 
+<a name="line56"> 56: </a>            <font color="#4169E1">return</font> fExpression;
+<a name="line57"> 57: </a>        }
+<a name="line58"> 58: </a>        
+<a name="line59"> 59: </a>        @Override
+<a name="line60"> 60: </a><strong><font color="#4169E1">        public boolean equals(Object other)</font></strong> {
+<a name="line61"> 61: </a>            <font color="#4169E1">return</font> super.baseEquals(other) &amp;&amp; ((ExpressionDMContext)other).fExpression.equals(fExpression);
+<a name="line62"> 62: </a>        }
+<a name="line63"> 63: </a>        
+<a name="line64"> 64: </a>        @Override
+<a name="line65"> 65: </a><strong><font color="#4169E1">        public int hashCode()</font></strong> {
+<a name="line66"> 66: </a>            <font color="#4169E1">return</font> super.baseHashCode() + fExpression.hashCode();
+<a name="line67"> 67: </a>        }
+<a name="line68"> 68: </a>        
+<a name="line69"> 69: </a>        @Override
+<a name="line70"> 70: </a><strong><font color="#4169E1">        public String toString()</font></strong> { 
+<a name="line71"> 71: </a>            <font color="#4169E1">return</font> baseToString() + <font color="#666666">".expression("</font> + fExpression + <font color="#666666">")"</font>;  
+<a name="line72"> 72: </a>        }
+<a name="line73"> 73: </a>    }
+
+<a name="line75"> 75: </a>    <font color="#B22222">/**</font>
+<a name="line76"> 76: </a><font color="#B22222">     * PDA expressions are simply variables.  Only the variable name </font>
+<a name="line77"> 77: </a><font color="#B22222">     * is relevant for its data.</font>
+<a name="line78"> 78: </a><font color="#B22222">     */</font>
+<a name="line79"> 79: </a>    @Immutable
+<a name="line80"> 80: </a>    private static class ExpressionDMData implements IExpressionDMData {
+
+<a name="line82"> 82: </a>        final private String fExpression;
+<a name="line83"> 83: </a>        
+<a name="line84"> 84: </a><strong><font color="#4169E1">        public ExpressionDMData(String expression)</font></strong> {
+<a name="line85"> 85: </a>            fExpression = expression;
+<a name="line86"> 86: </a>        }
+<a name="line87"> 87: </a>        
+<a name="line88"> 88: </a><strong><font color="#4169E1">        public BasicType getBasicType()</font></strong> {
+<a name="line89"> 89: </a>            <font color="#4169E1">return</font> BasicType.basic;
+<a name="line90"> 90: </a>        }
+
+<a name="line92"> 92: </a><strong><font color="#4169E1">        public String getEncoding()</font></strong> {
+<a name="line93"> 93: </a>            <font color="#4169E1">return</font> null;
+<a name="line94"> 94: </a>        }
+
+<a name="line96"> 96: </a>        public Map&lt;String, Integer&gt; getEnumerations() {
+<a name="line97"> 97: </a>            <font color="#4169E1">return</font> null;
+<a name="line98"> 98: </a>        }
+
+<a name="line100">100: </a><strong><font color="#4169E1">        public String getName()</font></strong> {
+<a name="line101">101: </a>            <font color="#4169E1">return</font> fExpression;
+<a name="line102">102: </a>        }
+
+<a name="line104">104: </a><strong><font color="#4169E1">        public IRegisterDMContext getRegister()</font></strong> {
+<a name="line105">105: </a>            <font color="#4169E1">return</font> null;
+<a name="line106">106: </a>        }
+
+<a name="line108">108: </a><strong><font color="#4169E1">        public String getStringValue()</font></strong> {
+<a name="line109">109: </a>            <font color="#4169E1">return</font> null;
+<a name="line110">110: </a>        }
+
+<a name="line112">112: </a><strong><font color="#4169E1">        public String getTypeId()</font></strong> {
+<a name="line113">113: </a>            <font color="#4169E1">return</font> null;
+<a name="line114">114: </a>        }
+
+<a name="line116">116: </a><strong><font color="#4169E1">        public String getTypeName()</font></strong> {
+<a name="line117">117: </a>            <font color="#4169E1">return</font> null;
+<a name="line118">118: </a>        }
+
+<a name="line120">120: </a>    }
+
+<a name="line122">122: </a>    <font color="#B22222">// @see #createExpression()</font>
+<a name="line123">123: </a>    @Immutable
+<a name="line124">124: </a>    private static class InvalidExpressionDMContext extends AbstractDMContext implements IExpressionDMContext {
+<a name="line125">125: </a>        final private String fExpression;
+<a name="line126">126: </a>    
+<a name="line127">127: </a><strong><font color="#4169E1">        public InvalidExpressionDMContext(String sessionId, IDMContext parent, String expr)</font></strong> {
+<a name="line128">128: </a>            super(sessionId, new IDMContext[] { parent });
+<a name="line129">129: </a>            fExpression = expr;
+<a name="line130">130: </a>        }
+<a name="line131">131: </a>    
+<a name="line132">132: </a>        @Override
+<a name="line133">133: </a><strong><font color="#4169E1">        public boolean equals(Object other)</font></strong> {
+<a name="line134">134: </a>            <font color="#4169E1">return</font> super.baseEquals(other) &amp;&amp; 
+<a name="line135">135: </a>                fExpression == null 
+<a name="line136">136: </a>                    ? ((InvalidExpressionDMContext) other).getExpression() == null 
+<a name="line137">137: </a>                    : fExpression.equals(((InvalidExpressionDMContext) other).getExpression());
+<a name="line138">138: </a>        }
+<a name="line139">139: </a>    
+<a name="line140">140: </a>        @Override
+<a name="line141">141: </a><strong><font color="#4169E1">        public int hashCode()</font></strong> {
+<a name="line142">142: </a>            <font color="#4169E1">return</font> fExpression == null ? super.baseHashCode() : super.baseHashCode() ^ fExpression.hashCode();
+<a name="line143">143: </a>        }
+<a name="line144">144: </a>    
+<a name="line145">145: </a>        @Override
+<a name="line146">146: </a><strong><font color="#4169E1">        public String toString()</font></strong> {
+<a name="line147">147: </a>            <font color="#4169E1">return</font> baseToString() + <font color="#666666">".invalid_expr["</font> + fExpression + <font color="#666666">"]"</font>; 
+<a name="line148">148: </a>        }
+<a name="line149">149: </a>    
+<a name="line150">150: </a><strong><font color="#4169E1">        public String getExpression()</font></strong> {
+<a name="line151">151: </a>            <font color="#4169E1">return</font> fExpression;
+<a name="line152">152: </a>        }
+<a name="line153">153: </a>    }
+<a name="line154">154: </a>    
+<a name="line155">155: </a>    @Immutable
+<a name="line156">156: </a>    private static class ExpressionChangedDMEvent extends AbstractDMEvent&lt;IExpressionDMContext&gt; 
+<a name="line157">157: </a>        implements IExpressionChangedDMEvent 
+<a name="line158">158: </a>    {
+<a name="line159">159: </a>        ExpressionChangedDMEvent(IExpressionDMContext expression) {
+<a name="line160">160: </a>            super(expression);
+<a name="line161">161: </a>        }
+<a name="line162">162: </a>    }
+
+<a name="line164">164: </a>    
+<a name="line165">165: </a>    private PDACommandControl fCommandControl;
+<a name="line166">166: </a>    private IStack fStack;
+
+<a name="line168">168: </a>    private CommandCache fCommandCache;
+
+<a name="line170">170: </a><strong><font color="#4169E1">    public PDAExpressions(DsfSession session)</font></strong> {
+<a name="line171">171: </a>        super(session);
+<a name="line172">172: </a>    }
+
+<a name="line174">174: </a>    @Override
+<a name="line175">175: </a><strong><font color="#4169E1">    protected BundleContext getBundleContext()</font></strong> {
+<a name="line176">176: </a>        <font color="#4169E1">return</font> PDAPlugin.getBundleContext();
+<a name="line177">177: </a>    }
+
+<a name="line179">179: </a>    @Override
+<a name="line180">180: </a><strong><font color="#4169E1">    public void initialize(final RequestMonitor rm)</font></strong> {
+<a name="line181">181: </a>        super.initialize(
+<a name="line182">182: </a>            new RequestMonitor(getExecutor(), rm) { 
+<a name="line183">183: </a>                @Override
+<a name="line184">184: </a><strong><font color="#4169E1">                protected void handleOK()</font></strong> {
+<a name="line185">185: </a>                    doInitialize(rm);
+<a name="line186">186: </a>                }});
+<a name="line187">187: </a>    }
+
+<a name="line189">189: </a><strong><font color="#4169E1">    private void doInitialize(final RequestMonitor rm)</font></strong> {
+<a name="line190">190: </a>        fCommandControl = getServicesTracker().getService(PDACommandControl.class);
+<a name="line191">191: </a>        fStack = getServicesTracker().getService(IStack.class);
+<a name="line192">192: </a>        fCommandCache = new CommandCache(fCommandControl);
+
+<a name="line194">194: </a>        getSession().addServiceEventListener(this, null);
+<a name="line195">195: </a>        
+<a name="line196">196: </a>        register(new String[]{IExpressions.class.getName(), PDAExpressions.class.getName()}, new Hashtable&lt;String,String&gt;());
+<a name="line197">197: </a>        
+<a name="line198">198: </a>        rm.done();
+<a name="line199">199: </a>    }
+
+<a name="line201">201: </a>    @Override
+<a name="line202">202: </a><strong><font color="#4169E1">    public void shutdown(final RequestMonitor rm)</font></strong> {
+<a name="line203">203: </a>        getSession().removeServiceEventListener(this);
+<a name="line204">204: </a>        fCommandCache.reset();
+<a name="line205">205: </a>        super.shutdown(rm);
+<a name="line206">206: </a>    }
+
+<a name="line208">208: </a>    public void canWriteExpression(IExpressionDMContext expressionContext, DataRequestMonitor&lt;Boolean&gt; rm) {
+<a name="line209">209: </a>        rm.setData(true);
+<a name="line210">210: </a>        rm.done();
+<a name="line211">211: </a>    }
+
+<a name="line213">213: </a><strong><font color="#4169E1">    public IExpressionDMContext createExpression(IDMContext ctx, String expression)</font></strong> {
+<a name="line214">214: </a>        <font color="#B22222">// Create an expression based on the given context and string expression.  </font>
+<a name="line215">215: </a>        <font color="#B22222">// The PDA debugger can only evaluate variables as expressions and only</font>
+<a name="line216">216: </a>        <font color="#B22222">// in context of a frame.  </font>
+<a name="line217">217: </a>        IFrameDMContext frameCtx = DMContexts.getAncestorOfType(ctx, IFrameDMContext.class);
+<a name="line218">218: </a>        <font color="#4169E1">if</font> (frameCtx != null) {
+<a name="line219">219: </a>            <font color="#4169E1">return</font> new ExpressionDMContext(getSession().getId(), frameCtx, expression);
+<a name="line220">220: </a>        } <font color="#4169E1">else</font> {
+<a name="line221">221: </a>            <font color="#B22222">// If a frame cannot be found in context, return an "invalid" </font>
+<a name="line222">222: </a>            <font color="#B22222">// expression context, because a null return value is not allowed.</font>
+<a name="line223">223: </a>            <font color="#B22222">// Evaluating an invalid expression context will always yield an </font>
+<a name="line224">224: </a>            <font color="#B22222">// error.</font>
+<a name="line225">225: </a>            <font color="#4169E1">return</font> new InvalidExpressionDMContext(getSession().getId(), ctx, expression);
+<a name="line226">226: </a>        }
+<a name="line227">227: </a>    }
+
+<a name="line229">229: </a>    public void getBaseExpressions(IExpressionDMContext exprContext, DataRequestMonitor&lt;IExpressionDMContext[]&gt; rm) {
+<a name="line230">230: </a>        PDAPlugin.failRequest(rm, NOT_SUPPORTED, <font color="#666666">"Not supported"</font>);
+<a name="line231">231: </a>    }
+
+<a name="line233">233: </a>    public void getExpressionAddressData(IExpressionDMContext dmc, DataRequestMonitor&lt;IExpressionDMAddress&gt; rm) {
+<a name="line234">234: </a>        PDAPlugin.failRequest(rm, NOT_SUPPORTED, <font color="#666666">"Not supported"</font>);
+<a name="line235">235: </a>    }
+
+<a name="line237">237: </a>    public void getExpressionData(final IExpressionDMContext exprCtx, final DataRequestMonitor&lt;IExpressionDMData&gt; rm) {
+<a name="line238">238: </a>        <font color="#B22222">// Since expression data doesn't contain any more information than the </font>
+<a name="line239">239: </a>        <font color="#B22222">// context, it doesn't require any debugger commmands.</font>
+<a name="line240">240: </a>        <font color="#4169E1">if</font> (exprCtx instanceof ExpressionDMContext) {
+<a name="line241">241: </a>            rm.setData(new ExpressionDMData(exprCtx.getExpression()));
+<a name="line242">242: </a>            rm.done();
+<a name="line243">243: </a>        } <font color="#4169E1">else</font> {
+<a name="line244">244: </a>            PDAPlugin.failRequest(rm, INVALID_HANDLE, <font color="#666666">"Invalid expression context "</font> + exprCtx);
+<a name="line245">245: </a>        }
+<a name="line246">246: </a>    }
+
+<a name="line248">248: </a>    public void getSubExpressionCount(IExpressionDMContext exprCtx, DataRequestMonitor&lt;Integer&gt; rm) {
+<a name="line249">249: </a>        PDAPlugin.failRequest(rm, NOT_SUPPORTED, <font color="#666666">"Not supported"</font>);
+<a name="line250">250: </a>    }
+
+<a name="line252">252: </a>    public void getSubExpressions(IExpressionDMContext exprCtx, DataRequestMonitor&lt;IExpressionDMContext[]&gt; rm) {
+<a name="line253">253: </a>        PDAPlugin.failRequest(rm, NOT_SUPPORTED, <font color="#666666">"Not supported"</font>);
+<a name="line254">254: </a>    }
+
+<a name="line256">256: </a>    public void getSubExpressions(IExpressionDMContext exprCtx, int startIndex, int length,
+<a name="line257">257: </a>        DataRequestMonitor&lt;IExpressionDMContext[]&gt; rm) 
+<a name="line258">258: </a>    {
+<a name="line259">259: </a>        PDAPlugin.failRequest(rm, NOT_SUPPORTED, <font color="#666666">"Not supported"</font>);
+<a name="line260">260: </a>    }
+
+<a name="line262">262: </a>    public void getAvailableFormats(IFormattedDataDMContext dmc, DataRequestMonitor&lt;String[]&gt; rm) {
+<a name="line263">263: </a>        <font color="#B22222">// PDA debugger doesn't support formatting the expression.  Natural </font>
+<a name="line264">264: </a>        <font color="#B22222">// formatting is the only available option.</font>
+<a name="line265">265: </a>        rm.setData(new String[] { NATURAL_FORMAT });
+<a name="line266">266: </a>        rm.done();
+<a name="line267">267: </a>    }
+
+<a name="line269">269: </a><strong><font color="#4169E1">    public FormattedValueDMContext getFormattedValueContext(IFormattedDataDMContext exprCtx, String formatId)</font></strong> {
+<a name="line270">270: </a>        <font color="#B22222">// Creates a context that can be used to retrieve a formatted value.</font>
+<a name="line271">271: </a>        <font color="#4169E1">return</font> new FormattedValueDMContext(this, exprCtx, formatId);
+<a name="line272">272: </a>    }
+
+<a name="line274">274: </a>    public void getFormattedExpressionValue(FormattedValueDMContext formattedCtx, 
+<a name="line275">275: </a>        final DataRequestMonitor&lt;FormattedValueDMData&gt; rm) 
+<a name="line276">276: </a>    {
+<a name="line277">277: </a>        final ExpressionDMContext exprCtx = DMContexts.getAncestorOfType(formattedCtx, ExpressionDMContext.class);
+<a name="line278">278: </a>        <font color="#4169E1">if</font> (exprCtx != null) {
+<a name="line279">279: </a>            final IFrameDMContext frameCtx = DMContexts.getAncestorOfType(exprCtx, IFrameDMContext.class);
+<a name="line280">280: </a>            
+<a name="line281">281: </a>            <font color="#B22222">// First retrieve the stack depth, needed to properly calculate</font>
+<a name="line282">282: </a>            <font color="#B22222">// the frame index that is used by the PDAVarCommand. </font>
+<a name="line283">283: </a>            fStack.getStackDepth(
+<a name="line284">284: </a>                frameCtx, 0,
+<a name="line285">285: </a>                new DataRequestMonitor&lt;Integer&gt;(getExecutor(), rm) {
+<a name="line286">286: </a>                    @Override
+<a name="line287">287: </a><strong><font color="#4169E1">                    protected void handleOK()</font></strong> {
+<a name="line288">288: </a>                        <font color="#B22222">// Calculate the frame index.</font>
+<a name="line289">289: </a>                        int frameId = getData() - frameCtx.getLevel() - 1;
+<a name="line290">290: </a>                        
+<a name="line291">291: </a>                        <font color="#B22222">// Send the command to evaluate the variable.</font>
+<a name="line292">292: </a>                        fCommandCache.execute(
+<a name="line293">293: </a>                            new PDAVarCommand(fCommandControl.getProgramDMContext(), frameId, exprCtx.getExpression()), 
+<a name="line294">294: </a>                            new DataRequestMonitor&lt;PDACommandResult&gt;(getExecutor(), rm) {
+<a name="line295">295: </a>                                @Override
+<a name="line296">296: </a><strong><font color="#4169E1">                                protected void handleOK()</font></strong> {
+<a name="line297">297: </a>                                    rm.setData(new FormattedValueDMData(getData().fResponseText));
+<a name="line298">298: </a>                                    rm.done();
+<a name="line299">299: </a>                                }
+<a name="line300">300: </a>                            });        
+<a name="line301">301: </a>                    }
+<a name="line302">302: </a>                });
+<a name="line303">303: </a>        } <font color="#4169E1">else</font> {
+<a name="line304">304: </a>            PDAPlugin.failRequest(rm, INVALID_HANDLE, <font color="#666666">"Invalid expression context "</font> + formattedCtx);
+<a name="line305">305: </a>            rm.done();
+<a name="line306">306: </a>        }
+<a name="line307">307: </a>    }
+
+<a name="line309">309: </a><strong><font color="#4169E1">    public void writeExpression(final IExpressionDMContext exprCtx, final String exprValue, String formatId, </font></strong>
+<a name="line310">310: </a><strong><font color="#4169E1">        final RequestMonitor rm)</font></strong> 
+<a name="line311">311: </a>    {
+<a name="line312">312: </a>        <font color="#4169E1">if</font> (exprCtx instanceof ExpressionDMContext) {
+<a name="line313">313: </a>            final IFrameDMContext frameCtx = DMContexts.getAncestorOfType(exprCtx, IFrameDMContext.class);
+<a name="line314">314: </a>            
+<a name="line315">315: </a>            <font color="#B22222">// Similarly to retrieving the variable, retrieve the </font>
+<a name="line316">316: </a>            <font color="#B22222">// stack depth first.</font>
+<a name="line317">317: </a>            fStack.getStackDepth(
+<a name="line318">318: </a>                frameCtx, 0,
+<a name="line319">319: </a>                new DataRequestMonitor&lt;Integer&gt;(getExecutor(), rm) {
+<a name="line320">320: </a>                    @Override
+<a name="line321">321: </a><strong><font color="#4169E1">                    protected void handleOK()</font></strong> {
+<a name="line322">322: </a>                        <font color="#B22222">// Calculate the frame index.</font>
+<a name="line323">323: </a>                        int frameId = getData() - frameCtx.getLevel() - 1;
+<a name="line324">324: </a>                        
+<a name="line325">325: </a>                        <font color="#B22222">// Send the "write" command to PDA debugger</font>
+<a name="line326">326: </a>                        fCommandCache.execute(
+<a name="line327">327: </a>                            new PDASetVarCommand(fCommandControl.getProgramDMContext(), frameId, exprCtx.getExpression(), exprValue), 
+<a name="line328">328: </a>                            new DataRequestMonitor&lt;PDACommandResult&gt;(getExecutor(), rm) {
+<a name="line329">329: </a>                                @Override
+<a name="line330">330: </a><strong><font color="#4169E1">                                protected void handleOK()</font></strong> {
+<a name="line331">331: </a>                                    getSession().dispatchEvent(new ExpressionChangedDMEvent(exprCtx), getProperties());
+<a name="line332">332: </a>                                    rm.done();
+<a name="line333">333: </a>                                }
+<a name="line334">334: </a>                            });
+<a name="line335">335: </a>                    }
+<a name="line336">336: </a>                });
+<a name="line337">337: </a>        } <font color="#4169E1">else</font> {
+<a name="line338">338: </a>            PDAPlugin.failRequest(rm, INVALID_HANDLE, <font color="#666666">"Invalid expression context "</font> + exprCtx);
+<a name="line339">339: </a>            rm.done();
+<a name="line340">340: </a>        }
+<a name="line341">341: </a>    }
+
+<a name="line343">343: </a>    @SuppressWarnings(<font color="#666666">"unchecked"</font>)
+<a name="line344">344: </a>    @Deprecated
+<a name="line345">345: </a>    public void getModelData(IDMContext dmc, DataRequestMonitor&lt;?&gt; rm) {
+<a name="line346">346: </a>        <font color="#4169E1">if</font> (dmc instanceof IExpressionDMContext) {
+<a name="line347">347: </a>            getExpressionData((IExpressionDMContext) dmc, (DataRequestMonitor&lt;IExpressionDMData&gt;) rm);
+<a name="line348">348: </a>        } <font color="#4169E1">else</font> <font color="#4169E1">if</font> (dmc instanceof FormattedValueDMContext) {
+<a name="line349">349: </a>            getFormattedExpressionValue((FormattedValueDMContext) dmc, (DataRequestMonitor&lt;FormattedValueDMData&gt;) rm);
+<a name="line350">350: </a>        } <font color="#4169E1">else</font> {
+<a name="line351">351: </a>            PDAPlugin.failRequest(rm, INVALID_HANDLE, <font color="#666666">"Unknown DMC type"</font>);
+<a name="line352">352: </a>            rm.done();
+<a name="line353">353: </a>        }
+<a name="line354">354: </a>    }
+
+<a name="line356">356: </a>    @DsfServiceEventHandler 
+<a name="line357">357: </a><strong><font color="#4169E1">    public void eventDispatched(IResumedDMEvent e)</font></strong> {
+<a name="line358">358: </a>        <font color="#B22222">// Mark the cache as not available, so that data retrieval commands </font>
+<a name="line359">359: </a>        <font color="#B22222">// will fail.  Also reset the cache unless it was a step command.</font>
+<a name="line360">360: </a>        fCommandCache.setTargetAvailable(false);
+<a name="line361">361: </a>        <font color="#4169E1">if</font> (!e.getReason().equals(StateChangeReason.STEP)) {
+<a name="line362">362: </a>            fCommandCache.reset();
+<a name="line363">363: </a>        }
+<a name="line364">364: </a>    }    
+
+
+<a name="line367">367: </a>    @DsfServiceEventHandler 
+<a name="line368">368: </a><strong><font color="#4169E1">    public void eventDispatched(ISuspendedDMEvent e)</font></strong> {
+<a name="line369">369: </a>        <font color="#B22222">// Enable sending commands to target and clear the cache.</font>
+<a name="line370">370: </a>        fCommandCache.setTargetAvailable(true);
+<a name="line371">371: </a>        fCommandCache.reset();
+<a name="line372">372: </a>    }
+<a name="line373">373: </a>}
+</pre>
+</body>
+
+</html>

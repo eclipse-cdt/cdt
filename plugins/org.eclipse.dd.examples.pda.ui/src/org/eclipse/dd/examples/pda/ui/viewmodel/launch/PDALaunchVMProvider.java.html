@@ -1,0 +1,149 @@
+
+<html>
+<head>
+<title>PDALaunchVMProvider.java</title>
+<meta name="generator" content="java2html 0.9.2">
+<meta name="date" content="2008-03-11T03:37:34+00:00">
+</head>
+
+<body bgcolor="#FFFFFF">
+<pre width="80"><a name="line1">  1: </a><font color="#B22222">/*******************************************************************************</font>
+<a name="line2">  2: </a><font color="#B22222"> * Copyright (c) 2006 Wind River Systems and others.</font>
+<a name="line3">  3: </a><font color="#B22222"> * All rights reserved. This program and the accompanying materials</font>
+<a name="line4">  4: </a><font color="#B22222"> * are made available under the terms of the Eclipse Public License v1.0</font>
+<a name="line5">  5: </a><font color="#B22222"> * which accompanies this distribution, and is available at</font>
+<a name="line6">  6: </a><font color="#B22222"> * http://www.eclipse.org/legal/epl-v10.html</font>
+<a name="line7">  7: </a><font color="#B22222"> * </font>
+<a name="line8">  8: </a><font color="#B22222"> * Contributors:</font>
+<a name="line9">  9: </a><font color="#B22222"> *     Wind River Systems - initial API and implementation</font>
+<a name="line10"> 10: </a><font color="#B22222"> *     Ericsson                          - Modified for new functionality        </font>
+<a name="line11"> 11: </a><font color="#B22222"> *******************************************************************************/</font>
+<a name="line12"> 12: </a>package org.eclipse.dd.examples.pda.ui.viewmodel.launch;
+
+<a name="line14"> 14: </a><font color="#228B22">import java.util.concurrent.RejectedExecutionException;</font>
+
+<a name="line16"> 16: </a><font color="#228B22">import org.eclipse.dd.dsf.concurrent.ThreadSafe;</font>
+<a name="line17"> 17: </a><font color="#228B22">import org.eclipse.dd.dsf.debug.ui.viewmodel.launch.LaunchRootVMNode;</font>
+<a name="line18"> 18: </a><font color="#228B22">import org.eclipse.dd.dsf.debug.ui.viewmodel.launch.StackFramesVMNode;</font>
+<a name="line19"> 19: </a><font color="#228B22">import org.eclipse.dd.dsf.debug.ui.viewmodel.launch.StandardProcessVMNode;</font>
+<a name="line20"> 20: </a><font color="#228B22">import org.eclipse.dd.dsf.debug.ui.viewmodel.launch.LaunchRootVMNode.LaunchesEvent;</font>
+<a name="line21"> 21: </a><font color="#228B22">import org.eclipse.dd.dsf.service.DsfSession;</font>
+<a name="line22"> 22: </a><font color="#228B22">import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMAdapter;</font>
+<a name="line23"> 23: </a><font color="#228B22">import org.eclipse.dd.dsf.ui.viewmodel.IRootVMNode;</font>
+<a name="line24"> 24: </a><font color="#228B22">import org.eclipse.dd.dsf.ui.viewmodel.IVMNode;</font>
+<a name="line25"> 25: </a><font color="#228B22">import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;</font>
+<a name="line26"> 26: </a><font color="#228B22">import org.eclipse.debug.core.DebugEvent;</font>
+<a name="line27"> 27: </a><font color="#228B22">import org.eclipse.debug.core.DebugPlugin;</font>
+<a name="line28"> 28: </a><font color="#228B22">import org.eclipse.debug.core.IDebugEventSetListener;</font>
+<a name="line29"> 29: </a><font color="#228B22">import org.eclipse.debug.core.ILaunch;</font>
+<a name="line30"> 30: </a><font color="#228B22">import org.eclipse.debug.core.ILaunchesListener2;</font>
+<a name="line31"> 31: </a><font color="#228B22">import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;</font>
+
+
+<a name="line34"> 34: </a><font color="#B22222">/**</font>
+<a name="line35"> 35: </a><font color="#B22222"> * View Model provider for the Launch (AKA Debug) view.  The PDA debugger is </font>
+<a name="line36"> 36: </a><font color="#B22222"> * single-threaded, so there is no need for a debug target element to be visible</font>
+<a name="line37"> 37: </a><font color="#B22222"> * in the debug view.  Therefore the launch VM provider is configured with three nodes:</font>
+<a name="line38"> 38: </a><font color="#B22222"> * &lt;ul&gt;</font>
+<a name="line39"> 39: </a><font color="#B22222"> * &lt;li&gt; LaunchRootVMNode - This is the root of the PDA view model.&lt;/li&gt;  </font>
+<a name="line40"> 40: </a><font color="#B22222"> * &lt;li&gt; ThreadVMNode - Supplies the PDA program element.&lt;/li&gt;  </font>
+<a name="line41"> 41: </a><font color="#B22222"> * &lt;li&gt; StackFramesVMNode - Supplies the stack frame elements.&lt;/li&gt;  </font>
+<a name="line42"> 42: </a><font color="#B22222"> * &lt;li&gt; StandardProcessVMNode - Supplies elements representing the PDA debugger process.&lt;/li&gt;</font>
+<a name="line43"> 43: </a><font color="#B22222"> * &lt;/ul&gt; </font>
+<a name="line44"> 44: </a><font color="#B22222"> */</font>
+<a name="line45"> 45: </a>@SuppressWarnings(<font color="#666666">"restriction"</font>)
+<a name="line46"> 46: </a><strong><font color="#4169E1"><a name="PDALaunchVMProvider"></a>public class PDALaunchVMProvider extends AbstractDMVMProvider </font></strong>
+<a name="line47"> 47: </a>    implements IDebugEventSetListener, ILaunchesListener2
+<a name="line48"> 48: </a>{
+<a name="line49"> 49: </a>    @ThreadSafe
+<a name="line50"> 50: </a><strong><font color="#4169E1">    public PDALaunchVMProvider(AbstractVMAdapter adapter, IPresentationContext presentationContext, DsfSession session)</font></strong> 
+<a name="line51"> 51: </a>    {
+<a name="line52"> 52: </a>        super(adapter, presentationContext, session);
+<a name="line53"> 53: </a>        
+<a name="line54"> 54: </a>        IRootVMNode launchNode = new LaunchRootVMNode(this);
+<a name="line55"> 55: </a>        setRootNode(launchNode);
+
+<a name="line57"> 57: </a>        <font color="#B22222">// Launch node is a parent to the processes and program nodes.</font>
+<a name="line58"> 58: </a>        IVMNode pdaProgramNode = new PDAProgramVMNode(this, getSession());
+<a name="line59"> 59: </a>        IVMNode processesNode = new StandardProcessVMNode(this);
+<a name="line60"> 60: </a>        addChildNodes(launchNode, new IVMNode[] { pdaProgramNode, processesNode});
+<a name="line61"> 61: </a>        
+<a name="line62"> 62: </a>        <font color="#B22222">// Stack frames node is under the PDA program node.</font>
+<a name="line63"> 63: </a>        IVMNode stackFramesNode = new StackFramesVMNode(this, getSession());
+<a name="line64"> 64: </a>        addChildNodes(pdaProgramNode, new IVMNode[] { stackFramesNode });
+
+<a name="line66"> 66: </a>        <font color="#B22222">// Register the LaunchVM provider as a listener to debug and launch </font>
+<a name="line67"> 67: </a>        <font color="#B22222">// events.  These events are used by the launch and processes nodes.</font>
+<a name="line68"> 68: </a>        DebugPlugin.getDefault().addDebugEventListener(this);
+<a name="line69"> 69: </a>        DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
+<a name="line70"> 70: </a>    }
+<a name="line71"> 71: </a>    
+<a name="line72"> 72: </a>    
+<a name="line73"> 73: </a><strong><font color="#4169E1">    public void handleDebugEvents(final DebugEvent[] events)</font></strong> {
+<a name="line74"> 74: </a>        <font color="#4169E1">if</font> (isDisposed()) <font color="#4169E1">return</font>;
+<a name="line75"> 75: </a>        
+<a name="line76"> 76: </a>        <font color="#B22222">// This method may be called on any thread.  Switch to the </font>
+<a name="line77"> 77: </a>        <font color="#B22222">// view model executor thread before processing.</font>
+<a name="line78"> 78: </a>        <font color="#4169E1">try</font> {
+<a name="line79"> 79: </a>            getExecutor().execute(new Runnable() {
+<a name="line80"> 80: </a><strong><font color="#4169E1">                public void run()</font></strong> {
+<a name="line81"> 81: </a>                    <font color="#4169E1">if</font> (isDisposed()) <font color="#4169E1">return</font>;
+<a name="line82"> 82: </a>    
+<a name="line83"> 83: </a>                    <font color="#4169E1">for</font> (final DebugEvent event : events) {
+<a name="line84"> 84: </a>                        handleEvent(event);
+<a name="line85"> 85: </a>                    }
+<a name="line86"> 86: </a>                }});
+<a name="line87"> 87: </a>        } <font color="#4169E1">catch</font> (RejectedExecutionException e) {
+<a name="line88"> 88: </a>            <font color="#B22222">// Ignore.  This exception could be thrown if the view model is being </font>
+<a name="line89"> 89: </a>            <font color="#B22222">// shut down.  </font>
+<a name="line90"> 90: </a>        }
+<a name="line91"> 91: </a>    }
+
+<a name="line93"> 93: </a>    @Override
+<a name="line94"> 94: </a><strong><font color="#4169E1">    public void dispose()</font></strong> {
+<a name="line95"> 95: </a>        DebugPlugin.getDefault().removeDebugEventListener(this);
+<a name="line96"> 96: </a>        DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
+<a name="line97"> 97: </a>        super.dispose();
+<a name="line98"> 98: </a>    }
+<a name="line99"> 99: </a>    
+<a name="line100">100: </a><strong><font color="#4169E1">    public void launchesAdded(ILaunch[] launches)</font></strong> {
+<a name="line101">101: </a>        handleLaunchesEvent(new LaunchesEvent(launches, LaunchesEvent.Type.ADDED)); 
+<a name="line102">102: </a>    }
+<a name="line103">103: </a>    
+<a name="line104">104: </a><strong><font color="#4169E1">    public void launchesRemoved(ILaunch[] launches)</font></strong> {
+<a name="line105">105: </a>        handleLaunchesEvent(new LaunchesEvent(launches, LaunchesEvent.Type.REMOVED)); 
+<a name="line106">106: </a>    }
+<a name="line107">107: </a>    
+<a name="line108">108: </a><strong><font color="#4169E1">    public void launchesChanged(ILaunch[] launches)</font></strong> {
+<a name="line109">109: </a>        handleLaunchesEvent(new LaunchesEvent(launches, LaunchesEvent.Type.CHANGED)); 
+<a name="line110">110: </a>    }
+<a name="line111">111: </a>    
+<a name="line112">112: </a><strong><font color="#4169E1">    public void launchesTerminated(ILaunch[] launches)</font></strong> {
+<a name="line113">113: </a>        handleLaunchesEvent(new LaunchesEvent(launches, LaunchesEvent.Type.TERMINATED)); 
+<a name="line114">114: </a>    }
+<a name="line115">115: </a>    
+<a name="line116">116: </a><strong><font color="#4169E1">    private void handleLaunchesEvent(final LaunchesEvent event)</font></strong> {
+<a name="line117">117: </a>        <font color="#4169E1">if</font> (isDisposed()) <font color="#4169E1">return</font>;
+<a name="line118">118: </a>        
+<a name="line119">119: </a>        <font color="#B22222">// This method also may be called on any thread.  Switch to the </font>
+<a name="line120">120: </a>        <font color="#B22222">// view model executor thread before processing.</font>
+<a name="line121">121: </a>        <font color="#4169E1">try</font> {
+<a name="line122">122: </a>            getExecutor().execute(new Runnable() {
+<a name="line123">123: </a><strong><font color="#4169E1">                public void run()</font></strong> {
+<a name="line124">124: </a>                    <font color="#4169E1">if</font> (isDisposed()) <font color="#4169E1">return</font>;
+<a name="line125">125: </a>    
+<a name="line126">126: </a>                    IRootVMNode rootLayoutNode = getRootVMNode();
+<a name="line127">127: </a>                    <font color="#4169E1">if</font> (rootLayoutNode != null &amp;&amp; rootLayoutNode.getDeltaFlags(event) != 0) {
+<a name="line128">128: </a>                        handleEvent(event);
+<a name="line129">129: </a>                    }
+<a name="line130">130: </a>                }});
+<a name="line131">131: </a>        } <font color="#4169E1">catch</font> (RejectedExecutionException e) {
+<a name="line132">132: </a>            <font color="#B22222">// Ignore.  This exception could be thrown if the view model is being </font>
+<a name="line133">133: </a>            <font color="#B22222">// shut down.  </font>
+<a name="line134">134: </a>        }
+<a name="line135">135: </a>    }
+<a name="line136">136: </a>}
+</pre>
+</body>
+
+</html>

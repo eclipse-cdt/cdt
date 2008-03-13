@@ -54,24 +54,24 @@ public class PDAStack extends AbstractDsfService implements IStack {
     private static class FrameDMContext extends AbstractDMContext implements IFrameDMContext {
 
         final private int fLevel;
-        
+
         FrameDMContext(String sessionId, IExecutionDMContext execDmc, int level) {
             super(sessionId, new IDMContext[] { execDmc });
             fLevel = level;
         }
 
         public int getLevel() { return fLevel; }
-        
+
         @Override
         public boolean equals(Object other) {
             return super.baseEquals(other) && ((FrameDMContext)other).fLevel == fLevel;
         }
-        
+
         @Override
         public int hashCode() {
             return super.baseHashCode() ^ fLevel;
         }
-        
+
         @Override
         public String toString() { 
             return baseToString() + ".frame[" + fLevel + "]";  //$NON-NLS-1$ //$NON-NLS-2$
@@ -85,11 +85,11 @@ public class PDAStack extends AbstractDsfService implements IStack {
     private static class FrameDMData implements IFrameDMData {
 
         final private PDAFrame fFrame;
-        
+
         FrameDMData(PDAFrame frame) {
             fFrame = frame;
         }
-        
+
         public String getFile() {
             return fFrame.fFilePath.lastSegment();
         }
@@ -118,24 +118,24 @@ public class PDAStack extends AbstractDsfService implements IStack {
     private static class VariableDMContext extends AbstractDMContext implements IVariableDMContext {
 
         final private String fVariable;
-        
+
         VariableDMContext(String sessionId, IFrameDMContext frameCtx, String variable) {
             super(sessionId, new IDMContext[] { frameCtx });
             fVariable = variable;
-       }
-        
+        }
+
         String getVariable() { return fVariable; }
-        
+
         @Override
         public boolean equals(Object other) {
             return super.baseEquals(other) && ((VariableDMContext)other).fVariable.equals(fVariable);
         }
-        
+
         @Override
         public int hashCode() {
             return super.baseHashCode() + fVariable.hashCode();
         }
-        
+
         @Override
         public String toString() { 
             return baseToString() + ".variable(" + fVariable + ")";  //$NON-NLS-1$ //$NON-NLS-2$
@@ -149,11 +149,11 @@ public class PDAStack extends AbstractDsfService implements IStack {
     private static class VariableDMData implements IVariableDMData {
 
         final private String fVariable;
-        
+
         VariableDMData(String variable) {
             fVariable = variable;
         }
-        
+
         public String getName() {
             return fVariable;
         }
@@ -193,16 +193,16 @@ public class PDAStack extends AbstractDsfService implements IStack {
         // Initialize service references that stack service depends on
         fCommandControl = getServicesTracker().getService(PDACommandControl.class);
         fRunControl = getServicesTracker().getService(IRunControl.class);
-        
+
         // Create the commands cache
         fCommandCache = new CommandCache(fCommandControl);
 
         // Register to listen for run control events, to clear cache accordingly.
         getSession().addServiceEventListener(this, null);
-        
+
         // Register stack service with OSGi
         register(new String[]{IStack.class.getName(), PDAStack.class.getName()}, new Hashtable<String,String>());
-        
+
         rm.done();
     }
 
@@ -213,7 +213,7 @@ public class PDAStack extends AbstractDsfService implements IStack {
         super.shutdown(rm);
     }
 
-    
+
     public void getArguments(IFrameDMContext frameCtx, DataRequestMonitor<IVariableDMContext[]> rm) {
         PDAPlugin.failRequest(rm, IDsfService.NOT_SUPPORTED, "PDA debugger does not support function arguments.");
     }
@@ -232,7 +232,7 @@ public class PDAStack extends AbstractDsfService implements IStack {
                         PDAPlugin.failRequest(rm, IDsfService.INVALID_HANDLE, "Invalid frame level " + frameCtx);
                         return;
                     }
-    
+
                     // Create the frame data object based on the corresponding PDAFrame
                     rm.setData(new FrameDMData(getData().fFrames[frameId]));
                     rm.done();
@@ -240,7 +240,7 @@ public class PDAStack extends AbstractDsfService implements IStack {
             });
     }
 
-    
+
     public void getFrames(IDMContext context, final DataRequestMonitor<IFrameDMContext[]> rm) {
         // Can only create stack frames for an execution context as a parent, 
         // however the argument context is a generic context type, so it could 
@@ -251,7 +251,7 @@ public class PDAStack extends AbstractDsfService implements IStack {
             PDAPlugin.failRequest(rm, IDsfService.INVALID_HANDLE, "Invalid context " + context);
             return;
         }
-    
+
         // Execute the stack command and create the corresponding frame contexts.
         fCommandCache.execute(
             new PDAStackCommand(fCommandControl.getProgramDMContext()),
@@ -282,7 +282,7 @@ public class PDAStack extends AbstractDsfService implements IStack {
                         return;
                     }
                     PDAFrame pdaFrame = getData().fFrames[frameId];
-                    
+
                     // Create variable contexts for all variables in frame.
                     IVariableDMContext[] variableCtxs = new IVariableDMContext[pdaFrame.fVariables.length];
                     for (int i = 0; i < pdaFrame.fVariables.length; i++) {
@@ -334,7 +334,7 @@ public class PDAStack extends AbstractDsfService implements IStack {
         // The variable data doen't contain a value.  So there's no need to 
         // go to the back end to retrieve it.
         String variable = ((VariableDMContext)variableCtx).getVariable();
-        
+
         rm.setData(new VariableDMData(variable));
         rm.done();
     }
@@ -359,7 +359,7 @@ public class PDAStack extends AbstractDsfService implements IStack {
             PDAPlugin.failRequest(rm, IDsfService.INVALID_HANDLE, "Unknown context type");
         }
     }
-    
+
     @DsfServiceEventHandler 
     public void eventDispatched(IResumedDMEvent e) {
         // Mark the cache as not available, so that stack commands will

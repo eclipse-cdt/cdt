@@ -12,13 +12,11 @@ package org.eclipse.dd.examples.pda.ui.viewmodel;
 
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.expression.ExpressionVMProvider;
-import org.eclipse.dd.dsf.debug.ui.viewmodel.modules.ModulesVMProvider;
-import org.eclipse.dd.dsf.debug.ui.viewmodel.register.RegisterVMProvider;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.variable.VariableVMProvider;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMAdapter;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
-import org.eclipse.dd.examples.pda.ui.viewmodel.launch.LaunchVMProvider;
+import org.eclipse.dd.examples.pda.ui.viewmodel.launch.PDALaunchVMProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -44,11 +42,9 @@ public class PDAVMAdapter extends AbstractDMVMAdapter
     @Override
     protected AbstractDMVMProvider createViewModelProvider(IPresentationContext context) {
         if ( IDebugUIConstants.ID_DEBUG_VIEW.equals(context.getId()) ) {
-            return new LaunchVMProvider(this, context, getSession()); 
+            return new PDALaunchVMProvider(this, context, getSession()); 
         } else if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(context.getId()) ) {
             return new VariableVMProvider(this, context, getSession());
-        } else if (IDebugUIConstants.ID_REGISTER_VIEW.equals(context.getId()) ) {
-            return new RegisterVMProvider(this, context, getSession());
         } else if (IDebugUIConstants.ID_EXPRESSION_VIEW.equals(context.getId()) ) {
             return new ExpressionVMProvider(this, context, getSession());
         } 

@@ -16,12 +16,14 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.dd.dsf.concurrent.Immutable;
 
 /**
  * Object representing a frame in the stack command results.
  * 
  * @see PDAStackCommand 
  */
+@Immutable
 public class PDAFrame {
 
     final public IPath fFilePath;

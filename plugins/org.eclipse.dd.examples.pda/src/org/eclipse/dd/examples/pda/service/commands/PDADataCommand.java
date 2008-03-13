@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.dd.examples.pda.service.commands;
 
+import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.examples.pda.service.PDAProgramDMContext;
 
 /**
@@ -20,14 +21,15 @@ import org.eclipse.dd.examples.pda.service.PDAProgramDMContext;
  *    R: {value 1}|{value 2}|{value 3}|...|
  * </pre>
  */
-public class PDADataCommand extends AbstractPDACommand<PDACommandResult> {
+@Immutable
+public class PDADataCommand extends AbstractPDACommand<PDADataCommandResult> {
 
     public PDADataCommand(PDAProgramDMContext context) {
         super(context, "data");
     }
     
     @Override
-    public PDACommandResult createResult(String resultText) {
-        return new PDACommandResult(resultText);
+    public PDADataCommandResult createResult(String resultText) {
+        return new PDADataCommandResult(resultText);
     }
 }

@@ -44,12 +44,6 @@ public class PDAServicesInitSequence extends Sequence {
                 fCommandControl = new PDACommandControl(fSession, fProgram, fRequestPort, fEventPort);
                 fCommandControl.initialize(requestMonitor);
             }
-            
-            @Override
-            public void rollBack(RequestMonitor rm) {
-                // TODO Auto-generated method stub
-                super.rollBack(rm);
-            }
         },
         new Step() { 
             @Override
@@ -77,7 +71,7 @@ public class PDAServicesInitSequence extends Sequence {
             @Override
             public void execute(final RequestMonitor requestMonitor) {
                 // Create the breakpoint mediator and start tracking PDA breakpoints.
-                
+
                 final BreakpointsMediator bpmService = new BreakpointsMediator(
                     fSession, new PDABreakpointAttributeTranslator());
                 bpmService.initialize(new RequestMonitor(getExecutor(), requestMonitor) {
@@ -88,19 +82,22 @@ public class PDAServicesInitSequence extends Sequence {
                 }); 
             }
         },
-        new Step() { @Override
+        new Step() { 
+            @Override
             public void execute(RequestMonitor requestMonitor) {
                 // Start the stack service.
                 new PDAStack(fSession).initialize(requestMonitor);
             }
         },
-        new Step() { @Override
+        new Step() { 
+            @Override
             public void execute(RequestMonitor requestMonitor) {
                 // Start the service to track expressions.
                 new PDAExpressions(fSession).initialize(requestMonitor);
             }
         },
-        new Step() { @Override
+        new Step() { 
+            @Override
             public void execute(RequestMonitor requestMonitor) {
                 fRunControl.resume(fCommandControl.getProgramDMContext(), requestMonitor);
             }
@@ -125,7 +122,7 @@ public class PDAServicesInitSequence extends Sequence {
         fRequestPort = requestPort;
         fEventPort = eventPort;
     }
-    
+
     @Override
     public Step[] getSteps() {
         return fSteps;

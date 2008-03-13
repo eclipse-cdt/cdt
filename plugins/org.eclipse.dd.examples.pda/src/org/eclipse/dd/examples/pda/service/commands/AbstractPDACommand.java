@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.dd.examples.pda.service.commands;
 
+import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.service.command.ICommand;
 import org.eclipse.dd.dsf.debug.service.command.ICommandResult;
@@ -20,6 +21,7 @@ import org.eclipse.dd.examples.pda.service.PDAProgramDMContext;
  * a context.  Since the PDA debugger protocol is stateless, the context is only 
  * needed to satisfy the ICommand interface.   
  */
+@Immutable
 abstract public class AbstractPDACommand<V extends PDACommandResult> implements ICommand<V> {
 
     final private IDMContext fContext;

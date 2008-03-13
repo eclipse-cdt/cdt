@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.dd.examples.pda.service.commands;
 
+import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.examples.pda.service.PDAProgramDMContext;
 
 /**
@@ -20,6 +21,7 @@ import org.eclipse.dd.examples.pda.service.PDAProgramDMContext;
  *    R: {file}|{line}|{function}|{var_1}|{var_2}|...#{file}|{line}|{function}|{var_1}|{var_2}|...#...
  * </pre>
  */
+@Immutable
 public class PDAStackCommand extends AbstractPDACommand<PDAStackCommandResult> {
 
     public PDAStackCommand(PDAProgramDMContext context) {

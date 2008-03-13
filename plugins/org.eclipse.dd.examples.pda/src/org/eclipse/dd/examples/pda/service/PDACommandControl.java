@@ -83,15 +83,20 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
     private final List<IEventListener>   fEventListeners = new ArrayList<IEventListener>();
     
     // Sockets for communicating with PDA debugger 
+    @ThreadSafe
     private Socket fRequestSocket;
+    @ThreadSafe
     private PrintWriter fRequestWriter;
+    @ThreadSafe
     private BufferedReader fRequestReader;
+    @ThreadSafe
     private Socket fEventSocket;
+    @ThreadSafe
     private BufferedReader fEventReader;
 
     // Jobs servicing the sockets.
     private EventDispatchJob fEventDispatchJob;
-    private CommandSendJob fRequestJob;
+    private CommandSendJob fCommandSendJob;
     
     /**
      * Command control constructor. 
@@ -170,8 +175,8 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
                     fEventDispatchJob = new EventDispatchJob();
                     fEventDispatchJob.schedule();
                     
-                    fRequestJob = new CommandSendJob();
-                    fRequestJob.schedule();
+                    fCommandSendJob = new CommandSendJob();
+                    fCommandSendJob.schedule();
 
                     socketsInitializeRm.done();
                 } catch (UnknownHostException e) {

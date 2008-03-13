@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.dd.examples.pda.service.commands;
 
+import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.examples.pda.service.PDAProgramDMContext;
 
 /**
@@ -20,6 +21,7 @@ import org.eclipse.dd.examples.pda.service.PDAProgramDMContext;
  *    R: ok
  * </pre>
  */
+@Immutable
 public class PDASetVarCommand extends AbstractPDACommand<PDACommandResult> {
 
     public PDASetVarCommand(PDAProgramDMContext context, int frame, String variable, String value) {

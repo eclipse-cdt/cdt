@@ -174,7 +174,6 @@ public class PDAAdapterFactory implements IAdapterFactory, ILaunchesListener2
         // Returns the adapter type for the launch object.
         if (adapterType.equals(IElementContentProvider.class)) return adapterSet.fViewModelAdapter;
         else if (adapterType.equals(IModelProxyFactory.class)) return adapterSet.fViewModelAdapter;
-        else if (adapterType.equals(IColumnPresentationFactory.class)) return adapterSet.fViewModelAdapter;
         else return null;
     }
 

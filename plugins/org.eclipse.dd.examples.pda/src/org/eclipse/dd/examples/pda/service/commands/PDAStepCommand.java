@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.dd.examples.pda.service.commands;
 
+import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.examples.pda.service.PDAProgramDMContext;
 
 /**
- * Executes next instruciton 
+ * Executes next instruction 
  * 
  * <pre>
  *    C: step
@@ -22,6 +23,7 @@ import org.eclipse.dd.examples.pda.service.PDAProgramDMContext;
  *    E: suspended step
  * </pre>
  */
+@Immutable
 public class PDAStepCommand extends AbstractPDACommand<PDACommandResult> {
 
     public PDAStepCommand(PDAProgramDMContext context) {

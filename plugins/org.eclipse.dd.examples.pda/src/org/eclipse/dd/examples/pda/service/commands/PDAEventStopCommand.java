@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.dd.examples.pda.service.commands;
 
+import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.examples.pda.service.PDAProgramDMContext;
 
 /**
@@ -24,6 +25,7 @@ import org.eclipse.dd.examples.pda.service.PDAProgramDMContext;
  * 
  * Where event_name could be <code>unimpinstr</code> or <code>nosuchlabel</code>.  
  */
+@Immutable
 public class PDAEventStopCommand extends AbstractPDACommand<PDACommandResult> {
 
     public enum Event { UNIMPINSTR, NOSUCHLABEL };

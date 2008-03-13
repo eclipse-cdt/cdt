@@ -14,10 +14,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.eclipse.dd.dsf.concurrent.Immutable;
+
 
 /**
  * @see PDADataCommand
  */
+@Immutable
 public class PDADataCommandResult extends PDACommandResult {
     
     final public String[] fValues;

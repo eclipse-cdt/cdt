@@ -182,7 +182,7 @@ public class PDARunControl extends AbstractDsfService
         if (!(output instanceof String)) return;
         String event = (String)output;
         
-        // Handle PDA debugger suspende/resumed events and issue the 
+        // Handle PDA debugger suspended/resumed events and issue the 
         // corresponding Data Model events.  Do not update the state
         // information until we start dispatching the service events.
         if (event.startsWith("suspended")) {
@@ -248,6 +248,7 @@ public class PDARunControl extends AbstractDsfService
                         // If the resume command failed, we no longer
                         // expect to receive a resumed event.
                         fResumePending = false;
+                        super.handleErrorOrCancel();
                     }
             	}
             );

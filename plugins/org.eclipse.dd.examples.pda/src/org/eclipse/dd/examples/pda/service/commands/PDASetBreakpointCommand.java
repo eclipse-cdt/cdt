@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.dd.examples.pda.service.commands;
 
+import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.examples.pda.service.PDAProgramDMContext;
 
 /**
@@ -23,6 +24,7 @@ import org.eclipse.dd.examples.pda.service.PDAProgramDMContext;
  *    E: suspended breakpoint line_number
  * </pre>
  */
+@Immutable
 public class PDASetBreakpointCommand extends AbstractPDACommand<PDACommandResult> {
 
     public PDASetBreakpointCommand(PDAProgramDMContext context, int line) {

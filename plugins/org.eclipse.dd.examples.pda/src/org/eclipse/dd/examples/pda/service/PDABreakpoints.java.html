@@ -1,0 +1,416 @@
+
+<html>
+<head>
+<title>PDABreakpoints.java</title>
+<meta name="generator" content="java2html 0.9.2">
+<meta name="date" content="2008-03-12T17:15:51+00:00">
+</head>
+
+<body bgcolor="#FFFFFF">
+<pre width="80"><a name="line1">  1: </a><font color="#B22222">/*******************************************************************************</font>
+<a name="line2">  2: </a><font color="#B22222"> * Copyright (c) 2007 Ericsson and others.</font>
+<a name="line3">  3: </a><font color="#B22222"> * All rights reserved. This program and the accompanying materials</font>
+<a name="line4">  4: </a><font color="#B22222"> * are made available under the terms of the Eclipse Public License v1.0</font>
+<a name="line5">  5: </a><font color="#B22222"> * which accompanies this distribution, and is available at</font>
+<a name="line6">  6: </a><font color="#B22222"> * http://www.eclipse.org/legal/epl-v10.html</font>
+<a name="line7">  7: </a><font color="#B22222"> *</font>
+<a name="line8">  8: </a><font color="#B22222"> * Contributors:</font>
+<a name="line9">  9: </a><font color="#B22222"> *     Ericsson - Initial API and implementation</font>
+<a name="line10"> 10: </a><font color="#B22222"> *******************************************************************************/</font>
+
+<a name="line12"> 12: </a>package org.eclipse.dd.examples.pda.service;
+
+<a name="line14"> 14: </a><font color="#228B22">import java.util.HashSet;</font>
+<a name="line15"> 15: </a><font color="#228B22">import java.util.Hashtable;</font>
+<a name="line16"> 16: </a><font color="#228B22">import java.util.Map;</font>
+<a name="line17"> 17: </a><font color="#228B22">import java.util.Set;</font>
+
+<a name="line19"> 19: </a><font color="#228B22">import org.eclipse.core.resources.IMarker;</font>
+<a name="line20"> 20: </a><font color="#228B22">import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;</font>
+<a name="line21"> 21: </a><font color="#228B22">import org.eclipse.dd.dsf.concurrent.Immutable;</font>
+<a name="line22"> 22: </a><font color="#228B22">import org.eclipse.dd.dsf.concurrent.RequestMonitor;</font>
+<a name="line23"> 23: </a><font color="#228B22">import org.eclipse.dd.dsf.datamodel.AbstractDMContext;</font>
+<a name="line24"> 24: </a><font color="#228B22">import org.eclipse.dd.dsf.datamodel.DMContexts;</font>
+<a name="line25"> 25: </a><font color="#228B22">import org.eclipse.dd.dsf.datamodel.IDMContext;</font>
+<a name="line26"> 26: </a><font color="#228B22">import org.eclipse.dd.dsf.debug.service.IBreakpoints;</font>
+<a name="line27"> 27: </a><font color="#228B22">import org.eclipse.dd.dsf.service.AbstractDsfService;</font>
+<a name="line28"> 28: </a><font color="#228B22">import org.eclipse.dd.dsf.service.DsfSession;</font>
+<a name="line29"> 29: </a><font color="#228B22">import org.eclipse.dd.examples.pda.PDAPlugin;</font>
+<a name="line30"> 30: </a><font color="#228B22">import org.eclipse.dd.examples.pda.breakpoints.PDAWatchpoint;</font>
+<a name="line31"> 31: </a><font color="#228B22">import org.eclipse.dd.examples.pda.service.commands.PDAClearBreakpointCommand;</font>
+<a name="line32"> 32: </a><font color="#228B22">import org.eclipse.dd.examples.pda.service.commands.PDACommandResult;</font>
+<a name="line33"> 33: </a><font color="#228B22">import org.eclipse.dd.examples.pda.service.commands.PDASetBreakpointCommand;</font>
+<a name="line34"> 34: </a><font color="#228B22">import org.eclipse.dd.examples.pda.service.commands.PDAWatchCommand;</font>
+<a name="line35"> 35: </a><font color="#228B22">import org.eclipse.debug.core.model.IBreakpoint;</font>
+<a name="line36"> 36: </a><font color="#228B22">import org.osgi.framework.BundleContext;</font>
+
+<a name="line38"> 38: </a><font color="#B22222">/**</font>
+<a name="line39"> 39: </a><font color="#B22222"> * Initial breakpoint service implementation.</font>
+<a name="line40"> 40: </a><font color="#B22222"> * Implements the IBreakpoints interface.</font>
+<a name="line41"> 41: </a><font color="#B22222"> */</font>
+<a name="line42"> 42: </a><strong><font color="#4169E1"><a name="PDABreakpoints"></a>public class PDABreakpoints extends AbstractDsfService implements IBreakpoints</font></strong>
+<a name="line43"> 43: </a>{
+<a name="line44"> 44: </a>    <font color="#B22222">/**</font>
+<a name="line45"> 45: </a><font color="#B22222">     * Context representing a PDA line breakpoint.  In PDA debugger, since there is only </font>
+<a name="line46"> 46: </a><font color="#B22222">     * one file being debugged at a time, a breakpoint is uniquely identified using the </font>
+<a name="line47"> 47: </a><font color="#B22222">     * line number only.</font>
+<a name="line48"> 48: </a><font color="#B22222">     */</font>
+<a name="line49"> 49: </a>    @Immutable
+<a name="line50"> 50: </a>    private static class BreakpointDMContext extends AbstractDMContext implements IBreakpointDMContext {
+
+<a name="line52"> 52: </a>        final Integer fLine;
+
+<a name="line54"> 54: </a><strong><font color="#4169E1">        public BreakpointDMContext(String sessionId, PDAProgramDMContext commandControlCtx, Integer line)</font></strong> {
+<a name="line55"> 55: </a>            super(sessionId, new IDMContext[] { commandControlCtx });
+<a name="line56"> 56: </a>            fLine = line;
+<a name="line57"> 57: </a>        }
+
+<a name="line59"> 59: </a>        @Override
+<a name="line60"> 60: </a><strong><font color="#4169E1">        public boolean equals(Object obj)</font></strong> {
+<a name="line61"> 61: </a>            <font color="#4169E1">return</font> baseEquals(obj) &amp;&amp; (fLine.equals(((BreakpointDMContext) obj).fLine));
+<a name="line62"> 62: </a>        }
+
+<a name="line64"> 64: </a>        @Override
+<a name="line65"> 65: </a><strong><font color="#4169E1">        public int hashCode()</font></strong> {
+<a name="line66"> 66: </a>            <font color="#4169E1">return</font> baseHashCode() + fLine.hashCode();
+<a name="line67"> 67: </a>        }
+
+<a name="line69"> 69: </a>        @Override
+<a name="line70"> 70: </a><strong><font color="#4169E1">        public String toString()</font></strong> {
+<a name="line71"> 71: </a>            <font color="#4169E1">return</font> baseToString() + <font color="#666666">".breakpoint("</font> + fLine + <font color="#666666">")"</font>;  <font color="#B22222">//$NON-NLS-1$//$NON-NLS-2$*/</font>
+<a name="line72"> 72: </a>        }
+<a name="line73"> 73: </a>    }
+
+<a name="line75"> 75: </a>    <font color="#B22222">/**</font>
+<a name="line76"> 76: </a><font color="#B22222">     * Context representing a watch point.  In PDA debugger, a watchpoint is </font>
+<a name="line77"> 77: </a><font color="#B22222">     * uniquely identified using the function and variable.</font>
+<a name="line78"> 78: </a><font color="#B22222">     */</font>
+<a name="line79"> 79: </a>    @Immutable
+<a name="line80"> 80: </a>    private static class WatchpointDMContext extends AbstractDMContext implements IBreakpointDMContext {
+<a name="line81"> 81: </a>        final String fFunction;
+<a name="line82"> 82: </a>        final String fVariable; 
+
+<a name="line84"> 84: </a><strong><font color="#4169E1">        public WatchpointDMContext(String sessionId, PDAProgramDMContext commandControlCtx, String function, </font></strong>
+<a name="line85"> 85: </a><strong><font color="#4169E1">            String variable)</font></strong> 
+<a name="line86"> 86: </a>        {
+<a name="line87"> 87: </a>            super(sessionId, new IDMContext[] { commandControlCtx });
+<a name="line88"> 88: </a>            fFunction = function;
+<a name="line89"> 89: </a>            fVariable = variable;
+<a name="line90"> 90: </a>        }
+
+<a name="line92"> 92: </a>        @Override
+<a name="line93"> 93: </a><strong><font color="#4169E1">        public boolean equals(Object obj)</font></strong> {
+<a name="line94"> 94: </a>            <font color="#4169E1">if</font> (baseEquals(obj)) {
+<a name="line95"> 95: </a>                WatchpointDMContext watchpointCtx = (WatchpointDMContext)obj;
+<a name="line96"> 96: </a>                <font color="#4169E1">return</font> fFunction.equals(watchpointCtx.fFunction) &amp;&amp; fVariable.equals(watchpointCtx.fVariable);
+<a name="line97"> 97: </a>            }
+<a name="line98"> 98: </a>            <font color="#4169E1">return</font> false;
+<a name="line99"> 99: </a>        }
+
+<a name="line101">101: </a>        @Override
+<a name="line102">102: </a><strong><font color="#4169E1">        public int hashCode()</font></strong> {
+<a name="line103">103: </a>            <font color="#4169E1">return</font> baseHashCode() + fFunction.hashCode() + fVariable.hashCode();
+<a name="line104">104: </a>        }
+
+<a name="line106">106: </a>        @Override
+<a name="line107">107: </a><strong><font color="#4169E1">        public String toString()</font></strong> {
+<a name="line108">108: </a>            <font color="#4169E1">return</font> baseToString() + <font color="#666666">".watchpoint("</font> + fFunction + <font color="#666666">"::"</font> + fVariable + <font color="#666666">")"</font>;
+<a name="line109">109: </a>        }
+<a name="line110">110: </a>    }
+
+<a name="line112">112: </a>    <font color="#B22222">// Attribute names</font>
+<a name="line113">113: </a>    public static final String ATTR_BREAKPOINT_TYPE = PDAPlugin.PLUGIN_ID + <font color="#666666">".pdaBreakpointType"</font>;      <font color="#B22222">//$NON-NLS-1$</font>
+<a name="line114">114: </a>    public static final String PDA_LINE_BREAKPOINT = <font color="#666666">"breakpoint"</font>;                 <font color="#B22222">//$NON-NLS-1$</font>
+<a name="line115">115: </a>    public static final String PDA_WATCHPOINT = <font color="#666666">"watchpoint"</font>;                 <font color="#B22222">//$NON-NLS-1$</font>
+<a name="line116">116: </a>    public static final String ATTR_PROGRAM_PATH = PDAPlugin.PLUGIN_ID + <font color="#666666">".pdaProgramPath"</font>;      <font color="#B22222">//$NON-NLS-1$</font>
+
+<a name="line118">118: </a>    <font color="#B22222">// Services</font>
+<a name="line119">119: </a>    private PDACommandControl fCommandControl;
+
+<a name="line121">121: </a>    <font color="#B22222">// Breakpoints currently installed</font>
+<a name="line122">122: </a>    private Set&lt;IBreakpointDMContext&gt; fBreakpoints = new HashSet&lt;IBreakpointDMContext&gt;();
+
+<a name="line124">124: </a>    <font color="#B22222">/**</font>
+<a name="line125">125: </a><font color="#B22222">     * The service constructor</font>
+<a name="line126">126: </a><font color="#B22222">     * </font>
+<a name="line127">127: </a><font color="#B22222">     * @param session The debugging session this service belongs to.</font>
+<a name="line128">128: </a><font color="#B22222">     */</font>
+<a name="line129">129: </a><strong><font color="#4169E1">    public PDABreakpoints(DsfSession session)</font></strong> {
+<a name="line130">130: </a>        super(session);
+<a name="line131">131: </a>    }
+
+<a name="line133">133: </a>    @Override
+<a name="line134">134: </a><strong><font color="#4169E1">    public void initialize(final RequestMonitor rm)</font></strong> {
+<a name="line135">135: </a>        super.initialize(new RequestMonitor(getExecutor(), rm) {
+<a name="line136">136: </a>            @Override
+<a name="line137">137: </a><strong><font color="#4169E1">            protected void handleOK()</font></strong> {
+<a name="line138">138: </a>                doInitialize(rm);
+<a name="line139">139: </a>            }
+<a name="line140">140: </a>        });
+<a name="line141">141: </a>    }
+
+<a name="line143">143: </a><strong><font color="#4169E1">    private void doInitialize(final RequestMonitor rm)</font></strong> {
+<a name="line144">144: </a>        <font color="#B22222">// Get the services references</font>
+<a name="line145">145: </a>        fCommandControl = getServicesTracker().getService(PDACommandControl.class);
+
+<a name="line147">147: </a>        <font color="#B22222">// Register this service</font>
+<a name="line148">148: </a>        register(new String[] { IBreakpoints.class.getName(), PDABreakpoints.class.getName() },
+<a name="line149">149: </a>            new Hashtable&lt;String, String&gt;());
+
+<a name="line151">151: </a>        rm.done();
+<a name="line152">152: </a>    }
+
+<a name="line154">154: </a>    @Override
+<a name="line155">155: </a><strong><font color="#4169E1">    public void shutdown(final RequestMonitor rm)</font></strong> {
+<a name="line156">156: </a>        unregister();
+<a name="line157">157: </a>        rm.done();
+<a name="line158">158: </a>    }
+
+<a name="line160">160: </a>    @Override
+<a name="line161">161: </a><strong><font color="#4169E1">    protected BundleContext getBundleContext()</font></strong> {
+<a name="line162">162: </a>        <font color="#4169E1">return</font> PDAPlugin.getBundleContext();
+<a name="line163">163: </a>    }
+
+<a name="line165">165: </a>    public void getBreakpoints(final IBreakpointsTargetDMContext context, final DataRequestMonitor&lt;IBreakpointDMContext[]&gt; rm) {
+<a name="line166">166: </a>        <font color="#B22222">// Validate the context</font>
+<a name="line167">167: </a>        <font color="#4169E1">if</font> (!fCommandControl.getProgramDMContext().equals(context)) {
+<a name="line168">168: </a>            PDAPlugin.failRequest(rm, INVALID_HANDLE, <font color="#666666">"Invalid breakpoints target context"</font>);
+<a name="line169">169: </a>            <font color="#4169E1">return</font>;
+<a name="line170">170: </a>        }
+
+<a name="line172">172: </a>        rm.setData(fBreakpoints.toArray(new IBreakpointDMContext[fBreakpoints.size()]));
+<a name="line173">173: </a>        rm.done();
+<a name="line174">174: </a>    }
+
+<a name="line176">176: </a>    public void getBreakpointDMData(IBreakpointDMContext dmc, DataRequestMonitor&lt;IBreakpointDMData&gt; rm) {
+<a name="line177">177: </a>        PDAPlugin.failRequest(rm, NOT_SUPPORTED, <font color="#666666">"Retrieving breakpoint data is not supported"</font>);
+<a name="line178">178: </a>    }
+
+<a name="line180">180: </a>    public void insertBreakpoint(IBreakpointsTargetDMContext context, Map&lt;String, Object&gt; attributes, 
+<a name="line181">181: </a>        DataRequestMonitor&lt;IBreakpointDMContext&gt; rm) 
+<a name="line182">182: </a>    {
+<a name="line183">183: </a>        Boolean enabled = (Boolean)attributes.get(IBreakpoint.ENABLED);
+<a name="line184">184: </a>        <font color="#4169E1">if</font> (enabled != null &amp;&amp; !enabled.booleanValue()) {
+<a name="line185">185: </a>            <font color="#B22222">// If the breakpoint is disabled, just fail the request. </font>
+<a name="line186">186: </a>            PDAPlugin.failRequest(rm, REQUEST_FAILED, <font color="#666666">"Breakpoint is disabled"</font>);
+<a name="line187">187: </a>        } <font color="#4169E1">else</font> {
+<a name="line188">188: </a>            String type = (String) attributes.get(ATTR_BREAKPOINT_TYPE);
+
+<a name="line190">190: </a>            <font color="#4169E1">if</font> (PDA_LINE_BREAKPOINT.equals(type)) {
+<a name="line191">191: </a>                <font color="#B22222">// Retrieve the PDA program context from the context given in the </font>
+<a name="line192">192: </a>                <font color="#B22222">// argument.  This service is typically only called by the </font>
+<a name="line193">193: </a>                <font color="#B22222">// breakpoints mediator, which was called with the program context</font>
+<a name="line194">194: </a>                <font color="#B22222">// in the services initialization sequence.  So checking if </font>
+<a name="line195">195: </a>                <font color="#B22222">// programCtx != null is mostly a formality.</font>
+<a name="line196">196: </a>                PDAProgramDMContext programCtx = DMContexts.getAncestorOfType(context, PDAProgramDMContext.class);
+<a name="line197">197: </a>                <font color="#4169E1">if</font> (programCtx != null) {
+<a name="line198">198: </a>                    doInsertBreakpoint(programCtx, attributes, rm);
+<a name="line199">199: </a>                } <font color="#4169E1">else</font> {
+<a name="line200">200: </a>                    PDAPlugin.failRequest(rm, INVALID_HANDLE, <font color="#666666">"Unknown breakpoint type"</font>);
+<a name="line201">201: </a>                }
+<a name="line202">202: </a>            }
+<a name="line203">203: </a>            <font color="#4169E1">else</font> <font color="#4169E1">if</font> (PDA_WATCHPOINT.equals(type)) {
+<a name="line204">204: </a>                doInsertWatchpoint(attributes, rm);
+<a name="line205">205: </a>            }
+<a name="line206">206: </a>            <font color="#4169E1">else</font> {
+<a name="line207">207: </a>                PDAPlugin.failRequest(rm, REQUEST_FAILED, <font color="#666666">"Unknown breakpoint type"</font>);
+<a name="line208">208: </a>            }
+<a name="line209">209: </a>        }
+<a name="line210">210: </a>    }
+
+<a name="line212">212: </a>    private void doInsertBreakpoint(PDAProgramDMContext programCtx, final Map&lt;String, Object&gt; attributes, final DataRequestMonitor&lt;IBreakpointDMContext&gt; rm) 
+<a name="line213">213: </a>    {
+<a name="line214">214: </a>        <font color="#B22222">// Compare the program path in the breakpoint with the path in the PDA </font>
+<a name="line215">215: </a>        <font color="#B22222">// program context. Only insert the breakpoint if the program matches. </font>
+<a name="line216">216: </a>        String program = (String)attributes.get(ATTR_PROGRAM_PATH);
+<a name="line217">217: </a>        <font color="#4169E1">if</font> (!programCtx.getProgram().equals(program)) {
+<a name="line218">218: </a>            PDAPlugin.failRequest(rm, REQUEST_FAILED, <font color="#666666">"Invalid file name"</font>);
+<a name="line219">219: </a>            <font color="#4169E1">return</font>;
+<a name="line220">220: </a>        }
+
+<a name="line222">222: </a>        <font color="#B22222">// Retrieve the line.</font>
+<a name="line223">223: </a>        Integer line = (Integer)attributes.get(IMarker.LINE_NUMBER);
+<a name="line224">224: </a>        <font color="#4169E1">if</font> (line == null) {
+<a name="line225">225: </a>            PDAPlugin.failRequest(rm, REQUEST_FAILED, <font color="#666666">"No breakpoint line specified"</font>);
+<a name="line226">226: </a>            <font color="#4169E1">return</font>;
+<a name="line227">227: </a>        }
+
+<a name="line229">229: </a>        <font color="#B22222">// Create a new breakpoint context object and check that it's not </font>
+<a name="line230">230: </a>        <font color="#B22222">// installed already. PDA can only track a single breakpoint at a </font>
+<a name="line231">231: </a>        <font color="#B22222">// given line, attempting to set the second breakpoint should fail.</font>
+<a name="line232">232: </a>        final BreakpointDMContext breakpointCtx = 
+<a name="line233">233: </a>            new BreakpointDMContext(getSession().getId(), fCommandControl.getProgramDMContext(), line);
+<a name="line234">234: </a>        <font color="#4169E1">if</font> (fBreakpoints.contains(breakpointCtx)) {
+<a name="line235">235: </a>            PDAPlugin.failRequest(rm, REQUEST_FAILED, <font color="#666666">"Breakpoint already set"</font>);
+<a name="line236">236: </a>            <font color="#4169E1">return</font>;
+<a name="line237">237: </a>        }
+
+<a name="line239">239: </a>        <font color="#B22222">// Add the new breakpoint context to the list of known breakpoints.  </font>
+<a name="line240">240: </a>        <font color="#B22222">// Adding it here, before the set command is completed will prevent </font>
+<a name="line241">241: </a>        <font color="#B22222">// a possibility of a second breakpoint being installed in the same </font>
+<a name="line242">242: </a>        <font color="#B22222">// location while this breakpoint is being processed.  It will also</font>
+<a name="line243">243: </a>        <font color="#B22222">// allow the breakpoint to be removed or updated even while it is </font>
+<a name="line244">244: </a>        <font color="#B22222">// still being processed here.</font>
+<a name="line245">245: </a>        fBreakpoints.add(breakpointCtx);
+<a name="line246">246: </a>        fCommandControl.queueCommand(
+<a name="line247">247: </a>            new PDASetBreakpointCommand(fCommandControl.getProgramDMContext(), line), 
+<a name="line248">248: </a>            new DataRequestMonitor&lt;PDACommandResult&gt;(getExecutor(), rm) {
+<a name="line249">249: </a>                @Override
+<a name="line250">250: </a><strong><font color="#4169E1">                protected void handleOK()</font></strong> {
+<a name="line251">251: </a>                    rm.setData(breakpointCtx);
+<a name="line252">252: </a>                    rm.done();
+<a name="line253">253: </a>                }
+
+<a name="line255">255: </a>                @Override
+<a name="line256">256: </a><strong><font color="#4169E1">                protected void handleErrorOrCancel()</font></strong> {
+<a name="line257">257: </a>                    <font color="#B22222">// If inserting of the breakpoint failed, remove it from</font>
+<a name="line258">258: </a>                    <font color="#B22222">// the set of installed breakpoints.</font>
+<a name="line259">259: </a>                    fBreakpoints.remove(breakpointCtx);
+<a name="line260">260: </a>                    super.handleErrorOrCancel();
+<a name="line261">261: </a>                }
+<a name="line262">262: </a>            });
+<a name="line263">263: </a>    }
+
+<a name="line265">265: </a>    private void doInsertWatchpoint(final Map&lt;String, Object&gt; attributes, final DataRequestMonitor&lt;IBreakpointDMContext&gt; rm) 
+<a name="line266">266: </a>    {
+<a name="line267">267: </a>        String function = (String)attributes.get(PDAWatchpoint.FUNCTION_NAME);
+<a name="line268">268: </a>        <font color="#4169E1">if</font> (function == null) {
+<a name="line269">269: </a>            PDAPlugin.failRequest(rm, REQUEST_FAILED, <font color="#666666">"No function specified"</font>);
+<a name="line270">270: </a>            <font color="#4169E1">return</font>;
+<a name="line271">271: </a>        }
+
+<a name="line273">273: </a>        String variable = (String)attributes.get(PDAWatchpoint.VAR_NAME);
+<a name="line274">274: </a>        <font color="#4169E1">if</font> (variable == null) {
+<a name="line275">275: </a>            PDAPlugin.failRequest(rm, REQUEST_FAILED, <font color="#666666">"No variable specified"</font>);
+<a name="line276">276: </a>            <font color="#4169E1">return</font>;
+<a name="line277">277: </a>        }
+
+<a name="line279">279: </a>        Boolean isAccess = (Boolean)attributes.get(PDAWatchpoint.ACCESS);
+<a name="line280">280: </a>        isAccess = isAccess != null ? isAccess : Boolean.FALSE; 
+
+<a name="line282">282: </a>        Boolean isModification = (Boolean)attributes.get(PDAWatchpoint.MODIFICATION);
+<a name="line283">283: </a>        isModification = isModification != null ? isModification : Boolean.FALSE; 
+
+<a name="line285">285: </a>        <font color="#B22222">// Create a new watchpoint context object and check that it's not </font>
+<a name="line286">286: </a>        <font color="#B22222">// installed already. PDA can only track a single watchpoint for a given</font>
+<a name="line287">287: </a>        <font color="#B22222">// function::variable, attempting to set the second breakpoint should fail.</font>
+<a name="line288">288: </a>        final WatchpointDMContext watchpointCtx = 
+<a name="line289">289: </a>            new WatchpointDMContext(getSession().getId(), fCommandControl.getProgramDMContext(), function, variable);
+<a name="line290">290: </a>        <font color="#4169E1">if</font> (fBreakpoints.contains(watchpointCtx)) {
+<a name="line291">291: </a>            PDAPlugin.failRequest(rm, REQUEST_FAILED, <font color="#666666">"Watchpoint already set"</font>);
+<a name="line292">292: </a>            <font color="#4169E1">return</font>;
+<a name="line293">293: </a>        }
+
+<a name="line295">295: </a>        <font color="#B22222">// Determine the watch operation to perform.</font>
+<a name="line296">296: </a>        PDAWatchCommand.WatchOperation watchOperation = PDAWatchCommand.WatchOperation.NONE;
+<a name="line297">297: </a>        <font color="#4169E1">if</font> (isAccess &amp;&amp; isModification) {
+<a name="line298">298: </a>            watchOperation = PDAWatchCommand.WatchOperation.BOTH;
+<a name="line299">299: </a>        } <font color="#4169E1">else</font> <font color="#4169E1">if</font> (isAccess) {
+<a name="line300">300: </a>            watchOperation = PDAWatchCommand.WatchOperation.READ;
+<a name="line301">301: </a>        } <font color="#4169E1">else</font> <font color="#4169E1">if</font> (isModification) {
+<a name="line302">302: </a>            watchOperation = PDAWatchCommand.WatchOperation.WRITE;
+<a name="line303">303: </a>        }
+
+<a name="line305">305: </a>        <font color="#B22222">// Add the new breakpoint context to the list of known breakpoints.  </font>
+<a name="line306">306: </a>        <font color="#B22222">// Adding it here, before the set command is completed will prevent </font>
+<a name="line307">307: </a>        <font color="#B22222">// a possibility of a second breakpoint being installed in the same </font>
+<a name="line308">308: </a>        <font color="#B22222">// location while this breakpoint is being processed.  It will also</font>
+<a name="line309">309: </a>        <font color="#B22222">// allow the breakpoint to be removed or updated even while it is </font>
+<a name="line310">310: </a>        <font color="#B22222">// still being processed here.</font>
+<a name="line311">311: </a>        fBreakpoints.add(watchpointCtx);
+<a name="line312">312: </a>        fCommandControl.queueCommand(
+<a name="line313">313: </a>            new PDAWatchCommand(fCommandControl.getProgramDMContext(), function, variable, watchOperation), 
+<a name="line314">314: </a>            new DataRequestMonitor&lt;PDACommandResult&gt;(getExecutor(), rm) {
+<a name="line315">315: </a>                @Override
+<a name="line316">316: </a><strong><font color="#4169E1">                protected void handleOK()</font></strong> {
+<a name="line317">317: </a>                    rm.setData(watchpointCtx);
+<a name="line318">318: </a>                    rm.done();
+<a name="line319">319: </a>                }
+
+<a name="line321">321: </a>                @Override
+<a name="line322">322: </a><strong><font color="#4169E1">                protected void handleErrorOrCancel()</font></strong> {
+<a name="line323">323: </a>                    <font color="#B22222">// Since the command failed, we need to remove the breakpoint from </font>
+<a name="line324">324: </a>                    <font color="#B22222">// the existing breakpoint set.</font>
+<a name="line325">325: </a>                    fBreakpoints.remove(watchpointCtx);
+<a name="line326">326: </a>                    super.handleErrorOrCancel();
+<a name="line327">327: </a>                }
+<a name="line328">328: </a>            });
+<a name="line329">329: </a>    }
+
+<a name="line331">331: </a><strong><font color="#4169E1">    public void removeBreakpoint(IBreakpointDMContext bpCtx, RequestMonitor rm)</font></strong> {
+<a name="line332">332: </a>        <font color="#4169E1">if</font> (!fBreakpoints.contains(bpCtx)) {
+<a name="line333">333: </a>            PDAPlugin.failRequest(rm, REQUEST_FAILED, <font color="#666666">"Breakpoint already removed"</font>);
+<a name="line334">334: </a>            <font color="#4169E1">return</font>;
+<a name="line335">335: </a>        }
+
+<a name="line337">337: </a>        <font color="#4169E1">if</font> (bpCtx instanceof BreakpointDMContext) {
+<a name="line338">338: </a>            doRemoveBreakpoint((BreakpointDMContext)bpCtx, rm);
+<a name="line339">339: </a>        } <font color="#4169E1">else</font> <font color="#4169E1">if</font> (bpCtx instanceof WatchpointDMContext) {
+<a name="line340">340: </a>            doRemoveWatchpoint((WatchpointDMContext)bpCtx, rm);
+<a name="line341">341: </a>        } <font color="#4169E1">else</font> {
+<a name="line342">342: </a>            PDAPlugin.failRequest(rm, INVALID_HANDLE, <font color="#666666">"Invalid breakpoint"</font>);
+<a name="line343">343: </a>        }
+<a name="line344">344: </a>    }
+
+<a name="line346">346: </a><strong><font color="#4169E1">    private void doRemoveBreakpoint(BreakpointDMContext bpCtx, RequestMonitor rm)</font></strong> {
+<a name="line347">347: </a>        <font color="#B22222">// Remove the breakpoint from the table right away, so that even when </font>
+<a name="line348">348: </a>        <font color="#B22222">// the remove is being processed, a new breakpoint can be created at the same </font>
+<a name="line349">349: </a>        <font color="#B22222">// location.</font>
+<a name="line350">350: </a>        fBreakpoints.remove(bpCtx);
+
+<a name="line352">352: </a>        fCommandControl.queueCommand(
+<a name="line353">353: </a>            new PDAClearBreakpointCommand(fCommandControl.getProgramDMContext(), bpCtx.fLine), 
+<a name="line354">354: </a>            new DataRequestMonitor&lt;PDACommandResult&gt;(getExecutor(), rm));        
+<a name="line355">355: </a>    }
+
+<a name="line357">357: </a><strong><font color="#4169E1">    private void doRemoveWatchpoint(WatchpointDMContext bpCtx, RequestMonitor rm)</font></strong> {
+<a name="line358">358: </a>        fBreakpoints.remove(bpCtx);
+
+<a name="line360">360: </a>        <font color="#B22222">// Watchpoints are cleared using the same command, but with a "no watch" operation</font>
+<a name="line361">361: </a>        fCommandControl.queueCommand(
+<a name="line362">362: </a>            new PDAWatchCommand(
+<a name="line363">363: </a>                fCommandControl.getProgramDMContext(), bpCtx.fFunction, bpCtx.fVariable, PDAWatchCommand.WatchOperation.NONE), 
+<a name="line364">364: </a>                new DataRequestMonitor&lt;PDACommandResult&gt;(getExecutor(), rm));        
+<a name="line365">365: </a>    }
+
+<a name="line367">367: </a>    public void updateBreakpoint(final IBreakpointDMContext bpCtx, Map&lt;String, Object&gt; attributes, final RequestMonitor rm) {
+<a name="line368">368: </a>        <font color="#4169E1">if</font> (!fBreakpoints.contains(bpCtx)) {
+<a name="line369">369: </a>            PDAPlugin.failRequest(rm, REQUEST_FAILED, <font color="#666666">"Breakpoint not installed"</font>);
+<a name="line370">370: </a>            <font color="#4169E1">return</font>;
+<a name="line371">371: </a>        }
+
+<a name="line373">373: </a>        <font color="#4169E1">if</font> (bpCtx instanceof BreakpointDMContext) {
+<a name="line374">374: </a>            PDAPlugin.failRequest(rm, NOT_SUPPORTED, <font color="#666666">"Modifying PDA breakpoints is not supported"</font>);
+<a name="line375">375: </a>        } <font color="#4169E1">else</font> <font color="#4169E1">if</font> (bpCtx instanceof WatchpointDMContext) {
+<a name="line376">376: </a>            WatchpointDMContext wpCtx = (WatchpointDMContext)bpCtx;
+<a name="line377">377: </a>            <font color="#4169E1">if</font> (!wpCtx.fFunction.equals(attributes.get(PDAWatchpoint.FUNCTION_NAME)) || 
+<a name="line378">378: </a>                !wpCtx.fVariable.equals(attributes.get(PDAWatchpoint.VAR_NAME)) )
+<a name="line379">379: </a>            {
+<a name="line380">380: </a>                PDAPlugin.failRequest(rm, REQUEST_FAILED, <font color="#666666">"Cannot modify watchpoint function or variable"</font>);
+<a name="line381">381: </a>                <font color="#4169E1">return</font>;
+<a name="line382">382: </a>            }
+<a name="line383">383: </a>            
+<a name="line384">384: </a>            <font color="#B22222">// PDA debugger can only track one watchpoint in the same location, </font>
+<a name="line385">385: </a>            <font color="#B22222">// so we can simply remove the existing context from the set and </font>
+<a name="line386">386: </a>            <font color="#B22222">// call insert again.  </font>
+<a name="line387">387: </a>            fBreakpoints.remove(bpCtx);
+<a name="line388">388: </a>            doInsertWatchpoint(
+<a name="line389">389: </a>                attributes, 
+<a name="line390">390: </a>                new DataRequestMonitor&lt;IBreakpointDMContext&gt;(getExecutor(), rm) {
+<a name="line391">391: </a>                    @Override
+<a name="line392">392: </a><strong><font color="#4169E1">                    protected void handleOK()</font></strong> {
+<a name="line393">393: </a>                        <font color="#B22222">// The inserted watchpoint context will equal the </font>
+<a name="line394">394: </a>                        <font color="#B22222">// current context.</font>
+<a name="line395">395: </a>                        assert bpCtx.equals(getData());
+<a name="line396">396: </a>                        rm.done();
+<a name="line397">397: </a>                    }
+<a name="line398">398: </a>                });
+<a name="line399">399: </a>        } <font color="#4169E1">else</font> {
+<a name="line400">400: </a>            PDAPlugin.failRequest(rm, INVALID_HANDLE, <font color="#666666">"Invalid breakpoint"</font>);
+<a name="line401">401: </a>        }
+<a name="line402">402: </a>    }
+<a name="line403">403: </a>}
+</pre>
+</body>
+
+</html>

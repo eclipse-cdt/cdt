@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.dd.examples.pda.service.commands;
 
+import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.examples.pda.service.PDAProgramDMContext;
 
 /**
@@ -21,6 +22,7 @@ import org.eclipse.dd.examples.pda.service.PDAProgramDMContext;
  *    E: suspended client
  * </pre>
  */
+@Immutable
 public class PDASuspendCommand extends AbstractPDACommand<PDACommandResult> {
 
     public PDASuspendCommand(PDAProgramDMContext context) {

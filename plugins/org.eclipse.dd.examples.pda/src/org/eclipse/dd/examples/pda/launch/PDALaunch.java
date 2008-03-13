@@ -43,17 +43,19 @@ import org.eclipse.debug.core.model.ITerminate;
  */
 @ThreadSafe
 public class PDALaunch extends Launch
-    implements ITerminate
+implements ITerminate
 {   
     // DSF executor and session.  Both are created and shutdown by the launch. 
     private final DefaultDsfExecutor fExecutor;
     private final DsfSession fSession;
 
     // Objects used to track the status of the DSF session.
-    private Sequence fInitializationSequence = null;
     private boolean fInitialized = false;
     private boolean fShutDown = false;
     
+    @ConfinedToDsfExecutor("getSession().getExecutor()")
+    private Sequence fInitializationSequence = null;
+
     /**
      * Launch constructor creates the launch for given parameters.  The
      * constructor also creates a DSF session and an executor, so that 
@@ -90,7 +92,7 @@ public class PDALaunch extends Launch
     {
         // Double-check that we're being called in the correct thread.
         assert fExecutor.isInExecutorThread();
-     
+
         // Check if shutdownServices() was called already, which would be 
         // highly unusual, but if so we don't need to do anything except set 
         // the initialized flag.
@@ -100,51 +102,47 @@ public class PDALaunch extends Launch
                 return;
             }
         }
-        
+
         // Register the launch as listener for services events.
         fSession.addServiceEventListener(PDALaunch.this, null);
-        
-        // Initialize the fInitializationSequence attribute in a synchronized
-        // block, because it may be accessed in another thread by shutdown().
+
         // The initialization sequence is stored in a field to allow it to be 
         // canceled if shutdownServices() is called before the sequence 
         // completes.
-        synchronized(this) {
-            fInitializationSequence = new PDAServicesInitSequence(
-                getSession(), program, requestPort, eventPort, 
-                new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
-                    @Override
-                    protected void handleCompleted() {
-                        // Set the initialized flag and check whether the 
-                        // shutdown flag is set.  Access the flags in a 
-                        // synchronized section as these flags can be accessed
-                        // on any thread.
-                        boolean doShutdown = false;
-                        synchronized (this) { 
-                            fInitialized = true;
-                            fInitializationSequence = null;
-                            if (fShutDown) {
-                                doShutdown = true;
-                            }
+        fInitializationSequence = new PDAServicesInitSequence(
+            getSession(), program, requestPort, eventPort, 
+            new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
+                @Override
+                protected void handleCompleted() {
+                    // Set the initialized flag and check whether the 
+                    // shutdown flag is set.  Access the flags in a 
+                    // synchronized section as these flags can be accessed
+                    // on any thread.
+                    boolean doShutdown = false;
+                    synchronized (this) { 
+                        fInitialized = true;
+                        fInitializationSequence = null;
+                        if (fShutDown) {
+                            doShutdown = true;
                         }
-                        
-                        if (doShutdown) {
-                            // If shutdownServices() was already called, start the 
-                            // shutdown sequence now.
-                            doShutdown(rm);
-                        } else {
-                            // If there was an error in the startup sequence, 
-                            // report the error to the client.
-                            if (getStatus().getSeverity() == IStatus.ERROR) {
-                                rm.setStatus(getStatus());
-                            }
-                            rm.done();
-                        }
-                        fireChanged();
                     }
-                });
-        }
-        
+
+                    if (doShutdown) {
+                        // If shutdownServices() was already called, start the 
+                        // shutdown sequence now.
+                        doShutdown(rm);
+                    } else {
+                        // If there was an error in the startup sequence, 
+                        // report the error to the client.
+                        if (getStatus().getSeverity() == IStatus.ERROR) {
+                            rm.setStatus(getStatus());
+                        }
+                        rm.done();
+                    }
+                    fireChanged();
+                }
+            });
+
         // Finally, execute the sequence. 
         getSession().getExecutor().execute(fInitializationSequence);
     }
@@ -163,7 +161,7 @@ public class PDALaunch extends Launch
     public synchronized boolean isInitialized() {
         return fInitialized;
     }
-    
+
     /**
      * Returns whether the DSF services have been set to shut down.
      * @return
@@ -171,7 +169,7 @@ public class PDALaunch extends Launch
     public synchronized boolean isShutDown() {
         return fShutDown;
     }
-    
+
     @Override
     public boolean canTerminate() {
         return super.canTerminate() && isInitialized() && !isShutDown();
@@ -223,7 +221,7 @@ public class PDALaunch extends Launch
             rm.done();
         }
     }
-    
+
     @ConfinedToDsfExecutor("getSession().getExecutor()")
     private void doShutdown(final RequestMonitor rm) {
         fExecutor.execute( new PDAServicesShutdownSequence(
@@ -242,13 +240,13 @@ public class PDALaunch extends Launch
                     // session-ended event, finish step only after the dispatch.
                     fExecutor.shutdown();
                     fireTerminate();
-                    
+
                     rm.setStatus(getStatus());
                     rm.done();
                 }
             }) );
     }
-    
+
     @SuppressWarnings("unchecked")
     @Override
     public Object getAdapter(Class adapter) {

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.dd.examples.pda.service.commands;
 
+import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.examples.pda.service.PDAProgramDMContext;
 
 /**
@@ -23,6 +24,7 @@ import org.eclipse.dd.examples.pda.service.PDAProgramDMContext;
  *    E: suspended watch {watch_operation} {function}::{variable_name}
  * </pre>
  */
+@Immutable
 public class PDAWatchCommand extends AbstractPDACommand<PDACommandResult> {
 
     public enum WatchOperation { READ, WRITE, BOTH, NONE };

@@ -43,11 +43,11 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
  * </ul> 
  */
 @SuppressWarnings("restriction")
-public class LaunchVMProvider extends AbstractDMVMProvider 
+public class PDALaunchVMProvider extends AbstractDMVMProvider 
     implements IDebugEventSetListener, ILaunchesListener2
 {
     @ThreadSafe
-    public LaunchVMProvider(AbstractVMAdapter adapter, IPresentationContext presentationContext, DsfSession session) 
+    public PDALaunchVMProvider(AbstractVMAdapter adapter, IPresentationContext presentationContext, DsfSession session) 
     {
         super(adapter, presentationContext, session);
         
@@ -55,13 +55,13 @@ public class LaunchVMProvider extends AbstractDMVMProvider
         setRootNode(launchNode);
 
         // Launch node is a parent to the processes and program nodes.
-        IVMNode threadsNode = new PDAProgramVMNode(this, getSession());
+        IVMNode pdaProgramNode = new PDAProgramVMNode(this, getSession());
         IVMNode processesNode = new StandardProcessVMNode(this);
-        addChildNodes(launchNode, new IVMNode[] { threadsNode, processesNode});
+        addChildNodes(launchNode, new IVMNode[] { pdaProgramNode, processesNode});
         
         // Stack frames node is under the PDA program node.
         IVMNode stackFramesNode = new StackFramesVMNode(this, getSession());
-        addChildNodes(threadsNode, new IVMNode[] { stackFramesNode });
+        addChildNodes(pdaProgramNode, new IVMNode[] { stackFramesNode });
 
         // Register the LaunchVM provider as a listener to debug and launch 
         // events.  These events are used by the launch and processes nodes.

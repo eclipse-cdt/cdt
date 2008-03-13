@@ -133,16 +133,18 @@ public class PDAProgramVMNode extends AbstractDMVMNode
     
     @Override
     protected void updateElementsInSessionThread(final IChildrenUpdate update) {
-        // Check if service is still available.  checkService() is a convenience
-        // method that marks the update as failed if the needed service is not 
-        // available.
-    	if (!checkService(PDACommandControl.class, null, update)) return;
-    	
     	// Get the instance of the service.  Note that there is no race condition
     	// in getting the service since this method is called only in the 
-    	// service executor thred.
+    	// service executor thread.
         final PDACommandControl commandControl = getServicesTracker().getService(PDACommandControl.class);
-         
+
+        // Check if the service is available.  If it is not, no elements are 
+        // updated.
+        if (commandControl == null) {
+            handleFailedUpdate(update);
+            return;
+        }
+        
         update.setChild(createVMContext(commandControl.getProgramDMContext()), 0);
         update.done();
     }
@@ -172,8 +174,11 @@ public class PDAProgramVMNode extends AbstractDMVMNode
     @ConfinedToDsfExecutor("getSession().getExecutor()")
     private void updateProgramLabelInSessionThread(final ILabelUpdate update) {
         // Get a reference to the run control service.
-        if (!checkService(IRunControl.class, null, update)) return;
         final IRunControl runControl = getServicesTracker().getService(IRunControl.class);
+        if (runControl == null) {
+            handleFailedUpdate(update);
+            return;
+        }
         
         // Find the PDA program context.
         final PDAProgramDMContext programCtx = 
@@ -191,7 +196,7 @@ public class PDAProgramVMNode extends AbstractDMVMNode
         }
         update.setImageDescriptor(DebugUITools.getImageDescriptor(imageKey), 0);
 
-        // Retrieve the last state chagne reason 
+        // Retrieve the last state change reason 
         runControl.getExecutionData(
             programCtx, 
             new DataRequestMonitor<IExecutionDMData>(ImmediateExecutor.getInstance(), null) 

@@ -14,10 +14,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.eclipse.dd.dsf.concurrent.Immutable;
+
 
 /**
  * @see PDAStackCommand
  */
+@Immutable
 public class PDAStackCommandResult extends PDACommandResult {
     
     /**

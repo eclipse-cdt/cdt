@@ -63,7 +63,7 @@ public class PDABreakpointAttributeTranslator implements IBreakpointAttributeTra
     }
 
     public List<Map<String, Object>> getBreakpointAttributes(IBreakpoint bp, boolean bpManagerEnabled) 
-        throws CoreException 
+    throws CoreException 
     {
         Map<String, Object> attrs = new HashMap<String, Object>(); 
 
@@ -82,15 +82,15 @@ public class PDABreakpointAttributeTranslator implements IBreakpointAttributeTra
         // Copy breakpoint attributes.
         if (bp instanceof PDAWatchpoint) {
             attrs.put(PDABreakpoints.ATTR_BREAKPOINT_TYPE, PDABreakpoints.PDA_WATCHPOINT);
-            
+
             copyAttributes(platformBpAttrs, attrs, fgPDAWatchpointAttributes);
         } else if (bp instanceof PDALineBreakpoint) {
             attrs.put(PDABreakpoints.ATTR_BREAKPOINT_TYPE, PDABreakpoints.PDA_LINE_BREAKPOINT);
             attrs.put(PDABreakpoints.ATTR_PROGRAM_PATH, marker.getResource().getFullPath().toString()); 
-            
+
             copyAttributes(platformBpAttrs, attrs, fgPDALineBreakpointAttributes);
         }
-        
+
         // If the breakpoint manager is disabled, override the enabled attribute.
         if (!bpManagerEnabled) {
             attrs.put(IBreakpoint.ENABLED, false);
@@ -111,7 +111,7 @@ public class PDABreakpointAttributeTranslator implements IBreakpointAttributeTra
             }
         }
     }
-    
+
     public boolean canUpdateAttributes(IBreakpointDMContext bp, Map<String, Object> delta) {
         // PDA debugger only allows updating of the action property of the watchpoint.
         // All other breakpoint updates will require a re-installation.

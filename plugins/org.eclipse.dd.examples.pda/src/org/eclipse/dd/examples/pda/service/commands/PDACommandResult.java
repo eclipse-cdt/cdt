@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.dd.examples.pda.service.commands;
 
+import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.dsf.debug.service.command.ICommand;
 import org.eclipse.dd.dsf.debug.service.command.ICommandResult;
 
@@ -19,6 +20,7 @@ import org.eclipse.dd.dsf.debug.service.command.ICommandResult;
  * PDA response.  Sub-classes may override to optionally parse the response text
  * and return higher-level objects.
  */
+@Immutable
 public class PDACommandResult implements ICommandResult {
 
     final public String fResponseText;

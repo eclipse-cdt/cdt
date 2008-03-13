@@ -27,6 +27,7 @@
  * Xuan Chen        (IBM)        - [210816] Archive testcases throw ResourceException if they are run in batch
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
+ * David McKnight   (IBM)        - [222406] Need to be able to override local encoding
  *******************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -1520,6 +1521,9 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 				else {
 					// using text mode so the char set needs to be local
 					String localEncoding = System.getProperty("file.encoding"); //$NON-NLS-1$
+					if (properties.getLocalEncoding() != null){
+						localEncoding = properties.getLocalEncoding();
+					}					
 					file.setCharset(localEncoding, null);
 				}
 			}

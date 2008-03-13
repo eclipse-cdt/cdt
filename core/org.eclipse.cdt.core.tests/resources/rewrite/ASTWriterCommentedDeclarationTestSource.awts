@@ -35,6 +35,44 @@ int i = 2, y = 3; //TEST 2
 //TEST 3
 int b = 0; //TEST 4
 
+//!Commented SimpleDeclarationTest 2
+//%CPP
+/*TEST 1*/
+int i = 2, y = 3; /*TEST 2*/
+/*TEST 3*/
+int b = 0; /*TEST 4*/
+
+//!Commented ExplicitTemplateInstantion 1
+//%CPP
+//TEST 1
+template class vector<int>; //TEST 2
+
+//!Commented ExplicitTemplateInstantion 2
+//%CPP
+/*TEST 1*/
+template class vector<int>; /*TEST 2*/
+
+//!Commented GPPExplicitTemplateInstantion 1
+//%CPP GNU
+//TEST 1
+static template class vector<int>; //TEST 2
+//TEST 3
+inline template class vector<int>; //TEST 4
+//TEST 5
+inline template class vector<int>; //TEST 6
+
+//!Commented LinkageSpecification 1
+//%CPP
+//TEST 1
+extern "C" typedef void FUNC(); //TEST 2
+
+
+//!Commented LinkageSpecification 2
+//%CPP
+/*TEST 1*/
+extern "C" typedef void FUNC(); /*TEST 2*/
+
+
 //!Commented NamespaceAlias 1
 //%CPP
 //TEST 1
@@ -44,6 +82,41 @@ namespace kurz = ziemlichlangernamespace; //TEST 2
 //%CPP
 /*TEST 1*/
 namespace kurz = ziemlichlangernamespace; /*TEST 2*/
+
+//!Commented NamespaceDefinition 1
+//%CPP
+//TEST 1
+namespace ziemlichlangernamespace
+{
+    //TEST 2
+} //TEST 3
+
+//!Commented NamespaceDefinition 2
+//%CPP
+/*TEST 1*/
+namespace ziemlichlangernamespace
+{
+    /*TEST 2*/
+} /*TEST 3*/
+
+//!Commented NamespaceDefinition 3
+//%CPP
+namespace ziemlichlangernamespace
+{
+    //TEST
+}
+
+//!Commented NamespaceDefinition 4
+//%CPP
+namespace ziemlichlangernamespace
+{
+    //TEST
+}
+void doIt()
+{
+    int i = 0;
+}
+
 
 //!Commented TemplateDeclaration 1
 //%CPP

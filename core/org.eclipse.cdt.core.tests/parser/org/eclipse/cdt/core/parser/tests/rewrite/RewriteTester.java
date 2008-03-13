@@ -142,7 +142,7 @@ public class RewriteTester extends TestSuite{
 			}
 			return test;
 		} catch (ClassNotFoundException e) {
-			throw new Exception("Unknown TestClass. Make sure the test's sourcefile specifies a valid test class."); 
+			throw new Exception("Unknown TestClass: " + e.getMessage() + ". Make sure the test's sourcefile specifies a valid test class."); 
 		} catch (SecurityException e) {
 			throw new Exception("Security Exception during Test creation", e); 
 		} catch (NoSuchMethodException e) {

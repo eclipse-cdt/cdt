@@ -24,12 +24,16 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTDeclarationStatement;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTForStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionDefinition;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIfStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTLabelStatement;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTLinkageSpecification;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSwitchStatement;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTemplateDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTWhileStatement;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.internal.core.dom.rewrite.util.OffsetHelper;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -164,12 +168,12 @@ public class NodeCommenter {
 			return true;
 		}else if(parent instanceof IASTTranslationUnit) {
 			return true;
-		}else if(parent instanceof ICPPASTBaseSpecifier) {
-			parent = (ASTNode) parent.getParent();
 		}else if(parent instanceof ICPPASTTemplateDeclaration) {
 			return true;
 		}else if(parent instanceof CPPASTIfStatement) {
 			return true;
+		}else if(parent instanceof ICPPASTBaseSpecifier) {
+			parent = (ASTNode) parent.getParent();
 		}
 		return !(OffsetHelper.getNodeOffset(com) >= OffsetHelper.getNodeEndPoint(parent));
 	}
@@ -192,6 +196,14 @@ public class NodeCommenter {
 		}else if(node instanceof CPPASTSwitchStatement) {
 			return true;
 		}else if(node instanceof CPPASTWhileStatement) {
+			return true;
+		}else if(node instanceof CPPASTTemplateDeclaration) {
+			return true;
+		}else if(node instanceof CPPASTLinkageSpecification) {
+			return true;
+		}else if(node instanceof GPPASTExplicitTemplateInstantiation) {
+			return true;
+		}else if(node instanceof CPPASTExplicitTemplateInstantiation) {
 			return true;
 		}
 		return false;
@@ -234,6 +246,9 @@ public class NodeCommenter {
 	public void appendRemainingComments(IASTDeclaration declaration) {
 		while(commHandler.hasMore()) {
 			IASTComment comment = commHandler.getFirst();
+			if(appendComment((ASTNode)declaration, comment)) {
+				continue;
+			}
 			addFreestandingCommentToMap((ASTNode) declaration, comment);
 		}
 	}

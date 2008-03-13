@@ -22,34 +22,6 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
  *
  */
 public class NodeCommentMap {
-	
-	protected final HashMap<IASTNode, ArrayList<IASTComment>> map = new HashMap<IASTNode, ArrayList<IASTComment>>();
-	
-	public void addCommentToNode(IASTNode node, IASTComment comment){
-		ArrayList<IASTComment> comments = map.get(node);
-		if(comments == null){
-			comments = new ArrayList<IASTComment>();
-		}
-		comments.add(comment);
-		map.put(node, comments);
-	}
-	
-	public ArrayList<IASTComment> getCommentsForNode(IASTNode node){
-		if(map.get(node) == null) {
-			return new ArrayList<IASTComment>();
-		}
-		return map.get(node);
-	}
-
-	//needed for testing
-	public HashMap<IASTNode, ArrayList<IASTComment>> getMap() {
-		return map;
-	}
-	
-	
-	//===
-	//Erst nur einmal zu test zwecken
-	// Wenn wircklich gebraucht refactorn
 	protected final HashMap<IASTNode, ArrayList<IASTComment>> leadingMap = new HashMap<IASTNode, ArrayList<IASTComment>>();
 	protected final HashMap<IASTNode, ArrayList<IASTComment>> trailingMap = new HashMap<IASTNode, ArrayList<IASTComment>>();
 	protected final HashMap<IASTNode, ArrayList<IASTComment>> freestandingMap = new HashMap<IASTNode, ArrayList<IASTComment>>();

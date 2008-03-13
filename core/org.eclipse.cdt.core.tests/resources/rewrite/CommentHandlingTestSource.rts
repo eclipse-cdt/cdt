@@ -1,78 +1,3 @@
-//!CommentRecognition209 - von ASTWriter GPPExplicitTemplateInstantitation
-//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
-//@Klasse1.h
-//TEST 1
-static template class vector<int>; //TEST 2
-//TEST 3
-inline template class vector<int>; //TEST 4
-//TEST 5
-inline template class vector<int>; //TEST 6
-
-//=
-=>leading
-static template class vector<int>; = //TEST 1
-inline template class vector<int>; = //TEST 3
-inline template class vector<int>; = //TEST 5
-
-=>trailing
-static template class vector<int>; = //TEST 2
-inline template class vector<int>; = //TEST 4
-inline template class vector<int>; = //TEST 6
-
-=>freestanding
-
-//!CommentRecognition210 - von ASTWriter LinkageSpecification
-//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
-//@Klasse1.h
-//TEST 1
-extern "C" typedef void FUNC(); //TEST 2
-
-//=
-=>leading
-extern "C" typedef void FUNC(); = //TEST 1
-
-=>trailing
-extern "C" typedef void FUNC(); = //TEST 2
-
-=>freestanding
-
-//!CommentRecognition212 - von ASTWriter TemplateFunction
-//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
-//@Klasse1.h
-template<typename T> int tempFunct(T p)
-{
-    ++p;
-    p + 4;
-    return 0;
-} //Kommentar
-
-//=
-=>leading
-
-=>trailing
-template<typename T> int tempFunct(T p)
-{
-    ++p;
-    p + 4;
-    return 0;
-} = //Kommentar
-
-=>freestanding
-
-//!CommentRecognition213 - von ASTWriter DeclarationWithTraillingDoubleComments
-//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
-//@Klasse1.h
-int foo = bar; //Comment
- //Zweiteilig
-//=
-=>leading
-
-=>trailing
-int foo = bar; = //Comment
-
-=>freestanding
-int foo = bar; = //Zweiteilig
-
 //!CommentHandlingTest 1 - von CERP
 //#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
 //@test.h
@@ -2772,9 +2697,160 @@ template class vector<int>; //TEST 2
 template class vector<int>; = //TEST 1
 
 =>trailing
-template class vector<int>; = //TEST 2
+class vector<int>; = //TEST 2
 
 =>freestanding
+
+//!CommentRecognition209 - von ASTWriter GPPExplicitTemplateInstantitation
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+//TEST 1
+static template class vector<int>; //TEST 2
+//TEST 3
+inline template class vector<int>; //TEST 4
+//TEST 5
+inline template class vector<int>; //TEST 6
+
+//=
+=>leading
+static template class vector<int>; = //TEST 1
+inline template class vector<int>; = //TEST 3
+inline template class vector<int>; = //TEST 5
+
+=>trailing
+class vector<int>; = //TEST 2
+class vector<int>; = //TEST 4
+class vector<int>; = //TEST 6
+
+=>freestanding
+
+//!CommentRecognition210 - von ASTWriter LinkageSpecification
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+//TEST 1
+extern "C" typedef void FUNC(); //TEST 2
+
+//=
+=>leading
+extern "C" typedef void FUNC(); = //TEST 1
+
+=>trailing
+typedef void FUNC(); = //TEST 2
+
+=>freestanding
+
+//!CommentRecognition212 - von ASTWriter TemplateFunction
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+template<typename T> int tempFunct(T p)
+{
+    ++p;
+    p + 4;
+    return 0;
+} //Kommentar
+
+//=
+=>leading
+
+=>trailing
+{
+    ++p;
+    p + 4;
+    return 0;
+} = //Kommentar
+
+=>freestanding
+
+//!CommentRecognition213 - von ASTWriter DeclarationWithTraillingDoubleComments
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+int foo = bar; //Comment
+ //Zweiteilig
+//=
+=>leading
+
+=>trailing
+int foo = bar; = //Comment
+
+=>freestanding
+int foo = bar; = //Zweiteilig
+
+//!CommentRecognition214 - von ASTWriter NamesapceDefinition
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+//TEST 1
+namespace ziemlichlangernamespace
+{
+    //TEST 2
+} //TEST 3
+
+//=
+=>leading
+namespace ziemlichlangernamespace
+{
+    //TEST 2
+} = //TEST 1
+
+=>trailing
+namespace ziemlichlangernamespace
+{
+    //TEST 2
+} = //TEST 3
+
+=>freestanding
+namespace ziemlichlangernamespace
+{
+    //TEST 2
+} = //TEST 2
+
+
+//!CommentRecognition215 - von ASTWriter NamesapceDefinition
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+namespace ziemlichlangernamespace
+{
+    //TEST
+}
+
+void doIt(){
+	int i = 0;
+}
+
+//=
+=>leading
+
+=>trailing
+
+=>freestanding
+namespace ziemlichlangernamespace
+{
+    //TEST
+} = //TEST
+
+//!CommentRecognition216 - von ASTWriter NamesapceDefinition
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+namespace ziemlichlangernamespace
+{
+    int i = 0;
+    //TEST
+}
+
+void doIt(){
+	int i = 0;
+}
+
+//=
+=>leading
+
+=>trailing
+
+=>freestanding
+namespace ziemlichlangernamespace
+{
+    int i = 0;
+    //TEST
+} = //TEST
 
 //!ImplementationFileCommentRecognition1 - von CERP
 //#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest

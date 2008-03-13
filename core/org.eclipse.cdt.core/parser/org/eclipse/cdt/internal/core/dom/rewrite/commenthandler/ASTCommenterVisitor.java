@@ -139,6 +139,10 @@ public class ASTCommenterVisitor extends CPPASTVisitor {
 		return PROCESS_CONTINUE;
 	}
 	@Override
+	public int leave(ICPPASTNamespaceDefinition namespaceDefinition) {
+		return nodeCommenter.appendFreestandingComments((ASTNode)namespaceDefinition);
+	}
+	@Override
 	public int leave(IASTInitializer initializer) {
 		nodeCommenter.appendComments((ASTNode)initializer);
 		return PROCESS_CONTINUE;

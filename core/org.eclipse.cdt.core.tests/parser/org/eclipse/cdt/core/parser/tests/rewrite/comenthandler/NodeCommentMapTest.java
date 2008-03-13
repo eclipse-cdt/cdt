@@ -39,17 +39,29 @@ public class NodeCommentMapTest extends TestCase {
 	public void testNoComment(){
 		ASTNode node = new CPPASTName();
 		
-		assertEquals(0, map.getCommentsForNode(node).size());	
+		assertEquals(0, map.getLeadingCommentsForNode(node).size());
+		assertEquals(0, map.getTrailingCommentsForNode(node).size());
+		assertEquals(0, map.getFreestandingCommentsForNode(node).size());
 	}
 	
 	public void testOneComment(){
 		ASTNode node = new CPPASTName();
-		IASTComment comm = new Comment();
+		IASTComment comm1 = new Comment();
+		IASTComment comm2 = new Comment();
+		IASTComment comm3 = new Comment();
 		
-		map.addCommentToNode(node, comm);
 		
-		assertEquals(1, map.getCommentsForNode(node).size());
-		assertEquals(comm, map.getCommentsForNode(node).get(0));
+		map.addLeadingCommentToNode(node, comm1);
+		map.addTrailingCommentToNode(node, comm2);
+		map.addFreestandingCommentToNode(node, comm3);
+		
+		assertEquals(1, map.getLeadingCommentsForNode(node).size());
+		assertEquals(1, map.getTrailingCommentsForNode(node).size());
+		assertEquals(1, map.getFreestandingCommentsForNode(node).size());
+
+		assertEquals(comm1, map.getLeadingCommentsForNode(node).get(0));
+		assertEquals(comm2, map.getTrailingCommentsForNode(node).get(0));
+		assertEquals(comm3, map.getFreestandingCommentsForNode(node).get(0));
 	}
 	
 	public void testTwoComment(){
@@ -57,12 +69,23 @@ public class NodeCommentMapTest extends TestCase {
 		IASTComment com1 = new Comment();
 		IASTComment com2 = new Comment();
 		
-		map.addCommentToNode(node, com1);
-		map.addCommentToNode(node, com2);
+		map.addLeadingCommentToNode(node, com1);
+		map.addLeadingCommentToNode(node, com2);
+		map.addTrailingCommentToNode(node, com1);
+		map.addTrailingCommentToNode(node, com2);
+		map.addFreestandingCommentToNode(node, com1);
+		map.addFreestandingCommentToNode(node, com2);
 		
-		assertEquals(2, map.getCommentsForNode(node).size());
-		assertEquals(com1, map.getCommentsForNode(node).get(0));
-		assertEquals(com2, map.getCommentsForNode(node).get(1));
+		assertEquals(2, map.getLeadingCommentsForNode(node).size());
+		assertEquals(2, map.getTrailingCommentsForNode(node).size());
+		assertEquals(2, map.getFreestandingCommentsForNode(node).size());
+
+		assertEquals(com1, map.getLeadingCommentsForNode(node).get(0));
+		assertEquals(com2, map.getLeadingCommentsForNode(node).get(1));
+		assertEquals(com1, map.getTrailingCommentsForNode(node).get(0));
+		assertEquals(com2, map.getTrailingCommentsForNode(node).get(1));
+		assertEquals(com1, map.getFreestandingCommentsForNode(node).get(0));
+		assertEquals(com2, map.getFreestandingCommentsForNode(node).get(1));
 	}
 	
 	
@@ -72,17 +95,37 @@ public class NodeCommentMapTest extends TestCase {
 		IASTComment com1 = new Comment();
 		IASTComment com2 = new Comment();
 		IASTComment com3 = new Comment();
+
+		map.addLeadingCommentToNode(node1, com1);
+		map.addLeadingCommentToNode(node2, com2);
+		map.addLeadingCommentToNode(node1, com3);
 		
+		map.addTrailingCommentToNode(node1, com1);
+		map.addTrailingCommentToNode(node2, com2);
+		map.addTrailingCommentToNode(node1, com3);
 		
-		map.addCommentToNode(node1, com1);
-		map.addCommentToNode(node2, com2);
-		map.addCommentToNode(node1, com3);
+		map.addFreestandingCommentToNode(node1, com1);
+		map.addFreestandingCommentToNode(node2, com2);
+		map.addFreestandingCommentToNode(node1, com3);
+
+		assertEquals(2, map.getLeadingCommentsForNode(node1).size());
+		assertEquals(1, map.getLeadingCommentsForNode(node2).size());
+		assertEquals(2, map.getTrailingCommentsForNode(node1).size());
+		assertEquals(1, map.getTrailingCommentsForNode(node2).size());
+		assertEquals(2, map.getFreestandingCommentsForNode(node1).size());
+		assertEquals(1, map.getFreestandingCommentsForNode(node2).size());
 		
-		assertEquals(2, map.getCommentsForNode(node1).size());
-		assertEquals(1, map.getCommentsForNode(node2).size());
-		assertEquals(com1, map.getCommentsForNode(node1).get(0));
-		assertEquals(com2, map.getCommentsForNode(node2).get(0));
-		assertEquals(com3, map.getCommentsForNode(node1).get(1));
+		assertEquals(com1, map.getLeadingCommentsForNode(node1).get(0));
+		assertEquals(com2, map.getLeadingCommentsForNode(node2).get(0));
+		assertEquals(com3, map.getLeadingCommentsForNode(node1).get(1));
+		
+		assertEquals(com1, map.getTrailingCommentsForNode(node1).get(0));
+		assertEquals(com2, map.getTrailingCommentsForNode(node2).get(0));
+		assertEquals(com3, map.getTrailingCommentsForNode(node1).get(1));
+		
+		assertEquals(com1, map.getFreestandingCommentsForNode(node1).get(0));
+		assertEquals(com2, map.getFreestandingCommentsForNode(node2).get(0));
+		assertEquals(com3, map.getFreestandingCommentsForNode(node1).get(1));
 	}
 	
 	

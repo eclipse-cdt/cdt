@@ -20,15 +20,11 @@
    <includes
          id="org.eclipse.cdt"
          version="0.0.0"/>
-<!--
+         
    <includes
-         id="org.eclipse.cdt.core.parser.c99.feature"
+         id="org.eclipse.cdt.core.lrparser.feature"
          version="0.0.0"/>
 
-   <includes
-         id="org.eclipse.cdt.core.parser.upc.feature"
-         version="0.0.0"/>
--->
    <includes
          id="org.eclipse.cdt.debug.gdbjtag"
          version="0.0.0"/>

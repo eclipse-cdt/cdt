@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Alena Laskavaia (QNX) - Bug 221224
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.cdi.model;
 
@@ -240,7 +241,7 @@ public abstract class VariableDescriptor extends CObject implements ICDIVariable
 			StackFrame currentFrame = currentThread.getCurrentStackFrame();
 			StackFrame frame = (StackFrame)getStackFrame();
 			Thread thread = (Thread)getThread();
-			target.lockTarget();
+			synchronized(target.getLock()) {
 			try {
 				if (frame != null) {
 					target.setCurrentThread(frame.getThread(), false);				
@@ -261,16 +262,13 @@ public abstract class VariableDescriptor extends CObject implements ICDIVariable
 			} catch (MIException e) {
 				throw new MI2CDIException(e);
 			} finally {
-				try {
-					if (frame != null) {
-						target.setCurrentThread(currentThread, false);
-						currentThread.setCurrentStackFrame(currentFrame, false);
-					} else if (thread != null) {
-						target.setCurrentThread(currentThread, false);
-					}
-				} finally {
-					target.releaseTarget();
+				if (frame != null) {
+					target.setCurrentThread(currentThread, false);
+					currentThread.setCurrentStackFrame(currentFrame, false);
+				} else if (thread != null) {
+					target.setCurrentThread(currentThread, false);
 				}
+			}
 			}
 		}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Ken Ryall (Nokia) - 175532 support the address to source location API
+ *     Alena Laskavaia (QNX) - Bug 221224
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.cdi.model;
 
@@ -100,45 +101,6 @@ import org.eclipse.cdt.debug.mi.core.output.MIThreadSelectInfo;
  */
 public class Target extends SessionObject implements ICDITarget, ICDIBreakpointManagement2, ICDIAddressToSource, ICDIMemorySpaceManagement {
 
-	public class Lock {
-
-		java.lang.Thread heldBy;
-		int count;
-
-		public Lock() {
-
-		}
-
-		public synchronized void aquire() {
-			if (heldBy == null || heldBy == java.lang.Thread.currentThread()) {
-				heldBy = java.lang.Thread.currentThread();
-				count++;
-			} else {
-				while (true) {
-					try {
-						wait();
-					} catch (InterruptedException e) {
-					}
-					if (heldBy == null) {
-						heldBy = java.lang.Thread.currentThread();
-						count++;
-						return;
-					}					
-				}
-			}
-		}
-
-		public synchronized void release() {
-			if (heldBy == null || heldBy != java.lang.Thread.currentThread()) {
-				throw new IllegalStateException("Thread does not own lock");
-			}
-			if(--count == 0) {
-				heldBy = null;
-				notifyAll();
-			}
-		}
-	}
-
 	MISession miSession;
 	ICDITargetConfiguration fConfiguration;
 	Thread[] noThreads = new Thread[0];
@@ -147,7 +109,7 @@ public class Target extends SessionObject implements ICDITarget, ICDIBreakpointM
 	String fEndian = null;
 	boolean suspended = true;
 	boolean deferBreakpoints = true;
-	Lock lock = new Lock();
+	final private Object lock = new Object();
 	
 	final static String CODE_MEMORY_SPACE = "code"; //$NON-NLS-1$
 	final static String DATA_MEMORY_SPACE = "data"; //$NON-NLS-1$
@@ -158,13 +120,37 @@ public class Target extends SessionObject implements ICDITarget, ICDIBreakpointM
 		currentThreads = noThreads;
 	}
 
-	public void lockTarget() {
-		lock.aquire();
+	/**
+	 * Return lock object for target. Replacement for <code>lockTarget</code> and
+	 * <code>releaseTarget</code> methods.
+	 * <p>
+	 * Use as synchronization object:
+	 * </p>
+	 * new code:
+	 * 
+	 * <pre>
+	 *   synchronized (target.getLock()) {
+	 *      ...
+	 *   }
+	 * </pre>
+	 * 
+	 * old code:
+	 * 
+	 * <pre>
+	 *   target.lockTarget();
+	 *   try {
+	 *     ...
+	 *   } finally {
+	 *     target.releaseTarget();
+	 *   }
+	 * </pre>
+	 * 
+	 * @since 5.0
+	 */
+	public Object getLock() {
+		return lock;
 	}
-	
-	public void releaseTarget() {
-		lock.release();
-	}
+
 	
 	public MISession getMISession() {
 		return miSession;
@@ -271,15 +257,14 @@ public class Target extends SessionObject implements ICDITarget, ICDIBreakpointM
 		// If we use "info threads" in getCThreads() this
 		// will be overwritten. However if we use -stack-list-threads
 		// it does not provide to the current thread
-		lockTarget();
-		try {
-			// get the new Threads.
-			currentThreadId = newThreadId;
-			currentThreads = getCThreads();
-		} catch (CDIException e) {
-			currentThreads = noThreads;
-		} finally {
-			releaseTarget();
+		synchronized (lock) {
+			try {
+				// get the new Threads.
+				currentThreadId = newThreadId;
+				currentThreads = getCThreads();
+			} catch (CDIException e) {
+				currentThreads = noThreads;
+			}
 		}
 
 		// Fire CreatedEvent for new threads.
@@ -338,57 +323,56 @@ public class Target extends SessionObject implements ICDITarget, ICDIBreakpointM
 	 */
 	public Thread[] getCThreads() throws CDIException {
 		Thread[] cthreads = noThreads;
-		try {
-			lockTarget();
+		synchronized (lock) {
 			RxThread rxThread = miSession.getRxThread();
 			rxThread.setEnableConsole(false);
-			CommandFactory factory = miSession.getCommandFactory();
-			CLIInfoThreads tids = factory.createCLIInfoThreads();
-			// HACK/FIXME: gdb/mi thread-list-ids does not
-			// show any newly create thread, we workaround by
-			// issuing "info threads" instead.
-			// MIThreadListIds tids = factory.createMIThreadListIds();
-			// MIThreadListIdsInfo info = tids.getMIThreadListIdsInfo();
-			miSession.postCommand(tids);
-			CLIInfoThreadsInfo info = tids.getMIInfoThreadsInfo();
-			int[] ids;
-			String[] names;
-			if (info == null) {
-				ids = new int[0];
-				names = new String[0];
-			} else {
-				ids = info.getThreadIds();
-				names = info.getThreadNames();
-				currentThreadId = info.getCurrentThread();
-			}
-			if (ids != null && ids.length > 0) {
-				cthreads = new Thread[ids.length];
-				// Ok that means it is a multiThreaded.
-				if (names != null && names.length == ids.length) {
-					for (int i = 0; i < ids.length; i++) {
-						cthreads[i] = new Thread(this, ids[i], names[i]);
+			try {
+				CommandFactory factory = miSession.getCommandFactory();
+				CLIInfoThreads tids = factory.createCLIInfoThreads();
+				// HACK/FIXME: gdb/mi thread-list-ids does not
+				// show any newly create thread, we workaround by
+				// issuing "info threads" instead.
+				// MIThreadListIds tids = factory.createMIThreadListIds();
+				// MIThreadListIdsInfo info = tids.getMIThreadListIdsInfo();
+				miSession.postCommand(tids);
+				CLIInfoThreadsInfo info = tids.getMIInfoThreadsInfo();
+				int[] ids;
+				String[] names;
+				if (info == null) {
+					ids = new int[0];
+					names = new String[0];
+				} else {
+					ids = info.getThreadIds();
+					names = info.getThreadNames();
+					currentThreadId = info.getCurrentThread();
+				}
+				if (ids != null && ids.length > 0) {
+					cthreads = new Thread[ids.length];
+					// Ok that means it is a multiThreaded.
+					if (names != null && names.length == ids.length) {
+						for (int i = 0; i < ids.length; i++) {
+							cthreads[i] = new Thread(this, ids[i], names[i]);
+						}
+					} else {
+						for (int i = 0; i < ids.length; i++) {
+							cthreads[i] = new Thread(this, ids[i]);
+						}
 					}
 				} else {
-					for (int i = 0; i < ids.length; i++) {
-						cthreads[i] = new Thread(this, ids[i]);
-					}
+					// Provide a dummy.
+					cthreads = new Thread[]{new Thread(this, 0)};
 				}
-			} else {
-				// Provide a dummy.
-				cthreads = new Thread[]{new Thread(this, 0)};
+				// FIX: When attaching there is no thread selected
+				// We will choose the first one as a workaround.
+				if (currentThreadId == 0 && cthreads.length > 0) {
+					setCurrentThread(cthreads[0], false);				
+				}
+			} catch (MIException e) {
+				// Do not throw anything in this case.
+				throw new CDIException(e.getMessage());
+			} finally {
+				rxThread.setEnableConsole(true);
 			}
-			// FIX: When attaching there is no thread selected
-			// We will choose the first one as a workaround.
-			if (currentThreadId == 0 && cthreads.length > 0) {
-				setCurrentThread(cthreads[0], false);				
-			}
-		} catch (MIException e) {
-			// Do not throw anything in this case.
-			throw new CDIException(e.getMessage());
-		} finally {
-			RxThread rxThread = miSession.getRxThread();
-			rxThread.setEnableConsole(true);
-			releaseTarget();
 		}
 		return cthreads;
 	}

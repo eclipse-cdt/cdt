@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Alena Laskavaia (QNX) - Bug 221224
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.cdi.model;
 
@@ -109,32 +110,29 @@ public class Thread extends CObject implements ICDIThread {
 			currentFrames = new ArrayList();
 			Target target = (Target)getTarget();
 			ICDIThread currentThread = target.getCurrentThread();
-			target.lockTarget();
-			try {
-				target.setCurrentThread(this, false);
-				MISession mi = target.getMISession();
-				CommandFactory factory = mi.getCommandFactory();
-				MIStackListFrames frames = factory.createMIStackListFrames();
-				mi.postCommand(frames);
-				MIStackListFramesInfo info = frames.getMIStackListFramesInfo();
-				if (info == null) {
-					throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
-				}
-				MIFrame[] miFrames = info.getMIFrames();
-				for (int i = 0; i < miFrames.length; i++) {
-					currentFrames.add(new StackFrame(this, miFrames[i], depth - miFrames[i].getLevel()));
-				}
-			} catch (MIException e) {
-				//throw new CDIException(e.getMessage());
-				//System.out.println(e);
-			} catch (CDIException e) {
-				//throw e;
-				//System.out.println(e);
-			} finally {
+			synchronized (target.getLock()) {
 				try {
-					target.setCurrentThread(currentThread, false);
+					target.setCurrentThread(this, false);
+					MISession mi = target.getMISession();
+					CommandFactory factory = mi.getCommandFactory();
+					MIStackListFrames frames = factory.createMIStackListFrames();
+					mi.postCommand(frames);
+					MIStackListFramesInfo info = frames.getMIStackListFramesInfo();
+					if (info == null) {
+						throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
+					}
+					MIFrame[] miFrames = info.getMIFrames();
+					for (int i = 0; i < miFrames.length; i++) {
+						currentFrames.add(new StackFrame(this, miFrames[i], depth - miFrames[i].getLevel()));
+					}
+				} catch (MIException e) {
+					//throw new CDIException(e.getMessage());
+					//System.out.println(e);
+				} catch (CDIException e) {
+					//throw e;
+					//System.out.println(e);
 				} finally {
-					target.releaseTarget();
+					target.setCurrentThread(currentThread, false);
 				}
 			}
 			// assign the currentFrame if it was not done yet.
@@ -157,45 +155,39 @@ public class Thread extends CObject implements ICDIThread {
 		if (stackdepth == 0) {
 			Target target = (Target)getTarget();
 			ICDIThread currentThread = target.getCurrentThread();
-			target.lockTarget();
-			try {
-				target.setCurrentThread(this, false);
-				MISession mi = target.getMISession();
-				CommandFactory factory = mi.getCommandFactory();
-				MIStackInfoDepth depth = factory.createMIStackInfoDepth();
-				mi.postCommand(depth);
-				MIStackInfoDepthInfo info = null;
+			synchronized (target.getLock()) {
 				try {
-					// Catch the first exception gdb can recover the second time.
-					info = depth.getMIStackInfoDepthInfo();
-					if (info == null) {
-						throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
-					}
-					stackdepth = info.getDepth();
-				} catch (MIException e) {
-					// First try fails, retry. gdb patches up the corrupt frame
-					// so retry should give us a frame count that is safe.
-					depth = factory.createMIStackInfoDepth();
+					target.setCurrentThread(this, false);
+					MISession mi = target.getMISession();
+					CommandFactory factory = mi.getCommandFactory();
+					MIStackInfoDepth depth = factory.createMIStackInfoDepth();
 					mi.postCommand(depth);
-					info = depth.getMIStackInfoDepthInfo();
-					if (info == null) {
-						throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
+					MIStackInfoDepthInfo info = null;
+					try {
+						// Catch the first exception gdb can recover the second time.
+						info = depth.getMIStackInfoDepthInfo();
+						if (info == null) {
+							throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
+						}
+						stackdepth = info.getDepth();
+					} catch (MIException e) {
+						// First try fails, retry. gdb patches up the corrupt frame
+						// so retry should give us a frame count that is safe.
+						depth = factory.createMIStackInfoDepth();
+						mi.postCommand(depth);
+						info = depth.getMIStackInfoDepthInfo();
+						if (info == null) {
+							throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
+						}
+						stackdepth = info.getDepth();
+						if (stackdepth > 0) {
+							stackdepth--;
+						}
 					}
-					stackdepth = info.getDepth();
-					if (stackdepth > 0) {
-						stackdepth--;
-					}
-				}
-			} catch (MIException e) {
-				throw new MI2CDIException(e);
-			} finally {
-				try {
-					target.setCurrentThread(currentThread, false);
-				} catch (MI2CDIException e) {
-					target.releaseTarget();
-					throw e;
+				} catch (MIException e) {
+					throw new MI2CDIException(e);
 				} finally {
-					target.releaseTarget();
+					target.setCurrentThread(currentThread, false);
 				}
 			}
 		}
@@ -210,7 +202,7 @@ public class Thread extends CObject implements ICDIThread {
 			currentFrames = new ArrayList();
 			Target target = (Target) getTarget();
 			ICDIThread currentThread = target.getCurrentThread();
-			target.lockTarget();
+			synchronized (target.getLock()) {
 			try {
 				target.setCurrentThread(this, false);
 				int depth = getStackFrameCount();
@@ -243,11 +235,8 @@ public class Thread extends CObject implements ICDIThread {
 				//throw e;
 				//System.out.println(e);
 			} finally {
-				try {
 					target.setCurrentThread(currentThread, false);
-				} finally {
-					target.releaseTarget();
-				}
+			}
 			}
 			// take time to assign the currentFrame, if it is in the set
 			if (currentFrame == null) {
@@ -294,34 +283,33 @@ public class Thread extends CObject implements ICDIThread {
 			int miLevel = getStackFrameCount() - frameLevel;
 			MIStackSelectFrame frame = factory.createMIStackSelectFrame(miLevel);
 			// Set ourself as the current thread first.
-			target.lockTarget();
-			try {
-				target.setCurrentThread(this, doUpdate);
-				mi.postCommand(frame);
-				MIInfo info = frame.getMIInfo();
-				if (info == null) {
-					throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
-				}
-				currentFrame = stackframe;
-				// Resetting stackframe may change the value of
-				// some variables like registers. Call an update()
-				// To generate changeEvents.
-				if (doUpdate) {
-					Session session = (Session) target.getSession();
-					RegisterManager regMgr = session.getRegisterManager();
-					if (regMgr.isAutoUpdate()) {
-						regMgr.update(target);
+			synchronized (target.getLock()) {
+				try {
+					target.setCurrentThread(this, doUpdate);
+					mi.postCommand(frame);
+					MIInfo info = frame.getMIInfo();
+					if (info == null) {
+						throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 					}
-					VariableManager varMgr = session.getVariableManager();
-					if (varMgr.isAutoUpdate()) {
-						varMgr.update(target);
+					currentFrame = stackframe;
+					// Resetting stackframe may change the value of
+					// some variables like registers. Call an update()
+					// To generate changeEvents.
+					if (doUpdate) {
+						Session session = (Session) target.getSession();
+						RegisterManager regMgr = session.getRegisterManager();
+						if (regMgr.isAutoUpdate()) {
+							regMgr.update(target);
+						}
+						VariableManager varMgr = session.getVariableManager();
+						if (varMgr.isAutoUpdate()) {
+							varMgr.update(target);
+						}
 					}
+				} catch (MIException e) {
+					throw new MI2CDIException(e);
 				}
-		} catch (MIException e) {
-			throw new MI2CDIException(e);
-		} finally {
-			target.releaseTarget();
-		}
+			}
 	}
 
 	/**
@@ -335,12 +323,10 @@ public class Thread extends CObject implements ICDIThread {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExecuteStep#stepInto(int)
 	 */
 	public void stepInto(int count) throws CDIException {
-		((Target)getTarget()).lockTarget();
-		try {
-			((Target)getTarget()).setCurrentThread(this);
-			getTarget().stepInto(count);
-		} finally {
-			((Target)getTarget()).releaseTarget();			
+		Target target = (Target)getTarget();
+		synchronized(target.getLock()) {
+			target.setCurrentThread(this);
+			target.stepInto(count);		
 		}
 	}
 
@@ -355,12 +341,10 @@ public class Thread extends CObject implements ICDIThread {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExecuteStep#stepIntoInstruction(int)
 	 */
 	public void stepIntoInstruction(int count) throws CDIException {
-		((Target)getTarget()).lockTarget();
-		try {
-			((Target)getTarget()).setCurrentThread(this);
-			getTarget().stepIntoInstruction(count);
-		} finally {
-			((Target)getTarget()).releaseTarget();			
+		Target target = (Target)getTarget();
+		synchronized(target.getLock()) {
+			target.setCurrentThread(this);
+			target.stepIntoInstruction(count);	
 		}
 	}
 
@@ -375,12 +359,10 @@ public class Thread extends CObject implements ICDIThread {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExecuteStep#stepOver(int)
 	 */
 	public void stepOver(int count) throws CDIException {
-		((Target)getTarget()).lockTarget();
-		try {
-			((Target)getTarget()).setCurrentThread(this);
-			getTarget().stepOver(count);
-		} finally {
-			((Target)getTarget()).releaseTarget();			
+		Target target = (Target)getTarget();
+		synchronized(target.getLock()) {
+			target.setCurrentThread(this);
+			target.stepOver(count);	
 		}
 	}
 
@@ -395,12 +377,10 @@ public class Thread extends CObject implements ICDIThread {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExecuteStep#stepOverInstruction(int)
 	 */
 	public void stepOverInstruction(int count) throws CDIException {
-		((Target)getTarget()).lockTarget();
-		try {
-			((Target)getTarget()).setCurrentThread(this);
-			getTarget().stepOverInstruction(count);
-		} finally {
-			((Target)getTarget()).releaseTarget();			
+		Target target = (Target)getTarget();
+		synchronized(target.getLock()) {
+			target.setCurrentThread(this);
+			target.stepOverInstruction(count);		
 		}
 	}
 
@@ -422,12 +402,10 @@ public class Thread extends CObject implements ICDIThread {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExecuteStep#stepUntil(org.eclipse.cdt.debug.core.cdi.ICDILocation)
 	 */
 	public void stepUntil(ICDILocation location) throws CDIException {
-		((Target)getTarget()).lockTarget();
-		try {
-			((Target)getTarget()).setCurrentThread(this);
-			getTarget().stepUntil(location);
-		} finally {
-			((Target)getTarget()).releaseTarget();			
+		Target target = (Target)getTarget();
+		synchronized(target.getLock()) {
+			target.setCurrentThread(this);
+			target.stepUntil(location);	
 		}
 }
 
@@ -457,24 +435,20 @@ public class Thread extends CObject implements ICDIThread {
 	 */
 
 	public void resume(boolean passSignal) throws CDIException {
-		((Target)getTarget()).lockTarget();
-		try {
-			((Target)getTarget()).setCurrentThread(this);
-			getTarget().resume(passSignal);
-		} finally {
-			((Target)getTarget()).releaseTarget();			
+		Target target = (Target)getTarget();
+		synchronized(target.getLock()) {
+			target.setCurrentThread(this);
+			target.resume(passSignal);		
 		}
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExecuteResume#resume(org.eclipse.cdt.debug.core.cdi.ICDILocation)
 	 */
 	public void resume(ICDILocation location) throws CDIException {
-		((Target)getTarget()).lockTarget();
-		try {
-			((Target)getTarget()).setCurrentThread(this);
-			getTarget().resume(location);
-		} finally {
-			((Target)getTarget()).releaseTarget();			
+		Target target = (Target)getTarget();
+		synchronized(target.getLock()) {
+			target.setCurrentThread(this);
+			target.resume(location);		
 		}
 	}
 
@@ -482,12 +456,10 @@ public class Thread extends CObject implements ICDIThread {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExecuteResume#resume(org.eclipse.cdt.debug.core.cdi.model.ICDISignal)
 	 */
 	public void resume(ICDISignal signal) throws CDIException {
-		((Target)getTarget()).lockTarget();
-		try {
-			((Target)getTarget()).setCurrentThread(this);
-			getTarget().resume(signal);
-		} finally {
-			((Target)getTarget()).releaseTarget();			
+		Target target = (Target)getTarget();
+		synchronized(target.getLock()) {
+			target.setCurrentThread(this);
+			target.resume(signal);	
 		}
 	}
 

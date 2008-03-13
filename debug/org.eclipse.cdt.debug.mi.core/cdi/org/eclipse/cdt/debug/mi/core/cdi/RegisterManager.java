@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Giuseppe Montalto, STMicroelectronics - bug 174988
+ *     Alena Laskavaia (QNX) - Bug 221224
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.cdi;
 
@@ -255,7 +256,7 @@ public class RegisterManager extends Manager {
 		Target target = (Target)frame.getTarget();
 		Thread currentThread = (Thread)target.getCurrentThread();
 		StackFrame currentFrame = currentThread.getCurrentStackFrame();
-		target.lockTarget();
+		synchronized(target.getLock()) {
 		try {
 			target.setCurrentThread(frame.getThread(), false);
 			((Thread)frame.getThread()).setCurrentStackFrame(frame, false);
@@ -271,12 +272,9 @@ public class RegisterManager extends Manager {
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		} finally {
-			try {
 			target.setCurrentThread(currentThread, false);
 			currentThread.setCurrentStackFrame(currentFrame, false);
-			} finally {
-				target.releaseTarget();
-			}
+		}
 		}
 	}
 	
@@ -284,7 +282,7 @@ public class RegisterManager extends Manager {
 		Target target = (Target)frame.getTarget();
 		Thread currentThread = (Thread)target.getCurrentThread();
 		StackFrame currentFrame = currentThread.getCurrentStackFrame();
-		target.lockTarget();
+		synchronized(target.getLock()) {
 		try {
 			target.setCurrentThread(frame.getThread(), false);
 			((Thread)frame.getThread()).setCurrentStackFrame(frame, false);
@@ -301,12 +299,9 @@ public class RegisterManager extends Manager {
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		} finally {
-			try {
 			target.setCurrentThread(currentThread, false);
 			currentThread.setCurrentStackFrame(currentFrame, false);
-			} finally {
-				target.releaseTarget();
-			}
+		}
 		}
 	}
 

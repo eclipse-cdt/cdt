@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
- *     Alena Laskavaia (QNX) - Bug 197986
+ *     Alena Laskavaia (QNX) - Bug 197986, Bug 221224
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.cdi;
 
@@ -177,7 +177,7 @@ public class VariableManager extends Manager {
 			Target target = (Target)frame.getTarget();
 			Thread currentThread = (Thread)target.getCurrentThread();
 			StackFrame currentFrame = currentThread.getCurrentStackFrame();
-			target.lockTarget();
+			synchronized(target.getLock()) {
 			try {
 				target.setCurrentThread(frame.getThread(), false);
 				((Thread)frame.getThread()).setCurrentStackFrame(frame, false);
@@ -194,15 +194,12 @@ public class VariableManager extends Manager {
 			} catch (MIException e) {
 				throw new MI2CDIException(e);
 			} finally {
-				try {
 					MISession miSession = target.getMISession();
 					RxThread rxThread = miSession.getRxThread();
 					rxThread.setEnableConsole(true);
 					target.setCurrentThread(currentThread, false);
 					currentThread.setCurrentStackFrame(currentFrame, false);
-				} finally {
-					target.releaseTarget();
-				}
+			}
 			}
 		} else {
 			throw new CDIException(CdiResources.getString("cdi.VariableManager.Unknown_type")); //$NON-NLS-1$
@@ -374,7 +371,7 @@ public class VariableManager extends Manager {
 			Target target = (Target)argDesc.getTarget();
 			Thread currentThread = (Thread)target.getCurrentThread();
 			StackFrame currentFrame = currentThread.getCurrentStackFrame();
-			target.lockTarget();
+			synchronized(target.getLock()) {
 			try {
 				target.setCurrentThread(stack.getThread(), false);
 				((Thread)stack.getThread()).setCurrentStackFrame(stack, false);
@@ -394,12 +391,9 @@ public class VariableManager extends Manager {
 			} catch (MIException e) {
 				throw new MI2CDIException(e);
 			} finally {
-				try {
 					target.setCurrentThread(currentThread, false);
 					currentThread.setCurrentStackFrame(currentFrame, false);
-				} finally {
-					target.releaseTarget();
-				}
+			}
 			}
 		}
 		return argument;
@@ -410,7 +404,7 @@ public class VariableManager extends Manager {
 		Target target = (Target)frame.getTarget();
 		Thread currentThread = (Thread)target.getCurrentThread();
 		StackFrame currentFrame = currentThread.getCurrentStackFrame();
-		target.lockTarget();
+		synchronized(target.getLock()) {
 		try {
 			target.setCurrentThread(frame.getThread(), false);
 			((Thread)frame.getThread()).setCurrentStackFrame(frame, false);
@@ -440,12 +434,9 @@ public class VariableManager extends Manager {
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		} finally {
-			try {
 				target.setCurrentThread(currentThread, false);
 				currentThread.setCurrentStackFrame(currentFrame, false);
-			} finally {
-				target.releaseTarget();
-			}
+		}
 		}
 		return (ICDIArgumentDescriptor[]) argObjects.toArray(new ICDIArgumentDescriptor[0]);
 	}
@@ -506,7 +497,7 @@ public class VariableManager extends Manager {
 		Target target = (Target)frame.getTarget();
 		Thread currentThread = (Thread)target.getCurrentThread();
 		StackFrame currentFrame = currentThread.getCurrentStackFrame();
-		target.lockTarget();
+		synchronized(target.getLock()) {
 		try {
 			target.setCurrentThread(frame.getThread(), false);
 			((Thread)frame.getThread()).setCurrentStackFrame(frame, false);
@@ -529,13 +520,10 @@ public class VariableManager extends Manager {
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
-		} finally {
-			try {
+		} finally {	
 				target.setCurrentThread(currentThread, false);
 				currentThread.setCurrentStackFrame(currentFrame, false);
-			} finally {
-				target.releaseTarget();
-			}
+		}
 		}
 		return (ICDILocalVariableDescriptor[]) varObjects.toArray(new ICDILocalVariableDescriptor[0]);
 	}
@@ -552,7 +540,7 @@ public class VariableManager extends Manager {
 			Target target = (Target)varDesc.getTarget();
 			Thread currentThread = (Thread)target.getCurrentThread();
 			StackFrame currentFrame = currentThread.getCurrentStackFrame();
-			target.lockTarget();
+			synchronized(target.getLock()) {
 			try {
 				target.setCurrentThread(stack.getThread(), false);
 				((Thread)stack.getThread()).setCurrentStackFrame(stack, false);
@@ -572,12 +560,9 @@ public class VariableManager extends Manager {
 			} catch (MIException e) {
 				throw new MI2CDIException(e);
 			} finally {
-				try {
-					target.setCurrentThread(currentThread, false);
-					currentThread.setCurrentStackFrame(currentFrame, false);
-				} finally {
-					target.releaseTarget();
-				}
+				target.setCurrentThread(currentThread, false);
+				currentThread.setCurrentStackFrame(currentFrame, false);
+			}
 			}
 		}
 		return local;

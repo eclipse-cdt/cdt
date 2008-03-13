@@ -7,17 +7,95 @@
 <h1 style="text-align: center;">How to write a DSF-based debugger <br>
 </h1>
 <h4>Summary</h4>
-<h3>DSF</h3>
-<ul>
-  <li>Customizing, componentization, performance.</li>
-  <li>GDB Reference Implementation</li>
+This tutorial describes the process of integrating a debugger with
+Eclipse using the Debugger Services Framework (DSF) developed by the <a
+ href="http://www.eclipse.org/dsdp/dd/">DSDP Device Debugging </a>project.<br>
+<h4>Table of Contents<br>
+</h4>
+<ul class="readonly" id="mozToc">
+<!--mozToc h2 1 h3 2-->
+  <li><a href="#mozTocId733947">i. Push Down Automata (PDA) </a>
+    <ul>
+      <li><a href="#mozTocId421423">Running the Example</a></li>
+      <li><a href="#mozTocId60418">Language</a></li>
+      <li><a href="#mozTocId662812">Debug Protocol</a></li>
+    </ul>
+  </li>
+  <li><a href="#mozTocId351550">Step 1 - Launching </a>
+    <ul>
+      <li><a href="#mozTocId265932">Launch Delegate</a></li>
+      <li><a href="#mozTocId33333">PDALaunch</a></li>
+      <li><a href="#mozTocId247519">Launch/Shutdown Sequence</a></li>
+    </ul>
+  </li>
+  <li><a href="#mozTocId867240">Step 2 - Connecting&nbsp;</a>
+    <ul>
+      <li><a href="#mozTocId239705">Synchronization</a></li>
+      <li><a href="#mozTocId244961">Command/Event Listeners</a></li>
+      <li><a href="#mozTocId231356">PDAProgramDMContext</a></li>
+      <li><a href="#mozTocId218300">PDA Commands</a></li>
+    </ul>
+  </li>
+  <li><a href="#mozTocId576369"></a></li>
+  <li><a href="#mozTocId660065">Step
+3 - View Model</a>
+    <ul>
+      <li><a href="#mozTocId202968">Adapter Glue
+        </a></li>
+      <li><a href="#mozTocId531112">PDA View Model</a></li>
+      <li><a href="#mozTocId395362">Launch VM Provider</a></li>
+      <li><a href="#mozTocId104193">PDA Program VM Node</a></li>
+    </ul>
+  </li>
+  <li><a href="#mozTocId797186">Step 4 - Run Control</a>
+    <ul>
+      <li><a href="#mozTocId333707">State Tracking
+        </a></li>
+      <li><a href="#mozTocId120075">Commands</a></li>
+      <li><a href="#mozTocId976358">IExecutionDMData</a></li>
+    </ul>
+  </li>
+  <li><a href="#mozTocId325852">Step 5 - Breakpoints</a>
+    <ul>
+      <li><a href="#mozTocId19247">IDE Breakpoints</a></li>
+      <li><a href="#mozTocId991346">Target-Side Breakpoints</a></li>
+      <li><a href="#mozTocId389907">Breakpoints Mediator</a></li>
+    </ul>
+  </li>
+  <li><a href="#mozTocId380385">Step 6 - Stack</a>
+    <ul>
+      <li><a href="#mozTocId378363">Command Cache</a></li>
+      <li><a href="#mozTocId923476">Frame Context</a></li>
+    </ul>
+  </li>
+  <li><a href="#mozTocId156503">Step 7 - Source Display</a></li>
+  <li><a href="#mozTocId343062">Step 8 - Variables</a>
+    <ul>
+      <li><a href="#mozTocId837286">Variable Contexts</a></li>
+      <li><a href="#mozTocId327572">Expression Contexts</a></li>
+      <li><a href="#mozTocId668928">Expression Data
+        </a></li>
+      <li><a href="#mozTocId233056">Formatted Value Context
+        </a></li>
+    </ul>
+  </li>
+  <li><a href="#mozTocId840787">Additional Resources
+    </a>
+    <ul>
+      <li><a href="#mozTocId824835">Debug Platform</a></li>
+      <li><a href="#mozTocId512801">GDB</a></li>
+      <li><a href="#mozTocId126766">TCF</a></li>
+    </ul>
+  </li>
 </ul>
-<h2>Push Down Automata (PDA) <br>
+<hr style="width: 100%; height: 2px;">
+<h2><a class="mozTocH2" name="mozTocId733947"></a>i. <a
+ class="mozTocH2" name="mozTocId934788"></a>Push Down Automata (PDA) <br>
 </h2>
 The Push Down Automata (PDA) debugger example is used as the basis for
 this tutorial.&nbsp; Before starting the tutorial it is best to
 familiarize with the features of the debugger.<br>
-<h3>Running the Example</h3>
+<h3><a class="mozTocH3" name="mozTocId421423"></a>Running the Example</h3>
 Launch the PDA debugger with these twelve "easy" steps:<br>
 <ol>
   <li>Download and install Eclipse development environment, either the <span
@@ -127,7 +205,7 @@ Indigo Perl (<a href="http://www.indigostar.com/">http://www.indigostar.com/</a>
     </tr>
   </tbody>
 </table>
-<h3>Language</h3>
+<h3><a class="mozTocH3" name="mozTocId60418"></a>Language</h3>
 <p>To demonstrate how to write a debugger for Eclipse, we need a
 language and a run time to debug. For this example, we chose an
 enhanced push down automata (PDA) assembly language and a simple
@@ -164,7 +242,7 @@ line):</p>
   </tbody>
 </table>
 </div>
-<h3>Debug Protocol</h3>
+<h3><a class="mozTocH3" name="mozTocId662812"></a>Debug Protocol</h3>
 <p>Our PDA assembly language interpreter can be started in either run
 mode or debug mode. When started in debug mode, the interpreter listens
 for debug commands on a specified local TCP socket and sends debug
@@ -209,59 +287,7 @@ instruction was encountered</li>
   <li><samp>no such label X</samp> &#8211; a branch or call to an unknown
 label was encountered</li>
 </ul>
-<h2>Debug Services</h2>
-<p style="color: rgb(255, 0, 0);">TODO: remove this sesion?</p>
-Use of services is intended to allow for maximum level of extendability
-and customization.&nbsp; To achieve this, service interfaces should
-encapsulate functionality that logically belongs together and at the
-same time allow for a managable number of services which have a clear
-hierarchy.&nbsp; DSF defines a set of standard debug interfaces (in the
-org.eclipse.dd.dsf.debug plugin), and supplies a set of classes that
-populate the standard debug views using those interfaces (in the
-org.eclipse.dd.dsf.debug.ui plugin).&nbsp; However there are very few
-dependencies in these service interfaces and a given debugger
-implementation may leave out or replace any of them as its custom
-functionality dictates.&nbsp; <br>
-<p>The standard debug service interfaces include:</p>
-<ul>
-  <li><span style="text-decoration: underline;">BreakpiontsMediator</span>
-- Not actually an interface, but a utility service implementation which
-mediates between IDE and target-side&nbsp; breakpoints.<br>
-  </li>
-  <li><span style="text-decoration: underline;">IBreakpionts</span> -
-Service for managing target-side breakpoints.<br>
-  </li>
-  <li><span style="text-decoration: underline;">IDisassembly</span> -
-Service for retrieving lines of disassembly.<br>
-  </li>
-  <li><span style="text-decoration: underline;">IExpressions</span> -
-Service for evaluating expressions, including variables.<br>
-  </li>
-  <li><span style="text-decoration: underline;">IMemory</span> -
-Service for reading target memory.<br>
-  </li>
-  <li><span style="text-decoration: underline;">IModules</span> -
-Service for examining target executable module information.<br>
-  </li>
-  <li><span style="text-decoration: underline;">IRegisters</span> -
-Service for reading register data.<br>
-  </li>
-  <li><span style="text-decoration: underline;">IRunControl</span> -
-Service for controlling execution state of the target.<br>
-  </li>
-  <li><span style="text-decoration: underline;">ISourceLookup</span> -
-Service for mapping target-side to host-side source paths.&nbsp; This
-service is intended to be used by other services and not to replace the
-platform source lookup APIs.<br>
-  </li>
-  <li><span style="text-decoration: underline;">IStack</span> - Service
-for reading stack information.<br>
-  </li>
-  <li><span style="text-decoration: underline;">ISymbols</span> -
-Service for reading symbol information about the loaded modules.<br>
-  </li>
-</ul>
-<h2>Step 1 - Launching <br>
+<h2><a class="mozTocH2" name="mozTocId351550"></a>Step 1 - Launching <br>
 </h2>
 The first task in integrating a debugger in Eclipse is creating and
 managing the debugger process.&nbsp; The Eclipse Platform provides an
@@ -270,7 +296,7 @@ extensive API for this purpose, which is nicely presented in the <i><a
 Have Lift-off: The Launching Framework in Eclipse</a> </i>article.&nbsp;
 This section (as this tutorial) concentrates on the DSF-specific tasks
 of launching the PDA debugger.<br>
-<h3>Launch Delegate</h3>
+<h3><a class="mozTocH3" name="mozTocId265932"></a>Launch Delegate</h3>
 At first glance, there's nothing unusual about the PDA debugger launch
 delegate.&nbsp; Just like the Debug Platform version it:<br>
 <ol>
@@ -299,7 +325,7 @@ extension interface, in order to create a custom launch object:<br>
       <td style="vertical-align: top; width: 10px;"><br>
       </td>
       <td style="vertical-align: top;">
-      <pre width="200"><i><a name="line51"> 51: </a><strong><font
+      <pre width="200"><a name="line51"> 51: </a><strong><font
  color="#4169e1"> public ILaunch getLaunch(ILaunchConfiguration configuration, String mode)</font></strong> <font
  color="#4169e1">throws</font> CoreException {<br><br><a name="line52"> 52: </a> <font
  color="#b22222">    // Need to configure the source locator before creating the launch</font><br><a
@@ -308,7 +334,7 @@ extension interface, in order to create a custom launch object:<br>
  name="line55"> 55: </a> <font color="#b22222">    // the source lookup adapter.</font><br><a
  name="line56"> 56: </a>     ISourceLocator locator = getSourceLocator(configuration);<br><br><a
  name="line58"> 58: </a> <font color="#4169e1">    return</font> new PDALaunch(configuration, mode, locator);<br><a
- name="line59"> 59: </a> }<br></i></pre>
+ name="line59"> 59: </a> }<i><br></i></pre>
       </td>
     </tr>
   </tbody>
@@ -316,7 +342,7 @@ extension interface, in order to create a custom launch object:<br>
 </div>
 <ul>
 </ul>
-<h3>PDALaunch</h3>
+<h3><a class="mozTocH3" name="mozTocId33333"></a>PDALaunch</h3>
 The PDALaunch object plays two main roles:<br>
 <ol>
   <li>Serve as the root element of the PDA View Model hierarchy</li>
@@ -513,7 +539,8 @@ these race conditions.<br>
   </tbody>
 </table>
 </div>
-<h3>Launch/Shutdown Sequence</h3>
+<h3><a class="mozTocH3" name="mozTocId247519"></a>Launch/Shutdown
+Sequence</h3>
 The actual task of calling the asynchronous <span
  style="font-style: italic;">IDsfService</span>'s <span
  style="font-style: italic;">initialize()</span> and <span
@@ -562,7 +589,8 @@ perform the service initialization:<br>
   </tbody>
 </table>
 </div>
-<h2>Step 2 - Connecting&nbsp;</h2>
+<h2><a class="mozTocH2" name="mozTocId867240"></a>Step 2 -
+Connecting&nbsp;</h2>
 With the launch framework in place, the debugger back end is running
 and the DSF session and executor are started.&nbsp; The next step is to
 create the first service and to connect to the debugger.&nbsp; DSF
@@ -604,7 +632,7 @@ target state change events.<br>
     </tr>
   </tbody>
 </table>
-<h3>Synchronization</h3>
+<h3><a class="mozTocH3" name="mozTocId239705"></a>Synchronization</h3>
 Since there are several threads being used by the PDA Command Control
 protecting state data becomes very important. <br>
 <br>
@@ -677,7 +705,7 @@ used only as a means of synchronization with the send job.</li>
 flag.&nbsp; It needs to be thread safe to allow the command and event
 processing jobs to access it.<br>
   </li>
-  <li>Lines 86-95 declare the commuication sockets.&nbsp; They are
+  <li>Lines 86-95 declare the communication sockets.&nbsp; They are
 marked as thread-safe though only used by dedicated threads after being
 created.</li>
 </ul>
@@ -745,10 +773,11 @@ thread.</li>
   </li>
 </ul>
 </div>
-<h3>Command/Event Listeners</h3>
+<h3><a class="mozTocH3" name="mozTocId244961"></a>Command/Event
+Listeners</h3>
 As mentioned before there are two types of listeners that can be
-registered with the comands control: <span style="font-style: italic;">event
-listners </span>and command listeners.&nbsp; The most important
+registered with the commands control: <span style="font-style: italic;">event
+listeners </span>and command listeners.&nbsp; The most important
 feature of these listeners, is that they are called by the command
 control <span style="font-style: italic;">synchronously</span>.&nbsp;
 As a result of this, the command listeners can expect to see the state
@@ -809,7 +838,7 @@ new command.</li>
 send commands to the debugger.&nbsp; The separate runnable is used to
 allow the command listeners to modify the queue as well.</li>
 </ul>
-<h3>PDAProgramDMContext</h3>
+<h3><a class="mozTocH3" name="mozTocId231356"></a>PDAProgramDMContext</h3>
 Finally the command control also declares a Data Model context, which
 is a parent to all other contexts for a given PDA debugger
 session.&nbsp; Each command used with the command control has to
@@ -820,7 +849,7 @@ instance returned by <span style="font-style: italic;">PDACommandControl.getProg
 However in other debuggers this context can have two other functions:<br>
 <ol>
   <li><span style="text-decoration: underline;">To identify the command
-control instnace</span> - In debugger sessions that connect to multiple
+control instance</span> - In debugger sessions that connect to multiple
 back ends, the context can be used to identify which command control
 should process a given command.</li>
   <li><span style="text-decoration: underline;">To help control
@@ -828,13 +857,13 @@ debugger command protocol state</span> - The PDA debug protocol is
 stateless, which means that any command acts independently of any
 commands that came before it.&nbsp; For debuggers which do have
 protocol state, e.g. GDB/MI, the command control needs to check the
-context of each command and set the protocol by preceeding the command
+context of each command and set the protocol by preceding the command
 being processed with other commands.<br>
   </li>
 </ol>
 <span style="font-weight: bold;"></span>
-<h3>PDA Commands</h3>
-To increase type safetly and make the code more readable the plain text
+<h3><a class="mozTocH3" name="mozTocId218300"></a>PDA Commands</h3>
+To increase type safely and make the code more readable the plain text
 PDA commands are abstracted using specific command objects.&nbsp; Below
 is an example of a command class:<br>
 <br>
@@ -933,9 +962,12 @@ immutable helps guard the integrity of these caches. </td>
     </tr>
   </tbody>
 </table>
-<h2><span style="font-weight: bold;"></span></h2>
-<h2><span style="font-weight: bold;">Step 3 - View Model</span></h2>
-<h3>Adapter Glue<br>
+<h2><a class="mozTocH2" name="mozTocId576369"></a><span
+ style="font-weight: bold;"></span></h2>
+<h2><a class="mozTocH2" name="mozTocId660065"></a><a
+ name="Step_3_-_View_Model"></a><span style="font-weight: bold;">Step
+3 - View Model</span></h2>
+<h3><a class="mozTocH3" name="mozTocId202968"></a>Adapter Glue<br>
 </h3>
 <table
  style="width: 95%; text-align: left; margin-left: auto; margin-right: auto; background-color: rgb(255, 255, 204); font-style: italic;"
@@ -1108,12 +1140,13 @@ object.<br>
 <ul>
   <li>Line 91 creates the View Model Adapter.&nbsp; This adapter is
 used to populate the content of all the Flexible Hierarchy debugger
-views for the given PDA debugger instgance.</li>
-  <li>Line 94-95 register the source display adapter (the "MI" prefix
+views for the given PDA debugger instance.</li>
+  <li><a name="Source_Display_Adapter_Registration"></a>Line 94-95
+register the source display adapter (the "MI" prefix
 is a historical left over).</li>
   <li>Lines 98-109 register handlers for common debug commands.</li>
-  <li>Lines 112 -116 Regiter an adapter to provide debug model
-ID.&nbsp; It is used by Debug Platform to enable custom keybord
+  <li>Lines 112 -116 Register an adapter to provide debug model
+ID.&nbsp; It is used by Debug Platform to enable custom keyboard
 shortcuts for the debugger.</li>
   <li>Line 122 associates the launch object with the PDA debugger
 elements.&nbsp; This enables some actions in debug view which access
@@ -1159,7 +1192,7 @@ PDA launch is removed:<br>
   </tbody>
 </table>
 </div>
-<h3>PDA View Model</h3>
+<h3><a class="mozTocH3" name="mozTocId531112"></a>PDA View Model</h3>
 The PDAVMAdapter creates the VM Providers on demand for each debugger
 view it supports:<br>
 <br>
@@ -1203,7 +1236,7 @@ respectively.&nbsp; These providers are implemented in the <span
 and are reused here without modification.<br>
   </li>
 </ul>
-<h3>Launch VM Provider</h3>
+<h3><a class="mozTocH3" name="mozTocId395362"></a>Launch VM Provider</h3>
 "Launch" actually refers to the internal name of the Debug view.&nbsp;
 The PDA debugger has a somewhat simpler presentation in Debug view than
 most debuggers because it does not support multiple threads so it has
@@ -1288,7 +1321,7 @@ events.&nbsp; These events are used by the LaunchVMRootNode to update
 the state and content of the launch if it has been changed or
 terminated.</li>
 </ul>
-<h3>PDA Program VM Node</h3>
+<h3><a class="mozTocH3" name="mozTocId104193"></a>PDA Program VM Node</h3>
 <ul>
 </ul>
 <h4>Elements</h4>
@@ -1371,7 +1404,7 @@ already terminated.&nbsp; The super-class implementation only changes
 the execution thread to the DSF session and calls <span
  style="font-style: italic;">updateElementsInSessionThread()</span>,
 which is not needed nor possible after the PDA program is terminated.</li>
-  <li>Line 126 cretes the dummy View Model context which represents a
+  <li>Line 126 creates the dummy View Model context which represents a
 terminated PDA program.</li>
   <li>Line 135 implements the elements update method which is called in
 the DSF session thread.&nbsp; <br>
@@ -1432,9 +1465,9 @@ implementation:<br>
 </table>
 </div>
 <ul>
-  <li>Line 153 iterates through the udptes. The
+  <li>Line 153 iterates through the updates. The
 IElementLabelProvider.update() method takes an array of updates as an
-argument to allow the implementation to process the udpates in bunches,
+argument to allow the implementation to process the updates in bunches,
 improving performance.&nbsp; <br>
   </li>
   <li>Line 157 calls a subroutine to handle the terminated program
@@ -1538,13 +1571,13 @@ method to retrieve additional information about the state of the PDA
 program.&nbsp; The label update is completed only after request monitor
 of this method is called.</li>
   <li>Lines 207-210 perform error handling.</li>
-  <li>Lines 213-229 finally calcuate the label string for the
+  <li>Lines 213-229 finally calculate the label string for the
 program.&nbsp; <br>
   </li>
   <li>On line 227, The result of the <span style="font-style: italic;">getExecutionData()</span>
 call, accessed using <span style="font-style: italic;">DataRequestMonitor.getData()</span>,
 is used to fill in the reason for the current state of the program.</li>
-  <li>Line 230 writes the label to the upate.&nbsp; This call assumes
+  <li>Line 230 writes the label to the update.&nbsp; This call assumes
 that there is no columns in Debug view, so it uses <span
  style="font-style: italic;">0</span> as the column index.<br>
   </li>
@@ -1552,7 +1585,7 @@ that there is no columns in Debug view, so it uses <span
 <h4>Delta</h4>
 Translating the Data Model events into <span
  style="font-style: italic;">IModelDelta</span> objects that can be
-processed by the Flehible Hierarchy views, is the most complicated task
+processed by the Flexible Hierarchy views, is the most complicated task
 performed by the View Model infrastructure.&nbsp; The model deltas
 require that a path be formed by the IModelDelta objects which matches
 the hierarchy elements found in the view, including such details as
@@ -1687,19 +1720,19 @@ context to be selected.<br>
       <td style="text-align: left;">Note: In theory, each VM Node
 should only generate delta flags that only affect its own
 elements.&nbsp; In this way, the layout of the VM Nodes in a view could
-be costomized as needed.&nbsp; In practice, testing and fine-tuning of
+be customized as needed.&nbsp; In practice, testing and fine-tuning of
 the view requires adjustments in the flags returned by the various VM
 Nodes in a given view. </td>
     </tr>
   </tbody>
 </table>
-<h2>Step 4 - Run Control</h2>
+<h2><a class="mozTocH2" name="mozTocId797186"></a>Step 4 - Run Control</h2>
 Up to this point most of the work in creating the new PDA debugger has
 gone into infrastructure.&nbsp; Now it is time to start adding
 functionality to do some actual debugging.&nbsp; The work needed to get
 run control functionality implemented is all encapsulated in the <span
  style="font-style: italic;">PDARunControl</span> service.<br>
-<h3>State Tracking<br>
+<h3><a class="mozTocH3" name="mozTocId333707"></a>State Tracking<br>
 </h3>
 The primary function of the run control system is to track the current
 execution state of the program and to issue the corresponding events to
@@ -1814,7 +1847,7 @@ logic an improve the efficiency of the IDE commands.<br>
   </tbody>
 </table>
 </div>
-<h3>Commands</h3>
+<h3><a class="mozTocH3" name="mozTocId120075"></a>Commands</h3>
 The command control commands all follow the same patter shown below by
 example of the resume() command:<br>
 <br>
@@ -1862,7 +1895,7 @@ state flag.</li>
   <li>Lines 244-253 send the resume command to the PDA debugger. <br>
   </li>
   <li>Lines 247-252 adds error handling in case the result command
-fails.&nbsp; It resotres the service state.</li>
+fails.&nbsp; It restores the service state.</li>
   <li>Line 251 calls the super class's handleErrorOrCancel()
 method.&nbsp; The super class relays the error status to the parent
 request monitor and completes it.<br>
@@ -1873,8 +1906,9 @@ request monitor and completes it.<br>
   <li>Tracking program running state <br>
   </li>
 </ul>
-<h3>IExecutionDMData</h3>
-There is very little data that the run control servie interface returns
+<h3><a class="mozTocH3" name="mozTocId976358"></a>IExecutionDMData</h3>
+There is very little data that the run control service interface
+returns
 for a given execution context.&nbsp; The intention behind this is to
 allow the service to remain very generic and thus applicable to any
 debugger.&nbsp; In specific debuggers, additional data about processes,
@@ -1883,14 +1917,14 @@ extensions.&nbsp; IExpressionDMData is the only object which is
 retrieved asynchronously from the run control service, and it only
 contains the state change reason for the last debugger state
 change.&nbsp; <br>
-<h2>Step 5 - Breakpoints</h2>
+<h2><a class="mozTocH2" name="mozTocId325852"></a>Step 5 - Breakpoints</h2>
 Managing breakpoints is one of the complicated tasks that need to be
 implemented by Eclipse debuggers.&nbsp; The source of this complexity
 is the fact that Eclipse breakpoints (IDE breakpoints) are managed
 independently of breakpoints that are installed in the debugger
 (target-side breakpoints).&nbsp; The Eclipse debugger integration has
 to keep these two sets of breakpoints synchronized.&nbsp; <br>
-<h3>IDE Breakpoints</h3>
+<h3><a class="mozTocH3" name="mozTocId19247"></a>IDE Breakpoints</h3>
 Eclipse breakpoints are based on markers, which are special tags in the
 Eclispe resource system and are associated with files and
 folders.&nbsp; By using markers, breakpoints gain the benefit of the
@@ -1924,8 +1958,10 @@ is described in fine detail the <a style="font-style: italic;"
  href="http://www.eclipse.org/articles/Article-Debugger/how-to.html">How
 to write an Eclipse debugger</a> article.<br>
 <p> </p>
-<h3>Target-Side Breakpoints</h3>
-DSF defines the IBreakpoints interface for a service which the fuctions
+<h3><a class="mozTocH3" name="mozTocId991346"></a>Target-Side
+Breakpoints</h3>
+DSF defines the IBreakpoints interface for a service which the
+functions
 of managing breakpoints installed on the target.&nbsp; These functions
 include:<br>
 <ul>
@@ -2054,7 +2090,7 @@ subroutine:<br>
   <li>Lines 183-186 determine if the breakpoint is enabled.&nbsp; If it
 is not, the insert command fails with an expected error.&nbsp; <br>
   </li>
-  <li>Line 188 retrieves the breakpoint type attribute, shich is used
+  <li>Line 188 retrieves the breakpoint type attribute, which is used
 to determine which breakpoint insert subroutine to call.</li>
   <li>Line 196 retrieves the <span style="font-style: italic;">PDAProgramDMContext</span>
 from the breakpoint target context.&nbsp; This context is the only
@@ -2134,7 +2170,7 @@ The PDABreakpoints.removeBreakpoint() command takes the
 IBreakpointDMContext as an argument, but otherwise follows the same
 general logic as the insertBreakpoint() implementation.<br>
 <h4>Updating a Breakpoint</h4>
-Updating a breakpoint involves motifying some of the attributes of an
+Updating a breakpoint involves modifying some of the attributes of an
 existing breakpoint.&nbsp; Not all debuggers may support this
 functionality and for debuggers that do, not all types of breakpoints
 and not all attributes may be updated.&nbsp; The IBreakpoints interface
@@ -2216,11 +2252,12 @@ this field.<br>
 The simple PDA debugger does not track detailed breakpoint data, such
 has hit counts, addresses etc.&nbsp; So this function simply returns an
 error.<br>
-<h3>Breakpoints Mediator</h3>
+<h3><a class="mozTocH3" name="mozTocId389907"></a>Breakpoints Mediator</h3>
 With the APIs for managing IDE and Target-Side breakpoints clearly
 defined, there is a need for a component which will keep the two sets
-of breakpoint objects synchronized.&nbsp; DSF provides a standard
-BreakpointsMediator service to accomplish this task.&nbsp; <br>
+of breakpoint objects synchronized.&nbsp; DSF provides a standard <span
+ style="font-style: italic;">BreakpointsMediator</span> service to
+accomplish this task.&nbsp;&nbsp;
 <table style="text-align: left; margin-left: auto; margin-right: auto;"
  border="0" cellpadding="5" cellspacing="30">
   <tbody>
@@ -2239,49 +2276,619 @@ breakpoints</span></small><br>
     </tr>
   </tbody>
 </table>
+The <span style="font-style: italic;">BreakpointsMediator</span>
+service is not meant to be sub-classed by specific debugger
+integrations, however the specific IDE Breakpoint objects as well as
+Target-Side Breakpoint attributes differ from debugger to
+debugger.&nbsp;
+Therefore, the Breakpoints Mediator requires a helper object, which
+implements IBreakpointAttributeTranslator which encapsulates the
+debugger-specific functionality.&nbsp; The most important function of
+the attribute translator is to translate IDE Breakpoint attributes into
+Target-Side breakpoint attributes.&nbsp; The following listing shows
+how the PDA debugger implements this function:<br>
 <br>
-<br>
-<ul>
-  <li>Target Side Breakpoints</li>
-  <li>Mediator</li>
-  <li>Diagram showing Mediator's role<br>
-  </li>
-</ul>
-<h2>Step 6 - Stack</h2>
-<ul>
-  <li>Command Cache at work<br>
-  </li>
-</ul>
-<h2>Step 7 - Source Display</h2>
-<ul>
-  <li>Source lookup director<br>
-  </li>
-</ul>
-<h2>Step 8 - Variables</h2>
-<ul>
-  <li>Reading and writing variables<br>
-  </li>
-  <li>Formatted values</li>
-  <li>Expressions view<br>
-  </li>
-</ul>
 <div style="margin-left: 20px;">
 <table style="text-align: left; background-color: rgb(238, 238, 238);"
  border="0" cellpadding="5" cellspacing="0">
   <tbody>
     <tr>
       <td colspan="2" rowspan="1" style="vertical-align: top;"><span
- style="font-family: monospace; font-weight: bold;">org.eclipse.dd.examples.dsf.timers.TimersVMNode</span>
-      </td>
+ style="font-family: monospace; font-weight: bold;">org.eclipse.dd.examples.pda.service.PDABreakpointAttributeTranslator
+- getBreakpointAttributes()</span> </td>
     </tr>
     <tr>
       <td style="vertical-align: top; width: 10px;"><br>
       </td>
-      <td style="vertical-align: top;"> <br>
+      <td style="vertical-align: top;">
+      <pre><a name="line65"> 65: </a>    public List&lt;Map&lt;String, Object&gt;&gt; getBreakpointAttributes(IBreakpoint bp, boolean bpManagerEnabled) <br><a
+ name="line66"> 66: </a>    <font color="#4169e1">    throws</font> CoreException <br><a
+ name="line67"> 67: </a>    {<br><a name="line68"> 68: </a>        Map&lt;String, Object&gt; attrs = new HashMap&lt;String, Object&gt;(); <br><br><a
+ name="line70"> 70: </a>        <font color="#b22222">// Check that the marker exists and retrieve its attributes.  </font><br><a
+ name="line71"> 71: </a>        <font color="#b22222">// Due to accepted race conditions, the breakpiont marker may become null </font><br><a
+ name="line72"> 72: </a>        <font color="#b22222">// while this method is being invoked.  In this case throw an exception</font><br><a
+ name="line73"> 73: </a>        <font color="#b22222">// and let the caller handle it.</font><br><a
+ name="line74"> 74: </a>        IMarker marker = bp.getMarker();<br><a
+ name="line75"> 75: </a>        <font color="#4169e1">if</font> (marker == null || !marker.exists()) {<br><a
+ name="line76"> 76: </a>            <font color="#4169e1">throw</font> new DebugException(new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, <font
+ color="#666666">"Breakpoint marker does not exist"</font>, null)); <br><a
+ name="line77"> 77: </a>        }<br><a name="line78"> 78: </a>        <font
+ color="#b22222">// Suppress cast warning: platform is still on Java 1.3</font><br><a
+ name="line79"> 79: </a>        @SuppressWarnings(<font color="#666666">"unchecked"</font>)<br><a
+ name="line80"> 80: </a>        Map&lt;String, Object&gt; platformBpAttrs = marker.getAttributes();<br><br><a
+ name="line82"> 82: </a>        <font color="#b22222">// Copy breakpoint attributes.</font><br><a
+ name="line83"> 83: </a>        <font color="#4169e1">if</font> (bp instanceof PDAWatchpoint) {<br><a
+ name="line84"> 84: </a>            attrs.put(PDABreakpoints.ATTR_BREAKPOINT_TYPE, PDABreakpoints.PDA_WATCHPOINT);<br><br><a
+ name="line86"> 86: </a>            copyAttributes(platformBpAttrs, attrs, fgPDAWatchpointAttributes);<br><a
+ name="line87"> 87: </a>        } <font color="#4169e1">else</font> <font
+ color="#4169e1">if</font> (bp instanceof PDALineBreakpoint) {<br><a
+ name="line88"> 88: </a>            attrs.put(PDABreakpoints.ATTR_BREAKPOINT_TYPE, PDABreakpoints.PDA_LINE_BREAKPOINT);<br><a
+ name="line89"> 89: </a>            attrs.put(PDABreakpoints.ATTR_PROGRAM_PATH, marker.getResource().getFullPath().toString()); <br><br><a
+ name="line91"> 91: </a>            copyAttributes(platformBpAttrs, attrs, fgPDALineBreakpointAttributes);<br><a
+ name="line92"> 92: </a>        }<br><br><a name="line94"> 94: </a>        <font
+ color="#b22222">// If the breakpoint manager is disabled, override the enabled attribute.</font><br><a
+ name="line95"> 95: </a>        <font color="#4169e1">if</font> (!bpManagerEnabled) {<br><a
+ name="line96"> 96: </a>            attrs.put(IBreakpoint.ENABLED, false);<br><a
+ name="line97"> 97: </a>        }<br><br><a name="line99"> 99: </a>        <font
+ color="#b22222">// The breakpoint mediator allows for multiple target-side breakpoints </font><br><a
+ name="line100">100: </a>        <font color="#b22222">// to be created for each IDE breakpoint.  Although in case of PDA this </font><br><a
+ name="line101">101: </a>        <font color="#b22222">// feature is never used, we still have to return a list of attributes.</font><br><a
+ name="line102">102: </a>        List&lt;Map&lt;String, Object&gt;&gt; retVal = new ArrayList&lt;Map&lt;String, Object&gt;&gt;(1);<br><a
+ name="line103">103: </a>        retVal.add(attrs);<br><a name="line104">104: </a>        <font
+ color="#4169e1">return</font> retVal;<br><a name="line105">105: </a>    }<br><br><a
+ name="line107">107: </a>    private void copyAttributes(Map&lt;String, Object&gt; srcMap, Map&lt;String, Object&gt; destMap, String[] attrs) {<br><a
+ name="line108">108: </a>        <font color="#4169e1">for</font> (String attr : attrs) {<br><a
+ name="line109">109: </a>            <font color="#4169e1">if</font> (srcMap.containsKey(attr)) {<br><a
+ name="line110">110: </a>                destMap.put(attr, srcMap.get(attr));<br><a
+ name="line111">111: </a>            }<br><a name="line112">112: </a>        }<br><a
+ name="line113">113: </a>    }<br></pre>
       </td>
     </tr>
   </tbody>
 </table>
 </div>
+<h2><a class="mozTocH2" name="mozTocId380385"></a>Step 6 - Stack</h2>
+<h3><a class="mozTocH3" name="mozTocId378363"></a>Command Cache</h3>
+A new feature introduced in this service is the command cache.&nbsp;
+The command cache is a surprisingly simple mechanism for caching
+service data which otherwise would need to be retrieved repeatedly from
+the debugger back end.&nbsp; The command cache performs two functions:<br>
+<ol>
+  <li>Map Command objects to corresponding Command Result objects.</li>
+  <li>While waiting for a Command to be processed, queue incoming
+Commands for the same data and complete them when the first Command is
+completed.</li>
+</ol>
+Using the command cache greatly simplifies the logic in implementing
+data retrieval commands.&nbsp; As an example, the following is the
+listing of the PDAStack.getFrames() method:<br>
+<br>
+<div style="margin-left: 20px;">
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
+ border="0" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2" rowspan="1" style="vertical-align: top;"><span
+ style="font-family: monospace; font-weight: bold;">org.eclipse.dd.examples.pda.service.PDAStack
+- getFrames()</span> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 10px;"><br>
+      </td>
+      <td style="vertical-align: top;">
+      <pre><a name="line244">244: </a>    public void getFrames(IDMContext context, final DataRequestMonitor&lt;IFrameDMContext[]&gt; rm) {<br><a
+ name="line245">245: </a>        <font color="#b22222">// Can only create stack frames for an execution context as a parent, </font><br><a
+ name="line246">246: </a>        <font color="#b22222">// however the argument context is a generic context type, so it could </font><br><a
+ name="line247">247: </a>        <font color="#b22222">// be an execution context, a frame, a variable, etc. Search the </font><br><a
+ name="line248">248: </a>        <font color="#b22222">// hierarchy of the argument context to find the execution one.</font><br><a
+ name="line249">249: </a>        final IExecutionDMContext execCtx = DMContexts.getAncestorOfType(context, IExecutionDMContext.class);<br><a
+ name="line250">250: </a>        <font color="#4169e1">if</font> (execCtx == null) {<br><a
+ name="line251">251: </a>            PDAPlugin.failRequest(rm, IDsfService.INVALID_HANDLE, <font
+ color="#666666">"Invalid context "</font> + context);<br><a
+ name="line252">252: </a>            <font color="#4169e1">return</font>;<br><a
+ name="line253">253: </a>        }<br><br><a name="line255">255: </a>        <font
+ color="#b22222">// Execute the stack command and create the corresponding frame contexts.</font><br><a
+ name="line256">256: </a>        fCommandCache.execute(<br><a
+ name="line257">257: </a>            new PDAStackCommand(fCommandControl.getProgramDMContext()),<br><a
+ name="line258">258: </a>            new DataRequestMonitor&lt;PDAStackCommandResult&gt;(getExecutor(), rm) {<br><a
+ name="line259">259: </a>                @Override<br><a name="line260">260: </a><strong><font
+ color="#4169e1">                protected void handleOK()</font></strong> {<br><a
+ name="line261">261: </a>                    IFrameDMContext[] frameCtxs = new IFrameDMContext[getData().fFrames.length];<br><a
+ name="line262">262: </a>                    <font color="#4169e1">for</font> (int i = 0; i &lt; getData().fFrames.length; i++) {<br><a
+ name="line263">263: </a>                        frameCtxs[i] = new FrameDMContext(getSession().getId(), execCtx, i);<br><a
+ name="line264">264: </a>                    }<br><a name="line265">265: </a>                    rm.setData(frameCtxs);<br><a
+ name="line266">266: </a>                    rm.done();<br><a
+ name="line267">267: </a>                }<br><a name="line268">268: </a>            });<br><a
+ name="line269">269: </a>    }<br></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<ul>
+  <li>Lines 256-268 create a new PDAStackCommand, and execute it using
+the command cache.&nbsp; <br>
+  </li>
+  <ul>
+    <li>If the <span style="font-style: italic;">PDAStackCommand</span>
+was previously executed, the <span style="font-style: italic;">PDAStackCommandResult</span>
+object will be returned from the cached data.&nbsp; <br>
+    </li>
+    <li>If the <span style="font-style: italic;">PDAStackCommand</span>
+was just sent to the debugger, and the cache is waiting for the result,
+this request monitor will be put in a queue to wait for the
+result.&nbsp; <br>
+    </li>
+    <li>If the cache does not contain an entry for the <span
+ style="font-style: italic;">PDAStackCommand</span>, it will create one
+and send it to the debugger.<br>
+    </li>
+  </ul>
+  <li>Lines 261-266 implement the handler which processes the <span
+ style="font-style: italic;">PDAStackCommandResult</span>.&nbsp; It
+creates an array of FrameDMContext objects and returns it to the client.<br>
+  </li>
+</ul>
+<h3><a class="mozTocH3" name="mozTocId923476"></a>Frame Context</h3>
+The primary object type managed by the stack service a stack
+frame.&nbsp; It is implemented by the FrameDMContext object listed
+below:<br>
+<br>
+<div style="margin-left: 20px;">
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
+ border="0" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2" rowspan="1" style="vertical-align: top;"><span
+ style="font-family: monospace; font-weight: bold;">org.eclipse.dd.examples.pda.service.PDAStack
+- FrameDMContext</span> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 10px;"><br>
+      </td>
+      <td style="vertical-align: top;">
+      <pre><a name="line54"> 54: </a>    private static class FrameDMContext extends AbstractDMContext implements IFrameDMContext {<br><br><a
+ name="line56"> 56: </a>        final private int fLevel;<br><br><a
+ name="line58"> 58: </a>        FrameDMContext(String sessionId, IExecutionDMContext execDmc, int level) {<br><a
+ name="line59"> 59: </a>            super(sessionId, new IDMContext[] { execDmc });<br><a
+ name="line60"> 60: </a>            fLevel = level;<br><a name="line61"> 61: </a>        }<br><br><a
+ name="line63"> 63: </a><strong><font color="#4169e1">        public int getLevel()</font></strong> { <font
+ color="#4169e1">return</font> fLevel; }<br><br><a name="line65"> 65: </a>        @Override<br><a
+ name="line66"> 66: </a><strong><font color="#4169e1">        public boolean equals(Object other)</font></strong> {<br><a
+ name="line67"> 67: </a>            <font color="#4169e1">return</font> super.baseEquals(other) &amp;&amp; ((FrameDMContext)other).fLevel == fLevel;<br><a
+ name="line68"> 68: </a>        }<br><br><a name="line70"> 70: </a>        @Override<br><a
+ name="line71"> 71: </a><strong><font color="#4169e1">        public int hashCode()</font></strong> {<br><a
+ name="line72"> 72: </a>            <font color="#4169e1">return</font> super.baseHashCode() ^ fLevel;<br><a
+ name="line73"> 73: </a>        }<br><br><a name="line75"> 75: </a>        @Override<br><a
+ name="line76"> 76: </a><strong><font color="#4169e1">        public String toString()</font></strong> { <br><a
+ name="line77"> 77: </a>            <font color="#4169e1">return</font> baseToString() + <font
+ color="#666666">".frame["</font> + fLevel + <font color="#666666">"]"</font>;  <font
+ color="#b22222">//$NON-NLS-1$ //$NON-NLS-2$</font><br><a name="line78"> 78: </a>        }<br><a
+ name="line79"> 79: </a>    }<br></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<ul>
+  <li>Line 56 declares the only field in the frame object, which is the
+frame level.&nbsp; <br>
+  </li>
+</ul>
+The frame context, which in itself does not provide access to much
+frame information, can be used to retrieve more complete frame data
+implemented using the FrameDMData object.&nbsp; The frame data object
+is based on information parsed from the result of the PDA debugger
+"stack" command, which is written into the <span
+ style="font-style: italic;">PDAFrame</span> object by the <span
+ style="font-style: italic;">PDAStackCommandResult</span><br>
+<br>
+<div style="margin-left: 20px;">
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
+ border="0" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2" rowspan="1" style="vertical-align: top;"><span
+ style="font-family: monospace; font-weight: bold;">org.eclipse.dd.examples.pda.service.PDAStack
+- FrameDMData</span> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 10px;"><br>
+      </td>
+      <td style="vertical-align: top;">
+      <pre><a name="line85"> 85: </a>    private static class FrameDMData implements IFrameDMData {<br><br><a
+ name="line87"> 87: </a>        final private PDAFrame fFrame;<br><br><a
+ name="line89"> 89: </a>        FrameDMData(PDAFrame frame) {<br><a
+ name="line90"> 90: </a>            fFrame = frame;<br><a name="line91"> 91: </a>        }<br><br><a
+ name="line93"> 93: </a><strong><font color="#4169e1">        public String getFile()</font></strong> {<br><a
+ name="line94"> 94: </a>            <font color="#4169e1">return</font> fFrame.fFilePath.lastSegment();<br><a
+ name="line95"> 95: </a>        }<br><br><a name="line97"> 97: </a><strong><font
+ color="#4169e1">        public String getFunction()</font></strong> {<br><a
+ name="line98"> 98: </a>            <font color="#4169e1">return</font> fFrame.fFunction;<br><a
+ name="line99"> 99: </a>        }<br><br><a name="line101">101: </a><strong><font
+ color="#4169e1">        public int getLine()</font></strong> {<br><a
+ name="line102">102: </a>            <font color="#4169e1">return</font> fFrame.fLine + 1;<br><a
+ name="line103">103: </a>        }<br><br><a name="line105">105: </a><strong><font
+ color="#4169e1">        public int getColumn()</font></strong> {<br><a
+ name="line106">106: </a>            <font color="#4169e1">return</font> 0;<br><a
+ name="line107">107: </a>        }<br><br><a name="line109">109: </a><strong><font
+ color="#4169e1">        public IAddress getAddress()</font></strong> {<br><a
+ name="line110">110: </a>            <font color="#4169e1">return</font> null;<br><a
+ name="line111">111: </a>        }<br><a name="line112">112: </a>    }<br></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<h2><a class="mozTocH2" name="mozTocId156503"></a>Step 7 - Source
+Display</h2>
+Integrating source display is relatively simple task, even though the
+Eclipse APIs for looking up and displaying source are rather
+convoluted.&nbsp; Fortunately Eclipse Platform and DSF provide most of
+the components needed to implement this functionality.<br>
+<table style="text-align: left; margin-left: auto; margin-right: auto;"
+ border="0" cellpadding="5" cellspacing="30">
+  <tbody>
+    <tr>
+      <td style="text-align: center; vertical-align: middle;"><img
+ style="width: 628px; height: 458px;"
+ title="Components involved in Source Display" alt=""
+ src="source_display_1.png"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><small><span
+ style="font-weight: bold;">Image 3: Components involved in Source
+Display</span></small><br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+The first step in integrating source lookup, is to create a source
+lookup director and the source container.&nbsp; This is explained in
+detail in the <a style="font-style: italic;"
+ href="http://www.eclipse.org/articles/Article-Debugger/how-to.html">How
+to write an Eclipse debugger</a> article referenced earlier.&nbsp;
+There is one difference in this process for a DSF-based debugger.&nbsp;
+The source lookup director does not need to initialize a source lookup
+participant list. <br>
+<p>The second step is to register a DSF source display adapter.&nbsp;
+This has actually <a href="#Source_Display_Adapter_Registration">already
+been accomplished</a> in <a href="#Step_3_-_View_Model">Step 3 - View
+Model</a>, when registering the View Model adapters.<br>
+</p>
+<h2><a class="mozTocH2" name="mozTocId343062"></a>Step 8 - Variables</h2>
+At this point we almost have a fully functional PDA debugger.&nbsp; The
+only thing that is left is to populate the Variables and Expressions
+views.&nbsp; <br>
+Displaying variable data in DSF requires use of two services:<br>
+<ol>
+  <li><span style="text-decoration: underline;">IStack service</span> -
+This service is used to get the list of local variables' names in a
+given stack frame.<br>
+  </li>
+  <li><span style="text-decoration: underline;">IExpressions service</span>
+- This service is used to evaluate the variable names as expressions in
+order to retrieve full type and value information for the given
+variables.<br>
+  </li>
+</ol>
+<h3><a class="mozTocH3" name="mozTocId837286"></a>Variable Contexts</h3>
+The stack service allows clients to retrieve two types of variables
+through two methods<br>
+<ul>
+  <li>getLocals() - local variables</li>
+  <li>getArguments() - function arguments (not implemented by the PDA
+debugger)<br>
+  </li>
+</ul>
+Both of these methods return a context that implements the <span
+ style="font-style: italic;">IStack.IVariableDMContext</span>
+interface.&nbsp; The implementation of this context is very simple in
+PDA<br>
+<br>
+<div style="margin-left: 20px;">
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
+ border="0" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2" rowspan="1" style="vertical-align: top;"><span
+ style="font-family: monospace; font-weight: bold;">org.eclipse.dd.examples.pda.service.PDAStack
+- VariableDMContext</span> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 10px;"><br>
+      </td>
+      <td style="vertical-align: top;">
+      <pre><a name="line117">117: </a>    @Immutable<br><a
+ name="line118">118: </a>    private static class VariableDMContext extends AbstractDMContext implements IVariableDMContext {<br><br><a
+ name="line120">120: </a>        final private String fVariable;<br><br><a
+ name="line122">122: </a>        VariableDMContext(String sessionId, IFrameDMContext frameCtx, String variable) {<br><a
+ name="line123">123: </a>            super(sessionId, new IDMContext[] { frameCtx });<br><a
+ name="line124">124: </a>            fVariable = variable;<br><a
+ name="line125">125: </a>        }<br><br><a name="line127">127: </a>        String getVariable() { <font
+ color="#4169e1">return</font> fVariable; }<br><br><a name="line129">129: </a>        @Override<br><a
+ name="line130">130: </a><strong><font color="#4169e1">        public boolean equals(Object other)</font></strong> {<br><a
+ name="line131">131: </a>            <font color="#4169e1">return</font> super.baseEquals(other) &amp;&amp; ((VariableDMContext)other).fVariable.equals(fVariable);<br><a
+ name="line132">132: </a>        }<br><br><a name="line134">134: </a>        @Override<br><a
+ name="line135">135: </a><strong><font color="#4169e1">        public int hashCode()</font></strong> {<br><a
+ name="line136">136: </a>            <font color="#4169e1">return</font> super.baseHashCode() + fVariable.hashCode();<br><a
+ name="line137">137: </a>        }<br><br><a name="line139">139: </a>        @Override<br><a
+ name="line140">140: </a><strong><font color="#4169e1">        public String toString()</font></strong> { <br><a
+ name="line141">141: </a>            <font color="#4169e1">return</font> baseToString() + <font
+ color="#666666">".variable("</font> + fVariable + <font color="#666666">")"</font>;  <font
+ color="#b22222">//$NON-NLS-1$ //$NON-NLS-2$</font><br><a name="line142">142: </a>        }<br><a
+ name="line143">143: </a>    }<br></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<ul>
+  <li>Line 127 declares the <span style="font-style: italic;">fVariable</span>
+(name) field which along with the parent context uniquely identifies a
+PDA variable.<br>
+  </li>
+</ul>
+The getLocals() implementation is also very simple as it only uses the
+familiar <span style="font-style: italic;">stack</span> PDA debugger
+command:<br>
+<br>
+<div style="margin-left: 20px;">
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
+ border="0" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2" rowspan="1" style="vertical-align: top;"><span
+ style="font-family: monospace; font-weight: bold;">org.eclipse.dd.examples.pda.service.PDAStack
+- getLocals()</span> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 10px;"><br>
+      </td>
+      <td style="vertical-align: top;">
+      <pre><a name="line271">271: </a>    public void getLocals(final IFrameDMContext frameCtx, final DataRequestMonitor&lt;IVariableDMContext[]&gt; rm) {<br><a
+ name="line272">272: </a>        <font color="#b22222">// Execute the stack command again.</font><br><a
+ name="line273">273: </a>        fCommandCache.execute(<br><a
+ name="line274">274: </a>            new PDAStackCommand(fCommandControl.getProgramDMContext()),<br><a
+ name="line275">275: </a>            new DataRequestMonitor&lt;PDAStackCommandResult&gt;(getExecutor(), rm) {<br><a
+ name="line276">276: </a>                @Override<br><a name="line277">277: </a><strong><font
+ color="#4169e1">                protected void handleOK()</font></strong> {<br><a
+ name="line278">278: </a>                    <font color="#b22222">// Find the correct PDAFrame</font><br><a
+ name="line279">279: </a>                    int frameId = getData().fFrames.length - frameCtx.getLevel() - 1;<br><a
+ name="line280">280: </a>                    <font color="#4169e1">if</font> (frameId &lt; 0) {<br><a
+ name="line281">281: </a>                        PDAPlugin.failRequest(rm, IDsfService.INVALID_HANDLE, <font
+ color="#666666">"Invalid frame level "</font> + frameCtx);<br><a
+ name="line282">282: </a>                        <font color="#4169e1">return</font>;<br><a
+ name="line283">283: </a>                    }<br><a name="line284">284: </a>                    PDAFrame pdaFrame = getData().fFrames[frameId];<br><br><a
+ name="line286">286: </a>                    <font color="#b22222">// Create variable contexts for all variables in frame.</font><br><a
+ name="line287">287: </a>                    IVariableDMContext[] variableCtxs = new IVariableDMContext[pdaFrame.fVariables.length];<br><a
+ name="line288">288: </a>                    <font color="#4169e1">for</font> (int i = 0; i &lt; pdaFrame.fVariables.length; i++) {<br><a
+ name="line289">289: </a>                        variableCtxs[i] = new VariableDMContext(getSession().getId(), frameCtx, pdaFrame.fVariables[i]);<br><a
+ name="line290">290: </a>                    }<br><a name="line291">291: </a>                    rm.setData(variableCtxs);<br><a
+ name="line292">292: </a>                    rm.done();<br><a
+ name="line293">293: </a>                }<br><a name="line294">294: </a>            });<br><br><a
+ name="line296">296: </a>    }<br></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<ul>
+  <li>Lines 273-294 send the <span style="font-style: italic;">stack</span>
+command to the PDA debugger through the command cache.</li>
+  <li>Lines 279-284 verify the stack frame number and retrieve the
+corresponding <span style="font-style: italic;">PDAFrame</span> object
+from the stack result.</li>
+  <li>Lines 287-290 create the variable Data Model contexts and return
+then to the caller.</li>
+</ul>
+The IStack interface also defines an IVariableDMData interface which
+returns information about the variable.&nbsp; However, the only method
+from this interface used by the Variables view is the getName() method
+and it is the only method implemented by the PDA debugger integration:<br>
+<h3><a class="mozTocH3" name="mozTocId327572"></a>Expression Contexts</h3>
+The IExpressions interface
+uses a somewhat unusual way of managing contexts.&nbsp; A client can
+create an <span style="font-style: italic;">IExpressionDMContext</span>
+context instance for any expression and
+parent context by calling the <span style="font-style: italic;">IExpressions.createExpressions()
+</span>method.&nbsp; However, when the returned expression context is
+evaluated, if its expression is not valid or if it uses an invalid
+parent context, it is guaranteed to fail.&nbsp; The
+PDAExpressions.createExpression() implementation reflects this:<br>
+<br>
+<div style="margin-left: 20px;">
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
+ border="0" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2" rowspan="1" style="vertical-align: top;"><span
+ style="font-family: monospace; font-weight: bold;">org.eclipse.dd.examples.pda.service.PDAExpressions
+- createExpression()</span> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 10px;"><br>
+      </td>
+      <td style="vertical-align: top;">
+      <pre><a name="line213">213: </a><strong><font color="#4169e1">    public IExpressionDMContext createExpression(IDMContext ctx, String expression)</font></strong> {<br><a
+ name="line214">214: </a>        <font color="#b22222">// Create an expression based on the given context and string expression.  </font><br><a
+ name="line215">215: </a>        <font color="#b22222">// The PDA debugger can only evaluate variables as expressions and only</font><br><a
+ name="line216">216: </a>        <font color="#b22222">// in context of a frame.  </font><br><a
+ name="line217">217: </a>        IFrameDMContext frameCtx = DMContexts.getAncestorOfType(ctx, IFrameDMContext.class);<br><a
+ name="line218">218: </a>        <font color="#4169e1">if</font> (frameCtx != null) {<br><a
+ name="line219">219: </a>            <font color="#4169e1">return</font> new ExpressionDMContext(getSession().getId(), frameCtx, expression);<br><a
+ name="line220">220: </a>        } <font color="#4169e1">else</font> {<br><a
+ name="line221">221: </a>            <font color="#b22222">// If a frame cannot be found in context, return an "invalid" </font><br><a
+ name="line222">222: </a>            <font color="#b22222">// expression context, because a null return value is not allowed.</font><br><a
+ name="line223">223: </a>            <font color="#b22222">// Evaluating an invalid expression context will always yield an </font><br><a
+ name="line224">224: </a>            <font color="#b22222">// error.</font><br><a
+ name="line225">225: </a>            <font color="#4169e1">return</font> new InvalidExpressionDMContext(getSession().getId(), ctx, expression);<br><a
+ name="line226">226: </a>        }<br><a name="line227">227: </a>    }<br></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<br>
+<h3><a class="mozTocH3" name="mozTocId668928"></a>Expression Data<br>
+</h3>
+The IExpressions interface allows for retrieving data in two stages:<br>
+<ol>
+  <li>Variable type and other data.</li>
+  <li>Variable value.</li>
+</ol>
+The implementation of the IExpressions.IExpressionDMData interface is
+required by the Variables views, however for the PDA debugger the
+IExpressionDMData does not carry any additional information beyond the
+expression string.<br>
+<h3><a class="mozTocH3" name="mozTocId233056"></a>Formatted Value
+Context<br>
+</h3>
+The IExpressions service allows expression values to be retrieved in
+different, client-selectable formats.&nbsp; For the PDA debugger, only
+one formatting is available, which is reflected in the implementation
+of
+<span style="font-style: italic;">IFormattedValues.getAvailableFormats()</span>
+method.&nbsp;&nbsp; Also, the implementation of the <span
+ style="font-style: italic;">IFormattedValues.getFormattedValueContext()</span>
+method is just a formality.<br>
+<br>
+<div style="margin-left: 20px;">
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
+ border="0" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2" rowspan="1" style="vertical-align: top;"><span
+ style="font-family: monospace; font-weight: bold;">org.eclipse.dd.examples.pda.service.PDAExpressions
+- getAvailableFormats()</span> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 10px;"><br>
+      </td>
+      <td style="vertical-align: top;">
+      <pre><a name="line262">262: </a>    public void getAvailableFormats(IFormattedDataDMContext dmc, DataRequestMonitor&lt;String[]&gt; rm) {<br><a
+ name="line263">263: </a>        <font color="#b22222">// PDA debugger doesn't support formatting the expression.  Natural </font><br><a
+ name="line264">264: </a>        <font color="#b22222">// formatting is the only available option.</font><br><a
+ name="line265">265: </a>        rm.setData(new String[] { NATURAL_FORMAT });<br><a
+ name="line266">266: </a>        rm.done();<br><a name="line267">267: </a>    }<br><br><a
+ name="line269">269:     </a>public FormattedValueDMContext getFormattedValueContext(IFormattedDataDMContext exprCtx, String formatId) {<br><a
+ name="line270">270: </a>        <font color="#b22222">// Creates a context that can be used to retrieve a formatted value.</font><br><a
+ name="line271">271: </a>        <font color="#4169e1">return</font> new FormattedValueDMContext(this, exprCtx, formatId);<br><a
+ name="line272">272: </a>    }<br></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<br>
+Only when the formatted vlaue context is evaluated, the <span
+ style="font-style: italic;">var</span> command is sent to the PDA
+debugger:<br>
+<br>
+<div style="margin-left: 20px;">
+<table style="text-align: left; background-color: rgb(238, 238, 238);"
+ border="0" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2" rowspan="1" style="vertical-align: top;"><span
+ style="font-family: monospace; font-weight: bold;">org.eclipse.dd.examples.pda.service.PDAExpressions
+- getFormattedExpressionValue()</span> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 10px;"><br>
+      </td>
+      <td style="vertical-align: top;">
+      <pre><a name="line274">274: </a>    public void getFormattedExpressionValue(FormattedValueDMContext formattedCtx, <br><a
+ name="line275">275: </a>        final DataRequestMonitor&lt;FormattedValueDMData&gt; rm) <br><a
+ name="line276">276: </a>    {<br><a name="line277">277: </a>        final ExpressionDMContext exprCtx = DMContexts.getAncestorOfType(formattedCtx, ExpressionDMContext.class);<br><a
+ name="line278">278: </a>        <font color="#4169e1">if</font> (exprCtx != null) {<br><a
+ name="line279">279: </a>            final IFrameDMContext frameCtx = DMContexts.getAncestorOfType(exprCtx, IFrameDMContext.class);<br><a
+ name="line280">280: </a>            <br><a name="line281">281: </a>            <font
+ color="#b22222">// First retrieve the stack depth, needed to properly calculate</font><br><a
+ name="line282">282: </a>            <font color="#b22222">// the frame index that is used by the PDAVarCommand. </font><br><a
+ name="line283">283: </a>            fStack.getStackDepth(<br><a
+ name="line284">284: </a>                frameCtx, 0,<br><a
+ name="line285">285: </a>                new DataRequestMonitor&lt;Integer&gt;(getExecutor(), rm) {<br><a
+ name="line286">286: </a>                    @Override<br><a
+ name="line287">287: </a><strong><font color="#4169e1">                    protected void handleOK()</font></strong> {<br><a
+ name="line288">288: </a>                        <font color="#b22222">// Calculate the frame index.</font><br><a
+ name="line289">289: </a>                        int frameId = getData() - frameCtx.getLevel() - 1;<br><a
+ name="line290">290: </a>                        <br><a name="line291">291: </a>                        <font
+ color="#b22222">// Send the command to evaluate the variable.</font><br><a
+ name="line292">292: </a>                        fCommandCache.execute(<br><a
+ name="line293">293: </a>                            new PDAVarCommand(fCommandControl.getProgramDMContext(), frameId, exprCtx.getExpression()), <br><a
+ name="line294">294: </a>                            new DataRequestMonitor&lt;PDACommandResult&gt;(getExecutor(), rm) {<br><a
+ name="line295">295: </a>                                @Override<br><a
+ name="line296">296: </a><strong><font color="#4169e1">                                protected void handleOK()</font></strong> {<br><a
+ name="line297">297: </a>                                    rm.setData(new FormattedValueDMData(getData().fResponseText));<br><a
+ name="line298">298: </a>                                    rm.done();<br><a
+ name="line299">299: </a>                                }<br><a
+ name="line300">300: </a>                            });        <br><a
+ name="line301">301: </a>                    }<br><a name="line302">302: </a>                });<br><a
+ name="line303">303: </a>        } <font color="#4169e1">else</font> {<br><a
+ name="line304">304: </a>            PDAPlugin.failRequest(rm, INVALID_HANDLE, <font
+ color="#666666">"Invalid expression context "</font> + formattedCtx);<br><a
+ name="line305">305: </a>            rm.done();<br><a name="line306">306: </a>        }<br><a
+ name="line307">307: </a>    }<br></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<ul>
+  <li>Line 277 extracts the expression context out of the <span
+ style="font-style: italic;">formattedCtx</span> argument.&nbsp; If the
+expression context is not found, the evaluation is failed.</li>
+  <li>Line 283 calls the stack service to retrieve the stack
+depth.&nbsp; This step is reqiured because the DPA debugger <span
+ style="font-style: italic;">var</span> command requires a stack frame
+number which is counted from the bottom.&nbsp; Where as the stack frame
+level returned in the <span style="font-style: italic;">IFrameDMCotnext.getLevel()</span>
+is counted at the top of the stack.</li>
+  <li>Line 289 calculates the frame number that can be used with the <span
+ style="font-style: italic;">var</span> command.</li>
+  <li>Lines 292-300 call the var command to evaluate the given
+expression and return the result to the client.<br>
+  </li>
+</ul>
+<h2><a class="mozTocH2" name="mozTocId840787"></a>Additional Resources<br>
+</h2>
+<h3><a class="mozTocH3" name="mozTocId824835"></a>Debug Platform</h3>
+The platform team has evolved and improved the debug APIs over many
+releases.&nbsp; Before starting a debugger integration using DSF, it
+would be very helpful to familiarize yourself with materials in these
+documents:<br>
+<ul>
+  <li><i><a
+ href="http://www.eclipse.org/articles/Article-Launch-Framework/launch.html">We
+Have Lift-off: The Launching Framework in Eclipse</a> </i>article<i><br>
+    </i></li>
+  <li><a style="font-style: italic;"
+ href="http://www.eclipse.org/articles/Article-Debugger/how-to.html">How
+to write an Eclipse debugger</a> article.</li>
+  <li><a href="http://www.eclipsecon.org/2008/?page=sub/&amp;id=40">Debug
+Platform: The Basics</a> EclipseCon tutorial.</li>
+  <li><a href="http://www.eclipsecon.org/2008/?page=sub/&amp;id=41">Debug
+Platform: Custom Integration</a> EclipseCon tutorial.<br>
+  </li>
+</ul>
+<h3><a class="mozTocH3" name="mozTocId512801"></a>GDB</h3>
+The <a href="http://www.eclipse.org/dsdp/dd/">DSDP Device Debugging
+project</a> is developing a DSF-based debugger integration with GDB as
+the main reference implementation of the DSF APIs.&nbsp; In comparison
+with PDA, GDB is a much more complex and feature rich debugger
+integration.&nbsp; The GDB debugger integration is also being
+continually developed and improve features and performance.<br>
+<h3><a class="mozTocH3" name="mozTocId126766"></a>TCF</h3>
+The Target Communication Framework which is being developed as part of
+the <a href="http://www.eclipse.org/dsdp/tm/">DSDP Target Management
+project</a> includes a reference debugger agent implementation. This
+reference debugger agent is integrated with Eclipse using DSF.&nbsp;
+The
+TCF debugger is more limited in features than the GDB debugger, however
+the TCF debugger API is considerably different than the GDB/MI protocol
+and is an interesting example integration.<br>
+<br>
 </body>
 </html>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.utils.spawner;
 
@@ -19,6 +20,7 @@ import java.util.StringTokenizer;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.utils.pty.PTY;
+import org.eclipse.osgi.util.NLS;
 
 public class Spawner extends Process {
 
@@ -240,7 +242,7 @@ public class Spawner extends Process {
 
 		// Check for errors.
 		if (pid == -1) {
-			throw new IOException("Exec error:" + reaper.getErrorMessage()); //$NON-NLS-1$
+			throw new IOException(reaper.getErrorMessage());
 		}
 	}
 
@@ -339,14 +341,14 @@ public class Spawner extends Process {
 		String[] fCmdarray;
 		String[] fEnvp;
 		String fDirpath;
-		String fErrMesg;
+		volatile Throwable fException;
 
 		public Reaper(String[] array, String[] env, String dir) {
 			super("Spawner Reaper"); //$NON-NLS-1$
 			fCmdarray = array;
 			fEnvp = env;
 			fDirpath = dir;
-			fErrMesg = new String(CCorePlugin.getResourceString("Util.error.cannotRun") + fCmdarray[0]); //$NON-NLS-1$
+			fException = null;
 		}
 
 		int execute(String[] cmdarray, String[] envp, String dir, int[] channels) throws IOException {
@@ -358,7 +360,7 @@ public class Spawner extends Process {
 				pid = execute(fCmdarray, fEnvp, fDirpath, fChannels);
 			} catch (Exception e) {
 				pid = -1;
-				fErrMesg = e.getMessage();
+				fException= e;
 			}
 
 			// Tell spawner that the process started.
@@ -377,7 +379,8 @@ public class Spawner extends Process {
 		}
 
 		public String getErrorMessage() {
-			return fErrMesg;
+			final String reason= fException != null ? fException.getMessage() : "Unknown reason"; //$NON-NLS-1$
+			return NLS.bind(CCorePlugin.getResourceString("Util.error.cannotRun"), fCmdarray[0], reason); //$NON-NLS-1$
 		}
 	}
 }

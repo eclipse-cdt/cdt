@@ -189,23 +189,19 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 			IASTDeclaration stopWhenLeaving;
 			
 			public int visit(IASTDeclaration declaration) {
-				IASTNodeLocation[] locs= declaration.getNodeLocations();
-				if(locs.length>0) {
-					for(int i=0; i<locs.length; i++) {
-						IASTNodeLocation loc= locs[i];
+				IASTNodeLocation loc= declaration.getFileLocation();
+				if(loc != null) {
+					int candidateOffset= loc.getNodeOffset();
+					int candidateEndOffset= candidateOffset+loc.getNodeLength();
 
-						int candidateOffset= loc.getNodeOffset();
-						int candidateEndOffset= candidateOffset+loc.getNodeLength();
-						
-						if(offset <= candidateOffset) {
-							dec[0]= declaration;
-							return PROCESS_ABORT;
-						}
-						
-						boolean candidateEnclosesOffset= (offset >= candidateOffset) && (offset < candidateEndOffset);
-						if(candidateEnclosesOffset) {
-							stopWhenLeaving= declaration;
-						}
+					if(offset <= candidateOffset) {
+						dec[0]= declaration;
+						return PROCESS_ABORT;
+					}
+
+					boolean candidateEnclosesOffset= (offset >= candidateOffset) && (offset < candidateEndOffset);
+					if(candidateEnclosesOffset) {
+						stopWhenLeaving= declaration;
 					}
 				}
 				return PROCESS_CONTINUE;

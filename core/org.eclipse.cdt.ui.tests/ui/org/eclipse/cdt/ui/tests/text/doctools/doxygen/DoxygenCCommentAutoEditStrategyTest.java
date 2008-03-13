@@ -13,8 +13,6 @@
 
 package org.eclipse.cdt.ui.tests.text.doctools.doxygen;
 
-import java.util.HashMap;
-
 import junit.framework.Test;
 
 import org.eclipse.core.resources.IFile;
@@ -23,7 +21,6 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
@@ -45,7 +42,6 @@ import org.eclipse.cdt.internal.ui.text.CTextTools;
  * Testing the auto indent strategies.
  */
 public class DoxygenCCommentAutoEditStrategyTest extends DefaultCCommentAutoEditStrategyTest {
-	private HashMap fOptions;
 	protected ICProject fCProject;
 	
 	/**
@@ -62,7 +58,6 @@ public class DoxygenCCommentAutoEditStrategyTest extends DefaultCCommentAutoEdit
 	protected void setUp() throws Exception {
 		super.setUp();
 		fCProject= CProjectHelper.createCCProject("test"+System.currentTimeMillis(), null);
-		fOptions= CCorePlugin.getOptions();
 	}
 
 	/*
@@ -70,7 +65,6 @@ public class DoxygenCCommentAutoEditStrategyTest extends DefaultCCommentAutoEdit
 	 */
 	protected void tearDown() throws Exception {
 		CProjectHelper.delete(fCProject);
-		CCorePlugin.setOptions(fOptions);
 		super.tearDown();
 	}
 
@@ -329,6 +323,32 @@ public class DoxygenCCommentAutoEditStrategyTest extends DefaultCCommentAutoEdit
 		/*
 		 * Indenting in the presence of tabs is not handled at the moment.
 		 */
+		assertAutoEditBehaviour();
+	}
+	
+	//	#define STATIC static
+	//
+	//	class D {
+	//	public:
+	//      /**X
+	//      STATIC void D::foo(int x) {
+	//      
+	//      }
+	//	};
+	
+	//	#define STATIC static
+	//
+	//	class D {
+	//	public:
+	//      /**
+	//       * X
+	//       * @param x
+	//       */
+	//      STATIC void D::foo(int x) {
+	//      
+	//      }
+	//	};
+	public void testAutoDocCommentContent17() throws CoreException {
 		assertAutoEditBehaviour();
 	}
 	

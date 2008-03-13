@@ -41,7 +41,7 @@ import org.eclipse.cdt.internal.ui.text.CTextTools;
  * Testing the auto indent strategies.
  */
 public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
-	private HashMap fOptions;
+	private HashMap<String,String> fOptions;
 
 	/**
 	 * @param name
@@ -521,6 +521,19 @@ public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	//  }
 	public void testFollowingDeclaration9() {
 		assertDeclarationFollowingX("void baz(int x) {}");
+	}
+	
+	//	#define STATIC static
+	//
+	//	class D {
+	//	public:
+	//		X
+	//		STATIC void D::foo(int x) {
+	//			
+	//		}
+	//	};
+	public void testFollowingDeclaration13() throws CoreException {
+		assertDeclarationFollowingX("STATIC void D::foo(int x) {\n			\n		}");
 	}
 
 	//  #define MM void foo()

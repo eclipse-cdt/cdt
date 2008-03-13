@@ -31,6 +31,8 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.ui.text.doctools.DefaultMultilineCommentAutoEditStrategy;
 
@@ -45,11 +47,33 @@ public class DoxygenMultilineAutoEditStrategy extends DefaultMultilineCommentAut
 	private static final String PARAM = "@param "; //$NON-NLS-1$
 	private static final String RETURN = "@return\n"; //$NON-NLS-1$
 
-	/**
-	 * Default constructor
-	 */
-	public DoxygenMultilineAutoEditStrategy() {
+	protected boolean documentPureVirtuals= true;
 	
+	public DoxygenMultilineAutoEditStrategy() {
+	}
+	
+	/**
+	 * @param decl the function declarator to document
+	 * @param ds the function specifier to document
+	 * @return content describing the specified function
+	 */
+	protected StringBuilder documentFunction(IASTFunctionDeclarator decl, IASTDeclSpecifier ds) {
+		StringBuilder result= new StringBuilder();
+		
+		result.append(documentFunctionParameters(getParameterDecls(decl)));
+		
+		boolean hasReturn= true;
+		if(ds instanceof IASTSimpleDeclSpecifier) {
+			IASTSimpleDeclSpecifier sds= (IASTSimpleDeclSpecifier) ds;
+			if(sds.getType()==IASTSimpleDeclSpecifier.t_void) {
+				hasReturn= false;
+			}
+		}
+		if(hasReturn) {
+			result.append(documentFunctionReturn());
+		}
+
+		return result;
 	}
 	
 	/**
@@ -58,7 +82,7 @@ public class DoxygenMultilineAutoEditStrategy extends DefaultMultilineCommentAut
 	 * @return a buffer containing the comment content to generate to describe the parameters of
 	 * the specified {@link IASTParameterDeclaration} objects.
 	 */
-	protected StringBuffer paramTags(IASTParameterDeclaration[] decls) {
+	protected StringBuffer documentFunctionParameters(IASTParameterDeclaration[] decls) {
 		StringBuffer result= new StringBuffer();
 		for(int i=0; i<decls.length; i++) {
 			IASTDeclarator dtor= decls[i].getDeclarator();
@@ -68,19 +92,18 @@ public class DoxygenMultilineAutoEditStrategy extends DefaultMultilineCommentAut
 	}
 
 	/**
-	 * @return the comment content to describe the return tag
+	 * @return the comment content to describe the return
 	 */
-	protected StringBuffer returnTag() {
+	protected StringBuffer documentFunctionReturn() {
 		return new StringBuffer(RETURN);
 	}
 
 	/**
-	 * @param def the function definition to analyze
+	 * @param decl the function declarator to analyze
 	 * @return the parameter declarations for the specified function definition
 	 */
-	protected IASTParameterDeclaration[] getParameterDecls(IASTFunctionDefinition def) {
+	protected IASTParameterDeclaration[] getParameterDecls(IASTFunctionDeclarator decl) {
 		IASTParameterDeclaration[] result;
-		IASTFunctionDeclarator decl= def.getDeclarator();
 		if (decl instanceof IASTStandardFunctionDeclarator) {
 			IASTStandardFunctionDeclarator standardFunctionDecl= (IASTStandardFunctionDeclarator)decl;
 			result= standardFunctionDecl.getParameters();
@@ -96,33 +119,31 @@ public class DoxygenMultilineAutoEditStrategy extends DefaultMultilineCommentAut
 	/*
 	 * @see org.eclipse.cdt.ui.text.doctools.DefaultMultilineCommentAutoEditStrategy#customizeAfterNewLineForDeclaration(org.eclipse.jface.text.IDocument, org.eclipse.cdt.core.dom.ast.IASTDeclaration, org.eclipse.jface.text.ITypedRegion)
 	 */
-	public StringBuffer customizeAfterNewLineForDeclaration(IDocument doc, IASTDeclaration dec, ITypedRegion partition) {
-		StringBuffer result= new StringBuffer();
+	protected StringBuilder customizeAfterNewLineForDeclaration(IDocument doc, IASTDeclaration dec, ITypedRegion partition) {
 
 		while(dec instanceof ICPPASTTemplateDeclaration) /* if? */
 			dec= ((ICPPASTTemplateDeclaration)dec).getDeclaration(); 
 
 		if(dec instanceof IASTFunctionDefinition) {
 			IASTFunctionDefinition fd= (IASTFunctionDefinition) dec;
-			result.append(paramTags(getParameterDecls(fd)));
-
-			IASTDeclSpecifier ds= fd.getDeclSpecifier();
-			boolean hasReturn= true;
-			if(ds instanceof IASTSimpleDeclSpecifier) {
-				IASTSimpleDeclSpecifier sds= (IASTSimpleDeclSpecifier) ds;
-				if(sds.getType()==IASTSimpleDeclSpecifier.t_void) {
-					hasReturn= false;
-				}
-			}
-			if(hasReturn) {
-				result.append(returnTag());
-			}
-
-			return result;
+			return documentFunction(fd.getDeclarator(), fd.getDeclSpecifier());
 		}
 
-		if(dec instanceof IASTSimpleDeclaration && ((IASTSimpleDeclaration)dec).getDeclSpecifier() instanceof IASTCompositeTypeSpecifier) {
-			return result;
+		if(dec instanceof IASTSimpleDeclaration) {
+			IASTSimpleDeclaration sdec= (IASTSimpleDeclaration) dec;
+			StringBuilder result= new StringBuilder();
+			
+			if(sdec.getDeclSpecifier() instanceof IASTCompositeTypeSpecifier) {
+				return result;
+			} else if(documentPureVirtuals && sdec.getDeclSpecifier() instanceof ICPPASTDeclSpecifier) {
+				IASTDeclarator[] dcs= sdec.getDeclarators();
+				if(dcs.length == 1) {
+					ICPPASTFunctionDeclarator fdecl= (ICPPASTFunctionDeclarator) sdec.getDeclarators()[0];
+					if(fdecl.isPureVirtual()) {
+						return documentFunction(fdecl, sdec.getDeclSpecifier());
+					}
+				}
+			}
 		}
 
 		try {
@@ -131,7 +152,7 @@ public class DoxygenMultilineAutoEditStrategy extends DefaultMultilineCommentAut
 			/*ignore*/
 		}
 
-		return new StringBuffer();
+		return new StringBuilder();
 	}
 
 	/*
@@ -167,16 +188,14 @@ public class DoxygenMultilineAutoEditStrategy extends DefaultMultilineCommentAut
 			boolean noCollisions= true;
 			LinkedHashSet<Entry> entries= new LinkedHashSet<Entry>();
 			for(IASTEnumerator enumerator : enms) {
-				IASTNodeLocation[] locs= enumerator.getName().getNodeLocations();
-				if(locs.length==1) {
-					int nodeOffset= locs[0].getNodeOffset()+locs[0].getNodeLength();
+				IASTNodeLocation loc= enumerator.getName().getFileLocation();
+				if(loc != null) {
+					int nodeOffset= loc.getNodeOffset()+loc.getNodeLength();
 					String cmt= SINGLELINE_COMMENT_PRECEDING+enumerator.getName();
 					IRegion line= doc.getLineInformationOfOffset(nodeOffset);
 					if(!doc.get(line.getOffset(), line.getLength()).contains("//")) { //$NON-NLS-1$
 						noCollisions &= entries.add(new Entry(line.getOffset(),line.getLength(), cmt));
 					}
-				} else {
-					// TODO
 				}
 			}
 

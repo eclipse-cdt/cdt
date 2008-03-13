@@ -236,10 +236,43 @@ public class DoxygenCCommentAutoEditStrategyTest extends DefaultCCommentAutoEdit
 	//  * @param x
 	//  */
 	// {}
-	public void _testAutoDocCommentContent9() throws CoreException {
+	public void testAutoDocCommentContent9() throws CoreException {
 		assertAutoEditBehaviour();
-		// TODO - desired behaviour when there is a comment preceding the declaration
-		// needs defining
+	}
+	
+	// /**
+	//  *
+	//  */
+	// void foo_bar(int x)
+	// /**X
+	// {}
+
+	// /**
+	//  *
+	//  */
+	// void foo_bar(int x)
+	// /**
+	//  * X
+	//  * @param x
+	//  */
+	// {}
+	public void testAutoDocCommentContent9b() throws CoreException {
+		assertAutoEditBehaviour();
+	}
+	
+	// void foo_bar(int x)
+	// {
+	//   /**X
+	// }
+	
+	// void foo_bar(int x)
+	// {
+	//   /**
+	//    * X
+	//    */
+	// }
+	public void testAutoDocCommentContent9c() throws CoreException {
+		assertAutoEditBehaviour();
 	}
 	
 	// void foo_bar(int x)
@@ -349,6 +382,41 @@ public class DoxygenCCommentAutoEditStrategyTest extends DefaultCCommentAutoEdit
 	//      }
 	//	};
 	public void testAutoDocCommentContent17() throws CoreException {
+		assertAutoEditBehaviour();
+	}
+	
+	// class D {
+	//	 public:
+	//       /**X
+	//		 virtual void foo(D x) = 0;
+	// };
+	
+	// class D {
+	//	 public:
+	//       /**
+	//        * X
+	//        * @param x
+	//        */
+	//		 virtual void foo(D x) = 0;
+	// };
+	public void testAutoDocCommentContent18() throws CoreException {
+		assertAutoEditBehaviour();
+	}
+	
+	// class D {
+	//	 public:
+	//       /**X
+	//		 virtual void foo(D x);
+	// };
+	
+	// class D {
+	//	 public:
+	//       /**
+	//        * X
+	//        */
+	//		 virtual void foo(D x);
+	// };
+	public void testAutoDocCommentContent19() throws CoreException {
 		assertAutoEditBehaviour();
 	}
 	

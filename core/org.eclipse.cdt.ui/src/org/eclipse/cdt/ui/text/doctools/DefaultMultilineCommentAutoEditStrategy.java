@@ -34,7 +34,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
+import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -109,7 +111,7 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 		if (offset == -1 || doc.getLength() == 0)
 			return;
 		
-		final StringBuffer buf= new StringBuffer(c.text);
+		final StringBuilder buf= new StringBuilder(c.text);
 		try {
 			// find start of line
 			IRegion line= doc.getLineInformationOfOffset(c.offset);
@@ -134,17 +136,25 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 				try {
 					doc.replace(c.offset, 0, indentation+" "+MULTILINE_END); // close the comment in order to parse //$NON-NLS-1$
 					buf.append("\n"); //$NON-NLS-1$
-					
+
 					// as we are auto-closing, the comment becomes eligible for auto-doc'ing
-					IASTDeclaration dec= findFollowingDeclaration(getAST(), offset);
+					IASTDeclaration dec= null;
+					IASTTranslationUnit ast= getAST();
 					
-					// TODO - it is also needed to support auto-tagging when closing a comment
-					// within a function declaration. See DoxygenCCommentAutoEditStrategyTest._testAutoDocCommentContent9()
-					// and DoxygenCCommentAutoEditStrategyTest._testAutoDocCommentContent10()
-					
+					if(ast != null) {
+						dec= findFollowingDeclaration(ast, offset);
+						if(dec == null) {
+							IASTNodeSelector ans= ast.getNodeSelector(ast.getFilePath());
+							IASTNode node= ans.findEnclosingNode(offset, 0);
+							if(node instanceof IASTDeclaration) {
+								dec= (IASTDeclaration) node;
+							}
+						}
+					}
+										
 					if(dec!=null) {
 						ITypedRegion partition= TextUtilities.getPartition(doc, ICPartitions.C_PARTITIONING /* this! */, offset, false);
-						StringBuffer content= customizeAfterNewLineForDeclaration(doc, dec, partition);
+						StringBuilder content= customizeAfterNewLineForDeclaration(doc, dec, partition);
 						buf.append(indent(content, indentation + MULTILINE_MID));
 					}
 
@@ -160,8 +170,8 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 		}	
 	}
 
-	protected StringBuffer customizeAfterNewLineForDeclaration(IDocument doc, IASTDeclaration dec, ITypedRegion region) {
-		return new StringBuffer();
+	protected StringBuilder customizeAfterNewLineForDeclaration(IDocument doc, IASTDeclaration dec, ITypedRegion region) {
+		return new StringBuilder();
 	}
 	
 	/*
@@ -307,8 +317,8 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 	 * @param buffer
 	 * @param indent
 	 */
-	protected static final StringBuffer indent(StringBuffer buffer, String indent) {
-		StringBuffer result= new StringBuffer();
+	protected static final StringBuilder indent(StringBuilder buffer, String indent) {
+		StringBuilder result= new StringBuilder();
 		BufferedReader br= new BufferedReader(new StringReader(buffer.toString()));
 		try {
 			for(String line= br.readLine(); line!=null; line= br.readLine()) {

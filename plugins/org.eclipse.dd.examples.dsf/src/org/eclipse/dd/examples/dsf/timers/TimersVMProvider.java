@@ -56,21 +56,21 @@ public class TimersVMProvider extends AbstractDMVMProvider {
         clearNodes();
         if (layout == ViewLayout.TRIGGERS_AT_TOP) {
             IRootVMNode root = new TimersRootVMNode(this); 
-            IVMNode alarmsNode = new TriggersVMNode(this, getSession());
-            addChildNodes(root, new IVMNode[] { alarmsNode });
+            IVMNode triggersNode = new TriggersVMNode(this, getSession());
+            addChildNodes(root, new IVMNode[] { triggersNode });
             IVMNode timersNode = new TimersVMNode(this, getSession());
-            addChildNodes(alarmsNode, new IVMNode[] { timersNode });
-            IVMNode alarmStatusNode = new AlarmsVMNode(this, getSession());
-            addChildNodes(timersNode, new IVMNode[] { alarmStatusNode });
+            addChildNodes(triggersNode, new IVMNode[] { timersNode });
+            IVMNode alarmNode = new AlarmsVMNode(this, getSession());
+            addChildNodes(timersNode, new IVMNode[] { alarmNode });
             setRootNode(root);
         } else if (layout == ViewLayout.TIMERS_AT_TOP) {
             IRootVMNode root = new TimersRootVMNode(this); 
             IVMNode timersNode = new TimersVMNode(this, getSession());
             addChildNodes(root, new IVMNode[] { timersNode });
-            IVMNode alarmsNode = new TriggersVMNode(this, getSession());
-            addChildNodes(timersNode, new IVMNode[] { alarmsNode });
-            IVMNode alarmStatusNode = new AlarmsVMNode(this, getSession());
-            addChildNodes(alarmsNode, new IVMNode[] { alarmStatusNode });
+            IVMNode triggersNode = new TriggersVMNode(this, getSession());
+            addChildNodes(timersNode, new IVMNode[] { triggersNode });
+            IVMNode alarmNode = new AlarmsVMNode(this, getSession());
+            addChildNodes(triggersNode, new IVMNode[] { alarmNode });
             setRootNode(root);
         }
         

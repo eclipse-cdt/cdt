@@ -17,8 +17,6 @@
 
 package samples.subsystems;
 
-import java.util.Vector;
-
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
@@ -69,14 +67,13 @@ public class DeveloperSubSystemConfiguration extends SubSystemConfiguration {
 		ISystemFilterPool defaultPool = null;
 		try {
 			defaultPool = mgr.createSystemFilterPool(getDefaultFilterPoolName(mgr.getName(), getId()), true); // true=>is deletable by user
-			Vector strings = new Vector();
-			strings.add("*"); //$NON-NLS-1$
+			String[] strings = new String[] { "*" }; //$NON-NLS-1$
 			//--tutorial part 1
 			//mgr.createSystemFilter(defaultPool, "All teams", strings);
 			//--tutorial part 2
 			ISystemFilter filter = mgr.createSystemFilter(defaultPool, 
 					RSESamplesPlugin.getResourceString("filter.default.name"), //$NON-NLS-1$
-					strings);
+					strings );
 			filter.setType("team"); //$NON-NLS-1$
 		} catch (Exception exc) {}
 		return defaultPool;

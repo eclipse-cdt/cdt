@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -9,8 +9,6 @@
  * Tobias Schwarz (Wind River) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.rse.tests.internal.testsubsystem;
-
-import java.util.Vector;
 
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
@@ -53,8 +51,7 @@ public class TestSubSystemConfiguration extends SubSystemConfiguration implement
 		try {
 			defaultPool = mgr.createSystemFilterPool(getDefaultFilterPoolName(mgr.getName(), getId()), true); // true=>is deletable by user
 
-			Vector strings = new Vector();
-			strings.add(".*"); //$NON-NLS-1$
+			String[] strings = new String[] { ".*" }; //$NON-NLS-1$
 
 			ISystemFilter filter = mgr.createSystemFilter(defaultPool, "All", strings); //$NON-NLS-1$
 			filter.setType("all"); //$NON-NLS-1$

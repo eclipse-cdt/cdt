@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.rse.tests.subsystems.testsubsystem;
 
-import java.util.Vector;
-
 import junit.framework.AssertionFailedError;
 
 import org.eclipse.jface.viewers.AbstractTreeViewer;
@@ -177,8 +175,7 @@ public class TestSubsystemTestCase extends RSEBaseConnectionTestCase {
 		RSEWaitAndDispatchUtil.waitAndDispatch(1000);
 
 		ISystemFilterPoolManager mgr = testSubSystem.getFilterPoolReferenceManager().getDefaultSystemFilterPoolManager();
-		Vector strings = new Vector();
-		strings.add("Node.*"); //$NON-NLS-1$
+		String[] strings = new String[] { "Node.*" }; //$NON-NLS-1$
 
 		try {
 			mgr.createSystemFilter(mgr.getFirstDefaultSystemFilterPool(), "Node*", strings, "Node*"); //$NON-NLS-1$ //$NON-NLS-2$

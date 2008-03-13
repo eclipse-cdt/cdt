@@ -16,6 +16,7 @@
  * Michael Berger (IBM) - 145799 added refresh() method with depth parameter.
  * David McKnight (IBM) - 202822 findDeleted should not be synchronized
  * David McKnight  (IBM)   [220123][dstore] Configurable timeout on irresponsiveness
+ * David McKnight  (IBM)  - [222168][dstore] Buffer in DataElement is not sent
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -48,7 +49,9 @@ import org.eclipse.dstore.core.java.IRemoteClassInstance;
 import org.eclipse.dstore.core.java.RemoteClassLoader;
 import org.eclipse.dstore.core.util.StringCompare;
 import org.eclipse.dstore.extra.IDomainNotifier;
+import org.eclipse.dstore.internal.core.client.ClientCommandHandler;
 import org.eclipse.dstore.internal.core.model.DefaultByteConverter;
+import org.eclipse.dstore.internal.core.server.ServerUpdateHandler;
 import org.eclipse.dstore.internal.core.util.DataElementRemover;
 import org.eclipse.dstore.internal.core.util.ExternalLoader;
 import org.eclipse.dstore.internal.core.util.XMLgenerator;
@@ -4362,4 +4365,23 @@ public final class DataStore
 		return total;
 	}
 
+	/**
+	 * Indicates that the datastore should transfer a DataElement's buffer attribute
+	 * in the communication layer
+	 * @param flag true if the DataElement buffer attribute should be transfered
+	 */
+	public void setGenerateBuffer(boolean flag)
+	{
+		if (isVirtual())
+		{
+			// client side
+			((ClientCommandHandler)_commandHandler).setGenerateBuffer(flag);
+		}
+		else
+		{
+			// server side
+			((ServerUpdateHandler)_updateHandler).setGenerateBuffer(flag);
+		}
+	}
+	
 }

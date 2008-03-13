@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight  (IBM)   [222168][dstore] Buffer in DataElement is not sent
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.server;
@@ -458,6 +458,19 @@ public class ServerUpdateHandler extends UpdateHandler
 		if (_dataObjects.size() == 0 && _classesToSend.size() == 0 && _pendingKeepAliveConfirmation == null && _pendingKeepAliveRequest == null)
 		{
 			super.waitForInput();
+		}
+	}
+	
+	/**
+	 * Indicates whether the xml generator should transfer the buffer attribute of a DataElement
+	 * @param flag true to transfer the buffer attribute
+	 */
+	public void setGenerateBuffer(boolean flag)
+	{
+		for (int i = 0; i < _senders.size(); i++)
+		{
+			Sender sender = (Sender)_senders.get(i);
+			sender.setGenerateBuffer(flag);
 		}
 	}
 }

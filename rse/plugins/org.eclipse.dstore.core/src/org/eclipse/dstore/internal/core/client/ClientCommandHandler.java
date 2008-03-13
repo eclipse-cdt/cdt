@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * David McKnight  (IBM)   [220123][dstore] Configurable timeout on irresponsiveness
+ * David McKnight  (IBM)   [222168][dstore] Buffer in DataElement is not sent
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.client;
@@ -380,4 +381,12 @@ public class ClientCommandHandler extends CommandHandler
 		}
 	}
 
+	/**
+	 * Indicates whether the xml generator should transfer the buffer attribute of a DataElement
+	 * @param flag true to transfer the buffer attribute
+	 */
+	public void setGenerateBuffer(boolean flag)
+	{
+		_sender.setGenerateBuffer(flag);
+	}
 }

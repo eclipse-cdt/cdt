@@ -106,7 +106,6 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
  * @author Doug Schaefer
  */
 public class AST2Tests extends AST2BaseTest {
-	private static ParserLanguage[] LANGUAGES= {ParserLanguage.C, ParserLanguage.CPP};
 
     public static TestSuite suite() {
     	return suite(AST2Tests.class);
@@ -3604,8 +3603,7 @@ public class AST2Tests extends AST2BaseTest {
     // }
     public void testBug181305_1() throws Exception {
     	StringBuffer buffer = getContents(1)[0];
-    	for (int i = 0; i < LANGUAGES.length; i++) {
-    		final ParserLanguage lang= LANGUAGES[i];
+    	for(ParserLanguage lang : ParserLanguage.values()) {
     		IASTTranslationUnit tu = parse( buffer.toString(), lang, true, true );
 
     		// check class
@@ -3627,8 +3625,7 @@ public class AST2Tests extends AST2BaseTest {
     // }
     public void testBug181305_2() throws Exception {
     	StringBuffer buffer = getContents(1)[0];
-    	for (int i = 0; i < LANGUAGES.length; i++) {
-    		final ParserLanguage lang= LANGUAGES[i];
+    	for(ParserLanguage lang : ParserLanguage.values()) {
     		IASTTranslationUnit tu = parse( buffer.toString(), lang, true, true );
 
     		// check class
@@ -3650,8 +3647,8 @@ public class AST2Tests extends AST2BaseTest {
 			+   "int g(int n, int m) {return n;}\n"
 			+   "void foo() { f=g; }";
     	
-    	for (int i = 0; i < LANGUAGES.length; i++)
-    		parseAndCheckBindings(code, LANGUAGES[i]);
+    	for(ParserLanguage lang : ParserLanguage.values())
+    		parseAndCheckBindings(code, lang);
     }
     
     // void test() {
@@ -3659,8 +3656,8 @@ public class AST2Tests extends AST2BaseTest {
     // }
     public void testBug181942() throws Exception {
     	StringBuffer buffer = getContents(1)[0];
-    	for (int i = 0; i < LANGUAGES.length; i++)
-    		parse( buffer.toString(), LANGUAGES[i], true, true );
+    	for(ParserLanguage lang : ParserLanguage.values()) 
+    		parse( buffer.toString(), lang, true, true );
     }
     
 	public void testMacroCommentsBug_177154_2() throws Exception {
@@ -3696,8 +3693,8 @@ public class AST2Tests extends AST2BaseTest {
     // int __builtin_sin;
     public void testBug182464() throws Exception {
     	StringBuffer buffer = getContents(1)[0];
-    	for (int i = 0; i < LANGUAGES.length; i++)
-    		parseAndCheckBindings( buffer.toString(), LANGUAGES[i], true);
+    	for(ParserLanguage lang : ParserLanguage.values())
+    		parseAndCheckBindings( buffer.toString(), lang, true);
     }
     
     public void testBug186018() throws Exception {
@@ -3854,8 +3851,8 @@ public class AST2Tests extends AST2BaseTest {
 	// typedef int (*J)(J);
 	public void testBug192165() throws Exception {
 		String content= getContents(1)[0].toString();
-		for (int i = 0; i < LANGUAGES.length; i++) {
-			IASTTranslationUnit tu = parse( content, LANGUAGES[i], true, false );
+		for(ParserLanguage lang : ParserLanguage.values()) {
+			IASTTranslationUnit tu = parse( content, lang, true, false );
 			CNameCollector col = new CNameCollector();
 	        tu.accept(col);
 	        assertInstance(col.getName(0).resolveBinding(), IProblemBinding.class);

@@ -483,7 +483,7 @@ nested_name_specifier_opt
       
 class_or_namespace_name -- just identifiers
     ::= class_name
-      | namespace_name
+      --| namespace_name -- namespace_name name can only be an identifier token, which is already accepted by class_name
 
 
 postfix_expression
@@ -958,9 +958,10 @@ declaration_specifiers
 
 
 declaration_specifiers_opt
-    ::= declaration_specifiers
-      | $empty
+    ::=? $empty  -- this option must come first for constructors to parse correctly
           /. $Build  consumeEmpty();  $EndBuild ./
+      | declaration_specifiers
+
           
 
 -- what about type qualifiers... cv_qualifier
@@ -1040,8 +1041,9 @@ function_specifier
       | 'explicit'
 
 
-typedef_name
-    ::= identifier_token
+-- We have no way to disambiguate token types
+--typedef_name
+--    ::= identifier_token
 
 
 --type_specifier
@@ -1082,8 +1084,8 @@ simple_type_specifier_token
 -- last two rules moved here from simple_type_specifier
 type_name  -- all identifiers of some kind
     ::= class_name
-      | enum_name 
-      | typedef_name
+     -- | enum_name 
+     -- | typedef_name
 
 
 -- last two rules moved here from simple_type_specifier
@@ -1109,8 +1111,9 @@ elaborated_type_specifier
           /. $Build  consumeTypeSpecifierElaborated(false);  $EndBuild ./
 
 
-enum_name
-    ::= identifier_token
+-- there is currently no way to disambiguate identifier tokens
+--enum_name
+--   ::= identifier_token
 
 
 enum_specifier
@@ -1131,25 +1134,29 @@ enumerator_list_opt
 
 
 enumerator_definition
-    ::= enumerator
+    ::= identifier_token
           /. $Build  consumeEnumerator(false); $EndBuild ./
-      | enumerator '=' constant_expression
+      | identifier_token '=' constant_expression
           /. $Build  consumeEnumerator(true); $EndBuild ./
 
 
-enumerator
-    ::= identifier_token
-
-
 namespace_name
-    ::= original_namespace_name
-      | namespace_alias
-
-
-original_namespace_name
     ::= identifier_name
+    
+    
+--namespace_name
+--    ::= original_namespace_name
+--     | namespace_alias
 
 
+--original_namespace_name
+--    ::= identifier_name
+
+
+--namespace_alias
+--    ::= identifier_token
+    
+    
 namespace_definition
     ::= named_namespace_definition
       | unnamed_namespace_definition
@@ -1175,8 +1182,7 @@ unnamed_namespace_definition
            /. $Build  consumeNamespaceDefinition(false);  $EndBuild ./
 
 
-namespace_alias
-    ::= identifier_token
+
 
 
 namespace_alias_definition
@@ -1343,7 +1349,7 @@ type_specifier_seq
 
 
 abstract_declarator
-    ::=? direct_abstract_declarator 
+    ::= direct_abstract_declarator 
       | <openscope-ast> ptr_operator_seq 
           /. $Build  consumeDeclaratorWithPointer(false);  $EndBuild ./
       | <openscope-ast> ptr_operator_seq direct_abstract_declarator
@@ -1351,10 +1357,8 @@ abstract_declarator
       
       
 direct_abstract_declarator
-    ::=? basic_direct_abstract_declarator
-    
-direct_abstract_declarator
-    ::= array_direct_abstract_declarator
+    ::= basic_direct_abstract_declarator
+      | array_direct_abstract_declarator
       | function_direct_abstract_declarator
       
 

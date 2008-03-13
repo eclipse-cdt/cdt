@@ -57,6 +57,7 @@ import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
 import org.eclipse.cdt.core.dom.ast.IASTProblemHolder;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -433,8 +434,8 @@ public abstract class BuildASTParserAction {
 		IASTNode result;
 		if(expressionStatement == null)
 			result = declarationStatement;
-		//else if(isImplicitInt(decl))
-		//	result = expressionStatement;
+		else if(isImplicitInt(decl))
+			result = expressionStatement;
 		else
 			result = nodeFactory.newAmbiguousStatement(declarationStatement, expressionStatement);
 			
@@ -445,22 +446,30 @@ public abstract class BuildASTParserAction {
 	
 	
 	/**
-	 * TODO : don't think this is correct.
-	 * 
-     * Returns true if the given declaration has unspecified type,
+	 * Returns true if the given declaration has unspecified type,
      * in this case the type defaults to int and is know as "implicit int".
+     * 
+	 * With implicit int a lot of language constructs can be accidentally parsed
+	 * as declarations:
+	 * 
+	 * eg) x = 1;
+	 * Should be an assignment statement but can also be parsed as a declaration
+	 * of a variable x, of unspecified type, initialized to 1.
+	 * 
+	 * These cases are easy to detect (using this method) and the wrong interpretation
+	 * as a declaration is discarded.
      */
-//    protected static boolean isImplicitInt(IASTDeclaration declaration) {
-//    	if(declaration instanceof IASTSimpleDeclaration) {
-//    		IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration)declaration).getDeclSpecifier();
-//    		if(declSpec instanceof IASTSimpleDeclSpecifier && 
-//    		   ((IASTSimpleDeclSpecifier)declSpec).getType() == IASTSimpleDeclSpecifier.t_unspecified) {
-//    			
-//    			return true;
-//    		}
-//    	}
-//    	return false;
-//    }
+    protected static boolean isImplicitInt(IASTDeclaration declaration) {
+    	if(declaration instanceof IASTSimpleDeclaration) {
+    		IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration)declaration).getDeclSpecifier();
+    		if(declSpec instanceof IASTSimpleDeclSpecifier && 
+    		   ((IASTSimpleDeclSpecifier)declSpec).getType() == IASTSimpleDeclSpecifier.t_unspecified) {
+    			
+    			return true;
+    		}
+    	}
+    	return false;
+    }
   	
 	
 	/**

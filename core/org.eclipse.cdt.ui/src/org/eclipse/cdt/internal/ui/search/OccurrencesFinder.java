@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 
 import org.eclipse.cdt.internal.ui.util.Messages;
 
@@ -107,6 +108,9 @@ public class OccurrencesFinder implements IOccurrencesFinder {
 		if (binding != null /* && Bindings.equals(binding, fTarget) */) {
 			int flag= 0;
 			String description= fDescription;
+			if (node instanceof ICPPASTTemplateId) {
+				node= ((ICPPASTTemplateId) node).getTemplateName();
+			}
 			IASTFileLocation fileLocation= node.getImageLocation();
 			if (fileLocation == null || !fRoot.getFilePath().equals(fileLocation.getFileName())) {
 				fileLocation= node.getFileLocation();

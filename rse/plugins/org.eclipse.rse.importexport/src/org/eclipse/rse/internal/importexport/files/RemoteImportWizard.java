@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [174945] split importexport icons from rse.ui
+ * David McKnight   (IBM)        - [219792][importexport][ftp] RSE hangs on FTP import
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
@@ -116,4 +117,9 @@ public class RemoteImportWizard extends AbstractSystemWizard implements IImportW
 	public boolean performFinish() {
 		return mainPage.finish();
 	}
+	
+    public boolean performCancel() {
+    	mainPage.cancel(); 
+    	return super.performCancel();
+    }
 }

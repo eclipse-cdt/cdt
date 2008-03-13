@@ -13,6 +13,7 @@
  * David McKnight   (IBM)        - [216252] MessageFormat.format -> NLS.bind
  * David McKnight   (IBM)        - [219792] use background query when doing import
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
+ * David McKnight   (IBM)        - [219792][importexport][ftp] RSE hangs on FTP import
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
@@ -127,6 +128,9 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 		private Object _fileSystemObject;
 		private IImportStructureProvider _provider;
 		private MinimizedFileSystemElement _element;
+		private boolean _isActive = false;
+		private boolean _isCanceled = false;
+		
 		public QueryAllJob(Object fileSystemObject, IImportStructureProvider provider, MinimizedFileSystemElement element){
 			super("Querying All"); //$NON-NLS-1$
 			_fileSystemObject = fileSystemObject;
@@ -136,11 +140,13 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 
 		
 		public IStatus run(IProgressMonitor monitor){
+			_isActive = true;
 			query(_fileSystemObject, _element, monitor);
-
+			_isActive = false;
 
 				Display.getDefault().asyncExec(new Runnable(){
 					public void run(){
+						updateWidgetEnablements();
 						selectionGroup.setAllSelections(true);
 					}
 				});
@@ -148,7 +154,22 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 			return Status.OK_STATUS;
 		}
 		
+		public boolean isActive()
+		{
+			return _isActive;
+		}
+		
+
+		protected void canceling() {
+			_isCanceled = true;
+		}
+		
 		private void query(Object parent, MinimizedFileSystemElement element, IProgressMonitor monitor){
+			
+			if (monitor.isCanceled() || _isCanceled){
+				return;
+			}
+			
 			List children = _provider.getChildren(parent);
 			if (children == null) children = new ArrayList(1);
 
@@ -221,6 +242,10 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 	protected Button deselectAllButton;
 	// a boolean to indicate if the user has typed anything
 	private boolean entryChanged = false;
+	
+	private QueryAllJob _queryAllJob;
+	private MinimizedFileSystemElement _fileSystemTree;
+	
 	// input object
 	protected Object inputObject = null;
 	// flag to indicate whether initial selection was used to set source field
@@ -505,8 +530,10 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 		MinimizedFileSystemElement result = new MinimizedFileSystemElement(elementLabel, dummyParent, isContainer);
 		result.setFileSystemObject(fileSystemObject);
 		
-		QueryAllJob query = new QueryAllJob(fileSystemObject, provider, result);
-		query.schedule();
+		if (_queryAllJob == null){
+			_queryAllJob = new QueryAllJob(fileSystemObject, provider, result);
+			_queryAllJob.schedule();
+		}
 		
 		////Get the files for the element so as to build the first level
 		//result.getFiles(provider);
@@ -673,7 +700,11 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 	protected MinimizedFileSystemElement getFileSystemTree() {
 		File sourceDirectory = getSourceDirectory();
 		if (sourceDirectory == null) return null;
-		return selectFiles(sourceDirectory, FileSystemStructureProvider.INSTANCE);
+		
+		if (_fileSystemTree == null){
+			_fileSystemTree = selectFiles(sourceDirectory, FileSystemStructureProvider.INSTANCE);
+		}
+		return _fileSystemTree;
 	}
 
 	/**
@@ -1379,6 +1410,14 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 	public boolean performFinish() {
 		return finish();
 	}
+	
+	public void cancel() {
+		if (_queryAllJob != null && _queryAllJob.isActive()){
+			_queryAllJob.cancel();
+		}
+	}
+	
+	
 
 	/* (non-Javadoc)
 	 * @see com.ibm.etools.systems.core.ui.wizards.ISystemWizardPage#setHelp(java.lang.String)
@@ -1520,5 +1559,12 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 		} else { // not configured yet
 			pendingString = message;
 		}
+	}
+	
+	public boolean determinePageCompletion(){
+			if (_queryAllJob != null && _queryAllJob.isActive()){
+				return false;
+			}
+			return super.determinePageCompletion();
 	}
 }

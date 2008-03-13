@@ -93,15 +93,6 @@
                menubarPath="additions"
                id="org.eclipse.dd.examples.pda.editor.context.runToLineAction"/>
       </viewerContribution>
-      <objectContribution
-            adaptable="false"
-            id="org.eclipse.dd.examples.pda.dropToFrame"
-            objectClass="org.eclipse.debug.examples.core.pda.model.PDAStackFrame">
-         <action
-               class="org.eclipse.dd.examples.pda.ui.editor.PopFrameActionDelegate"
-               id="org.eclipse.dd.examples.pda.dropToFrame"
-               label="Pop Frame"/>
-      </objectContribution> 
    </extension>
    
    <extension

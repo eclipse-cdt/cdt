@@ -82,8 +82,8 @@ public class DoxygenMultilineAutoEditStrategy extends DefaultMultilineCommentAut
 	 * @return a buffer containing the comment content to generate to describe the parameters of
 	 * the specified {@link IASTParameterDeclaration} objects.
 	 */
-	protected StringBuffer documentFunctionParameters(IASTParameterDeclaration[] decls) {
-		StringBuffer result= new StringBuffer();
+	protected StringBuilder documentFunctionParameters(IASTParameterDeclaration[] decls) {
+		StringBuilder result= new StringBuilder();
 		for(int i=0; i<decls.length; i++) {
 			IASTDeclarator dtor= decls[i].getDeclarator();
 			result.append(PARAM+dtor.getName()+"\n"); //$NON-NLS-1$
@@ -94,8 +94,8 @@ public class DoxygenMultilineAutoEditStrategy extends DefaultMultilineCommentAut
 	/**
 	 * @return the comment content to describe the return
 	 */
-	protected StringBuffer documentFunctionReturn() {
-		return new StringBuffer(RETURN);
+	protected StringBuilder documentFunctionReturn() {
+		return new StringBuilder(RETURN);
 	}
 
 	/**

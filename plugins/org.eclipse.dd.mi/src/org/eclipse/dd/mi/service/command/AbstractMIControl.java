@@ -509,6 +509,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
         * required for processing the results of CLI commands.   
         */ 
         private final List<MIOOBRecord> fAccumulatedOOBRecords = new ArrayList<MIOOBRecord>();
+        
         public RxThread(InputStream inputStream) {
             super("MI RX Thread"); //$NON-NLS-1$
             fInputStream = inputStream;
@@ -599,9 +600,6 @@ public abstract class AbstractMIControl extends AbstractDsfService
             
             if (recordType == MIParser.RecordType.ResultRecord) { 
                 final MIResultRecord rr = fMiParser.parseMIResultRecord(line);
-                final MIOutput response = new MIOutput(rr, 
-                		fAccumulatedOOBRecords.toArray(new MIOOBRecord[fAccumulatedOOBRecords.size()]) );
-                fAccumulatedOOBRecords.clear();
            
             	
             	/*
@@ -612,6 +610,9 @@ public abstract class AbstractMIControl extends AbstractDsfService
                 final CommandHandle commandHandle = fRxCommands.remove(id);
 
                 if (commandHandle != null) {
+                    final MIOutput response = new MIOutput(
+                        rr, fAccumulatedOOBRecords.toArray(new MIOOBRecord[fAccumulatedOOBRecords.size()]) );
+                    fAccumulatedOOBRecords.clear();
                 	
                 	MIInfo result = commandHandle.getCommand().getResult(response);
 					DataRequestMonitor<MIInfo> rm = commandHandle.getRequestMonitor();
@@ -663,7 +664,6 @@ public abstract class AbstractMIControl extends AbstractDsfService
 						 *  example and  the CommandDone listeners there handle the IO as part
 						 *  of the work.
 						 */
-
 						final ICommandResult finalResult = result;
 						getExecutor().execute(new DsfRunnable() {
 	                        public void run() {
@@ -678,9 +678,12 @@ public abstract class AbstractMIControl extends AbstractDsfService
                 } else {
                     /*
                      *  GDB apparently can sometimes send multiple responses to the same command.  In those cases, 
-                     *  the command handle is gone, so post the result as an event. Again this must be done on the
-                     *  DSF thread for integrity.
+                     *  the command handle is gone, so post the result as an event.  To avoid processing OOB records
+                     *  as events multiple times, do not include the accumulated OOB record list in the response 
+                     *  MIOutput object.  
                      */
+                    final MIOutput response = new MIOutput(rr, new MIOOBRecord[0]);
+
                     getExecutor().execute(new DsfRunnable() {
                         public void run() {
                             processEvent(response);

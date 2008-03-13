@@ -47,7 +47,7 @@ public abstract class ExtractInputPage extends UserInputWizardPage {
 	}
 
 	public void createControl(Composite parent) {
-		control = new NameAndVisibilityComposite(parent, label);
+		control = new NameAndVisibilityComposite(parent, label, info.getName());
 		setTitle(getName());
 		setPageComplete(false);
 		control.getConstantNameText().addKeyListener(new KeyAdapter(){

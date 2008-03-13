@@ -133,8 +133,32 @@ public class ExtractConstantRefactoring extends CRefactoring {
 		findAllNodesForReplacement(literalExpressionVector);
 		
 		info.addNamesToUsedNames(findAllDeclaredNames());
+		info.setName(getDefaultName(target));
 		sm.done();
 		return initStatus;
+	}
+
+	private String getDefaultName(IASTLiteralExpression literal) {
+		String nameString = literal.toString();
+		switch (literal.getKind()) {
+		case IASTLiteralExpression.lk_char_constant:
+		case ICPPASTLiteralExpression.lk_string_literal:
+			int beginIndex = 1;
+			if(nameString.startsWith("L")) {  //$NON-NLS-1$
+				beginIndex = 2;
+			}
+			final int len= nameString.length();
+			if (beginIndex < len && len > 0) {
+				nameString = nameString.substring(beginIndex, len-1);
+			}
+			break;
+
+		default:
+			break;
+		}
+		
+		nameString = nameString.replaceAll("[\\W]", "_");   //$NON-NLS-1$//$NON-NLS-2$
+		return '_' + nameString;
 	}
 
 	private Vector<String> findAllDeclaredNames() {

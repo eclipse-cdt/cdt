@@ -11,10 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.dialogs;
 
-/**
- * @author Thomas Corbat
- *
- */
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -37,11 +33,11 @@ public class NameAndVisibilityComposite extends Composite {
 	private final String labelName;
 	private final VisibilitySelectionPanel visibilityPanel;
 	
-	public NameAndVisibilityComposite(Composite parent, String labelName) {
-		this(parent, labelName, VisibilityEnum.v_public);
+	public NameAndVisibilityComposite(Composite parent, String labelName, String defaultName) {
+		this(parent, labelName, VisibilityEnum.v_public, defaultName);
 	}
 	
-	public NameAndVisibilityComposite(Composite parent, String labelName, VisibilityEnum defaultVisibility){
+	public NameAndVisibilityComposite(Composite parent, String labelName, VisibilityEnum defaultVisibility, String defaultName){
 
 		super(parent, SWT.NONE);
 		
@@ -49,7 +45,7 @@ public class NameAndVisibilityComposite extends Composite {
 		
 		setLayout(new GridLayout());
 		
-		createNewMethodNameComposite(this);
+		createNewMethodNameComposite(this, defaultName);
 		visibilityPanel = new VisibilitySelectionPanel(this, defaultVisibility,SWT.NONE);
 	}
 	
@@ -67,13 +63,13 @@ public class NameAndVisibilityComposite extends Composite {
 	}
 
 
-	private void createNewMethodNameComposite(Composite control) {
+	private void createNewMethodNameComposite(Composite control, String defaultName) {
 		Composite methodNameComposite = new Composite(control, SWT.NONE);
 		FillLayout compositeLayout = new FillLayout(SWT.HORIZONTAL);
 		GridData gridData = new GridData(SWT.FILL,SWT.BEGINNING, true, false);
 		gridData.horizontalAlignment = GridData.FILL;
 		methodNameComposite.setLayoutData(gridData);
 		methodNameComposite.setLayout(compositeLayout);
-		constantName = new LabeledTextField(methodNameComposite, labelName);
+		constantName = new LabeledTextField(methodNameComposite, labelName, defaultName);
 	}
 }

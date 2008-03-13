@@ -21,9 +21,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentati
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
-/* 
- * 
- */
 @ThreadSafe
 @SuppressWarnings("restriction")
 public class PDAVMAdapter extends AbstractDMVMAdapter

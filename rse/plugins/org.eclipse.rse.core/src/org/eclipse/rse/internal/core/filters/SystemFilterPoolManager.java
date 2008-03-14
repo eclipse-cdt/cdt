@@ -14,6 +14,7 @@
  * Contributors:
  * David Dykstal (IBM) - 142806: refactoring persistence framework
  * David Dykstal (IBM) - [197036] removed caching mechanism to clean up logic
+ * David Dykstal (IBM) - [222270] clean up interfaces in org.eclipse.rse.core.filters
  *******************************************************************************/
 
 package org.eclipse.rse.internal.core.filters;
@@ -622,6 +623,34 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 	// ---------------------------------
 	// FILTER METHODS
 	// ---------------------------------
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilterPoolManager#createSystemFilter(org.eclipse.rse.core.filters.ISystemFilterContainer, java.lang.String, java.util.List, java.lang.String, boolean)
+	 */
+	public ISystemFilter createSystemFilter(ISystemFilterContainer parent, String aliasName, List filterStrings, String type, boolean promptable) throws Exception {
+		String[] filterStringsArray = new String[filterStrings.size()];
+		ISystemFilter result = doCreateSystemFilter(parent, aliasName, filterStringsArray, type, promptable);
+		return result;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilterPoolManager#createSystemFilter(org.eclipse.rse.core.filters.ISystemFilterContainer, java.lang.String, java.util.List, java.lang.String)
+	 */
+	public ISystemFilter createSystemFilter(ISystemFilterContainer parent, String aliasName, List filterStrings, String type) throws Exception {
+		String[] filterStringsArray = new String[filterStrings.size()];
+		ISystemFilter result = doCreateSystemFilter(parent, aliasName, filterStringsArray, type, false);
+		return result;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilterPoolManager#createSystemFilter(org.eclipse.rse.core.filters.ISystemFilterContainer, java.lang.String, java.util.List)
+	 */
+	public ISystemFilter createSystemFilter(ISystemFilterContainer parent, String aliasName, List filterStrings) throws Exception {
+		String[] filterStringsArray = new String[filterStrings.size()];
+		ISystemFilter result = doCreateSystemFilter(parent, aliasName, filterStringsArray, null, false);
+		return result;
+	}
+	
 	/**
 	 * Creates a new system filter within the given filter container (either a filter pool, or
 	 *  a filter). This creates the filter, and then saves the filter pool. 
@@ -631,16 +660,7 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 	 * @param filterStrings The list of String objects that represent the filter strings.
 	 */
 	public ISystemFilter createSystemFilter(ISystemFilterContainer parent, String aliasName, String[] filterStrings) throws Exception {
-		ISystemFilter newFilter = null;
-		ISystemFilterPool parentPool = null;
-		if (parent instanceof ISystemFilterPool)
-			parentPool = (ISystemFilterPool) parent;
-		else
-			parentPool = ((ISystemFilter) parent).getParentFilterPool();
-		newFilter = parent.createSystemFilter(aliasName, filterStrings);
-		if (!suspendSave) commit(parentPool);
-		// if caller provider, callback to inform them of this event
-		if ((caller != null) && !suspendCallbacks) caller.filterEventFilterCreated(newFilter);
+		ISystemFilter newFilter = doCreateSystemFilter(parent, aliasName, filterStrings, null, false);
 		return newFilter;
 	}
 
@@ -659,27 +679,7 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 	 * @param type The type of this filter
 	 */
 	public ISystemFilter createSystemFilter(ISystemFilterContainer parent, String aliasName, String[] filterStrings, String type) throws Exception {
-		boolean oldSuspendSave = suspendSave;
-		boolean oldSuspendCallbacks = suspendCallbacks;
-		suspendSave = true;
-		suspendCallbacks = true;
-
-		ISystemFilter newFilter = createSystemFilter(parent, aliasName, filterStrings);
-		newFilter.setType(type);
-
-		suspendSave = oldSuspendSave;
-		suspendCallbacks = oldSuspendCallbacks;
-
-		if (!suspendSave) {
-			ISystemFilterPool parentPool = null;
-			if (parent instanceof ISystemFilterPool)
-				parentPool = (ISystemFilterPool) parent;
-			else
-				parentPool = ((ISystemFilter) parent).getParentFilterPool();
-			commit(parentPool);
-		}
-		// if caller provider, callback to inform them of this event
-		if ((caller != null) && !suspendCallbacks) caller.filterEventFilterCreated(newFilter);
+		ISystemFilter newFilter = doCreateSystemFilter(parent, aliasName, filterStrings, type, false);
 		return newFilter;
 	}
 
@@ -699,27 +699,35 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 	 * @param promptable Pass true if this is a promptable filter
 	 */
 	public ISystemFilter createSystemFilter(ISystemFilterContainer parent, String aliasName, String[] filterStrings, String type, boolean promptable) throws Exception {
-		boolean oldSuspendSave = suspendSave;
-		boolean oldSuspendCallbacks = suspendCallbacks;
-		suspendSave = true;
-		suspendCallbacks = true;
-
-		ISystemFilter newFilter = createSystemFilter(parent, aliasName, filterStrings, type);
+		ISystemFilter newFilter = doCreateSystemFilter(parent, aliasName, filterStrings, type, promptable);
+		return newFilter;
+	}
+	
+	/**
+	 * Creates a system filter.
+	 * @param parent the owning parent of this filter, must be a filter pool or a filter capable of nesting
+	 * @param name the name of this filter
+	 * @param filterStrings the strings associated with this filter
+	 * @param type the type of this filter, used only if inheritType is false
+	 * @param promptable the promptable nature of this filter, used only if inheritPromptable is false
+	 * @return
+	 */
+	private ISystemFilter doCreateSystemFilter(ISystemFilterContainer parent, String name, String[] filterStrings, String type, boolean promptable) {
+		ISystemFilterPool parentPool = null;
+		if (parent instanceof ISystemFilterPool) {
+			parentPool = (ISystemFilterPool) parent;
+		} else {
+			parentPool = ((ISystemFilter) parent).getParentFilterPool();
+		}
+		ISystemFilter newFilter = parentPool.createSystemFilter(name, filterStrings);
+		newFilter.setType(type);
 		newFilter.setPromptable(promptable);
-
-		suspendSave = oldSuspendSave;
-		suspendCallbacks = oldSuspendCallbacks;
-
 		if (!suspendSave) {
-			ISystemFilterPool parentPool = null;
-			if (parent instanceof ISystemFilterPool)
-				parentPool = (ISystemFilterPool) parent;
-			else
-				parentPool = ((ISystemFilter) parent).getParentFilterPool();
 			commit(parentPool);
 		}
-		// if caller provider, callback to inform them of this event
-		if ((caller != null) && !suspendCallbacks) caller.filterEventFilterCreated(newFilter);
+		if ((caller != null) && !suspendCallbacks) {
+			caller.filterEventFilterCreated(newFilter);
+		}
 		return newFilter;
 	}
 

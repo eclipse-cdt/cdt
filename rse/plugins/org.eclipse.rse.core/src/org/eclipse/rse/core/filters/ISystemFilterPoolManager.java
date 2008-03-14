@@ -14,9 +14,12 @@
  * Contributors:
  * David Dykstal (IBM) - [197036] All filter pools created on clean workspace
  * cleaned javadoc for renameSystemFilterPool
+ * David Dykstal (IBM) - [222270] clean up interfaces in org.eclipse.rse.core.filters
  *******************************************************************************/
 
 package org.eclipse.rse.core.filters;
+
+import java.util.List;
 
 import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.ISystemProfile;
@@ -250,13 +253,23 @@ public interface ISystemFilterPoolManager extends IRSEPersistableContainer {
 	// ---------------------------------
 	/**
 	 * Creates a new system filter within the given filter container (either a filter pool, or
-	 *  a filter). This creates the filter, and then saves the filter pool. 
+	 * a filter). This creates the filter, and then saves the filter pool. 
 	 * <p>Calls back to provider to inform of the event (filterEventFilterCreated)
 	 * @param parent The parent which is either a SystemFilterPool or a SystemFilter
 	 * @param aliasName The name to give the new filter. Must be unique for this pool.
 	 * @param filterStrings The list of String objects that represent the filter strings.
 	 */
 	public ISystemFilter createSystemFilter(ISystemFilterContainer parent, String aliasName, String[] filterStrings) throws Exception;
+
+	/**
+	 * Creates a new system filter within the given filter container (either a filter pool, or
+	 * a filter). This creates the filter, and then saves the filter pool. 
+	 * <p>Calls back to provider to inform of the event (filterEventFilterCreated)
+	 * @param parent The parent which is either a SystemFilterPool or a SystemFilter
+	 * @param aliasName The name to give the new filter. Must be unique for this pool.
+	 * @param filterStrings The list of String objects that represent the filter strings.
+	 */
+	public ISystemFilter createSystemFilter(ISystemFilterContainer parent, String aliasName, List filterStrings) throws Exception;
 
 	/**
 	 * Creates a new system filter that is typed.
@@ -275,6 +288,22 @@ public interface ISystemFilterPoolManager extends IRSEPersistableContainer {
 	public ISystemFilter createSystemFilter(ISystemFilterContainer parent, String aliasName, String[] filterStrings, String type) throws Exception;
 
 	/**
+	 * Creates a new system filter that is typed.
+	 * Same as {@link #createSystemFilter(ISystemFilterContainer, String, String[])} but 
+	 *  takes a filter type as an additional parameter.
+	 * <p>
+	 * A filter's type is an arbitrary string that is not interpreted or used by the base framework. This
+	 * is for use entirely by tools who wish to support multiple types of filters and be able to launch unique
+	 * actions per type, say.
+	 * 
+	 * @param parent The parent which is either a SystemFilterPool or a SystemFilter
+	 * @param aliasName The name to give the new filter. Must be unique for this pool.
+	 * @param filterStrings The list of String objects that represent the filter strings.
+	 * @param type The type of this filter
+	 */
+	public ISystemFilter createSystemFilter(ISystemFilterContainer parent, String aliasName, List filterStrings, String type) throws Exception;
+
+	/**
 	 * Creates a new system filter that is typed and promptable
 	 * Same as {@link #createSystemFilter(ISystemFilterContainer, String ,String[], String)} but 
 	 *  takes a boolean indicating if it is promptable.
@@ -290,6 +319,23 @@ public interface ISystemFilterPoolManager extends IRSEPersistableContainer {
 	 * @param promptable Pass true if this is a promptable filter
 	 */
 	public ISystemFilter createSystemFilter(ISystemFilterContainer parent, String aliasName, String[] filterStrings, String type, boolean promptable) throws Exception;
+
+	/**
+	 * Creates a new system filter that is typed and promptable
+	 * Same as {@link #createSystemFilter(ISystemFilterContainer, String ,String[], String)} but 
+	 *  takes a boolean indicating if it is promptable.
+	 * <p>
+	 * A promptable filter is one in which the user is prompted for information at expand time.
+	 * There is no base filter framework support for this, but tools can query this attribute and
+	 * do their own thing at expand time.
+	 * 
+	 * @param parent The parent which is either a SystemFilterPool or a SystemFilter
+	 * @param aliasName The name to give the new filter. Must be unique for this pool.
+	 * @param filterStrings The list of String objects that represent the filter strings.
+	 * @param type The type of this filter
+	 * @param promptable Pass true if this is a promptable filter
+	 */
+	public ISystemFilter createSystemFilter(ISystemFilterContainer parent, String aliasName, List filterStrings, String type, boolean promptable) throws Exception;
 
 	/**
 	 * Delete an existing system filter.

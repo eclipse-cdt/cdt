@@ -15,6 +15,7 @@
 package org.eclipse.cdt.internal.ui.text;
 
 import java.util.Arrays;
+import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -40,7 +41,6 @@ import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.formatter.IContentFormatter;
 import org.eclipse.jface.text.formatter.MultiPassContentFormatter;
-import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.text.information.IInformationPresenter;
 import org.eclipse.jface.text.information.IInformationProvider;
 import org.eclipse.jface.text.information.InformationPresenter;
@@ -62,7 +62,6 @@ import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.editors.text.ILocationProvider;
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 import org.eclipse.ui.ide.ResourceUtil;
-import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -89,7 +88,6 @@ import org.eclipse.cdt.ui.text.doctools.IDocCommentViewerConfiguration;
 import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
 
 import org.eclipse.cdt.internal.ui.editor.CDocumentProvider;
-import org.eclipse.cdt.internal.ui.editor.CElementHyperlinkDetector;
 import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverDescriptor;
 import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverProxy;
 import org.eclipse.cdt.internal.ui.text.c.hover.CInformationProvider;
@@ -811,29 +809,6 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getHyperlinkDetectors(org.eclipse.jface.text.source.ISourceViewer)
-	 * @since 3.1
-	 */
-	public IHyperlinkDetector[] getHyperlinkDetectors(ISourceViewer sourceViewer) {
-		if (!fPreferenceStore.getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINKS_ENABLED))
-			return null;
-		
-		IHyperlinkDetector[] inheritedDetectors= super.getHyperlinkDetectors(sourceViewer);
-		
-		if (fTextEditor == null)
-			return inheritedDetectors;
-		
-		int inheritedDetectorsLength= inheritedDetectors != null ? inheritedDetectors.length : 0;
-		IHyperlinkDetector[] detectors= new IHyperlinkDetector[inheritedDetectorsLength + 1];
-		detectors[0]= new CElementHyperlinkDetector(fTextEditor); 
-		for (int i= 0; i < inheritedDetectorsLength; i++) {
-			detectors[i+1]= inheritedDetectors[i];
-		}
-		
-		return detectors;
-	}
-
-	/*
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getConfiguredDocumentPartitioning(org.eclipse.jface.text.source.ISourceViewer)
 	 */
 	public String getConfiguredDocumentPartitioning(ISourceViewer sourceViewer) {
@@ -887,7 +862,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 			try {
 				return ((ITranslationUnit)element).getLanguage();
 			} catch (CoreException e) {
-				CUIPlugin.getDefault().log(e);
+				CUIPlugin.log(e);
 			}
 		} else {
 			// compute the language from the plain editor input
@@ -978,4 +953,14 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 			}
 		};
 	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getHyperlinkDetectorTargets(org.eclipse.jface.text.source.ISourceViewer)
+	 */
+	protected Map getHyperlinkDetectorTargets(ISourceViewer sourceViewer) {
+		Map targets= super.getHyperlinkDetectorTargets(sourceViewer);
+		targets.put("org.eclipse.cdt.ui.cCode", fTextEditor); //$NON-NLS-1$
+		return targets;
+	}
+
 }

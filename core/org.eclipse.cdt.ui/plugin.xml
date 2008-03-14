@@ -2677,4 +2677,24 @@
          </enablement>
       </decorator>
    </extension>
- </plugin>
+
+   <!-- Hyperlinking support -->
+   <extension
+         point="org.eclipse.ui.workbench.texteditor.hyperlinkDetectorTargets">
+      <target
+            id="org.eclipse.cdt.ui.cCode"
+            name="%cEditorHyperlinkTarget">
+            <context type="org.eclipse.ui.texteditor.ITextEditor"/>
+      </target>
+   </extension>
+   <extension
+         point="org.eclipse.ui.workbench.texteditor.hyperlinkDetectors">
+       <hyperlinkDetector
+            class="org.eclipse.cdt.internal.ui.editor.CElementHyperlinkDetector"
+            id="org.eclipse.cdt.ui.editor.CElementHyperlinkDetector"
+            name="%cElementHyperlinkDetector"
+            targetId="org.eclipse.cdt.ui.cCode">
+      </hyperlinkDetector>
+   </extension>
+
+</plugin>

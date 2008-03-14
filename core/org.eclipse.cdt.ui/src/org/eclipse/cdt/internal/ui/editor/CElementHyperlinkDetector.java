@@ -12,107 +12,96 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TextUtilities;
+import org.eclipse.jface.text.hyperlink.AbstractHyperlinkDetector;
 import org.eclipse.jface.text.hyperlink.IHyperlink;
-import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.ICPartitions;
 
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 
-public class CElementHyperlinkDetector implements IHyperlinkDetector {
+public class CElementHyperlinkDetector extends AbstractHyperlinkDetector {
 
-	private ITextEditor fTextEditor;
-
-	public CElementHyperlinkDetector(ITextEditor editor) {
-		fTextEditor= editor;
+	public CElementHyperlinkDetector() {
 	}
 	
-	
 	public IHyperlink[] detectHyperlinks(ITextViewer textViewer, final IRegion region, boolean canShowMultipleHyperlinks) {
-		if (region == null || canShowMultipleHyperlinks || fTextEditor == null)
+		ITextEditor textEditor= (ITextEditor)getAdapter(ITextEditor.class);
+		if (region == null || canShowMultipleHyperlinks || !(textEditor instanceof CEditor))
 			return null;
-		
-		final IAction openAction= fTextEditor.getAction("OpenDeclarations"); //$NON-NLS-1$
+
+		final IAction openAction= textEditor.getAction("OpenDeclarations"); //$NON-NLS-1$
 		if (openAction == null)
 			return null;
+
+		// check partition type
+		try {
+			String partitionType= TextUtilities.getContentType(textViewer.getDocument(), ICPartitions.C_PARTITIONING, region.getOffset(), false);
+			if (!IDocument.DEFAULT_CONTENT_TYPE.equals(partitionType) && !ICPartitions.C_PREPROCESSOR.equals(partitionType)) {
+				return null;
+			}
+		} catch (BadLocationException exc) {
+			return null;
+		}
 		
-		final IWorkingCopy workingCopy = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(fTextEditor.getEditorInput());
+		final IWorkingCopy workingCopy = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(textEditor.getEditorInput());
 		if (workingCopy == null) {
 			return null;
 		}
 
-		IIndex index;
-		try {
-			index = CCorePlugin.getIndexManager().getIndex(workingCopy.getCProject(),
-				       IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_DEPENDENT);
-		} catch(CoreException e) {
-			return null;
-		} 
-		
-		try {
-			index.acquireReadLock();
-		} catch (InterruptedException e) {
-			return null;
-		}
-		
 		final IHyperlink[] result= {null};
-		try {
-			IStatus status= ASTProvider.getASTProvider().runOnAST(workingCopy, ASTProvider.WAIT_YES, null, new ASTRunnable() {
-				public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
-					if (ast != null) {
-						final int offset= region.getOffset();
-						final int length= Math.max(1, region.getLength());
-						final IASTNodeSelector nodeSelector= ast.getNodeSelector(null);
-						IASTName selectedName= nodeSelector.findEnclosingName(offset, length);
-						IASTFileLocation linkLocation= null;
-						if (selectedName != null) { // found a name
-							// prefer include statement over the include name
-							if (selectedName.getParent() instanceof IASTPreprocessorIncludeStatement) {
-								linkLocation= selectedName.getParent().getFileLocation();
-							}
-							else {
-								linkLocation= selectedName.getFileLocation();
-							}
+		IStatus status= ASTProvider.getASTProvider().runOnAST(workingCopy, ASTProvider.WAIT_YES, null, new ASTRunnable() {
+			public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
+				if (ast != null) {
+					final int offset= region.getOffset();
+					final int length= Math.max(1, region.getLength());
+					final IASTNodeSelector nodeSelector= ast.getNodeSelector(null);
+					IASTName selectedName= nodeSelector.findEnclosingName(offset, length);
+					IASTFileLocation linkLocation= null;
+					if (selectedName != null) { // found a name
+						// prefer include statement over the include name
+						if (selectedName.getParent() instanceof IASTPreprocessorIncludeStatement) {
+							linkLocation= selectedName.getParent().getFileLocation();
 						}
-						else { 
-							// search for include statement
-							final IASTNode cand= nodeSelector.findEnclosingNode(offset, length);
-							if (cand instanceof IASTPreprocessorIncludeStatement) {
-								linkLocation= cand.getFileLocation();
-							}
-						}
-						if (linkLocation != null) {
-							result[0]= 	new CElementHyperlink(
-									new Region(linkLocation.getNodeOffset(), linkLocation.getNodeLength()), openAction);
+						else {
+							linkLocation= selectedName.getFileLocation();
 						}
 					}
-					return Status.OK_STATUS;
+					else { 
+						// search for include statement
+						final IASTNode cand= nodeSelector.findEnclosingNode(offset, length);
+						if (cand instanceof IASTPreprocessorIncludeStatement) {
+							linkLocation= cand.getFileLocation();
+						}
+					}
+					if (linkLocation != null) {
+						result[0]= 	new CElementHyperlink(
+								new Region(linkLocation.getNodeOffset(), linkLocation.getNodeLength()), openAction);
+					}
 				}
-			});
-			if (!status.isOK()) {
-				CUIPlugin.getDefault().log(status);
+				return Status.OK_STATUS;
 			}
-		} finally {
-			index.releaseReadLock();
+		});
+		if (!status.isOK()) {
+			CUIPlugin.log(status);
 		}
 		
 		return result[0] == null ? null : result;

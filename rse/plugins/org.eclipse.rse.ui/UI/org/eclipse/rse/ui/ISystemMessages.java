@@ -1,9 +1,10 @@
-/********************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation. All rights reserved.
- * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
- * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+/*******************************************************************************
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
  * component that contains this file: David McKnight, Kushal Munir, 
@@ -20,7 +21,7 @@
  *                                    FILEMSG_COPY_INTERRUPTED
  * Xuan Chen   (IBM)        - [209828] Need to move the Create operation to a job.
  * David McKnight   (IBM)        - [216252] removing unused messages and ids
- ********************************************************************************/
+ *******************************************************************************/
 
 package org.eclipse.rse.ui;
 

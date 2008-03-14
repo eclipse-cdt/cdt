@@ -1,9 +1,10 @@
-/********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
- * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
- * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+/*******************************************************************************
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Contributors:
  * Don Yantzi (IBM) - initial contribution.
  * David Dykstal (IBM) - initial contribution.
@@ -11,7 +12,7 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Xuan Chen (IBM)               - [198859] Update the API doc for getRemoteSystemConnection.
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
- ********************************************************************************/
+ *******************************************************************************/
 package org.eclipse.rse.tests.core.connection;
 
 import java.util.Properties;

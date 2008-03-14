@@ -207,6 +207,14 @@ public IASTNode getSecondaryParseResult() {
 	return  action.getSecondaryParseResult();
 }
 
+public String[] getOrderedTerminalSymbols() {
+	return C99NoCastExpressionParsersym.orderedTerminalSymbols;
+}
+
+public String getName() {
+	return "C99NoCastExpressionParser";
+}
+
 
 
 private ITokenMap tokenMap = null;

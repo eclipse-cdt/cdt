@@ -258,6 +258,15 @@ $Headers
 	public IASTNode getSecondaryParseResult() {
 		return  action.builder.getSecondaryParseResult();
 	}
+	
+	public String[] getOrderedTerminalSymbols() {
+		return $sym_type.orderedTerminalSymbols;
+	}
+	
+	public String getName() {
+		return "$action_type"; //$NON-NLS-1$
+	}
+	
 ./
 $End
 
@@ -762,8 +771,8 @@ assignment_expression
 
 expression
     ::= expression_list
-      | ERROR_TOKEN
-          /. $Build  consumeExpressionProblem(); $EndBuild ./
+     -- | ERROR_TOKEN
+     --     /. $Build  consumeExpressionProblem(); $EndBuild ./
       
 -- expression_list and expression_list_opt always result in a single element on the stack
 -- the element might be an expression, an expression list or null
@@ -861,12 +870,6 @@ condition
           /. $Build  consumeConditionDeclaration();  $EndBuild ./
 
 
--- where did this come from?
---condition_opt
---    ::= condition
---      | $empty
---          /. $Build  consumeEmpty(); $EndBuild ./
-
 
 iteration_statement
     ::= 'while' '(' condition ')' statement
@@ -875,7 +878,7 @@ iteration_statement
           /. $Build  consumeStatementDoLoop();  $EndBuild ./
       | 'for' '(' expression_opt ';' expression_opt ';' expression_opt ')' statement
           /. $Build consumeStatementForLoop(); $EndBuild ./
-      | 'for' '(' simple_declaration expression_opt ';' expression_opt ')' statement
+      | 'for' '(' simple_declaration_with_declspec expression_opt ';' expression_opt ')' statement
           /. $Build consumeStatementForLoop(); $EndBuild ./
           
 
@@ -940,7 +943,12 @@ declaration_seq_opt
 simple_declaration
     ::= declaration_specifiers_opt <openscope-ast> init_declarator_list_opt ';'
           /. $Build  consumeDeclarationSimple(true);  $EndBuild ./
-    
+
+
+simple_declaration_with_declspec 
+    ::= declaration_specifiers <openscope-ast> init_declarator_list_opt ';'
+          /. $Build  consumeDeclarationSimple(true);  $EndBuild ./
+
 
 -- declaration specifier nodes not created here, they are created by sub-rules 
 -- these rules add IToken modifiers to the declspec nodes

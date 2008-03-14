@@ -64,7 +64,8 @@ class CPreprocessorAdapter {
 				org.eclipse.cdt.core.parser.IToken domToken = preprocessor.nextToken(); // throws EndOfFileException
 				int type = domToken.getType();
 				
-				IToken token = new LPGTokenAdapter(domToken, tokenMap.mapKind(type));
+				int newKind = tokenMap.mapKind(type);			
+				IToken token = new LPGTokenAdapter(domToken, newKind);
 				tokenCollector.addToken(token);
 				
 				if(type == tCOMPLETION) {

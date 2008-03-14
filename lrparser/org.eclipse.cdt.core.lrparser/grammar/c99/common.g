@@ -104,6 +104,14 @@ $Headers
 		return  action.getSecondaryParseResult();
 	}
 	
+	public String[] getOrderedTerminalSymbols() {
+		return $sym_type.orderedTerminalSymbols;
+	}
+	
+	public String getName() {
+		return "$action_type"; //$NON-NLS-1$
+	}
+	
 ./
 $End
 

@@ -11,9 +11,6 @@
 package org.eclipse.cdt.core.dom.lrparser.action;
 
 import java.util.HashMap;
-import java.util.Map;
-
-
 
 
 /**
@@ -26,9 +23,9 @@ public class TokenMap implements ITokenMap {
 
 	// LPG token kinds start at 0
 	// the kind is not part of the base language parser
-	public static int INVALID_KIND = -1;
+	public static final int INVALID_KIND = -1;
 	
-	private int[] kindMap = null; 
+	private final int[] kindMap; 
 	
 	
 	/**
@@ -39,19 +36,21 @@ public class TokenMap implements ITokenMap {
 	 */
 	public TokenMap(String[] toSymbols, String[] fromSymbols) {
 		// If this map is not being used with an extension then it becomes an "identity map".
-		if(toSymbols == fromSymbols)
+		if(toSymbols == fromSymbols) {
+			kindMap = null;
 			return;
-		
-		kindMap = new int[fromSymbols.length];
-		Map<String,Integer> toMap = new HashMap<String,Integer>();
-		
-		for(int i = 0; i < toSymbols.length; i++) {
-			toMap.put(toSymbols[i], new Integer(i));
 		}
 		
-		for(int i = 0; i < fromSymbols.length; i++) {
+		kindMap = new int[fromSymbols.length];
+		
+		HashMap<String,Integer> toMap = new HashMap<String,Integer>();
+		for(int i = 0, n = toSymbols.length; i < n; i++) {
+			toMap.put(toSymbols[i], i);
+		}
+		
+		for(int i = 0, n = fromSymbols.length; i < n; i++) {
 			Integer kind = toMap.get(fromSymbols[i]);
-			kindMap[i] = kind == null ? INVALID_KIND : kind.intValue();
+			kindMap[i] = kind == null ? INVALID_KIND : kind;
 		}
 	}
 	
@@ -62,10 +61,23 @@ public class TokenMap implements ITokenMap {
 	public int mapKind(int kind) {
 		if(kindMap == null)
 			return kind;
-		
 		if(kind < 0 || kind >= kindMap.length)
 			return INVALID_KIND;
 		
 		return kindMap[kind];
+	}
+	
+
+	@Override 
+	public String toString() {
+		StringBuilder sb = new StringBuilder('(') ;
+		boolean first = true;
+		for(int i = 0, n = kindMap.length; i < n; i++) {
+			if(!first)
+				sb.append(", "); //$NON-NLS-1$
+			sb.append(i).append('=').append(kindMap[i]);
+			first = false;
+		}
+		return sb.append(')').toString();
 	}
 }

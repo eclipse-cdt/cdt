@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.util;
 
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 
 /**
  * This class contains several convenience methods 

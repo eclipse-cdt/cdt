@@ -269,11 +269,28 @@ public abstract class BuildASTParserAction {
 	 * Runs the given parser on the tokens that make up the current rule.
 	 */
 	protected IASTNode runSecondaryParser(IParser secondaryParser) { 
-		secondaryParser.setTokens(parser.getRuleTokens());
-		// need to pass tu because any completion nodes need to be linked directly to the root
+		List<IToken> tokens = parser.getRuleTokens();
+		
+		// the secondary parser will alter the token kinds, which will need to be undone
+		int[] savedKinds = new int[tokens.size()];
+		
+		int i = 0;
+		for(IToken token : tokens)
+			savedKinds[i++] = token.getKind();
+		
+		secondaryParser.setTokens(tokens);
+		
+		// need to pass tu because any new completion nodes need to be linked directly to the root
 		IASTCompletionNode compNode = secondaryParser.parse(tu);
 		addNameToCompletionNode(compNode);
-		return secondaryParser.getSecondaryParseResult();
+		IASTNode result = secondaryParser.getSecondaryParseResult();
+		
+		// restore the token kinds
+		i = 0;
+		for(IToken token : tokens)
+			token.setKind(savedKinds[i++]);
+		
+		return result;
 	}
 	
 	
@@ -601,17 +618,19 @@ public abstract class BuildASTParserAction {
 		IASTTypeId typeId = (IASTTypeId) astStack.pop();
 		IASTCastExpression expr = nodeFactory.newCastExpression(operator, typeId, operand);
 		setOffsetAndLength(expr);
-				
-		// try parsing as non-cast to resolve ambiguities
-		IParser secondaryParser = getNoCastExpressionParser();
-		IASTNode alternateExpr = runSecondaryParser(secondaryParser);
+		
+		IASTNode alternateExpr = null;
+		if(operator == IASTCastExpression.op_cast) { // don't reparse for dynamic_cast etc as those are not ambiguous
+			// try parsing as non-cast to resolve ambiguities
+			IParser secondaryParser = getNoCastExpressionParser();
+			alternateExpr = runSecondaryParser(secondaryParser);
+		}
 		
 		if(alternateExpr == null || alternateExpr instanceof IASTProblemExpression)
 			astStack.push(expr);
 		else
 			astStack.push(nodeFactory.newAmbiguousExpression(expr, (IASTExpression)alternateExpr));
 
-		
 		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	

@@ -130,18 +130,21 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	
 	@Override
 	protected IParser getExpressionStatementParser() {
-		return new CPPExpressionStatementParser(CPPParsersym.orderedTerminalSymbols); 
+		DebugUtil.printMethodTrace();
+		return new CPPExpressionStatementParser(parser.getOrderedTerminalSymbols()); 
 	}
 	
 	@Override
 	protected IParser getNoCastExpressionParser() {
-		return new CPPNoCastExpressionParser(CPPParsersym.orderedTerminalSymbols);
+		DebugUtil.printMethodTrace();
+		return new CPPNoCastExpressionParser(parser.getOrderedTerminalSymbols());
 	}
 	
 	
 	@Override
 	protected IParser getSizeofExpressionParser() {
-		return new CPPSizeofExpressionParser(CPPParsersym.orderedTerminalSymbols);
+		DebugUtil.printMethodTrace();
+		return new CPPSizeofExpressionParser(parser.getOrderedTerminalSymbols());
 	}
 
 	/**

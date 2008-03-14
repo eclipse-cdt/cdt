@@ -24,6 +24,7 @@ import lpg.lpgjavaruntime.Token;
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings.C99Variable;
 
+@Deprecated
 public class ResolverActionTests extends TestCase {
 
 	/**
@@ -76,6 +77,13 @@ public class ResolverActionTests extends TestCase {
 				tokens.add(token);
 			}
 			return tokens;
+		}
+		
+		public String[] getOrderedTerminalSymbols() {
+			return null;
+		}
+		public String getName() {
+			return "Blah"; //$NON-NLS-1$
 		}
 	}
 	

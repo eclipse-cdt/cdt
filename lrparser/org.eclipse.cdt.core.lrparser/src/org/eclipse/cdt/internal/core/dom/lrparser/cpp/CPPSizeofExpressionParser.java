@@ -239,6 +239,15 @@ public IASTNode getSecondaryParseResult() {
 	return  action.builder.getSecondaryParseResult();
 }
 
+public String[] getOrderedTerminalSymbols() {
+	return CPPSizeofExpressionParsersym.orderedTerminalSymbols;
+}
+
+public String getName() {
+	return "CPPSizeofExpressionParser"; //$NON-NLS-1$
+}
+
+
 
 private ITokenMap tokenMap = null;
 
@@ -1006,203 +1015,203 @@ public CPPSizeofExpressionParser(String[] mapFrom) {  // constructor
             }  
    
             //
-            // Rule 159:  expression ::= ERROR_TOKEN
+            // Rule 159:  expression_list ::= <openscope-ast> expression_list_actual
             //
             case 159: {       action.builder.
-   consumeExpressionProblem();                break;
-            }  
-   
-            //
-            // Rule 160:  expression_list ::= <openscope-ast> expression_list_actual
-            //
-            case 160: {       action.builder.
    consumeExpressionList();                 break;
             }  
    
             //
-            // Rule 164:  expression_list_opt ::= $Empty
+            // Rule 163:  expression_list_opt ::= $Empty
             //
-            case 164: {       action.builder.
+            case 163: {       action.builder.
    consumeEmpty();                 break;
             }  
    
             //
-            // Rule 166:  expression_opt ::= $Empty
+            // Rule 165:  expression_opt ::= $Empty
             //
-            case 166: {       action.builder.
+            case 165: {       action.builder.
    consumeEmpty();                 break;
             }  
    
             //
-            // Rule 169:  constant_expression_opt ::= $Empty
+            // Rule 168:  constant_expression_opt ::= $Empty
             //
-            case 169: {       action.builder.
+            case 168: {       action.builder.
    consumeEmpty();                 break;
             }  
    
             //
-            // Rule 178:  statement ::= ERROR_TOKEN
+            // Rule 177:  statement ::= ERROR_TOKEN
             //
-            case 178: {       action.builder.
+            case 177: {       action.builder.
    consumeStatementProblem();                 break;
             }  
    
             //
-            // Rule 179:  labeled_statement ::= identifier : statement
+            // Rule 178:  labeled_statement ::= identifier : statement
             //
-            case 179: {       action.builder.
+            case 178: {       action.builder.
    consumeStatementLabeled();                 break;
             }  
    
             //
-            // Rule 180:  labeled_statement ::= case constant_expression :
+            // Rule 179:  labeled_statement ::= case constant_expression :
             //
-            case 180: {       action.builder.
+            case 179: {       action.builder.
    consumeStatementCase();                 break;
             }  
    
             //
-            // Rule 181:  labeled_statement ::= default :
+            // Rule 180:  labeled_statement ::= default :
             //
-            case 181: {       action.builder.
+            case 180: {       action.builder.
    consumeStatementDefault();                 break;
             }  
    
             //
-            // Rule 182:  expression_statement ::= expression ;
+            // Rule 181:  expression_statement ::= expression ;
             //
-            case 182: {       action.builder.
+            case 181: {       action.builder.
    consumeStatementExpression();                 break;
             }  
    
             //
-            // Rule 183:  expression_statement ::= ;
+            // Rule 182:  expression_statement ::= ;
             //
-            case 183: {       action.builder.
+            case 182: {       action.builder.
    consumeStatementNull();                 break;
             }  
    
             //
-            // Rule 184:  compound_statement ::= { <openscope-ast> statement_seq }
+            // Rule 183:  compound_statement ::= { <openscope-ast> statement_seq }
             //
-            case 184: {       action.builder.
+            case 183: {       action.builder.
    consumeStatementCompoundStatement(true);                 break;
             }  
    
             //
-            // Rule 185:  compound_statement ::= { }
+            // Rule 184:  compound_statement ::= { }
             //
-            case 185: {       action.builder.
+            case 184: {       action.builder.
    consumeStatementCompoundStatement(false);                 break;
             }  
    
             //
-            // Rule 188:  selection_statement ::= if ( condition ) statement
+            // Rule 187:  selection_statement ::= if ( condition ) statement
             //
-            case 188: {       action.builder.
+            case 187: {       action.builder.
    consumeStatementIf(false);                 break;
             }  
    
             //
-            // Rule 189:  selection_statement ::= if ( condition ) statement else statement
+            // Rule 188:  selection_statement ::= if ( condition ) statement else statement
             //
-            case 189: {       action.builder.
+            case 188: {       action.builder.
    consumeStatementIf(true);                 break;
             }  
    
             //
-            // Rule 190:  selection_statement ::= switch ( condition ) statement
+            // Rule 189:  selection_statement ::= switch ( condition ) statement
             //
-            case 190: {       action.builder.
+            case 189: {       action.builder.
    consumeStatementSwitch();                 break;
             }  
    
             //
-            // Rule 192:  condition ::= type_specifier_seq declarator = assignment_expression
+            // Rule 191:  condition ::= type_specifier_seq declarator = assignment_expression
             //
-            case 192: {       action.builder.
+            case 191: {       action.builder.
    consumeConditionDeclaration();                 break;
             }  
    
             //
-            // Rule 193:  iteration_statement ::= while ( condition ) statement
+            // Rule 192:  iteration_statement ::= while ( condition ) statement
             //
-            case 193: {       action.builder.
+            case 192: {       action.builder.
    consumeStatementWhileLoop();                 break;
             }  
    
             //
-            // Rule 194:  iteration_statement ::= do statement while ( expression ) ;
+            // Rule 193:  iteration_statement ::= do statement while ( expression ) ;
             //
-            case 194: {       action.builder.
+            case 193: {       action.builder.
    consumeStatementDoLoop();                 break;
             }  
    
             //
-            // Rule 195:  iteration_statement ::= for ( expression_opt ; expression_opt ; expression_opt ) statement
+            // Rule 194:  iteration_statement ::= for ( expression_opt ; expression_opt ; expression_opt ) statement
+            //
+            case 194: {       action.builder.
+  consumeStatementForLoop();                break;
+            }  
+   
+            //
+            // Rule 195:  iteration_statement ::= for ( simple_declaration_with_declspec expression_opt ; expression_opt ) statement
             //
             case 195: {       action.builder.
   consumeStatementForLoop();                break;
             }  
    
             //
-            // Rule 196:  iteration_statement ::= for ( simple_declaration expression_opt ; expression_opt ) statement
+            // Rule 196:  jump_statement ::= break ;
             //
             case 196: {       action.builder.
-  consumeStatementForLoop();                break;
-            }  
-   
-            //
-            // Rule 197:  jump_statement ::= break ;
-            //
-            case 197: {       action.builder.
    consumeStatementBreak();                 break;
             }  
    
             //
-            // Rule 198:  jump_statement ::= continue ;
+            // Rule 197:  jump_statement ::= continue ;
             //
-            case 198: {       action.builder.
+            case 197: {       action.builder.
    consumeStatementContinue();                 break;
             }  
    
             //
-            // Rule 199:  jump_statement ::= return expression ;
+            // Rule 198:  jump_statement ::= return expression ;
             //
-            case 199: {       action.builder.
+            case 198: {       action.builder.
    consumeStatementReturn(true);                 break;
             }  
    
             //
-            // Rule 200:  jump_statement ::= return ;
+            // Rule 199:  jump_statement ::= return ;
             //
-            case 200: {       action.builder.
+            case 199: {       action.builder.
    consumeStatementReturn(false);                 break;
             }  
    
             //
-            // Rule 201:  jump_statement ::= goto identifier_token ;
+            // Rule 200:  jump_statement ::= goto identifier_token ;
             //
-            case 201: {       action.builder.
+            case 200: {       action.builder.
    consumeStatementGoto();                 break;
             }  
    
             //
-            // Rule 202:  declaration_statement ::= block_declaration
+            // Rule 201:  declaration_statement ::= block_declaration
+            //
+            case 201: {       action.builder.
+   consumeStatementDeclaration();                 break;
+            }  
+   
+            //
+            // Rule 202:  declaration_statement ::= function_definition
             //
             case 202: {       action.builder.
    consumeStatementDeclaration();                 break;
             }  
    
             //
-            // Rule 203:  declaration_statement ::= function_definition
+            // Rule 219:  simple_declaration ::= declaration_specifiers_opt <openscope-ast> init_declarator_list_opt ;
             //
-            case 203: {       action.builder.
-   consumeStatementDeclaration();                 break;
+            case 219: {       action.builder.
+   consumeDeclarationSimple(true);                 break;
             }  
    
             //
-            // Rule 220:  simple_declaration ::= declaration_specifiers_opt <openscope-ast> init_declarator_list_opt ;
+            // Rule 220:  simple_declaration_with_declspec ::= declaration_specifiers <openscope-ast> init_declarator_list_opt ;
             //
             case 220: {       action.builder.
    consumeDeclarationSimple(true);                 break;

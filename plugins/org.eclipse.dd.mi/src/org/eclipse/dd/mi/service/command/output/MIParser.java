@@ -402,6 +402,7 @@ public class MIParser {
             if (c == '\\') {
                 if (escape) {
                     sb.append(c);
+                    sb.append(c);
                     escape = false;
                 } else {
                     escape = true;

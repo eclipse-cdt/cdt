@@ -64,11 +64,13 @@ import org.eclipse.cdt.core.model.IMethod;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.util.CElementBaseLabels;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.actions.CdtActionConstants;
 import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
 import org.eclipse.cdt.ui.refactoring.actions.CRefactoringActionGroup;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
+import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
 import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
 import org.eclipse.cdt.internal.ui.util.CoreUtility;
 import org.eclipse.cdt.internal.ui.util.Messages;
@@ -445,6 +447,7 @@ public class CHViewPart extends ViewPart {
         	}
         };
         fOpenElement.setToolTipText(CHMessages.CHViewPart_Open_tooltip);
+        fOpenElement.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_DECL);
         
         fShowFilesInLabelsAction= new Action(CHMessages.CHViewPart_ShowFiles_label, IAction.AS_CHECK_BOX) {
             @Override
@@ -489,6 +492,7 @@ public class CHViewPart extends ViewPart {
         fOpenViewActionGroup.fillActionBars(actionBars);
         fSelectionSearchGroup.fillActionBars(actionBars);
         
+        actionBars.setGlobalActionHandler(CdtActionConstants.OPEN_DECLARATION, fOpenElement);
         actionBars.setGlobalActionHandler(ActionFactory.NEXT.getId(), fNextAction);
         actionBars.setGlobalActionHandler(ActionFactory.PREVIOUS.getId(), fPreviousAction);
         actionBars.setGlobalActionHandler(ActionFactory.REFRESH.getId(), fRefreshAction);
@@ -585,7 +589,7 @@ public class CHViewPart extends ViewPart {
     			try {
 					EditorOpener.open(page, elem);
 				} catch (CModelException e) {
-					CUIPlugin.getDefault().log(e);
+					CUIPlugin.log(e);
 				}
     		}
     	}
@@ -744,7 +748,7 @@ public class CHViewPart extends ViewPart {
         			try {
         				EditorOpener.open(page, fNavigationNode.getRepresentedDeclaration());
         			} catch (CModelException e) {
-        				CUIPlugin.getDefault().log(e);
+        				CUIPlugin.log(e);
         			}
         		}
         	}

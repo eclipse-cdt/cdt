@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,11 +28,14 @@ import org.eclipse.ui.part.Page;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IInclude;
 
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.callhierarchy.OpenCallHierarchyAction;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
 import org.eclipse.cdt.internal.ui.includebrowser.OpenIncludeBrowserAction;
+import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
 import org.eclipse.cdt.internal.ui.typehierarchy.OpenTypeHierarchyAction;
 
 /**
@@ -52,6 +55,7 @@ public class OpenViewActionGroup extends ActionGroup {
 	private boolean fSuppressCallHierarchy;
 	private boolean fSuppressProperties;
 	private boolean fEnableIncludeBrowser;
+	
 	private IWorkbenchSite fSite;
 	private String fGroupName= IContextMenuConstants.GROUP_OPEN;
 	
@@ -61,6 +65,7 @@ public class OpenViewActionGroup extends ActionGroup {
 	private PropertyDialogAction fOpenPropertiesDialog;
 	private OpenCallHierarchyAction fOpenCallHierarchy;
 	private OpenIncludeBrowserAction fOpenIncludeBrowser;
+	private OpenDeclarationsAction fOpenDeclaration;
 
 	/**
 	 * Creates a new <code>OpenActionGroup</code>. The group requires
@@ -70,9 +75,20 @@ public class OpenViewActionGroup extends ActionGroup {
 	 * @param page the page that owns this action group
 	 */
 	public OpenViewActionGroup(Page page) {
-		createSiteActions(page.getSite());
+		createSiteActions(page.getSite(), null);
 	}
-	
+
+	/**
+	 * Creates a new <code>OpenActionGroup</code>. The group requires
+	 * that the selection provided by the page's selection provider is of type <code>
+	 * org.eclipse.jface.viewers.IStructuredSelection</code>.
+	 * 
+	 * @param page the page that owns this action group
+	 */
+	public OpenViewActionGroup(Page page, CEditor editor) {
+		createSiteActions(page.getSite(), editor);
+	}
+
 	/**
 	 * Creates a new <code>OpenActionGroup</code>. The group requires
 	 * that the selection provided by the part's selection provider is of type <code>
@@ -81,7 +97,7 @@ public class OpenViewActionGroup extends ActionGroup {
 	 * @param part the view part that owns this action group
 	 */
 	public OpenViewActionGroup(IWorkbenchPart part) {
-		createSiteActions(part.getSite());
+		createSiteActions(part.getSite(), null);
 	}
 	
 	/**
@@ -109,11 +125,17 @@ public class OpenViewActionGroup extends ActionGroup {
         fOpenIncludeBrowser= new OpenIncludeBrowserAction(part);
         fOpenIncludeBrowser.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_INCLUDE_BROWSER);
         part.setAction("OpenIncludeBrowser", fOpenIncludeBrowser); //$NON-NLS-1$
+        
+        if (part instanceof CEditor) {
+        	fOpenDeclaration= new OpenDeclarationsAction((CEditor) part);
+        	fOpenDeclaration.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_DECL);
+        	part.setAction("OpenDeclarations", fOpenDeclaration); //$NON-NLS-1$
+        }
 
 		initialize(part.getEditorSite());
 	}
 
-	private void createSiteActions(IWorkbenchSite site) {
+	private void createSiteActions(IWorkbenchSite site, CEditor editor) {
 //		fOpenSuperImplementation= new OpenSuperImplementationAction(site);
 //		fOpenSuperImplementation.setActionDefinitionId(IJavaEditorActionDefinitionIds.OPEN_SUPER_IMPLEMENTATION);
 //
@@ -128,6 +150,11 @@ public class OpenViewActionGroup extends ActionGroup {
 
 		fOpenIncludeBrowser= new OpenIncludeBrowserAction(site);
 		fOpenIncludeBrowser.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_INCLUDE_BROWSER);
+
+        if (editor != null) {
+        	fOpenDeclaration= new OpenDeclarationsAction(editor);
+        	fOpenDeclaration.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_DECL);
+        }
 
         fOpenPropertiesDialog= new PropertyDialogAction(site, site.getSelectionProvider());
         fOpenPropertiesDialog.setActionDefinitionId("org.eclipse.ui.file.properties"); //$NON-NLS-1$
@@ -163,6 +190,7 @@ public class OpenViewActionGroup extends ActionGroup {
 	/* (non-Javadoc)
 	 * Method declared in ActionGroup
 	 */
+	@Override
 	public void fillActionBars(IActionBars actionBar) {
 		super.fillActionBars(actionBar);
 		setGlobalActionHandlers(actionBar);
@@ -171,9 +199,19 @@ public class OpenViewActionGroup extends ActionGroup {
 	/* (non-Javadoc)
 	 * Method declared in ActionGroup
 	 */
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		super.fillContextMenu(menu);
+		IStructuredSelection selection= getStructuredSelection();
 		if (!fEditorIsOwner) {
+			if (fOpenDeclaration != null && fOpenDeclaration.isEnabled()) {
+				if (selection != null) {
+					Object elem= selection.getFirstElement();
+					if (elem instanceof ICElement && elem instanceof IInclude == false) {
+						menu.appendToGroup(fGroupName, fOpenDeclaration);
+					}
+				}
+			}
 			if (!fSuppressTypeHierarchy && fOpenTypeHierarchy.isEnabled()) {
 				menu.appendToGroup(fGroupName, fOpenTypeHierarchy);
 			}
@@ -185,7 +223,6 @@ public class OpenViewActionGroup extends ActionGroup {
 			}
 		}
 //		appendToGroup(menu, fOpenSuperImplementation);
-		IStructuredSelection selection= getStructuredSelection();
 		if (!fSuppressProperties) {
 			if (fOpenPropertiesDialog != null && fOpenPropertiesDialog.isEnabled() && selection != null &&fOpenPropertiesDialog.isApplicableForSelection(selection)) {
 				menu.appendToGroup(IContextMenuConstants.GROUP_PROPERTIES, fOpenPropertiesDialog);
@@ -196,6 +233,7 @@ public class OpenViewActionGroup extends ActionGroup {
 	/*
 	 * @see ActionGroup#dispose()
 	 */
+	@Override
 	public void dispose() {
 		ISelectionProvider provider= fSite.getSelectionProvider();
 //		provider.removeSelectionChangedListener(fOpenSuperImplementation);
@@ -215,6 +253,9 @@ public class OpenViewActionGroup extends ActionGroup {
 		actionBars.setGlobalActionHandler(CdtActionConstants.OPEN_TYPE_HIERARCHY, fOpenTypeHierarchy);
         actionBars.setGlobalActionHandler(CdtActionConstants.OPEN_CALL_HIERARCHY, fOpenCallHierarchy);
         actionBars.setGlobalActionHandler(CdtActionConstants.OPEN_INCLUDE_BROWSER, fOpenIncludeBrowser);
+        if (fOpenDeclaration != null) {
+        	actionBars.setGlobalActionHandler(CdtActionConstants.OPEN_DECLARATION, fOpenDeclaration);
+        }
         if (fOpenPropertiesDialog != null) {
         	actionBars.setGlobalActionHandler(ActionFactory.PROPERTIES.getId(), fOpenPropertiesDialog);
         }

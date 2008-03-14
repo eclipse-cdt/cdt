@@ -38,7 +38,6 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 	private RetargetTextEditorAction fContextInformation;
 	private RetargetTextEditorAction fFormatter;
 	private RetargetTextEditorAction fAddInclude;
-	private RetargetTextEditorAction fOpenDeclaration;
 	private RetargetTextEditorAction fShiftLeft;
 	private RetargetTextEditorAction fShiftRight;
 	private TogglePresentationAction fTogglePresentation;
@@ -77,9 +76,6 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		fAddInclude = new RetargetTextEditorAction(bundle, "AddIncludeOnSelection."); //$NON-NLS-1$
 		fAddInclude.setActionDefinitionId(ICEditorActionDefinitionIds.ADD_INCLUDE);
 
-		fOpenDeclaration = new RetargetTextEditorAction(bundle, "OpenDeclarations."); //$NON-NLS-1$
-		fOpenDeclaration.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_DECL);
-
 		// actions that are "contributed" to editors, they are considered belonging to the active editor
 		fTogglePresentation= new TogglePresentationAction();
 
@@ -110,6 +106,7 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 	/*
 	 * @see org.eclipse.ui.texteditor.BasicTextEditorActionContributor#contributeToMenu(org.eclipse.jface.action.IMenuManager)
 	 */
+	@Override
 	public void contributeToMenu(IMenuManager menu) {
 		
 		super.contributeToMenu(menu);
@@ -131,7 +128,6 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		
 		IMenuManager navigateMenu= menu.findMenuUsingPath(IWorkbenchActionConstants.M_NAVIGATE);
 		if (navigateMenu != null) {
-			navigateMenu.appendToGroup(IWorkbenchActionConstants.OPEN_EXT, fOpenDeclaration);
 			navigateMenu.appendToGroup(IWorkbenchActionConstants.OPEN_EXT, fToggleSourceHeader);
 
 			navigateMenu.appendToGroup(IWorkbenchActionConstants.SHOW_EXT, fShowOutline);
@@ -150,6 +146,7 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 	/**
 	 * @see org.eclipse.ui.part.EditorActionBarContributor#init(IActionBars)
 	 */
+	@Override
 	public void init(IActionBars bars) {
 		super.init(bars);
 
@@ -165,6 +162,7 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 	/*
 	 * @see org.eclipse.ui.editors.text.TextEditorActionContributor#setActiveEditor(org.eclipse.ui.IEditorPart)
 	 */
+	@Override
 	public void setActiveEditor(IEditorPart part) {
 		
 		super.setActiveEditor(part);
@@ -184,7 +182,6 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		fContentAssist.setAction(getAction(textEditor, "ContentAssistProposal")); //$NON-NLS-1$
 		fContextInformation.setAction(getAction(textEditor, "ContentAssistContextInformation")); //$NON-NLS-1$
 		fAddInclude.setAction(getAction(textEditor, "AddIncludeOnSelection")); //$NON-NLS-1$
-		fOpenDeclaration.setAction(getAction(textEditor, "OpenDeclarations")); //$NON-NLS-1$
 		fFormatter.setAction(getAction(textEditor, "Format")); //$NON-NLS-1$
 
 		fGotoMatchingBracket.setAction(getAction(textEditor, GotoMatchingBracketAction.GOTO_MATCHING_BRACKET));
@@ -205,6 +202,7 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorActionBarContributor#dispose()
 	 */
+	@Override
 	public void dispose() {
 		setActiveEditor(null);
 		super.dispose();

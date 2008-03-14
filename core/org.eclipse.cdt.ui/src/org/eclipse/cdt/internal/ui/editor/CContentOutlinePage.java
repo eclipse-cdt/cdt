@@ -47,7 +47,7 @@ public class CContentOutlinePage extends AbstractCModelOutlinePage {
 
 	@Override
 	protected OpenViewActionGroup createOpenViewActionGroup() {
-		OpenViewActionGroup ovag= new OpenViewActionGroup(this);
+		OpenViewActionGroup ovag= new OpenViewActionGroup(this, getEditor());
 		ovag.setEnableIncludeBrowser(true);
 		return ovag;
 	}

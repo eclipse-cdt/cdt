@@ -79,11 +79,13 @@ import org.eclipse.cdt.core.model.IMethodDeclaration;
 import org.eclipse.cdt.core.model.util.CElementBaseLabels;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.actions.CdtActionConstants;
 import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
 import org.eclipse.cdt.ui.refactoring.actions.CRefactoringActionGroup;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
+import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
 import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
 import org.eclipse.cdt.internal.ui.viewsupport.AdaptingSelectionProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
@@ -461,7 +463,7 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 								if (md.isConstructor()) return 2;
 								if (md.isDestructor()) return 3;
 							} catch (CModelException e) {
-								CUIPlugin.getDefault().log(e);
+								CUIPlugin.log(e);
 							}
     						break;
     				}
@@ -650,7 +652,7 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
                 	try {
 						return !node.isStatic();
 					} catch (CModelException e) {
-						CUIPlugin.getDefault().log(e);
+						CUIPlugin.log(e);
 					}
                 }
                 return true;
@@ -664,7 +666,7 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
                 	try {
 						return ASTAccessVisibility.PUBLIC.equals(node.getVisibility());
 					} catch (CModelException e) {
-						CUIPlugin.getDefault().log(e);
+						CUIPlugin.log(e);
 					}
                 }
                 return true;
@@ -719,6 +721,7 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
         	}
         };
         fOpenElement.setToolTipText(Messages.THViewPart_Open_tooltip);
+        fOpenElement.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_DECL);
         
         fShowFilesInLabelsAction= new Action(Messages.THViewPart_ShowFileNames, IAction.AS_CHECK_BOX) {
             @Override
@@ -755,6 +758,7 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
         fOpenViewActionGroup.fillActionBars(actionBars);
         fSelectionSearchGroup.fillActionBars(actionBars);
         
+        actionBars.setGlobalActionHandler(CdtActionConstants.OPEN_DECLARATION, fOpenElement);
         actionBars.setGlobalActionHandler(ActionFactory.REFRESH.getId(), fRefreshAction);
         actionBars.updateActionBars();
         
@@ -806,7 +810,7 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 			try {
 				EditorOpener.open(page, elem);
 			} catch (CModelException e) {
-				CUIPlugin.getDefault().log(e);
+				CUIPlugin.log(e);
 			}
 		}
 	}

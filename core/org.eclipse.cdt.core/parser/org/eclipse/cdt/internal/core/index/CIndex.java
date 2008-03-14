@@ -535,44 +535,37 @@ public class CIndex implements IIndex {
 	}
 
 	private IIndexMacro[] findMacros(char[] name, boolean isPrefix, boolean caseSensitive, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
-		if (SPECIALCASE_SINGLES && fFragments.length==1) {
+		// macros can be represented multiple times when a header is parsed in c- and c++ context,
+		// so there is no special case for indexes with single fragments.
+		if (monitor == null) {
+			monitor= new NullProgressMonitor();
+		}
+		List<IIndexMacro> result = new ArrayList<IIndexMacro>();
+		HashSet<IIndexFileLocation> handledIFLs= new HashSet<IIndexFileLocation>();
+		monitor.beginTask(Messages.CIndex_FindBindingsTask_label, fFragments.length);
+		for (int i = 0; i < fPrimaryFragmentCount; i++) {
+			HashSet<IIndexFile> allowedFiles= new HashSet<IIndexFile>();
 			try {
-				return fFragments[0].findMacros(name, isPrefix, caseSensitive, filter, monitor);
+				IIndexMacro[] macros= fFragments[i].findMacros(name, isPrefix, caseSensitive, filter, new SubProgressMonitor(monitor, 1));
+				for (int k = 0; k < macros.length; k++) {
+					IIndexMacro indexMacro = macros[k];
+					IIndexFile file= indexMacro.getFile();
+					if (!allowedFiles.contains(file)) {
+						if (handledIFLs.add(file.getLocation())) {
+							allowedFiles.add(file);
+						}
+						else {
+							continue;
+						}
+					}
+					result.add(indexMacro);
+				}
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
-				return IIndexMacro.EMPTY_INDEX_MACRO_ARRAY;
 			}
-		} else {
-			if (monitor == null) {
-				monitor= new NullProgressMonitor();
-			}
-			List<IIndexMacro> result = new ArrayList<IIndexMacro>();
-			HashSet<IIndexFileLocation> handledIFLs= new HashSet<IIndexFileLocation>();
-			monitor.beginTask(Messages.CIndex_FindBindingsTask_label, fFragments.length);
-			for (int i = 0; i < fPrimaryFragmentCount; i++) {
-				HashSet<IIndexFile> allowedFiles= new HashSet<IIndexFile>();
-				try {
-					IIndexMacro[] macros= fFragments[i].findMacros(name, isPrefix, caseSensitive, filter, new SubProgressMonitor(monitor, 1));
-					for (int k = 0; k < macros.length; k++) {
-						IIndexMacro indexMacro = macros[k];
-						IIndexFile file= indexMacro.getFile();
-						if (!allowedFiles.contains(file)) {
-							if (handledIFLs.add(file.getLocation())) {
-								allowedFiles.add(file);
-							}
-							else {
-								continue;
-							}
-						}
-						result.add(indexMacro);
-					}
-				} catch (CoreException e) {
-					CCorePlugin.log(e);
-				}
-			}
-			monitor.done();
-			return result.toArray(new IIndexMacro[result.size()]);
 		}
+		monitor.done();
+		return result.toArray(new IIndexMacro[result.size()]);
 	}
 
 	public long getCacheHits() {

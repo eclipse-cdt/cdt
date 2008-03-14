@@ -128,9 +128,8 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 		private Object _fileSystemObject;
 		private IImportStructureProvider _provider;
 		private MinimizedFileSystemElement _element;
-		private boolean _isActive = false;
-		private boolean _isCanceled = false;
-		
+		private volatile boolean _isActive = false;
+
 		public QueryAllJob(Object fileSystemObject, IImportStructureProvider provider, MinimizedFileSystemElement element){
 			super("Querying All"); //$NON-NLS-1$
 			_fileSystemObject = fileSystemObject;
@@ -143,14 +142,12 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 			_isActive = true;
 			query(_fileSystemObject, _element, monitor);
 			_isActive = false;
-
 				Display.getDefault().asyncExec(new Runnable(){
 					public void run(){
 						updateWidgetEnablements();
 						selectionGroup.setAllSelections(true);
 					}
 				});
-	
 			return Status.OK_STATUS;
 		}
 		
@@ -159,14 +156,10 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 			return _isActive;
 		}
 		
-
-		protected void canceling() {
-			_isCanceled = true;
-		}
 		
 		private void query(Object parent, MinimizedFileSystemElement element, IProgressMonitor monitor){
 			
-			if (monitor.isCanceled() || _isCanceled){
+			if (monitor.isCanceled()){
 				return;
 			}
 			

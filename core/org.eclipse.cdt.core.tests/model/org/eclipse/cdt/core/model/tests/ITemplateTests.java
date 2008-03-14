@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 /*
  * Created on Jun 17, 2003
@@ -153,7 +154,7 @@ public class ITemplateTests extends IntegratedCModelTest {
 			// actually, none of the two are function templates, but method templates
 			String[] myExpectedValues = {
 //					"nonVector<T>::first",
-					"Foo::fum",
+//					"Foo::fum",
 				};
 				assertEquals(myExpectedValues.length, arrayElements.size());
 				// This test is no correct there is no guaranty on the order
@@ -169,11 +170,9 @@ public class ITemplateTests extends IntegratedCModelTest {
 		{
 			// Check the template method
 			List arrayElements = tu.getChildrenOfType(ICElement.C_TEMPLATE_METHOD);
-			// actually, both of the two are method templates, but Foo is not resolved
-			// to a cpp class
 			String[] myExpectedValues = {
 					"nonVector<T>::first",
-//					"Foo::fum",
+					"Foo::fum",
 				};
 				assertEquals(myExpectedValues.length, arrayElements.size());
 				// This test is no correct there is no guaranty on the order

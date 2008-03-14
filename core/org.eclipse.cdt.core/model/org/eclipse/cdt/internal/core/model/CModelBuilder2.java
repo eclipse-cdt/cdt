@@ -91,9 +91,11 @@ import org.eclipse.core.runtime.OperationCanceledException;
 public class CModelBuilder2 implements IContributedModelBuilder {
 
 	private final TranslationUnit fTranslationUnit;
+	private final IProgressMonitor fProgressMonitor;
+
 	private ASTAccessVisibility fCurrentVisibility;
 	private Stack<ASTAccessVisibility> fVisibilityStack;
-	private IProgressMonitor fProgressMonitor;
+	private Set<Namespace> fAllNamespaces;
 
 	/**
 	 * Create a model builder for the given translation unit.
@@ -182,6 +184,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 	 */
 	private void buildModel(IASTTranslationUnit ast) throws CModelException, DOMException {
 		fVisibilityStack= new Stack<ASTAccessVisibility>();
+		fAllNamespaces= new HashSet<Namespace>();
 
 		// includes
 		final IASTPreprocessorIncludeStatement[] includeDirectives= ast.getIncludeDirectives();
@@ -489,15 +492,20 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		// create element
 		final String type= Keywords.NAMESPACE;
 		final IASTName name= declaration.getName();
-		String nsName= ASTStringUtil.getQualifiedName(name);
-		final Namespace element= new Namespace (parent, nsName);
+		final String nsName= ASTStringUtil.getQualifiedName(name);
+		final Namespace element= new Namespace(parent, nsName);
+		// if there is a duplicate namespace, also set the index
+		if (!fAllNamespaces.add(element)) {
+			element.setIndex(fAllNamespaces.size());
+			fAllNamespaces.add(element);
+		}
 		// add to parent
 		parent.addChild(element);
 		// set positions
 		if (name != null && nsName.length() > 0) {
 			setIdentifierPosition(element, name);
 		} else {
-			final IASTFileLocation nsLocation= getMinFileLocation(declaration.getNodeLocations());
+			final IASTFileLocation nsLocation= declaration.getFileLocation();
 			if (nsLocation != null) {
 				element.setIdPos(nsLocation.getNodeOffset(), type.length());
 			}
@@ -506,6 +514,8 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 
 		element.setTypeName(type);
 
+		final Set<Namespace> savedNamespaces= fAllNamespaces;
+		fAllNamespaces= new HashSet<Namespace>();
 		IASTDeclaration[] nsDeclarations= declaration.getDeclarations();
 		for (int i= 0; i < nsDeclarations.length; i++) {
 			IASTDeclaration nsDeclaration= nsDeclarations[i];
@@ -513,6 +523,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 				createDeclaration(element, nsDeclaration);
 			}
 		}
+		fAllNamespaces= savedNamespaces;
 	}
 
 	private StructureDeclaration createElaboratedTypeDeclaration(Parent parent, IASTElaboratedTypeSpecifier elaboratedTypeSpecifier, boolean isTemplate) throws CModelException{
@@ -853,16 +864,22 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 				}
 				if (!isMethod) {
 					scope= CPPVisitor.getContainingScope(simpleName);
-			        isMethod= scope instanceof ICPPClassScope;
+			        isMethod= scope instanceof ICPPClassScope || simpleName.resolveBinding() instanceof ICPPMethod;
 				}
 			}
 			if (isMethod) {
 				// method
 				final MethodDeclaration methodElement;
-				if (isTemplate) {
-					methodElement= new MethodTemplate(parent, ASTStringUtil.getQualifiedName(name));
+				final String methodName;
+				if (parent instanceof IStructure) {
+					methodName= ASTStringUtil.getSimpleName(name);
 				} else {
-					methodElement= new Method(parent, ASTStringUtil.getQualifiedName(name));
+					methodName= ASTStringUtil.getQualifiedName(name);
+				}
+				if (isTemplate) {
+					methodElement= new MethodTemplate(parent, methodName);
+				} else {
+					methodElement= new Method(parent, methodName);
 				}
 				element= methodElement;
 				// establish identity attributes before getElementInfo()
@@ -909,10 +926,10 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			} else {
 				if (isTemplate) {
 					// template function
-					element= new FunctionTemplate(parent, ASTStringUtil.getQualifiedName(name));
+					element= new FunctionTemplate(parent, ASTStringUtil.getSimpleName(name));
 				} else {
 					// function
-					element= new Function(parent, ASTStringUtil.getQualifiedName(name));
+					element= new Function(parent, ASTStringUtil.getSimpleName(name));
 				}
 				element.setParameterTypes(parameterTypes);
 				element.setReturnType(returnType);

@@ -58,6 +58,7 @@ public class AllCoreTests {
 		suite.addTest(PathSettingsContainerTests.suite());
 		suite.addTest(ASTCacheTests.suite());
 		suite.addTest(AsmModelBuilderTest.suite());
+		suite.addTest(CModelBuilderBugsTest.suite());
         return suite;
 
     }

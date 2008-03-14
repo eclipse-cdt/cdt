@@ -211,7 +211,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 				}
 				return PROCESS_CONTINUE;
 			} catch (Exception e) {
-				CUIPlugin.getDefault().log(e);
+				CUIPlugin.log(e);
 				return PROCESS_ABORT;
 			}
 		}
@@ -1248,7 +1248,8 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 				// ignore
 			}
 		}
-		if (fPreprocessorBranchFoldingEnabled || fStatementsFoldingEnabled) {
+		final boolean needAST= fPreprocessorBranchFoldingEnabled || fStatementsFoldingEnabled;
+		if (needAST) {
 			IASTTranslationUnit ast= ctx.getAST();
 			if (ast != null) {
 				computeFoldingStructure(ast, ctx);
@@ -1265,11 +1266,11 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 					}
 				});
 				if (status.matches(IStatus.ERROR)) {
-					CUIPlugin.getDefault().log(status);
+					CUIPlugin.log(status);
 				}
 			}
 		}
-		if (ctx.getAST() != null && isConsistent(fInput)) {
+		if (!needAST || ctx.getAST() != null) {
 			fInitialReconcilePending= false;
 			IParent parent= (IParent) fInput;
 			try {

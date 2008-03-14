@@ -99,6 +99,7 @@ public class FoldingTest extends TestCase {
 		
 		IPreferenceStore store= CUIPlugin.getDefault().getPreferenceStore();
 		store.setToDefault(PreferenceConstants.EDITOR_FOLDING_ENABLED);
+		store.setToDefault(PreferenceConstants.EDITOR_FOLDING_STATEMENTS);
 		store.setToDefault(PreferenceConstants.EDITOR_FOLDING_PREPROCESSOR_BRANCHES_ENABLED);
 		store.setToDefault(PreferenceConstants.EDITOR_FOLDING_INACTIVE_CODE);
 		store.setToDefault(PreferenceConstants.EDITOR_FOLDING_HEADERS);
@@ -175,21 +176,19 @@ public class FoldingTest extends TestCase {
 	}
 
 	protected Position[] getFoldingPositions() {
-		List positions= new ArrayList();
+		List<Position> positions= new ArrayList<Position>();
 		ProjectionAnnotationModel model= (ProjectionAnnotationModel)fEditor.getAdapter(ProjectionAnnotationModel.class);
 		assertNotNull(model);
-		for (Iterator iter= model.getAnnotationIterator(); iter.hasNext(); ) {
+		for (Iterator<Annotation> iter= model.getAnnotationIterator(); iter.hasNext(); ) {
 			Annotation ann= (Annotation)iter.next();
 			Position pos= model.getPosition(ann);
 			positions.add(pos);
 		}
-		Collections.sort(positions, new Comparator() {
-			public int compare(Object arg0, Object arg1) {
-				Position p0= (Position)arg0;
-				Position p1= (Position)arg1;
+		Collections.sort(positions, new Comparator<Position>() {
+			public int compare(Position p0, Position p1) {
 				return p0.offset - p1.offset;
 			}});
-		return (Position[]) positions.toArray(new Position[positions.size()]);
+		return positions.toArray(new Position[positions.size()]);
 	}
 
 	public void testInitialFolding() throws BadLocationException {
@@ -264,6 +263,32 @@ public class FoldingTest extends TestCase {
 				createPosition(99, 102),
 				createPosition(106, 110),
 		};
+		assertEquals(toString(expected), toString(actual));
+		assertEqualPositions(expected, actual);
+	}
+
+	public void testToggleFoldingNoASTRequired() throws BadLocationException {
+		fEditor.getAction("FoldingToggle").run();
+		IPreferenceStore store= CUIPlugin.getDefault().getPreferenceStore();
+		store.setValue(PreferenceConstants.EDITOR_FOLDING_STATEMENTS, false);
+		store.setValue(PreferenceConstants.EDITOR_FOLDING_PREPROCESSOR_BRANCHES_ENABLED, false);
+		fEditor.getAction("FoldingToggle").run();
+		
+		Position[] actual= getFoldingPositions();
+		Position[] expected= new Position[] {
+				createPosition(0, 2, 1),
+				createPosition(4, 7),
+				createPosition(29, 31, 30),
+				createPosition(35, 40),
+				createPosition(42, 46),
+				createPosition(48, 55),
+				createPosition(51, 53),
+				createPosition(57, 59),
+				createPosition(61, 63),
+				createPosition(65, 67),
+				createPosition(70, 104, 71),
+				createPosition(106, 110),
+			};
 		assertEquals(toString(expected), toString(actual));
 		assertEqualPositions(expected, actual);
 	}

@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.RSECorePlugin;
@@ -109,7 +110,9 @@ public class SystemDynamicUserActionMenu extends CompoundContributionItem
 		// add a separator before Work With Compile Commands... menu item
 		//ourSubMenu.add(new Separator());
 		// add Work With Commands... action
-				
+		if (returnedItemList.size() > 0)
+			returnedItemList.add(new Separator());		
+		
 		SystemWorkWithUDAsAction wwAction;
 		wwAction = new SystemWorkWithUDAsAction(shell, systemUDActionSubsystem.getSubsystem(), systemUDActionSubsystem);
 		wwAction.setText(SystemUDAResources.RESID_WORKWITH_UDAS_ACTION_LABEL);
@@ -119,7 +122,7 @@ public class SystemDynamicUserActionMenu extends CompoundContributionItem
 		UserActionContribution userActionContribution = new UserActionContribution(wwAction);
 		returnedItemList.add(userActionContribution);
 		
-		IContributionItem[] list = (IContributionItem[])returnedItemList.toArray(new ActionContributionItem[]{});
+		IContributionItem[] list = (IContributionItem[])returnedItemList.toArray(new IContributionItem[]{});
         return list;
 	}
 

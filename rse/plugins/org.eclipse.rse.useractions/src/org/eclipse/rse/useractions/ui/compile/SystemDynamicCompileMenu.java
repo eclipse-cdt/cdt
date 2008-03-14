@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.RSECorePlugin;
@@ -126,13 +127,15 @@ public class SystemDynamicCompileMenu extends CompoundContributionItem
 		// add a separator before Work With Compile Commands... menu item
 		//ourSubMenu.add(new Separator());
 		// add Work With Commands... action
+		if (returnedItemList.size() > 0) 
+			returnedItemList.add(new Separator());		
 		
 		   // Here's where you would dynamically generate your list
 		SystemWorkWithCompileCommandsAction workWithCompileCommandAction = new SystemWorkWithCompileCommandsAction(shell, true, subsystem, compileManager);
 		workWithCompileCommandAction.setSelection(selection);
 		TestContribution testContribution = new TestContribution(workWithCompileCommandAction);
 		returnedItemList.add(testContribution);
-        IContributionItem[] list = (IContributionItem[])returnedItemList.toArray(new ActionContributionItem[]{});
+        IContributionItem[] list = (IContributionItem[])returnedItemList.toArray(new IContributionItem[]{});
 		//String[] array = (String[])arrayList.toArray(new String[]{});
         //SystemCascadingCompileAction promptAction = new SystemCascadingCompileAction(null, true);
         //list[0] = new TestContribution(/*promptAction*/);

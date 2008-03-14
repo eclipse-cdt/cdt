@@ -42,15 +42,15 @@
    <extension point="org.eclipse.ui.menus">
      <menuContribution locationURI="popup:org.eclipse.rse.ui.view.systemView">
         <menu id="org.eclipse.rse.ui.useractions.compile.menu"
-              label="%DynamicLabel.CompileActionNode"
-               mnemonic="useractions.dynamiccompilemenu.mnemonic">
+              label="%DynamicLabel.CompileActionNode">
            <dynamic class="org.eclipse.rse.useractions.ui.compile.SystemDynamicCompileMenu"
                      id="org.eclipse.ui.rse.ui.views.dynamiccompilemenu">
            </dynamic>
            <visibleWhen>
                <with
                      variable="activeMenuSelection">
-                  <iterate>
+                  <iterate
+                        ifEmpty="false">
                      <adapt
                            type="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile">
                      </adapt>
@@ -59,15 +59,15 @@
             </visibleWhen>
         </menu>
       	<menu id="org.eclipse.rse.ui.useractions.useraction.menu"
-              label="%DynamicLabel.UserActionNode"
-              mnemonic="useractions.dynamicuseractionmenu.mnemonic">
+              label="%DynamicLabel.UserActionNode">
            <dynamic class="org.eclipse.rse.useractions.ui.uda.SystemDynamicUserActionMenu"
                     id="org.eclipse.ui.rse.ui.views.dynamicuseractionmenu">
            </dynamic>
            <visibleWhen>
                <with
                      variable="activeMenuSelection">
-                  <iterate>
+                  <iterate
+                        ifEmpty="false">
                      <adapt
                            type="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile">
                      </adapt>

@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.model.IEnumerator;
 import org.eclipse.cdt.core.model.IField;
 import org.eclipse.cdt.core.model.IFunctionDeclaration;
 import org.eclipse.cdt.core.model.IInheritance;
+import org.eclipse.cdt.core.model.IMacro;
 import org.eclipse.cdt.core.model.IMethodDeclaration;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITemplate;
@@ -236,6 +237,9 @@ public class CElementBaseLabels {
 			buf.append(CONCAT_STRING);
 		}		
 		switch (type) {
+			case ICElement.C_MACRO:
+				getMacroLabel((IMacro) element, flags, buf);
+				break;
 			case ICElement.C_METHOD : 
 			case ICElement.C_METHOD_DECLARATION:
 			case ICElement.C_TEMPLATE_METHOD:
@@ -304,6 +308,24 @@ public class CElementBaseLabels {
 
 	}
 	
+	/**
+	 * Appends the label for a macro definition to a StringBuffer.
+	 * @param macro a macro definition
+	 * @param flags {@link #MF_POST_FILE_QUALIFIED}, or 0.
+	 * @param buf the buffer to append the label to.
+	 * @since 5.0
+	 */
+	public static void getMacroLabel(IMacro macro, int flags, StringBuffer buf) {
+		buf.append(macro.getElementName());
+		if( getFlag(flags, MF_POST_FILE_QUALIFIED)) {
+			IPath path= macro.getPath();
+			if (path != null) {
+				buf.append( CONCAT_STRING );
+				buf.append(path.toString());
+			}
+		}
+	}
+
 	/**
 	 * Appends the label for a method declaration to a StringBuffer.
 	 * @param method a method declaration

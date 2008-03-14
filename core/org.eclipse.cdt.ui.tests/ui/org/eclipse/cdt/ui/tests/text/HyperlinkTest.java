@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,8 +19,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.hyperlink.IHyperlink;
-import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
-import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICContainer;
@@ -71,7 +69,7 @@ public class HyperlinkTest extends TestCase {
 	
 	
 	private ICProject project;
-	private ITextEditor editor;
+	private CEditor editor;
 	
 	
 	public static TestSuite suite() {
@@ -96,9 +94,10 @@ public class HyperlinkTest extends TestCase {
 	}
 	
 	private IHyperlink[] getHyperlinks(int mouseOffset) {
-		IHyperlinkDetector detector = new CElementHyperlinkDetector(editor);
+		CElementHyperlinkDetector detector = new CElementHyperlinkDetector();
+		detector.setContext(editor);
 		IRegion region = new Region(mouseOffset, 0);
-		return detector.detectHyperlinks(null, region, false);
+		return detector.detectHyperlinks(EditorTestHelper.getSourceViewer(editor), region, false);
 	}
 	
 	private void assertHyperlink(int mouseOffset, int linkStartOffset, int linkLength) {

@@ -753,7 +753,7 @@ public class CProject extends Openable implements ICProject {
 				token = memento.nextToken();
 				char firstChar = token.charAt(0);
 				if (firstChar != CEM_SOURCEFOLDER && firstChar != CEM_TRANSLATIONUNIT) {
-					rootPath.append(token);
+					rootPath= rootPath.append(token);
 					token= null;
 				} else {
 					break;

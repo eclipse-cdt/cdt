@@ -2572,6 +2572,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			IOption option = getOptionToSet(opts[index], false);
 			if (option == null)
 				continue;
+			option.setValue(opts[index].getValue());
 			sb.setLength( 0 );
 
 			// check to see if the option has an applicability calculator

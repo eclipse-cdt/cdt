@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -96,12 +96,15 @@ public class TypeInfoLabelProvider extends LabelProvider {
 			}
 			buf.append(qualifiedName.getFullyQualifiedName());
 		}
-		if (isSet(SHOW_PARAMETERS) && typeInfo.getCElementType() == ICElement.C_FUNCTION || typeInfo.getCElementType() == ICElement.C_MACRO) {
-			if (typeInfo instanceof IFunctionInfo) {
-				IFunctionInfo functionInfo= (IFunctionInfo)typeInfo;
-				String[] params= functionInfo.getParameters();
-				if (params != null) {
-					buf.append(FunctionDeclaration.getParameterClause(params));
+		if (isSet(SHOW_PARAMETERS)) {
+			final int elementType = typeInfo.getCElementType();
+			if (elementType == ICElement.C_FUNCTION || elementType == ICElement.C_MACRO) {
+				if (typeInfo instanceof IFunctionInfo) {
+					IFunctionInfo functionInfo= (IFunctionInfo)typeInfo;
+					String[] params= functionInfo.getParameters();
+					if (params != null) {
+						buf.append(FunctionDeclaration.getParameterClause(params));
+					}
 				}
 			}
 		}

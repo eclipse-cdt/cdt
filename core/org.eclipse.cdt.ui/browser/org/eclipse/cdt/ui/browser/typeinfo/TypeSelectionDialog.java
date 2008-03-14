@@ -214,7 +214,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 	private static final String SETTINGS_SHOW_LOWLEVEL = "show_lowlevel"; //$NON-NLS-1$
 
 	private static final TypeInfoLabelProvider fElementRenderer = new TypeInfoLabelProvider(
-			TypeInfoLabelProvider.SHOW_NAME_ONLY);
+			TypeInfoLabelProvider.SHOW_NAME_ONLY | TypeInfoLabelProvider.SHOW_PARAMETERS);
 	private static final TypeInfoLabelProvider fQualifierRenderer = new TypeInfoLabelProvider(
 			TypeInfoLabelProvider.SHOW_FULLY_QUALIFIED |
 			TypeInfoLabelProvider.SHOW_PARAMETERS |

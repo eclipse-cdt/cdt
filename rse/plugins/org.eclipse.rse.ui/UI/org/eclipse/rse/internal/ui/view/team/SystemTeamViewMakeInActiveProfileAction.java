@@ -12,9 +12,11 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * David Dykstal (IBM) - [202630] getDefaultPrivateProfile() and ensureDefaultPrivateProfile() are inconsistent
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.team;
+
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.ISystemProfile;
@@ -28,25 +30,22 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.swt.widgets.Shell;
 
-
 /**
  * The action allows users to de-activate all selected profiles
  */
-public class SystemTeamViewMakeInActiveProfileAction extends SystemBaseAction 
-                                 
+public class SystemTeamViewMakeInActiveProfileAction extends SystemBaseAction
+
 {
-	
+
 	/**
 	 * Constructor 
 	 */
-	public SystemTeamViewMakeInActiveProfileAction(Shell parent) 
-	{
-		super(SystemResources.ACTION_PROFILE_MAKEINACTIVE_LABEL,SystemResources.ACTION_PROFILE_MAKEINACTIVE_TOOLTIP,
-		      RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_MAKEPROFILEINACTIVE_ID),
-		      parent);
-        allowOnMultipleSelection(true);
+	public SystemTeamViewMakeInActiveProfileAction(Shell parent) {
+		super(SystemResources.ACTION_PROFILE_MAKEINACTIVE_LABEL, SystemResources.ACTION_PROFILE_MAKEINACTIVE_TOOLTIP, RSEUIPlugin.getDefault().getImageDescriptor(
+				ISystemIconConstants.ICON_SYSTEM_MAKEPROFILEINACTIVE_ID), parent);
+		allowOnMultipleSelection(true);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_CHANGE);
-		setHelp(RSEUIPlugin.HELPPREFIX+"ActionMakeInactive"); //$NON-NLS-1$
+		setHelp(RSEUIPlugin.HELPPREFIX + "ActionMakeInactive"); //$NON-NLS-1$
 	}
 
 	/**
@@ -55,40 +54,38 @@ public class SystemTeamViewMakeInActiveProfileAction extends SystemBaseAction
 	 * that every selected profile is already inactive.
 	 * @see SystemBaseAction#updateSelection(IStructuredSelection)
 	 */
-	public boolean updateSelection(IStructuredSelection selection)
-	{
-		Object currsel = getFirstSelection();
-		if (!(currsel instanceof ISystemProfile))
-			return false;
-		ISystemProfile profile = (ISystemProfile)currsel;
-		ISystemProfileManager mgr = SystemProfileManager.getDefault();
-		boolean allInActive = true;
-		while (profile != null)
-		{
-			if (mgr.isSystemProfileActive(profile.getName()))
-				allInActive = false;
-			currsel = getNextSelection();
-			if ((currsel!=null) && !(currsel instanceof ISystemProfile))
-				return false;
-			profile = (ISystemProfile)currsel;
-		}			
-		return !allInActive;
+	public boolean updateSelection(IStructuredSelection selection) {
+		ISystemProfileManager manager = SystemProfileManager.getDefault();
+		ISystemProfile defaultProfile = manager.getDefaultPrivateSystemProfile();
+		boolean enabled = false;
+		if (!getSelection().isEmpty()) {
+			enabled = true;
+			Object currsel = getFirstSelection();
+			while (currsel != null && enabled) {
+				if (currsel instanceof ISystemProfile) {
+					ISystemProfile profile = (ISystemProfile) currsel;
+					if (!profile.isActive() || profile == defaultProfile) {
+						enabled = false;
+					}
+				} else {
+					enabled = false;
+				}
+				currsel = getNextSelection();
+			}
+		}
+		return enabled;
 	}
 
 	/**
 	 * This is the method called when the user selects this action.
 	 * It walks through all the selected profiles and make them all inactive
 	 */
-	public void run() 
-	{
-		// TODO: test if attempting to disable all profiles, and issue an error
-		//  that at least one needs to be active. Or, at least a warning.
+	public void run() {
 		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
-		ISystemProfile profile = (ISystemProfile)getFirstSelection();
-		while (profile != null)
-		{
+		ISystemProfile profile = (ISystemProfile) getFirstSelection();
+		while (profile != null) {
 			sr.setSystemProfileActive(profile, false);
-			profile = (ISystemProfile)getNextSelection();
-		}		
-	}		
+			profile = (ISystemProfile) getNextSelection();
+		}
+	}
 }

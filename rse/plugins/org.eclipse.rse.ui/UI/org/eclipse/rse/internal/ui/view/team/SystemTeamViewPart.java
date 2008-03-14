@@ -19,6 +19,7 @@
  * Rupen Mardirossian (IBM) - [187741] Implemented the handleDoubleClick method
  * Xuan Chen          (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
  * Martin Oberhuber (Wind River) - [cleanup] Avoid using SystemStartHere in production code
+ * David Dykstal (IBM) - [202630] getDefaultPrivateProfile() and ensureDefaultPrivateProfile() are inconsistent
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.team;
@@ -1026,31 +1027,29 @@ public class SystemTeamViewPart
 	{
 		return true;
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.ui.ISystemDeleteTarget#canDelete()
 	 */
-	public boolean canDelete()
-	{
-		boolean ok = true;
-		IStructuredSelection selection= getStructuredSelection();		
-		Iterator elements= selection.iterator();
-		ISystemProfileManager mgr = RSECorePlugin.getTheSystemRegistry().getSystemProfileManager();
-		int nbrActiveProfiles = mgr.getActiveSystemProfiles().length;
-		int activeCount = 0;
-		while (ok && elements.hasNext())
-		{
-			Object currObj = elements.next();
-			if (!(currObj instanceof ISystemProfile))
-			{
-				ok = false;
-				//System.out.println("selection: "+currObj.getClass().getName());
+	public boolean canDelete() {
+		boolean ok = false;
+		IStructuredSelection selection = getStructuredSelection();
+		if (!selection.isEmpty()) {
+			ok = true;
+			ISystemProfileManager manager = RSECorePlugin.getTheSystemRegistry().getSystemProfileManager();
+			ISystemProfile defaultProfile = manager.getDefaultPrivateSystemProfile();
+			for (Iterator z = selection.iterator(); z.hasNext() && ok;) {
+				Object object = z.next();
+				if (object instanceof ISystemProfile) {
+					ISystemProfile profile = (ISystemProfile) object;
+					if (profile == defaultProfile) {
+						ok = false;
+					}
+				} else {
+					ok = false;
+				}
 			}
-			else if (!mgr.isSystemProfileActive(((ISystemProfile)currObj).getName()))
-				activeCount++;
 		}
-		if (ok && (activeCount == nbrActiveProfiles)) // attempting to delete all active profiles?
-			ok = false; // don't allow that!
-		//System.out.println("Inside canDelete: "+ok);
 		return ok;
 	}
 

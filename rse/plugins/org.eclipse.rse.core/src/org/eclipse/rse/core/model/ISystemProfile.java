@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * David Dykstal (IBM) - [197036] removed createHost() shortcut (should use ISystemRegistry), 
  *    cleaned javadoc for getFilterPools() 
+ * David Dykstal (IBM) - [202630] getDefaultPrivateProfile() and ensureDefaultPrivateProfile() are inconsistent
  *******************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -96,7 +97,8 @@ public interface ISystemProfile extends IRSEModelObject {
 	
 	/**
 	 * Activates or deactivates a profile. If the profile is already in the
-	 * requested state, this will do nothing.
+	 * requested state, this will do nothing. The default private system profile 
+	 * cannot be deactivated and such a request will be ignored.
 	 * @param flag true to activate the profile, false to deactivate it.
 	 * @see ISystemProfile#isActive()
 	 */

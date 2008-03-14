@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * David Dykstal (IBM) - [197036] changed getFilterPools to not force the loading of subsystem configurations
  *   removed createHost, migrated commit logic to SystemProfileManager
+ * David Dykstal (IBM) - [202630] getDefaultPrivateProfile() and ensureDefaultPrivateProfile() are inconsistent
  *******************************************************************************/
 
 package org.eclipse.rse.internal.core.model;
@@ -28,6 +29,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.core.RSEPreferencesManager;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.model.IHost;
@@ -129,13 +131,33 @@ public class SystemProfile extends RSEModelObject implements ISystemProfile, IAd
 	{
 		return isActive;
 	}
-	/**
-	 * Reset whether this profile is currently active.
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemProfile#setActive(boolean)
 	 */
-	public void setActive(boolean active)
-	{
-		this.isActive = active;
-		setDirty(true);
+	public void setActive(boolean activate) {
+		if (activate) {
+			activate();
+		} else {
+			deactivate();
+		}
+	}
+	
+	private void activate() {
+		if (!isActive) {
+			isActive = true;
+			setDirty(true);
+			RSEPreferencesManager.addActiveProfile(getName());
+		}
+	}
+	
+	private void deactivate() {
+		ISystemProfile defaultProfile = mgr.getDefaultPrivateSystemProfile();
+		if (isActive && this != defaultProfile) {
+			isActive = false;
+			setDirty(true);
+			RSEPreferencesManager.deleteActiveProfile(getName());
+		}
 	}
 
     /**
@@ -176,13 +198,18 @@ public class SystemProfile extends RSEModelObject implements ISystemProfile, IAd
 		return RSECoreMessages.RESID_MODELOBJECTS_PROFILE_DESCRIPTION;
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation.
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemProfile#setName(java.lang.String)
 	 */
-	public void setName(String newName)
-	{
-		name = newName;
-		setDirty(true);
+	public void setName(String newName) {
+		String oldName = name;
+		if (!newName.equals(oldName)) {
+			name = newName;
+			setDirty(true);
+			if (isActive) {
+				RSEPreferencesManager.renameActiveProfile(oldName, newName);
+			}
+		}
 	}
 
 	/**

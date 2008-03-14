@@ -3,7 +3,7 @@
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<meta name="copyright" content="Copyright (c) IBM Corporation and others 2004, 2007. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." />
+	<meta name="copyright" content="Copyright (c) IBM Corporation and others 2004, 2008. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." />
 	<link rel="stylesheet" type="text/css" href="../book.css" />
 	<title> Remote System Explorer Profiles </title> 
 </head>
@@ -13,30 +13,27 @@
 </a> <h1 class="topictitle1"> Remote System Explorer Profiles </h1> 
 <div>
 	<p>
-		When you define your first connection to your remote server, you will also define your first profile. All Remote System Explorer resources such as connections, filters, and filter pools are owned by a profile. Profiles help you manage these resources when you have a lot of connections. The Remote System Explorer creates a unique profile per team member (that person's <em>private profile</em>), plus a common profile called <i> Team</i>. The intent is to be able to share the Team profile in the future with other members of your team. You can also create your own profiles. 
+		All Remote System Explorer resources such as connections, filters, and filter pools are owned by a profile. Profiles help you manage these resources when you have a lot of connections. The Remote System Explorer creates two profiles when starting up for the first time: a <em>private profile</em>, usually named after the host name of the machine that creates the workspace, and a profile called <i> Team</i>. The intent is to be able to share the Team profile in the future with other members of your team. You can also create your own profiles.
 	</p>
 	<div class="p">
 		Profiles contain: 
 		<ul>
 			<li>
-				Connections -- including subsystem properties. User IDs and passwords are not shared. 
+				Connections -- including subsystem properties. User IDs and passwords are not shared.
 			</li>
 			<li>
 				Filters, filter pools, and filters pool references 
 			</li>
 			<li>
-				User-defined actions 
-			</li>
-			<li>
-				Compile commands 
+				Other artifacts associated with a profile
 			</li>
 		</ul>
 	</div>
 	<p>
-		Profiles can be active, or inactive. By default, only your private profile and the Team profile are active. The Remote System Explorer displays all connections from all active profiles and, within a connection, allows filter pools to be referenced from any active profile. Further, the user actions and compile commands shown in the right-click menu for a remote resource are from all active profiles. 
+		Profiles can be active or inactive. The Remote System Explorer displays all connections from all active profiles and, within a connection, allows filter pools to be referenced from any active profile. Further, the user actions and compile commands shown in the right-click menu for a remote resource are from all active profiles.
 	</p>
 	<p>
-		Your first profile will be for your local workstation. When you complete the steps for your first connection, you can decide whether to use your personal profile or the Team profile so that in the future you can share resources and information with other people. 
+		Your private profile cannot be deleted or made inactive.
 	</p>
 	<div class="p">
 <!-- TODO rework 

@@ -44,6 +44,7 @@
  *                                rewrote getSubSystemConfigurationsBySystemType to be able to delay the creation (and loading) of subsystem configurations
  * David Dykstal (IBM) - [217556] remove service subsystem types
  * Martin Oberhuber (Wind River) - [215820] Move SystemRegistry implementation to Core
+ * David Dykstal (IBM) - [202630] getDefaultPrivateProfile() and ensureDefaultPrivateProfile() are inconsistent
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.model;
@@ -620,149 +621,99 @@ public class SystemRegistry implements ISystemRegistry
 		return newProfile;
 	}
 
-	/**
-	 * Delete a SystemProfile. Prior to physically deleting the profile, we delete all
-	 * the connections it has (first disconnecting if they are connected), and all the subsystems they have.
-	 * <p>
-	 * As well, all the filter pools for this profile are deleted, and subsequently any
-	 * cross references from subsystems in connections in other profiles are removed.
-	 * <p>
-	 * A delete event is fired for every connection deleted.
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#deleteSystemProfile(org.eclipse.rse.core.model.ISystemProfile)
 	 */
-	public void deleteSystemProfile(ISystemProfile profile) throws Exception
-	{
-		// step 0: load the world!
-		loadAll(); // force the world into memory!
-
-		// step 1: delete subsystems and connections
-		IHost[] connections = getHostsByProfile(profile);
-		//SystemConnectionPool pool = getConnectionPool(profile);
-		for (int idx = 0; idx < connections.length; idx++)
-		{
-			deleteHost(connections[idx]);
-		}
-		// step 2: bring to life every factory and ask it to delete all filter pools for this profile
-		if (subsystemConfigurationProxies != null)
-		{
-			for (int idx = 0; idx < subsystemConfigurationProxies.length; idx++)
-			{
-				ISubSystemConfiguration factory = subsystemConfigurationProxies[idx].getSubSystemConfiguration();
-				if (factory != null)
-					factory.deletingSystemProfile(profile);
+	public void deleteSystemProfile(ISystemProfile profile) throws Exception {
+		ISystemProfileManager manager = getSystemProfileManager();
+		ISystemProfile defaultProfile = manager.getDefaultPrivateSystemProfile();
+		if (profile != defaultProfile) {
+			// load everything
+			loadAll();
+			// remove connections
+			IHost[] connections = getHostsByProfile(profile);
+			for (int idx = 0; idx < connections.length; idx++) {
+				deleteHost(connections[idx]);
 			}
+			// remove filter pools for this profile
+			if (subsystemConfigurationProxies != null) {
+				for (int idx = 0; idx < subsystemConfigurationProxies.length; idx++) {
+					ISubSystemConfiguration factory = subsystemConfigurationProxies[idx].getSubSystemConfiguration();
+					if (factory != null) factory.deletingSystemProfile(profile);
+				}
+			}
+			// remove the profile
+			manager.deleteSystemProfile(profile, true);
+			// fire events
+			if (connections.length > 0) { // defect 42112
+				fireEvent(new SystemResourceChangeEvent(connections, ISystemResourceChangeEvents.EVENT_DELETE_MANY, this));
+			}
+			fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_REMOVED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_PROFILE, profile, null);
 		}
-		// last step... physically blow away the profile...
-		getSystemProfileManager().deleteSystemProfile(profile, true);
-		////Listening to Events now
-		//SystemPreferencesManager.setConnectionNamesOrder(); // update preferences order list        
-		if (connections.length > 0) // defect 42112
-			fireEvent(new SystemResourceChangeEvent(connections, ISystemResourceChangeEvents.EVENT_DELETE_MANY, this));
-
-		fireModelChangeEvent(
-				ISystemModelChangeEvents.SYSTEM_RESOURCE_REMOVED,
-				ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_PROFILE,
-				profile, null);
 	}
 
-	/**
-	 * Make or unmake the given profile active.
-	 * If switching to inactive, we force a disconnect for all subsystems of all connections in this profile.
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#setSystemProfileActive(org.eclipse.rse.core.model.ISystemProfile, boolean)
 	 */
-	public void setSystemProfileActive(ISystemProfile profile, boolean makeActive)
-	{
-		// Test if there are any filter pools in this profile that are referenced by another active profile...    	
-		Vector activeReferenceVector = new Vector();
-		if (!makeActive && (subsystemConfigurationProxies != null))
-		{
-			for (int idx = 0; idx < subsystemConfigurationProxies.length; idx++)
-			{
-				//if (subsystemConfigurationProxies[idx].isSubSystemConfigurationActive()) // don't bother if not yet alive
-				{
+	public void setSystemProfileActive(ISystemProfile profile, boolean makeActive) {
+		ISystemProfileManager manager = getSystemProfileManager();
+		ISystemProfile defaultProfile = manager.getDefaultPrivateSystemProfile();
+		if (profile != defaultProfile) {
+			// Test if there are any filter pools in this profile that are referenced by another active profile...    	
+			Vector activeReferenceVector = new Vector();
+			if (!makeActive && (subsystemConfigurationProxies != null)) {
+				for (int idx = 0; idx < subsystemConfigurationProxies.length; idx++) {
 					ISubSystemConfiguration factory = subsystemConfigurationProxies[idx].getSubSystemConfiguration();
-					if (factory != null)
-					{
+					if (factory != null) {
 						ISubSystem[] activeReferences = factory.testForActiveReferences(profile);
-						if (activeReferences != null)
-							for (int jdx = 0; jdx < activeReferences.length; jdx++)
-								activeReferenceVector.addElement(activeReferences[jdx]);
+						if (activeReferences != null) for (int jdx = 0; jdx < activeReferences.length; jdx++)
+							activeReferenceVector.addElement(activeReferences[jdx]);
 					}
 				}
 			}
-		}
-		if (activeReferenceVector.size() > 0)
-		{
-			//RSEG1069: De-Activativing profile {0} for which there are subsystems containing references to filter pools:
-			String msg = NLS.bind(RSECoreMessages.MSG_LOADING_PROFILE_WARNING_FILTERPOOL_REFS, profile.getName());
-			RSECorePlugin.getDefault().getLogger().logWarning(msg);
-			for (int idx = 0; idx < activeReferenceVector.size(); idx++)
-			{
-				//\ \ {refname} in connection {1} in profile {2}
-				ISubSystem activeReference = (ISubSystem) activeReferenceVector.elementAt(idx);
-				msg = "  " + activeReference.getName(); //$NON-NLS-1$
-				msg += NLS.bind(RSECoreMessages.MSG_LOADING_PROFILE_WARNING_FILTERPOOL_REF,
-					activeReference.getHost().getAliasName(),
-					activeReference.getSystemProfileName());
+			if (activeReferenceVector.size() > 0) {
+				String msg = NLS.bind(RSECoreMessages.MSG_LOADING_PROFILE_WARNING_FILTERPOOL_REFS, profile.getName());
+				RSECorePlugin.getDefault().getLogger().logWarning(msg);
+				for (int idx = 0; idx < activeReferenceVector.size(); idx++) {
+					ISubSystem activeReference = (ISubSystem) activeReferenceVector.elementAt(idx);
+					msg = "  " + activeReference.getName(); //$NON-NLS-1$
+					msg += NLS.bind(RSECoreMessages.MSG_LOADING_PROFILE_WARNING_FILTERPOOL_REF, activeReference.getHost().getAliasName(), activeReference.getSystemProfileName());
+					RSECorePlugin.getDefault().getLogger().logWarning(msg);
+				}
+				ISubSystem firstSubSystem = (ISubSystem) activeReferenceVector.elementAt(0);
+				String connectionName = firstSubSystem.getHost().getSystemProfileName() + "." + firstSubSystem.getHost().getAliasName(); //$NON-NLS-1$
+				msg = NLS.bind(RSECoreMessages.MSG_LOADING_PROFILE_SHOULDNOTBE_DEACTIVATED, profile.getName(), connectionName);
 				RSECorePlugin.getDefault().getLogger().logWarning(msg);
 			}
-			ISubSystem firstSubSystem = (ISubSystem) activeReferenceVector.elementAt(0);
-			String connectionName = firstSubSystem.getHost().getSystemProfileName() + "." + firstSubSystem.getHost().getAliasName(); //$NON-NLS-1$
-			//RSEG1069: Warning. Profile '%1' should be active. Active connection '%2' contains a reference to it.
-			msg = NLS.bind(RSECoreMessages.MSG_LOADING_PROFILE_SHOULDNOTBE_DEACTIVATED, profile.getName(), connectionName);
-			RSECorePlugin.getDefault().getLogger().logWarning(msg);
-			//// I think it should be sufficient to log this as warning rather than open a dialog
-			//SystemMessage sysMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_LOADING_PROFILE_SHOULDNOTBE_DEACTIVATED);
-			//sysMsg.makeSubstitution(profile.getName(), connectionName);
-			//SystemMessageDialog msgDlg = new SystemMessageDialog(null, sysMsg);
-			//msgDlg.open();
-		}
-
-		getSystemProfileManager().makeSystemProfileActive(profile, makeActive);
-
-		// To be safe, we tell each subsystem factory about the change in status. 
-		// At a minimum, each factory may have to load the subsystems for connections that
-		//  are suddenly active.
-		if (subsystemConfigurationProxies != null)
-		{
-			for (int idx = 0; idx < subsystemConfigurationProxies.length; idx++)
-			{
-				if (subsystemConfigurationProxies[idx].isSubSystemConfigurationActive()) // don't bother if not yet alive
-				{
-					ISubSystemConfiguration factory = subsystemConfigurationProxies[idx].getSubSystemConfiguration();
-					if (factory != null)
-						factory.changingSystemProfileActiveStatus(profile, makeActive);
+			getSystemProfileManager().makeSystemProfileActive(profile, makeActive);
+			// Each factory may have to load the subsystems for connections that are suddenly active.
+			if (subsystemConfigurationProxies != null) {
+				for (int idx = 0; idx < subsystemConfigurationProxies.length; idx++) {
+					if (subsystemConfigurationProxies[idx].isSubSystemConfigurationActive()) { // don't bother if not yet alive
+						ISubSystemConfiguration factory = subsystemConfigurationProxies[idx].getSubSystemConfiguration();
+						if (factory != null) factory.changingSystemProfileActiveStatus(profile, makeActive);
+					}
 				}
 			}
-		}
-
-		IHost[] affectedConnections = getHostsByProfile(profile);
-		//System.out.println("Affected Connection Count: " + affectedConnections.length);
-
-		// delete...
-		if (!makeActive) // better disconnect all connections before we lose sight of them
-		{
-			if ((affectedConnections != null) && (affectedConnections.length > 0))
-			{
-				for (int idx = 0; idx < affectedConnections.length; idx++)
-				{
-					disconnectAllSubSystems(affectedConnections[idx]);
+			// notify the hosts that are affected by this change
+			IHost[] affectedConnections = getHostsByProfile(profile);
+			// delete...
+			if (!makeActive) { // better disconnect all connections before we lose sight of them
+				if ((affectedConnections != null) && (affectedConnections.length > 0)) {
+					for (int idx = 0; idx < affectedConnections.length; idx++) {
+						disconnectAllSubSystems(affectedConnections[idx]);
+					}
+					SystemResourceChangeEvent event = new SystemResourceChangeEvent(affectedConnections, ISystemResourceChangeEvents.EVENT_DELETE_MANY, this);
+					fireEvent(event);
 				}
-				SystemResourceChangeEvent event = new SystemResourceChangeEvent(affectedConnections, ISystemResourceChangeEvents.EVENT_DELETE_MANY, this);
+			}
+			// add...
+			else if ((affectedConnections != null) && (affectedConnections.length > 0)) {
+				SystemResourceChangeEvent event = new SystemResourceChangeEvent(affectedConnections, ISystemResourceChangeEvents.EVENT_ADD_MANY, this);
 				fireEvent(event);
 			}
+			fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_CHANGED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_PROFILE, profile, null);
 		}
-		// add...
-		else if ((affectedConnections != null) && (affectedConnections.length > 0))
-		{
-			SystemResourceChangeEvent event = new SystemResourceChangeEvent(affectedConnections, ISystemResourceChangeEvents.EVENT_ADD_MANY, this);
-			fireEvent(event);
-		}
-		////Listening to Events now
-		//SystemPreferencesManager.setConnectionNamesOrder(); // update preferences order list            	
-
-		fireModelChangeEvent(
-				ISystemModelChangeEvents.SYSTEM_RESOURCE_CHANGED,
-				ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_PROFILE,
-				profile, null);
 	}
 
 	// private profile methods...
@@ -2905,7 +2856,7 @@ public class SystemRegistry implements ISystemRegistry
 				proxies[idx].getSubSystemConfiguration();
 		}
 
-		// step 0_b: force every subsystem of every connection to be active!
+		// step 0_b: force every subsystem of every connection to be active
 		IHost[] connections = getHosts();
 		for (int idx = 0; idx < connections.length; idx++)
 			getSubSystems(connections[idx]);

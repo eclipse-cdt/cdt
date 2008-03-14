@@ -19,6 +19,7 @@
  *                         - [189219] [team] Inactive Profiles become active after workbench restart
  * David Dykstal (IBM) - [197036] added implementation of run() for commit transaction support
  * David Dykstal (IBM) - [222376] NPE if starting on a workspace with an old mark and a renamed default profile
+ * David Dykstal (IBM) - [202630] getDefaultPrivateProfile() and ensureDefaultPrivateProfile() are inconsistent
  *******************************************************************************/
 
 package org.eclipse.rse.internal.core.model;
@@ -151,10 +152,7 @@ public class SystemProfileManager implements ISystemProfileManager {
 			deleteSystemProfile(existingProfile, false); // replace the existing one with a new profile
 		}
 		ISystemProfile newProfile = internalCreateSystemProfile(name);
-                newProfile.setActive(makeActive);
-		if (makeActive) {
-			RSEPreferencesManager.addActiveProfile(name);
-		}
+		newProfile.setActive(makeActive);
 		newProfile.commit();
 		return newProfile;
 	}
@@ -163,11 +161,6 @@ public class SystemProfileManager implements ISystemProfileManager {
 	 * @see org.eclipse.rse.core.model.ISystemProfileManager#makeSystemProfileActive(org.eclipse.rse.core.model.ISystemProfile, boolean)
 	 */
 	public void makeSystemProfileActive(ISystemProfile profile, boolean makeActive) {
-		boolean wasActive = isSystemProfileActive(profile.getName());
-		if (wasActive && !makeActive)
-			RSEPreferencesManager.deleteActiveProfile(profile.getName());
-		else if (makeActive && !wasActive) 
-		        RSEPreferencesManager.addActiveProfile(profile.getName());
 		profile.setActive(makeActive);
 		profile.commit();
 	}
@@ -236,12 +229,8 @@ public class SystemProfileManager implements ISystemProfileManager {
 	 * @see org.eclipse.rse.core.model.ISystemProfileManager#renameSystemProfile(org.eclipse.rse.core.model.ISystemProfile, java.lang.String)
 	 */
 	public void renameSystemProfile(ISystemProfile profile, String newName) {
-		boolean isActive = isSystemProfileActive(profile.getName());
 		String oldName = profile.getName();
 		profile.setName(newName);
-		if (isActive) {
-			RSEPreferencesManager.renameActiveProfile(oldName, newName);
-		}
 		// Commit the profile to reflect the name change
 		RSECorePlugin.getThePersistenceManager().commitProfile(profile, 5000);
 		// Delete the profile by the old name, which is done in a separate job.
@@ -252,19 +241,17 @@ public class SystemProfileManager implements ISystemProfileManager {
 	 * @see org.eclipse.rse.core.model.ISystemProfileManager#deleteSystemProfile(org.eclipse.rse.core.model.ISystemProfile, boolean)
 	 */
 	public void deleteSystemProfile(ISystemProfile profile, boolean persist) {
-		String oldName = profile.getName();
-		boolean isActive = isSystemProfileActive(oldName);
-		_profiles.remove(profile);
-		if (isActive) {
-			RSEPreferencesManager.deleteActiveProfile(oldName);
-		}
-		if (persist) {
-			IRSEPersistenceProvider provider = profile.getPersistenceProvider();
-			RSECorePlugin.getThePersistenceManager().deleteProfile(provider, oldName);
-		}
-		if (profile == defaultProfile) {
-			defaultProfile = null;
-			ensureDefaultPrivateProfile();
+		if (profile != defaultProfile) {
+			String oldName = profile.getName();
+			boolean isActive = isSystemProfileActive(oldName);
+			_profiles.remove(profile);
+			if (isActive) {
+				RSEPreferencesManager.deleteActiveProfile(oldName);
+			}
+			if (persist) {
+				IRSEPersistenceProvider provider = profile.getPersistenceProvider();
+				RSECorePlugin.getThePersistenceManager().deleteProfile(provider, oldName);
+			}
 		}
 	}
 
@@ -504,6 +491,7 @@ public class SystemProfileManager implements ISystemProfileManager {
 			logger.logWarning("Only one Profile Team exists - there is no Default Profile"); //$NON-NLS-1$
 			createDefaultPrivateProfile();
 		}
+		defaultProfile.setActive(true); // ensure that the default profile is active
 	}
 	
 	private void ensureDefaultTeamProfile() {

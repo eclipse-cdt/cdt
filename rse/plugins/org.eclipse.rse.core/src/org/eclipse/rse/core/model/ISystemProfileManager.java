@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * David Dykstal (IBM) - [197036] added commitSystemProfile operation to interface
+ * David Dykstal (IBM) - [202630] getDefaultPrivateProfile() and ensureDefaultPrivateProfile() are inconsistent
  *******************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -38,7 +39,8 @@ public interface ISystemProfileManager {
 	public ISystemProfile createSystemProfile(String name, boolean makeActive);
 
 	/**
-	 * Toggle an existing profile's state between active and inactive
+	 * Toggle an existing profile's state between active and inactive.
+	 * The default private profile cannot be deactivated and such a request will be ignored.
 	 * @param profile the profile to (in)activate
 	 * @param makeActive the state to make this profile
 	 */
@@ -97,7 +99,7 @@ public interface ISystemProfileManager {
 	public void renameSystemProfile(ISystemProfile profile, String newName);
 
 	/**
-	 * Delete the given profile
+	 * Delete the given profile. The default private profile cannot be deleted and such a request will be ignored.
 	 * @param profile the name of the profile to delete.
 	 * @param persist true if the deletion is meant to be persisted as well, false if the deletion is just in the 
 	 * model.

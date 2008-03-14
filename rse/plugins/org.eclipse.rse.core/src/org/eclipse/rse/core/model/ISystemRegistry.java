@@ -24,6 +24,7 @@
  *                                are able to delay the creation of subsystems.
  * David Dykstal (IBM) - [217556] remove service subsystem types
  * Martin Oberhuber (Wind River) - [215820] Move SystemRegistry implementation to Core
+ * David Dykstal (IBM) - [202630] getDefaultPrivateProfile() and ensureDefaultPrivateProfile() are inconsistent
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -188,6 +189,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	/**
 	 * Delete a SystemProfile. Prior to physically deleting the profile, we delete all
 	 * the connections it has, all the subsystems they have.
+	 * The default private profile cannot be deleted and such a request will be ignored.
 	 * <p>
 	 * As well, all the filter pools for this profile are deleted, and subsequently any
 	 * cross references from subsystems in connections in other profiles are removed.
@@ -197,7 +199,9 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	public void deleteSystemProfile(ISystemProfile profile) throws Exception;
 
 	/**
-	 * Make or unmake the given profile active
+	 * Make or unmake the given profile active. 
+	 * The default private profile cannot be deactivated and such
+	 * a request will be ignored.
 	 */
 	public void setSystemProfileActive(ISystemProfile profile, boolean makeActive);
 

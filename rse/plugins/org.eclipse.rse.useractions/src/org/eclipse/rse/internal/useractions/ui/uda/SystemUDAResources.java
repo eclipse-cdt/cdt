@@ -31,12 +31,6 @@ public class SystemUDAResources extends NLS {
 	public static String RESID_UDA_DELETE_BUTTON_TOOLTIP;
 	public static String RESID_UDA_COPY_BUTTON_LABEL;
 	public static String RESID_UDA_COPY_BUTTON_TOOLTIP;
-	public static String RESID_UDA_ACTION_DELETE;
-	public static String RESID_UDA_ACTION_MOVEUP;
-	public static String RESID_UDA_ACTION_MOVEDOWN;
-	public static String RESID_UDA_ACTION_COPY;
-	public static String RESID_UDA_ACTION_PASTE;
-	public static String RESID_UDA_ACTION_RESTORE;
 	public static String RESID_UDA_COPY_NAME_1;
 	public static String RESID_UDA_COPY_NAME_N;
 	public static String RESID_UDA_IBM_VERBAGE;
@@ -83,7 +77,6 @@ public class SystemUDAResources extends NLS {
 	public static String RESID_UDA_PROMPTCMD_PROMPT_TOOLTIP;
 	public static String RESID_UDA_PROMPTCMD_OKBUTTON_LABEL;
 	public static String RESID_UDA_PROMPTCMD_OKBUTTON_TOOLTIP;
-	public static String RESID_UDA_PROMPTCMD_CANCELBUTTON_LABEL;
 	public static String RESID_UDA_PROMPTCMD_CANCELBUTTON_TOOLTIP;
 	// COMMON USER DEFINED ACTION SUBSTITUTION VARIABLES SUPPORT...
 	public static String RESID_UDA_SUBVAR_ACTION_NAME;
@@ -131,10 +124,6 @@ public class SystemUDAResources extends NLS {
 	public static String RESID_UDT_FILES_USERTYPES_LABEL;
 	public static String RESID_UDT_FILES_USERTYPES_TOOLTIP;
 	// UNIVERSAL RUN COMMAND DIALOG
-	public static String RESID_UCMD_RUN_IN_NEW_SHELL;
-	public static String RESID_UCMD_RUN_COMMAND;
-	public static String RESID_UCMD_COMMAND;
-	public static String RESID_UCMD_COMAMND_SHELL;
 	public static String RESID_UCMD_RUN_IN_NEW_SHELL_LABEL;
 	public static String RESID_UCMD_RUN_IN_NEW_SHELL_TOOLTIP;
 	public static String RESID_UCMD_RUN_COMMAND_LABEL;
@@ -152,7 +141,6 @@ public class SystemUDAResources extends NLS {
 	public static String RESID_UDA_FILES_SUBVAR_CONTAINER_NAME;
 	public static String RESID_UDA_FILES_SUBVAR_CONTAINER_PATH;
 	// UNIVERSAL FILE SYSTEM COMPILE COMMAND SUPPORT...
-	public static String RESID_COMPILE_FILES_SUBVAR_ACTION_NAME;
 	public static String RESID_COMPILE_FILES_SUBVAR_CONNECTION_NAME;
 	public static String RESID_COMPILE_FILES_SUBVAR_LOCAL_HOSTNAME;
 	public static String RESID_COMPILE_FILES_SUBVAR_LOCAL_IP;

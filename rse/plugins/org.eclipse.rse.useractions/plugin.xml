@@ -39,5 +39,24 @@
       </page>
    </extension>
    
+   <extension point="org.eclipse.ui.menus">
+     <menuContribution locationURI="popup:org.eclipse.rse.ui.view.systemView">
+        <menu id="org.eclipse.rse.ui.useractions.compile.menu"
+              label="%DynamicLabel.CompileActionNode"
+               mnemonic="useractions.dynamiccompilemenu.mnemonic">
+           <dynamic class="org.eclipse.rse.useractions.ui.compile.SystemDynamicCompileMenu"
+                     id="org.eclipse.ui.rse.ui.views.dynamiccompilemenu">
+           </dynamic>
+        </menu>
+      	<menu id="org.eclipse.rse.ui.useractions.useraction.menu"
+              label="%DynamicLabel.UserActionNode"
+              mnemonic="useractions.dynamicuseractionmenu.mnemonic">
+           <dynamic class="org.eclipse.rse.useractions.ui.uda.SystemDynamicUserActionMenu"
+                    id="org.eclipse.ui.rse.ui.views.dynamicuseractionmenu">
+           </dynamic>
+        </menu>
+     </menuContribution>
+     </extension>
+   
 	
 </plugin>

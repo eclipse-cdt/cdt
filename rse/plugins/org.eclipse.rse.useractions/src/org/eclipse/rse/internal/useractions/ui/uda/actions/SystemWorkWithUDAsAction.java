@@ -155,12 +155,16 @@ public class SystemWorkWithUDAsAction extends SystemBaseDialogAction {
 		//System.out.println("First selection: "+element);
 		if ((subsystem == null) && (element instanceof ISubSystem)) {
 			subsystem = (ISubSystem) element;
-		} else if ((subsystemFactory == null) && (element instanceof SystemTeamViewSubSystemConfigurationNode)) {
+		} 
+		//Don't think we need to support invoking Work With User Action dialog from Team view
+		/*
+		else if ((subsystemFactory == null) && (element instanceof SystemTeamViewSubSystemConfigurationNode)) {
 			SystemTeamViewSubSystemConfigurationNode ssfNode = (SystemTeamViewSubSystemConfigurationNode) element;
 			subsystemFactory = ssfNode.getSubSystemConfiguration();
 			profile = ssfNode.getProfile();
 			//System.out.println("Profile is: "+profile);
 		}
+		*/
 		SystemWorkWithUDAsDialog dlg = null;
 		if (subsystem != null)
 			dlg = new SystemWorkWithUDAsDialog(parent, subsystem, udaActionSubsystem);

@@ -21,6 +21,7 @@ import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
+import org.eclipse.rse.internal.useractions.files.uda.UDActionSubsystemUniversalFiles;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemUDAResources;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemUDActionSubsystem;
 import org.eclipse.rse.internal.useractions.ui.uda.actions.SystemWorkWithUDAsAction;
@@ -79,6 +80,13 @@ public class SystemDynamicUserActionMenu extends CompoundContributionItem
 				 systemUDActionSubsystem = adapter.getSystemUDActionSubsystem(ssc);
 				 systemUDActionSubsystem.setSubsystem(subsystem);
 			 }
+		 }
+		 
+		 if (null == systemUDActionSubsystem)
+		 {
+			 systemUDActionSubsystem = new UDActionSubsystemUniversalFiles();
+			 systemUDActionSubsystem.setSubSystemFactory(ssc);
+			 systemUDActionSubsystem.setSubsystem(subsystem);
 		 }
 		 
 		 Shell shell = SystemBasePlugin.getActiveWorkbenchShell();

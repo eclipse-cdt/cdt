@@ -21,6 +21,7 @@ import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
+import org.eclipse.rse.internal.useractions.files.compile.UniversalCompileManager;
 import org.eclipse.rse.internal.useractions.ui.compile.SystemCompileCommand;
 import org.eclipse.rse.internal.useractions.ui.compile.SystemCompileManager;
 import org.eclipse.rse.internal.useractions.ui.compile.SystemCompileProfile;
@@ -68,10 +69,29 @@ public class SystemDynamicCompileMenu extends CompoundContributionItem
 		}
 		Shell shell = SystemBasePlugin.getActiveWorkbenchShell();
 		
+		ISystemRemoteElementAdapter rmtAdapter = SystemAdapterHelpers.getRemoteAdapter(firstSelection);
+		ISubSystem subsystem = rmtAdapter.getSubSystem(firstSelection);
+		ISubSystemConfiguration ssc = subsystem.getSubSystemConfiguration();
+		 
+		SystemCompileManager compileManager = null;
+		 
+		 if (firstSelection instanceof IAdaptable) {
+			 ISystemCompileManagerAdapter	adapter = (ISystemCompileManagerAdapter)((IAdaptable)firstSelection).getAdapter(ISystemCompileManagerAdapter.class);
+			 if (null != adapter)
+			 {
+				 compileManager = adapter.getSystemCompileManager(ssc);
+			 }
+		 }
+		 
+		 if (null == compileManager)
+		 {
+			 compileManager = new UniversalCompileManager();
+			 compileManager.setSubSystemFactory(ssc);
+		 }
+		 
 		for (int idx = 0; idx < activeProfiles.length; idx++)
 		{
 			String srcType = null;
-			ISystemRemoteElementAdapter rmtAdapter = SystemAdapterHelpers.getRemoteAdapter(firstSelection);
 			if (rmtAdapter != null) {
 				srcType = rmtAdapter.getRemoteSourceType(firstSelection);
 				if (srcType == null)
@@ -79,21 +99,9 @@ public class SystemDynamicCompileMenu extends CompoundContributionItem
 				else if (srcType.equals("")) //$NON-NLS-1$
 					srcType = "blank"; //$NON-NLS-1$
 			} 
-			 ISubSystem subsystem = rmtAdapter.getSubSystem(firstSelection);
-			 ISubSystemConfiguration ssc = subsystem.getSubSystemConfiguration();
 			 
-			 SystemCompileManager compileManager = null;
-			 
-			 if (firstSelection instanceof IAdaptable) {
-				 ISystemCompileManagerAdapter	adapter = (ISystemCompileManagerAdapter)((IAdaptable)firstSelection).getAdapter(ISystemCompileManagerAdapter.class);
-				 if (null != adapter)
-				 {
-					 compileManager = adapter.getSystemCompileManager(ssc);
-				 }
-			 }
-			 
-			 if (null != compileManager)
-			 {
+			if (null != compileManager)
+			{
 				 SystemCompileManager thisCompileManager = compileManager;
 				 SystemCompileProfile compileProfile = thisCompileManager.getCompileProfile(activeProfiles[idx]);
 				 // compileProfile.addContributions(firstSelection);
@@ -120,7 +128,7 @@ public class SystemDynamicCompileMenu extends CompoundContributionItem
 		// add Work With Commands... action
 		
 		   // Here's where you would dynamically generate your list
-		SystemWorkWithCompileCommandsAction workWithCompileCommandAction = new SystemWorkWithCompileCommandsAction(shell, true);
+		SystemWorkWithCompileCommandsAction workWithCompileCommandAction = new SystemWorkWithCompileCommandsAction(shell, true, subsystem, compileManager);
 		workWithCompileCommandAction.setSelection(selection);
 		TestContribution testContribution = new TestContribution(workWithCompileCommandAction);
 		returnedItemList.add(testContribution);

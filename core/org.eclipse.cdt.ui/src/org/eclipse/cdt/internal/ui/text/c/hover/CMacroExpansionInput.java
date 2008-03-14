@@ -105,35 +105,40 @@ public class CMacroExpansionInput {
 				}
 				if (fAllowSelection) {
 					// selection
+					boolean macroOccurrence= false;
 					fEnclosingNode= nodeSelector.findEnclosingNode(fTextRegion.getOffset(), fTextRegion.getLength());
-					if (fEnclosingNode != null) {
-						boolean macroOccurrence= false;
-						if (fEnclosingNode.getParent() instanceof IASTPreprocessorMacroExpansion) {
-							fEnclosingNode= fEnclosingNode.getParent();
-						}
-						if (fEnclosingNode instanceof IASTPreprocessorMacroExpansion) {
-							addExpansionNode(fEnclosingNode);
-							macroOccurrence= true;
-						}
-						else {
-							IASTNodeLocation[] locations= fEnclosingNode.getNodeLocations();
-							for (int i = 0; i < locations.length; i++) {
-								IASTNodeLocation location= locations[i];
-								if (location instanceof IASTMacroExpansionLocation) {
-									IASTFileLocation fileLocation= location.asFileLocation();
-									if (fileLocation != null && ast.getFilePath().equals(fileLocation.getFileName())) {
-										if (fTextRegion.overlapsWith(fileLocation.getNodeOffset(), fileLocation.getNodeLength())) {
-											addExpansionNode(nodeSelector.findEnclosingNode(fileLocation.getNodeOffset(), fileLocation.getNodeLength()));
-											macroOccurrence= true;
-										}
+					if (fEnclosingNode == null) {
+						// selection beyond last declaration
+						fEnclosingNode= ast;
+					}
+					else if (fEnclosingNode.getParent() instanceof IASTPreprocessorMacroExpansion) {
+						// selection enclosed by the name of a macro expansion
+						fEnclosingNode= fEnclosingNode.getParent();
+					}
+					
+					if (fEnclosingNode instanceof IASTPreprocessorMacroExpansion) {
+						// selection enclosed by a macro expansion
+						addExpansionNode(fEnclosingNode);
+						macroOccurrence= true;
+					}
+					else {
+						IASTNodeLocation[] locations= fEnclosingNode.getNodeLocations();
+						for (int i = 0; i < locations.length; i++) {
+							IASTNodeLocation location= locations[i];
+							if (location instanceof IASTMacroExpansionLocation) {
+								IASTFileLocation fileLocation= location.asFileLocation();
+								if (fileLocation != null && ast.getFilePath().equals(fileLocation.getFileName())) {
+									if (fTextRegion.overlapsWith(fileLocation.getNodeOffset(), fileLocation.getNodeLength())) {
+										addExpansionNode(nodeSelector.findEnclosingNode(fileLocation.getNodeOffset(), fileLocation.getNodeLength()));
+										macroOccurrence= true;
 									}
 								}
 							}
 						}
-						if (macroOccurrence) {
-							createMacroExpansionExplorer(ast);
-							return Status.OK_STATUS;
-						}
+					}
+					if (macroOccurrence) {
+						createMacroExpansionExplorer(ast);
+						return Status.OK_STATUS;
 					}
 				}
 			}

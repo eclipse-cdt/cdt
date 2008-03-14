@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -84,7 +84,7 @@ public class ASTStringUtil {
 	 * @return a (possibly) qualified name
 	 */
 	public static String getQualifiedName(IASTName name) {
-		return appendQualifiedNameString(new StringBuffer(), name).toString();
+		return appendQualifiedNameString(new StringBuilder(), name).toString();
 	}
 
 	/**
@@ -94,7 +94,7 @@ public class ASTStringUtil {
 	 * @return a non-qualified name
 	 */
 	public static String getSimpleName(IASTName name) {
-		return appendSimpleNameString(new StringBuffer(), name).toString();
+		return appendSimpleNameString(new StringBuilder(), name).toString();
 	}
 
 	/**
@@ -105,7 +105,7 @@ public class ASTStringUtil {
 	 * @see ASTSignatureUtil#getSignature(IASTDeclarator)
 	 */
 	public static String getSignatureString(IASTDeclarator declarator) {
-		return trimRight(appendSignatureString(new StringBuffer(), declarator)).toString();
+		return trimRight(appendSignatureString(new StringBuilder(), declarator)).toString();
 	}
 
 	/**
@@ -116,7 +116,7 @@ public class ASTStringUtil {
 	 * @return the signature string
 	 */
 	public static String getSignatureString(IASTDeclSpecifier declSpecifier, IASTDeclarator declarator) {
-		final StringBuffer buffer= new StringBuffer();
+		final StringBuilder buffer= new StringBuilder();
 		appendDeclarationString(buffer, declSpecifier, declarator, true);
 		return trimRight(buffer).toString();
 	}
@@ -129,7 +129,7 @@ public class ASTStringUtil {
 	 * @return the type string
 	 */
 	public static String getTypeString(IASTDeclSpecifier declSpecifier, IASTDeclarator declarator) {
-		final StringBuffer buffer= new StringBuffer();
+		final StringBuilder buffer= new StringBuilder();
 		appendDeclarationString(buffer, declSpecifier, declarator, false);
 		return trimRight(buffer).toString();
 	}
@@ -163,8 +163,11 @@ public class ASTStringUtil {
 			for(int i=0; i<names.length; i++) {
 				if (names[i] != null) {
 					final IASTDeclarator declaratorForParameterName= knrDeclarator.getDeclaratorForParameterName(names[i]);
-                    if( declaratorForParameterName != null )
+                    if( declaratorForParameterName != null ) {
                         result[i]= getSignatureString(declaratorForParameterName);
+                    } else {
+                    	result[i]= "?"; //$NON-NLS-1$
+                    }
 				}
 			}
 			return result;
@@ -181,7 +184,7 @@ public class ASTStringUtil {
 	public static String[] getTemplateParameterArray(ICPPASTTemplateParameter[] templateParams){
 		final String[] parameterTypes= new String[templateParams.length];
 		for (int i= 0; i < templateParams.length; i++) {
-			final StringBuffer paramType= new StringBuffer();
+			final StringBuilder paramType= new StringBuilder();
 			final ICPPASTTemplateParameter parameter= templateParams[i];
 			appendTemplateParameterString(paramType, parameter);
 			parameterTypes[i]= trimRight(paramType).toString();
@@ -190,10 +193,10 @@ public class ASTStringUtil {
 	}
 
 	private static String getParameterSignatureString(IASTParameterDeclaration parameterDeclaration) {
-		return trimRight(appendParameterDeclarationString(new StringBuffer(), parameterDeclaration)).toString();
+		return trimRight(appendParameterDeclarationString(new StringBuilder(), parameterDeclaration)).toString();
 	}
 
-	private static StringBuffer appendSignatureString(StringBuffer buffer, IASTDeclarator declarator) {
+	private static StringBuilder appendSignatureString(StringBuilder buffer, IASTDeclarator declarator) {
 		// get the declaration node
 		IASTNode node= declarator.getParent();
 		while(node instanceof IASTDeclarator ){
@@ -217,7 +220,7 @@ public class ASTStringUtil {
 		return appendDeclarationString(buffer, declSpec, declarator, true);
 	}
 
-	private static StringBuffer appendDeclarationString(StringBuffer buffer, IASTDeclSpecifier declSpecifier,  IASTDeclarator declarator, boolean addParams) {
+	private static StringBuilder appendDeclarationString(StringBuilder buffer, IASTDeclSpecifier declSpecifier,  IASTDeclarator declarator, boolean addParams) {
 		if (declSpecifier != null) {
 			appendDeclSpecifierString(buffer, declSpecifier);
 			trimRight(buffer);
@@ -226,7 +229,7 @@ public class ASTStringUtil {
 		return buffer;
 	}
 
-	private static StringBuffer appendDeclaratorString(StringBuffer buffer, IASTDeclarator declarator, boolean addParams) {
+	private static StringBuilder appendDeclaratorString(StringBuilder buffer, IASTDeclarator declarator, boolean addParams) {
 		if (declarator == null) {
 			return buffer;
 		}
@@ -236,7 +239,7 @@ public class ASTStringUtil {
 		}
 		final IASTDeclarator nestedDeclarator= declarator.getNestedDeclarator();
 		if (nestedDeclarator != null) {
-			StringBuffer tmp= new StringBuffer();
+			StringBuilder tmp= new StringBuilder();
 			appendDeclaratorString(tmp, nestedDeclarator, addParams);
 			trimRight(tmp);
 			final int tmpLength= tmp.length();
@@ -295,7 +298,7 @@ public class ASTStringUtil {
 		return buffer;
 	}
 
-	private static StringBuffer appendInitializerString(StringBuffer buffer, IASTInitializer initializer) {
+	private static StringBuilder appendInitializerString(StringBuilder buffer, IASTInitializer initializer) {
 		if (initializer instanceof IASTInitializerExpression) {
 			final IASTInitializerExpression initializerExpression= (IASTInitializerExpression)initializer;
 			buffer.append(Keywords.cpASSIGN);
@@ -330,13 +333,13 @@ public class ASTStringUtil {
 		return buffer;
 	}
 
-	private static StringBuffer appendTypeIdString(StringBuffer buffer, IASTTypeId typeId) {
+	private static StringBuilder appendTypeIdString(StringBuilder buffer, IASTTypeId typeId) {
 		appendDeclSpecifierString(buffer, typeId.getDeclSpecifier());
 		appendDeclaratorString(buffer, typeId.getAbstractDeclarator(), true);
 		return buffer;
 	}
 
-	private static StringBuffer trimRight(StringBuffer buffer) {
+	private static StringBuilder trimRight(StringBuilder buffer) {
 		int length= buffer.length();
 		while (length > 0 && buffer.charAt(length - 1) == ' ') {
 			--length;
@@ -345,7 +348,7 @@ public class ASTStringUtil {
 		return buffer;
 	}
 
-	private static StringBuffer appendArrayQualifiersString(StringBuffer buffer, IASTArrayDeclarator declarator) {
+	private static StringBuilder appendArrayQualifiersString(StringBuilder buffer, IASTArrayDeclarator declarator) {
 		final IASTArrayModifier[] modifiers= declarator.getArrayModifiers();
 		for (int i= 0; i < modifiers.length; i++) {
 			buffer.append(Keywords.cpLBRACKET).append(Keywords.cpRBRACKET);
@@ -353,7 +356,7 @@ public class ASTStringUtil {
 		return buffer;
 	}
 
-	private static StringBuffer appendPointerOperatorsString(StringBuffer buffer, IASTPointerOperator[] pointerOperators) {
+	private static StringBuilder appendPointerOperatorsString(StringBuilder buffer, IASTPointerOperator[] pointerOperators) {
 		for (int i= 0; i < pointerOperators.length; i++) {
 			final IASTPointerOperator pointerOperator= pointerOperators[i];
 			if (pointerOperator instanceof IASTPointer) {
@@ -387,7 +390,7 @@ public class ASTStringUtil {
 		return buffer;
 	}
 
-	private static StringBuffer appendParameterSignatureString(StringBuffer buffer, IASTFunctionDeclarator functionDeclarator) {
+	private static StringBuilder appendParameterSignatureString(StringBuilder buffer, IASTFunctionDeclarator functionDeclarator) {
 		if (functionDeclarator instanceof IASTStandardFunctionDeclarator) {
 			final IASTStandardFunctionDeclarator standardFunctionDecl= (IASTStandardFunctionDeclarator)functionDeclarator;
 			final IASTParameterDeclaration[] parameters= standardFunctionDecl.getParameters();
@@ -425,7 +428,7 @@ public class ASTStringUtil {
 		return buffer;
 	}
 
-	private static StringBuffer appendParameterDeclarationString(StringBuffer buffer, IASTParameterDeclaration parameter) {
+	private static StringBuilder appendParameterDeclarationString(StringBuilder buffer, IASTParameterDeclaration parameter) {
 		final IASTDeclSpecifier declSpecifier= parameter.getDeclSpecifier();
 		if (declSpecifier != null) {
 			appendDeclSpecifierString(buffer, declSpecifier);
@@ -439,7 +442,7 @@ public class ASTStringUtil {
 		return buffer;
 	}
 
-	private static StringBuffer appendDeclSpecifierString(StringBuffer buffer, IASTDeclSpecifier declSpecifier) {
+	private static StringBuilder appendDeclSpecifierString(StringBuilder buffer, IASTDeclSpecifier declSpecifier) {
 		if (declSpecifier.isConst()) {
 			buffer.append(Keywords.CONST).append(' ');
 		}
@@ -595,15 +598,15 @@ public class ASTStringUtil {
 		return buffer;
 	}
 
-	private static StringBuffer appendQualifiedNameString(StringBuffer buffer, IASTName name) {
+	private static StringBuilder appendQualifiedNameString(StringBuilder buffer, IASTName name) {
 		return appendNameString(buffer, name, true);
 	}
 
-	private static StringBuffer appendSimpleNameString(StringBuffer buffer, IASTName name) {
+	private static StringBuilder appendSimpleNameString(StringBuilder buffer, IASTName name) {
 		return appendNameString(buffer, name, false);
 	}
 
-	private static StringBuffer appendNameString(StringBuffer buffer, IASTName name, boolean qualified) {
+	private static StringBuilder appendNameString(StringBuilder buffer, IASTName name, boolean qualified) {
 		if (name instanceof ICPPASTQualifiedName) {
 			final ICPPASTQualifiedName qualifiedName= (ICPPASTQualifiedName)name;
 			if (qualified) {
@@ -642,7 +645,7 @@ public class ASTStringUtil {
 		return buffer;
 	}
 
-	private static StringBuffer appendExpressionString(StringBuffer buffer, IASTExpression expression) {
+	private static StringBuilder appendExpressionString(StringBuilder buffer, IASTExpression expression) {
 		if (expression instanceof IASTIdExpression) {
 			final IASTIdExpression idExpression= (IASTIdExpression)expression;
 			appendQualifiedNameString(buffer, idExpression.getName());
@@ -672,7 +675,7 @@ public class ASTStringUtil {
 		return buffer;
 	}
 
-	private static StringBuffer appendTemplateParameterString(StringBuffer buffer, ICPPASTTemplateParameter parameter){
+	private static StringBuilder appendTemplateParameterString(StringBuilder buffer, ICPPASTTemplateParameter parameter){
 		if (parameter instanceof ICPPASTParameterDeclaration) {
 			appendParameterDeclarationString(buffer, (ICPPASTParameterDeclaration)parameter);
 		} else if (parameter instanceof ICPPASTSimpleTypeTemplateParameter) {

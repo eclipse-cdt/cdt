@@ -10,24 +10,37 @@
  *******************************************************************************/
 package org.eclipse.dd.mi.service;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.debug.service.ISourceLookup;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControl;
 import org.eclipse.dd.dsf.service.AbstractDsfService;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.mi.internal.MIPlugin;
+import org.eclipse.dd.mi.service.command.commands.MIEnvironmentDirectory;
+import org.eclipse.dd.mi.service.command.output.MIInfo;
+import org.eclipse.debug.core.sourcelookup.ISourceContainer;
+import org.eclipse.debug.core.sourcelookup.containers.DirectorySourceContainer;
+import org.eclipse.debug.core.sourcelookup.containers.FolderSourceContainer;
+import org.eclipse.debug.core.sourcelookup.containers.ProjectSourceContainer;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -37,6 +50,8 @@ public class CSourceLookup extends AbstractDsfService implements ISourceLookup {
 
     private Map<ISourceLookupDMContext,CSourceLookupDirector> fDirectors = new HashMap<ISourceLookupDMContext,CSourceLookupDirector>(); 
     
+    ICommandControl fConnection;
+
     public CSourceLookup(DsfSession session) {
         super(session);
     }
@@ -51,6 +66,48 @@ public class CSourceLookup extends AbstractDsfService implements ISourceLookup {
         fDirectors.put(ctx, director);
     }
     
+    public void setSourceLookupPath(ISourceLookupDMContext ctx, ISourceContainer[] containers, RequestMonitor rm) {
+        List<String> pathList = getSourceLookupPath(containers);
+        String[] paths = pathList.toArray(new String[pathList.size()]);
+        
+        fConnection.queueCommand(
+        		new MIEnvironmentDirectory(ctx, paths, false), 
+        		new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+    }
+
+	private List<String> getSourceLookupPath(ISourceContainer[] containers) {
+		ArrayList<String> list = new ArrayList<String>(containers.length);
+		
+		for (int i = 0; i < containers.length; ++i) {
+			if (containers[i] instanceof ProjectSourceContainer) {
+				IProject project = ((ProjectSourceContainer)containers[i]).getProject();
+				if (project != null && project.exists())
+					list.add(project.getLocation().toPortableString());
+			}
+			if (containers[i] instanceof FolderSourceContainer) {
+				IContainer container = ((FolderSourceContainer)containers[i]).getContainer();
+				if (container != null && container.exists())
+					list.add(container.getLocation().toPortableString());
+			}
+			if (containers[i] instanceof DirectorySourceContainer) {
+				File dir = ((DirectorySourceContainer)containers[i]).getDirectory();
+				if (dir != null && dir.exists()) {
+					IPath path = new Path( dir.getAbsolutePath());
+					list.add(path.toPortableString());
+				}
+			}
+			if (containers[i].isComposite()) {
+				try {
+    				list.addAll(getSourceLookupPath(containers[i].getSourceContainers()));
+				} catch (CoreException e) {
+				}
+			}
+		}
+		
+		return list;
+	}
+	
+    
     @Override
     public void initialize(final RequestMonitor requestMonitor) {
         super.initialize(
@@ -62,8 +119,11 @@ public class CSourceLookup extends AbstractDsfService implements ISourceLookup {
     }
 
     private void doInitialize(final RequestMonitor requestMonitor) {
-        // Register this service
+    	fConnection = getServicesTracker().getService(ICommandControl.class);
+    	
+    	// Register this service
         register(new String[] { CSourceLookup.class.getName(), ISourceLookup.class.getName() }, new Hashtable<String, String>());
+        
         requestMonitor.done();
     }
 

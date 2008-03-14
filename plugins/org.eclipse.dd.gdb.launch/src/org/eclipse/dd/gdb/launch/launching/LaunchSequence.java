@@ -92,11 +92,11 @@ public class LaunchSequence extends Sequence {
         }},
         new Step() { @Override
         public void execute(RequestMonitor requestMonitor) {
-                new MIMemory(fSession).initialize(requestMonitor);
+            new MIMemory(fSession).initialize(requestMonitor);
         }},
         new Step() { @Override
         public void execute(RequestMonitor requestMonitor) {
-                new MIModules(fSession).initialize(requestMonitor);
+            new MIModules(fSession).initialize(requestMonitor);
         }},
         new Step() { @Override
         public void execute(RequestMonitor requestMonitor) {
@@ -113,10 +113,11 @@ public class LaunchSequence extends Sequence {
         }},
         new Step() { @Override
         public void execute(RequestMonitor requestMonitor) {
-            fSourceLookup.setSourceLookupDirector(
-                fCommandControl.getGDBDMContext(), 
-                ((CSourceLookupDirector)fLaunch.getSourceLocator()));
-            requestMonitor.done();
+        	CSourceLookupDirector locator = (CSourceLookupDirector)fLaunch.getSourceLocator();
+        	
+            fSourceLookup.setSourceLookupDirector(fCommandControl.getGDBDMContext(), locator);
+            fSourceLookup.setSourceLookupPath(fCommandControl.getGDBDMContext(), 
+            		                          locator.getSourceContainers(), requestMonitor);
         }},
         new Step() { @Override
         public void execute(final RequestMonitor requestMonitor) {
@@ -222,7 +223,9 @@ public class LaunchSequence extends Sequence {
  
             }
         },
-        /* Start tracking the breakpoints once we know we are connected to the target (necessary for remote debugging) */
+        /* 
+         * Start tracking the breakpoints once we know we are connected to the target (necessary for remote debugging) 
+         */
         new Step() { @Override
         public void execute(final RequestMonitor requestMonitor) {
         	fBpmService.startTrackingBreakpoints(fCommandControl.getGDBDMContext(), requestMonitor);

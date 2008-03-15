@@ -16,10 +16,10 @@
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
  * Martin Oberhuber (Wind River) - [189123] Move renameSubSystemProfile() from UI to Core
  * David Dykstal (IBM) - [197036] fixed NPE found during testing
+ * David Dykstal (IBM) - [222270] clean up interfaces in org.eclipse.rse.core.filters
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
-import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -228,7 +228,6 @@ public abstract class RemoteFileSubSystemConfiguration extends SubSystemConfigur
 	 * Return true if you support user-defined actions for the remote system objects returned from expansion of
 	 *  subsystems created by this subsystem factory.
 	 * <p>We return true.
-	 * @see #createActionSubSystem()
 	 */
 	public boolean supportsUserDefinedActions()
 	{

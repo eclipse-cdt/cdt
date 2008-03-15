@@ -13,11 +13,10 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
+ * David Dykstal (IBM) - [222270] clean up interfaces in org.eclipse.rse.core.filters
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.dstore;
-
-import java.util.Vector;
 
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPool;

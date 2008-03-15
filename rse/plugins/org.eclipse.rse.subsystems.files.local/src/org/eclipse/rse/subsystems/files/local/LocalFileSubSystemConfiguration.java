@@ -15,11 +15,10 @@
  * Martin Oberhuber (Wind River) - [186997] No deferred queries in Local Files
  * Kevin Doyle (IBM) - [199871] LocalFileService needs to implement getMessage()
  * Martin Oberhuber (Wind River) - [220020][api][breaking] SystemFileTransferModeRegistry should be internal
+ * David Dykstal (IBM) - [222270] clean up interfaces in org.eclipse.rse.core.filters
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.files.local;
-
-import java.util.Vector;
 
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;

@@ -629,6 +629,7 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 	 */
 	public ISystemFilter createSystemFilter(ISystemFilterContainer parent, String aliasName, List filterStrings, String type, boolean promptable) throws Exception {
 		String[] filterStringsArray = new String[filterStrings.size()];
+		filterStrings.toArray(filterStringsArray);
 		ISystemFilter result = doCreateSystemFilter(parent, aliasName, filterStringsArray, type, promptable);
 		return result;
 	}
@@ -637,8 +638,7 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 	 * @see org.eclipse.rse.core.filters.ISystemFilterPoolManager#createSystemFilter(org.eclipse.rse.core.filters.ISystemFilterContainer, java.lang.String, java.util.List, java.lang.String)
 	 */
 	public ISystemFilter createSystemFilter(ISystemFilterContainer parent, String aliasName, List filterStrings, String type) throws Exception {
-		String[] filterStringsArray = new String[filterStrings.size()];
-		ISystemFilter result = doCreateSystemFilter(parent, aliasName, filterStringsArray, type, false);
+		ISystemFilter result = createSystemFilter(parent, aliasName, filterStrings, type, false);
 		return result;
 	}
 	
@@ -646,11 +646,10 @@ public class SystemFilterPoolManager extends RSEPersistableObject implements ISy
 	 * @see org.eclipse.rse.core.filters.ISystemFilterPoolManager#createSystemFilter(org.eclipse.rse.core.filters.ISystemFilterContainer, java.lang.String, java.util.List)
 	 */
 	public ISystemFilter createSystemFilter(ISystemFilterContainer parent, String aliasName, List filterStrings) throws Exception {
-		String[] filterStringsArray = new String[filterStrings.size()];
-		ISystemFilter result = doCreateSystemFilter(parent, aliasName, filterStringsArray, null, false);
+		ISystemFilter result = createSystemFilter(parent, aliasName, filterStrings, null, false);
 		return result;
 	}
-	
+
 	/**
 	 * Creates a new system filter within the given filter container (either a filter pool, or
 	 *  a filter). This creates the filter, and then saves the filter pool. 

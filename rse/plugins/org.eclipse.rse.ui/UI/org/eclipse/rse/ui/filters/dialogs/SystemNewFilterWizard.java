@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
+ * David Dykstal (IBM) - [222270] clean up interfaces in org.eclipse.rse.core.filters
  *******************************************************************************/
 
 package org.eclipse.rse.ui.filters.dialogs;
@@ -629,14 +630,12 @@ public class SystemNewFilterWizard
 	 * @throws Exception if an error occurs
 	 */
 	public ISystemFilter createNewFilter(Shell shell, ISystemFilterContainer filterParent, String aliasName, Vector filterStringsVector, String type) throws Exception {
-		String[] filterStrings = new String[filterStringsVector.size()];
-		filterStringsVector.toArray(filterStrings);
 		ISystemFilter newFilter = null;
 		ISystemFilterPoolManager fpMgr = filterParent.getSystemFilterPoolManager();
 		if (type == null)
-			newFilter = fpMgr.createSystemFilter(filterParent, aliasName, filterStrings);
+			newFilter = fpMgr.createSystemFilter(filterParent, aliasName, filterStringsVector);
 		else
-			newFilter = fpMgr.createSystemFilter(filterParent, aliasName, filterStrings, type);
+			newFilter = fpMgr.createSystemFilter(filterParent, aliasName, filterStringsVector, type);
 		return newFilter;
 	}
 	

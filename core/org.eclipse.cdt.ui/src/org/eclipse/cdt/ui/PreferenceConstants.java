@@ -1450,12 +1450,13 @@ public class PreferenceConstants {
 		store.setDefault(PreferenceConstants.SPELLING_IGNORE_UPPER, true);
 		store.setDefault(PreferenceConstants.SPELLING_IGNORE_URLS, true);
 		store.setDefault(PreferenceConstants.SPELLING_IGNORE_SINGLE_LETTERS, true);
-		store.setDefault(PreferenceConstants.SPELLING_IGNORE_STRING_LITERALS, true);
+		store.setDefault(PreferenceConstants.SPELLING_IGNORE_STRING_LITERALS, false);
 		store.setDefault(PreferenceConstants.SPELLING_IGNORE_NON_LETTERS, true);
 		store.setDefault(PreferenceConstants.SPELLING_USER_DICTIONARY, ""); //$NON-NLS-1$
 
 		// Note: For backwards compatibility we must use the property and not the workspace default
-		store.setDefault(PreferenceConstants.SPELLING_USER_DICTIONARY_ENCODING, System.getProperty("file.encoding")); //$NON-NLS-1$
+		store.setDefault(PreferenceConstants.SPELLING_USER_DICTIONARY_ENCODING,
+				System.getProperty("file.encoding")); //$NON-NLS-1$
 
 		store.setDefault(PreferenceConstants.SPELLING_PROPOSAL_THRESHOLD, 20);
 		store.setDefault(PreferenceConstants.SPELLING_PROBLEMS_THRESHOLD, 100);

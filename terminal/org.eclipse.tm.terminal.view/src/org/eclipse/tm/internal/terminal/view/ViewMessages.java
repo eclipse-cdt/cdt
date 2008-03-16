@@ -31,7 +31,6 @@ public class ViewMessages extends NLS {
 	public static String VIEW_TITLE;
 	public static String VIEW_SETTINGS;
 
-    public static String LIMITOUTPUT;
     public static String INVERT_COLORS;
     public static String BUFFERLINES;
     public static String SERIALTIMEOUT;

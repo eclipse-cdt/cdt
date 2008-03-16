@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Michael Scharf (Wind River) - initial API and implementation 
+ * Michael Scharf (Wind River) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 
@@ -28,7 +28,7 @@ import org.eclipse.ui.IMemento;
  * @author Michael Scharf
  */
 class SettingsStore implements ISettingsStore {
-	
+
 	private static final String KEYS = "_keys_"; //$NON-NLS-1$
 	final private Map fMap=new HashMap();
 	public SettingsStore(IMemento memento) {
@@ -79,7 +79,8 @@ class SettingsStore implements ISettingsStore {
 	}
 	/**
 	 * Save the state into memento.
-	 * @param memento
+	 * 
+	 * @param memento Memento to save state into.
 	 */
 	public void saveState(IMemento memento) {
 		String[] keyNames=(String[]) fMap.keySet().toArray(new String[fMap.size()]);

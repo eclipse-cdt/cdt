@@ -46,8 +46,8 @@ public abstract class CPPSpecialization extends PlatformObject
 		this.argumentMap = argumentMap;
 
 		if (specialized instanceof ICPPInternalBinding) {
-			definition = ((ICPPInternalBinding)specialized).getDefinition();
-			IASTNode[] decls = ((ICPPInternalBinding)specialized).getDeclarations();
+			definition = ((ICPPInternalBinding) specialized).getDefinition();
+			IASTNode[] decls = ((ICPPInternalBinding) specialized).getDeclarations();
 			if (decls != null && decls.length > 0)
 				declarations = new IASTNode[] { decls[0] };
 		}
@@ -124,5 +124,15 @@ public abstract class CPPSpecialization extends PlatformObject
 
 	public ObjectMap getArgumentMap() {
 		return argumentMap;
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder result = new StringBuilder(getName());
+		if (argumentMap != null) {
+			result.append(" ");
+			result.append(argumentMap.toString());
+		}
+		return result.toString();
 	}
 }

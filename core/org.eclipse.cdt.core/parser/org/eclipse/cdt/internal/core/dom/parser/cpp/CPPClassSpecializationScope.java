@@ -42,22 +42,22 @@ public class CPPClassSpecializationScope implements ICPPClassScope, IASTInternal
 	/**
 	 * @param instance
 	 */
-	public CPPClassSpecializationScope( ICPPSpecialization specialization ) {
+	public CPPClassSpecializationScope(ICPPSpecialization specialization) {
 		this.specialization = specialization;
 	}
 
-	private ICPPClassType getOriginalClass(){
+	private ICPPClassType getOriginalClass() {
 		return (ICPPClassType) specialization.getSpecializedBinding();
 	}
 	
 	private IBinding getInstance(IBinding binding) {
-		if( instanceMap.containsKey( binding ) ) {
-			return (IBinding) instanceMap.get( binding );
+		if (instanceMap.containsKey(binding)) {
+			return (IBinding) instanceMap.get(binding);
 		} else if (!(binding instanceof ICPPClassTemplatePartialSpecialization)) {
-			IBinding spec = CPPTemplates.createSpecialization( this, binding, specialization.getArgumentMap() );
-			if( instanceMap == ObjectMap.EMPTY_MAP )
+			IBinding spec = CPPTemplates.createSpecialization(this, binding, specialization.getArgumentMap());
+			if (instanceMap == ObjectMap.EMPTY_MAP)
 				instanceMap = new ObjectMap(2);
-			instanceMap.put( binding, spec );
+			instanceMap.put(binding, spec);
 			return spec;
 		}
 		return null;
@@ -71,38 +71,43 @@ public class CPPClassSpecializationScope implements ICPPClassScope, IASTInternal
 		return getBindings(name, resolve, prefix, IIndexFileSet.EMPTY);
 	}
 
-	public IBinding getBinding( IASTName name, boolean forceResolve, IIndexFileSet fileSet) throws DOMException {
-		char [] c = name.toCharArray();
+	public IBinding getBinding(IASTName name, boolean forceResolve, IIndexFileSet fileSet) throws DOMException {
+		char[] c = name.toCharArray();
 		
-	    if( CharArrayUtils.equals( c, specialization.getNameCharArray() ) )
-	    	if (!CPPClassScope.isConstructorReference( name ))
-	    		return specialization;
+	    if (CharArrayUtils.equals(c, specialization.getNameCharArray()) &&
+	    		!CPPClassScope.isConstructorReference(name)) {
+	    	return specialization;
+	    }
 
 		ICPPClassType specialized = (ICPPClassType) specialization.getSpecializedBinding();
 		IScope classScope = specialized.getCompositeScope();
 		IBinding[] bindings = classScope != null ? classScope.getBindings(name, forceResolve, false) : null;
 		
-		if (bindings == null) return null;
+		if (bindings == null)
+			return null;
     	
 		IBinding[] specs = new IBinding[0];
 		for (int i = 0; i < bindings.length; i++) {
 			specs = (IBinding[]) ArrayUtil.append(IBinding.class, specs, getInstance(bindings[i]));
 		}
 		specs = (IBinding[]) ArrayUtil.trim(IBinding.class, specs);
-    	return CPPSemantics.resolveAmbiguities( name, specs );
+    	return CPPSemantics.resolveAmbiguities(name, specs);
 	}
 
-	public IBinding[] getBindings( IASTName name, boolean forceResolve, boolean prefixLookup, IIndexFileSet fileSet ) throws DOMException {
-		char [] c = name.toCharArray();
+	public IBinding[] getBindings(IASTName name, boolean forceResolve, boolean prefixLookup,
+			IIndexFileSet fileSet) throws DOMException {
+		char[] c = name.toCharArray();
 		IBinding[] result = null;
 		
-	    if( (!prefixLookup && CharArrayUtils.equals( c, specialization.getNameCharArray() ))
-	    		|| (prefixLookup && CharArrayUtils.equals(specialization.getNameCharArray(), 0, c.length, c, true)) )
+	    if ((!prefixLookup && CharArrayUtils.equals(c, specialization.getNameCharArray())) ||
+	    		(prefixLookup && CharArrayUtils.equals(specialization.getNameCharArray(), 0, c.length, c, true))) {
 	    	result = new IBinding[] { specialization };
+	    }
 
 		ICPPClassType specialized = (ICPPClassType) specialization.getSpecializedBinding();
 		IScope classScope = specialized.getCompositeScope();
-		IBinding[] bindings = classScope != null ? classScope.getBindings(name, forceResolve, prefixLookup, fileSet) : null;
+		IBinding[] bindings = classScope != null ?
+				classScope.getBindings(name, forceResolve, prefixLookup, fileSet) : null;
 		
 		if (bindings != null) {
 			for (int i = 0; i < bindings.length; i++) {
@@ -124,7 +129,7 @@ public class CPPClassSpecializationScope implements ICPPClassScope, IASTInternal
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope#getImplicitMethods()
 	 */
 	public ICPPMethod[] getImplicitMethods() {
-		//implicit methods shouldn't have implicit specializations
+		// Implicit methods shouldn't have implicit specializations
 		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 	}
 
@@ -138,7 +143,7 @@ public class CPPClassSpecializationScope implements ICPPClassScope, IASTInternal
 		return null;
 	}
 
-	protected ICPPConstructor [] getConstructors() throws DOMException {
+	protected ICPPConstructor[] getConstructors() throws DOMException {
 		ICPPClassType specialized = (ICPPClassType) specialization.getSpecializedBinding();
 		ICPPConstructor[] bindings = specialized.getConstructors();
 		
@@ -175,12 +180,12 @@ public class CPPClassSpecializationScope implements ICPPClassScope, IASTInternal
 	public IScope getParent() throws DOMException {
 		ICPPClassType cls = getOriginalClass();
 		ICPPClassScope scope = (ICPPClassScope)cls.getCompositeScope();
-		if( scope != null )
+		if (scope != null)
 			return scope.getParent();
-		if( cls instanceof ICPPInternalBinding ){
-			IASTNode [] nds = ((ICPPInternalBinding)cls).getDeclarations();
-			if( nds != null && nds.length > 0 )
-				return CPPVisitor.getContainingScope( nds[0] );
+		if (cls instanceof ICPPInternalBinding) {
+			IASTNode[] nds = ((ICPPInternalBinding)cls).getDeclarations();
+			if (nds != null && nds.length > 0)
+				return CPPVisitor.getContainingScope(nds[0]);
 		}
 		return null;
 	}
@@ -189,7 +194,7 @@ public class CPPClassSpecializationScope implements ICPPClassScope, IASTInternal
 	 * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
 	 */
 	public IBinding[] find(String name) throws DOMException {
-		return CPPSemantics.findBindings( this, name, false );
+		return CPPSemantics.findBindings(this, name, false);
 	}
 
 	/* (non-Javadoc)
@@ -200,18 +205,24 @@ public class CPPClassSpecializationScope implements ICPPClassScope, IASTInternal
 		if (!ASTInternal.isFullyCached(origScope)) {
 			CPPSemantics.LookupData data = new CPPSemantics.LookupData();
 			try {
-				CPPSemantics.lookupInScope( data, origScope, null );
+				CPPSemantics.lookupInScope(data, origScope, null);
 			} catch (DOMException e) {
 			}
 		}
 		return true;
 	}
 	
-	//this scope does not cache its own names
+	// This scope does not cache its own names
 	public void setFullyCached(boolean b) {}
 	public void flushCache() {}
 	public void addName(IASTName name) {}
-	public IASTNode getPhysicalNode() {return null;}
+	public IASTNode getPhysicalNode() { return null; }
 	public void removeBinding(IBinding binding) {}
 	public void addBinding(IBinding binding) {}
+
+	@Override
+	public String toString() {
+		IName name = getScopeName();
+		return name != null ? name.toString() : "<unnamed scope>"; //$NON-NLS-1$
+	}
 }

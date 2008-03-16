@@ -21,29 +21,28 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 /**
  * @author aniefer
  */
-public class CPPTypedefSpecialization extends CPPSpecialization implements
-        ITypedef, ITypeContainer {
-
+public class CPPTypedefSpecialization extends CPPSpecialization implements ITypedef, ITypeContainer {
     private IType type = null;
+
     /**
      * @param specialized
      * @param scope
      * @param argumentMap
      */
-    public CPPTypedefSpecialization( IBinding specialized, ICPPScope scope,
-            ObjectMap argumentMap ) {
-        super( specialized, scope, argumentMap );
+    public CPPTypedefSpecialization(IBinding specialized, ICPPScope scope, ObjectMap argumentMap) {
+        super(specialized, scope, argumentMap);
     }
 
     private ITypedef getTypedef() {
         return (ITypedef) getSpecializedBinding();
     }
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.ITypedef#getType()
      */
     public IType getType() throws DOMException {
-        if( type == null ){
-            type = CPPTemplates.instantiateType( getTypedef().getType(), argumentMap );
+        if (type == null) {
+            type = CPPTemplates.instantiateType(getTypedef().getType(), argumentMap);
 	    }
 		return type;
     }
@@ -56,8 +55,8 @@ public class CPPTypedefSpecialization extends CPPSpecialization implements
     	IType t = null;
    		try {
             t = (IType) super.clone();
-        } catch ( CloneNotSupportedException e ) {
-            //not going to happen
+        } catch (CloneNotSupportedException e) {
+            // not going to happen
         }
         return t;
     }
@@ -65,24 +64,25 @@ public class CPPTypedefSpecialization extends CPPSpecialization implements
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
      */
-    public boolean isSameType( IType o ) {
-        if( o == this )
+    public boolean isSameType(IType o) {
+        if (o == this)
             return true;
-	    if( o instanceof ITypedef )
+	    if (o instanceof ITypedef) {
             try {
                 IType t = getType();
-                if( t != null )
-                    return t.isSameType( ((ITypedef)o).getType());
+                if (t != null)
+                    return t.isSameType(((ITypedef) o).getType());
                 return false;
-            } catch ( DOMException e ) {
+            } catch (DOMException e) {
                 return false;
             }
+	    }
 	        
         try {
 		    IType t = getType();
-		    if( t != null )
-		        return t.isSameType( o );
-        } catch ( DOMException e ) {
+		    if (t != null)
+		        return t.isSameType(o);
+        } catch (DOMException e) {
             return false;
         }
 	    return false;
@@ -91,5 +91,4 @@ public class CPPTypedefSpecialization extends CPPSpecialization implements
 	public void setType(IType type) {
 		this.type = type;
 	}
-
 }

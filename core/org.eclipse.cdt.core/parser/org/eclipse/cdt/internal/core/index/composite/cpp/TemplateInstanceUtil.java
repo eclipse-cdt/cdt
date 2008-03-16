@@ -44,8 +44,7 @@ public class TemplateInstanceUtil {
 			if(specd instanceof ICPPTemplateDefinition) {
 				keysToAdapt= ((ICPPTemplateDefinition)specd).getTemplateParameters();
 			}
-			final int length= Math.min(keys.length, keysToAdapt.length); 
-			for(int i=0; i<length; i++) {
+			for(int i = 0; i < keys.length && i < keysToAdapt.length; i++) {
 				IType type= (IType) preresult.get(keys[i]);
 				result.put(
 						cf.getCompositeBinding((IIndexFragmentBinding)keysToAdapt[i]),

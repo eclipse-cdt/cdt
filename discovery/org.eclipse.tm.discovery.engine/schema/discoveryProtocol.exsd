@@ -66,7 +66,7 @@
                <documentation>
                   Allows specifying semicolon separated multicast addresses to be used with specific transports in the format  &lt;transport&gt;:&lt;address&gt;
 An example would be:
-&lt;code&gt;&quot;transportName1:address1;transportName2:address2;UDP:224.0.0.251&quot;&lt;code/&gt;
+&lt;code&gt;&quot;transportName1:address1;transportName2:address2;UDP:224.0.0.251&quot;&lt;/code&gt;
                </documentation>
             </annotation>
          </attribute>

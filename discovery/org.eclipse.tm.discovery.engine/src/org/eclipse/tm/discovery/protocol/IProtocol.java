@@ -1,7 +1,7 @@
 /********************************************************************************
  * Copyright (c) 2006, 2007 Symbian Software Ltd. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
@@ -27,21 +27,21 @@ import org.eclipse.tm.discovery.transport.ITransport;
  */
 public interface IProtocol {
 
-	
+
 	/**
-	 * Instantiates a Job to populate a model given an initial query, a resource containing the model to be populated and an ITranport implementation.
+	 * Instantiates a Job to populate a model given an initial query, a resource
+	 * containing the model to be populated and an ITranport implementation.
 	 * 
-	 * @param query 
-	 * Initial query to be sent to the target. This initial query can be obtained from the getQueries() method.
+	 * @param query Initial query to be sent to the target. This initial query
+	 *            can be obtained from the getQueries() method.
 	 * 
-	 * @param resource
-	 * Resource containing the model to be populated with the results of the service discovery action.
+	 * @param resource Resource containing the model to be populated with the
+	 *            results of the service discovery action.
 	 * 
-	 * @param transport
-	 * ITransport implementation of the transport to be used for the discovery action. 
+	 * @param transport ITransport implementation of the transport to be used
+	 *            for the discovery action.
 	 * 
-	 * @return
-	 * Job containing the service discovery action.
+	 * @return Job containing the service discovery action.
 	 * 
 	 * @see Job
 	 * @see Resource
@@ -49,8 +49,8 @@ public interface IProtocol {
 	 * 
 	 */
 	public abstract Job getDiscoveryJob(String query, Resource resource, ITransport transport);
-	
-	
+
+
 	/**
 	 * Gets the list of recommended queries to start the service discovery process. This queries can be used in getDiscoveryJob().
 	 * 
@@ -58,5 +58,5 @@ public interface IProtocol {
 	 * An array containing the recommended queries.
 	 */
 	public abstract String[] getQueries();
-	
+
 }

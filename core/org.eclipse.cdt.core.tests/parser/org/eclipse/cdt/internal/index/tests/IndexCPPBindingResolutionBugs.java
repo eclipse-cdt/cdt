@@ -137,29 +137,20 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//	class Temp {
 	//	};
 
-	//	#include <stdio.h>
-	//	#include <stdlib.h>
-	//	#include "test.h"
-	//	int main(void) {
-	//	        puts("Hello World!!!");
-	//
-	//	        Temp testFile;
-	//	        testTemplate(testFile);
-	//
-	//	        return EXIT_SUCCESS;
+	//	void main(void) {
+	//	    Temp testFile;
+	//	    testTemplate(testFile);
 	//	}
 	public void testBug207320() {
 		IBinding b0= getBindingFromASTName("testTemplate(", 12);
 		assertInstance(b0, ICPPFunction.class);
 		assertInstance(b0, ICPPTemplateInstance.class);
 	}
-
 	
 	//	class testdef{
 	//
 	//	public:
 	//		void testagain();
-	//
 	//	};
 	//
 	//	typedef void TAny;

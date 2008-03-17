@@ -279,7 +279,7 @@ public interface IIndex {
 	 *
  	 * This is fully equivalent to 
 	 * <pre>
-	 * findBindings(new char[][]{name}, filter, monitor);
+	 * findBindings(name, true, filter, monitor); 
 	 * </pre> 
 	 * @param name a name, which has to be matched by the qualified name of the bindings.
 	 * @param filter a filter that allows for skipping parts of the index 
@@ -288,6 +288,20 @@ public interface IIndex {
 	 * @throws CoreException
 	 */
 	public IIndexBinding[] findBindings(char[] name, IndexFilter filter, IProgressMonitor monitor) throws CoreException;
+
+	/**
+	 * Searches the global scope and optionally all other scopes for bindings with a given name.
+	 * In case a binding exists in multiple projects, no duplicate bindings are returned.
+	 * This method makes use of the BTree and is faster than the methods using patterns.
+	 *
+	 * @param name a name, which has to be matched by the qualified name of the bindings.
+	 * @param fileScopeOnly if true, only bindings at file scope are returned
+	 * @param filter a filter that allows for skipping parts of the index 
+	 * @param monitor a monitor to report progress, may be <code>null</code>.
+	 * @return an array of bindings matching the pattern
+	 * @throws CoreException
+	 */
+	public IIndexBinding[] findBindings(char[] name, boolean fileScopeOnly, IndexFilter filter, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Searches for all bindings with names that start with the given prefix.

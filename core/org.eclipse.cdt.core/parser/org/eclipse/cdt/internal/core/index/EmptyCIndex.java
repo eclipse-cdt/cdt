@@ -134,4 +134,8 @@ final public class EmptyCIndex implements IIndex {
 	public IIndexFile[] getAllFiles() {
 		return IIndexFile.EMPTY_FILE_ARRAY;
 	}
+
+	public IIndexBinding[] findBindings(char[] name, boolean fileScopeOnly,	IndexFilter filter, IProgressMonitor monitor) {
+		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
+	}
 }

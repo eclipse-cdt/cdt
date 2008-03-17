@@ -232,7 +232,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 						elems.add(elem);
 					}
 				}
-				IIndexBinding[] bindings = fIndex.findBindings(name, filter, fMonitor);
+				IIndexBinding[] bindings = fIndex.findBindings(name, false, filter, fMonitor);
 				for (IBinding binding : bindings) {
 					final IName[] names = findNames(fIndex, ast, KIND_OTHER, binding);
 					convertToCElements(project, fIndex, names, elems);
@@ -257,7 +257,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 					try {
 						open(path, 0, 0);
 					} catch (CoreException e) {
-						CUIPlugin.getDefault().log(e);
+						CUIPlugin.log(e);
 					}
 				}
 			});
@@ -280,7 +280,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 						try {
 							open(path, offset, length);
 						} catch (CoreException e) {
-							CUIPlugin.getDefault().log(e);
+							CUIPlugin.log(e);
 						}
 					}
 				});
@@ -305,7 +305,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 					elements.add(elem);
 				}
 			} catch (CoreException e) {
-				CUIPlugin.getDefault().log(e);
+				CUIPlugin.log(e);
 			}
 		}
 	}
@@ -328,7 +328,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 					ICElement[] elemArray= elements.toArray(new ICElement[elements.size()]);
 					target = (ISourceReference) OpenActionUtil.selectCElement(elemArray, getSite().getShell(),
 							CEditorMessages.getString("OpenDeclarationsAction.dialog.title"), CEditorMessages.getString("OpenDeclarationsAction.selectMessage"), //$NON-NLS-1$ //$NON-NLS-2$
-							CElementBaseLabels.ALL_DEFAULT | CElementBaseLabels.MF_POST_FILE_QUALIFIED, 0);
+							CElementBaseLabels.ALL_DEFAULT | CElementBaseLabels.ALL_FULLY_QUALIFIED | CElementBaseLabels.MF_POST_FILE_QUALIFIED, 0);
 				}
 				if (target != null) {
 					ITranslationUnit tu= target.getTranslationUnit();
@@ -339,7 +339,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 							open(tu.getLocation(), sourceRange.getIdStartPos(), sourceRange.getIdLength());
 						}
 					} catch (CoreException e) {
-						CUIPlugin.getDefault().log(e);
+						CUIPlugin.log(e);
 					}
 				}
 			}

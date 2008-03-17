@@ -60,18 +60,14 @@ public class RSECoreMessages extends NLS {
 	public static String InitRSEJob_error_creating_mark;
 	public static String InitRSEJob_initializer_ended_in_error;
 	public static String InitRSEJob_initializer_failed_to_load;
-	public static String InitRSEJob_initializer_interrupted;
 	public static String InitRSEJob_initializing_rse;
-	public static String InitRSEJob_job_interrupted;
-	public static String InitRSEJob_joining_job;
 	public static String InitRSEJob_listener_ended_in_error;
-	public static String InitRSEJob_waiting_for_initializer;
-	public static String InitRSEJob_waiting_for_job;
 	
 	// SystemRegistry: Loading Profile Warning Messages - See also ISystemMessages
 	public static String MSG_LOADING_PROFILE_WARNING_FILTERPOOL_REFS;
 	public static String MSG_LOADING_PROFILE_WARNING_FILTERPOOL_REF;
 	public static String MSG_LOADING_PROFILE_SHOULDNOTBE_DEACTIVATED; //RSEG1069
+	public static String MSG_LOADING_PROFILE_SHOULDBE_ACTIVATED;
 	public static String MSG_CREATEHOST_EXCEPTION;
 
 	// SystemRegistry: Progress Reporting - See also ISystemMessages
@@ -96,10 +92,6 @@ public class RSECoreMessages extends NLS {
 	
 	// Connection doesn't exist
 	public static String MSG_CONNECTION_DELETED;
-	public static String MSG_CONNECTION_DELETED_DETAILS; 
-
-	public static String MSG_LOADING_PROFILE_SHOULDBE_ACTIVATED;
-	
 	
 	private RSECoreMessages() {
 	}

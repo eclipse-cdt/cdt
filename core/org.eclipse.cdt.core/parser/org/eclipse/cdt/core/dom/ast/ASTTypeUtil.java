@@ -51,7 +51,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
  * @author dsteffle
  */
 public class ASTTypeUtil {
-	
 	private static final String COMMA_SPACE = ", "; //$NON-NLS-1$
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	private static final String SPACE = " "; //$NON-NLS-1$
@@ -72,10 +71,11 @@ public class ASTTypeUtil {
 		String[] parms = getParameterTypeStringArray(type);
 		
 		result.append(Keywords.cpLPAREN);
-		for(int i=0; i<parms.length; i++) {
+		for (int i = 0; i < parms.length; i++) {
 			if (parms[i] != null) {
 				result.append(parms[i]);
-				if (i<parms.length-1) result.append(COMMA_SPACE);
+				if (i < parms.length - 1)
+					result.append(COMMA_SPACE);
 			}
 		}
 		result.append(Keywords.cpRPAREN);
@@ -90,10 +90,11 @@ public class ASTTypeUtil {
 	 */
 	public static String getTypeListString(IType[] types) {
 		StringBuilder result = new StringBuilder();
-		for(int i=0; i<types.length; i++) {
+		for (int i = 0; i < types.length; i++) {
 			if (types[i] != null) {
 				result.append(getTypeString(types[i]));
-				if (i<types.length-1) result.append(COMMA_SPACE);
+				if (i < types.length - 1)
+					result.append(COMMA_SPACE);
 			}
 		}
 		return result.toString();
@@ -109,11 +110,13 @@ public class ASTTypeUtil {
 		IType[] parms = null;
 		try {
 			parms = type.getParameterTypes();
-		} catch (DOMException e) { return EMPTY_STRING_ARRAY; }
+		} catch (DOMException e) {
+			return EMPTY_STRING_ARRAY;
+		}
 		
 		String[] result = new String[parms.length];
 		
-		for(int i=0; i<parms.length; i++) {
+		for (int i = 0; i < parms.length; i++) {
 			if (parms[i] != null) {
 				result[i] = getType(parms[i]);
 			}
@@ -130,36 +133,86 @@ public class ASTTypeUtil {
 			result.append(Keywords.cpLBRACKET);
 			if (type instanceof ICArrayType) {
 				try {
-					if (((ICArrayType)type).isConst()) { result.append(Keywords.CONST); needSpace=true; }
-					if (((ICArrayType)type).isRestrict()) { if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.RESTRICT); needSpace=true; }
-					if (((ICArrayType)type).isStatic()) { if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.STATIC); needSpace=true; }
-					if (((ICArrayType)type).isVolatile()) { if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.VOLATILE); }
-				} catch (DOMException e) {}
+					if (((ICArrayType) type).isConst()) {
+						result.append(Keywords.CONST); needSpace = true;
+					}
+					if (((ICArrayType) type).isRestrict()) {
+						if (needSpace) {
+							result.append(SPACE); needSpace = false;
+						}
+						result.append(Keywords.RESTRICT); needSpace = true;
+					}
+					if (((ICArrayType) type).isStatic()) {
+						if (needSpace) {
+							result.append(SPACE); needSpace = false;
+						}
+						result.append(Keywords.STATIC); needSpace = true;
+					}
+					if (((ICArrayType) type).isVolatile()) {
+						if (needSpace) {
+							result.append(SPACE); needSpace = false;
+						}
+						result.append(Keywords.VOLATILE);
+					}
+				} catch (DOMException e) {
+				}
 			}
 			result.append(Keywords.cpRBRACKET);
 		} else if (type instanceof IBasicType) {
 			try {
-				if (((IBasicType)type).isSigned()) { result.append(Keywords.SIGNED); needSpace = true; }
-				else if (((IBasicType)type).isUnsigned()) { if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.UNSIGNED); needSpace=true; }
-				if (((IBasicType)type).isLong()) { if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.LONG); needSpace = true; }
-				else if (((IBasicType)type).isShort()) { if (needSpace) { result.append(SPACE); needSpace=false; }result.append(Keywords.SHORT); needSpace = true; }
-			} catch (DOMException e) {}
+				if (((IBasicType) type).isSigned()) {
+					result.append(Keywords.SIGNED); needSpace = true;
+				} else if (((IBasicType) type).isUnsigned()) {
+					if (needSpace) {
+						result.append(SPACE); needSpace = false;
+					}
+					result.append(Keywords.UNSIGNED); needSpace = true;
+				}
+				if (((IBasicType) type).isLong()) {
+					if (needSpace) {
+						result.append(SPACE); needSpace = false;
+					}
+					result.append(Keywords.LONG); needSpace = true;
+				} else if (((IBasicType) type).isShort()) {
+					if (needSpace) {
+						result.append(SPACE); needSpace = false;
+					}
+					result.append(Keywords.SHORT); needSpace = true;
+				}
+			} catch (DOMException e) {
+			}
 			
 			if (type instanceof IGPPBasicType) {
 				try {
-					if (((IGPPBasicType)type).isLongLong()) { if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.LONG_LONG); needSpace=true; }
-					if (((IGPPBasicType)type).isComplex()) { if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.c_COMPLEX); needSpace=true; }
-					if (((IGPPBasicType)type).isImaginary()) { if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.c_IMAGINARY); needSpace=true; }
+					if (((IGPPBasicType) type).isLongLong()) {
+						if (needSpace) {
+							result.append(SPACE); needSpace = false;
+						}
+						result.append(Keywords.LONG_LONG); needSpace = true;
+					}
+					if (((IGPPBasicType) type).isComplex()) {
+						if (needSpace) {
+							result.append(SPACE); needSpace = false;
+						}
+						result.append(Keywords.c_COMPLEX); needSpace = true;
+					}
+					if (((IGPPBasicType) type).isImaginary()) {
+						if (needSpace) {
+							result.append(SPACE); needSpace = false;
+						}
+						result.append(Keywords.c_IMAGINARY); needSpace = true;
+					}
 
-					switch (((IGPPBasicType)type).getType()) {
+					switch (((IGPPBasicType) type).getType()) {
 						case IGPPBasicType.t_typeof:
 							result.append(GCCKeywords.TYPEOF);
 							break;						
 					}
-				} catch (DOMException e) {}
+				} catch (DOMException e) {
+				}
 			} else if (type instanceof ICPPBasicType) {
 				try {
-					switch (((ICPPBasicType)type).getType()) {
+					switch (((ICPPBasicType) type).getType()) {
 						case ICPPBasicType.t_bool:
 							result.append(Keywords.BOOL);
 							break;
@@ -167,50 +220,62 @@ public class ASTTypeUtil {
 							result.append(Keywords.WCHAR_T);
 							break;
 					}
-				} catch (DOMException e) {}
+				} catch (DOMException e) {
+				}
 			} else if (type instanceof ICBasicType) {
 				try {
-					if (((ICBasicType)type).isComplex()) { if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.c_COMPLEX); needSpace=true; }
-					if (((ICBasicType)type).isImaginary()) { if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.c_IMAGINARY); needSpace=true; }
+					if (((ICBasicType) type).isComplex()) {
+						if (needSpace) {
+							result.append(SPACE); needSpace = false;
+						}
+						result.append(Keywords.c_COMPLEX); needSpace = true;
+					}
+					if (((ICBasicType) type).isImaginary()) {
+						if (needSpace) {
+							result.append(SPACE); needSpace = false;
+						}
+						result.append(Keywords.c_IMAGINARY); needSpace = true;
+					}
 					
-					switch (((ICBasicType)type).getType()) {
+					switch (((ICBasicType) type).getType()) {
 						case ICBasicType.t_Bool:
 							result.append(Keywords.c_BOOL);
 							break;
 					}
-				} catch (DOMException e) {}
+				} catch (DOMException e) {
+				}
 			}
 			
 			try {
-				switch (((IBasicType)type).getType()) {
+				switch (((IBasicType) type).getType()) {
 					case IBasicType.t_char:
-						if (needSpace) result.append( SPACE );
+						if (needSpace) result.append(SPACE);
 						result.append(Keywords.CHAR);
 						break;
 					case IBasicType.t_double:
-						if (needSpace) result.append( SPACE );
+						if (needSpace) result.append(SPACE);
 						result.append(Keywords.DOUBLE);
 						break;
 					case IBasicType.t_float:
-						if (needSpace) result.append( SPACE );
+						if (needSpace) result.append(SPACE);
 						result.append(Keywords.FLOAT);
 						break;
 					case IBasicType.t_int:
-						if (needSpace) result.append( SPACE );
+						if (needSpace) result.append(SPACE);
 						result.append(Keywords.INT);
 						break;
 					case IBasicType.t_void:
-						if (needSpace) result.append( SPACE );
+						if (needSpace) result.append(SPACE);
 						result.append(Keywords.VOID);
 						break;
 				}
-			} catch (DOMException e) {}
-
+			} catch (DOMException e) {
+			}
 		} else if (type instanceof ICompositeType) {
 //			101114 fix, do not display class, and for consistency don't display struct/union as well
 //			if (type instanceof ICPPClassType) {
 //				try {
-//					switch(((ICPPClassType)type).getKey()) {
+//					switch(((ICPPClassType) type).getKey()) {
 //						case ICPPClassType.k_class:
 //							result.append(Keywords.CLASS);
 //							break;
@@ -219,7 +284,7 @@ public class ASTTypeUtil {
 //			}
 //			
 //			try {
-//				switch(((ICompositeType)type).getKey()) {
+//				switch(((ICompositeType) type).getKey()) {
 //					case ICompositeType.k_struct:
 //						result.append(Keywords.STRUCT);
 //						break;
@@ -229,64 +294,103 @@ public class ASTTypeUtil {
 //				}
 //			} catch (DOMException e) {}
 //			result.append(SPACE);
-			if(type instanceof ICPPClassType) {
+			if (type instanceof ICPPClassType) {
 				try {
-					String qn = CPPVisitor.renderQualifiedName(getQualifiedNameForAnonymous((ICPPClassType)type));
+					String qn = CPPVisitor.renderQualifiedName(getQualifiedNameForAnonymous((ICPPClassType) type));
 					result.append(qn);
-				} catch(DOMException de) {
-					result.append(getNameForAnonymous((ICompositeType)type));
+				} catch (DOMException e) {
+					result.append(getNameForAnonymous((ICompositeType) type));
 				}
 			} else {
-				result.append(getNameForAnonymous((ICompositeType)type));
+				result.append(getNameForAnonymous((ICompositeType) type));
 			}
 		} else if (type instanceof ICPPReferenceType) {
 			result.append(Keywords.cpAMPER);
 		} else if (type instanceof ICPPTemplateTypeParameter) {
-			result.append(((ICPPTemplateTypeParameter)type).getName());
+			result.append(((ICPPTemplateTypeParameter) type).getName());
 		} else if (type instanceof ICPPTemplateTemplateParameter) {
-			result.append(((ICPPTemplateTemplateParameter)type).getName());
+			result.append(((ICPPTemplateTemplateParameter) type).getName());
 		} else if (type instanceof IEnumeration) {
 			result.append(Keywords.ENUM);
 			result.append(SPACE);
-			result.append(getNameForAnonymous((IEnumeration)type));
+			result.append(getNameForAnonymous((IEnumeration) type));
 		} else if (type instanceof IFunctionType) {
 			try {
-				String temp = getType(((IFunctionType)type).getReturnType());
-				if (temp != null && !temp.equals(EMPTY_STRING)) { result.append(temp); needSpace=true; }
-				if (needSpace) { result.append(SPACE); needSpace=false; }
-				temp = getParameterTypeString((IFunctionType)type);
-				if (temp != null && !temp.equals(EMPTY_STRING)) { result.append(temp); needSpace=false; }
-			} catch (DOMException e) {}
+				String temp = getType(((IFunctionType) type).getReturnType());
+				if (temp != null && !temp.equals(EMPTY_STRING)) {
+					result.append(temp); needSpace = true;
+				}
+				if (needSpace) {
+					result.append(SPACE); needSpace = false;
+				}
+				temp = getParameterTypeString((IFunctionType) type);
+				if (temp != null && !temp.equals(EMPTY_STRING)) {
+					result.append(temp); needSpace = false;
+				}
+			} catch (DOMException e) {
+			}
 		} else if (type instanceof IPointerType) {
-			result.append(Keywords.cpSTAR); needSpace=true;
+			result.append(Keywords.cpSTAR); needSpace = true;
 			
 			if (type instanceof IGPPPointerType) {
-				if (((IGPPPointerType)type).isRestrict()) { if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.RESTRICT); needSpace=true; }
+				if (((IGPPPointerType) type).isRestrict()) {
+					if (needSpace) {
+						result.append(SPACE); needSpace = false;
+					}
+					result.append(Keywords.RESTRICT); needSpace = true;
+				}
 			} else if (type instanceof ICPointerType) {
-				if (((ICPointerType)type).isRestrict()) { if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.RESTRICT); needSpace=true; }
+				if (((ICPointerType) type).isRestrict()) {
+					if (needSpace) {
+						result.append(SPACE); needSpace = false;
+					}
+					result.append(Keywords.RESTRICT); needSpace = true;
+				}
 			}
 			
 			try {
-				if (((IPointerType)type).isConst()) { if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.CONST); needSpace=true; }
-				if (((IPointerType)type).isVolatile()) { if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.VOLATILE); needSpace=true; }
-			} catch (DOMException e) {}
-			
+				if (((IPointerType) type).isConst()) {
+					if (needSpace) {
+						result.append(SPACE); needSpace = false;
+					}
+					result.append(Keywords.CONST); needSpace = true;
+				}
+				if (((IPointerType) type).isVolatile()) {
+					if (needSpace) {
+						result.append(SPACE); needSpace = false;
+					}
+					result.append(Keywords.VOLATILE); needSpace = true;
+				}
+			} catch (DOMException e) {
+			}
 		} else if (type instanceof IQualifierType) {
-			
 			if (type instanceof ICQualifierType) {
-				if (((ICQualifierType)type).isRestrict()) { result.append(Keywords.RESTRICT); needSpace=true; }
+				if (((ICQualifierType) type).isRestrict()) {
+					result.append(Keywords.RESTRICT); needSpace = true;
+				}
 			} else if (type instanceof IGPPQualifierType) {
-				if (((IGPPQualifierType)type).isRestrict()) { result.append(Keywords.RESTRICT); needSpace=true; }
+				if (((IGPPQualifierType) type).isRestrict()) {
+					result.append(Keywords.RESTRICT); needSpace = true;
+				}
 			}
 			
 			try {
-				if (((IQualifierType)type).isConst()) { if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.CONST); needSpace=true; }
-				if (((IQualifierType)type).isVolatile()) { if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.VOLATILE); needSpace=true; }
-			} catch (DOMException e) {}
-			
-		}
-		else if (type instanceof ITypedef) {
-			result.append(((ITypedef)type).getNameCharArray());
+				if (((IQualifierType) type).isConst()) {
+					if (needSpace) {
+						result.append(SPACE); needSpace = false;
+					}
+					result.append(Keywords.CONST); needSpace = true;
+				}
+				if (((IQualifierType) type).isVolatile()) {
+					if (needSpace) {
+						result.append(SPACE); needSpace = false;
+					}
+					result.append(Keywords.VOLATILE); needSpace = true;
+				}
+			} catch (DOMException e) {
+			}
+		} else if (type instanceof ITypedef) {
+			result.append(((ITypedef) type).getNameCharArray());
 		}
 		
 		return result.toString();
@@ -314,46 +418,47 @@ public class ASTTypeUtil {
 		IType[] types = new IType[DEAULT_ITYPE_SIZE];
 		
 		// push all of the types onto the stack
-		while(type != null) {
+		while (type != null) {
 			final boolean isTypedef= type instanceof ITypedef;
 			if (!resolveTypedefs || !isTypedef) { 
-			    types = (IType[]) ArrayUtil.append( IType.class, types, type );
+			    types = (IType[]) ArrayUtil.append(IType.class, types, type);
 			}
 			if (!resolveTypedefs && isTypedef) {
 				type= null;	// stop here
-			}
-			else if (type instanceof ITypeContainer) {
+			} else if (type instanceof ITypeContainer) {
 				try {
-					type = ((ITypeContainer)type).getType();
+					type = ((ITypeContainer) type).getType();
 				} catch (DOMException e) {
 					type= null;
 				}
-			}
-			else {
+			} else {
 				type= null;
 			}
 		}
 		
 		// pop all of the types off of the stack, and build the string representation while doing so
-		for(int j=types.length-1; j>=0; j--) {
-			if (types[j] != null && result.length() > 0) result.append(SPACE); // only add a space if this is not the first type being added
-			
+		for (int j = types.length - 1; j >= 0; j--) {
 			if (types[j] != null) {
-                if (j > 0 && types[j-1] instanceof IQualifierType) {
-                    result.append(getTypeString(types[j-1]));
-                    result.append(SPACE);
-                    result.append(getTypeString(types[j]));
+                if (j > 0 && types[j - 1] instanceof IQualifierType) {
+                	smartAppend(result, getTypeString(types[j - 1]));
+                	smartAppend(result, getTypeString(types[j]));
                     --j;
-                }
-                else {
-                    result.append(getTypeString(types[j]));
+                } else {
+                	smartAppend(result, getTypeString(types[j]));
                 }
             }
 		}
 		
 		return result.toString();
 	}
-	
+
+	private static void smartAppend(StringBuilder buf, String str) {
+		if (buf.length() > 0 && str.length() > 0 && "&*".indexOf(str.charAt(0)) < 0) { //$NON-NLS-1$
+			buf.append(SPACE);
+		}
+		buf.append(str);
+	}
+
 	/**
 	 * Returns the type representation of the declarator (including parameters) as a String.
 	 * 
@@ -401,15 +506,15 @@ public class ASTTypeUtil {
 	public static String getNodeType(IASTNode node) {
 		try {
 			if (node instanceof IASTDeclarator)
-				return getType((IASTDeclarator)node);
-			if (node instanceof IASTName && ((IASTName)node).resolveBinding() instanceof IVariable)
-				return getType(((IVariable)((IASTName)node).resolveBinding()).getType());
-			if (node instanceof IASTName && ((IASTName)node).resolveBinding() instanceof IFunction)
-				return getType(((IFunction)((IASTName)node).resolveBinding()).getType());
-			if (node instanceof IASTName && ((IASTName)node).resolveBinding() instanceof IType)
-				return getType((IType)((IASTName)node).resolveBinding());
+				return getType((IASTDeclarator) node);
+			if (node instanceof IASTName && ((IASTName) node).resolveBinding() instanceof IVariable)
+				return getType(((IVariable)((IASTName) node).resolveBinding()).getType());
+			if (node instanceof IASTName && ((IASTName) node).resolveBinding() instanceof IFunction)
+				return getType(((IFunction)((IASTName) node).resolveBinding()).getType());
+			if (node instanceof IASTName && ((IASTName) node).resolveBinding() instanceof IType)
+				return getType((IType)((IASTName) node).resolveBinding());
 			if (node instanceof IASTTypeId)
-				return getType((IASTTypeId)node);
+				return getType((IASTTypeId) node);
 		} catch (DOMException e) { return EMPTY_STRING; }
 		
 		return EMPTY_STRING;
@@ -454,43 +559,43 @@ public class ASTTypeUtil {
 	public static boolean isConst(IType type) {
 		if (type instanceof IQualifierType) {
 			try {
-				return ((IQualifierType)type).isConst();
+				return ((IQualifierType) type).isConst();
 			} catch (DOMException e) {
 				return false;
 			}
 		} else if (type instanceof ITypeContainer) {
 			try {
-				return isConst(((ITypeContainer)type).getType());
+				return isConst(((ITypeContainer) type).getType());
 			} catch (DOMException e) {
 				return false;
 			}
 		} else if (type instanceof IArrayType) {
 			try {
-				return isConst(((IArrayType)type).getType());
+				return isConst(((IArrayType) type).getType());
 			} catch (DOMException e) {
 				return false;
 			}
 		} else if (type instanceof ICPPReferenceType) {
 			try {
-				return isConst(((ICPPReferenceType)type).getType());
+				return isConst(((ICPPReferenceType) type).getType());
 			} catch (DOMException e) {
 				return false;
 			}
 		} else if (type instanceof IFunctionType) {
 			try {
-				return isConst(((IFunctionType)type).getReturnType());
+				return isConst(((IFunctionType) type).getReturnType());
 			} catch (DOMException e) {
 				return false;
 			}
 		} else if (type instanceof IPointerType) {
 			try {
-				return isConst(((IPointerType)type).getType());
+				return isConst(((IPointerType) type).getType());
 			} catch (DOMException e) {
 				return false;
 			}
 		} else if (type instanceof ITypedef) {
 			try {
-				return isConst(((ITypedef)type).getType());
+				return isConst(((ITypedef) type).getType());
 			} catch (DOMException e) {
 				return false;
 			}
@@ -504,7 +609,7 @@ public class ASTTypeUtil {
 		LinkedList<String> result= new LinkedList<String>();
 		result.addFirst(getNameForAnonymous(binding));
 		ICPPScope scope = (ICPPScope) binding.getScope();
-		while( scope != null ){
+		while (scope != null) {
 			if (scope instanceof ICPPBlockScope || scope instanceof ICPPFunctionScope) { 
 				break;
 			}
@@ -514,7 +619,7 @@ public class ASTTypeUtil {
 					break;
 				}
 				char[] name= n.toCharArray();
-				if (name.length == 0){
+				if (name.length == 0) {
 					if (!(scope instanceof ICPPNamespaceScope)) {
 						name= createNameForAnonymous(scope);
 						if (name == null) {
@@ -522,8 +627,7 @@ public class ASTTypeUtil {
 						}
 						result.addFirst(new String(name));
 					}
-				}
-				else {
+				} else {
 					result.addFirst(new String(name));
 				}
 			}
@@ -583,7 +687,7 @@ public class ASTTypeUtil {
 
 	
 	private static int findFileNameStart(char[] fname) {
-		for (int i= fname.length-2; i>=0; i--) {
+		for (int i= fname.length - 2; i >= 0; i--) {
 			switch (fname[i]) {
 			case '/':
 			case '\\':

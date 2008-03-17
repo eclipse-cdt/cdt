@@ -14,6 +14,7 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
@@ -30,7 +31,7 @@ public class CPPReferenceType implements ICPPReferenceType, ITypeContainer {
      * @param type
      * @param operator
      */
-    public CPPReferenceType( IType type ) {
+    public CPPReferenceType(IType type) {
         this.type = type;
     }
     /* (non-Javadoc)
@@ -40,36 +41,41 @@ public class CPPReferenceType implements ICPPReferenceType, ITypeContainer {
         return type;
     }
     
-    public void setType( IType t ){
+    public void setType(IType t) {
         type = t;
     }
 
     public boolean isSameType(IType obj) {
-        if( obj == this )
+        if (obj == this)
             return true;
-        if( obj instanceof ITypedef )
-            return ((ITypedef)obj).isSameType( this );
+        if (obj instanceof ITypedef)
+            return ((ITypedef)obj).isSameType(this);
         
-        if( type == null )
+        if (type == null)
             return (obj == null);
         
-        if( obj instanceof ICPPReferenceType ){
+        if (obj instanceof ICPPReferenceType) {
             try {
-                return type.isSameType( ((ICPPReferenceType) obj).getType() );
-            } catch ( DOMException e ) {
+                return type.isSameType(((ICPPReferenceType) obj).getType());
+            } catch (DOMException e) {
                 return false;
             }
         }
     	return false;
     }
     
-    public Object clone(){
+    public Object clone() {
         IType t = null;
    		try {
             t = (IType) super.clone();
-        } catch ( CloneNotSupportedException e ) {
-            //not going to happen
+        } catch (CloneNotSupportedException e) {
+            // not going to happen
         }
         return t;
     }
+    
+	@Override
+	public String toString() {
+		return ASTTypeUtil.getType(this);
+	}
 }

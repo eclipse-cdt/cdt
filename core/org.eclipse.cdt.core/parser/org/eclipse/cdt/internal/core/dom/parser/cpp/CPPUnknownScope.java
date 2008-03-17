@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Bryan Wilkinson (QNX)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 
 /*
@@ -22,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -33,12 +35,10 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
  * @author aniefer
  */
 public class CPPUnknownScope implements ICPPScope, IASTInternalScope {
-    private IBinding binding = null;
-    private IASTName scopeName = null;
-    private CharArrayObjectMap map = null;
-    /**
-     *
-     */
+    private IBinding binding;
+    private IASTName scopeName;
+    private CharArrayObjectMap map;
+
     public CPPUnknownScope(IBinding binding, IASTName name) {
         super();
         this.scopeName = name;
@@ -105,7 +105,9 @@ public class CPPUnknownScope implements ICPPScope, IASTInternalScope {
             return (IBinding) map.get(c);
         }
 
-        IBinding b = new CPPUnknownClass(this, binding, name);
+        IBinding b = name.getParent() instanceof ICPPASTTemplateId ?
+        		new CPPUnknownClassTemplate(this, binding, name) :
+          		new CPPUnknownClass(this, binding, name);
         name.setBinding(b);
         map.put(c, b);
         return b;

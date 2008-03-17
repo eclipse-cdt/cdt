@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -23,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /**
@@ -32,7 +34,7 @@ public class CPPDeferredClassInstance extends CPPInstance implements
 		ICPPClassType, ICPPDeferredTemplateInstance, ICPPInternalDeferredClassInstance {
 	
 	public CPPDeferredClassInstance(ICPPClassTemplate orig,	IType[] arguments) {
-		super(null, orig, null, arguments);
+		super(null, orig, buildArgumentMap(orig, arguments), arguments);
 	}
 	
 	/* (non-Javadoc)
@@ -46,7 +48,6 @@ public class CPPDeferredClassInstance extends CPPInstance implements
 	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getFields()
 	 */
 	public IField[] getFields() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -54,7 +55,6 @@ public class CPPDeferredClassInstance extends CPPInstance implements
 	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#findField(java.lang.String)
 	 */
 	public IField findField(String name) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -62,7 +62,6 @@ public class CPPDeferredClassInstance extends CPPInstance implements
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getDeclaredFields()
 	 */
 	public ICPPField[] getDeclaredFields() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -70,7 +69,6 @@ public class CPPDeferredClassInstance extends CPPInstance implements
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getMethods()
 	 */
 	public ICPPMethod[] getMethods() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -78,7 +76,6 @@ public class CPPDeferredClassInstance extends CPPInstance implements
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getAllDeclaredMethods()
 	 */
 	public ICPPMethod[] getAllDeclaredMethods() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -86,7 +83,6 @@ public class CPPDeferredClassInstance extends CPPInstance implements
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getDeclaredMethods()
 	 */
 	public ICPPMethod[] getDeclaredMethods() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -101,7 +97,6 @@ public class CPPDeferredClassInstance extends CPPInstance implements
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getFriends()
 	 */
 	public IBinding[] getFriends() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -116,6 +111,9 @@ public class CPPDeferredClassInstance extends CPPInstance implements
 	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getCompositeScope()
 	 */
 	public IScope getCompositeScope() throws DOMException {
+		if (getArgumentMap() != null) {
+			return new CPPClassSpecializationScope(this);
+		}
 		return ((ICPPClassType) getClassTemplate()).getCompositeScope();
 	}
 
@@ -144,7 +142,7 @@ public class CPPDeferredClassInstance extends CPPInstance implements
 			classTemplate = (ICPPClassTemplate) argMap.get(classTemplate);
 		}
 		
-		return (IType) ((ICPPInternalTemplateInstantiator)classTemplate).instantiate(newArgs);
+		return (IType) ((ICPPInternalTemplateInstantiator) classTemplate).instantiate(newArgs);
 	}
 
 	/* (non-Javadoc)
@@ -163,18 +161,47 @@ public class CPPDeferredClassInstance extends CPPInstance implements
 		} else if (type instanceof ICPPClassTemplate && classTemplate == type) {
 			return true;
 		} else if (type instanceof ICPPTemplateInstance &&
-				((ICPPTemplateInstance)type).getTemplateDefinition() == classTemplate) {
+				((ICPPTemplateInstance) type).getTemplateDefinition() == classTemplate) {
 			return true;
 		}
 		return false;
 	}
 
 	public ICPPClassType[] getNestedClasses() throws DOMException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	private ICPPClassTemplate getClassTemplate() {
 		return (ICPPClassTemplate) getSpecializedBinding();
+	}
+	
+	private static ObjectMap buildArgumentMap(ICPPClassTemplate template, IType[] arguments) {
+		ICPPTemplateParameter[] parameters = null;
+		try {
+			parameters = template.getTemplateParameters();
+		} catch (DOMException e) {
+		}
+
+		if (parameters == null || parameters.length == 0) {
+			return null;
+		}
+
+		int numParams = parameters.length;
+		ObjectMap map = new ObjectMap(numParams);
+		int numArgs = arguments.length;
+		boolean trivial = true;
+		for (int i = 0; i < numParams && i < numArgs; i++) {
+			ICPPTemplateParameter param = parameters[i];
+			IType arg = arguments[i];
+
+			if (!CPPTemplates.matchTemplateParameterAndArgument(param, arg, map)) {
+				return null;
+			}
+			map.put(param, arg);
+			if (!arg.equals(param)) {
+				trivial = false;
+			}
+		}
+		return trivial ? null : map;
 	}
 }

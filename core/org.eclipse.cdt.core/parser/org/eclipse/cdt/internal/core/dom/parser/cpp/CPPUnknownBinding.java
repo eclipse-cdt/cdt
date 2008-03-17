@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -32,7 +33,7 @@ public class CPPUnknownBinding extends PlatformObject implements ICPPInternalUnk
     private ICPPScope unknownScope = null;
     private IBinding scopeBinding = null;
     private ICPPScope scope = null;
-    private IASTName name = null;
+    protected IASTName name = null;
     /**
      *
      */
@@ -132,19 +133,20 @@ public class CPPUnknownBinding extends PlatformObject implements ICPPInternalUnk
      */
     public IBinding resolveUnknown(ObjectMap argMap) throws DOMException {
         IBinding result = this;
-        if (argMap.containsKey(scopeBinding)) {
-            IType t = (IType) argMap.get(scopeBinding);
-            t = CPPSemantics.getUltimateType(t, false);
-            if (t instanceof ICPPClassType) {
-                IScope s = ((ICPPClassType)t).getCompositeScope();
-
-                if (s != null && ASTInternal.isFullyCached(s))
-                	result = s.getBinding(name, true);
-//                CPPSemantics.LookupData data = CPPSemantics.createLookupData(name, false);
-//                CPPSemantics.lookup(data, s);
-//                IBinding result = CPPSemantics.resolveAmbiguities(data, name);
-                return result;
+        IType t = (IType) argMap.get(scopeBinding);
+        if (t == null && scopeBinding instanceof CPPUnknownBinding) {
+        	IBinding binding = ((CPPUnknownBinding) scopeBinding).resolveUnknown(argMap);
+        	if (binding instanceof IType) {
+                t = (IType) binding;
             }
+        }
+        if (t != null) {
+            t = CPPSemantics.getUltimateType(t, false);
+	        if (t instanceof ICPPClassType) {
+	            IScope s = ((ICPPClassType) t).getCompositeScope();
+	            if (s != null && ASTInternal.isFullyCached(s))
+	            	result = s.getBinding(name, true);
+	        }
         }
         return result;
     }

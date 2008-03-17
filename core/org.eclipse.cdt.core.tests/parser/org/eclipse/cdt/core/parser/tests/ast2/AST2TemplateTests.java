@@ -6,10 +6,11 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *    Bryan Wilkinson (QNX)
- *    Andrew Ferguson (Symbian)
+ *     IBM - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Bryan Wilkinson (QNX)
+ *     Andrew Ferguson (Symbian)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -298,8 +299,11 @@ public class AST2TemplateTests extends AST2BaseTest {
 		assertSame( foo1, foo2 );
 
 		ITypedef TYPE = (ITypedef) col.getName(2).resolveBinding();
-		assertSame( TYPE, col.getName(8).resolveBinding() );
-		assertSame( TYPE, col.getName(17).resolveBinding() );
+		IBinding b0 = col.getName(8).resolveBinding();
+		assertInstance(b0, ICPPSpecialization.class);
+		assertSame(TYPE, ((ICPPSpecialization) b0).getSpecializedBinding());
+		IBinding b1 = col.getName(17).resolveBinding();
+		assertSame(TYPE, ((ICPPSpecialization) b1).getSpecializedBinding());
 
 		assertInstances( col, T1, 6 );
 	}
@@ -1610,7 +1614,8 @@ public class AST2TemplateTests extends AST2BaseTest {
 		tu.accept( col );
 
 		ICPPMethod init = (ICPPMethod) col.getName(4).resolveBinding();
-		assertSame( init, col.getName(19).resolveBinding() );
+		ICPPSpecialization b0 = (ICPPSpecialization) col.getName(19).resolveBinding();
+		assertSame(init, b0.getSpecializedBinding());
 	}
 
 	public void testBug91707() throws Exception {
@@ -2110,7 +2115,7 @@ public class AST2TemplateTests extends AST2BaseTest {
     // };
     //
     // void f(B<int>::tb r) {}
-    public void _testTemplateTypedef_214447() throws Exception {
+    public void testTemplateTypedef_214447() throws Exception {
     	StringBuffer buffer = getContents(1)[0];
     	IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, true, true);
 
@@ -2144,7 +2149,7 @@ public class AST2TemplateTests extends AST2BaseTest {
     // };
     //
     // void f(Vec<int>::reference r) {}
-    public void _testRebindPattern_214447_1() throws Exception {
+    public void testRebindPattern_214447_1() throws Exception {
     	StringBuffer buffer = getContents(1)[0];
     	IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, true, true);
 
@@ -2184,7 +2189,7 @@ public class AST2TemplateTests extends AST2BaseTest {
     // };
     //
     // void f(Vec<int>::reference r) {}
-    public void _testRebindPattern_214017_2() throws Exception {
+    public void testRebindPattern_214447_2() throws Exception {
     	StringBuffer buffer = getContents(1)[0];
     	IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, true, true);
 
@@ -2200,7 +2205,7 @@ public class AST2TemplateTests extends AST2BaseTest {
    			}
 		}
     }
-    
+
     // template<typename _Tp>
     // class A {
     // public:

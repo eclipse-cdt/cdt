@@ -146,7 +146,9 @@ public class EditorReopener implements IDocCommentOwnershipListener {
 
 				for(int j=0; j<editorParts.length; j++) {
 					IEditorPart oldPart= editorParts[j];
-					oldPart.doSave(new NullProgressMonitor());
+					if(oldPart.isDirty()) {
+						oldPart.doSave(new NullProgressMonitor());
+					}
 					window.getActivePage().closeEditor(oldPart, false);
 					IEditorInput oldInput= oldPart.getEditorInput();
 

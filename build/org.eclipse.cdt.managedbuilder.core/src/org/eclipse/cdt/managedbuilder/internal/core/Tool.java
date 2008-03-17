@@ -81,6 +81,7 @@ import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeSettings;
 import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.osgi.framework.Version;
 
 /**
  * Represents a tool that can be invoked during a build.
@@ -2212,25 +2213,22 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	public String[] getAllOutputExtensions(IProject project) {
 		IOutputType[] types = getOutputTypes();
 		if (types != null && types.length > 0) {
-			List allExts = new ArrayList();
-			for (int i=0; i<types.length; i++) {
-				String[] exts = ((OutputType)types[i]).getOutputExtensions(this, project);
-				if (exts != null) {
-					for (int j=0; j<exts.length; j++) {
-						allExts.add(exts[j]);
-					}
-				}
+			List<String> allExts = new ArrayList<String>();
+			for (IOutputType t : types) {
+				String[] exts = ((OutputType)t).getOutputExtensions(this, project);
+				if (exts != null)
+					for (String s : exts) 
+						allExts.add(s);
 			}
-			if (allExts.size() > 0) {
-				return (String[])allExts.toArray(new String[allExts.size()]);
-			}
+			if (allExts.size() > 0) 
+				return allExts.toArray(new String[allExts.size()]);
 		}
 		// If none, use the outputs specified for the Tool (backwards compatibility)
 		String[] extsList = getOutputsAttribute();
-		if (extsList != null && extsList.length > 0) {
+		if (extsList != null && extsList.length > 0) 
 			return extsList;
-		}
-		return EMPTY_STRING_ARRAY;		
+		else
+			return EMPTY_STRING_ARRAY;		
 	}
 
 	/* (non-Javadoc)
@@ -2479,13 +2477,11 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 				IMacroContextInfoProvider provider) throws BuildException {
 		IOption[] opts = getOptions();
 		ArrayList<String> flags = new ArrayList<String>();
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		for (IOption op : opts) {
-			IOption option = getOptionToSet(op, false);
+			IOption option = op;
 			if (option == null)
 				continue;
-			option.setValue(op.getValue());
-
 			sb.setLength( 0 );
 
 			// check to see if the option has an applicability calculator
@@ -2497,7 +2493,20 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			} else if ( parent instanceof IToolChain ){
 				config = ((IToolChain)parent).getParent();
 			}
+
 			if (applicabilityCalculator == null || applicabilityCalculator.isOptionUsedInCommandLine(config, this, option)) {
+
+				// update option in case when its value changed.
+				// This code is added to fix bug #219684 and
+				// avoid using "getOptionToSet()" 	
+				if (applicabilityCalculator != null &&
+					!(applicabilityCalculator instanceof BooleanExpressionApplicabilityCalculator)) {	
+					if (option.getSuperClass() != null)
+						option = getOptionBySuperClassId(option.getSuperClass().getId());
+					else
+						option = getOptionById(option.getId());
+				}
+				
 				try{
 				switch (option.getValueType()) {
 				case IOption.BOOLEAN :
@@ -2626,7 +2635,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	 */
 	public String getToolCommandFlagsString(IPath inputFileLocation, IPath outputFileLocation) throws BuildException{
 		// Get all of the optionList
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		String[] flags = getToolCommandFlags(inputFileLocation,outputFileLocation);
 		for (int index = 0; index < flags.length; index++) {
 			if( flags[ index ] != null ) { 
@@ -3075,9 +3084,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 						String[] tmpVersions = versionsSupported.split(","); //$NON-NLS-1$
 
 						for (int j = 0; j < tmpVersions.length; j++) {
-							if (new PluginVersionIdentifier(version)
-									.equals(new PluginVersionIdentifier(
-											tmpVersions[j]))) {
+							if (new Version(version).equals(new Version(tmpVersions[j]))) {
 								// version is supported.
 								// Do the automatic conversion without
 								// prompting the user.
@@ -3316,12 +3323,12 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		return (CLanguageData)typeToDataMap.get(type);
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void initDataMap(){
 		if(fDataMapInited)
 			return;
 		
 		List<IInputType> types = getLanguageInputTypes();
-//		List datas = new ArrayList();
 		
 		if(types != null){
 			if(types.size() == 0){
@@ -3334,38 +3341,29 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 					typeToDataMap.put(null, data);
 				}
 				
-//				datas.add(data);
 			} else {
 				//create editable input types for lang datas first
 				
-				for(ListIterator iter = types.listIterator(); iter.hasNext();){
-					IInputType type = (IInputType)iter.next();
+				for(ListIterator<IInputType> iter = types.listIterator(); iter.hasNext();){
+					IInputType type = iter.next();
 					iter.set(getEdtableInputType(type));
 				}
 
-				Map map = (Map)typeToDataMap.clone();
-				for(ListIterator iter = types.listIterator(); iter.hasNext();){
-					IInputType type = (IInputType)iter.next();
+				Map<IInputType, CLanguageData> map = (Map<IInputType, CLanguageData>)typeToDataMap.clone();
+				for(IInputType type : types){
 					CLanguageData data = (CLanguageData)map.remove(type);
 					if(data == null){
 						data = new BuildLanguageData(this, type);
 						typeToDataMap.put(type, data);
 					}
-					
-//					datas.add(data);
 				}
 				
 				if(map.size() > 0){
-					for(Iterator iter = map.keySet().iterator(); iter.hasNext();){
-						typeToDataMap.remove(iter.next());
+					for(IInputType it : map.keySet()){
+						typeToDataMap.remove(it);
 					}
 				}
 			}	
-			
-//			int size = datas.size();
-//			for(int i = 0; i < size; i++){
-//				((BuildLanguageData)datas.get(i)).obtainEditableInputType();
-//			}
 		}
 		fDataMapInited = true;
 	}
@@ -3683,7 +3681,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		String name = getName();
 		String version = ManagedBuildManager.getVersionFromIdAndVersion(getId());
 		if(version != null && version.length() != 0){
-			return new StringBuffer().append(name).append(" (").append(version).append("").toString(); //$NON-NLS-1$ //$NON-NLS-2$
+			return new StringBuilder().append(name).append(" (").append(version).append("").toString(); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return name;
 	}
@@ -3804,7 +3802,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		} else if(ids.length == 0){
 			errorParserIds = EMPTY_STRING;
 		} else {
-			StringBuffer buf = new StringBuffer();
+			StringBuilder buf = new StringBuilder();
 			buf.append(ids[0]);
 			for(int i = 1; i < ids.length; i++){
 				buf.append(";").append(ids[i]); //$NON-NLS-1$
@@ -3833,7 +3831,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		} else {
 			String version = ManagedBuildManager.getVersionFromIdAndVersion(getId());
 			if(version != null){
-			StringBuffer buf = new StringBuffer();
+			StringBuilder buf = new StringBuilder();
 			buf.append(name);
 			buf.append(" (v").append(version).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
 			name = buf.toString();
@@ -3932,18 +3930,14 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			return true;
 
 		if(inputTypeList != null && inputTypeList.size() != 0){
-			InputType inType;
-			for(Iterator iter = inputTypeList.iterator(); iter.hasNext();){
-				inType = (InputType)iter.next();
+			for(InputType inType : inputTypeList){
 				if(inType.hasCustomSettings())
 					return true;
 			}
 		}
 		
 		if(outputTypeList != null && outputTypeList.size() != 0){
-			OutputType outType;
-			for(Iterator iter = outputTypeList.iterator(); iter.hasNext();){
-				outType = (OutputType)iter.next();
+			for(OutputType outType : outputTypeList){
 				if(outType.hasCustomSettings())
 					return true;
 			}

@@ -66,35 +66,35 @@ public class ParameterHintTests extends AbstractContentAssistTest {
 	//void foo(){aFunc(
 	public void testFunction() throws Exception {
 		assertParameterHints(new String[] {
-				"aFunc(int i) void"
+				"aFunc(int i) : void"
 		});
 	}
 	
 	//void foo(){tFunc(
 	public void testTemplateFunction() throws Exception {
 		assertParameterHints(new String[] {
-				"tFunc(T x,T y) void"
+				"tFunc(T x,T y) : void"
 		});
 	}
 	
 	//void foo(){tFunc<int>(
 	public void testTemplateFunction2() throws Exception {
 		assertParameterHints(new String[] {
-				"tFunc(T x,T y) void"
+				"tFunc(T x,T y) : void"
 		});
 	}
 	
 	//void foo(){int a=5;aFunc  ( anotherFunc   (  a ,  (in
 	public void testOffsetCalculation() throws Exception {
 		assertParameterHints(new String[] {
-				"anotherFunc(int i,int j) int"
+				"anotherFunc(int i,int j) : int"
 		});
 	}
 	
 	//void foo(){int a=pie(
 	public void testAccurateName() throws Exception {
 		assertParameterHints(new String[] {
-				"pie(aClass a) int"
+				"pie(aClass a) : int"
 		});
 	}
 	
@@ -106,16 +106,16 @@ public class ParameterHintTests extends AbstractContentAssistTest {
 	//void aClass::aMethod(
 	public void testMethodDefinition() throws Exception {
 		assertParameterHints(new String[] {
-				"aMethod(char c) void",
-				"aMethod(char c,int x) void"
+				"aMethod(char c) : void",
+				"aMethod(char c,int x) : void"
 		});
 	}
 	
 	//void aClass::aMethod(char c){aMethod(c,aFi
 	public void testMethodScope() throws Exception {
 		assertParameterHints(new String[] {
-				"aMethod(char c) void",
-				"aMethod(char c,int x) void"
+				"aMethod(char c) : void",
+				"aMethod(char c,int x) : void"
 		});
 	}
 	
@@ -123,7 +123,7 @@ public class ParameterHintTests extends AbstractContentAssistTest {
 	public void testConstructor() throws Exception {
 		assertParameterHints(new String[] {
 				"aClass(void)",
-				"aClass(const aClass &)"
+				"aClass(const aClass&)"
 		});
 	}
 
@@ -132,7 +132,7 @@ public class ParameterHintTests extends AbstractContentAssistTest {
 		assertParameterHints(new String[] {
 				"bClass(int x)",
 				"bClass(int x,int y)",
-				"bClass(const bClass &)"
+				"bClass(const bClass&)"
 		});
 	}
 	
@@ -140,7 +140,7 @@ public class ParameterHintTests extends AbstractContentAssistTest {
 	public void testTemplateConstructor() throws Exception {
 		assertParameterHints(new String[] {
 				"tClass(T t)",
-				"tClass(const tClass &)"
+				"tClass(const tClass&)"
 		});
 	}
 	
@@ -148,14 +148,14 @@ public class ParameterHintTests extends AbstractContentAssistTest {
 	public void _testTemplateConstructor2() throws Exception {
 		assertParameterHints(new String[] {
 				"tClass(T t)",
-				"tClass(const tClass &)"
+				"tClass(const tClass&)"
 		});
 	}
 	
 	//int pi = 3;void foo(){pi(
 	public void testFunctionsOnly() throws Exception {
 		assertParameterHints(new String[] {
-				"pi(aClass a) int"
+				"pi(aClass a) : int"
 		});
 	}
 	
@@ -169,7 +169,7 @@ public class ParameterHintTests extends AbstractContentAssistTest {
 	//    int i= (int) oc->getChar(
 	public void testMethodWithCast() throws Exception {
 		assertParameterHints(new String[] {
-				"getChar(int a,int b) char"
+				"getChar(int a,int b) : char"
 		});
 	}
 }

@@ -137,7 +137,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 			
 			fCN = fTU.getCompletionNode(fIndex, flags, offset);
 		} catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		}
 		
 		return fCN;

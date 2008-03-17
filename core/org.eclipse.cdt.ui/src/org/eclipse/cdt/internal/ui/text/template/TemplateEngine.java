@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,6 +48,7 @@ import org.eclipse.cdt.internal.corext.template.c.TranslationUnitContextType;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.text.c.hover.SourceViewerInformationControl;
+import org.eclipse.cdt.internal.ui.text.contentassist.RelevanceConstants;
 
 public class TemplateEngine {
 
@@ -82,7 +83,7 @@ public class TemplateEngine {
 		 * @param image
 		 */
 		public CTemplateProposal(Template template, TemplateContext context, IRegion region, Image image) {
-			super(template, context, region, image, 90);
+			super(template, context, region, image, RelevanceConstants.CASE_MATCH_RELEVANCE + RelevanceConstants.TEMPLATE_TYPE_RELEVANCE);
 		}
 
         public String getIdString() {

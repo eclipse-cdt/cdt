@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2007 QNX Software Systems and others.
+ * Copyright (c) 2007, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Bryan Wilkinson (QNX) - Initial API and implementation
+ *     Bryan Wilkinson (QNX) - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
@@ -92,6 +93,7 @@ public class HelpCompletionProposalComputer extends ParsingBasedProposalComputer
 					.getPrototype();
 			String fargs = fproto.getArguments();
 
+			int relevance = computeBaseRelevance(prefix, summary.getName()) + RelevanceConstants.HELP_TYPE_RELEVANCE;
 			CCompletionProposal proposal;
 			proposal = new CCompletionProposal(
 					fname,
@@ -99,7 +101,7 @@ public class HelpCompletionProposalComputer extends ParsingBasedProposalComputer
 					repLength,
 					image,
 					fproto.getPrototypeString(true),
-					2,
+					relevance,
 					cContext.getViewer());
 
 			if (fdesc != null) {
@@ -123,4 +125,5 @@ public class HelpCompletionProposalComputer extends ParsingBasedProposalComputer
 
 		return proposals;
 	}
+	
 }

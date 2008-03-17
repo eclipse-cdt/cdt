@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -87,11 +88,7 @@ final class CompletionProposalComputerDescriptor {
 	static {
 		Set partitions= new HashSet();
 		partitions.add(IDocument.DEFAULT_CONTENT_TYPE);
-		partitions.add(ICPartitions.C_PREPROCESSOR);
-		partitions.add(ICPartitions.C_MULTI_LINE_COMMENT);
-		partitions.add(ICPartitions.C_SINGLE_LINE_COMMENT);
-		partitions.add(ICPartitions.C_STRING);
-		partitions.add(ICPartitions.C_CHARACTER);
+		partitions.addAll(Arrays.asList(ICPartitions.ALL_CPARTITIONS));
 		
 		PARTITION_SET= Collections.unmodifiableSet(partitions);
 	}
@@ -197,7 +194,7 @@ final class CompletionProposalComputerDescriptor {
 			Object[] args= { getId(), fElement.getContributor().getName(), attribute };
 			String message= Messages.format(ContentAssistMessages.CompletionProposalComputerDescriptor_illegal_attribute_message, args);
 			IStatus status= new Status(IStatus.WARNING, CUIPlugin.getPluginId(), IStatus.OK, message, null);
-			CUIPlugin.getDefault().log(status);
+			CUIPlugin.log(status);
 			throw new InvalidRegistryObjectException();
 		}
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 QNX Software Systems and others.
+ * Copyright (c) 2002, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,7 +51,7 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.AUTOACTIVATION_TRIGGERS_ARROW));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.AUTOACTIVATION_TRIGGERS_DOUBLECOLON));
 //		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.SHOW_DOCUMENTED_PROPOSALS));
-//		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.ORDER_PROPOSALS));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.ORDER_PROPOSALS));
 //		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.ADD_INCLUDE));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.CURRENT_FILE_SEARCH_SCOPE));        
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.PROJECT_SEARCH_SCOPE));
@@ -111,12 +111,12 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 //		addTextField(insertionGroup, label, ContentAssistPreference.TIMEOUT_DELAY, 6, 0, true);
 
 		//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-		// sorting and filtering	
+		// sorting and filtering
 		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_sortingSection_title; 
 		Group sortingGroup = addGroupBox(contentAssistComposite, label, 2);
 
-//		label= PreferencesMessages.CEditorPreferencePage_ContentAssistPage_showProposalsInAlphabeticalOrder; 
-//		addCheckBox(sortingGroup, label, ContentAssistPreference.ORDER_PROPOSALS, 0);
+		label= PreferencesMessages.CEditorPreferencePage_ContentAssistPage_showProposalsInAlphabeticalOrder; 
+		addCheckBox(sortingGroup, label, ContentAssistPreference.ORDER_PROPOSALS, 0);
 
 		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_proposalFilterSelect ; 
 		addComboBox(sortingGroup, label, ContentAssistPreference.PROPOSALS_FILTER, NO_TEXT_LIMIT, 0);
@@ -163,7 +163,7 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 		
 		store.setDefault(ContentAssistPreference.AUTOINSERT, true);
 		store.setDefault(ContentAssistPreference.PREFIX_COMPLETION, true);
-//		store.setDefault(ContentAssistPreference.ORDER_PROPOSALS, false);
+		store.setDefault(ContentAssistPreference.ORDER_PROPOSALS, false);
 //		store.setDefault(ContentAssistPreference.ADD_INCLUDE, true);
 		store.setDefault(ContentAssistPreference.PROPOSALS_FILTER, ProposalFilterPreferencesUtil.getProposalFilternamesAsString());  // $NON_NLS 1$
 

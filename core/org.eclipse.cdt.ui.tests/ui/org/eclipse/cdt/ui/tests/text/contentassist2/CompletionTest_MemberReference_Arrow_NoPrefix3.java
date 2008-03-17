@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Symbian Software Systems and others.
+ * Copyright (c) 2006, 2008 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,7 @@ public class CompletionTest_MemberReference_Arrow_NoPrefix3  extends CompletionP
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
 	private final String expectedPrefix = "";
 	private final String[] expectedResults = {
-			"B", "bar(void) void"
+			"B", "bar(void) : void"
 	};
 	
 	public CompletionTest_MemberReference_Arrow_NoPrefix3(String name) {

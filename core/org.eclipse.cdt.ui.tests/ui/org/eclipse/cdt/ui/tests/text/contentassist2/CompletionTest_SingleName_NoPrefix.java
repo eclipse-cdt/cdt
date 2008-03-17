@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,11 +29,11 @@ public class CompletionTest_SingleName_NoPrefix  extends CompletionProposalsBase
 			"x : int",
 			"aVariable : int",
 			"xVariable : int",
-			"aFunction(void) bool",
-			"anotherFunction(void) void",
-			"foo(int x) void",
-			"xFunction(void) bool",
-			"xOtherFunction(void) void",
+			"aFunction(void) : bool",
+			"anotherFunction(void) : void",
+			"foo(int x) : void",
+			"xFunction(void) : bool",
+			"xOtherFunction(void) : void",
 			"aClass",
 			"anotherClass",
 			"xOtherClass",

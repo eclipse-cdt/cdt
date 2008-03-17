@@ -41,21 +41,26 @@ import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
+import org.eclipse.cdt.core.model.IMethod;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -95,7 +100,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 					try {
 						prefix= context.computeIdentifierPrefix().toString();
 					} catch (BadLocationException exc) {
-						CUIPlugin.getDefault().log(exc);
+						CUIPlugin.log(exc);
 					}
 				}
 				addMacroProposals(context, prefix, proposals);
@@ -123,7 +128,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 				
 				if (bindings != null)
 					for (int j = 0; j < bindings.length; ++j)
-						handleBinding(bindings[j], context, astContext, proposals);
+						handleBinding(bindings[j], context, prefix, astContext, proposals);
 			}
 
 			if (handleMacros)
@@ -186,26 +191,28 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		if (macros != null)
 			for (int i = 0; i < macros.length; ++i)
 				if (CharArrayUtils.equals(macros[i].getName().toCharArray(), 0, prefixChars.length, prefixChars, true))
-					handleMacro(macros[i], context, proposals);
+					handleMacro(macros[i], context, prefix, proposals);
 		macros = completionNode.getTranslationUnit().getBuiltinMacroDefinitions();
 		if (macros != null)
 			for (int i = 0; i < macros.length; ++i)
 				if (CharArrayUtils.equals(macros[i].getName().toCharArray(), 0, prefixChars.length, prefixChars, true))
-					handleMacro(macros[i], context, proposals);
+					handleMacro(macros[i], context, prefix, proposals);
 	}
 	
-	private void handleMacro(IASTPreprocessorMacroDefinition macro, CContentAssistInvocationContext context, List<CCompletionProposal> proposals) {
-		String macroName = macro.getName().toString();
+	private void handleMacro(IASTPreprocessorMacroDefinition macro, CContentAssistInvocationContext context, String prefix, List<CCompletionProposal> proposals) {
+		final String macroName = macro.getName().toString();
+		final int baseRelevance= computeBaseRelevance(prefix, macroName);
+
 		Image image = getImage(CElementImageProvider.getMacroImageDescriptor());
 		
 		if (macro instanceof IASTPreprocessorFunctionStyleMacroDefinition) {
 			IASTPreprocessorFunctionStyleMacroDefinition functionMacro = (IASTPreprocessorFunctionStyleMacroDefinition)macro;
 			
-			StringBuffer repStringBuff = new StringBuffer();
+			StringBuilder repStringBuff = new StringBuilder();
 			repStringBuff.append(macroName);
 			repStringBuff.append('(');
 			
-			StringBuffer args = new StringBuffer();
+			StringBuilder args = new StringBuilder();
 
 			IASTFunctionStyleMacroParameter[] params = functionMacro.getParameters();
 			if (params != null)
@@ -216,7 +223,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 				}
 			String argString = args.toString();
 			
-			StringBuffer descStringBuff = new StringBuffer(repStringBuff.toString());
+			StringBuilder descStringBuff = new StringBuilder(repStringBuff.toString());
 			descStringBuff.append(argString);
 			descStringBuff.append(')');
 			
@@ -224,7 +231,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			String repString = repStringBuff.toString();
 			String descString = descStringBuff.toString();
 			
-			CCompletionProposal proposal = createProposal(repString, descString, image, context);
+			CCompletionProposal proposal = createProposal(repString, descString, image, baseRelevance + RelevanceConstants.MACRO_TYPE_RELEVANCE, context);
 			if (!context.isContextInformationStyle()) {
 				proposal.setCursorPosition(repString.length() - 1);
 			}
@@ -237,12 +244,15 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			
 			proposals.add(proposal);
 		} else
-			proposals.add(createProposal(macroName, macroName, image, context));
+			proposals.add(createProposal(macroName, macroName, image, baseRelevance + RelevanceConstants.MACRO_TYPE_RELEVANCE, context));
 	}
-	
+
 	protected void handleBinding(IBinding binding,
 			CContentAssistInvocationContext cContext,
-			IASTCompletionContext astContext, List<CCompletionProposal> proposals) {
+			String prefix, 
+			IASTCompletionContext astContext, 
+			List<CCompletionProposal> proposals) {
+
 		if ((binding instanceof CPPImplicitFunction
 				|| binding instanceof CPPImplicitFunctionTemplate || binding instanceof CPPImplicitTypedef)
 				&& !(binding instanceof CPPImplicitMethod)) {
@@ -250,17 +260,25 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		}
 		
 		if (!isAnonymousBinding(binding)) {
+			final String name = binding.getName();
+			final int baseRelevance= computeBaseRelevance(prefix, name);
 			if (binding instanceof ICPPClassType) {
-				handleClass((ICPPClassType) binding, astContext, cContext, proposals);
+				handleClass((ICPPClassType) binding, astContext, cContext, baseRelevance, proposals);
 			} else if (binding instanceof IFunction) {
-				handleFunction((IFunction)binding, cContext, proposals);
+				handleFunction((IFunction)binding, cContext, baseRelevance, proposals);
 			} else if (!cContext.isContextInformationStyle()) {
 				if (binding instanceof IVariable) {
-					handleVariable((IVariable) binding, cContext, proposals);
+					handleVariable((IVariable) binding, cContext, baseRelevance, proposals);
+				} else if (binding instanceof ITypedef) {
+					proposals.add(createProposal(name, name, getImage(binding), baseRelevance + RelevanceConstants.TYPEDEF_TYPE_RELEVANCE, cContext));
 				} else if (binding instanceof ICPPNamespace) {
-					handleNamespace((ICPPNamespace) binding, astContext, cContext, proposals);
+					handleNamespace((ICPPNamespace) binding, astContext, cContext, baseRelevance, proposals);
+				} else if (binding instanceof IEnumeration) {
+					proposals.add(createProposal(name, name, getImage(binding), baseRelevance + RelevanceConstants.ENUMERATION_TYPE_RELEVANCE, cContext));
+				} else if (binding instanceof IEnumerator) {
+					proposals.add(createProposal(name, name, getImage(binding), baseRelevance + RelevanceConstants.ENUMERATOR_TYPE_RELEVANCE, cContext));
 				} else {
-					proposals.add(createProposal(binding.getName(), binding.getName(), getImage(binding), cContext));
+					proposals.add(createProposal(name, name, getImage(binding), baseRelevance, cContext));
 				}
 			}
 		}
@@ -271,35 +289,50 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		return name.length == 0 || name[0] == '{';
 	}
 
-	private void handleClass(ICPPClassType classType, IASTCompletionContext astContext, CContentAssistInvocationContext context, List<CCompletionProposal> proposals) {
+	private void handleClass(ICPPClassType classType, IASTCompletionContext astContext, CContentAssistInvocationContext context, int baseRelevance, List<CCompletionProposal> proposals) {
 		if (context.isContextInformationStyle()) {
 			try {
 				ICPPConstructor[] constructors = classType.getConstructors();
 				for (int i = 0; i < constructors.length; i++) {
-					handleFunction(constructors[i], context, proposals);
+					handleFunction(constructors[i], context, baseRelevance, proposals);
 				}
 			} catch (DOMException e) {
 			}
 		} else {
+			int relevance= 0;
+			try {
+				switch(classType.getKey()) {
+				case ICPPClassType.k_class:
+					relevance= RelevanceConstants.CLASS_TYPE_RELEVANCE;
+					break;
+				case ICPPClassType.k_struct:
+					relevance= RelevanceConstants.STRUCT_TYPE_RELEVANCE;
+					break;
+				case ICPPClassType.k_union:
+					relevance= RelevanceConstants.UNION_TYPE_RELEVANCE;
+					break;
+				}
+			} catch (DOMException exc) {
+			}
 			if (astContext instanceof IASTName && !(astContext instanceof ICPPASTQualifiedName)) {
 				IASTName name= (IASTName)astContext;
 				if (name.getParent() instanceof IASTDeclarator) {
-					proposals.add(createProposal(classType.getName()+"::", classType.getName(), getImage(classType), context)); //$NON-NLS-1$
+					proposals.add(createProposal(classType.getName()+"::", classType.getName(), getImage(classType), baseRelevance + relevance, context)); //$NON-NLS-1$
 				}
 			}
-			proposals.add(createProposal(classType.getName(), classType.getName(), getImage(classType), context));
+			proposals.add(createProposal(classType.getName(), classType.getName(), getImage(classType), baseRelevance + RelevanceConstants.CLASS_TYPE_RELEVANCE, context));
 		}
 	}
 	
-	private void handleFunction(IFunction function, CContentAssistInvocationContext context, List<CCompletionProposal> proposals) {	
+	private void handleFunction(IFunction function, CContentAssistInvocationContext context, int baseRelevance, List<CCompletionProposal> proposals) {	
 		Image image = getImage(function);
 		
-		StringBuffer repStringBuff = new StringBuffer();
+		StringBuilder repStringBuff = new StringBuilder();
 		repStringBuff.append(function.getName());
 		repStringBuff.append('(');
 		
-		StringBuffer dispargs = new StringBuffer(); // for the displayString
-        StringBuffer idargs = new StringBuffer();   // for the idString
+		StringBuilder dispargs = new StringBuilder(); // for the displayString
+        StringBuilder idargs = new StringBuilder();   // for the idString
 		String returnTypeStr = null;
 		try {
 			IParameter[] params = function.getParameters();
@@ -344,16 +377,16 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
         String dispargString = dispargs.toString();
         String idargString = idargs.toString();
 		
-        StringBuffer dispStringBuff = new StringBuffer(repStringBuff.toString());
+        StringBuilder dispStringBuff = new StringBuilder(repStringBuff.toString());
 		dispStringBuff.append(dispargString);
         dispStringBuff.append(')');
         if (returnTypeStr != null && returnTypeStr.length() > 0) {
-            dispStringBuff.append(' ');
+            dispStringBuff.append(" : "); //$NON-NLS-1$
             dispStringBuff.append(returnTypeStr);
         }
         String dispString = dispStringBuff.toString();
 
-        StringBuffer idStringBuff = new StringBuffer(repStringBuff.toString());
+        StringBuilder idStringBuff = new StringBuilder(repStringBuff.toString());
         idStringBuff.append(idargString);
         idStringBuff.append(')');
         String idString = idStringBuff.toString();
@@ -361,7 +394,8 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
         repStringBuff.append(')');
         String repString = repStringBuff.toString();
 
-        CCompletionProposal proposal = createProposal(repString, dispString, idString, image, context);
+        final int relevance = function instanceof IMethod ? RelevanceConstants.METHOD_TYPE_RELEVANCE : RelevanceConstants.FUNCTION_TYPE_RELEVANCE;
+		CCompletionProposal proposal = createProposal(repString, dispString, idString, image, baseRelevance + relevance, context);
 		if (!context.isContextInformationStyle()) {
 			proposal.setCursorPosition(repString.length() - 1);
 		}
@@ -375,8 +409,8 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		proposals.add(proposal);
 	}
 	
-	private void handleVariable(IVariable variable, CContentAssistInvocationContext context, List<CCompletionProposal> proposals) {
-		StringBuffer repStringBuff = new StringBuffer();
+	private void handleVariable(IVariable variable, CContentAssistInvocationContext context, int baseRelevance, List<CCompletionProposal> proposals) {
+		StringBuilder repStringBuff = new StringBuilder();
 		repStringBuff.append(variable.getName());
 		
 		String returnTypeStr = "<unknown>"; //$NON-NLS-1$
@@ -387,34 +421,70 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		} catch (DOMException e) {
 		}
         
-        StringBuffer dispStringBuff = new StringBuffer(repStringBuff.toString());
+        StringBuilder dispStringBuff = new StringBuilder(repStringBuff.toString());
         if (returnTypeStr != null) {
             dispStringBuff.append(" : "); //$NON-NLS-1$
             dispStringBuff.append(returnTypeStr);
         }
         String dispString = dispStringBuff.toString();
 
-        StringBuffer idStringBuff = new StringBuffer(repStringBuff.toString());
+        StringBuilder idStringBuff = new StringBuilder(repStringBuff.toString());
         String idString = idStringBuff.toString();
 		
         String repString = repStringBuff.toString();
 
 		Image image = getImage(variable);
-		CCompletionProposal proposal = createProposal(repString, dispString, idString, image, context);
+		final int relevance = isLocalVariable(variable) 
+			? RelevanceConstants.LOCAL_VARIABLE_TYPE_RELEVANCE
+			: isField(variable) 
+				? RelevanceConstants.FIELD_TYPE_RELEVANCE
+				: RelevanceConstants.VARIABLE_TYPE_RELEVANCE;
+		CCompletionProposal proposal = createProposal(repString, dispString, idString, image, baseRelevance + relevance, context);
 		proposals.add(proposal);
 	}
 	
+	private static boolean isField(IVariable variable) {
+		return variable instanceof IField;
+	}
+
+	private static boolean isLocalVariable(IVariable variable) {
+		try {
+			return isLocalScope(variable.getScope());
+		} catch (DOMException exc) {
+			return false;
+		}
+	}
+
+    private static boolean isLocalScope(IScope scope) {
+        while (scope != null) {
+            if (scope instanceof ICPPFunctionScope ||
+                    scope instanceof ICPPBlockScope ||
+                    scope instanceof ICFunctionScope) {
+                return true;
+            }
+            try {
+                scope= scope.getParent();
+            } catch (DOMException e) {
+                scope= null;
+            }
+        }
+        return false;
+    }
+
 	private void handleNamespace(ICPPNamespace namespace,
 			IASTCompletionContext astContext,
-			CContentAssistInvocationContext cContext, List<CCompletionProposal> proposals) {
+			CContentAssistInvocationContext cContext, 
+			int baseRelevance, 
+			List<CCompletionProposal> proposals) {
+
 		if (astContext instanceof ICPPASTQualifiedName) {
 			IASTCompletionContext parent = ((ICPPASTQualifiedName) astContext)
 					.getCompletionContext();
-			handleNamespace(namespace, parent, cContext, proposals);
+			handleNamespace(namespace, parent, cContext, baseRelevance, proposals);
 			return;
 		}
 		
-		StringBuffer repStringBuff = new StringBuffer();
+		StringBuilder repStringBuff = new StringBuilder();
 		repStringBuff.append(namespace.getName());
 		
 		if (!(astContext instanceof ICPPASTUsingDeclaration)
@@ -423,14 +493,14 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		}
 		
 		String repString = repStringBuff.toString();
-		proposals.add(createProposal(repString, namespace.getName(), getImage(namespace), cContext));
+		proposals.add(createProposal(repString, namespace.getName(), getImage(namespace), baseRelevance + RelevanceConstants.NAMESPACE_TYPE_RELEVANCE, cContext));
 	}
 	
-	private CCompletionProposal createProposal(String repString, String dispString, Image image, CContentAssistInvocationContext context) {
-		return createProposal(repString, dispString, null, image, context);
+	private CCompletionProposal createProposal(String repString, String dispString, Image image, int relevance, CContentAssistInvocationContext context) {
+		return createProposal(repString, dispString, null, image, relevance, context);
 	}
 	
-	private CCompletionProposal createProposal(String repString, String dispString, String idString, Image image, CContentAssistInvocationContext context) {
+	private CCompletionProposal createProposal(String repString, String dispString, String idString, Image image, int relevance, CContentAssistInvocationContext context) {
 		int parseOffset = context.getParseOffset();
 		int invocationOffset = context.getInvocationOffset();
 		boolean doReplacement = !context.isContextInformationStyle();
@@ -439,7 +509,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		int repOffset = doReplacement ? parseOffset - repLength : invocationOffset;
 		repString = doReplacement ? repString : ""; //$NON-NLS-1$
 		
-		return new CCompletionProposal(repString, repOffset, repLength, image, dispString, idString, 1, context.getViewer());
+		return new CCompletionProposal(repString, repOffset, repLength, image, dispString, idString, relevance, context.getViewer());
 	}
 
 	private Image getImage(ImageDescriptor desc) {

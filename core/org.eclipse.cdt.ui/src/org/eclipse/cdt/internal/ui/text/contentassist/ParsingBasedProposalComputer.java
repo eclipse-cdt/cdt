@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 QNX Software Systems and others.
+ * Copyright (c) 2007, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    QNX - Initial API and implementation
+ *    Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.text.contentassist;
@@ -54,7 +55,7 @@ public abstract class ParsingBasedProposalComputer implements ICompletionProposa
 			}
 		} catch (Exception e) {
 			fErrorMessage = e.toString();
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		}
 
 		return Collections.EMPTY_LIST;
@@ -92,5 +93,25 @@ public abstract class ParsingBasedProposalComputer implements ICompletionProposa
 
 	public void sessionStarted() {
 		fErrorMessage = null;
+	}
+
+	/**
+	 * Compute base relevance depending on quality of name / prefix match.
+	 * 
+	 * @param prefix  the completion pefix
+	 * @param match  the matching identifier
+	 * @return a relevance value inidicating the quality of the name match
+	 */
+	protected int computeBaseRelevance(String prefix, String match) {
+		int baseRelevance= RelevanceConstants.DEFAULT_TYPE_RELEVANCE;
+		boolean caseMatch= prefix.length() > 0 && match.startsWith(prefix);
+		if (caseMatch) {
+			baseRelevance += RelevanceConstants.CASE_MATCH_RELEVANCE;
+		}
+		boolean exactNameMatch= match.equalsIgnoreCase(prefix);
+		if (exactNameMatch) {
+			baseRelevance += RelevanceConstants.EXACT_NAME_MATCH_RELEVANCE;
+		}
+		return baseRelevance;
 	}
 }

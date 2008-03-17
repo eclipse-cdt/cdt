@@ -828,7 +828,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	public void testFunctionWithTypedefToAnonymousType_bug192787() throws Exception {
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=192787
 		final String[] expected= {
-				"func(my_struct s) void"
+				"func(my_struct s) : void"
 		};
 		assertCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_DISP_STRINGS);
 	}
@@ -939,7 +939,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	
 	// #include "header191315.h"
 	// void xxx() { c_lin/*cursor*/
-	public void testExtenC_bug191315() throws Exception {
+	public void testExternC_bug191315() throws Exception {
 		StringBuffer[] content= getContentsForTest(3);
 		createFile(fProject, "header191315.h", content[0].toString());
 		createFile(fProject, "source191315.c", content[0].toString());

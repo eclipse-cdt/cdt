@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -109,7 +109,7 @@ public final class CompletionProposalCategory {
 			Object[] args= { getId(), fElement.getContributor().getName(), attribute };
 			String message= Messages.format(ContentAssistMessages.CompletionProposalComputerDescriptor_illegal_attribute_message, args);
 			IStatus status= new Status(IStatus.WARNING, CUIPlugin.getPluginId(), IStatus.OK, message, null);
-			CUIPlugin.getDefault().log(status);
+			CUIPlugin.log(status);
 			throw new InvalidRegistryObjectException();
 		}
 	}

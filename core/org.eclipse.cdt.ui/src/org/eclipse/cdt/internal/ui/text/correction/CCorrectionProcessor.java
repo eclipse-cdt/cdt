@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * 	   Sergey Prigogin (Google)
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.text.correction;
@@ -66,7 +67,7 @@ public class CCorrectionProcessor implements IQuickAssistProcessor {
 			if (status.isOK()) {
 				res.add(desc);
 			} else {
-				CUIPlugin.getDefault().log(status);
+				CUIPlugin.log(status);
 			}
 		}
 		return (ContributedProcessorDescriptor[]) res.toArray(new ContributedProcessorDescriptor[res.size()]);
@@ -195,19 +196,19 @@ public class CCorrectionProcessor implements IQuickAssistProcessor {
 		
 		fErrorMessage= null;
 		
-		ICompletionProposal[] res= null;
+		ICCompletionProposal[] res= null;
 		if (model != null && annotations != null) {
 			ArrayList proposals= new ArrayList(10);
 			IStatus status= collectProposals(context, model, annotations, true, !fAssistant.isUpdatedOffset(), proposals);
-			res= (ICompletionProposal[]) proposals.toArray(new ICompletionProposal[proposals.size()]);
+			res= (ICCompletionProposal[]) proposals.toArray(new ICCompletionProposal[proposals.size()]);
 			if (!status.isOK()) {
 				fErrorMessage= status.getMessage();
-				CUIPlugin.getDefault().log(status);
+				CUIPlugin.log(status);
 			}
 		}
 		
 		if (res == null || res.length == 0) {
-			return new ICompletionProposal[]
+			return new ICCompletionProposal[]
 					{ new CCompletionProposal("", 0, 0, null, CorrectionMessages.NoCorrectionProposal_description, 0) }; //$NON-NLS-1$
 		}
 		if (res.length > 1) {

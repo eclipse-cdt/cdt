@@ -2162,6 +2162,13 @@
     </extension>
     <extension
         point="org.eclipse.cdt.ui.completionProposalComputer"
+        id="helpProposalCategory"
+        name="%HelpProposalCategory">
+        <proposalCategory
+            icon="$nl$/icons/elcl16/helpprop_co.gif"/>
+    </extension>
+    <extension
+        point="org.eclipse.cdt.ui.completionProposalComputer"
         id="textProposalCategory"
         name="%TextProposalCategory">
         <proposalCategory
@@ -2209,7 +2216,17 @@
             <partition type="__c_singleline_comment"/>
         </completionProposalComputer>
     </extension>
-    <!-- hippie word completions -->   
+    <!-- help provider proposals -->
+    <extension
+        point="org.eclipse.cdt.ui.completionProposalComputer"
+        id="HelpCompletionProposalComputer">
+        <completionProposalComputer
+            class="org.eclipse.cdt.internal.ui.text.contentassist.HelpCompletionProposalComputer"
+            categoryId="org.eclipse.cdt.ui.helpProposalCategory">
+            <partition type="__dftl_partition_content_type"/>
+        </completionProposalComputer>
+    </extension>
+    <!-- hippie word proposals -->
     <extension
         point="org.eclipse.cdt.ui.completionProposalComputer"
         id="HippieCompletionProposalComputer">

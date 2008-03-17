@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,8 +56,8 @@ public class ContentAssistPreference {
 	
 //	/** Preference key for visibility of proposals (unused) */
 //	public final static String SHOW_DOCUMENTED_PROPOSALS= "content_assist_show_visible_proposals"; //$NON-NLS-1$
-//	/** Preference key for alphabetic ordering of proposals (unused) */
-//	public final static String ORDER_PROPOSALS= "content_assist_order_proposals"; //$NON-NLS-1$
+	/** Preference key for alphabetic ordering of proposals */
+	public final static String ORDER_PROPOSALS= "content_assist_order_proposals"; //$NON-NLS-1$
 //	/** Preference key for case sensitivity of propsals */
 //	public final static String CASE_SENSITIVITY= "content_assist_case_sensitivity";
 //	/** Preference key for adding includes on code assist (unused) */

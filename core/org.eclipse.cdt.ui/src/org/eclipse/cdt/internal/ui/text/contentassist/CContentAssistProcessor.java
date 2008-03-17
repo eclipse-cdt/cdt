@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -69,7 +70,7 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 		 * @see org.eclipse.cdt.ui.text.ICCompletionProposal#getRelevance()
 		 */
 		public int getRelevance() {
-			return -1;
+			return RelevanceConstants.CASE_MATCH_RELEVANCE + RelevanceConstants.KEYWORD_TYPE_RELEVANCE;
 		}
 
 		/*
@@ -149,25 +150,45 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 		IProposalFilter filter = getCompletionFilter();
 		ICCompletionProposal[] proposalsInput= new ICCompletionProposal[proposals.size()];
 		// wrap proposals which are no ICCompletionProposals
+		boolean wrapped= false;
 		int i=0;
 		for (Iterator iterator = proposals.iterator(); iterator.hasNext(); ) {
 			ICompletionProposal proposal= (ICompletionProposal) iterator.next();
 			if (proposal instanceof ICCompletionProposal) {
 				proposalsInput[i++]= (ICCompletionProposal)proposal;
 			} else {
+				wrapped= true;
 				proposalsInput[i++]= new CCompletionProposalWrapper(proposal);
 			}
 		}
+		// filter
 		ICCompletionProposal[] proposalsFiltered = filter.filterProposals(proposalsInput);
-		// unwrap again
-		ArrayList filteredList= new ArrayList(proposalsFiltered.length);
-		for (int j= 0; j < proposalsFiltered.length; j++) {
-			ICCompletionProposal proposal= proposalsFiltered[j];
-			if (proposal instanceof CCompletionProposalWrapper) {
-				filteredList.add(((CCompletionProposalWrapper)proposal).unwrap());
-			} else {
-				filteredList.add(proposal);
+
+		// sort
+		boolean sortByAlphabet= CUIPlugin.getDefault().getPreferenceStore().getBoolean(ContentAssistPreference.ORDER_PROPOSALS);
+		if (sortByAlphabet) {
+			// already sorted alphabetically by DefaultProposalFilter
+			// in case of custom proposal filter, keep ordering applied by filter
+		} else {
+			// sort by relevance
+			CCompletionProposalComparator propsComp= new CCompletionProposalComparator();
+			propsComp.setOrderAlphabetically(sortByAlphabet);
+			Arrays.sort(proposalsFiltered, propsComp);
+		}
+		List filteredList;
+		if (wrapped) {
+			// unwrap again
+			filteredList= new ArrayList(proposalsFiltered.length);
+			for (int j= 0; j < proposalsFiltered.length; j++) {
+				ICCompletionProposal proposal= proposalsFiltered[j];
+				if (proposal instanceof CCompletionProposalWrapper) {
+					filteredList.add(((CCompletionProposalWrapper)proposal).unwrap());
+				} else {
+					filteredList.add(proposal);
+				}
 			}
+		} else {
+			filteredList= Arrays.asList(proposalsFiltered);
 		}
 		return filteredList;
 	}
@@ -185,10 +206,10 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 			}
 		} catch (InvalidRegistryObjectException e) {
 			// No action required since we will be using the fail-safe default filter
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		} catch (CoreException e) {
 			// No action required since we will be using the fail-safe default filter
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		}
 
 		if (null == filter) {

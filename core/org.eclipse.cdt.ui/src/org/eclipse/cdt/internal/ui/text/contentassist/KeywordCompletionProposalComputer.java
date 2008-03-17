@@ -46,28 +46,31 @@ public class KeywordCompletionProposalComputer extends ParsingBasedProposalCompu
 			try {
 				prefix= context.computeIdentifierPrefix().toString();
 			} catch (BadLocationException exc) {
-				CUIPlugin.getDefault().log(exc);
+				CUIPlugin.log(exc);
 			}
 		}
+		final int prefixLength = prefix.length();
 		// No prefix, no completions
-        if (prefix.length() == 0 || context.isContextInformationStyle())
+        if (prefixLength == 0 || context.isContextInformationStyle())
             return Collections.emptyList();
 
-        String[] keywords;
+        // keywords are matched case-sensitive
+		final int relevance = RelevanceConstants.CASE_MATCH_RELEVANCE + RelevanceConstants.KEYWORD_TYPE_RELEVANCE;
+
 		List<CCompletionProposal> proposals = new ArrayList<CCompletionProposal>();
 
 		if (inPreprocessorDirective(context)) {
 			// TODO split this into a separate proposal computer?
 			boolean needDirectiveKeyword= inPreprocessorKeyword(context);
-			keywords= preprocessorKeywords;
+			String[] keywords= preprocessorKeywords;
 
 			// add matching preprocessor keyword proposals
 			ImageDescriptor imagedesc = CElementImageProvider.getKeywordImageDescriptor();
 			Image image = imagedesc != null ? CUIPlugin.getImageDescriptorRegistry().get(imagedesc) : null;
 			for (int i = 0; i < keywords.length; ++i) {
 				String repString= keywords[i];
-				if (repString.startsWith(prefix)) {
-					int repLength = prefix.length();
+				if (repString.startsWith(prefix) && keywords[i].length() > prefixLength) {
+					int repLength = prefixLength;
 					int repOffset = context.getInvocationOffset() - repLength;
 					if (prefix.charAt(0) == '#') {
 						// strip leading '#' from replacement
@@ -78,7 +81,7 @@ public class KeywordCompletionProposalComputer extends ParsingBasedProposalCompu
 						continue;
 					}
 					proposals.add(new CCompletionProposal(repString, repOffset,
-							repLength, image, keywords[i], 1, context.getViewer()));
+							repLength, image, keywords[i], relevance, context.getViewer()));
 				}
 			}	        
 		} else {
@@ -87,7 +90,7 @@ public class KeywordCompletionProposalComputer extends ParsingBasedProposalCompu
 	        
 	        ITranslationUnit tu = context.getTranslationUnit();
 	        
-	        keywords = cppkeywords; // default to C++
+	        String[] keywords = cppkeywords; // default to C++
 	        if (tu != null && tu.isCLanguage())
 	            keywords = ckeywords;
 	        
@@ -95,11 +98,11 @@ public class KeywordCompletionProposalComputer extends ParsingBasedProposalCompu
 	        ImageDescriptor imagedesc = CElementImageProvider.getKeywordImageDescriptor();
 	        Image image = imagedesc != null ? CUIPlugin.getImageDescriptorRegistry().get(imagedesc) : null;
 	        for (int i = 0; i < keywords.length; ++i) {
-	            if (keywords[i].startsWith(prefix)) {
-	                int repLength = prefix.length();
+	            if (keywords[i].startsWith(prefix) && keywords[i].length() > prefixLength) {
+	                int repLength = prefixLength;
 	                int repOffset = context.getInvocationOffset() - repLength;
 	                proposals.add(new CCompletionProposal(keywords[i], repOffset,
-							repLength, image, keywords[i], 1, context.getViewer()));
+							repLength, image, keywords[i], relevance, context.getViewer()));
 	            }
 	        }
 		}

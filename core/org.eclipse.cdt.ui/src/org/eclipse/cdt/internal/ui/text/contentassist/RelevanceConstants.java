@@ -1,19 +1,27 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
+ *     IBM Rational Software - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
 public interface RelevanceConstants {
-	final int CASE_MATCH_RELEVANCE = 160;
+	/** Relevance increment for same case matches */
+	final int CASE_MATCH_RELEVANCE = 1000;
+
+	/** Relevance increment for exact name matches (disregarding case) */
 	final int EXACT_NAME_MATCH_RELEVANCE = 40;
 	
+	/** Relevance constant for proposals contributed by help provider */
+	final int HELP_TYPE_RELEVANCE = 200;
+
+	// parsing-based relevance constants
 	final int LOCAL_VARIABLE_TYPE_RELEVANCE = 140;
 	final int FIELD_TYPE_RELEVANCE = 130;
 	final int VARIABLE_TYPE_RELEVANCE = 120;
@@ -27,6 +35,12 @@ public interface RelevanceConstants {
 	final int ENUMERATOR_TYPE_RELEVANCE = 40;
 	final int ENUMERATION_TYPE_RELEVANCE = 30;
 	final int MACRO_TYPE_RELEVANCE = 20;
+
+	/** Relevance constant for (key-)word proposals */
 	final int KEYWORD_TYPE_RELEVANCE = 10;
+	
+	/** Relevance constant for editor template proposals */
+	final int TEMPLATE_TYPE_RELEVANCE = 5;
+	
 	final int DEFAULT_TYPE_RELEVANCE = 0;
 }

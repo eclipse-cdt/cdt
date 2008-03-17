@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -325,7 +325,7 @@ public final class CompletionProposalComputerRegistry {
 	 * @param status a status object that will be logged
 	 */
 	void informUser(CompletionProposalComputerDescriptor descriptor, IStatus status) {
-		CUIPlugin.getDefault().log(status);
+		CUIPlugin.log(status);
         String title= ContentAssistMessages.CompletionProposalComputerRegistry_error_dialog_title;
         CompletionProposalCategory category= descriptor.getCategory();
         IContributor culprit= descriptor.getContributor();
@@ -390,7 +390,7 @@ public final class CompletionProposalComputerRegistry {
     }
 
 	private void informUser(IStatus status) {
-		CUIPlugin.getDefault().log(status);
+		CUIPlugin.log(status);
 		String title= ContentAssistMessages.CompletionProposalComputerRegistry_error_dialog_title;
 		String message= status.getMessage();
 		MessageDialog.openError(CUIPlugin.getActiveWorkbenchShell(), title, message);

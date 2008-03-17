@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 QNX Software Systems and others.
+ * Copyright (c) 2004, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -88,9 +88,11 @@ public class ManageFunctionBreakpointActionDelegate extends ActionDelegate imple
 				IContributedContentsView contentsView = (IContributedContentsView) fTargetPart.getAdapter(IContributedContentsView.class);
 				if (contentsView != null) {
 					IWorkbenchPart contributingPart = contentsView.getContributingPart();
-					resource = (IResource) contributingPart.getAdapter(IResource.class);
-					if (resource == null && contributingPart instanceof IEditorPart) {
-						resource = (IResource) ((IEditorPart)contributingPart).getEditorInput().getAdapter(IResource.class);
+					if (contributingPart != null) {
+						resource = (IResource) contributingPart.getAdapter(IResource.class);
+						if (resource == null && contributingPart instanceof IEditorPart) {
+							resource = (IResource) ((IEditorPart)contributingPart).getEditorInput().getAdapter(IResource.class);
+						}
 					}
 				}
  			}

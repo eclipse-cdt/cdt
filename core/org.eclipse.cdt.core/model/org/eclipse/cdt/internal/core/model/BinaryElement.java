@@ -256,8 +256,8 @@ public class BinaryElement extends CElement implements IBinaryElement, ISourceMa
 	}
 
 	@Override
-	public void getHandleMemento(StringBuilder buff) {
-		((CElement)getParent()).getHandleMemento(buff);
+	public String getHandleMemento() {
+		return null;
 	}
 
 	@Override

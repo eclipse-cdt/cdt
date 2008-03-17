@@ -126,8 +126,8 @@ public class Archive extends Openable implements IArchive {
 	}
 
 	@Override
-	public void getHandleMemento(StringBuilder buff) {
-		((CElement)getParent()).getHandleMemento(buff);
+	public String getHandleMemento() {
+		return null;
 	}
 
 	@Override

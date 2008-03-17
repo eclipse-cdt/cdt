@@ -19,7 +19,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IStructureTemplate;
-import org.eclipse.cdt.internal.core.model.CElement;
 import org.eclipse.cdt.internal.core.model.Template;
 
 public class StructureTemplateHandle extends StructureHandle implements IStructureTemplate {
@@ -53,14 +52,4 @@ public class StructureTemplateHandle extends StructureHandle implements IStructu
 		return fTemplate.getTemplateSignature();
 	}
 
-	public void getHandleMemento(StringBuilder buff) {
-		super.getHandleMemento(buff);
-		if (fTemplate.getNumberOfTemplateParameters() > 0) {
-			final String[] parameterTypes= fTemplate.getTemplateParameterTypes();
-			for (int i = 0; i < parameterTypes.length; i++) {
-				buff.append(CElement.CEM_PARAMETER);
-				CElement.escapeMementoName(buff, parameterTypes[i]);
-			}
-		}
-	}
 }

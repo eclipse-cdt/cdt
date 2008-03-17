@@ -515,8 +515,8 @@ public class Binary extends Openable implements IBinary {
 	}
 
 	@Override
-	public void getHandleMemento(StringBuilder buff) {
-		((CElement)getParent()).getHandleMemento(buff);
+	public String getHandleMemento() {
+		return null;
 	}
 
 	@Override

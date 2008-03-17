@@ -382,7 +382,7 @@ public interface ICElement extends IAdaptable {
 	 * @exception CModelException if this element does not exist or if an
 	 *		exception occurs while accessing its resource
 	 */
-	IResource getResource() ;
+	IResource getResource();
 	/**
 	 * Returns whether this C element is read-only. An element is read-only
 	 * if its structure cannot be modified by the C model. 
@@ -417,12 +417,17 @@ public interface ICElement extends IAdaptable {
 	
 
 	/**
-	 * Returns a string representation of this element handle. The format of
-	 * the string is not specified; however, the identifier is stable across
+	 * Returns a string representation of this element handle. The format of the
+	 * string is not specified; however, the identifier is stable across
 	 * workspace sessions, and can be used to recreate this handle via the
 	 * <code>CoreModel.create(String)</code> method.
-	 *
-	 * @return the string handle identifier
+	 * <p>
+	 * Some element types, like binaries, do not support handle identifiers and
+	 * return <code>null</code>.
+	 * </p>
+	 * 
+	 * @return the string handle identifier, or <code>null</code> if the
+	 *         element type is not supported
 	 * @see CoreModel#create(java.lang.String)
 	 * 
 	 * @since 5.0

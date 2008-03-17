@@ -19,7 +19,6 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IMethodDeclaration;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
-import org.eclipse.cdt.internal.core.model.CElement;
 import org.eclipse.cdt.internal.core.model.FunctionDeclaration;
 import org.eclipse.cdt.internal.core.model.MethodDeclaration;
 
@@ -84,11 +83,4 @@ public class MethodDeclarationHandle extends CElementHandle implements IMethodDe
 		return fIsDestructor;
 	}
 
-	public void getHandleMemento(StringBuilder buff) {
-		super.getHandleMemento(buff);
-		for (int i = 0; i < fParameterTypes.length; i++) {
-			buff.append(CElement.CEM_PARAMETER);
-			CElement.escapeMementoName(buff, fParameterTypes[i]);
-		}
-	}
 }

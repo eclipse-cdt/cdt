@@ -57,8 +57,8 @@ public class ArchiveContainer extends Openable implements IArchiveContainer {
 	}
 
 	@Override
-	public void getHandleMemento(StringBuilder buff) {
-		((CElement)getParent()).getHandleMemento(buff);
+	public String getHandleMemento() {
+		return null;
 	}
 
 	@Override

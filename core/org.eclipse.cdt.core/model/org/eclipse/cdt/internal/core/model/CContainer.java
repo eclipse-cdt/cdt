@@ -274,13 +274,37 @@ public class CContainer extends Openable implements ICContainer {
 	@Override
 	public ICElement getHandleFromMemento(String token, MementoTokenizer memento) {
 		switch (token.charAt(0)) {
-			case CEM_TRANSLATIONUNIT:
-				if (!memento.hasMoreTokens()) return this;
-				String tuName = memento.nextToken();
-				CElement tu = (CElement) getTranslationUnit(tuName);
-				if (tu != null) {
-					return tu.getHandleFromMemento(memento);
+		case CEM_SOURCEFOLDER:
+			String name;
+			if (memento.hasMoreTokens()) {
+				name = memento.nextToken();
+				char firstChar = name.charAt(0);
+				if (firstChar == CEM_TRANSLATIONUNIT) {
+					token = name;
+					name = ""; //$NON-NLS-1$
+				} else {
+					token = null;
 				}
+			} else {
+				name = ""; //$NON-NLS-1$
+				token = null;
+			}
+			CElement folder = (CElement)getCContainer(name);
+			if (folder != null) {
+				if (token == null) {
+					return folder.getHandleFromMemento(memento);
+				} else {
+					return folder.getHandleFromMemento(token, memento);
+				}
+			}
+			break;
+		case CEM_TRANSLATIONUNIT:
+			if (!memento.hasMoreTokens()) return this;
+			String tuName = memento.nextToken();
+			CElement tu = (CElement) getTranslationUnit(tuName);
+			if (tu != null) {
+				return tu.getHandleFromMemento(memento);
+			}
 		}
 		return null;
 	}

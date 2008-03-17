@@ -299,34 +299,20 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 	 * @see ICElement
 	 */
 	public String getHandleIdentifier() {
-		return getHandleMemento();
-	}
-
-	public String getHandleMemento(){
-		StringBuilder buff = new StringBuilder();
-		getHandleMemento(buff);
-		return buff.toString();
-	}
-
-	protected void getHandleMemento(StringBuilder buff) {
-		final ICElement parent= getParent();
-		if (parent instanceof CElement) {
-			((CElement)parent).getHandleMemento(buff);
-		} else if (parent instanceof CElementHandle) {
-			((CElementHandle)parent).getHandleMemento(buff);
+		ICElement cModelElement= mapToModelElement();
+		if (cModelElement != null) {
+			return cModelElement.getHandleIdentifier();
 		}
-		buff.append(getHandleMementoDelimiter());
-		CElement.escapeMementoName(buff, getElementName());
-		buff.append(CElement.CEM_ELEMENTTYPE);
-		buff.append(Integer.toString(getElementType()));
+		return null;
 	}
 
-	/**
-	 * Returns the <code>char</code> that marks the start of this handles
-	 * contribution to a memento.
-	 */
-	protected char getHandleMementoDelimiter() {
-		return CElement.CEM_SOURCEELEMENT;
+	private ICElement mapToModelElement() {
+		try {
+			ISourceRange range= getSourceRange();
+			return getTranslationUnit().getElementAtOffset(range.getIdStartPos());
+		} catch (CModelException exc) {
+			return null;
+		}
 	}
 
 }

@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.settings.model.ICSourceEntry;
-import org.eclipse.cdt.internal.core.util.MementoTokenizer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -72,40 +71,7 @@ public class SourceRoot extends CContainer implements ISourceRoot {
 		return false;
 	}
 
-	/*
-	 * @see CElement
-	 */
-	public ICElement getHandleFromMemento(String token, MementoTokenizer memento) {
-		switch (token.charAt(0)) {
-			case CEM_SOURCEFOLDER:
-				String name;
-				if (memento.hasMoreTokens()) {
-					name = memento.nextToken();
-					char firstChar = name.charAt(0);
-					if (firstChar == CEM_TRANSLATIONUNIT) {
-						token = name;
-						name = ""; //$NON-NLS-1$
-					} else {
-						token = null;
-					}
-				} else {
-					name = ""; //$NON-NLS-1$
-					token = null;
-				}
-				CElement folder = (CElement)getCContainer(name);
-				if (token == null) {
-					return folder.getHandleFromMemento(memento);
-				} else {
-					return folder.getHandleFromMemento(token, memento);
-				}
-		case CEM_TRANSLATIONUNIT:
-			return super.getHandleFromMemento(token, memento);
-		}
-		return null;
-	}
-	/**
-	 * @see CElement#getHandleMemento(StringBuilder)
-	 */
+	@Override
 	public void getHandleMemento(StringBuilder buff) {
 		IPath path;
 		IResource underlyingResource = getResource();

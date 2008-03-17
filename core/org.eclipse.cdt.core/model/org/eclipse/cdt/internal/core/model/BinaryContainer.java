@@ -74,8 +74,8 @@ public class BinaryContainer extends Openable implements IBinaryContainer {
 	}
 
 	@Override
-	public void getHandleMemento(StringBuilder buff) {
-		((CElement)getParent()).getHandleMemento(buff);
+	public String getHandleMemento() {
+		return null;
 	}
 
 	@Override

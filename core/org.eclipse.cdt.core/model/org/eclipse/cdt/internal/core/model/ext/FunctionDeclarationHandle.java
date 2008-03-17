@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IFunctionDeclaration;
-import org.eclipse.cdt.internal.core.model.CElement;
 import org.eclipse.cdt.internal.core.model.FunctionDeclaration;
 
 public class FunctionDeclarationHandle extends CElementHandle implements org.eclipse.cdt.core.model.IFunctionDeclaration {
@@ -62,14 +61,6 @@ public class FunctionDeclarationHandle extends CElementHandle implements org.ecl
 
 	public boolean isStatic() throws CModelException {
 		return fIsStatic;
-	}
-
-	public void getHandleMemento(StringBuilder buff) {
-		super.getHandleMemento(buff);
-		for (int i = 0; i < fParameterTypes.length; i++) {
-			buff.append(CElement.CEM_PARAMETER);
-			CElement.escapeMementoName(buff, fParameterTypes[i]);
-		}
 	}
 
 }

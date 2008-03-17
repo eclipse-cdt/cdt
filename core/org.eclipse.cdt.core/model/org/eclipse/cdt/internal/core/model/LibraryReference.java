@@ -75,8 +75,8 @@ public class LibraryReference extends Parent implements ILibraryReference {
 	}
 
 	@Override
-	public void getHandleMemento(StringBuilder buff) {
-		((CElement)getParent()).getHandleMemento(buff);
+	public String getHandleMemento() {
+		return null;
 	}
 
 	@Override

@@ -139,9 +139,7 @@ import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.core.parser.util.ASTPrinter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.core.parser.util.DebugUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser;
@@ -171,6 +169,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     private ScopeStack templateIdScopes = new ScopeStack();
 
     private int templateCount = 0;
+    private int functionBodyCount= 0;
+    private int templateArgListCount= 0;
 
     protected CPPASTTranslationUnit translationUnit;
     
@@ -358,12 +358,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             case IToken.tCOMPLETION:
             case IToken.tEOC:
                 last = consume();
-                if (!fNoTemplateArguments) {
-                	IToken templateLast = consumeTemplateArguments(last, argumentList);
-                	if (last != templateLast) {
-                		last = templateLast;
-                		hasTemplateId = true;
-                	}
+                IToken templateLast = consumeTemplateArguments(last, argumentList);
+                if (last != templateLast) {
+                	last = templateLast;
+                	hasTemplateId = true;
                 }
                 break;
 
@@ -375,11 +373,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             }
 
             while (LT(1) == IToken.tCOLONCOLON) {
-            	boolean checkTemplateArgs= !fNoTemplateArguments;
                 last = consume();
 
                 if (LT(1) == IToken.t_template) {
-                	checkTemplateArgs= true;
                     consume();
                 }
 
@@ -395,9 +391,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 case IToken.tCOMPLETION:
                 case IToken.tEOC:
                     last = consume();
-                    if (checkTemplateArgs) {
-                    	last = consumeTemplateArguments(last, argumentList);
-                    }
+                    last = consumeTemplateArguments(last, argumentList);
                     if (last.getType() == IToken.tGT || last.getType() == IToken.tEOC)
                         hasTemplateId = true;
                 }
@@ -413,12 +407,29 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
     }
 
-    /**
-     */
-    protected IToken consumeTemplateArguments(IToken last, TemplateParameterManager argumentList) throws EndOfFileException, BacktrackException {
+    protected IASTExpression conditionalExpression() throws BacktrackException, EndOfFileException {
+    	final IASTExpression expr= super.conditionalExpression();
+    	if (templateArgListCount > 0) {
+    		// bug 104706, don't allow usage of logical operators in template argument lists.
+    		if (expr instanceof IASTConditionalExpression)
+    			throw new BacktrackException();
+    		if (expr instanceof IASTBinaryExpression) {
+    			IASTBinaryExpression bexpr= (IASTBinaryExpression) expr;
+    			switch (bexpr.getOperator()) {
+    			case IASTBinaryExpression.op_logicalAnd:
+    			case IASTBinaryExpression.op_logicalOr:
+    				throw new BacktrackException();
+    			}
+    		}
+    	}
+    	return expr;
+    }
+
+	protected IToken consumeTemplateArguments(IToken last, TemplateParameterManager argumentList) throws EndOfFileException, BacktrackException {
         if (LT(1) == IToken.tLT) {
             IToken secondMark = mark();
             consume();
+            templateArgListCount++;
             try {
                 List<IASTNode> list = templateArgumentList();
                 argumentList.addSegment(list);
@@ -437,6 +448,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             } catch (BacktrackException bt) {
                 argumentList.addSegment(null);
                 backup(secondMark);
+            } finally {
+            	templateArgListCount--;
             }
         } else {
             argumentList.addSegment(null);
@@ -1861,8 +1874,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     private final boolean supportLongLong;
 
 	private final IIndex index;
-
-	private boolean fNoTemplateArguments;
 
     private static final int DEFAULT_PARM_LIST_SIZE = 4;
 
@@ -4696,22 +4707,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             if (lt1 == expectToken || lt1 == IToken.tEOC) {
             	return e;
             }
-            if (!fNoTemplateArguments) {
-            	// bug 104706, ambiguity between template arguments and conditional expression,
-            	// try without template args
-            	backup(mark);
-            	try {
-            		fNoTemplateArguments= true;
-            		e= expression();
-            		final int lt11= LT(1);
-            		if (lt11 == expectToken || lt11 == IToken.tEOC) {
-            			return e;
-            		}
-            	}
-            	finally {
-            		fNoTemplateArguments= false;
-            	}
-            }
             throwBacktrack(LA(1));
         } catch (BacktrackException bt) {
             backup(mark);
@@ -4732,8 +4727,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     }
 
     private static final EmptyVisitor EMPTY_VISITOR = new EmptyVisitor();
-
-    private int functionBodyCount;
 
     @Override
 	protected ASTVisitor createVisitor() {

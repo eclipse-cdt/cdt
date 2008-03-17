@@ -2569,10 +2569,9 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		ArrayList flags = new ArrayList();
 		StringBuffer sb = new StringBuffer();
 		for (int index = 0; index < opts.length; index++) {
-			IOption option = getOptionToSet(opts[index], false);
+			IOption option = opts[index];
 			if (option == null)
 				continue;
-			option.setValue(opts[index].getValue());
 			sb.setLength( 0 );
 
 			// check to see if the option has an applicability calculator
@@ -2585,6 +2584,18 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 				config = ((IToolChain)parent).getParent();
 			}
 			if (applicabilityCalculator == null || applicabilityCalculator.isOptionUsedInCommandLine(config, this, option)) {
+
+				// update option in case when its value changed.
+				// This code is added to fix bug #219684 and
+				// avoid using "getOptionToSet()" 	
+				if (applicabilityCalculator != null &&
+					!(applicabilityCalculator instanceof BooleanExpressionApplicabilityCalculator)) {	
+					if (option.getSuperClass() != null)
+						option = getOptionBySuperClassId(option.getSuperClass().getId());
+					else
+						option = getOptionById(option.getId());
+				}
+
 				try{
 				switch (option.getValueType()) {
 				case IOption.BOOLEAN :

@@ -17,6 +17,8 @@ int main() {
 	cout << "$(TestWidget12)" << endl;
 	cout << "$(TestWidget13)" << endl;
 	cout << "$(TestWidget14)" << endl;
+	cout << "$(TestWidget15)" << endl;
+	cout << "$(TestWidget16)" << endl;
 	return 0;
 }
 

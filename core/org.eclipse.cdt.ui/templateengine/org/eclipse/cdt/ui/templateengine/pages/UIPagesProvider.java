@@ -93,9 +93,9 @@ public class UIPagesProvider {
 		}
 		else {
 			if ((hasChildUIElement(uiElement))) {
-				String title = uiElement.getAttributes().get(UIElement.TITLE);
+				String label = uiElement.getAttributes().get(UIElement.TITLE);
 				String description = (uiElement.getAttributes()).get(UIElement.DESCRIPTION);
-				UIWizardPage uiPage = new UIWizardPage(title, description, uiElement, valueStore);
+				UIWizardPage uiPage = new UIWizardPage(label, description, uiElement, valueStore);
 
 				pageMap.put((uiElement.getAttributes()).get(UIElement.ID), uiPage);
 				addToOrderVector((uiElement.getAttributes()).get(UIElement.ID));

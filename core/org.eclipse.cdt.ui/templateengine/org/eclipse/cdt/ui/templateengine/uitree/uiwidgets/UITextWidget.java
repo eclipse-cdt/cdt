@@ -45,10 +45,6 @@ import org.eclipse.cdt.ui.templateengine.uitree.UIElement;
  * but should set the same for UITextWidget(super).
  */
 public class UITextWidget extends InputUIElement implements ModifyListener {
-	/**
-	 * Attributes associated with this widget.
-	 */
-	protected UIAttributes uiAttribute;
 
 	/**
 	 * Text widget.
@@ -76,7 +72,6 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 	 */
 	public UITextWidget(UIAttributes uiAttribute) {
 		super(uiAttribute);
-		this.uiAttribute = uiAttribute;
 		this.textValue = new String();
 	}
 
@@ -85,7 +80,7 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 	 */
 	public Map<String, String> getValues() {
 		Map<String, String> retMap = new HashMap<String, String>();
-		retMap.put(uiAttribute.get(InputUIElement.ID), textValue);
+		retMap.put(uiAttributes.get(InputUIElement.ID), textValue);
 
 		return retMap;
 	}
@@ -96,7 +91,7 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 	 * @param valueMap
 	 */
 	public void setValues(Map<String, String> valueMap) {
-		String val = valueMap.get(uiAttribute.get(InputUIElement.ID));
+		String val = valueMap.get(uiAttributes.get(InputUIElement.ID));
 		String key = null;
 		String subString = null;
 		if (val != null) {
@@ -126,22 +121,22 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 		this.uiComposite = uiComposite;
 		label = new Label(uiComposite, SWT.LEFT);
 
-		label.setText(uiAttribute.get(InputUIElement.WIDGETLABEL));
-		if ((uiAttribute.get(UIElement.TYPE)).equalsIgnoreCase(InputUIElement.MULTILINETYPE)) {
+		label.setText(uiAttributes.get(InputUIElement.WIDGETLABEL));
+		if ((uiAttributes.get(UIElement.TYPE)).equalsIgnoreCase(InputUIElement.MULTILINETYPE)) {
 			gd = new GridData();
 			gd.verticalAlignment = SWT.BEGINNING;
 			gd.verticalIndent = 5;
 			label.setLayoutData(gd);
 		}
 
-		if (uiAttribute.get(UIElement.DESCRIPTION) != null){
-			String tipText = uiAttribute.get(UIElement.DESCRIPTION);
+		if (uiAttributes.get(UIElement.DESCRIPTION) != null){
+			String tipText = uiAttributes.get(UIElement.DESCRIPTION);
 			tipText = tipText.replaceAll("\\\\r\\\\n", "\r\n"); //$NON-NLS-1$ //$NON-NLS-2$
 			label.setToolTipText(tipText);
 		}
-		text = getTextWidget(uiAttribute.get(UIElement.TYPE));
+		text = getTextWidget(uiAttributes.get(UIElement.TYPE));
 		text.addModifyListener(this);
-		text.setData(".uid", uiAttribute.get(UIElement.ID)); //$NON-NLS-1$
+		text.setData(".uid", uiAttributes.get(UIElement.ID)); //$NON-NLS-1$
 		text.setText(textValue);
 	}
 
@@ -179,7 +174,7 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 				uiComposite.firePatternEvent(new PatternEvent(this, message, false));
 
 		} else {
-			String checkproject = attribute.get(InputUIElement.CHECKPROJECT);
+			String checkproject = uiAttributes.get(InputUIElement.CHECKPROJECT);
 			if ((checkproject != null) && (checkproject.equalsIgnoreCase(TemplateEngineHelper.BOOLTRUE))
 					&& TemplateEngineHelper.checkDirectoryInWorkspace(userInputText)) {
 
@@ -197,7 +192,7 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 	 * evaluatePattern.
 	 */
 	public void modifyText(ModifyEvent e) {
-		String patternName = uiAttribute.get(InputUIElement.INPUTPATTERN);
+		String patternName = uiAttributes.get(InputUIElement.INPUTPATTERN);
 
 		if (patternName == null) {
 			patternValue = null;
@@ -220,7 +215,7 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 		if ((patternValue == null) || (textValue == null)) 
 			return;
 		
-		String mandatory = attribute.get(InputUIElement.MANDATORY);
+		String mandatory = uiAttributes.get(InputUIElement.MANDATORY);
 		if ((mandatory == null || !mandatory.equalsIgnoreCase("true")) && textValue.equals("")) { //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
@@ -260,7 +255,7 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 	 */
 	public boolean isValid() {
 		boolean retVal = true;
-		String mandatory = uiAttribute.get(InputUIElement.MANDATORY);
+		String mandatory = uiAttributes.get(InputUIElement.MANDATORY);
 
 		if (((mandatory != null) && (mandatory.equalsIgnoreCase(TemplateEngineHelper.BOOLTRUE)))
 				&& ((textValue == null) || (textValue.equals("")) || //$NON-NLS-1$
@@ -297,7 +292,7 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 
 			GridData multiTextData = new GridData(GridData.FILL_HORIZONTAL);
 			multiTextData.widthHint = 70;
-			String line = uiAttribute.get(InputUIElement.SIZE);
+			String line = uiAttributes.get(InputUIElement.SIZE);
 			int cnt = 1;
 			if (line != null) {
 				cnt = Integer.parseInt(line);

@@ -301,7 +301,7 @@ public class ProjectSelectionPage extends WizardPage implements IWizardDataPage 
 				return true;
 			}
 		} catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 			currentCProject= null;
 		}
 		
@@ -314,7 +314,7 @@ public class ProjectSelectionPage extends WizardPage implements IWizardDataPage 
 		try {
 			projects= CoreModel.create(workspaceRoot).getCProjects();
 		} catch (CModelException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 			projects= new ICProject[0];
 		}
 		

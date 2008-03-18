@@ -18,8 +18,8 @@ import java.util.Map;
 import org.eclipse.cdt.ui.templateengine.uitree.uiwidgets.UIComposite;
 
 /**
- * The GenericUIElementGroup extends UIElement, implements the default behaviour
- * expected from UIElementGroup. This gives behaviour expected for PAGES-ONLY
+ * The GenericUIElementGroup extends UIElement, implements the default behavior
+ * expected from UIElementGroup. This gives behavior expected for PAGES-ONLY
  * type. Any other type of UIElement groups can override the definitions given
  * to methods in this class.
  * 
@@ -47,12 +47,12 @@ public class GenericUIElementGroup extends UIElement {
 	private List<UIElement> childList;
 
 	/**
-	 * Call UIElement constructor by passing Attributes as param.
+	 * Call UIElement constructor by passing Attributes as parameter.
 	 * 
-	 * @param attribute
+	 * @param attributes
 	 */
-	public GenericUIElementGroup(UIGroupTypeEnum type, UIAttributes/*<String, String>*/ attribute) {
-		super(attribute);
+	public GenericUIElementGroup(UIGroupTypeEnum type, UIAttributes attributes) {
+		super(attributes);
 		this.type = type;
 		this.childList = new ArrayList<UIElement>();
 	}
@@ -98,11 +98,8 @@ public class GenericUIElementGroup extends UIElement {
 		}
 	}
 
-	/**
-	 * dispose the Widget, releasing any resources occupied by this widget. The
-	 * same is called on the child list.
-	 * 
-	 * @see UIElement
+	/*
+	 * @see org.eclipse.cdt.ui.templateengine.uitree.UIElement#disposeWidget()
 	 */
 	public void disposeWidget() {
 		int childCount = getChildCount();

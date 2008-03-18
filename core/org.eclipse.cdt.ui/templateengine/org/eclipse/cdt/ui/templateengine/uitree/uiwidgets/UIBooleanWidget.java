@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-import org.eclipse.cdt.core.templateengine.TemplateEngineHelper;
 import org.eclipse.cdt.ui.templateengine.uitree.InputUIElement;
 import org.eclipse.cdt.ui.templateengine.uitree.UIAttributes;
 import org.eclipse.cdt.ui.templateengine.uitree.UIElement;
@@ -31,14 +30,7 @@ import org.eclipse.cdt.ui.templateengine.uitree.UIElement;
 /**
  * This gives a Label and Boolean widget.
  */
-
 public class UIBooleanWidget extends InputUIElement {
-
-	/**
-	 * Attributes associated with this widget.
-	 */
-	protected UIAttributes/*<String, String>*/ uiAttribute;
-
 	/**
 	 * Boolean widget.
 	 */
@@ -59,64 +51,54 @@ public class UIBooleanWidget extends InputUIElement {
 	/**
 	 * Constructor.
 	 * 
-	 * @param uiAttribute
+	 * @param uiAttributes
 	 *            attribute associated with this widget.
 	 */
-	public UIBooleanWidget(UIAttributes/*<String, String>*/ uiAttribute) {
-		super(uiAttribute);
-		this.uiAttribute = uiAttribute;
-		this.booleanValue = false;
+	public UIBooleanWidget(UIAttributes uiAttributes, boolean defaultValue) {
+		super(uiAttributes);
+		this.booleanValue= defaultValue;
 	}
 
 	/**
 	 * @return HashMap which contains the values in the Boolean Widget.
 	 */
 	public Map<String, String> getValues() {
-
-		Map<String, String> retMap = new HashMap<String, String>();
-		retMap.put(uiAttribute.get(InputUIElement.ID), new Boolean(booleanValue).toString());
-
-		return retMap;
+		Map<String, String> values = new HashMap<String, String>();
+		values.put(uiAttributes.get(InputUIElement.ID), Boolean.toString(booleanValue));
+		return values;
 	}
 
-	/**
-	 * Set the Boolean widget with new value.
-	 * 
-	 * @param valueMap
+	/*
+	 * @see org.eclipse.cdt.ui.templateengine.uitree.UIElement#setValues(java.util.Map)
 	 */
-	@Override
 	public void setValues(Map<String, String> valueMap) {
-		booleanValue = new Boolean(valueMap.get(uiAttribute.get(InputUIElement.ID))).booleanValue();
+		booleanValue = new Boolean(valueMap.get(uiAttributes.get(InputUIElement.ID))).booleanValue();
 	}
 
-	/**
-	 * create a Label and Boolean widget, add it to UIComposite. set Layout for
-	 * the widgets to be added to UIComposite. set required parameters to the
-	 * Widgets.
-	 * 
-	 * @param uiComposite
+	/*
+	 * @see org.eclipse.cdt.ui.templateengine.uitree.UIElement#createWidgets(org.eclipse.cdt.ui.templateengine.uitree.uiwidgets.UIComposite)
 	 */
 	public void createWidgets(UIComposite uiComposite) {
 		GridData gridData = null;
 		this.uiComposite = uiComposite;
 
 		label = new Label(uiComposite, SWT.LEFT);
-		label.setText(uiAttribute.get(InputUIElement.WIDGETLABEL));
+		label.setText(uiAttributes.get(InputUIElement.WIDGETLABEL));
 
-		if (uiAttribute.get(InputUIElement.DESCRIPTION) != null){
-			String tipText = uiAttribute.get(UIElement.DESCRIPTION);
+		if (uiAttributes.get(InputUIElement.DESCRIPTION) != null){
+			String tipText = uiAttributes.get(UIElement.DESCRIPTION);
 			tipText = tipText.replaceAll("\\\\r\\\\n", "\r\n"); //$NON-NLS-1$ //$NON-NLS-2$
 			label.setToolTipText(tipText);
 		}
 		gridData = new GridData();
 		gridData.horizontalAlignment = GridData.FILL;
 		gridData.grabExcessHorizontalSpace = true;
-		Composite booleanConatiner = new Composite(uiComposite, SWT.NONE);
+		Composite booleanContainer = new Composite(uiComposite, SWT.NONE);
 		GridData gridcData = new GridData(GridData.FILL_HORIZONTAL);
-		booleanConatiner.setLayout(new GridLayout());
-		booleanConatiner.setLayoutData(gridcData);
-		button = new Button(booleanConatiner, SWT.CHECK);
-		button.setData(".uid", uiAttribute.get(UIElement.ID)); //$NON-NLS-1$
+		booleanContainer.setLayout(new GridLayout());
+		booleanContainer.setLayoutData(gridcData);
+		button = new Button(booleanContainer, SWT.CHECK);
+		button.setData(".uid", uiAttributes.get(UIElement.ID)); //$NON-NLS-1$
 		button.setSelection(new Boolean(booleanValue).booleanValue());
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -125,31 +107,23 @@ public class UIBooleanWidget extends InputUIElement {
 		});
 	}
 
-	/**
-	 * Based on the stae of this Widget return true or false. This return value
-	 * will be used by the UIPage to update its(UIPage) state. Return value
-	 * depends on the value contained in Boolean Widget. If boolean value
-	 * contained is false and Mandatory value from attributes.
-	 * 
-	 * @return boolean.
+	/*
+	 * @see org.eclipse.cdt.ui.templateengine.uitree.UIElement#isValid()
 	 */
 	public boolean isValid() {
-		boolean retVal = true;
-		String mandatory = uiAttribute.get(InputUIElement.MANDATORY);
-
-		if (!booleanValue && mandatory.equalsIgnoreCase(TemplateEngineHelper.BOOLTRUE)) {
-			retVal = false;
+		boolean retVal= true;
+		String mandatory= uiAttributes.get(InputUIElement.MANDATORY);
+		if (!booleanValue && Boolean.parseBoolean(mandatory)) {
+			retVal= false;
 		}
 		return retVal;
 	}
 
-	/**
-	 * call the dispose method on the widgets. This is to ensure that the
-	 * widgets are properly disposed.
+	/*
+	 * @see org.eclipse.cdt.ui.templateengine.uitree.UIElement#disposeWidget()
 	 */
 	public void disposeWidget() {
 		label.dispose();
 		button.dispose();
 	}
-
 }

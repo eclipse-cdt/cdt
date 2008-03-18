@@ -17,12 +17,16 @@ import org.eclipse.cdt.ui.templateengine.uitree.uiwidgets.UIComposite;
 
 
 /**
- * UIElement describes the abstract behaviour expected from GenericUIElementGroup and 
+ * UIElement describes the abstract behavior expected from GenericUIElementGroup and 
  * InputUIElement. Some of the methods are meaningful to group Element. They will throw
  * SimpleElementException when invoked on InputUIElement.
  */
-
 public abstract class UIElement {
+	public static final String ID = "id"; //$NON-NLS-1$
+	public static final String TYPE = "type"; //$NON-NLS-1$
+	public static final String DESCRIPTION = "description"; //$NON-NLS-1$
+	public static final String TITLE = "label"; //$NON-NLS-1$
+	public static final String IMAGELOCATION = "image"; //$NON-NLS-1$
 
 	/**
 	 * Parent of this UIElement
@@ -32,16 +36,10 @@ public abstract class UIElement {
 	/**
 	 * Attributes of this UIElement
 	 */
-	protected UIAttributes/*<String, String>*/ attribute;
-	public static final String ID = "id"; //$NON-NLS-1$
-	public static final String TYPE = "type"; //$NON-NLS-1$
-	public static final String DESCRIPTION = "description"; //$NON-NLS-1$
-	public static final String TITLE = "label"; //$NON-NLS-1$
-	public static final String IMAGELOCATION = "image"; //$NON-NLS-1$
-
+	protected UIAttributes uiAttributes;
 	
-	public UIElement(UIAttributes/*<String, String> */uiAttribute) {
-		attribute = uiAttribute;
+	public UIElement(UIAttributes uiAttributes) {
+		this.uiAttributes = uiAttributes;
 	}
 
 	/**
@@ -62,7 +60,7 @@ public abstract class UIElement {
 	 * get the attributes of this UIElement
 	 */
 	public UIAttributes getAttributes() {
-		return attribute;
+		return uiAttributes;
 	}
 
 	/**

@@ -20,28 +20,40 @@ import org.eclipse.cdt.ui.templateengine.SimpleElementException;
  * 
  */
 public abstract class InputUIElement extends UIElement {
-
-	public static final String INPUTTYPE = new String("input"); //$NON-NLS-1$
-	public static final String MULTILINETYPE = new String("multiline"); //$NON-NLS-1$
-	public static final String SELECTTYPE = new String("select"); //$NON-NLS-1$
-	public static final String BOOLEANTYPE = new String("boolean"); //$NON-NLS-1$
-	public static final String BROWSETYPE = new String("browse"); //$NON-NLS-1$
-	public static final String STRINGLISTTYPE = new String("stringlist"); //$NON-NLS-1$
-	public static final String SPECIALLISTTYPE = new String("speciallist"); //$NON-NLS-1$
-	public static final String MANDATORY = new String("mandatory"); //$NON-NLS-1$
-	public static final String INPUTPATTERN = new String("pattern"); //$NON-NLS-1$
-	public static final String DEFAULT = new String("default"); //$NON-NLS-1$
-	public static final String WIDGETLABEL = new String("label"); //$NON-NLS-1$
-	public static final String BROWSELABEL = new String("    Browse..   "); //$NON-NLS-1$
-	public static final String CONTENTS = new String(" contents"); //$NON-NLS-1$
-	public static final String ISINVALID = new String(" is Invalid. "); //$NON-NLS-1$
-	public static final String CHECKPROJECT = new String("checkproject"); //$NON-NLS-1$
-	public static final String NULL = new String("null"); //$NON-NLS-1$
-	public static final String SIZE = new String("size"); //$NON-NLS-1$
-	public static final String HIDDEN = new String("hidden"); //$NON-NLS-1$
-	public static final String NAME = new String("name"); //$NON-NLS-1$
-	public static final String SELECTED = new String("selected"); //$NON-NLS-1$
-
+	public static final String INPUTTYPE= "input"; //$NON-NLS-1$
+	public static final String MULTILINETYPE= "multiline"; //$NON-NLS-1$
+	public static final String SELECTTYPE= "select"; //$NON-NLS-1$
+	public static final String BOOLEANTYPE= "boolean"; //$NON-NLS-1$
+	public static final String BROWSETYPE= "browse"; //$NON-NLS-1$
+	public static final String STRINGLISTTYPE= "stringlist"; //$NON-NLS-1$
+	public static final String SPECIALLISTTYPE= "speciallist"; //$NON-NLS-1$
+	public static final String MANDATORY= "mandatory"; //$NON-NLS-1$
+	public static final String INPUTPATTERN="pattern"; //$NON-NLS-1$
+	public static final String DEFAULT= "default"; //$NON-NLS-1$
+	public static final String WIDGETLABEL= "label"; //$NON-NLS-1$
+	public static final String BROWSELABEL= "    Browse..   "; //$NON-NLS-1$
+	public static final String CONTENTS= " contents"; //$NON-NLS-1$
+	public static final String ISINVALID= " is Invalid. "; //$NON-NLS-1$
+	public static final String CHECKPROJECT= "checkproject"; //$NON-NLS-1$
+	public static final String NULL= "null"; //$NON-NLS-1$
+	public static final String SIZE= "size"; //$NON-NLS-1$
+	public static final String HIDDEN= "hidden"; //$NON-NLS-1$
+	
+	/**
+	 * The string appearing in the Combo box
+	 */
+	public static final String COMBOITEM_LABEL= "label"; //$NON-NLS-1$
+	
+	/**
+	 * Alternative attribute name for the value stored when the corresponding Combo item is selected.
+	 * See <a href="https://bugs.eclipse.org/222954">Bugzilla 222954</a>.
+	 */
+	public static final String COMBOITEM_NAME= "name"; //$NON-NLS-1$
+	
+	/**
+	 * Preferred attribute name for the value stored when the corresponding Combo item is selected.
+	 */
+	public static final String COMBOITEM_VALUE= "value"; //$NON-NLS-1$
 
 	protected InputUIElement(UIAttributes uiAttribute) {
 		super(uiAttribute);

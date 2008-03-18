@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.templateengine.uitree;
 
-import java.util.HashMap;
+import java.text.MessageFormat;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -19,8 +21,9 @@ import org.w3c.dom.Node;
 
 import org.eclipse.cdt.core.templateengine.TemplateDescriptor;
 import org.eclipse.cdt.core.templateengine.TemplateEngine;
-import org.eclipse.cdt.core.templateengine.TemplateEngineHelper;
 import org.eclipse.cdt.core.templateengine.TemplateInfo;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.templateengine.Messages;
 import org.eclipse.cdt.ui.templateengine.uitree.uiwidgets.UIBooleanWidget;
 import org.eclipse.cdt.ui.templateengine.uitree.uiwidgets.UIBrowseWidget;
 import org.eclipse.cdt.ui.templateengine.uitree.uiwidgets.UISelectWidget;
@@ -33,14 +36,11 @@ import org.eclipse.cdt.ui.templateengine.uitree.uiwidgets.UITextWidget;
  * UIElement. The UIElement can be a simple UI Widget or a group.
  */
 public class UIElementTreeBuilderHelper implements IUIElementTreeBuilderHelper {
-
 	/**
 	 * TemplateDescriptor representing the TemplaeDescriptor XML.
 	 */
 	private TemplateDescriptor templateDescriptor = null;
 	private TemplateInfo templateInfo;
-
-	private Element element;
 
 	/**
 	 * Constructor, takes an TemplateDescriptor instance as parameter.
@@ -70,20 +70,15 @@ public class UIElementTreeBuilderHelper implements IUIElementTreeBuilderHelper {
 	 * @return UIElement.
 	 */
 	public UIElement getUIElement(Element element) {
-
-		this.element = element;
-		UIElement retUIElement = null;
-		UIAttributes/*<String, String>*/ uiAttributes = new UIAttributes/*<String, String>*/(templateInfo);
+		UIAttributes uiAttributes = new UIAttributes(templateInfo);
 
 		NamedNodeMap list = element.getAttributes();
-		for (int i = 0, s = list.getLength(); i < s; i++) {
+		for (int i=0; i<list.getLength(); i++) {
 			Node attribute = list.item(i);
 			uiAttributes.put(attribute.getNodeName(), attribute.getNodeValue());
 		}
-
-		retUIElement = getUIWidget(uiAttributes);
-
-		return retUIElement;
+		
+		return getUIWidget(element, uiAttributes);
 	}
 
 	/**
@@ -94,89 +89,63 @@ public class UIElementTreeBuilderHelper implements IUIElementTreeBuilderHelper {
 	 * @param uiAttributes
 	 * @return UIElement.
 	 */
-	private UIElement getUIWidget(UIAttributes/*<String, String>*/ uiAttributes) {
-
+	private UIElement getUIWidget(Element element, UIAttributes uiAttributes) {
+		UIElement widgetElement= null;
+		String id= uiAttributes.get(InputUIElement.ID);
 		String type= uiAttributes.get(InputUIElement.TYPE);
-
-		UIElement widgetElement = null;
-		String itemName = null;
-		String itemValue = null;
-		String itemSelected = null;
-		String nameStr = null;
-		String valueStr = null;
-		String selected = null;
-
-		if (new Boolean(uiAttributes.get(InputUIElement.HIDDEN)).booleanValue())
+		
+		if (type == null || type.length()==0 ) {
 			return null;
-		if (type.equalsIgnoreCase("") || type == null) //$NON-NLS-1$
-			return null;
-
-		// UIWidgets
-		if (type.equalsIgnoreCase(InputUIElement.INPUTTYPE)) {
-			widgetElement = new UITextWidget(uiAttributes);
-		}
-
-		if (type.equalsIgnoreCase(InputUIElement.MULTILINETYPE)) {
-			widgetElement = new UITextWidget(uiAttributes);
-		}
-
-		if (type.equalsIgnoreCase(InputUIElement.SELECTTYPE)) {
-
-			HashMap<String, String> itemMap = new HashMap<String, String>();
-			List<Element> itemList = TemplateEngine.getChildrenOfElement(element);
-
-			for (int i = 0, l = itemList.size(); i < l; i++) {
-				Element itemElement = itemList.get(i);
-				NamedNodeMap itemAttrList = itemElement.getAttributes();
-
-				for (int j = 0, l1 = itemAttrList.getLength(); j < l1; j++) {
-					Node itemAttr = itemAttrList.item(j);
-					itemName = itemAttr.getNodeName();
-					itemValue = itemAttr.getNodeValue();
-
-					if (itemName.equals(InputUIElement.TITLE)) {
-
-						selected = itemValue;
-						nameStr = new String(itemValue);
-					} else if (itemName.equals(InputUIElement.NAME))
-						valueStr = new String(itemValue);
-
-					if (itemName.equals(InputUIElement.SELECTED))
-						if (itemValue.equals(TemplateEngineHelper.BOOLTRUE))
-							itemSelected = selected;
-
-					itemMap.put(nameStr, valueStr);
-				}
-			}
-
-			widgetElement = new UISelectWidget(uiAttributes, itemMap, itemSelected);
-		}
-
-		if (type.equalsIgnoreCase(InputUIElement.BOOLEANTYPE)) {
-			widgetElement = new UIBooleanWidget(uiAttributes);
-		}
-
-		if (type.equalsIgnoreCase(InputUIElement.BROWSETYPE)) {
-			widgetElement = new UIBrowseWidget(uiAttributes);
-		}
-
-		if (type.equalsIgnoreCase(InputUIElement.STRINGLISTTYPE)) {
-			widgetElement = new UIStringListWidget(uiAttributes);
 		}
 		
-		if (type.equalsIgnoreCase(InputUIElement.SPECIALLISTTYPE)) {
+		if (new Boolean(uiAttributes.get(InputUIElement.HIDDEN)).booleanValue()) {
+			return null;	
+		}
+		
+		if (type.equalsIgnoreCase(InputUIElement.INPUTTYPE)) {
+			widgetElement = new UITextWidget(uiAttributes);
+		} else if (type.equalsIgnoreCase(InputUIElement.MULTILINETYPE)) {
+			widgetElement = new UITextWidget(uiAttributes);
+		} else if (type.equalsIgnoreCase(InputUIElement.SELECTTYPE)) {
+			String defaultValue= element.getAttribute(InputUIElement.DEFAULT);
+			
+			Map<String,String> value2name= new LinkedHashMap<String,String>();
+			for(Element item : TemplateEngine.getChildrenOfElement(element)) {
+				String label= item.getAttribute(InputUIElement.COMBOITEM_LABEL); // item displayed in Combo
+				String value= item.getAttribute(InputUIElement.COMBOITEM_NAME); // value stored when its selected
+				if(value.length() == 0) {
+					value= item.getAttribute(InputUIElement.COMBOITEM_VALUE);
+				}
+				if(label==null || value==null) {
+					String msg= Messages.getString("UIElementTreeBuilderHelper.InvalidEmptyLabel"); //$NON-NLS-1$
+					CUIPlugin.log(MessageFormat.format(msg, id), null);
+				} else {
+					if(value2name.put(value, label)!=null) {
+						String msg= Messages.getString("UIElementTreeBuilderHelper.InvalidNonUniqueValue"); //$NON-NLS-1$
+						CUIPlugin.log(MessageFormat.format(msg, id), null);
+					}
+				}
+			}
+			
+			widgetElement = new UISelectWidget(uiAttributes, value2name, defaultValue);
+		} else if (type.equalsIgnoreCase(InputUIElement.BOOLEANTYPE)) {
+			String defaultValue= element.getAttribute(InputUIElement.DEFAULT);
+			boolean b= Boolean.parseBoolean(defaultValue);
+			widgetElement = new UIBooleanWidget(uiAttributes, b);
+		} else if (type.equalsIgnoreCase(InputUIElement.BROWSETYPE)) {
+			widgetElement = new UIBrowseWidget(uiAttributes);
+		} else if (type.equalsIgnoreCase(InputUIElement.STRINGLISTTYPE)) {
+			widgetElement = new UIStringListWidget(uiAttributes);
+		} else if (type.equalsIgnoreCase(InputUIElement.SPECIALLISTTYPE)) {
 			widgetElement = new UISpecialListWidget(uiAttributes);
-		}
-
-		// PAGES(Groups).
-
-		if (type.equalsIgnoreCase(UIGroupTypeEnum.PAGES_ONLY.getId())) {
+		} else if (type.equalsIgnoreCase(UIGroupTypeEnum.PAGES_ONLY.getId())) {
 			widgetElement = new SimpleUIElementGroup(uiAttributes);
-		}
-
-		if (type.equalsIgnoreCase(UIGroupTypeEnum.PAGES_TAB.getId())) {
+		} else if (type.equalsIgnoreCase(UIGroupTypeEnum.PAGES_TAB.getId())) {
 			// Note: This is not implemented now as we haven't found a use case
 			// for generating UI pages as TABS in a single page. 
+		} else {
+			String msg= MessageFormat.format(Messages.getString("UIElementTreeBuilderHelper.UnknownWidgetType0"), type); //$NON-NLS-1$
+			CUIPlugin.log(msg, null);
 		}
 
 		return widgetElement;

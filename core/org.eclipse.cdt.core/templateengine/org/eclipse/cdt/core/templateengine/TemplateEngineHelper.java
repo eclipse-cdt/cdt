@@ -242,8 +242,8 @@ public class TemplateEngineHelper {
 	}
 
 	public static String externalizeTemplateString(String pluginId, String location, String key) {
-		String value = key;
-		if (key.startsWith(STRING_EXTERNALIZATION_MARKER)) {
+		String value= null;
+		if (key != null && key.startsWith(STRING_EXTERNALIZATION_MARKER)) {
 			try {
 				value = location != null ? getValueFromProperties(pluginId, location, key.substring(1)) : null;
 				if (value == null) {
@@ -253,18 +253,13 @@ public class TemplateEngineHelper {
 				value = key;
 				e.printStackTrace();
 			}
-
-			if (value == null) {
-				value = key;
-			}
 		}
-		return value;
+		return value == null ? key : value;
 	}
 	
 	private static String getValueFromProperties(String pluginId, String propertiesFile, String key) throws IOException {
 		String value = null;
 		Bundle b = Platform.getBundle(pluginId);
-//		URL url= b.getResource(propertiesFile);
 		URL url= getResourceURL(b, propertiesFile);
 		if (url != null) {
 			InputStream in= url.openStream();

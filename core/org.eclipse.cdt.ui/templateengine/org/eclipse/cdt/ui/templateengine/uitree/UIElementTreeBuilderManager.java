@@ -47,7 +47,7 @@ import org.eclipse.cdt.ui.templateengine.SimpleElementException;
 
 public class UIElementTreeBuilderManager implements IUIElementTreeBuilderManager {
 	/**
-	 * referenc to iUIElementTreeBuilderHelper, which returns UIElement for Element.
+	 * reference to iUIElementTreeBuilderHelper, which returns UIElement for Element.
 	 */
 	private UIElementTreeBuilderHelper uiElementTreeBuilderHelper;
 
@@ -75,9 +75,9 @@ public class UIElementTreeBuilderManager implements IUIElementTreeBuilderManager
 		}
 
 		if ((uiParent != null) && (uiParent instanceof GenericUIElementGroup)) {
-			List/*<Element>*/ childList = TemplateEngine.getChildrenOfElement(element);
+			List<Element> childList = TemplateEngine.getChildrenOfElement(element);
 			for (int listIndex = 0, l = childList.size(); listIndex < l; listIndex++) {
-				UIElement uiElement = uiElementTreeBuilderHelper.getUIElement((Element) childList.get(listIndex));
+				UIElement uiElement = uiElementTreeBuilderHelper.getUIElement(childList.get(listIndex));
 				if (uiElement != null) {
 					uiElement.setParent(uiParent);
 				} else {
@@ -88,7 +88,7 @@ public class UIElementTreeBuilderManager implements IUIElementTreeBuilderManager
 				} catch (SimpleElementException exp) {
 					TemplateEngineUtil.log(exp);
 				}
-				createUIElementTree(uiElement, (Element) childList.get(listIndex));
+				createUIElementTree(uiElement, childList.get(listIndex));
 			}
 		}
 	}

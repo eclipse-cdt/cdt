@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
@@ -34,10 +35,11 @@ public class CPPTypedef extends PlatformObject implements ITypedef, ITypeContain
 	private IASTName[] declarations = null;
 	private IType type = null;
 
-	/**
-	 * @param declarator
-	 */
 	public CPPTypedef(IASTName name) {
+		// bug 223020 even though qualified names are not legal, we need to deal with them.
+		if (name != null && name.getParent() instanceof ICPPASTQualifiedName) {
+			name= (IASTName) name.getParent();
+		}
 		this.declarations = new IASTName[] { name };
         if (name != null)
             name.setBinding(this);
@@ -95,14 +97,23 @@ public class CPPTypedef extends PlatformObject implements ITypedef, ITypeContain
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
 	 */
 	public String getName() {
-		return declarations[0].toString();
+		return getSimpleName().toString();
+	}
+
+	private IASTName getSimpleName() {
+		IASTName name= declarations[0];
+		if (name instanceof ICPPASTQualifiedName) {
+			IASTName[] na= ((ICPPASTQualifiedName) name).getNames();
+			name= na[na.length-1];
+		}
+		return name;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
 	 */
 	public char[] getNameCharArray() {
-		return declarations[0].toCharArray();
+		return getSimpleName().toCharArray();
 	}
 
 	/* (non-Javadoc)
@@ -160,9 +171,18 @@ public class CPPTypedef extends PlatformObject implements ITypedef, ITypeContain
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDeclaration(org.eclipse.cdt.core.dom.ast.IASTNode)
 	 */
 	public void addDeclaration(IASTNode node) {
-	    if (!(node instanceof IASTName))
+	    IASTName name;
+		if (node instanceof IASTName) {
+	    	if (node.getParent() instanceof ICPPASTQualifiedName) {
+	    		name= (IASTName) node.getParent();
+	    	}
+	    	else {
+	    		name= (IASTName) node;
+	    	}
+	    }
+	    else {
 			return;
-		IASTName name = (IASTName) node;
+	    }
 
 		if (declarations == null) {
 	        declarations = new IASTName[] { name };

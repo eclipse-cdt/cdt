@@ -51,6 +51,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 
 /**
  * Task for the actual indexing. Various indexers need to implement the abstract methods.
@@ -697,14 +698,18 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	}
 
 	private void swallowError(IPath file, Throwable e) throws CoreException {
+		IStatus s;
 		if (e instanceof CoreException) {
-			CCorePlugin.log(((CoreException) e).getStatus());
+			s= ((CoreException) e).getStatus();
+			if (s.getException() == null) {
+				s= new Status(s.getSeverity(), s.getPlugin(), s.getCode(), s.getMessage(), e);
+			}
 		}
 		else {
-			IStatus status= CCorePlugin.createStatus(
+			s= CCorePlugin.createStatus(
 					MessageFormat.format(Messages.AbstractIndexerTask_errorWhileParsing, new Object[]{file}), e);
-			CCorePlugin.log(status);
 		}
+		CCorePlugin.log(s);
 		if (++fStatistics.fErrorCount > MAX_ERRORS) {
 			throw new CoreException(CCorePlugin.createStatus(Messages.AbstractIndexerTask_tooManyIndexProblems));
 		}

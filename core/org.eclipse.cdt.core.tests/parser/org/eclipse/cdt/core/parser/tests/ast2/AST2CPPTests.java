@@ -82,6 +82,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
@@ -5825,5 +5826,16 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertEquals("member2", m1.getName());
 		assertEquals("Test", m1.getScope().getScopeName().toString());
 		assertSame(b, b2);
+	}
+	
+	// namespace ns { typedef int ns::TINT; } // illegal, still no CCE is expected.
+	public void testQualifiedTypedefs_Bug222093() throws Exception{
+		final String code = getContents(1)[0].toString();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		IBinding td= bh.assertNonProblem("TINT", 4);
+		bh.assertProblem("ns::", 2);
+		
+		assertTrue(td instanceof ITypedef);
+		assertTrue(((ITypedef) td).getType() instanceof ICPPBasicType);
 	}
 }

@@ -1,15 +1,17 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *     IBM - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig.util;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -32,7 +34,9 @@ import org.eclipse.core.runtime.Platform;
  * @author vhirsl
  */
 public class CygpathTranslator {
-//    private static final String CYGPATH_ERROR_MESSAGE = "CygpathTranslator.NotAvailableErrorMessage"; //$NON-NLS-1$
+	/** Default Cygwin root dir */
+	private static final String DEFAULT_CYGWIN_ROOT= "C:\\cygwin"; //$NON-NLS-1$
+	//    private static final String CYGPATH_ERROR_MESSAGE = "CygpathTranslator.NotAvailableErrorMessage"; //$NON-NLS-1$
     private CygPath cygPath = null;
     private boolean isAvailable = false;
     
@@ -56,8 +60,12 @@ public class CygpathTranslator {
             // No CygPath specified in BinaryParser page or not supported. 
             // Hoping that cygpath is on the path. 
             if (cygPath == null && Platform.getOS().equals(Platform.OS_WIN32)) {
-                cygPath = new CygPath("cygpath"); //$NON-NLS-1$
-                isAvailable = true;
+            	if (new File(DEFAULT_CYGWIN_ROOT).exists()) {
+                    cygPath = new CygPath(DEFAULT_CYGWIN_ROOT + "\\bin\\cygpath.exe"); //$NON-NLS-1$
+            	} else {
+            		cygPath = new CygPath("cygpath"); //$NON-NLS-1$
+            	}
+                isAvailable = cygPath.getFileName("test").equals("test"); //$NON-NLS-1$ //$NON-NLS-2$
             }
         }
         catch (CoreException e) {
@@ -93,13 +101,14 @@ public class CygpathTranslator {
     	}
     	
         CygpathTranslator cygpath = new CygpathTranslator(project);
-        if (cygpath.cygPath == null) return sumIncludes;
         
         List translatedIncludePaths = new ArrayList();
         for (Iterator i = sumIncludes.iterator(); i.hasNext(); ) {
             String includePath = (String) i.next();
             IPath realPath = new Path(includePath);
-            if (realPath.toFile().exists()) {
+            // only allow native pathes if they have a device prefix
+            // to avoid matches on the current drive, e.g. /usr/bin = C:\\usr\\bin
+            if (realPath.getDevice() != null && realPath.toFile().exists()) {
                 translatedIncludePaths.add(includePath);
             }
             else {
@@ -111,6 +120,18 @@ public class CygpathTranslator {
                     catch (IOException e) {
                         TraceUtil.outputError("CygpathTranslator unable to translate path: ", includePath); //$NON-NLS-1$
                     }
+                } else if (realPath.segmentCount() >= 2) {
+                	// try default conversions
+                	//     /cygdrive/x/ --> X:\
+                	//     /usr/        --> C:\Cygwin\\usr\\
+                	if ("cygdrive".equals(realPath.segment(0))) { //$NON-NLS-1$
+                		String drive= realPath.segment(1);
+                		if (drive.length() == 1) {
+                			translatedPath= realPath.removeFirstSegments(2).setDevice(drive.toUpperCase() + ':').toOSString();
+                		}
+                	} else {
+                		translatedPath= DEFAULT_CYGWIN_ROOT + realPath.toOSString();
+                	}
                 }
                 if (!translatedPath.equals(includePath)) {
                     // Check if the translated path exists

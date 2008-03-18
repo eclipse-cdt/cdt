@@ -26,7 +26,7 @@ package org.eclipse.dstore.core.model;
 public class DataStoreAttributes
 {
 
-	public static final String DATASTORE_VERSION = "DataStore.9.0.0"; //$NON-NLS-1$
+	public static final String DATASTORE_VERSION = "DataStore.8.0.0"; //$NON-NLS-1$
 
 	public static final int A_PLUGIN_PATH = 0;
 	public static final int A_ROOT_NAME = 1;

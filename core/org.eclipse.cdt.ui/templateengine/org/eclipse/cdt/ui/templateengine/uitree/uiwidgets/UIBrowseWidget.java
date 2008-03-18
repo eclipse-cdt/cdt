@@ -18,6 +18,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -39,14 +40,20 @@ public class UIBrowseWidget extends UITextWidget implements ModifyListener {
 	protected  Button button;
 
 	/**
+	 * If set to true, open a DirectoryDialog otherwise FileDialog
+	 */
+	protected boolean isDirectoryBrowser;
+	
+	/**
 	 * Constructor.
 	 * 
 	 * @param uiAttribute
 	 *            attribute associated with this widget.
 	 */
-	public UIBrowseWidget(UIAttributes uiAttribute) {
+	public UIBrowseWidget(UIAttributes uiAttribute, boolean isDirectoryBrowser) {
 		super(uiAttribute);
 		this.textValue = uiAttribute.get(InputUIElement.DEFAULT);
+		this.isDirectoryBrowser= isDirectoryBrowser;
 	}
 
 	/**
@@ -86,15 +93,24 @@ public class UIBrowseWidget extends UITextWidget implements ModifyListener {
 
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
-				String fileName = new FileDialog(uiComposite.getShell()).open();
-				if (fileName != null) {
-					textValue = fileName.toString();
-					text.setText(textValue);
-				}
+				onBrowsePushed();
 			}
 		});
 	}
 
+	protected void onBrowsePushed() {
+		String fileName;
+		if(isDirectoryBrowser) {
+			fileName= new DirectoryDialog(uiComposite.getShell()).open();
+		} else {
+			fileName= new FileDialog(uiComposite.getShell()).open();
+		}
+		if (fileName != null) {
+			textValue = fileName.toString();
+			text.setText(textValue);
+		}
+	}
+	
 	/**
 	 * call the dispose method on the widgets. This is to ensure that the
 	 * widgets are properly disposed.

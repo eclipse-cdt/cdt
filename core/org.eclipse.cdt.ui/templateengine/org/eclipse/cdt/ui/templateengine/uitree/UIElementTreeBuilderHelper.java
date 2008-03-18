@@ -133,7 +133,9 @@ public class UIElementTreeBuilderHelper implements IUIElementTreeBuilderHelper {
 			boolean b= Boolean.parseBoolean(defaultValue);
 			widgetElement = new UIBooleanWidget(uiAttributes, b);
 		} else if (type.equalsIgnoreCase(InputUIElement.BROWSETYPE)) {
-			widgetElement = new UIBrowseWidget(uiAttributes);
+			widgetElement = new UIBrowseWidget(uiAttributes, false);
+		} else if (type.equalsIgnoreCase(InputUIElement.BROWSEDIRTYPE)) {
+			widgetElement = new UIBrowseWidget(uiAttributes, true);
 		} else if (type.equalsIgnoreCase(InputUIElement.STRINGLISTTYPE)) {
 			widgetElement = new UIStringListWidget(uiAttributes);
 		} else if (type.equalsIgnoreCase(InputUIElement.SPECIALLISTTYPE)) {

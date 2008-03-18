@@ -25,6 +25,7 @@ public abstract class InputUIElement extends UIElement {
 	public static final String SELECTTYPE= "select"; //$NON-NLS-1$
 	public static final String BOOLEANTYPE= "boolean"; //$NON-NLS-1$
 	public static final String BROWSETYPE= "browse"; //$NON-NLS-1$
+	public static final String BROWSEDIRTYPE= "browsedir"; //$NON-NLS-1$
 	public static final String STRINGLISTTYPE= "stringlist"; //$NON-NLS-1$
 	public static final String SPECIALLISTTYPE= "speciallist"; //$NON-NLS-1$
 	public static final String MANDATORY= "mandatory"; //$NON-NLS-1$

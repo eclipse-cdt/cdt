@@ -36,6 +36,11 @@
 		<property id="TestWidget13" label="BrowseWidget1" description="BrowseWidget1Description" type="browse" default="Browse1Default" mandatory="true" pattern=".+"/>
 		<property id="TestWidget14" label="BrowseWidget2" description="BrowseWidget2Description" type="browse" default="Browse2Default" mandatory="false"/>
 	</property-group>
+	
+	<property-group id="basics3" label="basicsLabel3" description="basicsDescription3" type="PAGES-ONLY" help="help.html">
+		<property id="TestWidget15" label="BrowseDirWidget1" description="BrowseDirWidget1Description" type="browsedir" default="BrowseDir1Default" mandatory="true" pattern=".+"/>
+		<property id="TestWidget16" label="BrowseDirWidget2" description="BrowseDirWidget2Description" type="browsedir" default="BrowseDir2Default" mandatory="false"/>
+	</property-group>
 
 	<process type="org.eclipse.cdt.managedbuilder.core.NewManagedProject">
 		<simple name="name" value="$(projectName)" /> 

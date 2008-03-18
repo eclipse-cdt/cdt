@@ -19,6 +19,7 @@
  * Xuan Chen        (IBM)        - [160775] [api] rename (at least within a zip) blocks UI thread
  * David Dykstal (IBM) - [217556] remove service subsystem types
  * Martin Oberhuber (Wind River) - [195399] Improve String display for default port 0
+ * David McKnight   (IBM)        - [223103] [cleanup] fix broken externalized strings
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -239,6 +240,7 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 	      // port
 	      propertyPortDescriptor = new TextPropertyDescriptor(ISystemPropertyConstants.P_PORT, 	      
 	                                                            SystemViewResources.RESID_PROPERTY_PORT_LABEL);
+	      propertyPortDescriptor.setDescription(SystemViewResources.RESID_PROPERTY_PORT_TOOLTIP);
 	      propertyPortDescriptor.setValidator(new ValidatorPortInput());
           propertyDescriptorArray[++idx] = propertyPortDescriptor;	                                                                      
 	      //propertyDescriptorArray[++idx] = getPortDescriptor();

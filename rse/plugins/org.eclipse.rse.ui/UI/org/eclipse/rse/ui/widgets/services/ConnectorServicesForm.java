@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [223103] [cleanup] fix broken externalized strings
  *******************************************************************************/
 
 package org.eclipse.rse.ui.widgets.services;
@@ -87,6 +87,7 @@ public class ConnectorServicesForm extends SystemBaseForm
 
 		Label propertiesLabel = new Label(servicePropertiesComposite, SWT.NONE);
 	    propertiesLabel.setText(SystemResources.RESID_PROPERTIES_PROPERTIES_LABEL);	
+	    propertiesLabel.setToolTipText(SystemResources.RESID_PROPERTIES_PROPERTIES_TOOLTIP);
 		createPropertiesViewer(servicePropertiesComposite);
 	    
 		// description composite

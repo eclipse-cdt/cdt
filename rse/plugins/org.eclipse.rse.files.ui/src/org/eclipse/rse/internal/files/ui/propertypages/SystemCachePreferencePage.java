@@ -46,7 +46,6 @@ import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.internal.files.ui.ISystemFileConstants;
 import org.eclipse.rse.internal.files.ui.resources.SystemRemoteEditManager;
 import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
-import org.eclipse.rse.internal.ui.GenericMessages;
 import org.eclipse.rse.internal.ui.view.SystemTableViewProvider;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
@@ -642,7 +641,7 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 
 			dlg.setInitialSelections(input.getChildren());
 			// TODO: Cannot use WorkbenchMessages -- it's internal
-			dlg.setTitle(GenericMessages.EditorManager_saveResourcesTitle);
+			dlg.setTitle(FileResources.EditorManager_saveResourcesTitle);
 
 			int result = dlg.open();
 

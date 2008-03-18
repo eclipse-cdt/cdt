@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * David McKnight   (IBM)        - [223103] [cleanup] fix broken externalized strings
  ********************************************************************************/
 
 package org.eclipse.rse.ui.actions;
@@ -71,7 +72,7 @@ public class SystemCopyToClipboardAction extends SystemBaseAction implements  IV
 		      shell);
 
 		_clipboard = clipboard;
-
+		setToolTipText(SystemResources.ACTION_COPY_TOOLTIP);
 		allowOnMultipleSelection(true);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_REORGANIZE);
 		setHelp(RSEUIPlugin.HELPPREFIX+"actn0116"); //$NON-NLS-1$

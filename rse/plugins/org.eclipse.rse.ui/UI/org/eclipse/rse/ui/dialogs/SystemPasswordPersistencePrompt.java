@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * David McKnight   (IBM)        - [223103] [cleanup] fix broken externalized strings
  ********************************************************************************/
 
 package org.eclipse.rse.ui.dialogs;
@@ -109,7 +110,7 @@ public final class SystemPasswordPersistencePrompt extends SystemPromptDialog im
 		
 		// Confirm password prompt
 		SystemWidgetHelpers.createLabel(page, SystemResources.RESID_PREF_SIGNON_PASSWORD_VERIFY_LABEL);
-		passwordVerify = SystemWidgetHelpers.createTextField(page, null,SystemResources.RESID_PREF_SIGNON_PASSWORD_TOOLTIP);
+		passwordVerify = SystemWidgetHelpers.createTextField(page, null,SystemResources.RESID_PREF_SIGNON_PASSWORD_VERIFY_TOOLTIP);
 		passwordVerify.setEchoChar('*');
 		passwordVerify.addModifyListener(this);
 						

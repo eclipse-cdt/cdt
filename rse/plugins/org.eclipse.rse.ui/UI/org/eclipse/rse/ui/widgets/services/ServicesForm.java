@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * David McKnight (IBM) [196632] make sure selected element is marked selected
+ * David McKnight   (IBM)        - [223103] [cleanup] fix broken externalized strings
  *******************************************************************************/
 
 package org.eclipse.rse.ui.widgets.services;
@@ -87,6 +88,7 @@ public class ServicesForm extends SystemBaseForm implements ICheckStateListener
         factoryViewerComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 	    Label factoryLabel = new Label(factoryViewerComposite, SWT.NONE);
 	    factoryLabel.setText(SystemResources.RESID_PROPERTIES_FACTORIES_LABEL);	    
+	    factoryLabel.setToolTipText(SystemResources.RESID_PROPERTIES_FACTORIES_TOOLTIP);
 		createFactoryViewer(factoryViewerComposite);
 		
 		

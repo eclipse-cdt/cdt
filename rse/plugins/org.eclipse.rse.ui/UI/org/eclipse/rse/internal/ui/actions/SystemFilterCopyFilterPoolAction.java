@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
  * David Dykstal (IBM) - [194268] fixed updateSelection to disable when selection is empty
+ * David McKnight   (IBM)        - [223103] [cleanup] fix broken externalized strings
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
@@ -56,6 +57,7 @@ public class SystemFilterCopyFilterPoolAction extends SystemBaseCopyAction
 	public SystemFilterCopyFilterPoolAction(Shell parent) 
 	{
 		super(parent, SystemResources.ACTION_COPY_FILTERPOOL_LABEL, MODE_COPY);
+		setToolTipText(SystemResources.ACTION_COPY_FILTERPOOL_TOOLTIP);
 		promptString = SystemResources.RESID_COPY_PROMPT;		
 	}
 	/**

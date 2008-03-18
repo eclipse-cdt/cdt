@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [185552] Remove remoteSystemsViewPreferencesActions extension point
  * David McKnight   (IBM)        - [210229] table refresh needs unique table-specific tooltip-text
  * David McKnight   (IBM)        - [216252] [nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [223103] [cleanup] fix broken externalized strings
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui;
@@ -40,12 +41,8 @@ public class SystemResources extends NLS
 	public static String BUTTON_ADD;
 	public static String BUTTON_CREATE_LABEL;
 	public static String BUTTON_CREATE_TOOLTIP;
-	public static String BUTTON_APPLY_LABEL;
-	public static String BUTTON_APPLY_TOOLTIP;
-	public static String BUTTON_RESET_LABEL;
-	public static String BUTTON_RESET_TOOLTIP;
+
 	public static String BUTTON_CANCEL_ALL;
-	public static String BUTTON_CANCEL_ALL_TOOLTIP;
 
 	// THESE TERMS ARE USED POTENTIALLY ANYWHERE
 	public static String TERM_YES;
@@ -54,7 +51,7 @@ public class SystemResources extends NLS
 	public static String TERM_TRUE;
 	public static String TERM_FALSE;
 
-	public static String TERM_LOCAL;
+
 	public static String TERM_ALL;
 
 	public static String RESID_MSGLINE_TIP;
@@ -76,8 +73,6 @@ public class SystemResources extends NLS
 	// GENERIC SINGLE-SELECT RENAME DIALOG...
 
 	public static String RESID_SIMPLE_RENAME_PROMPT_LABEL;
-	public static String RESID_SIMPLE_RENAME_PROMPT_TOOLTIP; 
-
 
 
 	public static String RESID_SIMPLE_RENAME_RESOURCEPROMPT_LABEL;
@@ -100,16 +95,9 @@ public class SystemResources extends NLS
 	public static String RESID_DELETE_PROMPT_SINGLE;
 
 
-	public static String RESID_DELETE_RESOURCEPROMPT_LABEL;
-	public static String RESID_DELETE_RESOURCEPROMPT_TOOLTIP;
-
-	public static String RESID_DELETE_TIP;
-
 	public static String RESID_DELETE_WARNING_LABEL;
 	public static String RESID_DELETE_WARNING_TOOLTIP;
 
-	public static String RESID_DELETE_WARNINGLOCAL_LABEL; 
-	public static String RESID_DELETE_WARNINGLOCAL_TOOLTIP;
 
 	public static String RESID_DELETE_COLHDG_OLDNAME;
 
@@ -126,7 +114,7 @@ public class SystemResources extends NLS
 	public static String RESID_COPY_PROMPT;
 	public static String RESID_COPY_TARGET_PROFILE_PROMPT;
 	public static String RESID_COPY_TARGET_FILTERPOOL_PROMPT;
-	public static String RESID_COPY_TARGET_FILTER_PROMPT;
+
 
 	// GENERIC MOVE DIALOG...
 	public static String RESID_MOVE_TITLE;
@@ -134,17 +122,12 @@ public class SystemResources extends NLS
 	public static String RESID_MOVE_PROMPT;
 	public static String RESID_MOVE_TARGET_PROFILE_PROMPT;
 	public static String RESID_MOVE_TARGET_FILTERPOOL_PROMPT;
-	public static String RESID_MOVE_TARGET_FILTER_PROMPT;
 
 	// GENERIC RESOURCE NAME COLLISION DIALOG...
 	public static String RESID_COLLISION_RENAME_TITLE;
 	public static String RESID_COLLISION_RENAME_VERBIAGE;
 	public static String RESID_COLLISION_RENAME_LABEL; 
-	public static String RESID_COLLISION_RENAME_TOOLTIP;
 
-	// GENERIC SELECT CONNECTION DIALOG...
-	public static String RESID_SELECTCONNECTION_TITLE;
-	public static String RESID_SELECTCONNECTION_VERBIAGE;
 
 	// -------------------------
 	// WIZARD AND DIALOG STRINGS
@@ -160,10 +143,6 @@ public class SystemResources extends NLS
 	public static String RESID_NEWPROFILE_VERBIAGE;
 
 	// RENAME DEFAULT PROFILE WIZARD PAGE...
-	public static String RESID_RENAMEDEFAULTPROFILE_PAGE1_TITLE;
-
-	public static String RESID_RENAMEDEFAULTPROFILE_PAGE1_DESCRIPTION;
-
 	public static String RESID_PROFILE_PROFILENAME_LABEL;
 	public static String RESID_PROFILE_PROFILENAME_TIP;
 	public static String RESID_PROFILE_PROFILENAME_VERBIAGE;
@@ -177,7 +156,6 @@ public class SystemResources extends NLS
 
 	// NEW SYSTEM CONNECTION WIZARD...
 	public static String RESID_NEWCONN_PROMPT_LABEL;
-	public static String RESID_NEWCONN_PROMPT_TOOLTIP;
 	public static String RESID_NEWCONN_PROMPT_VALUE;
 	public static String RESID_NEWCONN_EXPANDABLEPROMPT_VALUE;
 	public static String RESID_NEWCONN_TITLE;
@@ -198,7 +176,6 @@ public class SystemResources extends NLS
 	public static String RESID_CONNECTION_TYPE_VALUE;
 	public static String RESID_CONNECTION_SYSTEMTYPE_LABEL;
 	public static String RESID_CONNECTION_SYSTEMTYPE_TIP;
-	public static String RESID_CONNECTION_SYSTEMTYPE_READONLY_LABEL;
 	public static String RESID_CONNECTION_SYSTEMTYPE_READONLY_TIP;
 
 	public static String RESID_CONNECTION_CONNECTIONNAME_LABEL;
@@ -207,21 +184,13 @@ public class SystemResources extends NLS
 	public static String RESID_CONNECTION_HOSTNAME_LABEL;
 	public static String RESID_CONNECTION_HOSTNAME_TIP;
 
-	public static String RESID_CONNECTION_HOSTNAME_READONLY_LABEL;
-	public static String RESID_CONNECTION_HOSTNAME_READONLY_TIP;
 
 	public static String RESID_CONNECTION_VERIFYHOSTNAME_LABEL;
 	public static String RESID_CONNECTION_VERIFYHOSTNAME_TOOLTIP;
 
-	public static String RESID_CONNECTION_USERID_LABEL;
-	public static String RESID_CONNECTION_USERID_TIP;
-
 	public static String RESID_CONNECTION_DEFAULTUSERID_LABEL;
 	public static String RESID_CONNECTION_DEFAULTUSERID_TIP;
 	public static String RESID_CONNECTION_DEFAULTUSERID_INHERITBUTTON_TIP;
-
-	public static String RESID_CONNECTION_RUNNING_PORT_LABEL;
-	public static String RESID_CONNECTION_RUNNING_PORT_TIP;
 
 	public static String RESID_CONNECTION_PORT_LABEL;
 	public static String RESID_CONNECTION_PORT_TIP;
@@ -229,8 +198,6 @@ public class SystemResources extends NLS
 	public static String RESID_CONNECTION_DAEMON_PORT_LABEL;
 	public static String RESID_CONNECTION_DAEMON_PORT_TIP;
 
-	public static String RESID_CONNECTION_DEFAULTPORT_LABEL;
-	public static String RESID_CONNECTION_DEFAULTPORT_TIP;
 
 	public static String RESID_CONNECTION_DESCRIPTION_LABEL;
 	public static String RESID_CONNECTION_DESCRIPTION_TIP;
@@ -239,16 +206,6 @@ public class SystemResources extends NLS
 	public static String RESID_CONNECTION_PROFILE_TIP;
 
 	public static String RESID_CONNECTION_PROFILE_READONLY_TIP;
-
-	// CHANGE SYSTEM CONNECTION DIALOG...
-	public static String RESID_CHGCONN_TITLE;
-
-	// SET DEFAULT USERID PER SYSTEM TYPE DIALOG...
-	public static String RESID_USERID_PER_SYSTEMTYPE_TITLE;
-	public static String RESID_USERID_PER_SYSTEMTYPE_SYSTEMTYPE_LABEL;
-	public static String RESID_USERID_PER_SYSTEMTYPE_SYSTEMTYPE_TOOLTIP;
-	public static String RESID_USERID_PER_SYSTEMTYPE_LABEL;
-	public static String RESID_USERID_PER_SYSTEMTYPE_TOOLTIP;
 
 
 
@@ -284,7 +241,6 @@ public class SystemResources extends NLS
 	// MAIN PAGE (page 1) OF NEW FILTER WIZARD...
 	public static String RESID_NEWFILTER_PAGE1_DESCRIPTION;
 
-	public static String RESID_NEWFILTER_POOLTIP;
 
 	// NAME PAGE (page 2) OF NEW FILTER WIZARD...
 	public static String RESID_NEWFILTER_PAGE2_DESCRIPTION;
@@ -314,13 +270,6 @@ public class SystemResources extends NLS
 	public static String RESID_NEWFILTER_PAGE3_STRINGS_VERBIAGE;
 	public static String RESID_NEWFILTER_PAGE3_POOLS_VERBIAGE;
 
-	public static String RESID_FILTERALIAS_LABEL;
-	public static String RESID_FILTERALIAS_TIP;
-	public static String RESID_FILTERPARENTPOOL_LABEL;
-	public static String RESID_FILTERPARENTPOOL_TIP;
-	public static String RESID_FILTERSTRINGS_LABEL;
-	public static String RESID_FILTERSTRINGS_TIP;
-
 
 	// CHANGE SYSTEM FILTER DIALOG...
 	public static String RESID_CHGFILTER_TITLE;
@@ -341,56 +290,28 @@ public class SystemResources extends NLS
 	public static String RESID_CHGFILTER_BUTTON_APPLY_TOOLTIP;
 	public static String RESID_CHGFILTER_BUTTON_REVERT_LABEL;
 	public static String RESID_CHGFILTER_BUTTON_REVERT_TOOLTIP;
-	public static String RESID_CHGFILTER_BUTTON_CREATE_LABEL;
-	public static String RESID_CHGFILTER_BUTTON_CREATE_TOOLTIP;
-
 
 	// CREATE UNNAMED FILTER DIALOG...
 	public static String RESID_CRTFILTER_TITLE;
 
-	// RENAME SYSTEM FILTER DIALOG...
-	public static String RESID_RENAME_FILTER_TITLE;
-
-	public static String RESID_RENAME_FILTER_PROMPT;
-
-	// COPY SYSTEM FILTER DIALOG...
-	public static String RESID_COPY_FILTER_TITLE;
-
-	public static String RESID_COPY_FILTER_PROMPT;
 
 	// NEW SYSTEM FILTER STRING WIZARD...
-	public static String RESID_NEWFILTERSTRING_TITLE;
-	public static String RESID_NEWFILTERSTRING_ADD_TITLE;
-	public static String RESID_NEWFILTERSTRING_PAGE1_TITLE;
-	public static String RESID_NEWFILTERSTRING_PAGE1_DESCRIPTION;
-
-	public static String RESID_NEWFILTERSTRING_PREFIX_LABEL;
-	public static String RESID_NEWFILTERSTRING_PREFIX_TOOLTIP;
-	public static String RESID_NEWFILTERSTRING_PREFIX_PROMPT;
 
 	public static String RESID_FILTERSTRING_STRING_LABEL;
 	public static String RESID_FILTERSTRING_STRING_TIP;
 
-	// CHANGE FILTER STRING ACTION AND DIALOG...
-	public static String RESID_CHGFILTERSTRING_PREFIX_LABEL;
-	public static String RESID_CHGFILTERSTRING_PREFIX_TOOLTIP;
-	public static String RESID_CHGFILTERSTRING_TITLE;
-	public static String RESID_CHGFILTERSTRING_PREFIX_PROMPT;
-	
+
 	// TEST SYSTEM FILTER STRING DIALOG...
 	public static String RESID_TESTFILTERSTRING_TITLE;
 
 	public static String RESID_TESTFILTERSTRING_PROMPT_LABEL; 
 	public static String RESID_TESTFILTERSTRING_PROMPT_TOOLTIP;
 
-	public static String RESID_TESTFILTERSTRING_TREE_TIP;
-
 
 	// WORK WITH HISTORY DIALOG...
 	public static String RESID_WORKWITHHISTORY_TITLE;
 	public static String RESID_WORKWITHHISTORY_VERBIAGE;
 	public static String RESID_WORKWITHHISTORY_PROMPT;
-	public static String RESID_WORKWITHHISTORY_BUTTON_LABEL;
 	public static String RESID_WORKWITHHISTORY_BUTTON_TIP;
 
 	// PROMPT FOR PASSWORD DIALOG...
@@ -432,7 +353,7 @@ public class SystemResources extends NLS
 	// TABLE view column selection
 	public static String RESID_TABLE_SELECT_COLUMNS_LABEL;
 	public static String RESID_TABLE_SELECT_COLUMNS_TOOLTIP;
-
+	
 	public static String RESID_TABLE_SELECT_COLUMNS_ADD_LABEL;
 	public static String RESID_TABLE_SELECT_COLUMNS_ADD_TOOLTIP;
 	
@@ -469,15 +390,6 @@ public class SystemResources extends NLS
 	public static String RESID_TEAMVIEW_CATEGORY_FILTERPOOLS_LABEL;
 	public static String RESID_TEAMVIEW_CATEGORY_FILTERPOOLS_TOOLTIP;
 
-	public static String RESID_TEAMVIEW_CATEGORY_USERACTIONS_LABEL;
-	public static String RESID_TEAMVIEW_CATEGORY_USERACTIONS_TOOLTIP;
-
-	public static String RESID_TEAMVIEW_CATEGORY_COMPILECMDS_LABEL;
-	public static String RESID_TEAMVIEW_CATEGORY_COMPILECMDS_TOOLTIP;
-
-	public static String RESID_TEAMVIEW_CATEGORY_TARGETS_LABEL;
-	public static String RESID_TEAMVIEW_CATEGORY_TARGETS_TOOLTIP;
-
 	// ------------------------------
 	// REUSABLE WIDGET STRINGS...
 	// ------------------------------
@@ -492,16 +404,10 @@ public class SystemResources extends NLS
 	public static String RESID_SELECTFILES_DESELECTALL_BUTTON_ROOT_TOOLTIP;
 
 
-	// ------------------------------
-	// PROPERTY PAGE STRINGS...
-	// ------------------------------
-	// SYSTEMREGISTRY PROPERTIES PAGE...
-	public static String RESID_SYSTEMREGISTRY_TEXT;
 
 	public static String RESID_SYSTEMREGISTRY_CONNECTIONS;
 
 	// SUBSYSTEM PROPERTIES PAGE...
-	public static String RESID_SUBSYSTEM_TITLE;
 	public static String RESID_SUBSYSTEM_TYPE_LABEL;
 	public static String RESID_SUBSYSTEM_TYPE_VALUE;
 	public static String RESID_SUBSYSTEM_VENDOR_LABEL;
@@ -512,15 +418,11 @@ public class SystemResources extends NLS
 	public static String RESID_SUBSYSTEM_PORT_LABEL;
 	public static String RESID_SUBSYSTEM_PORT_TIP;
 	public static String RESID_SUBSYSTEM_PORT_INHERITBUTTON_TIP;
-	public static String RESID_SUBSYSTEM_PORT_INHERITBUTTON_INHERIT_TIP;
-	public static String RESID_SUBSYSTEM_PORT_INHERITBUTTON_LOCAL_TIP;
 
 	public static String RESID_SUBSYSTEM_USERID_LABEL;
 	public static String RESID_SUBSYSTEM_USERID_TIP;
 
 	public static String RESID_SUBSYSTEM_USERID_INHERITBUTTON_TIP;
-	public static String RESID_SUBSYSTEM_USERID_INHERITBUTTON_INHERIT_TIP;
-	public static String RESID_SUBSYSTEM_USERID_INHERITBUTTON_LOCAL_TIP;
 
 	public static String RESID_SUBSYSTEM_SSL_LABEL;
 	public static String RESID_SUBSYSTEM_SSL_TIP;
@@ -534,7 +436,6 @@ public class SystemResources extends NLS
 	public static String RESID_SUBSYSTEM_NONSSL_ALERT_LABEL;
 	public static String RESID_SUBSYSTEM_NONSSL_ALERT_TIP;
 
-	public static String RESID_SUBSYSTEM_ENVVAR_TITLE;
 	public static String RESID_SUBSYSTEM_ENVVAR_DESCRIPTION;
 	public static String RESID_SUBSYSTEM_ENVVAR_TOOLTIP;
 
@@ -563,7 +464,6 @@ public class SystemResources extends NLS
 	public static String RESID_PP_PROPERTIES_TYPE_TOOLTIP;
 
 	// FILTER POOL PROPERTIES PAGE...
-	public static String RESID_FILTERPOOL_TITLE;
 	public static String RESID_FILTERPOOL_TYPE_VALUE;
 
 	public static String RESID_FILTERPOOL_NAME_LABEL; 
@@ -579,7 +479,6 @@ public class SystemResources extends NLS
 	public static String RESID_FILTERPOOL_RELATEDCONNECTION_TOOLTIP; 
 
 	// FILTER POOL REFERENCE PROPERTIES PAGE...
-	public static String RESID_FILTERPOOLREF_TITLE;
 	public static String RESID_FILTERPOOLREF_TYPE_VALUE;
 
 	public static String RESID_FILTERPOOLREF_NAME_LABEL; 
@@ -595,12 +494,12 @@ public class SystemResources extends NLS
 	public static String RESID_FILTERPOOLREF_PROFILE_TOOLTIP;
 
 	// FILTER PROPERTIES PAGE...
-	public static String RESID_PP_FILTER_TITLE_LABEL;
 	public static String RESID_PP_FILTER_TYPE_VALUE;
 
 	public static String RESID_PP_FILTER_TYPE_PROMPTABLE_VALUE;
 	public static String RESID_PP_FILTER_TYPE_PROMPTABLE_TOOLTIP;
 
+	
 	public static String RESID_PP_FILTER_NAME_LABEL; 
 	public static String RESID_PP_FILTER_NAME_TOOLTIP; 
 
@@ -617,11 +516,8 @@ public class SystemResources extends NLS
 	public static String RESID_PP_FILTER_ISCONNECTIONPRIVATE_TOOLTIP;
 
 	// FILTER STRING PROPERTIES PAGE...
-	public static String RESID_PP_FILTERSTRING_TITLE;
 	public static String RESID_PP_FILTERSTRING_TYPE_VALUE;
 
-	public static String RESID_PP_FILTERSTRING_STRING_LABEL; 
-	public static String RESID_PP_FILTERSTRING_STRING_TOOLTIP; 
 
 	public static String RESID_PP_FILTERSTRING_FILTER_LABEL; 
 	public static String RESID_PP_FILTERSTRING_FILTER_TOOLTIP; 
@@ -634,7 +530,6 @@ public class SystemResources extends NLS
 	public static String RESID_PP_FILTERSTRING_PROFILE_TOOLTIP;
 
 	// SUBSYSTEM FACTORY PROPERTIES PAGE...
-	public static String RESID_PP_SUBSYSFACTORY_TITLE;
 	public static String RESID_PP_SUBSYSFACTORY_ID_LABEL;
 	public static String RESID_PP_SUBSYSFACTORY_ID_TOOLTIP; 
 
@@ -648,7 +543,6 @@ public class SystemResources extends NLS
 
 	// REMOTE SERVER LAUNCH PROPERTIES PAGE...
 	public static String RESID_PROP_SERVERLAUNCHER_MEANS;
-	public static String RESID_PROP_SERVERLAUNCHER_MEANS_LABEL;
 	public static String RESID_PROP_SERVERLAUNCHER_RADIO_DAEMON;
 	public static String RESID_PROP_SERVERLAUNCHER_RADIO_REXEC;
 	public static String RESID_PROP_SERVERLAUNCHER_RADIO_NONE;
@@ -666,11 +560,10 @@ public class SystemResources extends NLS
 	// ---------------------------
 	// RE-USABLE WIDGET STRINGS...
 	// ---------------------------
-
+	
 	// WIDGETS IN SYSTEMCONNECTIONCOMBO.JAVA
 	public static String WIDGET_CONNECTION_LABEL;
 	public static String WIDGET_CONNECTION_TOOLTIP;
-	public static String WIDGET_CONNECTION_NAME;
 
 	public static String WIDGET_BUTTON_NEWCONNECTION_LABEL;
 	public static String WIDGET_BUTTON_NEWCONNECTION_TOOLTIP;
@@ -679,7 +572,6 @@ public class SystemResources extends NLS
 	// PREFERENCES...
 	// -------------------------
 	public static String RESID_PREF_ROOT_PAGE;
-	public static String RESID_PREF_ROOT_TITLE;
 
 	public static String RESID_PREF_SYSTYPE_COLHDG_NAME;
 	public static String RESID_PREF_SYSTYPE_COLHDG_ENABLED;
@@ -689,7 +581,6 @@ public class SystemResources extends NLS
 	//
 	// Signon Information Preferences Page
 	//
-	public static String RESID_PREF_SIGNON_DESCRIPTION;
 
 	public static String RESID_PREF_SIGNON_HOSTNAME_TITLE;
 	public static String RESID_PREF_SIGNON_HOSTNAME_LABEL;
@@ -722,35 +613,15 @@ public class SystemResources extends NLS
 
 	public static String RESID_PREF_SIGNON_CHANGE_DIALOG_TITLE;
 
-	// Unable to load message
-	public static String RESID_MSG_UNABLETOLOAD;
-
-	// Default filter pool name
-	public static String RESID_DEFAULT_FILTERPOOL;
-
-	public static String RESID_PERCONNECTION_FILTERPOOL;
-
-	// RSE Communication Preferences
-	public static String RESID_PREF_IP_ADDRESS_LABEL;
-	public static String RESID_PREF_IP_AUTO_LABEL;
-	public static String RESID_PREF_IP_AUTO_TOOLTIP;
-	public static String RESID_PREF_IP_MANUAL_LABEL;
-	public static String RESID_PREF_IP_MANUAL_TOOLTIP;
-	public static String RESID_PREF_IP_MANUAL_ENTER_LABEL;
-	public static String RESID_PREF_IP_MANUAL_ENTER_TOOLTIP;
 
 	// Offline constants (yantzi:3.0)
 	public static String RESID_OFFLINE_LABEL;
 	public static String RESID_OFFLINE_WORKOFFLINE_LABEL;
 	public static String RESID_OFFLINE_WORKOFFLINE_TOOLTIP;
-	public static String RESID_OFFLINE_WORKOFFLINE_DESCRIPTION;
 
 	// -------------------------------------------
 	// remote search view constants
 	// -------------------------------------------
-
-	// Search view constants
-	public static String RESID_SEARCH_VIEW_DEFAULT_TITLE;
 
 	// Remove selected matches action
 	public static String RESID_SEARCH_REMOVE_SELECTED_MATCHES_LABEL;
@@ -767,12 +638,6 @@ public class SystemResources extends NLS
 	/** ******************************************* */
 	/* Generated Vars */
 	/** ******************************************* */
-	public static String RESID_PREF_SYSTEMTYPE_PREFIX_LABEL;
-	public static String RESID_PREF_SYSTEMTYPE_PREFIX_TOOLTIP;
-
-	public static String RESID_PREF_USERID_PREFIX_LABEL;
-	public static String RESID_PREF_USERID_PREFIX_TOOLTIP;
-
 	public static String RESID_PREF_USERID_PERTYPE_PREFIX_LABEL;
 	public static String RESID_PREF_USERID_PERTYPE_PREFIX_TOOLTIP;
 
@@ -788,8 +653,6 @@ public class SystemResources extends NLS
 	public static String RESID_PREF_REMEMBERSTATE_PREFIX_LABEL;
 	public static String RESID_PREF_REMEMBERSTATE_PREFIX_TOOLTIP;
 
-	public static String RESID_PREF_USEDEFERREDQUERIES_PREFIX_LABEL;
-	public static String RESID_PREF_USEDEFERREDQUERIES_PREFIX_TOOLTIP;
 
 	public static String RESID_PREF_RESTOREFROMCACHE_PREFIX_LABEL;
 	public static String RESID_PREF_RESTOREFROMCACHE_PREFIX_TOOLTIP;
@@ -846,35 +709,14 @@ public class SystemResources extends NLS
 	public static String ACTION_REMOTESERVER_STOP_LABEL;
 	public static String ACTION_REMOTESERVER_STOP_TOOLTIP;
 
-	public static String ACTION_CASCADING_EXPAND_LABEL;
-	public static String ACTION_CASCADING_EXPAND_TOOLTIP;
-
 	public static String ACTION_CASCADING_EXPAND_TO_LABEL;
 	public static String ACTION_CASCADING_EXPAND_TO_TOOLTIP;
-
-	public static String ACTION_CASCADING_EXPAND_ALL_LABEL;
-	public static String ACTION_CASCADING_EXPAND_ALL_TOOLTIP;
-
-	public static String ACTION_CASCADING_EXPAND_BY_LABEL;
-	public static String ACTION_CASCADING_EXPAND_BY_TOOLTIP;
-
-	public static String ACTION_CASCADING_EXPAND_WORKWITH_LABEL;
-	public static String ACTION_CASCADING_EXPAND_WORKWITH_TOOLTIP;
 
 	public static String ACTION_CASCADING_VIEW_LABEL;
 	public static String ACTION_CASCADING_VIEW_TOOLTIP;
 
-	public static String ACTION_CASCADING_USERID_LABEL;
-	public static String ACTION_CASCADING_USERID_TOOLTIP;
-
 	public static String ACTION_CASCADING_PREFERENCES_LABEL;
 	public static String ACTION_CASCADING_PREFERENCES_TOOLTIP;
-
-	public static String ACTION_CASCADING_TEAM_LABEL;
-	public static String ACTION_CASCADING_TEAM_TOOLTIP;
-
-	public static String ACTION_TEAM_SYNC_LABEL;
-	public static String ACTION_TEAM_SYNC_TOOLTIP;
 
 	public static String ACTION_CASCADING_PULLDOWN_LABEL;
 	public static String ACTION_CASCADING_PULLDOWN_TOOLTIP;
@@ -884,9 +726,6 @@ public class SystemResources extends NLS
 
 	public static String ACTION_TEAM_RELOAD_LABEL;
 	public static String ACTION_TEAM_RELOAD_TOOLTIP;
-
-	public static String ACTION_PROFILE_ACTIVATE_LABEL;
-	public static String ACTION_PROFILE_ACTIVATE_TOOLTIP;
 
 	public static String ACTION_PROFILE_MAKEACTIVE_LABEL;
 	public static String ACTION_PROFILE_MAKEACTIVE_TOOLTIP;
@@ -921,35 +760,17 @@ public class SystemResources extends NLS
 	public static String ACTION_ANOTHERCONN_LABEL;
 	public static String ACTION_ANOTHERCONN_TOOLTIP;
 
-	public static String ACTION_UPDATECONN_LABEL;
-	public static String ACTION_UPDATECONN_TOOLTIP;
-
-	public static String ACTION_NEWFILTERSTRING_LABEL;
-	public static String ACTION_NEWFILTERSTRING_TOOLTIP;
-
-	public static String ACTION_ADDFILTERSTRING_LABEL;
-	public static String ACTION_ADDFILTERSTRING_TOOLTIP;
-
-	public static String ACTION_UPDATEFILTERSTRING_LABEL;
-	public static String ACTION_UPDATEFILTERSTRING_TOOLTIP;
-
 	public static String ACTION_TESTFILTERSTRING_LABEL;
 	public static String ACTION_TESTFILTERSTRING_TOOLTIP;
 
 	public static String ACTION_NEWFILTER_LABEL;
 	public static String ACTION_NEWFILTER_TOOLTIP;
 
-	public static String ACTION_NEWNESTEDFILTER_LABEL;
-	public static String ACTION_NEWNESTEDFILTER_TOOLTIP;
-
 	public static String ACTION_UPDATEFILTER_LABEL;
 	public static String ACTION_UPDATEFILTER_TOOLTIP;
 
 	public static String ACTION_NEWFILTERPOOL_LABEL;
 	public static String ACTION_NEWFILTERPOOL_TOOLTIP;
-
-	public static String ACTION_ADDFILTERPOOLREF_LABEL;
-	public static String ACTION_ADDFILTERPOOLREF_TOOLTIP;
 
 	public static String ACTION_RMVFILTERPOOLREF_LABEL;
 	public static String ACTION_RMVFILTERPOOLREF_TOOLTIP;
@@ -968,9 +789,6 @@ public class SystemResources extends NLS
 
 	public static String ACTION_RUN_LABEL;
 	public static String ACTION_RUN_TOOLTIP;
-
-	public static String ACTION_SIMPLERENAME_LABEL;
-	public static String ACTION_SIMPLERENAME_TOOLTIP;
 
 	public static String ACTION_REFRESH_ALL_LABEL;
 	public static String ACTION_REFRESH_ALL_TOOLTIP;
@@ -999,7 +817,7 @@ public class SystemResources extends NLS
 	public static String ACTION_MOVEDOWN_LABEL;
 	public static String ACTION_MOVEDOWN_TOOLTIP;
 
-	public static String ACTION_MOVEUPLEVEL_LABEL;
+	public static String ACTION_MOVEUPLEVEL_LABEL; // used but leaving for now since the tooltip is used
 	public static String ACTION_MOVEUPLEVEL_TOOLTIP;
 
 	public static String ACTION_CONNECT_LABEL;
@@ -1041,10 +859,6 @@ public class SystemResources extends NLS
 	public static String ACTION_HISTORY_MOVEBACKWARD_LABEL;
 	public static String ACTION_HISTORY_MOVEBACKWARD_TOOLTIP;
 	
-
-	public static String ACTION_SHOW_TOOLTIP_INFORMATION;
-	
-
 	public static String ACTION_COPY_LABEL;	
 	public static String ACTION_COPY_TOOLTIP;
 
@@ -1084,17 +898,11 @@ public class SystemResources extends NLS
 	public static String ACTION_MOVE_FILTERSTRING_LABEL;
 	public static String ACTION_MOVE_FILTERSTRING_TOOLTIP;
 
-	public static String ACTION_TEAM_BROWSEHISTORY_LABEL;
-	public static String ACTION_TEAM_BROWSEHISTORY_TOOLTIP;
-
 	public static String ACTION_TABLE_LABEL;
 	public static String ACTION_TABLE_TOOLTIP;
 	
 	public static String ACTION_MONITOR_LABEL;
 	public static String ACTION_MONITOR_TOOLTIP;
-
-	public static String ACTION_ERROR_LIST_LABEL;
-	public static String ACTION_ERROR_LIST_TOOLTIP;
 
 	public static String ACTION_SEARCH_LABEL;
 	public static String ACTION_SEARCH_TOOLTIP;
@@ -1121,27 +929,8 @@ public class SystemResources extends NLS
 	public static String ACTION_SELECTCOLUMNS_LABEL;
 	public static String ACTION_SELECTCOLUMNS_TOOLTIP;
 
-	public static String ACTION_OPENEXPLORER_CASCADE_LABEL;
-	public static String ACTION_OPENEXPLORER_CASCADE_TOOLTIP;
-
-	public static String ACTION_OPENEXPLORER_SAMEPERSP_LABEL;
-	public static String ACTION_OPENEXPLORER_SAMEPERSP_TOOLTIP;
-
-	public static String ACTION_OPENEXPLORER_DIFFPERSP_LABEL;
-	public static String ACTION_OPENEXPLORER_DIFFPERSP_TOOLTIP;
-
 	public static String ACTION_OPENEXPLORER_DIFFPERSP2_LABEL;
 	public static String ACTION_OPENEXPLORER_DIFFPERSP2_TOOLTIP;
-
-	public static String ACTION_REMOTE_PROPERTIES_LABEL;
-	public static String ACTION_REMOTE_PROPERTIES_TOOLTIP;
-
-	public static String ACTION_VIEWFORM_REFRESH_LABEL;
-	public static String ACTION_VIEWFORM_REFRESH_TOOLTIP;
-
-	public static String ACTION_VIEWFORM_GETLIST_LABEL;
-	public static String ACTION_VIEWFORM_GETLIST_TOOLTIP;
-
 
 	public static String ACTION_EXPAND_SELECTED_LABEL;
 	public static String ACTION_EXPAND_SELECTED_TOOLTIP;
@@ -1152,14 +941,8 @@ public class SystemResources extends NLS
 	public static String ACTION_COLLAPSE_ALL_LABEL;
 	public static String ACTION_COLLAPSE_ALL_TOOLTIP;
 
-	public static String ACTION_EXPAND_BY_LABEL;
-	public static String ACTION_EXPAND_BY_TOOLTIP;
-
 	public static String ACTION_EXPAND_ALL_LABEL;
 	public static String ACTION_EXPAND_ALL_TOOLTIP;
-	
-	public static String ACTION_EXPAND_OTHER_LABEL;
-	public static String ACTION_EXPAND_OTHER_TOOLTIP;
 	
 	public static String ACTION_SELECT_ALL_LABEL;
 	public static String ACTION_SELECT_ALL_TOOLTIP;
@@ -1168,26 +951,6 @@ public class SystemResources extends NLS
 	public static String ACTION_SELECT_INPUT_DLG;
 	public static String ACTION_SELECT_INPUT_TOOLTIP;
 
-	public static String ACTION_SELECTCONNECTION_LABEL;
-	public static String ACTION_SELECTCONNECTION_TOOLTIP;	
-
-	public static String RESID_CHANGE_PREFIX_LABEL;
-	public static String RESID_CHANGE_PREFIX_TOOLTIP;
-
-	public static String RESID_CHANGEVIAENTRY_PREFIX_LABEL;
-	public static String RESID_CHANGEVIAENTRY_PREFIX_TOOLTIP;
-
-	public static String RESID_ADDVIAENTRY_PREFIX_LABEL;
-	public static String RESID_ADDVIAENTRY_PREFIX_TOOLTIP;
-
-	public static String RESID_COPYFROM_PREFIX_LABEL;
-	public static String RESID_COPYFROM_PREFIX_TOOLTIP;
-
-	public static String RESID_COPYTO_PREFIX_LABEL;
-	public static String RESID_COPYTO_PREFIX_TOOLTIP;
-
-	public static String RESID_DUPLICATE_PREFIX_LABEL;
-	public static String RESID_DUPLICATE_PREFIX_TOOLTIP;
 	
 	
 	// services and connector services property pages
@@ -1195,8 +958,6 @@ public class SystemResources extends NLS
 	public static String RESID_PROPERTIES_SERVICES_LABEL;
 	public static String RESID_PROPERTIES_SERVICES_TOOLTIP;
 	public static String RESID_PROPERTIES_DESCRIPTION_LABEL;
-	public static String RESID_PROPERTIES_CONNECTOR_SERVICES_LABEL;
-	public static String RESID_PROPERTIES_CONNECTOR_SERVICES_TOOLTIP;
 	public static String RESID_PROPERTIES_FACTORIES_LABEL;
 	public static String RESID_PROPERTIES_FACTORIES_TOOLTIP;
 	public static String RESID_PROPERTIES_PROPERTIES_LABEL;

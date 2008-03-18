@@ -14,6 +14,7 @@
  * Contributors:
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [220309] [nls] Some GenericMessages and SubSystemResources should move from UI to Core
+ * David McKnight   (IBM)        - [223103] [cleanup] fix broken externalized strings
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui;
@@ -26,29 +27,11 @@ public class GenericMessages extends NLS
 
 	public static String ResourceNavigator_goto;
 	
-	public static String RefreshAction_text;
-	public static String RefreshAction_toolTip;
-	public static String RefreshAction_progressMessage;
-	public static String RefreshAction_problemTitle;
-	public static String RefreshAction_problemMessage;
-	public static String RefreshAction_locationDeletedMessage;
-	public static String RefreshAction_dialogTitle;
 
 	public static String TransferOperation_message;
 
-	// ==============================================================================
-	// Property Pages
-	// ==============================================================================
-	public static String PropertyDialog_messageTitle;
-	public static String PropertyDialog_noPropertyMessage;
-	public static String PropertyDialog_propertyMessage;
 	
-	// ==============================================================================
-	// Editor Framework
-	// ==============================================================================
-	public static String EditorManager_saveResourcesMessage;
-	public static String EditorManager_saveResourcesTitle;
-	
+
 	public static String TypesFiltering_title;
 	public static String TypesFiltering_message;
 	public static String TypesFiltering_otherExtensions;
@@ -57,7 +40,6 @@ public class GenericMessages extends NLS
 
 	public static String FileExtension_extensionEmptyMessage;
 	public static String FileExtension_fileNameInvalidMessage;
-	public static String FilteredPreferenceDialog_PreferenceSaveFailed;
 	
 	public static String RSEQuery_task;
 	

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -18,6 +18,7 @@
  * Kevin Doyle (IBM) - [160378] Subset action should be disabled when there are no tabs in Monitor
  * Kevin Doyle (IBM) - [196582] ClassCastException when doing copy/paste
  * Kevin Doyle		(IBM)		 - [212940] Duplicate Help Context Identifiers
+ * David McKnight   (IBM)        - [223103] [cleanup] fix broken externalized strings
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.monitor;
@@ -327,6 +328,7 @@ class SubSetAction extends BrowseAction
 			public SelectColumnsDialog(Shell shell, ISystemViewElementAdapter viewAdapter, SystemTableViewColumnManager columnManager)
 			{
 				super(shell, SystemResources.RESID_TABLE_SELECT_COLUMNS_LABEL);
+				setToolTipText(SystemResources.RESID_TABLE_SELECT_COLUMNS_TOOLTIP);
 				_adapter = viewAdapter;
 				_columnManager = columnManager;
 				_uniqueDescriptors = viewAdapter.getUniquePropertyDescriptors();

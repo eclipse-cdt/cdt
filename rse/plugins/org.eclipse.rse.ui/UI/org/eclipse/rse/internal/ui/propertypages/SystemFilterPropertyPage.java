@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [223103] [cleanup] fix broken externalized strings
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.propertypages;
@@ -111,8 +111,10 @@ public class SystemFilterPropertyPage extends SystemBasePropertyPage
 	    // name    
 	    labelName.setText(filter.getName());
 	    // type
-	    if (filter.isPromptable())
+	    if (filter.isPromptable()){
 	      labelType.setText(SystemResources.RESID_PP_FILTER_TYPE_PROMPTABLE_VALUE);
+	      labelType.setToolTipText(SystemResources.RESID_PP_FILTER_TYPE_PROMPTABLE_TOOLTIP);
+	    }
 	    if (!isTransient)
 	    {
 	      // pool

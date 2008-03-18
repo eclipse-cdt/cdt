@@ -36,7 +36,7 @@ public class ClearAction extends BrowseAction
 		super(view, SystemResources.ACTION_CLEAR_ALL_LABEL,
 		        RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CLEAR_ALL_ID));
 
-
+		setToolTipText(SystemResources.ACTION_CLEAR_ALL_TOOLTIP);
 		// TODO DKM - get help for this!
 		//PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.CLEAR_CONSOLE_ACTION);
 	}

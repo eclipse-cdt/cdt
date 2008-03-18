@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
+ * David McKnight   (IBM)        - [223103] [cleanup] fix broken externalized strings
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
@@ -60,6 +61,7 @@ public class SystemFilterMoveFilterStringAction extends SystemBaseCopyAction
 	public SystemFilterMoveFilterStringAction(Shell parent) 
 	{
 		super(parent, SystemResources.ACTION_MOVE_FILTERSTRING_LABEL, MODE_MOVE);
+		setToolTipText(SystemResources.ACTION_MOVE_FILTERSTRING_TOOLTIP);
 		promptString = SystemResources.RESID_MOVE_PROMPT;		
 	}
 

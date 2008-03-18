@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * David McKnight   (IBM)        - [223103] [cleanup] fix broken externalized strings
  *******************************************************************************/
 
 package org.eclipse.rse.ui.actions;
@@ -73,6 +74,7 @@ public abstract class SystemBaseCopyAction extends SystemBaseDialogAction
 	public SystemBaseCopyAction(Shell parent, int mode) 
 	{
 		this(parent, mode==MODE_COPY ? SystemResources.ACTION_COPY_LABEL : SystemResources.ACTION_MOVE_LABEL, mode);
+		setToolTipText(mode==MODE_COPY ? SystemResources.ACTION_COPY_TOOLTIP : SystemResources.ACTION_MOVE_TOOLTIP);
 	}
 
 	/**

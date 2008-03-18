@@ -15,6 +15,7 @@
  * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
  *                                API to the user actions plugin
  * Radoslav Gerganov (ProSyst) - [181563] Fix hardcoded Ctrl+Space for remote shell content assist
+ * David McKnight   (IBM)        - [223103] [cleanup] fix broken externalized strings
  ********************************************************************************/
 
 package org.eclipse.rse.shells.ui.view;
@@ -234,25 +235,33 @@ public class SystemCommandEditor extends SourceViewer
 	{
 		_undoAction = new TextViewerAction(this, UNDO);
 		_undoAction.setText(SystemResources.ACTION_UNDO_LABEL); 
+		_undoAction.setToolTipText(SystemResources.ACTION_UNDO_TOOLTIP);
 		fGlobalActions.put(ITextEditorActionConstants.UNDO, _undoAction);
 		_undoAction.setEnabled(false); // defect 46369		
+
 		_cutAction = new TextViewerAction(this, CUT);
 		_cutAction.setText(SystemResources.ACTION_CUT_LABEL); 
+		_cutAction.setToolTipText(SystemResources.ACTION_CUT_TOOLTIP);
 		fGlobalActions.put(ITextEditorActionConstants.CUT, _cutAction);
 		_cutAction.setEnabled(false); // defect 46369
+		
 		_copyAction = new TextViewerAction(this, COPY);
 		_copyAction.setText(SystemResources.ACTION_COPY_LABEL); 
+		_copyAction.setToolTipText(SystemResources.ACTION_COPY_TOOLTIP);
 		fGlobalActions.put(ITextEditorActionConstants.COPY, _copyAction);
 		_copyAction.setEnabled(false); // defect 46369
+		
 		_pasteAction = new TextViewerAction(this, PASTE);
 		_pasteAction.setText(SystemResources.ACTION_PASTE_LABEL); 
+		_pasteAction.setToolTipText(SystemResources.ACTION_PASTE_TOOLTIP);
 		fGlobalActions.put(ITextEditorActionConstants.PASTE, _pasteAction);
 		_pasteAction.setEnabled(false); // defect 46369		
 		if (_pasteAction != null) {
 			_pasteAction.update();
 		}
 		_selectAllAction = new TextViewerAction(this, SELECT_ALL);
-		_selectAllAction.setText(SystemResources.ACTION_SELECT_ALL_LABEL); 
+		_selectAllAction.setText(SystemResources.ACTION_SELECT_ALL_LABEL);
+		_selectAllAction.setToolTipText(SystemResources.ACTION_SELECT_ALL_TOOLTIP);
 		fGlobalActions.put(ITextEditorActionConstants.SELECT_ALL, _selectAllAction);
 		_selectAllAction.setEnabled(false); // defect 46369
 		_caAction = new TextViewerAction(this, CONTENTASSIST_PROPOSALS);

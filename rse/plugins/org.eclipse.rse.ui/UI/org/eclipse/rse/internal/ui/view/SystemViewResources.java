@@ -14,6 +14,7 @@
  * Contributors:
  * David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
  * David McKnight   (IBM)        - [216252] [nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [223103] [cleanup] fix broken externalized strings
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -33,9 +34,6 @@ public class SystemViewResources extends NLS {
 	// Property sheet values: Common	
 	public static String	RESID_PROPERTY_NBRCHILDREN_LABEL;
 	public static String	RESID_PROPERTY_NBRCHILDREN_TOOLTIP;
-
-	public static String	RESID_PROPERTY_NBRCHILDRENRETRIEVED_LABEL;
-	public static String	RESID_PROPERTY_NBRCHILDRENRETRIEVED_TOOLTIP;
 	
 	// Property sheet values: Connections
 	public static String	RESID_PROPERTY_PROFILE_TYPE_VALUE;
@@ -58,9 +56,6 @@ public class SystemViewResources extends NLS {
 
 	public static String	RESID_PROPERTY_CONNECTIONSTATUS_DISCONNECTED_VALUE;
 
-	
-	public static String	RESID_PROPERTY_ALIASNAME_LABEL;
-	public static String	RESID_PROPERTY_ALIASNAME_TOOLTIP;
 
 	public static String	RESID_PROPERTY_HOSTNAME_LABEL;
 	public static String	RESID_PROPERTY_HOSTNAME_TOOLTIP;
@@ -105,16 +100,8 @@ public class SystemViewResources extends NLS {
 	public static String	RESID_PROPERTY_FILTERPOOLREFERENCE_IS_CONNECTIONPRIVATE_TOOLTIP;
 
 	// Property sheet values: Filters
-	public static String	RESID_PROPERTY_FILTERTYPE_LABEL;
-	public static String	RESID_PROPERTY_FILTERTYPE_VALUE;
-	public static String	RESID_PROPERTY_FILTERTYPE_TOOLTIP;
-	
 	public static String	RESID_PROPERTY_FILTERSTRING_LABEL;
-	public static String	RESID_PROPERTY_FILTERSTRING_VALUE;
 	public static String	RESID_PROPERTY_FILTERSTRING_TOOLTIP;
-	
-	public static String	RESID_PROPERTY_FILTERSTRINGS_LABEL;
-	public static String	RESID_PROPERTY_FILTERSTRINGS_TOOLTIP;
 	
 	public static String	RESID_PROPERTY_FILTERSTRINGS_COUNT_LABEL;
 	public static String	RESID_PROPERTY_FILTERSTRINGS_COUNT_TOOLTIP;
@@ -124,10 +111,6 @@ public class SystemViewResources extends NLS {
 	
 	public static String	RESID_PROPERTY_FILTERPARENTPOOL_LABEL;
 	public static String	RESID_PROPERTY_FILTERPARENTPOOL_TOOLTIP;
-
-	public static String	RESID_PROPERTY_FILTERS_LABEL;
-	public static String	RESID_PROPERTY_FILTERS_DESCRIPTION;
-	
 	
 	// files - still needed outside of files.ui
 	public static String	RESID_PROPERTY_FILE_TYPE_FILE_VALUE;
@@ -146,9 +129,6 @@ public class SystemViewResources extends NLS {
 	public static String	RESID_PROPERTY_TEAM_SSFACTORY_TYPE_VALUE;
 	
 	// Miscellaneous / common
-	public static String	RESID_PROPERTY_LINKINGACTION_TEXT;
-	public static String	RESID_PROPERTY_LINKINGACTION_TOOLTIP;
-
 	public static String    RESID_SCRATCHPAD;
 	public static String    RESID_REMOTE_SCRATCHPAD;
 	

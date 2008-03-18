@@ -26,6 +26,7 @@
  * David McKnight   (IBM)        - [187543] use view filter to only show containers for set input dialog
  * David McKnight   (IBM)        - [210229] table refresh needs unique table-specific tooltip-text
  * Martin Oberhuber (Wind River) - [215820] Move SystemRegistry implementation to Core
+ * David McKnight   (IBM)        - [223103] [cleanup] fix broken externalized strings
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -237,7 +238,6 @@ public class SystemTableViewPart extends ViewPart
 		public UpAction()
 		{
 			super(SystemResources.ACTION_MOVEUPLEVEL_TOOLTIP, getEclipseImageDescriptor("elcl16/up_nav.gif")); //$NON-NLS-1$
-
 			setDisabledImageDescriptor(getEclipseImageDescriptor("dlcl16/up_nav.gif")); //$NON-NLS-1$
 		}
 
@@ -820,6 +820,7 @@ public class SystemTableViewPart extends ViewPart
 			public SelectColumnsDialog(Shell shell, ISystemViewElementAdapter viewAdapter, SystemTableViewColumnManager columnManager)
 			{
 				super(shell, SystemResources.RESID_TABLE_SELECT_COLUMNS_LABEL);
+				setToolTipText(SystemResources.RESID_TABLE_SELECT_COLUMNS_TOOLTIP);
 				_adapter = viewAdapter;
 				_columnManager = columnManager;
 				_uniqueDescriptors = viewAdapter.getUniquePropertyDescriptors();

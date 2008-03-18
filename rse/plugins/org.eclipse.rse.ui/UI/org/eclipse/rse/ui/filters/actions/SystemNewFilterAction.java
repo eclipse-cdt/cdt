@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [223103] [cleanup] fix broken externalized strings
  *******************************************************************************/
 
 package org.eclipse.rse.ui.filters.actions;
@@ -98,7 +98,7 @@ public class SystemNewFilterAction
 	 */
 	public SystemNewFilterAction(Shell shell, ISystemFilterPool parentPool) 
 	{
-		this(shell, parentPool, SystemResources.ACTION_NEWFILTER_LABEL, SystemResources.ACTION_NEWFILE_TOOLTIP,
+		this(shell, parentPool, SystemResources.ACTION_NEWFILTER_LABEL, SystemResources.ACTION_NEWFILTER_TOOLTIP,
 		      RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWFILTER_ID), false);
 	}		
 	

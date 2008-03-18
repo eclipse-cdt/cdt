@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * David McKnight   (IBM)        - [223103] [cleanup] fix broken externalized strings
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
@@ -52,6 +53,7 @@ public class SystemMoveConnectionAction extends SystemBaseCopyAction
 	{
 		super(parent, SystemResources.ACTION_MOVE_CONNECTION_LABEL, MODE_MOVE);
 		//allowOnMultipleSelection(false); // too hard to handle, for now!
+		setToolTipText(SystemResources.ACTION_MOVE_CONNECTION_TOOLTIP);
 		sr = RSECorePlugin.getTheSystemRegistry();
   	    setHelp(RSEUIPlugin.HELPPREFIX+"actn0020"); //$NON-NLS-1$
   	    setDialogHelp(RSEUIPlugin.HELPPREFIX+"dmcn0000");  //$NON-NLS-1$

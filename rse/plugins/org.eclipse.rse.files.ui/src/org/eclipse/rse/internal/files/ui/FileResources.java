@@ -17,6 +17,7 @@
  * David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
  * David McKnight   (IBM)        - [216252] [nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
+ * David McKnight   (IBM)        - [223103] [cleanup] fix broken externalized strings
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui;
@@ -477,6 +478,8 @@ public class FileResources extends NLS
 
 	// preferences
 	public static String MSG_ERROR_FILENAME_INVALID;
+	
+	public static String EditorManager_saveResourcesTitle;
 	
 	static 
 	{

@@ -599,7 +599,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 			try {
 				parser = parsers[i].getBinaryParser();
 				if (parser.getHintBufferSize() > hints) {
-					hints = parser.getHintBufferSize();
+					hints = Math.max(hints, parser.getHintBufferSize());
 				}
 			} catch (CoreException e) {
 			}

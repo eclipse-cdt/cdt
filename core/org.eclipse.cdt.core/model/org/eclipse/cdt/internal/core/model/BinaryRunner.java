@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Warren Paul (Nokia)
  *     Markus Schorn (Wind River Systems)
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
@@ -107,7 +108,11 @@ public class BinaryRunner {
 						vlib.removeChildren();
 						vbin.removeChildren();
 
-						cproject.getProject().accept(new Visitor(monitor), IContainer.INCLUDE_PHANTOMS);
+						// traverse project, but only if at least one binary parser is configured
+						BinaryParserConfig[] parsers = CModelManager.getDefault().getBinaryParser(cproject.getProject());
+						if (parsers.length > 0) {
+							cproject.getProject().accept(new Visitor(monitor), IContainer.INCLUDE_PHANTOMS);
+						}
 
 						if (!monitor.isCanceled()) {
 							CModelOperation op = new BinaryRunnerOperation(cproject);
@@ -179,10 +184,6 @@ public class BinaryRunner {
 				return false;
 			}
 			vMonitor.worked(1);
-			// give a hint to the user of what we are doing
-			String name = proxy.getName();
-			vMonitor.subTask(name);
-
 			// Attempt to speed things up by rejecting up front
 			// Things we know should not be Binary files.
 			
@@ -193,7 +194,7 @@ public class BinaryRunner {
 			}
 			
 			// check against known content types
-
+			String name = proxy.getName();
 			IContentType contentType = CCorePlugin.getContentType(project, name);
 			if (contentType != null && textContentType != null) {
 				if (contentType != null && contentType.isKindOf(textContentType)) {
@@ -202,6 +203,9 @@ public class BinaryRunner {
 					return true;
 				}
 			}
+
+			// give a hint to the user of what we are doing
+			vMonitor.subTask(name);
 
 			// we have a candidate
 			IPath path = proxy.requestFullPath();
@@ -214,8 +218,8 @@ public class BinaryRunner {
 						if (bin != null) {
 							// Create the file will add it to the {Archive,Binary}Containery.
 							factory.create(file, bin, cproject);
-							return true;
 						}
+						return true;
 					}
 				}
 			}

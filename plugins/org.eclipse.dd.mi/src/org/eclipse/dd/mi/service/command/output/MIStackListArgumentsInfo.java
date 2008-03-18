@@ -37,7 +37,7 @@ public class MIStackListArgumentsInfo extends MIInfo {
                         MIValue val = results[i].getMIValue();
                         if (val instanceof MIList) {
                             parseStack((MIList)val, aList);
-                        } else if (val instanceof MIList) {
+                        } else if (val instanceof MITuple) {
                             parseStack((MITuple)val, aList);
                         }
                     }

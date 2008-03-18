@@ -993,7 +993,7 @@ public class SystemRegistry implements ISystemRegistry
 		for (int i = 0; i < allSS.length; i++)
 		{
 			ISubSystem ss = allSS[i];
-			if (subsystemInterface.isInstance(subsystemInterface))
+			if (subsystemInterface.isInstance(ss))
 			{
 				matches.add(ss);
 			}						

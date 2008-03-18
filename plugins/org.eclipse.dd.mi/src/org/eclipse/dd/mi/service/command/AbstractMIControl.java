@@ -239,7 +239,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
             		CommandHandle cmdHandle = new CommandHandle(
             		    new MIThreadSelect(handle.fCommand.getContext(), fCurrentThreadId), null);
             		fTxCommands.add(cmdHandle);
-            		MIPlugin.debug(MIPlugin.getDebugTime() + " " + cmdHandle.getCommand()); //$NON-NLS-1$
+            		MIPlugin.debug(MIPlugin.getDebugTime() + " " + cmdHandle.getToken() + cmdHandle.getCommand()); //$NON-NLS-1$
             	}
 
             	// Before the command is sent, Check the Stack level and send it to 
@@ -252,7 +252,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
             		CommandHandle cmdHandle = new CommandHandle(
             		    new MIStackSelectFrame(handle.fCommand.getContext(), fCurrentStackLevel), null);
             		fTxCommands.add(cmdHandle);
-            		MIPlugin.debug(MIPlugin.getDebugTime() + " " + cmdHandle.getCommand()); //$NON-NLS-1$
+            		MIPlugin.debug(MIPlugin.getDebugTime() + " " + cmdHandle.getToken() + cmdHandle.getCommand()); //$NON-NLS-1$
             	}
                	fTxCommands.add(handle);
             }

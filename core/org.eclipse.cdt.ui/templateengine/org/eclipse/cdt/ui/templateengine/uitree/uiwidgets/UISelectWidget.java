@@ -108,9 +108,9 @@ public class UISelectWidget extends InputUIElement {
 
 		// populate combo
 		int index= 0, defaultIndex= 0;
-		for(String name : value2name.values()) {			
-			combo.add(name);
-			if(name.equals(defaultValue)) {
+		for(String value : value2name.keySet()) {			
+			combo.add(value2name.get(value));
+			if(value.equals(defaultValue)) {
 				defaultIndex= index;
 			}
 			index++;

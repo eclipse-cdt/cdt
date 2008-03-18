@@ -79,7 +79,6 @@ For a project template the <code>type</code> should be <code>ProjTempl</code>.
 <li>
 <p>
 <code>version</code>: Use this attribute to specify the major version
-number of the template. 
 </p>
 <li>
 <p>
@@ -235,7 +234,7 @@ property
 The syntax for the <code>property</code> elements included by the
 property-group element is as follows: 
 </p>
-<p class="CodeBlock"><code>&lt;property <br>id="propertyId"<br>label="User visible label of the property"<br>description="A brief description of the property"<br>type="type of the property"<br>pattern="Regular expression of the expected property"<br>default="Default value of the property"<br>size="size"<br>mandatory="true|false"<br>hidden="true|false"<br>persist="true|false"&gt;<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;item <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name="name of the item"<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;label="User visible label of the item"<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;selected="true|false"&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/item&gt;<br>&lt;/property&gt;</code></p>
+<p class="CodeBlock"><code>&lt;property <br>id="propertyId"<br>label="User visible label of the property"<br>description="A brief description of the property"<br>type="type of the property"<br>pattern="Regular expression of the expected property"<br>default="Default value of the property"<br>size="size"<br>mandatory="true|false"<br>hidden="true|false"<br>persist="true|false"&gt;<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;item <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;value="value of the item"<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;label="User visible label of the item"<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/item&gt;<br>&lt;/property&gt;</code></p>
 <p>
 Here is a list of attributes of the <code>property</code> element: 
 </p>
@@ -339,15 +338,11 @@ If the property <code>type</code> is <code>select</code> or
 specify the items to be listed. There is no limitation on the number of items
 that can be listed. Here is the syntax for the <code>item</code> element: 
 </p>
-<p class="CodeBlock"><code>&lt;item <br>name="name of the item"<br>label="User visible label of the item"<br>selected="true|false"&gt;<br>&lt;/item&gt;</code></p>
+<p class="CodeBlock"><code>&lt;item <br>value="value of the item"<br>label="User visible label of the item"<br>&lt;/item&gt;</code></p>
 <p>
 Here is a list of attributes of the <code>item</code> element: 
 </p>
 <ul>
-<li>
-<p>
-<code>name</code>: Used to specify a unique name for the list item. 
-</p>
 <li>
 <p>
 <code>label</code>: Used to specify a label that is displayed to the
@@ -355,11 +350,8 @@ user.
 </p>
 <li>
 <p>
-<code>selected</code>: Used to specify whether the list item is
-selected by default. The value for this attribute can either be
-<code>true</code> or <code>false</code>. 
+<code>value</code>: Used to specify a unique value for the list item. This will be the value used in macro expansions. 
 </p>
-</li>
 </ul>
 <h4 class="subheading">
 process 

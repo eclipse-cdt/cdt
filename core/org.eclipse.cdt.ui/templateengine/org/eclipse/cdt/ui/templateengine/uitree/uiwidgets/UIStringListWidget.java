@@ -24,7 +24,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
+import com.ibm.icu.text.MessageFormat;
+
 import org.eclipse.cdt.core.templateengine.TemplateEngineHelper;
+import org.eclipse.cdt.ui.templateengine.event.PatternEvent;
 import org.eclipse.cdt.ui.templateengine.uitree.InputUIElement;
 import org.eclipse.cdt.ui.templateengine.uitree.UIAttributes;
 import org.eclipse.cdt.ui.templateengine.uitree.UIElement;
@@ -36,14 +39,7 @@ import org.eclipse.cdt.utils.ui.controls.IFileListChangeListener;
  * This gives a Label and StringList Widget.
  * 
  */
-
 public class UIStringListWidget extends InputUIElement {
-
-	/**
-	 * Attributes associated with this widget.
-	 */
-	protected UIAttributes/*<String, String>*/ uiAttribute;
-
 	/**
 	 * StringList widget.
 	 */
@@ -54,12 +50,7 @@ public class UIStringListWidget extends InputUIElement {
 	 */
 	protected Label label;
 
-	/**
-	 * Composite to which this widget control is added.
-	 */
-	protected UIComposite uiComposite;
-	
-	protected List itemsList;
+	protected List/*<String>*/ itemsList;
 
 	/**
 	 * Constructor.
@@ -67,10 +58,9 @@ public class UIStringListWidget extends InputUIElement {
 	 * @param attribute
 	 *            attribute associated with this widget.
 	 */
-	public UIStringListWidget(UIAttributes/*<String, String>*/ attribute) {
+	public UIStringListWidget(UIAttributes attribute) {
 		super(attribute);
-		uiAttribute = attribute;
-		itemsList = new ArrayList();
+		itemsList = new ArrayList/*<String>*/();
 	}
 
 	/**
@@ -82,7 +72,7 @@ public class UIStringListWidget extends InputUIElement {
 		for (int i = 0; i < itemsList.size(); i++) {
 			itemString = itemString + itemsList.get(i) + "|"; //$NON-NLS-1$
 		}
-		retMap.put(uiAttribute.get(InputUIElement.ID), itemString);
+		retMap.put(uiAttributes.get(InputUIElement.ID), itemString);
 
 		return retMap;
 	}
@@ -92,8 +82,8 @@ public class UIStringListWidget extends InputUIElement {
 	 * 
 	 * @param valueMap
 	 */
-	public void setValues(Map/*<String, String>*/ valueMap) {
-		String items = (String) valueMap.get(uiAttribute.get(InputUIElement.ID));
+	public void setValues(Map valueMap) {
+		String items = (String) valueMap.get(uiAttributes.get(InputUIElement.ID));
 
 		if (items != null) {
 			items = items.trim();
@@ -109,22 +99,21 @@ public class UIStringListWidget extends InputUIElement {
 	 * for the widgets to be added to UIComposite. set required parameters to
 	 * the Widgets.
 	 * 
-	 * @param composite
+	 * @param uiComposite
 	 */
-	public void createWidgets(UIComposite composite) {
+	public void createWidgets(final UIComposite uiComposite) {
 		GridData gridData = null;
-		uiComposite = composite;
 
-		label = new Label(composite, SWT.LEFT);
-		label.setText((String) uiAttribute.get(InputUIElement.WIDGETLABEL));
+		label = new Label(uiComposite, SWT.LEFT);
+		label.setText((String) uiAttributes.get(InputUIElement.WIDGETLABEL));
 
 		GridData gd = new GridData();
 		gd.verticalAlignment = SWT.BEGINNING;
 		gd.verticalIndent = 5;
 		label.setLayoutData(gd);
 
-		if (uiAttribute.get(InputUIElement.DESCRIPTION) != null){
-			String tipText = (String) uiAttribute.get(UIElement.DESCRIPTION);
+		if (uiAttributes.get(InputUIElement.DESCRIPTION) != null){
+			String tipText = (String) uiAttributes.get(UIElement.DESCRIPTION);
 			tipText = tipText.replaceAll("\\\\r\\\\n", "\r\n"); //$NON-NLS-1$ //$NON-NLS-2$, $NON-NLS-2$
 			label.setToolTipText(tipText);
 		}
@@ -133,19 +122,27 @@ public class UIStringListWidget extends InputUIElement {
 		flcComposite.setLayout(new GridLayout());
 		flcComposite.setLayoutData(gridData);
 
-		fileListControl = new FileListControl(flcComposite, (String) uiAttribute.get(InputUIElement.WIDGETLABEL), 0);
-		fileListControl.setList((String[])itemsList.toArray());
+		fileListControl = new FileListControl(flcComposite, (String) uiAttributes.get(InputUIElement.WIDGETLABEL), 0);
+		fileListControl.setList((String[]) itemsList.toArray(new String[itemsList.size()]));
 		fileListControl.setSelection(0);
 		fileListControl.addChangeListener(new IFileListChangeListener(){
 			public void fileListChanged(FileListControl fileList, String oldValue[], String newValue[]) {
+				itemsList.clear();
 				itemsList.addAll(Arrays.asList(newValue));
+				uiComposite.firePatternEvent(createPatternEvent());
 			}
 		});
-
+		
+		uiComposite.firePatternEvent(createPatternEvent());
+	}
+	
+	protected PatternEvent createPatternEvent() {
+		String msg= MessageFormat.format("Please add an item to {0}", new String[] {label.getText()}); //$NON-NLS-1$
+		return new PatternEvent(this, msg, isValid());
 	}
 
 	/**
-	 * Based on the stae of this Widget return true or false. This return value
+	 * Based on the stage of this Widget return true or false. This return value
 	 * will be used by the UIPage to update its(UIPage) state. Return value
 	 * depends on the value contained in String List Widget. If value contained
 	 * is null and Mandatory value from attributes.
@@ -154,7 +151,7 @@ public class UIStringListWidget extends InputUIElement {
 	 */
 	public boolean isValid() {
 		boolean retVal = true;
-		String mandatory = (String) uiAttribute.get(InputUIElement.MANDATORY);
+		String mandatory = (String) uiAttributes.get(InputUIElement.MANDATORY);
 
 		if ((itemsList == null || itemsList.size() == 0) && (mandatory.equalsIgnoreCase(TemplateEngineHelper.BOOLTRUE))) {
 			retVal = false;

@@ -12,6 +12,7 @@ package org.eclipse.cdt.ui.templateengine.pages;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -37,7 +38,7 @@ public class UIPagesProvider {
 
 
 	public UIPagesProvider() {
-		orderVector = new ArrayList();
+		orderVector = new ArrayList/*<String>*/();
 	}
 	
 	/**
@@ -66,7 +67,7 @@ public class UIPagesProvider {
 	 *            UIElement group root element. Which can be converted to a
 	 *            UIPage.
 	 * @param valueStore
-	 * @return HashMap, UIPages corresonding to param aUIElement.
+	 * @return HashMap, UIPages corresponding to param aUIElement.
 	 */
 	public Map/*<String, UIWizardPage>*/ getWizardUIPages(UIElement uiElement, Map/*<String, String>*/ valueStore) {
 		int childCount = 0;
@@ -93,9 +94,9 @@ public class UIPagesProvider {
 		}
 		else {
 			if ((hasChildUIElement(uiElement))) {
-				String title = (String) uiElement.getAttributes().get(UIElement.TITLE);
+				String label = (String) uiElement.getAttributes().get(UIElement.TITLE);
 				String description = (String) (uiElement.getAttributes()).get(UIElement.DESCRIPTION);
-				UIWizardPage uiPage = new UIWizardPage(title, description, uiElement, valueStore);
+				UIWizardPage uiPage = new UIWizardPage(label, description, uiElement, valueStore);
 
 				pageMap.put((uiElement.getAttributes()).get(UIElement.ID), uiPage);
 				addToOrderVector((String) (uiElement.getAttributes()).get(UIElement.ID));
@@ -159,10 +160,9 @@ public class UIPagesProvider {
 	 * @param pageId
 	 */
 	private void addToOrderVector(String pageId) {
-		String containerIds = null;
-		for (int i = 0; i < orderVector.size(); i++) {
-			containerIds = (String) orderVector.get(i);
-			if (containerIds.equalsIgnoreCase(pageId))
+		for(Iterator i= orderVector.iterator(); i.hasNext(); ) {
+			String id= (String) i.next();
+			if (id.equalsIgnoreCase(pageId))
 				return;
 		}
 		orderVector.add(pageId);

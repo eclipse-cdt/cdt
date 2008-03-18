@@ -44,9 +44,8 @@ public class UIBrowseWidget extends UITextWidget implements ModifyListener {
 	 * @param uiAttribute
 	 *            attribute associated with this widget.
 	 */
-	public UIBrowseWidget(UIAttributes/*<String, String>*/ uiAttribute) {
+	public UIBrowseWidget(UIAttributes uiAttribute) {
 		super(uiAttribute);
-		this.uiAttribute = uiAttribute;
 		this.textValue = (String) uiAttribute.get(InputUIElement.DEFAULT);
 	}
 
@@ -61,11 +60,11 @@ public class UIBrowseWidget extends UITextWidget implements ModifyListener {
 		uiComposite = composite;
 
 		label = new Label(uiComposite, SWT.NONE | SWT.LEFT);
-		label.setText((String) uiAttribute.get(InputUIElement.WIDGETLABEL));
+		label.setText((String) uiAttributes.get(InputUIElement.WIDGETLABEL));
 
 		// set the tool tip text
-		if (uiAttribute.get(UIElement.DESCRIPTION) != null){
-			String tipText = (String) uiAttribute.get(UIElement.DESCRIPTION);
+		if (uiAttributes.get(UIElement.DESCRIPTION) != null){
+			String tipText = (String) uiAttributes.get(UIElement.DESCRIPTION);
 			tipText = tipText.replaceAll("\\\\r\\\\n", "\r\n"); //$NON-NLS-1$, //$NON-NLS-2$
 			label.setToolTipText(tipText);
 		}
@@ -105,5 +104,4 @@ public class UIBrowseWidget extends UITextWidget implements ModifyListener {
 		text.dispose();
 		button.dispose();
 	}
-
 }

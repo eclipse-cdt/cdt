@@ -41,16 +41,10 @@ import org.eclipse.cdt.ui.templateengine.uitree.UIElement;
  * fired to UIComposite.
  * 
  * The UI***Widget classes which needs to handle patterns, can inherit the same
- * from this class. The inheriting class need not catche UIComposite instance
+ * from this class. The inheriting class need not cache UIComposite instance
  * but should set the same for UITextWidget(super).
  */
-
 public class UITextWidget extends InputUIElement implements ModifyListener {
-
-	/**
-	 * Attributes associated with this widget.
-	 */
-	protected UIAttributes/*<String, String>*/ uiAttribute;
 
 	/**
 	 * Text widget.
@@ -76,9 +70,8 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 	 * @param uiAttribute
 	 *            attribute associated with this widget.
 	 */
-	public UITextWidget(UIAttributes/*<String, String>*/ uiAttribute) {
+	public UITextWidget(UIAttributes uiAttribute) {
 		super(uiAttribute);
-		this.uiAttribute = uiAttribute;
 		this.textValue = new String();
 	}
 
@@ -87,7 +80,7 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 	 */
 	public Map/*<String, String>*/ getValues() {
 		Map/*<String, String>*/ retMap = new HashMap/*<String, String>*/();
-		retMap.put(uiAttribute.get(InputUIElement.ID), textValue);
+		retMap.put(uiAttributes.get(InputUIElement.ID), textValue);
 
 		return retMap;
 	}
@@ -98,7 +91,7 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 	 * @param valueMap
 	 */
 	public void setValues(Map/*<String, String>*/ valueMap) {
-		String val = (String) valueMap.get(uiAttribute.get(InputUIElement.ID));
+		String val = (String) valueMap.get(uiAttributes.get(InputUIElement.ID));
 		String key = null;
 		String subString = null;
 		if (val != null) {
@@ -128,22 +121,22 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 		this.uiComposite = uiComposite;
 		label = new Label(uiComposite, SWT.LEFT);
 
-		label.setText((String)uiAttribute.get(InputUIElement.WIDGETLABEL));
-		if (((String)uiAttribute.get(UIElement.TYPE)).equalsIgnoreCase(InputUIElement.MULTILINETYPE)) {
+		label.setText((String) uiAttributes.get(InputUIElement.WIDGETLABEL));
+		if (((String) uiAttributes.get(UIElement.TYPE)).equalsIgnoreCase(InputUIElement.MULTILINETYPE)) {
 			gd = new GridData();
 			gd.verticalAlignment = SWT.BEGINNING;
 			gd.verticalIndent = 5;
 			label.setLayoutData(gd);
 		}
 
-		if (uiAttribute.get(UIElement.DESCRIPTION) != null){
-			String tipText = (String) uiAttribute.get(UIElement.DESCRIPTION);
+		if (uiAttributes.get(UIElement.DESCRIPTION) != null){
+			String tipText = (String) uiAttributes.get(UIElement.DESCRIPTION);
 			tipText = tipText.replaceAll("\\\\r\\\\n", "\r\n"); //$NON-NLS-1$ //$NON-NLS-2$
 			label.setToolTipText(tipText);
 		}
-		text = getTextWidget((String) uiAttribute.get(UIElement.TYPE));
+		text = getTextWidget((String) uiAttributes.get(UIElement.TYPE));
 		text.addModifyListener(this);
-		text.setData(".uid", uiAttribute.get(UIElement.ID)); //$NON-NLS-1$
+		text.setData(".uid", uiAttributes.get(UIElement.ID)); //$NON-NLS-1$
 		text.setText(textValue);
 	}
 
@@ -162,7 +155,7 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 	 * for this widget, by the user entered text. A pattern event is fired to
 	 * the container. If this widget has attribute 'checkproject' set to true,
 	 * the value entered in this widget is treated as project name. The same is
-	 * verified if there is a direcotry by the same name in workspace,
+	 * verified if there is a directory by the same name in workspace,
 	 * PatternEvent is thrown to Container.
 	 * 
 	 * @param pattern
@@ -181,7 +174,7 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 				uiComposite.firePatternEvent(new PatternEvent(this, message, false));
 
 		} else {
-			String checkproject = (String) attribute.get(InputUIElement.CHECKPROJECT);
+			String checkproject = (String) uiAttributes.get(InputUIElement.CHECKPROJECT);
 			if ((checkproject != null) && (checkproject.equalsIgnoreCase(TemplateEngineHelper.BOOLTRUE))
 					&& TemplateEngineHelper.checkDirectoryInWorkspace(userInputText)) {
 
@@ -199,7 +192,7 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 	 * evaluatePattern.
 	 */
 	public void modifyText(ModifyEvent e) {
-		String patternName = (String) uiAttribute.get(InputUIElement.INPUTPATTERN);
+		String patternName = (String) uiAttributes.get(InputUIElement.INPUTPATTERN);
 
 		if (patternName == null) {
 			patternValue = null;
@@ -222,7 +215,7 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 		if ((patternValue == null) || (textValue == null)) 
 			return;
 		
-		String mandatory = (String) attribute.get(InputUIElement.MANDATORY);
+		String mandatory = (String) uiAttributes.get(InputUIElement.MANDATORY);
 		if ((mandatory == null || !mandatory.equalsIgnoreCase("true")) && textValue.equals("")) { //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
@@ -262,7 +255,7 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 	 */
 	public boolean isValid() {
 		boolean retVal = true;
-		String mandatory = (String) uiAttribute.get(InputUIElement.MANDATORY);
+		String mandatory = (String) uiAttributes.get(InputUIElement.MANDATORY);
 
 		if (((mandatory != null) && (mandatory.equalsIgnoreCase(TemplateEngineHelper.BOOLTRUE)))
 				&& ((textValue == null) || (textValue.equals("")) || //$NON-NLS-1$
@@ -299,7 +292,7 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 
 			GridData multiTextData = new GridData(GridData.FILL_HORIZONTAL);
 			multiTextData.widthHint = 70;
-			String line = (String) uiAttribute.get(InputUIElement.SIZE);
+			String line = (String) uiAttributes.get(InputUIElement.SIZE);
 			int cnt = 1;
 			if (line != null) {
 				cnt = Integer.parseInt(line);

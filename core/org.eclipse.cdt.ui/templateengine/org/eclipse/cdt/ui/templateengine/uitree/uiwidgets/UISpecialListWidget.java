@@ -30,16 +30,14 @@ import org.eclipse.cdt.utils.ui.controls.IFileListChangeListener;
  * 
  */
 public class UISpecialListWidget extends UIStringListWidget {
-
 	/**
 	 * Constructor.
 	 * 
 	 * @param attribute
 	 *            attribute associated with this widget.
 	 */
-	public UISpecialListWidget(UIAttributes/*<String, String>*/ attribute) {
+	public UISpecialListWidget(UIAttributes attribute) {
 		super(attribute);
-		uiAttribute = attribute;
 	}
 
 	/**
@@ -47,38 +45,40 @@ public class UISpecialListWidget extends UIStringListWidget {
 	 * widgets to be added to UIComposite. set required parameters to the
 	 * Widgets.
 	 * 
-	 * @param composite
+	 * @param uiComposite
 	 */
-	public void createWidgets(UIComposite composite) {
+	public void createWidgets(final UIComposite uiComposite) {
 		GridData gridData = null;
-		uiComposite = composite;
 
-		label = new Label(composite, SWT.LEFT);
-		label.setText((String) uiAttribute.get(InputUIElement.WIDGETLABEL));
+		label = new Label(uiComposite, SWT.LEFT);
+		label.setText((String) uiAttributes.get(InputUIElement.WIDGETLABEL));
 
 		GridData gd = new GridData();
 		gd.verticalAlignment = SWT.BEGINNING;
 		gd.verticalIndent = 5;
 		label.setLayoutData(gd);
 
-		if (uiAttribute.get(InputUIElement.DESCRIPTION) != null){
-			String tipText = (String) uiAttribute.get(UIElement.DESCRIPTION);
+		if (uiAttributes.get(InputUIElement.DESCRIPTION) != null){
+			String tipText = (String) uiAttributes.get(UIElement.DESCRIPTION);
 			tipText = tipText.replaceAll("\\\\r\\\\n", "\r\n"); //$NON-NLS-1$, //$NON-NLS-2$
 			label.setToolTipText(tipText);
 		}
-		Composite flcComposite = new Composite(composite, SWT.NONE);
+		Composite flcComposite = new Composite(uiComposite, SWT.NONE);
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		flcComposite.setLayout(new GridLayout());
 		flcComposite.setLayoutData(gridData);
 
-		fileListControl = new FileListControl(flcComposite, (String) uiAttribute.get(InputUIElement.WIDGETLABEL), 1);
-		fileListControl.setList((String[])itemsList.toArray());
+		fileListControl = new FileListControl(flcComposite, (String) uiAttributes.get(InputUIElement.WIDGETLABEL), 1);
+		fileListControl.setList((String[]) itemsList.toArray(new String[itemsList.size()]));
 		fileListControl.setSelection(0);
 		fileListControl.addChangeListener(new IFileListChangeListener(){
 			public void fileListChanged(FileListControl fileList, String oldValue[], String newValue[]) {
+				itemsList.clear();
 				itemsList.addAll(Arrays.asList(newValue));
+				uiComposite.firePatternEvent(createPatternEvent());
 			}
 		});
+		uiComposite.firePatternEvent(createPatternEvent());
 	}
 
 	/**

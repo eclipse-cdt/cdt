@@ -18,8 +18,8 @@ import java.util.Map;
 import org.eclipse.cdt.ui.templateengine.uitree.uiwidgets.UIComposite;
 
 /**
- * The GenericUIElementGroup extends UIElement, implements the default behaviour
- * expected from UIElementGroup. This gives behaviour expected for PAGES-ONLY
+ * The GenericUIElementGroup extends UIElement, implements the default behavior
+ * expected from UIElementGroup. This gives behavior expected for PAGES-ONLY
  * type. Any other type of UIElement groups can override the definitions given
  * to methods in this class.
  * 
@@ -47,18 +47,17 @@ public class GenericUIElementGroup extends UIElement {
 	private List/*<UIElement>*/ childList;
 
 	/**
-	 * Call UIElement constructor by passing Attributes as param.
+	 * Call UIElement constructor by passing Attributes as parameter.
 	 * 
-	 * @param attribute
+	 * @param attributes
 	 */
-	public GenericUIElementGroup(UIGroupTypeEnum type, UIAttributes/*<String, String>*/ attribute) {
-		super(attribute);
+	public GenericUIElementGroup(UIGroupTypeEnum type, UIAttributes attributes) {
+		super(attributes);
 		this.type = type;
 		this.childList = new ArrayList/*<UIElement>*/();
 	}
 
 	/*
-	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.templateengine.uitree.UIElement#setValues(java.util.Map)
 	 */
 	public void setValues(Map/*<String, String>*/ valueMap) {
@@ -70,7 +69,6 @@ public class GenericUIElementGroup extends UIElement {
 	}
 
 	/*
-	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.templateengine.uitree.UIElement#getValues()
 	 */
 	public Map/*<String, String>*/ getValues() {
@@ -85,7 +83,6 @@ public class GenericUIElementGroup extends UIElement {
 	}
 
 	/*
-	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.templateengine.uitree.UIElement#createWidgets(org.eclipse.cdt.ui.templateengine.uitree.uiwidgets.UIComposite)
 	 */
 	public void createWidgets(UIComposite uiComposite) {
@@ -101,11 +98,8 @@ public class GenericUIElementGroup extends UIElement {
 		}
 	}
 
-	/**
-	 * dispose the Widget, releasing any resources occupied by this widget. The
-	 * same is called on the child list.
-	 * 
-	 * @see UIElement
+	/*
+	 * @see org.eclipse.cdt.ui.templateengine.uitree.UIElement#disposeWidget()
 	 */
 	public void disposeWidget() {
 		int childCount = getChildCount();
@@ -157,7 +151,6 @@ public class GenericUIElementGroup extends UIElement {
 	}
 
 	/*
-	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.templateengine.uitree.UIElement#isValid()
 	 */
 	public boolean isValid() {

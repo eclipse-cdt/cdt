@@ -42,8 +42,23 @@ public abstract class InputUIElement extends UIElement {
 	public static final String NAME = new String("name"); //$NON-NLS-1$
 	public static final String SELECTED = new String("selected"); //$NON-NLS-1$
 
+	/**
+	 * The string appearing in the Combo box
+	 */
+	public static final String COMBOITEM_LABEL= "label"; //$NON-NLS-1$
+	
+	/**
+	 * Alternative attribute name for the value stored when the corresponding Combo item is selected.
+	 * See <a href="https://bugs.eclipse.org/222954">Bugzilla 222954</a>.
+	 */
+	public static final String COMBOITEM_NAME= "name"; //$NON-NLS-1$
+	
+	/**
+	 * Preferred attribute name for the value stored when the corresponding Combo item is selected.
+	 */
+	public static final String COMBOITEM_VALUE= "value"; //$NON-NLS-1$
 
-	protected InputUIElement(UIAttributes/*<String, String>*/ uiAttribute) {
+	protected InputUIElement(UIAttributes uiAttribute) {
 		super(uiAttribute);
 	}
 

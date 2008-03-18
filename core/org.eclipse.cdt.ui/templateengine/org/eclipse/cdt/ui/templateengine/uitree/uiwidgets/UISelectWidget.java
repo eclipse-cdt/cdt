@@ -13,56 +13,45 @@ package org.eclipse.cdt.ui.templateengine.uitree.uiwidgets;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
+import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-import org.eclipse.cdt.core.templateengine.TemplateEngineHelper;
+import com.ibm.icu.text.MessageFormat;
+
+import org.eclipse.cdt.ui.templateengine.Messages;
+import org.eclipse.cdt.ui.templateengine.event.PatternEvent;
 import org.eclipse.cdt.ui.templateengine.uitree.InputUIElement;
 import org.eclipse.cdt.ui.templateengine.uitree.UIAttributes;
 import org.eclipse.cdt.ui.templateengine.uitree.UIElement;
-
 
 /**
  * This gives a Label and Combo widget.
  */
 public class UISelectWidget extends InputUIElement {
-	/**
-	 * Attributes associated with this widget.
-	 */
-	protected UIAttributes/*<String, String>*/ uiAttribute;
-
-	/**
-	 * Select widget.
-	 */
-	protected Combo combo = null;
-
-	/**
-	 * Label of this widget.
-	 */
 	protected Label label;
+	protected Combo combo;
 
 	/**
-	 * Composite to which this widget control is added.
+	 * Mapping from values stored by this combo, to their associated names in UI
 	 */
-	protected UIComposite uiComposite;
+	protected Map/*<String, String>*/ value2name;
 
 	/**
-	 * Map contains the values of Select Widget
+	 * The default name to select
 	 */
-	protected HashMap/*<String, String>*/ itemMap;
+	protected String defaultValue;
 
 	/**
-	 * Default value of Select Widget
+	 * The currently selected name. May be null.
 	 */
-	protected String itemSelected;
+	protected String currentValue;
 
 	/**
 	 * Constructor for Select Widget.
@@ -70,34 +59,33 @@ public class UISelectWidget extends InputUIElement {
 	 * @param attribute
 	 *            attribute associated with this widget.
 	 */
-	public UISelectWidget(UIAttributes/*<String, String>*/ attribute, HashMap/*<String, String>*/ itemMap,
-			String itemSelected) {
+	public UISelectWidget(UIAttributes attribute, Map/*<String, String>*/ value2name, String defaultValue) {
 		super(attribute);
-		uiAttribute = attribute;
-		this.itemMap = itemMap;
-		this.itemSelected = itemSelected;
+		this.value2name= value2name;
+		this.defaultValue= defaultValue;
+		this.currentValue= defaultValue;
 	}
 
+	/*
+	 * @see org.eclipse.cdt.ui.templateengine.uitree.UIElement#getValues()
+	 */
 	public Map/*<String, String>*/ getValues() {
-
-		Map/*<String, String>*/ retMap = new HashMap/*<String, String>*/();
-		retMap.put(uiAttribute.get(InputUIElement.ID), itemSelected);
-
-		return retMap;
+		Map/*<String, String>*/ values = new HashMap/*<String, String>*/();
+		if(currentValue != null) {
+			values.put(uiAttributes.get(InputUIElement.ID), currentValue);
+		}
+		return values;
 	}
 
-	/**
-	 * Set the Text widget with new value.
-	 * 
-	 * @param valueMap
+	/*
+	 * @see org.eclipse.cdt.ui.templateengine.uitree.UIElement#setValues(java.util.Map)
 	 */
 	public void setValues(Map/*<String, String>*/ valueMap) {
-		itemSelected = (String) valueMap.get(uiAttribute.get(InputUIElement.ID));
-		
+		defaultValue= (String) valueMap.get(uiAttributes.get(InputUIElement.ID));
 		if (combo != null) {
-			String[] items = combo.getItems();
+			String[] items= combo.getItems();
 			for (int i=0; i < items.length; i++) {
-				if (items[i].equals(itemSelected)) {
+				if (items[i].equals(defaultValue)) {
 					combo.select(i);
 					break;
 				}
@@ -105,84 +93,75 @@ public class UISelectWidget extends InputUIElement {
 		}
 	}
 
-	/**
-	 * create a Label and Text widget, add it to UIComposite. set Layout for the
-	 * widgets to be added to UIComposite. set required parameters to the
-	 * Widgets.
-	 * 
-	 * @param composite
+	/*
+	 * @see org.eclipse.cdt.ui.templateengine.uitree.UIElement#createWidgets(org.eclipse.cdt.ui.templateengine.uitree.uiwidgets.UIComposite)
 	 */
-	public void createWidgets(UIComposite composite) {
-		GridData gridData = null;
-		uiComposite = composite;
+	public void createWidgets(final UIComposite uiComposite) {
+		label= new Label(uiComposite, SWT.LEFT);
+		label.setText((String) uiAttributes.get(InputUIElement.WIDGETLABEL));
 
-		label = new Label(composite, SWT.LEFT);
-		label.setText((String) uiAttribute.get(InputUIElement.WIDGETLABEL));
+		Composite comboComposite = new Composite(uiComposite, SWT.NONE);
+		comboComposite.setLayout(GridLayoutFactory.swtDefaults().create());
+		comboComposite.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
 
-		gridData = new GridData();
-		gridData.horizontalAlignment = GridData.FILL;
-		gridData.grabExcessHorizontalSpace = true;
+		combo= new Combo(comboComposite, SWT.DROP_DOWN | SWT.READ_ONLY);
+		combo.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());		
+		combo.setData(".uid", uiAttributes.get(UIElement.ID)); //$NON-NLS-1$
 
-		Composite comboComposite = new Composite(composite, SWT.NONE);
-
-		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		comboComposite.setLayout(new GridLayout());
-		comboComposite.setLayoutData(gridData);
-
-		combo = new Combo(comboComposite, SWT.DROP_DOWN | SWT.READ_ONLY);
-
-		Set keySet = itemMap.keySet();
-		Iterator mapIterator = keySet.iterator();
-
-		int index = 0;
-		int i = 0;
-		while (mapIterator.hasNext()) {
-
-			String key = (String) mapIterator.next();
-			combo.add(key);
-			if (itemSelected.equals(key))
-				index = i;
-			i++;
-		}
-
-		combo.select(index);
-		combo.setData(".uid", uiAttribute.get(UIElement.ID)); //$NON-NLS-1$
-		combo.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				itemSelected = combo.getItem(combo.getSelectionIndex());
+		// populate combo
+		int index= 0, defaultIndex= 0;
+		for(Iterator i= value2name.keySet().iterator(); i.hasNext(); ) {
+			String value= (String) i.next();
+			combo.add((String) value2name.get(value));
+			if(value.equals(defaultValue)) {
+				defaultIndex= index;
 			}
-			
-			public void widgetDefaultSelected(SelectionEvent e) {	
+			index++;
+		}
+		
+		combo.select(defaultIndex);
+		combo.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				currentValue= getValue(combo.getItem(combo.getSelectionIndex()));
+				uiComposite.firePatternEvent(createPatternEvent());
 			}
 		});
+		uiComposite.firePatternEvent(createPatternEvent());
+	}
+
+	private PatternEvent createPatternEvent() {
+		String msg= MessageFormat.format(Messages.getString("UISelectWidget_ErrorNoneSelected0"), new String[] {label.getText()}); //$NON-NLS-1$
+		return new PatternEvent(this, msg, isValid());
 	}
 
 	/**
-	 * Based on the stae of this Widget return true or false. This return value
-	 * will be used by the UIPage to update its(UIPage) state. Return value
-	 * depends on the value contained in Select Widget. If value contained is
-	 * null, "" and Mandatory value from attributes.
-	 * 
-	 * @return boolean.
+	 * @return whether this widget has been set to a valid state. For this 
+	 * widget type that means whether the user has selected a non-empty string name.
 	 */
 	public boolean isValid() {
 		boolean retVal = true;
-		String mandatory = (String) uiAttribute.get(InputUIElement.MANDATORY);
-
-		if ((itemSelected == null || itemSelected.equals("") //$NON-NLS-1$
-		|| itemSelected.trim().length() < 1) && (mandatory.equalsIgnoreCase(TemplateEngineHelper.BOOLTRUE))) {
-			retVal = false;
+		if(new Boolean((String) uiAttributes.get(InputUIElement.MANDATORY)).booleanValue()) {
+			retVal= currentValue!= null && currentValue.trim().length()>0;
 		}
 		return retVal;
 	}
 
-	/**
-	 * call the dispose method on the widgets. This is to ensure that the
-	 * widgets are properly disposed.
+	private String getValue(String name) {
+		for(Iterator i= value2name.keySet().iterator(); i.hasNext(); ) {
+			String value= (String) i.next();
+			if(value2name.get(value).equals(name)) {
+				return value;
+			}
+		}
+		throw new IllegalStateException();
+	}
+	
+	
+	/*
+	 * @see org.eclipse.cdt.ui.templateengine.uitree.UIElement#disposeWidget()
 	 */
 	public void disposeWidget() {
 		label.dispose();
 		combo.dispose();
 	}
-
 }

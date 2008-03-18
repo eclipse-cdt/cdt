@@ -17,16 +17,13 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.templateengine.TemplateEngineUtil;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.templateengine.uitree.UIElement;
 import org.eclipse.cdt.ui.templateengine.uitree.uiwidgets.UIComposite;
-
 
 /**
  * 
@@ -35,13 +32,11 @@ import org.eclipse.cdt.ui.templateengine.uitree.uiwidgets.UIComposite;
  * UIComposite, which extends a SWT composite. The SWT widgets are added to
  * UIComposite.
  */
-
 public abstract class UIPage extends DialogPage {
-
 	/**
 	 * The Composite belonging to this page. The SWT widgets are added to this Composite. UIComposite instance is the top level control of this page. This top level control is initialized in createControl method.
 	 */
-	private UIComposite uiComposite;
+	protected UIComposite uiComposite;
 
 	/**
 	 * resources ID which will be displayed as F1 help in Title area.
@@ -51,12 +46,12 @@ public abstract class UIPage extends DialogPage {
 	/**
 	 * The UIElement (group), to which this page corresponds. Every UIElement group corresponds to a UIPage. The children of this goup are UIElement's (SWT widgets). Which are added to the UIComposite.
 	 */
-	private UIElement uiElement;
+	protected final UIElement uiElement;
 
 	/**
 	 * ValueStore for this instance of Template.
 	 */
-	private Map/*<String, String>*/ valueStore;
+	protected final Map/*<String, String>*/ valueStore;
 
 	/**
 	 * Title set for this WizardPage.
@@ -93,36 +88,14 @@ public abstract class UIPage extends DialogPage {
 
 		super.setImageDescriptor(imageDescriptor);
 		//TODO: Fix the imagedescriptor later.
-//		setImageDescriptor(TemplateEnginePlugin.imageDescriptorFromPlugin(TemplateEnginePlugin.getDefault().getWizardIconPluginID(), TemplateEnginePlugin.getDefault().getWizardIconFile()));
+		//setImageDescriptor(TemplateEnginePlugin.imageDescriptorFromPlugin(TemplateEnginePlugin.getDefault().getWizardIconPluginID(), TemplateEnginePlugin.getDefault().getWizardIconFile()));
 
 		title = name;
 		uiElement = element;
 		uiElement.setValues(valueStore);
 		this.valueStore = valueStore;
 		//TODO: Check the from which plugin the PLUGIN_ID comes from i.e. from CCorePlugin or CUIPlugin
-		pageId = CUIPlugin.getPluginId() + "." + //$NON-NLS-1$
-				(uiElement.getAttributes()).get(UIElement.ID);
-	}
-
-	/**
-	 * Creates the top level control for this dialog page under the given parent
-	 * composite.
-	 * 
-	 * @param parent
-	 *            the parent composite
-	 */
-	public void createControl(Composite parent) {
-		initializeDialogUnits(parent);
-		uiComposite = new UIComposite(parent, uiElement, valueStore);
-
-		// set the focus so that InfoPop is displayed when F1 is Pressed.
-		uiComposite.setFocus();
-
-		setControl(uiComposite);
-
-		// Setting InfoPop help context ID(plugin-id+ContextID).
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(super.getControl(), pageId);
-
+		pageId = CUIPlugin.getPluginId() + "." + (uiElement.getAttributes()).get(UIElement.ID); //$NON-NLS-1$
 	}
 
 	/**
@@ -145,7 +118,6 @@ public abstract class UIPage extends DialogPage {
 		return uiComposite;
 	}
 
-	// This method is provided for unit tesing the UIComposite instance.
 	/**
 	 * 
 	 * This returns UICompostie as UIComposite instance. Unlike the getControl.
@@ -155,5 +127,4 @@ public abstract class UIPage extends DialogPage {
 	public UIComposite getComposite() {
 		return uiComposite;
 	}
-
 }

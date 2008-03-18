@@ -47,7 +47,7 @@ import org.eclipse.cdt.ui.templateengine.SimpleElementException;
 
 public class UIElementTreeBuilderManager implements IUIElementTreeBuilderManager {
 	/**
-	 * referenc to iUIElementTreeBuilderHelper, which returns UIElement for Element.
+	 * reference to iUIElementTreeBuilderHelper, which returns UIElement for Element.
 	 */
 	private UIElementTreeBuilderHelper uiElementTreeBuilderHelper;
 

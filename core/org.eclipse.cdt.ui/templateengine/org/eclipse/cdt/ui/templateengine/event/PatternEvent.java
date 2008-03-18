@@ -16,7 +16,7 @@ import java.util.EventObject;
  * 
  * PatternEvent class instances are created, when there is an unexpected input
  * in the InputUIElement. Which results in a mismatch to the pattern of input
- * data exptected. This has to be updated in the UIPage. To do this,
+ * data expected. This has to be updated in the UIPage. To do this,
  * PatternEvent is fired. For which, the UIPage will be the registered listener.
  * Here UIPage stands for WizardPage.
  * 

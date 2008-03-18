@@ -1,28 +1,25 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
- * Yuan Zhang / Beth Tibbitts (IBM Research)
- * Bryan Wilkinson (QNX)
+ *     IBM Rational Software - Initial API and implementation
+ *     Yuan Zhang / Beth Tibbitts (IBM Research)
+ *     Bryan Wilkinson (QNX)
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.ICompositeType;
-import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 
 /**
  * @author jcamelon
@@ -77,16 +74,13 @@ public class CASTTypedefNameSpecifier extends CASTBaseDeclSpecifier implements
 
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
 		IBinding[] bindings = CVisitor.findBindingsForContentAssist(n, isPrefix);
-		List filtered = new ArrayList();
-		
+
 		for (int i = 0; i < bindings.length; i++) {
-			if (bindings[i] instanceof ICompositeType
-					|| bindings[i] instanceof IEnumeration
-					|| bindings[i] instanceof ITypedef) {
-				filtered.add(bindings[i]);
+			if (!(bindings[i] instanceof ITypedef)) {
+				bindings[i]= null;
 			}
 		}
 		
-		return (IBinding[]) filtered.toArray(new IBinding[filtered.size()]);
+		return (IBinding[]) ArrayUtil.removeNulls(IBinding.class, bindings);
 	}
 }

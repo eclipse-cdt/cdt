@@ -33,6 +33,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	private static final String HEADER_FILE_NAME = "CompletionTest.h";
 	private static final String SOURCE_FILE_NAME = "CompletionTest.c";
 	private static final String CURSOR_LOCATION_TAG = "/*cursor*/";
+	private static final String INCLUDE_LOCATION_TAG = "/*include*/";
 	private static final String DISTURB_FILE_NAME= "DisturbWith.c";
 	
 	protected int fCursorOffset;
@@ -44,6 +45,79 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	//struct Struct2;
 	//union Union1;
 	//union Union2;
+	//
+	//#define DEBUG 1
+	//#define AMacro(x) x+1
+	//#define XMacro(x,y) x+y
+	//
+	//int aVariable;
+	//int xVariable;
+	//
+	//void aFunction();
+	//void xFunction();
+	//
+	//enum anEnumeration {
+	//	aFirstEnum,
+	//	aSecondEnum, 
+	//	aThirdEnum
+	//};
+	//typedef enum anEnumeration anEnumerationType;
+	//
+	//enum xEnumeration {
+	//	xFirstEnum,
+	//	xSecondEnum, 
+	//	xThirdEnum
+	//};
+	//typedef enum xEnumeration xEnumerationType;
+	//
+	//struct AStruct{
+	//	int aStructField;
+	//	int xaStructField;
+	//};
+	//typedef struct AStruct AStructType;
+	//
+	//struct XStruct{
+	//	int xStructField;
+	//	int axStructField;
+	//};
+	//typedef struct XStruct XStructType;
+	//
+	//void anotherFunction(){
+	//   int aLocalDeclaration = 1;
+	//}
+	//
+	//void xOtherFunction(){
+	//   int xLocalDeclaration = 1;
+	//}
+	//#ifdef ANONYMOUS
+	//enum {
+	//	anonFirstEnum,
+	//	anonSecondEnum, 
+	//	anonThirdEnum
+	//};
+	//
+	//enum {
+	//	xanonFirstEnum,
+	//	xanonSecondEnum, 
+	//	xanonThirdEnum
+	//};
+	//
+	//int notAnonymous;
+	//enum notAnonymousEnum {};
+	//struct notAnonymousStruct {};
+	//
+	//struct {
+	//	int anonStructField;
+	//};
+	//
+	//struct {
+	//	int xanonStructField;
+	//};
+	//
+	//union {
+	//	int anonUnionMember1, anonUnionMember2;
+	//}; 
+	//#endif /* ANONYMOUS */
 
 	//{DisturbWith.c}
 	// int gTemp;
@@ -70,7 +144,8 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 		fProject= project;
 		String headerContent= readTaggedComment(HEADER_FILE_NAME);
 		StringBuffer sourceContent= getContentsForTest(1)[0];
-		sourceContent.insert(0, "#include \""+HEADER_FILE_NAME+"\"\n");
+		int includeOffset= Math.max(0, sourceContent.indexOf(INCLUDE_LOCATION_TAG));
+		sourceContent.insert(includeOffset, "#include \""+HEADER_FILE_NAME+"\"\n");
 		fCursorOffset= sourceContent.indexOf(CURSOR_LOCATION_TAG);
 		assertTrue("No cursor location specified", fCursorOffset >= 0);
 		sourceContent.delete(fCursorOffset, fCursorOffset+CURSOR_LOCATION_TAG.length());
@@ -141,10 +216,6 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 		int idx= doc.get().indexOf(replace);
 		doc.replace(idx, replace.length(), globalVar);
 
-		// succeeds when buffer is saved
-//		fEditor.doSave(new NullProgressMonitor());
-//		EditorTestHelper.joinBackgroundActivities((AbstractTextEditor)fEditor);
-
 		final String[] expected= {
 				"aNewGlobalVar"
 		};
@@ -203,7 +274,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	
 	// #include "header191315.h"
 	// void xxx() { c_lin/*cursor*/
-	public void testExtenC_bug191315() throws Exception {
+	public void testExternC_bug191315() throws Exception {
 		StringBuffer[] content= getContentsForTest(3);
 		createFile(fProject, "header191315.h", content[0].toString());
 		createFile(fProject, "source191315.c", content[0].toString());
@@ -215,4 +286,250 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 		};
 		assertCompletionResults(expected);
 	}
+
+	//#define ANONYMOUS
+	///*include*/
+	///*cursor*/
+	public void testAnonymousTypes() throws Exception {
+		final String[] expected = { "AStructType", "XStructType", "anEnumerationType", "xEnumerationType"};
+		assertCompletionResults(expected);
+	}
+	
+	//void foo ( a/*cursor*/
+	public void testArgumentTypes_Prefix() throws Exception {
+		final String[] expected = { "AMacro(x)", "AStructType", "anEnumerationType" };
+		assertCompletionResults(expected);
+	}
+
+	//struct aThirdStruct {
+	//   int x;
+	//   /*cursor*/
+	//};
+	public void testFieldType_NoPrefix() throws Exception {
+		final String[] expected = { "AStructType", "XStructType", "anEnumerationType", "xEnumerationType" };
+		assertCompletionResults(expected);
+	}
+
+	//struct aThirdStruct {
+	//   int x;
+	//   a/*cursor*/
+	//};
+	public void testFieldType_Prefix() throws Exception {
+		final String[] expected = { "AMacro(x)", "AStructType", "anEnumerationType" };
+		assertCompletionResults(expected);
+	}
+	
+	//#ifdef /*cursor*/
+	public void testMacroRef_NoPrefix() throws Exception {
+		final String[] expected = {
+				"AMacro(x)",
+				"DEBUG",
+				"XMacro(x, y)",
+				"_Pragma(arg)",
+				"__CDT_PARSER__",
+				"__DATE__",
+				"__FILE__",
+				"__LINE__",
+				"__STDC_HOSTED_",
+				"__STDC_VERSION_",
+				"__STDC__",
+				"__TIME__",
+				"__asm__",
+				"__builtin_constant_p(exp)",
+				"__builtin_va_arg(ap, type)",
+				"__complex__",
+				"__const",
+				"__const__",
+				"__extension__",
+				"__imag__",
+				"__inline__",
+				"__null",
+				"__real__",
+				"__restrict",
+				"__restrict__",
+				"__signed__",
+				"__stdcall",
+				"__volatile__",
+				"__typeof__"
+		};
+		assertCompletionResults(expected);
+	}
+
+	//#ifdef D/*cursor*/
+	public void testMacroRef_Prefix() throws Exception {
+		final String[] expected = { "DEBUG" };
+		assertCompletionResults(expected);
+	}
+	
+	//void fooFunction()
+	//{
+	//    AStructType* c;
+	//    c->/*cursor*/
+	//}
+	public void testMemberReference_Arrow_NoPrefix() throws Exception {
+		final String[] expected = { 
+				"aStructField", "xaStructField",
+		};
+		assertCompletionResults(expected);
+	}
+
+	//void main() {
+	//    struct AStruct a, *ap;
+	//    ap->/*cursor*/
+	//}
+	public void testMemberReference_Arrow_NoPrefix2() throws Exception {
+		final String[] expected = { 
+				"aStructField", "xaStructField",
+		};
+		assertCompletionResults(expected);
+	}
+
+	//void fooFunction()
+	//{
+	//    AStructType* c;
+	//    c->a/*cursor*/
+	//}
+	public void testMemberReference_Arrow_Prefix() throws Exception {
+		final String[] expected = { 
+				"aStructField",
+		};
+		assertCompletionResults(expected);
+	}
+
+	//AStructType* foo();
+	//
+	//void fooFunction()
+	//{
+	//    foo()->a/*cursor*/
+	//}
+	public void testMemberReference_Arrow_Prefix2() throws Exception {
+		final String[] expected = { 
+				"aStructField",
+		};
+		assertCompletionResults(expected);
+	}
+
+	//void fooFunction()
+	//{
+	//    AStructType c;
+	//    c./*cursor*/
+	//}
+	public void testMemberReference_Dot_NoPrefix() throws Exception {
+		final String[] expected = { 
+				"aStructField", "xaStructField",
+		};
+		assertCompletionResults(expected);
+	}
+
+	//void fooFunction()
+	//{
+	//    AStructType c;
+	//    c.a/*cursor*/
+	//}
+	public void testMemberReference_Dot_Prefix() throws Exception {
+		final String[] expected = { 
+				"aStructField",
+		};
+		assertCompletionResults(expected);
+	}
+
+	//typedef int myType;
+	//
+	//m/*cursor*/
+	public void testTypeDef_Prefix() throws Exception {
+		final String[] expected = { 
+				"myType",
+		};
+		assertCompletionResults(expected);
+	}
+
+	//void fooFunction(int x)
+	//{
+	//    /*cursor*/
+	//}
+	public void testSingleName_Function_NoPrefix() throws Exception {
+		final String[] expected = { 
+				"x",
+				"aVariable",
+				"xVariable",
+				"aFunction(void)",
+				"anotherFunction(void)",
+				"fooFunction(int)",
+				"xFunction(void)",
+				"xOtherFunction(void)",
+				"anEnumerationType",
+				"xEnumerationType",
+				"AStructType",
+				"XStructType",
+				"aFirstEnum",
+				"aSecondEnum",
+				"aThirdEnum",
+				"xFirstEnum",
+				"xSecondEnum",
+				"xThirdEnum",
+				"gGlobalInt"
+		};
+		assertCompletionResults(expected);
+	}
+
+	//void fooFunction(int x)
+	//{
+	//    a/*cursor*/
+	//}
+	public void testSingleName_Function_Prefix() throws Exception {
+		final String[] expected = { 
+				"AMacro(x)",
+				"AStructType",
+				"aVariable",
+				"aFunction(void)",
+				"anotherFunction(void)",
+				"anEnumerationType",
+				"aFirstEnum",
+				"aSecondEnum",
+				"aThirdEnum",
+		};
+		assertCompletionResults(expected);
+	}
+	
+	//void fooFunction(int x)
+	//{
+	//    int y = /*cursor*/
+	//}
+	public void testSingleName_Assignment_NoPrefix() throws Exception {
+		final String[] expected = {
+				"x",
+				"y",
+				"aVariable",
+				"xVariable",
+				"aFunction(void)",
+				"anotherFunction(void)",
+				"fooFunction(int)",
+				"xFunction(void)",
+				"xOtherFunction(void)",
+				"anEnumerationType",
+				"xEnumerationType",
+				"AStructType",
+				"XStructType",
+				"aFirstEnum",
+				"aSecondEnum",
+				"aThirdEnum",
+				"xFirstEnum",
+				"xSecondEnum",
+				"xThirdEnum",
+				"gGlobalInt"
+		};
+		assertCompletionResults(expected);
+	}
+	
+	//void foo(int x)
+	//{
+	//    int y = AM/*cursor*/
+	//}
+	public void testSingleName_Assignment_Prefix() throws Exception {
+		final String[] expected = {
+				"AMacro(x)"
+		};
+		assertCompletionResults(expected);
+	}
+
 }

@@ -17,7 +17,7 @@
 		</property>
 		
 		<property id="TestWidget6" label="SelectWidget2" description="SelectWidget2Description" type="select" default="-1" mandatory="true" persist="false">
-    		<item label="" value="-1"/>
+    		<item label="" value=""/>
     		<item label="Include" value="1"/>
     		<item label="Exclude" value="0"/>
 		</property>

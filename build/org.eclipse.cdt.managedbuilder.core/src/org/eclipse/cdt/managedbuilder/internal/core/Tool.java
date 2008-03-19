@@ -4113,33 +4113,46 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		
 		if(announcement != null && !announcement.equals(superTool.getAnnouncement()))
 			return true;
-		//commandLineGeneratorElement
-		//commandLineGenerator
-		//dependencyGeneratorElement
-		//dependencyGenerator
-		//iconPathURL;
-		//pathconverterElement
-		//optionPathConverter
-		//supportedProperties
-		//supportsManagedBuild
-		//isTest;
-		//  Miscellaneous
-		//isExtensionTool
-		//isDirty
-		//resolved
-		//previousMbsVersionConversionElement
-		//currentMbsVersionConversionElement
-		//rebuildState
-		//booleanExpressionCalculator
-		
-		//typeToDataMap
-		//fDataMapInited;
-		//identicalList;
+
 		if(discoveredInfoMap != null && discoveredInfoMap.size() != 0)
 			return true;
-		//scannerConfigDiscoveryProfileId
+
+		if (isAnyOptionModified(this, tool))
+			return true;
+		
 		return false;
 	}
+	
+	private boolean isAnyOptionModified(ITool t1, ITool t2) {
+		IOption[] ops1 = t1.getOptions();
+		IOption[] ops2 = t2.getOptions();
+		for (int i=0; i<ops1.length; i++) {
+			IOption op1 = ops1[i];
+			for (int j=0; j<ops2.length; j++) {
+				IOption op2 = ops2[j];
+				// find matching option
+				try {
+					if (op1.getValueType() == ops2[j].getValueType() &&
+							op1.getName().equals(ops2[j].getName())) {
+						Object ob1 = op1.getValue();
+						Object ob2 = op2.getValue();
+						if (ob1 == null && ob2 == null)
+							break;
+						// values are different ?
+						if ((ob1 == null || ob2 == null) ||
+								!(ob1.equals(ob2) ))
+							return true;
+						else
+							break;
+					}
+				} catch (BuildException e) {
+					return true; // unprobable
+				}
+			}
+		}
+		return false;
+	}
+	
 	
 	public IOption[] getOptionsOfType(int type){
 		IOption options[] = getOptions();

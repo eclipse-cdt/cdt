@@ -26,6 +26,19 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor;
  */
 public abstract class ASTVisitor {
 	/**
+	 * Skip the traversal of children of this node, don't call leave on this node. 
+	 */
+	public final static int PROCESS_SKIP = 1;
+	/**
+	 * Abort the entire traversal.
+	 */
+	public final static int PROCESS_ABORT = 2;
+	/**
+	 * Continue with traversing the children of this node.
+	 */
+	public final static int PROCESS_CONTINUE = 3;
+
+	/**
 	 * Set this flag to visit names.
 	 */
 	public boolean shouldVisitNames = false;
@@ -98,22 +111,7 @@ public abstract class ASTVisitor {
 	 */
 	public boolean shouldVisitTemplateParameters = false;
 
-
-	/**
-	 * Skip the traversal of children of this node, don't call leave on this node. 
-	 */
-	public final static int PROCESS_SKIP = 1;
-
-	/**
-	 * Abort the entire traversal.
-	 */
-	public final static int PROCESS_ABORT = 2;
-
-	/**
-	 * Continue with traversing the children of this node.
-	 */
-	public final static int PROCESS_CONTINUE = 3;
-
+	
 	// visit methods
 	public int visit(IASTTranslationUnit tu) {
 		return PROCESS_CONTINUE;
@@ -163,11 +161,6 @@ public abstract class ASTVisitor {
 		return PROCESS_CONTINUE;
 	}
 	
-	@Deprecated
-	public int visit( IASTComment comment){
-		return PROCESS_CONTINUE;
-	}
-
 	// leave methods
 	public int leave(IASTTranslationUnit tu) {
 		return PROCESS_CONTINUE;
@@ -217,6 +210,17 @@ public abstract class ASTVisitor {
 		return PROCESS_CONTINUE;
 	}
 	
+	/**
+	 * @deprecated use {@link IASTTranslationUnit#getComments()}, instead.
+	 */
+	@Deprecated
+	public int visit( IASTComment comment){
+		return PROCESS_CONTINUE;
+	}
+	/**
+	 * @deprecated use {@link IASTTranslationUnit#getComments()}, instead.
+	 */
+	@Deprecated
 	public int leave( IASTComment comment){
 		return PROCESS_CONTINUE;
 	}

@@ -27,6 +27,7 @@
  * David McKnight  (IBM)         - [220123][dstore] Configurable timeout on irresponsiveness
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * David McKnight   (IBM)        - [220123] [api][dstore] Configurable timeout on irresponsiveness
+ * David McKnight   (IBM)        - [223204] [cleanup] fix broken nls strings in files.ui and others
  *******************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore;
@@ -1026,7 +1027,8 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 					else
 					{
 						String cmsg = NLS.bind(ConnectorServiceResources.MSG_CONNECT_SSL_EXCEPTION, launchStatus.getMessage());
-						msg = createSystemMessage(IConnectorServiceMessageIds.MSG_CONNECT_SSL_EXCEPTION, IStatus.ERROR, cmsg);
+						String cmsgDetails = ConnectorServiceResources.MSG_CONNECT_SSL_EXCEPTION_DETAILS;
+						msg = createSystemMessage(IConnectorServiceMessageIds.MSG_CONNECT_SSL_EXCEPTION, IStatus.ERROR, cmsg, cmsgDetails);
 					}
 				} 	
 		    }

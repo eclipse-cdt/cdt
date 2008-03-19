@@ -18,6 +18,7 @@
  * David McKnight   (IBM)        - [216252] [nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * David McKnight   (IBM)        - [223103] [cleanup] fix broken externalized strings
+ * David McKnight   (IBM)        - [223204] [cleanup] fix broken nls strings in files.ui and others
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui;
@@ -40,23 +41,10 @@ public class FileResources extends NLS
 	public static String RSEOperation_message;
 
 	// --- File Editors ---
-	public static String FileEditorPreference_fileTypes;
-	public static String FileEditorPreference_add;
-	public static String FileEditorPreference_remove;
-	public static String FileEditorPreference_associatedEditors;
-	public static String FileEditorPreference_addEditor;
-	public static String FileEditorPreference_removeEditor;
-	public static String FileEditorPreference_default;
+
 	public static String FileEditorPreference_existsTitle;
 	public static String FileEditorPreference_existsMessage;
-	public static String FileEditorPreference_defaultLabel;
-    public static String FileEditorPreference_contentTypesRelatedLink;
-    public static String FileEditorPreference_isLocked;
 
-	public static String FileExtension_fileTypeMessage;
-	public static String FileExtension_fileTypeLabel;
-	public static String FileExtension_shellTitle;
-	public static String FileExtension_dialogTitle;
 	
 	public static String DefaultEditorDescription_name;
 
@@ -88,11 +76,9 @@ public class FileResources extends NLS
 	// PREFERENCES FOR UNIVERSAL FILE SYSTEM ...
 	// ---------------------------------------------------
 
-	public static String RESID_PREF_UNIVERSAL_FILES_TITLE;
 	public static String RESID_PREF_UNIVERSAL_SHOWHIDDEN_LABEL;
 	
 	public static String RESID_PREF_UNIVERSAL_PRESERVE_TIMESTAMPS_LABEL;
-	public static String RESID_PREF_UNIVERSAL_PRESERVE_TIMESTAMPS_TOOLTIP;
 
 	public static String RESID_PREF_UNIVERSAL_FILES_FILETYPES_TYPE_LABEL;
 	public static String RESID_PREF_UNIVERSAL_FILES_FILETYPES_TYPE_TOOLTIP;
@@ -168,30 +154,9 @@ public class FileResources extends NLS
 	public static String RESID_SEARCH_INCLUDE_SUBFOLDERS_LABEL;
 	public static String RESID_SEARCH_INCLUDE_SUBFOLDERS_TOOLTIP;
 
-	// advanced search filters
-	public static String RESID_SEARCH_CONNECTIONNAMELABEL_LABEL;
-	public static String RESID_SEARCH_CONNECTIONNAMELABEL_TOOLTIP;
-	
-	public static String RESID_SEARCH_TARGETGROUP_LABEL;
-	public static String RESID_SEARCH_TARGETGROUP_TOOLTIP;
 
-	public static String RESID_SEARCH_COLUMNSGROUP_LABEL;
-	public static String RESID_SEARCH_COLUMNSGROUP_TOOLTIP;
-
-	public static String RESID_SEARCH_ALLCOLUMNSLABEL_LABEL;
-	public static String RESID_SEARCH_ALLCOLUMNSLABEL_TOOLTIP;
-
-	public static String RESID_SEARCH_BETWEENLABEL_LABEL;
-	public static String RESID_SEARCH_ANDLABEL_LABEL;
-	public static String RESID_SEARCH_EOLLABEL_LABEL;
-	public static String RESID_SEARCH_FIRSTCOLUMN_TOOLTIP;
-	public static String RESID_SEARCH_SECONDCOLUMN_TOOLTIP;
-	public static String RESID_SEARCH_BOTHCOLUMNSLABEL_TOOLTIP;
-	public static String RESID_SEARCH_STARTCOLUMNLABEL_TOOLTIP;
 
 	public static String RESID_SEARCH_MESSAGE_SEARCHING;
-	public static String RESID_SEARCH_MESSAGE_ONEMATCH;
-	public static String RESID_SEARCH_MESSAGE_MULTIPLEMATCHES;
 
 	// Resource conflict dlg constants
 	public static String RESID_CONFLICT_SAVE_TITLE;
@@ -207,16 +172,12 @@ public class FileResources extends NLS
 	public static String RESID_CONFLICT_DOWNLOAD_OPENWITHLOCAL;
 
 	// RSE Cache Preferences
-	public static String RESID_PREF_CACHE_DESCRIPTION;
 	public static String RESID_PREF_CACHE_CLEAR;
-	public static String RESID_PREF_CACHE_CLEAR_LABEL;
 	public static String RESID_PREF_CACHE_CLEAR_TOOLTIP;
 	public static String RESID_PREF_CACHE_LIMIT_CACHE_SIZE_LABEL;
 	public static String RESID_PREF_CACHE_LIMIT_CACHE_SIZE_TOOLTIP;
 	public static String RESID_PREF_CACHE_MAX_CACHE_SIZE_LABEL;
-	public static String RESID_PREF_CACHE_MAX_CACHE_SIZE_DESCRIPTION;
 	public static String RESID_PREF_CACHE_MAX_CACHE_SIZE_TOOLTIP;
-	public static String RESID_PREF_CACHE_CLEAR_WARNING_LABEL;
 	public static String RESID_PREF_CACHE_CLEAR_WARNING_DESCRIPTION;
 
 	// SUPERTRANSFER PROGRESS MONITOR CONSTANTS
@@ -226,7 +187,6 @@ public class FileResources extends NLS
 
 	public static String RESID_SUPERTRANSFER_PROGMON_SUBTASK_TRANSFER;
 	public static String RESID_SUPERTRANSFER_PROGMON_SUBTASK_EXTRACT;
-	public static String RESID_SUPERTRANSFER_PROGMON_ARCHIVE;
 
 	// SUPERTRANSFER PREFERENCES PAGE CONSTANTS
 	public static String RESID_SUPERTRANSFER_PREFS_ENABLE;
@@ -245,8 +205,6 @@ public class FileResources extends NLS
 	public static String ACTION_REPLACEWITH_HISTORY_TOOLTIP;
 
 
-	// Project menu item 
-	public static String RESID_OPEN_FROM_ASSOCIATED_PROJECT;
 	
 	// Other Actions
 	public static String ACTION_NEWFOLDER_LABEL;
@@ -338,11 +296,6 @@ public class FileResources extends NLS
 	public static String	RESID_PROPERTY_FILE_READONLY_LABEL;
 	public static String	RESID_PROPERTY_FILE_READONLY_TOOLTIP;
 
-	public static String	RESID_PROPERTY_FILE_READABLE_LABEL;
-	public static String	RESID_PROPERTY_FILE_READABLE_TOOLTIP;
-
-	public static String	RESID_PROPERTY_FILE_WRITABLE_LABEL;
-	public static String	RESID_PROPERTY_FILE_WRITABLE_TOOLTIP;
 
 	public static String	RESID_PROPERTY_FILE_HIDDEN_LABEL;
 	public static String	RESID_PROPERTY_FILE_HIDDEN_TOOLTIP;
@@ -358,13 +311,8 @@ public class FileResources extends NLS
 
 	
 	// messages
-
-	public static String MSG_ERROR_FOLDER_NOTFOUND;
 	public static String MSG_ERROR_FILE_NOTFOUND; 
-	public static String MSG_ERROR_FOLDERORFILE_NOTFOUND;
-	public static String MSG_ERROR_ARCHIVEMANAGEMENT_NOTSUPPORTED;
-	public static String MSG_ERROR_ARCHIVEMANAGEMENT_NOTSUPPORTED_DETAILS;
-	
+
 	// Remote editing messages
 	public static String MSG_DOWNLOAD_NO_WRITE;
 	public static String MSG_DOWNLOAD_ALREADY_OPEN_IN_EDITOR;
@@ -373,44 +321,33 @@ public class FileResources extends NLS
 	public static String MSG_DOWNLOAD_ALREADY_OPEN_IN_EDITOR_DETAILS;
 
 	// file transfer messages
-	public static String MSG_DOWNLOAD_PROGRESS;
-	public static String MSG_UPLOAD_PROGRESS;
 	public static String MSG_SYNCHRONIZE_PROGRESS;
 	public static String MSG_EXTRACT_PROGRESS;
-	public static String MSG_PERCENT_DONE;
 	public static String MSG_DOWNLOADING_PROGRESS;
 	public static String MSG_UPLOADING_PROGRESS;
 	
     // Remote File Exception Messages
   	public static String FILEMSG_SECURITY_ERROR;
   	public static String FILEMSG_IO_ERROR;
-  	public static String FILEMSG_FOLDER_NOTEMPTY;
   	public static String FILEMSG_FOLDER_NOTFOUND;
-  	public static String FILEMSG_FOLDER_NOTFOUND_WANTTOCREATE;
   	public static String FILEMSG_FILE_NOTFOUND;
 		
   	public static String FILEMSG_SECURITY_ERROR_DETAILS;
   	public static String FILEMSG_IO_ERROR_DETAILS;
-  	public static String FILEMSG_FOLDER_NOTEMPTY_DETAILS;
-  	public static String FILEMSG_FOLDER_NOTFOUND_WANTTOCREATE_DETAILS;
+
 
   	
     // --------------------------
     // UNIVERSAL FILE MESSAGES...
     // --------------------------	
-	public static  String FILEMSG_VALIDATE_FILEFILTERSTRING_EMPTY;
 	public static  String FILEMSG_VALIDATE_FILEFILTERSTRING_NOTUNIQUE;
-	public static  String FILEMSG_VALIDATE_FILEFILTERSTRING_NOTVALID;
-	public static  String FILEMSG_VALIDATE_FILEFILTERSTRING_NOINCLUDES;
+
 	
     public static  String FILEMSG_DELETE_FILE_FAILED;
-    public static  String FILEMSG_RENAME_FILE_FAILED;
     public static  String FILEMSG_CREATE_FILE_FAILED;
     public static  String FILEMSG_CREATE_FILE_FAILED_EXIST;
-    public static  String FILEMSG_CREATE_FOLDER_FAILED;
     public static  String FILEMSG_CREATE_FOLDER_FAILED_EXIST;
     public static  String FILEMSG_CREATE_RESOURCE_NOTVISIBLE;
-    public static  String FILEMSG_RENAME_RESOURCE_NOTVISIBLE;
 	public static  String FILEMSG_ERROR_NOFILETYPES;
     public static  String FILEMSG_COPY_FILE_FAILED;
     public static  String FILEMSG_MOVE_FILE_FAILED;
@@ -420,13 +357,10 @@ public class FileResources extends NLS
 	public static  String FILEMSG_MOVE_FILTER_NOT_VALID;
 
     public static  String FILEMSG_DELETE_FILE_FAILED_DETAILS;
-    public static  String FILEMSG_RENAME_FILE_FAILED_DETAILS;
     public static  String FILEMSG_CREATE_FILE_FAILED_DETAILS;
     public static  String FILEMSG_CREATE_FILE_FAILED_EXIST_DETAILS;
-    public static  String FILEMSG_CREATE_FOLDER_FAILED_DETAILS;
     public static  String FILEMSG_CREATE_FOLDER_FAILED_EXIST_DETAILS;
     public static  String FILEMSG_CREATE_RESOURCE_NOTVISIBLE_DETAILS;
-    public static  String FILEMSG_RENAME_RESOURCE_NOTVISIBLE_DETAILS;
 	public static  String FILEMSG_ERROR_NOFILETYPES_DETAILS;
     public static  String FILEMSG_COPY_FILE_FAILED_DETAILS;
     public static  String FILEMSG_MOVE_FILE_FAILED_DETAILS;
@@ -436,31 +370,21 @@ public class FileResources extends NLS
 	public static  String FILEMSG_MOVE_FILTER_NOT_VALID_DETAILS;
 	
 	public static String FILEMSG_MOVE_INTERRUPTED;
-	public static String FILEMSG_RENAME_INTERRUPTED;	
-	public static String FILEMSG_DELETE_INTERRUPTED;
 	public static String FILEMSG_COPY_INTERRUPTED;
 	public static String FILEMSG_MOVE_INTERRUPTED_DETAILS;
-	public static String FILEMSG_RENAME_INTERRUPTED_DETAILS;	
-	public static String FILEMSG_DELETE_INTERRUPTED_DETAILS;
 	public static String FILEMSG_COPY_INTERRUPTED_DETAILS;
 	
 	// cache preferences
 	public static String MSG_CACHE_UPLOAD_BEFORE_DELETE;
 	public static String MSG_CACHE_UNABLE_TO_SYNCH;
-	
-	public static  String FILEMSG_DELETING;
 
-	public static String MSG_ERROR_CONNECTION_NOTFOUND;
 	public static String MSG_ERROR_PROFILE_NOTFOUND;
-	public static String MSG_ERROR_CONNECTION_NOTFOUND_DETAILS;
-	public static String MSG_ERROR_PROFILE_NOTFOUND_DETAILS;
-  	
+	public static String MSG_ERROR_CONNECTION_NOTFOUND;
+	
 	public static String MSG_VALIDATE_PATH_EMPTY;
-	public static String MSG_VALIDATE_PATH_NOTUNIQUE;
-	public static String MSG_VALIDATE_PATH_NOTVALID;
+
 	public static String MSG_VALIDATE_PATH_EMPTY_DETAILS;
-	public static String MSG_VALIDATE_PATH_NOTUNIQUE_DETAILS;
-	public static String MSG_VALIDATE_PATH_NOTVALID_DETAILS;
+
 	
 
 
@@ -473,8 +397,6 @@ public class FileResources extends NLS
 	public static String MSG_CREATEFILEGENERIC_PROGRESS;
 	public static String MSG_CREATEFOLDERGENERIC_PROGRESS;
   	
-	// universal commands
-	public static String MSG_UCMD_INVOCATION_EMPTY;
 
 	// preferences
 	public static String MSG_ERROR_FILENAME_INVALID;

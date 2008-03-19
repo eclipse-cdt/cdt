@@ -51,6 +51,10 @@ public class DStoreSearchService extends AbstractDStoreService implements ISearc
 	{
 		return ServiceResources.DStore_Search_Service_Label;
 	}
+	public String getDescription()
+	{
+		return ServiceResources.DStore_Search_Service_Description;
+	}
 	
 	protected String getMinerId()
 	{

@@ -18,6 +18,7 @@
  * David McKnight   (IBM)        - [210142] for accessibility need transfer mode toggle button
  * Martin Oberhuber (Wind River) - [220020][api][breaking] SystemFileTransferModeRegistry should be internal
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
+ * David McKnight   (IBM)        - [223204] [cleanup] fix broken nls strings in files.ui and others
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.propertypages;
@@ -292,6 +293,7 @@ public class UniversalPreferencePage
 				ISystemFilePreferencesConstants.PRESERVETIMESTAMPS, 
 				FileResources.RESID_PREF_UNIVERSAL_PRESERVE_TIMESTAMPS_LABEL,
 				propertiesComposite);
+
 		addField(preserveTimestamps);
 		
 		
@@ -455,6 +457,7 @@ public class UniversalPreferencePage
 		tableCol = new TableColumn(resourceTypeTable, SWT.NONE, 1);
 		tableCol.setResizable(true);
 		tableCol.setText(FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_TABLECOL_LABEL);
+		tableCol.setToolTipText(FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_TABLECOL_TOOLTIP);
 		tableCol.pack();
 		tableCol.setWidth(100);
 
@@ -464,7 +467,7 @@ public class UniversalPreferencePage
 		tableCol = new TableColumn(resourceTypeTable, SWT.NONE, 2);
 		tableCol.setResizable(true);
 		tableCol.setText(FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_MODE_LABEL);
-		
+		tableCol.setToolTipText(FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_MODE_TOOLTIP);
 		tableCol.pack();
 		tableCol.setWidth(200);
 		

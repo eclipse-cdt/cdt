@@ -14,6 +14,7 @@
  * Contributors:
  * David McKnight   (IBM)        - [216252] use SimpleSystemMessage instead of getMessage()
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
+ * David McKnight   (IBM)        - [223204] [cleanup] fix broken nls strings in files.ui and others
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore;
@@ -39,16 +40,8 @@ public class ServiceResources extends NLS
 	
     // Remote File Exception Messages
   	public static String FILEMSG_SECURITY_ERROR;
-  	public static String FILEMSG_IO_ERROR;
-  	public static String FILEMSG_FOLDER_NOTEMPTY;
-  	public static String FILEMSG_FOLDER_NOTFOUND;
-  	public static String FILEMSG_FOLDER_NOTFOUND_WANTTOCREATE;
-  	public static String FILEMSG_FILE_NOTFOUND;
 		
   	public static String FILEMSG_SECURITY_ERROR_DETAILS;
-  	public static String FILEMSG_IO_ERROR_DETAILS;
-  	public static String FILEMSG_FOLDER_NOTEMPTY_DETAILS;
-  	public static String FILEMSG_FOLDER_NOTFOUND_WANTTOCREATE_DETAILS;
 
     // --------------------------
     // UNIVERSAL FILE MESSAGES...
@@ -57,7 +50,6 @@ public class ServiceResources extends NLS
     public static  String FILEMSG_RENAME_FILE_FAILED;
     public static  String FILEMSG_CREATE_FILE_FAILED;
     public static  String FILEMSG_CREATE_FILE_FAILED_EXIST;
-    public static  String FILEMSG_CREATE_FOLDER_FAILED;
     public static  String FILEMSG_CREATE_FOLDER_FAILED_EXIST;
     public static  String FILEMSG_COPY_FILE_FAILED;
 
@@ -65,7 +57,6 @@ public class ServiceResources extends NLS
     public static  String FILEMSG_RENAME_FILE_FAILED_DETAILS;
     public static  String FILEMSG_CREATE_FILE_FAILED_DETAILS;
     public static  String FILEMSG_CREATE_FILE_FAILED_EXIST_DETAILS;
-    public static  String FILEMSG_CREATE_FOLDER_FAILED_DETAILS;
     public static  String FILEMSG_CREATE_FOLDER_FAILED_EXIST_DETAILS;
     public static  String FILEMSG_COPY_FILE_FAILED_DETAILS;
 

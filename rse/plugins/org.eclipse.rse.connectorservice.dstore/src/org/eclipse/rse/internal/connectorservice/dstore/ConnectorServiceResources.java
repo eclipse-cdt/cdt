@@ -39,12 +39,10 @@ public class ConnectorServiceResources extends NLS
 	
 	public static String MSG_COMM_CONNECT_FAILED;
 	public static String MSG_COMM_CONNECT_FAILED_DETAILS;
-	
-	public static String MSG_VALIDATE_PASSWORD_EMPTY;
+
 	public static String MSG_VALIDATE_PASSWORD_EXPIRED;
 	public static String MSG_VALIDATE_PASSWORD_INVALID;
 	
-	public static String MSG_VALIDATE_PASSWORD_EMPTY_DETAILS;
 	public static String MSG_VALIDATE_PASSWORD_EXPIRED_DETAILS;
 	public static String MSG_VALIDATE_PASSWORD_INVALID_DETAILS;
 	

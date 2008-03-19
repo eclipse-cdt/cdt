@@ -14,6 +14,7 @@
  * Contributors:
  * David McKnight   (IBM)        - [216252] [nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * Xuan Chen        (IBM)        - [223126] [api][breaking] Remove API related to User Actions in RSE Core/UI
+ * David McKnight   (IBM)        - [223204] [cleanup] fix broken nls strings in files.ui and others
  *******************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui;
@@ -36,8 +37,6 @@ public class ShellResources extends NLS
 	public static String RESID_COMMANDSVIEW_RUN_TOOLTIP;
 	public static String RESID_COMMANDSVIEW_CMDCOMBO_TOOLTIP;
 	public static String RESID_COMMANDSVIEW_SUBSYSCOMBO_TOOLTIP;
-	public static String RESID_PREF_COMMANDSVIEW_BRINGTOFRONT_LABEL;
-	public static String RESID_PREF_COMMANDSVIEW_BRINGTOFRONT_TOOLTIP;
 
 	// UNIVERSAL COMMMANDS VIEW
 	public static String RESID_COMMANDSVIEW_COMMAND_LABEL;
@@ -52,7 +51,6 @@ public class ShellResources extends NLS
 	public static String ACTION_RUN_SHELL_TOOLTIP;
 
 	public static String ACTION_LAUNCH_LABEL;
-	public static String ACTION_LAUNCH_TOOLTIP;
 
 	public static String ACTION_SHOW_SHELL_LABEL;
 	public static String ACTION_SHOW_SHELL_TOOLTIP;
@@ -69,8 +67,6 @@ public class ShellResources extends NLS
 	public static String ACTION_EXPORT_SHELL_HISTORY_LABEL;
 	public static String ACTION_EXPORT_SHELL_HISTORY_TOOLTIP;
 
-	public static String ACTION_OPEN_OUTPUT_LABEL;
-	public static String ACTION_OPEN_OUTPUT_TOOLTIP;
 	
 	public static String ACTION_OPEN_WITH_LABEL;
 	
@@ -93,8 +89,6 @@ public class ShellResources extends NLS
 	// universal commands
 	public static String MSG_UCMD_INVOCATION_EMPTY;
 
-	public static String MSG_OPERATION_RUNNING;
-	public static String MSG_OPERATION_FINISHED;
 	
 	public static String ACTION_CONTENT_ASSIST;
 

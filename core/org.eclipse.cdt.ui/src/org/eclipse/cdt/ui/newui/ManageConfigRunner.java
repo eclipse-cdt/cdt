@@ -11,9 +11,15 @@
 
 package org.eclipse.cdt.ui.newui;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.Window;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
@@ -23,6 +29,9 @@ public class ManageConfigRunner implements IConfigManager {
 	private static final String MANAGE_TITLE = UIMessages.getString("ManageConfigDialog.0");  //$NON-NLS-1$
 
 	protected static ManageConfigRunner instance = null;
+	
+	private ICProjectDescription des = null;
+	private IProject prj = null;
 	
 	public static ManageConfigRunner getDefault() {
 		if (instance == null)
@@ -44,16 +53,13 @@ public class ManageConfigRunner implements IConfigManager {
 		boolean result = false;
 		if (d.open() == Window.OK) {
 			if (doOk) {
-//				CDTPropertyManager.performOk(d.getShell());
-				ICProjectDescription des = d.getProjectDescription();
-				if(des != null){
+				des = d.getProjectDescription();
+				prj = obs[0];
+				if(des != null) 
 					try {
-						CoreModel.getDefault().setProjectDescription(obs[0], des);
-					} catch (CoreException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
+						PlatformUI.getWorkbench().getProgressService().run(false, false, getRunnable());
+					} catch (InvocationTargetException e) {}
+					  catch (InterruptedException e) {}
 			}
 			AbstractPage.updateViews(obs[0]);
 			result = true;
@@ -61,5 +67,21 @@ public class ManageConfigRunner implements IConfigManager {
 			CDTPropertyManager.performCancel(d.getShell());
 		}
 		return result;
+	}
+	
+	public IRunnableWithProgress getRunnable() {
+		return new WorkspaceModifyDelegatingOperation(new IRunnableWithProgress() {
+			public void run(IProgressMonitor imonitor) throws InvocationTargetException, InterruptedException {
+				CUIPlugin.getDefault().getShell().getDisplay().syncExec(new Runnable() {
+					public void run() {
+						try {
+							CoreModel.getDefault().setProjectDescription(prj, des);
+						} catch (CoreException e) {
+							e.printStackTrace();
+						}
+					}
+				});
+			}
+		});
 	}
 }

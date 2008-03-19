@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [174945] split importexport icons from rse.ui
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [223204] [cleanup] fix broken nls strings in files.ui and others
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 

@@ -10,6 +10,7 @@
  * 
  * Contributors:
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
+ * David McKnight   (IBM)        - [223204] [cleanup] fix broken nls strings in files.ui and others
  ********************************************************************************/
 package org.eclipse.rse.services.clientserver.messages;
 
@@ -25,9 +26,7 @@ public class CommonMessages extends NLS {
 	
 	
 	public static String MSG_COMM_AUTH_FAILED;
-	public static String MSG_COMM_PWD_INVALID;
 	public static String MSG_COMM_AUTH_FAILED_DETAILS;
-	public static String MSG_COMM_PWD_INVALID_DETAILS;
 
 	public static String MSG_EXPAND_FAILED;
 	public static String MSG_EXPAND_CANCELED;

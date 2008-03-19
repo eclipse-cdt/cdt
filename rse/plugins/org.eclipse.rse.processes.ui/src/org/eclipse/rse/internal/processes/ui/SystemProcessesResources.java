@@ -14,6 +14,7 @@
  * Contributors:
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
+ * David McKnight   (IBM)        - [223204] [cleanup] fix broken nls strings in files.ui and others
  *******************************************************************************/
 
 package org.eclipse.rse.internal.processes.ui;
@@ -74,7 +75,6 @@ public class SystemProcessesResources extends NLS
 	public static String 	RESID_KILL_PROMPT;
 	public static String 	RESID_KILL_PROMPT_SINGLE;
 	public static String 	RESID_KILL_BUTTON;
-	public static String 	RESID_KILL_TIP;
 	public static String 	RESID_KILL_SIGNAL_TYPE_LABEL;
 	public static String 	RESID_KILL_SIGNAL_TYPE_TOOLTIP;
 	public static String    RESID_KILL_SIGNAL_TYPE_DEFAULT;

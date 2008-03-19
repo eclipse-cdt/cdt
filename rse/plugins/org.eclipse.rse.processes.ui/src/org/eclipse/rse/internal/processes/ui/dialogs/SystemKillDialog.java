@@ -11,7 +11,8 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty()
+ * David McKnight   (IBM)        - [223204] [cleanup] fix broken nls strings in files.ui and others 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.processes.ui.dialogs;

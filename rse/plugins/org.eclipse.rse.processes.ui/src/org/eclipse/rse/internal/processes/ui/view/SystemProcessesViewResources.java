@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [223204] [cleanup] fix broken nls strings in files.ui and others
  *******************************************************************************/
 
 package org.eclipse.rse.internal.processes.ui.view;
@@ -54,7 +54,6 @@ public class SystemProcessesViewResources extends NLS
 	// Property sheet values: Processes
 	public static String RESID_PROPERTY_PROCESS_TYPE;
 	public static String RESID_PROPERTY_PROCESS_TYPE_ROOT;
-	public static String RESID_PROPERTY_PROCESS_TYPE_ERROR_VALUE;
 	public static String RESID_PROPERTY_PROCESS_TYPE_RUNNING_VALUE;
 	public static String RESID_PROPERTY_PROCESS_TYPE_SLEEPING_VALUE;
 	public static String RESID_PROPERTY_PROCESS_TYPE_WAITING_VALUE;	

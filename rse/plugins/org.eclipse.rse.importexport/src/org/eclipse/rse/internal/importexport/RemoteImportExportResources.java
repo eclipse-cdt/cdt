@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *  David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  *  David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
+ *  David McKnight   (IBM)        - [223204] [cleanup] fix broken nls strings in files.ui and others
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport;
 
@@ -29,21 +30,17 @@ public class RemoteImportExportResources extends NLS {
 	public static String IMPORT_EXPORT_ERROR_DESCRIPTION_CLOSE;
 	public static String WizardDataTransfer_existsQuestion;
 	public static String WizardDataTransfer_overwriteNameAndPathQuestion;
-	public static String WizardDataTransfer_exceptionMessage;
 	public static String Question;
 	
 	
 	public static  String FILEMSG_COPY_ROOT;
-	public static  String FILEMSG_COPY_ROOT_DETAILS;
 	
 	public static  String FILEMSG_IMPORT_ERROR;
 	public static  String FILEMSG_IMPORT_PROBLEMS;
 	public static  String FILEMSG_IMPORT_SELF;
-	public static  String FILEMSG_IMPORT_SELF_DETAILS;
 	public static  String FILEMSG_EXPORT_ERROR;
 	public static  String FILEMSG_EXPORT_PROBLEMS;
 	public static  String FILEMSG_NOT_WRITABLE;
-	public static  String FILEMSG_NOT_WRITABLE_DETAILS;
 		
 	public static  String FILEMSG_TARGET_EXISTS;
 	public static  String FILEMSG_TARGET_EXISTS_DETAILS;

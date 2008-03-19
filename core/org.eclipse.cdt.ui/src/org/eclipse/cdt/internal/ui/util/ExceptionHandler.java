@@ -42,7 +42,7 @@ public class ExceptionHandler {
 	 * logged as an error with the error code <code>JavaStatusConstants.INTERNAL_ERROR</code>.
 	 */
 	public static void log(Throwable t, String message) {
-		CUIPlugin.getDefault().log(new Status(IStatus.ERROR, CUIPlugin.getPluginId(), 
+		CUIPlugin.log(new Status(IStatus.ERROR, CUIPlugin.getPluginId(), 
 			CStatusConstants.INTERNAL_ERROR, message, t));
 	}
 	
@@ -97,7 +97,7 @@ public class ExceptionHandler {
 	//---- Hooks for subclasses to control exception handling ------------------------------------
 	
 	protected void perform(CoreException e, Shell shell, String title, String message) {
-		CUIPlugin.getDefault().log(e);
+		CUIPlugin.log(e);
 		IStatus status= e.getStatus();
 		if (status != null) {
 			ErrorDialog.openError(shell, title, message, status);
@@ -111,7 +111,7 @@ public class ExceptionHandler {
 		if (target instanceof CoreException) {
 			perform((CoreException)target, shell, title, message);
 		} else {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 			if (e.getMessage() != null && e.getMessage().length() > 0) {
 				displayMessageDialog(e, e.getMessage(), shell, title, message);
 			} else {

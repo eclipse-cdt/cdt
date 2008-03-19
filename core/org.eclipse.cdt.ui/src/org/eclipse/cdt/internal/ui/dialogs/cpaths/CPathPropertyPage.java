@@ -153,7 +153,7 @@ public class CPathPropertyPage extends PropertyPage implements IStatusChangeList
 		try {
 			return proj.hasNature(CProjectNature.C_NATURE_ID);
 		} catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		}
 		return false;
 	}

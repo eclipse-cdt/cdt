@@ -100,7 +100,7 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 				}
 			}
 		} catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 		}

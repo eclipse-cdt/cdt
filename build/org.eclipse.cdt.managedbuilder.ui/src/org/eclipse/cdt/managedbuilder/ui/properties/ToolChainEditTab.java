@@ -37,7 +37,6 @@ import org.eclipse.cdt.managedbuilder.tcmodification.IModificationOperation;
 import org.eclipse.cdt.managedbuilder.tcmodification.IToolChainModificationManager;
 import org.eclipse.cdt.managedbuilder.tcmodification.IToolListModification;
 import org.eclipse.cdt.managedbuilder.tcmodification.IToolModification;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.SWT;
@@ -244,7 +243,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 		Collections.sort(list, BuildListComparator.getInstance());
 
 		int pos = -1;
-		v_tcs = (IToolChain[]) list.toArray(new IToolChain[list.size()]); 
+		v_tcs = list.toArray(new IToolChain[list.size()]); 
 		for (int i=0; i<v_tcs.length; i++) {
 			c_toolchain.add(v_tcs[i].getUniqueRealName());
 			if (v_tcs[i].matches(tc)) pos = i;
@@ -284,7 +283,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 		}
 		bs = null;
 		Collections.sort(list, BuildListComparator.getInstance());
-		v_bs = (IBuilder[])list.toArray(new IBuilder[list.size()]);
+		v_bs = list.toArray(new IBuilder[list.size()]);
 		for (int i=0; i<v_bs.length; i++) {
 			c_builder.add(v_bs[i].getUniqueRealName());
 			if (v_bs[i].matches(b)) pos = i;
@@ -417,7 +416,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 			}
 		}
 		Collections.sort(list, BuildListComparator.getInstance());
-		v_tools = (ITool[]) list.toArray(new ITool[list.size()]);
+		v_tools = list.toArray(new ITool[list.size()]);
 		return result;
 	}
 		
@@ -435,7 +434,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 				(IToolListModification)tcmmgr.createModification(cfg, (IFileInfoModification)mod);
 			tlm.apply();
 		} catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
+			ManagedBuilderUIPlugin.log(e);
 		}
 	}
 	
@@ -510,7 +509,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 		try {
 			mod.apply();
 		} catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
+			ManagedBuilderUIPlugin.log(e);
 		}
 	}
 	

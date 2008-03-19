@@ -137,7 +137,7 @@ class THGraph {
 					fInputNode= addNode(input);
 				}
 			} catch (CoreException e) {
-				CUIPlugin.getDefault().log(e);
+				CUIPlugin.log(e);
 			}
 		}
 	}
@@ -202,9 +202,9 @@ class THGraph {
 				}
 			} catch (DOMException e) {
 				// index bindings should not throw this kind of exception, might as well log it.
-				CUIPlugin.getDefault().log(e);
+				CUIPlugin.log(e);
 			} catch (CoreException e) {
-				CUIPlugin.getDefault().log(e);
+				CUIPlugin.log(e);
 			}
 		}
 	}
@@ -252,7 +252,7 @@ class THGraph {
 					}
 				}
 			} catch (CoreException e) {
-				CUIPlugin.getDefault().log(e);
+				CUIPlugin.log(e);
 			}
 		}
 	}

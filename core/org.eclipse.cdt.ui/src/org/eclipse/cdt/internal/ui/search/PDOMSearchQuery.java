@@ -82,7 +82,7 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 				projects = projectMap.values().toArray(new ICProject[projectMap.size()]);
 			}
 		} catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		}
 	}
 	

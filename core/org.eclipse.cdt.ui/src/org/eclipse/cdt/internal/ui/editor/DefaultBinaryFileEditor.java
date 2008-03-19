@@ -118,7 +118,7 @@ public class DefaultBinaryFileEditor extends AbstractTextEditor {
 							try {
 								fStorage= new FileStorage(new ByteArrayInputStream(objdump.getOutput()), object.getPath());
 							} catch (IOException exc) {
-								CUIPlugin.getDefault().log(exc);
+								CUIPlugin.log(exc);
 							}
 						}
 					}

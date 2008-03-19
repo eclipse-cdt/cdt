@@ -749,7 +749,7 @@ public class LineWrappingTabPage extends FormatterTabPage {
                 changeForceSplit(currentKey, forceSplit);
             } catch (IllegalArgumentException e) {
     			fWorkingValues.put(currentKey, DefaultCodeFormatterConstants.createAlignmentValue(forceSplit, DefaultCodeFormatterConstants.WRAP_NO_SPLIT, DefaultCodeFormatterConstants.INDENT_DEFAULT));
-    			CUIPlugin.getDefault().log(new Status(IStatus.ERROR, CUIPlugin.getPluginId(), IStatus.OK, 
+    			CUIPlugin.log(new Status(IStatus.ERROR, CUIPlugin.getPluginId(), IStatus.OK, 
     			        Messages.format(FormatterMessages.LineWrappingTabPage_error_invalid_value, currentKey), e)); 
     		}
         }
@@ -773,7 +773,7 @@ public class LineWrappingTabPage extends FormatterTabPage {
 	        	    changeWrappingStyle(currentKey, wrappingStyle);
 	        	} catch (IllegalArgumentException e) {
 	    			fWorkingValues.put(currentKey, DefaultCodeFormatterConstants.createAlignmentValue(false, wrappingStyle, DefaultCodeFormatterConstants.INDENT_DEFAULT));
-	    			CUIPlugin.getDefault().log(new Status(IStatus.ERROR, CUIPlugin.getPluginId(), IStatus.OK, 
+	    			CUIPlugin.log(new Status(IStatus.ERROR, CUIPlugin.getPluginId(), IStatus.OK, 
 	    			        Messages.format(FormatterMessages.LineWrappingTabPage_error_invalid_value, currentKey), e)); 
 	        	}
 	        }
@@ -797,7 +797,7 @@ public class LineWrappingTabPage extends FormatterTabPage {
             	changeIndentStyle(currentKey, indentStyle);
         	} catch (IllegalArgumentException e) {
     			fWorkingValues.put(currentKey, DefaultCodeFormatterConstants.createAlignmentValue(false, DefaultCodeFormatterConstants.WRAP_NO_SPLIT, indentStyle));
-    			CUIPlugin.getDefault().log(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, IStatus.OK, 
+    			CUIPlugin.log(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, IStatus.OK, 
     			        Messages.format(FormatterMessages.LineWrappingTabPage_error_invalid_value, currentKey), e)); 
     		}
         }

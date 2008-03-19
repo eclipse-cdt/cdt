@@ -57,7 +57,7 @@ public abstract class AbstractUpdateIndexAction implements IObjectActionDelegate
 			CCorePlugin.getIndexManager().update(tuArray, getUpdateOptions());
 		}
 		catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		}
 	}
 

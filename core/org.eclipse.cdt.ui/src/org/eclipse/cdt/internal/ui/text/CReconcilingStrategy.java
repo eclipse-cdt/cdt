@@ -130,7 +130,7 @@ public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingS
 			// document was modified while parsing
 		} catch (CModelException e) {
 			IStatus status= new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, IStatus.OK, "Error in CDT UI during reconcile", e);  //$NON-NLS-1$
-			CUIPlugin.getDefault().log(status);
+			CUIPlugin.log(status);
 		} finally {
 			if (computeAST) {
 				IIndex index= null;
@@ -150,7 +150,7 @@ public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingS
 					}
 				} catch(Exception e) {
 					IStatus status= new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, IStatus.OK, "Error in CDT UI during reconcile", e);  //$NON-NLS-1$
-					CUIPlugin.getDefault().log(status);
+					CUIPlugin.log(status);
 				} finally {
 					if (index != null) {
 						index.releaseReadLock();

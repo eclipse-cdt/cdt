@@ -165,7 +165,7 @@ class THHierarchyModel {
 				index.releaseReadLock(); 
 			}
 		} catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		} catch (InterruptedException e) {
 			return Status.CANCEL_STATUS;
 		}

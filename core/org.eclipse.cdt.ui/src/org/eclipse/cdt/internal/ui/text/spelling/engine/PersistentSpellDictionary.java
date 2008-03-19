@@ -73,7 +73,7 @@ public class PersistentSpellDictionary extends AbstractSpellDictionary {
 			
 			fileStream.write(byteArray, bomCutSize, size - bomCutSize);
 		} catch (IOException exception) {
-			CUIPlugin.getDefault().log(exception);
+			CUIPlugin.log(exception);
 			return;
 		} finally {
 			try {

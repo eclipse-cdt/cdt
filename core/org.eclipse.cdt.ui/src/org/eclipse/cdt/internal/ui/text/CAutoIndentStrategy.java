@@ -197,7 +197,7 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 				}
 			}
 		} catch (BadLocationException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		}
 	}
 
@@ -240,7 +240,7 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 			}
 
 		} catch (BadLocationException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		}
 	}
 
@@ -342,7 +342,7 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 			c.text = buf.toString();
 
 		} catch (BadLocationException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		}
 	}
 	
@@ -639,7 +639,7 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 			command.length= newLength;
 			command.text= newText;
 		} catch (BadLocationException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		}
 	}
 
@@ -1028,7 +1028,7 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 				return;
 			}
 		} catch (BadLocationException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		}
 	}
 
@@ -1094,7 +1094,7 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 
 			return;
 		} catch (BadLocationException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		}
 	}
 
@@ -1110,7 +1110,7 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 				}
 			}
 		} catch (BadLocationException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		}
 	}
 
@@ -1184,7 +1184,7 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 			char[] buffer = contents.toString().toCharArray();
 			return new CompilationUnitInfo(buffer, sourceRange.getOffset() - methodOffset);
 		} catch (BadLocationException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		}
 
 		return null;

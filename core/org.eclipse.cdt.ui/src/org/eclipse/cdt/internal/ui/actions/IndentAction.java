@@ -111,7 +111,7 @@ public class IndentAction extends TextEditorAction {
 				document.addPosition(end);
 			} catch (BadLocationException e) {
 				// will only happen on concurrent modification
-				CUIPlugin.getDefault().log(new Status(IStatus.ERROR, CUIPlugin.getPluginId(), IStatus.OK, "", e)); //$NON-NLS-1$
+				CUIPlugin.log(new Status(IStatus.ERROR, CUIPlugin.getPluginId(), IStatus.OK, "", e)); //$NON-NLS-1$
 				return;
 			}
 			
@@ -148,7 +148,7 @@ public class IndentAction extends TextEditorAction {
 						
 					} catch (BadLocationException e) {
 						// will only happen on concurrent modification
-						CUIPlugin.getDefault().log(new Status(IStatus.ERROR, CUIPlugin.getPluginId(), IStatus.OK, "ConcurrentModification in IndentAction", e)); //$NON-NLS-1$
+						CUIPlugin.log(new Status(IStatus.ERROR, CUIPlugin.getPluginId(), IStatus.OK, "ConcurrentModification in IndentAction", e)); //$NON-NLS-1$
 					} finally {
 						document.removePosition(end);
 						if (target != null)

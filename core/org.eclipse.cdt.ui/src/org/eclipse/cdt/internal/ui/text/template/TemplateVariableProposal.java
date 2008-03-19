@@ -72,7 +72,7 @@ public class TemplateVariableProposal implements ICompletionProposal {
 			fSelection= new Point(fOffset + variable.length(), 0);
 
 		} catch (BadLocationException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 
 			Shell shell= fViewer.getTextWidget().getShell();
 			MessageDialog.openError(shell, TemplateMessages.TemplateVariableProposal_error_title, e.getMessage());

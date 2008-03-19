@@ -152,9 +152,9 @@ public class OpenIncludeAction extends Action {
 				EditorUtility.openInEditor(fileToOpen, include);
 			} 
 		} catch (CModelException e) {
-			CUIPlugin.getDefault().log(e.getStatus());
+			CUIPlugin.log(e.getStatus());
 		} catch (CoreException e) {
-			CUIPlugin.getDefault().log(e.getStatus());
+			CUIPlugin.log(e.getStatus());
 		}
 	}
 

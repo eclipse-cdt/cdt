@@ -303,7 +303,7 @@ public class NewSourceFolderWizardPage extends NewElementWizardPage {
 				return;
 			}
 		} catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 			fCurrCProject= null;
 		}	
 		fProjectStatus.setError(NewFolderWizardMessages.getString("NewSourceFolderWizardPage.error.NotACProject")); //$NON-NLS-1$
@@ -506,7 +506,7 @@ public class NewSourceFolderWizardPage extends NewElementWizardPage {
 		try {
 			projects= CoreModel.create(fWorkspaceRoot).getCProjects();
 		} catch (CModelException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 			projects= new ICProject[0];
 		}
 		

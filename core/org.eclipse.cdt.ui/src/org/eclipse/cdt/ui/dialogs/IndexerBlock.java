@@ -109,7 +109,7 @@ public class IndexerBlock extends AbstractCOptionPage {
             		fPage= (AbstractIndexerPage) fElement.createExecutableExtension(ATTRIB_CLASS);
             	}
             	catch (Exception e) {
-            		CUIPlugin.getDefault().log(e);
+            		CUIPlugin.log(e);
             	}
             	if (fPage == null) {
             		fPage= new NullIndexerBlock();
@@ -450,7 +450,7 @@ public class IndexerBlock extends AbstractCOptionPage {
             try {
                 return configElement.getPage();
             } catch (CoreException e) {
-            	CUIPlugin.getDefault().log(e);
+            	CUIPlugin.log(e);
             }
         }
         return null;

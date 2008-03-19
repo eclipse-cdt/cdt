@@ -161,7 +161,7 @@ public class OpenAction extends SelectionDispatchAction {
 				boolean activateOnOpen= fEditor != null ? true : OpenStrategy.activateOnOpen();
 				OpenActionUtil.open(element, activateOnOpen);
 			} catch (CModelException e) {
-				CUIPlugin.getDefault().log(new Status(IStatus.ERROR, CUIPlugin.getPluginId(),
+				CUIPlugin.log(new Status(IStatus.ERROR, CUIPlugin.getPluginId(),
 					ICStatusConstants.INTERNAL_ERROR, ActionMessages.getString("OpenAction.error.message"), e)); //$NON-NLS-1$
 				
 				ErrorDialog.openError(getShell(), 

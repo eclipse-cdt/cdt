@@ -154,7 +154,7 @@ public class PDOMSearchViewPage extends AbstractTextSearchViewPage {
 				textEditor.selectAndReveal(currentOffset, currentLength);
 			}
 		} catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		}
 	}
 	

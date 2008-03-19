@@ -431,7 +431,7 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 			        fSelected= Integer.parseInt(s);
 			    } catch (NumberFormatException e) {
 			        final String message= Messages.format(FormatterMessages.ModifyDialogTabPage_NumberPreference_error_invalid_key, getKey()); 
-			        CUIPlugin.getDefault().log(new Status(IStatus.ERROR, CUIPlugin.getPluginId(), IStatus.OK, message, e));
+			        CUIPlugin.log(new Status(IStatus.ERROR, CUIPlugin.getPluginId(), IStatus.OK, message, e));
 			        s= ""; //$NON-NLS-1$
 			    }
 			    fNumberText.setText(s);

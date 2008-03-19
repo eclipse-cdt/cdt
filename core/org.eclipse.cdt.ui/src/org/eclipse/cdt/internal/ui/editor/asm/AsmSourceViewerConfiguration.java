@@ -341,7 +341,7 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 			try {
 				return ((ITranslationUnit)element).getLanguage();
 			} catch (CoreException e) {
-				CUIPlugin.getDefault().log(e);
+				CUIPlugin.log(e);
 			}
 		} else {
 			// compute the language from the plain editor input

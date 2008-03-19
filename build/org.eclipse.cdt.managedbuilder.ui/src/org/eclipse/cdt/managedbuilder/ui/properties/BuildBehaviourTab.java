@@ -23,7 +23,6 @@ import org.eclipse.cdt.managedbuilder.internal.core.Builder;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.MultiConfiguration;
 import org.eclipse.cdt.newmake.core.IMakeBuilderInfo;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.cdt.ui.newui.ICPropertyProvider;
 import org.eclipse.core.runtime.CoreException;
@@ -528,7 +527,7 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 				icfg.getEditableBuilder().setBuildAttribute(name, value);
 			}
 		} catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
+			ManagedBuilderUIPlugin.log(e);
 		}		
 	}
 	
@@ -564,7 +563,7 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 				}
 			}
 		} catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
+			ManagedBuilderUIPlugin.log(e);
 		}
 	}
 }

@@ -71,7 +71,7 @@ public class TranslationUnitPreview extends CPreview {
 		} catch (Exception e) {
 			final IStatus status= new Status(IStatus.ERROR, CUIPlugin.getPluginId(), ICStatusConstants.INTERNAL_ERROR, 
 				FormatterMessages.CPreview_formatter_exception, e); 
-			CUIPlugin.getDefault().log(status);
+			CUIPlugin.log(status);
 		} finally {
 		    context.dispose();
 		    fSourceViewer.setRedraw(true);

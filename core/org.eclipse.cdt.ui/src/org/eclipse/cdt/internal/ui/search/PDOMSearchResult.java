@@ -127,7 +127,7 @@ public class PDOMSearchResult extends AbstractTextSearchResult implements IEdito
 			if (filename != null)
 				return computeContainedMatches(result, filename);
 		} catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		}
 		return new Match[0];
 	}
@@ -137,7 +137,7 @@ public class PDOMSearchResult extends AbstractTextSearchResult implements IEdito
 			String filename = file.getLocation().toOSString();
 			return computeContainedMatches(result, filename);
 		} catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		}
 		return new Match[0];
 	}

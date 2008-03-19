@@ -489,7 +489,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
                     celem = projects[0];
                 }
             } catch (CModelException e) {
-                CUIPlugin.getDefault().log(e);
+                CUIPlugin.log(e);
             }
         }
         return celem;

@@ -59,7 +59,7 @@ class ProjectMap {
 		try {
 			fMap= load(project);
 		} catch(CoreException ce) {
-			CUIPlugin.getDefault().log(ce);
+			CUIPlugin.log(ce);
 			fMap= new HashMap<IPath, String>();
 		}
 		fProject= project;
@@ -106,7 +106,7 @@ class ProjectMap {
 		try {
 			save();
 		} catch(CoreException ce) {
-			CUIPlugin.getDefault().log(ce);
+			CUIPlugin.log(ce);
 		}
 	}
 

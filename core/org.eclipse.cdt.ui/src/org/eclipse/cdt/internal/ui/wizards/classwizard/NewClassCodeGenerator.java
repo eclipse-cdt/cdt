@@ -254,9 +254,9 @@ public class NewClassCodeGenerator {
 				edit.apply(doc);
             	content= doc.get();
 			} catch (MalformedTreeException exc) {
-				CUIPlugin.getDefault().log(exc);
+				CUIPlugin.log(exc);
 			} catch (BadLocationException exc) {
-				CUIPlugin.getDefault().log(exc);
+				CUIPlugin.log(exc);
 			}
         }
         return content;
@@ -383,7 +383,7 @@ public class NewClassCodeGenerator {
 					return comment;
 				}
 			} catch (CoreException e) {
-				CUIPlugin.getDefault().log(e);
+				CUIPlugin.log(e);
 			}
 		}
 		return null;

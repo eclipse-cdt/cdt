@@ -73,7 +73,7 @@ public class MethodContext {
 		try {
 			label.setVisibility(member.getVisibility());
 		} catch (DOMException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		}
 		return label;
 	}

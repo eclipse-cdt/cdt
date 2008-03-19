@@ -111,7 +111,7 @@ public class ProblemMarkerManager implements IResourceChangeListener, IAnnotatio
 			if (delta != null)
 				delta.accept(new ProjectErrorVisitor(changedElements));
 		} catch (CoreException e) {
-			CUIPlugin.getDefault().log(e.getStatus());
+			CUIPlugin.log(e.getStatus());
 		}
 
 		if (!changedElements.isEmpty()) {

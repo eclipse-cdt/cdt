@@ -316,7 +316,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 		try {
 			fTemplateStore.load();
 		} catch (IOException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		}
 		
 		fTemplateProcessor= new TemplateVariableProcessor();
@@ -793,7 +793,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 		try {
 			fTemplateStore.save();
 		} catch (IOException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 			openWriteErrorDialog();
 		}
 		return true;

@@ -110,7 +110,7 @@ public class CEditorTextHoverDescriptor implements Comparable {
 			try {
 				return (ICEditorTextHover)fElement.createExecutableExtension(CLASS_ATTRIBUTE);
 			} catch (CoreException x) {
-				CUIPlugin.getDefault().log(new Status(IStatus.ERROR, CUIPlugin.getPluginId(), 0, "CEditorTextHover.createTextHover", null)); //$NON-NLS-1$
+				CUIPlugin.log(new Status(IStatus.ERROR, CUIPlugin.getPluginId(), 0, "CEditorTextHover.createTextHover", null)); //$NON-NLS-1$
 			}
 		}
 		

@@ -53,7 +53,7 @@ public class EditorOpener {
         try {
         	editor= IDE.openEditor(page, file, false);
         } catch (PartInitException e) {
-        	CUIPlugin.getDefault().log(e);
+        	CUIPlugin.log(e);
         }
         selectRegion(file.getFullPath(), region, timestamp, editor);
 	}
@@ -81,7 +81,7 @@ public class EditorOpener {
 	        }
 	        selectRegion(location, region, timestamp, editor);
 		} catch (PartInitException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		}
 	}
 

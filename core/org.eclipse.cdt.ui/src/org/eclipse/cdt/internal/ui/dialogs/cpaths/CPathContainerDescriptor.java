@@ -349,7 +349,7 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 						containers.add(curr);
 					}
 				} catch (CoreException e) {
-					CUIPlugin.getDefault().log(e);
+					CUIPlugin.log(e);
 				}
 			}
 			if (defaultPageName != null && containers.isEmpty()) {

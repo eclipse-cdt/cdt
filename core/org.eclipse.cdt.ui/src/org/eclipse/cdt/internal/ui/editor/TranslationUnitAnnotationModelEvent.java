@@ -59,7 +59,7 @@ public class TranslationUnitAnnotationModelEvent  extends AnnotationModelEvent {
 					fIncludesProblemMarkerAnnotations= true;
 				}
 			} catch (CoreException e) {
-				CUIPlugin.getDefault().log(e);
+				CUIPlugin.log(e);
 			}
 		}	
 	}

@@ -94,7 +94,7 @@ public class TypeHierarchyUI {
 				try {
 					return findInput(project, editorInput, region);
 				} catch (CoreException e) {
-					CUIPlugin.getDefault().log(e);
+					CUIPlugin.log(e);
 				}
 			}
 		}
@@ -171,7 +171,7 @@ public class TypeHierarchyUI {
 			}
 		}
 		catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		} 
 		catch (InterruptedException e) {
 		}
@@ -204,7 +204,7 @@ public class TypeHierarchyUI {
 			}
 		}
 		catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		} 
 		catch (InterruptedException e) {
 		}
@@ -330,7 +330,7 @@ public class TypeHierarchyUI {
 					return element.getElementName();
 				}
 			} catch (CModelException e) {
-				CUIPlugin.getDefault().log(e);
+				CUIPlugin.log(e);
 			}
 		}
 		return null;

@@ -190,7 +190,7 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 				try {
 					return element.getCProjects();
 				} catch (CModelException e) {
-					CUIPlugin.getDefault().log(e);
+					CUIPlugin.log(e);
 					return new Object[0];
 				}
 			}
@@ -236,7 +236,7 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 					}
 				}
 			} catch (CoreException e) {
-				CUIPlugin.getDefault().log(e);
+				CUIPlugin.log(e);
 			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
 			}
@@ -305,7 +305,7 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 				pdom.addListener(this);
 			}
 		} catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		}
 		CoreModel.getDefault().addElementChangedListener(this);
 		
@@ -349,7 +349,7 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 				pdom.removeListener(this);
 			}
 		} catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		}
 		CoreModel.getDefault().removeElementChangedListener(this);
 	}

@@ -1158,7 +1158,7 @@ public class ASTManager {
                     try {
                         conflicting= findInScope(scope, fRenameTo, true);
                     } catch (Exception e) {
-                    	CUIPlugin.getDefault().log(e);
+                    	CUIPlugin.log(e);
                     }
                     if (conflicting != null && conflicting.length > 0) {
                         fConflictingBinding.addAll(Arrays.asList(conflicting));

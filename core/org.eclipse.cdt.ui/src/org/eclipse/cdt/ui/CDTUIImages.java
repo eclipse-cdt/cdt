@@ -70,7 +70,7 @@ public class CDTUIImages {
 		try {
 			return new URL(iconBaseURL, buffer.toString());
 		} catch (MalformedURLException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 			return null;
 		}
 	}

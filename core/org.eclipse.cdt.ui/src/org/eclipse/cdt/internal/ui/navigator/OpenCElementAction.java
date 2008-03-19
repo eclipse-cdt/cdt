@@ -53,7 +53,7 @@ public class OpenCElementAction extends OpenFileAction {
 					EditorUtility.revealInEditor(part, fOpenElement);
 				}
 			} catch (CoreException exc) {
-				CUIPlugin.getDefault().log(exc.getStatus());
+				CUIPlugin.log(exc.getStatus());
 			}
 		} else {
 			super.run();

@@ -154,7 +154,7 @@ public class HTMLTextPresenter implements DefaultInformationControl.IInformation
 			
 		} catch (IOException e) {
 			
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 			return null;
 			
 		} finally {

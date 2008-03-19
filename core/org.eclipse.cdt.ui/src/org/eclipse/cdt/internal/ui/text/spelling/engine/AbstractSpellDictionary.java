@@ -495,7 +495,7 @@ public abstract class AbstractSpellDictionary implements ISpellDictionary {
 							String message= Messages.bind(Messages.AbstractSpellingDictionary_encodingError,
 									new String[] { word, decoder.replacement(), url.toString() });
 							IStatus status= new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, IStatus.OK, message, ex);
-							CUIPlugin.getDefault().log(status);
+							CUIPlugin.log(status);
 							
 							doRead= word != null;
 							continue;
@@ -510,12 +510,12 @@ public abstract class AbstractSpellDictionary implements ISpellDictionary {
 				String urlString= url.toString();
 				String lowercaseUrlString= urlString.toLowerCase();
 				if (urlString.equals(lowercaseUrlString)) {
-					CUIPlugin.getDefault().log(e);
+					CUIPlugin.log(e);
 				} else {
 					try {
 						return load(new URL(lowercaseUrlString));
 					} catch (MalformedURLException ex) {
-						CUIPlugin.getDefault().log(ex);
+						CUIPlugin.log(ex);
 					}
 				}
 			} catch (IOException exception) {
@@ -523,9 +523,9 @@ public abstract class AbstractSpellDictionary implements ISpellDictionary {
 					String message= Messages.bind(Messages.AbstractSpellingDictionary_encodingError,
 							String.valueOf(line), url.toString());
 					IStatus status= new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, IStatus.OK, message, exception);
-					CUIPlugin.getDefault().log(status);
+					CUIPlugin.log(status);
 				} else {
-					CUIPlugin.getDefault().log(exception);
+					CUIPlugin.log(exception);
 				}
 			} finally {
 				fMustLoad= false;

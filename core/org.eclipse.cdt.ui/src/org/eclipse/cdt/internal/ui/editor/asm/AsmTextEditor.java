@@ -343,7 +343,7 @@ public class AsmTextEditor extends TextEditor implements ISelectionChangedListen
 					return unit.getElementAtOffset(offset);
 				}
 			} catch (CModelException x) {
-				CUIPlugin.getDefault().log(x.getStatus());
+				CUIPlugin.log(x.getStatus());
 				// nothing found, be tolerant and go on
 			}
 		}

@@ -84,7 +84,7 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 				index= CCorePlugin.getIndexManager().getIndex(scope);
 				index.acquireReadLock();
 			} catch (CoreException e) {
-				CUIPlugin.getDefault().log(e);
+				CUIPlugin.log(e);
 				return NO_CHILDREN;
 			} catch (InterruptedException e) {
 				return NO_CHILDREN;
@@ -127,7 +127,7 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 							result.add(newnode);
 						}
 						catch (CoreException e) {
-							CUIPlugin.getDefault().log(e);
+							CUIPlugin.log(e);
 						}
 					}
 
@@ -176,7 +176,7 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 			}
 		}
 		catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		} 
 		return new IIndexInclude[0];
 	}
@@ -205,7 +205,7 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 			}
 		}
 		catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		} 
 		return new IIndexInclude[0];
 	}

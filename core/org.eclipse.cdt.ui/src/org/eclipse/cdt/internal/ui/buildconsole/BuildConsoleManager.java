@@ -100,7 +100,7 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 					try {
 						consoleView = page.showView(IConsoleConstants.ID_CONSOLE_VIEW);
 					} catch (PartInitException pie) {
-						CUIPlugin.getDefault().log(pie);
+						CUIPlugin.log(pie);
 					}
 					//restore focus stolen by the creation of the
 					// console

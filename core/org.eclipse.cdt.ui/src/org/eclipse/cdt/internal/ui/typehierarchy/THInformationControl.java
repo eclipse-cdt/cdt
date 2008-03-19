@@ -71,7 +71,7 @@ public class THInformationControl extends AbstractInformationControl implements 
 			try {
 				EditorOpener.open(CUIPlugin.getActivePage(), elem);
 			} catch (CModelException e) {
-				CUIPlugin.getDefault().log(e);
+				CUIPlugin.log(e);
 			}
 		}
 	}

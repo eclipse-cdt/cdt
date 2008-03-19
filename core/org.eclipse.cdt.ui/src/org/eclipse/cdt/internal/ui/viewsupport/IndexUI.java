@@ -319,7 +319,7 @@ public class IndexUI {
 			try {
 				return CoreModelUtil.findTranslationUnitForLocation(path, cproject);
 			} catch (CModelException e) {
-				CUIPlugin.getDefault().log(e);
+				CUIPlugin.log(e);
 			}
 		}
 		return null;

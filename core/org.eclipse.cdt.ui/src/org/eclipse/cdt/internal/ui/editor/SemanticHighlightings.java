@@ -247,7 +247,7 @@ public class SemanticHighlightings {
 					try {
 						return ((IField)binding).isStatic();
 					} catch (DOMException exc) {
-						CUIPlugin.getDefault().log(exc);
+						CUIPlugin.log(exc);
 					} catch (Error e) /* PDOMNotImplementedError */ {
 						// ignore
 					}
@@ -477,7 +477,7 @@ public class SemanticHighlightings {
 					try {
 						return ((ICPPMethod)binding).isStatic();
 					} catch (DOMException exc) {
-						CUIPlugin.getDefault().log(exc);
+						CUIPlugin.log(exc);
 					} catch (Error e) /* PDOMNotImplementedError */ {
 						// ignore
 					}
@@ -771,7 +771,7 @@ public class SemanticHighlightings {
 								return true;
 							}
 						} catch (DOMException exc) {
-							CUIPlugin.getDefault().log(exc);
+							CUIPlugin.log(exc);
 						} catch (Error e) /* PDOMNotImplementedError */ {
 							// ignore
 						}
@@ -849,7 +849,7 @@ public class SemanticHighlightings {
 								return true;
 							}
 						} catch (DOMException exc) {
-							CUIPlugin.getDefault().log(exc);
+							CUIPlugin.log(exc);
 						} catch (Error e) /* PDOMNotImplementedError */ {
 							// ignore
 						}
@@ -945,7 +945,7 @@ public class SemanticHighlightings {
 							return true;
 						}
 					} catch (DOMException exc) {
-						CUIPlugin.getDefault().log(exc);
+						CUIPlugin.log(exc);
 					} catch (Error e) /* PDOMNotImplementedError */ {
 						// ignore
 					}
@@ -1746,7 +1746,7 @@ public class SemanticHighlightings {
 						return true;
 					}
 				} catch (CoreException exc) {
-					CUIPlugin.getDefault().log(exc.getStatus());
+					CUIPlugin.log(exc.getStatus());
 					return false;
 				}
 			}

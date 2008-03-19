@@ -700,9 +700,9 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 				event.doit = false;
 
 			} catch (BadLocationException e) {
-				CUIPlugin.getDefault().log(e);
+				CUIPlugin.log(e);
 			} catch (BadPositionCategoryException e) {
-				CUIPlugin.getDefault().log(e);
+				CUIPlugin.log(e);
 			}
 		}
 
@@ -733,7 +733,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 												 level.fSecondPosition.length,
 												 null);
 							} catch (BadLocationException e) {
-								CUIPlugin.getDefault().log(e);
+								CUIPlugin.log(e);
 							}
 						}
 
@@ -742,7 +742,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 							try {
 								document.removePositionCategory(CATEGORY);
 							} catch (BadPositionCategoryException e) {
-								CUIPlugin.getDefault().log(e);
+								CUIPlugin.log(e);
 							}
 						}
 					}
@@ -1677,7 +1677,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 					return unit.getElementAtOffset(offset);
 				}
 			} catch (CModelException x) {
-				CUIPlugin.getDefault().log(x.getStatus());
+				CUIPlugin.log(x.getStatus());
 				// nothing found, be tolerant and go on
 			}
 		}

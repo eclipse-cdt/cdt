@@ -51,9 +51,9 @@ public class FileContentHelper {
 			
 			return new String(bytes);
 		} catch (IOException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		} catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		}
 		return ""; //$NON-NLS-1$
 	}

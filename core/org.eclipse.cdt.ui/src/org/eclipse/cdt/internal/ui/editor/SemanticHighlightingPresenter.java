@@ -439,10 +439,10 @@ public class SemanticHighlightingPresenter implements ITextPresentationListener,
 			}
 		} catch (BadPositionCategoryException e) {
 			// Should not happen
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		} catch (BadLocationException e) {
 			// Should not happen
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		}
 //		checkOrdering("new positions: ", fPositions); //$NON-NLS-1$
 
@@ -724,10 +724,10 @@ public class SemanticHighlightingPresenter implements ITextPresentationListener,
 			document.addPosition(positionCategory, position);
 		} catch (BadLocationException e) {
 			// Should not happen
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		} catch (BadPositionCategoryException e) {
 			// Should not happen
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		}
 	}
 
@@ -766,7 +766,7 @@ public class SemanticHighlightingPresenter implements ITextPresentationListener,
 				document.removePositionCategory(getPositionCategory());
 			} catch (BadPositionCategoryException e) {
 				// Should not happen
-				CUIPlugin.getDefault().log(e);
+				CUIPlugin.log(e);
 			}
 		}
 	}

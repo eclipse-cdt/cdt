@@ -99,7 +99,7 @@ public class IBConversions {
             		try {
 						return CoreModelUtil.findTranslationUnitForLocation(path, null);
 					} catch (CModelException e) {
-						CUIPlugin.getDefault().log(e);
+						CUIPlugin.log(e);
 					}
             	}
             }

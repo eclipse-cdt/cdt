@@ -206,7 +206,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 		        		}
 		        	}
 	        	} catch (CoreException e) {
-	        		CUIPlugin.getDefault().log(e.getStatus());
+	        		CUIPlugin.log(e.getStatus());
 	        	}
 	        }
 	        

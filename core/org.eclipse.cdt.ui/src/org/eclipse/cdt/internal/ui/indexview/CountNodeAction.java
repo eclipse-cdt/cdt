@@ -130,7 +130,7 @@ public class CountNodeAction extends IndexAction {
 				}
 			}
 		} catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 			return;

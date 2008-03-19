@@ -154,7 +154,7 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 			index = CCorePlugin.getIndexManager().getIndex(tu.getCProject(), IIndexManager.ADD_DEPENDENCIES);
 			index.acquireReadLock();
 		} catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 			return;
 		} catch (InterruptedException e) {
 			return;

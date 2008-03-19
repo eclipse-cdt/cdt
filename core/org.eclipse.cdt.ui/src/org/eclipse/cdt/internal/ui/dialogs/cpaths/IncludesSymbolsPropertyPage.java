@@ -174,7 +174,7 @@ public class IncludesSymbolsPropertyPage extends PropertyPage implements IStatus
 		try {
 			return proj.hasNature(CProjectNature.C_NATURE_ID);
 		} catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		}
 		return false;
 	}
@@ -252,7 +252,7 @@ public class IncludesSymbolsPropertyPage extends PropertyPage implements IStatus
 							try {
 								fIncludesSymbolsBlock.init(getCElement(), fIncludesSymbolsBlock.getRawCPath());
 							} catch (CModelException e) {
-								CUIPlugin.getDefault().log(e);
+								CUIPlugin.log(e);
 							}
 						}
 					}

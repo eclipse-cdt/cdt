@@ -77,7 +77,7 @@ public class OpenDefinitionAction extends IndexAction {
 			}
 		}
 		catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		} 
 		catch (InterruptedException e) {
 		}
@@ -123,7 +123,7 @@ public class OpenDefinitionAction extends IndexAction {
 					} 
 					textEditor.selectAndReveal(nodeOffset, nodeLength);
 				} catch (BadLocationException e) {
-					CUIPlugin.getDefault().log(e);
+					CUIPlugin.log(e);
 				}
 			}
 		}

@@ -342,7 +342,7 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
     				celem = projects[0];
     			}
     		} catch (CModelException e) {
-    			CUIPlugin.getDefault().log(e);
+    			CUIPlugin.log(e);
     		}
     	}
     	return celem;
@@ -379,7 +379,7 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
     					        folder = roots[0];
     					}
     				} catch (CModelException e) {
-    					CUIPlugin.getDefault().log(e);
+    					CUIPlugin.log(e);
     				}
     				if (folder == null) {
     				    folder = cproject.findSourceRoot(cproject.getResource());

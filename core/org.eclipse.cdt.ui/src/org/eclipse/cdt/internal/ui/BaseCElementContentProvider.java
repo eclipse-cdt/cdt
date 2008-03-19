@@ -213,7 +213,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 				return ((CElementGrouping)element).getChildren(element);
 			}
 		} catch (CModelException e) {
-			//CUIPlugin.getDefault().log(e);
+			//CUIPlugin.log(e);
 			return NO_CHILDREN;
 		}
 		return NO_CHILDREN;

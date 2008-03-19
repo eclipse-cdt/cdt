@@ -146,7 +146,7 @@ public class EditorUtility {
 					ISourceRange range= reference.getSourceRange();
 					((ITextEditor)part).selectAndReveal(range.getIdStartPos(), range.getIdLength());
 				} catch (CModelException exc) {
-					CUIPlugin.getDefault().log(exc.getStatus());
+					CUIPlugin.log(exc.getStatus());
 				}
 			}
 		}

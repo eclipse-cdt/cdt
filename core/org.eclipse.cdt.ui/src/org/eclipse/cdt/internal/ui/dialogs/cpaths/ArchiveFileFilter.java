@@ -75,7 +75,7 @@ public class ArchiveFileFilter extends ViewerFilter {
 					}
 				}
 			} catch (CoreException e) {
-				CUIPlugin.getDefault().log(e.getStatus());
+				CUIPlugin.log(e.getStatus());
 			}				
 		}
 		return false;

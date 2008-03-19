@@ -51,7 +51,7 @@ public class ExtractConstantRefactoringRunner extends RefactoringRunner  {
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 		} catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		}
 	}
 }

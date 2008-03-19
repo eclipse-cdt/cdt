@@ -145,7 +145,7 @@ public class CSpellingEngine extends SpellingEngine {
 					}
 				}
 			} catch (BadLocationException x) {
-				CUIPlugin.getDefault().log(x);
+				CUIPlugin.log(x);
 			}
 		} finally {
 			if(toRemove!=null)

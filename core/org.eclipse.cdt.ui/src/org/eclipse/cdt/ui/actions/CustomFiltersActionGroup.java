@@ -416,7 +416,7 @@ public class CustomFiltersActionGroup extends ActionGroup {
 			String id= filterDescs[i].getId();
 			Boolean isEnabled= new Boolean(filterDescs[i].isEnabled());
 			//if (fEnabledFilterIds.containsKey(id))
-			//	CUIPlugin.getDefault().log(new Status("WARNING: Duplicate id for extension-point \"org.eclipse.jdt.ui.CElementFilters\"")); //$NON-NLS-1$
+			//	CUIPlugin.log(new Status("WARNING: Duplicate id for extension-point \"org.eclipse.jdt.ui.CElementFilters\"")); //$NON-NLS-1$
 			fEnabledFilterIds.put(id, isEnabled);
 			fFilterDescriptorMap.put(id, filterDescs[i]);
 		}

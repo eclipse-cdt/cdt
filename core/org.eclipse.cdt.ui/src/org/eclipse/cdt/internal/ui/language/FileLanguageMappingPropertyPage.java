@@ -99,7 +99,7 @@ public class FileLanguageMappingPropertyPage extends PropertyPage {
 		try {
 			createMappingTable(fContents, file);
 		} catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		}
 		
 		Link link = new Link(fContents, SWT.NONE);
@@ -109,7 +109,7 @@ public class FileLanguageMappingPropertyPage extends PropertyPage {
 				try {
 					refreshMappings();
 				} catch (CoreException e) {
-					CUIPlugin.getDefault().log(e);
+					CUIPlugin.log(e);
 				}
 			}
 		});
@@ -184,7 +184,7 @@ public class FileLanguageMappingPropertyPage extends PropertyPage {
 							try {
 								refreshMappings();
 							} catch (CoreException e) {
-								CUIPlugin.getDefault().log(e);
+								CUIPlugin.log(e);
 							}
 						}
 					}

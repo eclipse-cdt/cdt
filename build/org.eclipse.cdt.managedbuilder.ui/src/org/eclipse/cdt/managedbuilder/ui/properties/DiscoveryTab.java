@@ -227,7 +227,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
  				}
  				if (s == null) s = Messages.getString("DiscoveryTab.3"); //$NON-NLS-1$
  			}
- 			IScannerConfigBuilderInfo2 bi2 = (IScannerConfigBuilderInfo2)m.get(ic);
+ 			IScannerConfigBuilderInfo2 bi2 = m.get(ic);
  			TableItem ti = new TableItem(resTable, SWT.NONE);
  			ti.setText(s);
  			ti.setData("cont", ic); //$NON-NLS-1$
@@ -442,11 +442,11 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
  		Map<CfgInfoContext, IScannerConfigBuilderInfo2> m2 = cbi2.getInfoMap();
  		for (CfgInfoContext ic : m2.keySet()) {
  			if (m1.keySet().contains(ic))  {
- 				IScannerConfigBuilderInfo2 bi1 = (IScannerConfigBuilderInfo2)m1.get(ic);
+ 				IScannerConfigBuilderInfo2 bi1 = m1.get(ic);
  				try { 
  					cbi2.applyInfo(ic, bi1);
  				} catch (CoreException e) {
- 					CUIPlugin.getDefault().log(e);
+					ManagedBuilderUIPlugin.log(e);
  				}
  			} else {
  				CUIPlugin.getDefault().logErrorMessage(Messages.getString("DiscoveryTab.7")); //$NON-NLS-1$
@@ -468,7 +468,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
         String savedId = buildInfo.getSelectedProfileId();
 		for (int i=0; i<realPages.length; i++) {
 			if (realPages != null && realPages[i] != null) {
-				String s = (String)visibleProfilesList.get(i);
+				String s = visibleProfilesList.get(i);
 				buildInfo.setSelectedProfileId(s);
 				realPages[i].performApply();
 				realPages[i].setVisible(false);
@@ -484,7 +484,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
  		List<CfgInfoContext> changedContexts = checkChanges();
  		IProject project = getProject();
  		for(int i = 0; i < changedContexts.size(); i++){
- 			CfgInfoContext c = (CfgInfoContext)changedContexts.get(i);
+ 			CfgInfoContext c = changedContexts.get(i);
  			CfgDiscoveredPathManager.getInstance().removeDiscoveredInfo(project, c);
 // 			MakeCorePlugin.getDefault().getDiscoveryManager().removeDiscoveredInfo(c.getProject(), c);
  		}
@@ -498,12 +498,12 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		HashMap<InfoContext, Object> baseCopy = new HashMap<InfoContext, Object>(baseInfoMap);
 		List<CfgInfoContext> list = new ArrayList<CfgInfoContext>();
 		for(Map.Entry<CfgInfoContext, IScannerConfigBuilderInfo2> entry : cfgInfoMap.entrySet()){
-			CfgInfoContext cic = (CfgInfoContext)entry.getKey();
+			CfgInfoContext cic = entry.getKey();
 			InfoContext c = cic.toInfoContext();
 			if(c == null)
 				continue;
 			
-			IScannerConfigBuilderInfo2 changed = (IScannerConfigBuilderInfo2)entry.getValue();
+			IScannerConfigBuilderInfo2 changed = entry.getValue();
 			IScannerConfigBuilderInfo2 old = (IScannerConfigBuilderInfo2)baseCopy.remove(c);
 			
 			if(old == null){

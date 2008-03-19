@@ -158,7 +158,7 @@ public class ToggleSourceAndHeaderAction extends TextEditorAction {
 								}
 							}
 						} catch (CoreException exc) {
-							CUIPlugin.getDefault().log(exc.getStatus());
+							CUIPlugin.log(exc.getStatus());
 						}
 					}
 				}
@@ -210,9 +210,9 @@ public class ToggleSourceAndHeaderAction extends TextEditorAction {
 			try {
 				EditorUtility.openInEditor(partnerUnit);
 			} catch (PartInitException exc) {
-				CUIPlugin.getDefault().log(exc.getStatus());
+				CUIPlugin.log(exc.getStatus());
 			} catch (CModelException exc) {
-				CUIPlugin.getDefault().log(exc.getStatus());
+				CUIPlugin.log(exc.getStatus());
 			}
 		}
 	}

@@ -61,7 +61,7 @@ public class DoxygenMultilineConfiguration extends AbstractGenericTagDocCommentV
 				return c == '*' || c == '!';
 			}
 		} catch(BadLocationException ble) {
-			CUIPlugin.getDefault().log(ble);
+			CUIPlugin.log(ble);
 		}
 		return false;
 	}

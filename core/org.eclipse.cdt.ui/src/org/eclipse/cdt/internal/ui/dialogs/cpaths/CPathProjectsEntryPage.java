@@ -146,7 +146,7 @@ public class CPathProjectsEntryPage extends CPathBasePage {
 				}
 			}
 		} catch (CModelException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		}
 		fProjectsList.setElements(projects);
 		fProjectsList.setCheckedElements(checkedProjects);

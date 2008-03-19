@@ -56,7 +56,7 @@ public class TestGenericTagConfiguration extends AbstractGenericTagDocCommentVie
 				return false;
 			}
 		} catch(BadLocationException ble) {
-			CUIPlugin.getDefault().log(ble);
+			CUIPlugin.log(ble);
 		}
 		return false;
 	}

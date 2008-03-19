@@ -509,7 +509,7 @@ public class StubUtility {
 		try {
 			projectStore.load();
 		} catch (IOException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		}
 		return projectStore.findTemplateById(id);
 	}
@@ -557,7 +557,7 @@ public class StubUtility {
 			try {
 				projectStore.load();
 			} catch (IOException e) {
-				CUIPlugin.getDefault().log(e);
+				CUIPlugin.log(e);
 			}
 			templateDatas= projectStore.getTemplateData();
 		}

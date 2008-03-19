@@ -68,11 +68,11 @@ public class CFormattingStrategy extends ContextBasedFormattingStrategy {
 					edit.apply(document);
 
 			} catch (MalformedTreeException exception) {
-				CUIPlugin.getDefault().log(exception);
+				CUIPlugin.log(exception);
 			} catch (BadLocationException exception) {
 				// Can only happen on concurrent document modification - log and
 				// bail out
-				CUIPlugin.getDefault().log(exception);
+				CUIPlugin.log(exception);
 			}
 		}
  	}

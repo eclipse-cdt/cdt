@@ -204,7 +204,7 @@ public class TeamProjectIndexExportWizardPage extends  WizardDataTransferPage im
 				}
 	        }
 		} catch (CModelException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		}
 		fProjectViewer.setInput(input);
 	}

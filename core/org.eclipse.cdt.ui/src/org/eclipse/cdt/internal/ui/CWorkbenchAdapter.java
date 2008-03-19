@@ -47,7 +47,7 @@ public class CWorkbenchAdapter implements IWorkbenchAdapter, IActionFilter {
 					return members;
 				}
 			} catch (CModelException e) {
-				CUIPlugin.getDefault().log(e);
+				CUIPlugin.log(e);
 			}
 		}
 		return fgEmptyArray;

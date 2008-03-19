@@ -122,7 +122,7 @@ public class DOMASTPluginImages {
 		try {
 			return new URL(fgIconBaseURL, buffer.toString());
 		} catch (MalformedURLException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 			return null;
 		}
 	}

@@ -192,7 +192,7 @@ public class IndexLabelProvider extends LabelProvider {
 					break;
 				}
 			} catch (DOMException e) {
-				CUIPlugin.getDefault().log(e);
+				CUIPlugin.log(e);
 			}
 		}
 		else if (element instanceof ICompositeType)

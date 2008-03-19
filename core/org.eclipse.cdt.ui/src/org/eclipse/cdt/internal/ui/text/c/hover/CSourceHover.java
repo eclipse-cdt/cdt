@@ -790,7 +790,7 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 				if (reader != null)
 					reader.close();
 			} catch (IOException ex) {
-				CUIPlugin.getDefault().log(ex);
+				CUIPlugin.log(ex);
 			}
 		}
 

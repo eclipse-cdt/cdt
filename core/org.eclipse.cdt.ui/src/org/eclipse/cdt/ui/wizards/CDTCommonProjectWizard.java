@@ -139,7 +139,7 @@ implements IExecutableExtension, IWizardWithMemory
 	                existingPath = true;
 		  		}
         	} catch (CoreException e) {
-        		CUIPlugin.getDefault().log(e.getStatus());
+        		CUIPlugin.log(e.getStatus());
         	}
 			savedHandler = fMainPage.h_selected;
 			savedHandler.saveState();
@@ -229,7 +229,7 @@ implements IExecutableExtension, IWizardWithMemory
 							newProject = createIProject(lastProjectName, lastProjectLocation);
 							if (newProject != null) 
 								fMainPage.h_selected.createProject(newProject, defaults, onFinish);
-						} catch (CoreException e) {	CUIPlugin.getDefault().log(e); }
+						} catch (CoreException e) {	CUIPlugin.log(e); }
 					}
 				});
 			}

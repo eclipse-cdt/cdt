@@ -17,7 +17,6 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IMultiConfiguration;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.MultiConfiguration;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
@@ -374,7 +373,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 				icfg.getEditableBuilder().setUseDefaultBuildCmd(val);
 			}
 		} catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
+			ManagedBuilderUIPlugin.log(e);
 		}
 	}
 
@@ -439,7 +438,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 				icfg.getEditableBuilder().setManagedBuildOn(on);
 			}
 		} catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
+			ManagedBuilderUIPlugin.log(e);
 		}
 	}
 }

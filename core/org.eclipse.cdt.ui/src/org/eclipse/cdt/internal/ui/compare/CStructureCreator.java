@@ -116,7 +116,7 @@ public class CStructureCreator extends StructureCreator {
 			// build structure
 			ast.accept(structureCreator);
 		} catch (CoreException exc) {
-			CUIPlugin.getDefault().log(exc);
+			CUIPlugin.log(exc);
 		}
 
 		return root;

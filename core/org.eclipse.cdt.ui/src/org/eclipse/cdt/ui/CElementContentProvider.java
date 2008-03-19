@@ -134,7 +134,7 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 		try {
 			processDelta(event.getDelta());
 		} catch(CModelException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 			e.printStackTrace();
 		}
 	}

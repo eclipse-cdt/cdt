@@ -72,7 +72,7 @@ public class SpellCheckEngine implements ISpellCheckEngine, IPropertyChangeListe
 			if (location == null)
 				return fgLocalesWithInstalledDictionaries= Collections.EMPTY_SET;
 		} catch (MalformedURLException ex) {
-			CUIPlugin.getDefault().log(ex);
+			CUIPlugin.log(ex);
 			return fgLocalesWithInstalledDictionaries= Collections.EMPTY_SET;
 		}
 		
@@ -86,7 +86,7 @@ public class SpellCheckEngine implements ISpellCheckEngine, IPropertyChangeListe
 			if (fileNames == null)
 				return fgLocalesWithInstalledDictionaries= Collections.EMPTY_SET;
 		} catch (IOException ex) {
-			CUIPlugin.getDefault().log(ex);
+			CUIPlugin.log(ex);
 			return fgLocalesWithInstalledDictionaries= Collections.EMPTY_SET;
 		}
 		

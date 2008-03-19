@@ -58,7 +58,7 @@ public class CUIHelp {
 			try {
 				CHelpDisplayContext.displayHelp(fContextId, fEditor);
 			} catch (CoreException x) {
-				CUIPlugin.getDefault().log(x);
+				CUIPlugin.log(x);
 			}
 		}
 	}

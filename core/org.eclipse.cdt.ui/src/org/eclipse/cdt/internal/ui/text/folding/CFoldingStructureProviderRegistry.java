@@ -78,7 +78,7 @@ public class CFoldingStructureProviderRegistry {
 			try {
 				return desc.createProvider();
 			} catch (CoreException e) {
-				CUIPlugin.getDefault().log(e);
+				CUIPlugin.log(e);
 			}
 		}
 		return null;

@@ -743,7 +743,7 @@ public abstract class OptionsConfigurationBlock {
 			try {
 				fManager.applyChanges();
 			} catch (BackingStoreException e) {
-				CUIPlugin.getDefault().log(e);
+				CUIPlugin.log(e);
 				return false;
 			}
 			if (doBuild) {

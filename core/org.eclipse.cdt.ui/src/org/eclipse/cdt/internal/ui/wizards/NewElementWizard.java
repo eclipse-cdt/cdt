@@ -53,7 +53,7 @@ public abstract class NewElementWizard extends Wizard implements INewWizard {
 						try {
 							IDE.openEditor(activePage, resource, true);
 						} catch (PartInitException e) {
-							CUIPlugin.getDefault().log(e);
+							CUIPlugin.log(e);
 						}
 					}
 				});

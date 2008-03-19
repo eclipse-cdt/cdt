@@ -189,7 +189,7 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 				return 0;
 			}
 			
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		}
 		return 0;
 	}

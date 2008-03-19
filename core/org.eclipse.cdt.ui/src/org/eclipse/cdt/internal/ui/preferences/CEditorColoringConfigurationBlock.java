@@ -821,7 +821,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 				buffer.append(separator);
 			}
 		} catch (IOException io) {
-			CUIPlugin.getDefault().log(io);
+			CUIPlugin.log(io);
 		} finally {
 			if (reader != null) {
 				try { reader.close(); } catch (IOException e) {}
@@ -906,7 +906,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 			int offset= document.getLineOffset(line) + column;
 			return new HighlightedRange(offset, length, key);
 		} catch (BadLocationException x) {
-			CUIPlugin.getDefault().log(x);
+			CUIPlugin.log(x);
 		}
 		return null;
 	}

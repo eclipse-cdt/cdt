@@ -97,7 +97,7 @@ public class GoToNextPreviousMemberAction extends TextEditorAction {
                 editor.selectAndReveal(next.getSourceRange().getIdStartPos(), 0);
             } 
         } catch (CModelException e) {
-        	CUIPlugin.getDefault().log(e);
+        	CUIPlugin.log(e);
         }
     }
 

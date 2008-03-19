@@ -167,7 +167,7 @@ public class NewClassWizardUtil {
                     folder = roots[0];
             }
         } catch (CModelException e) {
-            CUIPlugin.getDefault().log(e);
+            CUIPlugin.log(e);
         }
         if (folder == null) {
             folder = cproject.findSourceRoot(cproject.getResource());
@@ -394,7 +394,7 @@ public class NewClassWizardUtil {
 				index.acquireReadLock();
 			}
 		} catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 			return SEARCH_MATCH_ERROR;
 		} catch (InterruptedException e) {
 		}

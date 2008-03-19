@@ -57,7 +57,7 @@ public class IndexerOptionPropertyPage extends PropertyPage implements ICOptionC
 		try {
 			optionPage.performApply(new NullProgressMonitor());
 		} catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		}
 		return true;
 	}

@@ -38,7 +38,7 @@ public class CPluginImages {
 		try {
 			fgIconBaseURL= new URL(CUIPlugin.getDefault().getBundle().getEntry("/"), "icons/" ); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (MalformedURLException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		}
 	}	
 	private static final String NAME_PREFIX= CUIPlugin.PLUGIN_ID + '.';
@@ -367,7 +367,7 @@ public class CPluginImages {
 		try {
 			return new URL(fgIconBaseURL, buffer.toString());
 		} catch (MalformedURLException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 			return null;
 		}
 	}

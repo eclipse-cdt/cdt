@@ -512,7 +512,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 							try {
 								oldJob.join();
 							} catch (InterruptedException e) {
-								CUIPlugin.getDefault().log(e);
+								CUIPlugin.log(e);
 								return Status.CANCEL_STATUS;
 							}
 						}

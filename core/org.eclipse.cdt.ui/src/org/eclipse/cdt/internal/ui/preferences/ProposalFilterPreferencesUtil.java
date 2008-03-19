@@ -63,7 +63,7 @@ public class ProposalFilterPreferencesUtil {
 			}
 		} catch (InvalidRegistryObjectException e) {
 			// No action required since we will at least be using the fail-safe default filter
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		}
 		String[] filterNames = (String[]) names
 				.toArray(new String[names.size()]);

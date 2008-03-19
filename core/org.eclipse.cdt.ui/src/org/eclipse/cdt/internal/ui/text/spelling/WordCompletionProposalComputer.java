@@ -91,7 +91,7 @@ public final class WordCompletionProposalComputer implements ICompletionProposal
 				}
 			} catch (BadLocationException exception) {
 				// log & ignore
-				CUIPlugin.getDefault().log(exception);
+				CUIPlugin.log(exception);
 			}
 		}
 		return Collections.EMPTY_LIST;

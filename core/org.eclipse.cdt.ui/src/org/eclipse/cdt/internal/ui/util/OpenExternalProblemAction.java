@@ -60,7 +60,7 @@ public class OpenExternalProblemAction extends ActionDelegate implements IObject
 					}
 				}
 			} catch (CoreException e) {
-				CUIPlugin.getDefault().log(e.getStatus());
+				CUIPlugin.log(e.getStatus());
 			}
 		}
 	}

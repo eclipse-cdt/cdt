@@ -390,7 +390,7 @@ public abstract class AbstractInformationControl extends PopupDialog implements 
 				if (part != null && selectedElement instanceof ICElement)
 					EditorUtility.revealInEditor(part, (ICElement) selectedElement);
 			} catch (CoreException ex) {
-				CUIPlugin.getDefault().log(ex);
+				CUIPlugin.log(ex);
 			}
 		}
 	}

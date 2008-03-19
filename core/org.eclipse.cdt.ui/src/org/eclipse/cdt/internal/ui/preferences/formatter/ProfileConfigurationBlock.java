@@ -74,7 +74,7 @@ public abstract class ProfileConfigurationBlock {
     					fProfileStore.writeProfiles(fProfileManager.getSortedProfiles(), fInstanceScope); // update profile store
     					fProfileManager.commitChanges(fCurrContext); 
     				} catch (CoreException x) {
-    					CUIPlugin.getDefault().log(x);
+    					CUIPlugin.log(x);
     				}
     				break;
     			case ProfileManager.SELECTION_CHANGED_EVENT:
@@ -279,14 +279,14 @@ public abstract class ProfileConfigurationBlock {
         try {
             profiles= fProfileStore.readProfiles(fInstanceScope);
         } catch (CoreException e) {
-        	CUIPlugin.getDefault().log(e);
+        	CUIPlugin.log(e);
         }
         if (profiles == null) {
         	try {
         		// bug 129427
         	    profiles= fProfileStore.readProfiles(new DefaultScope());
         	} catch (CoreException e) {
-        		CUIPlugin.getDefault().log(e);
+        		CUIPlugin.log(e);
         	}
         }
         
@@ -416,7 +416,7 @@ public abstract class ProfileConfigurationBlock {
 				fInstanceScope.getNode(CCorePlugin.PLUGIN_ID).flush();
 			}
 		} catch (BackingStoreException e) {
-			CUIPlugin.getDefault().log(e);
+			CUIPlugin.log(e);
 		}
 	}
 

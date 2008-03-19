@@ -163,7 +163,7 @@ public final class ToggleCommentAction extends TextEditorAction {
 
 		} catch (BadLocationException x) {
 			// should not happen
-			CUIPlugin.getDefault().log(x);
+			CUIPlugin.log(x);
 		}
 
 		return false;
@@ -186,7 +186,7 @@ public final class ToggleCommentAction extends TextEditorAction {
 
 		} catch (BadLocationException x) {
 			// should not happen
-			CUIPlugin.getDefault().log(x);
+			CUIPlugin.log(x);
 		}
 
 		return null;
@@ -214,7 +214,7 @@ public final class ToggleCommentAction extends TextEditorAction {
 
 		} catch (BadLocationException x) {
 			// should not happen
-			CUIPlugin.getDefault().log(x);
+			CUIPlugin.log(x);
 		}
 
 		return -1;
@@ -260,7 +260,7 @@ public final class ToggleCommentAction extends TextEditorAction {
 
 		} catch (BadLocationException x) {
 			// should not happen
-			CUIPlugin.getDefault().log(x);
+			CUIPlugin.log(x);
 		}
 
 		return false;

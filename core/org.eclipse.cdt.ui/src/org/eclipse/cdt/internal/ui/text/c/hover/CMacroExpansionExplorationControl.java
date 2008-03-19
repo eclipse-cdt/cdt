@@ -258,7 +258,7 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 				}
 				dispose();
 			} catch (PartInitException exc) {
-				CUIPlugin.getDefault().log(exc);
+				CUIPlugin.log(exc);
 			}
 		}
 	}

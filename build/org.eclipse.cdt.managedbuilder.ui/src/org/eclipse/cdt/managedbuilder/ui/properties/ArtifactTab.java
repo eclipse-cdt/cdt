@@ -23,7 +23,6 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IMultiConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.wizards.CWizardHandler;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
@@ -226,7 +225,7 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 				}
 			}
 		} catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
+			ManagedBuilderUIPlugin.log(e);
 		}
 	}
 	

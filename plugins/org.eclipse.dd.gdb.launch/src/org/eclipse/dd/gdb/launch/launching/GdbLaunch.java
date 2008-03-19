@@ -56,10 +56,10 @@ public class GdbLaunch extends Launch
 
         // Create the dispatch queue to be used by debugger control and services 
         // that belong to this launch
-        final DefaultDsfExecutor dsfExecutor = new DefaultDsfExecutor(GdbLocalLaunchDelegate.GDB_DEBUG_MODEL_ID);
+        final DefaultDsfExecutor dsfExecutor = new DefaultDsfExecutor(GdbLaunchDelegate.GDB_DEBUG_MODEL_ID);
         dsfExecutor.prestartCoreThread();
         fExecutor = dsfExecutor;
-        fSession = DsfSession.startSession(fExecutor, GdbLocalLaunchDelegate.GDB_DEBUG_MODEL_ID);
+        fSession = DsfSession.startSession(fExecutor, GdbLaunchDelegate.GDB_DEBUG_MODEL_ID);
     }
 
     public DsfExecutor getDsfExecutor() { return fExecutor; }

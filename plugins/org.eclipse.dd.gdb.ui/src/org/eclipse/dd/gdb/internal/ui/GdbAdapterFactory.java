@@ -28,8 +28,7 @@ import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.ui.actions.DsfTerminateCommand;
 import org.eclipse.dd.gdb.internal.ui.viewmodel.GdbViewModelAdapter;
 import org.eclipse.dd.gdb.launch.launching.GdbLaunch;
-import org.eclipse.dd.gdb.launch.launching.GdbLocalLaunchDelegate;
-import org.eclipse.dd.gdb.launch.launching.GdbRemoteLaunchDelegate;
+import org.eclipse.dd.gdb.launch.launching.GdbLaunchDelegate;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchesListener2;
@@ -102,8 +101,7 @@ public class GdbAdapterFactory
             fDebugModelProvider = new IDebugModelProvider() {
                 // @see org.eclipse.debug.core.model.IDebugModelProvider#getModelIdentifiers()
                 public String[] getModelIdentifiers() {
-                    return new String[] { GdbLocalLaunchDelegate.GDB_DEBUG_MODEL_ID,
-                    		              GdbRemoteLaunchDelegate.GDB_DEBUG_MODEL_ID};
+                    return new String[] { GdbLaunchDelegate.GDB_DEBUG_MODEL_ID };
                 }
             };
             session.registerModelAdapter(IDebugModelProvider.class, fDebugModelProvider);

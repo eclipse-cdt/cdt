@@ -36,6 +36,7 @@ import org.eclipse.dd.dsf.debug.service.IMemory.IMemoryDMContext;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.gdb.launch.internal.GdbLaunchPlugin;
 import org.eclipse.dd.gdb.service.command.GDBControl;
+import org.eclipse.dd.gdb.service.command.GDBControl.SessionType;
 import org.eclipse.dd.mi.service.command.AbstractCLIProcess;
 import org.eclipse.dd.mi.service.command.MIInferiorProcess;
 import org.eclipse.debug.core.DebugException;
@@ -54,10 +55,11 @@ import org.eclipse.debug.core.sourcelookup.IPersistableSourceLocator2;
  * The launch configuration delegate for the CDI debugger session types.
  */
 @ThreadSafe
-public class GdbLocalLaunchDelegate extends AbstractCLaunchDelegate 
+public class GdbLaunchDelegate extends AbstractCLaunchDelegate 
     implements ILaunchConfigurationDelegate2
 {
     public final static String GDB_DEBUG_MODEL_ID = "org.eclipse.dd.gdb"; //$NON-NLS-1$
+    private SessionType fSessionType;
     
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.launch.AbstractCLaunchDelegate#launch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
@@ -78,23 +80,38 @@ public class GdbLocalLaunchDelegate extends AbstractCLaunchDelegate
 			return;
 		}
 		try {
-			String debugMode = config.getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE, ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN );
-			if ( debugMode.equals( ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN ) ) {
-				launchLocalDebugSession( config, launch, monitor );
-			}
+	        String debugMode = config.getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE, ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN );
+        	if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN)) {
+        		fSessionType = SessionType.RUN;
+        	} else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH)) {
+        		fSessionType = SessionType.ATTACH;
+        	} else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE)) {
+        		fSessionType = SessionType.CORE;
+        	} else if (debugMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE)) {
+        		fSessionType = SessionType.REMOTE;
+        	} else {
+            	fSessionType = SessionType.RUN;
+        	}
+
+			launchDebugSession( config, launch, monitor );
 		}
 		finally {
 			monitor.done();
 		}		
 	}
 
-	private void launchLocalDebugSession( final ILaunchConfiguration config, ILaunch l, IProgressMonitor monitor ) throws CoreException {
+	private void launchDebugSession( final ILaunchConfiguration config, ILaunch l, IProgressMonitor monitor ) throws CoreException {
 		if ( monitor.isCanceled() ) {
 			return;
 		}
         final GdbLaunch launch = (GdbLaunch)l;
 
-        monitor.subTask( "Debugging local C/C++ application" ); //$NON-NLS-1$
+        
+        if (fSessionType == SessionType.REMOTE) {
+            monitor.subTask( "Debugging remote C/C++ application" ); //$NON-NLS-1$    	
+        } else {
+            monitor.subTask( "Debugging local C/C++ application" ); //$NON-NLS-1$
+        }
 		IPath exePath = verifyProgramPath( config );
 		ICProject project = verifyCProject( config );
 		if ( exePath != null ) {

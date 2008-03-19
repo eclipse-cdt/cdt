@@ -13,7 +13,7 @@ package org.eclipse.dd.gdb.internal.ui.breakpoints;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.dd.gdb.breakpoints.CBreakpointGdbThreadsFilterExtension;
-import org.eclipse.dd.gdb.launch.launching.GdbLocalLaunchDelegate;
+import org.eclipse.dd.gdb.launch.launching.GdbLaunchDelegate;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -50,7 +50,7 @@ public class CBreakpointGdbThreadFilterPage extends PropertyPage {
 	        try {
 	        	CBreakpointGdbThreadsFilterExtension filter =
 	        		(CBreakpointGdbThreadsFilterExtension) bp.getExtension(
-	        				GdbLocalLaunchDelegate.GDB_DEBUG_MODEL_ID, CBreakpointGdbThreadsFilterExtension.class);
+	        				GdbLaunchDelegate.GDB_DEBUG_MODEL_ID, CBreakpointGdbThreadsFilterExtension.class);
 	        	filter.initialize(bp);
 	        	return filter;
 	        } catch (CoreException e) {}

@@ -3942,61 +3942,55 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 					return true;
 			}
 		}
-		//envVarBuildPathList;
-		//  Managed Build model attributes
-//		unusedChildren;
-//		isAbstract;
 		Tool superTool = (Tool)superClass;
 		
 		if(command != null && !command.equals(superTool.getToolCommand()))
 			return true;
 		
-		//inputExtensions;
-		//interfaceExtensions; //(header extensions)
-		//natureFilter;
-		//outputExtensions;
-		//outputFlag;
-		//outputPrefix;
 		if(errorParserIds != null && !errorParserIds.equals(superTool.getErrorParserIds()))
 			return true;
-
 		
 		if(commandLinePattern != null && !commandLinePattern.equals(superTool.getCommandLinePattern()))
 			return true;
 
-		//versionsSupported;
-		//convertToId;
-		//advancedInputCategory;
 		if(customBuildStep != null && customBuildStep.booleanValue() != superTool.getCustomBuildStep())
 			return true;
 		
 		if(announcement != null && !announcement.equals(superTool.getAnnouncement()))
 			return true;
-		//commandLineGeneratorElement
-		//commandLineGenerator
-		//dependencyGeneratorElement
-		//dependencyGenerator
-		//iconPathURL;
-		//pathconverterElement
-		//optionPathConverter
-		//supportedProperties
-		//supportsManagedBuild
-		//isTest;
-		//  Miscellaneous
-		//isExtensionTool
-		//isDirty
-		//resolved
-		//previousMbsVersionConversionElement
-		//currentMbsVersionConversionElement
-		//rebuildState
-		//booleanExpressionCalculator
-		
-		//typeToDataMap
-		//fDataMapInited;
-		//identicalList;
+
 		if(discoveredInfoMap != null && discoveredInfoMap.size() != 0)
 			return true;
-		//scannerConfigDiscoveryProfileId
+
+		if (isAnyOptionModified(this, tool))
+			return true;
+
+		return false;
+	}
+
+	private boolean isAnyOptionModified(ITool t1, ITool t2) {
+		for (IOption op1 : t1.getOptions()) {
+			for (IOption op2 : t2.getOptions()) {
+				// find matching option
+				try {  
+					if (op1.getValueType() == op2.getValueType() &&
+						op1.getName().equals(op2.getName())) {
+						Object ob1 = op1.getValue();
+						Object ob2 = op2.getValue();
+						if (ob1 == null && ob2 == null)
+							break;
+						// values are different ?
+						if ((ob1 == null || ob2 == null) ||
+						   !(ob1.equals(ob2) ))
+							return true;
+						else
+							break;
+					}
+				} catch (BuildException e) {
+					return true; // unprobable
+				}
+			}
+		}
 		return false;
 	}
 	

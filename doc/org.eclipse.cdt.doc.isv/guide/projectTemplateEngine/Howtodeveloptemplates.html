@@ -65,7 +65,7 @@ structure for the project templates, is part of
 <p>
 The structure or schema for a project template is as follows: 
 </p>
-<p class="CodeBlock"><code>&lt;template <br>type="TemplateType" <br>version="Version" <br>supplier="Supplier" <br>revision="Revision" <br>author="Author"&nbsp;&nbsp;&nbsp;<br>id="TemplateId" <br>label="Template label visible to the user" <br>description="A brief description of the template" <br>help="help.html" <br>preview-icon="icon.gif"&gt;<br><br>&lt;property-group <br>id="properyGroupId" <br>label="Property group label" <br>description="A simple description of the property group" <br>type=" Type of UIElement group" <br>help="help.html"<br>branding-icon="icon.gif"&gt;<br>...<br>&lt;/property-group&gt;<br><br>&lt;process&gt;<br>...<br>&lt;/process&gt;<br><br>&lt;/template&gt;</code></p>
+<p class="CodeBlock"><code>&lt;template <br>type="TemplateType" <br>version="Version" <br>supplier="Supplier" <br>revision="Revision" <br>author="Author"&nbsp;&nbsp;&nbsp;<br>id="TemplateId" <br>label="Template label visible to the user" <br>description="A brief description of the template" <br>preview-icon="icon.gif"&gt;<br><br>&lt;property-group <br>id="properyGroupId" <br>label="Property group label" <br>description="A simple description of the property group" <br>type=" Type of UIElement group" <br>branding-icon="icon.gif"&gt;<br>...<br>&lt;/property-group&gt;<br><br>&lt;process&gt;<br>...<br>&lt;/process&gt;<br><br>&lt;/template&gt;</code></p>
 <p>
 The root element for a project template is <code>template</code>, which
 provides the following properties or attributes to describe the template: 
@@ -114,12 +114,6 @@ Application".
 for the template, which is displayed to users when they choose the template
 from the list of available templates. 
 </p>
-<li>
-<p>
-<code>help</code>: Use this attribute to specify the HTML help file
-name for the template. 
-</p>
-<li>
 <p>
 <code>preview-icon</code>: Use this attribute to specify a
 <code class="filename">GIF</code> or <code class="filename">JPG</code> file name to be used as a icon for the
@@ -138,7 +132,9 @@ The <code>template</code> element includes the following child elements:
 wizard page in the New Project wizard. It lists all the fields to be displayed
 to the user for input using the <code>property</code> element. For example, you
 could use this element to define all the input fields to be displayed in the
-<em>Project Directories</em> page of the New Project wizard. 
+<em>Project Directories</em> page of the New Project wizard. The <em>id</em> attribute
+of the property-group is used as the Eclipse Help system id (see <code>org.eclipse.help.contexts</code>). The
+containing plug-in of the context id is <code>org.eclipse.cdt.ui</code>.
 </p>
 <li>
 <p>
@@ -215,11 +211,6 @@ displayed as tabs or as a tree structure.
 -->
 
 </ul>
-<li>
-<p>
-<code>help</code>: Use this attribute to specify the HTML help file
-name for the property group. 
-</p>
 <li>
 <p>
 <code>branding-icon</code>: Use this attribute to specify a

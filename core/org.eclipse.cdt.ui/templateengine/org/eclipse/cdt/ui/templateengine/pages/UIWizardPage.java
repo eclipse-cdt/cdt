@@ -272,17 +272,11 @@ public class UIWizardPage extends UIPage implements IWizardDataPage, PatternEven
 		
 		// set the focus so that InfoPop is displayed when F1 is Pressed.
 		uiComposite.setFocus();
-
 		
 		setControl(uiComposite);
-
-		// Setting InfoPop help context ID(plugin-id+ContextID).
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(super.getControl(), pageId);
-
-		// Page complete is set true of false, based on Mandatory attribute
-		// and Widgets contents.
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), pageId);
+		
 		setPageComplete(uiComposite.isValid());
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(super.getControl(), pageId);
 	}
 
 	/**

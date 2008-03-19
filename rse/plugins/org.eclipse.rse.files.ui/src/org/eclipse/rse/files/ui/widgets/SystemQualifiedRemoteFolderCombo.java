@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2000, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -18,6 +18,7 @@
  * David McKnight   (IBM)        - [186363] get rid of obsolete calls to ISubSystem.connect()
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
+ * David McKnight   (IBM)        - [223204] [cleanup] fix broken nls strings in files.ui and others
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.widgets;
@@ -124,6 +125,7 @@ public class SystemQualifiedRemoteFolderCombo extends Composite
 	    if (folderData instanceof GridData)
 	      ((GridData)folderData).widthHint = 200; 
 	    browseButton = createPushButton(this,SystemFileResources.WIDGET_BROWSE_LABEL);
+	    browseButton.setToolTipText(SystemFileResources.WIDGET_BROWSE_TOOLTIP);
 	    addOurButtonSelectionListener();
 	    //scrubHistory(); this is too intensive as it starts all kinds of servers and stuff unnecessarily.
 	}

@@ -39,7 +39,7 @@ public class TeamResourceAdapter extends AbstractSystemViewAdapter implements
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#addActions(org.eclipse.rse.ui.SystemMenuManager, 
+	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#addActions(org.eclipse.rse.ui.SystemMenuManager,
 	 * org.eclipse.jface.viewers.IStructuredSelection, org.eclipse.swt.widgets.Shell, java.lang.String)
 	 */
 	public void addActions(SystemMenuManager menu,
@@ -130,7 +130,7 @@ public class TeamResourceAdapter extends AbstractSystemViewAdapter implements
 	}
 	
 	/**
-	 * Intercept of parent method to actually do the rename. RSE supplies the rename GUI, but 
+	 * Intercept of parent method to actually do the rename. RSE supplies the rename GUI, but
 	 *  defers the action work of renaming to this adapter method.
 	 */
 	<a id="doRename"></a>public boolean doRename(Shell shell, Object element, String newName)
@@ -155,7 +155,7 @@ public class TeamResourceAdapter extends AbstractSystemViewAdapter implements
 	 */
 	public String getSubSystemConfigurationId(Object element)
 	{
-		<strong>return "samples.subsystems.factory";</strong> // as declared in extension in plugin.xml 
+		<strong>return "samples.subsystems.factory";</strong> // as declared in extension in plugin.xml
 	}
 
 	/* (non-Javadoc)
@@ -198,7 +198,7 @@ public class TeamResourceAdapter extends AbstractSystemViewAdapter implements
 	 */
 	public Object getRemoteParent(Shell shell, Object element) throws Exception
 	{
-		return null; // maybe this would be a Project or Roster object, or leave as null if this is the root 
+		return null; // maybe this would be a Project or Roster object, or leave as null if this is the root
 	}
 
 	/* (non-Javadoc)
@@ -214,14 +214,6 @@ public class TeamResourceAdapter extends AbstractSystemViewAdapter implements
 		  allNames[idx] = allTeams[idx].getName();
 		return allNames;</strong> // Return list of all team names 	
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.ui.view.ISystemRemoteElementAdapter#supportsUserDefinedActions(java.lang.Object)
-	 */
-	public boolean supportsUserDefinedActions(Object object) {
-		<strong>return false;</strong>
-	}
-
 }
 </samp></pre>
 </body>

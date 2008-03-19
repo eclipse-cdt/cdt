@@ -47,6 +47,7 @@
  * David McKnight   (IBM)        - [216252] [nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [216252] MessageFormat.format -> NLS.bind
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
+ * Xuan Chen        (IBM) - [223126] [api][breaking] Remove API related to User Actions in RSE Core/UI
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -3626,30 +3627,5 @@ public class SystemViewRemoteFileAdapter
 	protected SystemFetchOperation getSystemFetchOperation(Object o, IElementCollector collector)
 	{
 	    return new SystemFetchOperation(null, o, this, collector, true);
-	}
-
-	/**
-	 * Returns <code>false</code> if the file is a virtual file, otherwise defaults to asking the subsystem
-	 * factory.
-	 * @see org.eclipse.rse.ui.view.ISystemRemoteElementAdapter#supportsUserDefinedActions(java.lang.Object)
-	 */
-	public boolean supportsUserDefinedActions(Object object) {
-		
-		// if object is an instance of a remote file
-		if (object instanceof IRemoteFile) {
-			
-			IRemoteFile file = (IRemoteFile)object;
-			
-			// virtual files do not support user defined actions
-			if (file instanceof IVirtualRemoteFile) {
-				return false;
-			}
-			else {
-				return getSubSystem(object).getSubSystemConfiguration().supportsUserDefinedActions();
-			}
-		}
-		else {
-			return getSubSystem(object).getSubSystemConfiguration().supportsUserDefinedActions();
-		}
 	}
 }

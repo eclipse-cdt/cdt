@@ -31,6 +31,7 @@
  * Martin Oberhuber (Wind River) - [cleanup] Avoid using SystemStartHere in production code
  * David McKnight   (IBM)        - [220309] [nls] Some GenericMessages and SubSystemResources should move from UI to Core
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
+ * Xuan Chen        (IBM)        - [223126] [api][breaking] Remove API related to User Actions in RSE Core/UI
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -98,7 +99,6 @@ import org.eclipse.rse.ui.messages.SystemMessageDialog;
  *  <li>SubSystemConfiguration#isCaseSensitive() to indicate if filter strings are case sensitive or not
  *  <li>SubSystemConfiguration#supportsQuickFilters() to indicate if filters can be specified at contain expansion time.
  *  <li>SubSystemConfiguration#supportsUserActions() to indicate if users can define their own actions for your subsystems' child objects.
- *  <li>SubSystemConfiguration#supportsCompileActions() to indicate if users can compile remote objects using menu actions 
  *  <li>SubSystemConfiguration#supportsFileTypes() to indicate if users can define their own named file types.
  *  <li>SubSystemConfiguration#isSubSystemsDeletable() if they support user-deleting of subsystems. Default is false.
  *  <li>SubSystemConfiguration#supportsSubSystemConnect() to return false if the connect() action is not supported
@@ -302,29 +302,6 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 * By default this returns false.
 	 */
 	public boolean providesCustomDropInFilters()
-	{
-		return false;
-	}
-	
-	/**
-	 * Return true if you support user-defined actions for the remote system objects returned from expansion of
-	 *  subsystems created by this subsystem configuration
-	 * <p>RETURNS false BY DEFAULT
-	 */
-	public boolean supportsUserDefinedActions()
-	{
-		return false;
-	}
-	
-	/**
-	 * Return true if you support compile actions for the remote system objects returned from expansion of
-	 *  subsystems created by this subsystem configuration.
-	 * <p>
-	 * By returning true, user sees a "Work with->Compile Commands..." action item in the popup menu for this
-	 *  subsystem. The action is supplied by the framework, but is populated using overridable methods in this subsystem.
-	 * <p>RETURNS false BY DEFAULT
-	 */
-	public boolean supportsCompileActions()
 	{
 		return false;
 	}

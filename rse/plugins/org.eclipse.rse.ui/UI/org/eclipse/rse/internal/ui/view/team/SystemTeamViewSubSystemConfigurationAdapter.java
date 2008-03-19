@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Xuan Chen        (IBM)        - [223126] [api][breaking] Remove API related to User Actions in RSE Core/UI
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.team;
@@ -68,19 +69,6 @@ public class SystemTeamViewSubSystemConfigurationAdapter
 		SystemTeamViewCategoryNode category = ssfNode.getParentCategory();
 		String categoryType = category.getMementoHandle();
 		
-// 		FIXME - user actions and compilecmds no longer coupled to core
-//		if (categoryType.equals(SystemTeamViewCategoryNode.MEMENTO_USERACTIONS) && ssfNode.getSubSystemConfiguration().supportsUserDefinedActions())
-//		{
-//			wwActionsAction.reset();		  
-//			wwActionsAction.setShell(shell);
-//	    	menu.add(menuGroup, wwActionsAction);	    
-//		}
-//		else if (categoryType.equals(SystemTeamViewCategoryNode.MEMENTO_COMPILECMDS) && ssfNode.getSubSystemConfiguration().supportsCompileActions())
-//		{		  
-//			wwCmdsAction.reset();
-//			wwCmdsAction.setShell(shell);
-//			menu.add(menuGroup, wwCmdsAction);
-//		}	    
 		if (categoryType.equals(SystemTeamViewCategoryNode.MEMENTO_FILTERPOOLS) && ssfNode.getSubSystemConfiguration().supportsFilters())
 		{		  
 			wwPoolsAction.reset();

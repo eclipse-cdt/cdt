@@ -11,6 +11,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * David Dykstal (IBM) - [186589] move user actions API out of org.eclipse.rse.ui   
  * Martin Oberhuber (Wind River) - [cleanup] Avoid using SystemStartHere in production code
+ * Xuan Chen     (IBM) - [223126] [api][breaking] Remove API related to User Actions in RSE Core/UI
  *******************************************************************************/
 
 package org.eclipse.rse.internal.useractions.ui.compile;
@@ -72,8 +73,6 @@ import org.eclipse.swt.widgets.Shell;
  *       user to easily insert these into his command string, and the SystemCompilableSource
  *       object is responsible for making the substitutions at runtime, given the compile
  *       command and selected source object.
- *  <li>For subsystem factory support of compiling, the factory provider simply returns true
- *        to supportsCompileActions() and implements the 
  * </ul>
  * @see SystemCompileProfile
  * @see SystemCompileType

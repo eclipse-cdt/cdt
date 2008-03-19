@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - Adapted original tutorial code to Open RSE.
+ * Xuan Chen     (IBM) - [223126] [api][breaking] Remove API related to User Actions in RSE Core/UI
  ********************************************************************************/
 
 package samples.model;
@@ -211,12 +212,4 @@ public class DeveloperResourceAdapter extends AbstractSystemViewAdapter
 		return null;
 
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.ui.view.ISystemRemoteElementAdapter#supportsUserDefinedActions(java.lang.Object)
-	 */
-	public boolean supportsUserDefinedActions(Object object) {
-		return false;
-	}
-
 }

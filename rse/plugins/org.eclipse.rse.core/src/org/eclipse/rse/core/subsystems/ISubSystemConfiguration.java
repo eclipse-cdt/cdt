@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [189123] Move renameSubSystemProfile() from UI to Core
  * David Dykstal (IBM) - [197036] change signature of getFilterPoolManager method to be able to control the creation of filter pools
  * David Dykstal (IBM) - [217556] remove service subsystem types
+ * Xuan Chen     (IBM) - [223126] [api][breaking] Remove API related to User Actions in RSE Core/UI
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -181,20 +182,6 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	 * By default this returns false.
 	 */
 	public boolean providesCustomDropInFilters();
-
-	/**
-	 * Return true if you support user-defined actions for the remote system objects returned from expansion of
-	 *  subsystems created by this subsystem factory
-	 * <p>Returns false in default implementation.
-	 */
-	public boolean supportsUserDefinedActions();
-
-	/**
-	 * Return true if you support compile actions for the remote system objects returned from expansion of
-	 *  subsystems created by this subsystem factory.
-	 * <p>Returns false in default implementation.
-	 */
-	public boolean supportsCompileActions();
 
 	/**
 	 * Return true if you support user-defined/managed named file types

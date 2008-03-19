@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
+ * Xuan Chen        (IBM)        - [223126] [api][breaking] Remove API related to User Actions in RSE Core/UI
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -142,12 +143,4 @@ public interface ISystemRemoteElementAdapter extends ISystemRemoteObjectMatchPro
 	 */
 	public String[] getRemoteParentNamesInUse(Object element, IProgressMonitor monitor) throws Exception;
 	
-	/**
-	 * Returns whether user defined actions should be shown for the object.
-	 * 
-	 * @param object the object.
-	 * @return <code>true</code> if the object supports user defined actions,
-	 *     <code>false</code> otherwise.
-	 */
-	public boolean supportsUserDefinedActions(Object object);
 }

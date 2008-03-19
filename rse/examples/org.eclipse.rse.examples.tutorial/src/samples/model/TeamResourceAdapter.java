@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - Adapted original tutorial code to Open RSE.
  * Xuan Chen (IBM) - [160775] [api] [breaking] [nl] rename (at least within a zip) blocks UI thread
+ * Xuan Chen     (IBM) - [223126] [api][breaking] Remove API related to User Actions in RSE Core/UI
  ********************************************************************************/
 
 package samples.model;
@@ -224,12 +225,4 @@ public class TeamResourceAdapter extends AbstractSystemViewAdapter implements
 		  allNames[idx] = allTeams[idx].getName();
 		return allNames; // Return list of all team names 	
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.ui.view.ISystemRemoteElementAdapter#supportsUserDefinedActions(java.lang.Object)
-	 */
-	public boolean supportsUserDefinedActions(Object object) {
-		return false;
-	}
-
 }

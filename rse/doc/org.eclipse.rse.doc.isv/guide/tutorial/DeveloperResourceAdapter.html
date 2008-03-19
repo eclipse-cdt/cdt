@@ -33,7 +33,7 @@ public class DeveloperResourceAdapter extends AbstractSystemViewAdapter
 {
 
 	/**
-	 * Constructor 
+	 * Constructor
 	 */
 	public DeveloperResourceAdapter() {
 		super();
@@ -125,10 +125,10 @@ public class DeveloperResourceAdapter extends AbstractSystemViewAdapter
 	protected Object internalGetPropertyValue(Object key)
 	{
 		// propertySourceInput holds the currently selected object
-		<strong>DeveloperResource devr = (DeveloperResource)propertySourceInput; 
-		if (key.equals("devr_id")) 
+		<strong>DeveloperResource devr = (DeveloperResource)propertySourceInput;
+		if (key.equals("devr_id"))
 			return devr.getId();
-		else if (key.equals("devr_dept")) 
+		else if (key.equals("devr_dept"))
 		  return devr.getDeptNbr();
 		return null;</strong>
 	}		
@@ -204,13 +204,6 @@ public class DeveloperResourceAdapter extends AbstractSystemViewAdapter
 		// developers names do not have to be unique! So we don't need to implement this!
 		return null;
 
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.ui.view.ISystemRemoteElementAdapter#supportsUserDefinedActions(java.lang.Object)
-	 */
-	public boolean supportsUserDefinedActions(Object object) {
-		<strong>return false;</strong>
 	}
 
 }

@@ -18,6 +18,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * David Dykstal (IBM) - [197036] rewrote getSubSystemConfigurationNodes to get filter pools
  *                                in a way that delays the loading of subsystem configurations
+ * Xuan Chen     (IBM) - [223126] [api][breaking] Remove API related to User Actions in RSE Core/UI
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.team;
@@ -202,10 +203,6 @@ public class SystemTeamViewCategoryAdapter
 			boolean createNode = false;
 			if (categoryType.equals(SystemTeamViewCategoryNode.MEMENTO_FILTERPOOLS)) {
 				createNode = ssf.supportsFilters() && (profile.getFilterPools(ssf).length > 0);
-			} else if (categoryType.equals(SystemTeamViewCategoryNode.MEMENTO_USERACTIONS)) {
-				createNode = ssf.supportsUserDefinedActions(); // && profile.getUserActions(ssf).length > 0;
-			} else if (categoryType.equals(SystemTeamViewCategoryNode.MEMENTO_COMPILECMDS)) {
-				createNode = ssf.supportsCompileActions(); // && profile.getCompileCommandTypes(ssf).length > 0;
 			} else if (categoryType.equals(SystemTeamViewCategoryNode.MEMENTO_TARGETS)) {
 				createNode = ssf.supportsTargets(); // && profile.getTargets(ssf).length > 0;
 			}

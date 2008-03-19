@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Xuan Chen        (IBM) - [223126] [api][breaking] Remove API related to User Actions in RSE Core/UI
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -269,14 +270,6 @@ public class SystemViewScratchpadAdapter extends AbstractSystemViewAdapter imple
     {
     	return true;	
     }
-    
-	/**
-	 * Returns <code>false</code>.
-	 * @see org.eclipse.rse.ui.view.ISystemRemoteElementAdapter#supportsUserDefinedActions(java.lang.Object)
-	 */
-	public boolean supportsUserDefinedActions(Object object) {
-		return false;
-	}
 
 	/**
 	 * This is a local RSE artifact so returning false

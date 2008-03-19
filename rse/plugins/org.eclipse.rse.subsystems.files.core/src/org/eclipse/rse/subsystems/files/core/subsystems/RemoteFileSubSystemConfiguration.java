@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [189123] Move renameSubSystemProfile() from UI to Core
  * David Dykstal (IBM) - [197036] fixed NPE found during testing
  * David Dykstal (IBM) - [222270] clean up interfaces in org.eclipse.rse.core.filters
+ * Xuan Chen     (IBM) - [223126] [api][breaking] Remove API related to User Actions in RSE Core/UI
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
@@ -225,16 +226,6 @@ public abstract class RemoteFileSubSystemConfiguration extends SubSystemConfigur
 	}
 
 	/**
-	 * Return true if you support user-defined actions for the remote system objects returned from expansion of
-	 *  subsystems created by this subsystem factory.
-	 * <p>We return true.
-	 */
-	public boolean supportsUserDefinedActions()
-	{
-		return true;
-	}
-	
-	/**
 	 * Return true if you support user-defined/managed named file types
 	 * <p>We return true
 	 */
@@ -243,19 +234,6 @@ public abstract class RemoteFileSubSystemConfiguration extends SubSystemConfigur
 		return true;
 	}    
 
-	/**
-	 * Return true if you support compile actions for the remote system objects returned from expansion of
-	 *  subsystems created by this subsystem factory.
-	 * <p>
-	 * By returning true, user sees a "Work with->Compile Commands..." action item in the popup menu for this
-	 *  subsystem. The action is supplied by the framework, but is populated using overridable methods in this subsystem.
-	 * <p>We return false, but really we expect subclasses to return true
-	 */
-	public boolean supportsCompileActions()
-	{
-		return false;
-	}
-    
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#renameSubSystemProfile(java.lang.String, java.lang.String)

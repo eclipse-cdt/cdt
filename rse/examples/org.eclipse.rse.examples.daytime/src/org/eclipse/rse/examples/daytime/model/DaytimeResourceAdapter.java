@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - adapted template for daytime example.
+ * Xuan Chen     (IBM) - [223126] [api][breaking] Remove API related to User Actions in RSE Core/UI
  ********************************************************************************/
 
 package org.eclipse.rse.examples.daytime.model;
@@ -132,9 +133,4 @@ public class DaytimeResourceAdapter extends AbstractSystemViewAdapter implements
 		String[] allLabels = new String[] { time };
 		return allLabels; // Return list of all labels
 	}
-
-	public boolean supportsUserDefinedActions(Object object) {
-		return false;
-	}
-
 }

@@ -24,6 +24,7 @@
  * Xuan Chen        (IBM)        - [160775] [api] rename (at least within a zip) blocks UI thread
  * David McKnight   (IBM)        - [189873] Improve remote shell editor open action with background jobs
  * David McKnight   (IBM)        - [216252] [nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * Xuan Chen        (IBM)        - [223126] [api][breaking] Remove API related to User Actions in RSE Core/UI
  *******************************************************************************/
 
 package org.eclipse.rse.shells.ui.view;
@@ -166,7 +167,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 								    	//createActions.create(menu, selection, shell, menuGroup);			
 										// open with ->
 										MenuManager submenu =
-											new MenuManager(org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages.ResourceNavigator_openWith,
+											new MenuManager(ShellResources.ACTION_OPEN_WITH_LABEL,
 												ISystemContextMenuConstants.GROUP_OPENWITH);
 										
 										SystemRemoteFileLineOpenWithMenu  openWithMenu = new SystemRemoteFileLineOpenWithMenu();
@@ -1127,15 +1128,6 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 			}
 		}
 		return ""; //$NON-NLS-1$
-	}
-	
-
-	/**
-	 * Returns <code>false</code>.
-	 * @see org.eclipse.rse.ui.view.ISystemRemoteElementAdapter#supportsUserDefinedActions(java.lang.Object)
-	 */
-	public boolean supportsUserDefinedActions(Object object) {
-		return false;
 	}
 	
 	

@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * David McKnight   (IBM)        - [216252] [nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * Xuan Chen        (IBM)        - [223126] [api][breaking] Remove API related to User Actions in RSE Core/UI
  *******************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui;
@@ -70,6 +71,8 @@ public class ShellResources extends NLS
 
 	public static String ACTION_OPEN_OUTPUT_LABEL;
 	public static String ACTION_OPEN_OUTPUT_TOOLTIP;
+	
+	public static String ACTION_OPEN_WITH_LABEL;
 	
 	// error properties
 	public static String	RESID_PROPERTY_ERROR_FILENAME_LABEL;

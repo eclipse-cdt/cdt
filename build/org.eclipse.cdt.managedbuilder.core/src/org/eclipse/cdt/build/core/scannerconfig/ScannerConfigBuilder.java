@@ -59,8 +59,6 @@ public class ScannerConfigBuilder extends ACBuilder {
 
 	public final static String BUILDER_ID = ManagedBuilderCorePlugin.getUniqueIdentifier() + ".ScannerConfigBuilder"; //$NON-NLS-1$
 	
-	private static final boolean BUILD_ALL_CONFIGS = false;
-
 	public ScannerConfigBuilder() {
 		super();
 	}
@@ -78,7 +76,7 @@ public class ScannerConfigBuilder extends ACBuilder {
 		if(bInfo != null){
 			IConfiguration cfgs[] = bInfo.getManagedProject().getConfigurations();
 			if(cfgs.length != 0){
-				if(!BUILD_ALL_CONFIGS){
+				if(!needAllConfigBuild()){
 					ICProjectDescription des = CoreModel.getDefault().getProjectDescription(getProject(), false);
 					IConfiguration cfg = null;
 					if(des != null){

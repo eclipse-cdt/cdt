@@ -417,80 +417,87 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			return referencedProjects;
 		}
 
-		IConfiguration cfg = info.getDefaultConfiguration();
-
-		updateOtherConfigs(cfg, kind);
-
-		if(((Configuration)cfg).isInternalBuilderEnabled()){
-			invokeInternalBuilder(cfg, kind != FULL_BUILD, ((Configuration)cfg).getInternalBuilderIgnoreErr(), monitor);
-
-			// Scrub the build info the project
-			info.setRebuildState(false);
-			return referencedProjects;
-		}
-
-		// Create a makefile generator for the build
-		IManagedBuilderMakefileGenerator generator = ManagedBuildManager.getBuildfileGenerator(info.getDefaultConfiguration());
-		generator.initialize(getProject(), info, monitor);
-
-		//perform necessary cleaning and build type calculation
-		if(cfg.needsFullRebuild()){
-			//configuration rebuild state is set to true,
-			//full rebuild is needed in any case
-			//clean first, then make a full build
-			outputTrace(getProject().getName(), "config rebuild state is set to true, making a full rebuild");	//$NON-NLS-1$
-			clean(new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN));
-			fullBuild(info, generator, monitor);
+		IConfiguration[] cfgs = null;
+		if (needAllConfigBuild()) {
+			cfgs = info.getManagedProject().getConfigurations();
 		} else {
-			boolean fullBuildNeeded = info.needsRebuild();
-			IBuildDescription des = null;
-			
-			IResourceDelta delta = kind == FULL_BUILD ? null : getDelta(getProject());
-			if(delta == null)
-				fullBuildNeeded = true;
-			if(cfg.needsRebuild() || delta != null){
-				//use a build desacription model to calculate the resources to be cleaned 
-				//only in case there are some changes to the project sources or build information
-				try{
-					int flags = BuildDescriptionManager.REBUILD | BuildDescriptionManager.DEPFILES | BuildDescriptionManager.DEPS;
-					if(delta != null)
-						flags |= BuildDescriptionManager.REMOVED;
+			cfgs = new IConfiguration[] {info.getDefaultConfiguration() };
+		}
+		
+		for (IConfiguration cfg : cfgs) {
+			updateOtherConfigs(cfg, kind);
 
-					outputTrace(getProject().getName(), "using a build description..");	//$NON-NLS-1$
+			if(((Configuration)cfg).isInternalBuilderEnabled()){
+				invokeInternalBuilder(cfg, kind != FULL_BUILD, ((Configuration)cfg).getInternalBuilderIgnoreErr(), monitor);
 
-					des = BuildDescriptionManager.createBuildDescription(info.getDefaultConfiguration(), getDelta(getProject()), flags);
-	
-					BuildDescriptionManager.cleanGeneratedRebuildResources(des);
-				} catch (Throwable e){
-					//TODO: log error
-					outputError(getProject().getName(), "error occured while build description calculation: " + e.getLocalizedMessage());	//$NON-NLS-1$
-					//in case an error occured, make it behave in the old stile:
-					if(info.needsRebuild()){
-						//make a full clean if an info needs a rebuild
-						clean(new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN));
-						fullBuildNeeded = true;
-					}
-					else if(delta != null && !fullBuildNeeded){
-						// Create a delta visitor to detect the build type
-						ResourceDeltaVisitor visitor = new ResourceDeltaVisitor(info);
-						delta.accept(visitor);
-						if (visitor.shouldBuildFull()) {
+				// Scrub the build info the project
+				info.setRebuildState(false);
+				return referencedProjects;
+			}
+
+			// Create a makefile generator for the build
+			IManagedBuilderMakefileGenerator generator = ManagedBuildManager.getBuildfileGenerator(info.getDefaultConfiguration());
+			generator.initialize(getProject(), info, monitor);
+
+			//perform necessary cleaning and build type calculation
+			if(cfg.needsFullRebuild()){
+				//configuration rebuild state is set to true,
+				//full rebuild is needed in any case
+				//clean first, then make a full build
+				outputTrace(getProject().getName(), "config rebuild state is set to true, making a full rebuild");	//$NON-NLS-1$
+				clean(new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN));
+				fullBuild(info, generator, monitor);
+			} else {
+				boolean fullBuildNeeded = info.needsRebuild();
+				IBuildDescription des = null;
+
+				IResourceDelta delta = kind == FULL_BUILD ? null : getDelta(getProject());
+				if(delta == null)
+					fullBuildNeeded = true;
+				if(cfg.needsRebuild() || delta != null){
+					//use a build desacription model to calculate the resources to be cleaned 
+					//only in case there are some changes to the project sources or build information
+					try{
+						int flags = BuildDescriptionManager.REBUILD | BuildDescriptionManager.DEPFILES | BuildDescriptionManager.DEPS;
+						if(delta != null)
+							flags |= BuildDescriptionManager.REMOVED;
+
+						outputTrace(getProject().getName(), "using a build description..");	//$NON-NLS-1$
+
+						des = BuildDescriptionManager.createBuildDescription(info.getDefaultConfiguration(), getDelta(getProject()), flags);
+
+						BuildDescriptionManager.cleanGeneratedRebuildResources(des);
+					} catch (Throwable e){
+						//TODO: log error
+						outputError(getProject().getName(), "error occured while build description calculation: " + e.getLocalizedMessage());	//$NON-NLS-1$
+						//in case an error occured, make it behave in the old stile:
+						if(info.needsRebuild()){
+							//make a full clean if an info needs a rebuild
 							clean(new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN));
 							fullBuildNeeded = true;
 						}
+						else if(delta != null && !fullBuildNeeded){
+							// Create a delta visitor to detect the build type
+							ResourceDeltaVisitor visitor = new ResourceDeltaVisitor(info);
+							delta.accept(visitor);
+							if (visitor.shouldBuildFull()) {
+								clean(new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN));
+								fullBuildNeeded = true;
+							}
+						}
 					}
 				}
-			}
 
-			if(fullBuildNeeded){
-				outputTrace(getProject().getName(), "performing a full build");	//$NON-NLS-1$
-				fullBuild(info, generator, monitor);
-			} else {
-				outputTrace(getProject().getName(), "performing an incremental build");	//$NON-NLS-1$
-				incrementalBuild(delta, info, generator, monitor);
+				if(fullBuildNeeded){
+					outputTrace(getProject().getName(), "performing a full build");	//$NON-NLS-1$
+					fullBuild(info, generator, monitor);
+				} else {
+					outputTrace(getProject().getName(), "performing an incremental build");	//$NON-NLS-1$
+					incrementalBuild(delta, info, generator, monitor);
+				}
 			}
 		}
-/*
+		/*
 		// So let's figure out why we got called
 		if (kind == FULL_BUILD) {
 			outputTrace(getProject().getName(), "Full build needed/requested");	//$NON-NLS-1$
@@ -544,7 +551,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				}
 			}
 		}
-*/
+		 */
 		// Scrub the build info the project
 		info.setRebuildState(false);
 		// Ask build mechanism to compute deltas for project dependencies next time

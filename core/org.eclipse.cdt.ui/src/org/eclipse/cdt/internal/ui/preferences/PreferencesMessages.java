@@ -287,6 +287,11 @@ public final class PreferencesMessages extends NLS {
 	public static String FileLanguagesPropertyPage_missingLanguage;
 	public static String FileLanguagesPropertyPage_mappingTableTitle;
 
+	public static String CPluginPreferencePage_0;
+	public static String CPluginPreferencePage_1;
+	public static String CPluginPreferencePage_2;
+	public static String CPluginPreferencePage_3;
+	public static String CPluginPreferencePage_4;
 	public static String CPluginPreferencePage_caption;
 	public static String CPluginPreferencePage_structuralParseMode_label;
 	public static String CPluginPreferencePage_note;

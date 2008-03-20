@@ -19,8 +19,12 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Preferences;
 
 public abstract class ACBuilder extends IncrementalProjectBuilder implements IMarkerGenerator {
+
+	private static final String PREF_BUILD_ALL_CONFIGS = "build.all.configs.enabled";
+	private static final Preferences prefs = CCorePlugin.getDefault().getPluginPreferences();
 
 	/**
 	 * Constructor for ACBuilder
@@ -90,4 +94,13 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 		}
 		return IMarker.SEVERITY_ERROR;
 	}
+	
+	public static boolean needAllConfigBuild() {
+		return prefs.getBoolean(PREF_BUILD_ALL_CONFIGS);
+	}
+	
+	public static void setAllConfigBuild(boolean enable) {
+		prefs.setValue(PREF_BUILD_ALL_CONFIGS, enable);		
+	}
+	
 }

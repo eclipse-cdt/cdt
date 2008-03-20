@@ -502,9 +502,22 @@ public class CommonBuilder extends ACBuilder {
 		if(VERBOSE)
 			outputTrace(project.getName(), ">>build requested, type = " + kind); //$NON-NLS-1$
 
-		IBuilder builders[] = ManagedBuilderCorePlugin.createBuilders(project, args);
-		IProject[] projects = build(kind, project, builders, true, monitor);
-
+		IProject[] projects = null; 
+		if (needAllConfigBuild()) {
+			IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
+			IConfiguration[] cfgs = info.getManagedProject().getConfigurations();
+			IConfiguration defCfg = info.getDefaultConfiguration();
+			for (IConfiguration cfg : cfgs) {
+				info.setDefaultConfiguration(cfg);
+				IBuilder builders[] = ManagedBuilderCorePlugin.createBuilders(project, args);
+				projects = build(kind, project, builders, true, monitor);
+			}
+			info.setDefaultConfiguration(defCfg);
+		} else {
+			IBuilder builders[] = ManagedBuilderCorePlugin.createBuilders(project, args);
+			projects = build(kind, project, builders, true, monitor);
+		}
+		
 		if(VERBOSE)
 			outputTrace(project.getName(), "<<done build requested, type = " + kind); //$NON-NLS-1$
 
@@ -524,15 +537,15 @@ public class CommonBuilder extends ACBuilder {
 			if(status.getSeverity() != IStatus.OK)
 				throw new CoreException(status);
 
-			IConfiguration cfgs[] = getReferencedConfigs(builders);
+			IConfiguration rcfgs[] = getReferencedConfigs(builders);
 
-			monitor.beginTask("", num + cfgs.length); //$NON-NLS-1$
+			monitor.beginTask("", num + rcfgs.length); //$NON-NLS-1$
 
-			if(cfgs.length != 0){
-				Set set = buildReferencedConfigs(cfgs, new SubProgressMonitor(monitor, 1));// = getProjectsSet(cfgs);
+			if(rcfgs.length != 0){
+				Set<IProject> set = buildReferencedConfigs(rcfgs, new SubProgressMonitor(monitor, 1));// = getProjectsSet(cfgs);
 				if(set.size() != 0){
 					set.addAll(Arrays.asList(refProjects));
-					refProjects = (IProject[])set.toArray(new IProject[set.size()]);
+					refProjects = set.toArray(new IProject[set.size()]);
 				}
 			}
 
@@ -548,8 +561,8 @@ public class CommonBuilder extends ACBuilder {
 		return project.getReferencedProjects();		
 	}
 	
-	private Set buildReferencedConfigs(IConfiguration[] cfgs, IProgressMonitor monitor){
-		Set projSet = getProjectsSet(cfgs);
+	private Set<IProject> buildReferencedConfigs(IConfiguration[] cfgs, IProgressMonitor monitor){
+		Set<IProject> projSet = getProjectsSet(cfgs);
 		cfgs = filterConfigsToBuild(cfgs);
 
 		if(cfgs.length != 0){
@@ -610,7 +623,7 @@ public class CommonBuilder extends ACBuilder {
 	}
 
 	private IConfiguration[] getReferencedConfigs(IBuilder[] builders){
-		Set set = new HashSet();
+		Set<IConfiguration> set = new HashSet<IConfiguration>();
 		for(int i = 0; i < builders.length; i++){
 			IConfiguration cfg = builders[i].getParent().getParent();
 			IConfiguration refs[] = ManagedBuildManager.getReferencedConfigurations(cfg);
@@ -618,14 +631,14 @@ public class CommonBuilder extends ACBuilder {
 				set.add(refs[k]);
 			}
 		}
-		return (IConfiguration[]) set.toArray(new Configuration[set.size()]);
+		return set.toArray(new Configuration[set.size()]);
 	}
 	
-	private Set getProjectsSet(IConfiguration[] cfgs){
+	private Set<IProject> getProjectsSet(IConfiguration[] cfgs){
 		if(cfgs.length == 0)
-			return new HashSet(0);
+			return new HashSet<IProject>(0);
 		
-		Set set = new HashSet();
+		Set<IProject> set = new HashSet<IProject>();
 		for(int i = 0; i < cfgs.length; i++){
 			set.add(cfgs[i].getOwner().getProject());
 		}
@@ -759,7 +772,6 @@ public class CommonBuilder extends ACBuilder {
 //		}
 		
 		if (status.isBuild()) {
-//			IManagedBuilderMakefileGenerator makeGen = null;
 			IConfiguration cfg = bInfo.getConfiguration();
 			
 			if(!builder.isCustomBuilder()){

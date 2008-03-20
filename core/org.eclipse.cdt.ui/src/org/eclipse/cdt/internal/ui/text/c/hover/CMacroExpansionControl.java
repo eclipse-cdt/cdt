@@ -52,4 +52,15 @@ public class CMacroExpansionControl extends AbstractSourceViewerInformationContr
 		return "org.eclipse.cdt.ui.text.hover.CMacroExpansion"; //$NON-NLS-1$
 	}
 
+	/*
+	 * @see org.eclipse.cdt.internal.ui.text.AbstractSourceViewerInformationControl#setInput(java.lang.Object)
+	 */
+	@Override
+	public void setInput(Object input) {
+		if (input instanceof CMacroExpansionInput) {
+			setInformation(((CMacroExpansionInput) input).fExplorer.getFullExpansion().getCodeAfterStep());
+		} else {
+			super.setInput(input);
+		}
+	}
 }

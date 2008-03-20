@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 QNX Software Systems and others.
+ * Copyright (c) 2002, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX Software Systems - Initial API and implementation
- * IBM Corporation
+ *     QNX Software Systems - Initial API and implementation
+ *     IBM Corporation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.text.c.hover;
@@ -17,6 +18,7 @@ import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextHoverExtension;
+import org.eclipse.jface.text.ITextHoverExtension2;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
 import org.eclipse.swt.SWT;
@@ -31,12 +33,11 @@ import org.eclipse.cdt.internal.ui.text.CWordFinder;
 import org.eclipse.cdt.internal.ui.text.HTMLTextPresenter;
 
 /**
- * AbstractCEditorTextHover Abstract class for providing hover information for C
+ * Abstract class for providing hover information for C
  * elements.
  * 
  */
-public abstract class AbstractCEditorTextHover implements ICEditorTextHover,
-		ITextHoverExtension {
+public abstract class AbstractCEditorTextHover implements ICEditorTextHover, ITextHoverExtension, ITextHoverExtension2 {
 
 	private IEditorPart fEditor;
 
@@ -78,6 +79,13 @@ public abstract class AbstractCEditorTextHover implements ICEditorTextHover,
 	public abstract String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion);
 
 	/*
+	 * @see ITextHoverExtension2#getHoverInfo2(ITextViewer, IRegion)
+	 */
+	public Object getHoverInfo2(ITextViewer textViewer, IRegion hoverRegion) {
+		return getHoverInfo(textViewer, hoverRegion);
+	}
+
+	/*
 	 * @see ITextHoverExtension#getHoverControlCreator()
 	 * @since 3.0
 	 */
@@ -90,7 +98,20 @@ public abstract class AbstractCEditorTextHover implements ICEditorTextHover,
 			}
 		};
 	}
-	
+
+	/*
+	 * @see org.eclipse.jface.text.ITextHoverExtension2#getInformationPresenterControlCreator()
+	 * @since 5.0
+	 */
+	public IInformationControlCreator getInformationPresenterControlCreator() {
+		return new IInformationControlCreator() {
+			public IInformationControl createInformationControl(Shell shell) {
+				int style= SWT.V_SCROLL | SWT.H_SCROLL;
+				return new DefaultInformationControl(shell, SWT.RESIZE | SWT.TOOL, style, new HTMLTextPresenter(false));
+			}
+		};
+	}
+
 	/**
 	 * Returns the tool tip affordance string.
 	 * 

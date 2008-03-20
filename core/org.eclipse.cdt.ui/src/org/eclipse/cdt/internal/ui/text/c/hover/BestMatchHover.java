@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 QNX Software Systems and others.
+ * Copyright (c) 2002, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX Software Systems - Initial API and implementation
+ *     QNX Software Systems - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.text.c.hover;
@@ -22,6 +23,7 @@ import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.ITextHoverExtension;
+import org.eclipse.jface.text.ITextHoverExtension2;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.information.IInformationProviderExtension2;
 import org.eclipse.ui.IEditorPart;
@@ -29,7 +31,7 @@ import org.eclipse.ui.IEditorPart;
 /**
  * BestMatchHover
  */
-public class BestMatchHover extends AbstractCEditorTextHover implements ITextHoverExtension, IInformationProviderExtension2 {
+public class BestMatchHover extends AbstractCEditorTextHover {
 
 	private List fTextHoverSpecifications;
 	private List fInstantiatedTextHovers;
@@ -108,6 +110,38 @@ public class BestMatchHover extends AbstractCEditorTextHover implements ITextHov
 	}
 
 	/*
+	 * @see org.eclipse.jface.text.ITextHoverExtension2#getHoverInfo2(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
+	 */
+	public Object getHoverInfo2(ITextViewer textViewer, IRegion hoverRegion) {
+		
+		checkTextHovers();
+		fBestHover= null;
+		
+		if (fInstantiatedTextHovers == null)
+			return null;
+		
+		for (Iterator iterator= fInstantiatedTextHovers.iterator(); iterator.hasNext(); ) {
+			ITextHover hover= (ITextHover)iterator.next();
+			
+			if (hover instanceof ITextHoverExtension2) {
+				Object info= ((ITextHoverExtension2) hover).getHoverInfo2(textViewer, hoverRegion);
+				if (info != null) {
+					fBestHover= hover;
+					return info;
+				}
+			} else {
+				String s= hover.getHoverInfo(textViewer, hoverRegion);
+				if (s != null && s.trim().length() > 0) {
+					fBestHover= hover;
+					return s;
+				}
+			}
+		}
+		
+		return null;
+	}
+
+	/*
 	 * @see org.eclipse.jface.text.ITextHoverExtension#getHoverControlCreator()
 	 * @since 3.0
 	 */
@@ -123,6 +157,8 @@ public class BestMatchHover extends AbstractCEditorTextHover implements ITextHov
 	 * @since 3.0
 	 */
 	public IInformationControlCreator getInformationPresenterControlCreator() {
+		if (fBestHover instanceof ITextHoverExtension2)
+			return ((ITextHoverExtension2)fBestHover).getInformationPresenterControlCreator();
 		if (fBestHover instanceof IInformationProviderExtension2)
 			return ((IInformationProviderExtension2)fBestHover).getInformationPresenterControlCreator();
 

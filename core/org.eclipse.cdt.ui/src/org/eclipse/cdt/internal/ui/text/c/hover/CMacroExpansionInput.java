@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -222,13 +223,19 @@ public class CMacroExpansionInput {
 		}
 	}
 
-	MacroExpansionExplorer fExplorer;
+	final MacroExpansionExplorer fExplorer;
 	boolean fStartWithFullExpansion= true;
 
-	private CMacroExpansionInput() {
-		// forbidden
+	private CMacroExpansionInput(MacroExpansionExplorer explorer) {
+		Assert.isNotNull(explorer);
+		fExplorer= explorer;
 	}
 
+	@Override
+	public String toString() {
+		return fExplorer.getFullExpansion().getCodeAfterStep();
+	}
+	
 	/**
 	 * Creates an input object for the macro expansion exploration control {@link CMacroExpansionExplorationControl}.
 	 * 
@@ -256,8 +263,7 @@ public class CMacroExpansionInput {
 			return null;
 		}
 
-		CMacroExpansionInput input= new CMacroExpansionInput();
-		input.fExplorer= explorer;
+		CMacroExpansionInput input= new CMacroExpansionInput(explorer);
 
 		return input;
 	}

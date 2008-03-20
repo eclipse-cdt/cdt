@@ -11,12 +11,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.c.hover;
 
-
 import org.eclipse.jface.text.AbstractReusableInformationControlCreator;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextHoverExtension2;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.information.IInformationProvider;
 import org.eclipse.jface.text.information.IInformationProviderExtension2;
@@ -40,7 +40,6 @@ import org.eclipse.cdt.internal.ui.text.HTMLTextPresenter;
  */
 public class CInformationProvider implements IInformationProvider, IInformationProviderExtension2 {
 
-	
 	/**
 	 * Default control creator.
 	 */
@@ -124,8 +123,8 @@ public class CInformationProvider implements IInformationProvider, IInformationP
 	 * @see IInformationProviderExtension2#getInformationPresenterControlCreator()
 	 */
 	public IInformationControlCreator getInformationPresenterControlCreator() {
-		if (fImplementation instanceof IInformationProviderExtension2) {
-			IInformationProviderExtension2 ext2= (IInformationProviderExtension2) fImplementation;
+		if (fImplementation instanceof ITextHoverExtension2) {
+			ITextHoverExtension2 ext2= (ITextHoverExtension2) fImplementation;
 			return ext2.getInformationPresenterControlCreator();
 		}
 		if (fPresenterControlCreator == null)

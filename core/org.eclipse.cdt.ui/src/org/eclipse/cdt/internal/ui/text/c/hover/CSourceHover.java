@@ -35,12 +35,10 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextHoverExtension;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextUtilities;
-import org.eclipse.jface.text.information.IInformationProviderExtension2;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
@@ -99,7 +97,7 @@ import org.eclipse.cdt.internal.ui.util.EditorUtility;
 /**
  * A text hover presenting the source of the element under the cursor.
  */
-public class CSourceHover extends AbstractCEditorTextHover implements ITextHoverExtension, IInformationProviderExtension2 {
+public class CSourceHover extends AbstractCEditorTextHover {
 
 	private static final boolean DEBUG = false;
 

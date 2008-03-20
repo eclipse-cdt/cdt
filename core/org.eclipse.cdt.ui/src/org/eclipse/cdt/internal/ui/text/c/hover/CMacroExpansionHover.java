@@ -12,7 +12,6 @@
 package org.eclipse.cdt.internal.ui.text.c.hover;
 
 import java.lang.ref.Reference;
-import java.lang.ref.SoftReference;
 
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
@@ -20,7 +19,6 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
-import org.eclipse.jface.text.information.IInformationProviderExtension2;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.SWT;
@@ -32,25 +30,21 @@ import org.eclipse.ui.IEditorPart;
  *
  * @since 5.0
  */
-public class CMacroExpansionHover extends AbstractCEditorTextHover implements IInformationProviderExtension2 {
+public class CMacroExpansionHover extends AbstractCEditorTextHover {
 
-	private Reference fCache;
+	private Reference<CMacroExpansionInput> fCache;
 
-	/*
-	 * @see org.eclipse.cdt.internal.ui.text.c.hover.AbstractCEditorTextHover#getHoverInfo(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
-	 */
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
+		Object hoverInfo= getHoverInfo2(textViewer, hoverRegion);
+		return hoverInfo != null ? hoverInfo.toString() : null;
+	}
+	
+	/*
+	 * @see org.eclipse.cdt.internal.ui.text.c.hover.AbstractCEditorTextHover#getHoverInfo2(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
+	 */
+	public Object getHoverInfo2(ITextViewer textViewer, IRegion hoverRegion) {
 		CMacroExpansionInput input= CMacroExpansionInput.create(getEditor(), hoverRegion, false);
-		if (input == null) {
-			return null;
-		}
-		fCache= new SoftReference(input);
-		String result= input.fExplorer.getFullExpansion().getCodeAfterStep();
-		if (result.length() == 0) {
-			// expansion is empty - hover should show empty string
-			result= "/* EMPTY */"; //$NON-NLS-1$
-		}
-		return result;
+		return input;
 	}
 	
 	/*
@@ -65,7 +59,7 @@ public class CMacroExpansionHover extends AbstractCEditorTextHover implements II
 	}
 
 	/*
-	 * @see IInformationProviderExtension2#getInformationPresenterControlCreator()
+	 * @see org.eclipse.cdt.internal.ui.text.c.hover.AbstractCEditorTextHover#getInformationPresenterControlCreator()
 	 */
 	public IInformationControlCreator getInformationPresenterControlCreator() {
 		return new IInformationControlCreator() {
@@ -81,7 +75,7 @@ public class CMacroExpansionHover extends AbstractCEditorTextHover implements II
 		if (fCache == null) {
 			return null;
 		}
-		CMacroExpansionInput input= (CMacroExpansionInput) fCache.get();
+		CMacroExpansionInput input= fCache.get();
 		fCache= null;
 		if (input == null) {
 			IEditorPart editor= getEditor();

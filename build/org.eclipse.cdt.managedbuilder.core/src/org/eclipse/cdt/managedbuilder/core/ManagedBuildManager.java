@@ -4565,12 +4565,16 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	public static void buildConfigurations(IConfiguration[] configs, IBuilder builder, IProgressMonitor monitor) throws CoreException{
+		buildConfigurations(configs, builder, monitor, true);
+	}
+
+	public static void buildConfigurations(IConfiguration[] configs, IBuilder builder, IProgressMonitor monitor, boolean allBuilders) throws CoreException{
 		Map map = sortConfigs(configs);
 		for(Iterator iter = map.entrySet().iterator(); iter.hasNext();){
 			Map.Entry entry = (Map.Entry)iter.next();
 			IProject proj = (IProject)entry.getKey();
 			IConfiguration[] cfgs = (IConfiguration[])entry.getValue();
-			buildConfigurations(proj, cfgs, builder, monitor);
+			buildConfigurations(proj, cfgs, builder, monitor, allBuilders);
 		}
 	}
 
@@ -4600,9 +4604,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return cfgMap;
 	}
 
-	private static void buildConfigurations(final IProject project, IConfiguration[] configs, IBuilder builder, final IProgressMonitor monitor) throws CoreException{
-//		final IProject project = configs[0].getOwner().getProject();
-		final boolean runAllBuidlers = false;
+	private static void buildConfigurations(final IProject project, IConfiguration[] configs, IBuilder builder, final IProgressMonitor monitor, boolean allBuilders) throws CoreException{
+		final boolean runAllBuidlers = allBuilders;
 		final Map map = builder != null ?
 				BuilderFactory.createBuildArgs(configs, builder)
 				: BuilderFactory.createBuildArgs(configs);

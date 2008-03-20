@@ -438,25 +438,22 @@ public class ASTTypeUtil {
 		
 		// pop all of the types off of the stack, and build the string representation while doing so
 		for (int j = types.length - 1; j >= 0; j--) {
+			if (types[j] != null && result.length() > 0)
+				result.append(SPACE); // only add a space if this is not the first type being added
+
 			if (types[j] != null) {
                 if (j > 0 && types[j - 1] instanceof IQualifierType) {
-                	smartAppend(result, getTypeString(types[j - 1]));
-                	smartAppend(result, getTypeString(types[j]));
+                    result.append(getTypeString(types[j - 1]));
+                    result.append(SPACE);
+                    result.append(getTypeString(types[j]));
                     --j;
                 } else {
-                	smartAppend(result, getTypeString(types[j]));
+                    result.append(getTypeString(types[j]));
                 }
             }
 		}
-		
-		return result.toString();
-	}
 
-	private static void smartAppend(StringBuilder buf, String str) {
-		if (buf.length() > 0 && str.length() > 0 && "&*".indexOf(str.charAt(0)) < 0) { //$NON-NLS-1$
-			buf.append(SPACE);
-		}
-		buf.append(str);
+		return result.toString();
 	}
 
 	/**

@@ -516,7 +516,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		fIndex.acquireReadLock();
 		try {
 			final char[] nchars = name.toCharArray();
-			final String refType = name + "&";
+			final String refType = name + " &";
 			final String constRefType = "const " + refType;
 			IIndexBinding[] ctors= fIndex.findBindings(new char[][]{nchars, nchars}, IndexFilter.ALL_DECLARED_OR_IMPLICIT, NPM);
 

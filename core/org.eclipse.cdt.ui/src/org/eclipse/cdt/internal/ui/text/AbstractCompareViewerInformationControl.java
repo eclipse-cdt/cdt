@@ -93,7 +93,7 @@ public abstract class AbstractCompareViewerInformationControl extends PopupDialo
 	 * @param persistBounds  flag indicating whether control size and location should be persisted
 	 */
 	public AbstractCompareViewerInformationControl(Shell parent, int shellStyle, int textStyle, boolean takeFocus, boolean showViewMenu, boolean persistBounds) {
-		super(parent, shellStyle, takeFocus, persistBounds, showViewMenu, false, null, null);
+		super(parent, shellStyle | SWT.ON_TOP, takeFocus, persistBounds, showViewMenu, false, null, null);
 		fStyle= textStyle & ~(SWT.V_SCROLL | SWT.H_SCROLL);
 		// Title and status text must be set to get the title label created, so force empty values here. 
 		if (hasHeader())
@@ -393,7 +393,7 @@ public abstract class AbstractCompareViewerInformationControl extends PopupDialo
 	 * {@inheritDoc}
 	 */
 	public boolean isFocusControl() {
-		return fCompareViewerControl.isFocusControl();
+		return fCompareViewerControl != null;
 	}
 
 	/**

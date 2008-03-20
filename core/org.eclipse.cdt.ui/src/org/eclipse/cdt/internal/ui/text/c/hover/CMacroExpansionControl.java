@@ -11,6 +11,7 @@
 
 package org.eclipse.cdt.internal.ui.text.c.hover;
 
+import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 
@@ -30,7 +31,7 @@ public class CMacroExpansionControl extends AbstractSourceViewerInformationContr
 	 * @param statusFieldText  text to be displayed in the status field, may be <code>null</code>
 	 */
 	public CMacroExpansionControl(Shell parent, String statusFieldText) {
-		super(parent, SWT.NO_TRIM | SWT.TOOL, SWT.NONE, false, false, false);
+		super(parent, PopupDialog.HOVER_SHELLSTYLE, SWT.NONE, false, false, false);
 		if (statusFieldText != null) {
 			setInfoText(statusFieldText);
 		}

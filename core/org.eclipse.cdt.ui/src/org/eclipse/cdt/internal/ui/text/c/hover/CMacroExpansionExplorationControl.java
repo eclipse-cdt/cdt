@@ -42,6 +42,8 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.ui.IEditorPart;
@@ -50,6 +52,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.menus.CommandContributionItem;
@@ -100,7 +103,7 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 	}
 
 	private IHandlerService fHandlerService;
-	private Collection fHandlerActivations;
+	private Collection<IHandlerActivation> fHandlerActivations;
 	private IContextService fContextService;
 	private IContextActivation fContextActivation;
 	private int fIndex;
@@ -186,49 +189,66 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 		return sourceViewer;
 	}
 
-	/*
-	 * @see org.eclipse.jface.dialogs.PopupDialog#open()
-	 */
+
+	@Override
 	public int open() {
-		int result= super.open();
+		getShell().addListener(SWT.Activate, new Listener() {
+			public void handleEvent(Event arg0) {
+				registerCommandHandlers();
+			}});
+		getShell().addListener(SWT.Deactivate, new Listener() {
+			public void handleEvent(Event arg0) {
+				unregisterCommandHandlers();
+			}});
 
-		if (fInput != null) {
-	        IHandler backwardHandler= new AbstractHandler() {
-	            public Object execute(ExecutionEvent event) throws ExecutionException {
-	                backward();
-	                return null;
-	            }
-	        };
-	        IHandler forwardHandler= new AbstractHandler() {
-	            public Object execute(ExecutionEvent event) throws ExecutionException {
-	                forward();
-	                return null;
-	            }
-	        };
-	        IHandler gotoDefinitionHandler= new AbstractHandler() {
-	            public Object execute(ExecutionEvent event) throws ExecutionException {
-	                gotoMacroDefinition();
-	                return null;
-	            }
-	        };
-	
-	
-	        IWorkbench workbench= PlatformUI.getWorkbench();
-	        fHandlerService= (IHandlerService) workbench.getService(IHandlerService.class);
-	        fContextService= (IContextService) workbench.getService(IContextService.class);
-	        fContextActivation= fContextService.activateContext(CONTEXT_ID_MACRO_EXPANSION_HOVER);
-	        fHandlerActivations= new ArrayList();
-	        fHandlerActivations.add(fHandlerService.activateHandler(COMMAND_ID_EXPANSION_BACK, backwardHandler));
-	        fHandlerActivations.add(fHandlerService.activateHandler(COMMAND_ID_EXPANSION_FORWARD, forwardHandler));
-	        fHandlerActivations.add(fHandlerService.activateHandler(ICEditorActionDefinitionIds.OPEN_DECL, gotoDefinitionHandler));
+		return super.open();
+	}
 
-	        String infoText= getInfoText();
-	        if (infoText != null) {
-	            setInfoText(infoText);
-	        }
+	protected void unregisterCommandHandlers() {
+		if (fHandlerService != null) {
+			fHandlerService.deactivateHandlers(fHandlerActivations);
+			fHandlerActivations.clear();
+			fHandlerService= null;
 		}
-		
-        return result;
+		if (fContextActivation != null) {
+			fContextService.deactivateContext(fContextActivation);
+			fContextActivation= null;
+		}
+	}
+
+	protected void registerCommandHandlers() {
+        IHandler backwardHandler= new AbstractHandler() {
+            public Object execute(ExecutionEvent event) throws ExecutionException {
+                backward();
+                return null;
+            }
+        };
+        IHandler forwardHandler= new AbstractHandler() {
+            public Object execute(ExecutionEvent event) throws ExecutionException {
+                forward();
+                return null;
+            }
+        };
+        IHandler gotoDefinitionHandler= new AbstractHandler() {
+            public Object execute(ExecutionEvent event) throws ExecutionException {
+                gotoMacroDefinition();
+                return null;
+            }
+        };
+
+        IWorkbench workbench= PlatformUI.getWorkbench();
+        fHandlerService= (IHandlerService) workbench.getService(IHandlerService.class);
+        fContextService= (IContextService) workbench.getService(IContextService.class);
+        fContextActivation= fContextService.activateContext(CONTEXT_ID_MACRO_EXPANSION_HOVER);
+        fHandlerActivations= new ArrayList<IHandlerActivation>();
+        fHandlerActivations.add(fHandlerService.activateHandler(COMMAND_ID_EXPANSION_BACK, backwardHandler));
+        fHandlerActivations.add(fHandlerService.activateHandler(COMMAND_ID_EXPANSION_FORWARD, forwardHandler));
+        fHandlerActivations.add(fHandlerService.activateHandler(ICEditorActionDefinitionIds.OPEN_DECL, gotoDefinitionHandler));
+
+        String infoText= getInfoText();
+        if (infoText != null) {
+            setInfoText(infoText);
+        }
 	}
 
 	/*
@@ -302,14 +322,7 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 	 * @see org.eclipse.jface.dialogs.PopupDialog#close()
 	 */
 	public boolean close() {
-		if (fHandlerService != null) {
-			fHandlerService.deactivateHandlers(fHandlerActivations);
-			fHandlerActivations.clear();
-			fHandlerService= null;
-		}
-		if (fContextActivation != null) {
-			fContextService.deactivateContext(fContextActivation);
-		}
+		unregisterCommandHandlers();
 		return super.close();
 	}
 
@@ -443,6 +456,5 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 		}
 		return text;
 	}
-
 
 }

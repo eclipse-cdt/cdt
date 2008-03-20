@@ -13,6 +13,7 @@ package org.eclipse.cdt.ui.wizards;
 	import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -434,7 +435,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 			IExtension[] extensions = extensionPoint.getExtensions();
 			if (extensions == null) return null;
 			
-			ArrayList items = new ArrayList();
+			List items = new ArrayList();
 			for (int i = 0; i < extensions.length; ++i)	{
 				IConfigurationElement[] elements = extensions[i].getConfigurationElements();
 				for (int k = 0; k < elements.length; k++) {
@@ -454,6 +455,9 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 					}
 				}
 			}
+			// bug # 211935 : allow items filtering.
+			if (ls != null) // NULL means call from prefs
+				items = ls.filterItems(items);
 			
 			addItemsToTree(tree, items);
 			
@@ -475,7 +479,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 			return null;
 		}
 
-		private static void addItemsToTree(Tree tree, ArrayList items) {
+		private static void addItemsToTree(Tree tree, List items) {
 		//  Sorting is disabled because of users requests	
 		//	Collections.sort(items, CDTListComparator.getInstance());
 			
@@ -574,6 +578,10 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 			if (ed.getImage() != null) return ed.getImage();
 			if (ed.isCategory()) return IMG_CATEGORY;
 			return IMG_ITEM;
+		}
+
+		public List filterItems(List items) {
+			return items;
 		}
 }
 

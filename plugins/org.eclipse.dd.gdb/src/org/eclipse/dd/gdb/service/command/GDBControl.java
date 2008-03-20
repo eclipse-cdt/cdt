@@ -35,7 +35,6 @@ import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.Sequence;
 import org.eclipse.dd.dsf.datamodel.AbstractDMEvent;
-import org.eclipse.dd.dsf.debug.service.command.CommandCache;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControl;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
@@ -48,9 +47,7 @@ import org.eclipse.dd.mi.service.command.MIControlDMContext;
 import org.eclipse.dd.mi.service.command.MIInferiorProcess;
 import org.eclipse.dd.mi.service.command.MIRunControlEventProcessor;
 import org.eclipse.dd.mi.service.command.commands.MIGDBExit;
-import org.eclipse.dd.mi.service.command.commands.MIGDBShowExitCode;
 import org.eclipse.dd.mi.service.command.commands.MIInterpreterExecConsole;
-import org.eclipse.dd.mi.service.command.output.MIGDBShowExitCodeInfo;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
 import org.eclipse.debug.core.DebugException;
 import org.osgi.framework.BundleContext;
@@ -98,8 +95,6 @@ public class GDBControl extends AbstractMIControl {
     private Process fProcess;
     private int fGDBExitValue;
     final private int fGDBLaunchTimeout;
-
-    private CommandCache fCommandCache; 
     
     private MIRunControlEventProcessor fMIEventProcessor;
     private CLIEventProcessor fCLICommandProcessor;
@@ -263,18 +258,6 @@ public class GDBControl extends AbstractMIControl {
     }
     
     public IPath getExecutablePath() { return fExecPath; }
-
-    public void getInferiorExitCode(final DataRequestMonitor<Integer> rm) {
-        fCommandCache.execute(
-            new MIGDBShowExitCode(fControlDmc), 
-            new DataRequestMonitor<MIGDBShowExitCodeInfo>(getExecutor(), rm) {
-                @Override
-                protected void handleOK() {
-                    rm.setData(getData().getCode());
-                    rm.done();
-                }
-            });
-    }
         
     public void getInferiorProcessId(DataRequestMonitor<Integer> rm) {
     }
@@ -559,7 +542,6 @@ public class GDBControl extends AbstractMIControl {
             fInferiorProcess = new GDBInferiorProcess(GDBControl.this, fProcess.getOutputStream());
             fCLICommandProcessor = new CLIEventProcessor(GDBControl.this, fControlDmc, fInferiorProcess);
             fMIEventProcessor = new MIRunControlEventProcessor(GDBControl.this, fControlDmc);
-            fCommandCache = new CommandCache(GDBControl.this);
 
             requestMonitor.done();
         }

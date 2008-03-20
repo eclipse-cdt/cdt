@@ -456,7 +456,6 @@ public class GDBControl extends AbstractMIControl {
             new Job("Terminating GDB process.") {  //$NON-NLS-1$
                 @Override
                 protected IStatus run(IProgressMonitor monitor) {
-                    if (fProcess == null)
                     fProcess.destroy();
         
                     int attempts = 0;

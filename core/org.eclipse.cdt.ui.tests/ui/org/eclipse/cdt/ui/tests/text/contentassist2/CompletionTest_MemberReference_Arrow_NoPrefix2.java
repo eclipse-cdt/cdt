@@ -23,7 +23,7 @@ public class CompletionTest_MemberReference_Arrow_NoPrefix2  extends CompletionP
 	private final String expectedPrefix = "";
 	private final String[] expectedResults = {
 			"A", "foo(void) : void",
-			"operator ->(void) : B*"
+			"operator ->(void) : B *"
 	};
 	
 	public CompletionTest_MemberReference_Arrow_NoPrefix2(String name) {

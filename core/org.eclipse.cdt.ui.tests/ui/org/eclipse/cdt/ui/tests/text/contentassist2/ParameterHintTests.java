@@ -123,7 +123,7 @@ public class ParameterHintTests extends AbstractContentAssistTest {
 	public void testConstructor() throws Exception {
 		assertParameterHints(new String[] {
 				"aClass(void)",
-				"aClass(const aClass&)"
+				"aClass(const aClass &)"
 		});
 	}
 
@@ -132,7 +132,7 @@ public class ParameterHintTests extends AbstractContentAssistTest {
 		assertParameterHints(new String[] {
 				"bClass(int x)",
 				"bClass(int x,int y)",
-				"bClass(const bClass&)"
+				"bClass(const bClass &)"
 		});
 	}
 	
@@ -140,7 +140,7 @@ public class ParameterHintTests extends AbstractContentAssistTest {
 	public void testTemplateConstructor() throws Exception {
 		assertParameterHints(new String[] {
 				"tClass(T t)",
-				"tClass(const tClass&)"
+				"tClass(const tClass &)"
 		});
 	}
 	
@@ -148,7 +148,7 @@ public class ParameterHintTests extends AbstractContentAssistTest {
 	public void _testTemplateConstructor2() throws Exception {
 		assertParameterHints(new String[] {
 				"tClass(T t)",
-				"tClass(const tClass&)"
+				"tClass(const tClass &)"
 		});
 	}
 	

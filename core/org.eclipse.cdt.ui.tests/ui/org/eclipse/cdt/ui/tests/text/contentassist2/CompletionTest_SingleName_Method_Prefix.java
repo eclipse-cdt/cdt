@@ -33,7 +33,7 @@ public class CompletionTest_SingleName_Method_Prefix	  extends CompletionProposa
 			"anotherFunction(void) : void",
 			"aClass",
 			"anotherClass",
-			"anotherClass(const anotherClass&)",
+			"anotherClass(const anotherClass &)",
 			"anotherClass(void)",
 			"aNamespace",
 			"anEnumeration",

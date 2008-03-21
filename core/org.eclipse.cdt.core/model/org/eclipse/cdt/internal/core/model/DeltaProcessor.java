@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Rational Software - Initial API and implementation
- * Anton Leherbauer (Wind River Systems)
+ *     Rational Software - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.model;
@@ -574,7 +574,8 @@ final class DeltaProcessor {
 			case IResourceDelta.ADDED :
 				if (element != null) {
 					elementAdded(element, delta);
-					return element instanceof ICContainer;
+					// no need to traverse further
+//					return element instanceof ICContainer;
 				}
 				return false;
 

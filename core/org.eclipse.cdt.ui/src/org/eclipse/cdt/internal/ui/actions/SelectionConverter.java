@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -87,7 +87,7 @@ public class SelectionConverter {
 	 */
 	public static IStructuredSelection convertSelectionToCElements(ISelection s,
 			boolean keepNonCElements) {
-		List converted = new ArrayList();
+		List<Object> converted = new ArrayList<Object>();
 		if (s instanceof IStructuredSelection) {
 			Object[] elements = ((IStructuredSelection) s).toArray();
 			for (int i = 0; i < elements.length; i++) {
@@ -108,7 +108,7 @@ public class SelectionConverter {
 	}
 
 	public static IStructuredSelection convertSelectionToResources(ISelection s) {
-		List converted = new ArrayList();
+		List<Object> converted = new ArrayList<Object>();
 		if (s instanceof StructuredSelection) {
 			Object[] elements = ((StructuredSelection) s).toArray();
 			for (int i = 0; i < elements.length; i++) {
@@ -160,7 +160,7 @@ public class SelectionConverter {
 	 */
 	public static IStructuredSelection allResources(IStructuredSelection selection, int resourceMask) {
 		Iterator adaptables = selection.iterator();
-		List result = new ArrayList();
+		List<IResource> result = new ArrayList<IResource>();
 		while (adaptables.hasNext()) {
 			Object next = adaptables.next();
 			if (next instanceof IAdaptable) {
@@ -189,7 +189,7 @@ public class SelectionConverter {
 	public static ICElement getElementAtOffset(ICElement input, ITextSelection selection) throws CModelException {
 		if (input instanceof ITranslationUnit) {
 			ITranslationUnit tunit = (ITranslationUnit) input;
-			if (tunit.isWorkingCopy()) {
+			if (tunit.isWorkingCopy() && tunit.isOpen()) {
 				synchronized (tunit) {
 					if (tunit instanceof IWorkingCopy) {
 						((IWorkingCopy) tunit).reconcile();
@@ -207,7 +207,7 @@ public class SelectionConverter {
 	public static ICElement[] getElementsAtOffset(ICElement input, ITextSelection selection) throws CModelException {
 		if (input instanceof ITranslationUnit) {
 			ITranslationUnit tunit = (ITranslationUnit) input;
-			if (tunit.isWorkingCopy()) {
+			if (tunit.isWorkingCopy() && tunit.isOpen()) {
 				synchronized (tunit) {
 					if (tunit instanceof IWorkingCopy) {
 						((IWorkingCopy) tunit).reconcile();
@@ -253,7 +253,7 @@ public class SelectionConverter {
 	public static ICElement[] codeResolve(ICElement input, ITextSelection selection) throws CModelException {
 		if (input instanceof ITranslationUnit) {
 			ITranslationUnit tunit = (ITranslationUnit) input;
-			if (tunit.isWorkingCopy()) {
+			if (tunit.isWorkingCopy() && tunit.isOpen()) {
 				synchronized (tunit) {
 					if (tunit instanceof IWorkingCopy) {
 						((IWorkingCopy) tunit).reconcile();

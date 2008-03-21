@@ -1189,7 +1189,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	private Map<Object, List<Tuple>> computeCurrentStructure(FoldingStructureComputationContext ctx) {
 		boolean includeBranches= fPreprocessorBranchFoldingEnabled && ctx.fAST != null;
 		boolean includeStmts= fStatementsFoldingEnabled && ctx.fAST != null;
-		boolean includeCModel= ctx.fAST != null && isConsistent(fInput);
+		boolean includeCModel= ctx.fAST != null || !(fPreprocessorBranchFoldingEnabled || fStatementsFoldingEnabled);
 		Map<Object, List<Tuple>> map= new HashMap<Object, List<Tuple>>();
 		ProjectionAnnotationModel model= ctx.getModel();
 		Iterator e= model.getAnnotationIterator();
@@ -1600,6 +1600,8 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		case ICElement.C_METHOD:
 		case ICElement.C_TEMPLATE_METHOD:
 			collapse= ctx.collapseMethods();
+			break;
+		case ICElement.C_NAMESPACE:
 			break;
 		default:
 			return;

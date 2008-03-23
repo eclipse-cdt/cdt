@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,22 +8,16 @@
  * Contributors:
  * IBM - Initial API and implementation
  *******************************************************************************/
-/*
- * Created on Mar 28, 2005
- */
+
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IType;
 
 /**
- * @author aniefer
- */
-
-/**
  * This interface represents an instantiation of a class or function template.
  * An instantiated template is a specialization of that template.
  * 
- * An instance of a class template will also implement ICPPClassType and similarily
+ * An instance of a class template will also implement ICPPClassType and similarly
  * a function template instance will also implement ICPPFunction (or even ICPPMethod 
  * or ICPPConstructor as appropriate)
  * 
@@ -41,5 +35,5 @@ public interface ICPPTemplateInstance extends ICPPSpecialization {
 	 * get the types of the arguments the template was instantiated with.
 	 * @return
 	 */
-	public IType [] getArguments();
+	public IType[] getArguments();
 }

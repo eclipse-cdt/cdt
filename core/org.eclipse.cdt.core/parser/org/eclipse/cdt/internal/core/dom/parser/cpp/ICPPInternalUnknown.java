@@ -30,5 +30,5 @@ public interface ICPPInternalUnknown extends ICPPInternalBinding {
      * @return
      * @throws DOMException
      */
-    public IBinding resolveUnknown( ObjectMap argMap ) throws DOMException;
+    public IBinding resolveUnknown(ObjectMap argMap) throws DOMException;
 }

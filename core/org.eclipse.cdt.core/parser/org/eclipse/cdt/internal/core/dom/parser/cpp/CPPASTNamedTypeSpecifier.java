@@ -64,36 +64,43 @@ public class CPPASTNamedTypeSpecifier extends CPPASTBaseDeclSpecifier implements
 		}
     }
 
-    public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitDeclSpecifiers ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+    public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitDeclSpecifiers) {
+		    switch (action.visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT:
+	            	return false;
+	            case ASTVisitor.PROCESS_SKIP:
+	            	return true;
+	            default:
+	            	break;
 	        }
 		}
-        if( name != null ) if( !name.accept( action ) ) return false;
+        if (name != null && !name.accept(action))
+        	return false;
         
-        if( action.shouldVisitDeclSpecifiers ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+        if (action.shouldVisitDeclSpecifiers ){
+		    switch (action.leave(this)) {
+	            case ASTVisitor.PROCESS_ABORT:
+	            	return false;
+	            case ASTVisitor.PROCESS_SKIP:
+	            	return true;
+	            default:
+	            	break;
 	        }
 		}
         return true;
     }
 	
 	public int getRoleForName(IASTName n) {
-		if( n == name )
+		if (n == name)
 			return r_reference;
 		return r_unclear;
 	}
-	
+
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
 		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix);
-		List filtered = new ArrayList();
-		
+		List<IBinding> filtered = new ArrayList<IBinding>();
+
 		for (int i = 0; i < bindings.length; i++) {
 			if (bindings[i] instanceof ICPPClassType
 					|| bindings[i] instanceof IEnumeration
@@ -103,7 +110,7 @@ public class CPPASTNamedTypeSpecifier extends CPPASTBaseDeclSpecifier implements
 				filtered.add(bindings[i]);
 			}
 		}
-		
-		return (IBinding[]) filtered.toArray(new IBinding[filtered.size()]);
+
+		return filtered.toArray(new IBinding[filtered.size()]);
 	}
 }

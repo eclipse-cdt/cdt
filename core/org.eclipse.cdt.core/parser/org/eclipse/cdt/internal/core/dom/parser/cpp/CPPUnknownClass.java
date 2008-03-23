@@ -24,21 +24,19 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 
 /**
- * Represents a C++ class for which we don't yet have a complete declaration.
+ * Represents a C++ class, declaration of which is not yet available.
  *
  * @author aniefer
  */
 public class CPPUnknownClass extends CPPUnknownBinding implements ICPPClassType {
 
     /**
-     * @param scope
      * @param name
      */
-    public CPPUnknownClass(ICPPScope scope, IBinding scopeBinding, IASTName name) {
-        super(scope, scopeBinding, name);
+    public CPPUnknownClass(ICPPInternalUnknown scopeBinding, IASTName name) {
+        super(scopeBinding, name);
     }
 
     /* (non-Javadoc)

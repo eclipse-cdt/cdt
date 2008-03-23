@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.index.IIndexFileSet;
@@ -35,11 +36,11 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
  * @author aniefer
  */
 public class CPPUnknownScope implements ICPPScope, IASTInternalScope {
-    private IBinding binding;
-    private IASTName scopeName;
+    private final ICPPInternalUnknown binding;
+    private final IASTName scopeName;
     private CharArrayObjectMap map;
 
-    public CPPUnknownScope(IBinding binding, IASTName name) {
+    public CPPUnknownScope(ICPPInternalUnknown binding, IASTName name) {
         super();
         this.scopeName = name;
         this.binding = binding;
@@ -105,9 +106,16 @@ public class CPPUnknownScope implements ICPPScope, IASTInternalScope {
             return (IBinding) map.get(c);
         }
 
-        IBinding b = name.getParent() instanceof ICPPASTTemplateId ?
-        		new CPPUnknownClassTemplate(this, binding, name) :
-          		new CPPUnknownClass(this, binding, name);
+        IBinding b;
+        IASTNode parent = name.getParent();
+        if (parent instanceof ICPPASTTemplateId) {
+			IASTNode[] args = ((ICPPASTTemplateId) parent).getTemplateArguments();
+			IType[] arguments = CPPTemplates.createTypeArray(args);
+        	b = new CPPUnknownClassInstance(binding, name, arguments);
+        } else {
+        	b = new CPPUnknownClass(binding, name);
+        }
+
         name.setBinding(b);
         map.put(c, b);
         return b;

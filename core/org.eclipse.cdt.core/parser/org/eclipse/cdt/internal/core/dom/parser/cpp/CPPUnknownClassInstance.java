@@ -10,34 +10,31 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /*
- * Represents a C++ class template for which we don't yet have a complete declaration.
+ * Represents a partially instantiated C++ class template, declaration of which is not yet available.
  *
  * @author Sergey Prigogin
  */
-public class CPPUnknownClassTemplate extends CPPUnknownClass
-		implements ICPPClassTemplate, ICPPInternalClassTemplate {
+public class CPPUnknownClassInstance extends CPPUnknownClass implements ICPPInternalUnknownClassInstance {
 	private ICPPClassTemplatePartialSpecialization[] partialSpecializations;
 	private ObjectMap instances;
+	private final IType[] arguments;
 
-	public CPPUnknownClassTemplate(ICPPScope scope, IBinding scopeBinding, IASTName name) {
-		super(scope, scopeBinding, name);
+	public CPPUnknownClassInstance(ICPPInternalUnknown scopeBinding, IASTName name, IType[] arguments) {
+		super(scopeBinding, name);
+		this.arguments = arguments;
 	}
 
 	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations()
@@ -78,7 +75,7 @@ public class CPPUnknownClassTemplate extends CPPUnknownClass
 	public ICPPSpecialization getInstance(IType[] arguments) {
 		if (instances == null)
 			return null;
-		
+
 		for (int i = 0; i < instances.size(); i++) {
 			IType[] args = (IType[]) instances.keyAt(i);
 			if (args.length == arguments.length) {
@@ -99,28 +96,29 @@ public class CPPUnknownClassTemplate extends CPPUnknownClass
 		return deferredInstance(arguments);
 	}
 
+	public IType[] getArguments() {
+		return arguments;
+	}
+
 	@Override
 	public IBinding resolveUnknown(ObjectMap argMap) throws DOMException {
 		IBinding result = super.resolveUnknown(argMap);
+		
+		IType[] newArgs = new IType[arguments.length];
+		for (int i = 0; i < newArgs.length; i++) {
+			newArgs[i] = CPPTemplates.instantiateType(arguments[i], argMap);
+		}
 		if (result instanceof ICPPSpecialization) {
 			ICPPSpecialization specialization = (ICPPSpecialization) result;
-			IASTNode parent = name.getParent();
-			if (parent instanceof ICPPASTTemplateId) {
-				IBinding binding = ((ICPPASTTemplateId) parent).resolveBinding();
-				if (binding instanceof ICPPInternalDeferredClassInstance) {
-					// This is a hack to get proper arguments for the template instantiation.
-					// A proper solution should probably be implemented inside
-					// CPPTemplates.instantiateTemplate, but I don't know how to do it.
-					// When making any changes to this code please make sure to run
-					// AST2TemplateTests.testRebindPattern_214447* tests.
-					IType type = ((ICPPInternalDeferredClassInstance) binding).instantiate(argMap);
-					IType[] arguments = ((ICPPTemplateInstance) type).getArguments();
-					ICPPTemplateDefinition template =
-							(ICPPTemplateDefinition) specialization.getSpecializedBinding();
-					result = CPPTemplates.instantiateTemplate(template, arguments, null);
-				}
-			}
+			result = CPPTemplates.instantiateTemplate((ICPPTemplateDefinition) specialization, newArgs, null);
+		} else {
+			result = new CPPUnknownClassInstance(scopeBinding, name, newArgs);
 		}
 		return result;
+	}
+
+	@Override
+	public String toString() {
+		return getName() + " <" + ASTTypeUtil.getTypeListString(arguments) + ">"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

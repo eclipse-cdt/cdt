@@ -12,8 +12,6 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 
 /**
  * @author Bryan Wilkinson
- * 
  */
 public interface ICPPDeferredTemplateInstance extends ICPPTemplateInstance {
-
 }

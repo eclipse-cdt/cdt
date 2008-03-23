@@ -29,17 +29,13 @@ import org.eclipse.core.runtime.PlatformObject;
 /**
  * @author aniefer
  */
-public class CPPUnknownBinding extends PlatformObject implements ICPPInternalUnknown {
+public class CPPUnknownBinding extends PlatformObject implements ICPPInternalUnknown, Cloneable {
     private ICPPScope unknownScope = null;
-    private IBinding scopeBinding = null;
-    private ICPPScope scope = null;
+    protected ICPPInternalUnknown scopeBinding = null;
     protected IASTName name = null;
-    /**
-     *
-     */
-    public CPPUnknownBinding(ICPPScope scope, IBinding scopeBinding, IASTName name) {
+
+    public CPPUnknownBinding(ICPPInternalUnknown scopeBinding, IASTName name) {
         super();
-        this.scope = scope;
         this.name = name;
         this.scopeBinding = scopeBinding;
     }
@@ -125,7 +121,7 @@ public class CPPUnknownBinding extends PlatformObject implements ICPPInternalUnk
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
      */
     public IScope getScope() {
-        return scope;
+        return scopeBinding.getUnknownScope();
     }
 
     /* (non-Javadoc)
@@ -146,6 +142,10 @@ public class CPPUnknownBinding extends PlatformObject implements ICPPInternalUnk
 	            IScope s = ((ICPPClassType) t).getCompositeScope();
 	            if (s != null && ASTInternal.isFullyCached(s))
 	            	result = s.getBinding(name, true);
+	        } else if (t instanceof ICPPInternalUnknown) {
+	            CPPUnknownBinding res = (CPPUnknownBinding) clone();
+	            res.scopeBinding = (ICPPInternalUnknown) t;
+	            result = res;
 	        }
         }
         return result;
@@ -154,10 +154,20 @@ public class CPPUnknownBinding extends PlatformObject implements ICPPInternalUnk
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
 	}
+	
+	@Override
+	public Object clone() {
+		try {
+			return super.clone();
+		} catch (CloneNotSupportedException e) {
+			return null;  // Never happens
+		}
+	}
 
 	/* (non-Javadoc)
 	 * For debug purposes only
 	 */
+	@Override
 	public String toString() {
 		return getName();
 	}

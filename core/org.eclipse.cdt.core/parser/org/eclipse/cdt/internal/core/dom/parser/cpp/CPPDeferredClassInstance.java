@@ -28,10 +28,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /**
+ * Represents a partially instantiated C++ class template, who's arguments contain at least one template
+ * type parameter.
+ *
  * @author aniefer
  */
-public class CPPDeferredClassInstance extends CPPInstance implements
-		ICPPClassType, ICPPDeferredTemplateInstance, ICPPInternalDeferredClassInstance {
+public class CPPDeferredClassInstance extends CPPInstance
+		implements ICPPClassType, ICPPDeferredTemplateInstance, ICPPInternalDeferredClassInstance {
 	
 	public CPPDeferredClassInstance(ICPPClassTemplate orig,	IType[] arguments) {
 		super(null, orig, buildArgumentMap(orig, arguments), arguments);

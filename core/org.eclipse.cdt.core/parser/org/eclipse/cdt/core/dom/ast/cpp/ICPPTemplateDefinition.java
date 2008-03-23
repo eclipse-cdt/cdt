@@ -12,11 +12,10 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 
-
 /**
  * @author Doug Schaefer
  */
-public interface ICPPTemplateDefinition extends ICPPBinding{
+public interface ICPPTemplateDefinition extends ICPPBinding {
 
 	/**
 	 * Returns an array of the template parameters. 
@@ -25,6 +24,4 @@ public interface ICPPTemplateDefinition extends ICPPBinding{
 	 * @return array of ICPPTemplateParameter
 	 */
 	public ICPPTemplateParameter[] getTemplateParameters() throws DOMException;
-	
-	
 }

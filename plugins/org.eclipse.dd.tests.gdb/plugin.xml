@@ -5,7 +5,7 @@
       <launchConfigurationType
             sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
             delegate="org.eclipse.dd.tests.gdb.launching.TestLaunchDelegate"
-            public="true"
+            public="false"
             sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer"
             name="DSF JUnit Test Application"
             id="org.eclipse.dd.tests.gdb.TestLaunch"

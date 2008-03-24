@@ -70,6 +70,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
 import org.eclipse.cdt.core.parser.util.DebugUtil;
+import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
@@ -92,7 +93,7 @@ public abstract class BuildASTParserAction {
 	 * @see BuildASTParserAction#consumePlaceHolder()
 	 * @see BuildASTParserAction#consumeEmpty()
 	 */
-	protected static final Object PLACE_HOLDER = Boolean.TRUE;
+	protected static final Object PLACE_HOLDER = Boolean.TRUE; // any object will do
 	
 	
 	// turn debug tracing on and off
@@ -311,6 +312,9 @@ public abstract class BuildASTParserAction {
 		return true;
 	}
 	
+	
+	
+	
 	/*************************************************************************************************************
 	 * Start of actions.
 	 ************************************************************************************************************/
@@ -403,6 +407,7 @@ public abstract class BuildASTParserAction {
 		tu.accept(EMPTY_VISITOR);
 	}
 	
+	
 	/**
 	 * When applied to the AST causes ambiguity nodes to be resolved.
 	 */
@@ -453,8 +458,10 @@ public abstract class BuildASTParserAction {
 			result = declarationStatement;
 		else if(isImplicitInt(decl))
 			result = expressionStatement;
-		else
+		else {
 			result = nodeFactory.newAmbiguousStatement(declarationStatement, expressionStatement);
+			setOffsetAndLength(result);
+		}
 			
 		astStack.push(result);
 		
@@ -532,7 +539,11 @@ public abstract class BuildASTParserAction {
 	public void consumeExpressionID() {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		
-		IASTName name = createName(parser.getRightIToken());
+		System.out.println("Right Token: " + parser.getRightIToken());
+		System.out.println("Left Token: " + parser.getLeftIToken());
+		System.out.println("All Tokens: " + parser.getRuleTokens());
+		//IASTName name = createName(parser.getRightIToken());
+		IASTName name = createName(parser.getLeftIToken());
 		IASTIdExpression expr = nodeFactory.newIdExpression(name);
         setOffsetAndLength(expr);
         astStack.push(expr);
@@ -628,8 +639,11 @@ public abstract class BuildASTParserAction {
 		
 		if(alternateExpr == null || alternateExpr instanceof IASTProblemExpression)
 			astStack.push(expr);
-		else
-			astStack.push(nodeFactory.newAmbiguousExpression(expr, (IASTExpression)alternateExpr));
+		else {
+			IASTNode ambiguityNode = nodeFactory.newAmbiguousExpression(expr, (IASTExpression)alternateExpr);
+			setOffsetAndLength(ambiguityNode);
+			astStack.push(ambiguityNode);
+		}
 
 		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
@@ -669,19 +683,13 @@ public abstract class BuildASTParserAction {
 		
 		if(alternateExpr == null || alternateExpr instanceof IASTProblemExpression)
 			astStack.push(expr);
-		else
-			astStack.push(nodeFactory.newAmbiguousExpression(expr, (IASTExpression)alternateExpr));
+		else {
+			IASTNode ambiguityNode = nodeFactory.newAmbiguousExpression(expr, (IASTExpression)alternateExpr);
+			setOffsetAndLength(ambiguityNode);
+			astStack.push(ambiguityNode);
+		}
 		
 		if(TRACE_AST_STACK) System.out.println(astStack);
-		
-//		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-//		
-//		IASTTypeId typeId = (IASTTypeId) astStack.pop();
-//		IASTTypeIdExpression expr = nodeFactory.newTypeIdExpression(operator, typeId);
-//		setOffsetAndLength(expr);
-//		astStack.push(expr);
-//		
-//		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
@@ -1035,15 +1043,14 @@ public abstract class BuildASTParserAction {
 	/**
 	 * parameter_declaration ::= declaration_specifiers   
 	 */
-	public void consumeParameterDeclarationWithoutDeclarator(/*IBinding binding*/) {
+	public void consumeParameterDeclarationWithoutDeclarator() {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		
 		// offsets need to be calculated differently in this case		
-		final int endOffset = parser.getRightIToken().getEndOffset() + 1;
+		final int endOffset = parser.getRightIToken().getEndOffset();
 		
 		IASTName name = nodeFactory.newName();
 		setOffsetAndLength(name, endOffset, 0);
-		//name.setBinding(binding);
 		
 		// it appears that a declarator is always required in the AST here
 		IASTDeclarator declarator = nodeFactory.newDeclarator(name);
@@ -1078,31 +1085,31 @@ public abstract class BuildASTParserAction {
      *     
      * TODO Make both grammars the same here.
 	 */
-	public void consumeDeclarationSimple(boolean hasDeclaratorList) {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
-		List<Object> declarators = (hasDeclaratorList) ? astStack.closeScope() : Collections.emptyList();
-		IASTDeclSpecifier declSpecifier = (IASTDeclSpecifier) astStack.pop(); // may be null
-		
-		// do not generate nodes for extra EOC tokens
-		if(matchTokens(parser.getRuleTokens(), CPPParsersym.TK_EndOfCompletion))
-			return;
-
-		if(declSpecifier == null) { // can happen if implicit int is used
-			declSpecifier = nodeFactory.newSimpleDeclSpecifier();
-			setOffsetAndLength(declSpecifier, parser.getLeftIToken().getStartOffset(), 0);
-		}
-
-		IASTSimpleDeclaration declaration = nodeFactory.newSimpleDeclaration(declSpecifier);
-		
-		for(Object declarator : declarators)
-			declaration.addDeclarator((IASTDeclarator)declarator);
-
-		setOffsetAndLength(declaration);
-		astStack.push(declaration);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
-	}
+//	public void consumeDeclarationSimple(boolean hasDeclaratorList) {
+//		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
+//		
+//		List<Object> declarators = (hasDeclaratorList) ? astStack.closeScope() : Collections.emptyList();
+//		IASTDeclSpecifier declSpecifier = (IASTDeclSpecifier) astStack.pop(); // may be null
+//		
+//		// do not generate nodes for extra EOC tokens
+//		if(matchTokens(parser.getRuleTokens(), CPPParsersym.TK_EndOfCompletion))
+//			return;
+//
+//		if(declSpecifier == null) { // can happen if implicit int is used
+//			declSpecifier = nodeFactory.newSimpleDeclSpecifier();
+//			setOffsetAndLength(declSpecifier, parser.getLeftIToken().getStartOffset(), 0);
+//		}
+//
+//		IASTSimpleDeclaration declaration = nodeFactory.newSimpleDeclaration(declSpecifier);
+//		
+//		for(Object declarator : declarators)
+//			declaration.addDeclarator((IASTDeclarator)declarator);
+//
+//		setOffsetAndLength(declaration);
+//		astStack.push(declaration);
+//		
+//		if(TRACE_AST_STACK) System.out.println(astStack);
+//	}
 	
 	
 	/**

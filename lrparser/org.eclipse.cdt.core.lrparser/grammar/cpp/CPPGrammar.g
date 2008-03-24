@@ -233,7 +233,7 @@ $Headers
 		int kind = super.getKind(i);
 		
 		// There used to be a special token kind for zero used to parser pure virtual function declarations.
-		// But it turned out to be easier to just parse them as an init_declarator and programaticaly check
+		// But it turned out to be easier to just parse them as an init_ declarator and programaticaly check
 		// for pure virtual, see consumeMemberDeclaratorWithInitializer().
 		
 		//if(kind == CPPParsersym.TK_integer && "0".equals(getTokenText(i))) { //$NON-NLS-1$
@@ -435,8 +435,9 @@ template_opt
           /. $Build  consumeEmpty();  $EndBuild ./
 
 
+-- the ::=? is necessary for example 8.2.1 in the C++ spec to parse correctly
 dcolon_opt
-    ::= '::'
+    ::=? '::'
           /. $Build  consumePlaceHolder();  $EndBuild ./
       | $empty
           /. $Build  consumeEmpty();  $EndBuild ./
@@ -942,12 +943,12 @@ declaration_seq_opt
     
 simple_declaration
     ::= declaration_specifiers_opt <openscope-ast> init_declarator_list_opt ';'
-          /. $Build  consumeDeclarationSimple(true);  $EndBuild ./
+          /. $Build  consumeDeclarationSimple(true, true);  $EndBuild ./
 
 
 simple_declaration_with_declspec 
     ::= declaration_specifiers <openscope-ast> init_declarator_list_opt ';'
-          /. $Build  consumeDeclarationSimple(true);  $EndBuild ./
+          /. $Build  consumeDeclarationSimple(true, false);  $EndBuild ./
 
 
 -- declaration specifier nodes not created here, they are created by sub-rules 
@@ -1238,13 +1239,18 @@ linkage_specification
 
 
 init_declarator_list
-    ::= init_declarator
-      | init_declarator_list ',' init_declarator
+    ::= init_declarator_complete
+      | init_declarator_list ',' init_declarator_complete
 
 
 init_declarator_list_opt
     ::= init_declarator_list
       | $empty
+      
+      
+init_declarator_complete
+    ::= init_declarator
+          /. $Build  consumeInitDeclaratorComplete();  $EndBuild ./ 
       
       
 init_declarator
@@ -1332,9 +1338,10 @@ cv_qualifier
 
 
 declarator_id_name
-    ::= qualified_or_unqualified_name
-      | dcolon_opt nested_name_specifier_opt type_name
+   ::= qualified_or_unqualified_name
+     | dcolon_opt nested_name_specifier_opt type_name
           /. $Build  consumeQualifiedId(false);  $EndBuild ./
+      
 
 
 type_id
@@ -1520,9 +1527,9 @@ visibility_label
 
 member_declaration
     ::= declaration_specifiers_opt <openscope-ast> member_declarator_list ';'
-          /. $Build  consumeDeclarationSimple(true);  $EndBuild ./
+          /. $Build  consumeDeclarationSimple(true, true);  $EndBuild ./
       | declaration_specifiers_opt ';'
-          /. $Build  consumeDeclarationSimple(false);  $EndBuild ./
+          /. $Build  consumeDeclarationSimple(false, false);  $EndBuild ./
       | function_definition ';' 
       | function_definition      
       | dcolon_opt nested_name_specifier template_opt unqualified_id_name ';'
@@ -1785,11 +1792,11 @@ handler
 -- open a scope just so that we can reuse consumeDeclarationSimple()
 exception_declaration
     ::= type_specifier_seq <openscope-ast> declarator
-          /. $Build  consumeDeclarationSimple(true);  $EndBuild ./
+          /. $Build  consumeDeclarationSimple(true, false);  $EndBuild ./
       | type_specifier_seq <openscope-ast> abstract_declarator  -- TODO might need to be abstract_declarator_without_function, might be too lenient, what exactly can you catch?
-          /. $Build  consumeDeclarationSimple(true);  $EndBuild ./
+          /. $Build  consumeDeclarationSimple(true, false);  $EndBuild ./
       | type_specifier_seq
-          /. $Build  consumeDeclarationSimple(false);  $EndBuild ./
+          /. $Build  consumeDeclarationSimple(false, false);  $EndBuild ./
 
 
 -- puts type ids on the stack

@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.lrparser.action.cpp;
 
-import static org.eclipse.cdt.core.parser.util.CollectionUtils.*;
-
+import static org.eclipse.cdt.core.parser.util.CollectionUtils.findFirstAndRemove;
+import static org.eclipse.cdt.core.parser.util.CollectionUtils.reverseIterable;
 import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.*;
 
 import java.util.Collections;
@@ -20,16 +20,17 @@ import java.util.List;
 
 import lpg.lpgjavaruntime.IToken;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
@@ -40,6 +41,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointer;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
+import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
@@ -75,7 +77,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
@@ -87,15 +88,13 @@ import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
 import org.eclipse.cdt.core.dom.lrparser.LPGTokenAdapter;
 import org.eclipse.cdt.core.dom.lrparser.action.BuildASTParserAction;
-import org.eclipse.cdt.core.parser.util.CollectionUtils;
+import org.eclipse.cdt.core.parser.util.ASTPrinter;
 import org.eclipse.cdt.core.parser.util.DebugUtil;
-import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99ExpressionStatementParser;
-import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPExpressionStatementParser;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPNoCastExpressionParser;
+import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPNoFunctionDeclaratorParser;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPSizeofExpressionParser;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 
@@ -130,22 +129,21 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	
 	@Override
 	protected IParser getExpressionStatementParser() {
-		DebugUtil.printMethodTrace();
 		return new CPPExpressionStatementParser(parser.getOrderedTerminalSymbols()); 
 	}
 	
 	@Override
 	protected IParser getNoCastExpressionParser() {
-		DebugUtil.printMethodTrace();
 		return new CPPNoCastExpressionParser(parser.getOrderedTerminalSymbols());
 	}
 	
 	
 	@Override
 	protected IParser getSizeofExpressionParser() {
-		DebugUtil.printMethodTrace();
 		return new CPPSizeofExpressionParser(parser.getOrderedTerminalSymbols());
 	}
+	
+	
 
 	/**
 	 * new_expression
@@ -964,8 +962,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	 * object to determine how to set a specifier.
 	 */
 	protected void setSpecifier(IASTDeclSpecifier node, IToken token) {
-		//TODO int kind = asC99Kind(token);
-
+		//TODO int kind = asC99Kind(token)
 		int kind = token.getKind();
 		switch(kind){
 			case TK_typedef:  node.setStorageClass(IASTDeclSpecifier.sc_typedef);  return;
@@ -1081,13 +1078,129 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	
 	
 	private static int getElaboratedTypeSpecifier(IToken token) {
-		switch(token.getKind()) {
-			default: assert false;
+		int kind = token.getKind();
+		switch(kind) {
+			default: assert false : "wrong token kind: " + kind; //$NON-NLS-1$
 			case TK_struct: return IASTElaboratedTypeSpecifier.k_struct;
 			case TK_union:  return IASTElaboratedTypeSpecifier.k_union;
 			case TK_enum:   return IASTElaboratedTypeSpecifier.k_enum;
 			case TK_class:  return ICPPASTElaboratedTypeSpecifier.k_class;   
 		}
+	}
+	
+	
+	
+	/**
+	 * simple_declaration
+     *     ::= declaration_specifiers_opt <openscope-ast> init_declarator_list_opt ';'
+     *     
+     * TODO: remove attemptAmbiguityResolution parameter
+	 */
+	public void consumeDeclarationSimple(boolean hasDeclaratorList, boolean attemptAmbiguityResolution) {
+		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
+		
+		List<Object> declarators = (hasDeclaratorList) ? astStack.closeScope() : Collections.emptyList();
+		IASTDeclSpecifier declSpecifier = (IASTDeclSpecifier) astStack.pop(); // may be null
+		
+		// do not generate nodes for extra EOC tokens
+		if(matchTokens(parser.getRuleTokens(), CPPParsersym.TK_EndOfCompletion))
+			return;
+
+		if(declSpecifier == null) { // can happen if implicit int is used
+			declSpecifier = nodeFactory.newSimpleDeclSpecifier();
+			setOffsetAndLength(declSpecifier, parser.getLeftIToken().getStartOffset(), 0);
+		}
+
+		IASTSimpleDeclaration declaration = nodeFactory.newSimpleDeclaration(declSpecifier);
+		setOffsetAndLength(declaration);
+		for(Object declarator : declarators)
+			declaration.addDeclarator((IASTDeclarator)declarator);
+		
+		astStack.push(declaration);
+
+//		IASTNode alternateDeclaration = null;
+//		if(attemptAmbiguityResolution) {// && hasConstructorInitializer(declaration)) { // try to resolve the constructor initializer ambiguity
+//			// TODO should this ambiguity be resolved here, or at the level of individual declarators?
+//			IParser alternateParser = new CPPNoConstructorInitializerParser(parser.getOrderedTerminalSymbols()); 
+//			alternateDeclaration = runSecondaryParser(alternateParser);
+//		}
+//		
+//		if(alternateDeclaration == null || alternateDeclaration instanceof IASTProblemDeclaration)
+//			astStack.push(declaration);
+//		else {
+//			System.out.println("Ambiguous Declaration in my parser!");
+////	        ASTPrinter.print(declaration);
+////	        System.out.println();
+////	        ASTPrinter.print(alternateDeclaration);
+////	        System.out.println();
+//
+//	        IASTNode ambiguityNode = nodeFactory.newAmbiguousDeclaration((IASTDeclaration)alternateDeclaration, declaration);
+//	        setOffsetAndLength(ambiguityNode);
+//			astStack.push(ambiguityNode);
+//		}
+//		
+		
+		
+		if(TRACE_AST_STACK) System.out.println(astStack);
+	}
+	
+	
+	public void consumeInitDeclaratorComplete() {
+		DebugUtil.printMethodTrace();
+		
+		IASTDeclarator declarator = (IASTDeclarator) astStack.peek();
+		if(!(declarator instanceof IASTFunctionDeclarator))
+			return;
+		
+		IParser alternateParser = new CPPNoFunctionDeclaratorParser(parser.getOrderedTerminalSymbols()); 
+		IASTNode alternateDeclarator = runSecondaryParser(alternateParser);
+	
+		if(alternateDeclarator == null  || alternateDeclarator instanceof IASTProblemDeclaration)
+			return;
+		
+		
+		astStack.pop();
+		IASTNode ambiguityNode = new CPPASTAmbiguousDeclarator(declarator, (IASTDeclarator)alternateDeclarator);
+		
+		System.out.println("AMBIGUOUS DECLARATOR!");
+//		ASTPrinter.print(declarator);
+//		System.out.println();
+//		ASTPrinter.print(alternateDeclarator);
+//		System.out.println();
+				
+        setOffsetAndLength(ambiguityNode);
+		astStack.push(ambiguityNode);
+        
+		
+		if(TRACE_AST_STACK) System.out.println(astStack);
+	}
+	
+	
+	
+	/**
+	 * Returns true iff the given AST contains at least one constructor initializer node.
+	 * Can be called on any AST node but is mean to be called on declarations or declarators.
+	 * 
+	 * TODO how freaking inefficient is this?
+	 */
+	private static boolean hasConstructorInitializer(IASTNode declaration) {
+		final boolean[] found = {false}; 
+		
+		ASTVisitor detector = new ASTVisitor() {
+			{shouldVisitInitializers = true;}
+			@Override
+			public int visit(IASTInitializer initializer) {
+				if(initializer instanceof ICPPASTConstructorInitializer) {
+					found[0] = true; // who said Java doesn't have closures
+					return PROCESS_ABORT;
+				}
+				return PROCESS_CONTINUE;
+			}
+		};
+		
+		declaration.accept(detector);
+		System.out.println("hasConstructorInitializer: " + found[0]);
+		return found[0];
 	}
 	
 	
@@ -1109,8 +1222,9 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	
 	
 	private static int getAccessSpecifier(IToken token) {
-		switch(token.getKind()) {
-			default: assert false;
+		int kind = token.getKind();
+		switch(kind) {
+			default: assert false : "wrong token kind: " + kind; //$NON-NLS-1$
 			case TK_private:   return ICPPASTVisiblityLabel.v_private;
 			case TK_public:    return ICPPASTVisiblityLabel.v_public;    
 			case TK_protected: return ICPPASTVisiblityLabel.v_protected;
@@ -1218,8 +1332,9 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	
 	
 	private static int getCompositeTypeSpecifier(IToken token) {
-		switch(token.getKind()) {
-			default: assert false;
+		int kind = token.getKind();
+		switch(kind) {
+			default: assert false : "wrong token kind: " + kind; //$NON-NLS-1$
 			case TK_struct: return IASTCompositeTypeSpecifier.k_struct;
 			case TK_union:  return IASTCompositeTypeSpecifier.k_union;
 			case TK_class:  return ICPPASTCompositeTypeSpecifier.k_class;   
@@ -1325,8 +1440,9 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
  		}
  		
  		for(Object token : astStack.closeScope()) {
- 			switch(((IToken)token).getKind()) {
- 				default: assert false;
+ 			int kind = ((IToken)token).getKind();
+ 			switch(kind) {
+ 				default: assert false : "wrong token kind: " + kind; //$NON-NLS-1$
  				case TK_const:    declarator.setConst(true); break;
  				case TK_volatile: declarator.setVolatile(true); break;
  			}
@@ -1501,8 +1617,9 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
     }
     
     private static int getTemplateParameterType(IToken token) {
-    	switch(token.getKind()) {
-    		default: assert false;
+    	int kind = token.getKind();
+    	switch(kind) {
+    		default: assert false : "wrong token kind: " + kind; //$NON-NLS-1$
     		case TK_class:    return ICPPASTSimpleTypeTemplateParameter.st_class;
     		case TK_typename: return ICPPASTSimpleTypeTemplateParameter.st_typename;
     	}

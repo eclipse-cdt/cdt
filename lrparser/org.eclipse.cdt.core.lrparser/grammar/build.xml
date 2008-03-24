@@ -79,6 +79,15 @@
 		<antcall target="generate_cpp">
             <param name="grammar_name" value="CPPSizeofExpressionParser"/>
 		</antcall>
+		<!-- Generate parser for disambiguating declarators 
+		<antcall target="generate_cpp">
+            <param name="grammar_name" value="CPPNoConstructorInitializerParser"/>
+		</antcall>
+		-->
+		<!-- Generate parser for disambiguating declarators -->
+		<antcall target="generate_cpp">
+            <param name="grammar_name" value="CPPNoFunctionDeclaratorParser"/>
+		</antcall>
 	</target>
 	
 	

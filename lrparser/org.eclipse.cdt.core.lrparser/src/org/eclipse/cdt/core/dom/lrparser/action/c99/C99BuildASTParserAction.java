@@ -34,6 +34,7 @@ import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_uns
 import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_void;
 import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_volatile;
 
+import java.util.Collections;
 import java.util.List;
 
 import lpg.lpgjavaruntime.IToken;
@@ -41,6 +42,7 @@ import lpg.lpgjavaruntime.IToken;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
@@ -131,16 +133,19 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	
 	@Override
 	protected IParser getExpressionStatementParser() {
+		DebugUtil.printMethodTrace();
 		return new C99ExpressionStatementParser(parser.getOrderedTerminalSymbols()); 
 	}
 
 	@Override
 	protected IParser getNoCastExpressionParser() {
+		DebugUtil.printMethodTrace();
 		return new C99NoCastExpressionParser(parser.getOrderedTerminalSymbols());
 	}
 	
 	@Override
 	protected IParser getSizeofExpressionParser() {
+		DebugUtil.printMethodTrace();
 		return new C99SizeofExpressionParser(parser.getOrderedTerminalSymbols());
 	}
 	
@@ -533,6 +538,33 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 		astStack.closeScope();
 		setOffsetAndLength(declSpec);
 		astStack.push(declSpec);
+		
+		if(TRACE_AST_STACK) System.out.println(astStack);
+	}
+	
+	
+	
+	/**
+	 * declaration ::= declaration_specifiers <openscope> init_declarator_list ';'
+	 * declaration ::= declaration_specifiers  ';'
+	 */
+	public void consumeDeclarationSimple(boolean hasDeclaratorList) {
+		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
+		
+		List<Object> declarators = (hasDeclaratorList) ? astStack.closeScope() : Collections.emptyList();
+		IASTDeclSpecifier declSpecifier = (IASTDeclSpecifier) astStack.pop();
+		
+		// do not generate nodes for extra EOC tokens
+		if(matchTokens(parser.getRuleTokens(), CPPParsersym.TK_EndOfCompletion))
+			return;
+
+		IASTSimpleDeclaration declaration = nodeFactory.newSimpleDeclaration(declSpecifier);
+		
+		for(Object declarator : declarators)
+			declaration.addDeclarator((IASTDeclarator)declarator);
+
+		setOffsetAndLength(declaration);
+		astStack.push(declaration);
 		
 		if(TRACE_AST_STACK) System.out.println(astStack);
 	}

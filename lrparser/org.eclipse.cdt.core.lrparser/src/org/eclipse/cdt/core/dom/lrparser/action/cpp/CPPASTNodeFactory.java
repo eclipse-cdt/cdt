@@ -187,6 +187,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 /**
  * Abstract factory implementation that creates C++ AST nodes.
  * 
+ * TODO rename, its convention for AST nodes to start with CPPAST...
+ * 
  * @author Mike Kucera
  */
 @SuppressWarnings("restriction") // all AST node constructors are internal
@@ -377,7 +379,7 @@ public class CPPASTNodeFactory implements ICPPASTNodeFactory {
 	}
 
 	public IASTSimpleDeclaration newSimpleDeclaration(IASTDeclSpecifier declSpecifier) {
-		return new CPPASTSimpleDeclaration(declSpecifier);
+		return new ISOCPPASTSimpleDeclaration(declSpecifier);
 	}
 
 	public IASTInitializerExpression newInitializerExpression(IASTExpression expression) {

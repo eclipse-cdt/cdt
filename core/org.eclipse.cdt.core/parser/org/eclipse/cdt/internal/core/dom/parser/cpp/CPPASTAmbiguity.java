@@ -30,7 +30,8 @@ public abstract class CPPASTAmbiguity extends CPPASTNode {
     protected static class CPPASTNameCollector extends CPPASTVisitor {
         private IASTName[] names = new IASTName[2];
         private int namesPos=-1;
-        {
+        
+        public CPPASTNameCollector() {
             shouldVisitNames = true;
         }
 

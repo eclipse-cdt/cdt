@@ -53,7 +53,7 @@ public class TodoTaskParser {
 	}
 
 	public Task[] parse(IASTComment[] comments) {
-		List/*<Task>*/ tasks = new ArrayList();
+		List<Task> tasks = new ArrayList<Task>();
 		for (int i = 0; i < comments.length; i++) {
 			IASTComment comment = comments[i];
 			IASTFileLocation location = comment.getFileLocation();
@@ -65,11 +65,11 @@ public class TodoTaskParser {
 		if (tasks.isEmpty()) {
 			return EMPTY_TASK_ARRAY;
 		}
-		return (Task[]) tasks.toArray(new Task[tasks.size()]);
+		return tasks.toArray(new Task[tasks.size()]);
 	}
 	
     private void parse(char[] comment, String filename, int offset, int lineNumber,
-    		List/*<Task>*/ tasks) {
+    		List<Task> tasks) {
         int commentLength = comment.length;
 
     	int foundTaskIndex = tasks.size();
@@ -117,11 +117,10 @@ public class TodoTaskParser {
 
     	boolean containsEmptyTask = false;
     	for (int i = foundTaskIndex; i < tasks.size(); i++) {
-    		Task task = (Task) tasks.get(i);
+    		Task task = tasks.get(i);
     		// Retrieve message start and end positions
     		int msgStart = task.start + task.tag.length();
-    		int maxValue = i + 1 < tasks.size() ?
-    				((Task) tasks.get(i + 1)).start : commentLength;
+    		int maxValue = i + 1 < tasks.size() ? tasks.get(i + 1).start : commentLength;
     		// At most beginning of next task
     		if (maxValue < msgStart) {
     			maxValue = msgStart; // Would only occur if tag is before EOF.
@@ -166,10 +165,10 @@ public class TodoTaskParser {
 
     	if (containsEmptyTask) {
     		for (int i = foundTaskIndex; i < tasks.size(); i++) {
-    			Task task1 = (Task) tasks.get(i);
+    			Task task1 = tasks.get(i);
     			if (task1.message.length() == 0) {
     				for (int j = i + 1; j < tasks.size(); j++) {
-    	    			Task task2 = (Task) tasks.get(j);
+    	    			Task task2 = tasks.get(j);
     					if (task2.message.length() != 0) {
     						task1.message = task2.message;
     						task1.end = task2.end;
@@ -182,7 +181,7 @@ public class TodoTaskParser {
     	
     	// Add comment offset.
 		for (int i = foundTaskIndex; i < tasks.size(); i++) {
-			Task task = (Task) tasks.get(i);
+			Task task = tasks.get(i);
 			task.lineNumber += getLineOffset(comment, task.start);
 			task.start += offset;
 			task.end += offset;

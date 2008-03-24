@@ -15,8 +15,9 @@ package org.eclipse.cdt.internal.core.pdom.indexer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -34,6 +35,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -96,13 +98,13 @@ public class TodoTaskUpdater implements ITodoTaskUpdater {
 	public void updateTasks(IASTComment[] comments, IIndexFileLocation[] filesToUpdate) {
 		class TaskList {
 			IFile fFile;
-			List  fTasks;
+			List<Task> fTasks;
 			public TaskList(IFile file) {
 				fFile= file;
 			}
 			public void add(Task task) {
 				if (fTasks == null) {
-					fTasks= new ArrayList();
+					fTasks= new ArrayList<Task>();
 				}
 				fTasks.add(task);
 			}
@@ -111,8 +113,8 @@ public class TodoTaskUpdater implements ITodoTaskUpdater {
 		final IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 
 		// first collect all valid file-locations
-		final HashMap pathToTaskList= new HashMap();
-		final HashSet projects= new HashSet();
+		final Map<IPath, TaskList> pathToTaskList= new HashMap<IPath, TaskList>();
+		final Set<IProject> projects= new HashSet<IProject>();
 		for (int i = 0; i < filesToUpdate.length; i++) {
 			final IIndexFileLocation indexFileLocation = filesToUpdate[i];
 			final String filepath = indexFileLocation.getFullPath();
@@ -129,7 +131,7 @@ public class TodoTaskUpdater implements ITodoTaskUpdater {
 			final Task[] tasks = taskParser.parse(comments);
 			for (int i = 0; i < tasks.length; i++) {
 				final Task task = tasks[i];
-				TaskList list= (TaskList) pathToTaskList.get(new Path(task.getFileLocation()));
+				TaskList list= pathToTaskList.get(new Path(task.getFileLocation()));
 				if (list != null) {
 					list.add(task);
 				}
@@ -140,18 +142,17 @@ public class TodoTaskUpdater implements ITodoTaskUpdater {
 		if (!pathToTaskList.isEmpty()) {
 			Job job= new Job(Messages.TodoTaskUpdater_UpdateJob) {
 				protected IStatus run(IProgressMonitor monitor) {
-					MultiStatus status= new MultiStatus(CCorePlugin.PLUGIN_ID, 0, Messages.TodoTaskUpdater_UpdateJob, null);
+					MultiStatus status= new MultiStatus(CCorePlugin.PLUGIN_ID, 0,
+							Messages.TodoTaskUpdater_UpdateJob, null);
 
-					for (Iterator it = pathToTaskList.values().iterator(); it.hasNext();) {
-						final TaskList tasklist = (TaskList) it.next();
+					for (TaskList tasklist : pathToTaskList.values()) {
 						final IFile file= tasklist.fFile;
 						try {
 							if (file.exists()) {
 								file.deleteMarkers(ICModelMarker.TASK_MARKER, false, IResource.DEPTH_INFINITE);
-								final List tasks= tasklist.fTasks;
+								final List<Task> tasks= tasklist.fTasks;
 								if (tasks != null) {
-									for (Iterator itTasks = tasks.iterator(); itTasks.hasNext();) {
-										Task task = (Task) itTasks.next();
+									for (Task task : tasks) {
 										applyTask(task, file);
 									}
 								}
@@ -165,7 +166,7 @@ public class TodoTaskUpdater implements ITodoTaskUpdater {
 					return status;
 				}
 			};
-			job.setRule(new MultiRule((IProject[]) projects.toArray(new IProject[projects.size()])));
+			job.setRule(new MultiRule(projects.toArray(new IProject[projects.size()])));
 			job.setSystem(true);
 			job.schedule();
 		}

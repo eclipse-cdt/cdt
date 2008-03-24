@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 
 /**
@@ -278,7 +279,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateDefinition#deferredInstance(org.eclipse.cdt.core.dom.ast.IType[])
 	 */
 	@Override
-	public ICPPSpecialization deferredInstance(IType[] arguments) {
+	public ICPPSpecialization deferredInstance(ObjectMap argMap, IType[] arguments) {
 		ICPPSpecialization instance = getInstance( arguments );
 		if( instance == null ){
 			instance = new CPPDeferredFunctionInstance( this, arguments );

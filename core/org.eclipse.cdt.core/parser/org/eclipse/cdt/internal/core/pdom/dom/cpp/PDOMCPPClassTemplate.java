@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredClassInstance;
@@ -54,11 +55,9 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Bryan Wilkinson
- * 
  */
 class PDOMCPPClassTemplate extends PDOMCPPClassType
-		implements ICPPClassTemplate, ICPPInternalTemplateInstantiator,
-		ICPPTemplateScope {
+		implements ICPPClassTemplate, ICPPInternalTemplateInstantiator, ICPPTemplateScope {
 	
 	private static final int PARAMETERS = PDOMCPPClassType.RECORD_SIZE + 0;
 	private static final int INSTANCES = PDOMCPPClassType.RECORD_SIZE + 4;
@@ -71,15 +70,14 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPClassType.RECORD_SIZE + 16;
 	
-	public PDOMCPPClassTemplate(PDOM pdom, PDOMNode parent, ICPPClassTemplate template)
-			throws CoreException {
+	public PDOMCPPClassTemplate(PDOM pdom, PDOMNode parent, ICPPClassTemplate template)	throws CoreException {
 		super(pdom, parent, (ICPPClassType) template);
 	}
 
 	public PDOMCPPClassTemplate(PDOM pdom, int bindingRecord) {
 		super(pdom, bindingRecord);
 	}
-	
+
 	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
@@ -130,16 +128,15 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 		
 	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() throws DOMException {
 		try {
-			ArrayList<PDOMCPPClassTemplatePartialSpecialization> partials = new ArrayList<PDOMCPPClassTemplatePartialSpecialization>();
+			ArrayList<PDOMCPPClassTemplatePartialSpecialization> partials =
+				new ArrayList<PDOMCPPClassTemplatePartialSpecialization>();
 			for (PDOMCPPClassTemplatePartialSpecialization partial = getFirstPartial();
 					partial != null;
 					partial = partial.getNextPartial()) {
 				partials.add(partial);
 			}
 			
-			return partials
-					.toArray(new ICPPClassTemplatePartialSpecialization[partials
-							.size()]);
+			return partials.toArray(new ICPPClassTemplatePartialSpecialization[partials.size()]);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return new ICPPClassTemplatePartialSpecialization[0];
@@ -154,7 +151,7 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) throws DOMException {
 		try {
 		    if (getDBName().equals(name.toCharArray())) {
-		        if (CPPClassScope.isConstructorReference(name)){
+		        if (CPPClassScope.isConstructorReference(name)) {
 		            return CPPSemantics.resolveAmbiguities(name, getConstructors());
 		        }
 	            //9.2 ... The class-name is also inserted into the scope of the class itself
@@ -172,7 +169,8 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 				}
 			};
 		    
-		    BindingCollector visitor = new BindingCollector(getLinkageImpl(), name.toCharArray(), filter, false, true);
+		    BindingCollector visitor = new BindingCollector(getLinkageImpl(), name.toCharArray(), filter,
+		    		false, true);
 			accept(visitor);
 			return CPPSemantics.resolveAmbiguities(name, visitor.getBindings());
 		} catch (CoreException e) {
@@ -182,7 +180,8 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 	}
 	
 	@Override
-	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) throws DOMException {
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet)
+			throws DOMException {
 		IBinding[] result = null;
 		try {
 			if ((!prefixLookup && getDBName().compare(name.toCharArray(), true) == 0)
@@ -202,7 +201,8 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 				}
 			};
 			
-			BindingCollector visitor = new BindingCollector(getLinkageImpl(), name.toCharArray(), filter, prefixLookup, !prefixLookup);
+			BindingCollector visitor = new BindingCollector(getLinkageImpl(), name.toCharArray(), filter,
+					prefixLookup, !prefixLookup);
 			accept(visitor);
 			result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result, visitor.getBindings());
 		} catch (CoreException e) {
@@ -213,7 +213,7 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 	
 	private class PDOMCPPTemplateScope implements ICPPTemplateScope, IIndexScope {
 		public IBinding[] find(String name) throws DOMException {
-			return CPPSemantics.findBindings( this, name, false );
+			return CPPSemantics.findBindings(this, name, false);
 		}
 
 		public final IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
@@ -242,7 +242,8 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 				throws DOMException {
 			IBinding[] result = null;
 			try {
-				BindingCollector visitor = new BindingCollector(getLinkageImpl(), name.toCharArray(), null, prefixLookup, !prefixLookup);
+				BindingCollector visitor = new BindingCollector(getLinkageImpl(), name.toCharArray(), null,
+						prefixLookup, !prefixLookup);
 				PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + PARAMETERS, getLinkageImpl());
 				list.accept(visitor);
 				result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result, visitor.getBindings());
@@ -309,10 +310,10 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 		}
 	}
 
-	public ICPPSpecialization deferredInstance(IType[] arguments) {
-		ICPPSpecialization instance = getInstance( arguments );
-		if( instance == null ){
-			instance = new CPPDeferredClassInstance( this, arguments );
+	public ICPPSpecialization deferredInstance(ObjectMap argMap, IType[] arguments) {
+		ICPPSpecialization instance = getInstance(arguments);
+		if (instance == null) {
+			instance = new CPPDeferredClassInstance(this, argMap, arguments);
 		}
 		return instance;
 	}
@@ -368,10 +369,10 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 			return e.getProblem();
 		}
 		
-		if( template instanceof IProblemBinding )
+		if (template instanceof IProblemBinding)
 			return template;
-		if( template != null && template instanceof ICPPClassTemplatePartialSpecialization ){
-			return ((PDOMCPPClassTemplate)template).instantiate( arguments );	
+		if (template != null && template instanceof ICPPClassTemplatePartialSpecialization) {
+			return ((PDOMCPPClassTemplate)template).instantiate(arguments);	
 		}
 		
 		return CPPTemplates.instantiateTemplate(this, arguments, null);
@@ -384,45 +385,46 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 		}
 		
 		try {
-		if( type instanceof ICPPClassTemplate  && !(type instanceof ProblemBinding)) {
-			boolean same= !(type instanceof ICPPClassTemplatePartialSpecialization);
-			ICPPClassType ctype= (ICPPClassType) type;
-			try {
-				if (same && ctype.getKey() == getKey()) {
-					char[][] qname= ctype.getQualifiedNameCharArray();
-					same= hasQualifiedName(qname, qname.length-1);
+			if (type instanceof ICPPClassTemplate  && !(type instanceof ProblemBinding)) {
+				boolean same= !(type instanceof ICPPClassTemplatePartialSpecialization);
+				ICPPClassType ctype= (ICPPClassType) type;
+				try {
+					if (same && ctype.getKey() == getKey()) {
+						char[][] qname= ctype.getQualifiedNameCharArray();
+						same= hasQualifiedName(qname, qname.length - 1);
+					}
+				} catch (DOMException e) {
+					CCorePlugin.log(e);
 				}
-			} catch (DOMException e) {
-				CCorePlugin.log(e);
-			}
-			if(!same)
-				return false;
-			
-			ICPPTemplateParameter[] params= getTemplateParameters();
-			ICPPTemplateParameter[] oparams= ((ICPPClassTemplate)type).getTemplateParameters();
-			
-			if(params==null && oparams==null)
-				return true;
-			
-			if(params==null || oparams==null)
-				return false;
-			
-			if(params.length != oparams.length)
-				return false;
-			
-			for(int i=0; same && i<params.length; i++) {
-				ICPPTemplateParameter p= params[i], op= oparams[i];
-				if(p instanceof IType && op instanceof IType) {
-					same &= (((IType)p).isSameType((IType)op));
-				} else {
+				if (!same)
 					return false;
+				
+				ICPPTemplateParameter[] params= getTemplateParameters();
+				ICPPTemplateParameter[] oparams= ((ICPPClassTemplate) type).getTemplateParameters();
+				
+				if (params == null && oparams == null)
+					return true;
+				
+				if (params == null || oparams == null)
+					return false;
+				
+				if (params.length != oparams.length)
+					return false;
+				
+				for (int i = 0; same && i < params.length; i++) {
+					ICPPTemplateParameter p= params[i];
+					ICPPTemplateParameter op= oparams[i];
+					if (p instanceof IType && op instanceof IType) {
+						same &= (((IType)p).isSameType((IType)op));
+					} else {
+						return false;
+					}
 				}
+				
+				return same;
 			}
-			
-			return same;
-		}
-		} catch(DOMException de) {
-			CCorePlugin.log(de);
+		} catch (DOMException e) {
+			CCorePlugin.log(e);
 			return false;
 		}
 		

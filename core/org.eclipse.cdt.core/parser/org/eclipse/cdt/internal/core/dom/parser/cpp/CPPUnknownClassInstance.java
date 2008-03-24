@@ -63,10 +63,10 @@ public class CPPUnknownClassInstance extends CPPUnknownClass implements ICPPInte
 		instances.put(arguments, specialization);
 	}
 
-	public ICPPSpecialization deferredInstance(IType[] arguments) {
+	public ICPPSpecialization deferredInstance(ObjectMap argMap, IType[] arguments) {
 		ICPPSpecialization instance = getInstance(arguments);
 		if (instance == null) {
-			instance = new CPPDeferredClassInstance(this, arguments);
+			instance = new CPPDeferredClassInstance(this, argMap, arguments);
 			addSpecialization(arguments, instance);
 		}
 		return instance;
@@ -93,7 +93,7 @@ public class CPPUnknownClassInstance extends CPPUnknownClass implements ICPPInte
 	}
 
 	public IBinding instantiate(IType[] arguments) {
-		return deferredInstance(arguments);
+		return deferredInstance(null, arguments);
 	}
 
 	public IType[] getArguments() {

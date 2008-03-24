@@ -1382,7 +1382,7 @@ public class CPPTemplates {
 			}
 		}
 
-		//14.5.4.1 If none of the specializations is more specialized than all the other matchnig
+		//14.5.4.1 If none of the specializations is more specialized than all the other matching
 		//specializations, then the use of the class template is ambiguous and the program is ill-formed.
 		if (!bestMatchIsBest) {
 			//TODO problem
@@ -1599,6 +1599,7 @@ public class CPPTemplates {
 		ICPPTemplateParameter param = null;
 		IType arg = null;
 		IType[] actualArgs = new IType[numParams];
+		boolean argsContainTemplateParameters = false;
 
 		for (int i = 0; i < numParams; i++) {
 			arg = null;
@@ -1606,10 +1607,6 @@ public class CPPTemplates {
 
 			if (i < numArgs) {
 				arg = arguments[i];
-				//If the argument is a template parameter, we can't instantiate yet, defer for later
-				if (typeContainsTemplateParameter(arg)) {
-					return ((ICPPInternalTemplateInstantiator) template).deferredInstance(arguments);
-				}
 			} else {
 				IType defaultType = null;
 				try {
@@ -1641,12 +1638,24 @@ public class CPPTemplates {
 			}
 
 			if (CPPTemplates.matchTemplateParameterAndArgument(param, arg, map)) {
-				map.put(param, arg);
+				if (!param.equals(arg)) {
+					map.put(param, arg);
+				}
 				actualArgs[i] = arg;
+				if (typeContainsTemplateParameter(arg)) {
+					argsContainTemplateParameters = true;
+				}
 			} else {
 				//TODO problem
 				return null;
 			}
+		}
+
+		if (map.isEmpty()) {
+			map = null;
+		}
+		if (argsContainTemplateParameters) {
+			return ((ICPPInternalTemplateInstantiator) template).deferredInstance(map, arguments);
 		}
 
 		ICPPSpecialization instance = ((ICPPInternalTemplateInstantiator) template).getInstance(actualArgs);

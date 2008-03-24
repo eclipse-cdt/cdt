@@ -42,6 +42,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 
 /**
@@ -115,10 +116,10 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 	}
 
 	@Override
-	public ICPPSpecialization deferredInstance(IType[] arguments) {
+	public ICPPSpecialization deferredInstance(ObjectMap argMap, IType[] arguments) {
 		ICPPSpecialization instance = getInstance(arguments);
 		if (instance == null) {
-			instance = new CPPDeferredClassInstance(this, arguments);
+			instance = new CPPDeferredClassInstance(this, argMap, arguments);
 			addSpecialization(arguments, instance);
 		}
 		return instance;
@@ -127,7 +128,7 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 	public void checkForDefinition() {
 		FindDefinitionAction action = new FindDefinitionAction();
 		IASTNode node = CPPVisitor.getContainingBlockItem(declarations[0]).getParent();
-		while(node instanceof ICPPASTTemplateDeclaration)
+		while (node instanceof ICPPASTTemplateDeclaration)
 			node = node.getParent();
 		node.accept(action);
 		definition = action.result;
@@ -141,7 +142,8 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 	}
 	
 	public void addPartialSpecialization(ICPPClassTemplatePartialSpecialization spec) {
-		partialSpecializations = (ICPPClassTemplatePartialSpecialization[]) ArrayUtil.append(ICPPClassTemplatePartialSpecialization.class, partialSpecializations, spec);
+		partialSpecializations = (ICPPClassTemplatePartialSpecialization[]) ArrayUtil.append(
+				ICPPClassTemplatePartialSpecialization.class, partialSpecializations, spec);
 	}
 
 	public ICPPASTCompositeTypeSpecifier getCompositeTypeSpecifier() {

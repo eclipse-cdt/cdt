@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalTemplateInstantiator;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
@@ -37,7 +38,7 @@ public class CompositeCPPFunctionTemplateSpecialization
 		return result;
 	}
 
-	public ICPPSpecialization deferredInstance(IType[] arguments) {
+	public ICPPSpecialization deferredInstance(ObjectMap argMap, IType[] arguments) {
 		fail(); return null; 
 	}
 

@@ -25,7 +25,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.Util;
@@ -41,7 +40,6 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Bryan Wilkinson
- * 
  */
 class PDOMCPPClassTemplatePartialSpecialization extends
 		PDOMCPPClassTemplate implements ICPPClassTemplatePartialSpecialization, ICPPSpecialization, IPDOMOverloader {
@@ -118,16 +116,16 @@ class PDOMCPPClassTemplatePartialSpecialization extends
 	}
 	
 	private static class TemplateArgumentCollector implements IPDOMVisitor {
-		private List args = new ArrayList();
+		private List<IType> args = new ArrayList<IType>();
 		public boolean visit(IPDOMNode node) throws CoreException {
 			if (node instanceof IType)
-				args.add(node);
+				args.add((IType) node);
 			return false;
 		}
 		public void leave(IPDOMNode node) throws CoreException {
 		}
 		public IType[] getTemplateArguments() {
-			return (IType[])args.toArray(new IType[args.size()]);
+			return args.toArray(new IType[args.size()]);
 		}
 	}
 	
@@ -182,7 +180,7 @@ class PDOMCPPClassTemplatePartialSpecialization extends
 			
 			//If the argument is a template parameter, we can't instantiate yet, defer for later
 			if( CPPTemplates.typeContainsTemplateParameter( arg ) ){
-				return deferredInstance( args );
+				return deferredInstance( argMap, args );
 			}
 			try {
 				if( !CPPTemplates.deduceTemplateArgument( argMap,  spec, arg ) )
@@ -199,11 +197,11 @@ class PDOMCPPClassTemplatePartialSpecialization extends
 				return null;
 		}
 		
-		return (ICPPTemplateInstance) CPPTemplates.createInstance( (ICPPScope) getScope(), this, argMap, args );
+		return CPPTemplates.createInstance( (ICPPScope) getScope(), this, argMap, args );
 	}
 
 	private static class NodeCollector implements IPDOMVisitor {
-		private List nodes = new ArrayList();
+		private List<IPDOMNode> nodes = new ArrayList<IPDOMNode>();
 		public boolean visit(IPDOMNode node) throws CoreException {
 			nodes.add(node);
 			return false;
@@ -211,7 +209,7 @@ class PDOMCPPClassTemplatePartialSpecialization extends
 		public void leave(IPDOMNode node) throws CoreException {
 		}
 		public IPDOMNode[] getNodes() {
-			return (IPDOMNode[])nodes.toArray(new IPDOMNode[nodes.size()]);
+			return nodes.toArray(new IPDOMNode[nodes.size()]);
 		}
 	}
 	

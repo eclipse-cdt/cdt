@@ -24,20 +24,19 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /**
- * Represents a partially instantiated C++ class template, who's arguments contain at least one template
- * type parameter.
+ * Represents a partially instantiated class template, where instance arguments contain at least one
+ * template type parameter.
  *
  * @author aniefer
  */
 public class CPPDeferredClassInstance extends CPPInstance
 		implements ICPPClassType, ICPPDeferredTemplateInstance, ICPPInternalDeferredClassInstance {
 	
-	public CPPDeferredClassInstance(ICPPClassTemplate orig,	IType[] arguments) {
-		super(null, orig, buildArgumentMap(orig, arguments), arguments);
+	public CPPDeferredClassInstance(ICPPClassTemplate orig,	ObjectMap argMap, IType[] arguments) {
+		super(null, orig, argMap, arguments);
 	}
 	
 	/* (non-Javadoc)
@@ -176,35 +175,5 @@ public class CPPDeferredClassInstance extends CPPInstance
 
 	private ICPPClassTemplate getClassTemplate() {
 		return (ICPPClassTemplate) getSpecializedBinding();
-	}
-	
-	private static ObjectMap buildArgumentMap(ICPPClassTemplate template, IType[] arguments) {
-		ICPPTemplateParameter[] parameters = null;
-		try {
-			parameters = template.getTemplateParameters();
-		} catch (DOMException e) {
-		}
-
-		if (parameters == null || parameters.length == 0) {
-			return null;
-		}
-
-		int numParams = parameters.length;
-		ObjectMap map = new ObjectMap(numParams);
-		int numArgs = arguments.length;
-		boolean trivial = true;
-		for (int i = 0; i < numParams && i < numArgs; i++) {
-			ICPPTemplateParameter param = parameters[i];
-			IType arg = arguments[i];
-
-			if (!CPPTemplates.matchTemplateParameterAndArgument(param, arg, map)) {
-				return null;
-			}
-			map.put(param, arg);
-			if (!arg.equals(param)) {
-				trivial = false;
-			}
-		}
-		return trivial ? null : map;
 	}
 }

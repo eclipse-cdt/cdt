@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalTemplateInstantiator;
 import org.eclipse.cdt.internal.core.index.CIndex;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
@@ -23,10 +24,10 @@ import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 import org.eclipse.core.runtime.CoreException;
 
 public class InternalTemplateInstantiatorUtil {
-	public static ICPPSpecialization deferredInstance(IType[] arguments, ICompositesFactory cf, IIndexBinding rbinding) {
-		ICPPSpecialization spec= ((ICPPInternalTemplateInstantiator)rbinding).deferredInstance(arguments);
+	public static ICPPSpecialization deferredInstance(ObjectMap argMap, IType[] arguments, ICompositesFactory cf, IIndexBinding rbinding) {
+		ICPPSpecialization spec= ((ICPPInternalTemplateInstantiator)rbinding).deferredInstance(argMap, arguments);
 		if (spec instanceof IIndexFragmentBinding) {
-			return (ICPPSpecialization) cf.getCompositeBinding((IIndexFragmentBinding)spec);
+			return (ICPPSpecialization) cf.getCompositeBinding((IIndexFragmentBinding) spec);
 		} else {
 			//can result in a non-index binding
 			return spec;
@@ -38,7 +39,7 @@ public class InternalTemplateInstantiatorUtil {
 		try {
 			IIndexFragmentBinding[] bindings= ((CIndex)((CPPCompositesFactory)cf).getContext()).findEquivalentBindings(cbinding);
 			
-			for(int i=0; i<bindings.length && !(preferredInstance instanceof IIndexFragmentBinding); i++) {
+			for (int i = 0; i < bindings.length && !(preferredInstance instanceof IIndexFragmentBinding); i++) {
 				ICPPInternalTemplateInstantiator instantiator= (ICPPInternalTemplateInstantiator) bindings[i];
 				preferredInstance= instantiator.getInstance(arguments);
 			}
@@ -46,7 +47,7 @@ public class InternalTemplateInstantiatorUtil {
 			CCorePlugin.log(ce);
 		}
 		
-		if(preferredInstance instanceof IIndexFragmentBinding) {
+		if (preferredInstance instanceof IIndexFragmentBinding) {
 			return (ICPPSpecialization) cf.getCompositeBinding((IIndexFragmentBinding)preferredInstance);
 		} else {
 			// can result in a non-index binding

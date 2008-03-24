@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
@@ -24,8 +23,8 @@ import org.eclipse.cdt.core.parser.util.ObjectMap;
  * @author aniefer
  *
  */
-public class CPPFunctionTemplateSpecialization extends CPPFunctionSpecialization implements
-		ICPPFunctionTemplate, ICPPFunction, ICPPInternalTemplate {
+public class CPPFunctionTemplateSpecialization extends CPPFunctionSpecialization
+		implements ICPPFunctionTemplate, ICPPInternalTemplate {
 
 	private ObjectMap instances = null;
 	
@@ -73,8 +72,7 @@ public class CPPFunctionTemplateSpecialization extends CPPFunctionSpecialization
 		return CPPTemplates.instantiateTemplate( this, arguments, argumentMap ); 
 	}
 
-	public ICPPSpecialization deferredInstance(IType[] arguments) {
-		// TODO Auto-generated method stub
+	public ICPPSpecialization deferredInstance(ObjectMap argMap, IType[] arguments) {
 		return null;
 	}
 }

@@ -110,7 +110,7 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 		return CPPTemplates.instantiateTemplate(this, arguments, argumentMap);
 	}
 
-	public ICPPSpecialization deferredInstance(IType[] arguments) {
+	public ICPPSpecialization deferredInstance(ObjectMap argMap, IType[] arguments) {
 		return null;
 	}
 

@@ -32,7 +32,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 /**
  * @author aniefer
  */
-public class CPPField extends CPPVariable implements ICPPField, ICPPInternalBinding {
+public class CPPField extends CPPVariable implements ICPPField {
     public static class CPPFieldProblem extends CPPVariable.CPPVariableProblem implements ICPPField {
         /**
          * @param id

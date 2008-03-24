@@ -6,23 +6,24 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
+ * 	   QNX - Initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /**
  * @author Bryan Wilkinson
- * 
  */
 public interface ICPPInternalTemplateInstantiator {
-	
-	public IBinding instantiate( IType [] arguments );
-	
-	public ICPPSpecialization deferredInstance( IType [] arguments );
-	
-	public ICPPSpecialization getInstance( IType [] arguments );
+
+	public IBinding instantiate(IType[] arguments);
+
+	public ICPPSpecialization deferredInstance(ObjectMap argMap, IType[] arguments);
+
+	public ICPPSpecialization getInstance(IType[] arguments);
 }

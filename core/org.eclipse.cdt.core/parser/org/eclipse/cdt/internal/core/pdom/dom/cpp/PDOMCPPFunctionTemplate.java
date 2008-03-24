@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredFunctionInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplates;
@@ -47,7 +48,6 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Bryan Wilkinson
- * 
  */
 class PDOMCPPFunctionTemplate extends PDOMCPPFunction implements
 		ICPPFunctionTemplate, ICPPInternalTemplateInstantiator,
@@ -114,7 +114,7 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction implements
 		}
 	}
 
-	public ICPPSpecialization deferredInstance(IType[] arguments) {
+	public ICPPSpecialization deferredInstance(ObjectMap argMap, IType[] arguments) {
 		ICPPSpecialization instance = getInstance(arguments);
 		if( instance == null ){
 			instance = new CPPDeferredFunctionInstance( this, arguments );
@@ -224,7 +224,8 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction implements
 			throws DOMException {
 		IBinding[] result = null;
 		try {
-			BindingCollector visitor = new BindingCollector(getLinkageImpl(), name.toCharArray(), null, prefixLookup, !prefixLookup);
+			BindingCollector visitor = new BindingCollector(getLinkageImpl(), name.toCharArray(), null,
+					prefixLookup, !prefixLookup);
 			PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + TEMPLATE_PARAMS, getLinkageImpl());
 			list.accept(visitor);
 			result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result, visitor.getBindings());

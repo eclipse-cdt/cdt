@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalTemplateInstantiator;
 import org.eclipse.cdt.internal.core.index.CIndex;
@@ -63,8 +64,8 @@ ICPPClassTemplate, ICPPInternalTemplateInstantiator {
 		return result;
 	}
 
-	public ICPPSpecialization deferredInstance(IType[] arguments) {
-		return InternalTemplateInstantiatorUtil.deferredInstance(arguments, cf, rbinding);
+	public ICPPSpecialization deferredInstance(ObjectMap argMap, IType[] arguments) {
+		return InternalTemplateInstantiatorUtil.deferredInstance(argMap, arguments, cf, rbinding);
 	}
 
 	public ICPPSpecialization getInstance(IType[] arguments) {

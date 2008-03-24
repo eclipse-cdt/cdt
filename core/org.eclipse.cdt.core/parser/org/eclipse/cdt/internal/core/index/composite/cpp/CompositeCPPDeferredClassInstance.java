@@ -41,8 +41,8 @@ public class CompositeCPPDeferredClassInstance extends CompositeCPPClassType imp
 	}
 	
 	//	TODO - what happens to the arguments?
-	public ICPPSpecialization deferredInstance(IType[] arguments) {
-		ICPPSpecialization spec= ((ICPPInternalTemplateInstantiator)rbinding).deferredInstance(arguments);
+	public ICPPSpecialization deferredInstance(IType[] arguments, ObjectMap argMap) {
+		ICPPSpecialization spec= ((ICPPInternalTemplateInstantiator) rbinding).deferredInstance(argMap, arguments);
 		return (ICPPSpecialization) cf.getCompositeBinding((IIndexFragmentBinding)spec);
 	}
 

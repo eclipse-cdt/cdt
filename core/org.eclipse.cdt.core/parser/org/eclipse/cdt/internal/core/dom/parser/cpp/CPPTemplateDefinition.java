@@ -103,7 +103,7 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 		}
 	}
 
-	public abstract ICPPSpecialization deferredInstance(IType[] arguments);
+	public abstract ICPPSpecialization deferredInstance(ObjectMap argMap, IType[] arguments);
 	
 	public IBinding instantiate(ICPPASTTemplateId templateId) {//IASTNode[] arguments) {
 		IASTNode[] args = templateId.getTemplateArguments();

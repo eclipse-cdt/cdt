@@ -77,7 +77,7 @@ public class CPPClassTemplatePartialSpecialization extends CPPClassTemplate impl
 			
 			//If the argument is a template parameter, we can't instantiate yet, defer for later
 			if( CPPTemplates.typeContainsTemplateParameter( arg ) ){
-				return deferredInstance( args );
+				return deferredInstance( argMap, args );
 			}
 			try {
 				if( !CPPTemplates.deduceTemplateArgument( argMap,  spec, arg ) )

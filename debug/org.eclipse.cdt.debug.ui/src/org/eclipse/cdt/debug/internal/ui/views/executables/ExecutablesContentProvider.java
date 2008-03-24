@@ -118,7 +118,10 @@ class ExecutablesContentProvider extends ColumnLabelProvider implements IStructu
 				}
 				cell.setImage(null);
 			} else if (cell.getColumnIndex() == 5) {
-				cellText = exe.getPath().getFileExtension().toUpperCase();
+				cellText = "";
+				String fileExtension = exe.getPath().getFileExtension();
+				if (fileExtension != null)
+					cellText = fileExtension;
 			}
 			cell.setText(cellText);
 		}

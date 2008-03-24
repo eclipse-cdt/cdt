@@ -11,6 +11,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration;
  * @author Mike Kucera
  *
  */
+@Deprecated
 public class ISOCPPASTSimpleDeclaration extends CPPASTSimpleDeclaration implements IASTAmbiguityParent {
 
 	public ISOCPPASTSimpleDeclaration() {

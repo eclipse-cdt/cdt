@@ -55,6 +55,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
@@ -965,29 +966,37 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		//TODO int kind = asC99Kind(token)
 		int kind = token.getKind();
 		switch(kind){
-			case TK_typedef:  node.setStorageClass(IASTDeclSpecifier.sc_typedef);  return;
-			case TK_extern:   node.setStorageClass(IASTDeclSpecifier.sc_extern);   return;
-			case TK_static:   node.setStorageClass(IASTDeclSpecifier.sc_static);   return;
-			case TK_auto:     node.setStorageClass(IASTDeclSpecifier.sc_auto);     return;
-			case TK_register: node.setStorageClass(IASTDeclSpecifier.sc_register); return;
+			case TK_typedef:  node.setStorageClass(IASTDeclSpecifier.sc_typedef);    return;
+			case TK_extern:   node.setStorageClass(IASTDeclSpecifier.sc_extern);     return;
+			case TK_static:   node.setStorageClass(IASTDeclSpecifier.sc_static);     return;
+			case TK_auto:     node.setStorageClass(IASTDeclSpecifier.sc_auto);       return;
+			case TK_register: node.setStorageClass(IASTDeclSpecifier.sc_register);   return;
+			case TK_mutable:  node.setStorageClass(ICPPASTDeclSpecifier.sc_mutable); return;
+			
 			case TK_inline:   node.setInline(true);   return;
 			case TK_const:    node.setConst(true);    return;
 			case TK_volatile: node.setVolatile(true); return;
 		}
 		
-		// TODO: this isn't finished
 		if(node instanceof ICPPASTSimpleDeclSpecifier) {
 			ICPPASTSimpleDeclSpecifier n = (ICPPASTSimpleDeclSpecifier) node;
 			switch(kind) {
-				case TK_void:     n.setType(IASTSimpleDeclSpecifier.t_void);   break;
-				case TK_char:     n.setType(IASTSimpleDeclSpecifier.t_char);   break;
-				case TK_int:      n.setType(IASTSimpleDeclSpecifier.t_int);    break;
-				case TK_float:    n.setType(IASTSimpleDeclSpecifier.t_float);  break;
-				case TK_double:   n.setType(IASTSimpleDeclSpecifier.t_double); break;
+				case TK_void:     n.setType(IASTSimpleDeclSpecifier.t_void);       break;
+				case TK_char:     n.setType(IASTSimpleDeclSpecifier.t_char);       break;
+				case TK_int:      n.setType(IASTSimpleDeclSpecifier.t_int);        break;
+				case TK_float:    n.setType(IASTSimpleDeclSpecifier.t_float);      break;
+				case TK_double:   n.setType(IASTSimpleDeclSpecifier.t_double);     break;
+				case TK_bool:     n.setType(ICPPASTSimpleDeclSpecifier.t_bool);    break;
+				case TK_wchar_t:  n.setType(ICPPASTSimpleDeclSpecifier.t_wchar_t); break;
+				
 				case TK_signed:   n.setSigned(true);   break;
 				case TK_unsigned: n.setUnsigned(true); break;
 				case TK_long:     n.setLong(true);     break;
 				case TK_short:    n.setShort(true);    break;
+				case TK_friend:   n.setFriend(true);   break;
+				case TK_virtual:  n.setVirtual(true);  break;
+				case TK_volatile: n.setVolatile(true); break;
+				case TK_explicit: n.setExplicit(true); break;
 			}
 		}
 	}
@@ -1146,7 +1155,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	
 	
 	public void consumeInitDeclaratorComplete() {
-		DebugUtil.printMethodTrace();
+		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		
 		IASTDeclarator declarator = (IASTDeclarator) astStack.peek();
 		if(!(declarator instanceof IASTFunctionDeclarator))
@@ -1158,20 +1167,12 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		if(alternateDeclarator == null  || alternateDeclarator instanceof IASTProblemDeclaration)
 			return;
 		
-		
 		astStack.pop();
 		IASTNode ambiguityNode = new CPPASTAmbiguousDeclarator(declarator, (IASTDeclarator)alternateDeclarator);
-		
-		System.out.println("AMBIGUOUS DECLARATOR!");
-//		ASTPrinter.print(declarator);
-//		System.out.println();
-//		ASTPrinter.print(alternateDeclarator);
-//		System.out.println();
 				
         setOffsetAndLength(ambiguityNode);
 		astStack.push(ambiguityNode);
         
-		
 		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	

@@ -133,19 +133,16 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	
 	@Override
 	protected IParser getExpressionStatementParser() {
-		DebugUtil.printMethodTrace();
 		return new C99ExpressionStatementParser(parser.getOrderedTerminalSymbols()); 
 	}
 
 	@Override
 	protected IParser getNoCastExpressionParser() {
-		DebugUtil.printMethodTrace();
 		return new C99NoCastExpressionParser(parser.getOrderedTerminalSymbols());
 	}
 	
 	@Override
 	protected IParser getSizeofExpressionParser() {
-		DebugUtil.printMethodTrace();
 		return new C99SizeofExpressionParser(parser.getOrderedTerminalSymbols());
 	}
 	

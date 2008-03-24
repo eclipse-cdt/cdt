@@ -379,7 +379,7 @@ public class CPPASTNodeFactory implements ICPPASTNodeFactory {
 	}
 
 	public IASTSimpleDeclaration newSimpleDeclaration(IASTDeclSpecifier declSpecifier) {
-		return new ISOCPPASTSimpleDeclaration(declSpecifier);
+		return new CPPASTSimpleDeclaration(declSpecifier);
 	}
 
 	public IASTInitializerExpression newInitializerExpression(IASTExpression expression) {
@@ -403,8 +403,7 @@ public class CPPASTNodeFactory implements ICPPASTNodeFactory {
 		return new CPPASTFunctionDeclarator(name);
 	}
 
-	public ICPPASTSimpleTypeConstructorExpression newCPPSimpleTypeConstructorExpression(
-			int type, IASTExpression expression) {
+	public ICPPASTSimpleTypeConstructorExpression newCPPSimpleTypeConstructorExpression(int type, IASTExpression expression) {
 		return new CPPASTSimpleTypeConstructorExpression(type, expression);
 	}
 
@@ -516,8 +515,7 @@ public class CPPASTNodeFactory implements ICPPASTNodeFactory {
 		return new CPPASTFunctionDeclarator(name);
 	}
 
-	public IASTParameterDeclaration newParameterDeclaration(
-			IASTDeclSpecifier declSpec, IASTDeclarator declarator) {
+	public IASTParameterDeclaration newParameterDeclaration(IASTDeclSpecifier declSpec, IASTDeclarator declarator) {
 		return new CPPASTParameterDeclaration(declSpec, declarator);
 	}
 

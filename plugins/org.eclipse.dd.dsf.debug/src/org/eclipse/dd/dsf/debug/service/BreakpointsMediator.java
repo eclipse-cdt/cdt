@@ -420,13 +420,15 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 				new DataRequestMonitor<IBreakpointDMContext>(getExecutor(), installRM) {
 				@Override
                 protected void handleCompleted() {
-					if (getStatus().isOK()) {
+                    List<IBreakpointDMContext> list = breakpointIDs.get(breakpoint);
+                    if (list == null) {
+                        list = new LinkedList<IBreakpointDMContext>();
+                        breakpointIDs.put(breakpoint, list);
+                    }
+                    
+                    if (getStatus().isOK()) {
 						// Add the breakpoint back-end mapping
-						List<IBreakpointDMContext> list = breakpointIDs.get(breakpoint);
-						if (list == null)
-							list = new LinkedList<IBreakpointDMContext>();
 						list.add(getData());
-						breakpointIDs.put(breakpoint, list);
 					} else {
                         // TODO (bug 219841): need to add breakpoint error status tracking
                         // in addition to fBreakpointDMContexts.

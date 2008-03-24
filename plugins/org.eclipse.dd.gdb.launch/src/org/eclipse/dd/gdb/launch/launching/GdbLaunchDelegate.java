@@ -124,15 +124,15 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate
         
 
         // Create and invoke the launch sequence to create the debug control and services
-        final LaunchSequence launchSequence = 
-            new LaunchSequence(launch.getSession(), launch, exePath);
-        launch.getSession().getExecutor().execute(launchSequence);
+        final ServicesLaunchSequence servicesLaunchSequence = 
+            new ServicesLaunchSequence(launch.getSession(), launch, exePath);
+        launch.getSession().getExecutor().execute(servicesLaunchSequence);
         try {
-            launchSequence.get();
+            servicesLaunchSequence.get();
         } catch (InterruptedException e1) {
             throw new DebugException(new Status(IStatus.ERROR, GdbLaunchPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR, "Interrupted Exception in dispatch thread", e1)); //$NON-NLS-1$
         } catch (ExecutionException e1) {
-            throw new DebugException(new Status(IStatus.ERROR, GdbLaunchPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Error in launch sequence", e1.getCause())); //$NON-NLS-1$
+            throw new DebugException(new Status(IStatus.ERROR, GdbLaunchPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Error in services launch sequence", e1.getCause())); //$NON-NLS-1$
         }
         
         launch.initializeControl();
@@ -163,6 +163,17 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate
             throw new CoreException(new Status(IStatus.ERROR, GdbLaunchPlugin.PLUGIN_ID, 0, "Debugger shut down before launch was completed.", e)); //$NON-NLS-1$
         }            
         
+        // Create and invoke the final launch sequence to setup GDB
+        final FinalLaunchSequence finalLaunchSequence = 
+            new FinalLaunchSequence(launch.getSession().getExecutor(), launch, fSessionType);
+        launch.getSession().getExecutor().execute(finalLaunchSequence);
+        try {
+        	finalLaunchSequence.get();
+        } catch (InterruptedException e1) {
+            throw new DebugException(new Status(IStatus.ERROR, GdbLaunchPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR, "Interrupted Exception in dispatch thread", e1)); //$NON-NLS-1$
+        } catch (ExecutionException e1) {
+            throw new DebugException(new Status(IStatus.ERROR, GdbLaunchPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Error in final launch sequence", e1.getCause())); //$NON-NLS-1$
+        }
         // Create a memory retrieval and register it with session 
         try {
             launch.getDsfExecutor().submit( new Callable<Object>() {

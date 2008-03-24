@@ -17,6 +17,13 @@
    <extension
          point="org.eclipse.ui.views">
       <view
+            name="%ExecutablesView.name"
+            icon="icons/obj16/exec_view_obj.gif"
+            category="org.eclipse.debug.ui"
+            class="org.eclipse.cdt.debug.internal.ui.views.executables.ExecutablesView"
+            id="org.eclipse.cdt.debug.ui.executablesView">
+      </view>
+      <view
             name="%SignalsView.name"
             icon="icons/view16/signals_view.gif"
             category="org.eclipse.debug.ui"
@@ -88,6 +95,14 @@
          </view>      
          <viewShortcut
                id="org.eclipse.ui.views.ProblemView">
+         </viewShortcut>
+         <view
+               id="org.eclipse.cdt.debug.ui.executablesView"
+               relative="org.eclipse.ui.console.ConsoleView"
+               relationship="stack">
+         </view>
+         <viewShortcut
+               id="org.eclipse.cdt.debug.internal.ui.views.executables.ExecutablesView">
          </viewShortcut>
          <actionSet
                id="org.eclipse.cdt.debug.ui.debugActionSet">

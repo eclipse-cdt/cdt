@@ -20,7 +20,12 @@ public interface ICDebugUIConstants {
 	public static final String PLUGIN_ID = CDebugUIPlugin.getUniqueIdentifier();
 
 	public static final String PREFIX = PLUGIN_ID + "."; //$NON-NLS-1$
-	
+
+	/**
+	 * Executables view identifier (value <code>"org.eclipse.cdt.debug.ui.executablesView"</code>).
+	 */
+	public static final String ID_EXECUTABLES_VIEW = PREFIX + "executablesView"; //$NON-NLS-1$
+
 	/**
 	 * Disassembly view identifier (value <code>"org.eclipse.cdt.debug.ui.DisassemblyView"</code>).
 	 */

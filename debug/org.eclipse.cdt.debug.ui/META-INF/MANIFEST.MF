@@ -16,6 +16,7 @@ Export-Package:
  org.eclipse.cdt.debug.internal.ui.sourcelookup,
  org.eclipse.cdt.debug.internal.ui.views,
  org.eclipse.cdt.debug.internal.ui.views.disassembly,
+ org.eclipse.cdt.debug.internal.ui.views.executables,
  org.eclipse.cdt.debug.internal.ui.views.modules,
  org.eclipse.cdt.debug.internal.ui.views.signals,
  org.eclipse.cdt.debug.ui,

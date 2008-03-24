@@ -1554,10 +1554,10 @@ public CPPNoFunctionDeclaratorParser(String[] mapFrom) {  // constructor
             }  
    
             //
-            // Rule 337:  declarator_id_name ::= dcolon_opt nested_name_specifier_opt type_name
+            // Rule 337:  declarator_id_name ::= <empty> nested_name_specifier template_opt unqualified_id_name
             //
             case 337: {       action.builder.
-   consumeQualifiedId(false);                 break;
+   consumeQualifiedId(true);                 break;
             }  
    
             //

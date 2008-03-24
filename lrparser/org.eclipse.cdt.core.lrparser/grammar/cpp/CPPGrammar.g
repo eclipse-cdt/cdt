@@ -443,7 +443,7 @@ dcolon_opt
           /. $Build  consumeEmpty();  $EndBuild ./
 
 
--- this is a compound name
+
 qualified_id_name
     ::= dcolon_opt nested_name_specifier template_opt unqualified_id_name
           /. $Build  consumeQualifiedId(true);  $EndBuild ./
@@ -1337,12 +1337,16 @@ cv_qualifier
           /. $Build  consumeDeclSpecToken(); $EndBuild ./
 
 
-declarator_id_name
-   ::= qualified_or_unqualified_name
-     | dcolon_opt nested_name_specifier_opt type_name
-          /. $Build  consumeQualifiedId(false);  $EndBuild ./
+--declarator_id_name
+--   ::= qualified_or_unqualified_name
+--     | dcolon_opt nested_name_specifier_opt type_name
+--          /. $Build  consumeQualifiedId(false);  $EndBuild ./
       
-
+declarator_id_name
+   ::= unqualified_id_name
+     | <empty> nested_name_specifier template_opt unqualified_id_name
+         /. $Build  consumeQualifiedId(true);  $EndBuild ./
+  
 
 type_id
     ::= type_specifier_seq
@@ -1734,7 +1738,7 @@ type_parameter
           /. $Build  consumeTemplatedTypeTemplateParameter(true);  $EndBuild ./
 
 
--- pushes name node on stack
+
 template_id_name
     ::= template_identifier '<' <openscope-ast> template_argument_list_opt '>'
           /. $Build  consumeTemplateId();  $EndBuild ./

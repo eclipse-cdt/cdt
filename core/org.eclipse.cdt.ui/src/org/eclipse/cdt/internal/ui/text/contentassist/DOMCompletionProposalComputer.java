@@ -186,17 +186,22 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 
 	private void addMacroProposals(CContentAssistInvocationContext context, String prefix, List<CCompletionProposal> proposals) {
 		char[] prefixChars= prefix.toCharArray();
+		final boolean matchPrefix= !context.isContextInformationStyle();
 		IASTCompletionNode completionNode = context.getCompletionNode();
 		IASTPreprocessorMacroDefinition[] macros = completionNode.getTranslationUnit().getMacroDefinitions();
 		if (macros != null)
-			for (int i = 0; i < macros.length; ++i)
-				if (CharArrayUtils.equals(macros[i].getName().toCharArray(), 0, prefixChars.length, prefixChars, true))
+			for (int i = 0; i < macros.length; ++i) {
+				final char[] macroName= macros[i].getName().toCharArray();
+				if (CharArrayUtils.equals(macroName, 0, matchPrefix ? prefixChars.length : macroName.length, prefixChars, true))
 					handleMacro(macros[i], context, prefix, proposals);
+			}
 		macros = completionNode.getTranslationUnit().getBuiltinMacroDefinitions();
 		if (macros != null)
-			for (int i = 0; i < macros.length; ++i)
-				if (CharArrayUtils.equals(macros[i].getName().toCharArray(), 0, prefixChars.length, prefixChars, true))
+			for (int i = 0; i < macros.length; ++i) {
+				final char[] macroName= macros[i].getName().toCharArray();
+				if (CharArrayUtils.equals(macroName, 0, matchPrefix ? prefixChars.length : macroName.length, prefixChars, true))
 					handleMacro(macros[i], context, prefix, proposals);
+			}
 	}
 	
 	private void handleMacro(IASTPreprocessorMacroDefinition macro, CContentAssistInvocationContext context, String prefix, List<CCompletionProposal> proposals) {

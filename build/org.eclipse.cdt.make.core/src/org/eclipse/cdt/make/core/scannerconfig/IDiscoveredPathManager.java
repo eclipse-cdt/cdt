@@ -119,9 +119,9 @@ public interface IDiscoveredPathManager {
 	IDiscoveredPathInfo getDiscoveredInfo(IProject project) throws CoreException;
 	void removeDiscoveredInfo(IProject project);
 	void removeDiscoveredInfo(IProject project, InfoContext context);
-	void updateDiscoveredInfo(InfoContext context, IDiscoveredPathInfo info, boolean updateContainer, List changedResources) throws CoreException;
-	void updateDiscoveredInfo(IDiscoveredPathInfo info, List changedResources) throws CoreException;
-    void changeDiscoveredContainer(IProject project, ScannerConfigScope profileScope, List changedResources);
+	void updateDiscoveredInfo(InfoContext context, IDiscoveredPathInfo info, boolean updateContainer, List<IResource> changedResources) throws CoreException;
+	void updateDiscoveredInfo(IDiscoveredPathInfo info, List<IResource> changedResources) throws CoreException;
+    void changeDiscoveredContainer(IProject project, ScannerConfigScope profileScope, List<IResource> changedResources);
 
 	void addDiscoveredInfoListener(IDiscoveredInfoListener listener);
 	void removeDiscoveredInfoListener(IDiscoveredInfoListener listener);

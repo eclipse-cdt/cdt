@@ -13,7 +13,6 @@ package org.eclipse.cdt.make.internal.core.scannerconfig;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -44,20 +43,19 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
-
 
 public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceChangeListener {
 
-	private Map fDiscoveredInfoHolderMap = new HashMap();
-	private List listeners = Collections.synchronizedList(new ArrayList());
+	private Map<IProject, DiscoveredInfoHolder> fDiscoveredInfoHolderMap = new HashMap<IProject, DiscoveredInfoHolder>();
+	private List<IDiscoveredInfoListener> listeners = Collections.synchronizedList(new ArrayList<IDiscoveredInfoListener>());
 
 	private static final int INFO_CHANGED = 1;
 	private static final int INFO_REMOVED = 2;
 
 	private static class DiscoveredInfoHolder {
-		Map fInfoMap = new HashMap();
+		Map<InfoContext, IDiscoveredPathInfo> fInfoMap = new HashMap<InfoContext, IDiscoveredPathInfo>();
 //		PathSettingsContainer fContainer = PathSettingsContainer.createRootContainer();
 
 		public IDiscoveredPathInfo getInfo(InfoContext context){
@@ -230,14 +228,14 @@ public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceC
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager#updateDiscoveredInfo(org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo, java.util.List)
      */
-    public void updateDiscoveredInfo(IDiscoveredPathInfo info, List changedResources) throws CoreException {
+    public void updateDiscoveredInfo(IDiscoveredPathInfo info, List<IResource> changedResources) throws CoreException {
     	updateDiscoveredInfo(new InfoContext(info.getProject()), info, true, changedResources);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager#updateDiscoveredInfo(org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo, java.util.List)
      */
-    public void updateDiscoveredInfo(InfoContext context, IDiscoveredPathInfo info, boolean updateContainer, List changedResources) throws CoreException {
+    public void updateDiscoveredInfo(InfoContext context, IDiscoveredPathInfo info, boolean updateContainer, List<IResource> changedResources) throws CoreException {
     	DiscoveredInfoHolder holder = getHolder(info.getProject(), true);
     	IDiscoveredPathInfo oldInfo = holder.getInfo(context); 
 		if (oldInfo != null) {
@@ -271,7 +269,7 @@ public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceC
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager#changeDiscoveredContainer(org.eclipse.core.resources.IProject, java.lang.String)
      */
-    public void changeDiscoveredContainer(final IProject project, final ScannerConfigScope profileScope, final List changedResources) {
+    public void changeDiscoveredContainer(final IProject project, final ScannerConfigScope profileScope, final List<IResource> changedResources) {
         // order here is of essence
         // 1. clear DiscoveredPathManager's path info cache
     	DiscoveredInfoHolder holder = getHolder(project, false);
@@ -292,16 +290,15 @@ public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceC
         				CoreModel.setPathEntryContainer(new ICProject[]{cProject},
         						container, null);
         				if (changedResources != null) {
-        					List changeDelta = new ArrayList(changedResources.size());
-        					for (Iterator i = changedResources.iterator(); i.hasNext(); ) {
-        						IResource resource = (IResource) i.next();
+        					List<PathEntryContainerChanged> changeDelta = new ArrayList<PathEntryContainerChanged>(changedResources.size());
+        					for (IResource resource : changedResources) {
         						IPath path = resource.getFullPath();
         						changeDelta.add(new PathEntryContainerChanged(path, 
         								PathEntryContainerChanged.INCLUDE_CHANGED | 
         								PathEntryContainerChanged.MACRO_CHANGED)); // both include paths and symbols changed
         					}
         					CoreModel.pathEntryContainerUpdates(container, 
-        							(PathEntryContainerChanged[]) changeDelta.toArray(new PathEntryContainerChanged[changeDelta.size()]), 
+        							changeDelta.toArray(new PathEntryContainerChanged[changeDelta.size()]), 
         							null);
         				}
         			}
@@ -329,7 +326,7 @@ public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceC
 		for (int i = 0; i < list.length; i++) {
 			final IDiscoveredInfoListener listener = (IDiscoveredInfoListener)list[i];
 			if (listener != null) {
-				Platform.run(new ISafeRunnable() {
+				SafeRunner.run(new ISafeRunnable() {
 		
 					public void handleException(Throwable exception) {
 						IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1,

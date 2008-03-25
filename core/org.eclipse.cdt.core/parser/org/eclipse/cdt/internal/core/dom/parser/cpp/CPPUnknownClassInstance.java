@@ -112,7 +112,9 @@ public class CPPUnknownClassInstance extends CPPUnknownClass implements ICPPInte
 			ICPPSpecialization specialization = (ICPPSpecialization) result;
 			result = CPPTemplates.instantiateTemplate((ICPPTemplateDefinition) specialization, newArgs, null);
 		} else {
-			result = new CPPUnknownClassInstance(scopeBinding, name, newArgs);
+			ICPPInternalUnknown newScopeBinding = result instanceof CPPUnknownBinding ?
+					((CPPUnknownBinding) result).scopeBinding : scopeBinding;
+			result = new CPPUnknownClassInstance(newScopeBinding, name, newArgs);
 		}
 		return result;
 	}

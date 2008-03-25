@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 
 /*
@@ -114,13 +115,6 @@ public class CPPUnknownClass extends CPPUnknownBinding implements ICPPClassType 
      */
     public IScope getCompositeScope() {
         return getUnknownScope();
-    }
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#clone()
-     */
-    public Object clone() {
-        return this;
     }
 
     /* (non-Javadoc)

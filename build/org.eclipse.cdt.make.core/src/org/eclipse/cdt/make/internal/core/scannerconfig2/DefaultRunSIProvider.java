@@ -222,14 +222,14 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
             props.put(LANG_ENV_VAR, "en_US.UTF-8"); //$NON-NLS-1$
         }
         String[] env = null;
-        ArrayList envList = new ArrayList();
-        Enumeration names = props.propertyNames();
+        ArrayList<String> envList = new ArrayList<String>();
+        Enumeration<?> names = props.propertyNames();
         if (names != null) {
             while (names.hasMoreElements()) {
                 String key = (String) names.nextElement();
                 envList.add(key + "=" + props.getProperty(key)); //$NON-NLS-1$
             }
-            env = (String[]) envList.toArray(new String[envList.size()]);
+            env = envList.toArray(new String[envList.size()]);
         }
         return env;
     }

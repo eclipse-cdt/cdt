@@ -1,10 +1,13 @@
-//============================================================================
-// Name        : HelloCDT.cpp
-// Author      : Francois Chouinard
-// Version     :
-// Copyright   : Ericsson Research Canada
-// Description : Hello World in C++, Ansi-style
-//============================================================================
+/*******************************************************************************
+ * Copyright (c) 2007 Ericsson and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Ericsson - initial API and implementation
+ *******************************************************************************/
 
 #include <iostream>
 #include <pthread.h>
@@ -39,7 +42,7 @@ void test_threads(void)
 	char *message2 = "Thread 3";
 	int iret1, iret2;
 
-	// Create independent threads each of which will execute function
+	// Create a method breakpoint for "thread_print" and resume.
 	iret1 = pthread_create( &thread1, NULL, thread_print, (void*) message1);
 	iret2 = pthread_create( &thread2, NULL, thread_print, (void*) message2);
 
@@ -59,17 +62,18 @@ void test_threads(void)
 void test_stack2(int* k)
 {
 	bool j = true;
-	int* l = k;
+	int l = *k;
 	*k += 10;
 
-	// Modifying memory updates the monitors
-	// but not the Variables view :-(
+	// Modify *k in the memory view,  Memory view and the Variables view
+	// should show the new value.
 	printf("%d\n", *k);
 }
 
 void test_stack(void)
 {
-	// Add a memory monitor for 'j'
+	// Add a memory monitor for '&j' and verify that the memory changes
+	// with the following step.
 	int j = 5;
 	//  Step into
 	test_stack2(&j);
@@ -81,6 +85,8 @@ void countdown(int m)
 {
 	int x = m;
 	if (x == 0) {
+		// Set a breakpoint at next line and resume.
+		// Verify that the stack shown has the correct number of frames.
 		printf("We have a lift-off!\n");
 		return;
 	}
@@ -118,14 +124,16 @@ void test_overlap(void)
 ///////////////////////////////////////////////////////////////////////////////
 int main()
 {
-	// If we don't step this instruction then the initial content of cptr will
-	// be cached and the Variables view will display the wrong value.
+	// Step over the assignments and verify that the new values are displayed
+	// in the variables view.
 	char* cptr = "Thread 1";
 
 	// char* interpreted as C-string in Variables view
 	char* cp = (char*) malloc(1);
 	*cp = 'a';
 	
+	// Set a line breakpiont at the start of each test.
+	// Run to and step into each test.
 	test_stack();
 	test_threads();
 	test_recursion();

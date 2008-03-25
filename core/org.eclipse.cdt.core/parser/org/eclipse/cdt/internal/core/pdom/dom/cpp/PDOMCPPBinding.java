@@ -54,7 +54,7 @@ abstract class PDOMCPPBinding extends PDOMBinding implements ICPPBinding {
 	}
 
 	final public char[][] getQualifiedNameCharArray() throws DOMException {
-		List result = new ArrayList();
+		List<char[]> result = new ArrayList<char[]>();
 		try {
 			PDOMNode node = this;
 			while (node != null) {
@@ -63,9 +63,9 @@ abstract class PDOMCPPBinding extends PDOMBinding implements ICPPBinding {
 				}
 				node = node.getParentNode();
 			}
-			return (char[][]) result.toArray(new char[result.size()][]);
-		} catch(CoreException ce) {
-			CCorePlugin.log(ce);
+			return result.toArray(new char[result.size()][]);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
 			return null;
 		}
 	}

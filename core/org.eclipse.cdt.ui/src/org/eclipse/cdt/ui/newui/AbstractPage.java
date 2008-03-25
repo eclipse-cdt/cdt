@@ -234,92 +234,93 @@ implements
 	protected void contentForCDT(Composite composite) {
 		GridData gd;
 
-		// Add a config selection area
-		Group configGroup = ControlFactory.createGroup(composite, EMPTY_STR, 1);
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.grabExcessHorizontalSpace = true;
-		configGroup.setLayoutData(gd);
-		configGroup.setLayout(new GridLayout(3, false));
-		
-		Label configLabel = new Label(configGroup, SWT.NONE);
-		configLabel.setText(UIMessages.getString("AbstractPage.6")); //$NON-NLS-1$
-		configLabel.setLayoutData(new GridData(GridData.BEGINNING));
-		
-		configSelector = new Combo(configGroup, SWT.READ_ONLY | SWT.DROP_DOWN);
-		configSelector.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event e) {
-				handleConfigSelection();
-			}
-		});
-		gd = new GridData(GridData.FILL);
-		gd.grabExcessHorizontalSpace = true;
-	    gd.grabExcessVerticalSpace = true;
-	    gd.horizontalAlignment = GridData.FILL;
-	    gd.verticalAlignment = GridData.FILL;
-	  	
-		configSelector.setLayoutData(gd);
-		
-		if (!CDTPrefUtil.getBool(CDTPrefUtil.KEY_NOMNG)) {
-			manageButton = new Button(configGroup, SWT.PUSH);
-			manageButton.setText(UIMessages.getString("AbstractPage.12")); //$NON-NLS-1$
-			gd = new GridData(GridData.END);
-			gd.minimumWidth = 150;
-			manageButton.setLayoutData(gd);
-			manageButton.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					IProject[] obs = new IProject[] { getProject() };
-					IConfigManager cm = ManageConfigSelector.getManager(obs);
-					if (cm != null && cm.manage(obs, false)) {
-						cfgDescs = null;
-						populateConfigurations();					
-					}
+		if (showsConfig()) {
+			// Add a config selection area
+			Group configGroup = ControlFactory.createGroup(composite, EMPTY_STR, 1);
+			gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+			gd.grabExcessHorizontalSpace = true;
+			configGroup.setLayoutData(gd);
+			configGroup.setLayout(new GridLayout(3, false));
+
+			Label configLabel = new Label(configGroup, SWT.NONE);
+			configLabel.setText(UIMessages.getString("AbstractPage.6")); //$NON-NLS-1$
+			configLabel.setLayoutData(new GridData(GridData.BEGINNING));
+
+			configSelector = new Combo(configGroup, SWT.READ_ONLY | SWT.DROP_DOWN);
+			configSelector.addListener(SWT.Selection, new Listener() {
+				public void handleEvent(Event e) {
+					handleConfigSelection();
 				}
 			});
-		} else { // dummy object to avoid breaking layout
-			new Label(configGroup, SWT.NONE).setLayoutData(new GridData(GridData.END));
-		}
+			gd = new GridData(GridData.FILL);
+			gd.grabExcessHorizontalSpace = true;
+			gd.grabExcessVerticalSpace = true;
+			gd.horizontalAlignment = GridData.FILL;
+			gd.verticalAlignment = GridData.FILL;
 
-		errPane = new Composite(configGroup, SWT.NONE);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 3;
-		errPane.setLayoutData(gd);
-		GridLayout gl = new GridLayout(2, false);
-		gl.marginHeight = 0;
-		gl.marginWidth = 0;
-		gl.verticalSpacing = 0;
-		gl.horizontalSpacing = 0;
-		errPane.setLayout(gl);
-		
-		errIcon = new Label(errPane, SWT.LEFT);
-		errIcon.setLayoutData(new GridData(GridData.BEGINNING));
-		errIcon.setImage(IMG_WARN);
-		
-		errMessage = new Label(errPane, SWT.LEFT);
-		errMessage.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			configSelector.setLayoutData(gd);
 
-		if (isForFolder() || isForFile()) {
-			excludeFromBuildCheck = new Button(configGroup, SWT.CHECK);
-			excludeFromBuildCheck.setText(UIMessages.getString("AbstractPage.7")); //$NON-NLS-1$
+			if (!CDTPrefUtil.getBool(CDTPrefUtil.KEY_NOMNG)) {
+				manageButton = new Button(configGroup, SWT.PUSH);
+				manageButton.setText(UIMessages.getString("AbstractPage.12")); //$NON-NLS-1$
+				gd = new GridData(GridData.END);
+				gd.minimumWidth = 150;
+				manageButton.setLayoutData(gd);
+				manageButton.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						IProject[] obs = new IProject[] { getProject() };
+						IConfigManager cm = ManageConfigSelector.getManager(obs);
+						if (cm != null && cm.manage(obs, false)) {
+							cfgDescs = null;
+							populateConfigurations();					
+						}
+					}
+				});
+			} else { // dummy object to avoid breaking layout
+				new Label(configGroup, SWT.NONE).setLayoutData(new GridData(GridData.END));
+			}
+
+			errPane = new Composite(configGroup, SWT.NONE);
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 3;
-			excludeFromBuildCheck.setLayoutData(gd);
-			excludeFromBuildCheck.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					getResDesc().setExcluded(excludeFromBuildCheck.getSelection());
-				}
-			});
+			errPane.setLayoutData(gd);
+			GridLayout gl = new GridLayout(2, false);
+			gl.marginHeight = 0;
+			gl.marginWidth = 0;
+			gl.verticalSpacing = 0;
+			gl.horizontalSpacing = 0;
+			errPane.setLayout(gl);
+
+			errIcon = new Label(errPane, SWT.LEFT);
+			errIcon.setLayoutData(new GridData(GridData.BEGINNING));
+			errIcon.setImage(IMG_WARN);
+
+			errMessage = new Label(errPane, SWT.LEFT);
+			errMessage.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+			if (isForFolder() || isForFile()) {
+				excludeFromBuildCheck = new Button(configGroup, SWT.CHECK);
+				excludeFromBuildCheck.setText(UIMessages.getString("AbstractPage.7")); //$NON-NLS-1$
+				gd = new GridData(GridData.FILL_HORIZONTAL);
+				gd.horizontalSpan = 3;
+				excludeFromBuildCheck.setLayoutData(gd);
+				excludeFromBuildCheck.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						getResDesc().setExcluded(excludeFromBuildCheck.getSelection());
+					}
+				});
+			}
 		}
-		
+
 		//	Update the contents of the configuration widget
 		populateConfigurations();
-		
 		if (excludeFromBuildCheck != null) {
 			excludeFromBuildCheck.setSelection(getResDesc().isExcluded());
 		}
 		//	Create the Specific objects for each page
 		createWidgets(composite);
 	}
-	
+
 	public void createWidgets(Composite c) {
 		parentComposite = new Composite(c, SWT.NONE);
 		parentComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -544,19 +545,32 @@ implements
     }
 
 	private void populateConfigurations() {
-		// Do nothing if widget not created yet.
-		if (configSelector == null)	return;
-
 		// Do not re-read if list already created by another page
 		if (cfgDescs == null) {
 			cfgDescs = CDTPropertyManager.getProjectDescription(this, getProject()).getConfigurations();
 			if (cfgDescs == null || cfgDescs.length == 0) return;
 			Arrays.sort(cfgDescs, CDTListComparator.getInstance());
+			
 		} else {
 			// just register in CDTPropertyManager;
 			CDTPropertyManager.getProjectDescription(this, getProject());
 		}
 		
+		// Do nothing if widget not created yet.
+		if (configSelector == null)	{
+			if (cfgDescs != null && cfgDescs.length > 0) {
+				for (int i = 0; i < cfgDescs.length; ++i) {
+					if (cfgIndex == -1 && cfgDescs[i].isActive()) 
+						cfgIndex = i;
+				}
+				if (cfgIndex < 0) {
+					cfgIndex = 0;
+				}
+				cfgChanged(cfgDescs[cfgIndex]); 
+			}
+			return;
+		}
+
 		// Clear and replace the contents of the selector widget
 		configSelector.removeAll();
 		for (int i = 0; i < cfgDescs.length; ++i) {
@@ -697,6 +711,9 @@ implements
 				populateConfigurations();
 				if (cfgDescs == null || cfgDescs.length == 0) return null;
 			}
+			if (cfgDescs.length == 0) {
+				return null;
+			}
 			resd = getResDesc(cfgDescs[cfgIndex]);			
 		}
 		return resd;
@@ -734,11 +751,13 @@ implements
 	protected void cfgChanged(ICConfigurationDescription _cfgd) {
 		
 		CConfigurationStatus st = _cfgd.getConfigurationStatus();
-		if (st.isOK()) {
-			errPane.setVisible(false);
-		} else {
-			errMessage.setText(st.getMessage());
-			errPane.setVisible(true);
+		if (errPane != null && errMessage != null) {
+			if (st.isOK()) {
+				errPane.setVisible(false);
+			} else {
+				errMessage.setText(st.getMessage());
+				errPane.setVisible(true);
+			}
 		}
 
 		resd = getResDesc(_cfgd);
@@ -779,6 +798,13 @@ implements
 	 */
 	abstract protected boolean isSingle(); 
 	
+	/**
+	 * Defines whether the configurations control is shown or not.
+	 * Subclasses may override this.
+	 * @return true, if the configurations control should be shown (default); false otherwise
+	 */
+	protected boolean showsConfig() { return true;	}
+
 	/**
 	 * Apply specified method to all tabs
 	 */

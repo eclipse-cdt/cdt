@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
+import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.Query;
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
@@ -34,7 +35,6 @@ import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMData;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
@@ -204,7 +204,7 @@ public class DsfMISourceLookupParticipant implements ISourceLookupParticipant {
     @ConfinedToDsfExecutor("fExecutor")
     private void getSourceNameOnDispatchThread(IDMContext dmc, final DataRequestMonitor<String> rm) {
         if (!(dmc instanceof IStack.IFrameDMContext)) {
-            rm.setStatus(new Status(IStatus.ERROR, DsfDebugPlugin.PLUGIN_ID, IDsfService.INVALID_HANDLE, "No source for this object", null)); //$NON-NLS-1$
+            rm.setStatus(new Status(IStatus.ERROR, DsfDebugPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_HANDLE, "No source for this object", null)); //$NON-NLS-1$
             rm.done();
             return;
         }
@@ -212,7 +212,7 @@ public class DsfMISourceLookupParticipant implements ISourceLookupParticipant {
             
         IStack stackService = fServicesTracker.getService(IStack.class); 
         if (stackService == null) {
-            rm.setStatus(new Status(IStatus.ERROR, DsfDebugPlugin.PLUGIN_ID, IDsfService.INVALID_HANDLE, "Stack data not available", null)); //$NON-NLS-1$
+            rm.setStatus(new Status(IStatus.ERROR, DsfDebugPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_HANDLE, "Stack data not available", null)); //$NON-NLS-1$
             rm.done();
             return;
         }

@@ -42,7 +42,7 @@ public class ViewerCountingRequestMonitor extends CountingRequestMonitor {
     }
 
     @Override
-    protected void handleError() {
+    protected void handleErrorOrWarning() {
         fUpdate.setStatus(getStatus());
         fUpdate.done();
     }

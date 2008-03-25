@@ -43,37 +43,7 @@ public interface IDsfService {
      * all DSF services when they are registered with OSGI service framework. 
      */
     final static String PROP_SESSION_ID = "org.eclipse.dd.dsf.service.IService.session_id"; //$NON-NLS-1$
-    
-    /** 
-     * Error code indicating that the service is in a state which does not allow the 
-     * request to be processed.  For example if the client requested target information
-     * after target was disconnected. 
-     */
-    final static int INVALID_STATE = 10001;
-    
-    /** 
-     * Error code indicating that client supplied an invalid handle to the service.
-     * A handle could become invalid after an object it represents is removed from 
-     * the system.
-     */
-    final static int INVALID_HANDLE = 10002;
-    
-    /**
-     * Error code indicating that the client request is not supported/implemented.
-     */
-    final static int NOT_SUPPORTED = 10003;
-    
-    /**
-     * Error code indicating that the request to a sub-service or an external process 
-     * failed.
-     */
-    final static int REQUEST_FAILED = 10004;
-
-    /**
-     * Error code indicating an unexpected condition in the service, i.e. programming error.
-     */
-    final static int INTERNAL_ERROR = 10005;
-    
+        
     /** 
      * Returns the DSF Session that this service belongs to.
      */

@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
+import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.MultiRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
@@ -42,7 +43,6 @@ import org.eclipse.dd.dsf.debug.ui.viewmodel.expression.IExpressionUpdate;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.numberformat.IFormattedValuePreferenceStore;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.numberformat.IFormattedValueVMContext;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
@@ -228,8 +228,8 @@ public class VariableVMNode extends AbstractExpressionVMNode
                         
                         if (!getStatus().isOK()) {
                             assert getStatus().isOK() || 
-                                   getStatus().getCode() != IDsfService.INTERNAL_ERROR || 
-                                   getStatus().getCode() != IDsfService.NOT_SUPPORTED;
+                                   getStatus().getCode() != IDsfStatusConstants.INTERNAL_ERROR || 
+                                   getStatus().getCode() != IDsfStatusConstants.NOT_SUPPORTED;
                             
                             /*
                              *  Instead of just failing this outright we are going to attempt to do more here.
@@ -473,7 +473,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
     @Override
     protected void handleFailedUpdate(IViewerUpdate update) {
         if (update instanceof IExpressionUpdate) {
-            update.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfService.INVALID_STATE, "Update failed", null)); //$NON-NLS-1$
+            update.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Update failed", null)); //$NON-NLS-1$
             update.done();
         } else {
             super.handleFailedUpdate(update);

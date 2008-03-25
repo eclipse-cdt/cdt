@@ -40,7 +40,7 @@ public class ViewerDataRequestMonitor<V> extends DataRequestMonitor<V> {
     }
 
     @Override
-    protected void handleError() {
+    protected void handleErrorOrWarning() {
         fUpdate.setStatus(getStatus());
         fUpdate.done();
     }

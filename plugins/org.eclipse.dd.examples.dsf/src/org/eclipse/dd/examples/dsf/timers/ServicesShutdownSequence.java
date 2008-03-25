@@ -12,6 +12,7 @@ package org.eclipse.dd.examples.dsf.timers;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.Sequence;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
@@ -90,7 +91,7 @@ public class ServicesShutdownSequence extends Sequence {
         else {
             requestMonitor.setStatus(new Status(
                 IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID, 
-                IDsfService.INTERNAL_ERROR,  
+                IDsfStatusConstants.INTERNAL_ERROR,  
                 "Service '" + clazz.getName() + "' not found.", null));             
             requestMonitor.done();
         }

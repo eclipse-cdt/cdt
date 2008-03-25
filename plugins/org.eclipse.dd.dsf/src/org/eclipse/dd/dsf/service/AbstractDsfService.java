@@ -14,20 +14,21 @@ import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.Enumeration;
 
-import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
+import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
+import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceRegistration;
 
 
 /**
- * Standard base implementation of the DSF service.  This is a convinience
+ * Standard base implementation of the DSF service.  This is a convenience
  * class that provides the basic functionality that all DSF services have 
  * to implement.
  */
 abstract public class AbstractDsfService 
-    implements IDsfService
+    implements IDsfService, IDsfStatusConstants
 {
     /** Reference to the session that this service belongs to. */ 
     private DsfSession fSession;

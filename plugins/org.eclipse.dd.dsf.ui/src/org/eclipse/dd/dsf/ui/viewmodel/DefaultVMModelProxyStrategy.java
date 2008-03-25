@@ -22,9 +22,9 @@ import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.dd.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.dd.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.MultiRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
-import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
@@ -293,7 +293,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
                     if (getStatus().isOK()) {
                         assert getData() != null;
                         buildChildDeltasForEventContext(getData(), node, event, parentDelta, nodeOffset, rm);
-                    } else if (getStatus().getCode() == IDsfService.NOT_SUPPORTED) {
+                    } else if (getStatus().getCode() == IDsfStatusConstants.NOT_SUPPORTED) {
                         // The DMC for this node was not found in the event.  Call the 
                         // super-class to resort to the default behavior which may add a 
                         // delta for every element in this node.

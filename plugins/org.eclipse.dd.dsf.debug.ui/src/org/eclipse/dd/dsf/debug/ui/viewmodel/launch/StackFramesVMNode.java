@@ -15,6 +15,7 @@ import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
+import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
@@ -28,7 +29,6 @@ import org.eclipse.dd.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMData;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.ModelProxyInstalledEvent;
 import org.eclipse.dd.dsf.ui.viewmodel.VMChildrenUpdate;
@@ -191,8 +191,8 @@ public class StackFramesVMNode extends AbstractDMVMNode
                          */ 
                         if (!getStatus().isOK()) {
                             assert getStatus().isOK() || 
-                                   getStatus().getCode() != IDsfService.INTERNAL_ERROR || 
-                                   getStatus().getCode() != IDsfService.NOT_SUPPORTED;
+                                   getStatus().getCode() != IDsfStatusConstants.INTERNAL_ERROR || 
+                                   getStatus().getCode() != IDsfStatusConstants.NOT_SUPPORTED;
                             handleFailedUpdate(update);
                             return;
                         }

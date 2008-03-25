@@ -28,7 +28,6 @@ import org.eclipse.dd.dsf.debug.service.command.ICommandControl;
 import org.eclipse.dd.dsf.service.AbstractDsfService;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.mi.internal.MIPlugin;
 import org.eclipse.dd.mi.service.command.commands.MIExecContinue;
 import org.eclipse.dd.mi.service.command.commands.MIExecFinish;
@@ -475,7 +474,7 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
             else{
         		IMIExecutionDMContext dmc = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
     			if (dmc == null){
-    	            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.INVALID_STATE, "Given context: " + context + " is not an execution context.", null)); //$NON-NLS-1$ //$NON-NLS-2$
+    	            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INVALID_STATE, "Given context: " + context + " is not an execution context.", null)); //$NON-NLS-1$ //$NON-NLS-2$
     	            rm.done();
     	            return;
     			}
@@ -491,7 +490,7 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
             	}
             );
         }else {
-            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.INVALID_STATE, "Given context: " + context + ", is already running.", null)); //$NON-NLS-1$ //$NON-NLS-2$
+            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INVALID_STATE, "Given context: " + context + ", is already running.", null)); //$NON-NLS-1$ //$NON-NLS-2$
             rm.done();
         }
 	}
@@ -507,7 +506,7 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
 			else {
 				IMIExecutionDMContext dmc = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
 				if (dmc == null){
-		            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.INVALID_STATE, "Given context: " + context + " is not an execution context.", null)); //$NON-NLS-1$ //$NON-NLS-2$
+		            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, NOT_SUPPORTED, "Given context: " + context + " is not an execution context.", null)); //$NON-NLS-1$ //$NON-NLS-2$
 		            rm.done();
 		            return;
 				}
@@ -523,7 +522,7 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
             	}
             );
         } else {
-            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.INVALID_STATE, "Given context: " + context + ", is already suspended.", null)); //$NON-NLS-1$ //$NON-NLS-2$
+            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, NOT_SUPPORTED, "Given context: " + context + ", is already suspended.", null)); //$NON-NLS-1$ //$NON-NLS-2$
             rm.done();
         }
     }
@@ -537,7 +536,7 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
 
     	IMIExecutionDMContext dmc = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
 		if (dmc == null){
-            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.INVALID_STATE, "Given context: " + context + " is not an execution context.", null)); //$NON-NLS-1$ //$NON-NLS-2$
+            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, NOT_SUPPORTED, "Given context: " + context + " is not an execution context.", null)); //$NON-NLS-1$ //$NON-NLS-2$
             rm.done();
             return;
 		}
@@ -574,12 +573,12 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
                     fConnection.queueCommand(
                         new MIExecFinish(topFrameDmc), new DataRequestMonitor<MIInfo>(getExecutor(), rm) {});
                 } else {
-                    rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.INVALID_STATE, "Cannot create context for command, stack service not available.", null)); //$NON-NLS-1$
+                    rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, NOT_SUPPORTED, "Cannot create context for command, stack service not available.", null)); //$NON-NLS-1$
                     rm.done();                    
                 }
                 break;
             default:
-                rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR, "Given step type not supported", null)); //$NON-NLS-1$
+                rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INTERNAL_ERROR, "Given step type not supported", null)); //$NON-NLS-1$
                 rm.done();
         }
     }
@@ -643,7 +642,7 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
 
     	IMIExecutionDMContext dmc = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
 		if (dmc == null){
-            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.INVALID_STATE, "Given context: " + context + " is not an execution context.", null)); //$NON-NLS-1$ //$NON-NLS-2$
+            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, NOT_SUPPORTED, "Given context: " + context + " is not an execution context.", null)); //$NON-NLS-1$ //$NON-NLS-2$
             rm.done();
             return;
 		}
@@ -660,7 +659,7 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
     					}
     				});
         } else {
-            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.INVALID_STATE, 
+            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, NOT_SUPPORTED, 
             		"Cannot resume given DMC.", null)); //$NON-NLS-1$ 
             rm.done();
         }

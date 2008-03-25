@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.debug.service.IExpressions;
@@ -44,7 +45,6 @@ import org.eclipse.dd.dsf.service.AbstractDsfService;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.mi.internal.MIPlugin;
 import org.eclipse.dd.mi.service.ExpressionService.ExpressionInfo;
 import org.eclipse.dd.mi.service.ExpressionService.MIExpressionDMC;
@@ -822,7 +822,7 @@ public class MIVariableManager extends AbstractDsfService implements ICommandCon
 
 			// If the variable is a complex structure (including an array), then we cannot write to it
 			if (isComplex()) {
-				rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, 
+				rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, 
 						"Cannot change the value of a complex expression", null)); //$NON-NLS-1$
 				rm.done();
 				return;
@@ -849,7 +849,7 @@ public class MIVariableManager extends AbstractDsfService implements ICommandCon
 				try {
 	    			value = Integer.toString(Integer.parseInt(value, 2));
 				} catch (NumberFormatException e) {
-					rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.INVALID_HANDLE, 
+					rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_HANDLE, 
 							"Invalid binary number: " + value, e)); //$NON-NLS-1$
 					rm.done();
 					return;
@@ -864,7 +864,7 @@ public class MIVariableManager extends AbstractDsfService implements ICommandCon
 				// we do nothing for now and let the user have put in the proper value
 			}
 			else {
-				rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.INVALID_HANDLE, 
+				rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_HANDLE, 
 						"Unknown format: " + formatId, null)); //$NON-NLS-1$
 				rm.done();
 				return;
@@ -874,7 +874,7 @@ public class MIVariableManager extends AbstractDsfService implements ICommandCon
 			// Return a status info so that handleOK is not called and we don't send
 			// an ExpressionChanged event
 			if (value.equals(getValue(formatId))) {
-				rm.setStatus(new Status(IStatus.INFO, MIPlugin.PLUGIN_ID, IDsfService.NOT_SUPPORTED, 
+				rm.setStatus(new Status(IStatus.INFO, MIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, 
 						"Setting to the same value of: " + value, null)); //$NON-NLS-1$
 				rm.done();
 				return;				
@@ -1607,7 +1607,7 @@ public class MIVariableManager extends AbstractDsfService implements ICommandCon
     		// This does not use the variable objects but sends the command directly to the back-end
 			fCommandControl.queueCommand(command, rm);
     	} else {
-			rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR, 
+			rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, 
 					"Unexpected Expression Meta command", null)); //$NON-NLS-1$
 			rm.done();
     	}    	

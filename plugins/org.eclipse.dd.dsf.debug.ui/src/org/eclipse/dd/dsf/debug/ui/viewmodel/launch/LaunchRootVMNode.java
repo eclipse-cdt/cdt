@@ -16,8 +16,8 @@ import java.util.List;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.debug.internal.ui.DsfDebugUIPlugin;
-import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.IRootVMNode;
 import org.eclipse.dd.dsf.ui.viewmodel.RootVMNode;
@@ -89,7 +89,7 @@ public class LaunchRootVMNode extends RootVMNode
     @Override
     public void createRootDelta(Object rootObject, Object event, final DataRequestMonitor<VMDelta> rm) {
         if (!(rootObject instanceof ILaunch)) {
-            rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfService.INVALID_STATE, "Invalid root element configured with launch root node.", null)); //$NON-NLS-1$
+            rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Invalid root element configured with launch root node.", null)); //$NON-NLS-1$
             return;
         }
         

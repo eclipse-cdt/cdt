@@ -28,12 +28,12 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.debug.service.ISourceLookup;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControl;
 import org.eclipse.dd.dsf.service.AbstractDsfService;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.mi.internal.MIPlugin;
 import org.eclipse.dd.mi.service.command.commands.MIEnvironmentDirectory;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
@@ -137,14 +137,14 @@ public class CSourceLookup extends AbstractDsfService implements ISourceLookup {
     {
         if (! (source instanceof String)) {
             // In future if needed other elements such as URIs could be supported.
-            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.NOT_SUPPORTED, "Only string source element is supported", null)); //$NON-NLS-1$);
+            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "Only string source element is supported", null)); //$NON-NLS-1$);
             rm.done();
             return;
         }
         final String sourceString = (String) source;
         
         if (!fDirectors.containsKey(sourceLookupCtx) ){
-            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.INVALID_HANDLE, "No source director configured for given context", null)); //$NON-NLS-1$);
+            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_HANDLE, "No source director configured for given context", null)); //$NON-NLS-1$);
             rm.done();
             return;
         } 
@@ -170,7 +170,7 @@ public class CSourceLookup extends AbstractDsfService implements ISourceLookup {
     public void getSource(ISourceLookupDMContext sourceLookupCtx, final String debuggerPath, final DataRequestMonitor<Object> rm) 
     {
         if (!fDirectors.containsKey(sourceLookupCtx) ){
-            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.INVALID_HANDLE, "No source director configured for given context", null)); //$NON-NLS-1$);
+            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_HANDLE, "No source director configured for given context", null)); //$NON-NLS-1$);
             rm.done();
             return;
         } 
@@ -183,12 +183,12 @@ public class CSourceLookup extends AbstractDsfService implements ISourceLookup {
                 try {
                     sources = director.findSourceElements(debuggerPath);
                     if (sources == null || sources.length == 0) {
-                        rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, "No sources found", null)); //$NON-NLS-1$);
+                        rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "No sources found", null)); //$NON-NLS-1$);
                     } else {
                         rm.setData(sources[0]);
                     }                
                 } catch (CoreException e) {
-                    rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, "Source lookup failed", e)); //$NON-NLS-1$);
+                    rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "Source lookup failed", e)); //$NON-NLS-1$);
                 } finally {
                     rm.done();
                 }

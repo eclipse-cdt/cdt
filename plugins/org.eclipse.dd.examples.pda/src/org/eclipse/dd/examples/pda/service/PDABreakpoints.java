@@ -253,11 +253,11 @@ public class PDABreakpoints extends AbstractDsfService implements IBreakpoints
                 }
 
                 @Override
-                protected void handleErrorOrCancel() {
+                protected void handleCancelOrErrorOrWarning() {
                     // If inserting of the breakpoint failed, remove it from
                     // the set of installed breakpoints.
                     fBreakpoints.remove(breakpointCtx);
-                    super.handleErrorOrCancel();
+                    super.handleCancelOrErrorOrWarning();
                 }
             });
     }
@@ -319,11 +319,11 @@ public class PDABreakpoints extends AbstractDsfService implements IBreakpoints
                 }
 
                 @Override
-                protected void handleErrorOrCancel() {
+                protected void handleCancelOrErrorOrWarning() {
                     // Since the command failed, we need to remove the breakpoint from 
                     // the existing breakpoint set.
                     fBreakpoints.remove(watchpointCtx);
-                    super.handleErrorOrCancel();
+                    super.handleCancelOrErrorOrWarning();
                 }
             });
     }

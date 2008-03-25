@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
+import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
@@ -39,7 +40,6 @@ import org.eclipse.dd.dsf.debug.ui.viewmodel.numberformat.IFormattedValuePrefere
 import org.eclipse.dd.dsf.debug.ui.viewmodel.numberformat.IFormattedValueVMContext;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.register.RegisterBitFieldCellModifier.BitFieldEditorStyle;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
@@ -292,8 +292,8 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
                          */ 
                         if (!getStatus().isOK()) {
                             assert getStatus().isOK() || 
-                                   getStatus().getCode() != IDsfService.INTERNAL_ERROR || 
-                                   getStatus().getCode() != IDsfService.NOT_SUPPORTED;
+                                   getStatus().getCode() != IDsfStatusConstants.INTERNAL_ERROR || 
+                                   getStatus().getCode() != IDsfStatusConstants.NOT_SUPPORTED;
                             handleFailedUpdate(update);
                             return;
                         }
@@ -375,7 +375,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
             regDmc,
             new DataRequestMonitor<IBitFieldDMContext[]>(getSession().getExecutor(), null) {
                 @Override
-                protected void handleErrorOrCancel() {
+                protected void handleCancelOrErrorOrWarning() {
                     handleFailedUpdate(update);
                 }
 
@@ -514,14 +514,14 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
     @Override
     protected void testElementForExpression(Object element, IExpression expression, DataRequestMonitor<Boolean> rm) {
         if (!(element instanceof IDMVMContext)) {
-            rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfService.INVALID_HANDLE, "Invalid context", null)); //$NON-NLS-1$
+            rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_HANDLE, "Invalid context", null)); //$NON-NLS-1$
             rm.done();
             return;
         }
         
         final IBitFieldDMContext dmc = DMContexts.getAncestorOfType(((IDMVMContext)element).getDMContext(), IBitFieldDMContext.class);
         if (dmc == null) {
-            rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfService.INVALID_HANDLE, "Invalid context", null)); //$NON-NLS-1$
+            rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_HANDLE, "Invalid context", null)); //$NON-NLS-1$
             rm.done();
             return;
         }

@@ -34,7 +34,6 @@ import org.eclipse.dd.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.dd.dsf.service.AbstractDsfService;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.mi.internal.MIPlugin;
 import org.eclipse.dd.mi.service.command.commands.MIStackInfoDepth;
 import org.eclipse.dd.mi.service.command.commands.MIStackListArguments;
@@ -166,7 +165,7 @@ public class MIStack extends AbstractDsfService
             getVariableData((MIVariableDMC)dmc, (DataRequestMonitor<IVariableDMData>)rm);
             // getVariablesData invokes rm 
         } else {
-            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.INVALID_HANDLE, "Unknown DMC type", null)); //$NON-NLS-1$
+            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INVALID_HANDLE, "Unknown DMC type", null)); //$NON-NLS-1$
             rm.done();
         }
     }
@@ -198,7 +197,7 @@ public class MIStack extends AbstractDsfService
 	    
 	    if (execDmc == null) {
             //rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, -1, "No frame context found in " + ctx, null)); //$NON-NLS-1$
-            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.INVALID_HANDLE, "Invalid context" + ctx, null)); //$NON-NLS-1$
+            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid context" + ctx, null)); //$NON-NLS-1$
             rm.done();
             return;
         }
@@ -216,7 +215,7 @@ public class MIStack extends AbstractDsfService
     public void getTopFrame(final IDMContext ctx, final DataRequestMonitor<IFrameDMContext> rm) {     
         final IMIExecutionDMContext execDmc = DMContexts.getAncestorOfType(ctx, IMIExecutionDMContext.class);
         if (execDmc == null) {
-            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.INVALID_HANDLE, "Invalid context" + ctx, null)); //$NON-NLS-1$
+            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid context" + ctx, null)); //$NON-NLS-1$
             rm.done();
             return;
         }
@@ -258,7 +257,7 @@ public class MIStack extends AbstractDsfService
     
     public void getFrameData(final IFrameDMContext frameDmc, final DataRequestMonitor<IFrameDMData> rm) {
         if (!(frameDmc instanceof MIFrameDMC)) {
-            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.INVALID_HANDLE, "Invalid context type " + frameDmc, null)); //$NON-NLS-1$
+            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid context type " + frameDmc, null)); //$NON-NLS-1$
             rm.done();
             return;
         }
@@ -267,7 +266,7 @@ public class MIStack extends AbstractDsfService
         
         IMIExecutionDMContext execDmc = DMContexts.getAncestorOfType(frameDmc, IMIExecutionDMContext.class);
         if (execDmc == null) { 
-            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.INVALID_HANDLE, "No execution context found in " + frameDmc, null)); //$NON-NLS-1$
+            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INVALID_HANDLE, "No execution context found in " + frameDmc, null)); //$NON-NLS-1$
             rm.done();
             return;
         }

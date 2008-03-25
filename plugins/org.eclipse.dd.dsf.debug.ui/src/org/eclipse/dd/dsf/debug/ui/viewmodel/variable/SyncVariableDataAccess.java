@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.Query;
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.eclipse.dd.dsf.concurrent.ThreadSafeAndProhibitedFromDsfExecutor;
@@ -119,7 +120,7 @@ public class SyncVariableDataAccess {
 
             IExpressions service = getService();
             if (service == null) {
-                rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfService.INVALID_STATE, "Service not available", null)); //$NON-NLS-1$
+                rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Service not available", null)); //$NON-NLS-1$
                 rm.done();
                 return;
             }
@@ -220,7 +221,7 @@ public class SyncVariableDataAccess {
              */
             IExpressions service = getService();
             if (service == null) {
-                rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfService.INVALID_STATE, "Service unavailable", null)); //$NON-NLS-1$
+                rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Service unavailable", null)); //$NON-NLS-1$
                 rm.done();
                 return;
             }
@@ -331,7 +332,7 @@ public class SyncVariableDataAccess {
              */
             IExpressions service = getService();
             if (service == null) {
-                rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfService.INVALID_STATE, "Service unavailable", null)); //$NON-NLS-1$
+                rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Service unavailable", null)); //$NON-NLS-1$
                 rm.done();
                 return;
             }
@@ -430,7 +431,7 @@ public class SyncVariableDataAccess {
              */
             IExpressions service = getService();
             if (service == null) {
-                rm .setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfService.INVALID_STATE, "Service unavailable", null)); //$NON-NLS-1$
+                rm .setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Service unavailable", null)); //$NON-NLS-1$
                 rm.done();
                 return;
             }
@@ -526,7 +527,7 @@ public class SyncVariableDataAccess {
              */
             IExpressions service = getService();
             if (service == null) {
-                rm .setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfService.INVALID_STATE, "Service unavailable", null)); //$NON-NLS-1$
+                rm .setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Service unavailable", null)); //$NON-NLS-1$
                 rm.done();
                 return;
             }

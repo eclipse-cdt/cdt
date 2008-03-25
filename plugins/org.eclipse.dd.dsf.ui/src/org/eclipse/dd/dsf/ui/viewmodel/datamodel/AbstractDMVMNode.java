@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
+import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
@@ -182,7 +183,7 @@ abstract public class AbstractDMVMNode extends AbstractVMNode implements IVMNode
      */
     protected boolean checkDmc(IDMContext dmc, IViewerUpdate update) {
         if (dmc == null) {
-            update.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfService.INVALID_STATE, 
+            update.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, 
                                         "No valid context found.", null)); //$NON-NLS-1$
             handleFailedUpdate(update);
             return false;
@@ -200,7 +201,7 @@ abstract public class AbstractDMVMNode extends AbstractVMNode implements IVMNode
      */
     protected boolean checkService(Class<? extends IDsfService> serviceClass, String filter, IViewerUpdate update) {
         if (getServicesTracker().getService(serviceClass, filter) == null) {
-            update.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfService.INVALID_STATE, 
+            update.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, 
                                         "Service " + serviceClass.getName() + " not available.", null)); //$NON-NLS-1$ //$NON-NLS-2$
             handleFailedUpdate(update);
             return false;
@@ -226,7 +227,7 @@ abstract public class AbstractDMVMNode extends AbstractVMNode implements IVMNode
 
     @ConfinedToDsfExecutor("getSession().getExecutor()")
     protected void updateHasElementsInSessionThread(final IHasChildrenUpdate update) {
-        update.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfService.NOT_SUPPORTED, "Not implemented, clients should call to update all children instead.", null)); //$NON-NLS-1$
+        update.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "Not implemented, clients should call to update all children instead.", null)); //$NON-NLS-1$
         update.done();
     }
 
@@ -248,7 +249,7 @@ abstract public class AbstractDMVMNode extends AbstractVMNode implements IVMNode
     
     @ConfinedToDsfExecutor("getSession().getExecutor()")
     protected void updateElementCountInSessionThread(final IChildrenCountUpdate update) {
-        update.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfService.NOT_SUPPORTED, "Not implemented, clients should call to update all children instead.", null)); //$NON-NLS-1$
+        update.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "Not implemented, clients should call to update all children instead.", null)); //$NON-NLS-1$
         update.done();
     }
         

@@ -14,6 +14,7 @@ import java.util.Hashtable;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.AbstractDMContext;
@@ -29,7 +30,6 @@ import org.eclipse.dd.dsf.debug.service.command.CommandCache;
 import org.eclipse.dd.dsf.service.AbstractDsfService;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.examples.pda.PDAPlugin;
 import org.eclipse.dd.examples.pda.service.commands.PDAFrame;
 import org.eclipse.dd.examples.pda.service.commands.PDAStackCommand;
@@ -215,7 +215,7 @@ public class PDAStack extends AbstractDsfService implements IStack {
 
 
     public void getArguments(IFrameDMContext frameCtx, DataRequestMonitor<IVariableDMContext[]> rm) {
-        PDAPlugin.failRequest(rm, IDsfService.NOT_SUPPORTED, "PDA debugger does not support function arguments.");
+        PDAPlugin.failRequest(rm, IDsfStatusConstants.NOT_SUPPORTED, "PDA debugger does not support function arguments.");
     }
 
     public void getFrameData(final IFrameDMContext frameCtx, final DataRequestMonitor<IFrameDMData> rm) {
@@ -229,7 +229,7 @@ public class PDAStack extends AbstractDsfService implements IStack {
                     // calculate the index based on frame level.
                     int frameId = getData().fFrames.length - frameCtx.getLevel() - 1;
                     if (frameId < 0) {
-                        PDAPlugin.failRequest(rm, IDsfService.INVALID_HANDLE, "Invalid frame level " + frameCtx);
+                        PDAPlugin.failRequest(rm, IDsfStatusConstants.INVALID_HANDLE, "Invalid frame level " + frameCtx);
                         return;
                     }
 
@@ -248,7 +248,7 @@ public class PDAStack extends AbstractDsfService implements IStack {
         // hierarchy of the argument context to find the execution one.
         final IExecutionDMContext execCtx = DMContexts.getAncestorOfType(context, IExecutionDMContext.class);
         if (execCtx == null) {
-            PDAPlugin.failRequest(rm, IDsfService.INVALID_HANDLE, "Invalid context " + context);
+            PDAPlugin.failRequest(rm, IDsfStatusConstants.INVALID_HANDLE, "Invalid context " + context);
             return;
         }
 
@@ -278,7 +278,7 @@ public class PDAStack extends AbstractDsfService implements IStack {
                     // Find the correct PDAFrame
                     int frameId = getData().fFrames.length - frameCtx.getLevel() - 1;
                     if (frameId < 0) {
-                        PDAPlugin.failRequest(rm, IDsfService.INVALID_HANDLE, "Invalid frame level " + frameCtx);
+                        PDAPlugin.failRequest(rm, IDsfStatusConstants.INVALID_HANDLE, "Invalid frame level " + frameCtx);
                         return;
                     }
                     PDAFrame pdaFrame = getData().fFrames[frameId];
@@ -315,7 +315,7 @@ public class PDAStack extends AbstractDsfService implements IStack {
         // hierarchy of the argument context to find the execution one.
         final IExecutionDMContext execCtx = DMContexts.getAncestorOfType(context, IExecutionDMContext.class);
         if (execCtx == null) {
-            PDAPlugin.failRequest(rm, IDsfService.INVALID_HANDLE, "Invalid context " + context);
+            PDAPlugin.failRequest(rm, IDsfStatusConstants.INVALID_HANDLE, "Invalid context " + context);
             return;
         }
 
@@ -327,7 +327,7 @@ public class PDAStack extends AbstractDsfService implements IStack {
 
     public void getVariableData(IVariableDMContext variableCtx, DataRequestMonitor<IVariableDMData> rm) {
         if ( !(variableCtx instanceof VariableDMContext) ) {
-            PDAPlugin.failRequest(rm, IDsfService.INVALID_HANDLE, "Invalid context " + variableCtx);
+            PDAPlugin.failRequest(rm, IDsfStatusConstants.INVALID_HANDLE, "Invalid context " + variableCtx);
             return;
         }
 
@@ -356,7 +356,7 @@ public class PDAStack extends AbstractDsfService implements IStack {
         } else if (dmc instanceof IVariableDMContext) {
             getVariableData((IVariableDMContext)dmc, (DataRequestMonitor<IVariableDMData>)rm);
         } else {
-            PDAPlugin.failRequest(rm, IDsfService.INVALID_HANDLE, "Unknown context type");
+            PDAPlugin.failRequest(rm, IDsfStatusConstants.INVALID_HANDLE, "Unknown context type");
         }
     }
 

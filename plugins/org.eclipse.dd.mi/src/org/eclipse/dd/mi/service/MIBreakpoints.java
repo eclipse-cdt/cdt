@@ -30,7 +30,6 @@ import org.eclipse.dd.dsf.debug.service.command.ICommandControl;
 import org.eclipse.dd.dsf.service.AbstractDsfService;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.mi.internal.MIPlugin;
 import org.eclipse.dd.mi.service.command.commands.MIBreakAfter;
 import org.eclipse.dd.mi.service.command.commands.MIBreakCondition;
@@ -291,7 +290,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 	{
 		// Validate the context
 		if (context == null) {
-       		drm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, UNKNOWN_EXECUTION_CONTEXT, null));
+       		drm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_EXECUTION_CONTEXT, null));
        		drm.done();
 			return;
 		}
@@ -338,7 +337,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 	{
 		// Validate the breakpoint context
 		if (dmc == null) {
-       		drm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
+       		drm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
        		drm.done();
 			return;
 		}
@@ -349,7 +348,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 			breakpoint = (MIBreakpointDMContext) dmc;
 		}
 		else {
-       		drm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, UNKNOWN_BREAKPOINT_TYPE, null));
+       		drm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_TYPE, null));
        		drm.done();
 			return;
 		}
@@ -357,7 +356,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 		// Validate the target context
 		IBreakpointsTargetDMContext context = DMContexts.getAncestorOfType(breakpoint, IBreakpointsTargetDMContext.class);
 		if (context == null) {
-       		drm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, UNKNOWN_EXECUTION_CONTEXT, null));
+       		drm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_EXECUTION_CONTEXT, null));
        		drm.done();
 			return;
 		}
@@ -365,7 +364,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 		// Select the breakpoints context map
 		Map<Integer, MIBreakpointDMData> contextBreakpoints = fBreakpoints.get(context);
 		if (contextBreakpoints == null) {
-       		drm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, UNKNOWN_BREAKPOINT, null));
+       		drm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT, null));
        		drm.done();
 			return;
 		}
@@ -387,7 +386,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 		
 		// Validate the context
 		if (context == null) {
-       		drm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, UNKNOWN_EXECUTION_CONTEXT, null));
+       		drm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_EXECUTION_CONTEXT, null));
        		drm.done();
 			return;
 		}
@@ -402,7 +401,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 		// Validate the breakpoint type
 		String type = (String) attributes.get(BREAKPOINT_TYPE);
 		if (type == null) {
-       		drm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, UNKNOWN_BREAKPOINT_TYPE, null));
+       		drm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_TYPE, null));
    			drm.done();
    			return;
 		}
@@ -415,7 +414,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 			addWatchpoint(context, attributes, drm);
 		}
 		else {
-       		drm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, UNKNOWN_BREAKPOINT_TYPE, null));
+       		drm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_TYPE, null));
    			drm.done();
 		}
 	}
@@ -467,7 +466,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 		// Select the context breakpoints map
 		final Map<Integer, MIBreakpointDMData> contextBreakpoints = fBreakpoints.get(context);
 		if (contextBreakpoints == null) {
-       		drm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
+       		drm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
        		drm.done();
 			return;
 		}
@@ -489,7 +488,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 
 	            	// With MI, an invalid location won't generate an error
                 	if (getData().getMIBreakpoints().length == 0) {
-                   		drm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, BREAKPOINT_INSERTION_FAILURE, null));
+                   		drm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, REQUEST_FAILED, BREAKPOINT_INSERTION_FAILURE, null));
                    		drm.done();
                    		return;
                     }
@@ -498,7 +497,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
                 	final MIBreakpointDMData newBreakpoint = new MIBreakpointDMData(getData().getMIBreakpoints()[0]);
                 	int reference = newBreakpoint.getNumber();
                 	if (reference == -1) {
-                   		drm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, BREAKPOINT_INSERTION_FAILURE, null));
+                   		drm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, REQUEST_FAILED, BREAKPOINT_INSERTION_FAILURE, null));
                    		drm.done();
                    		return;
                 	}
@@ -520,7 +519,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 
 				@Override
 	            protected void handleError() {
-               		drm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, BREAKPOINT_INSERTION_FAILURE, null));
+               		drm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, REQUEST_FAILED, BREAKPOINT_INSERTION_FAILURE, null));
                		drm.done();
 				}
 		};
@@ -542,7 +541,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 		// Pick the context breakpoints map
 		final Map<Integer, MIBreakpointDMData> contextBreakpoints = fBreakpoints.get(context);
 		if (contextBreakpoints == null) {
-       		drm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
+       		drm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
        		drm.done();
 			return;
 		}
@@ -560,7 +559,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 
 	            	// With MI, an invalid location won't generate an error
                 	if (getData().getMIBreakpoints().length == 0) {
-                   		drm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, WATCHPOINT_INSERTION_FAILURE, null));
+                   		drm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, REQUEST_FAILED, WATCHPOINT_INSERTION_FAILURE, null));
                    		drm.done();
                    		return;
                     }
@@ -569,7 +568,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
                 	final MIBreakpointDMData newBreakpoint = new MIBreakpointDMData(getData().getMIBreakpoints()[0]);
                 	int reference = newBreakpoint.getNumber();
                 	if (reference == -1) {
-                   		drm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, WATCHPOINT_INSERTION_FAILURE, null));
+                   		drm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, REQUEST_FAILED, WATCHPOINT_INSERTION_FAILURE, null));
                    		drm.done();
                    		return;
                 	}
@@ -593,7 +592,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 
 				@Override
 	            protected void handleError() {
-               		drm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, WATCHPOINT_INSERTION_FAILURE, null));
+               		drm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, REQUEST_FAILED, WATCHPOINT_INSERTION_FAILURE, null));
                		drm.done();
 				}
 			};
@@ -613,7 +612,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 
 		// Validate the breakpoint context
 		if (dmc == null) {
-			rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
+			rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
 			rm.done();
 			return;
 		}
@@ -624,7 +623,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 			breakpointCtx = (MIBreakpointDMContext) dmc;
 		}
 		else {
-       		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, UNKNOWN_BREAKPOINT_TYPE, null));
+       		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_TYPE, null));
        		rm.done();
 			return;
 		}
@@ -632,7 +631,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 		// Validate the target context
         IBreakpointsTargetDMContext context = DMContexts.getAncestorOfType(dmc, IBreakpointsTargetDMContext.class);
 		if (context == null) {
-			rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, UNKNOWN_EXECUTION_CONTEXT, null));
+			rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_EXECUTION_CONTEXT, null));
 			rm.done();
 			return;
 		}
@@ -640,7 +639,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 		// Pick the context breakpoints map
 		final Map<Integer,MIBreakpointDMData> contextBreakpoints = fBreakpoints.get(context);
 		if (contextBreakpoints == null) {
-			rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, UNKNOWN_BREAKPOINT, null));
+			rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT, null));
 			rm.done();
 			return;
 		}
@@ -649,7 +648,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 		final int reference = breakpointCtx.getReference();
 		MIBreakpointDMData breakpoint = contextBreakpoints.get(reference);
 		if (breakpoint == null) {
-			rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, UNKNOWN_BREAKPOINT, null));
+			rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT, null));
 			rm.done();
 			return;
 		}
@@ -680,7 +679,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 	{
 		// Validate the breakpoint context
 		if (dmc == null) {
-       		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
+       		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
        		rm.done();
 			return;
 		}
@@ -691,7 +690,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 			breakpointCtx = (MIBreakpointDMContext) dmc;
 		}
 		else {
-			rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, UNKNOWN_BREAKPOINT_TYPE, null));
+			rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_TYPE, null));
 			rm.done();
 			return;
 		}
@@ -699,7 +698,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 		// Validate the context
         IBreakpointsTargetDMContext context = DMContexts.getAncestorOfType(dmc, IBreakpointsTargetDMContext.class);
 		if (context == null) {
-       		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, UNKNOWN_EXECUTION_CONTEXT, null));
+       		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_EXECUTION_CONTEXT, null));
        		rm.done();
 			return;
 		}
@@ -707,7 +706,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 		// Pick the context breakpoints map
 		final Map<Integer, MIBreakpointDMData> contextBreakpoints = fBreakpoints.get(context);
 		if (contextBreakpoints == null) {
-       		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, UNKNOWN_BREAKPOINT, null));
+       		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT, null));
        		rm.done();
 			return;
 		}
@@ -716,7 +715,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 		final int reference = breakpointCtx.getReference();
 		MIBreakpointDMData breakpoint = contextBreakpoints.get(reference);
 		if (breakpoint == null) {
-       		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, UNKNOWN_BREAKPOINT, null));
+       		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT, null));
        		rm.done();
 			return;
 		}
@@ -814,7 +813,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 		// Pick the context breakpoints map
 		final Map<Integer, MIBreakpointDMData> contextBreakpoints = fBreakpoints.get(context);
 		if (contextBreakpoints == null) {
-       		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
+       		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
        		rm.done();
 			return;
 		}
@@ -827,7 +826,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 		        protected void handleCompleted() {
 		        	MIBreakpointDMData breakpoint = contextBreakpoints.get(reference);
 		        	if (breakpoint == null) {
-		        		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, UNKNOWN_BREAKPOINT, null));
+		        		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT, null));
                    		rm.done();
                    		return;
 		        	}
@@ -835,7 +834,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 				        breakpoint.setCondition(condition);
 		        	}
 		        	else {
-		        		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, INVALID_CONDITION, null));
+		        		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, REQUEST_FAILED, INVALID_CONDITION, null));
 				        breakpoint.setCondition(NULL_STRING);
 		        	}
 		            rm.done();
@@ -858,7 +857,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 		// Pick the context breakpoints map
 		final Map<Integer, MIBreakpointDMData> contextBreakpoints = fBreakpoints.get(context);
 		if (contextBreakpoints == null) {
-       		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
+       		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
        		rm.done();
 			return;
 		}
@@ -871,7 +870,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 		        protected void handleOK() {
 		        	MIBreakpointDMData breakpoint = contextBreakpoints.get(reference);
 		        	if (breakpoint == null) {
-		        		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, UNKNOWN_BREAKPOINT, null));
+		        		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT, null));
                    		rm.done();
                    		return;
 		        	}
@@ -894,7 +893,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 		// Pick the context breakpoints map
 		final Map<Integer, MIBreakpointDMData> contextBreakpoints = fBreakpoints.get(context);
 		if (contextBreakpoints == null) {
-       		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
+       		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
        		rm.done();
 			return;
 		}
@@ -907,7 +906,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 		        protected void handleOK() {
 		        	MIBreakpointDMData breakpoint = contextBreakpoints.get(reference);
 		        	if (breakpoint == null) {
-		        		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, UNKNOWN_BREAKPOINT, null));
+		        		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT, null));
                    		rm.done();
                    		return;
 		        	}
@@ -930,7 +929,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 		// Pick the context breakpoints map
 		final Map<Integer, MIBreakpointDMData> contextBreakpoints = fBreakpoints.get(context);
 		if (contextBreakpoints == null) {
-       		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
+       		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
        		rm.done();
 			return;
 		}
@@ -943,7 +942,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 		        protected void handleOK() {
 		        	MIBreakpointDMData breakpoint = contextBreakpoints.get(reference);
 		        	if (breakpoint == null) {
-		        		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, UNKNOWN_BREAKPOINT, null));
+		        		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT, null));
                    		rm.done();
                    		return;
 		        	}

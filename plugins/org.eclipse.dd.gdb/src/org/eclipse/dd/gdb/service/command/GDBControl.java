@@ -32,13 +32,13 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
+import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.Sequence;
 import org.eclipse.dd.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControl;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
 import org.eclipse.dd.mi.service.command.AbstractCLIProcess;
 import org.eclipse.dd.mi.service.command.AbstractMIControl;
@@ -458,7 +458,7 @@ public class GDBControl extends AbstractMIControl {
                         attempts++;
                     }
                     requestMonitor.setStatus(new Status(
-                        IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, "Process terminate failed", null));      //$NON-NLS-1$
+                        IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "Process terminate failed", null));      //$NON-NLS-1$
                     requestMonitor.done();
                     return Status.OK_STATUS;
                 }
@@ -534,7 +534,7 @@ public class GDBControl extends AbstractMIControl {
                 fCLIProcess = new GDBCLIProcess(GDBControl.this, fUseInterpreterConsole);
             }
             catch(IOException e) {
-                requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, "Failed to create CLI Process", e)); //$NON-NLS-1$
+                requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "Failed to create CLI Process", e)); //$NON-NLS-1$
                 requestMonitor.done();
                 return;
             }

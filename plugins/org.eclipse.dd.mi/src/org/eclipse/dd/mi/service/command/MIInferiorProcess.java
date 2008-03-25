@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
+import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.dd.dsf.concurrent.Query;
 import org.eclipse.dd.dsf.debug.service.command.ICommand;
@@ -36,7 +37,6 @@ import org.eclipse.dd.dsf.debug.service.command.ICommandListener;
 import org.eclipse.dd.dsf.debug.service.command.ICommandResult;
 import org.eclipse.dd.dsf.debug.service.command.IEventListener;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.mi.internal.MIPlugin;
 import org.eclipse.dd.mi.service.command.commands.CLICommand;
 import org.eclipse.dd.mi.service.command.commands.CLIExecAbort;
@@ -231,7 +231,7 @@ public class MIInferiorProcess extends Process
                     } else if (getState() != State.TERMINATED) {
                         // This will cause ExecutionException to be thrown with a CoreException, 
                         // which will in turn contain the IllegalThreadStateException.
-                        rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.INVALID_STATE, "GDB is still running.", new IllegalThreadStateException())); //$NON-NLS-1$
+                        rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "GDB is still running.", new IllegalThreadStateException())); //$NON-NLS-1$
                         rm.done();
                     } else {
                         getCommandControl().queueCommand(

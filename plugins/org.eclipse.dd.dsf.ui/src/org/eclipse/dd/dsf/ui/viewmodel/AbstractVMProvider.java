@@ -20,7 +20,7 @@ import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
-import org.eclipse.dd.dsf.service.IDsfService;
+import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.ui.concurrent.DisplayDsfExecutor;
 import org.eclipse.dd.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
@@ -336,8 +336,8 @@ abstract public class AbstractVMProvider implements IVMProvider
                     }
                     
                     @Override
-                    protected void handleError() {
-                        if (getStatus().getCode() == IDsfService.NOT_SUPPORTED) {
+                    protected void handleErrorOrWarning() {
+                        if (getStatus().getCode() == IDsfStatusConstants.NOT_SUPPORTED) {
                             updateNode(
                                 node, 
                                 new VMChildrenUpdate(
@@ -382,8 +382,8 @@ abstract public class AbstractVMProvider implements IVMProvider
                     }
                     
                     @Override
-                    protected void handleError() {
-                        if (getStatus().getCode() == IDsfService.NOT_SUPPORTED) {
+                    protected void handleErrorOrWarning() {
+                        if (getStatus().getCode() == IDsfStatusConstants.NOT_SUPPORTED) {
                             updateNode(
                                 node, 
                                 new VMChildrenUpdate(

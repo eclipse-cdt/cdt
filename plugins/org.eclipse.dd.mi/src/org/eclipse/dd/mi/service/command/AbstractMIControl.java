@@ -39,7 +39,6 @@ import org.eclipse.dd.dsf.debug.service.command.ICommandResult;
 import org.eclipse.dd.dsf.debug.service.command.IEventListener;
 import org.eclipse.dd.dsf.service.AbstractDsfService;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.mi.internal.MIPlugin;
 import org.eclipse.dd.mi.service.IMIExecutionDMContext;
 import org.eclipse.dd.mi.service.command.commands.MICommand;
@@ -133,7 +132,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
      */
 
     private Status genStatus(String str) {
-    	return new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.INVALID_STATE, str, null);
+    	return new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INVALID_STATE, str, null);
     }
     
     protected void stopCommandProcessing() {
@@ -631,7 +630,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
 						
 						if ( errorResult.equals(MIResultRecord.ERROR) ) {
 							String status = getStatusString(commandHandle.getCommand(),response);
-							rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, status, null)); 
+							rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, REQUEST_FAILED, status, null)); 
 						}
 						
 						/*

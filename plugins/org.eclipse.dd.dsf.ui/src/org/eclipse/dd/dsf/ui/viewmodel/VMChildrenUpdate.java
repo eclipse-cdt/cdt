@@ -16,8 +16,8 @@ import java.util.List;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.internal.ui.DsfUIPlugin;
-import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
@@ -129,7 +129,7 @@ public class VMChildrenUpdate extends VMViewerUpdate implements IChildrenUpdate 
          */        
         rm.setData(fElements);
         if (rm.getStatus().isOK() && fLength != -1 && fElements.size() != fLength) {
-            rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, "Incomplete elements of updates", null)); //$NON-NLS-1$
+            rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "Incomplete elements of updates", null)); //$NON-NLS-1$
         }
         super.done();
     }

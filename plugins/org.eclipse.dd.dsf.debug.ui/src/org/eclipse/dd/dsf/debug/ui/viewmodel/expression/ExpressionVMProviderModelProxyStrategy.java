@@ -96,7 +96,7 @@ public class ExpressionVMProviderModelProxyStrategy extends DefaultVMModelProxyS
                                 }
                                 
                                 @Override
-                                protected void handleError() {
+                                protected void handleErrorOrWarning() {
                                     // Avoid propagating the error to avoid processing the delta by 
                                     // all nodes.
                                     rm.done();

@@ -13,6 +13,7 @@ package org.eclipse.dd.examples.pda.launch;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
+import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.Sequence;
 import org.eclipse.dd.dsf.debug.service.BreakpointsMediator;
@@ -133,7 +134,7 @@ public class PDAServicesShutdownSequence extends Sequence {
                 }
             });
         } else {
-            requestMonitor.setStatus(new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR,
+            requestMonitor.setStatus(new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR,
                 "Service '" + clazz.getName() + "' not found.", null)); //$NON-NLS-1$//$NON-NLS-2$
             requestMonitor.done();
         }

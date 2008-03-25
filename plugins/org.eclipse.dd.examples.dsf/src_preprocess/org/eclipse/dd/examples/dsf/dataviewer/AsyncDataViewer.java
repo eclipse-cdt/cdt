@@ -199,7 +199,7 @@ public class AsyncDataViewer
             if (item.fIndex < topIdx || item.fIndex > botIdx) {
                 // Set the item to canceled status, so that the data provider 
                 // will ignore it.
-                item.setCanceled(true);
+                item.cancel();
                 
                 // Add the item index to list of indexes that were canceled, 
                 // which will be sent to the table widget. 

@@ -13,6 +13,7 @@ package org.eclipse.dd.gdb.launch.launching;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
+import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.Sequence;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
@@ -98,7 +99,7 @@ public class ShutdownSequence extends Sequence {
 //                        }
 //                    });
 //            } else {
-//                requestMonitor.setStatus(new Status(IStatus.ERROR, DsfGdbLaunchPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR,
+//                requestMonitor.setStatus(new Status(IStatus.ERROR, DsfGdbLaunchPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR,
 //                    "Needed services not found.", null)); //$NON-NLS-1$
 //                requestMonitor.done();
 //            }
@@ -171,7 +172,7 @@ public class ShutdownSequence extends Sequence {
                 }
             });
         } else {
-            requestMonitor.setStatus(new Status(IStatus.ERROR, GdbLaunchPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR,
+            requestMonitor.setStatus(new Status(IStatus.ERROR, GdbLaunchPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR,
                 "Service '" + clazz.getName() + "' not found.", null)); //$NON-NLS-1$//$NON-NLS-2$
             requestMonitor.done();
         }

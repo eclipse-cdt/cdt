@@ -22,10 +22,10 @@ import java.util.Map;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.internal.DsfDebugPlugin;
-import org.eclipse.dd.dsf.service.IDsfService;
 
 /**
  *  This is a utility class for caching results  of MI Commands.  Return MIInfo 
@@ -268,7 +268,7 @@ public class CommandCache implements ICommandListener
          *  Return an error if the target is available anymore.
          */ 
         if (!fIsTargetAvailable) {
-            rm.setStatus(new Status(IStatus.ERROR, DsfDebugPlugin.PLUGIN_ID, IDsfService.INVALID_STATE, "Target not available.", null)); //$NON-NLS-1$
+            rm.setStatus(new Status(IStatus.ERROR, DsfDebugPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Target not available.", null)); //$NON-NLS-1$
             rm.done();
             return;
         }

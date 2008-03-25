@@ -17,12 +17,12 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.Query;
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.eclipse.dd.dsf.concurrent.ThreadSafeAndProhibitedFromDsfExecutor;
 import org.eclipse.dd.dsf.service.DsfServices;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.examples.dsf.DsfExamplesPlugin;
 import org.eclipse.dd.examples.dsf.timers.AlarmService.TriggerDMContext;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -199,7 +199,7 @@ public class TriggerCellModifier implements ICellModifier {
                 
             AlarmService service = getService(fDmc);
             if (service == null) {
-                rm.setStatus(new Status(IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID, IDsfService.INVALID_STATE, 
+                rm.setStatus(new Status(IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, 
                                           "Service not available", null)); 
                 rm.done();
                 return;
@@ -207,7 +207,7 @@ public class TriggerCellModifier implements ICellModifier {
             
             int value = service.getTriggerValue(fDmc);
             if (value == -1) {
-                rm.setStatus(new Status(IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID, IDsfService.INVALID_HANDLE, 
+                rm.setStatus(new Status(IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_HANDLE, 
                     "Invalid context", null)); 
                 rm.done();                
                 return;
@@ -241,7 +241,7 @@ public class TriggerCellModifier implements ICellModifier {
             // Guard against a disposed service
             AlarmService service = getService(fDmc);
             if (service == null) {
-                rm.setStatus(new Status(IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID, IDsfService.INVALID_STATE, 
+                rm.setStatus(new Status(IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, 
                                           "Service not available", null)); 
                 rm.done();
                 return;

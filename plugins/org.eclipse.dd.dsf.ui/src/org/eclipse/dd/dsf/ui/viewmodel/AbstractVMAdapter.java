@@ -17,9 +17,9 @@ import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.eclipse.dd.dsf.internal.ui.DsfUIPlugin;
-import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation;
@@ -97,7 +97,7 @@ abstract public class AbstractVMAdapter implements IVMAdapter
             updateProvider(provider, updates);
         } else {
             for (IViewerUpdate update : updates) {
-                update.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR, 
+                update.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, 
                     "No model provider for update " + update, null)); //$NON-NLS-1$
             }
         }
@@ -109,7 +109,7 @@ abstract public class AbstractVMAdapter implements IVMAdapter
             updateProvider(provider, updates);
         } else {
             for (IViewerUpdate update : updates) {
-                update.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR, 
+                update.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, 
                     "No model provider for update " + update, null)); //$NON-NLS-1$
             }
         }
@@ -121,7 +121,7 @@ abstract public class AbstractVMAdapter implements IVMAdapter
             updateProvider(provider, updates);
         } else {
             for (IViewerUpdate update : updates) {
-                update.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR, 
+                update.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, 
                     "No model provider for update " + update, null)); //$NON-NLS-1$
             }
         }
@@ -142,7 +142,7 @@ abstract public class AbstractVMAdapter implements IVMAdapter
             });
         } catch (RejectedExecutionException e) {
             for (IViewerUpdate update : updates) {
-                update.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR, 
+                update.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, 
                     "Display is disposed, cannot complete update " + update, null)); //$NON-NLS-1$
                 update.done();
             }                

@@ -276,7 +276,7 @@ public class MIRegisters extends AbstractDsfService implements IRegisters {
                         // If the list is empty just return empty handed.
                         if (regValue.length == 0) {
                             assert false : "Backend protocol error"; //$NON-NLS-1$
-                            //done.setStatus(new Status(IStatus.ERROR, IDsfService.INTERNAL_ERROR ,));
+                            //done.setStatus(new Status(IStatus.ERROR, IDsfStatusConstants.INTERNAL_ERROR ,));
                             rm.done();
                             return;
                         }
@@ -331,7 +331,7 @@ public class MIRegisters extends AbstractDsfService implements IRegisters {
                     // If the list is empty just return empty handed.
                     if (regValue.length == 0) {
                         assert false : "Backend protocol error"; //$NON-NLS-1$
-                        //done.setStatus(new Status(IStatus.ERROR, IDsfService.INTERNAL_ERROR ,));
+                        //done.setStatus(new Status(IStatus.ERROR, IDsfStatusConstants.INTERNAL_ERROR ,));
                         rm.done();
                         return;
                     }

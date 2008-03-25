@@ -21,6 +21,7 @@ import org.eclipse.dd.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.dd.dsf.concurrent.DefaultDsfExecutor;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
+import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.Sequence;
@@ -28,7 +29,6 @@ import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.gdb.launch.internal.GdbLaunchPlugin;
 import org.eclipse.dd.gdb.service.command.GDBControl;
 import org.eclipse.debug.core.DebugException;
@@ -83,9 +83,9 @@ public class GdbLaunch extends Launch
         try {
             fExecutor.submit(initRunnable).get();
         } catch (InterruptedException e) {
-            new Status(IStatus.ERROR, GdbLaunchPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR, "Error initializing launch", e); //$NON-NLS-1$
+            new Status(IStatus.ERROR, GdbLaunchPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Error initializing launch", e); //$NON-NLS-1$
         } catch (ExecutionException e) {
-            new Status(IStatus.ERROR, GdbLaunchPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR, "Error initializing launch", e); //$NON-NLS-1$
+            new Status(IStatus.ERROR, GdbLaunchPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Error initializing launch", e); //$NON-NLS-1$
         }
     }
 

@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.dd.dsf.concurrent.Query;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
@@ -27,7 +28,6 @@ import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.gdb.breakpoints.CBreakpointGdbThreadsFilterExtension;
 import org.eclipse.dd.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.dd.gdb.launch.launching.GdbLaunch;
@@ -368,7 +368,7 @@ public class GdbThreadFilterEditor {
             @Override
             protected void execute(DataRequestMonitor<IContainerDMContext> rm) {
                 if (!session.isActive()) {
-                    rm.setStatus(getFailStatus(IDsfService.INVALID_STATE, "Launch's session not active.")); //$NON-NLS-1$
+                    rm.setStatus(getFailStatus(IDsfStatusConstants.INVALID_STATE, "Launch's session not active.")); //$NON-NLS-1$
                     rm.done();
                     return;
                 }
@@ -380,7 +380,7 @@ public class GdbThreadFilterEditor {
                 if (gdbControl != null) {
                     rm.setData(gdbControl.getGDBDMContext());
                 } else {
-                    rm.setStatus(getFailStatus(IDsfService.INVALID_STATE, "GDB Control not accessible.")); //$NON-NLS-1$
+                    rm.setStatus(getFailStatus(IDsfStatusConstants.INVALID_STATE, "GDB Control not accessible.")); //$NON-NLS-1$
                 }
                 rm.done();
                 tracker.close();
@@ -408,7 +408,7 @@ public class GdbThreadFilterEditor {
             @Override
             protected void execute(DataRequestMonitor<IExecutionDMContext[]> rm) {
                 if (!session.isActive()) {
-                    rm.setStatus(getFailStatus(IDsfService.INVALID_STATE, "Container's session not active.")); //$NON-NLS-1$
+                    rm.setStatus(getFailStatus(IDsfStatusConstants.INVALID_STATE, "Container's session not active.")); //$NON-NLS-1$
                     rm.done();
                     return;
                 }
@@ -420,7 +420,7 @@ public class GdbThreadFilterEditor {
                 if (runControl != null) {
                     runControl.getExecutionContexts(container, rm);
                 } else {
-                    rm.setStatus(getFailStatus(IDsfService.INVALID_STATE, "GDB Control not accessible.")); //$NON-NLS-1$
+                    rm.setStatus(getFailStatus(IDsfStatusConstants.INVALID_STATE, "GDB Control not accessible.")); //$NON-NLS-1$
                     rm.done();
                 }
                 tracker.close();
@@ -448,7 +448,7 @@ public class GdbThreadFilterEditor {
             @Override
             protected void execute(DataRequestMonitor<String> rm) {
                 if (!session.isActive()) {
-                    rm.setStatus(getFailStatus(IDsfService.INVALID_STATE, "Container's session not active.")); //$NON-NLS-1$
+                    rm.setStatus(getFailStatus(IDsfStatusConstants.INVALID_STATE, "Container's session not active.")); //$NON-NLS-1$
                     rm.done();
                     return;
                 }
@@ -460,7 +460,7 @@ public class GdbThreadFilterEditor {
                 if (gdbControl != null) {
                     rm.setData(gdbControl.getExecutablePath().toOSString());
                 } else {
-                    rm.setStatus(getFailStatus(IDsfService.INVALID_STATE, "GDB Control not accessible.")); //$NON-NLS-1$
+                    rm.setStatus(getFailStatus(IDsfStatusConstants.INVALID_STATE, "GDB Control not accessible.")); //$NON-NLS-1$
                 }
                 rm.done();
                 tracker.close();
@@ -488,7 +488,7 @@ public class GdbThreadFilterEditor {
             @Override
             protected void execute(final DataRequestMonitor<String> rm) {
                 if (!session.isActive()) {
-                    rm.setStatus(getFailStatus(IDsfService.INVALID_STATE, "Container's session not active.")); //$NON-NLS-1$
+                    rm.setStatus(getFailStatus(IDsfStatusConstants.INVALID_STATE, "Container's session not active.")); //$NON-NLS-1$
                     rm.done();
                     return;
                 }
@@ -513,7 +513,7 @@ public class GdbThreadFilterEditor {
                         }
                     });
                 } else {
-                    rm.setStatus(getFailStatus(IDsfService.INVALID_STATE, "GDB Control not accessible.")); //$NON-NLS-1$
+                    rm.setStatus(getFailStatus(IDsfStatusConstants.INVALID_STATE, "GDB Control not accessible.")); //$NON-NLS-1$
                     rm.done();
                 }
                 tracker.close();

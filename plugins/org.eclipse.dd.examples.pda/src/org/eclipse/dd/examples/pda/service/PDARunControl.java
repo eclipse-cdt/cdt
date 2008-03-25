@@ -14,6 +14,7 @@ package org.eclipse.dd.examples.pda.service;
 import java.util.Hashtable;
 
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.AbstractDMEvent;
@@ -24,7 +25,6 @@ import org.eclipse.dd.dsf.debug.service.command.IEventListener;
 import org.eclipse.dd.dsf.service.AbstractDsfService;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.examples.pda.PDAPlugin;
 import org.eclipse.dd.examples.pda.service.commands.PDACommandResult;
 import org.eclipse.dd.examples.pda.service.commands.PDAResumeCommand;
@@ -244,11 +244,11 @@ public class PDARunControl extends AbstractDsfService
             	new PDAResumeCommand(fCommandControl.getProgramDMContext()),
             	new DataRequestMonitor<PDACommandResult>(getExecutor(), rm) { 
                     @Override
-                    protected void handleErrorOrCancel() {
+                    protected void handleCancelOrErrorOrWarning() {
                         // If the resume command failed, we no longer
                         // expect to receive a resumed event.
                         fResumePending = false;
-                        super.handleErrorOrCancel();
+                        super.handleCancelOrErrorOrWarning();
                     }
             	}
             );
@@ -266,7 +266,7 @@ public class PDARunControl extends AbstractDsfService
                 new DataRequestMonitor<PDACommandResult>(getExecutor(), rm));
             
         } else {
-            PDAPlugin.failRequest(rm, IDsfService.INVALID_STATE, "Given context: " + context + ", is already suspended."); 
+            PDAPlugin.failRequest(rm, IDsfStatusConstants.INVALID_STATE, "Given context: " + context + ", is already suspended."); 
         }
     }
     
@@ -285,7 +285,7 @@ public class PDARunControl extends AbstractDsfService
                 new PDAStepCommand(fCommandControl.getProgramDMContext()),
                 new DataRequestMonitor<PDACommandResult>(getExecutor(), rm) {
                     @Override
-                    protected void handleErrorOrCancel() {
+                    protected void handleCancelOrErrorOrWarning() {
                         // If the step command failed, we no longer
                         // expect to receive a resumed event.
                         fResumePending = false;

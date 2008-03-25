@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
@@ -38,7 +39,6 @@ import org.eclipse.dd.dsf.debug.service.command.ICommandControl;
 import org.eclipse.dd.dsf.service.AbstractDsfService;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.mi.internal.MIPlugin;
 import org.eclipse.dd.mi.service.ExpressionService.ExpressionChangedEvent;
 import org.eclipse.dd.mi.service.command.commands.MIDataReadMemory;
@@ -173,14 +173,14 @@ public class MIMemory extends AbstractDsfService implements IMemory {
         // Validate the word size
     	// NOTE: We only accept 1 byte words for this implementation
     	if (word_size != 1) {
-    		drm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.NOT_SUPPORTED, "Word size not supported (!= 1)", null)); //$NON-NLS-1$
+    		drm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, NOT_SUPPORTED, "Word size not supported (!= 1)", null)); //$NON-NLS-1$
     		drm.done();
     		return;
     	}
 
     	// Validate the byte count
     	if (count < 0) {
-    		drm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR, "Invalid word count (< 0)", null)); //$NON-NLS-1$
+    		drm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Invalid word count (< 0)", null)); //$NON-NLS-1$
     		drm.done();
     		return;
     	}
@@ -205,21 +205,21 @@ public class MIMemory extends AbstractDsfService implements IMemory {
     	// Validate the word size
     	// NOTE: We only accept 1 byte words for this implementation
     	if (word_size != 1) {
-    		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.NOT_SUPPORTED, "Word size not supported (!= 1)", null)); //$NON-NLS-1$
+    		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, NOT_SUPPORTED, "Word size not supported (!= 1)", null)); //$NON-NLS-1$
     		rm.done();
     		return;
     	}
 
     	// Validate the byte count
     	if (count < 0) {
-    		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR, "Invalid word count (< 0)", null)); //$NON-NLS-1$
+    		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Invalid word count (< 0)", null)); //$NON-NLS-1$
     		rm.done();
     		return;
     	}
 
     	// Validate the buffer size
     	if (buffer.length < count) {
-    		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR, "Buffer too short", null)); //$NON-NLS-1$
+    		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Buffer too short", null)); //$NON-NLS-1$
     		rm.done();
     		return;
     	}
@@ -244,21 +244,21 @@ public class MIMemory extends AbstractDsfService implements IMemory {
     	// Validate the word size
     	// NOTE: We only accept 1 byte words for this implementation
     	if (word_size != 1) {
-    		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.NOT_SUPPORTED, "Word size not supported (!= 1)", null)); //$NON-NLS-1$
+    		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, NOT_SUPPORTED, "Word size not supported (!= 1)", null)); //$NON-NLS-1$
     		rm.done();
     		return;
     	}
 
     	// Validate the repeat count
     	if (count < 0) {
-    		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR, "Invalid repeat count (< 0)", null)); //$NON-NLS-1$
+    		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Invalid repeat count (< 0)", null)); //$NON-NLS-1$
     		rm.done();
     		return;
     	}
 
     	// Validate the pattern
     	if (pattern.length < 1) {
-    		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR, "Empty pattern", null)); //$NON-NLS-1$
+    		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Empty pattern", null)); //$NON-NLS-1$
     		rm.done();
     		return;
     	}

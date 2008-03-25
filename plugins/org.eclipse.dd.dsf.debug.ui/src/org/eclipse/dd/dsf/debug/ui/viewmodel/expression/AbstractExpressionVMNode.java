@@ -16,11 +16,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.MultiRequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.internal.ui.DsfDebugUIPlugin;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.dd.dsf.ui.viewmodel.VMChildrenUpdate;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMNode;
@@ -42,7 +42,7 @@ public abstract class AbstractExpressionVMNode extends AbstractDMVMNode
 
     public void update(final IExpressionUpdate update) {
         if (!canParseExpression(update.getExpression())) {
-            update.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR, "Invalid expression", null)); //$NON-NLS-1$
+            update.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Invalid expression", null)); //$NON-NLS-1$
             update.done();
             return;
         }
@@ -53,7 +53,7 @@ public abstract class AbstractExpressionVMNode extends AbstractDMVMNode
                 @Override
                 protected void handleOK() {
                     if (getData().size() == 0) {
-                        update.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR, "No contexts", null)); //$NON-NLS-1$
+                        update.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "No contexts", null)); //$NON-NLS-1$
                         update.done();
                     } else {
                         final List<Object> elements = getData();
@@ -73,7 +73,7 @@ public abstract class AbstractExpressionVMNode extends AbstractDMVMNode
                                         }
                                     }
                                     if (!foundMatchingContext) {
-                                        update.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR, "Context not found", null)); //$NON-NLS-1$
+                                        update.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Context not found", null)); //$NON-NLS-1$
                                     }
                                 } else {
                                     update.setStatus(getStatus());
@@ -97,7 +97,7 @@ public abstract class AbstractExpressionVMNode extends AbstractDMVMNode
                 }
                 
                 @Override
-                protected void handleErrorOrCancel() {
+                protected void handleCancelOrErrorOrWarning() {
                     update.setStatus(getStatus());
                     update.done();
                 }

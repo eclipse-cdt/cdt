@@ -12,6 +12,7 @@
 package org.eclipse.cdt.debug.internal.ui.views.memory;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.cdt.debug.internal.core.CMemoryBlockRetrievalExtension;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
@@ -57,8 +58,8 @@ public class AddMemoryBlockDialog extends TrayDialog implements ModifyListener, 
 	private boolean fEnteredExpression;	// basically, which of the two radio buttons was selected when OK was hit		
 	private CMemoryBlockRetrievalExtension fMemRetrieval;
 
-	private static ArrayList sAddressHistory = new ArrayList();
-	private static ArrayList sExpressionHistory = new ArrayList();
+	private static List<String> sAddressHistory = new ArrayList<String>();
+	private static List<String> sExpressionHistory = new ArrayList<String>();
 
 	public AddMemoryBlockDialog(Shell parentShell,
 			IMemoryBlockRetrieval memRetrieval) {
@@ -74,6 +75,7 @@ public class AddMemoryBlockDialog extends TrayDialog implements ModifyListener, 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(
 				parent,
@@ -170,6 +172,7 @@ public class AddMemoryBlockDialog extends TrayDialog implements ModifyListener, 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 
@@ -180,6 +183,7 @@ public class AddMemoryBlockDialog extends TrayDialog implements ModifyListener, 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
+	@Override
 	protected void okPressed() {
 		fExpression = fExpressionInput.getText();
 		fAddress = fAddressInput.getText();
@@ -212,6 +216,7 @@ public class AddMemoryBlockDialog extends TrayDialog implements ModifyListener, 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.TrayDialog#createButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createButtonBar(Composite parent) {
 		return super.createButtonBar(parent);
 	}
@@ -232,7 +237,7 @@ public class AddMemoryBlockDialog extends TrayDialog implements ModifyListener, 
 		return fEnteredExpression;
 	}
 	
-	private static void addHistory(ArrayList list, String item)	{		
+	private static void addHistory(List<String> list, String item)	{		
 		if (!list.contains(item))
 			list.add(0, item);
 
@@ -240,8 +245,8 @@ public class AddMemoryBlockDialog extends TrayDialog implements ModifyListener, 
 			list.remove(list.size()-1);
 	}
 	
-	private static String[] getHistory(ArrayList list)	{
-		return (String[])list.toArray(new String[list.size()]);
+	private static String[] getHistory(List<String> list)	{
+		return list.toArray(new String[list.size()]);
 	}
 
 	/* (non-Javadoc)

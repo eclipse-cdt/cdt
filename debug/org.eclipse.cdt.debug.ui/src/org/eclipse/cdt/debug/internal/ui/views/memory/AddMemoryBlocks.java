@@ -12,6 +12,7 @@
 package org.eclipse.cdt.debug.internal.ui.views.memory;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import org.eclipse.cdt.debug.internal.core.CMemoryBlockRetrievalExtension;
@@ -91,7 +92,7 @@ public class AddMemoryBlocks implements IAddMemoryBlocksTarget {
 
 		String input = dialog.enteredExpression() ? dialog.getExpression() : dialog.getAddress();
 
-		ArrayList list = new ArrayList();
+		List<String> list = new ArrayList<String>();
 
 		if (input.length() == 0)
 			list.add(""); //$NON-NLS-1$
@@ -101,7 +102,7 @@ public class AddMemoryBlocks implements IAddMemoryBlocksTarget {
 				list.add(tokenizer.nextToken());
 		}
 
-		final String[] addrsOrExprs = (String[]) list.toArray(new String[list.size()]);
+		final String[] addrsOrExprs = list.toArray(new String[list.size()]);
 
 		ParamHolder params;
 		if (dialog.enteredExpression())
@@ -114,6 +115,7 @@ public class AddMemoryBlocks implements IAddMemoryBlocksTarget {
 		final ParamHolder params_f = params;
 		final IMemoryRenderingSite memRendSite = (IMemoryRenderingSite) part;
 		Job job = new Job("Add Memory Block") { //$NON-NLS-1$
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				addMemoryBlocks(debugViewElement_f, retrieval_f, params_f,
 						memRendSite);
@@ -273,6 +275,7 @@ public class AddMemoryBlocks implements IAddMemoryBlocksTarget {
 	{
 		UIJob uiJob = new UIJob("open error"){ //$NON-NLS-1$
 
+			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				// open error for the exception
 				String detail = ""; //$NON-NLS-1$

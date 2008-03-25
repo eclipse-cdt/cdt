@@ -12,10 +12,13 @@ package org.eclipse.cdt.launch.internal.ui;
 
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.launch.AbstractCLaunchDelegate;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
@@ -218,10 +221,19 @@ public class LaunchUIPlugin extends AbstractUIPlugin implements IDebugEventSetLi
 					} catch (CoreException e) {
 					}
 					if (cproject != null) {
-						try {
-							cproject.getProject().refreshLocal(IResource.DEPTH_INFINITE, null);
-						} catch (CoreException e) {
-						}
+						final IProject project = cproject.getProject();
+						Job projectRefreshJob = new Job("Refresh"){
+
+							@Override
+							protected IStatus run(IProgressMonitor monitor) {
+								try {
+									project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+								} catch (CoreException e) {
+									return new Status(Status.CANCEL, PLUGIN_ID, 1, e.getLocalizedMessage(), e);
+								}
+								return Status.OK_STATUS;
+							}};
+						projectRefreshJob.schedule();
 					}
 				}
 			}

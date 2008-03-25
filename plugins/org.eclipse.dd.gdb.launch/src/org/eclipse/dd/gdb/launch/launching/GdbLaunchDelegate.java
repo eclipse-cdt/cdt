@@ -34,6 +34,7 @@ import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.eclipse.dd.dsf.debug.model.DsfMemoryBlockRetrieval;
 import org.eclipse.dd.dsf.debug.service.IMemory.IMemoryDMContext;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
+import org.eclipse.dd.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.dd.gdb.launch.internal.GdbLaunchPlugin;
 import org.eclipse.dd.gdb.service.command.GDBControl;
 import org.eclipse.dd.gdb.service.command.GDBControl.SessionType;

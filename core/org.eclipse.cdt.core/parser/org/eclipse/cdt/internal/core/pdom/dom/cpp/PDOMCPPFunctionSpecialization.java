@@ -89,12 +89,13 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 			IParameter[] sParams= sFunc.getParameters();
 			IType[] sParamTypes= sFunc.getType().getParameterTypes();
 			
-			final int length= Math.min(sParamTypes.length, params.length);
+			final int length= Math.min(sParams.length, params.length);
 			db.putInt(record + NUM_PARAMS, length);
 			for (int i=0; i<length; ++i) {
 				int typeRecord= i<paramTypes.length && paramTypes[i]!=null ? ((PDOMNode)paramTypes[i]).getRecord() : 0;
 				//TODO shouldn't need to make new parameter (find old one)
-				PDOMCPPParameter sParam = new PDOMCPPParameter(pdom, this, sParams[i], sParamTypes[i]);
+				final IType type= i<sParamTypes.length ? sParamTypes[i] : null;
+				PDOMCPPParameter sParam = new PDOMCPPParameter(pdom, this, sParams[i], type);
 				setFirstParameter(new PDOMCPPParameterSpecialization(pdom, this, (ICPPParameter) params[i], sParam, typeRecord));
 			}
 			db.putByte(record + ANNOTATION, PDOMCPPAnnotation.encodeAnnotation(function));

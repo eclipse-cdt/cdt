@@ -835,13 +835,16 @@ public class CPPVisitor {
 		IScope scope= getContainingScopeOrNull(name);
 		if (scope == null) {
 			return new CPPScope.CPPScopeProblem(name, IProblemBinding.SEMANTIC_BAD_SCOPE,
-					name.toCharArray());
+					name == null ? CharArrayUtils.EMPTY : name.toCharArray());
 		}
 
 		return scope;
 	}
 	
 	private static IScope getContainingScopeOrNull(IASTName name) {
+		if (name == null) {
+			return null;
+		}
 		IASTNode parent = name.getParent();
 		try {
 		    if (parent instanceof ICPPASTTemplateId) {

@@ -5838,4 +5838,15 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertTrue(td instanceof ITypedef);
 		assertTrue(((ITypedef) td).getType() instanceof ICPPBasicType);
 	}
+	
+	// void func() {  
+	// int a, b;
+	// a < b || (a==b && a < b);
+	//   if (a > b) {
+	//   }
+	// }
+	public void testResettingTemplateIdScopesStack_Bug223777() throws Exception{
+		final String code = getContents(1)[0].toString();
+		parseAndCheckBindings(code);
+	}
 }

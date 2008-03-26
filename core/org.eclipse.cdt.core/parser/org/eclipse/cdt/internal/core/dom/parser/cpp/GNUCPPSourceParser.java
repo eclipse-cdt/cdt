@@ -282,45 +282,49 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         boolean completedArg = false;
         boolean failed = false;
 
+        final int initialTemplateIdScopesSize= templateIdScopes.size();
         templateIdScopes.push(IToken.tLT);
+        try {
+        	while (LT(1) != IToken.tGT && LT(1) != IToken.tEOC) {
+        		completedArg = false;
 
-        while (LT(1) != IToken.tGT && LT(1) != IToken.tEOC) {
-            completedArg = false;
+        		IToken mark = mark();
 
-            IToken mark = mark();
+        		IASTTypeId typeId = typeId(false);
+        		if (typeId == null) {
+        			backup(mark);
+        		} else if (LT(1) != IToken.tCOMMA && LT(1) != IToken.tGT && LT(1) != IToken.tEOC){
+        			//didn't consume the whole argument, probably confused typeId with idExpression
+        			//backup and try the assignmentExpression
+        			backup(mark);
+        		} else {
+        			list.add(typeId);
+        			completedArg = true;
+        		}
+        		if (!completedArg) {
+        			try {
+        				IASTExpression expression = assignmentExpression();
+        				list.add(expression);
+        				completedArg = true;
+        			} catch (BacktrackException e) {
+        				backup(mark);
+        			}
+        		}
 
-			IASTTypeId typeId = typeId(false);
-			if (typeId == null) {
-				backup(mark);
-			} else if (LT(1) != IToken.tCOMMA && LT(1) != IToken.tGT && LT(1) != IToken.tEOC){
-				//didn't consume the whole argument, probably confused typeId with idExpression
-				//backup and try the assignmentExpression
-				backup(mark);
-			} else {
-				list.add(typeId);
-				completedArg = true;
-			}
-            if (!completedArg) {
-                try {
-                    IASTExpression expression = assignmentExpression();
-                    list.add(expression);
-                    completedArg = true;
-                } catch (BacktrackException e) {
-                    backup(mark);
-                }
-            }
-
-            if (LT(1) == IToken.tCOMMA) {
-                consume();
-            } else if (LT(1) != IToken.tGT && LT(1) != IToken.tEOC) {
-                failed = true;
-                endOffset = LA(1).getEndOffset();
-                break;
-            }
+        		if (LT(1) == IToken.tCOMMA) {
+        			consume();
+        		} else if (LT(1) != IToken.tGT && LT(1) != IToken.tEOC) {
+        			failed = true;
+        			endOffset = LA(1).getEndOffset();
+        			break;
+        		}
+        	}
         }
-
-        templateIdScopes.pop();
-
+        finally {
+        	do {
+        		templateIdScopes.pop();
+        	} while (templateIdScopes.size() > initialTemplateIdScopesSize);
+        }
         if (failed)
             throwBacktrack(startingOffset, endOffset - startingOffset);
 
@@ -407,7 +411,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
     }
 
-    protected IASTExpression conditionalExpression() throws BacktrackException, EndOfFileException {
+    @Override
+	protected IASTExpression conditionalExpression() throws BacktrackException, EndOfFileException {
     	final IASTExpression expr= super.conditionalExpression();
     	if (templateArgListCount > 0) {
     		// bug 104706, don't allow usage of logical operators in template argument lists.
@@ -912,47 +917,52 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     		IToken mark = mark();
     		consume();
     		
-    		if (templateIdScopes.size() > 0)  
-    			templateIdScopes.push(IToken.tLPAREN); 
+            final int initialSize= templateIdScopes.size();
+    		if (initialSize > 0)  
+    			templateIdScopes.push(IToken.tLPAREN);
     		
-    		boolean popped = false;
-    		IASTTypeId typeId = null;
-    		IToken startCastExpression=null;
-    		
-    		// If this isn't a type name, then we shouldn't be here
-    		if (!avoidCastExpressionByHeuristics()) {
-    			typeId = typeId(false);
+    		try {
+    			IASTTypeId typeId = null;
+    			IToken startCastExpression=null;
+
+    			// If this isn't a type name, then we shouldn't be here
+    			if (!avoidCastExpressionByHeuristics()) {
+    				typeId = typeId(false);
+    			}
+    			if (typeId != null && LT(1) == IToken.tRPAREN) {
+    				consume();
+    				startCastExpression=mark();
+    				if (initialSize > 0) {
+    					templateIdScopes.pop();
+    				}
+    				try {
+    					IASTExpression castExpression = castExpression();
+
+    					mark = null; // clean up mark so that we can garbage collect
+    					return buildTypeIdUnaryExpression(IASTCastExpression.op_cast,
+    							typeId, castExpression, startingOffset,
+    							calculateEndOffset(castExpression));
+    				} catch (BacktrackException b) {
+    					try {
+    						// try a compoundStatementExpression
+    						backup(startCastExpression);
+    						if (LT(1) == IToken.tLPAREN) {
+    							IASTExpression castExpression = compoundStatementExpression();
+    							mark = null; // clean up mark so that we can garbage collect
+    							return buildTypeIdUnaryExpression(IASTCastExpression.op_cast,
+    									typeId, castExpression, startingOffset,
+    									calculateEndOffset(castExpression));
+    						}
+    					} catch (BacktrackException bte2) {}
+    				}
+    			}
+    			backup(mark);
     		}
-            if (typeId != null && LT(1) == IToken.tRPAREN) {
-                consume();
-                startCastExpression=mark();
-                if (templateIdScopes.size() > 0) {
-                    templateIdScopes.pop();
-                    popped = true;
-                }
-                try {
-                	IASTExpression castExpression = castExpression();
-                
-                	mark = null; // clean up mark so that we can garbage collect
-                	return buildTypeIdUnaryExpression(IASTCastExpression.op_cast,
-                			typeId, castExpression, startingOffset,
-                			calculateEndOffset(castExpression));
-                } catch (BacktrackException b) {
-                    try {
-                    	// try a compoundStatementExpression
-                		backup(startCastExpression);
-                    	if (LT(1) == IToken.tLPAREN) {
-                        	IASTExpression castExpression = compoundStatementExpression();
-                            mark = null; // clean up mark so that we can garbage collect
-                            return buildTypeIdUnaryExpression(IASTCastExpression.op_cast,
-                                    typeId, castExpression, startingOffset,
-                                    calculateEndOffset(castExpression));
-                    	}
-                    } catch (BacktrackException bte2) {}
-                }
-            }
-        	backup(mark);
-        	if (templateIdScopes.size() > 0 && !popped) { templateIdScopes.pop(); }
+    		finally {
+    			while (templateIdScopes.size() > initialSize) {
+    				templateIdScopes.pop();
+    			}
+    		}
     	}
     	return unaryExpression();
 
@@ -1395,13 +1405,19 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             IASTName name = createName(nestedName);
 
             consume(IToken.tLPAREN);
+            int lastOffset;
+            IASTExpression expressionList;
             if (templateIdScopes.size() > 0) {
                 templateIdScopes.push(IToken.tLPAREN);
             }
-            IASTExpression expressionList = expression();
-            int lastOffset = consume(IToken.tRPAREN).getEndOffset();
-            if (templateIdScopes.size() > 0) {
-                templateIdScopes.pop();
+            try {
+            	expressionList = expression();
+            	lastOffset = consume(IToken.tRPAREN).getEndOffset();
+            }
+            finally {
+            	if (templateIdScopes.size() > 0) {
+            		templateIdScopes.pop();
+            	}
             }
 
             ICPPASTTypenameExpression result = createTypenameExpression();
@@ -1460,10 +1476,15 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             if (templateIdScopes.size() > 0) {
                 templateIdScopes.push(IToken.tLPAREN);
             }
-            IASTNode[] n = parseTypeIdOrUnaryExpression(false);
-            lastOffset = consume(IToken.tRPAREN).getEndOffset();
-            if (templateIdScopes.size() > 0) {
-                templateIdScopes.pop();
+            IASTNode[] n;
+            try {
+            	n= parseTypeIdOrUnaryExpression(false);
+                lastOffset = consume(IToken.tRPAREN).getEndOffset();
+            }
+            finally {
+            	if (templateIdScopes.size() > 0) {
+            		templateIdScopes.pop();
+            	}
             }
 
             switch (n.length) {
@@ -1509,18 +1530,22 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 if (templateIdScopes.size() > 0) {
                     templateIdScopes.push(IToken.tLBRACKET);
                 }
-                secondExpression = expression();
                 int lastOffset;
-                switch (LT(1)) {
-                case IToken.tRBRACKET:
-                case IToken.tEOC:
-                    lastOffset = consume().getEndOffset();
-                    break;
-                default:
-                    throw backtrack;
+                try {
+                	secondExpression = expression();
+                	switch (LT(1)) {
+                	case IToken.tRBRACKET:
+                	case IToken.tEOC:
+                		lastOffset = consume().getEndOffset();
+                		break;
+                	default:
+                		throw backtrack;
+                	}
                 }
-                if (templateIdScopes.size() > 0) {
-                    templateIdScopes.pop();
+                finally {
+                	if (templateIdScopes.size() > 0) {
+                		templateIdScopes.pop();
+                	}
                 }
 
                 IASTArraySubscriptExpression s = createArraySubscriptExpression();
@@ -1537,21 +1562,24 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 if (templateIdScopes.size() > 0) {
                     templateIdScopes.push(IToken.tLPAREN);
                 }
-                if (LT(1) != IToken.tRPAREN)
-                    secondExpression = expression();
-                else
-                    secondExpression = null;
-                switch (LT(1)) {
-                case IToken.tRPAREN:
-                case IToken.tEOC:
-                    lastOffset = consume().getEndOffset();
-                    break;
-                default:
-                    throw backtrack;
+                try {
+                	if (LT(1) != IToken.tRPAREN)
+                		secondExpression = expression();
+                	else
+                		secondExpression = null;
+                	switch (LT(1)) {
+                	case IToken.tRPAREN:
+                	case IToken.tEOC:
+                		lastOffset = consume().getEndOffset();
+                		break;
+                	default:
+                		throw backtrack;
+                	}
                 }
-
-                if (templateIdScopes.size() > 0) {
-                    templateIdScopes.pop();
+                finally {
+                	if (templateIdScopes.size() > 0) {
+                		templateIdScopes.pop();
+                	}
                 }
 
                 IASTFunctionCallExpression fce = createFunctionCallExpression();
@@ -1743,16 +1771,21 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             if (templateIdScopes.size() > 0) {
                 templateIdScopes.push(IToken.tLPAREN);
             }
-            IASTExpression lhs = expression();
             int finalOffset= 0;
-            if (LT(1) == IToken.tRPAREN) {
-                finalOffset = consume().getEndOffset();
-            } else {
-            	// missing parenthesis, assume it's there and keep going.
-            	finalOffset = LA(1).getOffset();
+            IASTExpression lhs;
+            try {
+            	lhs = expression();
+            	if (LT(1) == IToken.tRPAREN) {
+            		finalOffset = consume().getEndOffset();
+            	} else {
+            		// missing parenthesis, assume it's there and keep going.
+            		finalOffset = LA(1).getOffset();
+            	}
             }
-            if (templateIdScopes.size() > 0) {
-                templateIdScopes.pop();
+            finally {
+            	if (templateIdScopes.size() > 0) {
+            		templateIdScopes.pop();
+            	}
             }
             return buildUnaryExpression(IASTUnaryExpression.op_bracketedPrimary, lhs, t.getOffset(), finalOffset);
         case IToken.tIDENTIFIER:

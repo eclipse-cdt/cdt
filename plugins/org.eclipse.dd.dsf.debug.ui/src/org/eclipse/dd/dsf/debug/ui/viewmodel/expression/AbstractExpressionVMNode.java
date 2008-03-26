@@ -97,7 +97,7 @@ public abstract class AbstractExpressionVMNode extends AbstractDMVMNode
                 }
                 
                 @Override
-                protected void handleCancelOrErrorOrWarning() {
+                protected void handleNotOK() {
                     update.setStatus(getStatus());
                     update.done();
                 }

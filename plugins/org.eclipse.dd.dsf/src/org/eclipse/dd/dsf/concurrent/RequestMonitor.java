@@ -223,15 +223,15 @@ public class RequestMonitor {
     /**
      * Default handler for the completion of a request.  The implementation
      * calls {@link #handleOK()} if the request succeeded, and calls 
-     * {@link #handleCancelOrErrorOrWarning()} or cancel otherwise.
+     * {@link #handleNotOK()} or cancel otherwise.
      * <br>
      * Note: Sub-classes may override this method.
      */
     protected void handleCompleted() {
-        if (getStatus().isOK()) {
+        if (getStatus().getSeverity() <= IStatus.INFO) {
             handleOK();
         } else {
-            handleCancelOrErrorOrWarning();
+            handleNotOK();
         } 
     }
     
@@ -239,7 +239,7 @@ public class RequestMonitor {
      * Default handler for a successful the completion of a request.  If this 
      * monitor has a parent monitor that was configured by the constructor, that 
      * parent monitor is notified.  Otherwise this method does nothing. 
-     * {@link #handleCancelOrErrorOrWarning()} or cancel otherwise.
+     * {@link #handleNotOK()} or cancel otherwise.
      * <br>
      * Note: Sub-classes may override this method.
      */
@@ -256,7 +256,7 @@ public class RequestMonitor {
      * <br>
      * Note: Sub-classes may override this method.
      */
-    protected void handleCancelOrErrorOrWarning() {
+    protected void handleNotOK() {
         assert !getStatus().isOK();
         if (isCanceled()) {
             handleCancel();
@@ -265,10 +265,8 @@ public class RequestMonitor {
                 DsfPlugin.getDefault().getLog().log(new Status(
                     IStatus.ERROR, DsfPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Request monitor: '" + this + "' resulted in a cancel status: " + getStatus() + ", even though the request is not set to cancel.", null)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             }
-            if (getStatus().getSeverity() == IStatus.ERROR) {
-                handleError();
-            } else {
-                handleWarning();
+            if (getStatus().getSeverity() > IStatus.INFO) {
+                handleErrorOrWarning();
             }
         } 
     }

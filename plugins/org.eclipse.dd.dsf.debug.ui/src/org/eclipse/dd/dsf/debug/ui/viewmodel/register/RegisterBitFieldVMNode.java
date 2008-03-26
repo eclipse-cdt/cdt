@@ -375,7 +375,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
             regDmc,
             new DataRequestMonitor<IBitFieldDMContext[]>(getSession().getExecutor(), null) {
                 @Override
-                protected void handleCancelOrErrorOrWarning() {
+                protected void handleNotOK() {
                     handleFailedUpdate(update);
                 }
 

@@ -40,6 +40,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
@@ -110,17 +111,16 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 	private CMacroExpansionInput fInput;
 	private CMacroCompareViewer fMacroCompareViewer;
 	private ISourceViewer fMacroViewer;
+	private StyledText fMacroText;
 
 	/**
 	 * Creates a new control for use as a "quick view" where the control immediately takes the focus.
 	 * 
 	 * @param parent  parent shell
-	 * @param shellStyle  shell style bits
-	 * @param style  text viewer style bits
 	 * @param input  the input object, may be <code>null</code>
 	 */
-	public CMacroExpansionExplorationControl(Shell parent, int shellStyle, int style, CMacroExpansionInput input) {
-		super(parent, shellStyle, style, true, true, true);
+	public CMacroExpansionExplorationControl(Shell parent, CMacroExpansionInput input) {
+		super(parent, SWT.RESIZE, SWT.NONE, true, true, true);
 		setMacroExpansionInput(input);
 	}
 
@@ -128,11 +128,9 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 	 * Creates a new control for use as a "quick view" where the control immediately takes the focus.
 	 * 
 	 * @param parent  parent shell
-	 * @param shellStyle  shell style bits
-	 * @param textStyle  text viewer style bits
 	 */
-	public CMacroExpansionExplorationControl(Shell parent, int shellStyle, int textStyle) {
-		this(parent, shellStyle, textStyle, null);
+	public CMacroExpansionExplorationControl(Shell parent) {
+		this(parent, null);
 	}
 
 	/*
@@ -173,15 +171,15 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 		sourceViewer.configure(new SimpleCSourceViewerConfiguration(tools.getColorManager(), store, null, ICPartitions.C_PARTITIONING, false));
 		sourceViewer.setEditable(false);
 
-		StyledText styledText= sourceViewer.getTextWidget();
+		fMacroText= sourceViewer.getTextWidget();
 
 		Font font= JFaceResources.getFont(PreferenceConstants.EDITOR_TEXT_FONT);
-		styledText.setFont(font);
+		fMacroText.setFont(font);
 
 		GridData gd= new GridData(GridData.BEGINNING | GridData.FILL_BOTH);
-		gd.heightHint= styledText.getLineHeight() * 2;
-		styledText.setLayoutData(gd);
-		styledText.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
+		gd.heightHint= fMacroText.getLineHeight() * 2;
+		fMacroText.setLayoutData(gd);
+		fMacroText.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
 		
 		final Document doc= new Document();
 		CUIPlugin.getDefault().getTextTools().setupCDocument(doc);
@@ -345,6 +343,16 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 			}
 			super.setInput(input);
 		}
+	}
+
+	/*
+	 * @see org.eclipse.cdt.internal.ui.text.AbstractCompareViewerInformationControl#computeTrim()
+	 */
+	@Override
+	public Rectangle computeTrim() {
+		Rectangle trim= super.computeTrim();
+		trim.height += fMacroText.getLineHeight();
+		return trim;
 	}
 
 	/**

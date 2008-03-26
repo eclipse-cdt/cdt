@@ -157,8 +157,7 @@ public class BestMatchHover extends AbstractCEditorTextHover {
 	 * @since 3.0
 	 */
 	public IInformationControlCreator getInformationPresenterControlCreator() {
-		if (fBestHover instanceof ITextHoverExtension2)
-			return ((ITextHoverExtension2)fBestHover).getInformationPresenterControlCreator();
+		// this is wrong, but left here for backwards compatibility
 		if (fBestHover instanceof IInformationProviderExtension2)
 			return ((IInformationProviderExtension2)fBestHover).getInformationPresenterControlCreator();
 

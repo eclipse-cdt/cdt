@@ -12,6 +12,8 @@
 package org.eclipse.cdt.internal.ui.text.c.hover;
 
 import org.eclipse.jface.dialogs.PopupDialog;
+import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 
@@ -58,9 +60,29 @@ public class CMacroExpansionControl extends AbstractSourceViewerInformationContr
 	@Override
 	public void setInput(Object input) {
 		if (input instanceof CMacroExpansionInput) {
-			setInformation(((CMacroExpansionInput) input).fExplorer.getFullExpansion().getCodeAfterStep());
+			CMacroExpansionInput macroExpansionInput= (CMacroExpansionInput) input;
+			setInformation(macroExpansionInput.fExplorer.getFullExpansion().getCodeAfterStep());
 		} else {
 			super.setInput(input);
 		}
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension5#getInformationPresenterControlCreator()
+	 */
+	public IInformationControlCreator getInformationPresenterControlCreator() {
+		return new IInformationControlCreator() {
+			public IInformationControl createInformationControl(Shell parent) {
+				return new CMacroExpansionExplorationControl(parent);
+			}
+		};
+	}
+
+	/*
+	 * @see org.eclipse.cdt.internal.ui.text.AbstractSourceViewerInformationControl#allowMoveIntoControl()
+	 */
+	@Override
+	public boolean allowMoveIntoControl() {
+		return true;
 	}
 }

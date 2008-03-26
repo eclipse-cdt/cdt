@@ -21,6 +21,7 @@ import org.eclipse.jface.text.ITextHoverExtension;
 import org.eclipse.jface.text.ITextHoverExtension2;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.information.IInformationProviderExtension2;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
@@ -37,7 +38,7 @@ import org.eclipse.cdt.internal.ui.text.HTMLTextPresenter;
  * elements.
  * 
  */
-public abstract class AbstractCEditorTextHover implements ICEditorTextHover, ITextHoverExtension, ITextHoverExtension2 {
+public abstract class AbstractCEditorTextHover implements ICEditorTextHover, ITextHoverExtension, ITextHoverExtension2, IInformationProviderExtension2 {
 
 	private IEditorPart fEditor;
 

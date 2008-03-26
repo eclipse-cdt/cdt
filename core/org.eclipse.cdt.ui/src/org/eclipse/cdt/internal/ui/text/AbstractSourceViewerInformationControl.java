@@ -23,8 +23,12 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IInformationControlExtension;
 import org.eclipse.jface.text.IInformationControlExtension2;
+import org.eclipse.jface.text.IInformationControlExtension3;
+import org.eclipse.jface.text.IInformationControlExtension4;
+import org.eclipse.jface.text.IInformationControlExtension5;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -37,6 +41,7 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
@@ -56,7 +61,7 @@ import org.eclipse.cdt.internal.ui.editor.CSourceViewer;
  *
  * @since 5.0
  */
-public abstract class AbstractSourceViewerInformationControl extends PopupDialog implements IInformationControl, IInformationControlExtension, IInformationControlExtension2, DisposeListener {
+public abstract class AbstractSourceViewerInformationControl extends PopupDialog implements IInformationControl, IInformationControlExtension, IInformationControlExtension2, IInformationControlExtension3, IInformationControlExtension4, IInformationControlExtension5, DisposeListener {
 
 	private int fTextStyle;
 	
@@ -70,7 +75,11 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 
 	private int fMaxHeight;
 
-	private List fColorExclusionControls= new ArrayList();
+	private List<Control> fColorExclusionControls= new ArrayList<Control>();
+
+	private Font fTextFont;
+
+	private StyledText fText;
 	
 	/**
 	 * Creates a source viewer information control with the given shell as parent. The given
@@ -118,8 +127,8 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 	 */
 	protected Control createContents(Composite parent) {
 		Control contents= super.createContents(parent);
-		for (Iterator it= fColorExclusionControls.iterator(); it.hasNext(); ) {
-			Control ctrl = (Control) it.next();
+		for (Iterator<Control> it= fColorExclusionControls.iterator(); it.hasNext(); ) {
+			Control ctrl = it.next();
 			ctrl.setBackground(fBackgroundColor);
 		}
 		return contents;
@@ -150,23 +159,23 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 		return ((Viewer)fSourceViewer).getControl();
 	}
 	
-	protected ISourceViewer createSourceViewer(Composite parent, int style) {
+	protected final ISourceViewer createSourceViewer(Composite parent, int style) {
 		IPreferenceStore store= CUIPlugin.getDefault().getCombinedPreferenceStore();
 		SourceViewer sourceViewer= new CSourceViewer(parent, null, null, false, style, store);
 		CTextTools tools= CUIPlugin.getDefault().getTextTools();
 		sourceViewer.configure(new SimpleCSourceViewerConfiguration(tools.getColorManager(), store, null, ICPartitions.C_PARTITIONING, false));
 		sourceViewer.setEditable(false);
 
-		StyledText styledText= sourceViewer.getTextWidget();
+		fText= sourceViewer.getTextWidget();
 		GridData gd= new GridData(GridData.BEGINNING | GridData.FILL_BOTH);
-		styledText.setLayoutData(gd);
+		fText.setLayoutData(gd);
 		initializeColors();
-		styledText.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
-		styledText.setBackground(fBackgroundColor);
-		fColorExclusionControls.add(styledText);
+		fText.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
+		fText.setBackground(fBackgroundColor);
+		fColorExclusionControls.add(fText);
 		
-		Font font= JFaceResources.getFont(PreferenceConstants.EDITOR_TEXT_FONT);
-		styledText.setFont(font);
+		fTextFont= JFaceResources.getFont(PreferenceConstants.EDITOR_TEXT_FONT);
+		fText.setFont(fTextFont);
 
 		return sourceViewer;
 	}
@@ -192,8 +201,8 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 	/*
 	 * @see org.eclipse.jface.dialogs.PopupDialog#getBackgroundColorExclusions()
 	 */
-	protected List getBackgroundColorExclusions() {
-		List exclusions= super.getBackgroundColorExclusions();
+	protected List<Control> getBackgroundColorExclusions() {
+		List<Control> exclusions= super.getBackgroundColorExclusions();
 		exclusions.addAll(fColorExclusionControls);
 		return exclusions;
 	}
@@ -201,8 +210,8 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 	/*
 	 * @see org.eclipse.jface.dialogs.PopupDialog#getForegroundColorExclusions()
 	 */
-	protected List getForegroundColorExclusions() {
-		List exclusions= super.getForegroundColorExclusions();
+	protected List<Control> getForegroundColorExclusions() {
+		List<Control> exclusions= super.getForegroundColorExclusions();
 		exclusions.addAll(fColorExclusionControls);
 		return exclusions;
 	}
@@ -305,7 +314,7 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 	}
 
 	protected Point getInitialLocation(Point initialSize) {
-		if (!getPersistBounds()) {
+		if (!restoresLocation()) {
 			Point size = new Point(400, 400);
 			Rectangle parentBounds = getParentShell().getBounds();
 			int x = parentBounds.x + parentBounds.width / 2 - size.x / 2;
@@ -366,7 +375,7 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 	 * {@inheritDoc}
 	 */
 	public void setLocation(Point location) {
-		if (!getPersistBounds() || getDialogSettings() == null)
+		if (!restoresLocation() || getDialogSettings() == null)
 			getShell().setLocation(location);
 	}
 
@@ -374,7 +383,7 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 	 * {@inheritDoc}
 	 */
 	public void setSize(int width, int height) {
-		if (!getPersistBounds() || getDialogSettings() == null) {
+		if (!restoresSize() || getDialogSettings() == null) {
 			getShell().setSize(width, height);
 		}
 	}
@@ -457,4 +466,91 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 
 		return settings;
 	}
+
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension3#computeTrim()
+	 */
+	public Rectangle computeTrim() {
+		return getShell().computeTrim(0, 0, 0, 0);
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension3#getBounds()
+	 */
+	public Rectangle getBounds() {
+		return getShell().getBounds();
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension3#restoresLocation()
+	 */
+	public boolean restoresLocation() {
+//		return getPersistLocation();
+		return getPersistBounds();
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension3#restoresSize()
+	 */
+	public boolean restoresSize() {
+//		return getPersistSize();
+		return getPersistBounds();
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension4#setStatusText(java.lang.String)
+	 */
+	public void setStatusText(String statusFieldText) {
+		setInfoText(statusFieldText);
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension5#computeSizeConstraints(int, int)
+	 */
+	public Point computeSizeConstraints(int widthInChars, int heightInChars) {
+		GC gc= new GC(fText);
+		gc.setFont(fTextFont);
+		int width= gc.getFontMetrics().getAverageCharWidth();
+		int height= gc.getFontMetrics().getHeight();
+		gc.dispose();
+
+		return new Point(widthInChars * width, heightInChars * height);
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension5#containsControl(org.eclipse.swt.widgets.Control)
+	 */
+	public boolean containsControl(Control control) {
+		do {
+			if (control == getShell())
+				return true;
+			if (control instanceof Shell)
+				return false;
+			control= control.getParent();
+		} while (control != null);
+		return false;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension5#isVisible()
+	 */
+	public boolean isVisible() {
+		Shell shell= getShell();
+		return shell != null && !shell.isDisposed() && shell.isVisible();
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension5#getInformationPresenterControlCreator()
+	 */
+	public IInformationControlCreator getInformationPresenterControlCreator() {
+		return null;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension5#allowMoveIntoControl()
+	 */
+	public boolean allowMoveIntoControl() {
+		return false;
+	}
+
 }

@@ -929,9 +929,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
     private IInformationControlCreator getMacroExplorationControlCreator() {
         final IInformationControlCreator conrolCreator = new IInformationControlCreator() {
             public IInformationControl createInformationControl(Shell parent) {
-                int shellStyle= SWT.RESIZE;
-                int textStyle= SWT.V_SCROLL | SWT.H_SCROLL;
-                return new CMacroExpansionExplorationControl(parent, shellStyle, textStyle);   
+                return new CMacroExpansionExplorationControl(parent);   
             }
         };
         return conrolCreator;

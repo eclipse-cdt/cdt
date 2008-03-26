@@ -12,13 +12,17 @@
 
 package org.eclipse.cdt.internal.ui.text.c.hover;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IInformationControlExtension;
+import org.eclipse.jface.text.IInformationControlExtension3;
+import org.eclipse.jface.text.IInformationControlExtension5;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.swt.SWT;
@@ -31,11 +35,14 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
@@ -54,7 +61,7 @@ import org.eclipse.cdt.internal.ui.text.SimpleCSourceViewerConfiguration;
  * Displays information in a source viewer.
  *
  */
-public class SourceViewerInformationControl implements IInformationControl, IInformationControlExtension, DisposeListener {
+public class SourceViewerInformationControl implements IInformationControl, IInformationControlExtension, IInformationControlExtension3, IInformationControlExtension5, DisposeListener {
 
 	/** Border thickness in pixels. */
 	private static final int BORDER= 1;
@@ -64,6 +71,8 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 	private StyledText fText;
 	/** The control's source viewer */
 	private SourceViewer fViewer;
+	/** The text font (do not dispose!) */
+	private Font fTextFont;
 	/**
 	 * The optional status field.
 	 *
@@ -92,6 +101,11 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 	 * @since 4.0
 	 */
 	private int fMaxHeight= SWT.DEFAULT;
+	/**
+	 * The orientation of the shell
+	 * @since 3.4
+	 */
+	private final int fOrientation;
 
 	private Color fBackgroundColor;
 	private boolean fIsSystemBackgroundColor= true;
@@ -102,28 +116,20 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 	 * styles are applied to the created styled text widget.
 	 *
 	 * @param parent the parent shell
-	 * @param shellStyle the additional styles for the shell
-	 * @param style the additional styles for the styled text widget
-	 */
-	public SourceViewerInformationControl(Shell parent, int shellStyle, int style) {
-		this(parent, shellStyle, style, null);
-	}
-
-	/**
-	 * Creates a default information control with the given shell as parent. The given
-	 * information presenter is used to process the information to be displayed. The given
-	 * styles are applied to the created styled text widget.
-	 *
-	 * @param parent the parent shell
-	 * @param shellStyle the additional styles for the shell
-	 * @param style the additional styles for the styled text widget
+	 * @param isResizable <code>true</code> if resizable
+	 * @param orientation the orientation
 	 * @param statusFieldText the text to be used in the optional status field
 	 *                         or <code>null</code> if the status field should be hidden
-	 * @since 3.0
 	 */
-	public SourceViewerInformationControl(Shell parent, int shellStyle, int style, String statusFieldText) {
+	public SourceViewerInformationControl(Shell parent, boolean isResizable, int orientation, String statusFieldText) {
+		Assert.isLegal(orientation == SWT.RIGHT_TO_LEFT || orientation == SWT.LEFT_TO_RIGHT || orientation == SWT.NONE);
+		fOrientation= orientation;
+		
 		GridLayout layout;
 		GridData gd;
+
+		int shellStyle= SWT.TOOL | SWT.ON_TOP | orientation | (isResizable ? SWT.RESIZE : 0);
+		int textStyle= isResizable ? SWT.V_SCROLL | SWT.H_SCROLL : SWT.NONE;
 
 		fShell= new Shell(parent, SWT.NO_FOCUS | SWT.ON_TOP | shellStyle);
 		Display display= fShell.getDisplay();
@@ -154,7 +160,7 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 
 		// Source viewer
 		IPreferenceStore store= CUIPlugin.getDefault().getCombinedPreferenceStore();
-		fViewer= new CSourceViewer(composite, null, null, false, style, store);
+		fViewer= new CSourceViewer(composite, null, null, false, textStyle, store);
 		CTextTools tools= CUIPlugin.getDefault().getTextTools();
 		fViewer.configure(new SimpleCSourceViewerConfiguration(tools.getColorManager(), store, null, ICPartitions.C_PARTITIONING, false));
 		fViewer.setEditable(false);
@@ -223,66 +229,14 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 	}
 
 	/**
-	 * Creates a default information control with the given shell as parent. The given
-	 * information presenter is used to process the information to be displayed. The given
-	 * styles are applied to the created styled text widget.
-	 *
-	 * @param parent the parent shell
-	 * @param style the additional styles for the styled text widget
-	 */
-	public SourceViewerInformationControl(Shell parent,int style) {
-		this(parent, SWT.NO_TRIM | SWT.TOOL, style);
-	}
-
-	/**
-	 * Creates a default information control with the given shell as parent. The given
-	 * information presenter is used to process the information to be displayed. The given
-	 * styles are applied to the created styled text widget.
-	 *
-	 * @param parent the parent shell
-	 * @param style the additional styles for the styled text widget
-	 * @param statusFieldText the text to be used in the optional status field
-	 *                         or <code>null</code> if the status field should be hidden
-	 * @since 3.0
-	 */
-	public SourceViewerInformationControl(Shell parent, int style, String statusFieldText) {
-		this(parent, SWT.NO_TRIM | SWT.TOOL, style, statusFieldText);
-	}
-
-	/**
-	 * Creates a default information control with the given shell as parent.
-	 * No information presenter is used to process the information
-	 * to be displayed. No additional styles are applied to the styled text widget.
-	 *
-	 * @param parent the parent shell
-	 */
-	public SourceViewerInformationControl(Shell parent) {
-		this(parent, SWT.NONE);
-	}
-
-	/**
-	 * Creates a default information control with the given shell as parent.
-	 * No information presenter is used to process the information
-	 * to be displayed. No additional styles are applied to the styled text widget.
-	 *
-	 * @param parent the parent shell
-	 * @param statusFieldText the text to be used in the optional status field
-	 *                         or <code>null</code> if the status field should be hidden
-	 * @since 3.0
-	 */
-	public SourceViewerInformationControl(Shell parent, String statusFieldText) {
-		this(parent, SWT.NONE, statusFieldText);
-	}
-
-	/**
 	 * Initialize the font to the editor font.
 	 *
 	 * @since 4.0
 	 */
 	private void initializeFont() {
-		Font font= JFaceResources.getFont(PreferenceConstants.EDITOR_TEXT_FONT);
+		fTextFont= JFaceResources.getFont(PreferenceConstants.EDITOR_TEXT_FONT);
 		StyledText styledText= getViewer().getTextWidget();
-		styledText.setFont(font);
+		styledText.setFont(fTextFont);
 	}
 
 	/*
@@ -459,6 +413,115 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 
 	protected ISourceViewer getViewer()  {
 		return fViewer;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension3#computeTrim()
+	 * @since 5.0
+	 */
+	public Rectangle computeTrim() {
+		Rectangle trim= fShell.computeTrim(0, 0, 0, 0);
+		addInternalTrim(trim);
+		return trim;
+	}
+
+	/**
+	 * Adds the internal trimmings to the given trim of the shell.
+	 * 
+	 * @param trim the shell's trim, will be updated
+	 * @since 5.0
+	 */
+	private void addInternalTrim(Rectangle trim) {
+		Rectangle textTrim= fText.computeTrim(0, 0, 0, 0);
+		trim.x+= textTrim.x;
+		trim.y+= textTrim.y;
+		trim.width+= textTrim.width;
+		trim.height+= textTrim.height;
+		
+		if (fStatusField != null) {
+			trim.height+= fSeparator.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+			trim.height+= fStatusField.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+			trim.height+= 1; // verticalSpacing
+		}
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension3#getBounds()
+	 * @since 5.0
+	 */
+	public Rectangle getBounds() {
+		return fShell.getBounds();
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension3#restoresLocation()
+	 * @since 5.0
+	 */
+	public boolean restoresLocation() {
+		return false;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension3#restoresSize()
+	 * @since 5.0
+	 */
+	public boolean restoresSize() {
+		return false;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension5#getInformationPresenterControlCreator()
+	 * @since 5.0
+	 */
+	public IInformationControlCreator getInformationPresenterControlCreator() {
+		return new IInformationControlCreator() {
+			public IInformationControl createInformationControl(Shell parent) {
+				return new SourceViewerInformationControl(parent, true, fOrientation, null);
+			}
+		};
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension5#containsControl(org.eclipse.swt.widgets.Control)
+	 * @since 5.0
+	 */
+	public boolean containsControl(Control control) {
+		do {
+			if (control == fShell)
+				return true;
+			if (control instanceof Shell)
+				return false;
+			control= control.getParent();
+		} while (control != null);
+		return false;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension5#isVisible()
+	 * @since 5.0
+	 */
+	public boolean isVisible() {
+		return fShell != null && !fShell.isDisposed() && fShell.isVisible();
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension5#computeSizeConstraints(int, int)
+	 */
+	public Point computeSizeConstraints(int widthInChars, int heightInChars) {
+		GC gc= new GC(fText);
+		gc.setFont(fTextFont);
+		int width= gc.getFontMetrics().getAverageCharWidth();
+		int height= gc.getFontMetrics().getHeight();
+		gc.dispose();
+
+		return new Point(widthInChars * width, heightInChars * height);
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension5#allowMoveIntoControl()
+	 */
+	public boolean allowMoveIntoControl() {
+		return true;
 	}
 
 }

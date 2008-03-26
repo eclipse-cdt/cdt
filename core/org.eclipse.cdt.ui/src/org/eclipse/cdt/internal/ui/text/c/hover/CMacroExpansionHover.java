@@ -21,7 +21,6 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 
@@ -64,9 +63,7 @@ public class CMacroExpansionHover extends AbstractCEditorTextHover {
 	public IInformationControlCreator getInformationPresenterControlCreator() {
 		return new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell parent) {
-				int shellStyle= SWT.RESIZE;
-				int style= SWT.V_SCROLL | SWT.H_SCROLL;
-				return new CMacroExpansionExplorationControl(parent, shellStyle, style, getCachedMacroExpansionInput());
+				return new CMacroExpansionExplorationControl(parent, getCachedMacroExpansionInput());
 			}
 		};
 	}

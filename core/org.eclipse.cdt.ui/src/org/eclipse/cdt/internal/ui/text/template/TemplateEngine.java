@@ -64,15 +64,14 @@ public class TemplateEngine {
 
 	public class CTemplateProposal extends TemplateProposal implements ICCompletionProposal {
 		
-		/* (non-Javadoc)
+		/*
 		 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension3#getInformationControlCreator()
 		 */
 		public IInformationControlCreator getInformationControlCreator() {
 			return new IInformationControlCreator() {
 				public IInformationControl createInformationControl(Shell parent) {
-					int shellStyle= SWT.RESIZE;
-					int style= SWT.V_SCROLL | SWT.H_SCROLL;				
-					return new SourceViewerInformationControl(parent, shellStyle, style);
+					int orientation = SWT.LEFT_TO_RIGHT;
+					return new SourceViewerInformationControl(parent, false, orientation, null);
 				}
 			};
 		}
@@ -178,10 +177,11 @@ public class TemplateEngine {
 
 		Template[] templates= CUIPlugin.getDefault().getTemplateStore().getTemplates();
 
+		Image image= CPluginImages.get(CPluginImages.IMG_OBJS_TEMPLATE);
 		if (selection.y == 0) {
 			for (int i= 0; i != templates.length; i++)
 				if (context.canEvaluate(templates[i]))
-					fProposals.add(new CTemplateProposal(templates[i], context, region, CPluginImages.get(CPluginImages.IMG_OBJS_TEMPLATE)));
+					fProposals.add(new CTemplateProposal(templates[i], context, region, image));
 
 		} else {
 
@@ -194,7 +194,7 @@ public class TemplateEngine {
 					template.getContextTypeId().equals(context.getContextType().getId()) &&
 					(!multipleLinesSelected && template.getPattern().indexOf($_WORD_SELECTION) != -1 || (multipleLinesSelected && template.getPattern().indexOf($_LINE_SELECTION) != -1)))
 				{
-					fProposals.add(new CTemplateProposal(templates[i], context, region, CPluginImages.get(CPluginImages.IMG_OBJS_TEMPLATE)));
+					fProposals.add(new CTemplateProposal(templates[i], context, region, image));
 				}
 			}
 		}

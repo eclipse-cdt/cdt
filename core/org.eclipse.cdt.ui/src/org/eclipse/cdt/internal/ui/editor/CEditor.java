@@ -2515,7 +2515,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		fProjectionSupport.addSummarizableAnnotationType("org.eclipse.search.results"); //$NON-NLS-1$
 		fProjectionSupport.setHoverControlCreator(new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell shell) {
-				return new SourceViewerInformationControl(shell, SWT.TOOL | SWT.NO_TRIM | getOrientation(), SWT.NONE);
+				return new SourceViewerInformationControl(shell, false, getOrientation(), null);
 			}
 		});
 		fProjectionSupport.install();

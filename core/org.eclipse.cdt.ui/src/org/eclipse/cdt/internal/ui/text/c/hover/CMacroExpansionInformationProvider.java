@@ -8,15 +8,18 @@
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.text.c.hover;
 
+import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.information.IInformationProvider;
 import org.eclipse.jface.text.information.IInformationProviderExtension;
+import org.eclipse.jface.text.information.IInformationProviderExtension2;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 
@@ -25,7 +28,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  *
  * @since 5.0
  */
-public class CMacroExpansionInformationProvider implements IInformationProvider, IInformationProviderExtension {
+public class CMacroExpansionInformationProvider implements IInformationProvider, IInformationProviderExtension, IInformationProviderExtension2 {
 
 	private final ITextEditor fEditor;
 
@@ -53,6 +56,17 @@ public class CMacroExpansionInformationProvider implements IInformationProvider,
 	 */
 	public Object getInformation2(ITextViewer textViewer, IRegion subject) {
 		return CMacroExpansionInput.create(fEditor, subject, true);
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.information.IInformationProviderExtension2#getInformationPresenterControlCreator()
+	 */
+	public IInformationControlCreator getInformationPresenterControlCreator() {
+		return new IInformationControlCreator() {
+			public IInformationControl createInformationControl(Shell parent) {
+				return new CMacroExpansionExplorationControl(parent);
+			}
+		};
 	}
 
 }

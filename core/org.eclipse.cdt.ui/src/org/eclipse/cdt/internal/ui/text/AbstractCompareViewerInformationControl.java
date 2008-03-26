@@ -18,9 +18,14 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IInformationControlExtension;
 import org.eclipse.jface.text.IInformationControlExtension2;
+import org.eclipse.jface.text.IInformationControlExtension3;
+import org.eclipse.jface.text.IInformationControlExtension4;
+import org.eclipse.jface.text.IInformationControlExtension5;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ViewForm;
@@ -30,6 +35,8 @@ import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
@@ -45,7 +52,7 @@ import org.eclipse.cdt.ui.PreferenceConstants;
  *
  * @since 5.0
  */
-public abstract class AbstractCompareViewerInformationControl extends PopupDialog implements IInformationControl, IInformationControlExtension, IInformationControlExtension2, DisposeListener {
+public abstract class AbstractCompareViewerInformationControl extends PopupDialog implements IInformationControl, IInformationControlExtension, IInformationControlExtension2, IInformationControlExtension3, IInformationControlExtension4, IInformationControlExtension5, DisposeListener {
 
 	protected class CompareViewerControl extends ViewForm {
 		private CompareConfiguration fCompareConfiguration;
@@ -281,7 +288,7 @@ public abstract class AbstractCompareViewerInformationControl extends PopupDialo
 	}
 
 	protected Point getInitialLocation(Point initialSize) {
-		if (!getPersistBounds()) {
+		if (!restoresSize()) {
 			Point size = new Point(400, 400);
 			Rectangle parentBounds = getParentShell().getBounds();
 			int x = parentBounds.x + parentBounds.width / 2 - size.x / 2;
@@ -341,7 +348,7 @@ public abstract class AbstractCompareViewerInformationControl extends PopupDialo
 	 * {@inheritDoc}
 	 */
 	public void setLocation(Point location) {
-		if (!getPersistBounds() || getDialogSettings() == null || fUseDefaultBounds)
+		if (!restoresLocation() || getDialogSettings() == null || fUseDefaultBounds)
 			getShell().setLocation(location);
 	}
 
@@ -349,7 +356,7 @@ public abstract class AbstractCompareViewerInformationControl extends PopupDialo
 	 * {@inheritDoc}
 	 */
 	public void setSize(int width, int height) {
-		if (!getPersistBounds() || getDialogSettings() == null || fUseDefaultBounds) {
+		if (!restoresSize() || getDialogSettings() == null || fUseDefaultBounds) {
 			getShell().setSize(width, height);
 		}
 	}
@@ -433,4 +440,93 @@ public abstract class AbstractCompareViewerInformationControl extends PopupDialo
 		}
 		return settings;
 	}
+	
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension3#computeTrim()
+	 */
+	public Rectangle computeTrim() {
+		Rectangle trim= getShell().computeTrim(0, 0, 0, 50);
+		return trim;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension3#getBounds()
+	 */
+	public Rectangle getBounds() {
+		return getShell().getBounds();
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension3#restoresLocation()
+	 */
+	public boolean restoresLocation() {
+//		return getPersistLocation();
+		return getPersistBounds();
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension3#restoresSize()
+	 */
+	public boolean restoresSize() {
+//		return getPersistSize();
+		return getPersistBounds();
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension4#setStatusText(java.lang.String)
+	 */
+	public void setStatusText(String statusFieldText) {
+		setInfoText(statusFieldText);
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension5#computeSizeConstraints(int, int)
+	 */
+	public Point computeSizeConstraints(int widthInChars, int heightInChars) {
+		Font font= JFaceResources.getFont(PreferenceConstants.EDITOR_TEXT_FONT);
+		GC gc= new GC(fCompareViewerControl);
+		gc.setFont(font);
+		int width= gc.getFontMetrics().getAverageCharWidth();
+		int height= gc.getFontMetrics().getHeight();
+		gc.dispose();
+
+		return new Point(widthInChars * width, heightInChars * height);
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension5#containsControl(org.eclipse.swt.widgets.Control)
+	 */
+	public boolean containsControl(Control control) {
+		do {
+			if (control == getShell())
+				return true;
+			if (control instanceof Shell)
+				return false;
+			control= control.getParent();
+		} while (control != null);
+		return false;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension5#isVisible()
+	 */
+	public boolean isVisible() {
+		Shell shell= getShell();
+		return shell != null && !shell.isDisposed() && shell.isVisible();
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension5#getInformationPresenterControlCreator()
+	 */
+	public IInformationControlCreator getInformationPresenterControlCreator() {
+		return null;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension5#allowMoveIntoControl()
+	 */
+	public boolean allowMoveIntoControl() {
+		return false;
+	}
+
 }

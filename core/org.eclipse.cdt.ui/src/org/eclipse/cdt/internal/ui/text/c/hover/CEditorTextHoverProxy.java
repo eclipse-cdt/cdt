@@ -118,9 +118,8 @@ public class CEditorTextHoverProxy extends AbstractCEditorTextHover {
 	 */
 	public IInformationControlCreator getInformationPresenterControlCreator() {
 		if (ensureHoverCreated()) {
-			if (fHover instanceof ITextHoverExtension2)
-				return ((ITextHoverExtension2) fHover).getInformationPresenterControlCreator();
-			if (fHover instanceof IInformationProviderExtension2) // this is wrong, but left here for backwards compatibility
+			// this is wrong, but left here for backwards compatibility
+			if (fHover instanceof IInformationProviderExtension2)
 				return ((IInformationProviderExtension2) fHover).getInformationPresenterControlCreator();
 		}
 		return null;

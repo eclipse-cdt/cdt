@@ -43,6 +43,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.part.IWorkbenchPartOrientation;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IPositionConverter;
@@ -841,7 +842,11 @@ public class CSourceHover extends AbstractCEditorTextHover {
 	public IInformationControlCreator getHoverControlCreator() {
 		return new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell parent) {
-				return new SourceViewerInformationControl(parent, getTooltipAffordanceString());
+				IEditorPart editor= getEditor();
+				int orientation= SWT.NONE;
+				if (editor instanceof IWorkbenchPartOrientation)
+					orientation= ((IWorkbenchPartOrientation) editor).getOrientation();
+				return new SourceViewerInformationControl(parent, false, orientation, getTooltipAffordanceString());
 			}
 		};
 	}
@@ -853,9 +858,11 @@ public class CSourceHover extends AbstractCEditorTextHover {
 	public IInformationControlCreator getInformationPresenterControlCreator() {
 		return new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell parent) {
-				int shellStyle= SWT.RESIZE;
-				int style= SWT.V_SCROLL | SWT.H_SCROLL;				
-				return new SourceViewerInformationControl(parent, shellStyle, style);
+				IEditorPart editor= getEditor();
+				int orientation= SWT.NONE;
+				if (editor instanceof IWorkbenchPartOrientation)
+					orientation= ((IWorkbenchPartOrientation) editor).getOrientation();
+				return new SourceViewerInformationControl(parent, true, orientation, getTooltipAffordanceString());
 			}
 		};
 	}

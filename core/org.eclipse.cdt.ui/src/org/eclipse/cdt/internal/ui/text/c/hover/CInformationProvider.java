@@ -16,11 +16,9 @@ import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextHoverExtension2;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.information.IInformationProvider;
 import org.eclipse.jface.text.information.IInformationProviderExtension2;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener;
@@ -28,8 +26,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 
 import org.eclipse.cdt.ui.text.c.hover.ICEditorTextHover;
-
-import org.eclipse.cdt.internal.ui.text.HTMLTextPresenter;
 
 
 /**
@@ -45,9 +41,7 @@ public class CInformationProvider implements IInformationProvider, IInformationP
 	 */
 	private static final class ControlCreator extends AbstractReusableInformationControlCreator {
 		public IInformationControl doCreateInformationControl(Shell parent) {
-			int shellStyle= SWT.RESIZE | SWT.TOOL;
-			int style= SWT.V_SCROLL | SWT.H_SCROLL;
-			return new DefaultInformationControl(parent, shellStyle, style, new HTMLTextPresenter(false));
+			return new DefaultInformationControl(parent);
 		}
 	}
 	
@@ -123,10 +117,6 @@ public class CInformationProvider implements IInformationProvider, IInformationP
 	 * @see IInformationProviderExtension2#getInformationPresenterControlCreator()
 	 */
 	public IInformationControlCreator getInformationPresenterControlCreator() {
-		if (fImplementation instanceof ITextHoverExtension2) {
-			ITextHoverExtension2 ext2= (ITextHoverExtension2) fImplementation;
-			return ext2.getInformationPresenterControlCreator();
-		}
 		if (fPresenterControlCreator == null)
 			fPresenterControlCreator= new ControlCreator();
 		return fPresenterControlCreator;

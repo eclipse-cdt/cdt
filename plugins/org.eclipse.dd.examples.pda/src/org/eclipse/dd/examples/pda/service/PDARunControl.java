@@ -244,11 +244,11 @@ public class PDARunControl extends AbstractDsfService
             	new PDAResumeCommand(fCommandControl.getProgramDMContext()),
             	new DataRequestMonitor<PDACommandResult>(getExecutor(), rm) { 
                     @Override
-                    protected void handleCancelOrErrorOrWarning() {
+                    protected void handleNotOK() {
                         // If the resume command failed, we no longer
                         // expect to receive a resumed event.
                         fResumePending = false;
-                        super.handleCancelOrErrorOrWarning();
+                        super.handleNotOK();
                     }
             	}
             );
@@ -285,7 +285,7 @@ public class PDARunControl extends AbstractDsfService
                 new PDAStepCommand(fCommandControl.getProgramDMContext()),
                 new DataRequestMonitor<PDACommandResult>(getExecutor(), rm) {
                     @Override
-                    protected void handleCancelOrErrorOrWarning() {
+                    protected void handleNotOK() {
                         // If the step command failed, we no longer
                         // expect to receive a resumed event.
                         fResumePending = false;

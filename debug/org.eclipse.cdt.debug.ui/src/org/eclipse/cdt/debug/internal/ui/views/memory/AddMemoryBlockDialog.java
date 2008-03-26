@@ -60,6 +60,8 @@ public class AddMemoryBlockDialog extends TrayDialog implements ModifyListener, 
 
 	private static List<String> sAddressHistory = new ArrayList<String>();
 	private static List<String> sExpressionHistory = new ArrayList<String>();
+	
+	private static boolean sDefaultToExpression = true;
 
 	public AddMemoryBlockDialog(Shell parentShell,
 			IMemoryBlockRetrieval memRetrieval) {
@@ -97,8 +99,21 @@ public class AddMemoryBlockDialog extends TrayDialog implements ModifyListener, 
 		composite.setLayoutData(gridData);
 		parent = composite;  // for all our widgets, the two-column composite is the real parent
 
+		fExpressionRadio = new Button(parent, SWT.RADIO);
+		final int radioButtonWidth = fExpressionRadio.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+		fExpressionRadio.setText(Messages.AddMemBlockDlg_enterExpression);
+		gridData = new GridData();
+		gridData.horizontalSpan = 2;
+		fExpressionRadio.setLayoutData(gridData);
+		fExpressionRadio.addSelectionListener(this);
+		
+		fExpressionInput = new Combo(parent, SWT.BORDER);
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.horizontalSpan = 2;
+		gridData.horizontalIndent = radioButtonWidth;
+		fExpressionInput.setLayoutData(gridData);
+
 		fAddressRadio = new Button(parent, SWT.RADIO);
-		final int radioButtonWidth = fAddressRadio.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
 		fAddressRadio.setText(Messages.AddMemBlockDlg_enterAddrAndMemSpace);
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.horizontalSpan = 2;
@@ -142,19 +157,6 @@ public class AddMemoryBlockDialog extends TrayDialog implements ModifyListener, 
 				fMemorySpaceInput.select(0);
 		}
 
-		fExpressionRadio = new Button(parent, SWT.RADIO);
-		fExpressionRadio.setText(Messages.AddMemBlockDlg_enterExpression);
-		gridData = new GridData();
-		gridData.horizontalSpan = 2;
-		fExpressionRadio.setLayoutData(gridData);
-		fExpressionRadio.addSelectionListener(this);
-		
-		fExpressionInput = new Combo(parent, SWT.BORDER);
-		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		gridData.horizontalSpan = 2;
-		gridData.horizontalIndent = radioButtonWidth;
-		fExpressionInput.setLayoutData(gridData);
-
 		// add the history into the combo boxes 
 		String[] history = getHistory(sExpressionHistory);
 		for (int i = 0; i < history.length; i++)
@@ -166,6 +168,17 @@ public class AddMemoryBlockDialog extends TrayDialog implements ModifyListener, 
 
 		fExpressionInput.addModifyListener(this);
 
+		if (sDefaultToExpression) {
+			fExpressionRadio.setSelection(true);
+			fAddressRadio.setSelection(false);
+			fExpressionInput.setFocus();
+		}
+		else {
+			fAddressRadio.setSelection(false);
+			fAddressRadio.setSelection(true);
+			fAddressInput.setFocus();
+		}
+			
 		return parent;
 	}
 
@@ -210,6 +223,7 @@ public class AddMemoryBlockDialog extends TrayDialog implements ModifyListener, 
 
 			fAddressRadio.setSelection(e.widget != fExpressionInput);
 			fExpressionRadio.setSelection(e.widget == fExpressionInput);
+			sDefaultToExpression = (e.widget == fExpressionInput);
 		}
 	}
 
@@ -263,9 +277,17 @@ public class AddMemoryBlockDialog extends TrayDialog implements ModifyListener, 
 	public void widgetSelected(SelectionEvent e) {
 		// if user selects a memory space, select its associated radio button (and deselect the 
 		// other, these are mutually exclusive) 
-		if (e.widget == fMemorySpaceInput) {
-			fAddressRadio.setSelection(true);
-			fExpressionRadio.setSelection(false);
+		if (e.widget == fExpressionRadio) {
+			fExpressionRadio.setSelection(true);
+			fAddressRadio.setSelection(false);
+			fExpressionInput.setFocus();
 		}
+		else {
+			fAddressRadio.setSelection(false);
+			fAddressRadio.setSelection(true);
+			fAddressInput.setFocus();
+		}
+		
+		sDefaultToExpression = (e.widget == fExpressionInput);
 	}
 }

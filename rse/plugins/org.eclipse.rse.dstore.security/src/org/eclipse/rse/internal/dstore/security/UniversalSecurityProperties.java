@@ -27,19 +27,12 @@ public class UniversalSecurityProperties extends NLS
 
 	
 	public static String RESID_SECURITY_CERTIFICATE_PROP_TITLE;
-	public static String RESID_SECURITY_VALIDITY_PERIOD;
-	public static String RESID_SECURITY_SERIAL_NUMBER_LBL                 ;
+	public static String RESID_SECURITY_VALIDITY_PERIOD;       
 	public static String RESID_SECURITY_CERTIF_VERSION_LBL;
 	public static String RESID_SECURITY_PROP_ALIAS_LBL;
 	public static String RESID_SECURITY_ISSUED_TO_LBL;
 	public static String RESID_SECURITY_ISSUED_BY_LBL;
-	public static String RESID_SECURITY_VALIDITY_LBL;
-	public static String RESID_SECURITY_SIGALG_LBL;
 	public static String RESID_SECURITY_ALGORITHM_LBL;
-	public static String RESID_SECURITY_SIGNATURE_LBL;
-	public static String RESID_SECURITY_SUBJECT_LBL;
-	public static String RESID_SECURITY_KEY_LBL;
-	public static String RESID_SECURITY_PUBLIC_KEY_LBL;
 	public static String RESID_SECURITY_KEY_ENTRY;
 	public static String RESID_SECURITY_ADD_CERT_DLG_TITLE;
 	public static String RESID_SECURITY_RENAME_CERT_DLG_TITLE;
@@ -57,20 +50,11 @@ public class UniversalSecurityProperties extends NLS
 	public static String RESID_SECURITY_PREF_EXPIRES;
 
 	public static String RESID_SECURITY_KEY_IO_ERROR_;
-	public static String RESID_SECURITY_KEY_LOAD_ERROR_;
-	public static String RESID_SECURITY_ALGORITHM_ERROR_;
-	public static String RESID_SECURITY_KEY_MANAG_ERROR_;
 	public static String RESID_SECURITY_KEY_STORE_ERROR_;
-	public static String RESID_SECURITY_UNREC_KEY_ERROR_;
-	public static String RESID_SECURITY_PWD_REQ_INFO_;
-	public static String RESID_SECURITY_LOGIN_FAILED_INFO_;
 	public static String RESID_SECURITY_KEYSTORE_SAVE_ERROR_;
 	public static String RESID_SECURITY_IO_SAVE_ERROR_;
 	public static String RESID_SECURITY_CERTIFICATE_STORE_ERROR_;
 	public static String RESID_SECURITY_UNINIT_KEYSTORE_ERROR_;
-	public static String RESID_SECURITY_INITIALIZE_ERROR_;
-	public static String RESID_SECURITY_SECURITY_PROVIDER_ERROR_;
-	public static String RESID_SECURITY_LOAD_KEYSTORE_ERROR_;
 	public static String RESID_SECURITY_CERTIFICATE_EXC_;
 	public static String RESID_SECURITY_LOAD_IO_EXC_;
 	public static String RESID_SECURITY_CERTIFICATE_LOAD_EXC_;
@@ -85,6 +69,8 @@ public class UniversalSecurityProperties extends NLS
 
 	public static String RESID_SECURITY_TRUST_IMPORT_CERTIFICATE_WIZARD;
 	public static String RESID_SECURITY_CERTIFICATE_INFORMATION;
+	
+	public static String RESID_SECURITY_VALIDITY_LBL;
 	
 	static 
 	{

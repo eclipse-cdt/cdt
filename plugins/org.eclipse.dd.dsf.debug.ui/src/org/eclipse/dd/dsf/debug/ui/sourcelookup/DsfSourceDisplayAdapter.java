@@ -36,7 +36,7 @@ import org.eclipse.dd.dsf.debug.service.StepQueueManager;
 import org.eclipse.dd.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMData;
-import org.eclipse.dd.dsf.debug.sourcelookup.DsfMISourceLookupParticipant;
+import org.eclipse.dd.dsf.debug.sourcelookup.DsfSourceLookupParticipant;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
@@ -81,7 +81,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * dispatch thread to synchronize access to the state data of the running jobs.
  */
 @ThreadSafe
-public class SourceDisplayAdapter implements ISourceDisplay 
+public class DsfSourceDisplayAdapter implements ISourceDisplay 
 {
     /**
 	 * A job to perform source lookup on the given DMC.
@@ -389,7 +389,7 @@ public class SourceDisplayAdapter implements ISourceDisplay
     private IDMContext fPrevModelContext;
     private SourceLookupResult fPrevResult;
     private ISourceLookupDirector fSourceLookup;
-    private DsfMISourceLookupParticipant fSourceLookupParticipant;
+    private DsfSourceLookupParticipant fSourceLookupParticipant;
     private InstructionPointerManager fIPManager;
     
     private LookupJob fRunningLookupJob;
@@ -398,12 +398,12 @@ public class SourceDisplayAdapter implements ISourceDisplay
     private ClearingJob fRunningClearingJob;
     private List<IRunControl.IExecutionDMContext> fPendingExecDmcsToClear = new LinkedList<IRunControl.IExecutionDMContext>();
     
-    public SourceDisplayAdapter(DsfSession session, ISourceLookupDirector sourceLocator) {
+    public DsfSourceDisplayAdapter(DsfSession session, ISourceLookupDirector sourceLocator) {
         fSession = session;
         fExecutor = session.getExecutor();
         fServicesTracker = new DsfServicesTracker(DsfDebugUIPlugin.getBundleContext(), session.getId());
         fSourceLookup = sourceLocator;
-        fSourceLookupParticipant = new DsfMISourceLookupParticipant(session); 
+        fSourceLookupParticipant = new DsfSourceLookupParticipant(session); 
         fSourceLookup.addParticipants(new ISourceLookupParticipant[] {fSourceLookupParticipant} );
 
         fIPManager = new InstructionPointerManager();

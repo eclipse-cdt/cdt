@@ -41,9 +41,10 @@ import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant;
 
 /**
+ * Source lookup participant that should be used with DSF-based debuggers.
  */
 @ThreadSafe
-public class DsfMISourceLookupParticipant implements ISourceLookupParticipant {
+public class DsfSourceLookupParticipant implements ISourceLookupParticipant {
     protected static final Object[] EMPTY = new Object[0]; 
 
     private DsfExecutor fExecutor;
@@ -52,7 +53,7 @@ public class DsfMISourceLookupParticipant implements ISourceLookupParticipant {
     private ISourceLookupDirector fDirector;
     private Map<String, List<Object>> fLookupCache = Collections.synchronizedMap(new HashMap<String, List<Object>>());
         
-    public DsfMISourceLookupParticipant(DsfSession session) {
+    public DsfSourceLookupParticipant(DsfSession session) {
         fSessionId = session.getId();
         fExecutor = session.getExecutor();
         fServicesTracker = new DsfServicesTracker(DsfDebugPlugin.getBundleContext(), fSessionId);

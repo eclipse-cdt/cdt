@@ -34,14 +34,15 @@
  * David McKnight   (IBM)        - [209375] new API copyRemoteResourcesToWorkspaceMultiple to optimize downloads
  * Rupen Mardirossian (IBM)      - [208435] added constructor to nested RenameRunnable class to take in names that are previously used as a parameter for multiple renaming instances, passed through check collision as well through overloading.
  * Xuan Chen          (IBM)      - [160775] [api] [breaking] [nl] rename (at least within a zip) blocks UI thread
- * David Mcknight     (IBM)      - [203114] don't treat XML files specially (no hidden prefs for bin vs text)
+ * David McKnight     (IBM)      - [203114] don't treat XML files specially (no hidden prefs for bin vs text)
  * David McKnight     (IBM)      - [209552] get rid of copy APIs to be clearer with download and upload  
  * David McKnight     (IBM)      - [143503] encoding and isBinary needs to be stored in the IFile properties
- * Xuan Chen          (IBM)        - [191370] [dstore] supertransfer zip not deleted when cancelling copy
+ * Xuan Chen          (IBM)        - [191370] [dstore] supertransfer zip not deleted when canceling copy
  * Xuan Chen          (IBM)      - [210816] Archive testcases throw ResourceException if they are run in batch
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * Martin Oberhuber (Wind River) - [220020][api][breaking] SystemFileTransferModeRegistry should be internal
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
+ * Rupen Mardirossian (IBM)      - [210682] Collisions when doing a copy operation across systems will us the SystemCopyDialog
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -107,6 +108,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.util.ValidatorFileUniqueName;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
+import org.eclipse.rse.internal.ui.dialogs.CopyRunnable;
 import org.eclipse.rse.ui.dialogs.SystemRenameSingleDialog;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.widgets.Display;
@@ -116,6 +118,9 @@ import org.eclipse.ui.PlatformUI;
  * Utility class for doing file transfers on universal systems.
  * 
  * Clients may use this class, but not instantiate or subclass it.
+ *
+ * @noextend
+ * @noinstantiate
  */
 public class UniversalFileTransferUtility
 {
@@ -1316,8 +1321,10 @@ public class UniversalFileTransferUtility
 		
 		// clear the list so that next time we use renamed names
 		newFilePathList.clear();
-		List toCopyNames = new ArrayList();
- 
+		//List toCopyNames = new ArrayList(); //was used for rename operation (no longer needed)
+		List copyFilesOrFolders = new ArrayList();
+		List existingFilesOrFolders = new ArrayList();
+		
 		for (int i = 0; i < resources.size() && !resultSet.hasMessage(); i++)
 		{
 			if (monitor != null && monitor.isCanceled())
@@ -1347,8 +1354,15 @@ public class UniversalFileTransferUtility
 				String oldPath = newPathBuf.toString() + name;
 				if (checkForCollisions)
 				{
-					RenameStatus status = checkForCollision(existingFiles, targetFolder, name, oldPath, toCopyNames);
-					int severity = status.getSeverity();
+					if(existingFiles!=null)
+					{
+						if(checkForCollision(existingFiles, targetFolder, oldPath))
+						{	
+							existingFilesOrFolders.add(existingFiles.get(oldPath));
+						}
+					}
+					//below code is used for renaming operation, which is no longer needed
+					/*int severity = status.getSeverity();
 					
 					if (severity == IStatus.OK) {
 						name = status.getMessage();
@@ -1364,56 +1378,9 @@ public class UniversalFileTransferUtility
 						else if (code == RenameStatus.CANCEL_ALL) {
 							break;
 						}
-					}
+					}*/
 				}
-
-				String newPath = newPathBuf.toString() + name;
-
-				try
-				{
-				
-					String srcCharSet = null;
-					
-
-					try
-					{
-						srcCharSet = ((IFile)srcFileOrFolder).getCharset(false);
-					    if (srcCharSet == null || srcCharSet.length() == 0)
-					    {
-					        srcCharSet = SystemEncodingUtil.ENCODING_UTF_8;
-					    }
-					}
-					catch (CoreException e)
-					{
-					    srcCharSet = SystemEncodingUtil.ENCODING_UTF_8;
-					}
-				
-
-					String srcFileLocation = srcFileOrFolder.getLocation().toOSString();
-					targetFS.upload(srcFileLocation, srcCharSet, newPath, targetFS.getRemoteEncoding(),monitor);	
-					newFilePathList.add(newPath);
-					
-					// should check preference first
-					if (RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.PRESERVETIMESTAMPS))
-					{
-						SystemIFileProperties properties = new SystemIFileProperties(srcFileOrFolder);
-						((FileServiceSubSystem)targetFS).getFileService().setLastModified(newPathBuf.toString(), name, properties.getRemoteFileTimeStamp(), monitor);
-					}
-				}
-			
-				catch (RemoteFileIOException e)
-				{
-					resultSet.setMessage(e.getSystemMessage());
-				}
-				catch (SystemMessageException e)
-				{
-					resultSet.setMessage(e.getSystemMessage());
-				}
-				
-				if (resultSet.hasMessage())
-				{
-					return resultSet;
-				}
+				copyFilesOrFolders.add(srcFileOrFolder);
 			}
 			
 			else if (srcFileOrFolder instanceof IContainer)
@@ -1421,6 +1388,15 @@ public class UniversalFileTransferUtility
 				String oldPath = newPathBuf.toString() + name;
 				if (checkForCollisions)
 				{
+					if(existingFiles!=null)
+					{
+						if(checkForCollision(existingFiles, targetFolder, oldPath))
+						{	
+							existingFilesOrFolders.add(existingFiles.get(oldPath));
+						}
+					}
+					//below code is used for renaming operation, which is no longer needed
+					/*
 					RenameStatus status = checkForCollision(existingFiles, targetFolder, name, oldPath, toCopyNames);
 					int severity = status.getSeverity();
 					
@@ -1439,82 +1415,145 @@ public class UniversalFileTransferUtility
 							break;
 						}
 					}
-				}
+				*/
 				
-				IContainer directory = (IContainer) srcFileOrFolder;
-				if (!directory.exists())
+				}
+				copyFilesOrFolders.add(srcFileOrFolder);
+			}
+		}
+		boolean overwrite=false;
+		if(existingFilesOrFolders.size()>0)
+		{
+			CopyRunnable cr = new CopyRunnable(existingFilesOrFolders);
+			Display.getDefault().syncExec(cr);
+			overwrite = cr.getOk();
+		}
+		if(existingFilesOrFolders.size()==0 || overwrite)
+		{
+			for (int i = 0; i < copyFilesOrFolders.size() && !resultSet.hasMessage(); i++)
+			{
+				
+				IResource srcFileOrFolder = (IResource)copyFilesOrFolders.get(i);				
+				String name = srcFileOrFolder.getName();
+
+				String newPath = newPathBuf.toString() + name;
+				
+				if (srcFileOrFolder instanceof IFile)
 				{
 					try
 					{
-						directory.refreshLocal(IResource.DEPTH_ONE, monitor);
+						String srcCharSet = null;
+						try
+						{
+							srcCharSet = ((IFile)srcFileOrFolder).getCharset(false);
+							if (srcCharSet == null || srcCharSet.length() == 0)
+							{
+								srcCharSet = SystemEncodingUtil.ENCODING_UTF_8;
+							}
+						}
+						catch (CoreException e)
+						{
+							srcCharSet = SystemEncodingUtil.ENCODING_UTF_8;
+						}
+
+
+						String srcFileLocation = srcFileOrFolder.getLocation().toOSString();
+						targetFS.upload(srcFileLocation, srcCharSet, newPath, targetFS.getRemoteEncoding(),monitor);	
+						newFilePathList.add(newPath);
+
+						// should check preference first
+						if (RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.PRESERVETIMESTAMPS))
+						{
+							SystemIFileProperties properties = new SystemIFileProperties(srcFileOrFolder);
+							((FileServiceSubSystem)targetFS).getFileService().setLastModified(newPathBuf.toString(), name, properties.getRemoteFileTimeStamp(), monitor);
+						}
+					}
+
+					catch (RemoteFileIOException e)
+					{
+						resultSet.setMessage(e.getSystemMessage());
+					}
+					catch (SystemMessageException e)
+					{
+						resultSet.setMessage(e.getSystemMessage());
+					}
+
+					if (resultSet.hasMessage())
+					{
+						return resultSet;
+					}
+				}
+				if(srcFileOrFolder instanceof IContainer)
+				{
+					IContainer directory = (IContainer) srcFileOrFolder;
+					if (!directory.exists())
+					{
+						try
+						{
+							directory.refreshLocal(IResource.DEPTH_ONE, monitor);
+						}
+						catch (Exception e)
+						{
+							
+						}
+					}
+					try
+					{
+						if (existingFiles != null)
+						{
+						IRemoteFile newTargetFolder = (IRemoteFile)existingFiles.get(newPath);
+						// newTargetFolder will be null if user chose to do a rename
+						if (newTargetFolder == null) {
+							newTargetFolder = targetFS.getRemoteFileObject(newPath, monitor);
+						}
+						if (newTargetFolder != null && !newTargetFolder.exists())
+						{
+							newTargetFolder = targetFS.createFolder(newTargetFolder, monitor);
+						}
+						 
+						boolean isTargetLocal = newTargetFolder.getParentRemoteFileSubSystem().getHost().getSystemType().isLocal();
+						boolean destInArchive = (newTargetFolder instanceof IVirtualRemoteFile) || newTargetFolder.isArchive();
+						
+						if (doCompressedTransfer && doSuperTransferPreference && !destInArchive && !isTargetLocal)
+						{
+							compressedUploadFromWorkspace(directory, newTargetFolder, monitor);					
+						}
+						else
+						{
+						    //sometimes, IContainer#members does not return the right members under
+						    //this folder.  We need to call refreshLocal() first to overcome this problem
+							directory.refreshLocal(IResource.DEPTH_ONE, monitor);
+							IResource[] children = directory.members();
+							SystemWorkspaceResourceSet childSet = new SystemWorkspaceResourceSet(children);			
+							SystemRemoteResourceSet childResults = uploadResourcesFromWorkspace(childSet, newTargetFolder, monitor, false);																	
+							if (childResults == null)
+							{
+								return null;
+							}						
+							if (childResults.hasMessage())
+							{
+								resultSet.setMessage(childResults.getMessage());
+							}
+						}	
+					
+						newFilePathList.add(newPath);
+						}
+					}
+					catch (SystemMessageException e)
+					{
+						workspaceSet.setMessage(e.getSystemMessage());
+					}
+					catch (CoreException e)
+					{
+						e.printStackTrace();
 					}
 					catch (Exception e)
 					{
-						
+						e.printStackTrace();
 					}
-				}
-				
-				String newPath = newPathBuf.toString() + name;
-				
-				// this is a directory
-				// recursively copy
-				try
-				{
-					if (existingFiles != null)
-					{
-					IRemoteFile newTargetFolder = (IRemoteFile)existingFiles.get(newPath);
-					// newTargetFolder will be null if user chose to do a rename
-					if (newTargetFolder == null) {
-						newTargetFolder = targetFS.getRemoteFileObject(newPath, monitor);
-					}
-					if (newTargetFolder != null && !newTargetFolder.exists())
-					{
-						newTargetFolder = targetFS.createFolder(newTargetFolder, monitor);
-					}
-					 
-					boolean isTargetLocal = newTargetFolder.getParentRemoteFileSubSystem().getHost().getSystemType().isLocal();
-					boolean destInArchive = (newTargetFolder instanceof IVirtualRemoteFile) || newTargetFolder.isArchive();
-					
-					if (doCompressedTransfer && doSuperTransferPreference && !destInArchive && !isTargetLocal)
-					{
-						compressedUploadFromWorkspace(directory, newTargetFolder, monitor);					
-					}
-					else
-					{
-					    //sometimes, IContainer#members does not return the right members under
-					    //this folder.  We need to call refreshLocal() first to overcome this problem
-						directory.refreshLocal(IResource.DEPTH_ONE, monitor);
-						IResource[] children = directory.members();
-						SystemWorkspaceResourceSet childSet = new SystemWorkspaceResourceSet(children);			
-						SystemRemoteResourceSet childResults = uploadResourcesFromWorkspace(childSet, newTargetFolder, monitor, false);																	
-						if (childResults == null)
-						{
-							return null;
-						}						
-						if (childResults.hasMessage())
-						{
-							resultSet.setMessage(childResults.getMessage());
-						}
-					}	
-				
-					newFilePathList.add(newPath);
-					}
-				}
-				catch (SystemMessageException e)
-				{
-					workspaceSet.setMessage(e.getSystemMessage());
-				}
-				catch (CoreException e)
-				{
-					e.printStackTrace();
-				}
-				catch (Exception e)
-				{
-					e.printStackTrace();
 				}
 			}
 		}
-		
 		
 		try
 		{
@@ -2468,7 +2507,19 @@ public class UniversalFileTransferUtility
 
 		return status;
 	}
+	
+	protected static boolean checkForCollision(SystemRemoteResourceSet existingFiles, IRemoteFile targetFolder, String oldPath)
+	{
+		
+		IRemoteFile targetFileOrFolder = (IRemoteFile) existingFiles.get(oldPath);
 
+
+		if (targetFileOrFolder != null && targetFileOrFolder.exists()) 
+			return true;
+		else
+			return false;
+	}
+	
 	public static class RenameRunnable implements Runnable
 	{
 		private IRemoteFile _targetFileOrFolder;

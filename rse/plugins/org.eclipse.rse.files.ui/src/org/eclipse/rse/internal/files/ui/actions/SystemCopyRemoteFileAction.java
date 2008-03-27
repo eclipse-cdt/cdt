@@ -1,25 +1,26 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
- * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
+ * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Kevin Doyle (IBM) - [196588] Move Dialog doesn't show Archives
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  * Xuan Chen (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
+ * Rupen Mardirossian (IBM)		-  [210682] created checkForCollision method that returns a boolean for SystemCopyDialog enhancement
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -73,33 +74,33 @@ import org.eclipse.swt.widgets.Shell;
  * Copy selected files and folders action.
  */
 public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
-       implements  IValidatorRemoteSelection
+implements  IValidatorRemoteSelection
 {
-    protected IRemoteFile targetFolder, targetFileOrFolder = null;
-    protected IRemoteFile firstSelection = null;
-    protected IRemoteFile firstSelectionParent = null;
-    protected IRemoteFile[] files;
-    protected Vector copiedFiles = new Vector();
-    protected IHost sourceConnection;
-    protected IRemoteFileSubSystem ss;
-    
+	protected IRemoteFile targetFolder, targetFileOrFolder = null;
+	protected IRemoteFile firstSelection = null;
+	protected IRemoteFile firstSelectionParent = null;
+	protected IRemoteFile[] files;
+	protected Vector copiedFiles = new Vector();
+	protected IHost sourceConnection;
+	protected IRemoteFileSubSystem ss;
+
 	/**
 	 * Constructor
 	 */
-	public SystemCopyRemoteFileAction(Shell shell) 
+	public SystemCopyRemoteFileAction(Shell shell)
 	{
 		this(shell, MODE_COPY);
 	}
 	/**
 	 * Constructor for subclass
 	 */
-	SystemCopyRemoteFileAction(Shell shell, int mode) 
+	SystemCopyRemoteFileAction(Shell shell, int mode)
 	{
 		super(shell, mode);
-  	    setHelp(RSEUIPlugin.HELPPREFIX+"actn0110"); //$NON-NLS-1$ 
-  	    setDialogHelp(RSEUIPlugin.HELPPREFIX+"dcrf0000");  //$NON-NLS-1$
+		setHelp(RSEUIPlugin.HELPPREFIX+"actn0110"); //$NON-NLS-1$
+		setDialogHelp(RSEUIPlugin.HELPPREFIX+"dcrf0000");  //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Reset. This is a re-run of this action
 	 */
@@ -116,7 +117,7 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 		sourceConnection = null;
 		ss = null;
 	}
- 
+
 	/**
 	 * We override from parent to do unique checking...
 	 * <p>
@@ -127,19 +128,19 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 	public boolean updateSelection(IStructuredSelection selection)
 	{
 		boolean enable = true;
-		Iterator e = selection.iterator();		
+		Iterator e = selection.iterator();
 		while (enable && e.hasNext())
 		{
 			Object selectedObject = e.next();
 			if (!(selectedObject instanceof IRemoteFile))
-			  enable = false;
+				enable = false;
 		}
 		return enable;
 	}
- 
-    // --------------------------
-    // PARENT METHOD OVERRIDES...
-    // --------------------------
+
+	// --------------------------
+	// PARENT METHOD OVERRIDES...
+	// --------------------------
 	public static class RenameRunnable implements Runnable
 	{
 		private IRemoteFile _targetFileOrFolder;
@@ -148,23 +149,24 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 		{
 			_targetFileOrFolder = targetFileOrFolder;
 		}
-		
+
 		public void run() {
-			ValidatorFileUniqueName validator = null; 				
+			ValidatorFileUniqueName validator = null;
 			SystemRenameSingleDialog dlg = new SystemRenameSingleDialog(null, true, _targetFileOrFolder, validator); // true => copy-collision-mode
-			
+
 			dlg.open();
 			if (!dlg.wasCancelled())
 				_newName = dlg.getNewName();
 			else
 				_newName = null;
 		}
-		
+
 		public String getNewName()
 		{
 			return _newName;
 		}
 	}
+
 
 	/**
 	 * @see SystemBaseCopyAction#checkForCollision(Shell, IProgressMonitor, Object, Object, String)
@@ -175,42 +177,72 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 	 * @param oldName will be the name of the IRemoteFile object currently being copied
 	 */
 	protected String checkForCollision(Shell shell, IProgressMonitor monitor,
-	                                   Object targetContainer, Object oldObject, String oldName)
+			Object targetContainer, Object oldObject, String oldName)
 	{
 		String newName = oldName;
-		
+
 		try {
-			
-			
-			
+
+
+
 			targetFolder   = (IRemoteFile)targetContainer;
 			ss = targetFolder.getParentRemoteFileSubSystem();
 			targetFileOrFolder = ss.getRemoteFileObject(targetFolder, oldName, monitor);
-	
-	
+
+
 			//RSEUIPlugin.logInfo("CHECKING FOR COLLISION ON '"+srcFileOrFolder.getAbsolutePath() + "' IN '" +targetFolder.getAbsolutePath()+"'");
-			//RSEUIPlugin.logInfo("...TARGET FILE: '"+tgtFileOrFolder.getAbsolutePath()+"'");  		
+			//RSEUIPlugin.logInfo("...TARGET FILE: '"+tgtFileOrFolder.getAbsolutePath()+"'");
 			//RSEUIPlugin.logInfo("...target.exists()? "+tgtFileOrFolder.exists());
 			if (targetFileOrFolder.exists())
 			{
-			  //monitor.setVisible(false); wish we could!
-	
-		      // we no longer have to set the validator here... the common rename dialog we all now use queries the input
-		      // object's system view adaptor for its name validator. See getNameValidator in SystemViewRemoteFileAdapter. phil
-			  ValidatorFileUniqueName validator = null; // new ValidatorFileUniqueName(shell, targetFolder, srcFileOrFolder.isDirectory());
-			  //SystemCollisionRenameDialog dlg = new SystemCollisionRenameDialog(shell, validator, oldName);
-			  RenameRunnable rr = new RenameRunnable(targetFileOrFolder);
+				//monitor.setVisible(false); wish we could!
+
+				// we no longer have to set the validator here... the common rename dialog we all now use queries the input
+				// object's system view adaptor for its name validator. See getNameValidator in SystemViewRemoteFileAdapter. phil
+				// ValidatorFileUniqueName validator = null; // new
+				// ValidatorFileUniqueName(shell, targetFolder,
+				// srcFileOrFolder.isDirectory());
+				//SystemCollisionRenameDialog dlg = new SystemCollisionRenameDialog(shell, validator, oldName);
+				RenameRunnable rr = new RenameRunnable(targetFileOrFolder);
 				Display.getDefault().syncExec(rr);
 				newName = rr.getNewName();
 			}
 		} catch (SystemMessageException e) {
 			SystemBasePlugin.logError("SystemCopyRemoteFileAction.checkForCollision()", e); //$NON-NLS-1$
 		}
-		
+
 		return newName;
 	}
+	/**
+	 * @see SystemBaseCopyAction#checkForCollision(Shell, IProgressMonitor, Object, Object, String)
+	 * @param shell Window to host dialog
+	 * @param monitor Usually not needed
+	 * @param targetContainer will be the IRemoteFile folder selected to copy into
+	 * @param oldName will be the name of the IRemoteFile object currently being copied
+	 */
+	protected boolean checkForCollision(Shell shell, IProgressMonitor monitor,
+			Object targetContainer, String oldName)
+	{
+		try
+		{
+			targetFolder   = (IRemoteFile)targetContainer;
+			ss = targetFolder.getParentRemoteFileSubSystem();
+			targetFileOrFolder = ss.getRemoteFileObject(targetFolder, oldName, monitor);
 
-	
+			if (targetFileOrFolder.exists())
+			{
+				return true;
+			}
+
+		}
+		catch (SystemMessageException e)
+		{
+			SystemBasePlugin.logError("SystemCopyRemoteFileAction.checkForCollision()", e); //$NON-NLS-1$
+		}
+		return false;
+
+	}
+
 	/**
 	 * @param targetContainer will be the IRemoteFile folder selected to copy into
 	 * @param oldObject will be the IRemoteFile object currently being copied
@@ -219,102 +251,102 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 	 * @see SystemBaseCopyAction#doCopy(Object, Object, String, IProgressMonitor)
 	 */
 	protected boolean doCopy(Object targetContainer, Object oldObject, String newName, IProgressMonitor monitor)
-		throws Exception 
-    {
-   		targetFolder    = (IRemoteFile)targetContainer;   		   		
+	throws Exception
+	{
+		targetFolder    = (IRemoteFile)targetContainer;
 		IRemoteFile srcFileOrFolder = (IRemoteFile)oldObject;
 
 		IHost targetConnection = targetFolder.getSystemConnection();
 		IHost srcConnection    = srcFileOrFolder.getSystemConnection();
-   	
+
 		boolean ok = false;
-   		if (targetConnection == srcConnection)
-   		{
+		if (targetConnection == srcConnection)
+		{
 			ss = targetFolder.getParentRemoteFileSubSystem();
-	
-		
+
+
 			ok = ss.copy(srcFileOrFolder, targetFolder, newName, null);
 			if (!ok)
 			{
 				String msgTxt = NLS.bind(FileResources.FILEMSG_COPY_FILE_FAILED, srcFileOrFolder.getName());
 				String msgDetails = FileResources.FILEMSG_COPY_FILE_FAILED_DETAILS;
-			  SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
-					  ISystemFileConstants.FILEMSG_COPY_FILE_FAILED,
-					  IStatus.ERROR, msgTxt, msgDetails);
-			  throw new SystemMessageException(msg); 
+				SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID,
+						ISystemFileConstants.FILEMSG_COPY_FILE_FAILED,
+						IStatus.ERROR, msgTxt, msgDetails);
+				throw new SystemMessageException(msg);
 			}
 			else
 			{
-			   String sep = targetFolder.getSeparator();
-			   String targetFolderName = targetFolder.getAbsolutePath();
-			   if (!targetFolderName.endsWith(sep))		     
-			     copiedFiles.addElement(targetFolderName+sep+newName);
-			   else
-			     copiedFiles.addElement(targetFolderName+newName);
+				String sep = targetFolder.getSeparator();
+				String targetFolderName = targetFolder.getAbsolutePath();
+				if (!targetFolderName.endsWith(sep))
+					copiedFiles.addElement(targetFolderName+sep+newName);
+				else
+					copiedFiles.addElement(targetFolderName+newName);
 			}
-   		}
-   		// DKM - for cross system copy
-   		else
-   		{
-   			IRemoteFileSubSystem targetFS = targetFolder.getParentRemoteFileSubSystem();
-   			IRemoteFileSubSystem srcFS    = srcFileOrFolder.getParentRemoteFileSubSystem();
-   			String newPath = targetFolder.getAbsolutePath() + "/" + newName; //$NON-NLS-1$
-   			if (srcFileOrFolder.isFile())
-   			{
-   				SystemRemoteEditManager mgr = SystemRemoteEditManager.getInstance();
-   				// if remote edit project doesn't exist, create it
-   				if (!mgr.doesRemoteEditProjectExist())
-   					mgr.getRemoteEditProject();
-   				
-   				StringBuffer path = new StringBuffer(mgr.getRemoteEditProjectLocation().makeAbsolute().toOSString());
+		}
+		// DKM - for cross system copy
+		else
+		{
+			IRemoteFileSubSystem targetFS = targetFolder.getParentRemoteFileSubSystem();
+			IRemoteFileSubSystem srcFS    = srcFileOrFolder.getParentRemoteFileSubSystem();
+			String newPath = targetFolder.getAbsolutePath() + "/" + newName; //$NON-NLS-1$
+			if (srcFileOrFolder.isFile())
+			{
+				SystemRemoteEditManager mgr = SystemRemoteEditManager.getInstance();
+				// if remote edit project doesn't exist, create it
+				if (!mgr.doesRemoteEditProjectExist())
+					mgr.getRemoteEditProject();
+
+				StringBuffer path = new StringBuffer(mgr.getRemoteEditProjectLocation().makeAbsolute().toOSString());
 				path = path.append("/" + srcFS.getSystemProfileName() + "/" + srcFS.getHostAliasName() + "/"); //$NON-NLS-1$  //$NON-NLS-2$  //$NON-NLS-3$
 
 				String absolutePath = srcFileOrFolder.getAbsolutePath();
-			
-				
+
+
 				int colonIndex = absolutePath.indexOf(IPath.DEVICE_SEPARATOR);
-		
-				if (colonIndex != -1) 
-				{	
-					if (colonIndex == 0) 
+
+				if (colonIndex != -1)
+				{
+					if (colonIndex == 0)
 					{
 						absolutePath = absolutePath.substring(1);
 					}
-					else if (colonIndex == (absolutePath.length() - 1)) 
+					else if (colonIndex == (absolutePath.length() - 1))
 					{
 						absolutePath = absolutePath.substring(0, colonIndex);
 					}
-					else 
+					else
 					{
 						absolutePath = absolutePath.substring(0, colonIndex) + absolutePath.substring(colonIndex + 1);
 					}
 				}
-		
+
 				path = path.append(absolutePath);
-		
+
 				String tempFile = path.toString();
 
-	   			srcFS.download(srcFileOrFolder, tempFile, SystemEncodingUtil.ENCODING_UTF_8, null);	
-		   		targetFS.upload(tempFile, SystemEncodingUtil.ENCODING_UTF_8, newPath, System.getProperty("file.encoding"), null);	 //$NON-NLS-1$
-   			}
-   			else
-   			{
-   				
-   				IRemoteFile newTargetFolder = targetFS.getRemoteFileObject(newPath, monitor);
-   				targetFS.createFolder(newTargetFolder, monitor);
-   				IRemoteFile[] children = srcFS.list(srcFileOrFolder, monitor);
-   				if (children != null)
-   				{
-	   				for (int i = 0; i < children.length; i++)
-	   				{
-	   					IRemoteFile child = children[i];
-	   					monitor.subTask("copying " + child.getName());	 //$NON-NLS-1$
-	   					doCopy(newTargetFolder, child, child.getName(), monitor);	
-	   					monitor.worked(1);
-	   				}	
-   				}
-   			}		
-   		}
+				srcFS.download(srcFileOrFolder, tempFile, SystemEncodingUtil.ENCODING_UTF_8, null);
+				targetFS.upload(tempFile, SystemEncodingUtil.ENCODING_UTF_8, newPath, System.getProperty("file.encoding"), null);	 //$NON-NLS-1$
+			}
+			else
+			{
+
+				IRemoteFile newTargetFolder = targetFS.getRemoteFileObject(newPath, monitor);
+				targetFS.createFolder(newTargetFolder, monitor);
+				IRemoteFile[] children = srcFS.list(srcFileOrFolder, monitor);
+				if (children != null)
+				{
+					for (int i = 0; i < children.length; i++)
+					{
+						IRemoteFile child = children[i];
+						monitor.subTask("copying " + child.getName());	 //$NON-NLS-1$
+						doCopy(newTargetFolder, child, child.getName(), monitor);
+						monitor.worked(1);
+					}
+				}
+			}
+		}
 
 		return ok;
 	}
@@ -324,7 +356,7 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 	 * Required parent class abstract method.
 	 * Does not apply to us as we supply our own dialog for the copy-target
 	 */
-	protected SystemSimpleContentElement getTreeModel() 
+	protected SystemSimpleContentElement getTreeModel()
 	{
 		return null;
 	}
@@ -341,7 +373,7 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 	 * @see SystemBaseCopyAction#getOldObjects()
 	 * Returns an array of IRemoteFile objects
 	 */
-	protected Object[] getOldObjects() 
+	protected Object[] getOldObjects()
 	{
 		return getSelectedFiles();
 	}
@@ -349,16 +381,16 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 	/**
 	 * @see SystemBaseCopyAction#getOldNames()
 	 */
-	protected String[] getOldNames() 
+	protected String[] getOldNames()
 	{
 		IRemoteFile[] files = getSelectedFiles();
 		String[] names = new String[files.length];
 		for (int idx=0; idx<files.length; idx++)
-		   names[idx] = files[idx].getName();
+			names[idx] = files[idx].getName();
 		return names;
 	}
-   
-   
+
+
 	/**
 	 * Override of parent.
 	 * Return the dialog that will be used to prompt for the copy/move target location.
@@ -366,11 +398,11 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 	protected Dialog createDialog(Shell shell)
 	{
 		++runCount;
-		if (runCount > 1)		
-		  reset();
-		//return new SystemSimpleCopyDialog(parent, getPromptString(), mode, this, getTreeModel(), getTreeInitialSelection()); 
-		String dlgTitle = (mode==MODE_COPY ? SystemResources.RESID_COPY_TITLE : SystemResources.RESID_MOVE_TITLE);		
-		
+		if (runCount > 1)
+			reset();
+		//return new SystemSimpleCopyDialog(parent, getPromptString(), mode, this, getTreeModel(), getTreeInitialSelection());
+		String dlgTitle = (mode==MODE_COPY ? SystemResources.RESID_COPY_TITLE : SystemResources.RESID_MOVE_TITLE);
+
 		firstSelection = getFirstSelectedFile();
 		sourceConnection = firstSelection.getSystemConnection();
 		SystemRemoteFolderDialog dlg = new SystemRemoteFolderDialog(shell, dlgTitle, sourceConnection);
@@ -378,10 +410,10 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 		dlg.setMessage(getPromptString());
 		dlg.setShowPropertySheet(true, false);
 		dlg.setDefaultSystemConnection(sourceConnection, true);
-		
+
 		//dlg.setSystemConnection(sourceConnection);
 		if (mode==MODE_MOVE)
-		  dlg.setSelectionValidator(this);
+			dlg.setSelectionValidator(this);
 		//RSEUIPlugin.logInfo("Calling getParentRemoteFile for '"+firstSelection.getAbsolutePath()+"'");
 		firstSelectionParent = firstSelection.getParentRemoteFile();
 		boolean supportsArchiveManagement = firstSelectionParent.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement();
@@ -399,14 +431,14 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 		  RSEUIPlugin.logInfo("Result of getParentRemoteFile: '"+firstSelectionParent.getAbsolutePath()+"'");
 		else
 		  RSEUIPlugin.logInfo("Result of getParentRemoteFile: null");
-		*/
+		 */
 		dlg.setPreSelection(firstSelectionParent);
-		
+
 		// our title now reflects multiple selection. If single change it.
 		IStructuredSelection sel = getSelection();
 		//System.out.println("size = "+sel.size());
 		if (sel.size() == 1)
-		{		
+		{
 			String singleTitle = null;
 			if (mode == MODE_COPY)
 				singleTitle = SystemResources.RESID_COPY_SINGLE_TITLE;
@@ -415,36 +447,36 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 			//System.out.println("..."+singleTitle);
 			if (!singleTitle.startsWith("Missing")) // TODO: remove test after next mri rev         	 //$NON-NLS-1$
 				dlg.setTitle(singleTitle);
-		}											
+		}
 		return dlg;
 	}
-	
+
 	/**
-	 * Override this method if you supply your own copy/move target dialog. 
+	 * Override this method if you supply your own copy/move target dialog.
 	 * Return the user-selected target or null if cancelled
 	 */
 	protected Object getTargetContainer(Dialog dlg)
 	{
-		SystemRemoteFolderDialog cpyDlg = (SystemRemoteFolderDialog)dlg;		
+		SystemRemoteFolderDialog cpyDlg = (SystemRemoteFolderDialog)dlg;
 		Object targetContainer = null;
 		if (!cpyDlg.wasCancelled())
 		{
-		   targetContainer = cpyDlg.getSelectedObject();
-		   if (targetContainer instanceof ISystemFilterReference)
-		   {
-			   ISubSystem targetSubSystem = ((ISystemFilterReference)targetContainer).getSubSystem();
-			   ISubSystemConfiguration factory = targetSubSystem.getSubSystemConfiguration();
-			   if (factory.supportsDropInFilters())
-			   {											        
-				   targetContainer = targetSubSystem.getTargetForFilter((ISystemFilterReference)targetContainer);										            
-			   }
-		   }
+			targetContainer = cpyDlg.getSelectedObject();
+			if (targetContainer instanceof ISystemFilterReference)
+			{
+				ISubSystem targetSubSystem = ((ISystemFilterReference)targetContainer).getSubSystem();
+				ISubSystemConfiguration factory = targetSubSystem.getSubSystemConfiguration();
+				if (factory.supportsDropInFilters())
+				{
+					targetContainer = targetSubSystem.getTargetForFilter((ISystemFilterReference)targetContainer);
+				}
+			}
 		}
-	    return targetContainer;
+		return targetContainer;
 	}
-	
+
 	private void invalidateFilterReferences(IRemoteFile targetFolder)
-	{		
+	{
 		String path = targetFolder.getAbsolutePath();
 		IRemoteFileSubSystem fileSS = targetFolder.getParentRemoteFileSubSystem();
 		ISystemFilterPoolReferenceManager mgr = fileSS.getSystemFilterPoolReferenceManager();
@@ -471,20 +503,20 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 						par = fileSS.getRemoteFileObject(str, monitor);
 					}
 					catch (Exception e)
-					{			
+					{
 					}
-					
+
 					if (par != null)
 						str = par.getAbsolutePath();
 
 					//if (StringCompare.compare(str, path, true))
-					if (str.equals(path))	
+					if (str.equals(path))
 					{
 						ISystemFilterReference ref = mgr.getSystemFilterReference(fileSS, filters[f]);
 						ref.markStale(true);
 					}
 				}
-			}			
+			}
 		}
 	}
 
@@ -492,40 +524,40 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 	 * Called after all the copy/move operations end, be it successfully or not.
 	 * Your opportunity to display completion or do post-copy selections/refreshes
 	 */
-	public void copyComplete() 
+	public void copyComplete()
 	{
 		if (copiedFiles.size() == 0)
-		  return;
+			return;
 
 		// refresh all instances of this parent, and all affected filters...
 		ISubSystem fileSS = targetFolder.getParentRemoteFileSubSystem();
 		Viewer originatingViewer = getViewer();
 		if (originatingViewer != null)
-		{		
-          if (!targetFolder.getAbsolutePath().equals(firstSelectionParent.getAbsolutePath()))
-          {
-          	  // we select the first instance of the target folder now so that the copied members will be selected in it
-          	  //  after it is refreshed via the remote_resource_created event.
-          	  if (originatingViewer instanceof SystemView)
-          	  {
-                // boolean selectedOk = ((SystemView)originatingViewer).selectRemoteObjects(targetFolder.getAbsolutePath(), fileSS, null);
-                 //System.out.println(targetFolder.getAbsolutePath()+" selectedOK? " + selectedOk);
-                 //if (selectedOk)
-                 //  return;
-          	  }
-          }
+		{
+			if (!targetFolder.getAbsolutePath().equals(firstSelectionParent.getAbsolutePath()))
+			{
+				// we select the first instance of the target folder now so that the copied members will be selected in it
+				//  after it is refreshed via the remote_resource_created event.
+				if (originatingViewer instanceof SystemView)
+				{
+					// boolean selectedOk = ((SystemView)originatingViewer).selectRemoteObjects(targetFolder.getAbsolutePath(), fileSS, null);
+					//System.out.println(targetFolder.getAbsolutePath()+" selectedOK? " + selectedOk);
+					//if (selectedOk)
+					//  return;
+				}
+			}
 		}
-		
-		
-		targetFolder.markStale(true);	
+
+
+		targetFolder.markStale(true);
 
 		// invalidate filters
 		invalidateFilterReferences(targetFolder);
-		
-		
+
+
 		RSECorePlugin.getTheSystemRegistry().fireRemoteResourceChangeEvent(
-		   ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_CREATED, copiedFiles, targetFolder.getAbsolutePath(), fileSS, null, originatingViewer);
-		
+				ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_CREATED, copiedFiles, targetFolder.getAbsolutePath(), fileSS, null, originatingViewer);
+
 		/* Old release 1.0 way...
 		// did they copy to the same parent? Just refresh that parent, whatever it is...
         if (targetFolder.getAbsolutePath().equals(firstSelectionParent.getAbsolutePath()))
@@ -561,49 +593,49 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 		else
 		{
 			// refresh target folder in all views, but only select new files in this view...
-			org.eclipse.rse.ui.model.SystemResourceChangeEvent event = 
+			org.eclipse.rse.ui.model.SystemResourceChangeEvent event =
 			  new org.eclipse.rse.ui.model.SystemResourceChangeEvent(
 			        targetFolder,ISystemResourceChangeEvent.EVENT_REFRESH_REMOTE, copiedFiles);
 			event.setOriginatingViewer(getViewer());
 		    sr.fireEvent(event);
 		}
-		*/
+		 */
 	}
-   
-    // ------------------
-    // PRIVATE METHODS...
-    // ------------------
-    
-    /**
-     * Get the currently selected IRemoteFile objects
-     */
-    protected IRemoteFile[] getSelectedFiles()
-    {
-    	if (files == null)
-    	{
-   	      IStructuredSelection selection = getSelection();
-   	      files = new IRemoteFile[selection.size()];
-   	      Iterator i = selection.iterator();
-   	      int idx=0;
-   	      while (i.hasNext())
-   	      {
-   	        files[idx++] = (IRemoteFile)i.next();
-   	      }
-   	    }
-   	    return files;
-    }
-    /**
-     * Get the first selected file or folder
-     */
-    protected IRemoteFile getFirstSelectedFile()
-    {
-    	if (files == null)
-    	  getSelectedFiles();
-    	if (files.length > 0)
-    	  return files[0];
-    	else
-    	  return null;
-    }
+
+	// ------------------
+	// PRIVATE METHODS...
+	// ------------------
+
+	/**
+	 * Get the currently selected IRemoteFile objects
+	 */
+	protected IRemoteFile[] getSelectedFiles()
+	{
+		if (files == null)
+		{
+			IStructuredSelection selection = getSelection();
+			files = new IRemoteFile[selection.size()];
+			Iterator i = selection.iterator();
+			int idx=0;
+			while (i.hasNext())
+			{
+				files[idx++] = (IRemoteFile)i.next();
+			}
+		}
+		return files;
+	}
+	/**
+	 * Get the first selected file or folder
+	 */
+	protected IRemoteFile getFirstSelectedFile()
+	{
+		if (files == null)
+			getSelectedFiles();
+		if (files.length > 0)
+			return files[0];
+		else
+			return null;
+	}
 
 	/**
 	 * The user has selected a remote object. Return null if OK is to be enabled, or a SystemMessage
@@ -614,5 +646,5 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 	public SystemMessage isValid(IHost selectedConnection, Object[] selectedObjects, ISystemRemoteElementAdapter[] remoteAdaptersForSelectedObjects)
 	{
 		return null;
-	}     
+	}
 }

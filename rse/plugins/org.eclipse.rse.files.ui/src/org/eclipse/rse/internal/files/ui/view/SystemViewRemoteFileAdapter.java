@@ -48,6 +48,7 @@
  * David McKnight   (IBM)        - [216252] MessageFormat.format -> NLS.bind
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * Xuan Chen        (IBM) - [223126] [api][breaking] Remove API related to User Actions in RSE Core/UI
+ * Rupen Mardirossian (IBM)      - [210682] Copy collisions will use SystemCopyDialog now instead of renameDialog when there is a copy collision within the same connection 
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -113,6 +114,7 @@ import org.eclipse.rse.internal.files.ui.actions.SystemSearchAction;
 import org.eclipse.rse.internal.files.ui.resources.SystemRemoteEditManager;
 import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
 import org.eclipse.rse.internal.ui.SystemResources;
+import org.eclipse.rse.internal.ui.dialogs.CopyRunnable;
 import org.eclipse.rse.internal.ui.view.ISystemMementoConstants;
 import org.eclipse.rse.internal.ui.view.SystemDNDTransferRunnable;
 import org.eclipse.rse.internal.ui.view.SystemViewResources;
@@ -1970,7 +1972,6 @@ public class SystemViewRemoteFileAdapter
 						ISystemFileConstants.FILEMSG_SECURITY_ERROR,
 						IStatus.ERROR, msgTxt, msgDetails);
 				resultSet.setMessage(errorMsg);
-
 				return resultSet;
 			}
 
@@ -2021,7 +2022,7 @@ public class SystemViewRemoteFileAdapter
 									}
 								}
 							}
-
+							//getMessage("RSEG1125").makeSubstitution(movedFileName));
 							if (copiedFileNames != null)
 							{
 								String msgTxt = FileResources.FILEMSG_COPY_INTERRUPTED;
@@ -2031,6 +2032,7 @@ public class SystemViewRemoteFileAdapter
 										ISystemFileConstants.FILEMSG_COPY_INTERRUPTED,
 										IStatus.ERROR, msgTxt, msgDetails);
 								resultSet.setMessage(thisMessage);
+								//SystemMessageDialog.displayErrorMessage(shell, thisMessage);
 							}
 						}
 					}
@@ -2096,10 +2098,12 @@ public class SystemViewRemoteFileAdapter
 					}
 					else if (first instanceof IRemoteFile)
 					{
-						List toCopy = new ArrayList();
-						List toCopyNames = new ArrayList();
+						//List toCopy = new ArrayList();
+						//List toCopyNames = new ArrayList();
 						List toCopyBatch = new ArrayList();
-
+						List existing = new ArrayList();
+						boolean overwrite=false;
+						
 						for (int i = 0; i < set.size(); i++)
 						{	
 							IRemoteFile srcFileOrFolder = (IRemoteFile)set.get(i);																									
@@ -2133,27 +2137,30 @@ public class SystemViewRemoteFileAdapter
 							{
 								try
 								{
-									if (!targetFolder.getAbsolutePath().equals(srcFileOrFolder.getAbsolutePath()))
+									if (!targetFolder.getAbsolutePath().equals(srcFileOrFolder.getAbsolutePath()) && !targetFolder.getAbsolutePath().equals(srcFileOrFolder.getParentRemoteFile().getAbsolutePath()))
 									{
 								
 										// should be better doing a query for all in the set																					
 										IRemoteFile existingFileOrFolder = ((IRemoteFileSubSystem)srcSubSystem).getRemoteFileObject(targetFolder, name, monitor);
 										if (existingFileOrFolder.exists())
 										{
-											RenameRunnable rr = new RenameRunnable(existingFileOrFolder, toCopyNames);
+											/*RenameRunnable rr = new RenameRunnable(existingFileOrFolder, toCopyNames);
 											Display.getDefault().syncExec(rr);
 											name = rr.getNewName();
-	
-											if (name != null)
-											{
-												toCopy.add(srcFileOrFolder);
-												toCopyNames.add(name);
-											}
+											*/
+											existing.add(existingFileOrFolder);
 										}
-										else if (name != null)
+											
+										if (name != null)
 										{
+											//toCopy.add(srcFileOrFolder);
+											//toCopyNames.add(name);
 											toCopyBatch.add(srcFileOrFolder);
 										}
+										/*else if (name != null)
+										{
+											toCopyBatch.add(srcFileOrFolder);
+										}*/
 									}		
 								}
 								catch (Exception e)
@@ -2167,160 +2174,174 @@ public class SystemViewRemoteFileAdapter
 							}
 						}
 						
-						for (int x = 0; x < toCopy.size(); x++)
-						{
-							
-							IRemoteFile srcFileOrFolder = (IRemoteFile)toCopy.get(x);
-							String name = (String)toCopyNames.get(x);
 						
-							/*
+						if(existing.size()>0)
+						{
+							CopyRunnable rr = new CopyRunnable(existing);
+							Display.getDefault().syncExec(rr);
+							overwrite = rr.getOk();
+						}
+						
+						//Following code for renaming dialog copying procedures is not required
+						/*if(existing.size()==0 || overwrite)
+						{
+							for (int x = 0; x < toCopy.size(); x++)
+							{
+
+								IRemoteFile srcFileOrFolder = (IRemoteFile)toCopy.get(x);
+								String name = (String)toCopyNames.get(x);
+
+								
 							SystemMessage copyMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COPY_PROGRESS);
 							copyMessage.makeSubstitution(srcFileOrFolder.getName(), targetFolder.getName());
 							if (monitor != null)
 							{
 								monitor.beginTask(copyMessage.getLevelOneText(), 100);
 							}
-							*/
-							try
-							{
-								if (targetFS.copy(srcFileOrFolder, targetFolder, name, monitor))
+								 
+								try
 								{
-									IRemoteFile copiedFile = targetFS.getRemoteFileObject(targetFolder, name, monitor);
-									resultSet.addResource(copiedFile); 
-								}
-								else
-								{
-									// need a failed message here
-									String msgTxt = NLS.bind(FileResources.FILEMSG_COPY_FILE_FAILED, srcFileOrFolder.getAbsolutePath());
-									String msgDetails = FileResources.FILEMSG_COPY_FILE_FAILED_DETAILS;
+									if (targetFS.copy(srcFileOrFolder, targetFolder, name, monitor))
+									{
+										IRemoteFile copiedFile = targetFS.getRemoteFileObject(targetFolder, name, monitor);
+										resultSet.addResource(copiedFile); 
+									}
+									else
+									{
+										// need a failed message here
+										String msgTxt = NLS.bind(FileResources.FILEMSG_COPY_FILE_FAILED, srcFileOrFolder.getAbsolutePath());
+										String msgDetails = FileResources.FILEMSG_COPY_FILE_FAILED_DETAILS;
+									
+										
 									
 									SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
 											ISystemFileConstants.FILEMSG_COPY_FILE_FAILED,
 											IStatus.ERROR, msgTxt, msgDetails);
 									resultSet.setMessage(msg);
+									}
 								}
-							}
-							catch (SystemMessageException e)
-							{
-								if (monitor.isCanceled() && resultSet.size() > 0)
+								catch (SystemMessageException e)
 								{
-									//Get the moved file names
-									Object thisObject = resultSet.get(0);
-									String copiedFileNames = null;
-									if (thisObject instanceof IRemoteFile)
+									if (monitor.isCanceled() && resultSet.size() > 0)
 									{
-										copiedFileNames = ((IRemoteFile)thisObject).getName();
-										for (int i=1; i<(resultSet.size()); i++)
+										//Get the moved file names
+										Object thisObject = resultSet.get(0);
+										String copiedFileNames = null;
+										if (thisObject instanceof IRemoteFile)
 										{
-											if (thisObject instanceof IRemoteFile)
+											copiedFileNames = ((IRemoteFile)thisObject).getName();
+											for (int i=1; i<(resultSet.size()); i++)
 											{
-												copiedFileNames = copiedFileNames + "\n" + ((IRemoteFile)thisObject).getName(); //$NON-NLS-1$
+												if (thisObject instanceof IRemoteFile)
+												{
+													copiedFileNames = copiedFileNames + "\n" + ((IRemoteFile)thisObject).getName(); //$NON-NLS-1$
+												}
 											}
 										}
-									}
-									//getMessage("RSEG1125").makeSubstitution(movedFileName));
-									if (copiedFileNames != null)
-									{
-										String msgTxt = FileResources.FILEMSG_COPY_INTERRUPTED;
-										String msgDetails = NLS.bind(FileResources.FILEMSG_COPY_INTERRUPTED_DETAILS, copiedFileNames);
+										//getMessage("RSEG1125").makeSubstitution(movedFileName));
+										if (copiedFileNames != null)
+										{
+											String msgTxt = FileResources.FILEMSG_COPY_INTERRUPTED;
+											String msgDetails = NLS.bind(FileResources.FILEMSG_COPY_INTERRUPTED_DETAILS, copiedFileNames);
 
 										SystemMessage thisMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, 
 												ISystemFileConstants.FILEMSG_COPY_INTERRUPTED,
 												IStatus.ERROR, msgTxt, msgDetails);
 										SystemMessageDialog.displayErrorMessage(shell, thisMessage);
+										}
+										else
+										{
+											SystemMessageDialog.displayMessage(e);
+										}
 									}
 									else
 									{
 										SystemMessageDialog.displayMessage(e);
 									}
 								}
-								else
+								catch (Exception e)
 								{
-									SystemMessageDialog.displayMessage(e);
+									e.printStackTrace();
 								}
 							}
-							catch (Exception e)
+						}*/
+						// deal with batch copies now 
+						if(existing.size()==0 || overwrite)
+						{
+							IRemoteFile[] srcFileOrFolders = new IRemoteFile[toCopyBatch.size()];
+							for (int x = 0; x < toCopyBatch.size(); x++)
 							{
-								e.printStackTrace();
+								srcFileOrFolders[x] = (IRemoteFile)toCopyBatch.get(x);
 							}
-						}
-						
-						// deal with batch copies now
-						IRemoteFile[] srcFileOrFolders = new IRemoteFile[toCopyBatch.size()];
-						for (int x = 0; x < toCopyBatch.size(); x++)
-						{
-							srcFileOrFolders[x] = (IRemoteFile)toCopyBatch.get(x);
-						}
-						if (toCopyBatch.size() > 0)
-						{
-							try
+							if (toCopyBatch.size() > 0)
 							{
-								if (targetFS.copyBatch(srcFileOrFolders, targetFolder, monitor))
+								try
 								{
-									for (int x = 0; x < toCopyBatch.size(); x++)
+									if (targetFS.copyBatch(srcFileOrFolders, targetFolder, monitor))
 									{
-										IRemoteFile copiedFile = targetFS.getRemoteFileObject(targetFolder, srcFileOrFolders[x].getName(), monitor);
-										resultSet.addResource(copiedFile);
+										for (int x = 0; x < toCopyBatch.size(); x++)
+										{
+											IRemoteFile copiedFile = targetFS.getRemoteFileObject(targetFolder, srcFileOrFolders[x].getName(), monitor);
+											resultSet.addResource(copiedFile);
+										}
 									}
 								}
-							}
-							catch (SystemMessageException e)
-							{
-								if (monitor.isCanceled() && srcFileOrFolders.length > 1)
+								catch (SystemMessageException e)
 								{
-									//ISystemViewElementAdapter adapter = fromSet.getViewAdapter();
-									for (int i = 0; i < srcFileOrFolders.length; i++)
+									if (monitor.isCanceled() && srcFileOrFolders.length > 1)
 									{
-										IRemoteFile thisCopiedFile = null;
-										try
+										//ISystemViewElementAdapter adapter = fromSet.getViewAdapter();
+										for (int i = 0; i < srcFileOrFolders.length; i++)
 										{
-											thisCopiedFile = targetFS.getRemoteFileObject(targetFolder, srcFileOrFolders[i].getName(), null);
+											IRemoteFile thisCopiedFile = null;
+											try
+											{
+												thisCopiedFile = targetFS.getRemoteFileObject(targetFolder, srcFileOrFolders[i].getName(), null);
+											}
+											catch (SystemMessageException thsiException)
+											{
+												thsiException.printStackTrace();
+												thisCopiedFile = null;
+											}
+											if (thisCopiedFile != null && thisCopiedFile.exists())
+											{
+												//This object has been deleted
+												resultSet.addResource(thisCopiedFile);
+											}	
 										}
-										catch (SystemMessageException thsiException)
+										if (resultSet.size() > 0)
 										{
-											thsiException.printStackTrace();
-											thisCopiedFile = null;
-										}
-										if (thisCopiedFile != null && thisCopiedFile.exists())
-										{
-											//This object has been deleted
-											resultSet.addResource(thisCopiedFile);
-										}	
-									}
-									if (resultSet.size() > 0)
-									{
-										//Get the copied file names
-										Object thisObject = resultSet.get(0);
-										String copiedFileNames = null;
-										copiedFileNames = ((IRemoteFile)thisObject).getName();
-										for (int i=1; i<(resultSet.size()); i++)
-										{
-											thisObject = resultSet.get(i);
-											copiedFileNames = copiedFileNames + "\n" + ((IRemoteFile)resultSet.get(i)).getName(); //$NON-NLS-1$
-										}
-										
-										String msgTxt = FileResources.FILEMSG_COPY_INTERRUPTED;
-										String msgDetails = NLS.bind(FileResources.FILEMSG_COPY_INTERRUPTED_DETAILS, copiedFileNames);
+											//Get the copied file names
+											Object thisObject = resultSet.get(0);
+											String copiedFileNames = null;
+											copiedFileNames = ((IRemoteFile)thisObject).getName();
+											for (int i=1; i<(resultSet.size()); i++)
+											{
+												thisObject = resultSet.get(i);
+												copiedFileNames = copiedFileNames + "\n" + ((IRemoteFile)resultSet.get(i)).getName(); //$NON-NLS-1$
+											}
+											String msgTxt = FileResources.FILEMSG_COPY_INTERRUPTED;
+											String msgDetails = NLS.bind(FileResources.FILEMSG_COPY_INTERRUPTED_DETAILS, copiedFileNames);
 																				
-										SystemMessage thisMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, 
-												ISystemFileConstants.FILEMSG_COPY_INTERRUPTED,
-												IStatus.ERROR, msgTxt, msgDetails);
-										SystemMessageDialog.displayErrorMessage(shell, thisMessage);
-										
+											SystemMessage thisMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+													ISystemFileConstants.FILEMSG_COPY_INTERRUPTED,
+													IStatus.ERROR, msgTxt, msgDetails);
+											SystemMessageDialog.displayErrorMessage(shell, thisMessage);
+										}
+										else
+										{
+											SystemMessageDialog.displayMessage(e);
+										}
 									}
 									else
 									{
 										SystemMessageDialog.displayMessage(e);
 									}
 								}
-								else
+								catch (Exception e)
 								{
-									SystemMessageDialog.displayMessage(e);
+									e.printStackTrace();
 								}
-							}
-							catch (Exception e)
-							{
-								e.printStackTrace();
 							}
 						}
 					}						
@@ -2329,7 +2350,6 @@ public class SystemViewRemoteFileAdapter
 		}
 		return resultSet;
 	}
-
 	/**
 	 * Perform a copy via drag and drop.
 	 * @param src the object to be copied.  If the target and source are not on the same system, then this is a

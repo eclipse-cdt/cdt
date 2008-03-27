@@ -17,6 +17,7 @@
  * David McKnight   (IBM)        - [210229] table refresh needs unique table-specific tooltip-text
  * David McKnight   (IBM)        - [216252] [nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [223103] [cleanup] fix broken externalized strings
+ * Rupen Mardirossian (IBM)      - [210682] Added BUTTON_OVERWRITE_ALL & and tooltip, also added some verbiage for new SystemCopyDialog.	
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui;
@@ -43,6 +44,9 @@ public class SystemResources extends NLS
 	public static String BUTTON_CREATE_TOOLTIP;
 
 	public static String BUTTON_CANCEL_ALL;
+	public static String BUTTON_CANCEL_ALL_TOOLTIP;
+	public static String BUTTON_OVERWRITE_ALL;
+	public static String BUTTON_OVERWRITE_ALL_TOOLTIP;
 
 	// THESE TERMS ARE USED POTENTIALLY ANYWHERE
 	public static String TERM_YES;
@@ -127,6 +131,9 @@ public class SystemResources extends NLS
 	public static String RESID_COLLISION_RENAME_TITLE;
 	public static String RESID_COLLISION_RENAME_VERBIAGE;
 	public static String RESID_COLLISION_RENAME_LABEL; 
+	public static String RESID_COLLISION_RENAME_TOOLTIP;
+	public static String RESID_COLLISION_COPY_VERBIAGE;
+	public static String RESID_COLLISION_COPY_COLHDG_OLDNAME;
 
 
 	// -------------------------

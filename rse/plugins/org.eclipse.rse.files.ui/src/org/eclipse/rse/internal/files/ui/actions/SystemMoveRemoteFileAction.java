@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -21,9 +21,12 @@
  * Xuan Chen (IBM) - [209827] Update DStore command implementation to enable cancelation of archive operations
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
+ * Rupen Mardirossian (IBM)		-  [210682] Modified MoveRemoteFileJob.runInWorkspace to use SystemCopyDialog for collisions in move operations
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.core.resources.WorkspaceJob;
@@ -50,7 +53,9 @@ import org.eclipse.rse.ui.actions.SystemBaseCopyAction;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.validators.IValidatorRemoteSelection;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.rse.internal.ui.dialogs.CopyRunnable;
 
 /**
  * Move selected files and folders action.
@@ -84,65 +89,103 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 			
 			IStatus status = Status.OK_STATUS;
 			
-	        try
-	        {
-	           int steps = oldObjects.length;
-		       monitor.beginTask(msg.getLevelOneText(), steps);
-		       copiedOk = true;
-		       String oldName = null;
-		       String newName = null;
-		       Object oldObject = null;
-		       newNames = new String[oldNames.length];
-		       for (int idx=0; copiedOk && (idx<steps); idx++)
-		       {
-		       	  oldName = oldNames[idx];
-		       	  oldObject = oldObjects[idx];
-		       	  monitor.subTask(getCopyingMessage(oldName).getLevelOneText());
-		       	  newName = checkForCollision(getShell(), monitor, targetContainer, oldObject, oldName);
-		       	  if (newName == null)
-		       	    copiedOk = false;
-		       	  else
+			//holds existing objects
+			List existing = new ArrayList();
+			//holds objects to be copied
+			List toCopy = new ArrayList();
+	        boolean overwrite = false;
+			
+		
+	        int steps = oldObjects.length;
+		    monitor.beginTask(msg.getLevelOneText(), steps);
+		    copiedOk = true;
+		    String oldName = null;
+		    String newName = null;
+		    Object oldObject = null;
+		    newNames = new String[oldNames.length];
+		    //go through all files to see if they exist
+		    for (int idx=0; copiedOk && (idx<steps); idx++)
+		    {
+		    	oldName = oldNames[idx];
+		     	oldObject = oldObjects[idx];
+		        //monitor.subTask(getCopyingMessage(oldName).getLevelOneText());
+		       	if(checkForCollision(getShell(), monitor, targetContainer, oldName))
+		       	{
+		       		existing.add(oldObject);
+		       	}
+		       	toCopy.add(oldObject);
+		       	/*newName = checkForCollision(getShell(), monitor, targetContainer, oldObject, oldName);
+		        if (newName == null)
+		        	copiedOk = false;
+		   	  	else
 			        copiedOk = doCopy(targetContainer, oldObject, newName, monitor);
-			      newNames[idx] = newName;
-			      monitor.worked(1);
-			      movedFileNames.add(oldName); //remember the old name, in case we need it later.
-		       }
-	           monitor.done();
-	        }
-			catch (SystemMessageException exc)
+			    newNames[idx] = newName;
+			    monitor.worked(1);
+			    movedFileNames.add(oldName);*/ //remember the old name, in case we need it later.
+		    }
+	        //monitor.done();
+		    
+		    //SystemCopyDialog used here with all existing objects
+			if(existing.size()>0)
 			{
-				copiedOk = false;
-				//If this operation is canceled, need to display a proper message to the user.
-				if (monitor.isCanceled() && movedFileNames.size() > 0)
+				CopyRunnable cr = new CopyRunnable(existing);
+				Display.getDefault().syncExec(cr);
+				overwrite = cr.getOk();
+				if(!overwrite)
 				{
-					//Get the moved file names
-					String movedFileNamesList = (String)(movedFileNames.get(0));
-					for (int i=1; i<(movedFileNames.size()); i++)
+					status = Status.CANCEL_STATUS;
+				}
+			}
+			//Proceed with copy if user chose to overwrite or there were no copy collisions
+			if(existing.size()==0 || overwrite)
+			{
+				try
+				{	
+					for (int idx=0; copiedOk && (idx<steps); idx++)
 					{
-						movedFileNamesList = movedFileNamesList + "\n" + (String)(movedFileNames.get(i)); //$NON-NLS-1$
-					}
-					
-					String msgTxt = FileResources.FILEMSG_MOVE_INTERRUPTED;
-					String msgDetails = NLS.bind(FileResources.FILEMSG_MOVE_INTERRUPTED_DETAILS, movedFileNamesList);
+						newName = oldNames[idx];
+			       	  	oldObject = oldObjects[idx];
+			       	  	monitor.subTask(getCopyingMessage(newName).getLevelOneText());
+			       	  	copiedOk = doCopy(targetContainer, oldObject, newName, monitor);
+			       	  	monitor.worked(1);
+			       	  	newNames[idx] = newName;
+			       	  	movedFileNames.add(newName);
+			       	  	monitor.done();
+					}  			
+				}
+				catch (SystemMessageException exc)
+				{
+					copiedOk = false;
+					//If this operation is canceled, need to display a proper message to the user.
+					if (monitor.isCanceled() && movedFileNames.size() > 0)
+					{
+						//Get the moved file names
+						String movedFileNamesList = (String)(movedFileNames.get(0));
+						for (int i=1; i<(movedFileNames.size()); i++)
+						{
+							movedFileNamesList = movedFileNamesList + "\n" + (String)(movedFileNames.get(i)); //$NON-NLS-1$
+						}
+						String msgTxt = FileResources.FILEMSG_MOVE_INTERRUPTED;
+						String msgDetails = NLS.bind(FileResources.FILEMSG_MOVE_INTERRUPTED_DETAILS, movedFileNamesList);
 									
 					SystemMessage thisMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, 							
 							ISystemFileConstants.FILEMSG_MOVE_INTERRUPTED,
 							IStatus.ERROR, msgTxt, msgDetails);
 					SystemMessageDialog.displayErrorMessage(shell, thisMessage);
 				
-					status = Status.CANCEL_STATUS;
+						status = Status.CANCEL_STATUS;
+					}
+					else
+					{
+						SystemMessageDialog.displayErrorMessage(shell, exc.getSystemMessage());
+					}
 				}
-				else
+				catch (Exception exc)
 				{
-					SystemMessageDialog.displayErrorMessage(shell, exc.getSystemMessage());
+					copiedOk = false;
+					exc.printStackTrace();
 				}
 			}
-			catch (Exception exc)
-			{
-				copiedOk = false;
-				exc.printStackTrace();
-			}
-			
 			if (movedFiles.size() > 0)
 			{
 				copyComplete();  //Need to reflect the views.
@@ -150,8 +193,7 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 	        
 	        return status;
 		}
-	}
-	
+	}	
 	/**
 	 * Constructor
 	 */

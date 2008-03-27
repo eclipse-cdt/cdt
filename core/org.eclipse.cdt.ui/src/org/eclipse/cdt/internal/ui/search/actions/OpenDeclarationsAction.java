@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
 package org.eclipse.cdt.internal.ui.search.actions;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -29,6 +30,7 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
@@ -38,11 +40,15 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.index.IIndexName;
+import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ILanguage;
@@ -82,12 +88,14 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 	private class Runner extends Job implements ASTRunnable {
 		private IWorkingCopy fWorkingCopy;
 		private IIndex fIndex;
+		private IProgressMonitor fMonitor;
 
 		Runner() {
 			super(CEditorMessages.getString("OpenDeclarations.dialog.title")); //$NON-NLS-1$
 		}
 
 		protected IStatus run(IProgressMonitor monitor) {
+			fMonitor= monitor;
 			try {
 				clearStatusLine();
 				
@@ -161,52 +169,84 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 						found = navigateOneLocation(declNames);
 					}
 				}
-				if (!found) {
+				if (!found && !navigationFallBack(ast, lang)) {
 					reportSymbolLookupFailure(new String(searchName.toCharArray()));
 				}
 				
 			} else {
 				// Check if we're in an include statement
 				IASTPreprocessorStatement[] preprocs = ast.getAllPreprocessorStatements();
-				boolean foundInInclude = false;
 				for (int i = 0; i < preprocs.length; ++i) {
-					if (!(preprocs[i] instanceof IASTPreprocessorIncludeStatement))
-						continue;
-					IASTPreprocessorIncludeStatement incStmt = (IASTPreprocessorIncludeStatement)preprocs[i];
-					IASTFileLocation loc = preprocs[i].getFileLocation();
-					if (loc != null
-							&& loc.getFileName().equals(ast.getFilePath())
-							&& loc.getNodeOffset() < selectionStart
-							&& loc.getNodeOffset() + loc.getNodeLength() > selectionStart) {
-						// Got it
-						foundInInclude = true;
-						String name = null;
-						if (incStmt.isResolved())
-							name = incStmt.getPath();
-						
-						if (name != null) {
-							final IPath path = new Path(name);
-							runInUIThread(new Runnable() {
-								public void run() {
-									try {
-										open(path, 0, 0);
-									} catch (CoreException e) {
-										CUIPlugin.getDefault().log(e);
-									}
-								}
-							});
-						} else {
-							reportIncludeLookupFailure(new String(incStmt.getName().toCharArray()));
+					final IASTPreprocessorStatement node= preprocs[i];
+					if (node instanceof IASTPreprocessorIncludeStatement) {
+						final IASTFileLocation loc= node.getFileLocation();
+						if (loc != null	&& loc.getFileName().equals(ast.getFilePath())
+								&& loc.getNodeOffset() < selectionStart
+								&& loc.getNodeOffset() + loc.getNodeLength() > selectionStart) {
+							openInclude((IASTPreprocessorIncludeStatement) node);
+							return Status.OK_STATUS;
 						}
-						
-						break;
-					}
-					if (!foundInInclude) {
-						reportSelectionMatchFailure();
 					}
 				}
+				if (!navigationFallBack(ast, lang)) 
+				   reportSelectionMatchFailure();
 			}
 			return Status.OK_STATUS;
+		}
+
+		private boolean navigationFallBack(IASTTranslationUnit ast, ILanguage lang) {
+			// bug 102643, as a fall-back we look up the selected word in the index
+			String selectedText= selNode.getText();
+			if (selectedText != null && selectedText.length() > 0) {
+				try {
+					final ICProject project = fWorkingCopy.getCProject();
+					final char[] name = selectedText.toCharArray();
+					List elems= new ArrayList();
+					String id= ast instanceof ICPPASTTranslationUnit ? ILinkage.CPP_LINKAGE_ID : ILinkage.C_LINKAGE_ID;
+					final IndexFilter filter = IndexFilter.getDeclaredBindingFilter(id, false);
+
+					IIndexMacro[] macros= fIndex.findMacros(name, filter, fMonitor);
+					for (int i = 0; i < macros.length; i++) {
+						IIndexMacro macro = macros[i];
+						ICElement elem= IndexUI.getCElementForMacro(project, fIndex, macro);
+						if (elem != null) {
+							elems.add(elem);
+						}
+					}
+					// searches global names, only.
+					IIndexBinding[] bindings = fIndex.findBindings(name, filter, fMonitor);
+					for (int i = 0; i < bindings.length; i++) {
+						IIndexBinding binding = bindings[i];
+						final IName[] names = findNames(fIndex, ast, false, binding);
+						convertToCElements(project, fIndex, names, elems);
+					}
+					return navigateCElements(elems);
+				} catch (CoreException e) {
+					CCorePlugin.log(e);
+				}
+			}
+			return false;
+		}
+
+		private void openInclude(IASTPreprocessorIncludeStatement incStmt) {
+			String name = null;
+			if (incStmt.isResolved())
+				name = incStmt.getPath();
+
+			if (name != null) {
+				final IPath path = new Path(name);
+				runInUIThread(new Runnable() {
+					public void run() {
+						try {
+							open(path, 0, 0);
+						} catch (CoreException e) {
+							CUIPlugin.getDefault().log(e);
+						}
+					}
+				});
+			} else {
+				reportIncludeLookupFailure(new String(incStmt.getName().toCharArray()));
+			}
 		}
 
 		private boolean navigateOneLocation(IName[] declNames) {
@@ -235,6 +275,11 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 
 		private boolean navigateViaCElements(ICProject project, IIndex index, IName[] declNames) {
 			final ArrayList elements= new ArrayList();
+			convertToCElements(project, index, declNames, elements);
+			return navigateCElements(elements);
+		}
+
+		private void convertToCElements(ICProject project, IIndex index, IName[] declNames, List elements) {
 			for (int i = 0; i < declNames.length; i++) {
 				try {
 					ICElement elem = getCElementForName(project, index, declNames[i]);
@@ -245,6 +290,9 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 					CUIPlugin.getDefault().log(e);
 				}
 			}
+		}
+	
+		private boolean navigateCElements(final List elements) {
 			if (elements.isEmpty()) {
 				return false;
 			}

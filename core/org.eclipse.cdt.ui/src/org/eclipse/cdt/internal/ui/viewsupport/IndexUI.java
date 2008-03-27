@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,6 +55,7 @@ import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexInclude;
+import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
@@ -307,13 +308,19 @@ public class IndexUI {
 	}
 	
 	public static ITranslationUnit getTranslationUnit(ICProject cproject, IName name) {
-		IPath path= Path.fromOSString(name.getFileLocation().getFileName());
-		try {
-			return CoreModelUtil.findTranslationUnitForLocation(path, cproject);
-		} catch (CModelException e) {
-			CUIPlugin.getDefault().log(e);
-			return null;
+		return getTranslationUnit(cproject, name.getFileLocation());
+	}
+
+	private static ITranslationUnit getTranslationUnit(ICProject cproject, final IASTFileLocation fileLocation) {
+		if (fileLocation != null) {
+			IPath path= Path.fromOSString(fileLocation.getFileName());
+			try {
+				return CoreModelUtil.findTranslationUnitForLocation(path, cproject);
+			} catch (CModelException e) {
+				CUIPlugin.getDefault().log(e);
+			}
 		}
+		return null;
 	}
 
 	public static ICElementHandle getCElementForName(ICProject preferProject, IIndex index, IIndexName declName) 
@@ -331,6 +338,17 @@ public class IndexUI {
 		IRegion region= new Region(declName.getNodeOffset(), declName.getNodeLength());
 		long timestamp= declName.getFile().getTimestamp();
 		return CElementHandleFactory.create(tu, index.findBinding(declName), declName.isDefinition(), region, timestamp);
+	}
+
+	public static ICElementHandle getCElementForMacro(ICProject preferProject, IIndex index, IIndexMacro macro) 
+			throws CoreException {
+		ITranslationUnit tu= getTranslationUnit(preferProject, macro.getFileLocation());
+		if (tu != null) {
+			IRegion region= new Region(macro.getNodeOffset(), macro.getNodeLength());
+			long timestamp= macro.getFile().getTimestamp();
+			return CElementHandleFactory.create(tu, macro, region, timestamp);
+		}
+		return null;
 	}
 
 	public static ICElementHandle findAnyDeclaration(IIndex index, ICProject preferProject, IBinding binding) 

@@ -43,6 +43,10 @@
 		</ant>
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />
+			<property name="id" value="org.eclipse.rse.wince" />
+		</ant>
+		<ant antfile="${genericTargets}" target="${target}">
+			<property name="type" value="feature" />
 			<property name="id" value="org.eclipse.rse.examples" />
 		</ant>
 		<ant antfile="${genericTargets}" target="${target}">
@@ -122,6 +126,12 @@
 
 	<target name="assemble.org.eclipse.rse.remotecdt">
 		<property name="archiveName" value="RSE-remotecdt-${buildId}.zip"/>
+		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
+		<antcall target="unpackUpdateJarsForPackaging" />
+	</target>
+
+	<target name="assemble.org.eclipse.rse.wince">
+		<property name="archiveName" value="RSE-wince-${buildId}.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>

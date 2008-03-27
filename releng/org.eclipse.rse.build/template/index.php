@@ -151,6 +151,16 @@
         </td>
     </tr>
 	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
+        <td>All (<i>Experimental</i>)</td>
+        <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-wince-@buildId@.zip">RSE-wince-@buildId@.zip</a></td>
+        <td><small>&nbsp;</small><br/>
+			RSE Services for accessing Windows CE devices via Microsoft RAPI2.
+			Provides a File subsystem for transparent remote file access.
+			Requires Microsoft RAPI libraries installed.
+			Includes Source.
+        </td>
+    </tr>
+	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
 		<td>All</td>
 		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-examples-@buildId@.zip">RSE-examples-@buildId@.zip</a></td>
         <td><small>&nbsp;</small><br/>

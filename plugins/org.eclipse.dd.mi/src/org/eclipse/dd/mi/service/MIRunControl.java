@@ -407,7 +407,7 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
     @DsfServiceEventHandler 
     public void eventDispatched(ContainerSuspendedEvent e) {
         fMICommandCache.setContextAvailable(e.getDMContext(), true);
-        fMICommandCache.reset(e.getDMContext());
+        fMICommandCache.reset();
         fStateChangeReason = e.getReason();
         fStateChangeTriggeringContext = e.getTriggeringContext();
         fSuspended = true;
@@ -431,7 +431,6 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
     @DsfServiceEventHandler 
     public void eventDispatched(ExitedDMEvent e) {
     	fMICommandCache.reset(e.getExecutionContext());
-
     }	
 
     ///////////////////////////////////////////////////////////////////////////

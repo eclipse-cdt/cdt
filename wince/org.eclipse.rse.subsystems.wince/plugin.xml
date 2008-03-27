@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright (c) 2008 Radoslav Gerganov
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Eclipse Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/epl-v10.html
+
+Contributors:
+  Radoslav Gerganov - initial API and implementation
+-->
+<?eclipse version="3.1"?>
+<plugin>
+   <extension
+         point="org.eclipse.rse.core.systemTypes">
+      <systemType
+            icon="icons/wince.gif"
+            iconLive="icons/wincelive.gif"
+            id="org.eclipse.rse.systemType.wince"
+            label="%systemType.label.0"
+            name="WinCE">
+      </systemType>
+   </extension>
+   <extension
+         point="org.eclipse.rse.core.subsystemConfigurations">
+      <configuration
+            category="files"
+            class="org.eclipse.rse.subsystems.files.wince.WinCEFileSubSystemConfiguration"
+            description="%configuration.description.0"
+            icon="icons/systemfiles_obj.gif"
+            iconlive="icons/systemfileslive_obj.gif"
+            id="wince.files"
+            name="%configuration.name.0"
+            priority="100"
+            systemTypeIds="org.eclipse.rse.systemType.wince"
+            vendor="%configuration.vendor.0">
+      </configuration>
+   </extension>
+</plugin>

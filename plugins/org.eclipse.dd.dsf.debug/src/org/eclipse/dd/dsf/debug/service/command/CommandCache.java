@@ -253,7 +253,7 @@ public class CommandCache implements ICommandListener
          */ 
         if(fCachedContexts.get(context) != null && fCachedContexts.get(context).containsKey(cachedCmd)){
         	CommandResultInfo result = fCachedContexts.get(context).get(cachedCmd);
-            if (result.getStatus().isOK()) {
+            if (result.getStatus().getSeverity() <= IStatus.INFO) {
             	@SuppressWarnings("unchecked") 
             	V v = (V)result.getData();
             	rm.setData(v);

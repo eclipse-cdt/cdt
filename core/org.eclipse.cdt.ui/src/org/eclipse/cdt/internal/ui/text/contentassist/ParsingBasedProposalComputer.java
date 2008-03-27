@@ -103,15 +103,15 @@ public abstract class ParsingBasedProposalComputer implements ICompletionProposa
 	 * @return a relevance value inidicating the quality of the name match
 	 */
 	protected int computeBaseRelevance(String prefix, String match) {
-		int baseRelevance= RelevanceConstants.DEFAULT_TYPE_RELEVANCE;
 		boolean caseMatch= prefix.length() > 0 && match.startsWith(prefix);
 		if (caseMatch) {
-			baseRelevance += RelevanceConstants.CASE_MATCH_RELEVANCE;
+			return RelevanceConstants.CASE_MATCH_RELEVANCE;
+		} else {
+			boolean exactNameMatch= match.equalsIgnoreCase(prefix);
+			if (exactNameMatch) {
+				return RelevanceConstants.EXACT_NAME_MATCH_RELEVANCE;
+			}
 		}
-		boolean exactNameMatch= match.equalsIgnoreCase(prefix);
-		if (exactNameMatch) {
-			baseRelevance += RelevanceConstants.EXACT_NAME_MATCH_RELEVANCE;
-		}
-		return baseRelevance;
+		return 0;
 	}
 }

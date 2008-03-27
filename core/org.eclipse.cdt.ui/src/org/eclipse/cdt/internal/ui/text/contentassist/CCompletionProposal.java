@@ -169,7 +169,7 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 		Assert.isTrue(cursorPosition >= 0);
 		fCursorPosition= cursorPosition;
 		fContextInformationPosition= (fContextInformation != null ? fCursorPosition : -1);
-	}	
+	}
 	
 	/*
 	 * @see ICompletionProposalExtension#apply(IDocument, char, int)
@@ -478,11 +478,7 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 		if (offset < fReplacementOffset)
 			return false;
 				
-		/* 
-		 * See http://dev.eclipse.org/bugs/show_bug.cgi?id=17667
-		String word= fReplacementString;
-		 */ 
-		boolean validated= startsWith(document, offset, fDisplayString);	
+		boolean validated= startsWith(document, offset, fReplacementString);	
 
 		if (validated && event != null) {
 			// adapt replacement range to document change
@@ -515,7 +511,7 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	 */	
 	protected boolean startsWith(IDocument document, int offset, String word) {
 		int wordLength= word == null ? 0 : word.length();
-		if (offset >  fReplacementOffset + wordLength)
+		if (offset >=  fReplacementOffset + wordLength)
 			return false;
 		
 		try {

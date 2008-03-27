@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,14 +15,13 @@ package org.eclipse.cdt.ui.tests.text.contentassist2;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContextInformation;
@@ -34,17 +33,16 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.parser.KeywordSetKey;
-import org.eclipse.cdt.core.parser.ParserFactory;
-import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 import org.eclipse.cdt.ui.tests.BaseUITestCase;
 import org.eclipse.cdt.ui.tests.text.EditorTestHelper;
 import org.eclipse.cdt.ui.text.ICCompletionProposal;
+import org.eclipse.cdt.ui.text.ICPartitions;
 
 import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProposal;
 import org.eclipse.cdt.internal.ui.text.contentassist.CContentAssistProcessor;
+import org.eclipse.cdt.internal.ui.text.contentassist.RelevanceConstants;
 
 public abstract class AbstractContentAssistTest extends BaseUITestCase {
 
@@ -57,14 +55,6 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 	protected ITextEditor fEditor;
 	private boolean fIsCpp;
 
-	private final static Set fgAllKeywords= new HashSet();
-	
-	static {
-		fgAllKeywords.addAll(ParserFactory.getKeywordSet(KeywordSetKey.KEYWORDS, ParserLanguage.C));
-		fgAllKeywords.addAll(ParserFactory.getKeywordSet(KeywordSetKey.TYPES, ParserLanguage.C));
-		fgAllKeywords.addAll(ParserFactory.getKeywordSet(KeywordSetKey.KEYWORDS, ParserLanguage.CPP));
-		fgAllKeywords.addAll(ParserFactory.getKeywordSet(KeywordSetKey.TYPES, ParserLanguage.CPP));
-	}
 	public AbstractContentAssistTest(String name, boolean isCpp) {
 		super(name);
 		fIsCpp= isCpp;
@@ -111,7 +101,8 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 
 		//Call the CContentAssistProcessor
 		ISourceViewer sourceViewer= EditorTestHelper.getSourceViewer((AbstractTextEditor)fEditor);
-		String contentType = sourceViewer.getDocument().getContentType(offset);
+		String contentType= TextUtilities.getContentType(sourceViewer.getDocument(), ICPartitions.C_PARTITIONING, offset, true);
+		boolean isCode= IDocument.DEFAULT_CONTENT_TYPE.equals(contentType);
 		ContentAssistant assistant = new ContentAssistant();
 		CContentAssistProcessor processor = new CContentAssistProcessor(fEditor, assistant, contentType);
 		long startTime= System.currentTimeMillis();
@@ -121,7 +112,7 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 		long endTime= System.currentTimeMillis();
 		assertTrue(results != null);
 
-		results= filterResults(results);
+		results= filterResults(results, isCode);
 		String[] resultStrings= toStringArray(results, compareType);
 		Arrays.sort(expected);
 		Arrays.sort(resultStrings);
@@ -167,22 +158,31 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 	/**
 	 * Filter out template and keyword proposals.
 	 * @param results
+	 * @param isCodeCompletion  completion is in code, not preprocessor, etc.
 	 * @return filtered proposals
 	 */
-	private Object[] filterResults(Object[] results) {
-		List filtered= new ArrayList();
+	private Object[] filterResults(Object[] results, boolean isCodeCompletion) {
+		List<Object> filtered= new ArrayList<Object>();
 		for (int i = 0; i < results.length; i++) {
 			Object result = results[i];
 			if (result instanceof TemplateProposal) {
 				continue;
 			}
 			if (result instanceof ICCompletionProposal) {
-				// check for keywords proposal
-				if (fgAllKeywords.contains(((ICCompletionProposal)result).getDisplayString())) {
-					continue;
+				if (isCodeCompletion) {
+					// check for keywords proposal
+					int relevance = ((ICCompletionProposal)result).getRelevance();
+					if (relevance >= RelevanceConstants.CASE_MATCH_RELEVANCE) {
+						relevance -= RelevanceConstants.CASE_MATCH_RELEVANCE;
+					}
+					if (relevance <= RelevanceConstants.KEYWORD_TYPE_RELEVANCE) {
+						continue;
+					}
 				}
+				filtered.add(result);
+			} else if (result instanceof IContextInformation) {
+				filtered.add(result);
 			}
-			filtered.add(result);
 		}
 		return filtered.toArray();
 	}
@@ -191,7 +191,7 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 		String[] strings= new String[results.length];
 		for(int i=0; i< results.length; i++){
 			Object result = results[i];
-			if (result instanceof ICompletionProposal) {
+			if (result instanceof CCompletionProposal) {
 				if (compareType == COMPARE_ID_STRINGS) {
 					strings[i]= ((CCompletionProposal)result).getIdString();
 				} else if (compareType == COMPARE_DISP_STRINGS) {
@@ -199,8 +199,20 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 				} else {
 					strings[i]= ((CCompletionProposal)result).getReplacementString();
 				}
-			} else {
+			} else if (result instanceof ICCompletionProposal) {
+				if (compareType == COMPARE_ID_STRINGS) {
+					strings[i]= ((ICCompletionProposal)result).getIdString();
+				} else if (compareType == COMPARE_DISP_STRINGS) {
+					strings[i]= ((ICCompletionProposal)result).getDisplayString();
+				} else {
+					strings[i]= ((ICCompletionProposal)result).getDisplayString();
+				}
+			} else if (result instanceof ICompletionProposal) {
+				strings[i]= ((ICompletionProposal)result).getDisplayString();
+			} else if (result instanceof IContextInformation) {
 				strings[i]= ((IContextInformation)result).getContextDisplayString();
+			} else {
+				strings[i]= result.toString();
 			}
 		}
 		return strings;

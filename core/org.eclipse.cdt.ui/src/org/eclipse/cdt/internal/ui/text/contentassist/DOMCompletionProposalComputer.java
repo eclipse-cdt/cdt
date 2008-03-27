@@ -282,7 +282,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 				} else if (binding instanceof IEnumerator) {
 					proposals.add(createProposal(name, name, getImage(binding), baseRelevance + RelevanceConstants.ENUMERATOR_TYPE_RELEVANCE, cContext));
 				} else {
-					proposals.add(createProposal(name, name, getImage(binding), baseRelevance, cContext));
+					proposals.add(createProposal(name, name, getImage(binding), baseRelevance + RelevanceConstants.DEFAULT_TYPE_RELEVANCE, cContext));
 				}
 			}
 		}

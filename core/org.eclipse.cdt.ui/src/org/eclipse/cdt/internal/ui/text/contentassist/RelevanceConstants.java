@@ -34,7 +34,8 @@ public interface RelevanceConstants {
 	final int NAMESPACE_TYPE_RELEVANCE = 50;
 	final int ENUMERATOR_TYPE_RELEVANCE = 40;
 	final int ENUMERATION_TYPE_RELEVANCE = 30;
-	final int MACRO_TYPE_RELEVANCE = 20;
+	final int DEFAULT_TYPE_RELEVANCE = 20;
+	final int MACRO_TYPE_RELEVANCE = 15;
 
 	/** Relevance constant for (key-)word proposals */
 	final int KEYWORD_TYPE_RELEVANCE = 10;
@@ -42,5 +43,4 @@ public interface RelevanceConstants {
 	/** Relevance constant for editor template proposals */
 	final int TEMPLATE_TYPE_RELEVANCE = 5;
 	
-	final int DEFAULT_TYPE_RELEVANCE = 0;
 }

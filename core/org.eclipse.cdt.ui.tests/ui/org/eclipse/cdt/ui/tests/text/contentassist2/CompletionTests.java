@@ -13,6 +13,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist2;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+
 import junit.framework.Test;
 
 import org.eclipse.core.resources.IFile;
@@ -20,6 +25,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.text.IDocument;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.testplugin.TestScannerProvider;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 
@@ -950,5 +956,76 @@ public class CompletionTests extends AbstractContentAssistTest {
 			"c_linkage()"
 		};
 		assertCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
+	}
+	
+	//#include "/*cursor*/
+	public void testInclusionProposals_bug113568() throws Exception {
+		File tempRoot= new File(System.getProperty("java.io.tmpdir"));
+		File tempDir= new File(tempRoot, "cdttest_113568");
+		tempDir.mkdir();
+		try {
+			createIncludeFiles(tempDir, new String[] {
+				"h1/inc1.h",
+				"h1/sub1/inc11.h",
+				"h2/inc2.h"
+			});
+			String[] expected= {
+				"\"inc1.h\"",
+				"\"sub1/\"",
+				"\"inc2.h\""
+			};
+			assertCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
+
+			getDocument().replace(fCursorOffset++, 0, "i");
+			expected= new String[] {
+				"\"inc1.h\"",
+				"\"inc2.h\""
+			};
+			assertCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
+
+			getDocument().replace(fCursorOffset, 0, "\"");
+			expected= new String[] {
+				"\"inc1.h",
+				"\"inc2.h"
+			};
+			assertCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
+
+			getDocument().replace(fCursorOffset-1, 1, "sub1/");
+			expected= new String[] {
+				"\"sub1/inc11.h"
+			};
+			assertCompletionResults(fCursorOffset+=4, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
+		} finally {
+			deleteDir(tempDir);
+		}
+	}
+
+	public static void deleteDir(File dir) {
+		File[] files = dir.listFiles();
+		for (int i = 0; i < files.length; i++) {
+			if (files[i].isDirectory()) {
+				deleteDir(files[i]);
+			} else {
+				files[i].delete();
+			}
+		}
+		dir.delete();
+	}
+
+	private static void createIncludeFiles(File dir, String[] files) throws IOException {
+		Set<String> includeDirs= new HashSet<String>();
+		for (int i = 0; i < files.length; i++) {
+			File file = new File(dir, files[i]);
+			final File parentFile= file.getParentFile();
+			if (parentFile.getName().startsWith("sub")) {
+				if (!parentFile.exists()) {
+					parentFile.mkdirs();
+				}
+			} else if (includeDirs.add(parentFile.getAbsolutePath())) {
+				parentFile.mkdirs();
+			}
+			file.createNewFile();
+		}
+		TestScannerProvider.sIncludes= (String[]) includeDirs.toArray(new String[includeDirs.size()]);
 	}
 }

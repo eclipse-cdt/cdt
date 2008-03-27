@@ -386,7 +386,7 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
                     final DataRequestMonitor<String[]> getAvailableFormatsDone = 
                         new DataRequestMonitor<String[]>(finalService.getSession().getExecutor(), null) {
                             @Override
-                            protected void handleOK() {
+                            protected void handleSuccess() {
                                 /*
                                  *  Now we have a set of formats for each one fire up an independent
                                  *  asynchronous request to get the data in that format. We do not

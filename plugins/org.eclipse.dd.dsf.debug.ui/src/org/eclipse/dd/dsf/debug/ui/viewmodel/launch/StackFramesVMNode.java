@@ -85,7 +85,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
             new DataRequestMonitor<IFrameDMContext[]>(getSession().getExecutor(), null) { 
                 @Override
                 public void handleCompleted() {
-                    if (!getStatus().isOK()) {
+                    if (!isSuccess()) {
                         // Failed to retrieve frames.  If we are stepping, we 
                         // might still be able to retrieve just the top stack 
                         // frame, which would still be useful in Debug View.
@@ -129,7 +129,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
                         new DataRequestMonitor<IFrameDMContext>(getExecutor(), null) { 
                             @Override
                             public void handleCompleted() {
-                                if (!getStatus().isOK()) {
+                                if (!isSuccess()) {
                                     handleFailedUpdate(update);
                                     return;
                                 }
@@ -189,7 +189,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
                          * service changed during the request, but the view model
                          * has not been updated yet.
                          */ 
-                        if (!getStatus().isOK()) {
+                        if (!isSuccess()) {
                             assert getStatus().isOK() || 
                                    getStatus().getCode() != IDsfStatusConstants.INTERNAL_ERROR || 
                                    getStatus().getCode() != IDsfStatusConstants.NOT_SUPPORTED;
@@ -294,7 +294,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
                     new DataRequestMonitor<List<Object>>(getExecutor(), null) { 
                         @Override
                         public void handleCompleted() {
-                            if (getStatus().isOK() && getData().size() != 0) {
+                            if (isSuccess() && getData().size() != 0) {
                                 rm.setData(new IVMContext[] { (IVMContext)getData().get(0) });
                             } else {
                                 // In case of errors, return an empty set of frames.
@@ -429,7 +429,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
                 new DataRequestMonitor<List<Object>>(getExecutor(), null) { 
                     @Override
                     public void handleCompleted() {
-                        if (getStatus().isOK() && getData().size() != 0) {
+                        if (isSuccess() && getData().size() != 0) {
                             parentDelta.addNode( getData().get(0), 0, IModelDelta.SELECT | IModelDelta.EXPAND);
                         }                        
                         rm.done();

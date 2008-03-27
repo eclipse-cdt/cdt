@@ -230,7 +230,7 @@ implements ITerminate
                 @Override
                 public void handleCompleted() {
                     fSession.removeServiceEventListener(PDALaunch.this);
-                    if (!getStatus().isOK()) {
+                    if (!isSuccess()) {
                         PDAPlugin.getDefault().getLog().log(new MultiStatus(
                             PDAPlugin.PLUGIN_ID, -1, new IStatus[]{getStatus()}, "Session shutdown failed", null)); //$NON-NLS-1$
                     }

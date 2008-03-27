@@ -418,7 +418,7 @@ public class ExpressionService extends AbstractDsfService implements IExpression
 	public void initialize(final RequestMonitor requestMonitor) {
 		super.initialize(new RequestMonitor(getExecutor(), requestMonitor) {
 			@Override
-			protected void handleOK() {
+			protected void handleSuccess() {
 				doInitialize(requestMonitor);
 			}
 		});
@@ -588,7 +588,7 @@ public class ExpressionService extends AbstractDsfService implements IExpression
     				new ExprMetaGetVar(dmc), 
     				new DataRequestMonitor<ExprMetaGetVarInfo>(getExecutor(), rm) {
     					@Override
-    					protected void handleOK() {
+    					protected void handleSuccess() {
     						rm.setData(new ExpressionDMData(getData().getExpr(), 
     								getData().getType(), getData().getNumChildren(), getData().getEditable()));
     						rm.done();
@@ -630,7 +630,7 @@ public class ExpressionService extends AbstractDsfService implements IExpression
     			new MIDataEvaluateExpression<MIDataEvaluateExpressionInfo>(addressDmc), 
     			new DataRequestMonitor<MIDataEvaluateExpressionInfo>(getExecutor(), rm) {
     				@Override
-    				protected void handleOK() {
+    				protected void handleSuccess() {
     					String tmpAddrStr = getData().getValue();
     					
     					// Deal with adresses of contents of a char* which is in
@@ -643,7 +643,7 @@ public class ExpressionService extends AbstractDsfService implements IExpression
     						new MIDataEvaluateExpression<MIDataEvaluateExpressionInfo>(sizeDmc), 
     						new DataRequestMonitor<MIDataEvaluateExpressionInfo>(getExecutor(), rm) {
     							@Override
-    							protected void handleOK() {
+    							protected void handleSuccess() {
     								try {
     									int size = Integer.parseInt(getData().getValue());
     									rm.setData(new ExpressionDMAddress(addrStr, size));
@@ -686,7 +686,7 @@ public class ExpressionService extends AbstractDsfService implements IExpression
         			new ExprMetaGetValue(dmc),
         			new DataRequestMonitor<ExprMetaGetValueInfo>(getExecutor(), rm) {
         				@Override
-        				protected void handleOK() {
+        				protected void handleSuccess() {
         					rm.setData(new FormattedValueDMData(getData().getValue()));
         					rm.done();
         				}
@@ -723,7 +723,7 @@ public class ExpressionService extends AbstractDsfService implements IExpression
 					new ExprMetaGetChildren(dmc),				
 					new DataRequestMonitor<ExprMetaGetChildrenInfo>(getExecutor(), rm) {
 						@Override
-						protected void handleOK() {
+						protected void handleSuccess() {
 							ExpressionInfo[] childrenExpr = getData().getChildrenExpressions();
 							IExpressionDMContext[] childArray = new IExpressionDMContext[childrenExpr.length];
 							for (int i=0; i<childArray.length; i++) {
@@ -766,7 +766,7 @@ public class ExpressionService extends AbstractDsfService implements IExpression
 				exprCtx,
 				new DataRequestMonitor<IExpressionDMContext[]>(getExecutor(), rm) {
 					@Override
-					protected void handleOK() {
+					protected void handleSuccess() {
 						rm.setData((IExpressionDMContext[])Arrays.asList(getData()).subList(startIndex, startIndex + length).toArray());
 						rm.done();
 					}
@@ -790,7 +790,7 @@ public class ExpressionService extends AbstractDsfService implements IExpression
 					new ExprMetaGetChildCount(dmc),				
 					new DataRequestMonitor<ExprMetaGetChildCountInfo>(getExecutor(), rm) {
 						@Override
-						protected void handleOK() {
+						protected void handleSuccess() {
 							rm.setData(getData().getChildNum());
 							rm.done();
 						}
@@ -818,7 +818,7 @@ public class ExpressionService extends AbstractDsfService implements IExpression
                     new ExprMetaGetAttributes(dmc),
                     new DataRequestMonitor<ExprMetaGetAttributesInfo>(getExecutor(), rm) {
                         @Override
-                        protected void handleOK() {
+                        protected void handleSuccess() {
                             rm.setData(getData().getEditable());
                             rm.done();
                         }
@@ -858,7 +858,7 @@ public class ExpressionService extends AbstractDsfService implements IExpression
 					formatId, 
 					new RequestMonitor(getExecutor(), rm) {
 						@Override
-						protected void handleOK() {
+						protected void handleSuccess() {
 							// A value has changed, we should remove any references to that
 							// value in our cache.  Since we don't have such granularity,
 							// we must clear the entire cache.

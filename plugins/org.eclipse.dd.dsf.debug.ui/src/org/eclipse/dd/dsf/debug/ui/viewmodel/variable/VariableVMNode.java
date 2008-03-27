@@ -226,7 +226,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
                         // fail if the state of the  service changed during the request, but the view model
                         // has not been updated yet.
                         
-                        if (!getStatus().isOK()) {
+                        if (!isSuccess()) {
                             assert getStatus().isOK() || 
                                    getStatus().getCode() != IDsfStatusConstants.INTERNAL_ERROR || 
                                    getStatus().getCode() != IDsfStatusConstants.NOT_SUPPORTED;
@@ -380,7 +380,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
                         new DataRequestMonitor<FormattedValueDMData>(getSession().getExecutor(), null) {
                             @Override
                             public void handleCompleted() {
-                                if (!getStatus().isOK()) {
+                                if (!isSuccess()) {
                                     handleFailedUpdate(update);
                                     return;
                                 }
@@ -567,7 +567,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
                 new DataRequestMonitor<IExpressionDMContext[]>(dsfExecutor, null) {
                     @Override
                     public void handleCompleted() {
-                        if (!getStatus().isOK()) {
+                        if (!isSuccess()) {
                             handleFailedUpdate(update);
                             return;
                         }
@@ -645,7 +645,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
                                 // IExpressionDMContext object for each local variable name, saving them all
                                 // in an array.
 
-                                if (!getStatus().isOK()) {
+                                if (!isSuccess()) {
                                     handleFailedUpdate(update);
                                     return;
                                 }

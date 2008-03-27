@@ -134,7 +134,7 @@ public class PDABreakpoints extends AbstractDsfService implements IBreakpoints
     public void initialize(final RequestMonitor rm) {
         super.initialize(new RequestMonitor(getExecutor(), rm) {
             @Override
-            protected void handleOK() {
+            protected void handleSuccess() {
                 doInitialize(rm);
             }
         });
@@ -247,17 +247,17 @@ public class PDABreakpoints extends AbstractDsfService implements IBreakpoints
             new PDASetBreakpointCommand(fCommandControl.getProgramDMContext(), line), 
             new DataRequestMonitor<PDACommandResult>(getExecutor(), rm) {
                 @Override
-                protected void handleOK() {
+                protected void handleSuccess() {
                     rm.setData(breakpointCtx);
                     rm.done();
                 }
 
                 @Override
-                protected void handleNotOK() {
+                protected void handleFailure() {
                     // If inserting of the breakpoint failed, remove it from
                     // the set of installed breakpoints.
                     fBreakpoints.remove(breakpointCtx);
-                    super.handleNotOK();
+                    super.handleFailure();
                 }
             });
     }
@@ -313,17 +313,17 @@ public class PDABreakpoints extends AbstractDsfService implements IBreakpoints
             new PDAWatchCommand(fCommandControl.getProgramDMContext(), function, variable, watchOperation), 
             new DataRequestMonitor<PDACommandResult>(getExecutor(), rm) {
                 @Override
-                protected void handleOK() {
+                protected void handleSuccess() {
                     rm.setData(watchpointCtx);
                     rm.done();
                 }
 
                 @Override
-                protected void handleNotOK() {
+                protected void handleFailure() {
                     // Since the command failed, we need to remove the breakpoint from 
                     // the existing breakpoint set.
                     fBreakpoints.remove(watchpointCtx);
-                    super.handleNotOK();
+                    super.handleFailure();
                 }
             });
     }
@@ -389,7 +389,7 @@ public class PDABreakpoints extends AbstractDsfService implements IBreakpoints
                 attributes, 
                 new DataRequestMonitor<IBreakpointDMContext>(getExecutor(), rm) {
                     @Override
-                    protected void handleOK() {
+                    protected void handleSuccess() {
                         // The inserted watchpoint context will equal the 
                         // current context.
                         assert bpCtx.equals(getData());

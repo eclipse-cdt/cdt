@@ -150,14 +150,14 @@ public class LaunchSequence extends Sequence {
                     new MIBreakInsert(fCommandControl.getGDBDMContext(), true, false, null, 0, fStopSymbol, 0), 
                     new DataRequestMonitor<MIBreakInsertInfo>(getExecutor(), requestMonitor) { 
                         @Override
-                        protected void handleOK() {
+                        protected void handleSuccess() {
     
                             // After the break-insert is done, execute the -exec-run command.
                             fCommandControl.queueCommand(
                                 new MIExecRun(fCommandControl.getGDBDMContext(), new String[0]), 
                                 new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
                                     @Override
-                                    protected void handleOK() {
+                                    protected void handleSuccess() {
                                         // Note : Do we not need to do something with the original requestMonitor?
                                         // Do nothing.  Execution was resumed and the EntryPointHitEventListener
                                         // will resume execution
@@ -206,7 +206,7 @@ public class LaunchSequence extends Sequence {
             final MIBreakpoints bpService = new MIBreakpoints(fSession);
             bpService.initialize(new RequestMonitor(getExecutor(), requestMonitor) {
                 @Override
-                protected void handleOK() {
+                protected void handleSuccess() {
                 	requestMonitor.done();
                 }
             }); 
@@ -218,7 +218,7 @@ public class LaunchSequence extends Sequence {
                 final MIBreakpointsManager bpmService = new MIBreakpointsManager(fSession, CDebugCorePlugin.PLUGIN_ID);
                 bpmService.initialize(new RequestMonitor(getExecutor(), requestMonitor) {
                     @Override
-                    protected void handleOK() {
+                    protected void handleSuccess() {
                         bpmService.startTrackingBreakpoints(fCommandControl.getGDBDMContext(), requestMonitor);
                     }
                 }); 

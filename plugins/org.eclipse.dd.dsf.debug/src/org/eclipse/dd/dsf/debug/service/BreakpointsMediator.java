@@ -135,7 +135,7 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
         super.initialize(
             new RequestMonitor(getExecutor(), rm) { 
                 @Override
-                protected void handleOK() {
+                protected void handleSuccess() {
                     doInitialize(rm);
                 }});
     }
@@ -426,7 +426,7 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
                         breakpointIDs.put(breakpoint, list);
                     }
                     
-                    if (getStatus().isOK()) {
+                    if (isSuccess()) {
 						// Add the breakpoint back-end mapping
 						list.add(getData());
 					} else {
@@ -619,7 +619,7 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
                     context, attrs, 
                     new DataRequestMonitor<IBreakpointDMContext>(getExecutor(), countingRM) {
                         @Override
-                        protected void handleOK() {
+                        protected void handleSuccess() {
                             newBpContexts.add(getData());
                             countingRM.done();
                         }
@@ -639,7 +639,7 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
                                 new DataRequestMonitor<IBreakpointDMContext>(getExecutor(), countingRM) {
                                     @Override
                                     protected void handleCompleted() {
-                                        if (getStatus().isOK()) { 
+                                        if (isSuccess()) { 
                                             newBpContexts.add(getData());
                                         } else {
                                             // TODO (bug 219841): need to add breakpoint error status tracking
@@ -658,7 +658,7 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
                     oldBpContexts.get(i), newAttrsList.get(i), 
                     new RequestMonitor(getExecutor(), countingRM) {
                         @Override
-                        protected void handleOK() {
+                        protected void handleSuccess() {
                             newBpContexts.add(bpCtx);
                             countingRM.done();
                         }
@@ -807,7 +807,7 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 		                    @Override
 		                    protected void handleCompleted() {
 
-		                    	if (!getStatus().isOK()) {
+		                    	if (!isSuccess()) {
 			                        if (getStatus().getSeverity() == IStatus.ERROR) {
 			                            DsfDebugPlugin.getDefault().getLog().log(getStatus());
 			                        }

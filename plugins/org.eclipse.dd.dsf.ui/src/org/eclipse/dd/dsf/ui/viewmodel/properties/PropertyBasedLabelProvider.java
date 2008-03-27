@@ -192,7 +192,7 @@ public class PropertyBasedLabelProvider
                 new DataRequestMonitor<Map<String, Object>>(ImmediateExecutor.getInstance(), null) {
                     @Override
                     protected void handleCompleted() {
-                        if (getStatus().isOK()) {
+                        if (isSuccess()) {
                             updateLabel(labelUpdate, getData());
                         }
                         labelUpdate.done();

@@ -229,7 +229,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
                         new DataRequestMonitor<FormattedValueDMData>(getSession().getExecutor(), null) {
                             @Override
                             public void handleCompleted() {
-                                if (!getStatus().isOK()) {
+                                if (!isSuccess()) {
                                     handleFailedUpdate(update);
                                     return;
                                 }
@@ -290,7 +290,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
                          * service changed during the request, but the view model
                          * has not been updated yet.
                          */ 
-                        if (!getStatus().isOK()) {
+                        if (!isSuccess()) {
                             assert getStatus().isOK() || 
                                    getStatus().getCode() != IDsfStatusConstants.INTERNAL_ERROR || 
                                    getStatus().getCode() != IDsfStatusConstants.NOT_SUPPORTED;
@@ -375,12 +375,12 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
             regDmc,
             new DataRequestMonitor<IBitFieldDMContext[]>(getSession().getExecutor(), null) {
                 @Override
-                protected void handleNotOK() {
+                protected void handleFailure() {
                     handleFailedUpdate(update);
                 }
 
                 @Override
-                protected void handleOK() {
+                protected void handleSuccess() {
                     fillUpdateWithVMCs(update, getData());
                     update.done();
                 }

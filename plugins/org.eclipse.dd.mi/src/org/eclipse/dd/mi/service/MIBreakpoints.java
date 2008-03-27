@@ -207,7 +207,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 	public void initialize(final RequestMonitor rm) {
 		super.initialize(new RequestMonitor(getExecutor(), rm) {
 			@Override
-			protected void handleOK() {
+			protected void handleSuccess() {
 				doInitialize(rm);
 			}
 		});
@@ -309,7 +309,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 		fConnection.queueCommand(new MIBreakList(context),
 			new DataRequestMonitor<MIBreakListInfo>(getExecutor(), drm) {
 				@Override
-				protected void handleOK() {
+				protected void handleSuccess() {
 					// Refresh the breakpoints map and format the result
 					breakpointContext.clear();
 					MIBreakpoint[] breakpoints = getData().getMIBreakpoints();
@@ -484,7 +484,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 		DataRequestMonitor<MIBreakInsertInfo> addBreakpointDRM =
 			new DataRequestMonitor<MIBreakInsertInfo>(getExecutor(), drm) {
 				@Override
-	            protected void handleOK() {
+	            protected void handleSuccess() {
 
 	            	// With MI, an invalid location won't generate an error
                 	if (getData().getMIBreakpoints().length == 0) {
@@ -555,7 +555,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 		DataRequestMonitor<MIBreakInsertInfo> addWatchpointDRM =
 			new DataRequestMonitor<MIBreakInsertInfo>(getExecutor(), drm) {
 				@Override
-	            protected void handleOK() {
+	            protected void handleSuccess() {
 
 	            	// With MI, an invalid location won't generate an error
                 	if (getData().getMIBreakpoints().length == 0) {
@@ -659,7 +659,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 			new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
 				@Override
 				protected void handleCompleted() {
-					if (getStatus().isOK()) {
+					if (isSuccess()) {
 						getSession().dispatchEvent(new BreakpointRemovedEvent(dmc), getProperties());
 						contextBreakpoints.remove(reference);
 					}
@@ -746,7 +746,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 		int numberOfChanges = 0;
         final CountingRequestMonitor countingRm = new CountingRequestMonitor(getExecutor(), rm) {
             @Override
-            protected void handleOK() {
+            protected void handleSuccess() {
            		if (generateUpdateEvent)
            			getSession().dispatchEvent(new BreakpointUpdatedEvent(dmc), getProperties());
         		rm.done();
@@ -830,7 +830,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
                    		rm.done();
                    		return;
 		        	}
-		        	if (getStatus().isOK()) {
+		        	if (isSuccess()) {
 				        breakpoint.setCondition(condition);
 		        	}
 		        	else {
@@ -867,7 +867,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 			new MIBreakAfter(context, reference, ignoreCount),
 		    new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
 		        @Override
-		        protected void handleOK() {
+		        protected void handleSuccess() {
 		        	MIBreakpointDMData breakpoint = contextBreakpoints.get(reference);
 		        	if (breakpoint == null) {
 		        		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT, null));
@@ -903,7 +903,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 			new MIBreakEnable(context, new int[] { reference }),
 		    new DataRequestMonitor<MIInfo>(getExecutor(), rm) { 
 		        @Override
-		        protected void handleOK() {
+		        protected void handleSuccess() {
 		        	MIBreakpointDMData breakpoint = contextBreakpoints.get(reference);
 		        	if (breakpoint == null) {
 		        		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT, null));
@@ -939,7 +939,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 			new MIBreakDisable(context, new int[] { reference }),
 		    new DataRequestMonitor<MIInfo>(getExecutor(), rm) { 
 		        @Override
-		        protected void handleOK() {
+		        protected void handleSuccess() {
 		        	MIBreakpointDMData breakpoint = contextBreakpoints.get(reference);
 		        	if (breakpoint == null) {
 		        		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT, null));

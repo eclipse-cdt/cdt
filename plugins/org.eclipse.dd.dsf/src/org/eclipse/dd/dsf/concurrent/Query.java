@@ -114,7 +114,7 @@ abstract public class Query<V> extends DsfRunnable
                 execute(new DataRequestMonitor<V>(ImmediateExecutor.getInstance(), null) {
                     @Override
                     public void handleCompleted() {
-                        if (getStatus().isOK()) fSync.doSet(getData());
+                        if (isSuccess()) fSync.doSet(getData());
                         else fSync.doSetException(new CoreException(getStatus()));
                     }
                 });

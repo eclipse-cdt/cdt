@@ -285,7 +285,7 @@ public class MISourceDisplayAdapter implements ISourceDisplay
                         frameDmc, 
                         new DataRequestMonitor<IFrameDMData>(fExecutor, rm) { 
                             @Override
-                            public void handleOK() {
+                            public void handleSuccess() {
                                 FramePositioningData clientData = new FramePositioningData();
                                 clientData.fLevel = frameDmc.getLevel();
                                 // Document line numbers are 0-based. While debugger line numbers are 1-based.

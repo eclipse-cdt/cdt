@@ -93,7 +93,7 @@ public class ContainerVMNode extends AbstractDMVMNode
                 new DataRequestMonitor<GDBProcessData>(getExecutor(), null) { 
 					@Override
                     public void handleCompleted() {
-                        if (!getStatus().isOK()) {
+                        if (!isSuccess()) {
                             update.done();
                             return;
                         }

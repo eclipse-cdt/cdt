@@ -181,7 +181,7 @@ public class PDAExpressions extends AbstractDsfService implements IExpressions {
         super.initialize(
             new RequestMonitor(getExecutor(), rm) { 
                 @Override
-                protected void handleOK() {
+                protected void handleSuccess() {
                     doInitialize(rm);
                 }});
     }
@@ -284,7 +284,7 @@ public class PDAExpressions extends AbstractDsfService implements IExpressions {
                 frameCtx, 0,
                 new DataRequestMonitor<Integer>(getExecutor(), rm) {
                     @Override
-                    protected void handleOK() {
+                    protected void handleSuccess() {
                         // Calculate the frame index.
                         int frameId = getData() - frameCtx.getLevel() - 1;
                         
@@ -293,7 +293,7 @@ public class PDAExpressions extends AbstractDsfService implements IExpressions {
                             new PDAVarCommand(fCommandControl.getProgramDMContext(), frameId, exprCtx.getExpression()), 
                             new DataRequestMonitor<PDACommandResult>(getExecutor(), rm) {
                                 @Override
-                                protected void handleOK() {
+                                protected void handleSuccess() {
                                     rm.setData(new FormattedValueDMData(getData().fResponseText));
                                     rm.done();
                                 }
@@ -318,7 +318,7 @@ public class PDAExpressions extends AbstractDsfService implements IExpressions {
                 frameCtx, 0,
                 new DataRequestMonitor<Integer>(getExecutor(), rm) {
                     @Override
-                    protected void handleOK() {
+                    protected void handleSuccess() {
                         // Calculate the frame index.
                         int frameId = getData() - frameCtx.getLevel() - 1;
                         
@@ -327,7 +327,7 @@ public class PDAExpressions extends AbstractDsfService implements IExpressions {
                             new PDASetVarCommand(fCommandControl.getProgramDMContext(), frameId, exprCtx.getExpression(), exprValue), 
                             new DataRequestMonitor<PDACommandResult>(getExecutor(), rm) {
                                 @Override
-                                protected void handleOK() {
+                                protected void handleSuccess() {
                                     getSession().dispatchEvent(new ExpressionChangedDMEvent(exprCtx), getProperties());
                                     rm.done();
                                 }

@@ -88,7 +88,7 @@ public class StepQueueManager extends AbstractDsfService
         super.initialize(
             new RequestMonitor(getExecutor(), requestMonitor) { 
                 @Override
-                protected void handleOK() {
+                protected void handleSuccess() {
                     doInitialize(requestMonitor);
                 }});
     }

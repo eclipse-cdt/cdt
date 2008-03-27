@@ -428,7 +428,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 			            fRetrieval.getContext(), address, 0, fWordSize, (int) length,
 			            new DataRequestMonitor<MemoryByte[]>(fRetrieval.getExecutor(), drm) {
 			                @Override
-			                protected void handleOK() {
+			                protected void handleSuccess() {
 			                    drm.setData(getData());
 			                    drm.done();
 			                }

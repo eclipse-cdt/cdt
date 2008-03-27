@@ -369,7 +369,7 @@ public class CommandCache implements ICommandListener
                                 	fCachedContexts.put(context, map);
                                 }	
 
-                                if (!status.isOK()) {
+                                if (!isSuccess()) {
                                     
                                     /*
                                      *  We had some form of error with the original command. So notify the 

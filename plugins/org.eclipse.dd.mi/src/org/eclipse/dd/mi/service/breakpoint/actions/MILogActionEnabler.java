@@ -56,7 +56,7 @@ public class MILogActionEnabler implements ILogActionEnabler {
                                 @Override
                                 protected void handleCompleted() {
                                     String result = expression + ": evaluation failed."; //$NON-NLS-1$
-                                    if (getStatus().isOK()) {
+                                    if (isSuccess()) {
                                         result = getData().getFormattedValue();
                                     }
                                     drm.setData(result);

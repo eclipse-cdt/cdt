@@ -481,7 +481,7 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 	                	valueDmc, 
 	                    new DataRequestMonitor<FormattedValueDMData>(getExecutor(), drm) {
 	            			@Override
-	            			protected void handleOK() {
+	            			protected void handleSuccess() {
 	            				// Store the result
 	            				FormattedValueDMData data = getData();
             					String value = data.getFormattedValue().substring(2);	// Strip the "0x"

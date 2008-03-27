@@ -138,7 +138,7 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
             new DataRequestMonitor<IRegisterGroupDMContext[]>(getSession().getExecutor(), null) { 
                 @Override
                 public void handleCompleted() {
-                    if (!getStatus().isOK()) {
+                    if (!isSuccess()) {
                         update.done();
                         return;
                     }
@@ -185,7 +185,7 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
                          * service changed during the request, but the view model
                          * has not been updated yet.
                          */ 
-                        if (!getStatus().isOK()) {
+                        if (!isSuccess()) {
                             assert getStatus().isOK() || 
                                    getStatus().getCode() != IDsfStatusConstants.INTERNAL_ERROR || 
                                    getStatus().getCode() != IDsfStatusConstants.NOT_SUPPORTED;

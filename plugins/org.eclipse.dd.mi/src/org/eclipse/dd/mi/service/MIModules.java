@@ -53,7 +53,7 @@ public class MIModules extends AbstractDsfService implements IModules {
         super.initialize(
             new RequestMonitor(getExecutor(), requestMonitor) { 
                 @Override
-                protected void handleOK() {
+                protected void handleSuccess() {
                     doInitialize(requestMonitor);
                 }});
     }
@@ -155,7 +155,7 @@ public class MIModules extends AbstractDsfService implements IModules {
     		fModulesCache.execute(new CLIInfoSharedLibrary(symCtx),
 					 			  new DataRequestMonitor<CLIInfoSharedLibraryInfo>(getExecutor(), rm) {
 						@Override
-						protected void handleOK() {
+						protected void handleSuccess() {
 							rm.setData(makeModuleContexts(symCtx, getData()));
 							rm.done();
 						}
@@ -184,7 +184,7 @@ public class MIModules extends AbstractDsfService implements IModules {
             fModulesCache.execute(new CLIInfoSharedLibrary(dmc),
                     new DataRequestMonitor<CLIInfoSharedLibraryInfo>(getExecutor(), rm) {
                         @Override
-                        protected void handleOK() {
+                        protected void handleSuccess() {
                             rm.setData( createSharedLibInfo((ModuleDMContext)dmc, getData()) );
                             rm.done();
                         }

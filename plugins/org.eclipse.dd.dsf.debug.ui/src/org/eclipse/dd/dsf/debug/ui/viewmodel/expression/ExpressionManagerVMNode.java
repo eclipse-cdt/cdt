@@ -195,7 +195,7 @@ public class ExpressionManagerVMNode extends AbstractVMNode
                         update, expression,
                         new DataRequestMonitor<Object>(getVMProvider().getExecutor(), multiRm) {
                             @Override
-                            protected void handleOK() {
+                            protected void handleSuccess() {
                                 update.setChild(getData(), childIndex);
                                 multiRm.done();
                             } 

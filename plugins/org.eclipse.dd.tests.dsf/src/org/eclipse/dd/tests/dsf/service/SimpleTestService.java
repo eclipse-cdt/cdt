@@ -34,7 +34,7 @@ public class SimpleTestService extends AbstractDsfService {
         super.initialize(
             new RequestMonitor(getExecutor(), requestMonitor) { 
                 @Override
-                public void handleOK() {
+                public void handleSuccess() {
                     doInitialize(requestMonitor);
                 }
             });

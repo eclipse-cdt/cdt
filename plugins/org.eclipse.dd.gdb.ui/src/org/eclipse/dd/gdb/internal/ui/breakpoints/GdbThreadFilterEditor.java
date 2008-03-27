@@ -501,7 +501,7 @@ public class GdbThreadFilterEditor {
                     runControl.getThreadData((IMIExecutionDMContext) thread, new DataRequestMonitor<GDBThreadData>(
                         ImmediateExecutor.getInstance(), rm) {
                         @Override
-                        protected void handleOK() {
+                        protected void handleSuccess() {
                             final StringBuilder builder = new StringBuilder("Thread["); //$NON-NLS-1$
                             builder.append(((IMIExecutionDMContext)thread).getThreadId());
                             builder.append("] "); //$NON-NLS-1$

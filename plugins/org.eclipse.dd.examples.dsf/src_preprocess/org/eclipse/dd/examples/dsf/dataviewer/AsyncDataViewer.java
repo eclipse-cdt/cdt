@@ -171,7 +171,7 @@ public class AsyncDataViewer
             fItemDataRequestMonitors.remove(this);
 
             // Check if the request completed successfully, otherwise ignore it.
-            if (getStatus().isOK()) {
+            if (isSuccess()) {
                 if (!fViewer.getTable().isDisposed()) {
                     fViewer.replace(getData(), fIndex);
                 }

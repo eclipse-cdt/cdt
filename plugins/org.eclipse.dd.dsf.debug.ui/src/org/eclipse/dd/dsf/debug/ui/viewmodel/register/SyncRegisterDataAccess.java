@@ -129,7 +129,7 @@ public class SyncRegisterDataAccess {
                 }
 
                 @Override
-                protected void handleOK() {
+                protected void handleSuccess() {
                     /*
                      * All good set return value.
                      */
@@ -238,7 +238,7 @@ public class SyncRegisterDataAccess {
                     }
 
                     @Override
-                    protected void handleOK() {
+                    protected void handleSuccess() {
                         /*
                          * All good set return value.
                          */
@@ -345,7 +345,7 @@ public class SyncRegisterDataAccess {
                     }
 
                     @Override
-                    protected void handleOK() {
+                    protected void handleSuccess() {
                         /*
                          * All good set return value.
                          */
@@ -466,7 +466,7 @@ public class SyncRegisterDataAccess {
                 }
 
                 @Override
-                protected void handleOK() {
+                protected void handleSuccess() {
                     /*
                      * All good set return value.
                      */
@@ -555,7 +555,7 @@ public class SyncRegisterDataAccess {
                 }
 
                 @Override
-                protected void handleOK() {
+                protected void handleSuccess() {
                     /*
                      * All good set return value.
                      */
@@ -660,7 +660,7 @@ public class SyncRegisterDataAccess {
                     }
 
                     @Override
-                    protected void handleOK() {
+                    protected void handleSuccess() {
                         /*
                          * All good set return value.
                          */
@@ -763,7 +763,7 @@ public class SyncRegisterDataAccess {
                     }
 
                     @Override
-                    protected void handleOK() {
+                    protected void handleSuccess() {
                         /*
                          * All good set return value.
                          */
@@ -868,7 +868,7 @@ public class SyncRegisterDataAccess {
                 }
 
                 @Override
-                protected void handleOK() {
+                protected void handleSuccess() {
                     /*
                      * All good set return value.
                      */

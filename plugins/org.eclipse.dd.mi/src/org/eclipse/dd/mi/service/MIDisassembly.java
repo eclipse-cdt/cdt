@@ -54,7 +54,7 @@ public class MIDisassembly extends AbstractDsfService implements IDisassembly {
     public void initialize(final RequestMonitor rm) {
         super.initialize(new RequestMonitor(getExecutor(), rm) {
             @Override
-            protected void handleOK() {
+            protected void handleSuccess() {
                 doInitialize(rm);
             }
         });
@@ -110,7 +110,7 @@ public class MIDisassembly extends AbstractDsfService implements IDisassembly {
         fConnection.queueCommand(new MIDataDisassemble(context, start, end, false),
             new DataRequestMonitor<MIDataDisassembleInfo>(getExecutor(), drm) {
                 @Override
-                protected void handleOK() {
+                protected void handleSuccess() {
                     IInstruction[] result = getData().getMIAssemblyCode();
                     drm.setData(result);
                     drm.done();
@@ -135,7 +135,7 @@ public class MIDisassembly extends AbstractDsfService implements IDisassembly {
         fConnection.queueCommand(new MIDataDisassemble(context, filename, linenum, lines, false),
             new DataRequestMonitor<MIDataDisassembleInfo>(getExecutor(), drm) {
                 @Override
-                protected void handleOK() {
+                protected void handleSuccess() {
                     IInstruction[] result = getData().getMIAssemblyCode();
                     drm.setData(result);
                     drm.done();
@@ -163,7 +163,7 @@ public class MIDisassembly extends AbstractDsfService implements IDisassembly {
         fConnection.queueCommand(new MIDataDisassemble(context, start, end, true),
             new DataRequestMonitor<MIDataDisassembleInfo>(getExecutor(), drm) {
                 @Override
-                protected void handleOK() {
+                protected void handleSuccess() {
                     IMixedInstruction[] result = getData().getMIMixedCode();
                     drm.setData(result);
                     drm.done();
@@ -189,7 +189,7 @@ public class MIDisassembly extends AbstractDsfService implements IDisassembly {
         fConnection.queueCommand(new MIDataDisassemble(context, filename, linenum, lines, true),
             new DataRequestMonitor<MIDataDisassembleInfo>(getExecutor(), drm) {
                 @Override
-                protected void handleOK() {
+                protected void handleSuccess() {
                     IMixedInstruction[] result = getData().getMIMixedCode();
                     drm.setData(result);
                     drm.done();

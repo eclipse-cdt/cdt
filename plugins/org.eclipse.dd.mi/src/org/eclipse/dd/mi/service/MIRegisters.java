@@ -162,7 +162,7 @@ public class MIRegisters extends AbstractDsfService implements IRegisters {
         super.initialize(
             new RequestMonitor(getExecutor(), requestMonitor) { 
                 @Override
-                protected void handleOK() {
+                protected void handleSuccess() {
                     doInitialize(requestMonitor);
                 }});
     }
@@ -269,7 +269,7 @@ public class MIRegisters extends AbstractDsfService implements IRegisters {
                 new MIDataListRegisterValues(execDmc, MIFormat.HEXADECIMAL, regnos),
                 new DataRequestMonitor<MIDataListRegisterValuesInfo>(getExecutor(), rm) {
                     @Override
-                    protected void handleOK() {
+                    protected void handleSuccess() {
                         // Retrieve the register value.
                         MIRegisterValue[] regValue = getData().getMIRegisterValues();
     
@@ -324,7 +324,7 @@ public class MIRegisters extends AbstractDsfService implements IRegisters {
             new MIDataListRegisterValues(miExecDmc, NumberFormat, regnos),
             new DataRequestMonitor<MIDataListRegisterValuesInfo>(getExecutor(), rm) {
                 @Override
-                protected void handleOK() {
+                protected void handleSuccess() {
                     // Retrieve the register value.
                     MIRegisterValue[] regValue = getData().getMIRegisterValues();
 
@@ -463,7 +463,7 @@ public class MIRegisters extends AbstractDsfService implements IRegisters {
                 new MIDataListRegisterNames(containerDmc),
                 new DataRequestMonitor<MIDataListRegisterNamesInfo>(getExecutor(), rm) { 
                     @Override
-                    protected void handleOK() {
+                    protected void handleSuccess() {
                         // Retrieve the register names.
                         String[] regNames = getData().getRegisterNames() ;
                        
@@ -515,18 +515,18 @@ public class MIRegisters extends AbstractDsfService implements IRegisters {
 	      final IExpressionDMContext exprCtxt = exprService.createExpression(regCtx, "$" + regName); //$NON-NLS-1$
 	      exprService.getModelData(exprCtxt, new DataRequestMonitor<IExpressionDMData>(getExecutor(), rm) {
 				@Override
-				protected void handleOK() {
+				protected void handleSuccess() {
 					// Evaluate the expression - request HEX since it works in every case 
 					final FormattedValueDMContext valueDmc = exprService.getFormattedValueContext(exprCtxt, formatId);
 					exprService.getModelData(
 	              	valueDmc, 
 	                  new DataRequestMonitor<FormattedValueDMData>(getExecutor(), null) {
 	          			@Override
-	          			protected void handleOK() {
+	          			protected void handleSuccess() {
 	          				if(! regValue.equals(getData().getFormattedValue()) || ! valueDmc.getFormatID().equals(formatId)){
 		          	            exprService.writeExpression(exprCtxt, regValue, formatId, new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
 		          	                @Override
-		          	                protected void handleOK() {
+		          	                protected void handleSuccess() {
 		          	                	generateRegisterChangedEvent(regDmc);
 		          	                }
 		          	            });

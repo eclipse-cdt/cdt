@@ -238,7 +238,7 @@ public class MIInferiorProcess extends Process
                             new MIGDBShowExitCode(getCommandControl().getControlDMContext()), 
                             new DataRequestMonitor<MIGDBShowExitCodeInfo>(fSession.getExecutor(), rm) {
                                 @Override
-                                protected void handleOK() {
+                                protected void handleSuccess() {
                                     rm.setData(getData().getCode());
                                     rm.done();
                                 }

@@ -37,7 +37,7 @@ public class ViewerCountingRequestMonitor extends CountingRequestMonitor {
     }
     
     @Override
-    protected void handleOK() {
+    protected void handleSuccess() {
         fUpdate.done();
     }
 

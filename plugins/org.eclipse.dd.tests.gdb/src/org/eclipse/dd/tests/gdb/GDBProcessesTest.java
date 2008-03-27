@@ -95,7 +95,7 @@ public class GDBProcessesTest extends BaseTestCase {
         	new DataRequestMonitor<GDBProcessData>(fSession.getExecutor(), null) {
             @Override
             protected void handleCompleted() {
-               if (getStatus().isOK()) {
+               if (isSuccess()) {
                     fWait.setReturnInfo(getData());
                 }
                 fWait.waitFinished(getStatus());
@@ -144,7 +144,7 @@ public class GDBProcessesTest extends BaseTestCase {
         	new DataRequestMonitor<GDBThreadData>(fSession.getExecutor(), null) {
             @Override
             protected void handleCompleted() {
-               if (getStatus().isOK()) {
+               if (isSuccess()) {
                     fWait.setReturnInfo(getData());
                 }
                 fWait.waitFinished(getStatus());

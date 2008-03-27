@@ -291,7 +291,7 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
         super.initialize(
             new RequestMonitor(getExecutor(), rm) { 
                 @Override
-                protected void handleOK() {
+                protected void handleSuccess() {
                     doInitialize(rm);
                 }});
     }
@@ -484,7 +484,7 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
             	cmd,
             	new DataRequestMonitor<MIInfo>(getExecutor(), rm) { 
                     @Override
-                    protected void handleOK() {
+                    protected void handleSuccess() {
                         rm.done();
                     }
             	}
@@ -516,7 +516,7 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
             	cmd,
                 new DataRequestMonitor<MIInfo>(getExecutor(), rm) { 
                     @Override
-                    protected void handleOK() {
+                    protected void handleSuccess() {
                         rm.done();
                     }
             	}
@@ -598,7 +598,7 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
 				new DataRequestMonitor<MIThreadListIdsInfo>(
 						getExecutor(), rm) {
 					@Override
-					protected void handleOK() {
+					protected void handleSuccess() {
 						rm.setData(makeExecutionDMCs(containerDmc, getData()));
 						rm.done();
 					}
@@ -654,7 +654,7 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
     				new DataRequestMonitor<MIInfo>(
     						getExecutor(), rm) {
     					@Override
-    					protected void handleOK() {
+    					protected void handleSuccess() {
     						rm.done();
     					}
     				});

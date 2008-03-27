@@ -298,7 +298,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
                     new VMHasChildrenUpdate(update, new DataRequestMonitor<Boolean>(getExecutor(), null) {
                         @Override
                         protected void handleCompleted() {
-                            if(getStatus().isOK()) {
+                            if(isSuccess()) {
                                 entry.fHasChildren = this.getData();
                                 update.setHasChilren(getData());
                             } else {
@@ -326,7 +326,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
             IChildrenCountUpdate updateProxy = new VMChildrenCountUpdate(update, new DataRequestMonitor<Integer>(getExecutor(), null) {
                 @Override
                 protected void handleCompleted() {
-                    if(getStatus().isOK()) {
+                    if(isSuccess()) {
                         entry.fChildrenCount = this.getData();
                         update.setChildCount(getData());
                     } else {
@@ -360,7 +360,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
                         // The viewer may request more children then there are at a given level.  
                         // This causes the update to return with an error.
                         // See https://bugs.eclipse.org/bugs/show_bug.cgi?id=202109
-                        // Instead of checking getStatus().isOK(), check getData() != null.
+                        // Instead of checking isSuccess(), check getData() != null.
                         if(getData() != null) {
                             // Check if the udpate retrieved all children by specifying "offset = -1, length = -1"
                             int updateOffset = update.getOffset();
@@ -578,7 +578,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
                         @Override
                         public void handleCompleted() {
                             
-                            if (getStatus().isOK()) {
+                            if (isSuccess()) {
                                 proxyStrategy.fireModelChanged(getData());
                             }
                         }
@@ -731,7 +731,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
                 new DataRequestMonitor<IDMData>(executor, rm) {
                     @Override
                     protected void handleCompleted() {
-                        if (getStatus().isOK()) {
+                        if (isSuccess()) {
                             entry.fDataOrStatus.put(dmc, getData());
                             rm.setData(getData());
                         } else {

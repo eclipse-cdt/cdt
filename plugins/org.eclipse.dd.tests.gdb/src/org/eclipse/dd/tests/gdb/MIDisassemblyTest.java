@@ -145,7 +145,7 @@ public class MIDisassemblyTest extends BaseTestCase {
             new DataRequestMonitor<FormattedValueDMData>(fSession.getExecutor(), null) {
             @Override
             protected void handleCompleted() {
-                if (getStatus().isOK()) {
+                if (isSuccess()) {
                     fWait.setReturnInfo(getData());
                 }
                 fWait.waitFinished(getStatus());
@@ -196,7 +196,7 @@ public class MIDisassemblyTest extends BaseTestCase {
             new DataRequestMonitor<IInstruction[]>(fSession.getExecutor(), null) {
                 @Override
                 protected void handleCompleted() {
-                    if (getStatus().isOK()) {
+                    if (isSuccess()) {
                         fWait.setReturnInfo(getData());
                     }
                     fWait.waitFinished(getStatus());
@@ -237,7 +237,7 @@ public class MIDisassemblyTest extends BaseTestCase {
             new DataRequestMonitor<IInstruction[]>(fSession.getExecutor(), null) {
                 @Override
                 protected void handleCompleted() {
-                    if (getStatus().isOK()) {
+                    if (isSuccess()) {
                         fWait.setReturnInfo(getData());
                     }
                     fWait.waitFinished(getStatus());
@@ -277,7 +277,7 @@ public class MIDisassemblyTest extends BaseTestCase {
             new DataRequestMonitor<IMixedInstruction[]>(fSession.getExecutor(), null) {
                 @Override
                 protected void handleCompleted() {
-                    if (getStatus().isOK()) {
+                    if (isSuccess()) {
                         fWait.setReturnInfo(getData());
                     }
                     fWait.waitFinished(getStatus());
@@ -318,7 +318,7 @@ public class MIDisassemblyTest extends BaseTestCase {
             new DataRequestMonitor<IMixedInstruction[]>(fSession.getExecutor(), null) {
                 @Override
                 protected void handleCompleted() {
-                    if (getStatus().isOK()) {
+                    if (isSuccess()) {
                         fWait.setReturnInfo(getData());
                     }
                     fWait.waitFinished(getStatus());

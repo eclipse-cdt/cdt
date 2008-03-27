@@ -79,7 +79,7 @@ public class ExpressionVMProviderModelProxyStrategy extends DefaultVMModelProxyS
             expression, expressionElementIdx, event, parentDelta, path, 
             new RequestMonitor(getVMProvider().getExecutor(), rm) {
                 @Override
-                protected void handleOK() {
+                protected void handleSuccess() {
                     final IExpressionVMNode matchingNode = 
                         getExpressionVMProvider().findNodeToParseExpression(node, expression);
                     if (matchingNode != null && !matchingNode.equals(node)) {
@@ -90,7 +90,7 @@ public class ExpressionVMProviderModelProxyStrategy extends DefaultVMModelProxyS
                             parentDelta, getVMProvider().getPresentationContext(), expression, 
                             new DataRequestMonitor<Object>(getVMProvider().getExecutor(), rm) {
                                 @Override
-                                protected void handleOK() {
+                                protected void handleSuccess() {
                                     buildDeltaForExpressionElement(
                                         node, getData(), expressionElementIdx, event, parentDelta, path, rm);
                                 }

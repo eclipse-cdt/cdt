@@ -33,12 +33,28 @@ import org.eclipse.dd.dsf.internal.DsfPlugin;
  * as an argument.  
  * </p>
  * <p>
- * This class handles an optional "parent" request monitor.  If a parent monitor is 
- * specified, it will automatically be invoked by this monitor when the request is 
- * completed.  The parent option is useful when implementing a method which is 
- * asynchronous (and accepts a request monitor as an argument) and which itself calls
- * another asynchronous method to complete its operation.  For example, in the request
- * monitor implementation below, the implementation only needs to override 
+ * The severity of the {@link IStatus> returned by #getStatus() can be used to 
+ * determine the success or failure of the asynchronous operation.  By convention
+ * the error codes returned by asynchronous method should be interpreted as follows:
+ * <ul>
+ * <li>OK and INFO - Result is a success.  In DataRequestMonitor, getData() should
+ *     return a value.</li>
+ * <li>WARNING - Acceptable error condition (getData() may return null).  Where for
+ *     example user tried to retrieve variable data, but the program resumed in the
+ *     mean time and an event will be generated shortly which will clear the variables
+ *     view.</li>
+ * <li>ERROR - An error condition that should probably be reported to the user.</li>
+ * <li>CANCEL - The request was canceled, and the asynchronous method was not
+ *     completed.</li>
+ * </ul>  
+ * </p>
+ * <p>
+ * The RequestMonitor constructor accepts an optional "parent" request monitor.  If a 
+ * parent monitor is specified, it will automatically be invoked by this monitor when 
+ * the request is completed.  The parent option is useful when implementing a method 
+ * which is asynchronous (and accepts a request monitor as an argument) and which itself 
+ * calls another asynchronous method to complete its operation.  For example, in the 
+ * request monitor implementation below, the implementation only needs to override 
  * <code>handleOK()</code>, because the base implementation will handle notifying the 
  * parent <code>rm</code> in case the <code>getIngredients()</code> call fails. 
  * <pre>
@@ -54,7 +70,7 @@ import org.eclipse.dd.dsf.internal.DsfPlugin;
  * </pre>
  * </p>
  */
-@ConfinedToDsfExecutor("")
+@ThreadSafe
 public class RequestMonitor {
     
     /**
@@ -132,9 +148,17 @@ public class RequestMonitor {
     
     /**
      * Sets this request monitor as canceled and calls the cancel listeners if any.
-     * The operation may still be carried out as it is up to the implementation of 
-     * the asynchronous operation to cancel the operation.  Even after the request
-     * monitor is canceled, the done() method still has to be called.
+     * <p>
+     * Note: Calling cancel() does not automatically complete the RequestMonitor.  
+     * The asynchronous call still has to call done().
+     * </p>
+     * <p>
+     * Note: logically a request should only be canceled by the client that issued 
+     * the request in the first place.  After a request is canceled, the method
+     * that is fulfilling the request may call {@link #setStatus(IStatus)} with 
+     * severity of <code>IStatus.CANCEL</code> to indicate that it recognized that
+     * the given request was canceled and it did not perform the given operation.   
+     * </p>
      */
     public void cancel() {
         Object[] listeners = null;
@@ -180,10 +204,9 @@ public class RequestMonitor {
      * when this request monitor is canceled.
      */
     public synchronized void removeCancelListener(ICanceledListener listener) {
-        if (fCancelListeners == null) {
-            fCancelListeners = new ListenerList();
+        if (fCancelListeners != null) {
+            fCancelListeners.remove(listener);
         }
-        fCancelListeners.remove(listener);
     }
 
     /**
@@ -219,19 +242,29 @@ public class RequestMonitor {
     public String toString() {
         return "RequestMonitor (" + super.toString() + "): " + getStatus().toString(); //$NON-NLS-1$ //$NON-NLS-2$
     }
+
+    /**
+     * Checks whether the given request monitor completed with success or 
+     * failure result.  If the request monitor was canceled it is considered
+     * that it failed, regardless of the status.
+     */
+    public boolean isSuccess() {
+        return !isCanceled() && getStatus().getSeverity() <= IStatus.INFO; 
+    }
     
     /**
      * Default handler for the completion of a request.  The implementation
-     * calls {@link #handleOK()} if the request succeeded, and calls 
-     * {@link #handleNotOK()} or cancel otherwise.
+     * calls {@link #handleSuccess()} if the request succeeded, and calls 
+     * {@link #handleFailure()} or cancel otherwise.
      * <br>
      * Note: Sub-classes may override this method.
      */
+    @ConfinedToDsfExecutor("fExecutor")
     protected void handleCompleted() {
-        if (getStatus().getSeverity() <= IStatus.INFO) {
-            handleOK();
+        if (isSuccess()) {
+            handleSuccess();
         } else {
-            handleNotOK();
+            handleFailure();
         } 
     }
     
@@ -239,11 +272,12 @@ public class RequestMonitor {
      * Default handler for a successful the completion of a request.  If this 
      * monitor has a parent monitor that was configured by the constructor, that 
      * parent monitor is notified.  Otherwise this method does nothing. 
-     * {@link #handleNotOK()} or cancel otherwise.
+     * {@link #handleFailure()} or cancel otherwise.
      * <br>
      * Note: Sub-classes may override this method.
      */
-    protected void handleOK() {
+    @ConfinedToDsfExecutor("fExecutor")
+    protected void handleSuccess() {
         if (fParentRequestMonitor != null) {
             fParentRequestMonitor.done();
         }
@@ -256,7 +290,8 @@ public class RequestMonitor {
      * <br>
      * Note: Sub-classes may override this method.
      */
-    protected void handleNotOK() {
+    @ConfinedToDsfExecutor("fExecutor")
+    protected void handleFailure() {
         assert !getStatus().isOK();
         if (isCanceled()) {
             handleCancel();
@@ -278,6 +313,7 @@ public class RequestMonitor {
      * <br>
      * Note: Sub-classes may override this method.
      */    
+    @ConfinedToDsfExecutor("fExecutor")
     protected void handleErrorOrWarning() {
         if (getStatus().getSeverity() == IStatus.ERROR) {
             handleError();
@@ -294,6 +330,7 @@ public class RequestMonitor {
      * <br>
      * Note: Sub-classes may override this method.
      */    
+    @ConfinedToDsfExecutor("fExecutor")
     protected void handleError() {
         if (fParentRequestMonitor != null) {
             fParentRequestMonitor.setStatus(getStatus());
@@ -313,14 +350,11 @@ public class RequestMonitor {
      * <br>
      * Note: Sub-classes may override this method.
      */    
+    @ConfinedToDsfExecutor("fExecutor")
     protected void handleWarning() {
         if (fParentRequestMonitor != null) {
             fParentRequestMonitor.setStatus(getStatus());
             fParentRequestMonitor.done();
-        } else {
-            MultiStatus logStatus = new MultiStatus(DsfPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Request for monitor: '" + toString() + "' resulted in a warning.", null); //$NON-NLS-1$ //$NON-NLS-2$
-            logStatus.merge(getStatus());
-            DsfPlugin.getDefault().getLog().log(logStatus);
         }        
     }
     
@@ -331,9 +365,15 @@ public class RequestMonitor {
      * <br>
      * Note: Sub-classes may override this method.
      */
+    @ConfinedToDsfExecutor("fExecutor")
     protected void handleCancel() {
         if (fParentRequestMonitor != null) {
-            fParentRequestMonitor.setStatus(getStatus());
+            if (getStatus().getSeverity() == IStatus.CANCEL && !fParentRequestMonitor.isCanceled()) {
+                fParentRequestMonitor.setStatus(new Status(
+                    IStatus.ERROR, DsfPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Sub-request " + toString() + " was canceled and not handled.'", null)); //$NON-NLS-1$ //$NON-NLS-2$
+            } else {
+                fParentRequestMonitor.setStatus(getStatus());
+            }
             fParentRequestMonitor.done();
         }
     }
@@ -343,6 +383,7 @@ public class RequestMonitor {
      * rejects the runnable that is submitted invoke this request monitor.
      * This usually happens only when the executor is shutting down.
      */
+    @ThreadSafe
     protected void handleRejectedExecutionException() {
         MultiStatus logStatus = new MultiStatus(DsfPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Request for monitor: '" + toString() + "' resulted in a rejected execution exception.", null); //$NON-NLS-1$ //$NON-NLS-2$
         logStatus.merge(getStatus());

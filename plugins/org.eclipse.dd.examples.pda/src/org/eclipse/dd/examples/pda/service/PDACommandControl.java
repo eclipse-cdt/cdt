@@ -116,7 +116,7 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
         // Call the super-class to perform initialization first.
         super.initialize( new RequestMonitor(getExecutor(), rm) {
             @Override
-            protected void handleOK() {
+            protected void handleSuccess() {
                 doInitialize(rm);
             }
         });
@@ -141,7 +141,7 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
         // completed.  
         final RequestMonitor socketsInitializeRm = new RequestMonitor(getExecutor(), rm) {
             @Override
-            protected void handleOK() {
+            protected void handleSuccess() {
                 // Register the service with OSGi as the last step in initialization of 
                 // the service.
                 register(

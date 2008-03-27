@@ -354,7 +354,7 @@ public class ExpressionServiceTest extends BaseTestCase {
                     .getExecutor(), null) {
                     @Override
                     protected void handleCompleted() {
-                        if (getStatus().isOK()) {
+                        if (isSuccess()) {
                             wait.setReturnInfo(getData());
                         }
 
@@ -455,7 +455,7 @@ public class ExpressionServiceTest extends BaseTestCase {
                     .getExecutor(), null) {
                     @Override
                     protected void handleCompleted() {
-                        if (!getStatus().isOK()) {
+                        if (!isSuccess()) {
                             wait.waitFinished(getStatus());
                         } else {
                             if (getData().getFormattedValue().equals("28")) {
@@ -474,7 +474,7 @@ public class ExpressionServiceTest extends BaseTestCase {
                     .getExecutor(), null) {
                     @Override
                     protected void handleCompleted() {
-                        if (!getStatus().isOK()) {
+                        if (!isSuccess()) {
                             wait.waitFinished(getStatus());
                         } else {
                             if (getData().getFormattedValue().equalsIgnoreCase("0x1c")) {
@@ -523,7 +523,7 @@ public class ExpressionServiceTest extends BaseTestCase {
                 		new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
                 			@Override
                 			protected void handleCompleted() {
-                				if (getStatus().isOK()) {
+                				if (isSuccess()) {
                 					wait.setReturnInfo(getData());
                 				}
 
@@ -551,7 +551,7 @@ public class ExpressionServiceTest extends BaseTestCase {
                     .getExecutor(), null) {
                     @Override
                     protected void handleCompleted() {
-                        if (!getStatus().isOK()) {
+                        if (!isSuccess()) {
                             wait.waitFinished(getStatus());
                         } else {
                             if (getData().getFormattedValue().equals(actualAddrStr)) {
@@ -569,7 +569,7 @@ public class ExpressionServiceTest extends BaseTestCase {
                     fExpService.getExecutor(), null) {
                     @Override
                     protected void handleCompleted() {
-                        if (!getStatus().isOK()) {
+                        if (!isSuccess()) {
                             wait.waitFinished(getStatus());
                         } else {
                             IExpressionDMContext[] children = getData();
@@ -597,7 +597,7 @@ public class ExpressionServiceTest extends BaseTestCase {
                     .getExecutor(), null) {
                     @Override
                     protected void handleCompleted() {
-                        if (!getStatus().isOK()) {
+                        if (!isSuccess()) {
                             wait.waitFinished(getStatus());
                         } else {
                             if (getData().getFormattedValue().equals(actualAddrStr)) {
@@ -645,7 +645,7 @@ public class ExpressionServiceTest extends BaseTestCase {
                 		new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
                 			@Override
                 			protected void handleCompleted() {
-                				if (getStatus().isOK()) {
+                				if (isSuccess()) {
                 					wait.setReturnInfo(getData());
                 				}
 
@@ -672,7 +672,7 @@ public class ExpressionServiceTest extends BaseTestCase {
                     .getExecutor(), null) {
                     @Override
                     protected void handleCompleted() {
-                        if (!getStatus().isOK()) {
+                        if (!isSuccess()) {
                             wait.waitFinished(getStatus());
                         } else {
                             if (getData().getFormattedValue().equals(actualAddrStr)) {
@@ -690,7 +690,7 @@ public class ExpressionServiceTest extends BaseTestCase {
                     null) {
                     @Override
                     protected void handleCompleted() {
-                        if (!getStatus().isOK()) {
+                        if (!isSuccess()) {
                             wait.waitFinished(getStatus());
                         } else {
                             int count = getData();
@@ -711,7 +711,7 @@ public class ExpressionServiceTest extends BaseTestCase {
                     .getExecutor(), null) {
                     @Override
                     protected void handleCompleted() {
-                        if (!getStatus().isOK()) {
+                        if (!isSuccess()) {
                             wait.waitFinished(getStatus());
                         } else {
                             if (getData().getFormattedValue().equals(actualAddrStr)) {
@@ -761,7 +761,7 @@ public class ExpressionServiceTest extends BaseTestCase {
                     .getExecutor(), null) {
                     @Override
                     protected void handleCompleted() {
-                        if (!getStatus().isOK()) {
+                        if (!isSuccess()) {
                             wait.waitFinished(getStatus());
                         } else {
                             if (getData().getFormattedValue().equals("32")) {
@@ -780,7 +780,7 @@ public class ExpressionServiceTest extends BaseTestCase {
                     fExpService.getExecutor(), null) {
                     @Override
                     protected void handleCompleted() {
-                        if (!getStatus().isOK()) {
+                        if (!isSuccess()) {
                             wait.waitFinished(getStatus());
                         } else {
                             wait.waitFinished();
@@ -795,7 +795,7 @@ public class ExpressionServiceTest extends BaseTestCase {
                     .getExecutor(), null) {
                     @Override
                     protected void handleCompleted() {
-                        if (!getStatus().isOK()) {
+                        if (!isSuccess()) {
                             wait.waitFinished(getStatus());
                         } else {
                             if (getData().getFormattedValue().equals("0x38")) {
@@ -850,7 +850,7 @@ public class ExpressionServiceTest extends BaseTestCase {
                     .getExecutor(), null) {
                     @Override
                     protected void handleCompleted() {
-                        if (!getStatus().isOK()) {
+                        if (!isSuccess()) {
                             wait.waitFinished(getStatus());
                         } else {
                             if (getData().getFormattedValue().equals("32")) {
@@ -870,7 +870,7 @@ public class ExpressionServiceTest extends BaseTestCase {
                     .getExecutor(), null) {
                     @Override
                     protected void handleCompleted() {
-                        if (!getStatus().isOK()) {
+                        if (!isSuccess()) {
                             wait.waitFinished(getStatus());
                         } else {
                             if (getData().getFormattedValue().equals("0x20")) {
@@ -889,7 +889,7 @@ public class ExpressionServiceTest extends BaseTestCase {
                     null) {
                     @Override
                     protected void handleCompleted() {
-                        if (!getStatus().isOK()) {
+                        if (!isSuccess()) {
                             wait.waitFinished(getStatus());
                         } else {
                             if (getData() != 0) {
@@ -907,7 +907,7 @@ public class ExpressionServiceTest extends BaseTestCase {
                     fExpService.getExecutor(), null) {
                     @Override
                     protected void handleCompleted() {
-                        if (!getStatus().isOK()) {
+                        if (!isSuccess()) {
                             wait.waitFinished(getStatus());
                         } else {
                             if (getData().length != 0) {
@@ -927,7 +927,7 @@ public class ExpressionServiceTest extends BaseTestCase {
                     .getExecutor(), null) {
                     @Override
                     protected void handleCompleted() {
-                        if (!getStatus().isOK()) {
+                        if (!isSuccess()) {
                             wait.waitFinished(getStatus());
                         } else {
                             if (getData().getFormattedValue().equals("040")) {
@@ -986,7 +986,7 @@ public class ExpressionServiceTest extends BaseTestCase {
                     .getExecutor(), null) {
                     @Override
                     protected void handleCompleted() {
-                        if (!getStatus().isOK()) {
+                        if (!isSuccess()) {
                             wait.waitFinished(getStatus());
                         } else {
                             if (getData().getFormattedValue().equals("32")) {
@@ -1005,7 +1005,7 @@ public class ExpressionServiceTest extends BaseTestCase {
                     fExpService.getExecutor(), null) {
                     @Override
                     protected void handleCompleted() {
-                        if (!getStatus().isOK()) {
+                        if (!isSuccess()) {
                             wait.waitFinished(getStatus());
                         } else {
                             wait.waitFinished();
@@ -1022,7 +1022,7 @@ public class ExpressionServiceTest extends BaseTestCase {
                     .getExecutor(), null) {
                     @Override
                     protected void handleCompleted() {
-                        if (!getStatus().isOK()) {
+                        if (!isSuccess()) {
                             wait.waitFinished(getStatus());
                         } else {
                             if (getData().getFormattedValue().equals("070")) {
@@ -1048,7 +1048,7 @@ public class ExpressionServiceTest extends BaseTestCase {
                     .getExecutor(), null) {
                     @Override
                     protected void handleCompleted() {
-                        if (!getStatus().isOK()) {
+                        if (!isSuccess()) {
                             wait.waitFinished(getStatus());
                         } else {
                             if (getData().getFormattedValue().equals("32")) {
@@ -1080,7 +1080,7 @@ public class ExpressionServiceTest extends BaseTestCase {
                     .getExecutor(), null) {
                     @Override
                     protected void handleCompleted() {
-                        if (!getStatus().isOK()) {
+                        if (!isSuccess()) {
                             wait.waitFinished(getStatus());
                         } else {
                             if (getData().getFormattedValue().equals("56")) {
@@ -1131,7 +1131,7 @@ public class ExpressionServiceTest extends BaseTestCase {
                     .getExecutor(), null) {
                     @Override
                     protected void handleCompleted() {
-                        if (getStatus().isOK()) {
+                        if (isSuccess()) {
                             wait.setReturnInfo(getData());
                         }
 
@@ -1282,7 +1282,7 @@ public class ExpressionServiceTest extends BaseTestCase {
     					new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
     						@Override
     						protected void handleCompleted() {
-    							if (!getStatus().isOK()) {
+    							if (!isSuccess()) {
     								wait.waitFinished(getStatus());
     							} else if (getData().length != 2) {
     								wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
@@ -1296,7 +1296,7 @@ public class ExpressionServiceTest extends BaseTestCase {
     										new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
     											@Override
     											protected void handleCompleted() {
-    												if (!getStatus().isOK()) {
+    												if (!isSuccess()) {
     													wait.waitFinished(getStatus());
     												} else if (getData().getFormattedValue().equals(valueStr)) {
     													wait.waitFinished();
@@ -1334,7 +1334,7 @@ public class ExpressionServiceTest extends BaseTestCase {
     					new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
     						@Override
     						protected void handleCompleted() {
-    							if (!getStatus().isOK()) {
+    							if (!isSuccess()) {
     								wait.waitFinished(getStatus());
     							} else if (getData().length != 2) {
     								wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
@@ -1348,7 +1348,7 @@ public class ExpressionServiceTest extends BaseTestCase {
     										new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
     											@Override
     											protected void handleCompleted() {
-    												if (!getStatus().isOK()) {
+    												if (!isSuccess()) {
     													wait.waitFinished(getStatus());
     												} else if (getData().getFormattedValue().equals(valueStr)) {
     													wait.waitFinished();
@@ -1386,7 +1386,7 @@ public class ExpressionServiceTest extends BaseTestCase {
     					new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
     						@Override
     						protected void handleCompleted() {
-    							if (!getStatus().isOK()) {
+    							if (!isSuccess()) {
     								wait.waitFinished(getStatus());
     							} else if (getData().length != 2) {
     								wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
@@ -1400,7 +1400,7 @@ public class ExpressionServiceTest extends BaseTestCase {
     										new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
     											@Override
     											protected void handleCompleted() {
-    												if (!getStatus().isOK()) {
+    												if (!isSuccess()) {
     													wait.waitFinished(getStatus());
     												} else if (getData().getFormattedValue().equals(valueStr)) {
     													wait.waitFinished();
@@ -1466,7 +1466,7 @@ public class ExpressionServiceTest extends BaseTestCase {
     					new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
     						@Override
     						protected void handleCompleted() {
-    							if (!getStatus().isOK()) {
+    							if (!isSuccess()) {
     								wait.waitFinished(getStatus());
     							} else if (getData().length != 1) {
     								wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
@@ -1480,7 +1480,7 @@ public class ExpressionServiceTest extends BaseTestCase {
     											protected void handleCompleted() {
     												final IExpressionDMContext[] childDmcs = getData();
 
-    												if (!getStatus().isOK()) {
+    												if (!isSuccess()) {
     													wait.waitFinished(getStatus());
     												} else if (childDmcs.length != 2) {
     													wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
@@ -1497,7 +1497,7 @@ public class ExpressionServiceTest extends BaseTestCase {
     																new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
     																	@Override
     																	protected void handleCompleted() {
-    																		if (!getStatus().isOK()) {
+    																		if (!isSuccess()) {
     																			wait.waitFinished(getStatus());
     																		} else if (getData().getFormattedValue().equals(valueStr)) {
     																			wait.waitFinished();
@@ -1542,7 +1542,7 @@ public class ExpressionServiceTest extends BaseTestCase {
     					new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
     						@Override
     						protected void handleCompleted() {
-    							if (!getStatus().isOK()) {
+    							if (!isSuccess()) {
     								wait.waitFinished(getStatus());
     							} else if (getData().length != 1) {
     								wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
@@ -1556,7 +1556,7 @@ public class ExpressionServiceTest extends BaseTestCase {
     											protected void handleCompleted() {
     												final IExpressionDMContext[] childDmcs = getData();
 
-    												if (!getStatus().isOK()) {
+    												if (!isSuccess()) {
     													wait.waitFinished(getStatus());
     												} else if (childDmcs.length != 2) {
     													wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
@@ -1573,7 +1573,7 @@ public class ExpressionServiceTest extends BaseTestCase {
     																new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
     																	@Override
     																	protected void handleCompleted() {
-    																		if (!getStatus().isOK()) {
+    																		if (!isSuccess()) {
     																			wait.waitFinished(getStatus());
     																		} else if (getData().getFormattedValue().equals(valueStr)) {
     																			wait.waitFinished();
@@ -1627,7 +1627,7 @@ public class ExpressionServiceTest extends BaseTestCase {
         				new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
         					@Override
         					protected void handleCompleted() {
-        						if (!getStatus().isOK()) {
+        						if (!isSuccess()) {
         							wait.waitFinished(getStatus());
         						} else {
         							if (getData().length != 5) {
@@ -1645,7 +1645,7 @@ public class ExpressionServiceTest extends BaseTestCase {
         											new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
         												@Override
         												protected void handleCompleted() {
-        													if (!getStatus().isOK()) {
+        													if (!isSuccess()) {
         														wait.waitFinished(getStatus());
         													} else {
         														if (getData().length != 2) {
@@ -1692,7 +1692,7 @@ public class ExpressionServiceTest extends BaseTestCase {
         					new DataRequestMonitor<IExpressionDMData>(fExpService.getExecutor(), null) {
         						@Override
         						protected void handleCompleted() {
-        							if (!getStatus().isOK()) {
+        							if (!isSuccess()) {
         								wait.waitFinished(getStatus());
         							} else {
         								wait.waitFinished();
@@ -1717,7 +1717,7 @@ public class ExpressionServiceTest extends BaseTestCase {
         				new DataRequestMonitor<IExpressionDMData>(fExpService.getExecutor(), null) {
         					@Override
         					protected void handleCompleted() {
-        						if (!getStatus().isOK()) {
+        						if (!isSuccess()) {
         							wait.waitFinished(getStatus());
         						} else {
         							wait.waitFinished();
@@ -1765,7 +1765,7 @@ public class ExpressionServiceTest extends BaseTestCase {
                 		new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
                         @Override
                         protected void handleCompleted() {
-                            if (!getStatus().isOK()) {
+                            if (!isSuccess()) {
                                 wait.waitFinished(getStatus());
                             } else {
                                 if (getData().getFormattedValue().equals("1011")) {
@@ -1801,7 +1801,7 @@ public class ExpressionServiceTest extends BaseTestCase {
                 		new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
                         @Override
                         protected void handleCompleted() {
-                            if (!getStatus().isOK()) {
+                            if (!isSuccess()) {
                                 wait.waitFinished(getStatus());
                             } else {
                                 if (getData().getFormattedValue().equals("11")) {
@@ -1864,7 +1864,7 @@ public class ExpressionServiceTest extends BaseTestCase {
                 		new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
                         @Override
                         protected void handleCompleted() {
-                            if (!getStatus().isOK()) {
+                            if (!isSuccess()) {
                                 wait.waitFinished(getStatus());
                             } else {
                                 if (getData().getFormattedValue().equals("1.99")) {
@@ -1885,7 +1885,7 @@ public class ExpressionServiceTest extends BaseTestCase {
                 		new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
                         @Override
                         protected void handleCompleted() {
-                            if (!getStatus().isOK()) {
+                            if (!isSuccess()) {
                                 wait.waitFinished(getStatus());
                             } else {
                                 if (getData().getFormattedValue().equals("0x1")) {
@@ -1922,7 +1922,7 @@ public class ExpressionServiceTest extends BaseTestCase {
                 		new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
                         @Override
                         protected void handleCompleted() {
-                            if (!getStatus().isOK()) {
+                            if (!isSuccess()) {
                                 wait.waitFinished(getStatus());
                             } else {
                                 if (getData().getFormattedValue().equals("1.22")) {
@@ -1981,7 +1981,7 @@ public class ExpressionServiceTest extends BaseTestCase {
     					new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
     						@Override
     						protected void handleCompleted() {
-    							if (!getStatus().isOK()) {
+    							if (!isSuccess()) {
     								wait.waitFinished(getStatus());
     							} else if (getData().length != 1) {
     								wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
@@ -1998,7 +1998,7 @@ public class ExpressionServiceTest extends BaseTestCase {
     										new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
     											@Override
     											protected void handleCompleted() {
-    												if (!getStatus().isOK()) {
+    												if (!isSuccess()) {
     													wait.waitFinished(getStatus());
     												} else if (getData().getFormattedValue().equals(valueStr)) {
 														wait.waitFinished();
@@ -2017,7 +2017,7 @@ public class ExpressionServiceTest extends BaseTestCase {
 											new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
 												@Override
 												protected void handleCompleted() {
-													if (!getStatus().isOK()) {
+													if (!isSuccess()) {
 														wait.waitFinished(getStatus());
 													} else {
 														if (getData().getFormattedValue().equals(valueStr)) {
@@ -2055,7 +2055,7 @@ public class ExpressionServiceTest extends BaseTestCase {
                 		new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
                         @Override
                         protected void handleCompleted() {
-                            if (!getStatus().isOK()) {
+                            if (!isSuccess()) {
                                 wait.waitFinished(getStatus());
                             } else {
                                 if (getData().getFormattedValue().equals("1.22")) {
@@ -2101,7 +2101,7 @@ public class ExpressionServiceTest extends BaseTestCase {
     					new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
     						@Override
     						protected void handleCompleted() {
-    							if (!getStatus().isOK()) {
+    							if (!isSuccess()) {
     								wait.waitFinished(getStatus());
     							} else if (getData().length != 1) {
     								wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
@@ -2115,7 +2115,7 @@ public class ExpressionServiceTest extends BaseTestCase {
     										new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
     											@Override
     											protected void handleCompleted() {
-    												if (!getStatus().isOK()) {
+    												if (!isSuccess()) {
     													wait.waitFinished(getStatus());
     												} else if (getData().getFormattedValue().equals(valueStr)) {
     													wait.waitFinished();
@@ -2148,7 +2148,7 @@ public class ExpressionServiceTest extends BaseTestCase {
         					@Override
         					protected void handleCompleted() {
 								final String valueStr = "1";
-        						if (!getStatus().isOK()) {
+        						if (!isSuccess()) {
         							wait.waitFinished(getStatus());
         						} else if (getData().getFormattedValue().equals(valueStr)) {
         							wait.waitFinished();
@@ -2167,7 +2167,7 @@ public class ExpressionServiceTest extends BaseTestCase {
         					@Override
         					protected void handleCompleted() {
 								final String valueStr = "0x1";
-        						if (!getStatus().isOK()) {
+        						if (!isSuccess()) {
         							wait.waitFinished(getStatus());
         						} else if (getData().getFormattedValue().equals(valueStr)) {
         							wait.waitFinished();
@@ -2216,7 +2216,7 @@ public class ExpressionServiceTest extends BaseTestCase {
     					new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
     						@Override
     						protected void handleCompleted() {
-    							if (!getStatus().isOK()) {
+    							if (!isSuccess()) {
     								wait.waitFinished(getStatus());
     							} else if (getData().length != 1) {
     								wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
@@ -2230,7 +2230,7 @@ public class ExpressionServiceTest extends BaseTestCase {
     										new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
     											@Override
     											protected void handleCompleted() {
-    												if (!getStatus().isOK()) {
+    												if (!isSuccess()) {
     													wait.waitFinished(getStatus());
     												} else if (getData().getFormattedValue().equals(valueStr)) {
     													wait.waitFinished();
@@ -2265,7 +2265,7 @@ public class ExpressionServiceTest extends BaseTestCase {
         					@Override
         					protected void handleCompleted() {
 								final String valueStr = "2";
-        						if (!getStatus().isOK()) {
+        						if (!isSuccess()) {
         							wait.waitFinished(getStatus());
         						} else if (getData().getFormattedValue().equals(valueStr)) {
         							wait.waitFinished();
@@ -2292,7 +2292,7 @@ public class ExpressionServiceTest extends BaseTestCase {
         					@Override
         					protected void handleCompleted() {
 								final String valueStr = "{...}";
-        						if (!getStatus().isOK()) {
+        						if (!isSuccess()) {
         							wait.waitFinished(getStatus());
         						} else if (getData().getFormattedValue().equals(valueStr)) {
         							wait.waitFinished();
@@ -2312,7 +2312,7 @@ public class ExpressionServiceTest extends BaseTestCase {
         					@Override
         					protected void handleCompleted() {
 								final String valueStr = "{...}";
-        						if (!getStatus().isOK()) {
+        						if (!isSuccess()) {
         							wait.waitFinished(getStatus());
         						} else if (getData().getFormattedValue().equals(valueStr)) {
         							wait.waitFinished();
@@ -2361,7 +2361,7 @@ public class ExpressionServiceTest extends BaseTestCase {
     					new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
     						@Override
     						protected void handleCompleted() {
-    							if (!getStatus().isOK()) {
+    							if (!isSuccess()) {
     								wait.waitFinished(getStatus());
     							} else if (getData().length != 2) {
     								wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
@@ -2378,7 +2378,7 @@ public class ExpressionServiceTest extends BaseTestCase {
     										new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
     											@Override
     											protected void handleCompleted() {
-    												if (!getStatus().isOK()) {
+    												if (!isSuccess()) {
     													wait.waitFinished(getStatus());
     												} else if (getData().getFormattedValue().equals(firstValue)) {
     													wait.waitFinished();
@@ -2397,7 +2397,7 @@ public class ExpressionServiceTest extends BaseTestCase {
     										new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
     											@Override
     											protected void handleCompleted() {
-    												if (!getStatus().isOK()) {
+    												if (!isSuccess()) {
     													wait.waitFinished(getStatus());
     												} else {
     													wait.setReturnInfo(getData().getFormattedValue());
@@ -2425,7 +2425,7 @@ public class ExpressionServiceTest extends BaseTestCase {
         				new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
         					@Override
         					protected void handleCompleted() {
-        						if (!getStatus().isOK()) {
+        						if (!isSuccess()) {
         							wait.waitFinished(getStatus());
         						} else if (getData().length != 1) {
         							wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
@@ -2438,7 +2438,7 @@ public class ExpressionServiceTest extends BaseTestCase {
         									new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
         										@Override
         										protected void handleCompleted() {
-        											if (!getStatus().isOK()) {
+        											if (!isSuccess()) {
         												wait.waitFinished(getStatus());
         											} else if (getData().getFormattedValue().equals(firstValue)) {
         												wait.waitFinished();
@@ -2473,7 +2473,7 @@ public class ExpressionServiceTest extends BaseTestCase {
     					new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
     						@Override
     						protected void handleCompleted() {
-    							if (!getStatus().isOK()) {
+    							if (!isSuccess()) {
     								wait.waitFinished(getStatus());
     							} else if (getData().length != 2) {
     								wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
@@ -2490,7 +2490,7 @@ public class ExpressionServiceTest extends BaseTestCase {
     										new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
     											@Override
     											protected void handleCompleted() {
-    												if (!getStatus().isOK()) {
+    												if (!isSuccess()) {
     													wait.waitFinished(getStatus());
     												} else if (getData().getFormattedValue().equals(secondValue)) {
     													wait.waitFinished();
@@ -2509,7 +2509,7 @@ public class ExpressionServiceTest extends BaseTestCase {
     										new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
     											@Override
     											protected void handleCompleted() {
-    												if (!getStatus().isOK()) {
+    												if (!isSuccess()) {
     													wait.waitFinished(getStatus());
     												} else if (!getData().getFormattedValue().equals(pointerValue)) {
     													// The value should have changed
@@ -2540,7 +2540,7 @@ public class ExpressionServiceTest extends BaseTestCase {
         				new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
         					@Override
         					protected void handleCompleted() {
-        						if (!getStatus().isOK()) {
+        						if (!isSuccess()) {
         							wait.waitFinished(getStatus());
         						} else if (getData().length != 1) {
         							wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
@@ -2553,7 +2553,7 @@ public class ExpressionServiceTest extends BaseTestCase {
         									new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
         										@Override
         										protected void handleCompleted() {
-        											if (!getStatus().isOK()) {
+        											if (!isSuccess()) {
         												wait.waitFinished(getStatus());
         											} else if (getData().getFormattedValue().equals(thirdValue)) {
         												wait.waitFinished();
@@ -2617,7 +2617,7 @@ public class ExpressionServiceTest extends BaseTestCase {
     						new DataRequestMonitor<Boolean>(fExpService.getExecutor(), null) {
     							@Override
     							protected void handleCompleted() {
-    								if (!getStatus().isOK()) {
+    								if (!isSuccess()) {
     									wait.waitFinished(getStatus());
     								} else if (getData() == expectedValues[finalIndex]) {
 										wait.waitFinished();
@@ -2674,7 +2674,7 @@ public class ExpressionServiceTest extends BaseTestCase {
     						new DataRequestMonitor<Boolean>(fExpService.getExecutor(), null) {
     							@Override
     							protected void handleCompleted() {
-    								if (!getStatus().isOK()) {
+    								if (!isSuccess()) {
     									wait.waitFinished(getStatus());
     								} else if (getData() == expectedValues[finalIndex]) {
 										wait.waitFinished();
@@ -2729,7 +2729,7 @@ public class ExpressionServiceTest extends BaseTestCase {
                         fExpService.getExecutor(), null) {
                         @Override
                         protected void handleCompleted() {
-                            if (!getStatus().isOK()) {
+                            if (!isSuccess()) {
                                 wait.waitFinished(getStatus());
                             } else {
                                 final String[] formatIds = getData();
@@ -2756,7 +2756,7 @@ public class ExpressionServiceTest extends BaseTestCase {
                                         new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
                                             @Override
                                             protected void handleCompleted() {
-                                                if (!getStatus().isOK()) {
+                                                if (!isSuccess()) {
                                                     wait.waitFinished(getStatus());
                                                 } else {
 
@@ -2831,7 +2831,7 @@ public class ExpressionServiceTest extends BaseTestCase {
                     .getExecutor(), null) {
                     @Override
                     protected void handleCompleted() {
-                        if (getStatus().isOK()) {
+                        if (isSuccess()) {
                             wait.setReturnInfo(getData());
                         }
 
@@ -2923,7 +2923,7 @@ public class ExpressionServiceTest extends BaseTestCase {
                     new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
                         @Override
                         protected void handleCompleted() {
-                            if (getStatus().isOK()) {
+                            if (isSuccess()) {
                             	wait.setReturnInfo(getData());
                             }
                             wait.waitFinished(getStatus());

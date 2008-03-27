@@ -204,7 +204,7 @@ public class PDAProgramVMNode extends AbstractDMVMNode
                 @Override
                 public void handleCompleted(){
                     // If the request failed, fail the udpate. 
-                    if (!getStatus().isOK()) {
+                    if (!isSuccess()) {
                         handleFailedUpdate(update);
                         return;
                     }

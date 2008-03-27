@@ -127,7 +127,7 @@ public class PDAServicesShutdownSequence extends Sequence {
             service.shutdown(new RequestMonitor(getExecutor(), requestMonitor) {
                 @Override
                 protected void handleCompleted() {
-                    if (!getStatus().isOK()) {
+                    if (!isSuccess()) {
                         PDAPlugin.getDefault().getLog().log(getStatus());
                     }
                     requestMonitor.done();

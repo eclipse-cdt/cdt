@@ -275,7 +275,7 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
                     assert fStepIdx == fCurrentStepIdx;
                     
                     // Proceed to the next step.
-                    if (getStatus().isOK()) {
+                    if (isSuccess()) {
                         fProgressMonitor.worked(getSteps()[fStepIdx].getTicks());
                         executeStep(fStepIdx + 1);
                     } else {
@@ -329,7 +329,7 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
                     assert fStepIdx == fCurrentStepIdx;
              
                     // Proceed to the next step.
-                    if (getStatus().isOK()) {
+                    if (isSuccess()) {
                         fProgressMonitor.worked(getSteps()[fStepIdx].getTicks());
                         rollBackStep(fStepIdx - 1);
                     } else {

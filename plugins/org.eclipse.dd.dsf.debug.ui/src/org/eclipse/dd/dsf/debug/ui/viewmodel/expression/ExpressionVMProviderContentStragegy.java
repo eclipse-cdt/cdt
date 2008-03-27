@@ -52,7 +52,7 @@ public class ExpressionVMProviderContentStragegy extends DefaultVMContentProvide
                 update, update.getExpression(),
                 new ViewerDataRequestMonitor<Object>(getVMProvider().getExecutor(), update) {
                     @Override
-                    protected void handleOK() {
+                    protected void handleSuccess() {
                         // Check if the evaluated node has child expression nodes.  
                         // If it does, check if any of those nodes can evaluate the given
                         // expression further.  If they can, call the child node to further
@@ -70,7 +70,7 @@ public class ExpressionVMProviderContentStragegy extends DefaultVMContentProvide
                                     new ViewerDataRequestMonitor<Object>(getVMProvider().getExecutor(), update) {
                                         
                                         @Override
-                                        protected void handleOK() {
+                                        protected void handleSuccess() {
                                             update.setExpressionElement(getData());
                                             update.done();
                                         }

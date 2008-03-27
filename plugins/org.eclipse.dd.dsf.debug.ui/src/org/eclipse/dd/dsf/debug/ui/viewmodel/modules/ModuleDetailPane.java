@@ -382,7 +382,7 @@ public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, 
 //                final DataRequestMonitor<IModuleDMData> modData = 
 //                    new DataRequestMonitor<IModuleDMData>(service.getSession().getExecutor(), null) {
 //                        @Override
-//                        protected void handleOK() {
+//                        protected void handleSuccess() {
 //                        	detailComputed(getModuleDetail(getData()));
 //                        }
 //                    };
@@ -544,7 +544,7 @@ public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, 
                 }
 
                 @Override
-                protected void handleOK() {
+                protected void handleSuccess() {
                     /*
                      * All good set return value.
                      */

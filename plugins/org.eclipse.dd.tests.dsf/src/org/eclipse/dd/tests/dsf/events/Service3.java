@@ -30,7 +30,7 @@ public class Service3 extends AbstractService {
         super.initialize(
             new RequestMonitor(getExecutor(), requestMonitor) { 
                 @Override
-                public void handleOK() {
+                public void handleSuccess() {
                     doInitialize(requestMonitor);
                 }
             });

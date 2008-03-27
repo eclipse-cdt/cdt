@@ -111,7 +111,7 @@ public class MIRegistersTest extends BaseTestCase {
         	new DataRequestMonitor<IRegisterGroupDMContext[]>(fRegService.getExecutor(), null) {
             @Override
             protected void handleCompleted() {
-                if (getStatus().isOK()) {
+                if (isSuccess()) {
                     fWait.setReturnInfo(getData());
                 }
                 
@@ -148,7 +148,7 @@ public class MIRegistersTest extends BaseTestCase {
     		new DataRequestMonitor<IRegisterDMContext[]>(fRegService.getExecutor(), null) {
     			@Override
     			protected void handleCompleted() {
-    				if (getStatus().isOK()) {
+    				if (isSuccess()) {
     					fWait.setReturnInfo(getData());
     				}
 
@@ -228,7 +228,7 @@ public class MIRegistersTest extends BaseTestCase {
         	new DataRequestMonitor<FormattedValueDMData>(fRegService.getExecutor(), null) {
             @Override
             protected void handleCompleted() {
-                if (getStatus().isOK()) {
+                if (isSuccess()) {
                     fWait.setReturnInfo(getData());
                 }
                 

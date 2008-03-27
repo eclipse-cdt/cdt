@@ -76,7 +76,7 @@ public class PDAServicesInitSequence extends Sequence {
                     fSession, new PDABreakpointAttributeTranslator());
                 bpmService.initialize(new RequestMonitor(getExecutor(), requestMonitor) {
                     @Override
-                    protected void handleOK() {
+                    protected void handleSuccess() {
                         bpmService.startTrackingBreakpoints(fCommandControl.getProgramDMContext(), requestMonitor);
                     }
                 }); 

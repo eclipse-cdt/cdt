@@ -203,7 +203,7 @@ abstract public class AbstractVMProvider implements IVMProvider
                     new DataRequestMonitor<IModelDelta>(getExecutor(), null) {
                         @Override
                         public void handleCompleted() {
-                            if (getStatus().isOK()) {
+                            if (isSuccess()) {
                                 proxyStrategy.fireModelChanged(getData());
                             }
                         }
@@ -330,7 +330,7 @@ abstract public class AbstractVMProvider implements IVMProvider
                 update,
                 new ViewerDataRequestMonitor<Boolean>(getExecutor(), updates[i]) {
                     @Override
-                    protected void handleOK() {
+                    protected void handleSuccess() {
                         update.setHasChilren(getData());
                         update.done();
                     }
@@ -344,7 +344,7 @@ abstract public class AbstractVMProvider implements IVMProvider
                                     update, -1, -1, 
                                     new ViewerDataRequestMonitor<List<Object>>(getExecutor(), update) {
                                         @Override
-                                        protected void handleOK() {
+                                        protected void handleSuccess() {
                                             update.setHasChilren( !getData().isEmpty() );
                                             update.done();
                                         }
@@ -376,7 +376,7 @@ abstract public class AbstractVMProvider implements IVMProvider
                 update,
                 new ViewerDataRequestMonitor<Integer>(getExecutor(), update) {
                     @Override
-                    protected void handleOK() {
+                    protected void handleSuccess() {
                         update.setChildCount(getData());
                         update.done();
                     }
@@ -390,7 +390,7 @@ abstract public class AbstractVMProvider implements IVMProvider
                                     update, -1, -1, 
                                     new ViewerDataRequestMonitor<List<Object>>(getExecutor(), update) {
                                         @Override
-                                        protected void handleOK() {
+                                        protected void handleSuccess() {
                                             update.setChildCount( getData().size() );
                                             update.done();
                                         }

@@ -144,7 +144,7 @@ public class GdbLaunch extends Launch
                 @Override
                 public void handleCompleted() {
                     fSession.removeServiceEventListener(GdbLaunch.this);
-                    if (!getStatus().isOK()) {
+                    if (!isSuccess()) {
                         GdbLaunchPlugin.getDefault().getLog().log(new MultiStatus(
                             GdbLaunchPlugin.PLUGIN_ID, -1, new IStatus[]{getStatus()}, "Session shutdown failed", null)); //$NON-NLS-1$
                     }

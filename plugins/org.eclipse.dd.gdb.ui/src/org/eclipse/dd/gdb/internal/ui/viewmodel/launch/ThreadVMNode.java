@@ -74,7 +74,7 @@ public class ThreadVMNode extends AbstractDMVMNode
     			 new DataRequestMonitor<IExecutionDMContext[]>(getSession().getExecutor(), null){
     	                @Override
 						public void handleCompleted() {
-    	                    if (!getStatus().isOK()) {
+    	                    if (!isSuccess()) {
     	                        handleFailedUpdate(update);
     	                        return;
     	                    }
@@ -120,7 +120,7 @@ public class ThreadVMNode extends AbstractDMVMNode
                 new DataRequestMonitor<VMContextInfo>(getExecutor(), rm) {
                     @Override
                     protected void handleCompleted() {
-                        if (getStatus().isOK()) {
+                        if (isSuccess()) {
                             rm.setData(new IVMContext[] { getData().fVMContext });
                         } else {
                             rm.setData(new IVMContext[0]);
@@ -149,7 +149,7 @@ public class ThreadVMNode extends AbstractDMVMNode
             parentDelta, getVMProvider().getPresentationContext(), -1, -1, 
             new DataRequestMonitor<List<Object>>(getExecutor(), rm) {
                 @Override
-                protected void handleOK() {
+                protected void handleSuccess() {
                     try {
                         getSession().getExecutor().execute(new DsfRunnable() {
                             public void run() {
@@ -231,7 +231,7 @@ public class ThreadVMNode extends AbstractDMVMNode
                         new DataRequestMonitor<GDBThreadData>(getSession().getExecutor(), null) { 
                             @Override
                             public void handleCompleted() {
-                                if (!getStatus().isOK()) {
+                                if (!isSuccess()) {
                                     update.done();
                                     return;
                                 }
@@ -294,7 +294,7 @@ public class ThreadVMNode extends AbstractDMVMNode
                 new DataRequestMonitor<VMContextInfo>(getExecutor(), rm) {
                     @Override
                     protected void handleCompleted() {
-                        if (getStatus().isOK()) {
+                        if (isSuccess()) {
                             parentDelta.addNode(
                                 getData().fVMContext, nodeOffset + getData().fIndex, 
                                 IModelDelta.EXPAND | (getData().fIsSuspended ? 0 : IModelDelta.SELECT));

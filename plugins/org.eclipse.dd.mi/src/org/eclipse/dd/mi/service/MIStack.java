@@ -135,7 +135,7 @@ public class MIStack extends AbstractDsfService
         super.initialize(
             new RequestMonitor(getExecutor(), rm) { 
                 @Override
-                protected void handleOK() {
+                protected void handleSuccess() {
                     doInitialize(rm);
                 }
             });
@@ -205,7 +205,7 @@ public class MIStack extends AbstractDsfService
             new MIStackListFrames(execDmc),
             new DataRequestMonitor<MIStackListFramesInfo>(getExecutor(), rm) { 
                 @Override
-                protected void handleOK() {
+                protected void handleSuccess() {
                     rm.setData(getFrames(execDmc, getData()));
                     rm.done();
                 }
@@ -236,7 +236,7 @@ public class MIStack extends AbstractDsfService
             ctx, 
             new DataRequestMonitor<IFrameDMContext[]>(getExecutor(), rm) { 
                 @Override
-                protected void handleOK() {
+                protected void handleSuccess() {
                     rm.setData(getData()[0]);
                     rm.done();
                 }
@@ -340,7 +340,7 @@ public class MIStack extends AbstractDsfService
             new MIStackListFrames(execDmc),
             new DataRequestMonitor<MIStackListFramesInfo>(getExecutor(), rm) { 
                 @Override
-                protected void handleOK() {
+                protected void handleSuccess() {
                     // Find the index to the correct MI frame object.
                     int idx = findFrameIndex(getData().getMIFrames(), miFrameDmc.fLevel);
                     if (idx == -1) {
@@ -384,7 +384,7 @@ public class MIStack extends AbstractDsfService
             new MIStackListArguments(execDmc, true),
             new DataRequestMonitor<MIStackListArgumentsInfo>(getExecutor(), rm) { 
                 @Override
-                protected void handleOK() {
+                protected void handleSuccess() {
                     // Find the index to the correct MI frame object.
                     // Note: this is a short-cut, but it won't work once we implement retrieving
                     // partial lists of stack frames.
@@ -464,7 +464,7 @@ public class MIStack extends AbstractDsfService
 	            new MIStackListArguments(execDmc, true),
 	            new DataRequestMonitor<MIStackListArgumentsInfo>(getExecutor(), rm) { 
 	                @Override
-	                protected void handleOK() {
+	                protected void handleSuccess() {
 	                    // Find the correct frame and argument
 	                    if ( frameDmc.fLevel >= getData().getMIFrames().length ||
 	                        miVariableDmc.fIndex >= getData().getMIFrames()[frameDmc.fLevel].getArgs().length )
@@ -484,7 +484,7 @@ public class MIStack extends AbstractDsfService
                     new MIStackListLocals(frameDmc, true),
                     new DataRequestMonitor<MIStackListLocalsInfo>(getExecutor(), rm) { 
                         @Override
-                        protected void handleOK() {
+                        protected void handleSuccess() {
    		                    
 		                    // Create the data object.
 		                    rm.setData(new VariableData(getData().getLocals()[miVariableDmc.fIndex]));
@@ -520,7 +520,7 @@ public class MIStack extends AbstractDsfService
         
         final CountingRequestMonitor countingRm = new CountingRequestMonitor(getExecutor(), rm) {
             @Override
-            protected void handleOK() {
+            protected void handleSuccess() {
                 rm.setData( localsList.toArray(new IVariableDMContext[localsList.size()]) );
                 rm.done();
             }
@@ -531,7 +531,7 @@ public class MIStack extends AbstractDsfService
             frameDmc,
             new DataRequestMonitor<IVariableDMContext[]>(getExecutor(), countingRm) { 
                 @Override
-                protected void handleOK() {
+                protected void handleSuccess() {
                     localsList.addAll( Arrays.asList(getData()) );
                     countingRm.done();
                 }
@@ -541,7 +541,7 @@ public class MIStack extends AbstractDsfService
                 new MIStackListLocals(frameDmc, true),
                 new DataRequestMonitor<MIStackListLocalsInfo>(getExecutor(), rm) { 
                     @Override
-                    protected void handleOK() {
+                    protected void handleSuccess() {
                         localsList.addAll( Arrays.asList(
                             makeVariableDMCs(frameDmc, MIVariableDMC.Type.LOCAL, getData().getLocals().length)) );
                         countingRm.done();
@@ -560,7 +560,7 @@ public class MIStack extends AbstractDsfService
                         depthCommand,
                         new DataRequestMonitor<MIStackInfoDepthInfo>(getExecutor(), rm) { 
                             @Override
-                            protected void handleOK() {
+                            protected void handleSuccess() {
                             	rm.setData(getData().getDepth());
                                 rm.done();
                             }

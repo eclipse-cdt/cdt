@@ -184,7 +184,7 @@ public class PDAStack extends AbstractDsfService implements IStack {
         super.initialize(
             new RequestMonitor(getExecutor(), rm) { 
                 @Override
-                protected void handleOK() {
+                protected void handleSuccess() {
                     doInitialize(rm);
                 }});
     }
@@ -224,7 +224,7 @@ public class PDAStack extends AbstractDsfService implements IStack {
             new PDAStackCommand(fCommandControl.getProgramDMContext()),
             new DataRequestMonitor<PDAStackCommandResult>(getExecutor(), rm) {
                 @Override
-                protected void handleOK() {
+                protected void handleSuccess() {
                     // PDAFrame array is ordered highest to lowest.  We need to 
                     // calculate the index based on frame level.
                     int frameId = getData().fFrames.length - frameCtx.getLevel() - 1;
@@ -257,7 +257,7 @@ public class PDAStack extends AbstractDsfService implements IStack {
             new PDAStackCommand(fCommandControl.getProgramDMContext()),
             new DataRequestMonitor<PDAStackCommandResult>(getExecutor(), rm) {
                 @Override
-                protected void handleOK() {
+                protected void handleSuccess() {
                     IFrameDMContext[] frameCtxs = new IFrameDMContext[getData().fFrames.length];
                     for (int i = 0; i < getData().fFrames.length; i++) {
                         frameCtxs[i] = new FrameDMContext(getSession().getId(), execCtx, i);
@@ -274,7 +274,7 @@ public class PDAStack extends AbstractDsfService implements IStack {
             new PDAStackCommand(fCommandControl.getProgramDMContext()),
             new DataRequestMonitor<PDAStackCommandResult>(getExecutor(), rm) {
                 @Override
-                protected void handleOK() {
+                protected void handleSuccess() {
                     // Find the correct PDAFrame
                     int frameId = getData().fFrames.length - frameCtx.getLevel() - 1;
                     if (frameId < 0) {
@@ -301,7 +301,7 @@ public class PDAStack extends AbstractDsfService implements IStack {
             new PDAStackCommand(fCommandControl.getProgramDMContext()),
             new DataRequestMonitor<PDAStackCommandResult>(getExecutor(), rm) {
                 @Override
-                protected void handleOK() {
+                protected void handleSuccess() {
                     rm.setData(getData().fFrames.length);
                     rm.done();
                 }

@@ -346,7 +346,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 			new DataRequestMonitor<FormattedValueDMData>(fSession.getExecutor(), null) {
 			@Override
 			protected void handleCompleted() {
-				if (getStatus().isOK()) {
+				if (isSuccess()) {
 					fWait.setReturnInfo(getData());
 				}
 				fWait.waitFinished(getStatus());

@@ -51,7 +51,7 @@ public abstract class AbstractExpressionVMNode extends AbstractDMVMNode
             update, -1, -1,
             new ViewerDataRequestMonitor<List<Object>>(getExecutor(), update) {
                 @Override
-                protected void handleOK() {
+                protected void handleSuccess() {
                     if (getData().size() == 0) {
                         update.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "No contexts", null)); //$NON-NLS-1$
                         update.done();
@@ -97,7 +97,7 @@ public abstract class AbstractExpressionVMNode extends AbstractDMVMNode
                 }
                 
                 @Override
-                protected void handleNotOK() {
+                protected void handleFailure() {
                     update.setStatus(getStatus());
                     update.done();
                 }

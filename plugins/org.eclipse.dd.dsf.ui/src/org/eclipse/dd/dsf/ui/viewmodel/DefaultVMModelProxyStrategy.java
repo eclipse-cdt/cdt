@@ -250,7 +250,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
             getRootElement(), event, 
             new DataRequestMonitor<VMDelta>(getVMProvider().getExecutor(), rm) {
                 @Override
-                protected void handleOK() {
+                protected void handleSuccess() {
                     // Find the root delta for the whole view to use when firing the delta. 
                     // Note: the view root is going to be different than the model root
                     // in case when the view model provider is registered to populate only 
@@ -272,7 +272,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
                         childNodesWithDeltaFlags, getData(), event, 
                         new RequestMonitor(getVMProvider().getExecutor(), rm) {
                             @Override
-                            protected void handleOK() {
+                            protected void handleSuccess() {
                                 rm.setData(viewRootDelta);
                                 rm.done();
                             }
@@ -290,7 +290,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
             new DataRequestMonitor<IVMContext[]>(getVMProvider().getExecutor(), rm) {
                 @Override
                 protected void handleCompleted() {
-                    if (getStatus().isOK()) {
+                    if (isSuccess()) {
                         assert getData() != null;
                         buildChildDeltasForEventContext(getData(), node, event, parentDelta, nodeOffset, rm);
                     } else if (getStatus().getCode() == IDsfStatusConstants.NOT_SUPPORTED) {
@@ -341,7 +341,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
                             // Check for an empty list of elements.  If it's empty then we 
                             // don't have to call the children nodes, so return here.
                             // No need to propagate error, there's no means or need to display it.
-                            if (!getStatus().isOK() || getData().isEmpty()) {
+                            if (!isSuccess() || getData().isEmpty()) {
                                 requestMonitor.done();
                                 return;
                             }
@@ -525,7 +525,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
                             event, delta, nodeOffset, 
                             new RequestMonitor(getVMProvider().getExecutor(), multiRm) {
                                 @Override
-                                protected void handleOK() {
+                                protected void handleSuccess() {
                                     buildChildDeltas(
                                         childNode, event, delta, nodeOffset, new RequestMonitor(getVMProvider().getExecutor(), multiRm));
                                 }
@@ -568,7 +568,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
                         super.handleCompleted();
                     }
                     @Override
-                    protected void handleOK() {
+                    protected void handleSuccess() {
                         Map<IVMNode, Integer> data = new HashMap<IVMNode, Integer>();
                         int offset = 0;
                         for (int i = 0; i < childNodes.length; i++) {

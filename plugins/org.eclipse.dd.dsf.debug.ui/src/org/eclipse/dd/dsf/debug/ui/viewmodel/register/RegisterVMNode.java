@@ -178,7 +178,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
             new DataRequestMonitor<String[]>(getSession().getExecutor(), null) {
                 @Override
                 public void handleCompleted() {
-                    if (!getStatus().isOK()) {
+                    if (!isSuccess()) {
                         handleFailedUpdate(update);
                         return;
                     }
@@ -228,7 +228,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
 	                    new DataRequestMonitor<FormattedValueDMData>(getSession().getExecutor(), null) {
 	                        @Override
 	                        public void handleCompleted() {
-	                            if (!getStatus().isOK()) {
+	                            if (!isSuccess()) {
 	                                handleFailedUpdate(update);
 	                                return;
 	                            }
@@ -290,7 +290,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
                      * service changed during the request, but the view model
                      * has not been updated yet.
                      */ 
-                    if (!getStatus().isOK()) {
+                    if (!isSuccess()) {
                         assert getStatus().isOK() || 
                                getStatus().getCode() != IDsfStatusConstants.INTERNAL_ERROR || 
                                getStatus().getCode() != IDsfStatusConstants.NOT_SUPPORTED;
@@ -370,7 +370,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
             new DataRequestMonitor<IRegisterDMContext[]>(getSession().getExecutor(), null) { 
                 @Override
                 public void handleCompleted() {
-                    if (!getStatus().isOK()) {
+                    if (!isSuccess()) {
                         handleFailedUpdate(update);
                         return;
                     }

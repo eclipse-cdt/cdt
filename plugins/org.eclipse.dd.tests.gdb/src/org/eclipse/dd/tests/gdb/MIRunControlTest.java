@@ -125,7 +125,7 @@ public class MIRunControlTest extends BaseTestCase {
         	new DataRequestMonitor<IExecutionDMContext[]>(fRunCtrl.getExecutor(), null) {
             @Override
             protected void handleCompleted() {
-               if (getStatus().isOK()) {
+               if (isSuccess()) {
                     fWait.setReturnInfo(getData());
                 }
                 fWait.waitFinished(getStatus());
@@ -177,7 +177,7 @@ public class MIRunControlTest extends BaseTestCase {
         	new DataRequestMonitor<IExecutionDMContext[]>(fRunCtrl.getExecutor(), null) {
             @Override
             protected void handleCompleted() {
-               if (getStatus().isOK()) {
+               if (isSuccess()) {
             	   fWait.setReturnInfo(getData());
                }
                fWait.waitFinished(getStatus());
@@ -249,7 +249,7 @@ public class MIRunControlTest extends BaseTestCase {
         	new DataRequestMonitor<IExecutionDMData>(fRunCtrl.getExecutor(), null) {
             @Override
             protected void handleCompleted() {
-               if (getStatus().isOK()) {
+               if (isSuccess()) {
                     fWait.setReturnInfo(getData());
                 }
                 fWait.waitFinished(getStatus());
@@ -290,7 +290,7 @@ public class MIRunControlTest extends BaseTestCase {
         	new DataRequestMonitor<IExecutionDMData>(fRunCtrl.getExecutor(), null) {
             @Override
             protected void handleCompleted() {
-               if (getStatus().isOK()) {
+               if (isSuccess()) {
                     fWait.setReturnInfo(getData());
                 }
                 fWait.waitFinished(getStatus());
@@ -339,7 +339,7 @@ public class MIRunControlTest extends BaseTestCase {
         	new DataRequestMonitor<IExecutionDMData>(fRunCtrl.getExecutor(), null) {
             @Override
             protected void handleCompleted() {
-               if (getStatus().isOK()) {
+               if (isSuccess()) {
                     fWait.setReturnInfo(getData());
                 }
                 fWait.waitFinished(getStatus());
@@ -375,7 +375,7 @@ public class MIRunControlTest extends BaseTestCase {
         	new DataRequestMonitor<IExecutionDMData>(fRunCtrl.getExecutor(), null) {
             @Override
             protected void handleCompleted() {
-               if (getStatus().isOK()) {
+               if (isSuccess()) {
                     fWait.setReturnInfo(getData());
                 }
                 fWait.waitFinished(getStatus());
@@ -412,7 +412,7 @@ public class MIRunControlTest extends BaseTestCase {
         	new DataRequestMonitor<IExecutionDMContext[]>(fRunCtrl.getExecutor(), null) {
             @Override
             protected void handleCompleted() {
-               if (getStatus().isOK()) {
+               if (isSuccess()) {
                     fWait.setReturnInfo(getData());
                 }
                 fWait.waitFinished(getStatus());
@@ -593,7 +593,7 @@ public class MIRunControlTest extends BaseTestCase {
 //        	new DataRequestMonitor<DsfMIInfo>(fRunCtrl.getExecutor(), null) {
 //            @Override
 //			protected void handleCompleted() {
-//                if (getStatus().isOK()) {
+//                if (isSuccess()) {
 //             	   assert true;
 //             	   fWait.setReturnInfo(getData());
 //                }
@@ -618,7 +618,7 @@ public class MIRunControlTest extends BaseTestCase {
 //        	new DataRequestMonitor<DsfMIInfo>(fRunCtrl.getExecutor(), null) {
 //            @Override
 //			protected void handleCompleted() {
-//                if (getStatus().isOK()) {
+//                if (isSuccess()) {
 //             	   assert true;
 //             	   fWait.setReturnInfo(getData());
 //                }

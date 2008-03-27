@@ -90,7 +90,7 @@ public class GDBRunControl extends MIRunControl {
         super.initialize(
             new RequestMonitor(getExecutor(), requestMonitor) { 
                 @Override
-                public void handleOK() {
+                public void handleSuccess() {
                     doInitialize(requestMonitor);
                 }});
     }
@@ -132,7 +132,7 @@ public class GDBRunControl extends MIRunControl {
 		DataRequestMonitor<IExecutionDMContext[]> rm1 = new DataRequestMonitor<IExecutionDMContext[]>(
 				getExecutor(), rm) {
 			@Override
-			protected void handleOK() {
+			protected void handleSuccess() {
 				raiseExitEvents(getData());
 				fOldExecutionCtxts = getData();
 				rm.setData(fOldExecutionCtxts);
@@ -153,7 +153,7 @@ public class GDBRunControl extends MIRunControl {
         getCache().execute(new CLIInfoThreads(containerDmc),
                 new DataRequestMonitor<CLIInfoThreadsInfo>(getExecutor(), rm) {
                     @Override
-                    protected void handleOK() {
+                    protected void handleSuccess() {
                         rm.setData( createThreadInfo(execDmc, getData()) );
                         rm.done();
                     }

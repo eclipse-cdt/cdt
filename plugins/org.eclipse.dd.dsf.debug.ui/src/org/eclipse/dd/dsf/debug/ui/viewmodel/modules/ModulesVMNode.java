@@ -52,7 +52,7 @@ public class ModulesVMNode extends AbstractDMVMNode
                 new DataRequestMonitor<IModuleDMContext[]>(getSession().getExecutor(), null) { 
                     @Override
                     public void handleCompleted() {
-                        if (!getStatus().isOK()) {
+                        if (!isSuccess()) {
                             update.done();
                             return;
                         }
@@ -97,7 +97,7 @@ public class ModulesVMNode extends AbstractDMVMNode
                          * changed during the request, but the view model
                          * has not been updated yet.
                          */ 
-                        if (!getStatus().isOK()) {
+                        if (!isSuccess()) {
                             assert getStatus().isOK() || 
                                    getStatus().getCode() != IDsfStatusConstants.INTERNAL_ERROR || 
                                    getStatus().getCode() != IDsfStatusConstants.NOT_SUPPORTED;

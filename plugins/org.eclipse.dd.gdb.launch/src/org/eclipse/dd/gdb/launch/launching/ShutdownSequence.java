@@ -165,7 +165,7 @@ public class ShutdownSequence extends Sequence {
             service.shutdown(new RequestMonitor(getExecutor(), requestMonitor) {
                 @Override
                 protected void handleCompleted() {
-                    if (!getStatus().isOK()) {
+                    if (!isSuccess()) {
                         GdbLaunchPlugin.getDefault().getLog().log(getStatus());
                     }
                     requestMonitor.done();

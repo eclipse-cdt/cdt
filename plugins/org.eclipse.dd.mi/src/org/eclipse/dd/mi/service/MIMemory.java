@@ -94,7 +94,7 @@ public class MIMemory extends AbstractDsfService implements IMemory {
     public void initialize(final RequestMonitor requestMonitor) {
         super.initialize(new RequestMonitor(getExecutor(), requestMonitor) {
             @Override
-            protected void handleOK() {
+            protected void handleSuccess() {
                 doInitialize(requestMonitor);
             }
         });
@@ -304,7 +304,7 @@ public class MIMemory extends AbstractDsfService implements IMemory {
 			expressionService.getExpressionAddressData(context,
 				new DataRequestMonitor<IExpressionDMAddress>(getExecutor(), null) {
 					@Override
-					protected void handleOK() {
+					protected void handleSuccess() {
 						// Figure out which memory area was modified
 						IExpressionDMAddress expression = getData();
 						final int count = expression.getSize();
@@ -694,7 +694,7 @@ public class MIMemory extends AbstractDsfService implements IMemory {
 	        final CountingRequestMonitor countingRM =
 	        	new CountingRequestMonitor(getExecutor(), drm) { 
 	                @Override
-	                protected void handleOK() {
+	                protected void handleSuccess() {
 	                	// We received everything so read the result from the memory cache
 	                	drm.setData(getMemoryBlockFromCache(address, count));
 	                    drm.done();
@@ -710,7 +710,7 @@ public class MIMemory extends AbstractDsfService implements IMemory {
 		        readMemoryBlock(memoryDMC, startAddress, 0, word_size, length,
 					    new DataRequestMonitor<MemoryByte[]>(getSession().getExecutor(), drm) {
 					    	@Override
-					    	protected void handleOK() {
+					    	protected void handleSuccess() {
 					    		MemoryByte[] block = new MemoryByte[count];
 					    		block = getData();
 					    		MemoryBlock memoryBlock = new MemoryBlock(startAddress, length, block);
@@ -738,7 +738,7 @@ public class MIMemory extends AbstractDsfService implements IMemory {
 	       	    memoryDMC, address, offset, word_size, count, buffer,
 				new RequestMonitor(getSession().getExecutor(), rm) {
 					@Override
-				    protected void handleOK() {
+				    protected void handleSuccess() {
 				    	// Clear the command cache (otherwise we can't guarantee
 						// that the subsequent memory read will be correct) 
 						fCommandCache.reset();
@@ -747,7 +747,7 @@ public class MIMemory extends AbstractDsfService implements IMemory {
 				        final DataRequestMonitor<MemoryByte[]> drm =
 							new DataRequestMonitor<MemoryByte[]>(getExecutor(), rm) { 
 								@Override
-								protected void handleOK() {
+								protected void handleSuccess() {
 									updateMemoryCache(address.add(offset), count, getData());
 									// Send the MemoryChangedEvent
 									IAddress[] addresses = new IAddress[count];
@@ -764,7 +764,7 @@ public class MIMemory extends AbstractDsfService implements IMemory {
 				        readMemoryBlock(memoryDMC, address, offset, word_size, count,
 					        new DataRequestMonitor<MemoryByte[]>(getExecutor(), drm) { 
 					        	@Override
-	                            public void handleOK() {
+	                            protected void handleSuccess() {
 					        		drm.setData(getData());
 	        						drm.done();
 					        	}
@@ -809,7 +809,7 @@ public class MIMemory extends AbstractDsfService implements IMemory {
 		   fMemoryCache.readMemoryBlock(memoryDMC, address, 0, 1, count,
 				   new DataRequestMonitor<MemoryByte[]>(getExecutor(), rm) {
 					   @Override
-					   public void handleOK() {
+					   protected void handleSuccess() {
 						   MemoryByte[] oldBlock = fMemoryCache.getMemoryBlockFromCache(address, count);
 						   MemoryByte[] newBlock = getData();
 						   boolean blocksDiffer = false;
@@ -855,7 +855,7 @@ public class MIMemory extends AbstractDsfService implements IMemory {
 	    		new MIDataReadMemory(memoryDMC, offset, address.toString(), mode, word_size, nb_rows, nb_cols, asChar),
 	    		new DataRequestMonitor<MIDataReadMemoryInfo>(getExecutor(), drm) {
 	    			@Override
-	    			protected void handleOK() {
+	    			protected void handleSuccess() {
 	    				// Retrieve the memory block
 	    				drm.setData(getData().getMIMemoryBlock());
 	    				drm.done();
@@ -881,7 +881,7 @@ public class MIMemory extends AbstractDsfService implements IMemory {
 	        final CountingRequestMonitor countingRM =
 	        	new CountingRequestMonitor(getExecutor(), rm) { 
 	                @Override
-	                protected void handleOK() {
+	                protected void handleSuccess() {
 	                    rm.done();
 	                }
 	            };

@@ -160,7 +160,7 @@ public class SyncUtil {
 			new DataRequestMonitor<MIBreakInsertInfo>(fRunControl.getExecutor(), null) { 
 			@Override
 			protected void handleCompleted() {
-                if (getStatus().isOK()) {
+                if (isSuccess()) {
                     wait.setReturnInfo(getData());
                 }
                 
@@ -187,7 +187,7 @@ public class SyncUtil {
 			new DataRequestMonitor<MIBreakListInfo>(fRunControl.getExecutor(), null) { 
 			@Override
 			protected void handleCompleted() {
-                if (getStatus().isOK()) {
+                if (isSuccess()) {
                     wait.setReturnInfo(getData());
                 }               
                 wait.waitFinished(getStatus());
@@ -219,7 +219,7 @@ public class SyncUtil {
 			new DataRequestMonitor<MIInfo>(fRunControl.getExecutor(), null) { 
 			@Override
 			protected void handleCompleted() {
-                if (getStatus().isOK()) {
+                if (isSuccess()) {
                     wait.setReturnInfo(getData());
                 }
                 
@@ -274,7 +274,7 @@ public class SyncUtil {
             protected void execute(final DataRequestMonitor<IFrameDMContext> rm) {
                 fStack.getFrames(execCtx, new DataRequestMonitor<IFrameDMContext[]>(fSession.getExecutor(), rm) {
                     @Override
-                    protected void handleOK() {
+                    protected void handleSuccess() {
                         if (getData().length > level) {
                             rm.setData(getData()[level]);
                         } else {

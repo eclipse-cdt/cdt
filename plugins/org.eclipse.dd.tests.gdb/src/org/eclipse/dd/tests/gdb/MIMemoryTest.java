@@ -213,7 +213,7 @@ public class MIMemoryTest extends BaseTestCase {
 			new DataRequestMonitor<FormattedValueDMData>(fSession.getExecutor(), null) {
 			@Override
 			protected void handleCompleted() {
-				if (getStatus().isOK()) {
+				if (isSuccess()) {
 					fWait.setReturnInfo(getData());
 				}
 				fWait.waitFinished(getStatus());
@@ -265,7 +265,7 @@ public class MIMemoryTest extends BaseTestCase {
 			new DataRequestMonitor<MemoryByte[]>(fSession.getExecutor(), null) {
 				@Override
 				protected void handleCompleted() {
-					if (getStatus().isOK()) {
+					if (isSuccess()) {
 						fWait.setReturnInfo(getData());
 					}
 					fWait.waitFinished(getStatus());
@@ -307,7 +307,7 @@ public class MIMemoryTest extends BaseTestCase {
 			new DataRequestMonitor<MemoryByte[]>(fSession.getExecutor(), null) {
 				@Override
 				protected void handleCompleted() {
-					if (getStatus().isOK()) {
+					if (isSuccess()) {
 						result[(int) offset] = getData()[0];
 					}
 					fWait.waitFinished(getStatus());

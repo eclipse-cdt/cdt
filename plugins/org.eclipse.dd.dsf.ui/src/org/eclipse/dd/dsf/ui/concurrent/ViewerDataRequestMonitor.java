@@ -35,7 +35,7 @@ public class ViewerDataRequestMonitor<V> extends DataRequestMonitor<V> {
     }
     
     @Override
-    protected void handleOK() {
+    protected void handleSuccess() {
         fUpdate.done();
     }
 

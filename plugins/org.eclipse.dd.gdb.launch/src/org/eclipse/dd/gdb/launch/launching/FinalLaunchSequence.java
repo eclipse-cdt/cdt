@@ -216,7 +216,7 @@ public class FinalLaunchSequence extends Sequence {
                     				true, false, null, 0, fStopSymbol, 0), 
                     				new DataRequestMonitor<MIBreakInsertInfo>(getExecutor(), requestMonitor) { 
                     			@Override
-                    			protected void handleOK() {
+                    			protected void handleSuccess() {
 
                     				// After the break-insert is done, execute the -exec-run or -exec-continue command.
                     				fCommandControl.queueCommand(execCommand, new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));

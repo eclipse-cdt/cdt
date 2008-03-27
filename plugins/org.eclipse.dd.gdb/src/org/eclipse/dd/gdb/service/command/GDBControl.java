@@ -120,7 +120,7 @@ public class GDBControl extends AbstractMIControl {
     public void initialize(final RequestMonitor requestMonitor) {
         super.initialize( new RequestMonitor(getExecutor(), requestMonitor) {
             @Override
-            protected void handleOK() {
+            protected void handleSuccess() {
                 doInitialize(requestMonitor);
             }
         });
@@ -220,7 +220,7 @@ public class GDBControl extends AbstractMIControl {
                 public void handleCompleted() {
                     // Cancel the time out runnable (if it hasn't run yet).
                     quitTimeoutFuture.cancel(false);
-                    if (!getStatus().isOK() && !isGDBExited()) {
+                    if (!isSuccess() && !isGDBExited()) {
                         destroy();
                     }
                     rm.done();
@@ -361,7 +361,7 @@ public class GDBControl extends AbstractMIControl {
                 protected void handleCompleted() {
                     if (!fGDBLaunchMonitor.fTimedOut) {
                         fGDBLaunchMonitor.fLaunched = true;
-                        if (!getStatus().isOK()) {
+                        if (!isSuccess()) {
                             requestMonitor.setStatus(getStatus());
                         }
                         requestMonitor.done();
@@ -517,7 +517,7 @@ public class GDBControl extends AbstractMIControl {
             	new DataRequestMonitor<MIInfo>(getExecutor(), null) { 
                     @Override
                     protected void handleCompleted() {
-                    	fUseInterpreterConsole = getStatus().isOK();
+                    	fUseInterpreterConsole = isSuccess();
                         requestMonitor.done();
                     }
             	}

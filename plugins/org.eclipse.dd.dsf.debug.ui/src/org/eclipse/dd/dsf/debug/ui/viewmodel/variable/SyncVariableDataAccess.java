@@ -134,13 +134,14 @@ public class SyncVariableDataAccess {
                      */
                     if (!DsfSession.isSessionActive(session.getId())) {
                         GetVariableValueQuery.this.cancel(false);
+                        rm.done();
                         return;
                     }
                     super.handleCompleted();
                 }
 
                 @Override
-                protected void handleOK() {
+                protected void handleSuccess() {
                     /*
                      * All good set return value.
                      */
@@ -248,7 +249,7 @@ public class SyncVariableDataAccess {
                     }
 
                     @Override
-                    protected void handleOK() {
+                    protected void handleSuccess() {
                         /*
                          * All good set return value.
                          */
@@ -357,7 +358,7 @@ public class SyncVariableDataAccess {
                     }
 
                     @Override
-                    protected void handleOK() {
+                    protected void handleSuccess() {
                         /*
                          * All good set return value.
                          */
@@ -456,7 +457,7 @@ public class SyncVariableDataAccess {
                 }
 
                 @Override
-                protected void handleOK() {
+                protected void handleSuccess() {
                     /*
                      * All good set return value.
                      */
@@ -546,7 +547,7 @@ public class SyncVariableDataAccess {
                 }
 
                 @Override
-                protected void handleOK() {
+                protected void handleSuccess() {
                     /*
                      * All good set return value.
                      */

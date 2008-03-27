@@ -125,10 +125,10 @@ public class DefaultVMContentProviderStrategy implements IElementContentProvider
                     @Override
                     protected void handleCompleted() {
                         // Status is OK, only if all request monitors are OK. 
-                        if (getStatus().isOK()) { 
+                        if (isSuccess()) { 
                             boolean isContainer = false;
                             for (DataRequestMonitor<Boolean> hasElementsDone : getRequestMonitors()) {
-                                isContainer |= hasElementsDone.getStatus().isOK() &&
+                                isContainer |= hasElementsDone.isSuccess() &&
                                                hasElementsDone.getData().booleanValue();
                             }
                             update.setHasChilren(isContainer);
@@ -178,7 +178,7 @@ public class DefaultVMContentProviderStrategy implements IElementContentProvider
                         new DataRequestMonitor<Integer[]>(getVMProvider().getExecutor(), null) {
                             @Override
                             protected void handleCompleted() {
-                                if (getStatus().isOK()) {
+                                if (isSuccess()) {
                                     int numChildren = 0;
                                     for (Integer count : getData()) {
                                         numChildren += count.intValue();
@@ -216,7 +216,7 @@ public class DefaultVMContentProviderStrategy implements IElementContentProvider
                         new DataRequestMonitor<Integer[]>(getVMProvider().getExecutor(), null) {
                             @Override
                             protected void handleCompleted() {
-                                if (!getStatus().isOK()) {
+                                if (!isSuccess()) {
                                     update.done();
                                     return;
                                 } 
@@ -251,7 +251,7 @@ public class DefaultVMContentProviderStrategy implements IElementContentProvider
         final MultiRequestMonitor<RequestMonitor> childrenCountMultiReqMon = 
             new MultiRequestMonitor<RequestMonitor>(getVMProvider().getExecutor(), rm) { 
                 @Override
-                protected void handleOK() {
+                protected void handleSuccess() {
                     rm.setData(counts);
                     rm.done();
                 }
@@ -266,7 +266,7 @@ public class DefaultVMContentProviderStrategy implements IElementContentProvider
                     childrenCountMultiReqMon.add(
                         new DataRequestMonitor<Integer>(getVMProvider().getExecutor(), null) {
                             @Override
-                            protected void handleOK() {
+                            protected void handleSuccess() {
                                 counts[nodeIndex] = getData();
                             }
                             

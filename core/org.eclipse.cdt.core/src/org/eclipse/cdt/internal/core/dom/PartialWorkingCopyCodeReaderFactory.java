@@ -76,12 +76,8 @@ public class PartialWorkingCopyCodeReaderFactory
         return cache.get( path );
     }
 
-    /**
-     * @return
-     */
-    @SuppressWarnings("unchecked")
 	protected Iterator<IWorkingCopy> createWorkingCopyIterator() {
-        if( provider == null ) return EmptyIterator.EMPTY_ITERATOR;
+        if( provider == null ) return EmptyIterator.empty();
         return Arrays.asList( provider.getWorkingCopies() ).iterator();
     }
 

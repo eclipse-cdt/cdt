@@ -19,6 +19,11 @@ public final class EmptyIterator<T> implements Iterator<T>
 
 	public static final EmptyIterator<?> EMPTY_ITERATOR = new EmptyIterator<Object>();
 	
+	@SuppressWarnings("unchecked")
+	public static <T> EmptyIterator<T> empty() {
+		return (EmptyIterator<T>) EMPTY_ITERATOR;
+	}
+	
 	private EmptyIterator()
 	{
 	}

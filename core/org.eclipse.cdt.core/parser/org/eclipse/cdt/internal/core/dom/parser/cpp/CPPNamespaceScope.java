@@ -22,7 +22,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics.LookupData;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 
 /**
@@ -40,8 +40,7 @@ public class CPPNamespaceScope extends CPPScope implements ICPPNamespaceScope{
 	 */
 	public ICPPUsingDirective[] getUsingDirectives() throws DOMException {
 		if (!isFullyCached()) {
-			LookupData ld= new LookupData();
-			CPPSemantics.lookupInScope(ld, this, null);
+			CPPSemantics.lookupInScope(null, this, null);
 		}
 		return (ICPPUsingDirective[]) ArrayUtil.trim( ICPPUsingDirective.class, usings, true );
 	}

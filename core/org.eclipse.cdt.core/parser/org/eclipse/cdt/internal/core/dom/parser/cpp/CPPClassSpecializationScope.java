@@ -31,6 +31,9 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
  * @author aniefer
@@ -203,9 +206,8 @@ public class CPPClassSpecializationScope implements ICPPClassScope, IASTInternal
 	public boolean isFullyCached() throws DOMException {
 		ICPPScope origScope = (ICPPScope) getOriginalClass().getCompositeScope();
 		if (!ASTInternal.isFullyCached(origScope)) {
-			CPPSemantics.LookupData data = new CPPSemantics.LookupData();
 			try {
-				CPPSemantics.lookupInScope(data, origScope, null);
+				CPPSemantics.lookupInScope(null, origScope, null);
 			} catch (DOMException e) {
 			}
 		}

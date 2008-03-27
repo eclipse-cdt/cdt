@@ -89,7 +89,7 @@ import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.ui.text.folding.ICFoldingStructureProvider;
 
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.model.ASTCache;
 
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;

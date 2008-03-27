@@ -11,7 +11,7 @@
  *    Markus Schorn (Wind River Systems)
  *    Sergey Prigogin (Google)
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.dom.parser.cpp;
+package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
@@ -82,7 +82,36 @@ import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics.Cost;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTLiteralExpression;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassSpecialization;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassTemplatePartialSpecialization;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassTemplateSpecialization;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPConstructorInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPConstructorSpecialization;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPConstructorTemplateSpecialization;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFieldSpecialization;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionSpecialization;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionTemplate;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionTemplateSpecialization;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethodInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethodSpecialization;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethodTemplateSpecialization;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameter;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateDefinition;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTemplateParameter;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTypedefSpecialization;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBase;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalClassTemplate;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalDeferredClassInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalTemplate;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalTemplateInstantiator;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknown;
 
 /**
  * @author aniefer
@@ -399,7 +428,7 @@ public class CPPTemplates {
 	}
 
 	protected static IBinding createFunctionSpecialization(IASTName name) {
-		CPPSemantics.LookupData data = new CPPSemantics.LookupData(name);
+		LookupData data = new LookupData(name);
 		data.forceQualified = true;
 		ICPPScope scope = (ICPPScope) CPPVisitor.getContainingScope(name);
 		if (scope instanceof ICPPTemplateScope) {
@@ -1538,7 +1567,7 @@ public class CPPTemplates {
 						pType = e.getProblem();
 					}
 				}
-				Cost cost = CPPSemantics.checkStandardConversionSequence(argument, pType, false);
+				Cost cost = Conversions.checkStandardConversionSequence(argument, pType, false);
 
 				if (cost == null || cost.rank == Cost.NO_MATCH_RANK) {
 					return false;
@@ -1575,7 +1604,7 @@ public class CPPTemplates {
 	public static boolean typeContainsTemplateParameter(IType t) {
 		if (t instanceof ICPPTemplateParameter)
 			return true;
-		t = CPPSemantics.getUltimateType(t, false);
+		t = SemanticUtil.getUltimateType(t, false);
 		return (t instanceof ICPPTemplateParameter);
 	}
 
@@ -1703,7 +1732,7 @@ public class CPPTemplates {
 				IBinding origClass = origBase.getBaseClass();
 				if (origClass instanceof IType) {
 					IType specClass = CPPTemplates.instantiateType((IType) origClass, classInstance.getArgumentMap());
-					specClass = CPPSemantics.getUltimateType(specClass, true);
+					specClass = SemanticUtil.getUltimateType(specClass, true);
 					if (specClass instanceof IBinding) {
 						((ICPPInternalBase) specBase).setBaseClass((IBinding) specClass);
 					}

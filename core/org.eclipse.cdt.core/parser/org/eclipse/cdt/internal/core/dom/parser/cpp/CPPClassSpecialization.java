@@ -37,6 +37,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBas
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 
 /**
@@ -80,7 +83,7 @@ public class CPPClassSpecialization extends CPPSpecialization implements
     		    IBinding base = bindings[i].getBaseClass();
     		    if (base instanceof IType) {
     		    	IType specBase = CPPTemplates.instantiateType((IType) base, argumentMap);
-    		    	specBase = CPPSemantics.getUltimateType(specBase, false);
+    		    	specBase = SemanticUtil.getUltimateType(specBase, false);
     		    	if (specBase instanceof IBinding) {
     		    		((ICPPInternalBase)specBinding).setBaseClass((IBinding)specBase);
     		    	}

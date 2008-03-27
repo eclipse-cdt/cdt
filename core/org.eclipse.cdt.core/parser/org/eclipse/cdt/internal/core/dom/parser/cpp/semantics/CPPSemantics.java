@@ -11,14 +11,14 @@
  *    Bryan Wilkinson (QNX)
  *    Andrew Ferguson (Symbian)
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.dom.parser.cpp;
+package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
+
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getUltimateType;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
@@ -26,7 +26,6 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
-import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -43,7 +42,6 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
-import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -53,7 +51,6 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
-import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -61,21 +58,15 @@ import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
-import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
-import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
-import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
@@ -91,12 +82,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
@@ -111,7 +100,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
@@ -119,8 +107,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
@@ -133,8 +119,24 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
-import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPCompositeBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitFunction;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitTypedef;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNamespace;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUsingDeclaration;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUsingDirective;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalTemplateInstantiator;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 
 /**
@@ -142,493 +144,11 @@ import org.eclipse.cdt.internal.core.index.IIndexScope;
  */
 public class CPPSemantics {
 
-    protected static final ASTNodeProperty STRING_LOOKUP_PROPERTY = new ASTNodeProperty("CPPSemantics.STRING_LOOKUP_PROPERTY - STRING_LOOKUP"); //$NON-NLS-1$
+    public static final ASTNodeProperty STRING_LOOKUP_PROPERTY = new ASTNodeProperty("CPPSemantics.STRING_LOOKUP_PROPERTY - STRING_LOOKUP"); //$NON-NLS-1$
 	public static final char[] EMPTY_NAME_ARRAY = new char[0];
 	public static final String EMPTY_NAME = ""; //$NON-NLS-1$
 	public static final char[] OPERATOR_ = new char[] {'o','p','e','r','a','t','o','r',' '};  
 	public static final IType VOID_TYPE = new CPPBasicType( IBasicType.t_void, 0 );
-	
-	static protected class LookupData
-	{
-		protected IASTName astName;
-		protected CPPASTTranslationUnit tu;
-		public Map<ICPPNamespaceScope, List<ICPPNamespaceScope>> usingDirectives= Collections.emptyMap(); 
-		public ObjectSet visited= new ObjectSet(1);	//used to ensure we don't visit things more than once
-		public ObjectSet inheritanceChain;	//used to detect circular inheritance
-		public ObjectSet associated = ObjectSet.EMPTY_SET;
-		
-		public boolean checkWholeClassScope = false;
-		public boolean ignoreUsingDirectives = false;
-		public boolean usingDirectivesOnly = false;
-		public boolean forceQualified = false;
-		public boolean forUserDefinedConversion = false;
-		public boolean forAssociatedScopes = false;
-		public boolean contentAssist = false;
-		public boolean prefixLookup = false;
-		public boolean typesOnly = false;
-		public boolean considerConstructors = false;
-		public Object foundItems = null;
-		public Object [] functionParameters;
-		public IASTNode [] templateArguments;
-		public ProblemBinding problem;
-        
-		
-		public LookupData( IASTName n ){
-			astName = n;
-			tu= (CPPASTTranslationUnit) astName.getTranslationUnit();
-			typesOnly = typesOnly();
-			considerConstructors = considerConstructors();
-			checkWholeClassScope = checkWholeClassScope();
-		}
-		public LookupData(){
-			astName = null;
-		}
-		public final char [] name () {
-			if( astName != null )
-				return astName.toCharArray();
-			return EMPTY_NAME_ARRAY;
-		}
-		public boolean includeBlockItem( IASTNode item ){
-		    if( astName.getPropertyInParent() == STRING_LOOKUP_PROPERTY ) return true;
-		    if( ( astName != null && astName.getParent() instanceof IASTIdExpression ) || 
-		        item instanceof ICPPASTNamespaceDefinition  ||
-	           (item instanceof IASTSimpleDeclaration && ((IASTSimpleDeclaration)item).getDeclSpecifier() instanceof IASTCompositeTypeSpecifier ) ||
-			    item instanceof ICPPASTTemplateDeclaration )
-		    {
-		        return true;
-		    }
-		    return false;
-		}
-		private boolean typesOnly(){
-			if( astName == null ) return false;
-			if( astName.getPropertyInParent() == STRING_LOOKUP_PROPERTY ) return false;
-			IASTNode parent = astName.getParent();
-			if( parent instanceof ICPPASTBaseSpecifier || parent instanceof ICPPASTElaboratedTypeSpecifier || 
-			    parent instanceof ICPPASTCompositeTypeSpecifier )
-			    return true;
-			if( parent instanceof ICPPASTQualifiedName ){
-			    IASTName [] ns = ((ICPPASTQualifiedName)parent).getNames();
-			    return ( astName != ns[ ns.length -1 ] );
-			}
-			return false;
-		}
-		public boolean forUsingDeclaration(){
-			if( astName == null ) return false;
-			if( astName.getPropertyInParent() == STRING_LOOKUP_PROPERTY ) return false;
-			IASTNode p1 = astName.getParent();
-			if( p1 instanceof ICPPASTUsingDeclaration )
-			    return true;
-			
-			if( p1 instanceof ICPPASTQualifiedName ){
-			    IASTNode p2 = p1.getParent();
-			    if( p2 instanceof ICPPASTUsingDeclaration ){
-			        IASTName [] ns = ((ICPPASTQualifiedName) p1 ).getNames();
-			        return (ns[ ns.length - 1 ] == astName);
-			    }
-			}
-			return false;
-		}
-		public boolean forDefinition(){
-			if( astName == null ) return false;
-			if( astName.getPropertyInParent() == STRING_LOOKUP_PROPERTY ) return false;
-			
-			IASTName n = astName;
-			if( n.getParent() instanceof ICPPASTTemplateId )
-			    n = (IASTName) n.getParent();
-			IASTNode p1 = n.getParent();
-			if( p1 instanceof ICPPASTQualifiedName ){
-			    IASTName [] ns = ((ICPPASTQualifiedName)p1).getNames();
-			    if( ns[ns.length - 1] != n )
-			        return false;
-			    p1 = p1.getParent();
-			}			
-			IASTNode p2 = p1.getParent();
-			if( p1 instanceof IASTDeclarator && p2 instanceof IASTSimpleDeclaration ){
-				return !( p2.getParent() instanceof ICPPASTExplicitTemplateInstantiation );
-			}
-			return ( p1 instanceof IASTDeclarator && p2 instanceof IASTFunctionDefinition);
-		}
-		
-		public boolean forExplicitInstantiation(){
-			if( astName == null ) return false;
-			if( astName.getPropertyInParent() == STRING_LOOKUP_PROPERTY ) return false;
-			
-			IASTName n = astName;
-			if( n.getParent() instanceof ICPPASTTemplateId )
-			    n = (IASTName) n.getParent();
-			IASTNode p1 = n.getParent();
-			if( p1 instanceof ICPPASTQualifiedName ){
-			    IASTName [] ns = ((ICPPASTQualifiedName)p1).getNames();
-			    if( ns[ns.length - 1] != n )
-			        return false;
-			    p1 = p1.getParent();
-			}			
-			IASTNode p2 = p1.getParent();
-			if( p1 instanceof IASTDeclarator && p2 instanceof IASTSimpleDeclaration ){
-				return ( p2.getParent() instanceof ICPPASTExplicitTemplateInstantiation );
-			}
-			return false;
-		}
-		
-		private boolean considerConstructors(){
-			if( astName == null ) return false;
-			if( astName.getPropertyInParent() == STRING_LOOKUP_PROPERTY ) return false;
-			IASTNode p1 = astName.getParent();
-			IASTNode p2 = p1.getParent();
-			
-			if( p1 instanceof ICPPASTConstructorChainInitializer )
-				return true;
-			if( p1 instanceof ICPPASTNamedTypeSpecifier && p2 instanceof IASTTypeId )
-				return p2.getParent() instanceof ICPPASTNewExpression;
-			else if( p1 instanceof ICPPASTQualifiedName ){
-				if( p2 instanceof ICPPASTFunctionDeclarator ){
-					IASTName[] names = ((ICPPASTQualifiedName)p1).getNames();
-					if( names.length >= 2 && names[ names.length - 1 ] == astName )
-					    return CPPVisitor.isConstructor( names[ names.length - 2 ], (IASTDeclarator) p2 );
-				} else if( p2 instanceof ICPPASTNamedTypeSpecifier ){
-					IASTNode p3 = p2.getParent();
-					return p3 instanceof IASTTypeId && p3.getParent() instanceof ICPPASTNewExpression;
-				} else if( p2 instanceof IASTIdExpression ){
-					return p2.getParent() instanceof IASTFunctionCallExpression;
-				}
-			} else if( p1 instanceof IASTFunctionCallExpression || p2 instanceof IASTFunctionCallExpression )
-				return true;
-			return false;
-		}
-		public boolean qualified(){
-		    if( forceQualified ) return true;
-			if( astName == null ) return false;
-			if( astName.getPropertyInParent() == STRING_LOOKUP_PROPERTY ) return false;
-			IASTNode p1 = astName.getParent();
-			if( p1 instanceof ICPPASTQualifiedName ){
-				final IASTName[] qnames = ((ICPPASTQualifiedName)p1).getNames();
-				return qnames.length == 1 || qnames[0] != astName;
-			}
-			return p1 instanceof ICPPASTFieldReference;
-		}
-		public boolean functionCall(){
-		    if( astName == null ) return false;
-		    if( astName.getPropertyInParent() == STRING_LOOKUP_PROPERTY ) return false;
-		    IASTNode p1 = astName.getParent();
-		    if( p1 instanceof ICPPASTQualifiedName )
-		        p1 = p1.getParent();
-		    return ( p1 instanceof IASTIdExpression && p1.getPropertyInParent() == IASTFunctionCallExpression.FUNCTION_NAME );
-		}
-        private boolean checkWholeClassScope() {
-            if( astName == null ) return false;
-            if( astName.getPropertyInParent() == STRING_LOOKUP_PROPERTY ) return true;
-            
-            IASTNode parent = astName.getParent();
-            while( parent != null && !(parent instanceof IASTFunctionDefinition) ){
-                parent = parent.getParent();
-            }
-            if( parent instanceof IASTFunctionDefinition ){
-            	while( parent.getParent() instanceof ICPPASTTemplateDeclaration )
-            		parent = parent.getParent();
-                if( parent.getPropertyInParent() != IASTCompositeTypeSpecifier.MEMBER_DECLARATION )
-                    return false;
-                
-                ASTNodeProperty prop = astName.getPropertyInParent();
-                if( prop == ICPPASTQualifiedName.SEGMENT_NAME )
-                    prop = astName.getParent().getPropertyInParent();
-                if( prop == IASTIdExpression.ID_NAME || 
-    				prop == IASTFieldReference.FIELD_NAME || 
-    				prop == ICASTFieldDesignator.FIELD_NAME ||
-    				prop == ICPPASTUsingDirective.QUALIFIED_NAME ||
-    				prop == ICPPASTUsingDeclaration.NAME ||
-    				prop == IASTFunctionCallExpression.FUNCTION_NAME ||
-    				prop == IASTNamedTypeSpecifier.NAME ||
-    				prop == ICPPASTConstructorChainInitializer.MEMBER_ID )
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-        
-        public boolean hasResults(){
-            if( foundItems == null )
-                return false;
-            if( foundItems instanceof Object [] )
-                return ((Object[])foundItems).length != 0;
-            if( foundItems instanceof CharArrayObjectMap )
-                return ((CharArrayObjectMap)foundItems).size() != 0;
-            return false;
-        }
-        /**
-         * an IType[] of function arguments, inluding the implied object argument
-         * @return
-         */
-        public IType getImpliedObjectArgument() {
-            IType implied = null;
-            
-            if( astName != null ){
-                IASTName tempName = astName;
-                while( tempName.getParent() instanceof IASTName )
-                    tempName = (IASTName) tempName.getParent();
-                
-                ASTNodeProperty prop = tempName.getPropertyInParent();
-                if( (prop == STRING_LOOKUP_PROPERTY && tempName.getParent() instanceof ICPPASTUnaryExpression) ) {
-                	ICPPASTUnaryExpression unaryExp = (ICPPASTUnaryExpression) tempName.getParent();
-                	IASTExpression oprd= unaryExp.getOperand();
-                	return CPPVisitor.getExpressionType(oprd);
-                } else if( prop == IASTFieldReference.FIELD_NAME || 
-                	(prop == STRING_LOOKUP_PROPERTY && tempName.getParent() instanceof ICPPASTFieldReference) )
-                {
-                    ICPPASTFieldReference fieldRef = (ICPPASTFieldReference) tempName.getParent();
-                    implied = CPPVisitor.getExpressionType( fieldRef.getFieldOwner() );
-                    IType ultimateImplied= getUltimateTypeUptoPointers(implied);
-                    if( prop != STRING_LOOKUP_PROPERTY && fieldRef.isPointerDereference() && ultimateImplied instanceof ICPPClassType) {
-                    	ICPPFunction operator= findOperator(fieldRef, (ICPPClassType) ultimateImplied);
-                    	try {
-                    		if(operator!=null) {
-                    			implied= operator.getType().getReturnType();
-                    		}
-                    	} catch(DOMException de) {
-                    		return de.getProblem();
-                    	}
-                    } else if( fieldRef.isPointerDereference() && implied instanceof IPointerType ){
-                        try {
-                            implied = ((IPointerType)implied).getType();
-                        } catch ( DOMException e ) {
-                            implied = e.getProblem();
-                        }
-                    }
-                } else if( prop == IASTIdExpression.ID_NAME ){
-                    IScope scope = CPPVisitor.getContainingScope( tempName );
-                    if( scope instanceof ICPPClassScope ){
-                        implied = ((ICPPClassScope)scope).getClassType();
-                    } else {
-	                    implied = CPPVisitor.getThisType( scope );
-	                    if( implied instanceof IPointerType ){
-	                        try {
-	                            implied = ((IPointerType)implied).getType();
-	                        } catch ( DOMException e ) {
-	                            implied = e.getProblem();
-	                        }
-	                    }
-                    }
-                } else if( prop == STRING_LOOKUP_PROPERTY && tempName.getParent() instanceof IASTArraySubscriptExpression ){
-            		IASTExpression exp = ((IASTArraySubscriptExpression)tempName.getParent()).getArrayExpression();
-            		implied = CPPVisitor.getExpressionType( exp );
-                }
-            }
-            return implied;
-        }
-		public boolean forFriendship() {
-			if( astName == null )
-				return false;
-			IASTNode node = astName.getParent();
-			while( node instanceof IASTName )
-				node = node.getParent();
-			
-			IASTDeclaration decl = null;
-			IASTDeclarator dtor = null;
-			if( node instanceof ICPPASTDeclSpecifier && node.getParent() instanceof IASTDeclaration ){
-				decl = (IASTDeclaration) node.getParent();
-			} else if( node instanceof IASTDeclarator ) {
-				dtor = (IASTDeclarator) node;
-				while( dtor.getParent() instanceof IASTDeclarator )
-					dtor = (IASTDeclarator) dtor.getParent();
-				if( !(dtor.getParent() instanceof IASTDeclaration) )
-					return false;
-				decl = (IASTDeclaration) dtor.getParent();
-			} else {
-				return false;
-			}
-			if( decl instanceof IASTSimpleDeclaration ){
-				IASTSimpleDeclaration simple = (IASTSimpleDeclaration) decl;
-				if( ! ((ICPPASTDeclSpecifier)simple.getDeclSpecifier()).isFriend() )
-					return false;
-				if( dtor != null )
-					return true;
-				return simple.getDeclarators().length == 0;
-			} else if( decl instanceof IASTFunctionDefinition ){
-				IASTFunctionDefinition fnDef = (IASTFunctionDefinition) decl;
-				if( ! ((ICPPASTDeclSpecifier)fnDef.getDeclSpecifier()).isFriend() )
-					return false;
-				return ( dtor != null );
-			}
-			return false;
-		}
-		
-		public boolean checkAssociatedScopes() {
-			if( astName == null || astName instanceof ICPPASTQualifiedName )
-				return false;
-			IASTNode parent = astName.getParent();
-			if( parent instanceof ICPPASTQualifiedName ){
-				IASTName [] ns = ((ICPPASTQualifiedName)parent).getNames();
-				if( ns[ ns.length - 1] != astName )
-					return false;
-			}
-			return functionCall() && (associated.size() > 0);
-		}
-		public boolean checkClassContainingFriend() {
-			if( astName == null || astName instanceof ICPPASTQualifiedName )
-				return false;
-			
-			IASTNode p = astName.getParent();
-			ASTNodeProperty prop = null;
-			while( p != null ){
-				prop = p.getPropertyInParent();
-				if( prop == ICPPASTTemplateId.TEMPLATE_ID_ARGUMENT || prop == IASTDeclarator.DECLARATOR_NAME )
-					return false;
-				if( p instanceof IASTDeclarator && !(((IASTDeclarator)p).getName() instanceof ICPPASTQualifiedName) )
-					return false;
-				if( p instanceof IASTDeclaration ){
-					if( prop == IASTCompositeTypeSpecifier.MEMBER_DECLARATION ){
-						if( p instanceof IASTSimpleDeclaration ){
-							ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration)p).getDeclSpecifier();
-							return declSpec.isFriend();
-						} else if( p instanceof IASTFunctionDefinition ){
-							ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTFunctionDefinition)p).getDeclSpecifier();
-							return declSpec.isFriend();
-						}
-					} else {
-						return false;
-					}
-				}
-				p = p.getParent();
-			}
-			return false;
-		}
-		public boolean preferTemplateFunctions() {
-			if( astName == null )
-				return false;
-			return (astName instanceof ICPPASTTemplateId || astName.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_NAME );
-		}
-	}
-
-	static protected class Cost {
-		//Some constants to help clarify things
-		public static final int AMBIGUOUS_USERDEFINED_CONVERSION = 1;
-		
-		public static final int NO_MATCH_RANK = -1;
-		public static final int IDENTITY_RANK = 0;
-		public static final int LVALUE_OR_QUALIFICATION_RANK = 0;
-		public static final int PROMOTION_RANK = 1;
-		public static final int CONVERSION_RANK = 2;
-		public static final int DERIVED_TO_BASE_CONVERSION = 3;
-		public static final int USERDEFINED_CONVERSION_RANK = 4;
-		public static final int ELLIPSIS_CONVERSION = 5;
-		public static final int FUZZY_TEMPLATE_PARAMETERS = 6;
-		
-		public IType source;
-		public IType target;
-		
-		public boolean targetHadReference = false;
-		
-		public int lvalue;
-		public int promotion;
-		public int conversion;
-		public int qualification;
-		public int userDefined;
-		public int rank = -1;
-		public int detail;
-		
-		public Cost( IType s, IType t ){
-			source = s;
-			target = t;
-		}
-
-		public int compare( Cost cost ) throws DOMException{
-			int result = 0;
-			
-			if( rank != cost.rank ){
-				return cost.rank - rank;
-			}
-			
-			if( userDefined != 0 || cost.userDefined != 0 ){
-				if( userDefined == 0 || cost.userDefined == 0 ){
-					return cost.userDefined - userDefined;
-				} 
-				if( (userDefined == AMBIGUOUS_USERDEFINED_CONVERSION || cost.userDefined == AMBIGUOUS_USERDEFINED_CONVERSION) ||
-					(userDefined != cost.userDefined ) )
-						return 0;
-		 
-					// else they are the same constructor/conversion operator and are ranked
-					//on the standard conversion sequence
-		
-			}
-			
-			if( promotion > 0 || cost.promotion > 0 ){
-				result = cost.promotion - promotion;
-			}
-			if( conversion > 0 || cost.conversion > 0 ){
-				if( detail == cost.detail ){
-					result = cost.conversion - conversion;
-				} else {
-					result = cost.detail - detail;
-				}
-			}
-			
-			if( result == 0 ){
-				if( cost.qualification != qualification ){
-					return cost.qualification - qualification;
-				} else if( (cost.qualification == qualification) && qualification == 0 ){
-					return 0;
-				} else {
-					IPointerType op1, op2;
-					IType t1 = cost.target, t2 = target;
-					int subOrSuper = 0;
-					while( true ){
-						op1 = null;
-						op2 = null;
-						while( true ){
-							if( t1 instanceof ITypedef )
-                                try {
-                                    t1 = ((ITypedef)t1).getType();
-                                } catch ( DOMException e ) {
-                                    t1 = e.getProblem();
-                                }
-                            else {
-								if( t1 instanceof IPointerType )		
-									op1 = (IPointerType) t1;	
-								break;
-							}
-						}
-						while( true ){
-							if( t2 instanceof ITypedef )
-                                try {
-                                    t2 = ((ITypedef)t2).getType();
-                                } catch ( DOMException e ) {
-                                    t2 = e.getProblem();
-                                }
-                            else {
-								if( t2 instanceof IPointerType )		
-									op1 = (IPointerType) t2;	
-								break;
-							}
-						}
-						if( op1 == null || op2 == null )
-							break;
-						
-						int cmp = ( op1.isConst() ? 1 : 0 ) + ( op1.isVolatile() ? 1 : 0 ) -
-						          ( op2.isConst() ? 1 : 0 ) + ( op2.isVolatile() ? 1 : 0 );
- 
-						if( subOrSuper == 0 )
-							subOrSuper = cmp;
-						else if( subOrSuper > 0 ^ cmp > 0) {
-							result = -1;
-							break;
-						}
-
-					}
-					if( result == -1 ){
-						result = 0;
-					} else {
-						if( op1 == op2 ){
-							result = subOrSuper;
-						} else {
-							result = op1 != null ? 1 : -1; 
-						}
-					}
-				}
-			}
-			 
-			return result;
-		}
-	}
 	
 	static protected IBinding resolveBinding( IASTName name ){      
 		//1: get some context info off of the name to figure out what kind of lookup we want
@@ -789,8 +309,8 @@ public class CPPSemantics {
         return binding;
     }
 
-    static private CPPSemantics.LookupData createLookupData( IASTName name, boolean considerAssociatedScopes ){
-		CPPSemantics.LookupData data = new CPPSemantics.LookupData( name );
+    static private LookupData createLookupData( IASTName name, boolean considerAssociatedScopes ){
+		LookupData data = new LookupData( name );
 		IASTNode parent = name.getParent();
 		
 		if( name instanceof ICPPASTTemplateId ){
@@ -1016,7 +536,7 @@ public class CPPSemantics {
 
         return resultMap;
 	}
-	static protected void lookup( CPPSemantics.LookupData data, Object start ) throws DOMException{
+	static protected void lookup( LookupData data, Object start ) throws DOMException{
 		IASTNode node = data.astName;
 
 		IIndexFileSet fileSet= IIndexFileSet.EMPTY;
@@ -1186,7 +706,7 @@ public class CPPSemantics {
 		return parentScope;
 	}
 
-	private static Object lookupInParents( CPPSemantics.LookupData data, ICPPScope lookIn ) throws DOMException{
+	private static Object lookupInParents( LookupData data, ICPPScope lookIn ) throws DOMException{
 		ICPPBase [] bases = null;
 		if( lookIn instanceof ICPPClassScope ){
 			ICPPClassType c  = ((ICPPClassScope)lookIn).getClassType();
@@ -1387,7 +907,7 @@ public class CPPSemantics {
 	 * In case of an unqualified lookup the transitive directives are stored, also. This is important because
 	 * the members nominated by a transitive directive can appear before those of the original directive.
 	 */
-	static private void storeUsingDirective(CPPSemantics.LookupData data, ICPPNamespaceScope container, 
+	static private void storeUsingDirective(LookupData data, ICPPNamespaceScope container, 
 			ICPPUsingDirective directive, Set<ICPPNamespaceScope> handled) throws DOMException {
 		ICPPNamespaceScope nominated= directive.getNominatedScope();
 		if (nominated instanceof IIndexScope && data.tu != null) {
@@ -1444,11 +964,16 @@ public class CPPSemantics {
 
 	/**
 	 * 
+	 * @param data may be null to use a fresh LookupData
 	 * @param scope
+	 * @param blockItem
 	 * @return List of encountered using directives
 	 * @throws DOMException
 	 */
-	static protected IASTName[] lookupInScope( CPPSemantics.LookupData data, ICPPScope scope, IASTNode blockItem ) throws DOMException {
+	public static IASTName[] lookupInScope( LookupData data, ICPPScope scope, IASTNode blockItem ) throws DOMException {
+		if(data == null) {
+			data = new LookupData();
+		}
 		final boolean isIndexBased= data.tu == null ? false : data.tu.getIndex() != null;
 		Object possible = null;
 		IASTNode [] nodes = null;
@@ -1630,7 +1155,7 @@ public class CPPSemantics {
 	 * that transitive directives have been stored in the lookup-data. For qualified lookups the transitive directives
 	 * are considered if the lookup of the original directive returns empty.
 	 */
-	static private void lookupInNominated(CPPSemantics.LookupData data, ICPPNamespaceScope scope) throws DOMException{
+	static private void lookupInNominated(LookupData data, ICPPNamespaceScope scope) throws DOMException{
 		List<ICPPNamespaceScope> allNominated= data.usingDirectives.remove(scope);
 		while (allNominated != null) {
 			for (ICPPNamespaceScope nominated : allNominated) {
@@ -1673,7 +1198,7 @@ public class CPPSemantics {
 		}
 	}
 
-	static private Object collectResult( CPPSemantics.LookupData data, ICPPScope scope, IASTNode node, boolean checkAux ) throws DOMException{
+	static private Object collectResult( LookupData data, ICPPScope scope, IASTNode node, boolean checkAux ) throws DOMException{
 	    IASTName resultName = null;
 	    IASTName [] resultArray = null;
 	    
@@ -2011,7 +1536,7 @@ public class CPPSemantics {
 	    return ( pointOfDecl < pointOfRef );
 	}
 	
-	static private IBinding resolveAmbiguities( CPPSemantics.LookupData data, IASTName name ) throws DOMException {
+	static private IBinding resolveAmbiguities( LookupData data, IASTName name ) throws DOMException {
 	    if( !data.hasResults() || data.contentAssist )
 	        return null;
 	      
@@ -2334,7 +1859,7 @@ public class CPPSemantics {
 	    return result;
 	}
 	
-	static private IBinding resolveFunction( CPPSemantics.LookupData data, IBinding[] fns ) throws DOMException{
+	static IBinding resolveFunction( LookupData data, IBinding[] fns ) throws DOMException{
 	    fns = (IBinding[]) ArrayUtil.trim( IBinding.class, fns );
 	    if( fns == null || fns.length == 0 )
 	        return null;
@@ -2430,12 +1955,12 @@ public class CPPSemantics {
 					cost = new Cost( source, target );
 					cost.rank = Cost.IDENTITY_RANK;	//exact match, no cost
 				} else {
-					cost = checkStandardConversionSequence( source, target, isImpliedObject);
+					cost = Conversions.checkStandardConversionSequence( source, target, isImpliedObject);
 					//12.3-4 At most one user-defined conversion is implicitly applied to
 					//a single value.  (also prevents infinite loop)				
 					if (!data.forUserDefinedConversion && (cost.rank == Cost.NO_MATCH_RANK || 
 							cost.rank == Cost.FUZZY_TEMPLATE_PARAMETERS)) { 
-						temp = checkUserDefinedConversionSequence( source, target );
+						temp = Conversions.checkUserDefinedConversionSequence( source, target );
 						if( temp != null ){
 							cost = temp;
 						}
@@ -2764,581 +2289,7 @@ public class CPPSemantics {
         }
         return result;
     }
-    /**
-     * Computes the cost of using the standard conversion sequence from source to target.
-     * @param ignoreDerivedToBaseConversion handles the special case when members of different
-     *    classes are nominated via using-declarations. In such a situation the derived to
-     *    base conversion does not cause any costs.
-     * @throws DOMException
-     */
-    static protected Cost checkStandardConversionSequence( IType source, IType target, boolean isImplicitThis) throws DOMException {
-		Cost cost = lvalue_to_rvalue( source, target );
-		
-		if( cost.source == null || cost.target == null ){
-			return cost;
-		}
-			
-		if (cost.source.isSameType(cost.target) || 
-				// 7.3.3.13 for overload resolution the implicit this pointer is treated as if 
-				// it were a pointer to the derived class
-				(isImplicitThis && cost.source instanceof ICPPClassType && cost.target instanceof ICPPClassType)) {
-			cost.rank = Cost.IDENTITY_RANK;
-			return cost;
-		}
-	
-		qualificationConversion( cost );
-		
-		//if we can't convert the qualifications, then we can't do anything
-		if( cost.qualification == Cost.NO_MATCH_RANK ){
-			return cost;
-		}
-		
-		//was the qualification conversion enough?
-		IType s = getUltimateType( cost.source, true );
-		IType t = getUltimateType( cost.target, true );
-		
-		if( s == null || t == null ){
-		    cost.rank = Cost.NO_MATCH_RANK;
-			return cost;
-		}
-		
-		if (s.isSameType(t) || 
-				// 7.3.3.13 for overload resolution the implicit this pointer is treated as if 
-				// it were a pointer to the derived class
-				(isImplicitThis && s instanceof ICPPClassType && t instanceof ICPPClassType)) {
-			return cost;
-		}
-		
-		promotion( cost );
-		if( cost.promotion > 0 || cost.rank > -1 ){
-			return cost;
-		}
-		
-		conversion( cost );
-		
-		if( cost.rank > -1 )
-			return cost;
-		
-		derivedToBaseConversion( cost );
-		
-		if( cost.rank == -1 ){
-			relaxTemplateParameters( cost );
-		}
-		return cost;	
-	}
-	
-	static private Cost checkUserDefinedConversionSequence( IType source, IType target ) throws DOMException {
-		Cost cost = null;
-		Cost constructorCost = null;
-		Cost conversionCost = null;
-
-		IType s = getUltimateType( source, true );
-		IType t = getUltimateType( target, true );
-
-		ICPPConstructor constructor = null;
-		ICPPMethod conversion = null;
-		
-		//constructors
-		if( t instanceof ICPPClassType ){
-			ICPPConstructor [] constructors = ((ICPPClassType)t).getConstructors();
-			if( constructors.length > 0 ){
-			    if( constructors.length == 1 && constructors[0] instanceof IProblemBinding )
-			        constructor = null;
-			    else {
-					LookupData data = new LookupData();
-					data.forUserDefinedConversion = true;
-					data.functionParameters = new IType [] { source };
-			    	IBinding binding = resolveFunction( data, constructors );
-			    	if( binding instanceof ICPPConstructor )
-			    		constructor = (ICPPConstructor) binding;
-			    }
-			}
-			if( constructor != null && !constructor.isExplicit() ){
-				constructorCost = checkStandardConversionSequence( t, target, false );
-			}
-		}
-		
-		//conversion operators
-		if( s instanceof ICPPInternalClassType ){
-			ICPPMethod [] ops = ((ICPPInternalClassType)s).getConversionOperators();
-			if( ops.length > 0 && !(ops[0] instanceof IProblemBinding) ){
-				Cost [] costs = null;
-				for (int i = 0; i < ops.length; i++) {
-					cost = checkStandardConversionSequence( ops[i].getType().getReturnType(), target, false );
-					if( cost.rank != Cost.NO_MATCH_RANK )
-						costs = (Cost[]) ArrayUtil.append( Cost.class, costs, cost );
-				}
-				if( costs != null ){
-					Cost best = costs[0];
-					boolean bestIsBest = true;
-					int bestIdx = 0;
-					for (int i = 1; i < costs.length && costs[i] != null; i++) {
-						int comp = best.compare( costs[i] );
-						if( comp == 0 )
-							bestIsBest = false;
-						else if( comp > 0 ){
-							best = costs[ bestIdx = i ];
-							bestIsBest = true;
-						}
-					}
-					if( bestIsBest ){
-						conversion = ops[ bestIdx ]; 
-						conversionCost = best;
-					}
-				}
-			}
-		}
-		
-		//if both are valid, then the conversion is ambiguous
-		if( constructorCost != null && constructorCost.rank != Cost.NO_MATCH_RANK && 
-			conversionCost != null && conversionCost.rank != Cost.NO_MATCH_RANK )
-		{
-			cost = constructorCost;
-			cost.userDefined = Cost.AMBIGUOUS_USERDEFINED_CONVERSION;	
-			cost.rank = Cost.USERDEFINED_CONVERSION_RANK;
-		} else {
-			if( constructorCost != null && constructorCost.rank != Cost.NO_MATCH_RANK ){
-				cost = constructorCost;
-				cost.userDefined = constructor.hashCode();
-				cost.rank = Cost.USERDEFINED_CONVERSION_RANK;
-			} else if( conversionCost != null && conversionCost.rank != Cost.NO_MATCH_RANK ){
-				cost = conversionCost;
-				cost.userDefined = conversion.hashCode();
-				cost.rank = Cost.USERDEFINED_CONVERSION_RANK;
-			} 			
-		}
-		return cost;
-	}
-
-	/**
-	 * Unravels a type by following purely typedefs
-	 * @param type
-	 * @return
-	 */
-	private static IType getUltimateTypeViaTypedefs(IType type) {
-		try {
-			while(type instanceof ITypedef) {
-				type= ((ITypedef)type).getType();
-			}
-		} catch(DOMException e) {
-			type= e.getProblem();
-		}
-		return type;
-	}
-	
-	private static IType getUltimateType(IType type, IType[] lastPointerType, boolean stopAtPointerToMember) {
-	    try {
-	        while( true ){
-				if( type instanceof ITypedef )
-					type= ((ITypedef)type).getType();
-	            else if( type instanceof IQualifierType )
-	            	type= ((IQualifierType)type).getType();
-	            else if( stopAtPointerToMember && type instanceof ICPPPointerToMemberType )
-	                return type;
-				else if( type instanceof IPointerType ) {
-					if(lastPointerType!=null) {
-						lastPointerType[0]= type;
-					}
-					type= ((IPointerType) type).getType();
-				} else if( type instanceof ICPPReferenceType )
-					type= ((ICPPReferenceType)type).getType();
-				else 
-					return type;
-				
-			}
-        } catch ( DOMException e ) {
-            return e.getProblem();
-        }
-	}
-	
-	public static IType getUltimateType(IType type, boolean stopAtPointerToMember) {
-	   return getUltimateType(type, null, stopAtPointerToMember);
-	}
-	
-	/**
-	 * Descends into type containers, stopping at pointer or
-	 * pointer-to-member types.
-	 * @param type
-	 * @return the ultimate type contained inside the specified type
-	 */
-	public static IType getUltimateTypeUptoPointers(IType type){
-	    try {
-	        while( true ){
-				if( type instanceof ITypedef )
-				    type = ((ITypedef)type).getType();
-	            else if( type instanceof IQualifierType )
-					type = ((IQualifierType)type).getType();
-				else if( type instanceof ICPPReferenceType )
-					type = ((ICPPReferenceType)type).getType();
-				else 
-					return type;
-			}
-        } catch ( DOMException e ) {
-            return e.getProblem();
-        }
-	}
-	
-	static private boolean isCompleteType( IType type ){
-		type = getUltimateType( type, false );
-		if( type instanceof ICPPClassType && type instanceof ICPPInternalBinding )
-			return (((ICPPInternalBinding)type).getDefinition() != null );
-		return true;
-	}
-	static private Cost lvalue_to_rvalue( IType source, IType target ) throws DOMException{
-		Cost cost = new Cost( source, target );
-		
-		if( ! isCompleteType( source ) ){
-			cost.rank = Cost.NO_MATCH_RANK;
-			return cost;
-		}
-		
-		if( source instanceof ICPPReferenceType ){
-			source = ((ICPPReferenceType) source).getType();
-		}
-		if( target instanceof ICPPReferenceType ){
-			target = ((ICPPReferenceType) target).getType();
-			cost.targetHadReference = true;
-		}
-			
-		//4.3 function to pointer conversion
-		if( target instanceof IPointerType && ((IPointerType)target).getType() instanceof IFunctionType &&
-		    source instanceof IFunctionType )
-	    {
-		    source = new CPPPointerType( source );
-	    }
-	    //4.2 Array-To-Pointer conversion
-		else if( target instanceof IPointerType && source instanceof IArrayType ){
-			source = new CPPPointerType( ((IArrayType)source).getType() );
-		}
-		
-		//4.1 if T is a non-class type, the type of the rvalue is the cv-unqualified version of T
-		if( source instanceof IQualifierType ){
-			IType t = ((IQualifierType)source).getType();
-			while( t instanceof ITypedef )
-				t = ((ITypedef)t).getType();
-			if( !(t instanceof ICPPClassType) ){
-				source = t;
-			}
-		} else if( source instanceof IPointerType && 
-				   ( ((IPointerType)source).isConst() || ((IPointerType)source).isVolatile() ) )
-		{
-			IType t = ((IPointerType)source).getType();
-			while( t instanceof ITypedef )
-				t = ((ITypedef)t).getType();
-			if( !(t instanceof ICPPClassType) ){
-				source = new CPPPointerType( t );
-			}
-		}
-		
-		cost.source = source;
-		cost.target = target;
-		
-		return cost;
-	}
-	
-	static private void qualificationConversion( Cost cost ) throws DOMException{
-		boolean canConvert = true;
-		int requiredConversion = Cost.IDENTITY_RANK;  
-
-		IType s = cost.source, t = cost.target;
-		boolean constInEveryCV2k = true;
-		boolean firstPointer= true;
-		while( true ){
-			 s= getUltimateTypeViaTypedefs(s);
-			 t= getUltimateTypeViaTypedefs(t);
-			 IPointerType op1= s instanceof IPointerType ? (IPointerType) s : null;
-			 IPointerType op2= t instanceof IPointerType ? (IPointerType) t : null;
-			 
-			 if( op1 == null && op2 == null )
-			 	break;
-			 else if( op1 == null ^ op2 == null) {
-			    // 4.12 - pointer types can be converted to bool
-				if(t instanceof ICPPBasicType) {
-					if(((ICPPBasicType)t).getType() == ICPPBasicType.t_bool) {
-						canConvert= true;
-						requiredConversion = Cost.CONVERSION_RANK;
-						break;
-					}
-				}
-			 	canConvert = false; 
-			 	break;
-			 } else if( op1 instanceof ICPPPointerToMemberType ^ op2 instanceof ICPPPointerToMemberType ){
-			     canConvert = false;
-			     break;
-			 } 
-			 
-			 //if const is in cv1,j then const is in cv2,j.  Similary for volatile
-			if( ( op1.isConst() && !op2.isConst() ) || ( op1.isVolatile() && !op2.isVolatile() ) ) {
-				canConvert = false;
-				requiredConversion = Cost.NO_MATCH_RANK;
-				break;
-			}
-			//if cv1,j and cv2,j are different then const is in every cv2,k for 0<k<j
-			if( !constInEveryCV2k && ( op1.isConst() != op2.isConst() ||
-									   op1.isVolatile() != op2.isVolatile() ) )
-			{
-				canConvert = false;
-				requiredConversion = Cost.NO_MATCH_RANK;
-				break; 
-			}
-			constInEveryCV2k &= (firstPointer || op2.isConst());
-			s = op1.getType();
-			t = op2.getType();
-			firstPointer= false;
-		}
-		
-		if( s instanceof IQualifierType ^ t instanceof IQualifierType ){
-		    if( t instanceof IQualifierType ){
-		    	if (!constInEveryCV2k) {
-		    		canConvert= false;
-		    		requiredConversion= Cost.NO_MATCH_RANK;
-		    	}
-		    	else {
-		    		canConvert = true;
-		    		requiredConversion = Cost.CONVERSION_RANK;
-		    	}
-		    } else {
-		    	//4.2-2 a string literal can be converted to pointer to char
-		    	if( t instanceof IBasicType && ((IBasicType)t).getType() == IBasicType.t_char &&
-		    		s instanceof IQualifierType )
-		    	{
-		    		IType qt = ((IQualifierType)s).getType();
-		    		if( qt instanceof IBasicType ){
-		    			IASTExpression val = ((IBasicType)qt).getValue();
-		    			canConvert = (val != null && 
-		    						  val instanceof IASTLiteralExpression && 
-									  ((IASTLiteralExpression)val).getKind() == IASTLiteralExpression.lk_string_literal );
-		    		} else {
-		    			canConvert = false;
-		    			requiredConversion = Cost.NO_MATCH_RANK;
-		    		}
-		    	} else {
-		    		canConvert = false;
-		    		requiredConversion = Cost.NO_MATCH_RANK;
-		    	}
-		    }
-		} else if( s instanceof IQualifierType && t instanceof IQualifierType ){
-			IQualifierType qs = (IQualifierType) s, qt = (IQualifierType) t;
-			if( qs.isConst() == qt.isConst() && qs.isVolatile() == qt.isVolatile() ) {
-				requiredConversion = Cost.IDENTITY_RANK;
-			}
-			else if( (qs.isConst() && !qt.isConst()) || (qs.isVolatile() && !qt.isVolatile()) || !constInEveryCV2k ) {
-				requiredConversion = Cost.NO_MATCH_RANK;
-				canConvert= false;
-			}
-			else
-				requiredConversion = Cost.CONVERSION_RANK;
-		} else if( constInEveryCV2k && !canConvert ){
-			canConvert = true;
-			requiredConversion = Cost.CONVERSION_RANK;
-			int i = 1;
-			for( IType type = s; canConvert == true && i == 1; type = t, i++  ){
-				while( type instanceof ITypeContainer ){
-					if( type instanceof IQualifierType )
-						canConvert = false;
-					else if( type instanceof IPointerType ){
-						canConvert = !((IPointerType)type).isConst() && !((IPointerType)type).isVolatile();
-					}
-					if( !canConvert ){
-						requiredConversion = Cost.NO_MATCH_RANK;
-						break;
-					}
-					type = ((ITypeContainer)type).getType();
-				}
-			}
-		}
-
-		cost.qualification = requiredConversion;
-		if( canConvert == true ){
-			cost.rank = Cost.LVALUE_OR_QUALIFICATION_RANK;
-		}
-	}
-	
-	/**
-	 * 
-	 * @param source
-	 * @param target
-	 * @return int
-	 * 
-	 * 4.5-1 char, signed char, unsigned char, short int or unsigned short int
-	 * can be converted to int if int can represent all the values of the source
-	 * type, otherwise they can be converted to unsigned int.
-	 * 4.5-2 wchar_t or an enumeration can be converted to the first of the
-	 * following that can hold it: int, unsigned int, long unsigned long.
-	 * 4.5-4 bool can be promoted to int 
-	 * 4.6 float can be promoted to double
-	 * @throws DOMException
-	 */
-	static private void promotion( Cost cost ) throws DOMException{
-		IType src = cost.source;
-		IType trg = cost.target;
-		 
-		if( src.isSameType( trg ) )
-			return;
-		
-		if( src instanceof IBasicType && trg instanceof IBasicType ){
-			int sType = ((IBasicType)src).getType();
-			int tType = ((IBasicType)trg).getType();
-			if( ( tType == IBasicType.t_int && ( sType == IBasicType.t_int ||   //short, long , unsigned etc
-												 sType == IBasicType.t_char    || 
-												 sType == ICPPBasicType.t_bool || 
-												 sType == ICPPBasicType.t_wchar_t ||
-												 sType == IBasicType.t_unspecified ) ) || //treat unspecified as int
-				( tType == IBasicType.t_double && sType == IBasicType.t_float ) )
-			{
-				cost.promotion = 1; 
-			}
-		} else if( src instanceof IEnumeration && trg instanceof IBasicType &&
-				   ( ((IBasicType)trg).getType() == IBasicType.t_int || 
-				     ((IBasicType)trg).getType() == IBasicType.t_unspecified ) )
-		{
-			cost.promotion = 1; 
-		}
-		
-		cost.rank = (cost.promotion > 0 ) ? Cost.PROMOTION_RANK : Cost.NO_MATCH_RANK;
-	}
-	
-	static private void conversion( Cost cost ) throws DOMException{
-		IType src = cost.source;
-		IType trg = cost.target;
-		
-		cost.conversion = 0;
-		cost.detail = 0;
-
-		IType[] sHolder= new IType[1], tHolder= new IType[1];
-		IType s = getUltimateType( src, sHolder, true );
-		IType t = getUltimateType( trg, tHolder, true );
-		IType sPrev= sHolder[0], tPrev= tHolder[0];
-		
-		if( src instanceof IBasicType && trg instanceof IPointerType ){
-			//4.10-1 an integral constant expression of integer type that evaluates to 0 can be converted to a pointer type
-			IASTExpression exp = ((IBasicType)src).getValue();
-			if( exp instanceof IASTLiteralExpression && 
-			    ((IASTLiteralExpression)exp).getKind() == IASTLiteralExpression.lk_integer_constant  )
-			{
-				try { 
-					String val = exp.toString().toLowerCase().replace('u', '0');
-					val.replace( 'l', '0' );
-					if( Integer.decode( val ).intValue() == 0 ){
-						cost.rank = Cost.CONVERSION_RANK;
-						cost.conversion = 1;
-					}
-				} catch( NumberFormatException e ) {
-				}
-			}
-		} else if( sPrev instanceof IPointerType ){
-			//4.10-2 an rvalue of type "pointer to cv T", where T is an object type can be
-			//converted to an rvalue of type "pointer to cv void"
-			if( tPrev instanceof IPointerType && t instanceof IBasicType && ((IBasicType)t).getType() == IBasicType.t_void ){
-				cost.rank = Cost.CONVERSION_RANK;
-				cost.conversion = 1;
-				cost.detail = 2;
-				return;
-			}
-			//4.10-3 An rvalue of type "pointer to cv D", where D is a class type can be converted
-			//to an rvalue of type "pointer to cv B", where B is a base class of D.
-			else if( s instanceof ICPPClassType && tPrev instanceof IPointerType && t instanceof ICPPClassType ){
-				int depth= calculateInheritanceDepth( (ICPPClassType)s, (ICPPClassType) t );
-				cost.rank= ( depth > -1 ) ? Cost.CONVERSION_RANK : Cost.NO_MATCH_RANK;
-				cost.conversion= ( depth > -1 ) ? depth : 0;
-				cost.detail= 1;
-				return;
-			}
-			// 4.12 if the target is a bool, we can still convert
-			else if(!(trg instanceof IBasicType && ((IBasicType)trg).getType() == ICPPBasicType.t_bool)) {
-				return;
-			}
-		}
-		
-		if( t instanceof IBasicType && s instanceof IBasicType || s instanceof IEnumeration ){
-			//4.7 An rvalue of an integer type can be converted to an rvalue of another integer type.  
-			//An rvalue of an enumeration type can be converted to an rvalue of an integer type.
-			cost.rank = Cost.CONVERSION_RANK;
-			cost.conversion = 1;	
-		} else if( trg instanceof IBasicType && ((IBasicType)trg).getType() == ICPPBasicType.t_bool && s instanceof IPointerType ){
-			//4.12 pointer or pointer to member type can be converted to an rvalue of type bool
-			cost.rank = Cost.CONVERSION_RANK;
-			cost.conversion = 1;
-		} else if( s instanceof ICPPPointerToMemberType && t instanceof ICPPPointerToMemberType ){
-		    //4.11-2 An rvalue of type "pointer to member of B of type cv T", where B is a class type, 
-			//can be converted to an rvalue of type "pointer to member of D of type cv T" where D is a
-			//derived class of B
-		    ICPPPointerToMemberType spm = (ICPPPointerToMemberType) s;
-		    ICPPPointerToMemberType tpm = (ICPPPointerToMemberType) t;
-		    IType st = spm.getType();
-		    IType tt = tpm.getType();
-		    if( st != null && tt != null && st.isSameType( tt ) ){
-		        int depth= calculateInheritanceDepth( tpm.getMemberOfClass(), spm.getMemberOfClass() );
-		        cost.rank= ( depth > -1 ) ? Cost.CONVERSION_RANK : Cost.NO_MATCH_RANK;
-				cost.conversion= ( depth > -1 ) ? depth : 0;
-				cost.detail= 1;
-		    }
-		}
-	}
-	
-	static private void derivedToBaseConversion( Cost cost ) throws DOMException {
-		IType s = getUltimateType( cost.source, true );
-		IType t = getUltimateType( cost.target, true );
-		
-		if( cost.targetHadReference && s instanceof ICPPClassType && t instanceof ICPPClassType ){
-			int depth= calculateInheritanceDepth( (ICPPClassType) s, (ICPPClassType) t );
-			if(depth > -1){
-				cost.rank= Cost.DERIVED_TO_BASE_CONVERSION;
-				cost.conversion= depth;
-			}	
-		}
-	}
-	
-	static private void relaxTemplateParameters( Cost cost ){
-		IType s = getUltimateType( cost.source, false );
-		IType t = getUltimateType( cost.target, false );
-		
-		if( (s instanceof ICPPTemplateTypeParameter && t instanceof ICPPTemplateTypeParameter) ||
-			(s instanceof ICPPTemplateTemplateParameter && t instanceof ICPPTemplateTemplateParameter ) )
-		{
-			cost.rank = Cost.FUZZY_TEMPLATE_PARAMETERS;
-		}
-	}
-	
-	/**
-	 * Calculates the number of edges in the inheritance path of <code>clazz</code> to
-	 * <code>ancestorToFind</code>, returning -1 if no inheritance relationship is found.
-	 * @param clazz the class to search upwards from
-	 * @param ancestorToFind the class to find in the inheritance graph
-	 * @return the number of edges in the inheritance graph, or -1 if the specifide classes have
-	 * no inheritance relation
-	 * @throws DOMException
-	 */
-	private static int calculateInheritanceDepth(ICPPClassType clazz, ICPPClassType ancestorToFind) throws DOMException {
-		if(clazz == ancestorToFind || clazz.isSameType(ancestorToFind))
-			return 0;
-
-		ICPPBase [] bases = clazz.getBases();
-		for(int i=0; i<bases.length; i++) {
-			IBinding base = bases[i].getBaseClass();
-			if(base instanceof IType) {
-				IType tbase= (IType) base;
-				if( tbase.isSameType(ancestorToFind) || 
-						(ancestorToFind instanceof ICPPSpecialization &&  /*allow some flexibility with templates*/ 
-								((IType)((ICPPSpecialization)ancestorToFind).getSpecializedBinding()).isSameType(tbase) ) ) 
-				{
-					return 1;
-				}
-				
-				tbase= getUltimateTypeViaTypedefs(tbase);
-				if(tbase instanceof ICPPClassType) {
-					int n= calculateInheritanceDepth((ICPPClassType) tbase, ancestorToFind );
-					if(n>0)
-						return n+1;
-				}
-			}
-		}
-		
-		return -1;
-	}
-
-	
-	public static ICPPFunction findOperator( IASTExpression exp, ICPPClassType cls ){
+    public static ICPPFunction findOperator( IASTExpression exp, ICPPClassType cls ){
 		IScope scope = null;
 		try {
 			scope = cls.getCompositeScope();

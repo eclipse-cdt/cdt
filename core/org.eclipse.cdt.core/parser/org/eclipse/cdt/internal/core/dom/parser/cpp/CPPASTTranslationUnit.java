@@ -34,6 +34,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.GCCBuiltinSymbolProvider.CPPBuiltinParameter;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.parser.scanner.IncludeFileContent;
 
@@ -169,14 +170,14 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 	}	
 	
 	// bug 217102: namespace scopes from the index have to be mapped back to the AST.
-	IScope mapToASTScope(IIndexScope scope) {
+	public IScope mapToASTScope(IIndexScope scope) {
 		return fScopeMapper.mapToASTScope(scope);
 	}
 
 	/**
 	 * Stores directives from the index into this scope.
 	 */
-	void handleAdditionalDirectives(ICPPNamespaceScope scope) {
+	public void handleAdditionalDirectives(ICPPNamespaceScope scope) {
 		fScopeMapper.handleAdditionalDirectives(scope);
 	}
 }

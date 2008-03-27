@@ -41,8 +41,8 @@ import org.eclipse.cdt.internal.core.dom.parser.c.CASTTypeId;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.c.ICInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTypeId;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
  * This is a utility class to help convert AST elements to Strings corresponding to the

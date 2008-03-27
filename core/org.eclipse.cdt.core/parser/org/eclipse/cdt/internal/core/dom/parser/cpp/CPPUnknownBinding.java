@@ -24,6 +24,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
@@ -137,7 +139,7 @@ public class CPPUnknownBinding extends PlatformObject implements ICPPInternalUnk
             }
         }
         if (t != null) {
-            t = CPPSemantics.getUltimateType(t, false);
+            t = SemanticUtil.getUltimateType(t, false);
 	        if (t instanceof ICPPClassType) {
 	            IScope s = ((ICPPClassType) t).getCompositeScope();
 	            if (s != null && ASTInternal.isFullyCached(s))

@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 
 /**
  * @author jcamelon

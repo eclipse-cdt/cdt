@@ -19,8 +19,8 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.index.CIndex;
 import org.eclipse.cdt.internal.core.index.DefaultFragmentBindingComparator;
-import org.eclipse.cdt.internal.core.index.IIndexFragmentBindingComparator;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
+import org.eclipse.cdt.internal.core.index.IIndexFragmentBindingComparator;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFragmentBindingComparator;
 import org.eclipse.core.runtime.CoreException;
 

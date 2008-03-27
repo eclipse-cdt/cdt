@@ -68,7 +68,7 @@ import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitMethod;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitTypedef;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplates.CPPImplicitFunctionTemplate;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates.CPPImplicitFunctionTemplate;
 
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 

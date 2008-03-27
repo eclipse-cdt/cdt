@@ -42,6 +42,8 @@ import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -110,7 +112,7 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 		}
 	}
 
-	boolean canDenoteScopeMember(ICPPASTQualifiedName name) {
+	public boolean canDenoteScopeMember(ICPPASTQualifiedName name) {
 		IScope scope= this;
 		IASTName[] na= name.getNames();
 		try {

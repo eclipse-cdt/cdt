@@ -30,7 +30,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.internal.core.dom.Linkage;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.parser.ParserMessages;
 import org.eclipse.core.runtime.PlatformObject;
 

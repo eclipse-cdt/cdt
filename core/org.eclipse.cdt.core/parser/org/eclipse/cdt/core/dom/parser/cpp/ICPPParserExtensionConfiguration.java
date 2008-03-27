@@ -13,6 +13,7 @@
 package org.eclipse.cdt.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
+import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 
 /**
  * C++ parser extension configuration interface.

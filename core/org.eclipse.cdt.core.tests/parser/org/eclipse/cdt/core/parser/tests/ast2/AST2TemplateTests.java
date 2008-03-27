@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getUltimateType;
+
 import java.util.Iterator;
 
 import junit.framework.TestSuite;
@@ -60,8 +62,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.parser.ParserLanguage;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
  * @author aniefer
@@ -2125,7 +2126,7 @@ public class AST2TemplateTests extends AST2BaseTest {
    			if ("r".equals(String.valueOf(name))) {
    	    		IBinding b0 = name.resolveBinding();
    				IType type = ((ICPPVariable) b0).getType();
-   				type = CPPSemantics.getUltimateType(type, false);
+   				type = getUltimateType(type, false);
    				assertInstance(type, IBasicType.class);
 				assertEquals("int", ASTTypeUtil.getType(type));
    			}
@@ -2159,7 +2160,7 @@ public class AST2TemplateTests extends AST2BaseTest {
    			if ("r".equals(String.valueOf(name))) {
    	    		IBinding b0 = name.resolveBinding();
    				IType type = ((ICPPVariable) b0).getType();
-   				type = CPPSemantics.getUltimateType(type, false);
+   				type = getUltimateType(type, false);
    				assertInstance(type, IBasicType.class);
 				assertEquals("int", ASTTypeUtil.getType(type));
    			}
@@ -2199,7 +2200,7 @@ public class AST2TemplateTests extends AST2BaseTest {
    			if ("r".equals(String.valueOf(name))) {
    	    		IBinding b0 = name.resolveBinding();
    				IType type = ((ICPPVariable) b0).getType();
-   				type = CPPSemantics.getUltimateType(type, false);
+   				type = getUltimateType(type, false);
    				assertInstance(type, IBasicType.class);
 				assertEquals("int", ASTTypeUtil.getType(type));
    			}
@@ -2229,7 +2230,7 @@ public class AST2TemplateTests extends AST2BaseTest {
     		if ("x".equals(String.valueOf(name))) {
 	    		IBinding b0 = name.resolveBinding();
    				IType type = ((ICPPVariable) b0).getType();
-   				type = CPPSemantics.getUltimateType(type, false);
+   				type = getUltimateType(type, false);
    				assertInstance(type, IBasicType.class);
 				assertEquals("int", ASTTypeUtil.getType(type));
    			}

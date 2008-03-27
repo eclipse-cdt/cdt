@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getUltimateType;
+
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
@@ -30,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 
 /**
@@ -60,7 +63,7 @@ public class CPPClassInstance extends CPPInstance implements ICPPClassType, ICPP
 				IBinding base = bindings[i].getBaseClass();
 				if (base instanceof IType) {
 					IType specBase = CPPTemplates.instantiateType((IType) base, argumentMap);
-					specBase = CPPSemantics.getUltimateType(specBase, false);
+					specBase = getUltimateType(specBase, false);
 					if (specBase instanceof IBinding) {
 						((ICPPInternalBase) specBinding).setBaseClass((IBinding) specBase);
 					}

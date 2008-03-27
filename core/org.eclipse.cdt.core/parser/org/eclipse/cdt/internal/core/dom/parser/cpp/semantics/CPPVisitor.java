@@ -10,7 +10,10 @@
  *     Markus Schorn (Wind River Systems)
  *     Andrew Ferguson (Symbian)
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.dom.parser.cpp;
+package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
+
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getUltimateType;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getUltimateTypeUptoPointers;
 
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
@@ -142,6 +145,39 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTemplateId;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArrayType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassTemplate;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPConstructor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPConstructorTemplate;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPEnumeration;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPEnumerator;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPField;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionTemplate;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPLabel;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethod;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethodTemplate;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNamespace;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNamespaceAlias;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameter;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTypedef;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPBasicType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPPointerToMemberType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPPointerType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknown;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 
 /**
@@ -900,7 +936,7 @@ public class CPPVisitor {
 				IASTExpression owner = fieldReference.getFieldOwner();
 				IType type = getExpressionType(owner);
 				if (fieldReference.isPointerDereference()) {
-					type= CPPSemantics.getUltimateTypeUptoPointers(type);
+					type= getUltimateTypeUptoPointers(type);
 					if (type instanceof ICPPClassType) {
 						ICPPFunction op = CPPSemantics.findOperator(fieldReference, (ICPPClassType) type);
 						if (op != null) {
@@ -908,7 +944,7 @@ public class CPPVisitor {
 						}
 					}
 				} 
-				type =  CPPSemantics.getUltimateType(type, false);
+				type =  getUltimateType(type, false);
 				if (type instanceof ICPPClassType) {
 					return ((ICPPClassType) type).getCompositeScope();
 				}

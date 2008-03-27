@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
-import org.eclipse.cdt.internal.core.index.IIndexFragmentBindingComparator;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
+import org.eclipse.cdt.internal.core.index.IIndexFragmentBindingComparator;
 
 /**
  * {@link IIndexFragmentBindingComparator} suitable for comparing two PDOMBindings

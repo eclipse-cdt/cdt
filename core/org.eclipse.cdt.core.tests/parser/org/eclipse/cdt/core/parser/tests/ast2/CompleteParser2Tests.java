@@ -78,8 +78,8 @@ import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 import org.eclipse.core.runtime.Platform;
 

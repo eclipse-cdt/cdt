@@ -12,6 +12,7 @@ package org.eclipse.cdt.core.dom.parser;
 
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.parser.ParseError;
 
 /**
  * Interface for an AST source code parser.

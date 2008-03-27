@@ -30,7 +30,7 @@ import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.CCoreInternals;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -82,7 +82,7 @@ public class PDOMCBugsTest extends BaseTestCase {
 		for(int i=0; i<bindings.length; i++) {
 			assertTrue("expected typedef, got "+bindings[i], bindings[i] instanceof ITypedef);
 			bnames.add(bindings[i].getName());
-			IType type= CPPSemantics.getUltimateType((IType)bindings[i], false);
+			IType type= SemanticUtil.getUltimateType((IType)bindings[i], false);
 			
 			if(bindings[i].getName().equals("J")) {
 				assertTrue(type instanceof IFunctionType);

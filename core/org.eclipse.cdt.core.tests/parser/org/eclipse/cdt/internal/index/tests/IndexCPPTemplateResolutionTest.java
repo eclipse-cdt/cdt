@@ -42,7 +42,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 /**
  * Tests for exercising resolution of template bindings against IIndex
@@ -874,7 +874,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
         IBinding b0= getBindingFromASTName("r)", 1);
         assertInstance(b0, ICPPVariable.class);
 		IType type = ((ICPPVariable) b0).getType();
-		type = CPPSemantics.getUltimateType(type, false);
+		type = SemanticUtil.getUltimateType(type, false);
 		assertInstance(type, IBasicType.class);
 		assertEquals("int", ASTTypeUtil.getType(type));
     }
@@ -917,7 +917,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		ICPPTemplateInstance par2 = (ICPPTemplateInstance) argumentMap.getAt(1); // Allocator <> CPP_DEFERRED_CLASS_INSTANCE
 		IType[] par2Arguments = par2.getArguments();  // [_Tp CPP_TEMPLATE_TYPE_PARAMETER]
 		ObjectMap par2ArgumentMap = par2.getArgumentMap();
-		type = CPPSemantics.getUltimateType(type, false);
+		type = SemanticUtil.getUltimateType(type, false);
 		assertInstance(type, ICPPClassType.class);
 		assertEquals("A", ((ICPPClassType) type).getName());
     }

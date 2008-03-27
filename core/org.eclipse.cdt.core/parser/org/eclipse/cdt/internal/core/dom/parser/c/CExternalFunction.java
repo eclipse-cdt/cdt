@@ -22,7 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.ICExternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 
 /**
  * @author aniefer

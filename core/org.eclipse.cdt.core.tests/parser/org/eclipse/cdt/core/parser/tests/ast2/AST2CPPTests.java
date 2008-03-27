@@ -105,9 +105,9 @@ import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPPointerType;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
 /**

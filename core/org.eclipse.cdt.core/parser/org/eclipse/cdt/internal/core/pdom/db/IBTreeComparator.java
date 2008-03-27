@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.db;
 
+import java.io.IOException;
+
 import org.eclipse.core.runtime.CoreException;
 
 /**

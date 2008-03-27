@@ -38,9 +38,10 @@ import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassScope;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBase;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.index.IIndexType;
@@ -160,7 +161,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 					IBinding origClass = origBase.getBaseClass();
 					if (origClass instanceof IType) {
 						IType specClass = CPPTemplates.instantiateType((IType) origClass, getArgumentMap());
-						specClass = CPPSemantics.getUltimateType(specClass, true);
+						specClass = SemanticUtil.getUltimateType(specClass, true);
 						if (specClass instanceof IBinding) {
 							((ICPPInternalBase)specBase).setBaseClass((IBinding) specClass);
 						}

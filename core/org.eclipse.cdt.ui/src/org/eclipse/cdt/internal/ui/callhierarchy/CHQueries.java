@@ -35,7 +35,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 

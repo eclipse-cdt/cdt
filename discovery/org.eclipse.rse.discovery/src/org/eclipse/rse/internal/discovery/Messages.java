@@ -6,6 +6,7 @@
  * 
  * Contributors:
  *   Javier Montalvo Orus (Symbian) - initial API and implementation
+ *   Javier Montalvo Orus (Symbian) - NLS Cleanup
  ********************************************************************************/
 
 package org.eclipse.rse.internal.discovery;
@@ -19,16 +20,9 @@ public class Messages extends NLS {
 
 	public static String ServiceDiscoveryWizard_Port;
 
-	public static String ServiceDiscoveryWizard_SavingMessage;
-
-	public static String ServiceDiscoveryWizard_StatusId;
-
-	public static String ServiceDiscoveryWizard_StatusMessage;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}
 
-	private Messages() {
-	}
 }

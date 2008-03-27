@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 QNX Software Systems and others.
+ * Copyright (c) 2005, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,29 +58,29 @@ final class Chunk {
 	public void putByte(final int offset, final byte value) {
 		assert fLocked;
 		fDirty= true;
-		fBuffer[offset % Database.CHUNK_SIZE]= value;
+		fBuffer[offset & Database.OFFSET_IN_CHUNK_MASK]= value;
 	}
 	
 	public byte getByte(final int offset) {
-		return fBuffer[offset % Database.CHUNK_SIZE];
+		return fBuffer[offset & Database.OFFSET_IN_CHUNK_MASK];
 	}
 	
 	public byte[] getBytes(final int offset, final int length) {
 		final byte[] bytes = new byte[length];
-		System.arraycopy(fBuffer, offset % Database.CHUNK_SIZE, bytes, 0, length);
+		System.arraycopy(fBuffer, offset & Database.OFFSET_IN_CHUNK_MASK, bytes, 0, length);
 		return bytes;
 	}
 	
 	public void putBytes(final int offset, final byte[] bytes) {
 		assert fLocked;
 		fDirty= true;
-		System.arraycopy(bytes, 0, fBuffer, offset % Database.CHUNK_SIZE, bytes.length);
+		System.arraycopy(bytes, 0, fBuffer, offset & Database.OFFSET_IN_CHUNK_MASK, bytes.length);
 	}
 	
 	public void putInt(final int offset, final int value) {
 		assert fLocked;
 		fDirty= true;
-		int idx= offset % Database.CHUNK_SIZE;
+		int idx= offset & Database.OFFSET_IN_CHUNK_MASK;
 		fBuffer[idx]=   (byte)(value >> 24);
 		fBuffer[++idx]= (byte)(value >> 16);
 		fBuffer[++idx]= (byte)(value >> 8);
@@ -88,7 +88,7 @@ final class Chunk {
 	}
 	
 	public int getInt(final int offset) {
-		int idx= offset % Database.CHUNK_SIZE;
+		int idx= offset & Database.OFFSET_IN_CHUNK_MASK;
 		return ((fBuffer[idx] & 0xff) << 24) |
 			((fBuffer[++idx] & 0xff) << 16) |
 			((fBuffer[++idx] & 0xff) <<  8) |
@@ -98,14 +98,14 @@ final class Chunk {
 	public void put3ByteUnsignedInt(final int offset, final int value) {
 		assert fLocked;
 		fDirty= true;
-		int idx= offset % Database.CHUNK_SIZE;
+		int idx= offset & Database.OFFSET_IN_CHUNK_MASK;
 		fBuffer[idx]= (byte)(value >> 16);
 		fBuffer[++idx]= (byte)(value >> 8);
 		fBuffer[++idx]= (byte)(value);
 	}
 	
 	public int get3ByteUnsignedInt(final int offset) {
-		int idx= offset % Database.CHUNK_SIZE;
+		int idx= offset & Database.OFFSET_IN_CHUNK_MASK;
 		return ((fBuffer[idx] & 0xff) << 16) |
 			((fBuffer[++idx] & 0xff) <<  8) |
 			((fBuffer[++idx] & 0xff) <<  0);
@@ -114,18 +114,18 @@ final class Chunk {
 	public void putShort(final int offset, final short value) {
 		assert fLocked;
 		fDirty= true;
-		int idx= offset % Database.CHUNK_SIZE;
+		int idx= offset & Database.OFFSET_IN_CHUNK_MASK;
 		fBuffer[idx]= (byte)(value >> 8);
 		fBuffer[++idx]= (byte)(value);
 	}
 	
 	public short getShort(final int offset) {
-		int idx= offset % Database.CHUNK_SIZE;
+		int idx= offset & Database.OFFSET_IN_CHUNK_MASK;
 		return (short) (((fBuffer[idx] << 8) | (fBuffer[++idx] & 0xff)));
 	}
 
 	public long getLong(final int offset) {
-		int idx= offset % Database.CHUNK_SIZE;
+		int idx= offset & Database.OFFSET_IN_CHUNK_MASK;
 		return ((((long)fBuffer[idx] & 0xff) << 56) |
 				(((long)fBuffer[++idx] & 0xff) << 48) |
 				(((long)fBuffer[++idx] & 0xff) << 40) |
@@ -139,7 +139,7 @@ final class Chunk {
 	public void putLong(final int offset, final long value) {
 		assert fLocked;
 		fDirty= true;
-		int idx= offset % Database.CHUNK_SIZE;
+		int idx= offset & Database.OFFSET_IN_CHUNK_MASK;
 
 		fBuffer[idx]=   (byte)(value >> 56);
 		fBuffer[++idx]= (byte)(value >> 48);
@@ -154,26 +154,26 @@ final class Chunk {
 	public void putChar(final int offset, final char value) {
 		assert fLocked;
 		fDirty= true;
-		int idx= offset % Database.CHUNK_SIZE;
+		int idx= offset & Database.OFFSET_IN_CHUNK_MASK;
 		fBuffer[idx]= (byte)(value >> 8);
 		fBuffer[++idx]= (byte)(value);
 	}
 	
 	public char getChar(final int offset) {
-		int idx= offset % Database.CHUNK_SIZE;
+		int idx= offset & Database.OFFSET_IN_CHUNK_MASK;
 		return (char) (((fBuffer[idx] << 8) | (fBuffer[++idx] & 0xff)));
 	}
 
 	public void getCharArray(final int offset, final char[] result) {
 		final ByteBuffer buf= ByteBuffer.wrap(fBuffer);
-		buf.position(offset % Database.CHUNK_SIZE);
+		buf.position(offset & Database.OFFSET_IN_CHUNK_MASK);
 		buf.asCharBuffer().get(result);
 	}
 	
 	void clear(final int offset, final int length) {
 		assert fLocked;
 		fDirty= true;
-		int idx= (offset % Database.CHUNK_SIZE);
+		int idx= (offset & Database.OFFSET_IN_CHUNK_MASK);
 		final int end= idx + length;
 		for (; idx < end; idx++) {
 			fBuffer[idx]= 0;

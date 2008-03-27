@@ -65,6 +65,7 @@ public class Database {
 	// public for tests only, you shouldn't need these
 	public static final int INT_SIZE = 4;
 	public static final int CHUNK_SIZE = 1024 * 4;
+	public static final int OFFSET_IN_CHUNK_MASK= CHUNK_SIZE-1;
 	public static final int BLOCK_HEADER_SIZE= 2;
 	public static final int BLOCK_SIZE_DELTA= 8;
 	public static final int MIN_BLOCK_DELTAS = 2;	// a block must at least be 2 + 2*4 bytes to link the free blocks.

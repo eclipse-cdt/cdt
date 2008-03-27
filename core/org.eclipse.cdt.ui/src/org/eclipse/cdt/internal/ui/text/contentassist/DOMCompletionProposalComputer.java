@@ -60,7 +60,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
-import org.eclipse.cdt.core.model.IMethod;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -399,7 +398,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
         repStringBuff.append(')');
         String repString = repStringBuff.toString();
 
-        final int relevance = function instanceof IMethod ? RelevanceConstants.METHOD_TYPE_RELEVANCE : RelevanceConstants.FUNCTION_TYPE_RELEVANCE;
+        final int relevance = function instanceof ICPPMethod ? RelevanceConstants.METHOD_TYPE_RELEVANCE : RelevanceConstants.FUNCTION_TYPE_RELEVANCE;
 		CCompletionProposal proposal = createProposal(repString, dispString, idString, image, baseRelevance + relevance, context);
 		if (!context.isContextInformationStyle()) {
 			proposal.setCursorPosition(repString.length() - 1);

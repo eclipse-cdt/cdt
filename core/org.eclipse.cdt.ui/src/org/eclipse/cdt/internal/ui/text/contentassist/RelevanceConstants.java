@@ -24,8 +24,8 @@ public interface RelevanceConstants {
 	// parsing-based relevance constants
 	final int LOCAL_VARIABLE_TYPE_RELEVANCE = 140;
 	final int FIELD_TYPE_RELEVANCE = 130;
-	final int VARIABLE_TYPE_RELEVANCE = 120;
-	final int METHOD_TYPE_RELEVANCE = 110;
+	final int METHOD_TYPE_RELEVANCE = 120;
+	final int VARIABLE_TYPE_RELEVANCE = 110;
 	final int FUNCTION_TYPE_RELEVANCE = 100;
 	final int CLASS_TYPE_RELEVANCE = 90;
 	final int STRUCT_TYPE_RELEVANCE = 80;

@@ -17,8 +17,10 @@ import java.util.concurrent.RejectedExecutionException;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
+import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExitedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IStartedDMEvent;
 import org.eclipse.dd.dsf.service.DsfSession;
@@ -124,13 +126,16 @@ public class ContainerVMNode extends AbstractDMVMNode
     }
 
     public void buildDelta(Object e, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor requestMonitor) {
-        
     	if(e instanceof IRunControl.IContainerResumedDMEvent || 
     	   e instanceof IRunControl.IContainerSuspendedDMEvent) 
     	{
             parentDelta.addNode(createVMContext(((IDMEvent<?>)e).getDMContext()), IModelDelta.CONTENT);
         } else if (e instanceof IStartedDMEvent || e instanceof IExitedDMEvent) {
-            parentDelta.addNode(createVMContext(((IDMEvent<?>)e).getDMContext()), IModelDelta.CONTENT);
+            IContainerDMContext containerCtx = DMContexts.getAncestorOfType(
+                ((IDMEvent<?>)e).getDMContext(), IContainerDMContext.class);
+            if (containerCtx != null) {
+                parentDelta.addNode(createVMContext(containerCtx), IModelDelta.CONTENT);
+            }
         } else if (e instanceof GDBControl.ExitedEvent || 
             e instanceof MIInferiorExitEvent || 
             e instanceof MIInferiorSignalExitEvent) 

@@ -438,7 +438,7 @@ public class MIRunControlTest extends BaseTestCase {
     @DsfServiceEventHandler 
     public void eventDispatched(IStartedDMEvent e) {
     	if(fIsTestingThreadCreateEvent){
-    		if(((IMIExecutionDMContext)e.getExecutionContext()).getThreadId() != 2)
+    		if(((IMIExecutionDMContext)e.getDMContext()).getThreadId() != 2)
     			/*
     			 * Set variable if thread create event is unsuccesful 
     			 */

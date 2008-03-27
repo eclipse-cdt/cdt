@@ -83,20 +83,14 @@ public interface IRunControl extends IDMService
     }
     
     /**
-     * Indicates that a new execution context (thread) was started.  The DMC 
-     * for the event is the container of the new exec context.
+     * Indicates that a new execution context (thread) was started.  
      */
-    public interface IStartedDMEvent extends IDMEvent<IContainerDMContext> {
-        IExecutionDMContext getExecutionContext();
-    }
+    public interface IStartedDMEvent extends IDMEvent<IExecutionDMContext> {}
 
     /**
-     * Indicates that an execution context has exited.  As in the started event, 
-     * the DMC for the event is the container of the exec context.
+     * Indicates that an execution context has exited. 
      */
-    public interface IExitedDMEvent extends IDMEvent<IContainerDMContext> {
-        IExecutionDMContext getExecutionContext();
-    }
+    public interface IExitedDMEvent extends IDMEvent<IExecutionDMContext> {}
 
     /**
      * Display information for an execution context.

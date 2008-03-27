@@ -236,35 +236,20 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
     }
     
     @Immutable
-    protected static class StartedDMEvent extends RunControlEvent<IContainerDMContext,MIThreadCreatedEvent> 
-    								   implements IStartedDMEvent{
-    	
-    	private final IMIExecutionDMContext fExecutionDmc;
-    	
-        StartedDMEvent(IContainerDMContext containerDmc, IMIExecutionDMContext executionDmc, MIThreadCreatedEvent miInfo) { 
-            super(containerDmc, miInfo);
-            fExecutionDmc = executionDmc;
+    protected static class StartedDMEvent extends RunControlEvent<IExecutionDMContext,MIThreadCreatedEvent> 
+        implements IStartedDMEvent
+    {
+        StartedDMEvent(IMIExecutionDMContext executionDmc, MIThreadCreatedEvent miInfo) { 
+            super(executionDmc, miInfo);
         }
-        
-    	public IExecutionDMContext getExecutionContext(){
-    		return fExecutionDmc;
-        }
-
     }
     
     @Immutable
-    protected static class ExitedDMEvent extends RunControlEvent<IContainerDMContext,MIThreadExitEvent> 
-    								   implements IExitedDMEvent{
-    	
-        private final IMIExecutionDMContext fExecutionDmc;
-        
-        ExitedDMEvent(IContainerDMContext containerDmc, IMIExecutionDMContext executionDmc, MIThreadExitEvent miInfo) { 
-            super(containerDmc, miInfo);
-            fExecutionDmc = executionDmc;
-        }
-        
-        public IExecutionDMContext getExecutionContext(){
-            return fExecutionDmc;
+    protected static class ExitedDMEvent extends RunControlEvent<IExecutionDMContext,MIThreadExitEvent> 
+        implements IExitedDMEvent
+    {
+        ExitedDMEvent(IMIExecutionDMContext executionDmc, MIThreadExitEvent miInfo) { 
+            super(executionDmc, miInfo);
         }
     }
     
@@ -375,7 +360,7 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
     public void eventDispatched(final MIThreadCreatedEvent e) {
         IContainerDMContext containerDmc = e.getDMContext();
         IMIExecutionDMContext executionCtx = e.getId() != -1 ? new MIExecutionDMC(getSession().getId(), containerDmc, e.getId()) : null;
-        getSession().dispatchEvent(new StartedDMEvent(containerDmc, executionCtx, e), getProperties());
+        getSession().dispatchEvent(new StartedDMEvent(executionCtx, e), getProperties());
     }
 
     //
@@ -386,7 +371,7 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
     public void eventDispatched(final MIThreadExitEvent e) {
         IContainerDMContext containerDmc = e.getDMContext();
         IMIExecutionDMContext executionCtx = e.getId() != -1 ? new MIExecutionDMC(getSession().getId(), containerDmc, e.getId()) : null;
-    	getSession().dispatchEvent(new ExitedDMEvent(containerDmc, executionCtx, e), getProperties());
+    	getSession().dispatchEvent(new ExitedDMEvent(executionCtx, e), getProperties());
     }
 
     @DsfServiceEventHandler 
@@ -430,7 +415,7 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
     // Event handler when a thread is destroyed
     @DsfServiceEventHandler 
     public void eventDispatched(ExitedDMEvent e) {
-    	fMICommandCache.reset(e.getExecutionContext());
+    	fMICommandCache.reset(e.getDMContext());
     }	
 
     ///////////////////////////////////////////////////////////////////////////

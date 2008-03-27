@@ -502,10 +502,10 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay
     }
     
     private void startAnnotationClearingJob(IRunControl.IExecutionDMContext execDmc) {
-        // Make sure to add the dmc to the list.
+        // Make sure to add the context to the list.
         fPendingExecDmcsToClear.add(execDmc);
         
-        // If lookup job is running, check it agains the exec context,
+        // If lookup job is running, check it against the execution context,
         // and cancel it if matches.
         if (fRunningLookupJob != null) {
             if (DMContexts.isAncestorOf(fRunningLookupJob.getDmc(), execDmc)) {
@@ -513,8 +513,8 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay
                 fRunningLookupJob = null;
             }
         }
-        // If there is a pending displahy job, make sure it doesn't get 
-        // pre-empted by this event.  If so, just cancel the pending
+        // If there is a pending display job, make sure it doesn't get 
+        // preempted by this event.  If so, just cancel the pending
         // display job.
         if (fPendingDisplayJob != null) {
             if (DMContexts.isAncestorOf(fPendingDisplayJob.getDmc(), execDmc)) {
@@ -539,7 +539,7 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay
 
     @DsfServiceEventHandler
     public void eventDispatched(IRunControl.IExitedDMEvent e) {
-        startAnnotationClearingJob(e.getExecutionContext());        
+        startAnnotationClearingJob(e.getDMContext());        
     }
 
     @DsfServiceEventHandler

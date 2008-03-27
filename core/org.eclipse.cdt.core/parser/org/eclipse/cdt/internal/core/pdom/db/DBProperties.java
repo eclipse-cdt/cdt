@@ -155,6 +155,7 @@ public class DBProperties {
 	private static class DBProperty {
 		static final int KEY = 0;
 		static final int VALUE = 4;
+		@SuppressWarnings("hiding")
 		static final int RECORD_SIZE = 8;
 		
 		Database db;

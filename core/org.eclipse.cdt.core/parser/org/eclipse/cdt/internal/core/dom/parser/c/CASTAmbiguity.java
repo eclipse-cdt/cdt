@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
-
-import java.util.Arrays;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -36,7 +34,8 @@ public abstract class CASTAmbiguity extends CASTNode  {
             shouldVisitNames = true;
         }
         
-        public int visit(IASTName name) {
+        @Override
+		public int visit(IASTName name) {
         	if (name != null) {
         		namesPos++;
         		names = (IASTName[]) ArrayUtil.append( IASTName.class, names, name );
@@ -54,7 +53,8 @@ public abstract class CASTAmbiguity extends CASTNode  {
     
     protected abstract IASTNode [] getNodes();
     
-    public boolean accept(ASTVisitor visitor) {
+    @Override
+	public boolean accept(ASTVisitor visitor) {
         IASTNode [] nodez = getNodes();
         int [] issues = new int[ nodez.length ];
         for( int i = 0; i < nodez.length; ++i )

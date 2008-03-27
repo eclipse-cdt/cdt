@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.dom.parser;
 
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.ICodeReaderCache;
 import org.eclipse.cdt.internal.core.parser.InternalParserUtil;
@@ -44,7 +45,7 @@ public class EmptyCodeReaderCache implements ICodeReaderCache {
 	 * @param workingCopies
 	 * @return
 	 */
-	public CodeReader createReader( String finalPath, Iterator workingCopies ) {
+	public CodeReader createReader( String finalPath, Iterator<IWorkingCopy> workingCopies ) {
 		return InternalParserUtil.createFileReader(finalPath);
 	}
 

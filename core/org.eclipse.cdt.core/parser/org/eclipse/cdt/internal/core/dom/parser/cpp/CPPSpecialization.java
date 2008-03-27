@@ -130,7 +130,7 @@ public abstract class CPPSpecialization extends PlatformObject
 	public String toString() {
 		StringBuilder result = new StringBuilder(getName());
 		if (argumentMap != null) {
-			result.append(" ");
+			result.append(" "); //$NON-NLS-1$
 			result.append(argumentMap.toString());
 		}
 		return result.toString();

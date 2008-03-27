@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.dom.rewrite.changegenerator;
 
 import java.util.List;
 
-import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -128,12 +127,6 @@ public class ChangeGeneratorWriterVisitor extends ASTWriterVisitor {
 		if (doBeforeEveryNode(parameter) == PROCESS_CONTINUE) {
 			return super.visit(parameter);
 		}
-		return PROCESS_SKIP;
-	}
-
-	@Override
-	public int leave(IASTComment comment) {
-		super.leave(comment);
 		return PROCESS_SKIP;
 	}
 

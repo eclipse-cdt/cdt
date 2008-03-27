@@ -243,7 +243,7 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 		}
 		result.append(t != null ? ASTTypeUtil.getParameterTypeString(t) : "()"); //$NON-NLS-1$
 		if (argumentMap != null) {
-			result.append(" ");
+			result.append(" "); //$NON-NLS-1$
 			result.append(argumentMap.toString());
 		}
 		return result.toString();

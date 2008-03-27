@@ -14,10 +14,10 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 
-public final class EmptyIterator implements Iterator 
+public final class EmptyIterator<T> implements Iterator<T> 
 {
 
-	public static final EmptyIterator EMPTY_ITERATOR = new EmptyIterator();
+	public static final EmptyIterator<?> EMPTY_ITERATOR = new EmptyIterator<Object>();
 	
 	private EmptyIterator()
 	{
@@ -34,7 +34,7 @@ public final class EmptyIterator implements Iterator
     /* (non-Javadoc)
      * @see java.util.Iterator#next()
      */
-    public final Object next()
+    public final T next()
     {
         throw new NoSuchElementException();
     }

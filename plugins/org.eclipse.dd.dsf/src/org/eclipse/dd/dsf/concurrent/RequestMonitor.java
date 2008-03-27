@@ -163,9 +163,12 @@ public class RequestMonitor {
     public void cancel() {
         Object[] listeners = null;
         synchronized (this) {
-            fCanceled = true;
-            if (fCancelListeners != null) {
-                listeners = fCancelListeners.getListeners();
+            // Check to make sure the request monitor wasn't previously canceled.
+            if (!fCanceled) {
+                fCanceled = true;
+                if (fCancelListeners != null) {
+                    listeners = fCancelListeners.getListeners();
+                }
             }
         }
 
@@ -292,7 +295,8 @@ public class RequestMonitor {
      */
     @ConfinedToDsfExecutor("fExecutor")
     protected void handleFailure() {
-        assert !getStatus().isOK();
+        assert !isSuccess();
+        
         if (isCanceled()) {
             handleCancel();
         } else {
@@ -300,9 +304,7 @@ public class RequestMonitor {
                 DsfPlugin.getDefault().getLog().log(new Status(
                     IStatus.ERROR, DsfPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Request monitor: '" + this + "' resulted in a cancel status: " + getStatus() + ", even though the request is not set to cancel.", null)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             }
-            if (getStatus().getSeverity() > IStatus.INFO) {
-                handleErrorOrWarning();
-            }
+            handleErrorOrWarning();
         } 
     }
     
@@ -383,7 +385,6 @@ public class RequestMonitor {
      * rejects the runnable that is submitted invoke this request monitor.
      * This usually happens only when the executor is shutting down.
      */
-    @ThreadSafe
     protected void handleRejectedExecutionException() {
         MultiStatus logStatus = new MultiStatus(DsfPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Request for monitor: '" + toString() + "' resulted in a rejected execution exception.", null); //$NON-NLS-1$ //$NON-NLS-2$
         logStatus.merge(getStatus());

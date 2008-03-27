@@ -58,15 +58,14 @@ public class StackFramesVMNode extends AbstractDMVMNode
     
     @Override
     protected void updateHasElementsInSessionThread(IHasChildrenUpdate update) {
-        if (!checkService(IStack.class, null, update)) return;
-        
-        IExecutionDMContext execDmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IExecutionDMContext.class);
-        if (execDmc == null) {
+        IRunControl runControl = getServicesTracker().getService(IRunControl.class);
+        IExecutionDMContext execCtx = findDmcInPath(update.getViewerInput(), update.getElementPath(), IExecutionDMContext.class);
+        if (runControl == null || execCtx == null) {
             handleFailedUpdate(update);
             return;
-        }          
+        }
         
-        update.setHasChilren(getServicesTracker().getService(IStack.class).isStackAvailable(execDmc));
+        update.setHasChilren(runControl.isSuspended(execCtx) || runControl.isStepping(execCtx));
         update.done();
     }
 

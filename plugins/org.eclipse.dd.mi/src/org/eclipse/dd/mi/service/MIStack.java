@@ -185,12 +185,6 @@ public class MIStack extends AbstractDsfService
         return new MIFrameDMC(getSession().getId(), execDmc, level);
     }
     
-
-    public boolean isStackAvailable(IDMContext context) {
-        IExecutionDMContext execCtx = DMContexts.getAncestorOfType(context, IExecutionDMContext.class);
-        return execCtx != null && (fRunControl.isSuspended(execCtx) || (fRunControl.isStepping(execCtx)));
-    }
-
 	public void getFrames(final IDMContext ctx, final DataRequestMonitor<IFrameDMContext[]> rm) {
 
 		final IMIExecutionDMContext execDmc = DMContexts.getAncestorOfType(ctx, IMIExecutionDMContext.class);

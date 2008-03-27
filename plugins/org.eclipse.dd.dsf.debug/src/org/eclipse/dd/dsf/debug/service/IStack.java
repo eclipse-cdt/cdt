@@ -72,11 +72,6 @@ public interface IStack extends IDMService {
     public void getVariableData(IVariableDMContext variableDmc, DataRequestMonitor<IVariableDMData> rm);
     
     /**
-     * Returns whether the stack frames can be retrieved for given thread.
-     */
-    boolean isStackAvailable(IDMContext execContext);
-    
-    /**
      * Retrieves list of stack frames for the given execution context.  Request
      * will fail if the stack frame data is not available.
      */

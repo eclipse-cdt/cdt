@@ -23,7 +23,7 @@ import org.eclipse.dd.dsf.debug.ui.actions.DsfStepOverCommand;
 import org.eclipse.dd.dsf.debug.ui.actions.DsfStepReturnCommand;
 import org.eclipse.dd.dsf.debug.ui.actions.DsfSuspendCommand;
 import org.eclipse.dd.dsf.debug.ui.contexts.DsfSuspendTrigger;
-import org.eclipse.dd.dsf.debug.ui.sourcelookup.MISourceDisplayAdapter;
+import org.eclipse.dd.dsf.debug.ui.sourcelookup.SourceDisplayAdapter;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.ui.actions.DsfTerminateCommand;
 import org.eclipse.dd.gdb.internal.ui.viewmodel.GdbViewModelAdapter;
@@ -61,7 +61,7 @@ public class GdbAdapterFactory
     class SessionAdapterSet {
         final GdbLaunch fLaunch;
         final GdbViewModelAdapter fViewModelAdapter;
-        final MISourceDisplayAdapter fSourceDisplayAdapter;
+        final SourceDisplayAdapter fSourceDisplayAdapter;
         final DsfStepIntoCommand fStepIntoCommand;
         final DsfStepOverCommand fStepOverCommand;
         final DsfStepReturnCommand fStepReturnCommand;
@@ -78,7 +78,7 @@ public class GdbAdapterFactory
             fViewModelAdapter = new GdbViewModelAdapter(session);
 
             if (launch.getSourceLocator() instanceof ISourceLookupDirector) {
-                fSourceDisplayAdapter = new MISourceDisplayAdapter(session, (ISourceLookupDirector)launch.getSourceLocator());
+                fSourceDisplayAdapter = new SourceDisplayAdapter(session, (ISourceLookupDirector)launch.getSourceLocator());
             } else {
                 fSourceDisplayAdapter = null;
             }

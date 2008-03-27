@@ -81,7 +81,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * dispatch thread to synchronize access to the state data of the running jobs.
  */
 @ThreadSafe
-public class MISourceDisplayAdapter implements ISourceDisplay 
+public class SourceDisplayAdapter implements ISourceDisplay 
 {
     /**
 	 * A job to perform source lookup on the given DMC.
@@ -398,7 +398,7 @@ public class MISourceDisplayAdapter implements ISourceDisplay
     private ClearingJob fRunningClearingJob;
     private List<IRunControl.IExecutionDMContext> fPendingExecDmcsToClear = new LinkedList<IRunControl.IExecutionDMContext>();
     
-    public MISourceDisplayAdapter(DsfSession session, ISourceLookupDirector sourceLocator) {
+    public SourceDisplayAdapter(DsfSession session, ISourceLookupDirector sourceLocator) {
         fSession = session;
         fExecutor = session.getExecutor();
         fServicesTracker = new DsfServicesTracker(DsfDebugUIPlugin.getBundleContext(), session.getId());

@@ -22,7 +22,7 @@ import org.eclipse.dd.dsf.debug.ui.actions.DsfStepIntoCommand;
 import org.eclipse.dd.dsf.debug.ui.actions.DsfStepOverCommand;
 import org.eclipse.dd.dsf.debug.ui.actions.DsfStepReturnCommand;
 import org.eclipse.dd.dsf.debug.ui.actions.DsfSuspendCommand;
-import org.eclipse.dd.dsf.debug.ui.sourcelookup.MISourceDisplayAdapter;
+import org.eclipse.dd.dsf.debug.ui.sourcelookup.SourceDisplayAdapter;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.examples.pda.PDAPlugin;
 import org.eclipse.dd.examples.pda.launch.PDALaunch;
@@ -68,7 +68,7 @@ public class PDAAdapterFactory implements IAdapterFactory, ILaunchesListener2
         final PDAVMAdapter fViewModelAdapter;
         
         // Source lookup and positioning adapter
-        final MISourceDisplayAdapter fSourceDisplayAdapter;
+        final SourceDisplayAdapter fSourceDisplayAdapter;
         
         // Command adapters
         final DsfStepIntoCommand fStepIntoCommand;
@@ -91,7 +91,7 @@ public class PDAAdapterFactory implements IAdapterFactory, ILaunchesListener2
             fViewModelAdapter = new PDAVMAdapter(session);
 
             // Initialize source lookup
-            fSourceDisplayAdapter = new MISourceDisplayAdapter(session, (ISourceLookupDirector)launch.getSourceLocator());
+            fSourceDisplayAdapter = new SourceDisplayAdapter(session, (ISourceLookupDirector)launch.getSourceLocator());
             session.registerModelAdapter(ISourceDisplay.class, fSourceDisplayAdapter);
             
             // Initialize retargetable command handler.

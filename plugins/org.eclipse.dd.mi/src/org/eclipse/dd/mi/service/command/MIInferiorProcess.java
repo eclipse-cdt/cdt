@@ -138,7 +138,8 @@ public class MIInferiorProcess extends Process
             fInputStreamPiped = new PipedOutputStream();
             PipedInputStream inputStream = null; 
             try {
-                inputStream = new PipedInputStream(fInputStreamPiped);
+                // Using a LargePipedInputStream see https://bugs.eclipse.org/bugs/show_bug.cgi?id=223154
+                inputStream = new LargePipedInputStream(fInputStreamPiped);
             } catch (IOException e) {
             }
             fInputStream = inputStream;
@@ -150,7 +151,8 @@ public class MIInferiorProcess extends Process
         fErrorStreamPiped = new PipedOutputStream();
         PipedInputStream errorStream = null; 
         try {
-            errorStream = new PipedInputStream(fErrorStreamPiped);
+            // Using a LargePipedInputStream see https://bugs.eclipse.org/bugs/show_bug.cgi?id=223154
+            errorStream = new LargePipedInputStream(fErrorStreamPiped);
         } catch (IOException e) {
         }
         fErrorStream = errorStream;

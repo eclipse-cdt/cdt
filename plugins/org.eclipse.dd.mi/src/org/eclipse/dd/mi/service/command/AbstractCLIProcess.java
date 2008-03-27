@@ -101,10 +101,11 @@ public abstract class AbstractCLIProcess extends Process
         PipedOutputStream miOutLogPipe = null;
         
         try {
+        	// Using a LargePipedInputStream see https://bugs.eclipse.org/bugs/show_bug.cgi?id=223154
             miOutConsolePipe = new PipedOutputStream();
-            miInConsolePipe = new PipedInputStream(miOutConsolePipe);
+            miInConsolePipe = new LargePipedInputStream(miOutConsolePipe);
             miOutLogPipe = new PipedOutputStream();
-            miInLogPipe = new PipedInputStream(miOutLogPipe);
+            miInLogPipe = new LargePipedInputStream(miOutLogPipe);
         } catch (IOException e) {
             ILog log = MIPlugin.getDefault().getLog();
             if (log != null) {

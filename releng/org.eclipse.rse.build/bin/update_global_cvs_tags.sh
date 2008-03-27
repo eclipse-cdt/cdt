@@ -38,6 +38,7 @@ TOPMODULES="\
   org.eclipse.tm.core/discovery \
   org.eclipse.tm.core/terminal \
   org.eclipse.tm.core/thirdparty \
+  org.eclipse.tm.core/wince \
 "
 cvs co -l $TOPMODULES
 ##exit 0

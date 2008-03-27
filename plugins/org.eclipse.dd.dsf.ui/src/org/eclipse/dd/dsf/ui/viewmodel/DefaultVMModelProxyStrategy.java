@@ -443,7 +443,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
                             // Check for an empty list of elements.  If it's empty then we 
                             // don't have to call the children nodes, so return here.
                             // No need to propagate error, there's no means or need to display it.
-                            if (!getStatus().isOK() || getData().size() == 0) {
+                            if (!isSuccess() || getData().size() == 0) {
                                 requestMonitor.done();
                                 return;
                             }

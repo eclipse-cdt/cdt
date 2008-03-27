@@ -330,7 +330,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
             new DataRequestMonitor<String[]>(getSession().getExecutor(), null) {
                 @Override
                 public void handleCompleted() {
-                    if (!getStatus().isOK()) {
+                    if (!isSuccess()) {
                         handleFailedUpdate(update);
                         return;
                     }
@@ -606,7 +606,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
             new DataRequestMonitor<IVariableDMContext[]>(dsfExecutor, null) {
                 @Override
                 public void handleCompleted() {
-                    if (!getStatus().isOK()) {
+                    if (!isSuccess()) {
                         handleFailedUpdate(update);
                         return;
                     }

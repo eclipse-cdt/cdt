@@ -71,7 +71,7 @@ class VMExpressionUpdate extends VMViewerUpdate implements IExpressionUpdate {
         DataRequestMonitor<Object> rm = (DataRequestMonitor<Object>)getRequestMonitor();
         if (fExpressionElement != null) {
             rm.setData(fExpressionElement);
-        } else if (rm.getStatus().isOK()) {
+        } else if (rm.isSuccess()) {
             rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "Incomplete elements of updates", null)); //$NON-NLS-1$
         }
         super.done();

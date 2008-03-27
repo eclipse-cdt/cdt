@@ -214,7 +214,7 @@ public class ThreadVMNode extends AbstractDMVMNode
             		new DataRequestMonitor<IExecutionDMData>(getSession().getExecutor(), null) { 
             	@Override
 				public void handleCompleted(){
-                    if (!getStatus().isOK()) {
+                    if (!isSuccess()) {
                         handleFailedUpdate(update);
                         return;
                     }

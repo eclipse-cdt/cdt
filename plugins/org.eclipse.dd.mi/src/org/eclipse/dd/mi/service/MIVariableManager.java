@@ -871,7 +871,7 @@ public class MIVariableManager extends AbstractDsfService implements ICommandCon
 			}
 			
 			// If the value has not changed, no need to set it.
-			// Return a status info so that handleOK is not called and we don't send
+			// Return a warning status so that handleSuccess is not called and we don't send
 			// an ExpressionChanged event
 			if (value.equals(getValue(formatId))) {
 				rm.setStatus(new Status(IStatus.WARNING, MIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, 

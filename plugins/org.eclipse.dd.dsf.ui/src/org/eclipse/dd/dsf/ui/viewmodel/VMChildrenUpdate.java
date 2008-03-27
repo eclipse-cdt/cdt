@@ -128,7 +128,7 @@ public class VMChildrenUpdate extends VMViewerUpdate implements IChildrenUpdate 
          * the error status. 
          */        
         rm.setData(fElements);
-        if (rm.getStatus().isOK() && fLength != -1 && fElements.size() != fLength) {
+        if (rm.isSuccess() && fLength != -1 && fElements.size() != fLength) {
             rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "Incomplete elements of updates", null)); //$NON-NLS-1$
         }
         super.done();

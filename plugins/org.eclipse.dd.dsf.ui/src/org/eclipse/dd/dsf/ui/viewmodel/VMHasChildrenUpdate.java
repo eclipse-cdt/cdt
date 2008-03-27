@@ -48,7 +48,7 @@ public class VMHasChildrenUpdate extends VMViewerUpdate implements IHasChildrenU
 
     @Override
     public void done() {
-        assert isCanceled() || fHasElemsRequestMonitor.getData() != null || !fHasElemsRequestMonitor.getStatus().isOK();
+        assert isCanceled() || fHasElemsRequestMonitor.getData() != null || !fHasElemsRequestMonitor.isSuccess();
         super.done();            
     }
 }

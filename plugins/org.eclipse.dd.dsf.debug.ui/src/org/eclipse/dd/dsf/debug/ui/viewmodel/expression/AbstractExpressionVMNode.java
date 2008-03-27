@@ -61,7 +61,7 @@ public abstract class AbstractExpressionVMNode extends AbstractDMVMNode
                         final MultiRequestMonitor<DataRequestMonitor<Boolean>> multiRm = new MultiRequestMonitor<DataRequestMonitor<Boolean>>(getExecutor(), null) {
                             @Override
                             protected void handleCompleted() {
-                                if (getStatus().isOK()) {
+                                if (isSuccess()) {
                                     boolean foundMatchingContext = false;
                                     for (int i = 0; i < getRequestMonitors().size(); i++) {
                                         if (getRequestMonitors().get(i).getData()) {

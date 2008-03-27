@@ -379,7 +379,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
                     new DataRequestMonitor<List<Object>>(getExecutor(), null) { 
                         @Override
                         public void handleCompleted() {
-                            if (getStatus().isOK() && getData().size() != 0) {
+                            if (isSuccess() && getData().size() != 0) {
                                 parentDelta.addNode( getData().get(0), 0, IModelDelta.SELECT | IModelDelta.STATE);
                                 // If second frame is available repaint it, so that a "..." appears.  This gives a better
                                 // impression that the frames are not up-to date.

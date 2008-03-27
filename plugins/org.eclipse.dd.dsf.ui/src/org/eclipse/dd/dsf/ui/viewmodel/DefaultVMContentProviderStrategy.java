@@ -321,9 +321,9 @@ public class DefaultVMContentProviderStrategy implements IElementContentProvider
                                 protected void handleCompleted() {
                                     // Workaround for a bug caused by an optimization in the viewer:
                                     // The viewer may request more children then there are at a given level.  
-                                    // This caues the update to return with an error.
+                                    // This causes the update to return with an error.
                                     // See https://bugs.eclipse.org/bugs/show_bug.cgi?id=202109
-                                    // Instead of checking getStatus().isOK(), check getData() != null.
+                                    // Instead of checking isSuccess(), check getData() != null.
                                     if (getData() != null) {
                                         for (int i = 0; i < elementsLength && i < getData().size(); i++) {
                                             Object child = getData().get(i);

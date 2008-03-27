@@ -404,7 +404,7 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
                                         new DataRequestMonitor<FormattedValueDMData>(finalService.getSession().getExecutor(), null) {
                                             @Override
                                             public void handleCompleted() {
-                                                if (getStatus().isOK()) {
+                                                if (isSuccess()) {
                                                     /*
                                                      *  Show the information indicating the format.
                                                      */

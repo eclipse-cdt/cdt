@@ -92,7 +92,7 @@ public class ShutdownSequence extends Sequence {
 //                        @Override
 //                        protected void handleCompleted() {
 //                            // If un-installing breakpoints fails, log the error but continue shutting down.
-//                            if (!getStatus().isOK()) {
+//                            if (!isSuccess) {
 //                                DsfGdbLaunchPlugin.getDefault().getLog().log(getStatus());
 //                            }
 //                            requestMonitor.done();

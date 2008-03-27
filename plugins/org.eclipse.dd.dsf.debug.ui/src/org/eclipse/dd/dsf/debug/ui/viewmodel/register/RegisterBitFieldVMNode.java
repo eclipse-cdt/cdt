@@ -179,7 +179,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
             new DataRequestMonitor<String[]>(getSession().getExecutor(), null) {
                 @Override
                 public void handleCompleted() {
-                    if (!getStatus().isOK()) {
+                    if (!isSuccess()) {
                         handleFailedUpdate(update);
                         return;
                     }

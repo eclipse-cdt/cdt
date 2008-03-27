@@ -397,7 +397,7 @@ public class MIRegisters extends AbstractDsfService implements IRegisters {
      */
 
     @DsfServiceEventHandler public void eventDispatched(IRunControl.IResumedDMEvent e) {
-        fRegisterValueCache.setTargetAvailable(false);
+        fRegisterValueCache.setContextAvailable(e.getDMContext(), false);
         if (e.getReason() != StateChangeReason.STEP) {
             fRegisterValueCache.reset();
         }
@@ -405,7 +405,7 @@ public class MIRegisters extends AbstractDsfService implements IRegisters {
     
     @DsfServiceEventHandler public void eventDispatched(
     IRunControl.ISuspendedDMEvent e) {
-        fRegisterValueCache.setTargetAvailable(true);
+        fRegisterValueCache.setContextAvailable(e.getDMContext(), true);
         fRegisterValueCache.reset();
     }
 

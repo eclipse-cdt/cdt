@@ -884,7 +884,7 @@ public class ExpressionService extends AbstractDsfService implements IExpression
 
     @DsfServiceEventHandler 
     public void eventDispatched(IRunControl.IResumedDMEvent e) {
-        fExpressionCache.setTargetAvailable(false);
+        fExpressionCache.setContextAvailable(e.getDMContext(), false);
         if (e.getReason() != StateChangeReason.STEP) {
             fExpressionCache.reset();
         }
@@ -892,7 +892,7 @@ public class ExpressionService extends AbstractDsfService implements IExpression
     
     @DsfServiceEventHandler 
     public void eventDispatched(IRunControl.ISuspendedDMEvent e) {
-        fExpressionCache.setTargetAvailable(true);
+        fExpressionCache.setContextAvailable(e.getDMContext(), true);
         fExpressionCache.reset();
     }
 

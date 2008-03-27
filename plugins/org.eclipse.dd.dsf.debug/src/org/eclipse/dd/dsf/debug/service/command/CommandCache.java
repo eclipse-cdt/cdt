@@ -14,10 +14,12 @@ package org.eclipse.dd.dsf.debug.service.command;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -63,17 +65,12 @@ public class CommandCache implements ICommandListener
         /** Command being processed for this command */
         CommandInfo fCoalescedCmd;           
         
-        /** No longer really used and needs to be deleted */
-        int fResetCounterStatus;             
-        
         public CommandInfo( CommandStyle cmdstyle, ICommand<ICommandResult> cmd, DataRequestMonitor<ICommandResult> rm ) {
-            
             fCmdStyle = cmdstyle;
             fCommand = cmd;
             fCurrentRequestMonitors = new LinkedList<DataRequestMonitor<ICommandResult>>();
             fCurrentRequestMonitors.add(rm);
             fCoalescedCmd = null;
-            fResetCounterStatus = fResetCounter;
         }
         
         public CommandStyle getCommandstyle() { return fCmdStyle; }
@@ -92,7 +89,7 @@ public class CommandCache implements ICommandListener
         
         @Override
         public int hashCode() {
-            return (fCommand.hashCode()+ (fResetCounterStatus + 1));
+            return fCommand.hashCode();
         }
     }
 
@@ -143,8 +140,7 @@ public class CommandCache implements ICommandListener
      *      when back into individual results from this command.
      */
     
-    private boolean fIsTargetAvailable = true;
-    private int fResetCounter = 0;
+    private Set<IDMContext> fAvailableContexts = new HashSet<IDMContext>();
 
     private ICommandControl fCommandControl;
     
@@ -267,7 +263,7 @@ public class CommandCache implements ICommandListener
         /*
          *  Return an error if the target is available anymore.
          */ 
-        if (!fIsTargetAvailable) {
+        if (!isTargetAvailable(command.getContext())) {
             rm.setStatus(new Status(IStatus.ERROR, DsfDebugPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Target not available.", null)); //$NON-NLS-1$
             rm.done();
             return;
@@ -440,33 +436,41 @@ public class CommandCache implements ICommandListener
     }
 
     /**
-     * Sets  the cache to a state in which target access is not allowed.  
-     * When target  is not available, commands to the target will either
-     * return data that is found in the cache already, or will return an
-     * error. This is useful in avoiding sending commands to target when 
-     * they are known to fail or return unreliable results,  while still 
-     * providing access to the cached data.
-     * 
-     * @param isAvailable Flag indicating whether target can be accessed.
+     * TODO
      */
-    public void setTargetAvailable(boolean isAvailable) {
-        fIsTargetAvailable = isAvailable;
+    public void setContextAvailable(IDMContext context, boolean isAvailable) {
+        if (isAvailable) {
+            fAvailableContexts.add(context);
+        } else {
+            fAvailableContexts.remove(context);
+            for (Iterator<IDMContext> itr = fAvailableContexts.iterator(); itr.hasNext();) {
+                if (DMContexts.isAncestorOf(itr.next(), context)) {
+                    itr.remove();
+                }
+            }
+        }
     }
     
     /** 
-     * Retrieves current flag indicating target availability.
-     * @see #setTargetAvailable(boolean)
+     * TODO
+     * @see #setContextAvailable(IDMContext, boolean)
      */
-    public boolean isTargetAvailable() {
-        return fIsTargetAvailable;
+    public boolean isTargetAvailable(IDMContext context) {
+        for (IDMContext availableContext : fAvailableContexts) {
+            if (context.equals(availableContext) || DMContexts.isAncestorOf(context, availableContext)) {
+                return true;
+            }
+        }
+        return false;
     }
+    
+    
     
     /**
      * Clears the cache data.
      */
     public void reset() {
     	fCachedContexts.clear();
-        fResetCounter++;
     }
 
     public void commandRemoved(ICommand<? extends ICommandResult> command) {

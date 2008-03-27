@@ -280,7 +280,7 @@ public class MIMemory extends AbstractDsfService implements IMemory {
 
     @DsfServiceEventHandler
 	public void eventDispatched(IRunControl.IResumedDMEvent e) {
-		fMemoryCache.setTargetAvailable(false);
+		fMemoryCache.setTargetAvailable(e.getDMContext(), false);
 		if (e.getReason() != StateChangeReason.STEP) {
 			fMemoryCache.reset();
 		}
@@ -288,7 +288,7 @@ public class MIMemory extends AbstractDsfService implements IMemory {
    
     @DsfServiceEventHandler
 	public void eventDispatched(IRunControl.ISuspendedDMEvent e) {
-		fMemoryCache.setTargetAvailable(true);
+		fMemoryCache.setTargetAvailable(e.getDMContext(), true);
 		fMemoryCache.reset();
 	}
 
@@ -450,12 +450,12 @@ public class MIMemory extends AbstractDsfService implements IMemory {
 	    	fMemoryBlockList.clear();
 		}
 		
-	    public void setTargetAvailable(boolean isAvailable) {
-	    	fCommandCache.setTargetAvailable(isAvailable);
+	    public void setTargetAvailable(IDMContext dmc, boolean isAvailable) {
+	    	fCommandCache.setContextAvailable(dmc, isAvailable);
 	    }
 	    
-	    public boolean isTargetAvailable() {
-	    	return fCommandCache.isTargetAvailable();
+	    public boolean isTargetAvailable(IDMContext dmc) {
+	    	return fCommandCache.isTargetAvailable(dmc);
 	    }
 
 	    /**

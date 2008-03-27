@@ -394,7 +394,7 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
         fSuspended = false;
         fResumePending = false;
         fStateChangeReason = e.getReason();
-        fMICommandCache.setTargetAvailable(false);
+        fMICommandCache.setContextAvailable(e.getDMContext(), false);
         //fStateChangeTriggeringContext = e.getTriggeringContext();
         if (e.getReason().equals(StateChangeReason.STEP)) {
             fStepping = true;        
@@ -406,8 +406,8 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
 
     @DsfServiceEventHandler 
     public void eventDispatched(ContainerSuspendedEvent e) {
-        fMICommandCache.setTargetAvailable(true);
-        fMICommandCache.reset();
+        fMICommandCache.setContextAvailable(e.getDMContext(), true);
+        fMICommandCache.reset(e.getDMContext());
         fStateChangeReason = e.getReason();
         fStateChangeTriggeringContext = e.getTriggeringContext();
         fSuspended = true;
@@ -467,7 +467,7 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
             // Cygwin GDB will accept commands and execute them after the step
             // which is not what we want, so mark the target as unavailable
             // as soon as we send a resume command.
-            fMICommandCache.setTargetAvailable(false);
+            fMICommandCache.setContextAvailable(context, false);
             MIExecContinue cmd = null;
             if(context instanceof IContainerDMContext)
             	cmd = new MIExecContinue(context);
@@ -549,7 +549,7 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
 
         fResumePending = true;
         fStepping = true;
-        fMICommandCache.setTargetAvailable(false);
+        fMICommandCache.setContextAvailable(context, false);
         switch(stepType) {
             case STEP_INTO:
                 fConnection.queueCommand(
@@ -649,7 +649,7 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
 
         if (canResume(context)) { 
             fResumePending = true;
-            fMICommandCache.setTargetAvailable(false);
+            fMICommandCache.setContextAvailable(context, false);
     		fConnection.queueCommand(new MIExecUntil(dmc, fileName + ":" + lineNo), //$NON-NLS-1$
     				new DataRequestMonitor<MIInfo>(
     						getExecutor(), rm) {

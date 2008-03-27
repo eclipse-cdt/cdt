@@ -364,7 +364,7 @@ public class PDAStack extends AbstractDsfService implements IStack {
     public void eventDispatched(IResumedDMEvent e) {
         // Mark the cache as not available, so that stack commands will
         // fail.  Also reset the cache unless it was a step command.
-        fCommandCache.setTargetAvailable(false);
+        fCommandCache.setContextAvailable(e.getDMContext(), false);
         if (!e.getReason().equals(StateChangeReason.STEP)) {
             fCommandCache.reset();
         }
@@ -374,7 +374,7 @@ public class PDAStack extends AbstractDsfService implements IStack {
     @DsfServiceEventHandler 
     public void eventDispatched(ISuspendedDMEvent e) {
         // Enable sending commands to target and clear the cache.
-        fCommandCache.setTargetAvailable(true);
+        fCommandCache.setContextAvailable(e.getDMContext(), true);
         fCommandCache.reset();
     }
 }

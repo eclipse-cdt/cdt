@@ -115,6 +115,7 @@ public class SyncVariableDataAccess {
             final DsfSession session = DsfSession.getSession(fDmc.getSessionId());
             if (session == null) {
                 cancel(false);
+                rm.done();
                 return;
             }
 
@@ -126,20 +127,6 @@ public class SyncVariableDataAccess {
             }
 
             service.getExpressionData(fDmc, new DataRequestMonitor<IExpressionDMData>(session.getExecutor(), rm) {
-                @Override
-                protected void handleCompleted() {
-                    /*
-                     * We're in another dispatch, so we must guard against
-                     * executor shutdown again.
-                     */
-                    if (!DsfSession.isSessionActive(session.getId())) {
-                        GetVariableValueQuery.this.cancel(false);
-                        rm.done();
-                        return;
-                    }
-                    super.handleCompleted();
-                }
-
                 @Override
                 protected void handleSuccess() {
                     /*
@@ -214,6 +201,7 @@ public class SyncVariableDataAccess {
             final DsfSession session = DsfSession.getSession(fDmc.getSessionId());
             if (session == null) {
                 cancel(false);
+                rm.done();
                 return;
             }
 
@@ -235,19 +223,6 @@ public class SyncVariableDataAccess {
                fValue, 
                fFormatId,
                new DataRequestMonitor<IExpressionDMData>(session.getExecutor(), rm) {
-                   @Override
-                   protected void handleCompleted() {
-                       /*
-                        * We're in another dispatch, so we must guard
-                        * against executor shutdown again.
-                        */
-                       if (!DsfSession.isSessionActive(session.getId())) {
-                           SetVariableValueQuery.this.cancel(false);
-                           return;
-                        }
-                        super.handleCompleted();
-                    }
-
                     @Override
                     protected void handleSuccess() {
                         /*
@@ -325,6 +300,7 @@ public class SyncVariableDataAccess {
             final DsfSession session = DsfSession.getSession(fDmc.getSessionId());
             if (session == null) {
                 cancel(false);
+                rm.done();
                 return;
             }
 
@@ -344,19 +320,6 @@ public class SyncVariableDataAccess {
             service.getAvailableFormats(
                 fDmc,
                 new DataRequestMonitor<String[]>(session.getExecutor(), rm) {
-                    @Override
-                    protected void handleCompleted() {
-                        /*
-                         * We're in another dispatch, so we must
-                         * guard against executor shutdown again.
-                         */
-                        if (!DsfSession.isSessionActive(session.getId())) {
-                            GetSupportFormatsValueQuery.this.cancel(false);
-                            return;
-                        }
-                        super.handleCompleted();
-                    }
-
                     @Override
                     protected void handleSuccess() {
                         /*
@@ -424,6 +387,7 @@ public class SyncVariableDataAccess {
             final DsfSession session = DsfSession.getSession(fDmc.getSessionId());
             if (session == null) {
                 cancel(false);
+                rm.done();
                 return;
             }
 
@@ -444,18 +408,6 @@ public class SyncVariableDataAccess {
             FormattedValueDMContext formDmc = service.getFormattedValueContext(fDmc, fFormatId);
             
             service.getFormattedExpressionValue(formDmc, new DataRequestMonitor<FormattedValueDMData>(session.getExecutor(), rm) {
-                @Override
-                protected void handleCompleted() {
-                    /*
-                     * We're in another dispatch, so we must guard against executor shutdown again.
-                     */
-                    if (!DsfSession.isSessionActive(session.getId())) {
-                        GetFormattedValueValueQuery.this.cancel(false);
-                        return;
-                    }
-                    super.handleCompleted();
-                }
-
                 @Override
                 protected void handleSuccess() {
                     /*
@@ -520,6 +472,7 @@ public class SyncVariableDataAccess {
             final DsfSession session = DsfSession.getSession(fDmc.getSessionId());
             if (session == null) {
                 cancel(false);
+                rm.done();
                 return;
             }
 
@@ -534,18 +487,6 @@ public class SyncVariableDataAccess {
             }
             
             service.canWriteExpression(fDmc, new DataRequestMonitor<Boolean>(session.getExecutor(), rm) {
-                @Override
-                protected void handleCompleted() {
-                    /*
-                     * We're in another dispatch, so we must guard against executor shutdown again.
-                     */
-                    if (!DsfSession.isSessionActive(session.getId())) {
-                    	CanWriteExpressionQuery.this.cancel(false);
-                        return;
-                    }
-                    super.handleCompleted();
-                }
-
                 @Override
                 protected void handleSuccess() {
                     /*

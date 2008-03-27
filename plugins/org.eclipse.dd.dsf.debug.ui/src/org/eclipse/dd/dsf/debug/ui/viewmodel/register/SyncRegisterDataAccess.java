@@ -59,16 +59,15 @@ public class SyncRegisterDataAccess {
     public SyncRegisterDataAccess(DsfSession session) {
         fSession = session;
     }
-    
+
     @ThreadSafe
     private synchronized IRegisters getService() {
 
-    	String serviceId = DsfServices.createServiceFilter( IRegisters.class, fSession.getId() );
+        String serviceId = DsfServices.createServiceFilter(IRegisters.class, fSession.getId());
         if (fServiceTracker == null) {
             try {
-                fServiceTracker = new ServiceTracker(
-                    DsfDebugUIPlugin.getBundleContext(), 
-                    DsfDebugUIPlugin.getBundleContext().createFilter(serviceId), null);
+                fServiceTracker = new ServiceTracker(DsfDebugUIPlugin.getBundleContext(), DsfDebugUIPlugin
+                    .getBundleContext().createFilter(serviceId), null);
                 fServiceTracker.open();
             } catch (InvalidSyntaxException e) {
                 return null;
@@ -76,10 +75,10 @@ public class SyncRegisterDataAccess {
         }
         return (IRegisters) fServiceTracker.getService();
     }
-    
+
     @ThreadSafe
     public synchronized void dispose() {
-        if ( fServiceTracker != null ) {
+        if (fServiceTracker != null) {
             fServiceTracker.close();
         }
     }
@@ -104,30 +103,19 @@ public class SyncRegisterDataAccess {
             final DsfSession session = DsfSession.getSession(fDmc.getSessionId());
             if (session == null) {
                 cancel(false);
+                rm.done();
                 return;
             }
 
             IRegisters service = getService();
             if (service == null) {
-                rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Service not available", null)); //$NON-NLS-1$
+                rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE,
+                    "Service not available", null)); //$NON-NLS-1$
                 rm.done();
                 return;
             }
 
             service.getBitFieldData(fDmc, new DataRequestMonitor<IBitFieldDMData>(session.getExecutor(), rm) {
-                @Override
-                protected void handleCompleted() {
-                    /*
-                     * We're in another dispatch, so we must guard against
-                     * executor shutdown again.
-                     */
-                    if (!DsfSession.isSessionActive(session.getId())) {
-                        GetBitFieldValueQuery.this.cancel(false);
-                        return;
-                    }
-                    super.handleCompleted();
-                }
-
                 @Override
                 protected void handleSuccess() {
                     /*
@@ -142,7 +130,7 @@ public class SyncRegisterDataAccess {
 
     public IBitFieldDMContext getBitFieldDMC(Object element) {
         if (element instanceof IDMVMContext) {
-            IDMContext dmc = ((IDMVMContext)element).getDMContext();
+            IDMContext dmc = ((IDMVMContext) element).getDMContext();
             return DMContexts.getAncestorOfType(dmc, IBitFieldDMContext.class);
         }
         return null;
@@ -154,9 +142,11 @@ public class SyncRegisterDataAccess {
          * session is stale, then bail out.
          */
         IBitFieldDMContext dmc = getBitFieldDMC(element);
-        if (dmc == null) return null;
+        if (dmc == null)
+            return null;
         DsfSession session = DsfSession.getSession(dmc.getSessionId());
-        if (session == null) return null;
+        if (session == null)
+            return null;
 
         /*
          * Create the query to request the value from service. Note: no need to
@@ -184,7 +174,9 @@ public class SyncRegisterDataAccess {
     public class SetBitFieldValueQuery extends Query<Object> {
 
         private IBitFieldDMContext fDmc;
+
         private String fValue;
+
         private String fFormatId;
 
         public SetBitFieldValueQuery(IBitFieldDMContext dmc, String value, String formatId) {
@@ -203,6 +195,7 @@ public class SyncRegisterDataAccess {
             final DsfSession session = DsfSession.getSession(fDmc.getSessionId());
             if (session == null) {
                 cancel(false);
+                rm.done();
                 return;
             }
 
@@ -211,7 +204,8 @@ public class SyncRegisterDataAccess {
              */
             IRegisters service = getService();
             if (service == null) {
-                rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Service unavailable", null)); //$NON-NLS-1$
+                rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE,
+                    "Service unavailable", null)); //$NON-NLS-1$
                 rm.done();
                 return;
             }
@@ -219,34 +213,17 @@ public class SyncRegisterDataAccess {
             /*
              * Write the bit field using a string/format style.
              */
-            service.writeBitField(
-               fDmc, 
-               fValue, 
-               fFormatId,
-               new DataRequestMonitor<IBitFieldDMData>(session.getExecutor(), rm) {
-                   @Override
-                   protected void handleCompleted() {
-                       /*
-                        * We're in another dispatch, so we must guard
-                        * against executor shutdown again.
-                        */
-                       if (!DsfSession.isSessionActive(session.getId())) {
-                           SetBitFieldValueQuery.this.cancel(false);
-                           return;
-                        }
-                        super.handleCompleted();
-                    }
-
-                    @Override
-                    protected void handleSuccess() {
-                        /*
-                         * All good set return value.
-                         */
-                        rm.setData(new Object());
-                        rm.done();
-                    }
+            service.writeBitField(fDmc, fValue, fFormatId, new DataRequestMonitor<IBitFieldDMData>(session
+                .getExecutor(), rm) {
+                @Override
+                protected void handleSuccess() {
+                    /*
+                     * All good set return value.
+                     */
+                    rm.setData(new Object());
+                    rm.done();
                 }
-            );
+            });
         }
     }
 
@@ -257,9 +234,11 @@ public class SyncRegisterDataAccess {
          * session is stale, then bail out.
          */
         IBitFieldDMContext dmc = getBitFieldDMC(element);
-        if (dmc == null) return;
+        if (dmc == null)
+            return;
         DsfSession session = DsfSession.getSession(dmc.getSessionId());
-        if (session == null) return;
+        if (session == null)
+            return;
 
         /*
          * Create the query to write the value to the service. Note: no need to
@@ -311,6 +290,7 @@ public class SyncRegisterDataAccess {
             final DsfSession session = DsfSession.getSession(fDmc.getSessionId());
             if (session == null) {
                 cancel(false);
+                rm.done();
                 return;
             }
 
@@ -319,7 +299,8 @@ public class SyncRegisterDataAccess {
              */
             IRegisters service = getService();
             if (service == null) {
-                rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Service unavailable", null)); //$NON-NLS-1$
+                rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE,
+                    "Service unavailable", null)); //$NON-NLS-1$
                 rm.done();
                 return;
             }
@@ -327,33 +308,16 @@ public class SyncRegisterDataAccess {
             /*
              * Write the bit field using the mnemonic style.
              */
-            service.writeBitField(
-                fDmc, 
-                fMnemonic,
-                new DataRequestMonitor<IBitFieldDMData>(session.getExecutor(), rm) {
-                    @Override
-                    protected void handleCompleted() {
-                        /*
-                         * We're in another dispatch, so we must guard
-                         * against executor shutdown again.
-                         */
-                        if (!DsfSession.isSessionActive(session.getId())) {
-                            SetBitFieldValueMnemonicQuery.this.cancel(false);
-                            return;
-                        }
-                        super.handleCompleted();
-                    }
-
-                    @Override
-                    protected void handleSuccess() {
-                        /*
-                         * All good set return value.
-                         */
-                        rm.setData(new Object());
-                        rm.done();
-                    }
+            service.writeBitField(fDmc, fMnemonic, new DataRequestMonitor<IBitFieldDMData>(session.getExecutor(), rm) {
+                @Override
+                protected void handleSuccess() {
+                    /*
+                     * All good set return value.
+                     */
+                    rm.setData(new Object());
+                    rm.done();
                 }
-            );
+            });
         }
     }
 
@@ -364,9 +328,11 @@ public class SyncRegisterDataAccess {
          * session is stale, then bail out.
          */
         IBitFieldDMContext dmc = getBitFieldDMC(element);
-        if (dmc == null) return;
+        if (dmc == null)
+            return;
         DsfSession session = DsfSession.getSession(dmc.getSessionId());
-        if (session == null) return;
+        if (session == null)
+            return;
 
         /*
          * Create the query to write the value to the service. Note: no need to
@@ -398,7 +364,7 @@ public class SyncRegisterDataAccess {
 
     public IRegisterGroupDMContext getRegisterGroupDMC(Object element) {
         if (element instanceof IDMVMContext) {
-            IDMContext dmc = ((IDMVMContext)element).getDMContext();
+            IDMContext dmc = ((IDMVMContext) element).getDMContext();
             return DMContexts.getAncestorOfType(dmc, IRegisterGroupDMContext.class);
         }
         return null;
@@ -406,7 +372,7 @@ public class SyncRegisterDataAccess {
 
     public IRegisterDMContext getRegisterDMC(Object element) {
         if (element instanceof IDMVMContext) {
-            IDMContext dmc = ((IDMVMContext)element).getDMContext();
+            IDMContext dmc = ((IDMVMContext) element).getDMContext();
             return DMContexts.getAncestorOfType(dmc, IRegisterDMContext.class);
         }
         return null;
@@ -414,13 +380,13 @@ public class SyncRegisterDataAccess {
 
     public IFormattedDataDMContext getFormattedDMC(Object element) {
         if (element instanceof IDMVMContext) {
-            IDMContext dmc = ((IDMVMContext)element).getDMContext();
-            IRegisterDMContext  regdmc = DMContexts.getAncestorOfType(dmc, IRegisterDMContext.class);
+            IDMContext dmc = ((IDMVMContext) element).getDMContext();
+            IRegisterDMContext regdmc = DMContexts.getAncestorOfType(dmc, IRegisterDMContext.class);
             return DMContexts.getAncestorOfType(regdmc, IFormattedDataDMContext.class);
         }
         return null;
     }
-    
+
     public class GetRegisterGroupValueQuery extends Query<IRegisterGroupDMData> {
 
         IRegisterGroupDMContext fDmc;
@@ -441,30 +407,19 @@ public class SyncRegisterDataAccess {
             final DsfSession session = DsfSession.getSession(fDmc.getSessionId());
             if (session == null) {
                 cancel(false);
+                rm.done();
                 return;
             }
 
             IRegisters service = getService();
             if (service == null) {
-                rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Service not available", null)); //$NON-NLS-1$
+                rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE,
+                    "Service not available", null)); //$NON-NLS-1$
                 rm.done();
                 return;
             }
 
-            service.getRegisterGroupData(fDmc, new DataRequestMonitor<IRegisterGroupDMData>( session.getExecutor(), rm) {
-                @Override
-                protected void handleCompleted() {
-                    /*
-                     * We're in another dispatch, so we must guard against
-                     * executor shutdown again.
-                     */
-                    if (!DsfSession.isSessionActive(session.getId())) {
-                        GetRegisterGroupValueQuery.this.cancel(false);
-                        return;
-                    }
-                    super.handleCompleted();
-                }
-
+            service.getRegisterGroupData(fDmc, new DataRequestMonitor<IRegisterGroupDMData>(session.getExecutor(), rm) {
                 @Override
                 protected void handleSuccess() {
                     /*
@@ -483,9 +438,11 @@ public class SyncRegisterDataAccess {
          * session is stale, then bail out.
          */
         IRegisterGroupDMContext dmc = getRegisterGroupDMC(element);
-        if (dmc == null) return null;
+        if (dmc == null)
+            return null;
         DsfSession session = DsfSession.getSession(dmc.getSessionId());
-        if (session == null) return null;
+        if (session == null)
+            return null;
 
         /*
          * Create the query to request the value from service. Note: no need to
@@ -530,30 +487,19 @@ public class SyncRegisterDataAccess {
             final DsfSession session = DsfSession.getSession(fDmc.getSessionId());
             if (session == null) {
                 cancel(false);
+                rm.done();
                 return;
             }
 
             IRegisters service = getService();
             if (service == null) {
-                rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Service not available", null)); //$NON-NLS-1$
+                rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE,
+                    "Service not available", null)); //$NON-NLS-1$
                 rm.done();
                 return;
             }
 
-            service.getRegisterData(fDmc, new DataRequestMonitor<IRegisterDMData>( session.getExecutor(), rm) {
-                @Override
-                protected void handleCompleted() {
-                    /*
-                     * We're in another dispatch, so we must guard against
-                     * executor shutdown again.
-                     */
-                    if (!DsfSession.isSessionActive(session.getId())) {
-                        GetRegisterValueQuery.this.cancel(false);
-                        return;
-                    }
-                    super.handleCompleted();
-                }
-
+            service.getRegisterData(fDmc, new DataRequestMonitor<IRegisterDMData>(session.getExecutor(), rm) {
                 @Override
                 protected void handleSuccess() {
                     /*
@@ -572,9 +518,11 @@ public class SyncRegisterDataAccess {
          * session is stale, then bail out.
          */
         IRegisterDMContext dmc = getRegisterDMC(element);
-        if (dmc == null) return null;
+        if (dmc == null)
+            return null;
         DsfSession session = DsfSession.getSession(dmc.getSessionId());
-        if (session == null) return null;
+        if (session == null)
+            return null;
 
         /*
          * Create the query to request the value from service. Note: no need to
@@ -602,7 +550,9 @@ public class SyncRegisterDataAccess {
     public class SetRegisterValueQuery extends Query<Object> {
 
         private IRegisterDMContext fDmc;
+
         private String fValue;
+
         private String fFormatId;
 
         public SetRegisterValueQuery(IRegisterDMContext dmc, String value, String formatId) {
@@ -621,6 +571,7 @@ public class SyncRegisterDataAccess {
             final DsfSession session = DsfSession.getSession(fDmc.getSessionId());
             if (session == null) {
                 cancel(false);
+                rm.done();
                 return;
             }
 
@@ -629,7 +580,8 @@ public class SyncRegisterDataAccess {
              */
             IRegisters service = getService();
             if (service == null) {
-                rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Service unavailable", null)); //$NON-NLS-1$
+                rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE,
+                    "Service unavailable", null)); //$NON-NLS-1$
                 rm.done();
                 return;
             }
@@ -641,48 +593,32 @@ public class SyncRegisterDataAccess {
             /*
              * Write the bit field using a string/format style.
              */
-            service.writeRegister(
-                fDmc, 
-                fValue, 
-                fFormatId,
-                new DataRequestMonitor<IBitFieldDMData>(session.getExecutor(), rm) {
-                    @Override
-                    protected void handleCompleted() {
-                        /*
-                         * We're in another dispatch, so we must guard
-                         * against executor shutdown again.
-                         */
-                        if (!DsfSession.isSessionActive(session.getId())) {
-                            SetRegisterValueQuery.this.cancel(false);
-                            return;
-                        }
-                        super.handleCompleted();
-                    }
-
-                    @Override
-                    protected void handleSuccess() {
-                        /*
-                         * All good set return value.
-                         */
-                        rm.setData(new Object());
-                        rm.done();
-                    }
+            service.writeRegister(fDmc, fValue, fFormatId, new DataRequestMonitor<IBitFieldDMData>(session
+                .getExecutor(), rm) {
+                @Override
+                protected void handleSuccess() {
+                    /*
+                     * All good set return value.
+                     */
+                    rm.setData(new Object());
+                    rm.done();
                 }
-            );
+            });
         }
     }
 
-    public void writeRegister(Object element, String value,
-            String formatId) {
+    public void writeRegister(Object element, String value, String formatId) {
 
         /*
          * Get the DMC and the session. If element is not an register DMC, or
          * session is stale, then bail out.
          */
         IRegisterDMContext dmc = getRegisterDMC(element);
-        if (dmc == null) return;
+        if (dmc == null)
+            return;
         DsfSession session = DsfSession.getSession(dmc.getSessionId());
-        if (session == null) return;
+        if (session == null)
+            return;
 
         /*
          * Create the query to write the value to the service. Note: no need to
@@ -730,6 +666,7 @@ public class SyncRegisterDataAccess {
             final DsfSession session = DsfSession.getSession(fDmc.getSessionId());
             if (session == null) {
                 cancel(false);
+                rm.done();
                 return;
             }
 
@@ -738,7 +675,8 @@ public class SyncRegisterDataAccess {
              */
             IRegisters service = getService();
             if (service == null) {
-                rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Service unavailable", null)); //$NON-NLS-1$
+                rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE,
+                    "Service unavailable", null)); //$NON-NLS-1$
                 rm.done();
                 return;
             }
@@ -746,32 +684,16 @@ public class SyncRegisterDataAccess {
             /*
              * Write the bit field using a string/format style.
              */
-            service.getAvailableFormats(
-                fDmc,
-                new DataRequestMonitor<String[]>(session.getExecutor(), rm) {
-                    @Override
-                    protected void handleCompleted() {
-                        /*
-                         * We're in another dispatch, so we must
-                         * guard against executor shutdown again.
-                         */
-                        if (!DsfSession.isSessionActive(session.getId())) {
-                            GetSupportFormatsValueQuery.this.cancel(false);
-                            return;
-                        }
-                        super.handleCompleted();
-                    }
-
-                    @Override
-                    protected void handleSuccess() {
-                        /*
-                         * All good set return value.
-                         */
-                        rm.setData(new Object());
-                        rm.done();
-                    }
+            service.getAvailableFormats(fDmc, new DataRequestMonitor<String[]>(session.getExecutor(), rm) {
+                @Override
+                protected void handleSuccess() {
+                    /*
+                     * All good set return value.
+                     */
+                    rm.setData(new Object());
+                    rm.done();
                 }
-            );
+            });
         }
     }
 
@@ -783,15 +705,17 @@ public class SyncRegisterDataAccess {
          */
         IFormattedDataDMContext dmc = null;
         if (element instanceof IDMVMContext) {
-            IDMContext vmcdmc = ((IDMVMContext)element).getDMContext();
-            IRegisterDMContext  regdmc = DMContexts.getAncestorOfType(vmcdmc, IRegisterDMContext.class);
+            IDMContext vmcdmc = ((IDMVMContext) element).getDMContext();
+            IRegisterDMContext regdmc = DMContexts.getAncestorOfType(vmcdmc, IRegisterDMContext.class);
             dmc = DMContexts.getAncestorOfType(regdmc, IFormattedDataDMContext.class);
         }
-        
-        if (dmc == null) return null;
+
+        if (dmc == null)
+            return null;
         DsfSession session = DsfSession.getSession(dmc.getSessionId());
-        if (session == null) return null;
-        
+        if (session == null)
+            return null;
+
         /*
          * Create the query to write the value to the service. Note: no need to
          * guard agains RejectedExecutionException, because
@@ -814,10 +738,11 @@ public class SyncRegisterDataAccess {
             return null;
         }
     }
-    
+
     public class GetFormattedValueValueQuery extends Query<Object> {
 
         private IFormattedDataDMContext fDmc;
+
         private String fFormatId;
 
         public GetFormattedValueValueQuery(IFormattedDataDMContext dmc, String formatId) {
@@ -835,6 +760,7 @@ public class SyncRegisterDataAccess {
             final DsfSession session = DsfSession.getSession(fDmc.getSessionId());
             if (session == null) {
                 cancel(false);
+                rm.done();
                 return;
             }
 
@@ -843,30 +769,21 @@ public class SyncRegisterDataAccess {
              */
             IRegisters service = getService();
             if (service == null) {
-                rm .setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Service unavailable", null)); //$NON-NLS-1$
+                rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE,
+                    "Service unavailable", null)); //$NON-NLS-1$
                 rm.done();
                 return;
             }
 
             /*
-             * Convert to the proper formatting DMC then go get the formatted value.
+             * Convert to the proper formatting DMC then go get the formatted
+             * value.
              */
-            
-            FormattedValueDMContext formDmc = service.getFormattedValueContext(fDmc, fFormatId);
-            
-            service.getFormattedExpressionValue(formDmc, new DataRequestMonitor<FormattedValueDMData>( session.getExecutor(), rm) {
-                @Override
-                protected void handleCompleted() {
-                    /*
-                     * We're in another dispatch, so we must guard against executor shutdown again.
-                     */
-                    if (!DsfSession.isSessionActive(session.getId())) {
-                        GetFormattedValueValueQuery.this.cancel(false);
-                        return;
-                    }
-                    super.handleCompleted();
-                }
 
+            FormattedValueDMContext formDmc = service.getFormattedValueContext(fDmc, fFormatId);
+
+            service.getFormattedExpressionValue(formDmc, new DataRequestMonitor<FormattedValueDMData>(session
+                .getExecutor(), rm) {
                 @Override
                 protected void handleSuccess() {
                     /*
@@ -887,15 +804,17 @@ public class SyncRegisterDataAccess {
          */
         IFormattedDataDMContext dmc = null;
         if (element instanceof IDMVMContext) {
-            IDMContext vmcdmc = ((IDMVMContext)element).getDMContext();
-            IRegisterDMContext  regdmc = DMContexts.getAncestorOfType(vmcdmc, IRegisterDMContext.class);
+            IDMContext vmcdmc = ((IDMVMContext) element).getDMContext();
+            IRegisterDMContext regdmc = DMContexts.getAncestorOfType(vmcdmc, IRegisterDMContext.class);
             dmc = DMContexts.getAncestorOfType(regdmc, IFormattedDataDMContext.class);
         }
-        
-        if (dmc == null) return null;
+
+        if (dmc == null)
+            return null;
         DsfSession session = DsfSession.getSession(dmc.getSessionId());
-        if (session == null) return null;
-        
+        if (session == null)
+            return null;
+
         /*
          * Create the query to write the value to the service. Note: no need to
          * guard agains RejectedExecutionException, because
@@ -918,7 +837,7 @@ public class SyncRegisterDataAccess {
             return null;
         }
     }
-    
+
     public String getFormattedBitFieldValue(Object element, String formatId) {
 
         /*
@@ -927,15 +846,17 @@ public class SyncRegisterDataAccess {
          */
         IFormattedDataDMContext dmc = null;
         if (element instanceof IDMVMContext) {
-            IDMContext vmcdmc = ((IDMVMContext)element).getDMContext();
-            IBitFieldDMContext  bitfielddmc = DMContexts.getAncestorOfType(vmcdmc, IBitFieldDMContext.class);
+            IDMContext vmcdmc = ((IDMVMContext) element).getDMContext();
+            IBitFieldDMContext bitfielddmc = DMContexts.getAncestorOfType(vmcdmc, IBitFieldDMContext.class);
             dmc = DMContexts.getAncestorOfType(bitfielddmc, IFormattedDataDMContext.class);
         }
-        
-        if (dmc == null) return null;
+
+        if (dmc == null)
+            return null;
         DsfSession session = DsfSession.getSession(dmc.getSessionId());
-        if (session == null) return null;
-        
+        if (session == null)
+            return null;
+
         /*
          * Create the query to write the value to the service. Note: no need to
          * guard agains RejectedExecutionException, because

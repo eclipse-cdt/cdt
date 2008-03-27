@@ -7,7 +7,7 @@
    <extension point="org.eclipse.core.runtime.adapters">
       <factory 
         	class="org.eclipse.dd.gdb.internal.ui.GdbAdapterFactory" 
-	        adaptableType="org.eclipse.dd.gdb.launch.launching.GdbLaunch">
+	        adaptableType="org.eclipse.dd.gdb.launching.GdbLaunch">
          <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider"/>
          <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory"/>
          <adapter type="org.eclipse.debug.ui.contexts.ISuspendTrigger"/>

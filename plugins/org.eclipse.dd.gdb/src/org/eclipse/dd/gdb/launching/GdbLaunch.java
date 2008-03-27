@@ -8,7 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.dd.gdb.launch.launching;
+package org.eclipse.dd.gdb.launching;
 
 import java.util.concurrent.ExecutionException;
 
@@ -29,7 +29,7 @@ import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.gdb.launch.internal.GdbLaunchPlugin;
+import org.eclipse.dd.gdb.internal.GdbPlugin;
 import org.eclipse.dd.gdb.service.command.GDBControl;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -71,7 +71,7 @@ public class GdbLaunch extends Launch
         
         Runnable initRunnable = new DsfRunnable() { 
             public void run() {
-                fTracker = new DsfServicesTracker(GdbLaunchPlugin.getBundleContext(), fSession.getId());
+                fTracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), fSession.getId());
                 fSession.addServiceEventListener(GdbLaunch.this, null);
     
                 fInitialized = true;
@@ -83,9 +83,9 @@ public class GdbLaunch extends Launch
         try {
             fExecutor.submit(initRunnable).get();
         } catch (InterruptedException e) {
-            new Status(IStatus.ERROR, GdbLaunchPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Error initializing launch", e); //$NON-NLS-1$
+            new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Error initializing launch", e); //$NON-NLS-1$
         } catch (ExecutionException e) {
-            new Status(IStatus.ERROR, GdbLaunchPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Error initializing launch", e); //$NON-NLS-1$
+            new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Error initializing launch", e); //$NON-NLS-1$
         }
     }
 
@@ -145,8 +145,8 @@ public class GdbLaunch extends Launch
                 public void handleCompleted() {
                     fSession.removeServiceEventListener(GdbLaunch.this);
                     if (!isSuccess()) {
-                        GdbLaunchPlugin.getDefault().getLog().log(new MultiStatus(
-                            GdbLaunchPlugin.PLUGIN_ID, -1, new IStatus[]{getStatus()}, "Session shutdown failed", null)); //$NON-NLS-1$
+                        GdbPlugin.getDefault().getLog().log(new MultiStatus(
+                            GdbPlugin.PLUGIN_ID, -1, new IStatus[]{getStatus()}, "Session shutdown failed", null)); //$NON-NLS-1$
                     }
                     // Last order of business, shutdown the dispatch queue.
                     fTracker.dispose();

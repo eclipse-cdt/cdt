@@ -8,7 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.dd.gdb.launch.launching;
+package org.eclipse.dd.gdb.launching;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -18,7 +18,7 @@ import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.Sequence;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.IDsfService;
-import org.eclipse.dd.gdb.launch.internal.GdbLaunchPlugin;
+import org.eclipse.dd.gdb.internal.GdbPlugin;
 import org.eclipse.dd.gdb.service.GDBRunControl;
 import org.eclipse.dd.gdb.service.command.GDBControl;
 import org.eclipse.dd.mi.service.CSourceLookup;
@@ -54,8 +54,8 @@ public class ShutdownSequence extends Sequence {
     private final Step[] fSteps = new Step[] { new Step() {
         @Override
         public void execute(RequestMonitor requestMonitor) {
-            assert GdbLaunchPlugin.getBundleContext() != null;
-            fTracker = new DsfServicesTracker(GdbLaunchPlugin.getBundleContext(), fSessionId);
+            assert GdbPlugin.getBundleContext() != null;
+            fTracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), fSessionId);
             requestMonitor.done();
         }
 
@@ -93,13 +93,13 @@ public class ShutdownSequence extends Sequence {
 //                        protected void handleCompleted() {
 //                            // If un-installing breakpoints fails, log the error but continue shutting down.
 //                            if (!isSuccess) {
-//                                DsfGdbLaunchPlugin.getDefault().getLog().log(getStatus());
+//                                DsfGdbPlugin.getDefault().getLog().log(getStatus());
 //                            }
 //                            requestMonitor.done();
 //                        }
 //                    });
 //            } else {
-//                requestMonitor.setStatus(new Status(IStatus.ERROR, DsfGdbLaunchPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR,
+//                requestMonitor.setStatus(new Status(IStatus.ERROR, DsfGdbPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR,
 //                    "Needed services not found.", null)); //$NON-NLS-1$
 //                requestMonitor.done();
 //            }
@@ -166,13 +166,13 @@ public class ShutdownSequence extends Sequence {
                 @Override
                 protected void handleCompleted() {
                     if (!isSuccess()) {
-                        GdbLaunchPlugin.getDefault().getLog().log(getStatus());
+                        GdbPlugin.getDefault().getLog().log(getStatus());
                     }
                     requestMonitor.done();
                 }
             });
         } else {
-            requestMonitor.setStatus(new Status(IStatus.ERROR, GdbLaunchPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR,
+            requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR,
                 "Service '" + clazz.getName() + "' not found.", null)); //$NON-NLS-1$//$NON-NLS-2$
             requestMonitor.done();
         }

@@ -30,7 +30,7 @@ import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.breakpoints.CBreakpointGdbThreadsFilterExtension;
 import org.eclipse.dd.gdb.internal.ui.GdbUIPlugin;
-import org.eclipse.dd.gdb.launch.launching.GdbLaunch;
+import org.eclipse.dd.gdb.launching.GdbLaunch;
 import org.eclipse.dd.gdb.service.GDBRunControl;
 import org.eclipse.dd.gdb.service.GDBRunControl.GDBThreadData;
 import org.eclipse.dd.gdb.service.command.GDBControl;

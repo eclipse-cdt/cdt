@@ -6,15 +6,6 @@ Bundle-SymbolicName: org.eclipse.dd.gdb.launch; singleton:=true
 Bundle-Version: 1.0.0
 Bundle-Activator: org.eclipse.dd.gdb.launch.internal.GdbLaunchPlugin
 Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.dd.dsf,
- org.eclipse.dd.dsf.debug,
- org.eclipse.dd.mi,
- org.eclipse.dd.gdb,
- org.eclipse.debug.core,
- org.eclipse.cdt.core,
- org.eclipse.cdt.launch,
- org.eclipse.cdt.debug.core,
- org.eclipse.cdt.debug.mi.core
+ org.eclipse.dd.gdb
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: org.eclipse.dd.gdb.launch.launching

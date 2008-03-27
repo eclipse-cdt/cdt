@@ -8,7 +8,7 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.dd.gdb.launch.launching; 
+package org.eclipse.dd.gdb.launching; 
 
 import java.io.File;
 import java.io.IOException;
@@ -35,7 +35,7 @@ import org.eclipse.dd.dsf.debug.model.DsfMemoryBlockRetrieval;
 import org.eclipse.dd.dsf.debug.service.IMemory.IMemoryDMContext;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.gdb.IGDBLaunchConfigurationConstants;
-import org.eclipse.dd.gdb.launch.internal.GdbLaunchPlugin;
+import org.eclipse.dd.gdb.internal.GdbPlugin;
 import org.eclipse.dd.gdb.service.command.GDBControl;
 import org.eclipse.dd.gdb.service.command.GDBControl.SessionType;
 import org.eclipse.dd.mi.service.command.AbstractCLIProcess;
@@ -131,9 +131,9 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate
         try {
             servicesLaunchSequence.get();
         } catch (InterruptedException e1) {
-            throw new DebugException(new Status(IStatus.ERROR, GdbLaunchPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR, "Interrupted Exception in dispatch thread", e1)); //$NON-NLS-1$
+            throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR, "Interrupted Exception in dispatch thread", e1)); //$NON-NLS-1$
         } catch (ExecutionException e1) {
-            throw new DebugException(new Status(IStatus.ERROR, GdbLaunchPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Error in services launch sequence", e1.getCause())); //$NON-NLS-1$
+            throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Error in services launch sequence", e1.getCause())); //$NON-NLS-1$
         }
         
         launch.initializeControl();
@@ -144,7 +144,7 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate
         try {
             launch.getDsfExecutor().submit( new Callable<Object>() {
                 public Object call() throws CoreException {
-                    DsfServicesTracker tracker = new DsfServicesTracker(GdbLaunchPlugin.getBundleContext(), launch.getSession().getId());
+                    DsfServicesTracker tracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), launch.getSession().getId());
                     GDBControl gdb = tracker.getService(GDBControl.class);
                     if (gdb != null) {
                         cliProcessRef.set(gdb.getCLIProcess());
@@ -157,11 +157,11 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate
             launch.addProcess(DebugPlugin.newProcess(launch, cliProcessRef.get(), "gdb")); //$NON-NLS-1$
             launch.addProcess(DebugPlugin.newProcess(launch, inferiorProcessRef.get(), exePath.lastSegment()));
         } catch (InterruptedException e) {
-            throw new CoreException(new Status(IStatus.ERROR, GdbLaunchPlugin.PLUGIN_ID, 0, "Interrupted while waiting for get process callable.", e)); //$NON-NLS-1$
+            throw new CoreException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, 0, "Interrupted while waiting for get process callable.", e)); //$NON-NLS-1$
         } catch (ExecutionException e) {
             throw (CoreException)e.getCause();
         } catch (RejectedExecutionException e) {
-            throw new CoreException(new Status(IStatus.ERROR, GdbLaunchPlugin.PLUGIN_ID, 0, "Debugger shut down before launch was completed.", e)); //$NON-NLS-1$
+            throw new CoreException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, 0, "Debugger shut down before launch was completed.", e)); //$NON-NLS-1$
         }            
         
         // Create and invoke the final launch sequence to setup GDB
@@ -171,15 +171,15 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate
         try {
         	finalLaunchSequence.get();
         } catch (InterruptedException e1) {
-            throw new DebugException(new Status(IStatus.ERROR, GdbLaunchPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR, "Interrupted Exception in dispatch thread", e1)); //$NON-NLS-1$
+            throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR, "Interrupted Exception in dispatch thread", e1)); //$NON-NLS-1$
         } catch (ExecutionException e1) {
-            throw new DebugException(new Status(IStatus.ERROR, GdbLaunchPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Error in final launch sequence", e1.getCause())); //$NON-NLS-1$
+            throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Error in final launch sequence", e1.getCause())); //$NON-NLS-1$
         }
         // Create a memory retrieval and register it with session 
         try {
             launch.getDsfExecutor().submit( new Callable<Object>() {
                 public Object call() throws CoreException {
-                    DsfServicesTracker tracker = new DsfServicesTracker(GdbLaunchPlugin.getBundleContext(), launch.getSession().getId());
+                    DsfServicesTracker tracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), launch.getSession().getId());
                     GDBControl gdbControl = tracker.getService(GDBControl.class);
                     if (gdbControl != null) {
                         IMemoryBlockRetrieval memRetrieval = new DsfMemoryBlockRetrieval(
@@ -192,11 +192,11 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate
                 }
             }).get();
         } catch (InterruptedException e) {
-            throw new CoreException(new Status(IStatus.ERROR, GdbLaunchPlugin.PLUGIN_ID, 0, "Interrupted while waiting for get process callable.", e)); //$NON-NLS-1$
+            throw new CoreException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, 0, "Interrupted while waiting for get process callable.", e)); //$NON-NLS-1$
         } catch (ExecutionException e) {
             throw (CoreException)e.getCause();
         } catch (RejectedExecutionException e) {
-            throw new CoreException(new Status(IStatus.ERROR, GdbLaunchPlugin.PLUGIN_ID, 0, "Debugger shut down before launch was completed.", e)); //$NON-NLS-1$
+            throw new CoreException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, 0, "Debugger shut down before launch was completed.", e)); //$NON-NLS-1$
         }
 	}
 

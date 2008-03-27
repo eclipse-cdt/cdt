@@ -8,7 +8,7 @@
  * Contributors:
  *     Ericsson - initial API and implementation          
  *******************************************************************************/
-package org.eclipse.dd.gdb.launch.launching;
+package org.eclipse.dd.gdb.launching;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
@@ -23,7 +23,7 @@ import org.eclipse.dd.dsf.concurrent.Sequence;
 import org.eclipse.dd.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
-import org.eclipse.dd.gdb.launch.internal.GdbLaunchPlugin;
+import org.eclipse.dd.gdb.internal.GdbPlugin;
 import org.eclipse.dd.gdb.service.command.GDBControl;
 import org.eclipse.dd.gdb.service.command.GDBControl.SessionType;
 import org.eclipse.dd.mi.service.CSourceLookup;
@@ -45,7 +45,7 @@ public class FinalLaunchSequence extends Sequence {
          */
         new Step() { @Override
         public void execute(RequestMonitor requestMonitor) {
-            DsfServicesTracker tracker = new DsfServicesTracker(GdbLaunchPlugin.getBundleContext(), fLaunch.getSession().getId());
+            DsfServicesTracker tracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), fLaunch.getSession().getId());
             fCommandControl = tracker.getService(GDBControl.class);
             tracker.dispose();
 
@@ -56,7 +56,7 @@ public class FinalLaunchSequence extends Sequence {
     	 */
         new Step() { @Override
         public void execute(RequestMonitor requestMonitor) {
-            DsfServicesTracker tracker = new DsfServicesTracker(GdbLaunchPlugin.getBundleContext(), fLaunch.getSession().getId());
+            DsfServicesTracker tracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), fLaunch.getSession().getId());
             CSourceLookup sourceLookup = tracker.getService(CSourceLookup.class);
             tracker.dispose();
 
@@ -79,7 +79,7 @@ public class FinalLaunchSequence extends Sequence {
                                     IGDBServerMILaunchConfigurationConstants.ATTR_REMOTE_TCP,
                                     false);
                 } catch (CoreException e) {
-                    requestMonitor.setStatus(new Status(IStatus.ERROR, GdbLaunchPlugin.PLUGIN_ID, -1, "Cannot retrieve connection mode", e)); //$NON-NLS-1$
+                    requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot retrieve connection mode", e)); //$NON-NLS-1$
                     requestMonitor.done();
                     return false;
                 }
@@ -89,9 +89,9 @@ public class FinalLaunchSequence extends Sequence {
             private boolean getSerialDevice(RequestMonitor requestMonitor) {
                 try {
                     fSerialDevice = fLaunch.getLaunchConfiguration().getAttribute(
-                                    			IGDBServerMILaunchConfigurationConstants.ATTR_DEV, "invalid");
+                                    			IGDBServerMILaunchConfigurationConstants.ATTR_DEV, "invalid"); //$NON-NLS-1$
                 } catch (CoreException e) {
-                    requestMonitor.setStatus(new Status(IStatus.ERROR, GdbLaunchPlugin.PLUGIN_ID, -1, "Cannot retrieve serial device", e)); //$NON-NLS-1$
+                    requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot retrieve serial device", e)); //$NON-NLS-1$
                     requestMonitor.done();
                     return false;
                 }
@@ -101,9 +101,9 @@ public class FinalLaunchSequence extends Sequence {
             private boolean getTcpHost(RequestMonitor requestMonitor) {
                 try {
                     fRemoteTcpHost = fLaunch.getLaunchConfiguration().getAttribute(
-                    							IGDBServerMILaunchConfigurationConstants.ATTR_HOST, "invalid");
+                    							IGDBServerMILaunchConfigurationConstants.ATTR_HOST, "invalid"); //$NON-NLS-1$
                 } catch (CoreException e) {
-                    requestMonitor.setStatus(new Status(IStatus.ERROR, GdbLaunchPlugin.PLUGIN_ID, -1, "Cannot retrieve remote TCP host", e)); //$NON-NLS-1$
+                    requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot retrieve remote TCP host", e)); //$NON-NLS-1$
                     requestMonitor.done();
                     return false;
                 }
@@ -113,9 +113,9 @@ public class FinalLaunchSequence extends Sequence {
             private boolean getTcpPort(RequestMonitor requestMonitor) {
                 try {
                     fRemoteTcpPort = fLaunch.getLaunchConfiguration().getAttribute(
-                                    			IGDBServerMILaunchConfigurationConstants.ATTR_PORT, "invalid");
+                                    			IGDBServerMILaunchConfigurationConstants.ATTR_PORT, "invalid"); //$NON-NLS-1$
                 } catch (CoreException e) {
-                    requestMonitor.setStatus(new Status(IStatus.ERROR, GdbLaunchPlugin.PLUGIN_ID, -1, "Cannot retrieve remote TCP port", e)); //$NON-NLS-1$
+                    requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot retrieve remote TCP port", e)); //$NON-NLS-1$
                     requestMonitor.done();
                     return false;
                 }
@@ -132,14 +132,14 @@ public class FinalLaunchSequence extends Sequence {
                         if (!getTcpPort(requestMonitor)) return;
                     
                         fCommandControl.queueCommand(
-                        		new MITargetSelect((IContainerDMContext)fCommandControl.getControlDMContext(), 
-                        				            fRemoteTcpHost, fRemoteTcpPort), 
+                        		new MITargetSelect(fCommandControl.getControlDMContext(), 
+                        				           fRemoteTcpHost, fRemoteTcpPort), 
                         	    new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
                		} else {
                			if (!getSerialDevice(requestMonitor)) return;
                     
                         fCommandControl.queueCommand(
-                        		new MITargetSelect((IContainerDMContext)fCommandControl.getControlDMContext(), 
+                        		new MITargetSelect(fCommandControl.getControlDMContext(), 
                         				           fSerialDevice), 
                         	    new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
                		}
@@ -154,7 +154,7 @@ public class FinalLaunchSequence extends Sequence {
          */
         new Step() { @Override
         public void execute(final RequestMonitor requestMonitor) {
-            DsfServicesTracker tracker = new DsfServicesTracker(GdbLaunchPlugin.getBundleContext(), fLaunch.getSession().getId());
+            DsfServicesTracker tracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), fLaunch.getSession().getId());
             MIBreakpointsManager bpmService = tracker.getService(MIBreakpointsManager.class);
             tracker.dispose();
         	bpmService.startTrackingBreakpoints(fCommandControl.getGDBDMContext(), requestMonitor);
@@ -174,7 +174,7 @@ public class FinalLaunchSequence extends Sequence {
                 try {
                     fStopInMain = fLaunch.getLaunchConfiguration().getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false );
                 } catch (CoreException e) {
-                    requestMonitor.setStatus(new Status(IStatus.ERROR, GdbLaunchPlugin.PLUGIN_ID, -1, "Cannot retrieve the entry point symbol", e)); //$NON-NLS-1$
+                    requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot retrieve the entry point symbol", e)); //$NON-NLS-1$
                     requestMonitor.done();
                     return false;
                 }
@@ -185,7 +185,7 @@ public class FinalLaunchSequence extends Sequence {
                 try {
                     fStopSymbol = fLaunch.getLaunchConfiguration().getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT );
                 } catch (CoreException e) {
-                    requestMonitor.setStatus(new Status(IStatus.ERROR, GdbLaunchPlugin.PLUGIN_ID, DebugException.CONFIGURATION_INVALID, "Cannot retrieve the entry point symbol", e)); //$NON-NLS-1$
+                    requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.CONFIGURATION_INVALID, "Cannot retrieve the entry point symbol", e)); //$NON-NLS-1$
                     requestMonitor.done();
                     return false;
                 }                

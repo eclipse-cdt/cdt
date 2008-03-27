@@ -4,7 +4,7 @@
    <extension point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
             sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
-            delegate="org.eclipse.dd.gdb.launch.launching.GdbLaunchDelegate"
+            delegate="org.eclipse.dd.gdb.launching.GdbLaunchDelegate"
             public="true"
             sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer"
             name="Local C/C++ Application (Experimental - DSF)"
@@ -12,7 +12,7 @@
             modes="debug">
       </launchConfigurationType>
       <launchConfigurationType
-            delegate="org.eclipse.dd.gdb.launch.launching.GdbLaunchDelegate"
+            delegate="org.eclipse.dd.gdb.launching.GdbLaunchDelegate"
             id="org.eclipse.dd.gdb.launch.remoteCLaunch"
             modes="debug"
             name="Remote C/C++ Application  (Experimental - DSF)"

@@ -5,7 +5,6 @@ Bundle-SymbolicName: org.eclipse.dd.tests.gdb;singleton:=true
 Bundle-Version: 1.0.0
 Bundle-Activator: org.eclipse.dd.tests.gdb.launching.TestsPlugin
 Bundle-Vendor: Ericsson
-Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.dd.dsf,
  org.eclipse.dd.dsf.debug,
@@ -17,8 +16,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.debug.core,
  org.eclipse.cdt.debug.mi.core,
  org.eclipse.swt,
- org.eclipse.dd.gdb,
- org.eclipse.dd.gdb.launch
+ org.eclipse.dd.gdb
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ClassPath: .

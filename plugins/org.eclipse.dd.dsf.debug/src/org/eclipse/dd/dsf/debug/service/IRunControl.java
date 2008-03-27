@@ -128,8 +128,8 @@ public interface IRunControl extends IDMService
     void suspend(IExecutionDMContext context, RequestMonitor requestMonitor);
     public enum StepType { STEP_OVER, STEP_INTO, STEP_RETURN };
     boolean isStepping(IExecutionDMContext context);
-    boolean canStep(IExecutionDMContext context);
+    boolean canStep(IExecutionDMContext context, StepType stepType);
     void step(IExecutionDMContext context, StepType stepType, RequestMonitor requestMonitor);
-    boolean canInstructionStep(IExecutionDMContext context);
+    boolean canInstructionStep(IExecutionDMContext context, StepType stepType);
     void instructionStep(IExecutionDMContext context, StepType stepType, RequestMonitor requestMonitor);
 }

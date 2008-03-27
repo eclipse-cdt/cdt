@@ -44,7 +44,7 @@ public class DsfStepReturnCommand implements IStepReturnHandler {
         
         fExecutor.submit(new DsfCommandRunnable(fTracker, request.getElements()[0], request) { 
             @Override public void doExecute() {
-                request.setEnabled(getStepQueueMgr().canEnqueueStep(getContext()));
+                request.setEnabled(getStepQueueMgr().canEnqueueStep(getContext(), StepType.STEP_RETURN));
             }
         });
     }

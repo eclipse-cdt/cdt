@@ -270,7 +270,7 @@ public class PDARunControl extends AbstractDsfService
         }
     }
     
-    public boolean canStep(IExecutionDMContext context) {
+    public boolean canStep(IExecutionDMContext context, StepType stepType) {
         return canResume(context);
     }
     
@@ -299,7 +299,7 @@ public class PDARunControl extends AbstractDsfService
         }
     }
 
-    public boolean canInstructionStep(IExecutionDMContext context) {
+    public boolean canInstructionStep(IExecutionDMContext context, StepType stepType) {
         return false;
     }
     

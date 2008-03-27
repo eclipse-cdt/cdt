@@ -527,7 +527,7 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
         }
     }
     
-    public boolean canStep(IExecutionDMContext context) {
+    public boolean canStep(IExecutionDMContext context, StepType stepType) {
         return canResume(context);
     }
     
@@ -583,7 +583,7 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
         }
     }
 
-    public boolean canInstructionStep(IExecutionDMContext context) {
+    public boolean canInstructionStep(IExecutionDMContext context, StepType stepType) {
         return false;
     }
     

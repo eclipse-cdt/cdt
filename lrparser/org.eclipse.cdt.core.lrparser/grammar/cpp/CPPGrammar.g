@@ -1717,10 +1717,9 @@ template_parameter_list
 -- but it would be better to refactor the grammar to remove the conflict.
 
 template_parameter
-    ::=? type_parameter
-    
-template_parameter
-    ::= parameter_declaration
+    ::= type_parameter
+      | parameter_declaration
+          /. $Build  consumeTemplateParamterDeclaration();  $EndBuild ./ 
 
 
 type_parameter
@@ -1740,11 +1739,8 @@ type_parameter
 
 
 template_id_name
-    ::= template_identifier '<' <openscope-ast> template_argument_list_opt '>'
+    ::= identifier_name '<' <openscope-ast> template_argument_list_opt '>'
           /. $Build  consumeTemplateId();  $EndBuild ./
-
-template_identifier
-    ::= identifier_name
 
 
 template_argument_list

@@ -65,9 +65,14 @@ public class CPPASTAmbiguousDeclarator extends CPPASTAmbiguity implements IASTDe
             }
             if(names.length > 0) {
                 IScope scope = CPPVisitor.getContainingScope(names[0]);
+                
                 if( scope != null ) {
                     try {
                         ASTInternal.flushCache(scope);
+                        IScope parentScope = scope.getParent(); // needed to fix bugs
+                        if(parentScope != null) {
+                        	ASTInternal.flushCache(parentScope);
+                        }
                     } catch (DOMException de) {}
                 }
             }

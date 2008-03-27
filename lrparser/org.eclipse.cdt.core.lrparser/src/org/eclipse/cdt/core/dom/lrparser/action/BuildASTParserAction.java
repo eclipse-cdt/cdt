@@ -299,6 +299,8 @@ public abstract class BuildASTParserAction {
 	/**
 	 * Allows simple pattern match testing of lists of tokens.
 	 * 
+	 * TODO: need to take token mapping into account
+	 * 
 	 * @throws NullPointerException if source or pattern is null
 	 */
 	public static boolean matchTokens(List<IToken> source, Integer ... pattern) {
@@ -313,6 +315,43 @@ public abstract class BuildASTParserAction {
 	}
 	
 	
+	
+	/**
+	 * Converts the given token list to a char[] suitable for
+	 * creating a name node. Spaces are discarded.
+	 */
+	protected static char[] tokenListToNameCharArray(List<IToken> tokens) {
+		StringBuilder sb = new StringBuilder(20); // longest operator name: operator delete[]
+		
+		for(IToken t : tokens)
+			sb.append(t.toString());
+		
+		int n = sb.length();
+		char[] cs = new char[n]; 
+		sb.getChars(0, n, cs, 0);
+		return cs;
+	}
+	
+	
+	/**
+	 * Finds the tokens in the given list that are between startOffset and endOffset.
+	 * Note, the offsets have to be exact.
+	 */
+	public static List<IToken> tokenOffsetSubList(List<IToken> tokens, int startOffset, int endOffset) {
+		int first = 0, last = 0;
+		int i = 0;
+		for(IToken t : tokens) {
+			if(offset(t) == startOffset) {
+				first = i;
+			}
+			if(endOffset(t) == endOffset) {
+				last = i;
+				break;
+			}
+			i++;
+		}
+		return tokens.subList(first, last+1);
+	}
 	
 	
 	/*************************************************************************************************************

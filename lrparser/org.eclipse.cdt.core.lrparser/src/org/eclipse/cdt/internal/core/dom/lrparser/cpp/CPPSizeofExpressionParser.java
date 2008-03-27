@@ -1988,6 +1988,13 @@ public CPPSizeofExpressionParser(String[] mapFrom) {  // constructor
             }  
    
             //
+            // Rule 492:  template_parameter ::= parameter_declaration
+            //
+            case 492: {       action.builder.
+   consumeTemplateParamterDeclaration();                 break;
+            }  
+   
+            //
             // Rule 493:  type_parameter ::= class identifier_name_opt
             //
             case 493: {       action.builder.
@@ -2030,72 +2037,72 @@ public CPPSizeofExpressionParser(String[] mapFrom) {  // constructor
             }  
    
             //
-            // Rule 499:  template_id_name ::= template_identifier < <openscope-ast> template_argument_list_opt >
+            // Rule 499:  template_id_name ::= identifier_name < <openscope-ast> template_argument_list_opt >
             //
             case 499: {       action.builder.
    consumeTemplateId();                 break;
             }  
    
             //
-            // Rule 508:  explicit_instantiation ::= template declaration
+            // Rule 507:  explicit_instantiation ::= template declaration
             //
-            case 508: {       action.builder.
+            case 507: {       action.builder.
    consumeTemplateExplicitInstantiation();                 break;
             }  
    
             //
-            // Rule 509:  explicit_specialization ::= template < > declaration
+            // Rule 508:  explicit_specialization ::= template < > declaration
             //
-            case 509: {       action.builder.
+            case 508: {       action.builder.
    consumeTemplateExplicitSpecialization();                 break;
             }  
    
             //
-            // Rule 510:  try_block ::= try compound_statement <openscope-ast> handler_seq
+            // Rule 509:  try_block ::= try compound_statement <openscope-ast> handler_seq
             //
-            case 510: {       action.builder.
+            case 509: {       action.builder.
    consumeStatementTryBlock();                 break;
             }  
    
             //
-            // Rule 513:  handler ::= catch ( exception_declaration ) compound_statement
+            // Rule 512:  handler ::= catch ( exception_declaration ) compound_statement
             //
-            case 513: {       action.builder.
+            case 512: {       action.builder.
    consumeStatementCatchHandler(false);                 break;
             }  
    
             //
-            // Rule 514:  handler ::= catch ( ... ) compound_statement
+            // Rule 513:  handler ::= catch ( ... ) compound_statement
             //
-            case 514: {       action.builder.
+            case 513: {       action.builder.
    consumeStatementCatchHandler(true);                 break;
             }  
    
             //
-            // Rule 515:  exception_declaration ::= type_specifier_seq <openscope-ast> declarator
+            // Rule 514:  exception_declaration ::= type_specifier_seq <openscope-ast> declarator
+            //
+            case 514: {       action.builder.
+   consumeDeclarationSimple(true, false);                 break;
+            }  
+   
+            //
+            // Rule 515:  exception_declaration ::= type_specifier_seq <openscope-ast> abstract_declarator
             //
             case 515: {       action.builder.
    consumeDeclarationSimple(true, false);                 break;
             }  
    
             //
-            // Rule 516:  exception_declaration ::= type_specifier_seq <openscope-ast> abstract_declarator
+            // Rule 516:  exception_declaration ::= type_specifier_seq
             //
             case 516: {       action.builder.
-   consumeDeclarationSimple(true, false);                 break;
-            }  
-   
-            //
-            // Rule 517:  exception_declaration ::= type_specifier_seq
-            //
-            case 517: {       action.builder.
    consumeDeclarationSimple(false, false);                 break;
             }  
    
             //
-            // Rule 525:  no_sizeof_type_name_start ::= ERROR_TOKEN
+            // Rule 524:  no_sizeof_type_name_start ::= ERROR_TOKEN
             //
-            case 525: {       action.builder.
+            case 524: {       action.builder.
    consumeExpressionProblem();                 break;
             }  
 

@@ -89,7 +89,6 @@ import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
 import org.eclipse.cdt.core.dom.lrparser.LPGTokenAdapter;
 import org.eclipse.cdt.core.dom.lrparser.action.BuildASTParserAction;
-import org.eclipse.cdt.core.parser.util.ASTPrinter;
 import org.eclipse.cdt.core.parser.util.DebugUtil;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPExpressionStatementParser;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPNoCastExpressionParser;
@@ -347,7 +346,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	
 	/**
 	 * template_id
-     *     ::= template_name '<' <openscope-ast> template_argument_list_opt '>'
+     *     ::= identifier_token '<' <openscope-ast> template_argument_list_opt '>'
      *     
      * operator_function_id
      *     ::= operator_id '<' <openscope-ast> template_argument_list_opt '>'
@@ -357,6 +356,12 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		
 		List<Object> templateArguments = astStack.closeScope();
 		IASTName name = (IASTName) astStack.pop();
+		
+//		char[] chars = tokenListToNameCharArray(parser.getRuleTokens());
+//		IASTName name = nodeFactory.newName(chars);
+//		setOffsetAndLength(name);
+	
+		
 		ICPPASTTemplateId templateId = nodeFactory.newCPPTemplateId(name);
 		
 		for(Object arg : templateArguments) {
@@ -423,11 +428,9 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	public void consumeConversionName() {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		
-		char[] chars = concatenateTokens(parser.getRuleTokens());
+		char[] chars = tokenListToNameCharArray(parser.getRuleTokens());
 		IASTTypeId typeId = (IASTTypeId) astStack.pop();
-		
 		ICPPASTConversionName name = nodeFactory.newCPPConversionName(chars, typeId);
-		
 		setOffsetAndLength(name);
 		astStack.push(name);
 		
@@ -435,16 +438,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	}
 	
 	
-	private static char[] concatenateTokens(List<IToken> tokens) {
-		StringBuilder sb = new StringBuilder(20); // longest operator name: operator delete[]
-		
-		for(IToken t : tokens)
-			sb.append(t);
-		
-		char[] cs = new char[sb.length()]; 
-		sb.getChars(0, sb.length(), cs, 0);
-		return cs;
-	}
+	
 	
     /**
      * unqualified_id
@@ -455,7 +449,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
   		
   		astStack.pop(); // throw away the name node thats already on the stack
   		
-  		char[] chars = concatenateTokens(parser.getRuleTokens());
+  		char[] chars = tokenListToNameCharArray(parser.getRuleTokens());
   		IASTName name = nodeFactory.newName(chars);
   		setOffsetAndLength(name);
   		astStack.push(name);
@@ -685,37 +679,60 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	
 	
 	
+	
+	
 	/**
 	 * Creates a qualified name from a list of names (that must be in reverse order).
 	 */
 	@SuppressWarnings("restriction")
 	private IASTName createQualifiedName(LinkedList<IASTName> nestedNames, boolean startsWithColonColon) {
-		if(!startsWithColonColon && nestedNames.size() == 1) { // its actually an unqualified name
+		if(!startsWithColonColon && nestedNames.size() == 1) // its actually an unqualified name
 			return nestedNames.get(0);
+		
+		int startOffset = offset(nestedNames.getLast());
+		int endOffset   = endOffset(nestedNames.getFirst());
+		int length      = endOffset - startOffset;
+	
+		// find the tokens that make up the name
+		List<IToken> nameTokens = tokenOffsetSubList(parser.getRuleTokens(), startOffset, endOffset);
+		
+		StringBuilder signature = new StringBuilder(startsWithColonColon ? "::" : ""); //$NON-NLS-1$ //$NON-NLS-2$
+		IToken prev = null;
+		for(IToken t : nameTokens) {
+			if(needSpaceBetween(prev, t))
+				signature.append(' ');
+			signature.append(t.toString());
+			prev = t;
 		}
 		
 		ICPPASTQualifiedName qualifiedName = nodeFactory.newCPPQualifiedName();
 		qualifiedName.setFullyQualified(startsWithColonColon);
-		
-		StringBuilder signature = new StringBuilder(startsWithColonColon ? "::" : ""); //$NON-NLS-1$ //$NON-NLS-2$
-		boolean first = true;
-		for(IASTName name : reverseIterable(nestedNames)) {
-			qualifiedName.addName(name);
-			if(!first)
-				signature.append("::"); //$NON-NLS-1$
-			signature.append(name.toString());
-			first = false;
-		}
-		 
+		setOffsetAndLength(qualifiedName, startOffset, length);
 		((CPPASTQualifiedName)qualifiedName).setSignature(signature.toString());
 		
-		int startOffset = offset(nestedNames.getLast());
-		int length = endOffset(nestedNames.getFirst()) - startOffset;
-		setOffsetAndLength(qualifiedName, startOffset, length);
-		
+		for(IASTName name : reverseIterable(nestedNames))
+			qualifiedName.addName(name);
+				
 		return qualifiedName;
 	}
 	
+	
+	private static boolean needSpaceBetween(IToken prev, IToken iter) {
+		if(prev == null)
+			return false;
+		
+		int prevKind = prev.getKind();
+		int iterKind = iter.getKind();
+		
+		return  prevKind != TK_ColonColon && 
+				prevKind != TK_identifier && 
+				prevKind != TK_LT &&
+				prevKind != TK_Tilde &&
+				iterKind != TK_GT && 
+				prevKind != TK_LeftBracket && 
+				iterKind != TK_RightBracket && 
+				iterKind != TK_ColonColon;
+	}
 	
 	/**
 	 * Consumes grammar sub-rules of the following form:
@@ -1396,9 +1413,11 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
     	 if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
      	
     	 List<Object> qualifiers = astStack.closeScope();
+    	 
     	 LinkedList<IASTName> nestedNames = (LinkedList<IASTName>) astStack.pop();
     	 boolean hasDColon = astStack.pop() == PLACE_HOLDER;
     	 IASTName name = createQualifiedName(nestedNames, hasDColon);
+    	 
      	 ICPPASTPointerToMember pointer = nodeFactory.newPointerToMember(name);
      	 addCVQualifiersToPointer(pointer, qualifiers);
      	 setOffsetAndLength(pointer);
@@ -1625,6 +1644,34 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
     		case TK_typename: return ICPPASTSimpleTypeTemplateParameter.st_typename;
     	}
     }
+    
+    
+    /**
+     * Simple type template parameters using the 'class' keyword are being parsed
+     * wrong due to an ambiguity between type_parameter and parameter_declaration.
+     * 
+     * eg) template <class T>
+     * 
+     * The 'class T' part is being parsed as an elaborated type specifier instead
+     * of a simple type template parameter.
+     * 
+     * This method detects the incorrect parse, throws away the incorrect AST fragment,
+     * and replaces it with the correct AST fragment.
+     */
+    public void consumeTemplateParamterDeclaration() {
+    	if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
+    	
+    	if(matchTokens(parser.getRuleTokens(), TK_class, TK_identifier)) {
+    		astStack.pop(); // throw away the ICPPASTParameterDeclaration
+    		IASTName name = createName(parser.getRightIToken());
+    		astStack.push(name);
+    		consumeSimpleTypeTemplateParameter(false);
+    	}
+    	
+    	if(TRACE_AST_STACK) System.out.println(astStack);
+    }
+    
+    
     
     /**
      * type_parameter

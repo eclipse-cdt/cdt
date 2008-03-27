@@ -2002,6 +2002,13 @@ public CPPParser(String[] mapFrom) {  // constructor
             }  
    
             //
+            // Rule 494:  template_parameter ::= parameter_declaration
+            //
+            case 494: {       action.builder.
+   consumeTemplateParamterDeclaration();                 break;
+            }  
+   
+            //
             // Rule 495:  type_parameter ::= class identifier_name_opt
             //
             case 495: {       action.builder.
@@ -2044,65 +2051,65 @@ public CPPParser(String[] mapFrom) {  // constructor
             }  
    
             //
-            // Rule 501:  template_id_name ::= template_identifier < <openscope-ast> template_argument_list_opt >
+            // Rule 501:  template_id_name ::= identifier_name < <openscope-ast> template_argument_list_opt >
             //
             case 501: {       action.builder.
    consumeTemplateId();                 break;
             }  
    
             //
-            // Rule 510:  explicit_instantiation ::= template declaration
+            // Rule 509:  explicit_instantiation ::= template declaration
             //
-            case 510: {       action.builder.
+            case 509: {       action.builder.
    consumeTemplateExplicitInstantiation();                 break;
             }  
    
             //
-            // Rule 511:  explicit_specialization ::= template < > declaration
+            // Rule 510:  explicit_specialization ::= template < > declaration
             //
-            case 511: {       action.builder.
+            case 510: {       action.builder.
    consumeTemplateExplicitSpecialization();                 break;
             }  
    
             //
-            // Rule 512:  try_block ::= try compound_statement <openscope-ast> handler_seq
+            // Rule 511:  try_block ::= try compound_statement <openscope-ast> handler_seq
             //
-            case 512: {       action.builder.
+            case 511: {       action.builder.
    consumeStatementTryBlock();                 break;
             }  
    
             //
-            // Rule 515:  handler ::= catch ( exception_declaration ) compound_statement
+            // Rule 514:  handler ::= catch ( exception_declaration ) compound_statement
             //
-            case 515: {       action.builder.
+            case 514: {       action.builder.
    consumeStatementCatchHandler(false);                 break;
             }  
    
             //
-            // Rule 516:  handler ::= catch ( ... ) compound_statement
+            // Rule 515:  handler ::= catch ( ... ) compound_statement
             //
-            case 516: {       action.builder.
+            case 515: {       action.builder.
    consumeStatementCatchHandler(true);                 break;
             }  
    
             //
-            // Rule 517:  exception_declaration ::= type_specifier_seq <openscope-ast> declarator
+            // Rule 516:  exception_declaration ::= type_specifier_seq <openscope-ast> declarator
+            //
+            case 516: {       action.builder.
+   consumeDeclarationSimple(true, false);                 break;
+            }  
+   
+            //
+            // Rule 517:  exception_declaration ::= type_specifier_seq <openscope-ast> abstract_declarator
             //
             case 517: {       action.builder.
    consumeDeclarationSimple(true, false);                 break;
             }  
    
             //
-            // Rule 518:  exception_declaration ::= type_specifier_seq <openscope-ast> abstract_declarator
+            // Rule 518:  exception_declaration ::= type_specifier_seq
             //
             case 518: {       action.builder.
-   consumeDeclarationSimple(true, false);                 break;
-            }  
-   
-            //
-            // Rule 519:  exception_declaration ::= type_specifier_seq
-            //
-            case 519: {       action.builder.
    consumeDeclarationSimple(false, false);                 break;
             }  
 

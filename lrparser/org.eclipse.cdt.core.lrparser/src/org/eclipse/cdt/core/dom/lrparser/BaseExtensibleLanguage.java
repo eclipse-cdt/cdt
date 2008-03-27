@@ -101,10 +101,10 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 	@Override
 	public IASTTranslationUnit getASTTranslationUnit(CodeReader reader, IScannerInfo scanInfo,
 			ICodeReaderFactory fileCreator, IIndex index, int options, IParserLogService log) throws CoreException {
-		
+		IASTTranslationUnit gtu = null;
 		if(DEBUG_PRINT_GCC_AST) {
 			ILanguage gppLanguage = GPPLanguage.getDefault();
-			IASTTranslationUnit gtu = gppLanguage.getASTTranslationUnit(reader, scanInfo, fileCreator, index, log);
+			gtu = gppLanguage.getASTTranslationUnit(reader, scanInfo, fileCreator, index, log);
 			
 			System.out.println();
 			System.out.println("********************************************************");

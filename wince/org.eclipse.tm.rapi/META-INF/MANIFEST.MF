@@ -1,11 +1,11 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: %Bundle-Name.0
+Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.tm.rapi
 Bundle-Version: 1.0.0.qualifier
 Export-Package: org.eclipse.tm.internal.rapi;x-internal:=true,
  org.eclipse.tm.rapi
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
-Bundle-Vendor: %Bundle-Vendor.0
+Bundle-Vendor: %providerName
 Eclipse-PlatformFilter: (& (osgi.ws=win32) (osgi.os=win32) (osgi.arch=x86))
 Bundle-Localization: plugin

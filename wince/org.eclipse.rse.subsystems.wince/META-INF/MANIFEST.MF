@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: %Bundle-Name.0
+Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.rse.subsystems.wince;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Vendor: %Bundle-Vendor.0
+Bundle-Vendor: %providerName
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.rse.services,

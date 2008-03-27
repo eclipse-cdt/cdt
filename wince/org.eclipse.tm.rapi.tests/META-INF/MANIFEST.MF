@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: %Bundle-Name.0
+Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.tm.rapi.tests
 Bundle-Version: 1.0.0.qualifier
-Bundle-Vendor: %Bundle-Vendor.0
+Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
 Require-Bundle: org.junit

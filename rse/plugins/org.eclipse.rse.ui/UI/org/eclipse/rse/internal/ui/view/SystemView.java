@@ -49,6 +49,7 @@
  * David McKnight   (IBM)        - [187711] expandTo to handle filters specially
  * Martin Oberhuber (Wind River) - [218524][api] Remove deprecated ISystemViewInputProvider#getShell()
  * David Dykstal (IBM) - [222376] NPE if starting on a workspace with an old mark and a renamed default profile
+ * David McKnight   (IBM)        - [224380] system view should only fire property sheet update event when in focus
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -3093,9 +3094,11 @@ public class SystemView extends SafeTreeViewer
 		{
 			String oldText = item.getText();
 			String newText = adapter.getText(element);
-			if (!oldText.equals(newText))
+			if (oldText == null || !oldText.equals(newText))
 			{
-				item.setText(newText);
+				//if (newText != null){
+					item.setText(newText);
+				//}
 			}
 		}
 		
@@ -5601,10 +5604,15 @@ public class SystemView extends SafeTreeViewer
 	public void updatePropertySheet() {
 		ISelection selection = getSelection();
 		if (selection == null) return;
-		// create an event
-		SelectionChangedEvent event = new SelectionChangedEvent(this, getSelection());
-		// fire the event
-		fireSelectionChanged(event);
+		
+		// only fire this event if the view actually has focus
+		if (getControl().isFocusControl())
+		{		
+			// create an event
+			SelectionChangedEvent event = new SelectionChangedEvent(this, getSelection());
+			// fire the event
+			fireSelectionChanged(event);
+		}
 	}
 
 	/**

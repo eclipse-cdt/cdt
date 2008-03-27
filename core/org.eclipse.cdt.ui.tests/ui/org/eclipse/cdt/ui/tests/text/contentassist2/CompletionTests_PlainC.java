@@ -116,9 +116,25 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	//
 	//union {
 	//	int anonUnionMember1, anonUnionMember2;
-	//}; 
+	//};
 	//#endif /* ANONYMOUS */
-
+	//
+	//#ifdef STRUCT_C1
+	//struct C1_s {
+	//  enum E2 {e21, e22};	
+	//	
+	//  struct C1_s* fMySelf;
+	//
+	//  int m123;
+	//  int m12;
+	//  int m13;
+	//};
+	//typedef struct C1_s C1;
+	//extern C1* gfC1();
+	//C1* gfC2();
+	//C1 gC1, gC2;
+	//#endif
+	
 	//{DisturbWith.c}
 	// int gTemp;
 	// void gFunc();
@@ -291,7 +307,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	///*include*/
 	///*cursor*/
 	public void testAnonymousTypes() throws Exception {
-		final String[] expected = { "AStructType", "XStructType", "anEnumerationType", "xEnumerationType"};
+		final String[] expected = { "AStructType", "XStructType", "anEnumerationType", "xEnumerationType" };
 		assertCompletionResults(expected);
 	}
 	
@@ -528,6 +544,107 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	public void testSingleName_Assignment_Prefix() throws Exception {
 		final String[] expected = {
 				"AMacro(x)"
+		};
+		assertCompletionResults(expected);
+	}
+
+	//#define STRUCT_C1
+	///*include*/
+	//void gfunc() {C1 v; v.m/*cursor*/
+	public void testLocalVariable() throws Exception {
+		final String[] expected= {
+				"m123", "m12", "m13"
+		};
+		assertCompletionResults(expected);
+	}
+
+	//#define STRUCT_C1
+	///*include*/
+	//void gfunc() {C1 v; v.fMySelf->m/*cursor*/
+	public void testLocalVariable_MemberVariable() throws Exception {
+		final String[] expected= {
+				"m123", "m12", "m13"
+		};
+		assertCompletionResults(expected);
+	}
+
+	//#define STRUCT_C1
+	///*include*/
+	//void gfunc() {gfC1().m/*cursor*/
+	public void testGlobalFunction() throws Exception {
+		final String[] expected= {
+				"m123", "m12", "m13"
+		};
+		assertCompletionResults(expected);
+	}
+
+	//#define STRUCT_C1
+	///*include*/
+	//void f() {gC/*cursor*/
+	public void testGlobalVariables_GlobalScope() throws Exception {
+		final String[] expected= {
+				"gC1", "gC2"
+		};
+		assertCompletionResults(expected);
+	}
+
+	//#define STRUCT_C1
+	///*include*/
+	//void foo() {gC/*cursor*/
+	public void testGlobalVariables_FunctionScope() throws Exception {
+		final String[] expected= {
+				"gC1", "gC2"
+		};
+		assertCompletionResults(expected);
+	}
+
+	//#define STRUCT_C1
+	///*include*/
+	//typedef struct {
+	//  enum E2 {e21, e22};	
+	//	
+	//  C2* fMySelf;
+	//
+	//  int m123;
+	//  int m12;
+	//  int m13;
+	//} C2;
+	//void f() {C2* cLocal1; while(true) {C1* cLocal2; cL/*cursor*/
+	public void testLocalVariables_FunctionScope() throws Exception {
+		final String[] expected= {
+				"cLocal1", "cLocal2"
+		};
+		assertCompletionResults(expected);
+	}
+
+	//#define STRUCT_C1
+	///*include*/
+	//void f() {C1* cLocal1; cLocal1->f/*cursor*/
+	public void testDataMembers_FunctionScope() throws Exception {
+		final String[] expected= {
+				"fMySelf"
+		};
+		assertCompletionResults(expected);
+	}
+
+	//#define STRUCT_C1
+	///*include*/
+	//void f() {gf/*cursor*/
+	public void testGlobalFunctions_FunctionScope() throws Exception {
+		final String[] expected= {
+				"gfC1(void)", "gfC2(void)"
+		};
+		assertCompletionResults(expected);
+	}
+
+	//#define STRUCT_C1
+	///*include*/
+	//typedef struct {} C2;
+	//typedef union {} C3;
+	//void f() {C/*cursor*/
+	public void testTypes_FunctionScope() throws Exception {
+		final String[] expected= {
+				"C1", "C2", "C3"
 		};
 		assertCompletionResults(expected);
 	}

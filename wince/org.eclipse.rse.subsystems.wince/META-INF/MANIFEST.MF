@@ -3,22 +3,22 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.rse.subsystems.wince;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Vendor: %providerName
-Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
- org.eclipse.rse.services,
- org.eclipse.rse.core,
- org.eclipse.rse.subsystems.files.core,
- org.eclipse.rse.ui,
- org.eclipse.core.resources
-Import-Package: org.eclipse.tm.rapi
-Bundle-RequiredExecutionEnvironment: J2SE-1.4
-Eclipse-LazyStart: true
-Bundle-Localization: plugin
 Bundle-Activator: org.eclipse.rse.internal.subsystems.files.wince.Activator
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.core.resources,
+ org.eclipse.core.runtime,
+ org.eclipse.ui,
+ org.eclipse.rse.services;bundle-version="[3.0.0,4.0.0)",
+ org.eclipse.rse.core;bundle-version="[3.0.0,4.0.0)",
+ org.eclipse.rse.subsystems.files.core;bundle-version="[3.0.0,4.0.0)",
+ org.eclipse.rse.ui;bundle-version="[3.0.0,4.0.0)"
+Import-Package: org.eclipse.tm.rapi
 Export-Package: org.eclipse.rse.internal.connectorservice.wince;x-internal:=true,
  org.eclipse.rse.internal.services.wince;x-internal:=true,
  org.eclipse.rse.internal.services.wince.files;x-internal:=true,
  org.eclipse.rse.internal.subsystems.files.wince;x-internal:=true,
  org.eclipse.rse.subsystems.files.wince
 Bundle-ActivationPolicy: lazy
+Eclipse-LazyStart: true
+Bundle-RequiredExecutionEnvironment: J2SE-1.4

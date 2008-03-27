@@ -3,9 +3,9 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.tm.rapi
 Bundle-Version: 1.0.0.qualifier
+Eclipse-PlatformFilter: (& (osgi.ws=win32) (osgi.os=win32) (osgi.arch=x86))
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
 Export-Package: org.eclipse.tm.internal.rapi;x-internal:=true,
  org.eclipse.tm.rapi
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
-Bundle-Vendor: %providerName
-Eclipse-PlatformFilter: (& (osgi.ws=win32) (osgi.os=win32) (osgi.arch=x86))
-Bundle-Localization: plugin

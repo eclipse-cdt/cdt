@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.eclipse.tm.rapi.tests
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Bundle-RequiredExecutionEnvironment: J2SE-1.4
 Require-Bundle: org.junit
 Import-Package: org.eclipse.tm.rapi
 Export-Package: org.eclipse.tm.rapi.tests
+Bundle-RequiredExecutionEnvironment: J2SE-1.4

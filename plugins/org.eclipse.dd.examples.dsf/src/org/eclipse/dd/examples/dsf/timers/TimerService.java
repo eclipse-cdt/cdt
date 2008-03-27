@@ -108,7 +108,7 @@ public class TimerService extends AbstractDsfService
         super.initialize(
             new RequestMonitor(getExecutor(), requestMonitor) { 
                 @Override
-                public void handleOK() {
+                public void handleSuccess() {
                     // After super-class is finished initializing
                     // perform TimerService initialization.
                     doInitialize(requestMonitor);

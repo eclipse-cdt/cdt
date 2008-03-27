@@ -131,7 +131,7 @@ public class AlarmService extends AbstractDsfService
         super.initialize(
             new RequestMonitor(getExecutor(), requestMonitor) { 
                 @Override
-                protected void handleOK() {
+                protected void handleSuccess() {
                     // After super-class is finished initializing
                     // perform TimerService initialization.
                     doInitialize(requestMonitor);

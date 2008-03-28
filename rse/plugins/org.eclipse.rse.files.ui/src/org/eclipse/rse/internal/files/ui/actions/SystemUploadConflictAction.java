@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
+ * David McKnight   (IBM)        - [224377] "open with" menu does not have "other" option
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -533,7 +534,7 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
                 String id = editor.getEditorSite().getId();
 
                 // open editor on new file
-                SystemEditableRemoteFile edit = new SystemEditableRemoteFile(_saveasFile, id);
+                SystemEditableRemoteFile edit = new SystemEditableRemoteFile(_saveasFile);
                 try
                 {
                     edit.download(getShell());

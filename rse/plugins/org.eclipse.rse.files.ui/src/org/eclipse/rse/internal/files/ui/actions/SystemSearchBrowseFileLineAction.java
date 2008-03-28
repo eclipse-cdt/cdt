@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
+ * David McKnight   (IBM)        - [224377] "open with" menu does not have "other" option
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -22,6 +23,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteSearchResult;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorDescriptor;
 
 
 public class SystemSearchBrowseFileLineAction extends SystemSearchEditFileLineAction {
@@ -32,19 +34,19 @@ public class SystemSearchBrowseFileLineAction extends SystemSearchEditFileLineAc
 	 * @param tooltip the tooltip for the action.
 	 * @param image the image for the action.
 	 * @param parent the parent shell.
-	 * @param editorId the editor id.
+	 * @param editorDescriptor the editor id.
 	 * @param remoteFile the remote file that is to be opened.
 	 * @param searchResult the line number.
 	 */
-	public SystemSearchBrowseFileLineAction(String text, String tooltip, ImageDescriptor image, Shell parent, String editorId, IRemoteFile remoteFile, IRemoteSearchResult searchResult) {
-		super(text, tooltip, image, parent, editorId, remoteFile, searchResult);
+	public SystemSearchBrowseFileLineAction(String text, String tooltip, ImageDescriptor image, Shell parent, IEditorDescriptor editorDescriptor, IRemoteFile remoteFile, IRemoteSearchResult searchResult) {
+		super(text, tooltip, image, parent, editorDescriptor, remoteFile, searchResult);
 	}
 	
 	/**
 	 * @see org.eclipse.rse.internal.files.ui.actions.SystemEditFileAction#process(IRemoteFile)
 	 */
 	protected void process(IRemoteFile remoteFile) {
-		SystemEditableRemoteFile editableFile = new SystemEditableRemoteFile(remoteFile, _editorId);
+		SystemEditableRemoteFile editableFile = new SystemEditableRemoteFile(remoteFile, _editorDescriptor);
 		editableFile.open(SystemBasePlugin.getActiveWorkbenchShell(), true);
 		handleGotoLine(_remoteFile, _searchResult);
 	}

@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
+ * David McKnight   (IBM)        - [224377] "open with" menu does not have "other" option
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -137,7 +138,7 @@ public class SystemRemoteFileLineOpenWithMenu extends SystemRemoteFileOpenWithMe
 	
 	protected void openEditor(IRemoteFile file, IEditorDescriptor descriptor)
 	{
-		SystemEditableRemoteFile editableFile = new SystemEditableRemoteFile(file, descriptor.getId());
+		SystemEditableRemoteFile editableFile = new SystemEditableRemoteFile(file, descriptor);
 		editableFile.open(SystemBasePlugin.getActiveWorkbenchShell());
 		handleGotoLine();
 	}

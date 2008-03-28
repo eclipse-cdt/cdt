@@ -22,6 +22,8 @@
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * Rupen Mardirossian (IBM)		-  [210682] Modified MoveRemoteFileJob.runInWorkspace to use SystemCopyDialog for collisions in move operations
+ * David McKnight   (IBM)        - [224313] [api] Create RSE Events for MOVE and COPY holding both source and destination fields
+ * David McKnight   (IBM)        - [224377] "open with" menu does not have "other" option
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -188,7 +190,7 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 			}
 			if (movedFiles.size() > 0)
 			{
-				copyComplete();  //Need to reflect the views.
+				copyComplete(ISystemRemoteChangeEvents.SYSTEM_REMOTE_OPERATION_MOVE);  //Need to reflect the views.
 			}
 	        
 	        return status;
@@ -359,52 +361,23 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 	 * Called after all the copy/move operations end, be it successfully or not.
 	 * Your opportunity to display completion or do post-copy selections/refreshes
 	 */
-	public void copyComplete() 
+	public void copyComplete(String operation) 
     {
     	// we want to do the super.copyComplete() to refresh the target, but first we must do refresh the 
     	//  source to reflect the deletion...
 
 		// refresh all instances of the source parent, and all affected filters...
 		ISubSystem fileSS = targetFolder.getParentRemoteFileSubSystem();
-		//RSECorePlugin.getTheSystemRegistry().fireRemoteResourceChangeEvent(
-		  // ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_DELETED, copiedFiles, firstSelectionParent.getAbsolutePath(), fileSS, null, null);
-		Viewer originatingViewer = getViewer();
-    	RSECorePlugin.getTheSystemRegistry().fireRemoteResourceChangeEvent(
-		   ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_DELETED, movedFiles, firstSelectionParent.getAbsolutePath(), fileSS, null, originatingViewer);
 
-    	
-    	/* old release 1.0 way of doing it...
-		Viewer v = getViewer();
-		if (v instanceof ISystemTree)
-		{
-		    SystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
-		  	ISystemTree tree = (ISystemTree)v;
-		  	Object parent = tree.getSelectedParent();
-		  	if (parent != null)
-		  	{
-		  	   if (parent instanceof IRemoteFile)
-		  	   {
-		  	   	 //System.out.println("Firing REFRESH_REMOTE");
-		         sr.fireEvent(
-                   new org.eclipse.rse.ui.model.impl.SystemResourceChangeEvent(
-                      parent,ISystemResourceChangeEvent.EVENT_REFRESH_REMOTE, null) );
-		  	   }
-		  	   else  
-		  	   {
-		  	   	 //System.out.println("MOVE OPERATION: Firing REFRESH");
-		  	   	 // FIRST REFRESH EXPANDED FILTER
-		         sr.fireEvent(
-                   new org.eclipse.rse.ui.model.impl.SystemResourceChangeEvent(
-                      parent,ISystemResourceChangeEvent.EVENT_REFRESH, null) );
-                 // NEXT REFRESH ALL OTHER PLACES THAT MIGHT BE SHOWING THE SOURCE FOLDER
-		         sr.fireEvent(
-                   new org.eclipse.rse.ui.model.impl.SystemResourceChangeEvent(
-                      firstSelectionParent,ISystemResourceChangeEvent.EVENT_REFRESH_REMOTE, null) );                 
-		  	   }
-		  	}
-		  	else
-		  	  RSEUIPlugin.logWarning("Hmm, selected parent is null on a move operation!");
-		}*/
-    	super.copyComplete();    	
+		if (operation == null){
+			operation = ISystemRemoteChangeEvents.SYSTEM_REMOTE_OPERATION_MOVE;
+		}
+		
+		
+		Viewer originatingViewer = getViewer(); 
+    	RSECorePlugin.getTheSystemRegistry().fireRemoteResourceChangeEvent(operation,
+		   ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_DELETED, movedFiles, firstSelectionParent.getAbsolutePath(), fileSS, getOldAbsoluteNames(), originatingViewer);
+
+    	super.copyComplete(operation);    	
     }
 }

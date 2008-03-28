@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
  * David McKnight   (IBM)        - [209660] check for changed encoding before using cached file
  * David McKnight   (IBM)        - [189873] DownloadJob changed to DownloadAndOpenJob
+ * David McKnight   (IBM)        - [224377] "open with" menu does not have "other" option
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -173,7 +174,7 @@ public class SystemEditFilesAction extends SystemBaseAction {
 			editorId = "org.eclipse.ui.DefaultTextEditor"; //$NON-NLS-1$
 		}
 		
-		SystemEditableRemoteFile editable = new SystemEditableRemoteFile(remoteFile, editorId);
+		SystemEditableRemoteFile editable = new SystemEditableRemoteFile(remoteFile, des);
 		{
 			try
 			{

@@ -19,6 +19,7 @@
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * David McKnight   (IBM)        - [223103] [cleanup] fix broken externalized strings
  * David McKnight   (IBM)        - [223204] [cleanup] fix broken nls strings in files.ui and others
+ * David McKnight   (IBM)        - [224377] "open with" menu does not have "other" option
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui;
@@ -402,6 +403,9 @@ public class FileResources extends NLS
 	public static String MSG_ERROR_FILENAME_INVALID;
 	
 	public static String EditorManager_saveResourcesTitle;
+	
+	public static String OpenWithMenu_Other;
+	public static String OpenWithMenu_OtherDialogDescription;
 	
 	static 
 	{

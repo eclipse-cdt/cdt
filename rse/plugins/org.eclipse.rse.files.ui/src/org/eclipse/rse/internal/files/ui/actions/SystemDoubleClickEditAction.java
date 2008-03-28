@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [224377] "open with" menu does not have "other" option
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -90,8 +90,7 @@ public class SystemDoubleClickEditAction extends SystemBaseAction
 			descriptor = registry.findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
 			
 		}
-		String id = descriptor.getId();
-		SystemEditFileAction editAction = new SystemEditFileAction(null, null, null, null, id);
+		SystemEditFileAction editAction = new SystemEditFileAction(null, null, null, null, descriptor);
 		editAction.setSelection(new StructuredSelection(element));
 		editAction.run();
 	}

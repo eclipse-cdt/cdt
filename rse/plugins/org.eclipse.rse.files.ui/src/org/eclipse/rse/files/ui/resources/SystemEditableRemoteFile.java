@@ -28,6 +28,7 @@
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * David McKnight   (IBM)        - [222406] Need to be able to override local encoding
+ * David McKnight   (IBM)        - [224377] "open with" menu does not have "other" option
  *******************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -98,6 +99,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -200,7 +202,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		}
 	}
 
-	private String _editorId = null;
+	private IEditorDescriptor _editorDescriptor = null;
 	private boolean _isRemoteFileMounted = false;
 	private String _actualRemoteHost = null;
 	private String _actualRemotePath = null;
@@ -208,7 +210,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 	/**
 	 * Constructor for SystemEditableRemoteFile
 	 */
-	public SystemEditableRemoteFile(IWorkbenchPage page, IRemoteFile remoteFile, String editorId)
+	public SystemEditableRemoteFile(IWorkbenchPage page, IRemoteFile remoteFile, IEditorDescriptor editorDescriptor)
 	{
 		super();
 		this.page = page;
@@ -223,15 +225,15 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		
 		this.root = mgr.getRemoteEditProjectLocation().makeAbsolute().toOSString();
 		this.localPath = getDownloadPath();
-		this._editorId = editorId;
+		this._editorDescriptor = editorDescriptor;
 	}
 
 	/**
 	 * Constructor for SystemEditableRemoteFile
 	 */
-	public SystemEditableRemoteFile(IRemoteFile remoteFile, String editorId)
+	public SystemEditableRemoteFile(IRemoteFile remoteFile, IEditorDescriptor editorDescriptor)
 	{
-		this(null, remoteFile, editorId);
+		this(null, remoteFile, editorDescriptor);
 	}
 
 	/**
@@ -256,8 +258,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		{
 			descriptor = getDefaultTextEditor();		
 		}
-		String id = descriptor.getId();
-		this._editorId = id;
+		this._editorDescriptor = descriptor;
 	}
 	
 	protected IEditorRegistry getEditorRegistry()
@@ -1596,7 +1597,12 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		}
 		
 		// set editor as preferred editor for this file
-		IDE.setDefaultEditor(file, _editorId);
+		
+		String editorId = null;
+		if (_editorDescriptor != null)
+			_editorDescriptor.getId();
+		
+		IDE.setDefaultEditor(file, editorId);
 
 		FileEditorInput finput = new FileEditorInput(file);
 		
@@ -1605,7 +1611,13 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		// DKM - when _editorId is not lpex, this causes problem
 		// DY - changed editor from SystemTextEditor to IEditorPart
 		//editor = (SystemTextEditor)activePage.openEditor(file, _editorId);
-		editor = activePage.openEditor(finput, _editorId);
+		if (_editorDescriptor != null && _editorDescriptor.isOpenExternal()){		
+			editor = ((WorkbenchPage)activePage).openEditorFromDescriptor(new FileEditorInput(file), _editorDescriptor, true, null);
+		}
+		else {
+			editor =  activePage.openEditor(finput, _editorDescriptor.getId());
+		}
+
 		
 		SystemIFileProperties properties = new SystemIFileProperties(file);
 		properties.setRemoteFileObject(this);
@@ -1624,7 +1636,10 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		IFile file = getLocalResource();
 		
 		// set editor as preferred editor for this file
-		IDE.setDefaultEditor(file, _editorId);
+		String editorId = null;
+		if (_editorDescriptor != null)
+			editorId = _editorDescriptor.getId();
+		IDE.setDefaultEditor(file, editorId);
 	
 		FileEditorInput fileInput = new FileEditorInput(file);
 		activePage.openEditor(fileInput, IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);

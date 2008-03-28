@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
  * David McKnight   (IBM)        - [189873] DownloadJob changed to DownloadAndOpenJob
+ * David McKnight   (IBM)        - [224377] "open with" menu does not have "other" option
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -30,6 +31,8 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
 import org.eclipse.rse.files.ui.resources.UniversalFileTransferUtility;
 import org.eclipse.rse.internal.files.ui.FileResources;
@@ -51,6 +54,7 @@ import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.EditorSelectionDialog;
 import org.eclipse.ui.ide.IDE;
 
 
@@ -181,6 +185,40 @@ protected void createMenuItem(Menu menu, final IEditorDescriptor descriptor, fin
 	menuItem.addListener(SWT.Selection, listener);
 }
 
+/**
+ * Creates the Other... menu item
+ *
+ * @param menu the menu to add the item to
+ */
+private void createOtherMenuItem(final Menu menu, final IRemoteFile remoteFile) {
+
+    new MenuItem(menu, SWT.SEPARATOR);
+    final MenuItem menuItem = new MenuItem(menu, SWT.PUSH);
+    menuItem.setText(FileResources.OpenWithMenu_Other);
+    Listener listener = new Listener() {
+        public void handleEvent(Event event) {
+            switch (event.type) {
+            case SWT.Selection:
+               	EditorSelectionDialog dialog = new EditorSelectionDialog(
+						menu.getShell());
+				dialog
+						.setMessage(NLS
+								.bind(
+										FileResources.OpenWithMenu_OtherDialogDescription,
+										remoteFile.getName()));
+				if (dialog.open() == Window.OK) {
+					IEditorDescriptor editor = dialog.getSelectedEditor();
+					if (editor != null) {
+						openEditor(remoteFile, editor);
+					}
+				}
+                break;
+            }
+        }
+    };
+    menuItem.addListener(SWT.Selection, listener);
+}
+
 
 protected void openEditor(IRemoteFile remoteFile, IEditorDescriptor descriptor) {
 	
@@ -192,7 +230,7 @@ protected void openEditor(IRemoteFile remoteFile, IEditorDescriptor descriptor) 
 	}
 	else
 	{
-		editable = new SystemEditableRemoteFile(remoteFile, descriptor.getId());
+		editable = new SystemEditableRemoteFile(remoteFile, descriptor);
 	}
 	
 	boolean systemEditor = descriptor != null && descriptor.getId().equals(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
@@ -392,6 +430,10 @@ public void fill(Menu menu, int index)
 	}
 	*/	
 	createDefaultMenuItem(menu, _remoteFile);
+	
+	// create other menu
+	createOtherMenuItem(menu, _remoteFile);
+	
 }
 
 

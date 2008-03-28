@@ -14,6 +14,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
  * David McKnight   (IBM)        - [189873] DownloadJob changed to DownloadAndOpenJob
+ * David McKnight   (IBM)        - [224377] "open with" menu does not have "other" option
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -30,30 +31,31 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorDescriptor;
 
 
 
 public class SystemEditFileAction extends SystemBaseAction {
 
 	
-	protected String _editorId;
+	protected IEditorDescriptor _editorDescriptor;
 	
 	/**
 	 * Constructor for SystemEditFileAction
 	 */
-	public SystemEditFileAction(String text, String tooltip, ImageDescriptor image, Shell parent, String editorId) {
+	public SystemEditFileAction(String text, String tooltip, ImageDescriptor image, Shell parent, IEditorDescriptor editorDescriptor) {
 		super(text, tooltip, null, image, parent);
 		init();
-		_editorId = editorId;
+		_editorDescriptor = editorDescriptor;
 	}
 	
 	/**
 	 * Constructor for SystemEditFileAction
 	 */
-	public SystemEditFileAction(String text, String tooltip, ImageDescriptor image, int style, Shell parent, String editorId) {
+	public SystemEditFileAction(String text, String tooltip, ImageDescriptor image, int style, Shell parent, IEditorDescriptor editorDescriptor) {
 		super(text, tooltip, null, image, style, parent);
 		init();
-		_editorId = editorId;
+		_editorDescriptor = editorDescriptor;
 	}
 	
 	/**
@@ -146,7 +148,7 @@ public class SystemEditFileAction extends SystemBaseAction {
 		SystemEditableRemoteFile editableFile = new SystemEditableRemoteFile(remoteFile, _editorId);
 		editableFile.open(SystemBasePlugin.getActiveWorkbenchShell());
 		*/
-		SystemEditableRemoteFile editable = new SystemEditableRemoteFile(remoteFile, _editorId);
+		SystemEditableRemoteFile editable = new SystemEditableRemoteFile(remoteFile, _editorDescriptor);
 		{
 			try
 			{

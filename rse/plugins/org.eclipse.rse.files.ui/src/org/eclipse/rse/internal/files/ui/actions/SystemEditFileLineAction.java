@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
+ * David McKnight   (IBM)        - [224377] "open with" menu does not have "other" option
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -25,6 +26,7 @@ import org.eclipse.rse.subsystems.files.core.SystemIFileProperties;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
@@ -46,8 +48,8 @@ public class SystemEditFileLineAction extends SystemEditFileAction {
 	/**
 	 * Constructor for SystemEditFileAction.
 	 */
-	public SystemEditFileLineAction(String text, String tooltip, ImageDescriptor image, Shell parent, String editorId, IRemoteFile remoteFile, int line, int charStart, int charEnd) {
-		super(text, tooltip, image, parent, editorId);
+	public SystemEditFileLineAction(String text, String tooltip, ImageDescriptor image, Shell parent, IEditorDescriptor editorDescriptor, IRemoteFile remoteFile, int line, int charStart, int charEnd) {
+		super(text, tooltip, image, parent, editorDescriptor);
 		_line = line;
 		_remoteFile = remoteFile;
 		_charStart = charStart;

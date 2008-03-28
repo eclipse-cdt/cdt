@@ -21,6 +21,8 @@
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * Rupen Mardirossian (IBM)		-  [210682] created checkForCollision method that returns a boolean for SystemCopyDialog enhancement
+ * David McKnight   (IBM)        - [224313] [api] Create RSE Events for MOVE and COPY holding both source and destination fields
+ * David McKnight   (IBM)        - [224377] "open with" menu does not have "other" option
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -50,7 +52,6 @@ import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.internal.files.ui.ISystemFileConstants;
 import org.eclipse.rse.internal.files.ui.resources.SystemRemoteEditManager;
 import org.eclipse.rse.internal.ui.SystemResources;
-import org.eclipse.rse.internal.ui.view.SystemView;
 import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
@@ -392,6 +393,18 @@ implements  IValidatorRemoteSelection
 
 
 	/**
+	 * @see SystemBaseCopyAction#getOldAbsoluteNames()
+	 */
+	protected String[] getOldAbsoluteNames()
+	{
+		IRemoteFile[] files = getSelectedFiles();
+		String[] names = new String[files.length];
+		for (int idx=0; idx<files.length; idx++)
+			names[idx] = files[idx].getAbsolutePath();
+		return names;
+	}
+
+	/**
 	 * Override of parent.
 	 * Return the dialog that will be used to prompt for the copy/move target location.
 	 */
@@ -524,7 +537,7 @@ implements  IValidatorRemoteSelection
 	 * Called after all the copy/move operations end, be it successfully or not.
 	 * Your opportunity to display completion or do post-copy selections/refreshes
 	 */
-	public void copyComplete()
+	public void copyComplete(String operation)
 	{
 		if (copiedFiles.size() == 0)
 			return;
@@ -532,74 +545,20 @@ implements  IValidatorRemoteSelection
 		// refresh all instances of this parent, and all affected filters...
 		ISubSystem fileSS = targetFolder.getParentRemoteFileSubSystem();
 		Viewer originatingViewer = getViewer();
-		if (originatingViewer != null)
-		{
-			if (!targetFolder.getAbsolutePath().equals(firstSelectionParent.getAbsolutePath()))
-			{
-				// we select the first instance of the target folder now so that the copied members will be selected in it
-				//  after it is refreshed via the remote_resource_created event.
-				if (originatingViewer instanceof SystemView)
-				{
-					// boolean selectedOk = ((SystemView)originatingViewer).selectRemoteObjects(targetFolder.getAbsolutePath(), fileSS, null);
-					//System.out.println(targetFolder.getAbsolutePath()+" selectedOK? " + selectedOk);
-					//if (selectedOk)
-					//  return;
-				}
-			}
-		}
-
 
 		targetFolder.markStale(true);
 
 		// invalidate filters
 		invalidateFilterReferences(targetFolder);
 
-
-		RSECorePlugin.getTheSystemRegistry().fireRemoteResourceChangeEvent(
-				ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_CREATED, copiedFiles, targetFolder.getAbsolutePath(), fileSS, null, originatingViewer);
-
-		/* Old release 1.0 way...
-		// did they copy to the same parent? Just refresh that parent, whatever it is...
-        if (targetFolder.getAbsolutePath().equals(firstSelectionParent.getAbsolutePath()))
-        {
-		  Viewer v = getViewer();
-		  if (v instanceof ISystemTree)
-		  {
-		    SystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
-		  	ISystemTree tree = (ISystemTree)v;
-		  	Object parent = tree.getSelectedParent();
-		  	if (parent == null)
-		  	  return;
-		  	if (parent instanceof IRemoteFile)
-		  	  // refresh parent in all views...
-		      sr.fireEvent(
-                 new org.eclipse.rse.ui.model.SystemResourceChangeEvent(
-                    parent,ISystemResourceChangeEvent.EVENT_REFRESH_REMOTE, null)
-		      );
-		  	else
-		  	  // refresh parent in all views...
-		      sr.fireEvent(
-                 new org.eclipse.rse.ui.model.SystemResourceChangeEvent(
-                    parent,ISystemResourceChangeEvent.EVENT_REFRESH, null)
-		      );
-		    // select new files in this view only
-		    sr.fireEvent((ISystemResourceChangeListener)v,
-                 new org.eclipse.rse.ui.model.SystemResourceChangeEvent(
-                    copiedFiles,ISystemResourceChangeEvent.EVENT_SELECT_REMOTE, targetFolder)
-		    );
-		  }
-        }
-        // they copied somewhere else... a little more work...
-		else
-		{
-			// refresh target folder in all views, but only select new files in this view...
-			org.eclipse.rse.ui.model.SystemResourceChangeEvent event =
-			  new org.eclipse.rse.ui.model.SystemResourceChangeEvent(
-			        targetFolder,ISystemResourceChangeEvent.EVENT_REFRESH_REMOTE, copiedFiles);
-			event.setOriginatingViewer(getViewer());
-		    sr.fireEvent(event);
+		if (operation == null){
+			operation = ISystemRemoteChangeEvents.SYSTEM_REMOTE_OPERATION_COPY;
 		}
-		 */
+
+		
+		RSECorePlugin.getTheSystemRegistry().fireRemoteResourceChangeEvent(operation,
+				ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_CREATED, copiedFiles, targetFolder.getAbsolutePath(), fileSS, getOldAbsoluteNames(), originatingViewer);
+	
 	}
 
 	// ------------------

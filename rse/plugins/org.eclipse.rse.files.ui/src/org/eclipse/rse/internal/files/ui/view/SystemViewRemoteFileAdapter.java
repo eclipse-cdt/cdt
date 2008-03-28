@@ -49,6 +49,7 @@
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * Xuan Chen        (IBM) - [223126] [api][breaking] Remove API related to User Actions in RSE Core/UI
  * Rupen Mardirossian (IBM)      - [210682] Copy collisions will use SystemCopyDialog now instead of renameDialog when there is a copy collision within the same connection 
+ * David McKnight   (IBM)        - [224377] "open with" menu does not have "other" option
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -395,6 +396,9 @@ public class SystemViewRemoteFileAdapter
 				openWithMenu.updateSelection(selection);
 				submenu.add(openWithMenu);
 				menu.getMenuManager().appendToGroup(ISystemContextMenuConstants.GROUP_OPENWITH, submenu);
+				
+				
+				
 		    }
 		}
 

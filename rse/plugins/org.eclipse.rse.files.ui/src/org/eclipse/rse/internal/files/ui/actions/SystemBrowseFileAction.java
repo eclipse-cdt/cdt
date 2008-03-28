@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
+ * David McKnight   (IBM)        - [224377] "open with" menu does not have "other" option
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -21,6 +22,7 @@ import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorDescriptor;
 
 
 /**
@@ -35,17 +37,17 @@ public class SystemBrowseFileAction extends SystemEditFileAction {
 	 * @param tooltip
 	 * @param image
 	 * @param parent
-	 * @param editorId
+	 * @param editorDescriptor
 	 */
-	public SystemBrowseFileAction(String text, String tooltip, ImageDescriptor image, Shell parent, String editorId) {
-		super(text, tooltip, image, parent, editorId);
+	public SystemBrowseFileAction(String text, String tooltip, ImageDescriptor image, Shell parent, IEditorDescriptor editorDescriptor) {
+		super(text, tooltip, image, parent, editorDescriptor);
 	}
 
 	/**
 	 * @see org.eclipse.rse.internal.files.ui.actions.SystemEditFileAction#process(IRemoteFile)
 	 */
 	protected void process(IRemoteFile remoteFile) {
-		SystemEditableRemoteFile editableFile = new SystemEditableRemoteFile(remoteFile, _editorId);
+		SystemEditableRemoteFile editableFile = new SystemEditableRemoteFile(remoteFile, _editorDescriptor);
 		editableFile.open(SystemBasePlugin.getActiveWorkbenchShell(), true);
 	}
 

@@ -83,4 +83,13 @@ public interface IMILaunchConfigurationConstants {
 	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_VERBOSE_MODE.
 	 */
 	public static final boolean DEBUGGER_VERBOSE_MODE_DEFAULT = false;
+	/**
+	 * Launch configuration attribute key.  The value is a boolean specifying is debugger should use full pathname to set breakpoints.
+	 */
+	public static final String ATTR_DEBUGGER_FULLPATH_BREAKPOINTS = MIPlugin.getUniqueIdentifier() + ".breakpointsFullPath"; //$NON-NLS-1$
+
+	/**
+	 * Launch configuration default attribute value. The key is ATTR_DEBUGGER_FULLPATH_BREAKPOINTS.
+	 */
+	public static final boolean DEBUGGER_FULLPATH_BREAKPOINTS_DEFAULT = false;
 }

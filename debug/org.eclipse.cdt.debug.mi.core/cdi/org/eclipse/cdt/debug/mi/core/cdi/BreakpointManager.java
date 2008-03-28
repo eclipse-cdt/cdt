@@ -685,7 +685,7 @@ public class BreakpointManager extends Manager {
 	public void setLocationBreakpoint (LocationBreakpoint bkpt) throws CDIException {
 		Target target = (Target)bkpt.getTarget();
 		MISession miSession = target.getMISession();
-		MIBreakInsert[] breakInserts = createMIBreakInsert(bkpt);
+		MIBreakInsert[] breakInserts = createMIBreakInsert(bkpt, miSession.isBreakpointsWithFullName());
 		List pointList = new ArrayList();
 		boolean restart = false;
 		try {
@@ -918,8 +918,10 @@ public class BreakpointManager extends Manager {
 	public AddressLocation createAddressLocation(BigInteger address) {
 		return new AddressLocation(address);
 	}
-
 	MIBreakInsert[] createMIBreakInsert(LocationBreakpoint bkpt) throws CDIException {
+		return createMIBreakInsert(bkpt, false);
+	}
+	MIBreakInsert[] createMIBreakInsert(LocationBreakpoint bkpt, boolean fullPath) throws CDIException {
 		boolean hardware = bkpt.isHardware();
 		boolean temporary = bkpt.isTemporary();
 		String exprCond = null;
@@ -938,7 +940,9 @@ public class BreakpointManager extends Manager {
 			ICDILocator locator = bkpt.getLocator();
 			String file = locator.getFile();
 			if (file != null) {
-				file = new File(file).getName();
+				if (fullPath==false) {
+					file = new File(file).getName();
+				}
 			}
 			String function = locator.getFunction();
 			int no = locator.getLineNumber();

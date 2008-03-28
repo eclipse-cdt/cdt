@@ -66,6 +66,7 @@ public class MISession extends Observable {
 	boolean terminated;
 	boolean useInterpreterExecConsole;
 	boolean verboseMode = false;
+	boolean breakpointsWithFullName = false;
 
 	// hold the type of the session(post-mortem, attach etc ..)
 	int sessionType;
@@ -842,4 +843,21 @@ public class MISession extends Observable {
 	public boolean isVerboseModeEnabled() {
 		return verboseMode;
 	}
+
+
+	/**
+	 * getter for breakpointsWithFullName 
+	 * @return true when debugger should set breakpoints using full file name
+	 */
+	public final boolean isBreakpointsWithFullName() {
+    	return breakpointsWithFullName;
+    }
+
+	/**
+	 * setter for breakpointsWithFullName 
+	 * set to true when debugger should set breakpoints using full file name, default is false
+	 */
+	public final void setBreakpointsWithFullName(boolean breakpointsWithFullName) {
+    	this.breakpointsWithFullName = breakpointsWithFullName;
+    }
 }

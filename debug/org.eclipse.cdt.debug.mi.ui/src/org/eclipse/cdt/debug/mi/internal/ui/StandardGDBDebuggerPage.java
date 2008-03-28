@@ -66,6 +66,7 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 	protected Combo fProtocolCombo;
 
 	protected Button fVerboseModeButton;
+	protected Button fBreakpointsFullPath;
 
 	private IMILaunchConfigurationComponent fSolibBlock;
 
@@ -232,14 +233,23 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 			// use default
 		}
 		fVerboseModeButton.setSelection( verboseMode );
-		
+		fBreakpointsFullPath.setSelection(getBreakpointsWithFullNameAttribute(configuration));
 		// We've populated combos, which affects their preferred size, and so must relayout things.
 		Control changed[] = { fCommandFactoryCombo, fProtocolCombo };
 		((Composite) getControl()).layout( changed );
 
 		setInitializing( false ); 
 	}
-
+	protected boolean getBreakpointsWithFullNameAttribute( ILaunchConfiguration config ) {
+		boolean result = IMILaunchConfigurationConstants.DEBUGGER_FULLPATH_BREAKPOINTS_DEFAULT; 
+		try {
+			return config.getAttribute( IMILaunchConfigurationConstants.ATTR_DEBUGGER_FULLPATH_BREAKPOINTS, result );
+		}
+		catch( CoreException e ) {
+			// use default
+		}
+		return result;
+	}
 	public void performApply( ILaunchConfigurationWorkingCopy configuration ) {
 		String str = fGDBCommandText.getText();
 		str.trim();
@@ -256,6 +266,7 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 		if ( fSolibBlock != null )
 			fSolibBlock.performApply( configuration );
 		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_DEBUGGER_VERBOSE_MODE, fVerboseModeButton.getSelection() );
+		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_DEBUGGER_FULLPATH_BREAKPOINTS, fBreakpointsFullPath.getSelection() );
 	}
 
 	public String getName() {
@@ -393,6 +404,14 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 		createCommandFactoryCombo( options );
 		createProtocolCombo( options );
 		createVerboseModeButton( subComp );
+		createBreakpointFullPathName(subComp);
+		// fit options into 3-grid one per line
+		GridData gd1 = new GridData();
+		gd1.horizontalSpan = 3;
+		fVerboseModeButton.setLayoutData(gd1);
+		GridData gd2 = new GridData();
+		gd2.horizontalSpan = 3;
+		fBreakpointsFullPath.setLayoutData(gd2);
 	}
 
 	public void createSolibTab( TabFolder tabFolder ) {
@@ -484,6 +503,22 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 	protected void createVerboseModeButton( Composite parent ) {
 		fVerboseModeButton = createCheckButton( parent, MIUIMessages.getString( "StandardGDBDebuggerPage.13" ) ); //$NON-NLS-1$
 		fVerboseModeButton.addSelectionListener( new SelectionListener() {
+
+			public void widgetDefaultSelected( SelectionEvent e ) {
+				if ( !isInitializing() )
+					updateLaunchConfigurationDialog();
+			}
+			
+			public void widgetSelected( SelectionEvent e ) {
+				if ( !isInitializing() )
+					updateLaunchConfigurationDialog();
+			}
+		} );
+	}
+	protected void createBreakpointFullPathName( Composite parent ) {
+		fBreakpointsFullPath = createCheckButton( parent, MIUIMessages.getString( "StandardGDBDebuggerPage.14" ) ); //$NON-NLS-1$
+
+		fBreakpointsFullPath.addSelectionListener( new SelectionListener() {
 
 			public void widgetDefaultSelected( SelectionEvent e ) {
 				if ( !isInitializing() )

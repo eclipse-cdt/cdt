@@ -63,6 +63,7 @@ abstract public class AbstractGDBCDIDebugger implements ICDIDebugger2 {
 			throw new OperationCanceledException();
 		}
 		boolean verboseMode = verboseMode( launch.getLaunchConfiguration() );
+		boolean breakpointsFullPath = getBreakpointsWithFullNameAttribute(launch.getLaunchConfiguration() );
 		Session session = createGDBSession( launch, executable, monitor );
 		if ( session != null ) {
 			try {
@@ -73,8 +74,11 @@ abstract public class AbstractGDBCDIDebugger implements ICDIDebugger2 {
 						IProcess debuggerProcess = createGDBProcess( (Target)targets[i], launch, debugger, renderDebuggerProcessLabel( launch ), null );
 						launch.addProcess( debuggerProcess );
 					}
-					((Target)targets[i]).enableVerboseMode( verboseMode );
-					((Target)targets[i]).getMISession().start();
+					Target target = (Target)targets[i];
+					target.enableVerboseMode( verboseMode );
+					target.getMISession().setBreakpointsWithFullName(breakpointsFullPath);
+					target.getMISession().start();
+				
 				}
 				doStartSession( launch, session, monitor );
 			}
@@ -208,6 +212,17 @@ abstract public class AbstractGDBCDIDebugger implements ICDIDebugger2 {
 		boolean result = IMILaunchConfigurationConstants.DEBUGGER_VERBOSE_MODE_DEFAULT; 
 		try {
 			return config.getAttribute( IMILaunchConfigurationConstants.ATTR_DEBUGGER_VERBOSE_MODE, result );
+		}
+		catch( CoreException e ) {
+			// use default
+		}
+		return result;
+	}
+	
+	protected boolean getBreakpointsWithFullNameAttribute( ILaunchConfiguration config ) {
+		boolean result = IMILaunchConfigurationConstants.DEBUGGER_FULLPATH_BREAKPOINTS_DEFAULT; 
+		try {
+			return config.getAttribute( IMILaunchConfigurationConstants.ATTR_DEBUGGER_FULLPATH_BREAKPOINTS, result );
 		}
 		catch( CoreException e ) {
 			// use default

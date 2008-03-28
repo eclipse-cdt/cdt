@@ -190,8 +190,10 @@ import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.actions.AddBlockCommentAction;
 import org.eclipse.cdt.internal.ui.actions.FoldingActionGroup;
 import org.eclipse.cdt.internal.ui.actions.GoToNextPreviousMemberAction;
+import org.eclipse.cdt.internal.ui.actions.GotoNextBookmarkAction;
 import org.eclipse.cdt.internal.ui.actions.IndentAction;
 import org.eclipse.cdt.internal.ui.actions.RemoveBlockCommentAction;
+import org.eclipse.cdt.internal.ui.actions.FindWordAction;
 import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
 import org.eclipse.cdt.internal.ui.dnd.TextEditorDropAdapter;
 import org.eclipse.cdt.internal.ui.dnd.TextViewerDragAdapter;
@@ -2012,6 +2014,16 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		IAction action= new GotoMatchingBracketAction(this);
 		action.setActionDefinitionId(ICEditorActionDefinitionIds.GOTO_MATCHING_BRACKET);
 		setAction(GotoMatchingBracketAction.GOTO_MATCHING_BRACKET, action);
+		
+		action = new GotoNextBookmarkAction(CEditorMessages.getResourceBundle(), "GotoNextBookmark.", this); //$NON-NLS-1$
+		action.setActionDefinitionId(ICEditorActionDefinitionIds.GOTO_NEXT_BOOKMARK);
+		setAction(GotoNextBookmarkAction.NEXT_BOOKMARK, action);
+
+		action = new FindWordAction(CEditorMessages.getResourceBundle(), "FindWord.", this, getSourceViewer()); //$NON-NLS-1$
+		action.setActionDefinitionId(ICEditorActionDefinitionIds.FIND_WORD);
+		setAction(FindWordAction.FIND_WORD, action);
+		markAsStateDependentAction(FindWordAction.FIND_WORD, true);
+		markAsSelectionDependentAction(FindWordAction.FIND_WORD, true);
 
 		action = new ToggleCommentAction(CEditorMessages.getResourceBundle(), "ToggleComment.", this); //$NON-NLS-1$
 		action.setActionDefinitionId(ICEditorActionDefinitionIds.TOGGLE_COMMENT);

@@ -179,6 +179,18 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	public static final String GOTO_MATCHING_BRACKET= "org.eclipse.cdt.ui.edit.text.c.goto.matching.bracket"; //$NON-NLS-1$
 
 	/**
+	 * Action definition ID for goto next bookmark action
+	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.goto.next.bookmark"</code>).
+	 */
+	public static final String GOTO_NEXT_BOOKMARK = "org.eclipse.cdt.ui.edit.text.c.goto.next.bookmark"; //$NON-NLS-1$	
+
+	/**
+	 * Action definition ID for find word action
+	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.find.word"</code>).
+	 */
+	public static final String FIND_WORD = "org.eclipse.cdt.ui.edit.text.c.find.word"; //$NON-NLS-1$	
+
+	/**
 	 * Action definition ID for toggle source/header action.
 	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.toggle.source.header"</code>)
 	 * 

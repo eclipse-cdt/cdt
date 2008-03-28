@@ -30,7 +30,9 @@ import org.eclipse.ui.texteditor.RetargetTextEditorAction;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
+import org.eclipse.cdt.internal.ui.actions.FindWordAction;
 import org.eclipse.cdt.internal.ui.actions.GoToNextPreviousMemberAction;
+import org.eclipse.cdt.internal.ui.actions.GotoNextBookmarkAction;
 
 public class CEditorActionContributor extends TextEditorActionContributor {
 	
@@ -44,12 +46,14 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 	private GotoAnnotationAction fPreviousAnnotation;
 	private GotoAnnotationAction fNextAnnotation;
 	private RetargetTextEditorAction fGotoMatchingBracket;
+	private RetargetTextEditorAction fGotoNextBookmark;
 	private RetargetTextEditorAction fGotoNextMemberAction;
 	private RetargetTextEditorAction fGotoPreviousMemberAction;
 	private RetargetTextEditorAction fToggleInsertModeAction;
 	private RetargetTextEditorAction fShowOutline;
 	private RetargetTextEditorAction fToggleSourceHeader;
 	private ToggleMarkOccurrencesAction fToggleMarkOccurrencesAction;
+	private RetargetTextEditorAction fFindWord;
 	
 	public CEditorActionContributor() {
 		super();
@@ -87,6 +91,9 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		fGotoMatchingBracket= new RetargetTextEditorAction(bundle, "GotoMatchingBracket."); //$NON-NLS-1$
 		fGotoMatchingBracket.setActionDefinitionId(ICEditorActionDefinitionIds.GOTO_MATCHING_BRACKET);
 
+		fGotoNextBookmark = new RetargetTextEditorAction(bundle, "GotoNextBookmark."); //$NON-NLS-1$
+		fGotoNextBookmark.setActionDefinitionId(ICEditorActionDefinitionIds.GOTO_NEXT_BOOKMARK);
+
 		fGotoNextMemberAction= new RetargetTextEditorAction(bundle, "GotoNextMember."); //$NON-NLS-1$
 		fGotoNextMemberAction.setActionDefinitionId(ICEditorActionDefinitionIds.GOTO_NEXT_MEMBER);
 		fGotoPreviousMemberAction= new RetargetTextEditorAction(bundle, "GotoPreviousMember."); //$NON-NLS-1$
@@ -101,7 +108,9 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		fToggleSourceHeader= new RetargetTextEditorAction(bundle, "ToggleSourceHeader."); //$NON-NLS-1$
 		fToggleSourceHeader.setActionDefinitionId(ICEditorActionDefinitionIds.TOGGLE_SOURCE_HEADER);
 
-	}
+		fFindWord = new RetargetTextEditorAction(bundle, "FindWord."); //$NON-NLS-1$
+		fFindWord.setActionDefinitionId(ICEditorActionDefinitionIds.FIND_WORD);
+	}	
 
 	/*
 	 * @see org.eclipse.ui.texteditor.BasicTextEditorActionContributor#contributeToMenu(org.eclipse.jface.action.IMenuManager)
@@ -115,6 +124,8 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		if (editMenu != null) {	
 			editMenu.appendToGroup(ITextEditorActionConstants.GROUP_ASSIST, fContentAssist);
 			editMenu.appendToGroup(ITextEditorActionConstants.GROUP_ASSIST, fContextInformation);
+
+			editMenu.prependToGroup(IWorkbenchActionConstants.FIND_EXT, fFindWord);
 
 			editMenu.appendToGroup(ITextEditorActionConstants.GROUP_GENERATE, fShiftRight);
 			editMenu.appendToGroup(ITextEditorActionConstants.GROUP_GENERATE, fShiftLeft);
@@ -138,6 +149,7 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 				gotoMenu.appendToGroup("additions2", fGotoPreviousMemberAction); //$NON-NLS-1$
 				gotoMenu.appendToGroup("additions2", fGotoNextMemberAction); //$NON-NLS-1$
 				gotoMenu.appendToGroup("additions2", fGotoMatchingBracket); //$NON-NLS-1$
+				gotoMenu.appendToGroup("additions2", fGotoNextBookmark); //$NON-NLS-1$
 			}
 		}
 
@@ -185,12 +197,14 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		fFormatter.setAction(getAction(textEditor, "Format")); //$NON-NLS-1$
 
 		fGotoMatchingBracket.setAction(getAction(textEditor, GotoMatchingBracketAction.GOTO_MATCHING_BRACKET));
+		fGotoNextBookmark.setAction(getAction(textEditor, GotoNextBookmarkAction.NEXT_BOOKMARK));
 		fGotoNextMemberAction.setAction(getAction(textEditor, GoToNextPreviousMemberAction.NEXT_MEMBER));
 		fGotoPreviousMemberAction.setAction(getAction(textEditor, GoToNextPreviousMemberAction.PREVIOUS_MEMBER));
 
 		fShowOutline.setAction(getAction(textEditor, "OpenOutline")); //$NON-NLS-1$
 		fToggleSourceHeader.setAction(getAction(textEditor, "ToggleSourceHeader")); //$NON-NLS-1$
 		fToggleInsertModeAction.setAction(getAction(textEditor, ITextEditorActionConstants.TOGGLE_INSERT_MODE));
+		fFindWord.setAction(getAction(textEditor, FindWordAction.FIND_WORD));
 
 		if (part instanceof CEditor) {
 			CEditor cEditor= (CEditor) part;

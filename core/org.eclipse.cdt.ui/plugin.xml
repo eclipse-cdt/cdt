@@ -1411,6 +1411,7 @@
    </extension>
 
    <extension point="org.eclipse.ui.bindings">
+ 
       <!--  win32:  M1=CTRL,    M2=SHIFT, M3=ALT, M4=-
             carbon: M1=COMMAND, M2=SHIFT, M3=ALT, M4=CTRL -->
    	 <key
@@ -1609,6 +1610,173 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.refactor.extract.constant"/>
+            
+      <scheme
+            id="org.eclipse.cdt.ui.visualstudio"
+			parentId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            name="%keybinding.MSVS"/>
+
+<!-- =================================================================================== -->
+<!-- MICROSOFT VISUAL STUDIO KEY SHORTCUTS                                               -->
+<!-- =================================================================================== -->
+		<!-- C/C++ Source Keys -->
+	   
+	    <!-- MSVS Edit.GoToDefinition -->
+		<key
+			sequence="F12"
+			commandId="org.eclipse.cdt.ui.edit.opendef"
+			contextId="org.eclipse.cdt.ui.cEditorScope"
+			schemeId="org.eclipse.cdt.ui.visualstudio"/>
+	   
+		<!-- Edit Keys -->
+
+		<key
+			sequence="F3"
+			commandId="org.eclipse.ui.edit.findNext"
+			contextId="org.eclipse.ui.textEditorScope"
+			schemeId="org.eclipse.cdt.ui.visualstudio"/>
+	   
+		<key
+			sequence="M2+F3"
+			commandId="org.eclipse.ui.edit.findPrevious"
+			contextId="org.eclipse.ui.textEditorScope"
+			schemeId="org.eclipse.cdt.ui.visualstudio"/>
+
+		<key
+			sequence="M1+F3"
+			commandId="org.eclipse.cdt.ui.edit.text.c.find.word"
+			contextId="org.eclipse.cdt.ui.cEditorScope"
+			schemeId="org.eclipse.cdt.ui.visualstudio"/>
+
+	   	<key
+			sequence="M1+M2+F"
+			commandId="org.eclipse.search.ui.openSearchDialog"
+			schemeId="org.eclipse.cdt.ui.visualstudio"/>
+
+	   	<!-- File Keys -->	   
+	   	<!-- Help Keys -->
+		<!-- MakeFile Source Keys -->
+	   
+		<!-- Navigate Keys -->
+		<key
+            sequence="M1+F2" 
+            commandId="org.eclipse.ui.edit.addBookmark"
+			schemeId="org.eclipse.cdt.ui.visualstudio"/>
+
+		<key
+            sequence="M2+F2" 
+            commandId="org.eclipse.cdt.ui.edit.text.c.goto.next.bookmark"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            schemeId="org.eclipse.cdt.ui.visualstudio"/>
+
+		<key
+            sequence="M1+G" 
+            commandId="org.eclipse.ui.edit.text.goto.line"
+			schemeId="org.eclipse.cdt.ui.visualstudio"/>
+	   
+		<!-- Project Keys -->
+	   
+		<!-- MSVS RebuildSolution -->
+<!-- THERE IS CURRENTLY NO REBUILD
+		<key
+			sequence="M1+M2+B"
+			commandId="org.eclipse.ui.project.rebuildProject"
+			schemeId="org.eclipse.cdt.ui.visualstudio"/>
+-->
+		<!-- MSVS NewProject -->   
+		<key
+			sequence="M1+M2+N"
+			commandId="org.eclipse.ui.newWizard"
+			schemeId="org.eclipse.cdt.ui.visualstudio"/>
+	   
+		<!-- Run/Debug Keys -->	   
+		<!-- MSVS Start -->
+		<key
+			sequence="M1+F5"
+			commandId="org.eclipse.debug.ui.commands.RunLast"
+			contextId="org.eclipse.ui.globalScope"
+			schemeId="org.eclipse.cdt.ui.visualstudio"/>
+	   
+		<!-- MSVS StartWithoutDebugging -->
+		<key
+			sequence="F5"
+			commandId="org.eclipse.debug.ui.commands.DebugLast"
+			contextId="org.eclipse.ui.globalScope"
+			schemeId="org.eclipse.cdt.ui.visualstudio"/>
+	   
+		<!-- MSVS StepInto -->
+		<key
+			sequence="F11"
+			commandId="org.eclipse.debug.ui.commands.StepInto"
+			contextId="org.eclipse.debug.ui.debugging"
+			schemeId="org.eclipse.cdt.ui.visualstudio"/>
+	   
+		<!-- MSVS StepOver -->
+		<key
+			sequence="F10"
+			commandId="org.eclipse.debug.ui.commands.StepOver"
+			contextId="org.eclipse.debug.ui.debugging"
+			schemeId="org.eclipse.cdt.ui.visualstudio"/>
+	   
+		<!-- MSVS StepReturn -->
+		<key
+			sequence="M2+F11"
+			commandId="org.eclipse.debug.ui.commands.StepReturn"
+			contextId="org.eclipse.debug.ui.debugging"
+			schemeId="org.eclipse.cdt.ui.visualstudio"/>
+	   
+		<!-- MSVS ToggleBreakpoint -->
+		<key
+			sequence="F9"
+			commandId="org.eclipse.debug.ui.commands.ToggleBreakpoint"
+            contextId="org.eclipse.ui.globalScope"
+			schemeId="org.eclipse.cdt.ui.visualstudio"/>
+	   
+		<!-- MSVS RunToCursor -->
+		<key
+			sequence="M1+F10"
+			commandId="org.eclipse.debug.ui.commands.RunToLine"
+            contextId="org.eclipse.ui.globalScope"
+			schemeId="org.eclipse.cdt.ui.visualstudio"/>
+	   
+		<!-- MSVS Breakpoints -->
+		<key
+			sequence="M1+M3+B"
+			commandId="org.eclipse.debug.ui.BreakpointView"
+            contextId="org.eclipse.ui.globalScope"
+			schemeId="org.eclipse.cdt.ui.visualstudio"/>
+
+		<!-- Search Keys -->
+		<!-- Text Editing Keys -->
+	   
+		<key	
+			sequence="M1+ARROW_LEFT"
+			commandId="org.eclipse.ui.edit.text.goto.wordPrevious"
+			contextId="org.eclipse.ui.textEditorScope"
+			schemeId="org.eclipse.cdt.ui.visualstudio"/>
+	   
+		<key
+			sequence="M1+ARROW_RIGHT"
+			commandId="org.eclipse.ui.edit.text.goto.wordNext"
+			contextId="org.eclipse.ui.textEditorScope"
+			schemeId="org.eclipse.cdt.ui.visualstudio"/>
+	   
+		<!-- View Keys -->
+		<!-- Views Keys -->
+		<!-- Window Keys -->
+			
+		<!-- MSVC Window NextDocumentWindow --> 
+		<key
+			sequence="M1+TAB"
+            commandId="org.eclipse.ui.window.nextEditor"
+			schemeId="org.eclipse.cdt.ui.visualstudio"/>
+
+		<!-- MSVC Window.PreviousDocumentWindow -->
+		<key
+			sequence="M1+M2+TAB"
+            commandId="org.eclipse.ui.window.previousEditor"
+			schemeId="org.eclipse.cdt.ui.visualstudio"/>
+            
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -1745,6 +1913,18 @@
             description="%ActionDefinition.gotoMatchingBracket.description"
             categoryId="org.eclipse.cdt.ui.category.source"
             id="org.eclipse.cdt.ui.edit.text.c.goto.matching.bracket">
+      </command>
+      <command
+            name="%ActionDefinition.gotoNextBookmark.name"
+            description="%ActionDefinition.gotoNextBookmark.description"
+            categoryId="org.eclipse.cdt.ui.category.source"
+            id="org.eclipse.cdt.ui.edit.text.c.goto.next.bookmark">
+      </command>
+      <command
+            name="%ActionDefinition.FindWord.name"
+            description="%ActionDefinition.FindWord.description"
+            categoryId="org.eclipse.cdt.ui.category.source"
+            id="org.eclipse.cdt.ui.edit.text.c.find.word">
       </command>
       <command
             name="%ActionDefinition.toggleSourceHeader.name"

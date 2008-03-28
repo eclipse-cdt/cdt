@@ -83,7 +83,6 @@ import org.eclipse.cdt.internal.ui.buildconsole.BuildConsoleManager;
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 import org.eclipse.cdt.internal.ui.editor.CDocumentProvider;
 import org.eclipse.cdt.internal.ui.editor.CustomBufferFactory;
-import org.eclipse.cdt.internal.ui.editor.SharedTextColors;
 import org.eclipse.cdt.internal.ui.editor.WorkingCopyManager;
 import org.eclipse.cdt.internal.ui.editor.asm.AsmTextTools;
 import org.eclipse.cdt.internal.ui.refactoring.CTextFileChangeFactory;
@@ -335,8 +334,6 @@ public class CUIPlugin extends AbstractUIPlugin {
 
 	// ------ CUIPlugin
 
-
-	private ISharedTextColors fSharedTextColors;
 	private ImageDescriptorRegistry fImageDescriptorRegistry;
 	private CEditorTextHoverDescriptor[] fCEditorTextHoverDescriptors;
 
@@ -599,10 +596,9 @@ public class CUIPlugin extends AbstractUIPlugin {
 		manager.unregisterAdapters(fCElementAdapterFactory);
 	}
 
+	/** @deprecated Use {@link EditorsUI#getSharedTextColors()} instead. */
 	public ISharedTextColors getSharedTextColors() {
-		if (fSharedTextColors == null)
-			fSharedTextColors= new SharedTextColors();
-		return fSharedTextColors;
+		return EditorsUI.getSharedTextColors();
 	}
 	
 	public void configurePluginDebugOptions(){

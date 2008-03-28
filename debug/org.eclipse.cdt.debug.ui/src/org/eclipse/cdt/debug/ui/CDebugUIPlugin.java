@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 QNX Software Systems and others.
+ * Copyright (c) 2004, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  * ARM Limited - https://bugs.eclipse.org/bugs/show_bug.cgi?id=186981
+ * Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.debug.ui;
 
@@ -43,6 +44,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -65,8 +67,6 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 	protected Map fDebuggerPageMap;
 
 	private CDebugImageDescriptorRegistry fImageDescriptorRegistry;
-
-	private ISharedTextColors fSharedTextColors;
 
 	/**
 	 * The constructor.
@@ -276,10 +276,6 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 	 */
 	public void stop( BundleContext context ) throws Exception {
 		CDebugCorePlugin.getDefault().removeCBreakpointListener( CBreakpointUpdater.getInstance() );
-		if ( fSharedTextColors != null ) {
-			fSharedTextColors.dispose();
-			fSharedTextColors = null;
-		}
 		if ( fImageDescriptorRegistry != null ) {
 			fImageDescriptorRegistry.dispose();
 		}
@@ -293,8 +289,6 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 	 * @since 3.1
 	 */
 	public ISharedTextColors getSharedTextColors() {
-		if ( fSharedTextColors == null )
-			fSharedTextColors = CUIPlugin.getDefault().getSharedTextColors();
-		return fSharedTextColors;
+		return EditorsUI.getSharedTextColors();
 	}
 }

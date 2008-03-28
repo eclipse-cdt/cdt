@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,6 @@ import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.actions.BuildAction;
@@ -140,9 +139,7 @@ public class CNavigatorBuildActionGroup extends AbstractCNavigatorActionGroup {
 	}
 
 	protected void makeActions() {
-		Shell shell= getViewPart().getSite().getShell();
-
-		fCleanAction= new BuildAction(shell, IncrementalProjectBuilder.CLEAN_BUILD);
+		fCleanAction= new BuildAction(getViewPart().getSite(), IncrementalProjectBuilder.CLEAN_BUILD);
 		fCleanAction.setText(CViewMessages.getString("CleanAction.label")); //$NON-NLS-1$
 	}
 

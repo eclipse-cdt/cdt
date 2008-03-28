@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -360,7 +360,7 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 			return null;
 		}
 		List elements = ((IStructuredSelection)selection).toList();
-		List resources= new ArrayList(elements.size());
+		List<Object> resources= new ArrayList<Object>(elements.size());
 		for (Iterator iter= elements.iterator(); iter.hasNext();) {
 			Object element= iter.next();
 			if (element instanceof ITranslationUnit) {
@@ -369,7 +369,7 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 			if (element instanceof ICElement)
 				resources.add(element);
 		}
-		return (ICElement[]) resources.toArray(new ICElement[resources.size()]);
+		return resources.toArray(new ICElement[resources.size()]);
 	}
 
 	private static boolean canCopyElements(ICElement[] cElements) {
@@ -433,7 +433,7 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 	 * @return the resource selection from the LocalSelectionTransfer
 	 */
 	private IResource[] getSelectedResources(IStructuredSelection selection) {
-		ArrayList selectedResources = new ArrayList();
+		ArrayList<Object> selectedResources = new ArrayList<Object>();
 
 		for (Iterator i = selection.iterator(); i.hasNext();) {
 			Object o = i.next();
@@ -447,7 +447,7 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 				}
 			}
 		}
-		return (IResource[]) selectedResources
+		return selectedResources
 				.toArray(new IResource[selectedResources.size()]);
 	}
 

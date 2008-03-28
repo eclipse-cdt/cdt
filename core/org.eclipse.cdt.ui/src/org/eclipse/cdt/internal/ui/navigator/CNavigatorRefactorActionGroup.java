@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,7 @@ package org.eclipse.cdt.internal.ui.navigator;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionFactory;
@@ -36,7 +36,7 @@ public class CNavigatorRefactorActionGroup extends ActionGroup {
 
 	private MoveResourceAction moveAction;
 
-	private Shell shell;
+	private IShellProvider shellProvider;
 
 	private Tree tree;
 
@@ -45,8 +45,8 @@ public class CNavigatorRefactorActionGroup extends ActionGroup {
 	 * @param aShell
 	 * @param aTree
 	 */
-	public CNavigatorRefactorActionGroup(Shell aShell, Tree aTree) {
-		shell = aShell;
+	public CNavigatorRefactorActionGroup(IShellProvider aShell, Tree aTree) {
+		shellProvider = aShell;
 		tree = aTree;
 		makeActions();
 	}
@@ -74,10 +74,10 @@ public class CNavigatorRefactorActionGroup extends ActionGroup {
 	}
 
 	protected void makeActions() {
-		moveAction = new MoveResourceAction(shell);
+		moveAction = new MoveResourceAction(shellProvider);
 		moveAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.MOVE);
 		
-		renameAction = new RenameResourceAction(shell, tree);
+		renameAction = new RenameResourceAction(shellProvider, tree);
 		renameAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.RENAME);
 	}
 

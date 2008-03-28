@@ -17,6 +17,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.navigator.CommonActionProvider;
 import org.eclipse.ui.navigator.ICommonActionExtensionSite;
@@ -36,25 +37,24 @@ public class CNavigatorRefactorActionProvider extends CommonActionProvider {
 	private CNavigatorRefactorActionGroup resourceRefactorGroup;
 	private CRefactoringActionGroup cElementRefactorGroup;
 
-	private ICommonActionExtensionSite site;
-
 	/*
 	 * @see org.eclipse.ui.navigator.CommonActionProvider#init(org.eclipse.ui.navigator.ICommonActionExtensionSite)
 	 */
 	@Override
 	public void init(ICommonActionExtensionSite actionSite) {
-		site = actionSite;
-		resourceRefactorGroup= new CNavigatorRefactorActionGroup(site.getViewSite().getShell(), (Tree)site.getStructuredViewer().getControl());
-		IUndoContext workspaceContext= (IUndoContext) ResourcesPlugin.getWorkspace().getAdapter(IUndoContext.class);
-		ICommonViewerWorkbenchSite workbenchSite = null;
-		if (site.getViewSite() instanceof ICommonViewerWorkbenchSite) {
-			workbenchSite = (ICommonViewerWorkbenchSite) site.getViewSite();
+		super.init(actionSite);
+		ICommonViewerWorkbenchSite workbenchSite= null;
+		if (actionSite.getViewSite() instanceof ICommonViewerWorkbenchSite) {
+			workbenchSite = (ICommonViewerWorkbenchSite) actionSite.getViewSite();
 		}
 		if (workbenchSite != null) {
-			undoRedoGroup = new UndoRedoActionGroup(workbenchSite.getSite(), workspaceContext, true);
+			final IWorkbenchPartSite partSite= workbenchSite.getSite();
+			resourceRefactorGroup= new CNavigatorRefactorActionGroup(partSite, (Tree)actionSite.getStructuredViewer().getControl());
+			IUndoContext workspaceContext= (IUndoContext) ResourcesPlugin.getWorkspace().getAdapter(IUndoContext.class);
+			undoRedoGroup = new UndoRedoActionGroup(partSite, workspaceContext, true);
 			cElementRefactorGroup= new CRefactoringActionGroup(workbenchSite.getPart());
 		}
-}
+	}
 
 	@Override
 	public void dispose() {

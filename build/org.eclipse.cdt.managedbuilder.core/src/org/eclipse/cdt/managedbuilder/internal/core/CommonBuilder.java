@@ -2046,7 +2046,7 @@ public class CommonBuilder extends ACBuilder {
 	}
 
 	// Turn the string into an array.
-	String[] makeArray(String string) {
+	private String[] makeArray(String string) {
 		string = string.trim();
 		char[] array = string.toCharArray();
 		ArrayList aList = new ArrayList();
@@ -2054,11 +2054,13 @@ public class CommonBuilder extends ACBuilder {
 		boolean inComment = false;
 		for (int i = 0; i < array.length; i++) {
 			char c = array[i];
+			boolean needsToAdd = true;
 			if (array[i] == '"' || array[i] == '\'') {
 				if (i > 0 && array[i - 1] == '\\') {
 					inComment = false;
 				} else {
 					inComment = !inComment;
+					needsToAdd = false;
 				}
 			}
 			if (c == ' ' && !inComment) {
@@ -2068,10 +2070,10 @@ public class CommonBuilder extends ACBuilder {
 						aList.add(str);
 					}
 				}
-//				aList.add(buffer.toString());
 				buffer = new StringBuffer();
 			} else {
-				buffer.append(c);
+				if (needsToAdd) // skip quotation marks
+					buffer.append(c);
 			}
 		}
 		if (buffer.length() > 0){

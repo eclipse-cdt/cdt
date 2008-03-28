@@ -126,37 +126,37 @@ public class SourceFilesViewer extends BaseViewer implements ISourceLookupPartic
 	private void createColumns() {
 		nameColumn = new TreeColumn(sourceFilesTree, SWT.NONE);
 		nameColumn.setWidth(100);
-		nameColumn.setText("Source File Name");
+		nameColumn.setText(Messages.SourceFilesViewer_SourceFileName);
 		nameColumn.setMoveable(true);
 		nameColumn.addSelectionListener(new ColumnSelectionAdapter(ExecutablesView.NAME));
 
 		locationColumn = new TreeColumn(sourceFilesTree, SWT.NONE);
 		locationColumn.setWidth(100);
-		locationColumn.setText("Location");
+		locationColumn.setText(Messages.SourceFilesViewer_Location);
 		locationColumn.setMoveable(true);
 		locationColumn.addSelectionListener(new ColumnSelectionAdapter(ExecutablesView.LOCATION));
 
 		originalLocationColumn = new TreeColumn(sourceFilesTree, SWT.NONE);
 		originalLocationColumn.setWidth(100);
-		originalLocationColumn.setText("Original");
+		originalLocationColumn.setText(Messages.SourceFilesViewer_Original);
 		originalLocationColumn.setMoveable(true);
 		originalLocationColumn.addSelectionListener(new ColumnSelectionAdapter(ExecutablesView.ORG_LOCATION));
 
 		sizeColumn = new TreeColumn(sourceFilesTree, SWT.NONE);
 		sizeColumn.setWidth(100);
-		sizeColumn.setText("Size");
+		sizeColumn.setText(Messages.SourceFilesViewer_Size);
 		sizeColumn.setMoveable(true);
 		sizeColumn.addSelectionListener(new ColumnSelectionAdapter(ExecutablesView.SIZE));
 
 		modifiedColumn = new TreeColumn(sourceFilesTree, SWT.NONE);
 		modifiedColumn.setWidth(100);
-		modifiedColumn.setText("Modified");
+		modifiedColumn.setText(Messages.SourceFilesViewer_Modified);
 		modifiedColumn.setMoveable(true);
 		modifiedColumn.addSelectionListener(new ColumnSelectionAdapter(ExecutablesView.MODIFIED));
 
 		typeColumn = new TreeColumn(sourceFilesTree, SWT.NONE);
 		typeColumn.setWidth(100);
-		typeColumn.setText("Type");
+		typeColumn.setText(Messages.SourceFilesViewer_Type);
 		typeColumn.setMoveable(true);
 		typeColumn.addSelectionListener(new ColumnSelectionAdapter(ExecutablesView.TYPE));
 	}
@@ -165,7 +165,7 @@ public class SourceFilesViewer extends BaseViewer implements ISourceLookupPartic
 		if (sortType == ExecutablesView.ORG_LOCATION) {
 			return new ExecutablesViewerComparator(sortType, column_order[ExecutablesView.ORG_LOCATION]) {
 
-				@SuppressWarnings("unchecked")
+				@SuppressWarnings("unchecked") //$NON-NLS-1$
 				public int compare(Viewer viewer, Object e1, Object e2) {
 					if (e1 instanceof ITranslationUnit && e2 instanceof ITranslationUnit) {
 						ITranslationUnit entry1 = (ITranslationUnit) e1;
@@ -252,14 +252,14 @@ public class SourceFilesViewer extends BaseViewer implements ISourceLookupPartic
 	}
 
 	public String getSourceName(Object object) throws CoreException {
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	public void init(ISourceLookupDirector director) {
 	}
 
 	public void sourceContainersChanged(ISourceLookupDirector director) {
-		UIJob refreshJob = new UIJob("Refresh Source Files") {
+		UIJob refreshJob = new UIJob(Messages.SourceFilesViewer_RefreshSourceFiles) {
 
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {

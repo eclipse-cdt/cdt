@@ -37,7 +37,7 @@ public class SourceFilesContentProvider extends CElementContentProvider {
 			Executable executable = (Executable) inputElement;
 			ITranslationUnit[] sourceFiles = executable.getSourceFiles();
 			if (sourceFiles.length == 0)
-				return new String[] { "No source files found in " + executable.getName() };
+				return new String[] { Messages.SourceFilesContentProvider_NoFilesFound + executable.getName() };
 			else
 				return sourceFiles;
 		}

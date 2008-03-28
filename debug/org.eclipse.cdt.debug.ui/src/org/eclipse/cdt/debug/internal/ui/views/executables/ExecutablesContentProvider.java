@@ -50,7 +50,7 @@ class ExecutablesContentProvider extends ColumnLabelProvider implements IStructu
 				// once the list of executables has been calculated. this can
 				// take a while and we don't want
 				// to block the UI.
-				Job refreshJob = new Job("Fetching executables") {
+				Job refreshJob = new Job(Messages.ExecutablesContentProvider_FetchingExecutables) {
 
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
@@ -102,7 +102,7 @@ class ExecutablesContentProvider extends ColumnLabelProvider implements IStructu
 			else if (cell.getColumnIndex() == 2)
 				cellText = exe.getPath().toOSString();
 			else if (cell.getColumnIndex() == 3) {
-				cellText = "";
+				cellText = ""; //$NON-NLS-1$
 				IPath path = exe.getPath();
 				if (path != null && path.toFile().exists()) {
 					long fileLength = path.toFile().length();
@@ -110,7 +110,7 @@ class ExecutablesContentProvider extends ColumnLabelProvider implements IStructu
 				}
 				cell.setImage(null);
 			} else if (cell.getColumnIndex() == 4) {
-				cellText = "";
+				cellText = ""; //$NON-NLS-1$
 				IPath path = exe.getPath();
 				if (path != null && path.toFile().exists()) {
 					long modified = path.toFile().lastModified();
@@ -118,7 +118,7 @@ class ExecutablesContentProvider extends ColumnLabelProvider implements IStructu
 				}
 				cell.setImage(null);
 			} else if (cell.getColumnIndex() == 5) {
-				cellText = "";
+				cellText = ""; //$NON-NLS-1$
 				String fileExtension = exe.getPath().getFileExtension();
 				if (fileExtension != null)
 					cellText = fileExtension;

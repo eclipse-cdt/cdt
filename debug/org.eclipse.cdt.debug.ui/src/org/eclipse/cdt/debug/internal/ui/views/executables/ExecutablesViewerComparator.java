@@ -36,7 +36,7 @@ class ExecutablesViewerComparator extends ViewerComparator {
 		return 0;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked") //$NON-NLS-1$
 	public int compare(Viewer viewer, Object e1, Object e2) {
 
 		if (category(e1) == 1 && category(e2) == 1) {
@@ -64,9 +64,9 @@ class ExecutablesViewerComparator extends ViewerComparator {
 
 			if (sortType == ExecutablesView.TYPE) {
 				String ext1 = getPath(e1).getFileExtension();
-				String s1 = ext1 != null ? ext1.toUpperCase() : "";
+				String s1 = ext1 != null ? ext1.toUpperCase() : ""; //$NON-NLS-1$
 				String ext2 = getPath(e2).getFileExtension();
-				String s2 = ext2 != null ? ext2.toUpperCase() : "";
+				String s2 = ext2 != null ? ext2.toUpperCase() : ""; //$NON-NLS-1$
 				return getComparator().compare(s1, s2) * columnOrder;
 			}
 		}

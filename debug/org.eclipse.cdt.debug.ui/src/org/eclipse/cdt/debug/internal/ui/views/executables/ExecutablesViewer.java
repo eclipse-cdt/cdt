@@ -107,37 +107,37 @@ public class ExecutablesViewer extends BaseViewer implements IExecutablesChangeL
 	private void createColumns() {
 		nameColumn = new TreeColumn(getTree(), SWT.NONE);
 		nameColumn.setWidth(100);
-		nameColumn.setText("Executable Name");
+		nameColumn.setText(Messages.ExecutablesViewer_ExecutableName);
 		nameColumn.setMoveable(true);
 		nameColumn.addSelectionListener(new ColumnSelectionAdapter(ExecutablesView.NAME));
 
 		projectColumn = new TreeColumn(getTree(), SWT.NONE);
 		projectColumn.setWidth(100);
 		projectColumn.setMoveable(true);
-		projectColumn.setText("Project");
+		projectColumn.setText(Messages.ExecutablesViewer_Project);
 		projectColumn.addSelectionListener(new ColumnSelectionAdapter(ExecutablesView.PROJECT));
 
 		locationColumn = new TreeColumn(getTree(), SWT.NONE);
 		locationColumn.setWidth(100);
-		locationColumn.setText("Location");
+		locationColumn.setText(Messages.ExecutablesViewer_Location);
 		locationColumn.setMoveable(true);
 		locationColumn.addSelectionListener(new ColumnSelectionAdapter(ExecutablesView.LOCATION));
 
 		sizeColumn = new TreeColumn(getTree(), SWT.NONE);
 		sizeColumn.setWidth(100);
-		sizeColumn.setText("Size");
+		sizeColumn.setText(Messages.ExecutablesViewer_Size);
 		sizeColumn.setMoveable(true);
 		sizeColumn.addSelectionListener(new ColumnSelectionAdapter(ExecutablesView.SIZE));
 
 		modifiedColumn = new TreeColumn(getTree(), SWT.NONE);
 		modifiedColumn.setWidth(100);
-		modifiedColumn.setText("Modified");
+		modifiedColumn.setText(Messages.ExecutablesViewer_Modified);
 		modifiedColumn.setMoveable(true);
 		modifiedColumn.addSelectionListener(new ColumnSelectionAdapter(ExecutablesView.MODIFIED));
 
 		typeColumn = new TreeColumn(getTree(), SWT.NONE);
 		typeColumn.setWidth(100);
-		typeColumn.setText("Type");
+		typeColumn.setText(Messages.ExecutablesViewer_Type);
 		typeColumn.setMoveable(true);
 		typeColumn.addSelectionListener(new ColumnSelectionAdapter(ExecutablesView.TYPE));
 
@@ -216,7 +216,7 @@ public class ExecutablesViewer extends BaseViewer implements IExecutablesChangeL
 	protected ViewerComparator getViewerComparator(int sortType) {
 		if (sortType == ExecutablesView.PROJECT) {
 			return new ExecutablesViewerComparator(sortType, column_order[ExecutablesView.PROJECT]) {
-				@SuppressWarnings("unchecked")
+				@SuppressWarnings("unchecked") //$NON-NLS-1$
 				public int compare(Viewer viewer, Object e1, Object e2) {
 					Executable entry1 = (Executable) e1;
 					Executable entry2 = (Executable) e2;
@@ -236,7 +236,7 @@ public class ExecutablesViewer extends BaseViewer implements IExecutablesChangeL
 	public void executablesChanged(IExecutablesChangeEvent event) {
 		// Executables have changed so refresh the view.
 		final ExecutablesViewer viewer = this;
-		UIJob refreshJob = new UIJob("Refresh Executables View") {
+		UIJob refreshJob = new UIJob(Messages.ExecutablesViewer_RefreshExecutablesView) {
 
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {

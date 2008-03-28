@@ -123,14 +123,14 @@ public class ExecutablesView extends ViewPart {
 	 * names and should not be localized. Display names are set when the columns
 	 * are created in the sub views.
 	 */
-	private String[] columnNames = { "Executable Name", "Executable Project", "Executable Location", "Executable Size", "Executable Date",
-			"Executable Type", "Source File Name", "Source File Location", "Source File Original Location", "Source File Size", "Source File Date",
-			"Source File Type" };
+	private String[] columnNames = { Messages.ExecutablesView_ExeName, Messages.ExecutablesView_ExeProject, Messages.ExecutablesView_ExeLocation, Messages.ExecutablesView_ExeSize, Messages.ExecutablesView_ExeData,
+			Messages.ExecutablesView_ExeType, Messages.ExecutablesView_SrcName, Messages.ExecutablesView_SrcLocation, Messages.ExecutablesView_SrcOrgLocation, Messages.ExecutablesView_SrcSize, Messages.ExecutablesView_SrcDate,
+			Messages.ExecutablesView_SrcType };
 
 	/**
 	 * Not all the columns are visible by default. Here are the ones that are.
 	 */
-	private String defaultVisibleColumns = "Executable Name,Executable Project,Executable Location,Source File Name,Source File Location";
+	private String defaultVisibleColumns = Messages.ExecutablesView_DefaultColumns;
 	private TreeColumn[] allColumns = new TreeColumn[columnNames.length];
 
 	/**
@@ -180,7 +180,7 @@ public class ExecutablesView extends ViewPart {
 		}
 
 		public ConfigureColumnsAction() {
-			setText("Configure Columns");
+			setText(Messages.ExecutablesView_ConfigureColumns);
 			setId(CDebugUIPlugin.getUniqueIdentifier() + ".ConfigureColumnsAction"); //$NON-NLS-1$
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, CONFIGURE_COLUMNS_ACTION);
 		}
@@ -192,14 +192,14 @@ public class ExecutablesView extends ViewPart {
 		 */
 		public void run() {
 			ListSelectionDialog dialog = new ListSelectionDialog(ExecutablesView.this.getExecutablesViewer().getTree().getShell(), this,
-					new ColumnContentProvider(), new ColumnLabelProvider(), "Select the columns to show");
+					new ColumnContentProvider(), new ColumnLabelProvider(), Messages.ExecutablesView_SelectColumns);
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, CONFIGURE_COLUMNS_DIALOG);
 			String[] visibleColumns = getVisibleColumns();
 			List<String> initialSelection = new ArrayList<String>(visibleColumns.length);
 			for (int i = 0; i < visibleColumns.length; i++) {
 				initialSelection.add(visibleColumns[i]);
 			}
-			dialog.setTitle("Configure COlumns");
+			dialog.setTitle(Messages.ExecutablesView_ConfigureColumns);
 			dialog.setInitialElementSelections(initialSelection);
 			if (dialog.open() == Window.OK) {
 				Object[] result = dialog.getResult();
@@ -281,10 +281,10 @@ public class ExecutablesView extends ViewPart {
 
 		// Initialize the list of visible columns
 		if (memento.getString(P_VISIBLE_COLUMNS).length() > 0) {
-			String[] visibleColumns = memento.getString(P_VISIBLE_COLUMNS).split(",");
+			String[] visibleColumns = memento.getString(P_VISIBLE_COLUMNS).split(","); //$NON-NLS-1$
 			setVisibleColumns(visibleColumns);
 		} else {
-			setVisibleColumns(defaultVisibleColumns.split(","));
+			setVisibleColumns(defaultVisibleColumns.split(",")); //$NON-NLS-1$
 		}
 		sourceFilesViewer.packColumns();
 
@@ -300,7 +300,7 @@ public class ExecutablesView extends ViewPart {
 		StringBuffer visibleColumns = new StringBuffer();
 		for (int i = 0; i < ids.length; i++) {
 			if (i > 0)
-				visibleColumns.append(",");
+				visibleColumns.append(","); //$NON-NLS-1$
 			visibleColumns.append(ids[i]);
 		}
 		memento.putString(P_VISIBLE_COLUMNS, visibleColumns.toString());
@@ -351,7 +351,7 @@ public class ExecutablesView extends ViewPart {
 
 	private Action createConfigureColumnsAction() {
 		ConfigureColumnsAction action = new ConfigureColumnsAction();
-		action.setToolTipText("Columns");
+		action.setToolTipText(Messages.ExecutablesView_Columns);
 		action.setImageDescriptor(ExecutablesView.DESC_COLUMNS);
 		action.setDisabledImageDescriptor(ExecutablesView.DESC_COLUMNS_DISABLED);
 		action.setEnabled(true);
@@ -361,7 +361,7 @@ public class ExecutablesView extends ViewPart {
 	protected void importExecutables(final String[] fileNames) {
 		if (fileNames.length > 0) {
 
-			Job importJob = new Job("Import Executables") {
+			Job importJob = new Job(Messages.ExecutablesView_ImportExecutables) {
 
 				@Override
 				public IStatus run(IProgressMonitor monitor) {
@@ -374,24 +374,24 @@ public class ExecutablesView extends ViewPart {
 	}
 
 	private Action createImportAction() {
-		Action action = new Action("Import") {
+		Action action = new Action(Messages.ExecutablesView_Import) {
 			public void run() {
 				FileDialog dialog = new FileDialog(getViewSite().getShell(), SWT.NONE);
-				dialog.setText("Select an executable file");
+				dialog.setText(Messages.ExecutablesView_SelectExeFile);
 				String res = dialog.open();
 				if (res != null) {
-					if (Platform.getOS().equals(Platform.OS_MACOSX) && res.endsWith(".app")) {
+					if (Platform.getOS().equals(Platform.OS_MACOSX) && res.endsWith(".app")) { //$NON-NLS-1$
 						// On Mac OS X the file dialog will let you select the
 						// package but not the executable inside.
 						Path macPath = new Path(res);
-						res = res + "/Contents/MacOS/" + macPath.lastSegment();
+						res = res + "/Contents/MacOS/" + macPath.lastSegment(); //$NON-NLS-1$
 						res = res.substring(0, res.length() - 4);
 					}
 					importExecutables(new String[] { res });
 				}
 			}
 		};
-		action.setToolTipText("Import an executable file");
+		action.setToolTipText(Messages.ExecutablesView_ImportExe);
 		action.setImageDescriptor(ExecutablesView.DESC_IMPORT);
 		action.setDisabledImageDescriptor(ExecutablesView.DESC_IMPORT_DISABLED);
 		action.setEnabled(true);
@@ -399,12 +399,12 @@ public class ExecutablesView extends ViewPart {
 	}
 
 	private Action createRefreshAction() {
-		Action action = new Action("Refresh") {
+		Action action = new Action(Messages.ExecutablesView_Refresh) {
 			public void run() {
 				ExecutablesManager.getExecutablesManager().scheduleRefresh(null, 0);
 			}
 		};
-		action.setToolTipText("Refresh the list of executables");
+		action.setToolTipText(Messages.ExecutablesView_RefreshList);
 		action.setImageDescriptor(ExecutablesView.DESC_REFRESH);
 		action.setDisabledImageDescriptor(ExecutablesView.DESC_REFRESH_DISABLED);
 		action.setEnabled(true);

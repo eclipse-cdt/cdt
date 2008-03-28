@@ -15,12 +15,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 /**
- * A pagebook is a composite control where only a single control is visible
- * at a time. It is similar to a notebook, but without tabs.
- * <p>
- * This class may be instantiated; it is not intended to be subclassed.
- * </p>
- *
+ * A pagebook is a composite control where only a single control is visible at a
+ * time. It is similar to a notebook, but without tabs.
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class PageBook extends Composite {
 	private StackLayout fLayout;

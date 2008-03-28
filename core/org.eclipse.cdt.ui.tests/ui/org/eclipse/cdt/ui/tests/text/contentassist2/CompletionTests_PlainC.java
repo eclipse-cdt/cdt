@@ -120,6 +120,8 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	//#endif /* ANONYMOUS */
 	//
 	//#ifdef STRUCT_C1
+	//enum E1 {e11, e12};	
+	//
 	//struct C1_s {
 	//  enum E2 {e21, e22};	
 	//	
@@ -133,7 +135,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	//extern C1* gfC1();
 	//C1* gfC2();
 	//C1 gC1, gC2;
-	//#endif
+	//#endif /* STRUCT_C1 */
 	
 	//{DisturbWith.c}
 	// int gTemp;
@@ -645,6 +647,206 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	public void testTypes_FunctionScope() throws Exception {
 		final String[] expected= {
 				"C1", "C2", "C3"
+		};
+		assertCompletionResults(expected);
+	}
+
+	//#define STRUCT_C1
+	///*include*/
+	//void f() {e/*cursor*/
+	public void testEnums_FunctionScope() throws Exception {
+		final String[] expected= {
+				"e11", "e12"
+		};
+		assertCompletionResults(expected);
+	}
+
+	//#define STRUCT_C1
+	///*include*/
+	//void f() {C1 c; (&c)->m/*cursor*/
+	public void testAddressOf() throws Exception {
+		final String[] expected= {
+				"m123", "m12", "m13"
+		};
+		assertCompletionResults(expected);
+	}
+
+	//#define STRUCT_C1
+	///*include*/
+	//void f() {C1* c; (*c).m/*cursor*/
+	public void testDereferencingOperator1() throws Exception {
+		final String[] expected= {
+				"m123", "m12", "m13"
+		};
+		assertCompletionResults(expected);
+	}
+
+	//#define STRUCT_C1
+	///*include*/
+	//void f() {C1** c; (**c).m/*cursor*/
+	public void testDereferencingOperator2() throws Exception {
+		final String[] expected= {
+				"m123", "m12", "m13"
+		};
+		assertCompletionResults(expected);
+	}
+
+	//#define STRUCT_C1
+	///*include*/
+	//void f() {C1** c; (*c)->m/*cursor*/
+	public void testDereferencingOperator3() throws Exception {
+		final String[] expected= {
+				"m123", "m12", "m13"
+		};
+		assertCompletionResults(expected);
+	}
+
+	//#define STRUCT_C1
+	///*include*/
+	//void f() {C1* c; c[0].m/*cursor*/
+	public void testArrayAccessOperator1() throws Exception {
+		final String[] expected= {
+				"m123", "m12", "m13"
+		};
+		assertCompletionResults(expected);
+	}
+
+	//#define STRUCT_C1
+	///*include*/
+	//void f() {C1** c; c[0][1].m/*cursor*/
+	public void testArrayAccessOperator2() throws Exception {
+		final String[] expected= {
+				"m123", "m12", "m13"
+		};
+		assertCompletionResults(expected);
+	}
+
+	//#define STRUCT_C1
+	///*include*/
+	//void f() {C1** c; c[0]->m/*cursor*/
+	public void testArrayAccessOperator3() throws Exception {
+		final String[] expected= {
+				"m123", "m12", "m13"
+		};
+		assertCompletionResults(expected);
+	}
+
+	//#define STRUCT_C1
+	///*include*/
+	//void f() {C1* c; (&c[0])->m/*cursor*/
+	public void testArrayAccessOperator4() throws Exception {
+		final String[] expected= {
+				"m123", "m12", "m13"
+		};
+		assertCompletionResults(expected);
+	}
+
+	//#define STRUCT_C1
+	///*include*/
+	//void f() {void* c; ((C1*)c)->m/*cursor*/
+	public void testCasts1() throws Exception {
+		final String[] expected= {
+				"m123", "m12", "m13"
+		};
+		assertCompletionResults(expected);
+	}
+
+	//#define STRUCT_C1
+	///*include*/
+	//void g(int a) {}; void f() {void* c; g(((C1*)c)->m/*cursor*/
+	public void testCasts2() throws Exception {
+		final String[] expected= {
+				"m123", "m12", "m13"
+		};
+		assertCompletionResults(expected);
+	}
+
+	//#define STRUCT_C1
+	///*include*/
+	//void f() {C1* c; c++->m/*cursor*/
+	public void testPointerArithmetic1() throws Exception {
+		final String[] expected= {
+				"m123", "m12", "m13"
+		};
+		assertCompletionResults(expected);
+	}
+
+	//#define STRUCT_C1
+	///*include*/
+	//void f() {C1* c; (*++c).m/*cursor*/
+	public void testPointerArithmetic2() throws Exception {
+		final String[] expected= {
+				"m123", "m12", "m13"
+		};
+		assertCompletionResults(expected);
+	}
+
+	//#define STRUCT_C1
+	///*include*/
+	//void f() {C1* c; c--->m/*cursor*/
+	public void testPointerArithmetic3() throws Exception {
+		final String[] expected= {
+				"m123", "m12", "m13"
+		};
+		assertCompletionResults(expected);
+	}
+
+	//#define STRUCT_C1
+	///*include*/
+	//void f() {C1 c; (&c+1)->m/*cursor*/
+	public void testPointerArithmetic4() throws Exception {
+		final String[] expected= {
+				"m123", "m12", "m13"
+		};
+		assertCompletionResults(expected);
+	}
+
+	//#define STRUCT_C1
+	///*include*/
+	//void f() {C1 c; (&c-1)->m/*cursor*/
+	public void testPointerArithmetic5() throws Exception {
+		final String[] expected= {
+				"m123", "m12", "m13"
+		};
+		assertCompletionResults(expected);
+	}
+
+	//#define STRUCT_C1
+	///*include*/
+	//void f() {int localVar=0; if (*cond && somefunc(&local/*cursor*/
+	public void testNestedCalls() throws Exception {
+		final String[] expected= {
+				"localVar"
+		};
+		assertCompletionResults(expected);
+	}
+
+	//#define STRUCT_C1
+	///*include*/
+	//int a[] = {1,2}; void f(int _0306_b) {_0306_b/*cursor*/
+	public void testCuttingInput1() throws Exception {
+		final String[] expected= {
+				"_0306_b"
+		};
+		assertCompletionResults(expected);
+	}
+
+	//#define STRUCT_C1
+	///*include*/
+	//int a[] = {1,2}; void f(int b) {int _0306_b[] = {2,3}; _0306_b/*cursor*/
+	public void testCuttingInput2() throws Exception {
+		final String[] expected= {
+				"_0306_b"
+		};
+		assertCompletionResults(expected);
+	}
+
+	//#define STRUCT_C1
+	///*include*/
+	//enum EnumType function() {int _031209_v; _031209/*cursor*/
+	public void testDisturbingMacros() throws Exception {
+		final String[] expected= {
+				"_031209_v"
 		};
 		assertCompletionResults(expected);
 	}

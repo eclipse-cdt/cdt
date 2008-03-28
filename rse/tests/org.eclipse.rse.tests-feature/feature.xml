@@ -49,35 +49,35 @@
 
    <plugin
          id="org.eclipse.test"
-         download-size="0"
-         install-size="0"
+         download-size="26"
+         install-size="35"
          version="0.0.0"/>
 
    <plugin
          id="org.eclipse.ant.optional.junit"
-         download-size="0"
-         install-size="0"
+         download-size="3"
+         install-size="4"
          version="0.0.0"
          fragment="true"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.tests"
-         download-size="0"
-         install-size="0"
+         download-size="70"
+         install-size="186"
          version="0.0.0"/>
 
    <plugin
          id="org.eclipse.rse.tests.framework"
-         download-size="0"
-         install-size="0"
+         download-size="131"
+         install-size="176"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.tests.source"
-         download-size="0"
-         install-size="0"
+         download-size="167"
+         install-size="172"
          version="0.0.0"/>
 
 </feature>

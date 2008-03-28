@@ -104,8 +104,8 @@
 
    <plugin
          id="org.eclipse.tm.discovery.doc.isv"
-         download-size="0"
-         install-size="0"
+         download-size="83"
+         install-size="185"
          version="0.0.0"/>
 
    <plugin

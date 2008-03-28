@@ -49,22 +49,22 @@
 
    <plugin
          id="org.eclipse.rse.connectorservice.telnet"
-         download-size="0"
-         install-size="0"
+         download-size="10"
+         install-size="21"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.services.telnet"
-         download-size="0"
-         install-size="0"
+         download-size="14"
+         install-size="23"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.subsystems.shells.telnet"
-         download-size="0"
-         install-size="0"
+         download-size="7"
+         install-size="14"
          version="0.0.0"
          unpack="false"/>
 

@@ -45,32 +45,32 @@
 
    <plugin
          id="org.eclipse.tm.terminal.source"
-         download-size="0"
-         install-size="0"
+         download-size="103"
+         install-size="107"
          version="0.0.0"/>
 
    <plugin
          id="org.eclipse.tm.terminal.serial.source"
-         download-size="0"
-         install-size="0"
+         download-size="117"
+         install-size="122"
          version="0.0.0"/>
 
    <plugin
          id="org.eclipse.tm.terminal.ssh.source"
-         download-size="0"
-         install-size="0"
+         download-size="133"
+         install-size="139"
          version="0.0.0"/>
 
    <plugin
          id="org.eclipse.tm.terminal.telnet.source"
-         download-size="0"
-         install-size="0"
+         download-size="155"
+         install-size="163"
          version="0.0.0"/>
 
    <plugin
          id="org.eclipse.tm.terminal.view.source"
-         download-size="0"
-         install-size="0"
+         download-size="182"
+         install-size="191"
          version="0.0.0"/>
 
 </feature>

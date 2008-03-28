@@ -71,8 +71,8 @@
 
    <plugin
          id="org.eclipse.rse.importexport"
-         download-size="0"
-         install-size="0"
+         download-size="51"
+         install-size="147"
          version="0.0.0"
          unpack="false"/>
 

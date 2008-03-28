@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,8 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
  * David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup
+ * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.command;
@@ -28,27 +28,27 @@ import java.util.StringTokenizer;
 
 import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
-import org.eclipse.dstore.core.model.DataStore;
+import org.eclipse.dstore.core.server.SecuredThread;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 
 /**
  * QueryPathThread is used to determine available command completions
  */
-public class QueryPathThread extends Thread
+public class QueryPathThread extends SecuredThread
 {
 
-	private DataStore _dataStore;
 	private DataElement _status;
 
 	public QueryPathThread(DataElement status)
 	{
-		super();
+		super(status.getDataStore());
 		_status = status;
-		_dataStore = status.getDataStore();
 	}
 
 	public void run()
 	{
+		super.run();
+		
 		getPossibleCommands(_status);
 
 	}

@@ -9,9 +9,9 @@
  * component that contains this file: David McKnight.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
  * Kevin Doyle (IBM) - [191548] Deleting Read-Only directory removes it from view and displays no error
  * Xuan Chen (IBM) -   [200417] [regression][dstore] Rename an expanded folder in an Archive displays no children
+ * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  ********************************************************************************/
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
 
@@ -49,6 +49,8 @@ public class ArchiveQueryThread extends QueryThread {
 	}
 
 	public void run() {
+		super.run();
+		
 		doQueryAll();
 
 		if (!isCancelled()) {
@@ -333,7 +335,7 @@ public class ArchiveQueryThread extends QueryThread {
 			e.printStackTrace();
 			UniversalServerUtilities.logError(
 					UniversalFileSystemMiner.CLASSNAME,
-					"createDataElement failed with exception - isFile ", e); //$NON-NLS-1$
+					"createDataElement failed with exception - isFile ", e, _dataStore); //$NON-NLS-1$
 		}
 	} // end currentObj not 0
 

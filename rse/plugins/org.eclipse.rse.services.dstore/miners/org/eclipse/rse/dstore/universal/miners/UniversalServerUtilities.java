@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,57 +11,15 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  ********************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
 
-import java.io.File;
+import org.eclipse.dstore.core.model.DataStore;
 
 public class UniversalServerUtilities {
 
-
-	private static String _userPreferencesDirectory = null;
-	
-	static {
-		new ServerLogger(getUserPreferencesDirectory());
-	}
-	
-	/** 
-	 * getUserPreferencesDirectory() - returns directory on IFS where to store user settings
-	 */
-	public static String getUserPreferencesDirectory()
-	{
-		if (_userPreferencesDirectory == null) {
-			
-			_userPreferencesDirectory = System.getProperty("user.home"); //$NON-NLS-1$
-			
-			String clientUserID = System.getProperty("client.username"); //$NON-NLS-1$
-			if (clientUserID == null || clientUserID.equals("")) //$NON-NLS-1$
-			{
-				clientUserID = ""; //$NON-NLS-1$
-			}
-			else
-			{
-				clientUserID += File.separator;
-			}
-			
- 			// append a '/' if not there
-  			if ( _userPreferencesDirectory.length() == 0 || 
-  			     _userPreferencesDirectory.charAt( _userPreferencesDirectory.length() -1 ) != File.separatorChar ) {
-  			     
-				_userPreferencesDirectory = _userPreferencesDirectory + File.separator;
-		    }
-  		
-  			_userPreferencesDirectory = _userPreferencesDirectory + ".eclipse" + File.separator +  //$NON-NLS-1$
-  			         												"RSE" + File.separator + clientUserID; //$NON-NLS-1$
-	  		File dirFile = new File(_userPreferencesDirectory);
-	  		if (!dirFile.exists()) {
-	 	 		dirFile.mkdirs();
-	  		}
-		}
-	  return _userPreferencesDirectory;
-	}
 
 	/**
 	 * logInfo
@@ -70,8 +28,9 @@ public class UniversalServerUtilities {
 	 * 
 	 * @param message Message text to be logged.
 	 */
-	public static void logInfo(String minerName, String message) {
-		ServerLogger.logInfo(minerName, message);
+	public static void logInfo(String minerName, String message, DataStore dataStore) 
+	{
+		dataStore.getClient().getLogger().logInfo(minerName, message);
 	}
 
 	/**
@@ -81,8 +40,9 @@ public class UniversalServerUtilities {
 	 * 
 	 * @param message Message text to be logged.
 	 */
-	public static void logWarning(String minerName, String message) {
-		ServerLogger.logWarning(minerName, message);
+	public static void logWarning(String minerName, String message, DataStore dataStore) 
+	{
+		dataStore.getClient().getLogger().logWarning(minerName, message);
 	}
 	
 	/**
@@ -94,8 +54,9 @@ public class UniversalServerUtilities {
 	 * 
 	 * @param exception Exception that generated the error.  Used to print a stack trace.
 	 */
-	public static void logError(String minerName, String message, Throwable exception) {
-		ServerLogger.logError(minerName, message, exception);
+	public static void logError(String minerName, String message, Throwable exception, DataStore dataStore) 
+	{
+		dataStore.getClient().getLogger().logError(minerName, message, exception);
 	}
 
 	/**
@@ -105,8 +66,9 @@ public class UniversalServerUtilities {
 	 * 
 	 * @param message Message text to be logged.
 	 */
-	public static void logDebugMessage(String minerName, String message) {
-		ServerLogger.logDebugMessage(minerName, message);
+	public static void logDebugMessage(String minerName, String message, DataStore dataStore) 
+	{
+		dataStore.getClient().getLogger().logDebugMessage(minerName, message);
 	}
 
 }

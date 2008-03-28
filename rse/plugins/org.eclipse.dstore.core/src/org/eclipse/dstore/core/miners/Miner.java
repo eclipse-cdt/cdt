@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ *  Noriaki Takatsu    (IBM)   [220126] [dstore][api][breaking] Single process server for multiple clients
  *******************************************************************************/
 
 package org.eclipse.dstore.core.miners;
@@ -332,6 +332,7 @@ implements ISchemaExtender
 	 */
 	public final void setDataStore(DataStore dataStore)
 	{
+		super.setDataStore(dataStore);
 		_dataStore = dataStore;
 
 		DataElement root = _dataStore.getMinerRoot();

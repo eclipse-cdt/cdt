@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ *   Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  *******************************************************************************/
 
 package org.eclipse.dstore.core.server;
@@ -28,7 +28,7 @@ import org.eclipse.dstore.internal.core.server.ServerReturnCodes;
  * the DataStore.
  *
  */
-public class Server
+public class Server implements Runnable
 {
 
 	private ConnectionEstablisher _establisher;
@@ -161,4 +161,15 @@ public class Server
 	{
 		_establisher.start();
 	}
+	
+	/**
+	 * Return the reference for the ConnectionEstablisher for this client
+	 * 
+	 * * @return the the reference for the ConnectionEstablisher instance for this client
+	 */
+	public ConnectionEstablisher getEstablisher()
+	{
+		return _establisher;
+	}
+
 }

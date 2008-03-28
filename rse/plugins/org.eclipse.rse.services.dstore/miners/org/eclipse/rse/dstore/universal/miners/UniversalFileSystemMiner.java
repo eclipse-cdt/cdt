@@ -30,6 +30,7 @@
  * Xuan Chen (IBM) - [194481] [dstore][Archive] Save Conflict After Renaming a File that is Open
  * David McKnight (IBM) - [209593] [api] add support for "file permissions" and "owner" properties for unix files
  * Johnson Ma (Wind River) - [195402] Add tar.gz archive support
+ * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -120,7 +121,7 @@ public class UniversalFileSystemMiner extends Miner {
 		DataElement status = getCommandStatus(theElement);
 		DataElement subject = getCommandArgument(theElement, 0);
 		
-		UniversalServerUtilities.logInfo(getName(), name + ":" + subject); //$NON-NLS-1$
+		UniversalServerUtilities.logInfo(getName(), name + ":" + subject, _dataStore); //$NON-NLS-1$
 		
 		String queryType = (String) subject.getElementProperty(DE.P_TYPE);
 		boolean caseSensitive = !_isWindows;
@@ -222,7 +223,7 @@ public class UniversalFileSystemMiner extends Miner {
                 return handleSetFilePermissions(subject, newPermissions, status);			
 		} else {
 			UniversalServerUtilities.logError(CLASSNAME,
-					"Invalid query to handlecommand", null); //$NON-NLS-1$
+					"Invalid query to handlecommand", null, _dataStore); //$NON-NLS-1$
 		}
 		return statusDone(status);
 	}
@@ -262,7 +263,7 @@ public class UniversalFileSystemMiner extends Miner {
 		}
 		// otherwise log error, and return as done
 		else {
-			UniversalServerUtilities.logError(CLASSNAME, "Invalid query type to handleSearch", null); //$NON-NLS-1$
+			UniversalServerUtilities.logError(CLASSNAME, "Invalid query type to handleSearch", null, _dataStore); //$NON-NLS-1$
 			return statusDone(status);
 		}
 		//If the subject is a virtual folder, we could not just use check file.exists() to determine if we need
@@ -381,7 +382,7 @@ public class UniversalFileSystemMiner extends Miner {
 		else
 		{
 			UniversalServerUtilities.logError(CLASSNAME,
-					"Invalid query type to handleQueryAll", null); //$NON-NLS-1$
+					"Invalid query type to handleQueryAll", null, _dataStore); //$NON-NLS-1$
 		}
 
 		if (fileobj != null)
@@ -478,7 +479,7 @@ public class UniversalFileSystemMiner extends Miner {
 					+ File.separatorChar + subject.getName());
 		else
 			UniversalServerUtilities.logError(CLASSNAME,
-					"Invalid query type to handleQueryFiles", null); //$NON-NLS-1$
+					"Invalid query type to handleQueryFiles", null, _dataStore); //$NON-NLS-1$
 
 
 		if (!fileobj.exists())
@@ -535,7 +536,7 @@ public class UniversalFileSystemMiner extends Miner {
 					+ File.separatorChar + subject.getName());
 		else
 			UniversalServerUtilities.logError(CLASSNAME,
-					"Invalid query type to handleQueryFolders", null); //$NON-NLS-1$
+					"Invalid query type to handleQueryFolders", null, _dataStore); //$NON-NLS-1$
 
 		if (!fileobj.exists())
 		{
@@ -733,7 +734,7 @@ public class UniversalFileSystemMiner extends Miner {
 				
 			} catch (Exception e) {
 				UniversalServerUtilities.logError(CLASSNAME,
-						"handleSetreadOnly", e); //$NON-NLS-1$
+						"handleSetreadOnly", e, _dataStore); //$NON-NLS-1$
 			}
 		}
 		_dataStore.refresh(subject);
@@ -775,7 +776,7 @@ public class UniversalFileSystemMiner extends Miner {
 				
 			} catch (Exception e) {
 				UniversalServerUtilities.logError(CLASSNAME,
-						"handleSetLastModified", e); //$NON-NLS-1$
+						"handleSetLastModified", e, _dataStore); //$NON-NLS-1$
 			}
 		}
 		_dataStore.refresh(subject);
@@ -933,7 +934,7 @@ public class UniversalFileSystemMiner extends Miner {
 		}
 		else {
 			UniversalServerUtilities.logError(CLASSNAME,
-					"Invalid query type to handleQueryGetRemoteObject", null); //$NON-NLS-1$
+					"Invalid query type to handleQueryGetRemoteObject", null, _dataStore); //$NON-NLS-1$
 			return statusDone(status);
 		}
 
@@ -1048,7 +1049,7 @@ public class UniversalFileSystemMiner extends Miner {
 					status.setAttribute(DE.A_SOURCE, IServiceConstants.SUCCESS);
 				} else {
 					UniversalServerUtilities.logWarning(CLASSNAME,
-							"object does not exist"); //$NON-NLS-1$
+							"object does not exist", _dataStore); //$NON-NLS-1$
 					subject.setAttribute(DE.A_SOURCE, setProperties(child));
 					status
 							.setAttribute(DE.A_SOURCE,
@@ -1226,7 +1227,7 @@ public class UniversalFileSystemMiner extends Miner {
 			socket.close();
 		}
 		catch (IOException e) {
-			UniversalServerUtilities.logError(CLASSNAME, "Can not get unused port", e); //$NON-NLS-1$
+			UniversalServerUtilities.logError(CLASSNAME, "Can not get unused port", e, _dataStore); //$NON-NLS-1$
 			port = -1;
 		}
 		
@@ -1387,7 +1388,7 @@ public class UniversalFileSystemMiner extends Miner {
 		} catch (IOException e) {
 			UniversalServerUtilities.logError(CLASSNAME,
 					"I/O error occured trying to read class file " + filePath, //$NON-NLS-1$
-					null);
+					null, _dataStore);
 			
 			_dataStore.createObject(status, IUniversalDataStoreConstants.TYPE_QUALIFIED_CLASSNAME, "null"); //$NON-NLS-1$
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  * Contributors:
  * David McKnight  (IBM)   [220123][dstore] Configurable timeout on irresponsiveness
  * David McKnight  (IBM)   [222003] Client remains connected after server terminates
+ * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.util;
@@ -26,18 +27,17 @@ import java.net.UnknownHostException;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.IDataStorePreferenceListener;
+import org.eclipse.dstore.core.server.SecuredThread;
 
 /**
  * This class is used for receiving data from a socket in the DataStore 
  * communication layer.
  */
-public abstract class Receiver extends Thread implements IDataStorePreferenceListener
+public abstract class Receiver extends SecuredThread implements IDataStorePreferenceListener
 {
 
 
 	private Socket _socket;
-
-	protected DataStore _dataStore;
 
 	private XMLparser _xmlParser;
 	private BufferedInputStream _in;
@@ -51,9 +51,9 @@ public abstract class Receiver extends Thread implements IDataStorePreferenceLis
 	 */
 	public Receiver(Socket socket, DataStore dataStore)
 	{
+		super(dataStore);
 		 setName("DStore Receiver"+getName()); //$NON-NLS-1$
 		_socket = socket;
-		_dataStore = dataStore;
 		_canExit = false;
 		_xmlParser = new XMLparser(dataStore);
 
@@ -107,6 +107,7 @@ public abstract class Receiver extends Thread implements IDataStorePreferenceLis
 	 */
 	public void run()
 	{
+		super.run();
 		try
 		{
 			while (!_canExit)

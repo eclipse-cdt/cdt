@@ -10,8 +10,8 @@
  * component that contains this file: David McKnight.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
  * Xuan Chen (IBM) - [209827] Update DStore command implementation to enable cancelation of archive operations
+ * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  *******************************************************************************/
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
 
@@ -27,8 +27,9 @@ import org.eclipse.rse.dstore.universal.miners.UniversalServerUtilities;
 import org.eclipse.rse.services.clientserver.IServiceConstants;
 import org.eclipse.rse.services.clientserver.PathUtility;
 import org.eclipse.rse.services.clientserver.SystemOperationMonitor;
+import org.eclipse.dstore.core.server.SecuredThread;
 
-public class CopyThread extends Thread implements ICancellableHandler {
+public class CopyThread extends SecuredThread implements ICancellableHandler {
 
 	protected DataElement targetFolder;
 	protected DataElement theElement;
@@ -45,6 +46,7 @@ public class CopyThread extends Thread implements ICancellableHandler {
 	
 	public CopyThread(DataElement targetFolder, DataElement theElement, UniversalFileSystemMiner miner, boolean isWindows, DataElement status)
 	{
+		super(theElement.getDataStore());
 		this.targetFolder = targetFolder;
 		this.theElement = theElement;
 		this.miner = miner;
@@ -224,7 +226,7 @@ public class CopyThread extends Thread implements ICancellableHandler {
 		}
 		catch (Exception e)
 		{
-			UniversalServerUtilities.logError(CLASSNAME, "Exception is handleCopy", e); //$NON-NLS-1$
+			UniversalServerUtilities.logError(CLASSNAME, "Exception is handleCopy", e, _dataStore); //$NON-NLS-1$
 			status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
 			status.setAttribute(DE.A_VALUE, e.getMessage());
 		}	

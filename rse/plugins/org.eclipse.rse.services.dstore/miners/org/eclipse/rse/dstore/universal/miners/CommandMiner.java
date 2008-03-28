@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@
  * David McKnight  (IBM)  - [191599] use specified encoding for shell
  * David McKnight  (IBM)  - [202822] canceled output should be created before thread cleanup
  * David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup
+ * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;

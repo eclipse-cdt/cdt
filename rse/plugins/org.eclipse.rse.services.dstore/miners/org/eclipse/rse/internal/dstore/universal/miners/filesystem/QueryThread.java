@@ -9,7 +9,7 @@
  * component that contains this file: David McKnight.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  ********************************************************************************/
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
 
@@ -17,26 +17,25 @@ import java.io.File;
 
 import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
-import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.DataStoreResources;
+import org.eclipse.dstore.core.server.SecuredThread;
 import org.eclipse.rse.dstore.universal.miners.ICancellableHandler;
 import org.eclipse.rse.services.clientserver.IServiceConstants;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.archiveutils.VirtualChild;
 
-public class QueryThread extends Thread implements ICancellableHandler {
+public class QueryThread extends SecuredThread implements ICancellableHandler {
 
 	protected DataElement _subject;
 	protected DataElement _status;
 	
 	protected boolean _isCancelled = false;
 	protected boolean _isDone = false;
-	protected DataStore _dataStore;
 	
 	public QueryThread(DataElement subject, DataElement status)
 	{
+		super(subject.getDataStore());
 		_subject = subject;
-		_dataStore = _subject.getDataStore();
 		_status = status;
 	}
 	

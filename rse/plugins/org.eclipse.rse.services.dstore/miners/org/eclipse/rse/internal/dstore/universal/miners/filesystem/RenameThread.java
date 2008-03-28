@@ -10,8 +10,8 @@
  * component that contains this file: David McKnight.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
  * Xuan Chen (IBM) - [209827] Update DStore command implementation to enable cancelation of archive operations
+ * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  *******************************************************************************/
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
 
@@ -28,12 +28,12 @@ import org.eclipse.rse.services.clientserver.SystemOperationMonitor;
 import org.eclipse.rse.services.clientserver.archiveutils.AbsoluteVirtualPath;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler;
+import org.eclipse.dstore.core.server.SecuredThread;
 
-public class RenameThread extends Thread implements ICancellableHandler {
+public class RenameThread extends SecuredThread implements ICancellableHandler {
 
 	protected DataElement _subject;
 	protected DataElement _status;
-	private DataStore _dataStore;
 	protected UniversalFileSystemMiner _miner;
 	
 	protected boolean _isCancelled = false;
@@ -45,12 +45,11 @@ public class RenameThread extends Thread implements ICancellableHandler {
 	
 	public RenameThread(DataElement theElement, UniversalFileSystemMiner miner, DataStore dataStore, DataElement status)
 	{
+		super(dataStore);
 		this._subject = theElement;
 		this._miner = miner;
-		this._dataStore = dataStore;
 		this._status = status;
 	}
-	
 	
 	
 
@@ -72,6 +71,7 @@ public class RenameThread extends Thread implements ICancellableHandler {
 	
 	public void run()
 	{
+		super.run();
 		handleRename();
 		_isDone = true;
 	}
@@ -134,7 +134,7 @@ public class RenameThread extends Thread implements ICancellableHandler {
 			} catch (Exception e) {
 				_status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
 				UniversalServerUtilities.logError(CLASSNAME,
-						"handleRename failed", e); //$NON-NLS-1$
+						"handleRename failed", e, _dataStore); //$NON-NLS-1$
 			}
 		}
 		_dataStore.refresh(_subject);

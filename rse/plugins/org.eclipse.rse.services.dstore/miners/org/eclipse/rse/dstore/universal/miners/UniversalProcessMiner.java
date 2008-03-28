@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,8 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
  * David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup
+ * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -89,7 +89,7 @@ public class UniversalProcessMiner extends Miner
 				
 		if (subject == null) {
 
-			UniversalServerUtilities.logError(IUniversalProcessDataStoreConstants.UNIVERSAL_PROCESS_MINER, "Subject for UniversalProcessMiner command " + name + " is null", null); //$NON-NLS-1$ //$NON-NLS-2$
+			UniversalServerUtilities.logError(IUniversalProcessDataStoreConstants.UNIVERSAL_PROCESS_MINER, "Subject for UniversalProcessMiner command " + name + " is null", null, _dataStore); //$NON-NLS-1$ //$NON-NLS-2$
 			status.setAttribute(DE.A_NAME, "done"); //$NON-NLS-1$
 			return status;
 		}
@@ -109,7 +109,8 @@ public class UniversalProcessMiner extends Miner
 			} 
 			else 
 			{
-				UniversalServerUtilities.logError(IUniversalProcessDataStoreConstants.UNIVERSAL_PROCESS_MINER, "Unknown filter command: " + name, null); //$NON-NLS-1$
+				UniversalServerUtilities.logError(IUniversalProcessDataStoreConstants.UNIVERSAL_PROCESS_MINER, 
+						                          "Unknown filter command: " + name, null, _dataStore); //$NON-NLS-1$
 				status.setAttribute(DE.A_NAME, "done"); //$NON-NLS-1$
 			}
 		}
@@ -125,13 +126,15 @@ public class UniversalProcessMiner extends Miner
 			}
 			else 
 			{
-				UniversalServerUtilities.logError(IUniversalProcessDataStoreConstants.UNIVERSAL_PROCESS_MINER, "Unsupported process command: " + name, null); //$NON-NLS-1$
+				UniversalServerUtilities.logError(IUniversalProcessDataStoreConstants.UNIVERSAL_PROCESS_MINER, 
+						                          "Unsupported process command: " + name, null, _dataStore); //$NON-NLS-1$
 				status.setAttribute(DE.A_NAME, "done"); //$NON-NLS-1$
 			}
 		}
 		else 
 		{
-			UniversalServerUtilities.logError(IUniversalProcessDataStoreConstants.UNIVERSAL_PROCESS_MINER, "Unsupported subject for command: " + subject, null); //$NON-NLS-1$
+			UniversalServerUtilities.logError(IUniversalProcessDataStoreConstants.UNIVERSAL_PROCESS_MINER, 
+					                          "Unsupported subject for command: " + subject, null, _dataStore); //$NON-NLS-1$
 			status.setAttribute(DE.A_NAME, "done"); //$NON-NLS-1$
 		}
 		
@@ -219,7 +222,7 @@ public class UniversalProcessMiner extends Miner
 			lookupProcesses(pfs, subject);
 		} catch (Exception e) {
 			e.printStackTrace();
-			UniversalServerUtilities.logError("UniversalProcessMiner", "handleQuery()", e); //$NON-NLS-1$ //$NON-NLS-2$
+			UniversalServerUtilities.logError("UniversalProcessMiner", "handleQuery()", e, _dataStore); //$NON-NLS-1$ //$NON-NLS-2$
 			status.setAttribute(DE.A_VALUE, e.getMessage());
 			status.setAttribute(DE.A_NAME, "done"); //$NON-NLS-1$
 			_dataStore.refresh(status);
@@ -396,7 +399,7 @@ public class UniversalProcessMiner extends Miner
 				subject.setAttribute(DE.A_VALUE, result.getAllProperties());
 			}	
 		} catch (Exception e) {
-			UniversalServerUtilities.logError("UniversalProcessMiner", "handleQuery()", e); //$NON-NLS-1$ //$NON-NLS-2$
+			UniversalServerUtilities.logError("UniversalProcessMiner", "handleQuery()", e, _dataStore); //$NON-NLS-1$ //$NON-NLS-2$
 			status.setAttribute(DE.A_VALUE, e.getMessage());
 			status.setAttribute(DE.A_NAME, "done"); //$NON-NLS-1$
 			_dataStore.refresh(status);

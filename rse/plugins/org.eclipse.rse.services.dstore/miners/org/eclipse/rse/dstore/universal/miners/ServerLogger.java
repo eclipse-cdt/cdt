@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  ********************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -22,9 +22,14 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
 import java.util.ResourceBundle;
+import org.eclipse.dstore.core.server.IServerLogger;
 
-
-public class ServerLogger {
+/**
+ * Class that facilitates logging for errors, warnings, debug messages and info for DataStore
+ * servers.
+ */
+public class ServerLogger implements IServerLogger
+{
 	
 	
 	// Constants for logging - for use in rsecomm.properties
@@ -44,7 +49,9 @@ public class ServerLogger {
 	private static int log_level = 0;
 
 	/**
+	 * Constructs a new ServerLogger.
 	 * 
+	 * @param logPathName the path on the filesystem to store the log information
 	 */
 	public ServerLogger(String logPathName) {
 		if (_logFileStream == null) {
@@ -84,13 +91,12 @@ public class ServerLogger {
 	
 	
 	/**
-	 * logInfo
+	 * Logs an informational message
 	 * 
-	 * @param minerName
-	 * 
+	 * @param minerName the name of the miner associated with this message
 	 * @param message Message text to be logged.
 	 */
-	public static void logInfo(String minerName, String message) {
+	public void logInfo(String minerName, String message) {
 		if (log_level >= LOG_INFO) {
 			if (_logFileStream != null) {
 				synchronized(writeLock) {
@@ -107,13 +113,12 @@ public class ServerLogger {
 
 
 	/**
-	 * logWarning
+	 * Logs a warning message
 	 * 
-	 * @param minerName
-	 * 
+	 * @param minerName the name of the miner associated with this message
 	 * @param message Message text to be logged.
 	 */
-	public static void logWarning(String minerName, String message) {
+	public void logWarning(String minerName, String message) {
 		if (log_level >= LOG_WARNING) {
 			if (_logFileStream != null) {
 				synchronized(writeLock) {
@@ -130,15 +135,14 @@ public class ServerLogger {
 	
 	
 	/**
-	 * logError
+	 * Logs an error message
 	 * 
-	 * @param minerName
-	 * 
+	 * @param minerName the name of the miner associated with this message
 	 * @param message Message text to be logged.
 	 * 
 	 * @param exception Exception that generated the error.  Used to print a stack trace.
 	 */
-	public static void logError(String minerName, String message, Throwable exception) {
+	public void logError(String minerName, String message, Throwable exception) {
 		if (_logFileStream != null) {
 			synchronized(writeLock) {
 				try {
@@ -156,13 +160,12 @@ public class ServerLogger {
 
 
 	/**
-	 * logDebugMessage
+	 * Logs a debug message
 	 * 
-	 * @param minerName
-	 * 
+	 * @param minerName the name of the miner associated with this message
 	 * @param message Message text to be logged.
 	 */
-	public synchronized static void logDebugMessage(String minerName, String message) {
+	public synchronized void logDebugMessage(String minerName, String message) {
 		if (DEBUG && log_level == LOG_DEBUG) {
 			if (_logFileStream != null) {
 				synchronized(writeLock) {

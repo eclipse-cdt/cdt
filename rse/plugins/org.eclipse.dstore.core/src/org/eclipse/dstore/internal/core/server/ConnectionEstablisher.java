@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  * Contributors:
  * David McKnight  (IBM)   [220123][dstore] Configurable timeout on irresponsiveness
  * David McKnight  (IBM)   [220892][dstore] Backward compatibility: Server and Daemon should support old clients
+ * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.server;
@@ -64,6 +65,7 @@ public class ConnectionEstablisher
 
 	private int _maxConnections;
 	private int _timeout;
+	private String _msg;
 
 	
 	/**
@@ -139,6 +141,31 @@ public class ConnectionEstablisher
 	{
 		return _dataStore;
 	}
+	
+	/**
+	 * Return the Server port opened for this client
+	 * 
+	 * @return the Server port opened for this client
+	 */
+	public int getServerPort()
+	{
+		if (_serverSocket != null)
+		{
+			return _serverSocket.getLocalPort();
+		}
+		
+		return -1;
+	}
+	
+	/**
+	 * Return the connection status for this client
+	 * 
+	 * * @return the connection status for this client
+	 */
+	public String getStatus()
+	{
+		return _msg;
+	}
 
 	/**
 	 * Tells the connection establisher to clean up and shutdown
@@ -155,7 +182,7 @@ public class ConnectionEstablisher
 			_updateHandler.finish();
 			_dataStore.finish();
 			System.out.println(ServerReturnCodes.RC_FINISHED);
-			System.exit(0);
+			//System.exit(0);
 		}
 	}
 

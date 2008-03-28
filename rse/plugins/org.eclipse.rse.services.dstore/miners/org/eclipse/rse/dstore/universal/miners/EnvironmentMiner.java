@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,11 +14,13 @@
  * Contributors:
  * {Name} (company) - description of contribution.
  * David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup
+ * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -27,11 +29,12 @@ import java.util.List;
 import org.eclipse.dstore.core.miners.Miner;
 import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
+import org.eclipse.dstore.core.model.Client;
+
 
 public class EnvironmentMiner extends Miner
 {
     private DataElement _system;
-    
     
     public void load() 
     {
@@ -56,6 +59,19 @@ public class EnvironmentMiner extends Miner
 	
     public void extendSchema(DataElement schemaRoot) 
     { 
+    	if (_dataStore.getClient() != null)
+    	{
+    		ServerLogger logger = new ServerLogger(getUserPreferencesDirectory());
+    		_dataStore.getClient().setLogger(logger);
+    	}
+    	else
+    	{
+    		Client client = new Client();
+			_dataStore.setClient(client);
+			ServerLogger logger = new ServerLogger(getUserPreferencesDirectory());
+    		client.setLogger(logger);
+    	}
+    	
 		DataElement envVar = _dataStore.createObjectDescriptor(schemaRoot, "Environment Variable"); //$NON-NLS-1$
 		_dataStore.createReference(envVar, _dataStore.createRelationDescriptor(schemaRoot,"Parent Environment")); //$NON-NLS-1$
 	 	DataElement containerObjectD = _dataStore.findObjectDescriptor("Container Object"); //$NON-NLS-1$
@@ -228,5 +244,39 @@ public class EnvironmentMiner extends Miner
 	public String getVersion()
 	{
 		return "6.4.0"; //$NON-NLS-1$
+	}
+	
+	/** 
+	 * getUserPreferencesDirectory() - returns directory on IFS where to store user settings
+	 */
+	public String getUserPreferencesDirectory()
+	{
+		String userPreferencesDirectory = _dataStore.getClient().getProperty("user.home"); //$NON-NLS-1$	
+			
+			String clientUserID = System.getProperty("client.username"); //$NON-NLS-1$
+			if (clientUserID == null || clientUserID.equals("")) //$NON-NLS-1$
+			{
+				clientUserID = ""; //$NON-NLS-1$
+			}
+			else
+			{
+				clientUserID += File.separator;
+			}
+			
+ 			// append a '/' if not there
+  			if ( userPreferencesDirectory.length() == 0 || 
+  			     userPreferencesDirectory.charAt( userPreferencesDirectory.length() -1 ) != File.separatorChar ) {
+  			     
+				userPreferencesDirectory = userPreferencesDirectory + File.separator;
+		    }
+  		
+  			userPreferencesDirectory = userPreferencesDirectory + ".eclipse" + File.separator +  //$NON-NLS-1$
+  			         												"RSE" + File.separator + clientUserID; //$NON-NLS-1$
+	  		File dirFile = new File(userPreferencesDirectory);
+	  		if (!dirFile.exists()) {
+	 	 		dirFile.mkdirs();
+	  		}
+	  		
+	  return userPreferencesDirectory;
 	}
 }

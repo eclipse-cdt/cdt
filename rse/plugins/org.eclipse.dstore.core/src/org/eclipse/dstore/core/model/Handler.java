@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,22 +12,23 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ *  Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
+
+import org.eclipse.dstore.core.server.SecuredThread;
 
 /**
  * The Handler class is the base class for the threaded mechanisms in
  * the DataStore.  This is a thread that periodically does some activity.
  * The frequency of handling can be configured.
  */
-public abstract class Handler extends Thread
+public abstract class Handler extends SecuredThread
 {
 
 
 	protected int _waitIncrement;
-	protected DataStore _dataStore;
 	protected boolean _keepRunning;
 
 	/**
@@ -63,7 +64,7 @@ public abstract class Handler extends Thread
 	 */
 	public void setDataStore(DataStore dataStore)
 	{
-		_dataStore = dataStore;
+		super.setDataStore(dataStore);
 	}
 
 	/**
@@ -113,6 +114,7 @@ public abstract class Handler extends Thread
 	 */
 	public void run()
 	{
+		super.run();
 		while (_keepRunning)
 		{
 			/*

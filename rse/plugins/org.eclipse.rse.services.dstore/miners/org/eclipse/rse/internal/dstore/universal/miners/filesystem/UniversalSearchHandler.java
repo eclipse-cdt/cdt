@@ -16,6 +16,7 @@
  * David McKnight   (IBM)  - [190010] cancelling search
  * Xuan Chen (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
  * David McKnight   (IBM)  - [214378] canonical path not required - problem is in the client
+ * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
@@ -44,8 +45,9 @@ import org.eclipse.rse.services.clientserver.search.SystemSearchFileNameMatcher;
 import org.eclipse.rse.services.clientserver.search.SystemSearchLineMatch;
 import org.eclipse.rse.services.clientserver.search.SystemSearchStringMatchLocator;
 import org.eclipse.rse.services.clientserver.search.SystemSearchStringMatcher;
+import org.eclipse.dstore.core.server.SecuredThread;
 
-public class UniversalSearchHandler extends Thread implements ICancellableHandler
+public class UniversalSearchHandler extends SecuredThread implements ICancellableHandler
 {
 	protected HashSet _alreadySearched;
 
@@ -54,8 +56,7 @@ public class UniversalSearchHandler extends Thread implements ICancellableHandle
 	protected boolean _isCancelled;
 	protected boolean _isDone;
 	protected int _depth = -1;
-	
-	protected DataStore _dataStore;
+
 	protected UniversalFileSystemMiner _miner;
 	protected DataElement _status;
 	
@@ -74,7 +75,7 @@ public class UniversalSearchHandler extends Thread implements ICancellableHandle
 	protected boolean _fsCaseSensitive;
 
 	public UniversalSearchHandler(DataStore dataStore, UniversalFileSystemMiner miner, SystemSearchString searchString, boolean fsCaseSensitive, File theFile, DataElement status) {
-		_dataStore = dataStore;
+		super(dataStore);
 		_miner = miner;
 		_searchString = searchString;
 		_fsCaseSensitive = fsCaseSensitive;
@@ -113,12 +114,12 @@ public class UniversalSearchHandler extends Thread implements ICancellableHandle
 	}
 
 	public void run() {
-		
+		super.run();
 		try {
 			internalSearch(_rootFile, _depth);
 		}
 		catch (Exception e) {
-			UniversalServerUtilities.logError(_miner.getName(), "Error occured when calling internal search", e); //$NON-NLS-1$
+			UniversalServerUtilities.logError(_miner.getName(), "Error occured when calling internal search", e, _dataStore); //$NON-NLS-1$
 		}
 
 		_isDone = true;
@@ -299,7 +300,7 @@ public class UniversalSearchHandler extends Thread implements ICancellableHandle
 							virtualchildren = ArchiveHandlerManager.getInstance().getContents(archive, virtualPath);
 						}
 						catch (IOException e) {
-							UniversalServerUtilities.logError(_miner.getName(), "Error occured trying to get the canonical file", e);				 //$NON-NLS-1$
+							UniversalServerUtilities.logError(_miner.getName(), "Error occured trying to get the canonical file", e, _dataStore);				 //$NON-NLS-1$
 						}
 							
 						if (virtualchildren != null) {
@@ -361,7 +362,7 @@ public class UniversalSearchHandler extends Thread implements ICancellableHandle
 			return foundMatches;
 		}
 		catch (Exception e) {
-			UniversalServerUtilities.logError(_miner.getName(), "Error occured when trying to locate matches", e); //$NON-NLS-1$
+			UniversalServerUtilities.logError(_miner.getName(), "Error occured when trying to locate matches", e, _dataStore); //$NON-NLS-1$
 			remoteFile.setAttribute(DE.A_VALUE, e.getMessage());
 			return false;
 		}

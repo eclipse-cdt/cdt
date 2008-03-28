@@ -10,8 +10,8 @@
  * component that contains this file: David McKnight.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
  * Xuan Chen (IBM) - [209827] Update DStore command implementation to enable cancelation of archive operations
+ * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  *******************************************************************************/
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
 
@@ -41,6 +41,7 @@ public class CopySingleThread extends CopyThread {
 	
 	public void run()
 	{
+		super.run();
 		handleCopy();
 		_isDone = true;
 	}

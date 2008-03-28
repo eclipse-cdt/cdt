@@ -11,6 +11,7 @@
  * Contributors:
  * David McKnight (IBM) - [192884] Should not use filter to determine previous query results
  * David McKnight (IBM) - [209387] Should not delete elements for files that still exist (but are filtered out)
+ * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  ********************************************************************************/
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
 
@@ -61,6 +62,8 @@ public class FileQueryThread extends QueryThread
 	
 	public void run()
 	{
+		super.run();
+		
 		doQueryAll();
 	
 		if (!isCancelled())
@@ -365,7 +368,7 @@ public class FileQueryThread extends QueryThread
 		} catch (Exception e) {
 			e.printStackTrace();
 			UniversalServerUtilities.logError(UniversalFileSystemMiner.CLASSNAME,
-					"createDataElement failed with exception - isFile ", e); //$NON-NLS-1$
+					"createDataElement failed with exception - isFile ", e, _dataStore); //$NON-NLS-1$
 		}
 
 	}

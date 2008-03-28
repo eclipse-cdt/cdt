@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@
  * David McKnight (IBM) - 202822 findDeleted should not be synchronized
  * David McKnight  (IBM)   [220123][dstore] Configurable timeout on irresponsiveness
  * David McKnight  (IBM)  - [222168][dstore] Buffer in DataElement is not sent
+ * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -159,6 +160,7 @@ public final class DataStore
 	private int _serverMinor;
 	
 	private List _lastCreatedElements;
+	private Client _client;
 
 	/**
 	 * Creates a new <code>DataStore</code> instance
@@ -4383,5 +4385,26 @@ public final class DataStore
 			((ServerUpdateHandler)_updateHandler).setGenerateBuffer(flag);
 		}
 	}
+	
+	/**
+     * This method is used to set the Client object for each user.
+     * 
+     * @param client the object of the Client class
+     */
+	public void setClient(Client client)
+	{
+		_client = client;
+	}
+	
+	/**
+     * This method is used to get the object of the Client stored for each user.
+     * 
+     * @return the object of the Client stored for each user
+     */
+	public Client getClient()
+	{
+		return _client;
+	}
+	
 	
 }

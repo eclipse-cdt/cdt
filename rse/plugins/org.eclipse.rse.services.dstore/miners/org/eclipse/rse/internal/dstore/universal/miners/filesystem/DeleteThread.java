@@ -10,8 +10,8 @@
  * component that contains this file: David McKnight.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
  * Xuan Chen (IBM) - [209827] Update DStore command implementation to enable cancelation of archive operations
+ * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  *******************************************************************************/
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
 
@@ -29,12 +29,12 @@ import org.eclipse.rse.services.clientserver.SystemOperationMonitor;
 import org.eclipse.rse.services.clientserver.archiveutils.AbsoluteVirtualPath;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler;
+import org.eclipse.dstore.core.server.SecuredThread;
 
-public class DeleteThread extends Thread implements ICancellableHandler {
+public class DeleteThread extends SecuredThread implements ICancellableHandler {
 
 	protected DataElement _theElement;
 	protected DataElement _status;
-	private DataStore _dataStore;
 	protected UniversalFileSystemMiner _miner;
 	protected boolean _batch;
 	
@@ -47,9 +47,9 @@ public class DeleteThread extends Thread implements ICancellableHandler {
 	
 	public DeleteThread(DataElement theElement, UniversalFileSystemMiner miner, DataStore dataStore, boolean batch, DataElement status)
 	{
+		super(dataStore);
 		this._theElement = theElement;
 		this._miner = miner;
-		this._dataStore = dataStore;
 		this._status = status;
 		this._batch = batch;
 	}
@@ -75,6 +75,7 @@ public class DeleteThread extends Thread implements ICancellableHandler {
 	
 	public void run()
 	{
+		super.run();
 		if (_batch)
 		{
 			handleDeleteBatch();
@@ -124,7 +125,7 @@ public class DeleteThread extends Thread implements ICancellableHandler {
 		if (!deleteObj.exists()) {
 			thisStatus.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED_WITH_DOES_NOT_EXIST + "|" + deleteObj.getAbsolutePath()); //$NON-NLS-1$
 			UniversalServerUtilities.logError(CLASSNAME,
-					"The object to delete does not exist", null); //$NON-NLS-1$
+					"The object to delete does not exist", null, _dataStore); //$NON-NLS-1$
 		} else {
 			try {
 				if (deleteObj.isFile()) {
@@ -147,7 +148,7 @@ public class DeleteThread extends Thread implements ICancellableHandler {
 					if (deleteObj.delete() == false) {
 						thisStatus.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED + "|" + deleteObj.getAbsolutePath()); //$NON-NLS-1$
 						UniversalServerUtilities.logError(CLASSNAME,
-								"Deletion of dir fialed", null); //$NON-NLS-1$
+								"Deletion of dir fialed", null, _dataStore); //$NON-NLS-1$
 					} else {
 						_dataStore.deleteObjects(subject);
 						DataElement parent = subject.getParent();
@@ -160,13 +161,13 @@ public class DeleteThread extends Thread implements ICancellableHandler {
 							.logError(
 									CLASSNAME,
 									"The object to delete is neither a File or Folder! in handleDelete", //$NON-NLS-1$
-									null);
+									null, _dataStore);
 				}
 			} catch (Exception e) {
 				thisStatus.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED_WITH_EXCEPTION + "|" + deleteObj.getAbsolutePath()); //$NON-NLS-1$
 				thisStatus.setAttribute(DE.A_VALUE, e.getLocalizedMessage());
 				UniversalServerUtilities.logError(CLASSNAME,
-						"Delete of the object failed", e); //$NON-NLS-1$
+						"Delete of the object failed", e, _dataStore); //$NON-NLS-1$
 			}
 		}
 		_dataStore.refresh(subject);
@@ -219,14 +220,14 @@ public class DeleteThread extends Thread implements ICancellableHandler {
 					if (!(list[i].delete())) {
 						status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
 						UniversalServerUtilities.logWarning(CLASSNAME,
-								"Deletion of dir failed"); //$NON-NLS-1$
+								"Deletion of dir failed", _dataStore); //$NON-NLS-1$
 					}
 				} else {
 					deleteDir(list[i], status);
 					if (!(list[i].delete())) {
 						status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
 						UniversalServerUtilities.logWarning(CLASSNAME,
-								"Deletion of dir failed"); //$NON-NLS-1$
+								"Deletion of dir failed", _dataStore); //$NON-NLS-1$
 					}
 				}
 			}
@@ -234,7 +235,7 @@ public class DeleteThread extends Thread implements ICancellableHandler {
 			status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED_WITH_EXCEPTION);
 			status.setAttribute(DE.A_VALUE, e.getLocalizedMessage());
 			UniversalServerUtilities.logError(CLASSNAME,
-					"Deletion of dir failed", e); //$NON-NLS-1$
+					"Deletion of dir failed", e, _dataStore); //$NON-NLS-1$
 		}
 	}
 	

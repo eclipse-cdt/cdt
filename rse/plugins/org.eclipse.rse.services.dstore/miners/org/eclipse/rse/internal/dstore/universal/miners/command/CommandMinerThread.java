@@ -15,6 +15,7 @@
  * {Name} (company) - description of contribution.
  *  David McKnight  (IBM)  - [202822] updating cleanup
  *  David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup
+ *  Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.command;
@@ -36,7 +37,6 @@ import java.util.List;
 import org.eclipse.dstore.core.miners.MinerThread;
 import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
-import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.DataStoreAttributes;
 import org.eclipse.rse.dstore.universal.miners.CommandMiner;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
@@ -51,10 +51,7 @@ import org.eclipse.rse.internal.dstore.universal.miners.command.patterns.Pattern
  */
 public class CommandMinerThread extends MinerThread
 {
-
-
 	private DataElement _status;
-	private DataStore _dataStore;
 	private String _invocation;
 
 	private DataInputStream _stdInput;
@@ -70,7 +67,7 @@ public class CommandMinerThread extends MinerThread
 
 	private DataElement _subject;
 	private String _cwdStr;
-	private OutputHandler _stdOutputHandler;
+	private OutputHandler _stdOutputHandler; 
 	private OutputHandler _stdErrorHandler;
 	private boolean _isShell;
 	private boolean _isDone;
@@ -87,10 +84,10 @@ public class CommandMinerThread extends MinerThread
 
 	public CommandMinerThread(DataElement theElement, String invocation, DataElement status, Patterns thePatterns, CommandMiner.CommandMinerDescriptors descriptors)
 	{ 
+		super(theElement.getDataStore());
 		_isShell = false;
 		_isDone = false;
 		_status = status;
-		_dataStore = theElement.getDataStore();
 		_descriptors = descriptors;
 		
 		_subject = theElement;
@@ -186,6 +183,15 @@ public class CommandMinerThread extends MinerThread
 						{
 							isSHonZ = true;
 						}
+					}
+					// In a single-process server, both user.home and HOME don't represent
+					// each client home directory.
+					if (_dataStore.getClient() != null)
+					{
+					    if (var.startsWith("HOME")) //$NON-NLS-1$
+					    {
+						    env[i] = "HOME=" + _dataStore.getClient().getProperty("user.home"); //$NON-NLS-1$
+					    }
 					}
 				}
 			
@@ -424,10 +430,12 @@ public class CommandMinerThread extends MinerThread
 			
 			_stdOutputHandler = new OutputHandler(_stdInput, null, _isWindows || _isTTY, false, _isShell, this);
 			_stdOutputHandler.setWaitTime(100);
+			_stdOutputHandler.setDataStore(_dataStore);
 			_stdOutputHandler.start();
 				
 			_stdErrorHandler = new OutputHandler(_stdError, null, _isWindows || _isTTY, true, _isShell, this);
 			_stdErrorHandler.setWaitTime(100);
+			_stdOutputHandler.setDataStore(_dataStore);
 			_stdErrorHandler.start();
 			
 			if (didLogin && !userHome.equals(_cwdStr))

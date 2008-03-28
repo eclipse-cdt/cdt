@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Intel Corporation and others.
+ * Copyright (c) 2005, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,11 +12,11 @@ package org.eclipse.cdt.internal.core.cdtvariables;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
+import org.eclipse.cdt.core.cdtvariables.IStorableCdtVariables;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.internal.core.cdtvariables.UserDefinedVariableSupplier.VarKey;
 import org.eclipse.cdt.internal.core.settings.model.ExceptionFactory;
@@ -29,19 +29,16 @@ import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
  * @since 3.0
  *
  */
-public class StorableCdtVariables {
+public class StorableCdtVariables implements IStorableCdtVariables {
 	public static final String MACROS_ELEMENT_NAME = "macros"; //$NON-NLS-1$
-//	public static final String EXPAND_ENVIRONMENT_MACROS = "expandEnvironmentMacros"; //$NON-NLS-1$
-//	public static final String TRUE = "true"; //$NON-NLS-1$
-	private HashMap fMacros;
-//	private boolean fExpandInMakefile = false;
+	private HashMap<String, ICdtVariable> fMacros;
 	private boolean fIsDirty = false;
 	private boolean fIsChanged = false;
 	private boolean fIsReadOnly;
 	
-	private HashMap getMap(){
+	private HashMap<String, ICdtVariable> getMap(){
 		if(fMacros == null)
-			fMacros = new HashMap();
+			fMacros = new HashMap<String, ICdtVariable>();
 		return fMacros;
 	}
 	
@@ -49,13 +46,14 @@ public class StorableCdtVariables {
 		fIsReadOnly = readOnly;
 	}
 
+	@SuppressWarnings("unchecked")
 	public StorableCdtVariables(StorableCdtVariables base, boolean readOnly) {
-		fMacros = (HashMap)base.getMap().clone();
+		fMacros = (HashMap<String, ICdtVariable>)base.getMap().clone();
 		fIsReadOnly = readOnly;
 	}
 
 	public StorableCdtVariables(ICdtVariable vars[], boolean readOnly) {
-		fMacros = new HashMap(vars.length);
+		fMacros = new HashMap<String, ICdtVariable>(vars.length);
 		for(int i = 0; i < vars.length; i++){
 			addMacro(vars[i]);
 		}
@@ -86,13 +84,9 @@ public class StorableCdtVariables {
 	}
 	
 	public void serialize(ICStorageElement element){
-//		if(fExpandInMakefile)
-//			element.setAttribute(EXPAND_ENVIRONMENT_MACROS,TRUE);
-		
 		if(fMacros != null){
-			Iterator iter = fMacros.values().iterator();
-			while(iter.hasNext()){
-				StorableCdtVariable macro = (StorableCdtVariable)iter.next();
+			for (ICdtVariable v : fMacros.values()){
+				StorableCdtVariable macro = (StorableCdtVariable)v;
 				ICStorageElement macroEl;
 				if(CdtVariableResolver.isStringListVariable(macro.getValueType()))
 					macroEl = element.createChild(StorableCdtVariable.STRINGLIST_MACRO_ELEMENT_NAME);
@@ -188,9 +182,7 @@ public class StorableCdtVariables {
 			deleteAll();
 		else{
 			if (getMap().size() != 0) {
-				Iterator iter = getMap().values().iterator();
-				while(iter.hasNext()){
-					ICdtVariable m = (ICdtVariable)iter.next();
+				for (ICdtVariable m : getMap().values()){
 					int i;
 					for(i = 0 ; i < macros.length; i++){
 						if(m.getName().equals(macros[i].getName()))
@@ -343,9 +335,8 @@ public class StorableCdtVariables {
 	}
 	
 	public ICdtVariable[] getMacros(){
-		Collection macros = getMap().values();
-		
-		return (ICdtVariable[])macros.toArray(new ICdtVariable[macros.size()]);
+		Collection<ICdtVariable> macros = getMap().values();		
+		return macros.toArray(new ICdtVariable[macros.size()]);
 	}
 	
 	public ICdtVariable deleteMacro(String name){
@@ -367,7 +358,7 @@ public class StorableCdtVariables {
 	public boolean deleteAll(){
 		if(fIsReadOnly)
 			throw ExceptionFactory.createIsReadOnlyException();
-		Map map = getMap();
+		Map<String, ICdtVariable> map = getMap();
 		if(map.size() > 0){
 			fIsDirty = true;
 			fIsChanged = true;

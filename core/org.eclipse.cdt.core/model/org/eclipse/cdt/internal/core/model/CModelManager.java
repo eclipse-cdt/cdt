@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -84,7 +83,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	 */
 	final CModel cModel = new CModel();
 
-	public static HashSet OptionNames = new HashSet(20);
+	public static HashSet<String> OptionNames = new HashSet<String>(20);
 
 	public static final int DEFAULT_CHANGE_EVENT = 0; // must not collide with ElementChangedEvent event masks
 
@@ -97,13 +96,13 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	 * Queue of deltas created explicitly by the C Model that
 	 * have yet to be fired.
 	 */
-	List fCModelDeltas = Collections.synchronizedList(new ArrayList());
+	List<ICElementDelta> fCModelDeltas = Collections.synchronizedList(new ArrayList<ICElementDelta>());
 
 	/**
 	 * Queue of reconcile deltas on working copies that have yet to be fired.
 	 * This is a table form IWorkingCopy to ICElementDelta
 	 */
-	HashMap reconcileDeltas = new HashMap();
+	HashMap<IWorkingCopy, ICElementDelta> reconcileDeltas = new HashMap<IWorkingCopy, ICElementDelta>();
 
 	/**
 	 * Turns delta firing on/off. By default it is on.
@@ -113,12 +112,12 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	/**
 	 * Collection of listeners for C element deltas
 	 */
-	protected List fElementChangedListeners = Collections.synchronizedList(new ArrayList());
+	protected List<IElementChangedListener> fElementChangedListeners = Collections.synchronizedList(new ArrayList<IElementChangedListener>());
 
 	/**
 	 * A map from ITranslationUnit to IWorkingCopy of the shared working copies.
 	 */
-	public Map sharedWorkingCopies = new HashMap();
+	public Map<ITranslationUnit, IWorkingCopy> sharedWorkingCopies = new HashMap<ITranslationUnit, IWorkingCopy>();
 	/**
 	 * Set of elements which are out of sync with their buffers.
 	 */
@@ -127,7 +126,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	/*
 	 * Temporary cache of newly opened elements
 	 */
-	private ThreadLocal temporaryCache = new ThreadLocal();
+	private ThreadLocal<Map<ICElement, Object>> temporaryCache = new ThreadLocal<Map<ICElement, Object>>();
 
 	/**
 	 * Infos cache.
@@ -142,17 +141,17 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	/**
 	 * The list of started BinaryRunners on projects.
 	 */
-	private HashMap binaryRunners = new HashMap();
+	private HashMap<IProject, BinaryRunner> binaryRunners = new HashMap<IProject, BinaryRunner>();
 
 	/**
 	 * Map of the binary parser for each project.
 	 */
-	private HashMap binaryParsersMap = new HashMap();
+	private HashMap<IProject, BinaryParserConfig[]> binaryParsersMap = new HashMap<IProject, BinaryParserConfig[]>();
 
 	/**
 	 * The lis of the SourceMappers on projects.
 	 */
-	private HashMap sourceMappers = new HashMap();
+	private HashMap<ICProject, SourceMapper> sourceMappers = new HashMap<ICProject, SourceMapper>();
 
 	public static final IWorkingCopy[] NoWorkingCopy = new IWorkingCopy[0];
 
@@ -464,7 +463,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 			if (celement.getElementType() == ICElement.C_CCONTAINER) {
 				ICProject cproject = celement.getCProject();
 				CProjectInfo pinfo = (CProjectInfo)peekAtInfo(cproject);
-				ArrayList list = new ArrayList(5);
+				ArrayList<ICElement> list = new ArrayList<ICElement>(5);
 				if (pinfo != null && pinfo.vBin != null) {
 					if (peekAtInfo(pinfo.vBin) != null) {
 						try {
@@ -520,7 +519,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 				if (cdesc != null) {
 					ICExtensionReference[] cextensions = cdesc.get(CCorePlugin.BINARY_PARSER_UNIQ_ID, true);
 					if (cextensions.length > 0) {
-						ArrayList list = new ArrayList(cextensions.length);
+						ArrayList<BinaryParserConfig> list = new ArrayList<BinaryParserConfig>(cextensions.length);
 						for (int i = 0; i < cextensions.length; i++) {
 							BinaryParserConfig config = new BinaryParserConfig(cextensions[i]);
 							list.add(config);
@@ -933,7 +932,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		}
 		if (deltaToNotify != null) {
 			// flush now so as to keep listener reactions to post their own deltas for subsequent iteration
-			this.reconcileDeltas = new HashMap();
+			this.reconcileDeltas = new HashMap<IWorkingCopy, ICElementDelta>();
 			notifyListeners(deltaToNotify, ElementChangedEvent.POST_RECONCILE, listeners, listenerMask, listenerCount);
 		}
 	}
@@ -988,27 +987,24 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		fCModelDeltas.clear();
 	}
 
-	private ICElementDelta mergeDeltas(Collection deltas) {
+	private ICElementDelta mergeDeltas(Collection<ICElementDelta> deltas) {
 
 		synchronized (deltas) {
 			if (deltas.size() == 0)
 				return null;
 			if (deltas.size() == 1)
-				return (ICElementDelta)deltas.iterator().next();
+				return deltas.iterator().next();
 			if (deltas.size() <= 1)
 				return null;
 
-			Iterator iterator = deltas.iterator();
 			ICElement cRoot = getCModel();
 			CElementDelta rootDelta = new CElementDelta(cRoot);
 			boolean insertedTree = false;
-			while (iterator.hasNext()) {
-				CElementDelta delta = (CElementDelta)iterator.next();
+			for (ICElementDelta delta : deltas) {
 				ICElement element = delta.getElement();
 				if (cRoot.equals(element)) {
-					ICElementDelta[] children = delta.getAffectedChildren();
-					for (int j = 0; j < children.length; j++) {
-						CElementDelta projectDelta = (CElementDelta)children[j];
+					for (ICElementDelta child : delta.getAffectedChildren()) {
+						CElementDelta projectDelta = (CElementDelta)child;
 						rootDelta.insertDeltaTree(projectDelta.getElement(), projectDelta);
 						insertedTree = true;
 					}
@@ -1020,7 +1016,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 						}
 					}
 				} else {
-					rootDelta.insertDeltaTree(element, delta);
+					rootDelta.insertDeltaTree(element, (CElementDelta)delta);
 					insertedTree = true;
 				}
 			}
@@ -1042,12 +1038,11 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	 * Returns the info for the element.
 	 */
 	public synchronized Object getInfo(ICElement element) {
-		HashMap tempCache = (HashMap)this.temporaryCache.get();
+		HashMap<ICElement, Object> tempCache = (HashMap<ICElement, Object>)this.temporaryCache.get();
 		if (tempCache != null) {
 			Object result = tempCache.get(element);
-			if (result != null) {
+			if (result != null)
 				return result;
-			}
 		}
 		return this.cache.getInfo(element);
 	}
@@ -1057,7 +1052,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	 *  disturbing the cache ordering.
 	 */
 	protected synchronized Object peekAtInfo(ICElement element) {
-		HashMap tempCache = (HashMap)this.temporaryCache.get();
+		HashMap<ICElement, Object> tempCache = (HashMap<ICElement, Object>)this.temporaryCache.get();
 		if (tempCache != null) {
 			Object result = tempCache.get(element);
 			if (result != null) {
@@ -1074,7 +1069,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	 * added to the cache. If it is the case, another thread has opened the element (or one of
 	 * its ancestors). So returns without updating the cache.
 	 */
-	protected synchronized void putInfos(ICElement openedElement, Map newElements) {
+	protected synchronized void putInfos(ICElement openedElement, Map<ICElement, Object> newElements) {
 		// remove children
 		Object existingInfo = this.cache.peekAtInfo(openedElement);
 		if (openedElement instanceof IParent && existingInfo instanceof CElementInfo) {
@@ -1089,12 +1084,8 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 			}
 		}
 
-		Iterator iterator = newElements.keySet().iterator();
-		while (iterator.hasNext()) {
-			ICElement element = (ICElement)iterator.next();
-			Object info = newElements.get(element);
-			this.cache.putInfo(element, info);
-		}
+		for (ICElement element : newElements.keySet())
+			this.cache.putInfo(element, newElements.get(element));
 	}
 
 	/**
@@ -1128,10 +1119,10 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	 * Returns the temporary cache for newly opened elements for the current thread.
 	 * Creates it if not already created.
 	 */
-	public HashMap getTemporaryCache() {
-		HashMap result = (HashMap)this.temporaryCache.get();
+	public HashMap<ICElement, Object> getTemporaryCache() {
+		HashMap<ICElement, Object> result = (HashMap<ICElement, Object>)this.temporaryCache.get();
 		if (result == null) {
-			result = new HashMap();
+			result = new HashMap<ICElement, Object>();
 			this.temporaryCache.set(result);
 		}
 		return result;

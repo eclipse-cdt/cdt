@@ -545,15 +545,20 @@ implements
     }
 
 	private void populateConfigurations() {
+		IProject prj = getProject();
+		// Do nothing in case of Preferences page.
+		if (prj == null)
+			return;
+
 		// Do not re-read if list already created by another page
 		if (cfgDescs == null) {
-			cfgDescs = CDTPropertyManager.getProjectDescription(this, getProject()).getConfigurations();
+			cfgDescs = CDTPropertyManager.getProjectDescription(this, prj).getConfigurations();
 			if (cfgDescs == null || cfgDescs.length == 0) return;
 			Arrays.sort(cfgDescs, CDTListComparator.getInstance());
 			
 		} else {
 			// just register in CDTPropertyManager;
-			CDTPropertyManager.getProjectDescription(this, getProject());
+			CDTPropertyManager.getProjectDescription(this, prj);
 		}
 		
 		// Do nothing if widget not created yet.

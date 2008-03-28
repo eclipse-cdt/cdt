@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Intel Corporation and others.
+ * Copyright (c) 2005, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,7 +67,7 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 	private static UserDefinedVariableSupplier fInstance;
 	
 	private StorableCdtVariables fWorkspaceMacros;
-	private Set fListeners;
+	private Set<ICdtVariableChangeListener> fListeners;
 	
 	private StorableCdtVariables getStorableMacros(int contextType, Object contextData){
 		StorableCdtVariables macros = null;
@@ -93,7 +93,7 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 	}
 	
 	private UserDefinedVariableSupplier(){
-		fListeners = Collections.synchronizedSet(new HashSet());
+		fListeners = Collections.synchronizedSet(new HashSet<ICdtVariableChangeListener>());
 	}
 
 	public static UserDefinedVariableSupplier getInstance(){
@@ -376,16 +376,16 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 		return createVariableChangeEvent(newVars, oldVars);
 	}
 
-	static ICdtVariable[] varsFromKeySet(Set set){
+	static ICdtVariable[] varsFromKeySet(Set<VarKey> set){
 		ICdtVariable vars[] = new ICdtVariable[set.size()];
 		int i = 0;
-		for(Iterator iter = set.iterator(); iter.hasNext(); i++){
-			VarKey key = (VarKey)iter.next();
-			vars[i] = key.getVariable();
+		for(VarKey key : set) {
+			vars[i++] = key.getVariable();
 		}
-		
 		return vars;
 	}
+	
+	@SuppressWarnings("unchecked")
 	static VariableChangeEvent createVariableChangeEvent(ICdtVariable[] newVars, ICdtVariable[] oldVars){
 		ICdtVariable[] addedVars = null, removedVars = null, changedVars = null;
 		
@@ -395,8 +395,8 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 		} else if(newVars == null || newVars.length == 0){
 			removedVars = (ICdtVariable[])oldVars.clone();
 		} else {
-			HashSet newSet = new HashSet(newVars.length);
-			HashSet oldSet = new HashSet(oldVars.length);
+			HashSet<VarKey> newSet = new HashSet<VarKey>(newVars.length);
+			HashSet<VarKey> oldSet = new HashSet<VarKey>(oldVars.length);
 			
 			for(int i = 0; i < newVars.length; i++){
 				newSet.add(new VarKey(newVars[i], true));
@@ -406,7 +406,7 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 				oldSet.add(new VarKey(oldVars[i], true));
 			}
 	
-			HashSet newSetCopy = (HashSet)newSet.clone();
+			HashSet<VarKey> newSetCopy = (HashSet<VarKey>)newSet.clone();
 	
 			newSet.removeAll(oldSet);
 			oldSet.removeAll(newSetCopy);

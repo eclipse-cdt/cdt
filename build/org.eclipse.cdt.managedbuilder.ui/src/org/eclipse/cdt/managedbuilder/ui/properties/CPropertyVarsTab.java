@@ -22,15 +22,12 @@ import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariableStatus;
+import org.eclipse.cdt.core.cdtvariables.IStorableCdtVariables;
+import org.eclipse.cdt.core.cdtvariables.IUserVarSupplier;
 import org.eclipse.cdt.core.model.util.CDTListComparator;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICMultiItemsHolder;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
-import org.eclipse.cdt.internal.core.cdtvariables.CdtVariableManager;
-import org.eclipse.cdt.internal.core.cdtvariables.EclipseVariablesVariableSupplier;
-import org.eclipse.cdt.internal.core.cdtvariables.ICoreVariableContextInfo;
-import org.eclipse.cdt.internal.core.cdtvariables.StorableCdtVariables;
-import org.eclipse.cdt.internal.core.cdtvariables.UserDefinedVariableSupplier;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.cdt.ui.newui.AbstractPage;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
@@ -39,7 +36,6 @@ import org.eclipse.cdt.ui.newui.UIMessages;
 import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
 import org.eclipse.cdt.utils.envvar.EnvVarOperationProcessor;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.variables.IDynamicVariable;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.JFacePreferences;
@@ -116,11 +112,11 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 	private static final String VALUE_DELIMITER = " || ";	//$NON-NLS-1$
 
 	private static final ICdtVariableManager vmgr = CCorePlugin.getDefault().getCdtVariableManager();
-	private static final UserDefinedVariableSupplier fUserSup = CdtVariableManager.fUserDefinedMacroSupplier;
+	private static final IUserVarSupplier fUserSup = CCorePlugin.getUserVarSupplier();
 	private static final EnvCmp comparator = new EnvCmp(); 
 
 	private ICConfigurationDescription cfgd = null;
-	private StorableCdtVariables vars = null;
+	private IStorableCdtVariables vars = null;
 	
 	//currently the "CWD" and "PWD" macros are not displayed in UI
 	private static final String fHiddenMacros[] = new String[]{
@@ -130,8 +126,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 	
 	private boolean fShowSysMacros = false;
 	private Set<String> fIncorrectlyDefinedMacrosNames = new HashSet<String>();
-	private static final int CONTEXT = ICoreVariableContextInfo.CONTEXT_CONFIGURATION;
-
+	
 	private TableViewer tv;
 	private Label fStatusLabel;
 	private Label  lb1, lb2;
@@ -272,10 +267,10 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 			if (!isUserVar(vars[i]))
 				vars[i] = null;
 		for (ICConfigurationDescription c : getCfs()) {
-			fUserSup.deleteAll(CONTEXT, c);
+			fUserSup.deleteAll(c);
 			for (ICdtVariable macro : vars)
 				if (macro != null)
-					fUserSup.createMacro(macro, CONTEXT, c);
+					fUserSup.createMacro(macro, c);
 		}
 	}
 
@@ -293,14 +288,14 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 		if (cfgd != null) {
 			if (forAll) {
 				for (ICConfigurationDescription c : page.getCfgsEditable()) 
-					fUserSup.createMacro(macro, CONTEXT, c);
+					fUserSup.createMacro(macro, c);
 			} else {
 				if (page.isMultiCfg() && cfgd instanceof ICMultiItemsHolder) {
 					for (ICConfigurationDescription c : getCfs())
-						fUserSup.createMacro(macro, CONTEXT, c);
+						fUserSup.createMacro(macro, c);
 					replaceMacros();
 				} else
-					fUserSup.createMacro(macro, CONTEXT, cfgd);
+					fUserSup.createMacro(macro, cfgd);
 			}
 		}
 		else if (vars != null)
@@ -333,11 +328,11 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 						if (page.isMultiCfg() && cfgd instanceof ICMultiItemsHolder) {
 							ICConfigurationDescription[] cfs = (ICConfigurationDescription[])((ICMultiItemsHolder)cfgd).getItems();
 							for (int k=0; k<cfs.length; k++)
-								fUserSup.deleteMacro(macros[i].getName(), CONTEXT, cfs[k]);
+								fUserSup.deleteMacro(macros[i].getName(), cfs[k]);
 							replaceMacros();
 						}
 						else		
-							fUserSup.deleteMacro(macros[i].getName(), CONTEXT, cfgd);
+							fUserSup.deleteMacro(macros[i].getName(), cfgd);
 					}
 					else if (vars != null)
 						vars.deleteMacro(macros[i].getName());
@@ -368,9 +363,9 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 				if (page.isMultiCfg() && cfgd instanceof ICMultiItemsHolder) {
 					ICConfigurationDescription[] cfs = (ICConfigurationDescription[])((ICMultiItemsHolder)cfgd).getItems();
 					for (int i=0; i<cfs.length; i++)
-						fUserSup.deleteAll(CONTEXT, cfs[i]);
+						fUserSup.deleteAll(cfs[i]);
 				} else
-					fUserSup.deleteAll(CONTEXT, cfgd);
+					fUserSup.deleteAll(cfgd);
 			}
 			else if (vars != null)
 				vars.deleteAll();
@@ -610,19 +605,8 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 			return vmgr.isUserVariable(v, cfgd); 
 	}
 	
-	/* check whether variable is dynamic */
-	private boolean isDynamic(ICdtVariable v) {
-		if (v instanceof EclipseVariablesVariableSupplier.EclipseVarMacro) {
-			EclipseVariablesVariableSupplier.EclipseVarMacro evar =
-				(EclipseVariablesVariableSupplier.EclipseVarMacro)v;
-			if (evar.getVariable() instanceof IDynamicVariable)
-				return true;
-		}		
-		return false;
-	}
-	
 	private String getString(ICdtVariable v) {
-		if (isDynamic(v)) 
+		if (fUserSup.isDynamic(v)) 
 			return UIMessages.getString(VALUE_ECLIPSE_DYNAMIC);
 		String value = EMPTY_STR; 
 		try {			
@@ -646,13 +630,13 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 					if (r0.length != r1.length)
 						return; // unprobable
 					for (int i=0; i<r0.length; i++) {
-						ICdtVariable[] vs = fUserSup.getMacros(CONTEXT, r0[i].getConfiguration());
-						fUserSup.setMacros(vs, CONTEXT, r1[i].getConfiguration());
+						ICdtVariable[] vs = fUserSup.getMacros(r0[i].getConfiguration());
+						fUserSup.setMacros(vs, r1[i].getConfiguration());
 					}
 				}
 			} else {
-				ICdtVariable[] vs = fUserSup.getMacros(CONTEXT, src.getConfiguration());
-				fUserSup.setMacros(vs, CONTEXT, dst.getConfiguration());
+				ICdtVariable[] vs = fUserSup.getMacros(src.getConfiguration());
+				fUserSup.setMacros(vs, dst.getConfiguration());
 			}
 		} else if (vars != null)
 			fUserSup.storeWorkspaceVariables(true);

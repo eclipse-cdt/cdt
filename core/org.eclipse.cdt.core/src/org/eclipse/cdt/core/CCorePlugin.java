@@ -20,19 +20,20 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
+import org.eclipse.cdt.core.cdtvariables.IUserVarSupplier;
 import org.eclipse.cdt.core.dom.CDOM;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariableManager;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.resources.IConsole;
@@ -47,6 +48,7 @@ import org.eclipse.cdt.internal.core.CDTLogWriter;
 import org.eclipse.cdt.internal.core.CdtVarPathEntryVariableManager;
 import org.eclipse.cdt.internal.core.PositionTrackerManager;
 import org.eclipse.cdt.internal.core.cdtvariables.CdtVariableManager;
+import org.eclipse.cdt.internal.core.cdtvariables.UserVarSupplier;
 import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
 import org.eclipse.cdt.internal.core.model.BufferManager;
 import org.eclipse.cdt.internal.core.model.CModelManager;
@@ -209,11 +211,11 @@ public class CCorePlugin extends Plugin {
 		
 		// if factory is null, default factory must be used
 		if (factory == null) factory = BufferManager.getDefaultBufferManager().getDefaultBufferFactory();
-		Map sharedWorkingCopies = CModelManager.getDefault().sharedWorkingCopies;
+		Map<ITranslationUnit, IWorkingCopy> sharedWorkingCopies = CModelManager.getDefault().sharedWorkingCopies;
 		
-		Map perFactoryWorkingCopies = (Map) sharedWorkingCopies.get(factory);
+		Map<ITranslationUnit, IWorkingCopy> perFactoryWorkingCopies = (Map) sharedWorkingCopies.get(factory);
 		if (perFactoryWorkingCopies == null) return CModelManager.NoWorkingCopy;
-		Collection copies = perFactoryWorkingCopies.values();
+		Collection<IWorkingCopy> copies = perFactoryWorkingCopies.values();
 		IWorkingCopy[] result = new IWorkingCopy[copies.size()];
 		copies.toArray(result);
 		return result;
@@ -234,11 +236,11 @@ public class CCorePlugin extends Plugin {
 	}
 
 	public static String getFormattedString(String key, String arg) {
-		return MessageFormat.format(getResourceString(key), new String[] { arg });
+		return MessageFormat.format(getResourceString(key), new Object[] { arg });
 	}
 
 	public static String getFormattedString(String key, String[] args) {
-		return MessageFormat.format(getResourceString(key), args);
+		return MessageFormat.format(getResourceString(key), (Object[])args);
 	}
 
 	public static ResourceBundle getResourceBundle() {
@@ -380,29 +382,23 @@ public class CCorePlugin extends Plugin {
      * @see #setOptions
      */
     
-    public static HashMap getDefaultOptions()
+    public static HashMap<String, String> getDefaultOptions()
     {
-        HashMap defaultOptions = new HashMap(10);
+        HashMap<String, String> defaultOptions = new HashMap<String, String>(10);
 
         // see #initializeDefaultPluginPreferences() for changing default settings
         Preferences preferences = getDefault().getPluginPreferences();
-        HashSet optionNames = CModelManager.OptionNames;
+        HashSet<String> optionNames = CModelManager.OptionNames;
         
         // get preferences set to their default
-        String[] defaultPropertyNames = preferences.defaultPropertyNames();
-        for (int i = 0; i < defaultPropertyNames.length; i++){
-            String propertyName = defaultPropertyNames[i];
-            if (optionNames.contains(propertyName)) {
+        for (String propertyName : preferences.defaultPropertyNames()){
+            if (optionNames.contains(propertyName))
                 defaultOptions.put(propertyName, preferences.getDefaultString(propertyName));
-            }
         }       
         // get preferences not set to their default
-        String[] propertyNames = preferences.propertyNames();
-        for (int i = 0; i < propertyNames.length; i++){
-            String propertyName = propertyNames[i];
-            if (optionNames.contains(propertyName)) {
+        for (String propertyName : preferences.propertyNames()) {
+            if (optionNames.contains(propertyName)) 
                 defaultOptions.put(propertyName, preferences.getDefaultString(propertyName));
-            }
         }       
         // get encoding through resource plugin
         defaultOptions.put(CORE_ENCODING, ResourcesPlugin.getEncoding()); 
@@ -445,28 +441,24 @@ public class CCorePlugin extends Plugin {
      *   (key type: <code>String</code>; value type: <code>String</code>)
      * @see CCorePlugin#getDefaultOptions
      */
-    public static HashMap getOptions() {
+    public static HashMap<String, String> getOptions() {
         
-        HashMap options = new HashMap(10);
+        HashMap<String, String> options = new HashMap<String, String>(10);
 
         // see #initializeDefaultPluginPreferences() for changing default settings
         Plugin plugin = getDefault();
         if (plugin != null) {
             Preferences preferences = plugin.getPluginPreferences();
-            HashSet optionNames = CModelManager.OptionNames;
+            HashSet<String> optionNames = CModelManager.OptionNames;
             
             // get preferences set to their default
-            String[] defaultPropertyNames = preferences.defaultPropertyNames();
-            for (int i = 0; i < defaultPropertyNames.length; i++){
-                String propertyName = defaultPropertyNames[i];
+            for (String propertyName : preferences.defaultPropertyNames()){
                 if (optionNames.contains(propertyName)){
                     options.put(propertyName, preferences.getDefaultString(propertyName));
                 }
             }       
             // get preferences not set to their default
-            String[] propertyNames = preferences.propertyNames();
-            for (int i = 0; i < propertyNames.length; i++){
-                String propertyName = propertyNames[i];
+            for (String propertyName : preferences.propertyNames()){
                 if (optionNames.contains(propertyName)){
                     options.put(propertyName, preferences.getString(propertyName).trim());
                 }
@@ -489,7 +481,7 @@ public class CCorePlugin extends Plugin {
      *   or <code>null</code> to reset all options to their default values
      * @see CCorePlugin#getDefaultOptions
      */
-    public static void setOptions(HashMap newOptions) {
+    public static void setOptions(HashMap<String, String> newOptions) {
     
         // see #initializeDefaultPluginPreferences() for changing default settings
         Preferences preferences = getDefault().getPluginPreferences();
@@ -497,9 +489,7 @@ public class CCorePlugin extends Plugin {
         if (newOptions == null){
             newOptions = getDefaultOptions();
         }
-        Iterator keys = newOptions.keySet().iterator();
-        while (keys.hasNext()){
-            String key = (String)keys.next();
+        for (String key : newOptions.keySet()){
             if (!CModelManager.OptionNames.contains(key)) continue; // unrecognized option
             if (key.equals(CORE_ENCODING)) continue; // skipped, contributed by resource prefs
             String value = (String)newOptions.get(key);
@@ -563,15 +553,10 @@ public class CCorePlugin extends Plugin {
 		ICExtensionReference ext[] = new ICExtensionReference[0];
 		if (project != null) {
 			try {
-				ICDescriptor cdesc = getCProjectDescription(project);
+				ICDescriptor cdesc = getCProjectDescription(project, false);
 				ICExtensionReference[] cextensions = cdesc.get(BINARY_PARSER_UNIQ_ID, true);
-				if (cextensions.length > 0) {
-					ArrayList list = new ArrayList(cextensions.length);
-					for (int i = 0; i < cextensions.length; i++) {
-						list.add(cextensions[i]);
-					}
-					ext = (ICExtensionReference[])list.toArray(ext);
-				}
+				if (cextensions != null && cextensions.length > 0)
+					ext = cextensions;
 			} catch (CoreException e) {
 				log(e);
 			}
@@ -589,19 +574,19 @@ public class CCorePlugin extends Plugin {
 		IBinaryParser parsers[] = null;
 		if (project != null) {
 			try {
-				ICDescriptor cdesc = getCProjectDescription(project);
+				ICDescriptor cdesc = getCProjectDescription(project, false);
 				ICExtensionReference[] cextensions = cdesc.get(BINARY_PARSER_UNIQ_ID, true);
 				if (cextensions.length > 0) {
-					ArrayList list = new ArrayList(cextensions.length);
-					for (int i = 0; i < cextensions.length; i++) {
+					ArrayList<IBinaryParser> list = new ArrayList<IBinaryParser>(cextensions.length);
+					for (ICExtensionReference ref : cextensions) {
 						IBinaryParser parser = null;
 						try {
-							parser = (IBinaryParser) cextensions[i].createExtension();
+							parser = (IBinaryParser)ref.createExtension();
 						} catch (ClassCastException e) {
-							//
+							log(e); // wrong binary parser definition ?
 						}
 						if (parser != null) {
-							list.add(parser);
+							list.add(parser); 
 						}
 					}
 					parsers = new IBinaryParser[list.size()];
@@ -939,11 +924,10 @@ public class CCorePlugin extends Plugin {
 		String[] empty = new String[0];
 		if (extension != null) {
 			IExtension[] extensions = extension.getExtensions();
-			ArrayList list = new ArrayList(extensions.length);
-			for (int i = 0; i < extensions.length; i++) {
-				list.add(extensions[i].getUniqueIdentifier());
-			}
-			return (String[]) list.toArray(empty);
+			ArrayList<String> list = new ArrayList<String>(extensions.length);
+			for (IExtension e : extensions)
+				list.add(e.getUniqueIdentifier());
+			return list.toArray(empty);
 		}
 		return empty;
 	}
@@ -954,18 +938,15 @@ public class CCorePlugin extends Plugin {
 	        IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, ERROR_PARSER_SIMPLE_ID);
 			if (extension != null) {
 				IExtension[] extensions = extension.getExtensions();
-				List list = new ArrayList(extensions.length);
-				for (int i = 0; i < extensions.length; i++) {
-					String parserID = extensions[i].getUniqueIdentifier();
+				List<IErrorParser> list = new ArrayList<IErrorParser>(extensions.length);
+				for (IExtension e : extensions) {
+					String parserID = e.getUniqueIdentifier();
 					if ((id == null && parserID != null) || (id != null && id.equals(parserID))) {
-						IConfigurationElement[] configElements = extensions[i]. getConfigurationElements();
-						for (int j = 0; j < configElements.length; j++) {
-							IErrorParser parser = (IErrorParser)configElements[j].createExecutableExtension("class"); //$NON-NLS-1$
-							list.add(parser);
-						}
+						for (IConfigurationElement ce : e.getConfigurationElements())
+							list.add((IErrorParser)ce.createExecutableExtension("class")); //$NON-NLS-1$
 					}
 				}
-				return (IErrorParser[]) list.toArray(empty);
+				return list.toArray(empty);
 			}
 		} catch (CoreException e) {
 			log(e);
@@ -975,29 +956,8 @@ public class CCorePlugin extends Plugin {
 
 	public IScannerInfoProvider getScannerInfoProvider(IProject project) {
 		return fNewCProjectDescriptionManager.getScannerInfoProviderProxy(project);
-//		IScannerInfoProvider provider = null;
-//		if (project != null) {
-//			try {
-//				ICDescriptor desc = getCProjectDescription(project);
-//				ICExtensionReference[] extensions = desc.get(BUILD_SCANNER_INFO_UNIQ_ID, true);
-//				if (extensions.length > 0)
-//					provider = (IScannerInfoProvider) extensions[0].createExtension();
-//			} catch (CoreException e) {
-//				// log(e);
-//			}
-//			if ( provider == null) {
-//				return getDefaultScannerInfoProvider(project);
-//			}
-//		}
-//		return provider;
 	}
 	
-//	private IScannerInfoProvider getDefaultScannerInfoProvider(IProject project){
-//		if(fNewCProjectDescriptionManager.isNewStyleIndexCfg(project))
-//			return fNewCProjectDescriptionManager.getScannerInfoProvider(project);
-//		return ScannerProvider.getInstance();
-//	}
-
 	/**
 	 * Helper function, returning the content type for a filename
 	 * Same as: <pre>
@@ -1234,4 +1194,13 @@ public class CCorePlugin extends Plugin {
 	public ICProjectDescriptionManager getProjectDescriptionManager(){
 		return fNewCProjectDescriptionManager;
 	}
+	
+	/**
+	 * @return editable User-variable's supplier 
+	 */
+	public static IUserVarSupplier getUserVarSupplier() {
+		return UserVarSupplier.getInstance();
+	}
+	
+	
 }

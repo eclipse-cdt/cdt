@@ -388,12 +388,15 @@ public class SourceManager extends Manager {
 			boolean isImaginery = (first.equals("_Imaginary") || second.equals("_Imaginary") || third.equals("_Imaginary")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 
+			if (isSigned == false && unSigned==false) {
+				isSigned  = true; // otherwise long long int would not work
+			}
 			if (isShort && isInt && (isSigned || unSigned)) {
 				return new ShortType(target, typename, unSigned);
-			} else if (isLong && isInt && (isSigned || unSigned)) {
-				return new LongType(target, typename, unSigned);
 			} else if (isLongLong && (isSigned || unSigned)) {
 				return new LongLongType(target, typename, unSigned);
+			} else if (isLong && isInt && (isSigned || unSigned)) {
+				return new LongType(target, typename, unSigned);
 			} else if (isDouble && isLong && (isComplex || isImaginery)) {
 				return new DoubleType(target, typename, isComplex, isImaginery, isLong);
 			}

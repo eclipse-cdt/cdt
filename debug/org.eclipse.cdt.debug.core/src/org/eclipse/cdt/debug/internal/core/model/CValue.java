@@ -239,7 +239,7 @@ public class CValue extends AbstractCValue {
 			else if ( cdiValue instanceof ICDIWCharValue )
 				return getWCharValueString( (ICDIWCharValue)cdiValue );
 			else
-				return cdiValue.getValueString();
+				return  getGenericValueString(cdiValue.getValueString());
 		}
 		return null;
 	}
@@ -423,6 +423,36 @@ public class CValue extends AbstractCValue {
 		return null;
 	}
 
+	private String getGenericValueString(String svalue) throws CDIException {
+		try {
+			BigInteger bigValue = new BigInteger(svalue);
+			CVariableFormat format = getParentVariable().getFormat();
+			if (CVariableFormat.NATURAL.equals(format)) {
+				format = CVariableFormat.DECIMAL;
+			}
+			if (CVariableFormat.DECIMAL.equals(format)) {
+				return svalue;
+			} else if (CVariableFormat.HEXADECIMAL.equals(format)) {
+				StringBuffer sb = new StringBuffer("0x"); //$NON-NLS-1$
+				if (isUnsigned()) {
+					sb.append(bigValue.toString(16));
+				} else
+					sb.append(Long.toHexString(bigValue.longValue()));
+				return sb.toString();
+			} else if (CVariableFormat.BINARY.equals(format)) {
+				StringBuffer sb = new StringBuffer("0b"); //$NON-NLS-1$
+				if (isUnsigned()) {
+					sb.append(bigValue.toString(2));
+				} else
+					sb.append(Long.toBinaryString(bigValue.longValue()));
+				return sb.toString();
+			}
+		} catch (NumberFormatException e) {
+		}
+		return svalue;
+	}
+	
+	
 	private String getFloatValueString( ICDIFloatValue value ) throws CDIException {
 		float floatValue = value.floatValue();
 		if ( Float.isNaN(floatValue) )

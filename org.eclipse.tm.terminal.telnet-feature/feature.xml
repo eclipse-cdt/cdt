@@ -30,8 +30,8 @@
 
    <plugin
          id="org.eclipse.tm.terminal.telnet"
-         download-size="0"
-         install-size="0"
+         download-size="19"
+         install-size="35"
          version="0.0.0"
          unpack="false"/>
 

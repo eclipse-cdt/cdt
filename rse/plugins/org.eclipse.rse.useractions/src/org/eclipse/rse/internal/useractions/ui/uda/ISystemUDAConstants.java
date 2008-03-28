@@ -9,6 +9,7 @@ package org.eclipse.rse.internal.useractions.ui.uda;
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Xuan Chen        (IBM)    - [222263] Need to provide a PropertySet Adapter for System Team View (cleanup some use action stuff)
  *******************************************************************************/
 /**
  * @author coulthar
@@ -17,11 +18,14 @@ package org.eclipse.rse.internal.useractions.ui.uda;
  */
 public interface ISystemUDAConstants {
 	
-	public static final String USER_DEFINED_ACTION_PROPRERTY_SET_PREFIX = "UDA."; //$NON-NLS-1$
+	public static final String USER_DEFINED_ACTION_PROPRERTY_SET_PREFIX = "UserActoins."; //$NON-NLS-1$
+	
+	public static final String USER_DEFINED_ACTION_PROPRERTY_SET_Name = "User Actions"; //$NON-NLS-1$
 	
 	static final String UDA_ROOT_ATTR = "uda_root"; //$NON-NLS-1$
 	static final String FILETYPES_ROOT = "FileTypes"; //$NON-NLS-1$
 	static final String ACTIONS_ROOT = "Actions"; //$NON-NLS-1$
+	static final String ACTION_FILETYPES = "User Action File Types"; //$NON-NLS-1$
 	
 	/**
 	 * The name of the xml tag for domain tags.
@@ -41,15 +45,15 @@ public interface ISystemUDAConstants {
 	 *  identifies the domain name. Its values will be
 	 *  a translated name like "Object" or "Folder".
 	 */
-	public static final String XE_DOMNAME = "Name"; //$NON-NLS-1$
+	public static final String XE_DOMNAME = "name"; //$NON-NLS-1$
 	/**
 	 * The name of the attribute we consistently use to store an element's name
 	 */
-	public static final String NAME_ATTR = "Name"; //$NON-NLS-1$
+	public static final String NAME_ATTR = "name"; //$NON-NLS-1$
 	/**
 	 * The type of the attribute we consistently use to store an element's name
 	 */
-	public static final String TYPE_ATTR = "Type"; //$NON-NLS-1$
+	public static final String TYPE_ATTR = "type"; //$NON-NLS-1$
 	
 	/**
 	 * The name of the attribute we consistently use to store an element's original IBM-supplied name

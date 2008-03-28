@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
+ * Xuan Chen        (IBM)        - [222263] Need to provide a PropertySet Adapter for System Team View
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -33,6 +34,8 @@ import org.eclipse.rse.core.subsystems.ISystemDragDropAdapter;
 import org.eclipse.rse.internal.ui.view.team.SystemTeamViewCategoryAdapter;
 import org.eclipse.rse.internal.ui.view.team.SystemTeamViewCategoryNode;
 import org.eclipse.rse.internal.ui.view.team.SystemTeamViewProfileAdapter;
+import org.eclipse.rse.internal.ui.view.team.SystemTeamViewPropertySetAdapter;
+import org.eclipse.rse.internal.ui.view.team.SystemTeamViewPropertySetNode;
 import org.eclipse.rse.internal.ui.view.team.SystemTeamViewSubSystemConfigurationAdapter;
 import org.eclipse.rse.internal.ui.view.team.SystemTeamViewSubSystemConfigurationNode;
 import org.eclipse.rse.ui.SystemBasePlugin;
@@ -63,6 +66,7 @@ public class SystemViewAdapterFactory implements IAdapterFactory {
 	private SystemTeamViewProfileAdapter profileAdapter = new SystemTeamViewProfileAdapter();
 	private SystemTeamViewCategoryAdapter categoryAdapter = new SystemTeamViewCategoryAdapter();
 	private SystemTeamViewSubSystemConfigurationAdapter subsysFactoryAdapter = new SystemTeamViewSubSystemConfigurationAdapter();
+	private SystemTeamViewPropertySetAdapter propertySetAdapter = new SystemTeamViewPropertySetAdapter();
 
 	private SystemViewFilterStringAdapter filterStringAdapter = new SystemViewFilterStringAdapter();
 
@@ -94,6 +98,7 @@ public class SystemViewAdapterFactory implements IAdapterFactory {
 		manager.registerAdapters(this, ISystemPromptableObject.class);
 		manager.registerAdapters(this, SystemTeamViewCategoryNode.class);
 		manager.registerAdapters(this, SystemTeamViewSubSystemConfigurationNode.class);
+		manager.registerAdapters(this, SystemTeamViewPropertySetNode.class);
 
 		// FIXME - UDAs no longer in core
 		//manager.registerAdapters(this, SystemTeamViewCompileTypeNode.class);
@@ -140,6 +145,7 @@ public class SystemViewAdapterFactory implements IAdapterFactory {
 		} else if (adaptableObject instanceof SystemTeamViewCategoryNode)
 			adapter = categoryAdapter;
 		else if (adaptableObject instanceof SystemTeamViewSubSystemConfigurationNode) adapter = subsysFactoryAdapter;
+		else if (adaptableObject instanceof SystemTeamViewPropertySetNode) adapter = propertySetAdapter;
 
 		/** FIXME - UDAs no longer in core
 		 else if (adaptableObject instanceof SystemTeamViewCompileTypeNode)

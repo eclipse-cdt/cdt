@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [180562][api] dont implement ISystemCompileXMLConstants
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Xuan Chen        (IBM)    - [222263] Need to provide a PropertySet Adapter for System Team View (cleanup some use action stuff)
  *******************************************************************************/
 
 package org.eclipse.rse.internal.useractions.ui.compile;
@@ -183,30 +184,6 @@ public abstract class SystemCompileProfile {
 		return parentManager.getCompileProfileFolder(this);
 	}
 
-	/**
-	 * Should you require access to the IFile handle to the persisted xml file,
-	 *  call this method. Note, this file is only created on first touch,
-	 *  so file may be a handle to something that doesn't exist yet.
-	 */
-	public IFile getCompileProfileFile() {
-		IFolder folder = getCompileFolder();
-		IFile file = folder.getFile(getSaveFileName());
-		return file;
-	}
-
-	/**
-	 * Should you require access to the java.io.File handle to the persisted xml file,
-	 *  call this method. Note, this file is only created on first touch,
-	 *  so file may be a handle to something that doesn't exist yet.
-	 */
-	public File getCompileProfileJavaFile() {
-		IFolder folder = getCompileFolder();
-		IPath path = folder.getLocation().makeAbsolute();
-		path = path.append(IPath.SEPARATOR + getSaveFileName());
-		File file = new File(path.makeAbsolute().toOSString());
-		return file;
-	}
-
 	// -------------------
 	// ABSTRACT METHODS...
 	// -------------------
@@ -217,18 +194,6 @@ public abstract class SystemCompileProfile {
 	 * This method must be implemented to return an instance of your subclass of SystemCompilableSource.
 	 */
 	public abstract SystemCompilableSource getCompilableSourceObject(Shell shell, Object selectedObject, SystemCompileCommand compileCmd, boolean isPrompt, Viewer viewer);
-
-	// -----------------------------------
-	// POTENTIALLY OVERRIDABLE METHODS...
-	// -----------------------------------
-	/**
-	 * Return the name of the xml file we will persist this profile's compile command
-	 *  information to. 
-	 * The default is "compile.xml" and need not be overridden unless you don't like that name :-).
-	 */
-	protected String getSaveFileName() {
-		return ISystemCompileXMLConstants.FILE_NAME;
-	}
 
 	/**
 	 * This method is called by the constructor, prior to reading the xml contents from disk.
@@ -531,6 +496,8 @@ public abstract class SystemCompileProfile {
 		if (null == compileCommandPropertySet)
 		{
 			compileCommandPropertySet = systemProfile.createPropertySet(compileCommandPropertySetName);
+			//Set its name and type attributes
+			compileCommandPropertySet.addProperty(ISystemCompileXMLConstants.LABEL_ATTRIBUTE, ISystemCompileXMLConstants.COMPILE_COMMAND_NAME);
 		}
 		// write type and compile commands for each
 		for (int i = 0; i < types.size(); i++) {
@@ -548,8 +515,10 @@ public abstract class SystemCompileProfile {
 			
 			IPropertySet thisCompileTypePropertySet = compileCommandPropertySet.createPropertySet(compileType.getType() + i);
 			//Set its properties.
+			thisCompileTypePropertySet.addProperty(ISystemCompileXMLConstants.TYPE_ATTRIBUTE, ISystemCompileXMLConstants.TYPE_ELEMENT);
+			thisCompileTypePropertySet.addProperty(ISystemCompileXMLConstants.LABEL_ATTRIBUTE, compileType.getType());
 			thisCompileTypePropertySet.addProperty(ISystemCompileXMLConstants.LASTUSED_ATTRIBUTE, lastUsedName);
-			thisCompileTypePropertySet.addProperty(ISystemCompileXMLConstants.TYPE_ATTRIBUTE, compileType.getType());
+			thisCompileTypePropertySet.addProperty(ISystemCompileXMLConstants.SOURCETYPE_ATTRIBUTE, compileType.getType());
 			Vector cmds = compileType.getCompileCommands();
 			for (int j = 0; j < cmds.size(); j++) {
 				SystemCompileCommand cmd = (SystemCompileCommand) (cmds.get(j));
@@ -559,6 +528,7 @@ public abstract class SystemCompileProfile {
 					thisCompileCommandPropertySet.addProperty(ISystemCompileXMLConstants.ID_ATTRIBUTE, cmd.getId());
 				}
 				thisCompileCommandPropertySet.addProperty(ISystemCompileXMLConstants.LABEL_ATTRIBUTE, cmd.getLabel());
+				thisCompileCommandPropertySet.addProperty(ISystemCompileXMLConstants.TYPE_ATTRIBUTE, ISystemCompileXMLConstants.COMPILECOMMAND_ELEMENT);
 				thisCompileCommandPropertySet.addProperty(ISystemCompileXMLConstants.NATURE_ATTRIBUTE, cmd.getNature());
 				thisCompileCommandPropertySet.addProperty(ISystemCompileXMLConstants.DEFAULT_ATTRIBUTE, cmd.getDefaultString());
 				thisCompileCommandPropertySet.addProperty(ISystemCompileXMLConstants.CURRENT_ATTRIBUTE, cmd.getCurrentString());

@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ * Xuan Chen        (IBM)    - [222263] Need to provide a PropertySet Adapter for System Team View (cleanup some use action stuff)
+ *******************************************************************************/
+
 package org.eclipse.rse.internal.useractions.ui.compile;
 
 import org.eclipse.rse.core.RSECorePlugin;
@@ -6,11 +18,10 @@ import org.eclipse.rse.core.RSECorePlugin;
  * Constants used in the persistence of the compile commands, into an xml file
  */
 public interface ISystemCompileXMLConstants {
-	// The file name to use to store the xml file that
-	// holds info on compile name associations for a 
-	// profile
-	public static final String COMPILE_COMMAND_PROPRERTY_SET_PREFIX = "CC."; //$NON-NLS-1$
-	public static final String FILE_NAME = "compileCommands.xml"; //$NON-NLS-1$
+	
+	public static final String COMPILE_COMMAND_PROPRERTY_SET_PREFIX = "CompileCommand."; //$NON-NLS-1$
+	public static final String COMPILE_COMMAND_NAME = "Compile Commands"; //$NON-NLS-1$
+	
 	// root tag
 	/**
 	 * The name of the root element (tag) for the compile types xml file. That element is named "types".
@@ -41,7 +52,7 @@ public interface ISystemCompileXMLConstants {
 	 * The xml element is named "compiletype".
 	 */
 	public static final String TYPE_ELEMENT = "compiletype"; //$NON-NLS-1$
-	public static final String TYPE_ATTRIBUTE = "sourcetype"; //$NON-NLS-1$
+	public static final String SOURCETYPE_ATTRIBUTE = "sourcetype"; //$NON-NLS-1$
 	/**
 	 * The name of the attribute holding the last-used compile command. This value identifies that 
 	 *   command via its label value. 
@@ -63,6 +74,7 @@ public interface ISystemCompileXMLConstants {
 	 *   were called compile names).
 	 */
 	public static final String LABEL_ATTRIBUTE = "name"; //$NON-NLS-1$
+	public static final String TYPE_ATTRIBUTE = "type"; //$NON-NLS-1$
 	/**
 	 * The name of the attribute holding the nature value. This tells the framework if this is
 	 *   an IBM-supplied or user-supplied compile command. The xml attribute is named "nature".

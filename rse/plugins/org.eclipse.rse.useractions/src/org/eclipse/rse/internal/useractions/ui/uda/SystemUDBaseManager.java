@@ -11,6 +11,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
  *                                API to the user actions plugin
+ * Xuan Chen        (IBM)    - [222263] Need to provide a PropertySet Adapter for System Team View (cleanup some use action stuff)
  *******************************************************************************/
 
 package org.eclipse.rse.internal.useractions.ui.uda;
@@ -990,6 +991,7 @@ public abstract class SystemUDBaseManager implements IResourceChangeListener, IS
 		if (udaRootPropertySet == null)
 		{
 			udaRootPropertySet = profile.createPropertySet(udaRootPropertySetName);
+			udaRootPropertySet.addProperty(ISystemUDAConstants.NAME_ATTR, ISystemUDAConstants.ACTION_FILETYPES);
 			udaRootPropertySet.addProperty(ISystemUDAConstants.RELEASE_ATTR, CURRENT_RELEASE_NAME);
 			udaRootPropertySet.addProperty(ISystemUDAConstants.UDA_ROOT_ATTR, getDocumentRootTagName());
 		}

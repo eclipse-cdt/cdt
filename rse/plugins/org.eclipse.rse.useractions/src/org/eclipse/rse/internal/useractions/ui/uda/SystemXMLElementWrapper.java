@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [180562][api] dont implement ISystemUDAConstants
+ * Xuan Chen        (IBM)    - [222263] Need to provide a PropertySet Adapter for System Team View (cleanup some use action stuff)
  *******************************************************************************/
 
 package org.eclipse.rse.internal.useractions.ui.uda;
@@ -169,7 +170,7 @@ public abstract class SystemXMLElementWrapper implements IAdaptable {
 	}
 
 	/**
-	 * Return the value of this node's "Name" attribute
+	 * Return the value of this node's "name" attribute
 	 */
 	public String getName() {
 		return elm.getPropertyValue(ISystemUDAConstants.NAME_ATTR);

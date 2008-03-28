@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * {Name} (company) - description of contribution.
+ * Xuan Chen        (IBM)        - [222263] Need to provide a PropertySet Adapter for System Team View
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.team;
@@ -37,6 +38,7 @@ public class SystemTeamViewCategoryNode implements IAdaptable
 	public static final String MEMENTO_FILTERPOOLS = "pools"; //$NON-NLS-1$
 	public static final String MEMENTO_USERACTIONS = "actions"; //$NON-NLS-1$
 	public static final String MEMENTO_COMPILECMDS = "cmds"; //$NON-NLS-1$
+	public static final String MEMENTO_PROPERTYSETS = "propertysets"; //$NON-NLS-1$
 	public static final String MEMENTO_TARGETS = "targets"; //$NON-NLS-1$
 		
 	/**

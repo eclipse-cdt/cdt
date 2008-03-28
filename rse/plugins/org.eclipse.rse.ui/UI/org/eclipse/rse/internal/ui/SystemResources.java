@@ -18,6 +18,7 @@
  * David McKnight   (IBM)        - [216252] [nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [223103] [cleanup] fix broken externalized strings
  * Rupen Mardirossian (IBM)      - [210682] Added BUTTON_OVERWRITE_ALL & and tooltip, also added some verbiage for new SystemCopyDialog.	
+ * Xuan Chen        (IBM)        - [222263] Need to provide a PropertySet Adapter for System Team View
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui;
@@ -389,12 +390,16 @@ public class SystemResources extends NLS
 	// TEAM VIEW
 	public static String RESID_TEAMVIEW_SUBSYSFACTORY_VALUE;
 	public static String RESID_TEAMVIEW_CATEGORY_VALUE;
+	public static String RESID_TEAMVIEW_PROPERTYSET_VALUE;
 
 	public static String RESID_TEAMVIEW_CATEGORY_CONNECTIONS_LABEL;
 	public static String RESID_TEAMVIEW_CATEGORY_CONNECTIONS_TOOLTIP;
 
 	public static String RESID_TEAMVIEW_CATEGORY_FILTERPOOLS_LABEL;
 	public static String RESID_TEAMVIEW_CATEGORY_FILTERPOOLS_TOOLTIP;
+	
+	public static String RESID_TEAMVIEW_CATEGORY_PROPERTYSET_LABEL;
+	public static String RESID_TEAMVIEW_CATEGORY_PROPERTYSET_TOOLTIP;
 
 	// ------------------------------
 	// REUSABLE WIDGET STRINGS...

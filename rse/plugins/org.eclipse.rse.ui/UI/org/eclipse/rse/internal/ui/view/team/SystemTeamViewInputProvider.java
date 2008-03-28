@@ -16,14 +16,19 @@
  * David Dykstal (IBM) - [189858] Removed the remote systems project in the team view
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  * Martin Oberhuber (Wind River) - [218524][api] Remove deprecated ISystemViewInputProvider#getShell()
+ * Xuan Chen        (IBM)        - [222263] Need to provide a PropertySet Adapter for System Team View
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.team;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemViewInputProvider;
 import org.eclipse.rse.internal.core.model.SystemProfileManager;
@@ -98,8 +103,18 @@ public class SystemTeamViewInputProvider implements IAdaptable, ISystemViewInput
 	 */
 	public Object[] getConnectionChildren(IHost selectedConnection)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		IPropertySet[] propertySets = selectedConnection.getPropertySets();
+		if (null == propertySets || propertySets.length == 0)
+		{
+			return new SystemTeamViewPropertySetNode[0];
+		}
+		List nodes = new ArrayList();
+		for (int i = 0; i < propertySets.length; i++) {
+			nodes.add(new SystemTeamViewPropertySetNode(selectedConnection, propertySets[i]));
+		}
+		SystemTeamViewPropertySetNode[] result = new SystemTeamViewPropertySetNode[nodes.size()];
+		nodes.toArray(result);
+		return result;
 	}
 
 	/* (non-Javadoc)
@@ -107,8 +122,13 @@ public class SystemTeamViewInputProvider implements IAdaptable, ISystemViewInput
 	 */
 	public boolean hasConnectionChildren(IHost selectedConnection)
 	{
-		// TODO Auto-generated method stub
-		return false;
+		IPropertySet[] sets = selectedConnection.getPropertySets();
+		if (sets == null || sets.length == 0){
+			return false;
+		}
+		else {
+			return true;
+		}
 	}
 
 	/* (non-Javadoc)

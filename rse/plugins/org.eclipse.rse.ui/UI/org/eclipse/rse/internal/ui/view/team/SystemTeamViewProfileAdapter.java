@@ -22,6 +22,7 @@
  * Martin Oberhuber (Wind River) - [cleanup] Avoid using SystemStartHere in production code
  * David Dykstal (IBM) - [202630] getDefaultPrivateProfile() and ensureDefaultPrivateProfile() are inconsistent
  * David Dykstal (IBM) - [cleanup] formatted
+ * Xuan Chen        (IBM)        - [222263] Need to provide a PropertySet Adapter for System Team View
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.team;
@@ -201,7 +202,7 @@ public class SystemTeamViewProfileAdapter extends AbstractSystemViewAdapter {
 	public SystemTeamViewCategoryNode[] getCategoryChildren(ISystemProfile profile) {
 		SystemTeamViewCategoryNode[] children = (SystemTeamViewCategoryNode[]) categoriesByProfile.get(profile);
 		if (children == null) {
-			children = new SystemTeamViewCategoryNode[2]; //5];
+			children = new SystemTeamViewCategoryNode[3]; //5];
 			for (int idx = 0; idx < children.length; idx++)
 				children[idx] = new SystemTeamViewCategoryNode(profile);
 			children[0].setLabel(SystemResources.RESID_TEAMVIEW_CATEGORY_CONNECTIONS_LABEL);
@@ -213,6 +214,11 @@ public class SystemTeamViewProfileAdapter extends AbstractSystemViewAdapter {
 			children[1].setDescription(SystemResources.RESID_TEAMVIEW_CATEGORY_FILTERPOOLS_TOOLTIP);
 			children[1].setImageDescriptor(RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_FILTERPOOL_ID));
 			children[1].setMementoHandle(SystemTeamViewCategoryNode.MEMENTO_FILTERPOOLS);
+			
+			children[2].setLabel(SystemResources.RESID_TEAMVIEW_CATEGORY_PROPERTYSET_LABEL);
+			children[2].setDescription(SystemResources.RESID_TEAMVIEW_CATEGORY_PROPERTYSET_TOOLTIP);
+			children[2].setImageDescriptor(RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_PROPERTIES_ID));
+			children[2].setMementoHandle(SystemTeamViewCategoryNode.MEMENTO_PROPERTYSETS);
 /*
 			children[2].setLabel(SystemResources.RESID_TEAMVIEW_CATEGORY_USERACTIONS_LABEL);
 			children[2].setDescription(SystemResources.RESID_TEAMVIEW_CATEGORY_USERACTIONS_TOOLTIP);

@@ -19,6 +19,7 @@
  * David Dykstal (IBM) - [197036] rewrote getSubSystemConfigurationNodes to get filter pools
  *                                in a way that delays the loading of subsystem configurations
  * Xuan Chen     (IBM) - [223126] [api][breaking] Remove API related to User Actions in RSE Core/UI
+ * Xuan Chen     (IBM) - [222263] Need to provide a PropertySet Adapter for System Team View
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.team;
@@ -35,6 +36,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.core.model.IPropertySet;
+import org.eclipse.rse.core.model.IPropertySetContainer;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
@@ -162,6 +165,10 @@ public class SystemTeamViewCategoryAdapter
 		{
 			return profile.getHosts();
 		}
+		else if (categoryType.equals(SystemTeamViewCategoryNode.MEMENTO_PROPERTYSETS))
+		{
+			return createSystemTeamViewPropertySetNodes(profile, category);
+		}
 		else
 			return createSubSystemConfigurationNodes(profile, category);
 	}
@@ -211,6 +218,27 @@ public class SystemTeamViewCategoryAdapter
 			}
 		}
 		SystemTeamViewSubSystemConfigurationNode[] result = new SystemTeamViewSubSystemConfigurationNode[nodes.size()];
+		nodes.toArray(result);
+		return result;
+	}
+	
+	/**
+	 * Create subsystem configuration child nodes for expanded category node.
+	 */
+	private SystemTeamViewPropertySetNode[] createSystemTeamViewPropertySetNodes(IPropertySetContainer profile, SystemTeamViewCategoryNode category) {
+		
+		IPropertySet[] propertySets = profile.getPropertySets();
+		if (null == propertySets || propertySets.length == 0)
+		{
+			return new SystemTeamViewPropertySetNode[0];
+		}
+		// construct the nodes for the view based on these configurations
+		List nodes = new ArrayList();
+		//String categoryType = category.getMementoHandle();
+		for (int i = 0; i < propertySets.length; i++) {
+			nodes.add(new SystemTeamViewPropertySetNode(profile, propertySets[i]));
+		}
+		SystemTeamViewPropertySetNode[] result = new SystemTeamViewPropertySetNode[nodes.size()];
 		nodes.toArray(result);
 		return result;
 	}

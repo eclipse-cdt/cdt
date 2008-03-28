@@ -15,6 +15,7 @@
  * David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
  * David McKnight   (IBM)        - [216252] [nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [223103] [cleanup] fix broken externalized strings
+ * Xuan Chen        (IBM)        - [222263] Need to provide a PropertySet Adapter for System Team View
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -127,6 +128,7 @@ public class SystemViewResources extends NLS {
 	// Property sheet values: Categories in Team view
 	public static String	RESID_PROPERTY_TEAM_CATEGORY_TYPE_VALUE;
 	public static String	RESID_PROPERTY_TEAM_SSFACTORY_TYPE_VALUE;
+	public static String    RESID_PROPERTY_TEAM_PROPERTYSET_TYPE_VALUE;
 	
 	// Miscellaneous / common
 	public static String    RESID_SCRATCHPAD;

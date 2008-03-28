@@ -13,8 +13,8 @@ package org.eclipse.cdt.managedbuilder.internal.core;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -98,10 +98,6 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	private IConfiguration parent;
 	private ProjectType projectType;
 	private ManagedProject managedProject;
-//	private ToolChain toolChain;
-//	private List resourceConfigurationList;
-//	private Map resourceConfigurationMap;
-	//  Managed Build model attributes
 	private String artifactName;
 	private String cleanCommand;
 	private String artifactExtension;
@@ -1392,28 +1388,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getErrorParserList()
 	 */
 	public String[] getErrorParserList() {
-//		String parserIDs = getErrorParserIds();
-//		String[] errorParsers;
-//		if (parserIDs != null) {
-//			// Check for an empty string
-//			if (parserIDs.length() == 0) {
-//				errorParsers = new String[0];
-//			} else {
-//				StringTokenizer tok = new StringTokenizer(parserIDs, ";"); //$NON-NLS-1$
-//				List list = new ArrayList(tok.countTokens());
-//				while (tok.hasMoreElements()) {
-//					list.add(tok.nextToken());
-//				}
-//				String[] strArr = {""};	//$NON-NLS-1$
-//				errorParsers = (String[]) list.toArray(strArr);
-//			}
-//		} else {
-//			// If no error parsers are specified, the default is 
-//			// all error parsers
-//			errorParsers = CCorePlugin.getDefault().getAllErrorParsersIDs();
-//		}
-//		return errorParsers;
-		Set set = contributeErrorParsers(null, true);
+		Set<String> set = contributeErrorParsers(null, true);
 		if(set != null){
 			String result[] = new String[set.size()];
 			set.toArray(result);
@@ -1422,11 +1397,11 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return CCorePlugin.getDefault().getAllErrorParsersIDs();
 	}
 
-	public Set contributeErrorParsers(Set set, boolean includeChildren) {
+	public Set<String> contributeErrorParsers(Set<String> set, boolean includeChildren) {
 		String parserIDs = getErrorParserIdsAttribute();
 		if (parserIDs != null){
 			if(set == null)
-				set = new HashSet();
+				set = new LinkedHashSet<String>();
 			if(parserIDs.length() != 0) {
 				StringTokenizer tok = new StringTokenizer(parserIDs, ";"); //$NON-NLS-1$
 				while (tok.hasMoreElements()) {
@@ -2356,23 +2331,24 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public void setErrorParserList(String[] ids) {
 		if(ids == null){
 			//reset
 			resetErrorParsers();
 		} else {
 			resetErrorParsers();
-			Set oldSet = contributeErrorParsers(null, true);
+			Set<String> oldSet = contributeErrorParsers(null, true);
 			if(oldSet == null)
-				oldSet = new HashSet();
-			HashSet newSet = new HashSet();
+				oldSet = new LinkedHashSet<String>();
+			LinkedHashSet<String> newSet = new LinkedHashSet<String>();
 			newSet.addAll(Arrays.asList(ids));
 			newSet.remove(null);
-			HashSet newCopy = (HashSet)newSet.clone();
+			LinkedHashSet<String> newCopy = (LinkedHashSet<String>)newSet.clone();
 			newSet.removeAll(oldSet);
 			oldSet.removeAll(newCopy);
-			Set removed = oldSet;
-			Set added = newSet;
+			Set<String> removed = oldSet;
+			Set<String> added = newSet;
 			
 			removeErrorParsers(removed);
 			setErrorParserAttribute((String[])added.toArray(new String[added.size()]));
@@ -2388,10 +2364,10 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		}
 	}
 	
-	void removeErrorParsers(Set set){
-		Set oldSet = contributeErrorParsers(null, false);
+	void removeErrorParsers(Set<String> set){
+		Set<String> oldSet = contributeErrorParsers(null, false);
 		if(oldSet == null)
-			oldSet = new HashSet();
+			oldSet = new LinkedHashSet<String>();
 		
 		oldSet.removeAll(set);
 		setErrorParserAttribute((String[])oldSet.toArray(new String[oldSet.size()]));

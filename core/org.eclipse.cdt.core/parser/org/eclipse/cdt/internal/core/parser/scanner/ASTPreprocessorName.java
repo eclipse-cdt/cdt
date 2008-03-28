@@ -43,7 +43,8 @@ class ASTPreprocessorName extends ASTPreprocessorNode implements IASTName {
 		return fBinding;
 	}
 	public ILinkage getLinkage() {
-		return Linkage.NO_LINKAGE;
+		final IASTTranslationUnit tu= getTranslationUnit();
+		return tu == null ? Linkage.NO_LINKAGE : tu.getLinkage();
 	}
 	public IASTCompletionContext getCompletionContext() {
 		return null;

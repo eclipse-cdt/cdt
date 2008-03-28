@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.index.ArrayTypeClone;
+import org.eclipse.cdt.internal.core.index.IIndexBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -27,6 +28,7 @@ import org.eclipse.core.runtime.CoreException;
 public class PDOMArrayType extends PDOMNode implements IIndexType, IArrayType, ITypeContainer {
 
 	private static final int TYPE = PDOMNode.RECORD_SIZE;
+	@SuppressWarnings("hiding")
 	private static final int RECORD_SIZE= TYPE+4;
 
 	public PDOMArrayType(PDOM pdom, int record) {
@@ -48,12 +50,14 @@ public class PDOMArrayType extends PDOMNode implements IIndexType, IArrayType, I
 		}
 	}
 
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 
+	@Override
 	public int getNodeType() {
-		return PDOMLinkage.ARRAY_TYPE;
+		return IIndexBindingConstants.ARRAY_TYPE;
 	}
 
 	public IASTExpression getArraySizeExpression() throws DOMException {
@@ -93,10 +97,12 @@ public class PDOMArrayType extends PDOMNode implements IIndexType, IArrayType, I
 		throw new PDOMNotImplementedError();
 	}
 	
+	@Override
 	public Object clone() {
 		return new ArrayTypeClone(this);
 	}
 	
+	@Override
 	public void delete(PDOMLinkage linkage) throws CoreException {
 		linkage.deleteType(getType(), record);
 		super.delete(linkage);

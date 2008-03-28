@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,30 +29,25 @@ import org.eclipse.core.runtime.CoreException;
  * 
  * @since 4.0
  */
-public interface IIndexMacro extends IMacroBinding {
+public interface IIndexMacro extends IMacroBinding, IIndexBinding {
 	
 	IIndexMacro[] EMPTY_INDEX_MACRO_ARRAY = new IIndexMacro[0];
 
 	/**
-	 * If available, return the file location for this macro definition
-	 * otherwise return null
-	 * @return
+	 * If available, return the file location for the macro definition of this macro,
+	 * otherwise return <code>null</code>.
 	 */
 	IASTFileLocation getFileLocation();
 	
 	/**
-	 * Returns the file this macro belongs to.
+	 * Returns the file in which this macro is defined and belongs to.
 	 * @throws CoreException 
 	 */
 	IIndexFile getFile() throws CoreException;
-	
-	/**
-	 * Returns the character offset of the location of the name.
-	 */
-	public int getNodeOffset();
 
 	/**
-	 * Returns the length of the name.
+	 * Returns the name of the definition of this macro, or <code>null</code> if not available.
+	 * @since 5.0
 	 */
-	public int getNodeLength();
+	IIndexName getDefinition();
 }

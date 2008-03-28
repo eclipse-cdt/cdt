@@ -9,7 +9,6 @@
  *    Markus Schorn - initial API and implementation
  *    Ed Swartz (Nokia)
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.ui.viewsupport;
 
 import java.util.ArrayList;
@@ -346,9 +345,12 @@ public class IndexUI {
 			throws CoreException {
 		ITranslationUnit tu= getTranslationUnit(preferProject, macro.getFileLocation());
 		if (tu != null) {
-			IRegion region= new Region(macro.getNodeOffset(), macro.getNodeLength());
-			long timestamp= macro.getFile().getTimestamp();
-			return CElementHandleFactory.create(tu, macro, region, timestamp);
+			IIndexName def= macro.getDefinition();
+			if (def != null) {
+				IRegion region= new Region(def.getNodeOffset(), def.getNodeLength());
+				long timestamp= macro.getFile().getTimestamp();
+				return CElementHandleFactory.create(tu, macro, region, timestamp);
+			}
 		}
 		return null;
 	}

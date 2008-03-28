@@ -679,6 +679,10 @@ public class LocationMap implements ILocationResolver {
 		return result.toArray(new IASTName[result.size()]);
 	}
 	
+	public IASTName[] getMacroReferences() {
+		return fMacroReferences.toArray(new IASTName[fMacroReferences.size()]);
+	}
+
 	public ASTPreprocessorName[] getNestedMacroReferences(ASTMacroExpansion expansion) {
 		final IASTName explicitRef= expansion.getMacroReference(); 
 		List<ASTPreprocessorName> result= new ArrayList<ASTPreprocessorName>();

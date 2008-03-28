@@ -29,12 +29,14 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndexMacroContainer;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.composite.AbstractCompositeFactory;
 import org.eclipse.cdt.internal.core.index.composite.CompositeArrayType;
 import org.eclipse.cdt.internal.core.index.composite.CompositeFunctionType;
+import org.eclipse.cdt.internal.core.index.composite.CompositeMacroContainer;
 import org.eclipse.cdt.internal.core.index.composite.CompositePointerType;
 import org.eclipse.cdt.internal.core.index.composite.CompositeQualifierType;
 import org.eclipse.cdt.internal.core.index.composite.CompositingNotImplementedError;
@@ -120,6 +122,8 @@ public class CCompositesFactory extends AbstractCompositeFactory implements ICom
 			result = new CompositeCEnumerator(this, rbinding);
 		} else if(rbinding instanceof ITypedef) {
 			result = new CompositeCTypedef(this, rbinding);
+		} else if(rbinding instanceof IIndexMacroContainer) {
+			result= new CompositeMacroContainer(this, rbinding);
 		} else {
 			throw new CompositingNotImplementedError("composite binding unavailable for "+rbinding+" "+rbinding.getClass()); //$NON-NLS-1$ //$NON-NLS-2$
 		}

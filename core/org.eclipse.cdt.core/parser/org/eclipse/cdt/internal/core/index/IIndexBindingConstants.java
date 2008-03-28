@@ -17,5 +17,7 @@ public interface IIndexBindingConstants {
 	 int POINTER_TYPE= 1;
 	 int ARRAY_TYPE= 2;
 	 int QUALIFIER_TYPE= 3;
-	 int LAST_CONSTANT= QUALIFIER_TYPE;
+	 int MACRO_DEFINITION = 4;
+	 int MACRO_CONTAINER = 5;
+	 int LAST_CONSTANT= MACRO_CONTAINER;
 }

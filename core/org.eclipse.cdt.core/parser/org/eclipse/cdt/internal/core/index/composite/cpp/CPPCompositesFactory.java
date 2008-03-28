@@ -48,12 +48,14 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndexMacroContainer;
 import org.eclipse.cdt.internal.core.index.CIndex;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.composite.AbstractCompositeFactory;
 import org.eclipse.cdt.internal.core.index.composite.CompositeArrayType;
+import org.eclipse.cdt.internal.core.index.composite.CompositeMacroContainer;
 import org.eclipse.cdt.internal.core.index.composite.CompositePointerType;
 import org.eclipse.cdt.internal.core.index.composite.CompositeQualifierType;
 import org.eclipse.cdt.internal.core.index.composite.CompositingNotImplementedError;
@@ -154,6 +156,7 @@ public class CPPCompositesFactory extends AbstractCompositeFactory implements IC
 		return index;
 	}
 	
+	@Override
 	protected IIndexFragmentBinding findOneDefinition(IBinding binding) {
 		return super.findOneDefinition(binding);
 	}
@@ -266,6 +269,8 @@ public class CPPCompositesFactory extends AbstractCompositeFactory implements IC
 				result = new CompositeCPPTypedef(this, (ICPPBinding) binding);
 			} else if(binding instanceof ICPPTemplateTypeParameter) {
 				result = new CompositeCPPTemplateTypeParameter(this, (ICPPTemplateTypeParameter) binding);
+			} else if(binding instanceof IIndexMacroContainer) {
+				result= new CompositeMacroContainer(this, binding);
 			} else {
 				throw new CompositingNotImplementedError("composite binding unavailable for "+binding+" "+binding.getClass()); //$NON-NLS-1$ //$NON-NLS-2$
 			}

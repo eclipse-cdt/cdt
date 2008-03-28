@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,7 +31,6 @@ public class Messages extends NLS {
 	public static String TeamPDOMExportOperation_errorWriteTempFile;
 	public static String TeamPDOMExportOperation_subtaskCreateDatabase;
 	public static String TeamPDOMExportOperation_taskExportIndex;
-	public static String WritablePDOM_error_unknownLinkage;
 	public static String AbstractIndexerTask_parsingFileTask;
 	public static String AbstractIndexerTask_errorWhileParsing;
 	public static String AbstractIndexerTask_tooManyIndexProblems;

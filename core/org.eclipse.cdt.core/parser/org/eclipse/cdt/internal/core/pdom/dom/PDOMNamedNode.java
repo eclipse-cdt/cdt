@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 QNX Software Systems and others.
+ * Copyright (c) 2006, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,10 @@ public abstract class PDOMNamedNode extends PDOMNode {
 	/**
 	 * The size in bytes of a PDOMNamedNode record in the database.
 	 */
+	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMNode.RECORD_SIZE + 4;
+
+	private char[] fName;
 	
 	public PDOMNamedNode(PDOM pdom, int record) {
 		super(pdom, record);
@@ -40,12 +43,14 @@ public abstract class PDOMNamedNode extends PDOMNode {
 
 	public PDOMNamedNode(PDOM pdom, PDOMNode parent, char[] name) throws CoreException {
 		super(pdom, parent);
-
+		
+		fName= name;
 		Database db = pdom.getDB();
 		db.putInt(record + NAME,
 				name != null ? db.newString(name).getRecord() : 0);
 	}
 
+	@Override
 	abstract protected int getRecordSize();
 
 	public IString getDBName() throws CoreException {
@@ -61,13 +66,17 @@ public abstract class PDOMNamedNode extends PDOMNode {
 	}
 	
 	public char[] getNameCharArray() throws CoreException {
-		return getDBName().getChars(); 
+		if (fName == null) {
+			fName= getDBName().getChars();
+		}
+		return fName; 
 	}
 	
 	public boolean hasName(char[] name) throws CoreException {
 		return getDBName().equals(name);
 	}
 	
+	@Override
 	public void delete(PDOMLinkage linkage) throws CoreException {
 		final Database db = pdom.getDB();
 		final int namerec= db.getInt(record + NAME);

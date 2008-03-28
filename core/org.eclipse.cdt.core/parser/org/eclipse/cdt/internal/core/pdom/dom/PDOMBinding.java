@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBindingComparator;
@@ -81,6 +82,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 			&& db.getInt(record + FIRST_REF_OFFSET) == 0;
 	}
 	
+	@Override
 	public int getRecord() {
 		return record;
 	}
@@ -174,13 +176,14 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 		return ""; //$NON-NLS-1$
 	}
 
+	@Override
 	public char[] getNameCharArray() {
 		try {
 			return super.getNameCharArray();
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
-		return new char[0];
+		return CharArrayUtils.EMPTY;
 	}
 	
 	public IIndexScope getParent() {
@@ -219,12 +222,14 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 		return pdom;
 	}
 
+	@Override
 	abstract protected int getRecordSize(); // superclass's implementation is no longer valid
 	
 	/* For debug purposes only
 	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		try {
 			return getName() + " " + getConstantNameForValue(getLinkageImpl(), getNodeType());  //$NON-NLS-1$
@@ -381,6 +386,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 	public void update(PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 	}
 	
+	@Override
 	final public void delete(PDOMLinkage linkage) throws CoreException {
 		assert false;
 	}

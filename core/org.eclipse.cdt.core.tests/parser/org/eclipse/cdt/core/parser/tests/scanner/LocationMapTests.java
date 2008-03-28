@@ -145,7 +145,7 @@ public class LocationMapTests extends BaseTestCase {
 			String filename, int offset, int length, int line, int endline, String sig) {
 		assertSame(binding, name.getBinding());
 		assertSame(binding, name.resolveBinding());
-		assertEquals(Linkage.NO_LINKAGE, name.getLinkage());
+		assertEquals(Linkage.CPP_LINKAGE, name.getLinkage());
 		assertEquals(nameString, name.toString());
 		checkASTNode(name, parent, property, filename, offset, length, line, endline, sig);
 		assertEquals(name.isDeclaration(), role == IASTNameOwner.r_declaration);

@@ -22,7 +22,6 @@ import org.eclipse.cdt.core.index.export.IExportProjectProvider;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.internal.core.CCoreInternals;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.WritablePDOM;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.core.runtime.CoreException;
@@ -87,9 +86,6 @@ public class GeneratePDOM implements ISafeRunnable {
 						exportedPDOM.setProperty(entry.getKey(), entry.getValue());
 					}
 				}
-				// fake PDOM-version to that which can be safely read by the CDT-version
-				// (and following CDT-versions) released at that PDOM-version.
-				exportedPDOM.getDB().setVersion(PDOM.EARLIEST_FORWARD_COMPATIBLE_VERSION);
 				exportedPDOM.close();
 			}
 			finally {

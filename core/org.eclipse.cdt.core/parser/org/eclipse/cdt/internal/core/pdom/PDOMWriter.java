@@ -46,6 +46,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.cdt.internal.core.index.IWritableIndex.IncludeInformation;
+import org.eclipse.cdt.internal.core.parser.scanner.LocationMap;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMASTAdapter;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerASTVisitor;
@@ -62,7 +63,8 @@ import org.eclipse.osgi.util.NLS;
  */
 abstract public class PDOMWriter {
 	public static int SKIP_ALL_REFERENCES= -1;
-	public static int SKIP_TYPE_REFERENCES= 1;
+	public static int SKIP_TYPE_REFERENCES=  1;
+	public static int SKIP_MACRO_REFERENCES= 2;
 	public static int SKIP_NO_REFERENCES= 0;
 	
 	private static class Symbols {
@@ -108,7 +110,8 @@ abstract public class PDOMWriter {
 	
 	/**
 	 * Determines whether references are skipped or not. Provide one of 
-	 * {@link #SKIP_ALL_REFERENCES}, {@link #SKIP_TYPE_REFERENCES} or {@link #SKIP_NO_REFERENCES}.
+	 * {@link #SKIP_ALL_REFERENCES}, {@link #SKIP_NO_REFERENCES} or a combination of
+	 * {@link #SKIP_TYPE_REFERENCES} or {@link #SKIP_MACRO_REFERENCES}.
 	 */
 	public void setSkipReferences(int options) {
 		fSkipReferences= options;
@@ -334,6 +337,20 @@ abstract public class PDOMWriter {
 			}
 		};
 		ast.accept(visitor);
+		
+		if ((fSkipReferences & SKIP_MACRO_REFERENCES) == 0) {
+			LocationMap lm= (LocationMap) ast.getAdapter(LocationMap.class);
+			if (lm != null) {
+				IASTName[] refs= lm.getMacroReferences();
+				for (IASTName name : refs) {
+					IASTFileLocation nameLoc = name.getFileLocation();
+					if (nameLoc != null) {
+						IIndexFileLocation location = fResolver.resolveASTPath(nameLoc.getFileName());
+						addToMap(symbolMap, location, new IASTName[]{name, null});
+					}
+				}
+			}
+		}
 		
 		fStatistics.fUnresolvedIncludesCount += unresolvedIncludes;
 		fStatistics.fPreprocessorProblemCount+= ast.getPreprocessorProblemsCount() - unresolvedIncludes;

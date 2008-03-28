@@ -123,6 +123,7 @@ public class FindBinding {
 			super(linkage.pdom);
 			this.linkage= linkage;
 		}
+		@Override
 		public int compare(int record1, int record2) throws CoreException {
 			int cmp= super.compare(record1, record2);	// compare names
 			if (cmp==0) {								// any order will do.
@@ -144,16 +145,7 @@ public class FindBinding {
 			fPDom= pdom;
 		}
 		public int compare(int record1, int record2) throws CoreException {
-			int cmp= compare(PDOMMacro.getNameInDB(fPDom, record1), PDOMMacro.getNameInDB(fPDom, record2));	// compare names
-			if (cmp==0) {								// any order will do.
-				if (record1 < record2) {
-					return -1;
-				}
-				else if (record1 > record2) {			
-					return 1;
-				}
-			}
-			return cmp;
+			return compare(PDOMNamedNode.getDBName(fPDom, record1), PDOMNamedNode.getDBName(fPDom, record2));	// compare names
 		}
 		private int compare(IString nameInDB, IString nameInDB2) throws CoreException {
 			return nameInDB.compareCompatibleWithIgnoreCase(nameInDB2);

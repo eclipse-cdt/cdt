@@ -50,7 +50,7 @@ public class PDOMSearchTextSelectionQuery extends PDOMSearchQuery {
 				if (ast != null) {
 					IASTName searchName= ast.getNodeSelector(null).findEnclosingName(selection.getOffset(), selection.getLength());
 					if (searchName != null) {
-						IBinding binding = searchName.resolveBinding();
+						IBinding binding = index.findBinding(searchName);
 						if (binding != null)
 							createMatches(index, binding);
 					}

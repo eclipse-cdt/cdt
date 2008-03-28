@@ -240,4 +240,15 @@ public class PDOMProxy implements IPDOM {
 			return fDelegate.getAllFiles();
 		return IIndexFragmentFile.EMPTY_ARRAY;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.index.IIndexFragment#findMacroContainers(java.util.regex.Pattern, org.eclipse.cdt.core.index.IndexFilter, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public synchronized IIndexFragmentBinding[] findMacroContainers(Pattern pattern, IndexFilter filter,
+			IProgressMonitor monitor) throws CoreException {
+		if (fDelegate != null) {
+			return fDelegate.findMacroContainers(pattern, filter, monitor);
+		}
+		return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
+	}
 }

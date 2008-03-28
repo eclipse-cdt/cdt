@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.ui.tests.text.selection;
 
 import java.io.IOException;
@@ -47,6 +46,7 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
 		sourceIndexerID= indexerID;
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		
@@ -58,6 +58,7 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
 		index= CCorePlugin.getIndexManager().getIndex(fCProject);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		closeAllEditors();
 		CProjectHelper.delete(fCProject);
@@ -511,7 +512,7 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
         IFile hfile = importFile("aheader.h", hcode); 
-        IFile file = importFile("source.cpp", scode); 
+        IFile file = importFile("source.c", scode); 
         TestSourceReader.waitUntilFileIsIndexed(index, file, MAX_WAIT_TIME);
         IASTNode decl;
         int offset0, offset1;
@@ -520,7 +521,7 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
         testF3(hfile, offset1);
         IEditorPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor(); 
         IEditorInput input = part.getEditorInput();
-        assertEquals("source.cpp", ((FileEditorInput)input).getFile().getName());
+        assertEquals("source.c", ((FileEditorInput)input).getFile().getName());
     }    
     
     // int myFunc();

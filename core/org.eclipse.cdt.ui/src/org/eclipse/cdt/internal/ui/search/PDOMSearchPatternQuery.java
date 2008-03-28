@@ -6,11 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * IBM Corporation
- * Markus Schorn (Wind River Systems)
+ *    QNX - Initial API and implementation
+ *    IBM Corporation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.search;
 
 import java.util.ArrayList;
@@ -85,7 +84,7 @@ public class PDOMSearchPatternQuery extends PDOMSearchQuery {
 		this.patternStr = patternStr.trim();
 		
 		// Parse the pattern string
-		List patternList = new ArrayList();
+		List<Pattern> patternList = new ArrayList<Pattern>();
     	StringBuffer buff = new StringBuffer();
     	int n = patternStr.length();
     	for (int i = 0; i < n; ++i) {
@@ -120,9 +119,10 @@ public class PDOMSearchPatternQuery extends PDOMSearchQuery {
 				patternList.add(Pattern.compile(buff.toString(),Pattern.CASE_INSENSITIVE));
     	}
 	    
-    	pattern = (Pattern[])patternList.toArray(new Pattern[patternList.size()]); 
+    	pattern = patternList.toArray(new Pattern[patternList.size()]); 
 	}
 	
+	@Override
 	public IStatus runWithIndex(IIndex index, IProgressMonitor monitor) throws OperationCanceledException {
 		try {
 			IndexFilter filter= IndexFilter.ALL;
@@ -179,6 +179,12 @@ public class PDOMSearchPatternQuery extends PDOMSearchQuery {
 					createMatches(index, pdomBinding);
 				}
 			}
+			if ((flags & FIND_MACRO) != 0 && pattern.length == 1) {
+				bindings = index.findMacroContainers(pattern[0], filter, monitor);
+				for (IIndexBinding indexBinding : bindings) {
+					createMatches(index, indexBinding);
+				}
+			}
 		} catch (CoreException e) {
 			return e.getStatus();
 		} catch (DOMException e) {
@@ -188,8 +194,8 @@ public class PDOMSearchPatternQuery extends PDOMSearchQuery {
 		return Status.OK_STATUS;
 	}
 
+	@Override
 	public String getLabel() {
 		return Messages.format(CSearchMessages.PDOMSearchPatternQuery_PatternQuery_labelPatternInScope, super.getLabel(), patternStr, scopeDesc); 
 	}
-	
 }

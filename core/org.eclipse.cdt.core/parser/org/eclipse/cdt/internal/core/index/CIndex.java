@@ -119,6 +119,33 @@ public class CIndex implements IIndex {
 		}
 	}
 
+	public IIndexBinding[] findMacroContainers(Pattern pattern, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+		if(SPECIALCASE_SINGLES && fFragments.length==1) {
+			 return fFragments[0].findMacroContainers(pattern, filter, monitor); 
+		} else {
+			List<IIndexBinding[]> result = new ArrayList<IIndexBinding[]>();
+			ILinkage[] linkages = Linkage.getAllLinkages();
+			for(int j=0; j < linkages.length; j++) {
+				if(filter.acceptLinkage(linkages[j])) {
+					IIndexFragmentBinding[][] fragmentBindings = new IIndexFragmentBinding[fPrimaryFragmentCount][];
+					for (int i = 0; i < fPrimaryFragmentCount; i++) {
+						try {
+							IBinding[] part = fFragments[i].findMacroContainers(pattern, retargetFilter(linkages[j], filter), monitor);
+							fragmentBindings[i] = new IIndexFragmentBinding[part.length];
+							System.arraycopy(part, 0, fragmentBindings[i], 0, part.length);
+						} catch (CoreException e) {
+							CCorePlugin.log(e);
+							fragmentBindings[i] = IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
+						}
+					}
+					ICompositesFactory factory = getCompositesFactory(linkages[j].getLinkageID());
+					result.add(factory.getCompositeBindings(fragmentBindings));
+				}
+			}
+			return flatten(result);
+		}
+	}
+
 	public IIndexName[] findNames(IBinding binding, int flags) throws CoreException {
 		LinkedList<IIndexFragmentName> result= new LinkedList<IIndexFragmentName>();
 		if (binding instanceof ICPPUsingDeclaration) {

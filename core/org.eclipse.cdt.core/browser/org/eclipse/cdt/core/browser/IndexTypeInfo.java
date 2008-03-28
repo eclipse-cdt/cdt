@@ -351,22 +351,9 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	}
 
 	private IndexTypeReference createReference(IIndexMacro macro) throws CoreException {
-		IIndexFileLocation ifl = macro.getFile().getLocation();
-		String fullPath = ifl.getFullPath();
-		if (fullPath != null) {
-			IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(fullPath));
-			if(file!=null) {
-				return new IndexTypeReference( 
-						macro, file, file.getProject(), macro.getNodeOffset(), macro.getNodeLength()
-				);
-			}
-		} else {
-			IPath path = URIUtil.toPath(ifl.getURI());
-			if(path!=null) {
-				return new IndexTypeReference(
-						macro, path, null, macro.getNodeOffset(), macro.getNodeLength()
-				);
-			}
+		IIndexName def= macro.getDefinition();
+		if (def != null) {
+			return createReference(macro, def);
 		}
 		return null;
 	}

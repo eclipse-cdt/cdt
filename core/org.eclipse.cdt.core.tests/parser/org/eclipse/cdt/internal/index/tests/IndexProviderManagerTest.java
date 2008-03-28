@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2008 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -93,6 +93,7 @@ public class IndexProviderManagerTest extends IndexTestBase {
 		return suite(IndexProviderManagerTest.class);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		IndexProviderManager ipm= ((PDOMManager)CCorePlugin.getIndexManager()).getIndexProviderManager();
 		ipm.reset(); ipm.startup();
@@ -526,7 +527,7 @@ class MockStateIndexFragmentProvider extends MockStateIndexProvider implements I
 
 		fragments = new IIndexFragment[MockState.states.size()];
 		for(int i=0; i<MockState.states.size(); i++) {
-			fragments[i] = new MockPDOM("mock.test.index."+System.identityHashCode(this)+"."+i, ""+PDOM.CURRENT_VERSION);
+			fragments[i] = new MockPDOM("mock.test.index."+System.identityHashCode(this)+"."+i, ""+PDOM.MAJOR_VERSION+'.'+PDOM.MINOR_VERSION);
 		}
 	}
 
@@ -726,6 +727,7 @@ class MockPDOM extends EmptyIndexFragment {
 		this.version= version;
 	}
 	
+	@Override
 	public String getProperty(String propertyName) throws CoreException {
 		if(IIndexFragment.PROPERTY_FRAGMENT_ID.equals(propertyName)) {
 			return id;
@@ -739,6 +741,7 @@ class MockPDOM extends EmptyIndexFragment {
 		return null;
 	}
 	
+	@Override
 	public String toString() {
 		return "[Mock index fragment "+id+"."+System.identityHashCode(this)+"]";
 	}

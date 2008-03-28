@@ -79,6 +79,10 @@ public class EmptyIndexFragment implements IIndexFragment {
 		return IIndexFragmentName.EMPTY_NAME_ARRAY;
 	}
 
+	public IIndexFragmentBinding[] findMacroContainers(Pattern pattern, IndexFilter filter, IProgressMonitor monitor) {
+		return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
+	}
+
 	public long getCacheHits() {
 		return 0;
 	}

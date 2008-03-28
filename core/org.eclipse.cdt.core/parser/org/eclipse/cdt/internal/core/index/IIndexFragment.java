@@ -141,6 +141,19 @@ public interface IIndexFragment {
 	IIndexFragmentBinding[] findBindings(Pattern[] patterns, boolean isFullyQualified, IndexFilter filter, IProgressMonitor monitor) throws CoreException;
 
 	/**
+	 * Searches for all macro containers (one for macros with the same name) with names that 
+	 * match the given pattern. In case a binding exists in multiple projects, no duplicate bindings 
+	 * are returned.
+	 * @param pattern a pattern the name of the bindings have to match.
+	 * @param filter a filter that allows for skipping parts of the index 
+	 * @param monitor a monitor to report progress, may be <code>null</code>
+	 * @return an array of bindings matching the pattern
+	 * @throws CoreException
+	 */
+	IIndexFragmentBinding[] findMacroContainers(Pattern pattern, IndexFilter filter, IProgressMonitor monitor) throws CoreException;
+
+	
+	/**
 	 * Searches for all bindings with qualified names that seen as an array of simple names equals
 	 * the given array of names. 
 	 * @param names an array of names the qualified name of the bindings have to match.

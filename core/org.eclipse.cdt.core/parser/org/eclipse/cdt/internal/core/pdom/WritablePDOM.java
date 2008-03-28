@@ -12,14 +12,12 @@
 package org.eclipse.cdt.internal.core.pdom;
 
 import java.io.File;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
@@ -32,9 +30,7 @@ import org.eclipse.cdt.internal.core.pdom.db.ChunkCache;
 import org.eclipse.cdt.internal.core.pdom.db.DBProperties;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.core.runtime.CoreException;
 
 public class WritablePDOM extends PDOM implements IWritableIndexFragment {	
@@ -96,19 +92,7 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 	public void flush() throws CoreException {
 		super.flush();
 	}
-	
-	public PDOMBinding addBinding(IASTName name) throws CoreException {
-		PDOMBinding result= null;
-		PDOMLinkage linkage= createLinkage(name.getLinkage().getLinkageName());
-		if (linkage == null) {
-			CCorePlugin.log(MessageFormat.format(Messages.WritablePDOM_error_unknownLinkage, new Object[]{name.getLinkage()}));
-		}
-		else {
-			result= linkage.addBinding(name);
-		}
-		return result;
-	}
-	
+		
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.index.IWritableIndexFragment#setProperty(java.lang.String, java.lang.String)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
@@ -31,6 +30,7 @@ public abstract class AbstractPDOMIndexer implements IPDOMIndexer {
 		fProperties.put(IndexerPreferences.KEY_FILES_TO_PARSE_UP_FRONT, ""); //$NON-NLS-1$
 		fProperties.put(IndexerPreferences.KEY_SKIP_ALL_REFERENCES, String.valueOf(false)); 
 		fProperties.put(IndexerPreferences.KEY_SKIP_TYPE_REFERENCES, String.valueOf(false)); 
+		fProperties.put(IndexerPreferences.KEY_SKIP_MACRO_REFERENCES, String.valueOf(false)); 
 	}
 
 	public ICProject getProject() {
@@ -46,8 +46,7 @@ public abstract class AbstractPDOMIndexer implements IPDOMIndexer {
 	}
 
 	public boolean needsToRebuildForProperties(Properties props) {
-		for (Iterator i= fProperties.entrySet().iterator(); i.hasNext();) {
-			Map.Entry entry = (Map.Entry) i.next();
+		for (Map.Entry<Object,Object> entry : fProperties.entrySet()) {
 			String key = (String) entry.getKey();
 			String myval = (String) entry.getValue();
 
@@ -63,8 +62,7 @@ public abstract class AbstractPDOMIndexer implements IPDOMIndexer {
 
 	public void setProperties(Properties props) {
 		// only set relevant properties as initialized in the constructor
-		for (Iterator i= props.entrySet().iterator(); i.hasNext();) {
-			Map.Entry entry = (Map.Entry) i.next();
+		for (Map.Entry<Object,Object> entry : props.entrySet()) {
 			String key = (String) entry.getKey();
 			String val = (String) entry.getValue();
 

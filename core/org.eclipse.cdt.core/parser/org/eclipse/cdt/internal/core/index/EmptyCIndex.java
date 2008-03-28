@@ -138,4 +138,8 @@ final public class EmptyCIndex implements IIndex {
 	public IIndexBinding[] findBindings(char[] name, boolean fileScopeOnly,	IndexFilter filter, IProgressMonitor monitor) {
 		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}
+
+	public IIndexBinding[] findMacroContainers(Pattern pattern, IndexFilter filter, IProgressMonitor monitor) {
+		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
+	}
 }

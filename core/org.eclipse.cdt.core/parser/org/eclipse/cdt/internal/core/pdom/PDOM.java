@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
@@ -46,6 +47,7 @@ import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexLinkage;
 import org.eclipse.cdt.core.index.IIndexLocationConverter;
 import org.eclipse.cdt.core.index.IIndexMacro;
+import org.eclipse.cdt.core.index.IIndexMacroContainer;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
@@ -62,13 +64,16 @@ import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.cdt.internal.core.pdom.dom.BindingCollector;
 import org.eclipse.cdt.internal.core.pdom.dom.FindBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
-import org.eclipse.cdt.internal.core.pdom.dom.MacroCollector;
+import org.eclipse.cdt.internal.core.pdom.dom.MacroContainerCollector;
+import org.eclipse.cdt.internal.core.pdom.dom.MacroContainerPatternCollector;
 import org.eclipse.cdt.internal.core.pdom.dom.NamedNodeCollector;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMInclude;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMMacro;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMMacroContainer;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMMacroReferenceName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNamedNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -91,18 +96,16 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 */
 	public static final String FRAGMENT_PROPERTY_VALUE_FORMAT_ID= "org.eclipse.cdt.internal.core.pdom.PDOM"; //$NON-NLS-1$
 	
-	public static final int CURRENT_VERSION = 56; 
-	public static final int MIN_SUPPORTED_VERSION= CURRENT_VERSION;
+	public static int version(int major, int minor) {
+		return major << 16 + minor;
+	}
 	
-	/**
-	 * The earliest PDOM version that the CURRENT_VERSION can be read as. For example,
-	 * versions 37,38 and 39 may be safely read by code from the version of CDT (4.0.0)
-	 * released at PDOM version 36.
-	 * <p>
-	 * Ideally this would always be CURRENT_VERSION on the basis that CURRENT_VERSION is
-	 * not incrementing.
-	 */
-	public static final int EARLIEST_FORWARD_COMPATIBLE_VERSION= CURRENT_VERSION; 
+	public static final int MAJOR_VERSION = 57; 
+	public static final int MINOR_VERSION = 0;	// minor versions must be compatible	
+	
+	public static final int CURRENT_VERSION=       version(MAJOR_VERSION, MINOR_VERSION);
+	public static final int MIN_SUPPORTED_VERSION= version(MAJOR_VERSION, 0);
+	public static final int MAX_SUPPORTED_VERSION= version(MAJOR_VERSION+1, 0)-1;
 	
 	/* 
 	 * PDOM internal format history
@@ -157,13 +160,13 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  54 - optimization of database size (bug 210392)
 	 *  55 - generalization of local bindings (bug 215783)
 	 *  56 - using directives (bug 216527)
+	 *  57.0 - macro references (bug 156561)
 	 */
 	
 	public static final int LINKAGES = Database.DATA_AREA;
 	public static final int FILE_INDEX = Database.DATA_AREA + 4;
 	public static final int PROPERTIES = Database.DATA_AREA + 8;
-	public static final int MACRO_BTREE= Database.DATA_AREA + 12; 
-	public static final int END= Database.DATA_AREA + 16;
+	public static final int END= Database.DATA_AREA + 12;
 	static {
 		assert END <= Database.CHUNK_SIZE;
 	}
@@ -195,7 +198,6 @@ public class PDOM extends PlatformObject implements IPDOM {
 	// Local caches
 	protected Database db;
 	private BTree fileIndex;
-	private BTree fMacroIndex= null;
 	private Map<String, PDOMLinkage> fLinkageIDCache = new HashMap<String, PDOMLinkage>();
 	private File fPath;
 	private IIndexLocationConverter locationConverter;
@@ -225,13 +227,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 		fPath= dbPath;
 		final boolean lockDB= db == null || lockCount != 0;
 		
+		clearCaches();
 		db = new Database(fPath, cache, CURRENT_VERSION, isPermanentlyReadOnly());
-		fileIndex= null;	// holds on to the database, so clear it.
-		fMacroIndex= null;  // same here 
 		
 		db.setLocked(lockDB);
-		int version= db.getVersion();
-		if (version >= MIN_SUPPORTED_VERSION) {
+		if (isSupportedVersion()) {
 			readLinkages();
 		}
 		db.setLocked(lockCount != 0);
@@ -246,7 +246,8 @@ public class PDOM extends PlatformObject implements IPDOM {
 	}
 
 	public boolean isSupportedVersion() throws CoreException {
-		return db.getVersion() >= MIN_SUPPORTED_VERSION;
+		final int version = db.getVersion();
+		return version >= MIN_SUPPORTED_VERSION && version <= MAX_SUPPORTED_VERSION;
 	}
 
 	public void accept(IPDOMVisitor visitor) throws CoreException {
@@ -353,9 +354,12 @@ public class PDOM extends PlatformObject implements IPDOM {
 	}
 
 	public IIndexFragmentBinding findBinding(IASTName name) throws CoreException {
-		PDOMLinkage linkage= adaptLinkage(name.getLinkage());
-		if (linkage != null) {
-			return linkage.resolveBinding(name);
+		IBinding binding= name.resolveBinding();
+		if (binding != null) {
+			PDOMLinkage linkage= adaptLinkage(name.getLinkage());
+			if (linkage != null) {
+				return findBindingInLinkage(linkage, binding);
+			}
 		}
 		return null;
 	}
@@ -459,6 +463,27 @@ public class PDOM extends PlatformObject implements IPDOM {
 			}
 		}
 		return finder.getBindings();
+	}
+
+	public IIndexFragmentBinding[] findMacroContainers(Pattern pattern, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+		if (monitor == null) {
+			monitor= new NullProgressMonitor();
+		}
+		MacroContainerPatternCollector finder = new MacroContainerPatternCollector(this, pattern, monitor);
+		for (Iterator<PDOMLinkage> iter = fLinkageIDCache.values().iterator(); iter.hasNext();) {
+			PDOMLinkage linkage = iter.next();
+			if (filter.acceptLinkage(linkage)) {
+				try {
+					linkage.getMacroIndex().accept(finder);
+				} catch (CoreException e) {
+					if (e.getStatus() != Status.OK_STATUS)
+						throw e;
+					else
+						return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
+				}
+			}
+		}
+		return finder.getMacroContainers();
 	}
 
 	public IIndexFragmentBinding[] findBindings(char[][] names, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
@@ -688,16 +713,23 @@ public class PDOM extends PlatformObject implements IPDOM {
 		if (binding == null) {
 			return null;
 		}
-		PDOMBinding pdomBinding= (PDOMBinding) binding.getAdapter(PDOMBinding.class);
-		if (pdomBinding != null && pdomBinding.getPDOM() == this) {
-			return pdomBinding;
+		PDOMNode pdomNode= (PDOMNode) binding.getAdapter(PDOMNode.class);
+		if (pdomNode instanceof IIndexFragmentBinding && pdomNode.getPDOM() == this) {
+			return (IIndexFragmentBinding) pdomNode;
 		}
 
 		PDOMLinkage linkage= adaptLinkage(binding.getLinkage());
 		if (linkage != null) {
-			return linkage.adaptBinding(binding);
+			return findBindingInLinkage(linkage, binding);
 		}
 		return null;
+	}
+
+	private IIndexFragmentBinding findBindingInLinkage(PDOMLinkage linkage, IBinding binding) throws CoreException {
+		if (binding instanceof IMacroBinding || binding instanceof IIndexMacroContainer) {
+			return linkage.findMacroContainer(binding.getNameCharArray());
+		}
+		return linkage.adaptBinding(binding);
 	}
 
 	public IIndexFragmentBinding findBinding(IIndexFragmentName indexName) throws CoreException {
@@ -709,22 +741,25 @@ public class PDOM extends PlatformObject implements IPDOM {
 	}
 
 	public IIndexFragmentName[] findNames(IBinding binding, int options) throws CoreException {
-		ArrayList<PDOMName> names= new ArrayList<PDOMName>();
-		PDOMBinding pdomBinding = (PDOMBinding) adaptBinding(binding);
-		if (pdomBinding != null) {
-			names= new ArrayList<PDOMName>();
+		ArrayList<IIndexFragmentName> names= new ArrayList<IIndexFragmentName>();
+		IIndexFragmentBinding myBinding= adaptBinding(binding);
+		if (myBinding instanceof PDOMBinding) {
+			PDOMBinding pdomBinding = (PDOMBinding) myBinding;
 			findNamesForMyBinding(pdomBinding, options, names);
-		}
-		if ((options & SEARCH_ACCROSS_LANGUAGE_BOUNDARIES) != 0) {
-			PDOMBinding[] xlangBindings= getCrossLanguageBindings(binding);
-			for (int j = 0; j < xlangBindings.length; j++) {
-				findNamesForMyBinding(xlangBindings[j], options, names);
+			if ((options & SEARCH_ACCROSS_LANGUAGE_BOUNDARIES) != 0) {
+				PDOMBinding[] xlangBindings= getCrossLanguageBindings(binding);
+				for (int j = 0; j < xlangBindings.length; j++) {
+					findNamesForMyBinding(xlangBindings[j], options, names);
+				}
 			}
+		}
+		else if (myBinding instanceof PDOMMacroContainer) {
+			findNamesForMyBinding((PDOMMacroContainer) myBinding, options, names);
 		}
 		return names.toArray(new IIndexFragmentName[names.size()]);
 	}
 
-	private void findNamesForMyBinding(PDOMBinding pdomBinding, int options, ArrayList<PDOMName> names)
+	private void findNamesForMyBinding(PDOMBinding pdomBinding, int options, ArrayList<IIndexFragmentName> names)
 			throws CoreException {
 		PDOMName name;
 		if ((options & FIND_DECLARATIONS) != 0) {
@@ -739,6 +774,20 @@ public class PDOM extends PlatformObject implements IPDOM {
 		}
 		if ((options & FIND_REFERENCES) != 0) {
 			for (name = pdomBinding.getFirstReference(); name != null; name= name.getNextInBinding()) {
+				names.add(name);
+			}
+		}
+	}
+
+	private void findNamesForMyBinding(PDOMMacroContainer container, int options, ArrayList<IIndexFragmentName> names)
+			throws CoreException {
+		if ((options & FIND_DEFINITIONS) != 0) {
+			for (PDOMMacro macro= container.getFirstDefinition(); macro != null; macro= macro.getNextInContainer()) {
+				names.add(macro.getDefinition());
+			}
+		}
+		if ((options & FIND_REFERENCES) != 0) {
+			for (PDOMMacroReferenceName name = container.getFirstReference(); name != null; name= name.getNextInContainer()) {
 				names.add(name);
 			}
 		}
@@ -822,38 +871,31 @@ public class PDOM extends PlatformObject implements IPDOM {
 
 	public IIndexMacro[] findMacros(char[] prefix, boolean isPrefix, boolean isCaseSensitive, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		ArrayList<IIndexMacro> result= new ArrayList<IIndexMacro>();
-		MacroCollector visitor = new MacroCollector(this, prefix, isPrefix, isCaseSensitive);
+		MacroContainerCollector visitor = new MacroContainerCollector(this, prefix, isPrefix, isCaseSensitive);
 		visitor.setMonitor(monitor);
 		try {
-			getMacroIndex().accept(visitor);
-			result.addAll(visitor.getMacroList());
+			for (Iterator<PDOMLinkage> iter = fLinkageIDCache.values().iterator(); iter.hasNext();) {
+				PDOMLinkage linkage = iter.next();
+				if (filter.acceptLinkage(linkage)) {
+					linkage.getMacroIndex().accept(visitor);
+				}
+			}
+			for (PDOMMacroContainer mcont : visitor.getMacroList()) {
+				result.addAll(Arrays.asList(mcont.getDefinitions()));
+			}
 		}
 		catch (OperationCanceledException e) {
 		}
 		return result.toArray(new IIndexMacro[result.size()]);
 	}
-
-	private BTree getMacroIndex() {
-		if (fMacroIndex == null) {
-			fMacroIndex= new BTree(db, MACRO_BTREE, new FindBinding.MacroBTreeComparator(this));
-		}
-		return fMacroIndex;
-	}
 	
-	public void afterAddMacro(PDOMMacro macro) throws CoreException {
-		getMacroIndex().insert(macro.getRecord());
-	}
-
-	public void beforeRemoveMacro(PDOMMacro macro) throws CoreException {
-		getMacroIndex().delete(macro.getRecord());
-	}
-
 	public String getProperty(String propertyName) throws CoreException {
 		if(IIndexFragment.PROPERTY_FRAGMENT_FORMAT_ID.equals(propertyName)) {
 			return FRAGMENT_PROPERTY_VALUE_FORMAT_ID;
 		}
 		if(IIndexFragment.PROPERTY_FRAGMENT_FORMAT_VERSION.equals(propertyName)) {
-			return ""+db.getVersion(); //$NON-NLS-1$
+			int version= db.getVersion();
+			return ""+(version >> 16) + '.' + (version & 0xffff); //$NON-NLS-1$
 		}
 		return new DBProperties(db, PROPERTIES).getProperty(propertyName);
 	}
@@ -865,7 +907,6 @@ public class PDOM extends PlatformObject implements IPDOM {
 
 	private void clearCaches() {
 		fileIndex= null;
-		fMacroIndex= null;
 		fLinkageIDCache.clear();
 		clearResultCache();
 	}
@@ -892,9 +933,9 @@ public class PDOM extends PlatformObject implements IPDOM {
 		db.flush();
 	}
 
-	public Object getCachedResult(Object binding) {
+	public Object getCachedResult(Object key) {
 		synchronized(fResultCache) {
-			return fResultCache.get(binding);
+			return fResultCache.get(key);
 		}
 	}
 
@@ -905,7 +946,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	}		
 	
 	public String createKeyForCache(int record, char[] name) {
-		return new StringBuffer(name.length+2).append((char) (record >> 16)).append((char) record).append(name).toString();
+		return new StringBuilder(name.length+2).append((char) (record >> 16)).append((char) record).append(name).toString();
 	}
 	
 	private PDOMBinding[] getCrossLanguageBindings(IBinding binding) throws CoreException {

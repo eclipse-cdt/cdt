@@ -65,8 +65,17 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 		if (checkProperty(IndexerPreferences.KEY_SKIP_ALL_REFERENCES)) {
 			setSkipReferences(SKIP_ALL_REFERENCES);
 		}
-		else if (checkProperty(IndexerPreferences.KEY_SKIP_TYPE_REFERENCES)) {
-			setSkipReferences(SKIP_TYPE_REFERENCES);
+		else {
+			int skipRefs= 0;
+			if (checkProperty(IndexerPreferences.KEY_SKIP_TYPE_REFERENCES)) {
+				skipRefs |= SKIP_TYPE_REFERENCES;
+			}
+			if (checkProperty(IndexerPreferences.KEY_SKIP_MACRO_REFERENCES)) {
+				skipRefs |= SKIP_MACRO_REFERENCES;
+			}
+			if (skipRefs != 0) {
+				setSkipReferences(skipRefs);
+			}
 		}
 		if (getIndexAllFiles()) {
 			setIndexFilesWithoutBuildConfiguration(true);
@@ -236,11 +245,13 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 			boolean allFiles= getIndexAllFiles();
 			boolean skipRefs= checkProperty(IndexerPreferences.KEY_SKIP_ALL_REFERENCES);
 			boolean skipTypeRefs= skipRefs || checkProperty(IndexerPreferences.KEY_SKIP_TYPE_REFERENCES);
+			boolean skipMacroRefs= skipRefs || checkProperty(IndexerPreferences.KEY_SKIP_MACRO_REFERENCES);
 			System.out.println(ident + " Options: "     //$NON-NLS-1$
 					+ "indexer='" + kind    //$NON-NLS-1$
 					+ "', parseAllFiles=" + allFiles    //$NON-NLS-1$
 					+ ", skipReferences=" + skipRefs    //$NON-NLS-1$
 					+ ", skipTypeReferences=" + skipTypeRefs    //$NON-NLS-1$
+					+ ", skipMacroReferences=" + skipMacroRefs    //$NON-NLS-1$
 					+ ".");    //$NON-NLS-1$
 			System.out.println(ident + " Database: " + dbSize + " bytes");   //$NON-NLS-1$ //$NON-NLS-2$
 			System.out.println(ident + " Timings: "     //$NON-NLS-1$

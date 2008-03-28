@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
  * Visitor to find macros in a BTree.
  * @since 4.0.2
  */
-public final class MacroCollector implements IBTreeVisitor {
+public final class MacroContainerCollector implements IBTreeVisitor {
 	private final PDOM pdom;
 	private final char[] name;
 	private final boolean prefixLookup;
@@ -32,14 +32,14 @@ public final class MacroCollector implements IBTreeVisitor {
 	private IProgressMonitor monitor= null;
 	private int monitorCheckCounter= 0;
 	
-	private List<PDOMMacro> macros = new ArrayList<PDOMMacro>();
+	private List<PDOMMacroContainer> macros = new ArrayList<PDOMMacroContainer>();
 
 		
 	/**
 	 * Collects all nodes with given name, passing the filter. If prefixLookup is set to
 	 * <code>true</code> a binding is considered if its name starts with the given prefix.
 	 */
-	public MacroCollector(PDOM pdom, char[] name, boolean prefixLookup, boolean caseSensitive) {
+	public MacroContainerCollector(PDOM pdom, char[] name, boolean prefixLookup, boolean caseSensitive) {
 		this.name= name;
 		this.pdom= pdom;
 		this.prefixLookup= prefixLookup;
@@ -57,7 +57,7 @@ public final class MacroCollector implements IBTreeVisitor {
 	final public int compare(int record) throws CoreException {
 		if (monitor != null)
 			checkCancelled();
-		IString name= PDOMMacro.getNameInDB(pdom, record);
+		IString name= PDOMNamedNode.getDBName(pdom, record);
 		return compare(name);
 	}
 
@@ -87,11 +87,11 @@ public final class MacroCollector implements IBTreeVisitor {
 		if (record == 0)
 			return true;
 		
-		macros.add(new PDOMMacro(pdom, record));
+		macros.add(new PDOMMacroContainer(pdom, record));
 		return true; // look for more
 	}
 	
-	final public List<PDOMMacro> getMacroList() {
+	final public List<PDOMMacroContainer> getMacroList() {
 		return macros;
 	}
 	

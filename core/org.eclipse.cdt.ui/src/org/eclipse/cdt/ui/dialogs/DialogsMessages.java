@@ -10,7 +10,6 @@
  *      IBM Corporation
  *      Andrew Ferguson (Symbian)
  *******************************************************************************/
-
 package org.eclipse.cdt.ui.dialogs;
 
 import org.eclipse.osgi.util.NLS;
@@ -21,6 +20,7 @@ public class DialogsMessages extends NLS {
 	public static String AbstractIndexerPage_indexUpFront;
 	public static String AbstractIndexerPage_skipAllReferences;
 	public static String AbstractIndexerPage_skipTypeReferences;
+	public static String AbstractIndexerPage_skipMacroReferences;
 	public static String CacheSizeBlock_MB;
 	public static String IndexerBlock_fixedBuildConfig;
 	public static String IndexerStrategyBlock_activeBuildConfig;

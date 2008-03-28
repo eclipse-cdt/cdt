@@ -79,7 +79,7 @@ public final class IndexProviderManager implements IElementChangedListener {
 	 * <b>Note: This method should not be called by clients for purposes other than testing</b>
 	 */
 	public void reset() {
-		reset(new VersionRange("["+PDOM.MIN_SUPPORTED_VERSION+','+PDOM.CURRENT_VERSION+']')); //$NON-NLS-1$
+		reset(new VersionRange(new Version(PDOM.MAJOR_VERSION,0, 0), true, new Version(PDOM.MAJOR_VERSION+1, 0, 0), false));
 	}
 	
 	/**

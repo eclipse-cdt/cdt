@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,6 @@
  *     Andrew Ferguson (Symbian)
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-/*
- * Created on May 28, 2004
- */
 package org.eclipse.cdt.core.parser.util;
 
 /**
@@ -234,15 +231,16 @@ public class CharArrayUtils {
 		return -1;
 	}
 	
-    public static int indexOf( char toBeFound, char[] buffer, int start, int len ) {
-        if( start < 0 || start > buffer.length || start + len > buffer.length )
+    public static int indexOf( char toBeFound, char[] buffer, int start, int end ) {
+        if( start < 0 || start > buffer.length || end > buffer.length )
             return -1;
         
-        for (int i = start; i < len; i++)
+        for (int i = start; i < end; i++)
 			if (toBeFound == buffer[i])
 				return i;
 		return -1;
     }
+    
 	public static final int indexOf( char[] toBeFound, char[] array ){
 	    if( toBeFound.length > array.length )
 	        return -1;

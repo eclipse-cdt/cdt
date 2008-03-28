@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 QNX Software Systems and others.
+ * Copyright (c) 2006, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,6 +41,7 @@ public final class BindingCollector extends NamedNodeCollector {
 		this.filter= filter;
 	}
 		
+	@Override
 	public boolean addNode(PDOMNamedNode tBinding) throws CoreException {
 		if (tBinding instanceof PDOMBinding) {
 			if (filter == null || filter.acceptBinding((IBinding) tBinding)) {
@@ -51,7 +52,7 @@ public final class BindingCollector extends NamedNodeCollector {
 	}
 	
 	public PDOMBinding[] getBindings() {
-		List bindings= getNodeList();
-		return (PDOMBinding[])bindings.toArray(new PDOMBinding[bindings.size()]);
+		List<PDOMNamedNode> bindings= getNodeList();
+		return bindings.toArray(new PDOMBinding[bindings.size()]);
 	}
 }

@@ -57,12 +57,15 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	private static final int NEXT_OFFSET = PDOMNamedNode.RECORD_SIZE + 4;
 	private static final int INDEX_OFFSET = PDOMNamedNode.RECORD_SIZE + 8;
 	private static final int NESTED_BINDINGS_INDEX = PDOMNamedNode.RECORD_SIZE + 12;
+	private static final int MACRO_BTREE = PDOMNamedNode.RECORD_SIZE + 16;
 
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = PDOMNamedNode.RECORD_SIZE + 16;
+	protected static final int RECORD_SIZE = PDOMNamedNode.RECORD_SIZE + 20;
 
 	// node types
 	protected static final int LINKAGE= 0; // special one for myself
+
+	private BTree fMacroIndex= null;
 
 	public PDOMLinkage(PDOM pdom, int record) {
 		super(pdom, record);
@@ -78,10 +81,12 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		pdom.insertLinkage(this);
 	}
 
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 
+	@Override
 	public int getNodeType() {
 		return LINKAGE;
 	}
@@ -113,6 +118,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		return new BTree(getPDOM().getDB(), record + NESTED_BINDINGS_INDEX, getNestedBindingsComparator());
 	}
 
+	@Override
 	public void accept(final IPDOMVisitor visitor) throws CoreException {
 		if (visitor instanceof IBTreeVisitor) {
 			getIndex().accept((IBTreeVisitor) visitor);
@@ -134,10 +140,12 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		}
 	}
 
+	@Override
 	public ILinkage getLinkage() throws CoreException {
 		return this;
 	}
 
+	@Override
 	public final void addChild(PDOMNode child) throws CoreException {
 		getIndex().insert(child.getRecord());
 	}
@@ -212,14 +220,6 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	}
 
 	protected abstract PDOMBinding doAdaptBinding(IBinding binding) throws CoreException;
-
-	public final PDOMBinding resolveBinding(IASTName name) throws CoreException {
-		IBinding binding= name.resolveBinding();
-		if (binding != null) {
-			return adaptBinding(binding);
-		}
-		return null;
-	}
 	
 	final protected int getLocalToFileRec(PDOMNode parent, IBinding binding) throws CoreException {
 		int rec= 0;
@@ -341,11 +341,56 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		// no implementation, yet.
 	}
 
+	@Override
 	public void delete(PDOMLinkage linkage) throws CoreException {
 		assert false; // no need to delete linkages.
 	}
 
 	public ICPPUsingDirective[] getUsingDirectives(PDOMFile file) throws CoreException {
 		return ICPPUsingDirective.EMPTY_ARRAY;
+	}
+	
+	public BTree getMacroIndex() {
+		if (fMacroIndex == null) {
+			fMacroIndex= new BTree(pdom.getDB(), record + MACRO_BTREE, new FindBinding.MacroBTreeComparator(pdom));
+		}
+		return fMacroIndex;
+	}
+
+	public PDOMMacroContainer findMacroContainer(final char[] name) throws CoreException {
+		return findMacroContainer(name, pdom.createKeyForCache(record, name));
+	}
+
+	private PDOMMacroContainer findMacroContainer(final char[] name, final String key) throws CoreException {
+		Object result= pdom.getCachedResult(key);
+		if (result instanceof PDOMMacroContainer) {
+			return ((PDOMMacroContainer) result);
+		}
+		assert result==null;
+		
+		MacroContainerFinder visitor = new MacroContainerFinder(pdom, name);
+		getMacroIndex().accept(visitor);
+		PDOMMacroContainer container= visitor.getMacroContainer();
+		if (container != null) {
+			pdom.putCachedResult(key, container);
+		}
+		return container;
+	}
+
+	public PDOMMacroContainer getMacroContainer(char[] name) throws CoreException {
+		String key= pdom.createKeyForCache(record, name);
+		PDOMMacroContainer result= findMacroContainer(name, key);
+		if (result == null) {
+			result= new PDOMMacroContainer(pdom, this, name);
+			getMacroIndex().insert(result.getRecord());
+			pdom.putCachedResult(key, result);
+		}
+		return result;
+	}
+
+	public void removeMacroContainer (PDOMMacroContainer container) throws CoreException {
+		String key= pdom.createKeyForCache(record, container.getNameCharArray());
+		pdom.putCachedResult(key, null);
+		getMacroIndex().delete(container.getRecord());
 	}
 }

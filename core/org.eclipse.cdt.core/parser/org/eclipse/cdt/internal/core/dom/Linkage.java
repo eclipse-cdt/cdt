@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,10 +8,11 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.dom;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
+import org.eclipse.core.runtime.CoreException;
 
 public class Linkage implements ILinkage {
 
@@ -25,7 +26,17 @@ public class Linkage implements ILinkage {
 	public static final ILinkage[] getAllLinkages() {
 		return LINKAGES;
 	}
-	
+
+	public static String getLinkageName(int linkageID) throws CoreException {
+		switch(linkageID) {
+		case NO_LINKAGE_ID: return NO_LINKAGE_NAME;
+		case C_LINKAGE_ID: return C_LINKAGE_NAME;
+		case CPP_LINKAGE_ID: return CPP_LINKAGE_NAME;
+		case FORTRAN_LINKAGE_ID: return FORTRAN_LINKAGE_NAME;
+		}
+		throw new CoreException(CCorePlugin.createStatus("Unsupported linkage id: " + linkageID)); //$NON-NLS-1$
+	}
+
 	private int fID;
 	private String fName;
 	private Linkage(int id, String name) {

@@ -8,7 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.dd.gdb.launching;
+package org.eclipse.dd.gdb.internal.provisional.launching;
 
 import java.util.concurrent.ExecutionException;
 
@@ -30,7 +30,7 @@ import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
-import org.eclipse.dd.gdb.service.command.GDBControl;
+import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.Launch;

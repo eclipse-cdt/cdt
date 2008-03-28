@@ -8,7 +8,7 @@
  * Contributors:
  *     Ericsson - initial API and implementation
  *******************************************************************************/
-package org.eclipse.dd.gdb;
+package org.eclipse.dd.gdb.internal.provisional;
 
 public class IGDBLaunchConfigurationConstants {
 

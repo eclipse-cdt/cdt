@@ -30,8 +30,8 @@ import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMContext
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMData;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.gdb.service.command.GDBControl;
-import org.eclipse.dd.gdb.service.command.GDBControlDMContext;
+import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
+import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControlDMContext;
 import org.eclipse.dd.mi.service.MIDisassembly;
 import org.eclipse.dd.tests.gdb.framework.AsyncCompletionWaitor;
 import org.eclipse.dd.tests.gdb.framework.BackgroundRunner;

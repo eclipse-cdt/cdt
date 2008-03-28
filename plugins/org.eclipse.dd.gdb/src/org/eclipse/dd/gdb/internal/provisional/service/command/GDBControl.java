@@ -9,7 +9,7 @@
  *     Wind River Systems - initial API and implementation
  *     Ericsson 		  - Modified for additional features in DSF Reference implementation
  *******************************************************************************/
-package org.eclipse.dd.gdb.service.command;
+package org.eclipse.dd.gdb.internal.provisional.service.command;
 
 import java.io.BufferedReader;
 import java.io.IOException;

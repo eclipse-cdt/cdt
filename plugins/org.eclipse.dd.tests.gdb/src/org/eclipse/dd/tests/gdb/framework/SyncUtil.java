@@ -31,7 +31,7 @@ import org.eclipse.dd.dsf.debug.service.IRunControl.StepType;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.gdb.service.command.GDBControl;
+import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
 import org.eclipse.dd.mi.service.MIRunControl;
 import org.eclipse.dd.mi.service.MIStack;
 import org.eclipse.dd.mi.service.command.commands.MIBreakDelete;

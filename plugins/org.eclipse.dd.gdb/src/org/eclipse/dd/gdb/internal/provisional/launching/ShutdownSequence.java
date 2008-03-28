@@ -8,7 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.dd.gdb.launching;
+package org.eclipse.dd.gdb.internal.provisional.launching;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -19,8 +19,8 @@ import org.eclipse.dd.dsf.concurrent.Sequence;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
-import org.eclipse.dd.gdb.service.GDBRunControl;
-import org.eclipse.dd.gdb.service.command.GDBControl;
+import org.eclipse.dd.gdb.internal.provisional.service.GDBRunControl;
+import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
 import org.eclipse.dd.mi.service.CSourceLookup;
 import org.eclipse.dd.mi.service.ExpressionService;
 import org.eclipse.dd.mi.service.MIBreakpoints;

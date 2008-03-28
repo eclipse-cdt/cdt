@@ -16,8 +16,8 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.cdt.launch
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: org.eclipse.dd.gdb,
- org.eclipse.dd.gdb.breakpoints,
- org.eclipse.dd.gdb.launching,
- org.eclipse.dd.gdb.service,
- org.eclipse.dd.gdb.service.command
+Export-Package: org.eclipse.dd.gdb.internal.provisional,
+ org.eclipse.dd.gdb.internal.provisional.breakpoints,
+ org.eclipse.dd.gdb.internal.provisional.launching,
+ org.eclipse.dd.gdb.internal.provisional.service,
+ org.eclipse.dd.gdb.internal.provisional.service.command

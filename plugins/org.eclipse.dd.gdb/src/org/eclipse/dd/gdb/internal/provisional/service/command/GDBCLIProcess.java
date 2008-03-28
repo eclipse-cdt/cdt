@@ -8,7 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.dd.gdb.service.command;
+package org.eclipse.dd.gdb.internal.provisional.service.command;
 
 import java.io.IOException;
 import java.util.concurrent.Callable;

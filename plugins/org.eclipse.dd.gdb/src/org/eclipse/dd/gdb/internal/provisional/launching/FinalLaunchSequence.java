@@ -8,7 +8,7 @@
  * Contributors:
  *     Ericsson - initial API and implementation          
  *******************************************************************************/
-package org.eclipse.dd.gdb.launching;
+package org.eclipse.dd.gdb.internal.provisional.launching;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
@@ -24,8 +24,8 @@ import org.eclipse.dd.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
-import org.eclipse.dd.gdb.service.command.GDBControl;
-import org.eclipse.dd.gdb.service.command.GDBControl.SessionType;
+import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
+import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl.SessionType;
 import org.eclipse.dd.mi.service.CSourceLookup;
 import org.eclipse.dd.mi.service.MIBreakpointsManager;
 import org.eclipse.dd.mi.service.command.commands.MIBreakInsert;

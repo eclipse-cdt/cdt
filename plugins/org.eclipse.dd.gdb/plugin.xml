@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.cdt.debug.core.BreakpointExtension">
       <breakpointExtension
-            class="org.eclipse.dd.gdb.breakpoints.CBreakpointGdbThreadsFilterExtension"
+            class="org.eclipse.dd.gdb.internal.provisional.breakpoints.CBreakpointGdbThreadsFilterExtension"
             debugModelId="org.eclipse.dd.gdb"
             id="org.eclipse.dd.gdb.threadFilter"
             markerType="org.eclipse.cdt.debug.core.cBreakpointMarker">

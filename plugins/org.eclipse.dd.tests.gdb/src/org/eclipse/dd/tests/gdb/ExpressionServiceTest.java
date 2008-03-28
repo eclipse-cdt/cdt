@@ -38,7 +38,7 @@ import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.gdb.service.command.GDBControl;
+import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
 import org.eclipse.dd.mi.service.ClassAccessor.MIExpressionDMCAccessor;
 import org.eclipse.dd.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.dd.tests.gdb.framework.AsyncCompletionWaitor;

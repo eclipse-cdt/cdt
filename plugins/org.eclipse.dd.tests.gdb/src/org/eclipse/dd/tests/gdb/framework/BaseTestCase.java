@@ -15,7 +15,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.dd.gdb.launching.GdbLaunch;
+import org.eclipse.dd.gdb.internal.provisional.launching.GdbLaunch;
 import org.eclipse.dd.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;

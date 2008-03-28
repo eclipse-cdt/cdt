@@ -8,7 +8,7 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.dd.gdb.launching; 
+package org.eclipse.dd.gdb.internal.provisional.launching; 
 
 import java.io.File;
 import java.io.IOException;
@@ -34,10 +34,10 @@ import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.eclipse.dd.dsf.debug.model.DsfMemoryBlockRetrieval;
 import org.eclipse.dd.dsf.debug.service.IMemory.IMemoryDMContext;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
-import org.eclipse.dd.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
-import org.eclipse.dd.gdb.service.command.GDBControl;
-import org.eclipse.dd.gdb.service.command.GDBControl.SessionType;
+import org.eclipse.dd.gdb.internal.provisional.IGDBLaunchConfigurationConstants;
+import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
+import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl.SessionType;
 import org.eclipse.dd.mi.service.command.AbstractCLIProcess;
 import org.eclipse.dd.mi.service.command.MIInferiorProcess;
 import org.eclipse.debug.core.DebugException;

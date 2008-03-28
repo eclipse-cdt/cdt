@@ -8,7 +8,7 @@ import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.Query;
-import org.eclipse.dd.gdb.launching.GdbLaunch;
+import org.eclipse.dd.gdb.internal.provisional.launching.GdbLaunch;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.osgi.framework.BundleContext;

@@ -10,7 +10,7 @@
  *     Ericsson AB		  - Modified for additional functionality	
  *******************************************************************************/
 
-package org.eclipse.dd.gdb.service;
+package org.eclipse.dd.gdb.internal.provisional.service;
 
 
 import java.util.Arrays;
@@ -26,8 +26,8 @@ import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
-import org.eclipse.dd.gdb.service.command.GDBControl;
-import org.eclipse.dd.gdb.service.command.GDBControlDMContext;
+import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
+import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControlDMContext;
 import org.eclipse.dd.mi.service.IMIExecutionDMContext;
 import org.eclipse.dd.mi.service.MIRunControl;
 import org.eclipse.dd.mi.service.command.commands.CLIInfoThreads;

@@ -8,7 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.dd.gdb.service.command;
+package org.eclipse.dd.gdb.internal.provisional.service.command;
 
 import org.eclipse.dd.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.dd.dsf.debug.service.IDisassembly.IDisassemblyDMContext;

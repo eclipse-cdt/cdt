@@ -8,7 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.dd.gdb.service.command;
+package org.eclipse.dd.gdb.internal.provisional.service.command;
 
 import java.io.OutputStream;
 import java.util.concurrent.ExecutionException;
@@ -17,7 +17,7 @@ import java.util.concurrent.RejectedExecutionException;
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.ThreadSafeAndProhibitedFromDsfExecutor;
-import org.eclipse.dd.gdb.service.command.GDBControl.SessionType;
+import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl.SessionType;
 import org.eclipse.dd.mi.service.command.MIInferiorProcess;
 
 /**

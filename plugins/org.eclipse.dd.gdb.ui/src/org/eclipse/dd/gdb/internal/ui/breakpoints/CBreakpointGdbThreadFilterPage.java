@@ -12,8 +12,8 @@ package org.eclipse.dd.gdb.internal.ui.breakpoints;
 
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.dd.gdb.breakpoints.CBreakpointGdbThreadsFilterExtension;
-import org.eclipse.dd.gdb.launching.GdbLaunchDelegate;
+import org.eclipse.dd.gdb.internal.provisional.breakpoints.CBreakpointGdbThreadsFilterExtension;
+import org.eclipse.dd.gdb.internal.provisional.launching.GdbLaunchDelegate;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;

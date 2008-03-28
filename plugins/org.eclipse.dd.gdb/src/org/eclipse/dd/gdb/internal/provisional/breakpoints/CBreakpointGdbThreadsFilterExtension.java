@@ -8,7 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.dd.gdb.breakpoints;
+package org.eclipse.dd.gdb.internal.provisional.breakpoints;
 
 import java.util.Arrays;
 import java.util.HashMap;

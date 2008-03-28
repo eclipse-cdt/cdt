@@ -65,7 +65,8 @@ public class BasicClassFileParser {
 	private InputStream stream;
 
 	/**
-	 * Constuctor.
+	 * Constructor.
+	 * 
 	 * @param stream the input stream to parse.
 	 */
 	public BasicClassFileParser(InputStream stream) {

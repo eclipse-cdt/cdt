@@ -23,6 +23,7 @@
  * Xuan Chen (IBM) - [191370] [dstore] Supertransfer zip not deleted when cancelling copy
  * Xuan Chen (IBM) - [api] SystemTarHandler has inconsistent API
  * Johnson Ma (Wind River) - [195402][api] Add tar.gz archive support
+ * Xuan Chen (IBM) - [224576] [api] Inconsistent boolean return values in SystemTarHandler API
  *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver.archiveutils;
@@ -1248,8 +1249,8 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 
 				// if it is an empty temp file, no need to recreate it
 				if (children.length != 0) {
-					boolean isCanceled = createTar(children, outStream, (HashSet)null, archiveOperationMonitor);
-					if (isCanceled)
+					boolean ok = createTar(children, outStream, (HashSet)null, archiveOperationMonitor);
+					if (!ok)
 					{
 						outStream.close();
 						if (outputTempFile != null)
@@ -1359,7 +1360,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 			if (archiveOperationMonitor != null && archiveOperationMonitor.isCanceled())
 			{
 				//the operation has been canceled
-				return true;
+				return false;
 			}
 			// if entry name is in the omit set, then do not include it
 			if (omitChildren != null && omitChildren.contains(children[i].fullName)) {
@@ -1407,7 +1408,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 				outStream.closeEntry();
 			}
 		}
-		return false;
+		return true;
 	}
 
 	/**
@@ -1698,8 +1699,8 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 			// add the virtual file to be replaced
 			omissions.add(fullVirtualName);
 
-			boolean isCanceled = createTar(children, outStream, omissions, archiveOperationMonitor);
-			if (isCanceled)
+			boolean ok = createTar(children, outStream, omissions, archiveOperationMonitor);
+			if (!ok)
 			{
 				outStream.close();
 				if (outputTempFile != null)
@@ -1822,8 +1823,8 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 					omissions.add(omitArray[i].fullName);
 				}
 
-				boolean isCanceled = createTar(children, outStream, omissions, archiveOperationMonitor);
-				if (isCanceled)
+				boolean ok = createTar(children, outStream, omissions, archiveOperationMonitor);
+				if (!ok)
 				{
 					outStream.close();
 					if (outputTempFile != null)
@@ -1990,8 +1991,8 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 				}
 
 				// create tar with renamed entries
-				boolean isCanceled = createTar(children, outStream, oldNewNames, archiveOperationMonitor);
-				if (isCanceled)
+				boolean ok = createTar(children, outStream, oldNewNames, archiveOperationMonitor);
+				if (!ok)
 				{
 					outStream.close();
 					if (outputTempFile != null)
@@ -2002,10 +2003,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 
 				}
 
-				if (true == isCanceled)
-				{
-					return false;
-				}
+				
 				// close the output stream
 				outStream.close();
 
@@ -2060,7 +2058,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 			if (archiveOperationMonitor != null && archiveOperationMonitor.isCanceled())
 			{
 				//the operation has been canceled
-				return true;
+				return false;
 			}
 
 			VirtualChild child = children[i];
@@ -2126,7 +2124,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 			}
 		}
 
-		return false;
+		return true;
 	}
 
 	/**
@@ -2241,8 +2239,8 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 
 				// if it is an empty temp file, no need to recreate it
 				if (children.length != 0) {
-					boolean isCanceled = createTar(children, outStream, (HashSet)null, archiveOperationMonitor);
-					if (isCanceled)
+					boolean ok = createTar(children, outStream, (HashSet)null, archiveOperationMonitor);
+					if (!ok)
 					{
 						outStream.close();
 						if (outputTempFile != null)

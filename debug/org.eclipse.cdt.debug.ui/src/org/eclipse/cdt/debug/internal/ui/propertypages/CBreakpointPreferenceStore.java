@@ -27,6 +27,8 @@ public class CBreakpointPreferenceStore implements IPreferenceStore {
 
 	protected final static String IGNORE_COUNT = "IGNORE_COUNT"; //$NON-NLS-1$
 
+	protected final static String LINE = "LINE"; //$NON-NLS-1$
+	
 	protected HashMap fProperties;
 
 	private boolean fIsDirty = false;

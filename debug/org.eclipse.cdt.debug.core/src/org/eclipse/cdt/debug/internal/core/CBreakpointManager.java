@@ -90,6 +90,7 @@ import org.eclipse.debug.core.IBreakpointManagerListener;
 import org.eclipse.debug.core.IBreakpointsListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
 
@@ -978,8 +979,21 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 					condition0 = cdiCondition;
 				}
 			}
-			if ( enabled0 != null || condition0 != null ) {
-				changeBreakpointPropertiesOnTarget( cdiBreakpoint, enabled0, condition0 );
+			int line = 0;
+			if (breakpoint instanceof ILineBreakpoint) {
+				ILineBreakpoint l = (ILineBreakpoint) breakpoint;
+				line = l.getLineNumber();
+			}
+			int oldLine = ( delta != null ) ? delta.getAttribute( IMarker.LINE_NUMBER, 0 ) : 0; //$NON-NLS-1$
+			boolean basic = oldLine>0 && oldLine != line;
+			
+			if (basic) {
+				final ICBreakpoint[] breakpoints = new ICBreakpoint[] {breakpoint};
+				breakpointsRemoved(breakpoints, null);
+				handleBreakpointDestroyedEvent(cdiBreakpoint); // events has to processed before add executes
+				breakpointsAdded(breakpoints);
+			} else if (enabled0 != null || condition0 != null) {
+				changeBreakpointPropertiesOnTarget(cdiBreakpoint, enabled0, condition0);
 			}
 		}
 		catch( CoreException e ) {

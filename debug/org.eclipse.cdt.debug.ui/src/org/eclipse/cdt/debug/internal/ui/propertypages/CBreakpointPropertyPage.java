@@ -20,6 +20,7 @@ import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -346,22 +347,28 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 			if ( fileName != null ) {
 				addField( createLabelEditor( getFieldEditorParent(), PropertyPageMessages.getString( "CBreakpointPropertyPage.7" ), fileName ) ); //$NON-NLS-1$
 			}
-			ILineBreakpoint lBreakpoint = (ILineBreakpoint)breakpoint;
-			StringBuffer lineNumber = new StringBuffer( 4 );
+			ILineBreakpoint lBreakpoint = (ILineBreakpoint) breakpoint;
+
+			int lNumber = 0;
 			try {
-				int lNumber = lBreakpoint.getLineNumber();
-				if ( lNumber > 0 ) {
-					lineNumber.append( lNumber );
-				}
+				lNumber = lBreakpoint.getLineNumber();
+			} catch (CoreException e) {
+				CDebugUIPlugin.log(e);
 			}
-			catch( CoreException ce ) {
-				CDebugUIPlugin.log( ce );
-			}
-			if ( lineNumber.length() > 0 ) {
-				addField( createLabelEditor( getFieldEditorParent(), PropertyPageMessages.getString( "CBreakpointPropertyPage.9" ), lineNumber.toString() ) ); //$NON-NLS-1$
+
+			if (lNumber > 0) {
+				getPreferenceStore().setValue( CBreakpointPreferenceStore.LINE, lNumber);
+				createLineNumberEditor(getFieldEditorParent());
 			}
 		}
 	}
+	protected void createLineNumberEditor( Composite parent ) {
+		 String title = PropertyPageMessages.getString( "CBreakpointPropertyPage.9" );
+		 BreakpointIntegerFieldEditor labelFieldEditor =new BreakpointIntegerFieldEditor( CBreakpointPreferenceStore.LINE ,title, parent);
+		 labelFieldEditor.setValidRange( 1, Integer.MAX_VALUE );
+		 addField( labelFieldEditor );
+	}
+	
 
 	protected void createEnabledField( Composite parent ) {
 		fEnabled = new BooleanFieldEditor( CBreakpointPreferenceStore.ENABLED, PropertyPageMessages.getString( "CBreakpointPropertyPage.19" ), parent ); //$NON-NLS-1$
@@ -447,6 +454,10 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 					}
 					else if ( property.equals( CBreakpointPreferenceStore.CONDITION ) ) {
 						breakpoint.setCondition( getPreferenceStore().getString( CBreakpointPreferenceStore.CONDITION ) );
+					}
+					else if ( property.equals( CBreakpointPreferenceStore.LINE ) ) {
+						// already workspace runnable, setting markers are safe
+						breakpoint.getMarker().setAttribute(IMarker.LINE_NUMBER, getPreferenceStore().getInt(CBreakpointPreferenceStore.LINE));
 					}
 				}
 			}

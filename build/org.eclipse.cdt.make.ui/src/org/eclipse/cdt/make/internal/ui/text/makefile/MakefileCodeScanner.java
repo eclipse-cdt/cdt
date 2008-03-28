@@ -78,7 +78,8 @@ public class MakefileCodeScanner extends AbstractMakefileCodeScanner {
 		MultiLineRule defineRule = new MultiLineRule("define", "endef", macroDef); //$NON-NLS-1$ //$NON-NLS-2$
 		defineRule.setColumnConstraint(0);
 		rules.add(defineRule);
-		rules.add(new MacroDefinitionRule(macroDef, other));
+
+//		rules.add(new MacroDefinitionRule(macroDef, other));
 
 		// Add word rule for keywords, types, and constants.
 		// We restring the detection of the keywords to be the first column to be valid.

@@ -14,8 +14,9 @@ import org.eclipse.jface.text.rules.IWordDetector;
 
 public class MakefileWordDetector implements IWordDetector {
 
-	private static final String correctStartSpecChars = "%*().><"; //$NON-NLS-1$
-	private static final String correctSpecChars = "@$/\\"; //$NON-NLS-1$
+	//private static final String correctStartSpecChars = "%*().><"; //$NON-NLS-1$
+	private static final String correctStartSpecChars = "%*()><"; //$NON-NLS-1$
+	private static final String correctSpecChars = "@$/\\_"; //$NON-NLS-1$
 
 	/**
 	 * @see IWordDetector#isWordPart(character)

@@ -95,7 +95,7 @@ class MacroDefinitionRule implements IPredicateRule {
 		scanner.unread();
 
 		if (state == FINISH_STATE) {
-			scanToEndOfLine(scanner);
+			//scanToEndOfLine(scanner);
 			return token;
 		}
 

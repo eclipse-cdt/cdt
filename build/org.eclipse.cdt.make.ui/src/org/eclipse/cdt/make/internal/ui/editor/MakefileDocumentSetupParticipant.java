@@ -20,7 +20,7 @@ import org.eclipse.jface.text.rules.FastPartitioner;
 
 /**
  * MakefileDocumentSetupParticipant
- * The document setup participant for Ant.
+ * The document setup participant for Makefile.
  */
 public class MakefileDocumentSetupParticipant  implements IDocumentSetupParticipant {
 	

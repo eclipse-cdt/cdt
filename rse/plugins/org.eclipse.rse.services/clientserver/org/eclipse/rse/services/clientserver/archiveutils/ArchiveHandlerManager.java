@@ -7,8 +7,8 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
@@ -35,23 +35,38 @@ import java.util.Iterator;
  * to use statements of the form "ArchiveHandlerManager.getInstance().method".
  * @author mjberger
  */
-public class ArchiveHandlerManager 
+public class ArchiveHandlerManager
 {
-	//	The string that separates the virtual part of an absolute path from the real part
+	/**
+	 * The string that separates the virtual part of an absolute path from the
+	 * real part.
+	 */
 	public static final String VIRTUAL_SEPARATOR = "#virtual#/"; //$NON-NLS-1$
 	public static final String VIRTUAL_CANONICAL_SEPARATOR = "#virtual#"; //$NON-NLS-1$
+	/**
+	 * Folder separator used in virtual paths inside the archive, i.e. after the
+	 * VIRTUAL_SEPARATOR.
+	 * 
+	 * @since org.eclipse.rse.services 3.0
+	 */
 	public static final String VIRTUAL_FOLDER_SEPARATOR = "/"; //$NON-NLS-1$
+	/**
+	 * Character used to separate file extension from file name. This is used in
+	 * order to recognize file patterns that should be treated as archives.
+	 * 
+	 * @since org.eclipse.rse.services 3.0
+	 */
 	public static final String EXTENSION_SEPARATOR = "."; //$NON-NLS-1$
-	
+
 	//	the singleton instance
-	protected static ArchiveHandlerManager _instance = new ArchiveHandlerManager(); 
+	protected static ArchiveHandlerManager _instance = new ArchiveHandlerManager();
 
 	// a mapping from Files to ISystemArchiveHandlers
 	protected HashMap _handlers;
-	
+
 	// a mapping from Strings (file extensions) to Classes (the type of handler to use)
 	protected HashMap _handlerTypes;
-	
+
 	/**
 	 * @return The singleton instance of this class.
 	 */
@@ -59,7 +74,7 @@ public class ArchiveHandlerManager
 	{
 		return _instance;
 	}
-	
+
 	public ArchiveHandlerManager()
 	{
 		_handlers = new HashMap();
@@ -72,18 +87,18 @@ public class ArchiveHandlerManager
 	 * @param virtualpath The parent virtual object whose children this method is to return. To
 	 * get the top level virtualchildren in the archive, set virtualpath to "" or null.
 	 * @return An array of VirtualChild objects representing the children of the virtual object
-	 * in <code>file</code> referred to by <code>virtualpath</code>. If no class implementing 
+	 * in <code>file</code> referred to by <code>virtualpath</code>. If no class implementing
 	 * ISystemArchiveHandler can be found that corresponds to file, then this method returns null.
 	 * If the virtual object has no children, this method also returns null.
 	 * @throws IOException if there was a problem getting the registered handler for the
 	 * file. This usually means the archive is corrupted.
-	 */	
+	 */
 	public VirtualChild[] getContents(File file, String virtualpath) throws IOException
 	{
 		if (virtualpath == null) virtualpath = ""; //$NON-NLS-1$
 		ISystemArchiveHandler handler = getRegisteredHandler(file);
-		if (handler == null || !handler.exists()) throw new IOException();	
-		return handler.getVirtualChildren(virtualpath, null);	
+		if (handler == null || !handler.exists()) throw new IOException();
+		return handler.getVirtualChildren(virtualpath, null);
 	}
 
 	/**
@@ -92,18 +107,18 @@ public class ArchiveHandlerManager
 	 * @param virtualpath The parent virtual object whose children this method is to return. To
 	 * get the top level virtualchildren in the archive, set virtualpath to "" or null.
 	 * @return An array of VirtualChild objects representing the children of the virtual object
-	 * in <code>file</code> referred to by <code>virtualpath</code> that are themselves folders. 
-	 * If no class implementing ISystemArchiveHandler can be found that corresponds to file, then 
+	 * in <code>file</code> referred to by <code>virtualpath</code> that are themselves folders.
+	 * If no class implementing ISystemArchiveHandler can be found that corresponds to file, then
 	 * this method returns null. If the virtual object has no children, this method also returns null.
-	 */	
+	 */
 	public VirtualChild[] getFolderContents(File file, String virtualpath)
 	{
 		if (virtualpath == null) virtualpath = ""; //$NON-NLS-1$
 		ISystemArchiveHandler handler = getRegisteredHandler(file);
 		if (handler == null) return null;
-		return handler.getVirtualChildFolders(virtualpath, null);	
+		return handler.getVirtualChildFolders(virtualpath, null);
 	}
-	
+
 	/**
 	 * Tests whether a file is an known type of archive.
 	 * @param file the file to test.
@@ -127,9 +142,9 @@ public class ArchiveHandlerManager
 				return false;
 			}
 		}
-		
+
 	}
-	
+
 	/**
 	 * Tests whether a file is an known type of archive, based on the file name.
 	 * @param filename the name of the file to test.
@@ -139,47 +154,47 @@ public class ArchiveHandlerManager
 	public boolean isRegisteredArchive(String filename)
 	{
 		return getRegisteredExtension(filename) == null?false:true;
-	}	
-	
+	}
+
 	/**
-	 * check if the file extension is registered archive type. 
+	 * Check if the file extension is registered archive type.
 	 * notice here, the getExtension method does't work for name like fool.tar.gz
 	 * @param file the file to check
 	 * @return registered extension or null
-	 * @since 3.0
+	 * @since org.eclipse.rse.services 3.0
 	 */
-	protected String getRegisteredExtension(File file) 
+	protected String getRegisteredExtension(File file)
 	{
 		String fileName = file.getName();
 		return getRegisteredExtension(fileName);
 	}
-	
+
 	/**
-	 * check if the file extension is registered archive type. 
+	 * check if the file extension is registered archive type.
 	 * @param fileName the file name to check
 	 * @return registered extension or null
-	 * @since 3.0
+	 * @since org.eclipse.rse.services 3.0
 	 */
-	protected String getRegisteredExtension(String fileName) 
+	protected String getRegisteredExtension(String fileName)
 	{
 		fileName = fileName.toLowerCase();
 		Iterator itor = _handlerTypes.keySet().iterator();
-		while(itor.hasNext()) 
+		while(itor.hasNext())
 		{
 			String ext = ((String)itor.next()).toLowerCase();
 			if (fileName.endsWith(EXTENSION_SEPARATOR + ext))
 			{
 				return ext;
-			} 
-				
+			}
+
 		}
 		return null;
 	}
-	
-	/** 
+
+	/**
 	 * @param file the file whose extension we are computing.
 	 * @return the extension of <code>file</code>. "Extension" is
-	 * defined as any letters in the filename after the last ".". 
+	 * defined as any letters in the filename after the last ".".
 	 * Returns "" if there is no extension.
 	 * @deprecated Use {@link #getRegisteredExtension(File)} instead
 	 */
@@ -190,12 +205,12 @@ public class ArchiveHandlerManager
 		if (i == -1) return ""; //$NON-NLS-1$
 		return filename.substring(i+1).toLowerCase();
 	}
-	
-	
-	/** 
+
+
+	/**
 	 * @param filename the name of the file whose extension we are computing.
 	 * @return the extension of <code>filename</code>. "Extension" is
-	 * defined as any letters in the filename after the last ".". 
+	 * defined as any letters in the filename after the last ".".
 	 * Returns "" if there is no extension.
 	 * * @deprecated Use {@link #getRegisteredExtension(String)} instead
 	 */
@@ -205,7 +220,7 @@ public class ArchiveHandlerManager
 		if (i == -1) return ""; //$NON-NLS-1$
 		return filename.substring(i+1).toLowerCase();
 	}
-	
+
 	/**
 	 * Given the absolute path to a virtual object, returns that object
 	 * as a VirtualChild.
@@ -231,7 +246,7 @@ public class ArchiveHandlerManager
 	 * Returns the registered handler for the File <code>file</code>. If
 	 * no handler exists for that file yet, create it. If the extension of
 	 * <code>file</code> is not registered, then returns null.
-	 */	
+	 */
 	public ISystemArchiveHandler getRegisteredHandler(File file)
 	{
 		ISystemArchiveHandler handler = null;
@@ -239,10 +254,10 @@ public class ArchiveHandlerManager
 		{
 			handler = (ISystemArchiveHandler) _handlers.get(file);
 		}
-		
+
 		if (handler != null && handler.exists())
 		{
-		    return handler;
+			return handler;
 		}
 		else {
 			// find registered handler based on file's extension
@@ -303,9 +318,9 @@ public class ArchiveHandlerManager
 	/**
 	 * Registers an extension and a handler type.
 	 * @param ext The extension to register with the ArchiveHandlerManager
-	 * @param handlerType The class of handler to register with <code>ext</code>. 
+	 * @param handlerType The class of handler to register with <code>ext</code>.
 	 * Note that any class passed in must implement ISystemArchiveHandler.
-	 * @return Whether or not the registration was successful. 
+	 * @return Whether or not the registration was successful.
 	 */
 	public boolean setRegisteredHandler(String ext, Class handlerType)
 	{
@@ -317,7 +332,7 @@ public class ArchiveHandlerManager
 		}
 		if (handlerImplementsISystemArchiveHandler(handlerType))
 		{
-			if (_handlerTypes.containsKey(ext)) _handlerTypes.remove(ext); 
+			if (_handlerTypes.containsKey(ext)) _handlerTypes.remove(ext);
 			_handlerTypes.put(ext, handlerType);
 			return true;
 		}
@@ -350,7 +365,7 @@ public class ArchiveHandlerManager
 		}
 		return ok;
 	}
-	
+
 	/**
 	 * Returns whether or not handlerType or one of its superclasses implements ISystemArchiveHandler.
 	 */
@@ -362,22 +377,22 @@ public class ArchiveHandlerManager
 		{
 			if (interfaces[i].getName().equals(ISystemArchiveHandler.class.getName())) okay = true;
 		}
-		if (!okay) 
+		if (!okay)
 		{
 			Class superclass = handlerType.getSuperclass();
 			if (superclass.getName().equals(Object.class.getName())) return false;
 			return handlerImplementsISystemArchiveHandler(superclass);
 		}
-		else return true; 
+		else return true;
 	}
-	
+
 	/**
 	 * Removes the handler associated with <code>file</code>, freeing the file
 	 * to be used by other processes.
 	 */
 	public void disposeOfRegisteredHandlerFor(File file)
 	{
-		_handlers.remove(file);	
+		_handlers.remove(file);
 	}
 
 	/**
@@ -390,7 +405,7 @@ public class ArchiveHandlerManager
 	{
 		return path.indexOf(VIRTUAL_CANONICAL_SEPARATOR) != -1;
 	}
-	
+
 	/**
 	 * Converts the virtual path given by <code>fullVirtualName</code>
 	 * to the standard virtual form ('/' as separator, no leading or trailing '/'s)
@@ -400,7 +415,7 @@ public class ArchiveHandlerManager
 	public static String cleanUpVirtualPath(String fullVirtualName)
 	{
 		int j = fullVirtualName.indexOf(VIRTUAL_CANONICAL_SEPARATOR);
-		if (j == -1) 
+		if (j == -1)
 		{
 			//fullVirtualName does not contains VIRTUAL_CANONICAL_SEPARATOR
 			//fullVirtualName could be the virtual path only, instead of the full path.
@@ -410,7 +425,7 @@ public class ArchiveHandlerManager
 			//":".  So for those two cases, we could just return the fullVirtualName
 			if (fullVirtualName.indexOf(":") != -1 || fullVirtualName.trim().startsWith("\\")) //$NON-NLS-1$ //$NON-NLS-2$
 			{
-				return fullVirtualName; 
+				return fullVirtualName;
 			}
 		}
 		String realPart = ""; //$NON-NLS-1$
@@ -445,7 +460,7 @@ public class ArchiveHandlerManager
 			newPath = newPath.substring(0,i) + newPath.substring(i+1);
 			i = newPath.indexOf("//"); //$NON-NLS-1$
 		}
-		
+
 		// get rid of any leading or trailing slashes
 		if (j != -1 && newPath.startsWith("/")) newPath = newPath.substring(1); //$NON-NLS-1$
 		if (newPath.endsWith("/")) newPath = newPath.substring(0, newPath.length() - 1); //$NON-NLS-1$
@@ -454,21 +469,21 @@ public class ArchiveHandlerManager
 
 	/**
 	 * Disposes of all registered handlers.
-	 */	
+	 */
 	public void dispose()
 	{
 		_handlers.clear();
 	}
-	
+
 	public boolean createEmptyArchive(File newFile)
 	{
-		if (!isRegisteredArchive(newFile.getName())) 
+		if (!isRegisteredArchive(newFile.getName()))
 		{
 			System.out.println("Could not create new archive."); //$NON-NLS-1$
 			System.out.println(newFile + " is not a registered type of archive."); //$NON-NLS-1$
 			return false;
 		}
-		
+
 		if (newFile.exists())
 		{
 			if (!newFile.isFile())
@@ -484,9 +499,9 @@ public class ArchiveHandlerManager
 				return false;
 			}
 		}
-		
+
 		try
-		{	
+		{
 			if (!newFile.createNewFile())
 			{
 				System.out.println("Could not create new archive."); //$NON-NLS-1$
@@ -500,11 +515,11 @@ public class ArchiveHandlerManager
 			System.out.println(e.getMessage());
 			return false;
 		}
-		
+
 		ISystemArchiveHandler handler = getRegisteredHandler(newFile);
 		return handler.create();
 	}
-	
+
 	/**
 	 * Returns the extensions for archive types that have been registered
 	 * with the ArchiveHandlerManager.
@@ -519,14 +534,14 @@ public class ArchiveHandlerManager
 		}
 		return extensions;
 	}
-	
+
 	public String getComment(File archive)
 	{
 		ISystemArchiveHandler handler = getRegisteredHandler(archive);
 		if (handler == null || !handler.exists()) return "";	 //$NON-NLS-1$
-		return handler.getArchiveComment();	
+		return handler.getArchiveComment();
 	}
-	
+
 	public long getExpandedSize(File archive)
 	{
 		ISystemArchiveHandler handler = getRegisteredHandler(archive);
@@ -539,7 +554,7 @@ public class ArchiveHandlerManager
 		}
 		return total;
 	}
-	
+
 	/**
 	 * Returns the classification for the entry in a archive with the given virtual path.
 	 * @param file the archive file.
@@ -547,20 +562,20 @@ public class ArchiveHandlerManager
 	 * @return the classification for the virtual file.
 	 */
 	public String getClassification(File file, String virtualPath) {
-		
+
 		// if archive file is null, or if it does not exist, or if the virtual path
 		// is null, then return null for the classification
 		if (file == null || !file.exists()) {
 			return null;
 		}
-		
+
 		// get archive handler
 		ISystemArchiveHandler handler = getRegisteredHandler(file);
-		
+
 		if (handler == null || !handler.exists()) {
-			return null;	
+			return null;
 		}
-		
+
 		return handler.getClassification(virtualPath);
 	}
 }

@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [cleanup] Add API "since" tags
  ********************************************************************************/
 
 package org.eclipse.rse.services.search;
@@ -30,6 +30,8 @@ public interface IHostSearchConstants {
 
 	/**
 	 * Status indicating configuration has been canceled, 2.
+	 * 
+	 * @since 3.0 this was renamed from CANCELLED in earlier versions
 	 */
 	public static final int CANCELED = 2;
 

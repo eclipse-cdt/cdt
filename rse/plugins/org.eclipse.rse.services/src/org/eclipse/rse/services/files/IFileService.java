@@ -7,8 +7,8 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
@@ -16,12 +16,13 @@
  * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
  * Martin Oberhuber (Wind River) - [199548] Avoid touching files on setReadOnly() if unnecessary
  * Martin Oberhuber (Wind River) - [204710] Update Javadoc to mention that getUserHome() may return null
- * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
- * David McKnight   (IBM)        - [162195] new APIs for upload multi and download multi
- * David McKnight   (IBM)        - [209552] API changes to use multiple and getting rid of deprecated
- * David McKnight   (IBM)        - [210109] store constants in IFileService rather than IFileServiceConstants
- * Kevin Doyle		(IBM)		 - [208778] new API getOutputSteam for getting an output stream in append mode
- * David McKnight   (IBM)        - [209704] added supportsEncodingConversion()
+ * David McKnight (IBM) - [207178] changing list APIs for file service and subsystems
+ * David McKnight (IBM) - [162195] new APIs for upload multi and download multi
+ * David McKnight (IBM) - [209552] API changes to use multiple and getting rid of deprecated
+ * David McKnight (IBM) - [210109] store constants in IFileService rather than IFileServiceConstants
+ * Kevin Doyle (IBM) - [208778] new API getOutputSteam for getting an output stream in append mode
+ * David McKnight (IBM) - [209704] added supportsEncodingConversion()
+ * Martin Oberhuber (Wind River) - [cleanup] Fix API since tags
  *******************************************************************************/
 
 package org.eclipse.rse.services.files;
@@ -39,7 +40,7 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
  * A IFileService is an abstraction of a file service that runs over some sort of connection.
  * It can be shared among multiple instances of a subsystem.  At some point this file
  * service layer may become official API but for now it is experimental.  Each
- * subsystem is currently responsible for layering an abstraction over whatever it 
+ * subsystem is currently responsible for layering an abstraction over whatever it
  * wants to construct as a service.
  * <p>
  * This is a very bare bones definition.  A real definition would probably have changed
@@ -54,77 +55,90 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
  * </p>
  */
 public interface IFileService extends IService
-{	
-	/** 
-	 * Query constant (bit mask value 1) which indicates that a query should be 
-	 * on files.  The filter(s) passed into the list methods will produce a subset
-	 * of files matching the filter(s).
+{
+	/**
+	 * Query constant (bit mask value 1) which indicates that a query should be
+	 * on files. The filter(s) passed into the list methods will produce a
+	 * subset of files matching the filter(s).
 	 * 
-	 * This constant is passed into the IFileService list calls.  Implementors of 
-	 * IFileService make use of this to determine what to query and what to return 
-	 * from the query.
-	 *
+	 * This constant is passed into the IFileService list calls. Implementors of
+	 * IFileService make use of this to determine what to query and what to
+	 * return from the query.
+	 * 
 	 * @see IFileService#list(String,String,int,IProgressMonitor)
 	 * @see IFileService#listMultiple(String[],String[],int,IProgressMonitor)
 	 * @see IFileService#listMultiple(String[],String[],int[],IProgressMonitor)
+	 * 
+	 * @since org.eclipse.rse.services 3.0
 	 */
 	public static final int FILE_TYPE_FILES =  0x1;
-	
-	/** 
-	 * Query constant (bit mask value 2) which indicates that a query should be 
-	 * on folders.  The filter(s) passed into the list methods will produce a subset
-	 * of folders matching the filter(s).
+
+	/**
+	 * Query constant (bit mask value 2) which indicates that a query should be
+	 * on folders. The filter(s) passed into the list methods will produce a
+	 * subset of folders matching the filter(s).
 	 * 
-	 * This constant is passed into the IFileService list calls.  Implementors of 
-	 * IFileService make use of this to determine what to query and what to return 
-	 * from the query.
-	 *
+	 * This constant is passed into the IFileService list calls. Implementors of
+	 * IFileService make use of this to determine what to query and what to
+	 * return from the query.
+	 * 
 	 * @see IFileService#list(String,String,int,IProgressMonitor)
 	 * @see IFileService#listMultiple(String[],String[],int,IProgressMonitor)
 	 * @see IFileService#listMultiple(String[],String[],int[],IProgressMonitor)
+	 * 
+	 * @since org.eclipse.rse.services 3.0
 	 */
 	public static final int FILE_TYPE_FOLDERS =  0x2;
-	
-	/** 
-	 * Query constant (bit mask value 0) which indicates that a query should produce 
-	 * folders and files.  The filter(s) passed into the list methods will produce a 
-	 * subset of files matching the filter(s) and all the folders.
-	 * Note that only files are filtered and all folders are returned when this is used.
+
+	/**
+	 * Query constant (bit mask value 0) which indicates that a query should
+	 * produce folders and files. The filter(s) passed into the list methods
+	 * will produce a subset of files matching the filter(s) and all the
+	 * folders. Note that only files are filtered and all folders are returned
+	 * when this is used.
 	 * 
-	 * This constant is passed into the IFileService list calls.  Implementors of 
-	 * IFileService make use of this to determine what to query and what to return 
-	 * from the query.
-	 *
+	 * This constant is passed into the IFileService list calls. Implementors of
+	 * IFileService make use of this to determine what to query and what to
+	 * return from the query.
+	 * 
 	 * @see IFileService#list(String,String,int,IProgressMonitor)
 	 * @see IFileService#listMultiple(String[],String[],int,IProgressMonitor)
 	 * @see IFileService#listMultiple(String[],String[],int[],IProgressMonitor)
+	 * 
+	 * @since org.eclipse.rse.services 3.0
 	 */
 	public static final int FILE_TYPE_FILES_AND_FOLDERS = 0x0;
 
 	/**
-	 * Options constant (value 1 &lt;&lt;0) for specifying a stream 
-	 * that will append data to a file.
+	 * Options constant (value 1 &lt;&lt;0) for specifying a stream that will
+	 * append data to a file.
 	 * 
 	 * @see IFileService#getOutputStream(String, String, int, IProgressMonitor)
+	 * 
+	 * @since org.eclipse.rse.services 3.0
 	 */
 	public static final int APPEND = 1 << 0;
-	
+
 	/**
-	 * Options constant (value 2 &lt;&lt;0) for specifying that a file
-	 * is Text instead of the default Binary.
-	 *
-	 * In Text mode, encoding conversions and line end conversions can be 
+	 * Options constant (value 2 &lt;&lt;0) for specifying that a file is Text
+	 * instead of the default Binary.
+	 * 
+	 * In Text mode, encoding conversions and line end conversions can be
 	 * performed on the stream.
 	 * 
 	 * @see IFileService#getOutputStream(String, String, int, IProgressMonitor)
+	 * 
+	 * @since org.eclipse.rse.services 3.0
 	 */
 	public static final int TEXT_MODE = 2 << 0;
-	
+
 	/**
 	 * Options constant (value 0) to indicate that no bit options are set.
+	 * 
+	 * @since org.eclipse.rse.services 3.0
 	 */
 	public static final int NONE = 0;
-	
+
 	/**
 	 * Copy a file to the remote file system.  The remote target is denoted by a
 	 * string representing the parent and a string representing the file.
@@ -135,11 +149,11 @@ public interface IFileService extends IService
 	 * @param hostEncoding - the tgt encoding of the file (if text)
 	 * @param monitor the monitor for this potentially long running operation
 	 * @return true if the file was uploaded
-	 * @throws SystemMessageException if an error occurs. 
+	 * @throws SystemMessageException if an error occurs.
 	 * Typically this would be one of those in the RemoteFileException family.
 	 */
 	public boolean upload(InputStream stream, String remoteParent, String remoteFile, boolean isBinary, String hostEncoding, IProgressMonitor monitor) throws SystemMessageException;
-	
+
 	/**
 	 * Copy a file to the remote file system.  The remote target is denoted by a
 	 * string representing the parent and a string representing the file.
@@ -151,7 +165,7 @@ public interface IFileService extends IService
 	 * @param hostEncoding - the tgt encoding of the file (if text)
 	 * @param monitor the monitor for this potentially long running operation
 	 * @return true if the file was uploaded
-	 * @throws SystemMessageException if an error occurs. 
+	 * @throws SystemMessageException if an error occurs.
 	 *     Typically this would be one of those in the
 	 *     {@link RemoteFileException} family.
 	 */
@@ -169,288 +183,336 @@ public interface IFileService extends IService
 	 * @param hostEncodings - the tgt encodings of the files (if text)
 	 * @param monitor the monitor for this potentially long running operation
 	 * @return true if the files were uploaded
-	 * @throws SystemMessageException if an error occurs. 
+	 * @throws SystemMessageException if an error occurs.
 	 *     Typically this would be one of those in the
 	 *     {@link RemoteFileException} family.
+	 * 
+	 * @since org.eclipse.rse.services 3.0
 	 */
 	public boolean uploadMultiple(File[] localFiles, String[] remoteParents, String[] remoteFiles, boolean[] isBinary, String[] srcEncodings, String[] hostEncodings, IProgressMonitor monitor) throws SystemMessageException;
 
-	
+
 	/**
 	 * Copy a file from the remote file system to the local system.
 	 * @param remoteParent - a String designating the remote parent.
 	 * @param remoteFile - a String designating the remote file residing in the parents.
-	 * @param localFile - The file that is to be written.  If the file exists it is 
+	 * @param localFile - The file that is to be written.  If the file exists it is
 	 * overwritten.
 	 * @param isBinary - indicates whether the file is text on binary
 	 * @param hostEncoding - the encoding on the host (if text)
 	 * @param monitor the monitor for this potentially long running operation
 	 * @return true if the file was copied from the remote system.
-	 * @throws SystemMessageException if an error occurs. 
-	 *     Typically this would be one of those in the 
+	 * @throws SystemMessageException if an error occurs.
+	 *     Typically this would be one of those in the
 	 *     {@link RemoteFileException} family.
 	 */
 	public boolean download(String remoteParent, String remoteFile, File localFile, boolean isBinary, String hostEncoding, IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
 	 * Copy files from the remote file system to the local system.
+	 * 
 	 * @param remoteParents - string designating the remote parents.
-	 * @param remoteFiles - Strings designating the remote files residing in the parents.
-	 * @param localFiles - The files that are to be written.  If the files exists they are 
-	 * overwritten.
+	 * @param remoteFiles - Strings designating the remote files residing in the
+	 *            parents.
+	 * @param localFiles - The files that are to be written. If the files exists
+	 *            they are overwritten.
 	 * @param isBinary - indicates whether the files are text on binary
 	 * @param hostEncodings - the encodings on the host (if text)
 	 * @param monitor the monitor for this potentially long running operation
 	 * @return true if the files were copied from the remote system.
-	 * @throws SystemMessageException if an error occurs. 
-	 *     Typically this would be one of those in the 
-	 *     {@link RemoteFileException} family.
+	 * @throws SystemMessageException if an error occurs. Typically this would
+	 *             be one of those in the {@link RemoteFileException} family.
+	 * 
+	 * @since org.eclipse.rse.services 3.0
 	 */
 	public boolean downloadMultiple(String[] remoteParents, String[] remoteFiles, File[] localFiles, boolean[] isBinary, String[] hostEncodings, IProgressMonitor monitor) throws SystemMessageException;
 
-	
-	
+
+
 	/**
+	 * Get an abstract remote file handle for a specified path.
+	 * 
 	 * @param remoteParent
 	 * @param name
 	 * @param monitor the monitor for this potentially long running operation
-	 * @return the host file given the parent path and file name.
-	 *     Must not return <code>null</code>, non-existing files should be
-	 *     reported with an IHostFile object where {@link IHostFile#exists()}
-	 *     returns <code>false</code>.
-	 * @throws SystemMessageException if an error occurs. 
-	 * Typically this would be one of those in the RemoteFileException family.
+	 * @return the host file given the parent path and file name. Must not
+	 *         return <code>null</code>, non-existing files should be
+	 *         reported with an IHostFile object where
+	 *         {@link IHostFile#exists()} returns <code>false</code>.
+	 * @throws SystemMessageException if an error occurs. Typically this would
+	 *             be one of those in the RemoteFileException family.
 	 */
 	public IHostFile getFile(String remoteParent, String name, IProgressMonitor monitor) throws SystemMessageException;
-	
-	
+
+
 	/**
-	 * @param remoteParent - the name of the parent directory on the remote file 
-	 * system from which to retrieve the child list.
-	 * @param fileFilter - a string that can be used to filter the children.  Only
-	 * those files matching the filter make it into the list.  The interface 
-	 * does not dictate where the filtering occurs.
-	 * @param fileType - indicates whether to query files, folders, both or some other type
-	 * @param monitor the monitor for this potentially long running operation
-	 * @return the list of host files. 
-	 * @throws SystemMessageException if an error occurs. 
-	 * Typically this would be one of those in the RemoteFileException family.
+	 * List the contents of a remote folder.
 	 * 
+	 * @param remoteParent - the name of the parent directory on the remote file
+	 *            system from which to retrieve the child list.
+	 * @param fileFilter - a string that can be used to filter the children.
+	 *            Only those files matching the filter make it into the list.
+	 *            The interface does not dictate where the filtering occurs.
+	 * @param fileType - indicates whether to query files, folders, both or some
+	 *            other type
+	 * @param monitor the monitor for this potentially long running operation
+	 * @return the list of host files.
+	 * @throws SystemMessageException if an error occurs. Typically this would
+	 *             be one of those in the RemoteFileException family.
+	 * 
+	 * @since org.eclipse.rse.services 3.0
 	 */
 	public IHostFile[] list(String remoteParent, String fileFilter, int fileType, IProgressMonitor monitor) throws SystemMessageException;
-  
-	
 
-	
-	
 	/**
+	 * Get multiple abstract remote file handles for an array of specified
+	 * paths.
+	 * 
 	 * @param remoteParents - the list of remote parents
 	 * @param names - the list of file names
 	 * @param monitor the monitor for this potentially long running operation
-	 * @return the host files given the parent paths and file names.  This is basically a batch version of getFile().
-	 *     Must not return <code>null</code>, non-existing files should be
-	 *     reported with an IHostFile object where {@link IHostFile#exists()}
-	 *     returns <code>false</code>.
-	 * @throws SystemMessageException if an error occurs. 
-	 * Typically this would be one of those in the RemoteFileException family.
+	 * @return the host files given the parent paths and file names. This is
+	 *         basically a batch version of getFile(). Must not return
+	 *         <code>null</code>, non-existing files should be reported with
+	 *         an IHostFile object where {@link IHostFile#exists()} returns
+	 *         <code>false</code>.
+	 * @throws SystemMessageException if an error occurs. Typically this would
+	 *             be one of those in the RemoteFileException family.
+	 * 
+	 * @since org.eclipse.rse.services 3.0
 	 */
 	public IHostFile[] getFileMultiple(String remoteParents[], String names[], IProgressMonitor monitor) throws SystemMessageException;
-	
-	/**
-	 * @param remoteParents - the names of the parent directories on the remote file 
-	 * system from which to retrieve the collective child list.
-	 * @param fileFilters - a set of strings that can be used to filter the children.  Only
-	 * those files matching the filter corresponding to it's remoteParent make it into the list.  The interface 
-	 * does not dictate where the filtering occurs.  For each remoteParent, there must be a corresponding
-	 * fileFilter.
-	 * @param fileTypes - indicates whether to query files, folders, both or some other type.  For
-	 * each remoteParent, there must be a corresponding fileType.
-	 * 				For the default list of available file types see <code>IFileServiceContants</code>
-	 * @param monitor the monitor for this potentially long running operation
-	 * @return the collective list of host files that reside in each of the remoteParents with it's corresponding filter. 
-	 * @throws SystemMessageException if an error occurs. 
-	 * Typically this would be one of those in the RemoteFileException family.
-	 */
-	public IHostFile[] listMultiple(String[] remoteParents, String[] fileFilters, int[] fileTypes, IProgressMonitor monitor) throws SystemMessageException;
-  
-	/**
-	 * @param remoteParents - the names of the parent directories on the remote file 
-	 * system from which to retrieve the collective child list.
-	 * @param fileFilters - a set of strings that can be used to filter the children.  Only
-	 * those files matching the filter corresponding to it's remoteParent make it into the list.  The interface 
-	 * does not dictate where the filtering occurs.  For each remoteParent, there must be a corresponding
-	 * fileFilter.
-	 * @param fileType - indicates whether to query files, folders, both or some other type.  For
-	 * each remoteParent, there must be a corresponding fileType.
-	 * 				For the default list of available file types see <code>IFileServiceContants</code>
-	 * @param monitor the monitor for this potentially long running operation
-	 * @return the collective list of host files that reside in each of the remoteParents with it's corresponding filter. 
-	 * @throws SystemMessageException if an error occurs. 
-	 * Typically this would be one of those in the RemoteFileException family.
-	 */
-	public IHostFile[] listMultiple(String[] remoteParents, String[] fileFilters, int fileType, IProgressMonitor monitor) throws SystemMessageException;
-  
 
 	/**
+	 * List the contents of multiple remote folders.
+	 * 
+	 * @param remoteParents - the names of the parent directories on the remote
+	 *            file system from which to retrieve the collective child list.
+	 * @param fileFilters - a set of strings that can be used to filter the
+	 *            children. Only those files matching the filter corresponding
+	 *            to it's remoteParent make it into the list. The interface does
+	 *            not dictate where the filtering occurs. For each remoteParent,
+	 *            there must be a corresponding fileFilter.
+	 * @param fileTypes - indicates whether to query files, folders, both or
+	 *            some other type. For each remoteParent, there must be a
+	 *            corresponding fileType. For the default list of available file
+	 *            types see <code>IFileServiceContants</code>
 	 * @param monitor the monitor for this potentially long running operation
-	 * Return the list of roots for this system
-	 * @return the list of host files. 
-	 * @throws SystemMessageException if an error occurs. 
-	 * Typically this would be one of those in the RemoteFileException family.
+	 * @return the collective list of host files that reside in each of the
+	 *         remoteParents with it's corresponding filter.
+	 * @throws SystemMessageException if an error occurs. Typically this would
+	 *             be one of those in the RemoteFileException family.
+	 * 
+	 * @since org.eclipse.rse.services 3.0
+	 */
+	public IHostFile[] listMultiple(String[] remoteParents, String[] fileFilters, int[] fileTypes, IProgressMonitor monitor) throws SystemMessageException;
+
+	/**
+	 * List the contents of multiple remote folders.
+	 * 
+	 * @param remoteParents - the names of the parent directories on the remote
+	 *            file system from which to retrieve the collective child list.
+	 * @param fileFilters - a set of strings that can be used to filter the
+	 *            children. Only those files matching the filter corresponding
+	 *            to it's remoteParent make it into the list. The interface does
+	 *            not dictate where the filtering occurs. For each remoteParent,
+	 *            there must be a corresponding fileFilter.
+	 * @param fileType - indicates whether to query files, folders, both or some
+	 *            other type. All results will be of the specified type. For the
+	 *            default list of available file types see
+	 *            <code>IFileServiceContants</code>
+	 * @param monitor the monitor for this potentially long running operation
+	 * @return the collective list of host files that reside in each of the
+	 *         remoteParents with it's corresponding filter.
+	 * @throws SystemMessageException if an error occurs. Typically this would
+	 *             be one of those in the RemoteFileException family.
+	 * 
+	 * @since org.eclipse.rse.services 3.0
+	 */
+	public IHostFile[] listMultiple(String[] remoteParents, String[] fileFilters, int fileType, IProgressMonitor monitor) throws SystemMessageException;
+
+
+	/**
+	 * Get abstract remote file handles for the known remote file system roots.
+	 * 
+	 * @param monitor the monitor for this potentially long running operation
+	 *            Return the list of roots for this system
+	 * @return the list of host files.
+	 * @throws SystemMessageException if an error occurs. Typically this would
+	 *             be one of those in the RemoteFileException family.
 	 */
 	public IHostFile[] getRoots(IProgressMonitor monitor) throws SystemMessageException;
-	
+
 	/**
 	 * Return the user's home directory on this connection.
 	 * 
-	 * The resulting IHostFile object is just a handle, so there is no guarantee 
+	 * The resulting IHostFile object is just a handle, so there is no guarantee
 	 * that it refers to an existing file.
 	 * 
 	 * This method may also return <code>null</code> if the home directory could
 	 * not be determined (for instance, because the connection is not yet connected).
 	 * In this case, clients are encouraged to query the home directory again once
 	 * the connection is connected.
-	 *  
+	 * 
 	 * @return A handle to the current user's home directory, or <code>null</code>
-	 *     if the home directory could not be determined.  
+	 *     if the home directory could not be determined.
 	 */
 	public IHostFile getUserHome();
 
 	/**
-	 * Create a file on the host
+	 * Create a file on the host.
+	 * 
 	 * @param remoteParent the parent directory
 	 * @param fileName the name of the new file
 	 * @param monitor the monitor for this potentially long running operation
 	 * @return the newly created file
-	 * @throws SystemMessageException if an error occurs. 
-	 * Typically this would be one of those in the RemoteFileException family.
+	 * @throws SystemMessageException if an error occurs. Typically this would
+	 *             be one of those in the RemoteFileException family.
 	 */
 	public IHostFile createFile(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException;
-	
+
 	/**
-	 * Create a folder on the host
+	 * Create a folder on the host.
+	 * 
 	 * @param remoteParent the parent directory
 	 * @param folderName the name of the new folder
 	 * @param monitor the progress monitor
 	 * @return the newly created folder
-	 * @throws SystemMessageException if an error occurs. 
-	 * Typically this would be one of those in the RemoteFileException family.
+	 * @throws SystemMessageException if an error occurs. Typically this would
+	 *             be one of those in the RemoteFileException family.
 	 */
 	public IHostFile createFolder(String remoteParent, String folderName, IProgressMonitor monitor) throws SystemMessageException;
-	
+
 	/**
-	 * Deletes a file or folder on the host
+	 * Delete a file or folder on the host.
+	 * 
 	 * @param remoteParent the folder containing the file to delete
 	 * @param fileName the name of the file or folder to delete
 	 * @param monitor the progress monitor
 	 * @return true if successful
-	 * @throws SystemMessageException if an error occurs. 
-	 * Typically this would be one of those in the RemoteFileException family.
+	 * @throws SystemMessageException if an error occurs. Typically this would
+	 *             be one of those in the RemoteFileException family.
 	 */
 	public boolean delete(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
-	 * Deletes a set of files or folders on the host. Should throw an exception if some files and folders were deleted and others were not
-	 * due to an exception during the operation. Without an exception thrown in such cases, views may not be refreshed correctly to account
-	 * for deleted resources.
+	 * Delete a set of files or folders on the host. Should throw an exception
+	 * if some files and folders were deleted and others were not due to an
+	 * exception during the operation. Without an exception thrown in such
+	 * cases, views may not be refreshed correctly to account for deleted
+	 * resources.
+	 * 
 	 * @param remoteParents the array of folders containing the files to delete
 	 * @param fileNames the names of the files or folders to delete
 	 * @param monitor the progress monitor
-	 * @return true iff all deletes are successful
-	 * @throws SystemMessageException if an error occurs. 
-	 * Typically this would be one of those in the RemoteFileException family.
+	 * @return <code>true</code> if all delete operations are successful,
+	 *         <code>false</code> otherwise.
+	 * @throws SystemMessageException if an error occurs. Typically this would
+	 *             be one of those in the RemoteFileException family.
 	 */
 	public boolean deleteBatch(String[] remoteParents, String[] fileNames, IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
-	 * Renames a file or folder on the host
+	 * Rename a file or folder on the host.
+	 * 
 	 * @param remoteParent the folder containing the file to rename
 	 * @param oldName the old name of the file or folder to rename
 	 * @param newName the new name for the file
 	 * @param monitor the progress monitor
 	 * @return true if successful
-	 * @throws SystemMessageException if an error occurs. 
-	 * Typically this would be one of those in the RemoteFileException family.
+	 * @throws SystemMessageException if an error occurs. Typically this would
+	 *             be one of those in the RemoteFileException family.
 	 */
 	public boolean rename(String remoteParent, String oldName, String newName, IProgressMonitor monitor) throws SystemMessageException;
-	
+
 	/**
-	 * Renames a file or folder on the host
+	 * Rename a file or folder on the host.
+	 * 
 	 * @param remoteParent the folder containing the file to rename
 	 * @param oldName the old name of the file or folder to rename
 	 * @param newName the new name for the file
 	 * @param oldFile the file to update with the change
 	 * @param monitor the progress monitor
 	 * @return true if successful
-	 * @throws SystemMessageException if an error occurs. 
-	 * Typically this would be one of those in the RemoteFileException family.
+	 * @throws SystemMessageException if an error occurs. Typically this would
+	 *             be one of those in the RemoteFileException family.
 	 */
 	public boolean rename(String remoteParent, String oldName, String newName, IHostFile oldFile, IProgressMonitor monitor) throws SystemMessageException;
-	
+
 	/**
-	 * Move the file or folder specified
+	 * Move the file or folder specified to a different remote path.
+	 * 
 	 * @param srcParent the folder containing the file or folder to move
 	 * @param srcName the new of the file or folder to move
 	 * @param tgtParent the destination folder for the move
 	 * @param tgtName the name of the moved file or folder
 	 * @param monitor the progress monitor
 	 * @return true if the file was moved
-	 * @throws SystemMessageException if an error occurs. 
-	 * Typically this would be one of those in the RemoteFileException family.
+	 * @throws SystemMessageException if an error occurs. Typically this would
+	 *             be one of those in the RemoteFileException family.
 	 */
 	public boolean move(String srcParent, String srcName, String tgtParent, String tgtName, IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
-	 * Copy the file or folder to the specified destination
+	 * Copy the file or folder to the specified destination.
+	 * 
 	 * @param srcParent the folder containing the file or folder to copy
 	 * @param srcName the new of the file or folder to copy
 	 * @param tgtParent the destination folder for the copy
 	 * @param tgtName the name of the copied file or folder
 	 * @param monitor the progress monitor
 	 * @return true if the file was copied successfully
-	 * @throws SystemMessageException if an error occurs. 
-	 * Typically this would be one of those in the RemoteFileException family.
+	 * @throws SystemMessageException if an error occurs. Typically this would
+	 *             be one of those in the RemoteFileException family.
 	 */
 	public boolean copy(String srcParent, String srcName, String tgtParent, String tgtName, IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
-	 * Copy a set of files or folders to the specified destination
+	 * Copy a set of files or folders to the specified destination.
+	 * 
 	 * @param srcParents the folders containing each file or folder to copy
 	 * @param srcNames the names of the files or folders to copy
 	 * @param tgtParent the destination folder for the copy
 	 * @param monitor the progress monitor
-	 * @return true if all files were copied
-	 * @throws SystemMessageException if an error occurs. 
-	 * Typically this would be one of those in the RemoteFileException family.
+	 * @return <code>true</code> if all files were copied, <code>false</code>
+	 *         or exception otherwise.
+	 * @throws SystemMessageException if an error occurs. Typically this would
+	 *             be one of those in the RemoteFileException family.
 	 */
 	public boolean copyBatch(String[] srcParents, String[] srcNames, String tgtParent, IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
-	 * Indicates whether the file system is case sensitive
+	 * Indicates whether the file system is case sensitive.
+	 * 
 	 * @return true if the file system has case sensitive file names
 	 */
 	public boolean isCaseSensitive();
-	
+
 	/**
-	 * Sets the last modified stamp of the file or folder with the specified timestamp
+	 * Set the last modified stamp of the file or folder with the specified
+	 * timestamp.
+	 * 
 	 * @param parent the parent path of the file to set
 	 * @param name the name of the file to set
-	 * @param timestamp the new timestamp  
+	 * @param timestamp the new timestamp
 	 * @param monitor the progress monitor
 	 * @return true if the file timestamp was changed successfully
 	 */
 	public boolean setLastModified(String parent, String name, long timestamp, IProgressMonitor monitor) throws SystemMessageException;
-	
+
 	/**
-	 * Sets the readonly permission of the file or folder
+	 * Set the read-only permission of the specified file or folder.
+	 * 
 	 * @param parent the parent path of the file to set
 	 * @param name the name of the file to set
-	 * @param readOnly indicates whether to make the file readonly or read-write
+	 * @param readOnly indicates whether to make the file read-only or
+	 *            read-write
 	 * @param monitor the progress monitor
-	 * @return true if the readonly permission was changed successfully, or the permission already was as desired
+	 * @return true if the read-only permission was changed successfully, or the
+	 *         permission already was as desired
 	 */
 	public boolean setReadOnly(String parent, String name, boolean readOnly, IProgressMonitor monitor) throws SystemMessageException;
-	
+
 	/**
 	 * Gets the remote encoding.
 	 * @param monitor the progress monitor.
@@ -459,51 +521,65 @@ public interface IFileService extends IService
 	 * @since 2.0
 	 */
 	public String getEncoding(IProgressMonitor monitor) throws SystemMessageException;
-	
+
 	/**
-	 * Gets the input stream to access the contents a remote file. Clients should close the input stream when done.
+	 * Get the input stream to access the contents a remote file. Clients should
+	 * close the input stream when done.
+	 * 
 	 * @param remoteParent the absolute path of the parent.
 	 * @param remoteFile the name of the remote file.
-	 * @param isBinary <code>true</code> if the file is a binary file, <code>false</code> otherwise.
+	 * @param isBinary <code>true</code> if the file is a binary file,
+	 *            <code>false</code> otherwise.
 	 * @param monitor the progress monitor.
 	 * @return the input stream to access the contents of the remote file.
-	 * @throws SystemMessageException if an error occurs. S
-	 * @since 2.0
+	 * @throws SystemMessageException if an error occurs.
+	 * @since org.eclipse.rse.services 2.0
 	 */
 	public InputStream getInputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException;
-	
+
 	/**
-	 * Gets the output stream to write to a remote file. Clients should close the output stream when done.
+	 * Get the output stream to write to a remote file. Clients should close the
+	 * output stream when done.
+	 * 
 	 * @param remoteParent the absolute path of the parent.
 	 * @param remoteFile the name of the remote file.
-	 * @param isBinary <code>true</code> if the file is a binary file, <code>false</code> otherwise.
+	 * @param isBinary <code>true</code> if the file is a binary file,
+	 *            <code>false</code> otherwise.
 	 * @param monitor the progress monitor.
 	 * @return the input stream to access the contents of the remote file.
 	 * @throws SystemMessageException if an error occurs.
-	 * @since 2.0
-	 * @deprecated  Use {@link #getOutputStream(String, String, int, IProgressMonitor)} instead
+	 * @since org.eclipse.rse.services 2.0
+	 * @deprecated Use
+	 *             {@link #getOutputStream(String, String, int, IProgressMonitor)}
+	 *             instead
 	 */
 	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException;
-  
+
 	/**
-	 * Gets the output stream to write/append to a remote file. Clients should close the output stream when done.
+	 * Get the output stream to write/append to a remote file. Clients should
+	 * close the output stream when done.
+	 * 
 	 * @param remoteParent the absolute path of the parent.
 	 * @param remoteFile the name of the remote file.
-	 * @param options bit wise or of option constants.  Valid constants are {@link IFileService#APPEND}, {@link IFileService#TEXT_MODE}, and {@link IFileService#NONE}
+	 * @param options bit wise or of option constants. Valid constants are
+	 *            {@link IFileService#APPEND}, {@link IFileService#TEXT_MODE},
+	 *            and {@link IFileService#NONE}
 	 * @param monitor the progress monitor.
 	 * @return the input stream to access the contents of the remote file.
 	 * @throws SystemMessageException if an error occurs.
-	 * @since 3.0
+	 * @since org.eclipse.rse.services 3.0
 	 */
 	public OutputStream getOutputStream(String remoteParent, String remoteFile, int options, IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
 	 * Indicates whether this file service supports code page conversion using
-	 * the IFileServiceCodePageConverter mechanism.  Certain extensions, such as 
-	 * property pages for encoding conversion can determine whether or not to 
+	 * the IFileServiceCodePageConverter mechanism.  Certain extensions, such as
+	 * property pages for encoding conversion can determine whether or not to
 	 * display or enable themselves based on result of this call.
 	 * 
 	 * @return whether this service supports encoding conversion
+	 * 
+	 * @since org.eclipse.rse.services 3.0
 	 */
 	public boolean supportsEncodingConversion();
 }

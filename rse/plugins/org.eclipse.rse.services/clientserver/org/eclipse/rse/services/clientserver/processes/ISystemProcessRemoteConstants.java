@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,12 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [cleanup] add API "since" tags
  *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver.processes;
@@ -28,7 +28,7 @@ public interface ISystemProcessRemoteConstants
 	public static final int PROCESS_ATTRIBUTES_INDEX_TRACERPID = 5;
 	public static final int PROCESS_ATTRIBUTES_INDEX_UID = 6;
 	public static final int PROCESS_ATTRIBUTES_INDEX_USERNAME = 7;
-	public static final int PROCESS_ATTRIBUTES_INDEX_GID = 8;	 
+	public static final int PROCESS_ATTRIBUTES_INDEX_GID = 8;
 	public static final int PROCESS_ATTRIBUTES_INDEX_VMSIZE = 9;
 	public static final int PROCESS_ATTRIBUTES_INDEX_VMRSS = 10;
 	public static final int PROCESS_ATTRIBUTES_COUNT = 11;
@@ -42,7 +42,7 @@ public interface ISystemProcessRemoteConstants
 	public static final char STATE_TRACED = 'T';
 	public static final char STATE_WAITING = 'D';
 	public static final char STATE_ZOMBIE = 'Z';
-	
+
 	public static final char STATE_ZOS_SINGLE = '1';
 	public static final char STATE_ZOS_MSGQRECEIVEWAIT = 'A';
 	public static final char STATE_ZOS_MSGQSENDWAIT = 'B';
@@ -55,6 +55,7 @@ public interface ISystemProcessRemoteConstants
 	public static final char STATE_ZOS_SWAPPEDOUT = 'I';
 	public static final char STATE_ZOS_PTHREADCREATED = 'J';
 	public static final char STATE_ZOS_OTHERKERNELWAIT = 'K';
+	/** @since 3.0 renamed from STATE_ZOS_CANCELLED */
 	public static final char STATE_ZOS_CANCELED = 'L';
 	public static final char STATE_ZOS_MULTITHREAD = 'M';
 	public static final char STATE_ZOS_MEDIUMWEIGHTTHREAD = 'N';
@@ -94,6 +95,7 @@ public interface ISystemProcessRemoteConstants
 	public static final int STATE_ZOS_SWAPPEDOUT_INDEX = 18;
 	public static final int STATE_ZOS_PTHREADCREATED_INDEX = 19;
 	public static final int STATE_ZOS_OTHERKERNELWAIT_INDEX = 20;
+	/** @since 3.0 renamed from STATE_ZOS_CANCELLED_INDEX */
 	public static final int STATE_ZOS_CANCELED_INDEX = 21;
 	public static final int STATE_ZOS_MULTITHREAD_INDEX = 22;
 	public static final int STATE_ZOS_MEDIUMWEIGHTTHREAD_INDEX = 23;
@@ -109,8 +111,8 @@ public interface ISystemProcessRemoteConstants
 	public static final int STATE_ZOS_MVSWAIT_INDEX = 33;
 	public static final int STATE_ZOS_ZOMBIE_INDEX = 34;
 	public static final int STATE_ZOS_ENDING_INDEX = 35;
-	
-	public static final char[] ALL_STATES = 
+
+	public static final char[] ALL_STATES =
 	{
 		STATE_ACTIVE,
 		STATE_IDLE,
@@ -146,11 +148,11 @@ public interface ISystemProcessRemoteConstants
 		STATE_ZOS_WAITINGFORCHILD,
 		STATE_ZOS_FORKING,
 		STATE_ZOS_MVSWAIT,
-		STATE_ZOS_ZOMBIE 
+		STATE_ZOS_ZOMBIE
 	};
-	
-	public static final String[] ALL_STATES_STR = 
-	{	
+
+	public static final String[] ALL_STATES_STR =
+	{
 		"ASTATE_ACTIVE", //$NON-NLS-1$
 		"ISTATE_IDLE", //$NON-NLS-1$
 		"OSTATE_NONEXISTENT", //$NON-NLS-1$
@@ -187,9 +189,9 @@ public interface ISystemProcessRemoteConstants
 		"YSTATE_ZOS_MVSWAIT", //$NON-NLS-1$
 		"ZSTATE_ZOS_ZOMBIE"  //$NON-NLS-1$
 	};
-	
+
 	public static final String PROCESS_MINER_ERROR_NO_HANDLER = "No handler for this system type"; //$NON-NLS-1$
 	public static final String PROCESS_MINER_SUCCESS = "SUCCESS"; //$NON-NLS-1$
-	
+
 	public static final String PROCESS_SIGNAL_TYPE_DEFAULT = "default"; //$NON-NLS-1$
 }

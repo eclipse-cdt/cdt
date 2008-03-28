@@ -16,7 +16,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.zip.GZIPOutputStream;
 
-import org.eclipse.rse.internal.services.clientserver.archiveutils.TarOutputStream;
 import org.eclipse.rse.internal.services.clientserver.archiveutils.TgzFile;
 
 /**

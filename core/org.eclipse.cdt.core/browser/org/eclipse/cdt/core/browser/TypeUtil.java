@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -111,13 +111,13 @@ public class TypeUtil {
      *		exception occurs while accessing its corresponding resource
      */
     public static ICElement[] getTypes(ITranslationUnit tu) throws CModelException {
-        List typeList = new ArrayList();
+        List<ICElement> typeList = new ArrayList<ICElement>();
         ICElement[] children = tu.getChildren();
         for (int i = 0; i < children.length; ++i) {
             if (isDeclaringType(children[i]))
                 typeList.add(children[i]);
         }
-        return (ICElement[])typeList.toArray(new ICElement[typeList.size()]);
+        return typeList.toArray(new ICElement[typeList.size()]);
 	}
     
     /**
@@ -132,13 +132,13 @@ public class TypeUtil {
      */
     public static ICElement[] getAllTypes(ITranslationUnit tu) throws CModelException {
     	ICElement[] types = getTypes(tu);
-    	ArrayList allTypes = new ArrayList(types.length);
-    	ArrayList typesToTraverse = new ArrayList(types.length);
+    	ArrayList<ICElement> allTypes = new ArrayList<ICElement>(types.length);
+    	ArrayList<ICElement> typesToTraverse = new ArrayList<ICElement>(types.length);
     	for (int i = 0; i < types.length; i++) {
     		typesToTraverse.add(types[i]);
     	}
     	while (!typesToTraverse.isEmpty()) {
-    		ICElement type = (ICElement) typesToTraverse.get(0);
+    		ICElement type = typesToTraverse.get(0);
     		typesToTraverse.remove(type);
     		allTypes.add(type);
     		types = getTypes(type);
@@ -146,7 +146,7 @@ public class TypeUtil {
     			typesToTraverse.add(types[i]);
     		}
     	} 
-        return (ICElement[])allTypes.toArray(new ICElement[allTypes.size()]);
+        return allTypes.toArray(new ICElement[allTypes.size()]);
 	}
     
 
@@ -160,7 +160,7 @@ public class TypeUtil {
 	 * @return the immediate member types declared by this type
 	 */
     public static ICElement[] getTypes(ICElement elem) throws CModelException {
-        List typeList = new ArrayList();
+        List<ICElement> typeList = new ArrayList<ICElement>();
         if (isDeclaringType(elem) && elem instanceof IParent) {
             ICElement[] children = ((IParent)elem).getChildren();
             for (int i = 0; i < children.length; ++i) {
@@ -168,7 +168,7 @@ public class TypeUtil {
                     typeList.add(children[i]);
             }
         }
-        return (ICElement[])typeList.toArray(new ICElement[typeList.size()]);
+        return typeList.toArray(new ICElement[typeList.size()]);
 	}
     
     public static ITranslationUnit getTranslationUnit(ICElement elem) {
@@ -257,8 +257,9 @@ public class TypeUtil {
 				String[] currParamTypes= curr.getParameterTypes();
 				if (paramTypes.length == currParamTypes.length) {
 					for (int i= 0; i < paramTypes.length; i++) {
-						String t1= Signature.getSimpleName(Signature.toString(paramTypes[i]));
-						String t2= Signature.getSimpleName(Signature.toString(currParamTypes[i]));
+						// TODO should compare signatures
+						String t1= paramTypes[i];
+						String t2= currParamTypes[i];
 						if (!t1.equals(t2)) {
 							return false;
 						}

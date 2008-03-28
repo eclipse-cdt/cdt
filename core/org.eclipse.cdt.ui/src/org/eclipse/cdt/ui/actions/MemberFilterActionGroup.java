@@ -156,7 +156,7 @@ public class MemberFilterActionGroup extends ActionGroup {
 		fFilter= new MemberFilter();
 		
 		String title, helpContext;
-		ArrayList actions= new ArrayList(4);
+		ArrayList<MemberFilterAction> actions= new ArrayList<MemberFilterAction>(4);
 		
 		// fields
 		int filterProperty= FILTER_FIELDS;
@@ -207,7 +207,7 @@ public class MemberFilterActionGroup extends ActionGroup {
 		}
 		
 		// order corresponds to order in toolbar
-		fFilterActions= (MemberFilterAction[]) actions.toArray(new MemberFilterAction[actions.size()]);
+		fFilterActions= actions.toArray(new MemberFilterAction[actions.size()]);
 		
 		fViewer.addFilter(fFilter);
 	}

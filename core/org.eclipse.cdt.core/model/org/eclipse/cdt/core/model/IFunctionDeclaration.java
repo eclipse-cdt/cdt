@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,8 +26,6 @@ public interface IFunctionDeclaration extends IDeclaration {
 	 *
 	 * @exception CModelException if this element does not exist or if an
 	 *      exception occurs while accessing its corresponding resource.
-	 *
-	 * @see Signature
 	 */
 	String[] getExceptions();
 
@@ -55,8 +53,6 @@ public interface IFunctionDeclaration extends IDeclaration {
 	 *
 	 * <p>For example, a source method declared as <code>void foo(string text, int length)</code>
 	 * would return the array <code>{"string","int"}</code>.
-	 *
-	 * @see Signature
 	 */
 	String[] getParameterTypes();
 

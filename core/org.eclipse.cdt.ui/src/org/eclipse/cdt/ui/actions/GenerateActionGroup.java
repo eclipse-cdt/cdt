@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -99,7 +99,7 @@ public class GenerateActionGroup extends ActionGroup {
 	private CEditor fEditor;
 	private IWorkbenchSite fSite;
 	private String fGroupName= IContextMenuConstants.GROUP_REORGANIZE;
-	private List fRegisteredSelectionListeners;
+	private List<ISelectionChangedListener> fRegisteredSelectionListeners;
 	
 	private AddIncludeOnSelectionAction fAddInclude;
 //	private OverrideMethodsAction fOverrideMethods;
@@ -249,10 +249,10 @@ public class GenerateActionGroup extends ActionGroup {
 //		fAddCppDocStub= new AddJavaDocStubAction(site);
 //		fAddCppDocStub.setActionDefinitionId(ICEditorActionDefinitionIds.ADD_JAVADOC_COMMENT);
 		
-		fAddBookmark= new AddBookmarkAction(site.getShell());
+		fAddBookmark= new AddBookmarkAction(site, true);
 		fAddBookmark.setActionDefinitionId(IWorkbenchActionDefinitionIds.ADD_BOOKMARK);
 		
-		fAddTaskAction= new AddTaskAction(site.getShell());
+		fAddTaskAction= new AddTaskAction(site);
 		fAddTaskAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.ADD_TASK);
 		
 //		fExternalizeStrings= new ExternalizeStringsAction(site);
@@ -318,7 +318,7 @@ public class GenerateActionGroup extends ActionGroup {
 	
 	private void registerSelectionListener(ISelectionProvider provider, ISelectionChangedListener listener) {
 		if (fRegisteredSelectionListeners == null)
-			fRegisteredSelectionListeners= new ArrayList(10);
+			fRegisteredSelectionListeners= new ArrayList<ISelectionChangedListener>(10);
 		provider.addSelectionChangedListener(listener);
 		fRegisteredSelectionListeners.add(listener);
 	}
@@ -433,8 +433,8 @@ public class GenerateActionGroup extends ActionGroup {
 	public void dispose() {
 		if (fRegisteredSelectionListeners != null) {
 			ISelectionProvider provider= fSite.getSelectionProvider();
-			for (Iterator iter= fRegisteredSelectionListeners.iterator(); iter.hasNext();) {
-				ISelectionChangedListener listener= (ISelectionChangedListener) iter.next();
+			for (Iterator<ISelectionChangedListener> iter= fRegisteredSelectionListeners.iterator(); iter.hasNext();) {
+				ISelectionChangedListener listener= iter.next();
 				provider.removeSelectionChangedListener(listener);
 			}
 		}

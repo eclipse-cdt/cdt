@@ -6,6 +6,7 @@ Bundle-SymbolicName: org.eclipse.dd.gdb.launch; singleton:=true
 Bundle-Version: 1.0.0
 Bundle-Activator: org.eclipse.dd.gdb.launch.internal.GdbLaunchPlugin
 Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.dd.gdb
+ org.eclipse.dd.gdb,
+ org.eclipse.dd.gdb.ui
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

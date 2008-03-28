@@ -21,4 +21,30 @@
             sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer">
       </launchConfigurationType>
    </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            class="org.eclipse.dd.gdb.internal.ui.launching.GdbLocalRunLaunchConfigurationTabGroup"
+            id="org.eclipse.dd.gdb.launch.localRunLaunchTabGroup"
+            type="org.eclipse.dd.gdb.launch.localCLaunch">
+      </launchConfigurationTabGroup>
+      <launchConfigurationTabGroup
+            class="org.eclipse.dd.gdb.internal.ui.launching.GdbRemoteRunLaunchConfigurationTabGroup"
+            id="org.eclipse.dd.gdb.launch.remoteRunLaunchTabGroup"
+            type="org.eclipse.dd.gdb.launch.remoteCLaunch">
+      </launchConfigurationTabGroup>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+      <launchConfigurationTypeImage
+            configTypeID="org.eclipse.dd.gdb.launch.localCLaunch"
+            icon="icons/full/obj16/c_app.gif"
+            id="org.eclipse.dd.gdb.launch.localRunLaunchImage">
+      </launchConfigurationTypeImage>
+      <launchConfigurationTypeImage
+            configTypeID="org.eclipse.dd.gdb.launch.remoteCLaunch"
+            icon="icons/full/obj16/c_app.gif"
+            id="org.eclipse.dd.gdb.launch.remoteRunLaunchImage">
+      </launchConfigurationTypeImage>
+   </extension>
 </plugin>

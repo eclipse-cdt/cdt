@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.dd.gdb.launching.GdbLaunch;
+import org.eclipse.dd.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -81,6 +82,16 @@ public class BaseTestCase {
  		
  		// Now initialize our SyncUtility, since we have the launcher
  		SyncUtil.initialize(fLaunch.getSession());
+ 		
+		try {
+			// Also wait for the program to stop before allowing tests to start
+			final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
+				new ServiceEventWaitor<MIStoppedEvent>(
+						fLaunch.getSession(),
+						MIStoppedEvent.class);
+			eventWaitor.waitForEvent(10000);
+		} catch (Exception e) {}
+
 	}
 
  	@After

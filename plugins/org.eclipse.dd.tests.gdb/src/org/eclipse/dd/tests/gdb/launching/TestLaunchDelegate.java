@@ -34,9 +34,13 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.eclipse.dd.dsf.debug.model.DsfMemoryBlockRetrieval;
+import org.eclipse.dd.dsf.debug.service.IMemory.IMemoryDMContext;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
+import org.eclipse.dd.gdb.launching.FinalLaunchSequence;
 import org.eclipse.dd.gdb.launching.GdbLaunch;
+import org.eclipse.dd.gdb.launching.ServicesLaunchSequence;
 import org.eclipse.dd.gdb.service.command.GDBControl;
+import org.eclipse.dd.gdb.service.command.GDBControl.SessionType;
 import org.eclipse.dd.mi.service.command.AbstractCLIProcess;
 import org.eclipse.dd.mi.service.command.MIInferiorProcess;
 import org.eclipse.debug.core.DebugException;
@@ -104,15 +108,16 @@ public class TestLaunchDelegate extends AbstractCLaunchDelegate
         monitor.worked( 1 );  
         
         // Create and invoke the launch sequence to create the debug control and services
-        final LaunchSequence launchSequence = 
-            new LaunchSequence(launch.getSession(), launch, exePath);
-        launch.getSession().getExecutor().execute(launchSequence);
+        // Create and invoke the launch sequence to create the debug control and services
+        final ServicesLaunchSequence servicesLaunchSequence = 
+            new ServicesLaunchSequence(launch.getSession(), launch, exePath);
+        launch.getSession().getExecutor().execute(servicesLaunchSequence);
         try {
-            launchSequence.get();
+            servicesLaunchSequence.get();
         } catch (InterruptedException e1) {
             throw new DebugException(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR, "Interrupted Exception in dispatch thread", e1)); //$NON-NLS-1$
         } catch (ExecutionException e1) {
-            throw new DebugException(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Error in launch sequence", e1.getCause())); //$NON-NLS-1$
+            throw new DebugException(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Error in services launch sequence", e1.getCause())); //$NON-NLS-1$
         }
         
         launch.initializeControl();
@@ -143,6 +148,17 @@ public class TestLaunchDelegate extends AbstractCLaunchDelegate
             throw new CoreException(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID, 0, "Debugger shut down before launch was completed.", e)); //$NON-NLS-1$
         }            
         
+        // Create and invoke the final launch sequence to setup GDB
+        final FinalLaunchSequence finalLaunchSequence = 
+            new FinalLaunchSequence(launch.getSession().getExecutor(), launch, SessionType.RUN);
+        launch.getSession().getExecutor().execute(finalLaunchSequence);
+        try {
+        	finalLaunchSequence.get();
+        } catch (InterruptedException e1) {
+            throw new DebugException(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR, "Interrupted Exception in dispatch thread", e1)); //$NON-NLS-1$
+        } catch (ExecutionException e1) {
+            throw new DebugException(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Error in final launch sequence", e1.getCause())); //$NON-NLS-1$
+        }
         // Create a memory retrieval and register it with session 
         try {
             launch.getDsfExecutor().submit( new Callable<Object>() {
@@ -151,7 +167,7 @@ public class TestLaunchDelegate extends AbstractCLaunchDelegate
                     GDBControl gdbControl = tracker.getService(GDBControl.class);
                     if (gdbControl != null) {
                         IMemoryBlockRetrieval memRetrieval = new DsfMemoryBlockRetrieval(
-                            GDB_DEBUG_MODEL_ID, config, gdbControl.getGDBDMContext());
+                            GDB_DEBUG_MODEL_ID, config, (IMemoryDMContext)gdbControl.getControlDMContext());
                         launch.getSession().registerModelAdapter(IMemoryBlockRetrieval.class, memRetrieval);
                         ((DsfMemoryBlockRetrieval) memRetrieval).initialize();
                     }

@@ -490,7 +490,7 @@ public class MIRegisters extends AbstractDsfService implements IRegisters {
      * (non-Javadoc)
      * @see org.eclipse.dd.dsf.debug.service.IRegisters#getBitFields(org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterDMContext, org.eclipse.dd.dsf.concurrent.DataRequestMonitor)
      */
-    public void getBitFields( IRegisterDMContext regDmc , DataRequestMonitor<IBitFieldDMContext[]> rm ) {
+    public void getBitFields( IDMContext regDmc , DataRequestMonitor<IBitFieldDMContext[]> rm ) {
         rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, NOT_SUPPORTED, "BitField not supported", null)); //$NON-NLS-1$
         rm.done();
     }

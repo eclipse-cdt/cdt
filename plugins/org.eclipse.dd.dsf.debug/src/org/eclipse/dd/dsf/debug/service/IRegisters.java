@@ -152,7 +152,7 @@ public interface IRegisters extends IFormattedValues {
      * @param ctx Context for the returned data.
      * @param rm Request completion monitor.
      */
-    void getBitFields(IRegisterDMContext ctx, DataRequestMonitor<IBitFieldDMContext[]> rm);
+    void getBitFields(IDMContext ctx, DataRequestMonitor<IBitFieldDMContext[]> rm);
     
     /** 
      * Writes a register value for a given register to the target

@@ -304,9 +304,13 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 		final IProject project= tu.getCProject().getProject();
 		parent.accept(new IResourceProxyVisitor() {
 			public boolean visit(IResourceProxy proxy) throws CoreException {
+				final int type= proxy.getType();
+				if (type == IResource.PROJECT) {
+					return true;
+				}
 				final String name= proxy.getName();
-				if (name.length() < prefixLength && namePrefix.equalsIgnoreCase(name.substring(0, prefixLength))) {
-					if (proxy.getType() == IResource.FILE) {
+				if (name.length() >= prefixLength && namePrefix.equalsIgnoreCase(name.substring(0, prefixLength))) {
+					if (type == IResource.FILE) {
 						if (isCpp) {
 							if (CoreModel.isValidCXXHeaderUnitName(project, name)) {
 								includeFiles.add(cPrefixPath.append(name).toString());
@@ -316,7 +320,7 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 								includeFiles.add(cPrefixPath.append(name).toString());
 							}
 						}
-					} else if (proxy.getType() == IResource.FOLDER) {
+					} else if (type == IResource.FOLDER) {
 						includeFiles.add(cPrefixPath.append(name).addTrailingSeparator().toString());
 					}
 				}

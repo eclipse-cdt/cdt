@@ -990,6 +990,14 @@ public class CompletionTests extends AbstractContentAssistTest {
 			};
 			assertCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
 
+			createFile(fProject, "inc113568.h", "");
+			expected= new String[] {
+				"\"inc1.h",
+				"\"inc113568.h",
+				"\"inc2.h"
+			};
+			assertCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
+
 			getDocument().replace(fCursorOffset-1, 1, "sub1/");
 			expected= new String[] {
 				"\"sub1/inc11.h"
@@ -1028,4 +1036,5 @@ public class CompletionTests extends AbstractContentAssistTest {
 		}
 		TestScannerProvider.sIncludes= (String[]) includeDirs.toArray(new String[includeDirs.size()]);
 	}
+
 }

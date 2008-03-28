@@ -1,31 +1,33 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
  * David McKnight (IBM) - update version to 9.0.0
  * David McKnight (IBM) - [220892] version back to 8.1.0 since protocol hasn't changed
+ * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
  ********************************************************************************/
 
 package org.eclipse.dstore.core.model;
 
-
-
 /**
- * This class is used to store attributes that are required
- * for configurating a remote connection.
+ * This class is used to store attributes that are required for configuring a
+ * remote connection.
  */
 public class DataStoreAttributes
 {
-
+	/**
+	 * Datastore Protocol Version. Current value = "DataStore.8.0.0". Will be
+	 * changed with protocol updates (which are only rarely necessary).
+	 */
 	public static final String DATASTORE_VERSION = "DataStore.8.0.0"; //$NON-NLS-1$
 
 	public static final int A_PLUGIN_PATH = 0;

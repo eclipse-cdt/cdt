@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.dstore.core" version="1">
+    <resource path="src/org/eclipse/dstore/core/model/DataStoreAttributes.java">
+        <filter id="388190292"/>
+    </resource>
+</component>

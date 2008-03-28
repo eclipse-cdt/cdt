@@ -7,13 +7,13 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * David McKnight  (IBM)  - [205986] daemon handshake needs a timeout
- * David McKnight  (IBM)  - [218685] [dstore] Unable to connect when using SSL.
+ * David McKnight  (IBM) - [205986] daemon handshake needs a timeout
+ * David McKnight  (IBM) - [218685] [dstore] Unable to connect when using SSL.
  * Martin Oberhuber (Wind River) - [219260][dstore][regression] Cannot connect to dstore daemon
  * David McKnight  (IBM)   [220123][dstore] Configurable timeout on irresponsiveness
  * David McKnight   (IBM) - [220892][dstore] Backward compatibility: Server and Daemon should support old clients
@@ -61,7 +61,7 @@ import org.eclipse.dstore.internal.extra.DomainNotifier;
 
 /**
  * ClientConnection provides the standard means of creating a new connection to
- * a DataStore.  
+ * a DataStore.
  *
  * <li>
  * If a connection is local, then a DataStore is instantiated
@@ -69,20 +69,16 @@ import org.eclipse.dstore.internal.extra.DomainNotifier;
  * </li>
  * 
  * <li>
- * If a connection is not local, then a virtual DataStore is instantiated in the 
+ * If a connection is not local, then a virtual DataStore is instantiated in the
  * current process to communicate with the remote DataStore.  If the client wishes
  * to instantiate a remote DataStore through a daemon, then ClientConnection first connects
  * to the daemon requesting a DataStore at a given port, and then connects to the
- * newly launched DataStore.  Otherwise, a DataStore is expected to be running on 
+ * newly launched DataStore.  Otherwise, a DataStore is expected to be running on
  * the remote machine under the same port that the client tries to connect to.
  * </li>
- * 
- *
  */
-public class ClientConnection 
+public class ClientConnection
 {
-
-
 	private ClientAttributes _clientAttributes;
 
 	private Socket _theSocket;
@@ -94,7 +90,7 @@ public class ClientConnection
 	private ClientReceiver _receiver;
 	private ClientUpdateHandler _updateHandler;
 	private CommandHandler _commandHandler;
-	
+
 	private int _clientVersion;
 	private int _clientMinor;
 
@@ -104,7 +100,7 @@ public class ClientConnection
 	private String _port;
 	private String _hostDirectory;
 	private Socket _launchSocket;
-	
+
 	private DataStoreTrustManager _trustManager;
 
 	private ArrayList _loaders;
@@ -169,27 +165,27 @@ public class ClientConnection
 		init(initialSize);
 	}
 
-	
+
 	public int getClientVersion()
 	{
 		return _clientVersion;
 	}
-	
+
 	public int getClientMinor()
 	{
 		return _clientMinor;
 	}
-	
+
 	public int getServerVersion()
 	{
 		return _dataStore.getServerVersion();
 	}
-	
+
 	public int getServerMinor()
 	{
 		return _dataStore.getServerMinor();
 	}
-	
+
 	public void setSSLProperties(ISSLProperties properties)
 	{
 		_dataStore.setSSLProperties(properties);
@@ -202,11 +198,11 @@ public class ClientConnection
 	public IDataStoreCompatibilityHandler getCompatibilityHandler(){
 		return _dataStore.getCompatibilityHandler();
 	}
-	
+
 	/**
 	 * Specifies the loaders used to instantiate the miners
 	 *
-	 * @param loaders the loaders 
+	 * @param loaders the loaders
 	 */
 	public void setLoaders(ArrayList loaders)
 	{
@@ -216,7 +212,7 @@ public class ClientConnection
 	/**
 	 * Adds a loader to be used to instantiate the miners
 	 *
-	 * @param loader the loader 
+	 * @param loader the loader
 	 */
 	public void addLoader(ExternalLoader loader)
 	{
@@ -228,7 +224,7 @@ public class ClientConnection
 	}
 
 	/**
-	 * Specifies the hostname or IP of the host to connect to 
+	 * Specifies the hostname or IP of the host to connect to
 	 *
 	 * @param host the hostname or IP of the machine to connect to
 	 */
@@ -239,7 +235,7 @@ public class ClientConnection
 	}
 
 	/**
-	 * Specifies the number of the socket port to connect to 
+	 * Specifies the number of the socket port to connect to
 	 *
 	 * @param port the number of the socket port to connect to
 	 */
@@ -255,7 +251,7 @@ public class ClientConnection
 	}
 
 	/**
-	 * Specifies the default working directory on the remote machine 
+	 * Specifies the default working directory on the remote machine
 	 *
 	 * @param directory the remote working directory
 	 */
@@ -266,7 +262,7 @@ public class ClientConnection
 	}
 
 	/**
-	 * Returns the hostname/IP of the host to connect to 
+	 * Returns the hostname/IP of the host to connect to
 	 *
 	 * @return the hostname/IP
 	 */
@@ -276,7 +272,7 @@ public class ClientConnection
 	}
 
 	/**
-	 * Returns the number of the socket port to connect to 
+	 * Returns the number of the socket port to connect to
 	 *
 	 * @return the number of the socket port to connect to
 	 */
@@ -286,7 +282,7 @@ public class ClientConnection
 	}
 
 	/**
-	 * Returns the default working directory on the host machine 
+	 * Returns the default working directory on the host machine
 	 *
 	 * @return the working directory on the host
 	 */
@@ -296,7 +292,7 @@ public class ClientConnection
 	}
 
 	/**
-	 * Indicates whether the client is connected to the DataStore 
+	 * Indicates whether the client is connected to the DataStore
 	 *
 	 * @return whether the client is connected
 	 */
@@ -311,7 +307,7 @@ public class ClientConnection
 	}
 
 	/**
-	 * Disconnects from the DataStore and cleans up DataStore meta-information 
+	 * Disconnects from the DataStore and cleans up DataStore meta-information
 	 */
 	public void disconnect()
 	{
@@ -323,9 +319,9 @@ public class ClientConnection
 			if (_isRemote)
 			{
 				_commandHandler.command(
-					_dataStore.find(_dataStore.getRoot(), DE.A_NAME, "Exit"), //$NON-NLS-1$
-					_dataStore.getHostRoot(),
-					false);
+						_dataStore.find(_dataStore.getRoot(), DE.A_NAME, "Exit"), //$NON-NLS-1$
+						_dataStore.getHostRoot(),
+						false);
 				_receiver.finish();
 			}
 
@@ -378,11 +374,11 @@ public class ClientConnection
 		((ServerCommandHandler) _commandHandler).loadMiners();
 
 		_clientAttributes.setAttribute(
-			DataStoreAttributes.A_LOCAL_NAME,
-			_clientAttributes.getAttribute(DataStoreAttributes.A_HOST_NAME));
+				DataStoreAttributes.A_LOCAL_NAME,
+				_clientAttributes.getAttribute(DataStoreAttributes.A_HOST_NAME));
 		_clientAttributes.setAttribute(
-			DataStoreAttributes.A_LOCAL_PATH,
-			_clientAttributes.getAttribute(DataStoreAttributes.A_HOST_PATH));
+				DataStoreAttributes.A_LOCAL_PATH,
+				_clientAttributes.getAttribute(DataStoreAttributes.A_HOST_PATH));
 
 		_isConnected = true;
 
@@ -423,7 +419,7 @@ public class ClientConnection
 
 		return connect(launchStatus.getTicket());
 	}
-	
+
 	public DataStoreTrustManager getTrustManager()
 	{
 		if (_trustManager == null)
@@ -434,9 +430,9 @@ public class ClientConnection
 	}
 
 	/**
-	 * Connects to a remote DataStore.   
-	 * A socket is created and the virtual DataStore is initialized with an update handler, command handler, 
-	 * socket sender and socket receiver. 
+	 * Connects to a remote DataStore.
+	 * A socket is created and the virtual DataStore is initialized with an update handler, command handler,
+	 * socket sender and socket receiver.
 	 *
 	 * @param ticket the ticket required to be granted access to the remote DataStore
 	 * @return the status of the connection
@@ -445,7 +441,7 @@ public class ClientConnection
 	{
 		return connect(ticket, 0);
 	}
-	
+
 	public ConnectionStatus connect(String ticket, int timeout)
 	{
 		boolean doTimeOut = (timeout > 0);
@@ -470,7 +466,7 @@ public class ClientConnection
 				String pw = _dataStore.getKeyStorePassword();
 				DataStoreTrustManager mgr = getTrustManager();
 				SSLContext context = DStoreSSLContext.getClientSSLContext(location, pw, mgr);
-				SSLSocketFactory factory = context.getSocketFactory();	
+				SSLSocketFactory factory = context.getSocketFactory();
 
 				_theSocket = factory.createSocket(_host, port);
 				if (doTimeOut && (_theSocket != null))
@@ -553,11 +549,11 @@ public class ClientConnection
 				msg = CANNOT_CONNECT;
 				msg += "Timeout waiting for socket activity."; //$NON-NLS-1$
 				break;
-			}	
+			}
 			default:
 				break;
 			}
-	
+
 			if (result == null && msg != null)
 			{
 				result = new ConnectionStatus(false, msg);
@@ -581,9 +577,9 @@ public class ClientConnection
 			_isConnected = false;
 			result = new ConnectionStatus(_isConnected, ioe);
 		}
-		return result;		
+		return result;
 	}
-	
+
 	protected ConnectionStatus doConnect(String ticket)
 	{
 		_sender = new Sender(_theSocket, _dataStore);
@@ -614,7 +610,7 @@ public class ClientConnection
 
 	/**
 	 * Connects to a remote daemon and tells the daemon to launch
-	 * a DataStore server.   
+	 * a DataStore server.
 	 *
 	 * @param user the user ID of the current user on the remote machine
 	 * @param password the password of the current user on the remote machine
@@ -628,7 +624,7 @@ public class ClientConnection
 
 	/**
 	 * Connects to a remote daemon and tells the daemon to launch
-	 * a DataStore server.   
+	 * a DataStore server.
 	 *
 	 * @param user the user ID of the current user on the remote machine
 	 * @param password the password of the current user on the remote machine
@@ -639,7 +635,7 @@ public class ClientConnection
 	{
 		return launchServer(user, password, daemonPort, 0);
 	}
-	
+
 	public ConnectionStatus launchServer(String user, String password, int daemonPort, int timeout)
 	{
 		if (timeout<=0) {
@@ -666,7 +662,7 @@ public class ClientConnection
 
 				reader = new BufferedReader(new InputStreamReader(_launchSocket.getInputStream(), DE.ENCODING_UTF_8));
 				String status = null;
-		
+
 				try
 				{
 					status = reader.readLine();
@@ -675,7 +671,7 @@ public class ClientConnection
 				{
 					result = new ConnectionStatus(false, e);
 				}
-		
+
 
 				if (status != null && !status.equals(IDataStoreConstants.CONNECTED))
 				{
@@ -737,7 +733,7 @@ public class ClientConnection
 					String pw = _dataStore.getKeyStorePassword();
 					DataStoreTrustManager mgr = getTrustManager();
 					SSLContext context = DStoreSSLContext.getClientSSLContext(location, pw, mgr);
-				
+
 					try
 					{
 						SocketFactory factory = context.getSocketFactory();
@@ -756,7 +752,7 @@ public class ClientConnection
 						}
 					}
 					catch (SSLHandshakeException e)
-					{						
+					{
 						result = new ConnectionStatus(false, e, true, mgr.getUntrustedCerts());
 						return result;
 					}
@@ -767,14 +763,14 @@ public class ClientConnection
 							_launchSocket.close();
 						}
 
-						result = new ConnectionStatus(false, e);						
+						result = new ConnectionStatus(false, e);
 						return result;
 					}
 				}
 				catch (Exception e)
 				{
-					result = new ConnectionStatus(false, e);						
-					return result;				
+					result = new ConnectionStatus(false, e);
+					return result;
 				}
 			}
 			else
@@ -802,7 +798,7 @@ public class ClientConnection
 
 		return result;
 	}
-	
+
 	/**
 	 * Reeturns the launch socket
 	 * 
@@ -811,7 +807,7 @@ public class ClientConnection
 	public Socket getLaunchSocket() {
 		return _launchSocket;
 	}
-	
+
 	/**
 	 * Returns the DataStore that the client is connected to.
 	 * @return the DataStore
@@ -841,7 +837,7 @@ public class ClientConnection
 		_port = _clientAttributes.getAttribute(DataStoreAttributes.A_HOST_PORT);
 	}
 
-	
+
 	private int doHandShake()
 	{
 		try
@@ -852,7 +848,7 @@ public class ClientConnection
 			writer.println(""); //$NON-NLS-1$
 			writer.println(""); //$NON-NLS-1$
 			writer.flush();
-			
+
 			String handshake = null;
 			try
 			{
@@ -863,28 +859,28 @@ public class ClientConnection
 				return IDataStoreCompatibilityHandler.HANDSHAKE_TIMEOUT;
 			}
 			_theSocket.setSoTimeout(0);
-			
+
 			String[] serverVersionStr = handshake.split("\\."); //$NON-NLS-1$
 			int serverVersion = Integer.parseInt(serverVersionStr[IDataStoreCompatibilityHandler.VERSION_INDEX_VERSION]);
 			_dataStore.setServerVersion(serverVersion);
 			_dataStore.setServerMinor(Integer.parseInt(serverVersionStr[IDataStoreCompatibilityHandler.VERSION_INDEX_MINOR]));
-			
+
 			return getCompatibilityHandler().checkCompatibility(handshake);
 		}
 		catch (Exception e)
 		{
 			return IDataStoreCompatibilityHandler.HANDSHAKE_UNEXPECTED;
 		}
-		
+
 	}
-		
+
 	public boolean isKnownStatus(String status)
 	{
 		return  status.equals(IDataStoreConstants.CONNECTED) ||
-				status.equals(IDataStoreConstants.AUTHENTICATION_FAILED) ||
-				status.equals(IDataStoreConstants.UNKNOWN_PROBLEM) ||
-				status.startsWith(IDataStoreConstants.SERVER_FAILURE) ||
-				status.equals(IDataStoreConstants.PASSWORD_EXPIRED) ||
-				status.equals(IDataStoreConstants.NEW_PASSWORD_INVALID);
+		status.equals(IDataStoreConstants.AUTHENTICATION_FAILED) ||
+		status.equals(IDataStoreConstants.UNKNOWN_PROBLEM) ||
+		status.startsWith(IDataStoreConstants.SERVER_FAILURE) ||
+		status.equals(IDataStoreConstants.PASSWORD_EXPIRED) ||
+		status.equals(IDataStoreConstants.NEW_PASSWORD_INVALID);
 	}
 }

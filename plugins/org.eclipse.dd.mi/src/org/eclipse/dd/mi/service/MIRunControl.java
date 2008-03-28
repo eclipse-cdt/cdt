@@ -180,14 +180,15 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
     protected static class ContainerSuspendedEvent extends SuspendedEvent 
         implements IContainerSuspendedDMEvent
     {
-        final IExecutionDMContext triggeringDmc;
+        final IExecutionDMContext[] triggeringDmcs;
         ContainerSuspendedEvent(IContainerDMContext containerDmc, MIStoppedEvent miInfo, IExecutionDMContext triggeringDmc) { 
             super(containerDmc, miInfo);
-            this.triggeringDmc = triggeringDmc;
+            this.triggeringDmcs = triggeringDmc != null 
+                ? new IExecutionDMContext[] { triggeringDmc } : new IExecutionDMContext[0];
         }
         
-        public IExecutionDMContext getTriggeringContext() {
-            return triggeringDmc;
+        public IExecutionDMContext[] getTriggeringContexts() {
+            return triggeringDmcs;
         }
     }
 
@@ -223,15 +224,16 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
     protected static class ContainerResumedEvent extends ResumedEvent 
         implements IContainerResumedDMEvent
     {
-        final IExecutionDMContext triggeringDmc;
+        final IExecutionDMContext[] triggeringDmcs;
 
         ContainerResumedEvent(IContainerDMContext containerDmc, MIRunningEvent miInfo, IExecutionDMContext triggeringDmc) { 
             super(containerDmc, miInfo);
-            this.triggeringDmc = triggeringDmc;
+            this.triggeringDmcs = triggeringDmc != null 
+                ? new IExecutionDMContext[] { triggeringDmc } : new IExecutionDMContext[0];
         }
         
-        public IExecutionDMContext getTriggeringContext() {
-            return triggeringDmc;
+        public IExecutionDMContext[] getTriggeringContexts() {
+            return triggeringDmcs;
         }
     }
     
@@ -394,7 +396,8 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
         fMICommandCache.setContextAvailable(e.getDMContext(), true);
         fMICommandCache.reset();
         fStateChangeReason = e.getReason();
-        fStateChangeTriggeringContext = e.getTriggeringContext();
+        fStateChangeTriggeringContext = e.getTriggeringContexts().length != 0 
+            ? e.getTriggeringContexts()[0] : null;
         fSuspended = true;
         fStepping = false;
     }
@@ -427,13 +430,23 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
     
     ///////////////////////////////////////////////////////////////////////////
     // IRunControl
-	public boolean canResume(IExecutionDMContext context) {
-        return !fTerminated && isSuspended(context) && !fResumePending;
+	public void canResume(IExecutionDMContext context, DataRequestMonitor<Boolean> rm) {
+        rm.setData(doCanResume(context));
+        rm.done();
+	}
+	
+	private boolean doCanResume(IExecutionDMContext context) {
+	    return !fTerminated && isSuspended(context) && !fResumePending;
 	}
 
-	public boolean canSuspend(IExecutionDMContext context) {
-        return !fTerminated && !isSuspended(context);
+	public void canSuspend(IExecutionDMContext context, DataRequestMonitor<Boolean> rm) {
+        rm.setData(doCanSuspend(context));
+        rm.done();
 	}
+	
+    private boolean doCanSuspend(IExecutionDMContext context) {
+        return !fTerminated && !isSuspended(context);
+    }
 
 	public boolean isSuspended(IExecutionDMContext context) {
 		return !fTerminated && fSuspended;
@@ -446,7 +459,7 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
 	public void resume(IExecutionDMContext context, final RequestMonitor rm) {
 		assert context != null;
 
-		if (canResume(context)) { 
+		if (doCanResume(context)) { 
             fResumePending = true;
             // Cygwin GDB will accept commands and execute them after the step
             // which is not what we want, so mark the target as unavailable
@@ -482,7 +495,7 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
 	public void suspend(IExecutionDMContext context, final RequestMonitor rm){
 		assert context != null;
 
-		if (canSuspend(context)) {
+		if (doCanSuspend(context)) {
 			MIExecInterrupt cmd = null;
 			if(context instanceof IContainerDMContext){
 				cmd = new MIExecInterrupt(context);
@@ -511,8 +524,8 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
         }
     }
     
-    public boolean canStep(IExecutionDMContext context, StepType stepType) {
-        return canResume(context);
+    public void canStep(IExecutionDMContext context, StepType stepType, DataRequestMonitor<Boolean> rm) {
+        canResume(context, rm);
     }
     
     public void step(IExecutionDMContext context, StepType stepType, final RequestMonitor rm) {
@@ -525,7 +538,7 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
             return;
 		}
     	
-    	if (!canResume(context)) {
+    	if (!doCanResume(context)) {
             rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INVALID_STATE, "Cannot resume context", null)); //$NON-NLS-1$
             rm.done();
             return;
@@ -565,15 +578,6 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
                 rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INTERNAL_ERROR, "Given step type not supported", null)); //$NON-NLS-1$
                 rm.done();
         }
-    }
-
-    public boolean canInstructionStep(IExecutionDMContext context, StepType stepType) {
-        return false;
-    }
-    
-    public void instructionStep(IExecutionDMContext context, StepType stepType, RequestMonitor rm) {
-        rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, NOT_SUPPORTED, "Operation not implemented", null)); //$NON-NLS-1$
-        rm.done();
     }
 
     public void getExecutionContexts(final IContainerDMContext containerDmc, final DataRequestMonitor<IExecutionDMContext[]> rm) {
@@ -631,7 +635,7 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
             return;
 		}
 
-        if (canResume(context)) { 
+        if (doCanResume(context)) { 
             fResumePending = true;
             fMICommandCache.setContextAvailable(context, false);
     		fConnection.queueCommand(new MIExecUntil(dmc, fileName + ":" + lineNo), //$NON-NLS-1$

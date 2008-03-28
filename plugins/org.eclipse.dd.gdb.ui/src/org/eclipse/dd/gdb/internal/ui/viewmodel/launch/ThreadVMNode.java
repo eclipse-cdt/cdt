@@ -21,7 +21,6 @@ import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
-import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
@@ -101,16 +100,16 @@ public class ThreadVMNode extends AbstractDMVMNode
     @Override
     public void getContextsForEvent(VMDelta parentDelta, Object e, final DataRequestMonitor<IVMContext[]> rm) {
         if(e instanceof IContainerResumedDMEvent) {
-            IDMContext triggerContext = ((IContainerResumedDMEvent)e).getTriggeringContext();
-            if (triggerContext != null) {
-                rm.setData(new IVMContext[] { createVMContext(triggerContext) });
+            IExecutionDMContext[] triggerContexts = ((IContainerResumedDMEvent)e).getTriggeringContexts();
+            if (triggerContexts.length != 0) {
+                rm.setData(new IVMContext[] { createVMContext(triggerContexts[0]) });
                 rm.done();
                 return;
             }
         } else if(e instanceof IContainerSuspendedDMEvent) {
-            IDMContext triggerContext = ((IContainerSuspendedDMEvent)e).getTriggeringContext();
-            if (triggerContext != null) {
-                rm.setData(new IVMContext[] { createVMContext(triggerContext) });
+            IExecutionDMContext[] triggerContexts = ((IContainerSuspendedDMEvent)e).getTriggeringContexts();
+            if (triggerContexts.length != 0) {
+                rm.setData(new IVMContext[] { createVMContext(triggerContexts[0]) });
                 rm.done();
                 return;
             }
@@ -274,15 +273,15 @@ public class ThreadVMNode extends AbstractDMVMNode
 
     public void buildDelta(Object e, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor rm) {
         if(e instanceof IContainerResumedDMEvent) {
-            IDMContext triggeringContext = ((IContainerResumedDMEvent)e).getTriggeringContext();
-            if (triggeringContext != null) {
-                parentDelta.addNode(createVMContext(triggeringContext), IModelDelta.CONTENT);
+            IExecutionDMContext[] triggeringContexts = ((IContainerResumedDMEvent)e).getTriggeringContexts();
+            if (triggeringContexts.length != 0) {
+                parentDelta.addNode(createVMContext(triggeringContexts[0]), IModelDelta.CONTENT);
             }
             rm.done();
         } else if (e instanceof IContainerSuspendedDMEvent) {
-            IDMContext triggeringContext = ((IContainerSuspendedDMEvent)e).getTriggeringContext();
-            if (triggeringContext != null) {
-                parentDelta.addNode(createVMContext(triggeringContext), IModelDelta.CONTENT);
+            IExecutionDMContext[] triggeringContexts = ((IContainerSuspendedDMEvent)e).getTriggeringContexts();
+            if (triggeringContexts.length != 0) {
+                parentDelta.addNode(createVMContext(triggeringContexts[0]), IModelDelta.CONTENT);
             }
             rm.done();
         } else if(e instanceof IResumedDMEvent || e instanceof ISuspendedDMEvent) {

@@ -65,10 +65,10 @@ public interface IRunControl extends IDMService
      */
     public interface IContainerSuspendedDMEvent extends ISuspendedDMEvent {
         /**
-         * Returns the context which triggered the resume, which could be 
-         * <code>null</code> if not known. 
+         * Returns the contexts which triggered the resume, which could be 
+         * an empty array if not known. 
          */
-        IExecutionDMContext getTriggeringContext();
+        IExecutionDMContext[] getTriggeringContexts();
     }
 
     /**
@@ -76,10 +76,10 @@ public interface IRunControl extends IDMService
      */
     public interface IContainerResumedDMEvent extends IResumedDMEvent {
         /**
-         * Returns the context which triggered the resume, which could be 
-         * <code>null</code> if not known. 
+         * Returns the contexts which triggered the resume, which could be an 
+         * empty array if not known.
          */
-        IExecutionDMContext getTriggeringContext();
+        IExecutionDMContext[] getTriggeringContexts();
     }
     
     /**

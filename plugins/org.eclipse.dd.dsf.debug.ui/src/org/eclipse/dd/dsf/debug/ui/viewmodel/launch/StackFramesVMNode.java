@@ -330,11 +330,18 @@ public class StackFramesVMNode extends AbstractDMVMNode
 
     public void buildDelta(final Object e, final VMDelta parent, final int nodeOffset, final RequestMonitor rm) {
         if (e instanceof IContainerSuspendedDMEvent) {
-            IExecutionDMContext threadDmc = null;
+            IContainerSuspendedDMEvent csEvent = (IContainerSuspendedDMEvent)e;
+            
+            IExecutionDMContext triggeringCtx = csEvent.getTriggeringContexts().length != 0 
+                ? csEvent.getTriggeringContexts()[0] : null;
+                
             if (parent.getElement() instanceof IDMVMContext) {
+                IExecutionDMContext threadDmc = null;
                 threadDmc = DMContexts.getAncestorOfType( ((IDMVMContext)parent.getElement()).getDMContext(), IExecutionDMContext.class);
+                buildDeltaForSuspendedEvent((ISuspendedDMEvent)e, threadDmc, triggeringCtx, parent, nodeOffset, rm);
+            } else {
+                rm.done();
             }
-            buildDeltaForSuspendedEvent((ISuspendedDMEvent)e, threadDmc, ((IContainerSuspendedDMEvent)e).getTriggeringContext(), parent, nodeOffset, rm);
         } else if (e instanceof ISuspendedDMEvent) {
             IExecutionDMContext execDmc = ((ISuspendedDMEvent)e).getDMContext();
             buildDeltaForSuspendedEvent((ISuspendedDMEvent)e, execDmc, execDmc, parent, nodeOffset, rm);
@@ -361,7 +368,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
         // Refresh the whole list of stack frames unless the target is already stepping the next command.  In 
         // which case, the refresh will occur when the stepping sequence slows down or stops.  Trying to
         // refresh the whole stack trace with every step would slow down stepping too much.
-        if (!runControlService.isStepping(triggeringCtx)) {
+        if (triggeringCtx == null || !runControlService.isStepping(triggeringCtx)) {
             parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
         }
         

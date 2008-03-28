@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * David McKnight   (IBM)        - [224313] [api] Create RSE Events for MOVE and COPY holding both source and destination fields
  ********************************************************************************/
 
 package org.eclipse.rse.core.events;
@@ -49,12 +50,12 @@ public interface ISystemRemoteChangeEvent
 	public Object getResourceParent();
 
 	/**
-	 * Get the old name of the resource, in the event of a resource rename.
+	 * Get the old name(s) of the resource(s), in the event of a resource rename, move or copy.
 	 * Null for other event types.
-	 * @return the old name of the resource in case of a rename event,
+	 * @return the old names of the resources in case of a rename event,
 	 *     or <code>null</code> if not applicable. 
 	 */
-	public String getOldName();
+	public String[] getOldNames();
 
 	/**
 	 * Get the subsystem in which this resource resides. 
@@ -65,4 +66,9 @@ public interface ISystemRemoteChangeEvent
 	 */
 	public ISubSystem getSubSystem();
 
+	/**
+	 * Returns the operation of this event if it's not implied by the event itself
+	 * @return the operation that triggered this event
+	 */
+	public String getOperation();
 }

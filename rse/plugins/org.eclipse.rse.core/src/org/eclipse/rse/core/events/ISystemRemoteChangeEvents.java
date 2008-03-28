@@ -136,5 +136,31 @@ public interface ISystemRemoteChangeEvents
 	 * @since org.eclipse.rse.core 3.0
 	 */
 	public static final int SYSTEM_REMOTE_RESOURCE_DOWNLOADED = 24;
+	
+	
+	/**
+	 * Indicates that the event is for a delete operation
+	 */
+	public static final String SYSTEM_REMOTE_OPERATION_DELETE = "DELETE"; //$NON-NLS-1$
+	
+	/**
+	 * Indicates that the event is for a rename operation
+	 */
+	public static final String SYSTEM_REMOTE_OPERATION_RENAME = "RENAME"; //$NON-NLS-1$
+	
+	/**
+	 * Indicates that the event is for a create operation
+	 */
+	public static final String SYSTEM_REMOTE_OPERATION_CREATE = "CREATE"; //$NON-NLS-1$
+	
+	/**
+	 * Indicates that the event is for a move operation
+	 */
+	public static final String SYSTEM_REMOTE_OPERATION_MOVE   = "MOVE"; //$NON-NLS-1$
+	
+	/**
+	 * Indicates that the event is for a copy operation
+	 */
+	public static final String SYSTEM_REMOTE_OPERATION_COPY   = "COPY"; //$NON-NLS-1$
 
 }

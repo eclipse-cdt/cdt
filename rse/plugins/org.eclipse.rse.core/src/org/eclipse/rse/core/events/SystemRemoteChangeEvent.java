@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * David McKnight   (IBM)        - [224313] [api] Create RSE Events for MOVE and COPY holding both source and destination fields
  ********************************************************************************/
 
 package org.eclipse.rse.core.events;
@@ -27,9 +28,10 @@ public class SystemRemoteChangeEvent implements ISystemRemoteChangeEvent
 {
 	private int eventType;
 	private Object resource, parent;
-	private String oldName;
+	private String[] oldNames;
 	private ISubSystem subsystem;
 	private Object originatingViewer;
+	private String operation;
 	
 	/**
 	 * Constructor for non-rename event
@@ -57,14 +59,50 @@ public class SystemRemoteChangeEvent implements ISystemRemoteChangeEvent
 	 * @param resourceParent - the remote resource's parent object, or absolute name, if that is known. If it is non-null, this will aid in refreshing occurences of that parent.
 	 * @param subsystem - the subsystem which contains this remote resource. This allows the search for impacts to be 
 	 *   limited to subsystems of the same parent factory, and to connections with the same hostname as the subsystem's connection.
-	 * @param oldName - on a rename operation, this is the absolute name of the resource prior to the rename
+	 * @param oldNames - on a rename, copy or move operation, these are the absolute names of the resources prior to the operation
 	 */
-	public SystemRemoteChangeEvent(int eventType, Object resource, Object resourceParent, ISubSystem subsystem, String oldName) 
+	public SystemRemoteChangeEvent(int eventType, Object resource, Object resourceParent, ISubSystem subsystem, String[] oldNames) 
 	{
 		this(eventType, resource, resourceParent, subsystem);
-		this.oldName = oldName;
+		this.oldNames = oldNames;
 	}
 	
+	/**
+	 * Constructor for non-rename event
+	 * @param operation - the operation for which this event was fired
+	 * @param eventType - one of the constants from {@link org.eclipse.rse.core.events.ISystemRemoteChangeEvents}
+	 * @param resource - the remote resource object, or absolute name of the resource as would be given by calling getAbsoluteName on its remote adapter, 
+	 * or List of absoluteNames 
+	 * @param resourceParent - the remote resource's parent object, or absolute name, if that is known. If it is non-null, this will aid in refreshing occurences of that parent.
+	 * @param subsystem - the subsystem which contains this remote resource. This allows the search for impacts to be 
+	 *   limited to subsystems of the same parent factory, and to connections with the same hostname as the subsystem's connection.
+	 */
+	public SystemRemoteChangeEvent(String operation, int eventType, Object resource, Object resourceParent, ISubSystem subsystem) 
+	{
+		super();
+		this.eventType = eventType;
+		this.resource = resource;
+		this.parent = resourceParent;
+		this.subsystem = subsystem;
+		this.operation = operation;
+	}
+	
+	/**
+	 * Constructor for a rename event.
+	 * @param operation - the operation for which this event was fired
+	 * @param eventType - one of the constants from {@link org.eclipse.rse.core.events.ISystemRemoteChangeEvents}
+	 * @param resource - the remote resource object, or absolute name of the resource as would be given by calling getAbsoluteName on its remote adapter,
+	 * or List of absoluteNames 
+	 * @param resourceParent - the remote resource's parent object, or absolute name, if that is known. If it is non-null, this will aid in refreshing occurences of that parent.
+	 * @param subsystem - the subsystem which contains this remote resource. This allows the search for impacts to be 
+	 *   limited to subsystems of the same parent factory, and to connections with the same hostname as the subsystem's connection.
+	 * @param oldNames - on a rename, copy or move operation, these are the absolute names of the resources prior to the operation
+	 */
+	public SystemRemoteChangeEvent(String operation, int eventType, Object resource, Object resourceParent, ISubSystem subsystem, String[] oldNames) 
+	{
+		this(operation, eventType, resource, resourceParent, subsystem);
+		this.oldNames = oldNames;
+	}
 	/**
 	 * Constructor you shouldn't use unless you intend to call the setters
 	 */
@@ -105,11 +143,11 @@ public class SystemRemoteChangeEvent implements ISystemRemoteChangeEvent
 	}
 	
 	/**
-	 * Reset the old name on a rename event
+	 * Reset the old names on a rename, move or copy event
 	 */
-	public void setOldName(String oldName)
+	public void setOldNames(String[] oldNames)
 	{
-		this.oldName = oldName;
+		this.oldNames = oldNames;
 	}
 	
 	/**
@@ -153,9 +191,9 @@ public class SystemRemoteChangeEvent implements ISystemRemoteChangeEvent
 	/**
 	 * Get the old name of the resource, in the event of a resource rename. Null for other event types.
 	 */
-	public String getOldName()
+	public String[] getOldNames()
 	{
-		return oldName;
+		return oldNames;
 	}
 
 	/**
@@ -178,5 +216,22 @@ public class SystemRemoteChangeEvent implements ISystemRemoteChangeEvent
 	public Object getOriginatingViewer() {
 		return originatingViewer;
 	}
+
+	
+	public void setOperation(String operation){
+		this.operation = operation;
+	}
+	
+	/**
+	 * Returns the operation of this event if it's not implied by the event itself.
+	 * The operation can be optionally specified when the event is constructed.
+	 * By default this will return null.
+	 * 
+	 * @return the operation that triggered this event
+	 */
+	public String getOperation() {
+		return operation;
+	}
+	
 	
 }

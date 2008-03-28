@@ -45,6 +45,7 @@
  * David Dykstal (IBM) - [217556] remove service subsystem types
  * Martin Oberhuber (Wind River) - [215820] Move SystemRegistry implementation to Core
  * David Dykstal (IBM) - [202630] getDefaultPrivateProfile() and ensureDefaultPrivateProfile() are inconsistent
+ * David McKnight   (IBM)        - [224313] [api] Create RSE Events for MOVE and COPY holding both source and destination fields
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.model;
@@ -2561,9 +2562,9 @@ public class SystemRegistry implements ISystemRegistry
 	 * @param resourceParent - the remote resource's parent object, or absolute name, if that is known. If it is non-null, this will aid in refreshing occurences of that parent.
 	 * @param subsystem - the subsystem which contains this remote resource. This allows the search for impacts to be 
 	 *   limited to subsystems of the same parent factory, and to connections with the same hostname as the subsystem's connection.
-	 * @param oldName - on a rename operation, this is the absolute name of the resource prior to the rename
+	 * @param oldNames - on a rename, copy or move operation, these are the absolute names of the resources prior to the operation
 	 */
-	public void fireRemoteResourceChangeEvent(int eventType, Object resource, Object resourceParent, ISubSystem subsystem, String oldName)
+	public void fireRemoteResourceChangeEvent(int eventType, Object resource, Object resourceParent, ISubSystem subsystem, String[] oldNames)
 	{
 		if (resourceParent instanceof ISystemContainer)
 		{
@@ -2577,7 +2578,7 @@ public class SystemRegistry implements ISystemRegistry
 		remoteEvent.setEventType(eventType);
 		remoteEvent.setResource(resource);
 		remoteEvent.setResourceParent(resourceParent);
-		remoteEvent.setOldName(oldName);
+		remoteEvent.setOldNames(oldNames);
 		remoteEvent.setSubSystem(subsystem);
 		
 		if (onMainThread())
@@ -2598,11 +2599,11 @@ public class SystemRegistry implements ISystemRegistry
 	 * @param resourceParent - the remote resource's parent object, or absolute name, if that is known. If it is non-null, this will aid in refreshing occurences of that parent.
 	 * @param subsystem - the subsystem which contains this remote resource. This allows the search for impacts to be 
 	 *   limited to subsystems of the same parent factory, and to connections with the same hostname as the subsystem's connection.
-	 * @param oldName - on a rename operation, this is the absolute name of the resource prior to the rename
+	 * @param oldNames - on a rename, copy or move operation, these are the absolute names of the resources prior to the operation
 	 * @param originatingViewer - optional. If set, this gives the viewer a clue that it should select the affected resource after refreshing its parent. 
 	 *    This saves sending a separate event to reveal and select the new created resource on a create event, for example.
 	 */
-	public void fireRemoteResourceChangeEvent(int eventType, Object resource, Object resourceParent, ISubSystem subsystem, String oldName, Object originatingViewer)
+	public void fireRemoteResourceChangeEvent(int eventType, Object resource, Object resourceParent, ISubSystem subsystem, String[] oldNames, Object originatingViewer)
 	{
 		if (resourceParent instanceof ISystemContainer)
 		{
@@ -2616,7 +2617,7 @@ public class SystemRegistry implements ISystemRegistry
 		remoteEvent.setEventType(eventType);
 		remoteEvent.setResource(resource);
 		remoteEvent.setResourceParent(resourceParent);
-		remoteEvent.setOldName(oldName);
+		remoteEvent.setOldNames(oldNames);
 		remoteEvent.setSubSystem(subsystem);
 		remoteEvent.setOriginatingViewer(originatingViewer);
 		
@@ -2630,6 +2631,87 @@ public class SystemRegistry implements ISystemRegistry
 		}
 	}
 
+	/**
+	 * Notify all listeners of a change to a remote resource such as a file.
+	 * This one takes the information needed and creates the event for you.
+	 * @param operation - the operation for which this event was fired
+	 * @param eventType - one of the constants from {@link org.eclipse.rse.core.events.ISystemRemoteChangeEvents}
+	 * @param resource - the remote resource object, or absolute name of the resource as would be given by calling getAbsoluteName on its remote adapter
+	 * @param resourceParent - the remote resource's parent object, or absolute name, if that is known. If it is non-null, this will aid in refreshing occurences of that parent.
+	 * @param subsystem - the subsystem which contains this remote resource. This allows the search for impacts to be 
+	 *   limited to subsystems of the same parent factory, and to connections with the same hostname as the subsystem's connection.
+     * @param oldNames - on a rename, copy or move operation, these are the absolute names of the resources prior to the operation
+	 */
+	public void fireRemoteResourceChangeEvent(String operation, int eventType, Object resource, Object resourceParent, ISubSystem subsystem, String[] oldNames)
+	{
+		if (resourceParent instanceof ISystemContainer)
+		{
+			((ISystemContainer)resourceParent).markStale(true);
+		}
+		// mark stale any filters that reference this object
+		invalidateFiltersFor(resourceParent, subsystem);
+		
+		if (remoteEvent == null)
+			remoteEvent = new SystemRemoteChangeEvent();
+		remoteEvent.setOperation(operation);
+		remoteEvent.setEventType(eventType);
+		remoteEvent.setResource(resource);
+		remoteEvent.setResourceParent(resourceParent);
+		remoteEvent.setOldNames(oldNames);
+		remoteEvent.setSubSystem(subsystem);
+		
+		if (onMainThread())
+		{
+			remoteListManager.notify(remoteEvent);
+		}
+		else
+		{
+			runOnMainThread(new RemoteChangedRunnable(remoteEvent));
+		}
+	}
+
+	/**
+	 * Notify all listeners of a change to a remote resource such as a file.
+	 * This one takes the information needed and creates the event for you.
+	 * @param operation - the operation for which this event was fired
+	 * @param eventType - one of the constants from {@link org.eclipse.rse.core.events.ISystemRemoteChangeEvents}
+	 * @param resource - the remote resource object, or absolute name of the resource as would be given by calling getAbsoluteName on its remote adapter
+	 * @param resourceParent - the remote resource's parent object, or absolute name, if that is known. If it is non-null, this will aid in refreshing occurences of that parent.
+	 * @param subsystem - the subsystem which contains this remote resource. This allows the search for impacts to be 
+	 *   limited to subsystems of the same parent factory, and to connections with the same hostname as the subsystem's connection.
+	 * @param oldNames - on a rename, copy or move operation, these are the absolute names of the resources prior to the operation
+	 * @param originatingViewer - optional. If set, this gives the viewer a clue that it should select the affected resource after refreshing its parent. 
+	 *    This saves sending a separate event to reveal and select the new created resource on a create event, for example.
+	 */
+	public void fireRemoteResourceChangeEvent(String operation, int eventType, Object resource, Object resourceParent, ISubSystem subsystem, String[] oldNames, Object originatingViewer)
+	{
+		if (resourceParent instanceof ISystemContainer)
+		{
+			((ISystemContainer)resourceParent).markStale(true);
+		}
+		// mark stale any filters that reference this object
+		invalidateFiltersFor(resourceParent, subsystem);
+		
+		if (remoteEvent == null)
+			remoteEvent = new SystemRemoteChangeEvent();
+		remoteEvent.setOperation(operation);	
+		remoteEvent.setEventType(eventType);
+		remoteEvent.setResource(resource);
+		remoteEvent.setResourceParent(resourceParent);
+		remoteEvent.setOldNames(oldNames);
+		remoteEvent.setSubSystem(subsystem);
+		remoteEvent.setOriginatingViewer(originatingViewer);
+		
+		if (onMainThread())
+		{
+			remoteListManager.notify(remoteEvent);
+		}
+		else
+		{
+			runOnMainThread(new RemoteChangedRunnable(remoteEvent));
+		}
+	}
+	
     /**
      * Returns the implementation of ISystemRemoteElement for the given
      * object.  Returns null if this object does not adaptable to this.

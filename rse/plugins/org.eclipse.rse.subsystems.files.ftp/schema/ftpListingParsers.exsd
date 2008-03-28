@@ -14,6 +14,7 @@ allowing the user to select them overriding the default parser.
 The string attributes &lt;code&gt;defaultDateFormatStr&lt;/code&gt; &lt;code&gt;recentDateFormatStr&lt;/code&gt;
  &lt;code&gt;serverLanguageCode&lt;/code&gt; &lt;code&gt;serverTimeZoneId&lt;/code&gt; &lt;code&gt;shortMonthNames&lt;/code&gt; have to 
  follow the format described by &lt;code&gt;org.apache.commons.net.ftp.FTPClientConfig&lt;/code&gt;
+ Each parser can also specify one or more FTP commands to be sent after establishing the connection in the &lt;code&gt;initCommands&lt;/code&gt; attribute.
       </documentation>
    </annotation>
 
@@ -162,6 +163,13 @@ If no priority is specified, the default value will be &lt;code&gt;Integer.MAX_V
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="initCommands" type="string">
+            <annotation>
+               <documentation>
+                  List of FTP commands to be sent after connecting to the remote server. If more than one command is specified, it has to be separated using the character &apos;|&apos;
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -238,7 +246,7 @@ If no priority is specified, the default value will be &lt;code&gt;Integer.MAX_V
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2007 Symbian Software Ltd. and others. All rights reserved.
+         Copyright (c) 2007, 2008 Symbian Software Ltd. and others. All rights reserved.
 This program and the accompanying materials are made available under the terms
 of the Eclipse Public License v1.0 which accompanies this distribution, and is 
 available at http://www.eclipse.org/legal/epl-v10.html
@@ -246,6 +254,7 @@ available at http://www.eclipse.org/legal/epl-v10.html
 Contributors:
    Javier Montalvo Orus (Symbian) - initial API and implementation
    Javier Montalvo Orus (Symbian) - added ftpSystemTypes and priority
+   Javier Montalvo Orus (Symbian) - [212382] additional &quot;initCommands&quot; slot for ftpListingParsers extension point
       </documentation>
    </annotation>
 

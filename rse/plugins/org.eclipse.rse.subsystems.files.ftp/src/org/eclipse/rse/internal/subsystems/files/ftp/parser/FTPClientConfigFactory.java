@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007 Symbian Software Ltd. All rights reserved.
+ * Copyright (c) 2007, 2008 Symbian Software Ltd. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -7,6 +7,7 @@
  * Contributors:
  *   Javier Montalvo Orus (Symbian) - initial API and implementation
  *   Javier Montalvo Orus (Symbian) - improved autodetection of FTPListingParser
+ *   Javier Montalvo Orus (Symbian) - [212382] additional "initCommands" slot for ftpListingParsers extension point
  ********************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.ftp.parser;
@@ -68,9 +69,10 @@ public class FTPClientConfigFactory implements IFTPClientConfigFactory {
 			String serverLanguageCode = ce[i].getAttribute("serverLanguageCode"); //$NON-NLS-1$
 			String shortMonthNames = ce[i].getAttribute("shortMonthNames"); //$NON-NLS-1$
 			String serverTimeZoneId = ce[i].getAttribute("serverTimeZoneId"); //$NON-NLS-1$
+			String initialCommands = ce[i].getAttribute("initCommands"); //$NON-NLS-1$
 			
 			FTPClientConfigProxy ftpClientConfigProxy = new FTPClientConfigProxy(id,label,priority,systemTypeRegex,className,declaringBundle,listCommandModifiers,
-					defaultDateFormatStr,recentDateFormatStr,serverLanguageCode,shortMonthNames,serverTimeZoneId);
+					defaultDateFormatStr,recentDateFormatStr,serverLanguageCode,shortMonthNames,serverTimeZoneId, initialCommands);
 			
 			ftpConfigProxyById.put(id, ftpClientConfigProxy);
 			

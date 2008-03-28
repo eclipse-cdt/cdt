@@ -71,6 +71,7 @@
  * David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
  * Martin Oberhuber (Wind River) - [216351] Improve cancellation of SystemFetchOperation for files
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * Javier Montalvo Orus (Symbian) - [212382] additional "initCommands" slot for ftpListingParsers extension point
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -90,6 +91,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
@@ -153,6 +155,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	private Map _fCachePreviousFiles = new HashMap();
 	private static long FTP_STATCACHE_TIMEOUT = 200; //msec
 	
+	private static final String FTP_COMMAND_SEPARATOR = "|"; //$NON-NLS-1$
 	
 	private static class FTPBufferedInputStream extends BufferedInputStream {
 		
@@ -425,6 +428,20 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		// Initial ASCII/Binary mode. This action will be refreshed later using setFileType()
 		_ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
 		_isBinaryFileType = true;
+		
+		//Initial commands
+		String initialCommands = _clientConfigProxy.getInitialCommands();
+		
+		if(initialCommands!=null)
+		{
+			StringTokenizer stk = new StringTokenizer(initialCommands,FTP_COMMAND_SEPARATOR);
+			
+			while(stk.hasMoreElements())
+			{
+				String command = stk.nextToken();
+				_ftpClient.sendCommand(command);
+			}
+		}
 		
 		_userHome = _ftpClient.printWorkingDirectory();
 		

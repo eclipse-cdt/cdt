@@ -131,7 +131,6 @@ public class SystemResources extends NLS
 	public static String RESID_COLLISION_RENAME_TITLE;
 	public static String RESID_COLLISION_RENAME_VERBIAGE;
 	public static String RESID_COLLISION_RENAME_LABEL; 
-	public static String RESID_COLLISION_RENAME_TOOLTIP;
 	public static String RESID_COLLISION_COPY_VERBIAGE;
 	public static String RESID_COLLISION_COPY_COLHDG_OLDNAME;
 
@@ -823,8 +822,6 @@ public class SystemResources extends NLS
 
 	public static String ACTION_MOVEDOWN_LABEL;
 	public static String ACTION_MOVEDOWN_TOOLTIP;
-
-	public static String ACTION_MOVEUPLEVEL_LABEL; // used but leaving for now since the tooltip is used
 	public static String ACTION_MOVEUPLEVEL_TOOLTIP;
 
 	public static String ACTION_CONNECT_LABEL;

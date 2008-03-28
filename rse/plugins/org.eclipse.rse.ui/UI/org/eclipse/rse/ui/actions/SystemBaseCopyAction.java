@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * David McKnight   (IBM)        - [223103] [cleanup] fix broken externalized strings
+ * David McKnight   (IBM)        - [224313] [api] Create RSE Events for MOVE and COPY holding both source and destination fields
  *******************************************************************************/
 
 package org.eclipse.rse.ui.actions;
@@ -142,8 +143,8 @@ public abstract class SystemBaseCopyAction extends SystemBaseDialogAction
 		
 		return copyDlg; 
 	}
-	
-	protected abstract String[] getOldNames();	
+
+	protected abstract String[] getOldNames();
 	protected abstract Object[] getOldObjects();	
 	/**
 	 * Get the verbiage prompt to show on line one of the copy dialog
@@ -277,7 +278,7 @@ public abstract class SystemBaseCopyAction extends SystemBaseDialogAction
 	 * Called after all the copy/move operations end, be it successfully or not.
 	 * Your opportunity to display completion or do post-copy selections/refreshes
 	 */
-	public void copyComplete() {}
+	public void copyComplete(String operation) {}
 	
     // ----------------------------------
     // INTERNAL METHODS...
@@ -333,7 +334,7 @@ public abstract class SystemBaseCopyAction extends SystemBaseDialogAction
            throw (java.lang.reflect.InvocationTargetException)runException;
         }
         if (copiedOk)
-        	copyComplete();
+        	copyComplete(null);
 	}
 	
 	protected abstract String checkForCollision(Shell shell, IProgressMonitor monitor, Object targetContainer, Object oldObject, String oldName);

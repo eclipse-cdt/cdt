@@ -17,6 +17,7 @@
  * Xuan Chen        (IBM)        - [187016] [menus] Remote Systems Details View should have Refresh on context menu
  * David McKnight   (IBM)        - [193329] using "Resource" instead of "Name" in the label column
  * Xuan Chen        (IBM)        - [160775] [api] rename (at least within a zip) blocks UI thread
+ * David McKnight   (IBM)        - [224313] [api] Create RSE Events for MOVE and COPY holding both source and destination fields
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -1146,7 +1147,7 @@ public class SystemTableView
 				// --------------------------
 			case ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_RENAMED :
 				{
-					String oldName = event.getOldName();
+					String oldName = event.getOldNames()[0]; // assuming only one resource
 					Object child = event.getResource();
 
 					if (provider != null)
@@ -1583,7 +1584,7 @@ public class SystemTableView
 						if (remoteAdapter != null)
 						{
 							// Don't think we need to do findItem and updateItem here.
-							sr.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_RENAMED, element, parentElement, adapter.getSubSystem(element), oldFullName, this);
+							sr.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_RENAMED, element, parentElement, adapter.getSubSystem(element), new String[]{oldFullName}, this);
 							
 						}
 

@@ -27,6 +27,7 @@
  * David McKnight   (IBM)        - [210229] table refresh needs unique table-specific tooltip-text
  * Martin Oberhuber (Wind River) - [215820] Move SystemRegistry implementation to Core
  * David McKnight   (IBM)        - [223103] [cleanup] fix broken externalized strings
+ * David McKnight   (IBM)        - [224313] [api] Create RSE Events for MOVE and COPY holding both source and destination fields
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -1668,8 +1669,8 @@ public class SystemTableViewPart extends ViewPart
 		
 		boolean referToSameObject = false;
 		if (registry instanceof SystemRegistry)
-		{
-			referToSameObject = ((SystemRegistry)registry).isSameObjectByAbsoluteName(input, null, child, event.getOldName());
+		{			
+			referToSameObject = ((SystemRegistry)registry).isSameObjectByAbsoluteName(input, null, child, event.getOldNames()[0]); // right now assuming only one resource
 		}
 		
 		if (input == child || child instanceof java.util.List || referToSameObject)

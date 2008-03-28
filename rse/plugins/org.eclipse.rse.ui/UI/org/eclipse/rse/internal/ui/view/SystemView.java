@@ -50,6 +50,7 @@
  * Martin Oberhuber (Wind River) - [218524][api] Remove deprecated ISystemViewInputProvider#getShell()
  * David Dykstal (IBM) - [222376] NPE if starting on a workspace with an old mark and a renamed default profile
  * David McKnight   (IBM)        - [224380] system view should only fire property sheet update event when in focus
+ * David McKnight   (IBM)        - [224313] [api] Create RSE Events for MOVE and COPY holding both source and destination fields
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -2523,7 +2524,7 @@ public class SystemView extends SafeTreeViewer
 		// --------------------------
 		// REMOTE RESOURCE RENAMED...
 		// --------------------------
-		case ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_RENAMED:
+		case ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_RENAMED: 
 			// we can easily lose our original selection so we need save and restore it if needed
 			prevSelection = null;
 			parentSelectionItem = null;
@@ -2533,7 +2534,7 @@ public class SystemView extends SafeTreeViewer
 			}
 
 			// rename all existing references to the remote object...
-			renameRemoteObject(remoteResource, event.getOldName(), ss);
+			renameRemoteObject(remoteResource, event.getOldNames()[0], ss); // assuming only one resource renamed
 
 			// refresh remoteResource if it's a directory
 			ISystemViewElementAdapter adapter = getViewAdapter(remoteResource);
@@ -2542,7 +2543,7 @@ public class SystemView extends SafeTreeViewer
 			}
 			
 			// now, find all filters that list the contents of the OLD name container.
-			filterMatches = findAllRemoteItemFilterReferences(event.getOldName(), ss, null);
+			filterMatches = findAllRemoteItemFilterReferences(event.getOldNames()[0], ss, null); // assuming only one resource renamed
 			if (filterMatches != null) {
 				for (int idx = 0; idx < filterMatches.size(); idx++) {
 					FilterMatch match = (FilterMatch) filterMatches.get(idx);
@@ -5063,7 +5064,7 @@ public class SystemView extends SafeTreeViewer
 						if (remoteAdapter != null)
 						{
 							ISubSystem ss = adapter.getSubSystem(element);
-							sr.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_RENAMED, element, parentElement, ss, oldFullName, this);
+							sr.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_RENAMED, element, parentElement, ss, new String[] {oldFullName}, this);
 						}
 
 						else

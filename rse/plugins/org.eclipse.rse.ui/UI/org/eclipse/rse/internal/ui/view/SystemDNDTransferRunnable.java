@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [200682] Fix drag&drop for elements just adaptable to IResource, like CDT elements
  * David McKnight   (IBM)        - [186363] get rid of obsolete calls to SubSystem.connect()
  * Xuan Chen        (IBM)        - [191370] [dstore] Supertransfer zip not deleted when cancelling copy
+ * David McKnight   (IBM)        - [224313] [api] Create RSE Events for MOVE and COPY holding both source and destination fields
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -54,6 +55,7 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.internal.model.SystemScratchpad;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
+import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.progress.UIJob;
@@ -640,6 +642,7 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 		
 		public IStatus runInUIThread(IProgressMonitor monitor)
 		{
+			String[] oldNames = new String[_resultSrcObjects.size()];
 			ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 			if (_resultTgtObjects.size() > 0)
 			{
@@ -657,6 +660,8 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 				    {
 				        doRefresh = true;
 				    }
+				    ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)((IAdaptable)src).getAdapter(ISystemViewElementAdapter.class);
+				    oldNames[t] = adapter.getAbsoluteName(src);
 				}
 				
 				if (_originatingViewer instanceof TreeViewer)
@@ -671,10 +676,11 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 						
 					}
 				}
-				
+				 
 				if (doRefresh)
 				{
-				    registry.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_CREATED, _resultTgtObjects, _target, _targetSubSystem, null, _originatingViewer);
+					String operation = ISystemRemoteChangeEvents.SYSTEM_REMOTE_OPERATION_COPY;
+				    registry.fireRemoteResourceChangeEvent(operation, ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_CREATED, _resultTgtObjects, _target, _targetSubSystem, oldNames, _originatingViewer);
 				}
 				else if (_target instanceof SystemScratchpad)
 				{

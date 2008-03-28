@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Kevin Doyle (IBM) - [196582] ClassCastException when doing copy/paste with Search view open
  * Xuan Chen   (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
+ * David McKnight   (IBM)        - [224313] [api] Create RSE Events for MOVE and COPY holding both source and destination fields
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -1007,7 +1008,7 @@ public class SystemTableTreeView
 				// --------------------------
 			case ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_RENAMED :
 				{
-					String oldName = event.getOldName();
+					String oldName = event.getOldNames()[0]; // right now we're assuming that a rename event is for a single resource
 					Object child = event.getResource();
 
 					if (provider != null)
@@ -1402,7 +1403,7 @@ public class SystemTableTreeView
 				if (ok)
 				{
 					if (remoteAdapter != null) {
-						sr.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_RENAMED, element, parentElement, remoteAdapter.getSubSystem(element), oldFullName, this);
+						sr.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_RENAMED, element, parentElement, remoteAdapter.getSubSystem(element), new String[]{oldFullName}, this);
 					}
 					else {
 						sr.fireEvent(new org.eclipse.rse.core.events.SystemResourceChangeEvent(element, ISystemResourceChangeEvents.EVENT_RENAME, parentElement));

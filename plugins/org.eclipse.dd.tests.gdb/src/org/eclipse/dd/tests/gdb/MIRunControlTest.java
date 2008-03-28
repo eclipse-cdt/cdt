@@ -274,7 +274,7 @@ public class MIRunControlTest extends BaseTestCase {
         	 * getModelData should return StateChangeReason.  
         	 */
 	   	 	Assert.assertTrue(" State change reason for a normal execution should be CONTAINER." , 
-	   	 			StateChangeReason.CONTAINER == data.getStateChangeReason());
+                StateChangeReason.USER_REQUEST == data.getStateChangeReason());
        } 
 	}
 
@@ -397,7 +397,8 @@ public class MIRunControlTest extends BaseTestCase {
         	/*
         	 * StateChangeReason in getModelData for Container DMC is null. 
         	 */
-	   	 	Assert.assertNull(data.getStateChangeReason());
+            Assert.assertTrue(" State change reason for a normal execution should be CONTAINER." , 
+                StateChangeReason.USER_REQUEST == data.getStateChangeReason());
        } 
 	}
         

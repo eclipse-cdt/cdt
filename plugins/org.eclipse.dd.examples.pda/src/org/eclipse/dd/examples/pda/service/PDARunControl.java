@@ -219,13 +219,23 @@ public class PDARunControl extends AbstractDsfService
     }
     
     
-	public boolean canResume(IExecutionDMContext context) {
+    public void canResume(IExecutionDMContext context, DataRequestMonitor<Boolean> rm) {
+        rm.setData(doCanResume(context));
+        rm.done();
+    }
+    
+    private boolean doCanResume(IExecutionDMContext context) {
         return isSuspended(context) && !fResumePending;
-	}
+    }
 
-	public boolean canSuspend(IExecutionDMContext context) {
+    public void canSuspend(IExecutionDMContext context, DataRequestMonitor<Boolean> rm) {
+        rm.setData(doCanSuspend(context));
+        rm.done();
+    }
+    
+    private boolean doCanSuspend(IExecutionDMContext context) {
         return !isSuspended(context);
-	}
+    }
 
 	public boolean isSuspended(IExecutionDMContext context) {
 		return fSuspended;
@@ -238,7 +248,7 @@ public class PDARunControl extends AbstractDsfService
 	public void resume(IExecutionDMContext context, final RequestMonitor rm) {
 		assert context != null;
 
-		if (canResume(context)) { 
+		if (doCanResume(context)) { 
             fResumePending = true;
             fCommandControl.queueCommand(
             	new PDAResumeCommand(fCommandControl.getProgramDMContext()),
@@ -260,7 +270,7 @@ public class PDARunControl extends AbstractDsfService
 	public void suspend(IExecutionDMContext context, final RequestMonitor rm){
 		assert context != null;
 
-		if (canSuspend(context)) {
+		if (doCanSuspend(context)) {
             fCommandControl.queueCommand(
                 new PDASuspendCommand(fCommandControl.getProgramDMContext()),
                 new DataRequestMonitor<PDACommandResult>(getExecutor(), rm));
@@ -270,14 +280,14 @@ public class PDARunControl extends AbstractDsfService
         }
     }
     
-    public boolean canStep(IExecutionDMContext context, StepType stepType) {
-        return canResume(context);
+    public void canStep(IExecutionDMContext context, StepType stepType, DataRequestMonitor<Boolean> rm) {
+        canResume(context, rm);
     }
     
     public void step(IExecutionDMContext context, StepType stepType, final RequestMonitor rm) {
     	assert context != null;
     	
-    	if (canResume(context)) {
+    	if (doCanResume(context)) {
             fResumePending = true;
             fStepping = true;
 
@@ -297,14 +307,6 @@ public class PDARunControl extends AbstractDsfService
             PDAPlugin.failRequest(rm, INVALID_STATE, "Cannot resume context"); 
             return;
         }
-    }
-
-    public boolean canInstructionStep(IExecutionDMContext context, StepType stepType) {
-        return false;
-    }
-    
-    public void instructionStep(IExecutionDMContext context, StepType stepType, RequestMonitor rm) {
-        PDAPlugin.failRequest(rm, NOT_SUPPORTED, "Operation not implemented"); 
     }
 
     public void getExecutionContexts(final IContainerDMContext containerDmc, final DataRequestMonitor<IExecutionDMContext[]> rm) {

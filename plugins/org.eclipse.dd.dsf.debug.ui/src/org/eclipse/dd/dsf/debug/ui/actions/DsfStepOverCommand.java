@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.ui.actions;
 
+import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
+import org.eclipse.dd.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.dsf.debug.internal.ui.DsfDebugUIPlugin;
 import org.eclipse.dd.dsf.debug.service.IRunControl.StepType;
@@ -44,7 +46,15 @@ public class DsfStepOverCommand implements IStepOverHandler {
         
         fExecutor.submit(new DsfCommandRunnable(fTracker, request.getElements()[0], request) { 
             @Override public void doExecute() {
-                request.setEnabled(getStepQueueMgr().canEnqueueStep(getContext(), StepType.STEP_OVER));
+                getStepQueueMgr().canEnqueueStep(
+                    getContext(), StepType.STEP_OVER,
+                    new DataRequestMonitor<Boolean>(ImmediateExecutor.getInstance(), null) {
+                        @Override
+                        protected void handleCompleted() {
+                            request.setEnabled(isSuccess() && getData());
+                            request.done();
+                        }
+                    });
             }
         });
     }

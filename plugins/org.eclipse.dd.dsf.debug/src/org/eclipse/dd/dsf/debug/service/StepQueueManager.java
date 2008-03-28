@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
@@ -64,10 +65,8 @@ public class StepQueueManager extends AbstractDsfService
     
     private static class StepRequest {
         StepType fStepType;
-        boolean fIsInstructionStep;
-        StepRequest(StepType type, boolean instruction) {
+        StepRequest(StepType type) {
             fStepType = type;
-            fIsInstructionStep = instruction;
         }
     }
     
@@ -116,17 +115,17 @@ public class StepQueueManager extends AbstractDsfService
     /**
      * Checks whether a step command can be queued up for given context.
      */
-    public boolean canEnqueueStep(IExecutionDMContext execCtx, StepType stepType) {
-        return (fRunControl.isSuspended(execCtx) && fRunControl.canStep(execCtx, stepType)) || 
-               (fRunControl.isStepping(execCtx) && !isSteppingTimedOut(execCtx));
+    public void canEnqueueStep(IExecutionDMContext execCtx, StepType stepType, DataRequestMonitor<Boolean> rm) {
+        if (doCanEnqueueStep(execCtx, stepType)) {
+            rm.setData(true);
+            rm.done();
+        } else {
+            fRunControl.canStep(execCtx, stepType, rm);
+        }
     }
 
-    /**
-     * Checks whether an instruction step command can be queued up for given context.
-     */
-    public boolean canEnqueueInstructionStep(IExecutionDMContext execCtx, StepType stepType) {
-        return (fRunControl.isSuspended(execCtx) && fRunControl.canInstructionStep(execCtx, stepType)) || 
-               (fRunControl.isStepping(execCtx) && !isSteppingTimedOut(execCtx));
+    private boolean doCanEnqueueStep(IExecutionDMContext execCtx, StepType stepType) {
+        return fRunControl.isStepping(execCtx) && !isSteppingTimedOut(execCtx); 
     }
 
     /** 
@@ -144,40 +143,25 @@ public class StepQueueManager extends AbstractDsfService
      * @param execCtx Execution context that should perform the step. 
      * @param stepType Type of step to execute.
      */
-    public void enqueueStep(IExecutionDMContext execCtx, StepType stepType) {
-        if (fRunControl.canStep(execCtx, stepType)) {
-            fRunControl.step(execCtx, stepType, new RequestMonitor(getExecutor(), null)); 
-        } else if (canEnqueueStep(execCtx, stepType)) {
-            List<StepRequest> stepQueue = fStepQueues.get(execCtx);
-            if (stepQueue == null) {
-                stepQueue = new LinkedList<StepRequest>();
-                fStepQueues.put(execCtx, stepQueue);
-            }
-            if (stepQueue.size() < fQueueDepth) {
-                stepQueue.add(new StepRequest(stepType, false));
-            }
-        }
-    }
-
-    /**
-     * Adds an instruction step command to the execution queue for given 
-     * context.
-     * @param execCtx Execution context that should perform the step. 
-     * @param stepType Type of step to execute.
-     */
-    public void enqueueInstructionStep(IExecutionDMContext execCtx, StepType stepType) {
-        if (fRunControl.canInstructionStep(execCtx, stepType)) {
-            fRunControl.instructionStep(execCtx, stepType, new RequestMonitor(getExecutor(), null)); 
-        } else if (canEnqueueInstructionStep(execCtx, stepType)) {
-            List<StepRequest> stepQueue = fStepQueues.get(execCtx);
-            if (stepQueue == null) {
-                stepQueue = new LinkedList<StepRequest>();
-                fStepQueues.put(execCtx, stepQueue);
-            }
-            if (stepQueue.size() < fQueueDepth) {
-                stepQueue.add(new StepRequest(stepType, true));
-            }
-        }
+    public void enqueueStep(final IExecutionDMContext execCtx, final StepType stepType) {
+        fRunControl.canStep(
+            execCtx, stepType, new DataRequestMonitor<Boolean>(getExecutor(), null) {
+                @Override
+                protected void handleCompleted() {
+                    if (isSuccess() && getData()) {
+                        fRunControl.step(execCtx, stepType, new RequestMonitor(getExecutor(), null)); 
+                    } else if (doCanEnqueueStep(execCtx, stepType)) {
+                        List<StepRequest> stepQueue = fStepQueues.get(execCtx);
+                        if (stepQueue == null) {
+                            stepQueue = new LinkedList<StepRequest>();
+                            fStepQueues.put(execCtx, stepQueue);
+                        }
+                        if (stepQueue.size() < fQueueDepth) {
+                            stepQueue.add(new StepRequest(stepType));
+                        }
+                    }
+                }
+            });
     }
 
     /**
@@ -191,7 +175,7 @@ public class StepQueueManager extends AbstractDsfService
     ///////////////////////////////////////////////////////////////////////////
 
     @DsfServiceEventHandler 
-    public void eventDispatched(ISuspendedDMEvent e) {
+    public void eventDispatched(final ISuspendedDMEvent e) {
         // Take care of the stepping time out
         fTimedOutFlags.remove(e.getDMContext());
         ScheduledFuture<?> future = fTimedOutFutures.remove(e.getDMContext()); 
@@ -200,26 +184,23 @@ public class StepQueueManager extends AbstractDsfService
         // Check if there's a step pending, if so execute it
         if (fStepQueues.containsKey(e.getDMContext())) {
             List<StepRequest> queue = fStepQueues.get(e.getDMContext());
-            StepRequest request = queue.remove(queue.size() - 1);
+            final StepRequest request = queue.remove(queue.size() - 1);
             if (queue.isEmpty()) fStepQueues.remove(e.getDMContext());
-            if (request.fIsInstructionStep) {
-                if (fRunControl.canInstructionStep(e.getDMContext(), request.fStepType)) {
-                    fRunControl.instructionStep(
-                        e.getDMContext(), request.fStepType, new RequestMonitor(getExecutor(), null));
-                } else {
-                    // For whatever reason we can't step anymore, so clear out
-                    // the step queue.
-                    fStepQueues.remove(e.getDMContext());
-                }
-            } else {
-                if (fRunControl.canStep(e.getDMContext(), request.fStepType)) {
-                    fRunControl.step(e.getDMContext(), request.fStepType,new RequestMonitor(getExecutor(), null));
-                } else {
-                    // For whatever reason we can't step anymore, so clear out
-                    // the step queue.
-                    fStepQueues.remove(e.getDMContext());
-                }
-            }
+            fRunControl.canStep(
+                e.getDMContext(), request.fStepType, 
+                new DataRequestMonitor<Boolean>(getExecutor(), null) {
+                    @Override
+                    protected void handleCompleted() {
+                        if (isSuccess() && getData()) {
+                            fRunControl.step(
+                                e.getDMContext(), request.fStepType, new RequestMonitor(getExecutor(), null));
+                        } else {
+                            // For whatever reason we can't step anymore, so clear out
+                            // the step queue.
+                            fStepQueues.remove(e.getDMContext());
+                        }
+                    }
+                });
         }
     }
 

@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.ui.actions;
 
+import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
+import org.eclipse.dd.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.debug.internal.ui.DsfDebugUIPlugin;
@@ -43,7 +45,15 @@ public class DsfSuspendCommand implements ISuspendHandler {
         
         fExecutor.submit(new DsfCommandRunnable(fTracker, request.getElements()[0], request) { 
             @Override public void doExecute() {
-                request.setEnabled(getRunControl().canSuspend(getContext()));
+                getRunControl().canSuspend(
+                    getContext(),
+                    new DataRequestMonitor<Boolean>(ImmediateExecutor.getInstance(), null) {
+                        @Override
+                        protected void handleCompleted() {
+                            request.setEnabled(isSuccess() && getData());
+                            request.done();
+                        }
+                    });
             }
         });
     }

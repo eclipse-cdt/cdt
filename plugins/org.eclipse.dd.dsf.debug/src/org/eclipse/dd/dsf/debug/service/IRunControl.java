@@ -115,15 +115,13 @@ public interface IRunControl extends IDMService
      * Run control commands.  They all require the IExecutionContext object on 
      * which they perform the operations.  
      */
-    boolean canResume(IExecutionDMContext context);
-    boolean canSuspend(IExecutionDMContext context);
+    void canResume(IExecutionDMContext context, DataRequestMonitor<Boolean> rm);
+    void canSuspend(IExecutionDMContext context, DataRequestMonitor<Boolean> rm);
     boolean isSuspended(IExecutionDMContext context);
     void resume(IExecutionDMContext context, RequestMonitor requestMonitor);
     void suspend(IExecutionDMContext context, RequestMonitor requestMonitor);
-    public enum StepType { STEP_OVER, STEP_INTO, STEP_RETURN };
+    public enum StepType { STEP_OVER, STEP_INTO, STEP_RETURN, INSTRUCTION_STEP_OVER, INSTRUCTION_STEP_INTO, INSTRUCTION_STEP_RETUTRN };
     boolean isStepping(IExecutionDMContext context);
-    boolean canStep(IExecutionDMContext context, StepType stepType);
+    void canStep(IExecutionDMContext context, StepType stepType, DataRequestMonitor<Boolean> rm);
     void step(IExecutionDMContext context, StepType stepType, RequestMonitor requestMonitor);
-    boolean canInstructionStep(IExecutionDMContext context, StepType stepType);
-    void instructionStep(IExecutionDMContext context, StepType stepType, RequestMonitor requestMonitor);
 }

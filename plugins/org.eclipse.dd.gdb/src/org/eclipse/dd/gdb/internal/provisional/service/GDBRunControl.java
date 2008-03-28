@@ -110,13 +110,20 @@ public class GDBRunControl extends MIRunControl {
     }
     
     @Override
-    public void suspend(IExecutionDMContext context, RequestMonitor requestMonitor){
-        if (canSuspend(context)) {
-            fGdb.interrupt();
-        } else {
-            requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Context cannot be suspended.", null)); //$NON-NLS-1$
-        }
-        requestMonitor.done();
+    public void suspend(IExecutionDMContext context, final RequestMonitor rm){
+        canSuspend(
+            context, 
+            new DataRequestMonitor<Boolean>(getExecutor(), rm) {
+                @Override
+                protected void handleSuccess() {
+                    if (getData()) {
+                        fGdb.interrupt();
+                    } else {
+                        rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Context cannot be suspended.", null)); //$NON-NLS-1$
+                    }
+                    rm.done();
+                }
+            });
     }
 
     

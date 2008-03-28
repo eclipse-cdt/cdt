@@ -7,8 +7,8 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
@@ -23,18 +23,18 @@ import org.eclipse.rse.files.ui.resources.ISystemRemoteMarker;
 import org.eclipse.rse.files.ui.resources.ISystemRemoteResource;
 
 /**
- * This class is an internal implementation of the ISystemRemoteMarker interface.
- * It is not intended to be implemented by clients.
+ * This class is an internal implementation of the ISystemRemoteMarker
+ * interface.
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class SystemRemoteMarker implements ISystemRemoteMarker {
 
-
-	
 	/**
 	 * Resource with which this marker is associated.
 	 */
 	protected ISystemRemoteResource resource;
-	
+
 	/**
 	 * The marker id.
 	 */
@@ -45,7 +45,7 @@ public class SystemRemoteMarker implements ISystemRemoteMarker {
 	 */
 	public SystemRemoteMarker(ISystemRemoteResource resource, long id) {
 		this.resource = resource;
-		this.id = id;		
+		this.id = id;
 	}
 
 	/**
@@ -54,12 +54,12 @@ public class SystemRemoteMarker implements ISystemRemoteMarker {
 	public void delete() {
 		SystemRemoteMarkerManager.getInstance().removeMarker(getResource(), getId());
 	}
-	
+
 	/**
 	 * @see org.eclipse.rse.files.ui.resources.ISystemRemoteMarker#equals(Object)
 	 */
 	public boolean equals(Object object) {
-		
+
 		if (!(object instanceof ISystemRemoteMarker)) {
 			return false;
 		}
@@ -75,7 +75,7 @@ public class SystemRemoteMarker implements ISystemRemoteMarker {
 	public boolean exists() {
 		return getInfo() != null;
 	}
-	
+
 	/**
 	 * Get the marker info.
 	 * @return the marker info.
@@ -89,12 +89,12 @@ public class SystemRemoteMarker implements ISystemRemoteMarker {
 	 */
 	public Object getAttribute(String attributeName) {
 		SystemRemoteMarkerInfo info = getInfo();
-		
+
 		if (info == null) {
 			return null;
 		}
-		
-		return info.getAttribute(attributeName);	
+
+		return info.getAttribute(attributeName);
 	}
 
 	/**
@@ -102,17 +102,17 @@ public class SystemRemoteMarker implements ISystemRemoteMarker {
 	 */
 	public int getAttribute(String attributeName, int defaultValue) {
 		SystemRemoteMarkerInfo info = getInfo();
-		
+
 		if (info == null) {
 			return defaultValue;
 		}
-		
+
 		Object value = info.getAttribute(attributeName);
-		
+
 		if ((value != null) && (value instanceof Integer)) {
 			return ((Integer)value).intValue();
 		}
-		
+
 		return defaultValue;
 	}
 
@@ -121,17 +121,17 @@ public class SystemRemoteMarker implements ISystemRemoteMarker {
 	 */
 	public String getAttribute(String attributeName, String defaultValue) {
 		SystemRemoteMarkerInfo info = getInfo();
-		
+
 		if (info == null) {
 			return defaultValue;
 		}
-		
+
 		Object value = info.getAttribute(attributeName);
-		
+
 		if ((value != null) && (value instanceof String)) {
 			return (String)value;
 		}
-		
+
 		return defaultValue;
 	}
 
@@ -140,17 +140,17 @@ public class SystemRemoteMarker implements ISystemRemoteMarker {
 	 */
 	public boolean getAttribute(String attributeName, boolean defaultValue) {
 		SystemRemoteMarkerInfo info = getInfo();
-		
+
 		if (info == null) {
 			return defaultValue;
 		}
-		
+
 		Object value = info.getAttribute(attributeName);
-		
+
 		if ((value != null) && (value instanceof Integer)) {
 			return ((Boolean)value).booleanValue();
 		}
-		
+
 		return defaultValue;
 	}
 
@@ -159,11 +159,11 @@ public class SystemRemoteMarker implements ISystemRemoteMarker {
 	 */
 	public Map getAttributes() {
 		SystemRemoteMarkerInfo info = getInfo();
-		
+
 		if (info == null) {
 			return null;
 		}
-		
+
 		return info.getAttributes();
 	}
 
@@ -172,11 +172,11 @@ public class SystemRemoteMarker implements ISystemRemoteMarker {
 	 */
 	public Object[] getAttributes(String[] attributeNames) {
 		SystemRemoteMarkerInfo info = getInfo();
-		
+
 		if (info == null) {
 			return new Object[0];
 		}
-		
+
 		return info.getAttributes(attributeNames);
 	}
 
@@ -185,11 +185,11 @@ public class SystemRemoteMarker implements ISystemRemoteMarker {
 	 */
 	public long getCreationTime() {
 		SystemRemoteMarkerInfo info = getInfo();
-		
+
 		if (info == null) {
 			return -1;
 		}
-		
+
 		return info.getCreationTime();
 	}
 
@@ -199,7 +199,7 @@ public class SystemRemoteMarker implements ISystemRemoteMarker {
 	public long getId() {
 		return id;
 	}
-	
+
 	/**
 	 * @see org.eclipse.rse.files.ui.resources.ISystemRemoteMarker#getResource()
 	 */
@@ -212,11 +212,11 @@ public class SystemRemoteMarker implements ISystemRemoteMarker {
 	 */
 	public String getType() {
 		SystemRemoteMarkerInfo info = getInfo();
-		
+
 		if (info == null) {
 			return null;
 		}
-		
+
 		return info.getType();
 	}
 
@@ -225,11 +225,11 @@ public class SystemRemoteMarker implements ISystemRemoteMarker {
 	 */
 	public boolean isSubtypeOf(String superType) {
 		String type = getType();
-		
+
 		if (type == null) {
 			return false;
 		}
-		
+
 		return SystemRemoteMarkerManager.getInstance().getCache().isSubtype(type, superType);
 	}
 
@@ -247,7 +247,7 @@ public class SystemRemoteMarker implements ISystemRemoteMarker {
 		SystemRemoteMarkerManager manager = SystemRemoteMarkerManager.getInstance();
 		SystemRemoteMarkerInfo info = getInfo();
 		info.setAttribute(attributeName, value);
-		
+
 		if (manager.isPersistent(info)) {
 			((SystemRemoteResource)resource).getResourceInfo().set(ISystemRemoteCoreConstants.M_MARKERS_DIRTY);	// need to change this
 		}
@@ -267,7 +267,7 @@ public class SystemRemoteMarker implements ISystemRemoteMarker {
 		SystemRemoteMarkerManager manager = SystemRemoteMarkerManager.getInstance();
 		SystemRemoteMarkerInfo info = getInfo();
 		info.setAttributes(attributeNames, values);
-		
+
 		if (manager.isPersistent(info)) {
 			((SystemRemoteResource)resource).getResourceInfo().set(ISystemRemoteCoreConstants.M_MARKERS_DIRTY);	// need to change this
 		}
@@ -280,7 +280,7 @@ public class SystemRemoteMarker implements ISystemRemoteMarker {
 		SystemRemoteMarkerManager manager = SystemRemoteMarkerManager.getInstance();
 		SystemRemoteMarkerInfo info = getInfo();
 		info.setAttributes(attributes);
-		
+
 		if (manager.isPersistent(info)) {
 			((SystemRemoteResource)resource).getResourceInfo().set(ISystemRemoteCoreConstants.M_MARKERS_DIRTY);	// need to change this
 		}

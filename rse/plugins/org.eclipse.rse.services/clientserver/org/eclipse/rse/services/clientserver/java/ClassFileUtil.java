@@ -1,13 +1,13 @@
 /********************************************************************************
  * Copyright (c) 2006, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
@@ -24,10 +24,10 @@ import java.io.InputStream;
 /**
  * Singleton class for obtaining various information about class files.
  * <p>
- * This class is not intended to be subclassed by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class ClassFileUtil {
-	
+
 	private static ClassFileUtil instance;
 
 	/**
@@ -36,20 +36,20 @@ public class ClassFileUtil {
 	private ClassFileUtil() {
 		super();
 	}
-	
+
 	/**
 	 * Returns the singleton instance.
 	 * @return the singleton instance.
 	 */
 	public static final ClassFileUtil getInstance() {
-		
+
 		if (instance == null) {
 			instance = new ClassFileUtil();
 		}
-		
+
 		return instance;
 	}
-	
+
 	/**
 	 * Returns whether the class with the given path is runnable, i.e. whether it contains <code>public
 	 * static void main (String[])</code> method.
@@ -61,7 +61,7 @@ public class ClassFileUtil {
 		File classFile = new File(classFilePath);
 		return isRunnable(classFile);
 	}
-	
+
 	/**
 	 * Returns whether the class is runnable, i.e. whether it contains <code>public
 	 * static void main (String[])</code> method.
@@ -72,8 +72,8 @@ public class ClassFileUtil {
 	public boolean isRunnable(File classFile) throws IOException {
 		FileInputStream stream = new FileInputStream(classFile);
 		return isRunnable(stream);
- 	}
-	
+	}
+
 	/**
 	 * Returns whether the class represented by the given input stream is runnable,
 	 * i.e. whether it contains <code>public static void main (String[])</code> method.
@@ -86,7 +86,7 @@ public class ClassFileUtil {
 		parser.parse();
 		return parser.isExecutable();
 	}
-	
+
 	/**
 	 * Gets the qualified class name for the file with the given path.
 	 * @param classFilePath the class file path.
@@ -96,7 +96,7 @@ public class ClassFileUtil {
 		File classFile = new File(classFilePath);
 		return getQualifiedClassName(classFile);
 	}
-	
+
 	/**
 	 * Gets the qualified class name.
 	 * @param classFile the class file.
@@ -106,7 +106,7 @@ public class ClassFileUtil {
 		FileInputStream stream = new FileInputStream(classFile);
 		return getQualifiedClassName(stream);
 	}
-	
+
 	/**
 	 * Gets the qualified class name for the class represented by the given input stream.
 	 * @param stream the input stream representing a class.

@@ -1,13 +1,13 @@
 /********************************************************************************
  * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
@@ -65,7 +65,7 @@ import org.eclipse.ui.part.ResourceTransfer;
 /**
  * Registry and control center for RSE UI related operations.
  * 
- * This class is not intended to be subclassed by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class SystemRegistryUI implements ISystemRegistryUI {
 
@@ -119,7 +119,7 @@ public class SystemRegistryUI implements ISystemRegistryUI {
 	{
 		SystemPerspectiveHelpers.openRSEPerspective();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.ui.model.ISystemRegistryUI#expandHost(org.eclipse.rse.core.model.IHost)
@@ -138,7 +138,7 @@ public class SystemRegistryUI implements ISystemRegistryUI {
 			}
 		}
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.ui.model.ISystemRegistryUI#expandSubSystem(org.eclipse.rse.core.subsystems.ISubSystem)
@@ -207,7 +207,7 @@ public class SystemRegistryUI implements ISystemRegistryUI {
 	public void clearRunnableContext()
 	{
 		//this.currentRunnableContext = null;
-		//this.currentRunnableContextShell = null;    	
+		//this.currentRunnableContextShell = null;
 		popRunnableContext();
 	}
 
@@ -256,7 +256,7 @@ public class SystemRegistryUI implements ISystemRegistryUI {
 			previousRunnableContextShells.remove(disposedShells.elementAt(idx));
 			previousRunnableContexts.remove(disposedContexts.elementAt(idx));
 		}
-	
+
 		return currentRunnableContext;
 	}
 
@@ -289,7 +289,7 @@ public class SystemRegistryUI implements ISystemRegistryUI {
 			}
 			clipboard = new Clipboard(display);
 		}
-	
+
 		return clipboard;
 	}
 
@@ -305,21 +305,21 @@ public class SystemRegistryUI implements ISystemRegistryUI {
 		int connectionDelim = str.indexOf(":"); //$NON-NLS-1$
 		if (connectionDelim == -1) // not subsystem, therefore likely to be a connection
 		{
-		    int profileDelim = str.indexOf("."); //$NON-NLS-1$
-			if (profileDelim != -1) 
+			int profileDelim = str.indexOf("."); //$NON-NLS-1$
+			if (profileDelim != -1)
 			{
-			    String profileId = str.substring(0, profileDelim);
-			    String connectionId = str.substring(profileDelim + 1, str.length());
-			    ISystemProfile profile = registry.getSystemProfile(profileId);
-			    return registry.getHost(profile, connectionId);
+				String profileId = str.substring(0, profileDelim);
+				String connectionId = str.substring(profileDelim + 1, str.length());
+				ISystemProfile profile = registry.getSystemProfile(profileId);
+				return registry.getHost(profile, connectionId);
 			}
 		}
-		
+
 		int subsystemDelim = str.indexOf(":", connectionDelim + 1); //$NON-NLS-1$
-	
+
 		String subSystemId = str.substring(0, subsystemDelim);
 		String srcKey = str.substring(subsystemDelim + 1, str.length());
-	
+
 		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 		ISubSystem subSystem = registry.getSubSystem(subSystemId);
 		if (subSystem != null)
@@ -364,26 +364,26 @@ public class SystemRegistryUI implements ISystemRegistryUI {
 		Clipboard clipboard = getSystemClipboard();
 		ArrayList srcObjects = new ArrayList();
 		Object object = null;
-	
+
 		if (srcType == SystemDNDTransferRunnable.SRC_TYPE_RSE_RESOURCE)
 		{
-	
+
 			// determine the source objects
 			object = clipboard.getContents(PluginTransfer.getInstance());
-	
+
 			if (object instanceof PluginTransferData)
 			{
 				// RSE transfer
 				PluginTransferData data = (PluginTransferData) object;
 				byte[] result = data.getData();
-	
+
 				//StringTokenizer tokenizer = new StringTokenizer(new String(result), SystemViewDataDropAdapter.RESOURCE_SEPARATOR);
 				String[] tokens = (new String(result)).split("\\"+SystemViewDataDropAdapter.RESOURCE_SEPARATOR); //$NON-NLS-1$
-				
+
 				for (int i = 0;i < tokens.length; i++)
 				{
 					String srcStr = tokens[i];
-	
+
 					Object srcObject = getObjectFor(srcStr);
 					srcObjects.add(srcObject);
 				}
@@ -403,7 +403,7 @@ public class SystemRegistryUI implements ISystemRegistryUI {
 				}
 			}
 		}
-	
+
 		else if (srcType == SystemDNDTransferRunnable.SRC_TYPE_OS_RESOURCE)
 		{
 			// Local File transfer
@@ -438,11 +438,11 @@ public class SystemRegistryUI implements ISystemRegistryUI {
 	 */
 	public SystemScratchpad getSystemScratchPad()
 	{
-	    if (scratchpad == null)
-	    {
-	        scratchpad = new SystemScratchpad();
-	    }
-	    return scratchpad;
+		if (scratchpad == null)
+		{
+			scratchpad = new SystemScratchpad();
+		}
+		return scratchpad;
 	}
 
 
@@ -474,7 +474,7 @@ public class SystemRegistryUI implements ISystemRegistryUI {
 		}
 		if (SystemPreferencesManager.getShowFilterPools())
 		{
-			registry.fireEvent(new SystemResourceChangeEvent(registry, ISystemResourceChangeEvents.EVENT_REFRESH, registry));			
+			registry.fireEvent(new SystemResourceChangeEvent(registry, ISystemResourceChangeEvents.EVENT_REFRESH, registry));
 		}
 	}
 
@@ -513,8 +513,8 @@ public class SystemRegistryUI implements ISystemRegistryUI {
 	      	   if ((factory!=null)&&factory.supportsFilters())
 	      	     factory.setShowFilterStrings(show);
 	      	 }
-	      }    	
-	    }    	
+	      }
+	    }
 	}*/
 	/**
 	 * Reflect the user changing the preference for showing new connection prompt
@@ -526,7 +526,7 @@ public class SystemRegistryUI implements ISystemRegistryUI {
 
 	// ----------------------------
 	// RESOURCE EVENT METHODS...
-	// ----------------------------            
+	// ----------------------------
 
 	/*
 	 * (non-Javadoc)

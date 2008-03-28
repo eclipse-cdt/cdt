@@ -7,8 +7,8 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
@@ -49,17 +49,20 @@ import org.eclipse.ui.XMLMemento;
 
 
 /**
- * An internal class. Clients must not instantiate or subclass it.
+ * An internal class.
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 
 public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRegistry {
 
 	private static SystemFileTransferModeRegistry instance;
-	
+
 	private HashMap typeModeMappings;
-	
+
 	private RSEUIPlugin plugin;
-	
+
 	// Constants for reading from and writing to xml file
 	private static final String FILENAME = "fileTransferMode.xml"; //$NON-NLS-1$
 	private static final String ENCODING = SystemEncodingUtil.ENCODING_UTF_8;
@@ -70,7 +73,7 @@ public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRe
 	private static final String MODE_ATTRIBUTE = "mode"; //$NON-NLS-1$
 	private static final String BINARY_VALUE = "binary";  //$NON-NLS-1$
 	private static final String TEXT_VALUE = "text"; //$NON-NLS-1$
-	private static final String PRIORITY_ATTRIBUTE = "priority"; //$NON-NLS-1$	
+	private static final String PRIORITY_ATTRIBUTE = "priority"; //$NON-NLS-1$
 
 	/**
 	 * Constructor for SystemFileTransferModeRegistry
@@ -80,20 +83,20 @@ public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRe
 		this.plugin = RSEUIPlugin.getDefault();
 		initialize();
 	}
-	
-	
+
+
 	/**
 	 * Get the singleton instance
 	 */
 	public static SystemFileTransferModeRegistry getInstance() {
-		
+
 		if (instance == null) {
 			instance = new SystemFileTransferModeRegistry();
 		}
-		
+
 		return instance;
 	}
-	
+
 	/**
 	 * Delete's the existing file associations and reinitializes with defaults
 	 */
@@ -102,16 +105,16 @@ public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRe
 		deleteAssociations();
 		initialize();
 	}
-	
+
 	/**
 	 * Initialize the registry from storage.
 	 */
 	private void initialize() {
-		
+
 		// load our current associations (if any)
 		loadAssociations();
-		
-		
+
+
 		// get reference to the extension registry
 		IExtensionRegistry extRegistry = Platform.getExtensionRegistry();
 
@@ -131,9 +134,9 @@ public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRe
 				String type = element.getAttribute("type"); //$NON-NLS-1$
 
 				if (type != null && !type.equals("")) { //$NON-NLS-1$
-																								
+
 					SystemFileTransferModeMapping mapping = new SystemFileTransferModeMapping(extension);
-															
+
 					// add extension to list of text types
 					if (type.equalsIgnoreCase("text")) { //$NON-NLS-1$
 						mapping.setAsText();
@@ -142,7 +145,7 @@ public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRe
 					if (type.equalsIgnoreCase("binary")) { //$NON-NLS-1$
 						mapping.setAsBinary();
 					}
-					
+
 					int priority = SystemFileTransferModeMapping.DEFAULT_PRIORITY;
 					String priorityStr = element.getAttribute("priority"); //$NON-NLS-1$
 					try
@@ -152,10 +155,10 @@ public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRe
 						}
 					}
 					catch (Exception e)
-					{						
+					{
 					}
 					mapping.setPriority(priority);
-					
+
 					String key = getMappingKey(mapping);
 					if (!typeModeMappings.containsKey(key)){
 						typeModeMappings.put(key, mapping);
@@ -164,7 +167,7 @@ public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRe
 						SystemFileTransferModeMapping existingMapping = (SystemFileTransferModeMapping)typeModeMappings.get(key);
 						int existingPriority = existingMapping.getPriority();
 						if (priority < existingPriority){
-							
+
 							// change properties of existing mapping to that of new priority
 							if (mapping.isBinary() && existingMapping.isText()){
 								existingMapping.setAsBinary();
@@ -172,19 +175,19 @@ public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRe
 							else if (mapping.isText() && existingMapping.isBinary()){
 								existingMapping.setAsText();
 							}
-							
+
 							existingMapping.setPriority(priority);
 						}
 					}
 				}
-				
+
 			}
 			else {
 				continue;
 			}
-		}	
+		}
 	}
-	
+
 	/**
 	 * @see ISystemFileTransferModeRegistry#getModeMappings()
 	 */
@@ -194,8 +197,8 @@ public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRe
 		sortedMappings.toArray(array);
 		return array;
 	}
-	
-	
+
+
 	/**
 	 * The mappings are kept in a hash map for fast lookup. Sorting is
 	 * typically only needed for certain dialogs/choices etc.
@@ -213,23 +216,23 @@ public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRe
 		List result = new ArrayList(s);
 		return result;
 	}
-	
-	
+
+
 	/**
 	 * Sets new mode mappings
 	 */
 	public void setModeMappings(SystemFileTransferModeMapping[] newMappings) {
 		typeModeMappings = new HashMap();
-		
+
 		for (int i = 0; i < newMappings.length; i++) {
 			SystemFileTransferModeMapping mapping = newMappings[i];
 			typeModeMappings.put(getMappingKey(mapping), mapping);
 		}
 	}
-	
-	
+
+
 	/**
- 	 * Return a key given the mapping
+	 * Return a key given the mapping
 	 */
 	private String getMappingKey(ISystemFileTransferModeMapping mapping) {
 		return mapping.getLabel().toLowerCase();
@@ -297,26 +300,26 @@ public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRe
 	 */
 	public boolean isText(IRemoteFile remoteFile) {
 		return isText(remoteFile.getName());
-	}	
-	
-	
+	}
+
+
 	/**
 	 * Get the mode mapping given a file name
 	 */
 	private SystemFileTransferModeMapping getMapping(String fileName) {
 		SystemFileTransferModeMapping mapping = (SystemFileTransferModeMapping)(typeModeMappings.get(fileName.toLowerCase()));
-		
+
 		if (mapping == null) {
 			mapping = createMappingFromModeMappings(fileName);
 		}
-		
+
 		if (mapping == null) {
 			return getDefaultMapping(fileName);
 		}
-		
+
 		return mapping;
-	}	
-	
+	}
+
 	private SystemFileTransferModeMapping createMappingFromModeMappings(String fileName)
 	{
 		// get file extension
@@ -325,7 +328,7 @@ public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRe
 
 		String name = null;
 		String extension = null;
-		
+
 		// if there is no extension
 		if ((extIndex == -1) || (extIndex == (fileName.length() - 1))) {
 			name = fileName;
@@ -333,45 +336,45 @@ public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRe
 		else {
 			name = fileName.substring(0, extIndex);
 			extension = fileName.substring(extIndex + 1);
-		}		
-		
+		}
+
 		// check if the name and extension combination exists already
 		SystemFileTransferModeMapping mapping = (SystemFileTransferModeMapping)(typeModeMappings.get(getMappingKey(new SystemFileTransferModeMapping(name, extension))));
-		
+
 		// if not, check only for the extension
 		if (mapping == null) {
 			mapping = (SystemFileTransferModeMapping)(typeModeMappings.get(getMappingKey(new SystemFileTransferModeMapping(extension))));
 		}
-		
+
 		if (mapping == null) {
 			return null;
 		}
-			
-		
+
+
 		SystemFileTransferModeMapping fileMapping = new SystemFileTransferModeMapping(name, extension);
-		
+
 		if (mapping.isText())
 		{
 			fileMapping.setAsText();
 		}
 		else
 		{
-			fileMapping.setAsBinary();			
+			fileMapping.setAsBinary();
 		}
-		
+
 		return fileMapping;
 	}
-	
+
 	/**
-	 * Return whether to automatically detect, use binary or text during file transfer 
+	 * Return whether to automatically detect, use binary or text during file transfer
 	 * for unspecified file types
 	 */
-	public static int getFileTransferModeDefaultPreference() 
+	public static int getFileTransferModeDefaultPreference()
 	{
 		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
 		return store.getInt(ISystemFilePreferencesConstants.FILETRANSFERMODEDEFAULT);
 	}
-	
+
 	/**
 	 * Get a default mapping given an extension. Should never return null.
 	 */
@@ -381,13 +384,13 @@ public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRe
 		// DY int extIndex = fileName.indexOf('.');
 		int extIndex = fileName.lastIndexOf('.');
 		String name, extension;
-		
+
 		// if there is no extension
 		// DY 04-23-2002 changed from default binary to default text for files that
 		//		a)  Have no extension
 		//		b)  Ends with a period
 		//		c)  Start with a '.' i.e. .bash_history
-		if ((extIndex == -1) || (extIndex == (fileName.length() - 1)) || (extIndex == 0)) 
+		if ((extIndex == -1) || (extIndex == (fileName.length() - 1)) || (extIndex == 0))
 		{
 			name = fileName;
 			extension = null;
@@ -395,15 +398,15 @@ public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRe
 		else
 		{
 			name = fileName.substring(0, extIndex);
-			extension = fileName.substring(extIndex + 1);			
+			extension = fileName.substring(extIndex + 1);
 		}
-		
 
-		SystemFileTransferModeMapping mapping = new SystemFileTransferModeMapping(name, extension);		
-		
-		// default	
+
+		SystemFileTransferModeMapping mapping = new SystemFileTransferModeMapping(name, extension);
+
+		// default
 		int defaultFileTransferMode = getFileTransferModeDefaultPreference();
-	
+
 		if (defaultFileTransferMode == ISystemFilePreferencesConstants.FILETRANSFERMODE_BINARY)
 		{
 			mapping.setAsBinary();
@@ -415,50 +418,50 @@ public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRe
 
 		return mapping;
 	}
-	
-	
+
+
 	/**
 	 * Load the saved associations to the registry
 	 * 
 	 * @return true if operation successful, false otherwise
 	 */
 	public boolean loadAssociations() {
-		
+
 		typeModeMappings = new HashMap();
-		
+
 		String location = getFileLocation();
-		
+
 		File file = new File(location);
-			
+
 		if (!file.exists())
 			return false;
-		
+
 		FileInputStream stream = null;
 		InputStreamReader reader = null;
-		
+
 		boolean result = false;
-		
+
 		try {
 			stream = new FileInputStream(file);
 			reader = new InputStreamReader(stream, ENCODING);
 			XMLMemento memento = XMLMemento.createReadRoot(reader);
 			IMemento[] mementos = memento.getChildren(INFO_NODE);
-			
+
 			for (int i = 0; i < mementos.length; i++) {
 				String name = mementos[i].getString(NAME_ATTRIBUTE);
 				String extension = mementos[i].getString(EXTENSION_ATTRIBUTE);
 				String mode = mementos[i].getString(MODE_ATTRIBUTE);
-				
-				
+
+
 				SystemFileTransferModeMapping mapping = new SystemFileTransferModeMapping(name, extension);
-				
+
 				if (mode.equals(TEXT_VALUE)) {
 					mapping.setAsText();
 				}
 				else {
 					mapping.setAsBinary();
 				}
-				
+
 				try
 				{
 					Integer priorityInt = mementos[i].getInteger(PRIORITY_ATTRIBUTE);
@@ -468,13 +471,13 @@ public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRe
 					}
 				}
 				catch (Exception e)
-				{						
+				{
 				}
-					
-				
+
+
 				typeModeMappings.put(getMappingKey(mapping), mapping);
 			}
-			
+
 			result = true;
 		}
 		catch (Exception e) {
@@ -482,9 +485,9 @@ public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRe
 			result = false;
 		}
 		finally {
-			
+
 			try {
-			
+
 				if (reader != null)
 					reader.close();
 			}
@@ -492,27 +495,27 @@ public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRe
 				SystemBasePlugin.logError("Could not close reader for transfer mode xml file", e); //$NON-NLS-1$
 			}
 		}
-		
-			
+
+
 		return result;
 	}
-	
-	private void deleteAssociations() 
+
+	private void deleteAssociations()
 	{
 		String location = getFileLocation();
 		File assFile = new File(location);
 		assFile.delete();
 	}
-	
+
 	/**
 	 * Save the contents of the registry
 	 */
 	public void saveAssociations() {
-		
+
 		String location = getFileLocation();
-		
+
 		XMLMemento memento = XMLMemento.createWriteRoot(ROOT_NODE);
-		
+
 		Iterator iter = typeModeMappings.values().iterator();
 
 		while (iter.hasNext()) {
@@ -520,25 +523,25 @@ public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRe
 			IMemento infoMemento = memento.createChild(INFO_NODE);
 			infoMemento.putString(NAME_ATTRIBUTE, mapping.getName());
 			infoMemento.putString(EXTENSION_ATTRIBUTE, mapping.getExtension());
-			infoMemento.putString(MODE_ATTRIBUTE, mapping.isBinary() ? BINARY_VALUE : TEXT_VALUE); 
+			infoMemento.putString(MODE_ATTRIBUTE, mapping.isBinary() ? BINARY_VALUE : TEXT_VALUE);
 			infoMemento.putInteger(PRIORITY_ATTRIBUTE, mapping.getPriority());
 		}
-		
+
 		FileOutputStream stream = null;
 		OutputStreamWriter writer = null;
-		
+
 		try {
 			stream = new FileOutputStream(location);
-	 		writer = new OutputStreamWriter(stream, ENCODING);
+			writer = new OutputStreamWriter(stream, ENCODING);
 			memento.save(writer);
 		}
 		catch (Exception e) {
 			SystemBasePlugin.logError("Could not write to transfer mode xml file", e); //$NON-NLS-1$
 		}
 		finally {
-			
+
 			try {
-				
+
 				if (writer != null)
 					writer.close();
 			}
@@ -547,8 +550,8 @@ public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRe
 			}
 		}
 	}
-	
-	
+
+
 	/**
 	 * Get the file location
 	 */

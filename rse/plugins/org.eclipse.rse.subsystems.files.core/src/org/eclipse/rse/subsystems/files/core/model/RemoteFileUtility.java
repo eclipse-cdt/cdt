@@ -1,13 +1,13 @@
 /********************************************************************************
  * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
@@ -35,7 +35,8 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConf
 /**
  * Public utility class for dealing with remote file subsystems.
  * 
- * Clients may use this class, but not instantiate or subclass it.
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class RemoteFileUtility
 {
@@ -52,7 +53,7 @@ public class RemoteFileUtility
 		ISubSystem[] sses = sr.getSubSystems(connection);
 		for (int i = 0; i < sses.length; i++)
 		{
-			if (sses[i] instanceof IRemoteFileSubSystem)	
+			if (sses[i] instanceof IRemoteFileSubSystem)
 			{
 				IRemoteFileSubSystem subSystem = (IRemoteFileSubSystem)sses[i];
 				return subSystem;
@@ -60,7 +61,7 @@ public class RemoteFileUtility
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Return the list of file subsystems associated with a connection.
 	 * @param connection the connection to query.
@@ -73,7 +74,7 @@ public class RemoteFileUtility
 		ISubSystem[] sses = sr.getSubSystems(connection);
 		for (int i = 0; i < sses.length; i++)
 		{
-			if (sses[i] instanceof IRemoteFileSubSystem)	
+			if (sses[i] instanceof IRemoteFileSubSystem)
 			{
 				IRemoteFileSubSystem subSystem = (IRemoteFileSubSystem)sses[i];
 				results.add(subSystem);
@@ -81,34 +82,34 @@ public class RemoteFileUtility
 		}
 		return (IRemoteFileSubSystem[])results.toArray(new IRemoteFileSubSystem[results.size()]);
 	}
-	
+
 	/**
 	 * Return the first remote file subsystem configuration associated with a system type.
 	 * @param systemType the system type to query.
 	 * @return an IRemoteFileSubSystemConfiguration instance, or <code>null</code> if
 	 *     no file subsystem is configured with the given system type.
 	 */
-	 public static IRemoteFileSubSystemConfiguration getFileSubSystemConfiguration(IRSESystemType systemType)
-	 {
-			ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
-			ISubSystemConfiguration[] sses = sr.getSubSystemConfigurationsBySystemType(systemType, false);
-			for (int i = 0; i < sses.length; i++)
+	public static IRemoteFileSubSystemConfiguration getFileSubSystemConfiguration(IRSESystemType systemType)
+	{
+		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
+		ISubSystemConfiguration[] sses = sr.getSubSystemConfigurationsBySystemType(systemType, false);
+		for (int i = 0; i < sses.length; i++)
+		{
+			if (sses[i] instanceof IRemoteFileSubSystemConfiguration)
 			{
-				if (sses[i] instanceof IRemoteFileSubSystemConfiguration)	
-				{
-					return (IRemoteFileSubSystemConfiguration)sses[i];
-				}
+				return (IRemoteFileSubSystemConfiguration)sses[i];
 			}
-			return null;
-	 }
-	 
-	 /**
-	  * Return the global SystemFileTransferModeRegistry.
-	  * @return the global SystemFileTransferModeRegistry.
-	  */
-	 public static ISystemFileTransferModeRegistry getSystemFileTransferModeRegistry()
-	 {
-		 return SystemFileTransferModeRegistry.getInstance();
-	 }
-		
+		}
+		return null;
+	}
+
+	/**
+	 * Return the global SystemFileTransferModeRegistry.
+	 * @return the global SystemFileTransferModeRegistry.
+	 */
+	public static ISystemFileTransferModeRegistry getSystemFileTransferModeRegistry()
+	{
+		return SystemFileTransferModeRegistry.getInstance();
+	}
+
 }

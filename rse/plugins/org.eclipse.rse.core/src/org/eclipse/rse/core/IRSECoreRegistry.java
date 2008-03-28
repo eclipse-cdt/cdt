@@ -18,10 +18,11 @@ package org.eclipse.rse.core;
 
 
 /**
- * Interface for RSE core registry. Clients should use this interface as the starting point for querying and
- * manipulating model objects in the RSE framework.
- *
- * This interface is not intended to be implemented by clients.
+ * Interface for RSE core registry. Clients should use this interface as the
+ * starting point for querying and manipulating model objects in the RSE
+ * framework.
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IRSECoreRegistry {
 
@@ -45,7 +46,7 @@ public interface IRSECoreRegistry {
 	 * @deprecated Use {@link #getSystemTypeById(String)}.
 	 */
 	public IRSESystemType getSystemType(String name);
-	
+
 	/**
 	 * Returns a system type object given by the id.
 	 * 

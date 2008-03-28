@@ -28,22 +28,25 @@ import org.eclipse.ui.IWorkbench;
  * Standard workbench wizard for importing resources from the local file system
  * into the workspace.
  * <p>
- * This class may be instantiated and used without further configuration;
- * this class is not intended to be subclassed.
+ * This class may be instantiated and used without further configuration.
  * </p>
  * <p>
  * Example:
+ * 
  * <pre>
  * IWizard wizard = new RemoteImportWizard();
  * wizard.init(workbench, selection);
  * WizardDialog dialog = new WizardDialog(shell, wizard);
  * dialog.open();
  * </pre>
- * During the call to <code>open</code>, the wizard dialog is presented to the
- * user. When the user hits Finish, the user-selected files are imported
+ * 
+ * During the call to <code>open</code>, the wizard dialog is presented to
+ * the user. When the user hits Finish, the user-selected files are imported
  * into the workspace, the dialog closes, and the call to <code>open</code>
  * returns.
  * </p>
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class RemoteImportWizard extends AbstractSystemWizard implements IImportWizard {
 	private IWorkbench workbench;
@@ -117,9 +120,9 @@ public class RemoteImportWizard extends AbstractSystemWizard implements IImportW
 	public boolean performFinish() {
 		return mainPage.finish();
 	}
-	
-    public boolean performCancel() {
-    	mainPage.cancel(); 
-    	return super.performCancel();
-    }
+
+	public boolean performCancel() {
+		mainPage.cancel();
+		return super.performCancel();
+	}
 }

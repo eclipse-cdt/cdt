@@ -1,13 +1,13 @@
 /********************************************************************************
  * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
@@ -22,14 +22,14 @@ import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.IRSEUserIdConstants;
 
 /**
- * An ordered list of connections ({@link IHost} objects), owned by an {@link ISystemProfile}.
+ * An ordered list of connections ({@link IHost} objects), owned by an
+ * {@link ISystemProfile}.
  * <p>
  * Implementations of this interface are expected to be thread-safe in the sense
- * that integrity of the host list is maintained even if multiple threads call 
+ * that integrity of the host list is maintained even if multiple threads call
  * multiple methods in this interface concurrently.
- * </p><p>
- * This interface is not intended to be implemented by clients.
  * </p>
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ISystemHostPool extends IRSEPersistableContainer {
 
@@ -62,48 +62,48 @@ public interface ISystemHostPool extends IRSEPersistableContainer {
 	 */
 	public IHost[] getHosts();
 
-    /**
-     * Create a connection object, given only the minimal information.
-     * <p>
-     * THE RESULTING CONNECTION OBJECT IS ADDED TO THE LIST OF EXISTING CONNECTIONS FOR YOU.
-     * @param systemType system type matching one of the system types
-     *     defined via the systemTypes extension point.
-     * @param aliasName unique connection name.
-     * @param hostName IP name or address of the host.
-     * @return IHost object, or null if it failed to create
-     *   because the aliasName is not unique. All other errors throw an exception.
-     */
+	/**
+	 * Create a connection object, given only the minimal information.
+	 * <p>
+	 * THE RESULTING CONNECTION OBJECT IS ADDED TO THE LIST OF EXISTING CONNECTIONS FOR YOU.
+	 * @param systemType system type matching one of the system types
+	 *     defined via the systemTypes extension point.
+	 * @param aliasName unique connection name.
+	 * @param hostName IP name or address of the host.
+	 * @return IHost object, or null if it failed to create
+	 *   because the aliasName is not unique. All other errors throw an exception.
+	 */
 	public IHost createHost(IRSESystemType systemType, String aliasName, String hostName);
 
-    /**
-     * Create a connection object, given all the possible attributes except default userId.
-     * <p>
-     * THE RESULTING CONNECTION OBJECT IS ADDED TO THE LIST OF EXISTING CONNECTIONS FOR YOU.
-     * @param systemType system type matching one of the system types
-     *     defined via the systemTypes extension point.
-     * @param aliasName unique connection name.
-     * @param hostName IP name or address of the host.
-     * @param description optional description of the connection. Can be null.
-     * @return IHost object, or <code>null</code> if it failed to create
-     *   because the aliasName is not unique. All other errors throw an exception.
-     */
+	/**
+	 * Create a connection object, given all the possible attributes except default userId.
+	 * <p>
+	 * THE RESULTING CONNECTION OBJECT IS ADDED TO THE LIST OF EXISTING CONNECTIONS FOR YOU.
+	 * @param systemType system type matching one of the system types
+	 *     defined via the systemTypes extension point.
+	 * @param aliasName unique connection name.
+	 * @param hostName IP name or address of the host.
+	 * @param description optional description of the connection. Can be null.
+	 * @return IHost object, or <code>null</code> if it failed to create
+	 *   because the aliasName is not unique. All other errors throw an exception.
+	 */
 	public IHost createHost(IRSESystemType systemType, String aliasName, String hostName, String description);
 
-    /**
-     * Create a connection object, given all the possible attributes.
-     * <p>
-     * The new connection is added to the list and saved to disk.
-     * @param systemType system type matching one of the system types
-     *     defined via the systemTypes extension point.
-     * @param aliasName unique connection name.
-     * @param hostName IP name or address of the host.
-     * @param description optional description of the connection. Can be null.
-     * @param defaultUserId userId to use as the default for the subsystems.
-     * @param defaultUserIdLocation where to set the given default user Id. See IRSEUserIdConstants for values.
-     * @return IHost object, or <code>null</code> if it failed to create
-     *   because the aliasName is not unique.
-     * @see IRSEUserIdConstants
-     */
+	/**
+	 * Create a connection object, given all the possible attributes.
+	 * <p>
+	 * The new connection is added to the list and saved to disk.
+	 * @param systemType system type matching one of the system types
+	 *     defined via the systemTypes extension point.
+	 * @param aliasName unique connection name.
+	 * @param hostName IP name or address of the host.
+	 * @param description optional description of the connection. Can be null.
+	 * @param defaultUserId userId to use as the default for the subsystems.
+	 * @param defaultUserIdLocation where to set the given default user Id. See IRSEUserIdConstants for values.
+	 * @return IHost object, or <code>null</code> if it failed to create
+	 *   because the aliasName is not unique.
+	 * @see IRSEUserIdConstants
+	 */
 	public IHost createHost(IRSESystemType systemType, String aliasName, String hostName, String description, String defaultUserId, int defaultUserIdLocation);
 
 	/**
@@ -118,7 +118,7 @@ public interface ISystemHostPool extends IRSEPersistableContainer {
 	 * @param systemType system type matching one of the system types
 	 *     defined via the systemType extension point.
 	 * @param aliasName unique connection name.
-     * @param hostName IP name or address of the host.
+	 * @param hostName IP name or address of the host.
 	 * @param description optional description of the connection. Can be null.
 	 * @param defaultUserId userId to use as the default for the subsystems.
 	 * @param defaultUserIdLocation where to set the given default user Id from IRSEUserIdConstants.
@@ -126,29 +126,29 @@ public interface ISystemHostPool extends IRSEPersistableContainer {
 	 */
 	public void updateHost(IHost conn, IRSESystemType systemType, String aliasName, String hostName, String description, String defaultUserId, int defaultUserIdLocation);
 
-    /**
-     * Return a connection object, given its alias name.
-     * 
-     * Can be used to test if an alias name is already used (non-null return).
-     * 
-     * @param aliasName unique aliasName (case insensitive) to search on.
-     * @return IHost object with unique aliasName, or null if
-     *  no connection object with this name exists.
-     */
+	/**
+	 * Return a connection object, given its alias name.
+	 * 
+	 * Can be used to test if an alias name is already used (non-null return).
+	 * 
+	 * @param aliasName unique aliasName (case insensitive) to search on.
+	 * @return IHost object with unique aliasName, or null if
+	 *  no connection object with this name exists.
+	 */
 	public IHost getHost(String aliasName);
 
 	/**
 	 * Return the connection at the given zero-based offset.
 	 * @param pos zero-based offset of requested connection in the connection list.
-	 * @return IHost object requested. 
+	 * @return IHost object requested.
 	 */
 	public IHost getHost(int pos);
 
 	/**
 	 * Add a new connection to the list.
 	 * <p>
-	 * This method will not ensure that the added connection's alias name is 
-	 * different (case-insensitive) than all other existing alias names. 
+	 * This method will not ensure that the added connection's alias name is
+	 * different (case-insensitive) than all other existing alias names.
 	 * Clients are responsible for maintaining this invariant.
 	 * </p>
 	 * @param conn Connection to add. Must not be <code>null</code>.
@@ -163,7 +163,7 @@ public interface ISystemHostPool extends IRSEPersistableContainer {
 	 * <ul>
 	 *    <li>Delete the connection in memory
 	 *    <li>Delete the underlying folder
-	 * </ul> 
+	 * </ul>
 	 * <p>
 	 * @param conn IHost object to remove
 	 */
@@ -212,7 +212,7 @@ public interface ISystemHostPool extends IRSEPersistableContainer {
 
 	/**
 	 * Move existing connections a given number of positions in the same pool.
-	 * If the delta is negative, they are all moved up (left) by the given amount. If 
+	 * If the delta is negative, they are all moved up (left) by the given amount. If
 	 * positive, they are all moved down (right) by the given amount.<p>
 	 * <ul>
 	 * <li>After the move, the pool containing the moved connection is saved to disk.

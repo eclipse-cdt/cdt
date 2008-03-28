@@ -7,8 +7,8 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
@@ -30,19 +30,18 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 /**
- * A slight variation of the Eclipse-supplied ComboBoxCellEditor class,
- * which allows the input array to be changed dynamically.
+ * A slight variation of the Eclipse-supplied ComboBoxCellEditor class, which
+ * allows the input array to be changed dynamically.
  * <p>
- * A cell editor that presents a list of items in a combo box.
- * The cell editor's value is the zero-based index of the selected
- * item.
- * <p>
- * This class may be instantiated; it is not intended to be subclassed.
+ * A cell editor that presents a list of items in a combo box. The cell editor's
+ * value is the zero-based index of the selected item.
  * </p>
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
  */
-public class SystemComboBoxCellEditor extends CellEditor 
+public class SystemComboBoxCellEditor extends CellEditor
 {
-    private boolean readOnly = false;
+	private boolean readOnly = false;
 	/**
 	 * The list of items to present in the combo box.
 	 */
@@ -58,42 +57,42 @@ public class SystemComboBoxCellEditor extends CellEditor
 	 */
 	private CCombo comboBox;
 	/**
-	 * Creates a new cell editor with a combo containing the given 
+	 * Creates a new cell editor with a combo containing the given
 	 * list of choices and parented under the given control. The cell
 	 * editor value is the zero-based index of the selected item.
 	 * Initially, the cell editor has no cell validator and
-	 * the first item in the list is selected. 
+	 * the first item in the list is selected.
 	 *
 	 * @param parent the parent control
 	 * @param items the list of strings for the combo box
 	 */
-	public SystemComboBoxCellEditor(Composite parent, String[] items) 
+	public SystemComboBoxCellEditor(Composite parent, String[] items)
 	{
-		super(parent);		
+		super(parent);
 		selection = 0;
 		if (items != null)
-		  setItems(items);
+			setItems(items);
 		else
-	      setValueValid(true);		
+			setValueValid(true);
 	}
 	/**
-	 * Creates a new cell editor with a combo containing the given 
+	 * Creates a new cell editor with a combo containing the given
 	 * list of choices and parented under the given control. The cell
 	 * editor value is the zero-based index of the selected item.
 	 * Initially, the cell editor has no cell validator and
-	 * the first item in the list is selected. 
+	 * the first item in the list is selected.
 	 *
 	 * @param parent the parent control
 	 * //@param whether or not this is readonly
 	 */
-	//public SystemComboBoxCellEditor(Composite parent, boolean readOnly) 
-	public SystemComboBoxCellEditor(Composite parent) 	
+	//public SystemComboBoxCellEditor(Composite parent, boolean readOnly)
+	public SystemComboBoxCellEditor(Composite parent)
 	{
-		super(parent);		
+		super(parent);
 		selection = 0;
 		//this.readOnly = readOnly;
-	    setValueValid(true);		
-	}	
+		setValueValid(true);
+	}
 	/**
 	 * Change the input items
 	 */
@@ -101,17 +100,17 @@ public class SystemComboBoxCellEditor extends CellEditor
 	{
 		this.items = items;
 		populateComboBoxItems();
-	    setValueValid(true);				
+		setValueValid(true);
 	}
 	/* (non-Javadoc)
 	 * Method declared on CellEditor.
 	 */
-	protected Control createControl(Composite parent) 
+	protected Control createControl(Composite parent)
 	{
-        if (!readOnly)
-		  comboBox = new CCombo(parent, SWT.NONE);
+		if (!readOnly)
+			comboBox = new CCombo(parent, SWT.NONE);
 		else
-		  comboBox = new CCombo(parent, SWT.READ_ONLY);		
+			comboBox = new CCombo(parent, SWT.READ_ONLY);
 		comboBox.setFont(parent.getFont());
 
 		comboBox.addKeyListener(new KeyAdapter() {
@@ -122,24 +121,24 @@ public class SystemComboBoxCellEditor extends CellEditor
 
 		comboBox.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
-				
+
 				// DKM - only process this when there is a selection change
 				//   fix for defect 138324
 				if (selection == comboBox.getSelectionIndex() && comboBox.getText().equals(comboBox.getItem(comboBox.getSelectionIndex())))
 					return; // no change
-				
+
 				// must set the selection before getting value
-				selection = comboBox.getSelectionIndex();	
+				selection = comboBox.getSelectionIndex();
 				Object newValue = doGetValue();
-				
-				
+
+
 				boolean newValidState = isCorrect(newValue);
 				if (newValidState) {
 					doSetValue(newValue);
 				} else {
 					// try to insert the current value into the error message.
 					setErrorMessage(
-						NLS.bind(getErrorMessage(), items[selection])); 
+							NLS.bind(getErrorMessage(), items[selection]));
 				}
 				fireApplyEditorValue();
 			}
@@ -163,14 +162,14 @@ public class SystemComboBoxCellEditor extends CellEditor
 	 * @return the zero-based index of the current selection wrapped
 	 *  as an <code>Integer</code>
 	 */
-	protected Object doGetValue() 
+	protected Object doGetValue()
 	{
-			return new Integer(selection);
+		return new Integer(selection);
 	}
 	/* (non-Javadoc)
 	 * Method declared on CellEditor.
 	 */
-	protected void doSetFocus() 
+	protected void doSetFocus()
 	{
 		comboBox.setFocus();
 	}
@@ -179,10 +178,10 @@ public class SystemComboBoxCellEditor extends CellEditor
 	 * this <code>CellEditor</code> framework method
 	 * accepts a zero-based index of a selection.
 	 *
- 	 * @param value the zero-based index of the selection wrapped
+	 * @param value the zero-based index of the selection wrapped
 	 *   as an <code>Integer</code>
- 	 */
-	protected void doSetValue(Object value) 
+	 */
+	protected void doSetValue(Object value)
 	{
 		if (!(value instanceof Integer))
 		{
@@ -193,11 +192,11 @@ public class SystemComboBoxCellEditor extends CellEditor
 				if (item.equals(value))
 				{
 					selection = i;
-				}				
+				}
 			}
-		  return;
+			return;
 		}
-		
+
 		//Assert.isTrue(comboBox != null && (value instanceof Integer));
 		int newselection = ((Integer) value).intValue();
 		if (newselection != selection)
@@ -213,9 +212,9 @@ public class SystemComboBoxCellEditor extends CellEditor
 	/**
 	 * Add the items to the combo box.
 	 */
-	private void populateComboBoxItems() 
+	private void populateComboBoxItems()
 	{
-		if (comboBox != null && items != null) 
+		if (comboBox != null && items != null)
 		{
 			comboBox.removeAll();
 			for (int i = 0; i < items.length; i++)

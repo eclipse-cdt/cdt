@@ -37,22 +37,24 @@ import org.eclipse.rse.services.IService;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
 /**
- * A IFileService is an abstraction of a file service that runs over some sort of connection.
- * It can be shared among multiple instances of a subsystem.  At some point this file
- * service layer may become official API but for now it is experimental.  Each
- * subsystem is currently responsible for layering an abstraction over whatever it
- * wants to construct as a service.
+ * A IFileService is an abstraction of a file service that runs over some sort
+ * of connection. It can be shared among multiple instances of a subsystem. At
+ * some point this file service layer may become official API but for now it is
+ * experimental. Each subsystem is currently responsible for layering an
+ * abstraction over whatever it wants to construct as a service.
  * <p>
- * This is a very bare bones definition.  A real definition would probably have changed
- * terminology, use URI's rather than Strings, and have much more robust error handling.
- * </p><p>
- * Implementers of this interface will have to either be instantiated, initialized, or
- * somehow derive a connection as part of its state.
- * </p><p>
- * This interface is not intended to be implemented by clients.  File service
- * implementations must subclass {@link AbstractFileService} rather than implementing
- * this interface directly.
+ * This is a very bare bones definition. A real definition would probably have
+ * changed terminology, use URI's rather than Strings, and have much more robust
+ * error handling.
  * </p>
+ * <p>
+ * Implementers of this interface will have to either be instantiated,
+ * initialized, or somehow derive a connection as part of its state.
+ * </p>
+ * @noimplement This interface is not intended to be implemented by clients.
+ *              File service implementations must subclass
+ *              {@link AbstractFileService} rather than implementing this
+ *              interface directly.
  */
 public interface IFileService extends IService
 {

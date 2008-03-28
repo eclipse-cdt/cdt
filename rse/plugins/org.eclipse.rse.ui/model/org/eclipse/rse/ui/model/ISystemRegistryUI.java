@@ -1,13 +1,13 @@
 /********************************************************************************
  * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
@@ -31,16 +31,15 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Registry and control center for RSE UI related operations.
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ISystemRegistryUI extends ISystemShellProvider {
 
 	// ----------------------------------
 	// UI METHODS...
 	// ----------------------------------
-	
+
 	/**
 	 * Show the RSE perspective if it is not already showing
 	 */
@@ -58,10 +57,10 @@ public interface ISystemRegistryUI extends ISystemShellProvider {
 	 */
 	public void expandSubSystem(ISubSystem subsystem);
 
-    /**
-     * Returns the clipboard used for copy actions
-     */
-    public Clipboard getSystemClipboard();
+	/**
+	 * Returns the clipboard used for copy actions
+	 */
+	public Clipboard getSystemClipboard();
 
 	/**
 	 * Returns the list of objects on the system clipboard
@@ -115,7 +114,7 @@ public interface ISystemRegistryUI extends ISystemShellProvider {
 	public void setRunnableContext(Shell shell, IRunnableContext context);
 
 	/**
-	 * Clear the current active runnable context to be used for a progress monitor. 
+	 * Clear the current active runnable context to be used for a progress monitor.
 	 * Be sure to call this from you dispose method.
 	 */
 	public void clearRunnableContext();
@@ -129,21 +128,21 @@ public interface ISystemRegistryUI extends ISystemShellProvider {
 
 	// ----------------------------
 	// RESOURCE EVENT METHODS...
-	// ----------------------------            
+	// ----------------------------
 
 	/**
 	 * Notify all listeners of a change to a system resource such as a connection.
 	 * You would not normally call this as the methods in this class call it when appropriate.
 	 * <p>
-	 * This version calls fireEvent at the next reasonable opportunity, leveraging SWT's 
+	 * This version calls fireEvent at the next reasonable opportunity, leveraging SWT's
 	 * Display.asyncExec() method.
 	 */
 	public void postEvent(ISystemResourceChangeEvent event);
-	
+
 	/**
 	 * Notify a specific listener of a change to a system resource such as a connection.
 	 * <p>
-	 * This version calls fireEvent at the next reasonable opportunity, leveraging SWT's 
+	 * This version calls fireEvent at the next reasonable opportunity, leveraging SWT's
 	 * Display.asyncExec() method.
 	 */
 	public void postEvent(ISystemResourceChangeListener listener, ISystemResourceChangeEvent event);

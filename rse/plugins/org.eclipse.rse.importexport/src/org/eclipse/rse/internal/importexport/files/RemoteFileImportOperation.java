@@ -52,11 +52,10 @@ import org.eclipse.ui.dialogs.IOverwriteQuery;
 
 // Similar to org.eclipse.ui.wizards.datatransfer.ImportOperation
 /**
- * An operation which does the actual work of copying objects from the local file
- * system into the workspace.
- * <p>
- * This class may be instantiated; it is not intended to be subclassed.
- * </p>
+ * An operation which does the actual work of copying objects from the local
+ * file system into the workspace.
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class RemoteFileImportOperation extends WorkspaceModifyOperation {
 	private static final int POLICY_DEFAULT = 0;
@@ -84,7 +83,7 @@ public class RemoteFileImportOperation extends WorkspaceModifyOperation {
 	 * Creates a new operation that recursively imports the entire contents of the
 	 * specified root file system object.
 	 * <p>
-	 * The <code>source</code> parameter represents the root file system object to 
+	 * The <code>source</code> parameter represents the root file system object to
 	 * import. All contents of this object are imported. Valid types for this parameter
 	 * are determined by the supplied <code>IImportStructureProvider</code>.
 	 * </p>
@@ -95,8 +94,8 @@ public class RemoteFileImportOperation extends WorkspaceModifyOperation {
 	 * </p>
 	 *  <p>
 	 * The default import behavior is to recreate the complete container structure
-	 * for the contents of the root file system object in their destination. 
-	 * If <code>setCreateContainerStructure</code> is set to false then the container 
+	 * for the contents of the root file system object in their destination.
+	 * If <code>setCreateContainerStructure</code> is set to false then the container
 	 * structure created is relative to the root file system object.
 	 * </p>
 	 * 
@@ -120,8 +119,8 @@ public class RemoteFileImportOperation extends WorkspaceModifyOperation {
 	 * operation solely to determine the destination container structure of the file system
 	 * objects being imported.
 	 * <p>
-	 * The <code>source</code> parameter represents the root file system object to 
-	 * import. Valid types for this parameter are determined by the supplied 
+	 * The <code>source</code> parameter represents the root file system object to
+	 * import. Valid types for this parameter are determined by the supplied
 	 * <code>IImportStructureProvider</code>. The contents of the source which
 	 * are to be imported are specified in the <code>filesToImport</code>
 	 * parameter.
@@ -138,7 +137,7 @@ public class RemoteFileImportOperation extends WorkspaceModifyOperation {
 	 * <p>
 	 * The default import behavior is to recreate the complete container structure
 	 * for the file system objects in their destination. If <code>setCreateContainerStructure</code>
-	 * is set to <code>false</code>, then the container structure created for each of 
+	 * is set to <code>false</code>, then the container structure created for each of
 	 * the file system objects is relative to the supplied root file system object.
 	 * </p>
 	 *
@@ -173,13 +172,13 @@ public class RemoteFileImportOperation extends WorkspaceModifyOperation {
 	 * and the provider in turn calls specific methods on the source object.
 	 * </p>
 	 * <p>
-	 * The <code>filesToImport</code> parameter specifies what file system objects 
+	 * The <code>filesToImport</code> parameter specifies what file system objects
 	 * are to be imported.
 	 * </p>
 	 * <p>
 	 * The default import behavior is to recreate the complete container structure
 	 * for the file system objects in their destination. If <code>setCreateContainerStructure</code>
-	 * is set to <code>false</code>, then no container structure is created for each of 
+	 * is set to <code>false</code>, then no container structure is created for each of
 	 * the file system objects.
 	 * </p>
 	 *
@@ -227,7 +226,7 @@ public class RemoteFileImportOperation extends WorkspaceModifyOperation {
 	 */
 	private IContainer createFromRoot(IPath path) throws CoreException {
 		int segmentCount = path.segmentCount();
-		//Assume the project exists 
+		//Assume the project exists
 		IContainer currentFolder = ((IWorkspaceRoot) destinationContainer).getProject(path.segment(0));
 		for (int i = 1; i < segmentCount; i++) {
 			currentFolder = currentFolder.getFolder(new Path(path.segment(i)));
@@ -257,7 +256,7 @@ public class RemoteFileImportOperation extends WorkspaceModifyOperation {
 	 *
 	 * @param targetResource the resource that should not exist
 	 * @param policy determines how the resource is imported
-	 * @return <code>true</code> if the resource does not exist, and 
+	 * @return <code>true</code> if the resource does not exist, and
 	 *    <code>false</code> if it does exist
 	 */
 	boolean ensureTargetDoesNotExist(IResource targetResource, int policy) {
@@ -596,7 +595,7 @@ public class RemoteFileImportOperation extends WorkspaceModifyOperation {
 	 */
 	boolean queryOverwrite(IPath resourcePath) throws OperationCanceledException {
 		String overwriteAnswer = overwriteCallback.queryOverwrite(resourcePath.makeRelative().toString());
-		if (overwriteAnswer.equals(IOverwriteQuery.CANCEL)) //throw new OperationCanceledException(UniversalSystemPlugin.getString("customs.emptyString")); 
+		if (overwriteAnswer.equals(IOverwriteQuery.CANCEL)) //throw new OperationCanceledException(UniversalSystemPlugin.getString("customs.emptyString"));
 			throw new OperationCanceledException(""); //$NON-NLS-1$
 		if (overwriteAnswer.equals(IOverwriteQuery.NO)) {
 			return false;
@@ -634,7 +633,7 @@ public class RemoteFileImportOperation extends WorkspaceModifyOperation {
 	 * Sets whether imported file system objects should automatically overwrite
 	 * existing workbench resources when a conflict occurs.
 	 *
-	 * @param value <code>true</code> to automatically overwrite, and 
+	 * @param value <code>true</code> to automatically overwrite, and
 	 *   <code>false</code> otherwise
 	 */
 	public void setOverwriteResources(boolean value) {

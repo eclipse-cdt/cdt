@@ -25,25 +25,28 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 
 /**
- * Standard workbench wizard for exporting resources from the workspace
- * to the local file system.
+ * Standard workbench wizard for exporting resources from the workspace to the
+ * local file system.
  * <p>
- * This class may be instantiated and used without further configuration;
- * this class is not intended to be subclassed.
+ * This class may be instantiated and used without further configuration.
  * </p>
  * <p>
  * Example:
+ * 
  * <pre>
  * IWizard wizard = new RemoteExportWizard();
  * wizard.init(workbench, selection);
  * WizardDialog dialog = new WizardDialog(shell, wizard);
  * dialog.open();
  * </pre>
- * During the call to <code>open</code>, the wizard dialog is presented to the
- * user. When the user hits Finish, the user-selected workspace resources 
- * are exported to the user-specified location in the local file system,
- * the dialog closes, and the call to <code>open</code> returns.
+ * 
+ * During the call to <code>open</code>, the wizard dialog is presented to
+ * the user. When the user hits Finish, the user-selected workspace resources
+ * are exported to the user-specified location in the local file system, the
+ * dialog closes, and the call to <code>open</code> returns.
  * </p>
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class RemoteExportWizard extends AbstractSystemWizard implements IExportWizard {
 	private IStructuredSelection selection;

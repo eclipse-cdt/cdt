@@ -1,13 +1,13 @@
 /********************************************************************************
  * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
@@ -52,29 +52,27 @@ import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
 import org.eclipse.rse.internal.core.RSECoreRegistry;
 
 /**
- * Registry or front door for all remote system connections.
- * There is a singleton of the class implementation of this interface.
- * To get it, call the {@link org.eclipse.rse.core.RSECorePlugin#getTheSystemRegistry()}.
+ * Registry or front door for all remote system connections. There is a
+ * singleton of the class implementation of this interface. To get it, call the
+ * {@link org.eclipse.rse.core.RSECorePlugin#getTheSystemRegistry()}.
  * <p>
- * The idea here is that connections are grouped by system profile. At any 
- * time, there is a user-specified number of profiles "active" and connections
- * from each active profile are worked with.
+ * The idea here is that connections are grouped by system profile. At any time,
+ * there is a user-specified number of profiles "active" and connections from
+ * each active profile are worked with.
  * </p>
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemViewInputProvider {
 
 	/**
-	 * Get the SystemFilterStartHere singleton instance. 
+	 * Get the SystemFilterStartHere singleton instance.
 	 * @return the SystemFilterStartHere singleton instance.
 	 */
 	public ISystemFilterStartHere getSystemFilterStartHere();
 
 	// ----------------------------
 	// SUBSYSTEM FACTORY METHODS...
-	// ----------------------------            
+	// ----------------------------
 
 	/**
 	 * Public method to retrieve list of subsystem factory proxies registered by extension points.
@@ -124,7 +122,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	 * @return an array of subsystem configurations meeting the criteria
 	 */
 	public ISubSystemConfiguration[] getSubSystemConfigurationsBySystemType(IRSESystemType systemType, boolean filterDuplicates, boolean activate);
-	
+
 	// ----------------------------------
 	// SYSTEMVIEWINPUTPROVIDER METHODS...
 	// ----------------------------------
@@ -141,11 +139,11 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	/**
 	 * This method is called by the connection adapter when deciding to show a plus-sign
 	 * or not beside a connection.
-	 * @param selectedConnection the connection being shown in the viewer 
+	 * @param selectedConnection the connection being shown in the viewer
 	 * @return true if this connection has children to be shown.
 	 */
 	public boolean hasConnectionChildren(IHost selectedConnection);
-	
+
 	// ----------------------------
 	// PROFILE METHODS...
 	// ----------------------------
@@ -175,7 +173,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	 * @param profile Source profile to copy
 	 * @param newName Unique name to give copied profile
 	 * @param makeActive whether to make the copied profile active or not
-	 * @param monitor Progress monitor to reflect each step of the operation    
+	 * @param monitor Progress monitor to reflect each step of the operation
 	 * @return new SystemProfile object
 	 */
 	public ISystemProfile copySystemProfile(ISystemProfile profile, String newName, boolean makeActive, IProgressMonitor monitor) throws Exception;
@@ -199,7 +197,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	public void deleteSystemProfile(ISystemProfile profile) throws Exception;
 
 	/**
-	 * Make or unmake the given profile active. 
+	 * Make or unmake the given profile active.
 	 * The default private profile cannot be deactivated and such
 	 * a request will be ignored.
 	 */
@@ -219,7 +217,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	/**
 	 * Return list of subsystem objects for a given host.
 	 * @param host the host for which to return the subsystems that are currently known.
-	 * @return an array of subsystem objects known to this host. 
+	 * @return an array of subsystem objects known to this host.
 	 */
 	public ISubSystem[] getSubSystems(IHost host);
 
@@ -242,7 +240,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	 * @return list of matching subsystems
 	 */
 	public ISubSystem[] getSubsystems(IHost host, Class subsystemInterface);
-	
+
 	/**
 	 * Get those subsystems that are registered against a given connection,
 	 * which are service subsystems with the given serviceType.
@@ -277,11 +275,11 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	public String getAbsoluteNameForConnection(IHost host);
 
 	/**
-	 * Get a list of subsystem objects for given connection, owned by a subsystem factory 
+	 * Get a list of subsystem objects for given connection, owned by a subsystem factory
 	 * that is of the given category. Array will never be null but may be length zero.
 	 * <p>
 	 * This looks for a match on the "category" of the subsystem factory's xml declaration
-	 *  in its plugin.xml file. 
+	 *  in its plugin.xml file.
 	 * 
 	 * @see org.eclipse.rse.core.model.ISubSystemConfigurationCategories
 	 * @deprecated use {@link #getSubSystemConfigurationProxiesByCategory(String)}
@@ -304,7 +302,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	 * Return the first connection to the local host we can find.
 	 * 
 	 * While we always create a default one in the user's profile, it is possible that
-	 * this profile is not active or the connection was deleted. However, since any 
+	 * this profile is not active or the connection was deleted. However, since any
 	 * connection to the local host will usually do, we just search all active profiles
 	 * until we find one, and return it. <br>
 	 * If no connection to the local host can be found, this will return <code>null</code>.
@@ -337,7 +335,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	 * <p>
 	 * This looks for a match on the "category" of the subsystem
 	 * configuration's xml declaration in its plugin.xml file.
-	 * Thus, it is efficient as it need not bring to life a 
+	 * Thus, it is efficient as it need not bring to life a
 	 * subsystem configuration just to test its parent class type.
 	 * 
 	 * @see org.eclipse.rse.core.model.ISubSystemConfigurationCategories
@@ -354,7 +352,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	 * @return The list of connections or an empty array.
 	 */
 	public IHost[] getHostsBySystemType(IRSESystemType systemType);
-	
+
 	/**
 	 * Return all connections for all active profiles, for the given system types.
 	 * 
@@ -364,7 +362,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	public IHost[] getHostsBySystemTypes(IRSESystemType[] systemTypes);
 
 	/**
-	 * Return a SystemConnection object given a system profile containing it, 
+	 * Return a SystemConnection object given a system profile containing it,
 	 *   and a connection name uniquely identifying it.
 	 */
 	public IHost getHost(ISystemProfile profile, String connectionName);
@@ -381,7 +379,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	public int getHostCount(ISystemProfile profile);
 
 	/**
-	 * Return the number of SystemConnection objects within the given 
+	 * Return the number of SystemConnection objects within the given
 	 * connection's owning profile.
 	 */
 	public int getHostCountWithinProfile(IHost conn);
@@ -421,7 +419,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	public IHost createLocalHost(ISystemProfile profile, String name, String userId);
 
 	/**
-	 * Create a host object, sometimes called a "connection", 
+	 * Create a host object, sometimes called a "connection",
 	 * given the containing profile and given all the possible attributes.
 	 * The profile is then scheduled to be persisted.
 	 * <p>
@@ -496,8 +494,8 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	 *   because the connectionName is not unique. Call getLastException() if necessary.
 	 */
 	public IHost createHost(IRSESystemType systemType, String connectionName, String hostAddress, String description) throws Exception;
-	
-    /**
+
+	/**
 	 * Create a host object. The resulting host object is added to the list of existing host objects
 	 * in the specified profile.
 	 * <ul>
@@ -518,32 +516,32 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	public IHost createHost(String profileName, IRSESystemType systemType, String hostName, String hostAddress, String description, boolean createSubSystems) throws Exception;
 
 	/**
-     * Update an existing host given the new information.
-     * This method:
-     * <ul>
-     *  <li>calls the setXXX methods on the given host object, updating the information in it.
-     *  <li>save the host's host pool to disk
-     *  <li>fires an ISystemResourceChangeEvent event of type EVENT_CHANGE to all registered listeners
-     *  <li>if the system type or host name is changed, calls disconnect on each associated subsystem.
-     *       We must do this because a host name changes fundamentally affects the connection, 
-     *       rendering any information currently displayed under
-     *       that host obsolete.
-     * </ul>
-     * <p>
-     * @param host the host to be updated
+	 * Update an existing host given the new information.
+	 * This method:
+	 * <ul>
+	 *  <li>calls the setXXX methods on the given host object, updating the information in it.
+	 *  <li>save the host's host pool to disk
+	 *  <li>fires an ISystemResourceChangeEvent event of type EVENT_CHANGE to all registered listeners
+	 *  <li>if the system type or host name is changed, calls disconnect on each associated subsystem.
+	 *       We must do this because a host name changes fundamentally affects the connection,
+	 *       rendering any information currently displayed under
+	 *       that host obsolete.
+	 * </ul>
+	 * <p>
+	 * @param host the host to be updated
 	 * @param systemType system type matching one of the system types
 	 *     defined via the systemTypes extension point.
-     * @param connectionName unique connection name.
-     * @param hostName ip name of host.
-     * @param description optional description of the host. Can be null.
-     * @param defaultUserId userId to use as the default for the subsystems under this host.
-     * @param defaultUserIdLocation one of the constants in {@link org.eclipse.rse.core.IRSEUserIdConstants}
-     *   that tells us where to set the user Id
-     */
-    public void updateHost(IHost host, IRSESystemType systemType, String connectionName,
-                                 String hostName, String description,
-                                 String defaultUserId, int defaultUserIdLocation);
-    
+	 * @param connectionName unique connection name.
+	 * @param hostName ip name of host.
+	 * @param description optional description of the host. Can be null.
+	 * @param defaultUserId userId to use as the default for the subsystems under this host.
+	 * @param defaultUserIdLocation one of the constants in {@link org.eclipse.rse.core.IRSEUserIdConstants}
+	 *   that tells us where to set the user Id
+	 */
+	public void updateHost(IHost host, IRSESystemType systemType, String connectionName,
+			String hostName, String description,
+			String defaultUserId, int defaultUserIdLocation);
+
 	/**
 	 * Creates subsystems for a given host and subsystem configurations.
 	 * @param host the host.
@@ -562,7 +560,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	public void setHostOffline(IHost conn, boolean offline);
 
 	/**
-	 * Delete an existing connection. 
+	 * Delete an existing connection.
 	 * <p>
 	 * Lots to do here:
 	 * <ul>
@@ -575,7 +573,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	public void deleteHost(IHost conn);
 
 	/**
-	 * Renames an existing connection. 
+	 * Renames an existing connection.
 	 * <p>
 	 * Lots to do here:
 	 * <ul>
@@ -589,7 +587,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 
 	/**
 	 * Move existing connections a given number of positions in the same profile.
-	 * If the delta is negative, they are all moved up by the given amount. If 
+	 * If the delta is negative, they are all moved up by the given amount. If
 	 * positive, they are all moved down by the given amount.<p>
 	 * <ul>
 	 * <li>After the move, the pool containing the moved connection is saved to disk.
@@ -618,7 +616,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	 * and if successful deleting the original.
 	 * @param conn The connection to move
 	 * @param targetProfile What profile to move into
-	 * @param newName Unique name to give copied profile. Typically this is the same as the original name, but 
+	 * @param newName Unique name to give copied profile. Typically this is the same as the original name, but
 	 *                will be different on name collisions
 	 * @param monitor Progress monitor to reflect each step of the operation
 	 * @return new SystemConnection object
@@ -666,7 +664,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 
 	// ----------------------------
 	// RESOURCE EVENT METHODS...
-	// ----------------------------            
+	// ----------------------------
 
 	/**
 	 * Register your interest in being told when a system resource such as a connection is changed.
@@ -696,7 +694,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 
 	// ----------------------------
 	// MODEL RESOURCE EVENT METHODS...
-	// ----------------------------            
+	// ----------------------------
 
 	/**
 	 * Register your interest in being told when an RSE model resource is changed.
@@ -728,7 +726,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 
 	// --------------------------------
 	// REMOTE RESOURCE EVENT METHODS...
-	// --------------------------------            
+	// --------------------------------
 
 	/**
 	 * Register your interest in being told when a remote resource is changed.
@@ -752,14 +750,14 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	 * You would not normally call this as the methods in this class call it when appropriate.
 	 */
 	public void fireEvent(ISystemRemoteChangeEvent event);
-	
+
 	/**
 	 * Notify all listeners of a change to a remote resource such as a file.
 	 * This one takes the information needed and creates the event for you.
 	 * @param eventType - one of the constants from {@link org.eclipse.rse.core.events.ISystemRemoteChangeEvents}
 	 * @param resource - the remote resource object, or absolute name of the resource as would be given by calling getAbsoluteName on its remote adapter
 	 * @param resourceParent - the remote resource's parent object, or absolute name, if that is known. If it is non-null, this will aid in refreshing occurences of that parent.
-	 * @param subsystem - the subsystem which contains this remote resource. This allows the search for impacts to be 
+	 * @param subsystem - the subsystem which contains this remote resource. This allows the search for impacts to be
 	 *   limited to subsystems of the same parent factory, and to connections with the same hostname as the subsystem's connection.
 	 * @param oldName - on a rename operation, this is the absolute name of the resource prior to the rename
 	 */
@@ -771,10 +769,10 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	 * @param eventType - one of the constants from {@link org.eclipse.rse.core.events.ISystemRemoteChangeEvents}
 	 * @param resource - the remote resource object, or absolute name of the resource as would be given by calling getAbsoluteName on its remote adapter
 	 * @param resourceParent - the remote resource's parent object, or absolute name, if that is known. If it is non-null, this will aid in refreshing occurences of that parent.
-	 * @param subsystem - the subsystem which contains this remote resource. This allows the search for impacts to be 
+	 * @param subsystem - the subsystem which contains this remote resource. This allows the search for impacts to be
 	 *   limited to subsystems of the same parent factory, and to connections with the same hostname as the subsystem's connection.
 	 * @param oldName - on a rename operation, this is the absolute name of the resource prior to the rename
-	 * @param originatingViewer - optional. If set, this gives the viewer a clue that it should select the affected resource after refreshing its parent. 
+	 * @param originatingViewer - optional. If set, this gives the viewer a clue that it should select the affected resource after refreshing its parent.
 	 *    This saves sending a separate event to reveal and select the new created resource on a create event, for example.
 	 */
 	public void fireRemoteResourceChangeEvent(int eventType, Object resource, Object resourceParent, ISubSystem subsystem, String oldName, Object originatingViewer);
@@ -786,7 +784,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 
 	// ----------------------------
 	// PREFERENCE EVENT METHODS...
-	// ----------------------------            
+	// ----------------------------
 
 	/**
 	 * Register your interest in being told when a system preference changes
@@ -805,7 +803,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	public void fireEvent(ISystemPreferenceChangeEvent event);
 
 	/**
-	 * Notify a specific listener of a change to a system preference 
+	 * Notify a specific listener of a change to a system preference
 	 */
 	public void fireEvent(ISystemPreferenceChangeListener l, ISystemPreferenceChangeEvent event);
 
@@ -825,14 +823,17 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 
 	/**
 	 * Marks all filters for this subsystem as stale to prevent caching
-	 * @param subsystem
+	 * 
+	 * @param subsystem the subsystem to work on
 	 */
 	public void invalidateFiltersFor(ISubSystem subsystem);
 
 	/**
-	 * Marks all filters for this subsystem the contain resourceParent as stale to prevent caching
-	 * @param resourceParent 
-	 * @param subsystem
+	 * Marks all filters for this subsystem that contain resourceParent as stale
+	 * to prevent caching
+	 * 
+	 * @param resourceParent a remote resource object
+	 * @param subsystem the subsystem to work on
 	 */
 	public void invalidateFiltersFor(Object resourceParent, ISubSystem subsystem);
 
@@ -844,10 +845,10 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 
 	// ----------------------------
 	// SAVE / RESTORE METHODS...
-	// ----------------------------            
+	// ----------------------------
 
 	/**
-	 * Save everything! 
+	 * Save everything!
 	 */
 	public boolean save();
 

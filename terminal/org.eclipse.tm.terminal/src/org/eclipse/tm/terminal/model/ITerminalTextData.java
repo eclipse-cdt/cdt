@@ -1,23 +1,24 @@
 /*******************************************************************************
  * Copyright (c) 2007 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors: 
+ * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.tm.terminal.model;
 
 
 /**
- * A writable matrix of characters and {@link Style}. This is intended  to be the
- * low level representation of the text of a Terminal. Higher layers are responsible
- * to fill the text and styles into this representation. 
- * 
- * <p><b>Note: </b> Implementations of this interface has to be thread safe.
- * <p><b>Note: </b> This interface is not intended to be implemented by clients.
+ * A writable matrix of characters and {@link Style}. This is intended to be
+ * the low level representation of the text of a Terminal. Higher layers are
+ * responsible to fill the text and styles into this representation.
+ * <p>
+ * <b>Note: </b> Implementations of this interface has to be thread safe.
+ * </p>
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ITerminalTextData extends ITerminalTextDataReadOnly {
 
@@ -61,30 +62,30 @@ public interface ITerminalTextData extends ITerminalTextDataReadOnly {
 	 * @param style the style or null
 	 */
 	void setChars(int line, int column, char[] chars, int start, int len, Style style);
-	
+
 
 	/**
 	 * Cleans the entire line.
 	 * @param line
 	 */
 	void cleanLine(int line);
-//	/**
-//	 * @param line
-//	 * @return true if this line belongs to the previous line but is simply
-//	 * wrapped. 
-//	 */
-//	boolean isWrappedLine(int line);
-//	
-//	/**
-//	 * Makes this line an extension to the previous line. Wrapped lines get folded back
-//	 * when the width of the terminal changes
-//	 * @param line
-//	 * @param extendsPreviousLine
-//	 */
-//	void setWrappedLine(int line, boolean extendsPreviousLine);
-	
+	//	/**
+	//	 * @param line
+	//	 * @return true if this line belongs to the previous line but is simply
+	//	 * wrapped.
+	//	 */
+	//	boolean isWrappedLine(int line);
+	//
+	//	/**
+	//	 * Makes this line an extension to the previous line. Wrapped lines get folded back
+	//	 * when the width of the terminal changes
+	//	 * @param line
+	//	 * @param extendsPreviousLine
+	//	 */
+	//	void setWrappedLine(int line, boolean extendsPreviousLine);
+
 	/**
-	 * Shifts some lines up or down. The "empty" space is filled with <code>'\000'</code> chars 
+	 * Shifts some lines up or down. The "empty" space is filled with <code>'\000'</code> chars
 	 * and <code>null</code> {@link Style}
 	 * <p>To illustrate shift, here is some sample data:
 	 * <pre>
@@ -100,7 +101,7 @@ public interface ITerminalTextData extends ITerminalTextDataReadOnly {
 	 * 0 aaaa
 	 * 1 cccc
 	 * 2 dddd
-	 * 3 
+	 * 3
 	 * 4 eeee
 	 * </pre>
 	 * 
@@ -108,7 +109,7 @@ public interface ITerminalTextData extends ITerminalTextDataReadOnly {
 	 * Shift a region of 3 lines <b>down</b> by one line <code>shift(1,3,1)</code>
 	 * <pre>
 	 * 0 aaaa
-	 * 1 
+	 * 1
 	 * 2 bbbb
 	 * 3 cccc
 	 * 4 eeee
@@ -119,7 +120,7 @@ public interface ITerminalTextData extends ITerminalTextDataReadOnly {
 	 * Negative number means scroll down, positive scroll up (see example above).
 	 */
 	void scroll(int startLine, int size, int shift);
-	
+
 	/**Adds a new line to the terminal. If maxHeigth is reached, the entire terminal
 	 * will be scrolled. Else a line will be added.
 	 */
@@ -145,7 +146,7 @@ public interface ITerminalTextData extends ITerminalTextDataReadOnly {
 	 * @param length
 	 */
 	void copyRange(ITerminalTextData source, int sourceStartLine, int destStartLine,int length);
-	
+
 	void setCursorLine(int line);
 	void setCursorColumn(int column);
 }

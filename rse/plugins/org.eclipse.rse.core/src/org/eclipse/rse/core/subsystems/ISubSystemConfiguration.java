@@ -1,13 +1,13 @@
 /********************************************************************************
  * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
@@ -36,11 +36,10 @@ import org.eclipse.rse.services.IService;
 /**
  * Subsystem Configuration interface.
  * 
- * <p>
- * This interface is not intended to be implemented by clients. Subsystem
- * configuration implementations must subclass SubSystemConfiguration
- * rather than implementing this interface directly.
- * </p>
+ * @noimplement This interface is not intended to be implemented by clients.
+ *              Subsystem configuration implementations must subclass
+ *              SubSystemConfiguration rather than implementing this interface
+ *              directly.
  */
 public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvider, IRSEPersistableContainer {
 	// ---------------------------------
@@ -53,7 +52,7 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	 * Reset for a full refresh from disk, such as after a team synch.
 	 */
 	public void reset();
-	
+
 	/**
 	 * Retrieves all the filter pool managers for all the profiles, active or not.
 	 * This allows cross references from
@@ -146,7 +145,7 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	 */
 	public boolean supportsQuickFilters();
 
-	/** 
+	/**
 	 * Return true if filters of this subsystem factory support dropping into.
 	 */
 	public boolean supportsDropInFilters();
@@ -155,7 +154,7 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	 * Return true if deferred queries are supported.
 	 * 
 	 * Deferred queries work such that when a filter or element
-	 * children query is made, a WorkbenchJob is started to 
+	 * children query is made, a WorkbenchJob is started to
 	 * perform the query in a background thread. The query can
 	 * take time to complete, but a negative side-effect of this
 	 * is that it will always take time to complete.
@@ -168,15 +167,15 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	 * The default implementation returns <code>true</code>, indicating
 	 * that deferred queries are supported for filters, and delegates
 	 * the check for model elements to the ISystemViewElementAdapter.
-	 *  
+	 * 
 	 * @return <code>true</code> if deferred queries are supported.
 	 */
 	public boolean supportsDeferredQueries();
-	
-	/** 
-	 * Return true if filters of this subsystem factory provide a custom implementation of drop support.  
+
+	/**
+	 * Return true if filters of this subsystem factory provide a custom implementation of drop support.
 	 * By default, the filter reference adapter treats a drop on a filter as an update to the list of filter
-	 * strings for a filter.  For things like files, it is more desirable to treat the drop as a physical 
+	 * strings for a filter.  For things like files, it is more desirable to treat the drop as a physical
 	 * resource copy, so in that case, custom drop makes sense.
 	 * 
 	 * By default this returns false.
@@ -190,7 +189,7 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	public boolean supportsFileTypes();
 
 	/**
-	 * Tell us if this subsystem factory supports targets, which are destinations for 
+	 * Tell us if this subsystem factory supports targets, which are destinations for
 	 *   pushes and builds. Normally only true for file system factories.
 	 */
 	public boolean supportsTargets();
@@ -198,8 +197,8 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	/**
 	 * Tell us if this subsystem factory supports server launch properties, which allow the user
 	 *  to configure how the server-side code for these subsystems are started. There is a Server
-	 *  Launch Setting property page, with a pluggable composite, where users can configure these 
-	 *  properties. 
+	 *  Launch Setting property page, with a pluggable composite, where users can configure these
+	 *  properties.
 	 * <br> By default we return false here. This is overridden in UniversalFileSubSystemConfiguration though.
 	 */
 	public boolean supportsServerLaunchProperties(IHost host);
@@ -213,7 +212,7 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	public boolean supportsServerLaunchType(ServerLaunchType serverLaunchType);
 
 	/**
-	 * Tell us if filter strings are case sensitive. 
+	 * Tell us if filter strings are case sensitive.
 	 * <p>Returns false in default implementation.
 	 */
 	public boolean isCaseSensitive();
@@ -328,12 +327,12 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	 * (and their folders).
 	 * </p><p>
 	 * Must be called AFTER changing the profile's name!!
-	 * </p> 
+	 * </p>
 	 * @param oldProfileName the old profile name.
 	 * @param newProfileName the new profile name.
 	 */
 	public void renameSubSystemProfile(String oldProfileName, String newProfileName);
-	
+
 
 	// ---------------------------------
 	// SUBSYSTEM METHODS...
@@ -341,7 +340,7 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 
 	/**
 	 * Called by SystemRegistry's renameSystemProfile method to ensure we update our
-	 * subsystem names within each subsystem. 
+	 * subsystem names within each subsystem.
 	 * This should be invoked after changing the profile's name.
 	 * @param subsystem the subsystem to be updated
 	 * @param oldProfileName the old profile name
@@ -350,7 +349,7 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	public void renameSubSystemProfile(ISubSystem subsystem, String oldProfileName, String newProfileName);
 
 	/**
-	 * Called by SystemRegistry's renameSystemProfile method to pre-test if we are going to run into errors on a 
+	 * Called by SystemRegistry's renameSystemProfile method to pre-test if we are going to run into errors on a
 	 *  profile rename, due to file or folder in use.
 	 */
 	public void preTestRenameSubSystemProfile(String oldProfileName) throws Exception;
@@ -392,14 +391,14 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	 * return the connector service specified in {@link #setConnectorService(IHost, IConnectorService)}.
 	 * @param host the host for which to create or retrieve the connector service
 	 * @return the connector service associated with this host. This can return null if there
-	 * is no connector service associated with this configuration. It is recommended that 
+	 * is no connector service associated with this configuration. It is recommended that
 	 * there be a connector service if {@link #supportsSubSystemConnect()} is true.
 	 */
 	public IConnectorService getConnectorService(IHost host);
 
 	/**
-	 * Sets the connector service for a particular host. 
-	 * This is usually mangaged by a connector service manager known 
+	 * Sets the connector service for a particular host.
+	 * This is usually mangaged by a connector service manager known
 	 * to this configuration.
 	 * This must be implemented by service subsystem configurations.
 	 * Service subsystems allow a connector service to be changed.
@@ -442,7 +441,7 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	 * When a subsystem is created, and {@link #supportsServerLaunchProperties(IHost)}
 	 * returns true, this method is called to create the server launcher instance
 	 * associated with the subsystem. The default implementation is to create an
-	 * instance of {@link IRemoteServerLauncher}, but override to create your own 
+	 * instance of {@link IRemoteServerLauncher}, but override to create your own
 	 * ServerLauncher instance if you have your own class.
 	 */
 	public IServerLauncherProperties createServerLauncher(IConnectorService connectorService);
@@ -525,19 +524,19 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	/**
 	 * A subsystem configuration has a filter pool manager for each profile.
 	 * Get the filter pool manager for the given profile.
-	 * @param profile The system profile for which to get the manager. 
-	 * @param force if true then create the default filters for this subsystem configuration in this profile. This should only be 
+	 * @param profile The system profile for which to get the manager.
+	 * @param force if true then create the default filters for this subsystem configuration in this profile. This should only be
 	 * done during initial subsystem creation, not during subsystem restore.
 	 * @return a filter pool manager
 	 */
 	public ISystemFilterPoolManager getFilterPoolManager(ISystemProfile profile, boolean force);
-	
+
 	/**
 	 * A subsystem configuration has a filter pool manager for each profile.
 	 * Get the filter pool manager for the given profile.
 	 * Do not force the creation of default filter pools.
 	 * Fully equivalent to getFilterPoolManager(profile, false).
-	 * @param profile The system profile for which to get the manager. 
+	 * @param profile The system profile for which to get the manager.
 	 * @return a filter pool manager
 	 */
 	public ISystemFilterPoolManager getFilterPoolManager(ISystemProfile profile);
@@ -640,14 +639,14 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 
 	/**
 	 * <i><b>Private</b>. Do not call or use.</i><br>
-	 * @generated This field/method will be replaced during code generation 
+	 * @generated This field/method will be replaced during code generation
 	 * @return The list of SubSystemList references
 	 */
 	java.util.List getSubSystemList();
 
 	/**
 	 * <i><b>Private</b>. Do not call or use.</i><br>
-	 * @generated This field/method will be replaced during code generation 
+	 * @generated This field/method will be replaced during code generation
 	 * @return The list of FilterPoolManagerList references
 	 */
 	java.util.List getFilterPoolManagerList();

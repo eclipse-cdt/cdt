@@ -56,6 +56,11 @@ class PDOMCache {
 	 * @return a PDOM instance or null if the PDOM version was too old
 	 */
 	public PDOM getPDOM(IPath path, IIndexLocationConverter converter) {
+
+		if (path==null){
+			return null;
+		}
+
 		PDOM result= null;
 		File file = path.toFile();
 

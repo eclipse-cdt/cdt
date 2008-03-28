@@ -168,7 +168,11 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 		assertTrue("No cursor location specified", fCursorOffset >= 0);
 		sourceContent.delete(fCursorOffset, fCursorOffset+CURSOR_LOCATION_TAG.length());
 		assertNotNull(createFile(project, HEADER_FILE_NAME, headerContent));
-		return createFile(project, SOURCE_FILE_NAME, sourceContent.toString());
+		IFile sourceFile= createFile(project, SOURCE_FILE_NAME, sourceContent.toString());
+		// for some unknown reason re-indexing is necessary, 
+		// otherwise tests fail at random
+		CCorePlugin.getIndexManager().reindex(fCProject);
+		return sourceFile;
 	}
 
 	protected void assertCompletionResults(String[] expected) throws Exception {

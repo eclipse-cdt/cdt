@@ -1349,7 +1349,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 
 		// TODO: if all children are to be deleted, we leave the tar file with a dummy entry
 		if (omitChildren != null && children.length == omitChildren.size()) {
-			return false;
+			return true;
 		}
 
 		TarFile tarFile = getTarFile();

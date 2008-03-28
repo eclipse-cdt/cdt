@@ -7,13 +7,14 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
  * David Dykstal (IBM) - [197036] added commitSystemProfile operation to interface
  * David Dykstal (IBM) - [202630] getDefaultPrivateProfile() and ensureDefaultPrivateProfile() are inconsistent
+ * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
  *******************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -21,10 +22,12 @@ package org.eclipse.rse.core.model;
 import org.eclipse.core.runtime.IStatus;
 
 /**
- * Manages a list of SystemProfile objects. System profiles
- * should be created, deleted, restored, activated, and deactivated though
- * this interface if event processing is not desired. If events are necessary
- * then the system registry should be used.
+ * Manages a list of SystemProfile objects. System profiles should be created,
+ * deleted, restored, activated, and deactivated though this interface if event
+ * processing is not desired. If events are necessary then the system registry
+ * should be used.
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ISystemProfileManager {
 
@@ -101,7 +104,7 @@ public interface ISystemProfileManager {
 	/**
 	 * Delete the given profile. The default private profile cannot be deleted and such a request will be ignored.
 	 * @param profile the name of the profile to delete.
-	 * @param persist true if the deletion is meant to be persisted as well, false if the deletion is just in the 
+	 * @param persist true if the deletion is meant to be persisted as well, false if the deletion is just in the
 	 * model.
 	 */
 	public void deleteSystemProfile(ISystemProfile profile, boolean persist);
@@ -113,11 +116,13 @@ public interface ISystemProfileManager {
 	 * @return the new profile
 	 */
 	public ISystemProfile cloneSystemProfile(ISystemProfile profile, String newName);
-	
+
 	/**
 	 * Commit a system profile
+	 * 
 	 * @param profile the profile to commit
 	 * @return a status object indicating the result of the commit
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public IStatus commitSystemProfile(ISystemProfile profile);
 
@@ -131,8 +136,8 @@ public interface ISystemProfileManager {
 
 	/**
 	 * Adds a system profile to this profile manager.
-	 * @param profile The system profile to add. 
+	 * @param profile The system profile to add.
 	 */
 	public void addSystemProfile(ISystemProfile profile);
-	
+
 }

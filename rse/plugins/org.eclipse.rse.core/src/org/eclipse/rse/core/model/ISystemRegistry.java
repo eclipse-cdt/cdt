@@ -25,6 +25,7 @@
  * David Dykstal (IBM) - [217556] remove service subsystem types
  * Martin Oberhuber (Wind River) - [215820] Move SystemRegistry implementation to Core
  * David Dykstal (IBM) - [202630] getDefaultPrivateProfile() and ensureDefaultPrivateProfile() are inconsistent
+ * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -102,24 +103,34 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 
 	/**
 	 * Return all subsystem configurations which support the given system type.
-	 * If the type is null, returns all subsystem confgurations.
-	 * Fully equivalent to getSubSystemConfigurationsBySystemType(systemType, filterDuplicates, <code>true</code>)
-	 * which is preferred since we do not want to load subsystem configurations unless necessary.
+	 * If the type is null, returns all subsystem configurations. Fully
+	 * equivalent to getSubSystemConfigurationsBySystemType(systemType,
+	 * filterDuplicates, <code>true</code>) which is preferred since we do
+	 * not want to load subsystem configurations unless necessary.
+	 * 
 	 * @param systemType system type to filter
-	 * @param filterDuplicates if true and the subsystem configuration uses services then return only one
-	 * subsystem configuration that supports this service. Which configuration is returned is undefined.
+	 * @param filterDuplicates if true and the subsystem configuration uses
+	 *            services then return only one subsystem configuration that
+	 *            supports this service. Which configuration is returned is
+	 *            undefined.
 	 * @return an array of subsystem configurations meeting the criteria
 	 */
 	public ISubSystemConfiguration[] getSubSystemConfigurationsBySystemType(IRSESystemType systemType, boolean filterDuplicates);
 
 	/**
 	 * Return all subsystem configurations which support the given system type.
-	 * If the type is null, returns all subsystem confgurations.
+	 * If the type is null, returns all subsystem configurations.
+	 * 
 	 * @param systemType system type to filter
-	 * @param filterDuplicates if true and the subsystem configuration uses services then return only one
-	 * subsystem configuration that supports this service. Which configuration is returned is undefined.
-	 * @param activate if true activate the respective configurations if not already active, if false return only those that are already active.
+	 * @param filterDuplicates if true and the subsystem configuration uses
+	 *            services then return only one subsystem configuration that
+	 *            supports this service. Which configuration is returned is
+	 *            undefined.
+	 * @param activate if true activate the respective configurations if not
+	 *            already active, if false return only those that are already
+	 *            active.
 	 * @return an array of subsystem configurations meeting the criteria
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public ISubSystemConfiguration[] getSubSystemConfigurationsBySystemType(IRSESystemType systemType, boolean filterDuplicates, boolean activate);
 
@@ -496,22 +507,28 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	public IHost createHost(IRSESystemType systemType, String connectionName, String hostAddress, String description) throws Exception;
 
 	/**
-	 * Create a host object. The resulting host object is added to the list of existing host objects
-	 * in the specified profile.
+	 * Create a host object. The resulting host object is added to the list of
+	 * existing host objects in the specified profile.
 	 * <ul>
 	 * <li>creates and saves a new host within the given profile
 	 * <li>optionally creates subsystem instances
-	 * <li>fires an ISystemResourceChangeEvent event of type EVENT_ADD to all registered listeners
+	 * <li>fires an ISystemResourceChangeEvent event of type EVENT_ADD to all
+	 * registered listeners
 	 * </ul>
 	 * <p>
-	 * @param profileName Name of the system profile to which the host is to be added.
+	 * 
+	 * @param profileName Name of the system profile to which the host is to be
+	 *            added.
 	 * @param systemType system type of the new host.
 	 * @param hostName unique host name within the profile.
 	 * @param hostAddress ip name of host.
 	 * @param description optional description of the connection. May be null.
-	 * @param createSubSystems <code>true</code> to create subsystems for the host, <code>false</code> otherwise.
-	 * @return IHost object, or null if it failed to create. This is typically because the hostName is not unique. Call getLastException() if necessary.
-	 * @since 3.0
+	 * @param createSubSystems <code>true</code> to create subsystems for the
+	 *            host, <code>false</code> otherwise.
+	 * @return IHost object, or null if it failed to create. This is typically
+	 *         because the hostName is not unique. Call getLastException() if
+	 *         necessary.
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public IHost createHost(String profileName, IRSESystemType systemType, String hostName, String hostAddress, String description, boolean createSubSystems) throws Exception;
 
@@ -735,13 +752,17 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	public void addSystemRemoteChangeListener(ISystemRemoteChangeListener l);
 
 	/**
-	 * De-Register your interest in being told when a remote resource is changed.
+	 * Unregister your interest in being told when a remote resource is changed.
 	 */
 	public void removeSystemRemoteChangeListener(ISystemRemoteChangeListener l);
 
 
 	/**
-	 * Query if the ISystemRemoteChangeListener is already listening for SystemRemoteChange events
+	 * Query if the ISystemRemoteChangeListener is already listening for
+	 * SystemRemoteChange events.
+	 * 
+	 * @param l the listener instance to check
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public boolean isRegisteredSystemRemoteChangeListener(ISystemRemoteChangeListener l);
 
@@ -792,7 +813,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	public void addSystemPreferenceChangeListener(ISystemPreferenceChangeListener l);
 
 	/**
-	 * De-Register your interest in being told when a system preference changes
+	 * Unregister your interest in being told when a system preference changes
 	 */
 	public void removeSystemPreferenceChangeListener(ISystemPreferenceChangeListener l);
 

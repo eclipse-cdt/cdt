@@ -7,12 +7,13 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
  * David Dykstal (IBM) - cleanup - format and javadoc
+ * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
  *******************************************************************************/
 
 package org.eclipse.rse.core.filters;
@@ -59,7 +60,7 @@ public interface ISystemFilterPool extends IRSEPersistableReferencedObject, ISys
 	public ISystemFilterPoolManager getSystemFilterPoolManager();
 
 	/**
-	 * Set a data object to be associated with this filter pool. This data is uninterpreted by this 
+	 * Set a data object to be associated with this filter pool. This data is uninterpreted by this
 	 * filter pool.
 	 * @param data the data object
 	 */
@@ -101,7 +102,7 @@ public interface ISystemFilterPool extends IRSEPersistableReferencedObject, ISys
 	/**
 	 * Order filters according to the names in the list. Typically used to enforce
 	 * a particular ordering in the filter list. If a name appears in this list and
-	 * does not name a filter it is ignored. If there are filters in this pool that 
+	 * does not name a filter it is ignored. If there are filters in this pool that
 	 * are not named in this list their order in the pool is undefined.
 	 * @param names the names of the filters in this pool in the order they should be returned.
 	 */
@@ -168,7 +169,7 @@ public interface ISystemFilterPool extends IRSEPersistableReferencedObject, ISys
 	public void setDefault(boolean value);
 
 	/**
-	 * Sets the attribute for this filter pool that determines whether strings of 
+	 * Sets the attribute for this filter pool that determines whether strings of
 	 * filters contained in this pool are case sensitive or not. If not set
 	 * this attribute is inherited from the containing filter pool manager.
 	 * @param value The new value of the StringsCaseSensitive attribute
@@ -187,7 +188,10 @@ public interface ISystemFilterPool extends IRSEPersistableReferencedObject, ISys
 	public boolean isSetStringsCaseSensitive();
 
 	/**
+	 * Return the filters in this pool.
+	 * 
 	 * @return An array of filters in this pool
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public ISystemFilter[] getFilters();
 
@@ -291,5 +295,5 @@ public interface ISystemFilterPool extends IRSEPersistableReferencedObject, ISys
 	 * @see #isNonRenamable()
 	 */
 	public void setNonRenamable(boolean value);
-	
+
 }

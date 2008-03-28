@@ -17,7 +17,8 @@
  * Martin Oberhuber (Wind River) - [189123] Move renameSubSystemProfile() from UI to Core
  * David Dykstal (IBM) - [197036] change signature of getFilterPoolManager method to be able to control the creation of filter pools
  * David Dykstal (IBM) - [217556] remove service subsystem types
- * Xuan Chen     (IBM) - [223126] [api][breaking] Remove API related to User Actions in RSE Core/UI
+ * Xuan Chen (IBM) - [223126] [api][breaking] Remove API related to User Actions in RSE Core/UI
+ * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -38,8 +39,8 @@ import org.eclipse.rse.services.IService;
  * 
  * @noimplement This interface is not intended to be implemented by clients.
  *              Subsystem configuration implementations must subclass
- *              SubSystemConfiguration rather than implementing this interface
- *              directly.
+ *              <code>SubSystemConfiguration</code> rather than implementing
+ *              this interface directly.
  */
 public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvider, IRSEPersistableContainer {
 	// ---------------------------------
@@ -397,39 +398,55 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	public IConnectorService getConnectorService(IHost host);
 
 	/**
-	 * Sets the connector service for a particular host.
-	 * This is usually mangaged by a connector service manager known
-	 * to this configuration.
-	 * This must be implemented by service subsystem configurations.
-	 * Service subsystems allow a connector service to be changed.
+	 * Set the connector service for a particular host. This is usually managed
+	 * by a connector service manager known to this configuration. This must be
+	 * implemented by service subsystem configurations. Service subsystems allow
+	 * a connector service to be changed.
+	 * 
 	 * @param host the host for which to set this connector service.
 	 * @param connectorService the connector service associated with this host.
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public void setConnectorService(IHost host, IConnectorService connectorService);
 
 	/**
-	 * Get the service type associated with this subsystem configuration.
-	 * If the configuration is not a service subsystem configuration it must return null, otherwise
-	 * it must return the interface class that the underlying service layer implements.
-	 * @return an interface class that is implemented by the service layer used by subsystems that have this configuration.
+	 * Get the service type associated with this subsystem configuration. If the
+	 * configuration is not a service subsystem configuration it must return
+	 * <code>null</code>, otherwise it must return the interface class that
+	 * the underlying service layer implements.
+	 * 
+	 * @return an interface class that is implemented by the service layer used
+	 *         by subsystems that have this configuration, or <code>null</code>
+	 *         if this is not a service subsystem configuration.
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public Class getServiceType();
 
 	/**
-	 * Get the implementation type of the service associated with this subsystem configuration.
-	 * If the configuration is not a service subsystem configuration then this must return null, otherwise
-	 * it must return the class that implements the interface specified in {@link #getServiceType()}.
-	 * @return an implementation class that implements the interface specified in {@link #getServiceType()}.
+	 * Get the implementation type of the service associated with this subsystem
+	 * configuration. If the configuration is not a service subsystem
+	 * configuration then this must return <code>null</code>, otherwise it
+	 * must return the class that implements the interface specified in
+	 * {@link #getServiceType()}.
+	 * 
+	 * @return an implementation class that implements the interface specified
+	 *         in {@link #getServiceType()}, or <code>null</code> if this is
+	 *         not a service subsystem configuration.
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public Class getServiceImplType();
 
 	/**
-	 * Get the actual service associated with a particular host.
-	 * If the configuration is not a service subsystem this must return null.
-	 * Otherwise this must return the particular instance of the class returned by {@link #getServiceImplType()}
-	 * that is associated with this host instance.
+	 * Get the actual service associated with a particular host. If the
+	 * configuration is not a service subsystem this must return null. Otherwise
+	 * this must return the particular instance of the class returned by
+	 * {@link #getServiceImplType()} that is associated with this host instance.
+	 * 
 	 * @param host The host for which to retrieve the service.
-	 * @return The instance of {@link IService} which is associated with this host.
+	 * @return The instance of {@link IService} which is associated with this
+	 *         host, or <code>null</code> if this is not a service subsystem
+	 *         configuration.
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public IService getService(IHost host);
 
@@ -522,20 +539,24 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	// FILTER POOL METHODS...
 	// ---------------------------------
 	/**
-	 * A subsystem configuration has a filter pool manager for each profile.
-	 * Get the filter pool manager for the given profile.
+	 * Get the filter pool manager for the given profile. A subsystem
+	 * configuration has a filter pool manager for each profile.
+	 * 
 	 * @param profile The system profile for which to get the manager.
-	 * @param force if true then create the default filters for this subsystem configuration in this profile. This should only be
-	 * done during initial subsystem creation, not during subsystem restore.
+	 * @param force if true then create the default filters for this subsystem
+	 *            configuration in this profile. This should only be done during
+	 *            initial subsystem creation, not during subsystem restore.
 	 * @return a filter pool manager
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public ISystemFilterPoolManager getFilterPoolManager(ISystemProfile profile, boolean force);
 
 	/**
-	 * A subsystem configuration has a filter pool manager for each profile.
-	 * Get the filter pool manager for the given profile.
-	 * Do not force the creation of default filter pools.
-	 * Fully equivalent to getFilterPoolManager(profile, false).
+	 * Get the filter pool manager for the given profile. A subsystem
+	 * configuration has a filter pool manager for each profile. Do not force
+	 * the creation of default filter pools. Fully equivalent to
+	 * getFilterPoolManager(profile, false).
+	 * 
 	 * @param profile The system profile for which to get the manager.
 	 * @return a filter pool manager
 	 */

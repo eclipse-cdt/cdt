@@ -1,24 +1,26 @@
 /********************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2000, 2008 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
  ********************************************************************************/
 
 package org.eclipse.rse.core;
 
 /**
- * Constants for user id management. Used when specifying the scope of a user id when 
- * setting a user id.
+ * Constants for user id management. Used when specifying the scope of a user id
+ * when setting a user id.
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IRSEUserIdConstants {
 
@@ -28,7 +30,7 @@ public interface IRSEUserIdConstants {
 	public static final int USERID_LOCATION_NOTSET = 0;
 
 	/**
-	 * Value 1. Location of user id is scoped to the connector service inside the host. 
+	 * Value 1. Location of user id is scoped to the connector service inside the host.
 	 */
 	public static final int USERID_LOCATION_CONNECTORSERVICE = 1;
 

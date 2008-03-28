@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2007, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -9,6 +9,7 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * David Dykstal (IBM) - [197167] adding notification and waiting for RSE model
+ * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
  ********************************************************************************/
 package org.eclipse.rse.core;
 
@@ -21,6 +22,12 @@ import java.util.TreeSet;
 
 import org.eclipse.core.runtime.Preferences;
 
+/**
+ * Preferences Manager utility class.
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ */
 public class RSEPreferencesManager {
 
 	/**
@@ -45,7 +52,7 @@ public class RSEPreferencesManager {
 	private static final String DEFAULT_ACTIVEUSERPROFILES = "Team"; //$NON-NLS-1$
 
 	/**
-	 * @return the Hashtable where the key is a string identifying a particular object, and 
+	 * @return the Hashtable where the key is a string identifying a particular object, and
 	 * the value is the user ID for that object.
 	 * @see #setUserId(String, String)
 	 */
@@ -87,7 +94,7 @@ public class RSEPreferencesManager {
 	}
 
 	/**
-	 * Clears the user ID for the given key. 
+	 * Clears the user ID for the given key.
 	 * @param key the key for the user id.
 	 * @see #setUserId(String, String)
 	 */
@@ -104,8 +111,8 @@ public class RSEPreferencesManager {
 	 * The key typically designates a scope for this userid so that a hierarchy
 	 * of user ids can be maintained for inheritance.
 	 * For example, hosts have greater scope than subsystems.
-	 * A key would typically be <profile-name>.<host-name>, 
-	 * or <profile-name>.<host-type>, 
+	 * A key would typically be <profile-name>.<host-name>,
+	 * or <profile-name>.<host-type>,
 	 * or <profile-name>.<host-name>.<subsystem-name>.
 	 * @param key the key used to find the userId
 	 * @param userId the userId to retrieve by this key.
@@ -331,7 +338,7 @@ public class RSEPreferencesManager {
 		store.setDefault(IRSEPreferenceNames.USE_DEFERRED_QUERIES, RSEPreferencesManager.DEFAULT_USE_DEFERRED_QUERIES);
 		savePreferences();
 	}
-	
+
 	/**
 	 * Save the preference store.
 	 */
@@ -342,7 +349,7 @@ public class RSEPreferencesManager {
 	/**
 	 * @return The name of the default private system profile. This
 	 * is typically the short name of the host machine or the name of the
-	 * user account. 
+	 * user account.
 	 */
 	public static String getDefaultPrivateSystemProfileName() {
 		String name = RSECorePlugin.getLocalMachineName();
@@ -390,9 +397,10 @@ public class RSEPreferencesManager {
 	}
 
 	/**
-	 * Make a single string out of an array of strings. A semi-colon is
-	 * used as a delimiter between the separate values. No value in the
-	 * array can contain a semi-colon.
+	 * Make a single string out of an array of strings. A semicolon is used as a
+	 * delimiter between the separate values. No value in the array can contain
+	 * a semicolon.
+	 * 
 	 * @param values the array of strings to condense into a single one
 	 * @return the condensed string
 	 */
@@ -410,7 +418,7 @@ public class RSEPreferencesManager {
 	}
 
 	/**
-	 * Parse out list of multiple values into a string array per value. 
+	 * Parse out list of multiple values into a string array per value.
 	 * This is the inverse of the {@link #makeString(String[])} operation.
 	 * @param allvalues the string holding the condensed value
 	 * @return the reconstituted array of strings.
@@ -422,10 +430,11 @@ public class RSEPreferencesManager {
 	}
 
 	/**
-	 * Parse out list of key-value pairs into a hashtable. This is the inverse of the
-	 * {@link SystemPreferencesManager#makeString(Hashtable)} operation.
-	 * @param allValues the string containing the key-value pairs. If empty or null returns
-	 * and empty Hashtable.
+	 * Parse out list of key-value pairs into a Hashtable. This is the inverse
+	 * of the {@link SystemPreferencesManager#makeString(Hashtable)} operation.
+	 * 
+	 * @param allValues the string containing the key-value pairs. If empty or
+	 *            null returns and empty Hashtable.
 	 * @return the reconstituted Hashtable
 	 */
 	private static Hashtable parseString(String allValues) {
@@ -447,9 +456,14 @@ public class RSEPreferencesManager {
 		}
 		return keyValues;
 	}
-	
+
 	/**
-	 * @return the boolean value indicating whether or not to create a local connection on a fresh workspace.
+	 * Get the Preference setting whether the local connection should be created
+	 * by default or not.
+	 * 
+	 * @return the boolean value indicating whether or not to create a local
+	 *         connection on a fresh workspace.
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public static boolean getCreateLocalConnection() {
 		Preferences prefs = RSECorePlugin.getDefault().getPluginPreferences();
@@ -458,7 +472,7 @@ public class RSEPreferencesManager {
 	}
 
 	/*
-	 * Having this method private disables instance creation. 
+	 * Having this method private disables instance creation.
 	 */
 	private RSEPreferencesManager() {
 	}

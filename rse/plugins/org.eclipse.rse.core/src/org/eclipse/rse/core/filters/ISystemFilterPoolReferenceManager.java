@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,8 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
@@ -25,9 +25,6 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
  * a filter pool. This class builds on the parent class SystemPersistableReferenceManager,
  * offering convenience versions of the parent methods that are typed to the
  * classes in the filters framework.
- */
-/**
- * @lastgen interface SystemFilterPoolReferenceManager extends SystemPersistableReferenceManager {}
  */
 public interface ISystemFilterPoolReferenceManager extends IRSEBasePersistableReferenceManager {
 	/**
@@ -54,7 +51,7 @@ public interface ISystemFilterPoolReferenceManager extends IRSEBasePersistableRe
 	/*
 	 * Set the managers of the master list of filter pools, from which
 	 *  objects in this list reference.
-	 * NOW DELETED SO THAT WE DYNAMICALLY QUERY THIS LIST FROM THE 
+	 * NOW DELETED SO THAT WE DYNAMICALLY QUERY THIS LIST FROM THE
 	 * ASSOCIATED SYSTEMFILTERPOOLMANAGER PROVIDER, SO IT IS ALWAYS UP
 	 * TO DATE. psc.
 	 */
@@ -124,7 +121,7 @@ public interface ISystemFilterPoolReferenceManager extends IRSEBasePersistableRe
 	public void setSystemFilterPoolReferences(ISystemFilterPoolReference[] filterPoolReferences, boolean deReference);
 
 	/**
-	 * Add a filter pool referencing object to the list. 
+	 * Add a filter pool referencing object to the list.
 	 * @return the new count of referencing objects
 	 */
 	public int addSystemFilterPoolReference(ISystemFilterPoolReference filterPoolReference);
@@ -160,7 +157,7 @@ public interface ISystemFilterPoolReferenceManager extends IRSEBasePersistableRe
 
 	/**
 	 * Move existing filter pool references a given number of positions.
-	 * If the delta is negative, they are all moved up by the given amount. If 
+	 * If the delta is negative, they are all moved up by the given amount. If
 	 * positive, they are all moved down by the given amount.<p>
 	 * <p> Calls back to inform provider
 	 * @param filterPoolRefs Array of SystemFilterPoolReferences to move.
@@ -243,14 +240,14 @@ public interface ISystemFilterPoolReferenceManager extends IRSEBasePersistableRe
 
 	/**
 	 * Given a filter reference, return its position within this reference manager
-	 *  when you think of all filter references from all filter pool references as 
+	 *  when you think of all filter references from all filter pool references as
 	 *  being concatenated
 	 */
 	public int getSystemFilterReferencePosition(ISystemFilterReference filterRef);
 
 	/**
 	 * Given a filter, return its position within this reference manager
-	 *  when you think of all filter references from all filter pool references as 
+	 *  when you think of all filter references from all filter pool references as
 	 *  being concatenated
 	 */
 	public int getSystemFilterReferencePosition(ISubSystem subSystem, ISystemFilter filter);

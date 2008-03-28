@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [185098] Provide constants for all well-known system types
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty()
  * Martin Oberhuber (Wind River) - [218655][api] Provide SystemType enablement info in non-UI
+ * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
  ********************************************************************************/
 
 package org.eclipse.rse.core;
@@ -254,14 +255,16 @@ public interface IRSESystemType extends IAdaptable {
 	 * 
 	 * The enabled state is a dynamic property of a system type, compared to the
 	 * static configuration by plugin markup. Enablement is a non-UI property,
-	 * which can be set by a Product in the Preferences or modified by a user
-	 * to hide certain system types.
+	 * which can be set by a Product in the Preferences or modified by a user to
+	 * hide certain system types.
 	 * <p>
-	 * Implementers of custom system types (which are registered by a SystemTypeProvider)
-	 * can override this method to provide more advanced enabled checks e.g. based on
-	 * license availability.
+	 * Implementers of custom system types (which are registered by a
+	 * SystemTypeProvider) can override this method to provide more advanced
+	 * enabled checks e.g. based on license availability.
 	 * 
-	 * @return <code>true</code> if the system type is currently enabled, or <code>false</code> otherwise.
+	 * @return <code>true</code> if the system type is currently enabled, or
+	 *         <code>false</code> otherwise.
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public boolean isEnabled();
 

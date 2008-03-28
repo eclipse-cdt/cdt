@@ -1,20 +1,21 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
  * David Dykstal (IBM) - 168977: refactoring IConnectorService
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType
- * Martin Oberhuber (Wind River) - [185750] Remove IConnectorService.getHostType() 
- * Martin Oberhuber (Wind River) - [187218] Fix error reporting for connect() 
+ * Martin Oberhuber (Wind River) - [185750] Remove IConnectorService.getHostType()
+ * Martin Oberhuber (Wind River) - [187218] Fix error reporting for connect()
+ * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -25,23 +26,27 @@ import org.eclipse.rse.core.model.IRSEModelObject;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
 /**
- * A connector service provides the means of establishing a connection from 
- * a subsystem (or a number of subsystems) to a target system (a host).
+ * A connector service provides the means of establishing a connection from a
+ * subsystem (or a number of subsystems) to a target system (a host).
  * <p>
  * A connector service manages a live connection to a remote system, with
  * operations for connecting and disconnecting, and storing information
  * typically cached from a subsystem: credentials (such as a userId/password),
  * port, etc.
  * <p>
- * The SubSystem interface includes a method, getConnectorService(),
- * which returns an instance of an object that implements this interface
- * for that subsystem.
+ * The SubSystem interface includes a method, getConnectorService(), which
+ * returns an instance of an object that implements this interface for that
+ * subsystem.
  * <p>
  * A single connector service object can be unique to a subsystem instance, but
  * it can also be shared across multiple subsystems in a single host if those
- * subsystems share a physical connection to the remote system.
- * This sharing is done using implementers of {@link IConnectorServiceManager} 
- * which are returned by another getter method in SubSystem.
+ * subsystems share a physical connection to the remote system. This sharing is
+ * done using implementers of {@link IConnectorServiceManager} which are
+ * returned by another getter method in SubSystem.
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
+ *              Clients should subclass {@link AbstractConnectorService}
+ *              instead.
  */
 public interface IConnectorService extends IRSEModelObject {
 
@@ -121,7 +126,7 @@ public interface IConnectorService extends IRSEModelObject {
 
 	/**
 	 * Sets the host used by this connector service.
-	 * @param host 
+	 * @param host
 	 */
 	public void setHost(IHost host);
 
@@ -150,13 +155,13 @@ public interface IConnectorService extends IRSEModelObject {
 	public void setPort(int port);
 
 	/**
-	 * @return true if this connector service will attempt to 
+	 * @return true if this connector service will attempt to
 	 * use SSL when establishing its connection.
 	 */
 	public boolean isUsingSSL();
 
 	/**
-	 * @param flag true if the connector service should attempt to use SSL when 
+	 * @param flag true if the connector service should attempt to use SSL when
 	 * establishing the connection.
 	 */
 	public void setIsUsingSSL(boolean flag);
@@ -170,7 +175,7 @@ public interface IConnectorService extends IRSEModelObject {
 
 	/**
 	 * Determines if this connector service understand the concept of a password.
-	 * @return true if the connector service can use a password, 
+	 * @return true if the connector service can use a password,
 	 * false if a password is irrelevant.
 	 */
 	public boolean supportsPassword();
@@ -195,7 +200,7 @@ public interface IConnectorService extends IRSEModelObject {
 	public void saveUserId();
 
 	/**
-	 * Causes the persisted (default) user id known to this 
+	 * Causes the persisted (default) user id known to this
 	 * connector service, if any, to be forgotten.
 	 */
 	public void removeUserId();
@@ -210,25 +215,25 @@ public interface IConnectorService extends IRSEModelObject {
 	 * @param propagate true if this password should be propagated to related connector services.
 	 */
 	public void setPassword(String matchingUserId, String password, boolean persist, boolean propagate);
-	
+
 	/**
-	 * Causes the password known to this connector service, if any, to be 
+	 * Causes the password known to this connector service, if any, to be
 	 * persisted.
 	 */
 	public void savePassword();
-	
+
 	/**
-	 * Causes the persisted password known to this connector service, if any, to 
+	 * Causes the persisted password known to this connector service, if any, to
 	 * be forgotten.
 	 */
 	public void removePassword();
-	
+
 	/**
-	 * Clear password held by this service and optionally 
-	 * clear its persistent form. 
-	 * Called when user uses the property dialog to 
-	 * change his userId.  
-	 * @param persist if true, clears the persistent form of the password 
+	 * Clear password held by this service and optionally
+	 * clear its persistent form.
+	 * Called when user uses the property dialog to
+	 * change his userId.
+	 * @param persist if true, clears the persistent form of the password
 	 * @param propagate true if this password should be cleared in related connector services.
 	 */
 	public void clearPassword(boolean persist, boolean propagate);
@@ -268,7 +273,7 @@ public interface IConnectorService extends IRSEModelObject {
 	 * Implementations may retain a remembered credentials or
 	 * use this acquire the credentials using some implementation defined means.
 	 * <p>
-	 * Throws InterruptedException if acquisition of the 
+	 * Throws InterruptedException if acquisition of the
 	 * credentials is canceled or is being suppressed.
 	 * @param refresh if true will force the connector service to discard
 	 * any remembered value and reacquire the credentials.
@@ -285,9 +290,9 @@ public interface IConnectorService extends IRSEModelObject {
 	 * Causes {@link #acquireCredentials(boolean)} to immediately
 	 * throw an InterruptedException.
 	 * <p>
-	 * The intent is to allow tool writers to prevent multiple 
+	 * The intent is to allow tool writers to prevent multiple
 	 * attempts to acquire credentials during a set period of time.
-	 * <b>It is the responsibility of the caller to set this value 
+	 * <b>It is the responsibility of the caller to set this value
 	 * back to false when the tool no longer needs to suppress
 	 * acquisition credentials.</b>
 	 * 
@@ -315,7 +320,7 @@ public interface IConnectorService extends IRSEModelObject {
 	 * called for this server launch type, then it is enabled by default.
 	 * @param subsystem the subystem for which this may be enabled.
 	 * @param serverLaunchType the type to check for enabledment.
-	 * @return true if the connector service supports server launching and 
+	 * @return true if the connector service supports server launching and
 	 * this launch type is enabled.
 	 * @see org.eclipse.rse.core.subsystems.ServerLaunchType
 	 */
@@ -334,7 +339,7 @@ public interface IConnectorService extends IRSEModelObject {
 	/**
 	 * Set the properties for the remote server launcher
 	 * This is an object containing
-	 * properties used to launch a remote server that 
+	 * properties used to launch a remote server that
 	 * communicates with this client.
 	 * @param value the new value of the '<em>Remote Server Launcher</em>' containment reference.
 	 */
@@ -349,7 +354,7 @@ public interface IConnectorService extends IRSEModelObject {
 	 * @return true if the connector service supports the concept of remote
 	 * server launch properties.
 	 * This will always return false {@link #supportsRemoteServerLaunching()}
-	 * is false. 
+	 * is false.
 	 */
 	boolean supportsServerLaunchProperties();
 
@@ -358,7 +363,7 @@ public interface IConnectorService extends IRSEModelObject {
 	 * server launching.
 	 */
 	boolean supportsRemoteServerLaunching();
-	
+
 	/**
 	 * @return the server launcher. Will be null unless
 	 * {@link #supportsRemoteServerLaunching()} is true.
@@ -367,14 +372,14 @@ public interface IConnectorService extends IRSEModelObject {
 
 	/**
 	 * Test if this connector service requires a password.
-	 * @return true if this connector service supports passwords and 
+	 * @return true if this connector service supports passwords and
 	 * requires a password to connect to its target system.
 	 */
 	boolean requiresPassword();
 
 	/**
 	 * Test if this connector service requires a user id.
-	 * @return true if this connector service understands the concept of a 
+	 * @return true if this connector service understands the concept of a
 	 * user id and requires one to connect to its target system.
 	 */
 	boolean requiresUserId();

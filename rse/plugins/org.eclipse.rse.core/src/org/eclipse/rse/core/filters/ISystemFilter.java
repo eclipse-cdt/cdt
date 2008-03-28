@@ -7,12 +7,13 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
  * David Dykstal (IBM) - cleanup format and javadoc
+ * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
  *******************************************************************************/
 
 package org.eclipse.rse.core.filters;
@@ -23,8 +24,8 @@ import org.eclipse.rse.core.references.IRSEReferencedObject;
 /**
  * A filter consists of filter strings and may be contained in a filter pool.
  * Filter pools are referenced by subsystems.
- * Subsystems are responsible for interpreting the filters. Filters, in and 
- * of themselves, provide no interpretation of themselves when applied 
+ * Subsystems are responsible for interpreting the filters. Filters, in and
+ * of themselves, provide no interpretation of themselves when applied
  * to the resources managed by a subsystem.
  */
 
@@ -33,7 +34,7 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	/**
 	 * Returns the value of the '<em><b>Name</b></em>' attribute.
 	 * <p>
-	 * This is the name of the filter. It may be present in the user interface and is also 
+	 * This is the name of the filter. It may be present in the user interface and is also
 	 * used to refer to the filter when it is persisted.
 	 * </p>
 	 * @return the value of the '<em>Name</em>' attribute.
@@ -43,7 +44,7 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 
 	/**
 	 * Sets the value of the '{@link org.eclipse.rse.core.filters.ISystemFilter#getName <em>Name</em>}' attribute.
-	 * This is the name of the filter. It may be present in the user interface and is also 
+	 * This is the name of the filter. It may be present in the user interface and is also
 	 * used to refer to the filter when it is persisted.
 	 * @param value the new value of the '<em>Name</em>' attribute.
 	 * @see #getName()
@@ -53,7 +54,7 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	/**
 	 * Returns the value of the '<em><b>Type</b></em>' attribute.
 	 * <p>
-	 * Filters may be further typed for use by subsystems. The type is also uninterpreted by the 
+	 * Filters may be further typed for use by subsystems. The type is also uninterpreted by the
 	 * filter. The type may be used to select a parser/interpreter for the filter strings.
 	 * </p>
 	 * @return the value of the '<em>Type</em>' attribute.
@@ -63,7 +64,7 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 
 	/**
 	 * Sets the value of the '{@link org.eclipse.rse.core.filters.ISystemFilter#getType <em>Type</em>}' attribute.
-	 * Filters may be further typed for use by subsystems. The type is also uninterpreted by the 
+	 * Filters may be further typed for use by subsystems. The type is also uninterpreted by the
 	 * filter. The type may be used to select a parser/interpreter for the filter strings.
 	 * @param value the new value of the '<em>Type</em>' attribute.
 	 * @see #getType()
@@ -74,7 +75,7 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	 * Returns the value of the '<em><b>Supports Nested Filters</b></em>' attribute.
 	 * <p>
 	 * Specifies whether filters may be nested or not. If nested the intent is to apply this filter
-	 * to the results of the parent filter - further restricting the resources selected by the 
+	 * to the results of the parent filter - further restricting the resources selected by the
 	 * parent filter. However, it is up to the subsystem to interpret exactly what "nesting" means.
 	 * </p>
 	 * @return the value of the '<em>Supports Nested Filters</em>' attribute.
@@ -86,7 +87,7 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	 * Sets the value of the '{@link org.eclipse.rse.core.filters.ISystemFilter#isSupportsNestedFilters <em>Supports Nested Filters</em>}' attribute.
 	 * <p>
 	 * Specifies whether filters may be nested or not. If nested the intent is to apply this filter
-	 * to the results of the parent filter - further restricting the resources selected by the 
+	 * to the results of the parent filter - further restricting the resources selected by the
 	 * parent filter. However, it is up to the subsystem to interpret exactly what "nesting" means.
 	 * </p>
 	 * @param value the new value of the '<em>Supports Nested Filters</em>' attribute.
@@ -220,10 +221,10 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	/**
 	 * Returns the value of the '<em><b>Promptable</b></em>' attribute.
 	 * <p>
-	 * An attribute that may be used by the subystems when interpreting the filter. 
+	 * An attribute that may be used by the subystems when interpreting the filter.
 	 * Typically used to indicate whether or not some sort of prompting is to occur when the
 	 * filter is used. Typically used when applying a filter in the UI to indicate
-	 * the start of a wizard or dialog. It may also have an effect on whether 
+	 * the start of a wizard or dialog. It may also have an effect on whether
 	 * the state of the filter is saved when the workbench is shut down.
 	 * </p>
 	 * @return the value of the '<em>Promptable</em>' attribute.
@@ -234,10 +235,10 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	/**
 	 * Sets the value of the '{@link org.eclipse.rse.core.filters.ISystemFilter#isPromptable <em>Promptable</em>}' attribute.
 	 * <p>
-	 * An attribute that may be used by the subystems when interpreting the filter. 
+	 * An attribute that may be used by the subystems when interpreting the filter.
 	 * Typically used to indicate whether or not some sort of prompting is to occur when the
 	 * filter is used. Typically used when applying a filter in the UI to indicate
-	 * the start of a wizard or dialog. It may also have an effect on whether 
+	 * the start of a wizard or dialog. It may also have an effect on whether
 	 * the state of the filter is saved when the workbench is shut down.
 	 * </p>
 	 * @param value the new value of the '<em>Promptable</em>' attribute.
@@ -366,7 +367,7 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	/**
 	 * Returns the value of the '<em><b>Release</b></em>' attribute.
 	 * <p>
-	 * This is an attribute specifying the release level of the  
+	 * This is an attribute specifying the release level of the
 	 * filter. This will be persisted in the filter definition and
 	 * can be used to migrate the internal form of the filter.
 	 * </p>
@@ -378,7 +379,7 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	/**
 	 * Sets the value of the '{@link org.eclipse.rse.core.filters.ISystemFilter#getRelease <em>Release</em>}' attribute.
 	 * <p>
-	 * This is an attribute specifying the release level of the  
+	 * This is an attribute specifying the release level of the
 	 * filter. This will be persisted in the filter definition and
 	 * can be used to migrate the internal form of the filter.
 	 * </p>
@@ -390,8 +391,8 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	/**
 	 * Returns the value of the '<em><b>Single Filter String Only</b></em>' attribute.
 	 * <p>
-	 * This attribute specifies that the filter may contain only a single 
-	 * filter string. Used by a filter manager to ensure that the 
+	 * This attribute specifies that the filter may contain only a single
+	 * filter string. Used by a filter manager to ensure that the
 	 * filter contains only one string. May, alternatively, be enforced
 	 * by the filter implementation.
 	 * </p><p>
@@ -408,12 +409,12 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	/**
 	 * Sets the value of the '{@link org.eclipse.rse.core.filters.ISystemFilter#isSingleFilterStringOnly <em>Single Filter String Only</em>}' attribute.
 	 * <p>
-	 * This attribute specifies that the filter may contain only a single 
-	 * filter string. Used by a filter manager to ensure that the 
+	 * This attribute specifies that the filter may contain only a single
+	 * filter string. Used by a filter manager to ensure that the
 	 * filter contains only one string. May, alternatively, be enforced
 	 * by the filter implementation.
 	 * </p><p>
-	 * This causes the attribute to be set for this filter, ignoring the value 
+	 * This causes the attribute to be set for this filter, ignoring the value
 	 * specified for the parent filter pool.
 	 * </p>
 	 * @param value the new value of the '<em>Single Filter String Only</em>' attribute.
@@ -443,14 +444,17 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	public boolean isSetSingleFilterStringOnly();
 
 	/**
-	 * Returns the value of the '<em><b>Nested Filters</b></em>' containment reference list.
-	 * The list contents are of type {@link org.eclipse.rse.core.filters.ISystemFilter}.
-	 * It is bidirectional and its opposite is '{@link org.eclipse.rse.core.filters.ISystemFilter#getParentFilter <em>Parent Filter</em>}'.
+	 * Returns the value of the '<em><b>Nested Filters</b></em>'
+	 * containment reference list. It is bidirectional and its opposite is '{@link org.eclipse.rse.core.filters.ISystemFilter#getParentFilter <em>Parent Filter</em>}'.
 	 * <p>
-	 * If this filter can contain child filters this will return the list of children.
+	 * If this filter can contain child filters this will return the list of
+	 * children.
 	 * </p>
-	 * @return the value of the '<em>Nested Filters</em>' containment reference list.
+	 * 
+	 * @return the value of the '<em>Nested Filters</em>' containment
+	 *         reference list.
 	 * @see org.eclipse.rse.core.filters.ISystemFilter#getParentFilter
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public ISystemFilter[] getNestedFilters();
 
@@ -458,7 +462,7 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	 * Returns the value of the '<em><b>Parent Filter</b></em>' container reference.
 	 * It is bidirectional and its opposite is '{@link org.eclipse.rse.core.filters.ISystemFilter#getNestedFilters <em>Nested Filters</em>}'.
 	 * <p>
-	 * If this filter can be nested inside another this will return the parent filter. Will be 
+	 * If this filter can be nested inside another this will return the parent filter. Will be
 	 * null if there is no parent.
 	 * </p>
 	 * @return the value of the '<em>Parent Filter</em>' container reference.
@@ -476,9 +480,12 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	public void setParentFilter(ISystemFilter value);
 
 	/**
-	 * Returns the value of the '<em><b>Strings</b></em>' containment reference list.
-	 * The list contents are of type {@link org.eclipse.rse.core.filters.ISystemFilterString}.
-	 * @return the value of the '<em>Strings</em>' containment reference list.
+	 * Returns the value of the '<em><b>Strings</b></em>' containment
+	 * reference list.
+	 * 
+	 * @return the value of the '<em>Strings</em>' containment reference
+	 *         list.
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public ISystemFilterString[] getStrings();
 
@@ -583,7 +590,7 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	 * in this manager or another manager. Will do nothing if the filter string is not
 	 * originally contained in this filter.
 	 * @param targetFilter the filter to which to copy the filter string
-	 * @param oldFilterString the filter string to copy 
+	 * @param oldFilterString the filter string to copy
 	 */
 	public ISystemFilterString copySystemFilterString(ISystemFilter targetFilter, ISystemFilterString oldFilterString);
 
@@ -593,7 +600,7 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	public boolean isNested();
 
 	/**
-	 * @return true if this a transient or simple filter that is not intended to be 
+	 * @return true if this a transient or simple filter that is not intended to be
 	 * saved or part of the filter framework. It will have no manager or provider.
 	 */
 	public boolean isTransient();

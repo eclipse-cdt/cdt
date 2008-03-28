@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,16 +7,21 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
  *******************************************************************************/
 
 package org.eclipse.rse.persistence.dom;
 
+/**
+ * Constants used in RSE DOMs.
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
+ */
 public interface IRSEDOMConstants {
 	// node types
 	public static final String TYPE_PROFILE = "Profile"; //$NON-NLS-1$
@@ -45,7 +50,7 @@ public interface IRSEDOMConstants {
 	public static final String ATTRIBUTE_TYPE = "type"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_DESCRIPTION = "description"; //$NON-NLS-1$
 
-	// host attributes 
+	// host attributes
 	public static final String ATTRIBUTE_HOSTNAME = "hostname"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_OFFLINE = "offline"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_SYSTEM_TYPE = "systemType"; //$NON-NLS-1$

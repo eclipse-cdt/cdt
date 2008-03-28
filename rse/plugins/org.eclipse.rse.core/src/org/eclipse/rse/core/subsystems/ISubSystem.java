@@ -1,22 +1,23 @@
 /********************************************************************************
  * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
- * Martin Oberhuber (Wind River) - [187218] Fix error reporting for connect() 
- * David McKnight   (IBM)        - [207095] Implicit connect needs to run in the same job as caller
- * David McKnight   (IBM)        - [186363] get rid of obsolete calls to ISubSystem.connect()
+ * Martin Oberhuber (Wind River) - [187218] Fix error reporting for connect()
+ * David McKnight (IBM) - [207095] Implicit connect needs to run in the same job as caller
+ * David McKnight (IBM) - [186363] get rid of obsolete calls to ISubSystem.connect()
  * David Dykstal (IBM) - [217556] remove service subsystem types
+ * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -38,12 +39,16 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 /**
  * Interface implemented by SubSystem objects.
  * 
- * While connections contain information to identify a particular remote
- * system, it is the subsystem objects within a connection that contain
- * information unique to a particular tool for that remote system, such as
- * the port the tool uses and the user ID for making the connection.
- * There are a set of default properties, but these can be extended by 
- * subsystem providers, by extending SubSystem. 
+ * While connections contain information to identify a particular remote system,
+ * it is the subsystem objects within a connection that contain information
+ * unique to a particular tool for that remote system, such as the port the tool
+ * uses and the user ID for making the connection. There are a set of default
+ * properties, but these can be extended by subsystem providers, by extending
+ * SubSystem.
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
+ *              Clients must extend the abstract <code>SubSystem</code> class
+ *              instead.
  */
 public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, IRemoteObjectResolver, ISchedulingRule, IRSEModelObject {
 	// -------------------------------------
@@ -66,7 +71,8 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 
 	/**
 	 * Set the connector service for this subsystem
-	 * @param connectorService
+	 * 
+	 * @param connectorService connector service object to set
 	 */
 	public void setConnectorService(IConnectorService connectorService);
 
@@ -82,7 +88,7 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	public IHost getHost();
 
 	/**
-	 * Called on each subsystem associated with a particular {@link IConnectorService} after it connects. 
+	 * Called on each subsystem associated with a particular {@link IConnectorService} after it connects.
 	 * @param monitor A progress monitor supporting progress reporting and cancellation.
 	 */
 	public void initializeSubSystem(IProgressMonitor monitor);
@@ -133,17 +139,24 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	public void deletingConnection();
 
 	/**
-	 * This is a helper method you can call when performing actions that must be certain there
-	 * is a connection. If there is no connection it will attempt to connect, and if that fails
-	 * will throw a SystemMessageException you can easily display to the user by using a method
-	 * in it.
+	 * Check if the subsystem is connected, and connect if it's not.
+	 * 
+	 * This is a convenience method which first checks whether the subsystem is
+	 * already connected. If not, it automatically checks if it's running on the
+	 * dispatch thread or not, and calls the right <code>connect()</code>
+	 * method as appropriate. It also performs some exception parsing,
+	 * converting Exceptions from connect() into SystemMessageException that can
+	 * be displayed to the user by using a method in it.
+	 * 
+	 * @throws SystemMessageException in case of an error connecting
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public void checkIsConnected(IProgressMonitor monitor) throws SystemMessageException;
 
 	// ---------------------------------------------------
-	// Methods for business partners to add their own 
+	// Methods for business partners to add their own
 	//  persisted attributes to the subsystem object...
-	// ---------------------------------------------------    
+	// ---------------------------------------------------
 
 	/**
 	 * For business partners defining their own subsystems.
@@ -153,7 +166,7 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 *   <li>Vendor name. This name should uniquely differentiate one
 	 *           vendor's attributes from anothers.
 	 *   <li>Attribute name. The name of the attribute to set.
-	 *   <li>attribute value. The value to give the named attribute. It must 
+	 *   <li>attribute value. The value to give the named attribute. It must
 	 *           be resolved into a string to use this. Eg, for boolean use
 	 *           something like "true" or "false". To clear the attribute
 	 *           value pass null for the value.
@@ -242,8 +255,8 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 
 	/**
 	 * Return true if the given filter lists the contents of the given remote object.
-	 *  For example, if given a folder, return true if any of the filter strings in this filter 
-	 *  lists the contents of that folder. Used in impact analysis when a remote object is 
+	 *  For example, if given a folder, return true if any of the filter strings in this filter
+	 *  lists the contents of that folder. Used in impact analysis when a remote object is
 	 *  created, deleted, renamed, copied or moved, so as to establish which filters need to be
 	 *  refreshed or collapsed (if the folder is deleted, say).
 	 * <p>
@@ -254,20 +267,20 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	/**
 	 * Return true if the given filter string lists the contents of the given remote object.
 	 *  For example, if given a folder, return true if the given filter string
-	 *  lists the contents of that folder. Used in impact analysis when a remote object is 
+	 *  lists the contents of that folder. Used in impact analysis when a remote object is
 	 *  created, deleted, renamed, copied or moved, so as to establish which filters need to be
 	 *  refreshed or collapsed (if the folder is deleted, say).
 	 */
 	public boolean doesFilterStringListContentsOf(ISystemFilterString filterString, String remoteObjectAbsoluteName);
 
 	/**
-	 * Return true if the given remote object name will pass the filtering criteria for any of 
+	 * Return true if the given remote object name will pass the filtering criteria for any of
 	 *  the filter strings in this filter.
 	 */
 	public boolean doesFilterMatch(ISystemFilter filter, String remoteObjectAbsoluteName);
 
 	/**
-	 * Return true if the given remote object name will pass the filtering criteria for the 
+	 * Return true if the given remote object name will pass the filtering criteria for the
 	 *  given filter string in this filter.
 	 */
 	public boolean doesFilterStringMatch(String filterString, String remoteObjectAbsoluteName, boolean caseSensitive);
@@ -334,11 +347,11 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	public boolean supportsCaching();
 
 	/**
-	 * Return the CacheManager for this subsystem.  If the SubSystem returns true for 
+	 * Return the CacheManager for this subsystem.  If the SubSystem returns true for
 	 * supportsCaching() then it must return a valid CacheManager, otherwise it is free
 	 * to return null.
 	 * 
-	 * @see #supportsCaching() 
+	 * @see #supportsCaching()
 	 */
 	public ICacheManager getCacheManager();
 
@@ -363,7 +376,7 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 */
 	public boolean isOffline();
 
-	
+
 	/**
 	 * Synchronously connect to the remote system.
 	 * 
@@ -384,16 +397,16 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	public void connect(IProgressMonitor monitor, boolean forcePrompt) throws Exception;
 
 	/**
-	 * Asynchronously connect to the remote system, optionally forcing a signon prompt 
+	 * Asynchronously connect to the remote system, optionally forcing a signon prompt
 	 * even if the password is cached in memory or on disk.
-	 * <p/> 
-	 * This method must be called on the UI Thread! An Eclipse background job with a 
-	 * progress monitor will be created automatically. If the optional callback is 
+	 * <p/>
+	 * This method must be called on the UI Thread! An Eclipse background job with a
+	 * progress monitor will be created automatically. If the optional callback is
 	 * given, it will be called when the connect is complete.
-	 * You do not need to override this, as it does the progress monitor reporting 
+	 * You do not need to override this, as it does the progress monitor reporting
 	 * for you.
 	 * <p/>
-	 * Override internalConnect if you want, but by default it calls 
+	 * Override internalConnect if you want, but by default it calls
 	 * <code>getConnectorService().connect(IProgressMonitor)</code>.
 	 * 
 	 * @param forcePrompt forces the prompt dialog even if the password is in mem
@@ -560,7 +573,7 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 * Return true if this subsystem is to be hidden so it doesn't show in the Remote Systems
 	 * view when a connection is expanded. If so, this subsystem is for programmatic use only,
 	 * or is exposed in alternative view. Such is the case for command subsystems, for example.
-	 * @generated This field/method will be replaced during code generation 
+	 * @generated This field/method will be replaced during code generation
 	 * @return The value of the Hidden attribute
 	 */
 	boolean isHidden();
@@ -570,26 +583,26 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 * Specify true if this subsystem is to be hidden so it doesn't show in the Remote Systems
 	 * view when a connection is expanded. If so, this subsystem is for programmatic use only,
 	 * or is exposed in alternative view. Such is the case for command subsystems, for example.
-	 * @generated This field/method will be replaced during code generation 
+	 * @generated This field/method will be replaced during code generation
 	 * @param value The new value of the Hidden attribute
 	 */
 	void setHidden(boolean value);
 
 	/**
 	 * <i>Generated persistent property method</i><br>
-	 * Return the object that manages the list of 
+	 * Return the object that manages the list of
 	 * filter pools referenced by this subsystem.
-	 * @generated This field/method will be replaced during code generation 
+	 * @generated This field/method will be replaced during code generation
 	 * @return The FilterPoolReferenceManager reference
 	 */
 	ISystemFilterPoolReferenceManager getFilterPoolReferenceManager();
 
 	/**
 	 * <i>Generated persistent property method</i><br>
-	 * Set the object that manages the list of 
+	 * Set the object that manages the list of
 	 * filter pools referenced by this subsystem. This is called by the subsystem factory
 	 * when creating or restoring subsystems.
-	 * @generated This field/method will be replaced during code generation 
+	 * @generated This field/method will be replaced during code generation
 	 * @param l The new value of the FilterPoolReferenceManager reference
 	 */
 	void setFilterPoolReferenceManager(ISystemFilterPoolReferenceManager value);
@@ -601,41 +614,52 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 * @return An object representing the parent
 	 */
 	Object getTargetForFilter(ISystemFilterReference filterRef);
-	
+
 	/**
-	 * Returns the interface type (i.e. a Class object that is an Interface) of a service subsystem. 
-	 * @return the service interface on which this service subsystem is implemented. If this
-	 * subsystem is not a service subsystem it must return null.
+	 * Returns the interface type (i.e. a Class object that is an Interface) of
+	 * a service subsystem.
+	 * 
+	 * @return the service interface on which this service subsystem is
+	 *         implemented. If this subsystem is not a service subsystem it must
+	 *         return <code>null</code>.
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public Class getServiceType();
 
 	/**
-	 * Requests a service subsystem to switch to a new configuration. If the configuration
-	 * is compatible with this subsystem then it must disconnect, possibly reset its
-	 * filter pool references, and request new services and parameters from its new configuration.
-	 * It must also answer true to {@link #canSwitchTo(ISubSystemConfiguration)}.
-	 * If the configuration is not compatible with this subsystem then this must do nothing and must answer
-	 * false to {@link #canSwitchTo(ISubSystemConfiguration)}.
+	 * Requests a service subsystem to switch to a new configuration. If the
+	 * configuration is compatible with this subsystem then it must disconnect,
+	 * possibly reset its filter pool references, and request new services and
+	 * parameters from its new configuration. It must also answer true to
+	 * {@link #canSwitchTo(ISubSystemConfiguration)}. If the configuration is
+	 * not compatible with this subsystem then this must do nothing and must
+	 * answer false to {@link #canSwitchTo(ISubSystemConfiguration)}.
+	 * 
 	 * @param configuration the configuration to which to switch.
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public void switchServiceFactory(ISubSystemConfiguration configuration);
-	
+
 	/**
-	 * Determine is this subsystem is compatible with this specified configuration.
+	 * Determine is this subsystem is compatible with this specified
+	 * configuration.
+	 * 
 	 * @param configuration the configuration which may be switched to
-	 * @return true if the subsystem can switch to this configuration, false otherwise.
-	 * Subsystems which are not service subsystems must return false.
+	 * @return true if the subsystem can switch to this configuration, false
+	 *         otherwise. Subsystems which are not service subsystems must
+	 *         return false.
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public boolean canSwitchTo(ISubSystemConfiguration configuration);
-	
+
 
 
 	////	 -------------------------------------
-	//	// GUI methods 
+	//	// GUI methods
 	//	// -------------------------------------
 	//	/**
 	//	 * Return the single property page to show in the tabbed notebook for the
-	//	 *  for SubSystem property of the parent Connection. Return null if no 
+	//	 *  for SubSystem property of the parent Connection. Return null if no
 	//	 *  page is to be contributed for this. You are limited to a single page,
 	//	 *  so you may have to compress. It is recommended you prompt for the port
 	//	 *  if applicable since the common base subsystem property page is not shown

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,12 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
  *******************************************************************************/
 package org.eclipse.rse.core.filters;
 
@@ -29,18 +29,23 @@ public interface ISystemFilterContainer extends IRSEPersistableContainer {
 	public ISystemFilterPoolManager getSystemFilterPoolManager();
 
 	/**
-	 * @return The value of the StringsCaseSensitive attribute
-	 * Are filters in this filter container case sensitive?
-	 * If not set locally, queries the parent filter pool manager's atttribute.
+	 * @return The value of the StringsCaseSensitive attribute Are filters in
+	 *         this filter container case sensitive? If not set locally, queries
+	 *         the parent filter pool manager's attribute.
 	 */
 	public boolean areStringsCaseSensitive();
 
 	/**
-	 * Adds a new system filter to this container (SystemFilterPool or SystemFilter) and
-	 * populates it with the filter strings created from the strings provided.
-	 * Does nothing if this filter already exists in this container.
-	 * @param aliasName The name to give the new filter. Must be unique for this pool.
-	 * @param filterStrings The list of String objects that represent the filter strings.
+	 * Adds a new system filter to this container (SystemFilterPool or
+	 * SystemFilter) and populates it with the filter strings created from the
+	 * strings provided. Does nothing if this filter already exists in this
+	 * container.
+	 * 
+	 * @param aliasName The name to give the new filter. Must be unique for this
+	 *            pool.
+	 * @param filterStrings The list of String objects that represent the filter
+	 *            strings.
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public ISystemFilter createSystemFilter(String aliasName, String[] filterStrings);
 
@@ -52,8 +57,11 @@ public interface ISystemFilterContainer extends IRSEPersistableContainer {
 	public boolean addSystemFilter(ISystemFilter filter);
 
 	/**
-	 * @return Vector of String objects: the names of existing filters in this container.
-	 * Typically used by name validators for New and Rename actions to verify new name is unique.
+	 * Get the names of existing filters in this container. Typically used by
+	 * name validators for New and Rename actions to verify new name is unique.
+	 * 
+	 * @return String array of the names of existing filters in this container.
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public String[] getSystemFilterNames();
 
@@ -80,14 +88,14 @@ public interface ISystemFilterContainer extends IRSEPersistableContainer {
 	public int getSystemFilterCount();
 
 	/**
-	 * Removes a given filter from the list. Will do nothing if the specified filter 
+	 * Removes a given filter from the list. Will do nothing if the specified filter
 	 * is not in this filter container.
 	 * @param filter SystemFilter object to remove
 	 */
 	public void deleteSystemFilter(ISystemFilter filter);
 
 	/**
-	 * Renames a given filter in the list. The new name is assumed to be valid. 
+	 * Renames a given filter in the list. The new name is assumed to be valid.
 	 * Will perform the rename whether or not the filter is contained in this
 	 * container.
 	 * @param filter SystemFilter object to rename

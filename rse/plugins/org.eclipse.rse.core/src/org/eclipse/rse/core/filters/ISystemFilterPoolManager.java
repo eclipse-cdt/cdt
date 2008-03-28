@@ -7,14 +7,15 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
  * David Dykstal (IBM) - [197036] All filter pools created on clean workspace
  * cleaned javadoc for renameSystemFilterPool
  * David Dykstal (IBM) - [222270] clean up interfaces in org.eclipse.rse.core.filters
+ * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
  *******************************************************************************/
 
 package org.eclipse.rse.core.filters;
@@ -30,6 +31,8 @@ import org.eclipse.rse.core.model.ISystemProfile;
  * Further, this is the front door for working with filters too. By forcing all
  * filter related activity through a single point like this, we can ensure that
  * all changes are saved to disk, and events are fired properly.
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ISystemFilterPoolManager extends IRSEPersistableContainer {
 	// ---------------------------------
@@ -155,7 +158,7 @@ public interface ISystemFilterPoolManager extends IRSEPersistableContainer {
 	public ISystemFilterPool createSystemFilterPool(String name, boolean isDeletable) throws Exception;
 
 	/**
-	 * Delete a given filter pool. Dependending on the save policy, the 
+	 * Delete a given filter pool. Dependending on the save policy, the
 	 *  appropriate file or folder on disk will also be deleted.
 	 * <p>
 	 * Does the following:
@@ -235,7 +238,7 @@ public interface ISystemFilterPoolManager extends IRSEPersistableContainer {
 	 * <ul>
 	 *   <li>Performs a {@link #copySystemFilterPool(ISystemFilterPoolManager, ISystemFilterPool, String) copySystemFilterPool} operation.
 	 *   <li>If copy is successful, updates all references to reference the new copy.
-	 *   <li>If copy is successful, deletes original filter pool in this manager 
+	 *   <li>If copy is successful, deletes original filter pool in this manager
 	 *   <li>If this final delete fails, deletes the copied version and restore original references
 	 *   <li>Asks target manager to save to disk
 	 *   <li>Saves this manager to disk
@@ -252,88 +255,120 @@ public interface ISystemFilterPoolManager extends IRSEPersistableContainer {
 	// FILTER METHODS
 	// ---------------------------------
 	/**
-	 * Creates a new system filter within the given filter container (either a filter pool, or
-	 * a filter). This creates the filter, and then saves the filter pool. 
-	 * <p>Calls back to provider to inform of the event (filterEventFilterCreated)
-	 * @param parent The parent which is either a SystemFilterPool or a SystemFilter
-	 * @param aliasName The name to give the new filter. Must be unique for this pool.
-	 * @param filterStrings The list of String objects that represent the filter strings.
+	 * Creates a new system filter within the given filter container (either a
+	 * filter pool, or a filter). This creates the filter, and then saves the
+	 * filter pool.
+	 * <p>
+	 * Calls back to provider to inform of the event (filterEventFilterCreated)
+	 * 
+	 * @param parent The parent which is either a SystemFilterPool or a
+	 *            SystemFilter
+	 * @param aliasName The name to give the new filter. Must be unique for this
+	 *            pool.
+	 * @param filterStrings The list of String objects that represent the filter
+	 *            strings.
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public ISystemFilter createSystemFilter(ISystemFilterContainer parent, String aliasName, String[] filterStrings) throws Exception;
 
 	/**
-	 * Creates a new system filter within the given filter container (either a filter pool, or
-	 * a filter). This creates the filter, and then saves the filter pool. 
-	 * <p>Calls back to provider to inform of the event (filterEventFilterCreated)
-	 * @param parent The parent which is either a SystemFilterPool or a SystemFilter
-	 * @param aliasName The name to give the new filter. Must be unique for this pool.
-	 * @param filterStrings The list of String objects that represent the filter strings.
+	 * Creates a new system filter within the given filter container (either a
+	 * filter pool, or a filter). This creates the filter, and then saves the
+	 * filter pool.
+	 * <p>
+	 * Calls back to provider to inform of the event (filterEventFilterCreated)
+	 * 
+	 * @param parent The parent which is either a SystemFilterPool or a
+	 *            SystemFilter
+	 * @param aliasName The name to give the new filter. Must be unique for this
+	 *            pool.
+	 * @param filterStrings The list of String objects that represent the filter
+	 *            strings.
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public ISystemFilter createSystemFilter(ISystemFilterContainer parent, String aliasName, List filterStrings) throws Exception;
 
 	/**
-	 * Creates a new system filter that is typed.
-	 * Same as {@link #createSystemFilter(ISystemFilterContainer, String, String[])} but 
-	 *  takes a filter type as an additional parameter.
+	 * Creates a new system filter that is typed. Same as
+	 * {@link #createSystemFilter(ISystemFilterContainer, String, String[])} but
+	 * takes a filter type as an additional parameter.
 	 * <p>
-	 * A filter's type is an arbitrary string that is not interpreted or used by the base framework. This
-	 * is for use entirely by tools who wish to support multiple types of filters and be able to launch unique
-	 * actions per type, say.
+	 * A filter's type is an arbitrary string that is not interpreted or used by
+	 * the base framework. This is for use entirely by tools who wish to support
+	 * multiple types of filters and be able to launch unique actions per type,
+	 * say.
 	 * 
-	 * @param parent The parent which is either a SystemFilterPool or a SystemFilter
-	 * @param aliasName The name to give the new filter. Must be unique for this pool.
-	 * @param filterStrings The list of String objects that represent the filter strings.
+	 * @param parent The parent which is either a SystemFilterPool or a
+	 *            SystemFilter
+	 * @param aliasName The name to give the new filter. Must be unique for this
+	 *            pool.
+	 * @param filterStrings The list of String objects that represent the filter
+	 *            strings.
 	 * @param type The type of this filter
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public ISystemFilter createSystemFilter(ISystemFilterContainer parent, String aliasName, String[] filterStrings, String type) throws Exception;
 
 	/**
-	 * Creates a new system filter that is typed.
-	 * Same as {@link #createSystemFilter(ISystemFilterContainer, String, String[])} but 
-	 *  takes a filter type as an additional parameter.
+	 * Creates a new system filter that is typed. Same as
+	 * {@link #createSystemFilter(ISystemFilterContainer, String, String[])} but
+	 * takes a filter type as an additional parameter.
 	 * <p>
-	 * A filter's type is an arbitrary string that is not interpreted or used by the base framework. This
-	 * is for use entirely by tools who wish to support multiple types of filters and be able to launch unique
-	 * actions per type, say.
+	 * A filter's type is an arbitrary string that is not interpreted or used by
+	 * the base framework. This is for use entirely by tools who wish to support
+	 * multiple types of filters and be able to launch unique actions per type,
+	 * say.
 	 * 
-	 * @param parent The parent which is either a SystemFilterPool or a SystemFilter
-	 * @param aliasName The name to give the new filter. Must be unique for this pool.
-	 * @param filterStrings The list of String objects that represent the filter strings.
+	 * @param parent The parent which is either a SystemFilterPool or a
+	 *            SystemFilter
+	 * @param aliasName The name to give the new filter. Must be unique for this
+	 *            pool.
+	 * @param filterStrings The list of String objects that represent the filter
+	 *            strings.
 	 * @param type The type of this filter
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public ISystemFilter createSystemFilter(ISystemFilterContainer parent, String aliasName, List filterStrings, String type) throws Exception;
 
 	/**
-	 * Creates a new system filter that is typed and promptable
-	 * Same as {@link #createSystemFilter(ISystemFilterContainer, String ,String[], String)} but 
-	 *  takes a boolean indicating if it is promptable.
+	 * Creates a new system filter that is typed and promptable Same as
+	 * {@link #createSystemFilter(ISystemFilterContainer, String ,String[], String)}
+	 * but takes a boolean indicating if it is promptable.
 	 * <p>
-	 * A promptable filter is one in which the user is prompted for information at expand time.
-	 * There is no base filter framework support for this, but tools can query this attribute and
-	 * do their own thing at expand time.
+	 * A promptable filter is one in which the user is prompted for information
+	 * at expand time. There is no base filter framework support for this, but
+	 * tools can query this attribute and do their own thing at expand time.
 	 * 
-	 * @param parent The parent which is either a SystemFilterPool or a SystemFilter
-	 * @param aliasName The name to give the new filter. Must be unique for this pool.
-	 * @param filterStrings The list of String objects that represent the filter strings.
+	 * @param parent The parent which is either a SystemFilterPool or a
+	 *            SystemFilter
+	 * @param aliasName The name to give the new filter. Must be unique for this
+	 *            pool.
+	 * @param filterStrings The list of String objects that represent the filter
+	 *            strings.
 	 * @param type The type of this filter
 	 * @param promptable Pass true if this is a promptable filter
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public ISystemFilter createSystemFilter(ISystemFilterContainer parent, String aliasName, String[] filterStrings, String type, boolean promptable) throws Exception;
 
 	/**
-	 * Creates a new system filter that is typed and promptable
-	 * Same as {@link #createSystemFilter(ISystemFilterContainer, String ,String[], String)} but 
-	 *  takes a boolean indicating if it is promptable.
+	 * Creates a new system filter that is typed and promptable Same as
+	 * {@link #createSystemFilter(ISystemFilterContainer, String ,String[], String)}
+	 * but takes a boolean indicating if it is promptable.
 	 * <p>
-	 * A promptable filter is one in which the user is prompted for information at expand time.
-	 * There is no base filter framework support for this, but tools can query this attribute and
-	 * do their own thing at expand time.
+	 * A promptable filter is one in which the user is prompted for information
+	 * at expand time. There is no base filter framework support for this, but
+	 * tools can query this attribute and do their own thing at expand time.
 	 * 
-	 * @param parent The parent which is either a SystemFilterPool or a SystemFilter
-	 * @param aliasName The name to give the new filter. Must be unique for this pool.
-	 * @param filterStrings The list of String objects that represent the filter strings.
+	 * @param parent The parent which is either a SystemFilterPool or a
+	 *            SystemFilter
+	 * @param aliasName The name to give the new filter. Must be unique for this
+	 *            pool.
+	 * @param filterStrings The list of String objects that represent the filter
+	 *            strings.
 	 * @param type The type of this filter
 	 * @param promptable Pass true if this is a promptable filter
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public ISystemFilter createSystemFilter(ISystemFilterContainer parent, String aliasName, List filterStrings, String type, boolean promptable) throws Exception;
 
@@ -350,7 +385,7 @@ public interface ISystemFilterPoolManager extends IRSEPersistableContainer {
 	public boolean deleteSystemFilter(ISystemFilter filter) throws Exception;
 
 	/**
-	 * Renames a filter. This is better than filter.setName(String newName) as it 
+	 * Renames a filter. This is better than filter.setName(String newName) as it
 	 *  saves the parent pool to disk.
 	 * <p>
 	 * Does the following:
@@ -404,7 +439,7 @@ public interface ISystemFilterPoolManager extends IRSEPersistableContainer {
 
 	/**
 	 * Move existing filters a given number of positions in the same container.
-	 * If the delta is negative, they are all moved up by the given amount. If 
+	 * If the delta is negative, they are all moved up by the given amount. If
 	 * positive, they are all moved down by the given amount.<p>
 	 * <p>
 	 * Does the following:
@@ -524,7 +559,7 @@ public interface ISystemFilterPoolManager extends IRSEPersistableContainer {
 
 	/**
 	 * Move existing filter strings a given number of positions in the same filter
-	 * If the delta is negative, they are all moved up by the given amount. If 
+	 * If the delta is negative, they are all moved up by the given amount. If
 	 * positive, they are all moved down by the given amount.<p>
 	 * <p>
 	 * Does the following:
@@ -546,31 +581,31 @@ public interface ISystemFilterPoolManager extends IRSEPersistableContainer {
 	public void suspendCallbacks(boolean suspend);
 
 	/**
-	 * @generated This field/method will be replaced during code generation 
+	 * @generated This field/method will be replaced during code generation
 	 * @return The value of the SupportsNestedFilters attribute
 	 */
 	boolean isSupportsNestedFilters();
 
 	/**
-	 * @generated This field/method will be replaced during code generation 
+	 * @generated This field/method will be replaced during code generation
 	 * @param value The new value of the StringsCaseSensitive attribute
 	 */
 	void setStringsCaseSensitive(boolean value);
 
 	/**
-	 * @generated This field/method will be replaced during code generation 
+	 * @generated This field/method will be replaced during code generation
 	 * @return The value of the SupportsDuplicateFilterStrings attribute
 	 */
 	boolean isSupportsDuplicateFilterStrings();
 
 	/**
-	 * @generated This field/method will be replaced during code generation 
+	 * @generated This field/method will be replaced during code generation
 	 * Unsets the SupportsDuplicateFilterStrings attribute
 	 */
 	void unsetSupportsDuplicateFilterStrings();
 
 	/**
-	 * @generated This field/method will be replaced during code generation 
+	 * @generated This field/method will be replaced during code generation
 	 * @return <b>true</b> if the SupportsDuplicateFilterStrings attribute has been set
 	 */
 	boolean isSetSupportsDuplicateFilterStrings();

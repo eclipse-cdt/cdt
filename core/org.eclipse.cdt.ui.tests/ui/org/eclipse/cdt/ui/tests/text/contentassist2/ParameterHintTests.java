@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2007 QNX Software Systems and others.
+ * Copyright (c) 2007, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Bryan Wilkinson (QNX) - Initial API and implementation
+ *     Bryan Wilkinson (QNX) - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist2;
 
@@ -128,7 +129,8 @@ public class ParameterHintTests extends AbstractContentAssistTest {
 	}
 
 	//void foo(){bClass b(
-	public void _testConstructor2() throws Exception {
+	public void _testConstructor2_Bug223660() throws Exception {
+		// http://bugs.eclipse.org/223660
 		assertParameterHints(new String[] {
 				"bClass(int x)",
 				"bClass(int x,int y)",
@@ -145,7 +147,8 @@ public class ParameterHintTests extends AbstractContentAssistTest {
 	}
 	
 	//void foo(){tClass<int> t(
-	public void _testTemplateConstructor2() throws Exception {
+	public void _testTemplateConstructor2_Bug223660() throws Exception {
+		// http://bugs.eclipse.org/223660
 		assertParameterHints(new String[] {
 				"tClass(T t)",
 				"tClass(const tClass &)"

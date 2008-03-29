@@ -193,7 +193,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider, IRSEImport
 	 * @see org.eclipse.rse.internal.persistence.IRSEImportExportProvider#exportRSEDOM(java.io.File, org.eclipse.rse.persistence.dom.RSEDOM, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public boolean exportRSEDOM(File folder, RSEDOM dom, IProgressMonitor monitor) {
-		PFPersistenceAnchor anchor = new PFMetadataAnchor(folder);
+		PFPersistenceAnchor anchor = new PFFileSystemAnchor(folder);
 		String name = "DOM"; //$NON-NLS-1$
 		boolean saved = save(dom, anchor, name, monitor);
 		return saved;
@@ -203,7 +203,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider, IRSEImport
 	 * @see org.eclipse.rse.internal.persistence.IRSEImportExportProvider#importRSEDOM(java.io.File, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public RSEDOM importRSEDOM(File folder, IProgressMonitor monitor) {
-		PFPersistenceAnchor anchor = new PFMetadataAnchor(folder);
+		PFPersistenceAnchor anchor = new PFFileSystemAnchor(folder);
 		String name = "DOM"; //$NON-NLS-1$
 		RSEDOM dom = load(anchor, name, monitor);
 		return dom;
@@ -239,11 +239,11 @@ public class PropertyFileProvider implements IRSEPersistenceProvider, IRSEImport
 			anchor = new PFWorkspaceAnchor();
 		} else if (location.equals(PV_LOCATION_METADATA)) {
 			File profilesFolder = getProfilesFolder();
-			anchor = new PFMetadataAnchor(profilesFolder);
+			anchor = new PFFileSystemAnchor(profilesFolder);
 		} else {
 			// if no explicit location is specified we assume the metadata location
 			File profilesFolder = getProfilesFolder();
-			anchor = new PFMetadataAnchor(profilesFolder);
+			anchor = new PFFileSystemAnchor(profilesFolder);
 		}
 		return anchor;
 	}

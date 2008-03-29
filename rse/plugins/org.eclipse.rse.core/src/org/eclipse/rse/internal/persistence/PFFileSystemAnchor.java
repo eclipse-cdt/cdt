@@ -23,11 +23,11 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.rse.persistence.IRSEPersistenceProvider;
 import org.eclipse.rse.persistence.dom.RSEDOM;
 
-class PFMetadataAnchor implements PFPersistenceAnchor {
+class PFFileSystemAnchor implements PFPersistenceAnchor {
 	
 	private File providerFolder = null;
 	
-	public PFMetadataAnchor(File providerFolder) {
+	public PFFileSystemAnchor(File providerFolder) {
 		this.providerFolder = providerFolder;
 	}
 	
@@ -42,7 +42,7 @@ class PFMetadataAnchor implements PFPersistenceAnchor {
 
 	public PFPersistenceLocation getProfileLocation(String profileLocationName) {
 		File profileFolder = getProfileFolder(profileLocationName);
-		PFPersistenceLocation result = new PFMetadataLocation(profileFolder);
+		PFPersistenceLocation result = new PFFileSystemLocation(profileFolder);
 		return result;
 	}
 
@@ -68,7 +68,7 @@ class PFMetadataAnchor implements PFPersistenceAnchor {
 	 * @see org.eclipse.rse.internal.persistence.PFPersistenceAnchor#makeSaveJob(org.eclipse.rse.persistence.dom.RSEDOM, org.eclipse.rse.persistence.IRSEPersistenceProvider)
 	 */
 	public Job makeSaveJob(RSEDOM dom, IRSEPersistenceProvider provider) {
-		return new PFMetatdataJob(dom, provider);
+		return new PFFileSystemJob(dom, provider);
 	}
 
 	/**

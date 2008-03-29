@@ -25,11 +25,11 @@ import java.util.Set;
 
 import org.eclipse.rse.core.RSECorePlugin;
 
-class PFMetadataLocation implements PFPersistenceLocation {
+class PFFileSystemLocation implements PFPersistenceLocation {
 	
 	private File _baseFolder;
 	
-	public PFMetadataLocation(File baseFolder) {
+	public PFFileSystemLocation(File baseFolder) {
 		_baseFolder = baseFolder;
 	}
 
@@ -44,7 +44,7 @@ class PFMetadataLocation implements PFPersistenceLocation {
 	
 	public PFPersistenceLocation getChild(String childName) {
 		File childFolder = new File(_baseFolder, childName);
-		return new PFMetadataLocation(childFolder);
+		return new PFFileSystemLocation(childFolder);
 	}
 	
 	public PFPersistenceLocation[] getChildren() {
@@ -54,7 +54,7 @@ class PFMetadataLocation implements PFPersistenceLocation {
 		for (int i = 0; i < members.length; i++) {
 			File member = members[i];
 			if (member.isDirectory()) {
-				PFPersistenceLocation child = new PFMetadataLocation(member);
+				PFPersistenceLocation child = new PFFileSystemLocation(member);
 				children.add(child);
 			}
 		}

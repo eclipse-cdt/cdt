@@ -35,7 +35,7 @@ import org.eclipse.rse.persistence.dom.RSEDOM;
  * {@link RSECorePlugin#getThePersistenceManager()}. It is used to 
  * save a DOM to the workspace metadata area. A DOM corresponds to a profile.
  */
-public class PFMetatdataJob extends Job {
+public class PFFileSystemJob extends Job {
 	
 	private static Object jobFamily = RSECorePlugin.getThePersistenceManager();
 
@@ -51,7 +51,7 @@ public class PFMetatdataJob extends Job {
 		}
 	}
 
-	public PFMetatdataJob(RSEDOM dom, IRSEPersistenceProvider provider) {
+	public PFFileSystemJob(RSEDOM dom, IRSEPersistenceProvider provider) {
 		super("Saving Profile"); //$NON-NLS-1$
 		String title = NLS.bind(RSECoreMessages.SaveRSEDOMJob_SavingProfileJobName, dom.getName());
 		setName(title);

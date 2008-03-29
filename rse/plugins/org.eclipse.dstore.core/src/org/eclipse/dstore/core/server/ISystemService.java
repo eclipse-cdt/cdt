@@ -26,4 +26,13 @@ public interface ISystemService
      * @param client the object of the client
      */
     public void setThreadSecurity(Client client); 
+    
+    /**
+     * This method is used to execute run() in a thread assigned
+     * from thread pools.
+     * 
+     * @param securedThread the securedThread object that implements
+     *        Runnable.
+     */
+    public void executeThread(SecuredThread securedThread);
 }

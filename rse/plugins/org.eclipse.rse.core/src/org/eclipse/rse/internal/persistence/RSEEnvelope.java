@@ -138,20 +138,68 @@ public class RSEEnvelope {
 	}
 
 	/**
-	 * @return a file handle to a temporary directory
+	 * Adds a host to the envelope.
+	 * If a host of the same name is already present in the envelope the new host will
+	 * be renamed prior to adding it.
+	 * @param host the host to be added to the envelope
 	 */
-	private File getTemporaryFolder() {
-		IPath stateLocation = RSECorePlugin.getDefault().getStateLocation();
-		File stateFolder = new File(stateLocation.toOSString());
-		File envelopesFolder = new File(stateFolder, "envelopes"); //$NON-NLS-1$
-		envelopesFolder.mkdir();
-		List envelopeNames = Arrays.asList(envelopesFolder.list());
-		String envelopeName = generateName(envelopeNames);
-		File envelopeFolder = new File(envelopesFolder, envelopeName);
-		envelopeFolder.mkdir();
-		return envelopeFolder;
+	public void add(final IHost host) {
+		// find and add the host-unique filter pools
+		ISubSystem[] subsystems = host.getSubSystems();
+		for (int i = 0; i < subsystems.length; i++) {
+			ISubSystem subsystem = subsystems[i];
+			ISystemFilterPool pool = subsystem.getUniqueOwningSystemFilterPool(false);
+			if (pool != null) {
+				add(pool);
+			}
+		}
+		// add the host
+		String type = IRSEDOMConstants.TYPE_HOST;
+		String name = host.getName();
+		Runnable action = new Runnable() {
+			public void run() {
+				RSEDOMExporter.getInstance().createNode(dom, host, true);
+			}
+		};
+		addNode(type, name, action);
 	}
-	
+
+	/**
+	 * Adds a filter pool to the envelope.
+	 * If a filter pool of the same name is already present in the envelope the new filter pool will
+	 * be renamed prior to adding it.
+	 * @param pool the filter pool to be added to the envelope
+	 */
+	public void add(final ISystemFilterPool pool) {
+		// add the pool
+		String type = IRSEDOMConstants.TYPE_FILTER_POOL;
+		String name = pool.getName();
+		Runnable action = new Runnable() {
+			public void run() {
+				RSEDOMExporter.getInstance().createNode(dom, pool, true);
+			}
+		};
+		addNode(type, name, action);
+	}
+
+	/**
+	 * Adds a property set to the envelope.
+	 * If a property set of the same name is already present in the envelope the new property set will
+	 * be renamed prior to adding it.
+	 * @param propertySet the property set to be added to the envelope
+	 */
+	public void add(final IPropertySet propertySet) {
+		// add the property set
+		String type = IRSEDOMConstants.TYPE_FILTER_POOL;
+		String name = propertySet.getName();
+		Runnable action = new Runnable() {
+			public void run() {
+				RSEDOMExporter.getInstance().createNode(dom, propertySet, true);
+			}
+		};
+		addNode(type, name, action);
+	}
+
 	/**
 	 * Merges the contents of the envelope into the profile.
 	 * @param profile the profile which is updated with the changes. The profile may be active or inactive.
@@ -254,73 +302,6 @@ public class RSEEnvelope {
 		return filterPool;
 	}
 	
-	private interface NodeAction {
-		abstract void run();
-	}
-	
-	/**
-	 * Adds a host to the envelope.
-	 * If a host of the same name is already present in the envelope the new host will
-	 * be renamed prior to adding it.
-	 * @param host the host to be added to the envelope
-	 */
-	public void add(final IHost host) {
-		// find and add the host-unique filter pools
-		ISubSystem[] subsystems = host.getSubSystems();
-		for (int i = 0; i < subsystems.length; i++) {
-			ISubSystem subsystem = subsystems[i];
-			ISystemFilterPool pool = subsystem.getUniqueOwningSystemFilterPool(false);
-			if (pool != null) {
-				add(pool);
-			}
-		}
-		// add the host
-		String type = IRSEDOMConstants.TYPE_HOST;
-		String name = host.getName();
-		NodeAction action = new NodeAction() {
-			public void run() {
-				RSEDOMExporter.getInstance().createNode(dom, host, true);
-			}
-		};
-		addNode(type, name, action);
-	}
-
-	/**
-	 * Adds a filter pool to the envelope.
-	 * If a filter pool of the same name is already present in the envelope the new filter pool will
-	 * be renamed prior to adding it.
-	 * @param pool the filter pool to be added to the envelope
-	 */
-	public void add(final ISystemFilterPool pool) {
-		// add the pool
-		String type = IRSEDOMConstants.TYPE_FILTER_POOL;
-		String name = pool.getName();
-		NodeAction action = new NodeAction() {
-			public void run() {
-				RSEDOMExporter.getInstance().createNode(dom, pool, true);
-			}
-		};
-		addNode(type, name, action);
-	}
-	
-	/**
-	 * Adds a property set to the envelope.
-	 * If a property set of the same name is already present in the envelope the new property set will
-	 * be renamed prior to adding it.
-	 * @param propertySet the property set to be added to the envelope
-	 */
-	public void add(final IPropertySet propertySet) {
-		// add the property set
-		String type = IRSEDOMConstants.TYPE_FILTER_POOL;
-		String name = propertySet.getName();
-		NodeAction action = new NodeAction() {
-			public void run() {
-				RSEDOMExporter.getInstance().createNode(dom, propertySet, true);
-			}
-		};
-		addNode(type, name, action);
-	}
-	
 	private IStatus saveProviderId(File parent, IRSEImportExportProvider provider) {
 		IStatus status = Status.OK_STATUS;
 		String providerId = provider.getId();
@@ -347,7 +328,7 @@ public class RSEEnvelope {
 		return providerId;
 	}
 	
-	private void addNode(String type, String name, NodeAction action) {
+	private void addNode(String type, String name, Runnable action) {
 		ensureDOM();
 		RSEDOMNode existingNode = dom.getChild(type, name);
 		if (existingNode != null) {
@@ -358,12 +339,8 @@ public class RSEEnvelope {
 
 	private void ensureDOM() {
 		if (dom == null) {
-			initialize();
+			dom = new RSEDOM("dom"); //$NON-NLS-1$
 		}
-	}
-	
-	private void initialize() {
-		dom = new RSEDOM("dom"); //$NON-NLS-1$
 	}
 	
 	private String generateName(List usedNames) {
@@ -485,6 +462,21 @@ public class RSEEnvelope {
 	private IStatus makeStatus(Exception e) {
 		IStatus status = new Status(IStatus.ERROR, RSECorePlugin.PLUGIN_ID, "Unexpected Exception", e); //$NON-NLS-1$
 		return status;
+	}
+
+	/**
+	 * @return a file handle to a temporary directory
+	 */
+	private File getTemporaryFolder() {
+		IPath stateLocation = RSECorePlugin.getDefault().getStateLocation();
+		File stateFolder = new File(stateLocation.toOSString());
+		File envelopesFolder = new File(stateFolder, "envelopes"); //$NON-NLS-1$
+		envelopesFolder.mkdir();
+		List envelopeNames = Arrays.asList(envelopesFolder.list());
+		String envelopeName = generateName(envelopeNames);
+		File envelopeFolder = new File(envelopesFolder, envelopeName);
+		envelopeFolder.mkdir();
+		return envelopeFolder;
 	}
 	
 }

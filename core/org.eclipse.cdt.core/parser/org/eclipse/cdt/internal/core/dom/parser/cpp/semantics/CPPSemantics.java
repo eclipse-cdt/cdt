@@ -784,34 +784,34 @@ public class CPPSemantics {
 			if( inherited != null  ){
 				if( result == null ){
 					result = inherited;
-				} else if ( inherited != null ) {
-					if( !data.contentAssist ) {
-						if( result instanceof Object [] ){
-							Object [] r = (Object[]) result;
-							for( int j = 0; j < r.length && r[j] != null; j++ ) {
-								if( checkForAmbiguity( data, r[j], inherited ) ){
-								    data.problem = new ProblemBinding( data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name() ); 
-								    return null;
-								}
-							}
-						} else {
-							if( checkForAmbiguity( data, result, inherited ) ){
-							    data.problem = new ProblemBinding( data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name() ); 
+				} else if( !data.contentAssist ) {
+					if( result instanceof Object [] ){
+						Object [] r = (Object[]) result;
+						for( int j = 0; j < r.length && r[j] != null; j++ ) {
+							if( checkForAmbiguity( data, r[j], inherited ) ){
+							    data.problem = new ProblemBinding( data.astName,
+							    		IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name() ); 
 							    return null;
 							}
 						}
 					} else {
-						CharArrayObjectMap temp = (CharArrayObjectMap) inherited;
-						CharArrayObjectMap r = (CharArrayObjectMap) result;
-						char[] key = null;
-						int tempSize = temp.size();
-						for( int ii = 0; ii < tempSize; ii++ ){
-						    key = temp.keyAt( ii );
-							if( !r.containsKey( key ) ){
-								r.put( key, temp.get(key) );
-							} else {
-								//TODO: prefixLookup ambiguity checking
-							}
+						if( checkForAmbiguity( data, result, inherited ) ){
+						    data.problem = new ProblemBinding( data.astName,
+						    		IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name() ); 
+						    return null;
+						}
+					}
+				} else {
+					CharArrayObjectMap temp = (CharArrayObjectMap) inherited;
+					CharArrayObjectMap r = (CharArrayObjectMap) result;
+					char[] key = null;
+					int tempSize = temp.size();
+					for( int ii = 0; ii < tempSize; ii++ ){
+					    key = temp.keyAt( ii );
+						if( !r.containsKey( key ) ){
+							r.put( key, temp.get(key) );
+						} else {
+							//TODO: prefixLookup ambiguity checking
 						}
 					}
 				}
@@ -2077,7 +2077,7 @@ public class CPPSemantics {
             type = (IType) o;
         
         while( type != null ){
-            type = (type != null) ? getUltimateType( type, false ) : null;
+            type = getUltimateType( type, false );
             if( type == null || !( type instanceof IFunctionType ) )
                 return new ProblemBinding( data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name() );
 
@@ -2450,5 +2450,4 @@ public class CPPSemantics {
 		}
 		return false;
 	}
-
 }

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,11 +13,13 @@
  * David Dykstal (IBM) - [177882] fixed escapeValue for garbling of CJK characters
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * David Dykstal (IBM) - [188863] fix job conflict problems for save jobs, ignore bad profiles on restore
+ * David Dykstal (IBM) - [189274] provide import and export operations for profiles
  ********************************************************************************/
 package org.eclipse.rse.internal.persistence;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -35,6 +37,7 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
@@ -51,7 +54,7 @@ import org.eclipse.rse.persistence.dom.RSEDOMNodeAttribute;
  * This is class is used to restore an RSE DOM from disk and import it into RSE.
  * It stores the DOM as a tree of folders and .properties files.
  */
-public class PropertyFileProvider implements IRSEPersistenceProvider {
+public class PropertyFileProvider implements IRSEPersistenceProvider, IRSEImportExportProvider {
 
 	private static final String NULL_VALUE_STRING = "null"; //$NON-NLS-1$
 	/* interesting character sets */
@@ -59,21 +62,28 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	private static final String UPPER = "ABCDEFGHIJKLMNOPQRTSUVWXYZ"; //$NON-NLS-1$
 	
 	/* properties */
+	
+	/**
+	 * anchor location - can be workspace or metadata
+	 */
 	private static final String P_LOCATION = "location"; //$NON-NLS-1$
 	
 	/* property values */
 	private static final String PV_LOCATION_WORKSPACE = "workspace"; //$NON-NLS-1$
 	private static final String PV_LOCATION_METADATA = "metadata"; //$NON-NLS-1$
-		
+	
+	/* location names */
+	private static final String LOC_PROFILES = "profiles"; //$NON-NLS-1$
 	
 	private Pattern period = Pattern.compile("\\."); //$NON-NLS-1$
 	private Pattern suffixPattern = Pattern.compile("_(\\d+)$"); //$NON-NLS-1$
 	private Pattern unicodePattern = Pattern.compile("#(\\p{XDigit}+)#"); //$NON-NLS-1$
 	private Map typeQualifiers = getTypeQualifiers();
 	private Map saveJobs = new HashMap();
-	private PFPersistenceAnchor anchor = null;
+//	private PFPersistenceAnchor anchor = null;
 	private Properties properties = null;
-
+	private String providerId = null;
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.persistence.IRSEPersistenceProvider#getSavedProfileNames()
 	 */
@@ -105,31 +115,38 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	 * @see org.eclipse.rse.persistence.IRSEPersistenceProvider#saveRSEDOM(org.eclipse.rse.persistence.dom.RSEDOM, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public boolean saveRSEDOM(RSEDOM dom, IProgressMonitor monitor) {
-		boolean result = false;
+		boolean saved = false;
 		synchronized (dom) {
 			String profileLocationName = getLocationName(dom);
-			PFPersistenceLocation profileLocation = getAnchor().getProfileLocation(profileLocationName);
-			try {
-				int n = countNodes(dom);
-				monitor.beginTask(RSECoreMessages.PropertyFileProvider_SavingTaskName, n);
-				saveNode(dom, profileLocation, monitor);
-				monitor.done();
+			PFPersistenceAnchor anchor = getAnchor();
+			saved = save(dom, anchor, profileLocationName, monitor);
+			if (saved) {
 				dom.markUpdated();
-				result = true;
-			} catch (Exception e) {
-				logException(e);
 			}
 		}
-		return result;
+		return saved;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.persistence.IRSEPersistenceProvider#loadRSEDOM(org.eclipse.rse.model.ISystemProfileManager, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public RSEDOM loadRSEDOM(String profileName, IProgressMonitor monitor) {
-		RSEDOM dom = null;
 		String profileLocationName = getLocationName(PFConstants.AB_PROFILE, profileName);
-		PFPersistenceLocation location = getAnchor().getProfileLocation(profileLocationName);
+		PFPersistenceAnchor anchor = getAnchor();
+		RSEDOM dom = load(anchor, profileLocationName, monitor);
+		return dom;
+	}
+
+	/**
+	 * Load a DOM from a named location within an anchor
+	 * @param anchor the anchor that contained named locations for DOMs
+	 * @param name the named location of that DOM
+	 * @param monitor for progress reporting and cancelation
+	 * @return the DOM what was loaded or null if the load failed
+	 */
+	private RSEDOM load(PFPersistenceAnchor anchor, String name, IProgressMonitor monitor) {
+		RSEDOM dom = null;
+		PFPersistenceLocation location = anchor.getProfileLocation(name);
 		if (location.exists()) {
 			int n = countLocations(location);
 			monitor.beginTask(RSECoreMessages.PropertyFileProvider_LoadingTaskName, n);
@@ -148,6 +165,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	public Job getSaveJob(RSEDOM dom) {
 		Job saveJob = (Job) saveJobs.get(dom);
 		if (saveJob == null) {
+			PFPersistenceAnchor anchor = getAnchor();
 			saveJob = anchor.makeSaveJob(dom, this);
 			saveJobs.put(dom, saveJob);
 		}
@@ -171,6 +189,40 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.internal.persistence.IRSEImportExportProvider#exportRSEDOM(java.io.File, org.eclipse.rse.persistence.dom.RSEDOM, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public boolean exportRSEDOM(File folder, RSEDOM dom, IProgressMonitor monitor) {
+		PFPersistenceAnchor anchor = new PFMetadataAnchor(folder);
+		String name = "DOM"; //$NON-NLS-1$
+		boolean saved = save(dom, anchor, name, monitor);
+		return saved;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.internal.persistence.IRSEImportExportProvider#importRSEDOM(java.io.File, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public RSEDOM importRSEDOM(File folder, IProgressMonitor monitor) {
+		PFPersistenceAnchor anchor = new PFMetadataAnchor(folder);
+		String name = "DOM"; //$NON-NLS-1$
+		RSEDOM dom = load(anchor, name, monitor);
+		return dom;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.internal.persistence.IRSEImportExportProvider#setId(java.lang.String)
+	 */
+	public void setId(String providerId) {
+		this.providerId = providerId;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.internal.persistence.IRSEImportExportProvider#getId()
+	 */
+	public String getId() {
+		return providerId;
+	}
+	
 	/**
 	 * Checks a profile name for validity. Currently all names are valid except for completely blank names.
 	 * @param profileName the name to check
@@ -181,17 +233,55 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	}
 	
 	private PFPersistenceAnchor getAnchor() {
-		if (anchor == null) {
-			String location = properties.getProperty(P_LOCATION);
-			if (location.equals(PV_LOCATION_WORKSPACE)) {
-				anchor = new PFWorkspaceAnchor();
-			} else if (location.equals(PV_LOCATION_METADATA)) {
-				anchor = new PFMetadataAnchor();
-			} else {
-				anchor = new PFMetadataAnchor();
-			}
+		PFPersistenceAnchor anchor = null;
+		String location = properties.getProperty(P_LOCATION);
+		if (location.equals(PV_LOCATION_WORKSPACE)) {
+			anchor = new PFWorkspaceAnchor();
+		} else if (location.equals(PV_LOCATION_METADATA)) {
+			File profilesFolder = getProfilesFolder();
+			anchor = new PFMetadataAnchor(profilesFolder);
+		} else {
+			// if no explicit location is specified we assume the metadata location
+			File profilesFolder = getProfilesFolder();
+			anchor = new PFMetadataAnchor(profilesFolder);
 		}
 		return anchor;
+	}
+	
+	/**
+	 * @return the folder that acts as the parent for profile folders.
+	 */
+	private File getProfilesFolder() {
+		IPath statePath = RSECorePlugin.getDefault().getStateLocation();
+		File stateFolder = new File(statePath.toOSString());
+		File profilesFolder = new File(stateFolder, LOC_PROFILES);
+		if (!profilesFolder.exists()) {
+			profilesFolder.mkdir();
+		}
+		return profilesFolder;
+	}
+	
+	/**
+	 * Save a DOM
+	 * @param dom the DOM to save
+	 * @param anchor the anchor in which DOMs may be saved
+	 * @param name the name of the saved DOM within the anchor
+	 * @param monitor for progress reporting and cancelation
+	 * @return true if the DOM was saved to the named location within the anchor.
+	 */
+	private boolean save(RSEDOM dom, PFPersistenceAnchor anchor, String name, IProgressMonitor monitor) {
+		boolean saved = false;
+		PFPersistenceLocation profileLocation = anchor.getProfileLocation(name);
+		try {
+			int n = countNodes(dom);
+			monitor.beginTask(RSECoreMessages.PropertyFileProvider_SavingTaskName, n);
+			saveNode(dom, profileLocation, monitor);
+			monitor.done();
+			saved = true;
+		} catch (Exception e) {
+			logException(e);
+		}
+		return saved;
 	}
 
 	/**

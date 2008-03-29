@@ -17,6 +17,7 @@
  * Kevin Doyle (IBM) - [163883] Multiple filter strings are disabled
  * Kevin Doyle (IBM) - [197199] Renaming a Profile doesn't cause a save
  * David McKnight   (IBM)        - [217715] [api] RSE property sets should support nested property sets
+ * David Dykstal (IBM) - [189274] provide import and export operations for profiles
  *******************************************************************************/
 
 package org.eclipse.rse.internal.persistence.dom;
@@ -171,25 +172,37 @@ public class RSEDOMExporter implements IRSEDOMExporter {
 		RSEDOMNode[] result = new RSEDOMNode[propertySets.length];
 		for (int i = 0; i < propertySets.length; i++) {
 			IPropertySet set = propertySets[i];
-			RSEDOMNode propertySetNode = new RSEDOMNode(parent, IRSEDOMConstants.TYPE_PROPERTY_SET, set.getName());
-			propertySetNode.addAttribute(IRSEDOMConstants.ATTRIBUTE_DESCRIPTION, set.getDescription());
-			String[] keys = set.getPropertyKeys();
-			for (int k = 0; k < keys.length; k++) {
-				String key = keys[k];
-				String value = set.getPropertyValue(key);
-				IPropertyType type = set.getPropertyType(key);
-				RSEDOMNode propertyNode = new RSEDOMNode(propertySetNode, IRSEDOMConstants.TYPE_PROPERTY, key);
-				propertyNode.addAttribute(IRSEDOMConstants.ATTRIBUTE_TYPE, type.toString());
-				propertyNode.addAttribute(IRSEDOMConstants.ATTRIBUTE_VALUE, value);
-				
-			}
+			RSEDOMNode propertySetNode = createNode(parent, set, clean);
 			result[i] = propertySetNode;
-			// persist nested property sets of property set
-			if (set instanceof IRSEModelObject){
-				createPropertySetNodes(propertySetNode, (IRSEModelObject)set, clean);
-			}
 		}
 		return result;
+	}
+
+	/**
+	 * Creates a DOM node for a property set
+	 * @param parent the owning parent of the node
+	 * @param set the property set from which to create a node
+	 * @param clean true if we are creating, false if we are merging
+	 * @return the DOM node representing the property set
+	 */
+	public RSEDOMNode createNode(RSEDOMNode parent, IPropertySet set, boolean clean) {
+		RSEDOMNode propertySetNode = new RSEDOMNode(parent, IRSEDOMConstants.TYPE_PROPERTY_SET, set.getName());
+		propertySetNode.addAttribute(IRSEDOMConstants.ATTRIBUTE_DESCRIPTION, set.getDescription());
+		String[] keys = set.getPropertyKeys();
+		for (int k = 0; k < keys.length; k++) {
+			String key = keys[k];
+			String value = set.getPropertyValue(key);
+			IPropertyType type = set.getPropertyType(key);
+			RSEDOMNode propertyNode = new RSEDOMNode(propertySetNode, IRSEDOMConstants.TYPE_PROPERTY, key);
+			propertyNode.addAttribute(IRSEDOMConstants.ATTRIBUTE_TYPE, type.toString());
+			propertyNode.addAttribute(IRSEDOMConstants.ATTRIBUTE_VALUE, value);
+			
+		}
+		// persist nested property sets of property set
+		if (set instanceof IRSEModelObject){
+			createPropertySetNodes(propertySetNode, (IRSEModelObject)set, clean);
+		}
+		return propertySetNode;
 	}
 
 	/**
@@ -447,7 +460,7 @@ public class RSEDOMExporter implements IRSEDOMExporter {
 	private RSEDOMNode findOrCreateNode(RSEDOMNode parent, String type, IRSEModelObject modelObject, boolean clean) {
 		RSEDOMNode node = null;
 		String name = modelObject.getName();
-		if (!clean) {
+		if (!clean && parent != null) {
 			node = parent.getChild(type, name);
 			if (node != null && modelObject.isDirty()) {
 				node.clearAttributes();

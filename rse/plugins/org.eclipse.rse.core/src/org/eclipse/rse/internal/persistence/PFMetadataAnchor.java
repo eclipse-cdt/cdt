@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  * IBM Corporation - initial API and implementation
+ * David Dykstal (IBM) - [189274] provide import and export operations for profiles
  *******************************************************************************/
 
 package org.eclipse.rse.internal.persistence;
@@ -15,16 +16,20 @@ import java.io.File;
 import java.util.List;
 import java.util.Vector;
 
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.persistence.IRSEPersistenceProvider;
 import org.eclipse.rse.persistence.dom.RSEDOM;
 
 class PFMetadataAnchor implements PFPersistenceAnchor {
+	
+	private File providerFolder = null;
+	
+	public PFMetadataAnchor(File providerFolder) {
+		this.providerFolder = providerFolder;
+	}
 	
 	public IStatus deleteProfileLocation(String profileName, IProgressMonitor monitor) {
 		IStatus result = Status.OK_STATUS;
@@ -43,7 +48,6 @@ class PFMetadataAnchor implements PFPersistenceAnchor {
 
 	public String[] getProfileLocationNames() {
 		List names = new Vector(10);
-		File providerFolder = getProviderFolder();
 		File[] profileCandidates = providerFolder.listFiles();
 		for (int i = 0; i < profileCandidates.length; i++) {
 			File profileCandidate = profileCandidates[i];
@@ -68,21 +72,10 @@ class PFMetadataAnchor implements PFPersistenceAnchor {
 	}
 
 	/**
-	 * @return the folder that acts as the parent for profile folders.
-	 */
-	private File getProviderFolder() {
-		IPath statePath = RSECorePlugin.getDefault().getStateLocation();
-		File stateFolder = new File(statePath.toOSString());
-		File providerFolder = getFolder(stateFolder, "profiles"); //$NON-NLS-1$
-		return providerFolder;
-	}
-	
-	/**
 	 * Returns the File (directory) in which a profile is stored. 
 	 * @return The folder that was created or found.
 	 */
 	private File getProfileFolder(String profileLocationName) {
-		File  providerFolder = getProviderFolder();
 		File profileFolder = getFolder(providerFolder, profileLocationName);
 		return profileFolder;
 	}

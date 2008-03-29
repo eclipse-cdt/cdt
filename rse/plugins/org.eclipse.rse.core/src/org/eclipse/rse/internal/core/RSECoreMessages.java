@@ -12,6 +12,7 @@
  * David McKnight   (IBM)        - [220309] [nls] Some GenericMessages and SubSystemResources should move from UI to Core
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * David Dykstal (IBM) - [197167] adding notification and waiting for RSE model
+ * David Dykstal (IBM) - [189274] provide import and export operations for profiles
  ********************************************************************************/
 package org.eclipse.rse.internal.core;
 
@@ -48,6 +49,8 @@ public class RSECoreMessages extends NLS {
 	public static String PropertyFileProvider_LoadingTaskName;
 	public static String PropertyFileProvider_SavingTaskName;
 	public static String PropertyFileProvider_UnexpectedException;
+	public static String RSEEnvelope_ExportNotSupported;
+	public static String RSEEnvelope_ModelNotExported;
 	public static String RSEPersistenceManager_DeleteProfileJobName;
 	public static String SaveRSEDOMJob_SavingProfileJobName;
 	public static String SerializingProvider_UnexpectedException;

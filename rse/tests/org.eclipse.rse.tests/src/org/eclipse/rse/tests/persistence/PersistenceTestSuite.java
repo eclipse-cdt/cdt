@@ -7,6 +7,7 @@
  *
  * Contributors:
  * David Dykstal (IBM) - initial API and implementation
+ * David Dykstal (IBM) - [189274] provide import and export operations for profiles
  *******************************************************************************/
 package org.eclipse.rse.tests.persistence;
 
@@ -43,6 +44,10 @@ public class PersistenceTestSuite extends DelegatingTestSuiteHolder {
 		suite.addTest(new PersistenceTest("testPersistenceManagerStartup"));
 		suite.addTest(new PersistenceTest("testProfilePersistence"));
 		suite.addTest(new PersistenceTest("testHostPersistence"));
+		suite.addTest(new ExportImportTest("testHost1"));
+		suite.addTest(new ExportImportTest("testFilterPool1"));
+		suite.addTest(new ExportImportTest("testPropertySet"));
+		suite.addTest(new MigrationTest("testProfileMigration"));
 		return suite;
 	}
 	

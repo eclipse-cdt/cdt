@@ -13,10 +13,7 @@ package org.eclipse.cdt.internal.core.parser;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-
-public final class EmptyIterator<T> implements Iterator<T> 
-{
-
+public final class EmptyIterator<T> implements Iterator<T> {
 	public static final EmptyIterator<?> EMPTY_ITERATOR = new EmptyIterator<Object>();
 	
 	@SuppressWarnings("unchecked")
@@ -24,32 +21,27 @@ public final class EmptyIterator<T> implements Iterator<T>
 		return (EmptyIterator<T>) EMPTY_ITERATOR;
 	}
 	
-	private EmptyIterator()
-	{
+	private EmptyIterator() {
 	}
 	
     /* (non-Javadoc)
      * @see java.util.Iterator#hasNext()
      */
-    public final boolean hasNext()
-    {
+    public final boolean hasNext() {
         return false;
     }
 
     /* (non-Javadoc)
      * @see java.util.Iterator#next()
      */
-    public final T next()
-    {
+    public final T next() {
         throw new NoSuchElementException();
     }
 
     /* (non-Javadoc)
      * @see java.util.Iterator#remove()
      */
-    public final void remove()
-    {
+    public final void remove() {
 		throw new UnsupportedOperationException();          
     }
-	
 }

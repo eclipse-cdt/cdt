@@ -727,14 +727,12 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 		}
 		else {
 			disposeStackFrames();
+			fireChangeEvent( DebugEvent.CONTENT );
 		}
 		setCurrent( false );
 		setState( state );
 		setCurrentStateInfo( null );
-		DebugEvent events[] = new DebugEvent[2];
-		events[0] = createChangeEvent( DebugEvent.CONTENT );
-		events[1] = createResumeEvent( detail );
-		fireEventSet(events);
+		fireResumeEvent( detail );
 	}
 
 	private void handleEndSteppingRange( ICDIEndSteppingRange endSteppingRange ) {

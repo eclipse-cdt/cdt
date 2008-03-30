@@ -9,11 +9,11 @@
  *    IBM - Initial API and implementation
  *    Anton Leherbauer (Wind River Systems)
  *    Markus Schorn (Wind River Systems)
+ *    Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -757,14 +757,13 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     }
 
     private int findIncludePos(String[] paths, File currentDirectory) {
-        for (int i = 0; i < paths.length; ++i)
-            try {
-                String path = new File(paths[i]).getCanonicalPath();
-                String parent = currentDirectory.getCanonicalPath();
-                if (path.equals(parent))
-                    return i;
-            } catch (IOException e) {
-            }
+        for (int i = 0; i < paths.length; ++i) {
+        	File pathDir = new File(paths[i]);
+        	for (File dir = currentDirectory; dir != null; dir = dir.getParentFile()) {
+        		if (dir.equals(pathDir))
+        			return i;
+        	}
+        }
 
         return -1;
     }

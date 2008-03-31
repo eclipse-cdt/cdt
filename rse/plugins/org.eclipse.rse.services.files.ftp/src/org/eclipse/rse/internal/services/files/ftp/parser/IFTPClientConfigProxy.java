@@ -28,7 +28,7 @@ public interface IFTPClientConfigProxy {
 	public String getServerLanguageCode();
 	public String getShortMonthNames();
 	public String getServerTimeZoneId();
-	public String getInitialCommands();
+	public String[] getInitialCommands();
 	
 	public FTPClientConfig getFTPClientConfig();
 	

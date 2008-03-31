@@ -69,7 +69,13 @@ public class FTPClientConfigFactory implements IFTPClientConfigFactory {
 			String serverLanguageCode = ce[i].getAttribute("serverLanguageCode"); //$NON-NLS-1$
 			String shortMonthNames = ce[i].getAttribute("shortMonthNames"); //$NON-NLS-1$
 			String serverTimeZoneId = ce[i].getAttribute("serverTimeZoneId"); //$NON-NLS-1$
-			String initialCommands = ce[i].getAttribute("initCommands"); //$NON-NLS-1$
+			
+			IConfigurationElement[] initialCommandsSequence = ce[i].getChildren("initCommand"); //$NON-NLS-1$
+			String[] initialCommands = new String[initialCommandsSequence.length];
+			
+			for (int j = 0; j < initialCommands.length; j++) {
+				initialCommands[j] = initialCommandsSequence[j].getAttribute("cmd"); //$NON-NLS-1$
+			}
 			
 			FTPClientConfigProxy ftpClientConfigProxy = new FTPClientConfigProxy(id,label,priority,systemTypeRegex,className,declaringBundle,listCommandModifiers,
 					defaultDateFormatStr,recentDateFormatStr,serverLanguageCode,shortMonthNames,serverTimeZoneId, initialCommands);

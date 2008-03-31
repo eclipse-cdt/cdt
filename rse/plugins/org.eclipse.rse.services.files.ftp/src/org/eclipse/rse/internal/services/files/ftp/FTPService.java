@@ -91,7 +91,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
@@ -154,8 +153,6 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	private long _fCachePreviousTimestamp;
 	private Map _fCachePreviousFiles = new HashMap();
 	private static long FTP_STATCACHE_TIMEOUT = 200; //msec
-	
-	private static final String FTP_COMMAND_SEPARATOR = "|"; //$NON-NLS-1$
 	
 	private static class FTPBufferedInputStream extends BufferedInputStream {
 		
@@ -430,18 +427,11 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		_isBinaryFileType = true;
 		
 		//Initial commands
-		String initialCommands = _clientConfigProxy.getInitialCommands();
+		String[] initialCommands = _clientConfigProxy.getInitialCommands();
 		
-		if(initialCommands!=null)
-		{
-			StringTokenizer stk = new StringTokenizer(initialCommands,FTP_COMMAND_SEPARATOR);
-			
-			while(stk.hasMoreElements())
-			{
-				String command = stk.nextToken();
-				_ftpClient.sendCommand(command);
-			}
-		}
+		for (int i = 0; i < initialCommands.length; i++) {
+			_ftpClient.sendCommand(initialCommands[i]);
+			}	
 		
 		_userHome = _ftpClient.printWorkingDirectory();
 		

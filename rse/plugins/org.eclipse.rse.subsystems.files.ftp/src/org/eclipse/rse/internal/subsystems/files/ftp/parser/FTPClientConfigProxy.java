@@ -31,12 +31,12 @@ public class FTPClientConfigProxy implements IFTPClientConfigProxy{
 	private String serverLanguageCode;
 	private String shortMonthNames;
 	private String serverTimeZoneId;
-	private String initialCommands;
+	private String[] initialCommands; 
 	
 	private FTPClientConfig ftpClientConfig;
 	
 	public FTPClientConfigProxy(String id, String label, String priority, String systemTypeRegex, String className, Bundle declaringBundle, String listCommandModifiers,
-			String defaultDateFormatStr, String recentDateFormatStr, String serverLanguageCode, String shortMonthNames,	String serverTimeZoneId, String initialCommands)		
+			String defaultDateFormatStr, String recentDateFormatStr, String serverLanguageCode, String shortMonthNames,	String serverTimeZoneId, String[] initialCommands)		
 	{
 		this.id = id;
 		this.label = label;
@@ -113,7 +113,7 @@ public class FTPClientConfigProxy implements IFTPClientConfigProxy{
 		return ftpClientConfig;
 	}
 	
-	public String getInitialCommands() {
+	public String[] getInitialCommands() {
 		return initialCommands;
 	}
 	

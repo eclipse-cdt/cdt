@@ -456,8 +456,8 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 				}
 			}
 			// bug # 211935 : allow items filtering.
-			if (ls != null) // NULL means call from prefs
-				items = ls.filterItems(items);
+			if (ls != null && ls instanceof CDTMainWizardPage) // NULL means call from prefs
+				items = ((CDTMainWizardPage)ls).filterItems(items);
 			
 			addItemsToTree(tree, items);
 			

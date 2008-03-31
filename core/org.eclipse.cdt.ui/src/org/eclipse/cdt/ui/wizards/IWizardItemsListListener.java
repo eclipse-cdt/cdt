@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.wizards;
 
-import java.util.List;
 
 /**
  * Interface should be implemented by some visible object
@@ -31,21 +30,4 @@ public interface IWizardItemsListListener {
 	 * @return true if this page is visible 
 	 */
 	boolean isCurrent();
-
-	/**
-	 * Ability to filter items which would be shown
-	 * in the left pane of Main Wizard Page.
-	 * Standard implementation: return unchanged list.
-	 * When filtering, please note :
-	 * - Each item has {@link}EntryDescriptor type
-	 * - Items have hierarchical relations with others,
-	 *   so removing some item(s) can break a tree. 
-	 *  
-	 * @param items - list of EntryDescriptor objects 
-	 * @return - list with filtered items
-	 */
-//       for Java5:	
-//	List<EntryDescriptor> filterItems(List<EntryDescriptor> items);
-
-	List filterItems(List items);
 }

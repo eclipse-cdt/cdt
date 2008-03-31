@@ -14,10 +14,15 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.SortedSet;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.CoreException;
@@ -96,6 +101,12 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 			return PROCESS_CONTINUE;
 		}
 	}
+
+	private static final Comparator<String> COMP_INSENSITIVE= new Comparator<String> () {
+		public int compare(String o1, String o2) {
+			return o1.toUpperCase().compareTo(o2.toUpperCase());
+		}
+	};
 
 	private ISelection fSelection;
 	private IWorkbenchPartSite fSite;
@@ -292,7 +303,9 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 	}
 
 	private void output(PrintStream out, String indent, Map<String, String> definedSymbols, HashSet<String> reported) {
-		for (Entry<String, String> entry : definedSymbols.entrySet()) {
+		SortedMap<String, String> sorted= new TreeMap<String, String>(COMP_INSENSITIVE);
+		sorted.putAll(definedSymbols);
+		for (Entry<String, String> entry : sorted.entrySet()) {
 			final String macro = entry.getKey() + '=' + entry.getValue();
 			if (reported.add(macro)) {
 				out.println(indent + macro);
@@ -301,8 +314,12 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 	}
 	
 	private void output(PrintStream out, String indent,	IASTPreprocessorMacroDefinition[] defs, HashSet<String> reported) {
+		SortedSet<String> macros= new TreeSet<String>(COMP_INSENSITIVE);
 		for (IASTPreprocessorMacroDefinition def : defs) {
-			String macro= def.toString();
+			macros.add(def.toString());
+		}
+		
+		for (String macro : macros) {
 			if (reported.add(macro)) {
 				out.println(indent + macro);
 			}

@@ -15,6 +15,7 @@
  * David McKnight  (IBM)   [220123][dstore] Configurable timeout on irresponsiveness
  * David McKnight  (IBM)   [220892][dstore] Backward compatibility: Server and Daemon should support old clients
  * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
+ * David McKnight     (IBM)   [224906] [dstore] changes for getting properties and doing exit due to single-process capability
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.server;
@@ -39,6 +40,7 @@ import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.DataStoreAttributes;
 import org.eclipse.dstore.core.model.ISSLProperties;
+import org.eclipse.dstore.core.server.SystemServiceManager;
 import org.eclipse.dstore.internal.core.util.ExternalLoader;
 import org.eclipse.dstore.internal.core.util.Sender;
 import org.eclipse.dstore.internal.core.util.ssl.DStoreSSLContext;
@@ -182,7 +184,9 @@ public class ConnectionEstablisher
 			_updateHandler.finish();
 			_dataStore.finish();
 			System.out.println(ServerReturnCodes.RC_FINISHED);
-			//System.exit(0);
+			
+			if (SystemServiceManager.getInstance() == null)
+				System.exit(0);
 		}
 	}
 

@@ -13,6 +13,7 @@
  * 
  * Contributors:
  *   Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
+ *   David McKnight     (IBM)   [224906] [dstore] changes for getting properties and doing exit due to single-process capability
  *******************************************************************************/
 
 package org.eclipse.dstore.core.server;
@@ -65,14 +66,16 @@ public class Server implements Runnable
 			{
 				// version is bad
 				System.err.println(ServerReturnCodes.RC_JRE_VERSION_ERROR);
-				System.exit(-1);
+				if (SystemServiceManager.getInstance() == null)
+					System.exit(-1);
 			}
 		}
 		catch (Exception e)
 		{			
 			// version is bad
 			System.err.println(ServerReturnCodes.RC_JRE_VERSION_ERROR);
-			System.exit(-1);
+			if (SystemServiceManager.getInstance() == null)
+				System.exit(-1);
 		}
 		
 		try

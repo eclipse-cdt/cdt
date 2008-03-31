@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ *  David McKnight     (IBM)   [224906] [dstore] changes for getting properties and doing exit due to single-process capability
  ********************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -98,21 +98,6 @@ public class ByteStreamHandler implements IByteStreamHandler
 					byteConverter.setContext(file);
 					byte[] convertedBytes = byteConverter.convertClientBytesToHostBytes(buffer, 0, size);
 					fileStream.write(convertedBytes, 0, convertedBytes.length);
-					
-					/*
-					String bufferString = new String(buffer, 0, size, DE.ENCODING_UTF_8);
-
-					// hack for zOS
-					String theOS = System.getProperty("os.name");
-					if (theOS.toLowerCase().startsWith("z"))
-					{
-						bufferString = bufferString.replace('\r', ' ');
-					}
-
-					OutputStreamWriter writer = new OutputStreamWriter(fileStream);
-					writer.write(bufferString, 0, size);
-					writer.flush();
-					*/
 				}
 
 				fileStream.close();

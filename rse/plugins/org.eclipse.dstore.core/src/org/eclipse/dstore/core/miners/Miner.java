@@ -13,6 +13,7 @@
  * 
  * Contributors:
  *  Noriaki Takatsu    (IBM)   [220126] [dstore][api][breaking] Single process server for multiple clients
+ *  David McKnight     (IBM)   [224906] [dstore] changes for getting properties and doing exit due to single-process capability
  *******************************************************************************/
 
 package org.eclipse.dstore.core.miners;
@@ -29,6 +30,7 @@ import org.eclipse.dstore.core.model.DataStoreSchema;
 import org.eclipse.dstore.core.model.Handler;
 import org.eclipse.dstore.core.model.IExternalLoader;
 import org.eclipse.dstore.core.model.ISchemaExtender;
+import org.eclipse.dstore.core.server.SystemServiceManager;
  
 /**
  * Miner is the abstact base class of all DataStore extensions).  
@@ -303,7 +305,9 @@ implements ISchemaExtender
 			    er.printStackTrace();
 				_dataStore.trace(er);
 				_dataStore.finish();
-				System.exit(-1);
+				
+				if (SystemServiceManager.getInstance() == null)
+					System.exit(-1);
 			}
 		}
 

@@ -14,6 +14,7 @@
  * Contributors:
  * David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup
  * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
+ * David McKnight     (IBM)   [224906] [dstore] changes for getting properties and doing exit due to single-process capability
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -145,10 +146,13 @@ public class UniversalProcessMiner extends Miner
 	 * Get the username
 	 */
 	protected DataElement handleQueryUserName(DataElement subject, DataElement status) {
-
-		String encoding = System.getProperty("user.name"); //$NON-NLS-1$
-
-		subject.setAttribute(DE.A_VALUE, encoding);
+		if (_dataStore.getClient() != null){
+			subject.setAttribute(DE.A_VALUE, _dataStore.getClient().getProperty("user.name")); //$NON-NLS-1$			
+		}
+		else {
+			subject.setAttribute(DE.A_VALUE, System.getProperty("user.name")); //$NON-NLS-1$
+		}
+		
 		_dataStore.refresh(subject);
 
 		status.setAttribute(DE.A_NAME, "done"); //$NON-NLS-1$

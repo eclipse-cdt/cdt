@@ -15,6 +15,7 @@
  * David McKnight  (IBM)   [220123][dstore] Configurable timeout on irresponsiveness
  * David McKnight  (IBM)   [221601][dstore] xmlparser needs to be able to handle very large attributes
  * David McKnight  (IBM)   [222163][dstore] Special characters from old server are not restored
+ * David McKnight     (IBM)   [224906] [dstore] changes for getting properties and doing exit due to single-process capability
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.util;

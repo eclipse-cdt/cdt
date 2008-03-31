@@ -16,6 +16,7 @@
  *  David McKnight  (IBM)  - [202822] updating cleanup
  *  David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup
  *  Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
+ *  David McKnight     (IBM)   [224906] [dstore] changes for getting properties and doing exit due to single-process capability
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.command;
@@ -63,7 +64,6 @@ public class CommandMinerThread extends MinerThread
 	private Patterns _patterns;
 
 	private Process _theProcess;
-	private ProcessTracker _processTracker;
 
 	private DataElement _subject;
 	private String _cwdStr;
@@ -113,8 +113,14 @@ public class CommandMinerThread extends MinerThread
 		
 		try
 		{
-			String userHome = System.getProperty("user.home");//$NON-NLS-1$
-
+			String userHome = null;
+			if (_dataStore.getClient() != null){
+				userHome = _dataStore.getClient().getProperty("user.home");//$NON-NLS-1$
+			}
+			else {	
+				userHome = System.getProperty("user.home");//$NON-NLS-1$
+			}
+			
 			_cwdStr = theElement.getSource();
 			if (_cwdStr == null || _cwdStr.length() == 0)
 			{
@@ -189,8 +195,8 @@ public class CommandMinerThread extends MinerThread
 					if (_dataStore.getClient() != null)
 					{
 					    if (var.startsWith("HOME")) //$NON-NLS-1$
-					    {
-						    env[i] = "HOME=" + _dataStore.getClient().getProperty("user.home"); //$NON-NLS-1$
+					    {					    	
+						    env[i] = "HOME=" + _dataStore.getClient().getProperty("user.home"); //$NON-NLS-1$ //$NON-NLS-2$
 					    }
 					}
 				}
@@ -547,19 +553,6 @@ public class CommandMinerThread extends MinerThread
 
 
 
-	public void sendBreak()
-	{
-		
-		if (!_isWindows)
-		{
-			if (_processTracker != null)
-			{
-				_processTracker.killLastest();
-			}
-		}
-		
-		
-	}
 
 	public void sendInput(String input)
 	{
@@ -575,7 +568,6 @@ public class CommandMinerThread extends MinerThread
 			    // pty executable handles the break now
 				if (input.equals("#break") && !_isTTY) //$NON-NLS-1$
 				{
-					sendBreak();
 					return;
 				}
 				else if (input.equals("#enter")) //$NON-NLS-1$
@@ -1108,7 +1100,14 @@ public class CommandMinerThread extends MinerThread
 							int tildaIndex = fileName.indexOf("~"); //$NON-NLS-1$
 							if (tildaIndex == 0)
 							{
-								String userHome = System.getProperty("user.home"); //$NON-NLS-1$
+								String userHome = null;
+								
+								if (_dataStore.getClient() != null){
+									userHome = _dataStore.getClient().getProperty("user.home"); //$NON-NLS-1$
+								}
+								else {
+									userHome = System.getProperty("user.home"); //$NON-NLS-1$
+								}
 								
 								fileName = userHome + fileName.substring(1);
 							}

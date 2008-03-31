@@ -31,6 +31,7 @@
  * David McKnight (IBM) - [209593] [api] add support for "file permissions" and "owner" properties for unix files
  * Johnson Ma (Wind River) - [195402] Add tar.gz archive support
  * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
+ * David McKnight     (IBM)   [224906] [dstore] changes for getting properties and doing exit due to single-process capability
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -903,7 +904,12 @@ public class UniversalFileSystemMiner extends Miner {
 			// . translates to home dir
 			if (filterValue.equals("."))  //$NON-NLS-1$
 			{
-				filterValue = System.getProperty("user.home"); //$NON-NLS-1$
+				if (_dataStore.getClient() != null){
+					filterValue = _dataStore.getClient().getProperty("user.home"); //$NON-NLS-1$					
+				}
+				else {
+					filterValue = System.getProperty("user.home"); //$NON-NLS-1$
+				}
 				subject.setAttribute(DE.A_VALUE, filterValue);
 			}
 			if (!isVirtual)
@@ -1769,7 +1775,12 @@ public class UniversalFileSystemMiner extends Miner {
 			// . translates to home dir
 			if (filterValue.equals("."))  //$NON-NLS-1$
 			{
-				filterValue = System.getProperty("user.home"); //$NON-NLS-1$
+				if (_dataStore.getClient() != null){
+					filterValue = _dataStore.getClient().getProperty("user.home"); //$NON-NLS-1$
+				}
+				else {
+					filterValue = System.getProperty("user.home"); //$NON-NLS-1$
+				}
 				subject.setAttribute(DE.A_VALUE, filterValue);
 			}
 			if (!isVirtual)

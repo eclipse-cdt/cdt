@@ -18,6 +18,7 @@
  * David McKnight  (IBM)   [220123][dstore] Configurable timeout on irresponsiveness
  * David McKnight  (IBM)  - [222168][dstore] Buffer in DataElement is not sent
  * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
+ * David McKnight     (IBM)   [224906] [dstore] changes for getting properties and doing exit due to single-process capability
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -3515,9 +3516,16 @@ public final class DataStore
 	{
 		if (_userPreferencesDirectory == null) {
 			
-			_userPreferencesDirectory = System.getProperty("user.home"); //$NON-NLS-1$
+			String clientUserID;
+			if (_client != null){
+				_userPreferencesDirectory = _client.getProperty("user.home"); //$NON-NLS-1$
+				clientUserID = _client.getProperty("client.username"); //$NON-NLS-1$
+			} 
+			else {
+				_userPreferencesDirectory = System.getProperty("user.home"); //$NON-NLS-1$
+				clientUserID = System.getProperty("client.username"); //$NON-NLS-1$
+			}
 			
-			String clientUserID = System.getProperty("client.username"); //$NON-NLS-1$
 			if (clientUserID == null || clientUserID.equals("")) //$NON-NLS-1$
 			{
 				clientUserID = ""; //$NON-NLS-1$

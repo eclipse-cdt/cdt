@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ *  David McKnight     (IBM)   [224906] [dstore] changes for getting properties and doing exit due to single-process capability
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.server;
@@ -31,6 +31,7 @@ import org.eclipse.dstore.core.model.DataStoreAttributes;
 import org.eclipse.dstore.core.model.DataStoreResources;
 import org.eclipse.dstore.core.model.DataStoreSchema;
 import org.eclipse.dstore.core.model.IDataStoreConstants;
+import org.eclipse.dstore.core.server.SystemServiceManager;
 
 /**
  * The ServerCommandHandler is reponsible for maintaining
@@ -62,7 +63,10 @@ public class ServerCommandHandler extends CommandHandler
 				_dataStore.getUpdateHandler().finish();
 				_dataStore.finish();
 				System.out.println(ServerReturnCodes.RC_FINISHED);
-				System.exit(0);
+				
+				// only exit if there's no service manager
+				if (SystemServiceManager.getInstance() == null)
+					System.exit(0);
 			}
 		}
 		

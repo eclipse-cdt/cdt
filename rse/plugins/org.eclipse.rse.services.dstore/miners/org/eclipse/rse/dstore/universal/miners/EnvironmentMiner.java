@@ -15,6 +15,7 @@
  * {Name} (company) - description of contribution.
  * David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup
  * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
+ * David McKnight     (IBM)   [224906] [dstore] changes for getting properties and doing exit due to single-process capability
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -95,8 +96,15 @@ public class EnvironmentMiner extends Miner
 		 */
 		DataElement systemInfo = _dataStore.createObject(_minerData, "dstore.structureNode", "systemInfo"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		_dataStore.createObject(systemInfo, "system.property", "user.home", System.getProperty("user.home")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		_dataStore.createObject(systemInfo, "system.property", "temp.dir", System.getProperty("java.io.tmpdir")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		if (_dataStore.getClient() != null){
+			_dataStore.createObject(systemInfo, "system.property", "user.home", _dataStore.getClient().getProperty("user.home")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			_dataStore.createObject(systemInfo, "system.property", "temp.dir", _dataStore.getClient().getProperty("java.io.tmpdir")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			
+		}
+		else {
+			_dataStore.createObject(systemInfo, "system.property", "user.home", System.getProperty("user.home")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			_dataStore.createObject(systemInfo, "system.property", "temp.dir", System.getProperty("java.io.tmpdir")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
 		
 		_dataStore.createObject(systemInfo, "system.property", "os.name", System.getProperty("os.name")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		_dataStore.createObject(systemInfo, "system.property", "os.version", System.getProperty("os.version")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -253,7 +261,13 @@ public class EnvironmentMiner extends Miner
 	{
 		String userPreferencesDirectory = _dataStore.getClient().getProperty("user.home"); //$NON-NLS-1$	
 			
-			String clientUserID = System.getProperty("client.username"); //$NON-NLS-1$
+		String clientUserID = null;
+		if (_dataStore.getClient() != null){
+			clientUserID = _dataStore.getClient().getProperty("client.username"); //$NON-NLS-1$
+		}
+		else {
+			clientUserID = System.getProperty("client.username"); //$NON-NLS-1$			
+		}
 			if (clientUserID == null || clientUserID.equals("")) //$NON-NLS-1$
 			{
 				clientUserID = ""; //$NON-NLS-1$

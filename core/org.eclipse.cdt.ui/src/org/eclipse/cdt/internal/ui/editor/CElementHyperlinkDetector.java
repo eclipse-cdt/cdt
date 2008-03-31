@@ -45,7 +45,7 @@ public class CElementHyperlinkDetector extends AbstractHyperlinkDetector {
 	
 	public IHyperlink[] detectHyperlinks(ITextViewer textViewer, final IRegion region, boolean canShowMultipleHyperlinks) {
 		ITextEditor textEditor= (ITextEditor)getAdapter(ITextEditor.class);
-		if (region == null || canShowMultipleHyperlinks || !(textEditor instanceof CEditor))
+		if (region == null || !(textEditor instanceof CEditor))
 			return null;
 
 		final IAction openAction= textEditor.getAction("OpenDeclarations"); //$NON-NLS-1$

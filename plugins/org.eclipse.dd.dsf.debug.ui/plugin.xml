@@ -4,7 +4,7 @@
    <extension point="org.eclipse.debug.core.watchExpressionDelegates">
       <watchExpressionDelegate 
          	debugModel="org.eclipse.dd.dsf.debug.ui"
-     		delegateClass="org.eclipse.dd.dsf.debug.ui.viewmodel.expression.WatchExpressionDelegate"/>
+     		delegateClass="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.WatchExpressionDelegate"/>
   </extension>
 
    <extension point="org.eclipse.ui.editors.annotationTypes">
@@ -56,7 +56,7 @@
             id="org.eclipse.dd.dsf.debug.ui.viewmodel.update.Refresh"
             targetID="org.eclipse.debug.ui.RegisterView">
          <action
-               class="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.RefreshActionDelegate"
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.RefreshActionDelegate"
                icon="icons/refresh.gif"
                id="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.Refresh"
                label="Refresh"
@@ -67,7 +67,7 @@
             id="org.eclipse.dd.dsf.debug.ui.viewmodel.update.Refresh"
             targetID="org.eclipse.debug.ui.VariableView">
          <action
-               class="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.RefreshActionDelegate"
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.RefreshActionDelegate"
                icon="icons/refresh.gif"
                id="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.Refresh"
                label="Refresh"
@@ -78,7 +78,7 @@
             id="org.eclipse.dd.dsf.debug.ui.viewmodel.update.Refresh"
             targetID="org.eclipse.debug.ui.ExpressionView">
          <action
-               class="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.RefreshActionDelegate"
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.RefreshActionDelegate"
                icon="icons/refresh.gif"
                id="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.Refresh"
                label="Refresh"
@@ -89,7 +89,7 @@
             id="org.eclipse.dd.dsf.debug.ui.update.variable.updatePolicies"
             targetID="org.eclipse.debug.ui.VariableView">
          <action
-               class="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.SelectUpdatePolicyAction"
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.SelectUpdatePolicyAction"
                id="org.eclipse.dd.dsf.debug.ui.update.selectUpdatePolicy"
                label="Update Policy"
                menubarPath="additions">
@@ -99,7 +99,7 @@
             id="org.eclipse.dd.dsf.debug.ui.update.register.updatePolicies"
             targetID="org.eclipse.debug.ui.RegisterView">
          <action
-               class="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.SelectUpdatePolicyAction"
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.SelectUpdatePolicyAction"
                id="org.eclipse.dd.dsf.debug.ui.update.selectUpdatePolicy"
                label="Update Policy"
                menubarPath="additions">
@@ -115,13 +115,13 @@
 			<enablement>
 		        <with variable="selection">
 	        		<iterate>
-					    <instanceof value="org.eclipse.dd.dsf.debug.ui.viewmodel.numberformat.IFormattedValueVMContext"/>
+					    <instanceof value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.IFormattedValueVMContext"/>
 	        		</iterate>
 	      		</with>
 	      	</enablement>      
         </detailFactories>
         <detailFactories
-              class="org.eclipse.dd.dsf.debug.ui.viewmodel.modules.ModuleDetailPaneFactory"
+              class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.modules.ModuleDetailPaneFactory"
               id="org.eclipse.dd.dsf.debug.ui.viewmodel.moduleDetailPaneFactory">
         </detailFactories>
     </extension>

@@ -12,10 +12,10 @@ package org.eclipse.dd.gdb.internal.ui.viewmodel;
 
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
-import org.eclipse.dd.dsf.debug.ui.viewmodel.expression.ExpressionVMProvider;
-import org.eclipse.dd.dsf.debug.ui.viewmodel.modules.ModulesVMProvider;
-import org.eclipse.dd.dsf.debug.ui.viewmodel.register.RegisterVMProvider;
-import org.eclipse.dd.dsf.debug.ui.viewmodel.variable.VariableVMProvider;
+import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.ExpressionVMProvider;
+import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.modules.ModulesVMProvider;
+import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.RegisterVMProvider;
+import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.variable.VariableVMProvider;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMAdapter;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;

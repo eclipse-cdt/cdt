@@ -14,10 +14,10 @@ package org.eclipse.dd.examples.pda.ui.viewmodel.launch;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
-import org.eclipse.dd.dsf.debug.ui.viewmodel.launch.LaunchRootVMNode;
-import org.eclipse.dd.dsf.debug.ui.viewmodel.launch.StackFramesVMNode;
-import org.eclipse.dd.dsf.debug.ui.viewmodel.launch.StandardProcessVMNode;
-import org.eclipse.dd.dsf.debug.ui.viewmodel.launch.LaunchRootVMNode.LaunchesEvent;
+import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch.LaunchRootVMNode;
+import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch.StackFramesVMNode;
+import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch.StandardProcessVMNode;
+import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch.LaunchRootVMNode.LaunchesEvent;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMAdapter;
 import org.eclipse.dd.dsf.ui.viewmodel.IRootVMNode;

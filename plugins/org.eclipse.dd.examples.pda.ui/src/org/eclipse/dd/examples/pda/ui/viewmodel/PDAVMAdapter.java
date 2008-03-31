@@ -11,8 +11,8 @@
 package org.eclipse.dd.examples.pda.ui.viewmodel;
 
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
-import org.eclipse.dd.dsf.debug.ui.viewmodel.expression.ExpressionVMProvider;
-import org.eclipse.dd.dsf.debug.ui.viewmodel.variable.VariableVMProvider;
+import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.ExpressionVMProvider;
+import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.variable.VariableVMProvider;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMAdapter;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;

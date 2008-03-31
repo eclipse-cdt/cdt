@@ -1172,7 +1172,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 				version= (version << 8) + (b & 0xff);
 				out.write(b);
 			}
-			if (version < PDOM.MIN_SUPPORTED_VERSION) {
+			if (version < PDOM.MIN_SUPPORTED_VERSION || version > PDOM.MAX_SUPPORTED_VERSION) {
 				final IStatus status = new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, 0, CCorePlugin.getResourceString("PDOMManager.unsupportedVersion"), null); //$NON-NLS-1$
 				throw new CoreException(status); 
 			}

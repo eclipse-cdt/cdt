@@ -96,17 +96,22 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 */
 	public static final String FRAGMENT_PROPERTY_VALUE_FORMAT_ID= "org.eclipse.cdt.internal.core.pdom.PDOM"; //$NON-NLS-1$
 	
-	public static int version(int major, int minor) {
+	private static int version(int major, int minor) {
 		return major << 16 + minor;
 	}
-	
 	public static final int MAJOR_VERSION = 57; 
 	public static final int MINOR_VERSION = 0;	// minor versions must be compatible	
 	
 	public static final int CURRENT_VERSION=       version(MAJOR_VERSION, MINOR_VERSION);
 	public static final int MIN_SUPPORTED_VERSION= version(MAJOR_VERSION, 0);
 	public static final int MAX_SUPPORTED_VERSION= version(MAJOR_VERSION+1, 0)-1;
-	
+
+	public static String versionString(int version) {
+		final int major= version >> 16;
+		final int minor= version & 0xffff;
+		return "" + major + '.' + minor; //$NON-NLS-1$
+	}
+
 	/* 
 	 * PDOM internal format history
 	 * 
@@ -239,10 +244,6 @@ public class PDOM extends PlatformObject implements IPDOM {
 
 	public IIndexLocationConverter getLocationConverter() {
 		return locationConverter;
-	}
-
-	public boolean isCurrentVersion() throws CoreException {
-		return db.getVersion() == CURRENT_VERSION;
 	}
 
 	public boolean isSupportedVersion() throws CoreException {
@@ -894,8 +895,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 			return FRAGMENT_PROPERTY_VALUE_FORMAT_ID;
 		}
 		if(IIndexFragment.PROPERTY_FRAGMENT_FORMAT_VERSION.equals(propertyName)) {
-			int version= db.getVersion();
-			return ""+(version >> 16) + '.' + (version & 0xffff); //$NON-NLS-1$
+			return PDOM.versionString(db.getVersion());
 		}
 		return new DBProperties(db, PROPERTIES).getProperty(propertyName);
 	}

@@ -212,15 +212,20 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		}
 		String defaultSelection = selection;
 		for (int i = 0; i < debugConfigs.length; i++) {
-			if (mode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE) || debugConfigs[i].supportsMode(mode)) {
+			if ((mode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE) 
+					                          && debugConfigs[i].getName().equals("gdbserver Debugger")) ||  //$NON-NLS-1$
+                (mode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN) 
+                		                      && debugConfigs[i].getName().equals("gdb/mi") && debugConfigs[i].supportsMode(mode)) ||  //$NON-NLS-1$
+                (mode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH) 
+                  		                      && debugConfigs[i].getName().equals("gdb Debugger") && debugConfigs[i].supportsMode(mode))) {  //$NON-NLS-1$
 				String debuggerPlatform = debugConfigs[i].getPlatform();
 				if (validatePlatform(config, debugConfigs[i])) {
 					list.add(debugConfigs[i]);
-					// select first exact matching debugger for platform or
-					// requested selection
-					if ( (defaultSelection.equals("") && debuggerPlatform.equalsIgnoreCase(configPlatform))) { //$NON-NLS-1$
-						defaultSelection = debugConfigs[i].getID();
-					}
+//					// select first exact matching debugger for platform or
+//					// requested selection
+//					if ( (defaultSelection.equals("") && debuggerPlatform.equalsIgnoreCase(configPlatform))) { //$NON-NLS-1$
+//						defaultSelection = debugConfigs[i].getID();
+//					}
 				}
 			}
 		}

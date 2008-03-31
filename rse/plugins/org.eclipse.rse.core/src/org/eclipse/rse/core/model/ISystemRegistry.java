@@ -775,54 +775,100 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	/**
 	 * Notify all listeners of a change to a remote resource such as a file.
 	 * This one takes the information needed and creates the event for you.
-	 * @param eventType - one of the constants from {@link org.eclipse.rse.core.events.ISystemRemoteChangeEvents}
-	 * @param resource - the remote resource object, or absolute name of the resource as would be given by calling getAbsoluteName on its remote adapter
-	 * @param resourceParent - the remote resource's parent object, or absolute name, if that is known. If it is non-null, this will aid in refreshing occurences of that parent.
-	 * @param subsystem - the subsystem which contains this remote resource. This allows the search for impacts to be 
-	 *   limited to subsystems of the same parent factory, and to connections with the same hostname as the subsystem's connection.
-	 * @param oldNames - on a rename, copy or move operation, these are the absolute names of the resources prior to the operation
+	 * 
+	 * @param eventType - one of the constants from
+	 *            {@link org.eclipse.rse.core.events.ISystemRemoteChangeEvents}
+	 * @param resource - the remote resource object, or absolute name of the
+	 *            resource as would be given by calling getAbsoluteName on its
+	 *            remote adapter
+	 * @param resourceParent - the remote resource's parent object, or absolute
+	 *            name, if that is known. If it is non-null, this will aid in
+	 *            refreshing occurrences of that parent.
+	 * @param subsystem - the subsystem which contains this remote resource.
+	 *            This allows the search for impacts to be limited to subsystems
+	 *            of the same parent factory, and to connections with the same
+	 *            hostname as the subsystem's connection.
+	 * @param oldNames - on a rename, copy or move operation, these are the
+	 *            absolute names of the resources prior to the operation
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public void fireRemoteResourceChangeEvent(int eventType, Object resource, Object resourceParent, ISubSystem subsystem, String[] oldNames);
 
 	/**
 	 * Notify all listeners of a change to a remote resource such as a file.
 	 * This one takes the information needed and creates the event for you.
-	 * @param eventType - one of the constants from {@link org.eclipse.rse.core.events.ISystemRemoteChangeEvents}
-	 * @param resource - the remote resource object, or absolute name of the resource as would be given by calling getAbsoluteName on its remote adapter
-	 * @param resourceParent - the remote resource's parent object, or absolute name, if that is known. If it is non-null, this will aid in refreshing occurences of that parent.
-	 * @param subsystem - the subsystem which contains this remote resource. This allows the search for impacts to be 
-	 *   limited to subsystems of the same parent factory, and to connections with the same hostname as the subsystem's connection.
-	 * @param oldNames - on a rename, copy or move operation, these are the absolute names of the resources prior to the operation
-	 * @param originatingViewer - optional. If set, this gives the viewer a clue that it should select the affected resource after refreshing its parent. 
-	 *    This saves sending a separate event to reveal and select the new created resource on a create event, for example.
+	 * 
+	 * @param eventType - one of the constants from
+	 *            {@link org.eclipse.rse.core.events.ISystemRemoteChangeEvents}
+	 * @param resource - the remote resource object, or absolute name of the
+	 *            resource as would be given by calling getAbsoluteName on its
+	 *            remote adapter
+	 * @param resourceParent - the remote resource's parent object, or absolute
+	 *            name, if that is known. If it is non-null, this will aid in
+	 *            refreshing occurrences of that parent.
+	 * @param subsystem - the subsystem which contains this remote resource.
+	 *            This allows the search for impacts to be limited to subsystems
+	 *            of the same parent factory, and to connections with the same
+	 *            hostname as the subsystem's connection.
+	 * @param oldNames - on a rename, copy or move operation, these are the
+	 *            absolute names of the resources prior to the operation
+	 * @param originatingViewer - optional. If set, this gives the viewer a clue
+	 *            that it should select the affected resource after refreshing
+	 *            its parent. This saves sending a separate event to reveal and
+	 *            select the new created resource on a create event, for
+	 *            example.
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public void fireRemoteResourceChangeEvent(int eventType, Object resource, Object resourceParent, ISubSystem subsystem, String[] oldNames, Object originatingViewer);
 
 	/**
 	 * Notify all listeners of a change to a remote resource such as a file.
 	 * This one takes the information needed and creates the event for you.
+	 * 
 	 * @param operation - the operation for which this event was fired
-	 * @param eventType - one of the constants from {@link org.eclipse.rse.core.events.ISystemRemoteChangeEvents}
-	 * @param resource - the remote resource object, or absolute name of the resource as would be given by calling getAbsoluteName on its remote adapter
-	 * @param resourceParent - the remote resource's parent object, or absolute name, if that is known. If it is non-null, this will aid in refreshing occurences of that parent.
-	 * @param subsystem - the subsystem which contains this remote resource. This allows the search for impacts to be 
-	 *   limited to subsystems of the same parent factory, and to connections with the same hostname as the subsystem's connection.
-	 * @param oldNames - on a rename, copy or move operation, these are the absolute names of the resources prior to the operation
+	 * @param eventType - one of the constants from
+	 *            {@link org.eclipse.rse.core.events.ISystemRemoteChangeEvents}
+	 * @param resource - the remote resource object, or absolute name of the
+	 *            resource as would be given by calling getAbsoluteName on its
+	 *            remote adapter
+	 * @param resourceParent - the remote resource's parent object, or absolute
+	 *            name, if that is known. If it is non-null, this will aid in
+	 *            refreshing occurrences of that parent.
+	 * @param subsystem - the subsystem which contains this remote resource.
+	 *            This allows the search for impacts to be limited to subsystems
+	 *            of the same parent factory, and to connections with the same
+	 *            hostname as the subsystem's connection.
+	 * @param oldNames - on a rename, copy or move operation, these are the
+	 *            absolute names of the resources prior to the operation
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public void fireRemoteResourceChangeEvent(String operation, int eventType, Object resource, Object resourceParent, ISubSystem subsystem, String[] oldNames);
 
 	/**
 	 * Notify all listeners of a change to a remote resource such as a file.
 	 * This one takes the information needed and creates the event for you.
+	 * 
 	 * @param operation - the operation for which this event was fired
-	 * @param eventType - one of the constants from {@link org.eclipse.rse.core.events.ISystemRemoteChangeEvents}
-	 * @param resource - the remote resource object, or absolute name of the resource as would be given by calling getAbsoluteName on its remote adapter
-	 * @param resourceParent - the remote resource's parent object, or absolute name, if that is known. If it is non-null, this will aid in refreshing occurences of that parent.
-	 * @param subsystem - the subsystem which contains this remote resource. This allows the search for impacts to be 
-	 *   limited to subsystems of the same parent factory, and to connections with the same hostname as the subsystem's connection.
-	 * @param oldNames - on a rename, copy or move operation, these are the absolute names of the resources prior to the operation
-	 * @param originatingViewer - optional. If set, this gives the viewer a clue that it should select the affected resource after refreshing its parent. 
-	 *    This saves sending a separate event to reveal and select the new created resource on a create event, for example.
+	 * @param eventType - one of the constants from
+	 *            {@link org.eclipse.rse.core.events.ISystemRemoteChangeEvents}
+	 * @param resource - the remote resource object, or absolute name of the
+	 *            resource as would be given by calling getAbsoluteName on its
+	 *            remote adapter
+	 * @param resourceParent - the remote resource's parent object, or absolute
+	 *            name, if that is known. If it is non-null, this will aid in
+	 *            refreshing occurrences of that parent.
+	 * @param subsystem - the subsystem which contains this remote resource.
+	 *            This allows the search for impacts to be limited to subsystems
+	 *            of the same parent factory, and to connections with the same
+	 *            hostname as the subsystem's connection.
+	 * @param oldNames - on a rename, copy or move operation, these are the
+	 *            absolute names of the resources prior to the operation
+	 * @param originatingViewer - optional. If set, this gives the viewer a clue
+	 *            that it should select the affected resource after refreshing
+	 *            its parent. This saves sending a separate event to reveal and
+	 *            select the new created resource on a create event, for
+	 *            example.
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public void fireRemoteResourceChangeEvent(String operation, int eventType, Object resource, Object resourceParent, ISubSystem subsystem, String[] oldNames, Object originatingViewer);
 

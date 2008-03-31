@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
+import org.eclipse.dd.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
@@ -32,7 +33,8 @@ import org.eclipse.dd.dsf.debug.service.IRegisters.IBitFieldDMContext;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IBitFieldDMData;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IMnemonic;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterDMContext;
-import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterGroupDMContext;
+import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterDMData;
+import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterGroupDMData;
 import org.eclipse.dd.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.IDebugVMConstants;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.expression.AbstractExpressionVMNode;
@@ -116,32 +118,22 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
         }
         
         public String createWatchExpression(Object element) throws CoreException {
-            BitFieldVMC bitFieldVmc = ((BitFieldVMC)element);
+            IRegisterGroupDMData groupData = fDataAccess.getRegisterGroupDMData(element);
+            IRegisterDMData registerData = fDataAccess.getRegisterDMData(element);
+            IBitFieldDMData bitFieldData = fDataAccess.getBitFieldDMData(element);
 
-            StringBuffer exprBuf = new StringBuffer();
-            IRegisterGroupDMContext groupDmc = 
-                DMContexts.getAncestorOfType(bitFieldVmc.getDMContext(), IRegisterGroupDMContext.class);
-            if (groupDmc != null) {
+            if (groupData != null && registerData != null && bitFieldData != null) { 
+                StringBuffer exprBuf = new StringBuffer();
                 exprBuf.append("$$\""); //$NON-NLS-1$
-                exprBuf.append(groupDmc.getName());
+                exprBuf.append(groupData.getName());
                 exprBuf.append('"');
-            }
-            
-            IRegisterDMContext registerDmc = 
-                DMContexts.getAncestorOfType(bitFieldVmc.getDMContext(), IRegisterDMContext.class);
-            if (registerDmc != null) {
                 exprBuf.append('$');
-                exprBuf.append(registerDmc.getName());
-            }
-
-            IBitFieldDMContext bitFieldDmc = 
-                DMContexts.getAncestorOfType(bitFieldVmc.getDMContext(), IBitFieldDMContext.class);
-            if (bitFieldDmc != null) {
+                exprBuf.append(registerData.getName());
                 exprBuf.append('.');
-                exprBuf.append(bitFieldDmc.getName());
+                exprBuf.append(bitFieldData.getName());
+                return exprBuf.toString();
             }
-
-            return exprBuf.toString();
+            return null;
         }
     }
     
@@ -512,7 +504,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
     }
 
     @Override
-    protected void testElementForExpression(Object element, IExpression expression, DataRequestMonitor<Boolean> rm) {
+    protected void testElementForExpression(Object element, IExpression expression, final DataRequestMonitor<Boolean> rm) {
         if (!(element instanceof IDMVMContext)) {
             rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_HANDLE, "Invalid context", null)); //$NON-NLS-1$
             rm.done();
@@ -526,13 +518,31 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
             return;
         }
         
-        String bitFieldName = parseExpressionForBitFieldName(expression.getExpressionText());
-        if (dmc.getName().equals(bitFieldName)) {
-            rm.setData(Boolean.TRUE);
-        } else {
-            rm.setData(Boolean.FALSE);
+        final String bitFieldName = parseExpressionForBitFieldName(expression.getExpressionText());
+        try {
+            getSession().getExecutor().execute(new DsfRunnable() {
+                public void run() {
+                    IRegisters registersService = getServicesTracker().getService(IRegisters.class);
+                    if (registersService != null) {
+                        registersService.getBitFieldData(
+                            dmc, 
+                            new DataRequestMonitor<IBitFieldDMData>(ImmediateExecutor.getInstance(), rm) {
+                                @Override
+                                protected void handleSuccess() {
+                                    rm.setData( getData().getName().equals(bitFieldName) );
+                                    rm.done();
+                                }
+                            });
+                    } else {
+                        rm.setStatus(new Status(IStatus.WARNING, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Register service not available", null)); //$NON-NLS-1$                        
+                        rm.done();
+                    }
+                }
+            });
+        } catch (RejectedExecutionException e) {
+            rm.setStatus(new Status(IStatus.WARNING, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "DSF session shut down", null)); //$NON-NLS-1$
+            rm.done();
         }
-        rm.done();
     }
 
     public boolean canParseExpression(IExpression expression) {

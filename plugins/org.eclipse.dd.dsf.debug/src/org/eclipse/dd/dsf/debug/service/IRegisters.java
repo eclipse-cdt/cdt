@@ -32,7 +32,6 @@ public interface IRegisters extends IFormattedValues {
 
     /** Register group context */
     public interface IRegisterGroupDMContext extends IFormattedDataDMContext {
-        public String getName();
     }
     
     /** Event indicating values for the group have changed. */
@@ -52,7 +51,6 @@ public interface IRegisters extends IFormattedValues {
 
     /** Register context */
     public interface IRegisterDMContext extends IFormattedDataDMContext {
-        public String getName();
     }
     
     /** Event indicating register value changed. */
@@ -73,7 +71,6 @@ public interface IRegisters extends IFormattedValues {
 
     /** Bit field context */
     public interface IBitFieldDMContext extends IFormattedDataDMContext {
-        public String getName();
     }
 
     /** Event indicating register value changed. */

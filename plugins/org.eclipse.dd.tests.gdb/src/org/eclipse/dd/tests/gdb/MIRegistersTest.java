@@ -9,14 +9,19 @@ import java.util.List;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.dd.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.dd.dsf.concurrent.ImmediateExecutor;
+import org.eclipse.dd.dsf.concurrent.Query;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues;
 import org.eclipse.dd.dsf.debug.service.IRegisters;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMData;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterDMContext;
+import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterDMData;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterGroupDMContext;
+import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterGroupDMData;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
@@ -189,9 +194,19 @@ public class MIRegistersTest extends BaseTestCase {
     public void getRegisterGroups() throws Throwable {     
     	final IRegisterGroupDMContext regGroupsDMC = getRegisterGroup();
     	
+        Query<IRegisterGroupDMData> query = new Query<IRegisterGroupDMData>() {
+            @Override
+            protected void execute(DataRequestMonitor<IRegisterGroupDMData> rm) {
+                fRegService.getRegisterGroupData(regGroupsDMC, rm);
+            }
+        };
+        fSession.getExecutor().execute(query);
+        
+        IRegisterGroupDMData data = query.get();
+    	
     	assertTrue("The name of the main group should be: General Registers instead of: " +
-    			   regGroupsDMC.getName(),
-    			   regGroupsDMC.getName().equals("General Registers"));    	
+    			   data.getName(),
+    			   data.getName().equals("General Registers"));    	
     }
     
     @Test
@@ -211,8 +226,36 @@ public class MIRegistersTest extends BaseTestCase {
         IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(execDmc, 0);
     	final IRegisterDMContext[] regDMCs = getRegisters(frameDmc);
     	List<String> regNames = Arrays.asList("eax","ecx","edx","ebx","esp","ebp","esi","edi","eip","eflags","cs","ss","ds","es","fs","gs","st0","st1","st2","st3","st4","st5","st6","st7","fctrl","fstat","ftag","fiseg","fioff","foseg","fooff","fop","xmm0","xmm1","xmm2","xmm3","xmm4","xmm5","xmm6","xmm7","mxcsr","orig_eax","mm0","mm1","mm2","mm3","mm4","mm5","mm6","mm7");
-    	for(IRegisterDMContext reg: regDMCs){
-    		String regName = reg.getName();
+    	
+        Query<IRegisterDMData[]> query = new Query<IRegisterDMData[]>() {
+            @Override
+            protected void execute(DataRequestMonitor<IRegisterDMData[]> rm) {
+                final IRegisterDMData[] datas = new IRegisterDMData[regDMCs.length];
+                rm.setData(datas);
+                final CountingRequestMonitor countingRm = new CountingRequestMonitor(ImmediateExecutor.getInstance(), rm);
+                countingRm.setDoneCount(regDMCs.length);
+                for (int i = 0; i < regDMCs.length; i++) {
+                    final int index = i; 
+                    fRegService.getRegisterData(
+                        regDMCs[index], 
+                        new DataRequestMonitor<IRegisterDMData>(ImmediateExecutor.getInstance(), countingRm) {
+                            @Override
+                            protected void handleSuccess() {
+                                datas[index] = getData();
+                                countingRm.done();
+                            }
+                        });
+                }
+                
+            }
+        };
+
+        fSession.getExecutor().execute(query);
+        
+        IRegisterDMData[] datas = query.get();
+    	
+    	for(IRegisterDMData data: datas){
+    		String regName = data.getName();
    			Assert.assertFalse("GDB does not support register name: " + regName, !regNames.contains(regName));
     	}
     }

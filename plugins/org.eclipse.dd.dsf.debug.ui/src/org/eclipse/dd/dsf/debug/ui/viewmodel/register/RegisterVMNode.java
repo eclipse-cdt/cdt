@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
+import org.eclipse.dd.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
@@ -30,7 +31,7 @@ import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMData;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterChangedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterDMContext;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterDMData;
-import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterGroupDMContext;
+import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterGroupDMData;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.IDebugVMConstants;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.expression.AbstractExpressionVMNode;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.numberformat.IFormattedValuePreferenceStore;
@@ -114,22 +115,15 @@ public class RegisterVMNode extends AbstractExpressionVMNode
         }
 
         public String createWatchExpression(Object element) throws CoreException {
-            RegisterVMC registerVmc = ((RegisterVMC)element);
-
-            StringBuffer exprBuf = new StringBuffer();
-            IRegisterGroupDMContext groupDmc = 
-                DMContexts.getAncestorOfType(registerVmc.getDMContext(), IRegisterGroupDMContext.class);
-            if (groupDmc != null) {
+            IRegisterGroupDMData groupData = fSyncRegisterDataAccess.getRegisterGroupDMData(element);
+            IRegisterDMData registerData = fSyncRegisterDataAccess.getRegisterDMData(element);
+            if (groupData != null && registerData != null) { 
+                StringBuffer exprBuf = new StringBuffer();
                 exprBuf.append("$$\""); //$NON-NLS-1$
-                exprBuf.append(groupDmc.getName());
+                exprBuf.append(groupData.getName());
                 exprBuf.append('"');
-            }
-
-            IRegisterDMContext registerDmc = 
-                DMContexts.getAncestorOfType(registerVmc.getDMContext(), IRegisterDMContext.class);
-            if (registerDmc != null) {
                 exprBuf.append('$');
-                exprBuf.append(registerDmc.getName());
+                exprBuf.append(registerData.getName());
                 return exprBuf.toString();
             }
 
@@ -485,7 +479,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
     }
     
     @Override
-    protected void testElementForExpression(Object element, IExpression expression, DataRequestMonitor<Boolean> rm) {
+    protected void testElementForExpression(Object element, IExpression expression, final DataRequestMonitor<Boolean> rm) {
         if (!(element instanceof IDMVMContext)) {
             rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_HANDLE, "Invalid context", null)); //$NON-NLS-1$
             rm.done();
@@ -498,13 +492,31 @@ public class RegisterVMNode extends AbstractExpressionVMNode
             return;
         }
         
-        String regName = parseExpressionForRegisterName(expression.getExpressionText());
-        if (dmc.getName().equals(regName)) {
-            rm.setData(Boolean.TRUE);
-        } else {
-            rm.setData(Boolean.FALSE);
+        final String regName = parseExpressionForRegisterName(expression.getExpressionText());
+        try {
+            getSession().getExecutor().execute(new DsfRunnable() {
+                public void run() {
+                    IRegisters registersService = getServicesTracker().getService(IRegisters.class);
+                    if (registersService != null) {
+                        registersService.getRegisterData(
+                            dmc, 
+                            new DataRequestMonitor<IRegisterDMData>(ImmediateExecutor.getInstance(), rm) {
+                                @Override
+                                protected void handleSuccess() {
+                                    rm.setData( getData().getName().equals(regName) );
+                                    rm.done();
+                                }
+                            });
+                    } else {
+                        rm.setStatus(new Status(IStatus.WARNING, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Register service not available", null)); //$NON-NLS-1$                        
+                        rm.done();
+                    }
+                }
+            });
+        } catch (RejectedExecutionException e) {
+            rm.setStatus(new Status(IStatus.WARNING, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "DSF session shut down", null)); //$NON-NLS-1$
+            rm.done();
         }
-        rm.done();
     }
 
     @Override

@@ -10,9 +10,6 @@
  *     Sergey Prigogin (Google)
  *******************************************************************************/
 
-/*
- * Created on May 3, 2005
- */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -31,7 +28,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
  *
  * @author aniefer
  */
-public class CPPUnknownClass extends CPPUnknownBinding implements ICPPClassType {
+public class CPPUnknownClass extends CPPUnknownBinding implements ICPPInternalUnknownClassType {
 
     /**
      * @param name
@@ -117,7 +114,7 @@ public class CPPUnknownClass extends CPPUnknownBinding implements ICPPClassType 
         return getUnknownScope();
     }
 
-    /* (non-Javadoc)
+	/* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
      */
     public boolean isSameType(IType type) {

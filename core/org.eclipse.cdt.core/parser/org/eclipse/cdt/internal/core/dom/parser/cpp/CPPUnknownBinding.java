@@ -43,16 +43,6 @@ public class CPPUnknownBinding extends PlatformObject implements ICPPInternalUnk
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknown#getUnknownScope()
-     */
-    public ICPPScope getUnknownScope() {
-        if (unknownScope == null) {
-            unknownScope = new CPPUnknownScope(this, name);
-        }
-        return unknownScope;
-    }
-
-    /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#getDeclarations()
      */
     public IASTNode[] getDeclarations() {
@@ -127,13 +117,23 @@ public class CPPUnknownBinding extends PlatformObject implements ICPPInternalUnk
     }
 
     /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknown#getUnknownScope()
+     */
+    public ICPPScope getUnknownScope() {
+        if (unknownScope == null) {
+            unknownScope = new CPPUnknownScope(this, name);
+        }
+        return unknownScope;
+    }
+
+    /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknown#resolveUnknown(org.eclipse.cdt.core.parser.util.ObjectMap)
      */
     public IBinding resolveUnknown(ObjectMap argMap) throws DOMException {
         IBinding result = this;
         IType t = (IType) argMap.get(scopeBinding);
-        if (t == null && scopeBinding instanceof CPPUnknownBinding) {
-        	IBinding binding = ((CPPUnknownBinding) scopeBinding).resolveUnknown(argMap);
+        if (t == null && scopeBinding instanceof ICPPInternalUnknownClassType) {
+        	IBinding binding = ((ICPPInternalUnknownClassType) scopeBinding).resolveUnknown(argMap);
         	if (binding instanceof IType) {
                 t = (IType) binding;
             }

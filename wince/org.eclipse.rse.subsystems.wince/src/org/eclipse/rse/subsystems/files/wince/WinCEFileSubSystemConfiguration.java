@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Radoslav Gerganov - initial API and implementation
+ *    Radoslav Gerganov - derived from SftpFileSubSystemConfiguration
  *******************************************************************************/
 package org.eclipse.rse.subsystems.files.wince;
 
@@ -69,7 +69,7 @@ public class WinCEFileSubSystemConfiguration extends FileServiceSubSystemConfigu
       RemoteFileFilterString myHomeFilterString = new RemoteFileFilterString(this);
       myHomeFilterString.setPath("\\My Documents\\"); //$NON-NLS-1$
       filterStrings.add(myHomeFilterString.toString());
-      mgr.createSystemFilter(pool, "My Home", filterStrings);
+      mgr.createSystemFilter(pool, "My Home", filterStrings); //$NON-NLS-1$
       //filter.setNonChangable(true);
       //filter.setSingleFilterStringOnly(true);
       
@@ -77,7 +77,7 @@ public class WinCEFileSubSystemConfiguration extends FileServiceSubSystemConfigu
       filterStrings = new Vector();
       RemoteFileFilterString rootFilesFilterString = new RemoteFileFilterString(this);
       filterStrings.add(rootFilesFilterString.toString());          
-      mgr.createSystemFilter(pool, "Root", filterStrings);         
+      mgr.createSystemFilter(pool, "Root", filterStrings); //$NON-NLS-1$
     } catch (Exception exc) {
       SystemBasePlugin.logError("Error creating default filter pool",exc); //$NON-NLS-1$
     }

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Radoslav Gerganov - initial API and implementation
+ *    Radoslav Gerganov - derived from SftpHostFile
  *******************************************************************************/
 package org.eclipse.rse.internal.services.wince.files;
 

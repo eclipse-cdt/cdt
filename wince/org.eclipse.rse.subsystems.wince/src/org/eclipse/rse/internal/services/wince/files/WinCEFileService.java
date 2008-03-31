@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Radoslav Gerganov - initial API and implementation
+ *    Radoslav Gerganov - derived from SftpFileService and LocalFileService
  *******************************************************************************/
 package org.eclipse.rse.internal.services.wince.files;
 
@@ -225,8 +225,8 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
       handle = session.createFile(fullPath, OS.GENERIC_READ, 
           OS.FILE_SHARE_READ, OS.OPEN_EXISTING, OS.FILE_ATTRIBUTE_NORMAL);
       bos = new BufferedOutputStream(new FileOutputStream(localFile));
-      // TODO: find the optimal buffer size
-      byte[] buffer = new byte[8 * 1024];
+      // don't increase the buffer size! the native functions sometimes fail with large buffers, 4K always work
+      byte[] buffer = new byte[4 * 1024];
       while (true) {
         int bytesRead = session.readFile(handle, buffer);
         if (bytesRead == -1) {
@@ -334,8 +334,8 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
     try {
       handle = session.createFile(fullPath, OS.GENERIC_WRITE, 
           OS.FILE_SHARE_READ, OS.CREATE_ALWAYS, OS.FILE_ATTRIBUTE_NORMAL);
-      // TODO: find the optimal buffer size
-      byte[] buffer = new byte[8 * 1024];
+      // don't increase the buffer size! the native functions sometimes fail with large buffers, 4K always work
+      byte[] buffer = new byte[4 * 1024];
       while (true) {
         int bytesRead = bis.read(buffer);
         if (bytesRead == -1) {
@@ -414,11 +414,11 @@ public class WinCEFileService extends AbstractFileService implements IWinCEServi
   }
 
   public String getDescription() {
-    return Messages.getString("WinCEFileService.12"); //$NON-NLS-1$
+    return Messages.WinCEFileService_0;
   }
 
   public String getName() {
-    return Messages.getString("WinCEFileService.13"); //$NON-NLS-1$
+    return Messages.WinCEFileService_1;
   }
 
   public void initService(IProgressMonitor monitor) {

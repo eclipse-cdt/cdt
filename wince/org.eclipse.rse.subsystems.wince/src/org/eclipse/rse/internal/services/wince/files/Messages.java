@@ -10,23 +10,17 @@
  *******************************************************************************/
 package org.eclipse.rse.internal.services.wince.files;
 
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import org.eclipse.osgi.util.NLS;
 
-public class Messages {
+public class Messages extends NLS {
   private static final String BUNDLE_NAME = "org.eclipse.rse.internal.services.wince.files.messages"; //$NON-NLS-1$
-
-  private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-      .getBundle(BUNDLE_NAME);
-
-  private Messages() {
+  public static String WinCEFileService_0;
+  public static String WinCEFileService_1;
+  static {
+    // initialize resource bundle
+    NLS.initializeMessages(BUNDLE_NAME, Messages.class);
   }
 
-  public static String getString(String key) {
-    try {
-      return RESOURCE_BUNDLE.getString(key);
-    } catch (MissingResourceException e) {
-      return '!' + key + '!';
-    }
+  private Messages() {
   }
 }

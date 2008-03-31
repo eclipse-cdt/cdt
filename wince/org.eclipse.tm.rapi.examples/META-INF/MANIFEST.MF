@@ -6,8 +6,8 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.tm.rapi.examples.Activator
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.core.runtime
-Import-Package: org.eclipse.tm.rapi
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.tm.rapi;bundle-version="[0.1.0,1.0.0)"
 Export-Package: org.eclipse.tm.rapi.examples
 Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true

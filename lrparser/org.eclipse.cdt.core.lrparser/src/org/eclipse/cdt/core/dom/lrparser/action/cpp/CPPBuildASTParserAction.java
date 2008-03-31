@@ -346,7 +346,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	
 	/**
 	 * template_id
-     *     ::= identifier_token '<' <openscope-ast> template_argument_list_opt '>'
+     *     ::= identifier_name '<' <openscope-ast> template_argument_list_opt '>'
      *     
      * operator_function_id
      *     ::= operator_id '<' <openscope-ast> template_argument_list_opt '>'
@@ -356,11 +356,6 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		
 		List<Object> templateArguments = astStack.closeScope();
 		IASTName name = (IASTName) astStack.pop();
-		
-//		char[] chars = tokenListToNameCharArray(parser.getRuleTokens());
-//		IASTName name = nodeFactory.newName(chars);
-//		setOffsetAndLength(name);
-	
 		
 		ICPPASTTemplateId templateId = nodeFactory.newCPPTemplateId(name);
 		
@@ -442,20 +437,45 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	
     /**
      * unqualified_id
-     *     ::= '~' class_name 
+     *     ::= '~' identifier_token
      */
   	public void consumeDestructorName() {
   		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
   		
-  		astStack.pop(); // throw away the name node thats already on the stack
-  		
+  		// concatenate the '~' with the identifier token
   		char[] chars = tokenListToNameCharArray(parser.getRuleTokens());
+  		
   		IASTName name = nodeFactory.newName(chars);
   		setOffsetAndLength(name);
   		astStack.push(name);
   		
   		if(TRACE_AST_STACK) System.out.println(astStack);
   	}
+  	
+  	
+  	/**
+  	 * destructor_type_name
+     *     ::= '~' template_id_name
+  	 */
+  	public void consumeDestructorNameTemplateId() {
+  		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
+  		
+  		ICPPASTTemplateId templateId = (ICPPASTTemplateId) astStack.peek();
+  		
+  		IASTName oldName = templateId.getTemplateName();
+  		char[] newChars = ("~" + oldName).toCharArray(); //$NON-NLS-1$
+  		
+  		IASTName newName = nodeFactory.newName(newChars);
+  		
+  		int offset = offset(parser.getLeftIToken());
+  		int length = offset - endOffset(oldName);
+  		setOffsetAndLength(newName, offset, length);
+  		
+  		templateId.setTemplateName(newName);
+  		
+  		if(TRACE_AST_STACK) System.out.println(astStack);
+  	}
+  	
   	
   	
   	/**
@@ -1578,7 +1598,10 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
  		IASTName qualifiedId = subRuleQualifiedName(true);
  		IASTDeclarator declarator = nodeFactory.newDeclarator(qualifiedId);
  		setOffsetAndLength(declarator);
- 		IASTSimpleDeclaration declaration = nodeFactory.newSimpleDeclaration(null); // no decl spec
+ 		// there has to be an empty specifier or... kaboom!
+ 		IASTDeclSpecifier emptySpecifier = nodeFactory.newSimpleDeclSpecifier();
+		setOffsetAndLength(emptySpecifier, parser.getLeftIToken().getStartOffset(), 0);
+ 		IASTSimpleDeclaration declaration = nodeFactory.newSimpleDeclaration(emptySpecifier);
  		setOffsetAndLength(declaration);
  		declaration.addDeclarator(declarator);
  		astStack.push(declaration);

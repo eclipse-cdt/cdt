@@ -418,8 +418,12 @@ unqualified_id_name
       | operator_function_id_name
       | conversion_function_id_name
       | template_id_name
-      | '~' class_name
+      | '~' identifier_token
           /. $Build  consumeDestructorName();  $EndBuild ./
+      | '~' template_id_name
+          /. $Build  consumeDestructorNameTemplateId();  $EndBuild ./
+     -- | '~' class_name
+    
 
 
 -- wrap an identifier in a name node
@@ -553,8 +557,16 @@ pseudo_destructor_name
 
 
 destructor_type_name
-    ::= '~' type_name
+    ::= '~' identifier_token
           /. $Build  consumeDestructorName();  $EndBuild ./
+      | '~' template_id_name
+          /. $Build  consumeDestructorNameTemplateId();  $EndBuild ./
+          
+          
+--destructor_type_name
+--    ::= '~' type_name
+--          /. $Build  consumeDestructorName();  $EndBuild ./
+     
           
 
 unary_expression
@@ -1038,16 +1050,24 @@ type_name_declaration_specifiers
 
 storage_class_specifier
     ::= 'auto'
+          /. $Build  consumeDeclSpecToken(); $EndBuild ./
       | 'register'
+          /. $Build  consumeDeclSpecToken(); $EndBuild ./
       | 'static'
+          /. $Build  consumeDeclSpecToken(); $EndBuild ./
       | 'extern'
+          /. $Build  consumeDeclSpecToken(); $EndBuild ./
       | 'mutable'
+          /. $Build  consumeDeclSpecToken(); $EndBuild ./
 
 
 function_specifier
     ::= 'inline'
+          /. $Build  consumeDeclSpecToken(); $EndBuild ./
       | 'virtual'
+          /. $Build  consumeDeclSpecToken(); $EndBuild ./
       | 'explicit'
+          /. $Build  consumeDeclSpecToken(); $EndBuild ./
 
 
 -- We have no way to disambiguate token types
@@ -1070,24 +1090,31 @@ function_specifier
 --          /. $Build  consumeQualifiedId(false);  $EndBuild ./
 --      | simple_type_primitive_specifier
       
-      
-simple_type_specifier
-    ::= simple_type_specifier_token
-          /. $Build  consumeDeclSpecToken(); $EndBuild ./
-    
+   
 
-simple_type_specifier_token
+simple_type_specifier
     ::= 'char'
+          /. $Build  consumeDeclSpecToken(); $EndBuild ./
       | 'wchar_t'
+          /. $Build  consumeDeclSpecToken(); $EndBuild ./
       | 'bool'
+          /. $Build  consumeDeclSpecToken(); $EndBuild ./
       | 'short'
+          /. $Build  consumeDeclSpecToken(); $EndBuild ./
       | 'int'
+          /. $Build  consumeDeclSpecToken(); $EndBuild ./
       | 'long'
+          /. $Build  consumeDeclSpecToken(); $EndBuild ./
       | 'signed'
+          /. $Build  consumeDeclSpecToken(); $EndBuild ./
       | 'unsigned'
+          /. $Build  consumeDeclSpecToken(); $EndBuild ./
       | 'float'
+          /. $Build  consumeDeclSpecToken(); $EndBuild ./
       | 'double'
+          /. $Build  consumeDeclSpecToken(); $EndBuild ./
       | 'void'
+          /. $Build  consumeDeclSpecToken(); $EndBuild ./
 
 
 -- last two rules moved here from simple_type_specifier

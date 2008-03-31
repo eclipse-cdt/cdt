@@ -140,7 +140,7 @@ public class CommandCache implements ICommandListener
      *      when back into individual results from this command.
      */
     
-    private Set<IDMContext> fAvailableContexts = new HashSet<IDMContext>();
+    private Set<IDMContext> fUnavailableContexts = new HashSet<IDMContext>();
 
     private ICommandControl fCommandControl;
     
@@ -439,11 +439,11 @@ public class CommandCache implements ICommandListener
      * TODO
      */
     public void setContextAvailable(IDMContext context, boolean isAvailable) {
-        if (isAvailable) {
-            fAvailableContexts.add(context);
+        if (!isAvailable) {
+            fUnavailableContexts.add(context);
         } else {
-            fAvailableContexts.remove(context);
-            for (Iterator<IDMContext> itr = fAvailableContexts.iterator(); itr.hasNext();) {
+            fUnavailableContexts.remove(context);
+            for (Iterator<IDMContext> itr = fUnavailableContexts.iterator(); itr.hasNext();) {
                 if (DMContexts.isAncestorOf(itr.next(), context)) {
                     itr.remove();
                 }
@@ -456,12 +456,12 @@ public class CommandCache implements ICommandListener
      * @see #setContextAvailable(IDMContext, boolean)
      */
     public boolean isTargetAvailable(IDMContext context) {
-        for (IDMContext availableContext : fAvailableContexts) {
+        for (IDMContext availableContext : fUnavailableContexts) {
             if (context.equals(availableContext) || DMContexts.isAncestorOf(context, availableContext)) {
-                return true;
+                return false;
             }
         }
-        return false;
+        return true;
     }
     
     

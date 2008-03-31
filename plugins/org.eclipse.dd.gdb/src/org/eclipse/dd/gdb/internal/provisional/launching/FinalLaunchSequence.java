@@ -32,6 +32,8 @@ import org.eclipse.dd.mi.service.command.commands.MIBreakInsert;
 import org.eclipse.dd.mi.service.command.commands.MICommand;
 import org.eclipse.dd.mi.service.command.commands.MIExecContinue;
 import org.eclipse.dd.mi.service.command.commands.MIExecRun;
+import org.eclipse.dd.mi.service.command.commands.MIFileExecFile;
+import org.eclipse.dd.mi.service.command.commands.MIFileSymbolFile;
 import org.eclipse.dd.mi.service.command.commands.MITargetSelect;
 import org.eclipse.dd.mi.service.command.output.MIBreakInsertInfo;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
@@ -50,6 +52,26 @@ public class FinalLaunchSequence extends Sequence {
             tracker.dispose();
 
             requestMonitor.done();
+        }},
+    	/*
+    	 * Specify the executable file to be debugged.
+    	 */
+        new Step() { @Override
+        public void execute(RequestMonitor requestMonitor) {
+            fCommandControl.queueCommand(
+           		new MIFileExecFile(fCommandControl.getControlDMContext(), 
+            			           fCommandControl.getExecutablePath().toOSString()), 
+           	    new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
+        }},
+    	/*
+    	 * Read symbol table.
+    	 */
+        new Step() { @Override
+        public void execute(RequestMonitor requestMonitor) {
+            fCommandControl.queueCommand(
+               	new MIFileSymbolFile(fCommandControl.getControlDMContext(), 
+                		             fCommandControl.getExecutablePath().toOSString()), 
+               	   new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
         }},
     	/*
     	 * Setup the source paths

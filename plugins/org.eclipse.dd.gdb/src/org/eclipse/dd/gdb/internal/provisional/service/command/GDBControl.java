@@ -375,11 +375,8 @@ public class GDBControl extends AbstractMIControl {
                     List<String> commandList = new ArrayList<String>();
                     
                     commandList.add(fGdbPath.toOSString());
-                    if (fExecPath != null) {
-                        commandList.add("--interpreter"); //$NON-NLS-1$
-                        commandList.add("mi"); //$NON-NLS-1$
-                        commandList.add(fExecPath.toOSString());
-                    }
+                    commandList.add("--interpreter"); //$NON-NLS-1$
+                    commandList.add("mi"); //$NON-NLS-1$
                     
                     String[] commandLine = commandList.toArray(new String[commandList.size()]);
         

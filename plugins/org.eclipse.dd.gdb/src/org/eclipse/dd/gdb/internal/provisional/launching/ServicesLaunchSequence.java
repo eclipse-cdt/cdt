@@ -147,9 +147,10 @@ public class ServicesLaunchSequence extends Sequence {
     }
     
     private IPath getGDBPath() {
-        IPath retVal = new Path("gdb.exe"); //$NON-NLS-1$
+        IPath retVal = new Path(IMILaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT);
         try {
-            retVal = new Path( fLaunch.getLaunchConfiguration().getAttribute( IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, IMILaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT ) );
+            retVal = new Path(fLaunch.getLaunchConfiguration().getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, 
+            		                                                        IMILaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT));
         } catch (CoreException e) {
         }
         return retVal;

@@ -23,8 +23,6 @@
 
 package org.eclipse.rse.internal.persistence.dom;
 
-import java.util.Vector;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.rse.core.IRSECoreRegistry;
@@ -71,8 +69,8 @@ public class RSEDOMImporter {
 	}
 
 	/**
-	 * Restores the profile represented by dom
-	 * @param dom
+	 * Restores the profile represented by DOM
+	 * @param dom the DOM from which to restore
 	 * @return the restored profile
 	 */
 	public ISystemProfile restoreProfile(RSEDOM dom) {

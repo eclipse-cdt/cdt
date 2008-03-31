@@ -705,18 +705,18 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 			}
 		}
 		IBinaryParser parser = CCorePlugin.getDefault().getDefaultBinaryParser();
+		Exception exception;
 		try {
 			return (IBinaryObject)parser.getBinary(exePath);
 		} catch (ClassCastException e) {
+			exception = e;
 		} catch (IOException e) {
+			exception = e;
 		}
-		Throwable exception = new FileNotFoundException(LaunchMessages.getFormattedString(
-				"AbstractCLaunchDelegate.Program_is_not_a_recongnized_executable", exePath.toOSString())); //$NON-NLS-1$
-		int code = ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_BINARY;
-		MultiStatus status = new MultiStatus(getPluginID(), code, LaunchMessages
-				.getString("AbstractCLaunchDelegate.Program_is_not_a_recongnized_executable"), exception); //$NON-NLS-1$
-		status.add(new Status(IStatus.ERROR, getPluginID(), code, exception == null ? "" : exception.getLocalizedMessage(), //$NON-NLS-1$
-				exception));
+		Status status = new Status(IStatus.ERROR,getPluginID(), 
+				ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_BINARY, 
+				LaunchMessages.getString("AbstractCLaunchDelegate.Program_is_not_a_recongnized_executable") + " " + exePath.toOSString(), //$NON-NLS-1$ 
+				exception); 
 		throw new CoreException(status);
 	}
 

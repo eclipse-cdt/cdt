@@ -10,12 +10,14 @@
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * David Dykstal (IBM) - [197167] adding notification and waiting for RSE model
  * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
+ * David Dykstal (IBM) - [210474] Deny save password function missing
  ********************************************************************************/
 package org.eclipse.rse.core;
 
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Locale;
 import java.util.SortedSet;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
@@ -469,6 +471,63 @@ public class RSEPreferencesManager {
 		Preferences prefs = RSECorePlugin.getDefault().getPluginPreferences();
 		boolean result = prefs.getBoolean(IRSEPreferenceNames.CREATE_LOCAL_CONNECTION);
 		return result;
+	}
+
+	/**
+	 * Sets the preference for a particular system type and host address that causes passwords
+	 * not to be savable. The default for this attribute is false - that is, passwords are savable for
+	 * all system types and hosts.
+	 * @param systemType The system type of this preference.
+	 * @param hostAddress The host address of this preference
+	 * @param deny true if save of passwords is to be denied. false is save is to be allowed.
+	 * If true then all passwords that have been saved for this system type and host address are removed.
+	 * All passwords saved for the default system type and host address are also removed.
+	 * @return the number of passwords removed if deny was set to true
+	 * @since org.eclipse.rse.core 3.0
+	 */
+	public static int setDenyPasswordSave(IRSESystemType systemType, String hostAddress, boolean deny) {
+		int result = 0;
+		Preferences preferences = RSECorePlugin.getDefault().getPluginPreferences();
+		String preferenceName = getPasswordSavePreferenceName(systemType, hostAddress);
+		preferences.setValue(preferenceName, deny);
+		if (deny) {
+			result = PasswordPersistenceManager.getInstance().remove(systemType, hostAddress);
+			result += PasswordPersistenceManager.getInstance().remove(PasswordPersistenceManager.DEFAULT_SYSTEM_TYPE, hostAddress);
+		}
+		return result;
+	}
+
+	/**
+	 * Retrieves the preference for a particular system type and host address that determines if passwords
+	 * can be saved. The default for this attribute is false, that is, save is not denied, 
+	 * thus passwords are savable.
+	 * @param systemType
+	 * @param hostAddress
+	 * @return true if saving of passwords is denied. false if saving is allowed.
+	 * @since org.eclipse.rse.core 3.0
+	 */
+	public static boolean getDenyPasswordSave(IRSESystemType systemType, String hostAddress) {
+		Preferences preferences = RSECorePlugin.getDefault().getPluginPreferences();
+		String preferenceName = getPasswordSavePreferenceName(systemType, hostAddress);
+		boolean result = preferences.getBoolean(preferenceName);
+		return result;
+	}
+
+	/**
+	 * Retrieves the "denyPasswordSave" preference name of a particular host address. 
+	 * @param systemType The system type we are concerned with
+	 * @param hostAddress The host address, typically an IP address.
+	 * @return the name associated with this preference.
+	 * This name is of the form {systemTypeId}___{hostAddress}___DENY_PASSWORD_SAVE.
+	 */
+	private static String getPasswordSavePreferenceName(IRSESystemType systemType, String hostAddress) {
+		StringBuffer b = new StringBuffer(100);
+		b.append(systemType.getId());
+		b.append("___"); //$NON-NLS-1$
+		b.append(hostAddress.toUpperCase(Locale.US)); // should use US locale for IP names and addresses
+		b.append("___DENY_PASSWORD_SAVE"); //$NON-NLS-1$
+		String preferenceName = b.toString();
+		return preferenceName;
 	}
 
 	/*

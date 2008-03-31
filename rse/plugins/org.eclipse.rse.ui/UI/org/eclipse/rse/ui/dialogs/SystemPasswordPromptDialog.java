@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,6 +14,7 @@
  * David Dykstal (IBM) - moved SystemPreferencesManager to a new package
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * David Dykstal (IBM) - [210474] Deny save password function missing
  ********************************************************************************/
 
 package org.eclipse.rse.ui.dialogs;
@@ -216,7 +217,7 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 
 		// Save signon information checkbox
 		// DY:  align password checkbox with entry fields
-		if (connectorService.supportsPassword()) {
+		if (connectorService.supportsPassword() && !connectorService.getDenyPasswordSave()) {
 			SystemWidgetHelpers.createLabel(composite_prompts, ""); //$NON-NLS-1$
 			savePasswordCB = SystemWidgetHelpers.createCheckBox(composite_prompts, 1, this, SystemResources.RESID_PASSWORD_SAVE_LABEL, SystemResources.RESID_PASSWORD_SAVE_TOOLTIP);
 			savePasswordCB.setSelection(savePassword);

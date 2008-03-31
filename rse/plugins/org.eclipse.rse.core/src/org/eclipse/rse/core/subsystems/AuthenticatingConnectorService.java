@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2007, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -9,6 +9,7 @@
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
+ * David Dykstal (IBM) - [210474] Deny save password function missing
  ********************************************************************************/
 package org.eclipse.rse.core.subsystems;
 
@@ -143,7 +144,7 @@ public abstract class AuthenticatingConnectorService extends AbstractConnectorSe
 		ICredentials credentials = credentialsProvider.getCredentials();
 		if (credentials instanceof SystemSignonInformation) {
 			SystemSignonInformation signonInformation = (SystemSignonInformation) credentials;
-			PasswordPersistenceManager.getInstance().add(signonInformation, true, true);
+			PasswordPersistenceManager.getInstance().add(signonInformation, true, false);
 		}
 	}
 

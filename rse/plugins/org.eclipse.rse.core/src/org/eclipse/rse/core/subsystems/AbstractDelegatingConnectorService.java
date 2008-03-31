@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2007, 2008 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  * David Dykstal (IBM) - 142806: refactoring persistence framework
  * Martin Oberhuber (Wind River) - [185750] Remove IConnectorService.getHostType() 
+ * David Dykstal (IBM) - [210474] Deny save password function missing
  ********************************************************************************/
 package org.eclipse.rse.core.subsystems;
 
@@ -782,6 +783,28 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return IRSEPersistableContainer.NO_CHILDREN;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#setDenyPasswordSave(boolean)
+	 */
+	public int setDenyPasswordSave(boolean deny) {
+		int n = 0;
+		IConnectorService connectorService = getRealConnectorService();
+		if (connectorService != null) {
+			n = connectorService.setDenyPasswordSave(deny);
+		}
+		return n;
+	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#getDenyPasswordSave()
+	 */
+	public boolean getDenyPasswordSave() {
+		boolean result = false;
+		IConnectorService connectorService = getRealConnectorService();
+		if (connectorService != null) {
+			result = connectorService.getDenyPasswordSave();
+		}
+		return result;
+	}
 
 }

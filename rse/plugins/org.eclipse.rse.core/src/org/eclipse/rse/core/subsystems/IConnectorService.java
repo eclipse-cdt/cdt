@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [185750] Remove IConnectorService.getHostType()
  * Martin Oberhuber (Wind River) - [187218] Fix error reporting for connect()
  * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
+ * David Dykstal (IBM) - [210474] Deny save password function missing
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -383,5 +384,29 @@ public interface IConnectorService extends IRSEModelObject {
 	 * user id and requires one to connect to its target system.
 	 */
 	boolean requiresUserId();
+
+	/**
+	 * Sets the attribute for this connector service instance that denies a password to be saved.
+	 * If the attribute has never been set it defaults to false. 
+	 * If set to true, it will clear any saved passwords for this system and not allow any further
+	 * passwords to be stored.
+	 * This property of a system is persistent from session to session, but is not sharable.
+	 * @param deny 
+	 * If true, forget any saved passwords and do not allow any others to be saved.
+	 * If false, allow passwords to be saved in the keychain.
+	 * @return the number of saved passwords removed by this operation.
+	 * This will always be zero if "deny" is false.
+	 * @since org.eclipse.rse.core 3.0
+	 */
+	public int setDenyPasswordSave(boolean deny);
+
+	/**
+	 * Retrieves the value of the "DENY_PASSWORD_SAVE" property of this connector service.
+	 * If the value has never been set, this will return false.
+	 * @return true if password saving is denied.
+	 * @since org.eclipse.rse.core 3.0
+	 */
+	public boolean getDenyPasswordSave();
+
 
 }

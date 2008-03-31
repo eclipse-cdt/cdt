@@ -18,6 +18,7 @@
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty()
  * Martin Oberhuber (Wind River) - [218655][api] Provide SystemType enablement info in non-UI
  * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
+ * David Dykstal (IBM) - [210474] Deny save password function missing
  ********************************************************************************/
 
 package org.eclipse.rse.core;
@@ -29,6 +30,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -59,6 +61,7 @@ public class PasswordPersistenceManager {
 	// Add return codes
 	public static final int RC_OK = 0;
 	public static final int RC_ALREADY_EXISTS = 1;
+	public static final int RC_DENIED = 2;
 	public static final int RC_ERROR = -1;
 
 	// Default System Type, on a lookup if the specified system type and hostname is not found
@@ -163,9 +166,7 @@ public class PasswordPersistenceManager {
 	}
 
 	/*
-	 * initialization
-	 * 		- read password file
-	 *  	- load IPasswordEncryptionProvider instances
+	 * initialization - register system types
 	 */
 	private void initExtensions()
 	{
@@ -186,37 +187,50 @@ public class PasswordPersistenceManager {
 		remove(info.getSystemType(), info.getHostname(), info.getUserId());
 	}
 
-	/**
-	 * Remove the entry from the keyring that matches the hostname, userid and
-	 * system type parameters.
-	 * @param systemtype the systemType
-	 * @param hname the connection name
-	 * @param userid the user id
+    /**
+	 * Removes all passwords for a host name for a given system type.
+	 * Use the default system type explicitly to remove those entries.
+	 * @param systemType The system type of the host
+	 * @param hostName The IP address of the host in canonical format
+	 * @return the number of passwords removed from the keyring
 	 */
-	public void remove(IRSESystemType systemtype, String hname, String userid)
-	{
-		String hostname = hname;//RSEUIPlugin.getQualifiedHostName(hname);
-		// Convert userid to upper case if required
-		if (!isUserIDCaseSensitive(systemtype))
-		{
-			userid = userid.toUpperCase();
-		}
-
-		Map passwords = getPasswordMap(systemtype);
-
-		if (passwords != null)
-		{
-			if (removePassword(passwords, hostname, userid))
-			{
-				savePasswordMap(systemtype.getId(), passwords);
+	public int remove(IRSESystemType systemType, String hostName) {
+		Map passwords = getPasswordMap(systemType);
+		int numberRemoved = 0;
+		if (passwords != null) {
+			String hostPrefix = hostName + "//"; //$NON-NLS-1$
+			Set keys = passwords.keySet();
+			for (Iterator z = keys.iterator(); z.hasNext();) {
+				String key = (String) z.next();
+				if (key.startsWith(hostPrefix)) {
+					z.remove(); // safely removes the key and the entry from the map
+					numberRemoved++;
+				}
+			}
+			if (numberRemoved > 0) {
+				savePasswordMap(systemType.getId(), passwords);
 			}
 		}
-		else
-		{
-			// yantzi: RSE6.2 check for default system type entry with this hostname and user ID
-			if (!DEFAULT_SYSTEM_TYPE.equals(systemtype))
-			{
-				remove(DEFAULT_SYSTEM_TYPE, hostname, userid);
+		return numberRemoved;
+	}
+    
+	/**
+	 * Removes all entries from the keyring that match the hostname, userid, and system type.
+	 * Use the default system type explicitly to remove those entries.
+	 * @param systemType the systemType
+	 * @param hostName the connection name
+	 * @param userid the user id
+	 */
+	public void remove(IRSESystemType systemType, String hostName, String userid) {
+		String hostname = hostName;//RSEUIPlugin.getQualifiedHostName(hname);
+		// Convert userid to upper case if required
+		if (!isUserIDCaseSensitive(systemType)) {
+			userid = userid.toUpperCase();
+		}
+		Map passwords = getPasswordMap(systemType);
+		if (passwords != null) {
+			if (removePassword(passwords, hostname, userid)) {
+				savePasswordMap(systemType.getId(), passwords);
 			}
 		}
 	}
@@ -247,102 +261,69 @@ public class PasswordPersistenceManager {
 	}
 
 	/**
-	 * Add a new persisted password to the password database.  This method assumes
-	 * the encrypted password is already stored in the SystemSignonInformation
-	 * parameter.
-	 * 
+	 * Add a password to the password database.
+	 * This will not update the entry for the default system type
 	 * @param info The signon information to store
 	 * @param overwrite Whether to overwrite any existing entry
-	 * 
 	 * @return
 	 * 	RC_OK if the password was successfully stored
 	 *  RC_ALREADY_EXISTS if the password already exists and overwrite was false
 	 */
-	public int add(SystemSignonInformation info, boolean overwrite)
-	{
+	public int add(SystemSignonInformation info, boolean overwrite) {
 		return add(info, overwrite, false);
 	}
 
 	/**
-	 * Add a new persisted password to the password database.  This method assumes
-	 * the encrypted password is already stored in the SystemSignonInformation
-	 * parameter.
-	 * 
+	 * Add a password to the password database.
 	 * @param info The signon information to store
-	 * @param overwrite Whether to overwrite any existing entry
-	 * @param updateDefault Whether or not to update the default entry for the specified hostname / user ID if one exists.
-	 * 
+	 * @param overwrite If true then overwrite the existing entry for this systemtype, hostname, and userid.
+	 * @param updateDefault if true then set the entry for the default systemtype, hostname, and user ID, according to the overwrite setting.
 	 * @return
-	 * 	RC_OK if the password was successfully stored
-	 *  RC_ALREADY_EXISTS if the password already exists and overwrite was false
+	 * RC_OK if the password was successfully stored.
+	 * RC_ALREADY_EXISTS if the password already exists and overwrite was false
+	 * RC_DENIED if passwords may not be saved for this system type and host
 	 */
-	public int add(SystemSignonInformation info, boolean overwrite, boolean updateDefault)
-	{
-		IRSESystemType systemtype = info.getSystemType();
-
-		// Convert userid to upper case if required
-		if (!isUserIDCaseSensitive(systemtype))
-		{
-			info.setUserId(info.getUserId().toUpperCase());
-		}
-
-		String hostname = info.getHostname();
-		String userid = info.getUserId();
-		Map passwords = getPasswordMap(systemtype);
-		String passwordKey = getPasswordKey(hostname, userid);
-
-		if (passwords != null)
-		{
-			String password = getPassword(passwords, hostname, userid);
-
-			if (password != null)
-			{
-				if (!overwrite)
-				{
-					return RC_ALREADY_EXISTS;
-				}
-				else
-				{
-					removePassword(passwords, hostname, userid);
+	public int add(SystemSignonInformation info, boolean overwrite, boolean updateDefault) {
+		int result = RC_OK;
+		IRSESystemType systemType = info.getSystemType();
+		String hostName = info.getHostname();
+		String userId = info.getUserId();
+		String newPassword = info.getPassword();
+		boolean deny = RSEPreferencesManager.getDenyPasswordSave(systemType, hostName);
+		if (!deny) {
+			if (!isUserIDCaseSensitive(systemType)) {
+				userId = userId.toUpperCase();
+				info.setUserId(userId);
+			}
+			if (updateDefault) {
+				if (systemType != DEFAULT_SYSTEM_TYPE) {
+					SystemSignonInformation newInfo = new SystemSignonInformation(hostName, userId, newPassword, DEFAULT_SYSTEM_TYPE);
+					result = add(newInfo, overwrite, false);
 				}
 			}
-			else if (updateDefault)
-			{
-				// yantzi: 6.2, check if default exists for the specified hostname / user ID
-				Map defaultPasswords = getPasswordMap(DEFAULT_SYSTEM_TYPE);
-				if (defaultPasswords != null)
-				{
-					String defaultPassword = (String) defaultPasswords.get(passwordKey);
-					if (defaultPassword != null)
-					{
-						if (!overwrite)
-						{
-							return RC_ALREADY_EXISTS;
-						}
-						else
-						{
-							defaultPasswords.remove(passwordKey);
-							passwords = defaultPasswords;
-							systemtype = DEFAULT_SYSTEM_TYPE;
-						}
-					}
+			Map passwords = getPasswordMap(systemType);
+			if (passwords == null) {
+				passwords = new HashMap(5);
+			}
+			String oldPassword = getPassword(passwords, hostName, userId);
+			if (oldPassword != null) {
+				if (overwrite) {
+					removePassword(passwords, hostName, userId);
+				} else {
+					result = RC_ALREADY_EXISTS;
 				}
 			}
+			if (result == RC_OK) {
+				String passwordKey = getPasswordKey(hostName, userId);
+				passwords.put(passwordKey, newPassword);
+				savePasswordMap(systemType.getId(), passwords);
+			}
+		} else {
+			result = RC_DENIED;
 		}
-		else
-		{
-			// password map did not exists yet so create a new one
-			passwords = new HashMap(5);
-		}
-
-		passwords.put(passwordKey, info.getPassword());
-
-		savePasswordMap(systemtype.getId(), passwords);
-
-		return RC_OK;
+		return result;
 	}
-
-
+	
 	/*
 	 * Retrieve the password map from the keyring for the specified system type
 	 */
@@ -405,7 +386,10 @@ public class PasswordPersistenceManager {
 	}
 
 	/**
-	 * Find the persisted password for the specified systemtype, hostname and userid.
+	 * Find the password for the specified systemtype, hostname and userid.
+	 * If one is not found then the default system type is used.
+	 * The system type in the signon information returned may not be the same as the system type
+	 * specfied in the argument.
 	 */
 	public SystemSignonInformation find(IRSESystemType systemtype, String hostname, String userid)
 	{
@@ -563,13 +547,13 @@ public class PasswordPersistenceManager {
 		return buffer.toString();
 	}
 
-	private static String getHostnameFromPasswordKey(String passwordKey)
+	private String getHostnameFromPasswordKey(String passwordKey)
 	{
 		int sepIndex = passwordKey.indexOf("//"); //$NON-NLS-1$
 		return passwordKey.substring(0,sepIndex);
 	}
 
-	private static String getUserIdFromPasswordKey(String passwordKey)
+	private String getUserIdFromPasswordKey(String passwordKey)
 	{
 		int sepIndex = passwordKey.indexOf("//"); //$NON-NLS-1$
 		return passwordKey.substring(sepIndex + 2, passwordKey.length());

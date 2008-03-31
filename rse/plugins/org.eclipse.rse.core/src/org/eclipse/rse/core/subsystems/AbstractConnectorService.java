@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -16,6 +16,7 @@
  * David Dykstal (IBM) - 142806: refactoring persistence framework
  * Martin Oberhuber (Wind River) - [185750] Remove IConnectorService.getHostType() 
  * David Dykstal (IBM) - [189483] fix spelling in initialize/uninitialize method signatures
+ * David Dykstal (IBM) - [210474] Deny save password function missing
  ********************************************************************************/
 package org.eclipse.rse.core.subsystems;
 
@@ -25,6 +26,8 @@ import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.rse.core.IRSESystemType;
+import org.eclipse.rse.core.RSEPreferencesManager;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.RSEModelObject;
@@ -476,5 +479,29 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	 */
 	protected void postConnect() {
 	}
+	
+    /* (non-Javadoc)
+	 * @see com.ibm.etools.systems.subsystems.ISystem#setDenyPasswordSave(boolean)
+	 */
+	public final int setDenyPasswordSave(boolean deny) {
+		IHost host = getHost();
+		String hostAddress = host.getHostName();
+		IRSESystemType systemType = host.getSystemType();
+		int result = RSEPreferencesManager.setDenyPasswordSave(systemType, hostAddress, deny);
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.ibm.etools.systems.subsystems.ISystem#getDenyPasswordSave()
+	 */
+	public final boolean getDenyPasswordSave() {
+		IHost host = getHost();
+		String hostAddress = host.getHostName();
+		IRSESystemType systemType = host.getSystemType();
+		boolean result = RSEPreferencesManager.getDenyPasswordSave(systemType, hostAddress);
+		return result;
+	}
+
+	
 
 }

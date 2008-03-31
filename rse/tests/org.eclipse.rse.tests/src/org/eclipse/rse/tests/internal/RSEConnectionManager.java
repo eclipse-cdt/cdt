@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * David Dykstal (IBM) - [217556] remove service subsystem types
  * Martin Oberhuber (Wind River) - [219086] flush event queue to shield tests from each other
+ * David Dykstal (IBM) - [210474] Deny save password function missing
  *******************************************************************************/
 package org.eclipse.rse.tests.internal;
 
@@ -249,7 +250,7 @@ public class RSEConnectionManager implements IRSEConnectionManager {
 
 				if (userId != null && password != null) {
 					SystemSignonInformation info = new SystemSignonInformation(address, userId, password, systemType);
-					PasswordPersistenceManager.getInstance().add(info, true, true);
+					PasswordPersistenceManager.getInstance().add(info, true, false);
 				}
 				
 				if (daemonPort != null) {

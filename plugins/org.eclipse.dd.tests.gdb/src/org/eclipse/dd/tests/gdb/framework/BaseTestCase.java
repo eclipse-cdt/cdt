@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
+import org.eclipse.cdt.debug.mi.core.IMILaunchConfigurationConstants;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.dd.gdb.internal.provisional.launching.GdbLaunch;
 import org.eclipse.dd.mi.service.command.events.MIStoppedEvent;
@@ -56,6 +57,7 @@ public class BaseTestCase {
 		attrs.put(ICDTLaunchConfigurationConstants.ATTR_USE_TERMINAL, true);
 		attrs.put(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, true);
 		attrs.put(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT);
+		attrs.put(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb");
     }
     
     @Before

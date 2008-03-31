@@ -19,11 +19,10 @@ import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 import org.eclipse.ui.console.IConsoleConstants;
+import org.eclipse.ui.navigator.resources.ProjectExplorer;
 
 public class CPerspectiveFactory implements IPerspectiveFactory {
 		
-	private static final String ID_PROJECT_EXPLORER = "org.eclipse.ui.navigator.ProjectExplorer"; //$NON-NLS-1$
-
 	/**
 	 * Constructs a new Default layout engine.
 	 */
@@ -38,7 +37,7 @@ public class CPerspectiveFactory implements IPerspectiveFactory {
  		String editorArea = layout.getEditorArea();
 		
 		IFolderLayout folder1= layout.createFolder("topLeft", IPageLayout.LEFT, (float)0.25, editorArea); //$NON-NLS-1$
-		folder1.addView(ID_PROJECT_EXPLORER);
+		folder1.addView(ProjectExplorer.VIEW_ID);
 		folder1.addPlaceholder(CUIPlugin.CVIEW_ID);
 		folder1.addPlaceholder(IPageLayout.ID_RES_NAV);
 		folder1.addPlaceholder(IPageLayout.ID_BOOKMARKS);

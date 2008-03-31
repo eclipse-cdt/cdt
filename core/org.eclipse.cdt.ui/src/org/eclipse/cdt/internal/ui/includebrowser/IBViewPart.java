@@ -67,6 +67,7 @@ import org.eclipse.ui.actions.ContributionItemFactory;
 import org.eclipse.ui.actions.OpenFileAction;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTarget;
 import org.eclipse.ui.part.IShowInTargetList;
@@ -805,7 +806,7 @@ public class IBViewPart extends ViewPart
     
     public String[] getShowInTargetIds() {
         return new String[] {
-        		CUIPlugin.CVIEW_ID, 
+        		ProjectExplorer.VIEW_ID, 
         		IPageLayout.ID_RES_NAV
         };
     }

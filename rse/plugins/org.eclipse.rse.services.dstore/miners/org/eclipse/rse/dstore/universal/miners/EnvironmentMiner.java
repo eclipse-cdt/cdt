@@ -21,16 +21,15 @@
 package org.eclipse.rse.dstore.universal.miners;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.dstore.core.miners.Miner;
+import org.eclipse.dstore.core.model.Client;
 import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
-import org.eclipse.dstore.core.model.Client;
 
 
 public class EnvironmentMiner extends Miner
@@ -62,14 +61,14 @@ public class EnvironmentMiner extends Miner
     { 
     	if (_dataStore.getClient() != null)
     	{
-    		ServerLogger logger = new ServerLogger(getUserPreferencesDirectory());
+    	    ServerLogger logger = new ServerLogger(UniversalServerUtilities.getUserPreferencesDirectory(_dataStore));
     		_dataStore.getClient().setLogger(logger);
     	}
     	else
     	{
     		Client client = new Client();
 			_dataStore.setClient(client);
-			ServerLogger logger = new ServerLogger(getUserPreferencesDirectory());
+		     ServerLogger logger = new ServerLogger(UniversalServerUtilities.getUserPreferencesDirectory(_dataStore));
     		client.setLogger(logger);
     	}
     	
@@ -253,44 +252,5 @@ public class EnvironmentMiner extends Miner
 	{
 		return "6.4.0"; //$NON-NLS-1$
 	}
-	
-	/** 
-	 * getUserPreferencesDirectory() - returns directory on IFS where to store user settings
-	 */
-	public String getUserPreferencesDirectory()
-	{
-		String userPreferencesDirectory = _dataStore.getClient().getProperty("user.home"); //$NON-NLS-1$	
-			
-		String clientUserID = null;
-		if (_dataStore.getClient() != null){
-			clientUserID = _dataStore.getClient().getProperty("client.username"); //$NON-NLS-1$
-		}
-		else {
-			clientUserID = System.getProperty("client.username"); //$NON-NLS-1$			
-		}
-			if (clientUserID == null || clientUserID.equals("")) //$NON-NLS-1$
-			{
-				clientUserID = ""; //$NON-NLS-1$
-			}
-			else
-			{
-				clientUserID += File.separator;
-			}
-			
- 			// append a '/' if not there
-  			if ( userPreferencesDirectory.length() == 0 || 
-  			     userPreferencesDirectory.charAt( userPreferencesDirectory.length() -1 ) != File.separatorChar ) {
-  			     
-				userPreferencesDirectory = userPreferencesDirectory + File.separator;
-		    }
-  		
-  			userPreferencesDirectory = userPreferencesDirectory + ".eclipse" + File.separator +  //$NON-NLS-1$
-  			         												"RSE" + File.separator + clientUserID; //$NON-NLS-1$
-	  		File dirFile = new File(userPreferencesDirectory);
-	  		if (!dirFile.exists()) {
-	 	 		dirFile.mkdirs();
-	  		}
-	  		
-	  return userPreferencesDirectory;
-	}
+
 }

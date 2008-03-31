@@ -17,6 +17,8 @@
 
 package org.eclipse.rse.dstore.universal.miners;
 
+import java.io.File;
+
 import org.eclipse.dstore.core.model.DataStore;
 
 /**
@@ -27,6 +29,42 @@ import org.eclipse.dstore.core.model.DataStore;
  */
 public class UniversalServerUtilities {
 
+
+	 /** 
+	  * getUserPreferencesDirectory() - returns directory on IFS where to store user settings
+	  */
+	 public static String getUserPreferencesDirectory(DataStore dataStore)
+	 {
+	  String userPreferencesDirectory = dataStore.getClient().getProperty("user.home"); //$NON-NLS-1$ 
+	   
+	   String clientUserID = System.getProperty("client.username"); //$NON-NLS-1$
+	   if (clientUserID == null || clientUserID.equals("")) //$NON-NLS-1$
+	   {
+	    clientUserID = ""; //$NON-NLS-1$
+	   }
+	   else
+	   {
+	    clientUserID += File.separator;
+	   }
+	   
+	    // append a '/' if not there
+	     if ( userPreferencesDirectory.length() == 0 || 
+	          userPreferencesDirectory.charAt( userPreferencesDirectory.length() -1 ) != File.separatorChar ) {
+	          
+	    userPreferencesDirectory = userPreferencesDirectory + File.separator;
+	      }
+	    
+	     userPreferencesDirectory = userPreferencesDirectory + ".eclipse" + File.separator +  //$NON-NLS-1$
+	                          "RSE" + File.separator + clientUserID; //$NON-NLS-1$
+	     File dirFile = new File(userPreferencesDirectory);
+	     if (!dirFile.exists()) {
+	      dirFile.mkdirs();
+	     }
+	     
+	   return userPreferencesDirectory;
+	 }
+	 
+	 
 	/**
 	 * logInfo
 	 * 

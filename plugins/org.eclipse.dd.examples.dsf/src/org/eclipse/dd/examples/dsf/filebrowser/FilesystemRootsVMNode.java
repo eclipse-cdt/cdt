@@ -56,7 +56,7 @@ class FilesystemRootsVMNode extends AbstractVMNode
                     int offset = update.getOffset() != -1 ? update.getOffset() : 0;
                     int length = update.getLength() != -1 ? update.getLength() : files.length;
                     for (int i = offset; (i < files.length) && (i < (offset + length)); i++) {
-                        update.setChild(new FileVMContext(getVMProvider().getVMAdapter(), FilesystemRootsVMNode.this, files[i]), i);
+                        update.setChild(new FileVMContext(FilesystemRootsVMNode.this, files[i]), i);
                     }
                     update.done();
                 }
@@ -168,7 +168,7 @@ class FilesystemRootsVMNode extends AbstractVMNode
                         // Check if the specified file is not one of the roots.
                         if (index < roots.length) {
                             ModelDelta delta = parentDelta.addNode(
-                                new FileVMContext(getVMProvider().getVMAdapter(), FilesystemRootsVMNode.this, eventRoot), 
+                                new FileVMContext(FilesystemRootsVMNode.this, eventRoot), 
                                 index, IModelDelta.NO_CHANGE);
 
                             if (eventFile.equals(eventRoot)) {

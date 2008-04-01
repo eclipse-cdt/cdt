@@ -135,7 +135,7 @@ class FileVMNode
                     int offset = update.getOffset() != -1 ? update.getOffset() : 0;
                     int length = update.getLength() != -1 ? update.getLength() : files.length;
                     for (int i = offset; (i < files.length) && (i < (offset + length)); i++) {
-                        update.setChild(new FileVMContext(fProvider.getVMAdapter(), FileVMNode.this, files[i]), i);
+                        update.setChild(new FileVMContext(FileVMNode.this, files[i]), i);
                     }
                     update.done();
                 }                
@@ -260,7 +260,7 @@ class FileVMNode
                                 
                                 File[] pathSegmentDirectoryFiles = pathSegment.listFiles();
                                 delta = delta.addNode(
-                                    new FileVMContext(fProvider.getVMAdapter(), FileVMNode.this, pathSegment), 
+                                    new FileVMContext(FileVMNode.this, pathSegment), 
                                     nodeOffset + Arrays.asList(allFilesInDirectory).indexOf(pathSegment), 
                                     IModelDelta.NO_CHANGE, 
                                     pathSegmentDirectoryFiles != null ? pathSegmentDirectoryFiles.length : 0);

@@ -73,7 +73,7 @@ public class ExpressionManagerVMNode extends AbstractVMNode
         final private IExpression fExpression;
         
         public InvalidExpressionVMContext(ExpressionManagerVMNode node, IExpression expression) {
-            super(node.getVMProvider().getVMAdapter(), node);
+            super(node);
             fExpression = expression;
         }
 
@@ -108,7 +108,7 @@ public class ExpressionManagerVMNode extends AbstractVMNode
      */
     class NewExpressionVMC extends AbstractVMContext {
         public NewExpressionVMC() {
-            super(getVMProvider().getVMAdapter(), ExpressionManagerVMNode.this);
+            super(ExpressionManagerVMNode.this);
         }
 
         @Override

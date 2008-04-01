@@ -49,7 +49,7 @@ public class StandardProcessVMNode extends AbstractVMNode {
         private final IProcess fProcess;
         
         VMC(IProcess process) {
-            super(getVMProvider().getVMAdapter(), StandardProcessVMNode.this);
+            super(StandardProcessVMNode.this);
             fProcess = process;
         }
         

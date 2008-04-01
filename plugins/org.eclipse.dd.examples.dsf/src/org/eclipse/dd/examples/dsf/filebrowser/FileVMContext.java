@@ -13,13 +13,12 @@ package org.eclipse.dd.examples.dsf.filebrowser;
 import java.io.File;
 
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMContext;
-import org.eclipse.dd.dsf.ui.viewmodel.IVMAdapter;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMNode;
 
 class FileVMContext extends AbstractVMContext {
     private File fFile;
-    FileVMContext(IVMAdapter adapter, IVMNode layoutNode, File file) {
-        super(adapter, layoutNode);
+    FileVMContext(IVMNode layoutNode, File file) {
+        super(layoutNode);
         fFile = file;
     }
     

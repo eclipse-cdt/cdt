@@ -57,7 +57,7 @@ abstract public class AbstractDMVMNode extends AbstractVMNode implements IVMNode
         private final IDMContext fDmc;
         
         public DMVMContext(IDMContext dmc) {
-            super(getVMProvider().getVMAdapter(), AbstractDMVMNode.this);
+            super(AbstractDMVMNode.this);
             fDmc = dmc;
         }
         
@@ -73,10 +73,13 @@ abstract public class AbstractDMVMNode extends AbstractVMNode implements IVMNode
             Object superAdapter = super.getAdapter(adapter);
             if (superAdapter != null) {
                 return superAdapter;
-            } else if (adapter.isInstance(fDmc)) {
-                return fDmc;
             } else {
-                return fDmc.getAdapter(adapter);
+                // Delegate to the Data Model to find the context.
+                if (adapter.isInstance(fDmc)) {
+                    return fDmc;
+                } else {
+                    return fDmc.getAdapter(adapter);
+                }
             }
         }
         

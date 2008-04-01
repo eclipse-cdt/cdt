@@ -36,6 +36,7 @@ class PDOMCTypedef extends PDOMBinding implements ITypedef, ITypeContainer, IInd
 
 	private static final int TYPE = PDOMBinding.RECORD_SIZE + 0;
 	
+	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 4;
 	
 	public PDOMCTypedef(PDOM pdom, PDOMNode parent, ITypedef typedef)

@@ -224,9 +224,9 @@ public class GeneratePDOMApplication implements IApplication {
 		public void worked(int work) {
 			internalWorked(work);
 		}
-		public void beginTask(String name, int totalWork) {
+		public void beginTask(String name, int total) {
 			this.taskName = name;
-			this.totalWork = totalWork;
+			this.totalWork = total;
 		}
 		public void internalWorked(double work) {
 			synchronized(mutex) {

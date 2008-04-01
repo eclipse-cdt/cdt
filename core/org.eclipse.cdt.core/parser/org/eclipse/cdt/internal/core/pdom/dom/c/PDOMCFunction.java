@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
@@ -60,6 +61,7 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 	/**
 	 * The size in bytes of a PDOMCPPFunction record in the database.
 	 */
+	@SuppressWarnings("hiding")
 	public static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 13;
 	
 	public PDOMCFunction(PDOM pdom, PDOMNode parent, IFunction function) throws CoreException {
@@ -148,7 +150,7 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 	}
 
 	public int getNodeType() {
-		return PDOMCLinkage.CFUNCTION;
+		return IIndexCBindingConstants.CFUNCTION;
 	}
 
 	public IFunctionType getType() {

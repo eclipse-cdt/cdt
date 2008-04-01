@@ -38,6 +38,7 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements
 	/**
 	 * The size in bytes of a PDOMCPPTemplateTypeParameter record in the database.
 	 */
+	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 4;
 	
 	public PDOMCPPTemplateTypeParameter(PDOM pdom, PDOMNode parent,

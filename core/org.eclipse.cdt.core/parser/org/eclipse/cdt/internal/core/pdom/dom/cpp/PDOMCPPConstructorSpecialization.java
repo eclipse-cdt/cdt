@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -27,6 +28,7 @@ class PDOMCPPConstructorSpecialization extends
 	/**
 	 * The size in bytes of a PDOMCPPConstructorSpecialization record in the database.
 	 */
+	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPMethodSpecialization.RECORD_SIZE + 0;
 
 	public PDOMCPPConstructorSpecialization(PDOM pdom, PDOMNode parent, ICPPConstructor constructor, PDOMBinding specialized) throws CoreException {
@@ -42,7 +44,7 @@ class PDOMCPPConstructorSpecialization extends
 	}
 
 	public int getNodeType() {
-		return PDOMCPPLinkage.CPP_CONSTRUCTOR_SPECIALIZATION;
+		return IIndexCPPBindingConstants.CPP_CONSTRUCTOR_SPECIALIZATION;
 	}
 	
 	public boolean isExplicit() throws DOMException {

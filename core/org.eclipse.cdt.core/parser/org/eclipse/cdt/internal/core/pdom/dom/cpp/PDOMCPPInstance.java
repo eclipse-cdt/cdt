@@ -37,6 +37,7 @@ abstract class PDOMCPPInstance extends PDOMCPPSpecialization implements
 	/**
 	 * The size in bytes of a PDOMCPPInstance record in the database.
 	 */
+	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPSpecialization.RECORD_SIZE + 4;
 	
 	public PDOMCPPInstance(PDOM pdom, PDOMNode parent, ICPPTemplateInstance inst, PDOMBinding instantiated)

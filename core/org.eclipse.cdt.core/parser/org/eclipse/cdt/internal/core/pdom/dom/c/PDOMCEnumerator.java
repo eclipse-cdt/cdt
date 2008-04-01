@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -29,6 +30,7 @@ class PDOMCEnumerator extends PDOMBinding implements IEnumerator {
 	private static final int ENUMERATION = PDOMBinding.RECORD_SIZE + 0;
 	private static final int NEXT_ENUMERATOR = PDOMBinding.RECORD_SIZE + 4;
 	
+	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 8;
 	
 	public PDOMCEnumerator(PDOM pdom, PDOMNode parent, IEnumerator enumerator, PDOMCEnumeration enumeration)
@@ -47,7 +49,7 @@ class PDOMCEnumerator extends PDOMBinding implements IEnumerator {
 	}
 	
 	public int getNodeType() {
-		return PDOMCLinkage.CENUMERATOR;
+		return IIndexCBindingConstants.CENUMERATOR;
 	}
 
 	public PDOMCEnumerator getNextEnumerator() throws CoreException {

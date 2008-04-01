@@ -43,6 +43,7 @@ class PDOMCPPParameterSpecialization extends PDOMCPPSpecialization implements IC
 	/**
 	 * The size in bytes of a PDOMCPPParameterSpecialization record in the database.
 	 */
+	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPSpecialization.RECORD_SIZE + 8;
 
 	public PDOMCPPParameterSpecialization(PDOM pdom, PDOMNode parent, ICPPParameter param, PDOMCPPParameter specialized, int typeRecord)

@@ -65,13 +65,12 @@ import org.eclipse.core.runtime.CoreException;
 class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 		ICPPClassScope, IPDOMMemberOwner, IIndexType, IIndexScope {
 
-	@SuppressWarnings("static-access")
 	private static final int FIRSTBASE = PDOMCPPBinding.RECORD_SIZE + 0;
-	@SuppressWarnings("static-access")
+	
 	private static final int KEY = PDOMCPPBinding.RECORD_SIZE + 4; // byte
-	@SuppressWarnings("static-access")
+	
 	private static final int MEMBERLIST = PDOMCPPBinding.RECORD_SIZE + 8;
-	@SuppressWarnings({ "static-access", "hiding" })
+	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 12;
 
 	public PDOMCPPClassType(PDOM pdom, PDOMNode parent, ICPPClassType classType)

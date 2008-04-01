@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalTemplateInstantiator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
+import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -43,6 +44,7 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPInstance implements
 	/**
 	 * The size in bytes of a PDOMCPPDeferredClassInstance record in the database.
 	 */
+	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPInstance.RECORD_SIZE + 0;
 	
 	public PDOMCPPDeferredClassInstance(PDOM pdom, PDOMNode parent, ICPPClassType classType, PDOMBinding instantiated)
@@ -59,7 +61,7 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPInstance implements
 	}
 
 	public int getNodeType() {
-		return PDOMCPPLinkage.CPP_DEFERRED_CLASS_INSTANCE;
+		return IIndexCPPBindingConstants.CPP_DEFERRED_CLASS_INSTANCE;
 	}
 
 	public ICPPBase[] getBases() throws DOMException {

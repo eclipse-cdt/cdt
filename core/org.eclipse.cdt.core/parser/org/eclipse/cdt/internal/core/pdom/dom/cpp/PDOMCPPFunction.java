@@ -47,40 +47,35 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 	 * Offset of total number of function parameters (relative to the
 	 * beginning of the record).
 	 */
-	@SuppressWarnings("static-access")
 	private static final int NUM_PARAMS = PDOMCPPBinding.RECORD_SIZE + 0;
 
 	/**
 	 * Offset of pointer to the first parameter of this function (relative to
 	 * the beginning of the record).
 	 */
-	@SuppressWarnings("static-access")
 	private static final int FIRST_PARAM = PDOMCPPBinding.RECORD_SIZE + 4;
 	
 	/**
 	 * Offset of pointer to the function type record of this function (relative to
 	 * the beginning of the record).
 	 */
-	@SuppressWarnings("static-access")
 	protected static final int FUNCTION_TYPE= PDOMCPPBinding.RECORD_SIZE + 8;
 	
 	/**
 	 * Offset of hash of parameter information to allow fast comparison
 	 */
-	@SuppressWarnings("static-access")
 	private static final int SIGNATURE_MEMENTO = PDOMCPPBinding.RECORD_SIZE + 12;
 	
 	/**
 	 * Offset of annotation information (relative to the beginning of the
 	 * record).
 	 */
-	@SuppressWarnings("static-access")
 	protected static final int ANNOTATION = PDOMCPPBinding.RECORD_SIZE + 16; // byte
 	
 	/**
 	 * The size in bytes of a PDOMCPPFunction record in the database.
 	 */
-	@SuppressWarnings({ "static-access", "hiding" })
+	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 17;
 	
 	public PDOMCPPFunction(PDOM pdom, PDOMNode parent, ICPPFunction function, boolean setTypes) throws CoreException {

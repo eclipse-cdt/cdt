@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
@@ -36,6 +37,6 @@ class PDOMCPPConstructorTemplate extends PDOMCPPMethodTemplate implements
 	}
 	
 	public int getNodeType() {
-		return PDOMCPPLinkage.CPP_CONSTRUCTOR_TEMPLATE;
+		return IIndexCPPBindingConstants.CPP_CONSTRUCTOR_TEMPLATE;
 	}
 }

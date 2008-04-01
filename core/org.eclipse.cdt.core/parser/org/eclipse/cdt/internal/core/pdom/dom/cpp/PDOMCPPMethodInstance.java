@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -29,6 +30,7 @@ class PDOMCPPMethodInstance extends PDOMCPPFunctionInstance implements
 	/**
 	 * The size in bytes of a PDOMCPPMethodInstance record in the database.
 	 */
+	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPFunctionInstance.RECORD_SIZE + 0;
 	
 	public PDOMCPPMethodInstance(PDOM pdom, PDOMNode parent, ICPPMethod method, PDOMBinding instantiated)
@@ -45,7 +47,7 @@ class PDOMCPPMethodInstance extends PDOMCPPFunctionInstance implements
 	}
 
 	public int getNodeType() {
-		return PDOMCPPLinkage.CPP_METHOD_INSTANCE;
+		return IIndexCPPBindingConstants.CPP_METHOD_INSTANCE;
 	}
 	
 	public boolean isDestructor() throws DOMException {

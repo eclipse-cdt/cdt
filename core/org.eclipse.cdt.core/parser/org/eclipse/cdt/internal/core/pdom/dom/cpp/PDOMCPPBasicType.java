@@ -36,6 +36,7 @@ class PDOMCPPBasicType extends PDOMNode implements ICPPBasicType, IIndexType {
 	public static final int TYPE_ID = PDOMNode.RECORD_SIZE + 0; // short
 	public static final int FLAGS = PDOMNode.RECORD_SIZE + 2;   // short
 
+	@SuppressWarnings("hiding")
 	public static final int RECORD_SIZE = PDOMNode.RECORD_SIZE + 4;
 
 	protected short fFlags= -1;

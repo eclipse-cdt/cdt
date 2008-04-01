@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredFunctionInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalTemplateInstantiator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
+import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
@@ -46,6 +47,7 @@ class PDOMCPPFunctionTemplateSpecialization extends
 	/**
 	 * The size in bytes of a PDOMCPPFunctionTemplateSpecialization record in the database.
 	 */
+	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPFunctionSpecialization.RECORD_SIZE + 8;
 	
 	public PDOMCPPFunctionTemplateSpecialization(PDOM pdom, PDOMNode parent, ICPPFunctionTemplate template, PDOMBinding specialized)
@@ -62,7 +64,7 @@ class PDOMCPPFunctionTemplateSpecialization extends
 	}
 
 	public int getNodeType() {
-		return PDOMCPPLinkage.CPP_FUNCTION_TEMPLATE_SPECIALIZATION;
+		return IIndexCPPBindingConstants.CPP_FUNCTION_TEMPLATE_SPECIALIZATION;
 	}
 	
 	public ICPPTemplateParameter[] getTemplateParameters() throws DOMException {

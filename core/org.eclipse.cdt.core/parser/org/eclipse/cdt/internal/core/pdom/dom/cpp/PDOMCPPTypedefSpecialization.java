@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.index.CPPTypedefClone;
+import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -35,6 +36,7 @@ class PDOMCPPTypedefSpecialization extends PDOMCPPSpecialization
 
 	private static final int TYPE = PDOMCPPSpecialization.RECORD_SIZE + 0;
 	
+	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPSpecialization.RECORD_SIZE + 4;
 	
 	public PDOMCPPTypedefSpecialization(PDOM pdom, PDOMNode parent, ITypedef typedef, PDOMBinding specialized)
@@ -60,7 +62,7 @@ class PDOMCPPTypedefSpecialization extends PDOMCPPSpecialization
 	}
 	
 	public int getNodeType() {
-		return PDOMCPPLinkage.CPP_TYPEDEF_SPECIALIZATION;
+		return IIndexCPPBindingConstants.CPP_TYPEDEF_SPECIALIZATION;
 	}
 
 	public IType getType() throws DOMException {

@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
+import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IndexCPPSignatureUtil;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
@@ -52,6 +53,7 @@ class PDOMCPPClassTemplatePartialSpecialization extends
 	/**
 	 * The size in bytes of a PDOMCPPClassTemplatePartialSpecialization record in the database.
 	 */
+	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPClassTemplate.RECORD_SIZE + 16;
 	
 	public PDOMCPPClassTemplatePartialSpecialization(PDOM pdom,
@@ -82,7 +84,7 @@ class PDOMCPPClassTemplatePartialSpecialization extends
 	}
 
 	public int getNodeType() {
-		return PDOMCPPLinkage.CPP_CLASS_TEMPLATE_PARTIAL_SPEC;
+		return IIndexCPPBindingConstants.CPP_CLASS_TEMPLATE_PARTIAL_SPEC;
 	}
 
 	public PDOMCPPClassTemplatePartialSpecialization getNextPartial() throws CoreException {

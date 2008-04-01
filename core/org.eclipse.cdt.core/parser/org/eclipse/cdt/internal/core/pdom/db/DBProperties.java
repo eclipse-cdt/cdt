@@ -122,9 +122,10 @@ public class DBProperties {
 	
 	/**
 	 * Deletes all properties, does not delete the record associated with the object itself - that is
-	 * it can be repopulated.
+	 * it can be re-populated.
 	 * @throws CoreException
 	 */
+	@SuppressWarnings("hiding")
 	public void clear() throws CoreException {
 		index.accept(new IBTreeVisitor(){
 			public int compare(int record) throws CoreException {

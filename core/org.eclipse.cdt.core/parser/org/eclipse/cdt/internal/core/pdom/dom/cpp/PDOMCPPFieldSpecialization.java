@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -36,6 +37,7 @@ class PDOMCPPFieldSpecialization extends PDOMCPPSpecialization implements
 	/**
 	 * The size in bytes of a PDOMCPPFieldSpecialization record in the database.
 	 */
+	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPSpecialization.RECORD_SIZE + 4;
 	
 	public PDOMCPPFieldSpecialization(PDOM pdom, PDOMNode parent,
@@ -63,7 +65,7 @@ class PDOMCPPFieldSpecialization extends PDOMCPPSpecialization implements
 	}
 
 	public int getNodeType() {
-		return PDOMCPPLinkage.CPP_FIELD_SPECIALIZATION;
+		return IIndexCPPBindingConstants.CPP_FIELD_SPECIALIZATION;
 	}
 
 	private ICPPField getField() {

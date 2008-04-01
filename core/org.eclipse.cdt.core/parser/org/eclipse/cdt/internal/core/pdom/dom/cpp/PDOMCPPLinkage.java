@@ -744,6 +744,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	}
 	
 	@Override
+	@SuppressWarnings("hiding")
 	public PDOMNode getNode(int record) throws CoreException {
 		if (record == 0)
 			return null;

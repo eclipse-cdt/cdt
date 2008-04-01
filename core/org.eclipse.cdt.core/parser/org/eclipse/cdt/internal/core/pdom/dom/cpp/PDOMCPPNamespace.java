@@ -74,6 +74,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 	}
 
 	@Override
+	@SuppressWarnings("hiding")
 	public void accept(final IPDOMVisitor visitor) throws CoreException {
 		if (visitor instanceof IBTreeVisitor) {
 			getIndex().accept((IBTreeVisitor) visitor);
@@ -176,6 +177,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 		return true;
 	}
 
+	@SuppressWarnings("hiding")
 	public IBinding[] getMemberBindings() throws DOMException {
 		IBinding[] result = null;
 		final List<PDOMNode> preresult = new ArrayList<PDOMNode>();

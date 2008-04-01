@@ -31,9 +31,8 @@ import org.eclipse.core.runtime.CoreException;
  */
 class PDOMCPPNamespaceAlias extends PDOMCPPBinding implements ICPPNamespaceAlias {
 
-	@SuppressWarnings("static-access")
 	private static final int NAMESPACE_BINDING = PDOMCPPBinding.RECORD_SIZE + 0;
-	@SuppressWarnings({ "hiding", "static-access" })
+	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 4;
 	
 	public PDOMCPPNamespaceAlias(PDOM pdom, PDOMNode parent, ICPPNamespaceAlias alias)

@@ -70,8 +70,8 @@ public class NamedNodeCollector implements IBTreeVisitor, IPDOMVisitor {
 	final public int compare(int record) throws CoreException {
 		if (monitor != null)
 			checkCancelled();
-		IString name= PDOMNamedNode.getDBName(linkage.getPDOM(), record);
-		return compare(name);
+		IString rhsName= PDOMNamedNode.getDBName(linkage.getPDOM(), record);
+		return compare(rhsName);
 	}
 
 	private int compare(IString rhsName) throws CoreException {

@@ -57,8 +57,8 @@ public final class MacroContainerCollector implements IBTreeVisitor {
 	final public int compare(int record) throws CoreException {
 		if (monitor != null)
 			checkCancelled();
-		IString name= PDOMNamedNode.getDBName(pdom, record);
-		return compare(name);
+		IString rhsName= PDOMNamedNode.getDBName(pdom, record);
+		return compare(rhsName);
 	}
 
 	private int compare(IString rhsName) throws CoreException {

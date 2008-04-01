@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.c.ICBasicType;
 import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -35,6 +36,7 @@ class PDOMCBasicType extends PDOMNode implements ICBasicType, IIndexType {
 	public static final int TYPE_ID = PDOMNode.RECORD_SIZE + 0; // short
 	public static final int FLAGS = PDOMNode.RECORD_SIZE + 2;   // short
 	
+	@SuppressWarnings("hiding")
 	public static final int RECORD_SIZE = PDOMNode.RECORD_SIZE + 4;
 	
 	public static final int IS_LONG = 0x1;
@@ -77,7 +79,7 @@ class PDOMCBasicType extends PDOMNode implements ICBasicType, IIndexType {
 	}
 	
 	public int getNodeType() {
-		return PDOMCLinkage.CBASICTYPE;
+		return IIndexCBindingConstants.CBASICTYPE;
 	}
 
 	public int getType() {

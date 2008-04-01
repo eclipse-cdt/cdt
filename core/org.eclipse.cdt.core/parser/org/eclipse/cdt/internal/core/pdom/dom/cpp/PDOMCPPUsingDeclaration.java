@@ -29,16 +29,19 @@ import org.eclipse.core.runtime.CoreException;
  * @see ICPPUsingDeclaration
  */
 class PDOMCPPUsingDeclaration extends PDOMCPPBinding implements	ICPPUsingDeclaration {
-	@SuppressWarnings("static-access")
+	
 	private static final int TARGET_BINDING = PDOMCPPBinding.RECORD_SIZE + 0;
 	// Using declarations for functions may have multiple delegates. We model such case
 	// by creating a chain of PDOMCPPUsingDeclaration objects linked by NEXT_DELEGATE field.
-	@SuppressWarnings("static-access")
+	
 	private static final int NEXT_DELEGATE = PDOMCPPBinding.RECORD_SIZE + 4;
-	@SuppressWarnings({ "hiding", "static-access" })
+	
+	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 8;
+	
 	private IBinding[] delegates;
 	
+	@SuppressWarnings("hiding")
 	public PDOMCPPUsingDeclaration(PDOM pdom, PDOMNode parent, ICPPUsingDeclaration using)
 			throws CoreException {
 		super(pdom, parent, using.getNameCharArray());

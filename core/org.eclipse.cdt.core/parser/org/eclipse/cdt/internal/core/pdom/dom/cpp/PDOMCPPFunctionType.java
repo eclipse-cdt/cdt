@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
+import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCAnnotation;
@@ -29,6 +30,7 @@ public class PDOMCPPFunctionType extends PDOMCFunctionType implements ICPPFuncti
 	/**
 	 * The size in bytes of a PDOMCFunctionType record in the database.
 	 */
+	@SuppressWarnings("hiding")
 	private static final int RECORD_SIZE= PDOMCFunctionType.RECORD_SIZE+ 4;
 	
 	protected PDOMCPPFunctionType(PDOM pdom, int offset) {
@@ -67,7 +69,7 @@ public class PDOMCPPFunctionType extends PDOMCFunctionType implements ICPPFuncti
 	}
 	
 	public int getNodeType() {
-		return PDOMCPPLinkage.CPP_FUNCTION_TYPE;
+		return IIndexCPPBindingConstants.CPP_FUNCTION_TYPE;
 	}
 
 	public String toString() {

@@ -28,12 +28,12 @@ import org.eclipse.core.runtime.CoreException;
  */
 class PDOMClassUtil {
 	static class FieldCollector implements IPDOMVisitor {
-		private List fields = new ArrayList();
+		private List<ICPPField> fields = new ArrayList<ICPPField>();
 		public boolean visit(IPDOMNode node) throws CoreException {
 			if (node instanceof ICPPField) {
 				ICPPField field= (ICPPField) node;
 				if (IndexFilter.ALL_DECLARED_OR_IMPLICIT.acceptBinding(field)) {
-					fields.add(node);
+					fields.add(field);
 				}
 			}
 			return false;
@@ -41,12 +41,12 @@ class PDOMClassUtil {
 		public void leave(IPDOMNode node) throws CoreException {
 		}
 		public ICPPField[] getFields() {
-			return (ICPPField[])fields.toArray(new ICPPField[fields.size()]);
+			return fields.toArray(new ICPPField[fields.size()]);
 		}
 	}
 	
 	static class ConstructorCollector implements IPDOMVisitor {
-		private List fConstructors = new ArrayList();
+		private List<ICPPConstructor> fConstructors = new ArrayList<ICPPConstructor>();
 		public boolean visit(IPDOMNode node) throws CoreException {
 			if (node instanceof ICPPConstructor) {
 				ICPPConstructor cons= (ICPPConstructor) node;
@@ -59,19 +59,19 @@ class PDOMClassUtil {
 		public void leave(IPDOMNode node) throws CoreException {
 		}
 		public ICPPConstructor[] getConstructors() {
-			return (ICPPConstructor[])fConstructors.toArray(new ICPPConstructor[fConstructors.size()]);
+			return fConstructors.toArray(new ICPPConstructor[fConstructors.size()]);
 		}
 	}
 
 	static class MethodCollector implements IPDOMVisitor {
-		private final List methods;
+		private final List<ICPPMethod> methods;
 		private final boolean acceptNonImplicit;
 		private final IndexFilter filter;
 		public MethodCollector(boolean acceptImplicit) {
 			this(acceptImplicit, true);
 		}
 		public MethodCollector(boolean acceptImplicit, boolean acceptNonImplicit) {
-			this.methods = new ArrayList();
+			this.methods = new ArrayList<ICPPMethod>();
 			this.acceptNonImplicit= acceptNonImplicit;
 			this.filter= acceptImplicit ? IndexFilter.ALL_DECLARED_OR_IMPLICIT : IndexFilter.ALL_DECLARED;
 		}
@@ -80,7 +80,7 @@ class PDOMClassUtil {
 				ICPPMethod method= (ICPPMethod) node;
 				if (filter.acceptBinding(method)) {
 					if (acceptNonImplicit || method.isImplicit()) {
-						methods.add(node);
+						methods.add(method);
 					}
 				}
 			}
@@ -89,7 +89,7 @@ class PDOMClassUtil {
 		public void leave(IPDOMNode node) throws CoreException {
 		}
 		public ICPPMethod[] getMethods() {
-			return (ICPPMethod[])methods.toArray(new ICPPMethod[methods.size()]); 
+			return methods.toArray(new ICPPMethod[methods.size()]); 
 		}
 	}
 }

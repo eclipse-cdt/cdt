@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.index.CPPReferenceTypeClone;
+import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -34,6 +35,7 @@ class PDOMCPPReferenceType extends PDOMNode implements ICPPReferenceType,
 
 	private static final int TYPE = PDOMNode.RECORD_SIZE + 0;
 	
+	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMNode.RECORD_SIZE + 4;
 	
 	public PDOMCPPReferenceType(PDOM pdom, int record) {
@@ -65,7 +67,7 @@ class PDOMCPPReferenceType extends PDOMNode implements ICPPReferenceType,
 	}
 
 	public int getNodeType() {
-		return PDOMCPPLinkage.CPP_REFERENCE_TYPE;
+		return IIndexCPPBindingConstants.CPP_REFERENCE_TYPE;
 	}
 	
 	

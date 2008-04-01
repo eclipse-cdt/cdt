@@ -546,7 +546,8 @@ public class PDOMFile implements IIndexFragmentFile {
 			}
 			return records;
 		}
-
+		
+		@SuppressWarnings("hiding")
 		public int compare(int record) throws CoreException {
 			IString name = db.getString(db.getInt(record + PDOMFile.LOCATION_REPRESENTATION));
 			int cmp= name.compare(rawKey, true);
@@ -555,7 +556,8 @@ public class PDOMFile implements IIndexFragmentFile {
 			}
 			return cmp;
 		}
-
+		
+		@SuppressWarnings("hiding")
 		public boolean visit(int record) throws CoreException {
 			if (linkageID >= 0) {
 				this.record = record;

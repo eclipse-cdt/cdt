@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -39,6 +40,7 @@ class PDOMCPPMethodSpecialization extends PDOMCPPFunctionSpecialization
 	/**
 	 * The size in bytes of a PDOMCPPMethodSpecialization record in the database.
 	 */
+	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPFunctionSpecialization.RECORD_SIZE + 1;
 	
 	/**
@@ -70,7 +72,7 @@ class PDOMCPPMethodSpecialization extends PDOMCPPFunctionSpecialization
 	}
 
 	public int getNodeType() {
-		return PDOMCPPLinkage.CPP_METHOD_SPECIALIZATION;
+		return IIndexCPPBindingConstants.CPP_METHOD_SPECIALIZATION;
 	}
 	
 	public boolean isDestructor() throws DOMException {

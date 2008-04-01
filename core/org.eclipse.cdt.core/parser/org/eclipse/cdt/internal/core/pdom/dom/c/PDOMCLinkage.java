@@ -272,6 +272,7 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 		return null;
 	}
 
+	@SuppressWarnings("hiding")
 	public PDOMNode getNode(int record) throws CoreException {
 		if (record == 0)
 			return null;

@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -55,6 +56,7 @@ class PDOMCPPFunctionInstance extends PDOMCPPInstance implements ICPPFunction {
 	/**
 	 * The size in bytes of a PDOMCPPFunctionInstance record in the database.
 	 */
+	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPInstance.RECORD_SIZE + 12;
 	
 	public PDOMCPPFunctionInstance(PDOM pdom, PDOMNode parent, ICPPFunction function, PDOMBinding instantiated)
@@ -100,7 +102,7 @@ class PDOMCPPFunctionInstance extends PDOMCPPInstance implements ICPPFunction {
 	}
 
 	public int getNodeType() {
-		return PDOMCPPLinkage.CPP_FUNCTION_INSTANCE;
+		return IIndexCPPBindingConstants.CPP_FUNCTION_INSTANCE;
 	}
 	
 	public PDOMCPPParameterSpecialization getFirstParameter() throws CoreException {

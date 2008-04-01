@@ -119,6 +119,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	}
 
 	@Override
+	@SuppressWarnings("hiding")
 	public void accept(final IPDOMVisitor visitor) throws CoreException {
 		if (visitor instanceof IBTreeVisitor) {
 			getIndex().accept((IBTreeVisitor) visitor);
@@ -150,6 +151,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		getIndex().insert(child.getRecord());
 	}
 
+	@SuppressWarnings("hiding")
 	public PDOMNode getNode(int record) throws CoreException {
 		switch (PDOMNode.getNodeType(pdom, record)) {
 		case POINTER_TYPE:

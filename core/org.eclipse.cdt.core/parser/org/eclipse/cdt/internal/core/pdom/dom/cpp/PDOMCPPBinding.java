@@ -29,6 +29,10 @@ import org.eclipse.core.runtime.CoreException;
  * Mirrors type-hierarchy from DOM interfaces
  */
 abstract class PDOMCPPBinding extends PDOMBinding implements ICPPBinding {
+	
+	@SuppressWarnings("hiding")
+	protected static final int RECORD_SIZE= PDOMBinding.RECORD_SIZE + 0;
+	
 	public PDOMCPPBinding(PDOM pdom, int record) {
 		super(pdom, record);
 	}

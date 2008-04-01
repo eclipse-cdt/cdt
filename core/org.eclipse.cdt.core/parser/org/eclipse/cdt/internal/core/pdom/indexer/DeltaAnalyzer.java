@@ -23,9 +23,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 public class DeltaAnalyzer {
-	private List fAdded= new ArrayList();
-	private List fChanged= new ArrayList();
-	private List fRemoved= new ArrayList();
+	private List<ITranslationUnit> fAdded= new ArrayList<ITranslationUnit>();
+	private List<ITranslationUnit> fChanged= new ArrayList<ITranslationUnit>();
+	private List<ITranslationUnit> fRemoved= new ArrayList<ITranslationUnit>();
 	
 	public DeltaAnalyzer() {
 	}
@@ -73,27 +73,27 @@ public class DeltaAnalyzer {
 		}
 	}
 
-	private void collectSources(ICContainer container, Collection sources) throws CoreException {
+	private void collectSources(ICContainer container, Collection<ITranslationUnit> sources) throws CoreException {
 		container.accept(new TranslationUnitCollector(sources, sources, new NullProgressMonitor()));
 	}
 
 	public ITranslationUnit[] getAddedTUs() {
-		return (ITranslationUnit[]) fAdded.toArray(new ITranslationUnit[fAdded.size()]);
+		return fAdded.toArray(new ITranslationUnit[fAdded.size()]);
 	}
 
 	public ITranslationUnit[] getChangedTUs() {
-		return (ITranslationUnit[]) fChanged.toArray(new ITranslationUnit[fChanged.size()]);
+		return fChanged.toArray(new ITranslationUnit[fChanged.size()]);
 	}
 
 	public ITranslationUnit[] getRemovedTUs() {
-		return (ITranslationUnit[]) fRemoved.toArray(new ITranslationUnit[fRemoved.size()]);
+		return fRemoved.toArray(new ITranslationUnit[fRemoved.size()]);
 	}
 
-	public List getAddedList() {
+	public List<ITranslationUnit> getAddedList() {
 		return fAdded;
 	}
 
-	public List getChangedList() {
+	public List<ITranslationUnit> getChangedList() {
 		return fChanged;
 	}
 }

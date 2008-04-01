@@ -49,6 +49,7 @@ class PDOMCVariable extends PDOMBinding implements IVariable {
 	/**
 	 * The size in bytes of a PDOMCVariable record in the database.
 	 */
+	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 5;
 	
 	public PDOMCVariable(PDOM pdom, PDOMNode parent, IVariable variable) throws CoreException {

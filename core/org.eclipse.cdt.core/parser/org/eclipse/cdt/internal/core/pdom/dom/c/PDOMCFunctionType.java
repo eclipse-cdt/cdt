@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
@@ -48,6 +49,7 @@ public class PDOMCFunctionType extends PDOMNode implements IIndexType, IFunction
 	/**
 	 * The size in bytes of a PDOMCFunctionType record in the database.
 	 */
+	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE= PDOMNode.RECORD_SIZE + 8;
 
 	public PDOMCFunctionType(PDOM pdom, int record) {
@@ -94,7 +96,7 @@ public class PDOMCFunctionType extends PDOMNode implements IIndexType, IFunction
 	}
 
 	public int getNodeType() {
-		return PDOMCLinkage.CFUNCTIONTYPE;
+		return IIndexCBindingConstants.CFUNCTIONTYPE;
 	}
 
 	protected int getRecordSize() {
@@ -144,12 +146,12 @@ public class PDOMCFunctionType extends PDOMNode implements IIndexType, IFunction
 
 
 	public IType[] getParameterTypes() {
-		final List result= new ArrayList();
+		final List<IType> result= new ArrayList<IType>();
 		try {
 			PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + TYPELIST, getLinkageImpl(), true);
 			list.accept(new IPDOMVisitor(){
 				public void leave(IPDOMNode node) throws CoreException {
-					result.add(node);
+					result.add((IType)node);
 				}
 				public boolean visit(IPDOMNode node) throws CoreException {
 					return false;
@@ -158,7 +160,7 @@ public class PDOMCFunctionType extends PDOMNode implements IIndexType, IFunction
 		} catch(CoreException ce) {
 			CCorePlugin.log(ce);
 		}
-		return (IType[]) result.toArray(new IType[result.size()]);
+		return result.toArray(new IType[result.size()]);
 	}
 
 	public IType getReturnType() {

@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -31,6 +32,7 @@ class PDOMCPPMethodTemplateSpecialization extends
 	/**
 	 * The size in bytes of a PDOMCPPMethodTemplateSpecialization record in the database.
 	 */
+	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPFunctionTemplateSpecialization.RECORD_SIZE + 0;
 	
 	public PDOMCPPMethodTemplateSpecialization(PDOM pdom, PDOMNode parent, ICPPMethod method, PDOMBinding specialized)
@@ -47,7 +49,7 @@ class PDOMCPPMethodTemplateSpecialization extends
 	}
 
 	public int getNodeType() {
-		return PDOMCPPLinkage.CPP_METHOD_TEMPLATE_SPECIALIZATION;
+		return IIndexCPPBindingConstants.CPP_METHOD_TEMPLATE_SPECIALIZATION;
 	}
 	
 	public boolean isDestructor() throws DOMException {

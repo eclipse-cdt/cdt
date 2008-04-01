@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -27,6 +28,7 @@ class PDOMCPPDeferredFunctionInstance extends PDOMCPPFunctionInstance
 	/**
 	 * The size in bytes of a PDOMCPPDeferredFunctionInstance record in the database.
 	 */
+	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPFunctionInstance.RECORD_SIZE + 0;
 	
 	public PDOMCPPDeferredFunctionInstance(PDOM pdom, PDOMNode parent, ICPPFunction function, PDOMBinding instantiated)
@@ -43,6 +45,6 @@ class PDOMCPPDeferredFunctionInstance extends PDOMCPPFunctionInstance
 	}
 
 	public int getNodeType() {
-		return PDOMCPPLinkage.CPP_DEFERRED_FUNCTION_INSTANCE;
+		return IIndexCPPBindingConstants.CPP_DEFERRED_FUNCTION_INSTANCE;
 	}
 }

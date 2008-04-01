@@ -46,6 +46,7 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements
 	/**
 	 * The size in bytes of a PDOMCPPSpecialization record in the database.
 	 */
+	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 16;
 	
 	public PDOMCPPSpecialization(PDOM pdom, PDOMNode parent, ICPPSpecialization spec, PDOMNamedNode specialized)

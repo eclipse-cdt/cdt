@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -40,6 +41,7 @@ class PDOMCPPMethodTemplate extends PDOMCPPFunctionTemplate implements
 	/**
 	 * The size in bytes of a PDOMCPPMethodTemplate record in the database.
 	 */
+	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPFunctionTemplate.RECORD_SIZE + 1;
 	
 	/**
@@ -73,7 +75,7 @@ class PDOMCPPMethodTemplate extends PDOMCPPFunctionTemplate implements
 	}
 
 	public int getNodeType() {
-		return PDOMCPPLinkage.CPP_METHOD_TEMPLATE;
+		return IIndexCPPBindingConstants.CPP_METHOD_TEMPLATE;
 	}
 
 	public boolean isDestructor() throws DOMException {

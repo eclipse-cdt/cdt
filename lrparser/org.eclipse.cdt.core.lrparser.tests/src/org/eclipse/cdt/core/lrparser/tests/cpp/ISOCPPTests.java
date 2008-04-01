@@ -1,5 +1,6 @@
 package org.eclipse.cdt.core.lrparser.tests.cpp;
 
+import junit.framework.AssertionFailedError;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -36,7 +37,6 @@ public class ISOCPPTests extends AST2CPPTests {
     	return ParseHelper.parse(code, language, expectNoProblems);
     }
     
-    
     protected ILanguage getC99Language() {
     	return C99Language.getDefault();
     }
@@ -45,9 +45,29 @@ public class ISOCPPTests extends AST2CPPTests {
     	return ISOCPPLanguage.getDefault();
     }
     
-    public void testBug98704() throws Exception {
+    
+    @Override
+	public void testBug98704() throws Exception {
     	// this one gets stuck in infinite loop
     	
     }
 	
+    @Override
+	public void testBug87424() throws Exception { // gcc extension
+    	try {
+    		super.testBug87424();
+    		fail();
+    	} catch(AssertionFailedError _) {
+    	} 
+    }
+
+    
+    @Override
+	public void testBug95757() throws Exception { // gcc extension
+    	try {
+    		super.testBug95757();
+    		fail();
+    	} catch(AssertionFailedError _) {
+    	} 
+    }
 }

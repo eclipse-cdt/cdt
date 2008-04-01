@@ -2386,7 +2386,7 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("struct B : public A { \n"); //$NON-NLS-1$
         buffer.append("    int a1;           \n"); //$NON-NLS-1$
         buffer.append("    void f();         \n"); //$NON-NLS-1$
-        buffer.append("}                     \n"); //$NON-NLS-1$
+        buffer.append("};                    \n"); //$NON-NLS-1$
         buffer.append("int a3;               \n"); //$NON-NLS-1$
         buffer.append("void B::f(){          \n"); //$NON-NLS-1$
         buffer.append("   int a4;            \n"); //$NON-NLS-1$
@@ -3340,23 +3340,19 @@ public class AST2CPPTests extends AST2BaseTest {
         IFunction f2 = (IFunction) col.getName(3).resolveBinding();
         IFunction f3 = (IFunction) col.getName(6).resolveBinding();
 
-        IASTFunctionDefinition def = (IASTFunctionDefinition) col.getName(5)
-                .getParent().getParent();
+        IASTFunctionDefinition def = (IASTFunctionDefinition) col.getName(5).getParent().getParent();
         IScope scope = ((IASTCompoundStatement) def.getBody()).getScope();
         IBinding[] bs = scope.find("f"); //$NON-NLS-1$
-        assertEquals(bs.length, 3);
+        assertEquals(3, bs.length);
         assertSame(bs[0], f3);
-        assertSame( bs[1], f1);
-        assertSame( bs[2], f2);
-
+        assertSame(bs[1], f1);
+        assertSame(bs[2], f2);
 
         String[] s = ((ICPPBinding)  bs[1]).getQualifiedName();
         assertEquals(s.length, 2);
         assertEquals(s[0], "A"); //$NON-NLS-1$
         assertEquals(s[1], "f"); //$NON-NLS-1$
-        assertTrue(((ICPPBinding)  bs[1])
-                .isGloballyQualified());
-
+        assertTrue(((ICPPBinding)  bs[1]).isGloballyQualified());
     }
 
     public void testFind_4() throws Exception {

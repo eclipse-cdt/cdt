@@ -482,9 +482,9 @@ public abstract class BuildASTParserAction {
   	/**
 	 * block_item ::= declaration | statement 
 	 * 
-	 * Wrap a declaration in a DeclarationStatement.
+	 * TODO, be careful where exactly in the grammar this is called, it may be called unnecessarily
 	 */
-	public void consumeStatementDeclaration() {
+	public void consumeStatementDeclarationWithDisambiguation() {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		
 		IASTDeclaration decl = (IASTDeclaration) astStack.pop();
@@ -514,6 +514,21 @@ public abstract class BuildASTParserAction {
 		}
 			
 		astStack.push(result);
+		
+		if(TRACE_AST_STACK) System.out.println(astStack);
+	}
+	
+	
+	/**
+	 * Wrap a declaration in a DeclarationStatement.
+	 */
+	public void consumeStatementDeclaration() {
+		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
+		
+		IASTDeclaration decl = (IASTDeclaration) astStack.pop();
+		IASTDeclarationStatement declarationStatement = nodeFactory.newDeclarationStatement(decl);
+		setOffsetAndLength(declarationStatement);
+		astStack.push(declarationStatement);
 		
 		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
@@ -957,37 +972,6 @@ public abstract class BuildASTParserAction {
 	}
 
 	
-	
-	/**
-	 * iteration_statement_matched
-	 *     ::= 'for' '(' expression_opt ';' expression_opt ';' expression_opt ')' statement
-	 */
-	public void consumeStatementForLoop() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
-		IASTStatement body = (IASTStatement) astStack.pop();
-		// these two expressions may be null, see consumeExpressionOptional()
-		IASTExpression expr3 = (IASTExpression) astStack.pop();
-		IASTExpression expr2 = (IASTExpression) astStack.pop();
-		IASTNode node = (IASTNode) astStack.pop(); // may be an expression or a declaration
-		
-		IASTStatement initializer;
-		if(node instanceof IASTExpression)
-			initializer = nodeFactory.newExpressionStatement((IASTExpression)node);
-		else if(node instanceof IASTDeclaration)
-			initializer = nodeFactory.newDeclarationStatement((IASTDeclaration)node);
-		else // its null
-			initializer = nodeFactory.newNullStatement();
-		
-		if(node != null)
-			setOffsetAndLength(initializer, offset(node), length(node));
-		
-		IASTForStatement forStat = nodeFactory.newForStatement(initializer, expr2, expr3, body);
-		setOffsetAndLength(forStat);
-		astStack.push(forStat);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
-	}
 
 	
 	/**

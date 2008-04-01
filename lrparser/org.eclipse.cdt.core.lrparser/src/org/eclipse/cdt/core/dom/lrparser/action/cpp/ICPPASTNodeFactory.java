@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.dom.lrparser.action.cpp;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
+import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPointer;
@@ -78,6 +79,9 @@ public interface ICPPASTNodeFactory extends IASTNodeFactory {
 	public IASTSwitchStatement newSwitchStatment(IASTDeclaration controller, IASTStatement body);
 
 	public IASTIfStatement newIfStatement(IASTDeclaration condition, IASTStatement then, IASTStatement elseClause);
+	
+	public IASTForStatement newForStatement(IASTStatement init, IASTDeclaration condition,
+			IASTExpression iterationExpression, IASTStatement body);
 	
 	public IASTWhileStatement newWhileStatement(IASTDeclaration condition, IASTStatement body);
 

@@ -46,12 +46,14 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
+import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointer;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
@@ -669,6 +671,40 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 		
 		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
+	
+	
+	
+	/**
+	 * iteration_statement_matched
+	 *     ::= 'for' '(' expression_opt ';' expression_opt ';' expression_opt ')' statement
+	 */
+	public void consumeStatementForLoop() {
+		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
+		
+		IASTStatement body = (IASTStatement) astStack.pop();
+		// these two expressions may be null, see consumeExpressionOptional()
+		IASTExpression expr3 = (IASTExpression) astStack.pop();
+		IASTExpression expr2 = (IASTExpression) astStack.pop();
+		IASTNode node = (IASTNode) astStack.pop(); // may be an expression or a declaration
+		
+		IASTStatement initializer;
+		if(node instanceof IASTExpression)
+			initializer = nodeFactory.newExpressionStatement((IASTExpression)node);
+		else if(node instanceof IASTDeclaration)
+			initializer = nodeFactory.newDeclarationStatement((IASTDeclaration)node);
+		else // its null
+			initializer = nodeFactory.newNullStatement();
+		
+		if(node != null)
+			setOffsetAndLength(initializer, offset(node), length(node));
+		
+		IASTForStatement forStat = nodeFactory.newForStatement(initializer, expr2, expr3, body);
+		setOffsetAndLength(forStat);
+		astStack.push(forStat);
+		
+		if(TRACE_AST_STACK) System.out.println(astStack);
+	}
+	
 	
 	
 	/**

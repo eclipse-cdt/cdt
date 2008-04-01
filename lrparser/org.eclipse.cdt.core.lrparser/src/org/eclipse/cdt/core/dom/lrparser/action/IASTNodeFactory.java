@@ -119,6 +119,9 @@ public interface IASTNodeFactory {
 
 	public IASTDoStatement newDoStatement(IASTStatement body, IASTExpression condition);
 
+	public IASTForStatement newForStatement(IASTStatement init, IASTExpression condition,
+			IASTExpression iterationExpression, IASTStatement body);
+	
 	public IASTGotoStatement newGotoStatement(IASTName name);
 
 	public IASTContinueStatement newContinueStatement();
@@ -126,9 +129,6 @@ public interface IASTNodeFactory {
 	public IASTBreakStatement newBreakStatement();
 
 	public IASTReturnStatement newReturnStatement(IASTExpression retValue);
-	
-	public IASTForStatement newForStatement(IASTStatement init, IASTExpression condition,
-			IASTExpression iterationExpression, IASTStatement body);
 	
 	public IASTDeclarationStatement newDeclarationStatement(IASTDeclaration declaration);
 	

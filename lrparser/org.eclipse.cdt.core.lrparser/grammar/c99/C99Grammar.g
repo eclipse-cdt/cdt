@@ -424,7 +424,7 @@ block_item_list
 block_item
     ::= statement
       | declaration
-          /. $Build  consumeStatementDeclaration();  $EndBuild ./
+          /. $Build  consumeStatementDeclarationWithDisambiguation();  $EndBuild ./
          
          
 expression_statement

@@ -358,6 +358,11 @@ public class CPPASTNodeFactory implements ICPPASTNodeFactory {
 		return new CPPASTForStatement(init, condition, iterationExpr, body);
 	}
 
+	public IASTForStatement newForStatement(IASTStatement init, IASTDeclaration condition, 
+			IASTExpression iterationExpression, IASTStatement body) {
+		return new CPPASTForStatement(init, condition, iterationExpression, body);
+	}
+	
 	public IASTDeclarationStatement newDeclarationStatement(IASTDeclaration declaration) {
 		return new CPPASTDeclarationStatement(declaration);
 	}
@@ -554,5 +559,7 @@ public class CPPASTNodeFactory implements ICPPASTNodeFactory {
 	public IASTDeclSpecifier newSimpleDeclSpecifier() {
 		return newCPPSimpleDeclSpecifier();
 	}
+
+	
 
 }

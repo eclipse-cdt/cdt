@@ -17,6 +17,7 @@ import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.*;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.locks.Condition;
 
 import lpg.lpgjavaruntime.IToken;
 
@@ -30,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
+import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
@@ -97,6 +99,7 @@ import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPSizeofExpressionParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
+import org.osgi.service.condpermadmin.ConditionInfo;
 
 /**
  * Semantic actions that build the AST during the parse. 
@@ -566,6 +569,29 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		
 		setOffsetAndLength(whileStatement);
 		astStack.push(whileStatement);
+		
+		if(TRACE_AST_STACK) System.out.println(astStack);
+	}
+	
+	
+	/**
+	 */
+	public void consumeStatementForLoop() {
+		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
+		
+		IASTStatement body = (IASTStatement) astStack.pop();
+		IASTExpression expr = (IASTExpression) astStack.pop();
+		Object condition = astStack.pop(); // can be an expression or a declaration
+		IASTStatement initializer = (IASTStatement) astStack.pop();
+		
+		IASTForStatement forStat;
+		if(condition instanceof IASTExpression)
+			forStat = nodeFactory.newForStatement(initializer, (IASTExpression)condition, expr, body);
+		else // its a declaration or its null
+			forStat = nodeFactory.newForStatement(initializer, (IASTDeclaration)condition, expr, body);
+		
+		setOffsetAndLength(forStat);
+		astStack.push(forStat);
 		
 		if(TRACE_AST_STACK) System.out.println(astStack);
 	}

@@ -212,7 +212,7 @@ public String[] getOrderedTerminalSymbols() {
 }
 
 public String getName() {
-	return "C99Parser";
+	return "C99Parser"; //$NON-NLS-1$
 }
 
 
@@ -621,7 +621,7 @@ public C99Parser(String[] mapFrom) {  // constructor
             //
             // Rule 109:  block_item ::= declaration
             //
-            case 109: { action.   consumeStatementDeclaration();             break;
+            case 109: { action.   consumeStatementDeclarationWithDisambiguation();             break;
             }  
   
             //

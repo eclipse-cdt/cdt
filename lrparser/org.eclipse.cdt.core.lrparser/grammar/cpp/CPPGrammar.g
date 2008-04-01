@@ -882,6 +882,10 @@ condition
       | type_specifier_seq declarator '=' assignment_expression
           /. $Build  consumeConditionDeclaration();  $EndBuild ./
 
+condition_opt
+    ::= condition
+      | $empty
+          /. $Build  consumeEmpty(); $EndBuild ./
 
 
 iteration_statement
@@ -889,11 +893,16 @@ iteration_statement
           /. $Build  consumeStatementWhileLoop();  $EndBuild ./
       | 'do' statement 'while' '(' expression ')' ';'
           /. $Build  consumeStatementDoLoop();  $EndBuild ./
-      | 'for' '(' expression_opt ';' expression_opt ';' expression_opt ')' statement
+      | 'for' '(' for_init_statement condition_opt ';' expression_opt ')' statement
           /. $Build consumeStatementForLoop(); $EndBuild ./
-      | 'for' '(' simple_declaration_with_declspec expression_opt ';' expression_opt ')' statement
-          /. $Build consumeStatementForLoop(); $EndBuild ./
-          
+
+
+-- I'm sure there are ambiguities here but we won't worry about it
+for_init_statement
+    ::= expression_statement
+      | simple_declaration_with_declspec
+          /. $Build  consumeStatementDeclaration();  $EndBuild ./
+
 
 jump_statement
     ::= 'break' ';'
@@ -912,7 +921,7 @@ jump_statement
 -- of the parser test cases expect them to work.
 declaration_statement
     ::= block_declaration
-          /. $Build  consumeStatementDeclaration();  $EndBuild ./
+          /. $Build  consumeStatementDeclarationWithDisambiguation();  $EndBuild ./
       | function_definition  -- not spec
           /. $Build  consumeStatementDeclaration();  $EndBuild ./
 

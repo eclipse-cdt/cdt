@@ -26,7 +26,7 @@ import org.eclipse.dd.mi.service.command.output.MIInfo;
 public class MIFileSymbolFile extends MICommand<MIInfo>
 {
     public MIFileSymbolFile(MIControlDMContext dmc, String file) {
-        super(dmc, "-file-symbol-file", new String[] {file}); //$NON-NLS-1$
+        super(dmc, "-file-symbol-file", null, new String[] {file}); //$NON-NLS-1$
     }
     
     public MIFileSymbolFile(MIControlDMContext dmc) {

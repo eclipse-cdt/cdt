@@ -27,7 +27,7 @@ import org.eclipse.dd.mi.service.command.output.MIInfo;
 public class MIFileExecFile extends MICommand<MIInfo>
 {
     public MIFileExecFile(MIControlDMContext dmc, String file) {
-        super(dmc, "-file-exec-file", new String[] {file}); //$NON-NLS-1$
+        super(dmc, "-file-exec-file", null, new String[] {file}); //$NON-NLS-1$
     }
     
     public MIFileExecFile(MIControlDMContext dmc) {

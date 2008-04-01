@@ -10,9 +10,13 @@
  *******************************************************************************/
 package org.eclipse.dd.gdb.internal.provisional.launching;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
 import org.eclipse.cdt.debug.mi.core.IGDBServerMILaunchConfigurationConstants;
+import org.eclipse.cdt.debug.mi.core.IMILaunchConfigurationConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -34,6 +38,8 @@ import org.eclipse.dd.mi.service.command.commands.MIExecContinue;
 import org.eclipse.dd.mi.service.command.commands.MIExecRun;
 import org.eclipse.dd.mi.service.command.commands.MIFileExecFile;
 import org.eclipse.dd.mi.service.command.commands.MIFileSymbolFile;
+import org.eclipse.dd.mi.service.command.commands.MIGDBSetAutoSolib;
+import org.eclipse.dd.mi.service.command.commands.MIGDBSetSolibSearchPath;
 import org.eclipse.dd.mi.service.command.commands.MITargetSelect;
 import org.eclipse.dd.mi.service.command.output.MIBreakInsertInfo;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
@@ -71,8 +77,46 @@ public class FinalLaunchSequence extends Sequence {
             fCommandControl.queueCommand(
                	new MIFileSymbolFile(fCommandControl.getControlDMContext(), 
                 		             fCommandControl.getExecutablePath().toOSString()), 
-               	   new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
+               	new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
         }},
+        /*
+         * Tell GDB to automatically load or not the shared library symbols
+         */
+        new Step() { @Override
+        public void execute(RequestMonitor requestMonitor) {
+    		try {
+    			boolean autolib = fLaunch.getLaunchConfiguration().getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB,
+    					                                                        IMILaunchConfigurationConstants.DEBUGGER_AUTO_SOLIB_DEFAULT);
+                fCommandControl.queueCommand(
+                	new MIGDBSetAutoSolib(fCommandControl.getControlDMContext(), autolib), 
+                	new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
+    		} catch (CoreException e) {
+    			requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot set shared library option", e)); //$NON-NLS-1$
+    			requestMonitor.done();
+    		}
+        }},
+        /*
+         * Set the shared library paths
+         */
+        new Step() { @Override
+        public void execute(RequestMonitor requestMonitor) {
+      		try {
+      		    @SuppressWarnings("unchecked")
+    			List<String> p = fLaunch.getLaunchConfiguration().getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_SOLIB_PATH, 
+    					                                                       new ArrayList<String>(1));
+   				if (p.size() > 0) {
+   					String[] paths = p.toArray(new String[p.size()]);
+   	                fCommandControl.queueCommand(
+   	                	new MIGDBSetSolibSearchPath(fCommandControl.getControlDMContext(), paths), 
+   	                	new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
+   				} else {
+   	                requestMonitor.done();
+   				}
+    		} catch (CoreException e) {
+                requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot set share library paths", e)); //$NON-NLS-1$
+                requestMonitor.done();
+    		}
+    	}},
     	/*
     	 * Setup the source paths
     	 */

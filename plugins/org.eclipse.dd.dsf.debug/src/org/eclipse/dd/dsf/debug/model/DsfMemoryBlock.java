@@ -31,6 +31,7 @@ import org.eclipse.dd.dsf.debug.internal.DsfDebugPlugin;
 import org.eclipse.dd.dsf.debug.service.IMemory;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IMemory.IMemoryChangedEvent;
+import org.eclipse.dd.dsf.debug.service.IMemory.IMemoryDMContext;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
@@ -49,6 +50,7 @@ import org.eclipse.debug.core.model.MemoryByte;
  */
 public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtension
 {
+    private final IMemoryDMContext fContext;
     private final ILaunch fLaunch;
     private final IDebugTarget fDebugTarget;
     private final DsfMemoryBlockRetrieval fRetrieval;
@@ -76,11 +78,11 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
      * @param word_size    - the number of bytes per address
      * @param length       - the requested block length (could be 0)
      */
-    DsfMemoryBlock(DsfMemoryBlockRetrieval retrieval, String modelId, String expression, BigInteger address, int word_size, long length) {
-
+    DsfMemoryBlock(DsfMemoryBlockRetrieval retrieval, IMemoryDMContext context, String modelId, String expression, BigInteger address, int word_size, long length) {
     	fLaunch      = retrieval.getLaunch();
     	fDebugTarget = retrieval.getDebugTarget();
         fRetrieval   = retrieval;
+        fContext     = context;
         fModelId     = modelId;
         fExpression  = expression;
         fBaseAddress = address;
@@ -425,7 +427,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 			    if (memoryService != null) {
 			        // Go for it
 			        memoryService.getMemory( 
-			            fRetrieval.getContext(), address, 0, fWordSize, (int) length,
+			            fContext, address, 0, fWordSize, (int) length,
 			            new DataRequestMonitor<MemoryByte[]>(fRetrieval.getExecutor(), drm) {
 			                @Override
 			                protected void handleSuccess() {
@@ -471,7 +473,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 			    if (memoryService != null) {
 			        // Go for it
 	    	        memoryService.setMemory(
-		    	  	      fRetrieval.getContext(), address, offset, fWordSize, bytes.length, bytes,
+		    	  	      fContext, address, offset, fWordSize, bytes.length, bytes,
 		    	  	      new RequestMonitor(fRetrieval.getExecutor(), null));
 			    }
 				
@@ -511,7 +513,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
     public void eventDispatched(IMemoryChangedEvent e) {
 
         // Check if we are in the same address space 
-        if (e.getDMContext().equals(fRetrieval.getContext())) {
+        if (e.getDMContext().equals(fContext)) {
         	IAddress[] addresses = e.getAddresses();
         	for (int i = 0; i < addresses.length; i++)
         		handleMemoryChange(addresses[i].getValue());

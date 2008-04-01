@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2004, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,29 +14,36 @@
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  * David Dykstal (IBM) - 142806: refactoring persistence framework
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * David McKnight  (IBM)  - [224671] [api] org.eclipse.rse.core API leaks non-API types
  ********************************************************************************/
 
-package org.eclipse.rse.internal.core.subsystems;
+package org.eclipse.rse.core.subsystems;
 import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.rse.core.model.ILabeledObject;
-import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.RSEModelObject;
-import org.eclipse.rse.core.subsystems.IConnectorService;
-import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
 import org.eclipse.rse.internal.core.RSECoreMessages;
 
-
+/**
+ *  Abstract class intended to be extended to provide a means for starting a remote server from 
+ *  the client.  DStore-based connector services use this to determine whether to start a sever via daemon, REXEC, or
+ *  some other mechanism.  For systems that don't need to start remote servers from RSE, this is not
+ *  needed. 
+ */
 public abstract class ServerLauncher extends RSEModelObject implements IServerLauncherProperties, ILabeledObject
 {
 	
-
 	protected String _name;
 	private String _label = null;
 	protected IConnectorService _connectorService;
 
+	/**
+	 * Constructs a server launcher
+	 * @param name name of the server launcher
+	 * @param service the associated connector service
+	 */
 	protected ServerLauncher(String name, IConnectorService service)
 	{
 		super();
@@ -44,26 +51,41 @@ public abstract class ServerLauncher extends RSEModelObject implements IServerLa
 		_connectorService = service; 
 	}
 	
+	/**
+	 * Returns the name of the server launcher
+	 */
 	public String getName()
 	{
 		return _name;
 	}
 	
+	/**
+	 * Returns the label to display in a ui for the server launcher
+	 */
 	public String getLabel() {
 		if (_label != null) return _label;
 		return _name;
 	}
 	
+	/**
+	 * Sets the label to use for display in a ui for the server launcher
+	 */
 	public void setLabel(String label) {
 		_label = label;
 		setDirty(true);
 	}
 	
+	/**
+	 * Returns the description of the server launcher
+	 */
 	public String getDescription()
 	{
 		return RSECoreMessages.RESID_MODELOBJECTS_SERVERLAUNCHER_DESCRIPTION;
 	}
 	
+	/**
+	 * Returns the associated connector service
+	 */
 	public IConnectorService getConnectorService()
 	{
 		return _connectorService;
@@ -93,40 +115,8 @@ public abstract class ServerLauncher extends RSEModelObject implements IServerLa
 	}
 	
 	/**
-	 * @deprecated use property sets
-	 * @param vendorName
-	 * @param attributeName
-	 * @param attributeValue
+	 * Commits the associated connector service to be persisted
 	 */
-	public void setVendorAttribute(String vendorName, 
-									String attributeName, String attributeValue)
-	{
-		IPropertySet set = getPropertySet(vendorName);
-		if (set == null)
-		{
-			set = createPropertySet(vendorName, ""); //$NON-NLS-1$
-		}
-		set.addProperty(attributeName, attributeValue);
-	}
- 
-	/**
-	 * @deprecated use property sets directly now
-	 */
-	public String getVendorAttribute(String vendor, String attributeName)
-	{
-		IPropertySet set = getPropertySet(vendor);
-		if (set != null)
-		{
-			return set.getPropertyValue(attributeName);
-		}
-		else
-		{
-			return null;
-		}
-	} 
-		
-
-
 	public boolean commit() 
 	{
 		return getConnectorService().getHost().commit();

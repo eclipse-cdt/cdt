@@ -14,6 +14,7 @@
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * David McKnight  (IBM)  - [224671] [api] org.eclipse.rse.core API leaks non-API types
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -26,7 +27,6 @@ import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.IPropertyType;
 import org.eclipse.rse.core.model.PropertyType;
 import org.eclipse.rse.internal.core.RSECoreMessages;
-import org.eclipse.rse.internal.core.subsystems.ServerLauncher;
 
 
 /**

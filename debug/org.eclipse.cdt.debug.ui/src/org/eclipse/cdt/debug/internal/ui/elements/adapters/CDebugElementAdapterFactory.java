@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 QNX Software Systems and others.
+ * Copyright (c) 2004, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,15 +9,18 @@
  * QNX Software Systems - Initial API and implementation
  * IBM Corporation
  * ARM Limited - https://bugs.eclipse.org/bugs/show_bug.cgi?id=186981
+ * Wind River Systems - adapted to work with platform Modules view (bug 210558)
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.elements.adapters; 
 
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.ICModule;
+import org.eclipse.cdt.debug.core.model.ICStackFrame;
+import org.eclipse.cdt.debug.core.model.ICThread;
 import org.eclipse.cdt.debug.core.model.IModuleRetrieval;
 import org.eclipse.cdt.debug.internal.ui.views.modules.ModuleContentProvider;
 import org.eclipse.cdt.debug.internal.ui.views.modules.ModuleMementoProvider;
-import org.eclipse.cdt.debug.internal.ui.views.modules.ModuleProxyFactory;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider;
@@ -25,8 +28,14 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactor
  
 public class CDebugElementAdapterFactory implements IAdapterFactory {
 
+    private static IElementContentProvider fgDebugTargetContentProvider = new CDebugTargetContentProvider();
+    private static IElementContentProvider fgThreadContentProvider = new CThreadContentProvider();
+    private static IElementContentProvider fgStackFrameContentProvider = new CStackFrameContentProvider();
     private static IElementContentProvider fgModuleContentProvider = new ModuleContentProvider();
-	private static IModelProxyFactory fgModuleProxyFactory = new ModuleProxyFactory();
+
+    private static IModelProxyFactory fgDebugElementProxyFactory = new CDebugElementProxyFactory();
+    
+    private static IElementMementoProvider fgStackFrameMementoProvider = new CStackFrameMementoProvider();
     private static IElementMementoProvider fgModuleMementoProvider = new ModuleMementoProvider();
 
 	/* (non-Javadoc)
@@ -37,23 +46,45 @@ public class CDebugElementAdapterFactory implements IAdapterFactory {
 			return adaptableObject;
 		}
 		if ( adapterType.equals( IElementContentProvider.class ) ) {
-			if ( adaptableObject instanceof IModuleRetrieval ) {
-				return fgModuleContentProvider;
+			if ( adaptableObject instanceof ICDebugTarget ) {
+				return fgDebugTargetContentProvider;
 			}
-			if ( adaptableObject instanceof ICModule ) {
-				return fgModuleContentProvider;
-			}
-			if ( adaptableObject instanceof ICElement ) {
+            if ( adaptableObject instanceof ICThread ) {
+                return fgThreadContentProvider;
+            }
+            if ( adaptableObject instanceof ICStackFrame ) {
+                return fgStackFrameContentProvider;
+            }
+			if ( adaptableObject instanceof ICModule || 
+			     adaptableObject instanceof ICElement ) 
+			{
 				return fgModuleContentProvider;
 			}
 		}
 		if ( adapterType.equals( IModelProxyFactory.class ) ) {
-			if ( adaptableObject instanceof IModuleRetrieval ) {
-				return fgModuleProxyFactory;
+			if ( adaptableObject instanceof ICDebugTarget ) {
+				return fgDebugElementProxyFactory;
 			}
+            if ( adaptableObject instanceof ICThread ) {
+                return fgDebugElementProxyFactory;
+            }
+			if ( adaptableObject instanceof ICStackFrame ) {
+			    return fgDebugElementProxyFactory;
+			}
+			if ( adaptableObject instanceof IModuleRetrieval ) {
+                return fgDebugElementProxyFactory;
+            }
+
 		}
         if ( adapterType.equals( IElementMementoProvider.class ) ) {
-			if ( adaptableObject instanceof IModuleRetrieval ) {
+            if ( adaptableObject instanceof ICStackFrame ) {
+                return fgStackFrameMementoProvider;
+            }
+			if ( adaptableObject instanceof IModuleRetrieval ||
+			    adaptableObject instanceof ICThread ||
+			     adaptableObject instanceof ICModule || 
+			     adaptableObject instanceof ICElement) 
+			{
 				return fgModuleMementoProvider;
 			}
 		}

@@ -37,12 +37,6 @@
             class="org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyView"
             id="org.eclipse.cdt.debug.ui.DisassemblyView">
       </view>
-      <view
-            icon="icons/view16/modules_view.gif"
-            class="org.eclipse.cdt.debug.internal.ui.views.modules.ModulesView"
-            category="org.eclipse.debug.ui"
-            name="%ModulesView.name"
-            id="org.eclipse.cdt.debug.ui.ModulesView"/>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
@@ -67,6 +61,9 @@
                id="org.eclipse.debug.ui.RegisterView">
          </viewShortcut>
          <viewShortcut
+               id="org.eclipse.debug.ui.ModuleView">
+         </viewShortcut>
+         <viewShortcut
                id="org.eclipse.debug.ui.MemoryView">
          </viewShortcut>
          <view
@@ -82,12 +79,9 @@
                visible="false"
                relative="org.eclipse.debug.ui.VariableView"
                relationship="stack"
-               id="org.eclipse.cdt.debug.ui.ModulesView">
+               id="org.eclipse.debug.ui.ModuleView">
          </view>
-         <viewShortcut
-               id="org.eclipse.cdt.debug.ui.ModulesView">
-         </viewShortcut>
-          <view
+         <view
                visible="true"
                relative="org.eclipse.ui.console.ConsoleView"
                relationship="stack"
@@ -757,7 +751,7 @@
          </action>
       </objectContribution>
       <viewerContribution
-            targetID="org.eclipse.cdt.debug.ui.ModulesView"
+            targetID="org.eclipse.debug.ui.ModuleView"
             id="org.eclipse.cdt.debug.ui.modulesView.popupMenu">
          <action
                helpContextId="load_symbols_for_all_context"
@@ -955,7 +949,7 @@
          </menu>
       </viewContribution>
       <viewContribution
-            targetID="org.eclipse.cdt.debug.ui.ModulesView"
+            targetID="org.eclipse.debug.ui.ModuleView"
             id="org.eclipse.debug.ui.modulesView.toolbar">
          <action
                helpContextId="load_symbols_for_all_context"
@@ -973,16 +967,6 @@
                      id="org.eclipse.cdt.debug.ui"/>
             </enablement>
          </action>
-         <action
-               helpContextId="collapse_all_modules_context"
-               disabledIcon="icons/dlcl16/collapseall.gif"
-               toolbarPath="additions"
-               label="%CollapseAllModulesAction.label"
-               tooltip="%CollapseAllModulesAction.tooltip"
-               icon="icons/elcl16/collapseall.gif"
-               class="org.eclipse.cdt.debug.internal.ui.actions.CollapseAllModulesAction"
-               style="push"
-               id="org.eclipse.cdt.debug.ui.CollapseAllModulesAction"/>
       </viewContribution>
    </extension>
    <extension
@@ -1136,7 +1120,7 @@
       </contextViewBinding>
       <contextViewBinding
             contextId="org.eclipse.cdt.debug.ui.debugging"
-            viewId="org.eclipse.cdt.debug.ui.ModulesView"/>
+            viewId="org.eclipse.debug.ui.ModuleView"/>
    </extension>
    <extension
          point="org.eclipse.ui.editors.annotationTypes">
@@ -1269,8 +1253,27 @@
       <factory
             adaptableType="org.eclipse.cdt.debug.core.model.IModuleRetrieval"
             class="org.eclipse.cdt.debug.internal.ui.elements.adapters.CDebugElementAdapterFactory">
+         <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider"/>
+      </factory>
+      <factory
+            adaptableType="org.eclipse.cdt.debug.core.model.ICDebugTarget"
+            class="org.eclipse.cdt.debug.internal.ui.elements.adapters.CDebugElementAdapterFactory">
          <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider"/>
          <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory"/>
+      </factory>
+      <factory
+            adaptableType="org.eclipse.cdt.debug.core.model.ICThread"
+            class="org.eclipse.cdt.debug.internal.ui.elements.adapters.CDebugElementAdapterFactory">
+         <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider"/>
+         <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory"/>
+         <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider"/>
+      </factory>
+      <factory
+            adaptableType="org.eclipse.cdt.debug.core.model.ICStackFrame"
+            class="org.eclipse.cdt.debug.internal.ui.elements.adapters.CDebugElementAdapterFactory">
+         <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider"/>
+         <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory"/>
+         <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider"/>
       </factory>
       <factory
             adaptableType="org.eclipse.cdt.debug.core.model.ICModule"
@@ -1278,6 +1281,7 @@
          <adapter
                type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider">
          </adapter>
+         <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider"/>
       </factory>
       <factory
             adaptableType="org.eclipse.cdt.debug.core.model.ICModule"
@@ -1292,6 +1296,7 @@
          <adapter
                type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider">
          </adapter>
+         <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider"/>
       </factory>
       <factory
             adaptableType="org.eclipse.cdt.core.model.ICElement"
@@ -1506,5 +1511,24 @@
             id="org.eclipse.cdt.debug.ui.breakpointactions.ExternalToolActionPage"
             actionType="org.eclipse.cdt.debug.ui.breakpointactions.ExternalToolAction"/>
    </extension>
+
+	<extension point="org.eclipse.debug.ui.detailPaneFactories">
+      	<detailFactories
+        		class="org.eclipse.cdt.debug.internal.ui.views.modules.ModuleDetailPaneFactory"
+             	id="org.eclipse.cdt.debug.ui.moduleDetailPaneFactory">
+			<enablement>
+		        <with variable="selection">
+	    	    	<count value="1">
+	        		</count>
+	        		<iterate>
+	        	    	<or>
+					    	<instanceof value="org.eclipse.cdt.debug.core.model.ICModule"/>
+						    <instanceof value="org.eclipse.cdt.core.model.ICElement"/>
+	    	    	    </or>
+	        		</iterate>
+	      		</with>
+	      	</enablement>      
+		</detailFactories>
+ 	</extension>
 
 </plugin>

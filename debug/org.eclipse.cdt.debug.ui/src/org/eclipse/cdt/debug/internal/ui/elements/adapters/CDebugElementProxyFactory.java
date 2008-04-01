@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 QNX Software Systems and others.
+ * Copyright (c) 2004, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,24 +8,26 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  * IBM Corporation
+ * Wind River Systems - adapted to work with platform Modules view (bug 210558)
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui.views.modules; 
+package org.eclipse.cdt.debug.internal.ui.elements.adapters; 
 
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.IModuleRetrieval;
-import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
+import org.eclipse.cdt.debug.internal.ui.views.modules.ModulesViewModelProxy;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.update.DefaultModelProxyFactory;
+import org.eclipse.debug.ui.IDebugUIConstants;
  
-public class ModuleProxyFactory implements IModelProxyFactory {
+public class CDebugElementProxyFactory extends DefaultModelProxyFactory {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IModelProxyFactoryAdapter#createModelProxy(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
 	 */
 	public IModelProxy createModelProxy( Object element, IPresentationContext context ) {
-		if ( ICDebugUIConstants.ID_MODULES_VIEW.equals( context.getId() ) ) {
+		if ( IDebugUIConstants.ID_MODULE_VIEW.equals( context.getId() ) ) {
 			IModuleRetrieval mr = null;
 			if ( element instanceof IAdaptable ) {
 				ICDebugTarget target = (ICDebugTarget)((IAdaptable)element).getAdapter( ICDebugTarget.class );
@@ -36,6 +38,6 @@ public class ModuleProxyFactory implements IModelProxyFactory {
 				return new ModulesViewModelProxy( mr );
 			}
 		}
-		return null;
+		return super.createModelProxy(element, context);
 	}
 }

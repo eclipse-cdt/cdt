@@ -7,17 +7,18 @@
  *
  * Contributors:
  * ARM - Initial API and implementation
+ * Wind River Systems - adapted to work with platform Modules view (bug 210558)
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.views.modules;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.debug.core.model.ICModule;
 import org.eclipse.cdt.debug.internal.ui.CDebugImages;
-import org.eclipse.cdt.debug.internal.ui.views.modules.ModulesView.ModulesViewPresentationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.internal.ui.model.elements.ElementLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.views.DebugModelPresentationContext;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.TreePath;
@@ -34,8 +35,8 @@ public class ModuleLabelProvider extends ElementLabelProvider {
 	 */
 	protected String getLabel( TreePath elementPath, IPresentationContext presentationContext, String columnId ) throws CoreException {
 		Object element = elementPath.getLastSegment();
-		if ( element instanceof ICModule && presentationContext instanceof ModulesViewPresentationContext ) {
-			IDebugModelPresentation presentation = ((ModulesViewPresentationContext)presentationContext).getModelPresentation();
+		if ( element instanceof ICModule && presentationContext instanceof DebugModelPresentationContext ) {
+			IDebugModelPresentation presentation = ((DebugModelPresentationContext)presentationContext).getModelPresentation();
 			return presentation.getText( element );
 		}
 		if ( element instanceof IAdaptable ) {

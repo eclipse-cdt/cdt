@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Wind River Systems - adapted to work with platform Modules view (bug 210558)
  *******************************************************************************/
 package org.eclipse.cdt.debug.ui;
 
@@ -30,16 +31,6 @@ public interface ICDebugUIConstants {
 	 * Disassembly view identifier (value <code>"org.eclipse.cdt.debug.ui.DisassemblyView"</code>).
 	 */
 	public static final String ID_DISASSEMBLY_VIEW = PREFIX + "DisassemblyView"; //$NON-NLS-1$
-
-	/**
-	 * Modules view identifier (value <code>"org.eclipse.cdt.debug.ui.ModulesView"</code>).
-	 */
-	public static final String ID_MODULES_VIEW = PREFIX + "ModulesView"; //$NON-NLS-1$
-
-	/**
-	 * Id for the popup menu associated with the variables (tree viewer) part of the VariableView
-	 */
-	public static final String MODULES_VIEW_MODULES_ID = PREFIX + "ModulesView.modules"; //$NON-NLS-1$
 
 	/**
 	 * Id for the popup menu associated with the detail (text viewer) part of the Modules view

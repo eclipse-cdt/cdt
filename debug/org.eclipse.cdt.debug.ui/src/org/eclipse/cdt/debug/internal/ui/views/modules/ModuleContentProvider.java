@@ -7,6 +7,7 @@
  *
  * Contributors:
  * ARM - Initial API and implementation
+ * Wind River Systems - adapted to work with platform Modules view (bug 210558)
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.views.modules; 
 
@@ -17,12 +18,12 @@ import org.eclipse.cdt.debug.core.model.ICModule;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.model.ICThread;
 import org.eclipse.cdt.debug.core.model.IModuleRetrieval;
-import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.internal.ui.model.elements.ElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
+import org.eclipse.debug.ui.IDebugUIConstants;
 
 public class ModuleContentProvider extends ElementContentProvider {
 
@@ -44,7 +45,7 @@ public class ModuleContentProvider extends ElementContentProvider {
 	 * @see org.eclipse.debug.internal.ui.model.elements.ElementContentProvider#supportsContextId(java.lang.String)
 	 */
 	protected boolean supportsContextId( String id ) {
-		return ICDebugUIConstants.ID_MODULES_VIEW.equals( id );
+		return IDebugUIConstants.ID_MODULE_VIEW.equals( id );
 	}
 	
 	protected Object[] getAllChildren( Object parent, IPresentationContext context ) throws CoreException {			

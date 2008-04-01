@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Ken Ryall (Nokia) - bugs 118894, 170027, 91771
+ *     Wind River Systems - adapted to work with platform Modules view (bug 210558)
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.model;
 
@@ -103,6 +104,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
@@ -826,6 +828,11 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 			return getMemoryBlockRetrieval();
 		if ( adapter.equals( IModuleRetrieval.class ) )
 			return getModuleManager();
+		
+        // Force adapters to be loaded.  Otherwise the adapter manager may not find
+        // the model proxy adapter for CDT debug elements.
+        Platform.getAdapterManager().loadAdapter(this, adapter.getName());
+
 		return super.getAdapter( adapter );
 	}
 

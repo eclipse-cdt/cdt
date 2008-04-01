@@ -167,9 +167,9 @@ public class TestLaunchDelegate extends AbstractCLaunchDelegate
                     GDBControl gdbControl = tracker.getService(GDBControl.class);
                     if (gdbControl != null) {
                         IMemoryBlockRetrieval memRetrieval = new DsfMemoryBlockRetrieval(
-                            GDB_DEBUG_MODEL_ID, config, (IMemoryDMContext)gdbControl.getControlDMContext());
+                            GDB_DEBUG_MODEL_ID, config, launch.getSession());
                         launch.getSession().registerModelAdapter(IMemoryBlockRetrieval.class, memRetrieval);
-                        ((DsfMemoryBlockRetrieval) memRetrieval).initialize();
+                        ((DsfMemoryBlockRetrieval) memRetrieval).initialize((IMemoryDMContext)gdbControl.getControlDMContext());
                     }
                     tracker.dispose();
                     return null;

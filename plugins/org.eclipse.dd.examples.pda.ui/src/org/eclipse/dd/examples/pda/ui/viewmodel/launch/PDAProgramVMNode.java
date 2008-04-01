@@ -67,8 +67,8 @@ public class PDAProgramVMNode extends AbstractDMVMNode
     // VM node object, such that two terminated program contexts
     // from the same instance of VM node will be equal. 
     private static class TerminatedProgramVMContext extends AbstractVMContext {
-        TerminatedProgramVMContext(IVMAdapter adapter, IVMNode node) {
-            super(adapter, node);
+        TerminatedProgramVMContext(IVMNode node) {
+            super(node);
         }
         
         @Override
@@ -123,7 +123,7 @@ public class PDAProgramVMNode extends AbstractDMVMNode
             if (launch != null && launch.isInitialized() && launch.isShutDown()) {
                 // If the debug session has been shut down, add a dummy 
                 // VM context representing the PDA thread.
-                update.setChild(new TerminatedProgramVMContext(getVMProvider().getVMAdapter(), this), 0);
+                update.setChild(new TerminatedProgramVMContext(this), 0);
                 update.done();
             } else {
                 super.update(new IChildrenUpdate[] { update });

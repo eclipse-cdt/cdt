@@ -452,7 +452,7 @@ public class ExpressionService extends AbstractDsfService implements IExpression
 
         // Create the meta command cache which will use the variable manager
         // to actually send MI commands to the back-end
-        fExpressionCache = new CommandCache(varManager);
+        fExpressionCache = new CommandCache(getSession(), varManager);
 
 		requestMonitor.done();
 	}
@@ -467,7 +467,7 @@ public class ExpressionService extends AbstractDsfService implements IExpression
 	@Override
 	public void shutdown(RequestMonitor requestMonitor) {
 		unregister();
-		varManager.shutdown();
+		varManager.dispose();
 		getSession().removeServiceEventListener(this);
 		super.shutdown(requestMonitor);
 	}

@@ -60,7 +60,7 @@ public class MIModules extends AbstractDsfService implements IModules {
 
     private void doInitialize(RequestMonitor requestMonitor) {
     	// Cache for holding Modules data
-    	fModulesCache = new CommandCache(getServicesTracker().getService(ICommandControl.class));
+    	fModulesCache = new CommandCache(getSession(), getServicesTracker().getService(ICommandControl.class));
         /*
          * Make ourselves known so clients can use us.
          */

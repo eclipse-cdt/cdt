@@ -189,7 +189,7 @@ public class PDAExpressions extends AbstractDsfService implements IExpressions {
     private void doInitialize(final RequestMonitor rm) {
         fCommandControl = getServicesTracker().getService(PDACommandControl.class);
         fStack = getServicesTracker().getService(IStack.class);
-        fCommandCache = new CommandCache(fCommandControl);
+        fCommandCache = new CommandCache(getSession(), fCommandControl);
 
         getSession().addServiceEventListener(this, null);
         

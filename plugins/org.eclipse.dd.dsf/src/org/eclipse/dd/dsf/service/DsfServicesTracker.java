@@ -73,7 +73,7 @@ public class DsfServicesTracker {
     
     private BundleContext fBundleContext;
     private Map<ServiceKey,ServiceReference> fServiceReferences = new HashMap<ServiceKey,ServiceReference>();
-    private Map<ServiceReference,IDsfService> fServices = new HashMap<ServiceReference,IDsfService>();
+    private Map<ServiceReference,Object> fServices = new HashMap<ServiceReference,Object>();
     private String fServiceFilter;
 
     /** 
@@ -125,7 +125,7 @@ public class DsfServicesTracker {
      * @param serviceClass class of the desired service
      * @return instance of the desired service, null if not found
      */
-    public <V extends IDsfService> V getService(Class<V> serviceClass) {
+    public <V> V getService(Class<V> serviceClass) {
         return getService(serviceClass, null);
     }
     
@@ -140,7 +140,7 @@ public class DsfServicesTracker {
      * @return instance of the desired service, null if not found
      */
     @SuppressWarnings("unchecked")
-    public <V extends IDsfService> V getService(Class<V> serviceClass, String filter) {
+    public <V> V getService(Class<V> serviceClass, String filter) {
         ServiceReference serviceRef = getServiceReference(serviceClass, filter);
         if (serviceRef == null) {
             return null;

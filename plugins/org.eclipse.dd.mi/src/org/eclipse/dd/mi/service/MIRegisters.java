@@ -171,8 +171,8 @@ public class MIRegisters extends AbstractDsfService implements IRegisters {
         /*
          * Create the lower level register cache.
          */
-        fRegisterValueCache = new CommandCache(getServicesTracker().getService(ICommandControl.class));
-        fRegisterNameCache  = new CommandCache(getServicesTracker().getService(ICommandControl.class));
+        fRegisterValueCache = new CommandCache(getSession(), getServicesTracker().getService(ICommandControl.class));
+        fRegisterNameCache  = new CommandCache(getSession(), getServicesTracker().getService(ICommandControl.class));
                
         /*
          * Signup so we see events. We use these events to decide how to manage

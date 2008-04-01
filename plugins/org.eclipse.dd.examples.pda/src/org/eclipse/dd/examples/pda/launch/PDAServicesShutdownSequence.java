@@ -122,7 +122,7 @@ public class PDAServicesShutdownSequence extends Sequence {
 
     @SuppressWarnings("unchecked")
     private void shutdownService(Class clazz, final RequestMonitor requestMonitor) {
-        IDsfService service = fTracker.getService(clazz);
+        IDsfService service = (IDsfService)fTracker.getService(clazz);
         if (service != null) {
             service.shutdown(new RequestMonitor(getExecutor(), requestMonitor) {
                 @Override

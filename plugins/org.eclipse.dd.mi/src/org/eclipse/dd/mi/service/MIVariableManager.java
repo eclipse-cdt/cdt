@@ -41,7 +41,6 @@ import org.eclipse.dd.dsf.debug.service.command.ICommandControl;
 import org.eclipse.dd.dsf.debug.service.command.ICommandListener;
 import org.eclipse.dd.dsf.debug.service.command.ICommandResult;
 import org.eclipse.dd.dsf.debug.service.command.IEventListener;
-import org.eclipse.dd.dsf.service.AbstractDsfService;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
@@ -81,7 +80,6 @@ import org.eclipse.dd.mi.service.command.output.MIVarListChildrenInfo;
 import org.eclipse.dd.mi.service.command.output.MIVarSetFormatInfo;
 import org.eclipse.dd.mi.service.command.output.MIVarShowAttributesInfo;
 import org.eclipse.dd.mi.service.command.output.MIVarUpdateInfo;
-import org.osgi.framework.BundleContext;
 
 /**
  * Manages a list of variable objects as created through GDB/MI commands.
@@ -195,7 +193,7 @@ import org.osgi.framework.BundleContext;
  *   with a specified format, therefore allowing us to never use -var-set-format, and
  *   consequently, to easily keep the display format of all variable objects to natural.
  */
-public class MIVariableManager extends AbstractDsfService implements ICommandControl {
+public class MIVariableManager implements ICommandControl {
 
 
 	/**
@@ -353,7 +351,7 @@ public class MIVariableManager extends AbstractDsfService implements ICommandCon
 				updatesPending.add(rm);
 			} else {			
 				currentState = STATE_UPDATING;
-				getRootToUpdate().update(new DataRequestMonitor<Boolean>(getExecutor(), rm) {
+				getRootToUpdate().update(new DataRequestMonitor<Boolean>(fSession.getExecutor(), rm) {
 					@Override
 					protected void handleCompleted() {
 						currentState = STATE_READY;
@@ -412,7 +410,7 @@ public class MIVariableManager extends AbstractDsfService implements ICommandCon
             } else {
                 fCommandControl.queueCommand(
                         new MIVarShowAttributes(fControlDmc, getGdbName()), 
-                        new DataRequestMonitor<MIVarShowAttributesInfo>(getExecutor(), rm) {
+                        new DataRequestMonitor<MIVarShowAttributesInfo>(fSession.getExecutor(), rm) {
                             @Override
                             protected void handleSuccess() {
                             	editable = getData().isEditable();
@@ -457,14 +455,14 @@ public class MIVariableManager extends AbstractDsfService implements ICommandCon
 					IExpressionDMContext addrCxt = fExpressionService.createExpression(exprCxt, "&(" + exprCxt.getExpression() + ")");  //$NON-NLS-1$//$NON-NLS-2$
 
 					final FormattedValueDMContext formatCxt = new FormattedValueDMContext(
-							fExpressionService.getSession().getId(),
+							fSession.getId(),
 							addrCxt,
 							dmc.getFormatID()
 					);
 
 					getVariable(
 							addrCxt,
-							new DataRequestMonitor<MIVariableObject>(getExecutor(), rm) {
+							new DataRequestMonitor<MIVariableObject>(fSession.getExecutor(), rm) {
 								@Override
 								protected void handleSuccess() {
 									getData().getValue(formatCxt, rm);
@@ -483,7 +481,7 @@ public class MIVariableManager extends AbstractDsfService implements ICommandCon
 			}
 
 			if (locked) {
-				operationsPending.add(new RequestMonitor(getExecutor(), rm) {
+				operationsPending.add(new RequestMonitor(fSession.getExecutor(), rm) {
 					@Override
 					protected void handleSuccess() {
 						getValue(dmc, rm);
@@ -500,7 +498,7 @@ public class MIVariableManager extends AbstractDsfService implements ICommandCon
 					// We must first set the new format and then evaluate the variable
 					fCommandControl.queueCommand(
 							new MIVarSetFormat(fControlDmc, getGdbName(), dmc.getFormatID()), 
-							new DataRequestMonitor<MIVarSetFormatInfo>(getExecutor(), rm) {
+							new DataRequestMonitor<MIVarSetFormatInfo>(fSession.getExecutor(), rm) {
 								@Override
 								protected void handleCompleted() {
 									if (isSuccess()) {
@@ -536,7 +534,7 @@ public class MIVariableManager extends AbstractDsfService implements ICommandCon
 		private void evaluate(final DataRequestMonitor<FormattedValueDMData> rm) {
 			fCommandControl.queueCommand(
 					new MIVarEvaluateExpression(fControlDmc, getGdbName()), 
-					new DataRequestMonitor<MIVarEvaluateExpressionInfo>(getExecutor(), rm) {
+					new DataRequestMonitor<MIVarEvaluateExpressionInfo>(fSession.getExecutor(), rm) {
 						@Override
 						protected void handleCompleted() {
 							if (isSuccess()) {
@@ -573,7 +571,7 @@ public class MIVariableManager extends AbstractDsfService implements ICommandCon
 			if (!getCurrentFormat().equals(IFormattedValues.NATURAL_FORMAT)) {
 				fCommandControl.queueCommand(
 						new MIVarSetFormat(fControlDmc, getGdbName(), IFormattedValues.NATURAL_FORMAT), 
-						new DataRequestMonitor<MIVarSetFormatInfo>(getExecutor(), null) {
+						new DataRequestMonitor<MIVarSetFormatInfo>(fSession.getExecutor(), null) {
 							@Override
 							protected void handleCompleted() {
 								if (isSuccess()) {
@@ -639,13 +637,13 @@ public class MIVariableManager extends AbstractDsfService implements ICommandCon
 	        // Also no need to lock the object, since getting the children won't affect other operations
 	        fCommandControl.queueCommand(
 	        		new MIVarListChildren(fControlDmc, getGdbName()),
-	        		new DataRequestMonitor<MIVarListChildrenInfo>(getExecutor(), rm) {
+	        		new DataRequestMonitor<MIVarListChildrenInfo>(fSession.getExecutor(), rm) {
 	        			@Override
 	        			protected void handleSuccess() {
 	        				MIVar[] children = getData().getMIVars();
 	        				final List<ExpressionInfo> realChildren = new ArrayList<ExpressionInfo>();
 
-	        				final CountingRequestMonitor countingRm = new CountingRequestMonitor(getExecutor(), rm) {
+	        				final CountingRequestMonitor countingRm = new CountingRequestMonitor(fSession.getExecutor(), rm) {
 	        					@Override
 	        					protected void handleSuccess() {
 	        						// Store the children in our variable object cache
@@ -676,7 +674,7 @@ public class MIVariableManager extends AbstractDsfService implements ICommandCon
 	        					numSubRequests++;
 	        					
 	        					final DataRequestMonitor<String> childPathRm =
-	        						new DataRequestMonitor<String>(getExecutor(), countingRm) {
+	        						new DataRequestMonitor<String>(fSession.getExecutor(), countingRm) {
 	        						@Override
 	        						protected void handleSuccess() {
 	        							String childFullExpression = getData();
@@ -727,7 +725,7 @@ public class MIVariableManager extends AbstractDsfService implements ICommandCon
 	        								// get the children of this child to get the real children
 	        								childVar.getChildren(
 	        										exprDmc,
-	        										new DataRequestMonitor<ExpressionInfo[]>(getExecutor(), countingRm) {
+	        										new DataRequestMonitor<ExpressionInfo[]>(fSession.getExecutor(), countingRm) {
 	        											@Override
 	        											protected void handleSuccess() {
 	        												ExpressionInfo[] vars = getData();
@@ -756,7 +754,7 @@ public class MIVariableManager extends AbstractDsfService implements ICommandCon
 	        						// can get from -var-info-path-expression starting from GDB 6.7 
 	        						fCommandControl.queueCommand(
 	        								new MIVarInfoPathExpression(fControlDmc, child.getVarName()),
-	    	        						new DataRequestMonitor<MIVarInfoPathExpressionInfo>(getExecutor(), childPathRm) {
+	    	        						new DataRequestMonitor<MIVarInfoPathExpressionInfo>(fSession.getExecutor(), childPathRm) {
 	        	        						@Override
 	        	        						protected void handleCompleted() {
 	        	        							if (isSuccess()) {
@@ -883,7 +881,7 @@ public class MIVariableManager extends AbstractDsfService implements ICommandCon
 			// No need to be in ready state or to lock the object
 			fCommandControl.queueCommand(
 					new MIVarAssign(fControlDmc, getGdbName(), value),
-					new DataRequestMonitor<MIVarAssignInfo>(getExecutor(), rm) {
+					new DataRequestMonitor<MIVarAssignInfo>(fSession.getExecutor(), rm) {
 						@Override
 						protected void handleSuccess() {
 							// We must also mark all variable objects
@@ -960,7 +958,7 @@ public class MIVariableManager extends AbstractDsfService implements ICommandCon
 
 				fCommandControl.queueCommand(
 						new MIVarCreate(exprCtx, exprCtx.getExpression()), 
-						new DataRequestMonitor<MIVarCreateInfo>(getExecutor(), rm) {
+						new DataRequestMonitor<MIVarCreateInfo>(fSession.getExecutor(), rm) {
 							@Override
 							protected void handleCompleted() {
 								if (isSuccess()) {
@@ -1016,7 +1014,7 @@ public class MIVariableManager extends AbstractDsfService implements ICommandCon
 				// Creation failed, inform anyone waiting.
 				while (updatesPending.size() > 0) {
 					RequestMonitor rm = updatesPending.poll();
-		            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INVALID_HANDLE, 
+		            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_HANDLE, 
 		            		"Unable to create variable object", null)); //$NON-NLS-1$
 					rm.done();
 				}
@@ -1057,7 +1055,7 @@ public class MIVariableManager extends AbstractDsfService implements ICommandCon
 				// var-set-format command.  This is done in the getValue() method
 				fCommandControl.queueCommand(
 						new MIVarUpdate(fControlDmc, getGdbName()),
-						new DataRequestMonitor<MIVarUpdateInfo>(getExecutor(), rm) {
+						new DataRequestMonitor<MIVarUpdateInfo>(fSession.getExecutor(), rm) {
 							@Override
 							protected void handleCompleted() {
 								currentState = STATE_READY;
@@ -1127,7 +1125,7 @@ public class MIVariableManager extends AbstractDsfService implements ICommandCon
 		    if (getGdbName() != null) {
 	    		fCommandControl.queueCommand(
 	    				new MIVarDelete(fControlDmc, getGdbName()),
-	    				new DataRequestMonitor<MIVarDeleteInfo>(getExecutor(), null));
+	    				new DataRequestMonitor<MIVarDeleteInfo>(fSession.getExecutor(), null));
 		        // Nothing to do in the requestMonitor, since the object was already
 		        // removed from our list before calling this method.
 
@@ -1199,7 +1197,7 @@ public class MIVariableManager extends AbstractDsfService implements ICommandCon
 			// from the StackService command cache after the first time.
 			fStackService.getStackDepth(
 					execCtx, 0,
-					new DataRequestMonitor<Integer>(getExecutor(), rm) {
+					new DataRequestMonitor<Integer>(fSession.getExecutor(), rm) {
 						@Override
 						protected void handleSuccess() {
 							fFrameId = new Integer(getData() - frameCtx.getLevel());
@@ -1294,6 +1292,8 @@ public class MIVariableManager extends AbstractDsfService implements ICommandCon
 		}
 	}
 
+	private final DsfSession fSession;
+	
 	/** Provides access to the GDB/MI back-end */
 	private final ICommandControl fCommandControl;
 	// The stack service needs to be used to get information such
@@ -1326,7 +1326,7 @@ public class MIVariableManager extends AbstractDsfService implements ICommandCon
 	 *            The service tracker that can be used to find other services
 	 */
 	public MIVariableManager(DsfSession session, DsfServicesTracker tracker) {
-		super(session);
+	    fSession = session;
 		lruVariableList = new LRUVariableCache();
 		fCommandControl = tracker.getService(ICommandControl.class);
 		fStackService  = tracker.getService(IStack.class);
@@ -1334,11 +1334,11 @@ public class MIVariableManager extends AbstractDsfService implements ICommandCon
 		fControlDmc = ((AbstractMIControl)fCommandControl).getControlDMContext();
 		
 		// Register to receive service events for this session.
-        getSession().addServiceEventListener(this, null);
+        fSession.addServiceEventListener(this, null);
 	}
 
-	public void shutdown() {
-    	getSession().removeServiceEventListener(this);
+	public void dispose() {
+    	fSession.removeServiceEventListener(this);
 	}
 
 	/** 
@@ -1360,7 +1360,7 @@ public class MIVariableManager extends AbstractDsfService implements ICommandCon
 		final VariableObjectId id = new VariableObjectId();
 		id.generateId(
 				exprCtx,
-				new RequestMonitor(getExecutor(), rm) {
+				new RequestMonitor(fSession.getExecutor(), rm) {
 					@Override
 					protected void handleSuccess() {
 					    getVariable(id, exprCtx, rm);
@@ -1381,7 +1381,7 @@ public class MIVariableManager extends AbstractDsfService implements ICommandCon
 			// We have found a varObject, but it may not be updated yet.
 			// Updating the object will also tell us if it is out-of-scope
 			// and if we should re-create it.
-			varObj.update(new DataRequestMonitor<Boolean>(getExecutor(), rm) {
+			varObj.update(new DataRequestMonitor<Boolean>(fSession.getExecutor(), rm) {
 				@Override
 				protected void handleSuccess() {
 					
@@ -1441,7 +1441,7 @@ public class MIVariableManager extends AbstractDsfService implements ICommandCon
 		// Note that this will replace any old entry with the same id.
 		lruVariableList.put(id, newVarObj);
 		
-		newVarObj.create(exprCtx, new RequestMonitor(getExecutor(), rm) {
+		newVarObj.create(exprCtx, new RequestMonitor(fSession.getExecutor(), rm) {
 			@Override
 			protected void handleCompleted() {
 				if (isSuccess()) {
@@ -1479,7 +1479,7 @@ public class MIVariableManager extends AbstractDsfService implements ICommandCon
 		
 		getVariable(
 				ctx, 
-				new DataRequestMonitor<MIVariableObject>(getExecutor(), rm) {
+				new DataRequestMonitor<MIVariableObject>(fSession.getExecutor(), rm) {
 					@Override
 					protected void handleSuccess() {
 						getData().writeValue(expressionValue, formatId, rm);
@@ -1502,7 +1502,7 @@ public class MIVariableManager extends AbstractDsfService implements ICommandCon
             
             getVariable(
             		exprCtx, 
-            		new DataRequestMonitor<MIVariableObject>(getExecutor(), drm) {
+            		new DataRequestMonitor<MIVariableObject>(fSession.getExecutor(), drm) {
             			@Override
             			protected void handleSuccess() {
             				drm.setData(
@@ -1521,11 +1521,11 @@ public class MIVariableManager extends AbstractDsfService implements ICommandCon
  
             getVariable(
                     exprCtx, 
-                    new DataRequestMonitor<MIVariableObject>(getExecutor(), drm) {
+                    new DataRequestMonitor<MIVariableObject>(fSession.getExecutor(), drm) {
                         @Override
                         protected void handleSuccess() {
                             getData().getAttributes(
-                                    new DataRequestMonitor<Boolean>(getExecutor(), drm) {
+                                    new DataRequestMonitor<Boolean>(fSession.getExecutor(), drm) {
                                         @Override
                                         protected void handleSuccess() {
                                             drm.setData(new ExprMetaGetAttributesInfo(getData()));
@@ -1544,12 +1544,12 @@ public class MIVariableManager extends AbstractDsfService implements ICommandCon
             
     		getVariable(
     				exprCtx, 
-    			    new DataRequestMonitor<MIVariableObject>(getExecutor(), drm) {
+    			    new DataRequestMonitor<MIVariableObject>(fSession.getExecutor(), drm) {
     	                @Override
     	                protected void handleSuccess() {
     	                	getData().getValue(
     	                			valueCtx, 
-    	                			new DataRequestMonitor<FormattedValueDMData>(getExecutor(), drm) {
+    	                			new DataRequestMonitor<FormattedValueDMData>(fSession.getExecutor(), drm) {
     	                    			@Override
     	                    			protected void handleSuccess() {
     	                    				drm.setData(
@@ -1567,12 +1567,12 @@ public class MIVariableManager extends AbstractDsfService implements ICommandCon
             
     		getVariable(
     				exprCtx, 
-    				new DataRequestMonitor<MIVariableObject>(getExecutor(), drm) {
+    				new DataRequestMonitor<MIVariableObject>(fSession.getExecutor(), drm) {
     					@Override
     					protected void handleSuccess() {
     						getData().getChildren(
     								exprCtx,
-    								new DataRequestMonitor<ExpressionInfo[]>(getExecutor(), drm) {
+    								new DataRequestMonitor<ExpressionInfo[]>(fSession.getExecutor(), drm) {
     									@Override
     									protected void handleSuccess() {
     										drm.setData(new ExprMetaGetChildrenInfo(getData()));
@@ -1589,11 +1589,11 @@ public class MIVariableManager extends AbstractDsfService implements ICommandCon
  
     		getVariable(
     				exprCtx, 
-    				new DataRequestMonitor<MIVariableObject>(getExecutor(), drm) {
+    				new DataRequestMonitor<MIVariableObject>(fSession.getExecutor(), drm) {
     					@Override
     					protected void handleSuccess() {
     						getData().getChildrenCount(
-    								new DataRequestMonitor<Integer>(getExecutor(), drm) {
+    								new DataRequestMonitor<Integer>(fSession.getExecutor(), drm) {
     									@Override
     									protected void handleSuccess() {
     										drm.setData(new ExprMetaGetChildCountInfo(getData()));
@@ -1650,11 +1650,6 @@ public class MIVariableManager extends AbstractDsfService implements ICommandCon
         }
     }
 
-    @Override
-	protected BundleContext getBundleContext() {
-		return MIPlugin.getBundleContext();
-	}
-    
     private void markAllOutOfDate() {
     	MIRootVariableObject root;
     	while ((root = updatedRootList.poll()) != null) {

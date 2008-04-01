@@ -438,7 +438,7 @@ public class MIMemory extends AbstractDsfService implements IMemory {
 
 		public MIMemoryCache() {
 	    	// Create the command cache
-	    	fCommandCache = new CommandCache(getServicesTracker().getService(ICommandControl.class));
+	    	fCommandCache = new CommandCache(getSession(), getServicesTracker().getService(ICommandControl.class));
 	    	// Create the memory block cache
 	    	fMemoryBlockList = new SortedMemoryBlockList();
 		}

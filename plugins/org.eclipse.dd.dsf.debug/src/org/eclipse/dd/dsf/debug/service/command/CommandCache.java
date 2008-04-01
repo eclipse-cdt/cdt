@@ -28,6 +28,7 @@ import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.internal.DsfDebugPlugin;
+import org.eclipse.dd.dsf.service.DsfSession;
 
 /**
  *  This is a utility class for caching results  of MI Commands.  Return MIInfo 
@@ -105,6 +106,10 @@ public class CommandCache implements ICommandListener
     	public ICommandResult getData() { return fData; }
     	public IStatus getStatus() { return fStatus; }
     }
+
+    private DsfSession fSession;
+    
+    private ICommandControl fCommandControl;    
     
     /*
      *  This class contains 5 significant lists.
@@ -139,11 +144,8 @@ public class CommandCache implements ICommandListener
      *      created. When the coalesced commands completes the results will be decomposed
      *      when back into individual results from this command.
      */
-    
     private Set<IDMContext> fUnavailableContexts = new HashSet<IDMContext>();
 
-    private ICommandControl fCommandControl;
-    
     private Map<IDMContext, HashMap<CommandInfo, CommandResultInfo>> fCachedContexts = new HashMap<IDMContext, HashMap<CommandInfo, CommandResultInfo>>();
     
     private ArrayList<CommandInfo> fPendingQCommandsSent = new ArrayList<CommandInfo>();
@@ -152,7 +154,8 @@ public class CommandCache implements ICommandListener
     
     private ArrayList<CommandInfo> fPendingQWaitingForCoalescedCompletion = new ArrayList<CommandInfo>();
     
-    public CommandCache(ICommandControl control) {
+    public CommandCache(DsfSession session, ICommandControl control) {
+        fSession = session;
         fCommandControl = control;
         
         /*
@@ -232,7 +235,7 @@ public class CommandCache implements ICommandListener
      * well as its cache status.
      */
     public <V extends ICommandResult> void execute(ICommand<V> command, DataRequestMonitor<V> rm) {
-        assert fCommandControl.getExecutor().isInExecutorThread();
+        assert fSession.getExecutor().isInExecutorThread();
         
         // Cast the generic ?'s to concrete types in the cache implementation.
         @SuppressWarnings("unchecked")
@@ -315,7 +318,7 @@ public class CommandCache implements ICommandListener
         
         fCommandControl.queueCommand(
             finalCachedCmd.getCommand(), 
-            new DataRequestMonitor<ICommandResult>(fCommandControl.getExecutor(), null) { 
+            new DataRequestMonitor<ICommandResult>(fSession.getExecutor(), null) { 
                 @Override
                 public void handleCompleted() {
                     

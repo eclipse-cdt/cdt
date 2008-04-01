@@ -285,7 +285,7 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
 
     private void doInitialize(final RequestMonitor rm) {
         fConnection = getServicesTracker().getService(ICommandControl.class);
-        fMICommandCache = new CommandCache(fConnection);
+        fMICommandCache = new CommandCache(getSession(), fConnection);
         getSession().addServiceEventListener(this, null);
         
         //register(new String[]{IRunControl.class.getName(), MIRunControl.class.getName()}, new Hashtable<String,String>());

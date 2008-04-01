@@ -11,13 +11,12 @@
 package org.eclipse.dd.dsf.debug.service.command;
 
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
-import org.eclipse.dd.dsf.service.IDsfService;
 
 /**
  * API for sending commands to the debugger and for receiving command results
  * and asynchronous events.
  */
-public interface ICommandControl extends IDsfService{
+public interface ICommandControl {
     
     /**
      * Adds the specified command to the queue of commands to be processed. 

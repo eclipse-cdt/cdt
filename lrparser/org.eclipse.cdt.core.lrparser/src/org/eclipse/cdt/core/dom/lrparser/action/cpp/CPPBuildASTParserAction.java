@@ -157,7 +157,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		List<Object> arrayExpressions = astStack.closeScope();
 		IASTTypeId typeId = (IASTTypeId) astStack.pop();
 		IASTExpression placement = (IASTExpression) astStack.pop(); // may be null
-		boolean hasDoubleColon = astStack.pop() == PLACE_HOLDER;
+		boolean hasDoubleColon = astStack.pop() != null;
 		
 		ICPPASTNewExpression newExpression = nodeFactory.newCPPNewExpression(placement, initializer, typeId);
 		newExpression.setIsGlobal(hasDoubleColon);
@@ -220,7 +220,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		
 		IASTExpression operand = (IASTExpression) astStack.pop();
-		boolean hasDoubleColon = astStack.pop() == PLACE_HOLDER;
+		boolean hasDoubleColon = astStack.pop() != null;
 		
 		ICPPASTDeleteExpression deleteExpr = nodeFactory.newDeleteExpression(operand);
 		deleteExpr.setIsGlobal(hasDoubleColon);
@@ -305,10 +305,13 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		IASTName name = (IASTName) astStack.pop();
 		boolean isTemplate = astStack.pop() == PLACE_HOLDER;
 		LinkedList<IASTName> nestedNames = (LinkedList<IASTName>) astStack.pop();
-		boolean hasDColon = astStack.pop() == PLACE_HOLDER;
-		
+		IToken dColon = (IToken) astStack.pop();
+
 		nestedNames.addFirst(name);
-		IASTName qualifiedName = createQualifiedName(nestedNames, hasDColon);
+		
+		int startOffset = dColon == null ? offset(nestedNames.getLast()) : offset(dColon);
+		int endOffset   = endOffset(name);
+		IASTName qualifiedName = createQualifiedName(nestedNames, startOffset, endOffset, dColon != null);
 		
 		ICPPASTTypenameExpression typenameExpr = nodeFactory.newCPPTypenameExpression(qualifiedName, expr, isTemplate);
 		
@@ -698,41 +701,46 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	}
 	
 	
-	
+	private IASTName createQualifiedName(LinkedList<IASTName> nestedNames, int startOffset, int endOffset, boolean startsWithColonColon) {
+		return createQualifiedName(nestedNames, startOffset, endOffset, startsWithColonColon, false);
+	}
 	
 	
 	/**
 	 * Creates a qualified name from a list of names (that must be in reverse order).
+	 * 
+	 * @param names List of name nodes in reverse order
 	 */
 	@SuppressWarnings("restriction")
-	private IASTName createQualifiedName(LinkedList<IASTName> nestedNames, boolean startsWithColonColon) {
-		if(!startsWithColonColon && nestedNames.size() == 1) // its actually an unqualified name
-			return nestedNames.get(0);
-		
-		int startOffset = offset(nestedNames.getLast());
-		int endOffset   = endOffset(nestedNames.getFirst());
-		int length      = endOffset - startOffset;
+	private IASTName createQualifiedName(LinkedList<IASTName> names, int startOffset, int endOffset, boolean startsWithColonColon, boolean endsWithColonColon) {
+		if(!endsWithColonColon && !startsWithColonColon && names.size() == 1) 
+			return names.getFirst(); // its actually an unqualified name
 	
-		// find the tokens that make up the name
-		List<IToken> nameTokens = tokenOffsetSubList(parser.getRuleTokens(), startOffset, endOffset);
+		ICPPASTQualifiedName qualifiedName = nodeFactory.newCPPQualifiedName();
+		qualifiedName.setFullyQualified(startsWithColonColon);
+		setOffsetAndLength(qualifiedName, startOffset, endOffset - startOffset);
+		for(IASTName name : reverseIterable(names))
+			qualifiedName.addName(name);
 		
-		StringBuilder signature = new StringBuilder(startsWithColonColon ? "::" : ""); //$NON-NLS-1$ //$NON-NLS-2$
+		// compute the signature, find the tokens that make up the name
+		List<IToken> nameTokens = tokenOffsetSubList(parser.getRuleTokens(), startOffset, endOffset);
+		StringBuilder sb = new StringBuilder();
 		IToken prev = null;
 		for(IToken t : nameTokens) {
 			if(needSpaceBetween(prev, t))
-				signature.append(' ');
-			signature.append(t.toString());
+				sb.append(' ');
+			sb.append(t.toString());
 			prev = t;
 		}
+		((CPPASTQualifiedName)qualifiedName).setSignature(sb.toString());
+	
+		// there must be a dummy name in the AST after the last double colon, this happens with pointer to member 
+		if(endsWithColonColon) {
+			IASTName dummyName = nodeFactory.newName();
+			setOffsetAndLength(dummyName, endOffset, 0);
+			qualifiedName.addName(dummyName);
+		}
 		
-		ICPPASTQualifiedName qualifiedName = nodeFactory.newCPPQualifiedName();
-		qualifiedName.setFullyQualified(startsWithColonColon);
-		setOffsetAndLength(qualifiedName, startOffset, length);
-		((CPPASTQualifiedName)qualifiedName).setSignature(signature.toString());
-		
-		for(IASTName name : reverseIterable(nestedNames))
-			qualifiedName.addName(name);
-				
 		return qualifiedName;
 	}
 	
@@ -770,15 +778,18 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 			astStack.pop();
 		
 		LinkedList<IASTName> nestedNames = (LinkedList<IASTName>) astStack.pop();
-		boolean startsWithColonColon = astStack.pop() == PLACE_HOLDER;
+		IToken dColon = (IToken) astStack.pop();
 		
-		if(nestedNames.isEmpty() && !startsWithColonColon) { // then its not a qualified name
+		if(nestedNames.isEmpty() && dColon == null) { // then its not a qualified name
 			return lastName;
 		}
 
 		nestedNames.addFirst(lastName); // the list of names is in reverse order
 		
-		return createQualifiedName(nestedNames, startsWithColonColon);
+		int startOffset = dColon == null ? offset(nestedNames.getLast()) : offset(dColon);
+		int endOffset = endOffset(lastName);
+		
+		return createQualifiedName(nestedNames, startOffset, endOffset, dColon != null);
 	}
 	
 	
@@ -796,14 +807,16 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		IASTName destructorTypeName = (IASTName) astStack.pop();
 		IASTName extraName = hasExtraTypeName ? (IASTName) astStack.pop() : null;
 		LinkedList<IASTName> nestedNames = (LinkedList<IASTName>) astStack.pop();
-		boolean hasDColon = astStack.pop() == PLACE_HOLDER;
+		IToken dColon = (IToken) astStack.pop();
 		
 		if(hasExtraTypeName)
 			nestedNames.addFirst(extraName);
 		
 		nestedNames.addFirst(destructorTypeName);
 		
-		IASTName qualifiedName = createQualifiedName(nestedNames, hasDColon);
+		int startOffset = dColon == null ? offset(nestedNames.getLast()) : offset(dColon);
+		int endOffset = endOffset(destructorTypeName);
+		IASTName qualifiedName = createQualifiedName(nestedNames, startOffset, endOffset, dColon != null);
 		
 		setOffsetAndLength(qualifiedName);
 		astStack.push(qualifiedName);
@@ -999,7 +1012,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	 * @param token Allows subclasses to override this method and use any
 	 * object to determine how to set a specifier.
 	 */
-	protected void setSpecifier(IASTDeclSpecifier node, IToken token) {
+	protected void setSpecifier(ICPPASTDeclSpecifier node, IToken token) {
 		//TODO int kind = asC99Kind(token)
 		int kind = token.getKind();
 		switch(kind){
@@ -1012,37 +1025,38 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 			
 			case TK_inline:   node.setInline(true);   return;
 			case TK_const:    node.setConst(true);    return;
+			case TK_friend:   node.setFriend(true);   return;
+			case TK_virtual:  node.setVirtual(true);  return;
 			case TK_volatile: node.setVolatile(true); return;
+			case TK_explicit: node.setExplicit(true); return;
 		}
 		
 		if(node instanceof ICPPASTSimpleDeclSpecifier) {
 			ICPPASTSimpleDeclSpecifier n = (ICPPASTSimpleDeclSpecifier) node;
 			switch(kind) {
-				case TK_void:     n.setType(IASTSimpleDeclSpecifier.t_void);       break;
-				case TK_char:     n.setType(IASTSimpleDeclSpecifier.t_char);       break;
-				case TK_int:      n.setType(IASTSimpleDeclSpecifier.t_int);        break;
-				case TK_float:    n.setType(IASTSimpleDeclSpecifier.t_float);      break;
-				case TK_double:   n.setType(IASTSimpleDeclSpecifier.t_double);     break;
-				case TK_bool:     n.setType(ICPPASTSimpleDeclSpecifier.t_bool);    break;
-				case TK_wchar_t:  n.setType(ICPPASTSimpleDeclSpecifier.t_wchar_t); break;
+				case TK_void:     n.setType(IASTSimpleDeclSpecifier.t_void);       return;
+				case TK_char:     n.setType(IASTSimpleDeclSpecifier.t_char);       return;
+				case TK_int:      n.setType(IASTSimpleDeclSpecifier.t_int);        return;
+				case TK_float:    n.setType(IASTSimpleDeclSpecifier.t_float);      return;
+				case TK_double:   n.setType(IASTSimpleDeclSpecifier.t_double);     return;
+				case TK_bool:     n.setType(ICPPASTSimpleDeclSpecifier.t_bool);    return;
+				case TK_wchar_t:  n.setType(ICPPASTSimpleDeclSpecifier.t_wchar_t); return;
 				
-				case TK_signed:   n.setSigned(true);   break;
-				case TK_unsigned: n.setUnsigned(true); break;
-				case TK_long:     n.setLong(true);     break;
-				case TK_short:    n.setShort(true);    break;
-				case TK_friend:   n.setFriend(true);   break;
-				case TK_virtual:  n.setVirtual(true);  break;
-				case TK_volatile: n.setVolatile(true); break;
-				case TK_explicit: n.setExplicit(true); break;
+				case TK_signed:   n.setSigned(true);   return;
+				case TK_unsigned: n.setUnsigned(true); return;
+				case TK_long:     n.setLong(true);     return;
+				case TK_short:    n.setShort(true);    return;
 			}
 		}
+
+		
 	}
 	
 	
 	public void consumeDeclarationSpecifiersSimple() {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		
-		IASTSimpleDeclSpecifier declSpec = nodeFactory.newCPPSimpleDeclSpecifier();
+		ICPPASTDeclSpecifier declSpec = nodeFactory.newCPPSimpleDeclSpecifier();
 		
 		for(Object token : astStack.closeScope())
 			setSpecifier(declSpec, (IToken)token);
@@ -1063,7 +1077,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		List<Object> topScope = astStack.closeScope();
 		
 		// There's already a composite or elaborated or enum type specifier somewhere on the stack, find it.
-		IASTDeclSpecifier declSpec = findFirstAndRemove(topScope, IASTDeclSpecifier.class);
+		ICPPASTDeclSpecifier declSpec = findFirstAndRemove(topScope, ICPPASTDeclSpecifier.class);
 		
 		// now apply the rest of the specifiers
 		for(Object token : topScope)
@@ -1344,14 +1358,15 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		
 		int key = getCompositeTypeSpecifier(parser.getLeftIToken());
 		List<Object> baseSpecifiers = astStack.closeScope();
-		
 		// may be null, but if it is then hasNestedNameSpecifier == false
 		IASTName className = (IASTName) astStack.pop();
 		
 		if(hasNestedNameSpecifier) {
 			LinkedList<IASTName> nestedNames = (LinkedList<IASTName>) astStack.pop();
 			nestedNames.addFirst(className);
-			className = createQualifiedName(nestedNames, false);
+			int startOffset = offset(nestedNames.getLast());
+			int endOffset = endOffset(className);
+			className = createQualifiedName(nestedNames, startOffset, endOffset, false);
 		}
 
 		if(className == null)
@@ -1433,10 +1448,21 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
     	 if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
      	
     	 List<Object> qualifiers = astStack.closeScope();
-    	 
     	 LinkedList<IASTName> nestedNames = (LinkedList<IASTName>) astStack.pop();
-    	 boolean hasDColon = astStack.pop() == PLACE_HOLDER;
-    	 IASTName name = createQualifiedName(nestedNames, hasDColon);
+    	 IToken dColon = (IToken) astStack.pop();
+    	 
+    	 int startOffset = dColon == null ? offset(nestedNames.getLast()) : offset(dColon);
+    	 int endOffset   = endOffset(nestedNames.getFirst()); // temporary
+    	 
+    	 // find the last double colon by searching for it
+    	 for(IToken t : reverseIterable(parser.getRuleTokens())) {
+    		 if(t.getKind() == TK_ColonColon) {
+    			 endOffset = endOffset(t);
+    			 break;
+    		 }
+    	 }
+    	 
+    	 IASTName name = createQualifiedName(nestedNames, startOffset, endOffset, dColon != null, true);
     	 
      	 ICPPASTPointerToMember pointer = nodeFactory.newPointerToMember(name);
      	 addCVQualifiersToPointer(pointer, qualifiers);

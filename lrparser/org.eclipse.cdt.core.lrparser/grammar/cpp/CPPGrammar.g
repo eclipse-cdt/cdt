@@ -442,7 +442,7 @@ template_opt
 -- the ::=? is necessary for example 8.2.1 in the C++ spec to parse correctly
 dcolon_opt
     ::=? '::'
-          /. $Build  consumePlaceHolder();  $EndBuild ./
+          /. $Build  consumeToken();  $EndBuild ./  -- need the actual token to compute offsets
       | $empty
           /. $Build  consumeEmpty();  $EndBuild ./
 

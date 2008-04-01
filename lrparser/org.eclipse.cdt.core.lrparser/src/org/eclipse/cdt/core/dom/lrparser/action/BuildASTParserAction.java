@@ -350,7 +350,7 @@ public abstract class BuildASTParserAction {
 			}
 			i++;
 		}
-		return tokens.subList(first, last+1);
+		return tokens.subList(first, last + 1);
 	}
 	
 	
@@ -406,6 +406,17 @@ public abstract class BuildASTParserAction {
 		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
+	
+	/**
+	 * Gets the current token and places it on the stack for later consumption.
+	 */
+	public void consumeToken() {
+		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
+		
+		astStack.push(parser.getRightIToken());
+		
+		if(TRACE_AST_STACK) System.out.println(astStack);
+	}
 	
 
 	

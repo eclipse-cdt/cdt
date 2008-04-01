@@ -416,7 +416,7 @@ public CPPNoFunctionDeclaratorParser(String[] mapFrom) {  // constructor
             // Rule 42:  dcolon_opt ::= ::
             //
             case 42: {       action.builder.
-   consumePlaceHolder();                 break;
+   consumeToken();                 break;
             }  
    
             //

@@ -14,14 +14,4 @@ public interface IElementPropertiesProvider {
      * a set of properties is requested and stores them
      */
     public void update(IPropertiesUpdate[] updates);
-    
-    /**
-     * Returns a user-presentable name for the given property.
-     */
-    public String getPropertyName(String property);
-    
-    /**
-     * Returns a description for the given property.
-     */
-    public String getPropertyDescription(String property);
 }

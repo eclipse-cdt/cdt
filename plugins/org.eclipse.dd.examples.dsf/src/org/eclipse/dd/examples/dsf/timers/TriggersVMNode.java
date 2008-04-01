@@ -192,12 +192,4 @@ class TriggersVMNode extends AbstractDMVMNode
         }
         super.dispose();
     }
-
-    public String getPropertyDescription(String property) {
-        return null;
-    }
-
-    public String getPropertyName(String property) {
-        return null;
-    }
 }

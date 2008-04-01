@@ -161,14 +161,4 @@ class TimersVMNode extends AbstractDMVMNode
         }
         requestMonitor.done();
     }
-
-
-    public String getPropertyDescription(String property) {
-        return null;
-    }
-
-    public String getPropertyName(String property) {
-        return null;
-    }
-
 }

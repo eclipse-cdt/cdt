@@ -78,24 +78,25 @@ public class InclusionTests extends PreprocessorTestsBase {
 	}
 
     public void testIncludeNext() throws Exception	{    	
-    	String baseFile = "int zero; \n#include \"bar/foo.h\""; //$NON-NLS-1$
+    	String baseFile = "int zero; \n#include \"foo.h\""; //$NON-NLS-1$
     	String i1Next = "int one; \n#include_next <bar/foo.h>"; //$NON-NLS-1$
     	String i2Next = "int two; \n#include_next \"bar/foo.h\""; //$NON-NLS-1$
     	String i3Next = "int three; \n"; //$NON-NLS-1$
 
-    	IFolder barf = importFolder("bar"); //$NON-NLS-1$
-    	IFolder twof = importFolder("two"); //$NON-NLS-1$
-    	IFolder twobarf = importFolder("two/bar"); //$NON-NLS-1$
-    	IFolder threef = importFolder("three"); //$NON-NLS-1$
-    	IFolder threebarf = importFolder("three/bar"); //$NON-NLS-1$
+    	IFolder one = importFolder("one"); //$NON-NLS-1$
+    	IFolder oneTwo = importFolder("one/two"); //$NON-NLS-1$
+    	IFolder oneTwoBar = importFolder("one/two/bar"); //$NON-NLS-1$
+    	IFolder oneThree = importFolder("one/three"); //$NON-NLS-1$
+    	IFolder oneThreeBar = importFolder("one/three/bar"); //$NON-NLS-1$
     	IFile base = importFile("base.cpp", baseFile); //$NON-NLS-1$
-    	importFile("bar/foo.h", i1Next); //$NON-NLS-1$
-    	importFile("two/bar/foo.h", i2Next); //$NON-NLS-1$
-    	importFile("three/bar/foo.h", i3Next); //$NON-NLS-1$
+    	importFile("one/foo.h", i1Next); //$NON-NLS-1$
+    	importFile("one/two/bar/foo.h", i2Next); //$NON-NLS-1$
+    	importFile("one/three/bar/foo.h", i3Next); //$NON-NLS-1$
     	
-    	String [] path = new String[2];
-    	path[0] = twof.getLocation().toOSString();
-    	path[1] = threef.getLocation().toOSString();
+    	String[] path = new String[3];
+    	path[0] = one.getLocation().toOSString();
+    	path[1] = oneTwo.getLocation().toOSString();
+    	path[2] = oneThree.getLocation().toOSString();
     	
     	IScannerInfo scannerInfo = new ExtendedScannerInfo(Collections.EMPTY_MAP, path, new String[]{}, null);
     	CodeReader reader= new CodeReader(base.getLocation().toString());

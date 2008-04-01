@@ -757,11 +757,11 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     }
 
     private int findIncludePos(String[] paths, File currentDirectory) {
-        for (int i = 0; i < paths.length; ++i) {
-        	File pathDir = new File(paths[i]);
-        	for (File dir = currentDirectory; dir != null; dir = dir.getParentFile()) {
-        		if (dir.equals(pathDir))
-        			return i;
+    	for (; currentDirectory != null; currentDirectory = currentDirectory.getParentFile()) {
+	        for (int i = 0; i < paths.length; ++i) {
+	        	File pathDir = new File(paths[i]);
+	        	if (currentDirectory.equals(pathDir))
+	        		return i;
         	}
         }
 

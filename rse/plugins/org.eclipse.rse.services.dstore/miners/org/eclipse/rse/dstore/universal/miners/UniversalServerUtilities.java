@@ -32,6 +32,8 @@ public class UniversalServerUtilities {
 
 	 /** 
 	  * getUserPreferencesDirectory() - returns directory on IFS where to store user settings
+	  * 
+	  * @since org.eclipse.rse.services.dstore 3.0 the DataStore argument was added
 	  */
 	 public static String getUserPreferencesDirectory(DataStore dataStore)
 	 {

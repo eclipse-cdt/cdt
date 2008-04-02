@@ -422,6 +422,11 @@ public abstract class AbstractMIControl extends AbstractDsfService
         		return execCtx.getThreadId();
         	return null;
         } 
+        
+        @Override
+        public String toString() {
+            return Integer.toString(fTokenId) + fCommand;
+        }
     }
 
     /*

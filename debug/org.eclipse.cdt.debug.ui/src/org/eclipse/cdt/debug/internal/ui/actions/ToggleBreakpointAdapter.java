@@ -9,6 +9,7 @@
  * QNX Software Systems - Initial API and implementation
  * Freescale Semiconductor - Address watchpoints, https://bugs.eclipse.org/bugs/show_bug.cgi?id=118299
  * Warren Paul (Nokia) - Bug 217485, Bug 218342
+ * Oyvind Harboe (oyvind.harboe@zylin.com) - Bug 225099
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
@@ -290,11 +291,15 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		if ( part instanceof IEditorPart ) {
 			IEditorInput editorInput = ((IEditorPart)part).getEditorInput();
+			IResource resource = null;
 			if ( editorInput instanceof IFileEditorInput ) {
-				return ((IFileEditorInput)editorInput).getFile();
+				resource = ((IFileEditorInput)editorInput).getFile();
 			} else if (editorInput instanceof ExternalEditorInput) {
-				return ((ExternalEditorInput)editorInput).getMarkerResource();
+				resource = ((ExternalEditorInput)editorInput).getMarkerResource();
 			}
+			if (resource != null)
+				return resource;
+			/* This file is not in a project, let default case handle it */
 			ILocationProvider provider = (ILocationProvider)editorInput.getAdapter( ILocationProvider.class );
 			if ( provider != null ) {
 				IPath location = provider.getPath( editorInput );

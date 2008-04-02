@@ -12,7 +12,8 @@
  * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
  *                                API to the user actions plugin
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
- * Kevin Doyle		(IBM)		 - [222831] Can't Delete User Actions/Named Types                                                               
+ * Kevin Doyle		(IBM)		 - [222831] Can't Delete User Actions/Named Types
+ * Kevin Doyle		(IBM)		 - [222827] Treeview is collapsed after creating new user action                                                               
  *******************************************************************************/
 
 package org.eclipse.rse.internal.useractions.ui.uda;
@@ -636,7 +637,9 @@ public class SystemUDBaseTreeView extends TreeViewer implements IMenuListener, I
 	 * If it is not currently shown in the tree, or there is no parent, returns null.
 	 */
 	public TreeItem findParentItem(SystemXMLElementWrapper element) {
-		IPropertySet parentElement = element.getParentDomainElement();
+//		IPropertySet parentElement = element.getParentDomainElement();
+		// Since we use PropertySet's now we don't want the parent domain element, just the parent element
+		IPropertySet parentElement = element.getParentElement();
 		TreeItem parentItem = null;
 		if (parentElement != null)
 			parentItem = findElement(parentElement);

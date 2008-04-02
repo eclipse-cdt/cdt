@@ -13,7 +13,7 @@ package org.eclipse.cdt.core.lrparser.tests.c99;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-public class ParserTestSuite extends TestSuite {
+public class C99ParserTestSuite extends TestSuite {
 	
 	// TODO: the following test are not being reused
 	//

@@ -604,9 +604,6 @@ public abstract class BuildASTParserAction {
 	public void consumeExpressionID() {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		
-		System.out.println("Right Token: " + parser.getRightIToken());
-		System.out.println("Left Token: " + parser.getLeftIToken());
-		System.out.println("All Tokens: " + parser.getRuleTokens());
 		//IASTName name = createName(parser.getRightIToken());
 		IASTName name = createName(parser.getLeftIToken());
 		IASTIdExpression expr = nodeFactory.newIdExpression(name);

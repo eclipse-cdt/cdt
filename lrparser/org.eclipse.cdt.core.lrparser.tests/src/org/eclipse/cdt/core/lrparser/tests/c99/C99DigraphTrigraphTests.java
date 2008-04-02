@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.lrparser.BaseExtensibleLanguage;
 import org.eclipse.cdt.core.dom.lrparser.c99.C99Language;
+import org.eclipse.cdt.core.lrparser.tests.ParseHelper;
 
 public class C99DigraphTrigraphTests extends TestCase {
 

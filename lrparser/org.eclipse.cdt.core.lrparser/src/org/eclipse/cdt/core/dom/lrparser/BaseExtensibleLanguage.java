@@ -46,8 +46,8 @@ import org.eclipse.core.runtime.CoreException;
 public abstract class BaseExtensibleLanguage extends AbstractLanguage implements ILanguage, ICLanguageKeywords {
 			
 	
-	private static final boolean DEBUG_PRINT_GCC_AST = true;
-	private static final boolean DEBUG_PRINT_AST = true;
+	private static final boolean DEBUG_PRINT_GCC_AST = false;
+	private static final boolean DEBUG_PRINT_AST = false;
 	
 	/**
 	 * Retrieve the parser (runs after the preprocessor runs).

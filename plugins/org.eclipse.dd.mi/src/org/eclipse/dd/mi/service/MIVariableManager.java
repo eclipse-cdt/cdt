@@ -85,14 +85,6 @@ import org.eclipse.dd.mi.service.command.output.MIVarUpdateInfo;
 /**
  * Manages a list of variable objects as created through GDB/MI commands.
  * 
- * Note that for the moment, this class is inheriting from AbstractDsfService,
- * although it does not register as a service.  This class is only used by the Expression
- * Service, and therefore, need not be a service of its own.
- * However, to be able to implement ICommandControl, we automatically must implement
- * IDsfService, so, that is why we extend AbstractDsfService.  We must implement
- * ICommandControl service, to be able to interface properly with the MICommandCache which
- * is using this class.
- * 
  * This class is passed expression-meta-commands which have their own cache.
  * Therefore, we don't use the standard MICommandCache in this class.
  * In fact, we can't even use it, because many variableObject MI commands,

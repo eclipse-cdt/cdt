@@ -86,7 +86,7 @@ Martin Oberhuber (Wind River) - [198692] Use FTP LIST -a to list UNIX hidden fil
             label="%FTPParser.OS400"
             priority="100">
          <initCommand
-               cmd="quote site namefmt 1">
+               cmd="site namefmt 1">
          </initCommand>
       </parser>
        <parser

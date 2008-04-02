@@ -20,5 +20,6 @@ public interface ICDIFormat {
 	final static int BINARY  = 2;
 	final static int OCTAL = 3;
 	final static int HEXADECIMAL = 4;
+	final static int FLOAT = 5;
 
 }

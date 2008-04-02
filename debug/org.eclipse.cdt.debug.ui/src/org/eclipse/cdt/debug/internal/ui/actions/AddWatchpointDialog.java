@@ -386,7 +386,7 @@ public class AddWatchpointDialog extends Dialog implements ModifyListener, Selec
 	}
 
 	public BigInteger getRange() {
-		return new BigInteger( fRange );
+		return BigInteger.valueOf( Long.decode(fRange).longValue() );
 	}
 	
 	public void initializeRange( boolean enable, String range ) {

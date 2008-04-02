@@ -10,7 +10,8 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
  *                                API to the user actions plugin
- * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared                               
+ * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
+ * Kevin Doyle		(IBM)		 - [222831] Can't Delete User Actions/Named Types                               
  *******************************************************************************/
 package org.eclipse.rse.internal.useractions.ui.uda;
 
@@ -78,9 +79,11 @@ public class SystemUDTypeTreeView extends SystemUDBaseTreeView {
 	 * Return message for delete confirmation
 	 */
 	protected SystemMessage getDeleteConfirmationMessage() {
-		return new SimpleSystemMessage(Activator.PLUGIN_ID, 
+		SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
 				IUserActionsMessageIds.MSG_CONFIRM_DELETE_USERTYPE,
 				IStatus.WARNING, UserActionsResources.MSG_CONFIRM_DELETE_USERTYPE, UserActionsResources.MSG_CONFIRM_DELETE_USERTYPE_DETAILS);
+		msg.setIndicator(SystemMessage.INQUIRY);
+		return msg;
 	}
 
 	/**

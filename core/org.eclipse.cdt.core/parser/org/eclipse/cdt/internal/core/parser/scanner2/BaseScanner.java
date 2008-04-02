@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,6 +48,8 @@ import org.eclipse.cdt.core.parser.util.CharArraySet;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.CharTable;
 import org.eclipse.cdt.internal.core.parser.ast.ASTCompletionNode;
+import org.eclipse.cdt.internal.core.parser.scanner2.IncludeFileResolutionCache.ISPKey;
+import org.eclipse.cdt.internal.core.parser.scanner2.IncludeFileResolutionCache.LookupKey;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
 import org.eclipse.cdt.internal.core.parser.token.SimpleToken;
 
@@ -147,6 +149,10 @@ abstract class BaseScanner implements IScanner {
     protected String[] includePaths;
     protected String[] quoteIncludePaths;
 
+	private final IncludeFileResolutionCache includeResolutionCache;
+	private final ISPKey includePathKey;
+	private ISPKey quoteIncludePathKey;
+
     /** Set of already included files */
     protected CharArraySet includedFiles= new CharArraySet(32);
 
@@ -214,11 +220,18 @@ abstract class BaseScanner implements IScanner {
     public BaseScanner(CodeReader reader, IScannerInfo info,
             ParserMode parserMode, ParserLanguage language,
             IParserLogService log, IScannerExtensionConfiguration configuration) {
+    	this(reader, info, parserMode, language, log, configuration, new IncludeFileResolutionCache(1024));
+    }
+
+    public BaseScanner(CodeReader reader, IScannerInfo info,
+            ParserMode parserMode, ParserLanguage language,
+            IParserLogService log, IScannerExtensionConfiguration configuration, IncludeFileResolutionCache ifrCache) {
     	
         this.parserMode = parserMode;
         this.language = language;
         this.log = log;
         this.scanComments = false;
+        
         
         if (configuration.supportAdditionalNumericLiteralSuffixes() != null)
             suffixes = configuration.supportAdditionalNumericLiteralSuffixes();
@@ -256,6 +269,8 @@ abstract class BaseScanner implements IScanner {
             }
         }
         includePaths= quoteIncludePaths= info.getIncludePaths();
+    	includeResolutionCache= ifrCache;
+    	includePathKey= quoteIncludePathKey= includeResolutionCache.getKey(includePaths);
     }
 
     /**
@@ -284,6 +299,7 @@ abstract class BaseScanner implements IScanner {
         	quoteIncludePaths= new String[qip.length + includePaths.length];
         	System.arraycopy(qip, 0, quoteIncludePaths, 0, qip.length);
         	System.arraycopy(includePaths, 0, quoteIncludePaths, qip.length, includePaths.length);
+        	quoteIncludePathKey= includeResolutionCache.getKey(quoteIncludePaths);
         }
         
         // 
@@ -1985,20 +2001,47 @@ abstract class BaseScanner implements IScanner {
         	}
         }
         
-        // if we're not include_next, then we are looking for the first occurrence of 
-        // the file, otherwise, we ignore all the paths before the current directory
-        String[] includePathsToUse = quoteInclude ? quoteIncludePaths : includePaths;
-        if (includePathsToUse != null ) {
-            int startpos = 0;
+        String[] isp;
+        ISPKey ispKey;
+        if (quoteInclude) {
+        	isp= quoteIncludePaths;
+        	ispKey= quoteIncludePathKey;
+        }
+        else {
+        	isp= includePaths;
+        	ispKey= includePathKey;
+        }
+        
+        if (isp != null ) {
             if (includeNext && currentDirectory != null) {
-                startpos = findIncludePos(includePathsToUse, currentDirectory) + 1;
+                final int startpos = findIncludePos(isp, currentDirectory) + 1;
+                for (int i= startpos; i < isp.length; ++i) {
+                    reader= tester.checkFile(isp[i], filename);
+                    if (reader != null) {
+                    	return reader;
+                    }
+                }
+                return null;
             }
-            for (int i = startpos; i < includePathsToUse.length; ++i) {
-                reader = tester.checkFile(includePathsToUse[i], filename);
+
+            final LookupKey lookupKey= includeResolutionCache.getKey(ispKey, filename.toCharArray());
+            Integer offset= includeResolutionCache.getCachedPathOffset(lookupKey);
+        	if (offset != null) {
+        		final int iOffset= offset.intValue();
+        		if (iOffset < 0) {
+        			return null;
+        		}
+        		return tester.checkFile(isp[iOffset], filename);
+        	}
+
+        	for (int i= 0; i < isp.length; ++i) {
+                reader = tester.checkFile(isp[i], filename);
                 if (reader != null) {
+                	includeResolutionCache.putCachedPathOffset(lookupKey, Integer.valueOf(i));
                 	return reader;
                 }
             }
+        	includeResolutionCache.putCachedPathOffset(lookupKey, Integer.valueOf(-1));
         }
         return null;
     }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.core.runtime.IAdaptable;
 
 /**
  * @author jcamelon
@@ -90,13 +91,23 @@ public class DOMScanner extends BaseScanner {
             IParserLogService log,
             IScannerExtensionConfiguration configuration,
             ICodeReaderFactory readerFactory) {
-        super(reader, info, parserMode, language, log, configuration);
+        super(reader, info, parserMode, language, log, configuration, getIncludeResolutionCache(readerFactory));
         this.expressionEvaluator = new ExpressionEvaluator(null, null);
         this.codeReaderFactory = readerFactory;
         postConstructorSetup(reader, info);
     }
 
-    private void registerMacros() {
+	private static IncludeFileResolutionCache getIncludeResolutionCache(ICodeReaderFactory readerFactory) {
+		if (readerFactory instanceof IAdaptable) {
+			IncludeFileResolutionCache cache= (IncludeFileResolutionCache) ((IAdaptable) readerFactory).getAdapter(IncludeFileResolutionCache.class);
+			if (cache != null) {
+				return cache;
+			}
+		}
+		return new IncludeFileResolutionCache(1024);
+	}
+
+	private void registerMacros() {
         for( int i = 0; i < definitions.size(); ++i )
         {
             registerMacro((IMacro)definitions.get(definitions.keyAt(i)));

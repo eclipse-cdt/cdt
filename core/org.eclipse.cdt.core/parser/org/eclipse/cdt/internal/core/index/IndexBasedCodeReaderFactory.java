@@ -1,16 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 QNX Software Systems and others.
+ * Copyright (c) 2005, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * Andrew Ferguson (Symbian)
- * Anton Leherbauer (Wind River Systems)
- * IBM Corporation
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
+ *    Andrew Ferguson (Symbian)
+ *    Anton Leherbauer (Wind River Systems)
+ *    IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index;
 
@@ -40,9 +40,11 @@ import org.eclipse.cdt.core.parser.ICodeReaderCache;
 import org.eclipse.cdt.core.parser.IMacro;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.internal.core.parser.scanner2.IIndexBasedCodeReaderFactory;
+import org.eclipse.cdt.internal.core.parser.scanner2.IncludeFileResolutionCache;
 import org.eclipse.cdt.internal.core.parser.scanner2.ObjectStyleMacro;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMMacro;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 
 /**
  * Code reader factory, that fakes code readers for header files already stored in the 
@@ -52,7 +54,7 @@ import org.eclipse.core.runtime.CoreException;
  * This interface is not intended to be implemented by clients.
  * </p>
  */
-public class IndexBasedCodeReaderFactory implements IIndexBasedCodeReaderFactory {
+public class IndexBasedCodeReaderFactory implements IIndexBasedCodeReaderFactory, IAdaptable {
 	public static interface CallbackHandler {
 		boolean needToUpdate(IndexFileInfo fileInfo) throws CoreException;		
 	}
@@ -88,6 +90,7 @@ public class IndexBasedCodeReaderFactory implements IIndexBasedCodeReaderFactory
 	private CallbackHandler fCallbackHandler;
 	private final ICProject cproject;
 	private final String fProjectPathPrefix;
+	private final IncludeFileResolutionCache fIncludeFileResolutionCache;
 	
 	public IndexBasedCodeReaderFactory(ICProject cproject, IIndex index) {
 		this(cproject, index, new HashMap/*<String,IIndexFileLocation>*/());
@@ -114,6 +117,7 @@ public class IndexBasedCodeReaderFactory implements IIndexBasedCodeReaderFactory
 		this.iflCache = iflCache;
 		this.fFallBackFactory= fallbackFactory;
 		this.fProjectPathPrefix= cproject == null ? null : '/' + cproject.getElementName() + '/';
+		fIncludeFileResolutionCache= new IncludeFileResolutionCache(1024);
 	}
 
 	final protected Map getIFLCache() {
@@ -126,6 +130,13 @@ public class IndexBasedCodeReaderFactory implements IIndexBasedCodeReaderFactory
 
 	public CodeReader createCodeReaderForTranslationUnit(String path) {
 		return ParserUtil.createReader(path, null);
+	}
+
+	public Object getAdapter(Class adapter) {
+		if (adapter.isInstance(fIncludeFileResolutionCache)) {
+			return fIncludeFileResolutionCache;
+		}
+		return null;
 	}
 	
 	public CodeReader createCodeReaderForInclusion(IMacroCollector scanner, String path) {

@@ -13,6 +13,7 @@ package org.eclipse.cdt.debug.internal.ui.actions;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMemorySpaceManagement;
 import org.eclipse.debug.ui.DebugUITools;
@@ -45,7 +46,7 @@ public class AddWatchpointDialog extends Dialog implements ModifyListener, Selec
 
 	private Combo fExpressionInput;
 	private String fExpression;
-	private static ArrayList sExpressionHistory = new ArrayList();
+	private static List<String> sExpressionHistory = new ArrayList<String>();
 
 	private boolean fHasMemorySpaceControls;
 	private Button fMemorySpaceEnableButton;
@@ -131,9 +132,9 @@ public class AddWatchpointDialog extends Dialog implements ModifyListener, Selec
 		gridData.horizontalSpan = 2;
 		fExpressionInput.setLayoutData( gridData );		
 		fExpressionInput.addModifyListener( this );
-		String[] history = getHistory( sExpressionHistory );
-		for ( int i = 0; i < history.length; i++ )
-			fExpressionInput.add( history[i] );
+		for (String expression : sExpressionHistory) {
+			fExpressionInput.add( expression );			
+		}
 	}
 	
 	private void createMemorySpaceControl( Composite parent, boolean hasMemorySpaces ) {
@@ -285,7 +286,7 @@ public class AddWatchpointDialog extends Dialog implements ModifyListener, Selec
 	protected void okPressed() {
 		fExpression = fExpressionInput.getText().trim();
 		if ( fExpression.length() > 0 ) {
-			addHistory( sExpressionHistory, fExpression );
+			addHistory( fExpression );
 		}
 		if ( fHasMemorySpaceControls ) {
 			fMemorySpace = fMemorySpaceEnableButton.getSelection() ? fMemorySpaceInput.getText().trim() : "";
@@ -318,16 +319,13 @@ public class AddWatchpointDialog extends Dialog implements ModifyListener, Selec
 		return fMemorySpace;
 	}
 
-	private static void addHistory( ArrayList list, String item )	{		
-		if ( !list.contains( item ) )
-			list.add( 0, item );
+	private static void addHistory( String item )	{		
+		if ( !sExpressionHistory.contains( item ) ) {
+			sExpressionHistory.add( 0, item );
 
-		if ( list.size() > 5 )
-			list.remove( list.size() - 1 );
-	}
-	
-	private static String[] getHistory( ArrayList list )	{
-		return (String[])list.toArray( new String[list.size()] );
+			if ( sExpressionHistory.size() > 5 )
+				sExpressionHistory.remove( sExpressionHistory.size() - 1 );
+		}
 	}
 
 	/* (non-Javadoc)

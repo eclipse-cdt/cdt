@@ -33,6 +33,7 @@
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * Martin Oberhuber (Wind River) - [220020][api][breaking] SystemFileTransferModeRegistry should be internal
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
+ * Kevin Doyle		(IBM)		 - [224162] SystemEditableRemoteFile.saveAs does not work because FileServiceSubSytem.upload does invalid check
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.servicesubsystem;
@@ -590,7 +591,7 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 		String hostEncoding = destination.getEncoding();
 		boolean isBinary = isBinary(encoding, hostEncoding, destination.getAbsolutePath());
 
-		if (!destination.canWrite())
+		if ((destination.exists() && !destination.canWrite()) || (!destination.exists() && !destination.getParentRemoteFile().canWrite()))
 		{
 			String msgTxt = NLS.bind(SystemFileResources.MSG_FILE_CANNOT_BE_SAVED, remoteFileName, getHostName());
 			String msgDetails = SystemFileResources.MSG_FILE_CANNOT_BE_SAVED_DETAILS;

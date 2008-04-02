@@ -29,6 +29,7 @@
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * David McKnight   (IBM)        - [222406] Need to be able to override local encoding
  * David McKnight   (IBM)        - [224377] "open with" menu does not have "other" option
+ * Kevin Doyle		(IBM)		 - [224162] SystemEditableRemoteFile.saveAs does not work because FileServiceSubSytem.upload does invalid check
  *******************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -1901,8 +1902,11 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 					{
 						this.setLocalResourceProperties();
 						this.upload();
-					}
-					catch (Exception e)
+					} catch (SystemMessageException e) {
+						SystemMessageDialog dialog = new SystemMessageDialog(SystemBasePlugin.getActiveWorkbenchShell(), e.getSystemMessage());
+						dialog.open();
+						return true;
+					} catch (Exception e)
 					{
 						SystemBasePlugin.logError("Error in performSaveAs", e); //$NON-NLS-1$
 						String msgTxt = CommonMessages.MSG_ERROR_UNEXPECTED;

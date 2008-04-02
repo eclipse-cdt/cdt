@@ -22,6 +22,8 @@ package org.eclipse.cdt.debug.core.disassembly;
  * It can be accessed from <code>CDebugCorePlugin</code>.
  * </p>
  * @see org.eclipse.cdt.debug.core.IDisassemblyContextListener
+ * 
+ * This interface is experimental.
  */
 public interface IDisassemblyContextService {
 

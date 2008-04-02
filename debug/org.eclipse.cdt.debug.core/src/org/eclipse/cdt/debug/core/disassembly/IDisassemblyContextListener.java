@@ -21,6 +21,7 @@ package org.eclipse.cdt.debug.core.disassembly;
  * <p>
  * The clients may implement this interface.
  * </p>
+ * This interface is experimental.
  */
 public interface IDisassemblyContextListener {
     

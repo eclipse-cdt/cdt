@@ -15,16 +15,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.breakpointactions.BreakpointActionManager;
+import org.eclipse.cdt.debug.core.disassembly.IDisassemblyContextService;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.internal.core.DebugConfiguration;
 import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.cdt.debug.internal.core.ListenerList;
 import org.eclipse.cdt.debug.internal.core.SessionManager;
-import org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint;
+import org.eclipse.cdt.debug.internal.core.disassembly.DisassemblyContextService;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CommonSourceLookupDirector;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.SourceUtils;
@@ -38,9 +38,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IBreakpointManager;
-import org.eclipse.debug.core.model.IBreakpoint;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -63,9 +60,9 @@ public class CDebugCorePlugin extends Plugin {
 	 */
 	private static CDebugCorePlugin plugin;
 
-	private HashMap fDebugConfigurations;
+	private HashMap<String, DebugConfiguration> fDebugConfigurations;
 	
-	private HashSet fActiveDebugConfigurations;
+	private HashSet<String> fActiveDebugConfigurations;
 
 	/**
 	 * Breakpoint listener list.
@@ -76,6 +73,8 @@ public class CDebugCorePlugin extends Plugin {
 	 * Breakpoint action manager.
 	 */
 	private BreakpointActionManager breakpointActionManager;
+
+    private DisassemblyContextService fDisassemblyContextService;
 
 	public static final String CDEBUGGER_EXTENSION_POINT_ID = "CDebugger"; //$NON-NLS-1$
 	public static final String DEBUGGER_ELEMENT = "debugger"; //$NON-NLS-1$
@@ -169,7 +168,7 @@ public class CDebugCorePlugin extends Plugin {
 	private void initializeDebugConfiguration() {
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint( getUniqueIdentifier(), CDEBUGGER_EXTENSION_POINT_ID );
 		IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
-		fDebugConfigurations = new HashMap( infos.length );
+		fDebugConfigurations = new HashMap<String, DebugConfiguration>( infos.length );
 		for( int i = 0; i < infos.length; i++ ) {
 			IConfigurationElement configurationElement = infos[i];
 			if (configurationElement.getName().equals(DEBUGGER_ELEMENT)) {
@@ -180,7 +179,7 @@ public class CDebugCorePlugin extends Plugin {
 	}
 
 	private void initializeActiveDebugConfigurations() {
-		fActiveDebugConfigurations = new HashSet( getDebugConfigurations().length );
+		fActiveDebugConfigurations = new HashSet<String>( getDebugConfigurations().length );
 		fActiveDebugConfigurations.addAll( fDebugConfigurations.keySet() );
 		String[] filteredTypes = CDebugCorePlugin.getDefault().getPluginPreferences().getString( ICDebugConstants.PREF_FILTERED_DEBUGGERS ).split( "\\," ); //$NON-NLS-1$
 		fActiveDebugConfigurations.removeAll( Arrays.asList( filteredTypes ) );
@@ -190,7 +189,7 @@ public class CDebugCorePlugin extends Plugin {
 		if ( fDebugConfigurations == null ) {
 			initializeDebugConfiguration();
 		}
-		return (ICDebugConfiguration[])fDebugConfigurations.values().toArray( new ICDebugConfiguration[0] );
+		return fDebugConfigurations.values().toArray( new ICDebugConfiguration[fDebugConfigurations.size()] );
 	}
 
 	public ICDebugConfiguration[] getActiveDebugConfigurations() {
@@ -200,21 +199,21 @@ public class CDebugCorePlugin extends Plugin {
 		if ( fActiveDebugConfigurations == null ) {
 			initializeActiveDebugConfigurations();
 		}
-		ArrayList list = new ArrayList( fActiveDebugConfigurations.size() );
-		Iterator it = fActiveDebugConfigurations.iterator();
-		while( it.hasNext() ) {
-			Object o = fDebugConfigurations.get( it.next() );
-			if ( o != null )
-				list.add( o );
+		ArrayList<DebugConfiguration> list = new ArrayList<DebugConfiguration>( fActiveDebugConfigurations.size() );
+
+		for ( String id : fActiveDebugConfigurations ) {
+			DebugConfiguration dc = fDebugConfigurations.get( id );
+			if ( dc != null )
+				list.add( dc );
 		}
-		return (ICDebugConfiguration[])list.toArray( new ICDebugConfiguration[list.size()] );
+		return list.toArray( new ICDebugConfiguration[list.size()] );
 	}
 
 	public ICDebugConfiguration[] getDefaultActiveDebugConfigurations() {
-		List filtered = Arrays.asList( CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultString( ICDebugConstants.PREF_FILTERED_DEBUGGERS ).split( "\\," ) ); //$NON-NLS-1$
-		HashMap all = (HashMap)fDebugConfigurations.clone();
+		List<String> filtered = Arrays.asList( CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultString( ICDebugConstants.PREF_FILTERED_DEBUGGERS ).split( "\\," ) ); //$NON-NLS-1$
+		HashMap<String, DebugConfiguration> all = new HashMap<String, DebugConfiguration>( fDebugConfigurations );
 		all.keySet().removeAll( filtered );
-		return (ICDebugConfiguration[])all.values().toArray( new ICDebugConfiguration[all.size()] ); 
+		return all.values().toArray( new ICDebugConfiguration[all.size()] ); 
 	}
 
 	public void saveFilteredDebugConfigurations( ICDebugConfiguration[] configurations ) {
@@ -261,7 +260,7 @@ public class CDebugCorePlugin extends Plugin {
 		if ( fDebugConfigurations == null ) {
 			initializeDebugConfiguration();
 		}
-		ICDebugConfiguration dbgCfg = (ICDebugConfiguration)fDebugConfigurations.get( id );
+		ICDebugConfiguration dbgCfg = fDebugConfigurations.get( id );
 		if ( dbgCfg == null ) {
 			IStatus status = new Status( IStatus.ERROR, getUniqueIdentifier(), 100, DebugCoreMessages.getString( "CDebugCorePlugin.0" ), null ); //$NON-NLS-1$
 			throw new CoreException( status );
@@ -328,18 +327,22 @@ public class CDebugCorePlugin extends Plugin {
 	/* (non-Javadoc)
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
-	public void start( BundleContext context ) throws Exception {
+	@Override
+    public void start( BundleContext context ) throws Exception {
 		super.start( context );
 		initializeCommonSourceLookupDirector();
 		createBreakpointListenersList();
+		createDisassemblyContextService();
 		setSessionManager( new SessionManager() );
 	}
 
 	/* (non-Javadoc)
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
-	public void stop( BundleContext context ) throws Exception {
+	@Override
+    public void stop( BundleContext context ) throws Exception {
 		setSessionManager( null );
+		disposeDisassemblyContextService();
 		disposeBreakpointListenersList();
 		disposeCommonSourceLookupDirector();
 		disposeDebugConfigurations();
@@ -399,4 +402,16 @@ public class CDebugCorePlugin extends Plugin {
 		return breakpointActionManager;
 	}
 
+    private void createDisassemblyContextService() {
+        fDisassemblyContextService = new DisassemblyContextService();
+    }
+
+    public IDisassemblyContextService getDisassemblyContextService() {
+        return fDisassemblyContextService;
+    }
+
+    private void disposeDisassemblyContextService() {
+        if ( fDisassemblyContextService != null )
+            fDisassemblyContextService.dispose();
+    }
 }

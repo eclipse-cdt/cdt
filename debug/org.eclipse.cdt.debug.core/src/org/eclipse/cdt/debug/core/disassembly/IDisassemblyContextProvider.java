@@ -17,6 +17,7 @@ package org.eclipse.cdt.debug.core.disassembly;
  * Clients must implements this interface to plug into
  * the diassembly framework.
  * </p>
+ * This interface is experimental.
  */
 public interface IDisassemblyContextProvider {
 

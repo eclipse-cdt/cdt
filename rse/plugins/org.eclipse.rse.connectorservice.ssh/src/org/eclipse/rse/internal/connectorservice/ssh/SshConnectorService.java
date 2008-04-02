@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors: 
+ * Contributors:
  * Martin Oberhuber (Wind River) - initial API and implementation
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
- * Martin Oberhuber (Wind River) - [175686] Adapted to new IJSchService API 
+ * Martin Oberhuber (Wind River) - [175686] Adapted to new IJSchService API
  *    - copied code from org.eclipse.team.cvs.ssh2/JSchSession (Copyright IBM)
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [186761] make the port setting configurable
@@ -65,21 +65,21 @@ import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.subsystems.StandardConnectorService;
 
-/** 
+/**
  * Create SSH connections.
  */
 public class SshConnectorService extends StandardConnectorService implements ISshSessionProvider
 {
 	private static final int SSH_DEFAULT_PORT = 22;
 	private static final int CONNECT_DEFAULT_TIMEOUT = 60; //seconds
-	
+
 	/** Property Keys. These are API because they are stored persistently. */
 	private static final String PROPERTY_SET_SSH_SETTINGS = "SSH Settings"; //$NON-NLS-1$
 	private static final String PROPERTY_KEY_TIMEOUT = "timeout(sec)"; //$NON-NLS-1$
 	private static final String PROPERTY_KEY_KEEPALIVE = "keepalive(sec)"; //$NON-NLS-1$
-	
-    private Session session;
-    private SessionLostHandler fSessionLostHandler;
+
+	private Session session;
+	private SessionLostHandler fSessionLostHandler;
 	/** Indicates the default string encoding on this platform */
 	private static String _defaultEncoding = new java.io.InputStreamReader(new java.io.ByteArrayInputStream(new byte[0])).getEncoding();
 
@@ -100,46 +100,46 @@ public class SshConnectorService extends StandardConnectorService implements ISs
 	 * the Jsch config (for instance, in order to switch off strict
 	 * host key checking or in order to add specific ciphers).
 	 */
-    protected Session createSession(String username, String password, String hostname, int port, UserInfo wrapperUI, IProgressMonitor monitor) throws JSchException {
-        IJSchService service = Activator.getDefault().getJSchService();
-        if (service == null)
-        	return null;
-        Session session = service.createSession(hostname, port, username);
-        
-        IPropertySet propertySet = getPropertySet();
+	protected Session createSession(String username, String password, String hostname, int port, UserInfo wrapperUI, IProgressMonitor monitor) throws JSchException {
+		IJSchService service = Activator.getDefault().getJSchService();
+		if (service == null)
+			return null;
+		Session session = service.createSession(hostname, port, username);
+
+		IPropertySet propertySet = getPropertySet();
 		String timeoutStr = propertySet.getPropertyValue(PROPERTY_KEY_TIMEOUT);
 		int timeout = 0; //default is never timeout
 		try {
-        	int value = Integer.parseInt(timeoutStr);
-        	if (value > 0) {
-        		timeout = value * 1000;
-        	}
-        } catch (NumberFormatException e) {
-        	//wrong input - should never happen because property type is Integer
-        }
-        session.setTimeout(timeout);
-        
-        int keepalive = 300000; //default is 5 minutes
-        String keepaliveStr = propertySet.getPropertyValue(PROPERTY_KEY_KEEPALIVE);
-        try {
-        	int value = Integer.parseInt(keepaliveStr);
-        	if (value >= 0) {
-        		keepalive = value * 1000;
-        	}
-        } catch (NumberFormatException e) {
-        	//wrong input - should never happen because property type is Integer
-        }
-        if (keepalive > 0) {
-            session.setServerAliveInterval(keepalive);
-        }
-        
-        
-        session.setServerAliveCountMax(6); //give up after 6 tries (remote will be dead after 30 min)
-        if (password != null)
+			int value = Integer.parseInt(timeoutStr);
+			if (value > 0) {
+				timeout = value * 1000;
+			}
+		} catch (NumberFormatException e) {
+			//wrong input - should never happen because property type is Integer
+		}
+		session.setTimeout(timeout);
+
+		int keepalive = 300000; //default is 5 minutes
+		String keepaliveStr = propertySet.getPropertyValue(PROPERTY_KEY_KEEPALIVE);
+		try {
+			int value = Integer.parseInt(keepaliveStr);
+			if (value >= 0) {
+				keepalive = value * 1000;
+			}
+		} catch (NumberFormatException e) {
+			//wrong input - should never happen because property type is Integer
+		}
+		if (keepalive > 0) {
+			session.setServerAliveInterval(keepalive);
+		}
+
+
+		session.setServerAliveCountMax(6); //give up after 6 tries (remote will be dead after 30 min)
+		if (password != null)
 			session.setPassword(password);
-        session.setUserInfo(wrapperUI);
-        return session;
-    }
+		session.setUserInfo(wrapperUI);
+		return session;
+	}
 
 	static void shutdown() {
 		//TODO: Store all Jsch sessions in a pool and disconnect them on shutdown
@@ -159,45 +159,45 @@ public class SshConnectorService extends StandardConnectorService implements ISs
 	}
 
 	protected void internalConnect(IProgressMonitor monitor) throws Exception
-    {
+	{
 		// Fire comm event to signal state about to change
 		fireCommunicationsEvent(CommunicationsEvent.BEFORE_CONNECT);
 
-        String host = getHostName();
-        String user = getUserId();
-        String password=""; //$NON-NLS-1$
-        SystemSignonInformation ssi = getSignonInformation();
-        if (ssi!=null) {
-        	password = getSignonInformation().getPassword();
-        }
-        MyUserInfo userInfo = new MyUserInfo(user, password);
-        userInfo.aboutToConnect();
-        
-        try {
-            session = createSession(user, password, host, getSshPort(), 
-            		userInfo, monitor);
+		String host = getHostName();
+		String user = getUserId();
+		String password=""; //$NON-NLS-1$
+		SystemSignonInformation ssi = getSignonInformation();
+		if (ssi!=null) {
+			password = getSignonInformation().getPassword();
+		}
+		MyUserInfo userInfo = new MyUserInfo(user, password);
+		userInfo.aboutToConnect();
 
-            //java.util.Hashtable config=new java.util.Hashtable();
-            //config.put("StrictHostKeyChecking", "no");
-            //session.setConfig(config);
-            userInfo.aboutToConnect();
+		try {
+			session = createSession(user, password, host, getSshPort(),
+					userInfo, monitor);
 
-            Activator.trace("SshConnectorService.connecting..."); //$NON-NLS-1$
-        	//wait for 60 sec maximum during connect
-            session.connect(CONNECT_DEFAULT_TIMEOUT * 1000);
-        	Activator.trace("SshConnectorService.connected"); //$NON-NLS-1$
-        } catch (JSchException e) {
-        	Activator.trace("SshConnectorService.connect failed: "+e.toString()); //$NON-NLS-1$
-        	sessionDisconnect();
+			//java.util.Hashtable config=new java.util.Hashtable();
+			//config.put("StrictHostKeyChecking", "no");
+			//session.setConfig(config);
+			userInfo.aboutToConnect();
+
+			Activator.trace("SshConnectorService.connecting..."); //$NON-NLS-1$
+			//wait for 60 sec maximum during connect
+			session.connect(CONNECT_DEFAULT_TIMEOUT * 1000);
+			Activator.trace("SshConnectorService.connected"); //$NON-NLS-1$
+		} catch (JSchException e) {
+			Activator.trace("SshConnectorService.connect failed: "+e.toString()); //$NON-NLS-1$
+			sessionDisconnect();
 			if(e.toString().indexOf("Auth cancel")>=0) {  //$NON-NLS-1$
 				throw new OperationCanceledException();
 			}
-            throw e;
-        }
-        userInfo.connectionMade();
-        fSessionLostHandler = new SessionLostHandler(this);
-        notifyConnection();
-    }
+			throw e;
+		}
+		userInfo.connectionMade();
+		fSessionLostHandler = new SessionLostHandler(this);
+		notifyConnection();
+	}
 
 	/**
 	 * Disconnect the ssh session.
@@ -205,21 +205,21 @@ public class SshConnectorService extends StandardConnectorService implements ISs
 	 * quickly in succession.
 	 */
 	private synchronized void sessionDisconnect() {
-    	Activator.trace("SshConnectorService.sessionDisconnect"); //$NON-NLS-1$
-    	try {
-            if (session.isConnected())
-                session.disconnect();
-    	} catch(Exception e) {
-    		//Bug 175328: NPE on disconnect shown in UI
-    		//This is a non-critical exception so print only in debug mode
-    		if (Activator.isTracingOn()) e.printStackTrace();
-    	}
+		Activator.trace("SshConnectorService.sessionDisconnect"); //$NON-NLS-1$
+		try {
+			if (session.isConnected())
+				session.disconnect();
+		} catch(Exception e) {
+			//Bug 175328: NPE on disconnect shown in UI
+			//This is a non-critical exception so print only in debug mode
+			if (Activator.isTracingOn()) e.printStackTrace();
+		}
 	}
-	
+
 	protected void internalDisconnect(IProgressMonitor monitor) throws Exception
 	{
 		//TODO Will services like the sftp service be disconnected too? Or notified?
-    	Activator.trace("SshConnectorService.disconnect"); //$NON-NLS-1$
+		Activator.trace("SshConnectorService.disconnect"); //$NON-NLS-1$
 		try
 		{
 			if (session != null) {
@@ -230,13 +230,13 @@ public class SshConnectorService extends StandardConnectorService implements ISs
 				// handle events
 				if (sessionLost) {
 					notifyError();
-				} 
+				}
 				else {
 					// Fire comm event to signal state about to change
 					fireCommunicationsEvent(CommunicationsEvent.BEFORE_DISCONNECT);
 				}
 				sessionDisconnect();
-				
+
 				// Fire comm event to signal state changed
 				notifyDisconnection();
 				//TODO MOB - keep the session to avoid NPEs in services (disables gc for the session!)
@@ -253,43 +253,42 @@ public class SshConnectorService extends StandardConnectorService implements ISs
 	}
 
 	//TODO avoid having jsch type "Session" in the API.
-	//Could be done by instanciating SshShellService and SshFileService here,
-	//and implementing IShellService getShellService() 
+	// Could be done by instantiating SshShellService and SshFileService here,
+	//and implementing IShellService getShellService()
 	//and IFileService getFileService().
-    public Session getSession() {
-    	return session;
-    }
-    
-    public String getControlEncoding() {
+	public Session getSession() {
+		return session;
+	}
+
+	public String getControlEncoding() {
 		//TODO this code should be in IHost
-		String encoding = getHost().getDefaultEncoding(false);
-		if (encoding==null) encoding = getHost().getDefaultEncoding(true);
+		String encoding = getHost().getDefaultEncoding(true);
 		if (encoding==null) encoding = _defaultEncoding;
 		//</code to be in IHost>
 		return encoding;
-    }
+	}
 
-    /**
-     * Handle session-lost events.
-     * This is generic for any sort of connector service.
-     * Most of this is extracted from dstore's ConnectionStatusListener.
-     * 
-     * TODO should be refactored to make it generally available, and allow
-     * dstore to derive from it.
-     */
+	/**
+	 * Handle session-lost events.
+	 * This is generic for any sort of connector service.
+	 * Most of this is extracted from dstore's ConnectionStatusListener.
+	 * 
+	 * TODO should be refactored to make it generally available, and allow
+	 * dstore to derive from it.
+	 */
 	public static class SessionLostHandler implements Runnable, IRunnableWithProgress
 	{
 		private IConnectorService _connection;
 		private boolean fSessionLost;
-		
+
 		public SessionLostHandler(IConnectorService cs)
 		{
 			_connection = cs;
 			fSessionLost = false;
 		}
-		
-		/** 
-		 * Notify that the connection has been lost. This may be called 
+
+		/**
+		 * Notify that the connection has been lost. This may be called
 		 * multiple times from multiple subsystems. The SessionLostHandler
 		 * ensures that actual user feedback and disconnect actions are
 		 * done only once, on the first invocation.
@@ -309,11 +308,11 @@ public class SshConnectorService extends StandardConnectorService implements ISs
 				Display.getDefault().asyncExec(this);
 			}
 		}
-		
+
 		public synchronized boolean isSessionLost() {
 			return fSessionLost;
 		}
-		
+
 		public void run()
 		{
 			Shell shell = getShell();
@@ -321,9 +320,9 @@ public class SshConnectorService extends StandardConnectorService implements ISs
 			//TODO allow users to reconnect from this dialog
 			//SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_UNKNOWNHOST);
 
-			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
-					ICommonMessageIds.MSG_CONNECT_CANCELED, IStatus.CANCEL, 
-					NLS.bind(CommonMessages.MSG_CONNECT_CANCELED, 
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID,
+					ICommonMessageIds.MSG_CONNECT_CANCELED, IStatus.CANCEL,
+					NLS.bind(CommonMessages.MSG_CONNECT_CANCELED,
 							_connection.getHost().getAliasName()));
 
 			SystemMessageDialog dialog = new SystemMessageDialog(getShell(), msg);
@@ -334,23 +333,23 @@ public class SshConnectorService extends StandardConnectorService implements ISs
 				//But what about error messages?
 				IRunnableContext runnableContext = getRunnableContext(getShell());
 				// will do this.run(IProgressMonitor mon)
-		    	//runnableContext.run(false,true,this); // inthread, cancellable, IRunnableWithProgress
-		    	runnableContext.run(true,true,this); // fork, cancellable, IRunnableWithProgress
-		    	_connection.reset();
-				ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();    	    
-	            sr.connectedStatusChange(_connection.getPrimarySubSystem(), false, true, true);
+				//runnableContext.run(false,true,this); // inthread, cancellable, IRunnableWithProgress
+				runnableContext.run(true,true,this); // fork, cancellable, IRunnableWithProgress
+				_connection.reset();
+				ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
+				sr.connectedStatusChange(_connection.getPrimarySubSystem(), false, true, true);
 			}
-	    	catch (InterruptedException exc) // user cancelled
-	    	{
-	    	  if (shell != null)    		
-	            showDisconnectCancelledMessage(shell, _connection.getHostName(), _connection.getPort());
-	    	}    	
-	    	catch (java.lang.reflect.InvocationTargetException invokeExc) // unexpected error
-	    	{
-	    	  Exception exc = (Exception)invokeExc.getTargetException();
-	    	  if (shell != null)    		
-	    	    showDisconnectErrorMessage(shell, _connection.getHostName(), _connection.getPort(), exc);    	    	
-	    	}
+			catch (InterruptedException exc) // user cancelled
+			{
+				if (shell != null)
+					showDisconnectCancelledMessage(shell, _connection.getHostName(), _connection.getPort());
+			}
+			catch (java.lang.reflect.InvocationTargetException invokeExc) // unexpected error
+			{
+				Exception exc = (Exception)invokeExc.getTargetException();
+				if (shell != null)
+					showDisconnectErrorMessage(shell, _connection.getHostName(), _connection.getPort(), exc);
+			}
 			catch (Exception e)
 			{
 				SystemBasePlugin.logError(SshConnectorResources.SshConnectorService_ErrorDisconnecting, e);
@@ -358,7 +357,7 @@ public class SshConnectorService extends StandardConnectorService implements ISs
 		}
 
 		public void run(IProgressMonitor monitor)
-				throws InvocationTargetException, InterruptedException
+		throws InvocationTargetException, InterruptedException
 		{
 			String message = null;
 			message = SubSystemConfiguration.getDisconnectingMessage(
@@ -391,7 +390,7 @@ public class SshConnectorService extends StandardConnectorService implements ISs
 			}
 			if (window == null) {
 				IWorkbenchWindow[] windows = PlatformUI.getWorkbench()
-						.getWorkbenchWindows();
+				.getWorkbenchWindows();
 				if (windows != null && windows.length > 0) {
 					return windows[0].getShell();
 				}
@@ -402,7 +401,7 @@ public class SshConnectorService extends StandardConnectorService implements ISs
 			return null;
 		}
 
-	    /**
+		/**
 		 * Get the progress monitor dialog for this operation. We try to use one
 		 * for all phases of a single operation, such as connecting and
 		 * resolving.
@@ -413,11 +412,11 @@ public class SshConnectorService extends StandardConnectorService implements ISs
 			IWorkbenchWindow win = SystemBasePlugin.getActiveWorkbenchWindow();
 			if (win != null) {
 				Shell winShell = RSEUIPlugin.getDefault().getWorkbench()
-						.getActiveWorkbenchWindow().getShell();
+				.getActiveWorkbenchWindow().getShell();
 				if (winShell != null && !winShell.isDisposed()
 						&& winShell.isVisible()) {
 					SystemBasePlugin
-							.logInfo("Using active workbench window as runnable context"); //$NON-NLS-1$
+					.logInfo("Using active workbench window as runnable context"); //$NON-NLS-1$
 					shell = winShell;
 					return win;
 				} else {
@@ -426,69 +425,69 @@ public class SshConnectorService extends StandardConnectorService implements ISs
 			}
 			if (shell == null || shell.isDisposed() || !shell.isVisible()) {
 				SystemBasePlugin
-						.logInfo("Using progress monitor dialog with given shell as parent"); //$NON-NLS-1$
+				.logInfo("Using progress monitor dialog with given shell as parent"); //$NON-NLS-1$
 				shell = rshell;
 			}
 			IRunnableContext dlg = new ProgressMonitorDialog(rshell);
 			return dlg;
 		}
 
-	    /**
+		/**
 		 * Show an error message when the disconnection fails. Shows a common
 		 * message by default. Overridable.
 		 */
-	    protected void showDisconnectErrorMessage(Shell shell, String hostName, int port, Exception exc)
-	    {
-	         //SystemMessage.displayMessage(SystemMessage.MSGTYPE_ERROR,shell,RSEUIPlugin.getResourceBundle(),
-	         //                             ISystemMessages.MSG_DISCONNECT_FAILED,
-	         //                             hostName, exc.getMessage()); 	
-	         //RSEUIPlugin.logError("Disconnect failed",exc); // temporary
-	    	SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, ICommonMessageIds.MSG_DISCONNECT_FAILED, IStatus.ERROR, NLS.bind(CommonMessages.MSG_DISCONNECT_FAILED, hostName), exc);
-	    	 SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);
-	    	 msgDlg.setException(exc);
-	    	 msgDlg.open();
-	    }	
+		protected void showDisconnectErrorMessage(Shell shell, String hostName, int port, Exception exc)
+		{
+			//SystemMessage.displayMessage(SystemMessage.MSGTYPE_ERROR,shell,RSEUIPlugin.getResourceBundle(),
+			//                             ISystemMessages.MSG_DISCONNECT_FAILED,
+			//                             hostName, exc.getMessage());
+			//RSEUIPlugin.logError("Disconnect failed",exc); // temporary
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, ICommonMessageIds.MSG_DISCONNECT_FAILED, IStatus.ERROR, NLS.bind(CommonMessages.MSG_DISCONNECT_FAILED, hostName), exc);
+			SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);
+			msgDlg.setException(exc);
+			msgDlg.open();
+		}
 
-	    /**
-	     * Show an error message when the user cancels the disconnection.
-	     * Shows a common message by default.
-	     * Overridable.
-	     */
-	    protected void showDisconnectCancelledMessage(Shell shell, String hostName, int port)
-	    {
-	         //SystemMessage.displayMessage(SystemMessage.MSGTYPE_ERROR, shell, RSEUIPlugin.getResourceBundle(),
-	         //                             ISystemMessages.MSG_DISCONNECT_CANCELED, hostName)
-	    	SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, ICommonMessageIds.MSG_DISCONNECT_CANCELED, IStatus.CANCEL, NLS.bind(CommonMessages.MSG_DISCONNECT_CANCELED, hostName));
-	    	 SystemMessageDialog msgDlg = new SystemMessageDialog(shell,msg);
-	    	 msgDlg.open();
-	    }
+		/**
+		 * Show an error message when the user cancels the disconnection.
+		 * Shows a common message by default.
+		 * Overridable.
+		 */
+		protected void showDisconnectCancelledMessage(Shell shell, String hostName, int port)
+		{
+			//SystemMessage.displayMessage(SystemMessage.MSGTYPE_ERROR, shell, RSEUIPlugin.getResourceBundle(),
+			//                             ISystemMessages.MSG_DISCONNECT_CANCELED, hostName)
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, ICommonMessageIds.MSG_DISCONNECT_CANCELED, IStatus.CANCEL, NLS.bind(CommonMessages.MSG_DISCONNECT_CANCELED, hostName));
+			SystemMessageDialog msgDlg = new SystemMessageDialog(shell,msg);
+			msgDlg.open();
+		}
 	}
 
-    /** 
-     * Notification from sub-services that our session was lost.
-     * Notify all subsystems properly.
-     * TODO allow user to try and reconnect?
-     */
-    public void handleSessionLost() {
-    	Activator.trace("SshConnectorService: handleSessionLost"); //$NON-NLS-1$
-    	if (fSessionLostHandler!=null) {
-    		fSessionLostHandler.sessionLost();
-    	}
+	/**
+	 * Notification from sub-services that our session was lost.
+	 * Notify all subsystems properly.
+	 * TODO allow user to try and reconnect?
+	 */
+	public void handleSessionLost() {
+		Activator.trace("SshConnectorService: handleSessionLost"); //$NON-NLS-1$
+		if (fSessionLostHandler!=null) {
+			fSessionLostHandler.sessionLost();
+		}
 	}
 
 	protected static Display getStandardDisplay() {
-    	Display display = Display.getCurrent();
-    	if( display==null ) {
-    		display = Display.getDefault();
-    	}
-    	return display;
-    }
-    
-    private static class MyUserInfo implements UserInfo, UIKeyboardInteractive {
-    	private String fPassphrase;
-    	private String fPassword;
-    	private int fAttemptCount;
-    	private final String fUser;
+		Display display = Display.getCurrent();
+		if( display==null ) {
+			display = Display.getDefault();
+		}
+		return display;
+	}
+
+	private static class MyUserInfo implements UserInfo, UIKeyboardInteractive {
+		private String fPassphrase;
+		private String fPassword;
+		private int fAttemptCount;
+		private final String fUser;
 
 		public MyUserInfo(String user, String password) {
 			fUser = user;
@@ -502,10 +501,10 @@ public class SshConnectorService extends StandardConnectorService implements ISs
 			final boolean[] retval = new boolean[1];
 			getStandardDisplay().syncExec(new Runnable() {
 				public void run() {
-					retval[0] = MessageDialog.openQuestion(null, SshConnectorResources.SshConnectorService_Warning, str); 
+					retval[0] = MessageDialog.openQuestion(null, SshConnectorResources.SshConnectorService_Warning, str);
 				}
 			});
-			return retval[0]; 
+			return retval[0];
 		}
 		private String promptSecret(final String message) {
 			final String[] retval = new String[1];
@@ -546,57 +545,57 @@ public class SshConnectorService extends StandardConnectorService implements ISs
 				}
 			});
 		}
-		public String[] promptKeyboardInteractive(final String destination, 
+		public String[] promptKeyboardInteractive(final String destination,
 				final String name, final String instruction,
 				final String[] prompt, final boolean[] echo)
 		{
-		    if (prompt.length == 0) {
-		        // No need to prompt, just return an empty String array
-		        return new String[0];
-		    }
+			if (prompt.length == 0) {
+				// No need to prompt, just return an empty String array
+				return new String[0];
+			}
 			try{
-			    if (fAttemptCount == 0 && fPassword != null && prompt.length == 1 && prompt[0].trim().equalsIgnoreCase("password:")) { //$NON-NLS-1$
-			        // Return the provided password the first time but always prompt on subsequent tries
-			        fAttemptCount++;
-			        return new String[] { fPassword };
-			    }
-			    final String[][] finResult = new String[1][];
-			    getStandardDisplay().syncExec(new Runnable() {
-			    	public void run() {
-			    		KeyboardInteractiveDialog dialog = new KeyboardInteractiveDialog(null, 
-			    			null, destination, name, instruction, prompt, echo);
-			    		dialog.open();
-			    		finResult[0]=dialog.getResult();
-		    		}
-			    });
-			    String[] result=finResult[0];
-                if (result == null) 
-                    return null; // canceled
-			    if (result.length == 1 && prompt.length == 1 && prompt[0].trim().equalsIgnoreCase("password:")) { //$NON-NLS-1$
-			        fPassword = result[0];
-			    }
-			    fAttemptCount++;
+				if (fAttemptCount == 0 && fPassword != null && prompt.length == 1 && prompt[0].trim().equalsIgnoreCase("password:")) { //$NON-NLS-1$
+					// Return the provided password the first time but always prompt on subsequent tries
+					fAttemptCount++;
+					return new String[] { fPassword };
+				}
+				final String[][] finResult = new String[1][];
+				getStandardDisplay().syncExec(new Runnable() {
+					public void run() {
+						KeyboardInteractiveDialog dialog = new KeyboardInteractiveDialog(null,
+								null, destination, name, instruction, prompt, echo);
+						dialog.open();
+						finResult[0]=dialog.getResult();
+					}
+				});
+				String[] result=finResult[0];
+				if (result == null)
+					return null; // canceled
+				if (result.length == 1 && prompt.length == 1 && prompt[0].trim().equalsIgnoreCase("password:")) { //$NON-NLS-1$
+					fPassword = result[0];
+				}
+				fAttemptCount++;
 				return result;
 			}
 			catch(OperationCanceledException e){
 				return null;
 			}
 		}
-        /**
-         * Callback to indicate that a connection is about to be attempted
-         */
-        public void aboutToConnect() {
-            fAttemptCount = 0;
-        }
-        /**
-         * Callback to indicate that a connection was made
-         */
-        public void connectionMade() {
-            fAttemptCount = 0;
-        }
-		
+		/**
+		 * Callback to indicate that a connection is about to be attempted
+		 */
+		public void aboutToConnect() {
+			fAttemptCount = 0;
+		}
+		/**
+		 * Callback to indicate that a connection was made
+		 */
+		public void connectionMade() {
+			fAttemptCount = 0;
+		}
+
 	}
-    
+
 	public boolean isConnected() {
 		if (session!=null) {
 			if (session.isConnected()) {
@@ -608,15 +607,15 @@ public class SshConnectorService extends StandardConnectorService implements ISs
 		}
 		return false;
 	}
-	
+
 	public boolean requiresPassword() {
 		return false;
 	}
-	
+
 	public boolean requiresUserId() {
 		return false;
 	}
-	
+
 	private IPropertySet getPropertySet()
 	{
 		IPropertySet propertySet = getPropertySet(PROPERTY_SET_SSH_SETTINGS);

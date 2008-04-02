@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors: 
+ * Contributors:
  * Martin Oberhuber (Wind River) - initial API and implementation
  * David Dykstal (IBM) - fixing bug 162510: correctly process filter strings
- * Kushal Munir (IBM) - for API bug   
+ * Kushal Munir (IBM) - for API bug
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [192724] Fixed logic to filter folders if FILE_TYPE_FOLDERS
  * Martin Oberhuber (Wind River) - [199548] Avoid touching files on setReadOnly() if unnecessary
@@ -23,6 +23,7 @@
  * David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
  * Martin Oberhuber (Wind River) - [216343] immediate link targets and canonical paths for Sftp
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * Martin Oberhuber (Wind River) - [224799] Fix JSch encoding problems with Arabic filenames
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.files;
@@ -82,9 +83,9 @@ public class SftpFileService extends AbstractFileService implements IFileService
 {
 
 	private static class SftpBufferedInputStream extends BufferedInputStream {
-		
+
 		private ChannelSftp channel;
-		
+
 		/**
 		 * Creates a BufferedInputStream  and saves its argument, the input stream, for later use. An internal buffer array is created.
 		 * @param in the underlying input stream.
@@ -115,11 +116,11 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			channel.disconnect();
 		}
 	}
-	
+
 	private static class SftpBufferedOutputStream extends BufferedOutputStream {
-		
+
 		private ChannelSftp channel;
-		
+
 		/**
 		 * Creates a new buffered output stream to write data to the specified underlying output stream with a default 512-byte buffer size.
 		 * @param out the underlying output stream.
@@ -150,7 +151,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			channel.disconnect();
 		}
 	}
-	
+
 	//private SshConnectorService fConnector;
 	private ISshSessionProvider fSessionProvider;
 	private ChannelSftp fChannelSftp;
@@ -161,19 +162,37 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	private String fControlEncoding = null;
 	/** Indicates the default string encoding on this platform */
 	private static String defaultEncoding = new java.io.InputStreamReader(new java.io.ByteArrayInputStream(new byte[0])).getEncoding();
-	
-//	public SftpFileService(SshConnectorService conn) {
-//		fConnector = conn;
-//	}
+	/** Indicates the encoding that our JSch channel uses */
+	private String fJSchChannelEncoding = defaultEncoding;
+
+	//	public SftpFileService(SshConnectorService conn) {
+	//		fConnector = conn;
+	//	}
 
 	public SftpFileService(ISshSessionProvider sessionProvider) {
 		fSessionProvider = sessionProvider;
 	}
-	
-	public void setControlEncoding(String encoding) {
+
+	public void setControlEncoding(String encoding) throws SystemMessageException {
+		try {
+			fChannelSftp.setFilenameEncoding(encoding);
+			fJSchChannelEncoding = encoding;
+		} catch (NoSuchMethodError e) {
+			// Fallback for JSch < 0.1.34: use recode() for encoding conversion
+			fControlEncoding = encoding;
+			fJSchChannelEncoding = defaultEncoding;
+		} catch (SftpException e) {
+			try {
+				fChannelSftp.setFilenameEncoding("UTF-8"); //$NON-NLS-1$
+				fJSchChannelEncoding = "UTF-8"; //$NON-NLS-1$
+			} catch (SftpException enest) {
+				// should not happen, are we not connected?
+				throw makeSystemMessageException(enest);
+			}
+		}
 		fControlEncoding = encoding;
 	}
-	
+
 	/**
 	 * Encode String with requested user encoding, in case it differs from Platform default encoding.
 	 * @param s String to encode
@@ -183,22 +202,24 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	protected String recode(String s) throws SystemMessageException {
 		if (fControlEncoding==null) {
 			return s;
-		} else if (fControlEncoding.equals(defaultEncoding)) {
+		} else if (fControlEncoding.equals(fJSchChannelEncoding)) {
 			return s;
 		}
 		try {
 			byte[] bytes = s.getBytes(fControlEncoding); //what we want on the wire
-			return new String(bytes);     //what we need to tell Jsch to get this on the wire
+			return new String(bytes, fJSchChannelEncoding); // what we need to
+			// tell Jsch to get
+			// this on the wire
 		} catch(UnsupportedEncodingException e) {
 			throw makeSystemMessageException(e);
 		}
 	}
-	
+
 	/**
 	 * Recode String, and check that no information is lost.
 	 * Throw an exception in case the desired Unicode String can not be expressed
 	 * by the current encodings. Also enquotes result characters '?' and '*' for
-	 * Jsch if necessary. 
+	 * Jsch if necessary.
 	 * @param s String to recode
 	 * @return recoded String
 	 * @throws SystemMessageException if information is lost
@@ -206,38 +227,38 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	protected String recodeSafe(String s) throws SystemMessageException {
 		try {
 			String recoded = recode(s);
-			byte[] bytes = recoded.getBytes(defaultEncoding);
-			String decoded = decode(new String(bytes));
+			byte[] bytes = recoded.getBytes(fJSchChannelEncoding);
+			String decoded = decode(new String(bytes, fJSchChannelEncoding));
 			if (!s.equals(decoded)) {
 				int i=0;
-				int lmax = Math.min(s.length(), decoded.length()); 
+				int lmax = Math.min(s.length(), decoded.length());
 				while( (i<lmax) && (s.charAt(i)==decoded.charAt(i))) {
 					i++;
 				}
 				//String sbad=s.substring(Math.max(i-2,0), Math.min(i+2,lmax));
 				char sbad = s.charAt(i);
 				String msg = "Cannot express character \'"+sbad+"\'(0x"+Integer.toHexString(sbad)  +") with "; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				if (fControlEncoding==null || fControlEncoding.equals(defaultEncoding)) {
-					msg += "default encoding \""+defaultEncoding+"\". "; //$NON-NLS-1$ //$NON-NLS-2$
+				if (fControlEncoding == null || fControlEncoding.equals(fJSchChannelEncoding)) {
+					msg += "default encoding \"" + fJSchChannelEncoding + "\". "; //$NON-NLS-1$ //$NON-NLS-2$
 				} else {
-					msg += "encoding \""+fControlEncoding+"\" over local default encoding \""+defaultEncoding+"\". "; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
+					msg += "encoding \"" + fControlEncoding + "\" over local default encoding \"" + fJSchChannelEncoding + "\". "; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				}
 				msg += "Please specify a different encoding in host properties.";  //$NON-NLS-1$
 				throw new UnsupportedEncodingException(msg);
 			}
 			//Quote ? and * characters for Jsch
-			//FIXME bug 204705: this does not work properly for commands like ls(), due to a Jsch bug 
+			//FIXME bug 204705: this does not work properly for commands like ls(), due to a Jsch bug
 			return quoteForJsch(recoded);
 		} catch(UnsupportedEncodingException e) {
 
-				//SystemMessage msg = new SystemMessage("RSE","F","9999",'E',e.getMessage(),"Please specify a different encoding in host properties."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-				SystemMessage msg = new SystemMessage("RSE","F","9999",'E',e.getMessage(),""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-				//throw new RemoteFileIOException(new SystemMessageException(msg));
-				throw new SystemMessageException(msg);
+			//SystemMessage msg = new SystemMessage("RSE","F","9999",'E',e.getMessage(),"Please specify a different encoding in host properties."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			SystemMessage msg = new SystemMessage("RSE","F","9999",'E',e.getMessage(),""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			//throw new RemoteFileIOException(new SystemMessageException(msg));
+			throw new SystemMessageException(msg);
 
 		}
 	}
-	
+
 	/**
 	 * Decode String (sftp result) with requested user encoding, in case it differs from Platform default encoding.
 	 * @param s String to decode
@@ -247,11 +268,13 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	protected String decode(String s) throws SystemMessageException {
 		if (fControlEncoding==null) {
 			return s;
-		} else if (fControlEncoding.equals(defaultEncoding)) {
+		} else if (fControlEncoding.equals(fJSchChannelEncoding)) {
 			return s;
 		}
 		try {
-			byte[] bytes = s.getBytes(); //original bytes sent by SSH
+			byte[] bytes = s.getBytes(fJSchChannelEncoding); // original
+			// bytes sent by
+			// SSH
 			return new String(bytes, fControlEncoding);
 		} catch(UnsupportedEncodingException e) {
 			throw makeSystemMessageException(e);
@@ -260,7 +283,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 
 	/** Regular expression pattern to know when Jsch needs quoting. */
 	private static Pattern quoteForJschPattern = Pattern.compile("[*?\\\\]"); //$NON-NLS-1$
-	
+
 	/**
 	 * Quote characters '?' and '*' for Jsch because it would otherwise
 	 * use them as patterns for globbing.
@@ -272,7 +295,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			StringBuffer buf = new StringBuffer(s.length()+8);
 			for(int i=0; i<s.length(); i++) {
 				char c = s.charAt(i);
-//				if(c=='?' || c=='*' || c=='\\') {
+				//				if(c=='?' || c=='*' || c=='\\') {
 				if(c=='?' || c=='*') {
 					buf.append('\\');
 				}
@@ -282,23 +305,23 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		}
 		return s;
 	}
-	
+
 	public String getName() {
 		return SshServiceResources.SftpFileService_Name;
 	}
-	
+
 	public String getDescription() {
 		return SshServiceResources.SftpFileService_Description;
 	}
-	
+
 	public void connect() throws SystemMessageException {
 		Activator.trace("SftpFileService.connecting..."); //$NON-NLS-1$
 		try {
 			Session session = fSessionProvider.getSession();
-		    Channel channel=session.openChannel("sftp"); //$NON-NLS-1$
-		    channel.connect();
-		    fChannelSftp=(ChannelSftp)channel;
-		    setControlEncoding(fSessionProvider.getControlEncoding());
+			Channel channel=session.openChannel("sftp"); //$NON-NLS-1$
+			channel.connect();
+			fChannelSftp=(ChannelSftp)channel;
+			setControlEncoding(fSessionProvider.getControlEncoding());
 			fUserHome = decode(fChannelSftp.pwd());
 			Activator.trace("SftpFileService.connected"); //$NON-NLS-1$
 		} catch(Exception e) {
@@ -306,7 +329,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			throw makeSystemMessageException(e);
 		}
 	}
-	
+
 	/**
 	 * Check if the main ssh session is still connected.
 	 * Notify ConnectorService of lost session if necessary.
@@ -327,7 +350,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			return false;
 		}
 	}
-	
+
 	protected ChannelSftp getChannel(String task) throws SystemMessageException
 	{
 		Activator.trace(task);
@@ -347,7 +370,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		}
 		return fChannelSftp;
 	}
-	
+
 	protected void progressTick(IProgressMonitor monitor, int ticks) throws RemoteFileCanceledException {
 		if (monitor!=null) {
 			if (monitor.isCanceled()) {
@@ -356,7 +379,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			monitor.worked(ticks);
 		}
 	}
-	
+
 	public void disconnect() {
 		//disconnect-service may be called after the session is already
 		//disconnected (due to event handling). Therefore, don't try to
@@ -368,8 +391,8 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		fDirChannelMutex.interruptAll();
 		fChannelSftp = null;
 	}
-	
-	
+
+
 	private SystemMessageException makeSystemMessageException(Exception e) {
 		if (e instanceof SystemMessageException) {
 			//dont wrap SystemMessageException again
@@ -390,7 +413,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		}
 		return new RemoteFileIOException(e);
 	}
-	
+
 	/**
 	 * Concatenate a parent directory with a file name to form a new proper path name.
 	 * @param parentDir path name of the parent directory.
@@ -408,11 +431,11 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		path.append(fileName);
 		return path.toString();
 	}
-	
+
 	public IHostFile getFile(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException
 	{
 		//getFile() must return a dummy even for non-existent files,
-		//or the move() operation will fail. This is described in 
+		//or the move() operation will fail. This is described in
 		//the API docs.
 		SftpHostFile node = null;
 		SftpATTRS attrs = null;
@@ -442,7 +465,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		}
 		return node;
 	}
-	
+
 	public boolean isConnected() {
 		try {
 			return getChannel("SftpFileService.isConnected()").isConnected(); //$NON-NLS-1$
@@ -451,7 +474,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		}
 		return false;
 	}
-	
+
 	protected IHostFile[] internalFetch(String parentPath, String fileFilter, int fileType, IProgressMonitor monitor) throws SystemMessageException
 	{
 		if (fileFilter == null) {
@@ -466,33 +489,33 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		}
 		List results = new ArrayList();
 		if (fDirChannelMutex.waitForLock(monitor, fDirChannelTimeout)) {
-		    boolean haveSubMonitor = false;
+			boolean haveSubMonitor = false;
 			try {
-			    Vector vv=getChannel("SftpFileService.internalFetch: "+parentPath).ls(recodeSafe(parentPath)); //$NON-NLS-1$
-			    progressTick(monitor, 40);
-			    if (vv.size()>1 && monitor!=null) {
-			    	monitor = new SubProgressMonitor(monitor, 40);
-			    	monitor.beginTask(null, vv.size());
-			    }
-			    for(int ii=0; ii<vv.size(); ii++) {
-			    	Object obj=vv.elementAt(ii);
-			    	if(obj instanceof ChannelSftp.LsEntry){
-			    		ChannelSftp.LsEntry lsEntry = (ChannelSftp.LsEntry)obj;
-			    		String fileName = decode(lsEntry.getFilename());
-			    		if (".".equals(fileName) || "..".equals(fileName)) { //$NON-NLS-1$ //$NON-NLS-2$
-			    			//don't show the trivial names
-			    			continue;
-			    		}			  
-			    		if (filematcher.matches(fileName) || (lsEntry.getAttrs().isDir() && fileType!=IFileService.FILE_TYPE_FOLDERS)) {
+				Vector vv=getChannel("SftpFileService.internalFetch: "+parentPath).ls(recodeSafe(parentPath)); //$NON-NLS-1$
+				progressTick(monitor, 40);
+				if (vv.size()>1 && monitor!=null) {
+					monitor = new SubProgressMonitor(monitor, 40);
+					monitor.beginTask(null, vv.size());
+				}
+				for(int ii=0; ii<vv.size(); ii++) {
+					Object obj=vv.elementAt(ii);
+					if(obj instanceof ChannelSftp.LsEntry){
+						ChannelSftp.LsEntry lsEntry = (ChannelSftp.LsEntry)obj;
+						String fileName = decode(lsEntry.getFilename());
+						if (".".equals(fileName) || "..".equals(fileName)) { //$NON-NLS-1$ //$NON-NLS-2$
+							//don't show the trivial names
+							continue;
+						}
+						if (filematcher.matches(fileName) || (lsEntry.getAttrs().isDir() && fileType!=IFileService.FILE_TYPE_FOLDERS)) {
 							//get ALL directory names (unless looking for folders only)
-			    			SftpHostFile node = makeHostFile(parentPath, fileName, lsEntry.getAttrs());
-			    			progressTick(monitor, 1);
-			    			if (isRightType(fileType, node)) {
-			    				results.add(node);
-			    			}
-			    		}
-			    	}
-			    }
+							SftpHostFile node = makeHostFile(parentPath, fileName, lsEntry.getAttrs());
+							progressTick(monitor, 1);
+							if (isRightType(fileType, node)) {
+								results.add(node);
+							}
+						}
+					}
+				}
 				Activator.trace("SftpFileService.internalFetch <--"); //$NON-NLS-1$
 			} catch(Exception e) {
 				//TODO throw new SystemMessageException.
@@ -505,7 +528,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 					throw makeSystemMessageException(e);
 				}
 				//TODO if not session connected, do we need to throw?
-				//Probably not, since the session is going down anyways.  
+				//Probably not, since the session is going down anyways.
 			} finally {
 				fDirChannelMutex.release();
 				if (haveSubMonitor) monitor.done(); else progressTick(monitor, 40);
@@ -533,7 +556,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 					//Disadvantages of the cd/pwd approach:
 					// * _realpath() followed by _stat() might be one extra roundtrip compared to the readlink() approach
 					// * Immediate link target is not available, only the fully resolved link target (might be an advantage too!)
-					// *  -- but clients can also resolve the path with the 
+					// *  -- but clients can also resolve the path with the
 					// * Immediate link target is not available for broken symbolic links
 					getChannel("makeHostFile.chdir").cd(recode(concat(parentPath, fileName))); //$NON-NLS-1$
 					linkTarget=decode(getChannel("makeHostFile.pwd").pwd()); //$NON-NLS-1$
@@ -541,7 +564,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 				}
 				if (linkTarget!=null && !linkTarget.equals(concat(parentPath, fileName))) {
 					if (readlinkDone) {
-					    //linkTarget may be a relative path name that needs to be resolved for stat() to work properly
+						//linkTarget may be a relative path name that needs to be resolved for stat() to work properly
 						String curdir=decode(getChannel("makeHostFile.pwd").pwd()); //$NON-NLS-1$
 						if (!parentPath.equals(curdir)) {
 							getChannel("makeHostFile.chdir").cd(recode(parentPath)); //$NON-NLS-1$
@@ -567,7 +590,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 				}
 			}
 		}
-		
+
 
 		SftpHostFile node = new SftpHostFile(parentPath, fileName, attrsTarget.isDir(), false, attrs.isLink(), 1000L * attrs.getMTime(), attrs.getSize());
 		if (linkTarget!=null) {
@@ -596,19 +619,19 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		if (attrs.getExtended()!=null) {
 			node.setExtendedData(attrs.getExtended());
 		}
-		
+
 		// permissions
 		// TODO get the user and owner from the uid and gid
 		HostFilePermissions permissions = new HostFilePermissions(perms, "" + attrs.getUId(), "" + attrs.getGId()); //$NON-NLS-1$ //$NON-NLS-2$
 		node.setPermissions(permissions);
-		
+
 		return node;
 	}
-	
+
 	public String getSeparator() {
 		return "/"; //$NON-NLS-1$
 	}
-	
+
 	public boolean upload(File localFile, String remoteParent, String remoteFile, boolean isBinary, String srcEncoding, String hostEncoding, IProgressMonitor monitor) throws SystemMessageException
 	{
 		String dst = remoteParent;
@@ -625,10 +648,10 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			SftpProgressMonitor sftpMonitor=new MyProgressMonitor(monitor);
 			int mode=ChannelSftp.OVERWRITE;
 			dst = recodeSafe(dst);
-			getChannel("SftpFileService.upload "+remoteFile); //check the session is healthy //$NON-NLS-1$ 
+			getChannel("SftpFileService.upload "+remoteFile); //check the session is healthy //$NON-NLS-1$
 			channel=(ChannelSftp)fSessionProvider.getSession().openChannel("sftp"); //$NON-NLS-1$
-		    channel.connect();
-			channel.put(localFile.getAbsolutePath(), dst, sftpMonitor, mode); 
+			channel.connect();
+			channel.put(localFile.getAbsolutePath(), dst, sftpMonitor, mode);
 			Activator.trace("SftpFileService.upload "+remoteFile+ " ok"); //$NON-NLS-1$ //$NON-NLS-2$
 			if (monitor.isCanceled()) {
 				return false;
@@ -659,56 +682,56 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		return true;
 	}
 
-	  public static class MyProgressMonitor implements SftpProgressMonitor
-	  {
-		  private IProgressMonitor fMonitor;
-		  private double fWorkPercentFactor;
-		  private Long fMaxWorkKB;
-		  private long fWorkToDate;
-		  
-		  public MyProgressMonitor(IProgressMonitor monitor) {
-			  fMonitor = monitor;
-		  }
-		  public void init(int op, String src, String dest, long max){
-			  fWorkPercentFactor = 1.0 / max;
-			  fMaxWorkKB = new Long(max / 1024L);
-			  fWorkToDate = 0;
-			  String srcFile = new Path(src).lastSegment();
-			  //String desc = ((op==SftpProgressMonitor.PUT)? 
-              //        "Uploading " : "Downloading ")+srcFile;
-			  String desc = srcFile;
-			  if (Activator.isTracingOn()) {
-				  Activator.trace("Sftp-monitor: "+max+", "+desc); //$NON-NLS-1$ //$NON-NLS-2$
-			  }
-			  //TODO avoid cast from long to int
-			  fMonitor.beginTask(desc, (int)max);
-			 
-		  }
-		  public boolean count(long count){
-			  fWorkToDate += count;
-			  Long workToDateKB = new Long(fWorkToDate / 1024L);
-			  Double workPercent = new Double(fWorkPercentFactor * fWorkToDate);
-			  String subDesc = MessageFormat.format(
-					  SshServiceResources.SftpFileService_Msg_Progress,
-					  new Object[] {
-						workToDateKB, fMaxWorkKB, workPercent	  
-					  });
+	public static class MyProgressMonitor implements SftpProgressMonitor
+	{
+		private IProgressMonitor fMonitor;
+		private double fWorkPercentFactor;
+		private Long fMaxWorkKB;
+		private long fWorkToDate;
 
-			  if (Activator.isTracingOn()) {
-				  System.out.print('#'); 
-			  }
-			  fMonitor.subTask(subDesc);
-		      fMonitor.worked((int)count);
-		      return !(fMonitor.isCanceled());
-		  }
-		  public void end(){
-			  if (Activator.isTracingOn()) {
-				  System.out.println();
-				  System.out.println("Sftp-monitor <--"); //$NON-NLS-1$
-				  System.out.flush();
-			  }
-			  fMonitor.done();
-		  }
+		public MyProgressMonitor(IProgressMonitor monitor) {
+			fMonitor = monitor;
+		}
+		public void init(int op, String src, String dest, long max){
+			fWorkPercentFactor = 1.0 / max;
+			fMaxWorkKB = new Long(max / 1024L);
+			fWorkToDate = 0;
+			String srcFile = new Path(src).lastSegment();
+			//String desc = ((op==SftpProgressMonitor.PUT)?
+			//        "Uploading " : "Downloading ")+srcFile;
+			String desc = srcFile;
+			if (Activator.isTracingOn()) {
+				Activator.trace("Sftp-monitor: "+max+", "+desc); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			//TODO avoid cast from long to int
+			fMonitor.beginTask(desc, (int)max);
+
+		}
+		public boolean count(long count){
+			fWorkToDate += count;
+			Long workToDateKB = new Long(fWorkToDate / 1024L);
+			Double workPercent = new Double(fWorkPercentFactor * fWorkToDate);
+			String subDesc = MessageFormat.format(
+					SshServiceResources.SftpFileService_Msg_Progress,
+					new Object[] {
+							workToDateKB, fMaxWorkKB, workPercent
+					});
+
+			if (Activator.isTracingOn()) {
+				System.out.print('#');
+			}
+			fMonitor.subTask(subDesc);
+			fMonitor.worked((int)count);
+			return !(fMonitor.isCanceled());
+		}
+		public void end(){
+			if (Activator.isTracingOn()) {
+				System.out.println();
+				System.out.println("Sftp-monitor <--"); //$NON-NLS-1$
+				System.out.flush();
+			}
+			fMonitor.done();
+		}
 	}
 
 	public boolean upload(InputStream stream, String remoteParent, String remoteFile, boolean isBinary, String hostEncoding, IProgressMonitor monitor) throws SystemMessageException
@@ -720,15 +743,15 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			File tempFile = File.createTempFile("sftp", "temp"); //$NON-NLS-1$ //$NON-NLS-2$
 			FileOutputStream os = new FileOutputStream(tempFile);
 			BufferedOutputStream bos = new BufferedOutputStream(os);
-	
-			 byte[] buffer = new byte[1024];
-			 int readCount;
-			 while( (readCount = bis.read(buffer)) > 0) 
-			 {
-			      bos.write(buffer, 0, readCount);
-			 }
-			 bos.close();
-			 upload(tempFile, remoteParent, remoteFile, isBinary, "", hostEncoding, monitor); //$NON-NLS-1$
+
+			byte[] buffer = new byte[1024];
+			int readCount;
+			while( (readCount = bis.read(buffer)) > 0)
+			{
+				bos.write(buffer, 0, readCount);
+			}
+			bos.close();
+			upload(tempFile, remoteParent, remoteFile, isBinary, "", hostEncoding, monitor); //$NON-NLS-1$
 		}
 		catch (Exception e) {
 			throw makeSystemMessageException(e);
@@ -736,7 +759,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		}
 		return true;
 	}
-	
+
 	public boolean download(String remoteParent, String remoteFile, File localFile, boolean isBinary, String hostEncoding, IProgressMonitor monitor) throws SystemMessageException
 	{
 		ChannelSftp channel = null;
@@ -755,7 +778,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			MyProgressMonitor sftpMonitor = new MyProgressMonitor(monitor);
 			getChannel("SftpFileService.download "+remoteFile); //check the session is healthy //$NON-NLS-1$
 			channel=(ChannelSftp)fSessionProvider.getSession().openChannel("sftp"); //$NON-NLS-1$
-		    channel.connect();
+			channel.connect();
 			channel.get(remotePathRecoded, localFile.getAbsolutePath(), sftpMonitor, mode);
 			Activator.trace("SftpFileService.download "+remoteFile+ " ok"); //$NON-NLS-1$ //$NON-NLS-2$
 			if (monitor.isCanceled()) {
@@ -778,7 +801,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			Activator.trace("SftpFileService.download "+remotePath+" failed: "+e.toString()); //$NON-NLS-1$ //$NON-NLS-2$
 			throw makeSystemMessageException(e);
 			//Note: In case of an exception, the caller needs to ensure that in case
-			//we downloaded to a temp file, the temp file is deleted again, or a 
+			//we downloaded to a temp file, the temp file is deleted again, or a
 			//broken incorrect file might be synchronized back to the source, thus
 			//destroying the original file!!
 			//return false;
@@ -790,12 +813,12 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		}
 		return true;
 	}
-	
+
 	public IHostFile getUserHome() {
 		//As per bug 204710, this may be called before we are connected
 		if (fUserHome!=null) {
 			int lastSlash = fUserHome.lastIndexOf('/');
-			String name = fUserHome.substring(lastSlash + 1);	
+			String name = fUserHome.substring(lastSlash + 1);
 			String parent = fUserHome.substring(0, lastSlash);
 			try {
 				return getFile(parent, name, null);
@@ -815,8 +838,8 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		IHostFile root = new SftpHostFile("/", "/", true, true, false, 0, 0); //$NON-NLS-1$ //$NON-NLS-2$
 		return new IHostFile[] { root };
 	}
-	
-	public IHostFile createFile(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException 
+
+	public IHostFile createFile(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException
 	{
 		IHostFile result = null;
 		String fullPath = concat(remoteParent, fileName);
@@ -875,7 +898,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 				try {
 					attrs = getChannel("SftpFileService.delete").lstat(fullPathRecoded); //$NON-NLS-1$
 				} catch (SftpException e) {
-					//bug 154419: test for dangling symbolic link 
+					//bug 154419: test for dangling symbolic link
 					if (e.id == ChannelSftp.SSH_FX_NO_SUCH_FILE) {
 						//simply try to delete --> if it really doesnt exist, this will throw an exception
 						getChannel("SftpFileService.delete.rm").rm(fullPathRecoded); //$NON-NLS-1$
@@ -935,7 +958,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		}
 		return ok;
 	}
-	
+
 	public boolean rename(String remoteParent, String oldName, String newName, IHostFile oldFile, IProgressMonitor monitor) throws SystemMessageException {
 		// TODO dont know how to update
 		return rename(remoteParent, oldName, newName, monitor);
@@ -949,7 +972,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		}
 		return cancelRequested;
 	}
-	
+
 	public int runCommand(String command, IProgressMonitor monitor) throws SystemMessageException
 	{
 		Activator.trace("SftpFileService.runCommand "+command); //$NON-NLS-1$
@@ -1005,7 +1028,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		}
 		return result;
 	}
-	
+
 	public boolean move(String srcParent, String srcName, String tgtParent, String tgtName, IProgressMonitor monitor) throws SystemMessageException
 	{
 		// move is not supported by sftp directly. Use the ssh shell instead.
@@ -1029,15 +1052,15 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		int rv = runCommand("cp -Rp "+fullPathOld+' '+fullPathNew, monitor); //$NON-NLS-1$
 		return (rv==0);
 	}
-	
-	public boolean copyBatch(String[] srcParents, String[] srcNames, String tgtParent, IProgressMonitor monitor) throws SystemMessageException 
+
+	public boolean copyBatch(String[] srcParents, String[] srcNames, String tgtParent, IProgressMonitor monitor) throws SystemMessageException
 	{
 		Activator.trace("SftpFileService.copyBatch "+srcNames); //$NON-NLS-1$
 		boolean ok = true;
 		for (int i = 0; i < srcParents.length; i++)
 		{
-			//TODO check what should happen if one file throws an Exception 
-			//should the batch job continue? 
+			//TODO check what should happen if one file throws an Exception
+			//should the batch job continue?
 			ok = ok && copy(srcParents[i], srcNames[i], tgtParent, srcNames[i], monitor);
 		}
 		return ok;
@@ -1050,10 +1073,10 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			connect();
 		}
 		catch (Exception e)
-		{			
+		{
 		}
 	}
-	
+
 	public void uninitService(IProgressMonitor monitor) {
 		Activator.trace("SftpFileService.uninitService"); //$NON-NLS-1$
 		disconnect();
@@ -1065,8 +1088,8 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	}
 
 	public boolean setLastModified(String parent, String name,
-			long timestamp, IProgressMonitor monitor) throws SystemMessageException 
-	{
+			long timestamp, IProgressMonitor monitor) throws SystemMessageException
+			{
 		boolean ok=false;
 		String path = concat(parent, name);
 		if (fDirChannelMutex.waitForLock(monitor, fDirChannelTimeout)) {
@@ -1082,7 +1105,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			}
 		}
 		return ok;
-	}
+			}
 
 	public boolean setReadOnly(String parent, String name,
 			boolean readOnly, IProgressMonitor monitor) throws SystemMessageException {
@@ -1100,7 +1123,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 				}
 				if (permNew != permOld) {
 					//getChannel("SftpFileService.setReadOnly").chmod(permNew, path); //$NON-NLS-1$
-					attr.setPERMISSIONS(permNew); 
+					attr.setPERMISSIONS(permNew);
 					getChannel("SftpFileService.setReadOnly").setStat(recode(path), attr); //$NON-NLS-1$					ok=true;
 					Activator.trace("SftpFileService.setReadOnly ok"); //$NON-NLS-1$
 				} else {
@@ -1120,18 +1143,18 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	/**
 	 * Gets the input stream to access the contents of a remote file.
 	 * @since 2.0
-	 * @see org.eclipse.rse.services.files.AbstractFileService#getInputStream(String, String, boolean, IProgressMonitor) 
+	 * @see org.eclipse.rse.services.files.AbstractFileService#getInputStream(String, String, boolean, IProgressMonitor)
 	 */
 	public InputStream getInputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException {
-		
+
 		InputStream stream = null;
-		
+
 		String remotePath = concat(remoteParent, remoteFile);
 		try {
 			String remotePathRecoded = recode(remotePath);
 			getChannel("SftpFileService.getInputStream " + remoteFile); //check the session is healthy //$NON-NLS-1$
 			ChannelSftp channel = (ChannelSftp)fSessionProvider.getSession().openChannel("sftp"); //$NON-NLS-1$
-		    channel.connect();
+			channel.connect();
 			stream = new SftpBufferedInputStream(channel.get(remotePathRecoded), channel);
 			Activator.trace("SftpFileService.getInputStream " + remoteFile + " ok"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -1139,7 +1162,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			Activator.trace("SftpFileService.getInputStream " + remotePath + " failed: " + e.toString()); //$NON-NLS-1$ //$NON-NLS-2$
 			throw makeSystemMessageException(e);
 		}
-		
+
 		return stream;
 	}
 
@@ -1152,23 +1175,23 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		int options = isBinary ? IFileService.NONE : IFileService.TEXT_MODE;
 		return getOutputStream(remoteParent, remoteFile, options, monitor);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.services.files.AbstractFileService#getOutputStream(java.lang.String, java.lang.String, boolean, int, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public OutputStream getOutputStream(String remoteParent, String remoteFile, int options, IProgressMonitor monitor) throws SystemMessageException {
-		
+
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		
+
 		OutputStream stream = null;
 		String dst = remoteParent;
 		if (remoteFile!=null) {
 			dst = concat(remoteParent, remoteFile);
 		}
-		
+
 		try {
 			SftpProgressMonitor sftpMonitor = new MyProgressMonitor(monitor);
 			int mode;
@@ -1179,8 +1202,8 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			}
 			getChannel("SftpFileService.getOutputStream " + remoteFile); //check the session is healthy //$NON-NLS-1$
 			ChannelSftp channel = (ChannelSftp)fSessionProvider.getSession().openChannel("sftp"); //$NON-NLS-1$
-		    channel.connect();
-			stream = new SftpBufferedOutputStream(channel.put(recodeSafe(dst), sftpMonitor, mode), channel); 
+			channel.connect();
+			stream = new SftpBufferedOutputStream(channel.put(recodeSafe(dst), sftpMonitor, mode), channel);
 			Activator.trace("SftpFileService.getOutputStream " + remoteFile + " ok"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		catch (Exception e) {
@@ -1199,7 +1222,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	 */
 	public IHostFilePermissions getFilePermissions(IHostFile file,
 			IProgressMonitor monitor) throws SystemMessageException {
-		if (file instanceof IHostFilePermissionsContainer){		
+		if (file instanceof IHostFilePermissionsContainer){
 			return ((IHostFilePermissionsContainer)file).getPermissions();
 		}
 		return null;
@@ -1211,10 +1234,10 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	 */
 	public void setFilePermissions(IHostFile file,
 			IHostFilePermissions permissions, IProgressMonitor monitor)
-			throws SystemMessageException {
-		return;		
+	throws SystemMessageException {
+		return;
 	}
-	
+
 	public int getCapabilities(IHostFile file) {
 		return IFilePermissionsService.FS_CAN_GET_ALL;
 	}

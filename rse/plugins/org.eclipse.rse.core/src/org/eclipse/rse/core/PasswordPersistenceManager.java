@@ -61,6 +61,7 @@ public class PasswordPersistenceManager {
 	// Add return codes
 	public static final int RC_OK = 0;
 	public static final int RC_ALREADY_EXISTS = 1;
+	/** @since org.eclipse.rse.core 3.0 */
 	public static final int RC_DENIED = 2;
 	public static final int RC_ERROR = -1;
 
@@ -187,12 +188,14 @@ public class PasswordPersistenceManager {
 		remove(info.getSystemType(), info.getHostname(), info.getUserId());
 	}
 
-    /**
-	 * Removes all passwords for a host name for a given system type.
-	 * Use the default system type explicitly to remove those entries.
+	/**
+	 * Removes all passwords for a host name for a given system type. Use the
+	 * default system type explicitly to remove those entries.
+	 * 
 	 * @param systemType The system type of the host
 	 * @param hostName The IP address of the host in canonical format
 	 * @return the number of passwords removed from the keyring
+	 * @since org.eclipse.rse.core 3.0
 	 */
 	public int remove(IRSESystemType systemType, String hostName) {
 		Map passwords = getPasswordMap(systemType);
@@ -213,7 +216,7 @@ public class PasswordPersistenceManager {
 		}
 		return numberRemoved;
 	}
-    
+
 	/**
 	 * Removes all entries from the keyring that match the hostname, userid, and system type.
 	 * Use the default system type explicitly to remove those entries.
@@ -323,7 +326,7 @@ public class PasswordPersistenceManager {
 		}
 		return result;
 	}
-	
+
 	/*
 	 * Retrieve the password map from the keyring for the specified system type
 	 */

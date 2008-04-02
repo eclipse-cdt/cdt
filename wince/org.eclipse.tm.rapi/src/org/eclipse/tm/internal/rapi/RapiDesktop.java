@@ -30,13 +30,13 @@ public class RapiDesktop extends IRapiDesktop {
     int[] ppIEnum = new int[1];
     int rc = EnumDevices(addr, ppIEnum);
     if (rc != OS.NOERROR) {
-      throw new RapiException("EnumDevices failed", rc);
+      throw new RapiException("EnumDevices failed", rc); //$NON-NLS-1$
     }
     return new RapiEnumDevices(ppIEnum[0]);
   }
   
   public String toString() {
-    return "[RapiDesktop] addr: " + Integer.toHexString(addr);
+    return "[RapiDesktop] addr: " + Integer.toHexString(addr); //$NON-NLS-1$
   }
 
   private final native int EnumDevices(int addr, int[] ppIEnum);

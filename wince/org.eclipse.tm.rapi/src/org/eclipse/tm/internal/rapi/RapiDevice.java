@@ -32,7 +32,7 @@ public class RapiDevice extends IRapiDevice {
     int[] ppISession = new int[1];
     int rc = CreateSession(addr, ppISession);
     if (rc != OS.NOERROR) {
-      throw new RapiException("CreateSession failed", rc);
+      throw new RapiException("CreateSession failed", rc); //$NON-NLS-1$
     }
     return new RapiSession(ppISession[0]);
   }
@@ -41,7 +41,7 @@ public class RapiDevice extends IRapiDevice {
     RapiConnectionInfo connInfo = new RapiConnectionInfo();
     int rc = GetConnectionInfo(addr, connInfo);
     if (rc != OS.NOERROR) {
-      throw new RapiException("GetConnectionInfo failed", rc);      
+      throw new RapiException("GetConnectionInfo failed", rc);       //$NON-NLS-1$
     }
     return connInfo;
   }
@@ -50,7 +50,7 @@ public class RapiDevice extends IRapiDevice {
     RapiDeviceInfo devInfo = new RapiDeviceInfo();
     int rc = GetDeviceInfo(addr, devInfo);
     if (rc != OS.NOERROR) {
-      throw new RapiException("GetDeviceInfo failed", rc);
+      throw new RapiException("GetDeviceInfo failed", rc); //$NON-NLS-1$
     }
     return devInfo;
   }
@@ -59,13 +59,13 @@ public class RapiDevice extends IRapiDevice {
     int[] status = new int[1];
     int rc = GetConnectStat(addr, status);
     if (rc != OS.NOERROR) {
-      throw new RapiException("GetConnectStat failed", rc);
+      throw new RapiException("GetConnectStat failed", rc); //$NON-NLS-1$
     }
     return status[0] == 1;
   }
   
   public String toString() {
-    return "[RapiDevice] addr: " + Integer.toHexString(addr);
+    return "[RapiDevice] addr: " + Integer.toHexString(addr); //$NON-NLS-1$
   }
 
   private final native int CreateSession(int addr, int[] ppISession);

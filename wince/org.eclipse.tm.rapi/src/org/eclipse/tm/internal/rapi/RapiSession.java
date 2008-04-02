@@ -42,14 +42,14 @@ public class RapiSession extends IRapiSession {
   public void init() throws RapiException {
     int rc = CeRapiInit(addr);
     if (rc != OS.NOERROR) {
-      throw new RapiException("CeRapiInit failed", rc);
+      throw new RapiException("CeRapiInit failed", rc); //$NON-NLS-1$
     }
   }
   
   public void uninit() throws RapiException {
     int rc = CeRapiUninit(addr);
     if (rc != OS.NOERROR) {
-      throw new RapiException("CeRapiUninit failed", rc);
+      throw new RapiException("CeRapiUninit failed", rc); //$NON-NLS-1$
     }    
   }
   
@@ -59,7 +59,7 @@ public class RapiSession extends IRapiSession {
     int handle = CeCreateFile(addr, fileName, desiredAccess, shareMode, 
         creationDisposition, flagsAndAttributes);
     if (handle == OS.INVALID_HANDLE_VALUE) {
-      throw new RapiException("CeCreateFile failed", getError());
+      throw new RapiException("CeCreateFile failed", getError()); //$NON-NLS-1$
     } 
     return handle; 
   }
@@ -71,7 +71,7 @@ public class RapiSession extends IRapiSession {
     int[] bytesRead = new int[1];
     boolean res = CeReadFile(addr, handle, b, b.length, bytesRead);
     if (!res) {
-      throw new RapiException("CeReadFile failed", getError());
+      throw new RapiException("CeReadFile failed", getError()); //$NON-NLS-1$
     }
     return bytesRead[0] > 0 ? bytesRead[0] : -1;
   }
@@ -79,7 +79,7 @@ public class RapiSession extends IRapiSession {
   public int readFile(int handle, byte[] b, int off, int len)
       throws RapiException {
     if (off < 0 || len < 0 || off + len > b.length) {
-      throw new IndexOutOfBoundsException("Incorrect offset/length");
+      throw new IndexOutOfBoundsException("Incorrect offset/length"); //$NON-NLS-1$
     }
     if (len == 0) {
       return 0;
@@ -89,7 +89,7 @@ public class RapiSession extends IRapiSession {
     int[] bytesRead = new int[1];
     boolean res = CeReadFile(addr, handle, tmp, tmp.length, bytesRead);
     if (!res) {
-      throw new RapiException("CeReadFile failed", getError());
+      throw new RapiException("CeReadFile failed", getError()); //$NON-NLS-1$
     }
     System.arraycopy(tmp, 0, b, off, len);
     return bytesRead[0] > 0 ? bytesRead[0] : -1;
@@ -99,7 +99,7 @@ public class RapiSession extends IRapiSession {
     int[] bytesWritten = new int[1];
     boolean res = CeWriteFile(addr, handle, b, b.length, bytesWritten);
     if (!res) {
-      throw new RapiException("CeWriteFile failed", getError());
+      throw new RapiException("CeWriteFile failed", getError()); //$NON-NLS-1$
     }
   }
   
@@ -107,7 +107,7 @@ public class RapiSession extends IRapiSession {
       throws RapiException {
 
     if (off < 0 || len < 0 || off + len > b.length) {
-      throw new IndexOutOfBoundsException("Incorrect offset/length");
+      throw new IndexOutOfBoundsException("Incorrect offset/length"); //$NON-NLS-1$
     }
     //TODO: add support for setting offset in the native code and remove this tmp array
     byte[] tmp = new byte[len];
@@ -115,14 +115,14 @@ public class RapiSession extends IRapiSession {
     int[] bytesWritten = new int[1];
     boolean res = CeWriteFile(addr, handle, tmp, tmp.length, bytesWritten);
     if (!res) {
-      throw new RapiException("CeWriteFile failed", getError());
+      throw new RapiException("CeWriteFile failed", getError()); //$NON-NLS-1$
     }
   }
   
   public void closeHandle(int handle) throws RapiException {
     boolean res = CeCloseHandle(addr, handle);
     if (!res) {
-      throw new RapiException("CeCloseHandle failed", getError());
+      throw new RapiException("CeCloseHandle failed", getError()); //$NON-NLS-1$
     }
   }
   
@@ -130,42 +130,42 @@ public class RapiSession extends IRapiSession {
     //overwrite by default
     boolean res = CeCopyFile(addr, existingFile, newFile, false);
     if (!res) {
-      throw new RapiException("CeCopyFile failed", getError());
+      throw new RapiException("CeCopyFile failed", getError()); //$NON-NLS-1$
     }
   }
 
   public void deleteFile(String fileName) throws RapiException {
     boolean res = CeDeleteFile(addr, fileName);
     if (!res) {
-      throw new RapiException("CeDeleteFile failed", getError());
+      throw new RapiException("CeDeleteFile failed", getError()); //$NON-NLS-1$
     }
   }
   
   public void moveFile(String existingFileName, String newFileName) throws RapiException {
     boolean res = CeMoveFile(addr, existingFileName, newFileName);
     if (!res) {
-      throw new RapiException("CeMoveFile failed", getError());
+      throw new RapiException("CeMoveFile failed", getError()); //$NON-NLS-1$
     }
   }
   
   public void createDirectory(String pathName) throws RapiException {
     boolean res = CeCreateDirectory(addr, pathName);
     if (!res) {
-      throw new RapiException("CeCreateDirectory failed", getError());
+      throw new RapiException("CeCreateDirectory failed", getError()); //$NON-NLS-1$
     }
   }
   
   public void removeDirectory(String pathName) throws RapiException {
     boolean res = CeRemoveDirectory(addr, pathName);
     if (!res) {
-      throw new RapiException("CeRemoveDirectory failed", getError());
+      throw new RapiException("CeRemoveDirectory failed", getError()); //$NON-NLS-1$
     }
   }
 
   public int findFirstFile(String fileName, RapiFindData findData) throws RapiException {
     int handle = CeFindFirstFile(addr, fileName, findData);
     if (handle == OS.INVALID_HANDLE_VALUE) {
-      throw new RapiException("CeFindFirstFile failed", getError());
+      throw new RapiException("CeFindFirstFile failed", getError()); //$NON-NLS-1$
     }
     return handle;
   }
@@ -180,7 +180,7 @@ public class RapiSession extends IRapiSession {
   public void findClose(int handle) throws RapiException {
     boolean res = CeFindClose(addr, handle);
     if (!res) {
-      throw new RapiException("CeFindClose failed", getError());
+      throw new RapiException("CeFindClose failed", getError()); //$NON-NLS-1$
     }
   }
   
@@ -199,7 +199,7 @@ public class RapiSession extends IRapiSession {
     }
     int hRes = CeFindAllFilesEx(addr, count, dataArr[0], findDataArr);
     if (hRes != OS.NOERROR) {
-      throw new RapiException("CeFindAllFilesEx failed", hRes);
+      throw new RapiException("CeFindAllFilesEx failed", hRes); //$NON-NLS-1$
     }
     return findDataArr;
   }
@@ -224,7 +224,7 @@ public class RapiSession extends IRapiSession {
     long[] lwTime = new long[1];
     boolean res = CeGetFileTime(addr, handle, crTime, laTime, lwTime);
     if (!res) {
-      throw new RapiException("CeGetFileTime failed", getError());
+      throw new RapiException("CeGetFileTime failed", getError()); //$NON-NLS-1$
     }
     return new Date((crTime[0] / 10000) - OS.TIME_DIFF);
   }
@@ -235,7 +235,7 @@ public class RapiSession extends IRapiSession {
     long[] lwTime = new long[1];
     boolean res = CeGetFileTime(addr, handle, crTime, laTime, lwTime);
     if (!res) {
-      throw new RapiException("CeGetFileTime failed", getError());
+      throw new RapiException("CeGetFileTime failed", getError()); //$NON-NLS-1$
     }
     return new Date((laTime[0] / 10000) - OS.TIME_DIFF);
   }
@@ -246,13 +246,13 @@ public class RapiSession extends IRapiSession {
     long[] lwTime = new long[1];
     boolean res = CeGetFileTime(addr, handle, crTime, laTime, lwTime);
     if (!res) {
-      throw new RapiException("CeGetFileTime failed", getError());
+      throw new RapiException("CeGetFileTime failed", getError()); //$NON-NLS-1$
     }
     return new Date((lwTime[0] / 10000) - OS.TIME_DIFF);
   }  
 
   public String toString() {
-    return "[RapiSession] addr: " + Integer.toHexString(addr);
+    return "[RapiSession] addr: " + Integer.toHexString(addr); //$NON-NLS-1$
   }  
   
   private final native int CeRapiInit(int addr);

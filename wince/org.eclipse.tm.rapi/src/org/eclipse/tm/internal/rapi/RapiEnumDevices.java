@@ -30,13 +30,13 @@ public class RapiEnumDevices extends IRapiEnumDevices {
     int[] ppIDevice = new int[1];
     int rc = Next(addr, ppIDevice);
     if (rc != OS.NOERROR) {
-      throw new RapiException("Next failed", rc);
+      throw new RapiException("Next failed", rc); //$NON-NLS-1$
     }
     return new RapiDevice(ppIDevice[0]);
   }
   
   public String toString() {
-    return "[RapiEnumDevices] addr: " + Integer.toHexString(addr);
+    return "[RapiEnumDevices] addr: " + Integer.toHexString(addr); //$NON-NLS-1$
   }
   
   private final native int Next(int addr, int[] ppIDevice);

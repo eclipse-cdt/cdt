@@ -26,7 +26,7 @@ public class RapiException extends Exception {
   }
   
   public RapiException(String msg, int errCode) {
-    super(msg + " errorCode: 0x" + Integer.toHexString(errCode));
+    super(msg + " errorCode: 0x" + Integer.toHexString(errCode)); //$NON-NLS-1$
     this.errorCode = errCode;
   }
   

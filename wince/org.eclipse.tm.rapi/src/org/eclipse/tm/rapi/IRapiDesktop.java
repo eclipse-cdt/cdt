@@ -35,7 +35,7 @@ public abstract class IRapiDesktop extends IUnknown {
     int[] rapiDesktop = new int[1];
     int rc = OS.CreateRapiDesktop(rapiDesktop);
     if (rc != OS.NOERROR) {
-      throw new RapiException("CreateRapiDesktop failed", rc);
+      throw new RapiException("CreateRapiDesktop failed", rc); //$NON-NLS-1$
     }
     return new RapiDesktop(rapiDesktop[0]);
   }  

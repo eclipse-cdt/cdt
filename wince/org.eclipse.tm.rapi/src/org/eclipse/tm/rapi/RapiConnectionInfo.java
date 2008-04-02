@@ -31,12 +31,12 @@ public class RapiConnectionInfo {
 
   public String toString() {
     switch (connectionType) {
-      case RAPI_CONNECTION_USB: return "USB";
-      case RAPI_CONNECTION_IR: return "IR";
-      case RAPI_CONNECTION_SERIAL: return "Serial";
-      case RAPI_CONNECTION_NETWORK: return "Network";
+      case RAPI_CONNECTION_USB: return "USB"; //$NON-NLS-1$
+      case RAPI_CONNECTION_IR: return "IR"; //$NON-NLS-1$
+      case RAPI_CONNECTION_SERIAL: return "Serial"; //$NON-NLS-1$
+      case RAPI_CONNECTION_NETWORK: return "Network"; //$NON-NLS-1$
     }
-    return "Unknown";
+    return "Unknown"; //$NON-NLS-1$
   }
   
 }

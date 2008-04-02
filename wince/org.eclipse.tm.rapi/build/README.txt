@@ -29,3 +29,9 @@ Building the library:
         
   8. Navigate to "Build", and click "Rebuild Solution" to rebuild the library. 
   The output dll will be placed in \lib\os\win32\x86
+
+Environment used for building the committed jrapi.dll:
+  Windows 2000 SP4
+  Visual Studio 2005 Standard Edition
+  Windows Mobile 5.0 Pocket PC SDK
+  JDK 1.4.2_10

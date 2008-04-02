@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,6 +64,12 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 	 */
 	private class UpdateElementsJob extends Job {
 
+		/**
+		 * The last used prefix to query the index. <code>null</code> means
+		 * the query result should be empty.
+		 */
+		private volatile char[] fCurrentPrefix = null;
+
 		public UpdateElementsJob(String name) {
 			super(name);
 			setSystem(true);
@@ -71,6 +77,15 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 			setPriority(Job.LONG);
 		}
 
+		public char[] getCurrentPrefix() {
+			return fCurrentPrefix;
+		}
+		public void scheduleQuery(char[] prefix) {
+			fCurrentPrefix= prefix;
+			int delay = fCurrentPrefix == null ? 0 : (fCurrentPrefix.length < 5 ? 400 : 200);
+			schedule(delay);
+		}
+		
 		public IStatus run(final IProgressMonitor monitor) {
 			monitor.beginTask(OpenTypeMessages.ElementSelectionDialog_UpdateElementsJob_inProgress, IProgressMonitor.UNKNOWN);
 			final ITypeInfo[] elements= getElementsByPrefix(fCurrentPrefix, monitor);
@@ -143,12 +158,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 			return rule == this;
 		}};
 
-	/**
-	 * The last used prefix to query the index. <code>null</code> means the
-	 * query result should be empty.
-	 */
-	private char[] fCurrentPrefix= null;
-	private Job fUpdateJob;
+	private UpdateElementsJob fUpdateJob;
 	private boolean fAllowEmptyPrefix= true;
 	private boolean fAllowEmptyString= true;
 	private ProgressMonitorPart fProgressMonitorPart;
@@ -341,17 +351,18 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 
 	protected void scheduleUpdate(String filterText) {
 		char[] newPrefix= toPrefix(filterText);
-		boolean equivalentPrefix= isEquivalentPrefix(fCurrentPrefix, newPrefix);
+		final char[] currentPrefix= fUpdateJob.getCurrentPrefix();
+		final boolean equivalentPrefix= isEquivalentPrefix(currentPrefix, newPrefix);
 		boolean emptyQuery= newPrefix.length == 0 && !fAllowEmptyPrefix || filterText.length() == 0 && !fAllowEmptyString;
-		boolean needQuery= !equivalentPrefix;
+		final int jobState = fUpdateJob.getState();
+		boolean needQuery= !equivalentPrefix || (currentPrefix.length > newPrefix.length && currentPrefix.length < 5 && jobState == Job.RUNNING);
 		if (emptyQuery) {
 			newPrefix= null;
-			needQuery= needQuery || fCurrentPrefix != null;
+			needQuery= needQuery || currentPrefix != null;
 		}
-		if(needQuery || fUpdateJob.getState() == Job.WAITING  || fUpdateJob.getState() == Job.SLEEPING) {
+		if(needQuery || jobState == Job.WAITING  || jobState == Job.SLEEPING) {
 			fUpdateJob.cancel();
-			fCurrentPrefix= newPrefix;
-			fUpdateJob.schedule(200);
+			fUpdateJob.scheduleQuery(newPrefix);
 		}
 	}
 

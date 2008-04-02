@@ -10,6 +10,7 @@ package org.eclipse.rse.internal.useractions.files.uda;
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * Xuan Chen        (IBM)    - [222263] Need to provide a PropertySet Adapter for System Team View (cleanup some use action stuff)
+ * Kevin Doyle		(IBM)	 - [222830] ArrayIndexOutOfBoundsException on Restore Defaults on Folder User Actions
  *******************************************************************************/
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -575,11 +576,13 @@ public class UDActionSubsystemFiles extends SystemUDActionSubsystem {
 			element.setShow(true);
 			element.setSingleSelection(actionsArray[match][2].equals("true")); //$NON-NLS-1$
 			element.setCollect(actionsArray[match][3].equals("true")); //$NON-NLS-1$
-			if (domain == DOMAIN_FOLDER)
+			if (domain == DOMAIN_FOLDER) {
 				element.setFileTypes(new String[] { "ALL" }); //$NON-NLS-1$
-			else
+				element.setCommand(actionsArray[match][4]);
+			} else {
 				element.setFileTypes(convertStringToArray(actionsArray[match][4]));
-			element.setCommand(actionsArray[match][5]);
+				element.setCommand(actionsArray[match][5]);
+			}
 			ok = true;
 		}
 		return ok;

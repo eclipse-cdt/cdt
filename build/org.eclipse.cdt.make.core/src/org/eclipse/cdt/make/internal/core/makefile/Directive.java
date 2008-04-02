@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,12 +11,12 @@
 package org.eclipse.cdt.make.internal.core.makefile;
 
 import org.eclipse.cdt.make.core.makefile.IDirective;
+import org.eclipse.cdt.make.core.makefile.IMakefile;
 
 public abstract class Directive implements IDirective {
 
 	int endLine;
 	int startLine;
-	String filename;
 	Directive parent;
 
 	public Directive(Directive owner) {
@@ -51,15 +51,10 @@ public abstract class Directive implements IDirective {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.core.makefile.IDirective#getFileName()
+	 * @see org.eclipse.cdt.make.core.makefile.IDirective#getMakefile()
 	 */
-	public String getFileName() {
-		if (filename == null) {
-			if (parent != null) {
-				filename = parent.getFileName();
-			}
-		}
-		return filename;
+	public IMakefile getMakefile() {
+		return parent.getMakefile();
 	}
 
 	public void setParent(Directive owner) {
@@ -78,9 +73,4 @@ public abstract class Directive implements IDirective {
 		setStartLine(start);
 		setEndLine(end);
 	}
-
-	public void setFilename(String name) {
-		filename = name;
-	}
-
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.cdt.make.core.makefile;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.net.URI;
 
 
 /**
@@ -124,12 +125,25 @@ public interface IMakefile extends IParent {
 	String expandString(String line, boolean recursive);
 
 	/**
-	 * Clear the all statements and (re)parse the Makefile
+	 * Clear all statements and (re)parse the Makefile
 	 * 
-	 * @param name
+	 * @param filePath
 	 * @param makefile
 	 * @throws IOException
 	 */
-	void parse(String name, Reader makefile) throws IOException;
-
+	void parse(String filePath, Reader makefile) throws IOException;
+	
+	/**
+	 * Clear all statements and (re)parse the Makefile
+	 * 
+	 * @param fileURI
+	 * @param makefile
+	 * @throws IOException
+	 */
+	void parse(URI fileURI, Reader makefile) throws IOException;
+	
+	/**
+	 * @return the <code>URI</code> of this makefile
+	 */
+	URI getFileURI();
 }

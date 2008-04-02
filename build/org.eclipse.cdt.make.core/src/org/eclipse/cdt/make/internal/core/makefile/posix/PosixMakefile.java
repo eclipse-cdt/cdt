@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,11 +11,12 @@
 package org.eclipse.cdt.make.internal.core.makefile.posix;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import org.eclipse.cdt.make.core.MakeCorePlugin;
@@ -42,8 +43,9 @@ import org.eclipse.cdt.make.internal.core.makefile.SuffixesRule;
 import org.eclipse.cdt.make.internal.core.makefile.Target;
 import org.eclipse.cdt.make.internal.core.makefile.TargetRule;
 import org.eclipse.cdt.make.internal.core.makefile.Util;
+import org.eclipse.core.filesystem.URIUtil;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 
 /**
  * Makefile : ( statement ) *
@@ -69,23 +71,16 @@ public class PosixMakefile extends AbstractMakefile {
 	public PosixMakefile() {
 		super(null);
 	}
-
-	public void parse(String name) throws IOException {
-		FileReader stream = new FileReader(name);
-		parse(name, stream);
-		if (stream != null) {
-			try {
-				stream.close();
-			} catch (IOException e) {
-			}
-		}
-	}
-
+	
 	public void parse(String name, Reader reader) throws IOException {
-		parse(name, new MakefileReader(reader));
+		parse(URIUtil.toURI(name), new MakefileReader(reader));
 	}
 
-	protected void parse(String name, MakefileReader reader) throws IOException {
+	public void parse(URI fileURI, Reader reader) throws IOException {
+		parse(fileURI, new MakefileReader(reader));
+	}
+
+	protected void parse(URI fileURI, MakefileReader reader) throws IOException {
 		String line;
 		Rule[] rules = null;
 		int startLine = 0;
@@ -94,7 +89,7 @@ public class PosixMakefile extends AbstractMakefile {
 		// Clear any old directives.
 		clearDirectives();
 
-		setFilename(name);
+		setFileURI(fileURI);
 
 		while ((line = reader.readLine()) != null) {
 			startLine = endLine + 1;
@@ -210,21 +205,21 @@ public class PosixMakefile extends AbstractMakefile {
 		if (builtins == null) {
 			String location =  "builtin" + File.separator + "posix.mk"; //$NON-NLS-1$ //$NON-NLS-2$
 			try {
-				InputStream stream = MakeCorePlugin.getDefault().openStream(new Path(location));
-				PosixMakefile gnu = new PosixMakefile();
-				URL url = Platform.find(MakeCorePlugin.getDefault().getBundle(), new Path(location));
-				url = Platform.resolve(url);
-				location = url.getFile();
-				gnu.parse(location, new InputStreamReader(stream));
-				builtins = gnu.getDirectives();
+				InputStream stream = FileLocator.openStream(MakeCorePlugin.getDefault().getBundle(), new Path(location), false);
+				PosixMakefile posix = new PosixMakefile();
+				URL url = FileLocator.find(MakeCorePlugin.getDefault().getBundle(), new Path(location), null);
+				posix.parse(url.toURI(), new InputStreamReader(stream));
+				builtins = posix.getDirectives();
 				for (int i = 0; i < builtins.length; i++) {
 					if (builtins[i] instanceof MacroDefinition) {
 						((MacroDefinition)builtins[i]).setFromDefault(true);
 					}
 				}
-			} catch (Exception e) {
-				//e.printStackTrace();
-			}
+			} catch (IOException e) {
+				MakeCorePlugin.log(e);
+			} catch (URISyntaxException e) {
+				MakeCorePlugin.log(e);
+            }
 			if (builtins == null) {
 				builtins = new IDirective[0];
 			}
@@ -337,24 +332,4 @@ public class PosixMakefile extends AbstractMakefile {
 		}
 		return targetRules;
 	}
-
-	public static void main(String[] args) {
-		try {
-			String filename = "Makefile"; //$NON-NLS-1$
-			if (args.length == 1) {
-				filename = args[0];
-			}
-			PosixMakefile makefile = new PosixMakefile();
-			makefile.parse(filename);
-			IDirective[] directives = makefile.getDirectives();
-			//IDirective[] directives = makefile.getBuiltins();
-			for (int i = 0; i < directives.length; i++) {
-				//System.out.println("Rule[" + i +"]");
-				System.out.print(directives[i]);
-			}
-		} catch (IOException e) {
-			System.out.println(e);
-		}
-	}
-
 }

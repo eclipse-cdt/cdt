@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,11 +11,12 @@
 package org.eclipse.cdt.make.internal.core.makefile.gnu;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,8 +51,9 @@ import org.eclipse.cdt.make.internal.core.makefile.Target;
 import org.eclipse.cdt.make.internal.core.makefile.TargetRule;
 import org.eclipse.cdt.make.internal.core.makefile.Util;
 import org.eclipse.cdt.make.internal.core.makefile.posix.PosixMakefileUtil;
+import org.eclipse.core.filesystem.URIUtil;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 
 /**
  * Makefile : ( statement ) *
@@ -80,23 +82,16 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 	public GNUMakefile() {
 		super(null);
 	}
-
-	public void parse(String name) throws IOException {
-		FileReader stream = new FileReader(name);
-		parse(name, stream);
-		if (stream != null) {
-			try {
-				stream.close();
-			} catch (IOException e) {
-			}
-		}
+	
+	public void parse(String filePath, Reader reader) throws IOException {
+		parse(URIUtil.toURI(filePath), new MakefileReader(reader));
 	}
 
-	public void parse(String name, Reader reader) throws IOException {
-		parse(name, new MakefileReader(reader));
+	public void parse(URI filePath, Reader reader) throws IOException {
+		parse(filePath, new MakefileReader(reader));	    
 	}
-
-	protected void parse(String name, MakefileReader reader) throws IOException {
+	
+	protected void parse(URI fileURI, MakefileReader reader) throws IOException {
 		String line;
 		Rule[] rules = null;
 		Stack conditions = new Stack();
@@ -107,8 +102,8 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 		// Clear any old directives.
 		clearDirectives();
 
-		setFilename(name);
-	
+		setFileURI(fileURI);
+
 		while ((line = reader.readLine()) != null) {
 			startLine = endLine + 1;
 			endLine = reader.getLineNumber();
@@ -793,21 +788,21 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 		if (builtins == null) {
 			String location =  "builtin" + File.separator + "gnu.mk"; //$NON-NLS-1$ //$NON-NLS-2$
 			try {
-				InputStream stream = MakeCorePlugin.getDefault().openStream(new Path(location));
+				InputStream stream = FileLocator.openStream(MakeCorePlugin.getDefault().getBundle(), new Path(location), false);
 				GNUMakefile gnu = new GNUMakefile();
-				URL url = Platform.find(MakeCorePlugin.getDefault().getBundle(), new Path(location));
-				url = Platform.resolve(url);
-				location = url.getFile();
-				gnu.parse(location, new InputStreamReader(stream));
+				URL url = FileLocator.find(MakeCorePlugin.getDefault().getBundle(), new Path(location), null);
+				gnu.parse(url.toURI(), new InputStreamReader(stream));
 				builtins = gnu.getDirectives();
 				for (int i = 0; i < builtins.length; i++) {
 					if (builtins[i] instanceof MacroDefinition) {
-						((MacroDefinition)builtins[i]).setFromDefault(true);
+						((MacroDefinition) builtins[i]).setFromDefault(true);
 					}
 				}
-			} catch (Exception e) {
-				//e.printStackTrace();
-			}
+			} catch (IOException e) {
+				MakeCorePlugin.log(e);
+			} catch (URISyntaxException e) {
+				MakeCorePlugin.log(e);
+            }
 			if (builtins == null) {
 				builtins = new IDirective[0];
 			}
@@ -822,23 +817,4 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 	public String[] getIncludeDirectories() {
 		return includeDirectories;
 	}
-
-	public static void main(String[] args) {
-		try {
-			String filename = "Makefile"; //$NON-NLS-1$
-			if (args.length == 1) {
-				filename = args[0];
-			}
-			GNUMakefile makefile = new GNUMakefile();
-			makefile.parse(filename);
-			IDirective[] directive = makefile.getDirectives();
-			for (int i = 0; i < directive.length; i++) {
-				//System.out.println("Rule[" + i +"]");
-				System.out.print(directive[i]);
-			}
-		} catch (IOException e) {
-			System.out.println(e);
-		}
-	}
-
 }

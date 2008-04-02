@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 QNX Software Systems and others.
+ * Copyright (c) 2002, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,11 @@
 package org.eclipse.cdt.make.core;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -33,6 +36,8 @@ import org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredPathManager;
 import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerConfigInfoFactory;
 import org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCScannerConfigUtil;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -148,26 +153,32 @@ public class MakeCorePlugin extends Plugin {
 		return (String[])v.toArray(new String[v.size()]);		
 	}
 
-	
+	/**
+	 * @deprecated
+	 * @param file
+	 * @param isGnuStyle
+	 * @param makefileDirs
+	 * @return
+	 */
 	static public IMakefile createMakefile(File file, boolean isGnuStyle, String[] makefileDirs) {
 		IMakefile makefile;
 		if (isGnuStyle) {
 			GNUMakefile gnu = new GNUMakefile();
 			ArrayList includeList = new ArrayList();
+			includeList.add(new Path(file.getAbsolutePath()).removeLastSegments(1).toOSString());
 			includeList.addAll(Arrays.asList(gnu.getIncludeDirectories()));
 			includeList.addAll(Arrays.asList(makefileDirs));
-			includeList.add(new Path(file.getAbsolutePath()).removeLastSegments(1).toOSString());
 			String[] includes = (String[]) includeList.toArray(new String[includeList.size()]);
 			gnu.setIncludeDirectories(includes);
 			try {
-				gnu.parse(file.getAbsolutePath());
+				gnu.parse(file.getAbsolutePath(), new FileReader(file));
 			} catch (IOException e) {
 			}
 			makefile = gnu;
 		} else {
 			PosixMakefile posix = new PosixMakefile();
 			try {
-				posix.parse(file.getAbsolutePath());
+				posix.parse(file.getAbsolutePath(), new FileReader(file));
 			} catch (IOException e) {
 			}
 			makefile = posix;
@@ -175,9 +186,35 @@ public class MakeCorePlugin extends Plugin {
 		return makefile;
 	}
 
-	public IMakefile createMakefile(IFile file) {
-		return createMakefile(file.getLocation().toFile(), isMakefileGNUStyle(),
-				getMakefileDirs());
+	static public IMakefile createMakefile(IFileStore file, boolean isGnuStyle, String[] makefileDirs) throws CoreException {
+		IMakefile makefile;
+		URI fileURI = file.toURI();
+		if (isGnuStyle) {
+			GNUMakefile gnu = new GNUMakefile();
+			ArrayList includeList = new ArrayList();
+			includeList.add(new Path(fileURI.getPath()).removeLastSegments(1).toString());
+			includeList.addAll(Arrays.asList(gnu.getIncludeDirectories()));
+			includeList.addAll(Arrays.asList(makefileDirs));
+			String[] includes = (String[]) includeList.toArray(new String[includeList.size()]);
+			gnu.setIncludeDirectories(includes);
+			try {
+				gnu.parse(fileURI, new InputStreamReader(file.openInputStream(EFS.NONE, null)));
+			} catch (IOException e) {
+			}
+			makefile = gnu;
+		} else {
+			PosixMakefile posix = new PosixMakefile();
+			try {
+				posix.parse(fileURI, new InputStreamReader(file.openInputStream(EFS.NONE, null)));
+			} catch (IOException e) {
+			}
+			makefile = posix;
+		}
+		return makefile;
+	}
+
+	public IMakefile createMakefile(IFile file) throws CoreException {
+		return createMakefile(EFS.getStore(file.getLocationURI()), isMakefileGNUStyle(), getMakefileDirs());
 	}
 	
 	public void stop(BundleContext context) throws Exception {

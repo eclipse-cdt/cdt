@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,21 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile.gnu;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.eclipse.cdt.make.core.makefile.IDirective;
 import org.eclipse.cdt.make.core.makefile.gnu.IInclude;
 import org.eclipse.cdt.make.internal.core.makefile.Directive;
 import org.eclipse.cdt.make.internal.core.makefile.Parent;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.URIUtil;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 public class Include extends Parent implements IInclude {
@@ -43,38 +52,44 @@ public class Include extends Parent implements IInclude {
 
 	public IDirective[] getDirectives() {
 		clearDirectives();
+		URI uri = getMakefile().getFileURI();
 		for (int i = 0; i < filenames.length; i++) {
-			// Try the current directory.
-			GNUMakefile gnu = new GNUMakefile();
-			try {
-				gnu.parse(filenames[i]);
-				addDirective(gnu);
-				continue;
-			} catch (IOException e) {
-			}
-			if (filenames[i].startsWith(GNUMakefile.FILE_SEPARATOR)) {
+			IPath includeFilePath = new Path(filenames[i]);
+			if (includeFilePath.isAbsolute()) {
 				// Try to set the device to that of the parent makefile.
-				String filename = getFileName();
-				if (filename != null) {
-					String device = new Path(filename).getDevice();
-					if (device != null) {
-						try {
-							gnu.parse(new Path(filenames[i]).setDevice(device).toOSString());
-							addDirective(gnu);
-							continue;
-						} catch (IOException e) {
-						}
+				final IPath path = URIUtil.toPath(uri);
+				if (path != null) {
+					String device = path.getDevice();
+					if (device != null && includeFilePath.getDevice() == null) {
+						includeFilePath = includeFilePath.setDevice(device);
+					}
+					try {
+						GNUMakefile gnu = new GNUMakefile();
+						final InputStreamReader reader = new InputStreamReader(new FileInputStream(includeFilePath.toFile()));
+						gnu.parse(includeFilePath.toOSString(), reader);
+						addDirective(gnu);
+						continue;
+					} catch (IOException e) {
 					}
 				}
 			} else if (dirs != null) {
 				for (int j = 0; j < dirs.length; j++) {
 					try {
-						String filename =  dirs[j] + GNUMakefile.FILE_SEPARATOR + filenames[i];
-						gnu = new GNUMakefile();
-						gnu.parse(filename);
+						includeFilePath= new Path(dirs[j]).append(includeFilePath);
+						String uriPath = includeFilePath.toString();
+						if (includeFilePath.getDevice() != null) {
+							// special case: device prefix is seen as relative path by URI
+							uriPath = '/' + uriPath;
+						}
+						GNUMakefile gnu = new GNUMakefile();
+						URI includeURI = new URI(uri.getScheme(), uri.getUserInfo(), uri.getHost(), uri.getPort(), uriPath, null, null);
+						IFileStore store = EFS.getStore(includeURI);
+						gnu.parse(includeURI, new InputStreamReader(store.openInputStream(0, null)));
 						addDirective(gnu);
 						break;
 					} catch (IOException e) {
+					} catch (URISyntaxException exc) {
+					} catch (CoreException exc) {
 					}
 				}
 			}

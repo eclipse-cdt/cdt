@@ -23,6 +23,7 @@ import org.eclipse.dd.dsf.concurrent.Query;
 import org.eclipse.dd.dsf.debug.service.command.ICommand;
 import org.eclipse.dd.dsf.debug.service.command.ICommandListener;
 import org.eclipse.dd.dsf.debug.service.command.ICommandResult;
+import org.eclipse.dd.dsf.debug.service.command.ICommandToken;
 import org.eclipse.dd.examples.pda.service.commands.PDACommandResult;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -53,17 +54,17 @@ public class BasicTests extends CommandControlTestsBase {
             List<CommandInfo> fRemovedCommands = new LinkedList<CommandInfo>(); 
             List<CommandInfo> fSentCommands = new LinkedList<CommandInfo>(); 
             
-            public void commandDone(ICommand<? extends ICommandResult> command, ICommandResult result) { 
-                fDoneCommands.add(new CommandInfo(command, result));
+            public void commandDone(ICommandToken token, ICommandResult result) { 
+                fDoneCommands.add(new CommandInfo(token.getCommand(), result));
             }
-            public void commandQueued(ICommand<? extends ICommandResult> command) {
-                fQueuedCommands.add(new CommandInfo(command, null));
+            public void commandQueued(ICommandToken token) {
+                fQueuedCommands.add(new CommandInfo(token.getCommand(), null));
             }
-            public void commandRemoved(ICommand<? extends ICommandResult> command) {
-                fRemovedCommands.add(new CommandInfo(command, null));
+            public void commandRemoved(ICommandToken token) {
+                fRemovedCommands.add(new CommandInfo(token.getCommand(), null));
             }
-            public void commandSent(ICommand<? extends ICommandResult> command) {
-                fSentCommands.add(new CommandInfo(command, null));
+            public void commandSent(ICommandToken token) {
+                fSentCommands.add(new CommandInfo(token.getCommand(), null));
             }
             
             void reset() {
@@ -106,7 +107,7 @@ public class BasicTests extends CommandControlTestsBase {
         Query<Object> queueRemoveCommandQuery = new Query<Object>() {
             @Override
             protected void execute(DataRequestMonitor<Object> rm) {
-                fCommandControl.queueCommand(
+                ICommandToken token = fCommandControl.queueCommand(
                     testCommand, 
                     new DataRequestMonitor<PDACommandResult>(fExecutor, null) {
                         @Override
@@ -114,7 +115,7 @@ public class BasicTests extends CommandControlTestsBase {
                             Assert.fail("This command should never have been executed.");
                         }
                     });
-                fCommandControl.removeCommand(testCommand);
+                fCommandControl.removeCommand(token);
 
                 rm.setData(new Object());
                 rm.done();

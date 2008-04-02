@@ -55,18 +55,20 @@ public class CommandCache implements ICommandListener
          */
         
         /** List of the request monitors associated with this command */
-        List<DataRequestMonitor<ICommandResult>> fCurrentRequestMonitors ; 
+        private final List<DataRequestMonitor<ICommandResult>> fCurrentRequestMonitors ; 
         
         /** Original command. Need for reference from Queue completion notification */
-        ICommand<ICommandResult> fCommand;                   
+        private final ICommand<ICommandResult> fCommand;                   
 
         /** Style of this command ( internal coalesced or not) */
-        CommandStyle fCmdStyle;
+        private final CommandStyle fCmdStyle;
         
         /** Command being processed for this command */
-        CommandInfo fCoalescedCmd;           
+        private CommandInfo fCoalescedCmd;           
+
+        private ICommandToken fToken;
         
-        public CommandInfo( CommandStyle cmdstyle, ICommand<ICommandResult> cmd, DataRequestMonitor<ICommandResult> rm ) {
+        public CommandInfo(CommandStyle cmdstyle, ICommand<ICommandResult> cmd, DataRequestMonitor<ICommandResult> rm ) {
             fCmdStyle = cmdstyle;
             fCommand = cmd;
             fCurrentRequestMonitors = new LinkedList<DataRequestMonitor<ICommandResult>>();
@@ -219,7 +221,7 @@ public class CommandCache implements ICommandListener
                  *  does not continue to process it.
                  */
                 fPendingQCommandsNotYetSent.remove(currentUnsentEntry);
-                fCommandControl.removeCommand(unsentCommand);
+                fCommandControl.removeCommand(currentUnsentEntry.fToken);
               
                 return( coalescedCmdInfo );
             }
@@ -316,7 +318,7 @@ public class CommandCache implements ICommandListener
         final CommandInfo finalCachedCmd = cachedCmd;
         fPendingQCommandsNotYetSent.add(finalCachedCmd);
         
-        fCommandControl.queueCommand(
+        finalCachedCmd.fToken = fCommandControl.queueCommand(
             finalCachedCmd.getCommand(), 
             new DataRequestMonitor<ICommandResult>(fSession.getExecutor(), null) { 
                 @Override
@@ -476,7 +478,7 @@ public class CommandCache implements ICommandListener
     	fCachedContexts.clear();
     }
 
-    public void commandRemoved(ICommand<? extends ICommandResult> command) {
+    public void commandRemoved(ICommandToken token) {
         /*
          *  Do nothing. 
          */
@@ -486,7 +488,7 @@ public class CommandCache implements ICommandListener
      * (non-Javadoc)
      * @see org.eclipse.dd.dsf.mi.service.control.IDebuggerControl.ICommandListener#commandQueued(org.eclipse.dd.dsf.mi.core.command.ICommand)
      */
-    public void commandQueued(ICommand<? extends ICommandResult> command) {
+    public void commandQueued(ICommandToken token) {
         /*
          *  Do nothing. 
          */
@@ -496,7 +498,7 @@ public class CommandCache implements ICommandListener
      * (non-Javadoc)
      * @see org.eclipse.dd.dsf.mi.service.control.IDebuggerControl.ICommandListener#commandDone(org.eclipse.dd.dsf.mi.core.command.ICommand, org.eclipse.dd.dsf.mi.core.command.ICommandResult)
      */
-    public void commandDone(ICommand<? extends ICommandResult> command, ICommandResult result) {
+    public void commandDone(ICommandToken token, ICommandResult result) {
         /*
          *  We handle the done with a runnable where we initiated the command
          *  so there is nothing to do here.
@@ -511,11 +513,11 @@ public class CommandCache implements ICommandListener
      * (non-Javadoc)
      * @see org.eclipse.dd.dsf.mi.service.control.IDebuggerControl.ICommandListener#commandSent(org.eclipse.dd.dsf.mi.core.command.ICommand)
      */
-    public void commandSent(ICommand<? extends ICommandResult> command) {
+    public void commandSent(ICommandToken token) {
         
         // Cast the generic ?'s to concrete types in the cache implementation.
         @SuppressWarnings("unchecked")
-        ICommand<ICommandResult> genericCommand = (ICommand<ICommandResult>)command;
+        ICommand<ICommandResult> genericCommand = (ICommand<ICommandResult>)token.getCommand();
         
         CommandInfo cachedCmd = new CommandInfo( CommandStyle.NONCOALESCED, genericCommand, null) ;
         

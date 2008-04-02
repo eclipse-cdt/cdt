@@ -36,6 +36,7 @@ import org.eclipse.dd.dsf.debug.service.command.ICommand;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControl;
 import org.eclipse.dd.dsf.debug.service.command.ICommandListener;
 import org.eclipse.dd.dsf.debug.service.command.ICommandResult;
+import org.eclipse.dd.dsf.debug.service.command.ICommandToken;
 import org.eclipse.dd.dsf.debug.service.command.IEventListener;
 import org.eclipse.dd.dsf.service.AbstractDsfService;
 import org.eclipse.dd.dsf.service.DsfSession;
@@ -182,15 +183,8 @@ public abstract class AbstractMIControl extends AbstractDsfService
      * @see org.eclipse.dd.dsf.debug.service.command.ICommandControl#addCommand(org.eclipse.dd.dsf.debug.service.command.ICommand, org.eclipse.dd.dsf.concurrent.RequestMonitor)
      */
     
-    public <V extends ICommandResult> void queueCommand(ICommand<V> command, DataRequestMonitor<V> rm) {
+    public <V extends ICommandResult> ICommandToken queueCommand(final ICommand<V> command, DataRequestMonitor<V> rm) {
 
-        // If the command control stopped processing commands, just return an error immediately. 
-        if (fStoppedCommandProcessing) {
-            rm.setStatus(genStatus("Connection is shut down")); //$NON-NLS-1$
-            rm.done();
-            return;
-        }
-        
         // Cast the command to MI Command type.  This will cause a cast exception to be 
         // thrown if the client did not give an MI command as an argument.
         @SuppressWarnings("unchecked")
@@ -202,8 +196,12 @@ public abstract class AbstractMIControl extends AbstractDsfService
         DataRequestMonitor<MIInfo> miDone = (DataRequestMonitor<MIInfo>)rm;
 
         final CommandHandle handle = new CommandHandle(miCommand, miDone);
-    	
-        if ( fRxCommands.size() > 3 ) {
+
+        // If the command control stopped processing commands, just return an error immediately. 
+        if (fStoppedCommandProcessing) {
+            rm.setStatus(genStatus("Connection is shut down")); //$NON-NLS-1$
+            rm.done();
+        } else if ( fRxCommands.size() > 3 ) {
         	
         	/*
         	 *  We  only allow three  outstanding commands  to be on the wire  to the backend
@@ -238,7 +236,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
             		CommandHandle cmdHandle = new CommandHandle(
             		    new MIThreadSelect(handle.fCommand.getContext(), fCurrentThreadId), null);
             		fTxCommands.add(cmdHandle);
-            		MIPlugin.debug(MIPlugin.getDebugTime() + " " + cmdHandle.getToken() + cmdHandle.getCommand()); //$NON-NLS-1$
+            		MIPlugin.debug(MIPlugin.getDebugTime() + " " + cmdHandle.getTokenId() + cmdHandle.getCommand()); //$NON-NLS-1$
             	}
 
             	// Before the command is sent, Check the Stack level and send it to 
@@ -251,12 +249,13 @@ public abstract class AbstractMIControl extends AbstractDsfService
             		CommandHandle cmdHandle = new CommandHandle(
             		    new MIStackSelectFrame(handle.fCommand.getContext(), fCurrentStackLevel), null);
             		fTxCommands.add(cmdHandle);
-            		MIPlugin.debug(MIPlugin.getDebugTime() + " " + cmdHandle.getToken() + cmdHandle.getCommand()); //$NON-NLS-1$
+            		MIPlugin.debug(MIPlugin.getDebugTime() + " " + cmdHandle.getTokenId() + cmdHandle.getCommand()); //$NON-NLS-1$
             	}
                	fTxCommands.add(handle);
             }
         }
         
+        return handle;
     }
     
     /*
@@ -267,12 +266,12 @@ public abstract class AbstractMIControl extends AbstractDsfService
      * (non-Javadoc)
      * @see org.eclipse.dd.mi.service.command.IDebuggerControl#removeCommand(org.eclipse.dd.mi.service.command.commands.ICommand)
      */
-    public void removeCommand(ICommand<? extends ICommandResult> command) {
+    public void removeCommand(ICommandToken token) {
     	
     	synchronized(fCommandQueue) {
     		
     		for ( CommandHandle handle : fCommandQueue ) {
-    			if ( handle.getCommand().equals(command)) {
+    			if ( handle.equals(token)) {
     				fCommandQueue.remove(handle);
     				
     				final CommandHandle finalHandle = handle;
@@ -287,18 +286,6 @@ public abstract class AbstractMIControl extends AbstractDsfService
     	}
     }
    
-    /*
-     *  This command allows the user to try and cancel commands  which have been handed off to the 
-     *  backend. Some backends support this with extended GDB/MI commands. If the support is there
-     *  then we will attempt it.  Because of the bidirectional nature of the GDB/MI command stream
-     *  there is no guarantee that this will work. The response to the command could be on its way
-     *  back when the cancel command is being issued.
-     *  
-     * (non-Javadoc)
-     * @see org.eclipse.dd.mi.service.command.IDebuggerControl#cancelCommand(org.eclipse.dd.mi.service.command.commands.ICommand)
-     */
-    public void  cancelCommand(ICommand<? extends ICommandResult> command) {}
-    
     /*
      *  Allows a user ( typically a cache manager ) to sign up a listener to monitor command queue
      *  activity.
@@ -339,19 +326,19 @@ public abstract class AbstractMIControl extends AbstractDsfService
 
     private void processCommandQueued(CommandHandle commandHandle) {
         for (ICommandListener processor : fCommandProcessors) {
-            processor.commandQueued(commandHandle.getCommand());
+            processor.commandQueued(commandHandle);
         }
     }
     private void processCommandRemoved(CommandHandle commandHandle) {
         for (ICommandListener processor : fCommandProcessors) {
-            processor.commandRemoved(commandHandle.getCommand());
+            processor.commandRemoved(commandHandle);
         }
     }
     
     private void processCommandSent(CommandHandle commandHandle) {
-        MIPlugin.debug(MIPlugin.getDebugTime() + " " + commandHandle.getToken() + commandHandle.getCommand()); //$NON-NLS-1$
+        MIPlugin.debug(MIPlugin.getDebugTime() + " " + commandHandle.getTokenId() + commandHandle.getCommand()); //$NON-NLS-1$
         for (ICommandListener processor : fCommandProcessors) {
-            processor.commandSent(commandHandle.getCommand());
+            processor.commandSent(commandHandle);
         }
     }
 
@@ -374,7 +361,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
          *  Tell the listeners we have completed this one.
          */
         for (ICommandListener processor : fCommandProcessors) {
-            processor.commandDone(commandHandle == null ? null : commandHandle.getCommand(), result);
+            processor.commandDone(commandHandle, result);
         }
     }
     
@@ -389,14 +376,13 @@ public abstract class AbstractMIControl extends AbstractDsfService
 	 * A global counter for all command, the token will be use to identify uniquely a command.
 	 * Unless the value wraps around which is unlikely.
 	 */
+    private int fTokenIdCounter = 0 ;
     
-    private static int globalCounter = 0 ;
-    
-	private static synchronized int getUniqToken() {
-		int count = ++globalCounter;
+	private int getNewTokenId() {
+		int count = ++fTokenIdCounter;
 		// If we ever wrap around.
 		if (count <= 0) {
-			count = globalCounter = 1;
+			count = fTokenIdCounter = 1;
 		}
 		return count;
 	}
@@ -406,8 +392,8 @@ public abstract class AbstractMIControl extends AbstractDsfService
 	 *  individual request.
 	 */
     
-    public static class CommandHandle {
-    	
+    private class CommandHandle implements ICommandToken {
+
         private MICommand<MIInfo> fCommand;
         private DataRequestMonitor<MIInfo> fRequestMonitor;
         private int fTokenId ;
@@ -415,12 +401,13 @@ public abstract class AbstractMIControl extends AbstractDsfService
         CommandHandle(MICommand<MIInfo> c, DataRequestMonitor<MIInfo> d) {
             fCommand = c; 
             fRequestMonitor = d;
-            fTokenId = getUniqToken() ;
+            fTokenId = getNewTokenId() ;
         }
         
         public MICommand<MIInfo> getCommand() { return fCommand; }
         public DataRequestMonitor<MIInfo> getRequestMonitor() { return fRequestMonitor; }
-        public Integer getToken() { return fTokenId; }
+        public Integer getTokenId() { return fTokenId; }
+        
         //public String getThreadId() { return null; } 
         public Integer getStackFrameId() {
         	IFrameDMContext frameCtx = DMContexts.getAncestorOfType(fCommand.getContext(), IFrameDMContext.class);
@@ -477,14 +464,14 @@ public abstract class AbstractMIControl extends AbstractDsfService
                     /*
                      *  We note that this is an outstanding request at this point.
                      */
-                    fRxCommands.put(commandHandle.getToken(), commandHandle);
+                    fRxCommands.put(commandHandle.getTokenId(), commandHandle);
                 }
                 
                 /*
                  *   Construct the new command and push this command out the pipeline.
                  */
                 
-                String str = commandHandle.getToken() + commandHandle.getCommand().constructCommand();
+                String str = commandHandle.getTokenId() + commandHandle.getCommand().constructCommand();
                 
                 try {
                     if (fOutputStream != null) {

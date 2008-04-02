@@ -24,9 +24,9 @@ import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.debug.service.ISignals.ISignalsDMContext;
-import org.eclipse.dd.dsf.debug.service.command.ICommand;
 import org.eclipse.dd.dsf.debug.service.command.ICommandListener;
 import org.eclipse.dd.dsf.debug.service.command.ICommandResult;
+import org.eclipse.dd.dsf.debug.service.command.ICommandToken;
 import org.eclipse.dd.dsf.debug.service.command.IEventListener;
 import org.eclipse.dd.mi.service.command.commands.CLICommand;
 import org.eclipse.dd.mi.service.command.commands.MIInterpreterExecConsole;
@@ -73,30 +73,30 @@ public class CLIEventProcessor
         fCommandControl.removeEventListener(this);        
     }
 
-    public void commandSent(ICommand<? extends ICommandResult> command) {
-        if (command instanceof CLICommand<?>) {
-            processStateChanges( (CLICommand<?>)command );
+    public void commandSent(ICommandToken token) {
+        if (token.getCommand() instanceof CLICommand<?>) {
+            processStateChanges( (CLICommand<?>)token.getCommand() );
         }
-        else if (command instanceof MIInterpreterExecConsole<?>) {
-            processStateChanges( (MIInterpreterExecConsole<?>)command );
+        else if (token.getCommand() instanceof MIInterpreterExecConsole<?>) {
+            processStateChanges( (MIInterpreterExecConsole<?>)token.getCommand() );
         }
     }
     
-    public void commandDone(ICommand<? extends ICommandResult> command, ICommandResult result) {
-        if (command instanceof CLICommand<?>) {
-            processSettingChanges( (CLICommand<?>)command );
+    public void commandDone(ICommandToken token, ICommandResult result) {
+        if (token.getCommand() instanceof CLICommand<?>) {
+            processSettingChanges( (CLICommand<?>)token.getCommand() );
         }
-        else if (command instanceof MIInterpreterExecConsole<?>) {
-            processSettingChanges( (MIInterpreterExecConsole<?>)command );
+        else if (token.getCommand() instanceof MIInterpreterExecConsole<?>) {
+            processSettingChanges( (MIInterpreterExecConsole<?>)token.getCommand() );
         }
         fEventList.clear();
     }
     
-    public void commandQueued(ICommand<? extends ICommandResult> command) {
+    public void commandQueued(ICommandToken token) {
         // No action 
     }
     
-    public void commandRemoved(ICommand<? extends ICommandResult> command) {
+    public void commandRemoved(ICommandToken token) {
         // No action 
     }
     

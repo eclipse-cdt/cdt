@@ -18,6 +18,7 @@ import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.debug.service.command.ICommand;
 import org.eclipse.dd.dsf.debug.service.command.ICommandListener;
 import org.eclipse.dd.dsf.debug.service.command.ICommandResult;
+import org.eclipse.dd.dsf.debug.service.command.ICommandToken;
 import org.eclipse.dd.dsf.debug.service.command.IEventListener;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.mi.internal.MIPlugin;
@@ -177,19 +178,20 @@ public class MIRunControlEventProcessor
         return event;
     }
 
-    public void commandQueued(ICommand<?> command) {
+    public void commandQueued(ICommandToken token) {
         // Do nothing.
     }
     
-    public void commandSent(ICommand<?> command) {
+    public void commandSent(ICommandToken token) {
         // Do nothing.
     }
     
-    public void commandRemoved(ICommand<?> command) {
+    public void commandRemoved(ICommandToken token) {
         // Do nothing.
     }
     
-    public void commandDone(ICommand<?> cmd, ICommandResult result) {
+    public void commandDone(ICommandToken token, ICommandResult result) {
+        ICommand<?> cmd = token.getCommand();
     	MIInfo cmdResult = (MIInfo) result ;
     	MIOutput output =  cmdResult.getMIOutput();
     	MIResultRecord rr = output.getMIResultRecord();

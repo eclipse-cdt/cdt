@@ -27,6 +27,7 @@ import org.eclipse.dd.dsf.debug.service.command.ICommand;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControl;
 import org.eclipse.dd.dsf.debug.service.command.ICommandListener;
 import org.eclipse.dd.dsf.debug.service.command.ICommandResult;
+import org.eclipse.dd.dsf.debug.service.command.ICommandToken;
 import org.eclipse.dd.dsf.debug.service.command.IEventListener;
 import org.eclipse.dd.dsf.service.AbstractDsfService;
 import org.eclipse.dd.dsf.service.DsfSession;
@@ -44,10 +45,12 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
 
     // Structure used to store command information in services internal queues.
     private static class CommandHandle {
+        final private ICommandToken fToken;
         final private AbstractPDACommand<PDACommandResult> fCommand;
         final private DataRequestMonitor<PDACommandResult> fRequestMonitor;
         
-        CommandHandle(AbstractPDACommand<PDACommandResult> c, DataRequestMonitor<PDACommandResult> rm) {
+        CommandHandle(ICommandToken token, AbstractPDACommand<PDACommandResult> c, DataRequestMonitor<PDACommandResult> rm) {
+            fToken = token;
             fCommand = c; 
             fRequestMonitor = rm;
         }
@@ -334,7 +337,13 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
         
     }
     
-    public <V extends ICommandResult> void queueCommand(ICommand<V> command, DataRequestMonitor<V> rm) {
+    public <V extends ICommandResult> ICommandToken queueCommand(final ICommand<V> command, DataRequestMonitor<V> rm) {
+        ICommandToken token = new ICommandToken() {
+            public ICommand<?> getCommand() {
+                return command;
+            }
+        };
+
         if (command instanceof AbstractPDACommand<?>) {
             // Cast from command with "<V extends ICommandResult>" to a more concrete
             // type to use internally in the command control.
@@ -346,9 +355,9 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
             DataRequestMonitor<PDACommandResult> pdaRM = (DataRequestMonitor<PDACommandResult>)rm;
 
             // Add the command to the queue and notify command listeners.
-            fCommandQueue.add( new CommandHandle(pdaCommand, pdaRM) );
+            fCommandQueue.add( new CommandHandle(token, pdaCommand, pdaRM) );
             for (ICommandListener listener : fCommandListeners) {
-                listener.commandQueued(command);
+                listener.commandQueued(token);
             }
             
             // In a separate dispatch cycle.  This allows command listeners to respond to the 
@@ -358,25 +367,20 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
                     processQueues();
                 }
             });
-            
         } else {
             PDAPlugin.failRequest(rm, INTERNAL_ERROR, "Unrecognized command: " + command);
         }
+        return token;
     }
 
-    public void cancelCommand(ICommand<? extends ICommandResult> command) {
-        // This debugger is unable of canceling commands once they have 
-        // been sent.
-    }
-
-    public void removeCommand(ICommand<? extends ICommandResult> command) {
+    public void removeCommand(ICommandToken token) {
         // Removes given command from the queue and notify the listeners
         for (Iterator<CommandHandle> itr = fCommandQueue.iterator(); itr.hasNext();) {
             CommandHandle handle = itr.next();
-            if (command.equals(handle.fCommand)) {
+            if (token.equals(handle.fToken)) {
                 itr.remove();
                 for (ICommandListener listener : fCommandListeners) {
-                    listener.commandRemoved(command);
+                    listener.commandRemoved(token);
                 }                
             }
         }
@@ -414,7 +418,7 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
 
         // Notify listeners of the response
         for (ICommandListener listener : fCommandListeners) {
-            listener.commandDone(handle.fCommand, result);
+            listener.commandDone(handle.fToken, result);
         }
         
         // Process next command in queue.
@@ -431,7 +435,7 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
 
         // Notify listeners also.
         for (ICommandListener listener : fCommandListeners) {
-            listener.commandDone(handle.fCommand, null);
+            listener.commandDone(handle.fToken, null);
         }
     }
 
@@ -462,7 +466,7 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
             fTxCommands.add(handle);
             PDAPlugin.debug("C: " + handle.fCommand.getRequest());
             for (ICommandListener listener : fCommandListeners) {
-                listener.commandSent(handle.fCommand);
+                listener.commandSent(handle.fToken);
             }            
         }
     }

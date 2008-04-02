@@ -32,9 +32,9 @@ import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.dd.dsf.concurrent.Query;
-import org.eclipse.dd.dsf.debug.service.command.ICommand;
 import org.eclipse.dd.dsf.debug.service.command.ICommandListener;
 import org.eclipse.dd.dsf.debug.service.command.ICommandResult;
+import org.eclipse.dd.dsf.debug.service.command.ICommandToken;
 import org.eclipse.dd.dsf.debug.service.command.IEventListener;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.mi.internal.MIPlugin;
@@ -387,22 +387,22 @@ public class MIInferiorProcess extends Process
         }
     }
     
-    public void commandQueued(ICommand<? extends ICommandResult> command) {
+    public void commandQueued(ICommandToken token) {
         // No action 
     }
     
-    public void commandSent(ICommand<? extends ICommandResult> command) {
-        if (command instanceof CLICommand<?>) {
+    public void commandSent(ICommandToken token) {
+        if (token.getCommand() instanceof CLICommand<?>) {
             fSuppressTargetOutputCounter++;
         }
     }
     
-    public void commandRemoved(ICommand<? extends ICommandResult> command) {
+    public void commandRemoved(ICommandToken token) {
         // No action 
     }
     
-    public void commandDone(ICommand<? extends ICommandResult> command, ICommandResult result) {
-    	if (command instanceof CLICommand<?>) {
+    public void commandDone(ICommandToken token, ICommandResult result) {
+    	if (token.getCommand() instanceof CLICommand<?>) {
             fSuppressTargetOutputCounter--;
         }
 

@@ -18,7 +18,7 @@ public interface ICommandListener {
 	 * @return None
 	 * @param command Command which has been added to the Queue
  	 */
-	public void commandQueued(ICommand<? extends ICommandResult> command);
+	public void commandQueued(ICommandToken token);
 	
 	/**
      * Notification that the given command was sent to the debugger. At this 
@@ -29,7 +29,7 @@ public interface ICommandListener {
      * @return None
      * @param command
      */
-    public void commandSent(ICommand<? extends ICommandResult> command);
+    public void commandSent(ICommandToken token);
 
 	/**
 	 * Notifies that the specified command has been removed from the 
@@ -42,7 +42,7 @@ public interface ICommandListener {
 	 * @return None
 	 * @param Command which has been sent to the backend
 	 */
-	public void commandRemoved(ICommand<? extends ICommandResult> command);
+	public void commandRemoved(ICommandToken token);
     
 	/**
 	 * Notifies that the specified command has been completed.
@@ -50,5 +50,5 @@ public interface ICommandListener {
 	 * @return None
 	 * @param Command which has been sent to the backend
 	 */
-	public void commandDone(ICommand<? extends ICommandResult> command, ICommandResult result);
+	public void commandDone(ICommandToken token, ICommandResult result);
 }

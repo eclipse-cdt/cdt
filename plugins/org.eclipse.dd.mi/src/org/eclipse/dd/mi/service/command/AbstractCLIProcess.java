@@ -30,6 +30,7 @@ import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.service.command.ICommand;
 import org.eclipse.dd.dsf.debug.service.command.ICommandListener;
 import org.eclipse.dd.dsf.debug.service.command.ICommandResult;
+import org.eclipse.dd.dsf.debug.service.command.ICommandToken;
 import org.eclipse.dd.dsf.debug.service.command.IEventListener;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.mi.internal.MIPlugin;
@@ -204,11 +205,12 @@ public abstract class AbstractCLIProcess extends Process
         }
     }
     
-    public void commandQueued(ICommand<? extends ICommandResult> command) {
+    public void commandQueued(ICommandToken token) {
             // Ignore
     }
 
-    public void commandSent(ICommand<? extends ICommandResult> command) {
+    public void commandSent(ICommandToken token) {
+        ICommand<?> command = token.getCommand();
         // Check if the command is a CLI command and if it did not originate from this class.
         if (command instanceof CLICommand<?> &&
             !(command instanceof ProcessCLICommand || command instanceof ProcessMIInterpreterExecConsole)) 
@@ -217,12 +219,13 @@ public abstract class AbstractCLIProcess extends Process
         }
     }
 
-    public void commandRemoved(ICommand<? extends ICommandResult> command) {
+    public void commandRemoved(ICommandToken token) {
             // Ignore
     }
 
-    public void commandDone(ICommand<? extends ICommandResult> command, ICommandResult result) {
-    	if (command instanceof CLICommand<?> &&
+    public void commandDone(ICommandToken token, ICommandResult result) {
+        ICommand<?> command = token.getCommand();
+    	if (token.getCommand() instanceof CLICommand<?> &&
     			!(command instanceof ProcessCLICommand || command instanceof ProcessMIInterpreterExecConsole)) 
         {
             fSuppressConsoleOutputCounter--;

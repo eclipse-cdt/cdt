@@ -40,6 +40,7 @@ import org.eclipse.dd.dsf.debug.service.command.ICommand;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControl;
 import org.eclipse.dd.dsf.debug.service.command.ICommandListener;
 import org.eclipse.dd.dsf.debug.service.command.ICommandResult;
+import org.eclipse.dd.dsf.debug.service.command.ICommandToken;
 import org.eclipse.dd.dsf.debug.service.command.IEventListener;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
@@ -1487,13 +1488,19 @@ public class MIVariableManager implements ICommandControl {
 				});
 	}
 
-    public <V extends ICommandResult> void queueCommand(final ICommand<V> command, DataRequestMonitor<V> rm) {
+    public <V extends ICommandResult> ICommandToken queueCommand(final ICommand<V> command, DataRequestMonitor<V> rm) {
     	
+        final ICommandToken token = new ICommandToken() {
+            public ICommand<? extends ICommandResult> getCommand() {
+                return command;
+            }
+        };
+        
     	// The MIVariableManager does not buffer commands itself, but sends them directly to the real
     	// MICommandControl service.  Therefore, we must immediately tell our calling cache that the command
     	// has been sent, since we can never cancel it.  Note that this removes any option of coalescing, 
     	// but coalescing was not applicable to variableObjects anyway.
-    	processCommandSent(command);
+    	processCommandSent(token);
     	
     	if (command instanceof ExprMetaGetVar) {
             @SuppressWarnings("unchecked")            
@@ -1512,6 +1519,7 @@ public class MIVariableManager implements ICommandControl {
             								getData().getType(),
             								!getData().isComplex()));
             				drm.done();
+            				processCommandDone(token, drm.getData());
             			}
             		});
         } else if (command instanceof ExprMetaGetAttributes) {
@@ -1530,6 +1538,7 @@ public class MIVariableManager implements ICommandControl {
                                         protected void handleSuccess() {
                                             drm.setData(new ExprMetaGetAttributesInfo(getData()));
                                             drm.done();
+                                            processCommandDone(token, drm.getData());
                                         }
                                     }); 
                         }
@@ -1555,6 +1564,7 @@ public class MIVariableManager implements ICommandControl {
     	                    				drm.setData(
     	                    						new ExprMetaGetValueInfo(getData().getFormattedValue()));
     	                    				drm.done();
+    	                                    processCommandDone(token, drm.getData());
     	                    			}
     	                    		});
     	                }
@@ -1577,6 +1587,7 @@ public class MIVariableManager implements ICommandControl {
     									protected void handleSuccess() {
     										drm.setData(new ExprMetaGetChildrenInfo(getData()));
     										drm.done();
+    			                            processCommandDone(token, drm.getData());
     									}
     								});
     					}
@@ -1598,6 +1609,7 @@ public class MIVariableManager implements ICommandControl {
     									protected void handleSuccess() {
     										drm.setData(new ExprMetaGetChildCountInfo(getData()));
     										drm.done();
+    			                            processCommandDone(token, drm.getData());
     									}
     								}); 
     					}
@@ -1610,7 +1622,8 @@ public class MIVariableManager implements ICommandControl {
 			rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, 
 					"Unexpected Expression Meta command", null)); //$NON-NLS-1$
 			rm.done();
-    	}    	
+    	}
+    	return token;
     }
     
     /*
@@ -1621,7 +1634,7 @@ public class MIVariableManager implements ICommandControl {
      * (non-Javadoc)
      * @see org.eclipse.dd.mi.service.command.IDebuggerControl#removeCommand(org.eclipse.dd.mi.service.command.commands.ICommand)
      */
-    public void removeCommand(ICommand<? extends ICommandResult> command) {
+    public void removeCommand(ICommandToken token) {
     	// It is impossible to remove a command from the MIVariableManager.
     	// This should never be called, if we did things right.
     	assert false;
@@ -1637,19 +1650,24 @@ public class MIVariableManager implements ICommandControl {
      * (non-Javadoc)
      * @see org.eclipse.dd.mi.service.command.IDebuggerControl#cancelCommand(org.eclipse.dd.mi.service.command.commands.ICommand)
      */
-    public void cancelCommand(ICommand<? extends ICommandResult> command) {}
     public void addCommandListener(ICommandListener processor) { fCommandProcessors.add(processor); }
     public void removeCommandListener(ICommandListener processor) { fCommandProcessors.remove(processor); }    
     public void addEventListener(IEventListener processor) {}
     public void removeEventListener(IEventListener processor) {}
 
     
-    private void processCommandSent(ICommand<?> command) {
+    private void processCommandSent(ICommandToken token) {
         for (ICommandListener processor : fCommandProcessors) {
-            processor.commandSent(command);
+            processor.commandSent(token);
         }
     }
 
+    private void processCommandDone(ICommandToken token, ICommandResult result) {
+        for (ICommandListener processor : fCommandProcessors) {
+            processor.commandDone(token, result);
+        }
+    }
+    
     private void markAllOutOfDate() {
     	MIRootVariableObject root;
     	while ((root = updatedRootList.poll()) != null) {
@@ -1679,5 +1697,4 @@ public class MIVariableManager implements ICommandControl {
     	// The views will fully refresh on a MemoryChangedEvent
     	markAllOutOfDate();
     }
-
 }

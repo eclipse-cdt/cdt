@@ -17,7 +17,7 @@ import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
  * and asynchronous events.
  */
 public interface ICommandControl {
-    
+
     /**
      * Adds the specified command to the queue of commands to be processed. 
      *   
@@ -25,7 +25,7 @@ public interface ICommandControl {
      * @param rm Request completion monitor
      * @return None
      */
-    <V extends ICommandResult> void queueCommand(ICommand<V> command, DataRequestMonitor<V> rm);
+    <V extends ICommandResult> ICommandToken queueCommand(ICommand<V> command, DataRequestMonitor<V> rm);
     
     /**
      * Removes the specified command from the processor queue.
@@ -33,17 +33,7 @@ public interface ICommandControl {
      * @param command Specific command to be removed
      * @return None
      */
-    void removeCommand(ICommand<? extends ICommandResult> command);
-    
-    /**
-     * Attempts to cancel and already sent command. Some versions
-     * of GDB/MI implement control commands which allow this. The
-     * GDB/MI standard does not currently allow for this.
-     *   
-     * @param command Specific command to be removed
-     * @return None
-     */
-    void cancelCommand(ICommand<? extends ICommandResult> command);
+    void removeCommand(ICommandToken token);
     
     /**
 	 * Adds a notification handler for the Command processor.

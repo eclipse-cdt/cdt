@@ -18,7 +18,7 @@ package org.eclipse.tm.rapi;
 public class OS {
   
   static {
-    System.loadLibrary("lib/os/win32/x86/jrapi"); //$NON-NLS-1$
+    System.loadLibrary("jrapi"); //$NON-NLS-1$
   }
   
   public static final int NOERROR = 0;

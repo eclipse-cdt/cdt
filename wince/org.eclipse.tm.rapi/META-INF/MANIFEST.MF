@@ -8,4 +8,5 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.tm.internal.rapi;x-internal:=true,
  org.eclipse.tm.rapi
+Bundle-NativeCode: /lib/os/win32/x86/jrapi.dll;osname="Win32";processor=x86
 Bundle-RequiredExecutionEnvironment: J2SE-1.4

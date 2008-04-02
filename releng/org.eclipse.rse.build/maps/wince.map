@@ -1,5 +1,5 @@
-feature@org.eclipse.rse.wince=v20080331,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/wince/org.eclipse.rse.wince-feature
-plugin@org.eclipse.rse.subsystems.wince=v20080331,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/wince/org.eclipse.rse.subsystems.wince
-plugin@org.eclipse.tm.rapi=v20080331,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/wince/org.eclipse.tm.rapi
-plugin@org.eclipse.tm.rapi.examples=v20080331,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/wince/org.eclipse.tm.rapi.examples
-plugin@org.eclipse.tm.rapi.tests=v20080331,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/wince/org.eclipse.tm.rapi.tests
+feature@org.eclipse.rse.wince=v20080401,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/wince/org.eclipse.rse.wince-feature
+plugin@org.eclipse.rse.subsystems.wince=v20080401,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/wince/org.eclipse.rse.subsystems.wince
+plugin@org.eclipse.tm.rapi=v20080401,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/wince/org.eclipse.tm.rapi
+plugin@org.eclipse.tm.rapi.examples=v20080401,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/wince/org.eclipse.tm.rapi.examples
+plugin@org.eclipse.tm.rapi.tests=v20080401,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/wince/org.eclipse.tm.rapi.tests

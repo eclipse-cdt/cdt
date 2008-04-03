@@ -216,6 +216,7 @@ public class UniversalFileTransferUtility
 	 * @param srcFileOrFolder the file to copy
 	 * @param monitor the progress monitor
 	 * @return the resulting local replica
+	 * @since 3.0
 	 */
 	protected static IFile downloadFileToWorkspace(IRemoteFile srcFileOrFolder, IProgressMonitor monitor)
 	{
@@ -344,6 +345,7 @@ public class UniversalFileTransferUtility
 	 * @param remoteFile
 	 * @param hostname
 	 * @param userId
+	 * @since 3.0
 	 */
 	protected static void setIFileProperties(IFile tempFile, File remoteFile, String hostname, String userId)
 	{
@@ -389,6 +391,7 @@ public class UniversalFileTransferUtility
 	 * @param remoteSet the set of resources to download
 	 * @param monitor the progress monitor
 	 * @return the set of temporary files created as a result of the download.
+	 * @since 3.0
 	 */
 	public static SystemWorkspaceResourceSet downloadResourcesToWorkspaceMultiple(SystemRemoteResourceSet remoteSet, IProgressMonitor monitor)
 	{
@@ -764,6 +767,9 @@ public class UniversalFileTransferUtility
 		}
 	}
 
+	/**
+	 * @since 3.0
+	 */
 	public static Object downloadResourceToWorkspace(File srcFileOrFolder, IProgressMonitor monitor) {
 
 		if (!srcFileOrFolder.exists()) {
@@ -1239,6 +1245,7 @@ public class UniversalFileTransferUtility
 	 * @param monitor the progress monitor
 	 * @param checkForCollisions indicates whether to check for colllisions or not
 	 * @return the resulting remote objects
+	 * @since 3.0
 	 */
 	public static SystemRemoteResourceSet uploadResourcesFromWorkspace(SystemWorkspaceResourceSet workspaceSet, IRemoteFile targetFolder, IProgressMonitor monitor, boolean checkForCollisions)
 	{
@@ -1824,6 +1831,9 @@ public class UniversalFileTransferUtility
 		return result;
 	}
 
+	/**
+	 * @since 3.0
+	 */
 	public static void compressedUploadFromWorkspace(IContainer directory, IRemoteFile newTargetFolder, IProgressMonitor monitor) throws Exception
 	{
 		if (!newTargetFolder.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement()) return;
@@ -2463,6 +2473,9 @@ public class UniversalFileTransferUtility
 		return false;
 	}
 
+	/**
+	 * @since 3.0
+	 */
 	protected static String getWorkspaceRemotePath(IRemoteFileSubSystem subsystem, String remotePath) {
 
 		if (subsystem != null) {
@@ -2472,6 +2485,9 @@ public class UniversalFileTransferUtility
 		return remotePath;
 	}
 
+	/**
+	 * @since 3.0
+	 */
 	protected static String getWorkspaceRemotePath(String hostname, String remotePath, IRemoteFileSubSystem subsystem) {
 		return SystemRemoteEditManager.getInstance().getWorkspacePathFor(hostname, remotePath, subsystem);
 	}

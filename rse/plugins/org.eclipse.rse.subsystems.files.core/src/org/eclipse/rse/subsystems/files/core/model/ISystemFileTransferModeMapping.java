@@ -64,6 +64,7 @@ public interface ISystemFileTransferModeMapping {
 	/**
 	 * Gets the priority - the smaller the number, the higher priority
 	 * @return the priority
+	 * @since 3.0
 	 */
 	public int getPriority();
 }

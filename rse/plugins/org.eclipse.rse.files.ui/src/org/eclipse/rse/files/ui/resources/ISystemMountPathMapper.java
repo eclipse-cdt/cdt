@@ -50,6 +50,7 @@ public interface ISystemMountPathMapper
 	 * @param subsystem the remote file subsystem.  User the subsystem to customize how the temp file is located.  If null
 	 *        is specified, then the subsystem is not used in determining the mapping
      * @return the corresponding workspace replica mapping
+	 * @since 3.0
 	 */
 	public String getWorkspaceMappingFor(String hostname, String remotePath, IRemoteFileSubSystem subsystem);
 	
@@ -85,6 +86,7 @@ public interface ISystemMountPathMapper
 	 * @param remotePath the remote path as seen by the file subsystem
 	 * @param subsystem the remote file subsystem
 	 * @return whether this mapper handles remapping of the specified remote resource
+	 * @since 3.0
 	 */
 	public boolean handlesMappingFor(String hostname, String remotePath, IRemoteFileSubSystem subsystem);
 

@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)     [225506][api][breaking] RSE UI leaks non-API types 
  *******************************************************************************/
 
 package org.eclipse.rse.ui.propertypages;
@@ -90,7 +90,7 @@ public class SystemTeamViewCategoryPropertyPage extends SystemBasePropertyPage
 	/**
 	 * Get the input team view category node
 	 */
-	protected SystemTeamViewCategoryNode getCategoryNode()
+	private SystemTeamViewCategoryNode getCategoryNode()
 	{
 		Object element = getElement();
 		return ((SystemTeamViewCategoryNode)element);

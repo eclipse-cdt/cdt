@@ -35,10 +35,14 @@ import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
+import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
@@ -755,7 +759,14 @@ public class PDOM extends PlatformObject implements IPDOM {
 			}
 		}
 		else if (myBinding instanceof PDOMMacroContainer) {
-			findNamesForMyBinding((PDOMMacroContainer) myBinding, options, names);
+			final PDOMMacroContainer macroContainer = (PDOMMacroContainer) myBinding;
+			findNamesForMyBinding(macroContainer, options, names);
+			if ((options & SEARCH_ACCROSS_LANGUAGE_BOUNDARIES) != 0) {
+				PDOMMacroContainer[] xlangBindings= getCrossLanguageBindings(macroContainer);
+				for (int j = 0; j < xlangBindings.length; j++) {
+					findNamesForMyBinding(xlangBindings[j], options, names);
+				}
+			}
 		}
 		return names.toArray(new IIndexFragmentName[names.size()]);
 	}
@@ -959,6 +970,25 @@ public class PDOM extends PlatformObject implements IPDOM {
 		return PDOMBinding.EMPTY_PDOMBINDING_ARRAY;
 	}
 
+	private PDOMMacroContainer[] getCrossLanguageBindings(PDOMMacroContainer binding) throws CoreException {
+		final int inputLinkage= binding.getLinkage().getLinkageID();
+		if (inputLinkage == ILinkage.C_LINKAGE_ID || inputLinkage == ILinkage.CPP_LINKAGE_ID) {
+			final char[] name= binding.getNameCharArray();
+			for (PDOMLinkage linkage : fLinkageIDCache.values()) {
+				final int linkageID = linkage.getLinkageID();
+				if (linkageID != inputLinkage) {
+					if (linkageID == ILinkage.C_LINKAGE_ID || linkageID == ILinkage.CPP_LINKAGE_ID) {
+						PDOMMacroContainer container= linkage.findMacroContainer(name);
+						if (container != null) {
+							return new PDOMMacroContainer[] {container};
+						}
+					}
+				}
+			}
+		}
+		return new PDOMMacroContainer[0];
+	}
+
 	private PDOMBinding[] getCBindingForCPP(IBinding binding) throws CoreException {
 		PDOMBinding result= null;
 		PDOMLinkage c= getLinkage(ILinkage.C_LINKAGE_NAME);
@@ -978,7 +1008,25 @@ public class PDOM extends PlatformObject implements IPDOM {
 					result = FindBinding.findBinding(c.getIndex(), this, var.getNameCharArray(),
 							new int[] { IIndexCBindingConstants.CVARIABLE }, 0);
 				}
-			}
+			} else if (binding instanceof IEnumeration) {
+				result= FindBinding.findBinding(c.getIndex(), this, binding.getNameCharArray(), 
+						new int[] {IIndexCBindingConstants.CENUMERATION }, 0);
+			} else if (binding instanceof IEnumerator) {
+				result= FindBinding.findBinding(c.getIndex(), this, binding.getNameCharArray(), 
+						new int[] {IIndexCBindingConstants.CENUMERATOR }, 0);
+			} else if (binding instanceof ITypedef) {
+				result= FindBinding.findBinding(c.getIndex(), this, binding.getNameCharArray(), 
+						new int[] {IIndexCBindingConstants.CTYPEDEF }, 0);
+			} else if (binding instanceof ICompositeType) {
+				final int key= ((ICompositeType) binding).getKey();
+				if (key == ICompositeType.k_struct || key == ICompositeType.k_union) {
+					result= FindBinding.findBinding(c.getIndex(), this, binding.getNameCharArray(),
+						new int[] {IIndexCBindingConstants.CSTRUCTURE }, 0);
+					if (result instanceof ICompositeType && ((ICompositeType) result).getKey() != key) {
+						result= null;
+					}
+				}
+			} 
 		} catch (DOMException e) {
 		}
 		return result == null ? PDOMBinding.EMPTY_PDOMBINDING_ARRAY : new PDOMBinding[] {result};
@@ -1017,6 +1065,44 @@ public class PDOM extends PlatformObject implements IPDOM {
 						return false;
 					}
 				};
+			}
+		} else if (binding instanceof IEnumeration) {
+			filter= new IndexFilter() {
+				@Override
+				public boolean acceptBinding(IBinding binding) {
+					return binding instanceof IEnumeration;
+				}
+			};
+		} else if (binding instanceof ITypedef) {
+			filter= new IndexFilter() {
+				@Override
+				public boolean acceptBinding(IBinding binding) {
+					return binding instanceof ITypedef;
+				}
+			};
+		} else if (binding instanceof IEnumerator) {
+			filter= new IndexFilter() {
+				@Override
+				public boolean acceptBinding(IBinding binding) {
+					return binding instanceof IEnumerator;
+				}
+			};
+		} else if (binding instanceof ICompositeType) {
+			try {
+				final int key = ((ICompositeType) binding).getKey();
+				filter= new IndexFilter() {
+					@Override
+					public boolean acceptBinding(IBinding binding) {
+						try {
+							if (binding instanceof ICompositeType) {
+								return ((ICompositeType) binding).getKey() == key;
+							}
+						} catch (DOMException e) {
+						}
+						return false;
+					}
+				};
+			} catch (DOMException e1) {
 			}
 		}
 		if (filter != null) {

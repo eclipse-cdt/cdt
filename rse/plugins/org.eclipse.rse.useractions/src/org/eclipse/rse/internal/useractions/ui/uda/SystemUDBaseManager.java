@@ -12,6 +12,7 @@
  * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
  *                                API to the user actions plugin
  * Xuan Chen        (IBM)    - [222263] Need to provide a PropertySet Adapter for System Team View (cleanup some use action stuff)
+ * Kevin Doyle		(IBM)	 - [222825] NPE when changing profile on Work with User Actions Dialog
  *******************************************************************************/
 
 package org.eclipse.rse.internal.useractions.ui.uda;
@@ -603,6 +604,8 @@ public abstract class SystemUDBaseManager implements IResourceChangeListener, IS
 			if (profile.isDefaultPrivate()) // we only prime the user's private profile with default compile commands
 			{
 				udaRootPropertySet = createAndPrimeDocument(profile);
+			} else {
+				udaRootPropertySet = profile.createPropertySet(udaRootPropertySetName);
 			}
 		}
 		else

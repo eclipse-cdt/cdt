@@ -12,15 +12,15 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM) - [225507][api][breaking] RSE dstore API leaks non-API types
  *******************************************************************************/
 
-package org.eclipse.dstore.internal.core.server;
+package org.eclipse.dstore.core.server;
 
 import java.net.Socket;
 
 import org.eclipse.dstore.core.model.DataElement;
-import org.eclipse.dstore.internal.core.util.Receiver;
+import org.eclipse.dstore.core.util.Receiver;
 
 /**
  * The ServerReciever is responsible for recieving data from

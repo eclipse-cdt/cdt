@@ -12,15 +12,15 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- *   Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
- *   David McKnight     (IBM)   [224906] [dstore] changes for getting properties and doing exit due to single-process capability
+ *  Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
+ *  David McKnight     (IBM)   [224906] [dstore] changes for getting properties and doing exit due to single-process capability
+ *  David McKnight   (IBM) - [225507][api][breaking] RSE dstore API leaks non-API types
  *******************************************************************************/
 
 package org.eclipse.dstore.core.server;
 
 import java.util.StringTokenizer;
 
-import org.eclipse.dstore.internal.core.server.ConnectionEstablisher;
 import org.eclipse.dstore.internal.core.server.ServerReturnCodes;
 
 /**

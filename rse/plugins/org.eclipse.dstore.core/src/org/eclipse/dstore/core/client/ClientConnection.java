@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [219260][dstore][regression] Cannot connect to dstore daemon
  * David McKnight  (IBM)   [220123][dstore] Configurable timeout on irresponsiveness
  * David McKnight   (IBM) - [220892][dstore] Backward compatibility: Server and Daemon should support old clients
+ * David McKnight   (IBM) - [225507][api][breaking] RSE dstore API leaks non-API types
  *******************************************************************************/
 
 package org.eclipse.dstore.core.client;
@@ -45,8 +46,11 @@ import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.DataStoreAttributes;
 import org.eclipse.dstore.core.model.IDataStoreCompatibilityHandler;
 import org.eclipse.dstore.core.model.IDataStoreConstants;
+import org.eclipse.dstore.core.model.IExternalLoader;
 import org.eclipse.dstore.core.model.ISSLProperties;
 import org.eclipse.dstore.core.server.ServerLauncher;
+import org.eclipse.dstore.core.util.ssl.IDataStoreTrustManager;
+import org.eclipse.dstore.extra.IDomainNotifier;
 import org.eclipse.dstore.internal.core.client.ClientAttributes;
 import org.eclipse.dstore.internal.core.client.ClientCommandHandler;
 import org.eclipse.dstore.internal.core.client.ClientReceiver;
@@ -57,6 +61,7 @@ import org.eclipse.dstore.internal.core.util.Sender;
 import org.eclipse.dstore.internal.core.util.ssl.DStoreSSLContext;
 import org.eclipse.dstore.internal.core.util.ssl.DataStoreTrustManager;
 import org.eclipse.dstore.internal.extra.DomainNotifier;
+
 
 
 /**
@@ -85,7 +90,7 @@ public class ClientConnection
 	private boolean _isConnected = false;
 	private boolean _isRemote = false;
 	private DataStore _dataStore;
-	private DomainNotifier _domainNotifier;
+	private IDomainNotifier _domainNotifier;
 	private Sender _sender;
 	private ClientReceiver _receiver;
 	private ClientUpdateHandler _updateHandler;
@@ -144,7 +149,7 @@ public class ClientConnection
 	 * @param name an identifier for this connection
 	 * @param notifier the notifier used to keep the user interface in synch with the DataStore
 	 */
-	public ClientConnection(String name, DomainNotifier notifier)
+	public ClientConnection(String name, IDomainNotifier notifier)
 	{
 		_domainNotifier = notifier;
 		_name = name;
@@ -158,7 +163,7 @@ public class ClientConnection
 	 * @param notifier the notifier used to keep the user interface in synch with the DataStore
 	 * @param initialSize the number of elements to preallocate in the DataStore
 	 */
-	public ClientConnection(String name, DomainNotifier notifier, int initialSize)
+	public ClientConnection(String name, IDomainNotifier notifier, int initialSize)
 	{
 		_domainNotifier = notifier;
 		_name = name;
@@ -214,7 +219,7 @@ public class ClientConnection
 	 *
 	 * @param loader the loader
 	 */
-	public void addLoader(ExternalLoader loader)
+	public void addLoader(IExternalLoader loader)
 	{
 		if (_loaders == null)
 		{
@@ -420,7 +425,7 @@ public class ClientConnection
 		return connect(launchStatus.getTicket());
 	}
 
-	public DataStoreTrustManager getTrustManager()
+	public IDataStoreTrustManager getTrustManager()
 	{
 		if (_trustManager == null)
 		{
@@ -464,7 +469,7 @@ public class ClientConnection
 			{
 				String location = _dataStore.getKeyStoreLocation();
 				String pw = _dataStore.getKeyStorePassword();
-				DataStoreTrustManager mgr = getTrustManager();
+				IDataStoreTrustManager mgr = getTrustManager();
 				SSLContext context = DStoreSSLContext.getClientSSLContext(location, pw, mgr);
 				SSLSocketFactory factory = context.getSocketFactory();
 
@@ -731,7 +736,7 @@ public class ClientConnection
 				{
 					String location = _dataStore.getKeyStoreLocation();
 					String pw = _dataStore.getKeyStorePassword();
-					DataStoreTrustManager mgr = getTrustManager();
+					IDataStoreTrustManager mgr = getTrustManager();
 					SSLContext context = DStoreSSLContext.getClientSSLContext(location, pw, mgr);
 
 					try

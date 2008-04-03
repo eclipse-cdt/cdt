@@ -16,9 +16,11 @@
  * David McKnight  (IBM)   [220892][dstore] Backward compatibility: Server and Daemon should support old clients
  * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  * David McKnight     (IBM)   [224906] [dstore] changes for getting properties and doing exit due to single-process capability
+ * Jacob Garcowski    (IBM)   [225175] [dstore] error handling change for Client
+ * David McKnight   (IBM) - [225507][api][breaking] RSE dstore API leaks non-API types
  *******************************************************************************/
 
-package org.eclipse.dstore.internal.core.server;
+package org.eclipse.dstore.core.server;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -40,7 +42,11 @@ import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.DataStoreAttributes;
 import org.eclipse.dstore.core.model.ISSLProperties;
-import org.eclipse.dstore.core.server.SystemServiceManager;
+import org.eclipse.dstore.internal.core.server.ServerAttributes;
+import org.eclipse.dstore.internal.core.server.ServerCommandHandler;
+import org.eclipse.dstore.internal.core.server.ServerReturnCodes;
+import org.eclipse.dstore.internal.core.server.ServerSSLProperties;
+import org.eclipse.dstore.internal.core.server.ServerUpdateHandler;
 import org.eclipse.dstore.internal.core.util.ExternalLoader;
 import org.eclipse.dstore.internal.core.util.Sender;
 import org.eclipse.dstore.internal.core.util.ssl.DStoreSSLContext;
@@ -220,6 +226,9 @@ public class ConnectionEstablisher
 				ServerReceiver receiver = new ServerReceiver(newSocket, this);
 				_dataStore.addDataStorePreferenceListener(receiver);
 				
+				if (_dataStore.getClient() != null)
+				     _dataStore.getClient().setServerReceiver(receiver);
+				    			
 				Sender sender = new Sender(newSocket, _dataStore);
 
 				// add this connection to list of elements

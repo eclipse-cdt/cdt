@@ -15,9 +15,10 @@
  * David McKnight  (IBM)   [220123][dstore] Configurable timeout on irresponsiveness
  * David McKnight  (IBM)   [222003] Client remains connected after server terminates
  * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
+ * David McKnight   (IBM) - [225507][api][breaking] RSE dstore API leaks non-API types
  *******************************************************************************/
 
-package org.eclipse.dstore.internal.core.util;
+package org.eclipse.dstore.core.util;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -28,6 +29,7 @@ import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.IDataStorePreferenceListener;
 import org.eclipse.dstore.core.server.SecuredThread;
+import org.eclipse.dstore.internal.core.util.XMLparser;
 
 /**
  * This class is used for receiving data from a socket in the DataStore 

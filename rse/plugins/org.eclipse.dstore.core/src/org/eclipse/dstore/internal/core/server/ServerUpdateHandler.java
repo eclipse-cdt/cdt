@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * David McKnight  (IBM)   [222168][dstore] Buffer in DataElement is not sent
+ * David McKnight   (IBM) - [225507][api][breaking] RSE dstore API leaks non-API types
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.server;
@@ -26,7 +27,7 @@ import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.DataStoreResources;
 import org.eclipse.dstore.core.model.UpdateHandler;
-import org.eclipse.dstore.internal.core.util.CommandGenerator;
+import org.eclipse.dstore.core.util.CommandGenerator;
 import org.eclipse.dstore.internal.core.util.Sender;
 
 /**

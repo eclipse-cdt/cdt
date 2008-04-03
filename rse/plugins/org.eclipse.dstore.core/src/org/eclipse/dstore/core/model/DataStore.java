@@ -19,6 +19,7 @@
  * David McKnight  (IBM)  - [222168][dstore] Buffer in DataElement is not sent
  * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  * David McKnight     (IBM)   [224906] [dstore] changes for getting properties and doing exit due to single-process capability
+ * David McKnight   (IBM) - [225507][api][breaking] RSE dstore API leaks non-API types
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -55,10 +56,8 @@ import org.eclipse.dstore.internal.core.client.ClientCommandHandler;
 import org.eclipse.dstore.internal.core.model.DefaultByteConverter;
 import org.eclipse.dstore.internal.core.server.ServerUpdateHandler;
 import org.eclipse.dstore.internal.core.util.DataElementRemover;
-import org.eclipse.dstore.internal.core.util.ExternalLoader;
 import org.eclipse.dstore.internal.core.util.XMLgenerator;
 import org.eclipse.dstore.internal.core.util.XMLparser;
-import org.eclipse.dstore.internal.extra.DomainNotifier;
 
 /**
  * <code>DataStore</code> is the heart of the <code>DataStore</code> Distributed Tooling Framework.
@@ -70,7 +69,7 @@ import org.eclipse.dstore.internal.extra.DomainNotifier;
  * handler is responsible for sending commands, in the form of <code>DataElement</code> trees, to the appropriate
  * implementer, either directly to the miner, or indirectly over the communication layer through a server 
  * <code>DataStore</code>.  The update handler is responsible for notifying listeners about changes in the 
- * <code>DataStore</code>, either directly via a <code>DomainNotifier</code> or indirectly over the communication
+ * <code>DataStore</code>, either directly via a <code>IDomainNotifier</code> or indirectly over the communication
  * layer through a client <code>DataStore</code>.  
  * </p>
  *
@@ -103,7 +102,7 @@ public final class DataStore
 	private ByteStreamHandlerRegistry _byteStreamHandlerRegistry;
 	private ClassByteStreamHandlerRegistry _classbyteStreamHandlerRegistry;
 
-	private DomainNotifier _domainNotifier;
+	private IDomainNotifier _domainNotifier;
 
 	private ArrayList _loaders;
 	private ArrayList _minersLocations;
@@ -208,7 +207,7 @@ public final class DataStore
 	 * @param updateHandler the DataStore's handler for doing updates
 	 * @param domainNotifier the domain notifier 
 	 */
-	public DataStore(DataStoreAttributes attributes, CommandHandler commandHandler, UpdateHandler updateHandler, DomainNotifier domainNotifier)
+	public DataStore(DataStoreAttributes attributes, CommandHandler commandHandler, UpdateHandler updateHandler, IDomainNotifier domainNotifier)
 	{
 		_dataStoreAttributes = attributes;
 		_commandHandler = commandHandler;
@@ -231,7 +230,7 @@ public final class DataStore
 	 * @param domainNotifier the domain notifier 
 	 * @param initialSize the initialNumber of preallocated <code>DataElement</code>s 
 	 */
-	public DataStore(DataStoreAttributes attributes, CommandHandler commandHandler, UpdateHandler updateHandler, DomainNotifier domainNotifier, int initialSize)
+	public DataStore(DataStoreAttributes attributes, CommandHandler commandHandler, UpdateHandler updateHandler, IDomainNotifier domainNotifier, int initialSize)
 	{
 		_dataStoreAttributes = attributes;
 		_commandHandler = commandHandler;
@@ -301,7 +300,7 @@ public final class DataStore
 	 *
 	 * @param loader the loader for the miners this <code>DataStore</code> will be using
 	 */
-	public void addLoader(ExternalLoader loader)
+	public void addLoader(IExternalLoader loader)
 	{
 		if (_loaders == null)
 		{
@@ -416,11 +415,11 @@ public final class DataStore
 	}
 
 	/**
-	 * Sets the <code>DataStore</code>'s DomainNotifier 
+	 * Sets the <code>DataStore</code>'s IDomainNotifier 
 	 *
 	 * @param domainNotifier the domainNotifier
 	 */
-	public void setDomainNotifier(DomainNotifier domainNotifier)
+	public void setDomainNotifier(IDomainNotifier domainNotifier)
 	{
 		_domainNotifier = domainNotifier;
 	}

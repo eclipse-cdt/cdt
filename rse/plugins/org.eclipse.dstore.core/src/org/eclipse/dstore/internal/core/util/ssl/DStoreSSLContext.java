@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM) - [225507][api][breaking] RSE dstore API leaks non-API types
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.util.ssl;
@@ -24,6 +24,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 
 import org.eclipse.dstore.core.util.ssl.DStoreKeyStore;
+import org.eclipse.dstore.core.util.ssl.IDataStoreTrustManager;
 
 
 public class DStoreSSLContext
@@ -51,7 +52,7 @@ public class DStoreSSLContext
 		return serverContext;
 	}
 	
-	public static SSLContext getClientSSLContext(String filePath, String password, DataStoreTrustManager trustManager)
+	public static SSLContext getClientSSLContext(String filePath, String password, IDataStoreTrustManager trustManager)
 	{
 		SSLContext clientContext = null;
 

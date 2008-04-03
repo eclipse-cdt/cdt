@@ -28,6 +28,7 @@
  * Martin Oberhuber (Wind River) - [215820] Move SystemRegistry implementation to Core
  * David McKnight   (IBM)        - [223103] [cleanup] fix broken externalized strings
  * David McKnight   (IBM)        - [224313] [api] Create RSE Events for MOVE and COPY holding both source and destination fields
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -96,6 +97,7 @@ import org.eclipse.rse.ui.model.ISystemShellProvider;
 import org.eclipse.rse.ui.view.IRSEViewPart;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.rse.ui.view.SystemTableView;
+import org.eclipse.rse.ui.view.SystemTableViewProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.layout.GridData;

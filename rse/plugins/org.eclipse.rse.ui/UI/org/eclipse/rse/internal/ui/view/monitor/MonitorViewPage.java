@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Kevin Doyle (IBM) - [177587] changed wrapped selection provider in setFocus()
  * Kevin Doyle		(IBM)		 - [212940] Duplicate Help Context Identifiers
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.monitor;
@@ -41,7 +42,6 @@ import org.eclipse.rse.core.model.ISystemContainer;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.ui.SystemResources;
-import org.eclipse.rse.internal.ui.view.SystemTableViewProvider;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -50,6 +50,7 @@ import org.eclipse.rse.ui.actions.SystemCopyToClipboardAction;
 import org.eclipse.rse.ui.actions.SystemPasteFromClipboardAction;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.rse.ui.view.SystemTableView;
+import org.eclipse.rse.ui.view.SystemTableViewProvider;
 import org.eclipse.rse.ui.widgets.ISystemCollapsableSectionListener;
 import org.eclipse.rse.ui.widgets.SystemCollapsableSection;
 import org.eclipse.swt.SWT;

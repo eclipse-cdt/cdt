@@ -21,6 +21,7 @@
  * Kevin Doyle (IBM) - [212940] Duplicate Help Context Identifiers
  * David McKnight (IBM) - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * Radoslav Gerganov (ProSyst) - [181563] Fix hardcoded Ctrl+Space for remote shell content assist
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  ********************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui.view;
@@ -41,7 +42,6 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.shells.ui.ShellResources;
 import org.eclipse.rse.internal.ui.SystemResources;
-import org.eclipse.rse.internal.ui.view.SystemTableViewProvider;
 import org.eclipse.rse.services.clientserver.PathUtility;
 import org.eclipse.rse.services.clientserver.messages.CommonMessages;
 import org.eclipse.rse.shells.ui.view.CommandEntryViewerConfiguration;
@@ -57,6 +57,7 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemCopyToClipboardAction;
 import org.eclipse.rse.ui.actions.SystemPasteFromClipboardAction;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
+import org.eclipse.rse.ui.view.SystemTableViewProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.dnd.Clipboard;

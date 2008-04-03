@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [180562] dont implement ISystemThemeConstants 
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  ********************************************************************************/
 
 package org.eclipse.rse.shells.ui.view;
@@ -24,13 +25,13 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvent;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.internal.shells.ui.view.SystemCommandsViewProvider;
-import org.eclipse.rse.internal.ui.view.SystemTableViewProvider;
 import org.eclipse.rse.subsystems.shells.core.model.ISystemOutputRemoteTypes;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteOutput;
 import org.eclipse.rse.ui.ISystemThemeConstants;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.view.SystemTableView;
+import org.eclipse.rse.ui.view.SystemTableViewProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -81,7 +82,7 @@ public class SystemCommandsView extends SystemTableView
 	// overridden to produce custom provider
 	protected SystemTableViewProvider getProvider()
 	{
-		if (_provider == null)
+		if (_provider == null) 
 		{
 			_provider = new SystemCommandsViewProvider();
 		}

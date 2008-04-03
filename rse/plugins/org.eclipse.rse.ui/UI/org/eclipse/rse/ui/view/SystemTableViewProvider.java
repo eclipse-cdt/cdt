@@ -14,9 +14,10 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * David McKnight   (IBM)        - [216161] table view needs to handle context when filter reference is input
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  *******************************************************************************/
 
-package org.eclipse.rse.internal.ui.view;
+package org.eclipse.rse.ui.view;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -37,9 +38,9 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.model.ISystemContainer;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.ui.view.ContextObject;
-import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
-import org.eclipse.rse.ui.view.SystemAdapterHelpers;
+import org.eclipse.rse.internal.ui.view.SystemTableViewColumnManager;
+import org.eclipse.rse.internal.ui.view.SystemViewPromptableAdapter;
+import org.eclipse.rse.internal.ui.view.SystemViewRootInputAdapter;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 

@@ -12,12 +12,12 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  *******************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui.view;
 
-import org.eclipse.rse.internal.ui.view.SystemTableViewProvider;
+import org.eclipse.rse.ui.view.SystemTableViewProvider;
 
 public class SystemCommandsViewProvider extends SystemTableViewProvider
 {

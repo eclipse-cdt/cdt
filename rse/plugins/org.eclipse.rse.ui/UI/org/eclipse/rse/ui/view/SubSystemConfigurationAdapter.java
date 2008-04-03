@@ -17,7 +17,8 @@
  * Martin Oberhuber (Wind River) - [190231] Remove UI-only code from SubSystemConfiguration
  * Martin Oberhuber (Wind River) - [174789] [performance] Don't contribute Property Pages to Wizard automatically
  * David McKnight   (IBM)        - [197129] Removing obsolete  ISystemConnectionWizardPropertyPage and SystemSubSystemsPropertiesWizardPage
- * David Dykstal (IBM) - [217556] remove service subsystem types
+ * David Dykstal    (IBM)        - [217556] remove service subsystem types
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -37,6 +38,7 @@ import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager;
+import org.eclipse.rse.core.filters.ISystemFilterPoolWrapperInformation;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.filters.ISystemFilterString;
 import org.eclipse.rse.core.model.ISystemNewConnectionWizardPage;
@@ -574,7 +576,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 				else
 				{
 					boolean anyAdded = false;
-					SystemFilterPoolWrapperInformation poolWrapperInfo = getNewFilterWizardPoolWrapperInformation();
+					ISystemFilterPoolWrapperInformation poolWrapperInfo = getNewFilterWizardPoolWrapperInformation();
 					ISystemProfile[] activeProfiles = RSECorePlugin.getTheSystemRegistry().getActiveSystemProfiles();
 					ISystemProfile activeProfile = selectedSubSystem.getHost().getSystemProfile();
 					for (int idx = 0; idx < activeProfiles.length; idx++)
@@ -609,7 +611,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 * Overridable entry for child classes to supply their own flavour of ISystemFilterPoolWrapperInformation for
 		 *  the new filter wizards.
 		 */
-		protected SystemFilterPoolWrapperInformation getNewFilterWizardPoolWrapperInformation()
+		protected ISystemFilterPoolWrapperInformation getNewFilterWizardPoolWrapperInformation()
 		{
 			return new SystemFilterPoolWrapperInformation(SystemResources.RESID_NEWFILTER_PAGE2_PROFILE_LABEL, SystemResources.RESID_NEWFILTER_PAGE2_PROFILE_TOOLTIP, 
 					SystemResources.RESID_NEWFILTER_PAGE2_PROFILE_VERBIAGE);

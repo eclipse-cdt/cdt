@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * David Dykstal (IBM) - moved SystemPreferencesManager to a new package
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -23,9 +24,6 @@ import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 
-/**
- * @author dmcknigh
- */
 public class SystemTableViewColumnManager
 {
     private Viewer _viewer;

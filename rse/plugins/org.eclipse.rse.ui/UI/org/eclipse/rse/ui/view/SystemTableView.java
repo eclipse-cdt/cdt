@@ -18,6 +18,7 @@
  * David McKnight   (IBM)        - [193329] using "Resource" instead of "Name" in the label column
  * Xuan Chen        (IBM)        - [160775] [api] rename (at least within a zip) blocks UI thread
  * David McKnight   (IBM)        - [224313] [api] Create RSE Events for MOVE and COPY holding both source and destination fields
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -77,7 +78,6 @@ import org.eclipse.rse.internal.ui.view.SystemDecoratingLabelProvider;
 import org.eclipse.rse.internal.ui.view.SystemInheritableTextCellEditor;
 import org.eclipse.rse.internal.ui.view.SystemTableViewColumnManager;
 import org.eclipse.rse.internal.ui.view.SystemTableViewFilter;
-import org.eclipse.rse.internal.ui.view.SystemTableViewProvider;
 import org.eclipse.rse.internal.ui.view.SystemTableViewSorter;
 import org.eclipse.rse.internal.ui.view.SystemView;
 import org.eclipse.rse.internal.ui.view.SystemViewDataDragAdapter;
@@ -257,17 +257,17 @@ public class SystemTableView
 	// of actions.  I say limited because somethings don't yet work properly.
 	protected SystemRefreshAction _refreshAction;
 	protected PropertyDialogAction _propertyDialogAction;
-	protected SystemOpenExplorerPerspectiveAction _openToPerspectiveAction;
-	protected SystemShowInTableAction _showInTableAction;
+	private SystemOpenExplorerPerspectiveAction _openToPerspectiveAction;
+	private SystemShowInTableAction _showInTableAction;
 
 	// global actions
 	// Note the Edit menu actions are set in SystemViewPart. Here we use these
 	//   actions from our own popup menu actions.
-	protected SystemCommonDeleteAction _deleteAction;
+	private SystemCommonDeleteAction _deleteAction;
 	// for global delete menu item	
-	protected SystemCommonRenameAction _renameAction;
+	private SystemCommonRenameAction _renameAction;
 	// for common rename menu item	
-	protected SystemCommonSelectAllAction _selectAllAction;
+	private SystemCommonSelectAllAction _selectAllAction;
 	// for common Ctrl+A select-all
 
 	protected boolean _selectionShowRefreshAction;

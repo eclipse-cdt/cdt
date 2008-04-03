@@ -10,6 +10,7 @@
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
  *                                API to the user actions plugin
+ * Xuan Chen        (IBM)    - [225617] [useraction][api] Remove Team view support inside user action.
  *******************************************************************************/
 package org.eclipse.rse.useractions.ui.compile;
 
@@ -19,15 +20,12 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.internal.ui.view.team.SystemTeamViewSubSystemConfigurationNode;
 import org.eclipse.rse.internal.useractions.IUserActionsImageIds;
 import org.eclipse.rse.internal.useractions.files.compile.UniversalCompileManager;
 import org.eclipse.rse.internal.useractions.ui.compile.SystemCompileManager;
 import org.eclipse.rse.internal.useractions.ui.compile.SystemCompileProfile;
 import org.eclipse.rse.internal.useractions.ui.compile.SystemWorkWithCompileCommandsDialog;
-import org.eclipse.rse.internal.useractions.ui.compile.teamview.SystemTeamViewCompileTypeNode;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemUDAResources;
-import org.eclipse.rse.internal.useractions.ui.uda.SystemUDActionSubsystem;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemBaseDialogAction;
@@ -89,17 +87,7 @@ public class SystemWorkWithCompileCommandsAction extends SystemBaseDialogAction 
 	 * Our opportunity to verify we are allowed for this selected type.
 	 */
 	public boolean updateSelection(IStructuredSelection selection) {
-		boolean enable = true;
-		Object inputObject = selection.getFirstElement();
-		if (inputObject instanceof SystemTeamViewCompileTypeNode) {
-			SystemTeamViewCompileTypeNode typeNode = ((SystemTeamViewCompileTypeNode) inputObject);
-			ISystemProfile currSystemProfile = typeNode.getProfile();
-			enable = currSystemProfile.isActive();
-		} else if (inputObject instanceof SystemTeamViewSubSystemConfigurationNode) {
-			ISystemProfile currSystemProfile = ((SystemTeamViewSubSystemConfigurationNode) inputObject).getProfile();
-			enable = currSystemProfile.isActive();
-		}
-		return enable;
+		return true;
 	}
 
 	/**
@@ -178,11 +166,7 @@ public class SystemWorkWithCompileCommandsAction extends SystemBaseDialogAction 
 				 */
 				dlg.setProfiles(currProfiles);
 				dlg.setCaseSensitive(caseSensitive);
-				if (inputObject instanceof SystemTeamViewCompileTypeNode) {
-					SystemTeamViewCompileTypeNode node = (SystemTeamViewCompileTypeNode) inputObject;
-					dlg.setCompileType(node.getCompileType());
-					dlg.setSupportsAddSrcTypeButton(false);
-				}
+				
 				return dlg;
 		}
 		return null;

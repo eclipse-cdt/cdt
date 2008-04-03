@@ -10,16 +10,14 @@
  * Martin Oberhuber (Wind River) - [180562][api] dont implement ISystemCompileXMLConstants
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Xuan Chen        (IBM)    - [222263] Need to provide a PropertySet Adapter for System Team View (cleanup some use action stuff)
+ * Xuan Chen        (IBM)    - [225617] [useraction][api] Remove Team view support inside user action.
  *******************************************************************************/
 
 package org.eclipse.rse.internal.useractions.ui.compile;
 
-import java.io.File;
 import java.util.Vector;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IProperty;

@@ -2,42 +2,6 @@
 <?eclipse version="3.0"?>
 <plugin>
 
-<!-- ============================================ -->
-<!-- Define Workbench Properties Pages            -->
-<!-- ============================================ -->
-   <extension
-         point="org.eclipse.ui.propertyPages">
-      <page
-            name="%PropertyPage.TeamViewUserActionNode"
-            class="org.eclipse.rse.internal.useractions.ui.propertypages.SystemTeamViewUserActionPropertyPage"
-            id="org.eclipse.rse.ui.SystemTeamViewUserActionPropertyPage">
-         <enabledWhen>
-            <instanceof
-                  value="org.eclipse.rse.internal.useractions.ui.uda.SystemUDActionElement">
-            </instanceof>
-         </enabledWhen>
-      </page>
-      <page
-            name="%PropertyPage.TeamViewCompileTypeNode"
-            class="org.eclipse.rse.internal.useractions.ui.propertypages.SystemTeamViewCompileTypePropertyPage"
-            id="org.eclipse.rse.ui.SystemTeamViewCompileTypePropertyPage">
-         <enabledWhen>
-            <instanceof
-                  value="org.eclipse.rse.internal.useractions.ui.compile.teamview.SystemTeamViewCompileTypeNode">
-            </instanceof>
-         </enabledWhen>
-      </page>
-      <page
-            name="%PropertyPage.TeamViewCompileCommandNode"
-            class="org.eclipse.rse.internal.useractions.ui.propertypages.SystemTeamViewCompileCommandPropertyPage"
-            id="com.ibm.etools.systems.SystemTeamViewCompileCommandPropertyPage">
-         <enabledWhen>
-            <instanceof
-                  value="org.eclipse.rse.internal.useractions.ui.compile.teamview.SystemTeamViewCompileCommandNode">
-            </instanceof>
-         </enabledWhen>
-      </page>
-   </extension>
    
    <extension point="org.eclipse.ui.menus">
      <menuContribution locationURI="popup:org.eclipse.rse.ui.view.systemView">

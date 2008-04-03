@@ -39,6 +39,7 @@
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * Radoslav Gerganov (ProSyst)   - [216195] [dstore] Saving empty file fails
  * David McKnight    (IBM)       - [220379] [api] Provide a means for contributing custom BIDI encodings
+ * David McKnight    (IBM)       - [225573] dstore] client not falling back to single operation when missing batch descriptors (due to old server)
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -1392,29 +1393,43 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			String remotePath = remoteParents[i] + getSeparator(remoteParents[i]) + fileNames[i];
 			DataElement de = getElementFor(remotePath);
 			if (de != null) dataElements.add(de);
-		}	
-		DataElement status = dsStatusCommand((DataElement) dataElements.get(0), dataElements, IUniversalDataStoreConstants.C_DELETE_BATCH, monitor);
-		if (status == null) return false;
-		if (null != monitor && monitor.isCanceled())
-		{
-			//This operation has been canceled by the user.
-			throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID, 
-					ICommonMessageIds.MSG_OPERATION_CANCELED,
-					IStatus.CANCEL, CommonMessages.MSG_OPERATION_CANCELED)); 
 		}
-		String sourceMsg = FileSystemMessageUtil.getSourceMessage(status);
-		// When running a server older than 2.0.1 success is not set for directories, so we must
-		// check if the source message is an empty string
-		if (sourceMsg.equals(IServiceConstants.SUCCESS) || sourceMsg.equals("")) { //$NON-NLS-1$
-			return true;
-		} else {
-			String msgTxt = NLS.bind(ServiceResources.FILEMSG_DELETE_FILE_FAILED, FileSystemMessageUtil.getSourceLocation(status));
-			String msgDetails = ServiceResources.FILEMSG_DELETE_FILE_FAILED_DETAILS;
-			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
-					IDStoreMessageIds.FILEMSG_DELETE_FILE_FAILED,
-					IStatus.ERROR, msgTxt, msgDetails);
+		
+		DataElement status = dsStatusCommand((DataElement) dataElements.get(0), dataElements, IUniversalDataStoreConstants.C_DELETE_BATCH, monitor);
+		if (status != null)
+		{
+			if (null != monitor && monitor.isCanceled())
+			{
+				//This operation has been canceled by the user.
+				throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID, 
+						ICommonMessageIds.MSG_OPERATION_CANCELED,
+						IStatus.CANCEL, CommonMessages.MSG_OPERATION_CANCELED)); 
+			}
+			String sourceMsg = FileSystemMessageUtil.getSourceMessage(status);
+			// When running a server older than 2.0.1 success is not set for directories, so we must
+			// check if the source message is an empty string
+			if (sourceMsg.equals(IServiceConstants.SUCCESS) || sourceMsg.equals("")) { //$NON-NLS-1$
+				return true;
+			} else {
+				String msgTxt = NLS.bind(ServiceResources.FILEMSG_DELETE_FILE_FAILED, FileSystemMessageUtil.getSourceLocation(status));
+				String msgDetails = ServiceResources.FILEMSG_DELETE_FILE_FAILED_DETAILS;
+				SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+						IDStoreMessageIds.FILEMSG_DELETE_FILE_FAILED,
+						IStatus.ERROR, msgTxt, msgDetails);
+				
+				throw new SystemMessageException(msg);	
+			}
+		}
+		else {
+			// no delete batch descriptor so need to fall back to single command approach
+			boolean result = true;
+			for (int i = 0; i < remoteParents.length && result; i++){
+				String parent = remoteParents[i];
+				String name = fileNames[i];
+				result = delete(parent, name, monitor);				
+			}
+			return result;
 			
-			throw new SystemMessageException(msg);	
 		}
 	}
 
@@ -1734,7 +1749,17 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			}
 			return true;
 		}
-		return false;
+		else {
+			// no copy batch descriptor so need to fall back to single command approach
+			boolean result = true;
+			for (int i = 0; i < srcParents.length && result; i++){
+				String parent = srcParents[i];
+				String name = srcNames[i];
+				result = copy(parent, name, tgtParent, name, monitor);				
+			}
+			return result;
+			
+		}
 	}
 
 

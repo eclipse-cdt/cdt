@@ -18,6 +18,7 @@ import org.eclipse.cdt.internal.core.index.CIndex;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
@@ -36,7 +37,15 @@ public class PDOMPrettyPrinter implements IPDOMVisitor {
 
 	public boolean visit(IPDOMNode node) throws CoreException {
 		indent.append(step);
-		System.out.println(indent+""+node);
+		StringBuilder sb= new StringBuilder();
+		sb.append(indent);
+		sb.append(node);
+		if(node instanceof PDOMBinding) {
+			sb.append("  ");
+			PDOMBinding binding= (PDOMBinding) node;
+			sb.append(" "+binding.getRecord());
+		}
+		System.out.println(sb);
 		return true;
 	}
 

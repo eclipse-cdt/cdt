@@ -297,7 +297,15 @@ public class AST2BaseTest extends BaseTestCase {
                 return null;
             return nameList.get(idx);
         }
-        public int size() { return nameList.size(); } 
+        public int size() { return nameList.size(); }
+        
+        public void dump() {
+        	for(int i=0; i<size(); i++) {
+        		IASTName name= getName(i);
+        		String parent= name.getParent() != null ? name.getParent().getRawSignature() : "";
+        		System.out.println(i+": #"+name.getRawSignature()+"# "+parent);
+        	}
+        }
     }
 
     protected void assertInstances( CPPNameCollector collector, IBinding binding, int num ) throws Exception {

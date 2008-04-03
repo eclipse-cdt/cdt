@@ -17,7 +17,6 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -37,6 +36,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 public class BaseTestCase extends TestCase {
@@ -117,7 +117,7 @@ public class BaseTestCase extends TestCase {
 
 	@Override
 	public void runBare() throws Throwable {
-		final List statusLog= Collections.synchronizedList(new ArrayList());
+		final List<IStatus> statusLog= Collections.synchronizedList(new ArrayList());
 		ILogListener logListener= new ILogListener() {
 			public void logging(IStatus status, String plugin) {
 				if(!status.isOK() && status.getSeverity() != IStatus.INFO) {
@@ -143,13 +143,20 @@ public class BaseTestCase extends TestCase {
 				msg.append("non-OK status objects differs from actual ("+statusLog.size()+").\n");
 				Throwable cause= null;
 				if(!statusLog.isEmpty()) {
-					for(Iterator i= statusLog.iterator(); i.hasNext(); ) {
-						IStatus status= (IStatus) i.next();
-						if(cause==null) {
-							cause= status.getException();
+					for(IStatus status : statusLog) {
+						IStatus[] ss= {status};
+						ss= status instanceof MultiStatus ? ((MultiStatus)status).getChildren() : ss; 
+						for(IStatus s : ss) {
+							msg.append("\t"+s.getMessage()+" ");
+							
+							Throwable t= s.getException();
+							cause= (cause==null) ? t : cause;
+							if(t != null) {
+								msg.append(t.getMessage()!=null ? t.getMessage() : t.getClass().getCanonicalName());
+							}
+							
+							msg.append("\n");
 						}
-						Throwable t= status.getException();
-						msg.append("\t"+status.getMessage()+" "+(t!=null?t.getMessage():"")+"\n");
 					}
 				}
 				AssertionFailedError afe= new AssertionFailedError(msg.toString());

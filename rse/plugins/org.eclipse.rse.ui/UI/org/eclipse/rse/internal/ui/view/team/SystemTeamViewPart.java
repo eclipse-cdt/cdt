@@ -20,6 +20,7 @@
  * Xuan Chen          (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
  * Martin Oberhuber (Wind River) - [cleanup] Avoid using SystemStartHere in production code
  * David Dykstal (IBM) - [202630] getDefaultPrivateProfile() and ensureDefaultPrivateProfile() are inconsistent
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.team;
@@ -155,7 +156,6 @@ public class SystemTeamViewPart
 	protected SystemTeamViewRefreshAllAction toolBarRefreshAllAction, menuRefreshAllAction;
 	protected SystemCollapseAllAction collapseAllAction;
 	
-	protected ISystemViewElementAdapter profileAdapter = RSEUIPlugin.getDefault().getSystemViewAdapterFactory().getProfileAdapter();
 
 	// remember-state variables...	
 	private IMemento                 fMemento;
@@ -1425,7 +1425,9 @@ public class SystemTeamViewPart
 					break;
 				case 3:
 					if (profile != null) {
-						SystemTeamViewProfileAdapter profileAdapter = (SystemTeamViewProfileAdapter) RSEUIPlugin.getDefault().getSystemViewAdapterFactory().getAdapter(profile, SystemTeamViewProfileAdapter.class);
+						
+						
+						SystemTeamViewProfileAdapter profileAdapter = (SystemTeamViewProfileAdapter)((IAdaptable)profile).getAdapter(ISystemViewElementAdapter.class);
 						category = profileAdapter.restoreCategory(profile, token);
 					}
 				    //System.out.println("Restored category: "+(category==null?"null":category.getLabel()));					

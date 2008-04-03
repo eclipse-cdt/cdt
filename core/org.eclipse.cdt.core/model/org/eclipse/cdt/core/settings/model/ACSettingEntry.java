@@ -83,7 +83,7 @@ public abstract class ACSettingEntry implements ICSettingEntry {
 	}
 	
 	protected int getByNameMatchFlags(){
-		return (fFlags & (~ (BUILTIN | READONLY)));
+		return (fFlags & (~ (BUILTIN | READONLY | RESOLVED)));
 	}
 
 	public final boolean equalsByName(ICSettingEntry entry) {

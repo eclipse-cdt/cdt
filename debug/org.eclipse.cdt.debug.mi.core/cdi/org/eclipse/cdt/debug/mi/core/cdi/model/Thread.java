@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Alena Laskavaia (QNX) - Bug 221224
+ *     Oyvind Harboe (oyvind.harboe@zylin.com) - Bug 86676
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.cdi.model;
 
@@ -185,7 +186,15 @@ public class Thread extends CObject implements ICDIThread {
 						}
 					}
 				} catch (MIException e) {
-					throw new MI2CDIException(e);
+					/* GDB has a bug where it fails to evaluate the stack depth, this must, ultimately
+					 * be fixed in GDB. GNAT nr 2395
+					 * 
+					 * http://sourceware.org/cgi-bin/gnatsweb.pl?cmd=view%20audit-trail&database=gdb&pr=2395
+					 */
+					// Bug#86676 fix:
+					// 
+					// 1 is safe
+					stackdepth = 1;
 				} finally {
 					target.setCurrentThread(currentThread, false);
 				}

@@ -135,6 +135,7 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 *              should be exactly one fileType specified per parent.
 	 * 				For the default list of available file types see <code>IFileServiceContants</code>
 	 * @param monitor the progress monitor
+	 * @since 3.0
 	 */
 	public IRemoteFile[] listMultiple(IRemoteFile[] parents, String[] fileNameFilters, int[] fileTypes,  IProgressMonitor monitor) throws SystemMessageException;
 
@@ -145,6 +146,7 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 * @param fileType - indicates whether to query files, folders, both or some other type. This fileType is used for each parent query.
 	 * 				For the default list of available file types see <code>IFileServiceContants</code>
 	 * @param monitor the progress monitor
+	 * @since 3.0
 	 */
 	public IRemoteFile[] listMultiple(IRemoteFile[] parents, int fileType, IProgressMonitor monitor) throws SystemMessageException;		
 	
@@ -160,6 +162,7 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 *      {@link IFileService#FILE_TYPE_FOLDERS}, and 
 	 *      {@link IFileService#FILE_TYPE_FILES_AND_FOLDERS}.
 	 * @param monitor the progress monitor
+	 * @since 3.0
 	 */
 	public IRemoteFile[] listMultiple(IRemoteFile[] parents, String[] fileNameFilters, int fileType,  IProgressMonitor monitor) throws SystemMessageException;
 
@@ -169,6 +172,7 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 * 
 	 * @param parent The parent folder to list folders and/or files in
 	 * @param monitor the progress monitor
+	 * @since 3.0
 	 */
 	public IRemoteFile[] list(IRemoteFile parent, IProgressMonitor monitor) throws SystemMessageException;
 	
@@ -181,6 +185,7 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 *      {@link IFileService#FILE_TYPE_FOLDERS}, and 
 	 *      {@link IFileService#FILE_TYPE_FILES_AND_FOLDERS}.
 	 * @param monitor the progress monitor
+	 * @since 3.0
 	 */
 	public IRemoteFile[] list(IRemoteFile parent, int fileType, IProgressMonitor monitor) throws SystemMessageException;		
 	
@@ -193,6 +198,7 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 * @param fileType - indicates whether to query files, folders, both or some other type.
 	 * 					For the default list of available file types see <code>IFileServiceContants</code>
 	 * @param monitor the progress monitor
+	 * @since 3.0
 	 */
 	public IRemoteFile[] list(IRemoteFile parent, String fileNameFilter, int fileType,  IProgressMonitor monitor) throws SystemMessageException;
 
@@ -207,6 +213,7 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 * @param fileType - indicates whether to query files, folders, both or some other type
 	 * 				For the default list of available file types see <code>IFileServiceContants</code>
 	 * @param monitor the progress monitor
+	 * @since 3.0
 
 	 */
 	public IRemoteFile[] list(IRemoteFile parent, String fileNameFilter, IRemoteFileContext context, int fileType, IProgressMonitor monitor) throws SystemMessageException;
@@ -268,6 +275,7 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 * @param monitor the progress monitor
 	 * 
 	 * @return the set of resources
+	 * @since 3.0
 	 */
 	public IRemoteFile[] getRemoteFileObjects(String[] folderOrFileNames, IProgressMonitor monitor) throws SystemMessageException;
 	
@@ -516,6 +524,7 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 * @throws SystemMessageException if an error occurs. 
 	 *     Typically this would be one of those in the 
 	 *     {@link RemoteFileException} family.
+	 * @since 3.0
 	 */
 	public void downloadMultiple(IRemoteFile[] sources, String[] destinations, String[] encodings, IProgressMonitor monitor) throws SystemMessageException;
 	
@@ -582,6 +591,7 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 * @throws SystemMessageException if an error occurs. 
 	 *     Typically this would be one of those in the 
 	 *     {@link RemoteFileException} family.
+	 * @since 3.0
 	 */
 	public void uploadMultiple(String[] sources, IRemoteFile[] destinations, String[] encodings, IProgressMonitor monitor) throws SystemMessageException;
 
@@ -603,6 +613,7 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 * @throws SystemMessageException if an error occurs. 
 	 *     Typically this would be one of those in the
 	 *     {@link RemoteFileException} family.
+	 * @since 3.0
 	 */
 	public void uploadMultiple(String sources[], String[] srcEncodings, String[] remotePaths, String[] rmtEncodings,  IProgressMonitor monitor) throws SystemMessageException;
 	
@@ -683,6 +694,7 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 * display or enable themselves based on result of this call.
 	 * 
 	 * @return whether this service supports encoding conversion
+	 * @since 3.0
 	 */
 	public boolean supportsEncodingConversion();
 }

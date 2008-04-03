@@ -1594,6 +1594,7 @@ public class UniversalFileTransferUtility
 	 * @param monitor the progress monitor
 	 * @param checkForCollisions indicates whether to check for colllisions or not
 	 * @return the result remote object
+	 * @since 3.0
 	 */
 	public static Object uploadResourceFromWorkspace(IResource srcFileOrFolder, IRemoteFile targetFolder, IProgressMonitor monitor, boolean checkForCollisions)
 	{
@@ -1992,6 +1993,9 @@ public class UniversalFileTransferUtility
 		return archiveType;
 	}
 
+	/**
+	 * @since 3.0
+	 */
 	public static IResource compressedDownloadToWorkspace(IRemoteFile directory, IProgressMonitor monitor) throws Exception
 	{
 		if (!directory.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement()) return null;
@@ -2417,6 +2421,9 @@ public class UniversalFileTransferUtility
 	}
 
 
+	/**
+	 * @since 3.0
+	 */
 	public static String getActualHostFor(IRemoteFileSubSystem subsystem, String remotePath)
 	{
 		String hostname = subsystem.getHost().getHostName();
@@ -2428,6 +2435,9 @@ public class UniversalFileTransferUtility
 		return hostname;
 	}
 
+	/**
+	 * @since 3.0
+	 */
 	public static String getActualHostFor(String hostname, String remotePath, IRemoteFileSubSystem subsystem)
 	{
 		return SystemRemoteEditManager.getInstance().getActualHostFor(hostname, remotePath, subsystem);
@@ -2465,6 +2475,9 @@ public class UniversalFileTransferUtility
 		return false;
 	}
 
+	/**
+	 * @since 3.0
+	 */
 	protected static boolean isRemoteFileMounted(String hostname, String remotePath, IRemoteFileSubSystem subsystem)
 	{
 		String result = SystemRemoteEditManager.getInstance().getActualHostFor(hostname, remotePath, subsystem);
@@ -2550,6 +2563,9 @@ public class UniversalFileTransferUtility
 			return false;
 	}
 
+	/**
+	 * @since 3.0
+	 */
 	public static class RenameRunnable implements Runnable
 	{
 		private IRemoteFile _targetFileOrFolder;
@@ -2557,8 +2573,17 @@ public class UniversalFileTransferUtility
 		private List _namesInUse = new ArrayList();
 		private int cancelStatus;
 
+		/**
+		 * @since 3.0
+		 */
 		public static int RENAME_DIALOG_NOT_CANCELED = -1;
+		/**
+		 * @since 3.0
+		 */
 		public static int RENAME_DIALOG_CANCELED = 0;
+		/**
+		 * @since 3.0
+		 */
 		public static int RENAME_DIALOG_CANCELED_ALL = 1;
 
 		public RenameRunnable(IRemoteFile targetFileOrFolder)
@@ -2695,6 +2720,7 @@ public class UniversalFileTransferUtility
 	 * @return the set of temp files created as a result of the download.
 	 * 
 	 * @deprecated use downloadResourcesToWorkspaceMultiple
+	 * @since 3.0
 	 */
 	public static SystemWorkspaceResourceSet copyRemoteResourcesToWorkspaceMultiple(SystemRemoteResourceSet remoteSet, IProgressMonitor monitor)
 	{

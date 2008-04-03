@@ -489,4 +489,17 @@
             contentMergeViewerId="org.eclipse.cdt.make.ui.compare.MakefileContentViewerCreator">
 	  </contentTypeBinding>
    </extension>
+   <!-- compare font -->
+   <extension
+       point="org.eclipse.ui.themes">
+      <fontDefinition
+            label="%makeCompareFontDefinition.label"
+            defaultsTo="org.eclipse.jface.textfont"
+            categoryId="org.eclipse.compare.contentmergeviewer.TextMergeViewer"
+            id="org.eclipse.cdt.make.internal.ui.compare.MakefileMergeViewer">
+         <description>
+            %makeCompareFontDefinition.description
+         </description>
+      </fontDefinition>
+   </extension>
 </plugin>

@@ -133,6 +133,9 @@ public interface ISystemMessages
 	public static final String MSG_MOVEGENERIC_PROGRESS = "RSEG1116"; //$NON-NLS-1$
 	public static final String MSG_COPYTHINGGENERIC_PROGRESS = "RSEG1117";	 //$NON-NLS-1$
 	public static final String MSG_MOVETHINGGENERIC_PROGRESS = "RSEG1118"; //$NON-NLS-1$
+	/**
+	 * @since 3.0
+	 */
 	public static final String MSG_RENAMEGENERIC_PROGRESS = "RSEG1142";	 //$NON-NLS-1$
 
 	public static final String MSG_VALIDATE_SRCTYPE_EMPTY    = "RSEG1192"; //$NON-NLS-1$
@@ -148,6 +151,9 @@ public interface ISystemMessages
 	
 	//public static final String MSG_OPERATION_PREFIX = MSG_PREFIX + "Operation.";
 	public static final String MSG_OPERATION_FAILED      = "RSEG1066"; 		 //$NON-NLS-1$
+	/**
+	 * @since 3.0
+	 */
 	public static final String MSG_OPERATION_CANCELED   = "RSEG1067";		 //$NON-NLS-1$
 
 
@@ -162,6 +168,9 @@ public interface ISystemMessages
     // UNIVERSAL FILE MESSAGES...
     // --------------------------	
 	public static final String FILEMSG_RENAME_INTERRUPTED = "RSEG1246"; //$NON-NLS-1$
+	/**
+	 * @since 3.0
+	 */
 	public static final String FILEMSG_DELETE_INTERRUPTED = "RSEG1247"; //$NON-NLS-1$
 
 
@@ -170,6 +179,9 @@ public interface ISystemMessages
     // --------------------------	
 	//public static final String MSG_EXPAND_PREFIX = MSG_PREFIX + "Expand.";
 	public static final String MSG_EXPAND_FAILED    = "RSEG1098"; //MSG_EXPAND_PREFIX + "Failed"; //$NON-NLS-1$
+	/**
+	 * @since 3.0
+	 */
 	public static final String MSG_EXPAND_CANCELED = "RSEG1067"; //MSG_EXPAND_PREFIX + "Cancelled"; //$NON-NLS-1$
 	// Message vetoed by UCD
 	//public static final String MSG_EXPAND_CANCELED = "RSEG1099"; //MSG_EXPAND_PREFIX + "Cancelled";

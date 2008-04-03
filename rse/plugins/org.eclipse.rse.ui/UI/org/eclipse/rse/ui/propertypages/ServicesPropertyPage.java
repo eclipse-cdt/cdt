@@ -67,6 +67,9 @@ public abstract class ServicesPropertyPage extends SystemBasePropertyPage
 	
 	protected abstract ServiceElement[] getServiceElements();
 	
+	/**
+	 * @since 3.0
+	 */
 	protected abstract ISubSystemConfiguration getCurrentSubSystemConfiguration();
 
 	public boolean performOk()

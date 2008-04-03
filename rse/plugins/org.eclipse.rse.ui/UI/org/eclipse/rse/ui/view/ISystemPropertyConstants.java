@@ -56,14 +56,26 @@ public interface ISystemPropertyConstants extends IBasicPropertyConstants
 	public static final String P_FILE_PATH         = P_PREFIX+"file.path";	 //$NON-NLS-1$
 	public static final String P_FILE_CANONICAL_PATH = P_PREFIX+"file.canonicalpath";	 //$NON-NLS-1$
 	public static final String P_FILE_CLASSIFICATION= P_PREFIX+"file.classification"; //$NON-NLS-1$
-	public static final String P_FILE_EXTENSION = P_PREFIX+"file.extension";
+	/**
+	 * @since 3.0
+	 */
+	public static final String P_FILE_EXTENSION = P_PREFIX+"file.extension"; //$NON-NLS-1$
 	public static final String P_FILE_READONLY     = P_PREFIX+"file.readonly"; //$NON-NLS-1$
 	public static final String P_FILE_READABLE     = P_PREFIX+"file.readable"; //$NON-NLS-1$
 	public static final String P_FILE_WRITABLE     = P_PREFIX+"file.writable"; //$NON-NLS-1$
 	public static final String P_FILE_HIDDEN       = P_PREFIX+"file.hidden"; //$NON-NLS-1$
 	
+	/**
+	 * @since 3.0
+	 */
 	public static final String P_FILE_PERMISSIONS  = P_PREFIX+"file.permissions"; //$NON-NLS-1$
+	/**
+	 * @since 3.0
+	 */
 	public static final String P_FILE_OWNER        = P_PREFIX+"file.owner"; //$NON-NLS-1$
+	/**
+	 * @since 3.0
+	 */
 	public static final String P_FILE_GROUP        = P_PREFIX+"file.group"; //$NON-NLS-1$
 	
 	

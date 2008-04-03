@@ -184,6 +184,7 @@ public interface ISystemViewElementAdapter extends IPropertySource, ISystemDragD
 	 * 
 	 * @param element the element to check
 	 * @return true if the element exists
+	 * @since 3.0
 	 */
 	public boolean exists(Object element);
 	
@@ -329,6 +330,7 @@ public interface ISystemViewElementAdapter extends IPropertySource, ISystemDragD
 	public boolean canRename(Object element);
 	/**
 	 * Perform the rename on the given item. 
+	 * @since 3.0
 	 */
 	public boolean doRename(Shell shell, Object element, String name, IProgressMonitor monitor)
 	    throws Exception;	

@@ -74,16 +74,19 @@ public interface ISystemRegistryUI extends ISystemShellProvider {
 	// ----------------------------
 	/**
 	 * Are connection names to be qualified by profile name?
+	 * @since 3.0
 	 */
 	public boolean getQualifiedHostNames();
 
 	/**
 	 * Set if connection names are to be qualified by profile name
+	 * @since 3.0
 	 */
 	public void setQualifiedHostNames(boolean set);
 
 	/**
 	 * Reflect the user changing the preference for showing filter pools.
+	 * @since 3.0
 	 */
 	public void setShowFilterPools(boolean show);
 
@@ -94,6 +97,7 @@ public interface ISystemRegistryUI extends ISystemShellProvider {
 	 */
 	/**
 	 * Reflect the user changing the preference for showing new connection prompt
+	 * @since 3.0
 	 */
 	public void setShowNewHostPrompt(boolean show);
 

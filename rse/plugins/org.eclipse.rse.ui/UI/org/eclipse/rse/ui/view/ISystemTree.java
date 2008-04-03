@@ -130,6 +130,7 @@ public interface ISystemTree {
 	 * @param remoteObject - The remote object to find.
 	 * @param parentItem - Optionally, the parent item to start the search at
 	 * @return TreeItem hit if found
+	 * @since 3.0
 	 */
 	public Item findFirstRemoteItemReference(Object remoteObject, Item parentItem);
 	
@@ -141,12 +142,14 @@ public interface ISystemTree {
 	 * @return the filter reference to the filter if found and expanded. This is a unique binary address 
 	 *   within the object's in this tree, so can be used in the viewer methods to affect this particular
 	 *   node.
+	 * @since 3.0
 	 */
 	public ISystemFilterReference revealAndExpand(ISubSystem parentSubSystem, ISystemFilter filter);
 	
 	/**
 	 * Return the Tree widget
 	 * @return tree widget
+	 * @since 3.0
 	 */
 	public Tree getTree();
 	
@@ -155,6 +158,7 @@ public interface ISystemTree {
 	 * 
 	 * @param widget the parent item for the items to create
 	 * @param children the children to create items for
+	 * @since 3.0
 	 */
 	public void createTreeItems(TreeItem widget, Object[] children);
 	
@@ -171,6 +175,7 @@ public interface ISystemTree {
 	 *    get a new List created and returned with the hits.
 	 * @return the List populated with hits, or <code>null</code> if <code>null</code>
 	 *    was passed in as the List to populate and no hits were found.
+	 * @since 3.0
 	 */
 	public List findAllRemoteItemReferences(Object element, Object elementObject, List matches);
 	

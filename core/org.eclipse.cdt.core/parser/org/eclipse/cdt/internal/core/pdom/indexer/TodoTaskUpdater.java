@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Google, Inc and others.
+ * Copyright (c) 2007, 2008 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -141,6 +141,7 @@ public class TodoTaskUpdater implements ITodoTaskUpdater {
 		// run this in a job in order not to block the indexer (bug 210730).
 		if (!pathToTaskList.isEmpty()) {
 			Job job= new Job(Messages.TodoTaskUpdater_UpdateJob) {
+				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					MultiStatus status= new MultiStatus(CCorePlugin.PLUGIN_ID, 0,
 							Messages.TodoTaskUpdater_UpdateJob, null);
@@ -205,8 +206,12 @@ public class TodoTaskUpdater implements ITodoTaskUpdater {
 		
 		// run this in a job in order not to block the indexer (bug 210730).
 		Job job= new Job(Messages.TodoTaskUpdater_DeleteJob) {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
+					if (resource == null || !resource.exists()) {
+						return Status.CANCEL_STATUS;
+					}
 					resource.deleteMarkers(ICModelMarker.TASK_MARKER, false, IResource.DEPTH_INFINITE);
 				} catch (CoreException e) {
 					if (resource.exists()) {

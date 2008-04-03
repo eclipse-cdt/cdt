@@ -32,6 +32,7 @@
  * Johnson Ma (Wind River) - [195402] Add tar.gz archive support
  * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  * David McKnight     (IBM)   [224906] [dstore] changes for getting properties and doing exit due to single-process capability
+ * David McKnight     (IBM)   [225507] [api][breaking] RSE dstore API leaks non-API types
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -56,7 +57,6 @@ import org.eclipse.rse.internal.dstore.universal.miners.filesystem.CopySingleThr
 import org.eclipse.rse.internal.dstore.universal.miners.filesystem.CreateFileThread;
 import org.eclipse.rse.internal.dstore.universal.miners.filesystem.CreateFolderThread;
 import org.eclipse.rse.internal.dstore.universal.miners.filesystem.DeleteThread;
-import org.eclipse.rse.internal.dstore.universal.miners.filesystem.FileClassifier;
 import org.eclipse.rse.internal.dstore.universal.miners.filesystem.FileDescriptors;
 import org.eclipse.rse.internal.dstore.universal.miners.filesystem.FileQueryThread;
 import org.eclipse.rse.internal.dstore.universal.miners.filesystem.RenameThread;
@@ -107,11 +107,6 @@ public class UniversalFileSystemMiner extends Miner {
 		_archiveHandlerManager.setRegisteredHandler("tar", SystemTarHandler.class); //$NON-NLS-1$
 	}
 
-	protected FileClassifier getFileClassifier(DataElement subject)
-	{
-	    return new FileClassifier(subject);
-	}
-	
 	/**
 	 * @see Miner#handleCommand(DataElement)
 	 */
@@ -197,10 +192,6 @@ public class UniversalFileSystemMiner extends Miner {
 				return handleQuerycanWriteProperty(subject, status);
 		} else if (IUniversalDataStoreConstants.C_QUERY_ADVANCE_PROPERTY.equals(name)) {
 				return handleQueryAdvanceProperty(subject, status);
-		} else if (IUniversalDataStoreConstants.C_QUERY_FILE_CLASSIFICATIONS.equals(name)) { 
-				return handleQueryFileClassification(subject, status);
-		} else if (IUniversalDataStoreConstants.C_QUERY_FILE_CLASSIFICATION.equals(name)) {
-				return handleQueryFileClassification(subject, status);
 		} else if (IUniversalDataStoreConstants.C_QUERY_EXISTS.equals(name)) { 
 				return handleQueryExists(subject, status, queryType);
 		} else if (IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT.equals(name)) { 
@@ -823,15 +814,6 @@ public class UniversalFileSystemMiner extends Miner {
 		// log error currently there are no advance properties for Universal
 		// Files
 		return statusDone(status);
-	}
-
-	protected DataElement handleQueryFileClassification(DataElement subject, DataElement status) {
-
-		FileClassifier classifier = getFileClassifier(subject);
-		classifier.start();
-		statusDone(status);
-
-		return status;
 	}
 
 	/**
@@ -1550,8 +1532,6 @@ public class UniversalFileSystemMiner extends Miner {
 		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "GetBasicProperty", IUniversalDataStoreConstants.C_QUERY_BASIC_PROPERTY); //$NON-NLS-1$
 		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "GetcanWriteProperty", IUniversalDataStoreConstants.C_QUERY_CAN_WRITE_PROPERTY); //$NON-NLS-1$
 
-		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "GetFileClassifications", IUniversalDataStoreConstants.C_QUERY_FILE_CLASSIFICATIONS); //$NON-NLS-1$ 
-		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "GetFolderClassifications", IUniversalDataStoreConstants.C_QUERY_FILE_CLASSIFICATION); //$NON-NLS-1$ 
 		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "Exists", IUniversalDataStoreConstants.C_QUERY_EXISTS); //$NON-NLS-1$
 		//create createFolderDescriptor and make it cancelable
 		DataElement createNewFileInFolderDescriptor = createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "CreateNewFile", IUniversalDataStoreConstants.C_CREATE_FILE); //$NON-NLS-1$
@@ -1764,12 +1744,10 @@ public class UniversalFileSystemMiner extends Miner {
 	{
 		File fileobj = null;
 		boolean isVirtual = false;
-		boolean isFilter = false;
 		String fullName = subject.getValue();
 		String queryType = subject.getType();
 		if (queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR)) 
 		{
-			isFilter = true;
 			isVirtual = ArchiveHandlerManager.isVirtual(fullName);
 			String filterValue = subject.getValue();
 			// . translates to home dir
@@ -1918,7 +1896,7 @@ public class UniversalFileSystemMiner extends Miner {
 		return status;
 	}
 
-	
+	/* - not used right now so commenting out
 	private String simpleShellCommand(String cmd)
 	{
 		String result = null;
@@ -1945,6 +1923,8 @@ public class UniversalFileSystemMiner extends Miner {
 		return result;
 	        	
 	}
+	
+	*/
 	
 	private String simpleShellCommand(String cmd, File file)
 	{

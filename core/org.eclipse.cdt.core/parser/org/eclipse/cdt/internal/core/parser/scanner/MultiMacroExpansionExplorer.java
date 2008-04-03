@@ -18,6 +18,10 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorElifStatement;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -65,6 +69,7 @@ public class MultiMacroExpansionExplorer extends MacroExpansionExplorer {
 			throw new IllegalArgumentException();
 		}
 		final ILocationResolver resolver = getResolver(tu);
+		final IASTNodeSelector nodeLocator= tu.getNodeSelector(null);
 		final IASTPreprocessorMacroExpansion[] expansions= resolver.getMacroExpansions(loc);
 		final int count= expansions.length;
 
@@ -87,11 +92,14 @@ public class MultiMacroExpansionExplorer extends MacroExpansionExplorer {
 				IASTFileLocation refLoc= expansion.getFileLocation();
 				int from= refLoc.getNodeOffset()-firstOffset;
 				int to= from+refLoc.getNodeLength();
+				IASTNode enclosing= nodeLocator.findEnclosingNode(from+firstOffset-1, 2);
+				boolean isPPCond= enclosing instanceof IASTPreprocessorIfStatement ||
+					enclosing instanceof IASTPreprocessorElifStatement;
 				fBoundaries[++bidx]= from;
 				fBoundaries[++bidx]= to;
 				fDelegates[++didx]= new SingleMacroExpansionExplorer(new String(fSource, from, to-from), 
 						refs.toArray(new IASTName[refs.size()]), fMacroLocations,
-						fFilePath, refLoc.getStartingLineNumber());
+						fFilePath, refLoc.getStartingLineNumber(), isPPCond);
 			}
 		}
 		fBoundaries[++bidx]= fSource.length;

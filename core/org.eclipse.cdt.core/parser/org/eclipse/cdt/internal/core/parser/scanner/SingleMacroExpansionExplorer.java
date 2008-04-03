@@ -36,17 +36,20 @@ public class SingleMacroExpansionExplorer extends MacroExpansionExplorer {
 	private final CharArrayMap<PreprocessorMacro> fDictionary;
 	private MacroExpansionStep fFullExpansion;
 	private int fExpansionCount;
-	private String fFilePath;
-	private int fLineNumber;
+	private final String fFilePath;
+	private final int fLineNumber;
 	private final Map<IMacroBinding, IASTFileLocation> fMacroLocationMap;
+	private final boolean fIsPPCondition;
 
 	public SingleMacroExpansionExplorer(String input, IASTName[] refs, 
-			Map<IMacroBinding, IASTFileLocation> macroDefinitionLocationMap, String filePath, int lineNumber) {
+			Map<IMacroBinding, IASTFileLocation> macroDefinitionLocationMap, 
+			String filePath, int lineNumber, boolean isPPCondition) {
 		fInput= input;
 		fDictionary= createDictionary(refs);
 		fMacroLocationMap= macroDefinitionLocationMap;
 		fFilePath= filePath;
 		fLineNumber= lineNumber;
+		fIsPPCondition= isPPCondition;
 	}
 
 	private CharArrayMap<PreprocessorMacro> createDictionary(IASTName[] refs) {
@@ -79,7 +82,7 @@ public class SingleMacroExpansionExplorer extends MacroExpansionExplorer {
 	private void computeExpansion() {
 		MacroExpander expander= new MacroExpander(ILexerLog.NULL, fDictionary, null, LEX_OPTIONS);
 		MacroExpansionTracker tracker= new MacroExpansionTracker(Integer.MAX_VALUE);
-		expander.expand(fInput, tracker, fFilePath, fLineNumber);
+		expander.expand(fInput, tracker, fFilePath, fLineNumber, fIsPPCondition);
 		
 		fExpansionCount= tracker.getStepCount();
 		ReplaceEdit r= tracker.getReplacement();
@@ -95,7 +98,7 @@ public class SingleMacroExpansionExplorer extends MacroExpansionExplorer {
 		}
 		MacroExpander expander= new MacroExpander(ILexerLog.NULL, fDictionary, null, LEX_OPTIONS);
 		MacroExpansionTracker tracker= new MacroExpansionTracker(step);
-		expander.expand(fInput, tracker, fFilePath, fLineNumber);
+		expander.expand(fInput, tracker, fFilePath, fLineNumber, fIsPPCondition);
 		
 		fExpansionCount= tracker.getStepCount();
 		ReplaceEdit r= tracker.getReplacement();

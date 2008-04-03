@@ -11,12 +11,14 @@
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.BitSet;
 import java.util.IdentityHashMap;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 import org.eclipse.cdt.core.parser.util.CharArrayMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -49,10 +51,12 @@ public class MacroExpander {
 			fIsStart= isStart;
 		}
 
+		@Override
 		public char[] getCharImage() {
 			return CharArrayUtils.EMPTY;
 		}
 		
+		@Override
 		public String toString() {
 			return "{" + (fIsStart ? '+' : '-') + fMacro.getName() + '}';  //$NON-NLS-1$
 		}
@@ -152,7 +156,7 @@ public class MacroExpander {
 	/** 
 	 * Expects that the identifier has been consumed, stores the result in the list provided.
 	 */
-	public TokenList expand(Lexer lexer, boolean stopAtNewline, PreprocessorMacro macro, Token identifier, boolean completionMode) throws OffsetLimitReachedException {
+	public TokenList expand(Lexer lexer, boolean stopAtNewline, final boolean isPPCondition, PreprocessorMacro macro, Token identifier, boolean completionMode) throws OffsetLimitReachedException {
 		fImplicitMacroExpansions.clear();
 		fImageLocationInfos.clear();
 		
@@ -172,7 +176,7 @@ public class MacroExpander {
 
 		input.prepend(firstExpansion);
 		
-		TokenList result= expandAll(input, forbidden, null);
+		TokenList result= expandAll(input, forbidden, isPPCondition, null);
 		postProcessTokens(result);
 		
 		return result;
@@ -182,7 +186,7 @@ public class MacroExpander {
 	 * Method for tracking macro expansions.
 	 * @since 5.0
 	 */
-	public void expand(String beforeExpansion, MacroExpansionTracker tracker, String filePath, int lineNumber) {
+	public void expand(String beforeExpansion, MacroExpansionTracker tracker, String filePath, int lineNumber, boolean protectDefinedConstructs) {
 		fImplicitMacroExpansions.clear();
 		fImageLocationInfos.clear();
 		fFixedInput= beforeExpansion.toCharArray();
@@ -218,7 +222,7 @@ public class MacroExpander {
 			firstExpansion.append(new ExpansionBoundary(macro, false));
 			input.prepend(firstExpansion);
 
-			TokenList result= expandAll(input, forbidden, tracker);
+			TokenList result= expandAll(input, forbidden, protectDefinedConstructs, tracker);
 			tracker.finish(result, fEndOffset);
 		} catch (OffsetLimitReachedException e) {
 		}
@@ -249,7 +253,7 @@ public class MacroExpander {
 				final boolean needCopy= paramUsage.get(2*i);
 				final boolean needExpansion = paramUsage.get(2*i+1);
 				clonedArgs[i]= needCopy ? argInput.cloneTokens() : EMPTY_TOKEN_LIST;
-				expandedArgs[i]= needExpansion ? expandAll(argInput, forbidden, tracker) : EMPTY_TOKEN_LIST;
+				expandedArgs[i]= needExpansion ? expandAll(argInput, forbidden, false, tracker) : EMPTY_TOKEN_LIST;
 				if (!needExpansion) {
 					executeScopeMarkers(argInput, forbidden);
 				}
@@ -310,8 +314,9 @@ public class MacroExpander {
 	}
 
 	private TokenList expandAll(TokenSource input, IdentityHashMap<PreprocessorMacro, PreprocessorMacro> forbidden,
-			MacroExpansionTracker tracker) throws OffsetLimitReachedException {
+			boolean protectDefinedConstructs, MacroExpansionTracker tracker) throws OffsetLimitReachedException {
 		final TokenList result= new TokenList();
+		boolean protect= false;
 		Token l= null;
 		Token t= input.removeFirst();
 		while(t != null) {
@@ -320,9 +325,15 @@ public class MacroExpander {
 				((ExpansionBoundary) t).execute(forbidden);
 				break;
 			case IToken.tIDENTIFIER:
-				PreprocessorMacro macro= fDictionary.get(t.getCharImage());
-				if (tracker != null && tracker.isDone()) {
+				final char[] image = t.getCharImage();
+				PreprocessorMacro macro= fDictionary.get(image);
+				if (protect || (tracker != null && tracker.isDone())) {
 					result.append(t);
+				}
+				else if (protectDefinedConstructs && Arrays.equals(image, Keywords.cDEFINED)) {
+					t.setType(CPreprocessor.tDEFINED);
+					result.append(t);
+					protect= true;
 				}
 				// tricky: don't mark function-style macros if you don't find the left parenthesis
 				else if (macro == null || (macro.isFunctionStyle() && !input.findLParenthesis())) {
@@ -351,7 +362,13 @@ public class MacroExpander {
 					input.prepend(replacement);
 				}
 				break;
+			case IToken.tLPAREN:
+			case CPreprocessor.tNOSPACE:
+			case CPreprocessor.tSPACE:				
+				result.append(t);
+				break;
 			default:
+				protect= false;
 				result.append(t); 
 				break;
 			}

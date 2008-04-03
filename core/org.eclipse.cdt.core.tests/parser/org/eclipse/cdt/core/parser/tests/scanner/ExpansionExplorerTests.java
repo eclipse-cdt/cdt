@@ -56,14 +56,14 @@ public class ExpansionExplorerTests extends BaseTestCase {
 
 	private void verifyStepCount(MacroExpander expander, String original, int steps) {
 		MacroExpansionTracker tracker= new MacroExpansionTracker(Integer.MAX_VALUE);
-		expander.expand(original, tracker, "", 1);
+		expander.expand(original, tracker, "", 1, false);
 		assertEquals(steps, tracker.getStepCount());
 	}
 
 	private void verifyStep(MacroExpander expander, String original, int step, String expectedPre,
 			String expectedPost) {
 		MacroExpansionTracker tracker= new MacroExpansionTracker(step);
-		expander.expand(original, tracker, "", 1);
+		expander.expand(original, tracker, "", 1, false);
 		String pre = tracker.getCodeBeforeStep();
 		ReplaceEdit replacement = tracker.getReplacement();
 		assertNotNull(pre);

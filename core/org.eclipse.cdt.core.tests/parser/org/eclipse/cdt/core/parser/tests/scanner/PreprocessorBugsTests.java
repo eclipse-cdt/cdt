@@ -92,4 +92,33 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 		validateEOF();
 		validateProblemCount(0);
 	}
+	
+	//	#define FOO(ARG) defined(ARG##_BAZ)
+	//	#define BAR_BAZ UNDEFINED
+	//	#if FOO(BAR)
+	//	    juhuu
+	//	#else
+	//	    ojeh
+	//	#endif
+	//  FOO(BAR) // here expansion has to take place
+	//
+	//  #define PLATFORM(WTF_FEATURE) (defined( WTF_PLATFORM_##WTF_FEATURE ) && WTF_PLATFORM_##WTF_FEATURE)
+	//  #define WTF_PLATFORM_FOO 1
+    //  #if PLATFORM(FOO)
+	//  ok
+	//  #endif
+
+	
+	public void testIndirectDefined_Bug225562() throws Exception {
+		initializeScanner();
+		validateIdentifier("juhuu");
+		validateIdentifier("defined");
+		validateToken(IToken.tLPAREN);
+		validateIdentifier("UNDEFINED"); // here the expansion has to take place
+		validateToken(IToken.tRPAREN);
+		
+		validateIdentifier("ok");
+		validateEOF();
+		validateProblemCount(0);
+	}
 }

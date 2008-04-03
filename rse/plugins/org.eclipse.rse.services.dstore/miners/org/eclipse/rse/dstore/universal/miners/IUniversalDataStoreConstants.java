@@ -16,6 +16,7 @@
  * David McKnight   (IBM) - [196624] dstore miner IDs should be String constants rather than dynamic lookup
  * David McKnight   (IBM) - [209593] [api] add support for "file permissions" and "owner" properties for unix files
  * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
+ * David McKnight   (IBM)  - [225507] Removed used commands
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -103,8 +104,6 @@ public interface IUniversalDataStoreConstants
 	public static final String C_QUERY_BASIC_PROPERTY = "C_QUERY_BASIC_PROPERTY";//$NON-NLS-1$
 	public static final String C_QUERY_CAN_WRITE_PROPERTY = "C_QUERY_CAN_WRITE_PROPERTY";//$NON-NLS-1$
 	public static final String C_QUERY_ADVANCE_PROPERTY = "C_QUERY_ADVANCE_PROPERTY";//$NON-NLS-1$
-	public static final String C_QUERY_FILE_CLASSIFICATION = "C_QUERY_FILE_CLASSIFICATION";//$NON-NLS-1$
-	public static final String C_QUERY_FILE_CLASSIFICATIONS = "C_QUERY_FILE_CLASSIFICATIONS"; //$NON-NLS-1$
 	public static final String C_QUERY_EXISTS = "C_QUERY_EXISTS";//$NON-NLS-1$
 	public static final String C_GET_OSTYPE = "C_GET_OSTYPE";//$NON-NLS-1$
 	public static final String C_QUERY_CLASSNAME = "C_QUERY_CLASSNAME"; //$NON-NLS-1$

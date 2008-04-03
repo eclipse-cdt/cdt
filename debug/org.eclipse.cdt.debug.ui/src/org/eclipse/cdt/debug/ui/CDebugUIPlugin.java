@@ -23,9 +23,9 @@ import org.eclipse.cdt.debug.internal.ui.CDebuggerPageAdapter;
 import org.eclipse.cdt.debug.internal.ui.ColorManager;
 import org.eclipse.cdt.debug.internal.ui.EvaluationContextManager;
 import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
+import org.eclipse.cdt.debug.internal.ui.disassembly.editor.DisassemblyEditorManager;
 import org.eclipse.cdt.debug.ui.sourcelookup.DefaultSourceLocator;
 import org.eclipse.cdt.debug.ui.sourcelookup.OldDefaultSourceLocator;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -64,9 +64,11 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 	//The shared instance.
 	private static CDebugUIPlugin plugin;
 
-	protected Map fDebuggerPageMap;
+	protected Map<String, IConfigurationElement> fDebuggerPageMap;
 
 	private CDebugImageDescriptorRegistry fImageDescriptorRegistry;
+
+    private DisassemblyEditorManager fDisassemblyEditorManager;
 
 	/**
 	 * The constructor.
@@ -143,7 +145,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 		if ( fDebuggerPageMap == null ) {
 			initializeDebuggerPageMap();
 		}
-		IConfigurationElement configElement = (IConfigurationElement)fDebuggerPageMap.get( debuggerID );
+		IConfigurationElement configElement = fDebuggerPageMap.get( debuggerID );
 		ICDebuggerPage tab = null;
 		if ( configElement != null ) {
 			Object o = configElement.createExecutableExtension( "class" ); //$NON-NLS-1$
@@ -160,7 +162,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 	}
 
 	protected void initializeDebuggerPageMap() {
-		fDebuggerPageMap = new HashMap( 10 );
+		fDebuggerPageMap = new HashMap<String, IConfigurationElement>( 10 );
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint( PLUGIN_ID, CDEBUGGER_PAGE_EXTENSION_POINT_ID );
 		IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
 		for( int i = 0; i < infos.length; i++ ) {
@@ -263,8 +265,10 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 	 * 
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
-	public void start( BundleContext context ) throws Exception {
+	@Override
+    public void start( BundleContext context ) throws Exception {
 		super.start( context );
+        fDisassemblyEditorManager = new DisassemblyEditorManager();
 		EvaluationContextManager.startup();
 		CDebugCorePlugin.getDefault().addCBreakpointListener( CBreakpointUpdater.getInstance() );
 	}
@@ -274,8 +278,10 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 	 * 
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
-	public void stop( BundleContext context ) throws Exception {
+	@Override
+    public void stop( BundleContext context ) throws Exception {
 		CDebugCorePlugin.getDefault().removeCBreakpointListener( CBreakpointUpdater.getInstance() );
+        fDisassemblyEditorManager.dispose();
 		if ( fImageDescriptorRegistry != null ) {
 			fImageDescriptorRegistry.dispose();
 		}
@@ -291,4 +297,8 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 	public ISharedTextColors getSharedTextColors() {
 		return EditorsUI.getSharedTextColors();
 	}
+
+    public DisassemblyEditorManager getDisassemblyEditorManager() {
+        return fDisassemblyEditorManager;
+    }
 }

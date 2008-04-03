@@ -24,7 +24,12 @@ public interface IInternalCDebugUIConstants {
 	
 	public static final String PREFIX = PLUGIN_ID + "."; //$NON-NLS-1$
 
-	/**
+    /**
+     * Specifies the conditions under which the disassembly editor will be activated
+     */
+    public static final String PREF_OPEN_DISASSEMBLY_MODE = PREFIX + "openDisassemblyMode"; //$NON-NLS-1$
+
+    /**
 	 * The name of the font to use for disassembly view. This font is managed via
 	 * the workbench font preference page.
 	 */ 

@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.core;
 
-
 /**
  * Constant definitions for C/C++ debug plug-in.
  */
@@ -101,5 +100,14 @@ public interface ICDebugConstants {
 	/**
 	 * The default character set to use with unicode strings.
 	 */
-	public static final String DEF_CHARSET = "UTF-16";
+	public static final String DEF_CHARSET = "UTF-16"; //$NON-NLS-1$
+
+    /**
+     * Specifies the stepping mode (context/source/instruction)
+     */
+    public static final String PREF_STEP_MODE = PLUGIN_ID + ".steppingMode"; //$NON-NLS-1$
+
+    public static final String PREF_VALUE_STEP_MODE_CONTEXT = "context"; //$NON-NLS-1$
+    public static final String PREF_VALUE_STEP_MODE_SOURCE = "source"; //$NON-NLS-1$
+    public static final String PREF_VALUE_STEP_MODE_INSTRUCTION = "instruction"; //$NON-NLS-1$
 }

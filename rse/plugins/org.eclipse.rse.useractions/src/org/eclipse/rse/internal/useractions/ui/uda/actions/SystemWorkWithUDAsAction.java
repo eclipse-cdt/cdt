@@ -11,6 +11,7 @@ package org.eclipse.rse.internal.useractions.ui.uda.actions;
  *     IBM Corporation - initial API and implementation
  * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
  *                                API to the user actions plugin
+ * Xuan Chen     (IBM) - [225617] [useraction][api] Remove Team view support inside user action.
  *******************************************************************************/
 //import java.util.Iterator;
 import org.eclipse.jface.dialogs.Dialog;
@@ -18,7 +19,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.internal.ui.view.team.SystemTeamViewSubSystemConfigurationNode;
 import org.eclipse.rse.internal.useractions.IUserActionsImageIds;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemUDAResources;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemUDActionSubsystem;
@@ -129,15 +129,7 @@ public class SystemWorkWithUDAsAction extends SystemBaseDialogAction {
 	 * Our opportunity to verify we are allowed for this selected type.
 	 */
 	public boolean updateSelection(IStructuredSelection selection) {
-		boolean enable = true;
-		Object firstSelection = selection.getFirstElement();
-		if (firstSelection instanceof SystemTeamViewSubSystemConfigurationNode) {
-			SystemTeamViewSubSystemConfigurationNode ssfNode = (SystemTeamViewSubSystemConfigurationNode) firstSelection;
-			subsystemFactory = ssfNode.getSubSystemConfiguration();
-			profile = ssfNode.getProfile();
-			enable = profile.isActive();
-		}
-		return enable;
+		return true;
 	}
 
 	/**

@@ -11,12 +11,12 @@ package org.eclipse.rse.internal.useractions.ui.uda.actions;
  *     IBM Corporation - initial API and implementation
  * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
  *                                API to the user actions plugin
+ * Xuan Chen     (IBM) - [225617] [useraction][api] Remove Team view support inside user action.
  *******************************************************************************/
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.internal.ui.view.team.SystemTeamViewSubSystemConfigurationNode;
 import org.eclipse.rse.internal.useractions.IUserActionsImageIds;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemUDAResources;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemUDActionSubsystem;
@@ -112,11 +112,6 @@ public class SystemWorkWithFileTypesAction extends SystemBaseDialogAction {
 	protected Dialog createDialog(Shell parent) {
 		if ((subsystem == null) && (getFirstSelection() instanceof ISubSystem))
 			subsystem = (ISubSystem) getFirstSelection();
-		else if (getFirstSelection() instanceof SystemTeamViewSubSystemConfigurationNode) {
-			SystemTeamViewSubSystemConfigurationNode ssfNode = (SystemTeamViewSubSystemConfigurationNode) getFirstSelection();
-			subsystemFactory = ssfNode.getSubSystemConfiguration();
-			profile = ssfNode.getProfile();
-		}
 		if (subsystem != null)
 			ourDlg = new SystemWorkWithUDTypeDialog(parent, subsystem, udaActionSubsystem);
 		else

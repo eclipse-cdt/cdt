@@ -1271,7 +1271,38 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// }
     public void testLegalConflictWithUsingDeclaration() throws Exception {
 		getBindingFromASTName("a(1)", 1);
-    } 
+    }
+    
+	//	class A {};
+	//	class B {};
+	//	class C {
+	//	public:
+	//		operator B() {B b; return b;}
+	//	};
+	//	class D : public C {};
+	//	void foo(B b) {}
+	
+    //  class E : public C {};
+	//	void refs() {
+	//		C c;
+	//		foo(c);
+	//		D d;
+	//		foo(d);
+	//		E e;
+	//		foo(e);
+	//	}
+    public void _testUserDefinedConversionOperator_224364() throws Exception {
+    	IBinding ca=   getBindingFromASTName("C c;", 1);
+    	assertInstance(ca, ICPPClassType.class);
+    	    	
+    	IBinding foo1= getBindingFromASTName("foo(c)", 3);
+    	
+    	IBinding da=   getBindingFromASTName("D d", 1);
+    	assertInstance(da, ICPPClassType.class);
+    	    	
+		IBinding foo2= getBindingFromASTName("foo(d)", 3);
+		IBinding foo3= getBindingFromASTName("foo(e)", 3);
+    }
 
 
 	/* CPP assertion helpers */

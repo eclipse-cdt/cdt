@@ -2274,4 +2274,68 @@ public class AST2TemplateTests extends AST2BaseTest {
     	assertInstance(f1.getParameters()[0].getType(), ICPPClassType.class);
     	assertInstance(f1.getParameters()[0].getType(), ICPPTemplateInstance.class);
     }
+    
+	//    class A {};
+	//    class B {};
+	//    template<typename T>
+	//    class C {
+	//    public:
+	//    	T t;
+	//    	operator B() {B b; return b;}
+	//    };
+	//    template<typename T>
+	//    class D : public C<T> {};
+	//    void foo(B b) {}
+	//
+	//    void refs() {
+	//    	D<A> d;
+	//    	foo(d);
+	//    }
+    public void _testUserDefinedConversions_224364() throws Exception {
+    	BindingAssertionHelper bh= new BindingAssertionHelper(getContents(1)[0].toString(), true);
+    	ICPPFunction fn= bh.assertNonProblem("foo(d)", 3, ICPPFunction.class);
+    }
+    
+	//    class B {};
+	//    template<typename T>
+	//    class C {
+	//    public:
+	//    	T t;
+	//    	operator T() {return t;}
+	//    };
+	//    template<typename T>
+	//    class D : public C<T> {};
+	//    void foo(B b) {}
+	//
+	//    void refs() {
+	//    	D<B> d;
+	//    	foo(d);
+	//    }
+    public void _testUserDefinedConversions_224364_2() throws Exception {
+    	BindingAssertionHelper bh= new BindingAssertionHelper(getContents(1)[0].toString(), true);
+    	ICPPFunction fn= bh.assertNonProblem("foo(d)", 3, ICPPFunction.class);
+    }
+    
+	//    class Z {};
+	//    template<typename TA>
+	//    class A {
+	//    	public:
+	//    		TA ta;
+	//          operator TA() {return ta;}
+	//    };
+	//    template<typename TB>
+	//    class B : public A<TB> {};
+	//    template<typename TC>
+	//    class C : public B<TC> {}; 
+	//    template<typename TD>
+	//    class D : public C<TD> {};
+	//    template<typename TE>
+	//    class E : public D<TE> {};
+	//    Z foo(Z z) {return z;}
+	//
+	//    Z z= foo(*new E<Z>());
+    public void _testUserDefinedConversions_224364_3() throws Exception {
+    	BindingAssertionHelper bh= new BindingAssertionHelper(getContents(1)[0].toString(), true);
+    	ICPPFunction fn= bh.assertNonProblem("foo(*new", 3, ICPPFunction.class);
+    }
 }

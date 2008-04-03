@@ -4701,24 +4701,20 @@ public class AST2CPPTests extends AST2BaseTest {
         assertSame(strcmp, col.getName(4).resolveBinding());
     }
 
+	//    class Other;                           
+	//    class Base {                           
+	//       public: Base( Other * );            
+	//    };                                     
+	//    class Sub : public Base {              
+	//       public: Sub( Other * );             
+	//    };                                     
+	//    Sub::Sub( Other * b ) : Base(b) {}     
     public void testBug95673() throws Exception {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append("class Other;                            \n"); //$NON-NLS-1$
-        buffer.append("class Base {                            \n"); //$NON-NLS-1$
-        buffer.append("   public: Base( Other * );             \n"); //$NON-NLS-1$
-        buffer.append("};                                      \n"); //$NON-NLS-1$
-        buffer.append("class Sub : public Base {               \n"); //$NON-NLS-1$
-        buffer.append("   public: Sub( Other * );              \n"); //$NON-NLS-1$
-        buffer.append("};                                      \n"); //$NON-NLS-1$
-        buffer.append("Sub::Sub( Other * b ) : Base(b) {}      \n"); //$NON-NLS-1$
-
-        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
-        CPPNameCollector col = new CPPNameCollector();
-        tu.accept(col);
-
-        ICPPConstructor ctor = (ICPPConstructor) col.getName(2)
-                .resolveBinding();
-        assertSame(ctor, col.getName(15).resolveBinding());
+       BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+       
+       ICPPConstructor ctor= ba.assertNonProblem("Base( Other", 4, ICPPConstructor.class);
+       ICPPConstructor ctor2=  ba.assertNonProblem("Base(b)", 4, ICPPConstructor.class);
+       assertSame(ctor, ctor2);
     }
 
     public void testBug95768() throws Exception {

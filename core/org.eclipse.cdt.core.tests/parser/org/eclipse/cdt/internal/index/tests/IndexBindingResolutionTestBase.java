@@ -90,13 +90,15 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	 * <ul>
 	 *  <li> There is not a unique name with the specified criteria
 	 *  <li> The binding associated with the name is null or a problem binding
+     *  <li> The binding is not an instance of the specified class
 	 * </ul>
+	 * @param clazz an expected class type or interface that the binding should extend/implement
 	 * @param section the code fragment to search for in the AST. The first occurrence of an identical section is used.
 	 * @param len the length of the specified section to use as a name. This can also be useful for distinguishing between
 	 * template names, and template ids.
 	 * @return the associated name's binding
 	 */
-	protected IBinding getBindingFromASTName(String section, int len) {
+	protected <T> T getBindingFromASTName(Class<T> clazz, String section, int len) {
 		IASTName name= findName(section, len);
 		assertNotNull("name not found for \""+section+"\"", name);
 		assertEquals(section.substring(0, len), name.getRawSignature());
@@ -104,7 +106,15 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		IBinding binding = name.resolveBinding();
 		assertNotNull("No binding for "+name.getRawSignature(), binding);
 		assertFalse("Binding is a ProblemBinding for name "+name.getRawSignature(), IProblemBinding.class.isAssignableFrom(name.resolveBinding().getClass()));
-		return name.resolveBinding();
+		assertInstance(binding, clazz);
+		return clazz.cast(binding);
+	}
+	
+	/*
+	 * @see IndexBindingResolutionTestBase#getBindingFromASTName(Class, String, int)
+	 */
+	protected IBinding getBindingFromASTName(String section, int len) {
+		return getBindingFromASTName(IBinding.class, section, len);
 	}
 
 	/**

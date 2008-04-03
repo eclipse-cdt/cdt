@@ -267,7 +267,7 @@
    <feature url="features/org.eclipse.rse.useractions_1.0.100.qualifier.jar" id="org.eclipse.rse.useractions" version="1.0.100.qualifier">
       <category name="TM and RSE 3.0"/>
    </feature>
-   <feature url="features/org.eclipse.rse.wince_1.0.0.qualifier.jar" id="org.eclipse.rse.wince" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.rse.wince_0.1.0.qualifier.jar" id="org.eclipse.rse.wince" version="0.1.0.qualifier">
       <category name="TM and RSE 3.0"/>
    </feature>
    <feature url="features/org.eclipse.tm.discovery_3.0.0.qualifier.jar" id="org.eclipse.tm.discovery" version="3.0.0.qualifier">

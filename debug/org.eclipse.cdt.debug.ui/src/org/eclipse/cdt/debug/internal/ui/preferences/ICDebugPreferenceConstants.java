@@ -35,15 +35,4 @@ public interface ICDebugPreferenceConstants {
 	 * Boolean preference controlling whether primitive types types display char values.
 	 */
 	public static final String PREF_SHOW_CHAR_VALUES = ICDebugUIConstants.PLUGIN_ID + ".cDebug.showCharValues"; //$NON-NLS-1$
-
-	/**
-	 * The orientation of the detail view in the ModulesView
-	 */
-	public static final String MODULES_DETAIL_PANE_ORIENTATION = "Modules.detail.orientation"; //$NON-NLS-1$
-
-	public static final String MODULES_DETAIL_PANE_RIGHT = "Modules.detail.orientation.right"; //$NON-NLS-1$
-
-	public static final String MODULES_DETAIL_PANE_UNDERNEATH = "Modules.detail.orientation.underneath"; //$NON-NLS-1$
-
-	public static final String MODULES_DETAIL_PANE_HIDDEN = "Modules.detail.orientation.hidden"; //$NON-NLS-1$
 }

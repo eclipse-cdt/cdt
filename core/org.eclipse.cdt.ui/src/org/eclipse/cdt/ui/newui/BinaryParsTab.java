@@ -28,6 +28,7 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -73,6 +74,7 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 	protected Table table;
 	protected CheckboxTableViewer tv;
 	protected Composite parserGroup;
+	protected SashForm sashForm;
 
 	private ICTargetPlatformSetting tps;
 	
@@ -112,9 +114,21 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 		super.createControls(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(usercomp, ICHelpContextIds.BINARY_PARSER_PAGE);
 
-		usercomp.setLayout(new GridLayout(2, false));
-		setupLabel(usercomp, UIMessages.getString("BinaryParsTab.0"), 2, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
-		table = new Table(usercomp, SWT.BORDER | SWT.CHECK | SWT.SINGLE);
+		usercomp.setLayout(new GridLayout(1, false));
+		
+		sashForm = new SashForm(usercomp, SWT.NONE);
+		sashForm.setBackground(sashForm.getDisplay().getSystemColor(SWT.COLOR_GRAY));
+		sashForm.setOrientation(SWT.VERTICAL);
+		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
+		GridLayout layout = new GridLayout(2, false);
+		layout.marginHeight = 5;
+		sashForm.setLayout(layout);
+
+		Composite c1 = new Composite(sashForm, SWT.NONE);
+		c1.setLayout(new GridLayout(2, false));
+		setupLabel(c1, UIMessages.getString("BinaryParsTab.0"), 2, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
+		table = new Table(c1, SWT.BORDER | SWT.CHECK | SWT.SINGLE);
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
 		table.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -144,11 +158,11 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 			}});
 		
 		// get "standard" buttons on my own place
-		Composite c = new Composite(usercomp, SWT.NONE);
+		Composite c = new Composite(c1, SWT.NONE);
 		c.setLayoutData(new GridData(GridData.END));
 		initButtons(c, new String[] {MOVEUP_STR, MOVEDOWN_STR});
 
-		parserGroup = new Composite(usercomp, SWT.NULL);
+		parserGroup = new Composite(sashForm, SWT.NULL);
 		GridData gd = new GridData();
 		parserGroup.setLayout(new TabFolderLayout());
 		
@@ -160,6 +174,8 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 		gd.grabExcessVerticalSpace = true;
 		gd.horizontalSpan = 2;
 		parserGroup.setLayoutData(gd);
+		
+  	    sashForm.setWeights(new int[] {100, 100});
 		initializeParserList();
 		initializeParserPageMap();
 		handleBinaryParserChanged();

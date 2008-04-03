@@ -34,7 +34,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.IRSESystemTypeConstants;
 import org.eclipse.rse.core.RSEPreferencesManager;
-import org.eclipse.rse.internal.ui.RSEAdapter;
 import org.eclipse.rse.ui.wizards.registries.IRSEWizardDescriptor;
 import org.eclipse.ui.IViewPart;
 import org.osgi.framework.Bundle;
@@ -150,7 +149,7 @@ public class RSESystemTypeAdapter extends RSEAdapter {
 	/**
 	 * Returns the description of the system type if the object passed in is of type <code>IRSESystemType</code>.
 	 * Otherwise, returns the value of the parent implementation.
-	 * @see org.eclipse.rse.internal.ui.RSEAdapter#getDescription(java.lang.Object)
+	 * @see org.eclipse.rse.ui.RSEAdapter#getDescription(java.lang.Object)
 	 */
 	public String getDescription(Object object) {
 

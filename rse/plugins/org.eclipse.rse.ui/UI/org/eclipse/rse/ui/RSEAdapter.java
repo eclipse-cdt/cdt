@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,11 +12,10 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [225506][api] make RSEAdapter API
  *******************************************************************************/
-package org.eclipse.rse.internal.ui;
+package org.eclipse.rse.ui;
 
-import org.eclipse.rse.ui.IRSEAdapter;
 import org.eclipse.ui.model.WorkbenchAdapter;
 
 /**

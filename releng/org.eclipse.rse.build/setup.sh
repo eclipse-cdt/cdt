@@ -57,6 +57,15 @@ if [ ! -f eclipse/plugins/org.eclipse.swt_3.4.0.v3436a.jar ]; then
   wget "http://download.eclipse.org/eclipse/downloads/drops/S-3.4M6-200803301350/eclipse-SDK-3.4M6-${ep_arch}.tar.gz"
   tar xfvz eclipse-SDK-3.4M6-${ep_arch}.tar.gz
   rm eclipse-SDK-3.4M6-${ep_arch}.tar.gz
+  # Remove P2 due to https://bugs.eclipse.org/bugs/show_bug.cgi?id=225537
+  # See http://wiki.eclipse.org/Equinox_p2_Removal
+  rm -rf eclipse/configuration/* eclipse/configuration/.settings
+  cp ../eclipse-3.3-linux-gtk-ppc/eclipse/configuration/config.ini eclipse/configuration
+  cp -f ../eclipse-3.3-linux-gtk-ppc/eclipse/eclipse.ini eclipse/
+  rm -rf eclipse/features/org.eclipse.equinox.p2.user.ui*
+  rm -f eclipse/plugins/org.eclipse.equinox.p2.*
+  rm -rf eclipse/p2
+  # </Remove P2>
   cd "${curdir2}"
   if [ ! -d eclipse -o -h eclipse ]; then
     if [ -e eclipse ]; then 
@@ -91,8 +100,9 @@ if [ ! -f eclipse/plugins/org.eclipse.cdt.core_5.0.0.200802111122.jar ]; then
   cd ${CDTTMP}
   unzip ../cdt-master-5.0.0-I200802111122.zip
   cd ..
-  # java -jar eclipse/plugins/org.eclipse.equinox.launcher_1.0.0.v20070606.jar \
-  java -jar eclipse/startup.jar \
+  #java -jar eclipse/plugins/org.eclipse.equinox.launcher_1.0.0.v20070606.jar \
+  #java -jar eclipse/startup.jar \
+  java -jar eclipse/plugins/org.eclipse.equinox.launcher_1.0.*.jar \
     -application org.eclipse.update.core.standaloneUpdate \
     -command install \
     -from file://${CDTTMP} \

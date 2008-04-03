@@ -45,6 +45,8 @@ import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
 import org.eclipse.cdt.core.parser.util.CharArrayMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator.EvalException;
+import org.eclipse.cdt.internal.core.parser.scanner.IncludeFileResolutionCache.ISPKey;
+import org.eclipse.cdt.internal.core.parser.scanner.IncludeFileResolutionCache.LookupKey;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
 import org.eclipse.cdt.internal.core.parser.scanner.MacroDefinitionParser.InvalidMacroDefinitionException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -85,18 +87,18 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     private static final DynamicMacro __TIME__ = new TimeMacro("__TIME__".toCharArray()); //$NON-NLS-1$
     private static final DynamicMacro __LINE__ = new LineMacro("__LINE__".toCharArray()); //$NON-NLS-1$
 
-	private interface IIncludeFileTester {
-    	Object checkFile(String path, String fileName);
+	private interface IIncludeFileTester<T> {
+    	T checkFile(String path, String fileName);
     }
 
-    final private IIncludeFileTester createCodeReaderTester= new IIncludeFileTester() { 
-    	public Object checkFile(String path, String fileName) {
+    final private IIncludeFileTester<IncludeFileContent> createCodeReaderTester= new IIncludeFileTester<IncludeFileContent>() { 
+    	public IncludeFileContent checkFile(String path, String fileName) {
     		return createReader(path, fileName);
     	}
     };
     
-    final private IIncludeFileTester createPathTester= new IIncludeFileTester() { 
-    	public Object checkFile(String path, String fileName) {
+    final private IIncludeFileTester<String> createPathTester= new IIncludeFileTester<String>() { 
+    	public String checkFile(String path, String fileName) {
     		path= ScannerUtility.createReconciledPath(path, fileName);
     		if (new File(path).exists()) {
     			return path;
@@ -119,6 +121,9 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     final private String[] fIncludePaths;
     final private String[] fQuoteIncludePaths;
     private String[][] fPreIncludedFiles= null;
+	private final IncludeFileResolutionCache fIncludeResolutionCache;
+	private final ISPKey fIncludePathKey;
+	private final ISPKey fQuoteIncludePathKey;
 
     private int fContentAssistLimit= -1;
 	private boolean fHandledCompletion= false;
@@ -151,11 +156,15 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 
     	fIncludePaths= info.getIncludePaths();
     	fQuoteIncludePaths= getQuoteIncludePath(info);
-    	
+
         fExpressionEvaluator= new ExpressionEvaluator();
         fMacroDefinitionParser= new MacroDefinitionParser();
         fMacroExpander= new MacroExpander(this, fMacroDictionary, fLocationMap, fLexOptions);
         fCodeReaderFactory= wrapReaderFactory(readerFactory);
+
+    	fIncludeResolutionCache= getIncludeResolutionCache(readerFactory);
+    	fIncludePathKey= fIncludeResolutionCache.getKey(fIncludePaths);
+    	fQuoteIncludePathKey= fIncludeResolutionCache.getKey(fQuoteIncludePaths);
 
         setupMacroDictionary(configuration, info, language);		
                 
@@ -169,8 +178,18 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         	fPreIncludedFiles= new String[][] {einfo.getMacroFiles(), einfo.getIncludeFiles()};
         }
     }
-    
-    private IIndexBasedCodeReaderFactory wrapReaderFactory(final ICodeReaderFactory readerFactory) {
+        
+	private IncludeFileResolutionCache getIncludeResolutionCache(ICodeReaderFactory readerFactory) {
+		if (readerFactory instanceof IAdaptable) {
+			IncludeFileResolutionCache cache= (IncludeFileResolutionCache) ((IAdaptable) readerFactory).getAdapter(IncludeFileResolutionCache.class);
+			if (cache != null) {
+				return cache;
+			}
+		}
+		return new IncludeFileResolutionCache(1024);
+	}
+
+	private IIndexBasedCodeReaderFactory wrapReaderFactory(final ICodeReaderFactory readerFactory) {
     	if (readerFactory instanceof IIndexBasedCodeReaderFactory) {
     		return (IIndexBasedCodeReaderFactory) readerFactory;
     	}
@@ -301,7 +320,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     		fCurrentContext= new ScannerContext(ctx, fCurrentContext, new Lexer(buffer, fLexOptions, this, this));
     		ScannerContext preCtx= fCurrentContext;
     		try {
-				while(internalFetchToken(true, false, true, preCtx).getType() != IToken.tEND_OF_INPUT) {
+				while(internalFetchToken(true, false, false, true, preCtx).getType() != IToken.tEND_OF_INPUT) {
 				// just eat the tokens
 				}
             	final ILocationCtx locationCtx = fCurrentContext.getLocationCtx();
@@ -385,7 +404,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     	}
     	
     	try {
-			t= internalFetchToken(true, false, true, fRootContext);
+			t= internalFetchToken(true, false, false, true, fRootContext);
 		} catch (OffsetLimitReachedException e) {
 			fHandledCompletion= true;
 			throw e;
@@ -514,7 +533,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     	buf.append(image, start, image.length-start-1);
 	}
 
-	Token internalFetchToken(final boolean expandMacros, final boolean stopAtNewline, 
+	Token internalFetchToken(final boolean expandMacros, final boolean isPPCondition, final boolean stopAtNewline, 
 			final boolean checkNumbers, final ScannerContext uptoEndOfCtx) throws OffsetLimitReachedException {
         Token ppToken= fCurrentContext.currentLexerToken();
         while(true) {
@@ -563,7 +582,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         		fCurrentContext.nextPPToken(); // consume the identifier
         		if (expandMacros) {
         			final Lexer lexer= fCurrentContext.getLexer();
-        			if (lexer != null && expandMacro(ppToken, lexer, stopAtNewline)) {
+        			if (lexer != null && expandMacro(ppToken, lexer, stopAtNewline, isPPCondition)) {
         				ppToken= fCurrentContext.currentLexerToken();
         				continue;
         			}
@@ -718,12 +737,12 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 
     private IncludeFileContent findInclusion(final String filename, final boolean quoteInclude, 
     		final boolean includeNext, final File currentDir) {
-    	return (IncludeFileContent) findInclusion(filename, quoteInclude, includeNext, currentDir, createCodeReaderTester);
+    	return findInclusion(filename, quoteInclude, includeNext, currentDir, createCodeReaderTester);
     }
 
-    private Object findInclusion(final String filename, final boolean quoteInclude, 
-    		final boolean includeNext, final File currentDirectory, final IIncludeFileTester tester) {
-        Object reader = null;
+    private <T> T findInclusion(final String filename, final boolean quoteInclude, 
+    		final boolean includeNext, final File currentDirectory, final IIncludeFileTester<T> tester) {
+        T reader = null;
 		// filename is an absolute path or it is a Linux absolute path on a windows machine
 		if (new File(filename).isAbsolute() || filename.startsWith("/")) {  //$NON-NLS-1$
 		    return tester.checkFile( EMPTY_STRING, filename );
@@ -740,18 +759,46 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         
         // if we're not include_next, then we are looking for the first occurrence of 
         // the file, otherwise, we ignore all the paths before the current directory
-        String[] includePathsToUse = quoteInclude ? fQuoteIncludePaths : fIncludePaths;
-        if (includePathsToUse != null ) {
-            int startpos = 0;
+        String[] isp;
+        ISPKey ispKey;
+        if (quoteInclude) {
+        	isp= fQuoteIncludePaths;
+        	ispKey= fQuoteIncludePathKey;
+        }
+        else {
+        	isp= fIncludePaths;
+        	ispKey= fIncludePathKey;
+        }
+        
+        if (isp != null ) {
             if (includeNext && currentDirectory != null) {
-                startpos = findIncludePos(includePathsToUse, currentDirectory) + 1;
+                final int startpos = findIncludePos(isp, currentDirectory) + 1;
+                for (int i= startpos; i < isp.length; ++i) {
+                    reader= tester.checkFile(isp[i], filename);
+                    if (reader != null) {
+                    	return reader;
+                    }
+                }
+                return null;
             }
-            for (int i = startpos; i < includePathsToUse.length; ++i) {
-                reader = tester.checkFile(includePathsToUse[i], filename);
+
+            final LookupKey lookupKey= fIncludeResolutionCache.getKey(ispKey, filename.toCharArray());
+            Integer offset= fIncludeResolutionCache.getCachedPathOffset(lookupKey);
+        	if (offset != null) {
+        		if (offset < 0) {
+        			return null;
+        		}
+        		return tester.checkFile(isp[offset], filename);
+        	}
+
+        	for (int i= 0; i < isp.length; ++i) {
+                reader = tester.checkFile(isp[i], filename);
                 if (reader != null) {
+                	fIncludeResolutionCache.putCachedPathOffset(lookupKey, i);
                 	return reader;
                 }
             }
+        	fIncludeResolutionCache.putCachedPathOffset(lookupKey, -1);
         }
         return null;
     }
@@ -1000,7 +1047,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		if (!active) {
 			// test if the include is inactive just because it was included before (bug 167100)
 			final File currentDir= userInclude || include_next ? new File(String.valueOf(getCurrentFilename())).getParentFile() : null;
-			final String resolved= (String) findInclusion(new String(headerName), userInclude, include_next, currentDir, createPathTester);
+			final String resolved= findInclusion(new String(headerName), userInclude, include_next, currentDir, createPathTester);
 			if (resolved != null && fCodeReaderFactory.hasFileBeenIncludedInCurrentTranslationUnit(resolved)) {
 				path= resolved;
 			}
@@ -1185,7 +1232,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     	final ScannerContext scannerCtx= fCurrentContext;
     	boolean expandMacros= true;
     	loop: while(true) {
-    		Token t= internalFetchToken(expandMacros, true, false, scannerCtx);
+    		Token t= internalFetchToken(expandMacros, isCondition, true, false, scannerCtx);
     		switch(t.getType()) {
     		case IToken.tEND_OF_INPUT:
     		case IToken.tCOMPLETION:
@@ -1340,8 +1387,10 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 	 * @param identifier the token where macro expansion may occur.
 	 * @param lexer the input for the expansion.
 	 * @param stopAtNewline whether or not tokens to be read are limited to the current line. 
+	 * @param isPPCondition whether the expansion is inside of a preprocessor condition. This
+	 * implies a specific handling for the defined token.
 	 */
-	private boolean expandMacro(final Token identifier, Lexer lexer, boolean stopAtNewline) throws OffsetLimitReachedException {
+	private boolean expandMacro(final Token identifier, Lexer lexer, boolean stopAtNewline, final boolean isPPCondition) throws OffsetLimitReachedException {
 		final char[] name= identifier.getCharImage();
         PreprocessorMacro macro= fMacroDictionary.get(name);
         if (macro == null) {
@@ -1360,7 +1409,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     		}
         }
         final boolean contentAssist = fContentAssistLimit>=0 && fCurrentContext == fRootContext;
-        TokenList replacement= fMacroExpander.expand(lexer, stopAtNewline, macro, identifier, contentAssist);
+        TokenList replacement= fMacroExpander.expand(lexer, stopAtNewline, isPPCondition, macro, identifier, contentAssist);
     	final IASTName[] expansions= fMacroExpander.clearImplicitExpansions();
     	final ImageLocationInfo[] ili= fMacroExpander.clearImageLocationInfos();
     	final Token last= replacement.last();

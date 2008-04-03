@@ -74,6 +74,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
@@ -5844,5 +5845,75 @@ public class AST2CPPTests extends AST2BaseTest {
 	public void testResettingTemplateIdScopesStack_Bug223777() throws Exception{
 		final String code = getContents(1)[0].toString();
 		parseAndCheckBindings(code);
+	}
+	
+	// long x= 10L;
+	public void _testLongLiteral_225534() throws Exception {
+		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP);
+		IASTDeclarator decltor= ((IASTSimpleDeclaration)tu.getDeclarations()[0]).getDeclarators()[0];
+		IASTInitializerExpression init= (IASTInitializerExpression) decltor.getInitializer();
+		ICPPASTLiteralExpression exp= (ICPPASTLiteralExpression) init.getExpression();
+		ICPPBasicType type= (ICPPBasicType) CPPVisitor.getExpressionType(exp);
+		assertEquals(ICPPBasicType.IS_LONG, type.getType());
+	}
+	
+	//	void foo/*_a*/(int x) {}
+	//	void foo/*_b*/(unsigned int) {}
+	//	void foo/*_c*/(short x) {}
+	//	void foo/*_d*/(unsigned short x) {}
+	//	void foo/*_e*/(long x) {}
+	//	void foo/*_f*/(unsigned long x) {}
+	//	void foo/*_g*/(long long x) {}
+	//	void foo/*_h*/(unsigned long long x) {}
+	//	void foo/*_i*/(float x) {}
+	//	void foo/*_j*/(double x) {}
+	//	void foo/*_k*/(long double x) {}
+	//
+	//	int main() {
+	//		foo/*a1*/(1);
+	//		foo/*a2*/(010);
+	//		foo/*a3*/(0x010);
+	//
+	//		foo/*b1*/(1U);
+	//		foo/*b2*/(010U);
+	//		foo/*b3*/(0x010U);
+	//
+	//      /*c*/ /*d*/
+	// 
+	//		foo/*e1*/(1L);
+	//		foo/*e2*/(010L);
+	//		foo/*e3*/(0x010L);
+	//
+	//		foo/*f1*/(1UL);
+	//		foo/*f2*/(010UL);
+	//		foo/*f3*/(0x010UL);
+	//
+	//		foo/*g1*/(100000000000000000L);
+	//		foo/*g2*/(0100000000000L);
+	//		foo/*g3*/(0x01000000000L);
+	//
+	//		foo/*h1*/(100000000000000000UL);
+	//		foo/*h2*/(0100000000000UL);
+	//		foo/*h3*/(0x01000000000UL);
+	//
+	//		foo/*i1*/(11.1F);
+	//		foo/*i2*/(11E1F);
+	//		
+	//		foo/*j1*/(11.1);
+	//		foo/*j2*/(11.1E1);
+	//		
+	//		foo/*k1*/(11.1L);
+	//		foo/*k2*/(11.1E1L);
+	//	}
+	public void _testLiteralsViaOverloads_225534() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		char[] cs= {'a','b','e','f','g','h','i','j','k'};
+		for(char c : cs) {
+			for(int i=1; i<(c < 'i' ? 4 : 3); i++) {
+				ICPPFunction def= ba.assertNonProblem("foo/*_"+c+"*/", 3, ICPPFunction.class);
+				ICPPFunction ref= ba.assertNonProblem("foo/*"+c+""+i+"*/", 3, ICPPFunction.class);
+				assertSame("function ref: "+c+""+i, def, ref);
+			}
+		}
 	}
 }

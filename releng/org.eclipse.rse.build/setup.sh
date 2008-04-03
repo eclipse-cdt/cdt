@@ -41,28 +41,28 @@ case ${uname_s}${uname_m} in
 esac
 
 # prepare the base Eclipse installation in folder "eclipse"
-if [ ! -f eclipse/plugins/org.eclipse.swt_3.4.0.v3428a.jar ]; then
+if [ ! -f eclipse/plugins/org.eclipse.swt_3.4.0.v3436a.jar ]; then
   curdir2=`pwd`
   if [ ! -d eclipse -o -h eclipse ]; then
-    if [ -d eclipse-3.4M5-${ep_arch} ]; then
-      rm -rf eclipse-3.4M5-${ep_arch}
+    if [ -d eclipse-3.4M6-${ep_arch} ]; then
+      rm -rf eclipse-3.4M6-${ep_arch}
     fi
-    mkdir eclipse-3.4M5-${ep_arch}
-    cd eclipse-3.4M5-${ep_arch}
+    mkdir eclipse-3.4M6-${ep_arch}
+    cd eclipse-3.4M6-${ep_arch}
   else
     rm -rf eclipse
   fi
-  # Eclipse SDK 3.4M5: Need the SDK so we can link into docs
+  # Eclipse SDK 3.4M6: Need the SDK so we can link into docs
   echo "Getting Eclipse SDK..."
-  wget "http://download.eclipse.org/eclipse/downloads/drops/S-3.4M5-200802071530/eclipse-SDK-3.4M5-${ep_arch}.tar.gz"
-  tar xfvz eclipse-SDK-3.4M5-${ep_arch}.tar.gz
-  rm eclipse-SDK-3.4M5-${ep_arch}.tar.gz
+  wget "http://download.eclipse.org/eclipse/downloads/drops/S-3.4M6-200803301350/eclipse-SDK-3.4M6-${ep_arch}.tar.gz"
+  tar xfvz eclipse-SDK-3.4M6-${ep_arch}.tar.gz
+  rm eclipse-SDK-3.4M6-${ep_arch}.tar.gz
   cd "${curdir2}"
   if [ ! -d eclipse -o -h eclipse ]; then
     if [ -e eclipse ]; then 
       rm eclipse
     fi
-    ln -s eclipse-3.4M5-${ep_arch}/eclipse eclipse
+    ln -s eclipse-3.4M6-${ep_arch}/eclipse eclipse
   fi
 fi
 if [ ! -f eclipse/startup.jar ]; then
@@ -110,9 +110,9 @@ fi
 if [ ! -f eclipse/plugins/org.junit_3.8.2.v200711021030/junit.jar ]; then
   # Eclipse Test Framework
   echo "Getting Eclipse Test Framework..."
-  wget "http://download.eclipse.org/eclipse/downloads/drops/S-3.4M5-200802071530/eclipse-test-framework-3.4M5.zip"
-  unzip -o eclipse-test-framework-3.4M5.zip
-  rm eclipse-test-framework-3.4M5.zip
+  wget "http://download.eclipse.org/eclipse/downloads/drops/S-3.4M6-200803301350/eclipse-test-framework-3.4M6.zip"
+  unzip -o eclipse-test-framework-3.4M6.zip
+  rm eclipse-test-framework-3.4M6.zip
 fi
 if [ ! -f eclipse/plugins/gnu.io.rxtx_2.1.7.4_v20071016.jar ]; then
   echo "Getting RXTX..."

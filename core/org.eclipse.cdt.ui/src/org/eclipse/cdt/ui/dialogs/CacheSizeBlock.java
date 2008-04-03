@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,7 +53,8 @@ public class CacheSizeBlock extends AbstractCOptionPage {
     	setContainer(container);
     }
 
-    public void createControl(Composite parent) {
+    @Override
+	public void createControl(Composite parent) {
     	GridData gd;
     	GridLayout gl;
         Composite composite = ControlFactory.createComposite(parent, 1);
@@ -77,7 +78,7 @@ public class CacheSizeBlock extends AbstractCOptionPage {
 
 		Label dbCacheLabel= ControlFactory.createLabel(cacheComp, DialogsMessages.CacheSizeBlock_indexDatabaseCache);
 		fDBLimitPct= new IntegerFieldEditor(CCorePreferenceConstants.INDEX_DB_CACHE_SIZE_PCT, DialogsMessages.CacheSizeBlock_limitRelativeToMaxHeapSize, cacheComp, 3);
-		fDBLimitPct.setValidRange(1, 40);
+		fDBLimitPct.setValidRange(1, 75);
 		ControlFactory.createLabel(cacheComp, "%"); //$NON-NLS-1$
 
 		fDBAbsoluteLimit= new IntegerFieldEditor(CCorePreferenceConstants.MAX_INDEX_DB_CACHE_SIZE_MB, DialogsMessages.CacheSizeBlock_absoluteLimit, cacheComp, 4);
@@ -138,6 +139,7 @@ public class CacheSizeBlock extends AbstractCOptionPage {
 		fCodeReaderLimit.load();
 	}
 
+	@Override
 	public void performApply(IProgressMonitor monitor) throws CoreException {
 		fDBLimitPct.store();
 		fDBAbsoluteLimit.store();
@@ -150,7 +152,8 @@ public class CacheSizeBlock extends AbstractCOptionPage {
 		}
     }
 
-    public void performDefaults() {
+    @Override
+	public void performDefaults() {
     	fDBLimitPct.loadDefault();
 		fDBAbsoluteLimit.loadDefault();
 		fCodeReaderLimit.loadDefault();

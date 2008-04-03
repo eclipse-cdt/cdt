@@ -1228,14 +1228,14 @@ public CPPSizeofExpressionParser(String[] mapFrom) {  // constructor
             // Rule 224:  simple_declaration ::= declaration_specifiers_opt <openscope-ast> init_declarator_list_opt ;
             //
             case 224: {       action.builder.
-   consumeDeclarationSimple(true, true);                 break;
+   consumeDeclarationSimple(true);                 break;
             }  
    
             //
             // Rule 225:  simple_declaration_with_declspec ::= declaration_specifiers <openscope-ast> init_declarator_list_opt ;
             //
             case 225: {       action.builder.
-   consumeDeclarationSimple(true, false);                 break;
+   consumeDeclarationSimple(true);                 break;
             }  
    
             //
@@ -1942,14 +1942,14 @@ public CPPSizeofExpressionParser(String[] mapFrom) {  // constructor
             // Rule 398:  member_declaration ::= declaration_specifiers_opt <openscope-ast> member_declarator_list ;
             //
             case 398: {       action.builder.
-   consumeDeclarationSimple(true, true);                 break;
+   consumeDeclarationSimple(true);                 break;
             }  
    
             //
             // Rule 399:  member_declaration ::= declaration_specifiers_opt ;
             //
             case 399: {       action.builder.
-   consumeDeclarationSimple(false, false);                 break;
+   consumeDeclarationSimple(false);                 break;
             }  
    
             //
@@ -2229,21 +2229,21 @@ public CPPSizeofExpressionParser(String[] mapFrom) {  // constructor
             // Rule 518:  exception_declaration ::= type_specifier_seq <openscope-ast> declarator
             //
             case 518: {       action.builder.
-   consumeDeclarationSimple(true, false);                 break;
+   consumeDeclarationSimple(true);                 break;
             }  
    
             //
             // Rule 519:  exception_declaration ::= type_specifier_seq <openscope-ast> abstract_declarator
             //
             case 519: {       action.builder.
-   consumeDeclarationSimple(true, false);                 break;
+   consumeDeclarationSimple(true);                 break;
             }  
    
             //
             // Rule 520:  exception_declaration ::= type_specifier_seq
             //
             case 520: {       action.builder.
-   consumeDeclarationSimple(false, false);                 break;
+   consumeDeclarationSimple(false);                 break;
             }  
    
             //

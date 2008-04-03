@@ -490,17 +490,19 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
      *       | '::' operator_function_id
      *       | '::' template_id
   	 */
-  	public void consumeGlobalQualifiedId() {
+  	@SuppressWarnings("restriction")
+	public void consumeGlobalQualifiedId() {
   		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-  		
+
   		IASTName name = (IASTName) astStack.pop();
   		
   		ICPPASTQualifiedName qualifiedName = nodeFactory.newCPPQualifiedName();
   		qualifiedName.addName(name);
   		qualifiedName.setFullyQualified(true);
+  		((CPPASTQualifiedName)qualifiedName).setSignature("::" + name.toString()); //$NON-NLS-1$
   		
   		setOffsetAndLength(qualifiedName);
-  		astStack.push(name);
+  		astStack.push(qualifiedName);
   		
   		if(TRACE_AST_STACK) System.out.println(astStack);
   	}
@@ -741,7 +743,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	private IASTName createQualifiedName(LinkedList<IASTName> names, int startOffset, int endOffset, boolean startsWithColonColon, boolean endsWithColonColon) {
 		if(!endsWithColonColon && !startsWithColonColon && names.size() == 1) 
 			return names.getFirst(); // its actually an unqualified name
-	
+
 		ICPPASTQualifiedName qualifiedName = nodeFactory.newCPPQualifiedName();
 		qualifiedName.setFullyQualified(startsWithColonColon);
 		setOffsetAndLength(qualifiedName, startOffset, endOffset - startOffset);
@@ -1182,20 +1184,45 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
      *     
      * TODO: remove attemptAmbiguityResolution parameter
 	 */
-	public void consumeDeclarationSimple(boolean hasDeclaratorList, boolean attemptAmbiguityResolution) {
+	public void consumeDeclarationSimple(boolean hasDeclaratorList) {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		
-		List<Object> declarators = (hasDeclaratorList) ? astStack.closeScope() : Collections.emptyList();
+		List<Object> declarators = hasDeclaratorList ? astStack.closeScope() : Collections.emptyList();
 		IASTDeclSpecifier declSpecifier = (IASTDeclSpecifier) astStack.pop(); // may be null
+		List<IToken> ruleTokens = parser.getRuleTokens();
 		
 		// do not generate nodes for extra EOC tokens
-		if(matchTokens(parser.getRuleTokens(), CPPParsersym.TK_EndOfCompletion))
+		if(matchTokens(ruleTokens, CPPParsersym.TK_EndOfCompletion)) {
 			return;
-
+		}
 		if(declSpecifier == null) { // can happen if implicit int is used
 			declSpecifier = nodeFactory.newSimpleDeclSpecifier();
 			setOffsetAndLength(declSpecifier, parser.getLeftIToken().getStartOffset(), 0);
 		}
+
+		
+		// bug 80171, check for situation similar to: static var;
+		// this will get parsed wrong, the following is a hack to rebuild the AST as it should have been parsed
+		IToken nameToken = null;
+		if(declarators.isEmpty() && 
+		   declSpecifier instanceof ICPPASTNamedTypeSpecifier &&
+		   ruleTokens.size() >= 2 &&
+		   (nameToken = ruleTokens.get(ruleTokens.size() - 2)).getKind() == TK_identifier) {
+			
+			declSpecifier = nodeFactory.newSimpleDeclSpecifier();
+			for(IToken t : ruleTokens.subList(0, ruleTokens.size()-1))
+				setSpecifier((ICPPASTDeclSpecifier)declSpecifier, t);
+			
+			int offset = offset(parser.getLeftIToken());
+			int length = endOffset(ruleTokens.get(ruleTokens.size()-2)) - offset;
+			setOffsetAndLength(declSpecifier, offset, length);
+			
+			IASTName name = createName(nameToken);
+			IASTDeclarator declarator = nodeFactory.newDeclarator(name);
+			setOffsetAndLength(declarator, nameToken);
+			declarators.add(declarator);
+		}
+		
 
 		IASTSimpleDeclaration declaration = nodeFactory.newSimpleDeclaration(declSpecifier);
 		setOffsetAndLength(declaration);
@@ -1204,31 +1231,11 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		
 		astStack.push(declaration);
 
-//		IASTNode alternateDeclaration = null;
-//		if(attemptAmbiguityResolution) {// && hasConstructorInitializer(declaration)) { // try to resolve the constructor initializer ambiguity
-//			// TODO should this ambiguity be resolved here, or at the level of individual declarators?
-//			IParser alternateParser = new CPPNoConstructorInitializerParser(parser.getOrderedTerminalSymbols()); 
-//			alternateDeclaration = runSecondaryParser(alternateParser);
-//		}
-//		
-//		if(alternateDeclaration == null || alternateDeclaration instanceof IASTProblemDeclaration)
-//			astStack.push(declaration);
-//		else {
-//			System.out.println("Ambiguous Declaration in my parser!");
-////	        ASTPrinter.print(declaration);
-////	        System.out.println();
-////	        ASTPrinter.print(alternateDeclaration);
-////	        System.out.println();
-//
-//	        IASTNode ambiguityNode = nodeFactory.newAmbiguousDeclaration((IASTDeclaration)alternateDeclaration, declaration);
-//	        setOffsetAndLength(ambiguityNode);
-//			astStack.push(ambiguityNode);
-//		}
-//		
-		
 		
 		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
+	
+
 	
 	
 	public void consumeInitDeclaratorComplete() {

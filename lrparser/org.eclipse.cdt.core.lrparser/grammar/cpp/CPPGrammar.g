@@ -964,12 +964,12 @@ declaration_seq_opt
     
 simple_declaration
     ::= declaration_specifiers_opt <openscope-ast> init_declarator_list_opt ';'
-          /. $Build  consumeDeclarationSimple(true, true);  $EndBuild ./
+          /. $Build  consumeDeclarationSimple(true);  $EndBuild ./
 
 
 simple_declaration_with_declspec 
     ::= declaration_specifiers <openscope-ast> init_declarator_list_opt ';'
-          /. $Build  consumeDeclarationSimple(true, false);  $EndBuild ./
+          /. $Build  consumeDeclarationSimple(true);  $EndBuild ./
 
 
 -- declaration specifier nodes not created here, they are created by sub-rules 
@@ -1567,9 +1567,9 @@ visibility_label
 
 member_declaration
     ::= declaration_specifiers_opt <openscope-ast> member_declarator_list ';'
-          /. $Build  consumeDeclarationSimple(true, true);  $EndBuild ./
+          /. $Build  consumeDeclarationSimple(true);  $EndBuild ./
       | declaration_specifiers_opt ';'
-          /. $Build  consumeDeclarationSimple(false, false);  $EndBuild ./
+          /. $Build  consumeDeclarationSimple(false);  $EndBuild ./
       | function_definition ';' 
       | function_definition      
       | dcolon_opt nested_name_specifier template_opt unqualified_id_name ';'
@@ -1828,11 +1828,11 @@ handler
 -- open a scope just so that we can reuse consumeDeclarationSimple()
 exception_declaration
     ::= type_specifier_seq <openscope-ast> declarator
-          /. $Build  consumeDeclarationSimple(true, false);  $EndBuild ./
+          /. $Build  consumeDeclarationSimple(true);  $EndBuild ./
       | type_specifier_seq <openscope-ast> abstract_declarator  -- TODO might need to be abstract_declarator_without_function, might be too lenient, what exactly can you catch?
-          /. $Build  consumeDeclarationSimple(true, false);  $EndBuild ./
+          /. $Build  consumeDeclarationSimple(true);  $EndBuild ./
       | type_specifier_seq
-          /. $Build  consumeDeclarationSimple(false, false);  $EndBuild ./
+          /. $Build  consumeDeclarationSimple(false);  $EndBuild ./
 
 
 -- puts type ids on the stack

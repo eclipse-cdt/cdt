@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.lrparser.action;
 
-import java.util.Collections;
 import java.util.List;
 
 import lpg.lpgjavaruntime.IToken;
@@ -38,7 +37,6 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
@@ -70,8 +68,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
 import org.eclipse.cdt.core.parser.util.DebugUtil;
-import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym;
-import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 
@@ -616,6 +612,8 @@ public abstract class BuildASTParserAction {
 	
 	public void consumeExpressionName() {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
+		
+		System.out.println("Exression name: " + parser.getRuleTokens());
 		
 		IASTName name = (IASTName) astStack.pop();
 		IASTIdExpression expr = nodeFactory.newIdExpression(name);

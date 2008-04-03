@@ -386,6 +386,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
                                 }
 
                                 // Fill the label/column with the properly formatted data value. 
+                                /* Commented out, to be replaced.  See bug 225612.
                                 StringBuffer stringValueBuf = new StringBuffer(getData().getFormattedValue());
                                 String stringValue = expressionDMData.getStringValue();
                                 if(stringValue != null && stringValue.length() > 0)
@@ -393,7 +394,8 @@ public class VariableVMNode extends AbstractExpressionVMNode
                                 	stringValueBuf.append(" ");
                                 	stringValueBuf.append(stringValue.length() > MAX_STRING_VALUE_LENGTH ? stringValue.substring(0, MAX_STRING_VALUE_LENGTH) : stringValue);
                                 }
-                                update.setLabel(stringValueBuf.toString(), labelIndex);
+                                update.setLabel(stringValueBuf.toString(), labelIndex);*/
+                                update.setLabel(getData().getFormattedValue(), labelIndex);
                                 
                                 // Color based on change history
                                 FormattedValueDMData oldData = (FormattedValueDMData) getDMVMProvider().getArchivedModelData(
@@ -401,11 +403,13 @@ public class VariableVMNode extends AbstractExpressionVMNode
 
                         		IExpressionDMData oldDMData = (IExpressionDMData) getDMVMProvider().getArchivedModelData(
                                     VariableVMNode.this, update, dmc); 
-                                String oldStringValue = oldDMData == null ? null : oldDMData.getStringValue();
+                                /* Commented out, to be replaced.  See bug 225612.
+                                String oldStringValue = oldDMData == null ? null : oldDMData.getStringValue();*/
                                 
                                 // highlight the value if either the value (address) has changed or the string (memory at the value) has changed
-                        		if ((oldData != null && !oldData.getFormattedValue().equals(getData().getFormattedValue()))
-                        			|| (oldStringValue != null && !oldStringValue.equals(stringValue))) {
+                        		if ((oldData != null && !oldData.getFormattedValue().equals(getData().getFormattedValue()))) {
+                        			/* Commented out, to be replaced.  See bug 225612.
+                        			|| (oldStringValue != null && !oldStringValue.equals(stringValue))) {*/
                                     update.setBackground(
                                         DebugUIPlugin.getPreferenceColor(
                                             IInternalDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND).getRGB(),

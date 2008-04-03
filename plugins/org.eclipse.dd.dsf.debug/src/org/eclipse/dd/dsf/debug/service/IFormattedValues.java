@@ -33,6 +33,7 @@ public interface IFormattedValues extends IDMService {
     public final static String NATURAL_FORMAT = "NATURAL.Format" ; //$NON-NLS-1$
     public final static String BINARY_FORMAT  = "BINARY.Format"  ; //$NON-NLS-1$
     public final static String DECIMAL_FORMAT = "DECIMAL.Format" ; //$NON-NLS-1$
+    public final static String STRING_FORMAT = "STRING.Format" ; //$NON-NLS-1$
     
     /**
      * Retrieves the  formats that the given data is available in.  

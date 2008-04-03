@@ -107,11 +107,6 @@ public interface IExpressions extends IFormattedValues {
         String getTypeId();
         
         /**
-         * @return A string containing the value of the expression as returned by the debugger backend.
-         */
-        String getStringValue();
-        
-        /**
          * @return A Map in which the keys are strings that are the names of enumerators in the enumeration
          *         that is the value of this expression and the values are the integer values of the
          *         enumerators.  If the expression type is not an enumeration, this returns an empty Map.

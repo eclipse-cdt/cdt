@@ -73,6 +73,10 @@ public interface IUniversalDStoreConstants
 	 * @since 3.0
 	 */
     public static final String RESID_PREF_KEEPALIVE_RESPONSE_TIMEOUT = RESID_PREF_PREFIX + "keepalivetimeout"; //$NON-NLS-1$
+
+    /**
+	 * @since 3.0
+	 */
     public static final int DEFAULT_PREF_KEEPALIVE_RESPONSE_TIMEOUT = 60000;
     
     /**
@@ -85,8 +89,13 @@ public interface IUniversalDStoreConstants
 	 */
     public static final int DEFAULT_PREF_SOCKET_READ_TIMEOUT = 3600000; 
     
-   
-    
+
+	/**
+	 * @since 3.0
+	 */
 	public static final String ALERT_MISMATCHED_SERVER = RESID_PREFIX + "alert.mismatched.server"; //$NON-NLS-1$
+	/**
+	 * @since 3.0
+	 */
 	public static final boolean DEFAULT_ALERT_MISMATCHED_SERVER = true;
 }

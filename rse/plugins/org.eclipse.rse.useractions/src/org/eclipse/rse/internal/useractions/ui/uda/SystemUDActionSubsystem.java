@@ -10,6 +10,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  *******************************************************************************/
 
 package org.eclipse.rse.internal.useractions.ui.uda;
@@ -40,7 +41,6 @@ import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.internal.ui.view.SystemTableViewProvider;
 import org.eclipse.rse.internal.useractions.UserActionsIcon;
 import org.eclipse.rse.internal.useractions.ui.ISystemSubstitutor;
 import org.eclipse.rse.internal.useractions.ui.SystemCmdSubstVarList;
@@ -55,6 +55,7 @@ import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
+import org.eclipse.rse.ui.view.SystemTableViewProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ListSelectionDialog;

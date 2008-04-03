@@ -9,6 +9,7 @@
  * IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  * David Dykstal (IBM) - [186589] move user actions API out of org.eclipse.rse.ui   
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  *******************************************************************************/
 package org.eclipse.rse.useractions.ui.compile;
 
@@ -18,7 +19,6 @@ import java.util.List;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.internal.ui.view.SystemTableViewProvider;
 import org.eclipse.rse.internal.useractions.Activator;
 import org.eclipse.rse.internal.useractions.IUserActionsImageIds;
 import org.eclipse.rse.internal.useractions.ui.compile.SystemCompilableSource;
@@ -31,6 +31,7 @@ import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.SystemAdapterHelpers;
+import org.eclipse.rse.ui.view.SystemTableViewProvider;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.model.AdaptableList;

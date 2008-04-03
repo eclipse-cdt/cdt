@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  *******************************************************************************/
 
 package org.eclipse.rse.core.filters;
@@ -51,4 +51,16 @@ public interface ISystemFilterPoolWrapperInformation {
 	 * Get the wrapper to preselect in the list.
 	 */
 	public ISystemFilterPoolWrapper getPreSelectWrapper();
+	
+	/**
+	 * Add a wrapper object
+	 * @since 3.0
+	 */
+	public void addWrapper(ISystemFilterPoolWrapper wrapper);
+	/**
+	 * Add a filter pool, which we will wrapper here by creating a SystemFilterPoolWrapper object for you
+	 * @since 3.0
+	 */
+	public void addWrapper(String displayName, ISystemFilterPool poolToWrap, boolean preSelect);
+
 }

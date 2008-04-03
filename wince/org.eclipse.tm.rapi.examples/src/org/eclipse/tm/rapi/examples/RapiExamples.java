@@ -15,6 +15,7 @@ import org.eclipse.tm.rapi.IRapiDevice;
 import org.eclipse.tm.rapi.IRapiEnumDevices;
 import org.eclipse.tm.rapi.IRapiSession;
 import org.eclipse.tm.rapi.OS;
+import org.eclipse.tm.rapi.ProcessInformation;
 import org.eclipse.tm.rapi.RapiConnectionInfo;
 import org.eclipse.tm.rapi.RapiDeviceInfo;
 import org.eclipse.tm.rapi.RapiException;
@@ -194,6 +195,22 @@ public class RapiExamples {
 		}
 	}
 
+	/**
+	 * Opens the specified URL in a browser. The browser is started with
+	 * {@link IRapiSession#createProcess(String, String, int)} and the URL
+	 * is passed as command line argument.
+	 */
+	void openUrl(String url) throws RapiException {
+		System.out.println(">>> openUrl() url: " + url);
+		ProcessInformation pi = session.createProcess("\\Windows\\iexplore.exe", url, 0);
+		System.out.println("hProcess: " + Integer.toHexString(pi.hProcess));
+		System.out.println("hThread: " + Integer.toHexString(pi.hThread));
+		System.out.println("dwProcessId: " + Integer.toHexString(pi.dwProcessId));
+		System.out.println("dwThreadId: " + Integer.toHexString(pi.dwThreadId));
+		session.closeHandle(pi.hProcess);
+		session.closeHandle(pi.hThread);
+	}
+
 	void runExamples() {
 		try {
 			initRapi();
@@ -216,6 +233,7 @@ public class RapiExamples {
 			statFile("\\foo.txt");
 			System.out.println(">>> printDeviceTree()");
 			printDeviceTree("\\", 0);
+			openUrl("www.eclipse.org/dsdp/tm");
 			session.uninit();
 		} catch (RapiException e) {
 			e.printStackTrace();

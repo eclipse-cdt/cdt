@@ -436,3 +436,61 @@ fail:
 	if (arg4 && lparg4) env->ReleaseLongArrayElements(arg4, lparg4, 0);
 	return rc;
 }
+
+struct PROCESS_INFORMATION_FID_CACHE
+{
+	int cached;
+	jclass clazz;
+	jfieldID hProcess, hThread;
+	jfieldID dwProcessId, dwThreadId;
+};
+
+PROCESS_INFORMATION_FID_CACHE PROCESS_INFORMATIONFc;
+
+void cachePROCESS_INFORMATIONFields(JNIEnv *env, jobject lpObject)
+{
+	if (PROCESS_INFORMATIONFc.cached) return;
+	PROCESS_INFORMATIONFc.clazz = env->GetObjectClass(lpObject);
+	PROCESS_INFORMATIONFc.hProcess = env->GetFieldID(PROCESS_INFORMATIONFc.clazz, "hProcess", "I");
+	PROCESS_INFORMATIONFc.hThread = env->GetFieldID(PROCESS_INFORMATIONFc.clazz, "hThread", "I");
+	PROCESS_INFORMATIONFc.dwProcessId = env->GetFieldID(PROCESS_INFORMATIONFc.clazz, "dwProcessId", "I");
+	PROCESS_INFORMATIONFc.dwThreadId = env->GetFieldID(PROCESS_INFORMATIONFc.clazz, "dwThreadId", "I");
+	PROCESS_INFORMATIONFc.cached = 1;
+}
+
+void setPROCESS_INFORMATIONFields(JNIEnv *env, jobject lpObject, PROCESS_INFORMATION *pi)
+{
+	if (!PROCESS_INFORMATIONFc.cached) cachePROCESS_INFORMATIONFields(env, lpObject);
+	env->SetIntField(lpObject, PROCESS_INFORMATIONFc.hProcess, (jint)pi->hProcess);
+	env->SetIntField(lpObject, PROCESS_INFORMATIONFc.hThread, (jint)pi->hThread);
+	env->SetIntField(lpObject, PROCESS_INFORMATIONFc.dwProcessId, (jint)pi->dwProcessId);
+	env->SetIntField(lpObject, PROCESS_INFORMATIONFc.dwThreadId, (jint)pi->dwThreadId);
+}
+
+JNIEXPORT jboolean JNICALL RAPI_NATIVE(CeCreateProcess)
+  (JNIEnv *env, jobject that, jint arg0, jstring arg1, jstring arg2, jint arg3, jobject arg4)
+{
+	jboolean rc = 0;
+	const jchar *lparg1 = NULL;
+	const jchar *lparg2 = NULL;
+	PROCESS_INFORMATION pi;
+
+	if (arg0 == 0) return 0;
+	if (arg1) {
+		lparg1 = env->GetStringChars(arg1, NULL);
+		if (lparg1 == NULL) goto fail;
+	}
+	if (arg2) {
+		lparg2 = env->GetStringChars(arg2, NULL);
+		if (lparg2 == NULL) goto fail;
+	}
+	IRAPISession *pSession = (IRAPISession*) arg0;
+	rc = pSession->CeCreateProcess((LPCWSTR)lparg1, (LPCWSTR)lparg2, NULL, NULL, FALSE, arg3, NULL, NULL, NULL, &pi);
+	if (!rc) goto fail;
+	if (arg4) setPROCESS_INFORMATIONFields(env, arg4, &pi);
+
+fail:
+	if (arg1 && lparg1) env->ReleaseStringChars(arg1, lparg1);
+	if (arg2 && lparg2) env->ReleaseStringChars(arg2, lparg2);
+	return rc;
+}

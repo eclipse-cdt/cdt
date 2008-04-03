@@ -234,4 +234,14 @@ public abstract class IRapiSession extends IUnknown {
    */
   public abstract Date getFileLastWriteTime(int handle) throws RapiException;
 
+  /**
+   * Creates new process on the remote device.
+   * @param appName module to execute
+   * @param commandLine command line arguments
+   * @param creationFlags additional flags controlling the creation
+   * @return <code>ProcessInformaion</code> containing information about the new process
+   * @throws RapiException if an error occurs.
+   */
+  public abstract ProcessInformation createProcess(String appName, String commandLine, 
+      int creationFlags) throws RapiException;
 }

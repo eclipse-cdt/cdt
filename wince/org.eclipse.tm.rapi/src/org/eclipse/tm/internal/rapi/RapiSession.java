@@ -14,6 +14,7 @@ import java.util.Date;
 
 import org.eclipse.tm.rapi.IRapiSession;
 import org.eclipse.tm.rapi.OS;
+import org.eclipse.tm.rapi.ProcessInformation;
 import org.eclipse.tm.rapi.RapiException;
 import org.eclipse.tm.rapi.RapiFindData;
 
@@ -249,7 +250,15 @@ public class RapiSession extends IRapiSession {
       throw new RapiException("CeGetFileTime failed", getError()); //$NON-NLS-1$
     }
     return new Date((lwTime[0] / 10000) - OS.TIME_DIFF);
-  }  
+  }
+  
+  public ProcessInformation createProcess(String appName, String commandLine, int creationFlags) throws RapiException {
+    ProcessInformation pi = new ProcessInformation();
+    if (!CeCreateProcess(addr, appName, commandLine, creationFlags, pi)) {
+      throw new RapiException("CeCreateProcess failed", getError()); //$NON-NLS-1$
+    }
+    return pi;
+  }
 
   public String toString() {
     return "[RapiSession] addr: " + Integer.toHexString(addr); //$NON-NLS-1$
@@ -307,4 +316,7 @@ public class RapiSession extends IRapiSession {
   
   private final native boolean CeGetFileTime(int addr, int hFile, 
       long[] lpCreationTime, long[] lpLastAccessTime, long[] lpLastWriteTime);
+  
+  private final native boolean CeCreateProcess(int addr, String lpApplicationName,
+      String lpCommandLine, int dwCreationFlags, ProcessInformation lpProcessInformation);
 }

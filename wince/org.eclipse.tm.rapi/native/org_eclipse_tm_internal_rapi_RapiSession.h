@@ -175,6 +175,14 @@ JNIEXPORT jint JNICALL Java_org_eclipse_tm_internal_rapi_RapiSession_CeGetFileSi
 JNIEXPORT jboolean JNICALL Java_org_eclipse_tm_internal_rapi_RapiSession_CeGetFileTime
   (JNIEnv *, jobject, jint, jint, jlongArray, jlongArray, jlongArray);
 
+/*
+ * Class:     org_eclipse_tm_internal_rapi_RapiSession
+ * Method:    CeCreateProcess
+ * Signature: (ILjava/lang/String;Ljava/lang/String;ILorg/eclipse/tm/rapi/ProcessInformation;)Z
+ */
+JNIEXPORT jboolean JNICALL Java_org_eclipse_tm_internal_rapi_RapiSession_CeCreateProcess
+  (JNIEnv *, jobject, jint, jstring, jstring, jint, jobject);
+
 #ifdef __cplusplus
 }
 #endif

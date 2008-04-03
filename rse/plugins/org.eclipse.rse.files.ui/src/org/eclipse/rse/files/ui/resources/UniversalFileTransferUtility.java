@@ -1233,6 +1233,7 @@ public class UniversalFileTransferUtility
 	 * @param targetFolder the object to be copied to.
 	 * @param monitor the progress monitor
 	 * @return the resulting remote object
+	 * @since 3.0
 	 */
 	public static Object uploadResourceFromWorkspace(IResource srcFileOrFolder, IRemoteFile targetFolder, IProgressMonitor monitor)
 	{
@@ -2534,6 +2535,9 @@ public class UniversalFileTransferUtility
 		return status;
 	}
 
+	/**
+	 * @since 3.0
+	 */
 	protected static boolean checkForCollision(SystemRemoteResourceSet existingFiles, IRemoteFile targetFolder, String oldPath)
 	{
 

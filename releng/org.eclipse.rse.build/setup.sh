@@ -71,7 +71,7 @@ if [ ! -f eclipse/startup.jar ]; then
   if [ -h ../startup.jar ]; then
     rm ../startup.jar
   fi
-  LAUNCHER=`ls org.eclipse.equinox.launcher*.jar | sort | tail -1`
+  LAUNCHER=`ls org.eclipse.equinox.launcher_*.jar | sort | tail -1`
   if [ "${LAUNCHER}" != "" ]; then
     echo "eclipse LAUNCHER=${LAUNCHER}" 
     ln -s plugins/${LAUNCHER} ../startup.jar
@@ -91,9 +91,10 @@ if [ ! -f eclipse/plugins/org.eclipse.cdt.core_5.0.0.200802111122.jar ]; then
   cd ${CDTTMP}
   unzip ../cdt-master-5.0.0-I200802111122.zip
   cd ..
-  java -jar eclipse/plugins/org.eclipse.equinox.launcher_1.0.0.v20070606.jar \
+  # java -jar eclipse/plugins/org.eclipse.equinox.launcher_1.0.0.v20070606.jar \
+  java -jar eclipse/startup.jar \
     -application org.eclipse.update.core.standaloneUpdate \
-    -command install \ 
+    -command install \
     -from file://${CDTTMP} \
     -featureId org.eclipse.cdt \
     -version 5.0.0.200802111122

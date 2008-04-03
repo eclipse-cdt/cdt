@@ -339,6 +339,7 @@ public interface IRemoteFile extends IRemoteContainer, IRemotePropertyHolder, IS
     /**
      * Returns the permissions for this file if they exist
      * @return the permissions
+     * @since 3.0
      */
     public IHostFilePermissions getPermissions();
     

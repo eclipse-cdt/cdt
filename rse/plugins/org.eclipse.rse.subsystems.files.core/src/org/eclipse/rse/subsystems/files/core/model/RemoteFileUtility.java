@@ -106,6 +106,7 @@ public class RemoteFileUtility
 	/**
 	 * Return the global SystemFileTransferModeRegistry.
 	 * @return the global SystemFileTransferModeRegistry.
+	 * @since 3.0
 	 */
 	public static ISystemFileTransferModeRegistry getSystemFileTransferModeRegistry()
 	{

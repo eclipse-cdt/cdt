@@ -120,6 +120,7 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 *              should be exactly one fileType specified per parent.
 	 * 				For the default list of available file types see <code>IFileServiceContants</code>
 	 * @param monitor the progress monitor
+	 * @since 3.0
 	 */
 	public IRemoteFile[] listMultiple(IRemoteFile[] parents, int[] fileTypes, IProgressMonitor monitor) throws SystemMessageException;		
 	

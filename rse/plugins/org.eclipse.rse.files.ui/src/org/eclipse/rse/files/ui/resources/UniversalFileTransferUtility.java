@@ -583,6 +583,7 @@ public class UniversalFileTransferUtility
 	 * @param remoteSet the objects which are being copied
 	 * @param monitor a progress monitor
 	 * @return the temporary objects that was created after the download
+	 * @since 3.0
 	 */
 	public static SystemWorkspaceResourceSet downloadResourcesToWorkspace(SystemRemoteResourceSet remoteSet, IProgressMonitor monitor)
 	{
@@ -830,6 +831,7 @@ public class UniversalFileTransferUtility
 	 * @param srcFileOrFolder the file to copy.
 	 * @param monitor the progress monitor.
 	 * @return the resulting local replica.
+	 * @since 3.0
 	 */
 	protected static IFile downloadFileToWorkspace(File srcFileOrFolder, IProgressMonitor monitor)
 	{
@@ -2496,6 +2498,9 @@ public class UniversalFileTransferUtility
 	{
 		return checkForCollision(existingFiles, targetFolder, oldName, oldPath, null);
 	}
+	/**
+	 * @since 3.0
+	 */
 	protected static RenameStatus checkForCollision(SystemRemoteResourceSet existingFiles, IRemoteFile targetFolder, String oldName, String oldPath, List NamesInUse)
 	{
 		String newName = oldName;

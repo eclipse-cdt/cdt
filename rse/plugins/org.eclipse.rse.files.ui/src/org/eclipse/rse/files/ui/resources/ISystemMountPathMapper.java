@@ -102,6 +102,7 @@ public interface ISystemMountPathMapper
 	 * @param subsystem the subsystem used to retrieve files
 	 * 
 	 * @return the priority, where the lower in value, the higher the priority.
+	 * @since 3.0
 	 */
 	int getPriority(String hostname, String remotePath, IRemoteFileSubSystem subsystem);
 }

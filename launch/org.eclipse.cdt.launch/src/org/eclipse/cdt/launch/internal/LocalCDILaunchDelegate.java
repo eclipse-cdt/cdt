@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 QNX Software Systems and others.
+ * Copyright (c) 2004, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
- * Anton Leherbauer (Wind River Systems) - bug 205108
+ * Anton Leherbauer (Wind River Systems) - bugs 205108, 212632, 224187
  *******************************************************************************/
 package org.eclipse.cdt.launch.internal; 
 
@@ -16,6 +16,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.IProcessInfo;
+import org.eclipse.cdt.core.IProcessList;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
@@ -38,6 +41,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
@@ -196,7 +200,10 @@ public class LocalCDILaunchDelegate extends AbstractCLaunchDelegate {
 			}
 			cancel( "", -1 ); //$NON-NLS-1$
 		}
-		IPath exePath = verifyProgramPath( config );
+		IPath exePath = getProgramPath( config );
+		if (exePath == null) {
+			exePath= getProgramPathForPid(pid);
+		}
 		ICProject project = verifyCProject( config );
 		IBinaryObject exeFile = null;
 		if ( exePath != null ) {
@@ -230,6 +237,29 @@ public class LocalCDILaunchDelegate extends AbstractCLaunchDelegate {
 				wc.setAttribute( ICDTLaunchConfigurationConstants.ATTR_ATTACH_PROCESS_ID, (String)null );
 			monitor.done();
 		}		
+	}
+
+	private IPath getProgramPathForPid(int pid) {
+		IProcessList processList= null;
+		try {
+			processList= CCorePlugin.getDefault().getProcessList();
+		} catch (CoreException exc) {
+			// ignored on purpose
+		}
+		if (processList != null) {
+			IProcessInfo[] pInfos= processList.getProcessList();
+			for (int i = 0; i < pInfos.length; i++) {
+				IProcessInfo processInfo = pInfos[i];
+				if (processInfo.getPid() == pid) {
+					final String name= processInfo.getName();
+					if (name != null) {
+						return new Path(name);
+					}
+					break;
+				}
+			}
+		}
+		return null;
 	}
 
 	private void launchCoreDebugSession( ILaunchConfiguration config, ILaunch launch, IProgressMonitor monitor ) throws CoreException {

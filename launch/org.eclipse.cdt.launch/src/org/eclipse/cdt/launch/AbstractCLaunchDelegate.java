@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 QNX Software Systems and others.
+ * Copyright (c) 2005, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     QNX Software Systems - initial API and implementation
  *     Andrew Ferguson (andrew.ferguson@arm.com) - bug 123997
  *     Ken Ryall (Nokia) - bug 178731
+ *     Anton Leherbauer (Wind River Systems) - bug 224187
  *******************************************************************************/
 package org.eclipse.cdt.launch;
 
@@ -153,9 +154,14 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 *            error code
 	 */
 	protected void abort(String message, Throwable exception, int code) throws CoreException {
-		MultiStatus status = new MultiStatus(getPluginID(), code, message, exception);
-		status.add(new Status(IStatus.ERROR, getPluginID(), code, exception == null ? "" : exception.getLocalizedMessage(), //$NON-NLS-1$
-				exception));
+		IStatus status;
+		if (exception != null) {
+			MultiStatus multiStatus = new MultiStatus(getPluginID(), code, message, exception);
+			multiStatus.add(new Status(IStatus.ERROR, getPluginID(), code, exception.getLocalizedMessage(), exception));
+			status= multiStatus;
+		} else {
+			status= new Status(IStatus.ERROR, getPluginID(), code, message, null);
+		}
 		throw new CoreException(status);
 	}
 
@@ -190,7 +196,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 
 	public static IPath getProgramPath(ILaunchConfiguration configuration) throws CoreException {
 		String path = getProgramName(configuration);
-		if (path == null) {
+		if (path == null || path.trim().length() == 0) {
 			return null;
 		}
 		return new Path(path);
@@ -364,7 +370,8 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 		ICProject cproject = verifyCProject(config);
 		IPath programPath = getProgramPath(config);
 		if (programPath == null || programPath.isEmpty()) {
-			return null;
+			abort(LaunchMessages.getString("AbstractCLaunchDelegate.Program_file_not_specified"), null, //$NON-NLS-1$
+					ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROGRAM);
 		}
 		if (!programPath.isAbsolute()) {
 			IFile wsProgramPath = cproject.getProject().getFile(programPath);

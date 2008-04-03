@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.dd.gdb.internal.ui.viewmodel;
 
-import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.ExpressionVMProvider;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.modules.ModulesVMProvider;
@@ -52,7 +51,7 @@ public class GdbViewModelAdapter extends AbstractDMVMAdapter
             return new RegisterVMProvider(this, context, getSession());
         } else if (IDebugUIConstants.ID_EXPRESSION_VIEW.equals(context.getId()) ) {
             return new ExpressionVMProvider(this, context, getSession());
-        } else if (ICDebugUIConstants.ID_MODULES_VIEW.equals(context.getId()) ) {
+        } else if (IDebugUIConstants.ID_MODULE_VIEW.equals(context.getId()) ) {
             return new ModulesVMProvider(this, context, getSession());
         }
         return null;

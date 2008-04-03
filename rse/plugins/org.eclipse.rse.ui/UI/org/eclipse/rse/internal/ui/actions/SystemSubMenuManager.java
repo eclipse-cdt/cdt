@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
@@ -38,9 +39,7 @@ import org.eclipse.swt.widgets.Shell;
  * The state-setting methods including setShell, setSelection and setValue.
  */
 public class SystemSubMenuManager  
-       extends MenuManager
-       //implements ISelectionChangedListener
-       //implements ISystemAction
+       extends MenuManager 
 {
 	protected String          toolTipText;	
     protected ImageDescriptor image = null;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,21 +12,19 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
 import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.rse.internal.ui.actions.SystemSubMenuManager;
 import org.eclipse.rse.ui.Mnemonics;
+import org.eclipse.rse.ui.actions.ISystemViewMenuListener;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.swt.events.ArmEvent;
-import org.eclipse.swt.events.ArmListener;
 import org.eclipse.swt.events.MenuEvent;
-import org.eclipse.swt.events.MenuListener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Widget;
@@ -36,7 +34,8 @@ import org.eclipse.swt.widgets.Widget;
  * A class that listens for menu show events for the purpose of applying mnemonics
  * to the menu items.
  */
-public class SystemViewMenuListener implements IMenuListener, MenuListener, ArmListener
+public class SystemViewMenuListener 
+implements ISystemViewMenuListener
 {
 
 

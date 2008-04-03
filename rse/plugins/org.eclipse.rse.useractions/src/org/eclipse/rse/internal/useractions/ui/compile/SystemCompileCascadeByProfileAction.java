@@ -9,6 +9,7 @@
  * IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  * David Dykstal (IBM) - [186589] move user actions API out of org.eclipse.rse.ui   
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  *******************************************************************************/
 package org.eclipse.rse.internal.useractions.ui.compile;
 
@@ -21,6 +22,7 @@ import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.ui.view.SystemViewMenuListener;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.ui.actions.ISystemViewMenuListener;
 import org.eclipse.rse.ui.actions.SystemBaseDummyAction;
 import org.eclipse.rse.ui.actions.SystemBaseSubMenuAction;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
@@ -78,7 +80,7 @@ public class SystemCompileCascadeByProfileAction extends SystemBaseSubMenuAction
 	 * Overridable method from parent that instantiates the menu listener who job is to add mnemonics.
 	 * @param setMnemonicsOnlyOnce true if the menu is static and so mnemonics need only be set once. False if it is dynamic
 	 */
-	protected SystemViewMenuListener createMnemonicsListener(boolean setMnemonicsOnlyOnce) {
+	protected ISystemViewMenuListener createMnemonicsListener(boolean setMnemonicsOnlyOnce) {
 		return new SystemViewMenuListener(false); // our menu is re-built dynamically each time
 	}
 

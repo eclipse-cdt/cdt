@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  *******************************************************************************/
 
 package org.eclipse.rse.ui.actions;
@@ -269,12 +269,12 @@ public abstract class SystemBaseSubMenuAction
      * Overridable method that instantiates the menu listener who job is to add mnemonics.
      * @param setMnemonicsOnlyOnce true if the menu is static and so mnemonics need only be set once. False if it is dynamic
      */
-    protected SystemViewMenuListener createMnemonicsListener(boolean setMnemonicsOnlyOnce)
+    protected ISystemViewMenuListener createMnemonicsListener(boolean setMnemonicsOnlyOnce)
     {
     	return new SystemViewMenuListener(setMnemonicsOnlyOnce);
     }
         
-	/** 
+	/**  
 	 * Sets the parent shell for this action. This is an override of our parent's method so we can
 	 * cascade it to each sub-action.
 	 */

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
@@ -22,6 +22,7 @@ import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager;
 import org.eclipse.rse.internal.ui.view.SystemViewMenuListener;
+import org.eclipse.rse.ui.actions.ISystemViewMenuListener;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.rse.ui.actions.SystemBaseSubMenuAction;
 import org.eclipse.swt.widgets.Shell;
@@ -120,7 +121,7 @@ public class SystemFilterCascadingNewFilterPoolReferenceFPMgrAction
      * Overridable method from parent that instantiates the menu listener who job is to add mnemonics.
      * @param setMnemonicsOnlyOnce true if the menu is static and so mnemonics need only be set once. False if it is dynamic
      */
-    protected SystemViewMenuListener createMnemonicsListener(boolean setMnemonicsOnlyOnce)
+    protected ISystemViewMenuListener createMnemonicsListener(boolean setMnemonicsOnlyOnce)
     {
     	return new SystemViewMenuListener(false); // our menu is re-built dynamically each time
     }

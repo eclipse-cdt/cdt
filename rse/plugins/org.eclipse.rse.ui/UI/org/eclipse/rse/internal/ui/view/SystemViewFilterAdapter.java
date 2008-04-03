@@ -20,6 +20,7 @@
  * Tobias Schwarz   (Wind River) - [173267] "empty list" should not be displayed 
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  * Xuan Chen        (IBM)        - [160775] [api] rename (at least within a zip) blocks UI thread
+ * David Dykstal (IBM) - [224671] [api] org.eclipse.rse.core API leaks non-API types
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -39,8 +40,8 @@ import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.filters.ISystemFilterString;
-import org.eclipse.rse.core.filters.SystemFilterSimple;
 import org.eclipse.rse.core.model.ISystemMessageObject;
+import org.eclipse.rse.core.model.ISystemModifiableContainer;
 import org.eclipse.rse.core.model.ISystemViewInputProvider;
 import org.eclipse.rse.core.model.SystemChildrenContentsType;
 import org.eclipse.rse.core.model.SystemMessageObject;
@@ -159,7 +160,7 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter
 	public String getAbsoluteName(Object element)
 	{
 		ISystemFilter filter = getFilter(element);
-		if (filter instanceof SystemFilterSimple)
+		if (filter.isTransient())
 		{
 			return filter.getName();
 		}
@@ -188,7 +189,7 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter
 	{
 		ISystemFilter filter = getFilter(element);
 		if (filter.isTransient())
-		  return ((SystemFilterSimple)filter).getParent(); 
+		  return filter.getSubSystem(); 
 		return filter.getParentFilterContainer();
 	}
 	
@@ -206,11 +207,10 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter
 			   return checkForEmptyList(processPromptingFilter(filter), element, true);
 
 			 Object[] children = null;
-             SystemFilterSimple simpleFilter = (SystemFilterSimple)filter;
-    	     String[] filterStrings = simpleFilter.getFilterStrings();
+    	     String[] filterStrings = filter.getFilterStrings();
     	     // 50167pc: The following was a problem, as the parent in a SystemFilterSimpleImpl is not
     	     // to be trusted, since we tend to use the same instance for each connection in the list.     	   	 
-             ISubSystem ss = (ISubSystem)simpleFilter.getParent();
+             ISubSystem ss = (ISubSystem)filter.getSubSystem();
              String preSelectName = null;
 		     try
 		     {
@@ -230,20 +230,23 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter
 		     	  }
 		     	  preSelectName = ip.getPreSelectFilterChild();
 		     	}
+		     	if (filter instanceof ISystemModifiableContainer) {
+		     		ISystemModifiableContainer containingFilter = (ISystemModifiableContainer) filter;
+			     	// get children from cache if the children have been cached
+			     	if (ss.getSubSystemConfiguration().supportsFilterCaching() && !containingFilter.isStale() &&
+			     			containingFilter.hasContents(SystemChildrenContentsType.getInstance())) {
+			     		children = containingFilter.getContents(SystemChildrenContentsType.getInstance());
+			     	}
+			     	// otherwise, get children and then cache
+			     	else {
+			     		children = checkForEmptyList(ss.resolveFilterStrings(filterStrings, monitor), element, true);
+			     		
+			     		if (ss.getSubSystemConfiguration().supportsFilterCaching()) {
+			     			containingFilter.setContents(SystemChildrenContentsType.getInstance(), children);
+			     		}
+			     	}
+		     	}
 		     	
-		     	// get children from cache if the children have been cached
-		     	if (ss.getSubSystemConfiguration().supportsFilterCaching() && !simpleFilter.isStale() &&
-		     			simpleFilter.hasContents(SystemChildrenContentsType.getInstance())) {
-		     		children = simpleFilter.getContents(SystemChildrenContentsType.getInstance());
-		     	}
-		     	// otherwise, get children and then cache
-		     	else {
-		     		children = checkForEmptyList(ss.resolveFilterStrings(filterStrings, monitor), element, true);
-		     		
-		     		if (ss.getSubSystemConfiguration().supportsFilterCaching()) {
-		     			simpleFilter.setContents(SystemChildrenContentsType.getInstance(), children);
-		     		}
-		     	}
 		     	
                 if ((children !=null) && (preSelectName != null))
                 {

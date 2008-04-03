@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,26 +11,19 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - [224671] [api] org.eclipse.rse.core API leaks non-API types
  ********************************************************************************/
 
-package org.eclipse.rse.internal.references;
+package org.eclipse.rse.core.references;
 
 import org.eclipse.rse.core.model.RSEModelObject;
-import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
-import org.eclipse.rse.core.references.IRSEReferencedObject;
 
 /**
  * A class to encapsulate the operations required of an object which
- * supports references to it by other objects (SystemReferencingObject).
+ * supports references to it by other objects ({@link SystemReferencingObject}).
  * This type of class needs to support maintaining an in-memory list of
  * all who reference it so that list can be following on delete and
  * rename operations.
- * <p>
- * These references are not persistent. Persistent references are managed
- * by the subclass SystemPersistableReferencedObject.
- * <p>
- * SystemFilter is a known concrete subclass.
  */
 public abstract class SystemReferencedObject extends RSEModelObject implements IRSEReferencedObject {
 
@@ -40,12 +33,9 @@ public abstract class SystemReferencedObject extends RSEModelObject implements I
 	 * Default constructor. Typically called by EMF factory method.
 	 */
 	protected SystemReferencedObject() {
-		helper = new SystemReferencedObjectHelper(this);
+		helper = new SystemReferencedObjectHelper();
 	}
 
-	// ----------------------------------
-	// IRSEReferencedObject methods...
-	// ----------------------------------
 	/**
 	 * Add a reference, increment reference count, return new count
 	 * @param ref the referencing object

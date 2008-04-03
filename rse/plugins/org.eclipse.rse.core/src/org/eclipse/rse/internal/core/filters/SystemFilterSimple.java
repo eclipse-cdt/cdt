@@ -15,9 +15,10 @@
  * David Dykstal (IBM) - [206901] fixing ArrayStoreException in getPersistableChildren
  *   Fix involved removing visibility for data referenced in SystemFilter. Addressed
  *   that by modifying the implementation of SystemFilterSimple to use its own data.
+ * David Dykstal (IBM) - [224671] [api] org.eclipse.rse.core API leaks non-API types
  *******************************************************************************/
 
-package org.eclipse.rse.core.filters;
+package org.eclipse.rse.internal.core.filters;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,9 +26,13 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.rse.core.model.ISystemContainer;
+import org.eclipse.rse.core.filters.ISystemFilter;
+import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
+import org.eclipse.rse.core.filters.ISystemFilterPoolManagerProvider;
+import org.eclipse.rse.core.filters.ISystemFilterString;
 import org.eclipse.rse.core.model.ISystemContentsType;
-import org.eclipse.rse.internal.core.filters.SystemFilter;
+import org.eclipse.rse.core.model.ISystemModifiableContainer;
+import org.eclipse.rse.core.subsystems.ISubSystem;
 
 /**
  * A lightweight implementation of ISystemFilter.
@@ -47,14 +52,14 @@ import org.eclipse.rse.internal.core.filters.SystemFilter;
  *  <li>The attributes relativeOrder, promptable and default
  * </ul>
  */
-public class SystemFilterSimple extends SystemFilter implements ISystemContainer {
+public class SystemFilterSimple extends SystemFilter implements ISystemModifiableContainer {
 
 	private String name = null;
 	private String type = null;
 	private boolean caseSensitive = false;
 	private boolean promptable = false;
 	private boolean isStale = true;
-	private Object parent = null;
+	private Object subsystem = null;
 	private List filterStrings = new ArrayList(3);
 	private HashMap cachedContents = new HashMap();
 
@@ -107,15 +112,15 @@ public class SystemFilterSimple extends SystemFilter implements ISystemContainer
 	 * Set the parent. Since we don't have any filter manager, we need
 	 * some way to store context info for the adapter. Use this.
 	 */
-	public void setParent(Object parent) {
-		this.parent = parent;
+	public void setSubSystem(ISubSystem parent) {
+		this.subsystem = parent;
 	}
 
 	/**
 	 * Get the parent as set in setParent(Object)
 	 */
-	public Object getParent() {
-		return parent;
+	public Object getSubSystem() {
+		return subsystem;
 	}
 
 	// -------------------------------------------------------

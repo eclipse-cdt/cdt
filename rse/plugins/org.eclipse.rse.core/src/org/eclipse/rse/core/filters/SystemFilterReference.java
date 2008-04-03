@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * David Dykstal (IBM) - 142806: refactoring persistence framework
+ * David Dykstal (IBM) - [224671] [api] org.eclipse.rse.core API leaks non-API types
  ********************************************************************************/
 
 package org.eclipse.rse.core.filters;
@@ -27,10 +28,10 @@ import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.ISystemContainer;
 import org.eclipse.rse.core.model.ISystemContentsType;
 import org.eclipse.rse.core.references.IRSEBaseReferencedObject;
+import org.eclipse.rse.core.references.SystemReferencingObject;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.core.filters.SystemFilterContainerReferenceCommonMethods;
 import org.eclipse.rse.internal.core.filters.SystemFilterStringReference;
-import org.eclipse.rse.internal.references.SystemReferencingObject;
 
 /**
  * Represents a shadow or reference to a system filter.

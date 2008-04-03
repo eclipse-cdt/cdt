@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * David Dykstal (IBM) - [224671] [api] org.eclipse.rse.core API leaks non-API types
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.widgets;
@@ -31,7 +32,7 @@ import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemRemoteObjectMatcher;
 import org.eclipse.rse.core.filters.ISystemFilter;
-import org.eclipse.rse.core.filters.SystemFilterSimple;
+import org.eclipse.rse.core.filters.SystemFilterUtil;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.files.ui.ISystemAddFileListener;
@@ -83,7 +84,6 @@ import org.eclipse.swt.widgets.Text;
  *   <li>{@link #setShowPropertySheet(boolean)}
  *   <li>{@link #enableAddMode(org.eclipse.rse.files.ui.ISystemAddFileListener)}
  *   <li>{@link #setMultipleSelectionMode(boolean)}
- *   <li>{@link #setSelectionValidator(org.eclipse.rse.ui.IValidatorRemoteSelection)}
  * </ul>
  * <p>
  * To configure the text on the dialog, call these methods:
@@ -302,7 +302,7 @@ public class SystemSelectRemoteFileOrFolderForm
 				
         // set the default filters we will show when the user expands a connection...
         String filterName = null;
-        SystemFilterSimple filter = null;
+        ISystemFilter filter = null;
         int filterCount = showRootFilter ? 2 : 1;
         if (preSelectRoot)
           filterCount = 1;
@@ -327,9 +327,9 @@ public class SystemSelectRemoteFileOrFolderForm
           }
           else
             filterName = fileMode ? SystemFileResources.RESID_FILTER_DRIVES : SystemFileResources.RESID_FILTER_DRIVES;
-          filter = new SystemFilterSimple(filterName);       
-          filter.setParent(ss);
-          filter.setFilterString(rffs.toString());
+          filter = SystemFilterUtil.makeSimpleFilter(filterName);       
+          filter.setSubSystem(ss);
+          filter.setFilterStrings(new String[] {rffs.toString()});
           filters[idx++] = filter;
     	  //System.out.println("FILTER 1: " + filter.getFilterString());
     	  if (preSelectRoot)
@@ -346,9 +346,9 @@ public class SystemSelectRemoteFileOrFolderForm
           // filter two: "\folder1\folder2"
 		  rffs.setPath(folderAbsolutePath); 
 
-          filter = new SystemFilterSimple(rffs.toStringNoSwitches());
-          filter.setParent(ss);
-          filter.setFilterString(rffs.toString());
+          filter = SystemFilterUtil.makeSimpleFilter(rffs.toStringNoSwitches());
+          filter.setSubSystem(ss);
+          filter.setFilterStrings(new String[] {rffs.toString()});
           filters[idx] = filter;
         
           preSelectFilter = filter;

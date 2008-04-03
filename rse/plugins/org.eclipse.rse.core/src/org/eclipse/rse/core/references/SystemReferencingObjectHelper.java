@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,19 +12,15 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - [224671] [api] org.eclipse.rse.core API leaks non-API types
  *******************************************************************************/
 
-package org.eclipse.rse.internal.references;
+package org.eclipse.rse.core.references;
 
-import org.eclipse.rse.core.references.IRSEBaseReferencedObject;
-import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
 
 /**
- * This is a class that implements all the methods in the IRSEReferencingObject.
- * It makes implementing this interface trivial.
- * The easiest use of this class is to subclass it, but since that is not
- * always possible, it is not abstract and hence can be leveraged via containment.
+ * The class should be used by subclasses of {@link SystemReferencingObject} by instantiating it and delegating to it.
+ * @noextend
  */
 public class SystemReferencingObjectHelper {
 

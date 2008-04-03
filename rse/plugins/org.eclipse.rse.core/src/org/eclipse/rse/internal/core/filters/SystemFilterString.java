@@ -14,6 +14,7 @@
  * David Dykstal (IBM) - 142806: refactoring persistence framework
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - Cleanup Javadoc.
+ * David Dykstal (IBM) - [224671] [api] org.eclipse.rse.core API leaks non-API types
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.filters;
@@ -27,8 +28,8 @@ import org.eclipse.rse.core.filters.ISystemFilterString;
 import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.RSEModelObject;
 import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
+import org.eclipse.rse.core.references.SystemReferencedObjectHelper;
 import org.eclipse.rse.internal.core.RSECoreMessages;
-import org.eclipse.rse.internal.references.SystemReferencedObjectHelper;
 
 
 /**
@@ -72,7 +73,7 @@ public class SystemFilterString extends RSEModelObject implements ISystemFilterS
 	protected SystemFilterString() 
 	{
 		super();
-		helper = new SystemReferencedObjectHelper(this);
+		helper = new SystemReferencedObjectHelper();
 	}
 
 	/*

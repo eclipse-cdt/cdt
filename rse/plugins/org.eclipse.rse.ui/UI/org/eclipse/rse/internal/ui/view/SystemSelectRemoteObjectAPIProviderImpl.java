@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
  * Tobias Schwarz   (Wind River) - [173267] "empty list" should not be displayed 
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
+ * David Dykstal (IBM) - [224671] [api] org.eclipse.rse.core API leaks non-API types
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -26,7 +27,7 @@ import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.filters.ISystemFilterStringReference;
-import org.eclipse.rse.core.filters.SystemFilterSimple;
+import org.eclipse.rse.core.filters.SystemFilterUtil;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemViewInputProvider;
 import org.eclipse.rse.core.subsystems.ISubSystem;
@@ -228,9 +229,8 @@ public class SystemSelectRemoteObjectAPIProviderImpl
 	}    
 
 	/**
-	 * Set the quick filters to be exposed to the user. These will be shown to the
-	 *  user when they expand a connection.
-	 * @see org.eclipse.rse.core.filters.SystemFilterSimple
+	 * Set the filters to be exposed to the user. These will be shown to the
+	 * user when they expand a connection.
 	 */
 	public void setQuickFilters(ISystemFilter[] filters)
 	{
@@ -428,10 +428,10 @@ public class SystemSelectRemoteObjectAPIProviderImpl
 						
 						for (int idx=0; idx<quickFilters.length; idx++)
 						{  				  	
-							SystemFilterSimple quickFilter = (SystemFilterSimple)quickFilters[idx];
-							children[idx] = new SystemFilterSimple(quickFilter.getName());
+							ISystemFilter quickFilter = quickFilters[idx];
+							children[idx] = SystemFilterUtil.makeSimpleFilter(quickFilter.getName());
 							quickFilter.clone((ISystemFilter)children[idx]);
-							((SystemFilterSimple)children[idx]).setParent(subsystem);
+							((ISystemFilter)children[idx]).setSubSystem(subsystem);
 						} 				        	 				        	 			        	
 					}
 								 						
@@ -440,9 +440,9 @@ public class SystemSelectRemoteObjectAPIProviderImpl
  				    	// walk through quickFilters and if they are transient, assign current subsystem as parent
  				    	for (int idx=0; idx<quickFilters.length; idx++)
  				    	{  				  	
- 				        	if ((quickFilters[idx] instanceof SystemFilterSimple)) 				        
+ 				        	if ((quickFilters[idx].isTransient())) 				        
  				        	{	 	
-								((SystemFilterSimple)quickFilters[idx]).setParent(subsystem);
+								quickFilters[idx].setSubSystem(subsystem);
  				        	}
  				    	} 				  
 

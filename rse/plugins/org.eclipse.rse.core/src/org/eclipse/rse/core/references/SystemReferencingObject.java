@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,25 +12,21 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * David Dykstal (IBM) - [224671] [api] org.eclipse.rse.core API leaks non-API types
  ********************************************************************************/
 
-package org.eclipse.rse.internal.references;
+package org.eclipse.rse.core.references;
 
 import org.eclipse.rse.core.model.RSEModelObject;
-import org.eclipse.rse.core.references.IRSEBaseReferencedObject;
-import org.eclipse.rse.core.references.IRSEReferencingObject;
 import org.eclipse.rse.internal.core.RSECoreMessages;
 
 /**
  * A class to encapsulate the operations required of an object which
  * is merely a reference to another object, something we call a shadow.
- * Such shadows are needed to support a GUI which displays the same
+ * Such shadows are needed to support a UI which displays the same
  * object in multiple places. To enable that, it is necessary not to
  * use the same physical object in each UI representation as the UI
  * will only know how to update/refresh the first one it finds.
- * <p>
- * These references are not persistent. Persistent references are managed
- * by the subclass SystemPersistableReferencingObject.
  */
 public abstract class SystemReferencingObject extends RSEModelObject implements IRSEReferencingObject {
 	private SystemReferencingObjectHelper helper = null;

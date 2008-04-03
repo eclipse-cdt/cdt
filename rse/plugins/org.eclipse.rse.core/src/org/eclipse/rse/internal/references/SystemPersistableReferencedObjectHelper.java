@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,12 +11,13 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - [224671] [api] org.eclipse.rse.core API leaks non-API types
  ********************************************************************************/
 
 package org.eclipse.rse.internal.references;
 
 import org.eclipse.rse.core.references.IRSEBasePersistableReferencedObject;
+import org.eclipse.rse.core.references.SystemReferencedObjectHelper;
 
 /**
  * This class extends the support for a class that supports being managing by a transient 
@@ -31,11 +32,9 @@ public class SystemPersistableReferencedObjectHelper extends SystemReferencedObj
 
 	/**
 	 * Constructor for SystemPersistableReferencedObjectHelper
-	 * @param parent the SystemPersistableReferencedObject that uses this helper.
 	 * @param referenceName The unique name that can be stored to identify this object.
 	 */
-	protected SystemPersistableReferencedObjectHelper(IRSEBasePersistableReferencedObject parent, String referenceName) {
-		super(parent);
+	protected SystemPersistableReferencedObjectHelper(String referenceName) {
 		setReferenceName(referenceName);
 	}
 

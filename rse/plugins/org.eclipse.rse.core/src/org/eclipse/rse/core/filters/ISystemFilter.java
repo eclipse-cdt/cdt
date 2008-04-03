@@ -14,12 +14,14 @@
  * Contributors:
  * David Dykstal (IBM) - cleanup format and javadoc
  * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
+ * David Dykstal (IBM) - [224671] [api] org.eclipse.rse.core API leaks non-API types
  *******************************************************************************/
 
 package org.eclipse.rse.core.filters;
 
 import org.eclipse.rse.core.model.IRSEModelObject;
 import org.eclipse.rse.core.references.IRSEReferencedObject;
+import org.eclipse.rse.core.subsystems.ISubSystem;
 
 /**
  * A filter consists of filter strings and may be contained in a filter pool.
@@ -604,6 +606,22 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	 * saved or part of the filter framework. It will have no manager or provider.
 	 */
 	public boolean isTransient();
+
+	/**
+	 * Set the subsytem of this filter.
+	 * This is ignored if the filter is not transient.
+	 * @param subsystem a subsystem associated with this transient filter
+	 * @since 3.0
+	 */
+	public void setSubSystem(ISubSystem subsystem);
+
+	/**
+	 * Get the subsystem for this filter.
+	 * This will return null if the filter is not transient.
+	 * @return the subsystem
+	 * @since 3.0
+	 */
+	public Object getSubSystem();
 
 	/**
 	 * Clones a given filter to the given target filter.

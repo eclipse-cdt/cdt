@@ -16,6 +16,7 @@
  * David Dykstal (IBM) - [206901] fixing ArrayStoreException in getPersistableChildren
  *   Removed caching that was here because of previous EMF/MOF implementation. This makes
  *   the class simpler.
+ * David Dykstal (IBM) - [224671] [api] org.eclipse.rse.core API leaks non-API types
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.filters;
@@ -34,11 +35,11 @@ import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManagerProvider;
 import org.eclipse.rse.core.filters.ISystemFilterString;
-import org.eclipse.rse.core.filters.SystemFilterSimple;
 import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.ISystemProfile;
+import org.eclipse.rse.core.references.SystemReferencedObject;
+import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.core.RSECoreMessages;
-import org.eclipse.rse.internal.references.SystemReferencedObject;
 
 /**
  * A filter is an encapsulation of a unique name, and a list of filter strings.
@@ -186,7 +187,6 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 	 *  and not intended to be saved or part of the filter framework. Eg it has no manager or provider.
 	 * <p>
 	 * We always return false.
-	 * @see SystemFilterSimple
 	 */
 	public boolean isTransient() {
 		return false;
@@ -903,6 +903,20 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 	 */
 	public boolean isSetSingleFilterStringOnly() {
 		return singleFilterStringOnly;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilter#setSubSystem(org.eclipse.rse.core.subsystems.ISubSystem)
+	 */
+	public void setSubSystem(ISubSystem subsystem) {
+		// does nothing this is not a transient filter
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilter#getSubSystem()
+	 */
+	public Object getSubSystem() {
+		return null; // since this is not a transient filter
 	}
 
 	/* (non-Javadoc)

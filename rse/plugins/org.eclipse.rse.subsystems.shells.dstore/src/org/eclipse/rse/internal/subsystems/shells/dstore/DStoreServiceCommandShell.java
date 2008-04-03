@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,13 +7,13 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
- * {Name} (company) - description of contribution.
- *  David McKnight  (IBM)  - [202822] cleanup output datalements after use
+ * David McKnight (IBM) - [202822] cleanup output datalements after use
+ * Martin Oberhuber (Wind River) - [225510][api] Fix OutputRefreshJob API leakage
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.shells.dstore;
@@ -26,7 +26,6 @@ import org.eclipse.dstore.extra.IDomainListener;
 import org.eclipse.rse.internal.services.dstore.shells.DStoreHostOutput;
 import org.eclipse.rse.internal.services.dstore.shells.DStoreHostShell;
 import org.eclipse.rse.internal.services.dstore.shells.DStoreShellOutputReader;
-import org.eclipse.rse.internal.subsystems.shells.servicesubsystem.OutputRefreshJob;
 import org.eclipse.rse.services.shells.IHostOutput;
 import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IHostShellChangeEvent;
@@ -45,21 +44,21 @@ public class DStoreServiceCommandShell extends ServiceCommandShell
 		private DataElement _status;
 		private DataStore _ds;
 		private boolean _done = false;
-		
+
 		public CleanUpSpirited(DataElement status, String name)
 		{
 			_status = status;
 			_ds = status.getDataStore();
 			_ds.getDomainNotifier().addDomainListener(this);
 		}
-		
-		public void domainChanged(DomainEvent e) 
+
+		public void domainChanged(DomainEvent e)
 		{
 			deleteElements();
 		}
-		
+
 		public void run()
-		{			
+		{
 			while (!_done)
 			{
 				try
@@ -67,12 +66,12 @@ public class DStoreServiceCommandShell extends ServiceCommandShell
 					Thread.sleep(10000);
 				}
 				catch (Exception e)
-				{					
+				{
 				}
 				deleteElements();
 			}
 		}
-		
+
 		private void deleteElements()
 		{
 			if (_status.getNestedSize() > 0)
@@ -84,13 +83,13 @@ public class DStoreServiceCommandShell extends ServiceCommandShell
 				{
 					// delete
 					_ds.deleteObjects(_status);
-					_ds.refresh(_status);			
-					
+					_ds.refresh(_status);
+
 					_ds.getDomainNotifier().removeDomainListener(this);
 					_done = true;
 				}
 				}
-			}		
+			}
 		}
 
 		public Shell getShell() {
@@ -103,9 +102,9 @@ public class DStoreServiceCommandShell extends ServiceCommandShell
 				return true;
 			return false;
 		}
-		
+
 	}
-	
+
 	public DStoreServiceCommandShell(IRemoteCmdSubSystem cmdSS, IHostShell hostShell)
 	{
 		super(cmdSS, hostShell);
@@ -127,12 +126,12 @@ public class DStoreServiceCommandShell extends ServiceCommandShell
 				}
 			}
 			catch (Exception e)
-			{			
+			{
 			}
 		}
 		return null;
 	}
-	
+
 	public String getContextString()
 	{
 		DStoreHostShell shell = (DStoreHostShell)getHostShell();
@@ -155,20 +154,20 @@ public class DStoreServiceCommandShell extends ServiceCommandShell
 				String src = line.getSource();
 				if (event.isError())
 				{
-					output = new RemoteError(this, type);		
-				
+					output = new RemoteError(this, type);
+
 				}
 				else
 				{
 					output = new RemoteOutput(this, type);
 				}
-				output.setText(line.getName());								
-				
+				output.setText(line.getName());
+
 				int colonSep = src.indexOf(':');
 				// line numbers
 				if (colonSep > 0)
 				{
-					
+
 					String lineNo = src.substring(colonSep + 1);
 					String file = src.substring(0, colonSep);
 					int linen = 0;
@@ -178,7 +177,7 @@ public class DStoreServiceCommandShell extends ServiceCommandShell
 					}
 					catch (Exception e)
 					{
-						
+
 					}
 					if (linen != 0)
 					{
@@ -188,33 +187,22 @@ public class DStoreServiceCommandShell extends ServiceCommandShell
 					else
 					{
 						output.setAbsolutePath(src);
-					}				
+					}
 				}
 				else
 				{
-					output.setAbsolutePath(src);	
+					output.setAbsolutePath(src);
 				}
-			
-	
+
+
 				addOutput(output);
 				outputs[i] = output;
 			}
 		}
-		//if (_lastRefreshJob == null || _lastRefreshJob.isComplete())
-		{
-			_lastRefreshJob = new OutputRefreshJob(this, outputs, false);
-			_lastRefreshJob.schedule();
-		}
-		/*
-		else
-		{
-			_lastRefreshJob.addOutputs(outputs);
-			_lastRefreshJob.schedule();
-		}
-		*/
+		notifyOutputChanged(outputs, false);
 	}
 
-	public boolean isActive() 
+	public boolean isActive()
 	{
 		boolean activeShell = _hostShell.isActive();
 		if (!activeShell)
@@ -223,13 +211,13 @@ public class DStoreServiceCommandShell extends ServiceCommandShell
 			if (_output.size() < status.getNestedSize())
 			{
 				return true;
-			}				
+			}
 		}
 		return activeShell;
 	}
-	
+
 	public void removeOutput()
-	{			
+	{
 		DStoreHostShell shell = (DStoreHostShell)getHostShell();
 		DataElement status = shell.getStatus();
 		DataStore ds = status.getDataStore();
@@ -240,8 +228,8 @@ public class DStoreServiceCommandShell extends ServiceCommandShell
 			if (!ds.isConnected())
 			{
 				status.removeNestedData();
-			}		
-			else if (status.get(ssize - 1).isSpirit() || !ds.isDoSpirit()) 
+			}
+			else if (status.get(ssize - 1).isSpirit() || !ds.isDoSpirit())
 			{
 				// objects can be deleted directly at this point since there will be no more updates from the server
 				ds.deleteObjects(status);
@@ -252,19 +240,19 @@ public class DStoreServiceCommandShell extends ServiceCommandShell
 				// cleanup later
 				// objects need to be deleted later since the server will still be sending spirited update
 				// if we don't defer this, then the deleted elements would get recreated when the spirits are updated
-				CleanUpSpirited cleanUp = new CleanUpSpirited(status, getId());					
+				CleanUpSpirited cleanUp = new CleanUpSpirited(status, getId());
 				cleanUp.start();
 			}
 		}
-		
 
-	
-		
+
+
+
 		synchronized(_output)
 		{
-			_output.clear();			
+			_output.clear();
 		}
 
 	}
-	
+
 }

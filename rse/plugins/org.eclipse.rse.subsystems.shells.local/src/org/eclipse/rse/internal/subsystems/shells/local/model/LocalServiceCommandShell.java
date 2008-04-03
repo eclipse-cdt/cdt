@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,12 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [225510][api] Fix OutputRefreshJob API leakage
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.shells.local.model;
@@ -22,7 +22,6 @@ import java.io.File;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.internal.subsystems.shells.servicesubsystem.OutputRefreshJob;
 import org.eclipse.rse.services.shells.IHostOutput;
 import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IHostShellChangeEvent;
@@ -41,7 +40,7 @@ public class LocalServiceCommandShell extends ServiceCommandShell
 	private Patterns _patterns;
 	private String _workingDir;
 	private IRemoteFileSubSystem _fs;
-	
+
 	public LocalServiceCommandShell(IRemoteCmdSubSystem cmdSS, IHostShell hostShell)
 	{
 		super(cmdSS, hostShell);
@@ -67,19 +66,19 @@ public class LocalServiceCommandShell extends ServiceCommandShell
 				return _fs.getRemoteFileObject(workingDir, new NullProgressMonitor());
 			}
 			catch (Exception e)
-			{			
+			{
 			}
 		}
 		return null;
 	}
-	
+
 	public String getContextString()
 	{
 		return _workingDir;
 	}
 
 
-	
+
 	public void shellOutputChanged(IHostShellChangeEvent event)
 	{
 		IHostOutput[] lines = event.getLines();
@@ -88,16 +87,16 @@ public class LocalServiceCommandShell extends ServiceCommandShell
 		{
 			String line = lines[i].getString();
 			ParsedOutput parsedMsg = null;
-			
+
 			try
 			{
 				parsedMsg = _patterns.matchLine(line);
 			}
-			catch (Throwable e) 
+			catch (Throwable e)
 			{
 				e.printStackTrace();
 			}
-			
+
 			RemoteOutput output = null;
 			String type = "stdout"; //$NON-NLS-1$
 			if (parsedMsg != null)
@@ -111,7 +110,7 @@ public class LocalServiceCommandShell extends ServiceCommandShell
 			if (event.isError())
 			{
 				output = new RemoteError(this, type);
-			}		
+			}
 			else
 			{
 				output = new RemoteOutput(this, type);
@@ -119,7 +118,7 @@ public class LocalServiceCommandShell extends ServiceCommandShell
 
 			output.setText(line);
 			if (parsedMsg != null)
-			{		
+			{
 				String file = parsedMsg.file;
 				if (type.equals(ISystemOutputRemoteTypes.TYPE_PROMPT))
 				{
@@ -137,29 +136,18 @@ public class LocalServiceCommandShell extends ServiceCommandShell
 					output.setAbsolutePath(_workingDir + File.separatorChar + file);
 				}
 			}
-		
+
 			addOutput(output);
 			outputs[i] = output;
 		}
-		//if (_lastRefreshJob == null || _lastRefreshJob.isComplete())
-		{
-			_lastRefreshJob = new OutputRefreshJob(this, outputs, false);
-			_lastRefreshJob.schedule();
-		}
-		/*
-		else
-		{
-			_lastRefreshJob.addOutputs(outputs);
-			_lastRefreshJob.schedule();
-		}
-		*/
+		notifyOutputChanged(outputs, false);
 	}
-	
+
 	public void writeToShell(String cmd)
 	{
 		_patterns.update(cmd);
 		super.writeToShell(cmd);
 
 	}
-	
+
 }

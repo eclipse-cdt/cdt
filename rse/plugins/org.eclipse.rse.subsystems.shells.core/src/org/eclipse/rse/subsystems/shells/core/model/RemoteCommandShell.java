@@ -1,18 +1,18 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
- * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
- * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
+ * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty()
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  ********************************************************************************/
 
@@ -46,7 +46,7 @@ public abstract class RemoteCommandShell implements IAdaptable, IRemoteCommandSh
 	protected IRemoteCmdSubSystem  _cmdSubSystem;
 	protected ArrayList _cmdHistory;
 	protected IProject _project;
-	
+
 	public RemoteCommandShell(IRemoteCmdSubSystem cmdSubSystem)
 	{
 		_output = new ArrayList();
@@ -61,13 +61,13 @@ public abstract class RemoteCommandShell implements IAdaptable, IRemoteCommandSh
 
 	public String getName()
 	{
-		return _name;	
+		return _name;
 	}
-	
 
-	
+
+
 	public String getId()
-	{      
+	{
 	  if (_id == null)
 	  {
 	   IRemoteCmdSubSystem subSystem = getCommandSubSystem();
@@ -75,12 +75,12 @@ public abstract class RemoteCommandShell implements IAdaptable, IRemoteCommandSh
 	   String name = connection.getAliasName();
 
 	   IRemoteCommandShell[] shells = subSystem.getShells();
-	 
+
 	   List currentNames = new ArrayList();
 	   for (int i = 0; i < shells.length; i++)
 	   {
 	    IRemoteCommandShell shell = shells[i];
-	    if (shell != this) 
+	    if (shell != this)
 	    {
 	        // DKM - noticed that this caused a stack overflow in one scenario
 	       if (shell instanceof RemoteCommandShell)
@@ -89,7 +89,7 @@ public abstract class RemoteCommandShell implements IAdaptable, IRemoteCommandSh
 	       }
 	    }
 	   }
-	   if (currentNames.size() > 0) 
+	   if (currentNames.size() > 0)
 	   {
 	    int number = 2;
 	    String newName = name + " " + number; //$NON-NLS-1$
@@ -180,7 +180,7 @@ public abstract class RemoteCommandShell implements IAdaptable, IRemoteCommandSh
 	public IRemoteCmdSubSystem getCommandSubSystem()
 	{
 	    if (_cmdSubSystem == null)
-	    { 
+	    {
 			if (_fileSubSystem != null)
 			{
 				try
@@ -190,7 +190,7 @@ public abstract class RemoteCommandShell implements IAdaptable, IRemoteCommandSh
 					ISubSystem[] sses = sr.getSubSystems(host);
 					for (int i = 0; i < sses.length; i++)
 					{
-						if (sses[i] instanceof IRemoteCmdSubSystem)	
+						if (sses[i] instanceof IRemoteCmdSubSystem)
 						{
 							IRemoteCmdSubSystem cmdSubSystem = (RemoteCmdSubSystem)sses[i];
 							_cmdSubSystem = cmdSubSystem;
@@ -221,7 +221,7 @@ public abstract class RemoteCommandShell implements IAdaptable, IRemoteCommandSh
 	public abstract boolean isActive();
 
 	public void updateHistory(String cmd)
-	{	
+	{
 	    /*
 			String text = cmd;
 			int tagIndex = text.indexOf("BEGIN-END-TAG");
@@ -249,7 +249,7 @@ public abstract class RemoteCommandShell implements IAdaptable, IRemoteCommandSh
 		}
 		return cmds;
 	}
-	
+
 
 	/**
 	 * Get the current working directory for this command
@@ -259,7 +259,7 @@ public abstract class RemoteCommandShell implements IAdaptable, IRemoteCommandSh
 	{
 		return _cwd;
 	}
-	
+
 	/**
 	 * Returns the context of this Shell as a String for persistence.
 	 * The context is typically the current working directory.
@@ -275,7 +275,7 @@ public abstract class RemoteCommandShell implements IAdaptable, IRemoteCommandSh
 	    }
 	    return ""; //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Get the current working directory for this command
 	 * @return the current working directory
@@ -284,38 +284,39 @@ public abstract class RemoteCommandShell implements IAdaptable, IRemoteCommandSh
 	{
 		return _cwd;
 	}
-	
+
 	/**
 	 * Set the current working directory for this command
-	 * @param file
+	 *
+	 * @param file the working directory.
 	 */
 	public void setWorkingDirectory(IRemoteFile file)
 	{
 		_cwd = file;
 	}
-	
+
 	protected boolean isWindows()
 	{
 		return getCommandSubSystem().getHost().getSystemType().isWindows();
 	}
 
-	
-		
+
+
 	/**
 	 * Override to provide a list of possible commands
 	 */
 	public abstract ICandidateCommand[] getCandidateCommands();
 
-	
+
 	public void associateProject(IProject project)
 	{
 		_project = project;
 	}
-	
-	
+
+
 	public IProject getAssociatedProject()
 	{
 		return _project;
 	}
-	
+
 }

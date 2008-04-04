@@ -89,34 +89,31 @@ if [ ! -f eclipse/startup.jar ]; then
   fi
   cd ${curdir2}
 fi
-if [ ! -f eclipse/plugins/org.eclipse.cdt.core_5.0.0.200802111122.jar ]; then
-  # CDT 5.0M5 Runtime
+if [ ! -f eclipse/plugins/org.eclipse.cdt.core_5.0.0.200804020801.jar ]; then
+  # CDT 5.0M6 Runtime
   echo "Getting CDT Runtime..."
-  wget "http://download.eclipse.org/tools/cdt/builds/5.0.0/I.I200802111122/cdt-master-5.0.0-I200802111122.zip"
-  #java \
-  #  -classpath eclipse/plugins/org.eclipse.help.base_3.3.0.v20070606.jar \
+  wget "http://download.eclipse.org/tools/cdt/builds/5.0.0/I.I200804020801/cdt-master-5.0.0-I200804020801.zip"
   CDTTMP=`pwd`/tmp.$$
   mkdir ${CDTTMP}
   cd ${CDTTMP}
-  unzip ../cdt-master-5.0.0-I200802111122.zip
+  unzip ../cdt-master-5.0.0-I200804020801.zip
   cd ..
-  #java -jar eclipse/plugins/org.eclipse.equinox.launcher_1.0.0.v20070606.jar \
   #java -jar eclipse/startup.jar \
   java -jar eclipse/plugins/org.eclipse.equinox.launcher_1.0.*.jar \
     -application org.eclipse.update.core.standaloneUpdate \
     -command install \
     -from file://${CDTTMP} \
     -featureId org.eclipse.cdt \
-    -version 5.0.0.200802111122
+    -version 5.0.0.200804020801
   rm -rf ${CDTTMP}
-  rm cdt-master-5.0.0-I200802111122.zip
+  rm cdt-master-5.0.0-I200804020801.zip
 fi
-if [ ! -f eclipse/plugins/org.eclipse.emf.doc_2.4.0.v200802090050.jar ]; then
+if [ ! -f eclipse/plugins/org.eclipse.emf.doc_2.4.0.v200804012208.jar ]; then
   # Need EMF 2.4 SDK for Service Discovery ISV Docs Backlinks
   echo "Getting EMF SDK..."
-  wget "http://download.eclipse.org/modeling/emf/emf/downloads/drops/2.4.0/S200802090050/emf-sdo-xsd-SDK-2.4.0M5.zip"
-  unzip -o emf-sdo-xsd-SDK-2.4.0M5.zip
-  rm emf-sdo-xsd-SDK-2.4.0M5.zip 
+  wget "http://download.eclipse.org/modeling/emf/emf/downloads/drops/2.4.0/S200804012208/emf-sdo-xsd-SDK-2.4.0M6.zip"
+  unzip -o emf-sdo-xsd-SDK-2.4.0M6.zip
+  rm emf-sdo-xsd-SDK-2.4.0M6.zip 
 fi
 if [ ! -f eclipse/plugins/org.junit_3.8.2.v200711021030/junit.jar ]; then
   # Eclipse Test Framework

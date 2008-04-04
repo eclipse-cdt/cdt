@@ -1420,6 +1420,8 @@ direct_abstract_declarator
 basic_direct_abstract_declarator
     ::= '(' abstract_declarator ')'
           /. $Build  consumeDirectDeclaratorBracketed();  $EndBuild ./
+      | '(' ')'
+          /. $Build  consumeAbstractDeclaratorEmpty();  $EndBuild ./
           
 
 array_direct_abstract_declarator

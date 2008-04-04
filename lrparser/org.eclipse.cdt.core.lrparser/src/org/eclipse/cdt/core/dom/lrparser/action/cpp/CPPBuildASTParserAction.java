@@ -91,6 +91,7 @@ import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
 import org.eclipse.cdt.core.dom.lrparser.LPGTokenAdapter;
 import org.eclipse.cdt.core.dom.lrparser.action.BuildASTParserAction;
+import org.eclipse.cdt.core.parser.util.ASTPrinter;
 import org.eclipse.cdt.core.parser.util.DebugUtil;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPExpressionStatementParser;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPNoCastExpressionParser;
@@ -1240,53 +1241,26 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	
 	public void consumeInitDeclaratorComplete() {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
+			
 		IASTDeclarator declarator = (IASTDeclarator) astStack.peek();
 		if(!(declarator instanceof IASTFunctionDeclarator))
 			return;
 		
-		IParser alternateParser = new CPPNoFunctionDeclaratorParser(parser.getOrderedTerminalSymbols()); 
-		IASTNode alternateDeclarator = runSecondaryParser(alternateParser);
+		IParser secondaryParser = new CPPNoFunctionDeclaratorParser(parser.getOrderedTerminalSymbols()); 
+		IASTNode alternateDeclarator = runSecondaryParser(secondaryParser);
 	
-		if(alternateDeclarator == null  || alternateDeclarator instanceof IASTProblemDeclaration)
+		if(alternateDeclarator == null || alternateDeclarator instanceof IASTProblemDeclaration)
 			return;
 		
 		astStack.pop();
 		IASTNode ambiguityNode = new CPPASTAmbiguousDeclarator(declarator, (IASTDeclarator)alternateDeclarator);
-				
-        setOffsetAndLength(ambiguityNode);
-		astStack.push(ambiguityNode);
-        
+
+		setOffsetAndLength(ambiguityNode);
+		astStack.push(ambiguityNode); 
+		
 		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
-	
-	
-	/**
-	 * Returns true iff the given AST contains at least one constructor initializer node.
-	 * Can be called on any AST node but is mean to be called on declarations or declarators.
-	 * 
-	 * TODO how freaking inefficient is this?
-	 */
-	private static boolean hasConstructorInitializer(IASTNode declaration) {
-		final boolean[] found = {false}; 
-		
-		ASTVisitor detector = new ASTVisitor() {
-			{shouldVisitInitializers = true;}
-			@Override
-			public int visit(IASTInitializer initializer) {
-				if(initializer instanceof ICPPASTConstructorInitializer) {
-					found[0] = true; // who said Java doesn't have closures
-					return PROCESS_ABORT;
-				}
-				return PROCESS_CONTINUE;
-			}
-		};
-		
-		declaration.accept(detector);
-		System.out.println("hasConstructorInitializer: " + found[0]);
-		return found[0];
-	}
 	
 	
 	/**
@@ -1564,6 +1538,22 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
  		}
  	}
  
+ 	
+ 	/**
+ 	 * Consume an empty bracketed abstract declarator.
+ 	 */
+ 	public void consumeAbstractDeclaratorEmpty() {
+ 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
+ 		
+ 		IASTName name = nodeFactory.newName();
+ 		setOffsetAndLength(name, offset(parser.getLeftIToken())+1, 0);
+ 		IASTDeclarator declarator = nodeFactory.newDeclarator(name);
+ 		setOffsetAndLength(declarator);
+ 		astStack.push(declarator);
+ 		
+ 		if(TRACE_AST_STACK) System.out.println(astStack);
+ 	}
+ 	
  	
  	/**
  	 * mem_initializer

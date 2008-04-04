@@ -15,8 +15,9 @@ import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 import org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl;
 
 /**
- * A terminal connector instance, also known as terminal connection type.
- * 
+ * An {@link ITerminalConnector} instance, also known as terminal connection
+ * type, for maintaining a single terminal connection.
+ *
  * It provides all terminal connector functions that can be provided by static
  * markup without loading the actual implementation class. The actual
  * {@link TerminalConnectorImpl} implementation class is lazily loaded by the
@@ -26,7 +27,7 @@ import org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnect
  * {@link #getId()}, {@link #getName()}, {@link #getSettingsSummary()},{@link #load(ISettingsStore)},
  * {@link #setTerminalSize(int, int)}, {@link #save(ISettingsStore)},
  * {@link #getAdapter(Class)}
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  *                Clients can get terminal connector instances through the
@@ -51,7 +52,7 @@ public class TerminalConnector implements ITerminalConnector {
 		TerminalConnectorImpl makeConnector() throws Exception;
 	}
 	/**
-	 *
+	 * The factory for creating impl instances.
 	 */
 	private final TerminalConnector.Factory fTerminalConnectorFactory;
 	/**
@@ -77,9 +78,13 @@ public class TerminalConnector implements ITerminalConnector {
 	 */
 	private ISettingsStore fStore;
 	/**
-	 * @param terminalConnectorFactory
-	 * @param id
-	 * @param name
+	 * Constructor for the terminal connector.
+	 *
+	 * @param terminalConnectorFactory Factory for lazily instantiating the
+	 *            TerminalConnectorImpl when needed.
+	 * @param id terminal connector ID. The connector is publicly known under
+	 *            this ID.
+	 * @param name translatable name to display the connector in the UI.
 	 */
 	public TerminalConnector(TerminalConnector.Factory terminalConnectorFactory, String id, String name) {
 		fTerminalConnectorFactory = terminalConnectorFactory;

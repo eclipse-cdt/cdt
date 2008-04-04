@@ -39,7 +39,7 @@
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * Radoslav Gerganov (ProSyst)   - [216195] [dstore] Saving empty file fails
  * David McKnight    (IBM)       - [220379] [api] Provide a means for contributing custom BIDI encodings
- * David McKnight    (IBM)       - [225573] dstore] client not falling back to single operation when missing batch descriptors (due to old server)
+ * David McKnight    (IBM)       - [225573] [dstore] client not falling back to single operation when missing batch descriptors (due to old server)
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -1449,10 +1449,31 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
  		}
  		
  		DataElement de = getElementFor(oldPath);
+ 		
+ 		
+		// new servers use the full path
  		de.setAttribute(DE.A_SOURCE, newPath);
+			
 		
 		DataElement status = dsStatusCommand(de, IUniversalDataStoreConstants.C_RENAME, monitor);
 
+		if (status != null && status.getAttribute(DE.A_SOURCE).equals("failed"))
+		{
+			// in the patch for bug 196211, a change was made to the UniversalFileSystemMiner that
+			// had the rename expecting the full path in the A_SOURCE attribute itself
+			// prior to that, we constructed the target file name from the value and the source
+			// I must have missed that while reviewing
+	
+			// this is our attempt at recovering, but doing the operation with the old
+			// format.  Old servers only used the name for the source attribute on C_RENAME
+			de.setAttribute(DE.A_SOURCE, newName);
+			
+			// trying again
+			status = dsStatusCommand(de, IUniversalDataStoreConstants.C_RENAME, monitor);
+		}
+		
+		
+		
 		if (status == null) return false;
 		if (null != monitor && monitor.isCanceled())
 		{

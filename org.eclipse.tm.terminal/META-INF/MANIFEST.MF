@@ -12,10 +12,16 @@ Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
 Bundle-ClassPath: .
-Export-Package: org.eclipse.tm.internal.terminal.control;x-friends:="org.eclipse.tm.terminal.view",
+Export-Package: org.eclipse.tm.internal.terminal.connector;x-friends:="org.eclipse.tm.terminal.test",
+ org.eclipse.tm.internal.terminal.control;x-friends:="org.eclipse.tm.terminal.view",
  org.eclipse.tm.internal.terminal.control.impl;x-friends:="org.eclipse.tm.terminal.test",
  org.eclipse.tm.internal.terminal.emulator;x-friends:="org.eclipse.tm.terminal.test",
  org.eclipse.tm.internal.terminal.model;x-friends:="org.eclipse.tm.terminal.test",
- org.eclipse.tm.internal.terminal.provisional.api;x-friends:="org.eclipse.tm.terminal.serial,org.eclipse.tm.terminal.ssh,org.eclipse.tm.terminal.telnet,org.eclipse.tm.terminal.view,org.eclipse.tm.terminal.test",
+ org.eclipse.tm.internal.terminal.provisional.api;
+  x-friends:="org.eclipse.tm.terminal.serial,
+   org.eclipse.tm.terminal.ssh,
+   org.eclipse.tm.terminal.telnet,
+   org.eclipse.tm.terminal.view,
+   org.eclipse.tm.terminal.test",
  org.eclipse.tm.internal.terminal.textcanvas;x-friends:="org.eclipse.tm.terminal.test",
  org.eclipse.tm.terminal.model

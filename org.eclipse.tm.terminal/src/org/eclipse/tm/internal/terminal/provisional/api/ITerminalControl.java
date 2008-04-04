@@ -56,7 +56,8 @@ public interface ITerminalControl {
 	/**
 	 * @return a stream used to write to the terminal. Any bytes written to this
 	 * stream appear in the terminal or are interpreted by the emulator as
-	 * control sequences.
+	 * control sequences. The stream in the opposite direction, terminal
+	 * to remote is in {@link ITerminalConnector#getTerminalToRemoteStream()}.
 	 */
 	OutputStream getRemoteToTerminalOutputStream();
 

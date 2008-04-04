@@ -1046,8 +1046,8 @@ public class VT100Emulator implements ControlListener {
 	}
 
 	private ITerminalConnector getConnector() {
-		if(terminal.getTerminalConnectorInfo()!=null)
-			return terminal.getTerminalConnectorInfo().getConnector();
+		if(terminal.getTerminalConnector()!=null)
+			return terminal.getTerminalConnector();
 		return null;
 	}
 

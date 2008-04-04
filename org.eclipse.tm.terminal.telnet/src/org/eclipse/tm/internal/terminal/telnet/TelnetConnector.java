@@ -23,12 +23,12 @@ import java.net.Socket;
 
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
-import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
+import org.eclipse.tm.internal.terminal.provisional.api.TerminalConnectorImpl;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 
-public class TelnetConnector implements ITerminalConnector {
+public class TelnetConnector extends TerminalConnectorImpl {
 	private OutputStream fOutputStream;
 	private InputStream fInputStream;
 	private Socket fSocket;

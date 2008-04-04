@@ -58,7 +58,6 @@ import org.eclipse.tm.internal.terminal.control.impl.ITerminalControlForText;
 import org.eclipse.tm.internal.terminal.control.impl.TerminalMessages;
 import org.eclipse.tm.internal.terminal.control.impl.TerminalPlugin;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
-import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnectorInfo;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
@@ -103,8 +102,8 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
     private final ITerminalListener         fTerminalListener;
     private String                    fMsg = ""; //$NON-NLS-1$
     private FocusListener             fFocusListener;
-    private ITerminalConnectorInfo		  fConnectorInfo;
-    private final ITerminalConnectorInfo[]      fConnectors;
+    private ITerminalConnector		  fConnector;
+    private final ITerminalConnector[]      fConnectors;
     PipedInputStream fInputStream;
 
 	private ICommandInputField fCommandInputField;
@@ -118,7 +117,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	 */
 	volatile private Job fJob;
 
-	public VT100TerminalControl(ITerminalListener target, Composite wndParent, ITerminalConnectorInfo[] connectors) {
+	public VT100TerminalControl(ITerminalListener target, Composite wndParent, ITerminalConnector[] connectors) {
 		fConnectors=connectors;
 		fTerminalListener=target;
 		fTerminalModel=TerminalTextDataFactory.makeTerminalTextData();
@@ -129,7 +128,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		setupTerminal(wndParent);
 	}
 
-	public ITerminalConnectorInfo[] getConnectors() {
+	public ITerminalConnector[] getConnectors() {
 		return fConnectors;
 	}
 
@@ -266,11 +265,11 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		if(getTerminalConnector()==null)
 			return;
 		fTerminalText.resetState();
-		if(fConnectorInfo.getInitializationErrorMessage()!=null) {
+		if(fConnector.getInitializationErrorMessage()!=null) {
 			showErrorMessage(NLS.bind(
 					TerminalMessages.CannotConnectTo,
-					fConnectorInfo.getName(),
-					fConnectorInfo.getInitializationErrorMessage()));
+					fConnector.getName(),
+					fConnector.getInitializationErrorMessage()));
 			// we cannot connect because the connector was not initialized
 			return;
 		}
@@ -280,10 +279,8 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		waitForConnect();
 	}
 
-	private ITerminalConnector getTerminalConnector() {
-		if(fConnectorInfo==null)
-			return null;
-		return fConnectorInfo.getConnector();
+	public ITerminalConnector getTerminalConnector() {
+		return fConnector;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#disconnectTerminal()
@@ -605,7 +602,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 
 	public OutputStream getOutputStream() {
 		if(getTerminalConnector()!=null)
-			return getTerminalConnector().getOutputStream();
+			return getTerminalConnector().getTerminalToRemoteStream();
 		return null;
 	}
 
@@ -633,13 +630,6 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	public VT100Emulator getTerminalText() {
 		return fTerminalText;
 	}
-
-	/**
-	 */
-	public ITerminalConnectorInfo getTerminalConnectorInfo() {
-		return fConnectorInfo;
-	}
-
 	protected class TerminalFocusListener implements FocusListener {
 		private IContextActivation contextActivation = null;
 
@@ -844,9 +834,9 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 			// locally, send a LF after sending a CR.
 			// ISSUE: Is this absolutely required?
 
-			if (character == '\r' && getTerminalConnectorInfo() != null
+			if (character == '\r' && getTerminalConnector() != null
 					&& isConnected()
-					&& getTerminalConnectorInfo().getConnector().isLocalEcho()) {
+					&& getTerminalConnector().isLocalEcho()) {
 				sendChar('\n', false);
 			}
 
@@ -865,8 +855,8 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 			//
 			// o The character is the DELETE character.
 
-			if (getTerminalConnectorInfo() == null
-					|| getTerminalConnectorInfo().getConnector().isLocalEcho() == false || altKeyPressed
+			if (getTerminalConnector() == null
+					|| getTerminalConnector().isLocalEcho() == false || altKeyPressed
 					|| (character >= '\u0001' && character < '\t')
 					|| (character > '\t' && character < '\r')
 					|| (character > '\r' && character <= '\u001f')
@@ -912,8 +902,8 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		return ""; //$NON-NLS-1$
 	}
 
-	public void setConnector(ITerminalConnectorInfo connector) {
-		fConnectorInfo=connector;
+	public void setConnector(ITerminalConnector connector) {
+		fConnector=connector;
 
 	}
 	public ICommandInputField getCommandInputField() {

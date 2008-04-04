@@ -56,7 +56,7 @@ import org.eclipse.tm.internal.terminal.control.ITerminalListener;
 import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
 import org.eclipse.tm.internal.terminal.control.TerminalViewControlFactory;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
-import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnectorInfo;
+import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalConnectorExtension;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
@@ -211,7 +211,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 		//if (isConnected())
 		if (fCtlTerminal.getState()!=TerminalState.CLOSED)
 			return;
-		if(fCtlTerminal.getTerminalConnectorInfo()==null)
+		if(fCtlTerminal.getTerminalConnector()==null)
 			setConnector(showSettingsDialog());
 		fCtlTerminal.connectTerminal();
 	}
@@ -246,7 +246,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 	}
 
 	public void onTerminalSettings() {
-		ITerminalConnectorInfo c=showSettingsDialog();
+		ITerminalConnector c=showSettingsDialog();
 		if(c!=null) {
 			setConnector(c);
 
@@ -254,11 +254,11 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 		}
 	}
 
-	private ITerminalConnectorInfo showSettingsDialog() {
+	private ITerminalConnector showSettingsDialog() {
 		// When the settings dialog is opened, load the Terminal settings from the
 		// persistent settings.
 
-		TerminalSettingsDlg dlgTerminalSettings = new TerminalSettingsDlg(getViewSite().getShell(),fCtlTerminal.getConnectors(),fCtlTerminal.getTerminalConnectorInfo());
+		TerminalSettingsDlg dlgTerminalSettings = new TerminalSettingsDlg(getViewSite().getShell(),fCtlTerminal.getConnectors(),fCtlTerminal.getTerminalConnector());
 		dlgTerminalSettings.setTerminalTitle(getPartName());
 		Logger.log("opening Settings dialog."); //$NON-NLS-1$
 
@@ -276,7 +276,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 		return dlgTerminalSettings.getConnector();
 	}
 
-	private void setConnector(ITerminalConnectorInfo connector) {
+	private void setConnector(ITerminalConnector connector) {
 		fCtlTerminal.setConnector(connector);
 	}
 
@@ -296,7 +296,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 			// display in the view's content description line.  This is used by class
 			// TerminalText when it processes an ANSI OSC escape sequence that commands
 			// the terminal to display text in its title bar.
-		} else if(fCtlTerminal.getTerminalConnectorInfo()==null){
+		} else if(fCtlTerminal.getTerminalConnector()==null){
 			strTitle=ViewMessages.NO_CONNECTION_SELECTED;
 		} else {
 			// When parameter 'data' is null, we construct a descriptive string to
@@ -307,7 +307,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 			//In order to make the logic of assembling, and the separators, better adapt to foreign languages
 			if(summary.length()>0)
 				summary=summary+" - ";  //$NON-NLS-1$
-			String name=fCtlTerminal.getTerminalConnectorInfo().getName();
+			String name=fCtlTerminal.getTerminalConnector().getName();
 			if(name.length()>0) {
 				name+=": "; //$NON-NLS-1$
 			}
@@ -327,7 +327,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 		// TODO: use another mechanism than "?" for the magic non initialized state
 		// see TerminalConnectorProxy.getSettingsSummary
 		String summary="?"; //$NON-NLS-1$
-		if(fCtlTerminal.getTerminalConnectorInfo()!=null)
+		if(fCtlTerminal.getTerminalConnector()!=null)
 			summary=fCtlTerminal.getSettingsSummary();
 		if("?".equals(summary)) { //$NON-NLS-1$
 			summary=fStore.get(STORE_SETTING_SUMMARY, ""); //$NON-NLS-1$
@@ -451,11 +451,11 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 	 * This method creates the top-level control for the Terminal view.
 	 */
 	protected void setupControls(Composite wndParent) {
-		ITerminalConnectorInfo[] connectors=TerminalConnectorExtension.getTerminalConnectors();
+		ITerminalConnector[] connectors = makeConnectors();
 		fCtlTerminal = TerminalViewControlFactory.makeControl(this, wndParent, connectors);
 		String connectionType=fStore.get(STORE_CONNECTION_TYPE);
 		for (int i = 0; i < connectors.length; i++) {
-			connectors[i].getConnector().load(getStore(connectors[i]));
+			connectors[i].load(getStore(connectors[i]));
 			if(connectors[i].getId().equals(connectionType))
 				fCtlTerminal.setConnector(connectors[i]);
 		}
@@ -469,10 +469,18 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 			setPartName(title);
 	}
 
-	private void saveSettings(ITerminalConnectorInfo connector) {
-		ITerminalConnectorInfo[] connectors=fCtlTerminal.getConnectors();
+	/**
+	 * @return a list of connectors this view can use
+	 */
+	protected ITerminalConnector[] makeConnectors() {
+		ITerminalConnector[] connectors=TerminalConnectorExtension.makeTerminalConnectors();
+		return connectors;
+	}
+
+	private void saveSettings(ITerminalConnector connector) {
+		ITerminalConnector[] connectors=fCtlTerminal.getConnectors();
 		for (int i = 0; i < connectors.length; i++) {
-			connectors[i].getConnector().save(getStore(connectors[i]));
+			connectors[i].save(getStore(connectors[i]));
 		}
 		if(connector!=null) {
 			fStore.put(STORE_CONNECTION_TYPE,connector.getId());
@@ -493,7 +501,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 		fStore.put(STORE_TITLE,getPartName());
 		fStore.saveState(memento);
 	}
-	private ISettingsStore getStore(ITerminalConnectorInfo connector) {
+	private ISettingsStore getStore(ITerminalConnector connector) {
 		return new SettingStorePrefixDecorator(fStore,connector.getId()+"."); //$NON-NLS-1$
 	}
 

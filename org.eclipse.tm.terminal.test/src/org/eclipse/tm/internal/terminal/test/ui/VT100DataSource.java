@@ -19,7 +19,7 @@ import java.io.OutputStream;
 
 import org.eclipse.tm.internal.terminal.control.impl.ITerminalControlForText;
 import org.eclipse.tm.internal.terminal.emulator.VT100Emulator;
-import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnectorInfo;
+import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 import org.eclipse.tm.terminal.model.ITerminalTextData;
 
@@ -89,7 +89,7 @@ final class VT100DataSource implements IDataSource {
 				return TerminalState.CONNECTED;
 			}
 
-			public ITerminalConnectorInfo getTerminalConnectorInfo() {
+			public ITerminalConnector getTerminalConnector() {
 				return null;
 			}
 

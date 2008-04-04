@@ -22,4 +22,5 @@ public class TerminalMessages extends NLS {
     public static String SocketError;
     public static String IOError;
     public static String CannotConnectTo;
+    public static String NotInitialized;
 }

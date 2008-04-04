@@ -13,10 +13,10 @@ package org.eclipse.tm.internal.terminal.control;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.tm.internal.terminal.emulator.VT100TerminalControl;
-import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnectorInfo;
+import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 
 public class TerminalViewControlFactory {
-	public static ITerminalViewControl makeControl(ITerminalListener target, Composite wndParent, ITerminalConnectorInfo[] connectors) {
+	public static ITerminalViewControl makeControl(ITerminalListener target, Composite wndParent, ITerminalConnector[] connectors) {
 		return new VT100TerminalControl(target, wndParent, connectors);
 	}
 }

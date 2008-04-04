@@ -7,7 +7,7 @@
  *
  * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
- * Douglas Lea (Addison Wesley) - [cq:1552] BoundedBufferWithStateTracking adapted to BoundedByteBuffer 
+ * Douglas Lea (Addison Wesley) - [cq:1552] BoundedBufferWithStateTracking adapted to BoundedByteBuffer
  *******************************************************************************/
 
 package org.eclipse.tm.internal.terminal.control.impl;
@@ -22,16 +22,16 @@ import org.eclipse.swt.widgets.Display;
 
 /**
  * The main purpose of this class is to start a runnable in the
- * display thread when data is available and to pretend no data 
+ * display thread when data is available and to pretend no data
  * is available after a given amount of time the runnable is running.
  *
  */
 public class TerminalInputStream extends InputStream {
 	/**
-	 * The maximum time in milli seconds the {@link #fNotifyChange} runs until
+	 * The maximum time in milliseconds the {@link #fNotifyChange} runs until
 	 * {@link #ready()} returns false.
 	 */
-	private final int fUITimeout; 
+	private final int fUITimeout;
 	/**
 	 * The output stream used by the terminal backend to write to the terminal
 	 */
@@ -49,7 +49,7 @@ public class TerminalInputStream extends InputStream {
 	 * A blocking byte queue.
 	 */
 	private final BoundedByteBuffer fQueue;
-	
+
 	/**
 	 * The maximum amount of data read and written in one shot.
 	 * The timer cannot interrupt reading this amount of data.
@@ -60,14 +60,14 @@ public class TerminalInputStream extends InputStream {
 	// block size must be smaller than the Queue capacity!
 	final int BLOCK_SIZE=64;
 
-	
+
 	/**
-	 * The runnable that si scheduled  in the display tread. Takes care of 
-	 * the timeout management. It calls the {@link #fNotifyChange}
+	 * The runnable that is scheduled in the display tread. Takes care of the
+	 * timeout management. It calls the {@link #fNotifyChange}
 	 */
 	// synchronized with fQueue!
 	private Runnable fRunnable;
-	
+
 	/**
 	 * Used as flag to indicate that the current runnable
 	 * has used enough time in the display thread.
@@ -81,23 +81,23 @@ public class TerminalInputStream extends InputStream {
 	/**
 	 * A byte bounded buffer used to synchronize the input and the output stream.
 	 * <p>
-	 * Adapted from BoundedBufferWithStateTracking 
+	 * Adapted from BoundedBufferWithStateTracking
 	 * http://gee.cs.oswego.edu/dl/cpj/allcode.java
 	 * http://gee.cs.oswego.edu/dl/cpj/
 	 * <p>
 	 * BoundedBufferWithStateTracking is part of the examples for the book
 	 * Concurrent Programming in Java: Design Principles and Patterns by
-	 * Doug Lea (ISBN 0-201-31009-0). Second edition published by 
-	 * Addison-Wesley, November 1999. The code is 
+	 * Doug Lea (ISBN 0-201-31009-0). Second edition published by
+	 * Addison-Wesley, November 1999. The code is
 	 * Copyright(c) Douglas Lea 1996, 1999 and released to the public domain
-	 * and may be used for any purposes whatsoever. 
+	 * and may be used for any purposes whatsoever.
 	 * <p>
 	 * For some reasons a solution based on
 	 * PipedOutputStream/PipedIntputStream
 	 * does work *very* slowly:
 	 * 		http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4404700
 	 * <p>
-	 * 
+	 *
 	 */
 	class BoundedByteBuffer {
 		protected final byte[] fBuffer; // the elements
@@ -153,17 +153,17 @@ public class TerminalInputStream extends InputStream {
 	}
 
 	/**
-	 * An output stream that calls {@link TerminalInputStream#textAvailable} 
+	 * An output stream that calls {@link TerminalInputStream#textAvailable}
 	 * every time data is written to the stream. The data is written to
 	 * {@link TerminalInputStream#fQueue}.
-	 * 
+	 *
 	 */
 	class TerminalOutputStream extends OutputStream {
 		public void write(byte[] b, int off, int len) throws IOException {
 			try {
 				// optimization to avoid many synchronized
 				// sections: put the data in junks into the
-				// queue. 
+				// queue.
 				int noff=off;
 				int end=off+len;
 				while(noff<end) {
@@ -200,7 +200,7 @@ public class TerminalInputStream extends InputStream {
 	}
 	/**
 	 * @param bufferSize the size of the buffer of the output stream
-	 * @param uiTimeout the maximum time the notifyChange runnable runs. It will be 
+	 * @param uiTimeout the maximum time the notifyChange runnable runs. It will be
 	 * rescheduled after uiTimeout if input data is still available.
 	 * @param notifyChange a Runnable that is posted to the Display thread
 	 * via {@link Display#asyncExec}. The runnable is posted several times!
@@ -228,7 +228,7 @@ public class TerminalInputStream extends InputStream {
 						synchronized(fQueue){
 							fRunnable=null;
 						}
-						// end the reading after some time 
+						// end the reading after some time
 						startTimer(fUITimeout);
 						// and start the real runnable
 						fNotifyChange.run();
@@ -312,14 +312,14 @@ public class TerminalInputStream extends InputStream {
 		// read as much as we can using a single synchronized statement
 		synchronized (fQueue) {
 			try {
-				// The assumption is that the caller has used available to 
-				// check if bytes are available! That's why we don't check 
+				// The assumption is that the caller has used available to
+				// check if bytes are available! That's why we don't check
 				// for fEnoughDisplayTime!
 				// Make sure that not more than BLOCK_SIZE is read in one call
 				while(fQueue.size()>0 && n<len && n<BLOCK_SIZE) {
 					cbuf[off+n]=fQueue.read();
 					n++;
-				} 
+				}
 			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
 			}

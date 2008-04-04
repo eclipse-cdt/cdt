@@ -1274,6 +1274,9 @@
          <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider"/>
          <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory"/>
          <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider"/>
+         <adapter
+               type="org.eclipse.cdt.debug.core.disassembly.IDisassemblyContextProvider">
+         </adapter>
       </factory>
       <factory
             adaptableType="org.eclipse.cdt.debug.core.model.ICModule"
@@ -1376,11 +1379,16 @@
       <renderingBindings
             defaultIds="org.eclipse.debug.ui.rendering.raw_memory"
             primaryId="org.eclipse.debug.ui.rendering.raw_memory"
-            renderingIds="org.eclipse.debug.ui.rendering.raw_memory,org.eclipse.debug.ui.rendering.ascii,org.eclipse.debug.ui.rendering.signedint,org.eclipse.debug.ui.rendering.unsignedint">
+            renderingIds="org.eclipse.debug.ui.rendering.raw_memory,org.eclipse.debug.ui.rendering.ascii,org.eclipse.debug.ui.rendering.signedint,org.eclipse.debug.ui.rendering.unsignedint,org.eclipse.cdt.debug.ui.rendering.disassembly">
          <enablement>
             <instanceof value="org.eclipse.cdt.debug.internal.core.model.CMemoryBlockExtension"/>
          </enablement>
       </renderingBindings>
+      <renderingType
+            class="org.eclipse.cdt.debug.internal.ui.disassembly.rendering.DisassemblyRenderingTypeDelegate"
+            id="org.eclipse.cdt.debug.ui.rendering.disassembly"
+            name="%DisassemblyRendering.name">
+      </renderingType>
    </extension>
    <extension
          point="org.eclipse.debug.ui.sourceContainerPresentations">
@@ -1433,6 +1441,13 @@
             icon="$nl$/icons/obj16/c_app.gif"
             class="org.eclipse.cdt.debug.internal.ui.sourcelookup.CSourceNotFoundEditor"
             id="org.eclipse.cdt.debug.ui.SourceNotFoundEditor">
+      </editor>
+      <editor
+            class="org.eclipse.cdt.debug.internal.ui.disassembly.editor.DisassemblyEditor"
+            default="false"
+            icon="icons/obj16/disassembly_obj.gif"
+            id="org.eclipse.cdt.debug.ui.disassemblyEditor"
+            name="%DisassemblyEditor.name">
       </editor>
    </extension>
 <!-- Breakpoint Action UI -->
@@ -1530,5 +1545,45 @@
 	      	</enablement>      
 		</detailFactories>
  	</extension>
+ <extension
+       point="org.eclipse.ui.commands">
+    <category
+          description="%DisassemblyCategory.description"
+          id="org.eclipse.cdt.debug.ui.category.disassembly"
+          name="%DisassemblyCategory.name">
+    </category>
+    <command
+          categoryId="org.eclipse.cdt.debug.ui.category.disassembly"
+          defaultHandler="org.eclipse.cdt.debug.internal.ui.disassembly.commands.OpenDisassemblyHandler"
+          description="%OpenDisassembly.description"
+          helpContextId="open_disassembly_context"
+          id="org.eclipse.cdt.debug.ui.command.openDisassembly"
+          name="%OpenDisassembly.name">
+    </command>
+ </extension>
+ <extension
+       point="org.eclipse.ui.menus">
+    <menuContribution
+          locationURI="popup:org.eclipse.debug.ui.DebugView?after=launchGroup">
+       <command
+             commandId="org.eclipse.cdt.debug.ui.command.openDisassembly"
+             disabledIcon="icons/dlcl16/disassembly.gif"
+             hoverIcon="icons/elcl16/disassembly.gif"
+             icon="icons/elcl16/disassembly.gif"
+             id="org.eclipse.cdt.debug.ui.menu.openDisassembly"
+             label="%OpenDisassembly.label"
+             style="push"
+             tooltip="%OpenDisassembly.tooltip">
+          <visibleWhen
+                checkEnabled="false">
+             <iterate>
+                <adapt
+                      type="org.eclipse.cdt.debug.core.disassembly.IDisassemblyContextProvider">
+                </adapt>
+             </iterate>
+          </visibleWhen>
+       </command>
+    </menuContribution>
+ </extension>
 
 </plugin>

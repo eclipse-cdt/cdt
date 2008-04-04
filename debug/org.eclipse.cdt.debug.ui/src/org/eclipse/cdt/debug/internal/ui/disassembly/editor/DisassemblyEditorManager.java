@@ -45,7 +45,7 @@ import org.eclipse.ui.progress.UIJob;
 
 public class DisassemblyEditorManager implements IWindowListener, IDisassemblyContextListener, IPartListener2 {
 
-    private static final String DEFAULT_EDITOR_ID = "com.arm.eclipse.rvd.ui.disassemblyEditor"; //$NON-NLS-1$
+    private static final String DEFAULT_EDITOR_ID = "org.eclipse.cdt.debug.ui.disassemblyEditor"; //$NON-NLS-1$
     private Map<Object, IEditorPart> fEditorParts;
     private Map<Object, String> fOpenDisassemblyPolicy;
     private Map<Object, ISteppingModeTarget> fSteppingModePolicy;

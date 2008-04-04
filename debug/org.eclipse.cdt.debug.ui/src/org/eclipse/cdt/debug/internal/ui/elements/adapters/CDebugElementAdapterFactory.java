@@ -14,11 +14,13 @@
 package org.eclipse.cdt.debug.internal.ui.elements.adapters; 
 
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.debug.core.disassembly.IDisassemblyContextProvider;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.ICModule;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.model.ICThread;
 import org.eclipse.cdt.debug.core.model.IModuleRetrieval;
+import org.eclipse.cdt.debug.internal.core.CDisassemblyContextProvider;
 import org.eclipse.cdt.debug.internal.ui.views.modules.ModuleContentProvider;
 import org.eclipse.cdt.debug.internal.ui.views.modules.ModuleMementoProvider;
 import org.eclipse.core.runtime.IAdapterFactory;
@@ -38,6 +40,8 @@ public class CDebugElementAdapterFactory implements IAdapterFactory {
     private static IElementMementoProvider fgStackFrameMementoProvider = new CStackFrameMementoProvider();
     private static IElementMementoProvider fgModuleMementoProvider = new ModuleMementoProvider();
 
+    private static IDisassemblyContextProvider fgDisassemblyContextProvider = new CDisassemblyContextProvider();
+    
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
 	 */
@@ -80,14 +84,19 @@ public class CDebugElementAdapterFactory implements IAdapterFactory {
             if ( adaptableObject instanceof ICStackFrame ) {
                 return fgStackFrameMementoProvider;
             }
-			if ( adaptableObject instanceof IModuleRetrieval ||
-			    adaptableObject instanceof ICThread ||
-			     adaptableObject instanceof ICModule || 
-			     adaptableObject instanceof ICElement) 
-			{
-				return fgModuleMementoProvider;
-			}
-		}
+            if ( adaptableObject instanceof IModuleRetrieval ||
+                adaptableObject instanceof ICThread ||
+                 adaptableObject instanceof ICModule || 
+                 adaptableObject instanceof ICElement) 
+            {
+                return fgModuleMementoProvider;
+            }
+        }
+        if ( adapterType.equals( IDisassemblyContextProvider.class ) ) {
+            if ( adaptableObject instanceof ICStackFrame ) {
+                return fgDisassemblyContextProvider;
+            }
+        }
     	return null;
 	}
 
@@ -99,6 +108,7 @@ public class CDebugElementAdapterFactory implements IAdapterFactory {
 				IElementContentProvider.class,
 				IModelProxyFactory.class,
         		IElementMementoProvider.class,
+        		IDisassemblyContextProvider.class,
 			};
 	}
 }

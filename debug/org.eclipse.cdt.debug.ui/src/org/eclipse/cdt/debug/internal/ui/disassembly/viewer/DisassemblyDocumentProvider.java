@@ -210,7 +210,7 @@ public class DisassemblyDocumentProvider implements IDocumentProvider {
     }
 
     private VirtualDocument createDocument( Object disassemblyContext, IDocumentPresentation presentationContext, IAnnotationModel annotationModel ) {
-        return null;
+        return new VirtualDocument( annotationModel, presentationContext, disassemblyContext );
     }
 
     private IDocumentPresentation createDocumentPresentation( Object context ) {

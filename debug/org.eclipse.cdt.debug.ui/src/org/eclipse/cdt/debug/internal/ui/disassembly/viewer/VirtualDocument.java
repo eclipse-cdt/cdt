@@ -16,21 +16,21 @@ import java.util.Properties;
 import org.eclipse.cdt.debug.ui.disassembly.IDocumentPresentation;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.source.Annotation;
-import org.eclipse.jface.text.source.AnnotationModel;
+import org.eclipse.jface.text.source.IAnnotationModel;
 
 /**
  * Converts the model elements into the text content
  */
-abstract public class VirtualDocument extends Document {
+public class VirtualDocument extends Document {
 
     private Object fRoot;
     private int fCurrentOffset = 0;
 
     private IDocumentPresentation fPresentationContext;
-    private AnnotationModel fAnnotationModel;
+    private IAnnotationModel fAnnotationModel;
     private DocumentContentProvider fContentProvider;
     
-    public VirtualDocument( AnnotationModel annotationModel, IDocumentPresentation presentationContext, Object root ) {
+    public VirtualDocument( IAnnotationModel annotationModel, IDocumentPresentation presentationContext, Object root ) {
         super();
         fRoot = root;
         fPresentationContext = presentationContext;
@@ -47,7 +47,7 @@ abstract public class VirtualDocument extends Document {
         return fPresentationContext;
     }
 
-    public AnnotationModel getAnnotationModel() {
+    public IAnnotationModel getAnnotationModel() {
         return fAnnotationModel;
     }
 

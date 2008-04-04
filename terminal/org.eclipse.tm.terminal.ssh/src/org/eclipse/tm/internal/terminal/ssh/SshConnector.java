@@ -18,8 +18,8 @@ import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
-import org.eclipse.tm.internal.terminal.provisional.api.TerminalConnectorImpl;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
+import org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl;
 
 import com.jcraft.jsch.ChannelShell;
 import com.jcraft.jsch.JSch;

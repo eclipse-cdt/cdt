@@ -10,8 +10,8 @@ import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
-import org.eclipse.tm.internal.terminal.provisional.api.TerminalConnectorImpl;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
+import org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl;
 
 /**
  * A placeholder for the ITerminalConnector. It gets initialized when

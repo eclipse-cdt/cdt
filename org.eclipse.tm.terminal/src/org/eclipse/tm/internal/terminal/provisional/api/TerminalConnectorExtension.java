@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  *******************************************************************************/
@@ -20,7 +20,7 @@ import org.eclipse.tm.internal.terminal.connector.TerminalConnector;
 
 /**
  * A factory to get {@link ITerminalConnector} instances.
- * 
+ *
  * @author Michael Scharf
  *
  * <p>
@@ -47,26 +47,39 @@ public class TerminalConnectorExtension {
 	}
 
 	/**
+	 * Return a specific terminal connector for a given connector id. The
+	 * terminal connector is not yet instantiated to any real connection.
+	 *
 	 * @param id the id of the terminal connector in the
-	 * <code>org.eclipse.tm.terminal.terminalConnector</code> extension point
-	 * @return a new ITerminalConnector with id or <code>null</code> if there is no
-	 * extension with that id.
+	 *            <code>org.eclipse.tm.terminal.terminalConnectors</code>
+	 *            extension point
+	 * @return a new ITerminalConnector with id or <code>null</code> if there
+	 *         is no extension with that id.
+	 * @since 3.0
 	 */
 	public static ITerminalConnector makeTerminalConnector(String id) {
-		IConfigurationElement[] config=RegistryFactory.getRegistry().getConfigurationElementsFor("org.eclipse.tm.terminal.terminalConnector"); //$NON-NLS-1$
+		IConfigurationElement[] config = RegistryFactory.getRegistry().getConfigurationElementsFor("org.eclipse.tm.terminal.terminalConnectors"); //$NON-NLS-1$
 		for (int i = 0; i < config.length; i++) {
 			if(id.equals(config[i].getAttribute("id"))) { //$NON-NLS-1$
 				return makeConnector(config[i]);
 			}
 		}
-		return null;	
+		return null;
 	}
 	/**
-	 * @return a new list of {@link ITerminalConnector} instances defined in 
-	 * the <code>org.eclipse.tm.terminal.terminalConnector</code> extension point
+	 * Return a list of available terminal connectors (connection types).
+	 * 
+	 * The terminal connectors returned are not yet instantiated to any real
+	 * connection. Each terminal connector can connect to one remote system at a
+	 * time.
+	 * 
+	 * @return a new list of {@link ITerminalConnector} instances defined in the
+	 *         <code>org.eclipse.tm.terminal.terminalConnectors</code>
+	 *         extension point
+	 * @since 3.0
 	 */
 	public static ITerminalConnector[] makeTerminalConnectors() {
-		IConfigurationElement[] config=RegistryFactory.getRegistry().getConfigurationElementsFor("org.eclipse.tm.terminal.terminalConnector"); //$NON-NLS-1$
+		IConfigurationElement[] config = RegistryFactory.getRegistry().getConfigurationElementsFor("org.eclipse.tm.terminal.terminalConnectors"); //$NON-NLS-1$
 		List result=new ArrayList();
 		for (int i = 0; i < config.length; i++) {
 			result.add(makeConnector(config[i]));

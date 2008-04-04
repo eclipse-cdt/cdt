@@ -13,7 +13,7 @@
 -->
 <plugin>
    <extension
-         point="org.eclipse.tm.terminal.terminalConnector">
+         point="org.eclipse.tm.terminal.terminalConnectors">
       <connector name="%telnetConnection"
       id="org.eclipse.tm.internal.terminal.telnet.TelnetConnector"
       class="org.eclipse.tm.internal.terminal.telnet.TelnetConnector"/>

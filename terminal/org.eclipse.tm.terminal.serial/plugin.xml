@@ -13,7 +13,7 @@
 -->
 <plugin>
    <extension
-         point="org.eclipse.tm.terminal.terminalConnector">
+         point="org.eclipse.tm.terminal.terminalConnectors">
       <connector name="%serialConnection" 
       id="org.eclipse.tm.internal.terminal.serial.SerialConnector"
       class="org.eclipse.tm.internal.terminal.serial.SerialConnector"/>

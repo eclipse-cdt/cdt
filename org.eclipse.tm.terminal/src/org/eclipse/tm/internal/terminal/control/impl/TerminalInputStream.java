@@ -120,8 +120,11 @@ public class TerminalInputStream extends InputStream {
 		}
 		/**
 		 * Writes a single byte to the buffer. Blocks if the buffer is full.
-		 * @param b
-		 * @throws InterruptedException
+		 *
+		 * @param b the byte to write
+		 * @throws InterruptedException when the Thread is interrupted while
+		 *             waiting for the buffer to become available because it was
+		 *             full
 		 */
 		public synchronized void write(byte b) throws InterruptedException {
 			while (fUsedSlots == fBuffer.length)
@@ -136,8 +139,10 @@ public class TerminalInputStream extends InputStream {
 		}
 		/**
 		 * Read a single byte. Blocks until a byte is available.
+		 * 
 		 * @return a byte from the buffer
-		 * @throws InterruptedException
+		 * @throws InterruptedException when the Thread is interrupted while
+		 *             waiting for the buffer to be filled with a readable byte
 		 */
 		public synchronized byte read() throws InterruptedException {
 			while (fUsedSlots == 0)

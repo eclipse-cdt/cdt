@@ -10,33 +10,48 @@ import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
+import org.eclipse.tm.internal.terminal.provisional.api.TerminalConnectorExtension;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 import org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl;
 
 /**
- * A placeholder for the ITerminalConnector. It gets initialized when
- * the real connector is needed. 
- * The following methods can be called without initializing
- * the contributed class: {@link #getId()}, {@link #getName()},
- * {@link #getSettingsSummary()},{@link #load(ISettingsStore)},
+ * A terminal connector instance, also known as terminal connection type.
+ * 
+ * It provides all terminal connector functions that can be provided by static
+ * markup without loading the actual implementation class. The actual
+ * {@link TerminalConnectorImpl} implementation class is lazily loaded by the
+ * provided {@link TerminalConnector.Factory} interface when needed. class, and
+ * delegates to the actual implementation when needed. The following methods can
+ * be called without initializing the contributed implementation class:
+ * {@link #getId()}, {@link #getName()}, {@link #getSettingsSummary()},{@link #load(ISettingsStore)},
  * {@link #setTerminalSize(int, int)}, {@link #save(ISettingsStore)},
  * {@link #getAdapter(Class)}
- *
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ *                Clients can get terminal connector instances through the
+ *                {@link TerminalConnectorExtension} class.
+ * @since org.eclipse.tm.terminal 2.0
  */
 public class TerminalConnector implements ITerminalConnector {
 	/**
-	 * Creates an instance of TerminalConnectorImpl. This is
-	 * used to lazily load classed defined in extensions.
+	 * Creates an instance of TerminalConnectorImpl. This is used to lazily load
+	 * classed defined in extensions.
+	 *
+	 * @since org.eclipse.tm.terminal 2.0
 	 */
 	public interface Factory {
 		/**
-		 * @return an Connector
+		 * Factory method to create the actual terminal connector implementation
+		 * when needed.
+		 *
+		 * @return a Connector
 		 * @throws Exception
 		 */
 		TerminalConnectorImpl makeConnector() throws Exception;
 	}
 	/**
-	 * 
+	 *
 	 */
 	private final TerminalConnector.Factory fTerminalConnectorFactory;
 	/**
@@ -118,7 +133,7 @@ public class TerminalConnector implements ITerminalConnector {
 		}
 		return fConnector;
 	}
-	
+
 	public boolean isInitialized() {
 		return fConnector!=null || fException!=null;
 	}
@@ -135,7 +150,7 @@ public class TerminalConnector implements ITerminalConnector {
 		if(fConnector!=null)
 			return getConnectorImpl().getSettingsSummary();
 		else
-			return TerminalMessages.NotInitialized; 
+			return TerminalMessages.NotInitialized;
 	}
 	public boolean isLocalEcho() {
 		return getConnectorImpl().isLocalEcho();

@@ -137,7 +137,9 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 		IStringVariableManager varManager= VariablesPlugin.getDefault().getStringVariableManager();
 		IPath location= new Path(varManager.performStringSubstitution(loc));
 		if (!location.isAbsolute()) {
-			location= project.getLocation().append(location);
+			
+			if(project.getLocation() != null)
+				location= project.getLocation().append(location);
 		}
 		return location.toFile();
 	}

@@ -17,8 +17,12 @@ package org.eclipse.cdt.internal.ui.util;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.text.MessageFormat;
 
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -29,6 +33,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
@@ -61,6 +66,7 @@ import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.core.resources.EFSFileStorage;
 import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.ui.CUIPlugin;
 
@@ -246,7 +252,7 @@ public class EditorUtility {
 				if (resource instanceof IFile) {
 					return new FileEditorInput((IFile) resource);
 				}
-				return new ExternalEditorInput(unit, new FileStorage(unit.getPath()));
+				return new ExternalEditorInput(unit, new EFSFileStorage(unit.getLocationURI()));
 			}
 
 			if (element instanceof IBinary) {
@@ -288,6 +294,11 @@ public class EditorUtility {
 		IEditorInput input= getEditorInputForLocation(location, element);
 		return EditorUtility.openInEditor(input, getEditorID(input, element), true);
 	}
+	
+	public static IEditorPart openInEditor(URI locationURI, ICElement element) throws PartInitException {
+		IEditorInput input= getEditorInputForLocation(locationURI, element);
+		return EditorUtility.openInEditor(input, getEditorID(input, element), true);
+	}
 
 	/**
 	 * Utility method to get an editor input for the given file system location.
@@ -301,6 +312,66 @@ public class EditorUtility {
 	 * @param context  an element related to the target file, may be <code>null</code>
 	 * @return an editor input
 	 */
+	public static IEditorInput getEditorInputForLocation(URI locationURI, ICElement context) {
+		IFile resource= getWorkspaceFileAtLocation(locationURI, context);
+		if (resource != null) {
+			return new FileEditorInput(resource);
+		}
+
+		if (context == null) {
+			// try to synthesize a context for a location appearing on a project's
+			// include paths
+			try {
+				ICProject[] projects = CCorePlugin.getDefault().getCoreModel().getCModel().getCProjects();
+				outerFor: for (int i = 0; i < projects.length; i++) {
+					IIncludeReference[] includeReferences = projects[i].getIncludeReferences();
+					for (int j = 0; j < includeReferences.length; j++) {
+						
+						// crecoskie test
+						// TODO FIXME
+						// include entries don't handle URIs yet, so fake it out for now
+						if (includeReferences[j].isOnIncludeEntry(URIUtil.toPath(locationURI))) {
+							context = projects[i];
+							break outerFor;
+						}
+					}
+				}
+				if (context == null && projects.length > 0) {
+					// last resort: just take any of them
+					context= projects[0];
+				}
+			} catch (CModelException e) {
+			}
+		}
+
+		if (context != null) {
+			// try to get a translation unit from the location and associated element
+			ICProject cproject= context.getCProject();
+			if (cproject != null) {
+				ITranslationUnit unit = CoreModel.getDefault().createTranslationUnitFrom(cproject, locationURI);
+				if (unit != null) {
+					IFileStore fileStore = null;
+					try {
+						fileStore = EFS.getStore(locationURI);
+					} catch (CoreException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						return null;
+					}
+					
+					if(fileStore != null)
+						return new ExternalEditorInput(unit, new EFSFileStorage(locationURI));
+				}
+				// no translation unit - still try to get a sensible marker resource
+				// from the associated element
+				IResource markerResource= cproject.getProject();
+				return new ExternalEditorInput(new EFSFileStorage(locationURI), markerResource);
+			}
+		}
+		return new ExternalEditorInput(new EFSFileStorage(locationURI));
+	}
+
+
 	public static IEditorInput getEditorInputForLocation(IPath location, ICElement context) {
 		IFile resource= getWorkspaceFileAtLocation(location, context);
 		if (resource != null) {
@@ -346,7 +417,8 @@ public class EditorUtility {
 		return new ExternalEditorInput(new FileStorage(location));
 	}
 
-
+	
+	
 	/**
 	 * Utility method to resolve a file system location to a workspace resource.
 	 * If a context element is given and there are multiple matches in the workspace,
@@ -399,6 +471,49 @@ public class EditorUtility {
 		return bestMatch;
 	}
 
+	/**
+	 * Utility method to resolve a file system location to a workspace resource.
+	 * If a context element is given and there are multiple matches in the workspace,
+	 * a resource with the same project of the context element are preferred.
+	 *
+	 * @param location  a valid file system location
+	 * @param context  an element related to the target file, may be <code>null</code>
+	 * @return an <code>IFile</code> or <code>null</code>
+	 */
+	public static IFile getWorkspaceFileAtLocation(URI locationURI, ICElement context) {
+		IProject project= null;
+		if (context != null) {
+			ICProject cProject= context.getCProject();
+			if (cProject != null) {
+				project= cProject.getProject();
+			}
+		}
+		IFile bestMatch= null;
+		IFile secondBestMatch= null;
+		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
+		IFile[] files= root.findFilesForLocationURI(locationURI);
+		for (int i= 0; i < files.length; i++) {
+			IFile file= files[i];
+			if (file.isAccessible()) {
+				if (project != null && file.getProject().equals(project)) {
+					bestMatch= file;
+					break;
+				} else if (CoreModel.hasCNature(file.getProject())) {
+					bestMatch= file;
+					if (project == null) {
+						break;
+					}
+				} else {
+					// match in  non-CDT project
+					secondBestMatch= file;
+				}
+			}
+		}
+		bestMatch=  bestMatch != null ? bestMatch : secondBestMatch;
+
+		return bestMatch;
+	}
+	
 	/**
 	 * If the current active editor edits a c element return it, else
 	 * return null
@@ -601,7 +716,7 @@ public class EditorUtility {
 		try {
 			IBuffer buffer = bin.getBuffer();
 			if (buffer != null) {
-				store = new FileStorage (new ByteArrayInputStream(buffer.getContents().getBytes()), bin.getPath());
+				store = new EFSFileStorage (bin.getLocationURI());
 			}
 		} catch (CModelException e) {
 			// nothing;
@@ -610,13 +725,7 @@ public class EditorUtility {
 	}
 
 	public static IStorage getStorage(ITranslationUnit tu) {
-		IStorage store = null;
-		try {
-			store = new FileStorage (new ByteArrayInputStream(tu.getBuffer().getContents().getBytes()), tu.getPath());
-		} catch (CModelException e) {
-			// nothing;
-		}
-		return store;
+		return new EFSFileStorage (tu.getLocationURI());
 	}
 
 	/**

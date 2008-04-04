@@ -13,6 +13,8 @@
 
 package org.eclipse.cdt.internal.ui.editor;
 
+import java.net.URI;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
@@ -23,8 +25,10 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.editors.text.ILocationProvider;
+import org.eclipse.ui.editors.text.ILocationProviderExtension;
 import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 
+import org.eclipse.cdt.core.resources.EFSFileStorage;
 import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.ui.CUIPlugin;
 
@@ -72,11 +76,22 @@ public class ExternalSearchDocumentProvider extends TextFileDocumentProvider {
 		}
 		if (element instanceof IAdaptable) {
 			IAdaptable adaptable= (IAdaptable) element;
-			ILocationProvider provider= (ILocationProvider) adaptable.getAdapter(ILocationProvider.class);
-			if (provider != null) {
-				IPath path= provider.getPath(element);
-				IStorage storage= new FileStorage(path);
+			
+			ILocationProviderExtension extendedProvider = (ILocationProviderExtension) adaptable.getAdapter(ILocationProviderExtension.class);
+			
+			if(extendedProvider != null) {
+				URI uri = extendedProvider.getURI(element);
+				IStorage storage = new EFSFileStorage(uri);
 				return createExternalSearchAnnotationModel(storage, null);
+			}
+			else {
+				ILocationProvider provider = (ILocationProvider) adaptable
+						.getAdapter(ILocationProvider.class);
+				if (provider != null) {
+					IPath path = provider.getPath(element);
+					IStorage storage = new FileStorage(path);
+					return createExternalSearchAnnotationModel(storage, null);
+				}
 			}
 		}
 		return null;

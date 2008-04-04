@@ -211,9 +211,13 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
     protected String[] setEnvironment(CommandLauncher launcher, Properties initialEnv) {
         // Set the environmennt, some scripts may need the CWD var to be set.
         Properties props = initialEnv != null ? initialEnv : launcher.getEnvironment();
-        props.put("CWD", fWorkingDirectory.toOSString()); //$NON-NLS-1$
-        props.put("PWD", fWorkingDirectory.toOSString()); //$NON-NLS-1$
-        // On POSIX (Linux, UNIX) systems reset LANG variable to English with UTF-8 encoding
+        
+        if (fWorkingDirectory != null) {
+			props.put("CWD", fWorkingDirectory.toOSString()); //$NON-NLS-1$
+			props.put("PWD", fWorkingDirectory.toOSString()); //$NON-NLS-1$
+		}
+        // On POSIX (Linux, UNIX) systems reset LANG variable to English with
+		// UTF-8 encoding
         // since GNU compilers can handle only UTF-8 characters. English language is chosen
         // beacuse GNU compilers inconsistently handle different locales when generating
         // output of the 'gcc -v' command. Include paths with locale characters will be

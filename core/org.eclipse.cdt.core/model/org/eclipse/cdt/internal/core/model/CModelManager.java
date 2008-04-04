@@ -11,6 +11,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Anton Leherbauer (Wind River Systems)
  *     Warren Paul (Nokia)
+ *	   IBM Corporation (EFS Support)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.model;
@@ -18,6 +19,7 @@ package org.eclipse.cdt.internal.core.model;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -53,6 +55,9 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.LocalProjectScope;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -427,6 +432,69 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 			} catch (CModelException e) {
 			}
 		}
+		return null;
+	}
+	
+	/**
+	 * Creates a translation unit in the given project for the given location.
+	 * 
+	 * @param cproject
+	 * @param locationURI
+	 * @return ITranslationUnit
+	 */
+	public ITranslationUnit createTranslationUnitFrom(ICProject cproject, URI locationURI) {
+		if (locationURI == null || cproject == null) {
+			return null;
+		}
+
+		if(!locationURI.isAbsolute()) {
+			throw new IllegalArgumentException();
+		}
+		
+		final IProject project= cproject.getProject();
+		
+		IFileStore fileStore = null;
+		try {
+			fileStore = EFS.getStore(locationURI);
+		} catch (CoreException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			return null;
+		}
+		
+		final String contentTypeId = CoreModel.getRegistedContentTypeId(project, fileStore.getName());
+	
+			if (! Util.isNonZeroLengthFile(locationURI)) {
+				return null;
+			}
+			
+			try {
+				IIncludeReference[] includeReferences = cproject.getIncludeReferences();
+				for (int i = 0; i < includeReferences.length; i++) {
+					
+					
+					// crecoskie
+					// TODO FIXME:  include entries don't handle URIs yet
+					if (includeReferences[i].isOnIncludeEntry(URIUtil.toPath(locationURI))) {
+						String headerContentTypeId= contentTypeId;
+						if (headerContentTypeId == null) {
+							headerContentTypeId= CoreModel.hasCCNature(project) ? CCorePlugin.CONTENT_TYPE_CXXHEADER : CCorePlugin.CONTENT_TYPE_CHEADER;
+						}
+						
+						return new ExternalTranslationUnit(includeReferences[i], locationURI, headerContentTypeId);
+					}
+				}
+			} catch (CModelException e) {
+			}
+
+			// if the file exists and it has a known C/C++ file extension then just create
+			// an external translation unit for it.
+			IFileInfo info = fileStore.fetchInfo();
+			
+			if (contentTypeId != null && info != null && info.exists()) {
+				return new ExternalTranslationUnit(cproject, locationURI, contentTypeId);
+			}
+		
 		return null;
 	}
 

@@ -4071,8 +4071,11 @@ public class ManagedBuildManager extends AbstractCExtension {
 			}
 		} else {
 			buildDirectory = project.getLocation();
-			if(builder.isManagedBuildOn())
-				buildDirectory = buildDirectory.append(cfg.getName());
+			
+			if (buildDirectory != null) {
+				if (builder.isManagedBuildOn())
+					buildDirectory = buildDirectory.append(cfg.getName());
+			}
 		}
 		return buildDirectory;
 	}

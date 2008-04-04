@@ -14,6 +14,7 @@ package org.eclipse.cdt.core;
  * (c) Copyright IBM Corp. 2000, 2001. All Rights Reserved.
  */
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Properties;
@@ -103,7 +104,13 @@ public class CommandLauncher {
 		try {
 			// add platform specific arguments (shell invocation)
 			fCommandArgs = constructCommandArray(commandPath.toOSString(), args);
-			fProcess = ProcessFactory.getFactory().exec(fCommandArgs, env, changeToDirectory.toFile());
+			
+			File file = null;
+			
+			if(changeToDirectory != null)
+				file = changeToDirectory.toFile();
+			
+			fProcess = ProcessFactory.getFactory().exec(fCommandArgs, env, file);
 			fErrorMessage = ""; //$NON-NLS-1$
 		} catch (IOException e) {
 			setErrorMessage(e.getMessage());

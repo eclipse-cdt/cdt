@@ -9,6 +9,7 @@
  * Rational Software - Initial API and implementation
  * Markus Schorn (Wind River Systems)
  * Anton Leherbauer (Wind River Systems)
+ * IBM Corporation - EFS support
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.model;
@@ -441,10 +442,10 @@ public class Util implements ICLogConstants {
 	public static boolean isNonZeroLengthFile(IPath path) {
 		return isNonZeroLengthFile(URIUtil.toURI(path));
 	}
-
+	
 	/**
-	 * Return true if the file is not a directory and has length > 0
-	 * @param path
+	 * Return true if the file referred to by the URI is not a directory and has length > 0
+	 * @param uri
 	 * @return
 	 */
 	public static boolean isNonZeroLengthFile(URI uri) {

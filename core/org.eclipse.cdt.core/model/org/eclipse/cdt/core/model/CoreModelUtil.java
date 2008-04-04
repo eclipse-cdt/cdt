@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 QNX Software Systems and others.
+ * Copyright (c) 2002, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,10 +8,12 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * IBM Corporation - EFS support
  *******************************************************************************/
 
 package org.eclipse.cdt.core.model;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -572,6 +574,43 @@ public class CoreModelUtil {
 		}
 		return null;
 	}	
+	
+	
+	/**
+	 * Searches for a translation unit within the cprojects. For external files the ones
+	 * from the given project are preferred.
+	 * @since 5.0
+	 */
+	public static ITranslationUnit findTranslationUnitForLocation(URI locationURI, ICProject preferredProject) throws CModelException {
+		IFile[] files= ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(locationURI);
+		if (files.length > 0) {
+			for (int i = 0; i < files.length; i++) {
+				IFile file = files[i];
+				ITranslationUnit tu= findTranslationUnit(file);
+				if (tu != null) {
+					return tu;
+				}
+			}
+		}
+		else {
+			CoreModel coreModel = CoreModel.getDefault();
+			ITranslationUnit tu= null;
+			if (preferredProject != null) {
+				tu= coreModel.createTranslationUnitFrom(preferredProject, locationURI);
+			}
+			if (tu == null) {
+				ICProject[] projects= coreModel.getCModel().getCProjects();
+				for (int i = 0; i < projects.length && tu == null; i++) {
+					ICProject project = projects[i];
+					if (!project.equals(preferredProject)) {
+						tu= coreModel.createTranslationUnitFrom(project, locationURI);
+					}
+				}
+			}
+			return tu;
+		}
+		return null;
+	}
 	
 	/**
 	 * Returns the translation unit for the location given or <code>null</code>.

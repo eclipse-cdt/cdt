@@ -24,12 +24,19 @@ import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
  * @since org.eclipse.tm.terminal 2.0
  */
 public abstract class TerminalConnectorImpl {
+
 	/**
-	 * Called once after the constructor
-	 * @throws Exception
+	 * Initialize this connector. This is called once after the constructor, in
+	 * order to perform any required initializations such as loading required
+	 * native libraries. Any work that may lead to runtime exceptions should be
+	 * done in this method rather than in the constructor.
+	 *
+	 * @throws Exception when the connector fails to initialize (due to missing
+	 *             required libraries, for instance).
 	 */
 	public void initialize() throws Exception {
 	}
+
 	/**
 	 * Connect using the current state of the settings.
 	 * @param control Used to inform the UI about state changes and messages from the connection.
@@ -79,18 +86,21 @@ public abstract class TerminalConnectorImpl {
 	 * store the state of the connection.
 	 */
 	abstract public void load(ISettingsStore store);
+
 	/**
-	 * When the view or dialog containing the terminal is closed,
-	 * the state of the connection is saved into the settings store <code>store</code>
-	 * @param store
+	 * When the view or dialog containing the terminal is closed, the state of
+	 * the connection is saved into the settings store <code>store</code>
+	 *
+	 * @param store the store for persisting settings.
 	 */
 	abstract public void save(ISettingsStore store);
 
     /**
-     * Notify the remote site that the size of the terminal has changed.
-     * @param newWidth
-     * @param newHeight
-     */
+	 * Notify the remote site that the size of the terminal has changed.
+	 *
+	 * @param newWidth the new width in characters.
+	 * @param newHeight the new height in characters.
+	 */
 	public void setTerminalSize(int newWidth, int newHeight) {
 	}
 }

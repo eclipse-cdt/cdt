@@ -970,6 +970,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 
 		// declarator
 		final IASTFunctionDeclarator declarator= node.getDeclarator();
+		skipNonWhitespaceToNode(declarator);
 		boolean needSpace= declarator.getPointerOperators().length > 0 && scribe.printComment();
 		if (needSpace) {
 			scribe.space();
@@ -1523,6 +1524,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			scribe.space();
 		}
 
+		final int headerIndent= scribe.numberOfIndentations;
 		scribe.printNextToken(Token.t_enum, true);
 		final IASTName name= node.getName();
 		if (name != null) {
@@ -1532,20 +1534,23 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		
 		formatLeftCurlyBrace(line, preferences.brace_position_for_type_declaration);
 		formatOpeningBrace(preferences.brace_position_for_type_declaration, preferences.insert_space_before_opening_brace_in_type_declaration);
+		final int braceIndent= scribe.numberOfIndentations;
 
-//        if (preferences.insert_new_line_after_opening_brace_in_enumerator_list) {
-//        	scribe.printNewLine();
-//        }
-//        if (preferences.insert_space_after_opening_brace_in_enumerator_list) {
-//        	scribe.space();
-//        }
-
+        if (true /* preferences.insert_new_line_after_opening_brace_in_enumerator_list */) {
+        	scribe.startNewLine();
+        } else if (true /* preferences.insert_space_after_opening_brace_in_enumerator_list */) {
+        	scribe.space();
+        }
+        if (braceIndent == headerIndent) {
+        	scribe.indent();
+        }
+        final int enumIndent= scribe.numberOfIndentations;
 		final IASTEnumerator[] enumerators= node.getEnumerators();
 
 		final ListAlignment align= new ListAlignment(preferences.alignment_for_enumerator_list);
 		align.fSpaceBeforeComma= preferences.insert_space_before_comma_in_enum_declarations;
 		align.fSpaceAfterComma= preferences.insert_space_after_comma_in_enum_declarations;
-		align.fContinuationIndentation= 1;
+		align.fContinuationIndentation= enumIndent == headerIndent ? 1 : 0;
 		formatList(Arrays.asList(enumerators), align, false, false);
 
 		// handle trailing comma
@@ -1556,13 +1561,14 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			}
 		}
 
-//		if (preferences.insert_new_line_before_closing_brace_in_enumerator_list) {
-//			scribe.startNewLine();
-//		}
-//		if (preferences.insert_space_before_closing_brace_in_enumerator_list) {
-//			scribe.space();
-//		}
-		scribe.startNewLine();
+        if (enumIndent > braceIndent) {
+            scribe.unIndent();
+        }
+		if (true /* preferences.insert_new_line_before_closing_brace_in_enumerator_list */) {
+			scribe.startNewLine();
+		} else if (true /* preferences.insert_space_before_closing_brace_in_enumerator_list */) {
+			scribe.space();
+		}
 		formatClosingBrace(preferences.brace_position_for_type_declaration);
 		return PROCESS_SKIP;
 	}
@@ -2854,6 +2860,21 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			final int restLength= startOffset - currentOffset;
 			if (restLength > 0) {
 				scribe.printRaw(currentOffset, restLength);
+			}
+		}
+	}
+
+	private void skipNonWhitespaceToNode(IASTNode node) {
+		final IASTNodeLocation fileLocation= node.getFileLocation();
+		if (fileLocation != null) {
+			final int startOffset= fileLocation.getNodeOffset();
+			final int nextTokenOffset= getNextTokenOffset();
+			if (nextTokenOffset < startOffset) {
+				final int currentOffset= scribe.scanner.getCurrentTokenEndPosition() + 1;
+				final int restLength= startOffset - currentOffset;
+				if (restLength > 0) {
+					scribe.printRaw(currentOffset, restLength);
+				}
 			}
 		}
 	}

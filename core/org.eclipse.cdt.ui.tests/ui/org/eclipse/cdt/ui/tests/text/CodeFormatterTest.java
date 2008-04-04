@@ -561,4 +561,44 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//NOT_DEFINED void foo()
+	//	{
+	//	}
+	//
+	//enum T1
+	//    {
+	//    E1 = 1
+	//    };
+
+	//NOT_DEFINED void foo() {
+	//}
+	//
+	//enum T1 {
+	//	E1 = 1
+	//};
+	public void testPreserveWhitespace_Bug225326() throws Exception {
+		assertFormatterResult();
+	}
+
+	//NOT_DEFINED void foo()
+	//	{
+	//	}
+	//
+	//enum T1
+	//    {
+	//    E1 = 1
+	//    };
+
+	//NOT_DEFINED void foo()
+	//    {
+	//    }
+	//
+	//enum T1
+	//    {
+	//    E1 = 1
+	//    };
+	public void testPreserveWhitespace2_Bug225326() throws Exception {
+		fOptions= DefaultCodeFormatterOptions.getWhitesmithsSettings().getMap();
+		assertFormatterResult();
+	}
 }

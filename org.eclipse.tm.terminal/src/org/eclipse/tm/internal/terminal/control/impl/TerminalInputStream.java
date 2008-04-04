@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 1996, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 1996, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -139,7 +139,7 @@ public class TerminalInputStream extends InputStream {
 		}
 		/**
 		 * Read a single byte. Blocks until a byte is available.
-		 * 
+		 *
 		 * @return a byte from the buffer
 		 * @throws InterruptedException when the Thread is interrupted while
 		 *             waiting for the buffer to be filled with a readable byte

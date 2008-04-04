@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * {Name} (company) - description of contribution.
  *******************************************************************************/
@@ -24,27 +24,27 @@ import org.eclipse.rse.core.filters.ISystemFilterPoolWrapper;
 import org.eclipse.rse.core.filters.ISystemFilterPoolWrapperInformation;
 
 /**
- * The system filter wizard allows callers to pass a list of wrapper objects
- *  for the user to select a filter pool. Effectively, this prompting for 
- *  euphamisms to filter pools. This requires an array of wrapper objects,
- *  and requires replacement mri for the pool prompt and tooltip text, and 
- *  the verbiage above it. 
+ * The system filter wizard allows callers to pass a list of wrapper objects for
+ * the user to select a filter pool. Effectively, this prompting for euphemisms
+ * to filter pools. This requires an array of wrapper objects, and requires
+ * replacement mri for the pool prompt and tooltip text, and the verbiage above
+ * it.
  * <p>
- * This is all encapsulated in this class. The information is set via setters
- *  or constructor parameters.
+ * This is all encapsulated in this class. The information is set via setters or
+ * constructor parameters.
  */
 public class SystemFilterPoolWrapperInformation
-	implements ISystemFilterPoolWrapperInformation 
+	implements ISystemFilterPoolWrapperInformation
 {
 	private String promptLabel, promptTooltip, verbiageLabel;
 	private Vector wrappers;
 	private ISystemFilterPoolWrapper[] wrapperArray;
 	private ISystemFilterPoolWrapper   preSelectWrapper;
-	
+
 	/**
 	 * Constructor for SystemFilterPoolWrapperInformation.
 	 */
-	public SystemFilterPoolWrapperInformation(String promptLabel, String promptTooltip, String verbiageLabel) 
+	public SystemFilterPoolWrapperInformation(String promptLabel, String promptTooltip, String verbiageLabel)
 	{
 		super();
 		this.promptLabel= promptLabel;
@@ -52,7 +52,7 @@ public class SystemFilterPoolWrapperInformation
 		this.promptLabel= promptTooltip;
 		wrappers = new Vector();
 	}
-	
+
 	/**
 	 * Add a wrapper object
 	 */
@@ -68,7 +68,7 @@ public class SystemFilterPoolWrapperInformation
 		SystemFilterPoolWrapper wrapper = new SystemFilterPoolWrapper(displayName, poolToWrap);
 		wrappers.add(wrapper);
 		if (preSelect)
-		  preSelectWrapper = wrapper;		  
+		  preSelectWrapper = wrapper;
 	}
 	/**
 	 * Set the wrapper to preselect
@@ -80,26 +80,26 @@ public class SystemFilterPoolWrapperInformation
 
 
 
-	public String getPromptLabel() 
+	public String getPromptLabel()
 	{
 		return promptLabel;
 	}
-	
-	public String getPromptTooltip() 
+
+	public String getPromptTooltip()
 	{
 		return promptTooltip;
 	}
 
-	public String getVerbiageLabel() 
+	public String getVerbiageLabel()
 	{
 		return verbiageLabel;
 	}
-	
+
 
 	/**
 	 * @see org.eclipse.rse.core.filters.ISystemFilterPoolWrapperInformation#getWrappers()
 	 */
-	public ISystemFilterPoolWrapper[] getWrappers() 
+	public ISystemFilterPoolWrapper[] getWrappers()
 	{
 		if (wrapperArray == null)
 		{
@@ -113,14 +113,14 @@ public class SystemFilterPoolWrapperInformation
 	/**
 	 * @see org.eclipse.rse.core.filters.ISystemFilterPoolWrapperInformation#getPreSelectWrapper()
 	 */
-	public ISystemFilterPoolWrapper getPreSelectWrapper() 
+	public ISystemFilterPoolWrapper getPreSelectWrapper()
 	{
 		if (preSelectWrapper == null)
 		{
 			if (wrappers.size() > 0)
 			  return (ISystemFilterPoolWrapper)wrappers.elementAt(0);
 			else
-			  return null;		 
+			  return null;
 		}
 		else
 		  return preSelectWrapper;

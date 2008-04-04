@@ -11,7 +11,7 @@
  * Helmut Haigermoser and Ted Williams.
  *
  * Contributors:
- * Michael Scharf (Wind River) - extracted from TerminalControl 
+ * Michael Scharf (Wind River) - extracted from TerminalControl
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  * Martin Oberhuber (Wind River) - [206892] Don't connect if already connecting
  * Martin Oberhuber (Wind River) - [208029] COM port not released after quick disconnect/reconnect
@@ -45,7 +45,7 @@ public class SerialConnector extends TerminalConnectorImpl {
 	private SerialSettings fSettings;
 	private SerialConnectWorker fConnectWorker = null;
 	private volatile boolean fDisconnectGoingOn = false;
-	
+
 	public SerialConnector() {
 	}
 	public SerialConnector(SerialSettings settings) {
@@ -53,7 +53,7 @@ public class SerialConnector extends TerminalConnectorImpl {
 	}
 	public void initialize() throws Exception {
 		try {
-			fSettings=new SerialSettings();			
+			fSettings=new SerialSettings();
 		} catch (NoClassDefFoundError e) {
 			// tell the user how to install the library
 			throw new CoreException(new Status(IStatus.WARNING,Activator.PLUGIN_ID,0, SerialMessages.ERROR_LIBRARY_NOT_INSTALLED,e));
@@ -63,7 +63,7 @@ public class SerialConnector extends TerminalConnectorImpl {
 		Logger.log("entered."); //$NON-NLS-1$
 		synchronized(this) {
 			if (fConnectWorker!=null || fDisconnectGoingOn) {
-				//avoid multiple background connect/disconnect threads at the same time		
+				//avoid multiple background connect/disconnect threads at the same time
 				return;
 			}
 			fConnectWorker = new SerialConnectWorker(this, control);
@@ -73,7 +73,7 @@ public class SerialConnector extends TerminalConnectorImpl {
 		fConnectWorker.start();
 	}
 	/**
-	 * Indicate that the connectWorker is finished. 
+	 * Indicate that the connectWorker is finished.
 	 */
 	void doneConnect() {
 		synchronized(this) {
@@ -83,7 +83,7 @@ public class SerialConnector extends TerminalConnectorImpl {
 	public void disconnect() {
 		Logger.log("entered."); //$NON-NLS-1$
 		synchronized(this) {
-			//avoid multiple background connect/disconnect threads at the same time		
+			//avoid multiple background connect/disconnect threads at the same time
 			if (fConnectWorker!=null) {
 				fConnectWorker.interrupt();
 				return;
@@ -92,7 +92,7 @@ public class SerialConnector extends TerminalConnectorImpl {
 			}
 			fDisconnectGoingOn = true;
 		}
-	
+
 		// Fix for SPR 112422.  When output is being received from the serial port, the
 		// below call to removePortOwnershipListener() attempts to lock the serial port
 		// object, but that object is already locked by another Terminal view thread
@@ -105,7 +105,7 @@ public class SerialConnector extends TerminalConnectorImpl {
 		// The solution is to spawn a short-lived worker thread that calls
 		// removePortOwnershipListener(), thus preventing the display thread from
 		// deadlocking with the other Terminal view thread.
-	
+
 		new Thread("Terminal View Serial Port Disconnect Worker") //$NON-NLS-1$
 		{
 			public void run() {
@@ -118,9 +118,9 @@ public class SerialConnector extends TerminalConnectorImpl {
 							Logger.logException(e);
 						}
 					}
-		
+
 					if (getSerialPort() != null) {
-						//Event listener is removed as part of close(), 
+						//Event listener is removed as part of close(),
 						//but exceptions need to be caught to ensure that close() really succeeds
 						try {
 							getSerialPort().removeEventListener();
@@ -131,7 +131,7 @@ public class SerialConnector extends TerminalConnectorImpl {
 						Logger.log("Calling close() on serial port ..."); //$NON-NLS-1$
 						getSerialPort().close();
 					}
-			
+
 					if (getInputStream() != null) {
 						try {
 							getInputStream().close();
@@ -139,7 +139,7 @@ public class SerialConnector extends TerminalConnectorImpl {
 							Logger.logException(exception);
 						}
 					}
-			
+
 					if (getOutputStream() != null) {
 						try {
 							getOutputStream().close();
@@ -147,7 +147,7 @@ public class SerialConnector extends TerminalConnectorImpl {
 							Logger.logException(exception);
 						}
 					}
-			
+
 					setSerialPortIdentifier(null);
 					cleanSerialPort();
 					setSerialPortHandler(null);
@@ -179,11 +179,11 @@ public class SerialConnector extends TerminalConnectorImpl {
 	public void setTerminalSize(int newWidth, int newHeight) {
 		// TODO
 	}
-	
+
 	protected SerialPort getSerialPort() {
 		return fSerialPort;
 	}
-	
+
 	/**
 	 * sets the socket to null
 	 */
@@ -192,9 +192,9 @@ public class SerialConnector extends TerminalConnectorImpl {
 		setInputStream(null);
 		setOutputStream(null);
 	}
-	
+
 	protected void setSerialPort(SerialPort serialPort) throws IOException {
-		cleanSerialPort();			
+		cleanSerialPort();
 		if(serialPort!=null) {
 			fSerialPort = serialPort;
 			setOutputStream(serialPort.getOutputStream());
@@ -214,9 +214,13 @@ public class SerialConnector extends TerminalConnectorImpl {
 	SerialPortHandler getSerialPortHandler() {
 		return fTerminalSerialPortHandler;
 	}
+	/**
+	 * Return the Serial Settings.
+	 *
+	 * @return the settings for a concrete connection.
+	 */
 	public ISerialSettings getSerialSettings() {
 		return fSettings;
-		
 	}
 	public ISettingsPage makeSettingsPage() {
 		return new SerialSettingsPage(fSettings);

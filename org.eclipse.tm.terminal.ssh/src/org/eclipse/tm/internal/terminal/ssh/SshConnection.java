@@ -1,19 +1,20 @@
 /*******************************************************************************
  * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
- * Martin Oberhuber (Wind River) - [175686] Adapted to new IJSchService API 
+ * Martin Oberhuber (Wind River) - [175686] Adapted to new IJSchService API
  *    - copied code from org.eclipse.team.cvs.ssh2/JSchSession (Copyright IBM)
  * Martin Oberhuber (Wind River) - [198790] make SSH createSession() protected
  * Mikhail Kalugin <fourdman@xored.com> - [201864] Fix Terminal SSH keyboard interactive authentication
  * Martin Oberhuber (Wind River) - [155026] Add keepalives for SSH connection
  * Johnson Ma (Wind River) - [218880] Add UI setting for ssh keepalives
+ * Martin Oberhuber (Wind River) - [225792] Rename SshConnector.getTelnetSettings() to getSshSettings()
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.ssh;
 
@@ -86,12 +87,12 @@ class SshConnection extends Thread {
 
 	public void run() {
 		try {
-			int nTimeout = fConn.getTelnetSettings().getTimeout() * 1000;
-			int nKeepalive = fConn.getTelnetSettings().getKeepalive() * 1000;
-			String host = fConn.getTelnetSettings().getHost();
-			String user = fConn.getTelnetSettings().getUser();
-			String password = fConn.getTelnetSettings().getPassword();
-			int port=fConn.getTelnetSettings().getPort();
+			int nTimeout = fConn.getSshSettings().getTimeout() * 1000;
+			int nKeepalive = fConn.getSshSettings().getKeepalive() * 1000;
+			String host = fConn.getSshSettings().getHost();
+			String user = fConn.getSshSettings().getUser();
+			String password = fConn.getSshSettings().getPassword();
+			int port = fConn.getSshSettings().getPort();
 
 			////Giving a connectionId could be the index into a local
 			////Store where passwords are stored
@@ -102,7 +103,7 @@ class SshConnection extends Thread {
 			//UserInfo ui=new MyUserInfo(connectionId, user, password);
 			UserInfo ui=new MyUserInfo(null, user, password);
 
-            Session session = createSession(user, password, host, port, 
+            Session session = createSession(user, password, host, port,
             		ui, new NullProgressMonitor());
 
             //java.util.Hashtable config=new java.util.Hashtable();
@@ -137,7 +138,7 @@ class SshConnection extends Thread {
 		} catch (IOException e) {
 			connectFailed(e.getMessage(),e.getMessage());
 		} finally {
-			
+
 		}
 	}
 	synchronized void setChannel(Channel channel) {
@@ -177,7 +178,7 @@ class SshConnection extends Thread {
     	}
     	return display;
     }
-    
+
     private static class MyUserInfo implements UserInfo, UIKeyboardInteractive {
     	private final String fConnectionId;
     	private final String fUser;
@@ -198,10 +199,10 @@ class SshConnection extends Thread {
 			final boolean[] retval = new boolean[1];
 			Display.getDefault().syncExec(new Runnable() {
 				public void run() {
-					retval[0] = MessageDialog.openQuestion(null, SshMessages.WARNING, str); 
+					retval[0] = MessageDialog.openQuestion(null, SshMessages.WARNING, str);
 				}
 			});
-			return retval[0]; 
+			return retval[0];
 		}
 		private String promptSecret(final String message) {
 			final String[] retval = new String[1];
@@ -240,7 +241,7 @@ class SshConnection extends Thread {
 				}
 			});
 		}
-		public String[] promptKeyboardInteractive(final String destination, 
+		public String[] promptKeyboardInteractive(final String destination,
 				final String name, final String instruction,
 				final String[] prompt, final boolean[] echo)
 		{
@@ -257,14 +258,14 @@ class SshConnection extends Thread {
 			    final String[][] finResult = new String[1][];
 			    getStandardDisplay().syncExec(new Runnable() {
 			    	public void run() {
-			    		KeyboardInteractiveDialog dialog = new KeyboardInteractiveDialog(null, 
+			    		KeyboardInteractiveDialog dialog = new KeyboardInteractiveDialog(null,
 			    			fConnectionId, destination, name, instruction, prompt, echo);
 			    		dialog.open();
 			    		finResult[0]=dialog.getResult();
 		    		}
 			    });
 			    String[] result=finResult[0];
-                if (result == null) 
+                if (result == null)
                     return null; // canceled
 			    if (result.length == 1 && prompt.length == 1 && prompt[0].trim().equalsIgnoreCase("password:")) { //$NON-NLS-1$
 			        fPassword = result[0];

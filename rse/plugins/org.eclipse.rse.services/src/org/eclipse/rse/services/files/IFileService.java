@@ -10,7 +10,7 @@
  * component that contains this file: David McKnight, Kushal Munir,
  * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
@@ -62,15 +62,15 @@ public interface IFileService extends IService
 	 * Query constant (bit mask value 1) which indicates that a query should be
 	 * on files. The filter(s) passed into the list methods will produce a
 	 * subset of files matching the filter(s).
-	 * 
+	 *
 	 * This constant is passed into the IFileService list calls. Implementors of
 	 * IFileService make use of this to determine what to query and what to
 	 * return from the query.
-	 * 
+	 *
 	 * @see IFileService#list(String,String,int,IProgressMonitor)
 	 * @see IFileService#listMultiple(String[],String[],int,IProgressMonitor)
 	 * @see IFileService#listMultiple(String[],String[],int[],IProgressMonitor)
-	 * 
+	 *
 	 * @since org.eclipse.rse.services 3.0
 	 */
 	public static final int FILE_TYPE_FILES =  0x1;
@@ -79,15 +79,15 @@ public interface IFileService extends IService
 	 * Query constant (bit mask value 2) which indicates that a query should be
 	 * on folders. The filter(s) passed into the list methods will produce a
 	 * subset of folders matching the filter(s).
-	 * 
+	 *
 	 * This constant is passed into the IFileService list calls. Implementors of
 	 * IFileService make use of this to determine what to query and what to
 	 * return from the query.
-	 * 
+	 *
 	 * @see IFileService#list(String,String,int,IProgressMonitor)
 	 * @see IFileService#listMultiple(String[],String[],int,IProgressMonitor)
 	 * @see IFileService#listMultiple(String[],String[],int[],IProgressMonitor)
-	 * 
+	 *
 	 * @since org.eclipse.rse.services 3.0
 	 */
 	public static final int FILE_TYPE_FOLDERS =  0x2;
@@ -98,15 +98,15 @@ public interface IFileService extends IService
 	 * will produce a subset of files matching the filter(s) and all the
 	 * folders. Note that only files are filtered and all folders are returned
 	 * when this is used.
-	 * 
+	 *
 	 * This constant is passed into the IFileService list calls. Implementors of
 	 * IFileService make use of this to determine what to query and what to
 	 * return from the query.
-	 * 
+	 *
 	 * @see IFileService#list(String,String,int,IProgressMonitor)
 	 * @see IFileService#listMultiple(String[],String[],int,IProgressMonitor)
 	 * @see IFileService#listMultiple(String[],String[],int[],IProgressMonitor)
-	 * 
+	 *
 	 * @since org.eclipse.rse.services 3.0
 	 */
 	public static final int FILE_TYPE_FILES_AND_FOLDERS = 0x0;
@@ -114,9 +114,9 @@ public interface IFileService extends IService
 	/**
 	 * Options constant (value 1 &lt;&lt;0) for specifying a stream that will
 	 * append data to a file.
-	 * 
+	 *
 	 * @see IFileService#getOutputStream(String, String, int, IProgressMonitor)
-	 * 
+	 *
 	 * @since org.eclipse.rse.services 3.0
 	 */
 	public static final int APPEND = 1 << 0;
@@ -124,19 +124,19 @@ public interface IFileService extends IService
 	/**
 	 * Options constant (value 2 &lt;&lt;0) for specifying that a file is Text
 	 * instead of the default Binary.
-	 * 
+	 *
 	 * In Text mode, encoding conversions and line end conversions can be
 	 * performed on the stream.
-	 * 
+	 *
 	 * @see IFileService#getOutputStream(String, String, int, IProgressMonitor)
-	 * 
+	 *
 	 * @since org.eclipse.rse.services 3.0
 	 */
 	public static final int TEXT_MODE = 2 << 0;
 
 	/**
 	 * Options constant (value 0) to indicate that no bit options are set.
-	 * 
+	 *
 	 * @since org.eclipse.rse.services 3.0
 	 */
 	public static final int NONE = 0;
@@ -188,7 +188,7 @@ public interface IFileService extends IService
 	 * @throws SystemMessageException if an error occurs.
 	 *     Typically this would be one of those in the
 	 *     {@link RemoteFileException} family.
-	 * 
+	 *
 	 * @since org.eclipse.rse.services 3.0
 	 */
 	public boolean uploadMultiple(File[] localFiles, String[] remoteParents, String[] remoteFiles, boolean[] isBinary, String[] srcEncodings, String[] hostEncodings, IProgressMonitor monitor) throws SystemMessageException;
@@ -212,7 +212,7 @@ public interface IFileService extends IService
 
 	/**
 	 * Copy files from the remote file system to the local system.
-	 * 
+	 *
 	 * @param remoteParents - string designating the remote parents.
 	 * @param remoteFiles - Strings designating the remote files residing in the
 	 *            parents.
@@ -224,7 +224,7 @@ public interface IFileService extends IService
 	 * @return true if the files were copied from the remote system.
 	 * @throws SystemMessageException if an error occurs. Typically this would
 	 *             be one of those in the {@link RemoteFileException} family.
-	 * 
+	 *
 	 * @since org.eclipse.rse.services 3.0
 	 */
 	public boolean downloadMultiple(String[] remoteParents, String[] remoteFiles, File[] localFiles, boolean[] isBinary, String[] hostEncodings, IProgressMonitor monitor) throws SystemMessageException;
@@ -233,7 +233,7 @@ public interface IFileService extends IService
 
 	/**
 	 * Get an abstract remote file handle for a specified path.
-	 * 
+	 *
 	 * @param remoteParent
 	 * @param name
 	 * @param monitor the monitor for this potentially long running operation
@@ -249,7 +249,7 @@ public interface IFileService extends IService
 
 	/**
 	 * List the contents of a remote folder.
-	 * 
+	 *
 	 * @param remoteParent - the name of the parent directory on the remote file
 	 *            system from which to retrieve the child list.
 	 * @param fileFilter - a string that can be used to filter the children.
@@ -261,7 +261,7 @@ public interface IFileService extends IService
 	 * @return the list of host files.
 	 * @throws SystemMessageException if an error occurs. Typically this would
 	 *             be one of those in the RemoteFileException family.
-	 * 
+	 *
 	 * @since org.eclipse.rse.services 3.0
 	 */
 	public IHostFile[] list(String remoteParent, String fileFilter, int fileType, IProgressMonitor monitor) throws SystemMessageException;
@@ -269,7 +269,7 @@ public interface IFileService extends IService
 	/**
 	 * Get multiple abstract remote file handles for an array of specified
 	 * paths.
-	 * 
+	 *
 	 * @param remoteParents - the list of remote parents
 	 * @param names - the list of file names
 	 * @param monitor the monitor for this potentially long running operation
@@ -280,14 +280,14 @@ public interface IFileService extends IService
 	 *         <code>false</code>.
 	 * @throws SystemMessageException if an error occurs. Typically this would
 	 *             be one of those in the RemoteFileException family.
-	 * 
+	 *
 	 * @since org.eclipse.rse.services 3.0
 	 */
 	public IHostFile[] getFileMultiple(String remoteParents[], String names[], IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
 	 * List the contents of multiple remote folders.
-	 * 
+	 *
 	 * @param remoteParents - the names of the parent directories on the remote
 	 *            file system from which to retrieve the collective child list.
 	 * @param fileFilters - a set of strings that can be used to filter the
@@ -304,14 +304,14 @@ public interface IFileService extends IService
 	 *         remoteParents with it's corresponding filter.
 	 * @throws SystemMessageException if an error occurs. Typically this would
 	 *             be one of those in the RemoteFileException family.
-	 * 
+	 *
 	 * @since org.eclipse.rse.services 3.0
 	 */
 	public IHostFile[] listMultiple(String[] remoteParents, String[] fileFilters, int[] fileTypes, IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
 	 * List the contents of multiple remote folders.
-	 * 
+	 *
 	 * @param remoteParents - the names of the parent directories on the remote
 	 *            file system from which to retrieve the collective child list.
 	 * @param fileFilters - a set of strings that can be used to filter the
@@ -328,7 +328,7 @@ public interface IFileService extends IService
 	 *         remoteParents with it's corresponding filter.
 	 * @throws SystemMessageException if an error occurs. Typically this would
 	 *             be one of those in the RemoteFileException family.
-	 * 
+	 *
 	 * @since org.eclipse.rse.services 3.0
 	 */
 	public IHostFile[] listMultiple(String[] remoteParents, String[] fileFilters, int fileType, IProgressMonitor monitor) throws SystemMessageException;
@@ -336,7 +336,7 @@ public interface IFileService extends IService
 
 	/**
 	 * Get abstract remote file handles for the known remote file system roots.
-	 * 
+	 *
 	 * @param monitor the monitor for this potentially long running operation
 	 *            Return the list of roots for this system
 	 * @return the list of host files.
@@ -347,15 +347,15 @@ public interface IFileService extends IService
 
 	/**
 	 * Return the user's home directory on this connection.
-	 * 
+	 *
 	 * The resulting IHostFile object is just a handle, so there is no guarantee
 	 * that it refers to an existing file.
-	 * 
+	 *
 	 * This method may also return <code>null</code> if the home directory could
 	 * not be determined (for instance, because the connection is not yet connected).
 	 * In this case, clients are encouraged to query the home directory again once
 	 * the connection is connected.
-	 * 
+	 *
 	 * @return A handle to the current user's home directory, or <code>null</code>
 	 *     if the home directory could not be determined.
 	 */
@@ -363,7 +363,7 @@ public interface IFileService extends IService
 
 	/**
 	 * Create a file on the host.
-	 * 
+	 *
 	 * @param remoteParent the parent directory
 	 * @param fileName the name of the new file
 	 * @param monitor the monitor for this potentially long running operation
@@ -375,7 +375,7 @@ public interface IFileService extends IService
 
 	/**
 	 * Create a folder on the host.
-	 * 
+	 *
 	 * @param remoteParent the parent directory
 	 * @param folderName the name of the new folder
 	 * @param monitor the progress monitor
@@ -387,7 +387,7 @@ public interface IFileService extends IService
 
 	/**
 	 * Delete a file or folder on the host.
-	 * 
+	 *
 	 * @param remoteParent the folder containing the file to delete
 	 * @param fileName the name of the file or folder to delete
 	 * @param monitor the progress monitor
@@ -403,7 +403,7 @@ public interface IFileService extends IService
 	 * exception during the operation. Without an exception thrown in such
 	 * cases, views may not be refreshed correctly to account for deleted
 	 * resources.
-	 * 
+	 *
 	 * @param remoteParents the array of folders containing the files to delete
 	 * @param fileNames the names of the files or folders to delete
 	 * @param monitor the progress monitor
@@ -416,7 +416,7 @@ public interface IFileService extends IService
 
 	/**
 	 * Rename a file or folder on the host.
-	 * 
+	 *
 	 * @param remoteParent the folder containing the file to rename
 	 * @param oldName the old name of the file or folder to rename
 	 * @param newName the new name for the file
@@ -429,7 +429,7 @@ public interface IFileService extends IService
 
 	/**
 	 * Rename a file or folder on the host.
-	 * 
+	 *
 	 * @param remoteParent the folder containing the file to rename
 	 * @param oldName the old name of the file or folder to rename
 	 * @param newName the new name for the file
@@ -443,7 +443,7 @@ public interface IFileService extends IService
 
 	/**
 	 * Move the file or folder specified to a different remote path.
-	 * 
+	 *
 	 * @param srcParent the folder containing the file or folder to move
 	 * @param srcName the new of the file or folder to move
 	 * @param tgtParent the destination folder for the move
@@ -457,7 +457,7 @@ public interface IFileService extends IService
 
 	/**
 	 * Copy the file or folder to the specified destination.
-	 * 
+	 *
 	 * @param srcParent the folder containing the file or folder to copy
 	 * @param srcName the new of the file or folder to copy
 	 * @param tgtParent the destination folder for the copy
@@ -471,7 +471,7 @@ public interface IFileService extends IService
 
 	/**
 	 * Copy a set of files or folders to the specified destination.
-	 * 
+	 *
 	 * @param srcParents the folders containing each file or folder to copy
 	 * @param srcNames the names of the files or folders to copy
 	 * @param tgtParent the destination folder for the copy
@@ -485,7 +485,7 @@ public interface IFileService extends IService
 
 	/**
 	 * Indicates whether the file system is case sensitive.
-	 * 
+	 *
 	 * @return true if the file system has case sensitive file names
 	 */
 	public boolean isCaseSensitive();
@@ -493,18 +493,28 @@ public interface IFileService extends IService
 	/**
 	 * Set the last modified stamp of the file or folder with the specified
 	 * timestamp.
-	 * 
+	 *
+	 * Note that the precision to which the underlying file system supports last
+	 * modified times may vary. Therefore, even if this method successfully sets
+	 * the timestamp, there is no guarantee that the
+	 * {@link IHostFile#getModifiedDate()} method after a following
+	 * {@link #getFile(String, String, IProgressMonitor)} call returns exactly
+	 * the same timestamp.
+	 *
 	 * @param parent the parent path of the file to set
 	 * @param name the name of the file to set
-	 * @param timestamp the new timestamp
+	 * @param timestamp the new timestamp in milliseconds from January 1, 1970,
+	 *            00:00:00 UTC.
 	 * @param monitor the progress monitor
 	 * @return true if the file timestamp was changed successfully
+	 * 
+	 * @see IHostFile#getModifiedDate()
 	 */
 	public boolean setLastModified(String parent, String name, long timestamp, IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
 	 * Set the read-only permission of the specified file or folder.
-	 * 
+	 *
 	 * @param parent the parent path of the file to set
 	 * @param name the name of the file to set
 	 * @param readOnly indicates whether to make the file read-only or
@@ -527,7 +537,7 @@ public interface IFileService extends IService
 	/**
 	 * Get the input stream to access the contents a remote file. Clients should
 	 * close the input stream when done.
-	 * 
+	 *
 	 * @param remoteParent the absolute path of the parent.
 	 * @param remoteFile the name of the remote file.
 	 * @param isBinary <code>true</code> if the file is a binary file,
@@ -542,7 +552,7 @@ public interface IFileService extends IService
 	/**
 	 * Get the output stream to write to a remote file. Clients should close the
 	 * output stream when done.
-	 * 
+	 *
 	 * @param remoteParent the absolute path of the parent.
 	 * @param remoteFile the name of the remote file.
 	 * @param isBinary <code>true</code> if the file is a binary file,
@@ -560,7 +570,7 @@ public interface IFileService extends IService
 	/**
 	 * Get the output stream to write/append to a remote file. Clients should
 	 * close the output stream when done.
-	 * 
+	 *
 	 * @param remoteParent the absolute path of the parent.
 	 * @param remoteFile the name of the remote file.
 	 * @param options bit wise or of option constants. Valid constants are
@@ -578,9 +588,9 @@ public interface IFileService extends IService
 	 * the IFileServiceCodePageConverter mechanism.  Certain extensions, such as
 	 * property pages for encoding conversion can determine whether or not to
 	 * display or enable themselves based on result of this call.
-	 * 
+	 *
 	 * @return whether this service supports encoding conversion
-	 * 
+	 *
 	 * @since org.eclipse.rse.services 3.0
 	 */
 	public boolean supportsEncodingConversion();

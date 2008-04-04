@@ -13,10 +13,12 @@
  * David Dykstal (IBM) - 142806: refactoring persistence framework
  * Martin Oberhuber (Wind River) - [185750] Remove IConnectorService.getHostType() 
  * David Dykstal (IBM) - [210474] Deny save password function missing
+ * David Dykstal (IBM) - [225089][ssh][shells][api] Canceling connection leads to exception
  ********************************************************************************/
 package org.eclipse.rse.core.subsystems;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.IRSEPersistableContainer;
@@ -446,7 +448,7 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 	 * @see org.eclipse.rse.core.subsystems.IConnectorService#acquireCredentials(boolean)
 	 */
 	public void acquireCredentials(boolean forcePrompt)
-			throws InterruptedException {
+			throws OperationCanceledException {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
 		{

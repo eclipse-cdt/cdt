@@ -19,6 +19,7 @@
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * David McKnight   (IBM)        - [223204] [cleanup] fix broken nls strings in files.ui and others
+ * David Dykstal (IBM) - [225089][ssh][shells][api] Canceling connection leads to exception
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.widgets;
@@ -26,6 +27,7 @@ import java.util.Hashtable;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
@@ -620,7 +622,7 @@ public class SystemQualifiedRemoteFolderCombo extends Composite
 			} else {
 				ss.connect(false, null);
 			}
-    	   } catch (InterruptedException exc)
+    	   } catch (OperationCanceledException exc)
     	   {
     		   String msgTxt = NLS.bind(CommonMessages.MSG_CONNECT_CANCELED, conn.getHostName());
     	     throw new Exception(msgTxt);    	   	 

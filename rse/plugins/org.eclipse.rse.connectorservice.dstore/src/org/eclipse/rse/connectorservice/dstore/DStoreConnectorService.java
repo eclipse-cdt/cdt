@@ -28,6 +28,7 @@
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * David McKnight   (IBM)        - [220123] [api][dstore] Configurable timeout on irresponsiveness
  * David McKnight   (IBM)        - [223204] [cleanup] fix broken nls strings in files.ui and others
+ * David Dykstal (IBM) - [225089][ssh][shells][api] Canceling connection leads to exception
  *******************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore;
@@ -44,6 +45,7 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.dstore.core.client.ClientConnection;
 import org.eclipse.dstore.core.client.ConnectionStatus;
 import org.eclipse.dstore.core.java.IRemoteClassInstance;
@@ -1070,7 +1072,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 							{
 								acquireCredentials(true);
 							}
-							catch (InterruptedException e)
+							catch (OperationCanceledException e)
 							{
 								connectException = e;
 							}
@@ -1078,7 +1080,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 					});
 
 					// Check if the user cancelled the prompt
-					if (connectException instanceof InterruptedException)
+					if (connectException instanceof OperationCanceledException)
 					{
 						throw connectException;
 					}
@@ -1215,7 +1217,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 						{
 							acquireCredentials(true);
 						}
-						catch (InterruptedException e)
+						catch (OperationCanceledException e)
 						{
 							connectException = e;
 						}
@@ -1223,7 +1225,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 				});
 
 				// Check if the user cancelled the prompt
-				if (connectException instanceof InterruptedException)
+				if (connectException instanceof OperationCanceledException)
 				{
 					throw connectException;
 				}

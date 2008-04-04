@@ -34,6 +34,7 @@
  * David Dykstal (IBM) - [217556] remove service subsystem types
  * David McKnight   (IBM)        - [220309] [nls] Some GenericMessages and SubSystemResources should move from UI to Core
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
+ * David Dykstal (IBM) - [225089][ssh][shells][api] Canceling connection leads to exception
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -51,6 +52,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
@@ -527,7 +529,7 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 					throw (SystemMessageException) e;
 				}
 				else
-					if (e instanceof InterruptedException)
+					if (e instanceof OperationCanceledException)
 					{
 						String msgTxt = NLS.bind(CommonMessages.MSG_CONNECT_CANCELED, getHost().getAliasName());
 						SystemMessage msg = new SimpleSystemMessage(RSECorePlugin.PLUGIN_ID,
@@ -1334,6 +1336,11 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 				monitor.done();
 				return Status.OK_STATUS;
 			}
+			catch(OperationCanceledException exc)
+			{
+				monitor.done();
+				return Status.CANCEL_STATUS;
+			}
 			catch(java.lang.InterruptedException exc)
 			{
 				monitor.done();
@@ -1711,7 +1718,7 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 		}
 	}
 
-	protected boolean implicitConnect(boolean isConnectOperation, IProgressMonitor mon, String msg, int totalWorkUnits) throws SystemMessageException, InvocationTargetException, InterruptedException
+	protected boolean implicitConnect(boolean isConnectOperation, IProgressMonitor mon, String msg, int totalWorkUnits) throws SystemMessageException, InvocationTargetException, OperationCanceledException
 	{
 		boolean didConnection = false;
 		if ( doConnection && !isConnected())// caller wants to do connection first as part operation
@@ -2311,17 +2318,20 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 				}
 			});
 			try {
-				if (exception[0]!=null)
-					throw exception[0];
-				getConnectorService().connect(monitor);
-				if (isConnected()) {
-					final SubSystem ss = this;
-					//Notify connect status change
-					Display.getDefault().asyncExec(new Runnable() {
-						public void run() {
-							RSECorePlugin.getTheSystemRegistry().connectedStatusChange(ss, true, false);
-						}
-					});
+				Exception e = exception[0];
+				if (e == null) {
+					getConnectorService().connect(monitor);
+					if (isConnected()) {
+						final SubSystem ss = this;
+						//Notify connect status change
+						Display.getDefault().asyncExec(new Runnable() {
+							public void run() {
+								RSECorePlugin.getTheSystemRegistry().connectedStatusChange(ss, true, false);
+							}
+						});
+					}
+				} else {
+					throw e;
 				}
 			} finally {
 				monitor.done();
@@ -2414,7 +2424,7 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 			doConnection = true;
 			ok = true;
 		}
-		catch (InterruptedException exc) // user cancelled
+		catch (OperationCanceledException exc) // user cancelled
 		{
 			throw exc;
 		}
@@ -2562,7 +2572,7 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 	 * <p>
 	 * Your connect method in your IConnectorService class must follow these IRunnableWithProgress rules:
 	 * <ul>
-	 *   <li>if the user cancels (monitor.isCanceled()), throw new InterruptedException()
+	 *   <li>if the user cancels (monitor.isCanceled()), throw new OperationCanceledException()
 	 *   <li>if something else bad happens, throw new java.lang.reflect.InvocationTargetException(exc)
 	 *       - well, actually you can throw anything and we'll wrap it here in an InvocationTargetException
 	 *   <li>do not worry about calling monitor.done() ... caller will do that.
@@ -2570,7 +2580,7 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 	 * 
 	 */
 	private void internalConnect(IProgressMonitor monitor)
-	throws InvocationTargetException, InterruptedException
+	throws InvocationTargetException, OperationCanceledException
 	{
 		try
 		{
@@ -2579,7 +2589,7 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 		catch(InvocationTargetException exc) {
 			throw exc;
 		}
-		catch (InterruptedException exc) {
+		catch (OperationCanceledException exc) {
 			throw exc;
 		}
 		catch (Exception exc) {

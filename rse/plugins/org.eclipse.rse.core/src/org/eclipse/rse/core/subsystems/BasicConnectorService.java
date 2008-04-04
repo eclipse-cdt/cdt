@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,9 +12,11 @@
  * 
  * Contributors:
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
+ * David Dykstal (IBM) - [225089][ssh][shells][api] Canceling connection leads to exception
  ********************************************************************************/
 package org.eclipse.rse.core.subsystems;
 
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.rse.core.model.IHost;
 
 /**
@@ -85,7 +87,7 @@ public abstract class BasicConnectorService extends AbstractConnectorService {
 	 * This implmentation does nothing.
 	 * @see org.eclipse.rse.core.subsystems.IConnectorService#acquireCredentials(boolean)
 	 */
-	public void acquireCredentials(boolean refresh) throws InterruptedException {
+	public void acquireCredentials(boolean refresh) throws OperationCanceledException {
 	}
 	
 	/**

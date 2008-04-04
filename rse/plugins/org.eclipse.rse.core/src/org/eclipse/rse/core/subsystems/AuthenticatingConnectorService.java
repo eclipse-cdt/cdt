@@ -10,12 +10,14 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * David Dykstal (IBM) - [210474] Deny save password function missing
+ * David Dykstal (IBM) - [225089][ssh][shells][api] Canceling connection leads to exception
  ********************************************************************************/
 package org.eclipse.rse.core.subsystems;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.IRSEUserIdConstants;
 import org.eclipse.rse.core.PasswordPersistenceManager;
@@ -185,7 +187,7 @@ public abstract class AuthenticatingConnectorService extends AbstractConnectorSe
 	 * @param reacquire if true will cause the credentials to be reobtained if necessary.
 	 * @see org.eclipse.rse.core.subsystems.IConnectorService#acquireCredentials(boolean)
 	 */
-	public final void acquireCredentials(boolean reacquire) throws InterruptedException {
+	public final void acquireCredentials(boolean reacquire) throws OperationCanceledException {
 		credentialsProvider.acquireCredentials(reacquire);
 	}
 

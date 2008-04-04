@@ -17,11 +17,13 @@
  * Martin Oberhuber (Wind River) - [187218] Fix error reporting for connect()
  * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
  * David Dykstal (IBM) - [210474] Deny save password function missing
+ * David Dykstal (IBM) - [225089][ssh][shells][api] Canceling connection leads to exception
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.IRSEModelObject;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
@@ -87,7 +89,8 @@ public interface IConnectorService extends IRSEModelObject {
 	 * @param monitor a monitor for tracking the progress and canceling a connect
 	 * operation.
 	 * @throws Exception an exception of there is a failure to connect.
-	 *    Typically, this will be a {@link SystemMessageException}.
+	 * Typically, this will be a {@link SystemMessageException}.
+	 * If the connect was canceled by the user this will be an {@link OperationCanceledException}   
 	 */
 	public void connect(IProgressMonitor monitor) throws Exception;
 
@@ -127,7 +130,7 @@ public interface IConnectorService extends IRSEModelObject {
 
 	/**
 	 * Sets the host used by this connector service.
-	 * @param host
+	 * @param host the host to be used for this connector service
 	 */
 	public void setHost(IHost host);
 
@@ -274,12 +277,12 @@ public interface IConnectorService extends IRSEModelObject {
 	 * Implementations may retain a remembered credentials or
 	 * use this acquire the credentials using some implementation defined means.
 	 * <p>
-	 * Throws InterruptedException if acquisition of the
+	 * Throws {@link OperationCanceledException} if acquisition of the
 	 * credentials is canceled or is being suppressed.
 	 * @param refresh if true will force the connector service to discard
 	 * any remembered value and reacquire the credentials.
 	 */
-	public void acquireCredentials(boolean refresh) throws InterruptedException;
+	public void acquireCredentials(boolean refresh) throws OperationCanceledException;
 
 	/**
 	 * @return true if the acquisition of credentials is being suppressed.
@@ -391,8 +394,7 @@ public interface IConnectorService extends IRSEModelObject {
 	 * If set to true, it will clear any saved passwords for this system and not allow any further
 	 * passwords to be stored.
 	 * This property of a system is persistent from session to session, but is not sharable.
-	 * @param deny 
-	 * If true, forget any saved passwords and do not allow any others to be saved.
+	 * @param deny If true, forget any saved passwords and do not allow any others to be saved.
 	 * If false, allow passwords to be saved in the keychain.
 	 * @return the number of saved passwords removed by this operation.
 	 * This will always be zero if "deny" is false.

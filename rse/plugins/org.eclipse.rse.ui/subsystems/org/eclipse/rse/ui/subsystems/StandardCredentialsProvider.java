@@ -10,9 +10,11 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  * David Dykstal (IBM) - [210474] Deny save password function missing
+ * David Dykstal (IBM) - [225089][ssh][shells][api] Canceling connection leads to exception
  ********************************************************************************/
 package org.eclipse.rse.ui.subsystems;
 
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.PasswordPersistenceManager;
@@ -168,12 +170,12 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 	 * </ol>
 	 * @param reacquire if true then present the prompt even
 	 * if the password was found and is valid.
-	 * @throws InterruptedException if user is prompted and user
+	 * @throws OperationCanceledException if user is prompted and user
 	 * cancels that prompt or if {@link #isSuppressed()} is true.
 	 */
-	public final void acquireCredentials(boolean reacquire) throws InterruptedException {
+	public final void acquireCredentials(boolean reacquire) throws OperationCanceledException {
 		if (isSuppressed()) {
-			throw new InterruptedException();
+			throw new OperationCanceledException();
 		}
 		ISubSystem subsystem = getPrimarySubSystem();
 		IHost host = subsystem.getHost();
@@ -276,7 +278,7 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.subsystems.ICredentialsProvider#repairCredentials(org.eclipse.rse.services.clientserver.messages.SystemMessage)
 	 */
-	public final void repairCredentials(SystemMessage prompt) throws InterruptedException {
+	public final void repairCredentials(SystemMessage prompt) throws OperationCanceledException {
 		promptForNewPassword(prompt);
 	}
 
@@ -383,19 +385,19 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 		log.logError("Unexpected exception", t); //$NON-NLS-1$
 	}
 
-	private void promptForCredentials() throws InterruptedException {
+	private void promptForCredentials() throws OperationCanceledException {
 		PromptForCredentials runnable = new PromptForCredentials();
 		Display.getDefault().syncExec(runnable);
 		if (runnable.isCanceled()) {
-			throw new InterruptedException();
+			throw new OperationCanceledException();
 		}
 	}
 
-	private void promptForNewPassword(SystemMessage prompt) throws InterruptedException {
+	private void promptForNewPassword(SystemMessage prompt) throws OperationCanceledException {
 		PromptForNewPassword runnable = new PromptForNewPassword(prompt);
 		Display.getDefault().syncExec(runnable);
 		if (runnable.isCancelled()) {
-			throw new InterruptedException();
+			throw new OperationCanceledException();
 		}
 	}
 

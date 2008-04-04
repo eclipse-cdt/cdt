@@ -1,14 +1,16 @@
 /********************************************************************************
- * Copyright (c) 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2007, 2008 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Initial Contributors:
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
+ * David Dykstal (IBM) - [225089][ssh][shells][api] Canceling connection leads to exception
  ********************************************************************************/
 package org.eclipse.rse.core.subsystems;
 
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 
 /**
@@ -37,12 +39,12 @@ public interface ICredentialsProvider {
 	 * @param reacquire true if the provider should refresh any remembered
 	 * credentials. Typically used to force the showing of a dialog containing
 	 * remembered credentials.
-	 * @throws InterruptedException if the acquisition of credentials is 
+	 * @throws OperationCanceledException if the acquisition of credentials is 
 	 * canceled by the user, if the provider is in suppressed state,
 	 * a resource (such as the workbench) not being available, 
 	 * or interrupted by some other means.
 	 */
-	void acquireCredentials(boolean reacquire) throws InterruptedException;
+	void acquireCredentials(boolean reacquire) throws OperationCanceledException;
 	
 	/**
 	 * The connector service using this provider may find the credentials provided
@@ -51,11 +53,11 @@ public interface ICredentialsProvider {
 	 * an expired password.
 	 * @param message the message indicating the nature of the damage that must
 	 * be repaired. For example, indicating expiration of a password.
-	 * @throws InterruptedException if the repair is canceled for some reason. This could
+	 * @throws OperationCanceledException if the repair is canceled for some reason. This could
 	 * include the inability of a credentials provider to open a dialog or a dialog being
 	 * canceled.
 	 */
-	void repairCredentials(SystemMessage message)throws InterruptedException;
+	void repairCredentials(SystemMessage message)throws OperationCanceledException;
 
 	/**
 	 * Clears the credentials known by this credentials provider. This will 

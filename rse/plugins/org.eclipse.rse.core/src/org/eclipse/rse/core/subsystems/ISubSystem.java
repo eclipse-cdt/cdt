@@ -18,11 +18,13 @@
  * David McKnight (IBM) - [186363] get rid of obsolete calls to ISubSystem.connect()
  * David Dykstal (IBM) - [217556] remove service subsystem types
  * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
+ * David Dykstal (IBM) - [225089][ssh][shells][api] Canceling connection leads to exception
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager;
@@ -390,9 +392,10 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 * 
 	 * @param monitor the progress monitor. Must not be <code>null</code>.
 	 * @param forcePrompt forces the prompt dialog to be displayed
-	 *     even if the password is currently in memory.
+	 * even if the password is currently in memory.
 	 * @throws Exception an exception if there is a failure to connect.
-	 *    Typically, this will be a {@link SystemMessageException}.
+	 * Typically, this will be a {@link SystemMessageException}.
+	 * An {@link OperationCanceledException} will be thrown if the user cancels the connect.
 	 */
 	public void connect(IProgressMonitor monitor, boolean forcePrompt) throws Exception;
 
@@ -413,7 +416,8 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 * @param callback to call after connect is complete.
 	 *     May be <code>null</code>.
 	 * @throws Exception an exception if there is a failure to connect.
-	 *    Typically, this will be a {@link SystemMessageException}.
+	 * Typically, this will be a {@link SystemMessageException}.
+	 * An {@link OperationCanceledException} will be thrown if the user cancels the connect.
 	 */
 	public void connect(boolean forcePrompt, IRSECallback callback) throws Exception;
 

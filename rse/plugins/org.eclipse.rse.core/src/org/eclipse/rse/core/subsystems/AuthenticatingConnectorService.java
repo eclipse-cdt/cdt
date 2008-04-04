@@ -181,10 +181,7 @@ public abstract class AuthenticatingConnectorService extends AbstractConnectorSe
 		credentialsProvider.setSuppressed(suppressed);
 	}
 
-	/**
-	 * Acquires the credentials by delegating the request to the 
-	 * credentials provider.
-	 * @param reacquire if true will cause the credentials to be reobtained if necessary.
+	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.subsystems.IConnectorService#acquireCredentials(boolean)
 	 */
 	public final void acquireCredentials(boolean reacquire) throws OperationCanceledException {

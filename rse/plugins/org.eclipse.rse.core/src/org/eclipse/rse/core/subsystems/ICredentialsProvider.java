@@ -43,6 +43,7 @@ public interface ICredentialsProvider {
 	 * canceled by the user, if the provider is in suppressed state,
 	 * a resource (such as the workbench) not being available, 
 	 * or interrupted by some other means.
+	 * @since 3.0 throws OperationCanceledException instead of InterruptedException
 	 */
 	void acquireCredentials(boolean reacquire) throws OperationCanceledException;
 	
@@ -56,6 +57,7 @@ public interface ICredentialsProvider {
 	 * @throws OperationCanceledException if the repair is canceled for some reason. This could
 	 * include the inability of a credentials provider to open a dialog or a dialog being
 	 * canceled.
+	 * @since 3.0 throws OperationCanceledException instead of InterruptedException
 	 */
 	void repairCredentials(SystemMessage message)throws OperationCanceledException;
 

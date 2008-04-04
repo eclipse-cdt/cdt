@@ -157,7 +157,7 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 	}
 
 	/**
-	 * <i>Do not override.</i>
+	 * @noimplement
 	 * Acquires the credentials (userid and password) for this connector service.
 	 * The search order for the password is as follows:</p>
 	 * <ol>
@@ -172,6 +172,7 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 	 * if the password was found and is valid.
 	 * @throws OperationCanceledException if user is prompted and user
 	 * cancels that prompt or if {@link #isSuppressed()} is true.
+	 * @since 3.0 throws {@link OperationCanceledException} rather than {@link InterruptedException}
 	 */
 	public final void acquireCredentials(boolean reacquire) throws OperationCanceledException {
 		if (isSuppressed()) {

@@ -90,7 +90,7 @@ public interface IConnectorService extends IRSEModelObject {
 	 * operation.
 	 * @throws Exception an exception of there is a failure to connect.
 	 * Typically, this will be a {@link SystemMessageException}.
-	 * If the connect was canceled by the user this will be an {@link OperationCanceledException}   
+	 * @since 3.0 throws an {@link OperationCanceledException} if the connect was canceled by the user
 	 */
 	public void connect(IProgressMonitor monitor) throws Exception;
 
@@ -275,12 +275,13 @@ public interface IConnectorService extends IRSEModelObject {
 	 * by using the {@link #setSuppressed(boolean)}.
 	 * <p>
 	 * Implementations may retain a remembered credentials or
-	 * use this acquire the credentials using some implementation defined means.
+	 * use this to acquire the credentials using some implementation defined means.
 	 * <p>
 	 * Throws {@link OperationCanceledException} if acquisition of the
 	 * credentials is canceled or is being suppressed.
 	 * @param refresh if true will force the connector service to discard
 	 * any remembered value and reacquire the credentials.
+	 * @since 3.0 throws OperationCanceledException instead of InterruptedException
 	 */
 	public void acquireCredentials(boolean refresh) throws OperationCanceledException;
 
@@ -398,7 +399,7 @@ public interface IConnectorService extends IRSEModelObject {
 	 * If false, allow passwords to be saved in the keychain.
 	 * @return the number of saved passwords removed by this operation.
 	 * This will always be zero if "deny" is false.
-	 * @since org.eclipse.rse.core 3.0
+	 * @since 3.0 org.eclipse.rse.core
 	 */
 	public int setDenyPasswordSave(boolean deny);
 
@@ -406,7 +407,7 @@ public interface IConnectorService extends IRSEModelObject {
 	 * Retrieves the value of the "DENY_PASSWORD_SAVE" property of this connector service.
 	 * If the value has never been set, this will return false.
 	 * @return true if password saving is denied.
-	 * @since org.eclipse.rse.core 3.0
+	 * @since 3.0 org.eclipse.rse.core
 	 */
 	public boolean getDenyPasswordSave();
 

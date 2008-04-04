@@ -404,11 +404,8 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 		return getPort();
 	}
 
-	/**
-	 * Connects to the target system.
-	 * Calls {@link #internalConnect(IProgressMonitor)}
-	 * @param monitor a monitor for progress monitoring and cancelation.
-	 * @throws Exception if the connect fails
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#connect(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public final void connect(IProgressMonitor monitor) throws Exception {
 		preConnect();

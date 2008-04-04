@@ -55,7 +55,7 @@ public class TerminalConnectorExtension {
 	 *            extension point
 	 * @return a new ITerminalConnector with id or <code>null</code> if there
 	 *         is no extension with that id.
-	 * @since 3.0
+	 * @since org.eclipse.tm.terminal 2.0
 	 */
 	public static ITerminalConnector makeTerminalConnector(String id) {
 		IConfigurationElement[] config = RegistryFactory.getRegistry().getConfigurationElementsFor("org.eclipse.tm.terminal.terminalConnectors"); //$NON-NLS-1$
@@ -68,15 +68,15 @@ public class TerminalConnectorExtension {
 	}
 	/**
 	 * Return a list of available terminal connectors (connection types).
-	 * 
+	 *
 	 * The terminal connectors returned are not yet instantiated to any real
 	 * connection. Each terminal connector can connect to one remote system at a
 	 * time.
-	 * 
+	 *
 	 * @return a new list of {@link ITerminalConnector} instances defined in the
 	 *         <code>org.eclipse.tm.terminal.terminalConnectors</code>
 	 *         extension point
-	 * @since 3.0
+	 * @since org.eclipse.tm.terminal 2.0 return value is ITerminalConnector[]
 	 */
 	public static ITerminalConnector[] makeTerminalConnectors() {
 		IConfigurationElement[] config = RegistryFactory.getRegistry().getConfigurationElementsFor("org.eclipse.tm.terminal.terminalConnectors"); //$NON-NLS-1$

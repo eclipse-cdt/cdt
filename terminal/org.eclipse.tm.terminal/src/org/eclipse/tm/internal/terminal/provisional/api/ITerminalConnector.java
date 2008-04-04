@@ -14,17 +14,29 @@ package org.eclipse.tm.internal.terminal.provisional.api;
 import java.io.OutputStream;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
 import org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl;
 
 
 /**
- * Manage a single connection. Implementations of this class are contributed via
- * <code>org.eclipse.tm.terminal.terminalConnectors</code> extension point.
- * This class is a handle to a {@link ITerminalConnector connector} that comes
- * from an extension. It maintains {@link TerminalConnectorImpl} to the
- * connector to allow lazy initialization of the real
- * {@link ITerminalConnector connector} that comes from an extension.
+ * A contributed connection type to manage a single connection.
  *
+ * Implementations of this class are contributed through the
+ * <code>org.eclipse.tm.terminal.terminalConnectors</code> extension point.
+ * This class gives access to the static markup of a terminal connector
+ * extension as well as providing the lifecycle management for the dynamically
+ * loaded {@link TerminalConnectorImpl} instance, which performs the actual
+ * communications. This pattern allows for lazy initialization, bundle
+ * activation and class loading of the actual {@link TerminalConnectorImpl}
+ * instance.
+ * 
+ * Clients can get terminal connector instances from the
+ * {@link TerminalConnectorExtension} class, or from
+ * {@link ITerminalViewControl#getTerminalConnector()} when running inside an
+ * active terminal widget.
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
+ * 
  * @author Michael Scharf
  *         <p>
  *         <strong>EXPERIMENTAL</strong>. This class or interface has been
@@ -37,11 +49,13 @@ import org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnect
 public interface ITerminalConnector extends IAdaptable {
 	/**
 	 * @return an ID of this connector. The id from the plugin.xml.
+	 * @since org.eclipse.tm.terminal 2.0
 	 */
 	String getId();
 
 	/**
 	 * @return <code>null</code> the name (as specified in the plugin.xml)
+	 * @since org.eclipse.tm.terminal 2.0
 	 */
 	String getName();
 
@@ -49,6 +63,7 @@ public interface ITerminalConnector extends IAdaptable {
 	 * @return true if the {@link TerminalConnectorImpl} has been initialized.
 	 * If there was an initialization error, {@link #getInitializationErrorMessage()}
 	 * returns the error message.
+	 * @since org.eclipse.tm.terminal 2.0
 	 */
 	boolean isInitialized();
 
@@ -57,6 +72,7 @@ public interface ITerminalConnector extends IAdaptable {
 	 * If the connector was initialized successfully, <code>null</code> is
 	 * returned. Otherwise an error message describing the problem is returned.
 	 * @return <code>null</code> or a localized error message.
+	 * @since org.eclipse.tm.terminal 2.0
 	 */
 	String getInitializationErrorMessage();
 
@@ -88,6 +104,7 @@ public interface ITerminalConnector extends IAdaptable {
      * @return the terminal to remote stream (bytes written to this stream will
      * be sent to the remote site). For the stream in the other direction (remote to
      * terminal see {@link ITerminalControl#getRemoteToTerminalOutputStream()}
+	 * @since org.eclipse.tm.terminal 2.0
      */
     OutputStream getTerminalToRemoteStream();
 

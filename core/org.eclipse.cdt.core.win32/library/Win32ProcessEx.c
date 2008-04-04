@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 QNX Software Systems and others.
+ * Copyright (c) 2002, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,7 +58,7 @@ pProcInfo_t createProcInfo();
 pProcInfo_t findProcInfo(int pid); 
 
 // We launch separate thread for each project to trap it termination
-unsigned int _stdcall waitProcTermination(void* pv) ;
+void _cdecl waitProcTermination(void* pv) ;
 
 // This is a helper function to prevent losing of quotatin marks
 static int copyTo(wchar_t * target, const wchar_t  * source, int cpyLenght, int availSpace);
@@ -127,7 +127,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
   (JNIEnv * env, jobject process, jobjectArray cmdarray, jobjectArray envp, jstring dir, jintArray channels) 
 {
 	HANDLE stdHandles[3];
-    PROCESS_INFORMATION pi = {0};
+    PROCESS_INFORMATION pi = {0}, *piCopy;
     STARTUPINFOW si;
 	DWORD flags = 0;
     const wchar_t  * cwd = NULL;
@@ -143,7 +143,6 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 	DWORD pid = GetCurrentProcessId();
 	int nPos;
 	pProcInfo_t pCurProcInfo;
-	DWORD dwThreadId;
 	wchar_t eventBreakName[20];
 	wchar_t eventWaitName[20];
 	wchar_t eventTerminateName[20];
@@ -392,11 +391,10 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 
 		pCurProcInfo -> pid = pi.dwProcessId;
         h[0] = pCurProcInfo -> eventWait;
-		h[1] = (HANDLE)_beginthreadex(NULL, 0, waitProcTermination, 
-			(void *) pi.dwProcessId, 0, (UINT*) &dwThreadId);
+		h[1] = pi.hProcess;
 		
 		what = WaitForMultipleObjects(2, h, FALSE, INFINITE); 
-		if((what != WAIT_OBJECT_0) && (pCurProcInfo -> pid > 0)) // CreateProcess failed
+		if(what != WAIT_OBJECT_0) // CreateProcess failed
 			{
 #ifdef DEBUG_MONITOR
 			swprintf(buffer, _T("Process %i failed\n"), pi.dwProcessId);
@@ -417,17 +415,22 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 			file_handles[1] = (int)stdHandles[1];
 			file_handles[2] = (int)stdHandles[2];
 			env->SetIntArrayRegion(channels, 0, 3, (jint *)file_handles);
+
+			// do the cleanup so launch the according thread
+			// create a copy of the PROCESS_INFORMATION as this might get destroyed
+			piCopy = (PROCESS_INFORMATION *)malloc(sizeof(PROCESS_INFORMATION));
+			memcpy(piCopy, &pi, sizeof(PROCESS_INFORMATION));
+			_beginthread(waitProcTermination, 0, (void *)piCopy);
+
 #ifdef DEBUG_MONITOR
 			OutputDebugStringW(_T("Process started\n"));
 #endif
 			}				
-		CloseHandle(h[1]);
 		LeaveCriticalSection(&cs);
 
 		}
 
 	CloseHandle(pi.hThread);
-	CloseHandle(pi.hProcess);
 
     return ret;
 
@@ -847,56 +850,33 @@ void cleanUpProcBlock(pProcInfo_t pCurProcInfo)
 //			pv - (int)pv is a pid
 // Return : always 0
 /////////////////////////////////////////////////////////////////////////////////////
-unsigned int _stdcall waitProcTermination(void* pv) 
+void _cdecl waitProcTermination(void* pv) 
 {
+	PROCESS_INFORMATION *pi = (PROCESS_INFORMATION *)pv;
 	int i;
-	int pid = (int)pv;
 #ifdef DEBUG_MONITOR
 	wchar_t buffer[1000];
 #endif
 
-	HANDLE hProc = OpenProcess(PROCESS_ALL_ACCESS, 0, pid);
-	
-	if(NULL == hProc) 
-		{
-#ifdef DEBUG_MONITOR
-		swprintf(buffer, _T("waitProcTermination: cannot get handler for PID %i (error %i)\n"), 
-			pid, 
-			GetLastError());
-		OutputDebugStringW(buffer);
-#endif
-		}
-	else
-		{
-		WaitForSingleObject(hProc, INFINITE);
-#ifdef DEBUG_MONITOR
-		swprintf(buffer, _T("Process PID %i terminated\n"), pid);
-		OutputDebugStringW(buffer);
-#endif
-		}
-	
+	// wait for process termination
+	WaitForSingleObject(pi->hProcess, INFINITE);
+
 	for(i = 0; i < MAX_PROCS; ++i)
+	{
+		if(pInfo[i].pid == pi->dwProcessId)
 		{
-		if(pInfo[i].pid == pid)
-			{
-			if(WaitForSingleObject(pInfo[i].eventWait, 1) == WAIT_OBJECT_0)  // Correct finish
-				{
+			cleanUpProcBlock(pInfo + i);
 #ifdef DEBUG_MONITOR
 				swprintf(buffer, _T("waitProcTermination: set PID %i to 0\n"), 
 					pid, 
 					GetLastError());
 				OutputDebugStringW(buffer);
 #endif
-				cleanUpProcBlock(pInfo + i);
-				}
-			break;
-			} // Otherwise failed because was not started
 		}
+	}
+	CloseHandle(pi->hProcess);
 
-	CloseHandle(hProc);
-
-
-	return 0;
+	free(pi);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////

@@ -20,14 +20,18 @@ import org.eclipse.tm.internal.terminal.connector.TerminalConnector;
 
 /**
  * A factory to get {@link ITerminalConnector} instances.
- *
+ * 
  * @author Michael Scharf
  *
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * 
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is no guarantee that this API will
- * work or that it will remain the same. Please do not use this API without
- * consulting with the <a href="http://www.eclipse.org/dsdp/tm/">Target Management</a> team.
+ * part of a work in progress. There is no guarantee that this API will work or
+ * that it will remain the same. Please do not use this API without consulting
+ * with the <a href="http://www.eclipse.org/dsdp/tm/">Target Management</a>
+ * team.
  * </p>
  */
 public class TerminalConnectorExtension {

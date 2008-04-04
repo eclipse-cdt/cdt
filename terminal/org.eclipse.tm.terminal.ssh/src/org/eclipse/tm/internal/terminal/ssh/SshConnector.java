@@ -1,13 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
+ * Martin Oberhuber (Wind River) - [225792] Rename SshConnector.getTelnetSettings() to getSshSettings()
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.ssh;
 
@@ -59,7 +60,7 @@ public class SshConnector extends TerminalConnectorImpl {
 				Logger.logException(exception);
 			}
 		}
-	
+
 		if (getOutputStream() != null) {
 			try {
 				getOutputStream().close();
@@ -94,9 +95,15 @@ public class SshConnector extends TerminalConnectorImpl {
 	}
 	public void setState(TerminalState state) {
 		fControl.setState(state);
-		
+
 	}
-	public ISshSettings getTelnetSettings() {
+	/**
+	 * Return the SSH Settings.
+	 *
+	 * @return the settings for a concrete connection.
+	 * @since org.eclipse.tm.terminal.ssh 2.0 renamed from getTelnetSettings()
+	 */
+	public ISshSettings getSshSettings() {
 		return fSettings;
 	}
 	public ISettingsPage makeSettingsPage() {
@@ -107,7 +114,7 @@ public class SshConnector extends TerminalConnectorImpl {
 	}
 	public void load(ISettingsStore store) {
 		fSettings.load(store);
-		
+
 	}
 	public void save(ISettingsStore store) {
 		fSettings.save(store);

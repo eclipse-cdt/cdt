@@ -12,25 +12,32 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ *  David McKnight   (IBM) - [225507][api][breaking] RSE dstore API leaks non-API types
  *******************************************************************************/
 
 package org.eclipse.dstore.extra;
 
-
 /**
  * For DataStore domain notification
- *
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IDomainNotifier
-{
+public interface IDomainNotifier {
+	public void addDomainListener(IDomainListener listener);
 
+	public void fireDomainChanged(DomainEvent event);
 
-  public void addDomainListener(IDomainListener listener);
-  public void fireDomainChanged(DomainEvent event);
-  public boolean hasDomainListener(IDomainListener listener);
-  public void removeDomainListener(IDomainListener listener);
-  
+	public boolean hasDomainListener(IDomainListener listener);
+
+	public void removeDomainListener(IDomainListener listener);
+
+	/**
+	 * @since 2.1
+	 */
 	public void enable(boolean on);
+
+	/**
+	 * @since 2.1
+	 */
 	public boolean isEnabled();
 }

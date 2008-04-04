@@ -30,43 +30,7 @@ public class DomainNotifier implements IDomainNotifier
 	private ArrayList _listeners;
 
 	private boolean _enabled;
-	
-/*
-	public class FireMainThread extends Job
-	{
-		public boolean _isWorking;
 
-		private DomainEvent _event;
-		
-		public FireMainThread(DomainEvent event)
-		{
-			super("DStore Events Fired");
-			_isWorking = false;
-			_event = event;
-			setPriority(Job.INTERACTIVE);
-		}
-
-		public IStatus run(IProgressMonitor monitor)
-		{
-			_isWorking = true;
-
-			if (_event.getType() != DomainEvent.FILE_CHANGE)
-			{
-				for (int i = 0; i < _listeners.size(); i++)
-				{
-					IDomainListener listener = (IDomainListener) _listeners.get(i);
-					if ((listener != null) && listener.listeningTo(_event))
-					{
-						listener.domainChanged(_event);
-					}
-				}
-			}
-
-			_isWorking = false;
-			return Status.OK_STATUS;
-		}
-	}
-*/
 	public DomainNotifier()
 	{
 		_listeners = new ArrayList();
@@ -106,8 +70,6 @@ public class DomainNotifier implements IDomainNotifier
 					listener.domainChanged(event);
 				}
 			}
-			//FireMainThread fireJob = new FireMainThread(event);
-			//fireJob.schedule();
 		}
 	}
 

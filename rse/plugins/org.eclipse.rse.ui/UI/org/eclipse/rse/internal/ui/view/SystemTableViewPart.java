@@ -29,6 +29,7 @@
  * David McKnight   (IBM)        - [223103] [cleanup] fix broken externalized strings
  * David McKnight   (IBM)        - [224313] [api] Create RSE Events for MOVE and COPY holding both source and destination fields
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
+ * Xuan Chen        (IBM)        - [225685] NPE when running archive testcases
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -1671,9 +1672,11 @@ public class SystemTableViewPart extends ViewPart
 		
 		boolean referToSameObject = false;
 		if (registry instanceof SystemRegistry)
-		{			
-			referToSameObject = ((SystemRegistry)registry).isSameObjectByAbsoluteName(input, null, child, event.getOldNames()[0]); // right now assuming only one resource
-		}
+        {                       
+                String[] oldNames = event.getOldNames();
+                String oldName = (oldNames == null)? null : oldNames[0];
+                referToSameObject =((SystemRegistry)registry).isSameObjectByAbsoluteName(input, null, child,oldName); // right now assuming only one resource
+        }
 		
 		if (input == child || child instanceof java.util.List || referToSameObject)
 		{ 

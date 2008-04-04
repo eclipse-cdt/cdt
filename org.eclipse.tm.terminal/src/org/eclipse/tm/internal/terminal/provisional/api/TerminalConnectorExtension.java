@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.tm.internal.terminal.connector.TerminalConnector;
+import org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl;
 
 /**
  * A factory to get {@link ITerminalConnector} instances.

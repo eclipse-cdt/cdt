@@ -14,6 +14,7 @@ package org.eclipse.tm.internal.terminal.provisional.api;
 import java.io.OutputStream;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl;
 
 
 /**

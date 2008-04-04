@@ -50,7 +50,7 @@
                   A class extending TerminalConnectorImpl
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.tm.internal.terminal.provisional.api.TerminalConnectorImpl:"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl:"/>
                </appinfo>
             </annotation>
          </attribute>

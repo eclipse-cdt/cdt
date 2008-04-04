@@ -1,17 +1,28 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
+ * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.tm.internal.terminal.provisional.api;
+package org.eclipse.tm.internal.terminal.provisional.api.provider;
 
 import java.io.OutputStream;
 
+import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
+import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
+
+/**
+ * Abstract base class for all terminal connector implementations to be
+ * registered via the <code>org.eclipse.tm.terminal.terminalConnectors</code>
+ * extension point.
+ *
+ * @since org.eclipse.tm.terminal 2.0
+ */
 public abstract class TerminalConnectorImpl {
 	/**
 	 * Called once after the constructor
@@ -40,10 +51,10 @@ public abstract class TerminalConnectorImpl {
 
 	/**
 	 * @return A string that represents the settings of the connection. This representation
-	 * may be shown in the status line of the terminal view. 
+	 * may be shown in the status line of the terminal view.
 	 */
 	abstract public String getSettingsSummary();
-	
+
 	/**
 	 * @return true if a local echo is needed.
 	 * TODO:Michael Scharf: this should be handed within the connection....
@@ -56,20 +67,20 @@ public abstract class TerminalConnectorImpl {
 	 * @return a new page that can be used in a dialog to setup this connection.
 	 * The dialog should persist its settings with the {@link #load(ISettingsStore)}
 	 * and {@link #save(ISettingsStore)} methods.
-	 *  
+	 *
 	 */
 	abstract public ISettingsPage makeSettingsPage();
 
 	/**
-	 * Load the state of this connection. Is typically called before 
+	 * Load the state of this connection. Is typically called before
 	 * {@link #connect(ITerminalControl)}.
-	 * 
-	 * @param store a string based data store. Short keys like "foo" can be used to 
+	 *
+	 * @param store a string based data store. Short keys like "foo" can be used to
 	 * store the state of the connection.
 	 */
 	abstract public void load(ISettingsStore store);
 	/**
-	 * When the view or dialog containing the terminal is closed, 
+	 * When the view or dialog containing the terminal is closed,
 	 * the state of the connection is saved into the settings store <code>store</code>
 	 * @param store
 	 */

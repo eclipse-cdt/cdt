@@ -23,26 +23,28 @@ import java.util.List;
 /**
  * @author aniefer
  */
-public abstract class ObjectTable extends HashTable implements Cloneable{  
-	protected Object[] keyTable;
+public abstract class ObjectTable<T> extends HashTable implements Cloneable{  
+	protected T[] keyTable;
 
+	@SuppressWarnings("unchecked")
 	public ObjectTable(int initialSize) {
 		super(initialSize);
-		keyTable = new Object[capacity()];
+		keyTable= (T[]) new Object[capacity()];
 	}
 
+	@SuppressWarnings("unchecked")
 	public Object clone(){
-	    ObjectTable newTable = (ObjectTable) super.clone();
+	    ObjectTable<T> newTable = (ObjectTable<T>) super.clone();
         
         int size = capacity();
-        newTable.keyTable = new Object[ size ];
+        newTable.keyTable = (T[]) new Object[size];
         System.arraycopy(keyTable, 0, newTable.keyTable, 0, keyTable.length);
         
 	    return newTable;
 	}
 	
-	public List toList(){
-	    List list = new ArrayList( size() );
+	public List<T> toList(){
+	    List<T> list = new ArrayList<T>(size());
 	    int size = size();
 	    for( int i = 0; i < size; i++ ){
 	        list.add( keyAt( i ) );
@@ -50,11 +52,11 @@ public abstract class ObjectTable extends HashTable implements Cloneable{
 	    return list;
 	}
 
-	public Object keyAt( int i ){
-	    if( i < 0 || i > currEntry )
+	public T keyAt(int i){
+	    if(i<0 || i>currEntry)
 	        return null;
 	    
-	    return keyTable[ i ];
+	    return keyTable[i];
 	}
 	
 	public void clear(){
@@ -71,15 +73,15 @@ public abstract class ObjectTable extends HashTable implements Cloneable{
 	    return obj.hashCode() & ((capacity() * 2) - 1);
 	}
 	
+	@SuppressWarnings("unchecked")
 	protected void resize(int size) {
 		Object[] oldKeyTable = keyTable;
-		keyTable = new Object[size];
+		keyTable = (T[]) new Object[size];
 		System.arraycopy(oldKeyTable, 0, keyTable, 0, oldKeyTable.length);
-
 		super.resize(size);
 	}
 	
-	protected final int add(Object obj) {
+	protected final int add(T obj) {
 		int pos = lookup(obj);
 		if (pos != -1)
 			return pos;
@@ -133,8 +135,8 @@ public abstract class ObjectTable extends HashTable implements Cloneable{
 		return -1;		
 	}
 	
-	public boolean containsKey( Object key ){
-	    return lookup( key ) != -1; 
+	public boolean containsKey(T key){
+	    return lookup(key) != -1; 
 	}
 	
 	public Object [] keyArray(){
@@ -143,8 +145,9 @@ public abstract class ObjectTable extends HashTable implements Cloneable{
 	    return keys;
 	}
 	
-	public Object [] keyArray( Class c ){
-		Object [] keys = (Object[]) Array.newInstance( c, size() );
+	@SuppressWarnings("unchecked")
+	public <X> X[] keyArray(Class<X> c) {
+		X[] keys = (X[]) Array.newInstance( c, size() );
         System.arraycopy( keyTable, 0, keys, 0, keys.length );
         return keys;
 	}

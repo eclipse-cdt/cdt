@@ -380,10 +380,10 @@ public class CPPSemantics {
 		return data;
 	}
     
-    static private ObjectSet getAssociatedScopes( LookupData data ) {
+    static private ObjectSet<IScope> getAssociatedScopes( LookupData data ) {
         IType [] ps = getSourceParameterTypes( data.functionParameters );
-        ObjectSet namespaces = new ObjectSet(2);
-        ObjectSet classes = new ObjectSet(2);
+        ObjectSet<IScope> namespaces = new ObjectSet<IScope>(2);
+        ObjectSet<ICPPClassType> classes = new ObjectSet<ICPPClassType>(2);
         for( int i = 0; i < ps.length; i++ ){
             IType p = ps[i];
             p = getUltimateType( p, true );
@@ -395,11 +395,12 @@ public class CPPSemantics {
         return namespaces;
     }
 
-    static private void getAssociatedScopes( IType t, ObjectSet namespaces, ObjectSet classes, CPPASTTranslationUnit tu) throws DOMException{
+    static private void getAssociatedScopes( IType t, ObjectSet<IScope> namespaces, ObjectSet<ICPPClassType> classes, CPPASTTranslationUnit tu) throws DOMException{
         //3.4.2-2 
-		if( t instanceof ICPPClassType ){
-		    if( !classes.containsKey( t ) ){
-		        classes.put( t );
+		if(t instanceof ICPPClassType) {
+			ICPPClassType ct= (ICPPClassType) t;
+		    if(!classes.containsKey(ct)) {
+		        classes.put(ct);
 				IScope scope = getContainingNamespaceScope( (IBinding) t, tu);
 				if( scope != null )
 					namespaces.put( scope );
@@ -722,7 +723,7 @@ public class CPPSemantics {
 				
 		//use data to detect circular inheritance
 		if( data.inheritanceChain == null )
-			data.inheritanceChain = new ObjectSet( 2 );
+			data.inheritanceChain = new ObjectSet<IScope>( 2 );
 		
 		data.inheritanceChain.put( lookIn );
 
@@ -825,7 +826,7 @@ public class CPPSemantics {
 
 	public static void visitVirtualBaseClasses( LookupData data, ICPPClassType cls ) throws DOMException {		
 		if( data.inheritanceChain == null )
-			data.inheritanceChain = new ObjectSet( 2 );
+			data.inheritanceChain = new ObjectSet<IScope>(2);
 		
 		IScope scope = cls.getCompositeScope();
 		if (scope != null)
@@ -949,7 +950,7 @@ public class CPPSemantics {
 	 * Computes the common enclosing scope of s1 and s2.
 	 */
 	static private ICPPScope getCommonEnclosingScope(IScope s1, IScope s2, CPPASTTranslationUnit tu) throws DOMException { 
-		ObjectSet set = new ObjectSet( 2 );
+		ObjectSet<IScope> set = new ObjectSet<IScope>(2);
 		IScope parent= s1;
 		while( parent != null ){
 			set.put( parent );
@@ -1540,13 +1541,13 @@ public class CPPSemantics {
 	    if( !data.hasResults() || data.contentAssist )
 	        return null;
 	      
-	    final boolean indexBased= data.tu == null ? false : data.tu.getIndex() != null;
+	    final boolean indexBased= data.tu == null ? false : data.tu.getIndex() != null;	    
+	    @SuppressWarnings("unchecked")
+	    ObjectSet<IFunction> fns= ObjectSet.EMPTY_SET, templateFns= ObjectSet.EMPTY_SET;
 	    IBinding type = null;
 	    IBinding obj  = null;
 	    IBinding temp = null;
-	    ObjectSet fns = ObjectSet.EMPTY_SET;
 	    boolean fnsFromAST= false;
-	    ObjectSet templateFns = ObjectSet.EMPTY_SET;
 	    
 	    Object [] items = (Object[]) data.foundItems;
 	    for( int i = 0; i < items.length && items[i] != null; i++ ){
@@ -1584,17 +1585,18 @@ public class CPPSemantics {
 	        	items = (Object[]) data.foundItems;
 	        	continue;
 	        } else if( temp instanceof IFunction ){
-	        	if( temp instanceof ICPPTemplateDefinition ){
+	        	IFunction function= (IFunction) temp;
+	        	if( function instanceof ICPPFunctionTemplate ){
 	        		if( templateFns == ObjectSet.EMPTY_SET )
-	        			templateFns = new ObjectSet(2);
-	        		templateFns.put( temp );
+	        			templateFns = new ObjectSet<IFunction>(2);
+	        		templateFns.put(function);
 	        	} else { 
 	        		if( fns == ObjectSet.EMPTY_SET )
-	        			fns = new ObjectSet(2);
-	        		if (isFromIndex(temp)) {
+	        			fns = new ObjectSet<IFunction>(2);
+	        		if (isFromIndex(function)) {
 	        			// accept bindings from index only, in case we have none in the AST
 	        			if (!fnsFromAST) {
-	        				fns.put(temp);
+	        				fns.put(function);
 	        			}
 	        		}
 	        		else {
@@ -1602,7 +1604,7 @@ public class CPPSemantics {
 	        				fns.clear();
 	        				fnsFromAST= true;
 	        			}
-	        			fns.put( temp );
+	        			fns.put( function );
 	        		}
 	        	}
 	        } else if( temp instanceof IType ){
@@ -1658,7 +1660,7 @@ public class CPPSemantics {
 				IFunction [] fs  = CPPTemplates.selectTemplateFunctions( templateFns, data.functionParameters, data.astName );
 				if( fs != null && fs.length > 0){
 				    if( fns == ObjectSet.EMPTY_SET )
-				        fns = new ObjectSet( fs.length );
+				        fns = new ObjectSet<IFunction>( fs.length );
 					fns.addAll( fs );
 				}
 			} else {
@@ -1677,7 +1679,7 @@ public class CPPSemantics {
 	    if( numFns > 0 ){
 	    	if( obj != null )
 	    		return new ProblemBinding( data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name() );
-	    	return resolveFunction( data, (IBinding[]) fns.keyArray( IBinding.class ) );
+	    	return resolveFunction(data, fns.keyArray(IFunction.class));
 	    }
 	    
 	    return obj;
@@ -1859,8 +1861,8 @@ public class CPPSemantics {
 	    return result;
 	}
 	
-	static IBinding resolveFunction( LookupData data, IBinding[] fns ) throws DOMException{
-	    fns = (IBinding[]) ArrayUtil.trim( IBinding.class, fns );
+	static IBinding resolveFunction(LookupData data, IFunction[] fns) throws DOMException {
+	    fns= (IFunction[]) ArrayUtil.trim(IFunction.class, fns);
 	    if( fns == null || fns.length == 0 )
 	        return null;
 	    
@@ -1894,7 +1896,6 @@ public class CPPSemantics {
 		
 		int comparison;
 		Cost cost = null;						//the cost of converting source to target
-		Cost temp = null;						//the cost of using a user defined conversion to convert source to target
 				 
 		boolean hasWorse = false;				//currFn has a worse parameter fit than bestFn
 		boolean hasBetter = false;				//currFn has a better parameter fit than bestFn
@@ -1908,7 +1909,7 @@ public class CPPSemantics {
 		
 		// loop over all functions
 		function_loop: for( int fnIdx = 0; fnIdx < fns.length; fnIdx++ ){
-			currFn = (IFunction) fns[fnIdx];
+			currFn= fns[fnIdx];
 			if (currFn == null || bestFn == currFn) {
 				continue;
 			}
@@ -1960,9 +1961,9 @@ public class CPPSemantics {
 					//a single value.  (also prevents infinite loop)				
 					if (!data.forUserDefinedConversion && (cost.rank == Cost.NO_MATCH_RANK || 
 							cost.rank == Cost.FUZZY_TEMPLATE_PARAMETERS)) { 
-						temp = Conversions.checkUserDefinedConversionSequence( source, target );
-						if( temp != null ){
-							cost = temp;
+						Cost udcCost= Conversions.checkUserDefinedConversionSequence( source, target );
+						if( udcCost != null ){
+							cost = udcCost;
 						}
 					}
 				}
@@ -2408,7 +2409,7 @@ public class CPPSemantics {
 		if( items == null )
 		    return new IBinding[0];
 		
-		ObjectSet set = new ObjectSet( items.length );
+		ObjectSet<IBinding> set = new ObjectSet<IBinding>(items.length);
 		IBinding binding = null;
 		for( int i = 0; i < items.length; i++ ){
 		    if( items[i] instanceof IASTName )
@@ -2428,7 +2429,7 @@ public class CPPSemantics {
 			    }
 		}
 		
-	    return (IBinding[]) set.keyArray( IBinding.class );
+	    return set.keyArray(IBinding.class);
     }
     
 	public static boolean isSameFunction(IFunction function, IASTDeclarator declarator) {

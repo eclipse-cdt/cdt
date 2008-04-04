@@ -78,6 +78,7 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 		return physicalNode;
 	}
 
+	@SuppressWarnings("unchecked")
 	public void addName(IASTName name) throws DOMException {
 		if (bindings == null)
 			bindings = new CharArrayObjectMap(1);
@@ -100,9 +101,9 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 		Object o = bindings.get(c);
 		if (o != null) {
 		    if (o instanceof ObjectSet) {
-		    	((ObjectSet)o).put(name);
+		    	((ObjectSet<Object>)o).put(name);
 		    } else {
-		    	ObjectSet temp = new ObjectSet(2);
+		    	ObjectSet<Object> temp = new ObjectSet<Object>(2);
 		    	temp.put(o);
 		    	temp.put(name);
 		        bindings.put(c, temp);
@@ -189,7 +190,8 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 	    Object obj = bindings != null ? bindings.get(c) : null;
 	    if (obj != null) {
 	        if (obj instanceof ObjectSet) {
-	        	ObjectSet os = (ObjectSet) obj;
+	        	@SuppressWarnings("unchecked")
+	        	ObjectSet<Object> os = (ObjectSet<Object>) obj;
 	        	if (forceResolve)
 	        		return CPPSemantics.resolveAmbiguities(name,  os.keyArray());
 	        	IBinding[] bs = null;
@@ -291,7 +293,8 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 	    obj = ArrayUtil.trim(Object.class, obj);
 	    for (int i = 0; i < obj.length; i++) {
 	        if (obj[i] instanceof ObjectSet) {
-	        	ObjectSet os = (ObjectSet) obj[i];
+	        	@SuppressWarnings("unchecked")
+	        	ObjectSet<Object> os= (ObjectSet<Object>) obj[i];
         		for (int j = 0; j < os.size(); j++) {
         			Object o = os.keyAt(j);
         			if (o instanceof IASTName) {
@@ -346,13 +349,14 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 	    removeBinding(key, binding);
 	}
 
+	@SuppressWarnings("unchecked")
 	protected void removeBinding(char[] key, IBinding binding) {
 	    if (bindings == null || ! bindings.containsKey(key))
 	        return;
 	    
 	    Object obj = bindings.get(key);
 	    if (obj instanceof ObjectSet) {
-	        ObjectSet set = (ObjectSet) obj;
+	        ObjectSet<Object> set = (ObjectSet<Object>) obj;
 	        for (int i = set.size() - 1; i > 0; i--) {
                 Object o = set.keyAt(i);
                 if ((o instanceof IBinding && o == binding) ||
@@ -383,6 +387,7 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 			bindings.clear();
 	}
     
+	@SuppressWarnings("unchecked")
     public void addBinding(IBinding binding) {
         if (bindings == null)
             bindings = new CharArrayObjectMap(1);
@@ -390,9 +395,9 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
         Object o = bindings.get(c);
         if (o != null) {
             if (o instanceof ObjectSet) {
-                ((ObjectSet)o).put(binding);
+                ((ObjectSet<Object>)o).put(binding);
             } else {
-                ObjectSet set = new ObjectSet(2);
+                ObjectSet<Object> set = new ObjectSet<Object>(2);
                 set.put(o);
                 set.put(binding);
                 bindings.put(c, set);

@@ -70,9 +70,19 @@ class LookupData {
 	protected IASTName astName;
 	protected CPPASTTranslationUnit tu;
 	public Map<ICPPNamespaceScope, List<ICPPNamespaceScope>> usingDirectives= Collections.emptyMap(); 
-	public ObjectSet visited= new ObjectSet(1);	//used to ensure we don't visit things more than once
-	public ObjectSet inheritanceChain;	//used to detect circular inheritance
-	public ObjectSet associated = ObjectSet.EMPTY_SET;
+	
+	/*
+	 * Used to ensure we don't visit things more than once
+	 */
+	public ObjectSet<IScope> visited= new ObjectSet<IScope>(1);
+	
+	/*
+	 * Used to detect circular inheritance
+	 */
+	public ObjectSet<IScope> inheritanceChain;
+	
+	@SuppressWarnings("unchecked")
+	public ObjectSet<IScope> associated = ObjectSet.EMPTY_SET;
 	
 	public boolean checkWholeClassScope = false;
 	public boolean ignoreUsingDirectives = false;
@@ -84,11 +94,11 @@ class LookupData {
 	public boolean prefixLookup = false;
 	public boolean typesOnly = false;
 	public boolean considerConstructors = false;
+	
 	public Object foundItems = null;
 	public Object [] functionParameters;
 	public IASTNode [] templateArguments;
 	public ProblemBinding problem;
-    
 	
 	public LookupData( IASTName n ){
 		astName = n;

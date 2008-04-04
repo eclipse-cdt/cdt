@@ -20,16 +20,17 @@ import java.util.List;
 /**
  * @author aniefer
  */
-public class ObjectSet extends ObjectTable {
+public class ObjectSet<T> extends ObjectTable<T> {
 	/**
 	 * Represents the empty ObjectSet
 	 */
+	@SuppressWarnings("unchecked")
     public static final ObjectSet EMPTY_SET = new ObjectSet( 0 ){
-        public Object clone()               { return this; }
-        public List toList()                { return Collections.EMPTY_LIST; }
-        public void put( Object key )       { throw new UnsupportedOperationException(); }
-        public void addAll( List list )     { throw new UnsupportedOperationException(); }
-        public void addAll( ObjectSet set ) { throw new UnsupportedOperationException(); }
+    	@Override public Object clone()               { return this; }
+    	@Override public List toList()                { return Collections.EMPTY_LIST; }
+    	@Override public void put( Object key )       { throw new UnsupportedOperationException(); }
+    	@Override public void addAll( List list )     { throw new UnsupportedOperationException(); }
+    	@Override public void addAll( ObjectSet set ) { throw new UnsupportedOperationException(); }
     };
 
     /**
@@ -38,7 +39,7 @@ public class ObjectSet extends ObjectTable {
      * @param initialSize
      */
 	public ObjectSet(int initialSize) {
-		super( initialSize );
+		super(initialSize);
 	}
 	
 	/**
@@ -46,7 +47,7 @@ public class ObjectSet extends ObjectTable {
 	 * if the parameter is null
 	 * @param items
 	 */
-	public ObjectSet(Object[] items) {
+	public ObjectSet(T[] items) {
 		super( items == null ? 2 : items.length );
 		addAll( items );
 	}
@@ -55,7 +56,7 @@ public class ObjectSet extends ObjectTable {
 	 * Adds the specified item to the set, or no-ops if the key is null
 	 * @param key the item to add (may be null)
 	 */
-	public void checkPut(Object key) {
+	public void checkPut(T key) {
 		if(key!=null)
 			add(key);
 	}
@@ -64,7 +65,7 @@ public class ObjectSet extends ObjectTable {
 	 * Adds the specified item to the set
 	 * @param key the (non-null) object to store
 	 */
-	public void put(Object key ){
+	public void put(T key){
 		add(key);
 	}
 	
@@ -72,7 +73,7 @@ public class ObjectSet extends ObjectTable {
 	 * Adds each item in the list to this ObjectSet, or no-ops if list is null
 	 * @param list a list (may be null)
 	 */
-	public void addAll( List list ){
+	public void addAll(List<T> list ) {
 	    if( list == null )
 	        return;
 	    
@@ -86,7 +87,7 @@ public class ObjectSet extends ObjectTable {
 	 * Adds each item in the specified ObjectSet, or no-ops if the set is null
 	 * @param set a set (may be null)
 	 */
-	public void addAll( ObjectSet set ){
+	public void addAll(ObjectSet<? extends T> set ){
 	    if( set == null )
 	        return;
 	    int size = set.size();
@@ -99,7 +100,7 @@ public class ObjectSet extends ObjectTable {
 	 * Adds each of the items in the specified array, or no-ops if the array is null
 	 * @param objs an array (may be null)
 	 */
-	public void addAll( Object[] objs ){
+	public void addAll(T[] objs ){
 		if( objs == null )
 			return;
 		
@@ -113,7 +114,7 @@ public class ObjectSet extends ObjectTable {
 	 * @param key the (non-null) object to remove
 	 * @return whether an object was removed
 	 */
-	public boolean remove( Object key ) {
+	public boolean remove(T key ) {
 		int i = lookup(key);
 		if (i < 0)
 			return false;

@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * @author aniefer
  */
-public class ObjectMap extends ObjectTable {
+public class ObjectMap extends ObjectTable<Object> {
     public static final ObjectMap EMPTY_MAP = new ObjectMap(0) {
         public Object clone() { return this; }
         public List<Object> toList() { return Collections.emptyList(); }
@@ -139,20 +139,20 @@ public class ObjectMap extends ObjectTable {
 	}
 	
 	public String toString() {
-		StringBuilder sb = new StringBuilder("{");
+		StringBuilder sb = new StringBuilder("{"); //$NON-NLS-1$
 		for (int i = 0; i < size(); i++) {
 			Object key = keyAt(i);
 			if (key != null) {
 				if (sb.length() > 1) {
-					sb.append(", ");
+					sb.append(", "); //$NON-NLS-1$
 				}
 				Object value = valueTable[i];
 				sb.append(String.valueOf(key));
-				sb.append(": ");
+				sb.append(": "); //$NON-NLS-1$
 				sb.append(String.valueOf(value));
 			}
 		}
-		sb.append("}");
+		sb.append("}"); //$NON-NLS-1$
 		return sb.toString();
 	}
 }

@@ -871,8 +871,8 @@ public class CPPTemplates {
 	}
 
 	private static class ClearBindingAction extends CPPASTVisitor {
-		public ObjectSet bindings = null;
-		public ClearBindingAction(ObjectSet bindings) {
+		public ObjectSet<IBinding> bindings = null;
+		public ClearBindingAction(ObjectSet<IBinding> bindings) {
 			shouldVisitNames = true;
 			shouldVisitStatements = true;
 			this.bindings = bindings;
@@ -885,9 +885,11 @@ public class CPPTemplates {
 				if (!clear && binding instanceof ICPPTemplateInstance) {
 					IType[] args = ((ICPPTemplateInstance) binding).getArguments();
 					for (int i = 0; i < args.length; i++) {
-						if (bindings.containsKey(args[i])) {
-							clear = true;
-							break;
+						if (args[i] instanceof IBinding) {
+							if(bindings.containsKey((IBinding)args[i])) {
+								clear = true;
+								break;
+							}
 						}
 					}
 				}
@@ -924,13 +926,13 @@ public class CPPTemplates {
 		if (defParams.length != templateParams.length)
 			return false;
 
-		ObjectSet bindingsToClear = null;
+		ObjectSet<IBinding> bindingsToClear = null;
 		for (int i = 0; i < templateParams.length; i++) {
 			IASTName tn = getTemplateParameterName(templateParams[i]);
 			if (tn.getBinding() != null)
 				return (tn.getBinding() == defParams[i]);
 			if (bindingsToClear == null)
-				bindingsToClear = new ObjectSet(templateParams.length);
+				bindingsToClear = new ObjectSet<IBinding>(templateParams.length);
 			tn.setBinding(defParams[i]);
 			if (defParams[i] instanceof ICPPInternalBinding)
 				((ICPPInternalBinding) defParams[i]).addDeclaration(tn);
@@ -1015,8 +1017,10 @@ public class CPPTemplates {
 		return result;
 	}
 
-	static protected IFunction[] selectTemplateFunctions(ObjectSet templates,
-			Object[] functionArguments, IASTName name) {//IASTNode[] templateArguments) {
+	static protected IFunction[] selectTemplateFunctions(
+			ObjectSet<IFunction> templates,
+			Object[] functionArguments, IASTName name) {
+		
 		if (templates == null || templates.size() == 0)
 			return null;
 

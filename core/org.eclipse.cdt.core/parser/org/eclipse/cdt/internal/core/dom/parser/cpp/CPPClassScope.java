@@ -179,6 +179,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 		super.addName(name);
 	}
 
+	@SuppressWarnings("unchecked")
 	private void addConstructor(Object constructor) {
 		if (bindings == null)
             bindings = new CharArrayObjectMap(1);
@@ -266,6 +267,8 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	static protected ICPPConstructor[] getConstructors(CharArrayObjectMap bindings, boolean forceResolve) {
 		return getConstructors(bindings, forceResolve, null);
 	}
+
+	@SuppressWarnings("unchecked")
 	static protected ICPPConstructor[] getConstructors(CharArrayObjectMap bindings, boolean forceResolve, IASTName forName) {
 		if (bindings == null)
 			return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;

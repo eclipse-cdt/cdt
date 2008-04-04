@@ -71,7 +71,7 @@ class ClassTypeMixin {
 				return new IBinding [] { new ProblemBinding( node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, host.getNameCharArray() ) };
 			}
 		}
-		ObjectSet resultSet = new ObjectSet(2);
+		ObjectSet<IBinding> resultSet = new ObjectSet<IBinding>(2);
 		IASTDeclaration [] members = host.getCompositeTypeSpecifier().getMembers();
 		for( int i = 0; i < members.length; i++ ){
 			IASTDeclaration decl = members[i];
@@ -101,7 +101,7 @@ class ClassTypeMixin {
 			}
 		}
 
-		return (IBinding[]) resultSet.keyArray( IBinding.class );
+		return resultSet.keyArray(IBinding.class);
 	}
 
 	public ICPPMethod[] getConversionOperators() throws DOMException {
@@ -179,7 +179,7 @@ class ClassTypeMixin {
 	}
 
 	public ICPPMethod[] getMethods() throws DOMException {
-		ObjectSet set = new ObjectSet(4);
+		ObjectSet<ICPPMethod> set = new ObjectSet<ICPPMethod>(4);
 		set.addAll(getDeclaredMethods());
 		ICPPClassScope scope = (ICPPClassScope) host.getCompositeScope();
 		set.addAll( scope.getImplicitMethods() );
@@ -189,7 +189,7 @@ class ClassTypeMixin {
 			if( b instanceof ICPPClassType )
 				set.addAll( ((ICPPClassType)b).getMethods() );
 		}
-		return (ICPPMethod[]) set.keyArray( ICPPMethod.class );
+		return set.keyArray(ICPPMethod.class);
 	}
 
 

@@ -19,9 +19,13 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTAmbiguity;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 
+@SuppressWarnings("restriction")
 public class CPPASTAmbiguousDeclarator extends CPPASTAmbiguity implements IASTDeclarator {
 
 	private List<IASTDeclarator> declarators = new ArrayList<IASTDeclarator>(2);
+	
+	private int defaultDeclarator = 0;
+	
 	
 	public CPPASTAmbiguousDeclarator(IASTDeclarator ... ds) {
 		for(IASTDeclarator declarator : ds)
@@ -45,6 +49,7 @@ public class CPPASTAmbiguousDeclarator extends CPPASTAmbiguity implements IASTDe
         int[] problems = new int[nodez.length];
         
         for(int i = 0; i < nodez.length; ++i) {
+        	defaultDeclarator = i;
             IASTNode node = nodez[i];
             owner.replace(nodeToReplace, node);
             nodeToReplace = node;
@@ -54,14 +59,17 @@ public class CPPASTAmbiguousDeclarator extends CPPASTAmbiguity implements IASTDe
             node.accept(nameCollector);
             IASTName[] names = nameCollector.getNames();
             for(IASTName name : names) {
-                try {
-                    IBinding b = name.resolveBinding();
-                    if(b == null || b instanceof IProblemBinding)
-                        ++problems[i];
-                } catch (Exception t) {
-                	t.printStackTrace();
-                    ++problems[i];
-                }
+            	if(name.toCharArray().length > 0) { // don't count dummy name nodes
+	                try {
+	                    IBinding b = name.resolveBinding();
+	                    if(b == null || b instanceof IProblemBinding) {
+	                        ++problems[i];
+	                    }
+	                } catch (Exception t) {
+	                	t.printStackTrace();
+	                    ++problems[i];
+	                }
+            	}
             }
             if(names.length > 0) {
                 IScope scope = CPPVisitor.getContainingScope(names[0]);
@@ -77,6 +85,7 @@ public class CPPASTAmbiguousDeclarator extends CPPASTAmbiguity implements IASTDe
                 }
             }
         }
+        
         int bestIndex = 0;
         int bestValue = problems[0];
         for (int i = 1; i < problems.length; ++i) {
@@ -88,6 +97,7 @@ public class CPPASTAmbiguousDeclarator extends CPPASTAmbiguity implements IASTDe
 
         //IASTAmbiguityParent owner = (IASTAmbiguityParent) getParent();
         owner.replace(nodeToReplace, nodez[bestIndex]);
+        defaultDeclarator = 0;
         return true;
 	}
 
@@ -100,7 +110,7 @@ public class CPPASTAmbiguousDeclarator extends CPPASTAmbiguity implements IASTDe
 	}
 
 	private IASTDeclarator getDefaultDeclarator() {
-		return declarators.get(0);
+		return declarators.get(defaultDeclarator);
 	}
 	
 	public void addPointerOperator(IASTPointerOperator operator) {

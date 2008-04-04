@@ -163,8 +163,8 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 		IASTName[] ns = getNames();
 		for (int i = 0; i < ns.length; i++) {
 			if (i == names.length - 1) {
-				if (names[i].toCharArray().length > 0
-						&& !names[i].accept(action))
+				// pointer-to-member qualified names have a dummy name as the last part of the name, don't visit it
+				if (names[i].toCharArray().length > 0 && !names[i].accept(action))
 					return false;
 			} else if (!names[i].accept(action))
 				return false;

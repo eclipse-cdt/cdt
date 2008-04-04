@@ -613,8 +613,6 @@ public abstract class BuildASTParserAction {
 	public void consumeExpressionName() {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		
-		System.out.println("Exression name: " + parser.getRuleTokens());
-		
 		IASTName name = (IASTName) astStack.pop();
 		IASTIdExpression expr = nodeFactory.newIdExpression(name);
         setOffsetAndLength(expr);

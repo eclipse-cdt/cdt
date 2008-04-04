@@ -5501,7 +5501,7 @@ public class AST2CPPTests extends AST2BaseTest {
     	buffer.append( "class B : public A {           \n"); //$NON-NLS-1$
     	buffer.append( "   double operator*(double);   \n"); //$NON-NLS-1$
     	buffer.append( "   using A::operator*;         \n"); //$NON-NLS-1$
-    	buffer.append( "}                              \n"); //$NON-NLS-1$
+    	buffer.append( "};                             \n"); //$NON-NLS-1$
     	
     	parse( buffer.toString(), ParserLanguage.CPP, true, true );
     }

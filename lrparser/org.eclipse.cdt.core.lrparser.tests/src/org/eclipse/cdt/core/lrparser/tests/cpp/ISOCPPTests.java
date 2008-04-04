@@ -70,4 +70,32 @@ public class ISOCPPTests extends AST2CPPTests {
     	} catch(AssertionFailedError _) {
     	} 
     }
+    
+    @Override
+	public void testBug108202() throws Exception { // gcc attributes not supported
+    	try {
+    		super.testBug108202();
+    		fail();
+    	} catch(AssertionFailedError _) {
+    	} 
+    }
+    
+    
+    @Override
+	public void testBug195701() throws Exception { // gcc attributes not supported
+    	try {
+    		super.testBug195701();
+    		fail();
+    	} catch(AssertionFailedError _) {
+    	} 
+    }
+    
+    @Override
+	public void testBug179712() throws Exception { // gcc attributes not supported
+    	try {
+    		super.testBug179712();
+    		fail();
+    	} catch(AssertionFailedError _) {
+    	} 
+    }
 }

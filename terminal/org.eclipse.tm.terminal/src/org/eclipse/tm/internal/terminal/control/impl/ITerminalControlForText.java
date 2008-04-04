@@ -13,7 +13,7 @@ package org.eclipse.tm.internal.terminal.control.impl;
 
 import java.io.OutputStream;
 
-import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnectorInfo;
+import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 
 /**
@@ -27,7 +27,7 @@ public interface ITerminalControlForText {
 	void setState(TerminalState state);
 	void setTerminalTitle(String title);
 	
-	ITerminalConnectorInfo getTerminalConnectorInfo();
+	ITerminalConnector getTerminalConnector();
 
 	void disconnectTerminal();
 

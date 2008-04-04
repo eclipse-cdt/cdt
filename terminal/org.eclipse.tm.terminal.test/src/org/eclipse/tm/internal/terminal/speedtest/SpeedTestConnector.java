@@ -18,12 +18,12 @@ import java.io.OutputStream;
 
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
-import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
+import org.eclipse.tm.internal.terminal.provisional.api.TerminalConnectorImpl;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 
-public class SpeedTestConnector implements ITerminalConnector {
+public class SpeedTestConnector extends TerminalConnectorImpl {
 	final SpeedTestSettings fSettings=new SpeedTestSettings();
 	InputStream fInputStream;
 	OutputStream fOutputStream;

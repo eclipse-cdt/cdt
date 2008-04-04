@@ -41,12 +41,12 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
-import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnectorInfo;
+import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 
 class TerminalSettingsDlg extends Dialog {
 	private Combo fCtlConnTypeCombo;
 	private Text fTerminalTitleText;
-	private final ITerminalConnectorInfo[] fConnectors;
+	private final ITerminalConnector[] fConnectors;
 	private final ISettingsPage[] fPages;
 	/**
 	 * Maps the fConnectors index to the fPages index
@@ -58,7 +58,7 @@ class TerminalSettingsDlg extends Dialog {
 	private IDialogSettings fDialogSettings;
 	private String fTerminalTitle;
 
-	public TerminalSettingsDlg(Shell shell, ITerminalConnectorInfo[] connectors, ITerminalConnectorInfo connector) {
+	public TerminalSettingsDlg(Shell shell, ITerminalConnector[] connectors, ITerminalConnector connector) {
 		super(shell);
 		fConnectors=getValidConnectors(connectors);
 		fPages=new ISettingsPage[fConnectors.length];
@@ -73,21 +73,21 @@ class TerminalSettingsDlg extends Dialog {
 	 * @param connectors
 	 * @return connectors excluding connectors with errors
 	 */
-	private ITerminalConnectorInfo[] getValidConnectors(ITerminalConnectorInfo[] connectors) {
+	private ITerminalConnector[] getValidConnectors(ITerminalConnector[] connectors) {
 		List list=new ArrayList(Arrays.asList(connectors));
 		for (Iterator iterator = list.iterator(); iterator.hasNext();) {
-			ITerminalConnectorInfo info = (ITerminalConnectorInfo) iterator.next();
+			ITerminalConnector info = (ITerminalConnector) iterator.next();
 			if(info.isInitialized() && info.getInitializationErrorMessage()!=null)
 				iterator.remove();
 		}
-		connectors=(ITerminalConnectorInfo[]) list.toArray(new ITerminalConnectorInfo[list.size()]);
+		connectors=(ITerminalConnector[]) list.toArray(new ITerminalConnector[list.size()]);
 		return connectors;
 	}
 	ISettingsPage getPage(int i) {
 		if(fPages[i]==null) {
 			if(fConnectors[i].getInitializationErrorMessage()!=null) {
 				// create a error message
-				final ITerminalConnectorInfo conn=fConnectors[i];
+				final ITerminalConnector conn=fConnectors[i];
 				fPages[i]=new ISettingsPage(){
 					public void createControl(Composite parent) {
 						Label l=new Label(parent,SWT.WRAP);
@@ -105,7 +105,7 @@ class TerminalSettingsDlg extends Dialog {
 					public boolean validateSettings() {return false;}
 				};
 			} else {
-				fPages[i]=fConnectors[i].getConnector().makeSettingsPage();
+				fPages[i]=fConnectors[i].makeSettingsPage();
 			}
 			// TODO: what happens if an error occurs while
 			// the control is partly created?
@@ -245,7 +245,7 @@ class TerminalSettingsDlg extends Dialog {
 			}
 		});
 	}
-	public ITerminalConnectorInfo getConnector() {
+	public ITerminalConnector getConnector() {
 		if(fSelectedConnector>=0)
 			return fConnectors[fSelectedConnector];
 		return null;

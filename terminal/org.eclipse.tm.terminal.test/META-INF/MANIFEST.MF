@@ -8,7 +8,8 @@ Bundle-Localization: plugin
 Require-Bundle: org.junit,
  org.eclipse.tm.terminal,
  org.eclipse.swt,
- org.eclipse.jface
+ org.eclipse.jface,
+ org.eclipse.core.runtime
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
 Export-Package: org.eclipse.tm.internal.terminal.emulator;x-internal:=true,
  org.eclipse.tm.internal.terminal.model;x-internal:=true,

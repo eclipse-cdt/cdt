@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.parser.util.WeakHashSet;
 
 /**
@@ -22,12 +23,23 @@ import org.eclipse.cdt.internal.core.parser.util.WeakHashSet;
  */
 public final class IncludeFileResolutionCache {
 	public static class ISPKey  {
+		private static int hashCode(Object[] array) {
+			int prime = 31;
+			if (array == null)
+				return 0;
+			int result = 1;
+			for (int index = 0; index < array.length; index++) {
+				result = prime * result + (array[index] == null ? 0 : array[index].hashCode());
+			}
+			return result;
+		}
+
 		private String[] fISP;
 		private int fHashCode;
 
 		private ISPKey(String[] isp) {
 			fISP= isp;
-			fHashCode= Arrays.hashCode(isp);
+			fHashCode= hashCode(isp);
 		}
 
 		public boolean equals(Object obj) {
@@ -50,7 +62,7 @@ public final class IncludeFileResolutionCache {
 		private LookupKey(ISPKey ispKey, char[] include) {
 			fCanonicISP= ispKey;
 			fName= include;
-			fHashCode= Arrays.hashCode(include) * 31 + ispKey.hashCode();
+			fHashCode= CharArrayUtils.hash(include) * 31 + ispKey.hashCode();
 		}
 		
 		public int hashCode() {

@@ -2037,11 +2037,11 @@ abstract class BaseScanner implements IScanner {
         	for (int i= 0; i < isp.length; ++i) {
                 reader = tester.checkFile(isp[i], filename);
                 if (reader != null) {
-                	includeResolutionCache.putCachedPathOffset(lookupKey, Integer.valueOf(i));
+                	includeResolutionCache.putCachedPathOffset(lookupKey, new Integer(i));
                 	return reader;
                 }
             }
-        	includeResolutionCache.putCachedPathOffset(lookupKey, Integer.valueOf(-1));
+        	includeResolutionCache.putCachedPathOffset(lookupKey, new Integer(-1));
         }
         return null;
     }

@@ -336,7 +336,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		else if (fSessionType == SessionType.REMOTE) mode = IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE;
 		
 		if (!mode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE) && !debugConfig.supportsMode(mode)) {
-			setErrorMessage(MessageFormat.format(LaunchMessages.getString("CDebuggerTab.Mode_not_supported"), new String[]{mode})); //$NON-NLS-1$
+			setErrorMessage(MessageFormat.format(LaunchMessages.getString("CDebuggerTab.Mode_not_supported"), (Object[]) new String[]{mode})); //$NON-NLS-1$
 			return false;
 		}
 		if ( fStopInMain != null && fStopInMainSymbol != null ) {

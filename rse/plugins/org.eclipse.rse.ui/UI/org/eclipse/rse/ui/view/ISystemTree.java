@@ -13,12 +13,16 @@
  * 
  * Contributors:
  * David McKnight    (IBM)   - [187711] Select SystemView APIs exposed by the ISystemTree interface
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  *******************************************************************************/
 
 package org.eclipse.rse.ui.view;
 
 import java.util.List;
 
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.subsystems.ISubSystem;
@@ -179,5 +183,56 @@ public interface ISystemTree {
 	 */
 	public List findAllRemoteItemReferences(Object element, Object elementObject, List matches);
 	
+	/**
+	 * Sets the auto expand level for the corresponding tree
+	 * @param level the level to expand
+	 * @since 3.0
+	 */
+	public void setAutoExpandLevel(int level);
 	
+	/**
+	 * Adds a double-click listener
+	 * @param listener the listener to add
+	 * @since 3.0
+	 */
+	public void addDoubleClickListener(IDoubleClickListener listener);
+	
+	/**
+	 * Checks whether the element is expandable or not
+	 * @param elementOrTreePath the object to expand
+	 * @return whether the item is expandable
+	 * @since 3.0
+	 */
+	public boolean isExpandable(Object elementOrTreePath);
+
+	/**
+	 * Expands the parent object down to the remote object
+	 * @param parentObject the parent object
+	 * @param remoteObject the child object
+	 * @since 3.0
+	 */
+	public void expandTo(Object parentObject, Object remoteObject);
+	
+	/**
+	 * Expand to the object specified by the filter string
+	 * @param filterString the string represending the object to expand to
+	 * @since 3.0
+	 */
+	public void expandTo(String filterString);
+	
+	/**
+	 * Adds a view filter
+	 * @param filter the view filter
+	 * @since 3.0
+	 */
+	public void addFilter(ViewerFilter filter);
+	
+
+	/**
+	 * Adds a selection changed listener
+	 * @param listener the listener
+	 * @since 3.0
+	 */
+	public void addSelectionChangedListener(ISelectionChangedListener listener);
+
 }

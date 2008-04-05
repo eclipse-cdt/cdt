@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2004, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,9 +14,10 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [202866] Fix exceptions in RSE browse dialog when SystemRegistry is not yet fully initialized
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  ********************************************************************************/
 
-package org.eclipse.rse.internal.ui.view;
+package org.eclipse.rse.ui.view;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;

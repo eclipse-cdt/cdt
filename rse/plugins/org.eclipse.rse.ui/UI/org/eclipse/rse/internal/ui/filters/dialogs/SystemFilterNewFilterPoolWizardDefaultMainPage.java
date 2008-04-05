@@ -12,16 +12,16 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.filters.dialogs;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.internal.ui.SystemResources;
-import org.eclipse.rse.internal.ui.filters.SystemFilterPoolDialogOutputs;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
+import org.eclipse.rse.ui.filters.SystemFilterPoolDialogOutputs;
 import org.eclipse.rse.ui.filters.actions.SystemFilterAbstractFilterPoolAction;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.validators.ValidatorFilterPoolName;

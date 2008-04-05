@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,14 +12,15 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  *******************************************************************************/
 
-package org.eclipse.rse.ui.actions;
+package org.eclipse.rse.internal.ui.actions;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.dialogs.SystemTestFilterStringDialog;
+import org.eclipse.rse.ui.actions.SystemBaseDialogAction;
 import org.eclipse.swt.widgets.Shell;
 
 
@@ -32,8 +33,6 @@ public class SystemTestFilterStringAction extends SystemBaseDialogAction
 	
 	protected ISubSystem subsystem;
 	protected String filterString;
-	protected SystemTestFilterStringDialog dlg;
-
 	
 	/**
 	 * Constructor when input subsystem and filter string are known already
@@ -84,13 +83,7 @@ public class SystemTestFilterStringAction extends SystemBaseDialogAction
 	 */
 	protected Dialog createDialog(Shell shell)
 	{
-		//if (dlg == null) // I hoped to reduce memory requirements by re-using but doesn't work. Phil
-		  dlg = new SystemTestFilterStringDialog(shell, subsystem, filterString);
-		//else
-		//{
-		  //dlg.reset(subsystem, filterString);
-		//}
-		return dlg;
+		return new SystemTestFilterStringDialog(shell, subsystem, filterString);
 	}
 	
 	/**

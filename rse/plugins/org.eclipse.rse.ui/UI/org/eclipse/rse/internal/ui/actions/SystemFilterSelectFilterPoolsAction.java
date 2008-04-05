@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
@@ -24,12 +24,12 @@ import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManagerProvider;
 import org.eclipse.rse.internal.ui.SystemResources;
-import org.eclipse.rse.internal.ui.filters.SystemFilterPoolDialogInterface;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.dialogs.SystemSimpleContentElement;
 import org.eclipse.rse.ui.dialogs.SystemSimpleSelectDialog;
+import org.eclipse.rse.ui.filters.SystemFilterPoolDialogInterface;
 import org.eclipse.rse.ui.filters.SystemFilterUIHelpers;
 import org.eclipse.rse.ui.filters.actions.SystemFilterAbstractFilterPoolAction;
 import org.eclipse.swt.widgets.Shell;

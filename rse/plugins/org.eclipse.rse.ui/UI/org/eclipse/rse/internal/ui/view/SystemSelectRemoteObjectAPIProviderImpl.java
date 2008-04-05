@@ -18,6 +18,7 @@
  * Tobias Schwarz   (Wind River) - [173267] "empty list" should not be displayed 
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  * David Dykstal (IBM) - [224671] [api] org.eclipse.rse.core API leaks non-API types
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -29,14 +30,15 @@ import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.filters.ISystemFilterStringReference;
 import org.eclipse.rse.core.filters.SystemFilterUtil;
 import org.eclipse.rse.core.model.IHost;
-import org.eclipse.rse.core.model.ISystemViewInputProvider;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.internal.model.SystemNewConnectionPromptObject;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
+import org.eclipse.rse.ui.view.ISystemSelectRemoteObjectAPIProvider;
 import org.eclipse.rse.ui.view.ISystemSelectRemoteObjectAPIProviderCaller;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
+import org.eclipse.rse.ui.view.SystemAbstractAPIProvider;
 import org.eclipse.rse.ui.view.SystemAdapterHelpers;
 import org.eclipse.swt.widgets.Shell;
 
@@ -53,8 +55,8 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class SystemSelectRemoteObjectAPIProviderImpl 
        extends SystemAbstractAPIProvider
-       implements ISystemViewInputProvider
-{
+       implements ISystemSelectRemoteObjectAPIProvider
+ {
 
 
 	protected ISubSystem subsystem = null;

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.widgets;
@@ -209,7 +210,7 @@ public class SaveAsForm extends SystemSelectRemoteFileOrFolderForm {
 					if (fileNameText != null)
 					{	
 						// simulate the parent file being selected...
-						Object parentFile = tree.getSelectedParent();
+						Object parentFile = getSelectedParent();
 															    		
 						if (remoteFile.isFile())
 						{	

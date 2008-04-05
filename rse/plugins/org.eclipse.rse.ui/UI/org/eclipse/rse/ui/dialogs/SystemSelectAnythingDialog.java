@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  * David McKnight   (IBM)        - [187543] added setViewerFilter() method
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  ********************************************************************************/
 
 package org.eclipse.rse.ui.dialogs;
@@ -48,10 +49,10 @@ public class SystemSelectAnythingDialog extends SystemPromptDialog
 	{
 		
 		_view = new SystemViewForm(getShell(), parent, SWT.NONE, getInputProvider(), true, this); 
-		_view.getSystemView().addSelectionChangedListener(this);	
+		_view.getSystemTree().addSelectionChangedListener(this);	
 		
 		if (_filter != null){
-			_view.getSystemView().addFilter(_filter);
+			_view.getSystemTree().addFilter(_filter);
 		}
 		
 		return _view.getTreeControl();
@@ -104,7 +105,7 @@ public class SystemSelectAnythingDialog extends SystemPromptDialog
 		_filter = filter;
 		if (_view != null)
 		{
-			_view.getSystemView().addFilter(filter);
+			_view.getSystemTree().addFilter(filter);
 		}
 
 	}

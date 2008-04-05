@@ -31,6 +31,7 @@
  * David Dykstal (IBM) - [197036] formatted the initialize job to be able to read it                     
  * Martin Oberhuber (Wind River) - [215820] Move SystemRegistry implementation to Core
  * David Dykstal (IBM) - [197167] adding notification and waiting for RSE model
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -38,6 +39,7 @@ package org.eclipse.rse.ui;
 import java.net.URL;
 import java.util.Vector;
 
+import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
@@ -417,7 +419,7 @@ public class RSEUIPlugin extends SystemBasePlugin
      * For fastpath access to our adapters for non-local objects in our model.
      * Exploits the knowledge we use singleton adapters.
      */
-    public SystemViewAdapterFactory getSystemViewAdapterFactory()
+    public IAdapterFactory getSystemViewAdapterFactory()
     {
     	return svaf;
     }

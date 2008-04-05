@@ -14,6 +14,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Tobias Schwarz   (Wind River) - [173267] "empty list" should not be displayed 
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -30,6 +31,7 @@ import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.ui.view.SystemAbstractAPIProvider;
 
 
 /**

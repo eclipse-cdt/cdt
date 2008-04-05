@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -487,7 +487,7 @@ public class SystemTableView
 			return new IPropertyDescriptor[0];
 	}
 
-	public SystemTableViewColumnManager getColumnManager()
+	public ISystemTableViewColumnManager getColumnManager()
 	{
 	    return _columnManager;
 	}
@@ -1406,7 +1406,7 @@ public class SystemTableView
 	 * Get the common "Open to->" action for opening a new Remote System Explorer view,
 	 *  scoped to the currently selected object.
 	 */
-	protected SystemOpenExplorerPerspectiveAction getOpenToPerspectiveAction()
+	private SystemOpenExplorerPerspectiveAction getOpenToPerspectiveAction()
 	{
 		if (_openToPerspectiveAction == null)
 		{
@@ -1419,7 +1419,7 @@ public class SystemTableView
 		return _openToPerspectiveAction;
 	}
 
-	protected SystemShowInTableAction getShowInTableAction()
+	private SystemShowInTableAction getShowInTableAction()
 	{
 		if (_showInTableAction == null)
 		{

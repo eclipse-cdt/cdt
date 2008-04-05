@@ -16,6 +16,7 @@
  * David Dykstal (IBM) - [197036] fixed delete filter pool bug found during testing of this bug
  *                                see also bug 194260 regarding deleting filter pools
  * David Dykstal (IBM) - [194268] fixed initial selection and new action selection
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.filters.dialogs;
@@ -43,8 +44,6 @@ import org.eclipse.rse.internal.ui.actions.SystemFilterCopyFilterPoolAction;
 import org.eclipse.rse.internal.ui.actions.SystemFilterMoveFilterPoolAction;
 import org.eclipse.rse.internal.ui.actions.SystemFilterNewFilterPoolAction;
 import org.eclipse.rse.internal.ui.actions.SystemFilterWorkWithFilterPoolsRefreshAllAction;
-import org.eclipse.rse.internal.ui.filters.SystemFilterPoolDialogInterface;
-import org.eclipse.rse.internal.ui.filters.SystemFilterPoolDialogOutputs;
 import org.eclipse.rse.internal.ui.filters.SystemFilterPoolManagerUIProvider;
 import org.eclipse.rse.internal.ui.filters.SystemFilterWorkWithFilterPoolsTreeViewer;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
@@ -58,6 +57,8 @@ import org.eclipse.rse.ui.actions.ISystemAction;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
 import org.eclipse.rse.ui.dialogs.SystemSimpleContentElement;
 import org.eclipse.rse.ui.dialogs.SystemSimpleContentProvider;
+import org.eclipse.rse.ui.filters.SystemFilterPoolDialogInterface;
+import org.eclipse.rse.ui.filters.SystemFilterPoolDialogOutputs;
 import org.eclipse.rse.ui.filters.SystemFilterUIHelpers;
 import org.eclipse.rse.ui.filters.actions.SystemFilterAbstractFilterPoolAction;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;

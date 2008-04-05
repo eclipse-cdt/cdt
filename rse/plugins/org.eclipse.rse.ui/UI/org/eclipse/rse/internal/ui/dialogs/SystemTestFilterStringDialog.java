@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.dialogs;
@@ -51,7 +52,7 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class SystemTestFilterStringDialog
        extends SystemPromptDialog
-       implements  ISelectionChangedListener, SelectionListener
+       implements ISelectionChangedListener, SelectionListener
 {
 	protected ISubSystem subsystem = null;
 	protected ISystemRegistry sr = null;

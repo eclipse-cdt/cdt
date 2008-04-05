@@ -14,6 +14,7 @@
  * Kevin Doyle (IBM) - Added Double Click Listener that closes dialog on file double click
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [190442] made SystemActionViewerFilter API
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.dialogs;
@@ -23,9 +24,9 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.internal.subsystems.files.core.SystemFileResources;
-import org.eclipse.rse.internal.ui.view.SystemView;
 import org.eclipse.rse.ui.SystemActionViewerFilter;
 import org.eclipse.rse.ui.dialogs.SystemRemoteResourceDialog;
+import org.eclipse.rse.ui.view.ISystemTree;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
@@ -70,7 +71,7 @@ public class SystemRemoteFileDialog extends SystemRemoteResourceDialog
 	protected Control createContents(Composite parent) 
 	{
 		Control control = super.createContents(parent);
-		_form.getSystemViewForm().getSystemView().addDoubleClickListener(new IDoubleClickListener() {
+		getSystemTree().addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
 				handleDoubleClick(event);
 			}
@@ -84,12 +85,12 @@ public class SystemRemoteFileDialog extends SystemRemoteResourceDialog
 	 */
 	protected void handleDoubleClick(DoubleClickEvent event) 
 	{
-		SystemView tree = _form.getSystemViewForm().getSystemView();
+		ISystemTree tree = getSystemTree();
 		IStructuredSelection s = (IStructuredSelection) event.getSelection();
 		Object element = s.getFirstElement();
 		if (element == null)
 			return;
-		if (_form.isPageComplete() && !tree.isExpandable(element))
+		if (isPageComplete() && !tree.isExpandable(element))
 		{
 			setReturnCode(OK);
 			if (processOK())

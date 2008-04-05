@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.core;
@@ -21,9 +22,9 @@ import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.internal.ui.view.SystemAbstractAPIProvider;
 import org.eclipse.rse.subsystems.files.core.model.ISystemFileAPIProvider;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
+import org.eclipse.rse.ui.view.SystemAbstractAPIProvider;
 
 
 /**

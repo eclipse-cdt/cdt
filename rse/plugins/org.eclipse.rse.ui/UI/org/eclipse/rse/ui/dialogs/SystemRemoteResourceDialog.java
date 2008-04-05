@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [190442] made SystemActionViewerFilter API
  * Kevin Doyle (IBM) - [198114] Allowed to move file into existing folder/archive on first attempt
  * Xuan Chen (IBM) - [220999] [api] Need to change class SystemSelectRemoteFileAction to use SystemRemoteFileDialog
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  *******************************************************************************/
 
 package org.eclipse.rse.ui.dialogs;
@@ -23,10 +24,11 @@ package org.eclipse.rse.ui.dialogs;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.internal.ui.view.SystemResourceSelectionForm;
-import org.eclipse.rse.internal.ui.view.SystemResourceSelectionInputProvider;
 import org.eclipse.rse.ui.SystemActionViewerFilter;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.validators.IValidatorRemoteSelection;
+import org.eclipse.rse.ui.view.ISystemTree;
+import org.eclipse.rse.ui.view.SystemResourceSelectionInputProvider;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
@@ -34,7 +36,7 @@ import org.eclipse.swt.widgets.Shell;
 
 public abstract class SystemRemoteResourceDialog extends SystemPromptDialog
 {
-	protected SystemResourceSelectionForm	_form;
+	private SystemResourceSelectionForm	_form;
 	private SystemResourceSelectionInputProvider _inputProvider;
 	private Object _preSelection;
 	private IValidatorRemoteSelection _selectionValidator;
@@ -275,7 +277,25 @@ public abstract class SystemRemoteResourceDialog extends SystemPromptDialog
 		_form.toggleShowPropertySheet(getShell(), getContents());
 		return true;
 	}	
+	
+	/**
+	 * Returns the system tree
+	 * @return the system tree
+	 */
+	public ISystemTree getSystemTree()
+	{
+		return _form.getSystemTree();
+	}
     
+	/**
+	 * Indicates whether the page for the form is complete or not.
+	 * @return true if the page associated with the form is complete
+	 */
+	public boolean isPageComplete()
+	{
+		return _form.isPageComplete();
+	}
+	
 	public abstract SystemActionViewerFilter getViewerFilter();
 	public abstract String getVerbiage();
 	public abstract String getTreeTip();

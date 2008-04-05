@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2004, 2008 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,7 +12,7 @@
  * 
  * Contributors:
  * David Dykstal (IBM) - moved SystemPreferencesManager to a new package
- * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -20,11 +20,12 @@ import java.util.HashMap;
 
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.ui.SystemPreferencesManager;
+import org.eclipse.rse.ui.view.ISystemTableViewColumnManager;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 
-public class SystemTableViewColumnManager
+public class SystemTableViewColumnManager implements ISystemTableViewColumnManager
 {
     private Viewer _viewer;
 	protected HashMap _descriptorCache;

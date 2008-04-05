@@ -19,13 +19,14 @@
  * Kevin Doyle (IBM) - [196582] ClassCastException when doing copy/paste
  * Kevin Doyle		(IBM)		 - [212940] Duplicate Help Context Identifiers
  * David McKnight   (IBM)        - [223103] [cleanup] fix broken externalized strings
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.monitor;
 
 import java.util.ArrayList;
 import java.util.Vector;
- 
+
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
@@ -49,7 +50,6 @@ import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.internal.ui.SystemPropertyResources;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.view.SystemTableTreeViewProvider;
-import org.eclipse.rse.internal.ui.view.SystemTableViewColumnManager;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -58,6 +58,7 @@ import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.model.ISystemShellProvider;
 import org.eclipse.rse.ui.view.IRSEViewPart;
+import org.eclipse.rse.ui.view.ISystemTableViewColumnManager;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.rse.ui.view.SystemTableView;
 import org.eclipse.swt.SWT;
@@ -311,7 +312,7 @@ class SubSetAction extends BrowseAction
 	    class SelectColumnsDialog extends SystemPromptDialog
 		{
 	        private ISystemViewElementAdapter _adapter;
-	        private SystemTableViewColumnManager _columnManager;
+	        private ISystemTableViewColumnManager _columnManager;
 			private IPropertyDescriptor[] _uniqueDescriptors;
 			private ArrayList _currentDisplayedDescriptors;
 			private ArrayList _availableDescriptors;
@@ -325,7 +326,7 @@ class SubSetAction extends BrowseAction
 			private Button _downButton;
 			
 
-			public SelectColumnsDialog(Shell shell, ISystemViewElementAdapter viewAdapter, SystemTableViewColumnManager columnManager)
+			public SelectColumnsDialog(Shell shell, ISystemViewElementAdapter viewAdapter, ISystemTableViewColumnManager columnManager)
 			{
 				super(shell, SystemResources.RESID_TABLE_SELECT_COLUMNS_LABEL);
 				setToolTipText(SystemResources.RESID_TABLE_SELECT_COLUMNS_TOOLTIP);
@@ -600,7 +601,7 @@ class SubSetAction extends BrowseAction
 		public void run()
 		{
 			SystemTableView viewer = getViewer();
-		    SystemTableViewColumnManager mgr = viewer.getColumnManager();		    
+		    ISystemTableViewColumnManager mgr = viewer.getColumnManager();		    
 		    ISystemViewElementAdapter adapter = viewer.getAdapterForContents();
 		    SelectColumnsDialog dlg = new SelectColumnsDialog(getShell(), adapter, mgr);
 		    if (dlg.open() == Window.OK)

@@ -715,6 +715,7 @@ public class SystemTeamViewPart
 	 */
 	private SystemTeamViewProfileAdapter getProfileAdapter(ISystemProfile profile) {
 		RSEUIPlugin plugin = RSEUIPlugin.getDefault();
+		
 		IAdapterFactory factory = plugin.getSystemViewAdapterFactory();
 		SystemTeamViewProfileAdapter adapter = (SystemTeamViewProfileAdapter) factory.getAdapter(profile, SystemTeamViewProfileAdapter.class);
 		return adapter;

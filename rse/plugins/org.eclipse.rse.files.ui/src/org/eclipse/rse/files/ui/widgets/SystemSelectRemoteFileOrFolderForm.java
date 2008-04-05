@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * David Dykstal (IBM) - [224671] [api] org.eclipse.rse.core API leaks non-API types
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.widgets;
@@ -54,6 +55,8 @@ import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.validators.IValidatorRemoteSelection;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
+import org.eclipse.rse.ui.view.ISystemSelectRemoteObjectAPIProvider;
+import org.eclipse.rse.ui.view.ISystemTree;
 import org.eclipse.rse.ui.view.SystemAdapterHelpers;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -106,8 +109,8 @@ public class SystemSelectRemoteFileOrFolderForm
 	// GUI widgets
     protected Label                   verbiageLabel, spacer1, spacer2;
 	protected Text                    nameEntryValue;
-	protected SystemViewForm          tree;
-    protected SystemPropertySheetForm ps;
+	private SystemViewForm          tree;
+    private SystemPropertySheetForm ps;
 	protected ISystemMessageLine      msgLine;	
 	protected Composite               outerParent, ps_composite;	
 	// inputs
@@ -135,7 +138,7 @@ public class SystemSelectRemoteFileOrFolderForm
 	protected IHost outputConnection = null;
 	// state
 	//protected ResourceBundle rb;
-    protected SystemSelectRemoteObjectAPIProviderImpl inputProvider = null;
+    protected ISystemSelectRemoteObjectAPIProvider inputProvider = null;
     protected ISystemFilter preSelectFilter;
     protected String       preSelectFilterChild;
     protected boolean      preSelectRoot;
@@ -195,7 +198,7 @@ public class SystemSelectRemoteFileOrFolderForm
 	 * Returns the input provider that drives the contents of the tree
 	 * Subclasses can override to provide custom tree contents
 	 */
-	protected SystemSelectRemoteObjectAPIProviderImpl getInputProvider()
+	protected ISystemSelectRemoteObjectAPIProvider getInputProvider()
 	{
 		if (inputProvider == null)
 		{
@@ -568,14 +571,6 @@ public class SystemSelectRemoteFileOrFolderForm
     	return outputConnection;
     }
 
-    /**
-     * Return the embedded System Tree object.
-     * Will be null until createContents is called.
-     */
-    public SystemViewForm getSystemViewForm()
-    {
-    	return tree;
-    }
 	
     /**
      * Return the multiple selection mode current setting
@@ -753,7 +748,7 @@ public class SystemSelectRemoteFileOrFolderForm
 		  //tree.setToolTipText(treeTip); //EXTREMELY ANNOYING!
 		if (autoExpandDepth != 0)
 		{
-		  tree.getSystemView().setAutoExpandLevel(autoExpandDepth);
+		  tree.getSystemTree().setAutoExpandLevel(autoExpandDepth);
 		  tree.reset(inputProvider);
 		}
 
@@ -803,7 +798,7 @@ public class SystemSelectRemoteFileOrFolderForm
      */
     protected IHost internalGetConnection()
     {
-    	Object parent = tree.getSystemView().getRootParent();
+    	Object parent = tree.getSystemTree().getRootParent();
     	if (parent instanceof IHost)
     	{
     		return (IHost)parent;
@@ -1057,5 +1052,19 @@ public class SystemSelectRemoteFileOrFolderForm
 	 */
 	public void setAllowFolderSelection(boolean allow) {
 	    allowFolderSelection = allow;
+	}
+	
+	/**
+	 * Returns the system tree
+	 * @return the system tree
+	 */
+	public ISystemTree getSystemTree()
+	{
+		return tree.getSystemTree();
+	}
+	
+	public Object getSelectedParent()
+	{
+		return tree.getSelectedParent();
 	}
 }

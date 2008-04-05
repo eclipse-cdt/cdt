@@ -42,7 +42,7 @@ public abstract class SystemBaseSubMenuAction
 
 {
 	
-    protected SystemSubMenuManager subMenu = null;
+    private SystemSubMenuManager subMenu = null;
     protected String actionLabel;
     protected String menuID;
     protected boolean createMenuEachTime = true;

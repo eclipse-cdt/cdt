@@ -15,12 +15,14 @@
  * Kevin Doyle (IBM) - [187553] - Removed code and related methods for toolbar/button bar.
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  * David McKnight    (IBM)   - [187711] select SystemView APIs exposed by the ISystemTree interface
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  *******************************************************************************/
 package org.eclipse.rse.internal.ui.view;
 import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -149,7 +151,7 @@ public class SystemViewForm extends Composite implements  ISystemTree
 	/**
 	 * Return the system view tree viewer
 	 */
-	public SystemView getSystemView()
+	public ISystemTree getSystemTree()
 	{
 		return tree;
 	}
@@ -515,4 +517,26 @@ public class SystemViewForm extends Composite implements  ISystemTree
 			ISystemFilter filter) {
 		return tree.revealAndExpand(parentSubSystem, filter);
 	}
+	public void addDoubleClickListener(IDoubleClickListener listener) {
+		tree.addDoubleClickListener(listener);
+	}
+	public void addFilter(ViewerFilter filter) {
+		tree.addFilter(filter);
+		
+	}
+	public void expandTo(Object parentObject, Object remoteObject) {
+		tree.expandTo(parentObject, remoteObject);
+		
+	}
+	public void expandTo(String filterString) {
+		tree.expandTo(filterString);
+		
+	}
+	public boolean isExpandable(Object elementOrTreePath) {
+		return tree.isExpandable(elementOrTreePath);
+	}
+	public void setAutoExpandLevel(int level) {
+		tree.setAutoExpandLevel(level);
+	}
+	
 }

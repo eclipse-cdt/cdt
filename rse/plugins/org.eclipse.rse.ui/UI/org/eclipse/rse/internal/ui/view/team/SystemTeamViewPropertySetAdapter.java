@@ -6,6 +6,7 @@
  * 
  * Contributors:
  * Xuan Chen (IBM) - [222263] initial contribution.
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API type
  *********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.team;
@@ -242,7 +243,7 @@ public class SystemTeamViewPropertySetAdapter
 	public String getMementoHandleKey(Object element)
 	{
 		SystemTeamViewPropertySetNode factory = (SystemTeamViewPropertySetNode)element;	
-		return  factory.getLabel(); //$NON-NLS-1$  
+		return  factory.getLabel(); 
 	}
 
 	/**

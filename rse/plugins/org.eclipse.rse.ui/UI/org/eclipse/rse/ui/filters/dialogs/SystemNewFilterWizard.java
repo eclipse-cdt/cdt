@@ -14,6 +14,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  * David Dykstal (IBM) - [222270] clean up interfaces in org.eclipse.rse.core.filters
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  *******************************************************************************/
 
 package org.eclipse.rse.ui.filters.dialogs;
@@ -77,7 +78,7 @@ public class SystemNewFilterWizard
 	    extends AbstractSystemWizard 
 {
 	protected SystemNewFilterWizardMainPage mainPage;	
-	protected SystemNewFilterWizardNamePage namePage;	
+	private SystemNewFilterWizardNamePage namePage;	
 	protected SystemNewFilterWizardInfoPage infoPage;	
 	protected ISystemFilterContainer         filterContainer;
 	protected ISystemFilterPool              parentPool;
@@ -326,12 +327,10 @@ public class SystemNewFilterWizard
 	    return mainPage;
 	}
 	/**
-	 * Extendable point for child classes. You don't need to override typically though.
-	 * <p>
 	 * By default, this page uses the wizard page title as set in setWizardPageTitle(...) or the constructor.
 	 * @return the wizard page prompting for the filter name and parent filter pool
 	 */
-	protected SystemNewFilterWizardNamePage createNamePage()
+	private SystemNewFilterWizardNamePage createNamePage()
 	{
 		namePage = new SystemNewFilterWizardNamePage(this, parentPool, configurator);
 	    return namePage;

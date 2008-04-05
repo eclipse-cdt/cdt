@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,6 +13,7 @@
  * Contributors:
  * Kevin Doyle (IBM) - Added a double click listener that closes the dialog if appropriate
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.dialogs;
@@ -26,13 +27,12 @@ import org.eclipse.rse.files.ui.ISystemAddFileListener;
 import org.eclipse.rse.files.ui.widgets.SystemSelectRemoteFileOrFolderForm;
 import org.eclipse.rse.internal.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.internal.ui.SystemResources;
-import org.eclipse.rse.internal.ui.view.SystemView;
-import org.eclipse.rse.internal.ui.view.SystemViewForm;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.validators.IValidatorRemoteSelection;
+import org.eclipse.rse.ui.view.ISystemTree;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
@@ -402,14 +402,7 @@ public class SystemSelectRemoteFileOrFolderDialog
     {
     	return multipleSelectionMode;
     }
-    /**
-     * Return the embedded System Tree object.
-     * Will be null until createContents is called.
-     */
-    public SystemViewForm getSystemViewForm()
-    {
-    	return form.getSystemViewForm();
-    }
+
 
     // ------------------
     // PRIVATE METHODS...
@@ -421,7 +414,7 @@ public class SystemSelectRemoteFileOrFolderDialog
     protected Control createContents(Composite parent) 
 	{
     	Control control = super.createContents(parent);
-    	form.getSystemViewForm().getSystemView().addDoubleClickListener(new IDoubleClickListener() {
+    	form.getSystemTree().addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
 				handleDoubleClick(event);
 			}
@@ -435,7 +428,7 @@ public class SystemSelectRemoteFileOrFolderDialog
 	 */
 	protected void handleDoubleClick(DoubleClickEvent event) 
 	{
-		SystemView tree = form.getSystemViewForm().getSystemView();
+		ISystemTree tree = form.getSystemTree();
 		IStructuredSelection s = (IStructuredSelection) event.getSelection();
 		Object element = s.getFirstElement();
 		if (element == null)
@@ -609,4 +602,6 @@ public class SystemSelectRemoteFileOrFolderDialog
 	        form.setAllowFolderSelection(allow);
 	    }
 	}
+	
+    
 }

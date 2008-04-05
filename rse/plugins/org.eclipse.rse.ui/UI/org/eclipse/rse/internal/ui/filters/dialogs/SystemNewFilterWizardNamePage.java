@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * David Dykstal (IBM) - [160403] filters should be connection private by default
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.filters.dialogs;

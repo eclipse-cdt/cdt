@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  * Xuan Chen        (IBM)        - [222263] Need to provide a PropertySet Adapter for System Team View
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -164,16 +165,5 @@ public class SystemViewAdapterFactory implements IAdapterFactory {
 		return adapter;
 	}
 
-	/**
-	 * Because we use singletons for our adapters, it is possible to speed up 
-	 * access to them by simply returning them from here.
-	 * <p>
-	 * This method returns the RSE adapter for profile objects
-	 * @return SystemViewProfileAdapter
-	 * 
-	 * @deprecated Call getAdapter(...) directly with a <code>ISystemProfile</code>. instance as adaptable object.
-	 */
-	public SystemTeamViewProfileAdapter getProfileAdapter() {
-		return profileAdapter;
-	}
+
 }

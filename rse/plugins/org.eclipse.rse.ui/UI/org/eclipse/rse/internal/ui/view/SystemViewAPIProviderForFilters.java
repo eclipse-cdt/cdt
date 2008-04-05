@@ -18,6 +18,7 @@
  * Tobias Schwarz   (Wind River) - [173267] "empty list" should not be displayed 
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  * Martin Oberhuber (Wind River) - [218524][api] Remove deprecated ISystemViewInputProvider#getShell()
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -41,6 +42,7 @@ import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.subsystems.ISubSystemConfigurationAdapter;
+import org.eclipse.rse.ui.view.SystemAbstractAPIProvider;
 
 
 

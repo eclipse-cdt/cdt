@@ -30,6 +30,7 @@
  * David McKnight   (IBM)        - [224313] [api] Create RSE Events for MOVE and COPY holding both source and destination fields
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  * Xuan Chen        (IBM)        - [225685] NPE when running archive testcases
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API type
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -96,6 +97,7 @@ import org.eclipse.rse.ui.dialogs.SystemSelectAnythingDialog;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.model.ISystemShellProvider;
 import org.eclipse.rse.ui.view.IRSEViewPart;
+import org.eclipse.rse.ui.view.ISystemTableViewColumnManager;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.rse.ui.view.SystemTableView;
 import org.eclipse.rse.ui.view.SystemTableViewProvider;
@@ -807,7 +809,7 @@ public class SystemTableViewPart extends ViewPart
 	    class SelectColumnsDialog extends SystemPromptDialog
 		{
 	        private ISystemViewElementAdapter _adapter;
-	        private SystemTableViewColumnManager _columnManager;
+	        private ISystemTableViewColumnManager _columnManager;
 			private IPropertyDescriptor[] _uniqueDescriptors;
 			private ArrayList _currentDisplayedDescriptors;
 			private ArrayList _availableDescriptors;
@@ -821,7 +823,7 @@ public class SystemTableViewPart extends ViewPart
 			private Button _downButton;
 			
 
-			public SelectColumnsDialog(Shell shell, ISystemViewElementAdapter viewAdapter, SystemTableViewColumnManager columnManager)
+			public SelectColumnsDialog(Shell shell, ISystemViewElementAdapter viewAdapter, ISystemTableViewColumnManager columnManager)
 			{
 				super(shell, SystemResources.RESID_TABLE_SELECT_COLUMNS_LABEL);
 				setToolTipText(SystemResources.RESID_TABLE_SELECT_COLUMNS_TOOLTIP);
@@ -1093,7 +1095,7 @@ public class SystemTableViewPart extends ViewPart
 		}
 		public void run()
 		{
-		    SystemTableViewColumnManager mgr = _viewer.getColumnManager();		    
+		    ISystemTableViewColumnManager mgr = _viewer.getColumnManager();		    
 		    ISystemViewElementAdapter adapter = _viewer.getAdapterForContents();
 		    SelectColumnsDialog dlg = new SelectColumnsDialog(getShell(), adapter, mgr);
 		    if (dlg.open() == Window.OK)
@@ -1672,11 +1674,11 @@ public class SystemTableViewPart extends ViewPart
 		
 		boolean referToSameObject = false;
 		if (registry instanceof SystemRegistry)
-        {                       
-                String[] oldNames = event.getOldNames();
-                String oldName = (oldNames == null)? null : oldNames[0];
-                referToSameObject =((SystemRegistry)registry).isSameObjectByAbsoluteName(input, null, child,oldName); // right now assuming only one resource
-        }
+		{			
+			String[] oldNames = event.getOldNames();
+			String oldName = (oldNames == null)? null : oldNames[0];
+			referToSameObject = ((SystemRegistry)registry).isSameObjectByAbsoluteName(input, null, child, oldName); // right now assuming only one resource
+		}
 		
 		if (input == child || child instanceof java.util.List || referToSameObject)
 		{ 

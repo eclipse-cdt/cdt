@@ -32,6 +32,7 @@
  * David McKnight   (IBM)        - [220309] [nls] Some GenericMessages and SubSystemResources should move from UI to Core
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * Xuan Chen        (IBM)        - [223126] [api][breaking] Remove API related to User Actions in RSE Core/UI
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -58,6 +59,7 @@ import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager;
+import org.eclipse.rse.core.filters.ISystemFilterPoolWrapperInformation;
 import org.eclipse.rse.core.filters.ISystemFilterString;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ILabeledObject;
@@ -1414,7 +1416,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 * Overridable entry for child classes to supply their own flavour of ISystemFilterPoolWrapperInformation for
 	 *  the new filter wizards.
 	 */
-	protected SystemFilterPoolWrapperInformation getNewFilterWizardPoolWrapperInformation()
+	protected ISystemFilterPoolWrapperInformation getNewFilterWizardPoolWrapperInformation()
 	{
 		return new SystemFilterPoolWrapperInformation(SystemResources.RESID_NEWFILTER_PAGE2_PROFILE_LABEL, SystemResources.RESID_NEWFILTER_PAGE2_PROFILE_TOOLTIP, 
 				SystemResources.RESID_NEWFILTER_PAGE2_PROFILE_VERBIAGE);

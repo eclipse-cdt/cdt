@@ -14,6 +14,7 @@
  * Contributors:
  * David Dykstal (IBM) - [194268] action now assumes the first filter pool manager is selected if there was no selection
  *                       provided by the caller.
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types                    
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
@@ -21,13 +22,13 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManagerProvider;
 import org.eclipse.rse.internal.ui.SystemResources;
-import org.eclipse.rse.internal.ui.filters.SystemFilterPoolDialogInterface;
 import org.eclipse.rse.internal.ui.filters.SystemFilterPoolManagerUIProvider;
 import org.eclipse.rse.internal.ui.filters.dialogs.SystemFilterWorkWithFilterPoolsDialog;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.dialogs.SystemSimpleContentElement;
+import org.eclipse.rse.ui.filters.SystemFilterPoolDialogInterface;
 import org.eclipse.rse.ui.filters.SystemFilterUIHelpers;
 import org.eclipse.rse.ui.filters.actions.SystemFilterAbstractFilterPoolAction;
 import org.eclipse.rse.ui.validators.ValidatorFilterPoolName;

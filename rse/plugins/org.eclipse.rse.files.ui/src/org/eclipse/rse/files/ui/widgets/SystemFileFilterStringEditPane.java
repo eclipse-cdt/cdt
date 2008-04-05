@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
+ * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.widgets;
@@ -33,6 +34,7 @@ import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.internal.files.ui.ISystemFileConstants;
 import org.eclipse.rse.internal.files.ui.actions.SystemSelectFileTypesAction;
 import org.eclipse.rse.internal.subsystems.files.core.SystemFileResources;
+import org.eclipse.rse.internal.ui.actions.SystemTestFilterStringAction;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString;
@@ -43,7 +45,6 @@ import org.eclipse.rse.subsystems.files.core.util.ValidatorFileFilterString;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
-import org.eclipse.rse.ui.actions.SystemTestFilterStringAction;
 import org.eclipse.rse.ui.filters.SystemFilterStringEditPane;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.validators.ISystemValidator;
@@ -97,8 +98,8 @@ public class SystemFileFilterStringEditPane
 	protected RemoteFileSubSystemConfiguration inputSubsystemConfiguration = null;
 	
 	// actions
-	protected SystemTestFilterStringAction testAction = null;
-    protected SystemSelectFileTypesAction typesAction = null;
+	private SystemTestFilterStringAction testAction = null;
+    private SystemSelectFileTypesAction typesAction = null;
 
 	
 	/**
@@ -474,7 +475,7 @@ public class SystemFileFilterStringEditPane
 	/**
 	 * Get the action to run when "Select Types..." is pressed by the user
 	 */
-	protected SystemSelectFileTypesAction getSelectTypesAction()
+	private SystemSelectFileTypesAction getSelectTypesAction()
 	{
 		if (typesAction == null)
 		  typesAction = new SystemSelectFileTypesAction(selectTypesButton.getShell());

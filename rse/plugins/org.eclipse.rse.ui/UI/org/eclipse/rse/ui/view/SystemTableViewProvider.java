@@ -38,7 +38,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.model.ISystemContainer;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.internal.ui.view.SystemTableViewColumnManager;
 import org.eclipse.rse.internal.ui.view.SystemViewPromptableAdapter;
 import org.eclipse.rse.internal.ui.view.SystemViewRootInputAdapter;
 import org.eclipse.swt.graphics.Image;
@@ -69,14 +68,14 @@ public class SystemTableViewProvider implements ILabelProvider, ITableLabelProvi
 	 * Maps ImageDescriptor->Image.
 	 */
 	private Map imageTable = new Hashtable(40);
-	private SystemTableViewColumnManager _columnManager;
+	private ISystemTableViewColumnManager _columnManager;
 	private HashMap cache;
 	/**
 	 * Constructor for table view provider where a column manager is present.
 	 * In this case, the columns are customizable by the user.
 	 * @param columnManager
 	 */
-	public SystemTableViewProvider(SystemTableViewColumnManager columnManager)
+	public SystemTableViewProvider(ISystemTableViewColumnManager columnManager)
 	{
 		super();
 		_columnManager= columnManager;

@@ -8,6 +8,7 @@
  * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
  * Michael Scharf (Wind River) - [200541] Extract from TerminalConnectorExtension.TerminalConnectorProxy
+ * Martin Oberhuber (Wind River) - [225853][api] Provide more default functionality in TerminalConnectorImpl 
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.connector;
 
@@ -123,23 +124,15 @@ public class TerminalConnector implements ITerminalConnector {
 				fException=e;
 				fConnector=new TerminalConnectorImpl(){
 					public void connect(ITerminalControl control) {
+						// super.connect(control);
 						control.setState(TerminalState.CLOSED);
 						control.setMsg(getInitializationErrorMessage());
 					}
-					public void disconnect() {
-					}
-					public OutputStream getOutputStream() {
+					public OutputStream getTerminalToRemoteStream() {
 						return null;
 					}
 					public String getSettingsSummary() {
 						return null;
-					}
-					public void load(ISettingsStore store) {
-					}
-					public ISettingsPage makeSettingsPage() {
-						return null;
-					}
-					public void save(ISettingsStore store) {
 					}};
 				// that's the place where we log the exception
 				Logger.logException(e);
@@ -160,7 +153,7 @@ public class TerminalConnector implements ITerminalConnector {
 		getConnectorImpl().disconnect();
 	}
 	public OutputStream getTerminalToRemoteStream() {
-		return getConnectorImpl().getOutputStream();
+		return getConnectorImpl().getTerminalToRemoteStream();
 	}
 	public String getSettingsSummary() {
 		if(fConnector!=null)

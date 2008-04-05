@@ -1,12 +1,13 @@
 /*******************************************************************************
  * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
+ * Martin Oberhuber (Wind River) - [225853][api] Provide more default functionality in TerminalConnectorImpl 
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.speedtest;
 
@@ -27,12 +28,11 @@ public class SpeedTestConnector extends TerminalConnectorImpl {
 	final SpeedTestSettings fSettings=new SpeedTestSettings();
 	InputStream fInputStream;
 	OutputStream fOutputStream;
-	ITerminalControl fControl;
 	SpeedTestConnection fConnection;
 	public SpeedTestConnector() {
 	}
 	synchronized public void connect(ITerminalControl control) {
-		fControl=control;
+		super.connect(control);
 		fControl.setState(TerminalState.CONNECTING);
 		String file=fSettings.getInputFile();
 		try {
@@ -48,7 +48,7 @@ public class SpeedTestConnector extends TerminalConnectorImpl {
 		fConnection.start();
 	}
 
-	synchronized public void disconnect() {
+	synchronized public void doDisconnect() {
 		if(fConnection!=null){
 			fConnection.interrupt();
 			fConnection=null;
@@ -69,13 +69,12 @@ public class SpeedTestConnector extends TerminalConnectorImpl {
 			}
 		}
 		fOutputStream=null;
-		fControl.setState(TerminalState.CLOSED);
 	}
 	synchronized public InputStream getInputStream() {
 		return fInputStream;
 	}
 
-	synchronized public OutputStream getOutputStream() {
+	synchronized public OutputStream getTerminalToRemoteStream() {
 		return fOutputStream;
 	}
 
@@ -87,13 +86,8 @@ public class SpeedTestConnector extends TerminalConnectorImpl {
 		//throw new RuntimeException("XXX problems\nSpeedTest\nXXX!");
 	}
 
-	public boolean isLocalEcho() {
-		return false;
-	}
-
 	public void load(ISettingsStore store) {
 		 fSettings.load(store);
-		
 	}
 
 	public ISettingsPage makeSettingsPage() {
@@ -102,7 +96,6 @@ public class SpeedTestConnector extends TerminalConnectorImpl {
 
 	public void save(ISettingsStore store) {
 		fSettings.save(store);
-		
 	}
 
 	public void setTerminalSize(int newWidth, int newHeight) {

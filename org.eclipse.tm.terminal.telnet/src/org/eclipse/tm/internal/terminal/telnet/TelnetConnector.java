@@ -11,8 +11,9 @@
  * Helmut Haigermoser and Ted Williams.
  *
  * Contributors:
- * Michael Scharf (Wind River) - extracted from TerminalControl 
+ * Michael Scharf (Wind River) - extracted from TerminalControl
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
+ * Martin Oberhuber (Wind River) - [225853][api] Provide more default functionality in TerminalConnectorImpl 
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.telnet;
 
@@ -44,19 +45,14 @@ public class TelnetConnector extends TerminalConnectorImpl {
 	public TelnetConnector(TelnetSettings settings) {
 		fSettings=settings;
 	}
-	public void initialize() throws Exception {
-	}
 	public void connect(ITerminalControl control) {
-		Logger.log("entered."); //$NON-NLS-1$
-		fControl=control;
+		super.connect(control);
 		fWidth=-1;
 		fHeight=-1;
 		TelnetConnectWorker worker = new TelnetConnectWorker(this,control);
 		worker.start();
 	}
-	public void disconnect() {
-		Logger.log("entered."); //$NON-NLS-1$
-	
+	public void doDisconnect() {
 		if (getSocket() != null) {
 			try {
 				getSocket().close();
@@ -64,7 +60,7 @@ public class TelnetConnector extends TerminalConnectorImpl {
 				Logger.logException(exception);
 			}
 		}
-	
+
 		if (getInputStream() != null) {
 			try {
 				getInputStream().close();
@@ -72,16 +68,15 @@ public class TelnetConnector extends TerminalConnectorImpl {
 				Logger.logException(exception);
 			}
 		}
-	
-		if (getOutputStream() != null) {
+
+		if (getTerminalToRemoteStream() != null) {
 			try {
-				getOutputStream().close();
+				getTerminalToRemoteStream().close();
 			} catch (Exception exception) {
 				Logger.logException(exception);
 			}
 		}
 		cleanSocket();
-		setState(TerminalState.CLOSED);
 	}
 	public boolean isLocalEcho() {
 		if(fTelnetConnection!=null)
@@ -99,7 +94,7 @@ public class TelnetConnector extends TerminalConnectorImpl {
 	public InputStream getInputStream() {
 		return fInputStream;
 	}
-	public OutputStream getOutputStream() {
+	public OutputStream getTerminalToRemoteStream() {
 		return fOutputStream;
 	}
 	private void setInputStream(InputStream inputStream) {
@@ -111,7 +106,7 @@ public class TelnetConnector extends TerminalConnectorImpl {
 	Socket getSocket() {
 		return fSocket;
 	}
-	
+
 	/**
 	 * sets the socket to null
 	 */
@@ -120,7 +115,7 @@ public class TelnetConnector extends TerminalConnectorImpl {
 		setInputStream(null);
 		setOutputStream(null);
 	}
-	
+
 	void setSocket(Socket socket) throws IOException {
 		if(socket==null) {
 			cleanSocket();
@@ -132,18 +127,16 @@ public class TelnetConnector extends TerminalConnectorImpl {
 
 	}
 	public void setTelnetConnection(TelnetConnection connection) {
-		fTelnetConnection=connection;		
+		fTelnetConnection=connection;
 	}
 	public void displayTextInTerminal(String text) {
 		fControl.displayTextInTerminal(text);
 	}
 	public OutputStream getRemoteToTerminalOutputStream () {
 		return fControl.getRemoteToTerminalOutputStream();
-		
 	}
 	public void setState(TerminalState state) {
 		fControl.setState(state);
-		
 	}
 	public ITelnetSettings getTelnetSettings() {
 		return fSettings;
@@ -156,7 +149,6 @@ public class TelnetConnector extends TerminalConnectorImpl {
 	}
 	public void load(ISettingsStore store) {
 		fSettings.load(store);
-		
 	}
 	public void save(ISettingsStore store) {
 		fSettings.save(store);

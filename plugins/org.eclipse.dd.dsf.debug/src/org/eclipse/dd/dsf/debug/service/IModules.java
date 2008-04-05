@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.service;
 
-import java.math.BigInteger;
-
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
@@ -66,13 +64,6 @@ public interface IModules extends IDsfService {
         long getSize();
     }
     
-    /** i information */
-    public interface Section {
-        String getName();
-        IAddress getStartAddress();
-        BigInteger getCount();
-    }
-
     /** Line information about a particular address */
     public interface LineInfo  {
         IAddress getAddress();

@@ -309,7 +309,7 @@ public class SpellingConfigurationBlock extends OptionsConfigurationBlock {
 		Composite composite= new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout());
 
-		List allControls= new ArrayList();
+		List<Control> allControls= new ArrayList<Control>();
 		final PixelConverter converter= new PixelConverter(parent);
 
 		final String[] trueFalse= new String[] { IPreferenceStore.TRUE, IPreferenceStore.FALSE };
@@ -447,7 +447,7 @@ public class SpellingConfigurationBlock extends OptionsConfigurationBlock {
 			allControls.add(button);
 		}
 
-		fAllControls= (Control[]) allControls.toArray(new Control[allControls.size()]);
+		fAllControls= allControls.toArray(new Control[allControls.size()]);
 		
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, ICHelpContextIds.SPELLING_CONFIGURATION_BLOCK);
 		return composite;
@@ -459,7 +459,7 @@ public class SpellingConfigurationBlock extends OptionsConfigurationBlock {
 	 * @param composite the parent composite
 	 * @param allControls list with all controls
 	 */
-	private void createEncodingFieldEditor(Composite composite, List allControls) {
+	private void createEncodingFieldEditor(Composite composite, List<Control> allControls) {
 		Label filler= new Label(composite, SWT.NONE);
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan= 4;
@@ -627,7 +627,7 @@ public class SpellingConfigurationBlock extends OptionsConfigurationBlock {
 			fEnabledControls= null;
 		}
 		if (!enabled && fEnabledControls == null) {
-			List enabledControls= new ArrayList();
+			List<Control> enabledControls= new ArrayList<Control>();
 			for (int i= fAllControls.length - 1; i >= 0; i--) {
 				Control control= fAllControls[i];
 				if (control.isEnabled()) {
@@ -635,7 +635,7 @@ public class SpellingConfigurationBlock extends OptionsConfigurationBlock {
 					control.setEnabled(false);
 				}
 			}
-			fEnabledControls= (Control[]) enabledControls.toArray(new Control[enabledControls.size()]);
+			fEnabledControls= enabledControls.toArray(new Control[enabledControls.size()]);
 		}
 	}
 }

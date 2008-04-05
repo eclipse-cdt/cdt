@@ -125,12 +125,9 @@ public class TimersView extends ViewPart {
         // Create the flexible hierarchy content/label adapter. Then register 
         // it with the session.
         fTimersVMAdapter = new TimersVMAdapter(fSession, fPresentationContext);
-        fSession.registerModelAdapter(
-            IElementContentProvider.class, fTimersVMAdapter);
-        fSession.registerModelAdapter(
-            IModelProxyFactory.class, fTimersVMAdapter);
-        fSession.registerModelAdapter(
-            IColumnPresentationFactory.class, fTimersVMAdapter);
+        fSession.registerModelAdapter(IElementContentProvider.class, fTimersVMAdapter);
+        fSession.registerModelAdapter(IModelProxyFactory.class, fTimersVMAdapter);
+        fSession.registerModelAdapter(IColumnPresentationFactory.class, fTimersVMAdapter);
         
         // Create the input object for the view.  This object needs to return
         // the VM adapter through the IAdaptable interface when queried for the 

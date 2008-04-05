@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.dd.dsf.gdb"
-      label="Debugger Services Framework GDB integration"
+      label="DSF GDB/MI Debugger Integration"
       version="1.0.0.qualifier"
       provider-name="Eclipse.org">
 
@@ -12,7 +12,7 @@ Debug Services Framework
 GDB-MI Implementation
    </description>
 
-   <copyright>
+   <copyright url="%licenseURL">
       %copyright
    </copyright>
 
@@ -25,7 +25,7 @@ GDB-MI Implementation
    </url>
 
    <requires>
-      <import feature="org.eclipse.dd.dsf.sdk" version="1.0.0" match="greaterOrEqual" />
+      <import feature="org.eclipse.dd.dsf.sdk" version="1.0.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
@@ -37,6 +37,13 @@ GDB-MI Implementation
 
    <plugin
          id="org.eclipse.dd.gdb.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.dd.mi"
          download-size="0"
          install-size="0"
          version="0.0.0"

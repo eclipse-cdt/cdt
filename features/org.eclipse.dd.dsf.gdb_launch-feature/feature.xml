@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.dd.dsf.gdb_launch"
+      label="DSF GDB Standard Launch Configurations"
+      version="1.0.0.qualifier"
+      provider-name="Eclipse.org">
+
+   <description url="http://www.eclipse.org/dsdp/dd/">
+      Device Software Development Platform Project
+Device Debug
+Debug Services Framework
+GDB Launch
+   </description>
+
+   <copyright>
+      %copyright
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      %license
+   </license>
+
+   <url>
+      <update label="Device Debug" url="http://download.eclipse.org/dsdp/dd/updates"/>
+   </url>
+
+</feature>

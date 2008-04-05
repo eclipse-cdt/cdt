@@ -191,7 +191,7 @@ public class ConnectionEstablisher
 			_dataStore.finish();
 			System.out.println(ServerReturnCodes.RC_FINISHED);
 			
-			if (SystemServiceManager.getInstance() == null)
+			if (SystemServiceManager.getInstance().getSystemService() == null)
 				System.exit(0);
 		}
 	}

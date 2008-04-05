@@ -65,7 +65,7 @@ public class ServerCommandHandler extends CommandHandler
 				System.out.println(ServerReturnCodes.RC_FINISHED);
 				
 				// only exit if there's no service manager
-				if (SystemServiceManager.getInstance() == null)
+				if (SystemServiceManager.getInstance().getSystemService() == null)
 					System.exit(0);
 			}
 		}

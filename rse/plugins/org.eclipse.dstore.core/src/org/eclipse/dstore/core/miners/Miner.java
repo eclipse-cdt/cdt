@@ -306,7 +306,7 @@ implements ISchemaExtender
 				_dataStore.trace(er);
 				_dataStore.finish();
 				
-				if (SystemServiceManager.getInstance() == null)
+				if (SystemServiceManager.getInstance().getSystemService() == null)
 					System.exit(-1);
 			}
 		}

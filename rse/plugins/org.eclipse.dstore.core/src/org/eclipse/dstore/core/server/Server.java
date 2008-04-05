@@ -66,7 +66,7 @@ public class Server implements Runnable
 			{
 				// version is bad
 				System.err.println(ServerReturnCodes.RC_JRE_VERSION_ERROR);
-				if (SystemServiceManager.getInstance() == null)
+				if (SystemServiceManager.getInstance().getSystemService() == null)
 					System.exit(-1);
 			}
 		}
@@ -74,7 +74,7 @@ public class Server implements Runnable
 		{			
 			// version is bad
 			System.err.println(ServerReturnCodes.RC_JRE_VERSION_ERROR);
-			if (SystemServiceManager.getInstance() == null)
+			if (SystemServiceManager.getInstance().getSystemService() == null)
 				System.exit(-1);
 		}
 		

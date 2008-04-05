@@ -16,12 +16,26 @@ GDB Launch
       %copyright
    </copyright>
 
-   <license url="http://www.example.com/license">
+   <license url="%licenseURL">
       %license
    </license>
 
    <url>
       <update label="Device Debug" url="http://download.eclipse.org/dsdp/dd/updates"/>
    </url>
+
+   <plugin
+         id="org.eclipse.dd.gdb.launch"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.dd.gdb.launch.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>

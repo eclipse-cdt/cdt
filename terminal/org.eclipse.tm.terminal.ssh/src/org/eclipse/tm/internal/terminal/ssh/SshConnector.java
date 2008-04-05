@@ -9,6 +9,7 @@
  * Michael Scharf (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  * Martin Oberhuber (Wind River) - [225792] Rename SshConnector.getTelnetSettings() to getSshSettings()
+ * Martin Oberhuber (Wind River) - [225853][api] Provide more default functionality in TerminalConnectorImpl 
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.ssh;
 
@@ -19,7 +20,6 @@ import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
-import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 import org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl;
 
 import com.jcraft.jsch.ChannelShell;
@@ -28,7 +28,6 @@ import com.jcraft.jsch.JSch;
 public class SshConnector extends TerminalConnectorImpl {
 	private OutputStream fOutputStream;
 	private InputStream fInputStream;
-	private ITerminalControl fControl;
 	private JSch fJsch;
 	private ChannelShell fChannel;
 	private SshConnection fConnection;
@@ -45,13 +44,11 @@ public class SshConnector extends TerminalConnectorImpl {
 		fJsch=new JSch();
 	}
 	public void connect(ITerminalControl control) {
-		Logger.log("entered."); //$NON-NLS-1$
-		fControl=control;
+		super.connect(control);
 		fConnection = new SshConnection(this,control);
 		fConnection.start();
 	}
-	synchronized public void disconnect() {
-		Logger.log("entered."); //$NON-NLS-1$
+	synchronized public void doDisconnect() {
 		fConnection.disconnect();
 		if (getInputStream() != null) {
 			try {
@@ -61,17 +58,13 @@ public class SshConnector extends TerminalConnectorImpl {
 			}
 		}
 
-		if (getOutputStream() != null) {
+		if (getTerminalToRemoteStream() != null) {
 			try {
-				getOutputStream().close();
+				getTerminalToRemoteStream().close();
 			} catch (Exception exception) {
 				Logger.logException(exception);
 			}
 		}
-		setState(TerminalState.CLOSED);
-	}
-	public boolean isLocalEcho() {
-		return false;
 	}
 	public void setTerminalSize(int newWidth, int newHeight) {
 		if(fChannel!=null && (newWidth!=fWidth || newHeight!=fHeight)) {
@@ -84,7 +77,7 @@ public class SshConnector extends TerminalConnectorImpl {
 	public InputStream getInputStream() {
 		return fInputStream;
 	}
-	public OutputStream getOutputStream() {
+	public OutputStream getTerminalToRemoteStream() {
 		return fOutputStream;
 	}
 	void setInputStream(InputStream inputStream) {
@@ -92,10 +85,6 @@ public class SshConnector extends TerminalConnectorImpl {
 	}
 	void setOutputStream(OutputStream outputStream) {
 		fOutputStream = outputStream;
-	}
-	public void setState(TerminalState state) {
-		fControl.setState(state);
-
 	}
 	/**
 	 * Return the SSH Settings.
@@ -114,7 +103,6 @@ public class SshConnector extends TerminalConnectorImpl {
 	}
 	public void load(ISettingsStore store) {
 		fSettings.load(store);
-
 	}
 	public void save(ISettingsStore store) {
 		fSettings.save(store);

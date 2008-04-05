@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  * Martin Oberhuber (Wind River) - [206892] Don't connect if already connecting
  * Martin Oberhuber (Wind River) - [208029] COM port not released after quick disconnect/reconnect
+ * Martin Oberhuber (Wind River) - [225853][api] Provide more default functionality in TerminalConnectorImpl 
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.serial;
 
@@ -38,7 +39,6 @@ import org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnect
 public class SerialConnector extends TerminalConnectorImpl {
 	private OutputStream fOutputStream;
 	private InputStream fInputStream;
-	private ITerminalControl fControl;
 	private SerialPort fSerialPort;
     private CommPortIdentifier fSerialPortIdentifier;
 	private SerialPortHandler fTerminalSerialPortHandler;
@@ -60,7 +60,7 @@ public class SerialConnector extends TerminalConnectorImpl {
 		}
 	}
 	public void connect(ITerminalControl control) {
-		Logger.log("entered."); //$NON-NLS-1$
+		super.connect(control);
 		synchronized(this) {
 			if (fConnectWorker!=null || fDisconnectGoingOn) {
 				//avoid multiple background connect/disconnect threads at the same time
@@ -68,7 +68,6 @@ public class SerialConnector extends TerminalConnectorImpl {
 			}
 			fConnectWorker = new SerialConnectWorker(this, control);
 		}
-		fControl=control;
 		fControl.setState(TerminalState.CONNECTING);
 		fConnectWorker.start();
 	}
@@ -80,8 +79,7 @@ public class SerialConnector extends TerminalConnectorImpl {
 			fConnectWorker = null;
 		}
 	}
-	public void disconnect() {
-		Logger.log("entered."); //$NON-NLS-1$
+	public void doDisconnect() {
 		synchronized(this) {
 			//avoid multiple background connect/disconnect threads at the same time
 			if (fConnectWorker!=null) {
@@ -140,9 +138,9 @@ public class SerialConnector extends TerminalConnectorImpl {
 						}
 					}
 
-					if (getOutputStream() != null) {
+					if (getTerminalToRemoteStream() != null) {
 						try {
-							getOutputStream().close();
+							getTerminalToRemoteStream().close();
 						} catch (Exception exception) {
 							Logger.logException(exception);
 						}
@@ -159,12 +157,11 @@ public class SerialConnector extends TerminalConnectorImpl {
 			}
 
 		}.start();
-		fControl.setState(TerminalState.CLOSED);
 	}
 	public InputStream getInputStream() {
 		return fInputStream;
 	}
-	public OutputStream getOutputStream() {
+	public OutputStream getTerminalToRemoteStream() {
 		return fOutputStream;
 	}
 	private void setInputStream(InputStream inputStream) {
@@ -173,13 +170,9 @@ public class SerialConnector extends TerminalConnectorImpl {
 	private void setOutputStream(OutputStream outputStream) {
 		fOutputStream = outputStream;
 	}
-	public boolean isLocalEcho() {
-		return false;
-	}
 	public void setTerminalSize(int newWidth, int newHeight) {
 		// TODO
 	}
-
 	protected SerialPort getSerialPort() {
 		return fSerialPort;
 	}

@@ -1,12 +1,13 @@
 /*******************************************************************************
  * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
+ * Martin Oberhuber (Wind River) - [225853][api] Provide more default functionality in TerminalConnectorImpl 
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.connector;
 
@@ -36,7 +37,7 @@ public class TerminalConnectorTest extends TestCase {
 
 		public void put(String key, String value) {
 		}
-	
+
 	}
 	public static class TerminalControlMock implements ITerminalControl {
 
@@ -83,13 +84,14 @@ public class TerminalConnectorTest extends TestCase {
 			fHeight=newHeight;
 		}
 		public void connect(ITerminalControl control) {
-			fControl=control;
+			super.connect(control);
+			fControl = control;
 		}
-		public void disconnect() {
+		public void doDisconnect() {
 			fDisconnect=true;
 		}
 
-		public OutputStream getOutputStream() {
+		public OutputStream getTerminalToRemoteStream() {
 			return null;
 		}
 
@@ -126,7 +128,7 @@ public class TerminalConnectorTest extends TestCase {
 		public TerminalConnectorImpl makeConnector() throws Exception {
 			// TODO Auto-generated method stub
 			return fConnector;
-		}		
+		}
 	}
 	public void testGetInitializationErrorMessage() {
 		TerminalConnector c=new TerminalConnector(new SimpleFactory(new ConnectorMock()),"xID","xName");
@@ -139,7 +141,7 @@ public class TerminalConnectorTest extends TestCase {
 			}}),"xID","xName");
 		c.connect(new TerminalControlMock());
 		assertEquals("FAILED",c.getInitializationErrorMessage());
-		
+
 	}
 
 	public void testGetIdAndName() {
@@ -172,7 +174,7 @@ public class TerminalConnectorTest extends TestCase {
 		assertFalse(c.isInitialized());
 		c.connect(new TerminalControlMock());
 		assertTrue(c.isInitialized());
-		
+
 	}
 
 	public void testDisconnect() {
@@ -226,7 +228,7 @@ public class TerminalConnectorTest extends TestCase {
 		assertNull(mock.fSaveStore);
 		c.connect(new TerminalControlMock());
 		c.save(s);
-		assertSame(s,mock.fSaveStore);		
+		assertSame(s,mock.fSaveStore);
 	}
 
 	public void testMakeSettingsPage() {
@@ -239,7 +241,7 @@ public class TerminalConnectorTest extends TestCase {
 		ConnectorMock mock=new ConnectorMock();
 		TerminalConnector c=new TerminalConnector(new SimpleFactory(mock),"xID","xName");
 		c.setTerminalSize(100, 200);
-		
+
 	}
 
 	public void testGetAdapter() {

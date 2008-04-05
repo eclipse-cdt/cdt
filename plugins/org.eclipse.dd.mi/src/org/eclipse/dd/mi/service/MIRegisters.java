@@ -40,7 +40,6 @@ import org.eclipse.dd.mi.service.command.output.MIInfo;
 import org.eclipse.dd.mi.service.command.output.MIRegisterValue;
 import org.osgi.framework.BundleContext;
 
-
 /**
  * 
  * <p> 
@@ -175,7 +174,7 @@ public class MIRegisters extends AbstractDsfService implements IRegisters {
         fRegisterNameCache  = new CommandCache(getSession(), getServicesTracker().getService(ICommandControl.class));
                
         /*
-         * Signup so we see events. We use these events to decide how to manage
+         * Sign up so we see events. We use these events to decide how to manage
          * any local caches we are providing as well as the lower level register
          * cache we create to get/set registers on the target.
          */
@@ -203,9 +202,9 @@ public class MIRegisters extends AbstractDsfService implements IRegisters {
     public void getModelData(IDMContext dmc, DataRequestMonitor<?> rm) {
         /*
          * This is the method which is called when actual results need to be returned.  We
-         * can be called either with a service DMC for which we return oureslves or we can
+         * can be called either with a service DMC for which we return ourselves or we can
          * be called with the DMC's we have handed out. If the latter is the case then  we
-         * datamine by talking to the Debug Engine.
+         * data mine by talking to the Debug Engine.
          */
         
         if (dmc instanceof MIRegisterGroupDMC) {
@@ -396,14 +395,16 @@ public class MIRegisters extends AbstractDsfService implements IRegisters {
      *   need to be flushed. These handlers maintain the state of the caches.
      */
 
-    @DsfServiceEventHandler public void eventDispatched(IRunControl.IResumedDMEvent e) {
+    @DsfServiceEventHandler 
+    public void eventDispatched(IRunControl.IResumedDMEvent e) {
         fRegisterValueCache.setContextAvailable(e.getDMContext(), false);
         if (e.getReason() != StateChangeReason.STEP) {
             fRegisterValueCache.reset();
         }
     }
     
-    @DsfServiceEventHandler public void eventDispatched(
+    @DsfServiceEventHandler 
+    public void eventDispatched(
     IRunControl.ISuspendedDMEvent e) {
         fRegisterValueCache.setContextAvailable(e.getDMContext(), true);
         fRegisterValueCache.reset();
@@ -412,6 +413,10 @@ public class MIRegisters extends AbstractDsfService implements IRegisters {
     @DsfServiceEventHandler 
     public void eventDispatched(final IRegisters.IRegisterChangedDMEvent e) {
     	fRegisterValueCache.reset();
+    }
+    
+    private void generateRegisterChangedEvent(IRegisterDMContext dmc ) {
+        getSession().dispatchEvent(new RegisterChangedDMEvent(dmc), getProperties());
     }
     
     /*
@@ -562,12 +567,20 @@ public class MIRegisters extends AbstractDsfService implements IRegisters {
         rm.done();
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.dd.dsf.debug.service.IFormattedValues#getAvailableFormats(org.eclipse.dd.dsf.debug.service.IFormattedValues.IFormattedDataDMContext, org.eclipse.dd.dsf.concurrent.DataRequestMonitor)
+     */
     public void getAvailableFormats(IFormattedDataDMContext dmc, DataRequestMonitor<String[]> rm) {
         
         rm.setData(new String[] { HEX_FORMAT, DECIMAL_FORMAT, OCTAL_FORMAT, BINARY_FORMAT, NATURAL_FORMAT });
         rm.done();
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.dd.dsf.debug.service.IFormattedValues#getFormattedValueContext(org.eclipse.dd.dsf.debug.service.IFormattedValues.IFormattedDataDMContext, java.lang.String)
+     */
     public FormattedValueDMContext getFormattedValueContext(IFormattedDataDMContext dmc, String formatId) {
         if ( dmc instanceof MIRegisterDMC ) {
             MIRegisterDMC regDmc = (MIRegisterDMC) dmc;
@@ -575,9 +588,31 @@ public class MIRegisters extends AbstractDsfService implements IRegisters {
         }
         return null;
     }
+
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.dd.dsf.debug.service.IRegisters#findRegisterGroup(org.eclipse.dd.dsf.datamodel.IDMContext, java.lang.String, org.eclipse.dd.dsf.concurrent.DataRequestMonitor)
+     */
+    public void findRegisterGroup(IDMContext ctx, String name, DataRequestMonitor<IRegisterGroupDMContext> rm) {
+        rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, NOT_SUPPORTED, "Finding a Register Group context not supported", null)); //$NON-NLS-1$
+        rm.done();
+    }
     
-    private void generateRegisterChangedEvent(IRegisterDMContext dmc ) {
-        getSession().dispatchEvent(new RegisterChangedDMEvent(dmc), getProperties());
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.dd.dsf.debug.service.IRegisters#findRegister(org.eclipse.dd.dsf.datamodel.IDMContext, java.lang.String, org.eclipse.dd.dsf.concurrent.DataRequestMonitor)
+     */
+    public void findRegister(IDMContext ctx, String name, DataRequestMonitor<IRegisterDMContext> rm) {
+        rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, NOT_SUPPORTED, "Finding a Register context not supported", null)); //$NON-NLS-1$
+        rm.done();
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.dd.dsf.debug.service.IRegisters#findBitField(org.eclipse.dd.dsf.datamodel.IDMContext, java.lang.String, org.eclipse.dd.dsf.concurrent.DataRequestMonitor)
+     */
+    public void findBitField(IDMContext ctx, String name, DataRequestMonitor<IBitFieldDMContext> rm) {
+        rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, NOT_SUPPORTED, "Finding a Register Group context not supported", null)); //$NON-NLS-1$
+        rm.done();
+    }
 }

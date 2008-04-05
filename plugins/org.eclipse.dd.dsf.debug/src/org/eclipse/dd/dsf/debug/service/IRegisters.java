@@ -107,27 +107,6 @@ public interface IRegisters extends IFormattedValues {
         String getLongName();
     }
     
-    /**
-     * Retrieves register group data for given context.
-     * @param dmc Context to retrieve data for.
-     * @param rm Request completion monitor.
-     */
-    void getRegisterGroupData(IRegisterGroupDMContext dmc, DataRequestMonitor<IRegisterGroupDMData> rm);
-
-    /**
-     * Retrieves register data for given context.
-     * @param dmc Context to retrieve data for.
-     * @param rm Request completion monitor.
-     */
-    void getRegisterData(IRegisterDMContext dmc , DataRequestMonitor<IRegisterDMData> rm);
-
-    /**
-     * Retrieves bit field data for given context.
-     * @param dmc Context to retrieve data for.
-     * @param rm Request completion monitor.
-     */
-    void getBitFieldData(IBitFieldDMContext dmc , DataRequestMonitor<IBitFieldDMData> rm);
-    
     /** 
      * Retrieves the list of register groups.
      * @param ctx Context for the returned data.
@@ -150,6 +129,56 @@ public interface IRegisters extends IFormattedValues {
      * @param rm Request completion monitor.
      */
     void getBitFields(IDMContext ctx, DataRequestMonitor<IBitFieldDMContext[]> rm);
+    
+    /** 
+     * Retrieves a Register Group context. The given context could include a register
+     * group and an execution context or just an execution context.
+     * @param ctx Context for the returned data.
+     * @param name Name of group being requested
+     * @param rm Request completion monitor.
+     */
+    void findRegisterGroup(IDMContext ctx, String name, DataRequestMonitor<IRegisterGroupDMContext> rm);
+    
+    /** 
+     * Retrieves a Register context. The given context could include a register group and an execution 
+     * context or just an execution context.
+     * @param ctx Context for the returned data.
+     * @param name Name of register being requested
+     * @param rm Request completion monitor.
+     */
+    void findRegister(IDMContext ctx, String name, DataRequestMonitor<IRegisterDMContext> rm);
+    
+    /** 
+     * Retrieves bit field context. The given context could include a register and an execution 
+     * context or just an execution context.
+     * @param ctx Context for the returned data.
+     * @param name Name of bit field being requested
+     * @param rm Request completion monitor.
+     */
+    void findBitField(IDMContext ctx, String name, DataRequestMonitor<IBitFieldDMContext> rm);
+    
+    /**
+     * Retrieves register group data for given context.
+     * @param dmc Context to retrieve data for.
+     * @param rm Request completion monitor.
+     */
+    void getRegisterGroupData(IRegisterGroupDMContext dmc, DataRequestMonitor<IRegisterGroupDMData> rm);
+
+    /**
+     * Retrieves register data for given context.
+     * @param dmc Context to retrieve data for.
+     * @param rm Request completion monitor.
+     */
+    void getRegisterData(IRegisterDMContext dmc , DataRequestMonitor<IRegisterDMData> rm);
+
+    /**
+     * Retrieves bit field data for given context.
+     * @param dmc Context to retrieve data for.
+     * @param rm Request completion monitor.
+     */
+    void getBitFieldData(IBitFieldDMContext dmc , DataRequestMonitor<IBitFieldDMData> rm);
+    
+    
     
     /** 
      * Writes a register value for a given register to the target

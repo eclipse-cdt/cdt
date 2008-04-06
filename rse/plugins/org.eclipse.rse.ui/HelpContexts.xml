@@ -914,5 +914,11 @@ You can specify what severity of messages you wish to log - from informational m
 Messages are logged to the .log file in the .metadata folder of the workspace.
 </description>
 </context>
+<context id="ActionImportConnectionDefinitions">
+   <description>This action imports connection definitions that have been exported from another workbench. A file selection dialog is displayed, and the specified file containing the connection definitions is imported. New connections will appear in the workspace. If a connection by that name already exists in the workspace, the connection being imported will be renamed.</description>
+</context>
+<context id="ActionExportConnectionDefinitions">
+   <description>This action exports connection definitions to a file. A file selection dialog is displayed, and you specify the directory and file name into which to export the selected connections and their filters. You may then import the connections into another workbench using the import action.</description>
+</context>
 
 </contexts>

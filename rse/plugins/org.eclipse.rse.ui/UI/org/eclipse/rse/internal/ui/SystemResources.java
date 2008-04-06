@@ -985,6 +985,10 @@ public class SystemResources extends NLS
 	public static String RESID_DO_NOT_SHOW_MESSAGE_AGAIN_LABEL;
 	public static String RESID_DO_NOT_SHOW_MESSAGE_AGAIN_TOOLTIP;
 	
+	public static String RESID_EXPORT_CONNECTION_ACTIONS_TOOLTIP;
+
+	public static String RESID_EXPORT_CONNECTIONS_ACTION_LABEL;
+
 	// Encoding
 	public static String RESID_HOST_ENCODING_GROUP_LABEL;
 	public static String RESID_HOST_ENCODING_SETTING_NOTE;
@@ -995,6 +999,14 @@ public class SystemResources extends NLS
 	public static String RESID_HOST_ENCODING_OTHER_LABEL;
 	public static String RESID_HOST_ENCODING_OTHER_TOOLTIP;
 	public static String RESID_HOST_ENCODING_ENTER_TOOLTIP;
+
+	public static String RESID_IMPORT_CONNECTION_ACTION_INVALID_FORMAT;
+
+	public static String RESID_IMPORT_CONNECTION_ACTION_LABEL;
+
+	public static String RESID_IMPORT_CONNECTION_ACTION_READER_MISSING;
+
+	public static String RESID_IMPORT_CONNECTION_ACTION_TOOLTIP;
 	
 	static {
 		// load message values from bundle file

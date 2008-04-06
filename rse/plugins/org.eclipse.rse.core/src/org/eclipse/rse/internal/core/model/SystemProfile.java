@@ -18,6 +18,7 @@
  * David Dykstal (IBM) - [197036] changed getFilterPools to not force the loading of subsystem configurations
  *   removed createHost, migrated commit logic to SystemProfileManager
  * David Dykstal (IBM) - [202630] getDefaultPrivateProfile() and ensureDefaultPrivateProfile() are inconsistent
+ * David Dykstal (IBM) - [200735][Persistence] Delete a profile that contains a connection and restart, profile is back without connections
  *******************************************************************************/
 
 package org.eclipse.rse.internal.core.model;
@@ -55,6 +56,12 @@ public class SystemProfile extends RSEModelObject implements ISystemProfile, IAd
 	private boolean isActive = true;
 	private String name = null;
 	private boolean defaultPrivate = false;
+	
+	/**
+	 * A suspended profile ignored commit requests.
+	 * Profiles must be suspended prior to being deleted.
+	 */
+	private boolean suspended = false;
 
 	/**
 	 * Default constructor
@@ -124,6 +131,27 @@ public class SystemProfile extends RSEModelObject implements ISystemProfile, IAd
 		return poolMgr.getSystemFilterPools();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemProfile#suspend()
+	 */
+	public void suspend() {
+		suspended = true;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemProfile#resume()
+	 */
+	public void resume() {
+		suspended = false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemProfile#isSuspended()
+	 */
+	public boolean isSuspended() {
+		return suspended;
+	}
+	
 	/**
 	 * Return true if this profile is currently active.
 	 */
@@ -235,8 +263,11 @@ public class SystemProfile extends RSEModelObject implements ISystemProfile, IAd
 	 * @see org.eclipse.rse.core.model.IRSEPersistableContainer#commit()
 	 */
 	public boolean commit() {
-		IStatus status = SystemProfileManager.getDefault().commitSystemProfile(this);
-		boolean scheduled =  status.isOK();
+		boolean scheduled =  false;
+		if (!suspended) {
+			IStatus status = SystemProfileManager.getDefault().commitSystemProfile(this);
+			scheduled =  status.isOK();
+		}
 		return scheduled;
 	}
 	

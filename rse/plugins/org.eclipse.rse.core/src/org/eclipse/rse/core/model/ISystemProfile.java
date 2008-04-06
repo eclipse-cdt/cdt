@@ -17,6 +17,7 @@
  * David Dykstal (IBM) - [197036] removed createHost() shortcut (should use ISystemRegistry), 
  *    cleaned javadoc for getFilterPools() 
  * David Dykstal (IBM) - [202630] getDefaultPrivateProfile() and ensureDefaultPrivateProfile() are inconsistent
+ * David Dykstal (IBM) - [200735][Persistence] Delete a profile that contains a connection and restart, profile is back without connections
  *******************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -36,6 +37,7 @@ import org.eclipse.rse.persistence.IRSEPersistenceProvider;
  * definitions to RSE. When made inactive, it those definition are no longer 
  * available for use.
  * <p>
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ISystemProfile extends IRSEModelObject {
 
@@ -103,6 +105,34 @@ public interface ISystemProfile extends IRSEModelObject {
 	 * @see ISystemProfile#isActive()
 	 */
 	public void setActive(boolean flag);
+	
+	/**
+	 * Suspend this profile.
+	 * Suspended profiles ignore commit requests.
+	 * Profiles are created in a non-suspended state. 
+	 * Profiles should be suspended while deleting their contents prior to their own deletion.
+	 * Note that being non-suspended is a different condition than being active.
+	 * A suspended profile may be resumed.
+	 * @since 3.0
+	 * @see #resume()
+	 */
+	public void suspend();
+	
+	/**
+	 * Resume this profile from a suspended state.
+	 * The profile will now honor commit requests.
+	 * @since 3.0
+	 * @see #suspend()
+	 */
+	public void resume();
+
+	/**
+	 * @return true if the profile is in a suspended state
+	 * @since 3.0
+	 * @see #suspend()
+	 * @see #resume()
+	 */
+	public boolean isSuspended();
 	
 	/**
 	 * Each profile is persisted by a persistence provider. This returns the instance of the 

@@ -46,6 +46,7 @@
  * Martin Oberhuber (Wind River) - [215820] Move SystemRegistry implementation to Core
  * David Dykstal (IBM) - [202630] getDefaultPrivateProfile() and ensureDefaultPrivateProfile() are inconsistent
  * David McKnight   (IBM)        - [224313] [api] Create RSE Events for MOVE and COPY holding both source and destination fields
+ * David Dykstal (IBM) - [200735][Persistence] Delete a profile that contains a connection and restart, profile is back without connections
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.model;
@@ -591,6 +592,7 @@ public class SystemRegistry implements ISystemRegistry
 		{
 			try
 			{
+				newProfile.suspend();
 				if (newConns != null)
 					for (int idx = 0; idx < newConns.length; idx++)
 						deleteHost(newConns[idx]);
@@ -630,6 +632,7 @@ public class SystemRegistry implements ISystemRegistry
 		ISystemProfile defaultProfile = manager.getDefaultPrivateSystemProfile();
 		if (profile != defaultProfile) {
 			// load everything
+			profile.suspend();
 			loadAll();
 			// remove connections
 			IHost[] connections = getHostsByProfile(profile);
@@ -647,7 +650,8 @@ public class SystemRegistry implements ISystemRegistry
 			manager.deleteSystemProfile(profile, true);
 			// fire events
 			if (connections.length > 0) { // defect 42112
-				fireEvent(new SystemResourceChangeEvent(connections, ISystemResourceChangeEvents.EVENT_DELETE_MANY, this));
+				SystemResourceChangeEvent event = new SystemResourceChangeEvent(connections, ISystemResourceChangeEvents.EVENT_DELETE_MANY, this);
+				fireEvent(event);
 			}
 			fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_REMOVED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_PROFILE, profile, null);
 		}
@@ -1963,8 +1967,6 @@ public class SystemRegistry implements ISystemRegistry
 			 ((ISubSystemConfiguration) affectedSubSystemFactories.elementAt(idx)).deleteSubSystemsByConnection(conn);
 		} 
 		conn.getHostPool().deleteHost(conn); // delete from memory and from disk.       
-		////Listening to Events now
-		//SystemPreferencesManager.setConnectionNamesOrder(); // update preferences order list        
 		fireModelChangeEvent(
 				ISystemModelChangeEvents.SYSTEM_RESOURCE_REMOVED,
 				ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_CONNECTION,

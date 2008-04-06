@@ -20,6 +20,7 @@
  * David Dykstal (IBM) - [197036] added implementation of run() for commit transaction support
  * David Dykstal (IBM) - [222376] NPE if starting on a workspace with an old mark and a renamed default profile
  * David Dykstal (IBM) - [202630] getDefaultPrivateProfile() and ensureDefaultPrivateProfile() are inconsistent
+ * David Dykstal (IBM) - [200735][Persistence] Delete a profile that contains a connection and restart, profile is back without connections
  *******************************************************************************/
 
 package org.eclipse.rse.internal.core.model;
@@ -149,6 +150,7 @@ public class SystemProfileManager implements ISystemProfileManager {
 	public ISystemProfile createSystemProfile(String name, boolean makeActive) {
 		ISystemProfile existingProfile = getSystemProfile(name);
 		if (existingProfile != null) {
+			existingProfile.suspend();
 			deleteSystemProfile(existingProfile, false); // replace the existing one with a new profile
 		}
 		ISystemProfile newProfile = internalCreateSystemProfile(name);

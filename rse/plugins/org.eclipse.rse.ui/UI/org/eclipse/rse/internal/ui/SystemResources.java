@@ -19,6 +19,7 @@
  * David McKnight   (IBM)        - [223103] [cleanup] fix broken externalized strings
  * Rupen Mardirossian (IBM)      - [210682] Added BUTTON_OVERWRITE_ALL & and tooltip, also added some verbiage for new SystemCopyDialog.	
  * Xuan Chen        (IBM)        - [222263] Need to provide a PropertySet Adapter for System Team View
+ * David Dykstal (IBM) - [210242] Credentials dialog should look different if password is not supported or optional
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui;
@@ -325,6 +326,7 @@ public class SystemResources extends NLS
 	public static String RESID_PASSWORD_TITLE;
 
 	public static String RESID_PASSWORD_LABEL;
+	public static String RESID_PASSWORD_LABEL_OPTIONAL;
 	public static String RESID_PASSWORD_TIP;
 	
 	public static String RESID_PASSWORD_SYSTEMTYPE_LABEL;

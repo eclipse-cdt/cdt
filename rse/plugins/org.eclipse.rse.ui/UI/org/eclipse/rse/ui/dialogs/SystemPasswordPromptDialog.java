@@ -15,6 +15,7 @@
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * David Dykstal (IBM) - [210474] Deny save password function missing
+ * David Dykstal (IBM) - [210242] Credentials dialog should look different if password is not supported or optional
  ********************************************************************************/
 
 package org.eclipse.rse.ui.dialogs;
@@ -201,7 +202,11 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 
 		// Password prompt
 		if (connectorService.supportsPassword()) {
-			textPassword = SystemWidgetHelpers.createLabeledTextField(composite_prompts, this, SystemResources.RESID_PASSWORD_LABEL, SystemResources.RESID_PASSWORD_TIP);
+			String passwordLabel = SystemResources.RESID_PASSWORD_LABEL_OPTIONAL;
+			if (connectorService.requiresPassword()) {
+				passwordLabel = SystemResources.RESID_PASSWORD_LABEL;
+			}
+			textPassword = SystemWidgetHelpers.createLabeledTextField(composite_prompts, this, passwordLabel, SystemResources.RESID_PASSWORD_TIP);
 			textPassword.setEchoChar('*');
 		}
 

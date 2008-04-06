@@ -31,7 +31,8 @@ import org.eclipse.core.runtime.PlatformObject;
 /**
  * @author aniefer
  */
-public class CPPUnknownBinding extends PlatformObject implements ICPPInternalUnknown, Cloneable {
+public abstract class CPPUnknownBinding extends PlatformObject
+		implements ICPPInternalUnknown, Cloneable {
     private ICPPScope unknownScope;
     protected ICPPInternalUnknown scopeBinding;
     protected IASTName name;
@@ -145,15 +146,16 @@ public class CPPUnknownBinding extends PlatformObject implements ICPPInternalUnk
 	            if (s != null && ASTInternal.isFullyCached(s))
 	            	result = s.getBinding(name, true);
 	        } else if (t instanceof ICPPInternalUnknown) {
-	            CPPUnknownBinding res = clone();
-	            res.scopeBinding = (ICPPInternalUnknown) t;
-	            res.unknownScope = null;
-	            result = res;
+	            result = resolvePartially((ICPPInternalUnknown) t, argMap);
 	        }
         }
         return result;
     }
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownClassType#resolvePartially(org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknown, org.eclipse.cdt.core.parser.util.ObjectMap)
+	 */
+    protected abstract IBinding resolvePartially(ICPPInternalUnknown parentBinding, ObjectMap argMap);
     
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;

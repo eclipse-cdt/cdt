@@ -753,6 +753,30 @@ public class CPPTemplates {
 		return newType;
 	}
 
+	/**
+	 * Instantiates types contained in an array.
+	 * @param types an array of types
+	 * @param argMap template argument map
+	 * @return an array containing instantiated types.
+	 */
+	public static IType[] instantiateTypes(IType[] types, ObjectMap argMap) {
+		// Don't create a new array until it's really needed.
+		IType[] result = types;
+		for (int i = 0; i < types.length; i++) {
+			IType type = CPPTemplates.instantiateType(types[i], argMap);
+			if (type != types[i]) {
+				if (result == types) {
+					result = new IType[types.length];
+					if (i > 0) {
+						System.arraycopy(types, 0, result, 0, i);
+					}
+				}
+				result[i] = type;
+			}
+		}
+		return result;
+	}
+
 	public static ICPPASTTemplateDeclaration getTemplateDeclaration(IASTName name) {
 		if (name == null) return null;
 

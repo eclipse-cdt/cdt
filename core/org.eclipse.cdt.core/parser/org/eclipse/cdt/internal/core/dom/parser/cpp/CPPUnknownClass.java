@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /**
  * Represents a C++ class, declaration of which is not yet available.
@@ -123,5 +124,16 @@ public class CPPUnknownClass extends CPPUnknownBinding implements ICPPInternalUn
 
 	public ICPPClassType[] getNestedClasses() {
 		return ICPPClassType.EMPTY_CLASS_ARRAY;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownClassType#resolvePartially(org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknown, org.eclipse.cdt.core.parser.util.ObjectMap)
+	 */
+	@Override
+	public IBinding resolvePartially(ICPPInternalUnknown parentBinding, ObjectMap argMap) {
+		if (parentBinding == this.scopeBinding) {
+			return this;
+		}
+		return new CPPUnknownClass(parentBinding, name);
 	}
 }

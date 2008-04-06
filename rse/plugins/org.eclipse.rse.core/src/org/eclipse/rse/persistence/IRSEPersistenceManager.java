@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * David Dykstal (IBM) - 142806: refactoring persistence framework
+ * David Dykstal (IBM) - [cleanup] adding noimplement tag
  ********************************************************************************/
 
 package org.eclipse.rse.persistence;
@@ -23,6 +24,7 @@ import org.eclipse.rse.core.model.ISystemProfile;
  * There is typically only one persistence manager instance defined when RSE is running.
  * The persistence manager controls the persistence of RSE profiles through the use 
  * of registered persistence providers.
+ * @noimplement this interface is not intended to be implemented by clients
  */
 public interface IRSEPersistenceManager {
 

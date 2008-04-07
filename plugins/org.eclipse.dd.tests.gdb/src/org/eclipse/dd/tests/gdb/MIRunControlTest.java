@@ -15,20 +15,16 @@ import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
-import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMData;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IResumedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IStartedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.dd.dsf.debug.service.IRunControl.StepType;
-import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
-import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControlDMContext;
 import org.eclipse.dd.mi.service.IMIExecutionDMContext;
 import org.eclipse.dd.mi.service.MIRunControl;
-import org.eclipse.dd.mi.service.MIStack;
 import org.eclipse.dd.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
 import org.eclipse.dd.tests.gdb.framework.AsyncCompletionWaitor;
@@ -53,17 +49,6 @@ public class MIRunControlTest extends BaseTestCase {
 
     private GDBControl fGDBCtrl;
 	private MIRunControl fRunCtrl;
-	private MIStack fStack;
-
-	/*
-	 * Boolean variables for testing events. Test thread create event only when this is set to true
-	 */
-	private boolean fIsTestingThreadCreateEvent = false;
-	/*
-	 * Boolean variables for error from events. Set to true only if there is an error in the event being tested.
-	 */
-	private boolean fIsEventError = false;
-
 
 	/*
 	 * Path to executable
@@ -75,33 +60,17 @@ public class MIRunControlTest extends BaseTestCase {
 	private static final String EXEC_NAME = "MultiThread.exe";
 	private static final String SOURCE_NAME = "MultiThread.cc";
 	
-	
-	/*
-	 * Variable to wait for asynchronous call to complete 
-	 */
-    private final AsyncCompletionWaitor fWait = new AsyncCompletionWaitor();
-    
 	@Before
 	public void init() throws Exception {
 		fServicesTracker = 
 			new DsfServicesTracker(TestsPlugin.getBundleContext(), 
                      			   getGDBLaunch().getSession().getId());
-        /*
-         *  Get the MIRunControl & MIStack service.
-         */
 		fGDBCtrl = fServicesTracker.getService(GDBControl.class);
 		fRunCtrl = fServicesTracker.getService(MIRunControl.class);
-		fStack = fServicesTracker.getService(MIStack.class);
-		/*
-		 * Add to the Listeners list 
-		 */
-		getGDBLaunch().getSession().addServiceEventListener(this, null);
 	}
 
 	@After
 	public void tearDown() {
-		fRunCtrl = null;
-		fStack = null;
 		fServicesTracker.dispose();
 	}
 	
@@ -111,13 +80,12 @@ public class MIRunControlTest extends BaseTestCase {
 				           EXEC_PATH + EXEC_NAME);
 	}
 
-
 	/*
 	 * For Multi-threaded application - In case of one thread, Thread id should start with 1. 
 	 */
 	@Test
 	public void getExecutionContext() throws InterruptedException{
-		//TestsPlugin.debugMethod("getExecutionContext()");
+	    final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 		/*
 		 * Create a request monitor 
 		 */
@@ -126,9 +94,9 @@ public class MIRunControlTest extends BaseTestCase {
             @Override
             protected void handleCompleted() {
                if (isSuccess()) {
-                    fWait.setReturnInfo(getData());
+                    wait.setReturnInfo(getData());
                 }
-                fWait.waitFinished(getStatus());
+                wait.waitFinished(getStatus());
             }
         };
         
@@ -140,8 +108,8 @@ public class MIRunControlTest extends BaseTestCase {
             	fRunCtrl.getExecutionContexts(fGDBCtrl.getGDBDMContext(), rm);
             }
         });
-        fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
-        Assert.assertTrue(fWait.getMessage(), fWait.isOK());
+        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        Assert.assertTrue(wait.getMessage(), wait.isOK());
 
         /*
          * Get data from the Request Monitor
@@ -150,16 +118,17 @@ public class MIRunControlTest extends BaseTestCase {
 
         // Context can not be null
         if(ctxts == null)
-       	 Assert.fail("Context returned is null. Atleast one context should have been returned");
-        else{
+       	 Assert.fail("Context returned is null. At least one context should have been returned");
+        else {
        	 // Only one Context in this case
        	 if(ctxts.length > 1)
-       	 	Assert.fail("Context returned canot be more than 1. This test case is for single context application.");
+       	 	Assert.fail("Context returned can not be more than 1. This test case is for single context application.");
+       	 
        	 IMIExecutionDMContext dmc = (IMIExecutionDMContext)ctxts[0];
        	 // Thread id for the main thread should be one
        	 Assert.assertEquals(1, dmc.getThreadId());
        } 
-       fWait.waitReset();
+       wait.waitReset();
 	}
 	
 	
@@ -169,7 +138,7 @@ public class MIRunControlTest extends BaseTestCase {
 	 */
 	@Test
 	public void getExecutionContexts() throws InterruptedException{
-		//TestsPlugin.debugMethod("getExecutionContexts()");
+	    final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 		/*
 		 * Create a request monitor 
 		 */
@@ -178,15 +147,18 @@ public class MIRunControlTest extends BaseTestCase {
             @Override
             protected void handleCompleted() {
                if (isSuccess()) {
-            	   fWait.setReturnInfo(getData());
+            	   wait.setReturnInfo(getData());
                }
-               fWait.waitFinished(getStatus());
+               wait.waitFinished(getStatus());
             }
         };
-        /*
-         * Also Testing Thread create event. Set boolean variable to true
-         */
-        fIsTestingThreadCreateEvent = true;
+        
+        // Prepare a waiter to make sure we have received the thread started event
+        final ServiceEventWaitor<IStartedDMEvent> startedEventWaitor =
+            new ServiceEventWaitor<IStartedDMEvent>(
+            		getGDBLaunch().getSession(),
+            		IStartedDMEvent.class);
+		
         try{
         	/*
         	 * Run till line for 2 threads to be created
@@ -196,16 +168,20 @@ public class MIRunControlTest extends BaseTestCase {
         catch(Throwable t){
         	Assert.fail("Exception in SyncUtil.SyncRunToLine: " + t.getMessage());
         }
-        /*
-         * Re-set the boolean variable for testing thread create event.
-         */
-        fIsTestingThreadCreateEvent = false;
-        /*
-         * Check if error in thread create event 
-         */
-        if(fIsEventError){
-        	Assert.fail("Thread create event has failed.");
+        
+		// Make sure thread started event was received because it could arrive
+        // after the stopped event is received
+        IStartedDMEvent startedEvent = null;
+        try {
+        	startedEvent = startedEventWaitor.waitForEvent(1000);
+        } catch (Exception e) {
+        	Assert.fail("Timeout waiting for Thread create event");
         }
+
+		if (((IMIExecutionDMContext)startedEvent.getDMContext()).getThreadId() != 2)
+        	Assert.fail("Thread create event has failed expected thread id 2 but got " +
+        			((IMIExecutionDMContext)startedEvent.getDMContext()).getThreadId());
+        
         /*
          * Test getExecutionContexts for a valid container DMC
          */
@@ -214,9 +190,9 @@ public class MIRunControlTest extends BaseTestCase {
            		fRunCtrl.getExecutionContexts(fGDBCtrl.getGDBDMContext(), rmExecutionCtxts);
             }
         });
-        fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
-        Assert.assertTrue(fWait.getMessage(), fWait.isOK());
-        fWait.waitReset();
+        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        Assert.assertTrue(wait.getMessage(), wait.isOK());
+        wait.waitReset();
         /*
          * Get data
          */
@@ -241,7 +217,7 @@ public class MIRunControlTest extends BaseTestCase {
 	 */
 	@Test
 	public void getModelDataForThread() throws InterruptedException{
-		//TestsPlugin.debugMethod("getModelDataForThread(");
+	    final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 		/*
 		 * Create a request monitor
 		 */
@@ -250,9 +226,9 @@ public class MIRunControlTest extends BaseTestCase {
             @Override
             protected void handleCompleted() {
                if (isSuccess()) {
-                    fWait.setReturnInfo(getData());
+                    wait.setReturnInfo(getData());
                 }
-                fWait.waitFinished(getStatus());
+                wait.waitFinished(getStatus());
             }
         };
         /*
@@ -263,8 +239,8 @@ public class MIRunControlTest extends BaseTestCase {
             	fRunCtrl.getExecutionData(fRunCtrl.createMIExecutionContext(fGDBCtrl.getGDBDMContext(), 1), rm);
             }
         });
-        fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
-        Assert.assertTrue(fWait.getMessage(), fWait.isOK());
+        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        Assert.assertTrue(wait.getMessage(), wait.isOK());
         
         IRunControl.IExecutionDMData data = rm.getData();
         if(data == null)
@@ -280,7 +256,7 @@ public class MIRunControlTest extends BaseTestCase {
 
 	@Test
 	public void getModelDataForThreadWhenStep() throws Throwable {
-		//TestsPlugin.debugMethod("getModelDataForThread()");		
+	    final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 		/*
 		 * Run till step returns
 		 */
@@ -291,9 +267,9 @@ public class MIRunControlTest extends BaseTestCase {
             @Override
             protected void handleCompleted() {
                if (isSuccess()) {
-                    fWait.setReturnInfo(getData());
+                    wait.setReturnInfo(getData());
                 }
-                fWait.waitFinished(getStatus());
+                wait.waitFinished(getStatus());
             }
         };
         /*
@@ -304,8 +280,8 @@ public class MIRunControlTest extends BaseTestCase {
             	fRunCtrl.getExecutionData(stoppedEvent.getDMContext(), rm);
             }
         });
-        fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
-        Assert.assertTrue(fWait.getMessage(), fWait.isOK());
+        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        Assert.assertTrue(wait.getMessage(), wait.isOK());
         
         IRunControl.IExecutionDMData data = rm.getData();
         if(data == null)
@@ -324,7 +300,7 @@ public class MIRunControlTest extends BaseTestCase {
 	 */
 	@Test
 	public void getModelDataForThreadWhenBreakpoint() throws Throwable {
-		//TestsPlugin.debugMethod("getModelDataForThreadWhenBreakpoint()");
+	    final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 		/* 
 		 * Add a breakpoint
 		 */
@@ -340,9 +316,9 @@ public class MIRunControlTest extends BaseTestCase {
             @Override
             protected void handleCompleted() {
                if (isSuccess()) {
-                    fWait.setReturnInfo(getData());
+                    wait.setReturnInfo(getData());
                 }
-                fWait.waitFinished(getStatus());
+                wait.waitFinished(getStatus());
             }
         };
         fRunCtrl.getExecutor().submit(new Runnable() {
@@ -350,8 +326,8 @@ public class MIRunControlTest extends BaseTestCase {
             	fRunCtrl.getExecutionData(stoppedEvent.getDMContext(), rm);
             }
         });
-        fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
-        Assert.assertTrue(fWait.getMessage(), fWait.isOK());
+        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        Assert.assertTrue(wait.getMessage(), wait.isOK());
         
         IRunControl.IExecutionDMData data = rm.getData();
         if(data == null)
@@ -370,15 +346,16 @@ public class MIRunControlTest extends BaseTestCase {
 	 */
 	@Test
 	public void getModelDataForContainer() throws InterruptedException{
-		//TestsPlugin.debugMethod("getModelDataForContainer()");
-        final DataRequestMonitor<IExecutionDMData> rm = 
+	    final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
+
+	    final DataRequestMonitor<IExecutionDMData> rm = 
         	new DataRequestMonitor<IExecutionDMData>(fRunCtrl.getExecutor(), null) {
             @Override
             protected void handleCompleted() {
                if (isSuccess()) {
-                    fWait.setReturnInfo(getData());
+                    wait.setReturnInfo(getData());
                 }
-                fWait.waitFinished(getStatus());
+                wait.waitFinished(getStatus());
             }
         };
         
@@ -387,8 +364,8 @@ public class MIRunControlTest extends BaseTestCase {
             	fRunCtrl.getExecutionData(fGDBCtrl.getGDBDMContext(), rm);
             }
         });
-        fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
-        Assert.assertTrue(fWait.getMessage(), fWait.isOK());
+        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        Assert.assertTrue(wait.getMessage(), wait.isOK());
         
         IRunControl.IExecutionDMData data = rm.getData();
         if(data == null)
@@ -408,43 +385,30 @@ public class MIRunControlTest extends BaseTestCase {
 	@Ignore
 	@Test
 	public void getExecutionContextsForInvalidContainerDMC() throws InterruptedException{
-		//TestsPlugin.debug("getExecutionContextsForInvalidContainerDMC()");
-        final DataRequestMonitor<IExecutionDMContext[]> rm = 
+	    final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
+
+	    final DataRequestMonitor<IExecutionDMContext[]> rm = 
         	new DataRequestMonitor<IExecutionDMContext[]>(fRunCtrl.getExecutor(), null) {
             @Override
             protected void handleCompleted() {
                if (isSuccess()) {
-                    fWait.setReturnInfo(getData());
+                    wait.setReturnInfo(getData());
                 }
-                fWait.waitFinished(getStatus());
+                wait.waitFinished(getStatus());
             }
         };
-        final IContainerDMContext ctxt = new GDBControlDMContext("-1", getClass().getName() + ":" + 1);
+//        final IContainerDMContext ctxt = new GDBControlDMContext("-1", getClass().getName() + ":" + 1);
         fRunCtrl.getExecutor().submit(new Runnable() {
             public void run() {
             	// Pass an invalid dmc
             	fRunCtrl.getExecutionContexts(fGDBCtrl.getGDBDMContext(), rm);
             }
         });
-        fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
-        Assert.assertTrue(fWait.getMessage(), !fWait.isOK());
+        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        Assert.assertTrue(wait.getMessage(), !wait.isOK());
         
         IStatus status = rm.getStatus();
    	 	Assert.assertEquals("Error message for invalid container", IStatus.ERROR, status.getSeverity());
-	}
-
-	/*
-	 * Test Thread Create event for thread ID. Thread IDs should be GDB generated thread ids.
-	 */
-    @DsfServiceEventHandler 
-    public void eventDispatched(IStartedDMEvent e) {
-    	if(fIsTestingThreadCreateEvent){
-    		if(((IMIExecutionDMContext)e.getDMContext()).getThreadId() != 2)
-    			/*
-    			 * Set variable if thread create event is unsuccesful 
-    			 */
-    			fIsEventError = true;
-    	}	
 	}
 
     /*
@@ -452,7 +416,7 @@ public class MIRunControlTest extends BaseTestCase {
      */
     @Test
     public void cacheAfterContainerSuspendEvent() throws InterruptedException{
-		//TestsPlugin.debugMethod("cacheAfterContainerSuspendEvent()");
+
     	final IExecutionDMContext dmc = fRunCtrl.createMIExecutionContext(fGDBCtrl.getGDBDMContext(), 1);
     	/*
     	 * Step to fire ContainerSuspendEvent
@@ -473,13 +437,13 @@ public class MIRunControlTest extends BaseTestCase {
      //Also test Cache after ContainerResumeEvent 
     @Test
     public void resume() throws InterruptedException{
-		//TestsPlugin.debugMethod("resume()");
-		
+	    final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
+	    
         final DataRequestMonitor<MIInfo> rm = 
         	new DataRequestMonitor<MIInfo>(fRunCtrl.getExecutor(), null) {
             @Override
 			protected void handleCompleted() {
-                fWait.waitFinished(getStatus());
+                wait.waitFinished(getStatus());
                 //TestsPlugin.debug("handleCompleted over");
              }
         };
@@ -493,7 +457,7 @@ public class MIRunControlTest extends BaseTestCase {
            		fRunCtrl.resume(fGDBCtrl.getGDBDMContext(), rm);
             }
         });
-        fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 
         try {
 			eventWaitor.waitForEvent(ServiceEventWaitor.WAIT_FOREVER);
@@ -502,10 +466,10 @@ public class MIRunControlTest extends BaseTestCase {
 			e.printStackTrace();
 			return;
 		}
-        if (fWait.isOK() == false)
-            Assert.assertTrue(fWait.getMessage(), false);
+        if (wait.isOK() == false)
+            Assert.assertTrue(wait.getMessage(), false);
         Assert.assertFalse("Target is suspended. It should have been running", fRunCtrl.isSuspended(fGDBCtrl.getGDBDMContext()));
-        fWait.waitReset();
+        wait.waitReset();
     }
     
     
@@ -513,12 +477,13 @@ public class MIRunControlTest extends BaseTestCase {
 
     @Test
     public void resumeContainerContext() throws InterruptedException{
-		//TestsPlugin.debugMethod("resumeContainerContext()");
-        final DataRequestMonitor<MIInfo> rm = 
+	    final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
+
+	    final DataRequestMonitor<MIInfo> rm = 
         	new DataRequestMonitor<MIInfo>(fRunCtrl.getExecutor(), null) {
             @Override
 			protected void handleCompleted() {
-                fWait.waitFinished(getStatus());
+                wait.waitFinished(getStatus());
              }
         };
         
@@ -532,7 +497,7 @@ public class MIRunControlTest extends BaseTestCase {
            		fRunCtrl.resume(fGDBCtrl.getGDBDMContext(), rm);
             }
         });
-        fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
         try {
 			eventWaitor.waitForEvent(ServiceEventWaitor.WAIT_FOREVER);
 			//TestsPlugin.debug("DsfMIRunningEvent received");	
@@ -542,10 +507,10 @@ public class MIRunControlTest extends BaseTestCase {
 			return;
 		}
 
-        if (fWait.isOK() == false)
-            Assert.assertTrue(fWait.getMessage(), false);
+        if (wait.isOK() == false)
+            Assert.assertTrue(wait.getMessage(), false);
         Assert.assertFalse("Target is suspended. It should have been running", fRunCtrl.isSuspended(fGDBCtrl.getGDBDMContext()));
-        fWait.waitReset();
+        wait.waitReset();
     }
     
  // PP: test no longer applies, the resume command now takes a strongly-typed execution context as an argument.
@@ -557,7 +522,7 @@ public class MIRunControlTest extends BaseTestCase {
 //        	new DataRequestMonitor<DsfMIInfo>(fRunCtrl.getExecutor(), null) {
 //            @Override
 //			protected void handleCompleted() {
-//                fWait.waitFinished(getStatus());
+//                wait.waitFinished(getStatus());
 //             }
 //        };
 //        final ServiceEventWaitor<IResumedDMEvent> eventWaitor =
@@ -572,7 +537,7 @@ public class MIRunControlTest extends BaseTestCase {
 //           		fRunCtrl.resume(dmc, rm);
 //            }
 //        });
-//        fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+//        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 //        
 //        try {
 //			eventWaitor.waitForEvent(ServiceEventWaitor.WAIT_FOREVER);
@@ -582,10 +547,10 @@ public class MIRunControlTest extends BaseTestCase {
 //			return;
 //		}
 //
-//        if (fWait.isOK() == false)
-//            Assert.assertTrue(fWait.getMessage(), false);
+//        if (wait.isOK() == false)
+//            Assert.assertTrue(wait.getMessage(), false);
 //        Assert.assertFalse("Target is suspended. It should have been running", fRunCtrl.isSuspended(fGDBCtrl.getGDBDMContext()));
-//        fWait.waitReset();
+//        wait.waitReset();
 //    }
     
 //    @Test
@@ -596,10 +561,10 @@ public class MIRunControlTest extends BaseTestCase {
 //			protected void handleCompleted() {
 //                if (isSuccess()) {
 //             	   assert true;
-//             	   fWait.setReturnInfo(getData());
+//             	   wait.setReturnInfo(getData());
 //                }
 //                System.out.println("Wait Finished called on getTHreads rm with status " + getStatus().getMessage());
-//                fWait.waitFinished(getStatus());
+//                wait.waitFinished(getStatus());
 //             }
 //        };
 //        final MIExecutionDMC dmc = new MIExecutionDMC(fRunCtrl, 1);       
@@ -608,12 +573,12 @@ public class MIRunControlTest extends BaseTestCase {
 //           		fRunCtrl.resume(dmc, rm);
 //            }
 //        });
-//        fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
-//        if (fWait.isOK() == false)
-//            Assert.assertTrue(fWait.getMessage(), false);
+//        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+//        if (wait.isOK() == false)
+//            Assert.assertTrue(wait.getMessage(), false);
 //        System.out.println("Message from isSuspended " +fRunCtrl.isSuspended(dmc));
 //        Assert.assertFalse("Target is suspended. It should have been running", fRunCtrl.isSuspended(dmc));
-//        fWait.waitReset();
+//        wait.waitReset();
 //        
 //        final DataRequestMonitor<DsfMIInfo> rmSuspend = 
 //        	new DataRequestMonitor<DsfMIInfo>(fRunCtrl.getExecutor(), null) {
@@ -621,10 +586,10 @@ public class MIRunControlTest extends BaseTestCase {
 //			protected void handleCompleted() {
 //                if (isSuccess()) {
 //             	   assert true;
-//             	   fWait.setReturnInfo(getData());
+//             	   wait.setReturnInfo(getData());
 //                }
 //                System.out.println("Wait Finished called on getTHreads rm with status " + getStatus().getMessage());
-//                fWait.waitFinished(getStatus());
+//                wait.waitFinished(getStatus());
 //             }
 //        };
 //
@@ -638,7 +603,7 @@ public class MIRunControlTest extends BaseTestCase {
 //           		fRunCtrl.suspend(dmc, rmSuspend);
 //            }
 //        });
-//        fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+//        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 //		try {
 //			eventWaitor.waitForEvent(ServiceEventWaitor.WAIT_FOREVER);
 //		} catch (Exception e) {
@@ -646,10 +611,10 @@ public class MIRunControlTest extends BaseTestCase {
 //			e.printStackTrace();
 //		}		
 //
-//        if (fWait.isOK() == false)
-//            Assert.assertTrue(fWait.getMessage(), false);
+//        if (wait.isOK() == false)
+//            Assert.assertTrue(wait.getMessage(), false);
 //        System.out.println("Message from isSuspended !!!  " +fRunCtrl.isSuspended(dmc));
 //        Assert.assertTrue("Target is running. It should have been suspended.", fRunCtrl.isSuspended(dmc));
-//        fWait.waitReset();
+//        wait.waitReset();
 //    }    
 }

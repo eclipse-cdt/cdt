@@ -198,7 +198,7 @@ public class SystemSelectRemoteFileOrFolderForm
 	 * Returns the input provider that drives the contents of the tree
 	 * Subclasses can override to provide custom tree contents
 	 */
-	protected ISystemSelectRemoteObjectAPIProvider getInputProvider()
+	private ISystemSelectRemoteObjectAPIProvider getInputProvider()
 	{
 		if (inputProvider == null)
 		{

@@ -15,12 +15,12 @@
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  *******************************************************************************/
 
-package org.eclipse.rse.files.ui.dialogs;
+package org.eclipse.rse.internal.files.ui.view;
 
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.internal.ui.view.SystemResourceSelectionInputProvider;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
-import org.eclipse.rse.ui.view.SystemResourceSelectionInputProvider;
 
 
 public class SystemRemoteFileSelectionInputProvider extends

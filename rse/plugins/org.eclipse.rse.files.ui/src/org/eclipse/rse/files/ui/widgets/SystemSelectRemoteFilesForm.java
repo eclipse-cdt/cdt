@@ -28,6 +28,7 @@ import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.internal.files.ui.Activator;
 import org.eclipse.rse.internal.files.ui.actions.SystemSelectFileTypesAction;
+import org.eclipse.rse.internal.files.ui.widgets.SystemFileTreeAndListGroup;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.view.SystemViewLabelAndContentProvider;
 import org.eclipse.rse.services.clientserver.messages.CommonMessages;

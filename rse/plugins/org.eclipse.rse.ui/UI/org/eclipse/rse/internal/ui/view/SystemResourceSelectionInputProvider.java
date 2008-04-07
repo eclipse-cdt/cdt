@@ -17,15 +17,18 @@
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  ********************************************************************************/
 
-package org.eclipse.rse.ui.view;
+package org.eclipse.rse.internal.ui.view;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.ui.view.ISystemResourceSelectionInputProvider;
+import org.eclipse.rse.ui.view.SystemAbstractAPIProvider;
 
 
 public abstract class SystemResourceSelectionInputProvider extends SystemAbstractAPIProvider
+	implements ISystemResourceSelectionInputProvider
 {		
 	private IHost _connection = null;
 	private boolean _onlyConnection = false;

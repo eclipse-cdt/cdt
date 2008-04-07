@@ -27,8 +27,8 @@ import org.eclipse.rse.internal.ui.view.SystemResourceSelectionForm;
 import org.eclipse.rse.ui.SystemActionViewerFilter;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.validators.IValidatorRemoteSelection;
+import org.eclipse.rse.ui.view.ISystemResourceSelectionInputProvider;
 import org.eclipse.rse.ui.view.ISystemTree;
-import org.eclipse.rse.ui.view.SystemResourceSelectionInputProvider;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
@@ -37,7 +37,7 @@ import org.eclipse.swt.widgets.Shell;
 public abstract class SystemRemoteResourceDialog extends SystemPromptDialog
 {
 	private SystemResourceSelectionForm	_form;
-	private SystemResourceSelectionInputProvider _inputProvider;
+	private ISystemResourceSelectionInputProvider _inputProvider;
 	private Object _preSelection;
 	private IValidatorRemoteSelection _selectionValidator;
 	private boolean _multipleSelectionMode;
@@ -47,7 +47,8 @@ public abstract class SystemRemoteResourceDialog extends SystemPromptDialog
 	private String _message, _tip;
 	
 
-	public SystemRemoteResourceDialog(Shell shell, String title, SystemResourceSelectionInputProvider inputProvider)
+	public SystemRemoteResourceDialog(Shell shell, String title, 
+			ISystemResourceSelectionInputProvider inputProvider)
 	{
 		super(shell, title);
 		_inputProvider = inputProvider;

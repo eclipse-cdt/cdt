@@ -15,7 +15,7 @@
  * {Name} (company) - description of contribution.
  *******************************************************************************/
 
-package org.eclipse.rse.files.ui.widgets;
+package org.eclipse.rse.internal.files.ui.widgets;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;

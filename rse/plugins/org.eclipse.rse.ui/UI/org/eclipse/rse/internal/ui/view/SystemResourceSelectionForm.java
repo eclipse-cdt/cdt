@@ -44,10 +44,10 @@ import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.validators.IValidatorRemoteSelection;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
+import org.eclipse.rse.ui.view.ISystemResourceSelectionInputProvider;
 import org.eclipse.rse.ui.view.ISystemTree;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.rse.ui.view.SystemAdapterHelpers;
-import org.eclipse.rse.ui.view.SystemResourceSelectionInputProvider;
 import org.eclipse.rse.ui.widgets.SystemHostCombo;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -67,8 +67,8 @@ public class SystemResourceSelectionForm implements ISelectionChangedListener
 	private Shell _shell;
 	private boolean _multipleSelection = true;
 	protected static final int PROMPT_WIDTH = 400; // The maximum width of the dialog's prompt, in pixels.
-	
-	private SystemResourceSelectionInputProvider _inputProvider;
+
+	private ISystemResourceSelectionInputProvider _inputProvider;
 	private SystemHostCombo _connectionCombo;
 	private SystemViewForm _systemViewForm;
 	private Composite _propertySheetContainer;
@@ -98,7 +98,8 @@ public class SystemResourceSelectionForm implements ISelectionChangedListener
 	
 	
 	public SystemResourceSelectionForm(Shell shell, Composite parent, Object caller,
-			SystemResourceSelectionInputProvider inputProvider, String verbiage,
+			ISystemResourceSelectionInputProvider inputProvider, 
+			String verbiage,
 			boolean multipleSelection, 
 			ISystemMessageLine msgLine)
 	{

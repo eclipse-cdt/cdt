@@ -1737,6 +1737,7 @@ public class DefaultCodeFormatterOptions {
 	public void setWhitesmitsSettings() {
 		setDefaultSettings();
 		this.alignment_for_expressions_in_initializer_list = Alignment.M_ONE_PER_LINE_SPLIT;
+		this.alignment_for_enumerator_list = Alignment.M_ONE_PER_LINE_SPLIT | Alignment.M_FORCE;
 		
 		this.brace_position_for_initializer_list = DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED;
 		this.brace_position_for_block = DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED;

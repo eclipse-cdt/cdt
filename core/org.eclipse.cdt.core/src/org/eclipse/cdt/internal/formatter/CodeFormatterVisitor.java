@@ -129,6 +129,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
+import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.internal.formatter.align.Alignment;
 import org.eclipse.cdt.internal.formatter.align.AlignmentException;
 import org.eclipse.cdt.internal.formatter.scanner.Scanner;
@@ -2167,19 +2168,20 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			scribe.printNextToken(Token.tCOLONCOLON);
 		}
 		scribe.printNextToken(Token.t_new);
+		scribe.space();
 		
 		// placement
 		final IASTExpression newPlacement= node.getNewPlacement();
 		if (newPlacement != null) {
 			formatParenthesizedExpression(newPlacement);
 		}
+
 		// type-id
+		scribe.space();
 		final IASTTypeId typeId= node.getTypeId();
 		final boolean expectParen= !node.isNewTypeId() && peekNextToken() == Token.tLPAREN;
 		if (expectParen) {
-			scribe.printNextToken(Token.tLPAREN, scribe.printComment());
-		} else {
-			scribe.space();
+			scribe.printNextToken(Token.tLPAREN, false);
 		}
 		typeId.accept(this);
 		if (expectParen) {
@@ -2486,7 +2488,11 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		scribe.printNextToken(Token.tGT, preferences.insert_space_before_closing_angle_bracket_in_template_arguments);
 		if (node.getPropertyInParent() != ICPPASTQualifiedName.SEGMENT_NAME) {
 			if (preferences.insert_space_after_closing_angle_bracket_in_template_arguments) {
-				scribe.space();
+				// avoid explicit space if followed by pointer operator
+				int nextToken= peekNextToken();
+				if (nextToken != IToken.tSTAR && nextToken != IToken.tAMPER) {
+					scribe.space();
+				}
 			} else {
 				scribe.printComment();
 				scribe.needSpace= false;

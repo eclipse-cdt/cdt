@@ -414,7 +414,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//void f() {
 	//	int *px = ::new int(0);
 	//	int py[] = new int[5](0, 1, 2, 3, 4);
-	//	int *pz[] = new(px) int(0);
+	//	int *pz[] = new (px) int(0);
 	//	delete[] py;
 	//	::delete px;
 	//}
@@ -598,6 +598,30 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//    E1 = 1
 	//    };
 	public void testPreserveWhitespace2_Bug225326() throws Exception {
+		fOptions= DefaultCodeFormatterOptions.getWhitesmithsSettings().getMap();
+		assertFormatterResult();
+	}
+	
+	//enum Tthe3rdtestIds
+	//{
+	//ECommand1 = 0x6001,
+	//ECommand2,
+	//EHelp,
+	//EAbout
+	//};
+	//
+	//CActiveScheduler* scheduler = new (ELeave) CActiveScheduler();
+
+	//enum Tthe3rdtestIds
+	//    {
+	//    ECommand1 = 0x6001,
+	//    ECommand2,
+	//    EHelp,
+	//    EAbout
+	//    };
+	//
+	//CActiveScheduler* scheduler = new (ELeave) CActiveScheduler();
+	public void testFormatterRegressions_Bug225858() throws Exception {
 		fOptions= DefaultCodeFormatterOptions.getWhitesmithsSettings().getMap();
 		assertFormatterResult();
 	}

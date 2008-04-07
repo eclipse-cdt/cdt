@@ -455,14 +455,12 @@ public class LineWrappingTabPage extends FormatterTabPage {
 //	    FormatterMessages.LineWrappingTabPage_enum_superinterfaces
 //	);
 //	
-//	private final Category fEnumConstantsCategory= new Category(
-//	    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ENUM_CONSTANTS,
-//	    "enum Example {" + //$NON-NLS-1$
-//	    "CANCELLED, RUNNING, WAITING, FINISHED }" + //$NON-NLS-1$
-//	    "enum Example {" + //$NON-NLS-1$
-//	    "GREEN(0, 255, 0), RED(255, 0, 0)  }", //$NON-NLS-1$
-//	    FormatterMessages.LineWrappingTabPage_enum_constants
-//	);
+	private final Category fEnumeratorsCategory= new Category(
+	    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ENUMERATOR_LIST,
+	    "enum Example {" + //$NON-NLS-1$
+	    "CANCELLED, RUNNING, WAITING, FINISHED };", //$NON-NLS-1$
+	    FormatterMessages.LineWrappingTabPage_enumerator_list
+	);
 //	
 //	private final Category fAssignmentCategory= new Category(
 //		    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ASSIGNMENT,
@@ -567,8 +565,8 @@ public class LineWrappingTabPage extends FormatterTabPage {
 		methodDeclarations.children.add(fMethodDeclarationsParametersCategory);
 		methodDeclarations.children.add(fMethodThrowsClauseCategory);
 
-//		final Category enumDeclarations= new Category(FormatterMessages.LineWrappingTabPage_enum_decls); 
-//		enumDeclarations.children.add(fEnumConstantsCategory);
+		final Category enumDeclarations= new Category(FormatterMessages.LineWrappingTabPage_enum_decls); 
+		enumDeclarations.children.add(fEnumeratorsCategory);
 //		enumDeclarations.children.add(fEnumDeclInterfacesCategory);
 //		enumDeclarations.children.add(fEnumConstArgumentsCategory);
 		
@@ -592,7 +590,7 @@ public class LineWrappingTabPage extends FormatterTabPage {
 		root.add(classDeclarations);
 //		root.add(constructorDeclarations);
 		root.add(methodDeclarations);
-//		root.add(enumDeclarations);
+		root.add(enumDeclarations);
 		root.add(functionCalls);
 		root.add(expressions);
 //		root.add(statements);

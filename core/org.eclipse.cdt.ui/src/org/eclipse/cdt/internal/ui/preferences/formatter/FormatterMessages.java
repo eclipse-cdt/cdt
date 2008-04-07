@@ -212,6 +212,8 @@ final class FormatterMessages extends NLS {
 	public static String LineWrappingTabPage_parameters;
 	public static String LineWrappingTabPage_arguments;
 	public static String LineWrappingTabPage_throws_clause;
+	public static String LineWrappingTabPage_enum_decls;
+	public static String LineWrappingTabPage_enumerator_list;
 	public static String LineWrappingTabPage_initializer_list;
 	public static String LineWrappingTabPage_conditionals;
 //	public static String LineWrappingTabPage_binary_exprs;

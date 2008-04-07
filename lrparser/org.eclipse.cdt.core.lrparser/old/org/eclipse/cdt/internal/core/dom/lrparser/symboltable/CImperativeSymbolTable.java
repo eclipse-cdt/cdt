@@ -8,14 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.core.dom.lrparser.action.c99;
+package org.eclipse.cdt.internal.core.dom.lrparser.symboltable;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings.IC99Binding;
-import org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings.IC99Scope;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 
 
 /**
@@ -27,11 +26,10 @@ import org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings.IC99Scope;
  * of bindings given their names, and a stack used to keep track
  * of scopes.
  * 
- * @deprecated Use FunctionalSymbolTable now that undo actions are needed
  * 
  * @author Mike Kucera
  */
-@Deprecated public class ImperativeSymbolTable {
+public class CImperativeSymbolTable {
 	
 	private static final int TABLE_SIZE = 256;
 	
@@ -52,11 +50,6 @@ import org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings.IC99Scope;
 		 * symbol table to the state it was in before the scope was opened.
 		 */
 		List<Integer> modifiedBuckets = new ArrayList<Integer>();
-		
-		/**
-		 * List of inner scopes that have been closed.
-		 */
-		List<IC99Scope> innerScopes = new ArrayList<IC99Scope>();
 	}
 	
 	
@@ -66,10 +59,10 @@ import org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings.IC99Scope;
 	private static class Bucket {
 		String key;
 		CNamespace namespace;
-		IC99Binding binding;
+		IBinding binding;
 		Bucket next;
 		
-		Bucket(Bucket next, CNamespace namespace, String key, IC99Binding binding) {
+		Bucket(Bucket next, CNamespace namespace, String key, IBinding binding) {
 			this.key = key;
 			this.namespace = namespace;
 			this.binding = binding;
@@ -78,7 +71,7 @@ import org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings.IC99Scope;
 	}
 	
 	
-	public ImperativeSymbolTable() {
+	public CImperativeSymbolTable() {
 		openScope(); // open the global scope
 		// TODO populate the global scope with built-ins
 	}
@@ -97,41 +90,12 @@ import org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings.IC99Scope;
 	 * 
 	 * @param mask A bit mask used to identify the namespace of the identifier.
 	 */
-	public void put(CNamespace namespace, String ident, IC99Binding b) {		
+	public void put(CNamespace namespace, String ident, IBinding b) {		
 		int index = index(ident);
 		table[index] = new Bucket(table[index], namespace, ident, b);
 		
 		SymbolScope scope = scopeStack.getLast();
 		scope.modifiedBuckets.add(index);
-	}
-	
-	
-	/**
-	 * Special version of put that adds the binding to the scope that contains
-	 * the current scope. 
-	 * 
-	 * This is here because the scope for a function body is opened before
-	 * the function binding is created.
-	 */
-	public void putInOuterScope(CNamespace namespace, String ident, IC99Binding b) {
-		LinkedList<Bucket> poppedBindings = new LinkedList<Bucket>();
-		SymbolScope scope = scopeStack.removeLast();
-		
-		for(int index : scope.modifiedBuckets) {
-			Bucket bucket = table[index];
-			poppedBindings.add(bucket);
-			table[index] = bucket.next;
-		}
-		
-		put(namespace, ident, b);
-		
-		for(int index : scope.modifiedBuckets) {
-			Bucket bucket = poppedBindings.removeFirst();
-			bucket.next = table[index];
-			table[index] = bucket;
-		}
-		
-		scopeStack.add(scope);
 	}
 	
 
@@ -141,7 +105,7 @@ import org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings.IC99Scope;
 	 * 
 	 * @param mask A bit mask used to identify the namespace of the identifier.
 	 */
-	public IC99Binding get(CNamespace namespace, String ident) {
+	public IBinding get(CNamespace namespace, String ident) {
 		Bucket b = table[index(ident)];
 		while(b != null) {
 			if(namespace == b.namespace && ident.equals(b.key))
@@ -149,11 +113,6 @@ import org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings.IC99Scope;
 			b = b.next;
 		}
 		return null;
-	}
-	
-
-	List<IC99Scope> getInnerScopes() {
-		return scopeStack.getLast().innerScopes;
 	}
 	
 	
@@ -174,35 +133,25 @@ import org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings.IC99Scope;
 	 * @param scope An IScope object that will be used to represent this scope.
 	 * @throws SymbolTableException If the global scope has already been closed or if bindingScope is null.
 	 */
-	public void closeScope(IC99Scope bindingScope) {		
+	public void closeScope() {		
 		SymbolScope poppedScope = scopeStack.removeLast(); // pop the scopeStack
-		
-		for(IC99Scope innerScope : poppedScope.innerScopes) {
-			innerScope.setParent(bindingScope);
-		}
-		
-		if(!scopeStack.isEmpty()) { // would be empty if the global scope was popped
-			SymbolScope outerScope = scopeStack.getLast();
-			outerScope.innerScopes.add(bindingScope);
-		}
 			
 		// pop each bucket that was modified in the scope
-		for(int index : poppedScope.modifiedBuckets) {
-			Bucket bucket = table[index];
-			bucket.binding.setScope(bindingScope);
-			table[index] = bucket.next;
-		}
+		for(int index : poppedScope.modifiedBuckets)
+			table[index] = table[index].next;
 	}
 	
 	
+	@SuppressWarnings("nls")
+	@Override
 	public String toString() {
-		StringBuilder buff = new StringBuilder("[");
+		StringBuilder buff = new StringBuilder('[');
 		for(Bucket b : table) {
 			while(b != null) {
-				buff.append("<").append(b.key).append(": ").append(b.binding).append(">, ");
+				buff.append('<').append(b.key).append(": ").append(b.binding).append(">, ");
 				b = b.next;
 			}
 		}
-		return buff.append("]").toString();
+		return buff.append(']').toString();
 	}
 }

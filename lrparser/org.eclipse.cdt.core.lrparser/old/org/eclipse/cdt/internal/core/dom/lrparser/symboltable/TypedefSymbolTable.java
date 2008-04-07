@@ -8,10 +8,9 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.core.dom.lrparser.action.c99;
+package org.eclipse.cdt.internal.core.dom.lrparser.symboltable;
 
 
-import org.eclipse.cdt.core.dom.lrparser.action.FunctionalMap;
 
 /**
  * A facade for a FunctionalMap that is used just to track typedef

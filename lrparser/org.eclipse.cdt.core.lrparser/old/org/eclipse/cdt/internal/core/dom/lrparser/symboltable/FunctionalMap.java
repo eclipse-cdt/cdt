@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.core.dom.lrparser.action;
+package org.eclipse.cdt.internal.core.dom.lrparser.symboltable;
 
 
 /**
@@ -41,8 +41,9 @@ package org.eclipse.cdt.core.dom.lrparser.action;
  */
 public class FunctionalMap<K extends Comparable<K>, V> {
 
-	// better than an enum because enum variables can be null
-	private static final boolean RED = true, BLACK = false;
+	private static final boolean 
+		RED = true, 
+		BLACK = false;
 
 
 	private static class Node<K, V> {
@@ -60,8 +61,10 @@ public class FunctionalMap<K extends Comparable<K>, V> {
 			this.color = color;
 		}
 		
-		@Override public String toString() {
-			return "Node(" + key + "," + val + "," + (color ? "R" : "B")  + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+		@SuppressWarnings("nls")
+		@Override 
+		public String toString() {
+			return "Node(" + key + "," + val + "," + (color ? "R" : "B")  + ")"; 
 		}
 	}
 	

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.core.dom.lrparser.action.c99;
+package org.eclipse.cdt.internal.core.dom.lrparser.c99.action.deprecated;
 
 import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.*;
 

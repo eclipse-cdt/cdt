@@ -8,10 +8,9 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.core.dom.lrparser.action.c99;
+package org.eclipse.cdt.internal.core.dom.lrparser.symboltable;
 
 
-import org.eclipse.cdt.core.dom.lrparser.action.FunctionalMap;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings.IC99Binding;
 
 /**
@@ -23,7 +22,7 @@ import org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings.IC99Binding;
  * 
  * @author Mike Kucera
  */
-@Deprecated public class C99SymbolTable {
+public class C99SymbolTable {
 	
 	/**
 	 * Adapter objects are used as the keys. The trick here is to implement

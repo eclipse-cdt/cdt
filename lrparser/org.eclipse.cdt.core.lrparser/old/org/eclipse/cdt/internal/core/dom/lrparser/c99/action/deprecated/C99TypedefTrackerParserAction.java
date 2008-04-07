@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.core.dom.lrparser.action.c99;
+package org.eclipse.cdt.internal.core.dom.lrparser.c99.action.deprecated;
 
 import java.util.LinkedList;
 
@@ -16,6 +16,7 @@ import lpg.lpgjavaruntime.IToken;
 
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
 import org.eclipse.cdt.core.parser.util.DebugUtil;
+import org.eclipse.cdt.internal.core.dom.lrparser.symboltable.TypedefSymbolTable;
 /**
  * A simple set of trial and undo actions that just keep track
  * of typedef names. This information is then fed back to the parser

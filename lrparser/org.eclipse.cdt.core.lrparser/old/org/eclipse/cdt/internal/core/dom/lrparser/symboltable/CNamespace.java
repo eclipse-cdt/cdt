@@ -8,22 +8,22 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.core.dom.lrparser.action.c99;
+package org.eclipse.cdt.internal.core.dom.lrparser.symboltable;
 
-import org.eclipse.cdt.core.dom.lrparser.action.c99.SymbolTableTests;
+/**
+ * The C language has 4 namespaces for identifiers.
+ * This enum represents three of them, the "member" namespace 
+ * is represented by IStructure.getFields().
+ * 
+ * The symbol table uses these to mark identifiers and keep
+ * the namespaces separate.
+ * 
+ * @author Mike Kucera
+ */
+public enum CNamespace {
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+	GOTO_LABEL, // goto labels
+	STRUCT_TAG,// structs, unions, enums
+	IDENTIFIER; // all other identifiers
 
-public class ActionTestSuite extends TestSuite {
-	
-	
-	public static Test suite() {
-		TestSuite suite = new TestSuite();
-		
-		suite.addTestSuite(SymbolTableTests.class);
-		suite.addTestSuite(ResolverActionTests.class);
-		
-		return suite;
-	}	
 }

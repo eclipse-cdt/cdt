@@ -11,7 +11,7 @@
 package org.eclipse.cdt.internal.core.dom.lrparser.c99;
 
 import org.eclipse.cdt.core.dom.lrparser.action.c99.C99BuildASTParserAction;
-import org.eclipse.cdt.core.dom.lrparser.action.c99.C99TypedefTrackerParserAction;
+import org.eclipse.cdt.internal.core.dom.lrparser.c99.action.deprecated.C99TypedefTrackerParserAction;
 
 class C99ParserAction {
 

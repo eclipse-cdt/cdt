@@ -8,12 +8,10 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.core.dom.lrparser.action.c99;
+package org.eclipse.cdt.internal.core.dom.lrparser.c99.action.deprecated;
 
-import static org.eclipse.cdt.core.dom.lrparser.action.c99.CNamespace.GOTO_LABEL;
-import static org.eclipse.cdt.core.dom.lrparser.action.c99.CNamespace.IDENTIFIER;
-import static org.eclipse.cdt.core.dom.lrparser.action.c99.CNamespace.STRUCT_TAG;
 import static org.eclipse.cdt.core.parser.util.CollectionUtils.reverseIterable;
+import static org.eclipse.cdt.internal.core.dom.lrparser.symboltable.CNamespace.*;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -57,6 +55,7 @@ import org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings.C99Variable;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings.IC99Binding;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings.IC99Scope;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings.ITypeable;
+import org.eclipse.cdt.internal.core.dom.lrparser.symboltable.C99SymbolTable;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 /**
  * This class was an attempt at doing full binding resolution during the parse

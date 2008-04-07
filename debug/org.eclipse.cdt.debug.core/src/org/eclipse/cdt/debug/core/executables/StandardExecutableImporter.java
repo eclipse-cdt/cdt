@@ -78,6 +78,12 @@ public class StandardExecutableImporter implements IExecutableImporter {
 						IWorkspace workspace = ResourcesPlugin.getWorkspace();
 						IProject newProjectHandle = workspace.getRoot().getProject(defaultProjectName);
 
+						int projectSuffix = 2;
+						while (newProjectHandle.exists()){						
+							newProjectHandle = workspace.getRoot().getProject(defaultProjectName + projectSuffix);
+							projectSuffix++;
+						}
+
 						IProjectDescription description = workspace.newProjectDescription(newProjectHandle.getName());
 						description.setLocation(null);
 						IFileStore store;

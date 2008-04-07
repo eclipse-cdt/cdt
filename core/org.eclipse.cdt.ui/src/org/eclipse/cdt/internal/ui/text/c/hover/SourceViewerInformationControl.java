@@ -63,10 +63,8 @@ import org.eclipse.cdt.internal.ui.text.SimpleCSourceViewerConfiguration;
  */
 public class SourceViewerInformationControl implements IInformationControl, IInformationControlExtension, IInformationControlExtension3, IInformationControlExtension5, DisposeListener {
 
-	/** Border thickness in pixels. */
-	private static final int BORDER= 1;
 	/** The control's shell */
-	Shell fShell;
+	private Shell fShell;
 	/** The control's text widget */
 	private StyledText fText;
 	/** The control's source viewer */
@@ -133,15 +131,13 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 
 		fShell= new Shell(parent, SWT.NO_FOCUS | SWT.ON_TOP | shellStyle);
 		Display display= fShell.getDisplay();
-		fShell.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
 
 		initializeColors();
 
 		Composite composite= fShell;
 		layout= new GridLayout(1, false);
-		int border= ((shellStyle & SWT.NO_TRIM) == 0) ? 0 : BORDER;
-		layout.marginHeight= border;
-		layout.marginWidth= border;
+		layout.marginHeight= 0;
+		layout.marginWidth= 0;
 		composite.setLayout(layout);
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		composite.setLayoutData(gd);
@@ -151,6 +147,7 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 			layout= new GridLayout(1, false);
 			layout.marginHeight= 0;
 			layout.marginWidth= 0;
+			layout.verticalSpacing= 1;
 			composite.setLayout(layout);
 			gd= new GridData(GridData.FILL_BOTH);
 			composite.setLayoutData(gd);
@@ -168,7 +165,7 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 		fText= fViewer.getTextWidget();
 		gd= new GridData(GridData.BEGINNING | GridData.FILL_BOTH);
 		fText.setLayoutData(gd);
-		fText.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
+		fText.setForeground(display.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
 		fText.setBackground(fBackgroundColor);
 
 		initializeFont();
@@ -199,7 +196,7 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 				fontDatas[i].setHeight(fontDatas[i].getHeight() * 9 / 10);
 			fStatusTextFont= new Font(fStatusField.getDisplay(), fontDatas);
 			fStatusField.setFont(fStatusTextFont);
-			GridData gd2= new GridData(GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING);
+			GridData gd2= new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 			fStatusField.setLayoutData(gd2);
 
 			// Regarding the color see bug 41128
@@ -279,6 +276,7 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 			fStatusTextFont.dispose();
 
 		fStatusTextFont= null;
+		fTextFont= null;
 		fShell= null;
 		fText= null;
 	}
@@ -299,17 +297,7 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 	 * @see IInformationControl#setSize(int, int)
 	 */
 	public void setSize(int width, int height) {
-
-		if (fStatusField != null) {
-			GridData gd= (GridData)fViewer.getTextWidget().getLayoutData();
-			Point statusSize= fStatusField.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-			Point separatorSize= fSeparator.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-			gd.heightHint= height - statusSize.y - separatorSize.y;
-		}
 		fShell.setSize(width, height);
-
-		if (fStatusField != null)
-			fShell.pack(true);
 	}
 
 	/*
@@ -518,7 +506,8 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.IInformationControlExtension5#allowMoveIntoControl()
+	 * This method has been removed from IInformationControlExtension5 in 3.4 M6.
+	 * TODO Remove this method. Just kept to stay compilable against 3.4 M5.
 	 */
 	public boolean allowMoveIntoControl() {
 		return true;

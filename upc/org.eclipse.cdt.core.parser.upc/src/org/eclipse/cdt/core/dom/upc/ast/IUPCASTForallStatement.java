@@ -17,18 +17,6 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 
 public interface IUPCASTForallStatement extends IASTForStatement {	
 
-	public static final ASTNodeProperty CONDITION = new ASTNodeProperty(
-			"IUPCASTForallStatement.CONDITION - IASTExpression condition of IUPCASTForallStatement"); //$NON-NLS-1$
-
-	public static final ASTNodeProperty ITERATION = new ASTNodeProperty(
-			"IUPCASTForallStatement.ITERATION - IASTExpression iteration of IUPCASTForallStatement"); //$NON-NLS-1$
-
-	public static final ASTNodeProperty BODY = new ASTNodeProperty(
-			"IUPCASTForallStatement.BODY - IASTStatement body of IUPCASTForallStatement"); //$NON-NLS-1$
-
-    public static final ASTNodeProperty INITIALIZER = new ASTNodeProperty(
-            "IUPCASTForallStatement.INITIALIZER - initializer for IUPCASTForallStatement"); //$NON-NLS-1$
-    
     public static final ASTNodeProperty AFFINITY = new ASTNodeProperty(
     		"IUPCASTForallStatement.AFFINITY - IASTExpression affinity for IUPCASTForallStatement"); //$NON-NLS-1$
     

@@ -15,10 +15,9 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
 import org.eclipse.cdt.core.dom.lrparser.BaseExtensibleLanguage;
+import org.eclipse.cdt.core.dom.lrparser.IDOMTokenMap;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
-import org.eclipse.cdt.core.dom.lrparser.action.ITokenMap;
 import org.eclipse.cdt.core.dom.lrparser.action.c99.C99ASTNodeFactory;
-import org.eclipse.cdt.core.dom.lrparser.action.cpp.CPPASTNodeFactory;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.IContributedModelBuilder;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -26,7 +25,6 @@ import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parser;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTTranslationUnit;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 
 /**
  * ILanguage implementation for the C99 parser.
@@ -38,7 +36,7 @@ public class C99Language extends BaseExtensibleLanguage {
 	public static final String PLUGIN_ID = "org.eclipse.cdt.core.lrparser"; //$NON-NLS-1$ 
 	public static final String ID = PLUGIN_ID + ".c99"; //$NON-NLS-1$ 
 	
-	private static final ITokenMap TOKEN_MAP = DOMToC99TokenMap.DEFAULT_MAP;
+	private static final IDOMTokenMap TOKEN_MAP = DOMToC99TokenMap.DEFAULT_MAP;
 	private static GCCLanguage GCC_LANGUAGE = GCCLanguage.getDefault();
 	
 	
@@ -55,7 +53,7 @@ public class C99Language extends BaseExtensibleLanguage {
 	}
 
 	@Override
-	protected ITokenMap getTokenMap() {
+	protected IDOMTokenMap getTokenMap() {
 		return TOKEN_MAP;
 	}
 

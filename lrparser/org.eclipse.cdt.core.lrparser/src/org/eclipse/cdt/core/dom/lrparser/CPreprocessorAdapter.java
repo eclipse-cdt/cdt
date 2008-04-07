@@ -14,7 +14,6 @@ import lpg.lpgjavaruntime.IToken;
 import lpg.lpgjavaruntime.Token;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.lrparser.action.ITokenMap;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IScanner;
 
@@ -40,9 +39,7 @@ class CPreprocessorAdapter {
 	
 	private static final int DUMMY_TOKEN_KIND = 0;
 	
-	
 	private static final int tCOMPLETION   = org.eclipse.cdt.core.parser.IToken.tCOMPLETION;
-	private static final int tEND_OF_INPUT = org.eclipse.cdt.core.parser.IToken.tEND_OF_INPUT;
 	private static final int tEOC          = org.eclipse.cdt.core.parser.IToken.tEOC;
 	
 	
@@ -53,7 +50,7 @@ class CPreprocessorAdapter {
 	 * TODO: should preprocessor.nextTokenRaw() be called instead?
 	 */
 	@SuppressWarnings("restriction")
-	public static void runCPreprocessor(IScanner preprocessor, ITokenCollector tokenCollector, ITokenMap tokenMap, IASTTranslationUnit tu) {
+	public static void runCPreprocessor(IScanner preprocessor, ITokenCollector tokenCollector, IDOMTokenMap tokenMap, IASTTranslationUnit tu) {
 		// LPG requires that the token stream start with a dummy token
 		tokenCollector.addToken(createDummyToken());
 		
@@ -62,12 +59,12 @@ class CPreprocessorAdapter {
 		try {
 			while(true) {
 				org.eclipse.cdt.core.parser.IToken domToken = preprocessor.nextToken(); // throws EndOfFileException
-				int type = domToken.getType();
-				
-				int newKind = tokenMap.mapKind(type);			
+
+				int newKind = tokenMap.mapKind(domToken);			
 				IToken token = new LPGTokenAdapter(domToken, newKind);
 				tokenCollector.addToken(token);
 				
+				int type = domToken.getType();
 				if(type == tCOMPLETION) {
 					// the token after the completion token must be an EOC token
 					org.eclipse.cdt.core.parser.IToken domEocToken = preprocessor.nextToken();
@@ -90,16 +87,16 @@ class CPreprocessorAdapter {
 	
 	
 	
-	private static IToken createEOCToken(org.eclipse.cdt.core.parser.IToken domEocToken, ITokenMap tokenMap) {
-		return new LPGTokenAdapter(domEocToken, tokenMap.mapKind(domEocToken.getType()));
+	private static IToken createEOCToken(org.eclipse.cdt.core.parser.IToken domEocToken, IDOMTokenMap tokenMap) {
+		return new LPGTokenAdapter(domEocToken, tokenMap.mapKind(domEocToken));
 	}
 	
 	private static IToken createDummyToken() {
 		return new Token(null, 0, 0, DUMMY_TOKEN_KIND);
 	}
 	
-	private static IToken createEOFToken(ITokenMap tokenMap) {
-		return new Token(null, 0, 0, tokenMap.mapKind(tEND_OF_INPUT));
+	private static IToken createEOFToken(IDOMTokenMap tokenMap) {
+		return new Token(null, 0, 0, tokenMap.getEOFTokenKind());
 	}
 	
 	

@@ -12,9 +12,11 @@ package org.eclipse.cdt.internal.core.dom.parser.upc.ast;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTEnumerationSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTEnumerationSpecifier;
 
+@SuppressWarnings("restriction")
 public class UPCASTEnumerationSpecifier extends CASTEnumerationSpecifier
 		implements IUPCASTEnumerationSpecifier {
 
@@ -23,6 +25,18 @@ public class UPCASTEnumerationSpecifier extends CASTEnumerationSpecifier
 	private IASTExpression blockSizeExpression;
 	
 	
+	public UPCASTEnumerationSpecifier() {
+	}
+
+	public UPCASTEnumerationSpecifier(IASTName name) {
+		super(name);
+	}
+	
+	public UPCASTEnumerationSpecifier(IASTName name, IASTExpression blockSizeExpression) {
+		super(name);
+		setBlockSizeExpression(blockSizeExpression);
+	}
+
 	public IASTExpression getBlockSizeExpression() {
 		return blockSizeExpression;
 	}
@@ -37,6 +51,10 @@ public class UPCASTEnumerationSpecifier extends CASTEnumerationSpecifier
 
 	public void setBlockSizeExpression(IASTExpression expr) {
 		this.blockSizeExpression = expr;
+		if(expr != null) {
+			expr.setParent(this);
+			expr.setPropertyInParent(BLOCK_SIZE_EXPRESSION);
+		}
 	}
 
 	public void setReferenceType(int referenceType) {
@@ -47,6 +65,7 @@ public class UPCASTEnumerationSpecifier extends CASTEnumerationSpecifier
 		this.sharedQualifier = shared;
 	}
 
+	@Override
 	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitDeclSpecifiers ){
 		    switch( action.visit( this ) ){

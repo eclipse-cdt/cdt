@@ -16,10 +16,6 @@ package org.eclipse.cdt.core.dom.lrparser.action;
  * Maps tokens defined in parser extensions back to the token kinds
  * defined in the lr parsers.
  * 
- * When LPG is used to generate a parser extension it will
- * generate all-new token kinds. In order for the semantic actions to be able
- * to interpret these token kinds correctly they will be mapped back
- * to the token kinds defined in C99Parsersym. 
  * 
  * @author Mike Kucera
  */

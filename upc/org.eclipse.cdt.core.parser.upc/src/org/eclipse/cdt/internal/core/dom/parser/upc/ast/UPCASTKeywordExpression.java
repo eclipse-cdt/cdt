@@ -17,11 +17,19 @@ import org.eclipse.cdt.core.dom.upc.ast.IUPCASTKeywordExpression;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.c.CBasicType;
 
+@SuppressWarnings("restriction")
 public class UPCASTKeywordExpression extends CASTNode implements IUPCASTKeywordExpression {
 
 	
 	private int keywordKind;
 	
+	public UPCASTKeywordExpression() {
+	}
+
+	public UPCASTKeywordExpression(int keywordKind) {
+		this.keywordKind = keywordKind;
+	}
+
 	public int getKeywordKind() {
 		return keywordKind;
 	}
@@ -36,6 +44,7 @@ public class UPCASTKeywordExpression extends CASTNode implements IUPCASTKeywordE
 	}
 
 	
+	@Override
 	public boolean accept(ASTVisitor visitor) {
 		if(visitor.shouldVisitExpressions) {
 			switch(visitor.visit(this)) {

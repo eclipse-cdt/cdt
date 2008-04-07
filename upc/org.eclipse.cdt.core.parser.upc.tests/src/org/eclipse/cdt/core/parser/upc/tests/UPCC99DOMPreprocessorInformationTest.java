@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.upc.tests;
 
-import org.eclipse.cdt.core.dom.c99.BaseExtensibleLanguage;
+import org.eclipse.cdt.core.dom.lrparser.BaseExtensibleLanguage;
 import org.eclipse.cdt.core.dom.upc.UPCLanguage;
-import org.eclipse.cdt.core.parser.c99.tests.C99DOMPreprocessorInformationTest;
+import org.eclipse.cdt.core.lrparser.tests.c99.C99DOMPreprocessorInformationTest;
 
 public class UPCC99DOMPreprocessorInformationTest extends C99DOMPreprocessorInformationTest {
 

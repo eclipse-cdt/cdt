@@ -12,9 +12,11 @@ package org.eclipse.cdt.internal.core.dom.parser.upc.ast;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTTypedefNameSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTTypedefNameSpecifier;
 
+@SuppressWarnings("restriction")
 public class UPCASTTypedefNameSpecifier extends CASTTypedefNameSpecifier
 		implements IUPCASTTypedefNameSpecifier {
 	
@@ -24,6 +26,14 @@ public class UPCASTTypedefNameSpecifier extends CASTTypedefNameSpecifier
 	private IASTExpression blockSizeExpression;
 	
 	
+	public UPCASTTypedefNameSpecifier() {
+	}
+
+	public UPCASTTypedefNameSpecifier(IASTName name, IASTExpression blockSizeExpression) {
+		super(name);
+		setBlockSizeExpression(blockSizeExpression);
+	}
+
 	public IASTExpression getBlockSizeExpression() {
 		return blockSizeExpression;
 	}
@@ -38,6 +48,10 @@ public class UPCASTTypedefNameSpecifier extends CASTTypedefNameSpecifier
 
 	public void setBlockSizeExpression(IASTExpression expr) {
 		this.blockSizeExpression = expr;
+		if(expr != null) {
+			expr.setParent(this);
+			expr.setPropertyInParent(BLOCK_SIZE_EXPRESSION);
+		}
 	}
 
 	public void setReferenceType(int referenceType) {
@@ -49,6 +63,7 @@ public class UPCASTTypedefNameSpecifier extends CASTTypedefNameSpecifier
 	}
 
 	
+	@Override
 	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitDeclSpecifiers ){
 		    switch( action.visit( this ) ){

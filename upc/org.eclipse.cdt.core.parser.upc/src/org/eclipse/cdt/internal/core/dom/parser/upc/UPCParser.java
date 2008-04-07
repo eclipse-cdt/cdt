@@ -13,28 +13,43 @@
 
 package org.eclipse.cdt.internal.core.dom.parser.upc;
 
-import lpg.lpgjavaruntime.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-import java.util.*;
+import lpg.lpgjavaruntime.BacktrackingParser;
+import lpg.lpgjavaruntime.BadParseException;
+import lpg.lpgjavaruntime.BadParseSymFileException;
+import lpg.lpgjavaruntime.DiagnoseParser;
+import lpg.lpgjavaruntime.ErrorToken;
+import lpg.lpgjavaruntime.IToken;
+import lpg.lpgjavaruntime.LexStream;
+import lpg.lpgjavaruntime.Monitor;
+import lpg.lpgjavaruntime.NotBacktrackParseTableException;
+import lpg.lpgjavaruntime.NullExportedSymbolsException;
+import lpg.lpgjavaruntime.NullTerminalSymbolsException;
+import lpg.lpgjavaruntime.ParseErrorCodes;
+import lpg.lpgjavaruntime.ParseTable;
+import lpg.lpgjavaruntime.PrsStream;
+import lpg.lpgjavaruntime.RuleAction;
+import lpg.lpgjavaruntime.TokenStream;
+import lpg.lpgjavaruntime.UndefinedEofSymbolException;
+import lpg.lpgjavaruntime.UnimplementedTerminalsException;
 
-import org.eclipse.cdt.core.dom.ast.*;
-import org.eclipse.cdt.core.dom.c99.IParserActionTokenProvider;
-import org.eclipse.cdt.core.dom.c99.IParser;
-import org.eclipse.cdt.core.dom.c99.IParseResult;
-import org.eclipse.cdt.core.dom.c99.IPreprocessorTokenCollector;
-import org.eclipse.cdt.core.dom.parser.c99.C99ParseResult;
-import org.eclipse.cdt.core.dom.parser.c99.C99ParserAction;
+import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
-import org.eclipse.cdt.core.dom.c99.IKeywordMap;
-import org.eclipse.cdt.core.dom.parser.c99.C99KeywordMap;
-
-import org.eclipse.cdt.core.dom.upc.ast.IUPCASTKeywordExpression;
-import org.eclipse.cdt.core.dom.upc.ast.IUPCASTSizeofExpression;
-import org.eclipse.cdt.core.dom.upc.ast.IUPCASTSynchronizationStatement;
-import org.eclipse.cdt.internal.core.dom.parser.c99.C99Lexer;
-import org.eclipse.cdt.internal.core.dom.parser.c99.C99Parsersym;
-import org.eclipse.cdt.core.dom.parser.upc.UPCKeywordMap;
+import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
+import org.eclipse.cdt.core.dom.lrparser.IParser;
+import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
+import org.eclipse.cdt.core.dom.parser.upc.DOMToUPCTokenMap;
 import org.eclipse.cdt.core.dom.parser.upc.UPCParserAction;
+import org.eclipse.cdt.core.dom.upc.ast.IUPCASTKeywordExpression;
+import org.eclipse.cdt.core.dom.upc.ast.IUPCASTSynchronizationStatement;
+import org.eclipse.cdt.core.dom.upc.ast.IUPCASTUnaryExpression;
 
 public class UPCParser extends PrsStream implements RuleAction , IParserActionTokenProvider, IParser, IPreprocessorTokenCollector<IToken> 
 {
@@ -175,7 +190,7 @@ public class UPCParser extends PrsStream implements RuleAction , IParserActionTo
 
 private  UPCParserAction  action = new  UPCParserAction (this);
 private List commentTokens = new ArrayList();
-private IKeywordMap keywordMap = new  UPCKeywordMap ();
+private IKeywordMap keywordMap = new  DOMToUPCTokenMap ();
 
 public UPCParser() {  // constructor
 	this(new  UPCLexer ());
@@ -1455,37 +1470,37 @@ public List getRuleTokens() {
             //
             // Rule 295:  unary_expression ::= upc_localsizeof unary_expression
             //
-            case 295: { action.beforeConsume(); action.   consumeExpressionUpcSizeofOperator(IUPCASTSizeofExpression.op_upc_localsizeof);           break;
+            case 295: { action.beforeConsume(); action.   consumeExpressionUpcSizeofOperator(IUPCASTUnaryExpression.op_upc_localsizeof);           break;
             }
  
             //
             // Rule 296:  unary_expression ::= upc_localsizeof ( type_name )
             //
-            case 296: { action.beforeConsume(); action.   consumeExpressionUpcSizeofTypeName(IUPCASTSizeofExpression.op_upc_localsizeof);           break;
+            case 296: { action.beforeConsume(); action.   consumeExpressionUpcSizeofTypeName(IUPCASTUnaryExpression.op_upc_localsizeof);           break;
             }
  
             //
             // Rule 297:  unary_expression ::= upc_blocksizeof unary_expression
             //
-            case 297: { action.beforeConsume(); action.   consumeExpressionUpcSizeofOperator(IUPCASTSizeofExpression.op_upc_blocksizeof);           break;
+            case 297: { action.beforeConsume(); action.   consumeExpressionUpcSizeofOperator(IUPCASTUnaryExpression.op_upc_blocksizeof);           break;
             }
  
             //
             // Rule 298:  unary_expression ::= upc_blocksizeof ( type_name )
             //
-            case 298: { action.beforeConsume(); action.   consumeExpressionUpcSizeofTypeName(IUPCASTSizeofExpression.op_upc_blocksizeof);           break;
+            case 298: { action.beforeConsume(); action.   consumeExpressionUpcSizeofTypeName(IUPCASTUnaryExpression.op_upc_blocksizeof);           break;
             }
  
             //
             // Rule 299:  unary_expression ::= upc_elemsizeof unary_expression
             //
-            case 299: { action.beforeConsume(); action.   consumeExpressionUpcSizeofOperator(IUPCASTSizeofExpression.op_upc_elemsizeof);           break;
+            case 299: { action.beforeConsume(); action.   consumeExpressionUpcSizeofOperator(IUPCASTUnaryExpression.op_upc_elemsizeof);           break;
             }
  
             //
             // Rule 300:  unary_expression ::= upc_elemsizeof ( type_name )
             //
-            case 300: { action.beforeConsume(); action.   consumeExpressionUpcSizeofTypeName(IUPCASTSizeofExpression.op_upc_elemsizeof);           break;
+            case 300: { action.beforeConsume(); action.   consumeExpressionUpcSizeofTypeName(IUPCASTUnaryExpression.op_upc_elemsizeof);           break;
             }
  
             //

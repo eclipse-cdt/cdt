@@ -12,9 +12,9 @@ package org.eclipse.cdt.core.parser.upc.tests;
 
 import junit.framework.TestSuite;
 
-import org.eclipse.cdt.core.dom.c99.BaseExtensibleLanguage;
+import org.eclipse.cdt.core.dom.lrparser.BaseExtensibleLanguage;
 import org.eclipse.cdt.core.dom.upc.UPCLanguage;
-import org.eclipse.cdt.core.parser.c99.tests.C99Tests;
+import org.eclipse.cdt.core.lrparser.tests.c99.C99Tests;
 /**
  * Run the C99 tests against the UPC parser
  *

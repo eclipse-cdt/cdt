@@ -12,9 +12,11 @@ package org.eclipse.cdt.internal.core.dom.parser.upc.ast;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTElaboratedTypeSpecifier;
 
+@SuppressWarnings("restriction")
 public class UPCASTElaboratedTypeSpecifier extends CASTElaboratedTypeSpecifier implements IUPCASTElaboratedTypeSpecifier {
 
 	private int referenceType;
@@ -22,6 +24,18 @@ public class UPCASTElaboratedTypeSpecifier extends CASTElaboratedTypeSpecifier i
 	private IASTExpression blockSizeExpression;
 	
 	
+	public UPCASTElaboratedTypeSpecifier() {
+	}
+
+	public UPCASTElaboratedTypeSpecifier(int kind, IASTName name) {
+		super(kind, name);
+	}
+	
+	public UPCASTElaboratedTypeSpecifier(int kind, IASTName name, IASTExpression blockSizeExpression) {
+		super(kind, name);
+		setBlockSizeExpression(blockSizeExpression);
+	}
+
 	public IASTExpression getBlockSizeExpression() {
 		return blockSizeExpression;
 	}
@@ -36,6 +50,10 @@ public class UPCASTElaboratedTypeSpecifier extends CASTElaboratedTypeSpecifier i
 
 	public void setBlockSizeExpression(IASTExpression expr) {
 		this.blockSizeExpression = expr;
+		if(expr != null) {
+			expr.setParent(this);
+			expr.setPropertyInParent(BLOCK_SIZE_EXPRESSION);
+		}
 	}
 
 	public void setReferenceType(int referenceType) {
@@ -47,6 +65,7 @@ public class UPCASTElaboratedTypeSpecifier extends CASTElaboratedTypeSpecifier i
 	}
 	
 	
+	@Override
 	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitDeclSpecifiers ){
 		    switch( action.visit( this ) ){

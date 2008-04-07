@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,40 +8,37 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.core.dom.lrparser.c99;
+package org.eclipse.cdt.core.dom.parser.upc;
+
 
 import static org.eclipse.cdt.core.parser.IToken.*;
-import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.*;
+import static org.eclipse.cdt.internal.core.dom.parser.upc.UPCParsersym.*;
 
 import org.eclipse.cdt.core.dom.lrparser.IDOMTokenMap;
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.util.CharArrayMap;
+import org.eclipse.cdt.internal.core.dom.parser.upc.UPCParsersym;
+
 
 /**
- * Maps tokens types returned by CPreprocessor to token types
- * expected by the C99 parser.
+ * Maps token kinds from CPreprocessor to the tokens kinds
+ * created by LPG.
  * 
- * 
- * TODO: Make token maps composable.
- * 
- * The idea would be to combine a DOM->C99 map with a C99->UPC map 
- * to get a DOM->UPC map.
+ * TODO UPC keywords need to be syntax highlighted
  * 
  * @author Mike Kucera
- *
  */
-public final class DOMToC99TokenMap implements IDOMTokenMap {
+@SuppressWarnings("nls")
+public class DOMToUPCTokenMap implements IDOMTokenMap {
+	
 
-	
-	public static final DOMToC99TokenMap DEFAULT_MAP = new DOMToC99TokenMap();
-	
-	private DOMToC99TokenMap() {
-		// just a private constructor
-	}
-	
 	public int mapKind(IToken token) {
 		
 		switch(token.getType()) {
-			case tIDENTIFIER   : return TK_identifier;
+			case tIDENTIFIER : 
+				Integer keywordKind = UPCKeyword.getTokenKind(token.getCharImage());
+				return keywordKind == null ? TK_identifier : keywordKind;
+			
 			case tINTEGER      : return TK_integer;
 			case tCOLON        : return TK_Colon;
 			case tSEMI         : return TK_SemiColon;
@@ -136,16 +133,21 @@ public final class DOMToC99TokenMap implements IDOMTokenMap {
 			case tCOMPLETION   : return TK_Completion;
 			case tEOC          : return TK_EndOfCompletion; 
 			case tEND_OF_INPUT : return TK_EOF_TOKEN;
-
+	
 			default:
-				assert false : "token not recognized by the C99 parser: " + token.getType(); //$NON-NLS-1$
+				assert false : "token not recognized by the UPC parser: " + token.getType(); 
 				return TK_Invalid;
 		}
 	}
 
 	
+	protected String[] getOrderedTerminalSymbols() {
+		return UPCParsersym.orderedTerminalSymbols;
+	}
+
 	public int getEOFTokenKind() {
 		return TK_EOF_TOKEN;
 	}
+
 
 }

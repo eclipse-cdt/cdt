@@ -15,8 +15,8 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.dom.lrparser.BaseExtensibleLanguage;
+import org.eclipse.cdt.core.dom.lrparser.IDOMTokenMap;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
-import org.eclipse.cdt.core.dom.lrparser.action.ITokenMap;
 import org.eclipse.cdt.core.dom.lrparser.action.cpp.CPPASTNodeFactory;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.IContributedModelBuilder;
@@ -36,7 +36,7 @@ public class ISOCPPLanguage extends BaseExtensibleLanguage {
 	public static final String PLUGIN_ID = "org.eclipse.cdt.core.lrparser"; //$NON-NLS-1$ 
 	public static final String ID = PLUGIN_ID + ".isocpp"; //$NON-NLS-1$ 
 	
-	private static final ITokenMap TOKEN_MAP = DOMToISOCPPTokenMap.DEFAULT_MAP;
+	private static final IDOMTokenMap TOKEN_MAP = DOMToISOCPPTokenMap.DEFAULT_MAP;
 	private static GPPLanguage GPP_LANGUAGE = GPPLanguage.getDefault();
 	
 	
@@ -53,7 +53,7 @@ public class ISOCPPLanguage extends BaseExtensibleLanguage {
 	}
 
 	@Override
-	protected ITokenMap getTokenMap() {
+	protected IDOMTokenMap getTokenMap() {
 		return TOKEN_MAP;
 	}
 

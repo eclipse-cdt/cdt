@@ -16,11 +16,21 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTForallStatement;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTForStatement;
 
+@SuppressWarnings("restriction")
 public class UPCASTForallStatement extends CASTForStatement implements IUPCASTForallStatement {
 
 	private IASTExpression affinity;
 	private boolean affinityContinue;
 	
+
+	public UPCASTForallStatement() {
+	}
+
+	public UPCASTForallStatement(IASTStatement init, IASTExpression condition,
+			IASTExpression iterationExpression, IASTStatement body, IASTExpression affinity) {
+		super(init, condition, iterationExpression, body);
+		setAffinityExpression(affinity);
+	}
 
 	public boolean isAffinityContinue() {
 		return affinityContinue;
@@ -34,6 +44,10 @@ public class UPCASTForallStatement extends CASTForStatement implements IUPCASTFo
 		if(affinity != null)
 			this.affinityContinue = false;
 		this.affinity = affinity;
+		if(affinity != null) {
+			affinity.setParent(this);
+			affinity.setPropertyInParent(AFFINITY);
+		}
 	}
 
 	public void setAffinityContinue(boolean affinityContinue) {
@@ -43,6 +57,7 @@ public class UPCASTForallStatement extends CASTForStatement implements IUPCASTFo
 	}
 	
 
+	@Override
 	public boolean accept(ASTVisitor visitor) {
 		if(visitor.shouldVisitStatements) {
 			switch(visitor.visit(this)){

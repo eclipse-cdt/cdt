@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.lrparser.cpp;
 
-import org.eclipse.cdt.core.dom.lrparser.action.ITokenMap;
-
 import static org.eclipse.cdt.core.parser.IToken.*;
 import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.*;
+
+import org.eclipse.cdt.core.dom.lrparser.IDOMTokenMap;
+import org.eclipse.cdt.core.parser.IToken;
 
 /**
  * Maps tokens types returned by CPreprocessor to token types
@@ -27,7 +28,7 @@ import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.*;
  * @author Mike Kucera
  *
  */
-public class DOMToISOCPPTokenMap implements ITokenMap {
+public class DOMToISOCPPTokenMap implements IDOMTokenMap {
 
 	
 	public static final DOMToISOCPPTokenMap DEFAULT_MAP = new DOMToISOCPPTokenMap();
@@ -36,9 +37,9 @@ public class DOMToISOCPPTokenMap implements ITokenMap {
 		// just a private constructor
 	}
 	
-	public int mapKind(int kind) {
+	public int mapKind(IToken token) {
 		
-		switch(kind) {
+		switch(token.getType()) {
 			case tIDENTIFIER   : return TK_identifier;
 			case tINTEGER      : return TK_integer;
 			case tCOLONCOLON   : return TK_ColonColon;
@@ -166,9 +167,14 @@ public class DOMToISOCPPTokenMap implements ITokenMap {
 			case tEND_OF_INPUT : return TK_EOF_TOKEN;
 
 			default:
-				assert false : "token not recognized by the ISO CPP parser: " + kind; //$NON-NLS-1$
+				assert false : "token not recognized by the ISO CPP parser: " + token.getType(); //$NON-NLS-1$
 				return TK_Invalid;
 		}
+	}
+
+	
+	public int getEOFTokenKind() {
+		return TK_EOF_TOKEN;
 	}
 
 }

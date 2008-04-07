@@ -62,7 +62,7 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 	 * A token map is used to map tokens from the DOM preprocessor
 	 * to the tokens defined by an LPG parser.
 	 */
-	protected abstract ITokenMap getTokenMap();
+	protected abstract IDOMTokenMap getTokenMap();
 	
 	
 	/**

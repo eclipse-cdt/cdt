@@ -33,15 +33,15 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IVariable;
-import org.eclipse.cdt.core.dom.c99.BaseExtensibleLanguage;
+import org.eclipse.cdt.core.dom.lrparser.BaseExtensibleLanguage;
 import org.eclipse.cdt.core.dom.upc.UPCLanguage;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTForallStatement;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTKeywordExpression;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTSimpleDeclSpecifier;
-import org.eclipse.cdt.core.dom.upc.ast.IUPCASTSizeofExpression;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTSynchronizationStatement;
-import org.eclipse.cdt.core.parser.c99.tests.ParseHelper;
+import org.eclipse.cdt.core.dom.upc.ast.IUPCASTUnaryExpression;
+import org.eclipse.cdt.core.lrparser.tests.ParseHelper;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
 public class UPCLanguageExtensionTests extends TestCase {
@@ -494,24 +494,24 @@ public class UPCLanguageExtensionTests extends TestCase {
 		IASTUnaryExpression cexpr = (IASTUnaryExpression)((IASTExpressionStatement)body[1]).getExpression();
 		assertEquals(IASTUnaryExpression.op_sizeof, cexpr.getOperator());
 		
-		IUPCASTSizeofExpression expr;
+		IUPCASTUnaryExpression expr;
 		
-		expr = (IUPCASTSizeofExpression)((IASTExpressionStatement)body[2]).getExpression();
-		assertEquals(IUPCASTSizeofExpression.op_upc_localsizeof, expr.getUPCSizeofOperator());
+		expr = (IUPCASTUnaryExpression)((IASTExpressionStatement)body[2]).getExpression();
+		assertEquals(IUPCASTUnaryExpression.op_upc_localsizeof, expr.getOperator());
 		
-		expr = (IUPCASTSizeofExpression)((IASTExpressionStatement)body[3]).getExpression();
-		assertEquals(IUPCASTSizeofExpression.op_upc_localsizeof, expr.getUPCSizeofOperator());
+		expr = (IUPCASTUnaryExpression)((IASTExpressionStatement)body[3]).getExpression();
+		assertEquals(IUPCASTUnaryExpression.op_upc_localsizeof, expr.getOperator());
 		
-		expr = (IUPCASTSizeofExpression)((IASTExpressionStatement)body[4]).getExpression();
-		assertEquals(IUPCASTSizeofExpression.op_upc_blocksizeof, expr.getUPCSizeofOperator());
+		expr = (IUPCASTUnaryExpression)((IASTExpressionStatement)body[4]).getExpression();
+		assertEquals(IUPCASTUnaryExpression.op_upc_blocksizeof, expr.getOperator());
 		
-		expr = (IUPCASTSizeofExpression)((IASTExpressionStatement)body[5]).getExpression();
-		assertEquals(IUPCASTSizeofExpression.op_upc_blocksizeof, expr.getUPCSizeofOperator());
+		expr = (IUPCASTUnaryExpression)((IASTExpressionStatement)body[5]).getExpression();
+		assertEquals(IUPCASTUnaryExpression.op_upc_blocksizeof, expr.getOperator());
 		
-		expr = (IUPCASTSizeofExpression)((IASTExpressionStatement)body[6]).getExpression();
-		assertEquals(IUPCASTSizeofExpression.op_upc_elemsizeof, expr.getUPCSizeofOperator());
+		expr = (IUPCASTUnaryExpression)((IASTExpressionStatement)body[6]).getExpression();
+		assertEquals(IUPCASTUnaryExpression.op_upc_elemsizeof, expr.getOperator());
 		
-		expr = (IUPCASTSizeofExpression)((IASTExpressionStatement)body[7]).getExpression();
-		assertEquals(IUPCASTSizeofExpression.op_upc_elemsizeof, expr.getUPCSizeofOperator());
+		expr = (IUPCASTUnaryExpression)((IASTExpressionStatement)body[7]).getExpression();
+		assertEquals(IUPCASTUnaryExpression.op_upc_elemsizeof, expr.getOperator());
 	}
 }

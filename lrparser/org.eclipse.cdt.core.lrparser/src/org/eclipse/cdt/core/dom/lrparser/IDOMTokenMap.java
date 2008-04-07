@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,19 +8,19 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.dom.parser.upc;
+package org.eclipse.cdt.core.dom.lrparser;
 
-import org.eclipse.cdt.core.dom.c99.ILexer;
-import org.eclipse.cdt.core.dom.c99.ILexerFactory;
-import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.IToken;
 
 /**
- * Creates new lexers for tokenizing included files.
+ * Maps tokens returned by CPreprocessor to the corresponding
+ * token kind used by an LPG based parser.
+ * 
+ * @author Mike Kucera
+ *
  */
-public class UPCLexerFactory implements ILexerFactory {
+public interface IDOMTokenMap {
 
-	public ILexer createLexer(CodeReader reader) {
-		return new UPCLexer(reader);
-	}
-
+	int mapKind(IToken token);
+	int getEOFTokenKind();
 }

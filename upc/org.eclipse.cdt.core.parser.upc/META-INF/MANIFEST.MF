@@ -7,7 +7,7 @@ Bundle-ClassPath: .
 Require-Bundle: org.eclipse.cdt.core,
  net.sourceforge.lpg.lpgjavaruntime;bundle-version="1.1.0";visibility:=reexport,
  org.eclipse.core.runtime,
- org.eclipse.cdt.core.parser.c99
+ org.eclipse.cdt.core.lrparser;bundle-version="4.0.1"
 Export-Package: org.eclipse.cdt.core.dom.upc,
  org.eclipse.cdt.core.dom.upc.ast,
  org.eclipse.cdt.internal.core.dom.parser.upc;x-internal:=true,

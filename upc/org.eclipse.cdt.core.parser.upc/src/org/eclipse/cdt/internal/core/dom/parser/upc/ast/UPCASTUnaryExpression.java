@@ -10,29 +10,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.upc.ast;
 
-import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
-import org.eclipse.cdt.core.dom.upc.ast.IUPCASTSizeofExpression;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.upc.ast.IUPCASTUnaryExpression;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTUnaryExpression;
 
-public class UPCASTSizeofExpression extends CASTUnaryExpression implements IUPCASTSizeofExpression {
+@SuppressWarnings("restriction")
+public class UPCASTUnaryExpression extends CASTUnaryExpression implements IUPCASTUnaryExpression {
 
-	// TODO: don't really know if extending CASTUnaryExpression is the right thing to do
-	private int upcSizeofOperator;
-	
-	
-	public int getOperator() {
-		return IASTUnaryExpression.op_sizeof;
-	}
-	
-	
-	public void setUPCSizeofOperator(int upcSizeofOperator) {
-		this.upcSizeofOperator = upcSizeofOperator;
-	}
-	
-	
-	public int getUPCSizeofOperator() {
-		return upcSizeofOperator;
+	public UPCASTUnaryExpression() {
 	}
 
-	
+	public UPCASTUnaryExpression(int operator, IASTExpression operand) {
+		super(operator, operand);
+	}
 }

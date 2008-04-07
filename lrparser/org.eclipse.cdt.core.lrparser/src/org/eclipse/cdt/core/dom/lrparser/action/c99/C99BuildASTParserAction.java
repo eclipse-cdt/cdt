@@ -217,13 +217,18 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	
 	
 	/**
-	 * Sets a token specifier.
-	 * Needs to be overrideable for new decl spec keywords.
+	 * Applies a specifier to a decl spec node.
 	 * 
-	 * @param token Allows subclasses to override this method and use any
-	 * object to determine how to set a specifier.
+	 * In plain C99 specifiers are always just single tokens, but in language
+	 * extensions specifiers may be more complex. Thats why this method takes
+	 * Object as the type of the specifier, so that it may be overridden in subclasses
+	 * and used with arbitray objects as the specifier.
 	 */
-	protected void setSpecifier(ICASTDeclSpecifier node, IToken token) {
+	protected void setSpecifier(ICASTDeclSpecifier node, Object specifier) {
+		if(!(specifier instanceof IToken))
+			return;
+		IToken token = (IToken)specifier;
+		
 		int kind = asC99Kind(token);
 		switch(kind){
 			case TK_typedef:  node.setStorageClass(IASTDeclSpecifier.sc_typedef);  return;
@@ -479,8 +484,8 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 
 		ICASTSimpleDeclSpecifier declSpec = nodeFactory.newCSimpleDeclSpecifier();
 		
-		for(Object token : astStack.closeScope())
-			setSpecifier(declSpec, (IToken)token);
+		for(Object specifier : astStack.closeScope())
+			setSpecifier(declSpec, specifier);
 		
 		setOffsetAndLength(declSpec);
 		astStack.push(declSpec);
@@ -500,8 +505,8 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 		ICASTDeclSpecifier declSpec = CollectionUtils.findFirstAndRemove(topScope, ICASTDeclSpecifier.class);
 		
 		// now apply the rest of the specifiers
-		for(Object token : topScope)
-			setSpecifier(declSpec, (IToken)token);
+		for(Object specifier : topScope)
+			setSpecifier(declSpec, specifier);
 		
 		setOffsetAndLength(declSpec);
 		astStack.push(declSpec);

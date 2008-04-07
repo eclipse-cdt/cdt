@@ -739,7 +739,8 @@ public class CPPTemplates {
 			IType t = (IType) argMap.get(type);
 			if (t == null) {
 				for (int i = 0; i < argMap.size(); i++) {
-					if (type.isSameType((IType) argMap.keyAt(i))) {
+					Object key = argMap.keyAt(i);
+					if (key instanceof IType && type.isSameType((IType) key)) {
 						newType = (IType) argMap.getAt(i);
 						break;
 					}

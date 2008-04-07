@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    IBM Corporation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.ui.typehierarchy;
 
@@ -38,6 +39,9 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.ACC;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ViewForm;
@@ -55,6 +59,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
@@ -472,8 +477,23 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
     		}
     	});   
         
-		ToolBar memberToolBar= new ToolBar(parent, SWT.FLAT | SWT.WRAP);
+		final ToolBar memberToolBar= new ToolBar(parent, SWT.FLAT | SWT.WRAP);
 		parent.setTopCenter(memberToolBar);
+		
+		memberToolBar.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			public void getName(AccessibleEvent e) {
+				if (e.childID != ACC.CHILDID_SELF) {
+					ToolItem item = memberToolBar.getItem(e.childID);
+					if (item != null) {
+						String toolTip = item.getToolTipText();
+						if (toolTip != null) {
+							e.result = toolTip;
+						}
+					}
+				}
+			}
+		});
+
 		fMemberToolbarManager= new ToolBarManager(memberToolBar);
     	return fMemberViewer.getControl();
 	}

@@ -89,10 +89,10 @@ public class DisassemblyPane implements IPropertyChangeListener {
 
     private Map<String, IAction> fActions = new HashMap<String, IAction>( 10 );
 
-    public DisassemblyPane() {
+    public DisassemblyPane( String contextMenuId, String rulerMenuId ) {
         fAnnotationPreferences = new MarkerAnnotationPreferences();
-        setViewContextMenuId( "#DisassemblyViewContext" ); //$NON-NLS-1$
-        setRulerContextMenuId( "#DisassemblyEditorRulerContext" ); //$NON-NLS-1$
+        setViewContextMenuId( contextMenuId );
+        setRulerContextMenuId( rulerMenuId );
     }
 
     public void create( Composite parent ) {

@@ -73,4 +73,11 @@ public interface IInternalCDebugUIConstants {
 	 * Status code indicating an unexpected internal error.
 	 */
 	public static final int INTERNAL_ERROR = 150;
+
+	// new disassembly (start)
+
+    public static final String DISASM_DISPLAY_MODE_INSTRUCTIONS = "instructions";  //$NON-NLS-1$
+    public static final String DISASM_DISPLAY_MODE_SOURCE = "source";  //$NON-NLS-1$
+	
+	// new disassembly (end)
 }

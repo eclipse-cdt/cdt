@@ -49,7 +49,7 @@ public class DisassemblyEditor extends EditorPart implements ITextEditor, IReusa
 
     public DisassemblyEditor() {
         super();
-        fDisassemblyPane = new DisassemblyPane();
+        fDisassemblyPane = new DisassemblyPane( "#DisassemblyEditorContext", "#DisassemblyEditorRulerContext" ); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /* (non-Javadoc)

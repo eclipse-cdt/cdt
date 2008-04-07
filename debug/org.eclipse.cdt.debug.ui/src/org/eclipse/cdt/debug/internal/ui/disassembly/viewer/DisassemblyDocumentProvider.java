@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.internal.ui.disassembly.editor.DisassemblyEditorInput;
+import org.eclipse.cdt.debug.internal.ui.disassembly.editor.DisassemblyEditorPresentation;
 import org.eclipse.cdt.debug.ui.disassembly.IDocumentPresentation;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -214,6 +215,6 @@ public class DisassemblyDocumentProvider implements IDocumentProvider {
     }
 
     private IDocumentPresentation createDocumentPresentation( Object context ) {
-        return null;
+        return new DisassemblyEditorPresentation();
     }
 }

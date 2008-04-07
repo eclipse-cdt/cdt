@@ -23,6 +23,7 @@ import org.eclipse.cdt.debug.core.model.ISteppingModeTarget;
 import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
 import org.eclipse.cdt.debug.internal.ui.disassembly.viewer.DisassemblyDocumentProvider;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -45,7 +46,6 @@ import org.eclipse.ui.progress.UIJob;
 
 public class DisassemblyEditorManager implements IWindowListener, IDisassemblyContextListener, IPartListener2 {
 
-    private static final String DEFAULT_EDITOR_ID = "org.eclipse.cdt.debug.ui.disassemblyEditor"; //$NON-NLS-1$
     private Map<Object, IEditorPart> fEditorParts;
     private Map<Object, String> fOpenDisassemblyPolicy;
     private Map<Object, ISteppingModeTarget> fSteppingModePolicy;
@@ -278,7 +278,7 @@ public class DisassemblyEditorManager implements IWindowListener, IDisassemblyCo
 
     private boolean isDisassemblyEditorPart( IWorkbenchPartReference partRef ) {
         // TODO: check all editors contributed via the extension point
-        return ( partRef.getId().equals( DEFAULT_EDITOR_ID ) );
+        return ( partRef.getId().equals( ICDebugUIConstants.ID_DEFAULT_DISASSEMBLY_EDITOR ) );
     }
 
     private ISourcePresentation getSourcePresentation() {
@@ -291,7 +291,7 @@ public class DisassemblyEditorManager implements IWindowListener, IDisassemblyCo
             }
 
             public String getEditorId( IEditorInput input, Object element ) {
-                return DEFAULT_EDITOR_ID;
+                return ICDebugUIConstants.ID_DEFAULT_DISASSEMBLY_EDITOR;
             }
         };
     }

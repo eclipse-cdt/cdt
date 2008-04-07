@@ -34,7 +34,7 @@ public class DisassemblyMemoryRendering extends AbstractMemoryRendering {
 
     public DisassemblyMemoryRendering( String renderingId ) {
         super( renderingId );
-        fDisassemblyPane = new DisassemblyPane();
+        fDisassemblyPane = new DisassemblyPane( "#DisassemblyRenderingContext", "#DisassemblyRenderingRulerContext" );  //$NON-NLS-1$//$NON-NLS-2$
     }
 
     /* (non-Javadoc)

@@ -1560,6 +1560,19 @@
           id="org.eclipse.cdt.debug.ui.command.openDisassembly"
           name="%OpenDisassembly.name">
     </command>
+    <command
+          categoryId="org.eclipse.cdt.debug.ui.category.disassembly"
+          defaultHandler="org.eclipse.cdt.debug.internal.ui.disassembly.commands.DisassemblyDisplayModeHandler"
+          description="%DisassemblyDisplayMode.description"
+          helpContextId="disassembly_display_mode_command_context"
+          id="org.eclipse.cdt.debug.command.disassemblyDisplayMode"
+          name="%DisassemblyDisplayMode.name">
+       <commandParameter
+             id="org.eclipse.cdt.debug.command.disassemblyDisplayMode.parameterMode"
+             name="displayMode"
+             optional="false">
+       </commandParameter>
+    </command>
  </extension>
  <extension
        point="org.eclipse.ui.menus">
@@ -1582,6 +1595,33 @@
                 </adapt>
              </iterate>
           </visibleWhen>
+       </command>
+    </menuContribution>
+    <menuContribution
+          locationURI="popup:#DisassemblyEditorContext?after=additions">
+       <command
+             commandId="org.eclipse.cdt.debug.command.disassemblyDisplayMode"
+             helpContextId="instructions_display_mode_menu_context"
+             id="org.eclipse.cdt.debug.menu.command.disassemblyDisplayMode.instructions"
+             label="%InstructionsDisplayMode.label"
+             style="toggle"
+             tooltip="%InstructionsDisplayMode.tooltip">
+          <parameter
+                name="org.eclipse.cdt.debug.command.disassemblyDisplayMode.parameterMode"
+                value="instructions">
+          </parameter>
+       </command>
+       <command
+             commandId="org.eclipse.cdt.debug.command.disassemblyDisplayMode"
+             helpContextId="source_display_mode_menu_context"
+             id="org.eclipse.cdt.debug.menu.command.disassemblyDisplayMode.source"
+             label="%SourceDisplayMode.label"
+             style="toggle"
+             tooltip="%SourceDisplayMode.tooltip">
+          <parameter
+                name="org.eclipse.cdt.debug.command.disassemblyDisplayMode.parameterMode"
+                value="source">
+          </parameter>
        </command>
     </menuContribution>
  </extension>

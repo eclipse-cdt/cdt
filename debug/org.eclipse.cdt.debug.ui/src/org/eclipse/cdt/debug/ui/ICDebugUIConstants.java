@@ -27,10 +27,15 @@ public interface ICDebugUIConstants {
 	 */
 	public static final String ID_EXECUTABLES_VIEW = PREFIX + "executablesView"; //$NON-NLS-1$
 
-	/**
-	 * Disassembly view identifier (value <code>"org.eclipse.cdt.debug.ui.DisassemblyView"</code>).
-	 */
-	public static final String ID_DISASSEMBLY_VIEW = PREFIX + "DisassemblyView"; //$NON-NLS-1$
+    /**
+     * Disassembly view identifier (value <code>"org.eclipse.cdt.debug.ui.DisassemblyView"</code>).
+     */
+    public static final String ID_DISASSEMBLY_VIEW = PREFIX + "DisassemblyView"; //$NON-NLS-1$
+
+    /**
+     * Deafult disassembly editor identifier (value <code>"org.eclipse.cdt.debug.ui.disassemblyEditor"</code>).
+     */
+    public static final String ID_DEFAULT_DISASSEMBLY_EDITOR = PREFIX + "disassemblyEditor"; //$NON-NLS-1$
 
 	/**
 	 * Id for the popup menu associated with the detail (text viewer) part of the Modules view

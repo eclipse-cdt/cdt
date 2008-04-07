@@ -35,4 +35,8 @@ public interface ICDebugPreferenceConstants {
 	 * Boolean preference controlling whether primitive types types display char values.
 	 */
 	public static final String PREF_SHOW_CHAR_VALUES = ICDebugUIConstants.PLUGIN_ID + ".cDebug.showCharValues"; //$NON-NLS-1$
+
+    public static final String PREF_DISASM_SHOW_INSTRUCTIONS = ICDebugUIConstants.PLUGIN_ID + ".disassembly.showInstructions"; //$NON-NLS-1$
+
+    public static final String PREF_DISASM_SHOW_SOURCE = ICDebugUIConstants.PLUGIN_ID + ".disassembly.showSource"; //$NON-NLS-1$
 }

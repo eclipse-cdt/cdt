@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Javier Montalvo Orús (Symbian) - patch for bug 163103 - NPE in filters
  * Martin Oberhuber (Wind River) - fix 168586 - isCaseSensitive() on Windows
@@ -93,7 +93,7 @@ import org.eclipse.rse.services.files.RemoteFileException;
 import org.eclipse.rse.services.files.RemoteFileIOException;
 import org.eclipse.rse.services.files.RemoteFileSecurityException;
 
-public class LocalFileService extends AbstractFileService implements IFileService, ILocalService, IFilePermissionsService
+public class LocalFileService extends AbstractFileService implements ILocalService, IFilePermissionsService
 {
 	private static final String[] ALLDRIVES =
 	{
@@ -121,32 +121,32 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		"X:\\", //$NON-NLS-1$
 		"Y:\\", //$NON-NLS-1$
 		"Z:\\" }; //$NON-NLS-1$
-	
+
 	private boolean _checkedOS = false;
 	private boolean _isWindows = false;
 	private boolean _isWin95 = false;
 	private boolean _isWinNT = false;
 	private String  _osCmdShell = null;
-	
+
 	protected ISystemFileTypes _fileTypeRegistry;
-	
+
 	public LocalFileService(ISystemFileTypes fileTypeRegistry)
 	{
 		_fileTypeRegistry = fileTypeRegistry;
 	}
-	
 
-	
+
+
 	public String getName()
 	{
 		return LocalServiceResources.Local_File_Service_Name;
 	}
-	
+
 	public String getDescription()
 	{
 		return LocalServiceResources.Local_File_Service_Description;
 	}
-	
+
 	public boolean isWindows()
 	{
 		if (!_checkedOS)
@@ -155,7 +155,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			_isWindows = osName.startsWith("win"); //$NON-NLS-1$
 			_isWin95 = _isWindows && ((osName.indexOf("95") >= 0) || (osName.indexOf("98") >= 0) || (osName.indexOf("me") >= 0)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			_isWinNT = _isWindows && ((osName.indexOf("nt") >= 0) || (osName.indexOf("2000") >= 0) || (osName.indexOf("xp") >= 0)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			
+
 			if (_isWinNT)
 			{
 				_osCmdShell = "cmd /C "; //$NON-NLS-1$
@@ -168,7 +168,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		}
 		return _isWindows;
 	}
-	
+
 	public class LocalFileNameFilter implements FilenameFilter {
 		private IMatcher _matcher;
 		private int type;
@@ -209,38 +209,38 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			}
 			return result;
 		}
-		
+
 	}
 
 	private class CheckArchiveOperationStatusThread extends Thread {
-		
+
 		private ISystemOperationMonitor archiveOperationMonitor = null;
 		private IProgressMonitor monitor = null;
-		
+
 		public CheckArchiveOperationStatusThread(ISystemOperationMonitor archiveOperationMonitor, IProgressMonitor monitor) {
 			this.archiveOperationMonitor = archiveOperationMonitor;
 			this.monitor = monitor;
 		}
-		
-		public void run() 
+
+		public void run()
 		{
-			while(!monitor.isCanceled() && !archiveOperationMonitor.isDone())		
+			while(!monitor.isCanceled() && !archiveOperationMonitor.isDone())
 			{
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {}
 			}
-			
+
 			//evaluate result
-			
+
 			if(monitor.isCanceled() && !archiveOperationMonitor.isDone())
 			{
 				archiveOperationMonitor.setCanceled(true);
 			}
 		}
 	}
-	
-	public boolean upload(InputStream stream, String remoteParent, String remoteFile, boolean isBinary, String hostEncoding, IProgressMonitor monitor) throws SystemMessageException 
+
+	public boolean upload(InputStream stream, String remoteParent, String remoteFile, boolean isBinary, String hostEncoding, IProgressMonitor monitor) throws SystemMessageException
 	{
 		boolean isCancelled = false;
 
@@ -259,7 +259,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 				ISystemArchiveHandler handler = child.getHandler();
 				if (handler == null)
 					throwCorruptArchiveException(this.getClass() + ".upload()"); //$NON-NLS-1$
-				else 
+				else
 					return handler.add(stream, child.path, remoteFile, SystemEncodingUtil.ENCODING_UTF_8, hostEncoding, !isBinary, null);
 			}
 			if (ArchiveHandlerManager.getInstance().isArchive(destinationFile))
@@ -267,10 +267,10 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 				ISystemArchiveHandler handler = ArchiveHandlerManager.getInstance().getRegisteredHandler(destinationFile);
 				if (handler == null)
 					throwCorruptArchiveException(this.getClass() + ".copyToArchive()"); //$NON-NLS-1$
-				else 
+				else
 					return handler.add(stream, "", remoteFile, SystemEncodingUtil.ENCODING_UTF_8, hostEncoding, !isBinary, null); //$NON-NLS-1$
 			}
-			
+
 			File destinationParent = destinationFile.getParentFile();
 			if (!destinationParent.exists())
 			{
@@ -279,27 +279,27 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 
 			bufInputStream = new BufferedInputStream(stream);
 			outputStream = new FileOutputStream(destinationFile);
-			
+
 			// if encoding conversion required, then we need a writer
 			boolean isEncodingConversionRequired = !isBinary;
-			if (isEncodingConversionRequired) 
+			if (isEncodingConversionRequired)
 			{
 				outputWriter = new OutputStreamWriter(outputStream, hostEncoding);
 				bufWriter = new BufferedWriter(outputWriter);
 			}
-			else 
+			else
 			{
 				bufOutputStream = new BufferedOutputStream(outputStream);
 			}
-			
 
-			
+
+
 			byte[] buffer = new byte[512000];
 			int readCount = 0;
 
-			 while( (readCount = bufInputStream.read(buffer)) > 0 && !isCancelled) 
+			 while( (readCount = bufInputStream.read(buffer)) > 0 && !isCancelled)
 			 {
-			      if (isEncodingConversionRequired && bufWriter != null) 
+			      if (isEncodingConversionRequired && bufWriter != null)
 			      {
 						String s = new String(buffer, 0, readCount, hostEncoding);
 						bufWriter.write(s);
@@ -308,13 +308,13 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			      {
 						bufOutputStream.write(buffer, 0,readCount);
 			      }
-			      if (monitor != null) 
+			      if (monitor != null)
 			      {
 						monitor.worked(readCount);
 						isCancelled = monitor.isCanceled();
 			      }
 			 }
-	
+
 		}
 		catch (FileNotFoundException e)
 		{
@@ -355,7 +355,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 
 
 
-	public boolean download(String remoteParent, String remoteFile, File destinationFile, boolean isBinary, String hostEncoding, IProgressMonitor monitor) throws SystemMessageException 
+	public boolean download(String remoteParent, String remoteFile, File destinationFile, boolean isBinary, String hostEncoding, IProgressMonitor monitor) throws SystemMessageException
 	{
 		File file = new File(remoteParent, remoteFile);
 		FileInputStream inputStream = null;
@@ -365,7 +365,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		OutputStreamWriter outputWriter = null;
 		BufferedWriter bufWriter = null;
 		boolean isCancelled = false;
-		
+
 		boolean sourceIsVirtual = ArchiveHandlerManager.isVirtual(file.getAbsolutePath());
 		boolean targetIsVirtual = ArchiveHandlerManager.isVirtual(destinationFile.getParent());
 		boolean targetIsArchive = ArchiveHandlerManager.getInstance().isArchive(destinationFile.getParentFile());
@@ -377,32 +377,32 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		{
 			return copyToArchive(file, destinationFile.getParentFile(), destinationFile.getName(), monitor, hostEncoding, SystemEncodingUtil.ENCODING_UTF_8, !isBinary);
 		}
-		
+
 		try
 		{
-	
+
 
 			if (!destinationFile.exists())
 			{
 				File parentDir = destinationFile.getParentFile();
 				parentDir.mkdirs();
 			}
-		
 
-			
+
+
 			// encoding conversion required if it a text file but not an xml file
 			boolean isEncodingConversionRequired = !isBinary;
-			
+
 			inputStream = new FileInputStream(file);
 			bufInputStream = new BufferedInputStream(inputStream);
 			outputStream = new FileOutputStream(destinationFile);
-			
-			if (isEncodingConversionRequired) 
+
+			if (isEncodingConversionRequired)
 			{
 				outputWriter = new OutputStreamWriter(outputStream, hostEncoding);
-				bufWriter = new BufferedWriter(outputWriter);				
+				bufWriter = new BufferedWriter(outputWriter);
 			}
-			else 
+			else
 			{
 				bufOutputStream = new BufferedOutputStream(outputStream);
 			}
@@ -412,9 +412,9 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			long totalSize = file.length();
 			int totalRead = 0;
 
-			while (totalRead < totalSize && !isCancelled) 
+			while (totalRead < totalSize && !isCancelled)
 			{
-				
+
 				int available = bufInputStream.available();
 				available = (available < 512000) ? available : 512000;
 
@@ -423,23 +423,23 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 				if (bytesRead == -1) {
 					break;
 				}
-				
+
 				// need to convert encoding, i.e. text file, but not xml
 				// ensure we read in file using the encoding for the file system
 				// which can be specified by user as text file encoding in preferences
-				if (isEncodingConversionRequired && bufWriter != null) 
+				if (isEncodingConversionRequired && bufWriter != null)
 				{
 					String s = new String(buffer, 0, bytesRead, hostEncoding);
 					bufWriter.write(s);
 				}
 				else if (bufOutputStream != null)
 				{
-					bufOutputStream.write(buffer, 0, bytesRead);					
+					bufOutputStream.write(buffer, 0, bytesRead);
 				}
 
 				totalRead += bytesRead;
-					
-				if (monitor != null) 
+
+				if (monitor != null)
 				{
 					monitor.worked(bytesRead);
 					isCancelled = monitor.isCanceled();
@@ -502,10 +502,10 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		return true;
 	}
 
-	private boolean copyToArchive(File file, File destination, String newName, IProgressMonitor monitor, String sourceEncoding, String targetEncoding, boolean isText) throws SystemMessageException 
+	private boolean copyToArchive(File file, File destination, String newName, IProgressMonitor monitor, String sourceEncoding, String targetEncoding, boolean isText) throws SystemMessageException
 	{
 		boolean ok = false;
-		
+
 		ISystemArchiveHandler handler = null;
 		String path = "";  //$NON-NLS-1$
 		if (ArchiveHandlerManager.isVirtual(destination.getAbsolutePath()))
@@ -522,10 +522,10 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		{
 			handler = ArchiveHandlerManager.getInstance().getRegisteredHandler(destination);
 		}
-		
+
 		if (handler == null)
 			throwCorruptArchiveException(this.getClass() + ".copyToArchive()"); //$NON-NLS-1$
-			
+
 		ISystemOperationMonitor archiveOperationMonitor = null;
 		if (null != monitor)
 		{
@@ -533,7 +533,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			CheckArchiveOperationStatusThread checkArchiveOperationStatusThread = new CheckArchiveOperationStatusThread(archiveOperationMonitor, monitor);
 			checkArchiveOperationStatusThread.start();
 		}
-		
+
 		if (file.isDirectory())
 		{
 		    ok = handler.add(file, path, newName, sourceEncoding, targetEncoding, _fileTypeRegistry, archiveOperationMonitor);
@@ -542,7 +542,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		{
 			ok = handler.add(file, path, newName, sourceEncoding, targetEncoding, isText, archiveOperationMonitor);
 		}
-			
+
 		if (!ok)
 		{
 			if (null != monitor && monitor.isCanceled())
@@ -553,7 +553,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			// SystemPlugin.logError("LocalFileSubSystemImpl.copyToArchive(): Handler's add() method returned false.");
 			String msgTxt = NLS.bind(LocalServiceResources.FILEMSG_FILE_NOT_SAVED, destination.getName(), "localhost"); //$NON-NLS-1$
 			String msgDetails = LocalServiceResources.FILEMSG_FILE_NOT_SAVED_DETAILS;
-			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID,
 					ILocalMessageIds.FILEMSG_FILE_NOT_SAVED,
 					IStatus.ERROR, msgTxt, msgDetails);
 			throw new SystemMessageException(msg);
@@ -572,7 +572,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		OutputStreamWriter outputWriter = null;
 		BufferedWriter bufWriter = null;
 		File destinationFile = null;
-		
+
 		File target = new File(remoteParent, remoteFile);
 		boolean sourceIsVirtual = ArchiveHandlerManager.isVirtual(localFile.getAbsolutePath());
 		boolean targetIsVirtual = ArchiveHandlerManager.isVirtual(target.getAbsolutePath());
@@ -599,15 +599,15 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			inputStream = new FileInputStream(localFile);
 			bufInputStream = new BufferedInputStream(inputStream);
 			outputStream = new FileOutputStream(destinationFile);
-			
+
 			// if encoding conversion required, then we need a writer
 			boolean isEncodingConversionRequired = !isBinary && !srcEncoding.equals(hostEncoding);
-			if (isEncodingConversionRequired) 
+			if (isEncodingConversionRequired)
 			{
 				outputWriter = new OutputStreamWriter(outputStream, hostEncoding);
 				bufWriter = new BufferedWriter(outputWriter);
 			}
-			else 
+			else
 			{
 				bufOutputStream = new BufferedOutputStream(outputStream);
 			}
@@ -636,7 +636,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 				}
 
 				totalRead += bytesRead;
-				
+
 				if (monitor != null) {
 					monitor.worked(bytesRead);
 					isCancelled = monitor.isCanceled();
@@ -674,7 +674,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 					destinationFile.setLastModified(localFile.lastModified());
 					//TODO check if we want to preserve permissions
 					//if(!localFile.canWrite()) destinationFile.setReadOnly();
-					
+
 					// File lengths can be different if the encodings are different
 /*					if (destinationFile.length() != localFile.length()) {
 						//	throw new RemoteFileCancelledException();
@@ -689,7 +689,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		}
 		return true;
 	}
-	
+
 	protected IHostFile[] internalFetch(String remoteParent, String fileFilter, int type, IProgressMonitor monitor) {
 		LocalFileNameFilter fFilter = new LocalFileNameFilter(fileFilter, type);
 		File localParent = new File(remoteParent);
@@ -742,7 +742,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			if (monitor != null && monitor.isCanceled()) {
 				return null;
 			}
-			/* bug 220241 - don't need this block of code 
+			/* bug 220241 - don't need this block of code
 			 *  listFiles() with a filter will still return all folders (they don't have to match)
 			if (!fFilter.isGeneric()) {
 				File file = new File(localParent, fileFilter);
@@ -757,7 +757,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			}
 		}
 	}
-	
+
 	protected IHostFile[] convertToHostFiles(File[] files, int type)
 	{
 		List results = new ArrayList();
@@ -768,7 +768,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 				File file = files[i];
 				if (file.isDirectory())
 				{
-					if (type == IFileService.FILE_TYPE_FILES_AND_FOLDERS || 
+					if (type == IFileService.FILE_TYPE_FILES_AND_FOLDERS ||
 					    type == IFileService.FILE_TYPE_FOLDERS)
 					{
 						results.add(new LocalHostFile(file));
@@ -776,11 +776,11 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 				}
 				else if (file.isFile())
 				{
-					if (type == IFileService.FILE_TYPE_FILES_AND_FOLDERS || 
+					if (type == IFileService.FILE_TYPE_FILES_AND_FOLDERS ||
 						type == IFileService.FILE_TYPE_FILES)
 					{
 						results.add(new LocalHostFile(file));
-					} else if (type == IFileService.FILE_TYPE_FOLDERS && 
+					} else if (type == IFileService.FILE_TYPE_FOLDERS &&
 						ArchiveHandlerManager.getInstance().isArchive(file)) {
 						// On Local Archive's should be considered Folders
 						// as they are containers that can be opened.
@@ -796,16 +796,16 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		return (IHostFile[])results.toArray(new IHostFile[results.size()]);
 	}
 
-	public IHostFile getUserHome() 
+	public IHostFile getUserHome()
 	{
 		String userHome  =System.getProperty("user.home"); //$NON-NLS-1$
-		File userHomeFile = new File(userHome);		
+		File userHomeFile = new File(userHome);
 		return new LocalHostFile(userHomeFile);
 	}
 
 
 
-	public IHostFile[] getRoots(IProgressMonitor monitor) 
+	public IHostFile[] getRoots(IProgressMonitor monitor)
 	{
 		List v = new ArrayList();
 		if (isWindows())
@@ -814,12 +814,12 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			{
 				File drive = new File(ALLDRIVES[idx]);
 				if (drive.exists())
-				
-					try 
+
+					try
 					{
 						v.add(drive.getAbsoluteFile());
 					}
-					catch (Exception e) 
+					catch (Exception e)
 					{
 					}
 			}
@@ -828,25 +828,25 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		{
 			v.add(new File("/")); //$NON-NLS-1$
 		}
-		
+
 		IHostFile[] fileObjs = new LocalHostFile[v.size()];
 		for (int idx = 0; idx < v.size(); idx++)
 		{
 			fileObjs[idx] = new LocalHostFile((File) v.get(idx), true);
 		}
-		
+
 		return fileObjs;
 	}
 
 
 
-	public IHostFile getFile(String remoteParent, String name, IProgressMonitor monitor) 
+	public IHostFile getFile(String remoteParent, String name, IProgressMonitor monitor)
 	{
 		if (name.endsWith(ArchiveHandlerManager.VIRTUAL_SEPARATOR))
 		{
 			name = name.substring(0, name.length() - ArchiveHandlerManager.VIRTUAL_SEPARATOR.length());
 		}
-		
+
 		boolean isVirtualParent = false;
 		boolean isArchiveParent = false;
 		if (remoteParent != null) {
@@ -896,7 +896,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			{
 				parentFile.mkdirs();
 			}
-			else 
+			else
 			{
 				try
 				{
@@ -905,16 +905,16 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 					{
 						if (!ArchiveHandlerManager.getInstance().createEmptyArchive(fileToCreate))
 						{
-							SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+							SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID,
 									ILocalMessageIds.FILEMSG_ARCHIVE_CORRUPTED,
-									IStatus.ERROR, 
+									IStatus.ERROR,
 									LocalServiceResources.FILEMSG_ARCHIVE_CORRUPTED, LocalServiceResources.FILEMSG_ARCHIVE_CORRUPTED_DETAILS);
 							throw new SystemMessageException(msg);
 						}
 					}
 				}
 				catch (Exception e)
-				{				
+				{
 					throw new RemoteFileSecurityException(e);
 				}
 			}
@@ -942,7 +942,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 				checkArchiveOperationStatusThread.start();
 			}
 			boolean ok = handler.createFile(child.fullName, archiveOperationMonitor);
-				
+
 			if (!ok)
 			{
 				if (null != monitor && monitor.isCanceled())
@@ -950,10 +950,10 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 					//This operation has been canceled by the user.
 					throw getCanceledException();
 				}
-				
+
 				String msgTxt = NLS.bind(LocalServiceResources.FILEMSG_CREATE_VIRTUAL_FAILED, newFile);
 				String msgDetails = LocalServiceResources.FILEMSG_CREATE_VIRTUAL_FAILED_DETAILS;
-				SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+				SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID,
 						ILocalMessageIds.FILEMSG_CREATE_VIRTUAL_FAILED,
 						IStatus.ERROR, msgTxt, msgDetails);
 				throw new SystemMessageException(msg);
@@ -961,23 +961,23 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		}
 		return new LocalVirtualHostFile(child);
 	}
-	
+
 	private void throwCorruptArchiveException(String classAndMethod) throws SystemMessageException
 	{
-		SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+		SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID,
 				ILocalMessageIds.FILEMSG_ARCHIVE_CORRUPTED,
-				IStatus.ERROR, 
+				IStatus.ERROR,
 				LocalServiceResources.FILEMSG_ARCHIVE_CORRUPTED, LocalServiceResources.FILEMSG_ARCHIVE_CORRUPTED_DETAILS);
 		throw new SystemMessageException(msg);
 	}
-	
+
 	protected File getContainingArchive(File file)
 	{
 		String absPath = file.getAbsolutePath();
 		AbsoluteVirtualPath avp = new AbsoluteVirtualPath(absPath);
 		return new File(avp.getContainingArchiveString());
 	}
-	
+
 	protected String getVirtualPart(String absPath)
 	{
 		AbsoluteVirtualPath avp = new AbsoluteVirtualPath(absPath);
@@ -1022,7 +1022,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 				checkArchiveOperationStatusThread.start();
 			}
 			boolean ok = handler.createFolder(child.fullName, archiveOperationMonitor);
-				
+
 			if (!ok)
 			{
 				if (null != monitor && monitor.isCanceled())
@@ -1030,10 +1030,10 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 					//This operation has been canceled by the user.
 					throw getCanceledException();
 				}
-				
+
 				String msgTxt = NLS.bind(LocalServiceResources.FILEMSG_CREATE_VIRTUAL_FAILED, newFolder);
 				String msgDetails = LocalServiceResources.FILEMSG_CREATE_VIRTUAL_FAILED_DETAILS;
-				SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+				SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID,
 						ILocalMessageIds.FILEMSG_CREATE_VIRTUAL_FAILED,
 						IStatus.ERROR, msgTxt, msgDetails);
 				throw new SystemMessageException(msg);
@@ -1071,7 +1071,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			return fileToDelete.delete();
 		}
 	}
-	
+
 	public boolean deleteBatch(String[] remoteParents, String[] fileNames, IProgressMonitor monitor) throws SystemMessageException
 	{
 		boolean ok = true;
@@ -1086,7 +1086,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		}
 		return ok;
 	}
-	
+
 	private boolean deleteContents(File folder, IProgressMonitor monitor)
 	{
 		boolean result = true;
@@ -1112,7 +1112,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 
 	/**
 	 * Deletes a virtual file from its archive.
-	 * 
+	 *
 	 * @param destination virtual file to delete from archive
 	 */
 	protected boolean deleteFromArchive(File destination, IProgressMonitor monitor) throws SystemMessageException
@@ -1139,13 +1139,13 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			// SystemPlugin.logError("LocalFileSubSystemImpl.deleteFromArchive(): Archive Handler's delete method returned false. Couldn't delete virtual object.");
 			String msgTxt = NLS.bind(LocalServiceResources.FILEMSG_DELETE_VIRTUAL_FAILED, destination);
 			String msgDetails = LocalServiceResources.FILEMSG_DELETE_VIRTUAL_FAILED_DETAILS;
-			throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID, 
+			throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID,
 					ILocalMessageIds.FILEMSG_DELETE_VIRTUAL_FAILED,
 					IStatus.ERROR, msgTxt, msgDetails));
 		}
 		return true;
 	}
-	
+
 	protected boolean deleteArchive(File file)
 	{
 		ArchiveHandlerManager.getInstance().disposeOfRegisteredHandlerFor(file);
@@ -1166,13 +1166,13 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			// for 192705, we need to throw an exception when rename fails
 			String msgTxt = NLS.bind(LocalServiceResources.FILEMSG_RENAME_FILE_FAILED, newFile);
 			String msgDetails = LocalServiceResources.FILEMSG_RENAME_FILE_FAILED_DETAILS;
-			throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID, 
+			throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID,
 					ILocalMessageIds.FILEMSG_RENAME_FILE_FAILED,
-					IStatus.ERROR, msgTxt, msgDetails)); 
+					IStatus.ERROR, msgTxt, msgDetails));
 		}
 		return result;
 	}
-	
+
 	public boolean rename(String remoteParent, String oldName, String newName, IHostFile oldFile, IProgressMonitor monitor) throws SystemMessageException
 	{
 		boolean retVal = rename(remoteParent, oldName, newName, monitor);
@@ -1183,7 +1183,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 
 	/**
 	 * Renames a virtual file
-	 * 
+	 *
 	 * @param destination virtual file to rename
 	 * @param newName the new name of the virtual file
 	 * @return whether the operation was successful or not
@@ -1205,7 +1205,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 				CheckArchiveOperationStatusThread checkArchiveOperationStatusThread = new CheckArchiveOperationStatusThread(archiveOperationMonitor, monitor);
 				checkArchiveOperationStatusThread.start();
 			}
-			
+
 			boolean retval = handler.rename(child.fullName, newName, archiveOperationMonitor);
 			if (!retval)
 			{
@@ -1214,20 +1214,20 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 					//This operation has been canceled by the user.
 					throw getCanceledException();
 				}
-				
+
 				// for 192705, we need to throw an exception when rename fails
 				String msgTxt = NLS.bind(LocalServiceResources.FILEMSG_RENAME_FILE_FAILED, child.fullName);
 				String msgDetails = LocalServiceResources.FILEMSG_RENAME_FILE_FAILED_DETAILS;
-				throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID, 
+				throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID,
 						ILocalMessageIds.FILEMSG_RENAME_FILE_FAILED,
-						IStatus.ERROR, msgTxt, msgDetails)); 
+						IStatus.ERROR, msgTxt, msgDetails));
 			}
 			return retval;
 		}
 		return false;
 	}
 
-	public boolean move(String srcParent, String srcName, String tgtParent, String tgtName, IProgressMonitor monitor) throws SystemMessageException 
+	public boolean move(String srcParent, String srcName, String tgtParent, String tgtName, IProgressMonitor monitor) throws SystemMessageException
 	{
 		File sourceFolderOrFile = new File(srcParent, srcName);
 		File targetFolder = new File(tgtParent, tgtName);
@@ -1246,9 +1246,9 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			File newFile = new File(tgtParent, tgtName);
 			movedOk = fileToMove.renameTo(newFile);
 		}
-		
+
 		if (!movedOk)
-		{	
+		{
 			if (copy(srcParent, srcName, tgtParent, tgtName, monitor))
 			{
 				try
@@ -1271,11 +1271,11 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		return movedOk;
 	}
 
-	public boolean copy(String srcParent, String srcName, String tgtParent, String tgtName, IProgressMonitor monitor) throws SystemMessageException 
+	public boolean copy(String srcParent, String srcName, String tgtParent, String tgtName, IProgressMonitor monitor) throws SystemMessageException
 	{
 		File srcFile = new File(srcParent, srcName);
 		File tgtFile = new File(tgtParent, tgtName);
-		
+
 		String command = null;
 		boolean folderCopy = srcFile.isDirectory();
 		String src = srcFile.getAbsolutePath();
@@ -1292,8 +1292,8 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		{
 			return copyToArchive(srcFile, new File(tgtParent), tgtName, monitor, SystemEncodingUtil.ENCODING_UTF_8, SystemEncodingUtil.ENCODING_UTF_8, false);
 		}
-		
-//		 handle special characters in source and target strings 
+
+//		 handle special characters in source and target strings
 		src = enQuote(src);
 		target = enQuote(target);
 		if (isWindows())
@@ -1316,9 +1316,9 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 					{
 						throw new RemoteFileException(e.getMessage(), e);
 					}
-				}				
+				}
 				command = _osCmdShell + "xcopy " + src + " " + target + " /Y /K /Q /H"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			}			
+			}
 		}
 		else
 		{
@@ -1326,7 +1326,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			{
 				command = "cp  -Rp " + src + " " + target; //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			else // it is a file 	 
+			else // it is a file
 			{
 				command = "cp -p " + src + " " + target; //$NON-NLS-1$ //$NON-NLS-2$
 			}
@@ -1339,19 +1339,19 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			if (isWindows())
 			{
 				String theShell = "cmd /C "; //$NON-NLS-1$
-				p = runtime.exec(theShell + command);		
+				p = runtime.exec(theShell + command);
 			}
 			else
 			{
 				String theShell = "sh"; //$NON-NLS-1$
 				String args[] = new String[3];
-				args[0] = theShell;					
+				args[0] = theShell;
 				args[1] = "-c"; //$NON-NLS-1$
 				args[2] = command;
-												
+
 				p = runtime.exec(args);
 			}
-			
+
 			//Process p = Runtime.getRuntime().exec(command);
 			rc = p.waitFor();
 
@@ -1363,7 +1363,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		}
 		return (rc == 0);
 	}
-	
+
 	/**
 	 * Quote a file name such that it is valid in a shell
 	 * @param s file name to quote
@@ -1377,11 +1377,11 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			return PathUtility.enQuoteUnix(s);
 		}
 	}
-	
+
 	/**
-	 * Copy a file or folder to a new target parent folder, but if 
+	 * Copy a file or folder to a new target parent folder, but if
 	 * copying from an archive, extract the file in the encoding specified
-	 * 
+	 *
 	 * @param sourceFolderOrFile The file or folder to copy
 	 * @param targetFolder The folder to copy to. No guarantee it is on the same system, so be sure to check getSystemConnection()!
 	 * @param newName The new name for the copied file or folder
@@ -1427,28 +1427,28 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 				{
 					destinationFile.delete();
 				}
-				
+
 				if (monitor != null && monitor.isCanceled())
 				{
 					//This operation has been canceled by the user.
 					throw getCanceledException();
 				}
-				
+
 				// for 192705, we need to throw an exception when rename fails
 				String msgTxt = NLS.bind(LocalServiceResources.FILEMSG_RENAME_FILE_FAILED, child.fullName);
 				String msgDetails = LocalServiceResources.FILEMSG_RENAME_FILE_FAILED_DETAILS;
-				throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID, 
+				throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID,
 						ILocalMessageIds.FILEMSG_RENAME_FILE_FAILED,
-						IStatus.ERROR, msgTxt, msgDetails)); 
+						IStatus.ERROR, msgTxt, msgDetails));
 			}
 			return returnValue;
 		}
-		
+
 		if (null != monitor)
 		{
 			checkArchiveOperationStatusThread.start();
 		}
-		
+
 		src = child.getExtractedFile(sourceEncoding, isText, archiveOperationMonitor).getAbsolutePath();
 		if (monitor != null && monitor.isCanceled())
 		{
@@ -1468,7 +1468,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 				String msgTxt = NLS.bind(LocalServiceResources.FILEMSG_COPY_FILE_FAILED, sourceFolderOrFile);
 				String msgDetails = LocalServiceResources.FILEMSG_COPY_FILE_FAILED_DETAILS;
 
-				throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID, 
+				throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID,
 						ILocalMessageIds.FILEMSG_COPY_FILE_FAILED,
 						IStatus.ERROR, msgTxt, msgDetails));
 			}
@@ -1477,16 +1477,16 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			{
 				String msgTxt = NLS.bind(LocalServiceResources.FILEMSG_COPY_FILE_FAILED, sourceFolderOrFile);
 				String msgDetails = LocalServiceResources.FILEMSG_COPY_FILE_FAILED_DETAILS;
-				
+
 				// SystemPlugin.logError("LocalFileSubSystemImpl.copy(): Couldn't create temp dir.");
-				throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID, 
+				throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID,
 						ILocalMessageIds.FILEMSG_COPY_FILE_FAILED,
 						IStatus.ERROR, msgTxt, msgDetails));
 			}
 			ISystemArchiveHandler handler = child.getHandler();
 			if (handler == null)
 				throwCorruptArchiveException(this.getClass() + ".copy()"); //$NON-NLS-1$
-			else 
+			else
 				handler.extractVirtualDirectory(child.fullName, tempSource, sourceEncoding, isText, archiveOperationMonitor);
 			src = tempSource.getAbsolutePath() + File.separatorChar + child.name;
 		}
@@ -1499,12 +1499,12 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 				if (monitor != null && monitor.isCanceled())
 				{
 					//This operation has been canceled by the user.
-					throw getCanceledException();				
+					throw getCanceledException();
 				}
 			}
 			return returnValue;
 		}
-		
+
 		//Don't think the code below here ever got executed, since it scenario has been covered by extract directly to the destination archive file.
 		String target = targetFolder.getAbsolutePath() + java.io.File.separator + newName;
 		// handle embedded blanks of from or to name...
@@ -1527,7 +1527,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			{
 				command = "cp  -r " + src + " " + target; //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			else // it is a file 	 
+			else // it is a file
 			{
 				command = "cp " + src + " " + target; //$NON-NLS-1$ //$NON-NLS-2$
 			}
@@ -1540,26 +1540,26 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		}
 		catch (Exception e)
 		{
-			
+
 		}
-		return (rc == 0);	
+		return (rc == 0);
 	}
-	
+
 	public void initService(IProgressMonitor monitor)
 	{
-		
+
 	}
-	
+
 	public void uninitService(IProgressMonitor monitor)
 	{
 	}
-	
+
 	public boolean isCaseSensitive()
 	{
 		return !isWindows();
 	}
 
-	public boolean copyBatch(String[] srcParents, String[] srcNames, String tgtParent, IProgressMonitor monitor) throws SystemMessageException 
+	public boolean copyBatch(String[] srcParents, String[] srcNames, String tgtParent, IProgressMonitor monitor) throws SystemMessageException
 	{
 		boolean ok = true;
 		String deletingMessage = NLS.bind(LocalServiceResources.FILEMSG_COPYING, ""); //$NON-NLS-1$
@@ -1574,14 +1574,14 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		return ok;
 	}
 
-	public boolean setLastModified(String parent, String name, long timestamp, IProgressMonitor monitor) 
+	public boolean setLastModified(String parent, String name, long timestamp, IProgressMonitor monitor)
 	{
 		File file = new File(parent, name);
 		return file.setLastModified(timestamp);
 	}
 
 	public boolean setReadOnly(String parent, String name,
-			boolean readOnly, IProgressMonitor monitor) throws SystemMessageException 
+			boolean readOnly, IProgressMonitor monitor) throws SystemMessageException
 	{
 		File file = new File(parent, name);
 		if (!file.exists()) {
@@ -1610,7 +1610,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 					exitValue = p.waitFor();
 				}
 				catch (Exception e)
-				{					
+				{
 				}
 				return (exitValue == 0);
 			}
@@ -1628,7 +1628,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 					exitValue = p.waitFor();
 				}
 				catch (Exception e)
-				{					
+				{
 				}
 				return (exitValue == 0);
 			}
@@ -1641,17 +1641,17 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 	 * @see org.eclipse.rse.services.files.AbstractFileService#getInputStream(String, String, boolean, IProgressMonitor)
 	 */
 	public InputStream getInputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException {
-		
+
 		File file = new File(remoteParent, remoteFile);
 		InputStream stream = null;
-		
+
 		try {
 			stream = new FileInputStream(file);
 		}
 		catch (Exception e) {
 			throw new RemoteFileIOException(e);
 		}
-		
+
 		return stream;
 	}
 
@@ -1663,8 +1663,8 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException {
 		int options = isBinary ? IFileService.NONE : IFileService.TEXT_MODE;
 		return getOutputStream(remoteParent, remoteFile, options, monitor);
-	}	
-	
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.services.files.AbstractFileService#getOutputStream(java.lang.String, java.lang.String, boolean, int, org.eclipse.core.runtime.IProgressMonitor)
@@ -1672,7 +1672,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 	public OutputStream getOutputStream(String remoteParent, String remoteFile, int options, IProgressMonitor monitor) throws SystemMessageException {
 		File file = new File(remoteParent, remoteFile);
 		OutputStream stream = null;
-		
+
 		try {
 			if ((options & IFileService.APPEND) == 0) {
 				stream = new FileOutputStream(file);
@@ -1683,9 +1683,9 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		catch (Exception e) {
 			throw new RemoteFileIOException(e);
 		}
-		
+
 		return stream;
-	}	
+	}
 
 
 	public int getCapabilities(IHostFile file) {
@@ -1703,19 +1703,19 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 
 	public IHostFilePermissions getFilePermissions(IHostFile rfile,
 			IProgressMonitor monitor) throws SystemMessageException {
-		if (!_isWindows){		
-			
+		if (!_isWindows){
+
 			File file = new File(rfile.getParentPath(), rfile.getName());
 
 			// permissions in form  "drwxrwxrwx ..."
 			String ldStr = simpleShellCommand("ls -ld", file); //$NON-NLS-1$
-					
-			StringTokenizer tokenizer = new StringTokenizer(ldStr, " \t"); //$NON-NLS-1$
-											
-			// permissions in form "rwxrwxrwx"
-			String permString = tokenizer.nextToken().substring(1); 
 
-			// user and group	
+			StringTokenizer tokenizer = new StringTokenizer(ldStr, " \t"); //$NON-NLS-1$
+
+			// permissions in form "rwxrwxrwx"
+			String permString = tokenizer.nextToken().substring(1);
+
+			// user and group
 			tokenizer.nextToken(); // nothing important
 			String user = tokenizer.nextToken(); // 3rd
 			String group = tokenizer.nextToken(); // 4th
@@ -1725,7 +1725,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			{
 				((IHostFilePermissionsContainer)rfile).setPermissions(permissions);
 			}
-			return permissions;			
+			return permissions;
 		}
 		return null;
 	}
@@ -1735,24 +1735,24 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			throws SystemMessageException {
 		if (!_isWindows){
 			File file = new File(rfile.getParentPath(), rfile.getName());
-		
+
 			int bits = newPermissions.getPermissionBits();
 			String permissionsInOctal = Integer.toOctalString(bits); // from decimal to octal
 			String user = newPermissions.getUserOwner();
 			String group = newPermissions.getGroupOwner();
-	
+
 			// set the permissions
 			String result = simpleShellCommand("chmod " + permissionsInOctal, file); //$NON-NLS-1$
-			
+
 			// set the user
 			simpleShellCommand("chown " + user, file); //$NON-NLS-1$
-			
+
 			// set the group
 			simpleShellCommand("chown :" + group, file); //$NON-NLS-1$
 		}
 	}
-	
-	
+
+
 	private String simpleShellCommand(String cmd, File file)
 	{
 		String result = null;
@@ -1760,11 +1760,11 @@ public class LocalFileService extends AbstractFileService implements IFileServic
         args[0] = "sh"; //$NON-NLS-1$
         args[1] = "-c"; //$NON-NLS-1$
         args[2] = cmd + " " + PathUtility.enQuoteUnix(file.getAbsolutePath()); //$NON-NLS-1$
-     
+
         BufferedReader childReader = null;
 		try {
         	Process childProcess = Runtime.getRuntime().exec(args);
-        	
+
         	childReader = new BufferedReader(new InputStreamReader(childProcess.getInputStream()));
 
         	result = childReader.readLine().trim();
@@ -1777,15 +1777,15 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			catch (IOException ex){}
 		}
 		return result;
-	        	
+
 	}
-	
+
 	private SystemMessageException getCanceledException()
 	{
 		//This operation has been canceled by the user.
-		return new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID, 
+		return new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID,
 				ICommonMessageIds.MSG_OPERATION_CANCELED,
-			IStatus.CANCEL, CommonMessages.MSG_OPERATION_CANCELED)); 
+			IStatus.CANCEL, CommonMessages.MSG_OPERATION_CANCELED));
 	}
-	
+
 }

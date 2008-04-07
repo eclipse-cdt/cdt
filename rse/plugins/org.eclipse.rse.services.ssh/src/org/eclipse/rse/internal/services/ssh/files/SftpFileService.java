@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - initial API and implementation
  * David Dykstal (IBM) - fixing bug 162510: correctly process filter strings
@@ -79,7 +79,7 @@ import org.eclipse.rse.services.files.RemoteFileCanceledException;
 import org.eclipse.rse.services.files.RemoteFileIOException;
 import org.eclipse.rse.services.files.RemoteFileSecurityException;
 
-public class SftpFileService extends AbstractFileService implements IFileService, ISshService, IFilePermissionsService
+public class SftpFileService extends AbstractFileService implements ISshService, IFilePermissionsService
 {
 
 	private static class SftpBufferedInputStream extends BufferedInputStream {
@@ -419,7 +419,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	 * @param parentDir path name of the parent directory.
 	 * @param fileName file name to concatenate.
 	 * @return path name concatenated from parent directory and file name.
-	 * 
+	 *
 	 */
 	protected String concat(String parentDir, String fileName) {
 		// See also {@link SftpHostFile#getAbsolutePath()}

@@ -1,9 +1,10 @@
-/********************************************************************************
- * Copyright (c) 2007 IBM Corporation. All rights reserved.
- * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
- * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+/*******************************************************************************
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
  * component that contains this file: David McKnight.
@@ -11,7 +12,7 @@
  * Contributors:
  * Xuan Chen (IBM) - [209827] Update DStore command implementation to enable cancelation of archive operations
  * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
- ********************************************************************************/
+ *******************************************************************************/
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
 
 import java.io.File;

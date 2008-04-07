@@ -1,9 +1,10 @@
-/********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation. All rights reserved.
- * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is
- * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+/*******************************************************************************
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
  * component that contains this file: David McKnight, Kushal Munir,
@@ -13,7 +14,7 @@
  * Contributors:
  * David Dykstal (IBM) - removed RESOURCE_TEAMPROFILE_NAME
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
- ********************************************************************************/
+ *******************************************************************************/
 
 package org.eclipse.rse.internal.core;
 

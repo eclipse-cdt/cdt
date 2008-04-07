@@ -1,9 +1,10 @@
-/********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
- * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
- * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+/*******************************************************************************
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
  * component that contains this file: David McKnight, Kushal Munir, 
@@ -17,7 +18,7 @@
  *                                contained in the reference was not found.
  * David Dykstal (IBM) - [192122] extended search to look for filter pools in
  *   profile during getReferencedFilterPool() rather than returning broken reference
- ********************************************************************************/
+ *******************************************************************************/
 
 package org.eclipse.rse.internal.core.filters;
 

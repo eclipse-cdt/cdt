@@ -1,8 +1,9 @@
-/********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
- * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is
- * available at http://www.eclipse.org/legal/epl-v10.html
+/*******************************************************************************
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
@@ -14,7 +15,7 @@
  * Uwe Stieber (Wind River) - Added system types provider extension.
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
  * David McKnight   (IBM)        - [216252] MessageFormat.format -> NLS.bind
- ********************************************************************************/
+ *******************************************************************************/
 package org.eclipse.rse.internal.core;
 
 import java.util.ArrayList;

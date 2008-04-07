@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.rse.files.ui" version="1">
+    <resource path="src/org/eclipse/rse/internal/files/ui/propertypages/UniversalPreferencePage.java">
+        <filter id="572522506" messageargs="org.eclipse.rse.internal.subsystems.files.core.model.SystemFileTransferModeMapping"/>
+    </resource>
+</component>

@@ -60,6 +60,7 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -401,10 +402,11 @@ class EditTemplateDialog extends StatusDialog {
 //		return button;
 //	}
 	
-	private static Text createText(Composite parent) {
+	private Text createText(Composite parent) {
 		Text text= new Text(parent, SWT.BORDER);
-		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+		final GridData gd= new GridData(GridData.FILL_HORIZONTAL);
+		gd.widthHint= convertWidthInCharsToPixels(20);
+		text.setLayoutData(gd);
 		return text;
 	}
 
@@ -632,6 +634,19 @@ class EditTemplateDialog extends StatusDialog {
 		}
 	}
 	
+	/*
+	 * @see org.eclipse.jface.dialogs.Dialog#getInitialSize()
+	 */
+	@Override
+	protected Point getInitialSize() {
+		Point defaultSize= getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+		Point restoredSize= super.getInitialSize();
+		if (defaultSize.x > restoredSize.x) {
+			restoredSize.x= defaultSize.x;
+		}
+		return restoredSize;
+	}
+
 	/*
 	 * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
 	 */

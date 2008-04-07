@@ -117,7 +117,7 @@ public class IndexBasedCodeReaderFactory implements IIndexBasedCodeReaderFactory
 		this.iflCache = iflCache;
 		this.fFallBackFactory= fallbackFactory;
 		this.fProjectPathPrefix= cproject == null ? null : '/' + cproject.getElementName() + '/';
-		fIncludeFileResolutionCache= new IncludeFileResolutionCache(1024);
+		fIncludeFileResolutionCache= new IncludeFileResolutionCache();
 	}
 
 	final protected Map getIFLCache() {
@@ -141,13 +141,13 @@ public class IndexBasedCodeReaderFactory implements IIndexBasedCodeReaderFactory
 	
 	public CodeReader createCodeReaderForInclusion(IMacroCollector scanner, String path) {
 		// if the file is in the index, we skip it
-		File location= new File(path);
-		String canonicalPath= path;
-		if (!location.exists()) {
+		if (!fIncludeFileResolutionCache.exists(path)) {
 			return null;
 		}
+		String canonicalPath= path;
 		if (!CASE_SENSITIVE_FILES) {
 			try {
+				File location= new File(path);
 				canonicalPath= location.getCanonicalPath();
 			}
 			catch (IOException e) {

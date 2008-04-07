@@ -10,105 +10,66 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
+import java.io.File;
+import java.lang.ref.Reference;
+import java.lang.ref.SoftReference;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.cdt.core.parser.util.CharArrayUtils;
-import org.eclipse.cdt.internal.core.parser.util.WeakHashSet;
-
 /**
- * A limited LRU cache for looking up files in an include search path.
+ * A cache for checking whether a file exists. The cache shall be used for a limited amount of time, only (e.g. one 
+ * indexer task). It uses as much memory as it needs. To protect against OutOfMemory situations, a soft reference is
+ * used.
  * @since 5.0
  */
 public final class IncludeFileResolutionCache {
-	public static class ISPKey  {
-		private static int hashCode(Object[] array) {
-			int prime = 31;
-			if (array == null)
-				return 0;
-			int result = 1;
-			for (int index = 0; index < array.length; index++) {
-				result = prime * result + (array[index] == null ? 0 : array[index].hashCode());
-			}
-			return result;
-		}
+	private static final String[] EMPTY_STRING_ARRAY= {};
+	private static final boolean CASE_INSENSITIVE = new File("a").equals(new File("A")); //$NON-NLS-1$ //$NON-NLS-2$
+	private static boolean BYPASS_CACHE= Boolean.getBoolean("CDT_INDEXER_BYPASS_FILE_EXISTS_CACHE"); //$NON-NLS-1$
 
-		private String[] fISP;
-		private int fHashCode;
-
-		private ISPKey(String[] isp) {
-			fISP= isp;
-			fHashCode= hashCode(isp);
-		}
-
-		public boolean equals(Object obj) {
-			if (this == obj) {
-				return true;
-			}
-			return obj != null && Arrays.equals(fISP, ((ISPKey) obj).fISP);
-		}
-
-		public int hashCode() {
-			return fHashCode;
-		}
+	private Reference fExistsCache= null;
+		
+	public IncludeFileResolutionCache() {
+		fExistsCache= new SoftReference(new HashMap());	// before running out of mem the entire map will be thrown away.
 	}
 	
-	public static class LookupKey {
-		private ISPKey fCanonicISP;
-		private char[] fName;
-		private int fHashCode;
-
-		private LookupKey(ISPKey ispKey, char[] include) {
-			fCanonicISP= ispKey;
-			fName= include;
-			fHashCode= CharArrayUtils.hash(include) * 31 + ispKey.hashCode();
+	public boolean exists(String path) {
+		File file= new File(path);
+		if (BYPASS_CACHE) {
+			return file.exists();
 		}
 		
-		public int hashCode() {
-			return fHashCode;
-		}
-
-		public boolean equals(Object obj) {
-			LookupKey other= (LookupKey) obj;
-			if (fCanonicISP != other.fCanonicISP)
-				return false;
-			if (!Arrays.equals(fName, other.fName))
-				return false;
-			return true;
-		}
-	}
-
-	private WeakHashSet fCanonicISPs;
-	private LinkedHashMap fCache;
+		String parent= file.getParent();
+		String name= file.getName();
+		if (CASE_INSENSITIVE)
+			name= name.toUpperCase();
 		
-	/**
-	 * Creates a cache for include file resolution using up to the given amount of memory
-	 * @param maxSizeKBytes the maximum size of the cache in kilobytes
-	 */
-	public IncludeFileResolutionCache(final int maxSizeKBytes) {
-		final int size= maxSizeKBytes*1024/72; // HashEntry 32 bytes, Key 16 bytes, Name 16 bytes, Integer 8 bytes 
-		fCache= new LinkedHashMap(size, 0.75f, true) {
-			protected boolean removeEldestEntry(Map.Entry eldest) {
-				return size() > size;
+		String[] avail= (String[]) getExistsCache().get(parent); 
+		if (avail == null) {
+			avail= new File(parent).list();
+			if (avail == null || avail.length == 0) {
+				avail= EMPTY_STRING_ARRAY;
 			}
-		};
-		fCanonicISPs= new WeakHashSet();
-	}
-	
-	public ISPKey getKey(String[] isp) {
-		return (ISPKey) fCanonicISPs.add(new ISPKey(isp));
-	}
-
-	public LookupKey getKey(ISPKey ispKey, char[] filename) {
-		return new LookupKey(ispKey, filename);
-	}
-
-	public Integer getCachedPathOffset(LookupKey key) {
-        return (Integer) fCache.get(key);
+			else {
+				if (CASE_INSENSITIVE) {
+					for (int i = 0; i < avail.length; i++) {
+						avail[i]= avail[i].toUpperCase();
+					}
+				}
+				Arrays.sort(avail);
+			}
+			getExistsCache().put(parent, avail);
+		}
+		return Arrays.binarySearch(avail, name) >= 0;
 	}
 
-	public void putCachedPathOffset(LookupKey key, Integer offset) {
-		fCache.put(key, offset);
+	private Map getExistsCache() {
+		Map cache= (Map) fExistsCache.get();
+		if (cache == null) {
+			cache= new HashMap();
+			fExistsCache= new SoftReference(cache); // before running out of mem the entire map will be thrown away.
+		}
+		return cache;
 	}
 }

@@ -45,7 +45,7 @@ public class DOMScanner extends BaseScanner {
     private final IIncludeFileTester createPathTester= new IIncludeFileTester() { 
     	public Object checkFile(String path, String fileName) {
     		path= ScannerUtility.createReconciledPath(path, fileName);
-    		if (new File(path).exists()) {
+    		if (includeResolutionCache.exists(path)) {
     			return path;
     		}
     		return null;
@@ -104,7 +104,7 @@ public class DOMScanner extends BaseScanner {
 				return cache;
 			}
 		}
-		return new IncludeFileResolutionCache(1024);
+		return new IncludeFileResolutionCache();
 	}
 
 	private void registerMacros() {

@@ -8,9 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-/*
- * Created on Apr 13, 2005
- */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -31,8 +28,8 @@ import org.eclipse.cdt.internal.core.index.IIndexType;
  */
 public class CPPTemplateTypeParameter extends CPPTemplateParameter implements
 		ICPPTemplateTypeParameter, IType, ICPPInternalUnknown {
-
     private ICPPScope unknownScope = null;
+    
 	/**
 	 * @param name
 	 */
@@ -41,49 +38,47 @@ public class CPPTemplateTypeParameter extends CPPTemplateParameter implements
 	}
 
 	public ICPPScope getUnknownScope() {
-	    if( unknownScope == null ) {
+	    if (unknownScope == null) {
 	    	IASTName n = null;
 	    	IASTNode[] nodes = getDeclarations();
-	    	if( nodes != null && nodes.length > 0 )
+	    	if (nodes != null && nodes.length > 0)
 	    		n = (IASTName) nodes[0];
-	        unknownScope = new CPPUnknownScope( this, n );
+	        unknownScope = new CPPUnknownScope(this, n);
 	    }
 	    return unknownScope;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter#getDefault()
 	 */
 	public IType getDefault() {
-		IASTNode [] nds = getDeclarations();
-		if( nds == null || nds.length == 0 )
+		IASTNode[] nds = getDeclarations();
+		if (nds == null || nds.length == 0)
 		    return null;
 		IASTName name = (IASTName) nds[0];
 		ICPPASTSimpleTypeTemplateParameter simple = (ICPPASTSimpleTypeTemplateParameter) name.getParent();
 		IASTTypeId typeId = simple.getDefaultType();
-		if( typeId != null )
-		    return CPPVisitor.createType( typeId );
+		if (typeId != null)
+		    return CPPVisitor.createType(typeId);
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
-	 */
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
      */
-    public boolean isSameType( IType type ) {
-        if( type == this )
+    public boolean isSameType(IType type) {
+        if (type == this)
             return true;
-        if( type instanceof ITypedef || type instanceof IIndexType )
-            return type.isSameType( this );
+        if (type instanceof ITypedef || type instanceof IIndexType)
+            return type.isSameType(this);
         return false;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknown#resolveUnknown(org.eclipse.cdt.core.parser.util.ObjectMap)
      */
-    public IBinding resolveUnknown( ObjectMap argMap ) {
-        // TODO Auto-generated method stub
-        return null;
+    public IBinding resolveUnknown(ObjectMap argMap) {
+    	// Cannot do resolution here since the result is not necessarily a binding.
+		return null;
     }
 }

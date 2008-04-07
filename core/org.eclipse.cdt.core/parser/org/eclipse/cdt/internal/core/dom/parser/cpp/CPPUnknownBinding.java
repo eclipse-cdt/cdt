@@ -21,9 +21,11 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.core.runtime.PlatformObject;
@@ -132,8 +134,10 @@ public abstract class CPPUnknownBinding extends PlatformObject
      */
     public IBinding resolveUnknown(ObjectMap argMap) throws DOMException {
         IBinding result = this;
-        IType t = (IType) argMap.get(scopeBinding);
-        if (t == null && scopeBinding instanceof ICPPInternalUnknownClassType) {
+        IType t = null;
+		if (scopeBinding instanceof ICPPTemplateTypeParameter) {
+			t = CPPTemplates.instantiateType((ICPPTemplateTypeParameter) scopeBinding, argMap);
+		} else if (scopeBinding instanceof ICPPInternalUnknownClassType) {
         	IBinding binding = ((ICPPInternalUnknownClassType) scopeBinding).resolveUnknown(argMap);
         	if (binding instanceof IType) {
                 t = (IType) binding;

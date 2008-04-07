@@ -735,8 +735,18 @@ public class CPPTemplates {
 			} else {
 				newType = type;
 			}
-		} else if (type instanceof ICPPTemplateParameter && argMap.containsKey(type)) {
-			newType = (IType) argMap.get(type);
+		} else if (type instanceof ICPPTemplateParameter) {
+			IType t = (IType) argMap.get(type);
+			if (t == null) {
+				for (int i = 0; i < argMap.size(); i++) {
+					if (type.isSameType((IType) argMap.keyAt(i))) {
+						newType = (IType) argMap.getAt(i);
+						break;
+					}
+				}
+			} else {
+				newType = t;
+			}
 		} else if (type instanceof ICPPInternalDeferredClassInstance) {
 			newType = ((ICPPInternalDeferredClassInstance) type).instantiate(argMap);
 		} else if (type instanceof ICPPInternalUnknown) {

@@ -34,36 +34,7 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.*;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPBasicType;
 import org.eclipse.cdt.core.index.IIndexBinding;
@@ -71,6 +42,7 @@ import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBlockScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownClassType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
@@ -119,7 +91,6 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	}
 
 	// Binding types
-
 	
 	private class ConfigureTemplate implements Runnable {
 		ICPPTemplateDefinition template;
@@ -150,7 +121,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		PDOMCPPClassTemplatePartialSpecialization partial;
 		ICPPClassTemplatePartialSpecialization binding;
 		
-		public ConfigurePartialSpecialization(PDOMCPPClassTemplatePartialSpecialization partial, ICPPClassTemplatePartialSpecialization binding) {
+		public ConfigurePartialSpecialization(PDOMCPPClassTemplatePartialSpecialization partial,
+				ICPPClassTemplatePartialSpecialization binding) {
 			this.partial = partial;
 			this.binding = binding;
 		}
@@ -295,12 +267,13 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 
 	private PDOMBinding addBinding(PDOMNode parent, IBinding binding) throws CoreException, DOMException {
 		PDOMBinding pdomBinding= null;
-		
+
 		if (binding instanceof ICPPSpecialization) {
 			IBinding specialized = ((ICPPSpecialization)binding).getSpecializedBinding();
 			if (specialized == null || specialized instanceof ProblemBinding) return null;
 			PDOMBinding pdomSpecialized = addBinding(specialized, null);
-			if (pdomSpecialized == null) return null;
+			if (pdomSpecialized == null)
+				return null;
 			
 			if (binding instanceof ICPPDeferredTemplateInstance) {
 				if (binding instanceof ICPPFunction && pdomSpecialized instanceof ICPPFunctionTemplate) {
@@ -324,7 +297,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 					pdomBinding = new PDOMCPPClassInstance(pdom, parent,
 							(ICPPClassType) binding, pdomSpecialized);
 				}
-			} else if (binding instanceof ICPPClassTemplatePartialSpecialization && pdomSpecialized instanceof PDOMCPPClassTemplate) {
+			} else if (binding instanceof ICPPClassTemplatePartialSpecialization &&
+					pdomSpecialized instanceof PDOMCPPClassTemplate) {
 				pdomBinding = new PDOMCPPClassTemplatePartialSpecialization(
 						pdom, parent, (ICPPClassTemplatePartialSpecialization) binding,
 						(PDOMCPPClassTemplate) pdomSpecialized);
@@ -460,10 +434,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 					PDOMBinding pdomBinding= adaptBinding(method);
 					if (pdomBinding == null) {
 						addBinding(type, method);
-					} else {
-						if (!pdomBinding.hasDefinition()) {
-							pdomBinding.update(this, method);
-						}
+					} else if (!pdomBinding.hasDefinition()) {
+						pdomBinding.update(this, method);
 					}
 				}
 			}
@@ -476,90 +448,97 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	public int getBindingType(IBinding binding) {
 		if (binding instanceof ICPPSpecialization) {
 			if (binding instanceof ICPPDeferredTemplateInstance) {
-				if (binding instanceof ICPPFunction)
+				if (binding instanceof ICPPFunction) {
 					return CPP_DEFERRED_FUNCTION_INSTANCE;
-				if (binding instanceof ICPPClassType)
-					return CPP_DEFERRED_CLASS_INSTANCE;	
+				} else if (binding instanceof ICPPClassType) {
+					return CPP_DEFERRED_CLASS_INSTANCE;
+				}
 			} else if (binding instanceof ICPPTemplateInstance) {
-				if (binding instanceof ICPPConstructor)
+				if (binding instanceof ICPPConstructor) {
 					return CPP_CONSTRUCTOR_INSTANCE;
-				if (binding instanceof ICPPMethod)
+				} else if (binding instanceof ICPPMethod) {
 					return CPP_METHOD_INSTANCE;
-				else if (binding instanceof ICPPFunction)
+				} else if (binding instanceof ICPPFunction) {
 					return CPP_FUNCTION_INSTANCE;
-				else if (binding instanceof ICPPClassType)
+				} else if (binding instanceof ICPPClassType) {
 					return CPP_CLASS_INSTANCE;		
-			} else if (binding instanceof ICPPClassTemplatePartialSpecialization)
+				}
+			} else if (binding instanceof ICPPClassTemplatePartialSpecialization) {
 				return CPP_CLASS_TEMPLATE_PARTIAL_SPEC;
-			else if (binding instanceof ICPPField)
+			} else if (binding instanceof ICPPField) {
 				return CPP_FIELD_SPECIALIZATION;
-			else if (binding instanceof ICPPFunctionTemplate) {
-				if (binding instanceof ICPPConstructor)
+		    } else if (binding instanceof ICPPFunctionTemplate) {
+				if (binding instanceof ICPPConstructor) {
 					return CPP_CONSTRUCTOR_TEMPLATE_SPECIALIZATION;
-				else if (binding instanceof ICPPMethod)
+				} else if (binding instanceof ICPPMethod) {
 					return CPP_METHOD_TEMPLATE_SPECIALIZATION;
-				else if (binding instanceof ICPPFunction)
+				} else if (binding instanceof ICPPFunction) {
 					return CPP_FUNCTION_TEMPLATE_SPECIALIZATION;
-			} else if (binding instanceof ICPPConstructor)
+				}
+			} else if (binding instanceof ICPPConstructor) {
 				return CPP_CONSTRUCTOR_SPECIALIZATION;
-			else if (binding instanceof ICPPMethod)
+			} else if (binding instanceof ICPPMethod) {
 				return CPP_METHOD_SPECIALIZATION;
-			else if (binding instanceof ICPPFunction)
+			} else if (binding instanceof ICPPFunction) {
 				return CPP_FUNCTION_SPECIALIZATION;
-			else if (binding instanceof ICPPClassTemplate)
+			} else if (binding instanceof ICPPClassTemplate) {
 				return CPP_CLASS_TEMPLATE_SPECIALIZATION;
-			else if (binding instanceof ICPPClassType)
+			} else if (binding instanceof ICPPClassType) {
 				return CPP_CLASS_SPECIALIZATION;
-			else if (binding instanceof ITypedef)
+			} else if (binding instanceof ITypedef) {
 				return CPP_TYPEDEF_SPECIALIZATION;
+			}
 		} else if (binding instanceof ICPPTemplateParameter) {
-			if (binding instanceof ICPPTemplateTypeParameter)
+			if (binding instanceof ICPPTemplateTypeParameter) {
 				return CPP_TEMPLATE_TYPE_PARAMETER;
+			}
 // TODO other template parameter types
 //			else if (binding instanceof ICPPTemplateTemplateParameter)
 //				return CPP_TEMPLATE_TEMPLATE_PARAMETER;
 //			else if (binding instanceof ICPPTemplateNonTypeParameter)
 //				return CPP_TEMPLATE_NON_TYPE_PARAMETER;
-		} else if (binding instanceof ICPPField)
+		} else if (binding instanceof ICPPField) {
 			// this must be before variables
 			return CPPFIELD;
-		else if (binding instanceof ICPPVariable)
+		} else if (binding instanceof ICPPVariable) {
 			return CPPVARIABLE;
-		else if (binding instanceof ICPPFunctionTemplate) {
+		} else if (binding instanceof ICPPFunctionTemplate) {
 			// this must be before functions
-			if (binding instanceof ICPPConstructor)
+			if (binding instanceof ICPPConstructor) {
 				return CPP_CONSTRUCTOR_TEMPLATE;
-			else if (binding instanceof ICPPMethod)
+			} else if (binding instanceof ICPPMethod) {
 				return CPP_METHOD_TEMPLATE;
-			else if (binding instanceof ICPPFunction)
+			} else if (binding instanceof ICPPFunction) {
 				return CPP_FUNCTION_TEMPLATE;
-		} else if (binding instanceof ICPPConstructor)
+			}
+		} else if (binding instanceof ICPPConstructor) {
 			// before methods
 			return CPP_CONSTRUCTOR;
-		else if (binding instanceof ICPPMethod)
+		} else if (binding instanceof ICPPMethod) {
 			// this must be before functions
 			return CPPMETHOD;
-		else if (binding instanceof ICPPFunctionType)
+		} else if (binding instanceof ICPPFunctionType) {
 			return CPP_FUNCTION_TYPE;
-		else if (binding instanceof ICPPFunction)
+		} else if (binding instanceof ICPPFunction) {
 			return CPPFUNCTION;
-		else if (binding instanceof ICPPClassTemplate)
+		} else if (binding instanceof ICPPClassTemplate) {
 			// this must be before class type
 			return CPP_CLASS_TEMPLATE;
-		else if (binding instanceof ICPPClassType)
+		} else if (binding instanceof ICPPClassType) {
 			return CPPCLASSTYPE;
-		else if (binding instanceof ICPPNamespaceAlias)
+		} else if (binding instanceof ICPPNamespaceAlias) {
 			return CPPNAMESPACEALIAS;
-		else if (binding instanceof ICPPNamespace)
+		} else if (binding instanceof ICPPNamespace) {
 			return CPPNAMESPACE;
-		else if (binding instanceof ICPPUsingDeclaration)
+		} else if (binding instanceof ICPPUsingDeclaration) {
 			return CPP_USING_DECLARATION;
-		else if (binding instanceof IEnumeration)
+		} else if (binding instanceof IEnumeration) {
 			return CPPENUMERATION;
-		else if (binding instanceof IEnumerator)
+		} else if (binding instanceof IEnumerator) {
 			return CPPENUMERATOR;
-		else if (binding instanceof ITypedef)
+		} else if (binding instanceof ITypedef) {
 			return CPPTYPEDEF;
+		}
 			
 		return 0;
 	}
@@ -576,7 +555,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		}
 		if (parent instanceof PDOMCPPNamespace) {
 			int localToFileRec= getLocalToFileRec(parent, binding);
-			return CPPFindBinding.findBinding(((PDOMCPPNamespace)parent).getIndex(), this, binding, localToFileRec);
+			return CPPFindBinding.findBinding(((PDOMCPPNamespace)parent).getIndex(), this, binding,
+					localToFileRec);
 		}
 		if (parent instanceof IPDOMMemberOwner) {
 			int localToFileRec= getLocalToFileRec(parent, binding);
@@ -610,6 +590,9 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
  					if (ib.isFileLocal()) {
  						return null;
  					}
+ 					if (scope == null && binding instanceof ICPPInternalUnknownClassType) {
+ 						return adaptBinding(((PDOMBinding) binding).getParentBinding());
+ 					}
  					// in an index the null scope represents global scope.
  					if (scope == null) {
  						return this;
@@ -633,7 +616,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
  				}
  
  				// the scope is from the ast
- 				if (scope instanceof ICPPTemplateScope && !(binding instanceof ICPPTemplateParameter || binding instanceof ICPPTemplateInstance)) {
+ 				if (scope instanceof ICPPTemplateScope &&
+ 						!(binding instanceof ICPPTemplateParameter || binding instanceof ICPPTemplateInstance)) {
  					scope = scope.getParent();
  					if (scope == null) {
  						return null;
@@ -867,12 +851,14 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				PDOMBinding derivedClassBinding= derivedClassName.getBinding();
 				if (derivedClassBinding instanceof PDOMCPPClassType) {
 					PDOMCPPClassType ownerClass = (PDOMCPPClassType)derivedClassBinding;
-					PDOMCPPBase pdomBase = new PDOMCPPBase(pdom, pdomName, baseNode.isVirtual(), baseNode.getVisibility());
+					PDOMCPPBase pdomBase = new PDOMCPPBase(pdom, pdomName, baseNode.isVirtual(),
+							baseNode.getVisibility());
 					ownerClass.addBase(pdomBase);
 					pdomName.setIsBaseSpecifier(true);
 				} else if (derivedClassBinding instanceof PDOMCPPClassSpecialization) {
 					PDOMCPPClassSpecialization ownerClass = (PDOMCPPClassSpecialization)derivedClassBinding;
-					PDOMCPPBase pdomBase = new PDOMCPPBase(pdom, pdomName, baseNode.isVirtual(), baseNode.getVisibility());
+					PDOMCPPBase pdomBase = new PDOMCPPBase(pdom, pdomName, baseNode.isVirtual(),
+							baseNode.getVisibility());
 					ownerClass.addBase(pdomBase);
 					pdomName.setIsBaseSpecifier(true);
 				}
@@ -901,7 +887,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				}
 				if (doit) {
 					int rec= file.getFirstUsingDirectiveRec();
-					PDOMCPPUsingDirective ud= new PDOMCPPUsingDirective(this, rec, containerNS, pdomName.getBinding());
+					PDOMCPPUsingDirective ud= new PDOMCPPUsingDirective(this, rec, containerNS,
+							pdomName.getBinding());
 					file.setFirstUsingDirectiveRec(ud.getRecord());
 				}
 			} catch (DOMException e) {
@@ -909,8 +896,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			}
 		}
 	}
-	
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage#getUsingDirectives()
 	 */

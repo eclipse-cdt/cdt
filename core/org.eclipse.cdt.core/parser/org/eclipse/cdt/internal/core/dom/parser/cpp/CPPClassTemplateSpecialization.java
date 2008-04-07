@@ -112,7 +112,12 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 	}
 
 	public ICPPSpecialization deferredInstance(ObjectMap argMap, IType[] arguments) {
-		return null;
+		ICPPSpecialization instance = getInstance(arguments);
+		if (instance == null) {
+			instance = new CPPDeferredClassInstance(this, argMap, arguments);
+			addSpecialization(arguments, instance);
+		}
+		return instance;
 	}
 
 	public void addPartialSpecialization(ICPPClassTemplatePartialSpecialization spec) {

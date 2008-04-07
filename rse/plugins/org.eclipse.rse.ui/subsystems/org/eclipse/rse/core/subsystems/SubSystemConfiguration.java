@@ -1,20 +1,20 @@
 /********************************************************************************
  * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * David Dykstal (IBM) - 168870: moved SystemPreferencesManager to a new package
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  * David Dykstal (IBM) - 168870: made use of adapters on the SubSystemConfigurationProxy
- * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType
  * David Dykstal (IBM) - 142806: refactoring persistence framework
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
@@ -157,7 +157,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 
 //	protected boolean _isDirty;
 
-	
+
 	/**
 	 * Constructor
 	 */
@@ -167,7 +167,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		//initSubSystems();
 		SystemBasePlugin.logDebugMessage(this.getClass().getName(), "STARTED SSFACTORY"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Reset for a full refresh from disk, such as after a team synch.
 	 * Override this as required, but please call super.reset()!!
@@ -186,7 +186,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	// ---------------------------------
 	// CRITICAL METHODS...
 	// ---------------------------------
-	
+
 	/**
 	 * Return true if instance of this subsystem configuration's subsystems support connect and disconnect actions.
 	 * <b>By default, returns true</b>.
@@ -215,7 +215,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	/**
 	 * Return true if subsystem instances from this subsystem configuration support getting and setting properties
 	 * <p>RETURNS FALSE BY DEFAULT.
-	 * 
+	 *
 	 * @return <code>false</code> to indicate that Properties are not supported by default.
 	 */
 	public boolean supportsProperties()
@@ -224,17 +224,17 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	}
 	/**
 	 * Return true if you support filters, false otherwise.
-	 * If you support filters, then some housekeeping will be 
+	 * If you support filters, then some housekeeping will be
 	 * done for you automatically. Specifically, they
 	 * will be saved and restored for you automatically.
 	 * The default is to support filters.
-	 * 
+	 *
 	 * @return <code>true</code> to indicate that Filters are supported by default.
 	 */
 	public boolean supportsFilters() {
 		return true;
 	}
-	
+
     /**
      * Indicates whether the subsystem supports displaying children under
      * its filters.  By default, this will return true, but if filters that can't
@@ -244,7 +244,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
     {
     	return true;
     }
-    
+
     /**
      * Required method for subsystem configuration child classes. Return true if you filter caching.
      * If you support filter caching, then the views will always check the in-memory cache for
@@ -285,8 +285,8 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	{
 		return supportsFilters();
 	}
-	
-	/** 
+
+	/**
 	 * Return true if filters of this subsystem configuration support dropping into.
 	 * Override this method to provide drop support for filters.
 	 */
@@ -294,13 +294,13 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	{
 	    return false;
 	}
-	
-	/** 
-	 * Return true if filters of this subsystem configuration provide a custom implementation of drop support.  
+
+	/**
+	 * Return true if filters of this subsystem configuration provide a custom implementation of drop support.
 	 * By default, the filter reference adapter treats a drop on a filter as an update to the list of filter
-	 * strings for a filter.  For things like files, it is more desirable to treat the drop as a physical 
+	 * strings for a filter.  For things like files, it is more desirable to treat the drop as a physical
 	 * resource copy, so in that case, custom drop makes sense.
-	 * 
+	 *
 	 * By default this returns false.
 	 */
 	public boolean providesCustomDropInFilters()
@@ -350,7 +350,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		return false;
 	}
 	/**
-	 * Tell us if this subsystem configuration supports targets, which are destinations for 
+	 * Tell us if this subsystem configuration supports targets, which are destinations for
 	 *   pushes and builds. Normally only true for file system factories.
 	 */
 	public boolean supportsTargets()
@@ -360,11 +360,11 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	/**
 	 * Tell us if this subsystem configuration supports server launch properties, which allow the user
 	 * to configure how the server-side code for these subsystems are started. There is a Server
-	 * Launch Setting property page, with a pluggable composite, where users can configure these 
-	 * properties. 
+	 * Launch Setting property page, with a pluggable composite, where users can configure these
+	 * properties.
 	 * <p>
-	 * If you return true here, you may also want to override {@link #supportsServerLaunchType(ServerLaunchType)}. 
-	 * <br> By default we return false here. This is overridden in UniversalFileSubSystemConfiguration though. 
+	 * If you return true here, you may also want to override {@link #supportsServerLaunchType(ServerLaunchType)}.
+	 * <br> By default we return false here. This is overridden in UniversalFileSubSystemConfiguration though.
 	 */
 	public boolean supportsServerLaunchProperties(IHost host) {
 		return false;
@@ -379,14 +379,16 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	public boolean supportsServerLaunchType(ServerLaunchType serverLaunchType)
 	{
 		return true;
-	}	
-			
+	}
+
 	/**
-	 * Determines whether this subsystem configuration is responsible for the creation of subsytems of the specified type
-	 * Subsystem factories should override this to indicate which subsystems they support.
-	 * 
+	 * Determines whether this subsystem configuration is responsible for the
+	 * creation of subsystems of the specified type Subsystem factories should
+	 * override this to indicate which subsystems they support.
+	 *
 	 * @param subSystemType type of subsystem
-	 * @return whether this subsystem configuration is for the specified subsystemtype
+	 * @return whether this subsystem configuration is for the specified
+	 *         subsystem type
 	 */
 	public boolean isFactoryFor(Class subSystemType)
 	{
@@ -421,7 +423,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 */
 	public void setShowFilterPools(boolean show)
 	{
-		ISubSystem[] subsystems = getSubSystems(false); // false=> lazy get; don't restore from disk if not already    	
+		ISubSystem[] subsystems = getSubSystems(false); // false=> lazy get; don't restore from disk if not already
 		for (int idx = 0; idx < subsystems.length; idx++)
 		{
 			ISubSystem ss = subsystems[idx];
@@ -457,7 +459,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	/**
 	 * Return vendor of this subsystem configuration.
 	 * This comes from the xml "vendor" attribute of the extension point.
-	 * 
+	 *
 	 * <b>Do not override this method</b>, it will likely be declared
 	 * <tt>final</tt> in the next release.
 	 */
@@ -469,7 +471,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	/**
 	 * Return name of this subsystem configuration.
 	 * This comes from the xml "name" attribute of the extension point.
-	 * 
+	 *
 	 * <b>Do not override this method</b>, it will likely be declared
 	 * <tt>final</tt> in the next release.
 	 */
@@ -477,11 +479,11 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	{
 		return proxy.getName();
 	}
-	
+
 	/**
 	 * Return name of this subsystem configuration.
 	 * This comes from the xml "description" attribute of the extension point.
-	 * 
+	 *
 	 * <b>Do not override this method</b>, it will likely be declared
 	 * <tt>final</tt> in the next release.
 	 */
@@ -489,11 +491,11 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	{
 		return proxy.getDescription();
 	}
-	
+
 	/**
 	 * Return unique id of this subsystem configuration.
 	 * This comes from the xml "id" attribute of the extension point.
-	 * 
+	 *
 	 * <b>Do not override this method</b>, it will likely be declared
 	 * <tt>final</tt> in the next release.
 	 */
@@ -501,12 +503,12 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	{
 		return proxy.getId();
 	}
-	
+
 	/**
 	 * Return the category this subsystem configuration subscribes to.
 	 * This comes from the xml "category" attribute of the extension point.
 	 * @see org.eclipse.rse.core.model.ISubSystemConfigurationCategories
-	 * 
+	 *
 	 * <b>Do not override this method</b>, it will likely be declared
 	 * <tt>final</tt> in the next release.
 	 */
@@ -514,13 +516,13 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	{
 		return proxy.getCategory();
 	}
-	
+
 	/**
 	 * Return the system types this subsystem configuration supports.
-	 * These come from static declaration in the 
+	 * These come from static declaration in the
 	 * <tt>org.eclipse.rse.core.subsystemConfigurations</tt> and
-	 * <tt>org.eclipse.rse.core.systemTypes</tt> extension points. 
-	 * 
+	 * <tt>org.eclipse.rse.core.systemTypes</tt> extension points.
+	 *
 	 * <b>Do not override this method</b>, it will likely be declared
 	 * <tt>final</tt> in the next release.
 	 */
@@ -612,12 +614,12 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 					SystemBasePlugin.logError("Unexpected error renaming default filter pool " + SubSystemConfiguration.getDefaultFilterPoolName(newProfileName, getId()), exc); //$NON-NLS-1$
 					System.out.println("Unexpected error renaming default filter pool " + SubSystemConfiguration.getDefaultFilterPoolName(newProfileName, getId()) + ": " + exc); //$NON-NLS-1$ //$NON-NLS-2$
 				}
-		}					
+		}
 	}
 
 	// ---------------------------------
 	// SUBSYSTEM METHODS...
-	// ---------------------------------    	
+	// ---------------------------------
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#renameSubSystemProfile(org.eclipse.rse.core.subsystems.ISubSystem, java.lang.String, java.lang.String)
@@ -636,7 +638,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	}
 
 	/**
-	 * Called by SystemRegistry's renameSystemProfile method to pre-test if we are going to run into errors on a 
+	 * Called by SystemRegistry's renameSystemProfile method to pre-test if we are going to run into errors on a
 	 *  profile rename, due to file or folder in use.
 	 */
 	public void preTestRenameSubSystemProfile(String oldProfileName) throws Exception
@@ -646,7 +648,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		{
 			ISystemFilterPool defaultPoolForThisProfile = getDefaultFilterPool(profile, oldProfileName);
 			if (defaultPoolForThisProfile != null)
-				getFilterPoolManager(profile).preTestRenameFilterPool(defaultPoolForThisProfile);				
+				getFilterPoolManager(profile).preTestRenameFilterPool(defaultPoolForThisProfile);
 		}
 	}
 
@@ -669,10 +671,10 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 			if (pool == null) // no perfect match?
 				pool = mgr.getFirstDefaultSystemFilterPool(); // settle for 2nd best. It may be that the filter was created in a different language.
 		}
-		
+
 		return pool;
 	}
-	
+
 	/**
 	 * Called by SystemRegistry's renameConnection method to ensure we update our
 	 *  connection names within each subsystem.
@@ -691,7 +693,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		}
 		else
 		{
-			// strange situation..log this 
+			// strange situation..log this
 			SystemBasePlugin.logInfo("renameSubSystemsByConnection for " + conn.getAliasName() + " has no subsystems" ); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		try
@@ -930,7 +932,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 * <p>
 	 * This method doe sthe following:
 	 * <ul>
-	 *   <li>calls {@link #createSubSystemInternal(IHost)} to create the subsystem 
+	 *   <li>calls {@link #createSubSystemInternal(IHost)} to create the subsystem
 	 *   <li>does initialization of common attributes
 	 *   <li>if {@link #supportsFilters()}, creates a {@link org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager} for the
 	 *           subsystem to manage references to filter pools
@@ -946,7 +948,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 * @param yourNewConnectionWizardPages The wizard pages you supplied to the New Connection wizard, via the
 	 *            {@link org.eclipse.rse.ui.subsystems.ISubSystemConfigurationAdapter#getNewConnectionWizardPages(ISubSystemConfiguration, org.eclipse.jface.wizard.IWizard)}
 	 *             method or null if you didn't override this method.
-	 *            Note there may be more pages than you originally supplied as it is all pages contributed by 
+	 *            Note there may be more pages than you originally supplied as it is all pages contributed by
 	 *            this subsystem configuration object, including subclasses.
 	 */
 	public ISubSystem createSubSystem(IHost conn, boolean creatingConnection, ISystemNewConnectionWizardPage[] yourNewConnectionWizardPages)
@@ -973,10 +975,10 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 				ISystemFilterPoolManager defaultFilterPoolManager = getFilterPoolManager(conn.getSystemProfile());
 				fprMgr.setDefaultSystemFilterPoolManager(defaultFilterPoolManager);
 			}
-			
+
 			IConnectorService connectorService = subsys.getConnectorService();
 			if (supportsServerLaunchProperties(conn))
-			{								
+			{
 				IServerLauncherProperties sl = connectorService.getRemoteServerLauncherProperties();
 				if (sl == null)
 				{
@@ -990,15 +992,15 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 			initializeSubSystem(subsys, yourNewConnectionWizardPages);
 			try
 			{
-				saveSubSystem(subsys);  
-				RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_ADDED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_SUBSYSTEM, subsys, null);						
+				saveSubSystem(subsys);
+				RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_ADDED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_SUBSYSTEM, subsys, null);
 			}
 			catch (Exception exc)
 			{
 				SystemBasePlugin.logError("Error saving new subsystem " + subsys.getName(), exc); //$NON-NLS-1$
 			}
-				  	    	
-			addSubSystem(subsys); // only add to list even if save was not successful.   
+
+			addSubSystem(subsys); // only add to list even if save was not successful.
 			//if (lastExc != null)
 			//throw lastExc;
 		}
@@ -1023,15 +1025,15 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 			internalInitializeNewSubSystem(subsys, newConnection);
 			// copy common data
 			subsys.setName(oldSubsystem.getName()); // just in case it was changed
-			subsys.addPropertySets(oldSubsystem.getPropertySets());	
+			subsys.addPropertySets(oldSubsystem.getPropertySets());
 			subsys.setHidden(oldSubsystem.isHidden());
 
-						
+
 			// connector service
 			IConnectorService oldConnectorService = oldSubsystem.getConnectorService();
 			IConnectorService newConnectorService = subsys.getConnectorService();
 			if (oldConnectorService != null)
-			{			
+			{
 				if (newConnectorService != null)
 				{
 					newConnectorService.setPort(oldConnectorService.getPort());
@@ -1039,7 +1041,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 					newConnectorService.setIsUsingSSL(oldConnectorService.isUsingSSL());
 				}
 			}
-			
+
 			// server launcher
 			IServerLauncherProperties sl = null;
 			if (oldConnectorService != null)
@@ -1047,9 +1049,9 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 			if ((sl != null) && supportsServerLaunchProperties(newConnection))
 			{
 				IServerLauncherProperties newSL = createServerLauncher(newConnectorService);
-				if (newSL != null && newConnectorService != null)					
+				if (newSL != null && newConnectorService != null)
 				{
-					newConnectorService.setRemoteServerLauncherProperties(sl.cloneServerLauncher(newSL));			
+					newConnectorService.setRemoteServerLauncherProperties(sl.cloneServerLauncher(newSL));
 				}
 			}
 			copySubSystemData(oldSubsystem, subsys); // let child classes copy their own data
@@ -1067,7 +1069,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 					defaultFilterPoolManager = oldSubsystem.getFilterPoolReferenceManager().getDefaultSystemFilterPoolManager();
 				newRefMgr.setDefaultSystemFilterPoolManager(defaultFilterPoolManager);
 				subsys.setFilterPoolReferenceManager(newRefMgr);
-				// copy filter pool references...    	  	
+				// copy filter pool references...
 				ISystemFilterPoolReferenceManager oldRefMgr = oldSubsystem.getSystemFilterPoolReferenceManager();
 				newRefMgr.setProviderEventNotification(false);
 				ISystemFilterPoolReference[] oldReferences = oldRefMgr.getSystemFilterPoolReferences();
@@ -1113,14 +1115,14 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 				saveSubSystem(subsys);
 
 				// fire model change event in case any BP code is listening...
-				RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_ADDED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_SUBSYSTEM, subsys, null);						
+				RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_ADDED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_SUBSYSTEM, subsys, null);
 			}
 			catch (Exception exc)
 			{
 				lastExc = exc;
 				SystemBasePlugin.logError("Error saving cloned subsystem " + subsys.getName(), exc); //$NON-NLS-1$
 			}
-			addSubSystem(subsys); // only add to list even if save was not successful.   	  	    	        	      	
+			addSubSystem(subsys); // only add to list even if save was not successful.
 			if (lastExc != null)
 				throw lastExc;
 		}
@@ -1144,9 +1146,9 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	/**
 	 * Overridable.
 	 * <p>
-	 * Return the name to give a new subsystem. By default, it is given the name of this 
+	 * Return the name to give a new subsystem. By default, it is given the name of this
 	 *  subsystem configuration object. This is fine, unless you support multiple subsystem instances per
-	 *  connection, in which case it is your responsibility to supply a unique name for 
+	 *  connection, in which case it is your responsibility to supply a unique name for
 	 *  each.
 	 * <p>
 	 * By default returns getName()
@@ -1166,15 +1168,15 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 * The default behavior is to add a reference to the default filter pool for this subsystem configuration,
 	 * if there is one. Typically subclasses call <samp>super().initializeSubSystem(...)</samp>
 	 * to get this default behavior, then extend it.
-	 * 
+	 *
 	 * <p>The reason for the connect wizard pages parameter is in case your subsystem configuration contributes a page to that wizard,
-	 * whose values are needed to set the subsystem's initial state. For example, you might decide to add a 
-	 * page to the connection wizard to prompt for a JDBC Driver name. If so, when this method is called at 
+	 * whose values are needed to set the subsystem's initial state. For example, you might decide to add a
+	 * page to the connection wizard to prompt for a JDBC Driver name. If so, when this method is called at
 	 * the time a new connection is created after the wizard, your page will have the user's value. You can
 	 * thus use it here to initialize that subsystem property. Be use to use instanceof to find your particular
-	 * page. 
+	 * page.
 	 * </p>
-	 * 
+	 *
 	 * @param ss - The subsystem that was created via createSubSystemInternal
 	 * @param yourNewConnectionWizardPages - The wizard pages you supplied to the New Connection wizard, via the
 	 *            {@link org.eclipse.rse.ui.view.SubSystemConfigurationAdapter#getNewConnectionWizardPages(org.eclipse.rse.core.subsystems.ISubSystemConfiguration, org.eclipse.jface.wizard.IWizard)}
@@ -1189,7 +1191,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		{
 			// --------------------------------------------
 			// add a reference to the default filter pool
-			// --------------------------------------------    	
+			// --------------------------------------------
 			ISystemFilterPool pool = getDefaultSystemFilterPool(ss);
 			if (pool != null)
 			{
@@ -1199,7 +1201,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 				refMgr.setProviderEventNotification(true);
 			}
 		}
-		
+
 		// apply properties set in the wizard to the subsystem
 	    if (yourNewConnectionWizardPages != null)
 	    {
@@ -1214,7 +1216,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	    	}
 	    }
 	}
-  
+
 	/**
 	 * Copy unique subsystem data after a copy operation. Subclasses should override and call super.
 	 */
@@ -1245,7 +1247,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		// we pushed down the code that checks if this change is real, such that
 		//  in a multi-subsystem environment it will not enter an infinite loop
 		//  when the event is fired.
-		if (!needsUpdate(subsystem, updateUserId, userId, updatePort, port)) // port was changed or userId was changed            	
+		if (!needsUpdate(subsystem, updateUserId, userId, updatePort, port)) // port was changed or userId was changed
 			return;
 
 		IConnectorService connectorService = subsystem.getConnectorService();
@@ -1261,7 +1263,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 				else
 				{
 					connectorService.setUserId(null);
-				}		
+				}
 			}
 			if (updatePort)
 			{
@@ -1274,16 +1276,16 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		}
 		else
 		{
-			
+
 		}
 
 		// inform interested listeners...
 		fireEvent(subsystem, ISystemResourceChangeEvents.EVENT_PROPERTY_CHANGE, subsystem.getHost());
 
 		// fire model change event in case any BP code is listening...
-		RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_CHANGED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_SUBSYSTEM, subsystem, null);						
+		RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_CHANGED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_SUBSYSTEM, subsystem, null);
 
-		// if the updated subsystem is one of many that share a single IConnectorService, then 
+		// if the updated subsystem is one of many that share a single IConnectorService, then
 		// update all of them too...
 		// DKM - now that ConnectorService is independent of subsystme, this should be unnecessary
 	/*	AbstractConnectorServiceManager systemManager = subsystem.getConnectorService();
@@ -1306,9 +1308,9 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	{
 		updateSubSystem(subsystem, true, userId, false, 0);
 	}
-		
+
 	/**
-	 * Used by child classes that override updateSubSystem to establish if anything really 
+	 * Used by child classes that override updateSubSystem to establish if anything really
 	 * needs to be changed.
 	 */
 	protected boolean needsUpdate(ISubSystem subsystem, boolean updateUserId, String userId, boolean updatePort, int port)
@@ -1318,7 +1320,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		{
 			if (updatePort) // we pass this parameter for a reason!
 			{
-				
+
 				int oldPort = connectorService.getPort();
 				updatePort = oldPort != port;
 			}
@@ -1326,12 +1328,12 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 			{
 				if ((userId == null) || (userId.trim().length() == 0)) // given empty
 				{
-					
+
 					updateUserId = (connectorService.getUserId() != null);
 				}
 				else
 				{
-					
+
 					String oldUserId = connectorService.getUserId();
 					if (oldUserId != null)
 					{ // if it is null, then we need to update it!
@@ -1372,7 +1374,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	{
 		if (subsystem.isConnected())
 		{
-			try 
+			try
 			{
 				subsystem.disconnect(); // just in case.
 			}
@@ -1380,7 +1382,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 			{
 			}
 		}
-		removeSubSystem(subsystem); // remove from our in-memory cache 	
+		removeSubSystem(subsystem); // remove from our in-memory cache
 		ISystemFilterPoolReferenceManager fpRefMgr = subsystem.getSystemFilterPoolReferenceManager();
 		if (fpRefMgr != null)
 		{
@@ -1391,9 +1393,9 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 					fpRefs[idx].removeReference();
 			}
 		}
-		
+
 		// fire model change event in case any BP code is listening...
-		RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_REMOVED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_SUBSYSTEM, subsystem, null);						
+		RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_REMOVED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_SUBSYSTEM, subsystem, null);
 		return true;
 	}
 
@@ -1418,7 +1420,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 */
 	protected ISystemFilterPoolWrapperInformation getNewFilterWizardPoolWrapperInformation()
 	{
-		return new SystemFilterPoolWrapperInformation(SystemResources.RESID_NEWFILTER_PAGE2_PROFILE_LABEL, SystemResources.RESID_NEWFILTER_PAGE2_PROFILE_TOOLTIP, 
+		return new SystemFilterPoolWrapperInformation(SystemResources.RESID_NEWFILTER_PAGE2_PROFILE_LABEL, SystemResources.RESID_NEWFILTER_PAGE2_PROFILE_TOOLTIP,
 				SystemResources.RESID_NEWFILTER_PAGE2_PROFILE_VERBIAGE);
 	}
 
@@ -1462,15 +1464,15 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	/**
 	 * <i>Overridable lifecycle method. Typically overridden to supply a default filter.</i><br>
 	 * When the user creates a new profile in the RSE (which is mapped to a SystemFilterPoolManager
-	 * by our parent class), each subsystem configuration that supports filters is asked if it wants to 
+	 * by our parent class), each subsystem configuration that supports filters is asked if it wants to
 	 * create a default system filter pool in that profile. <br>
 	 * This is the method that is called to do that default filter pool creation in the new profile.
 	 * <p>
 	 * By default we create an <i>empty</i> filter pool with a generated name, and no pre-defined filters.
 	 * If you don't want that behaviour, override this method and do one of the following:</p>
 	 * <ul>
-	 * <li>nothing if you don't want your subsystem configuration to have a default filter pool in the new profile</li>. 
-	 * <li>call super.createDefaultFilterPool(mgr) to get the default pool, and then than call <samp>mgr.createSystemFilter(pool,...)</samp> to create 
+	 * <li>nothing if you don't want your subsystem configuration to have a default filter pool in the new profile</li>.
+	 * <li>call super.createDefaultFilterPool(mgr) to get the default pool, and then than call <samp>mgr.createSystemFilter(pool,...)</samp> to create
 	 * each filter and add it to the filter pool, if you want to pre-populate the default pool with
 	 * default filters.
 	 * </ul>
@@ -1481,7 +1483,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		try {
 		  // -----------------------------------------------------
 		  // create a pool named filters
-		  // -----------------------------------------------------      			
+		  // -----------------------------------------------------
 		  pool = mgr.createSystemFilterPool(getDefaultFilterPoolName(mgr.getName(), getId()), true); // true=>is deletable by user
 		} catch (Exception exc)
 		{
@@ -1489,9 +1491,9 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		}
 		return pool;
 	}
-    
-	
-	
+
+
+
 	/**
 	 * Return true if the given filter pool manager maps to the private profile for this user.
 	 */
@@ -1571,7 +1573,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		}
 		return activeManagers;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#getFilterPoolManager(org.eclipse.rse.core.model.ISystemProfile)
 	 */
@@ -1591,12 +1593,12 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 				String managerName = getFilterPoolManagerName(profile);
 				boolean supportsNested = supportsNestedFilters();
 				mgr = SystemFilterPoolManager.createSystemFilterPoolManager(profile, logger, this, managerName, supportsNested);// the filter pool manager name
-				mgr.setSingleFilterStringOnly(!supportsMultipleFilterStrings()); 
+				mgr.setSingleFilterStringOnly(!supportsMultipleFilterStrings());
 				mgr.setWasRestored(false); // not yet initialized
 			} catch (Exception exc) {
 				SystemBasePlugin.logError("Restore/Creation of SystemFilterPoolManager " + getFilterPoolManagerName(profile) + " failed!", exc); //$NON-NLS-1$ //$NON-NLS-2$
 				SystemMessageDialog.displayExceptionMessage(null, exc);
-				return null; // something very bad happened!           	  
+				return null; // something very bad happened!
 			}
 			addFilterPoolManager(profile, mgr);
 		}
@@ -1620,11 +1622,11 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	}
 
 	/**
-	 * Do post-restore-processing of an existing filter pool manager. 
+	 * Do post-restore-processing of an existing filter pool manager.
 	 * This is where child classes do any required migration work. By default, we do nothing.
 	 * <p>
-	 * You can query the release of the filter pool managers, filter pools and filters, by querying the 
-	 * release attribute via getRelease().getValue(). You can compare to the current release number using 
+	 * You can query the release of the filter pool managers, filter pools and filters, by querying the
+	 * release attribute via getRelease().getValue(). You can compare to the current release number using
 	 * the CURRENT_RELEASE constant in ISystemConstants.
 	 * @return false if no changes made. True if changes made, and hence save required.
 	 */
@@ -1639,7 +1641,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 */
 	public ISystemFilterPoolManager copyFilterPoolManager(ISystemProfile oldProfile, ISystemProfile newProfile) throws Exception
 	{
-	
+
 		ISystemFilterPoolManager oldMgr = getFilterPoolManager(oldProfile); // will restore it if necessary
 
 			ISystemFilterPoolManager mgr = SystemFilterPoolManager.createSystemFilterPoolManager(newProfile, RSECorePlugin.getDefault().getLogger(), this, getFilterPoolManagerName(newProfile), supportsNestedFilters());
@@ -1706,18 +1708,18 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		if (match != null) // log and issue warning
 		{
 			ISubSystem ss = ((ISubSystem) callingRefMgr.getProvider());
-			// only issue the warning if it is NOT for a reference to a filter pool in the same profile as the 
-			// the one we are restoring. That is, we should not issue warnings about our own references when 
+			// only issue the warning if it is NOT for a reference to a filter pool in the same profile as the
+			// the one we are restoring. That is, we should not issue warnings about our own references when
 			// restoring the subsystems for an inactive profile, as happens when an inactive profile is deleted,
 			// for example. Defect 42675. Phil.
 			if (ss.getSystemProfile() != profile) // if restoring subsystem's profile != found pool's profile
 			{
 				IHost conn = ss.getHost();
 				String connectionName = conn.getSystemProfileName() + "." + conn.getAliasName(); //$NON-NLS-1$
-				
+
 				String msgTxt = NLS.bind(RSECoreMessages.MSG_LOADING_PROFILE_SHOULDBE_ACTIVATED, missingPoolMgrName, connectionName);
-				SystemMessage sysMsg = new SimpleSystemMessage(RSECorePlugin.PLUGIN_ID, 
-						SystemResourceConstants.MSG_LOADING_PROFILE_SHOULDBE_ACTIVATED,						
+				SystemMessage sysMsg = new SimpleSystemMessage(RSECorePlugin.PLUGIN_ID,
+						SystemResourceConstants.MSG_LOADING_PROFILE_SHOULDBE_ACTIVATED,
 						IStatus.ERROR, msgTxt);
 				SystemBasePlugin.logWarning(sysMsg.getFullMessageID() + ": " + sysMsg.getLevelOneText()); //$NON-NLS-1$
 				if (brokenReferenceWarningsIssued.get(missingPoolMgrName) == null)
@@ -1739,7 +1741,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	{
 		filterPoolManagersPerProfile.put(profile, mgr);
 		getFilterPoolManagerList().add(mgr); // MOF generated list
-		invalidateFilterCache(); // force regen of any cached lists    	
+		invalidateFilterCache(); // force regen of any cached lists
 	}
 	/**
 	 * Get the filter pool manager for the given filter pool
@@ -1874,7 +1876,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 */
 	protected void fireSubSystemEvent(SystemResourceChangeEvent event)
 	{
-		ISubSystem[] subsystems = getSubSystems(false); // false=> lazy get; don't restore from disk if not already        	
+		ISubSystem[] subsystems = getSubSystems(false); // false=> lazy get; don't restore from disk if not already
 		for (int idx = 0; idx < subsystems.length; idx++)
 			fireSubSystemEvent(event, subsystems[idx]);
 	}
@@ -1948,7 +1950,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 				//         ONLY OPTION IS TO LET THE GUI FIGURE IT OUT.
 				else
 				{
-					parentObj = nestedParentFilter;					
+					parentObj = nestedParentFilter;
 				}
 				event = cloneEvent(event, parentObj);
 				event.setParent(parentObj);
@@ -1957,7 +1959,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 			}
 		}
 
-	
+
 	protected SystemResourceChangeEvent cloneEvent(SystemResourceChangeEvent event, Object parent)
 	{
 		SystemResourceChangeEvent result;
@@ -1972,7 +1974,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		result.setPosition(event.getPosition());
 		return result;
 	}
-	
+
 
 	/*
 	 * Fire an event of a given id to subsystems that hold a reference to the given filter string
@@ -2029,9 +2031,9 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	public void filterEventFilterPoolCreated(ISystemFilterPool newPool)
 	{
 		//fireEvent(newPool, EVENT_ADD, this); // hmm, might not need to do this since we only work on references?
-		
+
 		// fire model change event in case any BP code is listening...
-		RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_ADDED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTERPOOL, newPool, null);		
+		RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_ADDED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTERPOOL, newPool, null);
 	}
 	/**
 	 * A filter pool has been deleted
@@ -2041,7 +2043,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		//fireEvent(oldPool, EVENT_DELETE, this); currently called by SystemView's delete support
 
 		// fire model change event in case any BP code is listening...
-		RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_REMOVED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTERPOOL, oldPool, null);		
+		RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_REMOVED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTERPOOL, oldPool, null);
 	}
 	/**
 	 * A filter pool has been renamed
@@ -2051,7 +2053,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		//fireEvent(pool, EVENT_RENAME, this); subsystem handles in firing of reference rename
 
 		// fire model change event in case any BP code is listening...
-		RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_RENAMED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTERPOOL, pool, oldName);		
+		RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_RENAMED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTERPOOL, pool, oldName);
 	}
 	/**
 	 * One or more filter pools have been re-ordered within their manager
@@ -2063,7 +2065,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		// fire model change event in case any BP code is listening...
 		if (pools!=null)
 			for (int idx=0; idx<pools.length; idx++)
-				RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_REORDERED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTERPOOL, pools[idx], null);		
+				RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_REORDERED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTERPOOL, pools[idx], null);
 	}
 
 	// ---------------------
@@ -2077,7 +2079,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		fireSubSystemFilterEvent(ISystemResourceChangeEvents.EVENT_ADD_FILTER_REFERENCE, newFilter);
 
 		// fire model change event in case any BP code is listening...
-		RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_ADDED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTER, newFilter, null);		
+		RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_ADDED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTER, newFilter, null);
 	}
 
 	/**
@@ -2088,7 +2090,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		fireSubSystemFilterEvent(ISystemResourceChangeEvents.EVENT_DELETE_FILTER_REFERENCE, oldFilter);
 
 		// fire model change event in case any BP code is listening...
-		RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_REMOVED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTER, oldFilter, null);		
+		RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_REMOVED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTER, oldFilter, null);
 	}
 
 	/**
@@ -2099,7 +2101,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		fireSubSystemFilterEvent(ISystemResourceChangeEvents.EVENT_RENAME_FILTER_REFERENCE, filter);
 
 		// fire model change event in case any BP code is listening...
-		RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_RENAMED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTER, filter, oldName);		
+		RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_RENAMED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTER, filter, oldName);
 	}
 
 	/**
@@ -2110,7 +2112,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		fireSubSystemFilterEvent(ISystemResourceChangeEvents.EVENT_CHANGE_FILTER_REFERENCE, filter);
 
 		// fire model change event in case any BP code is listening...
-		RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_CHANGED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTER, filter, null);		
+		RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_CHANGED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTER, filter, null);
 	}
 
 	/**
@@ -2125,7 +2127,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 			fireSubSystemFilterEvent(event, filters[0]);
 			// fire model change event in case any BP code is listening...
 			for (int idx=0; idx<filters.length; idx++)
-				RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_REORDERED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTER, filters[idx], null);		
+				RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_REORDERED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTER, filters[idx], null);
 
 		}
 		//System.out.println("In SubSystemConfigurationImpl#filterEventFiltersRepositioned(). Firing EVENT_MOVE_FILTER_REFERENCES");
@@ -2141,7 +2143,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	{
 		fireSubSystemFilterEvent(ISystemResourceChangeEvents.EVENT_ADD_FILTERSTRING_REFERENCE, newFilterString);
 		// fire model change event in case any BP code is listening...
-		RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_CHANGED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTER, newFilterString.getParentSystemFilter(), null);		
+		RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_CHANGED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTER, newFilterString.getParentSystemFilter(), null);
 	}
 	/**
 	 * A filter string has been deleted
@@ -2150,7 +2152,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	{
 		fireSubSystemFilterEvent(ISystemResourceChangeEvents.EVENT_DELETE_FILTERSTRING_REFERENCE, oldFilterString);
 		// fire model change event in case any BP code is listening...
-		RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_CHANGED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTER, oldFilterString.getParentSystemFilter(), null);		
+		RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_CHANGED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTER, oldFilterString.getParentSystemFilter(), null);
 	}
 	/**
 	 * A filter string has been updated
@@ -2159,7 +2161,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	{
 		fireSubSystemFilterEvent(ISystemResourceChangeEvents.EVENT_CHANGE_FILTERSTRING_REFERENCE, filterString);
 		// fire model change event in case any BP code is listening...
-		RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_CHANGED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTER, filterString.getParentSystemFilter(), null);		
+		RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_CHANGED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTER, filterString.getParentSystemFilter(), null);
 	}
 	/**
 	 * One or more filters have been re-ordered within their filter
@@ -2169,7 +2171,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		fireSubSystemFilterEvent(ISystemResourceChangeEvents.EVENT_MOVE_FILTERSTRING_REFERENCES, filterStrings, delta);
 		// fire model change event in case any BP code is listening...
 		if ((filterStrings!=null) && (filterStrings.length>0))
-			RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_CHANGED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTER, filterStrings[0].getParentSystemFilter(), null);		
+			RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_CHANGED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTER, filterStrings[0].getParentSystemFilter(), null);
 	}
 
 	// ---------------------------------
@@ -2281,7 +2283,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	{
 		if (translatedFilterStringType == null)
 		  //translatedFilterType = "Remote system filter string";
-	      translatedFilterStringType = SystemResources.RESID_PROPERTY_FILTERSTRINGTYPE_VALUE);    	
+	      translatedFilterStringType = SystemResources.RESID_PROPERTY_FILTERSTRINGTYPE_VALUE);
 		return translatedFilterStringType;
 	}*/
 
@@ -2351,7 +2353,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 * When a subsystem is created, and {@link #supportsServerLaunchProperties(IHost)}
 	 * returns true, this method is called to create the server launcher instance
 	 * associated with the subsystem. The default implementation is to create an
-	 * instance of {@link IRemoteServerLauncher}, but override to create your own 
+	 * instance of {@link IRemoteServerLauncher}, but override to create your own
 	 * ServerLauncher instance if you have your own class.
 	 */
 	public IServerLauncherProperties createServerLauncher(IConnectorService connectorService)
@@ -2360,10 +2362,10 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		if (sl instanceof ILabeledObject) {
 			((ILabeledObject)sl).setLabel(RSECoreMessages.RESID_PROPERTYSET_REMOTE_SERVER_LAUNCHER);
 		}
-		
+
 		IRSESystemType systemType = connectorService.getHost().getSystemType();
 		String systemTypeId = systemType.getId();
-		
+
 		if (systemTypeId.equals(IRSESystemType.SYSTEMTYPE_LINUX_ID)
 			|| systemTypeId.equals(IRSESystemType.SYSTEMTYPE_POWER_LINUX_ID)
 			|| systemTypeId.equals(IRSESystemType.SYSTEMTYPE_ZSERIES_LINUX_ID)
@@ -2375,7 +2377,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		) {
 			sl.setServerScript(RemoteServerLauncherConstants.UNIX_REXEC_SCRIPT);
 		}
-		
+
 		sl.saveToProperties();
 		return sl;
 	}
@@ -2543,7 +2545,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 			{
 				SystemBasePlugin.logError("Error saving new subsystem " + subsys.getName(), exc); //$NON-NLS-1$
 			}
-			addSubSystem(subsys); // only add to list even if save was not successful.   	  	    	        	      	
+			addSubSystem(subsys); // only add to list even if save was not successful.
 			//if (lastExc != null)
 			//throw lastExc;
 
@@ -2575,7 +2577,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		return allMgrs;
 	}
 
-		
+
 
 
 	/**
@@ -2671,7 +2673,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	}
 
 	/**
-	 * @generated This field/method will be replaced during code generation 
+	 * @generated This field/method will be replaced during code generation
 	 */
 	public java.util.List getSubSystemList()
 	{
@@ -2684,7 +2686,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	}
 
 	/**
-	 * @generated This field/method will be replaced during code generation 
+	 * @generated This field/method will be replaced during code generation
 	 */
 	public java.util.List getFilterPoolManagerList()
 	{
@@ -2697,9 +2699,9 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 
 	public Object getAdapter(Class adapterType)
 	{
-   	    return Platform.getAdapterManager().getAdapter(this, adapterType);	
+   	    return Platform.getAdapterManager().getAdapter(this, adapterType);
 	}
-	
+
 	/**
 	 * Subsystem configurations are never persisted.
 	 * @return false
@@ -2708,7 +2710,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	{
 		return false;
 	}
-	
+
 	/**
 	 * Subsystem configurations are never marked dirty. This does nothing.
 	 */
@@ -2724,7 +2726,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	{
 		return false;
 	}
-	
+
 	/**
 	 * Subsystem configurations are never marked dirty. This does nothing.
 	 */
@@ -2736,7 +2738,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 * Subsystem configurations are never restored since they are not persisted.
 	 * @return false
 	 */
-	public boolean wasRestored() 
+	public boolean wasRestored()
 	{
 		return false;
 	}
@@ -2744,16 +2746,16 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	/**
 	 * Subsystem configurations are never restored. This does nothing.
 	 */
-	public void setWasRestored(boolean flag) 
+	public void setWasRestored(boolean flag)
 	{
 	}
-	
+
 	public void beginRestore() {
 	}
-	
+
 	public void endRestore() {
 	}
-	
+
 	/**
 	 * Subsystem configurations are not persisted.
 	 * @return null
@@ -2761,7 +2763,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	public IRSEPersistableContainer getPersistableParent() {
 		return null;
 	}
-	
+
 	public IRSEPersistableContainer[] getPersistableChildren() {
 		return IRSEPersistableContainer.NO_CHILDREN;
 	}
@@ -2769,7 +2771,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	/**
 	 * Return true if deferred queries are supported.
 	 * By default, they are supported. Override for different behavior.
-	 * 
+	 *
 	 * @return <code>true</code> if deferred queries are supported.
 	 * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#supportsDeferredQueries()
 	 */
@@ -2777,11 +2779,11 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	{
 		return true;
 	}
-	
+
 	/*
 	 * Service Subsystem Configuration methods - default implementations
 	 */
-	
+
 	/**
 	 * This default implementation does nothing.
 	 * Service subsystems must override as defined in the interface.
@@ -2789,41 +2791,41 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 */
 	public void setConnectorService(IHost host, IConnectorService connectorService) {
 	}
-	
+
 	/**
-	 * This default implementation returns null. 
+	 * This default implementation returns null.
 	 * Service subsystem configurations must override as defined in the interface.
 	 * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#getConnectorService(org.eclipse.rse.core.model.IHost)
 	 */
 	public IConnectorService getConnectorService(IHost host) {
 		return null;
 	}
-	
+
 	/**
-	 * This default implementation returns null. 
+	 * This default implementation returns null.
 	 * Service subsystem configurations must override as defined in the interface.
 	 * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#getServiceType()
 	 */
 	public Class getServiceType() {
 		return null;
 	}
-	
+
 	/**
-	 * This default implementation returns null. 
+	 * This default implementation returns null.
 	 * Service subsystem configurations must override as defined in the interface.
 	 * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#getServiceImplType()
 	 */
 	public Class getServiceImplType() {
 		return null;
 	}
-	
+
 	/**
-	 * This default implementation returns null. 
+	 * This default implementation returns null.
 	 * Service subsystem configurations must override as defined in the interface.
 	 * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#getService(org.eclipse.rse.core.model.IHost)
 	 */
 	public IService getService(IHost host) {
 		return null;
 	}
-	
+
 }

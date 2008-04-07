@@ -142,6 +142,19 @@ public class ContributedEnvironment implements IContributedEnvironment{
 		return false;
 	}
 	
+	public String getOrigin(IEnvironmentVariable var) {
+		if(var instanceof EnvVarDescriptor) {
+			ICoreEnvironmentVariableSupplier sup = ((EnvVarDescriptor)var).getSupplier();
+			if (sup instanceof BuildSustemEnvironmentSupplier)
+				return Messages.getString("ContributedEnvironment.0"); //$NON-NLS-1$
+			if (sup instanceof EclipseEnvironmentSupplier)
+				return Messages.getString("ContributedEnvironment.1"); //$NON-NLS-1$
+			if (sup instanceof UserDefinedEnvironmentSupplier)
+				return Messages.getString("ContributedEnvironment.2"); //$NON-NLS-1$
+		}
+		return Messages.getString("ContributedEnvironment.3"); //$NON-NLS-1$
+	}
+	
 	public void serialize(ICProjectDescription des){
 		EnvironmentVariableManager.fUserSupplier.storeProjectEnvironment(des, false);
 	}

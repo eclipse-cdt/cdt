@@ -20,6 +20,8 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICMultiConfigDescription;
 import org.eclipse.cdt.core.settings.model.MultiItemsHolder;
 
+import org.eclipse.cdt.internal.core.envvar.ContributedEnvironment;
+
 /**
  * 
  *
@@ -188,4 +190,9 @@ public class MultiCfgContributedEnvironment implements IContributedEnvironment {
 		doReplace(des);
 	}
 	
+	public String getOrigin(IEnvironmentVariable var) {
+		if (ice instanceof ContributedEnvironment)
+			return ((ContributedEnvironment)ice).getOrigin(var);
+		return AbstractPage.EMPTY_STR;
+	}
 }

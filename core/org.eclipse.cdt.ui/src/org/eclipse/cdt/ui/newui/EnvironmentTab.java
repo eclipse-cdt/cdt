@@ -108,6 +108,8 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 				if(td.var.getOperation() == IEnvironmentVariable.ENVVAR_REMOVE)
 					return UIMessages.getString(VALUE_UNDEF);
 				return td.var.getValue();
+			case 2:
+				return ce.getOrigin(td.var);
 			}
 			return EMPTY_STR;
 		}
@@ -129,6 +131,8 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 				if(td.var.getOperation() == IEnvironmentVariable.ENVVAR_REMOVE)
 					f = JFaceResources.getFontRegistry().getItalic(JFaceResources.DIALOG_FONT);
 				break;
+			case 2:
+				return null;
 			}
 			return f;
 		}
@@ -180,10 +184,15 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 		// add headers
 		TableColumn tc = new TableColumn(table, SWT.LEFT);
 		tc.setText(UIMessages.getString("EnvironmentTab.1")); //$NON-NLS-1$
-		tc.setWidth(200);
+		tc.setWidth(150);
 		tc = new TableColumn(table, SWT.LEFT);
 		tc.setText(UIMessages.getString("EnvironmentTab.2")); //$NON-NLS-1$
-		tc.setWidth(200);
+		tc.setWidth(150);
+		if (this.getResDesc() != null) {
+			tc = new TableColumn(table, SWT.LEFT);
+			tc.setText(UIMessages.getString("EnvironmentTab.16"));  //$NON-NLS-1$
+			tc.setWidth(100);
+		}
 		                    
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 2;
@@ -191,6 +200,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 	    
 	    b1 = new Button(usercomp, SWT.RADIO);
 	    b1.setText(UIMessages.getString("EnvironmentTab.3")); //$NON-NLS-1$
+	    b1.setToolTipText(UIMessages.getString("EnvironmentTab.3")); //$NON-NLS-1$
 	    b1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	    b1.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -212,6 +222,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 	    
 	    b2 = new Button(usercomp, SWT.RADIO);
 	    b2.setText(UIMessages.getString("EnvironmentTab.4")); //$NON-NLS-1$
+	    b2.setToolTipText(UIMessages.getString("EnvironmentTab.4")); //$NON-NLS-1$
 	    b2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	    b2.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {

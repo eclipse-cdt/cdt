@@ -25,11 +25,16 @@ public abstract class ASTFilePathResolver {
 	public abstract IIndexFileLocation resolveASTPath(String astFilePath);
 
 	/**
-	 * Resolve a path for an inclusion as computed by the preprocessor. Check for existance
+	 * Resolve a path for an inclusion as computed by the preprocessor. Check for existence
 	 * and return <code>null</code> if the file does not exist. 
 	 * @return an index file location or <code>null</code> if the file does not exist.
 	 */
 	public abstract IIndexFileLocation resolveIncludeFile(String includePath);
+	
+	/**
+	 * Check for existence of an inclusion as computed by the preprocessor.
+	 */
+	 public abstract boolean doesIncludeFileExist(String includePath);
 	
 	/**
 	 * Convert an index file location to the path as it will be stored in the AST.

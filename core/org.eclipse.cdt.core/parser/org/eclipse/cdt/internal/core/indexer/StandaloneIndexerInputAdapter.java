@@ -30,7 +30,7 @@ import org.eclipse.core.runtime.Path;
  * @since 5.0
  */
 public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
-	private HashMap fIflCache= new HashMap();
+	private HashMap<String, IIndexFileLocation> fIflCache= new HashMap<String, IIndexFileLocation>();
 
 	private final StandaloneIndexer fIndexer;
 
@@ -38,28 +38,34 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 		fIndexer= indexer;
 	}
 	
+	@Override
 	public IScannerInfo getBuildConfiguration(int linkageID, Object tu) {
 		return fIndexer.getScannerInfo();
 	}
 
+	@Override
 	public long getLastModified(IIndexFileLocation location) {
 		return new File(location.getFullPath()).lastModified();
 	}
 
+	@Override
 	public boolean isSourceUnit(Object tu) {
 		return isValidSourceUnitName((String) tu);
 	}
 
+	@Override
 	public IIndexFileLocation resolveFile(Object tu) {
 		return resolveASTPath((String) tu);
 	}
 
+	@Override
 	public String getASTPath(IIndexFileLocation ifl) {
 		return ifl.getFullPath();
 	}
 
+	@Override
 	public IIndexFileLocation resolveASTPath(String astPath) {
-		IIndexFileLocation result= (IIndexFileLocation) fIflCache.get(astPath);
+		IIndexFileLocation result= fIflCache.get(astPath);
 		if (result == null) {
 			try {
 				astPath = new File(astPath).getCanonicalPath();
@@ -73,13 +79,17 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 		return result;
 	}
 
+	
+	@Override
+	public boolean doesIncludeFileExist(String includePath) {
+		return new File(includePath).exists();
+	}
+
+	@Override
 	public IIndexFileLocation resolveIncludeFile(String includePath) {		
-		IIndexFileLocation result= (IIndexFileLocation) fIflCache.get(includePath);
+		IIndexFileLocation result= fIflCache.get(includePath);
 		if (result == null) {
 			File file= new File(includePath);
-			if (!file.exists()) {
-				return null;
-			}
 			try {
 				includePath = file.getCanonicalPath();
 			} catch (IOException e) {
@@ -92,14 +102,17 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 		return result;
 	}
 
+	@Override
 	public boolean isFileBuildConfigured(Object tu) {
 		return isValidSourceUnitName((String) tu);
 	}
 
+	@Override
 	public boolean canBePartOfSDK(IIndexFileLocation ifl) {
 		return false;
 	}
 
+	@Override
 	public CodeReader getCodeReader(Object tu) {
 		try {
 			return new CodeReader((String) tu);
@@ -108,10 +121,12 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 		return null;
 	}
 
+	@Override
 	public Object getInputFile(IIndexFileLocation location) {
 		return location.getFullPath();
 	}
 
+	@Override
 	public AbstractLanguage[] getLanguages(Object tu) {
 		ILanguage language = fIndexer.getLanguageMapper().getLanguage((String) tu);
 		if (language instanceof AbstractLanguage) {

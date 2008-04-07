@@ -35,19 +35,17 @@ import org.eclipse.cdt.core.parser.ICodeReaderCache;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.internal.core.parser.scanner.IIndexBasedCodeReaderFactory;
 import org.eclipse.cdt.internal.core.parser.scanner.IncludeFileContent;
-import org.eclipse.cdt.internal.core.parser.scanner.IncludeFileResolutionCache;
 import org.eclipse.cdt.internal.core.parser.scanner.IncludeFileContent.InclusionKind;
 import org.eclipse.cdt.internal.core.pdom.ASTFilePathResolver;
 import org.eclipse.cdt.internal.core.pdom.AbstractIndexerTask;
 import org.eclipse.cdt.internal.core.pdom.AbstractIndexerTask.FileContent;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 
 /**
  * Code reader factory, that fakes code readers for header files already stored in the 
  * index.
  */
-public final class IndexBasedCodeReaderFactory implements IIndexBasedCodeReaderFactory, IAdaptable {
+public final class IndexBasedCodeReaderFactory implements IIndexBasedCodeReaderFactory {
 	private static final class NeedToParseException extends Exception {}
 
 	private final IIndex fIndex;
@@ -57,7 +55,6 @@ public final class IndexBasedCodeReaderFactory implements IIndexBasedCodeReaderF
 	private final ICodeReaderFactory fFallBackFactory;
 	private final ASTFilePathResolver fPathResolver;
 	private final AbstractIndexerTask fRelatedIndexerTask;
-	private final IncludeFileResolutionCache fIncludeFileResolutionCache;
 	
 	public IndexBasedCodeReaderFactory(IIndex index, ASTFilePathResolver pathResolver, int linkage, 
 			ICodeReaderFactory fallbackFactory) {
@@ -71,13 +68,12 @@ public final class IndexBasedCodeReaderFactory implements IIndexBasedCodeReaderF
 		fPathResolver= pathResolver;
 		fRelatedIndexerTask= relatedIndexerTask;
 		fLinkage= linkage;
-		fIncludeFileResolutionCache= new IncludeFileResolutionCache(1024);
 	}
 
 	public int getUniqueIdentifier() {
 		return 0;
 	}
-
+	
 	public CodeReader createCodeReaderForTranslationUnit(String path) {
 		if (fFallBackFactory != null) {
 			return fFallBackFactory.createCodeReaderForTranslationUnit(path);
@@ -90,6 +86,10 @@ public final class IndexBasedCodeReaderFactory implements IIndexBasedCodeReaderF
 			return fFallBackFactory.createCodeReaderForInclusion(path);
 		}
 		return ParserUtil.createReader(path, null);
+	}
+
+	public boolean getInclusionExists(String path) {
+		return fPathResolver.doesIncludeFileExist(path); 
 	}
 
 	public IncludeFileContent getContentForInclusion(String path) {
@@ -182,13 +182,5 @@ public final class IndexBasedCodeReaderFactory implements IIndexBasedCodeReaderF
 	
 	public void setLinkage(int linkageID) {
 		fLinkage= linkageID;
-	}
-
-	@SuppressWarnings("unchecked")
-	public Object getAdapter(Class adapter) {
-		if (adapter.isInstance(fIncludeFileResolutionCache)) {
-			return fIncludeFileResolutionCache;
-		}
-		return null;
 	}
 }

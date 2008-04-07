@@ -30,4 +30,10 @@ public interface IIndexBasedCodeReaderFactory extends ICodeReaderFactory {
 	 * @see IncludeFileContent
 	 */
 	public IncludeFileContent getContentForInclusion(String fileLocation);
+
+	/**
+	 * Check whether the specified inclusion exists.
+	 * @since 5.0
+	 */
+	boolean getInclusionExists(String finalPath);
 }

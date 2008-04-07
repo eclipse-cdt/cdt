@@ -45,8 +45,6 @@ import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
 import org.eclipse.cdt.core.parser.util.CharArrayMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator.EvalException;
-import org.eclipse.cdt.internal.core.parser.scanner.IncludeFileResolutionCache.ISPKey;
-import org.eclipse.cdt.internal.core.parser.scanner.IncludeFileResolutionCache.LookupKey;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
 import org.eclipse.cdt.internal.core.parser.scanner.MacroDefinitionParser.InvalidMacroDefinitionException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -93,15 +91,16 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 
     final private IIncludeFileTester<IncludeFileContent> createCodeReaderTester= new IIncludeFileTester<IncludeFileContent>() { 
     	public IncludeFileContent checkFile(String path, String fileName) {
-    		return createReader(path, fileName);
+    		String finalPath = ScannerUtility.createReconciledPath(path, fileName);
+			return fCodeReaderFactory.getContentForInclusion(finalPath);
     	}
     };
     
     final private IIncludeFileTester<String> createPathTester= new IIncludeFileTester<String>() { 
     	public String checkFile(String path, String fileName) {
-    		path= ScannerUtility.createReconciledPath(path, fileName);
-    		if (new File(path).exists()) {
-    			return path;
+    		String finalPath= ScannerUtility.createReconciledPath(path, fileName);
+    		if (fCodeReaderFactory.getInclusionExists(finalPath)) {
+    			return finalPath;
     		}
     		return null;
     	}
@@ -121,9 +120,6 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     final private String[] fIncludePaths;
     final private String[] fQuoteIncludePaths;
     private String[][] fPreIncludedFiles= null;
-	private final IncludeFileResolutionCache fIncludeResolutionCache;
-	private final ISPKey fIncludePathKey;
-	private final ISPKey fQuoteIncludePathKey;
 
     private int fContentAssistLimit= -1;
 	private boolean fHandledCompletion= false;
@@ -162,10 +158,6 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         fMacroExpander= new MacroExpander(this, fMacroDictionary, fLocationMap, fLexOptions);
         fCodeReaderFactory= wrapReaderFactory(readerFactory);
 
-    	fIncludeResolutionCache= getIncludeResolutionCache(readerFactory);
-    	fIncludePathKey= fIncludeResolutionCache.getKey(fIncludePaths);
-    	fQuoteIncludePathKey= fIncludeResolutionCache.getKey(fQuoteIncludePaths);
-
         setupMacroDictionary(configuration, info, language);		
                 
         final String filePath= new String(reader.filename);
@@ -179,16 +171,6 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         }
     }
         
-	private IncludeFileResolutionCache getIncludeResolutionCache(ICodeReaderFactory readerFactory) {
-		if (readerFactory instanceof IAdaptable) {
-			IncludeFileResolutionCache cache= (IncludeFileResolutionCache) ((IAdaptable) readerFactory).getAdapter(IncludeFileResolutionCache.class);
-			if (cache != null) {
-				return cache;
-			}
-		}
-		return new IncludeFileResolutionCache(1024);
-	}
-
 	private IIndexBasedCodeReaderFactory wrapReaderFactory(final ICodeReaderFactory readerFactory) {
     	if (readerFactory instanceof IIndexBasedCodeReaderFactory) {
     		return (IIndexBasedCodeReaderFactory) readerFactory;
@@ -215,6 +197,9 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 			}
 			public int getUniqueIdentifier() {
 				return readerFactory.getUniqueIdentifier();
+			}
+			public boolean getInclusionExists(String path) {
+				return readerFactory.createCodeReaderForInclusion(path) != null;
 			}
 		};
 	}
@@ -759,46 +744,18 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         
         // if we're not include_next, then we are looking for the first occurrence of 
         // the file, otherwise, we ignore all the paths before the current directory
-        String[] isp;
-        ISPKey ispKey;
-        if (quoteInclude) {
-        	isp= fQuoteIncludePaths;
-        	ispKey= fQuoteIncludePathKey;
-        }
-        else {
-        	isp= fIncludePaths;
-        	ispKey= fIncludePathKey;
-        }
-        
+        final String[] isp= quoteInclude ? fQuoteIncludePaths : fIncludePaths;
         if (isp != null ) {
-            if (includeNext && currentDirectory != null) {
-                final int startpos = findIncludePos(isp, currentDirectory) + 1;
-                for (int i= startpos; i < isp.length; ++i) {
-                    reader= tester.checkFile(isp[i], filename);
-                    if (reader != null) {
-                    	return reader;
-                    }
-                }
-                return null;
-            }
-
-            final LookupKey lookupKey= fIncludeResolutionCache.getKey(ispKey, filename.toCharArray());
-            Integer offset= fIncludeResolutionCache.getCachedPathOffset(lookupKey);
-        	if (offset != null) {
-        		if (offset < 0) {
-        			return null;
-        		}
-        		return tester.checkFile(isp[offset], filename);
+        	int i=0;
+        	if (includeNext && currentDirectory != null) {
+        		i= findIncludePos(isp, currentDirectory) + 1;
         	}
-
-        	for (int i= 0; i < isp.length; ++i) {
-                reader = tester.checkFile(isp[i], filename);
-                if (reader != null) {
-                	fIncludeResolutionCache.putCachedPathOffset(lookupKey, i);
-                	return reader;
-                }
-            }
-        	fIncludeResolutionCache.putCachedPathOffset(lookupKey, -1);
+        	for (; i < isp.length; ++i) {
+        		reader= tester.checkFile(isp[i], filename);
+        		if (reader != null) {
+        			return reader;
+        		}
+        	}
         }
         return null;
     }
@@ -848,13 +805,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     public void handleProblem(int id,  char[] arg, int offset, int endOffset) {
         fLocationMap.encounterProblem(id, arg, offset, endOffset);
     }
-
-    private IncludeFileContent createReader(String path, String fileName){
-        String finalPath = ScannerUtility.createReconciledPath(path, fileName);
-        return fCodeReaderFactory.getContentForInclusion(finalPath);
-    }
-    
-	
+    	
     /**
      * Assumes that the pound token has not yet been consumed
      * @param ppdCtx 

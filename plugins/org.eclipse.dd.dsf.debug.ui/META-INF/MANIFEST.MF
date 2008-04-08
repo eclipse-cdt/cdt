@@ -26,6 +26,7 @@ Export-Package:
  org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch,
  org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.modules,
  org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat,
+ org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions,
  org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register,
  org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update,
  org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions,

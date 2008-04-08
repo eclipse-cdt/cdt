@@ -170,7 +170,6 @@ public C99Parser() {  // constructor
 
 private void initActions(IASTTranslationUnit tu) {
 	action = new  C99BuildASTParserAction ( C99ASTNodeFactory.DEFAULT_INSTANCE , this, tu);
-	action.setTokenMap(C99Parsersym.orderedTerminalSymbols);
 }
 
 

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.parser.upc;
 
+
 import lpg.lpgjavaruntime.IToken;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -40,10 +41,14 @@ public class UPCParserAction extends C99BuildASTParserAction {
 		
 	public UPCParserAction(UPCASTNodeFactory nodeFactory, IParserActionTokenProvider parser, IASTTranslationUnit tu) {
 		super(nodeFactory, parser, tu);
-		super.setTokenMap(UPCParsersym.orderedTerminalSymbols);
 		this.nodeFactory = nodeFactory;
 	}
 	
+	
+	@Override 
+	protected boolean isCompletionToken(IToken token) {
+		return token.getKind() == UPCParsersym.TK_Completion;
+	}
 	
 	/**************************************************************************************
 	 * Semantic actions

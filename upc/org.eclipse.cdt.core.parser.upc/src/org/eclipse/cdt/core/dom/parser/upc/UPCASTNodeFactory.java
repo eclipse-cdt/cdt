@@ -47,6 +47,9 @@ import org.eclipse.cdt.internal.core.dom.parser.upc.ast.UPCASTUnaryExpression;
  */
 public class UPCASTNodeFactory extends C99ASTNodeFactory {
 
+	public static final UPCASTNodeFactory DEFAULT_INSTANCE = new UPCASTNodeFactory();
+	
+	
 	@Override
 	public IASTTypeIdExpression newTypeIdExpression(int operator, IASTTypeId typeId) {
 		return new UPCASTTypeIdExpression(operator, typeId);

@@ -13,6 +13,7 @@
 
 -- TODO when the architecture has solidified try to move common
 -- stuff between C99 and C++ into one file.
+
 $Include
 common.g
 $End
@@ -114,13 +115,6 @@ $Define
 	$build_action_class /. C99BuildASTParserAction ./
 	$node_factory_create_expression /. C99ASTNodeFactory.DEFAULT_INSTANCE ./
 $End
-
-
-
-
---$Start
---	translation_unit
---$End
 
 
 
@@ -986,19 +980,3 @@ function_body
           /. $Build  consumeStatementCompoundStatement(true);  $EndBuild ./
           
 $End
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

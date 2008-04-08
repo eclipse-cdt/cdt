@@ -12,33 +12,32 @@
 %options la=2
 %options package=org.eclipse.cdt.internal.core.dom.parser.upc
 %options template=btParserTemplateD.g
-%options import_terminals=UPCLexer.g
 
 
 -- Unified Parallel C (UPC) is an extension of C99.
 -- Must set LPG_INCLUDE environment variable to the location of C99Parser.g 
 $Import
-C99Parser.g
+	C99Grammar.g
+$End
+
+$Start
+    translation_unit
+$End
+
+
+$Define
+	$build_action_class /. UPCParserAction ./
+	$node_factory_create_expression /. UPCASTNodeFactory.DEFAULT_INSTANCE ./
 $End
 
 $Globals
 /.
-import org.eclipse.cdt.core.dom.upc.ast.IUPCASTKeywordExpression;
-import org.eclipse.cdt.core.dom.upc.ast.IUPCASTSizeofExpression;
-import org.eclipse.cdt.core.dom.upc.ast.IUPCASTSynchronizationStatement;
-import org.eclipse.cdt.internal.core.dom.parser.c99.C99Lexer;
-import org.eclipse.cdt.internal.core.dom.parser.c99.C99Parsersym;
-import org.eclipse.cdt.core.dom.parser.upc.UPCKeywordMap;
+import org.eclipse.cdt.core.dom.parser.upc.UPCASTNodeFactory;
 import org.eclipse.cdt.core.dom.parser.upc.UPCParserAction;
-import org.eclipse.cdt.core.dom.c99.IPreprocessorTokenCollector;
+import org.eclipse.cdt.core.dom.upc.ast.IUPCASTKeywordExpression;
+import org.eclipse.cdt.core.dom.upc.ast.IUPCASTSynchronizationStatement;
+import org.eclipse.cdt.core.dom.upc.ast.IUPCASTUnaryExpression;
 ./
-$End
-
-$Define	
-	$action_class /. UPCParserAction ./
-	$keyword_map_class /. UPCKeywordMap ./
-	$token_map_class /. UPCTokenMap ./
-	$lexer_class /. UPCLexer ./
 $End
 
 
@@ -67,40 +66,30 @@ $Rules  -- UPC grammar extensions to C99
 -- Expressions
 -----------------------------------------------------------------------------------
 
--- also need to be a pre-defined macro
--- THREADS and UPC_MAX_BLOCKSIZE are macros, but I want to be able to recognize
--- them in the AST, how do I do this? (getRawSignature() to get the source code and then string compare to THREADS?)
--- just use the paths and symbols dialog to add them, good for testing they can be added later by a upc toolchain
 
--- map them to integers in the UPCKeywordMap
--- override consumeExpressionConstant(IASTLiteralExpression.lk_integer_constant), call toString() onthe token 
--- and check if its THREADS or UPC_MAX_BLOCKSIZE and create appropriate AST node
-
--- but then the value would be lost, its no good, they need to be builtin macros
-
-constant
+literal
     ::= 'MYTHREAD'
-            /.$ba  consumeKeywordExpression(IUPCASTKeywordExpression.kw_mythread); $ea./
+            /. $Build  consumeKeywordExpression(IUPCASTKeywordExpression.kw_mythread); $EndBuild ./
       | 'THREADS'
-            /.$ba  consumeKeywordExpression(IUPCASTKeywordExpression.kw_threads); $ea./
+            /. $Build  consumeKeywordExpression(IUPCASTKeywordExpression.kw_threads); $EndBuild ./
       | 'UPC_MAX_BLOCKSIZE'
-            /.$ba  consumeKeywordExpression(IUPCASTKeywordExpression.kw_upc_max_block_size); $ea./
+            /. $Build  consumeKeywordExpression(IUPCASTKeywordExpression.kw_upc_max_block_size); $EndBuild ./
             
 
 -- causes ambiguities because of no type information, solution is SGLR
 unary_expression
     ::= 'upc_localsizeof' unary_expression
-          /.$ba  consumeExpressionUpcSizeofOperator(IUPCASTSizeofExpression.op_upc_localsizeof); $ea./
+          /. $Build  consumeExpressionUpcSizeofOperator(IUPCASTUnaryExpression.op_upc_localsizeof); $EndBuild ./
       | 'upc_localsizeof' '(' type_name ')'
-          /.$ba  consumeExpressionUpcSizeofTypeName(IUPCASTSizeofExpression.op_upc_localsizeof); $ea./
+          /. $Build  consumeExpressionUpcSizeofTypeName(IUPCASTUnaryExpression.op_upc_localsizeof); $EndBuild ./
       | 'upc_blocksizeof' unary_expression
-          /.$ba  consumeExpressionUpcSizeofOperator(IUPCASTSizeofExpression.op_upc_blocksizeof); $ea./
+          /. $Build  consumeExpressionUpcSizeofOperator(IUPCASTUnaryExpression.op_upc_blocksizeof); $EndBuild ./
       | 'upc_blocksizeof' '(' type_name ')'
-          /.$ba  consumeExpressionUpcSizeofTypeName(IUPCASTSizeofExpression.op_upc_blocksizeof); $ea./
+          /. $Build  consumeExpressionUpcSizeofTypeName(IUPCASTUnaryExpression.op_upc_blocksizeof); $EndBuild ./
       | 'upc_elemsizeof'  unary_expression
-          /.$ba  consumeExpressionUpcSizeofOperator(IUPCASTSizeofExpression.op_upc_elemsizeof); $ea./
+          /. $Build  consumeExpressionUpcSizeofOperator(IUPCASTUnaryExpression.op_upc_elemsizeof); $EndBuild ./
       | 'upc_elemsizeof'  '(' type_name ')'
-          /.$ba  consumeExpressionUpcSizeofTypeName(IUPCASTSizeofExpression.op_upc_elemsizeof); $ea./
+          /. $Build  consumeExpressionUpcSizeofTypeName(IUPCASTUnaryExpression.op_upc_elemsizeof); $EndBuild ./
       
       
 -----------------------------------------------------------------------------------
@@ -120,19 +109,19 @@ type_qualifier
 shared_type_qualifier
     ::= 'shared' layout_qualifier  -- don't consume anything, the presense of the 
                                    -- layout_qualifier will determine that 'shared' token was encountered
-      | 'shared'   /.$ba  consumeToken();  $ea./
+      | 'shared'   /. $Build  consumeToken();  $EndBuild ./
 
 reference_type_qualifier
-    ::= 'relaxed'  /.$ba  consumeToken();  $ea./
-      | 'strict'   /.$ba  consumeToken();  $ea./
+    ::= 'relaxed'  /. $Build  consumeToken();  $EndBuild ./
+      | 'strict'   /. $Build  consumeToken();  $EndBuild ./
 
 layout_qualifier
     ::= '[' constant_expression ']'
-         /.$ba  consumeLayoutQualifier(true, false);  $ea./
+         /. $Build  consumeLayoutQualifier(true, false);  $EndBuild ./
       | '[' '*' ']'
-         /.$ba  consumeLayoutQualifier(false, true);  $ea./
+         /. $Build  consumeLayoutQualifier(false, true);  $EndBuild ./
       | '[' ']'
-         /.$ba  consumeLayoutQualifier(false, false);  $ea./
+         /. $Build  consumeLayoutQualifier(false, false);  $EndBuild ./
 
 
 
@@ -145,98 +134,98 @@ statement
 
 synchronization_statement
      ::= 'upc_notify' expression ';'
-           /.$ba  consumeStatementSynchronizationStatement(IUPCASTSynchronizationStatement.st_upc_notify, true); $ea./
+           /. $Build  consumeStatementSynchronizationStatement(IUPCASTSynchronizationStatement.st_upc_notify, true); $EndBuild ./
        | 'upc_notify' ';'
-           /.$ba  consumeStatementSynchronizationStatement(IUPCASTSynchronizationStatement.st_upc_notify, false); $ea./
+           /. $Build  consumeStatementSynchronizationStatement(IUPCASTSynchronizationStatement.st_upc_notify, false); $EndBuild ./
        | 'upc_wait' expression ';'
-           /.$ba  consumeStatementSynchronizationStatement(IUPCASTSynchronizationStatement.st_upc_wait, true); $ea./
+           /. $Build  consumeStatementSynchronizationStatement(IUPCASTSynchronizationStatement.st_upc_wait, true); $EndBuild ./
        | 'upc_wait' ';'
-           /.$ba  consumeStatementSynchronizationStatement(IUPCASTSynchronizationStatement.st_upc_wait, false); $ea./
+           /. $Build  consumeStatementSynchronizationStatement(IUPCASTSynchronizationStatement.st_upc_wait, false); $EndBuild ./
        | 'upc_barrier' expression ';'
-           /.$ba  consumeStatementSynchronizationStatement(IUPCASTSynchronizationStatement.st_upc_barrier, true); $ea./
+           /. $Build  consumeStatementSynchronizationStatement(IUPCASTSynchronizationStatement.st_upc_barrier, true); $EndBuild ./
        | 'upc_barrier' ';'
-           /.$ba  consumeStatementSynchronizationStatement(IUPCASTSynchronizationStatement.st_upc_barrier, false); $ea./
+           /. $Build  consumeStatementSynchronizationStatement(IUPCASTSynchronizationStatement.st_upc_barrier, false); $EndBuild ./
        | 'upc_fence' ';'
-           /.$ba  consumeStatementSynchronizationStatement(IUPCASTSynchronizationStatement.st_upc_fence, false); $ea./
+           /. $Build  consumeStatementSynchronizationStatement(IUPCASTSynchronizationStatement.st_upc_fence, false); $EndBuild ./
        
        
 iteration_statement
     ::= 'upc_forall' '(' expression ';' expression ';' expression ';' affinity ')' statement
-            /.$ba  consumeStatementUPCForallLoop(true, true, true, true); $ea./
+            /. $Build  consumeStatementUPCForallLoop(true, true, true, true); $EndBuild ./
             
       | 'upc_forall' '(' expression ';' expression ';' expression ';'          ')' statement
-            /.$ba  consumeStatementUPCForallLoop(true, true, true, false); $ea./
+            /. $Build  consumeStatementUPCForallLoop(true, true, true, false); $EndBuild ./
             
       | 'upc_forall' '(' expression ';' expression ';'            ';' affinity ')' statement
-            /.$ba  consumeStatementUPCForallLoop(true, true, false, true); $ea./
+            /. $Build  consumeStatementUPCForallLoop(true, true, false, true); $EndBuild ./
             
       | 'upc_forall' '(' expression ';' expression ';'            ';'          ')' statement
-            /.$ba  consumeStatementUPCForallLoop(true, true, false, false); $ea./
+            /. $Build  consumeStatementUPCForallLoop(true, true, false, false); $EndBuild ./
             
       | 'upc_forall' '(' expression ';'            ';' expression ';' affinity ')' statement
-            /.$ba  consumeStatementUPCForallLoop(true, false, true, true); $ea./
+            /. $Build  consumeStatementUPCForallLoop(true, false, true, true); $EndBuild ./
             
       | 'upc_forall' '(' expression ';'            ';' expression ';'          ')' statement
-            /.$ba  consumeStatementUPCForallLoop(true, false, true, false); $ea./
+            /. $Build  consumeStatementUPCForallLoop(true, false, true, false); $EndBuild ./
             
       | 'upc_forall' '(' expression ';'            ';'            ';' affinity ')' statement
-            /.$ba  consumeStatementUPCForallLoop(true, false, false, true); $ea./
+            /. $Build  consumeStatementUPCForallLoop(true, false, false, true); $EndBuild ./
             
       | 'upc_forall' '(' expression ';'            ';'            ';'          ')' statement
-            /.$ba  consumeStatementUPCForallLoop(true, false, false, false); $ea./
+            /. $Build  consumeStatementUPCForallLoop(true, false, false, false); $EndBuild ./
             
       | 'upc_forall' '('            ';' expression ';' expression ';' affinity ')' statement
-            /.$ba  consumeStatementUPCForallLoop(false, true, true, true); $ea./
+            /. $Build  consumeStatementUPCForallLoop(false, true, true, true); $EndBuild ./
             
       | 'upc_forall' '('            ';' expression ';' expression ';'          ')' statement
-            /.$ba  consumeStatementUPCForallLoop(false, true, true, false); $ea./
+            /. $Build  consumeStatementUPCForallLoop(false, true, true, false); $EndBuild ./
             
       | 'upc_forall' '('            ';' expression ';'            ';' affinity ')' statement
-            /.$ba  consumeStatementUPCForallLoop(false, true, false, true); $ea./
+            /. $Build  consumeStatementUPCForallLoop(false, true, false, true); $EndBuild ./
             
       | 'upc_forall' '('            ';' expression ';'            ';'          ')' statement
-            /.$ba  consumeStatementUPCForallLoop(false, true, false, false); $ea./
+            /. $Build  consumeStatementUPCForallLoop(false, true, false, false); $EndBuild ./
             
       | 'upc_forall' '('            ';'            ';' expression ';' affinity ')' statement
-            /.$ba  consumeStatementUPCForallLoop(false, false, true, true); $ea./
+            /. $Build  consumeStatementUPCForallLoop(false, false, true, true); $EndBuild ./
             
       | 'upc_forall' '('            ';'            ';' expression ';'          ')' statement
-            /.$ba  consumeStatementUPCForallLoop(false, false, true, false); $ea./
+            /. $Build  consumeStatementUPCForallLoop(false, false, true, false); $EndBuild ./
             
       | 'upc_forall' '('            ';'            ';'            ';' affinity ')' statement
-            /.$ba  consumeStatementUPCForallLoop(false, false, false, true); $ea./
+            /. $Build  consumeStatementUPCForallLoop(false, false, false, true); $EndBuild ./
             
       | 'upc_forall' '('            ';'            ';'            ';'          ')' statement
-            /.$ba  consumeStatementUPCForallLoop(false, false, false, false); $ea./
+            /. $Build  consumeStatementUPCForallLoop(false, false, false, false); $EndBuild ./
       
       | 'upc_forall' '(' declaration expression ';' expression ';' affinity ')' statement
-            /.$ba  consumeStatementUPCForallLoop(true, true, true, true); $ea./
+            /. $Build  consumeStatementUPCForallLoop(true, true, true, true); $EndBuild ./
             
       | 'upc_forall' '(' declaration expression ';' expression ';'          ')' statement
-            /.$ba  consumeStatementUPCForallLoop(true, true, true, false); $ea./
+            /. $Build  consumeStatementUPCForallLoop(true, true, true, false); $EndBuild ./
             
       | 'upc_forall' '(' declaration expression ';'            ';' affinity ')' statement
-            /.$ba  consumeStatementUPCForallLoop(true, true, false, true); $ea./
+            /. $Build  consumeStatementUPCForallLoop(true, true, false, true); $EndBuild ./
             
       | 'upc_forall' '(' declaration expression ';'            ';'          ')' statement
-            /.$ba  consumeStatementUPCForallLoop(true, true, false, false); $ea./
+            /. $Build  consumeStatementUPCForallLoop(true, true, false, false); $EndBuild ./
             
       | 'upc_forall' '(' declaration            ';' expression ';' affinity ')' statement
-            /.$ba  consumeStatementUPCForallLoop(true, false, true, true); $ea./
+            /. $Build  consumeStatementUPCForallLoop(true, false, true, true); $EndBuild ./
             
       | 'upc_forall' '(' declaration            ';' expression ';'          ')' statement
-            /.$ba  consumeStatementUPCForallLoop(true, false, true, false); $ea./
+            /. $Build  consumeStatementUPCForallLoop(true, false, true, false); $EndBuild ./
             
       | 'upc_forall' '(' declaration            ';'            ';' affinity ')' statement
-            /.$ba  consumeStatementUPCForallLoop(true, false, false, true); $ea./
+            /. $Build  consumeStatementUPCForallLoop(true, false, false, true); $EndBuild ./
             
       | 'upc_forall' '(' declaration            ';'            ';'          ')' statement
-            /.$ba  consumeStatementUPCForallLoop(true, false, false, false); $ea./
+            /. $Build  consumeStatementUPCForallLoop(true, false, false, false); $EndBuild ./
 
 affinity
     ::= expression
       | 'continue'
-          /.$ba  consumeToken();  $ea./
+          /. $Build  consumeToken();  $EndBuild ./
 
 $End
 

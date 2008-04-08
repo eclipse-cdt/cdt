@@ -11,28 +11,7 @@
 
 package org.eclipse.cdt.core.dom.lrparser.action.c99;
 
-import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_Completion;
-import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK__Bool;
-import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK__Complex;
-import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_auto;
-import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_char;
-import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_const;
-import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_double;
-import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_extern;
-import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_float;
-import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_identifier;
-import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_inline;
-import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_int;
-import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_long;
-import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_register;
-import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_restrict;
-import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_short;
-import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_signed;
-import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_static;
-import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_typedef;
-import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_unsigned;
-import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_void;
-import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_volatile;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.*;
 
 import java.util.Collections;
 import java.util.List;
@@ -87,7 +66,6 @@ import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99ExpressionStatementPars
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99NoCastExpressionParser;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99SizeofExpressionParser;
-import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
@@ -98,7 +76,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 @SuppressWarnings("restriction")
 public class C99BuildASTParserAction extends BuildASTParserAction  {
 
-	private ITokenMap tokenMap = null;
+	private final ITokenMap tokenMap;
 	
 	/** Used to create the AST node objects */
 	protected final IC99ASTNodeFactory nodeFactory;
@@ -111,25 +89,22 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	public C99BuildASTParserAction(IC99ASTNodeFactory nodeFactory, IParserActionTokenProvider parser, IASTTranslationUnit tu) {
 		super(nodeFactory, parser, tu);
 		this.nodeFactory = nodeFactory;
+		this.tokenMap = new TokenMap(C99Parsersym.orderedTerminalSymbols, parser.getOrderedTerminalSymbols());
 	}
 	
 	
-	@Override protected boolean isCompletionToken(IToken token) {
+	@Override 
+	protected boolean isCompletionToken(IToken token) {
 		return asC99Kind(token) == TK_Completion;
 	}
 	
 	
-	public void setTokenMap(String[] orderedTerminalSymbols) {
-		this.tokenMap = new TokenMap(C99Parsersym.orderedTerminalSymbols, orderedTerminalSymbols);
-	}
-	
-	
-	int asC99Kind(IToken token) {
+	private int asC99Kind(IToken token) {
 		return asC99Kind(token.getKind());
 	}
 	
 	private int asC99Kind(int tokenKind) {
-		return tokenMap == null ? tokenKind : tokenMap.mapKind(tokenKind);
+		return tokenMap.mapKind(tokenKind);
 	}
 	
 	
@@ -161,11 +136,10 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	 * postfix_expression ::= postfix_expression '.' ident
 	 * postfix_expression ::= postfix_expression '->' ident
 	 */
-	public void consumeExpressionFieldReference(/*IBinding field, */ boolean isPointerDereference) {
+	public void consumeExpressionFieldReference(boolean isPointerDereference) {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		
 		IASTName name = createName(parser.getRightIToken());
-		//name.setBinding(field);
 		IASTExpression owner = (IASTExpression) astStack.pop();
 		IASTFieldReference expr = nodeFactory.newFieldReference(name, owner, isPointerDereference);
 		setOffsetAndLength(expr);
@@ -222,7 +196,7 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	 * In plain C99 specifiers are always just single tokens, but in language
 	 * extensions specifiers may be more complex. Thats why this method takes
 	 * Object as the type of the specifier, so that it may be overridden in subclasses
-	 * and used with arbitray objects as the specifier.
+	 * and used with arbitrary objects as the specifier.
 	 */
 	protected void setSpecifier(ICASTDeclSpecifier node, Object specifier) {
 		if(!(specifier instanceof IToken))
@@ -463,11 +437,10 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	/**
 	 *  designator ::= '.' 'identifier'
 	 */
-	public void consumeDesignatorField(/*IBinding binding*/) {
+	public void consumeDesignatorField() {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		
-		IASTName name = createName( parser.getRightIToken() );
-		//name.setBinding(binding);
+		IASTName name = createName(parser.getRightIToken());
 		ICASTFieldDesignator designator = nodeFactory.newCFieldDesignator(name);
 		setOffsetAndLength(designator);
 		astStack.push(designator);
@@ -558,10 +531,10 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 		List<Object> declarators = (hasDeclaratorList) ? astStack.closeScope() : Collections.emptyList();
 		IASTDeclSpecifier declSpecifier = (IASTDeclSpecifier) astStack.pop();
 		
-		// do not generate nodes for extra EOC tokens
-		if(matchTokens(parser.getRuleTokens(), CPPParsersym.TK_EndOfCompletion))
-			return;
-
+		List<IToken> ruleTokens = parser.getRuleTokens();
+		if(ruleTokens.size() == 1 && asC99Kind(ruleTokens.get(0)) == TK_EndOfCompletion) 
+			return; // do not generate nodes for extra EOC tokens
+		
 		IASTSimpleDeclaration declaration = nodeFactory.newSimpleDeclaration(declSpecifier);
 		
 		for(Object declarator : declarators)
@@ -647,11 +620,10 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
      *       
      * enum_specifier ::= 'enum' enum_identifier     
 	 */
-	public void consumeTypeSpecifierElaborated(int kind  /*, IBinding binding*/) {
+	public void consumeTypeSpecifierElaborated(int kind) {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		
 		IASTName name = createName(parser.getRuleTokens().get(1));
-		//name.setBinding(binding);
 		IASTElaboratedTypeSpecifier typeSpec = nodeFactory.newElaboratedTypeSpecifier(kind, name);
 		setOffsetAndLength(typeSpec);
 		astStack.push(typeSpec);

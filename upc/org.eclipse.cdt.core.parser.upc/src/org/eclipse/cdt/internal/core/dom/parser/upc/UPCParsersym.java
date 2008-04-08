@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2006, 2007 IBM Corporation and others.
+* Copyright (c) 2006, 2008 IBM Corporation and others.
 * All rights reserved. This program and the accompanying materials
 * are made available under the terms of the Eclipse Public License v1.0
 * which accompanies this distribution, and is available at
@@ -15,60 +15,68 @@ package org.eclipse.cdt.internal.core.dom.parser.upc;
 
 public interface UPCParsersym {
     public final static int
-      TK_auto = 35,
-      TK_break = 64,
-      TK_case = 65,
-      TK_char = 41,
-      TK_const = 25,
-      TK_continue = 59,
-      TK_default = 66,
-      TK_do = 67,
-      TK_double = 42,
+      TK_auto = 50,
+      TK_break = 29,
+      TK_case = 30,
+      TK_char = 55,
+      TK_const = 43,
+      TK_continue = 27,
+      TK_default = 31,
+      TK_do = 32,
+      TK_double = 56,
       TK_else = 93,
-      TK_enum = 54,
-      TK_extern = 36,
-      TK_float = 43,
-      TK_for = 68,
-      TK_goto = 69,
-      TK_if = 70,
-      TK_inline = 37,
-      TK_int = 44,
-      TK_long = 45,
-      TK_register = 38,
-      TK_restrict = 26,
-      TK_return = 71,
-      TK_short = 46,
-      TK_signed = 47,
-      TK_sizeof = 11,
-      TK_static = 32,
-      TK_struct = 55,
-      TK_switch = 72,
-      TK_typedef = 39,
-      TK_union = 56,
-      TK_unsigned = 48,
-      TK_void = 49,
-      TK_volatile = 27,
-      TK_while = 60,
-      TK__Bool = 50,
-      TK__Complex = 51,
-      TK__Imaginary = 52,
-      TK_LeftBracket = 31,
-      TK_LeftParen = 1,
-      TK_LeftBrace = 24,
+      TK_enum = 68,
+      TK_extern = 51,
+      TK_float = 57,
+      TK_for = 33,
+      TK_goto = 34,
+      TK_if = 35,
+      TK_inline = 52,
+      TK_int = 58,
+      TK_long = 59,
+      TK_register = 53,
+      TK_restrict = 44,
+      TK_return = 36,
+      TK_short = 60,
+      TK_signed = 61,
+      TK_sizeof = 12,
+      TK_static = 49,
+      TK_struct = 69,
+      TK_switch = 37,
+      TK_typedef = 54,
+      TK_union = 70,
+      TK_unsigned = 62,
+      TK_void = 63,
+      TK_volatile = 45,
+      TK_while = 28,
+      TK__Bool = 64,
+      TK__Complex = 65,
+      TK__Imaginary = 66,
+      TK_integer = 13,
+      TK_floating = 14,
+      TK_charconst = 15,
+      TK_stringlit = 16,
+      TK_identifier = 1,
+      TK_Completion = 3,
+      TK_EndOfCompletion = 4,
+      TK_Invalid = 107,
+      TK_LeftBracket = 67,
+      TK_LeftParen = 2,
+      TK_LeftBrace = 6,
       TK_Dot = 80,
       TK_Arrow = 94,
-      TK_PlusPlus = 9,
-      TK_MinusMinus = 10,
-      TK_And = 8,
-      TK_Star = 3,
-      TK_Plus = 6,
-      TK_Minus = 7,
-      TK_Tilde = 12,
-      TK_Bang = 13,
+      TK_PlusPlus = 10,
+      TK_MinusMinus = 11,
+      TK_And = 9,
+      TK_Star = 5,
+      TK_Plus = 7,
+      TK_Minus = 8,
+      TK_Tilde = 17,
+      TK_Bang = 18,
       TK_Slash = 81,
       TK_Percent = 82,
-      TK_RightShift = 61,
-      TK_LeftShift = 62,
+      TK_RightShift = 76,
+      TK_LeftShift = 77,
       TK_LT = 83,
       TK_GT = 84,
       TK_LE = 85,
@@ -80,9 +88,9 @@ public interface UPCParsersym {
       TK_AndAnd = 92,
       TK_OrOr = 95,
       TK_Question = 96,
-      TK_Colon = 57,
-      TK_DotDotDot = 73,
-      TK_Assign = 74,
+      TK_Colon = 74,
+      TK_DotDotDot = 79,
+      TK_Assign = 75,
       TK_StarAssign = 97,
       TK_SlashAssign = 98,
       TK_PercentAssign = 99,
@@ -93,155 +101,137 @@ public interface UPCParsersym {
       TK_AndAssign = 104,
       TK_CaretAssign = 105,
       TK_OrAssign = 106,
-      TK_Comma = 33,
-      TK_Hash = 107,
-      TK_HashHash = 108,
-      TK_NewLine = 109,
-      TK_MYTHREAD = 14,
-      TK_THREADS = 15,
-      TK_UPC_MAX_BLOCKSIZE = 16,
-      TK_relaxed = 28,
-      TK_shared = 29,
-      TK_strict = 30,
-      TK_upc_barrier = 75,
-      TK_upc_localsizeof = 17,
-      TK_upc_blocksizeof = 18,
-      TK_upc_elemsizeof = 19,
-      TK_upc_notify = 76,
-      TK_upc_fence = 77,
-      TK_upc_wait = 78,
-      TK_upc_forall = 79,
-      TK_EOF_TOKEN = 87,
-      TK_identifier = 2,
-      TK_integer = 20,
-      TK_floating = 21,
-      TK_charconst = 22,
-      TK_stringlit = 23,
-      TK_RightBracket = 63,
-      TK_RightParen = 53,
-      TK_RightBrace = 40,
-      TK_SemiColon = 34,
-      TK_Invalid = 110,
-      TK_Completion = 5,
-      TK_EndOfCompletion = 4,
-      TK_SingleLineComment = 111,
-      TK_MultiLineComment = 112,
-      TK_ERROR_TOKEN = 58;
+      TK_Comma = 72,
+      TK_RightBracket = 78,
+      TK_RightParen = 73,
+      TK_RightBrace = 71,
+      TK_SemiColon = 25,
+      TK_MYTHREAD = 19,
+      TK_THREADS = 20,
+      TK_UPC_MAX_BLOCKSIZE = 21,
+      TK_relaxed = 46,
+      TK_shared = 47,
+      TK_strict = 48,
+      TK_upc_barrier = 38,
+      TK_upc_localsizeof = 22,
+      TK_upc_blocksizeof = 23,
+      TK_upc_elemsizeof = 24,
+      TK_upc_notify = 39,
+      TK_upc_fence = 40,
+      TK_upc_wait = 41,
+      TK_upc_forall = 42,
+      TK_ERROR_TOKEN = 26,
+      TK_EOF_TOKEN = 87;
 
       public final static String orderedTerminalSymbols[] = {
-                 "",//$NON-NLS-1$
-                 "LeftParen",//$NON-NLS-1$
-                 "identifier",//$NON-NLS-1$
-                 "Star",//$NON-NLS-1$
-                 "EndOfCompletion",//$NON-NLS-1$
-                 "Completion",//$NON-NLS-1$
-                 "Plus",//$NON-NLS-1$
-                 "Minus",//$NON-NLS-1$
-                 "And",//$NON-NLS-1$
-                 "PlusPlus",//$NON-NLS-1$
-                 "MinusMinus",//$NON-NLS-1$
-                 "sizeof",//$NON-NLS-1$
-                 "Tilde",//$NON-NLS-1$
-                 "Bang",//$NON-NLS-1$
-                 "MYTHREAD",//$NON-NLS-1$
-                 "THREADS",//$NON-NLS-1$
-                 "UPC_MAX_BLOCKSIZE",//$NON-NLS-1$
-                 "upc_localsizeof",//$NON-NLS-1$
-                 "upc_blocksizeof",//$NON-NLS-1$
-                 "upc_elemsizeof",//$NON-NLS-1$
-                 "integer",//$NON-NLS-1$
-                 "floating",//$NON-NLS-1$
-                 "charconst",//$NON-NLS-1$
-                 "stringlit",//$NON-NLS-1$
-                 "LeftBrace",//$NON-NLS-1$
-                 "const",//$NON-NLS-1$
-                 "restrict",//$NON-NLS-1$
-                 "volatile",//$NON-NLS-1$
-                 "relaxed",//$NON-NLS-1$
-                 "shared",//$NON-NLS-1$
-                 "strict",//$NON-NLS-1$
-                 "LeftBracket",//$NON-NLS-1$
-                 "static",//$NON-NLS-1$
-                 "Comma",//$NON-NLS-1$
-                 "SemiColon",//$NON-NLS-1$
-                 "auto",//$NON-NLS-1$
-                 "extern",//$NON-NLS-1$
-                 "inline",//$NON-NLS-1$
-                 "register",//$NON-NLS-1$
-                 "typedef",//$NON-NLS-1$
-                 "RightBrace",//$NON-NLS-1$
-                 "char",//$NON-NLS-1$
-                 "double",//$NON-NLS-1$
-                 "float",//$NON-NLS-1$
-                 "int",//$NON-NLS-1$
-                 "long",//$NON-NLS-1$
-                 "short",//$NON-NLS-1$
-                 "signed",//$NON-NLS-1$
-                 "unsigned",//$NON-NLS-1$
-                 "void",//$NON-NLS-1$
-                 "_Bool",//$NON-NLS-1$
-                 "_Complex",//$NON-NLS-1$
-                 "_Imaginary",//$NON-NLS-1$
-                 "RightParen",//$NON-NLS-1$
-                 "enum",//$NON-NLS-1$
-                 "struct",//$NON-NLS-1$
-                 "union",//$NON-NLS-1$
-                 "Colon",//$NON-NLS-1$
-                 "ERROR_TOKEN",//$NON-NLS-1$
-                 "continue",//$NON-NLS-1$
-                 "while",//$NON-NLS-1$
-                 "RightShift",//$NON-NLS-1$
-                 "LeftShift",//$NON-NLS-1$
-                 "RightBracket",//$NON-NLS-1$
-                 "break",//$NON-NLS-1$
-                 "case",//$NON-NLS-1$
-                 "default",//$NON-NLS-1$
-                 "do",//$NON-NLS-1$
-                 "for",//$NON-NLS-1$
-                 "goto",//$NON-NLS-1$
-                 "if",//$NON-NLS-1$
-                 "return",//$NON-NLS-1$
-                 "switch",//$NON-NLS-1$
-                 "DotDotDot",//$NON-NLS-1$
-                 "Assign",//$NON-NLS-1$
-                 "upc_barrier",//$NON-NLS-1$
-                 "upc_notify",//$NON-NLS-1$
-                 "upc_fence",//$NON-NLS-1$
-                 "upc_wait",//$NON-NLS-1$
-                 "upc_forall",//$NON-NLS-1$
-                 "Dot",//$NON-NLS-1$
-                 "Slash",//$NON-NLS-1$
-                 "Percent",//$NON-NLS-1$
-                 "LT",//$NON-NLS-1$
-                 "GT",//$NON-NLS-1$
-                 "LE",//$NON-NLS-1$
-                 "GE",//$NON-NLS-1$
-                 "EOF_TOKEN",//$NON-NLS-1$
-                 "EQ",//$NON-NLS-1$
-                 "NE",//$NON-NLS-1$
-                 "Caret",//$NON-NLS-1$
-                 "Or",//$NON-NLS-1$
-                 "AndAnd",//$NON-NLS-1$
-                 "else",//$NON-NLS-1$
-                 "Arrow",//$NON-NLS-1$
-                 "OrOr",//$NON-NLS-1$
-                 "Question",//$NON-NLS-1$
-                 "StarAssign",//$NON-NLS-1$
-                 "SlashAssign",//$NON-NLS-1$
-                 "PercentAssign",//$NON-NLS-1$
-                 "PlusAssign",//$NON-NLS-1$
-                 "MinusAssign",//$NON-NLS-1$
-                 "RightShiftAssign",//$NON-NLS-1$
-                 "LeftShiftAssign",//$NON-NLS-1$
-                 "AndAssign",//$NON-NLS-1$
-                 "CaretAssign",//$NON-NLS-1$
-                 "OrAssign",//$NON-NLS-1$
-                 "Hash",//$NON-NLS-1$
-                 "HashHash",//$NON-NLS-1$
-                 "NewLine",//$NON-NLS-1$
-                 "Invalid",//$NON-NLS-1$
-                 "SingleLineComment",//$NON-NLS-1$
-                 "MultiLineComment"//$NON-NLS-1$
+                 "",
+                 "identifier",
+                 "LeftParen",
+                 "Completion",
+                 "EndOfCompletion",
+                 "Star",
+                 "LeftBrace",
+                 "Plus",
+                 "Minus",
+                 "And",
+                 "PlusPlus",
+                 "MinusMinus",
+                 "sizeof",
+                 "integer",
+                 "floating",
+                 "charconst",
+                 "stringlit",
+                 "Tilde",
+                 "Bang",
+                 "MYTHREAD",
+                 "THREADS",
+                 "UPC_MAX_BLOCKSIZE",
+                 "upc_localsizeof",
+                 "upc_blocksizeof",
+                 "upc_elemsizeof",
+                 "SemiColon",
+                 "ERROR_TOKEN",
+                 "continue",
+                 "while",
+                 "break",
+                 "case",
+                 "default",
+                 "do",
+                 "for",
+                 "goto",
+                 "if",
+                 "return",
+                 "switch",
+                 "upc_barrier",
+                 "upc_notify",
+                 "upc_fence",
+                 "upc_wait",
+                 "upc_forall",
+                 "const",
+                 "restrict",
+                 "volatile",
+                 "relaxed",
+                 "shared",
+                 "strict",
+                 "static",
+                 "auto",
+                 "extern",
+                 "inline",
+                 "register",
+                 "typedef",
+                 "char",
+                 "double",
+                 "float",
+                 "int",
+                 "long",
+                 "short",
+                 "signed",
+                 "unsigned",
+                 "void",
+                 "_Bool",
+                 "_Complex",
+                 "_Imaginary",
+                 "LeftBracket",
+                 "enum",
+                 "struct",
+                 "union",
+                 "RightBrace",
+                 "Comma",
+                 "RightParen",
+                 "Colon",
+                 "Assign",
+                 "RightShift",
+                 "LeftShift",
+                 "RightBracket",
+                 "DotDotDot",
+                 "Dot",
+                 "Slash",
+                 "Percent",
+                 "LT",
+                 "GT",
+                 "LE",
+                 "GE",
+                 "EOF_TOKEN",
+                 "EQ",
+                 "NE",
+                 "Caret",
+                 "Or",
+                 "AndAnd",
+                 "else",
+                 "Arrow",
+                 "OrOr",
+                 "Question",
+                 "StarAssign",
+                 "SlashAssign",
+                 "PercentAssign",
+                 "PlusAssign",
+                 "MinusAssign",
+                 "RightShiftAssign",
+                 "LeftShiftAssign",
+                 "AndAssign",
+                 "CaretAssign",
+                 "OrAssign",
+                 "Invalid"
              };
 
     public final static boolean isValidForParser = true;

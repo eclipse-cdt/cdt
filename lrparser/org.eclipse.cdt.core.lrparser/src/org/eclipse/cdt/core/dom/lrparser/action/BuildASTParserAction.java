@@ -114,9 +114,6 @@ public abstract class BuildASTParserAction {
 	private final IASTNodeFactory nodeFactory;
 	
 	
-	
-    
-	
 	/**
 	 * Completion tokens are represented by different kinds by different parsers.
 	 */

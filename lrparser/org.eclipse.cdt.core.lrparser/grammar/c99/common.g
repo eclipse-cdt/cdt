@@ -67,7 +67,6 @@ $Headers
 	
 	private void initActions(IASTTranslationUnit tu) {
 		action = new $build_action_class($node_factory_create_expression, this, tu);
-		action.setTokenMap($sym_type.orderedTerminalSymbols);
 	}
 	
 	

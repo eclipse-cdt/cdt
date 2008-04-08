@@ -16,7 +16,6 @@ import static org.eclipse.cdt.internal.core.dom.parser.upc.UPCParsersym.*;
 
 import org.eclipse.cdt.core.dom.lrparser.IDOMTokenMap;
 import org.eclipse.cdt.core.parser.IToken;
-import org.eclipse.cdt.core.parser.util.CharArrayMap;
 import org.eclipse.cdt.internal.core.dom.parser.upc.UPCParsersym;
 
 

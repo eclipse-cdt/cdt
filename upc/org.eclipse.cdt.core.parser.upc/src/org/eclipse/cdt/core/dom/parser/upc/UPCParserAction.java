@@ -13,24 +13,19 @@ package org.eclipse.cdt.core.dom.parser.upc;
 import lpg.lpgjavaruntime.IToken;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
-import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
 import org.eclipse.cdt.core.dom.lrparser.action.c99.C99BuildASTParserAction;
-import org.eclipse.cdt.core.dom.lrparser.action.c99.IC99ASTNodeFactory;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTForallStatement;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTKeywordExpression;
-import org.eclipse.cdt.core.dom.upc.ast.IUPCASTUnaryExpression;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTSynchronizationStatement;
+import org.eclipse.cdt.core.dom.upc.ast.IUPCASTUnaryExpression;
 import org.eclipse.cdt.internal.core.dom.parser.upc.UPCParsersym;
 
 

@@ -1,4 +1,4 @@
-#Tue Apr 08 11:14:12 EDT 2008
+#Tue Apr 08 11:17:49 EDT 2008
 eclipse.preferences.version=1
 org.eclipse.jdt.core.compiler.problem.annotationSuperInterface=warning
 org.eclipse.jdt.core.compiler.problem.autoboxing=ignore
@@ -32,7 +32,7 @@ org.eclipse.jdt.core.compiler.problem.possibleAccidentalBooleanAssignment=warnin
 org.eclipse.jdt.core.compiler.problem.potentialNullReference=warning
 org.eclipse.jdt.core.compiler.problem.rawTypeReference=warning
 org.eclipse.jdt.core.compiler.problem.redundantNullCheck=warning
-org.eclipse.jdt.core.compiler.problem.redundantSuperinterface=ignore
+org.eclipse.jdt.core.compiler.problem.redundantSuperinterface=warning
 org.eclipse.jdt.core.compiler.problem.specialParameterHidingField=disabled
 org.eclipse.jdt.core.compiler.problem.staticAccessReceiver=warning
 org.eclipse.jdt.core.compiler.problem.suppressWarnings=enabled

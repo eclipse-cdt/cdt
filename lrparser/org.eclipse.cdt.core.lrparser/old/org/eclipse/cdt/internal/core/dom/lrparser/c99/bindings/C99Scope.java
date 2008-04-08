@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.index.IIndexFileSet;
-import org.eclipse.cdt.internal.core.dom.lrparser.symboltable.C99SymbolTable;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 
 /**

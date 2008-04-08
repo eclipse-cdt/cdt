@@ -20,7 +20,6 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.internal.core.dom.Linkage;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.PlatformObject;
 
 public class C99Structure extends PlatformObject implements IC99Binding, ICompositeType, ITypeable {

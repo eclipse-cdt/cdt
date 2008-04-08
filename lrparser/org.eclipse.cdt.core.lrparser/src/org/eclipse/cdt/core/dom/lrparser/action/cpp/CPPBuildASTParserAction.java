@@ -17,11 +17,9 @@ import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.*;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.locks.Condition;
 
 import lpg.lpgjavaruntime.IToken;
 
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
@@ -35,7 +33,6 @@ import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
-import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -91,7 +88,6 @@ import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
 import org.eclipse.cdt.core.dom.lrparser.LPGTokenAdapter;
 import org.eclipse.cdt.core.dom.lrparser.action.BuildASTParserAction;
-import org.eclipse.cdt.core.parser.util.ASTPrinter;
 import org.eclipse.cdt.core.parser.util.DebugUtil;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPExpressionStatementParser;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPNoCastExpressionParser;
@@ -100,7 +96,6 @@ import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPSizeofExpressionParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
-import org.osgi.service.condpermadmin.ConditionInfo;
 
 /**
  * Semantic actions that build the AST during the parse. 

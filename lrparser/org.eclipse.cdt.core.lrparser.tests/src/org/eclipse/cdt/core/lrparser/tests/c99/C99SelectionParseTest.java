@@ -10,20 +10,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.lrparser.tests.c99;
 
-import java.util.Collections;
-
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
-import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.lrparser.BaseExtensibleLanguage;
 import org.eclipse.cdt.core.dom.lrparser.c99.C99Language;
 import org.eclipse.cdt.core.dom.lrparser.cpp.ISOCPPLanguage;
 import org.eclipse.cdt.core.lrparser.tests.ParseHelper;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.CodeReader;
-import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ScannerInfo;
@@ -31,7 +25,6 @@ import org.eclipse.cdt.core.parser.tests.ast2.AST2SelectionParseTest;
 import org.eclipse.cdt.internal.core.dom.SavedCodeReaderFactory;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 
 public class C99SelectionParseTest extends AST2SelectionParseTest {
 	

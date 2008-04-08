@@ -4457,4 +4457,12 @@ public class AST2Tests extends AST2BaseTest {
 		parseAndCheckBindings(code, ParserLanguage.C, true);
 		parseAndCheckBindings(code, ParserLanguage.CPP, true);
 	}
+	
+	//	int foo asm ("myfoo") __attribute__((__used__)), ff asm("ss") = 2;
+	//	extern void func () asm ("FUNC") __attribute__((__used__)); 
+	public void testASMLabels_Bug226121() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.C, true);
+		parseAndCheckBindings(code, ParserLanguage.CPP, true);
+	}
 }

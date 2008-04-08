@@ -1936,6 +1936,11 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
         } while (false);
 
+    	if (LT(1) == IToken.t_asm) { // asm labels bug 226121
+    		consume();
+    		finalOffset= asmExpression(null).getEndOffset();
+    	}
+
         // Consume any number of __attribute__ and __declspec tokens after the parameters
         __attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
 

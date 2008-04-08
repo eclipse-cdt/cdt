@@ -3825,6 +3825,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
         } while (false);
 
+        if (LT(1) == IToken.t_asm) { // asm labels bug 226121
+        	consume();
+            finalOffset= asmExpression(null).getEndOffset();
+        }
+        if(supportAttributeSpecifiers)
+        	__attribute_decl_seq(supportAttributeSpecifiers, false);
+        
         IASTDeclarator d = null;
         if (isFunction) {
 

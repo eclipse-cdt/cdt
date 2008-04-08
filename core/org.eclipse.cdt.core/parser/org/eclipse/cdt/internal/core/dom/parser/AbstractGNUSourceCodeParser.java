@@ -80,24 +80,16 @@ import org.eclipse.cdt.core.parser.ParserMode;
 public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
     protected final AbstractParserLogService log;
-
     protected final IScanner scanner;
-
     protected final ParserMode mode;
 
     protected final boolean supportStatementsInExpressions;
-
     protected final boolean supportTypeOfUnaries;
-
     protected final boolean supportAlignOfUnaries;
-
     protected final boolean supportKnRC;
-    
     protected final boolean supportAttributeSpecifiers;
-    
     protected final boolean supportDeclspecSpecifiers;
-
-	protected final IBuiltinBindingsProvider builtinBindingsProvider;
+    protected final IBuiltinBindingsProvider builtinBindingsProvider;
 	
     protected AbstractGNUSourceCodeParser(IScanner scanner,
             IParserLogService logService, ParserMode parserMode,
@@ -1405,12 +1397,19 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         	consume();
         }
         
-        consume(IToken.tLPAREN);
+        StringBuilder buffer= new StringBuilder();
+        asmExpression(buffer);
+        int lastOffset = consume(IToken.tSEMI).getEndOffset();
+
+        return buildASMDirective(first.getOffset(), buffer.toString(), lastOffset);
+    }
+
+	protected IToken asmExpression(StringBuilder content) throws EndOfFileException, BacktrackException {
+		IToken t= consume(IToken.tLPAREN);
     	boolean needspace= false;
-		StringBuffer buffer= new StringBuffer();
         int open= 1;
         while (open > 0) {
-        	IToken t= consume();
+        	t= consume();
 			switch(t.getType()) {
 			case IToken.tLPAREN:
 				open++;
@@ -1422,18 +1421,18 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         		throw new EndOfFileException();
         	
         	default:
-        		if (needspace) {
-        			buffer.append(' ');
+        		if (content != null) {
+        			if (needspace) {
+        				content.append(' ');
+        			}
+        			content.append(t.getCharImage());
+        			needspace= true;
         		}
-        		buffer.append(t.getCharImage());
-        		needspace= true;
         		break;
 			}
         }
-        int lastOffset = consume(IToken.tSEMI).getEndOffset();
-
-        return buildASMDirective(first.getOffset(), buffer.toString(), lastOffset);
-    }
+		return t;
+	}
 
     /**
      * @param offset

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,12 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [226143] [api][breaking] Make RSE rename/delete dialogs internal
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.dialogs;
@@ -29,12 +29,12 @@ import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 public class SystemRenameTableRow extends SystemDeleteTableRow
 {
 	private String newName;
-	private SystemMessage errorMsg = null;	
+	private SystemMessage errorMsg = null;
 	private ISystemValidator inputValidator = null;
 	private ValidatorUniqueString inputUniqueNameValidator = null;
 	private Object parent;
 	private int nameLengthLimit = -1;
-	
+
 	/**
 	 * Constructor
 	 * @param element that is being displayed in the tree, and which the
@@ -44,12 +44,12 @@ public class SystemRenameTableRow extends SystemDeleteTableRow
     {
     	super(element,rowNbr);
     	this.newName = getName();
-    	this.inputValidator = getViewAdapter(element).getNameValidator(element);    	
+    	this.inputValidator = getViewAdapter(element).getNameValidator(element);
 		if (inputValidator != null) {
 			  nameLengthLimit = inputValidator.getMaximumNameLength();
 		}
     }
-    
+
     /**
      * Set the new name for this element. Called by the CellModifier
      *  for the rename dialog.
@@ -67,7 +67,7 @@ public class SystemRenameTableRow extends SystemDeleteTableRow
     	else
     	  newName = null;
     }
-    
+
     /**
      * Trim leading blanks
      */
@@ -75,7 +75,7 @@ public class SystemRenameTableRow extends SystemDeleteTableRow
     {
     	return ("."+text).trim().substring(1); //$NON-NLS-1$
     }
-    
+
     /**
      *  Return the new name for this element, as set by setNewName
      */
@@ -83,7 +83,7 @@ public class SystemRenameTableRow extends SystemDeleteTableRow
     {
     	return newName;
     }
-    
+
     /**
      * Get the parent of this remote object that is being renamed
      */
@@ -103,10 +103,10 @@ public class SystemRenameTableRow extends SystemDeleteTableRow
     /**
      * Get the canonical name of this row. Sometimes, the name alone is not enough to do uniqueness
      *  checking on. For example, two connections or filter pools can have the same name if they are
-     *  in different profiles. Two iSeries QSYS objects can have the same name if their object types 
-     *  are different. 
+     *  in different profiles. Two iSeries QSYS objects can have the same name if their object types
+     *  are different.
      * <p>
-     * This method returns a name that can be used for uniqueness checking because it is qualified 
+     * This method returns a name that can be used for uniqueness checking because it is qualified
      *  sufficiently to make it unique.
      * <p>
      * Defers to the object's adapter
@@ -114,14 +114,14 @@ public class SystemRenameTableRow extends SystemDeleteTableRow
     public String getCanonicalNewName()
     {
     	// this is all for defect 42145
-    	Object element = super.getElement(); 
+    	Object element = super.getElement();
     	ISystemViewElementAdapter adapter = super.getViewAdapter();
     	String cName = newName;
     	if (adapter != null)
     	  cName = adapter.getCanonicalNewName(element, newName);
     	else
     	  cName = newName;
-    	//System.out.println("Inside getCanonicalNewName: newName: " + newName + ", canonical: " + cName);    	  
+    	//System.out.println("Inside getCanonicalNewName: newName: " + newName + ", canonical: " + cName);
     	return cName;
     }
     /**
@@ -130,14 +130,14 @@ public class SystemRenameTableRow extends SystemDeleteTableRow
      */
     public boolean newNameEqualsOldName()
     {
-    	Object element = super.getElement(); 
+    	Object element = super.getElement();
     	ISystemViewElementAdapter adapter = super.getViewAdapter();
     	if (adapter != null)
     	  return adapter.namesAreEqual(element, newName);
     	else
-    	  return getName().equals(newName);   	    	
+    	  return getName().equals(newName);
     }
-    
+
     /**
      * Return the name length limit, if available via the name validator supplied by the adapter.
      * Returns -1 if not available.
@@ -163,14 +163,14 @@ public class SystemRenameTableRow extends SystemDeleteTableRow
     {
     	inputUniqueNameValidator = uniqueNameValidator;
     }
-    
+
     /**
      * Return the validator for the new name,as supplied by the adaptor for
      *  this element type.
      * <p>
      * By default queries it from the object's adapter, unless setNameValidator has been
      * called.
-     */    
+     */
     public ISystemValidator getNameValidator()
     {
     	return inputValidator;
@@ -178,7 +178,7 @@ public class SystemRenameTableRow extends SystemDeleteTableRow
 
     /**
      * Return the uniqueness validator for the new name,as supplied by the call to setUniqueNameValidator
-     */    
+     */
     public ValidatorUniqueString getUniqueNameValidator()
     {
     	return inputUniqueNameValidator;
@@ -197,7 +197,7 @@ public class SystemRenameTableRow extends SystemDeleteTableRow
     public SystemMessage getErrorMessage()
     {
     	return errorMsg;
-    }    
+    }
     /**
      * Set error message for this row.
      * Pass null to clear it.
@@ -206,9 +206,9 @@ public class SystemRenameTableRow extends SystemDeleteTableRow
     {
     	this.errorMsg = errorMsg;
     }
-    
+
     public String toString()
     {
     	return getNewName();
-    }    
+    }
 }

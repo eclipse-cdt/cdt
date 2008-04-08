@@ -7,12 +7,13 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
+ * David McKnight   (IBM)        - [226143] [api][breaking] Make RSE rename/delete dialogs internal
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.dialogs;
@@ -42,7 +43,6 @@ import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
-import org.eclipse.rse.ui.dialogs.ISystemTypedObject;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.validators.ISystemValidator;
@@ -71,71 +71,71 @@ import org.eclipse.swt.widgets.Text;
  * Dialog for renaming multiple resources.
  * <p>
  * This is a re-usable dialog that you can use  directly, or via the {@link org.eclipse.rse.internal.ui.actions.SystemCommonRenameAction}
- *  action. 
+ *  action.
  * <p>
  * To use this dialog, you must call setInputObject with a StructuredSelection of the objects to be renamed.
- * If those objects adapt to {@link org.eclipse.rse.ui.view.ISystemRemoteElementAdapter} or 
+ * If those objects adapt to {@link org.eclipse.rse.ui.view.ISystemRemoteElementAdapter} or
  * {@link org.eclipse.rse.ui.view.ISystemRemoteElementAdapter}, the dialog will offer built-in error checking.
  * <p>
  * If the input objects do not adapt to org.eclipse.rse.ui.view.ISystemRemoteElementAdapter or ISystemViewElementAdapter, then you
- * should call {@link #setNameValidator(org.eclipse.rse.ui.validators.ISystemValidator)} to 
+ * should call {@link #setNameValidator(org.eclipse.rse.ui.validators.ISystemValidator)} to
  * specify a validator that is called to verify the typed new name is valid. Further, to show the type value
  * of the input objects, they should implement {@link org.eclipse.rse.ui.dialogs.ISystemTypedObject}.
  * <p>
  * This dialog does not do the actual renames. Rather, it will return an array of the user-typed new names. These
  * are queriable via {@link #getNewNames()}, after testing that {@link #wasCancelled()} is false. The array entries
  * will match the input order.
- * 
+ *
  * @see org.eclipse.rse.internal.ui.actions.SystemCommonRenameAction
  */
-public class SystemRenameDialog extends SystemPromptDialog 
-                                implements 
-                                           ISelectionChangedListener, 
+public class SystemRenameDialog extends SystemPromptDialog
+                                implements
+                                           ISelectionChangedListener,
                                            TraverseListener,
                                            ICellEditorListener, Runnable, FocusListener
 {
-	
+
     private SystemMessage errorMessage;
     private TextCellEditor cellEditor;
     private int currRow = 0;
     private GridData tableData = null;
     private boolean ignoreSelection = false;
     private Hashtable uniqueNameValidatorPerParent = new Hashtable();
-    
+
     private String verbiage;
 
     private SystemRenameTableProvider srtp;
     private Table table;
-    private TableViewer tableViewer;    
+    private TableViewer tableViewer;
     private static final int COLUMN_NEWNAME = SystemRenameTableProvider.COLUMN_NEWNAME;
 	private String columnHeaders[] = {
 		"",SystemResources.RESID_RENAME_COLHDG_OLDNAME, //$NON-NLS-1$
 		   SystemResources.RESID_RENAME_COLHDG_NEWNAME,
-		   SystemResources.RESID_RENAME_COLHDG_TYPE		   
+		   SystemResources.RESID_RENAME_COLHDG_TYPE
 	};
-	private ColumnLayoutData columnLayouts[] = 
+	private ColumnLayoutData columnLayouts[] =
 	{
-		new ColumnPixelData(19, false),		
+		new ColumnPixelData(19, false),
 		new ColumnWeightData(125,125,true),
 		new ColumnWeightData(150,150,true),
-		new ColumnWeightData(120,120,true)		
+		new ColumnWeightData(120,120,true)
     };
     // give each column a property value to identify it
-	private static String[] tableColumnProperties = 
+	private static String[] tableColumnProperties =
 	{
-		ISystemPropertyConstants.P_ERROR,		
+		ISystemPropertyConstants.P_ERROR,
 		IBasicPropertyConstants.P_TEXT,
 		ISystemPropertyConstants.P_NEWNAME,
-		ISystemPropertyConstants.P_TYPE,		
-    };    
-	// inner class to support cell editing	
-	private ICellModifier cellModifier = new ICellModifier() 
+		ISystemPropertyConstants.P_TYPE,
+    };
+	// inner class to support cell editing
+	private ICellModifier cellModifier = new ICellModifier()
 	{
-		public Object getValue(Object element, String property) 
+		public Object getValue(Object element, String property)
 		{
 			SystemRenameTableRow row = (SystemRenameTableRow)element;
 			String value = ""; //$NON-NLS-1$
-			if (property.equals(ISystemPropertyConstants.P_TEXT))
+			if (property.equals(IBasicPropertyConstants.P_TEXT))
 			  value = row.getName();
 			else
 			  value = row.getNewName();
@@ -143,12 +143,12 @@ public class SystemRenameDialog extends SystemPromptDialog
 			return value;
 		}
 
-		public boolean canModify(Object element, String property) 
+		public boolean canModify(Object element, String property)
 		{
 			boolean modifiable = property.equals(ISystemPropertyConstants.P_NEWNAME);
 			if ((cellEditor != null) && (cellEditor.getControl() != null))
 			{
-			  SystemRenameTableRow row = (SystemRenameTableRow)element;				
+			  SystemRenameTableRow row = (SystemRenameTableRow)element;
 			  int limit = row.getNameLengthLimit();
 			  if (limit == -1)
 			    limit = 1000;
@@ -159,10 +159,10 @@ public class SystemRenameDialog extends SystemPromptDialog
 		/**
 		 * Modifies a marker as a result of a successfully completed direct editing.
 		 */
-		public void modify(Object element, String property, Object value) 
+		public void modify(Object element, String property, Object value)
 		{
-			SystemRenameTableRow row = (SystemRenameTableRow)(((TableItem)element).getData());			
-			//System.out.println("inside modify: " + row+"; "+property+", "+value);			
+			SystemRenameTableRow row = (SystemRenameTableRow)(((TableItem)element).getData());
+			//System.out.println("inside modify: " + row+"; "+property+", "+value);
 			if (property.equals(ISystemPropertyConstants.P_NEWNAME))
 			{
 			  row.setNewName((String)value);
@@ -170,21 +170,21 @@ public class SystemRenameDialog extends SystemPromptDialog
 			}
 		}
 	};
-		    
-    
+
+
 	/**
 	 * Constructor for SystemRenameDialog
 	 */
-	public SystemRenameDialog(Shell shell) 
+	public SystemRenameDialog(Shell shell)
 	{
-		this(shell, SystemResources.RESID_RENAME_TITLE);				
+		this(shell, SystemResources.RESID_RENAME_TITLE);
 	}
 	/**
 	 * Constructor when you have your own title
 	 */
-	public SystemRenameDialog(Shell shell, String title) 
+	public SystemRenameDialog(Shell shell, String title)
 	{
-		super(shell, title);				
+		super(shell, title);
 
 		//pack();
 		setHelp(RSEUIPlugin.HELPPREFIX+"drnm0000"); //$NON-NLS-1$
@@ -195,7 +195,7 @@ public class SystemRenameDialog extends SystemPromptDialog
 	public void setVerbiage(String verbiage)
 	{
 		this.verbiage = verbiage;
-	}	
+	}
     /**
      * Set the validator for the new name,as supplied by the adaptor for name checking.
      * Overrides the default which is to query it from the object's adapter.
@@ -216,7 +216,7 @@ public class SystemRenameDialog extends SystemPromptDialog
 	/**
 	 * @see SystemPromptDialog#getInitialFocusControl()
 	 */
-	protected Control getInitialFocusControl() 
+	protected Control getInitialFocusControl()
 	{
 		SystemRenameTableRow[] rows = getRows();
 	   	tableViewer.setSelection(new StructuredSelection(rows[0]),true);
@@ -227,47 +227,47 @@ public class SystemRenameDialog extends SystemPromptDialog
 	/**
 	 * @see SystemPromptDialog#createInner(Composite)
 	 */
-	protected Control createInner(Composite parent) 
+	protected Control createInner(Composite parent)
 	{
 		// Inner composite
 		int nbrColumns = 1;
-		Composite composite = SystemWidgetHelpers.createComposite(parent, nbrColumns);			
-		
+		Composite composite = SystemWidgetHelpers.createComposite(parent, nbrColumns);
+
 		if (verbiage != null)
 			SystemWidgetHelpers.createVerbiage(composite, verbiage, nbrColumns, false, 200);
 		else
 			SystemWidgetHelpers.createVerbiage(composite, SystemResources.RESID_RENAME_VERBIAGE, nbrColumns, false, 200);
 
-        table = createTable(composite);        
+        table = createTable(composite);
         tableViewer = new TableViewer(table);
         createColumns();
-	    tableViewer.setColumnProperties(tableColumnProperties);        
+	    tableViewer.setColumnProperties(tableColumnProperties);
 	    tableViewer.setCellModifier(cellModifier);
 	    CellEditor editors[] = new CellEditor[columnHeaders.length];
 	    cellEditor = new TextCellEditor(table);
-	    cellEditor.addListener(this);	    
+	    cellEditor.addListener(this);
 	    editors[COLUMN_NEWNAME] = cellEditor;
-	    tableViewer.setCellEditors(editors);	    
+	    tableViewer.setCellEditors(editors);
 	    cellEditor.getControl().addTraverseListener(this);
 	    //System.out.println("CELL EDITOR CONTROL: " + cellEditor.getControl());
-                
+
         srtp = new SystemRenameTableProvider();
 	    int width = tableData.widthHint;
 	    int nbrRows = Math.min(getRows().length,8);
 	    int rowHeight = table.getItemHeight() + table.getGridLineWidth();
-        int sbHeight = table.getHorizontalBar().getSize().y;	    
+        int sbHeight = table.getHorizontalBar().getSize().y;
 	    int height = (nbrRows * rowHeight) + sbHeight;
-	    //System.out.println("#rows = "+nbrRows+", sbHeight = " + sbHeight+", totalHeight="+height);	    
+	    //System.out.println("#rows = "+nbrRows+", sbHeight = " + sbHeight+", totalHeight="+height);
 	    tableData.heightHint = height;
-	    table.setLayoutData(tableData);  	  	    
-	    table.setSize(width, height);                
+	    table.setLayoutData(tableData);
+	    table.setSize(width, height);
         tableViewer.setLabelProvider(srtp);
         tableViewer.setContentProvider(srtp);
         //System.out.println("Input Object: "+getInputObject());
-        tableViewer.setInput(getInputObject());        
+        tableViewer.setInput(getInputObject());
 
         tableViewer.addSelectionChangedListener(this);
-        tableViewer.getTable().addFocusListener(this);  
+        tableViewer.getTable().addFocusListener(this);
 
 		// test if we need a unique name validator
 		Shell shell = getShell();
@@ -276,52 +276,52 @@ public class SystemRenameDialog extends SystemPromptDialog
 		  display.asyncExec(this);
 		else
           run();
-	    
+
 		return composite;
 	}
-	
 
-    private Table createTable(Composite parent) 
+
+    private Table createTable(Composite parent)
     {
 	   //table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE | SWT.BORDER);
-	   table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE | SWT.BORDER | SWT.FULL_SELECTION | SWT.HIDE_SELECTION);	   
+	   table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE | SWT.BORDER | SWT.FULL_SELECTION | SWT.HIDE_SELECTION);
   	   table.setLinesVisible(true);
 	   tableData = new GridData();
 	   tableData.horizontalAlignment = GridData.FILL;
 	   tableData.grabExcessHorizontalSpace = true;
-	   tableData.widthHint = 450;        
+	   tableData.widthHint = 450;
 	   tableData.heightHint= 30;
 	   tableData.verticalAlignment = GridData.CENTER;
 	   tableData.grabExcessVerticalSpace = true;
-	   table.setLayoutData(tableData);  	  
-	   
+	   table.setLayoutData(tableData);
+
 	   //table.addTraverseListener(this);
 	   //getShell().addTraverseListener(this);
 
-	   
+
 	   return table;
-    }	
-    private void createColumns() 
+    }
+    private void createColumns()
     {
         TableLayout layout = new TableLayout();
         table.setLayout(layout);
         table.setHeaderVisible(true);
-	    for (int i = 0; i < columnHeaders.length; i++) 
+	    for (int i = 0; i < columnHeaders.length; i++)
 	    {
 		   layout.addColumnData(columnLayouts[i]);
 		   TableColumn tc = new TableColumn(table, SWT.NONE,i);
 		   tc.setResizable(columnLayouts[i].resizable);
 		   tc.setText(columnHeaders[i]);
 		   //tc.addSelectionListener(headerListener);
-	    }    	
+	    }
     }
     public void selectionChanged(SelectionChangedEvent event)
     {
 		//System.out.println("Selection changed. ignoreSelection? "+ignoreSelection);
     	if (ignoreSelection)
     	  return;
-	    IStructuredSelection selection = (IStructuredSelection) event.getSelection();		
-	    if (selection.isEmpty()) 	   
+	    IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+	    if (selection.isEmpty())
 	    {
 	      currRow = -1;
 		  return;
@@ -330,8 +330,8 @@ public class SystemRenameDialog extends SystemPromptDialog
 	    int rowIdx = srtp.getRowNumber(selectedRow);
 	    if (rowIdx == currRow)
 	      return;
-    	currRow = rowIdx;	    	      
-		tableViewer.editElement(getRows()[rowIdx], COLUMN_NEWNAME);	    
+    	currRow = rowIdx;
+		tableViewer.editElement(getRows()[rowIdx], COLUMN_NEWNAME);
     }
 	/**
 	 * Override of parent. Must pass selected object onto the form for initializing fields.
@@ -344,12 +344,12 @@ public class SystemRenameDialog extends SystemPromptDialog
 	}
 
 	/**
-	 * Called when user presses OK button. 
+	 * Called when user presses OK button.
 	 * This does not do the actual renames, but rather updates the new name array.
-	 * You need to query this via {@link #getNewNames()}, after ensuring the dialog was not 
+	 * You need to query this via {@link #getNewNames()}, after ensuring the dialog was not
 	 *  cancelled by calling {@link #wasCancelled()}.
 	 */
-	protected boolean processOK() 
+	protected boolean processOK()
 	{
 		// the following is for defect 41565 where the changed name is not used when enter pressed after typing
 		if ((currRow >=0) && (currRow <= (getRows().length - 1)))
@@ -360,31 +360,31 @@ public class SystemRenameDialog extends SystemPromptDialog
 	    }
 	    //else
 	    //  System.out.println("currRow = "+currRow);
-	    
+
 		boolean closeDialog = verify();
 		if (closeDialog)
 		{
 		}
 		return closeDialog;
-	}	
+	}
 	/**
 	 * Verifies all input.
 	 * @return true if there are no errors in the user input
 	 */
-	public boolean verify() 
+	public boolean verify()
 	{
 		SystemMessage errMsg = null;
 		SystemMessage firstErrMsg = null;
 		SystemRenameTableRow firstErrRow = null;
-		clearErrorMessage();		
+		clearErrorMessage();
 		SystemRenameTableRow[] rows = getRows();
 		Vector newNames = new Vector();
 		// first, clear pending errors...
-		for (int idx=0; (idx<rows.length); idx++)				
-			rows[idx].setErrorMessage(null);		
+		for (int idx=0; (idx<rows.length); idx++)
+			rows[idx].setErrorMessage(null);
 		// check 1: all entries have a new name, and the new name is unique for this list.
 		for (int idx=0; (firstErrMsg==null) && (idx<rows.length); idx++)
-		//for (int idx=0; (idx<rows.length); idx++)		
+		//for (int idx=0; (idx<rows.length); idx++)
 		{
 			errMsg = null;
 			String oldName = rows[idx].getName();
@@ -415,10 +415,10 @@ public class SystemRenameDialog extends SystemPromptDialog
            	 		if (!ok)
            	 			errMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_CANCELED);
            	 	}
-           	 		
-			}			
+
+			}
 			if (errMsg == null)
-			{           	 
+			{
 				//newNames.addElement(newName);
 				newNames.addElement(canonicalNewName); // defect 42145
 			}
@@ -432,13 +432,13 @@ public class SystemRenameDialog extends SystemPromptDialog
 		if (firstErrMsg != null)
 		{
 			setErrorMessage(firstErrMsg);
-			tableViewer.update(rows,null);		  
-			tableViewer.setSelection(new StructuredSelection(firstErrRow),true);		  
+			tableViewer.update(rows,null);
+			tableViewer.setSelection(new StructuredSelection(firstErrRow),true);
 			tableViewer.editElement(firstErrRow,COLUMN_NEWNAME);
 		}
 		return (firstErrMsg == null);
 	}
-	
+
   	/**
 	 * This hook method is called whenever the text changes in the input field.
 	 * The default implementation delegates the request to an <code>ISystemValidator</code> object.
@@ -446,18 +446,18 @@ public class SystemRenameDialog extends SystemPromptDialog
 	 * in the Dialog's message line.
 	 * @see #setNameValidator(ISystemValidator)
 	 */
-	protected SystemMessage validateNameInput() 
-	{			
+	protected SystemMessage validateNameInput()
+	{
 	    errorMessage= null;
 	    if (errorMessage == null)
 	      clearErrorMessage();
 	    else
 		  setErrorMessage(errorMessage);
-		setPageComplete();		
-		return errorMessage;		
+		setPageComplete();
+		return errorMessage;
 	}
 
- 
+
 	/**
 	 * This method can be called by the dialog or wizard page host, to decide whether to enable
 	 * or disable the next, final or ok buttons. It returns true if the minimal information is
@@ -470,7 +470,7 @@ public class SystemRenameDialog extends SystemPromptDialog
 		  pageComplete = true;
 		return pageComplete;
 	}
-	
+
 	/**
 	 * Inform caller of page-complete status of this form
 	 */
@@ -485,23 +485,23 @@ public class SystemRenameDialog extends SystemPromptDialog
      */
     public void keyTraversed(TraverseEvent e)
     {
-    	int detail = e.detail;    	
+    	int detail = e.detail;
     	//System.out.println("in keyTraversed: " + keycode + ", " + detail + ", " + doit);
-    	e.doit = false;	
+    	e.doit = false;
     	ignoreSelection = true;
-    	
-         	
-    	//System.out.println("...Key pressed. currRow = "+currRow);    	   
-    	 
-    	// DEFECT 41807 STATED USERS SHOULD BE ALLOWED TO TAB TO THE BUTTONS 
+
+
+    	//System.out.println("...Key pressed. currRow = "+currRow);
+
+    	// DEFECT 41807 STATED USERS SHOULD BE ALLOWED TO TAB TO THE BUTTONS
     	if (detail == SWT.TRAVERSE_TAB_NEXT)
     	{
     	  if (currRow != getRows().length-1)
     	  {
     	    ++currRow;
-    	    //System.out.println("...D TAB pressed. currRow = "+currRow);    	    
-	   	    //tableViewer.setSelection(new StructuredSelection(getRows()[currRow]),true);    
-		    tableViewer.editElement(getRows()[currRow], COLUMN_NEWNAME);	        	  
+    	    //System.out.println("...D TAB pressed. currRow = "+currRow);
+	   	    //tableViewer.setSelection(new StructuredSelection(getRows()[currRow]),true);
+		    tableViewer.editElement(getRows()[currRow], COLUMN_NEWNAME);
     	  }
 		  else
 		  {
@@ -518,9 +518,9 @@ public class SystemRenameDialog extends SystemPromptDialog
     	      --currRow;
     	    else
     	      currRow = 0;
-    	    //System.out.println("...D BACKTAB pressed. currRow = "+currRow);    	    	    
-	   	    //tableViewer.setSelection(new StructuredSelection(getRows()[currRow]),true);        	  
-		    tableViewer.editElement(getRows()[currRow], COLUMN_NEWNAME);	        	  	   	  
+    	    //System.out.println("...D BACKTAB pressed. currRow = "+currRow);
+	   	    //tableViewer.setSelection(new StructuredSelection(getRows()[currRow]),true);
+		    tableViewer.editElement(getRows()[currRow], COLUMN_NEWNAME);
     	  }
     	  else
     	  {
@@ -530,18 +530,18 @@ public class SystemRenameDialog extends SystemPromptDialog
     	  }
     	}
     	else
-    	  e.doit = true;  
+    	  e.doit = true;
     	ignoreSelection = false;
     }
-    
+
 	/**
 	 * Returns the rows of rename items.
 	 */
 	public SystemRenameTableRow[] getRows()
 	{
 		return (SystemRenameTableRow[])srtp.getElements(getInputObject());
-	}    
-	
+	}
+
 	/**
 	 * Returns an array of the new names.
 	 */
@@ -552,8 +552,8 @@ public class SystemRenameDialog extends SystemPromptDialog
 		for (int idx=0; idx<rows.length; idx++)
 		   names[idx] = rows[idx].getNewName();
 		return names;
-	}    	
-	
+	}
+
 	// CELL EDITOR METHODS
 	public void applyEditorValue()
 	{
@@ -561,11 +561,11 @@ public class SystemRenameDialog extends SystemPromptDialog
 	}
 	public void cancelEditor()
 	{
-		//System.out.println("CELLEDITOR: INSIDE CANCELEDITOR");		
+		//System.out.println("CELLEDITOR: INSIDE CANCELEDITOR");
 	}
 	public void editorValueChanged(boolean oldValidState,boolean newValidState)
 	{
-		//System.out.println("CELLEDITOR: INSIDE EDITORVALUECHANGED: "+oldValidState+","+newValidState);		
+		//System.out.println("CELLEDITOR: INSIDE EDITORVALUECHANGED: "+oldValidState+","+newValidState);
 	}
 
 	/**
@@ -581,14 +581,14 @@ public class SystemRenameDialog extends SystemPromptDialog
 		{
            nameValidator = rows[idx].getNameValidator();
            inputElement = rows[idx].getElement();
-		   uniqueNameValidator = setUniqueNameValidator(inputElement, nameValidator);		
+		   uniqueNameValidator = setUniqueNameValidator(inputElement, nameValidator);
 		   rows[idx].setUniqueNameValidator(uniqueNameValidator);
 		}
 	}
 
 	/**
 	 * Given an input element and externally-suppplied name validator for it, determine if we
-	 *  need to augment that validator with one that will check for uniqueness, and if so 
+	 *  need to augment that validator with one that will check for uniqueness, and if so
 	 *  create and register that uniqueness validator
 	 */
 	protected ValidatorUniqueString setUniqueNameValidator(Object inputElement, ISystemValidator nameValidator)
@@ -612,7 +612,7 @@ public class SystemRenameDialog extends SystemPromptDialog
 		      System.out.println("No existing name list found for parent " + parentName); //$NON-NLS-1$
 		}
 		if ((ra != null) && (parentName != null))
-		{			
+		{
            String[] names = null;
            boolean caseSensitive = ra.getSubSystem(inputElement).getSubSystemConfiguration().isCaseSensitive();
            boolean needUniqueNameValidator = !(nameValidator instanceof ISystemValidatorUniqueString);
@@ -625,7 +625,7 @@ public class SystemRenameDialog extends SystemPromptDialog
 		   {
     		  // Set the busy cursor to all shells.
     		  super.setBusyCursor(true);
-		  	  try {		  	   	 
+		  	  try {
 		  	         names = ra.getRemoteParentNamesInUse(inputElement, null);
 		  	  } catch (Exception exc) {SystemBasePlugin.logError("Exception getting parent's child names in rename dialog",exc);}		  			 //$NON-NLS-1$
 		  	  if ((names != null) && (names.length>0))
@@ -644,7 +644,7 @@ public class SystemRenameDialog extends SystemPromptDialog
     		  // Restore cursor
     		  super.setBusyCursor(false);
 		   }
-		}		
+		}
 		return uniqueNameValidator;
 	}
 
@@ -652,9 +652,9 @@ public class SystemRenameDialog extends SystemPromptDialog
      * Returns the implementation of ISystemRemoteElement for the given
      * object.  Returns null if this object does not adaptable to this.
      */
-    protected ISystemRemoteElementAdapter getRemoteAdapter(Object o) 
+    protected ISystemRemoteElementAdapter getRemoteAdapter(Object o)
     {
-    	if (!(o instanceof IAdaptable)) 
+    	if (!(o instanceof IAdaptable))
           return (ISystemRemoteElementAdapter)Platform.getAdapterManager().getAdapter(o,ISystemRemoteElementAdapter.class);
     	return (ISystemRemoteElementAdapter)((IAdaptable)o).getAdapter(ISystemRemoteElementAdapter.class);
     }
@@ -664,8 +664,8 @@ public class SystemRenameDialog extends SystemPromptDialog
 	public void focusGained(FocusEvent e)
 	{
 		/*
-		IStructuredSelection selection = (IStructuredSelection)tableViewer.getSelection();		
-		if (selection.isEmpty()) 	   
+		IStructuredSelection selection = (IStructuredSelection)tableViewer.getSelection();
+		if (selection.isEmpty())
 		{
 		  currRow = -1;
 		  return;
@@ -674,10 +674,10 @@ public class SystemRenameDialog extends SystemPromptDialog
 		int rowIdx = srtp.getRowNumber(selectedRow);
 		if (rowIdx == currRow)
 		  return;
-		currRow = rowIdx;	    	      
+		currRow = rowIdx;
 		tableViewer.editElement(getRows()[rowIdx], COLUMN_NEWNAME);
 		*/
-		//System.out.println("Focus gained");	    
+		//System.out.println("Focus gained");
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.events.FocusListener#focusLost(org.eclipse.swt.events.FocusEvent)

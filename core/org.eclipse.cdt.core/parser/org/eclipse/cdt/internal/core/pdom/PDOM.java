@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 QNX Software Systems and others.
+ * Copyright (c) 2005, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -199,7 +199,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		
 		db.setLocked(lockDB);
 		int version= db.getVersion();
-		if (version >= MIN_SUPPORTED_VERSION) {
+		if (version >= MIN_SUPPORTED_VERSION && version <= CURRENT_VERSION) {
 			readLinkages();
 			fHasBTreeForNestedBindings= db.getByte(HAS_NESTED_BINDING_BTREES) == 1;
 			fHasBTreeForMacros= db.getByte(HAS_MACRO_BTREES) == 1;
@@ -239,7 +239,8 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	}
 
 	public boolean isSupportedVersion() throws CoreException {
-		return db.getVersion() >= MIN_SUPPORTED_VERSION;
+		final int version = db.getVersion();
+		return version >= MIN_SUPPORTED_VERSION && version <= CURRENT_VERSION;
 	}
 
 	public void accept(IPDOMVisitor visitor) throws CoreException {

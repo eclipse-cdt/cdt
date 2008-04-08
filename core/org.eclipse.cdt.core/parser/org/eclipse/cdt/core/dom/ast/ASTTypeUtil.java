@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -295,7 +295,8 @@ public class ASTTypeUtil {
 		IType[] types = new IType[DEAULT_ITYPE_SIZE];
 		
 		// push all of the types onto the stack
-		while(type != null) {
+		int i=0;
+		while(type != null && ++i<100) {
 			final boolean isTypedef= type instanceof ITypedef;
 			if (!resolveTypedefs || !isTypedef) { 
 			    types = (IType[]) ArrayUtil.append( IType.class, types, type );

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1103,7 +1103,9 @@ public class CPPSemantics {
 					if( directives != null && directives.array != null && directives.array.length != 0 )
 						processDirectives( data, scope, directives.array );
 					
-					while( !data.usingDirectives.isEmpty() && data.usingDirectives.get( scope ) != null ){
+					// guard agains infinite loop, bug 209813
+					int i= 0;
+					while( !data.usingDirectives.isEmpty() && data.usingDirectives.get( scope ) != null && ++i<100){
 						transitives = lookupInNominated( data, scope, transitives );
 		
 						if( !data.qualified() || ( data.contentAssist || !data.hasResults()) ){

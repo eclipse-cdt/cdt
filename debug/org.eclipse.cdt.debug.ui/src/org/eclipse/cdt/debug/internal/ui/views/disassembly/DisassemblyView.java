@@ -866,7 +866,7 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 
 		// register the context menu such that other plugins may contribute to it
 		if ( getSite() != null ) {
-			getSite().registerContextMenu( getViewContextMenuId(), manager, getSourceViewer() );
+			getSite().registerContextMenu( id, manager, getSourceViewer() );
 		}
 	}
 
@@ -881,7 +881,7 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 		rulerControl.addMouseListener( getRulerMouseListener() );
 
 		if ( getSite() != null ) {
-            getSite().registerContextMenu( getRulerContextMenuId(), manager, getSourceViewer() );
+            getSite().registerContextMenu( id, manager, getSourceViewer() );
         }
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,11 +12,12 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - [168976][api] move ISystemNewConnectionWizardPage from core to UI
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.wizards;
 import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
@@ -221,6 +222,13 @@ public class SystemFileNewConnectionWizardPage extends AbstractSystemNewConnecti
 		  return true;
 		else
 		  return (textPort.getText().trim().length()>0);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemNewSubSystemProperties#applyValues(org.eclipse.rse.core.subsystems.ISubSystem)
+	 */
+	public boolean applyValues(ISubSystem ss) {
+		return true;
 	}
 
 }

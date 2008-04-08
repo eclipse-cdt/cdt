@@ -47,6 +47,7 @@
  * David Dykstal (IBM) - [202630] getDefaultPrivateProfile() and ensureDefaultPrivateProfile() are inconsistent
  * David McKnight   (IBM)        - [224313] [api] Create RSE Events for MOVE and COPY holding both source and destination fields
  * David Dykstal (IBM) - [200735][Persistence] Delete a profile that contains a connection and restart, profile is back without connections
+ * David Dykstal (IBM) - [168976][api] move ISystemNewConnectionWizardPage from core to UI
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.model;
@@ -89,7 +90,7 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISubSystemConfigurationCategories;
 import org.eclipse.rse.core.model.ISystemContainer;
 import org.eclipse.rse.core.model.ISystemHostPool;
-import org.eclipse.rse.core.model.ISystemNewConnectionWizardPage;
+import org.eclipse.rse.core.model.ISubSystemConfigurator;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemProfileManager;
 import org.eclipse.rse.core.model.ISystemRegistry;
@@ -1481,9 +1482,8 @@ public class SystemRegistry implements ISystemRegistry
 		return localConn;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.rse.core.model.ISystemRegistry#createHost(java.lang.String, org.eclipse.rse.core.IRSESystemType, java.lang.String, java.lang.String, java.lang.String, java.lang.String, int, org.eclipse.rse.core.model.ISystemNewConnectionWizardPage[])
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#createHost(java.lang.String, org.eclipse.rse.core.IRSESystemType, java.lang.String, java.lang.String, java.lang.String, java.lang.String, int, org.eclipse.rse.core.model.ISubSystemConfigurator[])
 	 */
 	public IHost createHost(
 		String profileName,
@@ -1493,10 +1493,10 @@ public class SystemRegistry implements ISystemRegistry
 		String description,
 		String defaultUserId,
 		int defaultUserIdLocation,
-		ISystemNewConnectionWizardPage[] newConnectionWizardPages)
+		ISubSystemConfigurator[] configurators)
 		throws Exception
 	{
-		return createHost(profileName, systemType, connectionName, hostName, description, defaultUserId, defaultUserIdLocation, true, newConnectionWizardPages);
+		return createHost(profileName, systemType, connectionName, hostName, description, defaultUserId, defaultUserIdLocation, true, configurators);
 	}
 	
 	/**
@@ -1518,16 +1518,14 @@ public class SystemRegistry implements ISystemRegistry
 	 * @param defaultUserIdLocation one of the constants in {@link org.eclipse.rse.core.IRSEUserIdConstants}
 	 * that tells us where to set the user Id
 	 * @param createSubSystems <code>true</code> to create subsystems for the host, <code>false</code> otherwise.
-	 * @param newConnectionWizardPages when called from the New Connection wizard this is union of the list of additional
-	 * wizard pages supplied by the subsystem factories that pertain to the specified system type. Else null.
+	 * @param configurators the list of all configurators supplied by the subsystem configuration that pertain to the specified system type. Else null.
 	 * @return SystemConnection object, or null if it failed to create. This is typically
 	 * because the connectionName is not unique. Call getLastException() if necessary.
 	 */
-	// FIXME need to remove ISystemNewConnectionWizardPage[] from this and replace with IAdaptable[]
 	public IHost createHost(final String profileName, final IRSESystemType systemType, final String hostName, 
 			final String hostAddress, final String description, final String defaultUserId, 
 			final int defaultUserIdLocation, final boolean createSubSystems, 
-			final ISystemNewConnectionWizardPage[] newConnectionWizardPages) throws Exception {
+			final ISubSystemConfigurator[] configurators) throws Exception {
 		final ISystemRegistry sr = this;
 		class CreateHostOperation implements ISystemProfileOperation {
 			private IHost host = null;
@@ -1560,10 +1558,10 @@ public class SystemRegistry implements ISystemRegistry
 					if (createSubSystems) {
 						// determine the list of configs to use to create subsystems from
 						List configs = new ArrayList(10); // arbitrary but reasonable
-						if (newConnectionWizardPages != null) {
-							// if there are wizard pages need to at least use those
-							for (int i = 0; i < newConnectionWizardPages.length; i++) {
-								configs.add(newConnectionWizardPages[i].getSubSystemConfiguration());
+						if (configurators != null) {
+							// if there are configurators need to at least use those
+							for (int i = 0; i < configurators.length; i++) {
+								configs.add(configurators[i].getSubSystemConfiguration());
 							}
 							// add any non-service subsystem configs that aren't already there that apply to this systemtype
 							ISubSystemConfiguration[] configsArray = getSubSystemConfigurationsBySystemType(systemType, false);
@@ -1587,7 +1585,7 @@ public class SystemRegistry implements ISystemRegistry
 						for (Iterator z = configs.iterator(); z.hasNext();) {
 							ISubSystemConfiguration config = (ISubSystemConfiguration) z.next();
 							config.getFilterPoolManager(profile, true); // create the filter pool
-							ISystemNewConnectionWizardPage[] interestingPages = getApplicableWizardPages(config, newConnectionWizardPages);
+							ISubSystemConfigurator[] interestingPages = getApplicableConfigurators(config, configurators);
 							subsystems[i] = config.createSubSystem(host, true, interestingPages); // give it the opportunity to create a subsystem
 							i++;
 						}
@@ -1798,7 +1796,7 @@ public class SystemRegistry implements ISystemRegistry
 		}
 	}
 	
-	private ISystemNewConnectionWizardPage[] getApplicableWizardPages(ISubSystemConfiguration ssf, ISystemNewConnectionWizardPage[] allPages)
+	private ISubSystemConfigurator[] getApplicableConfigurators(ISubSystemConfiguration ssf, ISubSystemConfigurator[] allPages)
 	{
 		if ((allPages == null) || (allPages.length == 0))
 			return null;
@@ -1808,7 +1806,7 @@ public class SystemRegistry implements ISystemRegistry
 				++count;
 		if (count == 0)
 			return null;
-		ISystemNewConnectionWizardPage[] subPages = new ISystemNewConnectionWizardPage[count];
+		ISubSystemConfigurator[] subPages = new ISubSystemConfigurator[count];
 		count = 0;
 		for (int idx = 0; idx < allPages.length; idx++)
 			if (allPages[idx].getSubSystemConfiguration() == ssf)

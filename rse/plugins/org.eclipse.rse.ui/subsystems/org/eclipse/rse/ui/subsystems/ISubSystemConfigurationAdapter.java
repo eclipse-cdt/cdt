@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [186748] Move from UI/org.eclipse.rse.core.subsystems.util
  * Martin Oberhuber (Wind River) - [189123] Move renameSubSystemProfile() from UI to Core
+ * David Dykstal (IBM) - [168976][api] move ISystemNewConnectionWizardPage from core to UI
  ********************************************************************************/
 
 package org.eclipse.rse.ui.subsystems;
@@ -27,7 +28,7 @@ import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.filters.ISystemFilterString;
 import org.eclipse.rse.core.model.IHost;
-import org.eclipse.rse.core.model.ISystemNewConnectionWizardPage;
+import org.eclipse.rse.core.model.ISubSystemConfigurator;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.ui.SystemMenuManager;
@@ -39,6 +40,7 @@ import org.eclipse.rse.ui.propertypages.SystemFilterStringPropertyPage;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.view.IContextObject;
 import org.eclipse.rse.ui.widgets.IServerLauncherForm;
+import org.eclipse.rse.ui.wizards.newconnection.ISystemNewConnectionWizardPage;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
@@ -70,17 +72,18 @@ public interface ISubSystemConfigurationAdapter
 	// -----------------------------------
 	/**
 	 * Optionally return one or more wizard pages to append to the New Connection Wizard if
-	 *  the user selects a system type that this subsystem configuration supports.
+	 * the user selects a system type that this subsystem configuration supports.
 	 * <p>
 	 * Some details:
 	 * <ul>
-	 *   <li>The wizard pages must implement ISystemNewConnectionWizardPage, so as to fit into the wizard's framework
-	 *   <li>When the user successfully presses Finish, the createConnection method in the SystemRegistry will call 
-	 *        your {@link ISubSystemConfiguration#createSubSystem(IHost,boolean, ISystemNewConnectionWizardPage[])} method to create the 
-	 *        your subsystem for the connection. The same pages you return here are passed back to you so you can 
-	 *        interrogate them for the user-entered data and use it when creating the default subsystem instance.
+	 * <li>The wizard pages must implement ISystemNewConnectionWizardPage, so as to fit into the wizard's framework
+	 * <li>When the user successfully presses Finish, the createConnection method in the SystemRegistry will call 
+	 * your {@link ISubSystemConfiguration#createSubSystem(IHost,boolean, ISubSystemConfigurator[])} method to create the 
+	 * your subsystem for the connection. The same pages you return here are passed back to you so you can 
+	 * interrogate them for the user-entered data and use it when creating the default subsystem instance.
 	 * </ul>
 	 * Tip: consider extending {@link org.eclipse.rse.ui.wizards.AbstractSystemNewConnectionWizardPage} for your wizard page class.
+	 * @since 3.0
 	 */
 	public ISystemNewConnectionWizardPage[] getNewConnectionWizardPages(ISubSystemConfiguration config, IWizard wizard);
 

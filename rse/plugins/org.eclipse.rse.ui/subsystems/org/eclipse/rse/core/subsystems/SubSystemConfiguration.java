@@ -33,6 +33,7 @@
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * Xuan Chen        (IBM)        - [223126] [api][breaking] Remove API related to User Actions in RSE Core/UI
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
+ * David Dykstal (IBM) - [168976][api] move ISystemNewConnectionWizardPage from core to UI
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -64,7 +65,7 @@ import org.eclipse.rse.core.filters.ISystemFilterString;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ILabeledObject;
 import org.eclipse.rse.core.model.IRSEPersistableContainer;
-import org.eclipse.rse.core.model.ISystemNewConnectionWizardPage;
+import org.eclipse.rse.core.model.ISubSystemConfigurator;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemProfileManager;
 import org.eclipse.rse.core.model.ISystemRegistry;
@@ -108,7 +109,7 @@ import org.eclipse.rse.ui.messages.SystemMessageDialog;
  *  <li>SubSystemConfiguration#getSubSystemActions() if they wish to supply actions for the right-click menu when
  *       the user right clicks on a subsystem object created by this subsystem configuration.
  *  <li>CreateDefaultFilterPool() to create any default filter pool when a new profile is created.
- *  <li>#initializeSubSystem(SubSystem ss, ISystemNewConnectionWizardPage[])
+ *  <li>#initializeSubSystem(SubSystem ss, configurarators[])
  * </ul>
  * <p>
  * A subsystem configuration will maintain in memory a list of all subsystem objects it has. This
@@ -938,20 +939,16 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 *           subsystem to manage references to filter pools
 	 *   <li>if (@link #supportsServerLaunchProperties()}, calls {@link #createServerLauncher(IConnectorService)}, to create
 	 *           the server launcher instance to associate with this subsystem.}.
-	 *   <li>calls {@link #initializeSubSystem(ISubSystem, ISystemNewConnectionWizardPage[])} so subclasses can
+	 *   <li>calls {@link #initializeSubSystem(ISubSystem, ISubSystemConfigurator[])} so subclasses can
 	 *           do their thing to initialize the subsystem.
 	 *   <li>finally, saves the subsystem to disk.
 	 * </ul>
 	 * @param conn The connection to create a subsystem for
 	 * @param creatingConnection true if we are creating a connection, false if just creating
 	 *          another subsystem for an existing connection.
-	 * @param yourNewConnectionWizardPages The wizard pages you supplied to the New Connection wizard, via the
-	 *            {@link org.eclipse.rse.ui.subsystems.ISubSystemConfigurationAdapter#getNewConnectionWizardPages(ISubSystemConfiguration, org.eclipse.jface.wizard.IWizard)}
-	 *             method or null if you didn't override this method.
-	 *            Note there may be more pages than you originally supplied as it is all pages contributed by
-	 *            this subsystem configuration object, including subclasses.
+	 * @param configurators configurators that inject properties into this new subsystem or null if there are none
 	 */
-	public ISubSystem createSubSystem(IHost conn, boolean creatingConnection, ISystemNewConnectionWizardPage[] yourNewConnectionWizardPages)
+	public ISubSystem createSubSystem(IHost conn, boolean creatingConnection, ISubSystemConfigurator[] configurators)
 	{
 		invalidateSubSystemCache(conn); // re-gen list of subsystems-by-connection on next call
 		if (creatingConnection)
@@ -989,7 +986,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 					}
 				}
 			}
-			initializeSubSystem(subsys, yourNewConnectionWizardPages);
+			initializeSubSystem(subsys, configurators);
 			try
 			{
 				saveSubSystem(subsys);
@@ -1168,33 +1165,16 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 * The default behavior is to add a reference to the default filter pool for this subsystem configuration,
 	 * if there is one. Typically subclasses call <samp>super().initializeSubSystem(...)</samp>
 	 * to get this default behavior, then extend it.
-	 *
-	 * <p>The reason for the connect wizard pages parameter is in case your subsystem configuration contributes a page to that wizard,
-	 * whose values are needed to set the subsystem's initial state. For example, you might decide to add a
-	 * page to the connection wizard to prompt for a JDBC Driver name. If so, when this method is called at
-	 * the time a new connection is created after the wizard, your page will have the user's value. You can
-	 * thus use it here to initialize that subsystem property. Be use to use instanceof to find your particular
-	 * page.
-	 * </p>
-	 *
 	 * @param ss - The subsystem that was created via createSubSystemInternal
-	 * @param yourNewConnectionWizardPages - The wizard pages you supplied to the New Connection wizard, via the
-	 *            {@link org.eclipse.rse.ui.view.SubSystemConfigurationAdapter#getNewConnectionWizardPages(org.eclipse.rse.core.subsystems.ISubSystemConfiguration, org.eclipse.jface.wizard.IWizard)}
-	 *             method or null if you didn't override this method.
-	 *            Note there may be more pages than you originally supplied, as you are passed all pages contributed
-	 *            by this subsystem configuration object, including subclasses. This is null when this method is called other than
-	 *            for a New Connection operation.
+	 * @param configurators an array of {@link ISubSystemConfigurator} used to inject values into this subsystem or null if there are none
 	 */
-	protected void initializeSubSystem(ISubSystem ss, ISystemNewConnectionWizardPage[] yourNewConnectionWizardPages)
-	{
-		if (supportsFilters())
-		{
+	protected void initializeSubSystem(ISubSystem ss, ISubSystemConfigurator[] configurators) {
+		if (supportsFilters()) {
 			// --------------------------------------------
 			// add a reference to the default filter pool
 			// --------------------------------------------
 			ISystemFilterPool pool = getDefaultSystemFilterPool(ss);
-			if (pool != null)
-			{
+			if (pool != null) {
 				ISystemFilterPoolReferenceManager refMgr = ss.getSystemFilterPoolReferenceManager();
 				refMgr.setProviderEventNotification(false);
 				refMgr.addReferenceToSystemFilterPool(pool);
@@ -1202,19 +1182,14 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 			}
 		}
 
-		// apply properties set in the wizard to the subsystem
-	    if (yourNewConnectionWizardPages != null)
-	    {
-	    	ISubSystemPropertiesWizardPage ourPage = null;
-	    	for (int idx=0; (ourPage==null) && (idx<yourNewConnectionWizardPages.length); idx++)
-	    	{
-	    	   if (yourNewConnectionWizardPages[idx] instanceof ISubSystemPropertiesWizardPage)
-	    	   {
-	    	     ourPage = (ISubSystemPropertiesWizardPage)yourNewConnectionWizardPages[idx];
-	    	     ourPage.applyValues(ss);
-	    	   }
-	    	}
-	    }
+		// apply properties from the configurators to the subsystem
+		if (configurators != null) {
+			ISubSystemConfigurator ourPage = null;
+			for (int idx = 0; (ourPage == null) && (idx < configurators.length); idx++) {
+				ourPage = configurators[idx];
+				ourPage.applyValues(ss);
+			}
+		}
 	}
 
 	/**

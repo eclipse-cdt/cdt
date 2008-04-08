@@ -19,6 +19,7 @@
  * David Dykstal (IBM) - [217556] remove service subsystem types
  * Xuan Chen (IBM) - [223126] [api][breaking] Remove API related to User Actions in RSE Core/UI
  * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
+ * David Dykstal (IBM) - [168976][api] move ISystemNewConnectionWizardPage from core to UI
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -30,7 +31,7 @@ import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManagerProvider;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.IRSEPersistableContainer;
-import org.eclipse.rse.core.model.ISystemNewConnectionWizardPage;
+import org.eclipse.rse.core.model.ISubSystemConfigurator;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.services.IService;
 
@@ -375,10 +376,10 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	 * @param conn The connection to create a subsystem for
 	 * @param creatingConnection true if we are creating a connection, false if just creating
 	 *          another subsystem for an existing connection.
-	 * @param yourNewConnectionWizardPages The wizard pages you supplied to the New Connection wizard, via the
-	 * getNewConnectionWizardPages(...) method, or null.
+	 * @param configurators The configurators that will be applied to a new subsystem or null if there are none.
+	 * @since 3.0
 	 */
-	public ISubSystem createSubSystem(IHost conn, boolean creatingConnection, ISystemNewConnectionWizardPage[] yourNewConnectionWizardPages);
+	public ISubSystem createSubSystem(IHost conn, boolean creatingConnection, ISubSystemConfigurator[] configurators);
 
 	// used in the case where newsubsystems are added after a connection exists
 	public ISubSystem createSubSystemAfterTheFact(IHost conn);

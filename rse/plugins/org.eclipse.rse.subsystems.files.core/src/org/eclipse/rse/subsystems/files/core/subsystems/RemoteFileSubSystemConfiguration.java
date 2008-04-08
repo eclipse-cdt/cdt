@@ -18,6 +18,7 @@
  * David Dykstal (IBM) - [197036] fixed NPE found during testing
  * David Dykstal (IBM) - [222270] clean up interfaces in org.eclipse.rse.core.filters
  * Xuan Chen     (IBM) - [223126] [api][breaking] Remove API related to User Actions in RSE Core/UI
+ * David Dykstal (IBM) - [168976][api] move ISystemNewConnectionWizardPage from core to UI
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
@@ -30,7 +31,7 @@ import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.model.IHost;
-import org.eclipse.rse.core.model.ISystemNewConnectionWizardPage;
+import org.eclipse.rse.core.model.ISubSystemConfigurator;
 import org.eclipse.rse.core.subsystems.IFileConstants;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
@@ -417,12 +418,10 @@ public abstract class RemoteFileSubSystemConfiguration extends SubSystemConfigur
 
     /**
      * Populate a new subsystem with our unique attributes, and/or create default filter references.
-     * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#initializeSubSystem(ISubSystem,ISystemNewConnectionWizardPage[])
-     * @see org.eclipse.rse.ui.view.SubSystemConfigurationAdapter#getNewConnectionWizardPages(org.eclipse.rse.core.subsystems.ISubSystemConfiguration, org.eclipse.jface.wizard.IWizard)
      */
-    protected void initializeSubSystem(ISubSystem ss, ISystemNewConnectionWizardPage[] yourNewConnectionWizardPages)
+    protected void initializeSubSystem(ISubSystem ss, ISubSystemConfigurator[] configurators)
     {
-    	super.initializeSubSystem(ss, yourNewConnectionWizardPages); // add a reference to the default filter pool
+    	super.initializeSubSystem(ss, configurators); // add a reference to the default filter pool
     	
     	/** FIXME - decouple wiz pages from core - do we still need this?
     	// Find the "set port" page we contributed to the New Connection wizard, reads it value, and

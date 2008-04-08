@@ -18,6 +18,7 @@
  * Javier Montalvo Orus (Symbian) - [188146] Incorrect "FTP Settings" node in Property Sheet for Linux connection
  * Martin Oberhuber (Wind River) - [190231] Move ISubSystemPropertiesWizardPage from UI to Core
  * David Dykstal (IBM) - [217556] remove service subsystem types
+ * David Dykstal (IBM) - [168976][api] move ISystemNewConnectionWizardPage from core to UI
  ********************************************************************************/
 
 package org.eclipse.rse.ui.wizards;
@@ -37,7 +38,6 @@ import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.core.subsystems.ISubSystemPropertiesWizardPage;
 import org.eclipse.rse.ui.widgets.services.ConnectorServiceElement;
 import org.eclipse.rse.ui.widgets.services.FactoryServiceElement;
 import org.eclipse.rse.ui.widgets.services.PropertySetServiceElement;
@@ -51,7 +51,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 
-public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizardPage implements ISubSystemPropertiesWizardPage
+public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizardPage
 {
 	private ServicesForm _form;
 	private ISubSystemConfiguration _selectedConfiguration;

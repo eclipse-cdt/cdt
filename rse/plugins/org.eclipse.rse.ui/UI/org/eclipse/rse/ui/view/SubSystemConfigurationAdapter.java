@@ -19,6 +19,7 @@
  * David McKnight   (IBM)        - [197129] Removing obsolete  ISystemConnectionWizardPropertyPage and SystemSubSystemsPropertiesWizardPage
  * David Dykstal    (IBM)        - [217556] remove service subsystem types
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
+ * David Dykstal (IBM) - [168976][api] move ISystemNewConnectionWizardPage from core to UI
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -41,7 +42,7 @@ import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager;
 import org.eclipse.rse.core.filters.ISystemFilterPoolWrapperInformation;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.filters.ISystemFilterString;
-import org.eclipse.rse.core.model.ISystemNewConnectionWizardPage;
+import org.eclipse.rse.core.model.ISubSystemConfigurator;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
@@ -91,6 +92,7 @@ import org.eclipse.rse.ui.validators.ValidatorSpecialChar;
 import org.eclipse.rse.ui.widgets.IServerLauncherForm;
 import org.eclipse.rse.ui.widgets.RemoteServerLauncherForm;
 import org.eclipse.rse.ui.wizards.SubSystemServiceWizardPage;
+import org.eclipse.rse.ui.wizards.newconnection.ISystemNewConnectionWizardPage;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
@@ -186,7 +188,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 * <ul>
 		 *   <li>The wizard pages must implement ISystemNewConnectionWizardPage, so as to fit into the wizard's framework
 		 *   <li>When the user successfully presses Finish, the createConnection method in the SystemRegistry will call 
-		 *        your {@link SubSystemConfiguration#createSubSystem(org.eclipse.rse.core.model.IHost,boolean, ISystemNewConnectionWizardPage[])} method to create the 
+		 *        your {@link SubSystemConfiguration#createSubSystem(org.eclipse.rse.core.model.IHost,boolean, ISubSystemConfigurator[])} method to create the 
 		 *        your subsystem for the connection. The same pages you return here are passed back to you so you can 
 		 *        interrogate them for the user-entered data and use it when creating the default subsystem instance.
 		 * </ul>

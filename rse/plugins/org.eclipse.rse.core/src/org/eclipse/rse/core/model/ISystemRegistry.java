@@ -26,6 +26,7 @@
  * Martin Oberhuber (Wind River) - [215820] Move SystemRegistry implementation to Core
  * David Dykstal (IBM) - [202630] getDefaultPrivateProfile() and ensureDefaultPrivateProfile() are inconsistent
  * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
+ * David Dykstal (IBM) - [168976][api] move ISystemNewConnectionWizardPage from core to UI
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -450,13 +451,13 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	 * @param defaultUserId userId to use as the default for the subsystems.
 	 * @param defaultUserIdLocation one of the constants in {@link org.eclipse.rse.core.IRSEUserIdConstants}
 	 * that tells us where to store the user Id
-	 * @param newConnectionWizardPages when called from the New Connection wizard this is union of the list of additional
-	 * wizard pages supplied by the subsystem factories that pertain to the specified system type. Else null.
+	 * @param configurators these are the configurators supplied by the subsystem configurations that pertain to the specified system type. Else null.
 	 * @return SystemConnection object, or null if it failed to create. This is typically
 	 * because the connectionName is not unique. Call getLastException() if necessary.
+	 * @since 3.0
 	 */
 	public IHost createHost(String profileName, IRSESystemType systemType, String connectionName, String hostName, String description, String defaultUserId, int defaultUserIdLocation,
-			ISystemNewConnectionWizardPage[] newConnectionWizardPages) throws Exception;
+			ISubSystemConfigurator[] configurators) throws Exception;
 
 	/**
 	 * Create a connection object. This is a simplified version

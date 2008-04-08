@@ -13,6 +13,7 @@ package org.eclipse.cdt.debug.internal.ui.views.disassembly;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
@@ -268,7 +269,7 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 	public DisassemblyView() {
 		super();
 		setViewContextMenuId( "#DisassemblyViewContext" ); //$NON-NLS-1$
-		setRulerContextMenuId( "#DisassemblyEditorRulerContext" ); //$NON-NLS-1$
+		setRulerContextMenuId( "#DisassemblyViewRulerContext" ); //$NON-NLS-1$
 		fAnnotationPreferences = new MarkerAnnotationPreferences();
 	}
 
@@ -878,6 +879,10 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 		setRulerContextMenu( manager.createContextMenu( rulerControl ) );
 		rulerControl.setMenu( getRulerContextMenu() );
 		rulerControl.addMouseListener( getRulerMouseListener() );
+
+		if ( getSite() != null ) {
+            getSite().registerContextMenu( getRulerContextMenuId(), manager, getSourceViewer() );
+        }
 	}
 
 	private Menu getTextContextMenu() {

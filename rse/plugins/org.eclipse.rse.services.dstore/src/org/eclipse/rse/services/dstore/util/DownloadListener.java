@@ -17,6 +17,7 @@
  * David McKnight   (IBM)        - [216252] MessageFormat.format -> NLS.bind
  * Martin Oberhuber (Wind River) - [219952] Use MessageFormat for download progress message
  * David McKnight   (IBM)        - [222448] [dstore] update DownloadListener to handle timeouts and nudge
+ * David McKnight   (IBM)        - [225902] [dstore] RSE download hangs
  ********************************************************************************/
 
 package org.eclipse.rse.services.dstore.util;
@@ -284,10 +285,10 @@ public class DownloadListener implements IDomainListener
 	private void wakeupServer(DataElement status)
 	{
 		if (status != null)
-		{
+		{		
 			// token command to wake up update handler
-			DataElement subject = (DataElement)status.getParent().get(0);
-			DataElement cmdDescriptor = _dataStore.localDescriptorQuery(subject.getDescriptor(), "C_QUERY_EXISTS");
+			DataElement cmdDescriptor = _dataStore.findCommandDescriptor("C_REFRESH"); //$NON-NLS-1$
+			DataElement subject = status.getParent().get(0);
 			if (cmdDescriptor != null)
 			{
 				_dataStore.command(cmdDescriptor, subject);

@@ -141,9 +141,19 @@ public class RapiSessionTest extends RapiTestCase {
 			// ignore
 		}
 		session.createDirectory(TEST_DIR_NAME);
-		assertTrue("Failed to create directory", isDirectory(TEST_DIR_NAME));
+		assertTrue("Failed to create directory: " + TEST_DIR_NAME, isDirectory(TEST_DIR_NAME));
 		session.removeDirectory(TEST_DIR_NAME);
-		assertFalse("Failed to remove directory", isDirectory(TEST_DIR_NAME));
+		assertFalse("Failed to remove directory: " + TEST_DIR_NAME, isDirectory(TEST_DIR_NAME));
+	}
+
+	/**
+	 * Utility method for creating files.
+	 */
+	void createFile(IRapiSession session, String fileName) throws RapiException {
+		int handle = session.createFile(fileName, OS.GENERIC_WRITE, 
+				OS.FILE_SHARE_READ, OS.CREATE_ALWAYS, OS.FILE_ATTRIBUTE_NORMAL);
+		session.writeFile(handle, "spam".getBytes());
+		session.closeHandle(handle);    
 	}
 
 	/**
@@ -153,24 +163,23 @@ public class RapiSessionTest extends RapiTestCase {
 		createInitSession();
 
 		// create test file
-		int handle = session.createFile(TEST_FILE_NAME, OS.GENERIC_WRITE,
-				OS.FILE_SHARE_READ, OS.CREATE_ALWAYS, OS.FILE_ATTRIBUTE_NORMAL);
-		session.writeFile(handle, "spam".getBytes());
-		session.closeHandle(handle);
+		createFile(session, TEST_FILE_NAME);
 
 		// make a copy
 		String copy = TEST_FILE_NAME + "1";
 		session.copyFile(TEST_FILE_NAME, copy);
-		assertTrue("Failed to copy file", isFile(copy));
+		assertTrue("The copied file doesn't exist: " + copy, isFile(copy));
 
 		// delete the test file
 		session.deleteFile(TEST_FILE_NAME);
-		assertFalse("Failed to delete file", isFile(TEST_FILE_NAME));
+		assertFalse("Failed to delete file: " + TEST_FILE_NAME, isFile(TEST_FILE_NAME));
 
 		// rename the copy
 		session.moveFile(copy, TEST_FILE_NAME);
-		assertTrue("Failed to move file", isFile(TEST_FILE_NAME));
-		assertFalse("Failed to move file", isFile(copy));
+		assertTrue("Failed to move file, existing file: " + copy + " new file: " + TEST_FILE_NAME,
+				isFile(TEST_FILE_NAME));
+		assertFalse("Failed to move file, existing file: " + copy + " new file: " + TEST_FILE_NAME,
+				isFile(copy));
 
 		// delete test file
 		session.deleteFile(TEST_FILE_NAME);
@@ -181,10 +190,7 @@ public class RapiSessionTest extends RapiTestCase {
 	 */
 	void createTempFiles() throws RapiException {
 		for (int i = 0 ; i < TEMP_FILES_COUNT ; i++) {
-			int handle = session.createFile(TEST_FILE_NAME + i, OS.GENERIC_WRITE,
-					OS.FILE_SHARE_READ, OS.CREATE_ALWAYS, OS.FILE_ATTRIBUTE_NORMAL);
-			session.writeFile(handle, "spam".getBytes());
-			session.closeHandle(handle);
+			createFile(session, TEST_FILE_NAME + i);
 		}
 	}
 
@@ -227,19 +233,66 @@ public class RapiSessionTest extends RapiTestCase {
 	}
 
 	/**
-	 * Tests getting file attributes, size, etc.
+	 * Tests getting and setting file attributes
 	 */
-	public void testStatFiles() throws RapiException {
+	public void testGetSetFileAttributes() throws RapiException {
 		createInitSession();
 		// create test file
-		int handle = session.createFile(TEST_FILE_NAME, OS.GENERIC_WRITE,
+		createFile(session, TEST_FILE_NAME);
+
+		session.setFileAttributes(TEST_FILE_NAME, OS.FILE_ATTRIBUTE_READONLY);
+		int attr = session.getFileAttributes(TEST_FILE_NAME);
+		assertTrue("Wrong file attributes, expected FILE_ATTRIBUTE_READONLY", 
+				(attr & OS.FILE_ATTRIBUTE_READONLY) != 0);
+
+		session.setFileAttributes(TEST_FILE_NAME, OS.FILE_ATTRIBUTE_ARCHIVE);
+		attr = session.getFileAttributes(TEST_FILE_NAME);
+		assertTrue("Wrong file attributes, expected FILE_ATTRIBUTE_ARCHIVE", 
+				(attr & OS.FILE_ATTRIBUTE_ARCHIVE) != 0);
+
+		//clean up
+		session.deleteFile(TEST_FILE_NAME);
+	}
+
+	/**
+	 * Tests getting file size using {@link IRapiSession#getFileSize(int)}
+	 */
+	public void testGetFileSize() throws RapiException {
+		createInitSession();
+		// create test file
+		int handle = session.createFile(TEST_FILE_NAME, OS.GENERIC_WRITE, 
 				OS.FILE_SHARE_READ, OS.CREATE_ALWAYS, OS.FILE_ATTRIBUTE_NORMAL);
 		session.writeFile(handle, "spam".getBytes());
-		assertTrue("Wrong file size", 4 == session.getFileSize(handle));
-		//TODO: add some checks for file times (creation, last modified, etc)
+		assertTrue("Wrong file size, expected size 4 bytes", 4 == session.getFileSize(handle));
 		session.closeHandle(handle);
-		int attr = session.getFileAttributes(TEST_FILE_NAME);
-		assertTrue("Wrong file attributes", (attr & OS.FILE_ATTRIBUTE_ARCHIVE) != 0);
+		//clean up
+		session.deleteFile(TEST_FILE_NAME);
+	}
+
+	/**
+	 * Tests getting and setting file times
+	 */
+	public void testGetSetFileTime() throws RapiException {
+		createInitSession();
+
+		// now + 1h
+		long d = System.currentTimeMillis() + 3600000;
+
+		// create file and set last access time to d
+		int handle = session.createFile(TEST_FILE_NAME, OS.GENERIC_WRITE, 
+				OS.FILE_SHARE_READ, OS.CREATE_ALWAYS, OS.FILE_ATTRIBUTE_NORMAL);
+		session.writeFile(handle, "spam".getBytes());
+		session.setFileLastWriteTime(handle, d);
+		session.closeHandle(handle);
+		// get file last write time and compare to d
+		handle = session.createFile(TEST_FILE_NAME, OS.GENERIC_READ, 
+				OS.FILE_SHARE_READ, OS.OPEN_EXISTING, OS.FILE_ATTRIBUTE_NORMAL);
+		long lwTime = session.getFileLastWriteTime(handle);
+		// the precision of setLastWriteTime should be about 1-2sec
+		assertTrue("Too big difference for lastWriteTime, expected: " + d 
+		    + " returned: " + lwTime,	Math.abs(lwTime - d) <= 5000);
+		session.closeHandle(handle);
+
 		//clean up
 		session.deleteFile(TEST_FILE_NAME);
 	}

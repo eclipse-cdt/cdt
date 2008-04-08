@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.tm.rapi;
 
-import java.util.Date;
-
 /**
  * This class is used to perform Remote API 2 operations on a connected
  * WinCE-based remote device.
@@ -208,32 +206,66 @@ public abstract class IRapiSession extends IUnknown {
   public abstract long getFileSize(int handle);
 
   /**
-   * Returns when the file was created.
-   * @param handle handle to the file for which to get dates and times
-   * @return <code>Date</code> object representing the date and time when
-   * the file was created
+   * Returns the time when the file was created.
+   * <p>
+   * The time is represented as the number of Universal Time (UT) 
+   * milliseconds since the epoch (00:00:00 GMT, January 1, 1970).
+   * </p> 
+   * @param handle handle to the file for which to get creation time
+   * @return the creation time for this file
    * @throws RapiException if an error occurs.
    */
-  public abstract Date getFileCreationTime(int handle) throws RapiException;
+  public abstract long getFileCreationTime(int handle) throws RapiException;
 
   /**
-   * Returns when the file was last accessed.
-   * @param handle handle to the file for which to get dates and times
-   * @return <code>Date</code> object representing the date and time when
-   * the file was last accessed
+   * Returns the time when the file was last accessed.
+   * <p>
+   * The time is represented as the number of Universal Time (UT) 
+   * milliseconds since the epoch (00:00:00 GMT, January 1, 1970).
+   * </p> 
+   * @param handle handle to the file for which to get last access time
+   * @return the last access time for this file
    * @throws RapiException if an error occurs.
    */
-  public abstract Date getFileLastAccessTime(int handle) throws RapiException;
+  public abstract long getFileLastAccessTime(int handle) throws RapiException;
 
   /**
-   * Returns when the file was last written to.
-   * @param handle handle to the file for which to get dates and times
-   * @return <code>Date</code> object representing the date and time when
-   * the file was last written to
+   * Returns the time when the file was last written to.
+   * <p>
+   * The time is represented as the number of Universal Time (UT) 
+   * milliseconds since the epoch (00:00:00 GMT, January 1, 1970).
+   * </p> 
+   * @param handle handle to the file for which to get last write time
+   * @return the last write time for this file
    * @throws RapiException if an error occurs.
    */
-  public abstract Date getFileLastWriteTime(int handle) throws RapiException;
+  public abstract long getFileLastWriteTime(int handle) throws RapiException;
 
+  /**
+   * Sets the attributes of the specified file on the remote device.
+   * @param fileName the target file
+   * @param fileAttributes the new attributes; this parameter is combination of the
+   * following values: {@link OS#FILE_ATTRIBUTE_ARCHIVE}, {@link OS#FILE_ATTRIBUTE_HIDDEN},
+   * {@link OS#FILE_ATTRIBUTE_NORMAL}, {@link OS#FILE_ATTRIBUTE_READONLY},
+   * {@link OS#FILE_ATTRIBUTE_SYSTEM}, {@link OS#FILE_ATTRIBUTE_TEMPORARY}
+   * @throws RapiException if an error occurs.
+   */
+  public abstract void setFileAttributes(String fileName, int fileAttributes) throws RapiException;
+  
+  /**
+   * Sets the last write time of the specified file.
+   * <p>
+   * The time is represented as the number of Universal Time (UT) 
+   * milliseconds since the epoch (00:00:00 GMT, January 1, 1970).
+   * </p>
+   * The specified time will be truncated to fit the supported precision.
+   * @param handle handle to the target file
+   * @param lastWriteTime the new last write time for this file
+   * @throws IllegalArgumentException if the specified time is negative
+   * @throws RapiException if an error occurs.
+   */
+  public abstract void setFileLastWriteTime(int handle, long lastWriteTime) throws RapiException;
+  
   /**
    * Creates new process on the remote device.
    * @param appName module to execute

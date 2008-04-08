@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.rapi;
 
-import java.util.Date;
-
 import org.eclipse.tm.rapi.IRapiSession;
 import org.eclipse.tm.rapi.OS;
 import org.eclipse.tm.rapi.ProcessInformation;
@@ -219,7 +217,7 @@ public class RapiSession extends IRapiSession {
     return ( ((long)sizeHigh[0] << 32) | (sizeLow & 0xFFFFFFFF));
   }
   
-  public Date getFileCreationTime(int handle) throws RapiException {
+  public long getFileCreationTime(int handle) throws RapiException {
     long[] crTime = new long[1];
     long[] laTime = new long[1];
     long[] lwTime = new long[1];
@@ -227,10 +225,10 @@ public class RapiSession extends IRapiSession {
     if (!res) {
       throw new RapiException("CeGetFileTime failed", getError()); //$NON-NLS-1$
     }
-    return new Date((crTime[0] / 10000) - OS.TIME_DIFF);
+    return (crTime[0] / 10000) - OS.TIME_DIFF;
   }
 
-  public Date getFileLastAccessTime(int handle) throws RapiException {
+  public long getFileLastAccessTime(int handle) throws RapiException {
     long[] crTime = new long[1];
     long[] laTime = new long[1];
     long[] lwTime = new long[1];
@@ -238,10 +236,10 @@ public class RapiSession extends IRapiSession {
     if (!res) {
       throw new RapiException("CeGetFileTime failed", getError()); //$NON-NLS-1$
     }
-    return new Date((laTime[0] / 10000) - OS.TIME_DIFF);
+    return (laTime[0] / 10000) - OS.TIME_DIFF;
   }
 
-  public Date getFileLastWriteTime(int handle) throws RapiException {
+  public long getFileLastWriteTime(int handle) throws RapiException {
     long[] crTime = new long[1];
     long[] laTime = new long[1];
     long[] lwTime = new long[1];
@@ -249,7 +247,25 @@ public class RapiSession extends IRapiSession {
     if (!res) {
       throw new RapiException("CeGetFileTime failed", getError()); //$NON-NLS-1$
     }
-    return new Date((lwTime[0] / 10000) - OS.TIME_DIFF);
+    return (lwTime[0] / 10000) - OS.TIME_DIFF;
+  }
+  
+  public void setFileAttributes(String fileName, int fileAttributes) throws RapiException {
+    boolean res = CeSetFileAttributes(addr, fileName, fileAttributes);
+    if (!res) {
+      throw new RapiException("CeSetFileAttributes failed", getError()); //$NON-NLS-1$
+    }
+  }
+
+  public void setFileLastWriteTime(int handle, long lastWriteTime) throws RapiException {
+    if (lastWriteTime < 0) {
+      throw new IllegalArgumentException("Time cannot be negative"); //$NON-NLS-1$
+    }
+    long[] lwTime = new long[] {(lastWriteTime + OS.TIME_DIFF) * 10000};
+    boolean res = CeSetFileTime(addr, handle, null, null, lwTime);
+    if (!res) {
+      throw new RapiException("CeSetFileTime failed", getError()); //$NON-NLS-1$
+    }
   }
   
   public ProcessInformation createProcess(String appName, String commandLine, int creationFlags) throws RapiException {
@@ -316,6 +332,11 @@ public class RapiSession extends IRapiSession {
   
   private final native boolean CeGetFileTime(int addr, int hFile, 
       long[] lpCreationTime, long[] lpLastAccessTime, long[] lpLastWriteTime);
+  
+  private final native boolean CeSetFileAttributes(int addr, String lpFileName, int dwFileAttributes);
+  
+  private final native boolean CeSetFileTime(int addr, int hFile, long[] lpCreationTime, 
+      long[] lpLastAccessTime, long[] lpLastWriteTime);
   
   private final native boolean CeCreateProcess(int addr, String lpApplicationName,
       String lpCommandLine, int dwCreationFlags, ProcessInformation lpProcessInformation);

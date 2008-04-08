@@ -187,6 +187,22 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_tm_internal_rapi_RapiSession_CeGetFi
 
 /*
  * Class:     org_eclipse_tm_internal_rapi_RapiSession
+ * Method:    CeSetFileAttributes
+ * Signature: (ILjava/lang/String;I)Z
+ */
+JNIEXPORT jboolean JNICALL Java_org_eclipse_tm_internal_rapi_RapiSession_CeSetFileAttributes
+  (JNIEnv *, jobject, jint, jstring, jint);
+
+/*
+ * Class:     org_eclipse_tm_internal_rapi_RapiSession
+ * Method:    CeSetFileTime
+ * Signature: (II[J[J[J)Z
+ */
+JNIEXPORT jboolean JNICALL Java_org_eclipse_tm_internal_rapi_RapiSession_CeSetFileTime
+  (JNIEnv *, jobject, jint, jint, jlongArray, jlongArray, jlongArray);
+
+/*
+ * Class:     org_eclipse_tm_internal_rapi_RapiSession
  * Method:    CeCreateProcess
  * Signature: (ILjava/lang/String;Ljava/lang/String;ILorg/eclipse/tm/rapi/ProcessInformation;)Z
  */

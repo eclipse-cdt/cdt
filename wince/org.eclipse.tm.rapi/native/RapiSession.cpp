@@ -258,6 +258,14 @@ jlong FILETIME2jlong(FILETIME ft)
 	return res;
 }
 
+LPFILETIME jlong2FILETIME(jlong jl, LPFILETIME ft)
+{
+	ft->dwLowDateTime = (DWORD)jl;
+	jl >>= 32;
+	ft->dwHighDateTime = (DWORD)jl;
+	return ft;
+}
+
 void setFIND_DATAFields(JNIEnv *env, jobject lpObject, CE_FIND_DATA *pFindData)
 {
 	if (!FIND_DATAFc.cached) cacheFIND_DATAFields(env, lpObject);
@@ -430,6 +438,58 @@ JNIEXPORT jboolean JNICALL RAPI_NATIVE(CeGetFileTime)
 	lparg2[0] = FILETIME2jlong(crTime);
 	lparg3[0] = FILETIME2jlong(laTime);
 	lparg4[0] = FILETIME2jlong(lwTime);
+fail:
+	if (arg2 && lparg2) env->ReleaseLongArrayElements(arg2, lparg2, 0);
+	if (arg3 && lparg3) env->ReleaseLongArrayElements(arg3, lparg3, 0);
+	if (arg4 && lparg4) env->ReleaseLongArrayElements(arg4, lparg4, 0);
+	return rc;
+}
+
+JNIEXPORT jboolean JNICALL RAPI_NATIVE(CeSetFileAttributes)
+  (JNIEnv *env, jobject that, jint arg0, jstring arg1, jint arg2)
+{
+	jboolean rc = 0;
+	const jchar *lparg1 = NULL;
+
+	if (arg0 == 0) return rc;
+	if (arg1) {
+		lparg1 = env->GetStringChars(arg1, NULL);
+		if (lparg1 == NULL) goto fail;
+	}
+	IRAPISession *pSession = (IRAPISession*) arg0;
+	rc = pSession->CeSetFileAttributes((LPCWSTR)lparg1, arg2);
+fail:
+	if (arg1 && lparg1) env->ReleaseStringChars(arg1, lparg1);
+	return rc;
+}
+
+JNIEXPORT jboolean JNICALL RAPI_NATIVE(CeSetFileTime)
+  (JNIEnv *env, jobject that, jint arg0, jint arg1, jlongArray arg2, jlongArray arg3, jlongArray arg4)
+{
+	jboolean rc = 0;
+	FILETIME crTime, laTime, lwTime;
+	LPFILETIME pcrTime = NULL, plaTime = NULL, plwTime = NULL;
+	jlong *lparg2 = NULL, *lparg3 = NULL, *lparg4 = NULL;
+
+	if (arg0 == 0) return 0;
+	if (arg2) {
+		lparg2 = env->GetLongArrayElements(arg2, NULL);
+		if (lparg2 == NULL) goto fail;
+		pcrTime = jlong2FILETIME(lparg2[0], &crTime);
+	}
+	if (arg3) {
+		lparg3 = env->GetLongArrayElements(arg3, NULL);
+		if (lparg3 == NULL) goto fail;
+		plaTime = jlong2FILETIME(lparg3[0], &laTime);
+	}
+	if (arg4) {
+		lparg4 = env->GetLongArrayElements(arg4, NULL);
+		if (lparg4 == NULL) goto fail;
+		plwTime = jlong2FILETIME(lparg4[0], &lwTime);
+	}
+
+	IRAPISession *pSession = (IRAPISession*) arg0;
+	rc = pSession->CeSetFileTime((HANDLE)arg1, pcrTime, plaTime, plwTime);
 fail:
 	if (arg2 && lparg2) env->ReleaseLongArrayElements(arg2, lparg2, 0);
 	if (arg3 && lparg3) env->ReleaseLongArrayElements(arg3, lparg3, 0);

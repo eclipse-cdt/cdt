@@ -12,9 +12,10 @@
  * 
  * Contributors:
  * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
+ * David McKnight  (IBM)  - [226086] [dstore][api][breaking] Move ServerLogger class to dstore.core
  ********************************************************************************/
 
-package org.eclipse.rse.dstore.universal.miners;
+package org.eclipse.dstore.core.server;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -22,7 +23,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
 import java.util.ResourceBundle;
-import org.eclipse.dstore.core.server.IServerLogger;
 
 /**
  * Class that facilitates logging for errors, warnings, debug messages and info for DataStore

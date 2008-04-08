@@ -280,13 +280,14 @@ public class DownloadListener implements IDomainListener
 		return _status;
 	}
 	
+	
 	private void wakeupServer(DataElement status)
 	{
 		if (status != null)
 		{
 			// token command to wake up update handler
-			DataElement cmdDescriptor = _dataStore.findCommandDescriptor("C_REFRESH"); //$NON-NLS-1$
-			DataElement subject = status.getParent().get(0);
+			DataElement subject = (DataElement)status.getParent().get(0);
+			DataElement cmdDescriptor = _dataStore.localDescriptorQuery(subject.getDescriptor(), "C_QUERY_EXISTS");
 			if (cmdDescriptor != null)
 			{
 				_dataStore.command(cmdDescriptor, subject);

@@ -30,6 +30,7 @@ import org.eclipse.dstore.core.miners.Miner;
 import org.eclipse.dstore.core.model.Client;
 import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
+import org.eclipse.dstore.core.server.ServerLogger;
 
 
 public class EnvironmentMiner extends Miner

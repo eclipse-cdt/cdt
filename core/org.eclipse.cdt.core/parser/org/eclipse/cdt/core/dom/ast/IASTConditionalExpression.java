@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
+ *    IBM Rational Software - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -58,9 +58,10 @@ public interface IASTConditionalExpression extends IASTExpression {
 	public void setLogicalConditionExpression(IASTExpression expression);
 
 	/**
-	 * Get the positive result expression.
+	 * Get the positive result expression, or <code>null</code> in case the positive condition was omitted (this is
+	 * a gcc extension).
 	 * 
-	 * @return <code>IASTExpression</code>
+	 * @return <code>IASTExpression</code>, or <code>null</code>.
 	 */
 	public IASTExpression getPositiveResultExpression();
 

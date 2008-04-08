@@ -2008,8 +2008,12 @@ public class CPPVisitor {
 					return getExpressionType(((IASTExpressionStatement)st).getExpression());
 			}
 		} else if (expression instanceof IASTConditionalExpression) {
-			IASTConditionalExpression conditional = (IASTConditionalExpression) expression;
-			IType t2 = getExpressionType(conditional.getPositiveResultExpression());
+			final IASTConditionalExpression conditional = (IASTConditionalExpression) expression;
+			IASTExpression positiveExpression = conditional.getPositiveResultExpression();
+			if (positiveExpression == null) {
+				positiveExpression= conditional.getLogicalConditionExpression();
+			}
+			IType t2 = getExpressionType(positiveExpression);
 			IType t3 = getExpressionType(conditional.getNegativeResultExpression());
 			if (t3 instanceof IPointerType || t2 == null)
 				return t3;

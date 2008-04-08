@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.formatter;
 
@@ -1748,7 +1749,10 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
     			if (preferences.insert_space_after_question_in_conditional) {
     				scribe.space();
     			}
-    			node.getPositiveResultExpression().accept(this);
+    			final IASTExpression positiveExpression = node.getPositiveResultExpression();
+    			if (positiveExpression != null) { // gcc-extension allows to omit the positive expression.
+    				positiveExpression.accept(this);
+    			}
     			scribe.printTrailingComment();
     			scribe.alignFragment(conditionalExpressionAlignment, 1);
     			scribe.printNextToken(Token.tCOLON, preferences.insert_space_before_colon_in_conditional);

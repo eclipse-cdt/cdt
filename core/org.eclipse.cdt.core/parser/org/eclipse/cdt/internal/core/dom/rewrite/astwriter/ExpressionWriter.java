@@ -7,7 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *    Institute for Software - initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
@@ -456,7 +457,14 @@ public class ExpressionWriter extends NodeWriter{
 	private void writeConditionalExpression(IASTConditionalExpression condExp) {
 		condExp.getLogicalConditionExpression().accept(visitor);
 		scribe.print(SPACE_QUESTIONMARK_SPACE);
-		condExp.getPositiveResultExpression().accept(visitor);
+		final IASTExpression positiveExpression = condExp.getPositiveResultExpression();
+		// gcc extension allows to omit the positive expression.
+		if (positiveExpression == null) {
+			scribe.print(' ');
+		}
+		else {
+			positiveExpression.accept(visitor);
+		}
 		scribe.print(SPACE_COLON_SPACE);
 		condExp.getNegativeResultExpression().accept(visitor);
 		

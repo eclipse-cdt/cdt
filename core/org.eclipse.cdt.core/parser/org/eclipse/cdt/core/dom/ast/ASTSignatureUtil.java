@@ -736,8 +736,11 @@ public class ASTSignatureUtil {
 		result.append(SPACE);
 		result.append(Keywords.cpQUESTION);
 		result.append(SPACE);
-		result.append(getExpressionString(expression.getPositiveResultExpression()));
-		result.append(SPACE);
+		final IASTExpression positiveExpression = expression.getPositiveResultExpression();
+		if (positiveExpression != null) {
+			result.append(getExpressionString(positiveExpression));
+			result.append(SPACE);
+		}
 		result.append(Keywords.cpCOLON);
 		result.append(SPACE);
 		result.append(getExpressionString(expression.getNegativeResultExpression()));

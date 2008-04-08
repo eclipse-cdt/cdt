@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -4435,5 +4435,15 @@ public class AST2Tests extends AST2BaseTest {
 		ba.assertProblem("foo2(d)", 4);
 		ba.assertNonProblem("foo1(b)", 4);
 		ba.assertProblem("foo2(b)", 4);
+	}
+	
+	// int a, b, c;
+	// void test() {
+	//    a= b ? : c;
+	// }
+	public void testOmittedPositiveExpression_Bug212905() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.C);
+		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
 import java.util.ArrayList;
@@ -53,6 +52,7 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 		fView= view;
 	}
 
+	@Override
 	public Object getParent(Object element) {
 		if (element instanceof CHNode) {
 			CHNode node = (CHNode) element;
@@ -61,6 +61,7 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 		return super.getParent(element);
 	}
 
+	@Override
 	protected Object[] syncronouslyComputeChildren(Object parentElement) {
 		if (parentElement instanceof CHMultiDefNode) {
 			return ((CHMultiDefNode) parentElement).getChildNodes();
@@ -84,6 +85,7 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 		return null;
 	}
 
+	@Override
 	protected Object[] asyncronouslyComputeChildren(Object parentElement, IProgressMonitor monitor) {
 		try {
 			if (parentElement instanceof ICElement) {
@@ -174,7 +176,7 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 	}
 
 	CHNode[] createNodes(CHNode node, CalledByResult result) throws CoreException {
-		ArrayList nodes= new ArrayList();
+		ArrayList<CHNode> nodes= new ArrayList<CHNode>();
 		ICElement[] elements= result.getElements();
 		for (int i = 0; i < elements.length; i++) {
 			ICElement element = elements[i];
@@ -188,7 +190,7 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 				}
 			}
 		}
-		return (CHNode[]) nodes.toArray(new CHNode[nodes.size()]);
+		return nodes.toArray(new CHNode[nodes.size()]);
 	}
 	
 	private CHNode createRefbyNode(CHNode parent, ICElement element, IIndexName[] refs) throws CoreException {
@@ -212,7 +214,7 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 
 	CHNode[] createNodes(CHNode node, CallsToResult callsTo) throws CoreException {
 		ITranslationUnit tu= CModelUtil.getTranslationUnit(node.getRepresentedDeclaration());
-		ArrayList result= new ArrayList();
+		ArrayList<CHNode> result= new ArrayList<CHNode>();
 		CElementSet[] elementSets= callsTo.getElementSets();
 		for (int i = 0; i < elementSets.length; i++) {
 			CElementSet set = elementSets[i];
@@ -225,7 +227,7 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 				}
 			}
 		}
-		return (CHNode[]) result.toArray(new CHNode[result.size()]);
+		return result.toArray(new CHNode[result.size()]);
 	}
 
 	private CHNode createReftoNode(CHNode parent, ITranslationUnit tu, ICElement[] elements, IIndexName[] references) throws CoreException {

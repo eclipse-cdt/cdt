@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
 import java.util.ArrayList;
@@ -22,7 +21,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.ui.viewsupport.WorkingSetFilterUI;
 
 public class CElementSet {
-	private Set fSet= new LinkedHashSet();
+	private Set<ICElement> fSet= new LinkedHashSet<ICElement>();
 	private int fHashCode;
 	
 	CElementSet( ICElement[] elements) {
@@ -33,10 +32,12 @@ public class CElementSet {
         }
 	}
 
+	@Override
 	public int hashCode() {
 		return fHashCode;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
@@ -60,7 +61,7 @@ public class CElementSet {
 			if (fSet.size() != other.fSet.size()) {
 				return false;
 			}
-			for (Iterator iter = fSet.iterator(); iter.hasNext(); ) {
+			for (Iterator<ICElement> iter = fSet.iterator(); iter.hasNext(); ) {
 				if (!other.fSet.contains(iter.next())) { 
 					return false;
 				}
@@ -74,13 +75,13 @@ public class CElementSet {
 	}
 
 	public ICElement[] getElements(WorkingSetFilterUI filter) {
-		ArrayList result= new ArrayList(fSet.size());
-		for (Iterator iter = fSet.iterator(); iter.hasNext(); ) {
-			ICElement element = (ICElement) iter.next();
+		ArrayList<ICElement> result= new ArrayList<ICElement>(fSet.size());
+		for (Iterator<ICElement> iter = fSet.iterator(); iter.hasNext(); ) {
+			ICElement element = iter.next();
 			if (filter == null || filter.isPartOfWorkingSet(element)) {
 				result.add(element);
 			}
 		}
-		return (ICElement[]) result.toArray(new ICElement[result.size()]);
+		return result.toArray(new ICElement[result.size()]);
 	}
 }

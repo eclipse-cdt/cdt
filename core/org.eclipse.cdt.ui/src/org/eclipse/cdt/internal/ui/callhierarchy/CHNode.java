@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
 import java.util.ArrayList;
@@ -32,7 +31,7 @@ public class CHNode implements IAdaptable {
 	private CHNode fParent;
 	private ICElement fRepresentedDecl;
 	private ITranslationUnit fFileOfReferences;
-    private List fReferences;
+    private List<CHReferenceInfo> fReferences;
     
     private int fHashCode;
     private long fTimestamp;
@@ -47,7 +46,7 @@ public class CHNode implements IAdaptable {
     public CHNode(CHNode parent, ITranslationUnit fileOfReferences, long timestamp, ICElement decl) {
         fParent= parent;
         fFileOfReferences= fileOfReferences;
-        fReferences= Collections.EMPTY_LIST;
+        fReferences= Collections.emptyList();
         fRepresentedDecl= decl;
         fIsRecursive= computeIsRecursive(fParent, decl);
         fHashCode= computeHashCode();
@@ -65,11 +64,13 @@ public class CHNode implements IAdaptable {
         return hashCode;
     }   
 
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         return fHashCode;
     }
     
-    public boolean equals(Object o) {
+    @Override
+	public boolean equals(Object o) {
 		if (!(o instanceof CHNode)) {
 			return false;
 		}
@@ -109,7 +110,7 @@ public class CHNode implements IAdaptable {
 	}
 	
 	public CHReferenceInfo getReference(int idx) {
-		return (CHReferenceInfo) fReferences.get(idx);
+		return fReferences.get(idx);
 	}
 	
 	public ICElement getRepresentedDeclaration() {
@@ -139,7 +140,7 @@ public class CHNode implements IAdaptable {
 			fReferences= Collections.singletonList(info);
 			return;
 		case 1:
-			fReferences= new ArrayList(fReferences);
+			fReferences= new ArrayList<CHReferenceInfo>(fReferences);
 			break;
 		}
 		fReferences.add(info);
@@ -149,6 +150,7 @@ public class CHNode implements IAdaptable {
 		return fFileOfReferences;
 	}
 
+	@SuppressWarnings("unchecked")
 	public Object getAdapter(Class adapter) {
 		if (adapter.isAssignableFrom(ICElement.class)) {
 			return getRepresentedDeclaration();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
 import java.util.HashMap;
@@ -39,7 +38,7 @@ public class CHLabelProvider extends LabelProvider implements IColorProvider {
 	
     private CUILabelProvider fCLabelProvider= new CUILabelProvider(LABEL_OPTIONS_SIMPLE, 0);
     private CHContentProvider fContentProvider;
-    private HashMap fCachedImages= new HashMap();
+    private HashMap<String, Image> fCachedImages= new HashMap<String, Image>();
 	private Color fColorInactive;
     
     public CHLabelProvider(Display display, CHContentProvider cp) {
@@ -47,7 +46,8 @@ public class CHLabelProvider extends LabelProvider implements IColorProvider {
         fContentProvider= cp;
     }
     
-    public Image getImage(Object element) {
+    @Override
+	public Image getImage(Object element) {
         if (element instanceof CHNode) {
             CHNode node= (CHNode) element;
             Image image= null;
@@ -68,7 +68,8 @@ public class CHLabelProvider extends LabelProvider implements IColorProvider {
         return super.getImage(element);
     }
 
-    public String getText(Object element) {
+    @Override
+	public String getText(Object element) {
         if (element instanceof CHNode) {
             CHNode node= (CHNode) element;
             ICElement decl= node.getOneRepresentedDeclaration();
@@ -114,10 +115,11 @@ public class CHLabelProvider extends LabelProvider implements IColorProvider {
     	return buf.toString();
 	}
 
+	@Override
 	public void dispose() {
         fCLabelProvider.dispose();
-        for (Iterator iter = fCachedImages.values().iterator(); iter.hasNext();) {
-            Image image = (Image) iter.next();
+        for (Iterator<Image> iter = fCachedImages.values().iterator(); iter.hasNext();) {
+            Image image = iter.next();
             image.dispose();
         }
         fCachedImages.clear();
@@ -150,7 +152,7 @@ public class CHLabelProvider extends LabelProvider implements IColorProvider {
         }
 
         String key= image.toString()+String.valueOf(flags);
-        Image result= (Image) fCachedImages.get(key);
+        Image result= fCachedImages.get(key);
         if (result == null) {
             ImageDescriptor desc= new CElementImageDescriptor(
                     new ImageImageDescriptor(image), flags, new Point(20,16));

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -86,6 +86,7 @@ public class THHistoryListAction extends Action {
 		/*
 		 * @see Dialog#createDialogArea(Composite)
 		 */
+		@Override
 		protected Control createDialogArea(Composite parent) {
 			initializeDialogUnits(parent);
 			
@@ -137,13 +138,14 @@ public class THHistoryListAction extends Action {
 		}
 		
 		public ICElement[] getRemaining() {
-			List elems= fHistoryList.getElements();
-			return (ICElement[]) elems.toArray(new ICElement[elems.size()]);
+			List<?> elems= fHistoryList.getElements();
+			return elems.toArray(new ICElement[elems.size()]);
 		}	
 		
 		/*
 		 * @see org.eclipse.jface.window.Window#configureShell(Shell)
 		 */
+		@Override
 		protected void configureShell(Shell newShell) {
 			super.configureShell(newShell);
 //			PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell, ...);
@@ -152,6 +154,7 @@ public class THHistoryListAction extends Action {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.window.Window#create()
 		 */
+		@Override
 		public void create() {
 			setShellStyle(getShellStyle() | SWT.RESIZE);
 			super.create();
@@ -169,6 +172,7 @@ public class THHistoryListAction extends Action {
 	/*
 	 * @see IAction#run()
 	 */
+	@Override
 	public void run() {
 		ICElement[] historyEntries= fView.getHistoryEntries();
 		HistoryListDialog dialog= new HistoryListDialog(fView.getSite().getShell(), historyEntries);

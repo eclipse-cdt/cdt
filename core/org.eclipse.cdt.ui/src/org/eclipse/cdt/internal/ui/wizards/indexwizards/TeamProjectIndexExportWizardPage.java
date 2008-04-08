@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.ui.wizards.indexwizards;
 
 import java.lang.reflect.InvocationTargetException;
@@ -149,7 +148,8 @@ public class TeamProjectIndexExportWizardPage extends  WizardDataTransferPage im
                 IDialogConstants.SELECT_ALL_ID, Messages.TeamProjectIndexExportWizardPage_selectAll, false);
 
         SelectionAdapter listener = new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 fProjectViewer.setAllChecked(true);
                 updateWidgetEnablements();
             }
@@ -160,7 +160,8 @@ public class TeamProjectIndexExportWizardPage extends  WizardDataTransferPage im
                 IDialogConstants.DESELECT_ALL_ID, Messages.TeamProjectIndexExportWizardPage_deselectAll, false);
 
         listener = new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
             	fProjectViewer.setAllChecked(false);
                 updateWidgetEnablements();
             }
@@ -194,7 +195,7 @@ public class TeamProjectIndexExportWizardPage extends  WizardDataTransferPage im
     }
 
     private void initProjects() {
-        ArrayList input = new ArrayList();
+        ArrayList<ICProject> input = new ArrayList<ICProject>();
         ICProject[] projects;
 		try {
 			projects = CoreModel.getDefault().getCModel().getCProjects();
@@ -210,7 +211,7 @@ public class TeamProjectIndexExportWizardPage extends  WizardDataTransferPage im
 	}
 
     private void setupBasedOnInitialSelections() {
-    	HashSet names= new HashSet();
+    	HashSet<String> names= new HashSet<String>();
         Iterator it = fInitialSelection.iterator();
         while (it.hasNext()) {
             IProject project = (IProject) it.next();
@@ -266,7 +267,8 @@ public class TeamProjectIndexExportWizardPage extends  WizardDataTransferPage im
 
         Button button= createButton(destinationSelectionGroup, IDialogConstants.CLIENT_ID, Messages.TeamProjectIndexExportWizardPage_variableButton, false);
         SelectionAdapter listener = new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 onInsertVariable();
             }
         };
@@ -353,7 +355,8 @@ public class TeamProjectIndexExportWizardPage extends  WizardDataTransferPage im
      *	Answer a boolean indicating whether the receivers destination specification
      *	widgets currently all contain valid values.
      */
-    protected boolean validateDestinationGroup() {
+    @Override
+	protected boolean validateDestinationGroup() {
         String destinationValue = getDestinationValue();
         if (destinationValue.length() == 0) {
             setMessage(Messages.TeamProjectIndexExportWizardPage_destinationMessage); 
@@ -364,7 +367,8 @@ public class TeamProjectIndexExportWizardPage extends  WizardDataTransferPage im
         return true;
     }
 
-    protected boolean validateSourceGroup() {
+    @Override
+	protected boolean validateSourceGroup() {
     	// there must be some resources selected for Export
     	boolean isValid = true;
         Object[] projectsToExport = getCheckedElements();
@@ -377,7 +381,8 @@ public class TeamProjectIndexExportWizardPage extends  WizardDataTransferPage im
 		return super.validateSourceGroup() && isValid;
 	}
 
-    protected void updateWidgetEnablements() {
+    @Override
+	protected void updateWidgetEnablements() {
         boolean pageComplete = determinePageCompletion();
         setPageComplete(pageComplete);
         if (pageComplete) {
@@ -391,10 +396,12 @@ public class TeamProjectIndexExportWizardPage extends  WizardDataTransferPage im
 		updateWidgetEnablements();
 	}
 	
-    protected String getErrorDialogTitle() {
+    @Override
+	protected String getErrorDialogTitle() {
         return Messages.TeamProjectIndexExportWizardPage_errorDlgTitle; 
     }
 
+	@Override
 	protected boolean allowNewContainerName() {
 		return false;
 	}

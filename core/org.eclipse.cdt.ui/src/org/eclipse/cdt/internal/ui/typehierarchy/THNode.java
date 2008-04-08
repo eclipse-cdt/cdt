@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.ui.typehierarchy;
 
 import java.util.ArrayList;
@@ -25,7 +24,7 @@ import org.eclipse.cdt.internal.ui.util.CoreUtility;
 public class THNode implements IAdaptable {
 	private THNode fParent;
 	private ICElement fElement;
-	private List fChildren= Collections.EMPTY_LIST;
+	private List<THNode> fChildren= Collections.emptyList();
     
     private int fHashCode;
     private boolean fIsFiltered;
@@ -51,11 +50,13 @@ public class THNode implements IAdaptable {
         return hashCode;
     }   
 
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         return fHashCode;
     }
     
-    public boolean equals(Object o) {
+    @Override
+	public boolean equals(Object o) {
 		if (!(o instanceof THNode)) {
 			return false;
 		}
@@ -80,6 +81,7 @@ public class THNode implements IAdaptable {
 		return fElement;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public Object getAdapter(Class adapter) {
 		if (adapter.isAssignableFrom(ICElement.class)) {
 			return getElement();
@@ -97,7 +99,7 @@ public class THNode implements IAdaptable {
 
 	public void addChild(THNode childNode) {
 		if (fChildren.isEmpty()) {
-			fChildren= new ArrayList();
+			fChildren= new ArrayList<THNode>();
 		}			
 		fChildren.add(childNode);
 	}
@@ -107,7 +109,7 @@ public class THNode implements IAdaptable {
 	}
 
 	public THNode[] getChildren() {
-		return (THNode[]) fChildren.toArray(new THNode[fChildren.size()]);
+		return fChildren.toArray(new THNode[fChildren.size()]);
 	}
 
 	public void setIsImplementor(boolean val) {
@@ -119,8 +121,8 @@ public class THNode implements IAdaptable {
 	}
 
 	public void removeFilteredLeafs() {
-		for (Iterator iterator = fChildren.iterator(); iterator.hasNext();) {
-			THNode child = (THNode) iterator.next();
+		for (Iterator<THNode> iterator = fChildren.iterator(); iterator.hasNext();) {
+			THNode child = iterator.next();
 			child.removeFilteredLeafs();
 			if (child.isFiltered() && !child.hasChildren()) {
 				iterator.remove();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.ui.typehierarchy;
 
 import java.util.ArrayList;
@@ -43,9 +42,9 @@ import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 class THGraph {
 	private static final ICElement[] NO_MEMBERS = new ICElement[0];
 	private THGraphNode fInputNode= null;
-	private HashSet fRootNodes= new HashSet();
-	private HashSet fLeaveNodes= new HashSet();
-	private HashMap fNodes= new HashMap();
+	private HashSet<THGraphNode> fRootNodes= new HashSet<THGraphNode>();
+	private HashSet<THGraphNode> fLeaveNodes= new HashSet<THGraphNode>();
+	private HashMap<ICElement, THGraphNode> fNodes= new HashMap<ICElement, THGraphNode>();
 	private boolean fFileIsIndexed;
 	
 	public THGraph() {
@@ -56,11 +55,11 @@ class THGraph {
 	}
 	
 	public THGraphNode getNode(ICElement elem) {
-		return (THGraphNode) fNodes.get(elem);
+		return fNodes.get(elem);
 	}
 
 	private THGraphNode addNode(ICElement input) {
-		THGraphNode node= (THGraphNode) fNodes.get(input); 
+		THGraphNode node= fNodes.get(input); 
 
 		if (node == null) {
 			node= new THGraphNode(input);
@@ -91,12 +90,12 @@ class THGraph {
 			return false;
 		}
 		
-		HashSet checked= new HashSet();
-		ArrayList stack= new ArrayList();
+		HashSet<THGraphNode> checked= new HashSet<THGraphNode>();
+		ArrayList<THGraphNode> stack= new ArrayList<THGraphNode>();
 		stack.add(to);
 		
 		while (!stack.isEmpty()) {
-			THGraphNode node= (THGraphNode) stack.remove(stack.size()-1);
+			THGraphNode node= stack.remove(stack.size()-1);
 			List out= node.getOutgoing();
 			for (Iterator iterator = out.iterator(); iterator.hasNext();) {
 				THGraphEdge	edge= (THGraphEdge) iterator.next();
@@ -120,11 +119,11 @@ class THGraph {
 		return false;
 	}
 
-	public Collection getRootNodes() {
+	public Collection<THGraphNode> getRootNodes() {
 		return fRootNodes;
 	}
 
-	public Collection getLeaveNodes() {
+	public Collection<THGraphNode> getLeaveNodes() {
 		return fLeaveNodes;
 	}
 
@@ -146,15 +145,15 @@ class THGraph {
 		if (fInputNode == null) {
 			return;
 		}
-		HashSet handled= new HashSet();
-		ArrayList stack= new ArrayList();
+		HashSet<ICElement> handled= new HashSet<ICElement>();
+		ArrayList<ICElement> stack= new ArrayList<ICElement>();
 		stack.add(fInputNode.getElement());
 		handled.add(fInputNode.getElement());
 		while (!stack.isEmpty()) {
 			if (monitor.isCanceled()) {
 				return;
 			}
-			ICElement elem= (ICElement) stack.remove(stack.size()-1);
+			ICElement elem= stack.remove(stack.size()-1);
 			THGraphNode graphNode= addNode(elem);
 			try {
 				IIndexBinding binding = IndexUI.elementToBinding(index, elem);
@@ -213,8 +212,8 @@ class THGraph {
 		if (fInputNode == null) {
 			return;
 		}
-		HashSet handled= new HashSet();
-		ArrayList stack= new ArrayList();
+		HashSet<ICElement> handled= new HashSet<ICElement>();
+		ArrayList<ICElement> stack= new ArrayList<ICElement>();
 		ICElement element = fInputNode.getElement();
 		stack.add(element);
 		handled.add(element);
@@ -222,7 +221,7 @@ class THGraph {
 			if (monitor.isCanceled()) {
 				return;
 			}
-			ICElement elem= (ICElement) stack.remove(stack.size()-1);
+			ICElement elem= stack.remove(stack.size()-1);
 			THGraphNode graphNode= addNode(elem);
 			try {
 				IBinding binding = IndexUI.elementToBinding(index, elem);
@@ -259,7 +258,7 @@ class THGraph {
 	
 	private void addMembers(IIndex index, THGraphNode graphNode, IBinding binding) throws CoreException {
 		if (graphNode.getMembers(false) == null) {
-			ArrayList memberList= new ArrayList();
+			ArrayList<ICElement> memberList= new ArrayList<ICElement>();
 			try {
 				if (binding instanceof ICPPClassType) {
 					ICPPClassType ct= (ICPPClassType) binding;
@@ -285,12 +284,12 @@ class THGraph {
 				graphNode.setMembers(NO_MEMBERS);
 			}
 			else {
-				graphNode.setMembers((ICElement[]) memberList.toArray(new ICElement[memberList.size()]));
+				graphNode.setMembers(memberList.toArray(new ICElement[memberList.size()]));
 			}
 		}
 	}
 	
-	private void addMemberElements(IIndex index, IBinding[] members, ArrayList memberList) 
+	private void addMemberElements(IIndex index, IBinding[] members, List<ICElement> memberList) 
 			throws CoreException {
 		for (int i = 0; i < members.length; i++) {
 			IBinding binding = members[i];

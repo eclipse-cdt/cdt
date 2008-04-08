@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.ui.includebrowser;
 
 import org.eclipse.core.resources.IFile;
@@ -65,11 +64,13 @@ public class IBNode implements IAdaptable {
         return hashCode;
     }   
 
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         return fHashCode;
     }
     
-    public boolean equals(Object o) {
+    @Override
+	public boolean equals(Object o) {
 		if (!(o instanceof IBNode)) {
 			return false;
 		}
@@ -156,7 +157,8 @@ public class IBNode implements IAdaptable {
         return fRepresentedFile.getName();
     }
 
-    public Object getAdapter(Class adapter) {
+    @SuppressWarnings("unchecked")
+	public Object getAdapter(Class adapter) {
         if (fRepresentedFile != null) {
             if (adapter.isAssignableFrom(ITranslationUnit.class)) {
                 return fRepresentedFile.getTranslationUnit();

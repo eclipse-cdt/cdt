@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,8 +21,8 @@ import java.util.List;
 import org.eclipse.cdt.core.model.ICElement;
 
 class THGraphNode {
-	private List fOutgoing= Collections.EMPTY_LIST;
-	private List fIncoming= Collections.EMPTY_LIST;
+	private List<THGraphEdge> fOutgoing= Collections.emptyList();
+	private List<THGraphEdge> fIncoming= Collections.emptyList();
 	private ICElement fElement;
 	private ICElement[] fMembers= null;
 	
@@ -42,12 +42,12 @@ class THGraphNode {
 		return fElement;
 	}
 
-	private List addElement(List list, Object elem) {
+	private List<THGraphEdge> addElement(List<THGraphEdge> list, THGraphEdge elem) {
 		switch (list.size()) {
 		case 0:
 			return Collections.singletonList(elem);
 		case 1:
-			list= new ArrayList(list);
+			list= new ArrayList<THGraphEdge>(list);
 			list.add(elem);
 			return list;
 		}
@@ -55,11 +55,11 @@ class THGraphNode {
 		return list;
 	}
 
-	List getOutgoing() {
+	List<THGraphEdge> getOutgoing() {
 		return fOutgoing;
 	}
 	
-	List getIncoming() {
+	List<THGraphEdge> getIncoming() {
 		return fIncoming;
 	}
 
@@ -71,19 +71,19 @@ class THGraphNode {
 		if (!addInherited) {
 			return fMembers;
 		}
-		ArrayList list= new ArrayList();
-		collectMembers(new HashSet(), list);
-		return (ICElement[]) list.toArray(new ICElement[list.size()]);
+		ArrayList<ICElement> list= new ArrayList<ICElement>();
+		collectMembers(new HashSet<THGraphNode>(), list);
+		return list.toArray(new ICElement[list.size()]);
 	}
 
-	private void collectMembers(HashSet visited, List list) {
+	private void collectMembers(HashSet<THGraphNode> visited, List<ICElement> list) {
 		if (visited.add(this)) {
 			if (fMembers != null) {
 				list.addAll(Arrays.asList(fMembers));
 			}
-			List bases= getOutgoing();
-			for (Iterator iterator = bases.iterator(); iterator.hasNext();) {
-				THGraphEdge edge = (THGraphEdge) iterator.next();
+			List<THGraphEdge> bases= getOutgoing();
+			for (Iterator<THGraphEdge> iterator = bases.iterator(); iterator.hasNext();) {
+				THGraphEdge edge = iterator.next();
 				edge.getEndNode().collectMembers(visited, list);
 			}
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,21 +15,22 @@ package org.eclipse.cdt.internal.corext.codemanipulation;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.core.model.IBuffer;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IInclude;
-import org.eclipse.cdt.core.model.ISourceRange;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.model.IUsing;
-import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
-import org.eclipse.cdt.ui.IRequiredInclude;
-
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+
+import org.eclipse.cdt.core.model.IBuffer;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IInclude;
+import org.eclipse.cdt.core.model.ISourceRange;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.IUsing;
+import org.eclipse.cdt.ui.IRequiredInclude;
+
+import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
 
 
 /**
@@ -70,7 +71,7 @@ public class AddIncludesOperation implements IWorkspaceRunnable {
 		}
 		
 		if (fTranslationUnit != null) {
-			ArrayList toAdd = new ArrayList();
+			ArrayList<IRequiredInclude> toAdd = new ArrayList<IRequiredInclude>();
 			
 			monitor.beginTask(CEditorMessages.getString("AddIncludesOperation.description"), 2); //$NON-NLS-1$
 			
@@ -94,7 +95,7 @@ public class AddIncludesOperation implements IWorkspaceRunnable {
 				// So we have our list. Now insert.
 				StringBuffer insert = new StringBuffer(""); //$NON-NLS-1$
 				for(int j = 0; j < toAdd.size(); j++) {
-					IRequiredInclude req = (IRequiredInclude)toAdd.get(j);
+					IRequiredInclude req = toAdd.get(j);
 					if (req.isStandard()) {
 						insert.append("#include <" + req.getIncludeName() + ">").append(newLine); //$NON-NLS-1$ //$NON-NLS-2$
 					} else {
@@ -124,7 +125,7 @@ public class AddIncludesOperation implements IWorkspaceRunnable {
 		}
 
 		if (fTranslationUnit != null) {
-			ArrayList toAdd = new ArrayList();
+			ArrayList<String> toAdd = new ArrayList<String>();
 			
 			monitor.beginTask(CEditorMessages.getString("AddIncludesOperation.description"), 2); //$NON-NLS-1$
 			
@@ -148,7 +149,7 @@ public class AddIncludesOperation implements IWorkspaceRunnable {
 				// So we have our list. Now insert.
 				StringBuffer insert = new StringBuffer(""); //$NON-NLS-1$
 				for(int j = 0; j < toAdd.size(); j++) {
-					String using = (String)toAdd.get(j);
+					String using = toAdd.get(j);
 					insert.append("using namespace " + using + ";").append(newLine); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				

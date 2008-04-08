@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.ui.typehierarchy;
 
 import java.util.ArrayList;
@@ -42,6 +41,7 @@ class THHierarchyModel {
 			super(Messages.THHierarchyModel_Job_title);
 		}
 
+		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			return onComputeGraph(this, monitor);
 		}
@@ -181,12 +181,12 @@ class THHierarchyModel {
 			return;
 		}
 		boolean fwd= fHierarchyKind == SUPER_TYPE_HIERARCHY;
-		ArrayList stack= new ArrayList();
-		ArrayList roots= new ArrayList();
-		ArrayList leafs= new ArrayList();
+		ArrayList<THNode> stack= new ArrayList<THNode>();
+		ArrayList<THNode> roots= new ArrayList<THNode>();
+		ArrayList<THNode> leafs= new ArrayList<THNode>();
 		
 		THGraphNode inputNode= fGraph.getInputNode();
-		Collection groots;
+		Collection<THGraphNode> groots;
 		
 		if (fHierarchyKind == TYPE_HIERARCHY) {
 			groots= fGraph.getLeaveNodes();
@@ -197,27 +197,27 @@ class THHierarchyModel {
 				groots= Collections.singleton(node);
 			}
 			else {
-				groots= Collections.EMPTY_SET;
+				groots= Collections.emptySet();
 			}
 		}
 		
-		for (Iterator iterator = groots.iterator(); iterator.hasNext();) {
-			THGraphNode gnode = (THGraphNode) iterator.next();
+		for (Iterator<THGraphNode> iterator = groots.iterator(); iterator.hasNext();) {
+			THGraphNode gnode = iterator.next();
 			THNode node = createNode(null, gnode, inputNode);
 			roots.add(node);
 			stack.add(node);
 		}
 		
 		while(!stack.isEmpty()) {
-			THNode node= (THNode) stack.remove(stack.size()-1);
+			THNode node= stack.remove(stack.size()-1);
 			THGraphNode gnode= fGraph.getNode(node.getElement());
-			List edges= fwd ? gnode.getOutgoing() : gnode.getIncoming();
+			List<THGraphEdge> edges= fwd ? gnode.getOutgoing() : gnode.getIncoming();
 			if (edges.isEmpty()) {
 				leafs.add(node);
 			}
 			else {
-				for (Iterator iterator = edges.iterator(); iterator.hasNext();) {
-					THGraphEdge edge = (THGraphEdge) iterator.next();
+				for (Iterator<THGraphEdge> iterator = edges.iterator(); iterator.hasNext();) {
+					THGraphEdge edge = iterator.next();
 					THGraphNode gchildNode= fwd ? edge.getEndNode() : edge.getStartNode();
 					THNode childNode= createNode(node, gchildNode, inputNode);
 					node.addChild(childNode);
@@ -225,7 +225,7 @@ class THHierarchyModel {
 				}
 			}
 		}
-		fRootNodes= (THNode[]) roots.toArray(new THNode[roots.size()]);
+		fRootNodes= roots.toArray(new THNode[roots.size()]);
 		removeFilteredLeafs(fRootNodes);
 		fSelectedTypeNode= findSelection(fRootNodes);
 		if (fSelectedTypeNode != null) {

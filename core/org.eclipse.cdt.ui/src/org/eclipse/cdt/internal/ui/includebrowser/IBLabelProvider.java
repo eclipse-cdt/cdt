@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.ui.includebrowser;
 
 import java.util.HashMap;
@@ -35,7 +34,7 @@ public class IBLabelProvider extends LabelProvider implements IColorProvider {
     private CElementLabelProvider fCLabelProvider= new CElementLabelProvider();
     private Color fColorInactive;
     private IBContentProvider fContentProvider;
-    private HashMap fCachedImages= new HashMap();
+    private HashMap<String, Image> fCachedImages= new HashMap<String, Image>();
     private boolean fShowFolders;
     
     public IBLabelProvider(Display display, IBContentProvider cp) {
@@ -43,7 +42,8 @@ public class IBLabelProvider extends LabelProvider implements IColorProvider {
         fContentProvider= cp;
     }
     
-    public Image getImage(Object element) {
+    @Override
+	public Image getImage(Object element) {
         if (element instanceof IBNode) {
             IBNode node= (IBNode) element;
             ITranslationUnit tu= node.getRepresentedTranslationUnit();
@@ -53,7 +53,8 @@ public class IBLabelProvider extends LabelProvider implements IColorProvider {
         return super.getImage(element);
     }
 
-    public String getText(Object element) {
+    @Override
+	public String getText(Object element) {
         if (element instanceof IBNode) {
             IBNode node= (IBNode) element;
             IPath path= node.getRepresentedPath();
@@ -68,10 +69,11 @@ public class IBLabelProvider extends LabelProvider implements IColorProvider {
         return super.getText(element);
     }
     
-    public void dispose() {
+    @Override
+	public void dispose() {
         fCLabelProvider.dispose();
-        for (Iterator iter = fCachedImages.values().iterator(); iter.hasNext();) {
-            Image image = (Image) iter.next();
+        for (Iterator<Image> iter = fCachedImages.values().iterator(); iter.hasNext();) {
+            Image image = iter.next();
             image.dispose();
         }
         fCachedImages.clear();
@@ -107,7 +109,7 @@ public class IBLabelProvider extends LabelProvider implements IColorProvider {
             return image;
         }
         String key= image.toString()+String.valueOf(flags);
-        Image result= (Image) fCachedImages.get(key);
+        Image result= fCachedImages.get(key);
         if (result == null) {
             ImageDescriptor desc= new CElementImageDescriptor(
                     new ImageImageDescriptor(image), flags, new Point(20,16));

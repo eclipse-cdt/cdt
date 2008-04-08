@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.ui.typehierarchy;
 
 import java.util.HashMap;
@@ -37,7 +36,7 @@ public class THLabelProvider extends LabelProvider implements IColorProvider {
 	
     private CUILabelProvider fCLabelProvider= new CUILabelProvider(LABEL_OPTIONS_SIMPLE, 0);
     private THHierarchyModel fModel;
-    private HashMap fCachedImages= new HashMap();
+    private HashMap<String, Image> fCachedImages= new HashMap<String, Image>();
 	private Color fColorInactive;
 	private boolean fMarkImplementers= true;
 	private boolean fHideNonImplementers= false;
@@ -47,7 +46,8 @@ public class THLabelProvider extends LabelProvider implements IColorProvider {
         fModel= model;
     }
     
-    public Image getImage(Object element) {
+    @Override
+	public Image getImage(Object element) {
     	if (element instanceof THNode) {
             THNode node= (THNode) element;
             ICElement decl= node.getElement();
@@ -69,7 +69,8 @@ public class THLabelProvider extends LabelProvider implements IColorProvider {
         return super.getImage(element);
     }
 
-    public String getText(Object element) {
+    @Override
+	public String getText(Object element) {
         if (element instanceof THNode) {
             THNode node= (THNode) element;
             ICElement decl= node.getElement();
@@ -81,10 +82,11 @@ public class THLabelProvider extends LabelProvider implements IColorProvider {
         return super.getText(element);
     }
     
+	@Override
 	public void dispose() {
         fCLabelProvider.dispose();
-        for (Iterator iter = fCachedImages.values().iterator(); iter.hasNext();) {
-            Image image = (Image) iter.next();
+        for (Iterator<Image> iter = fCachedImages.values().iterator(); iter.hasNext();) {
+            Image image = iter.next();
             image.dispose();
         }
         fCachedImages.clear();
@@ -106,7 +108,7 @@ public class THLabelProvider extends LabelProvider implements IColorProvider {
         }
 
         String key= image.toString()+String.valueOf(flags);
-        Image result= (Image) fCachedImages.get(key);
+        Image result= fCachedImages.get(key);
         if (result == null) {
             ImageDescriptor desc= new CElementImageDescriptor(
                     new ImageImageDescriptor(image), flags, new Point(20,16));

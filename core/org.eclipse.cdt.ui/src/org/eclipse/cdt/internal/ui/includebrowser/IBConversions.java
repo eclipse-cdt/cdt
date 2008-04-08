@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.includebrowser;
 
 import java.util.ArrayList;
@@ -59,7 +58,7 @@ public class IBConversions {
     public static ISelection nodeSelectionToRepresentedTUSelection(ISelection sel) {
         if (sel instanceof IStructuredSelection) {
             IStructuredSelection ssel= (IStructuredSelection) sel;
-            ArrayList tus= new ArrayList();
+            ArrayList<ITranslationUnit> tus= new ArrayList<ITranslationUnit>();
             for (Iterator iter = ssel.iterator(); iter.hasNext();) {
             	Object obj= iter.next();
             	if (obj instanceof IBNode) {

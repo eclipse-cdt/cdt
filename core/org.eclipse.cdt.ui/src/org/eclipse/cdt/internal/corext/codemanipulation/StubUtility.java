@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2007 IBM Corporation and others.
+ * Copyright (c) 2001, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -293,7 +293,7 @@ public class StubUtility {
 		IDocument doc= new Document(buffer.getString());
 		int nLines= doc.getNumberOfLines();
 		MultiTextEdit edit= new MultiTextEdit();
-		HashSet removedLines= new HashSet();
+		HashSet<Integer> removedLines= new HashSet<Integer>();
 		for (int i= 0; i < variables.length; i++) {
 			TemplateVariable position= findVariable(buffer, variables[i]);
 			if (position == null) {
@@ -561,7 +561,7 @@ public class StubUtility {
 			}
 			templateDatas= projectStore.getTemplateData();
 		}
-		List result= new ArrayList();
+		List<Template> result= new ArrayList<Template>();
 		for (int j = 0; j < contentTypes.length; j++) {
 			for (int i = 0; i < templateDatas.length; i++) {
 				Template template = templateDatas[i].getTemplate();
@@ -571,7 +571,7 @@ public class StubUtility {
 				}
 			}
 		}
-		return (Template[]) result.toArray(new Template[result.size()]);
+		return result.toArray(new Template[result.size()]);
 	}
 	
 }

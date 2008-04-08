@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,6 +60,7 @@ public class FileTemplateContextType extends TemplateContextType {
 			super(type, description);
 		}
 		
+		@Override
 		protected String resolve(TemplateContext context) {
 			String value= context.getVariable(getType());
 			return value != null ? value : ""; //$NON-NLS-1$
@@ -79,6 +80,7 @@ public class FileTemplateContextType extends TemplateContextType {
 		/*
 		 * @see org.eclipse.jface.text.templates.TemplateVariableResolver#resolve(org.eclipse.jface.text.templates.TemplateVariable, org.eclipse.jface.text.templates.TemplateContext)
 		 */
+		@Override
 		public void resolve(TemplateVariable variable, TemplateContext context) {
 			fFormat= null;
 			TemplateVariableType type= variable.getVariableType();
@@ -92,6 +94,7 @@ public class FileTemplateContextType extends TemplateContextType {
 		/*
 		 * @see org.eclipse.jface.text.templates.SimpleTemplateVariableResolver#resolve(org.eclipse.jface.text.templates.TemplateContext)
 		 */
+		@Override
 		protected String resolve(TemplateContext context) {
 			DateFormat f;
 			if (fFormat == null) {
@@ -117,17 +120,19 @@ public class FileTemplateContextType extends TemplateContextType {
 		/*
 		 * @see org.eclipse.jface.text.templates.TemplateVariableResolver#resolve(org.eclipse.jface.text.templates.TemplateVariable, org.eclipse.jface.text.templates.TemplateContext)
 		 */
+		@Override
 		public void resolve(TemplateVariable variable, TemplateContext context) {
 			fVariableName= variable.getName();
 			TemplateVariableType type= variable.getVariableType();
-			List params= type.getParams();
-			fArguments= (String[]) params.toArray(new String[params.size()]);
+			List<?> params= type.getParams();
+			fArguments= params.toArray(new String[params.size()]);
 			super.resolve(variable, context);
 		}
 		
 		/*
 		 * @see org.eclipse.jface.text.templates.SimpleTemplateVariableResolver#resolve(org.eclipse.jface.text.templates.TemplateContext)
 		 */
+		@Override
 		protected String resolve(TemplateContext context) {
 			StringBuffer expr= new StringBuffer("${"); //$NON-NLS-1$
 			expr.append(fVariableName);
@@ -172,6 +177,7 @@ public class FileTemplateContextType extends TemplateContextType {
 		addResolver(new FileTemplateVariableResolver(PROJECTNAME, TemplateMessages.FileTemplateContextType_variable_description_projectname)); 
 	}
 
+	@Override
 	protected void validateVariables(TemplateVariable[] variables) throws TemplateException {
 		ArrayList required=  new ArrayList(5);
 		for (int i= 0; i < variables.length; i++) {
@@ -191,6 +197,7 @@ public class FileTemplateContextType extends TemplateContextType {
 	/*
 	 * @see org.eclipse.jface.text.templates.TemplateContextType#resolve(org.eclipse.jface.text.templates.TemplateVariable, org.eclipse.jface.text.templates.TemplateContext)
 	 */
+	@Override
 	public void resolve(TemplateVariable variable, TemplateContext context) {
 		String type= variable.getType();
 		TemplateVariableResolver resolver= getResolver(type);

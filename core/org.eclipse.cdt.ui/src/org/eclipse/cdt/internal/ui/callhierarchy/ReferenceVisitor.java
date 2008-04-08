@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
  * @since 4.0
  */
 class ReferenceVisitor extends ASTVisitor {
-	private ArrayList fReferences= new ArrayList();
+	private ArrayList<IASTName> fReferences= new ArrayList<IASTName>();
 	private int fOffset;
 	private int fEndOffset;
 	private String fFileName;
@@ -38,9 +38,10 @@ class ReferenceVisitor extends ASTVisitor {
 	}
 	
 	public IASTName[] getReferences() {
-		return (IASTName[]) fReferences.toArray(new IASTName[fReferences.size()]);
+		return fReferences.toArray(new IASTName[fReferences.size()]);
 	}
 
+	@Override
 	public int visit(IASTName name) {
 		if (name.isReference()) {
 			IASTFileLocation loc= name.getFileLocation();
@@ -55,6 +56,7 @@ class ReferenceVisitor extends ASTVisitor {
 		return super.visit(name);
 	}
 
+	@Override
 	public int visit(IASTDeclaration declaration) {
 		IASTFileLocation loc= declaration.getFileLocation();
 		if (loc != null) {

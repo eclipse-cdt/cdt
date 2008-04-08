@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
 import java.util.ArrayList;
@@ -36,6 +35,7 @@ import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
 
 import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 
@@ -74,7 +74,7 @@ public class CHQueries {
 	private static IBinding[] getOverriddenBindings(IIndex index, IIndexBinding binding) {
 		if (binding instanceof ICPPMethod && !(binding instanceof ICPPConstructor)) {
 			try {
-				final ArrayList result= new ArrayList();
+				final ArrayList<ICPPMethod> result= new ArrayList<ICPPMethod>();
 				final ICPPMethod m= (ICPPMethod) binding;
 				final char[] mname= m.getNameCharArray();
 				final ICPPClassType mcl= m.getClassOwner();
@@ -91,7 +91,7 @@ public class CHQueries {
 					}
 				}
 				if (isVirtual) {
-					return (IBinding[]) result.toArray(new IBinding[result.size()]);
+					return result.toArray(new IBinding[result.size()]);
 				}
 			} catch (DOMException e) {
 				// index bindings don't throw DOMExceptions
@@ -105,7 +105,7 @@ public class CHQueries {
 			try {
 				final ICPPMethod m= (ICPPMethod) binding;
 				if (isVirtual(m)) {
-					final ArrayList result= new ArrayList();
+					final ArrayList<ICPPMethod> result= new ArrayList<ICPPMethod>();
 					final char[] mname= m.getNameCharArray();
 					final ICPPClassType mcl= m.getClassOwner();
 					final IFunctionType mft= m.getType();
@@ -121,7 +121,7 @@ public class CHQueries {
 							}
 						}
 					}
-					return (IBinding[]) result.toArray(new IBinding[result.size()]);
+					return result.toArray(new IBinding[result.size()]);
 				}
 			} catch (DOMException e) {
 				// index bindings don't throw DOMExceptions
@@ -131,14 +131,14 @@ public class CHQueries {
 	}
 
 	private static ICPPClassType[] getSubClasses(IIndex index, ICPPClassType mcl) throws CoreException {
-		List result= new LinkedList();
-		HashSet handled= new HashSet();
+		List<ICPPBinding> result= new LinkedList<ICPPBinding>();
+		HashSet<String> handled= new HashSet<String>();
 		getSubClasses(index, mcl, result, handled);
 		result.remove(0);
-		return (ICPPClassType[]) result.toArray(new ICPPClassType[result.size()]);
+		return result.toArray(new ICPPClassType[result.size()]);
 	}
 
-	private static void getSubClasses(IIndex index, ICPPBinding classOrTypedef, List result, HashSet handled) throws CoreException {
+	private static void getSubClasses(IIndex index, ICPPBinding classOrTypedef, List<ICPPBinding> result, HashSet<String> handled) throws CoreException {
 		try {
 			final String key = CPPVisitor.renderQualifiedName(classOrTypedef.getQualifiedName());
 			if (!handled.add(key)) {
@@ -227,13 +227,13 @@ public class CHQueries {
 						defs = IndexUI.findRepresentative(index, binding);
 					}
 					else {
-						ArrayList list= new ArrayList();
+						ArrayList<ICElementHandle> list= new ArrayList<ICElementHandle>();
 						list.addAll(Arrays.asList(IndexUI.findRepresentative(index, binding)));
 						for (int j = 0; j < virtualOverriders.length; j++) {
 							IBinding overrider = virtualOverriders[j];
 							list.addAll(Arrays.asList(IndexUI.findRepresentative(index, overrider)));
 						}
-						defs= (ICElement[]) list.toArray(new ICElement[list.size()]);
+						defs= list.toArray(new ICElement[list.size()]);
 					}
 					if (defs != null && defs.length > 0) {
 						result.add(defs, name);

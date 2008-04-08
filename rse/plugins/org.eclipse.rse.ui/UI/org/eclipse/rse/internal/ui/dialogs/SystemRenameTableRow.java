@@ -15,7 +15,8 @@
  * {Name} (company) - description of contribution.
  *******************************************************************************/
 
-package org.eclipse.rse.ui.dialogs;
+package org.eclipse.rse.internal.ui.dialogs;
+import org.eclipse.rse.internal.ui.actions.SystemDeleteTableRow;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.validators.ValidatorUniqueString;

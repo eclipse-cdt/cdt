@@ -15,7 +15,7 @@
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  *******************************************************************************/
 
-package org.eclipse.rse.ui.dialogs;
+package org.eclipse.rse.internal.ui.dialogs;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -42,6 +42,8 @@ import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
+import org.eclipse.rse.ui.dialogs.ISystemTypedObject;
+import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.validators.ISystemValidatorUniqueString;

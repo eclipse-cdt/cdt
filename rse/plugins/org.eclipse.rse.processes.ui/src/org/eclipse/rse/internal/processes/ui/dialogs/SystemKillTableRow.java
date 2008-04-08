@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2005, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,15 +12,16 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
+ * David McKnight   (IBM)        - [226143] [api][breaking] Make RSE rename/delete dialogs internal
  ********************************************************************************/
 
 package org.eclipse.rse.internal.processes.ui.dialogs;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.rse.internal.ui.actions.SystemDeleteTableRow;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcess;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
-import org.eclipse.rse.ui.dialogs.SystemDeleteTableRow;
 import org.eclipse.rse.ui.dialogs.SystemSimpleContentElement;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;

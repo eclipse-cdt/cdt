@@ -15,7 +15,7 @@
  * {Name} (company) - description of contribution.
  *******************************************************************************/
 
-package org.eclipse.rse.ui.dialogs;
+package org.eclipse.rse.internal.ui.dialogs;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Iterator;

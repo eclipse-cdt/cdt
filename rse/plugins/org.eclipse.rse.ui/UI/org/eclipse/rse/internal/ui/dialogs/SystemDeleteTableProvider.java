@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.ui.dialogs;
+package org.eclipse.rse.internal.ui.dialogs;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -27,6 +27,7 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.rse.internal.ui.actions.SystemDeleteTableRow;
 import org.eclipse.swt.graphics.Image;
 /**
  * This class is the table provider class for the delete dialog

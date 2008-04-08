@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,19 +12,19 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [226143] [api][breaking] Make RSE rename/delete dialogs internal
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.internal.ui.SystemResources;
+import org.eclipse.rse.internal.ui.dialogs.SystemRenameDialog;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemRenameTarget;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemBaseDialogAction;
-import org.eclipse.rse.ui.dialogs.SystemRenameDialog;
 import org.eclipse.rse.ui.dialogs.SystemRenameSingleDialog;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.swt.widgets.Shell;
@@ -47,7 +47,7 @@ import org.eclipse.swt.widgets.Shell;
  * specify a validator that is called to verify the typed new name is valid. Further, to show the type value
  * of the input objects, they should implement {@link org.eclipse.rse.ui.dialogs.ISystemTypedObject}.
  * 
- * @see org.eclipse.rse.ui.dialogs.SystemRenameDialog
+ * @see org.eclipse.rse.internal.ui.dialogs.SystemRenameDialog
  * @see org.eclipse.rse.ui.dialogs.SystemRenameSingleDialog
  */
 public class SystemCommonRenameAction extends SystemBaseDialogAction 

@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [226143] [api][breaking] Make RSE rename/delete dialogs internal
  *******************************************************************************/
 
 package org.eclipse.rse.internal.processes.ui.dialogs;
@@ -21,8 +21,7 @@ import java.util.Iterator;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.rse.ui.dialogs.SystemDeleteTableProvider;
-
+import org.eclipse.rse.internal.ui.dialogs.SystemDeleteTableProvider;
 
 public class SystemKillTableProvider extends SystemDeleteTableProvider
 {

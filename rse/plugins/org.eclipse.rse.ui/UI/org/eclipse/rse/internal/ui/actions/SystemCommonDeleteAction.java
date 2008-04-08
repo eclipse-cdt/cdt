@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -16,6 +16,7 @@
  * Kevin Doyle (IBM) - [196582] ClassCastException when doing copy/paste with Remote Search view open
  * Xuan Chen   (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
  * Xuan Chen (IBM) - [209827] Update DStore command implementation to enable cancelation of archive operations
+ * David McKnight   (IBM)        - [226143] [api][breaking] Make RSE rename/delete dialogs internal
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
@@ -39,6 +40,7 @@ import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.ui.SystemResources;
+import org.eclipse.rse.internal.ui.dialogs.SystemDeleteDialog;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
@@ -47,16 +49,12 @@ import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.actions.SystemBaseDialogAction;
-import org.eclipse.rse.ui.dialogs.SystemDeleteDialog;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.model.SystemRemoteElementResourceSet;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.rse.ui.view.SystemAdapterHelpers;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
@@ -73,7 +71,7 @@ import org.eclipse.ui.PlatformUI;
  * </ol>
  * <p>
  * 
- * @see org.eclipse.rse.ui.dialogs.SystemDeleteDialog
+ * @see org.eclipse.rse.internal.ui.dialogs.SystemDeleteDialog
  */
 public class SystemCommonDeleteAction
        extends SystemBaseDialogAction

@@ -18,6 +18,7 @@
  * David McKnight     (IBM)   [224906] [dstore] changes for getting properties and doing exit due to single-process capability
  * Jacob Garcowski    (IBM)   [225175] [dstore] error handling change for Client
  * David McKnight   (IBM) - [225507][api][breaking] RSE dstore API leaks non-API types
+ * Noriaki Takatsu  (IBM) - [226074] process for getStatus() API
  *******************************************************************************/
 
 package org.eclipse.dstore.core.server;
@@ -400,6 +401,7 @@ public class ConnectionEstablisher
 			if (_serverSocket == null)
 			{
 				System.err.println(ServerReturnCodes.RC_BIND_ERROR);
+				_msg = ServerReturnCodes.RC_BIND_ERROR;
 				_continue = false;
 			}			
 			else
@@ -434,21 +436,25 @@ public class ConnectionEstablisher
 		catch (UnknownHostException e)
 		{
 			System.err.println(ServerReturnCodes.RC_UNKNOWN_HOST_ERROR);
+			_msg = ServerReturnCodes.RC_UNKNOWN_HOST_ERROR;
 			_continue = false;
 		}
 		catch (BindException e)
 		{
 			System.err.println(ServerReturnCodes.RC_BIND_ERROR);
+			_msg = ServerReturnCodes.RC_BIND_ERROR;
 			_continue = false;
 		}
 		catch (IOException e)
 		{
 			System.err.println(ServerReturnCodes.RC_GENERAL_IO_ERROR);
+			_msg = ServerReturnCodes.RC_GENERAL_IO_ERROR;
 			_continue = false;
 		}
 		catch (SecurityException e)
 		{
 			System.err.println(ServerReturnCodes.RC_SECURITY_ERROR);
+			_msg = ServerReturnCodes.RC_SECURITY_ERROR;
 			_continue = false;
 		}
 	}

@@ -174,7 +174,8 @@ public class PropertyBasedLabelProvider
         IElementPropertiesProvider propertiesProvider = getElementPropertiesProvider(labelUpdates[0].getElement());
         if (propertiesProvider == null) {
             for (ILabelUpdate update : labelUpdates) {
-                update.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, "Properties-based label provider " + this + " failed to generate a label, no properties provider registered for element: " + labelUpdates[0].getElement()));  //$NON-NLS-1$ //$NON-NLS-2$ 
+                update.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, "Properties-based label provider " + this + " failed to generate a label, no properties provider registered for element: " + labelUpdates[0].getElement()));  //$NON-NLS-1$ //$NON-NLS-2$
+                update.done();
             }
             return;
         }

@@ -36,24 +36,15 @@ public class CompletionTest_MacroRef_NoPrefix  extends CompletionProposalsBaseTe
 			"__LINE__",
 			"__STDC__",
 			"__TIME__",
-			"__asm__",
 			"__builtin_constant_p(exp)",
 			"__builtin_va_arg(ap, type)",
 			"__complex__",
-			"__const",
-			"__const__",
 			"__cplusplus",
 			"__extension__",
 			"__imag__",
-			"__inline__",
 			"__null",
 			"__real__",
-			"__restrict",
-			"__restrict__",
-			"__signed__",
 			"__stdcall",
-			"__volatile__",
-			"__typeof__"
 	};
 	
 	public CompletionTest_MacroRef_NoPrefix(String name) {
@@ -69,6 +60,7 @@ public class CompletionTest_MacroRef_NoPrefix  extends CompletionProposalsBaseTe
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
 	 */
+	@Override
 	protected int getCompletionPosition() {
 		return getBuffer().indexOf("#ifdef ") + 7;
 	}
@@ -76,6 +68,7 @@ public class CompletionTest_MacroRef_NoPrefix  extends CompletionProposalsBaseTe
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getExpectedPrefix()
 	 */
+	@Override
 	protected String getExpectedPrefix() {
 		return expectedPrefix;
 	}
@@ -83,6 +76,7 @@ public class CompletionTest_MacroRef_NoPrefix  extends CompletionProposalsBaseTe
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getExpectedResultsValues()
 	 */
+	@Override
 	protected String[] getExpectedResultsValues() {
 		return expectedResults;
 	}
@@ -90,6 +84,7 @@ public class CompletionTest_MacroRef_NoPrefix  extends CompletionProposalsBaseTe
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getFileName()
 	 */
+	@Override
 	protected String getFileName() {
 		return fileName;
 	}
@@ -97,12 +92,14 @@ public class CompletionTest_MacroRef_NoPrefix  extends CompletionProposalsBaseTe
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getFileFullPath()
 	 */
+	@Override
 	protected String getFileFullPath() {
 		return fileFullPath;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getHeaderFileFullPath()
 	 */
+	@Override
 	protected String getHeaderFileFullPath() {
 		return headerFileFullPath;
 	}
@@ -110,6 +107,7 @@ public class CompletionTest_MacroRef_NoPrefix  extends CompletionProposalsBaseTe
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getHeaderFileName()
 	 */
+	@Override
 	protected String getHeaderFileName() {
 		return headerFileName;
 	}

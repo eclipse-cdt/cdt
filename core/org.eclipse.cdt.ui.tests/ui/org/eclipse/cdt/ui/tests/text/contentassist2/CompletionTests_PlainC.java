@@ -158,6 +158,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	/*
 	 * @see org.eclipse.cdt.ui.tests.text.contentassist2.AbstractContentAssistTest#setUpProjectContent(org.eclipse.core.resources.IProject)
 	 */
+	@Override
 	protected IFile setUpProjectContent(IProject project) throws Exception {
 		fProject= project;
 		String headerContent= readTaggedComment(HEADER_FILE_NAME);
@@ -356,23 +357,14 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 				"__STDC_VERSION_",
 				"__STDC__",
 				"__TIME__",
-				"__asm__",
 				"__builtin_constant_p(exp)",
 				"__builtin_va_arg(ap, type)",
 				"__complex__",
-				"__const",
-				"__const__",
 				"__extension__",
 				"__imag__",
-				"__inline__",
 				"__null",
 				"__real__",
-				"__restrict",
-				"__restrict__",
-				"__signed__",
 				"__stdcall",
-				"__volatile__",
-				"__typeof__"
 		};
 		assertCompletionResults(expected);
 	}

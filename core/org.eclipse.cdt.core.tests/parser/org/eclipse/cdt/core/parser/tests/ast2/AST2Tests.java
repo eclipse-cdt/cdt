@@ -4446,4 +4446,15 @@ public class AST2Tests extends AST2BaseTest {
 		parseAndCheckBindings(code, ParserLanguage.C);
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
+	
+	// #define __inline__ __inline__ __attribute__((always_inline))
+	// typedef int __u32;
+    // static __inline__  __u32 f(int x) {
+	//   return x;
+	// }
+	public void testRedefinedGCCKeywords_Bug226112() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.C, true);
+		parseAndCheckBindings(code, ParserLanguage.CPP, true);
+	}
 }

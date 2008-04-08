@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,10 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.cview;
 
-import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -21,10 +21,13 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.DeleteResourceAction;
 import org.eclipse.ui.actions.TextActionHandler;
+
+import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
 
 /**
  * This is the action group for refactor actions,
@@ -46,6 +49,7 @@ public class RefactorActionGroup extends CViewActionGroup {
 		super(cview);
 	}
 
+	@Override
 	public void dispose() {
 		if (clipboard != null) {
 			clipboard.dispose();
@@ -54,6 +58,7 @@ public class RefactorActionGroup extends CViewActionGroup {
 		super.dispose();
 	}
 
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		IStructuredSelection celements = (IStructuredSelection) getContext().getSelection();
 		IStructuredSelection selection = SelectionConverter.convertSelectionToResources(celements);
@@ -76,6 +81,7 @@ public class RefactorActionGroup extends CViewActionGroup {
 		}
 	}
 
+	@Override
 	public void fillActionBars(IActionBars actionBars) {
 		textActionHandler = new TextActionHandler(actionBars); // hooks handlers
 		textActionHandler.setCopyAction(copyAction);
@@ -90,6 +96,7 @@ public class RefactorActionGroup extends CViewActionGroup {
 	/**
  	 * Handles a key pressed event by invoking the appropriate action.
  	 */
+	@Override
 	public void handleKeyPressed(KeyEvent event) {
 		if (event.character == SWT.DEL && event.stateMask == 0) {
 			if (deleteAction.isEnabled()) {
@@ -106,9 +113,11 @@ public class RefactorActionGroup extends CViewActionGroup {
 		}
 	}
 
+	@Override
 	protected void makeActions() {
 		TreeViewer treeViewer = getCView().getViewer();
-		Shell shell = getCView().getSite().getShell();
+		final IWorkbenchPartSite site = getCView().getSite();
+		Shell shell = site.getShell();
 		clipboard = new Clipboard(shell.getDisplay());
 		
 		pasteAction = new PasteAction(shell, clipboard);
@@ -122,15 +131,16 @@ public class RefactorActionGroup extends CViewActionGroup {
 		copyAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
 		copyAction.setHoverImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
 		
-		moveAction = new CViewMoveAction(shell, treeViewer);
-		renameAction = new CViewRenameAction(shell, treeViewer);
+		moveAction = new CViewMoveAction(site, treeViewer);
+		renameAction = new CViewRenameAction(site, treeViewer);
 		
-		deleteAction = new DeleteResourceAction(shell);
+		deleteAction = new DeleteResourceAction(site);
 		deleteAction.setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
 		deleteAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));		
 		deleteAction.setHoverImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
 	}
 
+	@Override
 	public void updateActionBars() {
 		IStructuredSelection celements = (IStructuredSelection) getContext().getSelection();
 		IStructuredSelection selection = SelectionConverter.convertSelectionToResources(celements);

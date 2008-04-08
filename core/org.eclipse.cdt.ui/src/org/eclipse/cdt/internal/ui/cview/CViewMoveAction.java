@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.cview;
 
@@ -14,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -22,10 +22,12 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.MoveProjectAction;
 import org.eclipse.ui.actions.MoveResourceAction;
+
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 
 /**
  * The ResourceNavigatorMoveAction is a resource move that aso updates the navigator
@@ -40,18 +42,19 @@ public class CViewMoveAction extends MoveResourceAction {
 	
 /**
  * Create a ResourceNavigatorMoveAction and use the supplied viewer to update the UI.
- * @param shell Shell
+ * @param shellProvider provider for the shell
  * @param structureViewer StructuredViewer
  */
-public CViewMoveAction(Shell shell, StructuredViewer structureViewer) {
-	super(shell);
+public CViewMoveAction(IShellProvider shellProvider, StructuredViewer structureViewer) {
+	super(shellProvider);
 	PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.MOVE_ACTION);
 	this.viewer = structureViewer;
-	this.moveProjectAction = new MoveProjectAction(shell);
+	this.moveProjectAction = new MoveProjectAction(shellProvider);
 }
 /* (non-Javadoc)
  * Method declared on IAction.
  */
+@Override
 public void run() {
 	if (moveProjectAction.isEnabled()) {
 		moveProjectAction.run();
@@ -62,7 +65,7 @@ public void run() {
 	List destinations = getDestinations();
 	if (destinations != null && destinations.isEmpty() == false) {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		List resources = new ArrayList();
+		List<IResource> resources = new ArrayList<IResource>();
 		Iterator iterator = destinations.iterator();
 	
 		while (iterator.hasNext()) {
@@ -76,6 +79,7 @@ public void run() {
 
 }
 
+@Override
 protected boolean updateSelection(IStructuredSelection selection) {
 	moveProjectAction.selectionChanged(selection);
 	return super.updateSelection(selection) || moveProjectAction.isEnabled();

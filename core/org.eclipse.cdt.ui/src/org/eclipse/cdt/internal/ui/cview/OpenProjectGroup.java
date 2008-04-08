@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.cview;
 
 import java.util.Iterator;
 
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -22,13 +22,15 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.CloseResourceAction;
 import org.eclipse.ui.actions.OpenResourceAction;
 import org.eclipse.ui.actions.RefreshAction;
 import org.eclipse.ui.ide.IDEActionFactory;
+
+import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * This is the action group for actions such as Refresh Local, and Open/Close
@@ -44,6 +46,7 @@ public class OpenProjectGroup extends CViewActionGroup {
 		super(cview);
 	}
 
+	@Override
 	public void fillActionBars(IActionBars actionBars) {
 		actionBars.setGlobalActionHandler(ActionFactory.REFRESH.getId(), refreshAction);
 		actionBars.setGlobalActionHandler(IDEActionFactory.OPEN_PROJECT.getId(), openProjectAction);
@@ -67,6 +70,7 @@ public class OpenProjectGroup extends CViewActionGroup {
 	 * @param menu
 	 *            context menu to add actions to
 	 */
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
 		boolean isProjectSelection = true;
@@ -116,6 +120,7 @@ public class OpenProjectGroup extends CViewActionGroup {
 	/**
 	 * Handles a key pressed event by invoking the appropriate action.
 	 */
+	@Override
 	public void handleKeyPressed(KeyEvent event) {
 		if (event.keyCode == SWT.F5 && event.stateMask == 0) {
 			if (refreshAction.isEnabled()) {
@@ -126,20 +131,22 @@ public class OpenProjectGroup extends CViewActionGroup {
 		}
 	}
 
+	@Override
 	protected void makeActions() {
-		Shell shell = getCView().getSite().getShell();
+		final IWorkbenchPartSite site= getCView().getSite();
 		IWorkspace workspace = CUIPlugin.getWorkspace();
 
-		openProjectAction = new OpenResourceAction(shell);
+		openProjectAction = new OpenResourceAction(site);
 		workspace.addResourceChangeListener(openProjectAction, IResourceChangeEvent.POST_CHANGE);
-		closeProjectAction = new CloseResourceAction(shell);
+		closeProjectAction = new CloseResourceAction(site);
 		workspace.addResourceChangeListener(closeProjectAction, IResourceChangeEvent.POST_CHANGE);
-		refreshAction = new RefreshAction(shell);
+		refreshAction = new RefreshAction(site);
 		refreshAction.setDisabledImageDescriptor(getImageDescriptor("dlcl16/refresh_nav.gif"));//$NON-NLS-1$
 		refreshAction.setImageDescriptor(getImageDescriptor("elcl16/refresh_nav.gif"));//$NON-NLS-1$
 //		refreshAction.setHoverImageDescriptor(getImageDescriptor("clcl16/refresh_nav.gif"));//$NON-NLS-1$		
 	}
 
+	@Override
 	public void updateActionBars() {
 		IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
 		refreshAction.selectionChanged(selection);
@@ -147,6 +154,7 @@ public class OpenProjectGroup extends CViewActionGroup {
 		closeProjectAction.selectionChanged(selection);
 	}
 
+	@Override
 	public void dispose() {
 		IWorkspace workspace = CUIPlugin.getWorkspace();
 		workspace.removeResourceChangeListener(closeProjectAction);

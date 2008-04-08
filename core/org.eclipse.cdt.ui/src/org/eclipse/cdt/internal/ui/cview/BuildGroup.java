@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,9 +22,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.actions.BuildAction;
 import org.eclipse.ui.ide.IDEActionFactory;
 
@@ -34,10 +35,11 @@ import org.eclipse.ui.ide.IDEActionFactory;
 public class BuildGroup extends CViewActionGroup {
 
 	private class RebuildAction extends BuildAction {
-	    public RebuildAction(Shell shell) {
+	    public RebuildAction(IShellProvider shell) {
 	        super(shell, IncrementalProjectBuilder.FULL_BUILD);
 	    }
-	    protected void invokeOperation(IResource resource, IProgressMonitor monitor)
+	    @Override
+		protected void invokeOperation(IResource resource, IProgressMonitor monitor)
 	            throws CoreException {
 	    	// these are both async.  NOT what I want.
 	    	((IProject) resource).build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
@@ -58,6 +60,7 @@ public class BuildGroup extends CViewActionGroup {
 		super(cview);
 	}
 
+	@Override
 	public void fillActionBars(IActionBars actionBars) {
 		actionBars.setGlobalActionHandler(IDEActionFactory.BUILD_PROJECT.getId(), buildAction);
 	}
@@ -75,6 +78,7 @@ public class BuildGroup extends CViewActionGroup {
 	 * @param menu
 	 *            context menu to add actions to
 	 */
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
 		boolean isProjectSelection = true;
@@ -128,6 +132,7 @@ public class BuildGroup extends CViewActionGroup {
 	/**
 	 * Handles a key pressed event by invoking the appropriate action.
 	 */
+	@Override
 	public void handleKeyPressed(KeyEvent event) {
 	}
 
@@ -148,19 +153,21 @@ public class BuildGroup extends CViewActionGroup {
 		return false;
 	}
 
+	@Override
 	protected void makeActions() {
-		Shell shell = getCView().getSite().getShell();
+		final IWorkbenchPartSite site = getCView().getSite();
 
-		buildAction = new BuildAction(shell, IncrementalProjectBuilder.FULL_BUILD);
+		buildAction = new BuildAction(site, IncrementalProjectBuilder.FULL_BUILD);
 		buildAction.setText(CViewMessages.getString("BuildAction.label")); //$NON-NLS-1$
 
-		cleanAction = new BuildAction(shell, IncrementalProjectBuilder.CLEAN_BUILD);
+		cleanAction = new BuildAction(site, IncrementalProjectBuilder.CLEAN_BUILD);
 		cleanAction.setText(CViewMessages.getString("CleanAction.label")); //$NON-NLS-1$
 		
-		rebuildAction = new RebuildAction(shell);
+		rebuildAction = new RebuildAction(site);
 		rebuildAction.setText(CViewMessages.getString("RebuildAction.label")); //$NON-NLS-1$
 	}
 
+	@Override
 	public void updateActionBars() {
 		IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
 		buildAction.selectionChanged(selection);

@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.util;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -33,7 +32,6 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
@@ -308,7 +306,7 @@ public class EditorUtility {
 	 * The <code>ICElement</code> is used to determine the associated project
 	 * in case the location can not be resolved to a workspace <code>IFile</code>.
 	 *
-	 * @param location  a valid file system location
+	 * @param locationURI  a valid file system location
 	 * @param context  an element related to the target file, may be <code>null</code>
 	 * @return an editor input
 	 */
@@ -476,7 +474,7 @@ public class EditorUtility {
 	 * If a context element is given and there are multiple matches in the workspace,
 	 * a resource with the same project of the context element are preferred.
 	 *
-	 * @param location  a valid file system location
+	 * @param locationURI  a valid file system location
 	 * @param context  an element related to the target file, may be <code>null</code>
 	 * @return an <code>IFile</code> or <code>null</code>
 	 */

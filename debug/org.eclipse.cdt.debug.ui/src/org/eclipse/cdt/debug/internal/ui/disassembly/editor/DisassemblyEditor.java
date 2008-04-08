@@ -111,6 +111,10 @@ public class DisassemblyEditor extends EditorPart implements ITextEditor, IReusa
             getSite().registerContextMenu( fDisassemblyPane.getViewContextMenuId(), fDisassemblyPane.getTextMenuManager(), getViewer() );
         }
         
+        if ( getSite() != null ) {
+            getSite().registerContextMenu( fDisassemblyPane.getRulerContextMenuId(), fDisassemblyPane.getTextMenuManager(), getViewer() );
+        }
+        
         VirtualSourceViewer viewer = fDisassemblyPane.getViewer();
         IEditorInput input = getEditorInput();
         if ( input instanceof DisassemblyEditorInput ) {       

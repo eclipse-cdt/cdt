@@ -94,8 +94,6 @@ public class SystemProcessFilterStringEditPane extends
     protected boolean dontStealFocus;
 	protected IRemoteProcessSubSystemConfiguration inputSubsystemConfiguration = null;
 
-	// actions
-	protected SystemTestFilterStringAction testAction = null;
 
 	// constants
 	protected final static int SIZING_SELECTION_WIDGET_HEIGHT = 90;

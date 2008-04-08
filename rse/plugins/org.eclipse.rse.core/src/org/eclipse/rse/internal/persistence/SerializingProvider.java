@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * David Dykstal (IBM) - [191130] use explicit getRemoteSystemsProject(boolean) method
+ * David Dykstal (IBM) - [225988] need API to mark persisted profiles as migrated
  ********************************************************************************/
 
 package org.eclipse.rse.internal.persistence;
@@ -32,10 +33,13 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.rse.core.IRSECoreStatusCodes;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemResourceManager;
 import org.eclipse.rse.internal.core.RSECoreMessages;
 import org.eclipse.rse.persistence.IRSEPersistenceProvider;
@@ -81,8 +85,9 @@ public class SerializingProvider implements IRSEPersistenceProvider {
 				}
 			}
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			IStatus status = new Status(IStatus.ERROR, RSECorePlugin.PLUGIN_ID, IRSECoreStatusCodes.EXCEPTION_OCCURRED, "Unexpected CoreException", e); //$NON-NLS-1$
+			ILog log = RSECorePlugin.getDefault().getLog();
+			log.log(status);
 		}
 		String[] result = new String[names.size()];
 		names.toArray(result);
@@ -96,7 +101,6 @@ public class SerializingProvider implements IRSEPersistenceProvider {
 		RSEDOM dom = null;
 		IFile profileFile = getProfileFile(profileName, monitor);
 		if (profileFile.exists()) {
-			//System.out.println("loading "+ profileFile.getLocation().toOSString() + "..."); // DWD debugging
 			try {
 				InputStream iStream = profileFile.getContents();
 
@@ -142,7 +146,6 @@ public class SerializingProvider implements IRSEPersistenceProvider {
 
 		IFile profileFile = getProfileFile(dom.getName(), monitor);
 		File osFile = profileFile.getLocation().toFile();
-		//	System.out.println("saving "+ osFile.getAbsolutePath() + "..."); // DWD debugging
 		try {
 			OutputStream oStream = new FileOutputStream(osFile);
 			ObjectOutputStream outStream = new ObjectOutputStream(oStream);
@@ -172,10 +175,31 @@ public class SerializingProvider implements IRSEPersistenceProvider {
 			try {
 				profileFile.delete(IResource.FORCE | IResource.KEEP_HISTORY, monitor);
 			} catch (CoreException e) {
-				result = new Status(IStatus.ERROR, null, 0, RSECoreMessages.SerializingProvider_UnexpectedException, e);
+				result = new Status(IStatus.ERROR, null, IRSECoreStatusCodes.EXCEPTION_OCCURRED, RSECoreMessages.SerializingProvider_UnexpectedException, e);
 			}
 		}
 		return result;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.persistence.IRSEPersistenceProvider#supportsMigration()
+	 */
+	public boolean supportsMigration() {
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.persistence.IRSEPersistenceProvider#setMigratedMark(java.lang.String, boolean)
+	 */
+	public IStatus setMigrationMark(String profileName, boolean migrated) {
+		return new Status(IStatus.ERROR, RSECorePlugin.PLUGIN_ID, IRSECoreStatusCodes.MIGRATION_NOT_SUPPORTED, "Profile migration is not supported by the serializing provider.", null); //$NON-NLS-1$
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.persistence.IRSEPersistenceProvider#getMigratedProfileNames()
+	 */
+	public String[] getMigratedProfileNames() {
+		return new String[0];
 	}
 	
 	/* (non-Javadoc)

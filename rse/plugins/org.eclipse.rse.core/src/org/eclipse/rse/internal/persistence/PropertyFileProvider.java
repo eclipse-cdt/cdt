@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * David Dykstal (IBM) - [188863] fix job conflict problems for save jobs, ignore bad profiles on restore
  * David Dykstal (IBM) - [189274] provide import and export operations for profiles
+ * David Dykstal (IBM) - [225988] need API to mark persisted profiles as migrated
  ********************************************************************************/
 package org.eclipse.rse.internal.persistence;
 
@@ -40,7 +41,9 @@ import java.util.regex.Pattern;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.rse.core.IRSECoreStatusCodes;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.internal.core.RSECoreMessages;
 import org.eclipse.rse.logging.Logger;
@@ -221,6 +224,28 @@ public class PropertyFileProvider implements IRSEPersistenceProvider, IRSEImport
 	 */
 	public String getId() {
 		return providerId;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.persistence.IRSEPersistenceProvider#setMigratedMark(java.lang.String, boolean)
+	 */
+	public IStatus setMigrationMark(String profileName, boolean migrated) {
+		String message = "PropertyFileProvider does not support profile migration"; //$NON-NLS-1$
+		return new Status(IStatus.ERROR, RSECorePlugin.PLUGIN_ID, IRSECoreStatusCodes.MIGRATION_NOT_SUPPORTED, message, null);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.persistence.IRSEPersistenceProvider#supportsMigration()
+	 */
+	public boolean supportsMigration() {
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.persistence.IRSEPersistenceProvider#getMigratedProfileNames()
+	 */
+	public String[] getMigratedProfileNames() {
+		return new String[0];
 	}
 	
 	/**

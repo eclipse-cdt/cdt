@@ -14,10 +14,12 @@
  * Contributors:
  * David Dykstal (IBM) - 142806: refactoring persistence framework
  * David Dykstal (IBM) - [cleanup] adding noimplement tag
+ * David Dykstal (IBM) - [225988] need API to mark persisted profiles as migrated
  *******************************************************************************/
 
 package org.eclipse.rse.persistence;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.rse.core.model.ISystemProfile;
 
 /**
@@ -76,13 +78,30 @@ public interface IRSEPersistenceManager {
 	public void deleteProfile(IRSEPersistenceProvider persistenceProvider, String profileName);
 	
 	/**
-	 * Migrates a profile to a new persistence provider. It will delete the persistent form known to its previous
-	 * persistence provider. If the new provider and the previous provider are the same this does nothing.
+	 * Migrates a profile to a new persistence provider.
+	 * It will delete the persistent form known to its previous persistence provider.
+	 * If the new provider and the previous provider are the same this does nothing.
+	 * Exactly the same as <code>migrateProfile(profile, persistenceProvider, true);</code>
 	 * @param profile the system profile to be migrated
 	 * @param persistenceProvider the persistence provider to which this profile will be migrated.
 	 */
 	public void migrateProfile(ISystemProfile profile, IRSEPersistenceProvider persistenceProvider);
-
+	
+	/**
+	 * Migrates a profile to a new persistence provider. 
+	 * It will mark the persistent form known to its previous
+	 * persistence provider as migrated. This may, in fact, result
+	 * in the persistent form of this profile being deleted.
+	 * If the new provider and the previous provider are the same this does nothing.
+	 * @param profile the system profile to be migrated
+	 * @param persistenceProvider the persistence provider to which this profile will be migrated.
+	 * @param delete true if the persistent form of this profile is to be deleted from the old provider,
+	 * false if the persistent form of the profile is to be marked as migrated.
+	 * @return an IStatus indicating the success of the migration.
+	 * @since org.eclipse.rse.core 2.1
+	 */
+	public IStatus migrateProfile(ISystemProfile profile, IRSEPersistenceProvider persistenceProvider, boolean delete);
+	
 	/**
 	 * Register the persistence provider to be used when saving and restoring RSE doms.
 	 * The provider is registered under the provided id.

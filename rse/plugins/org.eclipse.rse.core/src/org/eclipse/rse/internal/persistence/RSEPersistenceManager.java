@@ -18,6 +18,7 @@
  * Martin Oberhuber (Wind River) - [196919] Fix deadlock with workspace operations
  * Martin Oberhuber (Wind River) - [202416] Protect against NPEs when importing DOM
  * David Dykstal (IBM) - [189274] provide import and export operations for profiles
+ * David Dykstal (IBM) - [225988] need API to mark persisted profiles as migrated
  ********************************************************************************/
 
 package org.eclipse.rse.internal.persistence;
@@ -39,6 +40,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.rse.core.IRSEPreferenceNames;
 import org.eclipse.rse.core.RSECorePlugin;
@@ -178,6 +180,14 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 	 * @see org.eclipse.rse.persistence.IRSEPersistenceManager#migrateProfile(org.eclipse.rse.core.model.ISystemProfile, org.eclipse.rse.persistence.IRSEPersistenceProvider)
 	 */
 	public void migrateProfile(ISystemProfile profile, IRSEPersistenceProvider persistenceProvider) {
+		migrateProfile(profile, persistenceProvider, true);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.persistence.IRSEPersistenceManager#migrateProfile(org.eclipse.rse.core.model.ISystemProfile, org.eclipse.rse.persistence.IRSEPersistenceProvider, boolean)
+	 */
+	public IStatus migrateProfile(ISystemProfile profile, IRSEPersistenceProvider persistenceProvider, boolean delete) {
+		IStatus result = Status.OK_STATUS;
 		IRSEPersistenceProvider oldProvider = profile.getPersistenceProvider();
 		oldProvider = (oldProvider == null) ? getDefaultPersistenceProvider() : oldProvider;
 		IRSEPersistenceProvider newProvider = persistenceProvider;
@@ -186,8 +196,13 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 			String profileName = profile.getName();
 			profile.setPersistenceProvider(newProvider);
 			profile.commit();
-			deleteProfile(oldProvider, profileName);
+			if (delete) {
+				deleteProfile(oldProvider, profileName);
+			} else {
+				result = oldProvider.setMigrationMark(profileName, true);
+			}
 		}
+		return result;
 	}
 
 	/* (non-Javadoc)

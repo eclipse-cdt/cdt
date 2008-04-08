@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,6 +13,7 @@
  * Contributors:
  * David Dykstal (IBM) - 177329: added getSaveJob so that the persistence provider 
  * determines the job characteristics.
+ * David Dykstal (IBM) - [225988] need API to mark persisted profiles as migrated
  ********************************************************************************/
 
 package org.eclipse.rse.persistence;
@@ -22,6 +23,7 @@ import java.util.Properties;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.rse.core.IRSECoreStatusCodes;
 import org.eclipse.rse.persistence.dom.RSEDOM;
 
 /**
@@ -35,7 +37,7 @@ import org.eclipse.rse.persistence.dom.RSEDOM;
  * of the DOM and should only be used by the persistence manager.
  */
 public interface IRSEPersistenceProvider {
-
+	
 	/**
 	 * Sets the properties for this provider. This must be done immediately
 	 * after the provider is instantiated. The persistence manager will
@@ -76,6 +78,8 @@ public interface IRSEPersistenceProvider {
 	
 	/**
 	 * @return The names of the profiles that have been saved by this persistence provider.
+	 * Profiles that have been marked as migrated are not returned in this list.
+	 * This may be an empty array but will never be null.
 	 */
 	public String[] getSavedProfileNames();
 
@@ -87,5 +91,36 @@ public interface IRSEPersistenceProvider {
 	 * @return the IStatus indicating the operations success.
 	 */
 	public IStatus deleteProfile(String profileName, IProgressMonitor monitor);
-
+	
+	/**
+	 * Sets the migration state of a profile.
+	 * @param profileName the name of the profile of which to set the migration state 
+	 * @param migrated true if the profile is to be marked as migrated, false if it is to be marked as normal.
+	 * Normal profiles are returned in {@link #getSavedProfileNames()}, migrated profiles are returned
+	 * in {@link #getMigratedProfileNames()}.
+	 * @return a status representing the resulting state of the migration. An OK status 
+	 * indicates a successful marking. An ERROR status indicates an unsuccessful marking.
+	 * @see IRSECoreStatusCodes
+	 * @since org.eclipse.rse.core 3.0
+	 */
+	public IStatus setMigrationMark(String profileName, boolean migrated);
+	
+	/**
+	 * @return The names of the profiles that have been migrated by this persistence provider.
+	 * The names of profiles that have been marked as migrated are returned in this list.
+	 * The appearance of a profile name in this list implies that the profile may be 
+	 * unmigrated by this provider by using {@link #setMigrationMark(String, boolean)}.
+	 * This may be an empty array but will never be null.
+	 * @since org.eclipse.rse.core 3.0
+	 */
+	public String[] getMigratedProfileNames();
+	
+	/**
+	 * Indicates whether or not this persistence provider supports migration.
+	 * @return true if the provider supports marking of the persistence form of profiles
+	 * as migrated, false otherwise.
+	 * @since org.eclipse.rse.core 3.0
+	 */
+	public boolean supportsMigration();
+	
 }

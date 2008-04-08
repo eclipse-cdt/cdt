@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,8 @@
  * 
  * Contributors:
  * IBM Corporation - initial API and implementation
- * David Dykstal (IBM) - [189858] delayed the creation of the remote systems project by
- *                                using handle-only operations.
+ * David Dykstal (IBM) - [189858] delayed the creation of the remote systems project by using handle-only operations.
+ * David Dykstal (IBM) - [225988] need API to mark persisted profiles as migrated
  *******************************************************************************/
 
 package org.eclipse.rse.internal.persistence;
@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.rse.core.IRSECoreStatusCodes;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemResourceManager;
 import org.eclipse.rse.internal.core.RSECoreMessages;
@@ -66,7 +67,7 @@ class PFWorkspaceAnchor implements PFPersistenceAnchor {
 			try {
 				profileFolder.delete(IResource.FORCE, monitor);
 			} catch (CoreException e) {
-				result = new Status(IStatus.ERROR, null, 0, RSECoreMessages.PropertyFileProvider_UnexpectedException, e);
+				result = new Status(IStatus.ERROR, RSECorePlugin.PLUGIN_ID, IRSECoreStatusCodes.EXCEPTION_OCCURRED, RSECoreMessages.PropertyFileProvider_UnexpectedException, e);
 			}
 		}
 		return result;

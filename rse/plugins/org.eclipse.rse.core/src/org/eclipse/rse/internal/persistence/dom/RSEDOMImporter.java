@@ -19,6 +19,7 @@
  * David McKnight   (IBM)        - [217715] [api] RSE property sets should support nested property sets
  * David Dykstal (IBM) - [197036] respond to removal of SystemProfile.createHost()
  * David Dykstal (IBM) - [217556] remove service subsystem types
+ * David Dykstal (IBM) - [225988] need API to mark persisted profiles as migrated
  ********************************************************************************/
 
 package org.eclipse.rse.internal.persistence.dom;
@@ -26,6 +27,7 @@ package org.eclipse.rse.internal.persistence.dom;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.rse.core.IRSECoreRegistry;
+import org.eclipse.rse.core.IRSECoreStatusCodes;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.filters.ISystemFilter;
@@ -581,12 +583,12 @@ public class RSEDOMImporter {
 	
 	private void logException(Exception e) {
 		RSECorePlugin.getDefault().getLog().log(
-				new Status(IStatus.ERROR, RSECorePlugin.getDefault().getBundle().getSymbolicName(), -1, e.getMessage(), e));
+				new Status(IStatus.ERROR, RSECorePlugin.getDefault().getBundle().getSymbolicName(), IRSECoreStatusCodes.EXCEPTION_OCCURRED, e.getMessage(), e));
 	}
 	
 	private void logWarning(String msg) {
 		RSECorePlugin.getDefault().getLog().log(
-				new Status(IStatus.WARNING, RSECorePlugin.getDefault().getBundle().getSymbolicName(), -1, "RSEDOMImporter: "+msg, null)); //$NON-NLS-1$
+				new Status(IStatus.WARNING, RSECorePlugin.getDefault().getBundle().getSymbolicName(), 0, "RSEDOMImporter: "+msg, null)); //$NON-NLS-1$
 	}
 
 	private void logNullAttribute(RSEDOMNode node, String attributeName) {
@@ -603,7 +605,7 @@ public class RSEDOMImporter {
 		}
 		msg.append(node.getName()==null ? "null" : node.getName()); //$NON-NLS-1$
 		RSECorePlugin.getDefault().getLog().log(
-				new Status(IStatus.WARNING, RSECorePlugin.getDefault().getBundle().getSymbolicName(), -1, msg.toString(), null));
+				new Status(IStatus.WARNING, RSECorePlugin.getDefault().getBundle().getSymbolicName(), 0, msg.toString(), null));
 	}
 
 }

@@ -16,6 +16,7 @@
  * David McKnight   (IBM)        - [190010] When status is "cancelled" the wait should complete
  * David McKnight   (IBM)        - [197480] eliminating UI dependencies
  * David McKnight   (IBM)        - [209593] [api] check for existing query to avoid duplicates
+ * David McKnight   (IBM)        - [225902] [dstore] use C_NOTIFICATION command to wake up the server
  *******************************************************************************/
 
 package org.eclipse.rse.services.dstore.util;
@@ -27,6 +28,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
+import org.eclipse.dstore.core.model.DataStoreSchema;
 import org.eclipse.dstore.extra.DomainEvent;
 import org.eclipse.dstore.extra.IDomainListener;
 import org.eclipse.dstore.extra.IDomainNotifier;
@@ -338,7 +340,7 @@ public class DStoreStatusMonitor implements IDomainListener
 		if (status != null)
 		{
 			// token command to wake up update handler
-			DataElement cmdDescriptor = _dataStore.findCommandDescriptor("C_REFRESH"); //$NON-NLS-1$
+			DataElement cmdDescriptor = _dataStore.findCommandDescriptor(DataStoreSchema.C_NOTIFICATION); 
 			DataElement subject = status.getParent().get(0);
 			if (cmdDescriptor != null)
 			{

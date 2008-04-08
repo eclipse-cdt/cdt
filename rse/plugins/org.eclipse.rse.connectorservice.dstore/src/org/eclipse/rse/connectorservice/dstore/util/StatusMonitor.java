@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
+ * David McKnight   (IBM)        - [225902] [dstore] use C_NOTIFICATION command to wake up the server
  *******************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore.util;
@@ -24,6 +25,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
+import org.eclipse.dstore.core.model.DataStoreSchema;
 import org.eclipse.dstore.extra.DomainEvent;
 import org.eclipse.dstore.extra.IDomainListener;
 import org.eclipse.rse.core.subsystems.CommunicationsEvent;
@@ -394,7 +396,7 @@ public class StatusMonitor implements IDomainListener, ICommunicationsListener
 		if (status != null)
 		{
 			// token command to wake up update handler
-			DataElement cmdDescriptor = _dataStore.findCommandDescriptor("C_REFRESH"); //$NON-NLS-1$
+			DataElement cmdDescriptor = _dataStore.findCommandDescriptor(DataStoreSchema.C_NOTIFICATION);
 			DataElement subject = status.getParent().get(0);
 			if (cmdDescriptor != null)
 			{

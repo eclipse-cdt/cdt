@@ -18,7 +18,7 @@
 package org.eclipse.rse.internal.processes.ui.dialogs;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.rse.internal.ui.actions.SystemDeleteTableRow;
+import org.eclipse.rse.internal.ui.dialogs.SystemDeleteTableRow;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcess;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;

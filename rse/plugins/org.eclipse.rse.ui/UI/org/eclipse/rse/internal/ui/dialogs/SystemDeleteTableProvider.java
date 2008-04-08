@@ -27,7 +27,6 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.rse.internal.ui.actions.SystemDeleteTableRow;
 import org.eclipse.swt.graphics.Image;
 /**
  * This class is the table provider class for the delete dialog

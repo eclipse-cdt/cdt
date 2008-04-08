@@ -15,7 +15,7 @@
  * David McKnight   (IBM)        - [226143] [api][breaking] Make RSE rename/delete dialogs internal
  ********************************************************************************/
 
-package org.eclipse.rse.internal.ui.actions;
+package org.eclipse.rse.internal.ui.dialogs;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;

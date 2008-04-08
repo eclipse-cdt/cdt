@@ -36,6 +36,7 @@ public class VirtualDocument extends Document {
         fPresentationContext = presentationContext;
         fAnnotationModel = annotationModel;
         fContentProvider = new DocumentContentProvider( this );
+        getContentProvider().init( fRoot );
     }
 
     public void dispose() {

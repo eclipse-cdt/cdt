@@ -27,6 +27,7 @@ import java.util.StringTokenizer;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.makefile.IDirective;
 import org.eclipse.cdt.make.core.makefile.IMakefile;
+import org.eclipse.cdt.make.core.makefile.IMakefileReaderProvider;
 import org.eclipse.cdt.make.core.makefile.gnu.IGNUMakefile;
 import org.eclipse.cdt.make.internal.core.makefile.AbstractMakefile;
 import org.eclipse.cdt.make.internal.core.makefile.BadDirective;
@@ -51,7 +52,9 @@ import org.eclipse.cdt.make.internal.core.makefile.Target;
 import org.eclipse.cdt.make.internal.core.makefile.TargetRule;
 import org.eclipse.cdt.make.internal.core.makefile.Util;
 import org.eclipse.cdt.make.internal.core.makefile.posix.PosixMakefileUtil;
+import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.URIUtil;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 
@@ -78,18 +81,48 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 
 	String[] includeDirectories = new String[0];
 	IDirective[] builtins = null;
+	private IMakefileReaderProvider makefileReaderProvider;
 
 	public GNUMakefile() {
 		super(null);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.make.core.makefile.IMakefile#getMakefileReaderProvider()
+	 */
+	public IMakefileReaderProvider getMakefileReaderProvider() {
+		return makefileReaderProvider;
 	}
 	
 	public void parse(String filePath, Reader reader) throws IOException {
 		parse(URIUtil.toURI(filePath), new MakefileReader(reader));
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.make.core.makefile.IMakefile#parse(java.net.URI, org.eclipse.cdt.make.core.makefile.IMakefileReaderProvider)
+	 */
+	public void parse(URI fileURI,
+			IMakefileReaderProvider makefileReaderProvider) throws IOException {
+		this.makefileReaderProvider = makefileReaderProvider;
+		MakefileReader reader;
+		if (makefileReaderProvider == null) {
+			try {
+				reader = new MakefileReader(new InputStreamReader(
+						EFS.getStore(fileURI).openInputStream(EFS.NONE, null)));
+			} catch (CoreException e) {
+				MakeCorePlugin.log(e);
+				throw new IOException(e.getMessage());
+			}
+		} else {
+			reader = new MakefileReader(makefileReaderProvider.getReader(fileURI));
+		}
+		parse(fileURI, reader);
+	}
+	
 	public void parse(URI filePath, Reader reader) throws IOException {
 		parse(filePath, new MakefileReader(reader));	    
 	}
+	
 	
 	protected void parse(URI fileURI, MakefileReader reader) throws IOException {
 		String line;
@@ -787,22 +820,24 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 	public IDirective[] getBuiltins() {
 		if (builtins == null) {
 			String location =  "builtin" + File.separator + "gnu.mk"; //$NON-NLS-1$ //$NON-NLS-2$
-			try {
-				InputStream stream = FileLocator.openStream(MakeCorePlugin.getDefault().getBundle(), new Path(location), false);
-				GNUMakefile gnu = new GNUMakefile();
-				URL url = FileLocator.find(MakeCorePlugin.getDefault().getBundle(), new Path(location), null);
-				gnu.parse(url.toURI(), new InputStreamReader(stream));
-				builtins = gnu.getDirectives();
-				for (int i = 0; i < builtins.length; i++) {
-					if (builtins[i] instanceof MacroDefinition) {
-						((MacroDefinition) builtins[i]).setFromDefault(true);
+			if (MakeCorePlugin.getDefault() != null) {
+				try {
+					InputStream stream = FileLocator.openStream(MakeCorePlugin.getDefault().getBundle(), new Path(location), false);
+					GNUMakefile gnu = new GNUMakefile();
+					URL url = FileLocator.find(MakeCorePlugin.getDefault().getBundle(), new Path(location), null);
+					gnu.parse(url.toURI(), new InputStreamReader(stream));
+					builtins = gnu.getDirectives();
+					for (int i = 0; i < builtins.length; i++) {
+						if (builtins[i] instanceof MacroDefinition) {
+							((MacroDefinition) builtins[i]).setFromDefault(true);
+						}
 					}
-				}
-			} catch (IOException e) {
-				MakeCorePlugin.log(e);
-			} catch (URISyntaxException e) {
-				MakeCorePlugin.log(e);
-            }
+				} catch (IOException e) {
+					MakeCorePlugin.log(e);
+				} catch (URISyntaxException e) {
+					MakeCorePlugin.log(e);
+	            }
+			}
 			if (builtins == null) {
 				builtins = new IDirective[0];
 			}

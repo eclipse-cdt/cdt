@@ -125,6 +125,12 @@ public interface IMakefile extends IParent {
 	String expandString(String line, boolean recursive);
 
 	/**
+	 * Get the makefile Reader provider used to create this makefile.
+	 * @return IMakefileReaderProvider or <code>null</code>
+	 */
+	IMakefileReaderProvider getMakefileReaderProvider();
+	
+	/**
 	 * Clear all statements and (re)parse the Makefile
 	 * 
 	 * @param filePath
@@ -142,6 +148,17 @@ public interface IMakefile extends IParent {
 	 */
 	void parse(URI fileURI, Reader makefile) throws IOException;
 	
+	/**
+	 * Clear the all statements and (re)parse the Makefile
+	 * using the given makefile Reader provider
+	 * 
+	 * @param fileURI
+	 * @param makefileReaderProvider provider, or <code>null</code> to use a FileReader
+	 * @throws IOException
+	 */
+	void parse(URI fileURI, IMakefileReaderProvider makefileReaderProvider) throws IOException;
+	
+
 	/**
 	 * @return the <code>URI</code> of this makefile
 	 */

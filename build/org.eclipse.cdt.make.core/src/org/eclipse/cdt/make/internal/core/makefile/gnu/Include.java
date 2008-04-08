@@ -10,20 +10,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile.gnu;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.eclipse.cdt.make.core.makefile.IDirective;
+import org.eclipse.cdt.make.core.makefile.IMakefile;
+import org.eclipse.cdt.make.core.makefile.IMakefileReaderProvider;
 import org.eclipse.cdt.make.core.makefile.gnu.IInclude;
 import org.eclipse.cdt.make.internal.core.makefile.Directive;
 import org.eclipse.cdt.make.internal.core.makefile.Parent;
-import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -50,9 +47,24 @@ public class Include extends Parent implements IInclude {
 		return filenames;
 	}
 
+	private IMakefileReaderProvider getCurrentMakefileReaderProvider() {
+		IDirective directive = this;
+		while (directive != null) {
+			if (directive instanceof IMakefile) {
+				IMakefileReaderProvider makefileReaderProvider = ((IMakefile) directive).getMakefileReaderProvider();
+				if (makefileReaderProvider != null)
+					return makefileReaderProvider;
+			}
+			directive = directive.getParent();
+		}
+		return null;
+	}
+	
+		
 	public IDirective[] getDirectives() {
 		clearDirectives();
 		URI uri = getMakefile().getFileURI();
+		IMakefileReaderProvider makefileReaderProvider = getCurrentMakefileReaderProvider();
 		for (int i = 0; i < filenames.length; i++) {
 			IPath includeFilePath = new Path(filenames[i]);
 			if (includeFilePath.isAbsolute()) {
@@ -65,8 +77,7 @@ public class Include extends Parent implements IInclude {
 					}
 					try {
 						GNUMakefile gnu = new GNUMakefile();
-						final InputStreamReader reader = new InputStreamReader(new FileInputStream(includeFilePath.toFile()));
-						gnu.parse(includeFilePath.toOSString(), reader);
+						gnu.parse(URIUtil.toURI(includeFilePath), makefileReaderProvider);
 						addDirective(gnu);
 						continue;
 					} catch (IOException e) {
@@ -75,21 +86,19 @@ public class Include extends Parent implements IInclude {
 			} else if (dirs != null) {
 				for (int j = 0; j < dirs.length; j++) {
 					try {
-						includeFilePath= new Path(dirs[j]).append(includeFilePath);
-						String uriPath = includeFilePath.toString();
-						if (includeFilePath.getDevice() != null) {
+						IPath testIncludeFilePath= new Path(dirs[j]).append(includeFilePath);
+						String uriPath = testIncludeFilePath.toString();
+						if (testIncludeFilePath.getDevice() != null) {
 							// special case: device prefix is seen as relative path by URI
 							uriPath = '/' + uriPath;
 						}
 						GNUMakefile gnu = new GNUMakefile();
 						URI includeURI = new URI(uri.getScheme(), uri.getUserInfo(), uri.getHost(), uri.getPort(), uriPath, null, null);
-						IFileStore store = EFS.getStore(includeURI);
-						gnu.parse(includeURI, new InputStreamReader(store.openInputStream(0, null)));
+						gnu.parse(includeURI, makefileReaderProvider);
 						addDirective(gnu);
 						break;
 					} catch (IOException e) {
 					} catch (URISyntaxException exc) {
-					} catch (CoreException exc) {
 					}
 				}
 			}

@@ -14,7 +14,6 @@ package org.eclipse.cdt.make.core;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -24,6 +23,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.eclipse.cdt.make.core.makefile.IMakefile;
+import org.eclipse.cdt.make.core.makefile.IMakefileReaderProvider;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager;
 import org.eclipse.cdt.make.core.scannerconfig.IExternalScannerInfoProvider;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo;
@@ -187,8 +187,22 @@ public class MakeCorePlugin extends Plugin {
 	}
 
 	static public IMakefile createMakefile(IFileStore file, boolean isGnuStyle, String[] makefileDirs) throws CoreException {
+		return createMakefile(file.toURI(), isGnuStyle, makefileDirs, null);
+	}
+
+	/**
+	 * Create an IMakefile using the given IMakefileReaderProvider to fetch
+	 * contents by name. 
+	 * @param name URI of main file
+	 * @param isGnuStyle
+	 * @param makefileDirs
+	 * @param makefileReaderProvider may be <code>null</code> for EFS IFileStore reading
+	 * @return IMakefile
+	 * @throws CoreException
+	 */
+	public static IMakefile createMakefile(URI fileURI,
+			boolean isGnuStyle, String[] makefileDirs, IMakefileReaderProvider makefileReaderProvider) {
 		IMakefile makefile;
-		URI fileURI = file.toURI();
 		if (isGnuStyle) {
 			GNUMakefile gnu = new GNUMakefile();
 			ArrayList includeList = new ArrayList();
@@ -198,19 +212,32 @@ public class MakeCorePlugin extends Plugin {
 			String[] includes = (String[]) includeList.toArray(new String[includeList.size()]);
 			gnu.setIncludeDirectories(includes);
 			try {
-				gnu.parse(fileURI, new InputStreamReader(file.openInputStream(EFS.NONE, null)));
+				gnu.parse(fileURI, makefileReaderProvider);
 			} catch (IOException e) {
 			}
 			makefile = gnu;
 		} else {
 			PosixMakefile posix = new PosixMakefile();
 			try {
-				posix.parse(fileURI, new InputStreamReader(file.openInputStream(EFS.NONE, null)));
+				posix.parse(fileURI, makefileReaderProvider);
 			} catch (IOException e) {
 			}
 			makefile = posix;
 		}
 		return makefile;
+	}
+
+	/**
+	 * Create an IMakefile using EFS to fetch contents.
+	 * @param name URI of main file
+	 * @param isGnuStyle
+	 * @param makefileDirs
+	 * @return IMakefile
+	 * @throws CoreException
+	 */
+	public static IMakefile createMakefile(URI fileURI,
+			boolean isGnuStyle, String[] makefileDirs) {
+		return createMakefile(fileURI, isGnuStyle, makefileDirs, null);
 	}
 
 	public IMakefile createMakefile(IFile file) throws CoreException {

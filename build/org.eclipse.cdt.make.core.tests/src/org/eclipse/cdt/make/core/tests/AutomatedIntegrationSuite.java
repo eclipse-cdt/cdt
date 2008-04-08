@@ -39,6 +39,7 @@ public class AutomatedIntegrationSuite extends TestSuite {
 
 		suite.addTest(StandardBuildTests.suite());
 		suite.addTest(ScannerDiscoveryTests.suite());
+		suite.addTest(MakefileReaderProviderTests.suite());
 		return suite;
 	}
 

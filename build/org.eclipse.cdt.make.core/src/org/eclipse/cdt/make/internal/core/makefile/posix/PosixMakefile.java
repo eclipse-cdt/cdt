@@ -21,6 +21,7 @@ import java.net.URL;
 
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.makefile.IDirective;
+import org.eclipse.cdt.make.core.makefile.IMakefileReaderProvider;
 import org.eclipse.cdt.make.internal.core.makefile.AbstractMakefile;
 import org.eclipse.cdt.make.internal.core.makefile.BadDirective;
 import org.eclipse.cdt.make.internal.core.makefile.Command;
@@ -43,7 +44,9 @@ import org.eclipse.cdt.make.internal.core.makefile.SuffixesRule;
 import org.eclipse.cdt.make.internal.core.makefile.Target;
 import org.eclipse.cdt.make.internal.core.makefile.TargetRule;
 import org.eclipse.cdt.make.internal.core.makefile.Util;
+import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.URIUtil;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 
@@ -67,15 +70,44 @@ import org.eclipse.core.runtime.Path;
 public class PosixMakefile extends AbstractMakefile {
 
 	IDirective[] builtins = null;
+	private IMakefileReaderProvider makefileReaderProvider;
 
 	public PosixMakefile() {
 		super(null);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.make.core.makefile.IMakefile#getMakefileReaderProvider()
+	 */
+	public IMakefileReaderProvider getMakefileReaderProvider() {
+		return makefileReaderProvider;
 	}
 	
 	public void parse(String name, Reader reader) throws IOException {
 		parse(URIUtil.toURI(name), new MakefileReader(reader));
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.make.core.makefile.IMakefile#parse(java.net.URI, org.eclipse.cdt.make.core.makefile.IMakefileReaderProvider)
+	 */
+	public void parse(URI fileURI,
+			IMakefileReaderProvider makefileReaderProvider) throws IOException {
+		this.makefileReaderProvider = makefileReaderProvider;
+		MakefileReader reader;
+		if (makefileReaderProvider == null) {
+			try {
+				reader = new MakefileReader(new InputStreamReader(
+						EFS.getStore(fileURI).openInputStream(EFS.NONE, null)));
+			} catch (CoreException e) {
+				MakeCorePlugin.log(e);
+				throw new IOException(e.getMessage());
+			}
+		} else {
+			reader = new MakefileReader(makefileReaderProvider.getReader(fileURI));
+		}
+		parse(fileURI, reader);
+	}
+	
 	public void parse(URI fileURI, Reader reader) throws IOException {
 		parse(fileURI, new MakefileReader(reader));
 	}
@@ -332,4 +364,5 @@ public class PosixMakefile extends AbstractMakefile {
 		}
 		return targetRules;
 	}
+
 }

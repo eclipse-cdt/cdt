@@ -15,6 +15,7 @@ import java.io.Reader;
 import java.net.URI;
 
 import org.eclipse.cdt.make.core.makefile.IDirective;
+import org.eclipse.cdt.make.core.makefile.IMakefileReaderProvider;
 
 /**
  * Makefile : ( statement ) *
@@ -61,6 +62,26 @@ public class NullMakefile extends AbstractMakefile {
 	public void parse(String name, Reader makefile) throws IOException {
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.make.core.makefile.IMakefile#getMakefileReaderProvider()
+	 */
+	public IMakefileReaderProvider getMakefileReaderProvider() {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.make.core.makefile.IMakefile#parse(java.lang.String, org.eclipse.cdt.make.core.makefile.IMakefileReaderProvider)
+	 */
+	public void parse(String name,
+			IMakefileReaderProvider makefileReaderProvider) throws IOException {
+	}
 	public void parse(URI fileURI, Reader makefile) throws IOException {
     }
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.make.core.makefile.IMakefile#parse(java.net.URI, org.eclipse.cdt.make.core.makefile.IMakefileReaderProvider)
+	 */
+	public void parse(URI fileURI,
+			IMakefileReaderProvider makefileReaderProvider) throws IOException {
+	}
 }

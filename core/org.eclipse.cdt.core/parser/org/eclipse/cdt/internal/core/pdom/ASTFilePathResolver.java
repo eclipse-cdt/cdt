@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,7 +34,7 @@ public abstract class ASTFilePathResolver {
 	/**
 	 * Check for existence of an inclusion as computed by the preprocessor.
 	 */
-	 public abstract boolean doesIncludeFileExist(String includePath);
+	public abstract boolean doesIncludeFileExist(String includePath);
 	
 	/**
 	 * Convert an index file location to the path as it will be stored in the AST.

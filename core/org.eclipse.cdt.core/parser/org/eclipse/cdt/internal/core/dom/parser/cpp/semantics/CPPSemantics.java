@@ -143,7 +143,11 @@ import org.eclipse.cdt.internal.core.index.IIndexScope;
  * @author aniefer
  */
 public class CPPSemantics {
-
+	/**
+	 * The maximum depth to search ancestors before assuming infinite looping.
+	 */
+	public static final int MAX_INHERITANCE_DEPTH= 10;
+	
     public static final ASTNodeProperty STRING_LOOKUP_PROPERTY = new ASTNodeProperty("CPPSemantics.STRING_LOOKUP_PROPERTY - STRING_LOOKUP"); //$NON-NLS-1$
 	public static final char[] EMPTY_NAME_ARRAY = new char[0];
 	public static final String EMPTY_NAME = ""; //$NON-NLS-1$
@@ -728,7 +732,7 @@ public class CPPSemantics {
 		data.inheritanceChain.put( lookIn );
 
 		// workaround to fix 185828 
-		if(data.inheritanceChain.size() > 20) { 
+		if(data.inheritanceChain.size() > CPPSemantics.MAX_INHERITANCE_DEPTH) { 
 			return null;
 		}
 

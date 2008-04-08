@@ -51,7 +51,7 @@ import org.eclipse.cdt.internal.core.index.IIndexType;
  * @author aniefer
  */
 public class CPPClassTemplate extends CPPTemplateDefinition implements
-		ICPPClassTemplate, ICPPClassType, ICPPInternalClassType, ICPPInternalClassTemplate,
+		ICPPClassTemplate, ICPPClassType, ICPPInternalBinding, ICPPInternalClassTemplate,
 		ICPPInternalClassTypeMixinHost {
 
 	private class FindDefinitionAction extends CPPASTVisitor {
@@ -219,10 +219,6 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 
 	public ICPPField[] getDeclaredFields() throws DOMException {
 		return mixin.getDeclaredFields();
-	}
-
-	public ICPPMethod[] getConversionOperators() throws DOMException {
-		return mixin.getConversionOperators();
 	}
 
 	public ICPPMethod[] getMethods() throws DOMException {

@@ -14,21 +14,148 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
+import org.eclipse.cdt.core.parser.Keywords;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.core.parser.util.CharArraySet;
+import org.eclipse.cdt.core.parser.util.ObjectSet;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 
 /**
  *
  */
 public class SemanticUtil {
+	/**
+	 * Cache of overloadable operator names for fast lookup. Used by isConversionOperator.
+	 */
+	private static final CharArraySet cas= new CharArraySet(OverloadableOperator.values().length);
+	
+	static {
+		for(OverloadableOperator op : OverloadableOperator.values()) {
+			cas.put(op.toCharArray());
+		}
+	}
+	
+	/**
+	 * Returns a list of ICPPMethod objects representing all conversion operators
+	 * declared by the specified class. It does not include inherited methods. Conversion
+	 * operators can not be implicit.
+	 * @param clazz
+	 * @return List of ICPPMethod
+	 */
+	public static final ICPPMethod[] getDeclaredConversionOperators(ICPPClassType clazz) throws DOMException {
+		ICPPMethod[] methods= new ICPPMethod[0];
+		ICPPMethod[] decs= clazz.getDeclaredMethods();
+		if(decs != null) {
+			for(ICPPMethod method : decs) {
+				if(isConversionOperator(method)) {
+					methods= (ICPPMethod[]) ArrayUtil.append(ICPPMethod.class, methods, method);
+				}
+			}
+		}
+		return methods;
+	}
+	
+	/**
+	 * Returns a list of ICPPMethod objects representing all conversion operators
+	 * declared by the specified class and its ancestors. It does not include inherited
+	 * methods. Conversion operators can not be implicit.
+	 * @param clazz
+	 * @return List of ICPPMethod
+	 */
+	public static ICPPMethod[] getConversionOperators(ICPPClassType clazz) throws DOMException {
+		ICPPMethod[] methods= new ICPPMethod[0];
+		ObjectSet<ICPPClassType> ancestry= inheritanceClosure(clazz);
+		for(int i=0; i<ancestry.size(); i++) {
+			methods= (ICPPMethod[]) ArrayUtil.addAll(ICPPMethod.class, methods, getDeclaredConversionOperators(ancestry.keyAt(i)));
+		}
+		return methods;
+	}
+	
+	/**
+	 * @param root the class to start at
+	 * @return the root and all its ancestor classes
+	 * @throws DOMException
+	 */
+	public static ObjectSet<ICPPClassType> inheritanceClosure(ICPPClassType root) throws DOMException {
+		ObjectSet<ICPPClassType> done= new ObjectSet<ICPPClassType>(2);
+		ObjectSet<ICPPClassType> current= new ObjectSet<ICPPClassType>(2);
+		current.put(root);
+
+		for(int count=0; count < CPPSemantics.MAX_INHERITANCE_DEPTH && !current.isEmpty(); count++) {
+			ObjectSet<ICPPClassType> next= new ObjectSet<ICPPClassType>(2);
+
+			for(int i=0; i<current.size(); i++) {
+				ICPPClassType clazz= current.keyAt(i);				
+				done.put(clazz);
+				
+				for(ICPPBase base : clazz.getBases()) {
+					IBinding binding= base.getBaseClass();
+					if(binding instanceof ICPPClassType && !(binding instanceof IProblemBinding)) {
+						ICPPClassType ct= (ICPPClassType) binding;
+						if(!done.containsKey(ct))
+							next.put(ct);
+					}
+				}
+			}
+
+			current= next;
+		}
+
+		return done;
+	}
+	
+	/**
+	 * @param method
+	 * @return true is the specified method is a conversion operator
+	 */
+	private static final boolean isConversionOperator(ICPPMethod method) {
+		boolean result= false;
+		if(!method.isImplicit()) {
+			char[] name= method.getNameCharArray();
+			char[] expected= Keywords.OPERATOR.toCharArray();
+			if(name.length > expected.length + 1) {
+				for(int i=0; i<expected.length; i++) {
+					if(name[i] != expected[i])
+						return false;
+				}
+				if(name[expected.length]!=' ')
+					return false;
+				result= !cas.containsKey(name, expected.length+1, name.length - (expected.length+1));
+			}
+		}
+		return result;
+	}
+	
+	/**
+	 * Descends into type containers, stopping at pointer-to-member types if
+	 * specified.
+	 * @param type the root type
+	 * @param stopAtPointerToMember if true, do not descend into ICPPPointerToMember types
+	 * @return the deepest type in a type container sequence
+	 */
 	public static IType getUltimateType(IType type, boolean stopAtPointerToMember) {
 	   return getUltimateType(type, null, stopAtPointerToMember);
 	}
-
+	
+	/**
+	 * Descends into type containers, stopping at pointer-to-member types if
+	 * specified.
+	 * @param type the root type
+	 * @param lastPointerType if non-null, the deepest pointer type encounter is stored in element zero
+	 * @param stopAtPointerToMember if true, do not descend into ICPPPointerToMember types
+	 * @return the deepest type in a type container sequence
+	 */
 	static IType getUltimateType(IType type, IType[] lastPointerType, boolean stopAtPointerToMember) {
 	    try {
 	        while( true ){
@@ -78,7 +205,7 @@ public class SemanticUtil {
 	}
 
 	/**
-	 * Unravels a type by following purely typedefs
+	 * Descends into a typedef sequence.
 	 * @param type
 	 * @return
 	 */

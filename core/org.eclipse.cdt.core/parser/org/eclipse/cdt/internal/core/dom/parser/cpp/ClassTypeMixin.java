@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,6 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
@@ -102,59 +101,6 @@ class ClassTypeMixin {
 		}
 
 		return resultSet.keyArray(IBinding.class);
-	}
-
-	public ICPPMethod[] getConversionOperators() throws DOMException {
-		if( host.getDefinition() == null ){
-			host.checkForDefinition();
-			if(  host.getDefinition() == null ){
-				IASTNode[] declarations= host.getDeclarations();
-				IASTNode node = (declarations != null && declarations.length > 0) ? declarations[0] : null;
-				return new ICPPMethod[] { new CPPMethod.CPPMethodProblem( node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, host.getNameCharArray() ) };
-			}
-		}
-		IBinding binding = null;
-		ICPPMethod [] result = null;
-
-		IASTDeclaration [] decls = host.getCompositeTypeSpecifier().getMembers();
-		IASTName name = null;
-		for ( int i = 0; i < decls.length; i++ ) {
-			if( decls[i] instanceof IASTSimpleDeclaration ){
-				IASTDeclarator [] dtors = ((IASTSimpleDeclaration)decls[i]).getDeclarators();
-				for ( int j = 0; j < dtors.length; j++ ) {
-					name = CPPVisitor.getMostNestedDeclarator( dtors[j] ).getName();
-					if( name instanceof ICPPASTConversionName ){
-						binding = name.resolveBinding();
-						if( binding instanceof ICPPMethod)
-							result = (ICPPMethod[]) ArrayUtil.append( ICPPMethod.class, result, binding );	
-					}
-				}
-			} else if( decls[i] instanceof IASTFunctionDefinition ){
-				IASTDeclarator dtor = ((IASTFunctionDefinition)decls[i]).getDeclarator();
-				name = CPPVisitor.getMostNestedDeclarator( dtor ).getName();
-				if( name instanceof ICPPASTConversionName ){
-					binding = name.resolveBinding();
-					if( binding instanceof ICPPMethod ){
-						result = (ICPPMethod[]) ArrayUtil.append( ICPPMethod.class, result, binding );
-					}
-				}
-			} 
-		}
-
-		ICPPBase [] bases = getBases();
-		for ( int i = 0; i < bases.length; i++ ) {
-			ICPPClassType cls = null;
-			try {
-				IBinding b = bases[i].getBaseClass();
-				if( b instanceof ICPPClassType )
-					cls = (ICPPClassType) b;
-			} catch (DOMException e) {
-				continue;
-			}
-			if( cls instanceof ICPPInternalClassType )
-				result = (ICPPMethod[]) ArrayUtil.addAll( ICPPMethod.class, result, ((ICPPInternalClassType)cls).getConversionOperators() );
-		}
-		return (ICPPMethod[]) ArrayUtil.trim( ICPPMethod.class, result );
 	}
 
 	public ICPPBase [] getBases() {

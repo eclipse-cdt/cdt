@@ -40,7 +40,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
  * @author aniefer
  */
 public class CPPTemplateTemplateParameter extends CPPTemplateParameter implements
-		ICPPTemplateTemplateParameter, ICPPClassType, ICPPInternalTemplate, ICPPInternalUnknown {
+		ICPPTemplateTemplateParameter, ICPPClassType, ICPPInternalBinding, ICPPInternalTemplate, ICPPInternalUnknown {
 
 	private ICPPTemplateParameter[] templateParameters = null;
 	private ObjectMap instances = null;

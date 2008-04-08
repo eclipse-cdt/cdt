@@ -34,7 +34,36 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
-import org.eclipse.cdt.core.dom.ast.cpp.*;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPBasicType;
 import org.eclipse.cdt.core.index.IIndexBinding;
@@ -44,6 +73,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBlockScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownClassType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.index.composite.CompositeScope;
@@ -220,10 +250,23 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				PDOMNode parent = getAdaptedParent(binding, true);
 				if (parent == null)
 					return null;
-				pdomBinding = addBinding(parent, binding);
-				if (pdomBinding instanceof PDOMCPPClassInstance && binding instanceof ICPPClassType) {
-					// Add instantiated constructors to the index (bug 201174).
-					addConstructors(pdomBinding, (ICPPClassType) binding);
+				
+				if(binding instanceof ICPPSpecialization) {
+					IBinding specialized= ((ICPPSpecialization)binding).getSpecializedBinding();
+					PDOMBinding pdomSpecialized= adaptBinding(specialized);
+					if(pdomSpecialized == null) {
+						addBinding(specialized, null);
+					}
+				}
+				
+				pdomBinding = adaptBinding(binding);
+				if(pdomBinding == null) {
+					pdomBinding = addBinding(parent, binding);
+					if ((pdomBinding instanceof PDOMCPPClassInstance || pdomBinding instanceof PDOMCPPDeferredClassInstance) && binding instanceof ICPPClassType) {
+						// Add instantiated constructors to the index (bug 201174).
+						addConstructors(pdomBinding, (ICPPClassType) binding);
+						addConversionOperators(pdomBinding, (ICPPClassType) binding);
+					}
 				}
 			} catch (DOMException e) {
 				throw new CoreException(Util.createStatus(e));
@@ -234,12 +277,14 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 
 	private void addConstructors(PDOMBinding pdomBinding, ICPPClassType binding)
 			throws DOMException, CoreException {
-		ICPPConstructor[] constructors = binding.getConstructors();
-		for (int i = 0; i < constructors.length; i++) {
-			if (adaptBinding(constructors[i]) == null) {
-				addBinding(pdomBinding, constructors[i]);
-			}
-		}
+		for(ICPPConstructor ctr : binding.getConstructors())
+			addBinding(ctr, null);
+	}
+	
+	private void addConversionOperators(PDOMBinding pdomBinding, ICPPClassType binding)
+	throws DOMException, CoreException {
+		for(ICPPMethod conv : SemanticUtil.getDeclaredConversionOperators(binding))
+			addBinding(conv, null);
 	}
 
 	private boolean shouldUpdate(PDOMBinding pdomBinding, IASTName fromName) throws CoreException {
@@ -270,11 +315,9 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 
 		if (binding instanceof ICPPSpecialization) {
 			IBinding specialized = ((ICPPSpecialization)binding).getSpecializedBinding();
-			if (specialized == null || specialized instanceof ProblemBinding) return null;
-			PDOMBinding pdomSpecialized = addBinding(specialized, null);
-			if (pdomSpecialized == null)
+			PDOMBinding pdomSpecialized= adaptBinding(specialized);
+			if(pdomSpecialized == null)
 				return null;
-			
 			if (binding instanceof ICPPDeferredTemplateInstance) {
 				if (binding instanceof ICPPFunction && pdomSpecialized instanceof ICPPFunctionTemplate) {
 					pdomBinding = new PDOMCPPDeferredFunctionInstance(pdom,

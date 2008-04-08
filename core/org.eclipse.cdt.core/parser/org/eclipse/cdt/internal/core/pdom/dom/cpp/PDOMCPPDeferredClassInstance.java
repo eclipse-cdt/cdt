@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
+import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
@@ -30,6 +31,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
+import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
@@ -39,13 +42,15 @@ import org.eclipse.core.runtime.CoreException;
  * 
  */
 class PDOMCPPDeferredClassInstance extends PDOMCPPInstance implements
-		ICPPClassType, IIndexType, ICPPDeferredTemplateInstance, ICPPInternalDeferredClassInstance {
+		ICPPClassType, IPDOMMemberOwner, IIndexType, ICPPDeferredTemplateInstance, ICPPInternalDeferredClassInstance {
 
+	private static final int MEMBERLIST = PDOMCPPInstance.RECORD_SIZE + 0;
+	
 	/**
 	 * The size in bytes of a PDOMCPPDeferredClassInstance record in the database.
 	 */
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = PDOMCPPInstance.RECORD_SIZE + 0;
+	protected static final int RECORD_SIZE = PDOMCPPInstance.RECORD_SIZE + 4;
 	
 	public PDOMCPPDeferredClassInstance(PDOM pdom, PDOMNode parent, ICPPClassType classType, PDOMBinding instantiated)
 			throws CoreException {
@@ -102,17 +107,6 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPInstance implements
 		return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
 	}
 	
-	//Unimplemented
-	public IField findField(String name) throws DOMException { fail(); return null; }
-	public ICPPMethod[] getAllDeclaredMethods() throws DOMException { fail(); return null; }
-	public ICPPField[] getDeclaredFields() throws DOMException { fail(); return null; }
-	public ICPPMethod[] getDeclaredMethods() throws DOMException { fail(); return null; }
-	public IField[] getFields() throws DOMException { fail(); return null; }
-	public IBinding[] getFriends() throws DOMException { fail(); return null; }
-	public ICPPMethod[] getMethods() throws DOMException { fail(); return null; }
-	public ICPPClassType[] getNestedClasses() throws DOMException { fail(); return null; }
-	public Object clone() {fail();return null;}
-	
 	/**
 	 * @param argMap
 	 * @return
@@ -128,4 +122,41 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPInstance implements
 		
 		return (IType) ((ICPPInternalTemplateInstantiator)getTemplateDefinition()).instantiate( newArgs );
 	}
+	
+	public void addMember(PDOMNode member) throws CoreException {
+		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + MEMBERLIST, getLinkageImpl());
+		list.addMember(member);
+	}
+	
+	@Override
+	public void accept(IPDOMVisitor visitor) throws CoreException {
+		super.accept(visitor);
+		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + MEMBERLIST, getLinkageImpl());
+		list.accept(visitor);
+	}
+	
+	@Override
+	public void addChild(PDOMNode member) throws CoreException {
+		addMember(member);
+	}
+	
+	public ICPPMethod[] getDeclaredMethods() throws DOMException {
+		try {
+			PDOMClassUtil.MethodCollector methods = new PDOMClassUtil.MethodCollector(false);
+			accept(methods);
+			return methods.getMethods();
+		} catch (CoreException e) {
+			return new ICPPMethod[0];
+		}
+	}
+	
+	//Unimplemented
+	public IField findField(String name) throws DOMException { fail(); return null; }
+	public ICPPMethod[] getAllDeclaredMethods() throws DOMException { fail(); return null; }
+	public ICPPField[] getDeclaredFields() throws DOMException { fail(); return null; }
+	public IField[] getFields() throws DOMException { fail(); return null; }
+	public IBinding[] getFriends() throws DOMException { fail(); return null; }
+	public ICPPMethod[] getMethods() throws DOMException { fail(); return null; }
+	public ICPPClassType[] getNestedClasses() throws DOMException { fail(); return null; }
+	public Object clone() {fail();return null;}
 }

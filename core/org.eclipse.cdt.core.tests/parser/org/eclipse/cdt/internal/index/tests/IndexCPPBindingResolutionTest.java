@@ -1291,7 +1291,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//		E e;
 	//		foo(e);
 	//	}
-    public void _testUserDefinedConversionOperator_224364() throws Exception {
+    public void testUserDefinedConversionOperator_224364() throws Exception {
     	IBinding ca=   getBindingFromASTName("C c;", 1);
     	assertInstance(ca, ICPPClassType.class);
     	    	

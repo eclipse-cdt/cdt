@@ -73,24 +73,28 @@ public abstract class AbstractCompositeFactory implements ICompositesFactory {
 	}
 	
 	/**
-	 * Convenience method for finding a binding with a definition in the specified index
-	 * context, which is equivalent to the specified binding, or null if no definitions were
-     * found.
+	 * Convenience method for finding a binding with a definition (in the specified index
+	 * context) which is equivalent to the specified binding. If no definition is found,
+     * a declaration is returned if <code>allowDeclaration</code> is set, otherwise an
+     * arbitrary binding is returned if available.
 	 * @param index
 	 * @param binding
 	 * @return
 	 */
-	protected IIndexFragmentBinding findOneDefinition(IBinding binding) {
+	protected IIndexFragmentBinding findOneBinding(IBinding binding, boolean allowDeclaration) {
 		try{
-			CIndex cindex = (CIndex) index;
-			IIndexFragmentBinding[] ibs = cindex.findEquivalentBindings(binding);
-			IBinding def = ibs.length>0 ? ibs[0] : null;
+			CIndex cindex= (CIndex) index;
+			IIndexFragmentBinding[] ibs= cindex.findEquivalentBindings(binding);
+			IBinding def= null;
+			IBinding dec= ibs.length>0 ? ibs[0] : null;
 			for(int i=0; i<ibs.length; i++) {
 				if(ibs[i].hasDefinition()) {
-					def = ibs[i];
+					def= ibs[i];
+				} else if(allowDeclaration && ibs[i].hasDeclaration()) {
+					dec= ibs[i];
 				}
 			}
-			return (IIndexFragmentBinding) def;
+			return (IIndexFragmentBinding) (def == null ? dec : def);
 		} catch(CoreException ce) {
 			CCorePlugin.log(ce);
 		}

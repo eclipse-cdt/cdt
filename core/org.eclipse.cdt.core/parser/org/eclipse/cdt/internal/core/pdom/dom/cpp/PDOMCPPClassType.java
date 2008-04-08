@@ -194,7 +194,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 	public ICPPMethod[] getMethods() throws DOMException {
 		try {
 			PDOMClassUtil.MethodCollector methods = new PDOMClassUtil.MethodCollector(true);
-			acceptInHierarchy(new HashSet<PDOMCPPClassType>(), methods);
+			acceptInHierarchy(this, new HashSet<IPDOMMemberOwner>(), methods);
 			return methods.getMethods();
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -212,30 +212,36 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 		}
 	}
 
-	private void acceptInHierarchy(Set<PDOMCPPClassType> visited, IPDOMVisitor visitor) throws CoreException {
-		if (visited.contains(this))
+	static void acceptInHierarchy(IPDOMMemberOwner current, Set<IPDOMMemberOwner> visited, IPDOMVisitor visitor) throws CoreException {
+		if (visited.contains(current))
 			return;
-		visited.add(this);
+		visited.add(current);
 
 		// Class is in its own scope
-		visitor.visit(this);
+		visitor.visit((IPDOMNode) current);
 		
 		// Get my members
-		accept(visitor);
+		current.accept(visitor);
 
 		// Visit my base classes
-		for (PDOMCPPBase base = getFirstBase(); base != null; base = base.getNextBase()) {
-			IBinding baseClass = base.getBaseClass();
-			if (baseClass != null && baseClass instanceof PDOMCPPClassType)
-				((PDOMCPPClassType)baseClass).acceptInHierarchy(visited, visitor);
+		if(current instanceof ICPPClassType) {
+			try {
+			ICPPBase[] bases= ((ICPPClassType) current).getBases();
+			for(ICPPBase base : bases) {
+				IBinding baseClass = base.getBaseClass();
+				if (baseClass != null && baseClass instanceof IPDOMMemberOwner)
+					acceptInHierarchy((IPDOMMemberOwner)baseClass, visited, visitor);
+			}
+			} catch(DOMException de) {
+				CCorePlugin.log(Util.createStatus(de));
+			}
 		}
 	}
 
 	public ICPPMethod[] getAllDeclaredMethods() throws DOMException {
 		PDOMClassUtil.MethodCollector myMethods = new PDOMClassUtil.MethodCollector(false, true);
-		Set<PDOMCPPClassType> visited = new HashSet<PDOMCPPClassType>();
 		try {
-			acceptInHierarchy(visited, myMethods);
+			acceptInHierarchy(this, new HashSet<IPDOMMemberOwner>(), myMethods);
 			return myMethods.getMethods();
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -246,7 +252,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 	public IField[] getFields() throws DOMException {
 		try {
 			PDOMClassUtil.FieldCollector visitor = new PDOMClassUtil.FieldCollector();
-			acceptInHierarchy(new HashSet<PDOMCPPClassType>(), visitor);
+			acceptInHierarchy(this, new HashSet<IPDOMMemberOwner>(), visitor);
 			return visitor.getFields();
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

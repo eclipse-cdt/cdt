@@ -31,14 +31,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
-import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 
 /**
  * @author aniefer
  */
-public class CPPClassInstance extends CPPInstance implements ICPPClassType, ICPPInternalClassType {
+public class CPPClassInstance extends CPPInstance implements ICPPClassType, ICPPInternalBinding {
 	private CPPClassSpecializationScope instanceScope;
 
 	/**
@@ -114,7 +113,10 @@ public class CPPClassInstance extends CPPInstance implements ICPPClassType, ICPP
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getDeclaredMethods()
 	 */
 	public ICPPMethod[] getDeclaredMethods() throws DOMException {
-		return null;
+		CPPClassSpecializationScope scope = (CPPClassSpecializationScope) getCompositeScope();
+		if (scope.isFullyCached())
+			return scope.getDeclaredMethods();
+		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 	}
 
 	/* (non-Javadoc)
@@ -194,15 +196,6 @@ public class CPPClassInstance extends CPPInstance implements ICPPClassType, ICPP
 
 	public ICPPClassType[] getNestedClasses() throws DOMException {
 		return ICPPClassType.EMPTY_CLASS_ARRAY;
-	}
-
-	public ICPPMethod[] getConversionOperators() throws DOMException {
-		IScope scope = getCompositeScope();
-		if (scope instanceof CPPClassSpecializationScope) {
-			if (ASTInternal.isFullyCached(scope))
-				return ((CPPClassSpecializationScope)scope).getConversionOperators();
-		}
-		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 	}
 
 	@Override

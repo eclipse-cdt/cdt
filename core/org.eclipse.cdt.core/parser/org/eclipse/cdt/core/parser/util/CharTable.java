@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 
 package org.eclipse.cdt.core.parser.util;
@@ -39,6 +40,7 @@ public class CharTable extends HashTable {
 		for( int i = 0; i < capacity(); i++ )
 			keyTable[i] = null;
 	}
+	
 	public Object clone(){
 	    CharTable newTable = (CharTable) super.clone();
         
@@ -48,9 +50,11 @@ public class CharTable extends HashTable {
         
 	    return newTable;
 	}
+	
 	protected final int hash(char[] source, int start, int length) {
 		return CharArrayUtils.hash(source, start, length) & ((keyTable.length * 2) - 1);
 	}
+	
 	protected final int hash( int pos ){
 	    return hash(keyTable[pos], 0, keyTable[pos].length);
 	}
@@ -62,6 +66,7 @@ public class CharTable extends HashTable {
 	protected final int addIndex(char[] buffer ) {
 		return addIndex(buffer, 0, buffer.length);
 	}
+	
 	public final int addIndex(char[] buffer, int start, int len) {
 		if (hashTable != null)
 		{
@@ -120,23 +125,29 @@ public class CharTable extends HashTable {
 	    return list;
 	}
 	
-	final public char[] keyAt( int i ){
+	public final char[] keyAt( int i ){
 	    if( i < 0 || i > currEntry )
 	        return null;
 	    
 	    return keyTable[ i ];
 	}
 	
-	final public boolean containsKey( char[] key ){
-	    return lookup( key ) != -1; 
+	public final boolean containsKey(char[] key, int start, int len) {
+		return lookup(key, start, len) != -1;
 	}
-	final public char[] findKey( char[] buffer, int start, int len ){
+	
+	public final boolean containsKey(char[] key){
+	    return lookup(key) != -1; 
+	}
+	
+	public final char[] findKey( char[] buffer, int start, int len ){
 	    int idx = lookup( buffer, start, len );
 	    if( idx == -1 )
 	        return null;
 	    
 	    return keyTable[ idx ];
 	}
+	
 	public int lookup(char[] buffer ){
 		return lookup(buffer, 0, buffer.length);
 	}

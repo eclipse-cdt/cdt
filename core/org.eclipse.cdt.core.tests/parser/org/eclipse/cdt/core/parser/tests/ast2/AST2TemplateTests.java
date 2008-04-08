@@ -2291,7 +2291,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//    	D<A> d;
 	//    	foo(d);
 	//    }
-    public void _testUserDefinedConversions_224364() throws Exception {
+    public void testUserDefinedConversions_224364() throws Exception {
     	BindingAssertionHelper bh= new BindingAssertionHelper(getContents(1)[0].toString(), true);
     	ICPPFunction fn= bh.assertNonProblem("foo(d)", 3, ICPPFunction.class);
     }
@@ -2311,7 +2311,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//    	D<B> d;
 	//    	foo(d);
 	//    }
-    public void _testUserDefinedConversions_224364_2() throws Exception {
+    public void testUserDefinedConversions_224364_2() throws Exception {
     	BindingAssertionHelper bh= new BindingAssertionHelper(getContents(1)[0].toString(), true);
     	ICPPFunction fn= bh.assertNonProblem("foo(d)", 3, ICPPFunction.class);
     }
@@ -2334,7 +2334,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//    Z foo(Z z) {return z;}
 	//
 	//    Z z= foo(*new E<Z>());
-    public void _testUserDefinedConversions_224364_3() throws Exception {
+    public void testUserDefinedConversions_224364_3() throws Exception {
     	BindingAssertionHelper bh= new BindingAssertionHelper(getContents(1)[0].toString(), true);
     	ICPPFunction fn= bh.assertNonProblem("foo(*new", 3, ICPPFunction.class);
     }

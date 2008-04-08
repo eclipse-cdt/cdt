@@ -922,8 +922,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertEquals("A", ((ICPPClassType) type).getName());
     }
     
-	//	class A {};
-	//	class B {};
+	//	class A {}; class B {}; class X {};	
 	//	template<typename T>
 	//	class C {
 	//	public:
@@ -934,6 +933,12 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	class D : public C<T> {};
 	//	class E : public C<A> {};
 	//	void foo(B b) {}
+    //  template<>
+    //  class C<X> {
+    //		public:
+	//		X t;
+	//		operator B() {B b; return b;}
+    //  };
 	
     //  class F : public C<A> {};
 	//	void refs() {
@@ -945,8 +950,10 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//		foo(e);
     //      F f;
 	//		foo(f);
+    //      C<X> cx;
+    //      foo(cx);
 	//	}
-    public void _testUserDefinedConversionOperator_224364() throws Exception {
+    public void testUserDefinedConversionOperator_224364() throws Exception {
     	IBinding ca=   getBindingFromASTName("C<A>", 4);
     	assertInstance(ca, ICPPClassType.class);
     	assertInstance(ca, ICPPTemplateInstance.class);
@@ -959,5 +966,9 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
     	
 		IBinding foo2= getBindingFromASTName("foo(d)", 3);
 		IBinding foo3= getBindingFromASTName("foo(e)", 3);
+		IBinding foo4= getBindingFromASTName("foo(cx)", 3);
+		
+		assertEquals(foo1, foo2); assertEquals(foo2, foo3);
+		assertEquals(foo3, foo4);
     }
 }

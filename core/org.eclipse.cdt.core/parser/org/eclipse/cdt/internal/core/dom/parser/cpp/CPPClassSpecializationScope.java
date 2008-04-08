@@ -9,6 +9,7 @@
  * IBM - Initial API and implementation
  * Markus Schorn (Wind River Systems)
  * Bryan Wilkinson (QNX)
+ * Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -159,18 +160,13 @@ public class CPPClassSpecializationScope implements ICPPClassScope, IASTInternal
 		return (ICPPConstructor[]) ArrayUtil.trim(ICPPConstructor.class, specs);
 	}
 	
-	protected ICPPMethod[] getConversionOperators() throws DOMException {
+	protected ICPPMethod[] getDeclaredMethods() throws DOMException {
 		ICPPClassType specialized = (ICPPClassType) specialization.getSpecializedBinding();
-		
-		if (!(specialized instanceof ICPPInternalClassType)) {
-			return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
-		}
- 		
-		ICPPMethod[] bindings = ((ICPPInternalClassType)specialized).getConversionOperators();
+		ICPPMethod[] bindings = specialized.getDeclaredMethods();
 		
 		if (bindings == null) return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 		
-    	ICPPMethod[] specs = new ICPPMethod[0];
+		ICPPMethod[] specs = new ICPPMethod[0];
 		for (int i = 0; i < bindings.length; i++) {
 			specs = (ICPPMethod[]) ArrayUtil.append(ICPPMethod.class, specs, getInstance(bindings[i]));
 		}

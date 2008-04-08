@@ -31,7 +31,7 @@ import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 public class TemplateInstanceUtil {
 	public static ObjectMap getArgumentMap(ICompositesFactory cf, IIndexBinding rbinding) {
 		ICPPSpecialization specn= (ICPPSpecialization) rbinding; 
-		IBinding specd= ((CPPCompositesFactory)cf).findOneDefinition(specn.getSpecializedBinding());
+		IBinding specd= ((CPPCompositesFactory)cf).findOneBinding(specn.getSpecializedBinding());
 		if(specd == null)
 			specd= specn.getSpecializedBinding();
 		

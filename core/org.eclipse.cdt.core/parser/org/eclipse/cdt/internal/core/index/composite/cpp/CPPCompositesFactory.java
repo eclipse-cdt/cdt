@@ -80,7 +80,7 @@ public class CPPCompositesFactory extends AbstractCompositeFactory implements IC
 			} else if(rscope instanceof ICPPClassScope) {
 				ICPPClassScope classScope = (ICPPClassScope) rscope;
 				result = new CompositeCPPClassScope(this,
-						findOneDefinition(classScope.getClassType()));
+						findOneBinding(classScope.getClassType()));
 			} else if(rscope instanceof ICPPNamespaceScope) {
 				ICPPNamespace[] namespaces;
 				if(rscope instanceof CompositeCPPNamespace) {
@@ -156,9 +156,13 @@ public class CPPCompositesFactory extends AbstractCompositeFactory implements IC
 		return index;
 	}
 	
+	protected IIndexFragmentBinding findOneBinding(IBinding binding) {
+		return super.findOneBinding(binding, false);
+	}
+	
 	@Override
-	protected IIndexFragmentBinding findOneDefinition(IBinding binding) {
-		return super.findOneDefinition(binding);
+	protected IIndexFragmentBinding findOneBinding(IBinding binding, boolean allowDeclaration) {
+		return super.findOneBinding(binding, allowDeclaration);
 	}
 
 	/* (non-Javadoc)
@@ -174,7 +178,7 @@ public class CPPCompositesFactory extends AbstractCompositeFactory implements IC
 				if(binding instanceof ICPPTemplateInstance) {
 					if(binding instanceof ICPPDeferredTemplateInstance) {
 						if(binding instanceof ICPPClassType) {
-							return new CompositeCPPDeferredClassInstance(this, (ICPPClassType) findOneDefinition(binding));
+							return new CompositeCPPDeferredClassInstance(this, (ICPPClassType) findOneBinding(binding));
 						} else if(binding instanceof ICPPFunction) {
 							return new CompositeCPPDeferredFunctionInstance(this, (ICPPFunction) binding);
 						} else {
@@ -182,7 +186,7 @@ public class CPPCompositesFactory extends AbstractCompositeFactory implements IC
 						}
 					} else {
 						if(binding instanceof ICPPClassType) {
-							return new CompositeCPPClassInstance(this, (ICPPClassType) findOneDefinition(binding));
+							return new CompositeCPPClassInstance(this, (ICPPClassType) findOneBinding(binding));
 						} else if(binding instanceof ICPPConstructor) {
 							return new CompositeCPPConstructorInstance(this, (ICPPConstructor) binding);
 						} else if(binding instanceof ICPPMethod) {
@@ -209,13 +213,13 @@ public class CPPCompositesFactory extends AbstractCompositeFactory implements IC
 					}
 				} else {
 					if(binding instanceof ICPPClassType) {
-						return new CompositeCPPClassSpecialization(this, (ICPPClassType) findOneDefinition(binding));
+						return new CompositeCPPClassSpecialization(this, (ICPPClassType) findOneBinding(binding));
 					} if(binding instanceof ICPPConstructor) {
-						return new CompositeCPPConstructorSpecialization(this, (ICPPConstructor) binding);						
+						return new CompositeCPPConstructorSpecialization(this, (ICPPConstructor) findOneBinding(binding, true));						
 					} if(binding instanceof ICPPMethod) {
-						return new CompositeCPPMethodSpecialization(this, (ICPPMethod) binding);
+						return new CompositeCPPMethodSpecialization(this, (ICPPMethod) findOneBinding(binding, true));
 					} if(binding instanceof ICPPFunction) {
-						return new CompositeCPPFunctionSpecialization(this, (ICPPFunction) binding);
+						return new CompositeCPPFunctionSpecialization(this, (ICPPFunction) findOneBinding(binding, true));
 					} if(binding instanceof ICPPField) {
 						return new CompositeCPPField(this, (ICPPField) binding);
 					} if(binding instanceof ICPPParameter) {
@@ -228,7 +232,8 @@ public class CPPCompositesFactory extends AbstractCompositeFactory implements IC
 				}
 			} else if (binding instanceof ICPPTemplateDefinition) {
 				if(binding instanceof ICPPClassTemplate) {
-					return new CompositeCPPClassTemplate(this, (ICPPClassType) findOneDefinition(binding));
+					ICPPClassType def= (ICPPClassType) findOneBinding(binding);
+					return new CompositeCPPClassTemplate(this, def);
 				} else if (binding instanceof ICPPConstructor) {
 					return new CompositeCPPConstructorTemplate(this, (ICPPConstructor) binding);
 				} else if (binding instanceof ICPPMethod) {
@@ -245,7 +250,7 @@ public class CPPCompositesFactory extends AbstractCompositeFactory implements IC
 			} else if(binding instanceof ICPPVariable) {
 				result = new CompositeCPPVariable(this, (ICPPVariable) binding);
 			} else if(binding instanceof ICPPClassType) {
-				ICPPClassType def = (ICPPClassType) findOneDefinition(binding);
+				ICPPClassType def = (ICPPClassType) findOneBinding(binding);
 				result = def == null ? null : new CompositeCPPClassType(this, def);
 			} else if(binding instanceof ICPPConstructor) {
 				result = new CompositeCPPConstructor(this, (ICPPConstructor) binding);
@@ -259,7 +264,7 @@ public class CPPCompositesFactory extends AbstractCompositeFactory implements IC
 			} else if (binding instanceof ICPPUsingDeclaration) {
 				result = new CompositeCPPUsingDeclaration(this, (ICPPUsingDeclaration) binding);
 			} else if(binding instanceof IEnumeration) {
-				IEnumeration def = (IEnumeration) findOneDefinition(binding);
+				IEnumeration def = (IEnumeration) findOneBinding(binding);
 				result = def == null ? null : new CompositeCPPEnumeration(this, def);
 			} else if(binding instanceof ICPPFunction) {
 				result = new CompositeCPPFunction(this, (ICPPFunction) binding);				

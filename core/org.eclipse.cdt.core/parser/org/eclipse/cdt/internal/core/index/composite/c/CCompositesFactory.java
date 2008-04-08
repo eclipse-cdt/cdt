@@ -113,9 +113,9 @@ public class CCompositesFactory extends AbstractCompositeFactory implements ICom
 		} else if(rbinding instanceof IVariable) {
 			result = new CompositeCVariable(this, rbinding);
 		} else if(rbinding instanceof ICompositeType) {
-			result = new CompositeCStructure(this, findOneDefinition(rbinding));
+			result = new CompositeCStructure(this, findOneBinding(rbinding, false));
 		} else if(rbinding instanceof IEnumeration) {
-			result = new CompositeCEnumeration(this, findOneDefinition(rbinding));
+			result = new CompositeCEnumeration(this, findOneBinding(rbinding, false));
 		} else if(rbinding instanceof IFunction) {
 			result = new CompositeCFunction(this, rbinding);				
 		} else if(rbinding instanceof IEnumerator) {

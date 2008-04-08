@@ -150,11 +150,23 @@ class PDOMCPPClassInstance extends PDOMCPPInstance implements
         return false;
 	}
 	
+	public ICPPMethod[] getDeclaredMethods() throws DOMException {
+		ICPPClassType specialized = (ICPPClassType) getSpecializedBinding();
+		ICPPMethod[] bindings = specialized.getDeclaredMethods();
+		SpecializationFinder visitor= new SpecializationFinder(bindings);
+		try {
+			accept(visitor);
+			return ArrayUtil.convert(ICPPMethod.class, visitor.getSpecializations());
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
+	}
+	
 	//ICPPClassType unimplemented
 	public IField findField(String name) throws DOMException { fail(); return null; }
 	public ICPPMethod[] getAllDeclaredMethods() throws DOMException { fail(); return null; }
 	public ICPPField[] getDeclaredFields() throws DOMException { fail(); return null; }
-	public ICPPMethod[] getDeclaredMethods() throws DOMException { fail(); return null; }
 	public IField[] getFields() throws DOMException { fail(); return null; }
 	public IBinding[] getFriends() throws DOMException { fail(); return null; }
 	public ICPPMethod[] getMethods() throws DOMException { fail(); return null; }

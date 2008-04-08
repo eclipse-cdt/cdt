@@ -10,6 +10,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Bryan Wilkinson (QNX)
  *     Sergey Prigogin (Google)
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -57,7 +58,7 @@ import org.eclipse.core.runtime.PlatformObject;
  * 
  * @author aniefer
  */
-public class CPPClassType extends PlatformObject implements ICPPInternalClassTypeMixinHost, ICPPClassType, ICPPInternalClassType {
+public class CPPClassType extends PlatformObject implements ICPPInternalClassTypeMixinHost {
 	public static class CPPClassTypeProblem extends ProblemBinding implements ICPPClassType{
 		public CPPClassTypeProblem( IASTNode node, int id, char[] arg ) {
 			super( node, id, arg );
@@ -82,6 +83,9 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 			throw new DOMException( this );
 		}
 		public ICPPConstructor[] getConstructors() throws DOMException {
+			throw new DOMException( this );
+		}
+		public ICPPMethod[] getDeclaredConversionOperators() throws DOMException {
 			throw new DOMException( this );
 		}
 		public int getKey() throws DOMException {
@@ -383,10 +387,6 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 
 	public ICPPField[] getDeclaredFields() throws DOMException {
 		return mixin.getDeclaredFields();
-	}
-
-	public ICPPMethod[] getConversionOperators() throws DOMException {
-		return mixin.getConversionOperators();
 	}
 
 	public ICPPMethod[] getMethods() throws DOMException {

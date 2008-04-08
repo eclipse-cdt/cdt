@@ -43,7 +43,6 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalClassType;
 
 /**
  * Routines for calculating the cost of conversions
@@ -149,8 +148,8 @@ class Conversions {
 		}
 
 		//conversion operators
-		if( s instanceof ICPPInternalClassType ){
-			ICPPMethod [] ops = ((ICPPInternalClassType)s).getConversionOperators();
+		if( s instanceof ICPPClassType ){
+			ICPPMethod [] ops = SemanticUtil.getConversionOperators((ICPPClassType)s); 
 			if( ops.length > 0 && !(ops[0] instanceof IProblemBinding) ){
 				Cost [] costs = null;
 				for (int i = 0; i < ops.length; i++) {
@@ -209,27 +208,29 @@ class Conversions {
 	 * no inheritance relation
 	 * @throws DOMException
 	 */
-	private static int calculateInheritanceDepth(ICPPClassType clazz, ICPPClassType ancestorToFind) throws DOMException {
+	private static int calculateInheritanceDepth(int maxdepth, ICPPClassType clazz, ICPPClassType ancestorToFind) throws DOMException {
 		if(clazz == ancestorToFind || clazz.isSameType(ancestorToFind))
 			return 0;
 
-		ICPPBase [] bases = clazz.getBases();
-		for(int i=0; i<bases.length; i++) {
-			IBinding base = bases[i].getBaseClass();
-			if(base instanceof IType) {
-				IType tbase= (IType) base;
-				if( tbase.isSameType(ancestorToFind) || 
-						(ancestorToFind instanceof ICPPSpecialization &&  /*allow some flexibility with templates*/ 
-								((IType)((ICPPSpecialization)ancestorToFind).getSpecializedBinding()).isSameType(tbase) ) ) 
-				{
-					return 1;
-				}
+		if(maxdepth>0) {
+			ICPPBase [] bases = clazz.getBases();
+			for(int i=0; i<bases.length; i++) {
+				IBinding base = bases[i].getBaseClass();
+				if(base instanceof IType) {
+					IType tbase= (IType) base;
+					if( tbase.isSameType(ancestorToFind) || 
+							(ancestorToFind instanceof ICPPSpecialization &&  /*allow some flexibility with templates*/ 
+									((IType)((ICPPSpecialization)ancestorToFind).getSpecializedBinding()).isSameType(tbase) ) ) 
+					{
+						return 1;
+					}
 
-				tbase= getUltimateTypeViaTypedefs(tbase);
-				if(tbase instanceof ICPPClassType) {
-					int n= calculateInheritanceDepth((ICPPClassType) tbase, ancestorToFind );
-					if(n>0)
-						return n+1;
+					tbase= getUltimateTypeViaTypedefs(tbase);
+					if(tbase instanceof ICPPClassType) {
+						int n= calculateInheritanceDepth(maxdepth-1, (ICPPClassType) tbase, ancestorToFind );
+						if(n>0)
+							return n+1;
+					}
 				}
 			}
 		}
@@ -277,7 +278,7 @@ class Conversions {
 			//4.10-3 An rvalue of type "pointer to cv D", where D is a class type can be converted
 			//to an rvalue of type "pointer to cv B", where B is a base class of D.
 			else if( s instanceof ICPPClassType && tPrev instanceof IPointerType && t instanceof ICPPClassType ){
-				int depth= calculateInheritanceDepth( (ICPPClassType)s, (ICPPClassType) t );
+				int depth= calculateInheritanceDepth(CPPSemantics.MAX_INHERITANCE_DEPTH, (ICPPClassType)s, (ICPPClassType) t );
 				cost.rank= ( depth > -1 ) ? Cost.CONVERSION_RANK : Cost.NO_MATCH_RANK;
 				cost.conversion= ( depth > -1 ) ? depth : 0;
 				cost.detail= 1;
@@ -307,7 +308,7 @@ class Conversions {
 			IType st = spm.getType();
 			IType tt = tpm.getType();
 			if( st != null && tt != null && st.isSameType( tt ) ){
-				int depth= calculateInheritanceDepth( tpm.getMemberOfClass(), spm.getMemberOfClass() );
+				int depth= calculateInheritanceDepth(CPPSemantics.MAX_INHERITANCE_DEPTH, tpm.getMemberOfClass(), spm.getMemberOfClass());
 				cost.rank= ( depth > -1 ) ? Cost.CONVERSION_RANK : Cost.NO_MATCH_RANK;
 				cost.conversion= ( depth > -1 ) ? depth : 0;
 				cost.detail= 1;
@@ -320,7 +321,7 @@ class Conversions {
 		IType t = getUltimateType( cost.target, true );
 
 		if( cost.targetHadReference && s instanceof ICPPClassType && t instanceof ICPPClassType ){
-			int depth= calculateInheritanceDepth( (ICPPClassType) s, (ICPPClassType) t );
+			int depth= calculateInheritanceDepth(CPPSemantics.MAX_INHERITANCE_DEPTH, (ICPPClassType) s, (ICPPClassType) t);
 			if(depth > -1){
 				cost.rank= Cost.DERIVED_TO_BASE_CONVERSION;
 				cost.conversion= depth;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,11 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
-
-/*
- * Created on Feb 16, 2005
- */
 package org.eclipse.cdt.core.parser.util;
 
 import java.lang.reflect.Array;
@@ -21,11 +18,7 @@ import java.lang.reflect.Array;
  * @author aniefer
  */
 public class ArrayUtil {
-    public static final class ArrayWrapper {
-        public Object [] array = null;
-    }
-    
-    public static final int DEFAULT_LENGTH = 2;
+    private static final int DEFAULT_LENGTH = 2;
     
     /**
      * Assumes that array contains nulls at the end, only. 
@@ -365,6 +358,24 @@ public class ArrayUtil {
         return array;
     }
     
-
+    /**
+     * Stores the specified array contents in a new array of specified
+     * runtime type.
+     * @param target the runtime type of the new array
+     * @param source the source array
+     * @return the current array stored in a new array with the
+     * specified runtime type, or null if source is null.
+     */
+    @SuppressWarnings("unchecked")
+    public static <S,T> T[] convert(Class<T> target, S[] source) {
+    	T[] result= null;
+    	if(source != null) {
+    		result= (T[]) Array.newInstance(target, source.length);
+    		for(int i=0; i<source.length; i++) {
+    			result[i]= (T) source[i];
+    		}
+    	}
+    	return result;
+    }
 	
 }

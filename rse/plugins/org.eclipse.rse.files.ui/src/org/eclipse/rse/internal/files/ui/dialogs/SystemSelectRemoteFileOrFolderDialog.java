@@ -14,9 +14,11 @@
  * Kevin Doyle (IBM) - Added a double click listener that closes the dialog if appropriate
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
+ * Xuan Chen        (IBM)        - [220999] [api] Need to change class SystemSelectRemoteFileAction to use SystemRemoteFileDialog
+ *                                          Move SystemSelectRemoteFileOrFolderDialog to internal package first.
  ********************************************************************************/
 
-package org.eclipse.rse.files.ui.dialogs;
+package org.eclipse.rse.internal.files.ui.dialogs;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;

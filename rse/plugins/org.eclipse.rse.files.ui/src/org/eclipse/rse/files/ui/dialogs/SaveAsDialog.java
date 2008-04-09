@@ -13,6 +13,8 @@
  * 
  * Contributors:
  * {Name} (company) - description of contribution.
+ * Xuan Chen        (IBM)        - [220999] [api] Need to change class SystemSelectRemoteFileAction to use SystemRemoteFileDialog
+ *                                          Move SystemSelectRemoteFileOrFolderDialog to internal package first.
  *******************************************************************************/
 
 package org.eclipse.rse.files.ui.dialogs;
@@ -20,6 +22,7 @@ package org.eclipse.rse.files.ui.dialogs;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.files.ui.widgets.SaveAsForm;
 import org.eclipse.rse.files.ui.widgets.SystemSelectRemoteFileOrFolderForm;
+import org.eclipse.rse.internal.files.ui.dialogs.SystemSelectRemoteFileOrFolderDialog;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.swt.widgets.Shell;
 

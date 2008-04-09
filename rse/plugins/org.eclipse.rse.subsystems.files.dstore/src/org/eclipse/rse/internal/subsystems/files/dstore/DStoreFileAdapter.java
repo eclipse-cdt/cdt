@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  *******************************************************************************/
@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.rse.connectorservice.dstore.DStoreConnectorService;
-import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.internal.services.dstore.files.DStoreHostFile;
 import org.eclipse.rse.internal.services.dstore.files.DStoreVirtualHostFile;
 import org.eclipse.rse.services.files.IHostFile;
@@ -30,35 +29,36 @@ import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSyst
 import org.eclipse.rse.subsystems.files.core.subsystems.IHostFileToRemoteFileAdapter;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileContext;
+import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.swt.widgets.Shell;
 
 public class DStoreFileAdapter implements IHostFileToRemoteFileAdapter
 {
 	private RemoteFilePropertyChangeListener _listener;
-	
+
 	private void registerFilePropertyChangeListener(FileServiceSubSystem ss)
 	{
 		if (_listener == null)
 		{
 			DStoreConnectorService connectorService = (DStoreConnectorService)ss.getConnectorService();
-			Shell shell = SubSystem.getActiveWorkbenchShell();
+			Shell shell = SystemBasePlugin.getActiveWorkbenchShell();
 			_listener = new RemoteFilePropertyChangeListener(shell, connectorService, connectorService.getDataStore(), ss);
 		}
 	}
 
 
-	public IRemoteFile[] convertToRemoteFiles(FileServiceSubSystem ss, IRemoteFileContext context, IRemoteFile parent, IHostFile[] nodes) 
+	public IRemoteFile[] convertToRemoteFiles(FileServiceSubSystem ss, IRemoteFileContext context, IRemoteFile parent, IHostFile[] nodes)
 	{
 		registerFilePropertyChangeListener(ss);
-		
+
 		List results = new ArrayList();
-		
-		for (int i = 0; i < nodes.length; i++) 
+
+		for (int i = 0; i < nodes.length; i++)
 		{
 			DStoreHostFile node = (DStoreHostFile)nodes[i];
-			
+
 			IRemoteFile lfile = null;
-					
+
 			if (node instanceof DStoreVirtualHostFile)
 			{
 				lfile = new DStoreVirtualFile(ss, context, parent, (DStoreVirtualHostFile) node);
@@ -67,22 +67,22 @@ public class DStoreFileAdapter implements IHostFileToRemoteFileAdapter
 			{
 				lfile = new DStoreFile(ss, context, parent, node);
 			}
-			
+
 			results.add(lfile);
 			ss.cacheRemoteFile(lfile);
 		}
-		
+
 		return (IRemoteFile[])results.toArray(new IRemoteFile[results.size()]);
 	}
 
 
 
-	public IRemoteFile convertToRemoteFile(FileServiceSubSystem ss, IRemoteFileContext context, IRemoteFile parent, IHostFile node) 
+	public IRemoteFile convertToRemoteFile(FileServiceSubSystem ss, IRemoteFileContext context, IRemoteFile parent, IHostFile node)
 	{
 		registerFilePropertyChangeListener(ss);
-		
+
 		IRemoteFile file = null;
-		
+
 		if (node instanceof DStoreVirtualHostFile)
 		{
 			file = new DStoreVirtualFile(ss, context, parent, (DStoreVirtualHostFile)node);
@@ -101,7 +101,7 @@ public class DStoreFileAdapter implements IHostFileToRemoteFileAdapter
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	public IRemoteFile convertToRemoteFile(FileServiceSubSystem ss, IRemoteFileContext context, IRemoteFile parent, Object object)
 	{
 		registerFilePropertyChangeListener(ss);
@@ -109,7 +109,7 @@ public class DStoreFileAdapter implements IHostFileToRemoteFileAdapter
 		{
 			DStoreHostFile hostFile = new DStoreHostFile((DataElement)object);
 			IRemoteFile file = null;
-	
+
 			{
 				file = new DStoreFile(ss, context, parent, hostFile);
 			}

@@ -8,3 +8,4 @@ Require-Bundle: org.eclipse.cdt.core,
  org.junit,
  org.eclipse.core.runtime,
  org.eclipse.core.resources
+Export-Package: org.eclipse.cdt.internal.core.parser.util

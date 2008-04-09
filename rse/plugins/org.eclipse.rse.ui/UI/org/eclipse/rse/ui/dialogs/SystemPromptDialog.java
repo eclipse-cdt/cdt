@@ -1,15 +1,15 @@
 /********************************************************************************
  * Copyright (c) 2002, 2008 IBM Corporation and others.. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Uwe Stieber (Wind River) - API consistency.
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
@@ -78,7 +78,7 @@ import org.eclipse.swt.widgets.Shell;
  *         <li>just override the processOk, processBrowse and processCancel methods to process them
  *         <li>constructor option whether to enable Browse or not
  *         <li>ability to override default labels for all three.
- *     </ul> 
+ *     </ul>
  *   <li>automatic support for a message line
  *     <ul>
  *         <li>can turn it off
@@ -117,7 +117,7 @@ import org.eclipse.swt.widgets.Shell;
  *   <li>optional support for a built-in progress monitor just like wizards have. Call {@link #setNeedsProgressMonitor(boolean)}
  *   <li>a simple {@link #setBusyCursor(boolean)} method to toggle the cursor between busy and normal
  * </ul>
- * 
+ *
  * <p>To use this class: </p>
  * <ol>
  *  <li>Subclass it, specifying the dialog title in the constructor. Optionally, also call {@link #setHelp(String)} to set the dialog's help in the constructor.
@@ -132,11 +132,11 @@ import org.eclipse.swt.widgets.Shell;
  * </ol>
  */
 public abstract class SystemPromptDialog
-	   extends org.eclipse.jface.dialogs.Dialog 
-	   implements Listener, IDialogConstants, ISystemPromptDialog,
+	   extends org.eclipse.jface.dialogs.Dialog
+	   implements Listener, ISystemPromptDialog,
 	              ISystemMessageLine, org.eclipse.jface.dialogs.IDialogPage, IRunnableContext, Runnable
 {
-	
+
 	protected boolean okPressed = false;
 	protected boolean cancelAllPressed = false;
 	protected boolean showBrowseButton = false;
@@ -176,7 +176,7 @@ public abstract class SystemPromptDialog
 	//protected Composite contentsComposite, buttonsComposite;
 	protected Mnemonics dialogMnemonics; // list of all unique mnemonics used in this dialog
 	protected ISystemValidator outputObjectValidator;
-	
+
 	protected long activeRunningOperations = 0;
 	protected boolean operationCancelableState;
 	protected boolean needsProgressMonitor;
@@ -185,29 +185,29 @@ public abstract class SystemPromptDialog
 	protected Cursor arrowCursor;
 	protected MessageDialog windowClosingDialog;
 	protected SelectionAdapter cancelListener;
-	
+
 	// preference stuff for option to not show the dialog again
 	protected IPreferenceStore prefStore;
 	protected String prefId;
 	protected boolean prefValAsSelected;
-	
+
 	private static final String FOCUS_CONTROL = "focusControl";//$NON-NLS-1$
-	
+
 	protected static final int BROWSE_ID = 50;
-	protected static final int TEST_ID = 60;	
-	protected static final int ADD_ID = 70;	
-	protected static final int DETAILS_ID = 80;	
+	protected static final int TEST_ID = 60;
+	protected static final int ADD_ID = 70;
+	protected static final int DETAILS_ID = 80;
 	protected static final int CANCEL_ALL_ID = 90;
-	
+
 	protected static final boolean BROWSE_BUTTON_YES = true;
-	protected static final boolean BROWSE_BUTTON_NO  = false;	
+	protected static final boolean BROWSE_BUTTON_NO  = false;
 	protected static final boolean TEST_BUTTON_YES = true;
-	protected static final boolean TEST_BUTTON_NO  = false;	
+	protected static final boolean TEST_BUTTON_NO  = false;
 	protected static final boolean ADD_BUTTON_YES = true;
-	protected static final boolean ADD_BUTTON_NO  = false;	
+	protected static final boolean ADD_BUTTON_NO  = false;
 	protected static final boolean DETAILS_BUTTON_YES = true;
-	protected static final boolean DETAILS_BUTTON_NO  = false;	
-	
+	protected static final boolean DETAILS_BUTTON_NO  = false;
+
 	/**
 	 * Constructor one: ok and cancel buttons
 	 * @param shell - parent window this dialog is modal to.
@@ -274,7 +274,7 @@ public abstract class SystemPromptDialog
 		                      Image titleImage)
 	{
 		super(shell);
-		setShellStyle(SWT.RESIZE | getShellStyle()); // dwd 
+		setShellStyle(SWT.RESIZE | getShellStyle()); // dwd
 		this.title = title;
 		this.titleImage = titleImage;
 		this.inputObject = inputObject;
@@ -288,7 +288,7 @@ public abstract class SystemPromptDialog
 		                      Image titleImage)
 	{
 		super(shell);
-		setShellStyle(SWT.RESIZE | getShellStyle()); // dwd 
+		setShellStyle(SWT.RESIZE | getShellStyle()); // dwd
 		this.title = title;
 		this.titleImage = titleImage;
 		this.inputObject = inputObject;
@@ -301,7 +301,7 @@ public abstract class SystemPromptDialog
     /* (non-Javadoc)
      * Method declared in Window.
      */
-    protected void configureShell(Shell shell) 
+    protected void configureShell(Shell shell)
     {
   	  super.configureShell(shell);
   	  overallShell = shell;
@@ -309,20 +309,20 @@ public abstract class SystemPromptDialog
 		shell.setText(title);
 	  //if (titleImage != null)
 	  //  shell.setImage(titleImage); // ?correct method?
-	  //shell.setSize(300,200); // default w,h	   
-    }		
-    
+	  //shell.setSize(300,200); // default w,h
+    }
+
     /**
      * Specify if a progress monitor is desired in this dialog. Should be called right after instantiation.
      * The default is false. If true is specified, area on the dialog is reserved for the progress monitor,
-     * and the monitor can be retrieved via {@link #getProgressMonitor()}. 
+     * and the monitor can be retrieved via {@link #getProgressMonitor()}.
      * <p>Support is patterned after WizardDialog in JFace.
      */
     public void setNeedsProgressMonitor(boolean needs)
     {
     	this.needsProgressMonitor = needs;
     }
-    
+
     /**
      * For setting the default overall help for the dialog.
      * This can be overridden per control by calling {@link #setHelp(Control, String)}.
@@ -331,10 +331,10 @@ public abstract class SystemPromptDialog
     {
     	if (parentComposite != null)
     	{
-    	  SystemWidgetHelpers.setHelp(parentComposite, helpId); 
-    	  SystemWidgetHelpers.setHelp(buttonsComposite, helpId); 
-    	  //SystemWidgetHelpers.setCompositeHelp(parentComposite, helpId, helpIdPerControl);		
-    	  //SystemWidgetHelpers.setCompositeHelp(buttonsComposite, helpId, helpIdPerControl);		
+    	  SystemWidgetHelpers.setHelp(parentComposite, helpId);
+    	  SystemWidgetHelpers.setHelp(buttonsComposite, helpId);
+    	  //SystemWidgetHelpers.setCompositeHelp(parentComposite, helpId, helpIdPerControl);
+    	  //SystemWidgetHelpers.setCompositeHelp(buttonsComposite, helpId, helpIdPerControl);
     	}
     	this.helpId = helpId;
     }
@@ -352,7 +352,7 @@ public abstract class SystemPromptDialog
      */
     public void setHelp(Control c, String helpId)
     {
-    	SystemWidgetHelpers.setHelp(c, helpId);		
+    	SystemWidgetHelpers.setHelp(c, helpId);
     	//if (helpIdPerControl == null)
     	//  helpIdPerControl = new Hashtable();
     	//helpIdPerControl.put(c, helpId);
@@ -389,20 +389,20 @@ public abstract class SystemPromptDialog
 	{
 		return !okPressed;
 	}
-	
+
 	public boolean wasCancelledAll() {
 		return cancelAllPressed;
 	}
-	
-	/** 
+
+	/**
 	 * If validation of the output object is desired, set the validator here.
-	 * It will be used when the child class calls setOutputObject(). 
+	 * It will be used when the child class calls setOutputObject().
 	 */
 	public void setOutputObjectValidator(ISystemValidator outputObjectValidator)
 	{
 	      this.outputObjectValidator = outputObjectValidator;
-	} 
-	
+	}
+
 	/**
 	 * Return the output object validator
 	 */
@@ -410,7 +410,7 @@ public abstract class SystemPromptDialog
 	{
 		return outputObjectValidator;
 	}
-	
+
 	/**
 	 * Get the ISystemMessageLine control reference.
 	 */
@@ -425,23 +425,23 @@ public abstract class SystemPromptDialog
 	 * Note: Signature has changed to ensure overall API consistency!!! If used with return
 	 *       value in specific product code (open source code does not reference this method!),
 	 *       replace the old code:<pre>
-	 * 
+	 *
 	 *          String xyz = "output object";
 	 *          SystemMessage message = systemPromptDialog.setOutputObject(xyz);
-	 * 
+	 *
 	 * </pre>with the new code:<pre>
-	 * 
+	 *
 	 *          String xyz = "output object";
 	 *          systemPromptDialog.setOutputObject(xyz);
 	 *          if (systemPromptDialog.getOutputObjectValidator() != null)
-	 *          	SystemMessage message = systemPromptDialog.getOutputObjectValidator().validate((String)systemPromptDialog.getOutputObject()); 
+	 *          	SystemMessage message = systemPromptDialog.getOutputObjectValidator().validate((String)systemPromptDialog.getOutputObject());
 	 * </pre>
-	 * 
+	 *
 	 */
 	public void setOutputObject(Object outputObject) {
 		this.outputObject = outputObject;
 	}
-	
+
 	/**
 	 * Set the cursor to the wait cursor (true) or restores it to the normal cursor (false).
 	 */
@@ -452,7 +452,7 @@ public abstract class SystemPromptDialog
           // Set the busy cursor to all shells.
     	  Display d = getShell().getDisplay();
     	  waitCursor = new Cursor(d, SWT.CURSOR_WAIT);
-    	  setDisplayCursor(waitCursor);		
+    	  setDisplayCursor(waitCursor);
 		}
 		else
 		{
@@ -473,7 +473,7 @@ public abstract class SystemPromptDialog
 	{
 		this.showOkButton = showOk;
 	}
-	
+
 	/**
 	 * For explicitly setting ok button label
 	 */
@@ -481,7 +481,7 @@ public abstract class SystemPromptDialog
 	{
 		this.labelOk = label;
 	}
-	
+
 	/**
 	 * For explicitly setting ok button tooltip text
 	 */
@@ -489,7 +489,7 @@ public abstract class SystemPromptDialog
 	{
 		this.tipOk = tip;
 	}
-	
+
 	/**
 	 * For explicitly enabling/disabling ok button.
 	 */
@@ -515,16 +515,16 @@ public abstract class SystemPromptDialog
     }
 	/**
 	 * To be overridden by children.
-	 * Called when user presses OK button. 
+	 * Called when user presses OK button.
 	 * Child dialog class should set output object.
 	 * Return true to close dialog.
 	 * Return false to not close dialog.
 	 */
-	protected boolean processOK() 
+	protected boolean processOK()
 	{
 		return true;
-	}	
-	
+	}
+
 	// ------------------------------
 	// CANCEL BUTTON CONFIGURATION...
 	// ------------------------------
@@ -560,15 +560,15 @@ public abstract class SystemPromptDialog
 	}
 	/**
 	 * To be overridden by children.
-	 * Called when user presses CANCEL button. 
+	 * Called when user presses CANCEL button.
 	 * Return true to close dialog.
 	 * Return false to not close dialog.
 	 */
-	protected boolean processCancel() 
+	protected boolean processCancel()
 	{
 		return true;
 	}
-	
+
 	// ------------------------------
 	// CANCEL ALL BUTTON CONFIGURATION...
 	// ------------------------------
@@ -579,7 +579,7 @@ public abstract class SystemPromptDialog
 	{
 		this.showCancelAllButton = showCancelAll;
 	}
-	
+
 	/**
 	 * For explicitly setting cancel button label
 	 */
@@ -612,14 +612,14 @@ public abstract class SystemPromptDialog
 	}
 	/**
 	 * To be overridden by children.
-	 * Called when user presses CANCEL button. 
+	 * Called when user presses CANCEL button.
 	 * Return true to close dialog.
 	 * Return false to not close dialog.
 	 */
-	protected boolean processCancelAll() 
+	protected boolean processCancelAll()
 	{
 		return true;
-	}	
+	}
 
 	// ------------------------------
 	// BROWSE BUTTON CONFIGURATION...
@@ -662,13 +662,13 @@ public abstract class SystemPromptDialog
 	}
 	/**
 	 * To be overridden by children.
-	 * Called when user presses BROWSE button. 
+	 * Called when user presses BROWSE button.
 	 * Return false always!
 	 */
-	protected boolean processBrowse() 
+	protected boolean processBrowse()
 	{
 		return false;
-	}			
+	}
 
 	// ------------------------------
 	// TEST BUTTON CONFIGURATION...
@@ -711,13 +711,13 @@ public abstract class SystemPromptDialog
 	}
 	/**
 	 * To be overridden by children.
-	 * Called when user presses TEST button. 
+	 * Called when user presses TEST button.
 	 * Return false always!
 	 */
-	protected boolean processTest() 
+	protected boolean processTest()
 	{
 		return false;
-	}		
+	}
 
 	// ------------------------------
 	// ADD BUTTON CONFIGURATION...
@@ -762,13 +762,13 @@ public abstract class SystemPromptDialog
 	}
 	/**
 	 * To be overridden by children.
-	 * Called when user presses ADD button. 
+	 * Called when user presses ADD button.
 	 * Return false always!
 	 */
-	protected boolean processAdd() 
+	protected boolean processAdd()
 	{
 		return false;
-	}		
+	}
 
 	// ------------------------------
 	// DETAILS BUTTON CONFIGURATION...
@@ -819,20 +819,20 @@ public abstract class SystemPromptDialog
 	}
 	/**
 	 * To be overridden by children.
-	 * Called when user presses DETAILS button. 
+	 * Called when user presses DETAILS button.
 	 * <p>
 	 * Note the text is automatically toggled for you! You need only
 	 * do whatever the functionality is that you desire
-	 * 
+	 *
 	 * @param hideMode the current state of the details toggle, prior to this request. If you return true from
 	 *   this method, this state and the button text will be toggled.
-	 * 
+	 *
 	 * @return true if the details state toggle was successful, false if it failed.
 	 */
-	protected boolean processDetails(boolean hideMode) 
+	protected boolean processDetails(boolean hideMode)
 	{
 		return true;
-	}		
+	}
 
 
 
@@ -840,20 +840,20 @@ public abstract class SystemPromptDialog
 	 * Get the list of all unique mnemonics used by buttons on this dialog. This is only
 	 * set at the time createButtonBar is called by the parent, and this is after the createContents
 	 * method call. It will return null until then. So, it is not available for you at constructor time.
-	 * Use setUniqueMnemonic(Button) on the returned object if you want to add a mnemonic to 
+	 * Use setUniqueMnemonic(Button) on the returned object if you want to add a mnemonic to
 	 * button after the fact.
 	 */
 	public Mnemonics getDialogMnemonics()
 	{
 		 return dialogMnemonics;
-	} 
-		
+	}
+
 	/**
-	 * Create message line. 
+	 * Create message line.
 	 */
 	protected ISystemMessageLine createMessageLine(Composite c)
 	{
-		//System.out.println("INSIDE CREATEMESSAGELINE");		
+		//System.out.println("INSIDE CREATEMESSAGELINE");
 		fMessageLine= new SystemMessageLine(c);
 		fMessageLine.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		Display.getCurrent().asyncExec(this);
@@ -871,7 +871,7 @@ public abstract class SystemPromptDialog
 		  setMessage(pendingMessage);
 		pendingErrorMessage = pendingMessage = null;
 	}
-	
+
 	/**
 	 * Handles events generated by controls on this page.
 	 * Should be overridden by child.
@@ -880,12 +880,12 @@ public abstract class SystemPromptDialog
 	public void handleEvent(Event e)
 	{
 	    if (e.type == SWT.Selection) {
-	    	
+
 	    	if (e.widget == noShowAgainButton) {
 	    		boolean isNoShowSelected = noShowAgainButton.getSelection();
-	    		
+
 	    		if ((prefStore != null) && (prefId != null)) {
-	    			
+
 	    			if (prefValAsSelected) {
 	    				prefStore.setValue(prefId, isNoShowSelected);
 	    			}
@@ -896,42 +896,32 @@ public abstract class SystemPromptDialog
 	    	}
 	    }
 	}
-	
-	/**
-	 * Swing-like method to auto-set the size of this dialog by 
-	 * looking at the preferred sizes of all constituents.
-	 * @deprecated
-	 */
-    protected void pack()
-    {
-   	      // pack = true; // defer until controls are all created.
-    }                     
-    
+
 	/**
 	 * Called by createContents method.
 	 * Create this dialog's widgets inside a composite.
 	 * Child classes must override this.
 	 */
 	protected abstract Control createInner(Composite parent);
-	
+
 	/**
 	 * Return the Control to be given initial focus.
 	 * Child classes must override this, but can return null.
 	 */
 	protected abstract Control getInitialFocusControl();
-		
-	
-	
+
+
+
 	/**
-	 * Override of parent method. 
+	 * Override of parent method.
 	 * Called by IDE when button is pressed.
 	 */
-	protected void buttonPressed(int buttonId) 
+	protected void buttonPressed(int buttonId)
 	{
 		okPressed = false;
-		if (buttonId == OK_ID)
+		if (buttonId == IDialogConstants.OK_ID)
 		{
-		    //setReturnId(buttonId);		  	
+		    //setReturnId(buttonId);
 			setReturnCode(OK);
 			if (processOK())
 		    {
@@ -948,17 +938,17 @@ public abstract class SystemPromptDialog
 		else if (buttonId == BROWSE_ID)
 		{
 		  	processBrowse();
-		}		  
+		}
 		else if (buttonId == TEST_ID)
 		{
 		  	processTest();
-		}		  
+		}
 		else if (buttonId == ADD_ID)
 		{
 		  	processAdd();
-		}		  
+		}
 		else if (buttonId == DETAILS_ID)
-		{			
+		{
 		  	if (processDetails(detailsButtonHideMode))
 		  	{
 		  	  detailsButtonHideMode = !detailsButtonHideMode;
@@ -966,22 +956,22 @@ public abstract class SystemPromptDialog
 	          if (detailsButtonHideMode && (tipDetailsShow != null))
 	            detailsButton.setToolTipText(tipDetailsShow);
 	          else if (!detailsButtonHideMode && (tipDetailsHide != null))
-	            detailsButton.setToolTipText(tipDetailsHide);		  	  
+	            detailsButton.setToolTipText(tipDetailsHide);
 		  	}
 		}
 		else if (buttonId == CANCEL_ALL_ID) {
-			
+
 			if (processCancelAll()) {
 				cancelAllPressed = true;
 				close();
 			}
 		}
 	}
-	
+
 	/**
 	 * Intercept of parent, so we can create the msg line above the button bar.
 	 */
-	protected Control createButtonBar(Composite parent) 
+	protected Control createButtonBar(Composite parent)
 	{
 		createMessageLine(parent);
 		return super.createButtonBar(parent);
@@ -1014,7 +1004,7 @@ public abstract class SystemPromptDialog
 	 *
 	 * @param parent the button bar composite
 	 */
-	protected void createButtonsForButtonBar(Composite parent) 
+	protected void createButtonsForButtonBar(Composite parent)
 	{
 	   //System.out.println("Inside createButtonsForButtonBar");
        //System.out.println("Vertical spacing="+((GridLayout)parent.getLayout()).verticalSpacing);
@@ -1023,7 +1013,7 @@ public abstract class SystemPromptDialog
        //((GridLayout)parent.getLayout()).horizontalSpacing = horizontalSpacing;
        ((GridLayout)parent.getLayout()).marginWidth = marginWidth;
        ((GridLayout)parent.getLayout()).marginHeight = marginHeight;
-		//System.out.println("INSIDE CREATEBUTTONSFORBUTTONBAR");		
+		//System.out.println("INSIDE CREATEBUTTONSFORBUTTONBAR");
 
 	   // create requested buttons...
 
@@ -1038,21 +1028,21 @@ public abstract class SystemPromptDialog
 	   if (showBrowseButton)
 	   {
 	     String browseLabel = (labelBrowse!=null)?labelBrowse: SystemResources.BUTTON_BROWSE;
-		 browseButton = createButton(parent, BROWSE_ID, browseLabel, false);	   
+		 browseButton = createButton(parent, BROWSE_ID, browseLabel, false);
 	     if (tipBrowse != null)
 	       browseButton.setToolTipText(tipBrowse);
 	   }
 	   if (showTestButton)
 	   {
 	     String testLabel = (labelTest!=null)?labelTest: SystemResources.BUTTON_TEST;
-		 testButton = createButton(parent, TEST_ID, testLabel, false);	   
+		 testButton = createButton(parent, TEST_ID, testLabel, false);
 	     if (tipTest != null)
 	       testButton.setToolTipText(tipTest);
 	   }
 	   if (showAddButton)
 	   {
 	     String addLabel  = (labelAdd!=null)?labelAdd: SystemResources.BUTTON_ADD;
-		 addButton = createButton(parent, ADD_ID, addLabel, !showOkButton);	   
+		 addButton = createButton(parent, ADD_ID, addLabel, !showOkButton);
 	     if (tipAdd != null)
 	       addButton.setToolTipText(tipAdd);
          addButton.setEnabled(initialAddButtonEnabledState);
@@ -1062,7 +1052,7 @@ public abstract class SystemPromptDialog
 	     detailsShowLabel  = Mnemonics.removeMnemonic((labelDetailsShow!=null)?labelDetailsShow: IDialogConstants.SHOW_DETAILS_LABEL);
 	     detailsHideLabel  = Mnemonics.removeMnemonic((labelDetailsHide!=null)?labelDetailsHide: IDialogConstants.HIDE_DETAILS_LABEL);
 	     String detailsLabel = detailsButtonHideMode ? detailsShowLabel : detailsHideLabel;
-		 detailsButton = createButton(parent, DETAILS_ID, detailsLabel, false);	   
+		 detailsButton = createButton(parent, DETAILS_ID, detailsLabel, false);
 		 adjustButtonWidth(detailsButton);
 	     if (detailsButtonHideMode && (tipDetailsShow != null))
 	       detailsButton.setToolTipText(tipDetailsShow);
@@ -1075,11 +1065,11 @@ public abstract class SystemPromptDialog
 	   cancelButton = createButton(parent, IDialogConstants.CANCEL_ID, cancelLabel, false);
 	   if (tipCancel != null)
 	     cancelButton.setToolTipText(tipCancel);
-	   cancelListener= new SelectionAdapter() 
+	   cancelListener= new SelectionAdapter()
 	   {
-		   public void widgetSelected(SelectionEvent e) 
+		   public void widgetSelected(SelectionEvent e)
 		   {
-		   	   if (activeRunningOperations <= 0) 
+		   	   if (activeRunningOperations <= 0)
 		   	   {
 		  	     if (processCancel())
 		  	       doCancel();
@@ -1089,11 +1079,11 @@ public abstract class SystemPromptDialog
 		   }
 	   };
 	   cancelButton.addSelectionListener(cancelListener);
-	   
+
 	   if (showCancelAllButton) {
 		   String cancelAllLabel = (labelCancelAll != null) ? labelCancelAll: SystemResources.BUTTON_CANCEL_ALL;
 		   cancelAllButton = createButton(parent, CANCEL_ALL_ID, cancelAllLabel, false);
-		   
+
 		   if (tipCancelAll != null) {
 			   cancelAllButton.setToolTipText(tipCancelAll);
 		   }
@@ -1101,17 +1091,17 @@ public abstract class SystemPromptDialog
 
        buttonsComposite = parent;
 	   if (helpId != null)
-		 SystemWidgetHelpers.setHelp(buttonsComposite, helpId);	
-		 //SystemWidgetHelpers.setCompositeHelp(buttonsComposite, helpId);	
-	}	
-	
+		 SystemWidgetHelpers.setHelp(buttonsComposite, helpId);
+		 //SystemWidgetHelpers.setCompositeHelp(buttonsComposite, helpId);
+	}
+
 	private void doCancel()
 	{
-		super.buttonPressed(CANCEL_ID);
+		super.buttonPressed(IDialogConstants.CANCEL_ID);
 	}
-	
+
     /**
-     * Set minimum width and height for this dialog. 
+     * Set minimum width and height for this dialog.
      * Pass zero for either to not affect it.
      */
     public void setMinimumSize(int width, int height)
@@ -1122,24 +1112,24 @@ public abstract class SystemPromptDialog
 	/**
 	 * Override of parent.
 	 */
-	protected Control createContents(Composite parent) 
+	protected Control createContents(Composite parent)
 	{
 		//System.out.println("INSIDE SYSTEMPROMPTDIALOG#CREATECONTENTS");
-			
+
 		Control c = super.createContents(parent);
 
         this.parentComposite = (Composite)c;
 		if (helpId != null)
-		  SystemWidgetHelpers.setHelp(parentComposite, helpId);	 
-		  //SystemWidgetHelpers.setCompositeHelp(parentComposite, helpId, helpIdPerControl);	
-	
+		  SystemWidgetHelpers.setHelp(parentComposite, helpId);
+		  //SystemWidgetHelpers.setCompositeHelp(parentComposite, helpId, helpIdPerControl);
+
 		// OK, parent method created dialog area and button bar.
 		// Time now to do our thing...
 
 		// Insert a progress monitor if requested
 		if (needsProgressMonitor)
 		{
-			
+
 			boolean showSeparators = false;
 			// Build the first separator line
 			Label separator = null;
@@ -1153,8 +1143,8 @@ public abstract class SystemPromptDialog
 
 			progressMonitorPart= new ProgressMonitorPart(parentComposite, pmlayout, SWT.DEFAULT);
 			progressMonitorPart.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			progressMonitorPart.setVisible(false);	
-			
+			progressMonitorPart.setVisible(false);
+
 			// Build the second separator line
 			if (showSeparators)
 			{
@@ -1165,31 +1155,31 @@ public abstract class SystemPromptDialog
 			{
 			  RSEUIPlugin.getTheSystemRegistryUI().setRunnableContext(getShell(),this);
 	          // add a dispose listener for the shell
-	          getShell().addDisposeListener(new DisposeListener() 
+	          getShell().addDisposeListener(new DisposeListener()
 	          {
-		        public void widgetDisposed(DisposeEvent e) 
+		        public void widgetDisposed(DisposeEvent e)
 		        {
 		          //System.out.println("Inside dispose for SystemPromptDialog");
-        	      RSEUIPlugin.getTheSystemRegistryUI().clearRunnableContext();		      	
+        	      RSEUIPlugin.getTheSystemRegistryUI().clearRunnableContext();
 		        }
  	          });
 			}
 		}
-	
-		//createMessageLine((Composite)c); now done before buttons are created. d54501		
-		
+
+		//createMessageLine((Composite)c); now done before buttons are created. d54501
+
 		Control initialFocusControl = getInitialFocusControl();
 		if (initialFocusControl != null)
 		  initialFocusControl.setFocus();
-		  
+
 		//buttonsComposite = buttons; // remember the buttons part of the dialog so we can add mnemonics
 		/*
 		 * OK now is a good time to add the mnemonics!
 		 * This is because both the contents and buttons have been created.
-		 */		  
+		 */
 		dialogMnemonics = SystemWidgetHelpers.setMnemonics((Composite)getButtonBar());
 		applyMnemonics(dialogMnemonics, (Composite)getDialogArea());
-		
+
 		/*
 		 * OK, now that mnemonics for the buttons are set, query the mnemonic for the details button and its
 		 *  two states... defect 42904
@@ -1211,31 +1201,31 @@ public abstract class SystemPromptDialog
 	    }
 	    if (labelCancel != null)
 	      labelCancel = cancelButton.getText(); // reset to include the mnemonic, in case we need to restore it
-		
+
 		if (pack)
 		{
-		   Shell shell = getShell();			
+		   Shell shell = getShell();
 		   shell.setSize(shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true));
 		}
 		// return composite created by call to parent's method
 		return c;
 	}
-	
+
 	/**
 	 * Apply mnemonic to the composite.
 	 * @param c the composite.
 	 */
 	protected void applyMnemonics(Mnemonics mnemonics, Composite c) {
-		SystemWidgetHelpers.setMnemonics(mnemonics, c);		
+		SystemWidgetHelpers.setMnemonics(mnemonics, c);
 	}
 
 	/**
 	 * Called by parent.
 	 * Create overall dialog page layout.
 	 */
-	protected Control createDialogArea(Composite parent) 
+	protected Control createDialogArea(Composite parent)
 	{
-		//System.out.println("INSIDE CREATEDIALOGAREA");		
+		//System.out.println("INSIDE CREATEDIALOGAREA");
 		Composite c        = new Composite(parent, SWT.NONE);
 		this.dialogAreaComposite = c;
 		GridLayout layout  = new GridLayout();
@@ -1244,11 +1234,11 @@ public abstract class SystemPromptDialog
 		layout.marginWidth = marginHeight;
 		layout.verticalSpacing  = verticalSpacing;
 		layout.horizontalSpacing= horizontalSpacing;
-		c.setLayout(layout);		
+		c.setLayout(layout);
 		c.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		Control inner = createInner(c); // allows for child classes to override.
-		
+
 		// if user wants the option to not show the dialog again
 		if (noShowAgainOption) {
 			noShowAgainButton = createNoShowAgainButton(c);
@@ -1286,16 +1276,16 @@ public abstract class SystemPromptDialog
 		  data.verticalAlignment = GridData.FILL;
 		  if (newData)
 		    inner.setLayoutData(data);
-		}		
+		}
 		//this.parent = c;
 		//contentsComposite = c; // remember the contents part of the dialog so we can add mnemonics
-		return c; 
+		return c;
 	}
-	
+
 	/**
 	 * Set option to not show this dialog again and specify the preference that should be set
 	 * according to whether the user selects to show the dialog again or no. The caller can
-	 * query this preference to find out what the user selection is. 
+	 * query this preference to find out what the user selection is.
 	 * @param noShowAgainOption <code>true</code> to show the option in the dialog, <code>false</code> to not show it.
 	 * @param prefStore the preference store.
 	 * @param prefId the preference id for which a boolean value will be stored according to the user's selection.
@@ -1311,7 +1301,7 @@ public abstract class SystemPromptDialog
 		this.prefId = prefId;
 		this.prefValAsSelected = prefValAsSelected;
 	}
-	
+
 	/**
 	 * Creates a button to allow option to not show this dialog again.
 	 * @return the button that allows option to not show this dialog again.
@@ -1323,7 +1313,7 @@ public abstract class SystemPromptDialog
 		b.addListener(SWT.Selection, this);
 		return b;
 	}
-	
+
 	/**
 	 * Call this to disable the Apply button if the input is not complete or not valid.
 	 */
@@ -1334,7 +1324,7 @@ public abstract class SystemPromptDialog
 		else
 		  initialOKButtonEnabledState = complete;
 	}
-	
+
 	// -----------------
 	// HELPER METHODS...
 	// -----------------
@@ -1343,45 +1333,45 @@ public abstract class SystemPromptDialog
      */
 	protected Label addSeparatorLine(Composite parent, int nbrColumns)
 	{
-		Label separator = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);	
+		Label separator = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
 	    GridData data = new GridData();
 	    data.horizontalSpan = nbrColumns;
 	    data.horizontalAlignment = GridData.FILL;
 	    separator.setLayoutData(data);
-	    return separator;		
+	    return separator;
 	}
 	/**
 	 * Add a spacer line
 	 */
 	protected Label addFillerLine(Composite parent, int nbrColumns)
 	{
-		Label filler = new Label(parent, SWT.LEFT);	
+		Label filler = new Label(parent, SWT.LEFT);
 	    GridData data = new GridData();
 	    data.horizontalSpan = nbrColumns;
 	    data.horizontalAlignment = GridData.FILL;
-	    filler.setLayoutData(data);	
-	    return filler;	
+	    filler.setLayoutData(data);
+	    return filler;
 	}
 	/**
 	 * Add a spacer line that grows in height to absorb extra space
 	 */
 	protected Label addGrowableFillerLine(Composite parent, int nbrColumns)
 	{
-		Label filler = new Label(parent, SWT.LEFT);	
+		Label filler = new Label(parent, SWT.LEFT);
 	    GridData data = new GridData();
 	    data.horizontalSpan = nbrColumns;
 	    data.horizontalAlignment = GridData.FILL;
 	    data.verticalAlignment = GridData.FILL;
         data.grabExcessVerticalSpace = true;
-	    filler.setLayoutData(data);		
-	    return filler;	
+	    filler.setLayoutData(data);
+	    return filler;
 	}
 
     /**
      * Expose inherited protected method convertWidthInCharsToPixels as a publicly
      *  excessible method
      */
-    public int publicConvertWidthInCharsToPixels(int chars) 
+    public int publicConvertWidthInCharsToPixels(int chars)
     {
     	return convertWidthInCharsToPixels(chars);
     }
@@ -1389,12 +1379,12 @@ public abstract class SystemPromptDialog
      * Expose inherited protected method convertHeightInCharsToPixels as a publicly
      *  excessible method
      */
-    public int publicConvertHeightInCharsToPixels(int chars) 
+    public int publicConvertHeightInCharsToPixels(int chars)
     {
     	return convertHeightInCharsToPixels(chars);
     }
-    
-    // -----------------------------	
+
+    // -----------------------------
 	// ISystemMessageLine METHODS...
 	// -----------------------------
 	/**
@@ -1458,7 +1448,7 @@ public abstract class SystemPromptDialog
 		else
 		  SystemMessageDialog.displayErrorMessage(getShell(),message);
 	}
-	
+
 	/**
 	 * Display the given error message. A currently displayed message
 	 * is saved and will be redisplayed when the error message is cleared.
@@ -1489,11 +1479,11 @@ public abstract class SystemPromptDialog
 			if (message != null)
 			  fMessageLine.setMessage(message);
 			else
-			  fMessageLine.clearMessage();		
+			  fMessageLine.clearMessage();
 		}
-	}	  
+	}
 
-	/** 
+	/**
 	 *If the message line currently displays an error,
 	 * the message is stored and will be shown after a call to clearErrorMessage
 	 */
@@ -1505,7 +1495,7 @@ public abstract class SystemPromptDialog
 		  //(new SystemMessageDialog(getShell(),message)).open();
 		  pendingMessage = message;
 	}
-	
+
 
 	/**
 	 * Convenience method to set an error message from an exception
@@ -1521,7 +1511,7 @@ public abstract class SystemPromptDialog
 		    (new SystemMessageDialog(getShell(),msg)).open();
 		}
 	}
-	
+
 	// -------------------------------------------------------------------------------
 	// IDialogPage interface methods, which we only implement to enable dialog help...
 	// -------------------------------------------------------------------------------
@@ -1538,14 +1528,14 @@ public abstract class SystemPromptDialog
 	/**
 	 * Get the dialog's title
 	 */
-	public String getTitle() 
+	public String getTitle()
 	{
 		return title;
 	}
 	/**
 	 * Set the dialog's title
 	 */
-	public void setTitle(String title) 
+	public void setTitle(String title)
 	{
 		this.title = title;
 		if (overallShell != null)
@@ -1564,7 +1554,7 @@ public abstract class SystemPromptDialog
      * @return the progress monitor, or <code>null</code> if
      *   this dialog does not have one
      */
-    public IProgressMonitor getProgressMonitor() 
+    public IProgressMonitor getProgressMonitor()
     {
     	return progressMonitorPart;
     }
@@ -1578,7 +1568,7 @@ public abstract class SystemPromptDialog
      *   be enabled, and <code>false</code> if it should be disabled
      * @return the saved UI state
      */
-    protected Object aboutToStart(boolean enableCancelButton) 
+    protected Object aboutToStart(boolean enableCancelButton)
     {
     	Map savedState = null;
     	operationCancelableState = enableCancelButton;
@@ -1587,17 +1577,17 @@ public abstract class SystemPromptDialog
     		// Save focus control
     		Control focusControl = getShell().getDisplay().getFocusControl();
     		if (focusControl != null && focusControl.getShell() != getShell())
-    			focusControl = null;			
-    		cancelButton.removeSelectionListener(cancelListener);		
+    			focusControl = null;
+    		cancelButton.removeSelectionListener(cancelListener);
     		// Set the busy cursor to all shells.
     		Display d = getShell().getDisplay();
     		waitCursor = new Cursor(d, SWT.CURSOR_WAIT);
     		setDisplayCursor(waitCursor);
-				
+
     		// Set the arrow cursor to the cancel component.
     		arrowCursor= new Cursor(d, SWT.CURSOR_ARROW);
     		cancelButton.setCursor(arrowCursor);
-    		
+
     		// Set the cancel button label to "Cancel" if it isn't already
     		if (labelCancel != null)
     		  cancelButton.setText("&" + IDialogConstants.CANCEL_LABEL);                		 //$NON-NLS-1$
@@ -1606,35 +1596,35 @@ public abstract class SystemPromptDialog
     		savedState = saveUIState(needsProgressMonitor && enableCancelButton);
     		if (focusControl != null)
     			savedState.put(FOCUS_CONTROL, focusControl);
-			
+
     		// Attach the progress monitor part to the cancel button
-    		if (needsProgressMonitor) 
+    		if (needsProgressMonitor)
     		{
     			progressMonitorPart.attachToCancelComponent(cancelButton);
     			progressMonitorPart.setVisible(true);
     		}
     	}
     	return savedState;
-    }    
-    
+    }
+
     /**
      * Creates and returns a new wizard closing dialog without opening it.
-     */ 
-    protected MessageDialog createWizardClosingDialog() 
+     */
+    protected MessageDialog createWizardClosingDialog()
     {
     	MessageDialog result= new MessageDialog(getShell(),
     		JFaceResources.getString("WizardClosingDialog.title"),//$NON-NLS-1$
     		null,
     		JFaceResources.getString("WizardClosingDialog.message"),//$NON-NLS-1$
     		MessageDialog.QUESTION,
-    		new String[] {IDialogConstants.OK_LABEL},		0 ); 
+    		new String[] {IDialogConstants.OK_LABEL},		0 );
     	return result;
     }
- 
+
     /* (non-Javadoc)
      * Method declared on Dialog.
      */
-    public boolean close() 
+    public boolean close()
     {
     	if (okToClose())
     		return hardClose();
@@ -1650,16 +1640,16 @@ public abstract class SystemPromptDialog
      * @return <code>true</code> if it is alright to close this dialog, and
      *  <code>false</code> if it is not
      */
-    protected boolean okToClose() 
+    protected boolean okToClose()
     {
-    	if (activeRunningOperations > 0) 
+    	if (activeRunningOperations > 0)
     	{
-    		synchronized (this) 
-    		{    			
+    		synchronized (this)
+    		{
     			windowClosingDialog = createWizardClosingDialog();
-    		}	
+    		}
     		windowClosingDialog.open();
-    		synchronized (this) 
+    		synchronized (this)
     		{
     			windowClosingDialog = null;
     		}
@@ -1674,11 +1664,11 @@ public abstract class SystemPromptDialog
      * @return <code>true</code> if the window is (or was already) closed,
      *   and <code>false</code> if it is still open
      */
-    protected boolean hardClose() 
+    protected boolean hardClose()
     {
     	return super.close();
     }
-    
+
     /**
      * Restores the enabled/disabled state of the given control.
      *
@@ -1688,7 +1678,7 @@ public abstract class SystemPromptDialog
      * @param key the key
      * @see #saveEnableStateAndSet
      */
-    protected void restoreEnableState(Control w, Map h, String key) 
+    protected void restoreEnableState(Control w, Map h, String key)
     {
     	if (w != null) {
     		Boolean b = (Boolean) h.get(key);
@@ -1704,7 +1694,7 @@ public abstract class SystemPromptDialog
      *   <code>saveUIState</code>
      * @see #saveUIState
      */
-    protected void restoreUIState(Map state) 
+    protected void restoreUIState(Map state)
     {
 	    //protected Button  okButton, cancelButton, testButton, browseButton, addButton, detailsButton;
     	restoreEnableState(okButton,     state, "ok"); //$NON-NLS-1$
@@ -1716,7 +1706,7 @@ public abstract class SystemPromptDialog
     	SystemControlEnableState pageState = (SystemControlEnableState) state.get("page");//$NON-NLS-1$
     	pageState.restore();
     }
-   
+
     /**
      * Captures and returns the enabled/disabled state of the wizard dialog's
      * buttons and the tree of controls for the currently showing page. All
@@ -1729,7 +1719,7 @@ public abstract class SystemPromptDialog
      *   with <code>restoreUIState</code>
      * @see #restoreUIState
      */
-    protected Map saveUIState(boolean keepCancelEnabled) 
+    protected Map saveUIState(boolean keepCancelEnabled)
     {
     	Map savedState= new HashMap(10);
     	saveEnableStateAndSet(okButton,     savedState, "ok",     false); //$NON-NLS-1$
@@ -1742,7 +1732,7 @@ public abstract class SystemPromptDialog
     	savedState.put("page", SystemControlEnableState.disable(dialogAreaComposite));    	 //$NON-NLS-1$
     	return savedState;
     }
-    
+
     /**
      * Saves the enabled/disabled state of the given control in the
      * given map, which must be modifiable.
@@ -1755,21 +1745,21 @@ public abstract class SystemPromptDialog
      *   and <code>false</code> to disable it
      * @see #restoreEnableState(Control,Map,String)
      */
-    protected void saveEnableStateAndSet(Control w, Map h, String key, boolean enabled) 
+    protected void saveEnableStateAndSet(Control w, Map h, String key, boolean enabled)
     {
     	if (w != null) {
     		h.put(key, new Boolean(w.isEnabled()));
     		w.setEnabled(enabled);
     	}
     }
-    
+
     /**
      * Sets the given cursor for all shells currently active
      * for this window's display.
      *
      * @param c the cursor
      */
-    protected void setDisplayCursor(Cursor c) 
+    protected void setDisplayCursor(Cursor c)
     {
     	setDisplayCursor(getShell(), c);
     }
@@ -1778,7 +1768,7 @@ public abstract class SystemPromptDialog
      *
      * @param c the cursor
      */
-    public static void setDisplayCursor(Shell shell, Cursor c) 
+    public static void setDisplayCursor(Shell shell, Cursor c)
     {
     	if (c == null)
     	{
@@ -1797,13 +1787,13 @@ public abstract class SystemPromptDialog
     	}
     	}
     }
-    
-    
+
+
     /**
-     * For IRunnableContext. 
+     * For IRunnableContext.
      */
-    public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) 
-           throws InvocationTargetException, InterruptedException 
+    public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable)
+           throws InvocationTargetException, InterruptedException
     {
     	// The operation can only be canceled if it is executed in a separate thread.
     	// Otherwise the UI is blocked anyway.
@@ -1812,7 +1802,7 @@ public abstract class SystemPromptDialog
     	if (activeRunningOperations > 1)
     	{
     		//System.out.println("Nested operation!");
-    		//(new Exception()).fillInStackTrace().printStackTrace();    		
+    		//(new Exception()).fillInStackTrace().printStackTrace();
     	}
     	try {
     		ModalContext.run(runnable, fork, getProgressMonitor(), getShell().getDisplay());
@@ -1820,7 +1810,7 @@ public abstract class SystemPromptDialog
     		activeRunningOperations--;
     		stopped(state);
     	}
-    }    
+    }
     /**
      * A long running operation triggered through the wizard
      * was stopped either by user input or by normal end.
@@ -1830,19 +1820,19 @@ public abstract class SystemPromptDialog
      * @param savedState the saved UI state as returned by <code>aboutToStart</code>
      * @see #aboutToStart
      */
-    private void stopped(Object savedState) 
+    private void stopped(Object savedState)
     {
     	if ((getShell() != null) && (activeRunningOperations <= 0))
     	{
-    		if (needsProgressMonitor) 
+    		if (needsProgressMonitor)
     		{
-    			progressMonitorPart.setVisible(false);	    			
+    			progressMonitorPart.setVisible(false);
     			progressMonitorPart.removeFromCancelComponent(cancelButton);
-    		}		
+    		}
     		Map state = (Map)savedState;
     		restoreUIState(state);
     		cancelButton.addSelectionListener(cancelListener);
-    		setDisplayCursor(null);	
+    		setDisplayCursor(null);
     		cancelButton.setCursor(null);
     		if (labelCancel != null)
     		  cancelButton.setText(labelCancel);

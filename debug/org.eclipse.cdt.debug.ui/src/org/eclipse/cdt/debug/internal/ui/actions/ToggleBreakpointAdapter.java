@@ -73,7 +73,28 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 	 */
 	public void toggleLineBreakpoints( IWorkbenchPart part, ISelection selection ) throws CoreException {
 		String errorMessage = null;
-		if ( part instanceof ITextEditor ) {
+		// Check for DisassemblyEditor first because it implements ITextEditor
+        if ( part instanceof DisassemblyEditor && selection instanceof ITextSelection ) {
+            DisassemblyEditor editor = (DisassemblyEditor)part;
+            int lineNumber = ((ITextSelection)selection).getStartLine();
+            if ( lineNumber != -1 ) {
+                IEditorInput input = editor.getEditorInput();
+                if ( input != null ) {
+                    VirtualDocument document = (VirtualDocument)editor.getDocumentProvider().getDocument( input );
+                    if ( document != null ) {
+                        IPresentationContext presentationContext = document.getPresentationContext();
+                        Object element = document.getElementAtLine( lineNumber );
+                        if ( element != null ) {
+                            IElementToggleBreakpointAdapter adapter = getToggleBreakpointAdapter( element );
+                            if ( adapter != null ) {
+                                adapter.toggleLineBreakpoints( presentationContext, element );
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else if ( part instanceof ITextEditor ) {
 			ITextEditor textEditor = (ITextEditor)part;
 			IEditorInput input = textEditor.getEditorInput();
 			if ( input == null ) {
@@ -156,26 +177,6 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 				}
 			}
 		}
-		else if ( part instanceof DisassemblyEditor && selection instanceof ITextSelection ) {
-            DisassemblyEditor editor = (DisassemblyEditor)part;
-            int lineNumber = ((ITextSelection)selection).getStartLine();
-            if ( lineNumber != -1 ) {
-                IEditorInput input = editor.getEditorInput();
-                if ( input != null ) {
-                    VirtualDocument document = (VirtualDocument)editor.getDocumentProvider().getDocument( input );
-                    if ( document != null ) {
-                        IPresentationContext presentationContext = document.getPresentationContext();
-                        Object element = document.getElementAtLine( lineNumber );
-                        if ( element != null ) {
-                            IElementToggleBreakpointAdapter adapter = getToggleBreakpointAdapter( element );
-                            if ( adapter != null ) {
-                                adapter.toggleLineBreakpoints( presentationContext, element );
-                            }
-                        }
-                    }
-                }
-            }
-        }
 		else {
 			errorMessage = ActionMessages.getString( "RunToLineAdapter.Operation_is_not_supported_1" ); //$NON-NLS-1$
 		}

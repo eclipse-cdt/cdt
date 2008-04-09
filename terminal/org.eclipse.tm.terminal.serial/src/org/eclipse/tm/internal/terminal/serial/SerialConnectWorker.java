@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2003, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,10 +11,11 @@
  * Helmut Haigermoser and Ted Williams.
  *
  * Contributors:
- * Michael Scharf (Wind River) - extracted from TerminalControl 
+ * Michael Scharf (Wind River) - extracted from TerminalControl
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  * Martin Oberhuber (Wind River) - [207158] improve error message when port not available
  * Martin Oberhuber (Wind River) - [208029] COM port not released after quick disconnect/reconnect
+ * Martin Oberhuber (Wind River) - [206884] Update Terminal Ownership ID to "org.eclipse.tm.terminal.serial"
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.serial;
 
@@ -44,7 +45,7 @@ public class SerialConnectWorker extends Thread {
 		fControl = control;
 		fConn = conn;
 	}
-	
+
 	/**
 	 * Adds the named port to the name of known ports to rxtx
 	 * @param name
@@ -65,7 +66,7 @@ public class SerialConnectWorker extends Thread {
 			boolean sepNeeded=false;
 			// When we add a port to this property, rxtx forgets the
 			// ports it finds by scanning the system.
-			
+
 			// iterate over the known ports and add them to the property
 			Enumeration portIdEnum= CommPortIdentifier.getPortIdentifiers();
 			while (portIdEnum.hasMoreElements()) {
@@ -95,13 +96,25 @@ public class SerialConnectWorker extends Thread {
 		// Reinitialize the ports because we have changed the list of known ports
 		CommPortIdentifier.getPortIdentifiers();
 	}
-	
+
+	/**
+	 * Return the ID that this connector uses for RXTX Comm Ownership Handling.
+	 *
+	 * Note that this was changed in Terminal 2.0 as per
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=206884 - previous versions
+	 * of the serial terminal connector used a different string,
+	 * "org.eclipse.tm.internal.terminal.serial".
+	 *
+	 * @since org.eclipse.tm.terminal.serial 2.0
+	 * @return ownership ID, "org.eclipse.tm.terminal.serial"
+	 */
+	public static final String getOwnershipId() {
+		return "org.eclipse.tm.terminal.serial"; //$NON-NLS-1$
+	}
+
 	public void run() {
 		String portName=null;
-		//Ownership identifier: 
-		//TODO [206884] This is part of API and should be changed for the next release
-		final String strID = getClass().getPackage().getName();
-		//final String strID = "org.eclipse.tm.terminal.serial"; //$NON-NLS-1$
+		final String strID = getOwnershipId();
 		SerialPort serialPort = null;
 		try {
 			fControl.setState(TerminalState.OPENED);
@@ -110,7 +123,7 @@ public class SerialConnectWorker extends Thread {
 			try {
 				fConn.setSerialPortIdentifier(CommPortIdentifier.getPortIdentifier(portName));
 			} catch (NoSuchPortException e) {
-				// let's try 
+				// let's try
 				addPort(portName);
 				fConn.setSerialPortIdentifier(CommPortIdentifier.getPortIdentifier(portName));
 			}
@@ -139,11 +152,11 @@ public class SerialConnectWorker extends Thread {
 			if(msg==null)
 				msg=portName;
 			fControl.displayTextInTerminal("No such port: \"" + msg+"\"\r\n"); //$NON-NLS-1$ //$NON-NLS-2$
-			
+
 		} catch (Exception exception) {
 			Logger.logException(exception);
 			if (serialPort!=null) {
-				//Event listener is removed as part of close(), 
+				//Event listener is removed as part of close(),
 				//but exceptions need to be caught to ensure that close() really succeeds
 				try {
 					serialPort.removeEventListener();

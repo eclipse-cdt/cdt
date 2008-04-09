@@ -27,18 +27,18 @@ import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
 public class ModifiedASTExpressionWriter extends ExpressionWriter {
 
-	private final ASTModificationHelper modificationHelpder;
+	private final ASTModificationHelper modificationHelper;
 
 	public ModifiedASTExpressionWriter(Scribe scribe, CPPASTVisitor visitor,
 			MacroExpansionHandler macroHandler, ASTModificationStore modStore, NodeCommentMap commentMap) {
 		super(scribe, visitor, macroHandler, commentMap);
-		this.modificationHelpder = new ASTModificationHelper(modStore);
+		this.modificationHelper = new ASTModificationHelper(modStore);
 	}
 
 	@Override
 	protected void writeExpressions(IASTExpressionList expList,
 			IASTExpression[] expressions) {
-		IASTExpression[] modifiedExpressions = modificationHelpder.createModifiedChildArray(expList, expressions);
+		IASTExpression[] modifiedExpressions = modificationHelper.createModifiedChildArray(expList, expressions);
 		super.writeExpressions(expList, modifiedExpressions);
 	}
 
@@ -49,7 +49,7 @@ public class ModifiedASTExpressionWriter extends ExpressionWriter {
 		IASTExpression initializer = newExp.getNewInitializer();
 		
 		if(initializer != null){
-			for(ASTModification childModification : modificationHelpder.modificationsForNode(initializer)){
+			for(ASTModification childModification : modificationHelper.modificationsForNode(initializer)){
 				switch(childModification.getKind()){
 				case REPLACE:
 					if(childModification.getNewNode() instanceof IASTInitializer){
@@ -66,7 +66,7 @@ public class ModifiedASTExpressionWriter extends ExpressionWriter {
 		}
 		else
 		{
-			for(ASTModification parentModification : modificationHelpder.modificationsForNode(newExp)){
+			for(ASTModification parentModification : modificationHelper.modificationsForNode(newExp)){
 				if(parentModification.getKind() == ModificationKind.APPEND_CHILD){
 					IASTNode newNode = parentModification.getNewNode();
 					if(newNode instanceof IASTInitializer){
@@ -81,7 +81,7 @@ public class ModifiedASTExpressionWriter extends ExpressionWriter {
 	@Override
 	protected IASTExpression[] getNewTypeIdArrayExpressions(
 			ICPPASTNewExpression newExp, IASTExpression[] expressions) {
-		IASTExpression[] modifiedExpressions = modificationHelpder.createModifiedChildArray(newExp, expressions);
+		IASTExpression[] modifiedExpressions = modificationHelper.createModifiedChildArray(newExp, expressions);
 		return modifiedExpressions;
 	}
 	

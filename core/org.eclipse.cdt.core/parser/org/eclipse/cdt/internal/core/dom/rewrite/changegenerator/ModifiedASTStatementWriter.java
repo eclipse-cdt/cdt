@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.changegenerator;
 
+import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
@@ -40,4 +41,11 @@ public class ModifiedASTStatementWriter extends StatementWriter {
 		IASTDeclaration replacementNode = modificationHelper.getNodeAfterReplacement(declaration);
 		super.writeDeclarationWithoutSemicolon(replacementNode);
 	}
+
+	@Override
+	protected IASTStatement[] getNestedStatements(IASTCompoundStatement compoundStatement) {
+		return modificationHelper.createModifiedChildArray(compoundStatement, compoundStatement.getStatements());
+	}
+	
+	
 }

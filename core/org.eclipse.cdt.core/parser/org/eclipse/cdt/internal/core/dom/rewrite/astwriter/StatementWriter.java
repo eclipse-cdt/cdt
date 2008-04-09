@@ -376,7 +376,7 @@ public class StatementWriter extends NodeWriter{
 	private void writeCompoundStatement(IASTCompoundStatement compoundStatement) {
 		scribe.printLBrace();
 		scribe.newLine();
-		for (IASTStatement statements : compoundStatement.getStatements()) {
+		for (IASTStatement statements : getNestedStatements(compoundStatement)) {
 			statements.accept(visitor);
 		}
 		
@@ -389,6 +389,10 @@ public class StatementWriter extends NodeWriter{
 			decrementIndentationLevelOneMore = false;
 		}
 		scribe.printRBrace();
+	}
+
+	protected IASTStatement[] getNestedStatements(IASTCompoundStatement compoundStatement) {
+		return compoundStatement.getStatements();
 	}	
 	
 	protected void writeBodyStatement(IASTStatement statement, boolean isDoStatement) {

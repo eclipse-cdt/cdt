@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * {Name} (company) - description of contribution.
  *******************************************************************************/
@@ -19,6 +19,7 @@ package org.eclipse.rse.ui.widgets;
 
 import org.eclipse.rse.core.subsystems.IRemoteServerLauncher;
 import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
+import org.eclipse.rse.core.subsystems.RemoteServerLauncherConstants;
 import org.eclipse.rse.core.subsystems.ServerLaunchType;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
@@ -56,9 +57,9 @@ public class RemoteServerLauncherForm extends RemoteBaseServerLauncherForm
 
 	private ValidatorPortInput       _daemonPortValidator;
 	private ValidatorPortInput       _rexecPortValidator;
-	
-	
-	private ServerLaunchType _origlaunchType; 
+
+
+	private ServerLaunchType _origlaunchType;
 	private String _origPath;
 	private String _origInvocation;
 	private int _origRexecPort;
@@ -88,7 +89,7 @@ public class RemoteServerLauncherForm extends RemoteBaseServerLauncherForm
 					_origAutoDetect != getAutoDetect();
 		return isDirty;
 	}
-	
+
 	public void disable()
 	{
 		_radioDaemon.setEnabled(false);
@@ -184,7 +185,7 @@ public class RemoteServerLauncherForm extends RemoteBaseServerLauncherForm
 
 		subRexecControls.setLayout(l2);
 		subRexecControls.setLayoutData(d2);
-		
+
 		_checkBoxAutoDetect = SystemWidgetHelpers.createCheckBox(_rexecControls, SystemResources.RESID_SUBSYSTEM_AUTODETECT_LABEL, this);
 		_checkBoxAutoDetect.setToolTipText(SystemResources.RESID_SUBSYSTEM_AUTODETECT_TIP);
 		_checkBoxRexecSSL = SystemWidgetHelpers.createCheckBox(_rexecControls, SystemResources.RESID_SUBSYSTEM_SSL_LABEL, this);
@@ -231,13 +232,13 @@ public class RemoteServerLauncherForm extends RemoteBaseServerLauncherForm
 		_checkBoxRexecSSL.setEnabled(_radioRexec.getSelection());
 		_checkBoxAutoDetect.setEnabled(_radioRexec.getSelection());
 		_checkBoxSSL.setEnabled(_radioNone.getSelection());
-		
-		_fieldDaemonPort.setText(String.valueOf(DEFAULT_DAEMON_PORT));
-		_fieldRexecPath.setText(DEFAULT_REXEC_PATH);
-		_fieldRexecInvocation.setText(DEFAULT_REXEC_SCRIPT);
-		_fieldRexecPort.setText(String.valueOf(DEFAULT_REXEC_PORT));		
+
+		_fieldDaemonPort.setText(String.valueOf(RemoteServerLauncherConstants.DEFAULT_DAEMON_PORT));
+		_fieldRexecPath.setText(RemoteServerLauncherConstants.DEFAULT_REXEC_PATH);
+		_fieldRexecInvocation.setText(RemoteServerLauncherConstants.DEFAULT_REXEC_SCRIPT);
+		_fieldRexecPort.setText(String.valueOf(RemoteServerLauncherConstants.DEFAULT_REXEC_PORT));
 	}
-	
+
 	/**
 	 * Set the initial values for the widgets, based on the server launcher
 	 */
@@ -252,35 +253,35 @@ public class RemoteServerLauncherForm extends RemoteBaseServerLauncherForm
 		int daemonPort = isl.getDaemonPort(); // defect 54335
 		boolean useSSL = isl.getConnectorService().isUsingSSL();
 		boolean autoDetectSSL = isl.getAutoDetectSSL();
-				
+
 		// find out if daemon can be launched
 		boolean allowDaemon = isl.isEnabledServerLaunchType(ServerLaunchType.DAEMON_LITERAL);
-			
+
 		// find out if rexec can be launched
 		boolean allowRexec = isl.isEnabledServerLaunchType(ServerLaunchType.REXEC_LITERAL);
-			
+
 		// find out if connect to running server should be allowed
 		boolean allowNo = isl.isEnabledServerLaunchType(ServerLaunchType.RUNNING_LITERAL);
-			
+
 		// enable/disable as appropriate
 		setDaemonLaunchEnabled(allowDaemon);
 		setRexecLaunchEnabled(allowRexec);
 		setNoLaunchEnabled(allowNo);
-		
+
 		setLaunchType(type);
-				
-		setDaemonPort(daemonPort);										
+
+		setDaemonPort(daemonPort);
 		setServerInstallPath(path);
 		setServerInvocation(invocation);
 		setREXECPort(rexecport);
 		setUseSSL(useSSL);
 		setAutoDetect(autoDetectSSL);
-	
+
 		if (!allowDaemon && !allowRexec && !allowNo) {
 			disable();
 		}
-		
-		
+
+
 		_origlaunchType = getLaunchType();
 		_origPath = getServerInstallPath();
 		_origInvocation = getServerInvocation();
@@ -289,7 +290,7 @@ public class RemoteServerLauncherForm extends RemoteBaseServerLauncherForm
 		_origUseSSL = getUseSSL();
 		_origAutoDetect = getAutoDetect();
 	}
-	
+
 	/**
 	 * Verify page contents on OK.
 	 * @return true if all went well, false if error found.
@@ -350,7 +351,7 @@ public class RemoteServerLauncherForm extends RemoteBaseServerLauncherForm
 
 	/**
 	 * Update the actual values in the server launcher, from the widgets. Called on successful press of OK.
-	 * @return true if all went well, false if something failed for some reason. 
+	 * @return true if all went well, false if something failed for some reason.
 	 */
 	public boolean updateValues(IServerLauncherProperties launcher)
 	{
@@ -375,12 +376,12 @@ public class RemoteServerLauncherForm extends RemoteBaseServerLauncherForm
 			isl.getConnectorService().commit();
 		}
 		catch (Exception e)
-		{	
+		{
 			return false;
 		}
 		return true;
 	}
-	
+
 
 	public void handleEvent(Event evt)
 	{
@@ -411,14 +412,14 @@ public class RemoteServerLauncherForm extends RemoteBaseServerLauncherForm
 		else
 			return null;
 	}
-	
+
 	protected boolean getUseSSL()
 	{
 		if (_radioRexec.getSelection())
 			return _checkBoxRexecSSL.getSelection();
 		else return _checkBoxSSL.getSelection();
 	}
-	
+
 	protected boolean getAutoDetect()
 	{
 		if (_radioNone.getSelection()) return false;
@@ -426,13 +427,13 @@ public class RemoteServerLauncherForm extends RemoteBaseServerLauncherForm
 			return _checkBoxAutoDetect.getSelection();
 		else return true;
 	}
-	
+
 	protected void setUseSSL(boolean use)
 	{
 		_checkBoxSSL.setSelection(use);
 		_checkBoxRexecSSL.setSelection(use);
 	}
-	
+
 	protected void setAutoDetect(boolean use)
 	{
 		_checkBoxAutoDetect.setSelection(use);
@@ -478,7 +479,7 @@ public class RemoteServerLauncherForm extends RemoteBaseServerLauncherForm
 	    //_daemonControls.getLayout().
 	    _labelDaemonPort.setEnabled(enable);
 	    _fieldDaemonPort.setEnabled(enable);
-	   
+
 		_radioDaemon.setEnabled(enable);
 	}
 
@@ -498,15 +499,15 @@ public class RemoteServerLauncherForm extends RemoteBaseServerLauncherForm
 	    _fieldRexecInvocation.setEnabled(enable);
 	    _fieldRexecPath.setEnabled(enable);
 	    _fieldRexecPort.setEnabled(enable);
-	    
+
 		_radioRexec.setEnabled(enable);
 	}
-	
+
 	public void setHostname(String hostname)
 	{
 	    _hostName = hostname;
 	}
-	
+
 	/**
 	 * Set the daemon port widget value
 	 * @param port - the port value as a string
@@ -515,10 +516,10 @@ public class RemoteServerLauncherForm extends RemoteBaseServerLauncherForm
 	{
 		_fieldDaemonPort.setText(port);
 	}
-	
+
 	/**
 	 * Set the daemon port widget value
-	 * @param port - the port value as an int 
+	 * @param port - the port value as an int
 	 */
 	public void setDaemonPort(int port)
 	{
@@ -545,7 +546,7 @@ public class RemoteServerLauncherForm extends RemoteBaseServerLauncherForm
 	{
 		return _fieldDaemonPort.getText().trim();
 	}
-	
+
 	/**
 	 * Set the REXEC port's widget value, as a String
 	 * @param port - the value to apply to the widget
@@ -594,7 +595,7 @@ public class RemoteServerLauncherForm extends RemoteBaseServerLauncherForm
 		_checkBoxSSL.setEnabled(enable);
 	}
 	/**
-	 * Return the current value of the REXEC server install path widget 
+	 * Return the current value of the REXEC server install path widget
 	 * @return widget value as a string
 	 */
 	public String getServerInstallPath()
@@ -610,7 +611,7 @@ public class RemoteServerLauncherForm extends RemoteBaseServerLauncherForm
 		_fieldRexecPath.setText(path);
 	}
 	/**
-	 * Return the current value of the REXEC server invocation widget 
+	 * Return the current value of the REXEC server invocation widget
 	 * @return widget value as a string
 	 */
 	public String getServerInvocation()

@@ -1,15 +1,15 @@
 /********************************************************************************
  * Copyright (c) 2002, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * David Dykstal (IBM) - refactoring IConnectorService and ServerLauncher hierarchies
  ********************************************************************************/
@@ -17,7 +17,6 @@
 package org.eclipse.rse.ui.widgets;
 
 import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
-import org.eclipse.rse.core.subsystems.RemoteServerLauncherConstants;
 import org.eclipse.rse.core.subsystems.ServerLaunchType;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -34,11 +33,8 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * Base Remote server launcher form.  Extend this to provide a specialized server launcher form
  */
-public abstract class RemoteBaseServerLauncherForm extends SystemBaseForm implements IServerLauncherForm, RemoteServerLauncherConstants, ISystemConnectionWizardErrorUpdater
+public abstract class RemoteBaseServerLauncherForm extends SystemBaseForm implements IServerLauncherForm, ISystemConnectionWizardErrorUpdater
 {
-
-
-
 	protected String _hostName;
 
 	protected ISystemMessageLine _msgLine;
@@ -54,8 +50,8 @@ public abstract class RemoteBaseServerLauncherForm extends SystemBaseForm implem
 	}
 
 	public abstract void disable();
-	
-	
+
+
 	/**
 	 * @see org.eclipse.rse.ui.SystemBaseForm#createContents(Composite)
 	 */
@@ -63,7 +59,7 @@ public abstract class RemoteBaseServerLauncherForm extends SystemBaseForm implem
 	{
 		// server lanucher group
 		Group group =createGroupControl(parent);
-	
+
 		// create launcher type controls
 		createLauncherControls(group);
 
@@ -74,7 +70,7 @@ public abstract class RemoteBaseServerLauncherForm extends SystemBaseForm implem
 		initDefaults();
 		return parent;
 	}
-	
+
 	protected Group createGroupControl(Composite parent)
 	{
 	    return SystemWidgetHelpers.createGroupComposite(
@@ -87,13 +83,13 @@ public abstract class RemoteBaseServerLauncherForm extends SystemBaseForm implem
 	protected abstract ServerLaunchType getLaunchType();
 	protected abstract void setLaunchType(ServerLaunchType type);
 
-	
-	
+
+
 
 	protected abstract void initDefaults();
-	
-	
-	
+
+
+
 	/**
 	 * Verify page contents on OK.
 	 * @return true if all went well, false if error found.
@@ -102,11 +98,11 @@ public abstract class RemoteBaseServerLauncherForm extends SystemBaseForm implem
 
 	/**
 	 * Update the actual values in the server launcher, from the widgets. Called on successful press of OK.
-	 * @return true if all went well, false if something failed for some reason. 
+	 * @return true if all went well, false if something failed for some reason.
 	 */
 	public abstract boolean updateValues(IServerLauncherProperties launcher);
 
-	
+
 	public void setHostname(String hostname)
 	{
 	    _hostName = hostname;

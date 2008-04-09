@@ -17,12 +17,12 @@
  *                                          Move SystemSelectRemoteFileOrFolderDialog to internal package first.
  *******************************************************************************/
 
-package org.eclipse.rse.files.ui.dialogs;
+package org.eclipse.rse.internal.files.ui.dialogs;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.rse.files.ui.dialogs.ISaveAsDialog;
 import org.eclipse.rse.files.ui.widgets.SaveAsForm;
 import org.eclipse.rse.files.ui.widgets.SystemSelectRemoteFileOrFolderForm;
-import org.eclipse.rse.internal.files.ui.dialogs.SystemSelectRemoteFileOrFolderDialog;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.swt.widgets.Shell;
 
@@ -38,7 +38,7 @@ public class SaveAsDialog extends SystemSelectRemoteFileOrFolderDialog implement
 	 * @param shell The shell to hang the dialog off of
 	 * 
 	 */
-	protected SaveAsDialog(Shell shell)
+	public SaveAsDialog(Shell shell)
 	{
 		super(shell, false);
 	}	
@@ -48,20 +48,11 @@ public class SaveAsDialog extends SystemSelectRemoteFileOrFolderDialog implement
 	 * @param shell The shell to hang the dialog off of
 	 * @param title The title to give the dialog
 	 */
-	protected SaveAsDialog(Shell shell, String title)
+	public SaveAsDialog(Shell shell, String title)
 	{
 		super(shell, title, true);
 	}
 	
-	public static ISaveAsDialog getSaveAsDialog(Shell shell, String title)
-	{
-		return new SaveAsDialog(shell, title);
-	}
-	
-	public static ISaveAsDialog getSaveAsDialog(Shell shell)
-	{
-		return new SaveAsDialog(shell);
-	}	
 	
     protected SystemSelectRemoteFileOrFolderForm getForm(boolean fileMode)
     {

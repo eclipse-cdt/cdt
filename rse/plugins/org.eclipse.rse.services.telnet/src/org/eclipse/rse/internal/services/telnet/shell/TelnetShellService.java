@@ -15,13 +15,15 @@
  * Martin Oberhuber (Wind River) - Adapted from LocalShellService.
  * Sheldon D'souza (Celunite) - Adapted from SshShellService.
  * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable
- *******************************************************************************/
+ * Martin Oberhuber (Wind River) - [226301][api] IShellService should throw SystemMessageException on error
+s *******************************************************************************/
 package org.eclipse.rse.internal.services.telnet.shell;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.internal.services.telnet.ITelnetService;
 import org.eclipse.rse.internal.services.telnet.ITelnetSessionProvider;
 import org.eclipse.rse.internal.services.telnet.TelnetServiceResources;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.shells.AbstractShellService;
 import org.eclipse.rse.services.shells.IHostShell;
 
@@ -33,20 +35,16 @@ public class TelnetShellService extends AbstractShellService implements ITelnetS
 		this.fTelnetSessionProvider = sessionProvider;
 	}
 
-	public String[] getHostEnvironment() {
-		return new String[0];
-	}
-
 	public IHostShell launchShell(String initialWorkingDirectory,
 			String encoding, String[] environment,
-			IProgressMonitor monitor) {
+			IProgressMonitor monitor) throws SystemMessageException {
 		TelnetHostShell hostShell = new TelnetHostShell(fTelnetSessionProvider, initialWorkingDirectory, TelnetHostShell.SHELL_INVOCATION, encoding, environment);
 		return hostShell;
 	}
 
 	public IHostShell runCommand(String initialWorkingDirectory,
 			String command, String encoding, String[] environment,
-			IProgressMonitor monitor) {
+			IProgressMonitor monitor) throws SystemMessageException {
 		TelnetHostShell hostShell = new TelnetHostShell(fTelnetSessionProvider, initialWorkingDirectory, TelnetHostShell.SHELL_INVOCATION, encoding, environment);
 		return hostShell;
 	}

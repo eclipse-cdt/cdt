@@ -1,20 +1,21 @@
 /********************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2005, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
- * Contributors: 
+ *
+ * Contributors:
  * Yu-Fen Kuo (MontaVista) - adapted from RSE UniversalLinuxProcessHandler
  * Martin Oberhuber (Wind River) - [refactor] "shell" instead of "ssh" everywhere
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * David McKnight   (IBM)        - [175308] Need to use a job to wait for shell to exit
+ * Martin Oberhuber (Wind River) - [226301][api] IShellService should throw SystemMessageException on error
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.processes.shell.linux;
@@ -34,7 +35,7 @@ import org.eclipse.rse.services.shells.IShellService;
 
 /**
  * Helper class that helps to get state code and user name info most of the code
- * 
+ *
  */
 public class LinuxProcessHelper {
     private HashMap stateMap;
@@ -92,11 +93,10 @@ public class LinuxProcessHelper {
         _uidsByUserName = new HashMap();
 
         IShellService shellService = Activator.getShellService(host);
-        IHostShell hostShell = shellService.launchShell(
-                "", null, new NullProgressMonitor()); //$NON-NLS-1$
-        hostShell.writeToShell(getUserNameCommand());
         Process p = null;
         try {
+            IHostShell hostShell = shellService.launchShell("", null, new NullProgressMonitor()); //$NON-NLS-1$
+			hostShell.writeToShell(getUserNameCommand());
             p = new HostShellProcessAdapter(hostShell);
             // when p.waitFor() is called here, the hostShell.isActive() always
             // return true.
@@ -131,7 +131,7 @@ public class LinuxProcessHelper {
         } catch (IOException e) {
             Activator.log(e);
         }
-        
+
         // Wait for remote process to exit.
         WaiterJob waiter = new WaiterJob(p);
         waiter.schedule();

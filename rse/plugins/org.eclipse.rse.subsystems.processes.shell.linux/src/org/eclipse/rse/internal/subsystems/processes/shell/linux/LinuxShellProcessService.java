@@ -11,6 +11,7 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * David McKnight   (IBM)        - [175308] Need to use a job to wait for shell to exit
  * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable and add Javadoc
+ * Martin Oberhuber (Wind River) - [226301][api] IShellService should throw SystemMessageException on error
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.processes.shell.linux;
@@ -212,15 +213,14 @@ public class LinuxShellProcessService extends AbstractProcessService {
      */
     protected String[] internalGetSignalTypes() {
         IShellService shellService = Activator.getShellService(host);
-        IHostShell hostShell = shellService.launchShell(
-                "", null, new NullProgressMonitor()); //$NON-NLS-1$
-        hostShell.writeToShell(getSignalTypesCommand());
         Process p = null;
         try {
+            IHostShell hostShell = shellService.launchShell("", null, new NullProgressMonitor()); //$NON-NLS-1$
+			hostShell.writeToShell(getSignalTypesCommand());
             p = new HostShellProcessAdapter(hostShell);
             // p.waitFor();
         } catch (Exception e) {
-            e.printStackTrace();
+            Activator.log(e);
             if (p != null) {
                 p.destroy();
             }

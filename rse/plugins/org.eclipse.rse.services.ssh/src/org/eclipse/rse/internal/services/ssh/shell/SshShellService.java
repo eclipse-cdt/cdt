@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - Adapted from LocalShellService.
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable
+ * Martin Oberhuber (Wind River) - [226301][api] IShellService should throw SystemMessageException on error
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.shell;
@@ -24,6 +25,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.internal.services.ssh.ISshService;
 import org.eclipse.rse.internal.services.ssh.ISshSessionProvider;
 import org.eclipse.rse.internal.services.ssh.SshServiceResources;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.shells.AbstractShellService;
 import org.eclipse.rse.services.shells.IHostShell;
 
@@ -41,21 +43,16 @@ public class SshShellService extends AbstractShellService implements ISshService
 
 	public IHostShell launchShell(String initialWorkingDirectory,
 			String encoding, String[] environment,
-			IProgressMonitor monitor) {
+			IProgressMonitor monitor) throws SystemMessageException {
 		SshHostShell hostShell = new SshHostShell(fSessionProvider, initialWorkingDirectory, SshHostShell.SHELL_INVOCATION, encoding, environment);
 		return hostShell;
 	}
 
 	public IHostShell runCommand(String initialWorkingDirectory,
 			String command, String encoding, String[] environment,
-			IProgressMonitor monitor) {
+			IProgressMonitor monitor) throws SystemMessageException {
 		SshHostShell hostShell = new SshHostShell(fSessionProvider, initialWorkingDirectory, command, encoding, environment);
 		return hostShell;
-	}
-
-	public String[] getHostEnvironment() {
-		//TODO getHostEnvironment is not yet implemented for ssh (needs running remote command and parsing)
-		return new String[0];
 	}
 
 	public String getName() {

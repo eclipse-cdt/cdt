@@ -17,6 +17,7 @@
  * David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup
  * David McKnight   (IBM)        - [216252] use SimpleSystemMessage instead of getMessage()
  * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable and add Javadoc
+ * Martin Oberhuber (Wind River) - [226301][api] IShellService should throw SystemMessageException on error
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.shells;
@@ -32,6 +33,7 @@ import org.eclipse.dstore.core.model.IDataStoreProvider;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.internal.services.dstore.ServiceResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.dstore.AbstractDStoreService;
 import org.eclipse.rse.services.dstore.util.DStoreStatusMonitor;
 import org.eclipse.rse.services.shells.IHostShell;
@@ -60,7 +62,7 @@ public class DStoreShellService extends AbstractDStoreService implements IShellS
 	}
 
 
-	public IHostShell launchShell(String initialWorkingDirectory, String[] environment, IProgressMonitor monitor)
+	public IHostShell launchShell(String initialWorkingDirectory, String[] environment, IProgressMonitor monitor) throws SystemMessageException
 	{
 		if (!isInitialized())
 		{
@@ -69,7 +71,7 @@ public class DStoreShellService extends AbstractDStoreService implements IShellS
 		return launchShell(initialWorkingDirectory, null, environment, monitor);
 	}
 
-	public IHostShell launchShell(String initialWorkingDirectory, String encoding, String[] environment, IProgressMonitor monitor)
+	public IHostShell launchShell(String initialWorkingDirectory, String encoding, String[] environment, IProgressMonitor monitor) throws SystemMessageException
 	{
 		if (!isInitialized())
 		{
@@ -79,7 +81,7 @@ public class DStoreShellService extends AbstractDStoreService implements IShellS
 	}
 
 	public IHostShell runCommand(String initialWorkingDirectory, String command, String[] environment,
-			IProgressMonitor monitor)
+			IProgressMonitor monitor) throws SystemMessageException
 	{
 		if (!isInitialized())
 		{
@@ -89,7 +91,7 @@ public class DStoreShellService extends AbstractDStoreService implements IShellS
 	}
 
 	public IHostShell runCommand(String initialWorkingDirectory, String command, String encoding,
-			String[] environment, IProgressMonitor monitor)
+			String[] environment, IProgressMonitor monitor) throws SystemMessageException
 	{
 		if (!isInitialized())
 		{
@@ -98,7 +100,7 @@ public class DStoreShellService extends AbstractDStoreService implements IShellS
 		return new DStoreHostShell(getStatusMonitor(getDataStore()), getDataStore(), initialWorkingDirectory, command, encoding, environment);
 	}
 
-	public String[] getHostEnvironment()
+	public String[] getHostEnvironment() throws SystemMessageException
 	{
 		if (_envVars == null || _envVars.length == 0)
 		{

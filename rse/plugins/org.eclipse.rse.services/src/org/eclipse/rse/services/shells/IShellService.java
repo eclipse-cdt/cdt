@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable and add Javadoc
+ * Martin Oberhuber (Wind River) - [226301][api] IShellService should throw SystemMessageException on error
  ********************************************************************************/
 
 package org.eclipse.rse.services.shells;
@@ -20,6 +21,7 @@ package org.eclipse.rse.services.shells;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.rse.services.IService;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
 /**
  * IShellService is an abstraction for running shells and shell commands.
@@ -36,16 +38,19 @@ public interface IShellService extends IService
 	 *
 	 * This is a convenience method, passing <code>null</code> as encoding
 	 * into {@link #launchShell(String, String, String[], IProgressMonitor)}.
+	 *
+	 * @throws SystemMessageException in case an error occurred or the user
+	 *             chose to cancel the operation via the progress monitor.
 	 */
-	public IHostShell launchShell(String initialWorkingDirectory, String[] environment, IProgressMonitor monitor);
+	public IHostShell launchShell(String initialWorkingDirectory, String[] environment, IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
 	 * Launch a new shell in the specified directory.
 	 *
-	 * @param initialWorkingDirectory initial working directory or
-	 *            <code>null</code> if not relevant. The remote shell will
-	 *            launch in a directory of its own choice in that case
-	 *            (typically a user's home directory).
+	 * @param initialWorkingDirectory initial working directory or empty String
+	 *            ("") if not relevant. The remote shell will launch in a
+	 *            directory of its own choice in that case (typically a user's
+	 *            home directory).
 	 * @param encoding Stream encoding to use, or <code>null</code> to fall
 	 *            back to a default encoding. The Shell Service will make
 	 *            efforts to determine a proper default encoding on the remote
@@ -57,11 +62,13 @@ public interface IShellService extends IService
 	 *            set.
 	 * @param monitor Progress Monitor for monitoring and cancellation
 	 * @return the shell object. Note that the shell may not actually be usable
-	 *         in case an error occurred or the operation was canceled. In this
-	 *         case, {@link IHostShell#isActive()} returns <code>false</code>
-	 *         on the created Shell object.
+	 *         in case the remote side allows opening a channel but immediately
+	 *         closes it again. In this case, {@link IHostShell#isActive()}
+	 *         returns <code>false</code> on the created Shell object.
+	 * @throws SystemMessageException in case an error occurred or the user
+	 *             chose to cancel the operation via the progress monitor.
 	 */
-	public IHostShell launchShell(String initialWorkingDirectory, String encoding, String[] environment, IProgressMonitor monitor);
+	public IHostShell launchShell(String initialWorkingDirectory, String encoding, String[] environment, IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
 	 *
@@ -70,8 +77,11 @@ public interface IShellService extends IService
 	 * This is a convenience method, passing <code>null</code> as encoding
 	 * into
 	 * {@link #runCommand(String, String, String, String[], IProgressMonitor)}.
+	 *
+	 * @throws SystemMessageException in case an error occurred or the user
+	 *             chose to cancel the operation via the progress monitor.
 	 */
-	public IHostShell runCommand(String initialWorkingDirectory, String command, String[] environment, IProgressMonitor monitor);
+	public IHostShell runCommand(String initialWorkingDirectory, String command, String[] environment, IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
 	 * Run a single command in it's own shell.
@@ -85,10 +95,10 @@ public interface IShellService extends IService
 	 * connection automatically. Clients need to call {@link IHostShell#exit()}
 	 * in case the shell remains active after the initial command is completed.
 	 *
-	 * @param initialWorkingDirectory initial working directory or
-	 *            <code>null</code> if not relevant. The remote shell will
-	 *            launch in a directory of its own choice in that case
-	 *            (typically a user's home directory).
+	 * @param initialWorkingDirectory initial working directory or empty String
+	 *            ("") if not relevant. The remote command will launch in a
+	 *            directory of its own choice in that case (typically a user's
+	 *            home directory).
 	 * @param encoding Stream encoding to use, or <code>null</code> to fall
 	 *            back to a default encoding. The Shell Service will make
 	 *            efforts to determine a proper default encoding on the remote
@@ -100,23 +110,27 @@ public interface IShellService extends IService
 	 *            set.
 	 * @param monitor Progress Monitor for monitoring and cancellation
 	 * @return the shell object for getting output and error streams. Note that
-	 *         the shell may not actually be usable in case an error occurred or
-	 *         the operation was canceled. In this case,
-	 *         {@link IHostShell#isActive()} returns <code>false</code> on the
-	 *         created Shell object.
+	 *         the shell may not actually be usable in case an error occurred on
+	 *         the remote side, such as the command not being executable. In
+	 *         this case, {@link IHostShell#isActive()} returns
+	 *         <code>false</code> on the created Shell object.
+	 * @throws SystemMessageException in case an error occurred or the user
+	 *             chose to cancel the operation via the progress monitor.
 	 */
-	public IHostShell runCommand(String initialWorkingDirectory, String command, String encoding, String[] environment, IProgressMonitor monitor);
+	public IHostShell runCommand(String initialWorkingDirectory, String command, String encoding, String[] environment, IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
 	 * Return an array of environment variables that describe the environment on
 	 * the remote system. Each String returned is of the format "var=text":
 	 * Everything up to the first equals sign is the name of the given
 	 * environment variable, everything after the equals sign is its contents.
-	 * 
+	 *
 	 * @return Array of environment variable Strings of the form "var=text" if
-	 *         supported by a shell service implementation. May return
-	 *         <code>null</code> in case environment variable retrieval is not
+	 *         supported by a shell service implementation. Should return an
+	 *         empty array in case environment variable retrieval is not
 	 *         supported on a particular shell service implementation.
+	 * @throws SystemMessageException in case an error occurred or the user
+	 *             chose to cancel the operation via the progress monitor.
 	 */
-	public String[] getHostEnvironment();
+	public String[] getHostEnvironment() throws SystemMessageException;
 }

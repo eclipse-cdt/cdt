@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable
+ * Martin Oberhuber (Wind River) - [226301][api] IShellService should throw SystemMessageException on error
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.local.shells;
@@ -26,6 +27,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.internal.services.local.ILocalService;
 import org.eclipse.rse.internal.services.local.LocalServiceResources;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.shells.AbstractShellService;
 import org.eclipse.rse.services.shells.IHostShell;
 
@@ -48,21 +50,21 @@ public class LocalShellService extends AbstractShellService implements ILocalSer
 		return LocalServiceResources.Local_Shell_Service_Description;
 	}
 
-	public IHostShell launchShell(String initialWorkingDirectory, String encoding, String[] environment, IProgressMonitor monitor)
+	public IHostShell launchShell(String initialWorkingDirectory, String encoding, String[] environment, IProgressMonitor monitor) throws SystemMessageException
 	{
 		LocalHostShell hostShell = new LocalHostShell(initialWorkingDirectory,SHELL_INVOCATION, encoding, environment);
 		hostShell.run(monitor);
 		return hostShell;
 	}
 
-	public IHostShell runCommand(String initialWorkingDirectory, String command, String encoding, String[] environment, IProgressMonitor monitor)
+	public IHostShell runCommand(String initialWorkingDirectory, String command, String encoding, String[] environment, IProgressMonitor monitor) throws SystemMessageException
 	{
 		LocalHostShell hostShell = new LocalHostShell(initialWorkingDirectory,command, encoding, environment);
 		hostShell.run(monitor);
 		return hostShell;
 	}
 
-	public String[] getHostEnvironment()
+	public String[] getHostEnvironment() throws SystemMessageException
 	{
 		if (_envVars == null)
 		{

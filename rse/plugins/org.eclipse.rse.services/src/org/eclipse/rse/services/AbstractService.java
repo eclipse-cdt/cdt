@@ -16,9 +16,9 @@ import org.eclipse.core.runtime.PlatformObject;
 /**
  * Abstract default implementation of an RSE Service. Clients are expected to
  * extend this class.
- *
+ * 
  * @see IService
- * @since org.eclipse.rse.core 3.0
+ * @since org.eclipse.rse.services 3.0
  */
 public abstract class AbstractService extends PlatformObject implements IService {
 

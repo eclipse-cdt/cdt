@@ -24,7 +24,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
  * 
  * @author dsteffle
  */
-public class CPPImplicitTypedef extends CPPTypedef implements ITypedef, ICPPInternalBinding {
+public class CPPImplicitTypedef extends CPPTypedef {
     private IType type=null;
     private char[] name=null;
     private IScope scope=null;
@@ -36,41 +36,26 @@ public class CPPImplicitTypedef extends CPPTypedef implements ITypedef, ICPPInte
         this.scope = scope;
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.ITypedef#getType()
-     */
     @Override
 	public IType getType() {
         return type;
     }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
-     */
+
     @Override
 	public String getName() {
         return String.valueOf(name);
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
-     */
     @Override
 	public char[] getNameCharArray() {
         return name;
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
-     */
     @Override
 	public IScope getScope() {
         return scope;
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
-     */
     @Override
 	public boolean isSameType(IType t) {
         if( t == this )
@@ -91,9 +76,6 @@ public class CPPImplicitTypedef extends CPPTypedef implements ITypedef, ICPPInte
         return false;
     }
     
-    /* (non-Javadoc)
-     * @see java.lang.Object#clone()
-     */
     @Override
 	public Object clone(){
         IType t = null;
@@ -141,9 +123,7 @@ public class CPPImplicitTypedef extends CPPTypedef implements ITypedef, ICPPInte
         // do nothing
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedName()
-     */
+
     @Override
 	public String[] getQualifiedName() {
         String[] temp = new String[1];
@@ -152,9 +132,7 @@ public class CPPImplicitTypedef extends CPPTypedef implements ITypedef, ICPPInte
         return temp;
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedNameCharArray()
-     */
+
     @Override
 	public char[][] getQualifiedNameCharArray() {
         char[][] temp = new char[1][];

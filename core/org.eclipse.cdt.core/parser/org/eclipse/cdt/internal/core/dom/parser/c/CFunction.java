@@ -77,23 +77,22 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
             updateParameterBindings( fnDeclarator );
             definition = fnDeclarator;
             return;
-        } else {
-            updateParameterBindings( fnDeclarator );
-            if( declarators == null ){
-                declarators = new IASTStandardFunctionDeclarator[] { (IASTStandardFunctionDeclarator) fnDeclarator };
-            	return;
-            }
-            for( int i = 0; i < declarators.length; i++ ){
-                if( declarators[i] == null ){
-                    declarators[i] = (IASTStandardFunctionDeclarator) fnDeclarator;
-                    return;
-                }
-            }
-            IASTStandardFunctionDeclarator tmp [] = new IASTStandardFunctionDeclarator [ declarators.length * 2 ];
-            System.arraycopy( declarators, 0, tmp, 0, declarators.length );
-            tmp[ declarators.length ] = (IASTStandardFunctionDeclarator) fnDeclarator;
-            declarators = tmp;
         }
+		updateParameterBindings( fnDeclarator );
+		if( declarators == null ){
+		    declarators = new IASTStandardFunctionDeclarator[] { (IASTStandardFunctionDeclarator) fnDeclarator };
+			return;
+		}
+		for( int i = 0; i < declarators.length; i++ ){
+		    if( declarators[i] == null ){
+		        declarators[i] = (IASTStandardFunctionDeclarator) fnDeclarator;
+		        return;
+		    }
+		}
+		IASTStandardFunctionDeclarator tmp [] = new IASTStandardFunctionDeclarator [ declarators.length * 2 ];
+		System.arraycopy( declarators, 0, tmp, 0, declarators.length );
+		tmp[ declarators.length ] = (IASTStandardFunctionDeclarator) fnDeclarator;
+		declarators = tmp;
     }
 	
     protected IASTTranslationUnit getTranslationUnit() {
@@ -374,9 +373,7 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
         return false;
 	}
 	
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IFunction#isExtern()
-     */
+
     public boolean isExtern() {
     	return isExtern(true);
     }
@@ -388,9 +385,7 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
         return hasStorageClass( IASTDeclSpecifier.sc_extern);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IFunction#isAuto()
-     */
+
     public boolean isAuto() {
         if( (bits & FULLY_RESOLVED) == 0 ){
             resolveAllDeclarations();
@@ -398,9 +393,7 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
         return hasStorageClass( IASTDeclSpecifier.sc_auto);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IFunction#isRegister()
-     */
+  
     public boolean isRegister() {
         if( (bits & FULLY_RESOLVED) == 0 ){
             resolveAllDeclarations();
@@ -408,9 +401,7 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
         return hasStorageClass( IASTDeclSpecifier.sc_register);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IFunction#isInline()
-     */
+ 
     public boolean isInline() {
         if( (bits & FULLY_RESOLVED) == 0 ){
             resolveAllDeclarations();
@@ -442,9 +433,7 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IFunction#takesVarArgs()
-     */
+
     public boolean takesVarArgs() {
         if( (bits & FULLY_RESOLVED) == 0 ){
             resolveAllDeclarations();

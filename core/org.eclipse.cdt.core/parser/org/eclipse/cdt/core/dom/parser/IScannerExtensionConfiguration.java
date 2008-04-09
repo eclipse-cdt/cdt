@@ -45,7 +45,7 @@ public interface IScannerExtensionConfiguration {
 	/**
 	 * Support for GNU extension "Dollar Signs in Identifier Names".
 	 * 
-	 * @see http://gcc.gnu.org/onlinedocs/gcc/Dollar-Signs.html
+	 * @see "http://gcc.gnu.org/onlinedocs/gcc/Dollar-Signs.html"
 	 * @return <code>true</code>, if $ should be supported in identifiers
 	 */
 	public boolean support$InIdentifiers();
@@ -54,7 +54,7 @@ public interface IScannerExtensionConfiguration {
 	 * Support for (deprecated) GNU minimum and maximum operators (<code>&lt;?</code>
 	 * and <code>&gt;?</code>).
 	 * 
-	 * @see http://gcc.gnu.org/onlinedocs/gcc/Deprecated-Features.html
+	 * @see "http://gcc.gnu.org/onlinedocs/gcc/Deprecated-Features.html"
 	 * @return <code>true</code> if support for the extension should be
 	 *         enabled
 	 */
@@ -64,7 +64,7 @@ public interface IScannerExtensionConfiguration {
 	 * Support for additional numeric literal suffix characters, like e.g. 'i'
 	 * and 'j' for GNU Complex number literals.
 	 * 
-	 * @see http://gcc.gnu.org/onlinedocs/gcc/Complex.html
+	 * @see "http://gcc.gnu.org/onlinedocs/gcc/Complex.html"
 	 * @return an array of chars or <code>null</code>, if no additional
 	 *         suffixes should be allowed
 	 */

@@ -331,14 +331,6 @@ public class ASTPrinter {
 		private void print(IBinding binding) {
 			ASTPrinter.print(out, indentLevel, binding);
 		}
-		
-
-		@Override
-		public int visit(IASTComment comment) {
-			print(comment);
-			indentLevel++;
-			return super.visit(comment);
-		}
 
 		@Override
 		public int visit(ICASTDesignator designator) {
@@ -450,11 +442,6 @@ public class ASTPrinter {
 			return super.visit(typeId);
 		}
 
-		@Override
-		public int leave(IASTComment comment) {
-			indentLevel--;
-			return super.leave(comment);
-		}
 		
 		@Override
 		public int leave(ICASTDesignator designator) {

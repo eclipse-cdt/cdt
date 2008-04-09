@@ -289,7 +289,7 @@ public class CVisitor {
 				parent = parent.getParent();
 
 			if ( parent instanceof IASTDeclaration ) {
-				if ( parent != null && parent instanceof IASTFunctionDefinition ) {
+				if ( parent instanceof IASTFunctionDefinition ) {
 					if ( declarator.getName() != null && declarator.getName().resolveBinding() == binding ) {
 						addName(declarator.getName());
 					}
@@ -895,7 +895,6 @@ public class CVisitor {
 		try {
             binding = ( scope != null ) ? scope.getBinding( name, false ) : null;
         } catch ( DOMException e1 ) {
-            binding = null;
         }  
 		
         if( parent instanceof IASTParameterDeclaration || parent.getPropertyInParent() == ICASTKnRFunctionDeclarator.FUNCTION_PARAMETER ){
@@ -1030,8 +1029,7 @@ public class CVisitor {
                 	return new ProblemBinding( node, IProblemBinding.SEMANTIC_NAME_NOT_FOUND, name.toCharArray());
 				if( binding instanceof IType )
 					return binding;
-                else if( binding != null )
-					return new ProblemBinding( node, IProblemBinding.SEMANTIC_INVALID_TYPE, binding.getNameCharArray() );
+				return new ProblemBinding( node, IProblemBinding.SEMANTIC_INVALID_TYPE, binding.getNameCharArray() );
             } catch ( DOMException e ) {
                 return null;
             }
@@ -1272,7 +1270,6 @@ public class CVisitor {
 					// The index will be search later, still we need to look at the declarations found in
 					// the AST, bug 180883
 					nodes = translation.getDeclarations();
-					scope = null;
 				}
 			} else if( parent instanceof IASTStandardFunctionDeclarator ){
 			    IASTStandardFunctionDeclarator dtor = (IASTStandardFunctionDeclarator) parent;
@@ -1314,7 +1311,7 @@ public class CVisitor {
 				boolean reachedBlockItem = false;
 				if( nodes != null ){
 				    int idx = -1;
-					IASTNode node = ( nodes != null ? (nodes.length > 0 ? nodes[++idx] : null ) : parent );
+					IASTNode node = nodes.length > 0 ? nodes[++idx] : null;
 					while( node != null ) {
 						Object candidate = null;
 	                    try {
@@ -1418,8 +1415,7 @@ public class CVisitor {
 		if( blockItem != null) {
 			if (binding == null)
 				return externalBinding( (IASTTranslationUnit) blockItem, name );
-			else
-				return binding;
+			return binding;
 		}
 		return null;
 	}
@@ -1785,11 +1781,10 @@ public class CVisitor {
 	 * behaviour and is used as the foundation of the ITypes being created.  
 	 * The parameter isParm is used to specify whether the declarator is a parameter or not.  
 	 * 
-	 * @param declarator the IASTDeclarator whose base IType will be created 
 	 * @param declSpec the IASTDeclSpecifier used to determine if the base type is a CQualifierType or not
-	 * @param isParm is used to specify whether the IASTDeclarator is a parameter of a declaration
 	 * @return the base IType
 	 */
+	@SuppressWarnings("null")
 	public static IType createBaseType( IASTDeclSpecifier declSpec ) {
 		if( declSpec instanceof IGCCASTSimpleDeclSpecifier ){
 			IASTExpression exp = ((IGCCASTSimpleDeclSpecifier)declSpec).getTypeofExpression();
@@ -1968,23 +1963,14 @@ public class CVisitor {
 		return action.getDeclarationNames();
 	}
 
-	/**
-	 * @param unit
-	 * @param binding
-	 * @return
-	 */
+
 	public static IASTName[] getReferences(IASTTranslationUnit tu, IBinding binding) {
 		CollectReferencesAction action = new CollectReferencesAction( binding );
 		tu.accept(action);
 		return action.getReferences();
 	}
 
-    /**
-     * @param startingPoint
-     * @param name
-     * @return
-     * @throws DOMException
-     */
+
     public static IBinding findTypeBinding(IASTNode startingPoint, IASTName name) throws DOMException {
         if( startingPoint instanceof IASTTranslationUnit )
         {
@@ -2084,7 +2070,7 @@ public class CVisitor {
             scope = scope.getParent();
         } while( scope != null );
         
-        int c = (b1 == null ? 0 : b1.length) + (b2 == null ? 0 :b2.length) + (b3 == null ? 0 : b3.size());
+        int c = (b1 == null ? 0 : b1.length) + (b2 == null ? 0 : b2.length) + b3.size();
 
         IBinding [] result = new IBinding [c];
         
@@ -2094,8 +2080,7 @@ public class CVisitor {
         if (b2 != null)
         	ArrayUtil.addAll(IBinding.class, result, b2);
        
-        if (b3 != null)
-        	ArrayUtil.addAll(IBinding.class, result, b3.toArray(new IBinding[b3.size()]));
+        ArrayUtil.addAll(IBinding.class, result, b3.toArray(new IBinding[b3.size()]));
         
         return result;
     }

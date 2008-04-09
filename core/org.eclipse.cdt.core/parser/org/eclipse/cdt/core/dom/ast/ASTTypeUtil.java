@@ -552,7 +552,6 @@ public class ASTTypeUtil {
      * Note:  false is returned if no isConst() method is found
      * 
 	 * @param type
-	 * @return
 	 */
 	public static boolean isConst(IType type) {
 		if (type instanceof IQualifierType) {

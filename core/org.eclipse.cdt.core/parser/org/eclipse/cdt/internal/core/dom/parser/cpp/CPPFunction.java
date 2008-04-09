@@ -149,16 +149,12 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 	    }
 	}
 	
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPBinding#getDeclarations()
-     */
+ 
     public IASTNode[] getDeclarations() {
         return declarations;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPBinding#getDefinition()
-     */
+
     public IASTNode getDefinition() {
         return definition;
     }
@@ -209,9 +205,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IFunction#getParameters()
-	 */
+
 	public IParameter[] getParameters() {
 	    IASTStandardFunctionDeclarator dtor = (definition != null) ? definition : declarations[0];
 		IASTParameterDeclaration[] params = dtor.getParameters();
@@ -234,9 +228,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IFunction#getFunctionScope()
-	 */
+
 	public IScope getFunctionScope() {
 	    resolveAllDeclarations();
 	    if (definition != null) {
@@ -246,16 +238,12 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 	    return declarations[0].getFunctionScope();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
-	 */
+
 	public String getName() {
 	    return getASTName().toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
-	 */
+
 	public char[] getNameCharArray() {
 		return getASTName().toCharArray();
 	}
@@ -276,9 +264,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 	}
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
-	 */
+
 	public IScope getScope() {
 	    IASTName n = getASTName();
 	    IScope scope = CPPVisitor.getContainingScope(n);
@@ -309,9 +295,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 		return scope;
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IFunction#getType()
-     */
+
     public IFunctionType getType() {
         if (type == null)
             type = (IFunctionType) CPPVisitor.createType((definition != null) ? definition : declarations[0]);
@@ -383,15 +367,11 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
     	}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IFunction#isStatic()
-     */
+
     public boolean isStatic() {
         return isStatic(true);
     }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction#isStatic(boolean)
-     */
+
     public boolean isStatic(boolean resolveAll) {
         if (resolveAll && (bits & FULLY_RESOLVED) == 0) {
             resolveAllDeclarations();
@@ -430,23 +410,17 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 //        return false;
 //    }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedName()
-     */
+
     public String[] getQualifiedName() {
         return CPPVisitor.getQualifiedName(this);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedNameCharArray()
-     */
+
     public char[][] getQualifiedNameCharArray() {
         return CPPVisitor.getQualifiedNameCharArray(this);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#isGloballyQualified()
-     */
+
     public boolean isGloballyQualified() throws DOMException {
         IScope scope = getScope();
         while (scope != null) {
@@ -487,16 +461,10 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
         return false;
 	}
 	
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction#isMutable()
-     */
     public boolean isMutable() {
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction#isInline()
-     */
     public boolean isInline() throws DOMException {
 	    ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) getDefinition();
         ICPPASTFunctionDeclarator[] ds = (ICPPASTFunctionDeclarator[]) getDeclarations();
@@ -524,9 +492,6 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction#isInline()
-     */
     public boolean isExternC() throws DOMException {
 	    if (CPPVisitor.isExternC(getDefinition())) {
 	    	return true;
@@ -542,30 +507,18 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IFunction#isExtern()
-     */
     public boolean isExtern() {
         return hasStorageClass(this, IASTDeclSpecifier.sc_extern);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IFunction#isAuto()
-     */
     public boolean isAuto() {
         return hasStorageClass(this, IASTDeclSpecifier.sc_auto);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IFunction#isRegister()
-     */
     public boolean isRegister() {
         return hasStorageClass(this, IASTDeclSpecifier.sc_register);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IFunction#takesVarArgs()
-     */
     public boolean takesVarArgs() {
         ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) getDefinition();
         if (dtor != null) {

@@ -43,9 +43,7 @@ public class CPPClassSpecializationScope implements ICPPClassScope, IASTInternal
 	private ObjectMap instanceMap = ObjectMap.EMPTY_MAP;
 	final private ICPPSpecialization specialization;
 	
-	/**
-	 * @param instance
-	 */
+
 	public CPPClassSpecializationScope(ICPPSpecialization specialization) {
 		this.specialization = specialization;
 	}
@@ -122,24 +120,15 @@ public class CPPClassSpecializationScope implements ICPPClassScope, IASTInternal
 		return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope#getClassType()
-	 */
 	public ICPPClassType getClassType() {
 		return (ICPPClassType) specialization;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope#getImplicitMethods()
-	 */
 	public ICPPMethod[] getImplicitMethods() {
 		// Implicit methods shouldn't have implicit specializations
 		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#getScopeName()
-	 */
 	public IName getScopeName() {
 		if (specialization instanceof ICPPInternalBinding)
 			return (IASTName) ((ICPPInternalBinding)specialization).getDefinition();
@@ -173,9 +162,6 @@ public class CPPClassSpecializationScope implements ICPPClassScope, IASTInternal
 		return (ICPPMethod[]) ArrayUtil.trim(ICPPMethod.class, specs);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IScope#getParent()
-	 */
 	public IScope getParent() throws DOMException {
 		ICPPClassType cls = getOriginalClass();
 		ICPPClassScope scope = (ICPPClassScope)cls.getCompositeScope();
@@ -189,16 +175,10 @@ public class CPPClassSpecializationScope implements ICPPClassScope, IASTInternal
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
-	 */
 	public IBinding[] find(String name) throws DOMException {
 		return CPPSemantics.findBindings(this, name, false);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope#isFullyCached()
-	 */
 	public boolean isFullyCached() throws DOMException {
 		ICPPScope origScope = (ICPPScope) getOriginalClass().getCompositeScope();
 		if (!ASTInternal.isFullyCached(origScope)) {

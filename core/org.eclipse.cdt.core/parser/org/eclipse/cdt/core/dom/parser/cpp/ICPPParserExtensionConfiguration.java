@@ -29,8 +29,8 @@ import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
  * with the CDT team.
  * </p>
  * 
- * @see http://gcc.gnu.org/onlinedocs/gcc/C-Extensions.html
- * @see http://gcc.gnu.org/onlinedocs/gcc/C_002b_002b-Extensions.html
+ * @see "http://gcc.gnu.org/onlinedocs/gcc/C-Extensions.html"
+ * @see "http://gcc.gnu.org/onlinedocs/gcc/C_002b_002b-Extensions.html"
  * 
  * @author jcamelon
  * @since 4.0
@@ -40,7 +40,7 @@ public interface ICPPParserExtensionConfiguration {
 	/**
 	 * Support for GNU extension "Restricting Pointer Aliasing".
 	 * 
-	 * @see http://gcc.gnu.org/onlinedocs/gcc/Restricted-Pointers.html
+	 * @see "http://gcc.gnu.org/onlinedocs/gcc/Restricted-Pointers.html"
 	 * @return <code>true</code> if support for the extension should be
 	 *         enabled
 	 */
@@ -49,7 +49,7 @@ public interface ICPPParserExtensionConfiguration {
 	/**
 	 * Support for GNU extension "Extended Syntax for Template Instantiation".
 	 * 
-	 * @see http://gcc.gnu.org/onlinedocs/gcc/Template-Instantiation.html
+	 * @see "http://gcc.gnu.org/onlinedocs/gcc/Template-Instantiation.html"
 	 * @return <code>true</code> if support for the extension should be
 	 *         enabled
 	 */
@@ -61,7 +61,7 @@ public interface ICPPParserExtensionConfiguration {
 	 * also be enabled.
 	 * 
 	 * @see IScannerExtensionConfiguration
-	 * @see http://gcc.gnu.org/onlinedocs/gcc/Deprecated-Features.html
+	 * @see "http://gcc.gnu.org/onlinedocs/gcc/Deprecated-Features.html"
 	 * @return <code>true</code> if support for the extension should be
 	 *         enabled
 	 */
@@ -70,7 +70,7 @@ public interface ICPPParserExtensionConfiguration {
 	/**
 	 * Support for GNU extension "Data types for complex numbers".
 	 * 
-	 * @see http://gcc.gnu.org/onlinedocs/gcc/Complex.html#Complex
+	 * @see "http://gcc.gnu.org/onlinedocs/gcc/Complex.html#Complex"
 	 * @return <code>true</code> if support for the extension should be
 	 *         enabled
 	 */
@@ -87,7 +87,7 @@ public interface ICPPParserExtensionConfiguration {
 	/**
 	 * Support for GNU long long types.
 	 * 
-	 * @see http://gcc.gnu.org/onlinedocs/gcc/Long-Long.html
+	 * @see "http://gcc.gnu.org/onlinedocs/gcc/Long-Long.html"
 	 * @return <code>true</code> if support for the extension should be
 	 *         enabled
 	 */
@@ -96,7 +96,7 @@ public interface ICPPParserExtensionConfiguration {
 	/**
 	 * Support for GNU extension "Statements and Declarations in Expressions".
 	 * 
-	 * @see http://gcc.gnu.org/onlinedocs/gcc/Statement-Exprs.html
+	 * @see "http://gcc.gnu.org/onlinedocs/gcc/Statement-Exprs.html"
 	 * @return <code>true</code> if support for the extension should be
 	 *         enabled
 	 */
@@ -105,7 +105,7 @@ public interface ICPPParserExtensionConfiguration {
 	/**
 	 * Support for GNU extension "Referring to a Type with typeof".
 	 * 
-	 * @see http://gcc.gnu.org/onlinedocs/gcc/Typeof.html
+	 * @see "http://gcc.gnu.org/onlinedocs/gcc/Typeof.html"
 	 * @return <code>true</code> if support for the extension should be
 	 *         enabled
 	 */
@@ -114,7 +114,7 @@ public interface ICPPParserExtensionConfiguration {
 	/**
 	 * Support for GNU extension "Inquiring on Alignment of Types or Variables".
 	 * 
-	 * @see http://gcc.gnu.org/onlinedocs/gcc/Alignment.html
+	 * @see "http://gcc.gnu.org/onlinedocs/gcc/Alignment.html"
 	 * @return <code>true</code> if support for the extension should be
 	 *         enabled
 	 */
@@ -131,9 +131,8 @@ public interface ICPPParserExtensionConfiguration {
 	 * See http://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html for more
 	 * information on GCC's Other Built-in Symbols.
 	 * 
-	 * @return <code>true</code> if support for the extension should be
-	 *         enabled
-	 * @deprecated use {@link #getBuiltinSymbolProvider(IScope)} instead.
+	 * @return <code>true</code> if support for the extension should be enabled
+	 * @deprecated use {@link #getBuiltinBindingsProvider()} instead.
 	 */
 	@Deprecated
 	public boolean supportGCCOtherBuiltinSymbols();

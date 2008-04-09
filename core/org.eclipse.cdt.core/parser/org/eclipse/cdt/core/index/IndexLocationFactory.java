@@ -57,7 +57,6 @@ public class IndexLocationFactory {
 	/**
 	 * Returns the absolute file path of an URI or null if the 
 	 * URI is not a filesystem path.
-	 * @param uri 
 	 * @return the absolute file path of an URI or null if the 
 	 * URI is not a filesystem path.
 	 */
@@ -92,12 +91,11 @@ public class IndexLocationFactory {
 		IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(new Path(absolutePath));
 		if(files.length==1) {
 			return getWorkspaceIFL(files[0]);
-		} else {
-			if(cproject!=null) {
-				for(int i=0; i<files.length; i++) {
-					if(files[i].getProject().equals(cproject.getProject()))
-						return getWorkspaceIFL(files[i]);
-				}
+		}
+		if(cproject!=null) {
+			for(int i=0; i<files.length; i++) {
+				if(files[i].getProject().equals(cproject.getProject()))
+					return getWorkspaceIFL(files[i]);
 			}
 		}
 		return new IndexFileLocation(URIUtil.toURI(absolutePath), null);
@@ -148,13 +146,11 @@ public class IndexLocationFactory {
 		IResource res = tu.getResource();
 		if(res instanceof IFile) {
 			return getWorkspaceIFL((IFile)res);
-		} else {
-			IPath location = tu.getLocation();
-			if(location!=null) {
-				return getExternalIFL(location);
-			} else {
-				return null;
-			}
 		}
+		IPath location = tu.getLocation();
+		if(location!=null) {
+			return getExternalIFL(location);
+		}
+		return null;
 	}
 }

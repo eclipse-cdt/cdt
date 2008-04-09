@@ -26,7 +26,7 @@ public class ArrayUtil {
      * If the array is null or not large enough, a larger one is allocated, using
      * the given class object.
      */
-    static public Object [] append( Class c, Object[] array, Object obj ){
+    static public Object [] append( Class<?> c, Object[] array, Object obj ){
     	if( obj == null )
     		return array;
     	if( array == null || array.length == 0){
@@ -74,7 +74,7 @@ public class ArrayUtil {
      * Appends object using the current length of the array.
      * @since 4.0
      */
-    static public Object [] append(Class c, Object[] array, int currentLength, Object obj ){
+    static public Object [] append(Class<?> c, Object[] array, int currentLength, Object obj ){
     	if( obj == null )
     		return array;
     	if( array == null || array.length == 0){
@@ -108,12 +108,11 @@ public class ArrayUtil {
      * if forceNew == false, a new array will only be created if the original array
      * contained null entries.
      *  
-     * @param Class c: the type of the new array
-     * @param Object [] array, the array to be trimmed
+     * @param c the type of the new array
+     * @param array the array to be trimmed
      * @param forceNew
-     * @return
      */
-    static public Object [] trim( Class c, Object [] array, boolean forceNew ){
+    static public Object [] trim( Class<?> c, Object [] array, boolean forceNew ){
         if( array == null )
             return (Object[]) Array.newInstance( c, 0 );
         
@@ -133,19 +132,15 @@ public class ArrayUtil {
         return temp;
     }
 
-    /**
-     * @param class1
-     * @param fields
-     * @return
-     */
-    public static Object[] trim( Class c, Object[] array ) {
+
+    public static Object[] trim( Class<?> c, Object[] array ) {
         return trim( c, array, false );
     }
 
     /**
      * Assumes that both arrays contain nulls at the end, only.
      */
-    public static Object[] addAll( Class c, Object[] dest, Object[] source ) {
+    public static Object[] addAll( Class<?> c, Object[] dest, Object[] source ) {
         if( source == null || source.length == 0 )
             return dest;
         
@@ -224,8 +219,8 @@ public class ArrayUtil {
      * Assumes that array contains nulls at the end, only. 
      * Returns the index into the specified array of the specified object, or -1 if the array does not
      * contain the object, or if the array is null.  Comparison is by equals().
-     * @param array the array to search
-     * @param obj the object to search for
+     * @param comments the array to search
+     * @param comment the object to search for
      * @return the index into the specified array of the specified object, or -1 if the array does not
      * contain an equal object, or if the array is null
      */    
@@ -251,7 +246,7 @@ public class ArrayUtil {
      * If there are no nulls in the original array then the original
      * array is returned.
 	 */
-	public static Object[] removeNulls(Class c, Object[] array) {
+	public static Object[] removeNulls(Class<?> c, Object[] array) {
         if( array == null )
             return (Object[]) Array.newInstance( c, 0 );
         
@@ -279,9 +274,8 @@ public class ArrayUtil {
 	 * and all of the nulls are at the end of the array.  
 	 * The position of the last non-null element in the array must also be known. 
      *
-	 * @return
 	 */
-	public static Object[] removeNullsAfter(Class c, Object[] array, int index) {
+	public static Object[] removeNullsAfter(Class<?> c, Object[] array, int index) {
         if( array == null || index < 0)
             return (Object[]) Array.newInstance( c, 0 );
         
@@ -299,7 +293,7 @@ public class ArrayUtil {
 	 * Insert the obj at the beginning of the array, shifting the whole thing one index
 	 * Assumes that array contains nulls at the end, only. 
 	 */
-	public static Object[] prepend(Class c, Object[] array, Object obj) {
+	public static Object[] prepend(Class<?> c, Object[] array, Object obj) {
 		if( obj == null )
     		return array;
         if( array == null || array.length == 0){

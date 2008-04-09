@@ -10,7 +10,7 @@
  *******************************************************************************/ 
 
 package org.eclipse.cdt.core.parser;
-
+ 
 public abstract class AbstractParserLogService implements IParserLogService {
 
 	public void traceLog(String message) {

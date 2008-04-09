@@ -44,7 +44,6 @@ public interface IExportProjectProvider {
 	 * Creates, configures and returns a project for the indexer to index. This routine should
 	 * not itself index the project, as a reindex will be performed by the framework.
 	 * May not return null.
-	 * @return
 	 */
 	public ICProject createProject() throws CoreException;
 	
@@ -52,7 +51,6 @@ public interface IExportProjectProvider {
 	 * The location converter to use on export. This converter will be called to convert
 	 * IIndexFileLocation's to an external form. The external form is implementation dependent. 
 	 * @param cproject
-	 * @return
 	 * @see URIRelativeLocationConverter
 	 * @see ResourceContainerRelativeLocationConverter
 	 */

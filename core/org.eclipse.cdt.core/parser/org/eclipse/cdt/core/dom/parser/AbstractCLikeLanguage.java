@@ -47,9 +47,10 @@ import org.eclipse.core.runtime.CoreException;
  * for the DOM parser framework.
  * 
  * This class uses the template method pattern, derived classes need only implement
- * {@link getScannerExtensionConfiguration()}, 
- * {@link getParserLanguage()} and
- * {@link createParser()}.
+ * {@link AbstractCLikeLanguage#getScannerExtensionConfiguration()}, 
+ * {@link AbstractCLikeLanguage#getParserLanguage()} and
+ * {@link AbstractCLikeLanguage#createParser(IScanner scanner, ParserMode parserMode,
+ *                                           IParserLogService logService, IIndex index)}.
  * 
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as

@@ -79,7 +79,6 @@ public abstract class AbstractExportProjectProvider implements IExportProjectPro
 	/**
 	 * @param option
 	 * @return the list of parameters given with this option
-	 * @throws CoreException
 	 */
 	public List<String> getParameters(String option) {
 		return arguments.get(option); 
@@ -100,7 +99,6 @@ public abstract class AbstractExportProjectProvider implements IExportProjectPro
 	 * user.
 	 * @param option
 	 * @param expected the number of parameters expected
-	 * @return
 	 * @throws CoreException
 	 */
 	public List<String> getParameters(String option, int expected) throws CoreException {

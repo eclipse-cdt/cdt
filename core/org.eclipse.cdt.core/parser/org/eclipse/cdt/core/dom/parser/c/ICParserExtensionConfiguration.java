@@ -28,7 +28,7 @@ import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
  * with the CDT team.
  * </p>
  * 
- * @see http://gcc.gnu.org/onlinedocs/gcc/C-Extensions.html
+ * @see "http://gcc.gnu.org/onlinedocs/gcc/C-Extensions.html"
  * 
  * @author jcamelon
  * @since 4.0
@@ -38,7 +38,7 @@ public interface ICParserExtensionConfiguration {
 	/**
 	 * Support for GNU extension "Statements and Declarations in Expressions".
 	 * 
-	 * @see http://gcc.gnu.org/onlinedocs/gcc/Statement-Exprs.html
+	 * @see "http://gcc.gnu.org/onlinedocs/gcc/Statement-Exprs.html"
 	 * @return <code>true</code> if support for the extension should be
 	 *         enabled
 	 */
@@ -47,7 +47,7 @@ public interface ICParserExtensionConfiguration {
 	/**
 	 * Support for GNU extension "Designated Initializers".
 	 * 
-	 * @see http://gcc.gnu.org/onlinedocs/gcc/Designated-Inits.html
+	 * @see "http://gcc.gnu.org/onlinedocs/gcc/Designated-Inits.html"
 	 * @return <code>true</code> if support for the extension should be
 	 *         enabled
 	 */
@@ -56,7 +56,7 @@ public interface ICParserExtensionConfiguration {
 	/**
 	 * Support for GNU extension "Referring to a Type with typeof".
 	 * 
-	 * @see http://gcc.gnu.org/onlinedocs/gcc/Typeof.html
+	 * @see "http://gcc.gnu.org/onlinedocs/gcc/Typeof.html"
 	 * @return <code>true</code> if support for the extension should be
 	 *         enabled
 	 */
@@ -65,7 +65,7 @@ public interface ICParserExtensionConfiguration {
 	/**
 	 * Support for GNU extension "Inquiring on Alignment of Types or Variables".
 	 * 
-	 * @see http://gcc.gnu.org/onlinedocs/gcc/Alignment.html
+	 * @see "http://gcc.gnu.org/onlinedocs/gcc/Alignment.html"
 	 * @return <code>true</code> if support for the extension should be
 	 *         enabled
 	 */

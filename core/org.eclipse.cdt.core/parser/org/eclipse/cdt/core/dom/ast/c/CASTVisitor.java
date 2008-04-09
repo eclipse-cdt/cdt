@@ -19,16 +19,12 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
  */
 public abstract class CASTVisitor extends ASTVisitor implements ICASTVisitor {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.c.ICASTVisitor#visit(org.eclipse.cdt.core.dom.ast.c.ICASTDesignator)
-	 */
+
 	public int visit(ICASTDesignator designator) {
 		return PROCESS_CONTINUE;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.c.ICASTVisitor#leave(org.eclipse.cdt.core.dom.ast.c.ICASTDesignator)
-	 */
+
 	public int leave(ICASTDesignator designator) {
 		return PROCESS_CONTINUE;
 	}

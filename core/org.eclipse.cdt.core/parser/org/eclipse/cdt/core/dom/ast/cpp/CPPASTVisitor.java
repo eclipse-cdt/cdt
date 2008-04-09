@@ -20,45 +20,27 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBas
  * and the leave() methods implement a bottom-up traversal.
  */
 public abstract class CPPASTVisitor extends ASTVisitor implements ICPPASTVisitor {
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor#visit(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier)
-	 */
+ 
 	public int visit(ICPPASTBaseSpecifier baseSpecifier) {
 		return PROCESS_CONTINUE;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor#visit(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition)
-	 */
 	public int visit(ICPPASTNamespaceDefinition namespaceDefinition) {
 		return PROCESS_CONTINUE;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor#visit(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter)
-	 */
 	public int visit(ICPPASTTemplateParameter templateParameter) {
 		return PROCESS_CONTINUE;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor#leave(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier)
-	 */
 	public int leave(ICPPASTBaseSpecifier baseSpecifier) {
 		return PROCESS_CONTINUE;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor#leave(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition)
-	 */
 	public int leave(ICPPASTNamespaceDefinition namespaceDefinition) {
 		return PROCESS_CONTINUE;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor#leave(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter)
-	 */
 	public int leave(ICPPASTTemplateParameter templateParameter) {
 		return PROCESS_CONTINUE;
 	}

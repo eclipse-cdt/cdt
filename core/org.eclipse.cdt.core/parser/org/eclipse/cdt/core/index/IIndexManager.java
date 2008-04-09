@@ -180,7 +180,6 @@ public interface IIndexManager extends IPDOMManager {
 	
 	/**
 	 * Clears the entire index of the project and schedules the indexer.
-	 * @throws CoreException
 	 * @since 4.0
 	 */
 	public void reindex(ICProject project);

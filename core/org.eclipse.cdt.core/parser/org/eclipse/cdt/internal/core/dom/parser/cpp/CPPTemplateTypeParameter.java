@@ -30,9 +30,7 @@ public class CPPTemplateTypeParameter extends CPPTemplateParameter implements
 		ICPPTemplateTypeParameter, IType, ICPPInternalUnknown {
     private ICPPScope unknownScope = null;
     
-	/**
-	 * @param name
-	 */
+
 	public CPPTemplateTypeParameter(IASTName name) {
 		super(name);
 	}
@@ -48,9 +46,6 @@ public class CPPTemplateTypeParameter extends CPPTemplateParameter implements
 	    return unknownScope;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter#getDefault()
-	 */
 	public IType getDefault() {
 		IASTNode[] nds = getDeclarations();
 		if (nds == null || nds.length == 0)
@@ -63,9 +58,7 @@ public class CPPTemplateTypeParameter extends CPPTemplateParameter implements
 		return null;
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
-     */
+
     public boolean isSameType(IType type) {
         if (type == this)
             return true;
@@ -74,9 +67,7 @@ public class CPPTemplateTypeParameter extends CPPTemplateParameter implements
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknown#resolveUnknown(org.eclipse.cdt.core.parser.util.ObjectMap)
-     */
+
     public IBinding resolveUnknown(ObjectMap argMap) {
     	// Cannot do resolution here since the result is not necessarily a binding.
 		return null;

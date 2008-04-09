@@ -29,19 +29,15 @@ public class CPPPointerType implements IPointerType, ITypeContainer {
 	protected IType type = null;
 	private boolean isConst = false;
 	private boolean isVolatile = false;
-	/**
-	 * @param type
-	 * @param operator
-	 */
+
+	
 	public CPPPointerType(IType type, IASTPointer operator) {
 		this.type = type;
 		this.isConst = operator.isConst();
 		this.isVolatile = operator.isVolatile();
 	}
 
-	/**
-	 * @param type2
-	 */
+
 	public CPPPointerType(IType type, boolean isConst, boolean isVolatile ) {
 		this.type = type;
 		this.isConst = isConst;
@@ -79,10 +75,7 @@ public class CPPPointerType implements IPointerType, ITypeContainer {
 	        return type.isSameType( pt.getType() );
 	    return false;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IPointerType#getType()
-	 */
+
 	public IType getType() {
 		return type;
 	}
@@ -91,16 +84,10 @@ public class CPPPointerType implements IPointerType, ITypeContainer {
 	    type = t;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IPointerType#isConst()
-	 */
 	public boolean isConst() {
 		return isConst;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IPointerType#isVolatile()
-	 */
 	public boolean isVolatile() {
 		return isVolatile;
 	}

@@ -66,7 +66,6 @@ public class ASTSignatureUtil {
 	 * TODO Remove this function when done testing if it is no longer needed
 	 * 
 	 * @param node
-	 * @return
 	 */
 	public static String getNodeSignature(IASTNode node) {
 		if (node instanceof IASTDeclarator)
@@ -1082,9 +1081,7 @@ public class ASTSignatureUtil {
 		return result;
 	}
 
-	/**
-	 * Returns the same message as {@link IASTProblem#getMessageWithoutLocation()}.
-	 */
+
 	public static String getProblemMessage(int problemID, String detail) {
 		return ASTProblem.getMessage(problemID, detail);
 	}

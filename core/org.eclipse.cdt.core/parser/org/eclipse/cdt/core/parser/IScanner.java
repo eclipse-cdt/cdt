@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.parser;
 
 import java.util.Map;
 
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer;
@@ -41,7 +42,7 @@ public interface IScanner {
 	
 	/**
 	 * Turns on/off creation of image locations. 
-	 * @see IASTName#getImageLocation().
+	 * @see IASTName#getImageLocation()
 	 * @since 5.0
 	 */
 	public void setComputeImageLocations(boolean val);

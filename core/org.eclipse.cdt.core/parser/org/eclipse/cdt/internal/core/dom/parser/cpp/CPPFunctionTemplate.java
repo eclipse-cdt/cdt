@@ -96,9 +96,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
 	}
 	
 	protected IFunctionType type = null;
-	/**
-	 * @param decl
-	 */
+
 	public CPPFunctionTemplate(IASTName name) {
 		super(name);
 	}
@@ -111,9 +109,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
 		super.addDefinition( node );
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDeclaration(org.eclipse.cdt.core.dom.ast.IASTNode)
-	 */
+
 	@Override
 	public void addDeclaration(IASTNode node) {
 		if( !(node instanceof IASTName) )
@@ -140,17 +136,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
     	}
 	}
 
-	/**
-	 * @param templateParameter
-	 * @return
-	 */
-//	public IBinding resolveParameter(ICPPASTTemplateParameter templateParameter) {
-//		return null;
-//	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IFunction#getParameters()
-	 */
+
 	public IParameter[] getParameters() {
 		IASTName name = getTemplateName();
 		ICPPASTFunctionDeclarator fdecl= getDeclaratorByName(name);
@@ -176,17 +162,12 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IFunction#getFunctionScope()
-	 */
+
 	public IScope getFunctionScope() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IFunction#getType()
-	 */
+
 	public IFunctionType getType() {
 		if( type == null ) {
 			IASTName name = getTemplateName();
@@ -228,10 +209,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
         return false;
 	}
 
-	/**
-	 * @param param
-	 * @return
-	 */
+
 	public IBinding resolveParameter(IASTParameterDeclaration param) {
 	   	IASTName name = param.getDeclarator().getName();
     	IBinding binding = name.getBinding();
@@ -276,9 +254,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
     	return binding;	
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateDefinition#deferredInstance(org.eclipse.cdt.core.dom.ast.IType[])
-	 */
+
 	@Override
 	public ICPPSpecialization deferredInstance(ObjectMap argMap, IType[] arguments) {
 		ICPPSpecialization instance = getInstance( arguments );
@@ -288,22 +264,16 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
 		}
 		return instance;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IFunction#isStatic()
-	 */
+
 	public boolean isStatic() {
 		return hasStorageClass( IASTDeclSpecifier.sc_static);
 	}
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction#isMutable()
-     */
+
     public boolean isMutable() {
         return hasStorageClass( ICPPASTDeclSpecifier.sc_mutable);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction#isInline()
-     */
+
     public boolean isInline() throws DOMException {
         IASTName name = (IASTName) getDefinition();
         IASTNode[] ns = getDeclarations();
@@ -346,30 +316,19 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IFunction#isExtern()
-     */
+
     public boolean isExtern() {
         return hasStorageClass( IASTDeclSpecifier.sc_extern);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IFunction#isAuto()
-     */
     public boolean isAuto() {
         return hasStorageClass( IASTDeclSpecifier.sc_auto );
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IFunction#isRegister()
-     */
     public boolean isRegister() {
         return hasStorageClass( IASTDeclSpecifier.sc_register);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IFunction#takesVarArgs()
-     */
     public boolean takesVarArgs() {
     	ICPPASTFunctionDeclarator fdecl= getDeclaratorByName(getDefinition());
     	if (fdecl == null) {
@@ -398,9 +357,6 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
     	return null;
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction#isStatic(boolean)
-     */
     public boolean isStatic( boolean resolveAll ) {
     	return hasStorageClass( IASTDeclSpecifier.sc_static );
     }

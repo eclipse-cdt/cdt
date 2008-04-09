@@ -54,7 +54,7 @@ import org.eclipse.core.runtime.Path;
  * <li>-id the id to write to the produce fragment
  * </ul>
  */
-public class ExternalExportProjectProvider extends AbstractExportProjectProvider implements IExportProjectProvider {
+public class ExternalExportProjectProvider extends AbstractExportProjectProvider {
 	private static final String PREBUILT_PROJECT_OWNER = "org.eclipse.cdt.core.index.export.prebuiltOwner"; //$NON-NLS-1$
 	private static final String ORG_ECLIPSE_CDT_CORE_INDEX_EXPORT_DATESTAMP = "org.eclipse.cdt.core.index.export.datestamp"; //$NON-NLS-1$
 	private static final String CONTENT = "content"; //$NON-NLS-1$

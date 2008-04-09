@@ -18,7 +18,7 @@ package org.eclipse.cdt.core.parser;
  * <p>
  * {@link #ORIGIN_LEXER}: char-literal, string-literal, number-literal, header-name.
  * <p>
- * {@link #ORIGIN_PREPROCESSOR}: preprocessor-directive.
+ * {@link #ORIGIN_PREPROCESSOR_DIRECTIVE}: preprocessor-directive.
  * <p>
  * {@link #ORIGIN_INACTIVE_CODE}: within an inactive branch of conditional compilation.
  * <p>

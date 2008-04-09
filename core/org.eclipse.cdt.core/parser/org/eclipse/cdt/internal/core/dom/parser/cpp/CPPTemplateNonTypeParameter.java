@@ -36,9 +36,6 @@ public class CPPTemplateNonTypeParameter extends CPPTemplateParameter implements
 		super(name);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter#getDefault()
-	 */
 	public IASTExpression getDefault() {
 		IASTName name = getPrimaryDeclaration();
 		IASTDeclarator dtor = (IASTDeclarator) name.getParent();
@@ -49,9 +46,6 @@ public class CPPTemplateNonTypeParameter extends CPPTemplateParameter implements
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IVariable#getType()
-	 */
 	public IType getType() {
 		if( type == null ){
 			IASTName name = getPrimaryDeclaration();
@@ -61,50 +55,32 @@ public class CPPTemplateNonTypeParameter extends CPPTemplateParameter implements
 		return type;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IVariable#isStatic()
-	 */
 	public boolean isStatic() throws DOMException {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IVariable#isExtern()
-	 */
 	public boolean isExtern() throws DOMException {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IVariable#isAuto()
-	 */
 	public boolean isAuto() throws DOMException {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IVariable#isRegister()
-	 */
 	public boolean isRegister() throws DOMException {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDefinition(org.eclipse.cdt.core.dom.ast.IASTNode)
-	 */
 	@Override
 	public void addDefinition(IASTNode node) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDeclaration(org.eclipse.cdt.core.dom.ast.IASTNode)
-	 */
 	@Override
 	public void addDeclaration(IASTNode node) {
 		// TODO Auto-generated method stub

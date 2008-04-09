@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.ITypedef;
 
 /**
  * The CImplicitTypedef is used to represent implicit typedefs that exist on the translation
@@ -23,7 +22,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
  *  
  * @author dsteffle
  */
-public class CImplicitTypedef extends CTypedef implements ITypedef, ICInternalBinding {
+public class CImplicitTypedef extends CTypedef {
     private IType type=null;
     private char[] name=null;
     private IScope scope=null;
@@ -35,33 +34,21 @@ public class CImplicitTypedef extends CTypedef implements ITypedef, ICInternalBi
         this.scope = scope;
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.ITypedef#getType()
-     */
     @Override
 	public IType getType() {
         return type;
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
-     */
     @Override
 	public String getName() {
         return String.valueOf(name);
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
-     */
     @Override
 	public char[] getNameCharArray() {
         return name;
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
-     */
     @Override
 	public IScope getScope() {
         return scope;
@@ -100,10 +87,6 @@ public class CImplicitTypedef extends CTypedef implements ITypedef, ICInternalBi
 //        return t;
 //    }
     
-    /**
-     * returns null
-     * @return
-     */
     @Override
 	public IASTNode getPhysicalNode() {
         return null;

@@ -51,7 +51,7 @@ import org.eclipse.cdt.internal.core.index.IIndexType;
  * @author aniefer
  */
 public class CPPClassTemplate extends CPPTemplateDefinition implements
-		ICPPClassTemplate, ICPPClassType, ICPPInternalBinding, ICPPInternalClassTemplate,
+		ICPPClassTemplate, ICPPClassType, ICPPInternalClassTemplate,
 		ICPPInternalClassTypeMixinHost {
 
 	private class FindDefinitionAction extends CPPASTVisitor {

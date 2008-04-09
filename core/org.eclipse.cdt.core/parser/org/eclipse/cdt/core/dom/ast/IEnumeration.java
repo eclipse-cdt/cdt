@@ -21,7 +21,6 @@ public interface IEnumeration extends IBinding, IType {
     
     /**
      * returns an array of the IEnumerators declared in this enumeration
-     * @return
      * @throws DOMException
      */
     IEnumerator [] getEnumerators() throws DOMException;

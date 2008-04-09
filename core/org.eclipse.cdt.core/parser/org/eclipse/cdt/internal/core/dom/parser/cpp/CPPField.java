@@ -98,9 +98,7 @@ public class CPPField extends CPPVariable implements ICPPField {
 		}
 		return null;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMember#getVisibility()
-	 */
+
 	public int getVisibility() throws DOMException {
 		ICPPASTVisiblityLabel vis = null;
 		IASTDeclaration decl = getPrimaryDeclaration();
@@ -141,9 +139,7 @@ public class CPPField extends CPPVariable implements ICPPField {
 		return super.isStatic();
 	}
 	
-	/* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable#isMutable()
-     */
+
     @Override
 	public boolean isMutable() {
         return hasStorageClass( ICPPASTDeclSpecifier.sc_mutable);

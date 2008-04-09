@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
-import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -23,7 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
  * 
  * @author dsteffle
  */
-public class CImplicitFunction extends CExternalFunction implements IFunction, ICInternalBinding {
+public class CImplicitFunction extends CExternalFunction {
 
     private IParameter[] parms=null;
     private IScope scope=null;
@@ -39,55 +38,32 @@ public class CImplicitFunction extends CExternalFunction implements IFunction, I
         this.takesVarArgs=takesVarArgs;
     }
     
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IFunction#getParameters()
-     */
+
     @Override
 	public IParameter[] getParameters() {
         return parms;
     }
     
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IFunction#getType()
-     */
     @Override
 	public IFunctionType getType() {
         return type;
     }
     
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IFunction#takesVarArgs()
-     */
     @Override
 	public boolean takesVarArgs() {
         return takesVarArgs;
     }
     
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
-     */
     @Override
 	public String getName() {
         return String.valueOf(name);
     }
     
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
-     */
     @Override
 	public char[] getNameCharArray() {
         return name;
     }
     
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
-     */
     @Override
 	public IScope getScope() {
         return scope;

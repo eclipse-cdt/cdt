@@ -40,79 +40,46 @@ public class CPPDeferredClassInstance extends CPPInstance
 		super(null, orig, argMap, arguments);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getBases()
-	 */
 	public ICPPBase[] getBases() throws DOMException {
 		return ((ICPPClassType) getClassTemplate()).getBases();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getFields()
-	 */
 	public IField[] getFields() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#findField(java.lang.String)
-	 */
 	public IField findField(String name) {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getDeclaredFields()
-	 */
 	public ICPPField[] getDeclaredFields() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getMethods()
-	 */
 	public ICPPMethod[] getMethods() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getAllDeclaredMethods()
-	 */
 	public ICPPMethod[] getAllDeclaredMethods() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getDeclaredMethods()
-	 */
 	public ICPPMethod[] getDeclaredMethods() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getConstructors()
-	 */
 	public ICPPConstructor[] getConstructors() {
 		return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getFriends()
-	 */
 	public IBinding[] getFriends() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getKey()
-	 */
 	public int getKey() throws DOMException {
 		return ((ICPPClassType) getClassTemplate()).getKey();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getCompositeScope()
-	 */
 	public IScope getCompositeScope() throws DOMException {
 		if (getArgumentMap() != null) {
 			return new CPPClassSpecializationScope(this);
@@ -120,18 +87,11 @@ public class CPPDeferredClassInstance extends CPPInstance
 		return ((ICPPClassType) getClassTemplate()).getCompositeScope();
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#clone()
-	 */
 	 @Override
 	public Object clone() {
         return this;
     }
 
-	/**
-	 * @param argMap
-	 * @return
-	 */
 	public IType instantiate(ObjectMap argMap) {
 		IType[] arguments = getArguments();
 		IType[] newArgs = new IType[arguments.length];
@@ -148,9 +108,6 @@ public class CPPDeferredClassInstance extends CPPInstance
 		return (IType) ((ICPPInternalTemplateInstantiator) classTemplate).instantiate(newArgs);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
-	 */
 	public boolean isSameType(IType type) {
 		if (type == this)
 			return true;

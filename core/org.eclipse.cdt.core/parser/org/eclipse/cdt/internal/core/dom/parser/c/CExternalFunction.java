@@ -16,7 +16,6 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -27,7 +26,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 /**
  * @author aniefer
  */
-public class CExternalFunction extends CFunction implements IFunction, ICExternalBinding {
+public class CExternalFunction extends CFunction implements ICExternalBinding {
     private IASTName name = null;
     private IASTTranslationUnit tu = null;
     
@@ -37,9 +36,7 @@ public class CExternalFunction extends CFunction implements IFunction, ICExterna
         this.tu = tu;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IFunction#getType()
-     */
+
     @Override
 	public IFunctionType getType() {
     	IFunctionType t = super.getType();
@@ -54,33 +51,21 @@ public class CExternalFunction extends CFunction implements IFunction, ICExterna
 		return tu;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
-     */
     @Override
 	public String getName() {
         return name.toString();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
-     */
     @Override
 	public char[] getNameCharArray() {
         return name.toCharArray();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
-     */
     @Override
 	public IScope getScope() {
         return tu.getScope();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IFunction#isExtern()
-     */
     @Override
 	public boolean isExtern() {
         return true;

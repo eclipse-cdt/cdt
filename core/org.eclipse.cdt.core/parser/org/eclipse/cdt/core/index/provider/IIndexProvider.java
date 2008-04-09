@@ -27,7 +27,6 @@ public interface IIndexProvider {
 	 * The method will only be called once per project per eclipse session. This method will be called when a project is deleted
 	 * and a new project of the same name added. It also may be called lazily (at the point of first logical index use).
 	 * @param project
-	 * @return
 	 */
 	public boolean providesFor(ICProject project) throws CoreException;
 }

@@ -38,11 +38,7 @@ public class CPPDeferredFunctionInstance extends CPPInstance implements	ICPPFunc
 	private IType[] arguments;
 	private IFunctionType functionType;
 
-	/**
-	 * @param scope
-	 * @param orig
-	 * @param argMap
-	 */
+
 	public CPPDeferredFunctionInstance( ICPPFunctionTemplate template, IType[] arguments ) {
 		super( null, template, null, arguments );
 		this.arguments = arguments;
@@ -65,17 +61,12 @@ public class CPPDeferredFunctionInstance extends CPPInstance implements	ICPPFunc
 		return map;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance#getArguments()
-	 */
+
 	@Override
 	public IType[] getArguments() {
 		return arguments;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IFunction#getParameters()
-	 */
 	public IParameter[] getParameters() throws DOMException {
 		if( getArgumentMap() == null )
 			return ((ICPPFunction)getTemplateDefinition()).getParameters();
@@ -91,17 +82,13 @@ public class CPPDeferredFunctionInstance extends CPPInstance implements	ICPPFunc
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IFunction#getFunctionScope()
-	 */
+
 	public IScope getFunctionScope() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IFunction#getType()
-	 */
+
 	public IFunctionType getType() throws DOMException {
 		if( functionType == null ){
             IFunctionType ft = ((ICPPFunction)getTemplateDefinition()).getType(); 
@@ -113,65 +100,39 @@ public class CPPDeferredFunctionInstance extends CPPInstance implements	ICPPFunc
         return functionType;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IFunction#isStatic()
-	 */
+
 	public boolean isStatic() throws DOMException {
 		return ((ICPPFunction)getTemplateDefinition()).isStatic();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction#isMutable()
-	 */
 	public boolean isMutable() throws DOMException {
 		return ((ICPPFunction)getTemplateDefinition()).isMutable();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction#isInline()
-	 */
 	public boolean isInline() throws DOMException {
 		return ((ICPPFunction)getTemplateDefinition()).isInline();	
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction#isInline()
-	 */
 	public boolean isExternC() throws DOMException {
 		return ((ICPPFunction)getTemplateDefinition()).isExternC();	
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IFunction#isExtern()
-	 */
 	public boolean isExtern() throws DOMException {
 		return ((ICPPFunction)getTemplateDefinition()).isExtern();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IFunction#isAuto()
-	 */
 	public boolean isAuto() throws DOMException {
 		return ((ICPPFunction)getTemplateDefinition()).isAuto();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IFunction#isRegister()
-	 */
 	public boolean isRegister() throws DOMException {
 		return ((ICPPFunction)getTemplateDefinition()).isRegister();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IFunction#takesVarArgs()
-	 */
 	public boolean takesVarArgs() throws DOMException {
 		return ((ICPPFunction)getTemplateDefinition()).takesVarArgs();
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction#isStatic(boolean)
-     */
     public boolean isStatic( boolean resolveAll) {
     	try {
 			return ASTInternal.isStatic((IFunction) getTemplateDefinition(), resolveAll);
@@ -180,9 +141,6 @@ public class CPPDeferredFunctionInstance extends CPPInstance implements	ICPPFunc
 		}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction#resolveParameter(org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration)
-     */
     public IBinding resolveParameter( IASTParameterDeclaration param ) {
         // TODO Auto-generated method stub
         return null;

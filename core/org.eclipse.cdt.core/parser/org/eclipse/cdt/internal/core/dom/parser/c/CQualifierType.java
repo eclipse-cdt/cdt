@@ -34,8 +34,6 @@ public class CQualifierType implements ICQualifierType, ITypeContainer {
 
 	/**
 	 * CQualifierType has an IBasicType to keep track of the basic type information.
-	 * 
-	 * @param type the CQualifierType's IBasicType
 	 */
 	public CQualifierType(ICASTDeclSpecifier declSpec) {
 		this.type = resolveType( declSpec );

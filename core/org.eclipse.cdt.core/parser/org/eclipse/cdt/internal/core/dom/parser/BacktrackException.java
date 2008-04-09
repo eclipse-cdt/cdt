@@ -42,11 +42,6 @@ public class BacktrackException extends Exception {
         return problem;
     }
 
-    /**
-     * @param startingOffset
-     * @param endingOffset
-     * @param f TODO
-     */
     public void initialize(int start, int l ) {
         reset();
         offset = start;

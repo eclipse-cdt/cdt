@@ -104,7 +104,6 @@ public abstract class AbstractScannerExtensionConfiguration implements IScannerE
 	/**
 	 * Helper method to add a function style macro to the given map.
 	 * 
-	 * @param macros the macro map
 	 * @param name the macro name
 	 * @param value the macro value
 	 * @param arguments the macro arguments

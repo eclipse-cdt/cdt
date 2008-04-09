@@ -41,30 +41,18 @@ public class CPPUsingDeclaration extends PlatformObject implements ICPPUsingDecl
         this.delegates= bindings;
     }
         
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration#getDelegates()
-     */
     public IBinding[] getDelegates() {
         return delegates;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#getQualifiedName()
-     */
     public String[] getQualifiedName() {
     	return CPPVisitor.getQualifiedName( this );
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#getQualifiedNameCharArray()
-     */
     public char[][] getQualifiedNameCharArray() {
     	return CPPVisitor.getQualifiedNameCharArray( this );
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#isGloballyQualified()
-     */
     public boolean isGloballyQualified() throws DOMException {
         IScope scope = getScope();
         while( scope != null ){
@@ -75,37 +63,22 @@ public class CPPUsingDeclaration extends PlatformObject implements ICPPUsingDecl
         return true;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
-     */
     public String getName() {
     	return name.toString();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
-     */
     public char[] getNameCharArray() {
     	return name.toCharArray();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
-     */
     public IScope getScope() {
         return CPPVisitor.getContainingScope( name.getParent() );
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#getDeclarations()
-     */
     public IASTNode[] getDeclarations() {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#getDefinition()
-     */
     public IASTNode getDefinition() {
         IASTNode n = name.getParent();
         if( n instanceof ICPPASTTemplateId )
@@ -114,21 +87,12 @@ public class CPPUsingDeclaration extends PlatformObject implements ICPPUsingDecl
         return n;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDefinition(org.eclipse.cdt.core.dom.ast.IASTNode)
-     */
     public void addDefinition( IASTNode node ) {
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDeclaration(org.eclipse.cdt.core.dom.ast.IASTNode)
-     */
     public void addDeclaration( IASTNode node ) {
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#removeDeclaration(org.eclipse.cdt.core.dom.ast.IASTNode)
-     */
     public void removeDeclaration( IASTNode node ) {
     }
 

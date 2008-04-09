@@ -13,14 +13,13 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 
 /**
  * @author jcamelon
  */
 public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
-		implements IASTEnumerationSpecifier, ICPPASTDeclSpecifier {
+		implements IASTEnumerationSpecifier {
 
 	private IASTName name;
 

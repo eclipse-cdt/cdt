@@ -19,7 +19,6 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
@@ -30,7 +29,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
  * 
  * @author dsteffle
  */
-public class CPPImplicitFunction extends CPPFunction implements ICPPFunction, ICPPInternalBinding {
+public class CPPImplicitFunction extends CPPFunction {
 
 	private IParameter[] parms=null;
 	private IScope scope=null;

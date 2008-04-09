@@ -33,52 +33,32 @@ import org.eclipse.core.runtime.PlatformObject;
  */
 public class CPPEnumeration extends PlatformObject implements IEnumeration, ICPPInternalBinding {
     private IASTName enumName;
-    /**
-     * @param specifier
-     */
+
     public CPPEnumeration( IASTName name ) {
         this.enumName = name;
         name.setBinding( this );
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPBinding#getDeclarations()
-     */
     public IASTNode[] getDeclarations() {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPBinding#getDefinition()
-     */
     public IASTNode getDefinition() {
         return enumName;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
-     */
     public String getName() {
         return enumName.toString();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
-     */
     public char[] getNameCharArray() {
         return enumName.toCharArray();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
-     */
     public IScope getScope() {
         return CPPVisitor.getContainingScope( enumName );
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getPhysicalNode()
-     */
     public IASTNode getPhysicalNode() {
         return enumName;
     }
@@ -94,9 +74,6 @@ public class CPPEnumeration extends PlatformObject implements IEnumeration, ICPP
         return t;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IEnumeration#getEnumerators()
-     */
     public IEnumerator[] getEnumerators() {
         IASTEnumerationSpecifier.IASTEnumerator[] enums = ((IASTEnumerationSpecifier)enumName.getParent()).getEnumerators();
         IEnumerator [] bindings = new IEnumerator [ enums.length ];
@@ -107,23 +84,14 @@ public class CPPEnumeration extends PlatformObject implements IEnumeration, ICPP
         return bindings;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedName()
-     */
     public String[] getQualifiedName() {
         return CPPVisitor.getQualifiedName( this );
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedNameCharArray()
-     */
     public char[][] getQualifiedNameCharArray() {
         return CPPVisitor.getQualifiedNameCharArray( this );
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#isGloballyQualified()
-     */
     public boolean isGloballyQualified() throws DOMException {
         IScope scope = getScope();
         while( scope != null ){
@@ -134,17 +102,11 @@ public class CPPEnumeration extends PlatformObject implements IEnumeration, ICPP
         return true;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDefinition(org.eclipse.cdt.core.dom.ast.IASTNode)
-	 */
 	public void addDefinition(IASTNode node) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDeclaration(org.eclipse.cdt.core.dom.ast.IASTNode)
-	 */
 	public void addDeclaration(IASTNode node) {
 		// TODO Auto-generated method stub
 		
@@ -154,9 +116,6 @@ public class CPPEnumeration extends PlatformObject implements IEnumeration, ICPP
 
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
-     */
     public boolean isSameType( IType type ) {
         if( type == this )
             return true;

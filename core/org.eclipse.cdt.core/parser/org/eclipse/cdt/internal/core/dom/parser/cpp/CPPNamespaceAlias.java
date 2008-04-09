@@ -41,58 +41,34 @@ public class CPPNamespaceAlias extends PlatformObject implements ICPPNamespaceAl
         this.alias = aliasName;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace#getNamespaceScope()
-     */
     public ICPPNamespaceScope getNamespaceScope() throws DOMException {
         return namespace.getNamespaceScope();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate#getBinding()
-     */
     public IBinding getBinding() {
         return namespace;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
-     */
     public String getName() {
         return alias.toString();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
-     */
     public char[] getNameCharArray() {
         return alias.toCharArray();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedName()
-     */
     public String[] getQualifiedName() {
         return CPPVisitor.getQualifiedName( this );
     }
 
-    /* (non-Javadoc) 
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedNameCharArray()
-     */
     public char[][] getQualifiedNameCharArray() {
         return CPPVisitor.getQualifiedNameCharArray( this );
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
-     */
     public IScope getScope() {
         return CPPVisitor.getContainingScope( alias );
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#isGloballyQualified()
-     */
     public boolean isGloballyQualified() throws DOMException {
         IScope scope = getScope();
         while( scope != null ){
@@ -103,29 +79,17 @@ public class CPPNamespaceAlias extends PlatformObject implements ICPPNamespaceAl
         return true;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#getDeclarations()
-     */
     public IASTNode[] getDeclarations() {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#getDefinition()
-     */
     public IASTNode getDefinition() {
         return alias;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDefinition(org.eclipse.cdt.core.dom.ast.IASTNode)
-	 */
 	public void addDefinition(IASTNode node) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDeclaration(org.eclipse.cdt.core.dom.ast.IASTNode)
-	 */
 	public void addDeclaration(IASTNode node) {
 	}
 	public void removeDeclaration(IASTNode node) {

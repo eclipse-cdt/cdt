@@ -45,83 +45,47 @@ public abstract class CPPUnknownBinding extends PlatformObject
         this.scopeBinding = scopeBinding;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#getDeclarations()
-     */
     public IASTNode[] getDeclarations() {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#getDefinition()
-     */
     public IASTNode getDefinition() {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDefinition(org.eclipse.cdt.core.dom.ast.IASTNode)
-     */
     public void addDefinition(IASTNode node) {
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDeclaration(org.eclipse.cdt.core.dom.ast.IASTNode)
-     */
     public void addDeclaration(IASTNode node) {
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#removeDeclaration(org.eclipse.cdt.core.dom.ast.IASTNode)
-     */
     public void removeDeclaration(IASTNode node) {
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#getQualifiedName()
-     */
     public String[] getQualifiedName() {
         return CPPVisitor.getQualifiedName(this);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#getQualifiedNameCharArray()
-     */
     public char[][] getQualifiedNameCharArray() {
     	return CPPVisitor.getQualifiedNameCharArray(this);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#isGloballyQualified()
-     */
     public boolean isGloballyQualified() {
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
-     */
     public String getName() {
         return name.toString();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
-     */
     public char[] getNameCharArray() {
         return name.toCharArray();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
-     */
     public IScope getScope() {
         return scopeBinding.getUnknownScope();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknown#getUnknownScope()
-     */
     public ICPPScope getUnknownScope() {
         if (unknownScope == null) {
             unknownScope = new CPPUnknownScope(this, name);
@@ -129,9 +93,6 @@ public abstract class CPPUnknownBinding extends PlatformObject
         return unknownScope;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknown#resolveUnknown(org.eclipse.cdt.core.parser.util.ObjectMap)
-     */
     public IBinding resolveUnknown(ObjectMap argMap) throws DOMException {
         IBinding result = this;
         IType t = null;
@@ -156,9 +117,7 @@ public abstract class CPPUnknownBinding extends PlatformObject
         return result;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownClassType#resolvePartially(org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknown, org.eclipse.cdt.core.parser.util.ObjectMap)
-	 */
+
     protected abstract IBinding resolvePartially(ICPPInternalUnknown parentBinding, ObjectMap argMap);
     
 	public ILinkage getLinkage() {
@@ -174,9 +133,6 @@ public abstract class CPPUnknownBinding extends PlatformObject
 		}
 	}
 
-	/* (non-Javadoc)
-	 * For debug purposes only
-	 */
 	@Override
 	public String toString() {
 		return getName();

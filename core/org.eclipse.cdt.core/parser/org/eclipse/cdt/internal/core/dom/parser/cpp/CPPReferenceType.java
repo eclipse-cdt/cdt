@@ -27,16 +27,11 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 public class CPPReferenceType implements ICPPReferenceType, ITypeContainer {
     IType type = null;
     
-    /**
-     * @param type
-     * @param operator
-     */
+
     public CPPReferenceType(IType type) {
         this.type = type;
     }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType#getType()
-     */
+
     public IType getType() {
         return type;
     }

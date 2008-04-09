@@ -21,13 +21,8 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
  * @author jcamelon
  */
 public interface ITokenDuple {
-	/**
-	 * @return
-	 */
+
 	public abstract IToken getFirstToken();
-	/**
-	 * @return
-	 */
 	public abstract IToken getLastToken();
 	
 	public List<IASTNode>[] getTemplateIdArgLists();

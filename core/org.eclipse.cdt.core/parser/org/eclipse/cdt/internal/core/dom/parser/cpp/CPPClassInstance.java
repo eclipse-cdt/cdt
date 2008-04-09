@@ -37,21 +37,15 @@ import org.eclipse.cdt.internal.core.index.IIndexType;
 /**
  * @author aniefer
  */
-public class CPPClassInstance extends CPPInstance implements ICPPClassType, ICPPInternalBinding {
+public class CPPClassInstance extends CPPInstance implements ICPPClassType {
 	private CPPClassSpecializationScope instanceScope;
 
-	/**
-	 * @param decl
-	 * @param args
-	 * @param arguments
-	 */
+
 	public CPPClassInstance(ICPPScope scope, IBinding decl, ObjectMap argMap, IType[] args) {
 		super(scope, decl, argMap, args);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getBases()
-	 */
+
 	public ICPPBase[] getBases() throws DOMException {
 		ICPPClassType cls = (ICPPClassType) getSpecializedBinding();
 		if (cls != null) {
@@ -74,44 +68,26 @@ public class CPPClassInstance extends CPPInstance implements ICPPClassType, ICPP
 		return ICPPBase.EMPTY_BASE_ARRAY;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getFields()
-	 */
 	public IField[] getFields() throws DOMException {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#findField(java.lang.String)
-	 */
 	public IField findField(String name) throws DOMException {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getDeclaredFields()
-	 */
 	public ICPPField[] getDeclaredFields() throws DOMException {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getMethods()
-	 */
 	public ICPPMethod[] getMethods() throws DOMException {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getAllDeclaredMethods()
-	 */
 	public ICPPMethod[] getAllDeclaredMethods() throws DOMException {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getDeclaredMethods()
-	 */
 	public ICPPMethod[] getDeclaredMethods() throws DOMException {
 		CPPClassSpecializationScope scope = (CPPClassSpecializationScope) getCompositeScope();
 		if (scope.isFullyCached())
@@ -119,9 +95,6 @@ public class CPPClassInstance extends CPPInstance implements ICPPClassType, ICPP
 		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getConstructors()
-	 */
 	public ICPPConstructor[] getConstructors() throws DOMException {
 		CPPClassSpecializationScope scope = (CPPClassSpecializationScope) getCompositeScope();
 		if (scope.isFullyCached())
@@ -129,23 +102,14 @@ public class CPPClassInstance extends CPPInstance implements ICPPClassType, ICPP
 		return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getFriends()
-	 */
 	public IBinding[] getFriends() throws DOMException {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getKey()
-	 */
 	public int getKey() throws DOMException {
 		return ((ICPPClassType) getSpecializedBinding()).getKey();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getCompositeScope()
-	 */
 	public IScope getCompositeScope() {
 		if (instanceScope == null) {
 			instanceScope = new CPPClassSpecializationScope(this);
@@ -153,17 +117,11 @@ public class CPPClassInstance extends CPPInstance implements ICPPClassType, ICPP
 		return instanceScope;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#clone()
-	 */
 	@Override
 	public Object clone() {
 		return this;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
-	 */
 	public boolean isSameType(IType type) {
 		if (type == this)
 			return true;

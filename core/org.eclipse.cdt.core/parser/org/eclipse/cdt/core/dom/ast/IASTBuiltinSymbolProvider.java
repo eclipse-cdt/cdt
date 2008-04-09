@@ -24,9 +24,6 @@ public interface IASTBuiltinSymbolProvider {
 	
 	/**
 	 * Returns all of the IBindings corresponding to the IASTBuiltinSymbolProvider.
-	 * 
-	 * @param symbol
-	 * @return
 	 */
 	public IBinding[] getBuiltinBindings();
 	

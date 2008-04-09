@@ -35,14 +35,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionTryBlockDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 
 /**
  * Visitor to search for nodes by file offsets.
  * @since 5.0
  */
-public class FindNodeForOffsetAction extends CPPASTVisitor implements ICASTVisitor, ICPPASTVisitor {
+public class FindNodeForOffsetAction extends CPPASTVisitor implements ICASTVisitor {
 	private final ASTNodeSpecification<?> fNodeSpec;
 
 	public FindNodeForOffsetAction(ASTNodeSpecification<?> nodeSpec) {
@@ -180,16 +179,10 @@ public class FindNodeForOffsetAction extends CPPASTVisitor implements ICASTVisit
 		return processNode(problem);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processDesignator(org.eclipse.cdt.core.dom.ast.c.ICASTDesignator)
-	 */
 	public int visit(ICASTDesignator designator) {
 		return processNode(designator);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.c.ICASTVisitor#leave(org.eclipse.cdt.core.dom.ast.c.ICASTDesignator)
-	 */
 	public int leave(ICASTDesignator designator) {
 		return PROCESS_CONTINUE;
 	}
